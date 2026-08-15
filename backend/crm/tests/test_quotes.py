@@ -425,3 +425,17 @@ class QuoteExportTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
         self.assertEqual(after.updated_at, before.updated_at)
         self.assertEqual(after.quote_no, before.quote_no)
+
+    def test_export_negative_total_returns_422_without_changing_quote(self):
+        self.multi_item_quote.discount = Decimal("1000.00")
+        self.multi_item_quote.save()
+        before = Quote.objects.get(pk=self.multi_item_quote.pk)
+        failure_client = APIClient()
+        failure_client.raise_request_exception = False
+
+        response = failure_client.get(f"/api/quotes/{before.id}/export/")
+
+        after = Quote.objects.get(pk=before.pk)
+        self.assertEqual(response.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
+        self.assertEqual(after.updated_at, before.updated_at)
+        self.assertEqual(after.quote_no, before.quote_no)

@@ -96,6 +96,8 @@ def _export_payload(quote):
         })
 
     total_amount = Decimal(quote.total_amount).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
+    if total_amount < 0:
+        raise QuoteExportError("PI total amount cannot be negative.")
     deposit_amount = (total_amount * quote.deposit_ratio).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
     balance_amount = total_amount - deposit_amount
     validity_days = (quote.valid_until - quote.quote_date).days if quote.valid_until else 30

@@ -9,7 +9,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from crm.models import Contact, Customer, Product, Quote, QuoteItem, SKU
+from crm.models import Contact, Customer, Product, Quote, QuoteItem, QuoteRevisionCounter, SKU
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 
 
@@ -208,6 +208,39 @@ class QuoteApiTests(TestCase):
         self.assertEqual(root.notes, "Original terms")
         self.assertEqual(root.items.get().description, "Dimmable panel light")
         self.assertEqual(response.data["items"][0]["description"], "Updated description")
+
+    def test_revise_rejects_customer_change_that_would_mismatch_buyer_snapshot(self):
+        root = self.create_quote()
+        another_customer = Customer.objects.create(code="C-API-002", name="Other Buyer", country="Germany")
+
+        response = self.client.post(
+            f"/api/quotes/{root.id}/revise/",
+            {"customer": another_customer.id},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("customer", response.data)
+        self.assertEqual(Quote.objects.count(), 1)
+
+    def test_create_returns_400_for_unsupported_country(self):
+        unsupported_customer = Customer.objects.create(code="C-API-003", name="Atlantis Buyer", country="Atlantis")
+
+        response = self.client.post(
+            "/api/quotes/",
+            self.root_quote_payload(customer=unsupported_customer.id),
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_revise_returns_400_after_revision_99(self):
+        root = self.create_quote()
+        QuoteRevisionCounter.objects.create(root_quote=root, last_value=99)
+
+        response = self.client.post(f"/api/quotes/{root.id}/revise/", {}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_put_and_patch_reject_changes_to_saved_quotes(self):
         quote = self.create_quote()

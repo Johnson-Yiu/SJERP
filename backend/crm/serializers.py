@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from rest_framework import serializers
 
@@ -292,7 +293,10 @@ class QuoteSerializer(serializers.ModelSerializer):
         for field, value in snapshots.items():
             if not validated_data.get(field):
                 validated_data[field] = value
-        validated_data["quote_no"] = allocate_root_quote_no(validated_data["quote_date"], customer.country)
+        try:
+            validated_data["quote_no"] = allocate_root_quote_no(validated_data["quote_date"], customer.country)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(getattr(exc, "message_dict", exc.messages)) from exc
         quote = Quote.objects.create(**validated_data)
         QuoteItem.objects.bulk_create([QuoteItem(quote=quote, **item) for item in items])
         return quote

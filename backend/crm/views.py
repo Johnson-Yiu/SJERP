@@ -3,12 +3,13 @@ import io
 from datetime import date
 from decimal import Decimal, InvalidOperation
 
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models import Case, Count, DecimalField, ExpressionWrapper, F, IntegerField, OuterRef, Q, Subquery, Sum, Value, When
 from django.db.models.functions import Coalesce, TruncMonth
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from rest_framework import status, viewsets
+from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action, api_view, parser_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
@@ -368,8 +369,13 @@ class QuoteViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         changes = serializer.validated_data.copy()
         item_data = changes.pop("items", None)
+        if "customer" in changes and changes["customer"].pk != source.customer_id:
+            raise serializers.ValidationError({"customer": "修订版本不能更换客户。"})
         root_quote = source.root_quote or source
-        quote_no, revision_no = allocate_revision_quote_no(root_quote)
+        try:
+            quote_no, revision_no = allocate_revision_quote_no(root_quote)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(getattr(exc, "message_dict", exc.messages)) from exc
         copied_fields = [
             "customer", "quote_date", "valid_until", "status", "currency", "exchange_rate",
             "shipping_fee", "discount", "notes", "recipient_name", "buyer_address",

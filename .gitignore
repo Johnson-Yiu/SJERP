@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+backend/db.sqlite3
+backend/staticfiles/
+frontend/node_modules/
+node_modules/
+frontend/dist/
+.env
+.codex-inspect-template.mjs
+.codex-template-preview.png

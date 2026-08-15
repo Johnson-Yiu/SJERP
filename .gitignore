@@ -9,3 +9,4 @@ frontend/dist/
 .env
 .codex-inspect-template.mjs
 .codex-template-preview.png
+.worktrees/

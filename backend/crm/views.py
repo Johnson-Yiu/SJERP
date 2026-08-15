@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models import Case, Count, DecimalField, ExpressionWrapper, F, IntegerField, OuterRef, Q, Subquery, Sum, Value, When
 from django.db.models.functions import Coalesce, TruncMonth
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import serializers, status, viewsets
@@ -17,6 +18,7 @@ from rest_framework.response import Response
 from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, QuoteItem, RolePermission, SKU, Transaction
 from .permissions import PermissionAdminOnly
 from .quote_numbers import allocate_revision_quote_no
+from .quote_export import QuoteExportError, build_pi_export_payload
 from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, TransactionSerializer, next_product_code
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
@@ -454,6 +456,23 @@ class QuoteViewSet(viewsets.ModelViewSet):
             },
             "products": products,
         })
+
+    @action(detail=True, methods=["get"])
+    def export(self, request, pk=None):
+        quote = self.get_object()
+        try:
+            content = build_pi_export_payload(quote)
+        except QuoteExportError:
+            return Response(
+                {"detail": "PI workbook generation failed."},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
+        response = HttpResponse(
+            content,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response["Content-Disposition"] = f'attachment; filename="{quote.quote_no}.xlsx"'
+        return response
 
 
 class OrderViewSet(viewsets.ModelViewSet):

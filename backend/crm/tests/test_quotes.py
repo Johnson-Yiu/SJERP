@@ -1,6 +1,9 @@
 from datetime import date
 from decimal import Decimal
+import io
 import tempfile
+import zipfile
+from xml.etree import ElementTree
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -11,6 +14,25 @@ from rest_framework.test import APIClient
 
 from crm.models import Contact, Customer, Product, Quote, QuoteItem, QuoteRevisionCounter, SKU
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
+
+
+def unzip_member(xlsx_bytes, member_name):
+    with zipfile.ZipFile(io.BytesIO(xlsx_bytes)) as archive:
+        return archive.read(member_name)
+
+
+def xlsx_cell_text(xlsx_bytes, cell_reference):
+    namespace = {"x": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+    sheet = ElementTree.fromstring(unzip_member(xlsx_bytes, "xl/worksheets/sheet1.xml"))
+    cell = sheet.find(f".//x:c[@r='{cell_reference}']", namespace)
+    if cell is None:
+        return None
+    value = cell.findtext("x:v", default="", namespaces=namespace)
+    if cell.get("t") != "s":
+        return value
+    shared_strings = ElementTree.fromstring(unzip_member(xlsx_bytes, "xl/sharedStrings.xml"))
+    item = shared_strings.findall("x:si", namespace)[int(value)]
+    return "".join(item.itertext())
 
 
 class QuoteRevisionTests(TestCase):
@@ -281,3 +303,125 @@ class QuoteApiTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("image", response.data)
+
+
+class QuoteExportTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.customer = Customer.objects.create(
+            code="C-EXPORT-001",
+            name="Export Buyer GmbH",
+            country="Germany",
+            address="Berlin, Germany",
+        )
+        self.product = Product.objects.create(code="P-EXPORT-001", name="Export Panel")
+        self.sku_1 = SKU.objects.create(product=self.product, sku="SKU-001", unit="pcs")
+        self.sku_2 = SKU.objects.create(product=self.product, sku="SKU-002", unit="pcs")
+        self.sku_3 = SKU.objects.create(product=self.product, sku="SKU-003", unit="pcs")
+        self.sku_4 = SKU.objects.create(product=self.product, sku="SKU-004", unit="pcs")
+        self.multi_item_quote = self.create_quote(
+            quote_no=allocate_root_quote_no(date(2026, 8, 15), "Germany"),
+            items=[
+                (self.sku_1, "Dimmable panel light", "2.00", "10.00"),
+                (self.sku_2, "Emergency panel light", "3.00", "12.50"),
+            ],
+        )
+
+    def create_quote(self, quote_no, items):
+        quote = Quote.objects.create(
+            quote_no=quote_no,
+            customer=self.customer,
+            quote_date=date(2026, 8, 15),
+            valid_until=date(2026, 9, 14),
+            currency="USD",
+            shipping_fee=Decimal("5.00"),
+            discount=Decimal("1.00"),
+            recipient_name="Anna Schmidt",
+            buyer_address="Berlin, Germany",
+            buyer_email="anna@example.com",
+            buyer_phone="+49 30 123456",
+            lead_time_days=20,
+            deposit_ratio=Decimal("0.3000"),
+            trading_terms="FOB Shenzhen",
+            shipping_details="Sea freight",
+            notes="Cartons marked with buyer reference.",
+        )
+        QuoteItem.objects.bulk_create([
+            QuoteItem(
+                quote=quote,
+                sku=sku,
+                description=description,
+                quantity=Decimal(quantity),
+                unit_price=Decimal(unit_price),
+            )
+            for sku, description, quantity, unit_price in items
+        ])
+        return quote
+
+    def create_revision(self, root):
+        quote_no, revision_no = allocate_revision_quote_no(root)
+        revision = self.create_quote(
+            quote_no=quote_no,
+            items=[
+                (item.sku, item.description, str(item.quantity), str(item.unit_price))
+                for item in root.items.select_related("sku")
+            ],
+        )
+        revision.root_quote = root
+        revision.revision_no = revision_no
+        revision.save(update_fields=["root_quote", "revision_no"])
+        return revision
+
+    def test_export_filename_and_invoice_use_full_revision_identifier(self):
+        revision = self.create_revision(self.multi_item_quote)
+
+        response = self.client.get(f"/api/quotes/{revision.id}/export/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(f'{revision.quote_no}.xlsx', response["Content-Disposition"])
+        self.assertTrue(response.content.startswith(b"PK"))
+        self.assertIn(revision.quote_no.encode(), unzip_member(response.content, "xl/worksheets/sheet1.xml"))
+
+    def test_export_two_items_contains_sku_codes_and_arial_style(self):
+        response = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        sheet_xml = unzip_member(response.content, "xl/worksheets/sheet1.xml")
+        self.assertIn(b"SKU-001", sheet_xml)
+        self.assertIn(b"SKU-002", sheet_xml)
+        self.assertIn(b"Arial", unzip_member(response.content, "xl/styles.xml"))
+
+    def test_export_expands_product_rows_and_shifts_fixed_bank_section(self):
+        quote = self.create_quote(
+            quote_no="SJ20260815DE099",
+            items=[
+                (self.sku_1, "Panel one", "1.00", "10.00"),
+                (self.sku_2, "Panel two", "2.00", "11.00"),
+                (self.sku_3, "Panel three", "3.00", "12.00"),
+                (self.sku_4, "Panel four", "4.00", "13.00"),
+            ],
+        )
+
+        response = self.client.get(f"/api/quotes/{quote.id}/export/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        sheet_xml = unzip_member(response.content, "xl/worksheets/sheet1.xml")
+        self.assertIn(b"SKU-004", sheet_xml)
+        self.assertEqual(xlsx_cell_text(response.content, "A23"), "BANK INFORMATION")
+        self.assertEqual(xlsx_cell_text(response.content, "I3"), "Guangzhou Sunjack Lighting Co., Ltd.")
+        self.assertEqual(xlsx_cell_text(response.content, "C24"), "Guangzhou Sunjack Lighting Co., Ltd.")
+        self.assertEqual(xlsx_cell_text(response.content, "A31"), "Bank Code")
+        self.assertEqual(xlsx_cell_text(response.content, "C31"), "007")
+        self.assertEqual(xlsx_cell_text(response.content, "A32"), "Branch Code")
+        self.assertTrue(xlsx_cell_text(response.content, "A33").startswith("IMPORTANT NOTICE"))
+
+    @override_settings(QUOTE_XLSX_NODE_BINARY="definitely-not-a-real-node-binary")
+    def test_export_failure_returns_422_without_changing_quote(self):
+        before = Quote.objects.get(pk=self.multi_item_quote.pk)
+
+        response = self.client.get(f"/api/quotes/{before.id}/export/")
+
+        after = Quote.objects.get(pk=before.pk)
+        self.assertEqual(response.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
+        self.assertEqual(after.updated_at, before.updated_at)
+        self.assertEqual(after.quote_no, before.quote_no)

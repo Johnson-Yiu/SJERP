@@ -4,7 +4,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, FollowUp, InventoryMovement, Order, OrganizationUnit, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, RolePermission, SKU, Transaction
+from ..models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, FollowUp, InventoryMovement, Order, OrganizationUnit, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, RolePermission, SKU, Transaction
 
 
 class BusinessFlowTests(APITestCase):

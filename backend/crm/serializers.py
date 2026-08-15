@@ -4,6 +4,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, QuoteItem, RolePermission, SKU, Transaction
+from .quote_numbers import allocate_root_quote_no
 
 
 def customer_sequence_suffix(value):
@@ -263,7 +264,7 @@ class QuoteItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuoteItem
-        fields = ["id", "sku", "sku_code", "product_name", "quantity", "unit_price", "amount", "notes"]
+        fields = ["id", "sku", "sku_code", "product_name", "quantity", "unit_price", "amount", "description", "notes"]
 
 
 class QuoteSerializer(serializers.ModelSerializer):
@@ -275,24 +276,29 @@ class QuoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quote
         fields = "__all__"
+        read_only_fields = ["quote_no", "root_quote", "revision_no"]
 
     @transaction.atomic
     def create(self, validated_data):
         items = validated_data.pop("items", [])
+        customer = validated_data["customer"]
+        primary_contact = customer.contacts.order_by("-is_primary", "name").first()
+        snapshots = {
+            "recipient_name": primary_contact.name if primary_contact else customer.name,
+            "buyer_address": customer.address,
+            "buyer_email": primary_contact.email if primary_contact else "",
+            "buyer_phone": primary_contact.phone if primary_contact else "",
+        }
+        for field, value in snapshots.items():
+            if not validated_data.get(field):
+                validated_data[field] = value
+        validated_data["quote_no"] = allocate_root_quote_no(validated_data["quote_date"], customer.country)
         quote = Quote.objects.create(**validated_data)
         QuoteItem.objects.bulk_create([QuoteItem(quote=quote, **item) for item in items])
         return quote
 
-    @transaction.atomic
     def update(self, instance, validated_data):
-        items = validated_data.pop("items", None)
-        for key, value in validated_data.items():
-            setattr(instance, key, value)
-        instance.save()
-        if items is not None:
-            instance.items.all().delete()
-            QuoteItem.objects.bulk_create([QuoteItem(quote=instance, **item) for item in items])
-        return instance
+        raise serializers.ValidationError("已保存报价请创建迭代版本")
 
 
 class OrderItemSerializer(serializers.ModelSerializer):

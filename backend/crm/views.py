@@ -13,8 +13,9 @@ from rest_framework.decorators import action, api_view, parser_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, RolePermission, SKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, QuoteItem, RolePermission, SKU, Transaction
 from .permissions import PermissionAdminOnly
+from .quote_numbers import allocate_revision_quote_no
 from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, TransactionSerializer, next_product_code
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
@@ -311,6 +312,20 @@ class SKUViewSet(viewsets.ModelViewSet):
             qs = qs.filter(active=True)
         return qs.filter(product_id=self.request.query_params["product"]) if self.request.query_params.get("product") else qs
 
+    @action(detail=True, methods=["post"], parser_classes=[MultiPartParser, FormParser])
+    def image(self, request, pk=None):
+        upload = request.FILES.get("image")
+        allowed_mime_types = {"image/gif", "image/jpeg", "image/png", "image/webp"}
+        if upload is None:
+            return Response({"image": "请上传图片文件。"}, status=status.HTTP_400_BAD_REQUEST)
+        if upload.content_type not in allowed_mime_types:
+            return Response({"image": "仅支持 GIF、JPEG、PNG 或 WebP 图片。"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(self.get_object(), data={"image": upload}, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
 
 class ProductParameterViewSet(viewsets.ModelViewSet):
     serializer_class = ProductParameterSerializer
@@ -341,6 +356,98 @@ class QuoteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.filter(customer_id=self.request.query_params["customer"]) if self.request.query_params.get("customer") else qs
+
+    def update(self, request, *args, **kwargs):
+        return Response({"detail": "已保存报价请创建迭代版本"}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=["post"])
+    @transaction.atomic
+    def revise(self, request, pk=None):
+        source = self.get_object()
+        serializer = self.get_serializer(data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        changes = serializer.validated_data.copy()
+        item_data = changes.pop("items", None)
+        root_quote = source.root_quote or source
+        quote_no, revision_no = allocate_revision_quote_no(root_quote)
+        copied_fields = [
+            "customer", "quote_date", "valid_until", "status", "currency", "exchange_rate",
+            "shipping_fee", "discount", "notes", "recipient_name", "buyer_address",
+            "buyer_email", "buyer_phone", "lead_time_days", "deposit_ratio", "trading_terms",
+            "shipping_details",
+        ]
+        quote_values = {field: getattr(source, field) for field in copied_fields}
+        quote_values.update(changes)
+        revision = Quote.objects.create(
+            quote_no=quote_no,
+            root_quote=root_quote,
+            revision_no=revision_no,
+            **quote_values,
+        )
+        if item_data is None:
+            item_data = [
+                {
+                    "sku": item.sku,
+                    "quantity": item.quantity,
+                    "unit_price": item.unit_price,
+                    "description": item.description,
+                    "notes": item.notes,
+                }
+                for item in source.items.all()
+            ]
+        QuoteItem.objects.bulk_create([QuoteItem(quote=revision, **item) for item in item_data])
+        return Response(self.get_serializer(revision).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["get"], url_path="pi-data")
+    def pi_data(self, request, pk=None):
+        quote = self.get_object()
+        products = []
+        subtotal = Decimal("0")
+        for item in quote.items.select_related("sku__product"):
+            amount = item.amount
+            subtotal += amount
+            products.append({
+                "sku": item.sku.sku,
+                "product_name": item.sku.product.name,
+                "description": item.description,
+                "quantity": item.quantity,
+                "unit_price": item.unit_price,
+                "amount": amount,
+                "image_url": request.build_absolute_uri(item.sku.image.url) if item.sku.image else "",
+            })
+        total_amount = quote.total_amount
+        deposit_amount = (total_amount * quote.deposit_ratio).quantize(Decimal("0.01"))
+        return Response({
+            "invoice_no": quote.quote_no,
+            "buyer": {
+                "name": quote.recipient_name,
+                "address": quote.buyer_address,
+                "email": quote.buyer_email,
+                "phone": quote.buyer_phone,
+            },
+            "terms": {
+                "quote_date": quote.quote_date,
+                "valid_until": quote.valid_until,
+                "lead_time_days": quote.lead_time_days,
+                "trading_terms": quote.trading_terms,
+                "shipping_details": quote.shipping_details,
+                "notes": quote.notes,
+            },
+            "totals": {
+                "currency": quote.currency,
+                "subtotal": subtotal,
+                "shipping_fee": quote.shipping_fee,
+                "discount": quote.discount,
+                "total_amount": total_amount,
+            },
+            "payment_splits": {
+                "deposit_ratio": quote.deposit_ratio,
+                "deposit_amount": deposit_amount,
+                "balance_ratio": Decimal("1") - quote.deposit_ratio,
+                "balance_amount": total_amount - deposit_amount,
+            },
+            "products": products,
+        })
 
 
 class OrderViewSet(viewsets.ModelViewSet):

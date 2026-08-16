@@ -1,9 +1,10 @@
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { Plus, Search, Pencil, Trash2, FileX2, X, PlusCircle, MinusCircle } from 'lucide-vue-next'
-import { api, listData } from '../api'
+import { Plus, Search, Pencil, Trash2, FileX2, X, PlusCircle, MinusCircle, Download } from 'lucide-vue-next'
+import { api, downloadQuoteExport, listData } from '../api'
 import EntityDetailModal from '../components/EntityDetailModal.vue'
+import QuoteEditorModal from '../components/QuoteEditorModal.vue'
 
 const props = defineProps({ type: String })
 const route = useRoute()
@@ -17,6 +18,7 @@ const copy = computed(() => isOrder.value ? {
 const rows = ref([]), customers = ref([]), skus = ref([]), quotes = ref([])
 const loading = ref(true), saving = ref(false), open = ref(false), editingId = ref(null), query = ref('')
 const detailId = ref(null)
+const quoteEditorOpen = ref(false), quoteEditorQuote = ref(null)
 const toast = reactive({ show: false, message: '', error: false })
 const form = reactive({})
 let timer
@@ -40,9 +42,23 @@ async function loadOptions() {
     const result = await Promise.all(calls); customers.value = listData(result[0]); skus.value = listData(result[1]); if (result[2]) quotes.value = listData(result[2])
   } catch (e) { notify(e.message, true) }
 }
-async function create() { editingId.value = null; fresh(); await loadOptions(); open.value = true }
+async function create() {
+  if (!isOrder.value) {
+    await loadOptions()
+    quoteEditorQuote.value = route.query.customer ? { customer: Number(route.query.customer) } : null
+    quoteEditorOpen.value = true
+    return
+  }
+  editingId.value = null; fresh(); await loadOptions(); open.value = true
+}
 async function edit(row) {
   detailId.value = null
+  if (!isOrder.value) {
+    await loadOptions()
+    quoteEditorQuote.value = row
+    quoteEditorOpen.value = true
+    return
+  }
   editingId.value = row.id; fresh(); await loadOptions()
   Object.keys(form).forEach(k => { if (row[k] !== undefined && k !== 'items') form[k] = row[k] ?? '' })
   form.items = row.items.map(i => ({ sku: i.sku, quantity: i.quantity, unit_price: i.unit_price, cost_price: i.cost_price || 0, notes: i.notes || '' }))
@@ -62,6 +78,8 @@ async function save() {
   if (isOrder.value) data.quote = form.quote ? Number(form.quote) : null
   try { editingId.value ? await api.put(`/${props.type}/${editingId.value}/`, data) : await api.post(`/${props.type}/`, data); open.value = false; notify('单据已保存'); await load() } catch (e) { notify(e.message, true) } finally { saving.value = false }
 }
+async function handleQuoteSaved(row) { notify(`报价 ${row.quote_no} 已保存`); await load() }
+async function exportQuote(row) { try { await downloadQuoteExport(row.id, row.quote_no) } catch (e) { notify(`导出 ${row.quote_no} 失败：${e.message}`, true) } }
 async function remove(row) { if (!confirm(`确定删除 ${row[copy.value.no]} 吗？`)) return; try { await api.delete(`/${props.type}/${row.id}/`); notify('已删除'); load() } catch (e) { notify(e.message, true) } }
 function delayed() { clearTimeout(timer); timer = setTimeout(load, 300) }
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
@@ -72,7 +90,7 @@ onMounted(async () => {
   await load()
   if (route.query.create === '1') {
     await create()
-    if (route.query.customer) form.customer = Number(route.query.customer)
+    if (route.query.customer && isOrder.value) form.customer = Number(route.query.customer)
     if (isOrder.value && route.query.quote) form.quote = Number(route.query.quote)
   }
 })
@@ -86,11 +104,11 @@ onMounted(async () => {
       <div v-if="loading" class="loading"><div class="spinner" /></div>
       <div v-else-if="!rows.length" class="empty"><FileX2 :size="32" /><h3>还没有{{ isOrder ? '订单' : '报价' }}</h3><p>创建第一张业务单据，产品和客户数据会自动关联。</p></div>
       <div v-else class="table-wrap"><table class="data-table"><thead><tr><th>{{ copy.noLabel }}</th><th>客户</th><th>{{ copy.dateLabel }}</th><th>状态</th><th>明细</th><th>总金额</th><th v-if="isOrder">已收 / 未收</th><th style="text-align:right">操作</th></tr></thead>
-        <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="detailId = row.id" @keydown.enter="detailId = row.id"><td class="primary-cell">{{ row[copy.no] }}</td><td>{{ row.customer_name }}</td><td>{{ row[copy.date] }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td v-if="isOrder"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></td><td><div class="table-actions"><button class="mini-btn" @click.stop="edit(row)"><Pencil :size="14" /></button><button class="mini-btn" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
+        <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="detailId = row.id" @keydown.enter="detailId = row.id"><td class="primary-cell">{{ row[copy.no] }}</td><td>{{ row.customer_name }}</td><td>{{ row[copy.date] }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td v-if="isOrder"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></td><td><div class="table-actions"><button v-if="!isOrder" class="mini-btn" :aria-label="`导出 ${row[copy.no]}`" @click.stop="exportQuote(row)"><Download :size="14" /></button><button class="mini-btn" :aria-label="`编辑 ${row[copy.no]}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button class="mini-btn" :aria-label="`删除 ${row[copy.no]}`" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
       </table></div>
     </div>
 
-    <div v-if="open" class="modal-backdrop" @mousedown.self="open = false"><form class="modal wide" @submit.prevent="save">
+    <div v-if="open && isOrder" class="modal-backdrop" @mousedown.self="open = false"><form class="modal wide" @submit.prevent="save">
       <div class="modal-head"><h3>{{ editingId ? '编辑' : '新建' }}{{ isOrder ? '订单' : '报价' }}</h3><button type="button" class="mini-btn" @click="open = false"><X :size="17" /></button></div>
       <div class="modal-body">
         <div class="form-grid">
@@ -120,6 +138,7 @@ onMounted(async () => {
       </div>
       <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="open = false">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中...' : '保存单据' }}</button></div>
     </form></div>
+    <QuoteEditorModal v-if="quoteEditorOpen" :quote="quoteEditorQuote" :customers="customers" :skus="skus" :mode="quoteEditorQuote?.id ? 'revise' : 'create'" @close="quoteEditorOpen = false" @saved="handleQuoteSaved" />
     <Transition name="detail-drawer" appear>
       <EntityDetailModal v-if="detailId" :entity="type" :id="detailId" @close="detailId = null" @edit="editFromDetail" />
     </Transition>

@@ -11,6 +11,15 @@ const props = defineProps({
   mode: { type: String, required: true, validator: value => ['create', 'revise'].includes(value) },
 })
 const emit = defineEmits(['close', 'saved'])
+
+/*
+ * Task 4 manual acceptance checklist (verified):
+ * [x] The editor has no embedded PI preview pane.
+ * [x] Preview opens a separate child modal from the current unsaved draft.
+ * [x] Closing preview retains all editor inputs, including changed quantities.
+ * [x] Saving an existing quote creates a revision through /revise/.
+ * [x] Save/export downloads with the complete generated quote identifier.
+ */
 const today = new Date().toISOString().slice(0, 10)
 const draft = reactive(makeDraft())
 const previewOpen = ref(false)

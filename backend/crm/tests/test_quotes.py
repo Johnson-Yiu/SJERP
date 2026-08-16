@@ -196,6 +196,17 @@ class QuoteApiTests(TestCase):
         self.assertEqual(response.data["buyer_email"], "primary@example.com")
         self.assertEqual(response.data["items"][0]["description"], "Dimmable panel light")
 
+    def test_create_accepts_localized_chinese_country_names(self):
+        for country, expected_iso_code in (("美国", "US"), ("法国", "FR"), ("阿联酋", "AE")):
+            with self.subTest(country=country):
+                self.customer.country = country
+                self.customer.save(update_fields=["country"])
+
+                response = self.client.post("/api/quotes/", self.root_quote_payload(), format="json")
+
+                self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+                self.assertEqual(response.data["quote_no"], f"SJ20260815{expected_iso_code}001")
+
     def test_create_ignores_client_quote_number_and_revision_fields(self):
         response = self.client.post(
             "/api/quotes/",

@@ -29,6 +29,9 @@ COUNTRY_ISO_CODES = {
     "united states": "US",
     "united states of america": "US",
     "usa": "US",
+    "美国": "US",
+    "法国": "FR",
+    "阿联酋": "AE",
 }
 MAX_REVISION_NO = 99
 

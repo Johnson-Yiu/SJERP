@@ -5,6 +5,8 @@ $Worktree = Join-Path $ProjectRoot ".worktrees\quotation-template-revamp"
 $PythonExe = Join-Path $ProjectRoot ".venv\Scripts\python.exe"
 $BackendDir = Join-Path $Worktree "backend"
 $FrontendDir = Join-Path $Worktree "frontend"
+$BackendPort = 8137
+$FrontendPort = 5227
 
 if (-not (Test-Path -LiteralPath $Worktree)) {
     throw "Feature worktree not found: $Worktree"
@@ -16,23 +18,24 @@ if (-not (Test-Path -LiteralPath (Join-Path $FrontendDir "node_modules"))) {
     throw "Feature frontend dependencies are missing. Run npm install in $FrontendDir first."
 }
 
-$occupied = foreach ($port in 8100, 5191) {
+$occupied = foreach ($port in $BackendPort, $FrontendPort) {
     if (Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue) { $port }
 }
 if ($occupied) {
     Write-Host "Ports $($occupied -join ', ') are occupied by an existing service." -ForegroundColor Yellow
-    Write-Host "Stop the existing service (or press Ctrl+C in its terminal), then run this launcher again."
+    Write-Host "Stop the service using these ports (or press Ctrl+C in its terminal), then run this launcher again."
     exit 1
 }
 
-Start-Process -FilePath $PythonExe -ArgumentList "manage.py runserver 127.0.0.1:8100 --noreload" -WorkingDirectory $BackendDir -WindowStyle Hidden
-Start-Process -FilePath "npm.cmd" -ArgumentList "run dev -- --host 127.0.0.1 --port 5191 --strictPort" -WorkingDirectory $FrontendDir -WindowStyle Hidden
+Start-Process -FilePath $PythonExe -ArgumentList "manage.py runserver 127.0.0.1:$BackendPort --noreload" -WorkingDirectory $BackendDir -WindowStyle Hidden
+$env:VITE_API_PROXY_PORT = $BackendPort
+Start-Process -FilePath "npm.cmd" -ArgumentList "run dev -- --host 127.0.0.1 --port $FrontendPort --strictPort" -WorkingDirectory $FrontendDir -WindowStyle Hidden
 
 for ($i = 0; $i -lt 40; $i++) {
     Start-Sleep -Milliseconds 500
-    if ((Get-NetTCPConnection -LocalPort 8100 -State Listen -ErrorAction SilentlyContinue) -and (Get-NetTCPConnection -LocalPort 5191 -State Listen -ErrorAction SilentlyContinue)) {
-        Start-Process "http://127.0.0.1:5191/quotes"
-        Write-Host "Quotation feature branch is running: http://127.0.0.1:5191/quotes" -ForegroundColor Green
+    if ((Get-NetTCPConnection -LocalPort $BackendPort -State Listen -ErrorAction SilentlyContinue) -and (Get-NetTCPConnection -LocalPort $FrontendPort -State Listen -ErrorAction SilentlyContinue)) {
+        Start-Process "http://127.0.0.1:$FrontendPort/quotes"
+        Write-Host "Quotation feature branch is running: http://127.0.0.1:$FrontendPort/quotes" -ForegroundColor Green
         exit 0
     }
 }

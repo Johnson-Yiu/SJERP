@@ -315,8 +315,16 @@ class SKUViewSet(viewsets.ModelViewSet):
             qs = qs.filter(active=True)
         return qs.filter(product_id=self.request.query_params["product"]) if self.request.query_params.get("product") else qs
 
-    @action(detail=True, methods=["post"], parser_classes=[MultiPartParser, FormParser])
+    @action(detail=True, methods=["post", "delete"], parser_classes=[MultiPartParser, FormParser])
     def image(self, request, pk=None):
+        sku = self.get_object()
+        if request.method == "DELETE":
+            if sku.image:
+                sku.image.delete(save=False)
+            sku.image = ""
+            sku.save(update_fields=["image"])
+            return Response(self.get_serializer(sku).data)
+
         upload = request.FILES.get("image")
         allowed_mime_types = {"image/gif", "image/jpeg", "image/png", "image/webp"}
         if upload is None:
@@ -324,7 +332,7 @@ class SKUViewSet(viewsets.ModelViewSet):
         if upload.content_type not in allowed_mime_types:
             return Response({"image": "仅支持 GIF、JPEG、PNG 或 WebP 图片。"}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = self.get_serializer(self.get_object(), data={"image": upload}, partial=True)
+        serializer = self.get_serializer(sku, data={"image": upload}, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)

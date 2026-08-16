@@ -15,6 +15,7 @@ const form = reactive({ product: '', unit: 'pcs', cost_price: 0, default_price: 
 const parameterValues = reactive({})
 const details = ref([])
 const imageInput = ref(null), selectedImage = ref(null), imagePreviewUrl = ref(''), savedImageUrl = ref('')
+const imageClearRequested = ref(false), pendingImageSkuIds = ref([])
 
 const product = computed(() => products.value.find(item => Number(item.id) === Number(form.product)))
 const categoryMap = computed(() => new Map(categories.value.map(item => [item.id, item])))
@@ -74,20 +75,25 @@ function chooseImage() { imageInput.value?.click() }
 function onImageSelected(event) {
   const file = event.target.files?.[0]
   if (!file) return
-  if (!file.type.startsWith('image/')) {
+  if (!['image/gif', 'image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
     event.target.value = ''
-    return notify('请选择图片文件。', true)
+    return notify('仅支持 GIF、JPEG、PNG 或 WebP 图片。', true)
   }
   revokeImagePreview()
+  imageClearRequested.value = false
   selectedImage.value = file
   imagePreviewUrl.value = URL.createObjectURL(file)
 }
-function clearImageSelection() { resetImagePicker(savedImageUrl.value) }
+function clearImageSelection() {
+  imageClearRequested.value = Boolean(savedImageUrl.value)
+  resetImagePicker()
+}
 async function uploadImage(skuId, file) {
   const data = new FormData()
   data.append('image', file)
   return api.post(`/skus/${skuId}/image/`, data)
 }
+async function clearImage(skuId) { return api.delete(`/skus/${skuId}/image/`) }
 function newDetail(name = product.value?.name || '') { return { product_name: name, model: '', unit: form.unit || 'pcs', notes: '', unit_weight: 0, length: 0, width: 0, height: 0, carton_quantity: 0, carton_weight: 0, cbm: 0, volume_weight: 0 } }
 async function load() {
   loading.value = true
@@ -96,6 +102,8 @@ async function load() {
 async function openCreate(productId = '') {
   editingId.value = null
   savedImageUrl.value = ''
+  imageClearRequested.value = false
+  pendingImageSkuIds.value = []
   resetImagePicker()
   Object.assign(form, { product: productId ? Number(productId) : '', unit: 'pcs', cost_price: 0, default_price: 0, currency: 'USD', active: true })
   Object.keys(parameterValues).forEach(key => delete parameterValues[key])
@@ -117,6 +125,8 @@ function closeModal() {
 function openEdit(row) {
   editingId.value = row.id
   savedImageUrl.value = row.image || ''
+  imageClearRequested.value = false
+  pendingImageSkuIds.value = []
   resetImagePicker(savedImageUrl.value)
   Object.assign(form, { product: row.product, unit: row.unit, cost_price: row.cost_price, default_price: row.default_price, currency: row.currency, active: row.active })
   Object.keys(parameterValues).forEach(key => delete parameterValues[key])
@@ -131,6 +141,16 @@ function onProductChanged() {
 function addDetail() { details.value.push(newDetail(product.value?.name || details.value.at(-1)?.product_name || '')) }
 function removeDetail(index) { if (details.value.length > 1) details.value.splice(index, 1) }
 async function save() {
+  if (pendingImageSkuIds.value.length) {
+    if (!selectedImage.value) return notify('请选择图片后重试上传，或取消本次编辑。', true)
+    saving.value = true
+    try {
+      await Promise.all(pendingImageSkuIds.value.map(skuId => uploadImage(skuId, selectedImage.value)))
+      pendingImageSkuIds.value = []
+      closeModal(); emit('saved'); notify('SKU 图片已上传'); await load()
+    } catch (error) { notify(`SKU 已创建，但图片上传失败：${error.message}`, true) } finally { saving.value = false }
+    return
+  }
   if (!form.product) return notify('请选择所属产品。', true)
   if (!details.value.some(detail => String(detail.model || '').trim())) return notify('请至少填写一个型号；每个型号都会参与 SKU 编码。', true)
   if (!allPreviews.value.length) return notify('请至少填写型号或一个参与 SKU 的参数值。', true)
@@ -140,12 +160,19 @@ async function save() {
     if (editingId.value) {
       const preview = allPreviews.value[0]
       await api.put(`/skus/${editingId.value}/`, { ...shared, ...preview, product_details: [preview.detail], parameter_values: parameterValues })
-      if (selectedImage.value) await uploadImage(editingId.value, selectedImage.value)
+      if (imageClearRequested.value) await clearImage(editingId.value)
+      else if (selectedImage.value) await uploadImage(editingId.value, selectedImage.value)
     } else {
-      await Promise.all(allPreviews.value.map(async ({ detail, ...preview }) => {
-        const response = await api.post('/skus/', { ...shared, ...preview, product_details: [detail], parameter_values: parameterValues })
-        if (selectedImage.value) await uploadImage(response.data.id, selectedImage.value)
-      }))
+      const createdRows = await Promise.all(allPreviews.value.map(async ({ detail, ...preview }) => (await api.post('/skus/', { ...shared, ...preview, product_details: [detail], parameter_values: parameterValues })).data))
+      if (selectedImage.value) {
+        try { await Promise.all(createdRows.map(row => uploadImage(row.id, selectedImage.value))) }
+        catch (error) {
+          pendingImageSkuIds.value = createdRows.map(row => row.id)
+          editingId.value = createdRows[0]?.id || null
+          await load()
+          return notify(`SKU 已创建，但图片上传失败：${error.message}`, true)
+        }
+      }
     }
     closeModal(); emit('saved'); notify(editingId.value ? 'SKU 已更新' : `已创建 ${allPreviews.value.length} 个 SKU`); await load()
   } catch (error) { notify(error.message, true) } finally { saving.value = false }
@@ -176,11 +203,11 @@ onBeforeUnmount(revokeImagePreview)
     <section class="panel"><div v-if="loading" class="loading"><div class="spinner" /></div><div v-else-if="!rows.length" class="empty"><Database :size="32" /><h3>还没有 SKU</h3><p>点击“新建 SKU”开始配置产品规格。</p></div><div v-else class="table-wrap"><table class="data-table"><thead><tr><th>SKU</th><th>图片</th><th>产品</th><th>规格</th><th>库存</th><th>单位</th><th>默认售价</th><th /></tr></thead><tbody><tr v-for="row in rows" :key="row.id"><td class="primary-cell">{{ row.sku }}</td><td><img v-if="row.image" class="sku-table-thumbnail" :src="row.image" :alt="`${row.sku} 图片`" /><span v-else class="sku-image-empty">—</span></td><td>{{ row.product_name }}</td><td>{{ row.specification || '—' }}</td><td>{{ row.stock_quantity }}</td><td>{{ row.unit }}</td><td>{{ row.default_price }} {{ row.currency }}</td><td><div class="table-actions"><button class="mini-btn" title="编辑" @click="openEdit(row)"><Pencil :size="14" /></button><button class="mini-btn danger" title="删除" @click="removeRow(row)"><Trash2 :size="14" /></button></div></td></tr></tbody></table></div></section>
 
     <Teleport to="body" :disabled="!embedded"><div v-if="modalOpen || route.query.create === '1'" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal sku-modal" @submit.prevent="save"><div class="modal-head"><div><h3>{{ editingId ? '编辑 SKU' : '新建 SKU' }}</h3><p>参数按产品所属分类自动带入；每个值输入后按回车确认。</p></div><button type="button" class="mini-btn" @click="closeModal"><X :size="17" /></button></div><div class="modal-body sku-body">
-      <section class="sku-basics"><div class="field"><label>所属产品 <em>*</em></label><select v-model="form.product" required @change="onProductChanged"><option value="">请选择产品</option><option v-for="item in products" :key="item.id" :value="item.id">{{ item.name }}</option></select></div><div class="field"><label>单位</label><input v-model.trim="form.unit" placeholder="如：pcs" /></div><div class="field"><label>成本价</label><input v-model.number="form.cost_price" type="number" min="0" step="0.0001" /></div><div class="field"><label>默认售价</label><input v-model.number="form.default_price" type="number" min="0" step="0.0001" /></div><div class="field"><label>币种</label><select v-model="form.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div><label class="check-field"><input v-model="form.active" type="checkbox" /> 启用</label><div class="sku-image-picker"><input ref="imageInput" type="file" accept="image/*" hidden @change="onImageSelected" /><img v-if="imagePreviewUrl" class="sku-image-preview" :src="imagePreviewUrl" alt="SKU 图片预览" /><div v-else class="sku-image-placeholder">暂无图片</div><div class="sku-image-actions"><button type="button" class="btn btn-secondary" @click="chooseImage">选择图片</button><button v-if="selectedImage || imagePreviewUrl" type="button" class="btn btn-secondary" @click="clearImageSelection">清除</button></div></div></section>
+      <section class="sku-basics"><div class="field"><label>所属产品 <em>*</em></label><select v-model="form.product" required @change="onProductChanged"><option value="">请选择产品</option><option v-for="item in products" :key="item.id" :value="item.id">{{ item.name }}</option></select></div><div class="field"><label>单位</label><input v-model.trim="form.unit" placeholder="如：pcs" /></div><div class="field"><label>成本价</label><input v-model.number="form.cost_price" type="number" min="0" step="0.0001" /></div><div class="field"><label>默认售价</label><input v-model.number="form.default_price" type="number" min="0" step="0.0001" /></div><div class="field"><label>币种</label><select v-model="form.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div><label class="check-field"><input v-model="form.active" type="checkbox" /> 启用</label><div class="sku-image-picker"><input ref="imageInput" type="file" accept="image/gif,image/jpeg,image/png,image/webp,.gif,.jpg,.jpeg,.png,.webp" hidden @change="onImageSelected" /><img v-if="imagePreviewUrl" class="sku-image-preview" :src="imagePreviewUrl" alt="SKU 图片预览" /><div v-else class="sku-image-placeholder">暂无图片</div><div class="sku-image-actions"><button type="button" class="btn btn-secondary" @click="chooseImage">选择图片</button><button v-if="selectedImage || imagePreviewUrl" type="button" class="btn btn-secondary" @click="clearImageSelection">清除</button></div></div></section>
       <section v-if="product" class="parameter-section"><div class="section-title"><div><small>参数资料</small><h4>按分类填写 SKU 参数</h4></div><span>{{ categoryGroups.length }} 个分类</span></div><p v-if="skuAttributes.length" class="rule-hint">仅展示分类中勾选“参与 SKU 编码”的属性；大写规则将自动应用。</p><div v-if="!skuAttributes.length" class="section-empty">该产品的分类尚未配置“参与 SKU 编码”的参数，请先在产品分类中配置。</div><div v-for="group in categoryGroups" :key="group.id" class="parameter-group"><h5>{{ group.name }}</h5><div v-if="group.attributes.length" class="parameter-grid"><div v-for="attribute in group.attributes" :key="attribute.key" class="parameter-cell"><label>{{ attribute.name }}<small v-if="attribute.unit">（{{ attribute.unit }}）</small></label><ComboInput v-model="parameterValues[`${group.id}:${attribute.key}`]" :options="optionsFor(group, attribute)" :placeholder="`输入${attribute.name}后按回车确认`" multiple /><p>按回车添加多个值</p></div></div><p v-else class="muted">本分类暂无参与 SKU 命名的参数。</p></div></section>
       <section v-if="product" class="preview-section"><div class="section-title"><h4>SKU 组合预览</h4><span>{{ allPreviews.length }} 个组合</span></div><div v-if="!allPreviews.length" class="section-empty">填写参数后将在这里实时生成 SKU 组合。</div><div v-else class="preview-list"><div v-for="item in allPreviews" :key="item.sku" class="preview-card"><strong>{{ item.sku }}</strong></div></div></section>
       <section v-if="product" class="detail-section"><div class="section-title"><div><small>产品明细</small><h4>包装与发货信息</h4></div><button type="button" class="btn btn-secondary" @click="addDetail"><Plus :size="14" /> 新增</button></div><div class="detail-scroll"><div v-for="(detail, index) in details" :key="index" class="detail-row"><div class="detail-index">{{ index + 1 }}</div><label>产品名称<input v-model.trim="detail.product_name" /></label><label>型号<input v-model.trim="detail.model" placeholder="如：60W" /></label><label>单位<input v-model.trim="detail.unit" /></label><label>备注<input v-model.trim="detail.notes" /></label><label>单个重量 KG<input v-model.number="detail.unit_weight" type="number" min="0" step="0.001" /></label><label>长 CM<input v-model.number="detail.length" type="number" min="0" step="0.1" /></label><label>宽 CM<input v-model.number="detail.width" type="number" min="0" step="0.1" /></label><label>高 CM<input v-model.number="detail.height" type="number" min="0" step="0.1" /></label><label>整件数量<input v-model.number="detail.carton_quantity" type="number" min="0" /></label><button v-if="details.length > 1" type="button" class="mini-btn danger" title="删除此行" @click="removeDetail(index)"><Trash2 :size="14" /></button></div></div></section>
-    </div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中...' : editingId ? '保存 SKU' : `创建 ${allPreviews.length || ''} 个 SKU` }}</button></div></form></div></Teleport>
+    </div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中...' : pendingImageSkuIds.length ? '重试上传图片' : editingId ? '保存 SKU' : `创建 ${allPreviews.length || ''} 个 SKU` }}</button></div></form></div></Teleport>
     <div v-if="toast.text" class="toast" :class="{ error: toast.error }">{{ toast.text }}</div>
   </div>
 </template>

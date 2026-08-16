@@ -315,6 +315,21 @@ class QuoteApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("image", response.data)
 
+    def test_sku_image_can_be_cleared_after_upload(self):
+        upload = SimpleUploadedFile(
+            "panel.gif",
+            b"GIF87a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01;",
+            content_type="image/gif",
+        )
+        self.client.post(f"/api/skus/{self.sku.id}/image/", {"image": upload}, format="multipart")
+
+        response = self.client.delete(f"/api/skus/{self.sku.id}/image/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.sku.refresh_from_db()
+        self.assertFalse(self.sku.image)
+        self.assertEqual(response.data["image"], None)
+
 
 class QuoteExportTests(TestCase):
     def setUp(self):

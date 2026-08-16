@@ -75,21 +75,21 @@ def _money(value):
 def _export_payload(quote):
     products = []
     subtotal = Decimal("0")
-    for item in quote.items.select_related("sku__product"):
+    for item in quote.items.all():
         amount = item.amount
         subtotal += amount
         image_path = ""
-        if item.sku.image:
+        if item.image_snapshot:
             try:
-                image_path = item.sku.image.path
+                image_path = item.image_snapshot.path
             except (NotImplementedError, ValueError):
                 image_path = ""
         products.append({
-            "sku": item.sku.sku,
-            "product_name": item.sku.product.name,
-            "description": item.description or item.sku.product.name,
+            "sku": item.sku_code_snapshot,
+            "product_name": item.product_name_snapshot,
+            "description": item.description or item.product_name_snapshot,
             "quantity": str(item.quantity),
-            "unit": item.sku.unit,
+            "unit": item.unit_snapshot,
             "unit_price": str(item.unit_price),
             "amount": _money(amount),
             "image_path": image_path,
@@ -104,10 +104,10 @@ def _export_payload(quote):
     return {
         "invoice_no": quote.quote_no,
         "buyer": {
-            "company_name": quote.customer.name,
+            "company_name": quote.buyer_company_name,
             "recipient": quote.recipient_name,
             "address": quote.buyer_address,
-            "tax_id": getattr(quote.customer, "tax_id", ""),
+            "tax_id": "",
             "email": quote.buyer_email,
             "phone": quote.buyer_phone,
         },

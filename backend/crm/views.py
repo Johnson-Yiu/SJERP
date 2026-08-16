@@ -15,10 +15,11 @@ from rest_framework.decorators import action, api_view, parser_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, QuoteItem, RolePermission, SKU, Transaction
-from .permissions import PermissionAdminOnly
+from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, RolePermission, SKU, Transaction
+from .permissions import PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
+from .quote_snapshots import create_quote_items
 from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, TransactionSerializer, next_product_code
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
@@ -360,7 +361,7 @@ class ProductCertificateViewSet(viewsets.ModelViewSet):
 
 class QuoteViewSet(viewsets.ModelViewSet):
     serializer_class = QuoteSerializer
-    queryset = Quote.objects.select_related("customer").prefetch_related("items__sku__product")
+    queryset = Quote.objects.select_related("customer", "root_quote").prefetch_related("items__sku__product")
     search_fields = ["quote_no", "customer__name"]
     ordering_fields = ["quote_date", "valid_until", "created_at"]
 
@@ -370,6 +371,12 @@ class QuoteViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         return Response({"detail": "已保存报价请创建迭代版本"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(
+            {"detail": "Saved quotations are permanent records and cannot be deleted."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
 
     @action(detail=True, methods=["post"])
     @transaction.atomic
@@ -390,7 +397,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
             "customer", "quote_date", "valid_until", "status", "currency", "exchange_rate",
             "shipping_fee", "discount", "notes", "recipient_name", "buyer_address",
             "buyer_email", "buyer_phone", "lead_time_days", "deposit_ratio", "trading_terms",
-            "shipping_details",
+            "shipping_details", "buyer_company_name",
         ]
         quote_values = {field: getattr(source, field) for field in copied_fields}
         quote_values.update(changes)
@@ -401,6 +408,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
             **quote_values,
         )
         if item_data is None:
+            source_items = list(source.items.select_related("sku__product"))
             item_data = [
                 {
                     "sku": item.sku,
@@ -409,9 +417,11 @@ class QuoteViewSet(viewsets.ModelViewSet):
                     "description": item.description,
                     "notes": item.notes,
                 }
-                for item in source.items.all()
+                for item in source_items
             ]
-        QuoteItem.objects.bulk_create([QuoteItem(quote=revision, **item) for item in item_data])
+            create_quote_items(revision, item_data, source_items=source_items)
+        else:
+            create_quote_items(revision, item_data)
         return Response(self.get_serializer(revision).data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["get"], url_path="pi-data")
@@ -419,23 +429,25 @@ class QuoteViewSet(viewsets.ModelViewSet):
         quote = self.get_object()
         products = []
         subtotal = Decimal("0")
-        for item in quote.items.select_related("sku__product"):
+        for item in quote.items.all():
             amount = item.amount
             subtotal += amount
             products.append({
-                "sku": item.sku.sku,
-                "product_name": item.sku.product.name,
+                "sku": item.sku_code_snapshot,
+                "product_name": item.product_name_snapshot,
                 "description": item.description,
                 "quantity": item.quantity,
                 "unit_price": item.unit_price,
                 "amount": amount,
-                "image_url": request.build_absolute_uri(item.sku.image.url) if item.sku.image else "",
+                "unit": item.unit_snapshot,
+                "image_url": request.build_absolute_uri(item.image_snapshot.url) if item.image_snapshot else "",
             })
         total_amount = quote.total_amount
         deposit_amount = (total_amount * quote.deposit_ratio).quantize(Decimal("0.01"))
         return Response({
             "invoice_no": quote.quote_no,
             "buyer": {
+                "company_name": quote.buyer_company_name,
                 "name": quote.recipient_name,
                 "address": quote.buyer_address,
                 "email": quote.buyer_email,
@@ -465,7 +477,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
             "products": products,
         })
 
-    @action(detail=True, methods=["get"])
+    @action(detail=True, methods=["get"], permission_classes=[QuoteExportPermission])
     def export(self, request, pk=None):
         quote = self.get_object()
         try:

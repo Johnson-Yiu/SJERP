@@ -311,6 +311,7 @@ class Quote(TimestampedModel):
     )
     revision_no = models.PositiveSmallIntegerField("修订号", default=0, validators=[MaxValueValidator(99)])
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name="quotes")
+    buyer_company_name = models.CharField("买方公司快照", max_length=200, blank=True)
     quote_date = models.DateField("报价日期")
     valid_until = models.DateField("有效期至", null=True, blank=True)
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
@@ -331,6 +332,11 @@ class Quote(TimestampedModel):
     class Meta:
         ordering = ["-quote_date", "-id"]
 
+    def save(self, *args, **kwargs):
+        if not self.buyer_company_name and self.customer_id:
+            self.buyer_company_name = self.customer.name
+        super().save(*args, **kwargs)
+
     @property
     def total_amount(self):
         return sum((item.amount for item in self.items.all()), Decimal("0")) + self.shipping_fee - self.discount
@@ -344,6 +350,10 @@ class QuoteRevisionCounter(models.Model):
 class QuoteItem(models.Model):
     quote = models.ForeignKey(Quote, on_delete=models.CASCADE, related_name="items")
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="quote_items")
+    sku_code_snapshot = models.CharField("SKU 编码快照", max_length=80, blank=True)
+    product_name_snapshot = models.CharField("产品名称快照", max_length=200, blank=True)
+    unit_snapshot = models.CharField("单位快照", max_length=30, blank=True)
+    image_snapshot = models.ImageField("产品图片快照", upload_to="quote-item-images/%Y/%m/", blank=True)
     quantity = models.DecimalField("数量", max_digits=14, decimal_places=2)
     unit_price = models.DecimalField("单价", max_digits=14, decimal_places=4)
     description = models.TextField("产品描述", blank=True)

@@ -5,6 +5,7 @@ import tempfile
 import zipfile
 from xml.etree import ElementTree
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -12,8 +13,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from crm.models import Contact, Customer, Product, Quote, QuoteItem, QuoteRevisionCounter, SKU
+from crm.models import Contact, Customer, Order, Product, Quote, QuoteItem, QuoteRevisionCounter, SKU
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
+from crm.quote_snapshots import create_quote_items
 
 
 def unzip_member(xlsx_bytes, member_name):
@@ -285,6 +287,24 @@ class QuoteApiTests(TestCase):
             [root.quote_no, f"{root.quote_no}-1", f"{root.quote_no}-2"],
         )
 
+    def test_serializer_and_context_expose_quote_revision_lineage(self):
+        root = self.create_quote()
+        response = self.client.post(f"/api/quotes/{root.id}/revise/", {}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["root_quote_no"], root.quote_no)
+        self.assertEqual(response.data["revision_label"], "Revision 1")
+
+        context = self.client.get(f"/api/context/quotes/{response.data['id']}/")
+
+        self.assertEqual(context.status_code, status.HTTP_200_OK)
+        self.assertEqual(context.data["lineage"], {
+            "root_quote_id": root.id,
+            "root_quote_no": root.quote_no,
+            "revision_no": 1,
+            "revision_label": "Revision 1",
+        })
+
     def test_revise_rejects_customer_change_that_would_mismatch_buyer_snapshot(self):
         root = self.create_quote()
         another_customer = Customer.objects.create(code="C-API-002", name="Other Buyer", country="Germany")
@@ -329,6 +349,61 @@ class QuoteApiTests(TestCase):
         self.assertEqual(put_response.data["detail"], "已保存报价请创建迭代版本")
         self.assertEqual(patch_response.data["detail"], "已保存报价请创建迭代版本")
 
+    def test_delete_rejects_saved_quotes_but_order_delete_remains_available(self):
+        quote = self.create_quote()
+        order = Order.objects.create(
+            order_no="SO-DELETE-001",
+            customer=self.customer,
+            order_date=date(2026, 8, 15),
+        )
+
+        quote_response = self.client.delete(f"/api/quotes/{quote.id}/")
+        order_response = self.client.delete(f"/api/orders/{order.id}/")
+
+        self.assertEqual(quote_response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertTrue(Quote.objects.filter(pk=quote.pk).exists())
+        self.assertEqual(order_response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Order.objects.filter(pk=order.pk).exists())
+
+    def test_saved_pi_uses_buyer_and_sku_snapshots_after_source_records_change(self):
+        upload = SimpleUploadedFile(
+            "historical-panel.gif",
+            b"GIF87a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;",
+            content_type="image/gif",
+        )
+        upload_response = self.client.post(
+            f"/api/skus/{self.sku.id}/image/",
+            {"image": upload},
+            format="multipart",
+        )
+        self.assertEqual(upload_response.status_code, status.HTTP_200_OK)
+        self.sku.unit = "set"
+        self.sku.save(update_fields=["unit"])
+        quote = self.create_quote()
+        snapshot_image_name = quote.items.get().image_snapshot.name
+
+        self.customer.name = "Renamed Buyer"
+        self.customer.save(update_fields=["name"])
+        self.sku.sku = "RENAMED-SKU"
+        self.sku.unit = "box"
+        self.sku.product.name = "Renamed Product"
+        self.sku.product.save(update_fields=["name"])
+        self.sku.save(update_fields=["sku", "unit"])
+        self.client.delete(f"/api/skus/{self.sku.id}/image/")
+        revision_response = self.client.post(f"/api/quotes/{quote.id}/revise/", {}, format="json")
+        self.assertEqual(revision_response.status_code, status.HTTP_201_CREATED)
+
+        for quote_id in (quote.id, revision_response.data["id"]):
+            with self.subTest(quote_id=quote_id):
+                response = self.client.get(f"/api/quotes/{quote_id}/pi-data/")
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.assertEqual(response.data["buyer"]["company_name"], "API Buyer")
+                self.assertEqual(response.data["products"][0]["sku"], "SKU-API-001")
+                self.assertEqual(response.data["products"][0]["unit"], "set")
+                self.assertEqual(response.data["products"][0]["product_name"], "API Panel")
+                self.assertIn("/media/quote-item-images/", response.data["products"][0]["image_url"])
+        self.assertEqual(quote.items.get().image_snapshot.name, snapshot_image_name)
+
     def test_pi_data_returns_snapshots_totals_payment_splits_and_product_image_urls(self):
         upload = SimpleUploadedFile(
             "panel.gif",
@@ -372,7 +447,7 @@ class QuoteApiTests(TestCase):
         self.assertEqual(Decimal(response.data["payment_splits"]["deposit_amount"]), Decimal("23.00"))
         self.assertEqual(Decimal(response.data["payment_splits"]["balance_amount"]), Decimal("34.50"))
         self.assertEqual(response.data["products"][0]["description"], "Dimmable panel light")
-        self.assertIn("/media/sku-images/", response.data["products"][0]["image_url"])
+        self.assertIn("/media/quote-item-images/", response.data["products"][0]["image_url"])
         self.assertEqual(response.data["products"][1]["image_url"], "")
 
     def test_sku_image_upload_rejects_non_image_mime_type(self):
@@ -405,6 +480,8 @@ class QuoteApiTests(TestCase):
 class QuoteExportTests(TestCase):
     def setUp(self):
         self.client = APIClient()
+        self.user = get_user_model().objects.create_user(username="quote-exporter", password="test-pass")
+        self.client.force_authenticate(self.user)
         self.customer = Customer.objects.create(
             code="C-EXPORT-001",
             name="Export Buyer GmbH",
@@ -443,14 +520,13 @@ class QuoteExportTests(TestCase):
             shipping_details="Sea freight",
             notes="Cartons marked with buyer reference.",
         )
-        QuoteItem.objects.bulk_create([
-            QuoteItem(
-                quote=quote,
-                sku=sku,
-                description=description,
-                quantity=Decimal(quantity),
-                unit_price=Decimal(unit_price),
-            )
+        create_quote_items(quote, [
+            {
+                "sku": sku,
+                "description": description,
+                "quantity": Decimal(quantity),
+                "unit_price": Decimal(unit_price),
+            }
             for sku, description, quantity, unit_price in items
         ])
         return quote
@@ -483,6 +559,29 @@ class QuoteExportTests(TestCase):
                 )
                 self.assertTrue(response.content.startswith(b"PK"))
                 self.assertEqual(xlsx_cell_text(response.content, "L9"), revision.quote_no)
+
+    def test_export_requires_authentication_and_allows_authenticated_operator(self):
+        anonymous = APIClient()
+
+        denied = anonymous.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
+        allowed = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
+
+        self.assertEqual(denied.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(allowed.status_code, status.HTTP_200_OK)
+
+    def test_export_uses_saved_buyer_and_sku_snapshots_after_sources_change(self):
+        self.customer.name = "Renamed Export Buyer"
+        self.customer.save(update_fields=["name"])
+        self.sku_1.sku = "RENAMED-SKU"
+        self.sku_1.unit = "box"
+        self.sku_1.save(update_fields=["sku", "unit"])
+
+        response = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(xlsx_cell_text(response.content, "B3"), "Export Buyer GmbH")
+        self.assertEqual(xlsx_cell_text(response.content, "C11"), "SKU-001")
+        self.assertEqual(xlsx_cell_text(response.content, "K11"), "pcs")
 
     def test_export_uses_selected_currency_in_both_price_headers(self):
         for currency in ("USD", "CNY", "EUR", "GBP"):
@@ -563,6 +662,7 @@ class QuoteExportTests(TestCase):
         self.multi_item_quote.save()
         before = Quote.objects.get(pk=self.multi_item_quote.pk)
         failure_client = APIClient()
+        failure_client.force_authenticate(self.user)
         failure_client.raise_request_exception = False
 
         response = failure_client.get(f"/api/quotes/{before.id}/export/")

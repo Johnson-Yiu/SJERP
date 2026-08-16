@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, QuoteItem, RolePermission, SKU, Transaction
 from .quote_numbers import allocate_root_quote_no
+from .quote_snapshots import create_quote_items
 
 
 def customer_sequence_suffix(value):
@@ -259,25 +260,35 @@ class ProductCertificateSerializer(serializers.ModelSerializer):
 
 
 class QuoteItemSerializer(serializers.ModelSerializer):
-    sku_code = serializers.CharField(source="sku.sku", read_only=True)
-    product_name = serializers.CharField(source="sku.product.name", read_only=True)
+    sku_code = serializers.CharField(source="sku_code_snapshot", read_only=True)
+    product_name = serializers.CharField(source="product_name_snapshot", read_only=True)
+    unit = serializers.CharField(source="unit_snapshot", read_only=True)
+    image = serializers.ImageField(source="image_snapshot", read_only=True)
     amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
 
     class Meta:
         model = QuoteItem
-        fields = ["id", "sku", "sku_code", "product_name", "quantity", "unit_price", "amount", "description", "notes"]
+        fields = ["id", "sku", "sku_code", "product_name", "unit", "image", "quantity", "unit_price", "amount", "description", "notes"]
 
 
 class QuoteSerializer(serializers.ModelSerializer):
     items = QuoteItemSerializer(many=True)
-    customer_name = serializers.CharField(source="customer.name", read_only=True)
+    customer_name = serializers.CharField(source="buyer_company_name", read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     total_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    root_quote_no = serializers.SerializerMethodField()
+    revision_label = serializers.SerializerMethodField()
 
     class Meta:
         model = Quote
         fields = "__all__"
-        read_only_fields = ["quote_no", "root_quote", "revision_no"]
+        read_only_fields = ["quote_no", "root_quote", "revision_no", "buyer_company_name"]
+
+    def get_root_quote_no(self, obj):
+        return obj.root_quote.quote_no if obj.root_quote_id else obj.quote_no
+
+    def get_revision_label(self, obj):
+        return f"Revision {obj.revision_no}" if obj.revision_no else "Original"
 
     @transaction.atomic
     def create(self, validated_data):
@@ -298,7 +309,7 @@ class QuoteSerializer(serializers.ModelSerializer):
         except DjangoValidationError as exc:
             raise serializers.ValidationError(getattr(exc, "message_dict", exc.messages)) from exc
         quote = Quote.objects.create(**validated_data)
-        QuoteItem.objects.bulk_create([QuoteItem(quote=quote, **item) for item in items])
+        create_quote_items(quote, items)
         return quote
 
     def update(self, instance, validated_data):

@@ -142,11 +142,13 @@ def _sku_context(pk):
 
 
 def _quote_context(pk):
-    obj = get_object_or_404(Quote.objects.select_related("customer").prefetch_related("items__sku__product"), pk=pk)
+    obj = get_object_or_404(Quote.objects.select_related("customer", "root_quote").prefetch_related("items"), pk=pk)
     customer = _target([CustomerSerializer(obj.customer).data], "customers")
-    items = _target([{"id": item.sku_id, "sku_code": item.sku.sku, "product_name": item.sku.product.name, "quantity": item.quantity, "unit_price": item.unit_price, "amount": item.amount, "notes": item.notes} for item in obj.items.all()], "skus")
+    items = _target([{"id": item.sku_id, "sku_code": item.sku_code_snapshot, "product_name": item.product_name_snapshot, "quantity": item.quantity, "unit_price": item.unit_price, "amount": item.amount, "notes": item.notes} for item in obj.items.all()], "skus")
     orders = _target(OrderSerializer(obj.orders.prefetch_related("items__sku__product", "transactions"), many=True).data, "orders")
-    return {"entity": "quotes", "title": obj.quote_no, "subtitle": f"{obj.customer.name} · {obj.quote_date}", "badge": obj.get_status_display(), "info": [["报价日期", obj.quote_date], ["有效期至", obj.valid_until or "—"], ["币种", obj.currency], ["汇率", obj.exchange_rate], ["备注", obj.notes or "—"]], "metrics": [["报价总额", obj.total_amount, "money"], ["明细", len(items), "number"], ["转订单", len(orders), "number"]], "sections": [
+    root = obj.root_quote or obj
+    revision_label = f"Revision {obj.revision_no}" if obj.revision_no else "Original"
+    return {"entity": "quotes", "title": obj.quote_no, "subtitle": f"{obj.buyer_company_name} · {obj.quote_date}", "badge": obj.get_status_display(), "lineage": {"root_quote_id": root.id, "root_quote_no": root.quote_no, "revision_no": obj.revision_no, "revision_label": revision_label}, "info": [["报价日期", obj.quote_date], ["有效期至", obj.valid_until or "—"], ["原始报价", root.quote_no], ["当前版本", revision_label], ["币种", obj.currency], ["汇率", obj.exchange_rate], ["备注", obj.notes or "—"]], "metrics": [["报价总额", obj.total_amount, "money"], ["明细", len(items), "number"], ["转订单", len(orders), "number"]], "sections": [
         _section("customer", "客户", "customers", [["code", "客户编号"], ["name", "客户名称"], ["country", "国家"], ["owner", "负责人"]], customer),
         _section("items", "报价明细", "skus", [["sku_code", "SKU"], ["product_name", "产品"], ["quantity", "数量", "number"], ["unit_price", "单价", "money"], ["amount", "小计", "money"]], items),
         _section("orders", "关联订单", "orders", [["order_no", "订单号"], ["order_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"]], orders),

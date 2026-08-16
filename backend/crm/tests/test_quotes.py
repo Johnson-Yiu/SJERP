@@ -221,8 +221,9 @@ class QuoteApiTests(TestCase):
 
     def test_revise_creates_not_updates_and_returns_full_invoice_no(self):
         root = self.create_quote(notes="Original terms")
+        second_sku = SKU.objects.create(product=self.sku.product, sku="SKU-API-002")
 
-        response = self.client.post(
+        first_response = self.client.post(
             f"/api/quotes/{root.id}/revise/",
             {"notes": "Revised terms", "items": [{
                 "sku": self.sku.id,
@@ -232,15 +233,57 @@ class QuoteApiTests(TestCase):
             }]},
             format="json",
         )
+        first_revision = Quote.objects.get(pk=first_response.data["id"])
+        second_response = self.client.post(
+            f"/api/quotes/{first_revision.id}/revise/",
+            {
+                "valid_until": "2026-09-21",
+                "shipping_fee": "12.50",
+                "discount": "5.00",
+                "deposit_ratio": "0.40",
+                "lead_time_days": 25,
+                "trading_terms": "CIF Hamburg",
+                "shipping_details": "DHL air freight",
+                "notes": "Second revision",
+                "items": [
+                    {
+                        "sku": self.sku.id,
+                        "quantity": "2.00",
+                        "unit_price": "10.00",
+                        "description": "Dimmable panel light",
+                    },
+                    {
+                        "sku": second_sku.id,
+                        "quantity": "4.00",
+                        "unit_price": "7.50",
+                        "description": "Emergency panel light",
+                    },
+                ],
+            },
+            format="json",
+        )
 
         root.refresh_from_db()
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["quote_no"], f"{root.quote_no}-1")
-        self.assertEqual(response.data["root_quote"], root.id)
-        self.assertEqual(response.data["revision_no"], 1)
+        self.assertEqual(first_response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(first_response.data["quote_no"], f"{root.quote_no}-1")
+        self.assertEqual(first_response.data["root_quote"], root.id)
+        self.assertEqual(first_response.data["revision_no"], 1)
+        self.assertEqual(second_response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(second_response.data["quote_no"], f"{root.quote_no}-2")
+        self.assertEqual(second_response.data["root_quote"], root.id)
+        self.assertEqual(second_response.data["revision_no"], 2)
         self.assertEqual(root.notes, "Original terms")
         self.assertEqual(root.items.get().description, "Dimmable panel light")
-        self.assertEqual(response.data["items"][0]["description"], "Updated description")
+        self.assertEqual(first_response.data["items"][0]["description"], "Updated description")
+        self.assertEqual(root.items.count(), 1)
+        self.assertEqual(
+            list(
+                Quote.objects.filter(
+                    pk__in=[root.pk, first_response.data["id"], second_response.data["id"]],
+                ).order_by("revision_no").values_list("quote_no", flat=True)
+            ),
+            [root.quote_no, f"{root.quote_no}-1", f"{root.quote_no}-2"],
+        )
 
     def test_revise_rejects_customer_change_that_would_mismatch_buyer_snapshot(self):
         root = self.create_quote()
@@ -286,7 +329,7 @@ class QuoteApiTests(TestCase):
         self.assertEqual(put_response.data["detail"], "已保存报价请创建迭代版本")
         self.assertEqual(patch_response.data["detail"], "已保存报价请创建迭代版本")
 
-    def test_pi_data_returns_snapshots_totals_payment_splits_and_product_image_url(self):
+    def test_pi_data_returns_snapshots_totals_payment_splits_and_product_image_urls(self):
         upload = SimpleUploadedFile(
             "panel.gif",
             b"GIF87a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;",
@@ -294,18 +337,43 @@ class QuoteApiTests(TestCase):
         )
         upload_response = self.client.post(f"/api/skus/{self.sku.id}/image/", {"image": upload}, format="multipart")
         self.assertEqual(upload_response.status_code, status.HTTP_200_OK)
-        quote = self.create_quote(shipping_fee="5.00", discount="1.00", deposit_ratio="0.30", trading_terms="FOB Shenzhen")
+        sku_without_image = SKU.objects.create(product=self.sku.product, sku="SKU-API-NO-IMAGE")
+        quote = self.create_quote(
+            shipping_fee="12.50",
+            discount="5.00",
+            deposit_ratio="0.40",
+            trading_terms="CIF Hamburg",
+            items=[
+                {
+                    "sku": self.sku.id,
+                    "quantity": "2.00",
+                    "unit_price": "10.00",
+                    "description": "Dimmable panel light",
+                },
+                {
+                    "sku": sku_without_image.id,
+                    "quantity": "4.00",
+                    "unit_price": "7.50",
+                    "description": "Emergency panel light",
+                },
+            ],
+        )
 
         response = self.client.get(f"/api/quotes/{quote.id}/pi-data/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["invoice_no"], quote.quote_no)
         self.assertEqual(response.data["buyer"]["name"], "Primary Contact")
-        self.assertEqual(Decimal(response.data["totals"]["subtotal"]), Decimal("20.00"))
-        self.assertEqual(Decimal(response.data["totals"]["total_amount"]), Decimal("24.00"))
-        self.assertEqual(Decimal(response.data["payment_splits"]["deposit_amount"]), Decimal("7.20"))
+        self.assertEqual(Decimal(response.data["totals"]["subtotal"]), Decimal("50.00"))
+        self.assertEqual(Decimal(response.data["totals"]["shipping_fee"]), Decimal("12.50"))
+        self.assertEqual(Decimal(response.data["totals"]["discount"]), Decimal("5.00"))
+        self.assertEqual(Decimal(response.data["totals"]["total_amount"]), Decimal("57.50"))
+        self.assertEqual(Decimal(response.data["payment_splits"]["deposit_ratio"]), Decimal("0.4000"))
+        self.assertEqual(Decimal(response.data["payment_splits"]["deposit_amount"]), Decimal("23.00"))
+        self.assertEqual(Decimal(response.data["payment_splits"]["balance_amount"]), Decimal("34.50"))
         self.assertEqual(response.data["products"][0]["description"], "Dimmable panel light")
         self.assertIn("/media/sku-images/", response.data["products"][0]["image_url"])
+        self.assertEqual(response.data["products"][1]["image_url"], "")
 
     def test_sku_image_upload_rejects_non_image_mime_type(self):
         upload = SimpleUploadedFile("not-an-image.txt", b"not an image", content_type="text/plain")
@@ -321,7 +389,10 @@ class QuoteApiTests(TestCase):
             b"GIF87a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01;",
             content_type="image/gif",
         )
-        self.client.post(f"/api/skus/{self.sku.id}/image/", {"image": upload}, format="multipart")
+        upload_response = self.client.post(f"/api/skus/{self.sku.id}/image/", {"image": upload}, format="multipart")
+        self.assertEqual(upload_response.status_code, status.HTTP_200_OK)
+        self.sku.refresh_from_db()
+        self.assertTrue(self.sku.image)
 
         response = self.client.delete(f"/api/skus/{self.sku.id}/image/")
 
@@ -399,14 +470,49 @@ class QuoteExportTests(TestCase):
         return revision
 
     def test_export_filename_and_invoice_use_full_revision_identifier(self):
-        revision = self.create_revision(self.multi_item_quote)
+        revisions = [self.create_revision(self.multi_item_quote), self.create_revision(self.multi_item_quote)]
 
-        response = self.client.get(f"/api/quotes/{revision.id}/export/")
+        for revision_number, revision in enumerate(revisions, start=1):
+            with self.subTest(revision_number=revision_number):
+                response = self.client.get(f"/api/quotes/{revision.id}/export/")
+
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.assertEqual(
+                    response["Content-Disposition"],
+                    f'attachment; filename="{self.multi_item_quote.quote_no}-{revision_number}.xlsx"',
+                )
+                self.assertTrue(response.content.startswith(b"PK"))
+                self.assertEqual(xlsx_cell_text(response.content, "L9"), revision.quote_no)
+
+    def test_export_uses_selected_currency_in_both_price_headers(self):
+        for currency in ("USD", "CNY", "EUR", "GBP"):
+            with self.subTest(currency=currency):
+                self.multi_item_quote.currency = currency
+                self.multi_item_quote.save(update_fields=["currency"])
+
+                response = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
+
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.assertEqual(xlsx_cell_text(response.content, "L10"), f"Unit Price\n{currency}")
+                self.assertEqual(xlsx_cell_text(response.content, "M10"), f"Total\n{currency}")
+
+    def test_export_uses_validity_days_40_percent_deposit_and_non_default_terms(self):
+        self.multi_item_quote.valid_until = date(2026, 8, 22)
+        self.multi_item_quote.deposit_ratio = Decimal("0.4000")
+        self.multi_item_quote.trading_terms = "CIF Hamburg"
+        self.multi_item_quote.shipping_details = "DHL air freight"
+        self.multi_item_quote.save(update_fields=[
+            "valid_until", "deposit_ratio", "trading_terms", "shipping_details",
+        ])
+
+        response = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn(f'{revision.quote_no}.xlsx', response["Content-Disposition"])
-        self.assertTrue(response.content.startswith(b"PK"))
-        self.assertIn(revision.quote_no.encode(), unzip_member(response.content, "xl/worksheets/sheet1.xml"))
+        notes = xlsx_cell_text(response.content, "A16")
+        self.assertIn("Price Valid Date: 7 Days.", notes)
+        self.assertIn("40% (USD 24.60) payment in advance", notes)
+        self.assertIn("Trading terms: CIF Hamburg", notes)
+        self.assertIn("Shipping details: DHL air freight", notes)
 
     def test_export_two_items_contains_sku_codes_and_arial_style(self):
         response = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/export/")

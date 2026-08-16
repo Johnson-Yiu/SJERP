@@ -44,6 +44,14 @@ npm run dev
 
 访问 `http://localhost:5191`。后端 API 位于 `http://localhost:8100/api/`。
 
+## 报价与 PI 工作流
+
+- 在“SKU 管理”的新建或编辑弹窗中上传产品图片；支持 GIF、JPEG、PNG 和 WebP。图片随 SKU 保存，重新打开 SKU 仍可预览，也可在编辑时清除。
+- 已保存报价是不可变快照。调整价格、明细或条款时请使用“创建修订版”；原报价保留不变，新版本按 `<根报价号>-1`、`<根报价号>-2` 顺序编号，并在报价列表中分别保留历史记录。
+- 编辑器中的“预览 PI”只预览当前草稿，不会保存。保存并导出后，Excel 文件名严格使用完整报价号，例如 `SJ20260815DE001-2.xlsx`；工作表中的 `Invoice No.` 与文件名中的报价号完全一致。
+
+PI Excel 由后端调用 Node.js 执行 `scripts/generate_quote_xlsx.mjs` 生成。部署机器需安装 Node.js，并确保项目根目录可解析 `@oai/artifact-tool`。如果 `node` 不在 `PATH` 中，可设置 `QUOTE_XLSX_NODE_BINARY` 为 Node.js 可执行文件的绝对路径。请保留 `文档/PI模板Proforma Invoice Sunjack Lighting.xlsx` 的文件名和路径，导出会在原模板布局上填充动态明细。
+
 ## PostgreSQL 切换
 
 安装 PostgreSQL 驱动并设置环境变量：

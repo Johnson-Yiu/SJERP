@@ -1,10 +1,13 @@
 from decimal import Decimal
 
+import bleach
+
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
+from django.utils.html import strip_tags
 from rest_framework import serializers
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, QuoteItem, RolePermission, SKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Transaction
 from .quote_numbers import allocate_root_quote_no
 from .quote_snapshots import create_quote_items
 
@@ -36,6 +39,24 @@ def next_product_code():
     if value > 999:
         raise serializers.ValidationError({"code": "当日产品编号已超过 999，请联系管理员扩展编号规则。"})
     return f"SPU{today:%y%m%d}{value:03d}"
+
+
+IMPORTANT_NOTE_TAGS = ["p", "br", "strong", "em", "ul", "ol", "li", "a"]
+IMPORTANT_NOTE_ATTRIBUTES = {"a": ["href", "target", "rel"]}
+IMPORTANT_NOTE_PROTOCOLS = ["http", "https", "mailto"]
+
+
+def sanitize_important_note(value):
+    content = bleach.clean(
+        value or "",
+        tags=IMPORTANT_NOTE_TAGS,
+        attributes=IMPORTANT_NOTE_ATTRIBUTES,
+        protocols=IMPORTANT_NOTE_PROTOCOLS,
+        strip=True,
+    ).strip()
+    if not strip_tags(content).strip():
+        raise serializers.ValidationError("备注内容不能为空。")
+    return content
 
 
 def allocate_product_code():
@@ -257,6 +278,23 @@ class ProductCertificateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductCertificate
         fields = "__all__"
+
+
+class QuoteImportantNoteSerializer(serializers.ModelSerializer):
+    source_quote_no = serializers.CharField(source="source_quote.quote_no", read_only=True)
+    source_revision_no = serializers.IntegerField(source="source_quote.revision_no", read_only=True)
+    created_by_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = QuoteImportantNote
+        fields = ["id", "content", "is_active", "source_quote_no", "source_revision_no", "created_by_name", "created_at"]
+        read_only_fields = ["is_active", "source_quote_no", "source_revision_no", "created_by_name", "created_at"]
+
+    def validate_content(self, value):
+        return sanitize_important_note(value)
+
+    def get_created_by_name(self, obj):
+        return obj.created_by.get_username() if obj.created_by else "系统"
 
 
 class QuoteItemSerializer(serializers.ModelSerializer):

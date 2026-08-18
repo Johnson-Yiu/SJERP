@@ -15,12 +15,12 @@ from rest_framework.decorators import action, api_view, parser_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, RolePermission, SKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, QuoteImportantNote, RolePermission, SKU, Transaction
 from .permissions import PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, TransactionSerializer, next_product_code
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -377,6 +377,36 @@ class QuoteViewSet(viewsets.ModelViewSet):
             {"detail": "Saved quotations are permanent records and cannot be deleted."},
             status=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
+
+    def _root_quote(self, quote):
+        return quote.root_quote or quote
+
+    @action(detail=True, methods=["get", "post"], url_path="important-notes")
+    def important_notes(self, request, pk=None):
+        quote = self.get_object()
+        root_quote = self._root_quote(quote)
+        notes = QuoteImportantNote.objects.filter(root_quote=root_quote).select_related("source_quote", "created_by")
+        if request.method == "GET":
+            return Response(QuoteImportantNoteSerializer(notes, many=True).data)
+
+        serializer = QuoteImportantNoteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        creator = request.user if request.user.is_authenticated else None
+        note = serializer.save(root_quote=root_quote, source_quote=quote, created_by=creator)
+        return Response(QuoteImportantNoteSerializer(note).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"], url_path=r"important-notes/(?P<note_id>[^/.]+)/deactivate")
+    def deactivate_important_note(self, request, pk=None, note_id=None):
+        root_quote = self._root_quote(self.get_object())
+        note = get_object_or_404(
+            QuoteImportantNote.objects.select_related("source_quote", "created_by"),
+            pk=note_id,
+            root_quote=root_quote,
+        )
+        if note.is_active:
+            note.is_active = False
+            note.save(update_fields=["is_active", "updated_at"])
+        return Response(QuoteImportantNoteSerializer(note).data)
 
     @action(detail=True, methods=["post"])
     @transaction.atomic

@@ -476,6 +476,59 @@ class QuoteApiTests(TestCase):
         self.assertFalse(self.sku.image)
         self.assertEqual(response.data["image"], None)
 
+    def test_important_notes_are_shared_by_the_revision_chain_and_sanitized(self):
+        root = self.create_quote()
+        revision_response = self.client.post(f"/api/quotes/{root.id}/revise/", {}, format="json")
+        self.assertEqual(revision_response.status_code, status.HTTP_201_CREATED)
+        revision = Quote.objects.get(pk=revision_response.data["id"])
+
+        created = self.client.post(
+            f"/api/quotes/{revision.id}/important-notes/",
+            {"content": '<p><strong>4000K</strong> confirmed.</p><script>alert("x")</script>'},
+            format="json",
+        )
+        shared = self.client.get(f"/api/quotes/{root.id}/important-notes/")
+
+        self.assertEqual(created.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(shared.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(shared.data), 1)
+        self.assertEqual(shared.data[0]["source_quote_no"], revision.quote_no)
+        self.assertEqual(shared.data[0]["source_revision_no"], 1)
+        self.assertIn("<strong>4000K</strong>", shared.data[0]["content"])
+        self.assertNotIn("<script>", shared.data[0]["content"])
+
+    def test_important_note_can_be_deactivated_without_deletion(self):
+        quote = self.create_quote()
+        created = self.client.post(
+            f"/api/quotes/{quote.id}/important-notes/",
+            {"content": "<p>Old payment term.</p>"},
+            format="json",
+        )
+        self.assertEqual(created.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(
+            f"/api/quotes/{quote.id}/important-notes/{created.data['id']}/deactivate/",
+            format="json",
+        )
+        notes = self.client.get(f"/api/quotes/{quote.id}/important-notes/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.data["is_active"])
+        self.assertEqual(len(notes.data), 1)
+        self.assertFalse(notes.data[0]["is_active"])
+
+    def test_important_note_rejects_html_without_visible_text(self):
+        quote = self.create_quote()
+
+        response = self.client.post(
+            f"/api/quotes/{quote.id}/important-notes/",
+            {"content": "<p><br></p>"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("content", response.data)
+
 
 class QuoteExportTests(TestCase):
     def setUp(self):

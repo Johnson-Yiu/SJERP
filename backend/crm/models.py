@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
 
@@ -362,6 +363,23 @@ class QuoteItem(models.Model):
     @property
     def amount(self):
         return self.quantity * self.unit_price
+
+
+class QuoteImportantNote(TimestampedModel):
+    root_quote = models.ForeignKey(Quote, on_delete=models.PROTECT, related_name="important_notes")
+    source_quote = models.ForeignKey(Quote, on_delete=models.PROTECT, related_name="sourced_important_notes")
+    content = models.TextField()
+    is_active = models.BooleanField(default=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+        indexes = [models.Index(fields=["root_quote", "-created_at"])]
+
+    def clean(self):
+        source_root = self.source_quote.root_quote or self.source_quote
+        if self.root_quote_id != source_root.id:
+            raise ValidationError({"source_quote": "来源报价必须属于原始报价链。"})
 
 
 class Order(TimestampedModel):

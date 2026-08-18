@@ -6,7 +6,7 @@
 
 **Architecture:** 新建报价专用 API 和 Vue 详情组件，避免将报价规则继续塞进通用 `EntityDetailModal`。备注以原始报价为聚合根、以创建版本为来源；订单按原始报价链查询，转单只生成前端可编辑的预填草稿，实际保存订单后再将来源报价标记为已接受。
 
-**Tech Stack:** Django 5、Django REST Framework、SQLite/Django migrations、Vue 3、Vite、lucide-vue-next、现有 `SimpleRichTextEditor`。
+**Tech Stack:** Django 5、Django REST Framework、SQLite/Django migrations、Vue 3、Vite、lucide-vue-next、`bleach`、浏览器原生 `contenteditable`。
 
 **Spec:** `docs/superpowers/specs/2026-08-18-quotation-workbench-design.md`
 
@@ -14,7 +14,7 @@
 
 - 报价号与版本号继续使用 `SJYYYYMMDDCCNNN-n`，不得重写已有报价。
 - 已保存报价、其买方/SKU快照、PI预览和 Excel 导出保持不可变。
-- 不新增第三方富文本依赖；复用 `SimpleRichTextEditor`。
+- 后端新增 `bleach>=6.2,<7`，仅保留 `p`、`br`、`strong`、`em`、`ul`、`ol`、`li`、`a` 标签和安全的 `href`、`target`、`rel` 属性。
 - 重要备注不进入 PI 或 Excel；失效备注不可删除，正文必须显示删除线。
 - 同一版本允许多张订单；订单分页按整个原始报价链聚合并显示来源版本。
 
@@ -27,6 +27,7 @@
 - `backend/crm/serializers.py`：备注、报价工作台、订单草稿的序列化与订单保存后的报价状态更新。
 - `backend/crm/views.py`：报价工作台、订单草稿、备注创建与失效 API。
 - `backend/crm/tests/test_quotes.py`：API/模型回归。
+- `frontend/src/components/RichTextEditor.vue`：基于 `contenteditable` 的备注富文本编辑器。
 - `frontend/src/components/QuoteDetailModal.vue`：报价专用工作台和五个分页。
 - `frontend/src/views/DocumentPage.vue`：报价行使用专用工作台；订单创建消费 `quote` 查询参数的预填数据。
 - `frontend/src/api.js`：可复用的 PI 下载/预览请求辅助函数（若组件不直接调用 `api`）。
@@ -35,6 +36,7 @@
 
 **Files:**
 - Modify: `backend/crm/models.py`
+- Modify: `backend/requirements.txt`
 - Create: `backend/crm/migrations/0013_quoteimportantnote.py`
 - Modify: `backend/crm/serializers.py`
 - Modify: `backend/crm/views.py`
@@ -85,7 +87,7 @@ class QuoteImportantNoteSerializer(serializers.ModelSerializer):
     created_by_name = serializers.SerializerMethodField()
 ```
 
-Create a migration, add model validation that `source_quote` belongs to `root_quote`, reject stripped/HTML-empty content, and sanitize with the project’s standard HTML-cleaning helper before save. The create action uses the request user only when authenticated; anonymous development mode leaves `created_by` null and returns `系统` as the creator label.
+Add `bleach>=6.2,<7` to `backend/requirements.txt`. Create a migration, add model validation that `source_quote` belongs to `root_quote`, reject HTML whose text content is empty, and sanitize with `bleach.clean()` using exactly `p`, `br`, `strong`, `em`, `ul`, `ol`, `li`, `a` tags; allow only `href`, `target`, `rel` on `a` and `http`, `https`, `mailto` protocols. The create action uses the request user only when authenticated; anonymous development mode leaves `created_by` null and returns `系统` as the creator label.
 
 - [ ] **Step 4: Implement actions and verify focused tests pass**
 
@@ -98,7 +100,7 @@ Expected: PASS, including shared-chain source-version and retained-deactivation 
 - [ ] **Step 5: Commit**
 
 ```powershell
-git add backend/crm/models.py backend/crm/migrations/0013_quoteimportantnote.py backend/crm/serializers.py backend/crm/views.py backend/crm/tests/test_quotes.py
+git add backend/requirements.txt backend/crm/models.py backend/crm/migrations/0013_quoteimportantnote.py backend/crm/serializers.py backend/crm/views.py backend/crm/tests/test_quotes.py
 git commit -m "feat: add quotation important notes"
 ```
 
@@ -174,6 +176,7 @@ git commit -m "feat: expose quotation workbench and order drafts"
 ### Task 3: 报价专用详情工作台 UI
 
 **Files:**
+- Create: `frontend/src/components/RichTextEditor.vue`
 - Create: `frontend/src/components/QuoteDetailModal.vue`
 - Modify: `frontend/src/views/DocumentPage.vue`
 - Modify: `frontend/src/api.js`
@@ -200,7 +203,7 @@ Expected: PASS before the component exists; use this as the baseline command.
 
 Replace only the quote branch in `DocumentPage`; retain `EntityDetailModal` for orders. In `QuoteDetailModal`, add tabs `overview`, `items`, `lineage`, `orders`, `notes`. The overview is a compact summary/action page; items render snapshot fields; lineage buttons load the selected quote id into the same component; orders show every root-chain order with source version and a button to preview its source PI; no generic relation-create controls are imported.
 
-Use existing modal/drawer CSS tokens and `QuotePreviewModal` for PI. Use `downloadQuoteExport` for Excel.
+Use existing modal/drawer CSS tokens and `QuotePreviewModal` for PI. Use `downloadQuoteExport` for Excel. The notes tab uses `RichTextEditor`, a `contenteditable` component with buttons for paragraph, bold, unordered/ordered list and link; emit sanitized-in-browser HTML only as a convenience, while the backend remains the security boundary.
 
 - [ ] **Step 4: Verify the build and manual checklist**
 
@@ -211,7 +214,7 @@ Expected: PASS. Run the development service and execute the new checklist agains
 - [ ] **Step 5: Commit**
 
 ```powershell
-git add frontend/src/components/QuoteDetailModal.vue frontend/src/components/QuoteDetailModal.manual-test.md frontend/src/views/DocumentPage.vue frontend/src/api.js
+git add frontend/src/components/RichTextEditor.vue frontend/src/components/QuoteDetailModal.vue frontend/src/components/QuoteDetailModal.manual-test.md frontend/src/views/DocumentPage.vue frontend/src/api.js
 git commit -m "feat: add quotation workbench detail view"
 ```
 
@@ -220,7 +223,7 @@ git commit -m "feat: add quotation workbench detail view"
 **Files:**
 - Modify: `frontend/src/components/QuoteDetailModal.vue`
 - Modify: `frontend/src/views/DocumentPage.vue`
-- Modify: `frontend/src/components/SimpleRichTextEditor.vue` only if it lacks a public empty-content helper
+- Create: `frontend/src/components/RichTextEditor.vue`
 
 **Interfaces:**
 - Note create request: `POST /quotes/{id}/important-notes/ { content: string }`.
@@ -234,7 +237,7 @@ Extend the checklist with: create rich-text note on `-1`, open the root and see 
 - [ ] **Step 2: Implement note UI and safe state changes**
 
 ```vue
-<SimpleRichTextEditor v-model="noteContent" />
+<RichTextEditor v-model="noteContent" />
 <button :disabled="isRichTextEmpty(noteContent)" @click="createNote">新增重要备注</button>
 <article :class="{ 'note-inactive': !note.is_active }" v-html="note.content" />
 ```
@@ -263,7 +266,7 @@ Expected: PASS. Execute every expanded manual test case with the branch service.
 - [ ] **Step 5: Commit**
 
 ```powershell
-git add frontend/src/components/QuoteDetailModal.vue frontend/src/components/QuoteDetailModal.manual-test.md frontend/src/views/DocumentPage.vue frontend/src/components/SimpleRichTextEditor.vue
+git add frontend/src/components/RichTextEditor.vue frontend/src/components/QuoteDetailModal.vue frontend/src/components/QuoteDetailModal.manual-test.md frontend/src/views/DocumentPage.vue
 git commit -m "feat: add quotation notes and order conversion flow"
 ```
 

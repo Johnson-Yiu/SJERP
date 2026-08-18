@@ -388,6 +388,15 @@ class QuoteImportantNote(TimestampedModel):
     content = models.TextField()
     is_active = models.BooleanField(default=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    deactivated_at = models.DateTimeField("失效时间", null=True, blank=True)
+    deactivated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="deactivated_quote_important_notes",
+        verbose_name="失效操作人",
+    )
 
     class Meta:
         ordering = ["-created_at", "-id"]

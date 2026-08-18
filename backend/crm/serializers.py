@@ -284,17 +284,23 @@ class QuoteImportantNoteSerializer(serializers.ModelSerializer):
     source_quote_no = serializers.CharField(source="source_quote.quote_no", read_only=True)
     source_revision_no = serializers.IntegerField(source="source_quote.revision_no", read_only=True)
     created_by_name = serializers.SerializerMethodField()
+    deactivated_by_name = serializers.SerializerMethodField()
 
     class Meta:
         model = QuoteImportantNote
-        fields = ["id", "content", "is_active", "source_quote_no", "source_revision_no", "created_by_name", "created_at"]
-        read_only_fields = ["is_active", "source_quote_no", "source_revision_no", "created_by_name", "created_at"]
+        fields = ["id", "content", "is_active", "source_quote_no", "source_revision_no", "created_by_name", "created_at", "deactivated_at", "deactivated_by_name"]
+        read_only_fields = ["is_active", "source_quote_no", "source_revision_no", "created_by_name", "created_at", "deactivated_at", "deactivated_by_name"]
 
     def validate_content(self, value):
         return sanitize_important_note(value)
 
     def get_created_by_name(self, obj):
         return obj.created_by.get_username() if obj.created_by else "系统"
+
+    def get_deactivated_by_name(self, obj):
+        if not obj.deactivated_at:
+            return ""
+        return obj.deactivated_by.get_username() if obj.deactivated_by else "系统"
 
 
 class QuoteItemSerializer(serializers.ModelSerializer):

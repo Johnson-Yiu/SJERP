@@ -386,7 +386,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
     def important_notes(self, request, pk=None):
         quote = self.get_object()
         root_quote = self._root_quote(quote)
-        notes = QuoteImportantNote.objects.filter(root_quote=root_quote).select_related("source_quote", "created_by")
+        notes = QuoteImportantNote.objects.filter(root_quote=root_quote).select_related("source_quote", "created_by", "deactivated_by")
         if request.method == "GET":
             return Response(QuoteImportantNoteSerializer(notes, many=True).data)
 
@@ -400,12 +400,27 @@ class QuoteViewSet(viewsets.ModelViewSet):
     def deactivate_important_note(self, request, pk=None, note_id=None):
         root_quote = self._root_quote(self.get_object())
         note = get_object_or_404(
-            QuoteImportantNote.objects.select_related("source_quote", "created_by"),
+            QuoteImportantNote.objects.select_related("source_quote", "created_by", "deactivated_by"),
             pk=note_id,
             root_quote=root_quote,
         )
         if note.is_active:
             note.is_active = False
+            note.deactivated_at = timezone.now()
+            note.deactivated_by = request.user if request.user.is_authenticated else None
+            note.save(update_fields=["is_active", "deactivated_at", "deactivated_by", "updated_at"])
+        return Response(QuoteImportantNoteSerializer(note).data)
+
+    @action(detail=True, methods=["post"], url_path=r"important-notes/(?P<note_id>[^/.]+)/restore")
+    def restore_important_note(self, request, pk=None, note_id=None):
+        root_quote = self._root_quote(self.get_object())
+        note = get_object_or_404(
+            QuoteImportantNote.objects.select_related("source_quote", "created_by", "deactivated_by"),
+            pk=note_id,
+            root_quote=root_quote,
+        )
+        if not note.is_active:
+            note.is_active = True
             note.save(update_fields=["is_active", "updated_at"])
         return Response(QuoteImportantNoteSerializer(note).data)
 
@@ -415,7 +430,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
         root_quote = self._root_quote(quote)
         revisions = Quote.objects.filter(Q(pk=root_quote.pk) | Q(root_quote=root_quote)).order_by("revision_no", "id")
         orders = Order.objects.filter(quote__in=revisions).select_related("quote", "customer").prefetch_related("items__sku__product", "transactions")
-        notes = QuoteImportantNote.objects.filter(root_quote=root_quote).select_related("source_quote", "created_by")
+        notes = QuoteImportantNote.objects.filter(root_quote=root_quote).select_related("source_quote", "created_by", "deactivated_by")
         return Response({
             "quote": QuoteSerializer(quote).data,
             "root_quote_no": root_quote.quote_no,

@@ -548,6 +548,34 @@ class QuoteApiTests(TestCase):
         self.assertEqual(len(notes.data), 1)
         self.assertFalse(notes.data[0]["is_active"])
 
+    def test_important_note_deactivation_records_operator_and_can_be_restored(self):
+        quote = self.create_quote()
+        created = self.client.post(
+            f"/api/quotes/{quote.id}/important-notes/",
+            {"content": "<p>Confirm carton label before production.</p>"},
+            format="json",
+        )
+        operator = get_user_model().objects.create_user(username="note-operator", password="safe-password")
+        self.client.force_authenticate(operator)
+
+        deactivated = self.client.post(
+            f"/api/quotes/{quote.id}/important-notes/{created.data['id']}/deactivate/",
+            format="json",
+        )
+        restored = self.client.post(
+            f"/api/quotes/{quote.id}/important-notes/{created.data['id']}/restore/",
+            format="json",
+        )
+
+        self.assertEqual(deactivated.status_code, status.HTTP_200_OK)
+        self.assertFalse(deactivated.data["is_active"])
+        self.assertIsNotNone(deactivated.data["deactivated_at"])
+        self.assertEqual(deactivated.data["deactivated_by_name"], "note-operator")
+        self.assertEqual(restored.status_code, status.HTTP_200_OK)
+        self.assertTrue(restored.data["is_active"])
+        self.assertEqual(restored.data["deactivated_at"], deactivated.data["deactivated_at"])
+        self.assertEqual(restored.data["deactivated_by_name"], "note-operator")
+
     def test_important_note_rejects_html_without_visible_text(self):
         quote = self.create_quote()
 

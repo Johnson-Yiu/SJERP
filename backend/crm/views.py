@@ -456,6 +456,9 @@ class QuoteViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def revise(self, request, pk=None):
         source = self.get_object()
+        revision_summary = str(request.data.get("revision_summary", "")).strip()
+        if not revision_summary:
+            raise serializers.ValidationError({"revision_summary": "请简要说明本次修改的内容。"})
         serializer = self.get_serializer(data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         changes = serializer.validated_data.copy()
@@ -478,7 +481,9 @@ class QuoteViewSet(viewsets.ModelViewSet):
         revision = Quote.objects.create(
             quote_no=quote_no,
             root_quote=root_quote,
+            parent_quote=source,
             revision_no=revision_no,
+            revision_summary=revision_summary,
             **quote_values,
         )
         if item_data is None:

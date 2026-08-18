@@ -310,7 +310,16 @@ class Quote(TimestampedModel):
         related_name="revisions",
         verbose_name="原始报价",
     )
+    parent_quote = models.ForeignKey(
+        "self",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="child_revisions",
+        verbose_name="直接来源报价",
+    )
     revision_no = models.PositiveSmallIntegerField("修订号", default=0, validators=[MaxValueValidator(99)])
+    revision_summary = models.CharField("修订说明", max_length=500, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name="quotes")
     buyer_company_name = models.CharField("买方公司快照", max_length=200, blank=True)
     quote_date = models.DateField("报价日期")
@@ -337,6 +346,14 @@ class Quote(TimestampedModel):
         if not self.buyer_company_name and self.customer_id:
             self.buyer_company_name = self.customer.name
         super().save(*args, **kwargs)
+
+    def clean(self):
+        if not self.parent_quote_id:
+            return
+        parent_root = self.parent_quote.root_quote or self.parent_quote
+        own_root = self.root_quote or self
+        if parent_root.pk != own_root.pk:
+            raise ValidationError({"parent_quote": "直接来源报价必须属于同一原始报价链。"})
 
     @property
     def total_amount(self):

@@ -227,7 +227,7 @@ class QuoteApiTests(TestCase):
 
         first_response = self.client.post(
             f"/api/quotes/{root.id}/revise/",
-            {"notes": "Revised terms", "items": [{
+            {"revision_summary": "调整报价条款", "notes": "Revised terms", "items": [{
                 "sku": self.sku.id,
                 "quantity": "3.00",
                 "unit_price": "12.00",
@@ -239,6 +239,7 @@ class QuoteApiTests(TestCase):
         second_response = self.client.post(
             f"/api/quotes/{first_revision.id}/revise/",
             {
+                "revision_summary": "延长有效期",
                 "valid_until": "2026-09-21",
                 "shipping_fee": "12.50",
                 "discount": "5.00",
@@ -287,9 +288,39 @@ class QuoteApiTests(TestCase):
             [root.quote_no, f"{root.quote_no}-1", f"{root.quote_no}-2"],
         )
 
+    def test_revise_requires_a_non_blank_revision_summary(self):
+        root = self.create_quote()
+
+        response = self.client.post(f"/api/quotes/{root.id}/revise/", {"revision_summary": "   "}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("revision_summary", response.data)
+        self.assertEqual(Quote.objects.count(), 1)
+
+    def test_revise_records_the_direct_parent_version(self):
+        root = self.create_quote()
+        first = self.client.post(
+            f"/api/quotes/{root.id}/revise/", {"revision_summary": "更新产品数量"}, format="json"
+        )
+        self.assertEqual(first.status_code, status.HTTP_201_CREATED)
+        first_revision = Quote.objects.get(pk=first.data["id"])
+
+        branch = self.client.post(
+            f"/api/quotes/{first_revision.id}/revise/", {"revision_summary": "更新付款条款"}, format="json"
+        )
+
+        self.assertEqual(branch.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(branch.data["parent_quote"], first_revision.id)
+        self.assertEqual(branch.data["parent_quote_no"], first_revision.quote_no)
+        self.assertEqual(branch.data["revision_summary"], "更新付款条款")
+        branch_revision = Quote.objects.get(pk=branch.data["id"])
+        self.assertEqual(branch_revision.parent_quote_id, first_revision.id)
+        self.assertEqual(branch_revision.revision_summary, "更新付款条款")
+        self.assertEqual(branch_revision.root_quote_id, root.id)
+
     def test_serializer_and_context_expose_quote_revision_lineage(self):
         root = self.create_quote()
-        response = self.client.post(f"/api/quotes/{root.id}/revise/", {}, format="json")
+        response = self.client.post(f"/api/quotes/{root.id}/revise/", {"revision_summary": "首次修订"}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["root_quote_no"], root.quote_no)
@@ -311,7 +342,7 @@ class QuoteApiTests(TestCase):
 
         response = self.client.post(
             f"/api/quotes/{root.id}/revise/",
-            {"customer": another_customer.id},
+            {"revision_summary": "错误的客户变更", "customer": another_customer.id},
             format="json",
         )
 
@@ -334,7 +365,7 @@ class QuoteApiTests(TestCase):
         root = self.create_quote()
         QuoteRevisionCounter.objects.create(root_quote=root, last_value=99)
 
-        response = self.client.post(f"/api/quotes/{root.id}/revise/", {}, format="json")
+        response = self.client.post(f"/api/quotes/{root.id}/revise/", {"revision_summary": "超过编号上限"}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -390,7 +421,7 @@ class QuoteApiTests(TestCase):
         self.sku.product.save(update_fields=["name"])
         self.sku.save(update_fields=["sku", "unit"])
         self.client.delete(f"/api/skus/{self.sku.id}/image/")
-        revision_response = self.client.post(f"/api/quotes/{quote.id}/revise/", {}, format="json")
+        revision_response = self.client.post(f"/api/quotes/{quote.id}/revise/", {"revision_summary": "复制快照"}, format="json")
         self.assertEqual(revision_response.status_code, status.HTTP_201_CREATED)
 
         for quote_id in (quote.id, revision_response.data["id"]):
@@ -478,7 +509,7 @@ class QuoteApiTests(TestCase):
 
     def test_important_notes_are_shared_by_the_revision_chain_and_sanitized(self):
         root = self.create_quote()
-        revision_response = self.client.post(f"/api/quotes/{root.id}/revise/", {}, format="json")
+        revision_response = self.client.post(f"/api/quotes/{root.id}/revise/", {"revision_summary": "新增沟通备注"}, format="json")
         self.assertEqual(revision_response.status_code, status.HTTP_201_CREATED)
         revision = Quote.objects.get(pk=revision_response.data["id"])
 
@@ -531,7 +562,7 @@ class QuoteApiTests(TestCase):
 
     def test_workbench_lists_orders_from_every_version_of_the_quote_chain(self):
         root = self.create_quote()
-        revision_response = self.client.post(f"/api/quotes/{root.id}/revise/", {}, format="json")
+        revision_response = self.client.post(f"/api/quotes/{root.id}/revise/", {"revision_summary": "创建关联订单"}, format="json")
         self.assertEqual(revision_response.status_code, status.HTTP_201_CREATED)
         revision = Quote.objects.get(pk=revision_response.data["id"])
         root_order = Order.objects.create(

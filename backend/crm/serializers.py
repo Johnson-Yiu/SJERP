@@ -316,17 +316,21 @@ class QuoteSerializer(serializers.ModelSerializer):
     total_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     root_quote_no = serializers.SerializerMethodField()
     revision_label = serializers.SerializerMethodField()
+    parent_quote_no = serializers.SerializerMethodField()
 
     class Meta:
         model = Quote
         fields = "__all__"
-        read_only_fields = ["quote_no", "root_quote", "revision_no", "buyer_company_name"]
+        read_only_fields = ["quote_no", "root_quote", "parent_quote", "revision_no", "revision_summary", "buyer_company_name"]
 
     def get_root_quote_no(self, obj):
         return obj.root_quote.quote_no if obj.root_quote_id else obj.quote_no
 
     def get_revision_label(self, obj):
         return f"Revision {obj.revision_no}" if obj.revision_no else "Original"
+
+    def get_parent_quote_no(self, obj):
+        return obj.parent_quote.quote_no if obj.parent_quote_id else ""
 
     @transaction.atomic
     def create(self, validated_data):

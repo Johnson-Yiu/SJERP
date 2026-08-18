@@ -36,6 +36,7 @@ function makeDraft() {
     exchange_rate: quote.exchange_rate || '7.200000', shipping_fee: quote.shipping_fee || 0, discount: quote.discount || 0,
     recipient_name: quote.recipient_name || '', buyer_address: quote.buyer_address || '', buyer_email: quote.buyer_email || '', buyer_phone: quote.buyer_phone || '',
     lead_time_days: quote.lead_time_days || 10, deposit_percent: Number(quote.deposit_ratio || 0) * 100,
+    revision_summary: '',
     trading_terms: quote.trading_terms || 'FOB Shenzhen', shipping_details: quote.shipping_details || '', notes: quote.notes || '',
     items: (quote.items?.length ? quote.items : [{ sku: '', quantity: 1, unit_price: 0, description: '', notes: '' }]).map(item => ({ sku: item.sku, quantity: item.quantity, unit_price: item.unit_price, description: item.description || '', notes: item.notes || '' })),
   }
@@ -75,6 +76,7 @@ async function selectCustomer() {
 }
 function validate() {
   if (!draft.customer) return '请选择客户。'
+  if (props.mode === 'revise' && !draft.revision_summary.trim()) return '请简要说明本次修改的内容。'
   if (!draft.items.length || draft.items.some(item => !item.sku)) return '请至少添加一条有效的 SKU 明细。'
   if (total.value < 0) return '报价合计不能为负数。'
   return ''
@@ -86,6 +88,7 @@ function payload() {
     recipient_name: draft.recipient_name, buyer_address: draft.buyer_address, buyer_email: draft.buyer_email, buyer_phone: draft.buyer_phone,
     lead_time_days: draft.lead_time_days || null, deposit_ratio: Math.min(100, Math.max(0, Number(draft.deposit_percent || 0))) / 100,
     trading_terms: draft.trading_terms, shipping_details: draft.shipping_details, notes: draft.notes,
+    revision_summary: draft.revision_summary.trim(),
     items: draft.items.map(item => ({ sku: Number(item.sku), quantity: item.quantity, unit_price: item.unit_price, description: item.description, notes: item.notes })),
   }
 }
@@ -130,6 +133,7 @@ onMounted(() => { if (props.mode === 'create' && draft.customer) selectCustomer(
             <div class="field"><label>对人民币汇率</label><input v-model="draft.exchange_rate" type="number" min="0" step="0.000001" /></div><div class="field"><label>交期（天）</label><input v-model="draft.lead_time_days" type="number" min="1" step="1" /></div>
             <div class="field"><label>定金比例（%）</label><input v-model="draft.deposit_percent" type="number" min="0" max="100" step="1" /></div><div class="field"><label>收件人</label><input v-model="draft.recipient_name" /></div>
             <div class="field full"><label>买方地址</label><textarea v-model="draft.buyer_address" /></div><div class="field"><label>买方邮箱</label><input v-model="draft.buyer_email" type="email" /></div><div class="field"><label>买方电话</label><input v-model="draft.buyer_phone" /></div>
+            <div v-if="mode === 'revise'" class="field full revision-summary"><label>本次修改说明 *</label><textarea v-model="draft.revision_summary" required placeholder="例如：调整数量、价格、交期或付款条款" /><small>该说明会显示在版本谱系中，便于后续追溯。</small></div>
           </div>
           <div class="items-head"><div><strong>产品明细</strong><small>预览会使用当前未保存数量、价格与图片</small></div><button type="button" class="btn btn-secondary" @click="addItem"><PlusCircle :size="15" /> 添加一行</button></div>
           <div class="quote-line-items"><div class="quote-line-header"><span>SKU</span><span>数量</span><span>单价</span><span>产品描述</span><span>小计</span><span></span></div><div v-for="(item,index) in draft.items" :key="index" class="quote-line-row"><select v-model="item.sku" required @change="selectSku(item)"><option value="">选择 SKU</option><option v-for="sku in skus" :key="sku.id" :value="sku.id">{{ sku.sku }} · {{ sku.product_name }}</option></select><input v-model="item.quantity" aria-label="数量" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" aria-label="单价" type="number" min="0" step="0.0001" required /><input v-model="item.description" aria-label="产品描述" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" :disabled="draft.items.length === 1" aria-label="删除明细" @click="draft.items.splice(index,1)"><MinusCircle :size="17" /></button></div></div>

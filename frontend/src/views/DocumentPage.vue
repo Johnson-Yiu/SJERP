@@ -1,13 +1,15 @@
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Plus, Search, Pencil, Trash2, FileX2, X, PlusCircle, MinusCircle, Download } from 'lucide-vue-next'
 import { api, downloadQuoteExport, listData } from '../api'
 import EntityDetailModal from '../components/EntityDetailModal.vue'
+import QuoteDetailModal from '../components/QuoteDetailModal.vue'
 import QuoteEditorModal from '../components/QuoteEditorModal.vue'
 
 const props = defineProps({ type: String })
 const route = useRoute()
+const router = useRouter()
 const isOrder = computed(() => props.type === 'orders')
 const copy = computed(() => isOrder.value ? {
   title: '订单管理', description: '从客户需求到交付和回款，保持订单、产品与流水一一对应。', no: 'order_no', noLabel: '订单号', date: 'order_date', dateLabel: '订单日期', statuses: { draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
@@ -18,6 +20,7 @@ const copy = computed(() => isOrder.value ? {
 const rows = ref([]), customers = ref([]), skus = ref([]), quotes = ref([])
 const loading = ref(true), saving = ref(false), open = ref(false), editingId = ref(null), query = ref('')
 const detailId = ref(null)
+const quoteDetailId = ref(null), orderDetailId = ref(null)
 const quoteEditorOpen = ref(false), quoteEditorQuote = ref(null)
 const toast = reactive({ show: false, message: '', error: false })
 const form = reactive({})
@@ -52,7 +55,7 @@ async function create() {
   editingId.value = null; fresh(); await loadOptions(); open.value = true
 }
 async function edit(row) {
-  detailId.value = null
+  detailId.value = null; quoteDetailId.value = null; orderDetailId.value = null
   if (!isOrder.value) {
     await loadOptions()
     quoteEditorQuote.value = row
@@ -83,7 +86,12 @@ async function exportQuote(row) { try { await downloadQuoteExport(row.id, row.qu
 async function remove(row) { if (!isOrder.value || !confirm(`确定删除 ${row[copy.value.no]} 吗？`)) return; try { await api.delete(`/${props.type}/${row.id}/`); notify('已删除'); load() } catch (e) { notify(e.message, true) } }
 function delayed() { clearTimeout(timer); timer = setTimeout(load, 300) }
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+function openDetail(row) { if (isOrder.value) detailId.value = row.id; else quoteDetailId.value = row.id }
 function editFromDetail() { const row = rows.value.find(r => r.id === detailId.value); if (row) edit(row) }
+function reviseFromDetail(row) { if (row) edit(row) }
+function openOrderDraft(quoteId) { quoteDetailId.value = null; router.push({ path: '/orders', query: { create: '1', quote: quoteId, draft: '1' } }) }
+function openOrderDetail(id) { quoteDetailId.value = null; orderDetailId.value = id }
+function editRelatedOrder() { const row = rows.value.find(r => r.id === orderDetailId.value); if (row) edit(row) }
 watch(() => props.type, load)
 watch(() => route.query, load)
 onMounted(async () => {
@@ -92,6 +100,13 @@ onMounted(async () => {
     await create()
     if (route.query.customer && isOrder.value) form.customer = Number(route.query.customer)
     if (isOrder.value && route.query.quote) form.quote = Number(route.query.quote)
+    if (isOrder.value && route.query.draft === '1' && route.query.quote) {
+      try {
+        const draft = (await api.get(`/quotes/${route.query.quote}/order-draft/`)).data
+        Object.keys(form).forEach(key => delete form[key])
+        Object.assign(form, draft)
+      } catch (error) { notify(`无法创建订单草稿：${error.message}`, true) }
+    }
   }
 })
 </script>
@@ -104,7 +119,7 @@ onMounted(async () => {
       <div v-if="loading" class="loading"><div class="spinner" /></div>
       <div v-else-if="!rows.length" class="empty"><FileX2 :size="32" /><h3>还没有{{ isOrder ? '订单' : '报价' }}</h3><p>创建第一张业务单据，产品和客户数据会自动关联。</p></div>
       <div v-else class="table-wrap"><table class="data-table"><thead><tr><th>{{ copy.noLabel }}</th><th v-if="!isOrder">版本链</th><th>客户</th><th>{{ copy.dateLabel }}</th><th>状态</th><th>明细</th><th>总金额</th><th v-if="isOrder">已收 / 未收</th><th style="text-align:right">操作</th></tr></thead>
-        <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="detailId = row.id" @keydown.enter="detailId = row.id"><td class="primary-cell">{{ row[copy.no] }}</td><td v-if="!isOrder"><strong>{{ row.root_quote_no }}</strong><br /><small>{{ row.revision_label }}</small></td><td>{{ row.customer_name }}</td><td>{{ row[copy.date] }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td v-if="isOrder"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></td><td><div class="table-actions"><button v-if="!isOrder" class="mini-btn" :aria-label="`导出 ${row[copy.no]}`" @click.stop="exportQuote(row)"><Download :size="14" /></button><button class="mini-btn" :aria-label="`编辑 ${row[copy.no]}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button v-if="isOrder" class="mini-btn" :aria-label="`删除 ${row[copy.no]}`" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
+        <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row)" @keydown.enter="openDetail(row)"><td class="primary-cell">{{ row[copy.no] }}</td><td v-if="!isOrder"><strong>{{ row.root_quote_no }}</strong><br /><small>{{ row.revision_label }}</small></td><td>{{ row.customer_name }}</td><td>{{ row[copy.date] }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td v-if="isOrder"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></td><td><div class="table-actions"><button v-if="!isOrder" class="mini-btn" :aria-label="`导出 ${row[copy.no]}`" @click.stop="exportQuote(row)"><Download :size="14" /></button><button class="mini-btn" :aria-label="`编辑 ${row[copy.no]}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button v-if="isOrder" class="mini-btn" :aria-label="`删除 ${row[copy.no]}`" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
       </table></div>
     </div>
 
@@ -140,7 +155,11 @@ onMounted(async () => {
     </form></div>
     <QuoteEditorModal v-if="quoteEditorOpen" :quote="quoteEditorQuote" :customers="customers" :skus="skus" :mode="quoteEditorQuote?.id ? 'revise' : 'create'" @close="quoteEditorOpen = false" @saved="handleQuoteSaved" />
     <Transition name="detail-drawer" appear>
-      <EntityDetailModal v-if="detailId" :entity="type" :id="detailId" @close="detailId = null" @edit="editFromDetail" />
+      <QuoteDetailModal v-if="quoteDetailId" :id="quoteDetailId" @close="quoteDetailId = null" @revise="reviseFromDetail" @create-order="openOrderDraft" @open-order="openOrderDetail" />
+      <EntityDetailModal v-else-if="detailId" :entity="type" :id="detailId" @close="detailId = null" @edit="editFromDetail" />
+    </Transition>
+    <Transition name="detail-drawer" appear>
+      <EntityDetailModal v-if="orderDetailId" entity="orders" :id="orderDetailId" @close="orderDetailId = null" @edit="editRelatedOrder" />
     </Transition>
     <div v-if="toast.show" class="toast" :class="{ error: toast.error }">{{ toast.message }}</div>
   </div>

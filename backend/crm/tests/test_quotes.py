@@ -529,6 +529,85 @@ class QuoteApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("content", response.data)
 
+    def test_workbench_lists_orders_from_every_version_of_the_quote_chain(self):
+        root = self.create_quote()
+        revision_response = self.client.post(f"/api/quotes/{root.id}/revise/", {}, format="json")
+        self.assertEqual(revision_response.status_code, status.HTTP_201_CREATED)
+        revision = Quote.objects.get(pk=revision_response.data["id"])
+        root_order = Order.objects.create(
+            order_no="SO-WORKBENCH-ROOT",
+            customer=self.customer,
+            quote=root,
+            order_date=date(2026, 8, 16),
+        )
+        revision_order = Order.objects.create(
+            order_no="SO-WORKBENCH-REVISION",
+            customer=self.customer,
+            quote=revision,
+            order_date=date(2026, 8, 17),
+        )
+
+        response = self.client.get(f"/api/quotes/{revision.id}/workbench/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["root_quote_no"], root.quote_no)
+        self.assertEqual({row["order_no"] for row in response.data["orders"]}, {root_order.order_no, revision_order.order_no})
+        self.assertEqual(
+            {row["source_quote_no"] for row in response.data["orders"]},
+            {root.quote_no, revision.quote_no},
+        )
+        self.assertEqual([row["quote_no"] for row in response.data["revisions"]], [root.quote_no, revision.quote_no])
+
+    def test_order_draft_copies_quote_and_accepts_source_only_after_save(self):
+        quote = self.create_quote(
+            shipping_fee="12.50",
+            discount="2.00",
+            notes="Use confirmed carton marks.",
+            items=[{
+                "sku": self.sku.id,
+                "quantity": "3.00",
+                "unit_price": "11.25",
+                "description": "Dimmable panel light",
+            }],
+        )
+
+        draft = self.client.get(f"/api/quotes/{quote.id}/order-draft/")
+
+        self.assertEqual(draft.status_code, status.HTTP_200_OK)
+        self.assertEqual(draft.data["quote"], quote.id)
+        self.assertEqual(draft.data["customer"], self.customer.id)
+        self.assertEqual(draft.data["status"], "draft")
+        self.assertEqual(Decimal(draft.data["shipping_fee"]), Decimal("12.50"))
+        self.assertEqual(draft.data["items"][0]["sku"], self.sku.id)
+        self.assertEqual(Decimal(draft.data["items"][0]["quantity"]), Decimal("3.00"))
+        self.assertEqual(Decimal(draft.data["items"][0]["unit_price"]), Decimal("11.2500"))
+
+        saved = self.client.post("/api/orders/", draft.data, format="json")
+        quote.refresh_from_db()
+
+        self.assertEqual(saved.status_code, status.HTTP_201_CREATED, getattr(saved, "data", None))
+        self.assertEqual(saved.data["quote"], quote.id)
+        self.assertEqual(quote.status, "accepted")
+
+    def test_invalid_order_with_quote_does_not_accept_the_quote(self):
+        quote = self.create_quote()
+
+        response = self.client.post(
+            "/api/orders/",
+            {
+                "order_no": "SO-INVALID-QUOTE",
+                "customer": self.customer.id,
+                "quote": quote.id,
+                "order_date": "2026-08-18",
+                "items": [],
+            },
+            format="json",
+        )
+        quote.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotEqual(quote.status, "accepted")
+
 
 class QuoteExportTests(TestCase):
     def setUp(self):

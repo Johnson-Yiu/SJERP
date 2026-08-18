@@ -2,6 +2,7 @@ import csv
 import io
 from datetime import date
 from decimal import Decimal, InvalidOperation
+from uuid import uuid4
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
@@ -407,6 +408,49 @@ class QuoteViewSet(viewsets.ModelViewSet):
             note.is_active = False
             note.save(update_fields=["is_active", "updated_at"])
         return Response(QuoteImportantNoteSerializer(note).data)
+
+    @action(detail=True, methods=["get"])
+    def workbench(self, request, pk=None):
+        quote = self.get_object()
+        root_quote = self._root_quote(quote)
+        revisions = Quote.objects.filter(Q(pk=root_quote.pk) | Q(root_quote=root_quote)).order_by("revision_no", "id")
+        orders = Order.objects.filter(quote__in=revisions).select_related("quote", "customer").prefetch_related("items__sku__product", "transactions")
+        notes = QuoteImportantNote.objects.filter(root_quote=root_quote).select_related("source_quote", "created_by")
+        return Response({
+            "quote": QuoteSerializer(quote).data,
+            "root_quote_no": root_quote.quote_no,
+            "revisions": QuoteSerializer(revisions, many=True).data,
+            "orders": OrderSerializer(orders, many=True).data,
+            "important_notes": QuoteImportantNoteSerializer(notes, many=True).data,
+            "order_summary": {"count": orders.count()},
+        })
+
+    @action(detail=True, methods=["get"], url_path="order-draft")
+    def order_draft(self, request, pk=None):
+        quote = self.get_object()
+        return Response({
+            "order_no": f"SO-{timezone.localdate():%Y%m%d}-{quote.id}-{uuid4().hex[:6].upper()}",
+            "customer": quote.customer_id,
+            "quote": quote.id,
+            "order_date": timezone.localdate(),
+            "expected_ship_date": None,
+            "status": "draft",
+            "currency": quote.currency,
+            "exchange_rate": quote.exchange_rate,
+            "shipping_fee": quote.shipping_fee,
+            "discount": quote.discount,
+            "notes": quote.notes,
+            "items": [
+                {
+                    "sku": item.sku_id,
+                    "quantity": item.quantity,
+                    "unit_price": item.unit_price,
+                    "cost_price": item.sku.cost_price,
+                    "notes": item.notes,
+                }
+                for item in quote.items.select_related("sku")
+            ],
+        })
 
     @action(detail=True, methods=["post"])
     @transaction.atomic

@@ -368,6 +368,7 @@ class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
     customer_name = serializers.CharField(source="customer.name", read_only=True)
     quote_no = serializers.CharField(source="quote.quote_no", read_only=True, default="")
+    source_quote_no = serializers.CharField(source="quote.quote_no", read_only=True, default="")
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     total_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     paid_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
@@ -380,6 +381,11 @@ class OrderSerializer(serializers.ModelSerializer):
     def get_balance_amount(self, obj):
         return (obj.total_amount - obj.paid_amount).quantize(Decimal("0.01"))
 
+    def validate(self, attrs):
+        if self.instance is None and not attrs.get("items"):
+            raise serializers.ValidationError({"items": "订单至少需要一条商品明细。"})
+        return attrs
+
     @transaction.atomic
     def create(self, validated_data):
         items = validated_data.pop("items", [])
@@ -390,6 +396,8 @@ class OrderSerializer(serializers.ModelSerializer):
                 item["cost_price"] = item["sku"].cost_price
             rows.append(OrderItem(order=order, **item))
         OrderItem.objects.bulk_create(rows)
+        if order.quote_id:
+            Quote.objects.filter(pk=order.quote_id).update(status="accepted")
         return order
 
     @transaction.atomic

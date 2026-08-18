@@ -1,15 +1,15 @@
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { Plus, Search, Pencil, Trash2, FileX2, X, PlusCircle, MinusCircle, Download } from 'lucide-vue-next'
 import { api, downloadQuoteExport, listData } from '../api'
 import EntityDetailModal from '../components/EntityDetailModal.vue'
 import QuoteDetailModal from '../components/QuoteDetailModal.vue'
 import QuoteEditorModal from '../components/QuoteEditorModal.vue'
+import OrderDraftModal from '../components/OrderDraftModal.vue'
 
 const props = defineProps({ type: String })
 const route = useRoute()
-const router = useRouter()
 const isOrder = computed(() => props.type === 'orders')
 const copy = computed(() => isOrder.value ? {
   title: '订单管理', description: '从客户需求到交付和回款，保持订单、产品与流水一一对应。', no: 'order_no', noLabel: '订单号', date: 'order_date', dateLabel: '订单日期', statuses: { draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
@@ -22,6 +22,7 @@ const loading = ref(true), saving = ref(false), open = ref(false), editingId = r
 const detailId = ref(null)
 const quoteDetailId = ref(null), orderDetailId = ref(null)
 const quoteEditorOpen = ref(false), quoteEditorQuote = ref(null)
+const orderDraft = ref(null), workbenchRefresh = ref(0)
 const toast = reactive({ show: false, message: '', error: false })
 const form = reactive({})
 let timer
@@ -89,7 +90,21 @@ function money(value) { return Number(value || 0).toLocaleString('zh-CN', { mini
 function openDetail(row) { if (isOrder.value) detailId.value = row.id; else quoteDetailId.value = row.id }
 function editFromDetail() { const row = rows.value.find(r => r.id === detailId.value); if (row) edit(row) }
 function reviseFromDetail(row) { if (row) edit(row) }
-function openOrderDraft(quoteId) { quoteDetailId.value = null; router.push({ path: '/orders', query: { create: '1', quote: quoteId, draft: '1' } }) }
+async function openOrderDraft(sourceQuote) {
+  await loadOptions()
+  try {
+    const quoteId = typeof sourceQuote === 'object' ? sourceQuote.id : sourceQuote
+    const draft = (await api.get(`/quotes/${quoteId}/order-draft/`)).data
+    orderDraft.value = { ...draft, source_quote_no: sourceQuote?.quote_no || draft.source_quote_no }
+  }
+  catch (error) { notify(`无法创建订单草稿：${error.message}`, true) }
+}
+async function handleOrderDraftSaved(row) {
+  orderDraft.value = null
+  notify(`订单 ${row.order_no} 已保存`)
+  await load()
+  workbenchRefresh.value += 1
+}
 function openOrderDetail(id) { quoteDetailId.value = null; orderDetailId.value = id }
 function editRelatedOrder() { const row = rows.value.find(r => r.id === orderDetailId.value); if (row) edit(row) }
 watch(() => props.type, load)
@@ -100,13 +115,6 @@ onMounted(async () => {
     await create()
     if (route.query.customer && isOrder.value) form.customer = Number(route.query.customer)
     if (isOrder.value && route.query.quote) form.quote = Number(route.query.quote)
-    if (isOrder.value && route.query.draft === '1' && route.query.quote) {
-      try {
-        const draft = (await api.get(`/quotes/${route.query.quote}/order-draft/`)).data
-        Object.keys(form).forEach(key => delete form[key])
-        Object.assign(form, draft)
-      } catch (error) { notify(`无法创建订单草稿：${error.message}`, true) }
-    }
   }
 })
 </script>
@@ -154,8 +162,9 @@ onMounted(async () => {
       <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="open = false">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中...' : '保存单据' }}</button></div>
     </form></div>
     <QuoteEditorModal v-if="quoteEditorOpen" :quote="quoteEditorQuote" :customers="customers" :skus="skus" :mode="quoteEditorQuote?.id ? 'revise' : 'create'" @close="quoteEditorOpen = false" @saved="handleQuoteSaved" />
+    <OrderDraftModal v-if="orderDraft" :draft="orderDraft" :customers="customers" :skus="skus" @close="orderDraft = null" @saved="handleOrderDraftSaved" />
     <Transition name="detail-drawer" appear>
-      <QuoteDetailModal v-if="quoteDetailId" :id="quoteDetailId" @close="quoteDetailId = null" @revise="reviseFromDetail" @create-order="openOrderDraft" @open-order="openOrderDetail" />
+      <QuoteDetailModal v-if="quoteDetailId" :id="quoteDetailId" :refresh-key="workbenchRefresh" @close="quoteDetailId = null" @revise="reviseFromDetail" @create-order="openOrderDraft" @open-order="openOrderDetail" />
       <EntityDetailModal v-else-if="detailId" :entity="type" :id="detailId" @close="detailId = null" @edit="editFromDetail" />
     </Transition>
     <Transition name="detail-drawer" appear>

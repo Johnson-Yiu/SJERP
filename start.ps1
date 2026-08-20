@@ -4,6 +4,7 @@ $VenvPython = Join-Path $ProjectRoot ".venv\Scripts\python.exe"
 $PythonExe = if (Test-Path -LiteralPath $VenvPython) { $VenvPython } else { "python.exe" }
 $BackendDir = Join-Path $ProjectRoot "backend"
 $FrontendDir = Join-Path $ProjectRoot "frontend"
+$ManagePy = Join-Path $BackendDir "manage.py"
 
 function Test-PortOpen([int] $Port) {
     $client = [System.Net.Sockets.TcpClient]::new()
@@ -28,6 +29,12 @@ function Wait-ForPort([int] $Port, [int] $TimeoutSeconds) {
         Start-Sleep -Milliseconds 500
     }
     return $false
+}
+
+Write-Host "Applying database migrations..."
+& $PythonExe $ManagePy migrate --noinput
+if ($LASTEXITCODE -ne 0) {
+    throw "Database migration failed. The services were not started."
 }
 
 if (-not (Test-PortOpen 8100)) {

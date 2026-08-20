@@ -68,18 +68,18 @@ function applyPickerValue(event) { emit('update:modelValue', event.target.value)
 </script>
 
 <template>
-  <div class="segmented-date" @click.self="openPicker">
+  <div class="segmented-date">
     <input v-model="year" class="date-year" inputmode="numeric" maxlength="4" :required="required" aria-label="年份" @input="onYearInput" @focus="$event.target.select()" />
     <span>/</span>
     <input ref="monthInput" v-model="month" inputmode="numeric" maxlength="2" aria-label="月份" @input="onMonthInput" @focus="$event.target.select()" />
     <span>/</span>
     <input ref="dayInput" v-model="day" inputmode="numeric" maxlength="2" aria-label="日期" @input="onDayInput" @focus="$event.target.select()" />
     <template v-if="withTime"><span class="time-separator"> </span><input ref="hourInput" v-model="hour" inputmode="numeric" maxlength="2" aria-label="小时" @input="onHourInput" @focus="$event.target.select()" /><span>:</span><input ref="minuteInput" v-model="minute" inputmode="numeric" maxlength="2" aria-label="分钟" @input="onMinuteInput" @focus="$event.target.select()" /></template>
-    <button type="button" tabindex="-1" aria-label="打开日期选择器" @click="openPicker"><CalendarDays :size="16" /></button>
+    <button type="button" aria-label="打开日期选择器" @click="openPicker"><CalendarDays :size="16" /></button>
     <input ref="picker" class="native-date-picker" :type="withTime ? 'datetime-local' : 'date'" :value="modelValue" tabindex="-1" @change="applyPickerValue" />
   </div>
 </template>
 
 <style scoped>
-.segmented-date{position:relative;display:flex;align-items:center;height:40px;border:1px solid #dce3df;border-radius:7px;background:#fff;padding:0 9px}.segmented-date:focus-within{border-color:#2a8067;box-shadow:0 0 0 3px #2a80671a}.segmented-date input:not(.native-date-picker){min-width:0;border:0;outline:0;padding:0;background:transparent;font:inherit;text-align:left}.date-year{width:4ch}.segmented-date input:not(.date-year):not(.native-date-picker){width:2ch}.segmented-date span{color:#94a19c}.segmented-date .time-separator{width:5px}.segmented-date button{margin-left:6px;border:0;background:transparent;color:#405b53;display:grid;place-items:center;padding:4px;cursor:pointer}.native-date-picker{position:absolute;inline-size:1px;block-size:1px;opacity:0;pointer-events:none}
+.segmented-date{position:relative;display:flex;align-items:center;height:40px;border:1px solid #d2ddd8;border-radius:7px;background:#fff;padding:0 10px;color:#173e35}.segmented-date:focus-within{border-color:#4f9f8e;box-shadow:0 0 0 3px #4f9f8e1f}.segmented-date input:not(.native-date-picker){min-width:0;border:0;outline:0;padding:0;background:transparent;font:inherit;line-height:1.25;text-align:left;color:inherit}.date-year{width:4ch}.segmented-date input:not(.date-year):not(.native-date-picker){width:2ch}.segmented-date span{color:#405b53}.segmented-date .time-separator{width:7px}.segmented-date button{margin-left:auto;border:0;background:transparent;color:#182f2a;display:grid;place-items:center;padding:5px 0 5px 8px;cursor:pointer}.segmented-date button:hover{color:#0d5d4d}.segmented-date button:focus-visible{outline:2px solid #4f9f8e;outline-offset:2px;border-radius:3px}.native-date-picker{position:absolute;inline-size:1px;block-size:1px;opacity:0;pointer-events:none}
 </style>

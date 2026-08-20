@@ -15,5 +15,7 @@ test('date parts remain compact without individual outlines', async () => {
   const source = await readFile(componentUrl, 'utf8')
 
   assert.match(source, /input:not\(\.native-date-picker\)\{flex:0 0 auto;[^}]*border:0/)
+  assert.match(source, /\.segmented-date input\.date-year\{width:4ch!important/)
+  assert.match(source, /input:not\(\.date-year\):not\(\.native-date-picker\)\{width:2ch!important/)
   assert.doesNotMatch(source, /button\{margin-left:auto/)
 })

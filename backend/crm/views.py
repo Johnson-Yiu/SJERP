@@ -21,7 +21,7 @@ from .permissions import PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, TransactionSerializer, next_product_code
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -606,6 +606,41 @@ class OrderViewSet(viewsets.ModelViewSet):
         if self.request.query_params.get("sku"):
             qs = qs.filter(items__sku_id=self.request.query_params["sku"]).distinct()
         return qs
+
+    @action(detail=True, methods=["get"])
+    def workbench(self, request, pk=None):
+        order = self.get_object()
+        items = list(order.items.all())
+        payments = list(order.transactions.all())
+        inventory = list(order.inventory_movements.select_related("sku__product"))
+        ordered_quantity = sum((item.quantity for item in items), Decimal("0"))
+        shipped_quantity = sum(
+            (movement.quantity for movement in inventory if movement.type == "sale_out"),
+            Decimal("0"),
+        ) - sum(
+            (movement.quantity for movement in inventory if movement.type == "return_in"),
+            Decimal("0"),
+        )
+        paid_amount = sum(
+            (payment.amount for payment in payments if payment.direction == "income" and payment.status == "confirmed"),
+            Decimal("0"),
+        )
+        return Response({
+            "order": OrderSerializer(order).data,
+            "source_quote": QuoteSerializer(order.quote).data if order.quote else None,
+            "items": OrderItemSerializer(items, many=True).data,
+            "payments": TransactionSerializer(payments, many=True).data,
+            "inventory": InventoryMovementSerializer(inventory, many=True).data,
+            "payment_summary": {
+                "paid_amount": paid_amount,
+                "balance_amount": order.total_amount - paid_amount,
+            },
+            "fulfillment_summary": {
+                "ordered_quantity": ordered_quantity,
+                "shipped_quantity": shipped_quantity,
+                "remaining_quantity": ordered_quantity - shipped_quantity,
+            },
+        })
 
 
 class TransactionViewSet(viewsets.ModelViewSet):

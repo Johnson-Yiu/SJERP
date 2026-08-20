@@ -5,6 +5,7 @@ import { api, listData } from '../api'
 import { resourceConfigs } from '../resourceConfigs'
 import ComboInput from './ComboInput.vue'
 import SimpleRichTextEditor from './SimpleRichTextEditor.vue'
+import SegmentedDateInput from './SegmentedDateInput.vue'
 
 const props = defineProps({ entity: String, query: { type: Object, default: () => ({}) } })
 const emit = defineEmits(['close', 'saved'])
@@ -189,6 +190,7 @@ onMounted(init)
                   <option v-for="option in visibleOptions(field)" :key="option.id" :value="option.id">{{ option[field[5]] }}</option>
                 </select>
                 <label v-else-if="field[2] === 'checkbox'" class="checkbox-line"><input v-model="form[field[0]]" type="checkbox" /> 是</label>
+                <SegmentedDateInput v-else-if="field[2] === 'date' || field[2] === 'datetime-local'" v-model="form[field[0]]" :required="field[3]" :with-time="field[2] === 'datetime-local'" />
                 <input v-else v-model="form[field[0]]" :type="field[2] || 'text'" :step="field[2] === 'number' ? '0.0001' : undefined" :required="field[3]" />
               </div>
             </div>
@@ -198,8 +200,8 @@ onMounted(init)
             <div class="form-grid">
               <div class="field"><label>{{ isOrder ? '订单号' : '报价单号' }} *</label><input v-model="form[documentCopy.no]" required /></div>
               <div class="field"><label>客户 *</label><select v-model="form.customer" required><option value="">请选择</option><option v-for="customer in customers" :key="customer.id" :value="customer.id">{{ customer.name }}</option></select></div>
-              <div class="field"><label>{{ isOrder ? '订单日期' : '报价日期' }} *</label><input v-model="form[documentCopy.date]" type="date" required /></div>
-              <div class="field"><label>{{ isOrder ? '预计交期' : '有效期至' }}</label><input v-model="form[isOrder ? 'expected_ship_date' : 'valid_until']" type="date" /></div>
+              <div class="field"><label>{{ isOrder ? '订单日期' : '报价日期' }} *</label><SegmentedDateInput v-model="form[documentCopy.date]" required /></div>
+              <div class="field"><label>{{ isOrder ? '预计交期' : '有效期至' }}</label><SegmentedDateInput v-model="form[isOrder ? 'expected_ship_date' : 'valid_until']" /></div>
               <div class="field"><label>状态 *</label><select v-model="form.status"><option v-for="(label, key) in documentCopy.statuses" :key="key" :value="key">{{ label }}</option></select></div>
               <div v-if="isOrder" class="field"><label>来源报价</label><select v-model="form.quote"><option value="">无</option><option v-for="quote in quotes" :key="quote.id" :value="quote.id">{{ quote.quote_no }}</option></select></div>
               <div class="field"><label>币种</label><select v-model="form.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>

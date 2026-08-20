@@ -8,7 +8,7 @@ from django.utils.html import strip_tags
 from rest_framework import serializers
 
 from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Transaction
-from .quote_numbers import allocate_root_quote_no
+from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .quote_snapshots import create_quote_items
 
 
@@ -394,11 +394,89 @@ class OrderSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if self.instance is None and not attrs.get("items"):
             raise serializers.ValidationError({"items": "订单至少需要一条商品明细。"})
+        source_quote = attrs.get("quote")
+        customer = attrs.get("customer")
+        if self.instance is None and source_quote and customer and source_quote.customer_id != customer.id:
+            raise serializers.ValidationError({"customer": "从报价创建订单时，客户必须与来源报价一致。"})
         return attrs
+
+    @staticmethod
+    def _item_signature(items):
+        return [
+            (item["sku"].pk, Decimal(item["quantity"]), Decimal(item["unit_price"]), item.get("notes", ""))
+            for item in items
+        ]
+
+    def _create_quote_revision_if_needed(self, source_quote, order_data, order_items):
+        source_items = list(source_quote.items.order_by("id"))
+        changed_parts = []
+        if self._item_signature(order_items) != [
+            (item.sku_id, item.quantity, item.unit_price, item.notes)
+            for item in source_items
+        ]:
+            changed_parts.append("产品明细")
+
+        for field, label in [
+            ("currency", "币种"),
+            ("exchange_rate", "汇率"),
+            ("shipping_fee", "运费"),
+            ("discount", "折扣"),
+            ("notes", "条款/备注"),
+        ]:
+            if order_data.get(field, getattr(source_quote, field)) != getattr(source_quote, field):
+                changed_parts.append(label)
+
+        if not changed_parts:
+            return source_quote
+
+        root_quote = source_quote.root_quote or source_quote
+        try:
+            quote_no, revision_no = allocate_revision_quote_no(root_quote)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(getattr(exc, "message_dict", exc.messages)) from exc
+
+        copied_fields = [
+            "customer", "quote_date", "valid_until", "currency", "exchange_rate", "shipping_fee", "discount",
+            "notes", "recipient_name", "buyer_address", "buyer_email", "buyer_phone", "lead_time_days",
+            "deposit_ratio", "trading_terms", "shipping_details", "buyer_company_name",
+        ]
+        revision_values = {field: getattr(source_quote, field) for field in copied_fields}
+        revision_values.update({
+            field: order_data[field]
+            for field in ("currency", "exchange_rate", "shipping_fee", "discount", "notes")
+            if field in order_data
+        })
+        revision = Quote.objects.create(
+            quote_no=quote_no,
+            root_quote=root_quote,
+            parent_quote=source_quote,
+            revision_no=revision_no,
+            revision_summary=f"订单确认时调整：{'、'.join(changed_parts)}",
+            status="accepted",
+            **revision_values,
+        )
+        create_quote_items(
+            revision,
+            [
+                {
+                    "sku": item["sku"],
+                    "quantity": item["quantity"],
+                    "unit_price": item["unit_price"],
+                    "notes": item.get("notes", ""),
+                    "description": source_items[index].description if index < len(source_items) else "",
+                }
+                for index, item in enumerate(order_items)
+            ],
+            source_items=source_items,
+        )
+        return revision
 
     @transaction.atomic
     def create(self, validated_data):
         items = validated_data.pop("items", [])
+        source_quote = validated_data.get("quote")
+        if source_quote:
+            validated_data["quote"] = self._create_quote_revision_if_needed(source_quote, validated_data, items)
         order = Order.objects.create(**validated_data)
         rows = []
         for item in items:
@@ -431,6 +509,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     customer_name = serializers.CharField(source="customer.name", read_only=True, default="")
     order_no = serializers.CharField(source="order.order_no", read_only=True, default="")
     direction_display = serializers.CharField(source="get_direction_display", read_only=True)
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
     rmb_amount = serializers.SerializerMethodField()
 
     class Meta:

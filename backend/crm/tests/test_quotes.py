@@ -13,7 +13,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from crm.models import Contact, Customer, Order, Product, Quote, QuoteItem, QuoteRevisionCounter, SKU
+from crm.models import Contact, Customer, InventoryMovement, Order, Product, Quote, QuoteItem, QuoteRevisionCounter, SKU, Transaction
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.quote_snapshots import create_quote_items
 
@@ -648,6 +648,42 @@ class QuoteApiTests(TestCase):
         self.assertEqual(saved.data["quote"], quote.id)
         self.assertEqual(quote.status, "accepted")
 
+    def test_order_with_commercial_changes_creates_and_links_quote_revision(self):
+        quote = self.create_quote(
+            shipping_fee="12.50",
+            discount="2.00",
+            notes="Use confirmed carton marks.",
+            items=[{
+                "sku": self.sku.id,
+                "quantity": "3.00",
+                "unit_price": "11.25",
+                "description": "Dimmable panel light",
+            }],
+        )
+        draft = self.client.get(f"/api/quotes/{quote.id}/order-draft/").data
+        draft["shipping_fee"] = "18.50"
+        draft["items"][0]["quantity"] = "4.00"
+
+        saved = self.client.post("/api/orders/", draft, format="json")
+
+        self.assertEqual(saved.status_code, status.HTTP_201_CREATED, getattr(saved, "data", None))
+        order = Order.objects.get(pk=saved.data["id"])
+        revision = order.quote
+        quote.refresh_from_db()
+        self.assertNotEqual(revision.id, quote.id)
+        self.assertEqual(revision.parent_quote_id, quote.id)
+        self.assertEqual(revision.root_quote_id, quote.id)
+        self.assertEqual(revision.revision_no, 1)
+        self.assertEqual(revision.status, "accepted")
+        self.assertIn("产品明细", revision.revision_summary)
+        self.assertIn("运费", revision.revision_summary)
+        self.assertEqual(Decimal(revision.shipping_fee), Decimal("18.50"))
+        self.assertEqual(Decimal(revision.items.get().quantity), Decimal("4.00"))
+        self.assertEqual(revision.items.get().description, "Dimmable panel light")
+        self.assertEqual(Decimal(quote.shipping_fee), Decimal("12.50"))
+        self.assertEqual(Decimal(quote.items.get().quantity), Decimal("3.00"))
+        self.assertEqual(quote.status, "draft")
+
     def test_invalid_order_with_quote_does_not_accept_the_quote(self):
         quote = self.create_quote()
 
@@ -666,6 +702,56 @@ class QuoteApiTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertNotEqual(quote.status, "accepted")
+
+
+class OrderWorkbenchTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.customer = Customer.objects.create(code="C-ORDER-WORKBENCH", name="Order Workbench Buyer", country="Germany")
+        product = Product.objects.create(code="P-ORDER-WORKBENCH", name="Order Workbench Light")
+        self.sku = SKU.objects.create(product=product, sku="SKU-ORDER-WORKBENCH", default_price="15.00", cost_price="7.00")
+        self.quote = Quote.objects.create(quote_no="SJ20260819DE001", customer=self.customer, quote_date=date(2026, 8, 19))
+        self.order = Order.objects.create(
+            order_no="SO-ORDER-WORKBENCH",
+            customer=self.customer,
+            quote=self.quote,
+            order_date=date(2026, 8, 19),
+            expected_ship_date=date(2026, 9, 3),
+            status="production",
+        )
+        self.order.items.create(sku=self.sku, quantity="3.00", unit_price="15.00", cost_price="7.00")
+
+    def test_workbench_returns_order_fulfillment_and_payment_context(self):
+        Transaction.objects.create(
+            transaction_no="TX-ORDER-WORKBENCH",
+            transaction_date=date(2026, 8, 20),
+            direction="income",
+            category="订单定金",
+            amount="20.00",
+            customer=self.customer,
+            order=self.order,
+        )
+        InventoryMovement.objects.create(
+            movement_no="IM-ORDER-WORKBENCH",
+            movement_date=date(2026, 8, 21),
+            type="sale_out",
+            sku=self.sku,
+            order=self.order,
+            quantity="1.00",
+            warehouse="中山成品仓",
+        )
+
+        response = self.client.get(f"/api/orders/{self.order.id}/workbench/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["order"]["order_no"], self.order.order_no)
+        self.assertEqual(response.data["source_quote"]["quote_no"], self.quote.quote_no)
+        self.assertEqual(response.data["items"][0]["sku_code"], self.sku.sku)
+        self.assertEqual(response.data["payments"][0]["transaction_no"], "TX-ORDER-WORKBENCH")
+        self.assertEqual(response.data["payments"][0].get("status_display"), "已确认")
+        self.assertEqual(response.data["inventory"][0]["movement_no"], "IM-ORDER-WORKBENCH")
+        self.assertEqual(Decimal(response.data["payment_summary"]["paid_amount"]), Decimal("20.00"))
+        self.assertEqual(Decimal(response.data["fulfillment_summary"]["shipped_quantity"]), Decimal("1.00"))
 
 
 class QuoteExportTests(TestCase):

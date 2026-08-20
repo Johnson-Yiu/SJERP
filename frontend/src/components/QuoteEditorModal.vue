@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { Eye, MinusCircle, PlusCircle, RotateCw, Save, X } from 'lucide-vue-next'
 import { api, downloadQuoteExport, listData } from '../api'
 import QuotePreviewModal from './QuotePreviewModal.vue'
+import SegmentedDateInput from './SegmentedDateInput.vue'
 
 const props = defineProps({
   quote: { type: Object, default: null },
@@ -127,7 +128,7 @@ onMounted(() => { if (props.mode === 'create' && draft.customer) selectCustomer(
           <div class="form-grid">
             <div class="field"><label>报价单号</label><input :value="draft.quote_no || '保存后自动生成'" disabled /></div>
             <div class="field"><label>客户 *</label><select v-model="draft.customer" required :disabled="mode === 'revise'" @change="selectCustomer"><option value="">请选择</option><option v-for="customer in customers" :key="customer.id" :value="customer.id">{{ customer.name }}</option></select></div>
-            <div class="field"><label>报价日期 *</label><input v-model="draft.quote_date" type="date" required /></div><div class="field"><label>有效期至</label><input v-model="draft.valid_until" type="date" /></div>
+            <div class="field"><label>报价日期 *</label><SegmentedDateInput v-model="draft.quote_date" required /></div><div class="field"><label>有效期至</label><SegmentedDateInput v-model="draft.valid_until" /></div>
             <div class="field"><label>状态</label><select v-model="draft.status"><option value="draft">草稿</option><option value="sent">已发送</option><option value="accepted">已接受</option><option value="rejected">已拒绝</option><option value="expired">已过期</option></select></div>
             <div class="field"><label>币种</label><select v-model="draft.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
             <div class="field"><label>对人民币汇率</label><input v-model="draft.exchange_rate" type="number" min="0" step="0.000001" /></div><div class="field"><label>交期（天）</label><input v-model="draft.lead_time_days" type="number" min="1" step="1" /></div>

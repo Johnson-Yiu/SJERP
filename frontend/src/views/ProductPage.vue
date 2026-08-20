@@ -13,6 +13,8 @@ const loading = ref(true)
 const saving = ref(false)
 const modalOpen = ref(false)
 const editingId = ref(null)
+const keepDetailOpen = ref(false)
+const detailRefresh = ref(0)
 const pickerOpen = ref(false)
 const pickerTarget = ref('primary')
 const cascadePath = ref([])
@@ -50,16 +52,19 @@ async function load() {
   } catch (error) { notify(error.message, true) } finally { loading.value = false }
 }
 async function openCreate() {
+  keepDetailOpen.value = false
   editingId.value = null
   Object.assign(form, { code: '', name: '', name_en: '', hs_code: '', category: '', additional_categories: [], status: 'active', description: '' })
   try { form.code = (await api.get('/products/next-code/')).data.code } catch { form.code = '保存时自动生成' }
   modalOpen.value = true
 }
-function openEdit(product) {
+function openEdit(product, { keepDetail = false } = {}) {
+  keepDetailOpen.value = keepDetail
   editingId.value = product.id
   Object.assign(form, { code: product.code, name: product.name, name_en: product.name_en || '', hs_code: product.hs_code || '', category: product.category || '', additional_categories: [...(product.additional_categories || [])], status: product.status, description: product.description || '' })
   modalOpen.value = true
 }
+function closeModal() { modalOpen.value = false; keepDetailOpen.value = false }
 function categoryAncestors(id) {
   const path = []
   let current = categories.value.find(item => item.id === Number(id))
@@ -91,7 +96,10 @@ async function save() {
     const data = { name: form.name, name_en: form.name_en, hs_code: form.hs_code, category: form.category ? Number(form.category) : null, additional_categories: form.additional_categories.filter(Boolean).map(Number), status: form.status, description: form.description }
     if (editingId.value) await api.put(`/products/${editingId.value}/`, data)
     else await api.post('/products/', data)
+    const refreshDetail = keepDetailOpen.value
     modalOpen.value = false; notify(editingId.value ? '产品已更新' : '产品已创建'); await load()
+    if (refreshDetail) detailRefresh.value += 1
+    keepDetailOpen.value = false
   } catch (error) { notify(error.message, true) } finally { saving.value = false }
 }
 async function remove(product) {
@@ -111,14 +119,14 @@ onMounted(load)
       <div v-else class="table-wrap"><table class="data-table"><thead><tr><th>产品编号</th><th>产品名称</th><th>主分类</th><th>状态</th><th>SKU</th><th>参数</th><th>证书</th><th /></tr></thead><tbody><tr v-for="product in products" :key="product.id" class="clickable-row" @click="detailId = product.id"><td class="primary-cell">{{ product.code }}</td><td>{{ product.name }}</td><td>{{ product.category_name }}</td><td><span class="tag">{{ product.status === 'active' ? '在售' : product.status === 'development' ? '开发中' : '停产' }}</span></td><td>{{ product.sku_count }}</td><td>{{ product.parameter_count }}</td><td>{{ product.certificate_count }}</td><td><div class="table-actions"><button class="mini-btn" title="编辑产品" @click.stop="openEdit(product)"><Pencil :size="14" /></button><button class="mini-btn danger" title="删除产品" @click.stop="remove(product)"><Trash2 :size="14" /></button></div></td></tr></tbody></table></div>
     </section>
 
-    <div v-if="modalOpen" class="modal-backdrop" @mousedown.self="modalOpen = false"><form class="modal product-modal" @submit.prevent="save"><div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" @click="modalOpen = false"><X :size="17" /></button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>产品编号 <em>*</em></label><input v-model="form.code" class="readonly-input" readonly /></div><div class="field"><label>产品名称 <em>*</em></label><input v-model.trim="form.name" placeholder="如：BTY橱柜电源" required /></div>
+    <div v-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal product-modal" @submit.prevent="save"><div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" @click="closeModal"><X :size="17" /></button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>产品编号 <em>*</em></label><input v-model="form.code" class="readonly-input" readonly /></div><div class="field"><label>产品名称 <em>*</em></label><input v-model.trim="form.name" placeholder="如：BTY橱柜电源" required /></div>
         <div class="field"><label>产品英文名称</label><input v-model.trim="form.name_en" /></div><div class="field"><label>HS 编码</label><input v-model.trim="form.hs_code" /></div>
         <div class="field category-field"><label>产品分类</label><button type="button" class="category-select" @click.stop="openPicker('primary')"><span>{{ categoryName(form.category) }}</span><ChevronDown :size="16" /></button><div v-if="pickerOpen && pickerTarget === 'primary'" class="category-picker"><div class="picker-head"><strong>选择分类</strong><span>逐级选择最终分类</span></div><div class="cascade-columns"><div v-for="(column, columnIndex) in cascadeColumns" :key="columnIndex" class="cascade-column"><button v-for="category in column" :key="category.id" type="button" class="cascade-option" :class="{ active: cascadePath[columnIndex] === category.id, selected: Number(form.category) === category.id }" @click.stop="chooseCascadeCategory(category, columnIndex)"><span>{{ category.name }}</span><ChevronRight v-if="categories.some(item => Number(item.parent || 0) === Number(category.id))" :size="15" /></button></div></div></div></div><div class="field"><label>状态 <em>*</em></label><select v-model="form.status"><option value="active">在售</option><option value="development">开发中</option><option value="discontinued">停产</option></select></div>
         <div class="field full"><div class="additional-head"><label>附加分类</label><button type="button" class="text-add" @click.stop="addAdditionalCategory"><Plus :size="14" /> 新增</button></div><div v-if="form.additional_categories.length" class="additional-list"><div v-for="(id, index) in form.additional_categories" :key="index" class="additional-row category-field"><button type="button" class="category-select" @click.stop="openPicker(index)"><span>{{ categoryName(id) }}</span><ChevronDown :size="16" /></button><button type="button" class="mini-btn danger" title="移除附加分类" @click.stop="removeAdditionalCategory(index)"><Trash2 :size="14" /></button><div v-if="pickerOpen && pickerTarget === index" class="category-picker"><div class="picker-head"><strong>选择附加分类</strong><span>逐级选择最终分类</span></div><div class="cascade-columns"><div v-for="(column, columnIndex) in cascadeColumns" :key="columnIndex" class="cascade-column"><button v-for="category in column" :key="category.id" type="button" class="cascade-option" :class="{ active: cascadePath[columnIndex] === category.id, selected: form.additional_categories.map(Number).includes(category.id) }" @click.stop="chooseCascadeCategory(category, columnIndex)"><span>{{ category.name }}</span><ChevronRight v-if="categories.some(item => Number(item.parent || 0) === Number(category.id))" :size="15" /></button></div></div></div></div></div><p v-else class="field-help">可为同一产品添加第二、第三个分类，用于多维筛选与分析。</p></div>
         <div class="field full"><label>产品描述</label><textarea v-model="form.description" /></div></div>
-      </div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="modalOpen = false">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : '保存' }}</button></div></form></div>
+      </div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : '保存' }}</button></div></form></div>
     <div v-if="message.text" class="toast" :class="{ error: message.error }">{{ message.text }}</div>
-    <Transition name="detail-drawer" appear><EntityDetailModal v-if="detailId" entity="products" :id="detailId" @close="detailId = null" @edit="openEdit(products.find(product => product.id === detailId))" /></Transition>
+    <Transition name="detail-drawer" appear><EntityDetailModal v-if="detailId" entity="products" :id="detailId" :refresh-key="detailRefresh" @close="detailId = null" @edit="openEdit(products.find(product => product.id === detailId), { keepDetail: true })" /></Transition>
   </div>
 </template>
 

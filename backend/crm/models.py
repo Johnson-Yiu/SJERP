@@ -1,6 +1,8 @@
 from decimal import Decimal
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator
 from django.db import models
 
 
@@ -246,12 +248,22 @@ class SKU(TimestampedModel):
     active = models.BooleanField("启用", default=True)
     parameter_values = models.JSONField("参数快照", default=dict, blank=True)
     product_details = models.JSONField("产品明细", default=list, blank=True)
+    image = models.ImageField("SKU 图片", upload_to="sku-images/%Y/%m/", blank=True)
 
     class Meta:
         ordering = ["sku"]
 
     def __str__(self):
         return self.sku
+
+
+class QuoteNumberSequence(models.Model):
+    quote_date = models.DateField()
+    country_code = models.CharField(max_length=2)
+    last_value = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["quote_date", "country_code"], name="unique_quote_number_sequence")]
 
 
 class ProductParameter(TimestampedModel):
@@ -290,7 +302,26 @@ class ProductCertificate(TimestampedModel):
 class Quote(TimestampedModel):
     STATUS_CHOICES = [("draft", "草稿"), ("sent", "已发送"), ("accepted", "已接受"), ("rejected", "已拒绝"), ("expired", "已过期")]
     quote_no = models.CharField("报价单号", max_length=40, unique=True)
+    root_quote = models.ForeignKey(
+        "self",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="revisions",
+        verbose_name="原始报价",
+    )
+    parent_quote = models.ForeignKey(
+        "self",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="child_revisions",
+        verbose_name="直接来源报价",
+    )
+    revision_no = models.PositiveSmallIntegerField("修订号", default=0, validators=[MaxValueValidator(99)])
+    revision_summary = models.CharField("修订说明", max_length=500, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name="quotes")
+    buyer_company_name = models.CharField("买方公司快照", max_length=200, blank=True)
     quote_date = models.DateField("报价日期")
     valid_until = models.DateField("有效期至", null=True, blank=True)
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
@@ -299,25 +330,82 @@ class Quote(TimestampedModel):
     shipping_fee = models.DecimalField("运费", max_digits=14, decimal_places=2, default=0)
     discount = models.DecimalField("折扣金额", max_digits=14, decimal_places=2, default=0)
     notes = models.TextField("条款/备注", blank=True)
+    recipient_name = models.CharField("收件人", max_length=200, blank=True)
+    buyer_address = models.TextField("买方地址", blank=True)
+    buyer_email = models.EmailField("买方邮箱", blank=True)
+    buyer_phone = models.CharField("买方电话", max_length=100, blank=True)
+    lead_time_days = models.PositiveIntegerField("交期（天）", null=True, blank=True)
+    deposit_ratio = models.DecimalField("定金比例", max_digits=6, decimal_places=4, default=0)
+    trading_terms = models.TextField("贸易条款", blank=True)
+    shipping_details = models.TextField("运输信息", blank=True)
 
     class Meta:
         ordering = ["-quote_date", "-id"]
+
+    def save(self, *args, **kwargs):
+        if not self.buyer_company_name and self.customer_id:
+            self.buyer_company_name = self.customer.name
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        if not self.parent_quote_id:
+            return
+        parent_root = self.parent_quote.root_quote or self.parent_quote
+        own_root = self.root_quote or self
+        if parent_root.pk != own_root.pk:
+            raise ValidationError({"parent_quote": "直接来源报价必须属于同一原始报价链。"})
 
     @property
     def total_amount(self):
         return sum((item.amount for item in self.items.all()), Decimal("0")) + self.shipping_fee - self.discount
 
 
+class QuoteRevisionCounter(models.Model):
+    root_quote = models.OneToOneField(Quote, on_delete=models.CASCADE, related_name="revision_counter")
+    last_value = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(99)])
+
+
 class QuoteItem(models.Model):
     quote = models.ForeignKey(Quote, on_delete=models.CASCADE, related_name="items")
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="quote_items")
+    sku_code_snapshot = models.CharField("SKU 编码快照", max_length=80, blank=True)
+    product_name_snapshot = models.CharField("产品名称快照", max_length=200, blank=True)
+    unit_snapshot = models.CharField("单位快照", max_length=30, blank=True)
+    image_snapshot = models.ImageField("产品图片快照", upload_to="quote-item-images/%Y/%m/", blank=True)
     quantity = models.DecimalField("数量", max_digits=14, decimal_places=2)
     unit_price = models.DecimalField("单价", max_digits=14, decimal_places=4)
+    description = models.TextField("产品描述", blank=True)
     notes = models.CharField("备注", max_length=200, blank=True)
 
     @property
     def amount(self):
         return self.quantity * self.unit_price
+
+
+class QuoteImportantNote(TimestampedModel):
+    root_quote = models.ForeignKey(Quote, on_delete=models.PROTECT, related_name="important_notes")
+    source_quote = models.ForeignKey(Quote, on_delete=models.PROTECT, related_name="sourced_important_notes")
+    content = models.TextField()
+    is_active = models.BooleanField(default=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    deactivated_at = models.DateTimeField("失效时间", null=True, blank=True)
+    deactivated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="deactivated_quote_important_notes",
+        verbose_name="失效操作人",
+    )
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+        indexes = [models.Index(fields=["root_quote", "-created_at"])]
+
+    def clean(self):
+        source_root = self.source_quote.root_quote or self.source_quote
+        if self.root_quote_id != source_root.id:
+            raise ValidationError({"source_quote": "来源报价必须属于原始报价链。"})
 
 
 class Order(TimestampedModel):

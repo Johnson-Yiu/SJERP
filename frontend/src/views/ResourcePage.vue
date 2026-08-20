@@ -6,11 +6,13 @@ import { api, listData } from '../api'
 import EntityDetailModal from '../components/EntityDetailModal.vue'
 import SimpleRichTextEditor from '../components/SimpleRichTextEditor.vue'
 import ComboInput from '../components/ComboInput.vue'
+import SegmentedDateInput from '../components/SegmentedDateInput.vue'
 
 const props = defineProps({ config: Object })
 const route = useRoute()
 const rows = ref([]), loading = ref(true), saving = ref(false), query = ref('')
 const modalOpen = ref(false), detailId = ref(null), editingId = ref(null)
+const detailRefresh = ref(0), keepDetailOpen = ref(false)
 const form = reactive({}), options = reactive({})
 const customerContacts = ref([])
 const currentOperator = ref('')
@@ -76,6 +78,7 @@ function resetForm() {
   })
 }
 async function openCreate() {
+  keepDetailOpen.value = false
   editingId.value = null; resetForm()
   customerContacts.value = props.config.endpoint === 'customers' ? [emptyContact(true)] : []
   await loadOptions()
@@ -86,8 +89,10 @@ async function openCreate() {
   applyDefaultContact()
   modalOpen.value = true
 }
-async function openEdit(row) {
-  detailId.value = null; editingId.value = row.id; resetForm(); await loadOptions()
+async function openEdit(row, { keepDetail = false } = {}) {
+  if (!keepDetail) detailId.value = null
+  keepDetailOpen.value = keepDetail
+  editingId.value = row.id; resetForm(); await loadOptions()
   props.config.fields.forEach(([name, , type]) => {
     let value = row[name]
     if (type === 'datetime-local' && value) value = value.slice(0, 16)
@@ -95,6 +100,7 @@ async function openEdit(row) {
   })
   modalOpen.value = true
 }
+function closeModal() { modalOpen.value = false; keepDetailOpen.value = false }
 function payload() {
   const data = {}
   props.config.fields.forEach(([name, , type]) => {
@@ -111,7 +117,10 @@ async function save() {
   saving.value = true
   try {
     editingId.value ? await api.put(`/${props.config.endpoint}/${editingId.value}/`, payload()) : await api.post(`/${props.config.endpoint}/`, payload())
+    const refreshDetail = keepDetailOpen.value
     modalOpen.value = false; notify(editingId.value ? '更新成功' : '创建成功'); await load()
+    if (refreshDetail) detailRefresh.value += 1
+    keepDetailOpen.value = false
   } catch (e) { notify(e.message, true) } finally { saving.value = false }
 }
 async function remove(row) {
@@ -131,7 +140,7 @@ function display(value, type, fieldName = '') {
   return value
 }
 function cellClass(type, value) { return { amount: ['money', 'rmb'].includes(type), tag: type === 'tag', status: type === 'status', [value]: type === 'status', direction: type === 'direction', income: value === '收入', expense: value === '支出', positive: type === 'signed' && Number(value) > 0, negative: type === 'signed' && Number(value) < 0 } }
-function editFromDetail() { const row = rows.value.find(r => r.id === detailId.value); if (row) openEdit(row) }
+function editFromDetail() { const row = rows.value.find(r => r.id === detailId.value); if (row) openEdit(row, { keepDetail: true }) }
 
 watch(() => route.query, load)
 onMounted(async () => {
@@ -155,8 +164,8 @@ onMounted(async () => {
       </tbody></table></div>
     </div>
 
-    <div v-if="modalOpen" class="modal-backdrop" @mousedown.self="modalOpen = false"><form class="modal" :class="{ wide: isWideForm }" @submit.prevent="save">
-      <div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" @click="modalOpen = false"><X :size="17" /></button></div>
+    <div v-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal" :class="{ wide: isWideForm }" @submit.prevent="save">
+      <div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" @click="closeModal"><X :size="17" /></button></div>
       <div class="modal-body"><div class="form-grid"><div v-for="field in config.fields" :key="field[0]" class="field" :class="{ full: field[2] === 'textarea' || (config.endpoint === 'follow-ups' && field[0] === 'subject') }">
         <label>{{ field[1] }} <em v-if="field[3]">*</em></label>
         <textarea v-if="field[2] === 'textarea'" v-model="form[field[0]]" :required="field[3]" />
@@ -165,6 +174,7 @@ onMounted(async () => {
         <select v-else-if="field[2] === 'select'" v-model="form[field[0]]" :required="field[3]"><option v-for="(label,key) in field[4]" :key="key" :value="key">{{ label }}</option></select>
         <select v-else-if="field[2] === 'remote'" v-model="form[field[0]]" :required="field[3]" @change="onFieldChange(field)"><option value="">请选择</option><option v-for="option in visibleOptions(field)" :key="option.id" :value="option.id">{{ option[field[5]] }}</option></select>
         <label v-else-if="field[2] === 'checkbox'" class="checkbox-line"><input v-model="form[field[0]]" type="checkbox" /> 是</label>
+        <SegmentedDateInput v-else-if="field[2] === 'date' || field[2] === 'datetime-local'" v-model="form[field[0]]" :required="field[3]" :with-time="field[2] === 'datetime-local'" />
         <input v-else v-model="form[field[0]]" :type="field[2] === 'readonly' ? 'text' : (field[2] || 'text')" :readonly="field[2] === 'readonly'" :class="{ 'readonly-input': field[2] === 'readonly' }" :step="field[2] === 'number' ? '0.0001' : undefined" :required="field[3]" />
       </div></div>
 
@@ -197,11 +207,11 @@ onMounted(async () => {
           <button type="button" class="add-contact-btn" @click="addCustomerContact"><UserRoundPlus :size="16" /> 新增联系人</button>
         </section>
       </div>
-      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="modalOpen = false">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中...' : '保存' }}</button></div>
+      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中...' : '保存' }}</button></div>
     </form></div>
 
     <Transition name="detail-drawer" appear>
-      <EntityDetailModal v-if="detailId" :entity="config.endpoint" :id="detailId" @close="detailId = null" @edit="editFromDetail" />
+      <EntityDetailModal v-if="detailId" :entity="config.endpoint" :id="detailId" :refresh-key="detailRefresh" @close="detailId = null" @edit="editFromDetail" />
     </Transition>
     <div v-if="toast.show" class="toast" :class="{ error: toast.error }">{{ toast.message }}</div>
   </div>

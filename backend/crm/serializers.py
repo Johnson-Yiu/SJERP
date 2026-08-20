@@ -1,9 +1,15 @@
 from decimal import Decimal
 
+import bleach
+
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
+from django.utils.html import strip_tags
 from rest_framework import serializers
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, QuoteItem, RolePermission, SKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Transaction
+from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
+from .quote_snapshots import create_quote_items
 
 
 def customer_sequence_suffix(value):
@@ -33,6 +39,24 @@ def next_product_code():
     if value > 999:
         raise serializers.ValidationError({"code": "当日产品编号已超过 999，请联系管理员扩展编号规则。"})
     return f"SPU{today:%y%m%d}{value:03d}"
+
+
+IMPORTANT_NOTE_TAGS = ["p", "br", "strong", "em", "ul", "ol", "li", "a"]
+IMPORTANT_NOTE_ATTRIBUTES = {"a": ["href", "target", "rel"]}
+IMPORTANT_NOTE_PROTOCOLS = ["http", "https", "mailto"]
+
+
+def sanitize_important_note(value):
+    content = bleach.clean(
+        value or "",
+        tags=IMPORTANT_NOTE_TAGS,
+        attributes=IMPORTANT_NOTE_ATTRIBUTES,
+        protocols=IMPORTANT_NOTE_PROTOCOLS,
+        strip=True,
+    ).strip()
+    if not strip_tags(content).strip():
+        raise serializers.ValidationError("备注内容不能为空。")
+    return content
 
 
 def allocate_product_code():
@@ -256,43 +280,88 @@ class ProductCertificateSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class QuoteImportantNoteSerializer(serializers.ModelSerializer):
+    source_quote_no = serializers.CharField(source="source_quote.quote_no", read_only=True)
+    source_revision_no = serializers.IntegerField(source="source_quote.revision_no", read_only=True)
+    created_by_name = serializers.SerializerMethodField()
+    deactivated_by_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = QuoteImportantNote
+        fields = ["id", "content", "is_active", "source_quote_no", "source_revision_no", "created_by_name", "created_at", "deactivated_at", "deactivated_by_name"]
+        read_only_fields = ["is_active", "source_quote_no", "source_revision_no", "created_by_name", "created_at", "deactivated_at", "deactivated_by_name"]
+
+    def validate_content(self, value):
+        return sanitize_important_note(value)
+
+    def get_created_by_name(self, obj):
+        return obj.created_by.get_username() if obj.created_by else "系统"
+
+    def get_deactivated_by_name(self, obj):
+        if not obj.deactivated_at:
+            return ""
+        return obj.deactivated_by.get_username() if obj.deactivated_by else "系统"
+
+
 class QuoteItemSerializer(serializers.ModelSerializer):
-    sku_code = serializers.CharField(source="sku.sku", read_only=True)
-    product_name = serializers.CharField(source="sku.product.name", read_only=True)
+    sku_code = serializers.CharField(source="sku_code_snapshot", read_only=True)
+    product_name = serializers.CharField(source="product_name_snapshot", read_only=True)
+    unit = serializers.CharField(source="unit_snapshot", read_only=True)
+    image = serializers.ImageField(source="image_snapshot", read_only=True)
     amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
 
     class Meta:
         model = QuoteItem
-        fields = ["id", "sku", "sku_code", "product_name", "quantity", "unit_price", "amount", "notes"]
+        fields = ["id", "sku", "sku_code", "product_name", "unit", "image", "quantity", "unit_price", "amount", "description", "notes"]
 
 
 class QuoteSerializer(serializers.ModelSerializer):
     items = QuoteItemSerializer(many=True)
-    customer_name = serializers.CharField(source="customer.name", read_only=True)
+    customer_name = serializers.CharField(source="buyer_company_name", read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     total_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    root_quote_no = serializers.SerializerMethodField()
+    revision_label = serializers.SerializerMethodField()
+    parent_quote_no = serializers.SerializerMethodField()
 
     class Meta:
         model = Quote
         fields = "__all__"
+        read_only_fields = ["quote_no", "root_quote", "parent_quote", "revision_no", "revision_summary", "buyer_company_name"]
+
+    def get_root_quote_no(self, obj):
+        return obj.root_quote.quote_no if obj.root_quote_id else obj.quote_no
+
+    def get_revision_label(self, obj):
+        return f"Revision {obj.revision_no}" if obj.revision_no else "Original"
+
+    def get_parent_quote_no(self, obj):
+        return obj.parent_quote.quote_no if obj.parent_quote_id else ""
 
     @transaction.atomic
     def create(self, validated_data):
         items = validated_data.pop("items", [])
+        customer = validated_data["customer"]
+        primary_contact = customer.contacts.order_by("-is_primary", "name").first()
+        snapshots = {
+            "recipient_name": primary_contact.name if primary_contact else customer.name,
+            "buyer_address": customer.address,
+            "buyer_email": primary_contact.email if primary_contact else "",
+            "buyer_phone": primary_contact.phone if primary_contact else "",
+        }
+        for field, value in snapshots.items():
+            if not validated_data.get(field):
+                validated_data[field] = value
+        try:
+            validated_data["quote_no"] = allocate_root_quote_no(validated_data["quote_date"], customer.country)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(getattr(exc, "message_dict", exc.messages)) from exc
         quote = Quote.objects.create(**validated_data)
-        QuoteItem.objects.bulk_create([QuoteItem(quote=quote, **item) for item in items])
+        create_quote_items(quote, items)
         return quote
 
-    @transaction.atomic
     def update(self, instance, validated_data):
-        items = validated_data.pop("items", None)
-        for key, value in validated_data.items():
-            setattr(instance, key, value)
-        instance.save()
-        if items is not None:
-            instance.items.all().delete()
-            QuoteItem.objects.bulk_create([QuoteItem(quote=instance, **item) for item in items])
-        return instance
+        raise serializers.ValidationError("已保存报价请创建迭代版本")
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -309,6 +378,7 @@ class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
     customer_name = serializers.CharField(source="customer.name", read_only=True)
     quote_no = serializers.CharField(source="quote.quote_no", read_only=True, default="")
+    source_quote_no = serializers.CharField(source="quote.quote_no", read_only=True, default="")
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     total_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     paid_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
@@ -321,9 +391,92 @@ class OrderSerializer(serializers.ModelSerializer):
     def get_balance_amount(self, obj):
         return (obj.total_amount - obj.paid_amount).quantize(Decimal("0.01"))
 
+    def validate(self, attrs):
+        if self.instance is None and not attrs.get("items"):
+            raise serializers.ValidationError({"items": "订单至少需要一条商品明细。"})
+        source_quote = attrs.get("quote")
+        customer = attrs.get("customer")
+        if self.instance is None and source_quote and customer and source_quote.customer_id != customer.id:
+            raise serializers.ValidationError({"customer": "从报价创建订单时，客户必须与来源报价一致。"})
+        return attrs
+
+    @staticmethod
+    def _item_signature(items):
+        return [
+            (item["sku"].pk, Decimal(item["quantity"]), Decimal(item["unit_price"]), item.get("notes", ""))
+            for item in items
+        ]
+
+    def _create_quote_revision_if_needed(self, source_quote, order_data, order_items):
+        source_items = list(source_quote.items.order_by("id"))
+        changed_parts = []
+        if self._item_signature(order_items) != [
+            (item.sku_id, item.quantity, item.unit_price, item.notes)
+            for item in source_items
+        ]:
+            changed_parts.append("产品明细")
+
+        for field, label in [
+            ("currency", "币种"),
+            ("exchange_rate", "汇率"),
+            ("shipping_fee", "运费"),
+            ("discount", "折扣"),
+            ("notes", "条款/备注"),
+        ]:
+            if order_data.get(field, getattr(source_quote, field)) != getattr(source_quote, field):
+                changed_parts.append(label)
+
+        if not changed_parts:
+            return source_quote
+
+        root_quote = source_quote.root_quote or source_quote
+        try:
+            quote_no, revision_no = allocate_revision_quote_no(root_quote)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(getattr(exc, "message_dict", exc.messages)) from exc
+
+        copied_fields = [
+            "customer", "quote_date", "valid_until", "currency", "exchange_rate", "shipping_fee", "discount",
+            "notes", "recipient_name", "buyer_address", "buyer_email", "buyer_phone", "lead_time_days",
+            "deposit_ratio", "trading_terms", "shipping_details", "buyer_company_name",
+        ]
+        revision_values = {field: getattr(source_quote, field) for field in copied_fields}
+        revision_values.update({
+            field: order_data[field]
+            for field in ("currency", "exchange_rate", "shipping_fee", "discount", "notes")
+            if field in order_data
+        })
+        revision = Quote.objects.create(
+            quote_no=quote_no,
+            root_quote=root_quote,
+            parent_quote=source_quote,
+            revision_no=revision_no,
+            revision_summary=f"订单确认时调整：{'、'.join(changed_parts)}",
+            status="accepted",
+            **revision_values,
+        )
+        create_quote_items(
+            revision,
+            [
+                {
+                    "sku": item["sku"],
+                    "quantity": item["quantity"],
+                    "unit_price": item["unit_price"],
+                    "notes": item.get("notes", ""),
+                    "description": source_items[index].description if index < len(source_items) else "",
+                }
+                for index, item in enumerate(order_items)
+            ],
+            source_items=source_items,
+        )
+        return revision
+
     @transaction.atomic
     def create(self, validated_data):
         items = validated_data.pop("items", [])
+        source_quote = validated_data.get("quote")
+        if source_quote:
+            validated_data["quote"] = self._create_quote_revision_if_needed(source_quote, validated_data, items)
         order = Order.objects.create(**validated_data)
         rows = []
         for item in items:
@@ -331,6 +484,8 @@ class OrderSerializer(serializers.ModelSerializer):
                 item["cost_price"] = item["sku"].cost_price
             rows.append(OrderItem(order=order, **item))
         OrderItem.objects.bulk_create(rows)
+        if order.quote_id:
+            Quote.objects.filter(pk=order.quote_id).update(status="accepted")
         return order
 
     @transaction.atomic
@@ -354,6 +509,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     customer_name = serializers.CharField(source="customer.name", read_only=True, default="")
     order_no = serializers.CharField(source="order.order_no", read_only=True, default="")
     direction_display = serializers.CharField(source="get_direction_display", read_only=True)
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
     rmb_amount = serializers.SerializerMethodField()
 
     class Meta:

@@ -2,20 +2,26 @@ import csv
 import io
 from datetime import date
 from decimal import Decimal, InvalidOperation
+from uuid import uuid4
 
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models import Case, Count, DecimalField, ExpressionWrapper, F, IntegerField, OuterRef, Q, Subquery, Sum, Value, When
 from django.db.models.functions import Coalesce, TruncMonth
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from rest_framework import status, viewsets
+from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action, api_view, parser_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, RolePermission, SKU, Transaction
-from .permissions import PermissionAdminOnly
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, TransactionSerializer, next_product_code
+from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, QuoteImportantNote, RolePermission, SKU, Transaction
+from .permissions import PermissionAdminOnly, QuoteExportPermission
+from .quote_numbers import allocate_revision_quote_no
+from .quote_export import QuoteExportError, build_pi_export_payload
+from .quote_snapshots import create_quote_items
+from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, TransactionSerializer, next_product_code
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -311,6 +317,28 @@ class SKUViewSet(viewsets.ModelViewSet):
             qs = qs.filter(active=True)
         return qs.filter(product_id=self.request.query_params["product"]) if self.request.query_params.get("product") else qs
 
+    @action(detail=True, methods=["post", "delete"], parser_classes=[MultiPartParser, FormParser])
+    def image(self, request, pk=None):
+        sku = self.get_object()
+        if request.method == "DELETE":
+            if sku.image:
+                sku.image.delete(save=False)
+            sku.image = ""
+            sku.save(update_fields=["image"])
+            return Response(self.get_serializer(sku).data)
+
+        upload = request.FILES.get("image")
+        allowed_mime_types = {"image/gif", "image/jpeg", "image/png", "image/webp"}
+        if upload is None:
+            return Response({"image": "请上传图片文件。"}, status=status.HTTP_400_BAD_REQUEST)
+        if upload.content_type not in allowed_mime_types:
+            return Response({"image": "仅支持 GIF、JPEG、PNG 或 WebP 图片。"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(sku, data={"image": upload}, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
 
 class ProductParameterViewSet(viewsets.ModelViewSet):
     serializer_class = ProductParameterSerializer
@@ -334,13 +362,231 @@ class ProductCertificateViewSet(viewsets.ModelViewSet):
 
 class QuoteViewSet(viewsets.ModelViewSet):
     serializer_class = QuoteSerializer
-    queryset = Quote.objects.select_related("customer").prefetch_related("items__sku__product")
+    queryset = Quote.objects.select_related("customer", "root_quote").prefetch_related("items__sku__product")
     search_fields = ["quote_no", "customer__name"]
     ordering_fields = ["quote_date", "valid_until", "created_at"]
 
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.filter(customer_id=self.request.query_params["customer"]) if self.request.query_params.get("customer") else qs
+
+    def update(self, request, *args, **kwargs):
+        return Response({"detail": "已保存报价请创建迭代版本"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(
+            {"detail": "Saved quotations are permanent records and cannot be deleted."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    def _root_quote(self, quote):
+        return quote.root_quote or quote
+
+    @action(detail=True, methods=["get", "post"], url_path="important-notes")
+    def important_notes(self, request, pk=None):
+        quote = self.get_object()
+        root_quote = self._root_quote(quote)
+        notes = QuoteImportantNote.objects.filter(root_quote=root_quote).select_related("source_quote", "created_by", "deactivated_by")
+        if request.method == "GET":
+            return Response(QuoteImportantNoteSerializer(notes, many=True).data)
+
+        serializer = QuoteImportantNoteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        creator = request.user if request.user.is_authenticated else None
+        note = serializer.save(root_quote=root_quote, source_quote=quote, created_by=creator)
+        return Response(QuoteImportantNoteSerializer(note).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"], url_path=r"important-notes/(?P<note_id>[^/.]+)/deactivate")
+    def deactivate_important_note(self, request, pk=None, note_id=None):
+        root_quote = self._root_quote(self.get_object())
+        note = get_object_or_404(
+            QuoteImportantNote.objects.select_related("source_quote", "created_by", "deactivated_by"),
+            pk=note_id,
+            root_quote=root_quote,
+        )
+        if note.is_active:
+            note.is_active = False
+            note.deactivated_at = timezone.now()
+            note.deactivated_by = request.user if request.user.is_authenticated else None
+            note.save(update_fields=["is_active", "deactivated_at", "deactivated_by", "updated_at"])
+        return Response(QuoteImportantNoteSerializer(note).data)
+
+    @action(detail=True, methods=["post"], url_path=r"important-notes/(?P<note_id>[^/.]+)/restore")
+    def restore_important_note(self, request, pk=None, note_id=None):
+        root_quote = self._root_quote(self.get_object())
+        note = get_object_or_404(
+            QuoteImportantNote.objects.select_related("source_quote", "created_by", "deactivated_by"),
+            pk=note_id,
+            root_quote=root_quote,
+        )
+        if not note.is_active:
+            note.is_active = True
+            note.save(update_fields=["is_active", "updated_at"])
+        return Response(QuoteImportantNoteSerializer(note).data)
+
+    @action(detail=True, methods=["get"])
+    def workbench(self, request, pk=None):
+        quote = self.get_object()
+        root_quote = self._root_quote(quote)
+        revisions = Quote.objects.filter(Q(pk=root_quote.pk) | Q(root_quote=root_quote)).order_by("revision_no", "id")
+        orders = Order.objects.filter(quote__in=revisions).select_related("quote", "customer").prefetch_related("items__sku__product", "transactions")
+        notes = QuoteImportantNote.objects.filter(root_quote=root_quote).select_related("source_quote", "created_by", "deactivated_by")
+        return Response({
+            "quote": QuoteSerializer(quote).data,
+            "root_quote_no": root_quote.quote_no,
+            "revisions": QuoteSerializer(revisions, many=True).data,
+            "orders": OrderSerializer(orders, many=True).data,
+            "important_notes": QuoteImportantNoteSerializer(notes, many=True).data,
+            "order_summary": {"count": orders.count()},
+        })
+
+    @action(detail=True, methods=["get"], url_path="order-draft")
+    def order_draft(self, request, pk=None):
+        quote = self.get_object()
+        return Response({
+            "order_no": f"SO-{timezone.localdate():%Y%m%d}-{quote.id}-{uuid4().hex[:6].upper()}",
+            "customer": quote.customer_id,
+            "quote": quote.id,
+            "order_date": timezone.localdate(),
+            "expected_ship_date": None,
+            "status": "draft",
+            "currency": quote.currency,
+            "exchange_rate": quote.exchange_rate,
+            "shipping_fee": quote.shipping_fee,
+            "discount": quote.discount,
+            "notes": quote.notes,
+            "items": [
+                {
+                    "sku": item.sku_id,
+                    "quantity": item.quantity,
+                    "unit_price": item.unit_price,
+                    "cost_price": item.sku.cost_price,
+                    "notes": item.notes,
+                }
+                for item in quote.items.select_related("sku")
+            ],
+        })
+
+    @action(detail=True, methods=["post"])
+    @transaction.atomic
+    def revise(self, request, pk=None):
+        source = self.get_object()
+        revision_summary = str(request.data.get("revision_summary", "")).strip()
+        if not revision_summary:
+            raise serializers.ValidationError({"revision_summary": "请简要说明本次修改的内容。"})
+        serializer = self.get_serializer(data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        changes = serializer.validated_data.copy()
+        item_data = changes.pop("items", None)
+        if "customer" in changes and changes["customer"].pk != source.customer_id:
+            raise serializers.ValidationError({"customer": "修订版本不能更换客户。"})
+        root_quote = source.root_quote or source
+        try:
+            quote_no, revision_no = allocate_revision_quote_no(root_quote)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(getattr(exc, "message_dict", exc.messages)) from exc
+        copied_fields = [
+            "customer", "quote_date", "valid_until", "status", "currency", "exchange_rate",
+            "shipping_fee", "discount", "notes", "recipient_name", "buyer_address",
+            "buyer_email", "buyer_phone", "lead_time_days", "deposit_ratio", "trading_terms",
+            "shipping_details", "buyer_company_name",
+        ]
+        quote_values = {field: getattr(source, field) for field in copied_fields}
+        quote_values.update(changes)
+        revision = Quote.objects.create(
+            quote_no=quote_no,
+            root_quote=root_quote,
+            parent_quote=source,
+            revision_no=revision_no,
+            revision_summary=revision_summary,
+            **quote_values,
+        )
+        if item_data is None:
+            source_items = list(source.items.select_related("sku__product"))
+            item_data = [
+                {
+                    "sku": item.sku,
+                    "quantity": item.quantity,
+                    "unit_price": item.unit_price,
+                    "description": item.description,
+                    "notes": item.notes,
+                }
+                for item in source_items
+            ]
+            create_quote_items(revision, item_data, source_items=source_items)
+        else:
+            create_quote_items(revision, item_data)
+        return Response(self.get_serializer(revision).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["get"], url_path="pi-data")
+    def pi_data(self, request, pk=None):
+        quote = self.get_object()
+        products = []
+        subtotal = Decimal("0")
+        for item in quote.items.all():
+            amount = item.amount
+            subtotal += amount
+            products.append({
+                "sku": item.sku_code_snapshot,
+                "product_name": item.product_name_snapshot,
+                "description": item.description,
+                "quantity": item.quantity,
+                "unit_price": item.unit_price,
+                "amount": amount,
+                "unit": item.unit_snapshot,
+                "image_url": request.build_absolute_uri(item.image_snapshot.url) if item.image_snapshot else "",
+            })
+        total_amount = quote.total_amount
+        deposit_amount = (total_amount * quote.deposit_ratio).quantize(Decimal("0.01"))
+        return Response({
+            "invoice_no": quote.quote_no,
+            "buyer": {
+                "company_name": quote.buyer_company_name,
+                "name": quote.recipient_name,
+                "address": quote.buyer_address,
+                "email": quote.buyer_email,
+                "phone": quote.buyer_phone,
+            },
+            "terms": {
+                "quote_date": quote.quote_date,
+                "valid_until": quote.valid_until,
+                "lead_time_days": quote.lead_time_days,
+                "trading_terms": quote.trading_terms,
+                "shipping_details": quote.shipping_details,
+                "notes": quote.notes,
+            },
+            "totals": {
+                "currency": quote.currency,
+                "subtotal": subtotal,
+                "shipping_fee": quote.shipping_fee,
+                "discount": quote.discount,
+                "total_amount": total_amount,
+            },
+            "payment_splits": {
+                "deposit_ratio": quote.deposit_ratio,
+                "deposit_amount": deposit_amount,
+                "balance_ratio": Decimal("1") - quote.deposit_ratio,
+                "balance_amount": total_amount - deposit_amount,
+            },
+            "products": products,
+        })
+
+    @action(detail=True, methods=["get"], permission_classes=[QuoteExportPermission])
+    def export(self, request, pk=None):
+        quote = self.get_object()
+        try:
+            content = build_pi_export_payload(quote)
+        except QuoteExportError:
+            return Response(
+                {"detail": "PI workbook generation failed."},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
+        response = HttpResponse(
+            content,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response["Content-Disposition"] = f'attachment; filename="{quote.quote_no}.xlsx"'
+        return response
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -360,6 +606,41 @@ class OrderViewSet(viewsets.ModelViewSet):
         if self.request.query_params.get("sku"):
             qs = qs.filter(items__sku_id=self.request.query_params["sku"]).distinct()
         return qs
+
+    @action(detail=True, methods=["get"])
+    def workbench(self, request, pk=None):
+        order = self.get_object()
+        items = list(order.items.all())
+        payments = list(order.transactions.all())
+        inventory = list(order.inventory_movements.select_related("sku__product"))
+        ordered_quantity = sum((item.quantity for item in items), Decimal("0"))
+        shipped_quantity = sum(
+            (movement.quantity for movement in inventory if movement.type == "sale_out"),
+            Decimal("0"),
+        ) - sum(
+            (movement.quantity for movement in inventory if movement.type == "return_in"),
+            Decimal("0"),
+        )
+        paid_amount = sum(
+            (payment.amount for payment in payments if payment.direction == "income" and payment.status == "confirmed"),
+            Decimal("0"),
+        )
+        return Response({
+            "order": OrderSerializer(order).data,
+            "source_quote": QuoteSerializer(order.quote).data if order.quote else None,
+            "items": OrderItemSerializer(items, many=True).data,
+            "payments": TransactionSerializer(payments, many=True).data,
+            "inventory": InventoryMovementSerializer(inventory, many=True).data,
+            "payment_summary": {
+                "paid_amount": paid_amount,
+                "balance_amount": order.total_amount - paid_amount,
+            },
+            "fulfillment_summary": {
+                "ordered_quantity": ordered_quantity,
+                "shipped_quantity": shipped_quantity,
+                "remaining_quantity": ordered_quantity - shipped_quantity,
+            },
+        })
 
 
 class TransactionViewSet(viewsets.ModelViewSet):

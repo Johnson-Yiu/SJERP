@@ -22,3 +22,26 @@ class PermissionAdminOnly(BasePermission):
         if not getattr(settings, "RBAC_ENFORCEMENT", False):
             return True
         return is_permission_admin(request.user)
+
+
+class QuoteExportPermission(BasePermission):
+    """Require a signed-in operator and honor quote export grants when RBAC is active."""
+
+    message = "Authentication and quote export permission are required."
+
+    def has_permission(self, request, view):
+        user = request.user
+        if not user or not user.is_authenticated:
+            return False
+        if not getattr(settings, "RBAC_ENFORCEMENT", False) or user.is_superuser:
+            return True
+        profile = getattr(user, "employee_profile", None)
+        return bool(
+            profile
+            and profile.active
+            and profile.roles.filter(
+                active=True,
+                permissions__module="quotes",
+                permissions__can_export=True,
+            ).exists()
+        )

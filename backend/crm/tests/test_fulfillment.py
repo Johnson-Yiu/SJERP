@@ -229,3 +229,25 @@ class FulfillmentApiTests(TestCase):
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(response.data["unpaid_amount"], "12.00")
+
+    def test_purchase_receipt_creates_automatic_inventory_movement(self):
+        supplier = Supplier.objects.create(name="Receipt API Supplier")
+        order = Order.objects.create(order_no="SO-RECEIPT-API", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21))
+        purchase = PurchaseOrder.objects.create(purchase_no="PO-RECEIPT-API", supplier=supplier, order=order, order_date=date(2026, 8, 21), status="ordered")
+        item = purchase.items.create(sku=self.sku, quantity="4", unit_price="3")
+        response = self.client.post("/api/purchase-orders/{}/receive/".format(purchase.id), {
+            "purchase_item": item.id, "receipt_date": "2026-08-21", "quantity": "4", "unit_cost": "3",
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
+        self.assertTrue(InventoryMovement.objects.filter(source_type="receipt", source_no="PO-RECEIPT-API", is_automatic=True).exists())
+
+    def test_supplier_payment_creates_expense_for_purchase_order(self):
+        supplier = Supplier.objects.create(name="Payment API Supplier")
+        order = Order.objects.create(order_no="SO-PAYMENT-API", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21))
+        purchase = PurchaseOrder.objects.create(purchase_no="PO-PAYMENT-API", supplier=supplier, order=order, order_date=date(2026, 8, 21), status="ordered")
+        purchase.items.create(sku=self.sku, quantity="4", unit_price="3")
+        response = self.client.post("/api/purchase-orders/{}/pay/".format(purchase.id), {
+            "transaction_date": "2026-08-21", "amount": "12", "currency": "USD", "exchange_rate": "1",
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
+        self.assertEqual(response.data["direction"], "expense")

@@ -21,7 +21,8 @@ from .permissions import PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, SupplierSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, SupplierPaymentInputSerializer, SupplierSerializer, TransactionSerializer, next_product_code
+from .services.fulfillment import record_receipt, record_supplier_payment
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -48,6 +49,30 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
     serializer_class = PurchaseOrderSerializer
     queryset = PurchaseOrder.objects.select_related("supplier", "order").prefetch_related("items__sku", "items__receipts", "transactions")
     search_fields = ["purchase_no", "supplier__name", "order__order_no"]
+
+    @action(detail=True, methods=["post"])
+    def receive(self, request, pk=None):
+        purchase = self.get_object()
+        input_serializer = ReceiptInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        item = purchase.items.filter(pk=input_serializer.validated_data["purchase_item"]).first()
+        if item is None:
+            return Response({"detail": "到货明细不属于该采购单。"}, status=status.HTTP_400_BAD_REQUEST)
+        receipt = record_receipt(item, input_serializer.validated_data)
+        return Response({
+            "id": receipt.id,
+            "purchase_item": receipt.purchase_item_id,
+            "quantity": receipt.quantity,
+            "is_overage": receipt.is_overage,
+            "inventory_movement": receipt.inventory_movement_id,
+        }, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"])
+    def pay(self, request, pk=None):
+        input_serializer = SupplierPaymentInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        payment = record_supplier_payment(self.get_object(), input_serializer.validated_data)
+        return Response(TransactionSerializer(payment).data, status=status.HTTP_201_CREATED)
 
 
 class AccessRoleViewSet(viewsets.ModelViewSet):

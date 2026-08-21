@@ -120,6 +120,26 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         return purchase
 
 
+class ReceiptInputSerializer(serializers.Serializer):
+    purchase_item = serializers.IntegerField()
+    receipt_date = serializers.DateField()
+    quantity = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal("0.01"))
+    unit_cost = serializers.DecimalField(max_digits=14, decimal_places=4, min_value=Decimal("0"))
+    is_overage = serializers.BooleanField(required=False, default=False)
+    overage_reason = serializers.CharField(required=False, allow_blank=True, max_length=30)
+    notes = serializers.CharField(required=False, allow_blank=True)
+
+
+class SupplierPaymentInputSerializer(serializers.Serializer):
+    transaction_date = serializers.DateField()
+    amount = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal("0.01"))
+    currency = serializers.CharField(max_length=10, required=False)
+    exchange_rate = serializers.DecimalField(max_digits=12, decimal_places=6, min_value=Decimal("0"), required=False)
+    payment_method = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    reference = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    notes = serializers.CharField(required=False, allow_blank=True)
+
+
 class OrganizationUnitSerializer(serializers.ModelSerializer):
     type_display = serializers.CharField(source="get_type_display", read_only=True)
     positions = PositionSerializer(many=True, read_only=True)

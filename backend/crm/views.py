@@ -22,7 +22,7 @@ from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
 from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, SKUSerializer, SupplierPaymentInputSerializer, SupplierSerializer, TransactionSerializer, next_product_code
-from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment
+from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, sku_metrics
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -406,6 +406,16 @@ class QuoteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.filter(customer_id=self.request.query_params["customer"]) if self.request.query_params.get("customer") else qs
+
+    @action(detail=True, methods=["get"])
+    def availability(self, request, pk=None):
+        quote = self.get_object()
+        return Response({"quote": quote.id, "items": [
+            {"quote_item": item.id, "sku": item.sku_id,
+             "available_quantity": sku_metrics(item.sku)["available_quantity"],
+             "reference_lead_time_days": quote.lead_time_days}
+            for item in quote.items.select_related("sku")
+        ]})
 
     def update(self, request, *args, **kwargs):
         return Response({"detail": "已保存报价请创建迭代版本"}, status=status.HTTP_400_BAD_REQUEST)

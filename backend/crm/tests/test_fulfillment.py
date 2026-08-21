@@ -18,6 +18,7 @@ from crm.models import (
     ShipmentItem,
     SKU,
     Supplier,
+    Quote,
 )
 from crm.services.fulfillment import (
     allocate_order,
@@ -269,3 +270,11 @@ class FulfillmentApiTests(TestCase):
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
         self.assertTrue(InventoryMovement.objects.filter(source_type="shipment", source_no="SH-API-001", type="sale_out").exists())
+
+    def test_quote_availability_shows_stock_without_creating_reservation(self):
+        quote = Quote.objects.create(quote_no="QT-AVAIL-API", customer=Customer.objects.get(code="C-API"), quote_date=date(2026, 8, 21), lead_time_days=12)
+        quote.items.create(sku=self.sku, quantity="3", unit_price="5")
+        InventoryMovement.objects.create(movement_no="IN-AVAIL-API", movement_date=date(2026, 8, 21), type="purchase_in", sku=self.sku, quantity="2")
+        response = self.client.get("/api/quotes/{}/availability/".format(quote.id))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, getattr(response, "data", None))
+        self.assertEqual(response.data["items"][0]["available_quantity"], Decimal("2.00"))

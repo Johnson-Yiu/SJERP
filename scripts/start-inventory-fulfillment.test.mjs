@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 
-const launcher = new URL('../启动库存履约分支.ps1', import.meta.url)
+const launcher = new URL('../start-inventory-fulfillment.ps1', import.meta.url)
 
 test('inventory fulfillment launcher owns fixed branch ports and opens the inventory page', async () => {
   const source = await readFile(launcher, 'utf8')
@@ -20,6 +20,8 @@ test('batch launcher uses Windows CRLF line endings for cmd.exe', async () => {
   const text = source.toString('utf8')
   assert.ok(text.includes('\r\n'))
   assert.equal(text.replaceAll('\r\n', '').includes('\n'), false)
+  assert.match(text, /start-inventory-fulfillment\.ps1/)
+  assert.doesNotMatch(text, /[\u4e00-\u9fff]/)
 })
 
 test('launcher uses TCP probes for both fixed ports before starting either service', async () => {

@@ -17,12 +17,8 @@ function Test-PortOpen([int] $Port) {
         $client.EndConnect($connection)
         return $true
     }
-    catch {
-        return $false
-    }
-    finally {
-        $client.Dispose()
-    }
+    catch { return $false }
+    finally { $client.Dispose() }
 }
 
 function Wait-ForPort([int] $Port, [int] $TimeoutSeconds) {
@@ -49,7 +45,7 @@ if ($backendAlreadyRunning -and $frontendAlreadyRunning) {
     exit 0
 }
 if ($backendAlreadyRunning -or $frontendAlreadyRunning) {
-    throw "Only one branch service is running. Stop the service using port(s) $(@($BackendPort, $FrontendPort | Where-Object { Test-PortOpen $_ }) -join ', ') before restarting."
+    throw "Only one branch service is running. Stop the partial branch service before restarting."
 }
 
 Write-Host "Applying inventory fulfillment branch migrations..."

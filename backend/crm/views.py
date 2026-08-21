@@ -16,12 +16,12 @@ from rest_framework.decorators import action, api_view, parser_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, QuoteImportantNote, RolePermission, SKU, Supplier, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, SKU, Supplier, Transaction
 from .permissions import PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, SupplierSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, SupplierSerializer, TransactionSerializer, next_product_code
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -42,6 +42,12 @@ class SupplierViewSet(viewsets.ModelViewSet):
     serializer_class = SupplierSerializer
     queryset = Supplier.objects.prefetch_related("purchase_orders")
     search_fields = ["name", "contact_name", "phone", "email"]
+
+
+class PurchaseOrderViewSet(viewsets.ModelViewSet):
+    serializer_class = PurchaseOrderSerializer
+    queryset = PurchaseOrder.objects.select_related("supplier", "order").prefetch_related("items__sku", "items__receipts", "transactions")
+    search_fields = ["purchase_no", "supplier__name", "order__order_no"]
 
 
 class AccessRoleViewSet(viewsets.ModelViewSet):

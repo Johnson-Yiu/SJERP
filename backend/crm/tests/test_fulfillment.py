@@ -215,3 +215,17 @@ class FulfillmentApiTests(TestCase):
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], "API Supplier")
+
+    def test_purchase_order_can_be_created_and_reports_unpaid_amount(self):
+        supplier = Supplier.objects.create(name="Purchase API Supplier")
+        order = Order.objects.create(
+            order_no="SO-PURCHASE-API", customer=Customer.objects.get(code="C-API"),
+            order_date=date(2026, 8, 21), status="confirmed",
+        )
+        response = self.client.post("/api/purchase-orders/", {
+            "purchase_no": "PO-API-001", "supplier": supplier.id, "order": order.id,
+            "order_date": "2026-08-21", "status": "ordered", "currency": "USD",
+            "exchange_rate": "1", "items": [{"sku": self.sku.id, "quantity": "4", "unit_price": "3"}],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.data["unpaid_amount"], "12.00")

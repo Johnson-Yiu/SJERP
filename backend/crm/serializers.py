@@ -7,7 +7,7 @@ from django.db import transaction
 from django.utils.html import strip_tags
 from rest_framework import serializers
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Supplier, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Supplier, Transaction
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .quote_snapshots import create_quote_items
 
@@ -86,6 +86,38 @@ class SupplierSerializer(serializers.ModelSerializer):
         model = Supplier
         fields = "__all__"
         read_only_fields = ["purchase_count", "created_at", "updated_at"]
+
+
+class PurchaseOrderItemSerializer(serializers.ModelSerializer):
+    sku_code = serializers.CharField(source="sku.sku", read_only=True)
+    received_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    remaining_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = PurchaseOrderItem
+        fields = ["id", "sku", "sku_code", "quantity", "unit_price", "received_quantity", "remaining_quantity"]
+
+
+class PurchaseOrderSerializer(serializers.ModelSerializer):
+    items = PurchaseOrderItemSerializer(many=True)
+    supplier_name = serializers.CharField(source="supplier.name", read_only=True)
+    order_no = serializers.CharField(source="order.order_no", read_only=True)
+    total_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    paid_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    unpaid_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = PurchaseOrder
+        fields = "__all__"
+
+    @transaction.atomic
+    def create(self, validated_data):
+        items = validated_data.pop("items")
+        purchase = PurchaseOrder.objects.create(**validated_data)
+        PurchaseOrderItem.objects.bulk_create([
+            PurchaseOrderItem(purchase_order=purchase, **item) for item in items
+        ])
+        return purchase
 
 
 class OrganizationUnitSerializer(serializers.ModelSerializer):

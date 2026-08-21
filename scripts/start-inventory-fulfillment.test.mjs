@@ -13,3 +13,18 @@ test('inventory fulfillment launcher owns fixed branch ports and opens the inven
   assert.match(source, /VITE_API_PROXY_PORT/)
   assert.match(source, /127\.0\.0\.1:\$FrontendPort\/inventory/)
 })
+
+test('batch launcher uses Windows CRLF line endings for cmd.exe', async () => {
+  const source = await readFile(new URL('../启动库存履约分支.bat', import.meta.url))
+
+  const text = source.toString('utf8')
+  assert.ok(text.includes('\r\n'))
+  assert.equal(text.replaceAll('\r\n', '').includes('\n'), false)
+})
+
+test('launcher checks both fixed ports before starting either service', async () => {
+  const source = await readFile(launcher, 'utf8')
+
+  assert.match(source, /@\(\$BackendPort, \$FrontendPort\) \| Where-Object/)
+  assert.match(source, /System\.Net\.Sockets\.TcpClient/)
+})

@@ -10,7 +10,19 @@ $BackendPort = 8138
 $FrontendPort = 5228
 
 function Test-PortOpen([int] $Port) {
-    return $null -ne (Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue)
+    $client = [System.Net.Sockets.TcpClient]::new()
+    try {
+        $connection = $client.BeginConnect("127.0.0.1", $Port, $null, $null)
+        if (-not $connection.AsyncWaitHandle.WaitOne(300)) { return $false }
+        $client.EndConnect($connection)
+        return $true
+    }
+    catch {
+        return $false
+    }
+    finally {
+        $client.Dispose()
+    }
 }
 
 function Wait-ForPort([int] $Port, [int] $TimeoutSeconds) {
@@ -28,7 +40,7 @@ if (-not (Test-Path -LiteralPath (Join-Path $FrontendDir "node_modules"))) {
     throw "Frontend dependencies are missing. Run npm install in $FrontendDir first."
 }
 
-$occupied = @($BackendPort, $FrontendPort | Where-Object { Test-PortOpen $_ })
+$occupied = @(@($BackendPort, $FrontendPort) | Where-Object { Test-PortOpen $_ })
 if ($occupied.Count -gt 0) {
     throw "Port(s) $($occupied -join ', ') are already in use. Stop that branch service before starting this one."
 }

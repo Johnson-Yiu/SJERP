@@ -328,10 +328,40 @@ class SKUSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source="product.name", read_only=True)
     product_code = serializers.CharField(source="product.code", read_only=True)
     stock_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True, default=0)
+    actual_quantity = serializers.SerializerMethodField()
+    reserved_quantity = serializers.SerializerMethodField()
+    available_quantity = serializers.SerializerMethodField()
+    in_transit_quantity = serializers.SerializerMethodField()
+    to_procure_quantity = serializers.SerializerMethodField()
+    has_anomaly = serializers.SerializerMethodField()
 
     class Meta:
         model = SKU
         fields = "__all__"
+
+    def _metrics(self, obj):
+        from .services.fulfillment import sku_metrics
+        return sku_metrics(obj)
+
+    def get_actual_quantity(self, obj):
+        return self._metrics(obj)["actual_quantity"]
+
+    def get_reserved_quantity(self, obj):
+        return self._metrics(obj)["reserved_quantity"]
+
+    def get_available_quantity(self, obj):
+        return self._metrics(obj)["available_quantity"]
+
+    def get_in_transit_quantity(self, obj):
+        return self._metrics(obj)["in_transit_quantity"]
+
+    def get_to_procure_quantity(self, obj):
+        from .models import OrderItem
+        from .services.fulfillment import order_item_metrics
+        return sum((order_item_metrics(item)["to_procure_quantity"] for item in OrderItem.objects.filter(sku=obj, order__status__in=["confirmed", "production", "shipped"])), Decimal("0"))
+
+    def get_has_anomaly(self, obj):
+        return self.get_available_quantity(obj) < 0
 
 
 class ProductParameterSerializer(serializers.ModelSerializer):

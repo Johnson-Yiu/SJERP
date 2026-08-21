@@ -7,7 +7,7 @@ from django.db import transaction
 from django.utils.html import strip_tags
 from rest_framework import serializers
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Supplier, Transaction
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .quote_snapshots import create_quote_items
 
@@ -77,6 +77,15 @@ class PositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Position
         fields = "__all__"
+
+
+class SupplierSerializer(serializers.ModelSerializer):
+    purchase_count = serializers.IntegerField(source="purchase_orders.count", read_only=True)
+
+    class Meta:
+        model = Supplier
+        fields = "__all__"
+        read_only_fields = ["purchase_count", "created_at", "updated_at"]
 
 
 class OrganizationUnitSerializer(serializers.ModelSerializer):

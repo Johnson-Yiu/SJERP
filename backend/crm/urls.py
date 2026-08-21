@@ -2,10 +2,11 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .context import entity_context
-from .views import AccessRoleViewSet, CategoryAttributeViewSet, ContactViewSet, CustomerViewSet, EmployeeProfileViewSet, FollowUpViewSet, InventoryMovementViewSet, OrderViewSet, OrganizationUnitViewSet, PositionViewSet, ProductCategoryViewSet, ProductCertificateViewSet, ProductParameterViewSet, ProductViewSet, QuoteViewSet, RolePermissionViewSet, SKUViewSet, TransactionViewSet, current_operator, dashboard, import_csv, import_templates, organization_overview
+from .views import AccessRoleViewSet, CategoryAttributeViewSet, ContactViewSet, CustomerViewSet, EmployeeProfileViewSet, FollowUpViewSet, InventoryMovementViewSet, OrderViewSet, OrganizationUnitViewSet, PositionViewSet, ProductCategoryViewSet, ProductCertificateViewSet, ProductParameterViewSet, ProductViewSet, QuoteViewSet, RolePermissionViewSet, SKUViewSet, SupplierViewSet, TransactionViewSet, current_operator, dashboard, import_csv, import_templates, organization_overview
 
 router = DefaultRouter()
 router.register("customers", CustomerViewSet, basename="customer")
+router.register("suppliers", SupplierViewSet, basename="supplier")
 router.register("contacts", ContactViewSet)
 router.register("follow-ups", FollowUpViewSet)
 router.register("categories", ProductCategoryViewSet)

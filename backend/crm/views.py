@@ -16,12 +16,12 @@ from rest_framework.decorators import action, api_view, parser_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, QuoteImportantNote, RolePermission, SKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, QuoteImportantNote, RolePermission, SKU, Supplier, Transaction
 from .permissions import PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, SupplierSerializer, TransactionSerializer, next_product_code
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -36,6 +36,12 @@ class PositionViewSet(viewsets.ModelViewSet):
     serializer_class = PositionSerializer
     queryset = Position.objects.select_related("unit")
     search_fields = ["name", "code", "unit__name"]
+
+
+class SupplierViewSet(viewsets.ModelViewSet):
+    serializer_class = SupplierSerializer
+    queryset = Supplier.objects.prefetch_related("purchase_orders")
+    search_fields = ["name", "contact_name", "phone", "email"]
 
 
 class AccessRoleViewSet(viewsets.ModelViewSet):
@@ -673,6 +679,30 @@ class InventoryMovementViewSet(viewsets.ModelViewSet):
         if self.request.query_params.get("order"):
             qs = qs.filter(order_id=self.request.query_params["order"])
         return qs
+
+    def create(self, request, *args, **kwargs):
+        if request.data.get("type") not in {"adjust_in", "adjust_out", "sample_out", "return_in"}:
+            return Response(
+                {"detail": "手工库存流水仅允许盘盈、盘亏、样品出库或客户退回。"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        payload = request.data.copy()
+        payload["source_type"] = "manual"
+        payload["is_automatic"] = False
+        serializer = self.get_serializer(data=payload)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        if self.get_object().is_automatic:
+            return Response({"detail": "系统自动生成的库存流水不能修改。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        if self.get_object().is_automatic:
+            return Response({"detail": "系统自动生成的库存流水不能删除。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().destroy(request, *args, **kwargs)
 
 
 @api_view(["GET"])

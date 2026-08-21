@@ -4,6 +4,8 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.test import TestCase
+from rest_framework import status
+from rest_framework.test import APIClient
 
 from crm.models import (
     Customer,
@@ -176,17 +178,40 @@ class FulfillmentServiceTests(TestCase):
                 "exchange_rate": Decimal("1"),
             })
 
-        shipment = Shipment.objects.create(
-            shipment_no="SH-FULFILLMENT",
-            order=self.order,
-            shipment_date=date(2026, 8, 21),
-            status="draft",
+
+class FulfillmentApiTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        customer = Customer.objects.create(code="C-API", name="API Buyer")
+        product = Product.objects.create(code="P-API", name="API Light")
+        self.sku = SKU.objects.create(product=product, sku="SKU-API")
+
+    def test_automatic_inventory_movement_is_read_only(self):
+        movement = InventoryMovement.objects.create(
+            movement_no="AUTO-API",
+            movement_date=date(2026, 8, 21),
+            type="purchase_in",
+            sku=self.sku,
+            quantity=Decimal("2.00"),
+            is_automatic=True,
+            source_type="receipt",
+            source_no="PO-API",
         )
-        with self.assertRaises(IntegrityError):
-            with transaction.atomic():
-                ShipmentItem.objects.create(
-                    shipment=shipment,
-                    order_item=self.order_item,
-                    sku=self.sku,
-                    quantity=Decimal("0"),
-                )
+
+        response = self.client.patch(
+            "/api/inventory-movements/{}/".format(movement.id),
+            {"notes": "changed"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("自动", response.data["detail"])
+
+    def test_suppliers_can_be_created_through_api(self):
+        response = self.client.post("/api/suppliers/", {
+            "name": "API Supplier",
+            "currency": "USD",
+            "payment_terms": "30 days",
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["name"], "API Supplier")

@@ -251,3 +251,21 @@ class FulfillmentApiTests(TestCase):
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
         self.assertEqual(response.data["direction"], "expense")
+
+    def test_order_fulfillment_reports_procurement_need_without_reserving_quote(self):
+        order = Order.objects.create(order_no="SO-FULFILLMENT-API", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="confirmed")
+        order.items.create(sku=self.sku, quantity="4", unit_price="5")
+        response = self.client.get("/api/orders/{}/fulfillment/".format(order.id))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, getattr(response, "data", None))
+        self.assertEqual(response.data["items"][0]["to_procure_quantity"], Decimal("4.00"))
+
+    def test_order_shipment_creates_automatic_sale_out(self):
+        order = Order.objects.create(order_no="SO-SHIP-API", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="confirmed")
+        item = order.items.create(sku=self.sku, quantity="2", unit_price="5")
+        InventoryMovement.objects.create(movement_no="IN-SHIP-API", movement_date=date(2026, 8, 21), type="purchase_in", sku=self.sku, quantity="2")
+        response = self.client.post("/api/orders/{}/ship/".format(order.id), {
+            "shipment_no": "SH-API-001", "shipment_date": "2026-08-21",
+            "items": [{"order_item": item.id, "quantity": "2"}],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
+        self.assertTrue(InventoryMovement.objects.filter(source_type="shipment", source_no="SH-API-001", type="sale_out").exists())

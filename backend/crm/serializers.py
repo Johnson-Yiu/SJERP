@@ -140,6 +140,15 @@ class SupplierPaymentInputSerializer(serializers.Serializer):
     notes = serializers.CharField(required=False, allow_blank=True)
 
 
+class ShipmentInputSerializer(serializers.Serializer):
+    shipment_no = serializers.CharField(max_length=40, required=False, allow_blank=True)
+    shipment_date = serializers.DateField()
+    logistics_provider = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    waybill_no = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    notes = serializers.CharField(required=False, allow_blank=True)
+    items = serializers.ListField(child=serializers.DictField(), min_length=1)
+
+
 class OrganizationUnitSerializer(serializers.ModelSerializer):
     type_display = serializers.CharField(source="get_type_display", read_only=True)
     positions = PositionSerializer(many=True, read_only=True)

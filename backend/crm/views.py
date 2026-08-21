@@ -21,8 +21,8 @@ from .permissions import PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, SupplierPaymentInputSerializer, SupplierSerializer, TransactionSerializer, next_product_code
-from .services.fulfillment import record_receipt, record_supplier_payment
+from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, SKUSerializer, SupplierPaymentInputSerializer, SupplierSerializer, TransactionSerializer, next_product_code
+from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -643,6 +643,28 @@ class OrderViewSet(viewsets.ModelViewSet):
         if self.request.query_params.get("sku"):
             qs = qs.filter(items__sku_id=self.request.query_params["sku"]).distinct()
         return qs
+
+    @action(detail=True, methods=["get"])
+    def fulfillment(self, request, pk=None):
+        order = self.get_object()
+        rows = []
+        for item in order.items.select_related("sku"):
+            metrics = order_item_metrics(item)
+            rows.append({
+                "id": item.id, "sku": item.sku_id, "sku_code": item.sku.sku,
+                "quantity": item.quantity, "allocated_quantity": metrics["allocated_quantity"],
+                "to_procure_quantity": metrics["to_procure_quantity"],
+                "in_transit_quantity": Decimal("0"), "arrived_quantity": Decimal("0"),
+                "shipped_quantity": Decimal("0"), "unshipped_quantity": item.quantity,
+            })
+        return Response({"order": OrderSerializer(order).data, "items": rows, "purchase_orders": [], "shipments": []})
+
+    @action(detail=True, methods=["post"])
+    def ship(self, request, pk=None):
+        input_serializer = ShipmentInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        shipment = confirm_shipment(self.get_object(), input_serializer.validated_data)
+        return Response({"id": shipment.id, "shipment_no": shipment.shipment_no, "status": shipment.status}, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["get"])
     def workbench(self, request, pk=None):

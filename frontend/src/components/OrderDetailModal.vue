@@ -6,6 +6,7 @@ import { api } from '../api'
 const props = defineProps({ id: { type: [Number, String], required: true }, refreshKey: { type: Number, default: 0 } })
 const emit = defineEmits(['close', 'edit', 'open-quote'])
 const workbench = ref(null)
+const fulfillment = ref(null)
 const activeTab = ref('overview')
 const loading = ref(true)
 const error = ref('')
@@ -13,7 +14,7 @@ const error = ref('')
 const order = computed(() => workbench.value?.order)
 const tabs = computed(() => [
   ['overview', '概览'], ['items', `订单明细 (${workbench.value?.items?.length || 0})`],
-  ['payments', `回款 (${workbench.value?.payments?.length || 0})`], ['inventory', `履约 (${workbench.value?.inventory?.length || 0})`],
+  ['payments', `回款 (${workbench.value?.payments?.length || 0})`], ['fulfillment', '采购与发货'], ['inventory', `库存流水 (${workbench.value?.inventory?.length || 0})`],
 ])
 const paymentPercent = computed(() => {
   const total = Number(order.value?.total_amount || 0)
@@ -27,10 +28,25 @@ const itemSubtotal = computed(() => (workbench.value?.items || []).reduce((sum, 
 
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 function date(value) { return value || '—' }
+async function ship(item) {
+  const quantity = window.prompt(`确认 ${item.sku_code} 发货数量（待发 ${item.unshipped_quantity}）：`)
+  if (!quantity) return
+  const overage = Number(quantity) > Number(item.unshipped_quantity)
+  const overage_reason = overage ? window.prompt('超发原因：customer_addon（客户追加）/ gift_or_sample（赠品或样品）/ packing_variance（包装尾差）') : ''
+  if (overage && !overage_reason) return
+  try {
+    await api.post(`/orders/${props.id}/ship/`, { shipment_date: new Date().toISOString().slice(0, 10), items: [{ order_item: item.id, quantity, overage_reason }] })
+    await load()
+  } catch (err) { error.value = err.response?.data?.detail || Object.values(err.response?.data || {}).flat().join(' ') || err.message }
+}
 async function load() {
   loading.value = true
   error.value = ''
-  try { workbench.value = (await api.get(`/orders/${props.id}/workbench/`)).data }
+  try {
+    const [workbenchResult, fulfillmentResult] = await Promise.all([api.get(`/orders/${props.id}/workbench/`), api.get(`/orders/${props.id}/fulfillment/`)])
+    workbench.value = workbenchResult.data
+    fulfillment.value = fulfillmentResult.data
+  }
   catch (err) { error.value = err.message }
   finally { loading.value = false }
 }
@@ -67,6 +83,7 @@ watch(() => props.refreshKey, load)
           <section v-else class="workbench-card"><div class="section-heading"><div><h3><Truck :size="16" /> 履约流水</h3><p>关联此订单的出入库动作会在这里集中展示。</p></div><strong>{{ workbench.inventory.length }} 条</strong></div><div v-if="!workbench.inventory.length" class="workbench-empty"><Truck :size="28" /><strong>暂无出入库流水</strong><p>在库存流水中关联本订单后，履约进度会自动更新。</p></div><div v-else class="workbench-table-wrap"><table class="workbench-table"><thead><tr><th>日期</th><th>流水号</th><th>类型</th><th>SKU</th><th>数量</th><th>仓库</th></tr></thead><tbody><tr v-for="movement in workbench.inventory" :key="movement.id"><td>{{ date(movement.movement_date) }}</td><td>{{ movement.movement_no }}</td><td>{{ movement.type_display }}</td><td>{{ movement.sku_code }}</td><td>{{ movement.signed_quantity }}</td><td>{{ movement.warehouse }}</td></tr></tbody></table></div></section>
         </main>
       </template>
+      <section v-if="!loading && !error && activeTab === 'fulfillment'" class="fulfillment-panel"><div class="section-heading"><div><h3>采购与发货</h3><p>订单确认后会预留现货；缺口按采购、到货和在途数量持续更新。</p></div></div><div class="workbench-table-wrap"><table class="workbench-table"><thead><tr><th>SKU</th><th>订单</th><th>预留</th><th>已采购</th><th>已到 / 在途</th><th>已发 / 待发</th><th></th></tr></thead><tbody><tr v-for="item in fulfillment?.items || []" :key="item.id"><td>{{ item.sku_code }}</td><td>{{ item.quantity }}</td><td>{{ item.allocated_quantity }}</td><td>{{ item.purchased_quantity }}</td><td>{{ item.arrived_quantity }} / {{ item.in_transit_quantity }}</td><td>{{ item.shipped_quantity }} / {{ item.unshipped_quantity }}</td><td><button class="text-btn" :disabled="Number(item.unshipped_quantity) <= 0" @click="ship(item)">确认发货</button></td></tr></tbody></table></div><p v-if="!(fulfillment?.purchase_orders || []).length" class="muted">尚未创建采购单；请在采购管理中按待采购数量建立采购单。</p></section>
     </article>
   </div>
 </template>

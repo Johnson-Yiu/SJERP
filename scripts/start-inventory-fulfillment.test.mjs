@@ -22,9 +22,18 @@ test('batch launcher uses Windows CRLF line endings for cmd.exe', async () => {
   assert.equal(text.replaceAll('\r\n', '').includes('\n'), false)
 })
 
-test('launcher checks both fixed ports before starting either service', async () => {
+test('launcher uses TCP probes for both fixed ports before starting either service', async () => {
   const source = await readFile(launcher, 'utf8')
 
-  assert.match(source, /@\(\$BackendPort, \$FrontendPort\) \| Where-Object/)
   assert.match(source, /System\.Net\.Sockets\.TcpClient/)
+  assert.match(source, /\$backendAlreadyRunning = Test-PortOpen \$BackendPort/)
+  assert.match(source, /\$frontendAlreadyRunning = Test-PortOpen \$FrontendPort/)
+})
+
+test('launcher opens the inventory page when both branch services already run', async () => {
+  const source = await readFile(launcher, 'utf8')
+
+  assert.match(source, /\$backendAlreadyRunning = Test-PortOpen \$BackendPort/)
+  assert.match(source, /\$frontendAlreadyRunning = Test-PortOpen \$FrontendPort/)
+  assert.match(source, /if \(\$backendAlreadyRunning -and \$frontendAlreadyRunning\)/)
 })

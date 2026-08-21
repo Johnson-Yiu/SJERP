@@ -40,9 +40,16 @@ if (-not (Test-Path -LiteralPath (Join-Path $FrontendDir "node_modules"))) {
     throw "Frontend dependencies are missing. Run npm install in $FrontendDir first."
 }
 
-$occupied = @(@($BackendPort, $FrontendPort) | Where-Object { Test-PortOpen $_ })
-if ($occupied.Count -gt 0) {
-    throw "Port(s) $($occupied -join ', ') are already in use. Stop that branch service before starting this one."
+$url = "http://127.0.0.1:$FrontendPort/inventory"
+$backendAlreadyRunning = Test-PortOpen $BackendPort
+$frontendAlreadyRunning = Test-PortOpen $FrontendPort
+if ($backendAlreadyRunning -and $frontendAlreadyRunning) {
+    Write-Host "Inventory fulfillment branch is already running: $url" -ForegroundColor Green
+    Start-Process $url
+    exit 0
+}
+if ($backendAlreadyRunning -or $frontendAlreadyRunning) {
+    throw "Only one branch service is running. Stop the service using port(s) $(@($BackendPort, $FrontendPort | Where-Object { Test-PortOpen $_ }) -join ', ') before restarting."
 }
 
 Write-Host "Applying inventory fulfillment branch migrations..."
@@ -56,6 +63,5 @@ Start-Process -FilePath "npm.cmd" -ArgumentList "run dev -- --host 127.0.0.1 --p
 if (-not (Wait-ForPort $BackendPort 20)) { throw "Backend failed to start on port $BackendPort." }
 if (-not (Wait-ForPort $FrontendPort 20)) { throw "Frontend failed to start on port $FrontendPort." }
 
-$url = "http://127.0.0.1:$FrontendPort/inventory"
 Write-Host "Inventory fulfillment branch is running: $url" -ForegroundColor Green
 Start-Process $url

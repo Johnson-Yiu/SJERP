@@ -313,3 +313,22 @@ class FulfillmentApiTests(TestCase):
         self.assertEqual(supplement.quantity, Decimal("1.00"))
         self.assertEqual(supplement.unit_price, Decimal("7.50"))
         self.assertIn("客户追加", supplement.notes)
+
+    def test_sku_inventory_detail_lists_related_purchase_shipments_and_orders(self):
+        customer = Customer.objects.get(code="C-API")
+        supplier = Supplier.objects.create(name="SKU Detail Supplier")
+        order = Order.objects.create(order_no="SO-SKU-DETAIL", customer=customer, order_date=date(2026, 8, 21), status="confirmed")
+        order_item = order.items.create(sku=self.sku, quantity="4", unit_price="8")
+        purchase = PurchaseOrder.objects.create(purchase_no="PO-SKU-DETAIL", supplier=supplier, order=order, order_date=date(2026, 8, 21), status="ordered")
+        purchase_item = purchase.items.create(sku=self.sku, quantity="4", unit_price="3")
+        record_receipt(purchase_item, {"receipt_date": date(2026, 8, 21), "quantity": "4", "unit_cost": "3"})
+        confirm_shipment(order, {"shipment_no": "SH-SKU-DETAIL", "shipment_date": date(2026, 8, 21), "items": [{"order_item": order_item.id, "quantity": "2"}]})
+
+        response = self.client.get("/api/skus/{}/inventory-detail/".format(self.sku.id))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, getattr(response, "data", None))
+        self.assertEqual(response.data["purchases"][0]["purchase_no"], "PO-SKU-DETAIL")
+        self.assertEqual(response.data["purchases"][0]["supplier_name"], "SKU Detail Supplier")
+        self.assertEqual(response.data["shipments"][0]["shipment_no"], "SH-SKU-DETAIL")
+        self.assertEqual(response.data["orders"][0]["order_no"], "SO-SKU-DETAIL")
+        self.assertEqual(response.data["orders"][0]["customer_name"], "API Buyer")

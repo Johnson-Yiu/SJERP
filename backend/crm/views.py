@@ -354,6 +354,38 @@ class SKUViewSet(viewsets.ModelViewSet):
             qs = qs.filter(active=True)
         return qs.filter(product_id=self.request.query_params["product"]) if self.request.query_params.get("product") else qs
 
+    @action(detail=True, methods=["get"], url_path="inventory-detail")
+    def inventory_detail(self, request, pk=None):
+        sku = self.get_object()
+        purchases = PurchaseOrder.objects.filter(items__sku=sku).select_related("supplier", "order").prefetch_related("items__receipts").distinct()
+        shipments = Shipment.objects.filter(items__sku=sku).select_related("order__customer").prefetch_related("items").distinct()
+        orders = Order.objects.filter(items__sku=sku).select_related("customer").prefetch_related("items", "items__shipment_items").distinct()
+        return Response({
+            "sku": SKUSerializer(sku).data,
+            "purchases": [{
+                "id": purchase.id, "purchase_no": purchase.purchase_no, "supplier_name": purchase.supplier.name,
+                "order_no": purchase.order.order_no, "order_date": purchase.order_date,
+                "status": purchase.status, "status_display": purchase.get_status_display(),
+                "quantity": sum((item.quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
+                "received_quantity": sum((item.received_quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
+            } for purchase in purchases],
+            "shipments": [{
+                "id": shipment.id, "shipment_no": shipment.shipment_no, "shipment_date": shipment.shipment_date,
+                "order_no": shipment.order.order_no, "customer_name": shipment.order.customer.name,
+                "status": shipment.status, "status_display": shipment.get_status_display(),
+                "quantity": sum((item.quantity for item in shipment.items.filter(sku=sku)), Decimal("0")),
+            } for shipment in shipments],
+            "orders": [{
+                "id": order.id, "order_no": order.order_no, "customer_name": order.customer.name,
+                "order_date": order.order_date, "status": order.status, "status_display": order.get_status_display(),
+                "quantity": sum((item.quantity for item in order.items.filter(sku=sku)), Decimal("0")),
+                "shipped_quantity": sum((
+                    shipment_item.quantity for item in order.items.filter(sku=sku)
+                    for shipment_item in item.shipment_items.filter(shipment__status="confirmed")
+                ), Decimal("0")),
+            } for order in orders],
+        })
+
     @action(detail=True, methods=["post", "delete"], parser_classes=[MultiPartParser, FormParser])
     def image(self, request, pk=None):
         sku = self.get_object()

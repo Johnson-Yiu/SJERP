@@ -16,7 +16,7 @@ from rest_framework.decorators import action, api_view, parser_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, SKU, Supplier, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, SKU, Supplier, Transaction
 from .permissions import PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
@@ -664,10 +664,24 @@ class OrderViewSet(viewsets.ModelViewSet):
                 "id": item.id, "sku": item.sku_id, "sku_code": item.sku.sku,
                 "quantity": item.quantity, "allocated_quantity": metrics["allocated_quantity"],
                 "to_procure_quantity": metrics["to_procure_quantity"],
-                "in_transit_quantity": Decimal("0"), "arrived_quantity": Decimal("0"),
-                "shipped_quantity": Decimal("0"), "unshipped_quantity": item.quantity,
+                "purchased_quantity": metrics["purchased_quantity"],
+                "in_transit_quantity": metrics["in_transit_quantity"],
+                "arrived_quantity": metrics["received_quantity"],
+                "shipped_quantity": metrics["shipped_quantity"],
+                "unshipped_quantity": metrics["unshipped_quantity"],
             })
-        return Response({"order": OrderSerializer(order).data, "items": rows, "purchase_orders": [], "shipments": []})
+        purchase_orders = PurchaseOrder.objects.filter(order=order).select_related("supplier").prefetch_related("items__receipts")
+        shipments = Shipment.objects.filter(order=order).prefetch_related("items__sku")
+        return Response({
+            "order": OrderSerializer(order).data,
+            "items": rows,
+            "purchase_orders": PurchaseOrderSerializer(purchase_orders, many=True).data,
+            "shipments": [{
+                "id": shipment.id, "shipment_no": shipment.shipment_no,
+                "shipment_date": shipment.shipment_date, "status": shipment.status,
+                "items": [{"sku_code": line.sku.sku, "quantity": line.quantity, "is_overage": line.is_overage} for line in shipment.items.all()],
+            } for shipment in shipments],
+        })
 
     @action(detail=True, methods=["post"])
     def ship(self, request, pk=None):

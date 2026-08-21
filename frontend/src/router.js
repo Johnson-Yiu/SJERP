@@ -8,6 +8,7 @@ import CategoryPage from './views/CategoryPage.vue'
 import ProductPage from './views/ProductPage.vue'
 import SKUPage from './views/SKUPage.vue'
 import InventoryPage from './views/InventoryPage.vue'
+import PurchaseOrderPage from './views/PurchaseOrderPage.vue'
 import { resourceConfigs } from './resourceConfigs'
 
 const routes = [
@@ -26,6 +27,7 @@ const routes = [
   { path: '/import', component: ImportPage, meta: { title: '数据导入', eyebrow: 'Data onboarding' } },
   { path: '/organization', component: OrganizationPage, meta: { title: '组织与权限', eyebrow: 'Organization & access' } },
   { path: '/inventory', component: InventoryPage, meta: { title: '库存', eyebrow: 'Current inventory' } },
+  { path: '/purchase-orders', component: PurchaseOrderPage, meta: { title: '采购管理', eyebrow: 'Procurement desk' } },
 ]
 
 export default createRouter({ history: createWebHistory(), routes })

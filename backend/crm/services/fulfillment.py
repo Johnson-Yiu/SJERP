@@ -76,6 +76,8 @@ def sku_metrics(sku: SKU) -> dict[str, Decimal]:
 @transaction.atomic
 def allocate_order(order):
     InventoryReservation.objects.filter(order_item__order=order).delete()
+    if order.status not in ACTIVE_ORDER_STATUSES:
+        return []
     created = []
     for item in order.items.select_related("sku").order_by("id"):
         available = sku_metrics(item.sku)["available_quantity"]
@@ -93,14 +95,25 @@ def order_item_metrics(item: OrderItem) -> dict[str, Decimal]:
     allocated = item.reservations.aggregate(
         total=Coalesce(Sum("quantity"), Decimal("0"), output_field=QUANTITY_FIELD)
     )["total"]
-    purchased = PurchaseOrderItem.objects.filter(
+    purchase_items = PurchaseOrderItem.objects.filter(
         purchase_order__order=item.order,
         sku=item.sku,
-        purchase_order__status__in=OPEN_PURCHASE_STATUSES,
-    ).aggregate(total=Coalesce(Sum("quantity"), Decimal("0"), output_field=QUANTITY_FIELD))["total"]
+    ).exclude(purchase_order__status="cancelled")
+    purchased = purchase_items.aggregate(
+        total=Coalesce(Sum("quantity"), Decimal("0"), output_field=QUANTITY_FIELD)
+    )["total"]
+    received = purchase_items.aggregate(
+        total=Coalesce(Sum("receipts__quantity"), Decimal("0"), output_field=QUANTITY_FIELD)
+    )["total"]
+    shipped = _shipped_quantity(item)
     return {
         "allocated_quantity": allocated,
         "to_procure_quantity": max(Decimal("0"), item.quantity - allocated - purchased),
+        "purchased_quantity": purchased,
+        "received_quantity": received,
+        "in_transit_quantity": max(Decimal("0"), purchased - received),
+        "shipped_quantity": shipped,
+        "unshipped_quantity": max(Decimal("0"), item.quantity - shipped),
     }
 
 
@@ -194,35 +207,58 @@ def confirm_shipment(order: Order, payload: dict) -> Shipment:
         is_overage = quantity > remaining
         if quantity <= 0:
             raise ValidationError("发货数量必须大于零。")
-        if is_overage and not reason:
-            raise ValidationError("超发必须选择原因。")
+        if is_overage and reason not in {"customer_addon", "gift_or_sample", "packing_variance"}:
+            raise ValidationError("超发必须选择客户追加、赠品/样品或包装尾差原因。")
+        if not is_overage:
+            reason = ""
         if quantity > sku_metrics(item.sku)["actual_quantity"]:
             raise ValidationError("库存不足，不能确认发货。")
-        movement = InventoryMovement.objects.create(
-            movement_no=_movement_no("SH"),
-            movement_date=payload["shipment_date"],
-            type="sale_out",
-            sku=item.sku,
-            order=order,
-            quantity=quantity,
-            warehouse="默认仓",
-            reference=shipment.shipment_no,
-            source_type="shipment",
-            source_no=shipment.shipment_no,
-            is_automatic=True,
-            is_overage=is_overage,
-            overage_reason=reason if is_overage else "",
-        )
-        ShipmentItem.objects.create(
-            shipment=shipment,
-            order_item=item,
-            sku=item.sku,
-            quantity=quantity,
-            is_overage=is_overage,
-            overage_reason=reason if is_overage else "",
-            creates_supplement=reason == "customer_addon",
-            inventory_movement=movement,
-        )
+
+        def create_line(order_item, line_quantity, overage=False, line_reason=""):
+            movement = InventoryMovement.objects.create(
+                movement_no=_movement_no("SH"),
+                movement_date=payload["shipment_date"],
+                type="sale_out",
+                sku=order_item.sku,
+                order=order,
+                quantity=line_quantity,
+                warehouse="默认仓",
+                reference=shipment.shipment_no,
+                source_type="shipment",
+                source_no=shipment.shipment_no,
+                is_automatic=True,
+                is_overage=overage,
+                overage_reason=line_reason,
+            )
+            ShipmentItem.objects.create(
+                shipment=shipment,
+                order_item=order_item,
+                sku=order_item.sku,
+                quantity=line_quantity,
+                is_overage=overage,
+                overage_reason=line_reason,
+                creates_supplement=overage and line_reason == "customer_addon",
+                inventory_movement=movement,
+            )
+
+        normal_quantity = min(quantity, max(Decimal("0"), remaining))
+        if normal_quantity:
+            create_line(item, normal_quantity)
+        extra_quantity = quantity - normal_quantity
+        if extra_quantity:
+            supplement = OrderItem.objects.create(
+                order=order,
+                sku=item.sku,
+                quantity=extra_quantity,
+                unit_price=item.unit_price if reason == "customer_addon" else Decimal("0"),
+                cost_price=item.cost_price,
+                notes="超发登记：{}".format({
+                    "customer_addon": "客户追加",
+                    "gift_or_sample": "赠品或样品",
+                    "packing_variance": "包装尾差",
+                }[reason]),
+            )
+            create_line(supplement, extra_quantity, True, reason)
     return shipment
 
 

@@ -278,3 +278,38 @@ class FulfillmentApiTests(TestCase):
         response = self.client.get("/api/quotes/{}/availability/".format(quote.id))
         self.assertEqual(response.status_code, status.HTTP_200_OK, getattr(response, "data", None))
         self.assertEqual(response.data["items"][0]["available_quantity"], Decimal("2.00"))
+
+    def test_confirmed_order_created_by_api_reserves_available_stock(self):
+        InventoryMovement.objects.create(
+            movement_no="IN-ORDER-RESERVATION-API", movement_date=date(2026, 8, 21),
+            type="purchase_in", sku=self.sku, quantity="3",
+        )
+        response = self.client.post("/api/orders/", {
+            "order_no": "SO-RESERVATION-API", "customer": Customer.objects.get(code="C-API").id,
+            "order_date": "2026-08-21", "status": "confirmed", "currency": "USD",
+            "exchange_rate": "1", "items": [{"sku": self.sku.id, "quantity": "5", "unit_price": "8"}],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
+        self.assertEqual(response.data["items"][0]["quantity"], "5.00")
+        self.assertEqual(
+            response.data["items"][0]["sku"], self.sku.id,
+        )
+        self.assertEqual(
+            Order.objects.get(pk=response.data["id"]).items.first().reservations.first().quantity,
+            Decimal("3.00"),
+        )
+
+    def test_customer_addon_shipment_creates_a_priced_order_supplement(self):
+        order = Order.objects.create(order_no="SO-ADDON-API", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="confirmed")
+        item = order.items.create(sku=self.sku, quantity="2", unit_price="7.50")
+        InventoryMovement.objects.create(movement_no="IN-ADDON-API", movement_date=date(2026, 8, 21), type="purchase_in", sku=self.sku, quantity="3")
+        response = self.client.post("/api/orders/{}/ship/".format(order.id), {
+            "shipment_no": "SH-ADDON-API", "shipment_date": "2026-08-21",
+            "items": [{"order_item": item.id, "quantity": "3", "overage_reason": "customer_addon"}],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
+        self.assertEqual(order.items.count(), 2)
+        supplement = order.items.exclude(pk=item.pk).get()
+        self.assertEqual(supplement.quantity, Decimal("1.00"))
+        self.assertEqual(supplement.unit_price, Decimal("7.50"))
+        self.assertIn("客户追加", supplement.notes)

@@ -584,6 +584,8 @@ class OrderSerializer(serializers.ModelSerializer):
                 item["cost_price"] = item["sku"].cost_price
             rows.append(OrderItem(order=order, **item))
         OrderItem.objects.bulk_create(rows)
+        from .services.fulfillment import allocate_order
+        allocate_order(order)
         if order.quote_id:
             Quote.objects.filter(pk=order.quote_id).update(status="accepted")
         return order
@@ -602,6 +604,8 @@ class OrderSerializer(serializers.ModelSerializer):
                     item["cost_price"] = item["sku"].cost_price
                 rows.append(OrderItem(order=instance, **item))
             OrderItem.objects.bulk_create(rows)
+        from .services.fulfillment import allocate_order
+        allocate_order(instance)
         return instance
 
 

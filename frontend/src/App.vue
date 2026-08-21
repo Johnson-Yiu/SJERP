@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Bell, Search, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck } from 'lucide-vue-next'
+import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Bell, Search, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck } from 'lucide-vue-next'
 import { api } from './api'
 
 const route = useRoute()
@@ -16,6 +16,8 @@ const nav = [
   { section: '业务' },
   { label: '报价管理', path: '/quotes', icon: FileText },
   { label: '订单管理', path: '/orders', icon: ShoppingCart },
+  { label: '供应商管理', path: '/suppliers', icon: Truck },
+  { label: '采购管理', path: '/purchase-orders', icon: ShoppingCart },
   { label: '产品管理', path: '/products', icon: Package },
   { label: 'SKU 管理', path: '/skus', icon: Boxes },
   { label: '库存流水', path: '/inventory-movements', icon: Warehouse },

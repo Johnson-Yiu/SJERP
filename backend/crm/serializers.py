@@ -479,6 +479,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
     customer_name = serializers.CharField(source="customer.name", read_only=True)
+    customer_country = serializers.CharField(source="customer.country", read_only=True, default="")
     quote_no = serializers.CharField(source="quote.quote_no", read_only=True, default="")
     source_quote_no = serializers.CharField(source="quote.quote_no", read_only=True, default="")
     status_display = serializers.CharField(source="get_status_display", read_only=True)

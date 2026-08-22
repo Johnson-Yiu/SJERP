@@ -447,6 +447,177 @@ class OrderItem(models.Model):
         return self.quantity * self.unit_price
 
 
+OVERAGE_REASON_CHOICES = [
+    ("overprocurement", "超采"),
+    ("gift", "赠品"),
+    ("carton_variance", "尾差"),
+    ("customer_addon", "客户追加"),
+    ("gift_or_sample", "赠品或样品"),
+    ("packing_variance", "包装尾差"),
+]
+
+
+class Supplier(TimestampedModel):
+    name = models.CharField("供应商名称", max_length=200, unique=True)
+    contact_name = models.CharField("联系人", max_length=100, blank=True)
+    phone = models.CharField("电话", max_length=50, blank=True)
+    email = models.EmailField("邮箱", blank=True)
+    currency = models.CharField("默认币种", max_length=10, default="USD")
+    payment_terms = models.CharField("付款条款", max_length=200, blank=True)
+    notes = models.TextField("备注", blank=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class PurchaseOrder(TimestampedModel):
+    STATUS_CHOICES = [
+        ("draft", "草稿"),
+        ("ordered", "已下单"),
+        ("partial", "部分到货"),
+        ("completed", "已完成"),
+        ("cancelled", "已取消"),
+    ]
+    purchase_no = models.CharField("采购单号", max_length=40, unique=True)
+    supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT, related_name="purchase_orders")
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name="purchase_orders")
+    order_date = models.DateField("下单日期")
+    expected_arrival_date = models.DateField("预计到货日", null=True, blank=True)
+    status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
+    currency = models.CharField("币种", max_length=10, default="USD")
+    exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
+    notes = models.TextField("备注", blank=True)
+
+    class Meta:
+        ordering = ["-order_date", "-id"]
+
+    @property
+    def total_amount(self):
+        return sum((item.quantity * item.unit_price for item in self.items.all()), Decimal("0"))
+
+    @property
+    def paid_amount(self):
+        return sum(
+            (row.amount for row in self.transactions.filter(direction="expense", status="confirmed")),
+            Decimal("0"),
+        )
+
+    @property
+    def unpaid_amount(self):
+        return self.total_amount - self.paid_amount
+
+    def __str__(self):
+        return self.purchase_no
+
+
+class PurchaseOrderItem(models.Model):
+    purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name="items")
+    sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="purchase_order_items")
+    quantity = models.DecimalField("采购数量", max_digits=14, decimal_places=2)
+    unit_price = models.DecimalField("采购单价", max_digits=14, decimal_places=4)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(quantity__gt=0), name="purchase_item_quantity_positive"),
+            models.CheckConstraint(condition=models.Q(unit_price__gte=0), name="purchase_item_price_non_negative"),
+        ]
+
+    @property
+    def received_quantity(self):
+        return sum((receipt.quantity for receipt in self.receipts.all()), Decimal("0"))
+
+    @property
+    def remaining_quantity(self):
+        return self.quantity - self.received_quantity
+
+
+class PaymentPlan(TimestampedModel):
+    DIRECTION_CHOICES = [("receivable", "应收"), ("payable", "应付")]
+    STATUS_CHOICES = [("open", "待结清"), ("settled", "已结清"), ("cancelled", "已取消")]
+
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, null=True, blank=True, related_name="payment_plans")
+    purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.PROTECT, null=True, blank=True, related_name="payment_plans")
+    direction = models.CharField("收付款方向", max_length=12, choices=DIRECTION_CHOICES)
+    due_date = models.DateField("预计日期", null=True, blank=True)
+    planned_amount = models.DecimalField("计划原币金额", max_digits=14, decimal_places=2)
+    settled_amount = models.DecimalField("已核销原币金额", max_digits=14, decimal_places=2, default=0)
+    currency = models.CharField("币种", max_length=10)
+    status = models.CharField("状态", max_length=12, choices=STATUS_CHOICES, default="open")
+    notes = models.TextField("备注", blank=True)
+
+    class Meta:
+        ordering = ["due_date", "id"]
+        constraints = [
+            models.CheckConstraint(
+                condition=(models.Q(order__isnull=False, purchase_order__isnull=True) | models.Q(order__isnull=True, purchase_order__isnull=False)),
+                name="payment_plan_one_contract",
+            ),
+            models.CheckConstraint(condition=models.Q(planned_amount__gt=0), name="payment_plan_amount_positive"),
+            models.CheckConstraint(condition=models.Q(settled_amount__gte=0), name="payment_plan_settled_non_negative"),
+        ]
+
+    @property
+    def remaining_amount(self):
+        return self.planned_amount - self.settled_amount
+
+    def clean(self):
+        super().clean()
+        if bool(self.order_id) == bool(self.purchase_order_id):
+            raise ValidationError("收付款计划必须且只能关联一个订单或采购单。")
+        expected_direction = "receivable" if self.order_id else "payable"
+        if self.direction != expected_direction:
+            raise ValidationError("销售订单只能建立应收计划，采购单只能建立应付计划。")
+        if self.settled_amount > self.planned_amount:
+            raise ValidationError("已核销金额不能超过计划金额。")
+
+
+class ContractChangeRequest(TimestampedModel):
+    STATUS_CHOICES = [("pending", "待确认"), ("approved", "已确认"), ("rejected", "已拒绝")]
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, null=True, blank=True, related_name="contract_changes")
+    purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.PROTECT, null=True, blank=True, related_name="contract_changes")
+    amount_delta = models.DecimalField("合同原币变更金额", max_digits=14, decimal_places=2)
+    due_date = models.DateField("新增计划日期", null=True, blank=True)
+    status = models.CharField("状态", max_length=12, choices=STATUS_CHOICES, default="pending")
+    notes = models.TextField("变更说明")
+
+    def clean(self):
+        if bool(self.order_id) == bool(self.purchase_order_id):
+            raise ValidationError("变更单必须且只能关联一个订单或采购单。")
+        if self.amount_delta <= 0:
+            raise ValidationError("本期只允许通过变更单增加合同金额。")
+
+
+class Shipment(TimestampedModel):
+    STATUS_CHOICES = [("draft", "草稿"), ("confirmed", "已确认"), ("cancelled", "已取消")]
+    shipment_no = models.CharField("发货单号", max_length=40, unique=True)
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name="shipments")
+    shipment_date = models.DateField("发货日期")
+    logistics_provider = models.CharField("物流商", max_length=100, blank=True)
+    waybill_no = models.CharField("物流单号", max_length=100, blank=True)
+    status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
+    notes = models.TextField("备注", blank=True)
+
+    class Meta:
+        ordering = ["-shipment_date", "-id"]
+
+    def __str__(self):
+        return self.shipment_no
+
+
+class InventoryReservation(models.Model):
+    order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE, related_name="reservations")
+    sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="inventory_reservations")
+    quantity = models.DecimalField("预留数量", max_digits=14, decimal_places=2)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(quantity__gt=0), name="inventory_reservation_quantity_positive"),
+        ]
+
+
 class InventoryMovement(TimestampedModel):
     TYPE_CHOICES = [
         ("purchase_in", "采购入库"), ("sale_out", "销售出库"),
@@ -463,6 +634,16 @@ class InventoryMovement(TimestampedModel):
     unit_cost = models.DecimalField("单位成本", max_digits=14, decimal_places=4, default=0)
     reference = models.CharField("参考号", max_length=100, blank=True)
     notes = models.TextField("备注", blank=True)
+    source_type = models.CharField(
+        "来源类型",
+        max_length=20,
+        choices=[("manual", "手工"), ("receipt", "到货"), ("shipment", "发货"), ("return", "退货")],
+        default="manual",
+    )
+    source_no = models.CharField("来源单号", max_length=50, blank=True)
+    is_automatic = models.BooleanField("系统自动生成", default=False)
+    is_overage = models.BooleanField("超额记录", default=False)
+    overage_reason = models.CharField("超额原因", max_length=30, choices=OVERAGE_REASON_CHOICES, blank=True)
 
     class Meta:
         ordering = ["-movement_date", "-id"]
@@ -475,9 +656,59 @@ class InventoryMovement(TimestampedModel):
         return self.movement_no
 
 
+class GoodsReceipt(TimestampedModel):
+    purchase_item = models.ForeignKey(PurchaseOrderItem, on_delete=models.PROTECT, related_name="receipts")
+    receipt_date = models.DateField("到货日期")
+    quantity = models.DecimalField("到货数量", max_digits=14, decimal_places=2)
+    unit_cost = models.DecimalField("实际单价", max_digits=14, decimal_places=4, default=0)
+    is_overage = models.BooleanField("超到", default=False)
+    overage_reason = models.CharField("超到原因", max_length=30, choices=OVERAGE_REASON_CHOICES, blank=True)
+    notes = models.TextField("备注", blank=True)
+    inventory_movement = models.OneToOneField(
+        InventoryMovement,
+        on_delete=models.PROTECT,
+        related_name="goods_receipt",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(quantity__gt=0), name="goods_receipt_quantity_positive"),
+            models.CheckConstraint(condition=models.Q(unit_cost__gte=0), name="goods_receipt_cost_non_negative"),
+        ]
+
+
+class ShipmentItem(models.Model):
+    shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, related_name="items")
+    order_item = models.ForeignKey(OrderItem, on_delete=models.PROTECT, related_name="shipment_items")
+    sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="shipment_items")
+    quantity = models.DecimalField("发货数量", max_digits=14, decimal_places=2)
+    is_overage = models.BooleanField("超发", default=False)
+    overage_reason = models.CharField("超发原因", max_length=30, choices=OVERAGE_REASON_CHOICES, blank=True)
+    creates_supplement = models.BooleanField("创建订单增补", default=False)
+    inventory_movement = models.OneToOneField(
+        InventoryMovement,
+        on_delete=models.PROTECT,
+        related_name="shipment_item",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(quantity__gt=0), name="shipment_item_quantity_positive"),
+        ]
+
+
 class Transaction(TimestampedModel):
     DIRECTION_CHOICES = [("income", "收入"), ("expense", "支出")]
     STATUS_CHOICES = [("pending", "待确认"), ("confirmed", "已确认"), ("cancelled", "已作废")]
+    KIND_CHOICES = [
+        ("other", "其他收支"), ("customer_receipt", "客户收款"), ("supplier_payment", "供应商付款"),
+        ("order_expense", "订单费用"), ("period_expense", "期间费用"), ("unallocated_advance", "未分配预收预付"),
+        ("refund", "退款或折让"), ("exchange_difference", "汇兑差额"),
+    ]
     transaction_no = models.CharField("流水号", max_length=50, unique=True)
     transaction_date = models.DateField("发生日期")
     direction = models.CharField("收支方向", max_length=10, choices=DIRECTION_CHOICES)
@@ -485,8 +716,21 @@ class Transaction(TimestampedModel):
     amount = models.DecimalField("金额", max_digits=14, decimal_places=2)
     currency = models.CharField("币种", max_length=10, default="USD")
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
+    rmb_amount = models.DecimalField("实际人民币金额", max_digits=14, decimal_places=2, default=0)
+    allocated_amount = models.DecimalField("已分配原币金额", max_digits=14, decimal_places=2, default=0)
+    kind = models.CharField("业务类型", max_length=30, choices=KIND_CHOICES, default="other")
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
+    supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
+    purchase_order = models.ForeignKey(
+        PurchaseOrder,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="transactions",
+    )
+    plan = models.ForeignKey(PaymentPlan, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
+    replaces = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True, related_name="replacements")
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="confirmed")
     payment_method = models.CharField("支付方式", max_length=100, blank=True)
     reference = models.CharField("外部参考号", max_length=100, blank=True)

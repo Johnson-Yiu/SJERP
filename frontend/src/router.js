@@ -8,11 +8,15 @@ import CategoryPage from './views/CategoryPage.vue'
 import ProductPage from './views/ProductPage.vue'
 import SKUPage from './views/SKUPage.vue'
 import InventoryPage from './views/InventoryPage.vue'
+import PurchaseOrderPage from './views/PurchaseOrderPage.vue'
+import FinanceDashboardPage from './views/FinanceDashboardPage.vue'
+import PaymentPlanPage from './views/PaymentPlanPage.vue'
+import TransactionPage from './views/TransactionPage.vue'
 import { resourceConfigs } from './resourceConfigs'
 
 const routes = [
   { path: '/', component: Dashboard, meta: { title: '经营概览', eyebrow: 'Business overview' } },
-  ...Object.entries(resourceConfigs).filter(([path]) => !['categories', 'products', 'skus'].includes(path)).map(([path, config]) => ({
+  ...Object.entries(resourceConfigs).filter(([path]) => !['categories', 'products', 'skus', 'transactions'].includes(path)).map(([path, config]) => ({
     path: `/${path}`,
     component: ResourcePage,
     props: { config },
@@ -26,6 +30,11 @@ const routes = [
   { path: '/import', component: ImportPage, meta: { title: '数据导入', eyebrow: 'Data onboarding' } },
   { path: '/organization', component: OrganizationPage, meta: { title: '组织与权限', eyebrow: 'Organization & access' } },
   { path: '/inventory', component: InventoryPage, meta: { title: '库存', eyebrow: 'Current inventory' } },
+  { path: '/purchase-orders', component: PurchaseOrderPage, meta: { title: '采购管理', eyebrow: 'Procurement desk' } },
+  { path: '/finance', component: FinanceDashboardPage, meta: { title: '财务概览', eyebrow: 'Operating finance' } },
+  { path: '/receivables', component: PaymentPlanPage, props: { direction: 'receivable' }, meta: { title: '应收计划', eyebrow: 'Accounts receivable' } },
+  { path: '/payables', component: PaymentPlanPage, props: { direction: 'payable' }, meta: { title: '应付计划', eyebrow: 'Accounts payable' } },
+  { path: '/transactions', component: TransactionPage, meta: { title: '财务流水', eyebrow: 'Cash ledger' } },
 ]
 
 export default createRouter({ history: createWebHistory(), routes })

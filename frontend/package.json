@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "test:unit": "node --test",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -16,6 +17,9 @@
     "vue": "latest",
     "vue-router": "latest"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@vue/test-utils": "^2.4.11",
+    "jsdom": "^30.0.1",
+    "vitest": "^4.1.11"
+  }
 }
-

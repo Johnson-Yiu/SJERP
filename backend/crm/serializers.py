@@ -7,7 +7,7 @@ from django.db import transaction
 from django.utils.html import strip_tags
 from rest_framework import serializers
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Supplier, Transaction
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .quote_snapshots import create_quote_items
 
@@ -77,6 +77,78 @@ class PositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Position
         fields = "__all__"
+
+
+class SupplierSerializer(serializers.ModelSerializer):
+    purchase_count = serializers.IntegerField(source="purchase_orders.count", read_only=True)
+
+    class Meta:
+        model = Supplier
+        fields = "__all__"
+        read_only_fields = ["purchase_count", "created_at", "updated_at"]
+
+
+class PurchaseOrderItemSerializer(serializers.ModelSerializer):
+    sku_code = serializers.CharField(source="sku.sku", read_only=True)
+    received_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    remaining_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = PurchaseOrderItem
+        fields = ["id", "sku", "sku_code", "quantity", "unit_price", "received_quantity", "remaining_quantity"]
+
+
+class PurchaseOrderSerializer(serializers.ModelSerializer):
+    items = PurchaseOrderItemSerializer(many=True)
+    supplier_name = serializers.CharField(source="supplier.name", read_only=True)
+    order_no = serializers.CharField(source="order.order_no", read_only=True)
+    total_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    paid_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    unpaid_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = PurchaseOrder
+        fields = "__all__"
+
+    @transaction.atomic
+    def create(self, validated_data):
+        items = validated_data.pop("items")
+        purchase = PurchaseOrder.objects.create(**validated_data)
+        PurchaseOrderItem.objects.bulk_create([
+            PurchaseOrderItem(purchase_order=purchase, **item) for item in items
+        ])
+        from .services.finance import ensure_default_payment_plans
+        ensure_default_payment_plans(purchase)
+        return purchase
+
+
+class ReceiptInputSerializer(serializers.Serializer):
+    purchase_item = serializers.IntegerField()
+    receipt_date = serializers.DateField()
+    quantity = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal("0.01"))
+    unit_cost = serializers.DecimalField(max_digits=14, decimal_places=4, min_value=Decimal("0"))
+    is_overage = serializers.BooleanField(required=False, default=False)
+    overage_reason = serializers.CharField(required=False, allow_blank=True, max_length=30)
+    notes = serializers.CharField(required=False, allow_blank=True)
+
+
+class SupplierPaymentInputSerializer(serializers.Serializer):
+    transaction_date = serializers.DateField()
+    amount = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal("0.01"))
+    currency = serializers.CharField(max_length=10, required=False)
+    exchange_rate = serializers.DecimalField(max_digits=12, decimal_places=6, min_value=Decimal("0"), required=False)
+    payment_method = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    reference = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    notes = serializers.CharField(required=False, allow_blank=True)
+
+
+class ShipmentInputSerializer(serializers.Serializer):
+    shipment_no = serializers.CharField(max_length=40, required=False, allow_blank=True)
+    shipment_date = serializers.DateField()
+    logistics_provider = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    waybill_no = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    notes = serializers.CharField(required=False, allow_blank=True)
+    items = serializers.ListField(child=serializers.DictField(), min_length=1)
 
 
 class OrganizationUnitSerializer(serializers.ModelSerializer):
@@ -258,10 +330,40 @@ class SKUSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source="product.name", read_only=True)
     product_code = serializers.CharField(source="product.code", read_only=True)
     stock_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True, default=0)
+    actual_quantity = serializers.SerializerMethodField()
+    reserved_quantity = serializers.SerializerMethodField()
+    available_quantity = serializers.SerializerMethodField()
+    in_transit_quantity = serializers.SerializerMethodField()
+    to_procure_quantity = serializers.SerializerMethodField()
+    has_anomaly = serializers.SerializerMethodField()
 
     class Meta:
         model = SKU
         fields = "__all__"
+
+    def _metrics(self, obj):
+        from .services.fulfillment import sku_metrics
+        return sku_metrics(obj)
+
+    def get_actual_quantity(self, obj):
+        return self._metrics(obj)["actual_quantity"]
+
+    def get_reserved_quantity(self, obj):
+        return self._metrics(obj)["reserved_quantity"]
+
+    def get_available_quantity(self, obj):
+        return self._metrics(obj)["available_quantity"]
+
+    def get_in_transit_quantity(self, obj):
+        return self._metrics(obj)["in_transit_quantity"]
+
+    def get_to_procure_quantity(self, obj):
+        from .models import OrderItem
+        from .services.fulfillment import order_item_metrics
+        return sum((order_item_metrics(item)["to_procure_quantity"] for item in OrderItem.objects.filter(sku=obj, order__status__in=["confirmed", "production", "shipped"])), Decimal("0"))
+
+    def get_has_anomaly(self, obj):
+        return self.get_available_quantity(obj) < 0
 
 
 class ProductParameterSerializer(serializers.ModelSerializer):
@@ -377,6 +479,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
     customer_name = serializers.CharField(source="customer.name", read_only=True)
+    customer_country = serializers.CharField(source="customer.country", read_only=True, default="")
     quote_no = serializers.CharField(source="quote.quote_no", read_only=True, default="")
     source_quote_no = serializers.CharField(source="quote.quote_no", read_only=True, default="")
     status_display = serializers.CharField(source="get_status_display", read_only=True)
@@ -484,6 +587,10 @@ class OrderSerializer(serializers.ModelSerializer):
                 item["cost_price"] = item["sku"].cost_price
             rows.append(OrderItem(order=order, **item))
         OrderItem.objects.bulk_create(rows)
+        from .services.fulfillment import allocate_order
+        allocate_order(order)
+        from .services.finance import ensure_default_payment_plans
+        ensure_default_payment_plans(order)
         if order.quote_id:
             Quote.objects.filter(pk=order.quote_id).update(status="accepted")
         return order
@@ -502,6 +609,8 @@ class OrderSerializer(serializers.ModelSerializer):
                     item["cost_price"] = item["sku"].cost_price
                 rows.append(OrderItem(order=instance, **item))
             OrderItem.objects.bulk_create(rows)
+        from .services.fulfillment import allocate_order
+        allocate_order(instance)
         return instance
 
 
@@ -515,9 +624,10 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = "__all__"
+        extra_kwargs = {"transaction_no": {"required": False}}
 
     def get_rmb_amount(self, obj):
-        return (obj.amount * obj.exchange_rate).quantize(Decimal("0.01"))
+        return obj.rmb_amount or (obj.amount * obj.exchange_rate).quantize(Decimal("0.01"))
 
     def validate(self, attrs):
         order = attrs.get("order", getattr(self.instance, "order", None))
@@ -526,6 +636,38 @@ class TransactionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("流水选择的客户必须与订单客户一致。")
         if order and not customer:
             attrs["customer"] = order.customer
+        return attrs
+
+
+class PaymentPlanSerializer(serializers.ModelSerializer):
+    remaining_amount = serializers.DecimalField(max_digits=14, decimal_places=2, read_only=True)
+    contract_no = serializers.SerializerMethodField()
+    counterparty_name = serializers.SerializerMethodField()
+    is_overdue = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PaymentPlan
+        fields = "__all__"
+
+    def get_contract_no(self, obj):
+        return obj.order.order_no if obj.order_id else obj.purchase_order.purchase_no
+
+    def get_counterparty_name(self, obj):
+        return obj.order.customer.name if obj.order_id else obj.purchase_order.supplier.name
+
+    def get_is_overdue(self, obj):
+        from django.utils import timezone
+        return bool(obj.due_date and obj.due_date < timezone.localdate() and obj.status == "open")
+
+
+class ContractChangeRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContractChangeRequest
+        fields = "__all__"
+
+    def validate(self, attrs):
+        if bool(attrs.get("order")) == bool(attrs.get("purchase_order")):
+            raise serializers.ValidationError("变更单必须且只能关联一个订单或采购单。")
         return attrs
 
 

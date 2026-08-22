@@ -1,4 +1,11 @@
 export const resourceConfigs = {
+  suppliers: {
+    title: '供应商管理', eyebrow: 'Supplier directory', endpoint: 'suppliers', key: 'name',
+    description: '维护采购供应商、联系人、付款条款与默认币种。',
+    columns: [['name', '供应商'], ['contact_name', '联系人'], ['phone', '电话'], ['email', '邮箱'], ['currency', '默认币种', 'tag'], ['payment_terms', '付款条款']],
+    fields: [['name', '供应商名称', 'text', true], ['contact_name', '联系人'], ['phone', '电话'], ['email', '邮箱', 'email'], ['currency', '默认币种', 'select', true, { USD: 'USD', CNY: 'CNY', EUR: 'EUR', GBP: 'GBP' }], ['payment_terms', '付款条款'], ['notes', '备注', 'textarea']],
+    detail: true,
+  },
   customers: {
     title: '客户管理', eyebrow: 'Customer portfolio', endpoint: 'customers', key: 'name',
     description: '集中维护客户画像、归属、状态和下一步跟进计划。',

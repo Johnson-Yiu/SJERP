@@ -60,6 +60,10 @@ const previewDraft = computed(() => {
 })
 
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+function availability(item) {
+  const sku = props.skus.find(row => row.id === Number(item.sku)) || {}
+  return '可用现货 ' + Number(sku.available_quantity ?? sku.stock_quantity ?? 0) + ' · 参考交期 ' + (draft.lead_time_days || '—') + ' 天'
+}
 function addItem() { draft.items.push({ sku: '', quantity: 1, unit_price: 0, description: '', notes: '' }) }
 function selectSku(item) { const sku = props.skus.find(row => row.id === Number(item.sku)); if (sku) { item.unit_price = sku.default_price; item.description = sku.product_name || sku.specification || '' } }
 async function selectCustomer() {
@@ -137,7 +141,7 @@ onMounted(() => { if (props.mode === 'create' && draft.customer) selectCustomer(
             <div v-if="mode === 'revise'" class="field full revision-summary"><label>本次修改说明 *</label><textarea v-model="draft.revision_summary" required placeholder="例如：调整数量、价格、交期或付款条款" /><small>该说明会显示在版本谱系中，便于后续追溯。</small></div>
           </div>
           <div class="items-head"><div><strong>产品明细</strong><small>预览会使用当前未保存数量、价格与图片</small></div><button type="button" class="btn btn-secondary" @click="addItem"><PlusCircle :size="15" /> 添加一行</button></div>
-          <div class="quote-line-items"><div class="quote-line-header"><span>SKU</span><span>数量</span><span>单价</span><span>产品描述</span><span>小计</span><span></span></div><div v-for="(item,index) in draft.items" :key="index" class="quote-line-row"><select v-model="item.sku" required @change="selectSku(item)"><option value="">选择 SKU</option><option v-for="sku in skus" :key="sku.id" :value="sku.id">{{ sku.sku }} · {{ sku.product_name }}</option></select><input v-model="item.quantity" aria-label="数量" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" aria-label="单价" type="number" min="0" step="0.0001" required /><input v-model="item.description" aria-label="产品描述" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" :disabled="draft.items.length === 1" aria-label="删除明细" @click="draft.items.splice(index,1)"><MinusCircle :size="17" /></button></div></div>
+          <div class="quote-line-items"><div class="quote-line-header"><span>SKU</span><span>数量</span><span>单价</span><span>产品描述</span><span>小计</span><span></span></div><div v-for="(item,index) in draft.items" :key="index" class="quote-line-row"><select v-model="item.sku" required @change="selectSku(item)"><option value="">选择 SKU</option><option v-for="sku in skus" :key="sku.id" :value="sku.id">{{ sku.sku }} · {{ sku.product_name }}</option></select><input v-model="item.quantity" aria-label="数量" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" aria-label="单价" type="number" min="0" step="0.0001" required /><input v-model="item.description" aria-label="产品描述" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}<small>{{ availability(item) }}</small></span><button type="button" class="remove-line" :disabled="draft.items.length === 1" aria-label="删除明细" @click="draft.items.splice(index,1)"><MinusCircle :size="17" /></button></div></div>
           <div class="totals"><label>运费 <input v-model="draft.shipping_fee" type="number" step="0.01" /></label><label>折扣 <input v-model="draft.discount" type="number" step="0.01" /></label><div><span>合计</span><strong>{{ draft.currency }} {{ money(total) }}</strong></div></div>
           <div class="form-grid"><div class="field full"><label>贸易条款</label><textarea v-model="draft.trading_terms" /></div><div class="field full"><label>运输信息</label><textarea v-model="draft.shipping_details" /></div><div class="field full"><label>附加备注</label><textarea v-model="draft.notes" /></div></div>
         </fieldset>

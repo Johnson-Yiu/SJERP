@@ -16,12 +16,14 @@ from rest_framework.decorators import action, api_view, parser_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, QuoteImportantNote, RolePermission, SKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, SKU, Supplier, Transaction
 from .permissions import PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, SKUSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, SKUSerializer, SupplierPaymentInputSerializer, SupplierSerializer, TransactionSerializer, next_product_code
+from .services.finance import allocate_advance, approve_contract_change, record_transaction, void_transaction
+from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, sku_metrics
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -36,6 +38,50 @@ class PositionViewSet(viewsets.ModelViewSet):
     serializer_class = PositionSerializer
     queryset = Position.objects.select_related("unit")
     search_fields = ["name", "code", "unit__name"]
+
+
+class SupplierViewSet(viewsets.ModelViewSet):
+    serializer_class = SupplierSerializer
+    queryset = Supplier.objects.prefetch_related("purchase_orders")
+    search_fields = ["name", "contact_name", "phone", "email"]
+
+
+class PurchaseOrderViewSet(viewsets.ModelViewSet):
+    serializer_class = PurchaseOrderSerializer
+    queryset = PurchaseOrder.objects.select_related("supplier", "order").prefetch_related("items__sku", "items__receipts", "transactions")
+    search_fields = ["purchase_no", "supplier__name", "order__order_no"]
+
+    @action(detail=True, methods=["post"])
+    def receive(self, request, pk=None):
+        purchase = self.get_object()
+        input_serializer = ReceiptInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        item = purchase.items.filter(pk=input_serializer.validated_data["purchase_item"]).first()
+        if item is None:
+            return Response({"detail": "到货明细不属于该采购单。"}, status=status.HTTP_400_BAD_REQUEST)
+        receipt = record_receipt(item, input_serializer.validated_data)
+        return Response({
+            "id": receipt.id,
+            "purchase_item": receipt.purchase_item_id,
+            "quantity": receipt.quantity,
+            "is_overage": receipt.is_overage,
+            "inventory_movement": receipt.inventory_movement_id,
+        }, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"])
+    def pay(self, request, pk=None):
+        input_serializer = SupplierPaymentInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        purchase = self.get_object()
+        plan = purchase.payment_plans.filter(status="open").order_by("due_date", "id").first()
+        if plan:
+            payload = input_serializer.validated_data.copy()
+            payload["plan"] = plan
+            payload["category"] = "供应商付款"
+            payment = record_transaction(payload)
+        else:
+            payment = record_supplier_payment(purchase, input_serializer.validated_data)
+        return Response(TransactionSerializer(payment).data, status=status.HTTP_201_CREATED)
 
 
 class AccessRoleViewSet(viewsets.ModelViewSet):
@@ -317,6 +363,38 @@ class SKUViewSet(viewsets.ModelViewSet):
             qs = qs.filter(active=True)
         return qs.filter(product_id=self.request.query_params["product"]) if self.request.query_params.get("product") else qs
 
+    @action(detail=True, methods=["get"], url_path="inventory-detail")
+    def inventory_detail(self, request, pk=None):
+        sku = self.get_object()
+        purchases = PurchaseOrder.objects.filter(items__sku=sku).select_related("supplier", "order").prefetch_related("items__receipts").distinct()
+        shipments = Shipment.objects.filter(items__sku=sku).select_related("order__customer").prefetch_related("items").distinct()
+        orders = Order.objects.filter(items__sku=sku).select_related("customer").prefetch_related("items", "items__shipment_items").distinct()
+        return Response({
+            "sku": SKUSerializer(sku).data,
+            "purchases": [{
+                "id": purchase.id, "purchase_no": purchase.purchase_no, "supplier_name": purchase.supplier.name,
+                "order_no": purchase.order.order_no, "order_date": purchase.order_date,
+                "status": purchase.status, "status_display": purchase.get_status_display(),
+                "quantity": sum((item.quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
+                "received_quantity": sum((item.received_quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
+            } for purchase in purchases],
+            "shipments": [{
+                "id": shipment.id, "shipment_no": shipment.shipment_no, "shipment_date": shipment.shipment_date,
+                "order_no": shipment.order.order_no, "customer_name": shipment.order.customer.name,
+                "status": shipment.status, "status_display": shipment.get_status_display(),
+                "quantity": sum((item.quantity for item in shipment.items.filter(sku=sku)), Decimal("0")),
+            } for shipment in shipments],
+            "orders": [{
+                "id": order.id, "order_no": order.order_no, "customer_name": order.customer.name,
+                "order_date": order.order_date, "status": order.status, "status_display": order.get_status_display(),
+                "quantity": sum((item.quantity for item in order.items.filter(sku=sku)), Decimal("0")),
+                "shipped_quantity": sum((
+                    shipment_item.quantity for item in order.items.filter(sku=sku)
+                    for shipment_item in item.shipment_items.filter(shipment__status="confirmed")
+                ), Decimal("0")),
+            } for order in orders],
+        })
+
     @action(detail=True, methods=["post", "delete"], parser_classes=[MultiPartParser, FormParser])
     def image(self, request, pk=None):
         sku = self.get_object()
@@ -369,6 +447,16 @@ class QuoteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.filter(customer_id=self.request.query_params["customer"]) if self.request.query_params.get("customer") else qs
+
+    @action(detail=True, methods=["get"])
+    def availability(self, request, pk=None):
+        quote = self.get_object()
+        return Response({"quote": quote.id, "items": [
+            {"quote_item": item.id, "sku": item.sku_id,
+             "available_quantity": sku_metrics(item.sku)["available_quantity"],
+             "reference_lead_time_days": quote.lead_time_days}
+            for item in quote.items.select_related("sku")
+        ]})
 
     def update(self, request, *args, **kwargs):
         return Response({"detail": "已保存报价请创建迭代版本"}, status=status.HTTP_400_BAD_REQUEST)
@@ -608,10 +696,48 @@ class OrderViewSet(viewsets.ModelViewSet):
         return qs
 
     @action(detail=True, methods=["get"])
+    def fulfillment(self, request, pk=None):
+        order = self.get_object()
+        rows = []
+        for item in order.items.select_related("sku"):
+            metrics = order_item_metrics(item)
+            rows.append({
+                "id": item.id, "sku": item.sku_id, "sku_code": item.sku.sku,
+                "quantity": item.quantity, "allocated_quantity": metrics["allocated_quantity"],
+                "to_procure_quantity": metrics["to_procure_quantity"],
+                "purchased_quantity": metrics["purchased_quantity"],
+                "in_transit_quantity": metrics["in_transit_quantity"],
+                "arrived_quantity": metrics["received_quantity"],
+                "shipped_quantity": metrics["shipped_quantity"],
+                "unshipped_quantity": metrics["unshipped_quantity"],
+            })
+        purchase_orders = PurchaseOrder.objects.filter(order=order).select_related("supplier").prefetch_related("items__receipts")
+        shipments = Shipment.objects.filter(order=order).prefetch_related("items__sku")
+        return Response({
+            "order": OrderSerializer(order).data,
+            "items": rows,
+            "purchase_orders": PurchaseOrderSerializer(purchase_orders, many=True).data,
+            "shipments": [{
+                "id": shipment.id, "shipment_no": shipment.shipment_no,
+                "shipment_date": shipment.shipment_date, "status": shipment.status,
+                "items": [{"sku_code": line.sku.sku, "quantity": line.quantity, "is_overage": line.is_overage} for line in shipment.items.all()],
+            } for shipment in shipments],
+        })
+
+    @action(detail=True, methods=["post"])
+    def ship(self, request, pk=None):
+        input_serializer = ShipmentInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        shipment = confirm_shipment(self.get_object(), input_serializer.validated_data)
+        return Response({"id": shipment.id, "shipment_no": shipment.shipment_no, "status": shipment.status}, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["get"])
     def workbench(self, request, pk=None):
         order = self.get_object()
         items = list(order.items.all())
         payments = list(order.transactions.all())
+        plans = list(order.payment_plans.all())
+        expenses = [row for row in payments if row.kind == "order_expense" and row.status == "confirmed"]
         inventory = list(order.inventory_movements.select_related("sku__product"))
         ordered_quantity = sum((item.quantity for item in items), Decimal("0"))
         shipped_quantity = sum(
@@ -625,22 +751,52 @@ class OrderViewSet(viewsets.ModelViewSet):
             (payment.amount for payment in payments if payment.direction == "income" and payment.status == "confirmed"),
             Decimal("0"),
         )
+        planned_receivable = sum((plan.planned_amount for plan in plans if plan.status != "cancelled"), Decimal("0"))
+        expense_rmb = sum((row.rmb_amount for row in expenses), Decimal("0"))
+        purchase_cost_rmb = sum((purchase.total_amount * purchase.exchange_rate for purchase in order.purchase_orders.prefetch_related("items")), Decimal("0"))
         return Response({
             "order": OrderSerializer(order).data,
             "source_quote": QuoteSerializer(order.quote).data if order.quote else None,
             "items": OrderItemSerializer(items, many=True).data,
             "payments": TransactionSerializer(payments, many=True).data,
+            "plans": PaymentPlanSerializer(plans, many=True).data,
             "inventory": InventoryMovementSerializer(inventory, many=True).data,
             "payment_summary": {
                 "paid_amount": paid_amount,
                 "balance_amount": order.total_amount - paid_amount,
+                "planned_amount": planned_receivable,
             },
+            "expense_summary": {"expense_rmb": expense_rmb},
+            "profit_summary": {"sales_rmb": order.total_amount * order.exchange_rate, "purchase_cost_rmb": purchase_cost_rmb, "expense_rmb": expense_rmb, "estimated_gross_profit_rmb": order.total_amount * order.exchange_rate - purchase_cost_rmb - expense_rmb},
             "fulfillment_summary": {
                 "ordered_quantity": ordered_quantity,
                 "shipped_quantity": shipped_quantity,
                 "remaining_quantity": ordered_quantity - shipped_quantity,
             },
         })
+
+
+@api_view(["GET"])
+def finance_dashboard(request):
+    today = timezone.localdate()
+    plans = PaymentPlan.objects.select_related("order__customer", "purchase_order__supplier").filter(status="open")
+    receivables = plans.filter(direction="receivable")
+    payables = plans.filter(direction="payable")
+    remaining = lambda rows: sum((row.remaining_amount * (row.order.exchange_rate if row.order_id else row.purchase_order.exchange_rate) for row in rows), Decimal("0"))
+    month_start = today.replace(day=1)
+    monthly_sales = sum((order.total_amount * order.exchange_rate for order in Order.objects.exclude(status="cancelled").filter(order_date__range=(month_start, today)).prefetch_related("items")), Decimal("0"))
+    due_items = [
+        {
+            "id": row.id, "direction": row.direction, "contract_no": row.order.order_no if row.order_id else row.purchase_order.purchase_no,
+            "counterparty_name": row.order.customer.name if row.order_id else row.purchase_order.supplier.name,
+            "due_date": row.due_date, "remaining_amount": row.remaining_amount, "currency": row.currency,
+        }
+        for row in plans.filter(due_date__isnull=False, due_date__lte=today).order_by("due_date")[:12]
+    ]
+    return Response({"metrics": {
+        "receivable_count": receivables.count(), "receivable_rmb": remaining(receivables),
+        "payable_count": payables.count(), "payable_rmb": remaining(payables), "monthly_sales_rmb": monthly_sales,
+    }, "due_items": due_items})
 
 
 class TransactionViewSet(viewsets.ModelViewSet):
@@ -673,6 +829,81 @@ class InventoryMovementViewSet(viewsets.ModelViewSet):
         if self.request.query_params.get("order"):
             qs = qs.filter(order_id=self.request.query_params["order"])
         return qs
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        row = record_transaction(serializer.validated_data.copy())
+        return Response(self.get_serializer(row).data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        if self.get_object().status == "confirmed":
+            return Response({"detail": "已确认流水不能直接修改，请作废后重记。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().update(request, *args, **kwargs)
+
+    @action(detail=True, methods=["post"])
+    def void(self, request, pk=None):
+        row = void_transaction(self.get_object())
+        return Response(self.get_serializer(row).data)
+
+    @action(detail=True, methods=["post"])
+    def allocate(self, request, pk=None):
+        plan = get_object_or_404(PaymentPlan, pk=request.data.get("plan"))
+        plan = allocate_advance(self.get_object(), plan, request.data.get("amount"))
+        return Response(PaymentPlanSerializer(plan).data)
+
+    def create(self, request, *args, **kwargs):
+        if request.data.get("type") not in {"adjust_in", "adjust_out", "sample_out", "return_in"}:
+            return Response({"detail": "手工库存流水仅允许盘盈、盘亏、样品出库或客户退回。"}, status=status.HTTP_400_BAD_REQUEST)
+        payload = request.data.copy()
+        payload["source_type"] = "manual"
+        payload["is_automatic"] = False
+        serializer = self.get_serializer(data=payload)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        if self.get_object().is_automatic:
+            return Response({"detail": "系统自动生成的库存流水不能修改。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        if self.get_object().is_automatic:
+            return Response({"detail": "系统自动生成的库存流水不能删除。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().destroy(request, *args, **kwargs)
+
+
+class PaymentPlanViewSet(viewsets.ModelViewSet):
+    serializer_class = PaymentPlanSerializer
+    queryset = PaymentPlan.objects.select_related("order__customer", "purchase_order__supplier")
+    ordering_fields = ["due_date", "planned_amount", "created_at"]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        for key in ("direction", "order", "purchase_order", "status"):
+            if self.request.query_params.get(key):
+                qs = qs.filter(**{f"{key}_id" if key in {"order", "purchase_order"} else key: self.request.query_params[key]})
+        if self.request.query_params.get("overdue") == "true":
+            qs = qs.filter(status="open", due_date__lt=timezone.localdate())
+        return qs
+
+    @action(detail=True, methods=["post"])
+    def settle(self, request, pk=None):
+        plan = self.get_object()
+        row = record_transaction({**request.data, "plan": plan})
+        return Response(TransactionSerializer(row).data, status=status.HTTP_201_CREATED)
+
+
+class ContractChangeRequestViewSet(viewsets.ModelViewSet):
+    serializer_class = ContractChangeRequestSerializer
+    queryset = ContractChangeRequest.objects.select_related("order", "purchase_order")
+
+    @action(detail=True, methods=["post"])
+    def approve(self, request, pk=None):
+        plan = approve_contract_change(self.get_object())
+        return Response(PaymentPlanSerializer(plan).data, status=status.HTTP_201_CREATED)
+
 
 
 @api_view(["GET"])

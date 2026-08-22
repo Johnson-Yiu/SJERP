@@ -4,7 +4,8 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from crm.models import Customer, Order, PaymentPlan, Product, SKU
+from crm.models import Customer, Order, PaymentPlan, Product, SKU, Transaction
+from crm.services.finance import ensure_default_payment_plans, record_transaction
 
 
 class PaymentPlanModelTests(TestCase):
@@ -39,3 +40,31 @@ class PaymentPlanModelTests(TestCase):
         )
 
         plan.full_clean()
+
+
+class FinanceServiceTests(PaymentPlanModelTests):
+    def test_excess_receipt_creates_unallocated_advance(self):
+        plan = PaymentPlan.objects.create(
+            order=self.order,
+            direction="receivable",
+            currency="USD",
+            planned_amount=Decimal("100"),
+        )
+
+        receipt = record_transaction({
+            "plan": plan,
+            "amount": Decimal("120"),
+            "currency": "USD",
+            "exchange_rate": Decimal("7.2"),
+            "category": "客户收款",
+        })
+
+        plan.refresh_from_db()
+        self.assertEqual(receipt.amount, Decimal("100"))
+        self.assertEqual(plan.status, "settled")
+        self.assertTrue(Transaction.objects.filter(kind="unallocated_advance", amount=Decimal("20")).exists())
+
+    def test_default_plan_uses_deposit_and_balance(self):
+        plans = ensure_default_payment_plans(self.order)
+
+        self.assertEqual([row.planned_amount for row in plans], [Decimal("30.00"), Decimal("70.00")])

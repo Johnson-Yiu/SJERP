@@ -701,6 +701,7 @@ class Transaction(TimestampedModel):
     currency = models.CharField("币种", max_length=10, default="USD")
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
     rmb_amount = models.DecimalField("实际人民币金额", max_digits=14, decimal_places=2, default=0)
+    allocated_amount = models.DecimalField("已分配原币金额", max_digits=14, decimal_places=2, default=0)
     kind = models.CharField("业务类型", max_length=30, choices=KIND_CHOICES, default="other")
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")

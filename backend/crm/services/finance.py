@@ -102,3 +102,26 @@ def void_transaction(row):
     row.status = "cancelled"
     row.save(update_fields=["status", "updated_at"])
     return row
+
+
+@transaction.atomic
+def allocate_advance(advance, plan, amount):
+    advance = Transaction.objects.select_for_update().get(pk=advance.pk)
+    plan = PaymentPlan.objects.select_for_update().select_related("order__customer", "purchase_order__supplier").get(pk=plan.pk)
+    amount = Decimal(str(amount))
+    if advance.kind != "unallocated_advance" or advance.status != "confirmed":
+        raise ValidationError("只能分配已确认的未分配预收预付。")
+    if amount <= 0 or amount > advance.amount - advance.allocated_amount:
+        raise ValidationError("分配金额不能超过未分配余额。")
+    if amount > plan.remaining_amount or advance.currency != plan.currency:
+        raise ValidationError("计划余额或币种不匹配。")
+    if plan.direction == "receivable" and advance.customer_id != plan.order.customer_id:
+        raise ValidationError("预收款只能分配给同一客户的应收计划。")
+    if plan.direction == "payable" and advance.supplier_id != plan.purchase_order.supplier_id:
+        raise ValidationError("预付款只能分配给同一供应商的应付计划。")
+    advance.allocated_amount += amount
+    advance.save(update_fields=["allocated_amount", "updated_at"])
+    plan.settled_amount += amount
+    plan.status = "settled" if plan.settled_amount == plan.planned_amount else "open"
+    plan.save(update_fields=["settled_amount", "status", "updated_at"])
+    return plan

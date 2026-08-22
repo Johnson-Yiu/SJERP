@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from crm.models import Customer, Order, PaymentPlan, Product, SKU, Transaction
-from crm.services.finance import ensure_default_payment_plans, record_transaction
+from crm.services.finance import allocate_advance, ensure_default_payment_plans, record_transaction
 
 
 class PaymentPlanModelTests(TestCase):
@@ -68,3 +68,18 @@ class FinanceServiceTests(PaymentPlanModelTests):
         plans = ensure_default_payment_plans(self.order)
 
         self.assertEqual([row.planned_amount for row in plans], [Decimal("30.00"), Decimal("70.00")])
+
+    def test_unallocated_advance_can_be_allocated_to_same_customer_plan(self):
+        advance = Transaction.objects.create(
+            transaction_no="ADV-FIN-001", transaction_date=date(2026, 8, 22), direction="income",
+            kind="unallocated_advance", category="未分配预收预付", amount=Decimal("50"),
+            rmb_amount=Decimal("360"), currency="USD", exchange_rate=Decimal("7.2"), customer=self.order.customer,
+        )
+        plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))
+
+        allocate_advance(advance, plan, Decimal("50"))
+
+        advance.refresh_from_db()
+        plan.refresh_from_db()
+        self.assertEqual(advance.allocated_amount, Decimal("50"))
+        self.assertEqual(plan.settled_amount, Decimal("50"))

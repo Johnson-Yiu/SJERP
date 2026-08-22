@@ -22,7 +22,7 @@ from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
 from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, SKUSerializer, SupplierPaymentInputSerializer, SupplierSerializer, TransactionSerializer, next_product_code
-from .services.finance import record_transaction, void_transaction
+from .services.finance import allocate_advance, record_transaction, void_transaction
 from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, sku_metrics
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
@@ -845,6 +845,12 @@ class InventoryMovementViewSet(viewsets.ModelViewSet):
     def void(self, request, pk=None):
         row = void_transaction(self.get_object())
         return Response(self.get_serializer(row).data)
+
+    @action(detail=True, methods=["post"])
+    def allocate(self, request, pk=None):
+        plan = get_object_or_404(PaymentPlan, pk=request.data.get("plan"))
+        plan = allocate_advance(self.get_object(), plan, request.data.get("amount"))
+        return Response(PaymentPlanSerializer(plan).data)
 
     def create(self, request, *args, **kwargs):
         if request.data.get("type") not in {"adjust_in", "adjust_out", "sample_out", "return_in"}:

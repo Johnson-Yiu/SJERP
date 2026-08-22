@@ -759,6 +759,29 @@ class OrderViewSet(viewsets.ModelViewSet):
         })
 
 
+@api_view(["GET"])
+def finance_dashboard(request):
+    today = timezone.localdate()
+    plans = PaymentPlan.objects.select_related("order__customer", "purchase_order__supplier").filter(status="open")
+    receivables = plans.filter(direction="receivable")
+    payables = plans.filter(direction="payable")
+    remaining = lambda rows: sum((row.remaining_amount * (row.order.exchange_rate if row.order_id else row.purchase_order.exchange_rate) for row in rows), Decimal("0"))
+    month_start = today.replace(day=1)
+    monthly_sales = sum((order.total_amount * order.exchange_rate for order in Order.objects.exclude(status="cancelled").filter(order_date__range=(month_start, today)).prefetch_related("items")), Decimal("0"))
+    due_items = [
+        {
+            "id": row.id, "direction": row.direction, "contract_no": row.order.order_no if row.order_id else row.purchase_order.purchase_no,
+            "counterparty_name": row.order.customer.name if row.order_id else row.purchase_order.supplier.name,
+            "due_date": row.due_date, "remaining_amount": row.remaining_amount, "currency": row.currency,
+        }
+        for row in plans.filter(due_date__isnull=False, due_date__lte=today).order_by("due_date")[:12]
+    ]
+    return Response({"metrics": {
+        "receivable_count": receivables.count(), "receivable_rmb": remaining(receivables),
+        "payable_count": payables.count(), "payable_rmb": remaining(payables), "monthly_sales_rmb": monthly_sales,
+    }, "due_items": due_items})
+
+
 class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
     queryset = Transaction.objects.select_related("customer", "order")

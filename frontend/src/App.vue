@@ -25,6 +25,7 @@ const nav = [
   { label: '产品证书', path: '/product-certificates', icon: BadgeCheck },
   { label: '产品分类', path: '/categories', icon: Tags },
   { section: '财务与工具' },
+  { label: '财务概览', path: '/finance', icon: WalletCards },
   { label: '财务流水', path: '/transactions', icon: WalletCards },
   { label: '数据导入', path: '/import', icon: Upload },
   { section: '组织与系统' },

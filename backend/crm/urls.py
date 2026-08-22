@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .context import entity_context
-from .views import AccessRoleViewSet, CategoryAttributeViewSet, ContactViewSet, CustomerViewSet, EmployeeProfileViewSet, FollowUpViewSet, InventoryMovementViewSet, OrderViewSet, OrganizationUnitViewSet, PaymentPlanViewSet, PositionViewSet, ProductCategoryViewSet, ProductCertificateViewSet, ProductParameterViewSet, ProductViewSet, PurchaseOrderViewSet, QuoteViewSet, RolePermissionViewSet, SKUViewSet, SupplierViewSet, TransactionViewSet, current_operator, dashboard, import_csv, import_templates, organization_overview
+from .views import AccessRoleViewSet, CategoryAttributeViewSet, ContactViewSet, CustomerViewSet, EmployeeProfileViewSet, FollowUpViewSet, InventoryMovementViewSet, OrderViewSet, OrganizationUnitViewSet, PaymentPlanViewSet, PositionViewSet, ProductCategoryViewSet, ProductCertificateViewSet, ProductParameterViewSet, ProductViewSet, PurchaseOrderViewSet, QuoteViewSet, RolePermissionViewSet, SKUViewSet, SupplierViewSet, TransactionViewSet, current_operator, dashboard, finance_dashboard, import_csv, import_templates, organization_overview
 
 router = DefaultRouter()
 router.register("customers", CustomerViewSet, basename="customer")
@@ -29,6 +29,7 @@ router.register("employees", EmployeeProfileViewSet)
 
 urlpatterns = [
     path("dashboard/", dashboard),
+    path("finance-dashboard/", finance_dashboard),
     path("organization/overview/", organization_overview),
     path("session/current-operator/", current_operator),
     path("context/<str:entity>/<int:pk>/", entity_context),

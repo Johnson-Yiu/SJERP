@@ -9,6 +9,7 @@ import ProductPage from './views/ProductPage.vue'
 import SKUPage from './views/SKUPage.vue'
 import InventoryPage from './views/InventoryPage.vue'
 import PurchaseOrderPage from './views/PurchaseOrderPage.vue'
+import FinanceDashboardPage from './views/FinanceDashboardPage.vue'
 import { resourceConfigs } from './resourceConfigs'
 
 const routes = [
@@ -28,6 +29,7 @@ const routes = [
   { path: '/organization', component: OrganizationPage, meta: { title: '组织与权限', eyebrow: 'Organization & access' } },
   { path: '/inventory', component: InventoryPage, meta: { title: '库存', eyebrow: 'Current inventory' } },
   { path: '/purchase-orders', component: PurchaseOrderPage, meta: { title: '采购管理', eyebrow: 'Procurement desk' } },
+  { path: '/finance', component: FinanceDashboardPage, meta: { title: '财务概览', eyebrow: 'Operating finance' } },
 ]
 
 export default createRouter({ history: createWebHistory(), routes })

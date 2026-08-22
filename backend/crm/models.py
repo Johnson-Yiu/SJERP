@@ -227,6 +227,7 @@ class Product(TimestampedModel):
     code = models.CharField("产品编号", max_length=50, unique=True)
     category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name="products")
     additional_categories = models.ManyToManyField(ProductCategory, blank=True, related_name="secondary_products", verbose_name="附加分类")
+    suppliers = models.ManyToManyField("Supplier", blank=True, related_name="products", verbose_name="供应商")
     description = models.TextField("描述", blank=True)
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="active")
 

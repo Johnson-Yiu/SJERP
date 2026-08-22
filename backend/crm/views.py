@@ -59,7 +59,10 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
         item = purchase.items.filter(pk=input_serializer.validated_data["purchase_item"]).first()
         if item is None:
             return Response({"detail": "到货明细不属于该采购单。"}, status=status.HTTP_400_BAD_REQUEST)
-        receipt = record_receipt(item, input_serializer.validated_data)
+        try:
+            receipt = record_receipt(item, input_serializer.validated_data)
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         return Response({
             "id": receipt.id,
             "purchase_item": receipt.purchase_item_id,
@@ -728,7 +731,10 @@ class OrderViewSet(viewsets.ModelViewSet):
     def ship(self, request, pk=None):
         input_serializer = ShipmentInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
-        shipment = confirm_shipment(self.get_object(), input_serializer.validated_data)
+        try:
+            shipment = confirm_shipment(self.get_object(), input_serializer.validated_data)
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"id": shipment.id, "shipment_no": shipment.shipment_no, "status": shipment.status}, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["get"])

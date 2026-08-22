@@ -217,6 +217,14 @@ class FulfillmentApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], "API Supplier")
 
+    def test_product_can_be_created_with_suppliers(self):
+        supplier = Supplier.objects.create(name="Product Supplier")
+        response = self.client.post("/api/products/", {
+            "name": "Supplier-linked product", "suppliers": [supplier.id],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
+        self.assertEqual(response.data["suppliers"], [supplier.id])
+
     def test_purchase_order_can_be_created_and_reports_unpaid_amount(self):
         supplier = Supplier.objects.create(name="Purchase API Supplier")
         order = Order.objects.create(
@@ -241,6 +249,15 @@ class FulfillmentApiTests(TestCase):
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
         self.assertTrue(InventoryMovement.objects.filter(source_type="receipt", source_no="PO-RECEIPT-API", is_automatic=True).exists())
+
+    def test_over_receipt_returns_a_user_facing_validation_error(self):
+        supplier = Supplier.objects.create(name="Over Receipt Supplier")
+        order = Order.objects.create(order_no="SO-OVER-RECEIPT", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21))
+        purchase = PurchaseOrder.objects.create(purchase_no="PO-OVER-RECEIPT", supplier=supplier, order=order, order_date=date(2026, 8, 21), status="ordered")
+        item = purchase.items.create(sku=self.sku, quantity="1", unit_price="3")
+        response = self.client.post(f"/api/purchase-orders/{purchase.id}/receive/", {"purchase_item": item.id, "receipt_date": "2026-08-21", "quantity": "2", "unit_cost": "3"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("超到必须选择原因", response.data["detail"])
 
     def test_supplier_payment_creates_expense_for_purchase_order(self):
         supplier = Supplier.objects.create(name="Payment API Supplier")
@@ -270,6 +287,14 @@ class FulfillmentApiTests(TestCase):
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
         self.assertTrue(InventoryMovement.objects.filter(source_type="shipment", source_no="SH-API-001", type="sale_out").exists())
+
+    def test_over_shipment_returns_a_user_facing_validation_error(self):
+        order = Order.objects.create(order_no="SO-OVER-SHIP", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="confirmed")
+        item = order.items.create(sku=self.sku, quantity="1", unit_price="5")
+        InventoryMovement.objects.create(movement_no="IN-OVER-SHIP", movement_date=date(2026, 8, 21), type="purchase_in", sku=self.sku, quantity="2")
+        response = self.client.post(f"/api/orders/{order.id}/ship/", {"shipment_no": "SH-OVER-SHIP", "shipment_date": "2026-08-21", "items": [{"order_item": item.id, "quantity": "2"}]}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("超发必须选择", response.data["detail"])
 
     def test_quote_availability_shows_stock_without_creating_reservation(self):
         quote = Quote.objects.create(quote_no="QT-AVAIL-API", customer=Customer.objects.get(code="C-API"), quote_date=date(2026, 8, 21), lead_time_days=12)

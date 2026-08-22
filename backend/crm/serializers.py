@@ -321,8 +321,10 @@ class ProductSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop("code", None)
         additional_categories = validated_data.pop("additional_categories", [])
+        suppliers = validated_data.pop("suppliers", [])
         product = Product.objects.create(code=allocate_product_code(), **validated_data)
         product.additional_categories.set(additional_categories)
+        product.suppliers.set(suppliers)
         return product
 
 

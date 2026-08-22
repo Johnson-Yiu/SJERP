@@ -5,7 +5,7 @@ from uuid import uuid4
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
-from crm.models import PaymentPlan, Transaction
+from crm.models import ContractChangeRequest, PaymentPlan, Transaction
 
 
 def _transaction_no(prefix="FIN"):
@@ -124,4 +124,24 @@ def allocate_advance(advance, plan, amount):
     plan.settled_amount += amount
     plan.status = "settled" if plan.settled_amount == plan.planned_amount else "open"
     plan.save(update_fields=["settled_amount", "status", "updated_at"])
+    return plan
+
+
+@transaction.atomic
+def approve_contract_change(change):
+    change = ContractChangeRequest.objects.select_for_update().select_related("order", "purchase_order").get(pk=change.pk)
+    if change.status != "pending":
+        raise ValidationError("只有待确认变更单可以确认。")
+    contract = change.order or change.purchase_order
+    plan = PaymentPlan.objects.create(
+        order=change.order,
+        purchase_order=change.purchase_order,
+        direction="receivable" if change.order_id else "payable",
+        due_date=change.due_date,
+        planned_amount=change.amount_delta,
+        currency=contract.currency,
+        notes=f"变更单 #{change.pk}：{change.notes}",
+    )
+    change.status = "approved"
+    change.save(update_fields=["status", "updated_at"])
     return plan

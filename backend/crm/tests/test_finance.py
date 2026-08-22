@@ -4,8 +4,8 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from crm.models import Customer, Order, PaymentPlan, Product, SKU, Transaction
-from crm.services.finance import allocate_advance, ensure_default_payment_plans, record_transaction
+from crm.models import ContractChangeRequest, Customer, Order, PaymentPlan, Product, SKU, Transaction
+from crm.services.finance import allocate_advance, approve_contract_change, ensure_default_payment_plans, record_transaction
 
 
 class PaymentPlanModelTests(TestCase):
@@ -83,3 +83,13 @@ class FinanceServiceTests(PaymentPlanModelTests):
         plan.refresh_from_db()
         self.assertEqual(advance.allocated_amount, Decimal("50"))
         self.assertEqual(plan.settled_amount, Decimal("50"))
+
+    def test_approved_order_change_appends_receivable_plan(self):
+        change = ContractChangeRequest.objects.create(order=self.order, amount_delta=Decimal("20"), notes="客户追加")
+
+        plan = approve_contract_change(change)
+
+        change.refresh_from_db()
+        self.assertEqual(change.status, "approved")
+        self.assertEqual(plan.planned_amount, Decimal("20"))
+        self.assertEqual(plan.direction, "receivable")

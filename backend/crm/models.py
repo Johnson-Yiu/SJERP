@@ -574,6 +574,22 @@ class PaymentPlan(TimestampedModel):
             raise ValidationError("已核销金额不能超过计划金额。")
 
 
+class ContractChangeRequest(TimestampedModel):
+    STATUS_CHOICES = [("pending", "待确认"), ("approved", "已确认"), ("rejected", "已拒绝")]
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, null=True, blank=True, related_name="contract_changes")
+    purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.PROTECT, null=True, blank=True, related_name="contract_changes")
+    amount_delta = models.DecimalField("合同原币变更金额", max_digits=14, decimal_places=2)
+    due_date = models.DateField("新增计划日期", null=True, blank=True)
+    status = models.CharField("状态", max_length=12, choices=STATUS_CHOICES, default="pending")
+    notes = models.TextField("变更说明")
+
+    def clean(self):
+        if bool(self.order_id) == bool(self.purchase_order_id):
+            raise ValidationError("变更单必须且只能关联一个订单或采购单。")
+        if self.amount_delta <= 0:
+            raise ValidationError("本期只允许通过变更单增加合同金额。")
+
+
 class Shipment(TimestampedModel):
     STATUS_CHOICES = [("draft", "草稿"), ("confirmed", "已确认"), ("cancelled", "已取消")]
     shipment_no = models.CharField("发货单号", max_length=40, unique=True)

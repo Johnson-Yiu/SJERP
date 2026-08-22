@@ -7,7 +7,7 @@ from django.db import transaction
 from django.utils.html import strip_tags
 from rest_framework import serializers
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Supplier, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Supplier, Transaction
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .quote_snapshots import create_quote_items
 
@@ -658,6 +658,17 @@ class PaymentPlanSerializer(serializers.ModelSerializer):
     def get_is_overdue(self, obj):
         from django.utils import timezone
         return bool(obj.due_date and obj.due_date < timezone.localdate() and obj.status == "open")
+
+
+class ContractChangeRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContractChangeRequest
+        fields = "__all__"
+
+    def validate(self, attrs):
+        if bool(attrs.get("order")) == bool(attrs.get("purchase_order")):
+            raise serializers.ValidationError("变更单必须且只能关联一个订单或采购单。")
+        return attrs
 
 
 class InventoryMovementSerializer(serializers.ModelSerializer):

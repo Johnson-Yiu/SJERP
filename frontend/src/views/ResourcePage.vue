@@ -24,6 +24,7 @@ const fieldOptions = computed(() => Object.fromEntries(props.config.fields.filte
 const title = computed(() => editingId.value ? `编辑${props.config.title.replace('管理', '')}` : `新建${props.config.title.replace('管理', '')}`)
 const isCustomerCreate = computed(() => props.config.endpoint === 'customers' && !editingId.value)
 const isWideForm = computed(() => isCustomerCreate.value || props.config.endpoint === 'follow-ups')
+const isTransactionPage = computed(() => props.config.endpoint === 'transactions')
 
 function emptyContact(primary = false) {
   return { name: '', title: '', email: '', phone: '', whatsapp: '', notes: '', is_primary: primary }
@@ -150,7 +151,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="resource-page" :class="{ 'finance-resource-page': isTransactionPage }">
     <div class="page-head"><div><h2>{{ config.title }}</h2><p>{{ config.description }}</p></div><button class="btn btn-primary" @click="openCreate"><Plus :size="16" /> 新建记录</button></div>
     <div class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索当前列表..." @input="delayedSearch" /></div></div>
     <div class="panel">
@@ -158,7 +159,7 @@ onMounted(async () => {
       <div v-else-if="!rows.length" class="empty"><Database :size="32" /><h3>还没有数据</h3><p>点击“新建记录”开始建立业务资料。</p></div>
       <div v-else class="table-wrap"><table class="data-table"><thead><tr><th v-for="col in config.columns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
         <tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="detailId = row.id" @keydown.enter="detailId = row.id">
-          <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0 }"><span :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
+          <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><span :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
           <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="detailId = row.id"><ChevronRight :size="14" /></button><button class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
         </tr>
       </tbody></table></div>
@@ -166,7 +167,7 @@ onMounted(async () => {
 
     <div v-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal" :class="{ wide: isWideForm }" @submit.prevent="save">
       <div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" @click="closeModal"><X :size="17" /></button></div>
-      <div class="modal-body"><div class="form-grid"><div v-for="field in config.fields" :key="field[0]" class="field" :class="{ full: field[2] === 'textarea' || (config.endpoint === 'follow-ups' && field[0] === 'subject') }">
+      <div class="modal-body"><div class="form-grid"><div v-for="field in config.fields" :key="field[0]" class="field" :class="{ full: field[2] === 'textarea' || (config.endpoint === 'follow-ups' && field[0] === 'subject'), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
         <label>{{ field[1] }} <em v-if="field[3]">*</em></label>
         <textarea v-if="field[2] === 'textarea'" v-model="form[field[0]]" :required="field[3]" />
         <SimpleRichTextEditor v-else-if="field[2] === 'richtext'" v-model="form[field[0]]" />
@@ -238,6 +239,18 @@ onMounted(async () => {
 .add-contact-btn{width:100%;margin-top:12px;padding:11px;border:1px dashed #aac2ba;border-radius:9px;background:#f7faf8;color:var(--green-2);display:flex;align-items:center;justify-content:center;gap:7px;font-size:13px;font-weight:600}
 .add-contact-btn:hover{background:#edf5f1;border-color:#719d8f}
 .readonly-input{background:#f1f5f3!important;color:#557068!important;cursor:not-allowed}
+.finance-resource-page{font-family:var(--font-sans)}
+.finance-resource-page .page-head h2,.finance-resource-page .page-head p,.finance-resource-page .data-table,.finance-resource-page .modal{font-family:inherit}
+.finance-resource-page .data-table th{background:#f8faf8;color:#81908b}
+.finance-resource-page .data-table td{color:#43504c}
+.finance-resource-page .data-table .direction{font-weight:700}
+.finance-resource-page .data-table .direction.income{color:#267255}
+.finance-resource-page .data-table .direction.expense{color:#bd4e4e}
+.finance-resource-page .numeric-cell{text-align:right;white-space:nowrap}
+.finance-resource-page .numeric-cell .amount{display:inline-block;min-width:7.5ch;text-align:right;font-variant-numeric:tabular-nums}
+.finance-resource-page .data-table td:nth-last-child(2){padding-right:22px}
+.finance-resource-page .finance-amount-field input{font-variant-numeric:tabular-nums}
+.finance-resource-page .modal .field label{letter-spacing:.01em}
 @media(max-width:760px){.contact-fields{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.contact-create-head,.contact-card-head{align-items:flex-start}.contact-card-head{flex-direction:column}.contact-fields{grid-template-columns:1fr}.contact-card-actions{width:100%;justify-content:space-between}}
 </style>

@@ -117,6 +117,8 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         PurchaseOrderItem.objects.bulk_create([
             PurchaseOrderItem(purchase_order=purchase, **item) for item in items
         ])
+        from .services.finance import ensure_default_payment_plans
+        ensure_default_payment_plans(purchase)
         return purchase
 
 
@@ -586,6 +588,8 @@ class OrderSerializer(serializers.ModelSerializer):
         OrderItem.objects.bulk_create(rows)
         from .services.fulfillment import allocate_order
         allocate_order(order)
+        from .services.finance import ensure_default_payment_plans
+        ensure_default_payment_plans(order)
         if order.quote_id:
             Quote.objects.filter(pk=order.quote_id).update(status="accepted")
         return order

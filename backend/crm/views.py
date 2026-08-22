@@ -728,6 +728,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         order = self.get_object()
         items = list(order.items.all())
         payments = list(order.transactions.all())
+        plans = list(order.payment_plans.all())
+        expenses = [row for row in payments if row.kind == "order_expense" and row.status == "confirmed"]
         inventory = list(order.inventory_movements.select_related("sku__product"))
         ordered_quantity = sum((item.quantity for item in items), Decimal("0"))
         shipped_quantity = sum(
@@ -741,16 +743,23 @@ class OrderViewSet(viewsets.ModelViewSet):
             (payment.amount for payment in payments if payment.direction == "income" and payment.status == "confirmed"),
             Decimal("0"),
         )
+        planned_receivable = sum((plan.planned_amount for plan in plans if plan.status != "cancelled"), Decimal("0"))
+        expense_rmb = sum((row.rmb_amount for row in expenses), Decimal("0"))
+        purchase_cost_rmb = sum((purchase.total_amount * purchase.exchange_rate for purchase in order.purchase_orders.prefetch_related("items")), Decimal("0"))
         return Response({
             "order": OrderSerializer(order).data,
             "source_quote": QuoteSerializer(order.quote).data if order.quote else None,
             "items": OrderItemSerializer(items, many=True).data,
             "payments": TransactionSerializer(payments, many=True).data,
+            "plans": PaymentPlanSerializer(plans, many=True).data,
             "inventory": InventoryMovementSerializer(inventory, many=True).data,
             "payment_summary": {
                 "paid_amount": paid_amount,
                 "balance_amount": order.total_amount - paid_amount,
+                "planned_amount": planned_receivable,
             },
+            "expense_summary": {"expense_rmb": expense_rmb},
+            "profit_summary": {"sales_rmb": order.total_amount * order.exchange_rate, "purchase_cost_rmb": purchase_cost_rmb, "expense_rmb": expense_rmb, "estimated_gross_profit_rmb": order.total_amount * order.exchange_rate - purchase_cost_rmb - expense_rmb},
             "fulfillment_summary": {
                 "ordered_quantity": ordered_quantity,
                 "shipped_quantity": shipped_quantity,

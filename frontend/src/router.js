@@ -10,6 +10,7 @@ import SKUPage from './views/SKUPage.vue'
 import InventoryPage from './views/InventoryPage.vue'
 import PurchaseOrderPage from './views/PurchaseOrderPage.vue'
 import FinanceDashboardPage from './views/FinanceDashboardPage.vue'
+import PaymentPlanPage from './views/PaymentPlanPage.vue'
 import { resourceConfigs } from './resourceConfigs'
 
 const routes = [
@@ -30,6 +31,8 @@ const routes = [
   { path: '/inventory', component: InventoryPage, meta: { title: '库存', eyebrow: 'Current inventory' } },
   { path: '/purchase-orders', component: PurchaseOrderPage, meta: { title: '采购管理', eyebrow: 'Procurement desk' } },
   { path: '/finance', component: FinanceDashboardPage, meta: { title: '财务概览', eyebrow: 'Operating finance' } },
+  { path: '/receivables', component: PaymentPlanPage, props: { direction: 'receivable' }, meta: { title: '应收计划', eyebrow: 'Accounts receivable' } },
+  { path: '/payables', component: PaymentPlanPage, props: { direction: 'payable' }, meta: { title: '应付计划', eyebrow: 'Accounts payable' } },
 ]
 
 export default createRouter({ history: createWebHistory(), routes })

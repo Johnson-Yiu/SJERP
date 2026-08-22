@@ -619,6 +619,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = "__all__"
+        extra_kwargs = {"transaction_no": {"required": False}}
 
     def get_rmb_amount(self, obj):
         return obj.rmb_amount or (obj.amount * obj.exchange_rate).quantize(Decimal("0.01"))

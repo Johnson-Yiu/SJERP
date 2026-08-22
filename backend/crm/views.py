@@ -72,7 +72,15 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
     def pay(self, request, pk=None):
         input_serializer = SupplierPaymentInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
-        payment = record_supplier_payment(self.get_object(), input_serializer.validated_data)
+        purchase = self.get_object()
+        plan = purchase.payment_plans.filter(status="open").order_by("due_date", "id").first()
+        if plan:
+            payload = input_serializer.validated_data.copy()
+            payload["plan"] = plan
+            payload["category"] = "供应商付款"
+            payment = record_transaction(payload)
+        else:
+            payment = record_supplier_payment(purchase, input_serializer.validated_data)
         return Response(TransactionSerializer(payment).data, status=status.HTTP_201_CREATED)
 
 

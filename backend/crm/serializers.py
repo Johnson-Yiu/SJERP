@@ -7,7 +7,7 @@ from django.db import transaction
 from django.utils.html import strip_tags
 from rest_framework import serializers
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Supplier, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Supplier, Transaction
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .quote_snapshots import create_quote_items
 
@@ -621,7 +621,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_rmb_amount(self, obj):
-        return (obj.amount * obj.exchange_rate).quantize(Decimal("0.01"))
+        return obj.rmb_amount or (obj.amount * obj.exchange_rate).quantize(Decimal("0.01"))
 
     def validate(self, attrs):
         order = attrs.get("order", getattr(self.instance, "order", None))
@@ -631,6 +631,27 @@ class TransactionSerializer(serializers.ModelSerializer):
         if order and not customer:
             attrs["customer"] = order.customer
         return attrs
+
+
+class PaymentPlanSerializer(serializers.ModelSerializer):
+    remaining_amount = serializers.DecimalField(max_digits=14, decimal_places=2, read_only=True)
+    contract_no = serializers.SerializerMethodField()
+    counterparty_name = serializers.SerializerMethodField()
+    is_overdue = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PaymentPlan
+        fields = "__all__"
+
+    def get_contract_no(self, obj):
+        return obj.order.order_no if obj.order_id else obj.purchase_order.purchase_no
+
+    def get_counterparty_name(self, obj):
+        return obj.order.customer.name if obj.order_id else obj.purchase_order.supplier.name
+
+    def get_is_overdue(self, obj):
+        from django.utils import timezone
+        return bool(obj.due_date and obj.due_date < timezone.localdate() and obj.status == "open")
 
 
 class InventoryMovementSerializer(serializers.ModelSerializer):

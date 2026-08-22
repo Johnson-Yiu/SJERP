@@ -16,12 +16,13 @@ from rest_framework.decorators import action, api_view, parser_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, SKU, Supplier, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, SKU, Supplier, Transaction
 from .permissions import PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, SKUSerializer, SupplierPaymentInputSerializer, SupplierSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, SKUSerializer, SupplierPaymentInputSerializer, SupplierSerializer, TransactionSerializer, next_product_code
+from .services.finance import record_transaction, void_transaction
 from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, sku_metrics
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
@@ -790,11 +791,24 @@ class InventoryMovementViewSet(viewsets.ModelViewSet):
         return qs
 
     def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        row = record_transaction(serializer.validated_data.copy())
+        return Response(self.get_serializer(row).data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        if self.get_object().status == "confirmed":
+            return Response({"detail": "已确认流水不能直接修改，请作废后重记。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().update(request, *args, **kwargs)
+
+    @action(detail=True, methods=["post"])
+    def void(self, request, pk=None):
+        row = void_transaction(self.get_object())
+        return Response(self.get_serializer(row).data)
+
+    def create(self, request, *args, **kwargs):
         if request.data.get("type") not in {"adjust_in", "adjust_out", "sample_out", "return_in"}:
-            return Response(
-                {"detail": "手工库存流水仅允许盘盈、盘亏、样品出库或客户退回。"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({"detail": "手工库存流水仅允许盘盈、盘亏、样品出库或客户退回。"}, status=status.HTTP_400_BAD_REQUEST)
         payload = request.data.copy()
         payload["source_type"] = "manual"
         payload["is_automatic"] = False
@@ -812,6 +826,28 @@ class InventoryMovementViewSet(viewsets.ModelViewSet):
         if self.get_object().is_automatic:
             return Response({"detail": "系统自动生成的库存流水不能删除。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().destroy(request, *args, **kwargs)
+
+
+class PaymentPlanViewSet(viewsets.ModelViewSet):
+    serializer_class = PaymentPlanSerializer
+    queryset = PaymentPlan.objects.select_related("order__customer", "purchase_order__supplier")
+    ordering_fields = ["due_date", "planned_amount", "created_at"]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        for key in ("direction", "order", "purchase_order", "status"):
+            if self.request.query_params.get(key):
+                qs = qs.filter(**{f"{key}_id" if key in {"order", "purchase_order"} else key: self.request.query_params[key]})
+        if self.request.query_params.get("overdue") == "true":
+            qs = qs.filter(status="open", due_date__lt=timezone.localdate())
+        return qs
+
+    @action(detail=True, methods=["post"])
+    def settle(self, request, pk=None):
+        plan = self.get_object()
+        row = record_transaction({**request.data, "plan": plan})
+        return Response(TransactionSerializer(row).data, status=status.HTTP_201_CREATED)
+
 
 
 @api_view(["GET"])

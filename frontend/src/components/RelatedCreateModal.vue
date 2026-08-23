@@ -213,7 +213,7 @@ onMounted(init)
             </div>
             <div class="quick-lines">
               <div v-for="(item, index) in form.items" :key="index" class="quick-line" :class="{ order: isOrder }">
-                <select v-model="item.sku" required @change="selectSku(item)"><option value="">选择 SKU</option><option v-for="sku in skus" :key="sku.id" :value="sku.id">{{ sku.sku }} · {{ sku.product_name }}</option></select>
+                <select v-model="item.sku" required @change="selectSku(item)"><option value="">选择 SKU</option><option v-for="sku in skus" :key="sku.id" :value="sku.id">{{ sku.display_name_cn || sku.product_name }} · {{ sku.sales_model || '未设置型号' }} · {{ sku.sku_code || sku.sku }}</option></select>
                 <input v-model="item.quantity" type="number" min="0.01" step="0.01" />
                 <input v-model="item.unit_price" type="number" min="0" step="0.0001" />
                 <input v-if="isOrder" v-model="item.cost_price" type="number" min="0" step="0.0001" />

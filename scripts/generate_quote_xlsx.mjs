@@ -165,7 +165,7 @@ for (let index = 0; index < visibleProductRows; index += 1) {
   const product = payload.products[index];
   if (!product) continue;
   sheet.getRange(`A${rowNumber}`).values = [[index + 1]];
-  sheet.getRange(`C${rowNumber}`).values = [[product.sku]];
+  sheet.getRange(`C${rowNumber}`).values = [[product.model ?? product.sku ?? ""]];
   sheet.getRange(`D${rowNumber}`).values = [[product.description || product.product_name]];
   sheet.getRange(`J${rowNumber}`).values = [[Number(product.quantity)]];
   sheet.getRange(`K${rowNumber}`).values = [[product.unit]];

@@ -219,6 +219,10 @@ class ProductCodeSequence(models.Model):
     last_value = models.PositiveIntegerField(default=0)
 
 
+class SKUCodeSequence(models.Model):
+    last_value = models.PositiveIntegerField(default=0)
+
+
 class Product(TimestampedModel):
     STATUS_CHOICES = [("active", "在售"), ("development", "开发中"), ("discontinued", "停产")]
     name = models.CharField("产品名称", max_length=200)
@@ -242,6 +246,10 @@ class SKU(TimestampedModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="skus")
     sku = models.CharField("SKU", max_length=80, unique=True)
     specification = models.CharField("规格", max_length=200, blank=True)
+    display_name_cn = models.CharField("内部中文显示名称", max_length=300, blank=True)
+    sales_model = models.CharField("对外商业型号", max_length=80, unique=True, null=True, blank=True)
+    description_cn = models.TextField("中文描述", blank=True)
+    description_en = models.TextField("英文描述", blank=True)
     unit = models.CharField("单位", max_length=30, default="pcs")
     cost_price = models.DecimalField("成本价", max_digits=14, decimal_places=4, default=0)
     default_price = models.DecimalField("默认售价", max_digits=14, decimal_places=4, default=0)
@@ -254,8 +262,27 @@ class SKU(TimestampedModel):
     class Meta:
         ordering = ["sku"]
 
+    def save(self, *args, **kwargs):
+        if not self.sku:
+            from .sku_numbers import allocate_sku_code
+
+            self.sku = allocate_sku_code()
+        if self.product_id and (not self.display_name_cn or not self.description_cn or not self.description_en):
+            from .sku_identity import build_sku_identity
+
+            generated = build_sku_identity(
+                self.product,
+                self.specification,
+                self.parameter_values,
+                self.product_details,
+            )
+            self.display_name_cn = self.display_name_cn or generated["display_name_cn"]
+            self.description_cn = self.description_cn or generated["description_cn"]
+            self.description_en = self.description_en or generated["description_en"]
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return self.sku
+        return self.display_name_cn or self.sku
 
 
 class PackagingTemplate(TimestampedModel):
@@ -422,6 +449,7 @@ class QuoteItem(models.Model):
     quote = models.ForeignKey(Quote, on_delete=models.CASCADE, related_name="items")
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="quote_items")
     sku_code_snapshot = models.CharField("SKU 编码快照", max_length=80, blank=True)
+    sales_model_snapshot = models.CharField("销售型号快照", max_length=80, blank=True)
     product_name_snapshot = models.CharField("产品名称快照", max_length=200, blank=True)
     unit_snapshot = models.CharField("单位快照", max_length=30, blank=True)
     image_snapshot = models.ImageField("产品图片快照", upload_to="quote-item-images/%Y/%m/", blank=True)
@@ -429,6 +457,16 @@ class QuoteItem(models.Model):
     unit_price = models.DecimalField("单价", max_digits=14, decimal_places=4)
     description = models.TextField("产品描述", blank=True)
     notes = models.CharField("备注", max_length=200, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self._state.adding and self.sku_id:
+            sku = self.sku
+            self.sku_code_snapshot = self.sku_code_snapshot or sku.sku
+            self.sales_model_snapshot = self.sales_model_snapshot or sku.sales_model or ""
+            self.product_name_snapshot = self.product_name_snapshot or sku.display_name_cn or sku.product.name
+            self.unit_snapshot = self.unit_snapshot or sku.unit
+            self.description = self.description or sku.description_en or sku.description_cn or self.product_name_snapshot
+        super().save(*args, **kwargs)
 
     @property
     def amount(self):
@@ -490,10 +528,25 @@ class Order(TimestampedModel):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="order_items")
+    sku_code_snapshot = models.CharField("SKU 编码快照", max_length=80, blank=True)
+    sales_model_snapshot = models.CharField("销售型号快照", max_length=80, blank=True)
+    display_name_snapshot = models.CharField("显示名称快照", max_length=300, blank=True)
+    description_snapshot = models.TextField("描述快照", blank=True)
+    unit_snapshot = models.CharField("单位快照", max_length=30, blank=True)
     quantity = models.DecimalField("数量", max_digits=14, decimal_places=2)
     unit_price = models.DecimalField("单价", max_digits=14, decimal_places=4)
     cost_price = models.DecimalField("成交时成本", max_digits=14, decimal_places=4, default=0)
     notes = models.CharField("备注", max_length=200, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self._state.adding and self.sku_id:
+            sku = self.sku
+            self.sku_code_snapshot = self.sku_code_snapshot or sku.sku
+            self.sales_model_snapshot = self.sales_model_snapshot or sku.sales_model or ""
+            self.display_name_snapshot = self.display_name_snapshot or sku.display_name_cn or sku.product.name
+            self.description_snapshot = self.description_snapshot or sku.description_en or sku.description_cn or self.display_name_snapshot
+            self.unit_snapshot = self.unit_snapshot or sku.unit
+        super().save(*args, **kwargs)
 
     @property
     def amount(self):

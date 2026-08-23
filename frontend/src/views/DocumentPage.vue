@@ -170,7 +170,7 @@ onMounted(async () => {
         <div class="line-items">
           <div class="line-header"><span>SKU</span><span>数量</span><span>单价</span><span v-if="isOrder">成本</span><span>小计</span><span></span></div>
           <div v-for="(item,index) in form.items" :key="index" class="line-row" :class="{ order: isOrder }">
-            <select v-model="item.sku" required @change="selectSku(item)"><option value="">选择 SKU</option><option v-for="sku in skus" :key="sku.id" :value="sku.id">{{ sku.sku }} · {{ sku.product_name }}</option></select>
+            <select v-model="item.sku" required @change="selectSku(item)"><option value="">选择 SKU</option><option v-for="sku in skus" :key="sku.id" :value="sku.id">{{ sku.display_name_cn || sku.product_name }} · {{ sku.sales_model || '未设置型号' }} · {{ sku.sku_code || sku.sku }}</option></select>
             <input v-model="item.quantity" type="number" min="0.01" step="0.01" required />
             <input v-model="item.unit_price" type="number" min="0" step="0.0001" required />
             <input v-if="isOrder" v-model="item.cost_price" type="number" min="0" step="0.0001" />

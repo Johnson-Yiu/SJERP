@@ -357,7 +357,7 @@ class SKUViewSet(viewsets.ModelViewSet):
             default=F("inventory_movements__quantity"), output_field=MONEY,
         )), Decimal("0"), output_field=MONEY)
     ).order_by("sku")
-    search_fields = ["sku", "specification", "product__name", "product__code"]
+    search_fields = ["sku", "display_name_cn", "sales_model", "specification", "description_cn", "description_en", "product__name", "product__name_en", "product__code"]
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -627,6 +627,13 @@ class QuoteViewSet(viewsets.ModelViewSet):
             "items": [
                 {
                     "sku": item.sku_id,
+                    "sku_code": item.sku_code_snapshot,
+                    "sales_model_snapshot": item.sales_model_snapshot,
+                    "model": item.sales_model_snapshot,
+                    "display_name_snapshot": item.product_name_snapshot,
+                    "description_snapshot": item.description,
+                    "description": item.description,
+                    "unit_snapshot": item.unit_snapshot,
                     "quantity": item.quantity,
                     "unit_price": item.unit_price,
                     "cost_price": item.sku.cost_price,
@@ -696,8 +703,14 @@ class QuoteViewSet(viewsets.ModelViewSet):
             amount = item.amount
             subtotal += amount
             products.append({
+                # ``sku`` remains the legacy/internal field for old clients;
+                # customer-facing callers must use ``model``.
                 "sku": item.sku_code_snapshot,
+                "sku_code": item.sku_code_snapshot,
+                "model": item.sales_model_snapshot,
+                "sales_model": item.sales_model_snapshot,
                 "product_name": item.product_name_snapshot,
+                "display_name": item.product_name_snapshot,
                 "description": item.description,
                 "quantity": item.quantity,
                 "unit_price": item.unit_price,
@@ -783,7 +796,9 @@ class OrderViewSet(viewsets.ModelViewSet):
         for item in order.items.select_related("sku"):
             metrics = order_item_metrics(item)
             rows.append({
-                "id": item.id, "sku": item.sku_id, "sku_code": item.sku.sku,
+                "id": item.id, "sku": item.sku_id, "sku_code": item.sku_code_snapshot or item.sku.sku,
+                "sales_model": item.sales_model_snapshot,
+                "display_name": item.display_name_snapshot,
                 "quantity": item.quantity, "allocated_quantity": metrics["allocated_quantity"],
                 "to_procure_quantity": metrics["to_procure_quantity"],
                 "purchased_quantity": metrics["purchased_quantity"],

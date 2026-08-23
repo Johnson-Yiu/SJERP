@@ -58,9 +58,9 @@ export const resourceConfigs = {
     detail: true,
   },
   skus: {
-    title: 'SKU 管理', eyebrow: 'Sellable variants', endpoint: 'skus', key: 'sku',
+    title: 'SKU 管理', eyebrow: 'Sellable variants', endpoint: 'skus', key: 'display_name_cn',
     description: '管理实际报价和下单使用的规格、成本、单位与默认售价。',
-    columns: [['sku', 'SKU'], ['product_name', '产品'], ['specification', '规格'], ['stock_quantity', '库存', 'number'], ['unit', '单位'], ['cost_price', '成本价', 'money'], ['default_price', '默认售价', 'money'], ['currency', '币种', 'tag'], ['active', '启用', 'boolean']],
+    columns: [['display_name_cn', '内部名称'], ['sales_model', '对外型号'], ['sku_code', 'SKU Code'], ['specification', '规格'], ['stock_quantity', '库存', 'number'], ['unit', '单位'], ['cost_price', '成本价', 'money'], ['default_price', '默认售价', 'money'], ['currency', '币种', 'tag'], ['active', '启用', 'boolean']],
     fields: [
       ['product', '所属产品', 'remote', true, 'products', 'name'], ['sku', 'SKU', 'text', true], ['specification', '规格'], ['unit', '单位'],
       ['cost_price', '成本价', 'number'], ['default_price', '默认售价', 'number'], ['currency', '币种', 'select', true, { USD: 'USD', CNY: 'CNY', EUR: 'EUR', GBP: 'GBP' }], ['active', '启用', 'checkbox'],

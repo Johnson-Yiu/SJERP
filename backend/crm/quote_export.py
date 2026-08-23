@@ -85,7 +85,9 @@ def _export_payload(quote):
             except (NotImplementedError, ValueError):
                 image_path = ""
         products.append({
-            "sku": item.sku_code_snapshot,
+            "sku": item.sales_model_snapshot,
+            "model": item.sales_model_snapshot,
+            "sku_code": item.sku_code_snapshot,
             "product_name": item.product_name_snapshot,
             "description": item.description or item.product_name_snapshot,
             "quantity": str(item.quantity),

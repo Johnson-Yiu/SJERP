@@ -10,6 +10,8 @@ from rest_framework import serializers
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Supplier, Transaction
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .quote_snapshots import create_quote_items
+from .sku_identity import build_sku_identity
+from .sku_numbers import allocate_sku_code
 
 
 def customer_sequence_suffix(value):
@@ -90,12 +92,14 @@ class SupplierSerializer(serializers.ModelSerializer):
 
 class PurchaseOrderItemSerializer(serializers.ModelSerializer):
     sku_code = serializers.CharField(source="sku.sku", read_only=True)
+    display_name = serializers.CharField(source="sku.display_name_cn", read_only=True)
+    sales_model = serializers.CharField(source="sku.sales_model", read_only=True)
     received_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     remaining_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
 
     class Meta:
         model = PurchaseOrderItem
-        fields = ["id", "sku", "sku_code", "quantity", "unit_price", "received_quantity", "remaining_quantity"]
+        fields = ["id", "sku", "sku_code", "display_name", "sales_model", "quantity", "unit_price", "received_quantity", "remaining_quantity"]
 
 
 class PurchaseOrderSerializer(serializers.ModelSerializer):
@@ -329,8 +333,10 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class SKUSerializer(serializers.ModelSerializer):
+    sku_code = serializers.CharField(source="sku", read_only=True)
     product_name = serializers.CharField(source="product.name", read_only=True)
     product_code = serializers.CharField(source="product.code", read_only=True)
+    sales_model_missing = serializers.SerializerMethodField()
     stock_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True, default=0)
     actual_quantity = serializers.SerializerMethodField()
     reserved_quantity = serializers.SerializerMethodField()
@@ -342,6 +348,35 @@ class SKUSerializer(serializers.ModelSerializer):
     class Meta:
         model = SKU
         fields = "__all__"
+        extra_kwargs = {"sku": {"required": False}}
+
+    def _generated_identity(self, values):
+        product = values.get("product", getattr(self.instance, "product", None))
+        if not product:
+            return {}
+        return build_sku_identity(
+            product,
+            values.get("specification", getattr(self.instance, "specification", "")),
+            values.get("parameter_values", getattr(self.instance, "parameter_values", {})),
+            values.get("product_details", getattr(self.instance, "product_details", [])),
+        )
+
+    def create(self, validated_data):
+        validated_data.setdefault("sku", allocate_sku_code())
+        generated = self._generated_identity(validated_data)
+        for field, value in generated.items():
+            if not validated_data.get(field):
+                validated_data[field] = value
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        generated = self._generated_identity(validated_data)
+        identity_fields = {"product", "specification", "parameter_values", "product_details"}
+        if identity_fields.intersection(validated_data):
+            for field, value in generated.items():
+                if field not in self.initial_data:
+                    validated_data[field] = value
+        return super().update(instance, validated_data)
 
     def _metrics(self, obj):
         from .services.fulfillment import sku_metrics
@@ -366,6 +401,9 @@ class SKUSerializer(serializers.ModelSerializer):
 
     def get_has_anomaly(self, obj):
         return self.get_available_quantity(obj) < 0
+
+    def get_sales_model_missing(self, obj):
+        return not bool((obj.sales_model or "").strip())
 
 
 class ProductParameterSerializer(serializers.ModelSerializer):
@@ -409,14 +447,28 @@ class QuoteImportantNoteSerializer(serializers.ModelSerializer):
 
 class QuoteItemSerializer(serializers.ModelSerializer):
     sku_code = serializers.CharField(source="sku_code_snapshot", read_only=True)
+    model = serializers.CharField(source="sales_model_snapshot", read_only=True)
     product_name = serializers.CharField(source="product_name_snapshot", read_only=True)
+    display_name_snapshot = serializers.CharField(source="product_name_snapshot", read_only=True)
     unit = serializers.CharField(source="unit_snapshot", read_only=True)
+    description_snapshot = serializers.SerializerMethodField()
     image = serializers.ImageField(source="image_snapshot", read_only=True)
     amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
 
     class Meta:
         model = QuoteItem
-        fields = ["id", "sku", "sku_code", "product_name", "unit", "image", "quantity", "unit_price", "amount", "description", "notes"]
+        fields = ["id", "sku", "sku_code", "sales_model_snapshot", "model", "product_name", "display_name_snapshot", "unit", "image", "quantity", "unit_price", "amount", "description", "description_snapshot", "notes"]
+
+    def to_internal_value(self, data):
+        data = data.copy()
+        if "model" in data and "sales_model_snapshot" not in data:
+            data["sales_model_snapshot"] = data["model"]
+        if "description_snapshot" in data and "description" not in data:
+            data["description"] = data["description_snapshot"]
+        return super().to_internal_value(data)
+
+    def get_description_snapshot(self, obj):
+        return obj.description
 
 
 class QuoteSerializer(serializers.ModelSerializer):
@@ -469,13 +521,18 @@ class QuoteSerializer(serializers.ModelSerializer):
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    sku_code = serializers.CharField(source="sku.sku", read_only=True)
-    product_name = serializers.CharField(source="sku.product.name", read_only=True)
+    sku_code = serializers.CharField(source="sku_code_snapshot", read_only=True)
+    sales_model = serializers.CharField(source="sales_model_snapshot", read_only=True)
+    model = serializers.CharField(source="sales_model_snapshot", read_only=True)
+    product_name = serializers.CharField(source="display_name_snapshot", read_only=True)
+    display_name = serializers.CharField(source="display_name_snapshot", read_only=True)
+    description = serializers.CharField(source="description_snapshot", read_only=True)
+    unit = serializers.CharField(source="unit_snapshot", read_only=True)
     amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
 
     class Meta:
         model = OrderItem
-        fields = ["id", "sku", "sku_code", "product_name", "quantity", "unit_price", "cost_price", "amount", "notes"]
+        fields = ["id", "sku", "sku_code", "sales_model", "model", "product_name", "display_name", "description", "unit", "quantity", "unit_price", "cost_price", "amount", "notes"]
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -511,6 +568,24 @@ class OrderSerializer(serializers.ModelSerializer):
             (item["sku"].pk, Decimal(item["quantity"]), Decimal(item["unit_price"]), item.get("notes", ""))
             for item in items
         ]
+
+    @staticmethod
+    def _item_snapshots(sku, source=None):
+        if source is not None:
+            return {
+                "sku_code_snapshot": source.sku_code_snapshot,
+                "sales_model_snapshot": source.sales_model_snapshot,
+                "display_name_snapshot": source.product_name_snapshot,
+                "description_snapshot": source.description,
+                "unit_snapshot": source.unit_snapshot,
+            }
+        return {
+            "sku_code_snapshot": sku.sku,
+            "sales_model_snapshot": sku.sales_model or "",
+            "display_name_snapshot": sku.display_name_cn or sku.product.name,
+            "description_snapshot": sku.description_en or sku.description_cn or sku.display_name_cn or sku.product.name,
+            "unit_snapshot": sku.unit,
+        }
 
     def _create_quote_revision_if_needed(self, source_quote, order_data, order_items):
         source_items = list(source_quote.items.order_by("id"))
@@ -583,11 +658,13 @@ class OrderSerializer(serializers.ModelSerializer):
         if source_quote:
             validated_data["quote"] = self._create_quote_revision_if_needed(source_quote, validated_data, items)
         order = Order.objects.create(**validated_data)
+        source_items = list(order.quote.items.order_by("id")) if order.quote_id else []
         rows = []
-        for item in items:
+        for index, item in enumerate(items):
             if not item.get("cost_price"):
                 item["cost_price"] = item["sku"].cost_price
-            rows.append(OrderItem(order=order, **item))
+            source = source_items[index] if index < len(source_items) and source_items[index].sku_id == item["sku"].pk else None
+            rows.append(OrderItem(order=order, **item, **self._item_snapshots(item["sku"], source)))
         OrderItem.objects.bulk_create(rows)
         from .services.fulfillment import allocate_order
         allocate_order(order)
@@ -604,12 +681,14 @@ class OrderSerializer(serializers.ModelSerializer):
             setattr(instance, key, value)
         instance.save()
         if items is not None:
+            previous_items = list(instance.items.order_by("id"))
             instance.items.all().delete()
             rows = []
-            for item in items:
+            for index, item in enumerate(items):
                 if not item.get("cost_price"):
                     item["cost_price"] = item["sku"].cost_price
-                rows.append(OrderItem(order=instance, **item))
+                source = previous_items[index] if index < len(previous_items) and previous_items[index].sku_id == item["sku"].pk else None
+                rows.append(OrderItem(order=instance, **item, **self._item_snapshots(item["sku"], source)))
             OrderItem.objects.bulk_create(rows)
         from .services.fulfillment import allocate_order
         allocate_order(instance)
@@ -675,7 +754,9 @@ class ContractChangeRequestSerializer(serializers.ModelSerializer):
 
 class InventoryMovementSerializer(serializers.ModelSerializer):
     sku_code = serializers.CharField(source="sku.sku", read_only=True)
-    product_name = serializers.CharField(source="sku.product.name", read_only=True)
+    display_name = serializers.CharField(source="sku.display_name_cn", read_only=True)
+    sales_model = serializers.CharField(source="sku.sales_model", read_only=True)
+    product_name = serializers.CharField(source="sku.display_name_cn", read_only=True)
     order_no = serializers.CharField(source="order.order_no", read_only=True, default="")
     type_display = serializers.CharField(source="get_type_display", read_only=True)
     signed_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)

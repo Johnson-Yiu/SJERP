@@ -7,6 +7,7 @@ const props = defineProps({ id: { type: [Number, String], required: true }, refr
 const emit = defineEmits(['close', 'edit', 'open-quote'])
 const workbench = ref(null)
 const fulfillment = ref(null)
+const packingPlan = ref(null)
 const activeTab = ref('overview')
 const loading = ref(true)
 const error = ref('')
@@ -39,13 +40,18 @@ async function ship(item) {
     await load()
   } catch (err) { error.value = err.response?.data?.detail || Object.values(err.response?.data || {}).flat().join(' ') || err.message }
 }
+async function generatePackingPlan() {
+  try { packingPlan.value = (await api.post(`/orders/${props.id}/packing-plan/`)).data }
+  catch (err) { error.value = err.message }
+}
 async function load() {
   loading.value = true
   error.value = ''
   try {
-    const [workbenchResult, fulfillmentResult] = await Promise.all([api.get(`/orders/${props.id}/workbench/`), api.get(`/orders/${props.id}/fulfillment/`)])
+    const [workbenchResult, fulfillmentResult, packingResult] = await Promise.all([api.get(`/orders/${props.id}/workbench/`), api.get(`/orders/${props.id}/fulfillment/`), api.get(`/orders/${props.id}/packing-plan/`).catch(() => null)])
     workbench.value = workbenchResult.data
     fulfillment.value = fulfillmentResult.data
+    packingPlan.value = packingResult?.data || null
   }
   catch (err) { error.value = err.message }
   finally { loading.value = false }

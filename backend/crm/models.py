@@ -258,6 +258,58 @@ class SKU(TimestampedModel):
         return self.sku
 
 
+class PackagingTemplate(TimestampedModel):
+    """Reusable physical carton specification. Dimensions are stored in cm."""
+    PARTIAL_POLICIES = [("SAME_CARTON", "使用标准箱"), ("REPACK", "尾箱待确认"), ("MANUAL", "人工装箱")]
+    code = models.CharField("包装模板编码", max_length=50, unique=True)
+    name = models.CharField("包装模板名称", max_length=120)
+    description = models.TextField("说明", blank=True)
+    carton_length = models.DecimalField("箱长(cm)", max_digits=10, decimal_places=2)
+    carton_width = models.DecimalField("箱宽(cm)", max_digits=10, decimal_places=2)
+    carton_height = models.DecimalField("箱高(cm)", max_digits=10, decimal_places=2)
+    qty_per_carton = models.DecimalField("每箱数量", max_digits=14, decimal_places=2)
+    carton_tare_weight = models.DecimalField("纸箱皮重(kg)", max_digits=12, decimal_places=3, default=0)
+    partial_carton_policy = models.CharField("尾箱策略", max_length=20, choices=PARTIAL_POLICIES, default="SAME_CARTON")
+    mixed_pack_allowed = models.BooleanField("允许混装", default=False)
+    active = models.BooleanField("启用", default=True)
+
+    class Meta:
+        ordering = ["code"]
+        constraints = [
+            models.CheckConstraint(condition=models.Q(carton_length__gt=0), name="pack_template_length_positive"),
+            models.CheckConstraint(condition=models.Q(carton_width__gt=0), name="pack_template_width_positive"),
+            models.CheckConstraint(condition=models.Q(carton_height__gt=0), name="pack_template_height_positive"),
+            models.CheckConstraint(condition=models.Q(qty_per_carton__gt=0), name="pack_template_qty_positive"),
+            models.CheckConstraint(condition=models.Q(carton_tare_weight__gte=0), name="pack_template_tare_non_negative"),
+        ]
+
+    @property
+    def cbm(self):
+        return (Decimal(str(self.carton_length)) * Decimal(str(self.carton_width)) * Decimal(str(self.carton_height)) / Decimal("1000000")).quantize(Decimal("0.000001"))
+
+
+class SKUPackagingProfile(TimestampedModel):
+    """SKU defaults: only values which differ from its shared template are saved here."""
+    sku = models.OneToOneField(SKU, on_delete=models.CASCADE, related_name="packaging_profile")
+    packaging_template = models.ForeignKey(PackagingTemplate, on_delete=models.SET_NULL, null=True, blank=True, related_name="sku_profiles")
+    unit_net_weight = models.DecimalField("单件净重(kg)", max_digits=12, decimal_places=3, null=True, blank=True)
+    qty_per_carton_override = models.DecimalField("每箱数量覆盖", max_digits=14, decimal_places=2, null=True, blank=True)
+    carton_length_override = models.DecimalField("箱长覆盖(cm)", max_digits=10, decimal_places=2, null=True, blank=True)
+    carton_width_override = models.DecimalField("箱宽覆盖(cm)", max_digits=10, decimal_places=2, null=True, blank=True)
+    carton_height_override = models.DecimalField("箱高覆盖(cm)", max_digits=10, decimal_places=2, null=True, blank=True)
+    carton_tare_weight_override = models.DecimalField("纸箱皮重覆盖(kg)", max_digits=12, decimal_places=3, null=True, blank=True)
+    gross_weight_override = models.DecimalField("整箱预计毛重覆盖(kg)", max_digits=12, decimal_places=3, null=True, blank=True)
+    verified_at = models.DateTimeField("验证时间", null=True, blank=True)
+    verified_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="verified_sku_packaging_profiles")
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(unit_net_weight__gte=0) | models.Q(unit_net_weight__isnull=True), name="sku_pack_unit_weight_non_negative"),
+            models.CheckConstraint(condition=models.Q(qty_per_carton_override__gt=0) | models.Q(qty_per_carton_override__isnull=True), name="sku_pack_qty_positive"),
+            models.CheckConstraint(condition=models.Q(carton_tare_weight_override__gte=0) | models.Q(carton_tare_weight_override__isnull=True), name="sku_pack_tare_non_negative"),
+        ]
+
+
 class QuoteNumberSequence(models.Model):
     quote_date = models.DateField()
     country_code = models.CharField(max_length=2)
@@ -606,6 +658,82 @@ class Shipment(TimestampedModel):
 
     def __str__(self):
         return self.shipment_no
+
+
+class PackingPlan(TimestampedModel):
+    """Estimated packing snapshot for exactly one quote or sales order."""
+    STATUS_CHOICES = [("generated", "已生成"), ("needs_attention", "待处理")]
+    quote = models.OneToOneField(Quote, on_delete=models.CASCADE, null=True, blank=True, related_name="packing_plan")
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, null=True, blank=True, related_name="packing_plan")
+    status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="generated")
+    total_cartons = models.PositiveIntegerField("预计箱数", default=0)
+    total_net_weight = models.DecimalField("预计净重(kg)", max_digits=16, decimal_places=3, default=0)
+    total_gross_weight = models.DecimalField("预计毛重(kg)", max_digits=16, decimal_places=3, default=0)
+    total_cbm = models.DecimalField("预计CBM", max_digits=16, decimal_places=6, default=0)
+    warnings = models.JSONField("警告", default=list, blank=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=(models.Q(quote__isnull=False, order__isnull=True) | models.Q(quote__isnull=True, order__isnull=False)), name="packing_plan_one_source")]
+
+
+class PackingPlanCarton(models.Model):
+    packing_plan = models.ForeignKey(PackingPlan, on_delete=models.CASCADE, related_name="cartons")
+    carton_no = models.PositiveIntegerField("箱号")
+    packaging_template_snapshot = models.JSONField("包装模板快照", default=dict)
+    qty_per_carton_snapshot = models.DecimalField("每箱数量快照", max_digits=14, decimal_places=2, null=True, blank=True)
+    partial_carton_policy_snapshot = models.CharField("尾箱策略快照", max_length=20, blank=True)
+    length = models.DecimalField("箱长(cm)", max_digits=10, decimal_places=2, null=True, blank=True)
+    width = models.DecimalField("箱宽(cm)", max_digits=10, decimal_places=2, null=True, blank=True)
+    height = models.DecimalField("箱高(cm)", max_digits=10, decimal_places=2, null=True, blank=True)
+    carton_tare_weight = models.DecimalField("纸箱皮重(kg)", max_digits=12, decimal_places=3, default=0)
+    estimated_net_weight = models.DecimalField("预计净重(kg)", max_digits=16, decimal_places=3, default=0)
+    estimated_gross_weight = models.DecimalField("预计毛重(kg)", max_digits=16, decimal_places=3, default=0)
+    estimated_cbm = models.DecimalField("预计CBM", max_digits=16, decimal_places=6, default=0)
+    is_partial = models.BooleanField("尾箱", default=False)
+    requires_confirmation = models.BooleanField("待确认", default=False)
+
+    class Meta:
+        ordering = ["carton_no"]
+        constraints = [models.UniqueConstraint(fields=["packing_plan", "carton_no"], name="packing_plan_carton_no_unique")]
+
+
+class PackingPlanCartonItem(models.Model):
+    carton = models.ForeignKey(PackingPlanCarton, on_delete=models.CASCADE, related_name="items")
+    sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="packing_plan_items")
+    sku_code_snapshot = models.CharField("SKU编码快照", max_length=80)
+    sku_name_snapshot = models.CharField("SKU名称快照", max_length=200)
+    unit_net_weight_snapshot = models.DecimalField("单件净重快照(kg)", max_digits=12, decimal_places=3, null=True, blank=True)
+    quantity = models.DecimalField("数量", max_digits=14, decimal_places=2)
+
+
+class ShipmentPackage(models.Model):
+    shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, related_name="packages")
+    carton_no = models.PositiveIntegerField("箱号")
+    packaging_template = models.ForeignKey(PackagingTemplate, on_delete=models.SET_NULL, null=True, blank=True)
+    length = models.DecimalField("实际箱长(cm)", max_digits=10, decimal_places=2, null=True, blank=True)
+    width = models.DecimalField("实际箱宽(cm)", max_digits=10, decimal_places=2, null=True, blank=True)
+    height = models.DecimalField("实际箱高(cm)", max_digits=10, decimal_places=2, null=True, blank=True)
+    actual_net_weight = models.DecimalField("实际净重(kg)", max_digits=16, decimal_places=3, default=0)
+    actual_gross_weight = models.DecimalField("实际毛重(kg)", max_digits=16, decimal_places=3, default=0)
+    notes = models.TextField("备注", blank=True)
+
+    @property
+    def actual_cbm(self):
+        if not all([self.length, self.width, self.height]): return Decimal("0")
+        return (self.length * self.width * self.height / Decimal("1000000")).quantize(Decimal("0.000001"))
+
+    class Meta:
+        ordering = ["carton_no"]
+        constraints = [models.UniqueConstraint(fields=["shipment", "carton_no"], name="shipment_package_carton_no_unique")]
+
+
+class ShipmentPackageItem(models.Model):
+    shipment_package = models.ForeignKey(ShipmentPackage, on_delete=models.CASCADE, related_name="items")
+    sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="shipment_package_items")
+    quantity = models.DecimalField("实际装箱数量", max_digits=14, decimal_places=2)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(quantity__gt=0), name="shipment_package_item_quantity_positive")]
 
 
 class InventoryReservation(models.Model):

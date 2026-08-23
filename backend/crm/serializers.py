@@ -7,7 +7,7 @@ from django.db import transaction
 from django.utils.html import strip_tags
 from rest_framework import serializers
 
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, SKU, Supplier, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, Supplier, Transaction
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .quote_snapshots import create_quote_items
 
@@ -338,6 +338,7 @@ class SKUSerializer(serializers.ModelSerializer):
     in_transit_quantity = serializers.SerializerMethodField()
     to_procure_quantity = serializers.SerializerMethodField()
     has_anomaly = serializers.SerializerMethodField()
+    packaging = serializers.SerializerMethodField()
 
     class Meta:
         model = SKU
@@ -366,6 +367,10 @@ class SKUSerializer(serializers.ModelSerializer):
 
     def get_has_anomaly(self, obj):
         return self.get_available_quantity(obj) < 0
+
+    def get_packaging(self, obj):
+        from .services.packaging import packaging_summary
+        return packaging_summary(obj)
 
 
 class ProductParameterSerializer(serializers.ModelSerializer):
@@ -666,6 +671,86 @@ class ContractChangeRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContractChangeRequest
         fields = "__all__"
+
+
+class PackagingTemplateSerializer(serializers.ModelSerializer):
+    cbm = serializers.DecimalField(max_digits=16, decimal_places=6, read_only=True)
+
+    class Meta:
+        model = PackagingTemplate
+        fields = "__all__"
+
+
+class SKUPackagingProfileSerializer(serializers.ModelSerializer):
+    sku_code = serializers.CharField(source="sku.sku", read_only=True)
+    product_name = serializers.CharField(source="sku.product.name", read_only=True)
+    packaging_status = serializers.SerializerMethodField()
+    effective_packaging = serializers.SerializerMethodField()
+
+    class Meta:
+        model = SKUPackagingProfile
+        fields = "__all__"
+        read_only_fields = ["verified_at", "verified_by"]
+
+    def get_packaging_status(self, obj):
+        from .services.packaging import resolve_packaging
+        return resolve_packaging(obj.sku).status
+
+    def get_effective_packaging(self, obj):
+        from .services.packaging import packaging_summary
+        return packaging_summary(obj.sku)
+
+
+class PackingPlanCartonItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PackingPlanCartonItem
+        fields = "__all__"
+
+
+class PackingPlanCartonSerializer(serializers.ModelSerializer):
+    items = PackingPlanCartonItemSerializer(many=True, read_only=True)
+    class Meta:
+        model = PackingPlanCarton
+        fields = "__all__"
+
+
+class PackingPlanSerializer(serializers.ModelSerializer):
+    cartons = PackingPlanCartonSerializer(many=True, read_only=True)
+    class Meta:
+        model = PackingPlan
+        fields = "__all__"
+        read_only_fields = ["quote", "order", "total_cartons", "total_net_weight", "total_gross_weight", "total_cbm", "warnings", "status"]
+
+
+class ShipmentPackageItemSerializer(serializers.ModelSerializer):
+    sku_code = serializers.CharField(source="sku.sku", read_only=True)
+    class Meta:
+        model = ShipmentPackageItem
+        fields = ["id", "sku", "sku_code", "quantity"]
+
+
+class ShipmentPackageSerializer(serializers.ModelSerializer):
+    items = ShipmentPackageItemSerializer(many=True)
+    actual_cbm = serializers.DecimalField(max_digits=16, decimal_places=6, read_only=True)
+    class Meta:
+        model = ShipmentPackage
+        fields = ["id", "shipment", "carton_no", "packaging_template", "length", "width", "height", "actual_net_weight", "actual_gross_weight", "actual_cbm", "notes", "items"]
+        read_only_fields = ["shipment"]
+
+    def create(self, validated_data):
+        items = validated_data.pop("items", [])
+        package = ShipmentPackage.objects.create(**validated_data)
+        ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+        return package
+
+    def update(self, instance, validated_data):
+        items = validated_data.pop("items", None)
+        for key, value in validated_data.items(): setattr(instance, key, value)
+        instance.save()
+        if items is not None:
+            instance.items.all().delete()
+            ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=instance, **item) for item in items])
+        return instance
 
     def validate(self, attrs):
         if bool(attrs.get("order")) == bool(attrs.get("purchase_order")):

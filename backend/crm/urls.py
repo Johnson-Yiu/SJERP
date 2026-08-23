@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .context import entity_context
-from .views import AccessRoleViewSet, CategoryAttributeViewSet, ContactViewSet, ContractChangeRequestViewSet, CustomerViewSet, EmployeeProfileViewSet, FollowUpViewSet, InventoryMovementViewSet, OrderViewSet, OrganizationUnitViewSet, PaymentPlanViewSet, PositionViewSet, ProductCategoryViewSet, ProductCertificateViewSet, ProductParameterViewSet, ProductViewSet, PurchaseOrderViewSet, QuoteViewSet, RolePermissionViewSet, SKUViewSet, SupplierViewSet, TransactionViewSet, current_operator, dashboard, finance_dashboard, import_csv, import_templates, organization_overview
+from .views import AccessRoleViewSet, CategoryAttributeViewSet, ContactViewSet, ContractChangeRequestViewSet, CustomerViewSet, EmployeeProfileViewSet, FollowUpViewSet, InventoryMovementViewSet, OrderViewSet, OrganizationUnitViewSet, PackagingTemplateViewSet, PaymentPlanViewSet, PositionViewSet, ProductCategoryViewSet, ProductCertificateViewSet, ProductParameterViewSet, ProductViewSet, PurchaseOrderViewSet, QuoteViewSet, RolePermissionViewSet, ShipmentViewSet, SKUPackagingProfileViewSet, SKUViewSet, SupplierViewSet, TransactionViewSet, current_operator, dashboard, finance_dashboard, import_csv, import_templates, organization_overview
 
 router = DefaultRouter()
 router.register("customers", CustomerViewSet, basename="customer")
@@ -14,6 +14,9 @@ router.register("categories", ProductCategoryViewSet)
 router.register("category-attributes", CategoryAttributeViewSet)
 router.register("products", ProductViewSet)
 router.register("skus", SKUViewSet)
+router.register("packaging-templates", PackagingTemplateViewSet)
+router.register("sku-packaging-profiles", SKUPackagingProfileViewSet)
+router.register("shipments", ShipmentViewSet)
 router.register("product-parameters", ProductParameterViewSet)
 router.register("product-certificates", ProductCertificateViewSet)
 router.register("quotes", QuoteViewSet)

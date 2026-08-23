@@ -20,6 +20,7 @@ const nav = [
   { label: '采购管理', path: '/purchase-orders', icon: ShoppingCart },
   { label: '产品管理', path: '/products', icon: Package },
   { label: 'SKU 管理', path: '/skus', icon: Boxes },
+  { label: 'SKU 包装资料', path: '/sku-packaging', icon: Package },
   { label: '库存流水', path: '/inventory-movements', icon: Warehouse },
   { label: '产品参数', path: '/product-parameters', icon: SlidersHorizontal },
   { label: '产品证书', path: '/product-certificates', icon: BadgeCheck },

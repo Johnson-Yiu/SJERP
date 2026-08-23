@@ -16,14 +16,15 @@ from rest_framework.decorators import action, api_view, parser_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, SKU, Supplier, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, Supplier, Transaction
 from .permissions import PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, SKUSerializer, SupplierPaymentInputSerializer, SupplierSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, SKUPackagingProfileSerializer, SKUSerializer, SupplierPaymentInputSerializer, SupplierSerializer, TransactionSerializer, next_product_code
 from .services.finance import allocate_advance, approve_contract_change, record_transaction, void_transaction
 from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, sku_metrics
+from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -420,6 +421,75 @@ class SKUViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data)
 
+    @action(detail=True, methods=["get", "put"], url_path="packaging")
+    def packaging(self, request, pk=None):
+        sku = self.get_object()
+        if request.method == "GET":
+            try:
+                profile = sku.packaging_profile
+                return Response({"profile": SKUPackagingProfileSerializer(profile).data, "effective": packaging_summary(sku)})
+            except SKUPackagingProfile.DoesNotExist:
+                return Response({"profile": None, "effective": packaging_summary(sku)})
+        profile, _ = SKUPackagingProfile.objects.get_or_create(sku=sku)
+        serializer = SKUPackagingProfileSerializer(profile, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        profile = serializer.save()
+        if request.data.get("verify"):
+            profile.verified_at = timezone.now(); profile.verified_by = request.user if request.user.is_authenticated else None
+            profile.save(update_fields=["verified_at", "verified_by", "updated_at"])
+        return Response({"profile": SKUPackagingProfileSerializer(profile).data, "effective": packaging_summary(sku)})
+
+
+class PackagingTemplateViewSet(viewsets.ModelViewSet):
+    serializer_class = PackagingTemplateSerializer
+    queryset = PackagingTemplate.objects.all()
+    search_fields = ["code", "name", "description"]
+
+
+class SKUPackagingProfileViewSet(viewsets.ModelViewSet):
+    serializer_class = SKUPackagingProfileSerializer
+    queryset = SKUPackagingProfile.objects.select_related("sku__product", "packaging_template")
+    search_fields = ["sku__sku", "sku__product__name", "packaging_template__code"]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        status_value = self.request.query_params.get("status")
+        if status_value:
+            # Status is resolved, so only use this broad DB filter then resolve in list below.
+            if status_value == "NOT_CONFIGURED": return qs.none()
+        return qs
+
+
+class ShipmentViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = serializers.Serializer  # read endpoints below use explicit responses
+    queryset = Shipment.objects.select_related("order").prefetch_related("packages__items__sku")
+
+    @action(detail=True, methods=["get", "post"], url_path="packages")
+    def packages(self, request, pk=None):
+        shipment = self.get_object()
+        if request.method == "GET":
+            return Response(ShipmentPackageSerializer(shipment.packages.prefetch_related("items__sku"), many=True).data)
+        serializer = ShipmentPackageSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(shipment=shipment)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"], url_path=r"packages/(?P<package_id>[^/.]+)")
+    def update_package(self, request, pk=None, package_id=None):
+        shipment = self.get_object()
+        package = get_object_or_404(ShipmentPackage, pk=package_id, shipment=shipment)
+        serializer = ShipmentPackageSerializer(package, data=request.data)
+        serializer.is_valid(raise_exception=True); serializer.save()
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["post"], url_path="copy-estimated-packing")
+    def copy_estimated_packing(self, request, pk=None):
+        shipment = self.get_object()
+        plan = getattr(shipment.order, "packing_plan", None)
+        if not plan: return Response({"detail": "该订单尚未生成预计装箱。"}, status=status.HTTP_400_BAD_REQUEST)
+        copy_estimated_to_actual(shipment, plan)
+        return Response(ShipmentPackageSerializer(shipment.packages.prefetch_related("items__sku"), many=True).data)
+
 
 class ProductParameterViewSet(viewsets.ModelViewSet):
     serializer_class = ProductParameterSerializer
@@ -460,6 +530,14 @@ class QuoteViewSet(viewsets.ModelViewSet):
              "reference_lead_time_days": quote.lead_time_days}
             for item in quote.items.select_related("sku")
         ]})
+
+    @action(detail=True, methods=["get", "post"], url_path="packing-plan")
+    def packing_plan(self, request, pk=None):
+        quote = self.get_object()
+        if request.method == "POST":
+            return Response(PackingPlanSerializer(generate_packing_plan(quote)).data)
+        plan = getattr(quote, "packing_plan", None)
+        return Response(PackingPlanSerializer(plan).data if plan else {"detail": "尚未生成预计装箱。"}, status=status.HTTP_200_OK if plan else status.HTTP_404_NOT_FOUND)
 
     def update(self, request, *args, **kwargs):
         return Response({"detail": "已保存报价请创建迭代版本"}, status=status.HTTP_400_BAD_REQUEST)
@@ -726,6 +804,14 @@ class OrderViewSet(viewsets.ModelViewSet):
                 "items": [{"sku_code": line.sku.sku, "quantity": line.quantity, "is_overage": line.is_overage} for line in shipment.items.all()],
             } for shipment in shipments],
         })
+
+    @action(detail=True, methods=["get", "post"], url_path="packing-plan")
+    def packing_plan(self, request, pk=None):
+        order = self.get_object()
+        if request.method == "POST":
+            return Response(PackingPlanSerializer(generate_packing_plan(order)).data)
+        plan = getattr(order, "packing_plan", None)
+        return Response(PackingPlanSerializer(plan).data if plan else {"detail": "尚未生成预计装箱。"}, status=status.HTTP_200_OK if plan else status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=["post"])
     def ship(self, request, pk=None):

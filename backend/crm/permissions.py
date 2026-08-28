@@ -25,11 +25,13 @@ class PermissionAdminOnly(BasePermission):
 
 
 class QuoteExportPermission(BasePermission):
-    """Require a signed-in operator and honor quote export grants when RBAC is active."""
+    """Allow local development exports; protect production exports with operator permissions."""
 
     message = "Authentication and quote export permission are required."
 
     def has_permission(self, request, view):
+        if settings.DEBUG:
+            return True
         user = request.user
         if not user or not user.is_authenticated:
             return False

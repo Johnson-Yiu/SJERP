@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { X } from 'lucide-vue-next'
+import { Printer, X } from 'lucide-vue-next'
 
 const props = defineProps({ draft: { type: Object, required: true } })
 defineEmits(['close'])
@@ -60,6 +60,10 @@ const validityDays = computed(() => {
   if (!props.draft.valid_until || !props.draft.quote_date) return 30
   return Math.max(0, Math.round((new Date(props.draft.valid_until) - new Date(props.draft.quote_date)) / 86400000))
 })
+
+function printPreview() {
+  window.print()
+}
 </script>
 
 <template>
@@ -67,7 +71,10 @@ const validityDays = computed(() => {
     <section class="quote-preview-modal" role="dialog" aria-modal="true" aria-label="报价单预览">
       <header class="quote-preview-toolbar">
         <div><strong>报价单预览</strong><small>当前未保存内容 · 关闭后可继续编辑</small></div>
-        <button type="button" class="mini-btn" aria-label="关闭预览" @click="$emit('close')"><X :size="17" /></button>
+        <div class="quote-preview-actions">
+          <button type="button" class="btn btn-secondary" @click="printPreview"><Printer :size="15" /> 导出预览 PDF</button>
+          <button type="button" class="mini-btn" aria-label="关闭预览" @click="$emit('close')"><X :size="17" /></button>
+        </div>
       </header>
       <div class="quote-preview-scroll">
         <article class="pi-sheet">

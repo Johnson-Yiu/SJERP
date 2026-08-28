@@ -2,20 +2,24 @@
 import { computed, ref, watch } from 'vue'
 import { ChevronDown, Plus } from 'lucide-vue-next'
 
-const props = defineProps({ modelValue: { type: String, default: '' }, options: { type: Array, default: () => [] }, required: Boolean, placeholder: { type: String, default: '选择或输入' }, multiple: Boolean })
+const props = defineProps({ modelValue: { type: [String, Number], default: '' }, options: { type: Array, default: () => [] }, required: Boolean, placeholder: { type: String, default: '选择或输入' }, multiple: Boolean, allowCustom: { type: Boolean, default: true } })
 const emit = defineEmits(['update:modelValue'])
 const open = ref(false), text = ref('')
-const selectedLabel = computed(() => props.options.find(option => option.value === props.modelValue)?.label || props.modelValue || '')
+const selectedLabel = computed(() => props.options.find(option => String(option.value) === String(props.modelValue))?.label || props.modelValue || '')
 const values = computed(() => String(props.modelValue || '').split('\n').map(value => value.trim()).filter(Boolean))
 const filtered = computed(() => {
-  const keyword = text.value.trim().toLowerCase()
-  return props.options.filter(option => !keyword || option.label.toLowerCase().includes(keyword) || option.value.toLowerCase().includes(keyword))
+  const keywords = text.value.trim().toLowerCase().split(/[\s,，;；/\\|]+/).filter(Boolean)
+  return props.options.filter(option => {
+    if (!keywords.length) return true
+    const searchable = `${option.label || ''} ${option.value || ''} ${option.searchText || ''}`.toLowerCase()
+    return keywords.every(keyword => searchable.includes(keyword))
+  })
 })
-const isCustom = computed(() => text.value.trim() && !props.options.some(option => option.label === text.value.trim() || option.value === text.value.trim()))
+const isCustom = computed(() => props.allowCustom && text.value.trim() && !props.options.some(option => option.label === text.value.trim() || option.value === text.value.trim()))
 
 watch(() => props.modelValue, () => { if (!open.value && !props.multiple) text.value = selectedLabel.value }, { immediate: true })
 function focus() { if (!props.multiple) text.value = selectedLabel.value; open.value = true }
-function input(event) { text.value = event.target.value; if (!props.multiple) emit('update:modelValue', event.target.value); open.value = true }
+function input(event) { text.value = event.target.value; open.value = true }
 function append(value) {
   const next = value?.trim()
   if (!next) return
@@ -25,7 +29,7 @@ function append(value) {
 function choose(option) { if (props.multiple) { append(option.value); return } emit('update:modelValue', option.value); text.value = option.label; open.value = false }
 function remove(value) { emit('update:modelValue', values.value.filter(item => item !== value).join('\n')) }
 function keydown(event) { if (props.multiple && event.key === 'Enter') { event.preventDefault(); append(text.value) } }
-function commit() { if (props.multiple) { append(text.value); setTimeout(() => { open.value = false }, 150); return } if (text.value.trim()) emit('update:modelValue', text.value.trim()); setTimeout(() => { open.value = false; text.value = selectedLabel.value }, 150) }
+function commit() { if (props.multiple) { append(text.value); setTimeout(() => { open.value = false }, 150); return } if (props.allowCustom && text.value.trim()) emit('update:modelValue', text.value.trim()); setTimeout(() => { open.value = false; text.value = selectedLabel.value }, 150) }
 </script>
 
 <template>
@@ -35,7 +39,7 @@ function commit() { if (props.multiple) { append(text.value); setTimeout(() => {
     <div v-if="open" class="combo-menu">
       <button v-for="option in filtered" :key="option.value" type="button" @mousedown.prevent @click="choose(option)"><span>{{ option.label }}</span><small v-if="option.label !== option.value">{{ option.value }}</small></button>
       <button v-if="isCustom" type="button" class="custom-option" @mousedown.prevent @click="choose({ value: text.trim(), label: text.trim() })"><Plus :size="13" /> 添加“{{ text.trim() }}”</button>
-      <div v-if="!filtered.length && !isCustom" class="combo-empty">暂无历史选项，可直接输入新值</div>
+      <div v-if="!filtered.length && !isCustom" class="combo-empty">暂无匹配选项</div>
     </div>
   </div>
 </template>

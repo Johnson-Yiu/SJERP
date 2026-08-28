@@ -6,6 +6,7 @@ import { resourceConfigs } from '../resourceConfigs'
 import ComboInput from './ComboInput.vue'
 import SimpleRichTextEditor from './SimpleRichTextEditor.vue'
 import SegmentedDateInput from './SegmentedDateInput.vue'
+import { addDays, daysBetween } from '../utils/orderDate'
 
 const props = defineProps({ entity: String, query: { type: Object, default: () => ({}) } })
 const emit = defineEmits(['close', 'saved'])
@@ -17,6 +18,7 @@ const form = reactive({})
 const customers = ref([])
 const skus = ref([])
 const quotes = ref([])
+const documentDurationDays = ref('')
 
 const config = computed(() => resourceConfigs[props.entity])
 const isDocument = computed(() => ['orders', 'quotes'].includes(props.entity))
@@ -107,7 +109,8 @@ async function initDocument() {
     items: [{ sku: '', quantity: 1, unit_price: 0, cost_price: 0, notes: '' }],
   })
   if (isOrder.value) Object.assign(form, { quote: props.query.quote || '', expected_ship_date: '' })
-  else form.valid_until = ''
+  else form.valid_until = addDays(date, 30)
+  documentDurationDays.value = daysBetween(form[documentCopy.value.date], form[isOrder.value ? 'expected_ship_date' : 'valid_until'])
 }
 async function init() {
   try {
@@ -125,6 +128,21 @@ function selectSku(item) {
     item.unit_price = sku.default_price
     item.cost_price = sku.cost_price
   }
+}
+function setDocumentDate(value) {
+  form[documentCopy.value.date] = value
+  const target = isOrder.value ? 'expected_ship_date' : 'valid_until'
+  if (documentDurationDays.value !== '') form[target] = addDays(value, documentDurationDays.value)
+  else if (form[target]) documentDurationDays.value = daysBetween(value, form[target])
+}
+function setDocumentTargetDate(value) {
+  const target = isOrder.value ? 'expected_ship_date' : 'valid_until'
+  form[target] = value
+  documentDurationDays.value = daysBetween(form[documentCopy.value.date], value)
+}
+function setDocumentDurationDays() {
+  if (documentDurationDays.value === '' || !form[documentCopy.value.date]) return
+  form[isOrder.value ? 'expected_ship_date' : 'valid_until'] = addDays(form[documentCopy.value.date], documentDurationDays.value)
 }
 function payloadGeneric() {
   const data = {}
@@ -200,8 +218,8 @@ onMounted(init)
             <div class="form-grid">
               <div class="field"><label>{{ isOrder ? '订单号' : '报价单号' }} *</label><input v-model="form[documentCopy.no]" required /></div>
               <div class="field"><label>客户 *</label><select v-model="form.customer" required><option value="">请选择</option><option v-for="customer in customers" :key="customer.id" :value="customer.id">{{ customer.name }}</option></select></div>
-              <div class="field"><label>{{ isOrder ? '订单日期' : '报价日期' }} *</label><SegmentedDateInput v-model="form[documentCopy.date]" required /></div>
-              <div class="field"><label>{{ isOrder ? '预计交期' : '有效期至' }}</label><SegmentedDateInput v-model="form[isOrder ? 'expected_ship_date' : 'valid_until']" /></div>
+              <div class="field"><label>{{ isOrder ? '订单日期' : '报价日期' }} *</label><SegmentedDateInput :model-value="form[documentCopy.date]" required @update:model-value="setDocumentDate" /></div>
+              <div class="field"><label>{{ isOrder ? '预计交期' : '有效期' }}</label><div class="lead-time-input"><input v-model="documentDurationDays" type="number" min="0" step="1" placeholder="天数" :aria-label="isOrder ? '交期天数' : '有效期天数'" @input="setDocumentDurationDays" /><span>天</span><SegmentedDateInput :model-value="form[isOrder ? 'expected_ship_date' : 'valid_until']" @update:model-value="setDocumentTargetDate" /></div></div>
               <div class="field"><label>状态 *</label><select v-model="form.status"><option v-for="(label, key) in documentCopy.statuses" :key="key" :value="key">{{ label }}</option></select></div>
               <div v-if="isOrder" class="field"><label>来源报价</label><select v-model="form.quote"><option value="">无</option><option v-for="quote in quotes" :key="quote.id" :value="quote.id">{{ quote.quote_no }}</option></select></div>
               <div class="field"><label>币种</label><select v-model="form.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
@@ -239,6 +257,6 @@ onMounted(init)
 </template>
 
 <style scoped>
-.related-create-backdrop{z-index:85}.related-create-modal{width:min(1120px,calc(100% - 48px));max-height:94vh}.inline-error{margin-bottom:14px;padding:10px 12px;background:#fff0f0;color:#a84444;border-radius:8px;font-size:12px}.modal-loading{padding:50px;text-align:center;color:#74847e}.quick-items-head{display:flex;align-items:center;justify-content:space-between;margin:24px 0 9px;padding-top:18px;border-top:1px solid #e3e8e4}.quick-items-head strong{font-size:14px}.quick-lines{border:1px solid #e0e6e2;border-radius:9px;overflow:hidden}.quick-line{display:grid;grid-template-columns:2fr .6fr .8fr 1fr 32px;gap:8px;align-items:center;padding:9px;border-top:1px solid #edf0ee}.quick-line:first-child{border-top:0}.quick-line.order{grid-template-columns:2fr .55fr .7fr .7fr 1fr 32px}.quick-line select,.quick-line input{min-width:0;width:100%;padding:8px;border:1px solid #dce3df;border-radius:7px}.quick-line span{text-align:right;font-size:11px;font-weight:600}.quick-line button{border:0;background:transparent;color:#b05b5b}.quick-line button:disabled{opacity:.25}.quick-totals{display:flex;justify-content:flex-end;align-items:end;gap:13px;margin:14px 0 20px}.quick-totals label{font-size:10px;color:#788680}.quick-totals input{display:block;width:100px;margin-top:4px;padding:7px;border:1px solid #dce3df;border-radius:7px}.quick-totals strong{padding:8px 0 8px 16px;border-left:1px solid #dce3df;color:#173f36}.related-create-modal :deep(.simple-editor textarea){min-height:155px}
+.related-create-backdrop{z-index:85}.related-create-modal{width:min(1120px,calc(100% - 48px));max-height:94vh}.inline-error{margin-bottom:14px;padding:10px 12px;background:#fff0f0;color:#a84444;border-radius:8px;font-size:12px}.modal-loading{padding:50px;text-align:center;color:#74847e}.lead-time-input{display:flex;align-items:center;gap:6px}.lead-time-input>input{flex:0 0 10ch!important;width:10ch!important;min-width:0}.lead-time-input>span{color:#70817b;font-size:12px}.lead-time-input :deep(.segmented-date){flex:1 1 auto;min-width:0}.quick-items-head{display:flex;align-items:center;justify-content:space-between;margin:24px 0 9px;padding-top:18px;border-top:1px solid #e3e8e4}.quick-items-head strong{font-size:14px}.quick-lines{border:1px solid #e0e6e2;border-radius:9px;overflow:hidden}.quick-line{display:grid;grid-template-columns:2fr .6fr .8fr 1fr 32px;gap:8px;align-items:center;padding:9px;border-top:1px solid #edf0ee}.quick-line:first-child{border-top:0}.quick-line.order{grid-template-columns:2fr .55fr .7fr .7fr 1fr 32px}.quick-line select,.quick-line input{min-width:0;width:100%;padding:8px;border:1px solid #dce3df;border-radius:7px}.quick-line span{text-align:right;font-size:11px;font-weight:600}.quick-line button{border:0;background:transparent;color:#b05b5b}.quick-line button:disabled{opacity:.25}.quick-totals{display:flex;justify-content:flex-end;align-items:end;gap:13px;margin:14px 0 20px}.quick-totals label{font-size:10px;color:#788680}.quick-totals input{display:block;width:100px;margin-top:4px;padding:7px;border:1px solid #dce3df;border-radius:7px}.quick-totals strong{padding:8px 0 8px 16px;border-left:1px solid #dce3df;color:#173f36}.related-create-modal :deep(.simple-editor textarea){min-height:155px}
 @media(max-width:700px){.related-create-modal{width:100%;height:100%;max-height:100%;border-radius:0}.quick-lines{overflow:auto}.quick-line,.quick-line.order{min-width:750px}.quick-totals{flex-wrap:wrap}}
 </style>

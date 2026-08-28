@@ -4,7 +4,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from ..models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, FollowUp, InventoryMovement, Order, OrganizationUnit, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, Quote, RolePermission, SKU, Transaction
+from ..models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, FollowUp, InventoryMovement, Order, OrganizationUnit, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, Quote, RolePermission, SKU, Supplier, Transaction
 
 
 class BusinessFlowTests(APITestCase):
@@ -137,6 +137,23 @@ class BusinessFlowTests(APITestCase):
         followup_section = next(section for section in customer_response.data["sections"] if section["key"] == "followups")
         self.assertIn(["content", "跟进记录 / 解决方案", "excerpt"], followup_section["columns"])
         self.assertIn(["result", "客户回复 / 客户疑问", "excerpt"], followup_section["columns"])
+
+    def test_supplier_and_purchase_order_context(self):
+        supplier = Supplier.objects.create(name="Test Supplier", contact_name="Ming", currency="CNY")
+        supplier.products.add(self.product)
+        order = Order.objects.create(order_no="T-SO-SUPPLIER", customer=self.customer, order_date=date.today(), exchange_rate=7.2)
+        purchase = PurchaseOrder.objects.create(purchase_no="T-PO-001", supplier=supplier, order=order, order_date=date.today(), currency="CNY", exchange_rate=1)
+        purchase.items.create(sku=self.sku, quantity=10, unit_price=3)
+
+        response = self.client.get(f"/api/context/suppliers/{supplier.id}/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.data["entity"], "suppliers")
+        self.assertEqual({section["key"] for section in response.data["sections"]}, {"products", "purchases", "payments"})
+        self.assertEqual(response.data["metrics"][2][1], 30)
+
+        purchase_response = self.client.get(f"/api/context/purchase-orders/{purchase.id}/")
+        self.assertEqual(purchase_response.status_code, status.HTTP_200_OK, purchase_response.data)
+        self.assertEqual(purchase_response.data["title"], "T-PO-001")
 
     def test_create_customer_with_multiple_contacts_and_one_primary(self):
         preview = self.client.get("/api/customers/next-code/")

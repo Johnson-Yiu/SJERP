@@ -1,0 +1,812 @@
+请检查当前项目中“报价单自动生成 Excel 并导出”的完整实现链路，并对其进行一次架构级重构。
+
+## 一、重构目标
+
+当前报价单 Excel 的数据与样式主要通过代码生成。这个方案虽然可以正常工作，但存在明显的长期维护问题：
+
+- 修改背景颜色、字体、边框、列宽、Logo 位置等纯视觉内容时，也必须修改代码；
+- Excel 的业务逻辑和表现层耦合；
+- 后续如果增加多个报价单模板，代码容易快速膨胀；
+- 普通的 Excel 格式调整无法直接通过修改模板完成；
+- 前端可能承担了过多报价单导出数据的组装和格式化职责。
+
+本次重构的目标是：
+
+> 保留“系统自动生成 Excel”的能力，但将 Excel 的静态布局和视觉样式迁移到 `.xlsx` 模板文件中，让代码只负责业务数据、动态内容和模板渲染。
+
+目标架构：
+
+```text
+Quotation Database
+        ↓
+Quotation Snapshot
+        ↓
+Export DTO
+        ↓
+Template Selection
+        ↓
+Excel Renderer
+        ↓
+Generated .xlsx
+```
+
+请先完整分析当前实现，再在不破坏现有报价单业务功能的前提下完成重构。
+
+---
+
+# 二、先检查当前实现
+
+在修改代码之前，请先检查并理解以下内容：
+
+1. 报价单主表和报价单明细表的数据结构；
+2. 创建报价单时哪些字段来自：
+   - 客户资料
+   - 产品资料
+   - SKU
+   - 实时报价数据
+   - 用户手动输入
+3. 当前是否已经保存“报价单快照”；
+4. 当前 Excel 导出时：
+   - 前端提交哪些数据；
+   - 后端读取哪些数据；
+   - 哪些数据由前端重新格式化；
+   - 哪些数据从数据库重新查询；
+5. 当前 Excel 由哪个库生成；
+6. 当前所有 Excel 样式代码所在位置；
+7. 产品图片是如何插入 Excel 的；
+8. 产品明细行如何动态生成；
+9. 金额、折扣、税费、汇率、合计等字段如何计算；
+10. 打印区域、分页、页边距、行高、列宽等逻辑目前在哪里定义。
+
+不要假设现有实现方式。
+
+必须根据当前项目代码和数据库结构判断。
+
+---
+
+# 三、核心设计原则
+
+本次重构必须明确区分以下四层。
+
+## 1. Quotation Business Data
+
+负责报价单本身的业务数据。
+
+例如：
+
+```json
+{
+  "quotation_no": "QT-2026-00125",
+  "customer": {},
+  "currency": "USD",
+  "items": [],
+  "subtotal": 0,
+  "discount": 0,
+  "total": 0,
+  "payment_terms": "",
+  "delivery_terms": ""
+}
+```
+
+这一层不能包含 Excel 视觉样式信息。
+
+禁止在业务对象中加入类似：
+
+```text
+backgroundColor
+fontSize
+columnWidth
+borderStyle
+rowHeight
+```
+
+之类的 Excel 表现层字段。
+
+---
+
+## 2. Export DTO
+
+建立专门用于报价单导出的 DTO / View Model。
+
+例如：
+
+```text
+QuotationExportDTO
+```
+
+它负责把数据库中的报价单转换成 Excel Renderer 可以直接使用的数据。
+
+原则：
+
+> Excel Renderer 不应该直接到处查询 Customer、Product、SKU 等业务表。
+
+应该先由 Export Service 统一组装 Export DTO。
+
+这样 Excel 渲染器只关心：
+
+```text
+“我要把什么数据放入模板”
+```
+
+而不是：
+
+```text
+“这些数据应该去哪里查询”
+```
+
+---
+
+## 3. Excel Template
+
+建立真实 `.xlsx` 模板文件，例如：
+
+```text
+templates/
+    quotation/
+        quotation_standard_en.xlsx
+```
+
+具体目录请根据项目现有结构选择合理位置。
+
+模板应承担以下内容：
+
+- Logo
+- 公司名称
+- QUOTATION 标题
+- 字体
+- 字号
+- 背景色
+- 边框
+- 单元格对齐
+- 行高
+- 列宽
+- 合并单元格
+- 静态文字
+- 打印方向
+- 页边距
+- 页眉页脚
+- 打印区域
+- 其他纯视觉内容
+
+原则：
+
+> 普通用户以后打开 Excel 模板修改颜色、字体、Logo、列宽等视觉内容后，不需要修改程序代码。
+
+---
+
+## 4. Excel Renderer
+
+代码只负责模板无法静态完成的内容，例如：
+
+- 加载模板；
+- 填充固定字段；
+- 根据产品数量生成动态产品行；
+- 复制模板产品行；
+- 插入产品图片；
+- 写入数量；
+- 写入单价；
+- 写入金额；
+- 写入折扣；
+- 写入汇率；
+- 写入总金额；
+- 根据明细数量移动下面的区域；
+- 处理动态公式；
+- 必要时调整分页；
+- 最终输出 `.xlsx`。
+
+Renderer 不应重新定义整个 Excel 视觉系统。
+
+---
+
+# 四、模板设计
+
+请创建至少一个：
+
+```text
+quotation_standard_en.xlsx
+```
+
+作为默认报价单模板。
+
+模板建议至少包含以下区域：
+
+```text
+------------------------------------------------
+LOGO                         QUOTATION
+
+Customer:
+Contact:
+Country:
+
+Quotation No:
+Quotation Date:
+Currency:
+
+------------------------------------------------
+Item | Image | Model | Description | Qty | Unit | Unit Price | Amount
+------------------------------------------------
+
+<< dynamic item row >>
+
+------------------------------------------------
+Subtotal
+Discount
+Total
+------------------------------------------------
+
+Payment Terms:
+Delivery Terms:
+Validity:
+Remarks:
+------------------------------------------------
+```
+
+具体字段必须根据当前系统已有报价单字段决定。
+
+不要为了匹配以上示例而新增无意义字段。
+
+---
+
+# 五、动态产品行
+
+这是本次重构的重点之一。
+
+不要在代码中重新生成整张报价单。
+
+模板中应预留一行或一个区域作为：
+
+```text
+ITEM_TEMPLATE_ROW
+```
+
+Renderer 根据报价单 items 数量动态复制这一行。
+
+例如：
+
+```text
+模板：
+
+第 8 行 = 产品模板行
+
+如果报价单有 5 个产品：
+
+复制第 8 行样式 →
+生成第 8~12 行
+```
+
+必须正确复制：
+
+- 单元格样式；
+- 边框；
+- 填充色；
+- 字体；
+- 数字格式；
+- 对齐；
+- 行高；
+- 合并关系（如果存在）；
+- 公式逻辑（如果适用）。
+
+然后将：
+
+```text
+Item No.
+Image
+Model
+Description
+Quantity
+Unit
+Unit Price
+Amount
+```
+
+分别写入对应单元格。
+
+动态产品行生成后，下方：
+
+```text
+Subtotal
+Total
+Payment Terms
+Remarks
+```
+
+等区域应自动移动到正确位置。
+
+---
+
+# 六、模板字段定位方式
+
+不要大量依赖：
+
+```text
+A1
+B7
+F23
+H35
+```
+
+这种散落在代码中的魔法坐标。
+
+优先采用以下方案之一：
+
+### 方案 A：Named Range
+
+如果当前使用的 Excel 库支持，优先使用 Excel Named Range。
+
+例如：
+
+```text
+QUOTATION_NO
+CUSTOMER_NAME
+QUOTATION_DATE
+CURRENCY
+SUBTOTAL
+TOTAL
+ITEM_TEMPLATE_ROW
+```
+
+Renderer 根据 Named Range 查找目标位置。
+
+### 方案 B：集中式 Template Mapping
+
+如果当前库对 Named Range 支持不好，则建立统一映射：
+
+```javascript
+const quotationTemplateMap = {
+  quotationNo: "F3",
+  customerName: "B4",
+  quotationDate: "F4",
+  itemTemplateRow: 8,
+  subtotal: "H20",
+  total: "H21"
+}
+```
+
+禁止在业务代码的不同位置散落大量 Cell Address。
+
+---
+
+# 七、报价单快照
+
+请重点检查当前报价单是否已经具备完整的 Snapshot 机制。
+
+原则：
+
+> 已经确认或保存的历史报价单，重新导出时不应该因为产品主数据后续发生变化而改变历史报价内容。
+
+例如：
+
+报价时：
+
+```text
+Model: ABC-001
+Description: COB LED Strip 24V
+Price: USD 2.35
+```
+
+三个月后产品库改成：
+
+```text
+Model: ABC-001A
+Description: High Density COB Strip
+Default Price: USD 2.70
+```
+
+重新导出旧报价单时必须仍然显示：
+
+```text
+ABC-001
+COB LED Strip 24V
+USD 2.35
+```
+
+因此请检查 quotation item 是否已经保存必要快照字段，例如：
+
+```text
+sku_code_snapshot
+product_name_snapshot
+model_snapshot
+description_snapshot
+unit_snapshot
+unit_price
+discount
+currency
+image_snapshot / image reference
+```
+
+如果目前已经有类似机制：
+
+> 保留现有机制，不要重复造表。
+
+如果没有：
+
+请设计尽可能小的数据库调整方案实现报价单快照。
+
+不要为了“架构完美”大规模重构整个 Product / SKU 系统。
+
+---
+
+# 八、前端职责调整
+
+请检查当前是否存在：
+
+```text
+Frontend
+    ↓
+收集报价单数据
+    ↓
+重新组装 / 格式化 Excel 数据
+    ↓
+POST 数据给后端
+    ↓
+后端生成 Excel
+```
+
+如果是，请尽量调整为：
+
+```text
+Frontend
+    ↓
+POST /quotations/{id}/export
+    ↓
+Backend
+    ↓
+根据 quotation_id 查询报价单
+    ↓
+构建 QuotationExportDTO
+    ↓
+加载 Excel Template
+    ↓
+生成 Excel
+```
+
+即：
+
+> 前端只负责发起导出请求，不负责决定 Excel 数据内容。
+
+这样保证：
+
+```text
+数据库中的报价单
+=
+Excel 导出的报价单
+```
+
+避免出现：
+
+```text
+数据库状态 A
+前端传入状态 B
+Excel 导出状态 C
+```
+
+但如果当前系统存在：
+
+```text
+“未保存报价单也允许预览 / 导出”
+```
+
+这种业务能力，则不要直接删除。
+
+请针对当前实际业务做兼容设计，例如：
+
+```text
+已保存报价单：
+quotation_id → 后端读取数据库
+
+未保存草稿：
+draft payload → 临时 Export DTO
+```
+
+根据现有系统实际功能决定。
+
+---
+
+# 九、样式归属规则
+
+以后严格按照以下原则处理。
+
+## 应该由 Excel Template 控制
+
+```text
+字体
+字号
+文字颜色
+背景颜色
+边框
+Logo
+列宽
+默认行高
+对齐
+合并单元格
+静态标题
+表头
+页边距
+页眉
+页脚
+打印方向
+打印区域
+```
+
+## 应该由代码控制
+
+```text
+业务数据查询
+报价单 Snapshot
+动态产品数量
+产品行复制
+产品图片
+数量
+单价
+金额
+折扣
+汇率
+公式
+Subtotal
+Total
+分页边界
+动态区域扩展
+```
+
+如果某些样式必须因为动态内容由代码调整，例如：
+
+```text
+动态产品图片高度导致行高变化
+```
+
+可以保留在 Renderer。
+
+但必须限制在真正属于动态渲染的问题上。
+
+---
+
+# 十、多模板扩展能力
+
+本次暂时只要求实现：
+
+```text
+quotation_standard_en.xlsx
+```
+
+但架构要允许未来增加：
+
+```text
+quotation_standard_cn.xlsx
+quotation_with_image_en.xlsx
+quotation_compact_en.xlsx
+quotation_customer_xxx.xlsx
+```
+
+不要为每一个模板创建一个完整复制的：
+
+```text
+generateQuotationExcelA()
+generateQuotationExcelB()
+generateQuotationExcelC()
+```
+
+应该采用类似：
+
+```text
+templateId
+    ↓
+Template Resolver
+    ↓
+Excel Renderer
+```
+
+的方式。
+
+Renderer 尽量复用。
+
+---
+
+# 十一、不要过度设计
+
+这是一个小型企业内部管理系统。
+
+用户规模预计：
+
+```text
+约 10~20 人
+```
+
+因此：
+
+不要引入：
+
+- 微服务；
+- 消息队列；
+- 独立模板服务；
+- 模板数据库 DSL；
+- 复杂规则引擎；
+- Excel 模板编辑器；
+- 低代码模板系统；
+- 不必要的抽象层；
+- 为几百种模板提前设计复杂框架。
+
+目标是：
+
+> 简单、稳定、可维护。
+
+推荐结构类似：
+
+```text
+quotation/
+    quotation.service
+    quotation-export.service
+    quotation-export.dto
+    excel/
+        quotation-excel.renderer
+        quotation-template.config
+
+templates/
+    quotation/
+        quotation_standard_en.xlsx
+```
+
+具体命名请遵循当前项目代码规范。
+
+---
+
+# 十二、兼容当前功能
+
+重构以后必须保持当前已有功能正常，包括但不限于：
+
+- 报价单创建；
+- 报价单编辑；
+- 报价单保存；
+- 产品明细；
+- 产品图片；
+- 数量；
+- 单价；
+- 金额计算；
+- 币种；
+- 汇率；
+- 折扣；
+- 总金额；
+- 客户信息；
+- Excel 下载；
+- 当前已有的其他报价单功能。
+
+如果发现当前实现中还有其他字段或规则，也必须保留。
+
+不要因为重构 Excel 而改变报价单业务逻辑。
+
+---
+
+# 十三、测试要求
+
+完成以后至少验证以下场景：
+
+### Case 1
+
+1 个产品的报价单。
+
+### Case 2
+
+5~10 个产品。
+
+### Case 3
+
+大量产品，验证分页。
+
+### Case 4
+
+产品带图片。
+
+### Case 5
+
+产品没有图片。
+
+### Case 6
+
+长 Product Description。
+
+### Case 7
+
+小数价格。
+
+例如：
+
+```text
+0.035
+2.356
+```
+
+确认 Excel 数字格式不会错误截断。
+
+### Case 8
+
+不同币种。
+
+### Case 9
+
+历史报价单重新导出。
+
+修改产品主数据以后：
+
+旧报价单 Excel 内容必须保持不变。
+
+### Case 10
+
+修改 Excel 模板中的：
+
+```text
+背景颜色
+字体
+列宽
+Logo
+```
+
+不修改任何代码。
+
+重新导出报价单以后，新生成的 Excel 必须自动使用新的模板样式。
+
+这一条是本次重构是否成功的核心验收标准。
+
+---
+
+# 十四、代码质量要求
+
+完成后检查：
+
+- 是否仍然存在大量 Excel 样式硬编码；
+- 是否仍然存在大量散落 Cell Address；
+- Renderer 是否承担业务数据库查询；
+- Frontend 是否仍然负责构造 Excel 内容；
+- 历史报价单是否依赖当前 Product / SKU 主数据；
+- 模板是否可以单独替换；
+- 是否存在不必要的大规模数据库重构；
+- 是否存在重复 Excel 生成逻辑。
+
+---
+
+# 十五、执行方式
+
+这是一次已有功能的架构重构。
+
+请：
+
+1. 先检查当前实现；
+2. 基于当前实际代码确定迁移方式；
+3. 直接执行重构；
+4. 尽量保持改动范围集中；
+5. 不要为了重构而重写整个报价单模块；
+6. 不要改变现有业务规则，除非发现明确 Bug；
+7. 如果发现必须进行数据库 migration，可以执行，但必须保持向后兼容；
+8. 完成后执行现有项目可用的构建、测试和静态检查。
+
+不需要因为普通实现细节等待我逐项确认。
+
+如果发现会造成以下重大变化之一，再停止并向我说明：
+
+- 删除现有报价单数据；
+- 大范围修改现有数据库核心表；
+- 改变报价单金额计算规则；
+- 改变报价单历史数据；
+- 删除当前已有业务功能。
+
+否则按上述目标直接完成。
+
+---
+
+# 十六、最终汇报
+
+完成后请说明：
+
+1. 原 Excel 生成链路是什么；
+2. 新 Excel 生成链路是什么；
+3. 新增了哪些文件；
+4. 修改了哪些核心文件；
+5. Excel 模板文件在哪里；
+6. 普通格式修改以后应该如何操作；
+7. 哪些内容仍然必须通过代码修改；
+8. 是否增加数据库 migration；
+9. 报价单 Snapshot 是否完善；
+10. 已执行哪些测试；
+11. 是否存在未解决风险。
+
+最重要的最终验收目标：
+
+> 今后如果我只是想修改报价单 Excel 的字体、背景颜色、Logo、边框、列宽、静态文字等表现内容，我应该能够直接编辑 `.xlsx` 模板完成，而不需要再让 Codex 修改程序代码。

@@ -1,21 +1,22 @@
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { Plus, Search, Pencil, Trash2, FileX2, X, PlusCircle, MinusCircle, Download } from 'lucide-vue-next'
+import { Plus, Search, Pencil, Trash2, FileX2, X, PlusCircle, MinusCircle, Download, ChevronDown, ChevronRight, CornerDownRight } from 'lucide-vue-next'
 import { api, downloadQuoteExport, listData } from '../api'
 import QuoteDetailModal from '../components/QuoteDetailModal.vue'
 import QuoteEditorModal from '../components/QuoteEditorModal.vue'
 import OrderDraftModal from '../components/OrderDraftModal.vue'
 import OrderDetailModal from '../components/OrderDetailModal.vue'
 import SegmentedDateInput from '../components/SegmentedDateInput.vue'
+import { addDays, daysBetween } from '../utils/orderDate'
 
 const props = defineProps({ type: String })
 const route = useRoute()
 const isOrder = computed(() => props.type === 'orders')
 const copy = computed(() => isOrder.value ? {
-  title: '订单管理', description: '从客户需求到交付和回款，保持订单、产品与流水一一对应。', no: 'order_no', noLabel: '订单号', date: 'order_date', dateLabel: '订单日期', statuses: { draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
+  title: '订单管理', description: '从客户需求到交付和回款，保持订单、产品与流水一一对应。', no: 'order_no', noLabel: '订单号', date: 'order_date', dateLabel: '创建时间', statuses: { draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
 } : {
-  title: '报价管理', description: '建立标准化报价明细，记录有效期与客户反馈状态。', no: 'quote_no', noLabel: '报价单号', date: 'quote_date', dateLabel: '报价日期', statuses: { draft: '草稿', sent: '已发送', accepted: '已接受', rejected: '已拒绝', expired: '已过期' }
+  title: '报价管理', description: '建立标准化报价明细，记录有效期与客户反馈状态。', no: 'quote_no', noLabel: '报价单号', date: 'quote_date', dateLabel: '创建时间', statuses: { draft: '草稿', sent: '已发送', accepted: '已接受', rejected: '已拒绝', expired: '已过期' }
 })
 
 const rows = ref([]), customers = ref([]), skus = ref([]), quotes = ref([])
@@ -25,6 +26,8 @@ const returnToOrderDetailId = ref(null)
 const orderWorkbenchRefresh = ref(0)
 const quoteEditorOpen = ref(false), quoteEditorQuote = ref(null)
 const orderDraft = ref(null), workbenchRefresh = ref(0)
+const orderLeadTimeDays = ref('')
+const expandedQuoteGroups = ref(new Set())
 const toast = reactive({ show: false, message: '', error: false })
 const form = reactive({})
 let timer
@@ -33,13 +36,20 @@ function fresh() {
   const now = new Date(), y = now.getFullYear(), m = String(now.getMonth() + 1).padStart(2, '0'), d = String(now.getDate()).padStart(2, '0')
   Object.keys(form).forEach(k => delete form[k])
   Object.assign(form, { customer: '', [copy.value.no]: `${isOrder.value ? 'SO' : 'QT'}-${y}-${String(Date.now()).slice(-5)}`, [copy.value.date]: `${y}-${m}-${d}`, status: isOrder.value ? 'confirmed' : 'draft', currency: 'USD', exchange_rate: '7.20', shipping_fee: 0, discount: 0, notes: '', items: [{ sku: '', quantity: 1, unit_price: 0, cost_price: 0, notes: '' }] })
-  if (isOrder.value) Object.assign(form, { quote: '', expected_ship_date: '' })
+  if (isOrder.value) {
+    Object.assign(form, { quote: '', expected_ship_date: '' })
+    orderLeadTimeDays.value = ''
+  }
   else form.valid_until = ''
 }
 function notify(message, error = false) { Object.assign(toast, { show: true, message, error }); setTimeout(() => toast.show = false, 2800) }
 async function load() {
   loading.value = true
-  try { rows.value = listData(await api.get(`/${props.type}/`, { params: { ...route.query, search: query.value } })) } catch (e) { notify(e.message, true) } finally { loading.value = false }
+  try {
+    rows.value = listData(await api.get(`/${props.type}/`, { params: { ...route.query, search: query.value } }))
+    const visibleGroupIds = new Set(rows.value.map(row => row.root_quote || row.id))
+    expandedQuoteGroups.value = new Set([...expandedQuoteGroups.value].filter(id => visibleGroupIds.has(id)))
+  } catch (e) { notify(e.message, true) } finally { loading.value = false }
 }
 async function loadOptions() {
   try {
@@ -70,7 +80,21 @@ async function edit(row, { closeDetail = true } = {}) {
   editingId.value = row.id; fresh(); await loadOptions()
   Object.keys(form).forEach(k => { if (row[k] !== undefined && k !== 'items') form[k] = row[k] ?? '' })
   form.items = row.items.map(i => ({ sku: i.sku, quantity: i.quantity, unit_price: i.unit_price, cost_price: i.cost_price || 0, notes: i.notes || '' }))
+  orderLeadTimeDays.value = daysBetween(form.order_date, form.expected_ship_date)
   open.value = true
+}
+function setOrderDate(value) {
+  form.order_date = value
+  if (orderLeadTimeDays.value !== '') form.expected_ship_date = addDays(value, orderLeadTimeDays.value)
+  else if (form.expected_ship_date) orderLeadTimeDays.value = daysBetween(value, form.expected_ship_date)
+}
+function setExpectedShipDate(value) {
+  form.expected_ship_date = value
+  orderLeadTimeDays.value = daysBetween(form.order_date, value)
+}
+function setOrderLeadTimeDays() {
+  if (orderLeadTimeDays.value === '' || !form.order_date) return
+  form.expected_ship_date = addDays(form.order_date, orderLeadTimeDays.value)
 }
 function closeEditor() { open.value = false; returnToOrderDetailId.value = null }
 function selectSku(item) {
@@ -104,7 +128,34 @@ async function exportQuote(row) { try { await downloadQuoteExport(row.id, row.qu
 async function remove(row) { if (!isOrder.value || !confirm(`确定删除 ${row[copy.value.no]} 吗？`)) return; try { await api.delete(`/${props.type}/${row.id}/`); notify('已删除'); load() } catch (e) { notify(e.message, true) } }
 function delayed() { clearTimeout(timer); timer = setTimeout(load, 300) }
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+function documentTimestamp(row) {
+  if (!row.created_at) return row[copy.value.date] || '—'
+  return new Date(row.created_at).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })
+}
 function openDetail(row) { if (isOrder.value) orderDetailId.value = row.id; else quoteDetailId.value = row.id }
+function toggleQuoteGroup(groupId) {
+  const next = new Set(expandedQuoteGroups.value)
+  next.has(groupId) ? next.delete(groupId) : next.add(groupId)
+  expandedQuoteGroups.value = next
+}
+function activateQuoteGroup(group) {
+  if (group.versionCount > 1) toggleQuoteGroup(group.id)
+  else openDetail(group.main)
+}
+const quoteGroups = computed(() => {
+  const groups = new Map()
+  rows.value.forEach(row => {
+    const groupId = row.root_quote || row.id
+    if (!groups.has(groupId)) groups.set(groupId, [])
+    groups.get(groupId).push(row)
+  })
+  return [...groups.entries()].map(([id, versions]) => {
+    const ordered = [...versions].sort((a, b) => (Number(a.revision_no) - Number(b.revision_no)) || (a.id - b.id))
+    const main = ordered.find(row => !row.root_quote) || ordered[0]
+    const latest = ordered[ordered.length - 1]
+    return { id, main, versions: ordered, latest, versionCount: ordered.length }
+  })
+})
 function reviseFromDetail(row) { if (row) edit(row, { closeDetail: false }) }
 async function openOrderDraft(sourceQuote) {
   await loadOptions()
@@ -148,8 +199,12 @@ onMounted(async () => {
     <div class="panel">
       <div v-if="loading" class="loading"><div class="spinner" /></div>
       <div v-else-if="!rows.length" class="empty"><FileX2 :size="32" /><h3>还没有{{ isOrder ? '订单' : '报价' }}</h3><p>创建第一张业务单据，产品和客户数据会自动关联。</p></div>
-      <div v-else class="table-wrap"><table class="data-table"><thead><tr><th>{{ copy.noLabel }}</th><th v-if="!isOrder">版本链</th><th>客户</th><th>{{ copy.dateLabel }}</th><th>状态</th><th>明细</th><th>总金额</th><th v-if="isOrder">已收 / 未收</th><th style="text-align:right">操作</th></tr></thead>
-        <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row)" @keydown.enter="openDetail(row)"><td class="primary-cell">{{ row[copy.no] }}</td><td v-if="!isOrder"><strong>{{ row.root_quote_no }}</strong><br /><small>{{ row.revision_label }}</small></td><td>{{ row.customer_name }}</td><td>{{ row[copy.date] }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td v-if="isOrder"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></td><td><div class="table-actions"><button v-if="!isOrder" class="mini-btn" :aria-label="`导出 ${row[copy.no]}`" @click.stop="exportQuote(row)"><Download :size="14" /></button><button class="mini-btn" :aria-label="`编辑 ${row[copy.no]}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button v-if="isOrder" class="mini-btn" :aria-label="`删除 ${row[copy.no]}`" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
+      <div v-else-if="isOrder" class="table-wrap"><table class="data-table"><thead><tr><th>{{ copy.noLabel }}</th><th>客户</th><th>{{ copy.dateLabel }}</th><th>状态</th><th>明细</th><th>总金额</th><th>已收 / 未收</th><th style="text-align:right">操作</th></tr></thead>
+        <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row)" @keydown.enter="openDetail(row)"><td class="primary-cell">{{ row[copy.no] }}</td><td>{{ row.customer_name }}</td><td>{{ documentTimestamp(row) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></td><td><div class="table-actions"><button class="mini-btn" :aria-label="`编辑 ${row[copy.no]}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button class="mini-btn" :aria-label="`删除 ${row[copy.no]}`" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
+      </table></div>
+      <div v-else class="table-wrap"><table class="data-table quote-table"><thead><tr><th>报价单号</th><th>版本链</th><th>客户</th><th>创建时间</th><th>状态</th><th>明细</th><th>总金额</th><th style="text-align:right">操作</th></tr></thead>
+        <tbody><template v-for="group in quoteGroups" :key="group.id"><tr class="clickable-row quote-group-row" :class="{ 'is-expanded': expandedQuoteGroups.has(group.id) }" tabindex="0" @click="activateQuoteGroup(group)" @keydown.enter="activateQuoteGroup(group)"><td class="primary-cell"><button v-if="group.versionCount > 1" class="quote-expand" :aria-label="`${expandedQuoteGroups.has(group.id) ? '收起' : '展开'} ${group.main.quote_no} 的全部版本`" @click.stop="toggleQuoteGroup(group.id)"><ChevronDown v-if="expandedQuoteGroups.has(group.id)" :size="16" /><ChevronRight v-else :size="16" /></button><span v-else class="quote-expand-placeholder" />{{ group.main.quote_no }}</td><td><div class="quote-chain-summary"><span class="quote-group-chip">报价组</span><strong>{{ group.versionCount > 1 ? `${group.versionCount} 个版本` : '单一版本' }}</strong><small>{{ group.versionCount > 1 ? `最新 V${group.latest.revision_no}` : 'V0 · 原始报价' }}</small></div></td><td>{{ group.main.customer_name }}</td><td>{{ documentTimestamp(group.main) }}</td><td><span class="status" :class="group.latest.status">{{ group.latest.status_display }}</span></td><td>{{ group.main.items.length }} 项</td><td class="amount">{{ group.main.currency }} {{ money(group.main.total_amount) }}</td><td><div class="table-actions"><button class="mini-btn" :aria-label="`导出 ${group.main.quote_no}`" @click.stop="exportQuote(group.main)"><Download :size="14" /></button><button class="mini-btn" :aria-label="`编辑 ${group.main.quote_no}`" @click.stop="edit(group.main)"><Pencil :size="14" /></button></div></td></tr>
+          <tr v-for="row in expandedQuoteGroups.has(group.id) ? group.versions : []" :key="row.id" class="clickable-row quote-version-row" tabindex="0" @click="openDetail(row)" @keydown.enter="openDetail(row)"><td class="primary-cell"><span class="quote-version-rail"><CornerDownRight :size="14" /></span><span class="quote-version-node">V{{ row.revision_no }}</span>{{ row.quote_no }}</td><td><div class="quote-chain-summary child"><strong>{{ row.revision_label }}</strong><small>{{ row.revision_summary || '版本快照' }}</small></div></td><td>{{ row.customer_name }}</td><td>{{ documentTimestamp(row) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><div class="table-actions"><button class="mini-btn" :aria-label="`导出 ${row.quote_no}`" @click.stop="exportQuote(row)"><Download :size="14" /></button><button class="mini-btn" :aria-label="`编辑 ${row.quote_no}`" @click.stop="edit(row)"><Pencil :size="14" /></button></div></td></tr></template></tbody>
       </table></div>
     </div>
 
@@ -159,8 +214,8 @@ onMounted(async () => {
         <div class="form-grid">
           <div class="field"><label>{{ copy.noLabel }} *</label><input v-model="form[copy.no]" required /></div>
           <div class="field"><label>客户 *</label><select v-model="form.customer" required><option value="">请选择</option><option v-for="c in customers" :key="c.id" :value="c.id">{{ c.name }}</option></select></div>
-          <div class="field"><label>{{ copy.dateLabel }} *</label><SegmentedDateInput v-model="form[copy.date]" required /></div>
-          <div class="field"><label>{{ isOrder ? '预计交期' : '有效期至' }}</label><SegmentedDateInput v-model="form[isOrder ? 'expected_ship_date' : 'valid_until']" /></div>
+          <div class="field"><label>{{ copy.dateLabel }} *</label><SegmentedDateInput :model-value="form[copy.date]" required @update:model-value="setOrderDate" /></div>
+          <div class="field"><label>预计交期</label><div class="lead-time-input"><input v-model="orderLeadTimeDays" type="number" min="0" step="1" placeholder="天数" aria-label="交期天数" @input="setOrderLeadTimeDays" /><span>天</span><SegmentedDateInput :model-value="form.expected_ship_date" @update:model-value="setExpectedShipDate" /></div></div>
           <div class="field"><label>状态 *</label><select v-model="form.status"><option v-for="(label,key) in copy.statuses" :key="key" :value="key">{{ label }}</option></select></div>
           <div v-if="isOrder" class="field"><label>来源报价</label><select v-model="form.quote"><option value="">无</option><option v-for="q in quotes" :key="q.id" :value="q.id">{{ q.quote_no }}</option></select></div>
           <div class="field"><label>币种</label><select v-model="form.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
@@ -196,5 +251,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.paid{color:#277258;font-weight:600}.owing{color:#b66d2f;font-weight:600}.items-head{display:flex;justify-content:space-between;align-items:center;margin:26px 0 10px;padding-top:22px;border-top:1px solid #e5eae7}.items-head strong,.items-head small{display:block}.items-head strong{font-size:14px}.items-head small{font-size:11px;color:#82908b;margin-top:3px}.line-items{border:1px solid #e0e6e2;border-radius:10px;overflow:hidden}.line-header,.line-row{display:grid;grid-template-columns:2fr .6fr .8fr .8fr 34px;gap:8px;align-items:center;padding:8px 10px}.line-header:has(+ .order),.line-row.order{grid-template-columns:2fr .55fr .7fr .7fr .8fr 34px}.line-header{background:#f5f8f6;color:#7a8984;font-size:10px;text-transform:uppercase}.line-row{border-top:1px solid #edf0ee}.line-row select,.line-row input{min-width:0;width:100%;border:1px solid #dce3df;border-radius:7px;padding:8px;font-size:12px}.line-row .amount{text-align:right}.remove-line{border:0;background:transparent;color:#b05b5b;display:grid;place-items:center}.remove-line:disabled{opacity:.25}.totals{margin:15px 0 22px;display:flex;justify-content:flex-end;gap:14px;align-items:end}.totals label{font-size:11px;color:#778680}.totals input{display:block;width:105px;margin-top:5px;border:1px solid #dce3df;border-radius:7px;padding:8px}.totals div{border-left:1px solid #dae2de;padding-left:18px}.totals span,.totals strong{display:block}.totals span{font-size:11px;color:#788680}.totals strong{font-size:20px;color:#123c36;margin-top:5px}.notes textarea{min-height:65px}@media(max-width:700px){.line-items{overflow:auto}.line-header,.line-row,.line-header:has(+ .order),.line-row.order{min-width:700px}.totals{flex-wrap:wrap}}
+.paid{color:#277258;font-weight:600}.owing{color:#b66d2f;font-weight:600}.quote-table{border-collapse:separate;border-spacing:0 8px;margin-top:-8px}.quote-table thead th{border-bottom:0}.quote-table .quote-group-row td{background:#fff;border-top:1px solid #dfe8e4;border-bottom:1px solid #dfe8e4;box-shadow:0 3px 8px #163f3510}.quote-table .quote-group-row td:first-child{border-left:1px solid #dfe8e4;border-radius:10px 0 0 10px}.quote-table .quote-group-row td:last-child{border-right:1px solid #dfe8e4;border-radius:0 10px 10px 0}.quote-group-row:hover td{background:#f2f8f5}.quote-group-row.is-expanded td{background:#dceee7;border-color:#bdd9cc;box-shadow:0 4px 10px #174d3c15}.quote-group-row.is-expanded td:first-child{box-shadow:inset 4px 0 #23765d,0 4px 10px #174d3c15}.quote-chain-summary{display:grid;gap:3px;align-content:center}.quote-chain-summary strong{font-size:12px;color:#29483e}.quote-chain-summary small{color:#71847d;font-size:10px}.quote-group-chip{width:max-content;padding:2px 6px;border-radius:10px;background:#e8f3ee;color:#28745e;font-size:9px;font-weight:700;letter-spacing:.04em}.quote-version-row td{background:#f8fbf9;border-top:1px solid #e2ece7;border-bottom:1px solid #e2ece7}.quote-version-row td:first-child{position:relative;padding-left:41px;border-left:1px solid #e2ece7;border-radius:8px 0 0 8px}.quote-version-row td:last-child{border-right:1px solid #e2ece7;border-radius:0 8px 8px 0}.quote-version-row:hover td{background:#eef7f2}.quote-chain-summary.child strong{color:#477167}.quote-version-rail{position:absolute;left:15px;top:0;bottom:0;width:17px;display:flex;align-items:center;color:#4d9a83}.quote-version-rail:before{content:'';position:absolute;left:7px;top:-9px;bottom:50%;width:1px;background:#8fc4b2}.quote-version-rail svg{position:relative;z-index:1;background:#f8fbf9}.quote-version-node{display:inline-grid;place-items:center;min-width:25px;height:20px;margin-right:7px;border-radius:5px;background:#e3f2eb;color:#23765d;font-size:10px;font-weight:800;vertical-align:1px}.quote-expand{display:inline-grid;width:24px;height:24px;margin:0 5px 0 -4px;padding:0;place-items:center;vertical-align:middle;border:1px solid #d8e6df;border-radius:7px;background:#f7fbf9;color:#397060}.quote-expand:hover{background:#c8e5d8;border-color:#add1bf}.quote-expand-placeholder{display:inline-block;width:24px;margin-right:5px}.items-head{display:flex;justify-content:space-between;align-items:center;margin:26px 0 10px;padding-top:22px;border-top:1px solid #e5eae7}.items-head strong,.items-head small{display:block}.items-head strong{font-size:14px}.items-head small{font-size:11px;color:#82908b;margin-top:3px}.line-items{border:1px solid #e0e6e2;border-radius:10px;overflow:hidden}.line-header,.line-row{display:grid;grid-template-columns:2fr .6fr .8fr .8fr 34px;gap:8px;align-items:center;padding:8px 10px}.line-header:has(+ .order),.line-row.order{grid-template-columns:2fr .55fr .7fr .7fr .8fr 34px}.line-header{background:#f5f8f6;color:#7a8984;font-size:10px;text-transform:uppercase}.line-row{border-top:1px solid #edf0ee}.line-row select,.line-row input{min-width:0;width:100%;border:1px solid #dce3df;border-radius:7px;padding:8px;font-size:12px}.line-row .amount{text-align:right}.remove-line{border:0;background:transparent;color:#b05b5b;display:grid;place-items:center}.remove-line:disabled{opacity:.25}.totals{margin:15px 0 22px;display:flex;justify-content:flex-end;gap:14px;align-items:end}.totals label{font-size:11px;color:#778680}.totals input{display:block;width:105px;margin-top:5px;border:1px solid #dce3df;border-radius:7px;padding:8px}.totals div{border-left:1px solid #dae2de;padding-left:18px}.totals span,.totals strong{display:block}.totals span{font-size:11px;color:#788680}.totals strong{font-size:20px;color:#123c36;margin-top:5px}.notes textarea{min-height:65px}@media(max-width:700px){.quote-table{border-spacing:0 5px}.line-items{overflow:auto}.line-header,.line-row,.line-header:has(+ .order),.line-row.order{min-width:700px}.totals{flex-wrap:wrap}}
+.lead-time-input{display:flex;align-items:center;gap:6px}.lead-time-input>input{flex:0 0 10ch!important;width:10ch!important;min-width:0}.lead-time-input>span{color:#70817b;font-size:12px}.lead-time-input :deep(.segmented-date){flex:1 1 auto;min-width:0}
 </style>

@@ -837,7 +837,8 @@ class QuoteExportTests(TestCase):
                 self.assertTrue(response.content.startswith(b"PK"))
                 self.assertEqual(xlsx_cell_text(response.content, "L9"), revision.quote_no)
 
-    def test_export_requires_authentication_and_allows_authenticated_operator(self):
+    @override_settings(DEBUG=False)
+    def test_export_requires_authentication_and_allows_authenticated_operator_in_production(self):
         anonymous = APIClient()
 
         denied = anonymous.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
@@ -845,6 +846,12 @@ class QuoteExportTests(TestCase):
 
         self.assertEqual(denied.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(allowed.status_code, status.HTTP_200_OK)
+
+    @override_settings(DEBUG=True)
+    def test_export_allows_anonymous_operator_in_development(self):
+        response = APIClient().get(f"/api/quotes/{self.multi_item_quote.id}/export/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_export_uses_saved_buyer_and_sku_snapshots_after_sources_change(self):
         self.customer.name = "Renamed Export Buyer"
@@ -884,7 +891,7 @@ class QuoteExportTests(TestCase):
         response = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        notes = xlsx_cell_text(response.content, "A16")
+        notes = xlsx_cell_text(response.content, "A17")
         self.assertIn("Price Valid Date: 7 Days.", notes)
         self.assertIn("40% (USD 24.60) payment in advance", notes)
         self.assertIn("Trading terms: CIF Hamburg", notes)
@@ -915,13 +922,34 @@ class QuoteExportTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         sheet_xml = unzip_member(response.content, "xl/worksheets/sheet1.xml")
         self.assertIn(b"SKU-004", sheet_xml)
-        self.assertEqual(xlsx_cell_text(response.content, "A23"), "BANK INFORMATION")
+        self.assertEqual(xlsx_cell_text(response.content, "A24"), "BANK INFORMATION")
         self.assertEqual(xlsx_cell_text(response.content, "I3"), "Guangzhou Sunjack Lighting Co., Ltd.")
-        self.assertEqual(xlsx_cell_text(response.content, "C24"), "Guangzhou Sunjack Lighting Co., Ltd.")
-        self.assertEqual(xlsx_cell_text(response.content, "A31"), "Bank Code")
-        self.assertEqual(xlsx_cell_text(response.content, "C31"), "007")
-        self.assertEqual(xlsx_cell_text(response.content, "A32"), "Branch Code")
-        self.assertTrue(xlsx_cell_text(response.content, "A33").startswith("IMPORTANT NOTICE"))
+        self.assertEqual(xlsx_cell_text(response.content, "C25"), "Guangzhou Sunjack Lighting Co., Ltd.")
+        self.assertEqual(xlsx_cell_text(response.content, "A32"), "Bank Code")
+        self.assertEqual(xlsx_cell_text(response.content, "C32"), "007")
+        self.assertEqual(xlsx_cell_text(response.content, "A33"), "Branch Code")
+        self.assertTrue(xlsx_cell_text(response.content, "A34").startswith("IMPORTANT NOTICE"))
+
+    def test_export_uses_no_discount_template_when_discount_is_zero(self):
+        self.multi_item_quote.discount = Decimal("0.00")
+        self.multi_item_quote.save(update_fields=["discount"])
+
+        response = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(xlsx_cell_text(response.content, "A14"), "Sub Total")
+        self.assertTrue(xlsx_cell_text(response.content, "A16").startswith("NOTES:"))
+        self.assertEqual(xlsx_cell_text(response.content, "A21"), "BANK INFORMATION")
+
+    def test_export_uses_discount_template_and_writes_discount_amount(self):
+        response = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(xlsx_cell_text(response.content, "A14"), "Discount")
+        self.assertEqual(Decimal(xlsx_cell_text(response.content, "M14")), Decimal("1.00"))
+        self.assertEqual(xlsx_cell_text(response.content, "A15"), "Sub Total")
+        self.assertTrue(xlsx_cell_text(response.content, "A17").startswith("NOTES:"))
+        self.assertEqual(xlsx_cell_text(response.content, "A22"), "BANK INFORMATION")
 
     @override_settings(QUOTE_XLSX_NODE_BINARY="definitely-not-a-real-node-binary")
     def test_export_failure_returns_422_without_changing_quote(self):

@@ -40,6 +40,8 @@ def record_transaction(payload):
     payload = payload.copy()
     plan = payload.pop("plan", None)
     amount = Decimal(str(payload.pop("amount")))
+    # Transaction status is controlled by this service; callers cannot override it.
+    payload.pop("status", None)
     if amount <= 0:
         raise ValidationError("收付款金额必须大于零。")
     if plan:

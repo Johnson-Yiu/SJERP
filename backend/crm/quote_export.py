@@ -7,6 +7,8 @@ import tempfile
 
 from django.conf import settings
 
+from .quotation_export_dto import build_quotation_export_dto
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 WORKER_PATH = PROJECT_ROOT / "scripts" / "generate_quote_xlsx.mjs"
@@ -68,82 +70,20 @@ def _amount_words(amount, currency):
     return f"{words} ONLY"
 
 
-def _money(value):
-    return str(Decimal(value).quantize(TWO_PLACES, rounding=ROUND_HALF_UP))
-
-
-def _export_payload(quote):
-    products = []
-    subtotal = Decimal("0")
-    for item in quote.items.all():
-        amount = item.amount
-        subtotal += amount
-        image_path = ""
-        if item.image_snapshot:
-            try:
-                image_path = item.image_snapshot.path
-            except (NotImplementedError, ValueError):
-                image_path = ""
-        products.append({
-            "sku": item.sku_code_snapshot,
-            "product_name": item.product_name_snapshot,
-            "description": item.description or item.product_name_snapshot,
-            "quantity": str(item.quantity),
-            "unit": item.unit_snapshot,
-            "unit_price": str(item.unit_price),
-            "amount": _money(amount),
-            "image_path": image_path,
-        })
-
-    total_amount = Decimal(quote.total_amount).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
+def build_pi_export_payload(quote, *, template_id=None):
+    """Render a saved quotation through the selected workbook template."""
+    dto = build_quotation_export_dto(quote, template_id=template_id)
+    total_amount = Decimal(dto.totals["total_amount"])
     if total_amount < 0:
         raise QuoteExportError("PI total amount cannot be negative.")
-    deposit_amount = (total_amount * quote.deposit_ratio).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
-    balance_amount = total_amount - deposit_amount
-    validity_days = (quote.valid_until - quote.quote_date).days if quote.valid_until else 30
-    return {
-        "invoice_no": quote.quote_no,
-        "buyer": {
-            "company_name": quote.buyer_company_name,
-            "recipient": quote.recipient_name,
-            "address": quote.buyer_address,
-            "tax_id": "",
-            "email": quote.buyer_email,
-            "phone": quote.buyer_phone,
-        },
-        "terms": {
-            "quote_date": quote.quote_date.isoformat(),
-            "validity_days": max(validity_days, 0),
-            "lead_time_days": quote.lead_time_days or 10,
-            "trading_terms": quote.trading_terms,
-            "shipping_details": quote.shipping_details,
-            "notes": quote.notes,
-        },
-        "totals": {
-            "currency": quote.currency,
-            "subtotal": _money(subtotal),
-            "shipping_fee": _money(quote.shipping_fee),
-            "discount": _money(quote.discount),
-            "total_amount": _money(total_amount),
-            "amount_words": _amount_words(total_amount, quote.currency),
-        },
-        "payment_splits": {
-            "deposit_ratio": str(quote.deposit_ratio),
-            "deposit_amount": _money(deposit_amount),
-            "balance_ratio": str(Decimal("1") - quote.deposit_ratio),
-            "balance_amount": _money(balance_amount),
-        },
-        "products": products,
-    }
-
-
-def build_pi_export_payload(quote):
+    payload = dto.as_renderer_payload()
+    payload["totals"]["amount_words"] = _amount_words(total_amount, quote.currency)
     temporary = tempfile.TemporaryDirectory(prefix="quote-export-")
     try:
         temporary_path = Path(temporary.name)
         input_path = temporary_path / "payload.json"
         output_path = temporary_path / f"{quote.quote_no}.xlsx"
-        input_path.write_text(json.dumps(_export_payload(quote), ensure_ascii=False), encoding="utf-8")
+        input_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
 
         node_binary = getattr(settings, "QUOTE_XLSX_NODE_BINARY", None) or os.environ.get("QUOTE_XLSX_NODE_BINARY") or "node"
         try:

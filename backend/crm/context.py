@@ -7,8 +7,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Contact, Customer, FollowUp, InventoryMovement, Order, OrderItem, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, SKU, Transaction
-from .serializers import ContactSerializer, CustomerSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, QuoteSerializer, SKUSerializer, TransactionSerializer
+from .models import Contact, Customer, FollowUp, InventoryMovement, Order, OrderItem, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, SKU, Supplier, Transaction
+from .serializers import ContactSerializer, CustomerSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, QuoteSerializer, SKUSerializer, SupplierSerializer, TransactionSerializer
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -49,6 +49,8 @@ def entity_context(request, entity, pk):
         "product-certificates": _certificate_context,
         "quotes": _quote_context,
         "orders": _order_context,
+        "suppliers": _supplier_context,
+        "purchase-orders": _purchase_order_context,
         "transactions": _transaction_context,
         "inventory-movements": _inventory_context,
     }
@@ -169,6 +171,40 @@ def _order_context(pk):
         _section("inventory", "出入库流水", "inventory-movements", [["movement_date", "日期", "date"], ["movement_no", "流水号"], ["type_display", "类型"], ["sku_code", "SKU"], ["signed_quantity", "变动", "signed"], ["warehouse", "仓库"]], inventory),
         _section("quote", "来源报价", "quotes", [["quote_no", "报价单号"], ["quote_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"]], quote),
     ]}
+
+
+def _supplier_context(pk):
+    obj = get_object_or_404(Supplier, pk=pk)
+    products = _target(ProductSerializer(obj.products.select_related("category"), many=True).data, "products")
+    purchases = _target(PurchaseOrderSerializer(obj.purchase_orders.select_related("supplier", "order").prefetch_related("items__sku", "items__receipts", "transactions"), many=True).data, "purchase-orders")
+    payments = _target(TransactionSerializer(obj.transactions.select_related("customer", "order", "purchase_order"), many=True).data, "transactions")
+    total_purchases = sum((Decimal(row["total_amount"]) for row in purchases), Decimal("0"))
+    total_paid = sum((Decimal(row["amount"]) for row in payments if row["direction"] == "expense" and row["status"] == "confirmed"), Decimal("0"))
+    return {"entity": "suppliers", "title": obj.name, "subtitle": obj.contact_name or "供应商", "badge": obj.currency,
+        "info": [["联系人", obj.contact_name or "—"], ["电话", obj.phone or "—"], ["邮箱", obj.email or "—"], ["默认币种", obj.currency], ["付款条款", obj.payment_terms or "—"], ["备注", obj.notes or "—"]],
+        "metrics": [["合作产品", len(products), "number"], ["采购单", len(purchases), "number"], ["采购金额", total_purchases, "money"], ["已付款", total_paid, "money"]],
+        "sections": [
+            _section("products", "合作产品", "products", [["code", "产品编号"], ["name", "产品名称"], ["category_name", "分类"], ["status", "状态", "status"]], products),
+            _section("purchases", "采购单", "purchase-orders", [["purchase_no", "采购单号"], ["order_no", "关联订单"], ["order_date", "下单日期", "date"], ["expected_arrival_date", "预计到货", "date"], ["status", "状态", "status"], ["total_amount", "金额", "money"], ["currency", "币种"]], purchases),
+            _section("payments", "付款流水", "transactions", [["transaction_date", "日期", "date"], ["transaction_no", "流水号"], ["category", "分类"], ["amount", "金额", "money"], ["currency", "币种"], ["status", "状态", "status"]], payments),
+        ]}
+
+
+def _purchase_order_context(pk):
+    obj = get_object_or_404(PurchaseOrder.objects.select_related("supplier", "order").prefetch_related("items__sku__product", "transactions"), pk=pk)
+    supplier = _target([SupplierSerializer(obj.supplier).data], "suppliers")
+    order = _target([OrderSerializer(obj.order).data], "orders")
+    items = _target([{"id": item.sku_id, "sku_code": item.sku.sku, "product_name": item.sku.product.name, "quantity": item.quantity, "unit_price": item.unit_price, "amount": item.quantity * item.unit_price} for item in obj.items.all()], "skus")
+    payments = _target(TransactionSerializer(obj.transactions.all(), many=True).data, "transactions")
+    return {"entity": "purchase-orders", "title": obj.purchase_no, "subtitle": f"{obj.supplier.name} · {obj.order_date}", "badge": obj.get_status_display(),
+        "info": [["下单日期", obj.order_date], ["预计到货", obj.expected_arrival_date or "—"], ["币种", obj.currency], ["汇率", obj.exchange_rate], ["关联订单", obj.order.order_no], ["备注", obj.notes or "—"]],
+        "metrics": [["采购金额", obj.total_amount, "money"], ["已付款", obj.paid_amount, "money"], ["待付款", obj.unpaid_amount, "money"], ["明细", len(items), "number"]],
+        "sections": [
+            _section("supplier", "供应商", "suppliers", [["name", "供应商"], ["contact_name", "联系人"], ["phone", "电话"], ["currency", "默认币种"]], supplier),
+            _section("order", "关联订单", "orders", [["order_no", "订单号"], ["order_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"]], order),
+            _section("items", "采购明细", "skus", [["sku_code", "SKU"], ["product_name", "产品"], ["quantity", "数量", "number"], ["unit_price", "单价", "money"], ["amount", "小计", "money"]], items),
+            _section("payments", "付款流水", "transactions", [["transaction_date", "日期", "date"], ["transaction_no", "流水号"], ["amount", "金额", "money"], ["currency", "币种"], ["status", "状态", "status"]], payments),
+        ]}
 
 
 def _follow_up_context(pk):

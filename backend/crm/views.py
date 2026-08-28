@@ -819,6 +819,37 @@ class TransactionViewSet(viewsets.ModelViewSet):
             qs = qs.filter(order_id=self.request.query_params["order"])
         return qs
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            row = record_transaction(serializer.validated_data.copy())
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(self.get_serializer(row).data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        if self.get_object().status == "confirmed":
+            return Response({"detail": "已确认流水不能直接修改，请作废后重记。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().update(request, *args, **kwargs)
+
+    @action(detail=True, methods=["post"])
+    def void(self, request, pk=None):
+        try:
+            row = void_transaction(self.get_object())
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(self.get_serializer(row).data)
+
+    @action(detail=True, methods=["post"])
+    def allocate(self, request, pk=None):
+        plan = get_object_or_404(PaymentPlan, pk=request.data.get("plan"))
+        try:
+            plan = allocate_advance(self.get_object(), plan, request.data.get("amount"))
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(PaymentPlanSerializer(plan).data)
+
 
 class InventoryMovementViewSet(viewsets.ModelViewSet):
     serializer_class = InventoryMovementSerializer
@@ -835,28 +866,6 @@ class InventoryMovementViewSet(viewsets.ModelViewSet):
         if self.request.query_params.get("order"):
             qs = qs.filter(order_id=self.request.query_params["order"])
         return qs
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        row = record_transaction(serializer.validated_data.copy())
-        return Response(self.get_serializer(row).data, status=status.HTTP_201_CREATED)
-
-    def update(self, request, *args, **kwargs):
-        if self.get_object().status == "confirmed":
-            return Response({"detail": "已确认流水不能直接修改，请作废后重记。"}, status=status.HTTP_400_BAD_REQUEST)
-        return super().update(request, *args, **kwargs)
-
-    @action(detail=True, methods=["post"])
-    def void(self, request, pk=None):
-        row = void_transaction(self.get_object())
-        return Response(self.get_serializer(row).data)
-
-    @action(detail=True, methods=["post"])
-    def allocate(self, request, pk=None):
-        plan = get_object_or_404(PaymentPlan, pk=request.data.get("plan"))
-        plan = allocate_advance(self.get_object(), plan, request.data.get("amount"))
-        return Response(PaymentPlanSerializer(plan).data)
 
     def create(self, request, *args, **kwargs):
         if request.data.get("type") not in {"adjust_in", "adjust_out", "sample_out", "return_in"}:
@@ -897,7 +906,10 @@ class PaymentPlanViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def settle(self, request, pk=None):
         plan = self.get_object()
-        row = record_transaction({**request.data, "plan": plan})
+        try:
+            row = record_transaction({**request.data, "plan": plan})
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         return Response(TransactionSerializer(row).data, status=status.HTTP_201_CREATED)
 
 
@@ -907,7 +919,10 @@ class ContractChangeRequestViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def approve(self, request, pk=None):
-        plan = approve_contract_change(self.get_object())
+        try:
+            plan = approve_contract_change(self.get_object())
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         return Response(PaymentPlanSerializer(plan).data, status=status.HTTP_201_CREATED)
 
 

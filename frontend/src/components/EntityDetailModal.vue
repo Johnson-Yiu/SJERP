@@ -19,7 +19,7 @@ const skuMultiSelect = ref(false)
 const currentEntity = ref(props.entity), currentId = ref(props.id)
 
 const activeSection = computed(() => data.value?.sections.find(s => s.key === activeTab.value) || data.value?.sections[0])
-const documentEntities = new Set(['orders', 'quotes'])
+const documentEntities = new Set(['orders', 'quotes', 'purchase-orders'])
 const hasManagement = (entity) => Boolean(resourceConfigs[entity] || documentEntities.has(entity))
 const quickCreatable = new Set(['contacts', 'follow-ups', 'orders', 'quotes', 'transactions', 'inventory-movements', 'skus', 'product-parameters', 'product-certificates', 'categories'])
 const canManage = computed(() => Boolean(activeSection.value && quickCreatable.has(activeSection.value.entity)))

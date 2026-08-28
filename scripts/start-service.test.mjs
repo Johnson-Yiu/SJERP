@@ -3,9 +3,9 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 test("startup applies migrations before it starts Django", async () => {
-  const source = await readFile(new URL("../start.ps1", import.meta.url), "utf8");
+  const source = await readFile(new URL("../启动主工作树.ps1", import.meta.url), "utf8");
   const managePathAt = source.indexOf('Join-Path $BackendDir "manage.py"');
-  const migrateAt = source.indexOf("& $PythonExe $ManagePy migrate --noinput");
+  const migrateAt = source.indexOf("& $VenvPython $ManagePy migrate --noinput");
   const serverAt = source.indexOf("manage.py runserver");
 
   assert.ok(managePathAt >= 0, "migration must use backend/manage.py");

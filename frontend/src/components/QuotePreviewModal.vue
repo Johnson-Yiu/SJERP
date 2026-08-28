@@ -94,8 +94,8 @@ function printPreview() {
             <div class="pi-product-head"><span>No.</span><span>Product Image</span><span>Model</span><span>Product Description</span><span>Quantity</span><span>Unit</span><span>Unit Price<br />{{ draft.currency }}</span><span>Total<br />{{ draft.currency }}</span></div>
             <div v-for="(item, index) in draft.products" :key="item.key" class="pi-product-row">
               <span>{{ index + 1 }}</span>
-              <span class="pi-image-frame"><img v-if="item.image_url" :src="item.image_url" :alt="item.sku" /></span>
-              <span>{{ item.sku || '—' }}</span><span>{{ item.description || item.product_name || '—' }}</span><span>{{ item.quantity }}</span><span>{{ item.unit || 'pcs' }}</span><span>{{ money(item.unit_price) }}</span><span>{{ money(item.amount) }}</span>
+              <span class="pi-image-frame"><img v-if="item.image_url" :src="item.image_url" :alt="item.model || item.product_name" /></span>
+              <span>{{ item.model || '—' }}</span><span>{{ item.description || item.product_name || '—' }}</span><span>{{ item.quantity }}</span><span>{{ item.unit || 'pcs' }}</span><span>{{ money(item.unit_price) }}</span><span>{{ money(item.amount) }}</span>
             </div>
           </div>
           <div class="pi-totals"><div><span>Sub Total</span><strong>{{ money(draft.totals.subtotal) }}</strong></div><div><span>Shipping Cost</span><strong>{{ money(draft.totals.shipping_fee) }}</strong></div><div v-if="Number(draft.totals.discount)"><span>Discount</span><strong>-{{ money(draft.totals.discount) }}</strong></div><div class="pi-grand-total"><span>Grand Total</span><strong>{{ money(draft.totals.total_amount) }}</strong></div></div>

@@ -766,10 +766,10 @@ class QuoteExportTests(TestCase):
             address="Berlin, Germany",
         )
         self.product = Product.objects.create(code="P-EXPORT-001", name="Export Panel")
-        self.sku_1 = SKU.objects.create(product=self.product, sku="SKU-001", unit="pcs")
-        self.sku_2 = SKU.objects.create(product=self.product, sku="SKU-002", unit="pcs")
-        self.sku_3 = SKU.objects.create(product=self.product, sku="SKU-003", unit="pcs")
-        self.sku_4 = SKU.objects.create(product=self.product, sku="SKU-004", unit="pcs")
+        self.sku_1 = SKU.objects.create(product=self.product, sku="SKU-001", sales_model="MODEL-001", unit="pcs")
+        self.sku_2 = SKU.objects.create(product=self.product, sku="SKU-002", sales_model="MODEL-002", unit="pcs")
+        self.sku_3 = SKU.objects.create(product=self.product, sku="SKU-003", sales_model="MODEL-003", unit="pcs")
+        self.sku_4 = SKU.objects.create(product=self.product, sku="SKU-004", sales_model="MODEL-004", unit="pcs")
         self.multi_item_quote = self.create_quote(
             quote_no=allocate_root_quote_no(date(2026, 8, 15), "Germany"),
             items=[
@@ -864,7 +864,7 @@ class QuoteExportTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(xlsx_cell_text(response.content, "B3"), "Export Buyer GmbH")
-        self.assertEqual(xlsx_cell_text(response.content, "C11"), "SKU-001")
+        self.assertEqual(xlsx_cell_text(response.content, "C11"), "MODEL-001")
         self.assertEqual(xlsx_cell_text(response.content, "K11"), "pcs")
 
     def test_export_uses_selected_currency_in_both_price_headers(self):
@@ -902,8 +902,8 @@ class QuoteExportTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         sheet_xml = unzip_member(response.content, "xl/worksheets/sheet1.xml")
-        self.assertIn(b"SKU-001", sheet_xml)
-        self.assertIn(b"SKU-002", sheet_xml)
+        self.assertIn(b"MODEL-001", sheet_xml)
+        self.assertIn(b"MODEL-002", sheet_xml)
         self.assertIn(b"Arial", unzip_member(response.content, "xl/styles.xml"))
 
     def test_export_expands_product_rows_and_shifts_fixed_bank_section(self):

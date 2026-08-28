@@ -42,7 +42,7 @@ function makeDraft() {
     lead_time_days: quote.lead_time_days || 10, deposit_percent: Number(quote.deposit_ratio ?? 1) * 100,
     revision_summary: '',
     trading_terms: quote.trading_terms || 'FOB Shenzhen', shipping_details: quote.shipping_details || '', notes: quote.notes || '',
-    items: (quote.items?.length ? quote.items : [{ sku: '', quantity: 1, unit_price: 0, description: '', notes: '' }]).map(item => ({ sku: item.sku, quantity: item.quantity, unit_price: item.unit_price, description: item.description || '', notes: item.notes || '' })),
+    items: (quote.items?.length ? quote.items : [{ sku: '', quantity: 1, unit_price: 0, sales_model_snapshot: '', description: '', notes: '' }]).map(item => ({ sku: item.sku, quantity: item.quantity, unit_price: item.unit_price, sales_model_snapshot: item.sales_model_snapshot ?? item.model ?? '', description: item.description || item.description_snapshot || '', notes: item.notes || '' })),
   }
 }
 
@@ -74,7 +74,7 @@ const previewDraft = computed(() => {
     terms: { lead_time_days: draft.lead_time_days, trading_terms: draft.trading_terms, shipping_details: draft.shipping_details, notes: draft.notes },
     totals: { subtotal: subtotal.value, shipping_fee: Number(draft.shipping_fee || 0), discount: Number(draft.discount || 0), total_amount: total.value },
     payment_splits: { deposit_ratio: depositRatio, deposit_amount: depositAmount, balance_ratio: 1 - depositRatio, balance_amount: total.value - depositAmount },
-    products: draft.items.map((item, index) => { const sku = props.skus.find(row => row.id === Number(item.sku)) || {}; return { key: `${index}-${item.sku}`, sku: sku.sku || '', product_name: sku.product_name || '', description: item.description, quantity: item.quantity, unit: sku.unit || 'pcs', unit_price: item.unit_price, amount: Number(item.quantity || 0) * Number(item.unit_price || 0), image_url: sku.image || '' } }),
+    products: draft.items.map((item, index) => { const sku = props.skus.find(row => row.id === Number(item.sku)) || {}; return { key: `${index}-${item.sku}`, sku: sku.sku || '', sku_code: sku.sku_code || sku.sku || '', model: item.sales_model_snapshot || sku.sales_model || '', product_name: sku.display_name_cn || sku.product_name || '', description: item.description, quantity: item.quantity, unit: sku.unit || 'pcs', unit_price: item.unit_price, amount: Number(item.quantity || 0) * Number(item.unit_price || 0), image_url: sku.image || '' } }),
   }
 })
 const pinyinInitialMap = { 灯: 'd', 带: 'd', 柜: 'g', 电: 'd', 源: 'y', 面: 'm', 板: 'b', 筒: 't', 射: 's', 轨: 'g', 道: 'd', 吸: 'x', 顶: 'd', 壁: 'b', 台: 't', 庭: 't', 户: 'h', 外: 'w', 工: 'g', 矿: 'k', 防: 'f', 爆: 'b', 应: 'y', 急: 'j', 开: 'k', 关: 'g', 驱: 'q', 动: 'd', 器: 'q', 线: 'x', 条: 't', 球: 'q', 泡: 'p', 光: 'g', 伏: 'f', 瓦: 'w', 白: 'b', 黑: 'h', 暖: 'n', 冷: 'l', 红: 'h', 蓝: 'l', 绿: 'l', 黄: 'h' }
@@ -85,8 +85,8 @@ const skuOptions = computed(() => props.skus.map(sku => {
 }))
 
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
-function addItem() { draft.items.push({ sku: '', quantity: 1, unit_price: 0, description: '', notes: '' }) }
-function selectSku(item) { const sku = props.skus.find(row => row.id === Number(item.sku)); if (sku) { item.unit_price = sku.default_price; item.description = sku.product_name || sku.specification || '' } }
+function addItem() { draft.items.push({ sku: '', quantity: 1, unit_price: 0, sales_model_snapshot: '', description: '', notes: '' }) }
+function selectSku(item) { const sku = props.skus.find(row => row.id === Number(item.sku)); if (sku) { item.unit_price = sku.default_price; item.sales_model_snapshot = sku.sales_model || ''; item.description = sku.description_en || sku.description_cn || sku.display_name_cn || sku.product_name || sku.specification || '' } }
 async function selectCustomer() {
   const customer = props.customers.find(row => row.id === Number(draft.customer))
   if (!customer) return
@@ -115,7 +115,7 @@ function payload() {
     lead_time_days: draft.lead_time_days || null, deposit_ratio: Math.min(100, Math.max(0, Number(draft.deposit_percent || 0))) / 100,
     trading_terms: draft.trading_terms, shipping_details: draft.shipping_details, notes: draft.notes,
     revision_summary: draft.revision_summary.trim(),
-    items: draft.items.map(item => ({ sku: Number(item.sku), quantity: item.quantity, unit_price: item.unit_price, description: item.description, notes: item.notes })),
+    items: draft.items.map(item => ({ sku: Number(item.sku), quantity: item.quantity, unit_price: item.unit_price, sales_model_snapshot: item.sales_model_snapshot, description: item.description, notes: item.notes })),
   }
 }
 function openPreview() { errorMessage.value = validate(); if (!errorMessage.value) previewOpen.value = true }
@@ -149,6 +149,7 @@ onMounted(() => { if (props.mode === 'create' && draft.customer) selectCustomer(
       <div class="modal-body">
         <div v-if="errorMessage" class="quote-message error">{{ errorMessage }}</div>
         <div v-if="exportError" class="quote-message warning"><span>{{ exportError }}</span><button type="button" class="btn btn-secondary" :disabled="saving" @click="retryExport"><RotateCw :size="15" /> 重新导出 Excel</button></div>
+        <div v-if="draft.items.some(item => { const sku = skus.find(row => row.id === Number(item.sku)); return item.sku && !(item.sales_model_snapshot || sku?.sales_model) })" class="quote-message warning">有 SKU 尚未设置对外商业型号；报价仍可保存，但客户版 Model 将留空，请先确认是否需要补充。</div>
         <fieldset :disabled="Boolean(savedQuote)">
           <div class="form-grid">
             <div class="field"><label>报价单号</label><input :value="draft.quote_no || '保存后自动生成'" disabled /></div>
@@ -162,7 +163,7 @@ onMounted(() => { if (props.mode === 'create' && draft.customer) selectCustomer(
             <div v-if="mode === 'revise'" class="field full revision-summary"><label>本次修改说明 *</label><textarea v-model="draft.revision_summary" required placeholder="例如：调整数量、价格、交期或付款条款" /><small>该说明会显示在版本谱系中，便于后续追溯。</small></div>
           </div>
           <div class="items-head"><div><strong>产品明细</strong><small>预览会使用当前未保存数量、价格与图片</small></div><button type="button" class="btn btn-secondary" @click="addItem"><PlusCircle :size="15" /> 添加一行</button></div>
-          <div class="quote-line-items"><div class="quote-line-header"><span>SKU</span><span>数量</span><span>单价</span><span>产品描述</span><span>小计</span><span></span></div><div v-for="(item,index) in draft.items" :key="index" class="quote-line-row"><ComboInput v-model="item.sku" :options="skuOptions" :allow-custom="false" required placeholder="搜索 SKU 或产品" @update:model-value="selectSku(item)" /><input v-model="item.quantity" aria-label="数量" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" aria-label="单价" type="number" min="0" step="0.0001" required /><input v-model="item.description" aria-label="产品描述" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" :disabled="draft.items.length === 1" aria-label="删除明细" @click="draft.items.splice(index,1)"><MinusCircle :size="17" /></button></div></div>
+          <div class="quote-line-items"><div class="quote-line-header"><span>SKU</span><span>Model</span><span>数量</span><span>单价</span><span>产品描述</span><span>小计</span><span></span></div><div v-for="(item,index) in draft.items" :key="index" class="quote-line-row"><ComboInput v-model="item.sku" :options="skuOptions" :allow-custom="false" required placeholder="搜索 SKU 或产品" @update:model-value="selectSku(item)" /><input v-model.trim="item.sales_model_snapshot" aria-label="报价型号" placeholder="可按客户要求修改" /><input v-model="item.quantity" aria-label="数量" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" aria-label="单价" type="number" min="0" step="0.0001" required /><input v-model="item.description" aria-label="产品描述" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" :disabled="draft.items.length === 1" aria-label="删除明细" @click="draft.items.splice(index,1)"><MinusCircle :size="17" /></button></div></div>
           <div class="totals"><label>运费 <input v-model="draft.shipping_fee" type="number" step="0.01" /></label><label>折扣 <input v-model="draft.discount" type="number" step="0.01" /></label><div><span>合计</span><strong>{{ draft.currency }} {{ money(total) }}</strong></div></div>
           <div class="form-grid"><div class="field full"><label>贸易条款</label><textarea v-model="draft.trading_terms" /></div><div class="field full"><label>运输信息</label><textarea v-model="draft.shipping_details" /></div><div class="field full"><label>附加备注</label><textarea v-model="draft.notes" /></div></div>
         </fieldset>

@@ -7,6 +7,7 @@ const props = defineProps({ id: { type: [Number, String], required: true }, refr
 const emit = defineEmits(['close', 'edit', 'open-quote'])
 const workbench = ref(null)
 const fulfillment = ref(null)
+const packingPlan = ref(null)
 const activeTab = ref('overview')
 const loading = ref(true)
 const error = ref('')
@@ -39,13 +40,18 @@ async function ship(item) {
     await load()
   } catch (err) { error.value = err.response?.data?.detail || Object.values(err.response?.data || {}).flat().join(' ') || err.message }
 }
+async function generatePackingPlan() {
+  try { packingPlan.value = (await api.post(`/orders/${props.id}/packing-plan/`)).data }
+  catch (err) { error.value = err.message }
+}
 async function load() {
   loading.value = true
   error.value = ''
   try {
-    const [workbenchResult, fulfillmentResult] = await Promise.all([api.get(`/orders/${props.id}/workbench/`), api.get(`/orders/${props.id}/fulfillment/`)])
+    const [workbenchResult, fulfillmentResult, packingResult] = await Promise.all([api.get(`/orders/${props.id}/workbench/`), api.get(`/orders/${props.id}/fulfillment/`), api.get(`/orders/${props.id}/packing-plan/`).catch(() => null)])
     workbench.value = workbenchResult.data
     fulfillment.value = fulfillmentResult.data
+    packingPlan.value = packingResult?.data || null
   }
   catch (err) { error.value = err.message }
   finally { loading.value = false }
@@ -76,7 +82,7 @@ watch(() => props.refreshKey, load)
             <article class="workbench-card"><div class="section-heading"><div><h3><Truck :size="16" /> 履约进度</h3><p>依据关联的销售出库流水计算。</p></div><b>{{ fulfillmentPercent.toFixed(0) }}%</b></div><div class="progress-track fulfillment"><i :style="{ width: `${fulfillmentPercent}%` }" /></div><dl class="data-list compact"><dt>订单数量</dt><dd>{{ workbench.fulfillment_summary.ordered_quantity }}</dd><dt>已出库</dt><dd>{{ workbench.fulfillment_summary.shipped_quantity }}</dd><dt>待出库</dt><dd>{{ workbench.fulfillment_summary.remaining_quantity }}</dd></dl></article>
           </section>
 
-          <section v-else-if="activeTab === 'items'" class="workbench-card"><div class="section-heading"><div><h3><Boxes :size="16" /> 订单明细</h3><p>记录本订单已确认的成交价与成本。</p></div><strong>{{ workbench.items.length }} 项</strong></div><div class="workbench-table-wrap"><table class="workbench-table"><thead><tr><th>SKU</th><th>产品</th><th>数量</th><th>成交单价</th><th>成本单价</th><th>小计</th></tr></thead><tbody><tr v-for="item in workbench.items" :key="item.id"><td>{{ item.sku_code }}</td><td>{{ item.product_name }}</td><td>{{ item.quantity }}</td><td>{{ order.currency }} {{ money(item.unit_price) }}</td><td>{{ order.currency }} {{ money(item.cost_price) }}</td><td>{{ order.currency }} {{ money(item.amount) }}</td></tr></tbody></table></div><div class="order-totals"><span>商品小计 <b>{{ order.currency }} {{ money(itemSubtotal) }}</b></span><span>运费 <b>{{ order.currency }} {{ money(order.shipping_fee) }}</b></span><span>折扣 / 优惠 <b>- {{ order.currency }} {{ money(order.discount) }}</b></span><strong>订单总计 <b>{{ order.currency }} {{ money(order.total_amount) }}</b></strong></div></section>
+          <section v-else-if="activeTab === 'items'" class="workbench-card"><div class="section-heading"><div><h3><Boxes :size="16" /> 订单明细</h3><p>订单保存时固定销售型号、描述、单位和内部名称快照。</p></div><strong>{{ workbench.items.length }} 项</strong></div><div class="workbench-table-wrap"><table class="workbench-table"><thead><tr><th>Model</th><th>内部名称 / SKU Code</th><th>Description</th><th>数量</th><th>单位</th><th>成交单价</th><th>成本单价</th><th>小计</th></tr></thead><tbody><tr v-for="item in workbench.items" :key="item.id"><td>{{ item.sales_model || item.model || '未设置' }}</td><td>{{ item.display_name || item.product_name }}<small>{{ item.sku_code }}</small></td><td>{{ item.description || '—' }}</td><td>{{ item.quantity }}</td><td>{{ item.unit || '—' }}</td><td>{{ order.currency }} {{ money(item.unit_price) }}</td><td>{{ order.currency }} {{ money(item.cost_price) }}</td><td>{{ order.currency }} {{ money(item.amount) }}</td></tr></tbody></table></div><div class="order-totals"><span>商品小计 <b>{{ order.currency }} {{ money(itemSubtotal) }}</b></span><span>运费 <b>{{ order.currency }} {{ money(order.shipping_fee) }}</b></span><span>折扣 / 优惠 <b>- {{ order.currency }} {{ money(order.discount) }}</b></span><strong>订单总计 <b>{{ order.currency }} {{ money(order.total_amount) }}</b></strong></div></section>
 
           <section v-else-if="activeTab === 'payments'" class="workbench-card"><div class="section-heading"><div><h3><WalletCards :size="16" /> 回款流水</h3><p>确认付款后，订单的已收金额会自动更新。</p></div><strong>{{ workbench.payments.length }} 条</strong></div><div v-if="!workbench.payments.length" class="workbench-empty"><WalletCards :size="28" /><strong>暂无关联流水</strong><p>可在财务流水中关联此订单，记录定金与尾款。</p></div><div v-else class="workbench-table-wrap"><table class="workbench-table"><thead><tr><th>日期</th><th>流水号</th><th>类型</th><th>分类</th><th>状态</th><th>金额</th></tr></thead><tbody><tr v-for="payment in workbench.payments" :key="payment.id"><td>{{ date(payment.transaction_date) }}</td><td>{{ payment.transaction_no }}</td><td>{{ payment.direction_display }}</td><td>{{ payment.category }}</td><td><span class="status" :class="payment.status">{{ payment.status_display }}</span></td><td>{{ payment.currency }} {{ money(payment.amount) }}</td></tr></tbody></table></div></section>
 

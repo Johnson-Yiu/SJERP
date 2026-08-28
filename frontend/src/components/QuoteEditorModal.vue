@@ -179,6 +179,7 @@ onMounted(() => { if (props.mode === 'create' && draft.customer) selectCustomer(
 .quote-line-header{border-radius:10px 10px 0 0}
 .quote-line-row{position:relative}
 .quote-line-row:focus-within{z-index:20}
+.quote-line-header,.quote-line-row{grid-template-columns:1.7fr 1fr .55fr .7fr 1.7fr .75fr 34px}
 :deep(.combo-menu){z-index:100}
 .lead-time-input{display:flex;align-items:center;gap:6px}.lead-time-input>input{flex:0 0 10ch!important;width:10ch!important;min-width:0}.lead-time-input>span{color:#70817b;font-size:12px}.lead-time-input :deep(.segmented-date){flex:1 1 auto;min-width:0}
 </style>

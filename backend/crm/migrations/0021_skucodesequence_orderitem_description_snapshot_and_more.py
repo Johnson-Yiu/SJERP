@@ -47,7 +47,7 @@ def populate_sku_and_document_snapshots(apps, schema_editor):
     for item in order_items.iterator():
         if item.order_id != current_order_id:
             current_order_id = item.order_id
-            source_items = list(item.order.items.order_by("id")) if item.order.quote_id else []
+            source_items = list(item.order.quote.items.order_by("id")) if item.order.quote_id else []
             source_index = 0
         source = source_items[source_index] if source_index < len(source_items) and source_items[source_index].sku_id == item.sku_id else None
         source_index += 1

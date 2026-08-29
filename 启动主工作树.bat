@@ -1,16 +1,16 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-title 森爵 CRM ERP - 主工作树
+title Senju CRM ERP
 
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0start-main-worktree.ps1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "start-main-worktree.ps1"
 if errorlevel 1 (
     echo.
-    echo 服务启动失败，请查看上面的错误信息。
+    echo Startup failed. Review the error above.
     pause
     exit /b 1
 )
 
 echo.
-echo 服务已启动，浏览器正在打开系统页面。
+echo Service started. Opening the system in your browser.
 pause

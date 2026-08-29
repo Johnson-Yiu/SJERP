@@ -3,7 +3,7 @@ setlocal
 cd /d "%~dp0"
 title 森爵 CRM ERP - 主工作树
 
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0启动主工作树.ps1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0start-main-worktree.ps1"
 if errorlevel 1 (
     echo.
     echo 服务启动失败，请查看上面的错误信息。

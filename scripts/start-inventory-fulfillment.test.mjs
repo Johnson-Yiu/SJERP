@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 
-const launcher = new URL('../启动主工作树.ps1', import.meta.url)
+const launcher = new URL('../start-main-worktree.ps1', import.meta.url)
 
 test('main launcher owns the consolidated service ports and opens the root page', async () => {
   const source = await readFile(launcher, 'utf8')
@@ -20,7 +20,7 @@ test('batch launcher uses Windows CRLF line endings for cmd.exe', async () => {
   const text = source.toString('utf8')
   assert.ok(text.includes('\r\n'))
   assert.equal(text.replaceAll('\r\n', '').includes('\n'), false)
-  assert.match(text, /启动主工作树\.ps1/)
+  assert.match(text, /start-main-worktree\.ps1/)
 })
 
 test('launcher uses TCP probes for both fixed ports before starting either service', async () => {

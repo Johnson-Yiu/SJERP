@@ -1,10 +1,9 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
-import { Eye, MinusCircle, PlusCircle, RotateCw, Save, X } from 'lucide-vue-next'
+import { Eye, MinusCircle, RotateCw, Save, X } from 'lucide-vue-next'
 import { api, downloadQuoteExport, listData } from '../api'
 import QuotePreviewModal from './QuotePreviewModal.vue'
 import SegmentedDateInput from './SegmentedDateInput.vue'
-import ComboInput from './ComboInput.vue'
 import { addDays, daysBetween } from '../utils/orderDate'
 
 const props = defineProps({
@@ -42,7 +41,7 @@ function makeDraft() {
     lead_time_days: quote.lead_time_days || 10, deposit_percent: Number(quote.deposit_ratio ?? 1) * 100,
     revision_summary: '',
     trading_terms: quote.trading_terms || 'FOB Shenzhen', shipping_details: quote.shipping_details || '', notes: quote.notes || '',
-    items: (quote.items?.length ? quote.items : [{ sku: '', quantity: 1, unit_price: 0, sales_model_snapshot: '', description: '', notes: '' }]).map(item => ({ sku: item.sku, quantity: item.quantity, unit_price: item.unit_price, sales_model_snapshot: item.sales_model_snapshot ?? item.model ?? '', description: item.description || item.description_snapshot || '', notes: item.notes || '' })),
+    items: (quote.items || []).map(item => ({ sku: item.sku, quantity: item.quantity, unit_price: item.unit_price, sales_model_snapshot: item.sales_model_snapshot ?? item.model ?? '', description: item.description || item.description_snapshot || '', notes: item.notes || '' })),
   }
 }
 
@@ -77,16 +76,29 @@ const previewDraft = computed(() => {
     products: draft.items.map((item, index) => { const sku = props.skus.find(row => row.id === Number(item.sku)) || {}; return { key: `${index}-${item.sku}`, sku: sku.sku || '', sku_code: sku.sku_code || sku.sku || '', model: item.sales_model_snapshot || sku.sales_model || '', product_name: sku.display_name_cn || sku.product_name || '', description: item.description, quantity: item.quantity, unit: sku.unit || 'pcs', unit_price: item.unit_price, amount: Number(item.quantity || 0) * Number(item.unit_price || 0), image_url: sku.image || '' } }),
   }
 })
-const pinyinInitialMap = { 灯: 'd', 带: 'd', 柜: 'g', 电: 'd', 源: 'y', 面: 'm', 板: 'b', 筒: 't', 射: 's', 轨: 'g', 道: 'd', 吸: 'x', 顶: 'd', 壁: 'b', 台: 't', 庭: 't', 户: 'h', 外: 'w', 工: 'g', 矿: 'k', 防: 'f', 爆: 'b', 应: 'y', 急: 'j', 开: 'k', 关: 'g', 驱: 'q', 动: 'd', 器: 'q', 线: 'x', 条: 't', 球: 'q', 泡: 'p', 光: 'g', 伏: 'f', 瓦: 'w', 白: 'b', 黑: 'h', 暖: 'n', 冷: 'l', 红: 'h', 蓝: 'l', 绿: 'l', 黄: 'h' }
-function pinyinInitials(value) { return Array.from(String(value || '')).map(char => pinyinInitialMap[char] || (/^[a-z0-9]$/i.test(char) ? char : '')).join('') }
-const skuOptions = computed(() => props.skus.map(sku => {
-  const searchText = `${sku.sku || ''} ${sku.product_name || ''} ${sku.specification || ''}`
-  return { value: String(sku.id), label: `${sku.sku} · ${sku.product_name || sku.specification || ''}`, searchText: `${searchText} ${pinyinInitials(searchText)}` }
-}))
-
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
-function addItem() { draft.items.push({ sku: '', quantity: 1, unit_price: 0, sales_model_snapshot: '', description: '', notes: '' }) }
-function selectSku(item) { const sku = props.skus.find(row => row.id === Number(item.sku)); if (sku) { item.unit_price = sku.default_price; item.sales_model_snapshot = sku.sales_model || ''; item.description = sku.description_en || sku.description_cn || sku.display_name_cn || sku.product_name || sku.specification || '' } }
+const skuSearch = ref('')
+const activeSkuId = ref('')
+function skuDescription(sku) { return sku?.description_en || sku?.description_cn || sku?.display_name_cn || sku?.product_name || sku?.specification || '' }
+function makeItem(sku) { return { sku: sku.id, quantity: 1, unit_price: sku.default_price || 0, sales_model_snapshot: sku.sales_model || '', description: skuDescription(sku), notes: '' } }
+const filteredSkus = computed(() => {
+  const terms = skuSearch.value.trim().toLowerCase().split(/\s+/).filter(Boolean)
+  if (!terms.length) return props.skus
+  return props.skus.filter(sku => terms.every(term => `${sku.sku || ''} ${sku.sales_model || ''} ${sku.product_name || ''} ${sku.specification || ''} ${skuDescription(sku)}`.toLowerCase().includes(term)))
+})
+const selectedSkuIds = computed({
+  get: () => draft.items.map(item => String(item.sku)).filter(Boolean),
+  set: syncSelectedSkus,
+})
+const activeSku = computed(() => props.skus.find(sku => String(sku.id) === String(activeSkuId.value)) || props.skus.find(sku => String(sku.id) === selectedSkuIds.value[0]) || null)
+const activeItem = computed(() => draft.items.find(item => String(item.sku) === String(activeSku.value?.id)) || null)
+function syncSelectedSkus(ids) {
+  const selected = [...new Set((ids || []).map(String))]
+  const existing = new Map(draft.items.map(item => [String(item.sku), item]))
+  draft.items.splice(0, draft.items.length, ...selected.map(id => existing.get(id) || makeItem(props.skus.find(sku => String(sku.id) === id))).filter(Boolean))
+  if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
+}
+function activateSku(id) { activeSkuId.value = String(id) }
 async function selectCustomer() {
   const customer = props.customers.find(row => row.id === Number(draft.customer))
   if (!customer) return
@@ -162,8 +174,12 @@ onMounted(() => { if (props.mode === 'create' && draft.customer) selectCustomer(
             <div class="field full"><label>买方地址</label><textarea v-model="draft.buyer_address" /></div><div class="field"><label>买方邮箱</label><input v-model="draft.buyer_email" type="email" /></div><div class="field"><label>买方电话</label><input v-model="draft.buyer_phone" /></div>
             <div v-if="mode === 'revise'" class="field full revision-summary"><label>本次修改说明 *</label><textarea v-model="draft.revision_summary" required placeholder="例如：调整数量、价格、交期或付款条款" /><small>该说明会显示在版本谱系中，便于后续追溯。</small></div>
           </div>
-          <div class="items-head"><div><strong>产品明细</strong><small>预览会使用当前未保存数量、价格与图片</small></div><button type="button" class="btn btn-secondary" @click="addItem"><PlusCircle :size="15" /> 添加一行</button></div>
-          <div class="quote-line-items"><div class="quote-line-header"><span>SKU</span><span>Model</span><span>数量</span><span>单价</span><span>产品描述</span><span>小计</span><span></span></div><div v-for="(item,index) in draft.items" :key="index" class="quote-line-row"><ComboInput v-model="item.sku" :options="skuOptions" :allow-custom="false" required placeholder="搜索 SKU 或产品" @update:model-value="selectSku(item)" /><input v-model.trim="item.sales_model_snapshot" aria-label="报价型号" placeholder="可按客户要求修改" /><input v-model="item.quantity" aria-label="数量" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" aria-label="单价" type="number" min="0" step="0.0001" required /><input v-model="item.description" aria-label="产品描述" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" :disabled="draft.items.length === 1" aria-label="删除明细" @click="draft.items.splice(index,1)"><MinusCircle :size="17" /></button></div></div>
+          <div class="items-head"><div><strong>产品明细</strong><small>先在上方选择一个或多个 SKU；每个选择都会自动生成一行报价明细。</small></div></div>
+          <div class="sku-selection-panel">
+            <section class="sku-picker-list"><div class="sku-picker-head"><strong>选择 SKU</strong><input v-model.trim="skuSearch" type="search" placeholder="搜索 SKU、型号或描述" aria-label="搜索报价 SKU" /></div><div class="sku-picker-options"><label v-for="sku in filteredSkus" :key="sku.id" :class="{ active: String(activeSkuId) === String(sku.id) }" @click="activateSku(sku.id)"><input v-model="selectedSkuIds" type="checkbox" :value="String(sku.id)" /><span><b>{{ sku.sku }}</b><small>{{ sku.sales_model || sku.product_name || sku.specification || '未设置型号' }}</small></span><em>{{ sku.default_price || 0 }}</em></label><p v-if="!filteredSkus.length">没有匹配的 SKU。</p></div></section>
+            <aside class="sku-picker-preview"><template v-if="activeSku"><small>已选 SKU 详情</small><strong>{{ activeSku.sku }}</strong><dl><div><dt>Sales Model</dt><dd>{{ activeSku.sales_model || '—' }}</dd></div><div><dt>单位 / 默认单价</dt><dd>{{ activeSku.unit || 'pcs' }} / {{ activeSku.default_price || 0 }}</dd></div></dl><label>报价描述（可修改）<textarea v-if="activeItem" v-model="activeItem.description" aria-label="已选 SKU 的报价描述" /></label></template><p v-else>从左侧勾选 SKU 后，可在这里查看并编辑报价描述。</p></aside>
+          </div>
+          <div v-if="draft.items.length" class="quote-line-items"><div class="quote-line-header"><span>SKU</span><span>Model</span><span>数量</span><span>单价</span><span>产品描述</span><span>小计</span><span></span></div><div v-for="(item,index) in draft.items" :key="item.sku" class="quote-line-row"><span class="quote-sku">{{ skus.find(sku => sku.id === Number(item.sku))?.sku || '—' }}</span><input v-model.trim="item.sales_model_snapshot" aria-label="报价型号" placeholder="可按客户要求修改" /><input v-model="item.quantity" aria-label="数量" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" aria-label="单价" type="number" min="0" step="0.0001" required /><input v-model="item.description" aria-label="产品描述" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" aria-label="取消选择该 SKU" @click="selectedSkuIds = selectedSkuIds.filter(id => id !== String(item.sku))"><MinusCircle :size="17" /></button></div></div><p v-else class="quote-items-empty">请先从上方选择至少一个 SKU。</p>
           <div class="totals"><label>运费 <input v-model="draft.shipping_fee" type="number" step="0.01" /></label><label>折扣 <input v-model="draft.discount" type="number" step="0.01" /></label><div><span>合计</span><strong>{{ draft.currency }} {{ money(total) }}</strong></div></div>
           <div class="form-grid"><div class="field full"><label>贸易条款</label><textarea v-model="draft.trading_terms" /></div><div class="field full"><label>运输信息</label><textarea v-model="draft.shipping_details" /></div><div class="field full"><label>附加备注</label><textarea v-model="draft.notes" /></div></div>
         </fieldset>
@@ -180,6 +196,8 @@ onMounted(() => { if (props.mode === 'create' && draft.customer) selectCustomer(
 .quote-line-row{position:relative}
 .quote-line-row:focus-within{z-index:20}
 .quote-line-header,.quote-line-row{grid-template-columns:1.7fr 1fr .55fr .7fr 1.7fr .75fr 34px}
-:deep(.combo-menu){z-index:100}
+.quote-sku{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:#294a41}
+.sku-selection-panel{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(270px,.85fr);margin:0 0 14px;border:1px solid #dbe5df;border-radius:10px;overflow:hidden;background:#fff}.sku-picker-list{min-width:0;border-right:1px solid #e4ece7}.sku-picker-head{padding:11px;border-bottom:1px solid #e8efeb}.sku-picker-head strong{display:block;margin-bottom:8px;font-size:13px}.sku-picker-head input{width:100%;border:1px solid #d7e1dc;border-radius:7px;padding:8px 10px;font-size:12px}.sku-picker-options{max-height:192px;overflow:auto}.sku-picker-options label{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 11px;cursor:pointer;border-bottom:1px solid #f0f4f1}.sku-picker-options label:hover,.sku-picker-options label.active{background:#eff8f4}.sku-picker-options input{margin:0}.sku-picker-options b,.sku-picker-options small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sku-picker-options b{font-size:12px;color:#23473d}.sku-picker-options small{margin-top:2px;color:#81908a;font-size:10px}.sku-picker-options em{font-style:normal;color:#436d60;font-size:11px}.sku-picker-options p,.sku-picker-preview>p{margin:0;padding:18px;color:#81908a;font-size:12px}.sku-picker-preview{padding:14px;background:#f7fbf9}.sku-picker-preview>small{display:block;color:#799087;font-size:10px}.sku-picker-preview>strong{display:block;margin:4px 0 10px;color:#1d4d40;font-size:15px}.sku-picker-preview dl{margin:0 0 11px}.sku-picker-preview dl div{display:grid;grid-template-columns:105px 1fr;gap:8px;margin-top:5px;font-size:11px}.sku-picker-preview dt{color:#7a8983}.sku-picker-preview dd{margin:0;color:#38564d}.sku-picker-preview label{display:block;color:#526d64;font-size:11px}.sku-picker-preview textarea{display:block;width:100%;min-height:54px;margin-top:5px;border:1px solid #b8d3c7;border-radius:7px;padding:7px;resize:vertical;font:inherit;font-size:12px}.quote-items-empty{margin:0 0 12px;padding:12px;border:1px dashed #cddbd4;border-radius:8px;text-align:center;color:#82918b;font-size:12px}
 .lead-time-input{display:flex;align-items:center;gap:6px}.lead-time-input>input{flex:0 0 10ch!important;width:10ch!important;min-width:0}.lead-time-input>span{color:#70817b;font-size:12px}.lead-time-input :deep(.segmented-date){flex:1 1 auto;min-width:0}
+@media(max-width:720px){.sku-selection-panel{grid-template-columns:1fr}.sku-picker-list{border-right:0;border-bottom:1px solid #e4ece7}}
 </style>

@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import Max
 
-from .models import Quote, QuoteNumberSequence, QuoteRevisionCounter
+from .models import Quote, QuoteChildRevisionCounter, QuoteNumberSequence, QuoteRevisionCounter
 
 
 COUNTRY_ISO_CODES = {
@@ -72,11 +72,22 @@ def allocate_root_quote_no(quote_date: date, country: str) -> str:
     return f"SJ{quote_date:%Y%m%d}{country_code}{next_sequence:03d}"
 
 
+def _legacy_child_revision_number(parent_quote: Quote) -> int:
+    prefix = f"{parent_quote.quote_no}-"
+    maximum = 0
+    for quote_no in parent_quote.child_revisions.values_list("quote_no", flat=True):
+        suffix = quote_no.removeprefix(prefix)
+        if suffix.isdigit():
+            maximum = max(maximum, int(suffix))
+    return maximum
+
+
 @transaction.atomic
-def allocate_revision_quote_no(root_quote: Quote) -> tuple[str, int]:
-    root_quote = Quote.objects.select_for_update().get(pk=root_quote.pk)
-    if root_quote.root_quote_id is not None:
-        raise ValidationError({"root_quote": "A revision cannot be used as a root quote."})
+def allocate_revision_quote_no(parent_quote: Quote) -> tuple[str, int]:
+    parent_quote = Quote.objects.select_for_update().get(pk=parent_quote.pk)
+    root_quote = parent_quote.root_quote or parent_quote
+    if root_quote.pk != parent_quote.pk:
+        root_quote = Quote.objects.select_for_update().get(pk=root_quote.pk)
 
     counter, created = QuoteRevisionCounter.objects.select_for_update().get_or_create(root_quote=root_quote)
     if created:
@@ -87,4 +98,13 @@ def allocate_revision_quote_no(root_quote: Quote) -> tuple[str, int]:
         raise ValidationError({"revision_no": f"Maximum revision is {MAX_REVISION_NO}."})
     counter.last_value = next_revision_no
     counter.save(update_fields=["last_value"])
-    return f"{root_quote.quote_no}-{next_revision_no}", next_revision_no
+
+    child_counter, created = QuoteChildRevisionCounter.objects.select_for_update().get_or_create(parent_quote=parent_quote)
+    if created:
+        child_counter.last_value = _legacy_child_revision_number(parent_quote)
+    next_child_revision = child_counter.last_value + 1
+    if next_child_revision > MAX_REVISION_NO:
+        raise ValidationError({"revision_no": f"Maximum child revision is {MAX_REVISION_NO}."})
+    child_counter.last_value = next_child_revision
+    child_counter.save(update_fields=["last_value"])
+    return f"{parent_quote.quote_no}-{next_child_revision}", next_revision_no

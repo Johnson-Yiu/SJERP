@@ -57,6 +57,7 @@ class QuoteRevisionTests(TestCase):
             customer=root.customer,
             quote_date=root.quote_date,
             root_quote=root,
+            parent_quote=root,
             revision_no=revision_no,
         )
 
@@ -93,6 +94,7 @@ class QuoteRevisionTests(TestCase):
             customer=root.customer,
             quote_date=root.quote_date,
             root_quote=root,
+            parent_quote=root,
             revision_no=98,
         )
 
@@ -104,6 +106,7 @@ class QuoteRevisionTests(TestCase):
             customer=root.customer,
             quote_date=root.quote_date,
             root_quote=root,
+            parent_quote=root,
             revision_no=revision_no,
         )
         with self.assertRaises(ValidationError):
@@ -272,7 +275,7 @@ class QuoteApiTests(TestCase):
         self.assertEqual(first_response.data["root_quote"], root.id)
         self.assertEqual(first_response.data["revision_no"], 1)
         self.assertEqual(second_response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(second_response.data["quote_no"], f"{root.quote_no}-2")
+        self.assertEqual(second_response.data["quote_no"], f"{root.quote_no}-1-1")
         self.assertEqual(second_response.data["root_quote"], root.id)
         self.assertEqual(second_response.data["revision_no"], 2)
         self.assertEqual(root.notes, "Original terms")
@@ -285,7 +288,7 @@ class QuoteApiTests(TestCase):
                     pk__in=[root.pk, first_response.data["id"], second_response.data["id"]],
                 ).order_by("revision_no").values_list("quote_no", flat=True)
             ),
-            [root.quote_no, f"{root.quote_no}-1", f"{root.quote_no}-2"],
+            [root.quote_no, f"{root.quote_no}-1", f"{root.quote_no}-1-1"],
         )
 
     def test_revise_requires_a_non_blank_revision_summary(self):

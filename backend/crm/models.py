@@ -1,4 +1,5 @@
 from decimal import Decimal
+from django.utils import timezone
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -203,6 +204,7 @@ class CategoryAttribute(TimestampedModel):
     default_value = models.CharField("默认值", max_length=200, blank=True)
     unit = models.CharField("单位", max_length=30, blank=True)
     include_in_sku = models.BooleanField("参与 SKU 命名", default=False)
+    include_in_sales_model = models.BooleanField("参与生成型号", default=False)
     uppercase = models.BooleanField("SKU 中转为大写", default=False)
     sort_order = models.PositiveIntegerField("排序", default=0)
 
@@ -229,6 +231,7 @@ class Product(TimestampedModel):
     name_en = models.CharField("产品英文名称", max_length=200, blank=True)
     hs_code = models.CharField("HS 编码", max_length=30, blank=True)
     code = models.CharField("产品编号", max_length=50, unique=True)
+    sales_model_prefix = models.CharField("销售型号前缀", max_length=30, unique=True, null=True, blank=True)
     category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name="products")
     additional_categories = models.ManyToManyField(ProductCategory, blank=True, related_name="secondary_products", verbose_name="附加分类")
     suppliers = models.ManyToManyField("Supplier", blank=True, related_name="products", verbose_name="供应商")
@@ -248,6 +251,7 @@ class SKU(TimestampedModel):
     specification = models.CharField("规格", max_length=200, blank=True)
     display_name_cn = models.CharField("内部中文显示名称", max_length=300, blank=True)
     sales_model = models.CharField("对外商业型号", max_length=80, unique=True, null=True, blank=True)
+    sales_model_abbreviations = models.JSONField("销售型号参数缩写", default=dict, blank=True)
     description_cn = models.TextField("中文描述", blank=True)
     description_en = models.TextField("英文描述", blank=True)
     unit = models.CharField("单位", max_length=30, default="pcs")
@@ -288,13 +292,15 @@ class SKU(TimestampedModel):
 class PackagingTemplate(TimestampedModel):
     """Reusable physical carton specification. Dimensions are stored in cm."""
     PARTIAL_POLICIES = [("SAME_CARTON", "使用标准箱"), ("REPACK", "尾箱待确认"), ("MANUAL", "人工装箱")]
-    code = models.CharField("包装模板编码", max_length=50, unique=True)
+    code = models.CharField("包装模板编码", max_length=50, unique=True, blank=True)
     name = models.CharField("包装模板名称", max_length=120)
+    supplier = models.ForeignKey("Supplier", on_delete=models.SET_NULL, null=True, blank=True, related_name="packaging_templates", verbose_name="包装供应商")
     description = models.TextField("说明", blank=True)
     carton_length = models.DecimalField("箱长(cm)", max_digits=10, decimal_places=2)
     carton_width = models.DecimalField("箱宽(cm)", max_digits=10, decimal_places=2)
     carton_height = models.DecimalField("箱高(cm)", max_digits=10, decimal_places=2)
-    qty_per_carton = models.DecimalField("每箱数量", max_digits=14, decimal_places=2)
+    # 新建资料的装箱数由 SKU 包装档案维护；此字段只保留旧模板的历史兜底值。
+    qty_per_carton = models.DecimalField("每箱数量（历史）", max_digits=14, decimal_places=2, null=True, blank=True)
     carton_tare_weight = models.DecimalField("纸箱皮重(kg)", max_digits=12, decimal_places=3, default=0)
     partial_carton_policy = models.CharField("尾箱策略", max_length=20, choices=PARTIAL_POLICIES, default="SAME_CARTON")
     mixed_pack_allowed = models.BooleanField("允许混装", default=False)
@@ -306,9 +312,19 @@ class PackagingTemplate(TimestampedModel):
             models.CheckConstraint(condition=models.Q(carton_length__gt=0), name="pack_template_length_positive"),
             models.CheckConstraint(condition=models.Q(carton_width__gt=0), name="pack_template_width_positive"),
             models.CheckConstraint(condition=models.Q(carton_height__gt=0), name="pack_template_height_positive"),
-            models.CheckConstraint(condition=models.Q(qty_per_carton__gt=0), name="pack_template_qty_positive"),
             models.CheckConstraint(condition=models.Q(carton_tare_weight__gte=0), name="pack_template_tare_non_negative"),
         ]
+
+    def save(self, *args, **kwargs):
+        if not self.code:
+            prefix = f"PKG-{timezone.localdate():%Y%m%d}-"
+            latest = self.__class__.objects.filter(code__startswith=prefix).order_by("-code").values_list("code", flat=True).first()
+            try:
+                sequence = int(latest.rsplit("-", 1)[-1]) + 1 if latest else 1
+            except (ValueError, IndexError):
+                sequence = 1
+            self.code = f"{prefix}{sequence:04d}"
+        super().save(*args, **kwargs)
 
     @property
     def cbm(self):
@@ -381,7 +397,7 @@ class ProductCertificate(TimestampedModel):
 
 class Quote(TimestampedModel):
     STATUS_CHOICES = [("draft", "草稿"), ("sent", "已发送"), ("accepted", "已接受"), ("rejected", "已拒绝"), ("expired", "已过期")]
-    quote_no = models.CharField("报价单号", max_length=40, unique=True)
+    quote_no = models.CharField("报价单号", max_length=120, unique=True)
     root_quote = models.ForeignKey(
         "self",
         on_delete=models.PROTECT,
@@ -442,6 +458,11 @@ class Quote(TimestampedModel):
 
 class QuoteRevisionCounter(models.Model):
     root_quote = models.OneToOneField(Quote, on_delete=models.CASCADE, related_name="revision_counter")
+    last_value = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(99)])
+
+
+class QuoteChildRevisionCounter(models.Model):
+    parent_quote = models.OneToOneField(Quote, on_delete=models.CASCADE, related_name="child_revision_counter")
     last_value = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(99)])
 
 

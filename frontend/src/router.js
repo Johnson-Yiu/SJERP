@@ -26,7 +26,7 @@ const routes = [
   { path: '/categories', component: CategoryPage, meta: { title: '产品分类', eyebrow: 'Catalog structure' } },
   { path: '/products', component: ProductPage, meta: { title: '产品管理', eyebrow: 'Product catalog' } },
   { path: '/skus', component: SKUPage, meta: { title: 'SKU 管理', eyebrow: 'Sellable variants' } },
-  { path: '/sku-packaging', component: PackagingPage, meta: { title: 'SKU 包装资料', eyebrow: 'Packaging maintenance' } },
+  { path: '/sku-packaging', component: PackagingPage, meta: { title: '包装管理', eyebrow: 'Packaging maintenance' } },
   { path: '/quotes', component: DocumentPage, props: { type: 'quotes' }, meta: { title: '报价管理', eyebrow: 'Quotation desk' } },
   { path: '/orders', component: DocumentPage, props: { type: 'orders' }, meta: { title: '订单管理', eyebrow: 'Sales orders' } },
   { path: '/import', component: ImportPage, meta: { title: '数据导入', eyebrow: 'Data onboarding' } },

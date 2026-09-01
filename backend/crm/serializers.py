@@ -1,4 +1,5 @@
 from decimal import Decimal
+import re
 
 import bleach
 
@@ -10,7 +11,7 @@ from rest_framework import serializers
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, Supplier, Transaction
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .quote_snapshots import create_quote_items
-from .sku_identity import build_sku_identity
+from .sku_identity import build_sku_identity, parameter_pairs
 from .sku_numbers import allocate_sku_code
 
 
@@ -321,6 +322,19 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["code"]
 
+    def validate_sales_model_prefix(self, value):
+        if value is None or not str(value).strip():
+            return None
+        value = str(value).strip().upper()
+        if not re.fullmatch(r"[A-Z0-9]+", value):
+            raise serializers.ValidationError("销售型号只能包含字母和数字，例如 BTY、COB320 或 SMD120。")
+        return value
+
+    def validate(self, attrs):
+        if not self.instance and not attrs.get("sales_model_prefix"):
+            raise serializers.ValidationError({"sales_model_prefix": "新建产品时必须填写销售型号。"})
+        return attrs
+
     @transaction.atomic
     def create(self, validated_data):
         validated_data.pop("code", None)
@@ -360,21 +374,60 @@ class SKUSerializer(serializers.ModelSerializer):
             values.get("specification", getattr(self.instance, "specification", "")),
             values.get("parameter_values", getattr(self.instance, "parameter_values", {})),
             values.get("product_details", getattr(self.instance, "product_details", [])),
+            values.get("sales_model_abbreviations", getattr(self.instance, "sales_model_abbreviations", {})),
         )
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        if "product_details" in attrs:
+            # 销售型号属于 SKU 本身；包装尺寸统一来自包装模板。
+            attrs["product_details"] = [
+                {key: value for key, value in detail.items() if key not in {"model", "length", "width", "height"}}
+                for detail in attrs["product_details"]
+                if isinstance(detail, dict)
+            ]
+        product = attrs.get("product", getattr(self.instance, "product", None))
+        if not product or not getattr(product, "sales_model_prefix", None):
+            return attrs
+        parameters = attrs.get("parameter_values", getattr(self.instance, "parameter_values", {}))
+        abbreviations = attrs.get("sales_model_abbreviations", getattr(self.instance, "sales_model_abbreviations", {})) or {}
+        missing = []
+        for pair in parameter_pairs(product, parameters):
+            if pair.get("include_in_sales_model") and not re.fullmatch(r"[A-Za-z0-9]{2,3}", str(abbreviations.get(pair["abbreviation_key"], "")).strip()):
+                missing.append(pair["name"])
+        if missing:
+            raise serializers.ValidationError({"sales_model_abbreviations": f"请为参与生成型号的参数填写 2–3 位字母或数字缩写：{'、'.join(dict.fromkeys(missing))}。"})
+        return attrs
+
+    def _allocate_sales_model(self, base):
+        if not base:
+            return None
+        prefix = f"{base}-"
+        used = {value for value in SKU.objects.filter(sales_model__startswith=prefix).values_list("sales_model", flat=True) if value}
+        sequence = 1
+        while f"{base}-{sequence}" in used:
+            sequence += 1
+        return f"{base}-{sequence}"
 
     def create(self, validated_data):
         validated_data.setdefault("sku", allocate_sku_code())
         generated = self._generated_identity(validated_data)
+        sales_model_base = generated.pop("sales_model_base", "")
         for field, value in generated.items():
             if not validated_data.get(field):
                 validated_data[field] = value
+        if sales_model_base:
+            validated_data["sales_model"] = self._allocate_sales_model(sales_model_base)
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
         generated = self._generated_identity(validated_data)
+        generated.pop("sales_model_base", None)
         identity_fields = {"product", "specification", "parameter_values", "product_details"}
         if identity_fields.intersection(validated_data):
             for field, value in generated.items():
+                if field == "sales_model":
+                    continue
                 if field not in self.initial_data:
                     validated_data[field] = value
         return super().update(instance, validated_data)
@@ -754,10 +807,13 @@ class ContractChangeRequestSerializer(serializers.ModelSerializer):
 
 class PackagingTemplateSerializer(serializers.ModelSerializer):
     cbm = serializers.DecimalField(max_digits=16, decimal_places=6, read_only=True)
+    supplier_name = serializers.CharField(source="supplier.name", read_only=True)
+    linked_sku_count = serializers.IntegerField(source="sku_profiles.count", read_only=True)
 
     class Meta:
         model = PackagingTemplate
         fields = "__all__"
+        read_only_fields = ["code"]
 
 
 class SKUPackagingProfileSerializer(serializers.ModelSerializer):

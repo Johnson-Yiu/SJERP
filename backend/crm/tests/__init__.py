@@ -98,7 +98,7 @@ class BusinessFlowTests(APITestCase):
     def test_product_code_is_created_server_side_with_additional_categories(self):
         primary = ProductCategory.objects.create(name="主分类")
         secondary = ProductCategory.objects.create(name="附加分类")
-        response = self.client.post("/api/products/", {"code": "MANUAL", "name": "自动编号产品", "category": primary.id, "additional_categories": [secondary.id], "status": "active"}, format="json")
+        response = self.client.post("/api/products/", {"code": "MANUAL", "name": "自动编号产品", "sales_model_prefix": "AUTO12", "category": primary.id, "additional_categories": [secondary.id], "status": "active"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertRegex(response.data["code"], r"^SPU\d{9}$")
         self.assertNotEqual(response.data["code"], "MANUAL")
@@ -128,8 +128,8 @@ class BusinessFlowTests(APITestCase):
 
         product_response = self.client.get(f"/api/context/products/{self.product.id}/")
         self.assertEqual(product_response.status_code, status.HTTP_200_OK)
-        self.assertEqual({section["key"] for section in product_response.data["sections"]}, {"skus", "sales-summary", "sales", "inventory", "parameters", "certificates"})
-        self.assertEqual(product_response.data["metrics"][1][1], 115)
+        self.assertEqual({section["key"] for section in product_response.data["sections"]}, {"skus", "suppliers", "sales-summary", "sales", "inventory", "parameters", "certificates"})
+        self.assertEqual(product_response.data["metrics"][2][1], 115)
 
         customer_response = self.client.get(f"/api/context/customers/{self.customer.id}/")
         self.assertEqual(customer_response.status_code, status.HTTP_200_OK)

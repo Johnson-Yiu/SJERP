@@ -54,52 +54,54 @@ def parameter_pairs(product, parameter_values=None):
             formatted = _with_unit(value, attribute.unit)
             if attribute.uppercase:
                 formatted = formatted.upper()
-            pairs.append({"name": attribute.name, "value": formatted, "unit": attribute.unit})
+            pairs.append({
+                "name": attribute.name,
+                "value": formatted,
+                "unit": attribute.unit,
+                "include_in_sku": attribute.include_in_sku,
+                "include_in_sales_model": attribute.include_in_sales_model,
+                "abbreviation_key": f"{attribute.category_id}:{attribute.key}:{value}",
+            })
     if not pairs:
         for key, raw in (parameter_values or {}).items():
             for value in _values(raw):
-                pairs.append({"name": str(key), "value": value, "unit": ""})
+                pairs.append({"name": str(key), "value": value, "unit": "", "include_in_sku": True, "include_in_sales_model": False, "abbreviation_key": ""})
     return pairs
 
 
-def _detail_tokens(product_details):
-    tokens = []
-    for detail in product_details or []:
-        if not isinstance(detail, dict):
-            continue
-        model = str(detail.get("model") or "").strip()
-        if model:
-            tokens.append(model)
-    return tokens
-
-
-def build_sku_identity(product, specification="", parameter_values=None, product_details=None):
+def build_sku_identity(product, specification="", parameter_values=None, product_details=None, sales_model_abbreviations=None):
     """Return generated display and description values for one SKU."""
     pairs = parameter_pairs(product, parameter_values)
-    details = _detail_tokens(product_details)
     legacy_specification = str(specification or "").strip()
-    detail_text = " / ".join(details)
-    pair_values = [pair["value"] for pair in pairs]
-    readable_parts = [str(product.name or "").strip(), detail_text, *pair_values]
+    display_pairs = [pair for pair in pairs if pair.get("include_in_sku")]
+    pair_values = [pair["value"] for pair in display_pairs]
+    readable_parts = [str(product.name or "").strip(), *pair_values]
     display_name_cn = " ".join(part for part in readable_parts if part)
     if not display_name_cn:
         display_name_cn = str(product.name or "").strip()
-    if legacy_specification and not pair_values and not detail_text:
+    if legacy_specification and not pair_values:
         display_name_cn = " ".join(part for part in [product.name, legacy_specification] if part)
 
-    cn_pairs = [f"{pair['name']}：{pair['value']}" for pair in pairs]
-    description_cn = "，".join(part for part in [str(product.name or "").strip(), detail_text, *cn_pairs] if part)
+    cn_pairs = [f"{pair['name']}：{pair['value']}" for pair in display_pairs]
+    description_cn = "，".join(part for part in [str(product.name or "").strip(), *cn_pairs] if part)
     if not description_cn:
         description_cn = display_name_cn or legacy_specification
 
     english_name = str(getattr(product, "name_en", "") or product.name or "").strip()
-    english_values = [pair["value"] for pair in pairs]
-    description_en = ", ".join(part for part in [english_name, detail_text, *english_values] if part)
+    english_values = [pair["value"] for pair in display_pairs]
+    description_en = ", ".join(part for part in [english_name, *english_values] if part)
     if not description_en:
         description_en = display_name_cn or legacy_specification
+
+    abbreviations = sales_model_abbreviations or {}
+    sales_model_tokens = [str(abbreviations.get(pair["abbreviation_key"], "")).strip().upper() for pair in pairs if pair.get("include_in_sales_model")]
+    sales_model_suffix = "".join(token for token in sales_model_tokens if token)
+    sales_model_prefix = str(getattr(product, "sales_model_prefix", "") or "").strip().upper()
+    sales_model_base = "-".join(part for part in [sales_model_prefix, sales_model_suffix] if part) if sales_model_suffix else ""
 
     return {
         "display_name_cn": display_name_cn,
         "description_cn": description_cn,
         "description_en": description_en,
+        "sales_model_base": sales_model_base,
     }

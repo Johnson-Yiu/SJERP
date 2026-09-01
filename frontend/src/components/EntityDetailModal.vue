@@ -1,16 +1,16 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { ArrowLeft, CheckSquare, ChevronRight, ExternalLink, Pencil, Plus, Rows3, Search, Trash2, X } from 'lucide-vue-next'
 import { api } from '../api'
 import { resourceConfigs } from '../resourceConfigs'
 import RelatedCreateModal from './RelatedCreateModal.vue'
-import SKUPage from '../views/SKUPage.vue'
 
 const props = defineProps({ entity: String, id: [Number, String], refreshKey: { type: Number, default: 0 } })
 const emit = defineEmits(['close', 'edit'])
 const data = ref(null), loading = ref(true), error = ref(''), activeTab = ref(''), stack = ref([])
 const quickCreate = ref(null)
-const skuCreateProductId = ref(null)
+const router = useRouter()
 const operatorRole = ref('')
 const selectedSkuIds = ref([])
 const showInactiveSkus = ref(false)
@@ -67,16 +67,10 @@ function createLabel(section) {
   return `新增${labels[section?.entity] || section?.title || '记录'}`
 }
 function openRelatedCreate() { if (activeSection.value) quickCreate.value = { entity: activeSection.value.entity, query: relationQuery(activeSection.value) } }
-function openSkuCreate() { skuCreateProductId.value = currentId.value }
+function openSkuCreate() { router.push({ path: '/skus', query: { create: '1', product: currentId.value } }) }
 async function relatedSaved() {
   const previousTab = activeTab.value
   quickCreate.value = null
-  await load()
-  if (data.value?.sections.some(section => section.key === previousTab)) activeTab.value = previousTab
-}
-async function skuSaved() {
-  const previousTab = activeTab.value
-  skuCreateProductId.value = null
   await load()
   if (data.value?.sections.some(section => section.key === previousTab)) activeTab.value = previousTab
 }
@@ -203,7 +197,6 @@ onMounted(async () => {
       </template>
     </article>
     <RelatedCreateModal v-if="quickCreate" :entity="quickCreate.entity" :query="quickCreate.query" @close="quickCreate = null" @saved="relatedSaved" />
-    <SKUPage v-if="skuCreateProductId" embedded :initial-product="skuCreateProductId" @close="skuCreateProductId = null" @saved="skuSaved" />
   </div>
 </template>
 

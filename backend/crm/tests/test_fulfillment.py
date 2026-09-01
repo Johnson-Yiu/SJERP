@@ -220,7 +220,7 @@ class FulfillmentApiTests(TestCase):
     def test_product_can_be_created_with_suppliers(self):
         supplier = Supplier.objects.create(name="Product Supplier")
         response = self.client.post("/api/products/", {
-            "name": "Supplier-linked product", "suppliers": [supplier.id],
+            "name": "Supplier-linked product", "sales_model_prefix": "SUPP01", "suppliers": [supplier.id],
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
         self.assertEqual(response.data["suppliers"], [supplier.id])

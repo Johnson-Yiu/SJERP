@@ -367,6 +367,32 @@ class SKUViewSet(viewsets.ModelViewSet):
             qs = qs.filter(active=True)
         return qs.filter(product_id=self.request.query_params["product"]) if self.request.query_params.get("product") else qs
 
+    @action(detail=False, methods=["get"], url_path="sales-model-abbreviations")
+    def sales_model_abbreviations(self, request):
+        """Return saved parameter abbreviations, scoped strictly to one category."""
+        category_id = request.query_params.get("category")
+        if not category_id:
+            return Response({"detail": "category 为必填参数。"}, status=status.HTTP_400_BAD_REQUEST)
+        category = get_object_or_404(ProductCategory, pk=category_id)
+        prefix = f"{category.id}:"
+        suggestions = {}
+        skus = SKU.objects.filter(
+            Q(product__category=category) | Q(product__additional_categories=category)
+        ).exclude(sales_model_abbreviations={}).order_by("id").distinct()
+        for sku in skus:
+            for stored_key, stored_value in (sku.sales_model_abbreviations or {}).items():
+                key = str(stored_key)
+                abbreviation = str(stored_value or "").strip().upper()
+                if not key.startswith(prefix) or not abbreviation:
+                    continue
+                try:
+                    attribute_key, raw_value = key[len(prefix):].split(":", 1)
+                except ValueError:
+                    continue
+                suggestion_key = f"{category.id}:{attribute_key}:{raw_value.strip().lower()}"
+                suggestions.setdefault(suggestion_key, abbreviation)
+        return Response({"abbreviations": suggestions})
+
     @action(detail=True, methods=["get"], url_path="inventory-detail")
     def inventory_detail(self, request, pk=None):
         sku = self.get_object()
@@ -442,7 +468,8 @@ class SKUViewSet(viewsets.ModelViewSet):
 
 class PackagingTemplateViewSet(viewsets.ModelViewSet):
     serializer_class = PackagingTemplateSerializer
-    queryset = PackagingTemplate.objects.all()
+    queryset = PackagingTemplate.objects.select_related("supplier").prefetch_related("sku_profiles")
+    search_fields = ["code", "name", "supplier__name", "description"]
     search_fields = ["code", "name", "description"]
 
 
@@ -658,7 +685,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
             raise serializers.ValidationError({"customer": "修订版本不能更换客户。"})
         root_quote = source.root_quote or source
         try:
-            quote_no, revision_no = allocate_revision_quote_no(root_quote)
+            quote_no, revision_no = allocate_revision_quote_no(source)
         except DjangoValidationError as exc:
             raise serializers.ValidationError(getattr(exc, "message_dict", exc.messages)) from exc
         copied_fields = [

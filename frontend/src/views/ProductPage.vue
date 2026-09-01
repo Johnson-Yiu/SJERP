@@ -20,7 +20,7 @@ const pickerOpen = ref(false)
 const pickerTarget = ref('primary')
 const cascadePath = ref([])
 const message = reactive({ text: '', error: false })
-const form = reactive({ code: '', name: '', name_en: '', hs_code: '', category: '', additional_categories: [], suppliers: [], status: 'active', description: '' })
+const form = reactive({ code: '', name: '', name_en: '', hs_code: '', sales_model_prefix: '', category: '', additional_categories: [], suppliers: [], status: 'active', description: '' })
 
 const byId = computed(() => new Map(categories.value.map(item => [item.id, { ...item, children: [] }])))
 const roots = computed(() => {
@@ -56,14 +56,14 @@ async function load() {
 async function openCreate() {
   keepDetailOpen.value = false
   editingId.value = null
-  Object.assign(form, { code: '', name: '', name_en: '', hs_code: '', category: '', additional_categories: [], suppliers: [], status: 'active', description: '' })
+  Object.assign(form, { code: '', name: '', name_en: '', hs_code: '', sales_model_prefix: '', category: '', additional_categories: [], suppliers: [], status: 'active', description: '' })
   try { form.code = (await api.get('/products/next-code/')).data.code } catch { form.code = '保存时自动生成' }
   modalOpen.value = true
 }
 function openEdit(product, { keepDetail = false } = {}) {
   keepDetailOpen.value = keepDetail
   editingId.value = product.id
-  Object.assign(form, { code: product.code, name: product.name, name_en: product.name_en || '', hs_code: product.hs_code || '', category: product.category || '', additional_categories: [...(product.additional_categories || [])], suppliers: [...(product.suppliers || [])], status: product.status, description: product.description || '' })
+  Object.assign(form, { code: product.code, name: product.name, name_en: product.name_en || '', hs_code: product.hs_code || '', sales_model_prefix: product.sales_model_prefix || '', category: product.category || '', additional_categories: [...(product.additional_categories || [])], suppliers: [...(product.suppliers || [])], status: product.status, description: product.description || '' })
   modalOpen.value = true
 }
 function closeModal() { modalOpen.value = false; keepDetailOpen.value = false }
@@ -95,7 +95,7 @@ function removeAdditionalCategory(index) { form.additional_categories.splice(ind
 async function save() {
   saving.value = true
   try {
-    const data = { name: form.name, name_en: form.name_en, hs_code: form.hs_code, category: form.category ? Number(form.category) : null, additional_categories: form.additional_categories.filter(Boolean).map(Number), suppliers: form.suppliers.map(Number), status: form.status, description: form.description }
+    const data = { name: form.name, name_en: form.name_en, hs_code: form.hs_code, sales_model_prefix: form.sales_model_prefix, category: form.category ? Number(form.category) : null, additional_categories: form.additional_categories.filter(Boolean).map(Number), suppliers: form.suppliers.map(Number), status: form.status, description: form.description }
     if (editingId.value) await api.put(`/products/${editingId.value}/`, data)
     else await api.post('/products/', data)
     const refreshDetail = keepDetailOpen.value
@@ -118,10 +118,11 @@ onMounted(load)
     <section class="panel">
       <div v-if="loading" class="loading"><div class="spinner" /></div>
       <div v-else-if="!products.length" class="empty"><Database :size="32" /><h3>还没有产品</h3><p>点击“新建产品”开始建立产品主档。</p></div>
-      <div v-else class="table-wrap"><table class="data-table"><thead><tr><th>产品编号</th><th>产品名称</th><th>主分类</th><th>状态</th><th>SKU</th><th>参数</th><th>证书</th><th /></tr></thead><tbody><tr v-for="product in products" :key="product.id" class="clickable-row" @click="detailId = product.id"><td class="primary-cell">{{ product.code }}</td><td>{{ product.name }}</td><td>{{ product.category_name }}</td><td><span class="tag">{{ product.status === 'active' ? '在售' : product.status === 'development' ? '开发中' : '停产' }}</span></td><td>{{ product.sku_count }}</td><td>{{ product.parameter_count }}</td><td>{{ product.certificate_count }}</td><td><div class="table-actions"><button class="mini-btn" title="编辑产品" @click.stop="openEdit(product)"><Pencil :size="14" /></button><button class="mini-btn danger" title="删除产品" @click.stop="remove(product)"><Trash2 :size="14" /></button></div></td></tr></tbody></table></div>
+      <div v-else class="table-wrap"><table class="data-table"><thead><tr><th>产品编号</th><th>产品名称</th><th>销售型号前缀</th><th>主分类</th><th>状态</th><th>SKU</th><th>参数</th><th>证书</th><th /></tr></thead><tbody><tr v-for="product in products" :key="product.id" class="clickable-row" @click="detailId = product.id"><td class="primary-cell">{{ product.code }}</td><td>{{ product.name }}</td><td>{{ product.sales_model_prefix || '—' }}</td><td>{{ product.category_name }}</td><td><span class="tag">{{ product.status === 'active' ? '在售' : product.status === 'development' ? '开发中' : '停产' }}</span></td><td>{{ product.sku_count }}</td><td>{{ product.parameter_count }}</td><td>{{ product.certificate_count }}</td><td><div class="table-actions"><button class="mini-btn" title="编辑产品" @click.stop="openEdit(product)"><Pencil :size="14" /></button><button class="mini-btn danger" title="删除产品" @click.stop="remove(product)"><Trash2 :size="14" /></button></div></td></tr></tbody></table></div>
     </section>
 
     <div v-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal product-modal" @submit.prevent="save"><div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" @click="closeModal"><X :size="17" /></button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>产品编号 <em>*</em></label><input v-model="form.code" class="readonly-input" readonly /></div><div class="field"><label>产品名称 <em>*</em></label><input v-model.trim="form.name" placeholder="如：BTY橱柜电源" required /></div>
+        <div class="field"><label>销售型号前缀 <em v-if="!editingId">*</em></label><input v-model.trim="form.sales_model_prefix" maxlength="30" pattern="[A-Za-z0-9]+" placeholder="如：BTY、COB320、SMD120" :required="!editingId" @input="form.sales_model_prefix = form.sales_model_prefix.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()" /><p class="field-help">仅字母和数字，且产品之间不可重复；将作为 SKU 销售型号的固定前缀。</p></div>
         <div class="field"><label>产品英文名称</label><input v-model.trim="form.name_en" /></div><div class="field"><label>HS 编码</label><input v-model.trim="form.hs_code" /></div>
         <div class="field category-field"><label>产品分类</label><button type="button" class="category-select" @click.stop="openPicker('primary')"><span>{{ categoryName(form.category) }}</span><ChevronDown :size="16" /></button><div v-if="pickerOpen && pickerTarget === 'primary'" class="category-picker"><div class="picker-head"><strong>选择分类</strong><span>逐级选择最终分类</span></div><div class="cascade-columns"><div v-for="(column, columnIndex) in cascadeColumns" :key="columnIndex" class="cascade-column"><button v-for="category in column" :key="category.id" type="button" class="cascade-option" :class="{ active: cascadePath[columnIndex] === category.id, selected: Number(form.category) === category.id }" @click.stop="chooseCascadeCategory(category, columnIndex)"><span>{{ category.name }}</span><ChevronRight v-if="categories.some(item => Number(item.parent || 0) === Number(category.id))" :size="15" /></button></div></div></div></div><div class="field"><label>状态 <em>*</em></label><select v-model="form.status"><option value="active">在售</option><option value="development">开发中</option><option value="discontinued">停产</option></select></div>
         <div class="field full"><label>供应商</label><select v-model="form.suppliers" class="supplier-select" multiple><option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.id">{{ supplier.name }}{{ supplier.contact_name ? ` · ${supplier.contact_name}` : '' }}</option></select><p class="field-help">按住 Ctrl / ⌘ 可选择多个供应商；未选择时可后续在编辑产品中补充。</p></div>

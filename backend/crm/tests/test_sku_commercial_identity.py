@@ -16,7 +16,7 @@ class SkuCommercialIdentityTests(TestCase):
         category = ProductCategory.objects.create(name="COB Strip")
         CategoryAttribute.objects.create(category=category, name="电压", key="voltage", unit="V", include_in_sku=True)
         CategoryAttribute.objects.create(category=category, name="宽度", key="width", unit="mm", include_in_sku=True)
-        product = Product.objects.create(code="P-SKU-ID", name="COB灯带", name_en="COB LED Strip", category=category)
+        product = Product.objects.create(code="P-SKU-ID", name="COB灯带", name_en="COB LED Strip", sales_model_prefix="COB320", category=category)
         self.product = product
 
     def create_sku(self, **payload):
@@ -43,6 +43,48 @@ class SkuCommercialIdentityTests(TestCase):
         self.assertIn("24V", response.data["display_name_cn"])
         self.assertTrue(response.data["description_cn"])
         self.assertIn("COB LED Strip", response.data["description_en"])
+
+    def test_sales_model_is_generated_from_enabled_category_attributes(self):
+        attribute = CategoryAttribute.objects.get(key="voltage")
+        attribute.include_in_sales_model = True
+        attribute.save(update_fields=["include_in_sales_model"])
+
+        sku, response = self.create_sku(sales_model=None, sales_model_abbreviations={f"{self.product.category_id}:voltage:24": "6K"})
+
+        self.assertEqual(sku.sales_model, "COB320-6K-1")
+        self.assertEqual(response.data["sales_model"], "COB320-6K-1")
+
+    def test_generated_sales_model_increments_when_the_abbreviation_is_repeated(self):
+        attribute = CategoryAttribute.objects.get(key="voltage")
+        attribute.include_in_sales_model = True
+        attribute.save(update_fields=["include_in_sales_model"])
+        payload = {"sales_model": None, "sales_model_abbreviations": {f"{self.product.category_id}:voltage:24": "6K"}}
+
+        first, _ = self.create_sku(**payload)
+        second, _ = self.create_sku(**payload)
+
+        self.assertEqual(first.sales_model, "COB320-6K-1")
+        self.assertEqual(second.sales_model, "COB320-6K-2")
+
+    def test_same_category_abbreviation_suggestions_are_reused_across_products(self):
+        attribute = CategoryAttribute.objects.get(key="voltage")
+        attribute.include_in_sales_model = True
+        attribute.save(update_fields=["include_in_sales_model"])
+        self.create_sku(sales_model=None, sales_model_abbreviations={f"{self.product.category_id}:voltage:24": "6K"})
+        sibling = Product.objects.create(code="P-SKU-SIBLING", name="同类产品", sales_model_prefix="SIBLING1", category=self.product.category)
+        Product.objects.create(code="P-SKU-OTHER", name="其他分类产品", sales_model_prefix="OTHER1", category=ProductCategory.objects.create(name="Other"))
+
+        response = self.client.get("/api/skus/sales-model-abbreviations/", {"category": sibling.category_id})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.data["abbreviations"][f"{self.product.category_id}:voltage:24"], "6K")
+
+    def test_legacy_detail_model_and_dimensions_are_not_saved_on_sku(self):
+        sku, _ = self.create_sku(product_details=[{"model": "A1", "unit_weight": 0.2, "length": 40, "width": 30, "height": 20}])
+
+        self.assertNotIn("model", sku.product_details[0])
+        self.assertFalse({"length", "width", "height"}.intersection(sku.product_details[0]))
+        self.assertEqual(sku.product_details[0]["unit_weight"], 0.2)
 
     def test_parameter_change_regenerates_display_name_but_not_internal_or_sales_identity(self):
         sku, created = self.create_sku()

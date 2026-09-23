@@ -12,6 +12,7 @@ from crm.models import (
     InventoryMovement,
     Order,
     Product,
+    ProductCategory,
     PurchaseOrder,
     PurchaseOrderItem,
     Shipment,
@@ -44,7 +45,7 @@ class FulfillmentModelTests(TestCase):
             quantity=Decimal("10.00"),
             unit_price=Decimal("5.00"),
         )
-        self.supplier = Supplier.objects.create(name="Fulfillment Supplier")
+        self.supplier = Supplier.objects.create(name="Fulfillment Supplier", code="FS")
 
     def test_purchase_and_shipment_lines_reject_zero_quantity(self):
         purchase = PurchaseOrder.objects.create(
@@ -102,7 +103,7 @@ class FulfillmentServiceTests(TestCase):
         )
 
     def test_receipt_and_shipment_create_automatic_inventory_movements(self):
-        supplier = Supplier.objects.create(name="Service Supplier")
+        supplier = Supplier.objects.create(name="Service Supplier", code="SV")
         purchase = PurchaseOrder.objects.create(
             purchase_no="PO-SERVICE",
             supplier=supplier,
@@ -136,7 +137,7 @@ class FulfillmentServiceTests(TestCase):
         )
 
     def test_over_receipt_requires_reason_and_supplier_payment_cannot_exceed_unpaid(self):
-        supplier = Supplier.objects.create(name="Payment Supplier")
+        supplier = Supplier.objects.create(name="Payment Supplier", code="PS")
         purchase = PurchaseOrder.objects.create(
             purchase_no="PO-PAYMENT",
             supplier=supplier,
@@ -209,16 +210,42 @@ class FulfillmentApiTests(TestCase):
         self.assertIn("自动", response.data["detail"])
 
     def test_suppliers_can_be_created_through_api(self):
+        category = ProductCategory.objects.create(name="Supplier API category")
         response = self.client.post("/api/suppliers/", {
             "name": "API Supplier",
-            "currency": "USD",
+            "code": "AP",
             "payment_terms": "30 days",
+            "store_url": "https://1688.com/store/api-supplier",
+            "supply_categories": [category.pk],
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], "API Supplier")
+        self.assertEqual(response.data["code"], "AP")
+        self.assertEqual(response.data["store_url"], "https://1688.com/store/api-supplier")
+
+    def test_supplier_defaults_are_applied_by_api(self):
+        category = ProductCategory.objects.create(name="Supplier defaults category")
+        response = self.client.post("/api/suppliers/", {
+            "name": "Default Supplier",
+            "code": "DF",
+            "supply_categories": [category.pk],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.data["country"], "中国")
+        self.assertEqual(response.data["payment_terms"], "30%预付款，70%尾款发货前结清")
+        self.assertEqual(response.data["main_products"], "")
+
+    def test_supplier_code_is_unique_and_reports_the_existing_supplier(self):
+        Supplier.objects.create(name="Existing Supplier", code="ES")
+        response = self.client.post("/api/suppliers/", {
+            "name": "Duplicate Supplier",
+            "code": "es",
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("ES 与 Existing Supplier-ES 重复", response.data["code"][0])
 
     def test_product_can_be_created_with_suppliers(self):
-        supplier = Supplier.objects.create(name="Product Supplier")
+        supplier = Supplier.objects.create(name="Product Supplier", code="PD")
         response = self.client.post("/api/products/", {
             "name": "Supplier-linked product", "sales_model_prefix": "SUPP01", "suppliers": [supplier.id],
         }, format="json")
@@ -226,7 +253,7 @@ class FulfillmentApiTests(TestCase):
         self.assertEqual(response.data["suppliers"], [supplier.id])
 
     def test_purchase_order_can_be_created_and_reports_unpaid_amount(self):
-        supplier = Supplier.objects.create(name="Purchase API Supplier")
+        supplier = Supplier.objects.create(name="Purchase API Supplier", code="PA")
         order = Order.objects.create(
             order_no="SO-PURCHASE-API", customer=Customer.objects.get(code="C-API"),
             order_date=date(2026, 8, 21), status="confirmed",
@@ -240,7 +267,7 @@ class FulfillmentApiTests(TestCase):
         self.assertEqual(response.data["unpaid_amount"], "12.00")
 
     def test_purchase_receipt_creates_automatic_inventory_movement(self):
-        supplier = Supplier.objects.create(name="Receipt API Supplier")
+        supplier = Supplier.objects.create(name="Receipt API Supplier", code="RA")
         order = Order.objects.create(order_no="SO-RECEIPT-API", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21))
         purchase = PurchaseOrder.objects.create(purchase_no="PO-RECEIPT-API", supplier=supplier, order=order, order_date=date(2026, 8, 21), status="ordered")
         item = purchase.items.create(sku=self.sku, quantity="4", unit_price="3")
@@ -251,7 +278,7 @@ class FulfillmentApiTests(TestCase):
         self.assertTrue(InventoryMovement.objects.filter(source_type="receipt", source_no="PO-RECEIPT-API", is_automatic=True).exists())
 
     def test_over_receipt_returns_a_user_facing_validation_error(self):
-        supplier = Supplier.objects.create(name="Over Receipt Supplier")
+        supplier = Supplier.objects.create(name="Over Receipt Supplier", code="OR")
         order = Order.objects.create(order_no="SO-OVER-RECEIPT", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21))
         purchase = PurchaseOrder.objects.create(purchase_no="PO-OVER-RECEIPT", supplier=supplier, order=order, order_date=date(2026, 8, 21), status="ordered")
         item = purchase.items.create(sku=self.sku, quantity="1", unit_price="3")
@@ -260,7 +287,7 @@ class FulfillmentApiTests(TestCase):
         self.assertIn("超到必须选择原因", response.data["detail"])
 
     def test_supplier_payment_creates_expense_for_purchase_order(self):
-        supplier = Supplier.objects.create(name="Payment API Supplier")
+        supplier = Supplier.objects.create(name="Payment API Supplier", code="PY")
         order = Order.objects.create(order_no="SO-PAYMENT-API", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21))
         purchase = PurchaseOrder.objects.create(purchase_no="PO-PAYMENT-API", supplier=supplier, order=order, order_date=date(2026, 8, 21), status="ordered")
         purchase.items.create(sku=self.sku, quantity="4", unit_price="3")
@@ -341,7 +368,7 @@ class FulfillmentApiTests(TestCase):
 
     def test_sku_inventory_detail_lists_related_purchase_shipments_and_orders(self):
         customer = Customer.objects.get(code="C-API")
-        supplier = Supplier.objects.create(name="SKU Detail Supplier")
+        supplier = Supplier.objects.create(name="SKU Detail Supplier", code="SD")
         order = Order.objects.create(order_no="SO-SKU-DETAIL", customer=customer, order_date=date(2026, 8, 21), status="confirmed")
         order_item = order.items.create(sku=self.sku, quantity="4", unit_price="8")
         purchase = PurchaseOrder.objects.create(purchase_no="PO-SKU-DETAIL", supplier=supplier, order=order, order_date=date(2026, 8, 21), status="ordered")

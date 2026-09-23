@@ -7,12 +7,64 @@ from django.core.validators import MaxValueValidator
 from django.db import models
 
 
+# Inventory movement types which reduce available stock.  Keep this list in
+# one place so model properties and reporting code can stay in sync.
+INVENTORY_OUTBOUND_TYPES = {
+    "sale_out",
+    "adjust_out",
+    "sample_out",
+    "transfer_out",
+    "production_out",
+    "other_out",
+}
+
+
+TAIL_GOODS_POLICY_CHOICES = [
+    ("SAME_CARTON", "使用标准箱"),
+    ("REPACK", "尾箱待确认"),
+    ("MANUAL", "人工装箱"),
+]
+
+
 class TimestampedModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
+
+
+class OperationLog(models.Model):
+    """Generic, append-only audit record for business data changes."""
+
+    ACTION_CHOICES = [
+        ("create", "创建"),
+        ("update", "修改"),
+        ("delete", "删除"),
+        ("custom", "业务操作"),
+    ]
+    content_type = models.ForeignKey("contenttypes.ContentType", on_delete=models.PROTECT, related_name="operation_logs")
+    object_id = models.CharField("对象 ID", max_length=100)
+    entity = models.CharField("对象类型", max_length=100, db_index=True)
+    entity_label = models.CharField("对象类型名称", max_length=100, blank=True)
+    object_label = models.CharField("对象名称", max_length=300, blank=True)
+    action = models.CharField("操作类型", max_length=30, choices=ACTION_CHOICES, default="custom")
+    action_label = models.CharField("操作说明", max_length=100, blank=True)
+    operator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="operation_logs")
+    changed_fields = models.JSONField("变更字段", default=list, blank=True)
+    before_data = models.JSONField("变更前数据", default=dict, blank=True)
+    after_data = models.JSONField("变更后数据", default=dict, blank=True)
+    metadata = models.JSONField("操作元数据", default=dict, blank=True)
+    request_method = models.CharField("请求方法", max_length=10, blank=True)
+    request_path = models.CharField("请求路径", max_length=500, blank=True)
+    created_at = models.DateTimeField("操作时间", auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+        indexes = [
+            models.Index(fields=["entity", "object_id", "created_at"]),
+            models.Index(fields=["operator", "created_at"]),
+        ]
 
 
 class OrganizationUnit(TimestampedModel):
@@ -122,6 +174,7 @@ class Customer(TimestampedModel):
     name = models.CharField("客户名称", max_length=200, unique=True)
     code = models.CharField("客户编号", max_length=30, unique=True)
     country = models.CharField("国家/地区", max_length=100, blank=True)
+    region = models.CharField("业务区域", max_length=100, blank=True)
     source = models.CharField("客户来源", max_length=100, blank=True)
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="lead")
     owner = models.CharField("负责人", max_length=100, blank=True)
@@ -183,6 +236,20 @@ class FollowUp(TimestampedModel):
         ordering = ["-followed_at"]
 
 
+class FollowUpAttachment(TimestampedModel):
+    follow_up = models.ForeignKey(FollowUp, on_delete=models.CASCADE, related_name="attachments")
+    file = models.FileField("附件文件", upload_to="follow-up-attachments/%Y/%m/")
+    name = models.CharField("文件名", max_length=255)
+    content_type = models.CharField("文件类型", max_length=150, blank=True)
+    size = models.PositiveBigIntegerField("文件大小", default=0)
+
+    class Meta:
+        ordering = ["created_at", "id"]
+
+    def __str__(self):
+        return self.name
+
+
 class ProductCategory(TimestampedModel):
     name = models.CharField("分类名称", max_length=100, unique=True)
     description = models.TextField("说明", blank=True)
@@ -206,6 +273,7 @@ class CategoryAttribute(TimestampedModel):
     include_in_sku = models.BooleanField("参与 SKU 命名", default=False)
     include_in_sales_model = models.BooleanField("参与生成型号", default=False)
     uppercase = models.BooleanField("SKU 中转为大写", default=False)
+    required = models.BooleanField("创建 SKU 时必填", default=False)
     sort_order = models.PositiveIntegerField("排序", default=0)
 
     class Meta:
@@ -221,6 +289,20 @@ class ProductCodeSequence(models.Model):
     last_value = models.PositiveIntegerField(default=0)
 
 
+class HSCode(TimestampedModel):
+    """Controlled customs-code catalog assigned to products by administrators."""
+    code = models.CharField("HS 编码", max_length=30, unique=True)
+    description = models.CharField("商品描述", max_length=300, blank=True)
+    notes = models.TextField("备注", blank=True)
+    active = models.BooleanField("启用", default=True)
+
+    class Meta:
+        ordering = ["code"]
+
+    def __str__(self):
+        return self.code
+
+
 class SKUCodeSequence(models.Model):
     last_value = models.PositiveIntegerField(default=0)
 
@@ -229,8 +311,9 @@ class Product(TimestampedModel):
     STATUS_CHOICES = [("active", "在售"), ("development", "开发中"), ("discontinued", "停产")]
     name = models.CharField("产品名称", max_length=200)
     name_en = models.CharField("产品英文名称", max_length=200, blank=True)
-    hs_code = models.CharField("HS 编码", max_length=30, blank=True)
+    hs_code = models.ForeignKey(HSCode, on_delete=models.PROTECT, null=True, blank=True, related_name="products", verbose_name="HS 编码")
     code = models.CharField("产品编号", max_length=50, unique=True)
+    combination_rules = models.JSONField("SKU 组合规则", default=list, blank=True)
     sales_model_prefix = models.CharField("销售型号前缀", max_length=30, unique=True, null=True, blank=True)
     category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name="products")
     additional_categories = models.ManyToManyField(ProductCategory, blank=True, related_name="secondary_products", verbose_name="附加分类")
@@ -246,10 +329,12 @@ class Product(TimestampedModel):
 
 
 class SKU(TimestampedModel):
+    schema_version = models.PositiveIntegerField(default=0, editable=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="skus")
     sku = models.CharField("SKU", max_length=80, unique=True)
     specification = models.CharField("规格", max_length=200, blank=True)
     display_name_cn = models.CharField("内部中文显示名称", max_length=300, blank=True)
+    display_name_key = models.CharField("内部名称规范化键", max_length=300, blank=True, null=True, editable=False, db_index=True)
     sales_model = models.CharField("对外商业型号", max_length=80, unique=True, null=True, blank=True)
     sales_model_abbreviations = models.JSONField("销售型号参数缩写", default=dict, blank=True)
     description_cn = models.TextField("中文描述", blank=True)
@@ -260,17 +345,26 @@ class SKU(TimestampedModel):
     currency = models.CharField("币种", max_length=10, default="USD")
     active = models.BooleanField("启用", default=True)
     parameter_values = models.JSONField("参数快照", default=dict, blank=True)
+    identity_signature = models.CharField("身份参数签名", max_length=500, blank=True, db_index=True)
     product_details = models.JSONField("产品明细", default=list, blank=True)
     image = models.ImageField("SKU 图片", upload_to="sku-images/%Y/%m/", blank=True)
 
     class Meta:
         ordering = ["sku"]
+        constraints = [
+            models.UniqueConstraint(fields=["display_name_key"], name="sku_display_name_key_unique"),
+        ]
 
     def save(self, *args, **kwargs):
         if not self.sku:
             from .sku_numbers import allocate_sku_code
 
             self.sku = allocate_sku_code()
+        if self.pk:
+            original_sku = SKU.objects.filter(pk=self.pk).values_list("sku", flat=True).first()
+            if original_sku is not None and self.sku != original_sku:
+                raise ValidationError({"sku": "SKU Code 创建后不可修改。"})
+        display_name_was_blank = not self.display_name_cn
         if self.product_id and (not self.display_name_cn or not self.description_cn or not self.description_en):
             from .sku_identity import build_sku_identity
 
@@ -283,15 +377,101 @@ class SKU(TimestampedModel):
             self.display_name_cn = self.display_name_cn or generated["display_name_cn"]
             self.description_cn = self.description_cn or generated["description_cn"]
             self.description_en = self.description_en or generated["description_en"]
+        from .sku_identity import normalize_display_name
+
+        normalized_name = normalize_display_name(self.display_name_cn)
+        if normalized_name:
+            duplicate_name = SKU.objects.filter(display_name_key=normalized_name).exclude(pk=self.pk).exists()
+            if duplicate_name:
+                if not display_name_was_blank:
+                    raise ValidationError({"display_name_cn": "内部识别名称已存在（不区分大小写）。"})
+                suffix = f" · {self.sku}"
+                base = str(self.display_name_cn or "SKU").strip()
+                candidate = f"{base[: max(1, 300 - len(suffix))]}{suffix}"
+                candidate_key = normalize_display_name(candidate)
+                sequence = 2
+                while SKU.objects.filter(display_name_key=candidate_key).exclude(pk=self.pk).exists():
+                    suffix = f" · {self.sku}-{sequence}"
+                    candidate = f"{base[: max(1, 300 - len(suffix))]}{suffix}"
+                    candidate_key = normalize_display_name(candidate)
+                    sequence += 1
+                self.display_name_cn = candidate
+                normalized_name = candidate_key
+            self.display_name_key = normalized_name
+        else:
+            self.display_name_key = None
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.display_name_cn or self.sku
 
 
+class SKUVersion(models.Model):
+    """An immutable copy of the SKU state immediately before a material change."""
+    sku = models.ForeignKey(SKU, on_delete=models.CASCADE, related_name="versions")
+    version_no = models.PositiveIntegerField("版本号")
+    sku_code_snapshot = models.CharField("SKU 编码快照", max_length=80)
+    sales_model_snapshot = models.CharField("销售型号快照", max_length=80, blank=True)
+    display_name_cn_snapshot = models.CharField("内部名称快照", max_length=300, blank=True)
+    description_cn_snapshot = models.TextField("中文描述快照", blank=True)
+    description_en_snapshot = models.TextField("英文描述快照", blank=True)
+    parameter_values_snapshot = models.JSONField("参数快照", default=dict)
+    product_details_snapshot = models.JSONField("产品明细快照", default=list)
+    specification_snapshot = models.CharField("规格快照", max_length=200, blank=True)
+    changed_fields = models.JSONField("变更字段", default=list)
+    changed_at = models.DateTimeField("变更时间", default=timezone.now)
+    changed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="sku_versions")
+    change_reason = models.CharField("变更说明", max_length=300, blank=True)
+
+    class Meta:
+        ordering = ["-version_no"]
+        constraints = [models.UniqueConstraint(fields=["sku", "version_no"], name="unique_sku_version_no")]
+
+
+class SKUParameterPlan(TimestampedModel):
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name="sku_parameter_plans")
+    version = models.PositiveIntegerField()
+    status = models.CharField(max_length=12, default="draft", choices=[("draft", "草稿"), ("published", "已发布")])
+    definitions = models.JSONField(default=list)
+    assignments = models.JSONField(default=dict, blank=True)
+    baseline = models.CharField(max_length=64)
+    published_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["product", "version"], name="product_sku_plan_version_unique")]
+
+
+class SKURelationship(TimestampedModel):
+    source = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="successors")
+    target = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="predecessors")
+    plan = models.ForeignKey(SKUParameterPlan, on_delete=models.PROTECT, related_name="relationships")
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["source", "target"], name="sku_relationship_unique")]
+
+
+class SupplierCapability(TimestampedModel):
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name="supplier_capabilities")
+    supplier = models.ForeignKey("Supplier", on_delete=models.PROTECT, related_name="capabilities")
+    name = models.CharField(max_length=120)
+    filters = models.JSONField(default=dict, blank=True)
+    characteristics = models.JSONField(default=dict, blank=True)
+    is_active = models.BooleanField(default=True)
+
+
+class SupplierCandidateOverride(TimestampedModel):
+    sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="candidate_overrides")
+    supplier = models.ForeignKey("Supplier", on_delete=models.PROTECT)
+    is_allowed = models.BooleanField(default=True)
+    characteristics = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["sku", "supplier"], name="sku_supplier_override_unique")]
+
+
 class PackagingTemplate(TimestampedModel):
     """Reusable physical carton specification. Dimensions are stored in cm."""
-    PARTIAL_POLICIES = [("SAME_CARTON", "使用标准箱"), ("REPACK", "尾箱待确认"), ("MANUAL", "人工装箱")]
+    PARTIAL_POLICIES = TAIL_GOODS_POLICY_CHOICES
     code = models.CharField("包装模板编码", max_length=50, unique=True, blank=True)
     name = models.CharField("包装模板名称", max_length=120)
     supplier = models.ForeignKey("Supplier", on_delete=models.SET_NULL, null=True, blank=True, related_name="packaging_templates", verbose_name="包装供应商")
@@ -302,8 +482,7 @@ class PackagingTemplate(TimestampedModel):
     # 新建资料的装箱数由 SKU 包装档案维护；此字段只保留旧模板的历史兜底值。
     qty_per_carton = models.DecimalField("每箱数量（历史）", max_digits=14, decimal_places=2, null=True, blank=True)
     carton_tare_weight = models.DecimalField("纸箱皮重(kg)", max_digits=12, decimal_places=3, default=0)
-    partial_carton_policy = models.CharField("尾箱策略", max_length=20, choices=PARTIAL_POLICIES, default="SAME_CARTON")
-    mixed_pack_allowed = models.BooleanField("允许混装", default=False)
+    partial_carton_policy = models.CharField("尾货策略", max_length=20, choices=PARTIAL_POLICIES, default="SAME_CARTON")
     active = models.BooleanField("启用", default=True)
 
     class Meta:
@@ -423,8 +602,8 @@ class Quote(TimestampedModel):
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
     currency = models.CharField("币种", max_length=10, default="USD")
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
-    shipping_fee = models.DecimalField("运费", max_digits=14, decimal_places=2, default=0)
-    discount = models.DecimalField("折扣金额", max_digits=14, decimal_places=2, default=0)
+    shipping_fee = models.DecimalField("运费", max_digits=14, decimal_places=4, default=0)
+    discount = models.DecimalField("折扣金额", max_digits=14, decimal_places=4, default=0)
     notes = models.TextField("条款/备注", blank=True)
     recipient_name = models.CharField("收件人", max_length=200, blank=True)
     buyer_address = models.TextField("买方地址", blank=True)
@@ -466,16 +645,63 @@ class QuoteChildRevisionCounter(models.Model):
     last_value = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(99)])
 
 
-class QuoteItem(models.Model):
+class SKUTradeUnit(TimestampedModel):
+    sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="trade_units")
+    supplier = models.ForeignKey("Supplier", on_delete=models.PROTECT, null=True, blank=True)
+    name = models.CharField("规格名称", max_length=120)
+    unit = models.CharField("交易单位", max_length=30)
+    factor = models.DecimalField("每交易单位的基础数量", max_digits=14, decimal_places=2)
+    allow_fraction = models.BooleanField("允许非整包装", default=False)
+    is_default = models.BooleanField("默认规格", default=False)
+    active = models.BooleanField("启用", default=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['sku_id', '-is_default', 'id']
+        constraints = [
+            models.CheckConstraint(condition=models.Q(factor__gt=0), name='trade_unit_factor_positive'),
+            models.UniqueConstraint(fields=['sku'], condition=models.Q(is_default=True), name='trade_unit_one_default'),
+            models.CheckConstraint(condition=models.Q(is_default=False) | models.Q(active=True), name='trade_unit_default_active'),
+        ]
+
+
+class TradeUnitLine(models.Model):
+    trade_unit = models.ForeignKey(SKUTradeUnit, on_delete=models.PROTECT, null=True, blank=True, related_name='+')
+    trade_quantity = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+    trade_unit_price = models.DecimalField(max_digits=16, decimal_places=4, null=True, blank=True)
+    trade_snapshot = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        if not self.trade_snapshot and not self.trade_unit_id:
+            sku = getattr(self, 'sku', None)
+            if sku is None and hasattr(self, 'purchase_item'):
+                sku = self.purchase_item.sku
+            if sku is not None:
+                unit = getattr(self, 'unit_snapshot', '') or sku.unit
+                self.trade_snapshot = {'unit': unit, 'base_unit': unit, 'factor': '1', 'name': ''}
+        super().save(*args, **kwargs)
+
+    @property
+    def amount(self):
+        if self.trade_quantity is not None and self.trade_unit_price is not None:
+            return self.trade_quantity * self.trade_unit_price
+        return self.quantity * self.unit_price
+
+
+class QuoteItem(TradeUnitLine):
     quote = models.ForeignKey(Quote, on_delete=models.CASCADE, related_name="items")
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="quote_items")
     sku_code_snapshot = models.CharField("SKU 编码快照", max_length=80, blank=True)
     sales_model_snapshot = models.CharField("销售型号快照", max_length=80, blank=True)
     product_name_snapshot = models.CharField("产品名称快照", max_length=200, blank=True)
     unit_snapshot = models.CharField("单位快照", max_length=30, blank=True)
+    sales_rules_snapshot = models.JSONField(default=list, blank=True)
     image_snapshot = models.ImageField("产品图片快照", upload_to="quote-item-images/%Y/%m/", blank=True)
     quantity = models.DecimalField("数量", max_digits=14, decimal_places=2)
-    unit_price = models.DecimalField("单价", max_digits=14, decimal_places=4)
+    unit_price = models.DecimalField("单价", max_digits=24, decimal_places=12)
     description = models.TextField("产品描述", blank=True)
     notes = models.CharField("备注", max_length=200, blank=True)
 
@@ -491,7 +717,7 @@ class QuoteItem(models.Model):
 
     @property
     def amount(self):
-        return self.quantity * self.unit_price
+        return super().amount
 
 
 class QuoteImportantNote(TimestampedModel):
@@ -527,11 +753,12 @@ class Order(TimestampedModel):
     quote = models.ForeignKey(Quote, on_delete=models.SET_NULL, null=True, blank=True, related_name="orders")
     order_date = models.DateField("订单日期")
     expected_ship_date = models.DateField("预计交期", null=True, blank=True)
+    tail_goods_policy = models.CharField("尾货策略", max_length=20, choices=TAIL_GOODS_POLICY_CHOICES, default="SAME_CARTON")
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="confirmed")
     currency = models.CharField("币种", max_length=10, default="USD")
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
-    shipping_fee = models.DecimalField("运费", max_digits=14, decimal_places=2, default=0)
-    discount = models.DecimalField("折扣金额", max_digits=14, decimal_places=2, default=0)
+    shipping_fee = models.DecimalField("运费", max_digits=14, decimal_places=4, default=0)
+    discount = models.DecimalField("折扣金额", max_digits=14, decimal_places=4, default=0)
     notes = models.TextField("备注", blank=True)
 
     class Meta:
@@ -543,10 +770,23 @@ class Order(TimestampedModel):
 
     @property
     def paid_amount(self):
-        return sum((t.amount for t in self.transactions.filter(direction="income", status="confirmed")), Decimal("0"))
+        receipts = sum((t.amount for t in self.transactions.filter(direction="income", status="confirmed").exclude(kind__in=["unallocated_advance", "unallocated_payment", "supplier_refund"])), Decimal("0"))
+        refunds = sum((t.amount for t in self.transactions.filter(direction="expense", status="confirmed", kind="refund")), Decimal("0"))
+        allocations = sum(AdvanceAllocation.objects.filter(plan__order=self, is_active=True, advance__status="confirmed").values_list("amount", flat=True), Decimal("0"))
+        return receipts + allocations - refunds
 
 
-class OrderItem(models.Model):
+class OrderItem(TradeUnitLine):
+    SUPPLIER_ALLOCATION_SCOPE_CHOICES = [
+        ("order_only", "仅本次订单"),
+        ("recommended", "同时更新为推荐供应商"),
+    ]
+    SUPPLIER_ALLOCATION_SOURCE_CHOICES = [
+        ("rule_match", "规则匹配"),
+        ("historical_purchase", "历史采购"),
+        ("manual", "人工补充"),
+        ("supplier_sku", "供货档案"),
+    ]
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="order_items")
     sku_code_snapshot = models.CharField("SKU 编码快照", max_length=80, blank=True)
@@ -555,9 +795,31 @@ class OrderItem(models.Model):
     description_snapshot = models.TextField("描述快照", blank=True)
     unit_snapshot = models.CharField("单位快照", max_length=30, blank=True)
     quantity = models.DecimalField("数量", max_digits=14, decimal_places=2)
-    unit_price = models.DecimalField("单价", max_digits=14, decimal_places=4)
+    unit_price = models.DecimalField("单价", max_digits=24, decimal_places=12)
     cost_price = models.DecimalField("成交时成本", max_digits=14, decimal_places=4, default=0)
     notes = models.CharField("备注", max_length=200, blank=True)
+    supplier_sku = models.ForeignKey(
+        "SupplierSKU",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="sales_order_items",
+        verbose_name="本次采购供应来源",
+    )
+    supplier_name_snapshot = models.CharField("供应商名称快照", max_length=200, blank=True)
+    supplier_model_snapshot = models.CharField("供应商型号快照", max_length=120, blank=True)
+    supplier_sku_code_snapshot = models.CharField("供应商 SKU 编码快照", max_length=100, blank=True)
+    supplier_barcode_snapshot = models.CharField("供应商条码快照", max_length=100, blank=True)
+    supplier_characteristics_snapshot = models.JSONField("供货特点快照", default=dict, blank=True)
+    supplier_price_snapshot = models.DecimalField("供应商参考价快照", max_digits=14, decimal_places=4, null=True, blank=True)
+    supplier_currency_snapshot = models.CharField("供应商报价币种快照", max_length=10, blank=True)
+    supplier_moq_snapshot = models.DecimalField("MOQ 快照", max_digits=14, decimal_places=2, null=True, blank=True)
+    supplier_lead_time_days_snapshot = models.PositiveIntegerField("交期快照（天）", null=True, blank=True)
+    supplier_allocation_source = models.CharField("供应商候选来源", max_length=30, choices=SUPPLIER_ALLOCATION_SOURCE_CHOICES, blank=True)
+    supplier_allocation_sources_snapshot = models.JSONField("候选来源快照", default=list, blank=True)
+    supplier_allocation_scope = models.CharField("供应商分配范围", max_length=30, choices=SUPPLIER_ALLOCATION_SCOPE_CHOICES, blank=True)
+    supplier_allocation_note = models.CharField("供应商分配说明", max_length=300, blank=True)
+    supplier_allocated_at = models.DateTimeField("供应商分配时间", null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self._state.adding and self.sku_id:
@@ -567,11 +829,25 @@ class OrderItem(models.Model):
             self.display_name_snapshot = self.display_name_snapshot or sku.display_name_cn or sku.product.name
             self.description_snapshot = self.description_snapshot or sku.description_en or sku.description_cn or self.display_name_snapshot
             self.unit_snapshot = self.unit_snapshot or sku.unit
+        if self._state.adding and self.supplier_sku_id:
+            source = self.supplier_sku
+            self.supplier_name_snapshot = self.supplier_name_snapshot or source.supplier.name
+            self.supplier_model_snapshot = self.supplier_model_snapshot or source.supplier_model
+            self.supplier_sku_code_snapshot = self.supplier_sku_code_snapshot or source.supplier_sku_code
+            self.supplier_barcode_snapshot = self.supplier_barcode_snapshot or source.supplier_barcode
+            self.supplier_characteristics_snapshot = self.supplier_characteristics_snapshot or source.characteristics
+            if self.supplier_price_snapshot is None:
+                self.supplier_price_snapshot = source.purchase_price
+            self.supplier_currency_snapshot = self.supplier_currency_snapshot or source.currency
+            if self.supplier_moq_snapshot is None:
+                self.supplier_moq_snapshot = source.moq
+            if self.supplier_lead_time_days_snapshot is None:
+                self.supplier_lead_time_days_snapshot = source.lead_time_days
         super().save(*args, **kwargs)
 
     @property
     def amount(self):
-        return self.quantity * self.unit_price
+        return super().amount
 
 
 OVERAGE_REASON_CHOICES = [
@@ -585,12 +861,16 @@ OVERAGE_REASON_CHOICES = [
 
 
 class Supplier(TimestampedModel):
+    supply_categories = models.ManyToManyField("ProductCategory", blank=True, related_name="suppliers", verbose_name="可供产品分类")
+    country = models.CharField("国家/地区", max_length=100, blank=True, default="中国")
+    main_products = models.CharField("主要产品", max_length=300, blank=True)
     name = models.CharField("供应商名称", max_length=200, unique=True)
+    code = models.CharField("供应商二字代码", max_length=2, unique=True)
     contact_name = models.CharField("联系人", max_length=100, blank=True)
     phone = models.CharField("电话", max_length=50, blank=True)
     email = models.EmailField("邮箱", blank=True)
-    currency = models.CharField("默认币种", max_length=10, default="USD")
-    payment_terms = models.CharField("付款条款", max_length=200, blank=True)
+    store_url = models.URLField("店铺链接", max_length=500, blank=True)
+    payment_terms = models.CharField("付款条款", max_length=200, blank=True, default="30%预付款，70%尾款发货前结清")
     notes = models.TextField("备注", blank=True)
 
     class Meta:
@@ -600,7 +880,57 @@ class Supplier(TimestampedModel):
         return self.name
 
 
+class SupplierSKU(TimestampedModel):
+    """A supplier's purchasing identity for one internal SKU.
+
+    The internal SKU remains the inventory and sales identity.  This entity
+    only records how a supplier identifies and quotes that SKU.
+    """
+
+    supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT, related_name="supplier_skus")
+    sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="supplier_skus")
+    supplier_model = models.CharField("供应商型号", max_length=120, blank=True)
+    supplier_product_name = models.CharField("供应商产品名称", max_length=200, blank=True)
+    supplier_sku_code = models.CharField("供应商 SKU 编码", max_length=100)
+    supplier_barcode = models.CharField("供应商条码", max_length=100, blank=True)
+    purchase_price = models.DecimalField("参考采购价", max_digits=14, decimal_places=4, default=0)
+    currency = models.CharField("采购币种", max_length=10, default="USD")
+    moq = models.DecimalField("最小起订量", max_digits=14, decimal_places=2, default=0)
+    lead_time_days = models.PositiveIntegerField("交期（天）", default=0)
+    is_active = models.BooleanField("启用", default=True)
+    is_preferred = models.BooleanField("首选供应来源", default=False)
+    remarks = models.TextField("备注", blank=True)
+    characteristics = models.JSONField("供货特点", default=dict, blank=True)
+
+    class Meta:
+        ordering = ["supplier__name", "supplier_sku_code", "id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["supplier", "supplier_sku_code"],
+                name="supplier_supplier_sku_code_unique",
+            ),
+            models.UniqueConstraint(
+                fields=["sku"],
+                condition=models.Q(is_active=True, is_preferred=True),
+                name="active_preferred_supplier_sku_unique",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(purchase_price__gte=0),
+                name="supplier_sku_purchase_price_non_negative",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(moq__gte=0),
+                name="supplier_sku_moq_non_negative",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.supplier.name} / {self.supplier_sku_code}"
+
+
 class PurchaseOrder(TimestampedModel):
+    cost_allocation_version = models.PositiveIntegerField(default=0, editable=False)
+    additional_costs = models.JSONField(default=list, blank=True, editable=False)
     STATUS_CHOICES = [
         ("draft", "草稿"),
         ("ordered", "已下单"),
@@ -610,7 +940,7 @@ class PurchaseOrder(TimestampedModel):
     ]
     purchase_no = models.CharField("采购单号", max_length=40, unique=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT, related_name="purchase_orders")
-    order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name="purchase_orders")
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name="purchase_orders", null=True, blank=True)
     order_date = models.DateField("下单日期")
     expected_arrival_date = models.DateField("预计到货日", null=True, blank=True)
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
@@ -623,14 +953,17 @@ class PurchaseOrder(TimestampedModel):
 
     @property
     def total_amount(self):
-        return sum((item.quantity * item.unit_price for item in self.items.all()), Decimal("0"))
+        return sum((item.amount for item in self.items.all()), Decimal("0"))
 
     @property
     def paid_amount(self):
-        return sum(
-            (row.amount for row in self.transactions.filter(direction="expense", status="confirmed")),
+        paid = sum(
+            (row.amount for row in self.transactions.filter(direction="expense", status="confirmed").exclude(kind__in=["unallocated_advance", "unallocated_payment"])),
             Decimal("0"),
         )
+        allocations = sum(AdvanceAllocation.objects.filter(plan__purchase_order=self, is_active=True, advance__status="confirmed").values_list("amount", flat=True), Decimal("0"))
+        refunds = sum(self.transactions.filter(direction="income", status="confirmed", kind="supplier_refund").values_list("amount", flat=True), Decimal("0"))
+        return paid + allocations - refunds
 
     @property
     def unpaid_amount(self):
@@ -640,11 +973,42 @@ class PurchaseOrder(TimestampedModel):
         return self.purchase_no
 
 
-class PurchaseOrderItem(models.Model):
+class PurchaseCostAllocation(models.Model):
+    target_name = models.CharField("自定义成本归属", max_length=100, blank=True, default="")
+    purchase_item = models.ForeignKey("PurchaseOrderItem", on_delete=models.CASCADE, related_name="cost_allocations")
+    target_type = models.CharField(max_length=20, choices=[("order", "销售订单"), ("inventory", "库存"), ("sample", "样品"), ("loss", "损耗"), ("gift", "赠品"), ("after_sales", "售后补发"), ("research", "研发试制"), ("internal", "内部领用"), ("marketing", "展会推广"), ("other", "其他")])
+    order = models.ForeignKey(Order, null=True, blank=True, on_delete=models.PROTECT, related_name="purchase_cost_allocations")
+    quantity = models.DecimalField(max_digits=14, decimal_places=2)
+
+    class Meta:
+        ordering = ["id"]
+        constraints = [
+            models.CheckConstraint(condition=models.Q(quantity__gt=0), name="cost_allocation_quantity_positive"),
+            models.CheckConstraint(condition=(models.Q(target_type="order", order__isnull=False) | models.Q(target_type__in=["inventory", "sample", "loss", "gift", "after_sales", "research", "internal", "marketing", "other"], order__isnull=True)), name="cost_allocation_target_valid"),
+        ]
+
+
+class PurchaseOrderItem(TradeUnitLine):
     purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name="items")
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="purchase_order_items")
+    supplier_sku = models.ForeignKey(
+        "SupplierSKU",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="purchase_items",
+    )
+    sku_code_snapshot = models.CharField("SKU 编码快照", max_length=80, blank=True)
+    sales_model_snapshot = models.CharField("销售型号快照", max_length=80, blank=True)
+    display_name_snapshot = models.CharField("显示名称快照", max_length=300, blank=True)
+    description_snapshot = models.TextField("描述快照", blank=True)
+    supplier_name_snapshot = models.CharField("供应商名称快照", max_length=200, blank=True)
+    supplier_model_snapshot = models.CharField("供应商型号快照", max_length=120, blank=True)
+    supplier_sku_code_snapshot = models.CharField("供应商 SKU 编码快照", max_length=100, blank=True)
+    supplier_barcode_snapshot = models.CharField("供应商条码快照", max_length=100, blank=True)
+    supplier_characteristics_snapshot = models.JSONField("供货特点快照", default=dict, blank=True)
     quantity = models.DecimalField("采购数量", max_digits=14, decimal_places=2)
-    unit_price = models.DecimalField("采购单价", max_digits=14, decimal_places=4)
+    unit_price = models.DecimalField("采购单价", max_digits=24, decimal_places=12)
 
     class Meta:
         constraints = [
@@ -660,6 +1024,22 @@ class PurchaseOrderItem(models.Model):
     def remaining_quantity(self):
         return self.quantity - self.received_quantity
 
+    def save(self, *args, **kwargs):
+        if self._state.adding and self.sku_id:
+            sku = self.sku
+            self.sku_code_snapshot = self.sku_code_snapshot or sku.sku
+            self.sales_model_snapshot = self.sales_model_snapshot or sku.sales_model or ""
+            self.display_name_snapshot = self.display_name_snapshot or sku.display_name_cn or sku.product.name
+            self.description_snapshot = self.description_snapshot or sku.description_en or sku.description_cn or self.display_name_snapshot
+        if self._state.adding and self.supplier_sku_id:
+            supplier_sku = self.supplier_sku
+            self.supplier_name_snapshot = self.supplier_name_snapshot or supplier_sku.supplier.name
+            self.supplier_model_snapshot = self.supplier_model_snapshot or supplier_sku.supplier_model
+            self.supplier_sku_code_snapshot = self.supplier_sku_code_snapshot or supplier_sku.supplier_sku_code
+            self.supplier_barcode_snapshot = self.supplier_barcode_snapshot or supplier_sku.supplier_barcode
+            self.supplier_characteristics_snapshot = self.supplier_characteristics_snapshot or supplier_sku.characteristics
+        super().save(*args, **kwargs)
+
 
 class PaymentPlan(TimestampedModel):
     DIRECTION_CHOICES = [("receivable", "应收"), ("payable", "应付")]
@@ -669,8 +1049,8 @@ class PaymentPlan(TimestampedModel):
     purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.PROTECT, null=True, blank=True, related_name="payment_plans")
     direction = models.CharField("收付款方向", max_length=12, choices=DIRECTION_CHOICES)
     due_date = models.DateField("预计日期", null=True, blank=True)
-    planned_amount = models.DecimalField("计划原币金额", max_digits=14, decimal_places=2)
-    settled_amount = models.DecimalField("已核销原币金额", max_digits=14, decimal_places=2, default=0)
+    planned_amount = models.DecimalField("计划原币金额", max_digits=14, decimal_places=4)
+    settled_amount = models.DecimalField("已核销原币金额", max_digits=14, decimal_places=4, default=0)
     currency = models.CharField("币种", max_length=10)
     status = models.CharField("状态", max_length=12, choices=STATUS_CHOICES, default="open")
     notes = models.TextField("备注", blank=True)
@@ -705,7 +1085,7 @@ class ContractChangeRequest(TimestampedModel):
     STATUS_CHOICES = [("pending", "待确认"), ("approved", "已确认"), ("rejected", "已拒绝")]
     order = models.ForeignKey(Order, on_delete=models.PROTECT, null=True, blank=True, related_name="contract_changes")
     purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.PROTECT, null=True, blank=True, related_name="contract_changes")
-    amount_delta = models.DecimalField("合同原币变更金额", max_digits=14, decimal_places=2)
+    amount_delta = models.DecimalField("合同原币变更金额", max_digits=14, decimal_places=4)
     due_date = models.DateField("新增计划日期", null=True, blank=True)
     status = models.CharField("状态", max_length=12, choices=STATUS_CHOICES, default="pending")
     notes = models.TextField("变更说明")
@@ -755,7 +1135,7 @@ class PackingPlanCarton(models.Model):
     carton_no = models.PositiveIntegerField("箱号")
     packaging_template_snapshot = models.JSONField("包装模板快照", default=dict)
     qty_per_carton_snapshot = models.DecimalField("每箱数量快照", max_digits=14, decimal_places=2, null=True, blank=True)
-    partial_carton_policy_snapshot = models.CharField("尾箱策略快照", max_length=20, blank=True)
+    partial_carton_policy_snapshot = models.CharField("尾货策略快照", max_length=20, blank=True)
     length = models.DecimalField("箱长(cm)", max_digits=10, decimal_places=2, null=True, blank=True)
     width = models.DecimalField("箱宽(cm)", max_digits=10, decimal_places=2, null=True, blank=True)
     height = models.DecimalField("箱高(cm)", max_digits=10, decimal_places=2, null=True, blank=True)
@@ -821,20 +1201,40 @@ class InventoryReservation(models.Model):
         ]
 
 
-class InventoryMovement(TimestampedModel):
+class InventoryMovement(TradeUnitLine, TimestampedModel):
     TYPE_CHOICES = [
-        ("purchase_in", "采购入库"), ("sale_out", "销售出库"),
-        ("adjust_in", "盘盈入库"), ("adjust_out", "盘亏出库"),
-        ("sample_out", "样品出库"), ("return_in", "客户退回"),
+        ("purchase_in", "采购入库"),
+        ("return_in", "客户退回"),
+        ("adjust_in", "盘盈入库"),
+        ("transfer_in", "调拨入库"),
+        ("production_in", "生产入库"),
+        ("other_in", "其他入库"),
+        ("sale_out", "销售出库"),
+        ("sample_out", "样品出库"),
+        ("adjust_out", "盘亏出库"),
+        ("transfer_out", "调拨出库"),
+        ("production_out", "生产领料"),
+        ("other_out", "其他出库"),
     ]
     movement_no = models.CharField("流水号", max_length=50, unique=True)
     movement_date = models.DateField("发生日期")
     type = models.CharField("类型", max_length=20, choices=TYPE_CHOICES)
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="inventory_movements")
+    supplier_sku = models.ForeignKey(
+        "SupplierSKU",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="inventory_movements",
+    )
+    sku_code_snapshot = models.CharField("SKU 编码快照", max_length=80, blank=True)
+    sales_model_snapshot = models.CharField("销售型号快照", max_length=80, blank=True)
+    display_name_snapshot = models.CharField("显示名称快照", max_length=300, blank=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True, related_name="inventory_movements")
+    related_orders = models.ManyToManyField(Order, blank=True, related_name="related_inventory_movements", verbose_name="关联订单")
     quantity = models.DecimalField("数量", max_digits=14, decimal_places=2)
     warehouse = models.CharField("仓库", max_length=100, default="默认仓")
-    unit_cost = models.DecimalField("单位成本", max_digits=14, decimal_places=4, default=0)
+    unit_cost = models.DecimalField("单位成本", max_digits=24, decimal_places=12, default=0)
     reference = models.CharField("参考号", max_length=100, blank=True)
     notes = models.TextField("备注", blank=True)
     source_type = models.CharField(
@@ -853,17 +1253,25 @@ class InventoryMovement(TimestampedModel):
 
     @property
     def signed_quantity(self):
-        return -self.quantity if self.type in {"sale_out", "adjust_out", "sample_out"} else self.quantity
+        return -self.quantity if self.type in INVENTORY_OUTBOUND_TYPES else self.quantity
+
+    def save(self, *args, **kwargs):
+        if self._state.adding and self.sku_id:
+            sku = self.sku
+            self.sku_code_snapshot = self.sku_code_snapshot or sku.sku
+            self.sales_model_snapshot = self.sales_model_snapshot or sku.sales_model or ""
+            self.display_name_snapshot = self.display_name_snapshot or sku.display_name_cn or sku.product.name
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.movement_no
 
 
-class GoodsReceipt(TimestampedModel):
+class GoodsReceipt(TradeUnitLine, TimestampedModel):
     purchase_item = models.ForeignKey(PurchaseOrderItem, on_delete=models.PROTECT, related_name="receipts")
     receipt_date = models.DateField("到货日期")
     quantity = models.DecimalField("到货数量", max_digits=14, decimal_places=2)
-    unit_cost = models.DecimalField("实际单价", max_digits=14, decimal_places=4, default=0)
+    unit_cost = models.DecimalField("实际单价", max_digits=24, decimal_places=12, default=0)
     is_overage = models.BooleanField("超到", default=False)
     overage_reason = models.CharField("超到原因", max_length=30, choices=OVERAGE_REASON_CHOICES, blank=True)
     notes = models.TextField("备注", blank=True)
@@ -882,7 +1290,7 @@ class GoodsReceipt(TimestampedModel):
         ]
 
 
-class ShipmentItem(models.Model):
+class ShipmentItem(TradeUnitLine):
     shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, related_name="items")
     order_item = models.ForeignKey(OrderItem, on_delete=models.PROTECT, related_name="shipment_items")
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="shipment_items")
@@ -905,22 +1313,28 @@ class ShipmentItem(models.Model):
 
 
 class Transaction(TimestampedModel):
+    split_from = models.ForeignKey("self", on_delete=models.PROTECT, null=True, blank=True, related_name="split_rows")
     DIRECTION_CHOICES = [("income", "收入"), ("expense", "支出")]
     STATUS_CHOICES = [("pending", "待确认"), ("confirmed", "已确认"), ("cancelled", "已作废")]
     KIND_CHOICES = [
         ("other", "其他收支"), ("customer_receipt", "客户收款"), ("supplier_payment", "供应商付款"),
         ("order_expense", "订单费用"), ("period_expense", "期间费用"), ("unallocated_advance", "未分配预收预付"),
+        ("supplier_refund", "供应商退款返利"), ("other_income", "其他收入"),
+        ("sample_expense", "样品费用"), ("freight_expense", "运费物流费"), ("bank_fee", "银行手续费"),
+        ("tax_fee", "税费"), ("salary_expense", "工资福利"), ("office_expense", "办公费用"),
+        ("travel_expense", "差旅招待"), ("marketing_expense", "营销推广"), ("warehouse_expense", "仓储费用"),
+        ("asset_expense", "设备固定资产"), ("unallocated_payment", "未分配预付款"), ("other_expense", "其他支出"),
         ("refund", "退款或折让"), ("exchange_difference", "汇兑差额"),
     ]
     transaction_no = models.CharField("流水号", max_length=50, unique=True)
     transaction_date = models.DateField("发生日期")
     direction = models.CharField("收支方向", max_length=10, choices=DIRECTION_CHOICES)
     category = models.CharField("收支分类", max_length=100)
-    amount = models.DecimalField("金额", max_digits=14, decimal_places=2)
+    amount = models.DecimalField("金额", max_digits=14, decimal_places=4)
     currency = models.CharField("币种", max_length=10, default="USD")
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
-    rmb_amount = models.DecimalField("实际人民币金额", max_digits=14, decimal_places=2, default=0)
-    allocated_amount = models.DecimalField("已分配原币金额", max_digits=14, decimal_places=2, default=0)
+    rmb_amount = models.DecimalField("实际人民币金额", max_digits=14, decimal_places=4, default=0)
+    allocated_amount = models.DecimalField("已分配原币金额", max_digits=14, decimal_places=4, default=0)
     kind = models.CharField("业务类型", max_length=30, choices=KIND_CHOICES, default="other")
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
@@ -941,3 +1355,31 @@ class Transaction(TimestampedModel):
 
     class Meta:
         ordering = ["-transaction_date", "-id"]
+
+
+class AdvanceAllocation(TimestampedModel):
+    """Non-cash allocation: keeps cash totals unchanged and preserves reversal history."""
+    advance = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name="allocations")
+    plan = models.ForeignKey(PaymentPlan, on_delete=models.PROTECT, related_name="advance_allocations")
+    amount = models.DecimalField(max_digits=14, decimal_places=4)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(amount__gt=0), name="advance_allocation_positive")]
+
+
+class SalesRule(TimestampedModel):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="sales_rules")
+    sku = models.ForeignKey(SKU, null=True, blank=True, on_delete=models.PROTECT, related_name="sales_rules")
+    name = models.CharField("规则名称", max_length=120)
+    rule_type = models.CharField(max_length=20, choices=[("moq", "最低报价数量")], default="moq")
+    filters = models.JSONField("参数条件", default=dict, blank=True)
+    minimum_quantity = models.DecimalField(max_digits=14, decimal_places=2)
+    unit = models.CharField(max_length=30, default="pcs")
+    effective_from = models.DateField(null=True, blank=True)
+    effective_until = models.DateField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(minimum_quantity__gt=0), name="sales_moq_positive")]

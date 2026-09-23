@@ -11,6 +11,7 @@ from crm.models import (
     InventoryMovement,
     Order,
     PaymentPlan,
+    Supplier,
     Transaction,
 )
 from crm.services.fulfillment import record_supplier_payment
@@ -24,6 +25,10 @@ class Command(BaseCommand):
         # Expected-error checks must record server failures rather than abort the run.
         client.raise_request_exception = False
         tag = f"E2E-{date.today():%Y%m%d}-{uuid4().hex[:6].upper()}"
+        sales_model_prefix = f"E{date.today():%m%d}{uuid4().hex[:6].upper()}"
+        supplier_code = "".join(chr(65 + (int(ch, 16) % 26)) for ch in uuid4().hex[:2])
+        while Supplier.objects.filter(code=supplier_code).exists():
+            supplier_code = "".join(chr(65 + (int(ch, 16) % 26)) for ch in uuid4().hex[:2])
         checks, failures = [], []
 
         def check(name, condition, detail=""):
@@ -68,7 +73,7 @@ class Command(BaseCommand):
         check("产品：创建分类属性", attribute.status_code == status.HTTP_201_CREATED, str(attribute.data))
         duplicate_attribute = post("/api/category-attributes/", {"category": child_category.data["id"], "name": "重复功率", "key": "watt"})
         expected_error("产品：重复属性键被拦截", duplicate_attribute, status.HTTP_400_BAD_REQUEST, "unique")
-        product = post("/api/products/", {"name": f"{tag} 12W 筒灯", "name_en": "E2E Downlight", "category": child_category.data["id"], "status": "active"})
+        product = post("/api/products/", {"name": f"{tag} 12W 筒灯", "name_en": "E2E Downlight", "sales_model_prefix": sales_model_prefix, "category": child_category.data["id"], "status": "active"})
         check("产品：自动生成产品编号", product.status_code == status.HTTP_201_CREATED and product.data["code"].startswith("SPU"), str(product.data))
         product_id = product.data["id"]
         sku = post("/api/skus/", {"product": product_id, "sku": f"{tag}-DL12", "specification": "12W/4000K", "cost_price": "4", "default_price": "10", "currency": "USD"})
@@ -79,7 +84,7 @@ class Command(BaseCommand):
         product_context = client.get(f"/api/context/products/{product_id}/")
         check("产品：关联详情可追溯 SKU、参数、证书", product_context.status_code == status.HTTP_200_OK, str(product_context.data))
 
-        supplier = post("/api/suppliers/", {"name": f"{tag} 供应商", "currency": "USD", "payment_terms": "30 days"})
+        supplier = post("/api/suppliers/", {"name": f"{tag} 供应商", "code": supplier_code, "supply_categories": [child_category.data["id"]], "payment_terms": "30 days"})
         check("采购：创建供应商", supplier.status_code == status.HTTP_201_CREATED, str(supplier.data))
         quote = post("/api/quotes/", {"customer": customer_id, "quote_date": today, "valid_until": due, "status": "sent", "currency": "USD", "exchange_rate": "7.2", "lead_time_days": 20, "deposit_ratio": "0.30", "items": [{"sku": sku_id, "quantity": "8", "unit_price": "10", "description": "12W downlight"}]})
         check("报价：创建报价及商品快照", quote.status_code == status.HTTP_201_CREATED and len(quote.data["items"]) == 1, str(quote.data))
@@ -154,17 +159,18 @@ class Command(BaseCommand):
         settlement = post(f"/api/payment-plans/{receivable.id}/settle/", {"transaction_date": today, "amount": str(receivable.planned_amount + Decimal('5')), "currency": "USD", "exchange_rate": "7.2", "category": "客户收款"})
         check("财务：超额收款自动拆分预收款", settlement.status_code == status.HTTP_201_CREATED and Transaction.objects.filter(kind="unallocated_advance", customer_id=customer_id).exists(), str(settlement.data))
         advance = Transaction.objects.filter(kind="unallocated_advance", customer_id=customer_id).latest("id")
-        another_order = post("/api/orders/", {"order_no": f"{tag}-SO-ADV", "customer": customer_id, "order_date": today, "status": "draft", "currency": "USD", "exchange_rate": "7.2", "items": [{"sku": sku_id, "quantity": "1", "unit_price": "10"}]})
-        target_plan = PaymentPlan.objects.filter(order_id=another_order.data["id"], status="open").first()
+        another_order = post("/api/orders/", {"order_no": f"{tag}-SO-ADV", "customer": customer_id, "order_date": today, "expected_ship_date": due, "status": "confirmed", "currency": "USD", "exchange_rate": "7.2", "items": [{"sku": sku_id, "quantity": "1", "unit_price": "10"}]})
+        target_plan = PaymentPlan.objects.filter(order_id=another_order.data["id"], status="open").order_by("-planned_amount").first()
         allocation = post(f"/api/transactions/{advance.id}/allocate/", {"plan": target_plan.id, "amount": "5"})
         allocation_body = str(getattr(allocation, "data", getattr(allocation, "content", b"")))[:300]
-        check("财务：预收款可核销同客户计划", allocation.status_code == status.HTTP_200_OK and getattr(allocation, "data", {}).get("settled_amount") == "5.00", allocation_body)
+        allocation_settled = getattr(allocation, "data", {}).get("settled_amount", "0")
+        check("财务：预收款可核销同客户计划", allocation.status_code == status.HTTP_200_OK and Decimal(str(allocation_settled)) == Decimal("5"), allocation_body)
         inconsistent = post("/api/transactions/", {"transaction_date": today, "direction": "income", "category": "测试", "amount": "1", "currency": "USD", "exchange_rate": "7.2", "customer": customer_id + 999999, "order": order_id})
         check("财务：订单与客户不一致被拦截", inconsistent.status_code == status.HTTP_400_BAD_REQUEST, str(inconsistent.data))
         change = post("/api/contract-changes/", {"order": order_id, "amount_delta": "20", "due_date": due, "notes": "客户追加费用"})
         check("财务：创建订单变更单", change.status_code == status.HTTP_201_CREATED, str(change.data))
         approved_change = post(f"/api/contract-changes/{change.data['id']}/approve/", {})
-        check("财务：确认变更单追加应收计划", approved_change.status_code == status.HTTP_201_CREATED and approved_change.data["planned_amount"] == "20.00", str(approved_change.data))
+        check("财务：确认变更单追加应收计划", approved_change.status_code == status.HTTP_201_CREATED and Decimal(str(approved_change.data["planned_amount"])) == Decimal("20"), str(approved_change.data))
         repeated_approval = post(f"/api/contract-changes/{change.data['id']}/approve/", {})
         expected_error("财务：已确认变更单不可重复确认", repeated_approval, status.HTTP_400_BAD_REQUEST, "只有待确认")
 

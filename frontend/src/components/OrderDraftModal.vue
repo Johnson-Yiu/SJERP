@@ -1,8 +1,11 @@
 <script setup>
+import TradeUnitPicker from './TradeUnitPicker.vue'
+import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
 import { computed, reactive, ref, watch } from 'vue'
-import { MinusCircle, PlusCircle, X } from 'lucide-vue-next'
+import { MinusCircle, X } from 'lucide-vue-next'
 import { api } from '../api'
 import SegmentedDateInput from './SegmentedDateInput.vue'
+import SkuPickerPanel from './SkuPickerPanel.vue'
 import { addDays, daysBetween } from '../utils/orderDate'
 
 const props = defineProps({
@@ -15,18 +18,22 @@ const saving = ref(false)
 const error = ref('')
 const form = reactive({})
 const leadTimeDays = ref('')
+const tailPolicyHelpOpen = ref(false)
+const tailPolicyLabels = { SAME_CARTON: '整箱优先', REPACK: '尾箱待确认', MANUAL: '人工装箱' }
 
 function resetForm(draft) {
   Object.keys(form).forEach((key) => delete form[key])
   Object.assign(form, {
     ...draft,
+    tail_goods_policy: draft.tail_goods_policy || 'SAME_CARTON',
     customer: draft.customer ? Number(draft.customer) : '',
     quote: draft.quote ? Number(draft.quote) : '',
     items: (draft.items || []).map((item) => ({
       ...item,
+      _historical_trade_unit: item.trade_unit,
       sku: item.sku ? Number(item.sku) : '',
-      quantity: Number(item.quantity || 0),
-      unit_price: Number(item.unit_price || 0),
+      quantity: Number(item.trade_quantity ?? item.quantity ?? 0),
+      unit_price: Number(item.trade_unit_price ?? item.unit_price ?? 0),
       cost_price: Number(item.cost_price || 0),
     })),
   })
@@ -41,7 +48,23 @@ function selectSku(item) {
     item.cost_price = Number(sku.cost_price || 0)
   }
 }
-function addItem() { form.items.push({ sku: '', quantity: 1, unit_price: 0, cost_price: 0, notes: '' }) }
+const activeSkuId = ref('')
+const selectedSkuIds = computed({
+  get: () => [...new Set((form.items || []).map(item => String(item.sku || '')).filter(Boolean))],
+  set: syncSelectedSkus,
+})
+function syncSelectedSkus(ids) {
+  const selected = [...new Set((ids || []).map(String))]
+  const previousLines = [...(form.items || [])]
+  const existing = new Map((form.items || []).map(item => [String(item.sku), item]))
+  form.items = selected.map(id => existing.get(id) || (() => {
+    const item = { sku: Number(id), quantity: 1, unit_price: 0, cost_price: 0, notes: '' }
+    selectSku(item)
+    return withDefaultTradeUnit(item, props.skus.find(s => s.id === Number(id)))
+  })())
+  form.items = restoreTradeLines(form.items, previousLines)
+  if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
+}
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 const subtotal = computed(() => (form.items || []).reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unit_price || 0), 0))
 const total = computed(() => subtotal.value + Number(form.shipping_fee || 0) - Number(form.discount || 0))
@@ -71,7 +94,7 @@ async function save() {
     ...form,
     customer: Number(form.customer),
     quote: Number(form.quote),
-    items: form.items.map((item) => ({ ...item, sku: Number(item.sku) })),
+    items: form.items.map((item) => tradePayload({ ...item, sku: Number(item.sku) })),
   }
   try { emit('saved', (await api.post('/orders/', payload)).data) }
   catch (err) { error.value = err.message }
@@ -93,13 +116,15 @@ async function save() {
           <div class="field"><label>客户 *</label><input :value="customers.find((customer) => customer.id === Number(form.customer))?.name || '—'" readonly aria-label="来源报价客户" /></div>
           <div class="field"><label>订单日期 *</label><SegmentedDateInput :model-value="form.order_date" required @update:model-value="setOrderDate" /></div>
           <div class="field"><label>预计交期</label><div class="lead-time-input"><input v-model="leadTimeDays" type="number" min="0" step="1" placeholder="天数" aria-label="交期天数" @input="setLeadTimeDays" /><span>天</span><SegmentedDateInput :model-value="form.expected_ship_date" @update:model-value="setExpectedShipDate" /></div></div>
-          <div class="field"><label>状态 *</label><select v-model="form.status"><option value="draft">草稿</option><option value="confirmed">已确认</option><option value="production">生产中</option><option value="shipped">已发货</option><option value="completed">已完成</option><option value="cancelled">已取消</option></select></div>
+          <div class="field"><label>状态 *</label><select v-model="form.status"><option value="draft">草稿</option><option value="confirmed">已确认</option><option value="production">生产中</option><option value="cancelled">已取消</option></select><small class="field-hint">“已发货”由确认出库自动更新。</small></div>
+          <div class="field tail-policy-field"><label>尾货策略 <button type="button" class="policy-help-trigger" aria-label="查看尾货策略说明" @click="tailPolicyHelpOpen = !tailPolicyHelpOpen">?</button></label><select v-model="form.tail_goods_policy"><option v-for="(label, key) in tailPolicyLabels" :key="key" :value="key">{{ label }}</option></select><div v-if="tailPolicyHelpOpen" class="policy-help" role="note"><strong>不同策略的区别</strong><ul><li><b>整箱优先：</b>尾货自动使用标准箱尺寸、皮重和 CBM。</li><li><b>尾箱待确认：</b>保留尾货箱数并标记待确认，尺寸和 CBM 等待补充。</li><li><b>人工装箱：</b>不自动生成尾货箱，余数作为警告交由人工处理。</li></ul><small>此选择对整张订单统一生效，优先于 SKU 包装模板。</small></div></div>
           <div class="field"><label>币种</label><select v-model="form.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
           <div class="field"><label>对人民币汇率</label><input v-model="form.exchange_rate" type="number" step="0.000001" /></div>
         </div>
-        <div class="items-head"><div><strong>订单明细</strong><small>保存时将以这里的商品、数量与价格创建订单。</small></div><button type="button" class="btn btn-secondary" @click="addItem"><PlusCircle :size="15" /> 添加一行</button></div>
-        <div class="line-items"><div class="line-header"><span>SKU / Model</span><span>数量</span><span>单价</span><span>成本</span><span>小计</span><span /></div><div v-for="(item, index) in form.items" :key="index" class="line-row"><select v-model="item.sku" required @change="selectSku(item)"><option value="">选择 SKU</option><option v-for="sku in skus" :key="sku.id" :value="sku.id">{{ sku.display_name_cn || sku.product_name }} · {{ sku.sales_model || '未设置型号' }} · {{ sku.sku_code || sku.sku }}</option></select><input v-model="item.quantity" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" type="number" min="0" step="0.0001" required /><input v-model="item.cost_price" type="number" min="0" step="0.0001" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" :disabled="form.items.length === 1" @click="form.items.splice(index, 1)"><MinusCircle :size="17" /></button></div></div>
-        <div class="totals"><label>运费 <input v-model="form.shipping_fee" type="number" step="0.01" /></label><label>折扣 <input v-model="form.discount" type="number" step="0.01" /></label><div><span>合计</span><strong>{{ form.currency }} {{ money(total) }}</strong></div></div>
+        <div class="items-head"><div><strong>订单明细</strong><small>先选择一个或多个 SKU，再填写数量与价格。</small></div></div>
+        <SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" />
+        <div class="line-items"><div class="line-header"><span>SKU / Model</span><span>数量</span><span>单价</span><span>成本</span><span>小计</span><span /></div><div v-for="(item, index) in form.items" :key="index" class="line-row"><span class="sku-cell"><b>{{ skus.find(sku => sku.id === Number(item.sku))?.display_name_cn || skus.find(sku => sku.id === Number(item.sku))?.product_name || '—' }}</b><small>SKU: {{ skus.find(sku => sku.id === Number(item.sku))?.sku_code || item.sku || '—' }} · Sales Model: {{ skus.find(sku => sku.id === Number(item.sku))?.sales_model || '—' }}</small><TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="form.items.splice(index + 1, 0, { ...item })">增加规格行</button></span><input v-model="item.quantity" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" v-money-input type="number" min="0" step="any" required /><input v-model="item.cost_price" v-money-input type="number" min="0" step="any" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" @click="form.items.splice(index, 1)"><MinusCircle :size="17" /></button></div><p v-if="!form.items.length" class="quote-items-empty">请先从上方选择至少一个 SKU。</p></div>
+        <div class="totals"><label>运费 <input v-model="form.shipping_fee" v-money-input type="number" step="any" /></label><label>折扣 <input v-model="form.discount" v-money-input type="number" step="any" /></label><div><span>合计</span><strong>{{ form.currency }} {{ money(total) }}</strong></div></div>
         <div class="field notes"><label>条款 / 备注</label><textarea v-model="form.notes" /></div>
         <p v-if="error" class="draft-error">{{ error }}</p>
       </div>
@@ -109,5 +134,7 @@ async function save() {
 </template>
 
 <style scoped>
-.order-draft-backdrop{z-index:90;display:grid;place-items:center;padding:24px;background:#07191478;backdrop-filter:blur(3px)}.order-draft-modal{width:min(980px,100%);max-height:92vh;overflow:auto}.modal-head h3{margin:0}.modal-head p{margin:4px 0 0;color:#71817b;font-size:12px}.draft-hint{margin:0 0 18px;padding:10px 12px;border-radius:8px;background:#eff7f2;color:#49675d;font-size:12px}.lead-time-input{display:flex;align-items:center;gap:6px}.lead-time-input>input{flex:0 0 10ch!important;width:10ch!important;min-width:0}.lead-time-input>span{color:#70817b;font-size:12px}.lead-time-input :deep(.segmented-date){flex:1 1 auto;min-width:0}.items-head{display:flex;justify-content:space-between;align-items:center;margin:25px 0 10px;padding-top:21px;border-top:1px solid #e5eae7}.items-head strong,.items-head small{display:block}.items-head small{margin-top:3px;color:#82908b;font-size:11px}.line-items{border:1px solid #e0e6e2;border-radius:10px;overflow:hidden}.line-header,.line-row{display:grid;grid-template-columns:2fr .55fr .7fr .7fr .8fr 34px;gap:8px;align-items:center;padding:8px 10px}.line-header{background:#f5f8f6;color:#7a8984;font-size:10px;text-transform:uppercase}.line-row{border-top:1px solid #edf0ee}.line-row select,.line-row input{min-width:0;width:100%;border:1px solid #dce3df;border-radius:7px;padding:8px;font-size:12px}.line-row .amount{text-align:right}.remove-line{border:0;background:transparent;color:#b05b5b;display:grid;place-items:center}.remove-line:disabled{opacity:.25}.totals{display:flex;justify-content:flex-end;gap:14px;align-items:end;margin:15px 0 22px}.totals label{color:#778680;font-size:11px}.totals input{display:block;width:105px;margin-top:5px;border:1px solid #dce3df;border-radius:7px;padding:8px}.totals div{border-left:1px solid #dae2de;padding-left:18px}.totals span,.totals strong{display:block}.totals span{color:#788680;font-size:11px}.totals strong{margin-top:5px;color:#123c36;font-size:20px}.notes textarea{min-height:65px}.draft-error{margin:14px 0 0;color:#a64444;font-size:12px}@media(max-width:700px){.order-draft-backdrop{padding:10px}.line-items{overflow:auto}.line-header,.line-row{min-width:720px}.totals{flex-wrap:wrap}}
+.order-draft-backdrop{z-index:90;display:grid;place-items:center;padding:24px;background:#07191478;backdrop-filter:blur(3px)}.order-draft-modal{width:min(980px,100%);max-height:92vh;overflow:auto}.modal-head h3{margin:0}.modal-head p{margin:4px 0 0;color:#71817b;font-size:var(--text-body)}.draft-hint{margin:0 0 18px;padding:10px 12px;border-radius:8px;background:#eff7f2;color:#49675d;font-size:var(--text-caption)}.lead-time-input{display:flex;align-items:center;gap:6px}.lead-time-input>input{flex:0 0 10ch!important;width:10ch!important;min-width:0}.lead-time-input>span{color:#70817b;font-size:var(--text-body)}.lead-time-input :deep(.segmented-date){flex:1 1 auto;min-width:0}.tail-policy-field{position:relative}.policy-help-trigger{display:inline-grid;place-items:center;width:18px;height:18px;margin-left:4px;border:1px solid #83ab9d;border-radius:50%;background:#f3faf6;color:#26715d;font:700 var(--text-caption)/1 inherit;cursor:pointer}.policy-help-trigger:hover{background:#dff1e8}.policy-help{position:relative;z-index:2;margin-top:8px;padding:10px 12px;border:1px solid #bed8cc;border-radius:8px;background:#f7fcf9;color:#3e5e53;font-size:var(--text-caption);line-height:1.55;box-shadow:0 5px 13px #173f3612}.policy-help strong,.policy-help small{display:block}.policy-help ul{margin:6px 0;padding-left:18px}.policy-help li+li{margin-top:3px}.policy-help small{color:#6c8379}.items-head{display:flex;justify-content:space-between;align-items:center;margin:25px 0 10px;padding-top:21px;border-top:1px solid #e5eae7}.items-head strong,.items-head small{display:block}.items-head small{margin-top:3px;color:#82908b;font-size:var(--text-caption)}.line-items{border:1px solid #e0e6e2;border-radius:10px;overflow:hidden}.line-header,.line-row{display:grid;grid-template-columns:2fr .55fr .7fr .7fr .8fr 34px;gap:8px;align-items:center;padding:8px 10px}.line-header{background:#f5f8f6;color:#7a8984;font-size:var(--text-caption);text-transform:uppercase}.line-row{border-top:1px solid #edf0ee}.line-row select,.line-row input{min-width:0;width:100%;border:1px solid #dce3df;border-radius:7px;padding:8px;font-size:var(--text-body)}.line-row .amount{text-align:right}.remove-line{border:0;background:transparent;color:#b05b5b;display:grid;place-items:center}.remove-line:disabled{opacity:.25}.totals{display:flex;justify-content:flex-end;gap:14px;align-items:end;margin:15px 0 22px}.totals label{color:#778680;font-size:var(--text-body)}.totals input{display:block;width:105px;margin-top:5px;border:1px solid #dce3df;border-radius:7px;padding:8px}.totals div{border-left:1px solid #dae2de;padding-left:18px}.totals span,.totals strong{display:block}.totals span{color:#788680;font-size:var(--text-body)}.totals strong{margin-top:5px;color:#123c36;font-size:var(--text-dialog)}.notes textarea{min-height:65px}.draft-error{margin:14px 0 0;color:#a64444;font-size:var(--text-body)}@media(max-width:700px){.order-draft-backdrop{padding:10px}.line-items{overflow:auto}.line-header,.line-row{min-width:720px}.totals{flex-wrap:wrap}}
+.sku-cell{min-width:0}.sku-cell b,.sku-cell small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sku-cell b{color:#294a41;font-size:var(--text-body)}.sku-cell small{margin-top:3px;color:#81908a;font-size:var(--text-caption)}
+.policy-help{position:absolute;z-index:12;top:48px;left:0;width:min(360px,calc(100vw - 64px));margin:0;box-shadow:0 8px 20px #173f3624}
 </style>

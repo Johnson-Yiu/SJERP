@@ -1,9 +1,10 @@
 @echo off
-setlocal
-cd /d "%~dp0"
+setlocal EnableExtensions
+set "ProjectRoot=%~dp0"
+cd /d "%ProjectRoot%"
 title Senju CRM ERP
 
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "start-main-worktree.ps1"
+powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%ProjectRoot%start-main-worktree.ps1"
 if errorlevel 1 (
     echo.
     echo Startup failed. Review the error above.

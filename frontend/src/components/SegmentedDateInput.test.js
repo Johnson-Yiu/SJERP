@@ -19,3 +19,11 @@ test('date parts remain compact without individual outlines', async () => {
   assert.match(source, /input:not\(\.date-year\):not\(\.native-date-picker\)\{width:2ch!important/)
   assert.doesNotMatch(source, /button\{margin-left:auto/)
 })
+
+test('time parts are grouped into a compact hour-minute control', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /class="time-group"/)
+  assert.match(source, /\.segmented-date \.time-group\{display:flex;align-items:center;gap:0/)
+  assert.doesNotMatch(source, /time-separator/)
+})

@@ -9,6 +9,7 @@ from .models import Quote, QuoteChildRevisionCounter, QuoteNumberSequence, Quote
 
 COUNTRY_ISO_CODES = {
     "australia": "AU",
+    "austria": "AT",
     "brazil": "BR",
     "canada": "CA",
     "china": "CN",
@@ -29,9 +30,27 @@ COUNTRY_ISO_CODES = {
     "united states": "US",
     "united states of america": "US",
     "usa": "US",
+    "澳大利亚": "AU",
+    "奥地利": "AT",
+    "巴西": "BR",
+    "加拿大": "CA",
+    "中国": "CN",
+    "中华人民共和国": "CN",
     "美国": "US",
     "法国": "FR",
+    "德国": "DE",
+    "印度": "IN",
+    "意大利": "IT",
+    "日本": "JP",
+    "墨西哥": "MX",
+    "荷兰": "NL",
+    "新西兰": "NZ",
+    "沙特阿拉伯": "SA",
+    "新加坡": "SG",
+    "韩国": "KR",
+    "西班牙": "ES",
     "阿联酋": "AE",
+    "英国": "GB",
 }
 MAX_REVISION_NO = 99
 

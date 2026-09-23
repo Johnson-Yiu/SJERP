@@ -1,20 +1,20 @@
 export const resourceConfigs = {
   suppliers: {
     title: '供应商管理', eyebrow: 'Supplier directory', endpoint: 'suppliers', key: 'name',
-    description: '维护采购供应商、联系人、付款条款与默认币种。',
-    columns: [['name', '供应商'], ['contact_name', '联系人'], ['phone', '电话'], ['email', '邮箱'], ['currency', '默认币种', 'tag'], ['payment_terms', '付款条款']],
-    fields: [['name', '供应商名称', 'text', true], ['contact_name', '联系人'], ['phone', '电话'], ['email', '邮箱', 'email'], ['currency', '默认币种', 'select', true, { USD: 'USD', CNY: 'CNY', EUR: 'EUR', GBP: 'GBP' }], ['payment_terms', '付款条款'], ['notes', '备注', 'textarea']],
+    description: '维护采购供应商、二字代码、主要产品、联系人与付款条款。',
+    columns: [['name', '供应商'], ['code', '二字代码', 'tag'], ['country', '国家/地区'], ['main_products', '主要产品'], ['supply_category_names', '可供分类', 'labels'], ['contact_name', '联系人'], ['phone', '电话'], ['email', '邮箱'], ['store_url', '店铺链接'], ['payment_terms', '付款条款']],
+    fields: [['name', '供应商名称', 'text', true], ['code', '二字代码', 'text', true], ['country', '国家/地区'], ['main_products', '主要产品'], ['contact_name', '联系人'], ['phone', '电话'], ['email', '邮箱', 'email'], ['store_url', '店铺链接', 'url'], ['payment_terms', '付款条款'], ['supply_categories', '可供产品分类', 'remote_multi', true, 'categories/tree', 'name'], ['notes', '备注', 'textarea']],
     detail: true,
   },
   customers: {
     title: '客户管理', eyebrow: 'Customer portfolio', endpoint: 'customers', key: 'name',
     description: '集中维护客户画像、归属、状态和下一步跟进计划。',
     columns: [
-      ['code', '客户编号'], ['name', '客户名称'], ['country', '国家/地区'], ['status', '状态', 'status'],
+      ['code', '客户编号'], ['name', '客户名称'], ['country', '国家/地区'], ['region', '业务区域'], ['status', '状态', 'status'],
       ['owner', '负责人'], ['order_count', '订单数', 'number'], ['sales_amount', '累计销售额', 'rmb'], ['next_follow_up', '下次跟进', 'date'],
     ],
     fields: [
-      ['code', '客户编号', 'readonly', true], ['name', '客户名称', 'text', true], ['country', '国家/地区'], ['source', '客户来源', 'combo', false, 'customers/sources'],
+      ['code', '客户编号', 'readonly', true], ['name', '客户名称', 'text', true], ['country', '国家/地区'], ['region', '业务区域'], ['source', '客户来源', 'combo', false, 'customers/sources'],
       ['status', '客户状态', 'select', true, {
         lead: '线索：开发中，未建立联系',
         contact: '联系人：有联系，未询价',
@@ -74,7 +74,7 @@ export const resourceConfigs = {
     fields: [
       ['transaction_no', '流水号', 'text', true], ['transaction_date', '发生日期', 'date', true], ['direction', '收支方向', 'select', true, { income: '收入', expense: '支出' }],
       ['category', '收支分类', 'text', true], ['amount', '金额', 'number', true], ['currency', '币种', 'select', true, { USD: 'USD', CNY: 'CNY', EUR: 'EUR', GBP: 'GBP' }], ['exchange_rate', '对人民币汇率', 'number', true],
-      ['customer', '关联客户', 'remote', false, 'customers', 'name'], ['order', '关联订单', 'remote', false, 'orders', 'order_no'], ['payment_method', '支付方式'], ['reference', '外部参考号'], ['notes', '备注', 'textarea'],
+      ['customer', '关联客户', 'remote', false, 'customers', 'name'], ['supplier', '关联供应商', 'remote', false, 'suppliers', 'name'], ['order', '关联订单', 'remote', false, 'orders', 'order_no'], ['purchase_order', '关联采购单', 'remote', false, 'purchase-orders', 'purchase_no'], ['payment_method', '支付方式'], ['reference', '外部参考号'], ['notes', '备注', 'textarea'],
     ],
     detail: true,
   },
@@ -88,10 +88,10 @@ export const resourceConfigs = {
   'inventory-movements': {
     title: '库存流水', eyebrow: 'Inventory ledger', endpoint: 'inventory-movements', key: 'movement_no',
     description: '按 SKU 记录真实出入库，自动形成当前库存。',
-    columns: [['movement_date', '日期', 'date'], ['movement_no', '流水号'], ['type_display', '类型', 'tag'], ['sku_code', 'SKU'], ['product_name', '产品'], ['signed_quantity', '库存变动', 'signed'], ['warehouse', '仓库'], ['order_no', '关联订单']],
+    columns: [['movement_date', '日期', 'date'], ['movement_no', '流水号'], ['type_display', '类型', 'tag'], ['sku_code', 'SKU'], ['product_name', '产品'], ['signed_quantity', '库存变动', 'signed'], ['warehouse', '仓库'], ['related_order_nos', '关联订单']],
     fields: [
-      ['movement_no', '流水号', 'text', true], ['movement_date', '发生日期', 'date', true],
-      ['type', '类型', 'select', true, { purchase_in: '采购入库', sale_out: '销售出库', adjust_in: '盘盈入库', adjust_out: '盘亏出库', sample_out: '样品出库', return_in: '客户退回' }],
+      ['movement_no', '流水号', 'readonly'], ['movement_date', '发生日期', 'date', true],
+      ['type', '类型', 'select', true, { purchase_in: '采购入库', return_in: '客户退回', adjust_in: '盘盈入库', transfer_in: '调拨入库', production_in: '生产入库', other_in: '其他入库', sale_out: '销售出库', sample_out: '样品出库', adjust_out: '盘亏出库', transfer_out: '调拨出库', production_out: '生产领料', other_out: '其他出库' }],
       ['sku', 'SKU', 'remote', true, 'skus', 'sku'], ['order', '关联订单', 'remote', false, 'orders', 'order_no'], ['quantity', '数量', 'number', true],
       ['warehouse', '仓库'], ['unit_cost', '单位成本', 'number'], ['reference', '参考号'], ['notes', '备注', 'textarea'],
     ], detail: true,

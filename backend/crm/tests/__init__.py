@@ -138,8 +138,60 @@ class BusinessFlowTests(APITestCase):
         self.assertIn(["content", "跟进记录 / 解决方案", "excerpt"], followup_section["columns"])
         self.assertIn(["result", "客户回复 / 客户疑问", "excerpt"], followup_section["columns"])
 
+    def test_manual_inventory_batch_creates_auto_numbered_movements_with_optional_orders(self):
+        second_sku = SKU.objects.create(product=self.product, sku="T-SKU-002")
+        order = Order.objects.create(order_no="T-SO-INVENTORY", customer=self.customer, order_date=date.today())
+        order.items.create(sku=self.sku, quantity=2, unit_price=1)
+        order.items.create(sku=second_sku, quantity=2, unit_price=1)
+
+        response = self.client.post("/api/inventory-movements/batch/", {
+            "movement_date": str(date.today()),
+            "type": "adjust_in",
+            "related_orders": [order.id],
+            "items": [
+                {"sku": self.sku.id, "quantity": "2", "warehouse": "成品仓", "reference": "盘点"},
+                {"sku": second_sku.id, "quantity": "3", "warehouse": "成品仓", "notes": "补录"},
+            ],
+        }, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(len(response.data), 2)
+        self.assertTrue(all(row["movement_no"].startswith("IM-") for row in response.data))
+        self.assertTrue(all(row["related_order_nos"] == [order.order_no] for row in response.data))
+        self.assertEqual(InventoryMovement.objects.filter(related_orders=order).count(), 2)
+
+    def test_contact_context_shows_company_info_and_orders_related_tabs(self):
+        contact = Contact.objects.create(customer=self.customer, name="Context Contact", title="采购负责人")
+
+        response = self.client.get(f"/api/context/contacts/{contact.id}/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual([section["key"] for section in response.data["sections"]], ["followups", "company"])
+        self.assertIn(["关联企业", self.customer.name], response.data["info"])
+        company = next(section for section in response.data["sections"] if section["key"] == "company")
+        self.assertEqual(company["rows"][0]["name"], self.customer.name)
+
+    def test_transaction_created_from_purchase_order_inherits_supplier(self):
+        supplier = Supplier.objects.create(name="Inherited Supplier", code="IS")
+        order = Order.objects.create(order_no="T-SO-INHERIT", customer=self.customer, order_date=date.today())
+        purchase = PurchaseOrder.objects.create(purchase_no="T-PO-INHERIT", supplier=supplier, order=order, order_date=date.today(), currency="CNY")
+
+        response = self.client.post("/api/transactions/", {
+            "transaction_no": "T-TX-INHERIT",
+            "transaction_date": str(date.today()),
+            "direction": "expense",
+            "category": "供应商付款",
+            "amount": "100",
+            "currency": "CNY",
+            "exchange_rate": "1",
+            "purchase_order": purchase.id,
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        transaction = Transaction.objects.get(transaction_no="T-TX-INHERIT")
+        self.assertEqual(transaction.purchase_order_id, purchase.id)
+        self.assertEqual(transaction.supplier_id, supplier.id)
+
     def test_supplier_and_purchase_order_context(self):
-        supplier = Supplier.objects.create(name="Test Supplier", contact_name="Ming", currency="CNY")
+        supplier = Supplier.objects.create(name="Test Supplier", code="TS", contact_name="Ming")
         supplier.products.add(self.product)
         order = Order.objects.create(order_no="T-SO-SUPPLIER", customer=self.customer, order_date=date.today(), exchange_rate=7.2)
         purchase = PurchaseOrder.objects.create(purchase_no="T-PO-001", supplier=supplier, order=order, order_date=date.today(), currency="CNY", exchange_rate=1)
@@ -177,6 +229,29 @@ class BusinessFlowTests(APITestCase):
 
         sources = self.client.get("/api/customers/sources/")
         self.assertIn({"value": "展会", "label": "展会"}, sources.data)
+
+    def test_customer_contact_requires_only_name(self):
+        response = self.client.post("/api/customers/", {
+            "name": "Minimal Contact Buyer",
+            "status": "lead",
+            "contacts": [{"name": "Only Required Value"}],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        contact = Customer.objects.get(name="Minimal Contact Buyer").contacts.get()
+        self.assertEqual(contact.name, "Only Required Value")
+        self.assertEqual(contact.title, "")
+        self.assertEqual(contact.email, "")
+        self.assertEqual(contact.phone, "")
+        self.assertEqual(contact.whatsapp, "")
+        self.assertEqual(contact.notes, "")
+
+        response = self.client.post("/api/customers/", {
+            "name": "Missing Contact Name Buyer",
+            "status": "lead",
+            "contacts": [{"phone": "+86 13800000000"}],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("name", response.data["contacts"][0])
 
     def test_customer_code_carries_from_9999_to_a000_and_first_contact_is_primary(self):
         CustomerCodeSequence.objects.create(pk=1, last_value=9998)
@@ -264,3 +339,22 @@ class BusinessFlowTests(APITestCase):
             {"value": "WhatsApp视频", "label": "WhatsApp视频"},
             methods.data,
         )
+
+    def test_follow_up_attachments_upload_and_context(self):
+        follow_up = FollowUp.objects.create(
+            customer=self.customer,
+            followed_at="2026-08-07T10:00:00+08:00",
+            type="email",
+            content="沟通记录",
+            owner="Johnson",
+        )
+        upload = SimpleUploadedFile("沟通纪要.txt", "沟通附件".encode("utf-8"), content_type="text/plain")
+        response = self.client.post(f"/api/follow-ups/{follow_up.id}/attachments/", {"files": [upload]}, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.data[0]["name"], "沟通纪要.txt")
+        detail = self.client.get(f"/api/follow-ups/{follow_up.id}/")
+        self.assertEqual(detail.status_code, status.HTTP_200_OK)
+        self.assertEqual(detail.data["attachments"][0]["size"], len("沟通附件".encode("utf-8")))
+        context = self.client.get(f"/api/context/follow-ups/{follow_up.id}/")
+        self.assertEqual(context.status_code, status.HTTP_200_OK)
+        self.assertEqual(context.data["attachments"][0]["name"], "沟通纪要.txt")

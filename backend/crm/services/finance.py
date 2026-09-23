@@ -1,11 +1,22 @@
 from datetime import date
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from uuid import uuid4
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
-from crm.models import ContractChangeRequest, PaymentPlan, Transaction
+from django.utils import timezone
+from crm.models import AdvanceAllocation, ContractChangeRequest, PaymentPlan, Transaction
+
+
+def positive_decimal(value, label):
+    try:
+        number = Decimal(str(value))
+        if not number.is_finite() or number <= 0:
+            raise ValueError
+        return number
+    except (InvalidOperation, ValueError, TypeError):
+        raise ValidationError(f"{label}必须是大于零的有效数字。")
 
 
 def _transaction_no(prefix="FIN"):
@@ -17,8 +28,16 @@ def _contract_amount(contract):
 
 
 @transaction.atomic
-def ensure_default_payment_plans(contract, deposit_ratio=Decimal("0.30")):
+def ensure_default_payment_plans(contract, deposit_ratio=None):
+    contract = contract.__class__.objects.select_for_update().get(pk=contract.pk)
+    if contract.status in {"draft", "cancelled"}:
+        return []
     is_order = contract.__class__.__name__ == "Order"
+    if deposit_ratio is None:
+        deposit_ratio = contract.quote.deposit_ratio if is_order and contract.quote_id else Decimal("0.30")
+    deposit_ratio = Decimal(str(deposit_ratio))
+    if not Decimal("0") <= deposit_ratio <= Decimal("1"):
+        raise ValidationError("定金比例必须在 0 到 1 之间。")
     relation = {"order": contract} if is_order else {"purchase_order": contract}
     direction = "receivable" if is_order else "payable"
     if PaymentPlan.objects.filter(**relation).exists():
@@ -26,12 +45,13 @@ def ensure_default_payment_plans(contract, deposit_ratio=Decimal("0.30")):
     total = _contract_amount(contract)
     if total <= 0:
         return []
-    deposit = (total * Decimal(str(deposit_ratio))).quantize(Decimal("0.01"))
+    deposit = (total * Decimal(str(deposit_ratio))).quantize(Decimal("0.0001"))
     balance = total - deposit
-    rows = [
-        PaymentPlan.objects.create(**relation, direction=direction, currency=contract.currency, due_date=contract.order_date, planned_amount=deposit, notes="默认预付款/定金"),
-        PaymentPlan.objects.create(**relation, direction=direction, currency=contract.currency, due_date=contract.expected_ship_date if is_order else contract.expected_arrival_date, planned_amount=balance, notes="默认尾款"),
-    ]
+    rows = [PaymentPlan.objects.create(**relation, direction=direction, currency=contract.currency,
+        due_date=due_date, planned_amount=amount, notes=notes)
+        for amount, due_date, notes in [(deposit, contract.order_date, "默认预付款/定金"),
+            (balance, contract.expected_ship_date if is_order else contract.expected_arrival_date, "默认尾款")]
+        if amount > 0]
     return rows
 
 
@@ -39,9 +59,11 @@ def ensure_default_payment_plans(contract, deposit_ratio=Decimal("0.30")):
 def record_transaction(payload):
     payload = payload.copy()
     plan = payload.pop("plan", None)
-    amount = Decimal(str(payload.pop("amount")))
+    amount = positive_decimal(payload.pop("amount", None), "收付款金额")
     # Transaction status is controlled by this service; callers cannot override it.
     payload.pop("status", None)
+    payload.pop("allocated_amount", None)
+    payload.pop("rmb_amount", None)
     if amount <= 0:
         raise ValidationError("收付款金额必须大于零。")
     if plan:
@@ -50,7 +72,23 @@ def record_transaction(payload):
             raise ValidationError("只能核销待结清的收付款计划。")
         if payload.get("currency", plan.currency) != plan.currency:
             raise ValidationError("实际收付款币种必须与计划原币一致。")
+        contract = plan.order or plan.purchase_order
+        if contract.status in {"draft", "cancelled"}:
+            raise ValidationError("草稿或已取消合同不能登记收付款。")
+        expected = {"order": plan.order, "purchase_order": plan.purchase_order,
+            "customer": plan.order.customer if plan.order_id else None,
+            "supplier": plan.purchase_order.supplier if plan.purchase_order_id else None,
+            "direction": "income" if plan.order_id else "expense",
+            "kind": "customer_receipt" if plan.order_id else "supplier_payment"}
+        for key, value in expected.items():
+            if payload.get(key) is not None and payload[key] != value:
+                raise ValidationError("收付款方向、往来方及合同必须与核销计划一致。")
+        payload.update(expected)
+        payload["currency"] = plan.currency
+        payload.setdefault("exchange_rate", contract.exchange_rate)
         remaining = plan.remaining_amount
+        if remaining <= 0:
+            raise ValidationError("该计划已无待结余额，请核对计划状态。")
         applied_amount = min(amount, remaining)
         if plan.order_id:
             payload.setdefault("order", plan.order)
@@ -64,11 +102,21 @@ def record_transaction(payload):
             payload.setdefault("kind", "supplier_payment")
     else:
         applied_amount = amount
-    exchange_rate = Decimal(str(payload.get("exchange_rate", 1)))
-    payload.setdefault("rmb_amount", (applied_amount * exchange_rate).quantize(Decimal("0.01")))
+        order, purchase = payload.get("order"), payload.get("purchase_order")
+        kind = payload.get("kind", "other")
+        if kind in {"customer_receipt", "supplier_payment"}:
+            contract = order if kind == "customer_receipt" else purchase
+            if not contract:
+                raise ValidationError("客户收款必须关联销售订单，供应商付款必须关联采购单。")
+            return record_contract_payment(contract, payload)
+    exchange_rate = positive_decimal(payload.get("exchange_rate", 1), "汇率")
+    if payload.get("currency") == "CNY" and exchange_rate != 1:
+        raise ValidationError("人民币流水汇率必须为 1。")
+    payload["exchange_rate"] = exchange_rate
+    payload.setdefault("rmb_amount", (applied_amount * exchange_rate).quantize(Decimal("0.0001")))
     row = Transaction.objects.create(
         transaction_no=payload.pop("transaction_no", None) or _transaction_no(),
-        transaction_date=payload.pop("transaction_date", None) or date.today(),
+        transaction_date=payload.pop("transaction_date", None) or timezone.localdate(),
         amount=applied_amount,
         status="confirmed",
         plan=plan,
@@ -84,9 +132,10 @@ def record_transaction(payload):
                 transaction_no=_transaction_no("ADV"), transaction_date=row.transaction_date,
                 direction=row.direction, kind="unallocated_advance", category="未分配预收预付",
                 amount=excess, currency=row.currency, exchange_rate=exchange_rate,
-                rmb_amount=(excess * exchange_rate).quantize(Decimal("0.01")),
+                rmb_amount=(excess * exchange_rate).quantize(Decimal("0.0001")),
                 customer=row.customer, supplier=row.supplier, status="confirmed",
                 reference=row.transaction_no, notes="由合同计划超额收付款自动拆分",
+                split_from=row, payment_method=row.payment_method,
             )
     return row
 
@@ -96,13 +145,26 @@ def void_transaction(row):
     row = Transaction.objects.select_for_update().select_related("plan").get(pk=row.pk)
     if row.status != "confirmed":
         raise ValidationError("只有已确认流水可以作废。")
+    for child in row.split_rows.filter(status="confirmed").order_by("pk"):
+        void_transaction(child)
+    allocations = list(row.allocations.filter(is_active=True).order_by("plan_id"))
+    if row.allocated_amount != sum((allocation.amount for allocation in allocations), Decimal("0")):
+        raise ValidationError("该历史预收预付缺少核销明细，请先人工核对，不能直接作废。")
+    for allocation in allocations:
+        target = PaymentPlan.objects.select_for_update().get(pk=allocation.plan_id)
+        target.settled_amount -= allocation.amount
+        target.status = "open"
+        target.save(update_fields=["settled_amount", "status", "updated_at"])
+        allocation.is_active = False
+        allocation.save(update_fields=["is_active", "updated_at"])
     if row.plan_id:
         plan = PaymentPlan.objects.select_for_update().get(pk=row.plan_id)
         plan.settled_amount -= row.amount
         plan.status = "open"
         plan.save(update_fields=["settled_amount", "status", "updated_at"])
     row.status = "cancelled"
-    row.save(update_fields=["status", "updated_at"])
+    row.allocated_amount = 0
+    row.save(update_fields=["status", "allocated_amount", "updated_at"])
     return row
 
 
@@ -110,9 +172,13 @@ def void_transaction(row):
 def allocate_advance(advance, plan, amount):
     advance = Transaction.objects.select_for_update().get(pk=advance.pk)
     plan = PaymentPlan.objects.select_for_update().select_related("order__customer", "purchase_order__supplier").get(pk=plan.pk)
-    amount = Decimal(str(amount))
-    if advance.kind != "unallocated_advance" or advance.status != "confirmed":
+    amount = positive_decimal(amount, "分配金额")
+    if advance.kind not in {"unallocated_advance", "unallocated_payment"} or advance.status != "confirmed":
         raise ValidationError("只能分配已确认的未分配预收预付。")
+    if plan.status != "open" or (plan.order or plan.purchase_order).status in {"draft", "cancelled"}:
+        raise ValidationError("只能分配到有效合同的待结清计划。")
+    if advance.direction != ("income" if plan.order_id else "expense"):
+        raise ValidationError("预收预付方向与计划不匹配。")
     if amount <= 0 or amount > advance.amount - advance.allocated_amount:
         raise ValidationError("分配金额不能超过未分配余额。")
     if amount > plan.remaining_amount or advance.currency != plan.currency:
@@ -126,7 +192,40 @@ def allocate_advance(advance, plan, amount):
     plan.settled_amount += amount
     plan.status = "settled" if plan.settled_amount == plan.planned_amount else "open"
     plan.save(update_fields=["settled_amount", "status", "updated_at"])
+    AdvanceAllocation.objects.create(advance=advance, plan=plan, amount=amount)
     return plan
+
+
+@transaction.atomic
+def record_contract_payment(contract, payload):
+    """One cash event may settle several installments; only true excess becomes an advance."""
+    contract = contract.__class__.objects.select_for_update().get(pk=contract.pk)
+    if contract.status in {"draft", "cancelled"}:
+        raise ValidationError("草稿或已取消合同不能登记收付款。")
+    amount = positive_decimal(payload.get("amount"), "收付款金额")
+    if payload.get("currency", contract.currency) != contract.currency:
+        raise ValidationError("收付款币种必须与合同一致。")
+    ensure_default_payment_plans(contract)
+    plans = list(contract.payment_plans.select_for_update().filter(status="open").order_by("due_date", "pk"))
+    if not plans:
+        raise ValidationError("合同已结清；额外款项请登记为未分配预收预付。")
+    first = None
+    remaining = amount
+    for index, plan in enumerate(plans):
+        applied = remaining if index == len(plans) - 1 else min(remaining, plan.remaining_amount)
+        if applied <= 0:
+            continue
+        data = {**payload, "amount": applied, "plan": plan, "currency": contract.currency}
+        data.setdefault("exchange_rate", contract.exchange_rate)
+        if first:
+            data.pop("transaction_no", None)
+            data["split_from"] = first
+        row = record_transaction(data)
+        first = first or row
+        remaining -= applied
+        if remaining <= 0:
+            break
+    return first
 
 
 @transaction.atomic
@@ -135,6 +234,8 @@ def approve_contract_change(change):
     if change.status != "pending":
         raise ValidationError("只有待确认变更单可以确认。")
     contract = change.order or change.purchase_order
+    if contract is None or change.amount_delta <= 0 or contract.status in {"draft", "cancelled"}:
+        raise ValidationError("只有有效合同的正数增补可以确认。")
     plan = PaymentPlan.objects.create(
         order=change.order,
         purchase_order=change.purchase_order,

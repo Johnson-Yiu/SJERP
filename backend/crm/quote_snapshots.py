@@ -18,12 +18,20 @@ def _copy_sku_image(item, sku_image):
 
 def create_quote_items(quote, item_rows, source_items=None):
     """Create quote lines with immutable commercial/internal display snapshots."""
+    from .sales_rules import check_rows
+    item_rows = list(item_rows)
+    checks = check_rows(quote.quote_date, item_rows, enforce=True)
     sources = list(source_items or [])
     created = []
     for index, row in enumerate(item_rows):
         values = dict(row)
         sku = values["sku"]
         source = sources[index] if index < len(sources) else None
+        if source is not None and source.sku_id != sku.pk:
+            source = None
+        if not sku.active and (source is None or source.sku_id != sku.pk):
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError({"sku": "新报价行不能选择停用或已归档的 SKU。"})
         manual_sales_model = values.pop("sales_model_snapshot", None)
         if source is None:
             snapshots = {
@@ -43,6 +51,7 @@ def create_quote_items(quote, item_rows, source_items=None):
             snapshots["sales_model_snapshot"] = manual_sales_model
         if not values.get("description") and source is None:
             values["description"] = sku.description_en or sku.description_cn or snapshots["product_name_snapshot"]
+        snapshots["sales_rules_snapshot"] = checks[index]["rules"]
         item = QuoteItem(quote=quote, **values, **snapshots)
         if source is not None and source.image_snapshot:
             item.image_snapshot.name = source.image_snapshot.name

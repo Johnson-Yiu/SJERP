@@ -2,9 +2,17 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .context import entity_context
-from .views import AccessRoleViewSet, CategoryAttributeViewSet, ContactViewSet, ContractChangeRequestViewSet, CustomerViewSet, EmployeeProfileViewSet, FollowUpViewSet, InventoryMovementViewSet, OrderViewSet, OrganizationUnitViewSet, PackagingTemplateViewSet, PaymentPlanViewSet, PositionViewSet, ProductCategoryViewSet, ProductCertificateViewSet, ProductParameterViewSet, ProductViewSet, PurchaseOrderViewSet, QuoteViewSet, RolePermissionViewSet, ShipmentViewSet, SKUPackagingProfileViewSet, SKUViewSet, SupplierViewSet, TransactionViewSet, current_operator, dashboard, finance_dashboard, import_csv, import_templates, organization_overview
+from .sku_management import ProductCombinationRulesView, SupplierCapabilityViewSet, SupplierCandidatesView, ProductSKUPlanView, ProductSKUPlanActionView, ProductSupplierCandidatePoolView, OrderItemSupplierAllocationView
+from .views import AccessRoleViewSet, CategoryAttributeViewSet, ContactViewSet, ContractChangeRequestViewSet, CustomerViewSet, EmployeeProfileViewSet, FollowUpViewSet, HSCodeViewSet, InventoryMovementViewSet, OperationLogViewSet, OrderViewSet, OrganizationUnitViewSet, PackagingTemplateViewSet, PaymentPlanViewSet, PositionViewSet, ProductCategoryViewSet, ProductCertificateViewSet, ProductParameterViewSet, ProductViewSet, PurchaseOrderViewSet, QuoteViewSet, RolePermissionViewSet, ShipmentViewSet, SKUPackagingProfileViewSet, SKUViewSet, SupplierSKUViewSet, SupplierViewSet, TransactionViewSet, current_operator, dashboard, finance_dashboard, import_csv, import_templates, organization_overview, usd_cny_reference_rate
+
+from .sales_rules import SalesRuleViewSet
+
+from .trade_units import SKUTradeUnitViewSet
 
 router = DefaultRouter()
+router.register("sku-trade-units", SKUTradeUnitViewSet)
+router.register("sales-rules", SalesRuleViewSet, basename="sales-rule")
+router.register("supplier-capabilities", SupplierCapabilityViewSet, basename="supplier-capability")
 router.register("customers", CustomerViewSet, basename="customer")
 router.register("suppliers", SupplierViewSet, basename="supplier")
 router.register("purchase-orders", PurchaseOrderViewSet, basename="purchase-order")
@@ -13,7 +21,9 @@ router.register("follow-ups", FollowUpViewSet)
 router.register("categories", ProductCategoryViewSet)
 router.register("category-attributes", CategoryAttributeViewSet)
 router.register("products", ProductViewSet)
+router.register("hs-codes", HSCodeViewSet, basename="hs-code")
 router.register("skus", SKUViewSet)
+router.register("supplier-skus", SupplierSKUViewSet, basename="supplier-sku")
 router.register("packaging-templates", PackagingTemplateViewSet)
 router.register("sku-packaging-profiles", SKUPackagingProfileViewSet)
 router.register("shipments", ShipmentViewSet)
@@ -30,12 +40,24 @@ router.register("positions", PositionViewSet)
 router.register("access-roles", AccessRoleViewSet)
 router.register("role-permissions", RolePermissionViewSet)
 router.register("employees", EmployeeProfileViewSet)
+router.register("operation-logs", OperationLogViewSet, basename="operation-log")
+
+from .reporting import report_catalog, report_data
 
 urlpatterns = [
+    path("products/<int:pk>/combination-rules/", ProductCombinationRulesView.as_view()),
+    path("products/<int:pk>/sku-plan/", ProductSKUPlanView.as_view()),
+    path("products/<int:pk>/sku-plan/<str:operation>/", ProductSKUPlanActionView.as_view()),
+    path("products/<int:pk>/supplier-candidate-pool/", ProductSupplierCandidatePoolView.as_view()),
+    path("skus/<int:pk>/supplier-candidates/", SupplierCandidatesView.as_view()),
+    path("orders/<int:order_id>/items/<int:item_id>/supplier-allocation/", OrderItemSupplierAllocationView.as_view()),
+    path("reports/catalog/", report_catalog),
+    path("reports/data/", report_data),
     path("dashboard/", dashboard),
     path("finance-dashboard/", finance_dashboard),
     path("organization/overview/", organization_overview),
     path("session/current-operator/", current_operator),
+    path("exchange-rates/usd-cny/", usd_cny_reference_rate),
     path("context/<str:entity>/<int:pk>/", entity_context),
     path("import/templates/", import_templates),
     path("import/csv/", import_csv),

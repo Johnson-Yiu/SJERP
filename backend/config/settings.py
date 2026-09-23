@@ -7,8 +7,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-change-me")
 DEBUG = os.getenv("DJANGO_DEBUG", "true").lower() == "true"
+# Development operators share full application access. Never infer this from a role label.
+APP_STAGE = os.getenv("APP_STAGE", "development" if DEBUG else "production")
+DEVELOPMENT_SUPERADMIN = os.getenv("DEVELOPMENT_SUPERADMIN", "true").lower() == "true"
 RBAC_ENFORCEMENT = os.getenv("RBAC_ENFORCEMENT", "false").lower() == "true"
 DEFAULT_OPERATOR_NAME = os.getenv("DEFAULT_OPERATOR_NAME", "Johnson")
+# Audit records stay disabled during local development. Turn this on explicitly
+# in the closed-beta environment after real user authentication is available.
+AUDIT_LOG_ENABLED = os.getenv("AUDIT_LOG_ENABLED", "false").lower() in {"1", "true", "yes", "on"}
 ALLOWED_HOSTS = [host.strip() for host in os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",")]
 
 INSTALLED_APPS = [

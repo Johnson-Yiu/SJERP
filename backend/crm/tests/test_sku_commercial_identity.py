@@ -3,9 +3,10 @@ from datetime import date
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from crm.models import CategoryAttribute, Contact, Customer, Order, Product, ProductCategory, Quote, SKU
+from crm.models import CategoryAttribute, Contact, Customer, InventoryMovement, Order, Product, ProductCategory, PurchaseOrder, PurchaseOrderItem, Quote, SKU, SKUVersion, Supplier
 
 
 class SkuCommercialIdentityTests(TestCase):
@@ -33,6 +34,23 @@ class SkuCommercialIdentityTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         return SKU.objects.get(pk=response.data["id"]), response
 
+    def test_sku_category_names_include_full_hierarchy(self):
+        root = ProductCategory.objects.create(name="灯具")
+        branch = ProductCategory.objects.create(name="户外灯", parent=root)
+        leaf = ProductCategory.objects.create(name="投光灯", parent=branch)
+        product = Product.objects.create(
+            code="P-CATEGORY-PATH",
+            name="投光灯产品",
+            sales_model_prefix="FLOOD",
+            category=leaf,
+        )
+        sku = SKU.objects.create(sku="SKU-CATEGORY-PATH", product=product, sales_model="FLOOD-1")
+
+        response = self.client.get(f"/api/skus/{sku.id}/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.data["category_names"], ["灯具 / 户外灯 / 投光灯"])
+
     def test_new_sku_gets_separate_id_display_and_commercial_fields(self):
         sku, response = self.create_sku()
 
@@ -51,20 +69,51 @@ class SkuCommercialIdentityTests(TestCase):
 
         sku, response = self.create_sku(sales_model=None, sales_model_abbreviations={f"{self.product.category_id}:voltage:24": "6K"})
 
-        self.assertEqual(sku.sales_model, "COB320-6K-1")
-        self.assertEqual(response.data["sales_model"], "COB320-6K-1")
+        self.assertEqual(sku.sales_model, "COB320-6K")
+        self.assertEqual(response.data["sales_model"], "COB320-6K")
 
-    def test_generated_sales_model_increments_when_the_abbreviation_is_repeated(self):
+    def test_required_category_attribute_is_enforced_for_create_and_update(self):
+        attribute = CategoryAttribute.objects.get(key="voltage")
+        attribute.required = True
+        attribute.save(update_fields=["required"])
+
+        response = self.client.post(
+            "/api/skus/",
+            {
+                "product": self.product.id,
+                "parameter_values": {"width": "8"},
+                "unit": "reel",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertIn("parameter_values", response.data)
+
+        sku, _ = self.create_sku()
+        response = self.client.patch(
+            f"/api/skus/{sku.id}/",
+            {
+                "parameter_values": {"width": "8"},
+                "identity_change_confirmed": True,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertIn("parameter_values", response.data)
+
+    def test_generated_sales_model_rejects_collision_when_the_abbreviation_is_repeated(self):
         attribute = CategoryAttribute.objects.get(key="voltage")
         attribute.include_in_sales_model = True
         attribute.save(update_fields=["include_in_sales_model"])
         payload = {"sales_model": None, "sales_model_abbreviations": {f"{self.product.category_id}:voltage:24": "6K"}}
 
         first, _ = self.create_sku(**payload)
-        second, _ = self.create_sku(**payload)
+        second = self.client.post("/api/skus/", {**payload, "product": self.product.pk, "parameter_values": {"voltage": "24", "width": "10"}, "specification": "24V / 10mm"}, format="json")
 
-        self.assertEqual(first.sales_model, "COB320-6K-1")
-        self.assertEqual(second.sales_model, "COB320-6K-2")
+        self.assertEqual(first.sales_model, "COB320-6K")
+        self.assertEqual(second.status_code, status.HTTP_400_BAD_REQUEST, second.data)
+        self.assertIn("duplicate_sku", second.data)
+        self.assertEqual(SKU.objects.filter(product=self.product).count(), 1)
 
     def test_same_category_abbreviation_suggestions_are_reused_across_products(self):
         attribute = CategoryAttribute.objects.get(key="voltage")
@@ -86,10 +135,11 @@ class SkuCommercialIdentityTests(TestCase):
         self.assertFalse({"length", "width", "height"}.intersection(sku.product_details[0]))
         self.assertEqual(sku.product_details[0]["unit_weight"], 0.2)
 
-    def test_parameter_change_regenerates_display_name_but_not_internal_or_sales_identity(self):
-        sku, created = self.create_sku()
+    def test_parameter_change_requires_confirmation_and_keeps_existing_name(self):
+        sku, _ = self.create_sku()
         original_code = sku.sku
         original_model = sku.sales_model
+        original_name = sku.display_name_cn
 
         response = self.client.patch(
             f"/api/skus/{sku.id}/",
@@ -97,11 +147,158 @@ class SkuCommercialIdentityTests(TestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         sku.refresh_from_db()
         self.assertEqual(sku.sku, original_code)
         self.assertEqual(sku.sales_model, original_model)
-        self.assertIn("10mm", sku.display_name_cn)
+        self.assertEqual(sku.display_name_cn, original_name)
+
+    def test_confirmed_parameter_change_refreshes_the_existing_sku(self):
+        sku, _ = self.create_sku()
+        original_name = sku.display_name_cn
+        original_signature = sku.identity_signature
+
+        response = self.client.patch(
+            f"/api/skus/{sku.id}/",
+            {
+                "parameter_values": {"voltage": "24", "width": "10"},
+                "specification": "24V / 10mm",
+                "identity_change_confirmed": True,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        sku.refresh_from_db()
+        self.assertNotEqual(sku.display_name_cn, original_name)
+        self.assertNotEqual(sku.identity_signature, original_signature)
+        version = SKUVersion.objects.get(sku=sku)
+        self.assertEqual(version.display_name_cn_snapshot, original_name)
+        self.assertEqual(version.sales_model_snapshot, "CB8-24-A1")
+        self.assertIn("parameter_values", version.changed_fields)
+
+    def test_parameter_change_refreshes_sales_model_and_preserves_quote_snapshot(self):
+        voltage = CategoryAttribute.objects.get(key="voltage")
+        voltage.include_in_sales_model = True
+        voltage.save(update_fields=["include_in_sales_model"])
+        sku, _ = self.create_sku(sales_model=None)
+        original_code = sku.sku
+        original_name = sku.display_name_cn
+        original_model = sku.sales_model
+        quote_response = self.client.post(
+            "/api/quotes/",
+            {"customer": self.customer.id, "quote_date": "2026-08-23", "items": [{"sku": sku.id, "quantity": "1", "unit_price": "10"}]},
+            format="json",
+        )
+        self.assertEqual(quote_response.status_code, status.HTTP_201_CREATED, quote_response.data)
+
+        response = self.client.patch(
+            f"/api/skus/{sku.id}/",
+            {"parameter_values": {"voltage": "12", "width": "8"}, "specification": "12V / 8mm", "identity_change_confirmed": True},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        sku.refresh_from_db()
+        self.assertEqual(sku.sku, original_code)
+        self.assertNotEqual(sku.display_name_cn, original_name)
+        self.assertNotEqual(sku.sales_model, original_model)
+        self.assertEqual(sku.sales_model, "COB320-12V")
+        version = SKUVersion.objects.get(sku=sku)
+        self.assertEqual(version.display_name_cn_snapshot, original_name)
+        self.assertEqual(version.sales_model_snapshot, original_model)
+        item = Quote.objects.get(pk=quote_response.data["id"]).items.get()
+        self.assertEqual(item.product_name_snapshot, original_name)
+        self.assertEqual(item.sales_model_snapshot, original_model)
+
+    def test_attribute_rename_keeps_identity_signature_stable(self):
+        sku, _ = self.create_sku()
+        original_signature = sku.identity_signature
+
+        attribute = CategoryAttribute.objects.get(key="voltage")
+        attribute.name = "输入电压"
+        attribute.save()
+
+        response = self.client.patch(
+            f"/api/skus/{sku.id}/",
+            {"parameter_values": {"voltage": "24", "width": "8"}},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        sku.refresh_from_db()
+        self.assertEqual(sku.identity_signature, original_signature)
+
+    def test_abbreviation_lookup_is_case_insensitive_and_persisted_canonically(self):
+        attribute = CategoryAttribute.objects.get(key="voltage")
+        attribute.include_in_sales_model = True
+        attribute.save()
+
+        sku, _ = self.create_sku(
+            sales_model=None,
+            parameter_values={"voltage": "White", "width": "8"},
+            sales_model_abbreviations={f"{self.product.category_id}:Voltage: white": "cw"},
+        )
+
+        self.assertEqual(sku.sales_model, "COB320-CW")
+        self.assertEqual(sku.sales_model_abbreviations, {f"{self.product.category_id}:voltage:white": "CW"})
+
+    def test_category_attribute_reorder_refreshes_identity_after_preview_confirmation(self):
+        voltage = CategoryAttribute.objects.get(key="voltage")
+        width = CategoryAttribute.objects.get(key="width")
+        voltage.include_in_sales_model = True
+        width.include_in_sales_model = True
+        voltage.save(update_fields=["include_in_sales_model"])
+        width.save(update_fields=["include_in_sales_model"])
+        abbreviations = {
+            f"{self.product.category_id}:voltage:24": "24V",
+            f"{self.product.category_id}:width:8": "8M",
+        }
+        sku, _ = self.create_sku(sales_model=None, sales_model_abbreviations=abbreviations)
+        original_name, original_model = sku.display_name_cn, sku.sales_model
+        reordered_ids = [width.id, voltage.id]
+
+        preview = self.client.post(
+            "/api/category-attributes/reorder/",
+            {"category": self.product.category_id, "ids": reordered_ids, "preview": True},
+            format="json",
+        )
+        self.assertEqual(preview.status_code, status.HTTP_200_OK, preview.data)
+        self.assertEqual(preview.data["affected_skus"], 1)
+        self.assertEqual(SKU.objects.get(pk=sku.pk).display_name_cn, original_name)
+
+        response = self.client.post(
+            "/api/category-attributes/reorder/",
+            {"category": self.product.category_id, "ids": reordered_ids, "confirm": True},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        sku.refresh_from_db()
+        self.assertNotEqual(sku.display_name_cn, original_name)
+        self.assertNotEqual(sku.sales_model, original_model)
+        self.assertEqual(sku.sku, "SKU-000001")
+        version = SKUVersion.objects.get(sku=sku)
+        self.assertEqual(version.display_name_cn_snapshot, original_name)
+        self.assertEqual(version.sales_model_snapshot, original_model)
+        self.assertIn("分类属性排序变更", version.change_reason)
+
+    def test_confirmed_parameter_change_is_blocked_when_identity_duplicates_another_sku(self):
+        first, _ = self.create_sku()
+        second, _ = self.create_sku(parameter_values={"voltage": "24", "width": "10"}, specification="24V / 10mm", sales_model="CB8-24-A2")
+        original_name, original_model = second.display_name_cn, second.sales_model
+
+        response = self.client.patch(
+            f"/api/skus/{second.id}/",
+            {"parameter_values": first.parameter_values, "specification": first.specification, "identity_change_confirmed": True},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertIn("duplicate_sku", response.data)
+        second.refresh_from_db()
+        self.assertEqual(second.display_name_cn, original_name)
+        self.assertEqual(second.sales_model, original_model)
+        self.assertFalse(SKUVersion.objects.filter(sku=second).exists())
 
     def test_quote_and_order_keep_commercial_snapshots_after_sku_changes(self):
         sku, _ = self.create_sku(description_en="COB LED Strip, 24V, 8mm, CRI>=90")
@@ -161,3 +358,80 @@ class SkuCommercialIdentityTests(TestCase):
                 response = self.client.get("/api/skus/", {"search": query})
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
                 self.assertIn(sku.id, [row["id"] for row in response.data["results"]])
+
+    def test_sku_code_is_read_only_after_creation(self):
+        sku, _ = self.create_sku()
+        response = self.client.patch(f"/api/skus/{sku.id}/", {"sku": "USER-EDITED"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        sku.refresh_from_db()
+        self.assertNotEqual(sku.sku, "USER-EDITED")
+
+    def test_model_rejects_direct_sku_code_change(self):
+        sku, _ = self.create_sku()
+        sku.sku = "USER-EDITED"
+        with self.assertRaises(ValidationError):
+            sku.save()
+
+    def test_manual_sales_model_persists_and_creates_a_version(self):
+        sku, _ = self.create_sku()
+        response = self.client.patch(f"/api/skus/{sku.id}/", {"sales_model": "COB08-24-WW"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        response = self.client.patch(f"/api/skus/{sku.id}/", {"sales_model": "COB08-24-WW", "identity_change_confirmed": True}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        sku.refresh_from_db()
+        self.assertEqual(sku.sales_model, "COB08-24-WW")
+        version = SKUVersion.objects.get(sku=sku)
+        self.assertEqual(version.sales_model_snapshot, "CB8-24-A1")
+        self.assertIn("sales_model", version.changed_fields)
+
+    def test_description_change_creates_version_but_price_change_does_not(self):
+        sku, _ = self.create_sku()
+        response = self.client.patch(f"/api/skus/{sku.id}/", {"description_en": "New commercial description"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(SKUVersion.objects.filter(sku=sku).count(), 1)
+        response = self.client.patch(f"/api/skus/{sku.id}/", {"default_price": "99.0000"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(SKUVersion.objects.filter(sku=sku).count(), 1)
+
+    def test_old_sales_model_search_returns_current_sku_with_historical_marker(self):
+        sku, _ = self.create_sku()
+        self.client.patch(f"/api/skus/{sku.id}/", {"sales_model": "COB08-24-12W", "identity_change_confirmed": True}, format="json")
+        response = self.client.get("/api/skus/", {"search": "CB8-24-A1"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        row = next(row for row in response.data["results"] if row["id"] == sku.id)
+        self.assertEqual(row["sales_model"], "COB08-24-12W")
+        self.assertTrue(row["historical_matches"])
+
+    def test_duplicate_product_parameter_signature_is_rejected_but_different_values_work(self):
+        self.create_sku()
+        duplicate = self.client.post("/api/skus/", {"product": self.product.id, "parameter_values": {"voltage": "24", "width": "8"}, "specification": "24V / 8mm", "sales_model": "DIFFERENT"}, format="json")
+        self.assertEqual(duplicate.status_code, status.HTTP_400_BAD_REQUEST)
+        different = self.client.post("/api/skus/", {"product": self.product.id, "parameter_values": {"voltage": "24", "width": "10"}, "specification": "24V / 10mm", "sales_model": "DIFFERENT"}, format="json")
+        self.assertEqual(different.status_code, status.HTTP_201_CREATED, different.data)
+
+    def test_purchase_and_inventory_store_commercial_snapshots(self):
+        sku, _ = self.create_sku()
+        order = Order.objects.create(order_no="SO-SKU-SNAPSHOT", customer=self.customer, order_date=date(2026, 8, 23))
+        supplier = Supplier.objects.create(name="SKU Snapshot Supplier", code="SS")
+        purchase = PurchaseOrder.objects.create(purchase_no="PO-SKU-SNAPSHOT", supplier=supplier, order=order, order_date=date(2026, 8, 23))
+        item = PurchaseOrderItem.objects.create(purchase_order=purchase, sku=sku, quantity="1", unit_price="5")
+        movement = InventoryMovement.objects.create(movement_no="IM-SKU-SNAPSHOT", movement_date=date(2026, 8, 23), type="adjust_in", sku=sku, quantity="1")
+        self.assertEqual(item.sales_model_snapshot, sku.sales_model)
+        self.assertEqual(item.sku_code_snapshot, sku.sku)
+        self.assertEqual(movement.sales_model_snapshot, sku.sales_model)
+        self.assertEqual(movement.sku_code_snapshot, sku.sku)
+
+    def test_referenced_sku_cannot_be_deleted_but_can_be_disabled(self):
+        sku, _ = self.create_sku()
+        InventoryMovement.objects.create(movement_no="IM-SKU-PROTECT", movement_date=date(2026, 8, 23), type="adjust_in", sku=sku, quantity="1")
+        response = self.client.delete(f"/api/skus/{sku.id}/")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.client.patch(f"/api/skus/{sku.id}/", {"active": False}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertFalse(SKU.objects.get(pk=sku.pk).active)
+
+    def test_unreferenced_sku_can_only_be_disabled(self):
+        sku, _ = self.create_sku()
+        response = self.client.delete(f"/api/skus/{sku.id}/")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertTrue(SKU.objects.filter(pk=sku.pk).exists())

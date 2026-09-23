@@ -64,7 +64,8 @@ def resolve_packaging(sku, overrides=None):
 
 def packaging_summary(sku):
     p = resolve_packaging(sku)
-    return {"status": p.status, "template": p.template_id if hasattr(p.template, "id") else None, "effective_qty_per_carton": p.qty_per_carton,
+    return {"status": p.status, "template": p.template.id if p.template else None,
+            "template_name": p.template.name if p.template else "", "effective_qty_per_carton": p.qty_per_carton,
             "effective_length": p.length, "effective_width": p.width, "effective_height": p.height,
             "effective_carton_tare_weight": p.carton_tare_weight, "unit_net_weight": p.unit_net_weight,
             "effective_cbm": p.cbm, "partial_carton_policy": p.partial_carton_policy}
@@ -82,11 +83,12 @@ def generate_packing_plan(source):
     plan = PackingPlan.objects.create(**source_key)
     warnings, carton_no = [], 0
     total_net = total_gross = total_cbm = ZERO
+    order_policy = getattr(source, "tail_goods_policy", None) if source.__class__.__name__ == "Order" else None
     for line in _source_items(source):
         if line.quantity <= 0:
             warnings.append(f"{line.sku.sku}: 数量必须大于零")
             continue
-        pack = resolve_packaging(line.sku)
+        pack = resolve_packaging(line.sku, {"partial_carton_policy": order_policy} if order_policy else None)
         if pack.status not in {"COMPLETE", "VERIFIED"}:
             warnings.append(f"{line.sku.sku}: 包装资料{ '未配置' if pack.status == 'NOT_CONFIGURED' else '不完整'}")
             continue

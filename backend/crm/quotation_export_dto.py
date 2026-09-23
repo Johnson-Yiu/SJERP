@@ -24,6 +24,7 @@ class QuotationExportItemDTO:
     unit_price: str
     amount: str
     image_path: str = ""
+    model: str = ""
 
 
 @dataclass(frozen=True)
@@ -62,11 +63,12 @@ def build_quotation_export_dto(quote, *, template_id=None):
                 pass
         products.append(QuotationExportItemDTO(
             sku=item.sku_code_snapshot,
+            model=item.sales_model_snapshot,
             product_name=item.product_name_snapshot,
-            description=item.description or item.product_name_snapshot,
-            quantity=str(item.quantity),
-            unit=item.unit_snapshot,
-            unit_price=str(item.unit_price),
+            description=(item.description or item.product_name_snapshot) + (f"\n{item.trade_snapshot['name']}: 1 {item.trade_snapshot['unit']} = {item.trade_snapshot['factor']} {item.trade_snapshot['base_unit']}; Total {item.quantity} {item.trade_snapshot['base_unit']}" if item.trade_unit_id else ""),
+            quantity=str(item.trade_quantity if item.trade_unit_id else item.quantity),
+            unit=item.trade_snapshot.get("unit", item.unit_snapshot),
+            unit_price=str(item.trade_unit_price if item.trade_unit_id else item.unit_price),
             amount=_money(amount),
             image_path=image_path,
         ))

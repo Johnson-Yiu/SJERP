@@ -13,7 +13,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from crm.models import Contact, Customer, InventoryMovement, Order, Product, Quote, QuoteItem, QuoteRevisionCounter, SKU, Transaction
+from crm.models import Contact, Customer, InventoryMovement, Order, Product, Quote, QuoteItem, QuoteRevisionCounter, Shipment, SKU, Transaction
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.quote_snapshots import create_quote_items
 
@@ -202,7 +202,7 @@ class QuoteApiTests(TestCase):
         self.assertEqual(response.data["items"][0]["description"], "Dimmable panel light")
 
     def test_create_accepts_localized_chinese_country_names(self):
-        for country, expected_iso_code in (("美国", "US"), ("法国", "FR"), ("阿联酋", "AE")):
+        for country, expected_iso_code in (("美国", "US"), ("法国", "FR"), ("德国", "DE"), ("奥地利", "AT"), ("中国", "CN"), ("阿联酋", "AE")):
             with self.subTest(country=country):
                 self.customer.country = country
                 self.customer.save(update_fields=["country"])
@@ -211,6 +211,18 @@ class QuoteApiTests(TestCase):
 
                 self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
                 self.assertEqual(response.data["quote_no"], f"SJ20260815{expected_iso_code}001")
+
+    def test_quote_list_uses_live_customer_name_while_pi_snapshot_remains_immutable(self):
+        quote = self.create_quote()
+        original_name = quote.buyer_company_name
+        self.customer.name = "Renamed API Buyer"
+        self.customer.save(update_fields=["name"])
+
+        response = self.client.get(f"/api/quotes/{quote.id}/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["customer_name"], "Renamed API Buyer")
+        self.assertEqual(response.data["buyer_company_name"], original_name)
 
     def test_create_ignores_client_quote_number_and_revision_fields(self):
         response = self.client.post(
@@ -418,11 +430,10 @@ class QuoteApiTests(TestCase):
 
         self.customer.name = "Renamed Buyer"
         self.customer.save(update_fields=["name"])
-        self.sku.sku = "RENAMED-SKU"
         self.sku.unit = "box"
         self.sku.product.name = "Renamed Product"
         self.sku.product.save(update_fields=["name"])
-        self.sku.save(update_fields=["sku", "unit"])
+        self.sku.save(update_fields=["unit"])
         self.client.delete(f"/api/skus/{self.sku.id}/image/")
         revision_response = self.client.post(f"/api/quotes/{quote.id}/revise/", {"revision_summary": "复制快照"}, format="json")
         self.assertEqual(revision_response.status_code, status.HTTP_201_CREATED)
@@ -687,6 +698,45 @@ class QuoteApiTests(TestCase):
         self.assertEqual(Decimal(quote.items.get().quantity), Decimal("3.00"))
         self.assertEqual(quote.status, "draft")
 
+    def test_editing_order_commercial_terms_creates_and_links_quote_revision(self):
+        quote = self.create_quote(items=[{"sku": self.sku.id, "quantity": "2.00", "unit_price": "10.00"}])
+        draft = self.client.get(f"/api/quotes/{quote.id}/order-draft/").data
+        saved = self.client.post("/api/orders/", draft, format="json")
+        self.assertEqual(saved.status_code, status.HTTP_201_CREATED, saved.data)
+
+        response = self.client.patch(
+            f"/api/orders/{saved.data['id']}/",
+            {"discount": "1.50", "notes": "订单谈判后的付款条款"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        order = Order.objects.get(pk=saved.data["id"])
+        revision = order.quote
+        self.assertNotEqual(revision.pk, quote.pk)
+        self.assertEqual(revision.parent_quote_id, quote.pk)
+        self.assertEqual(revision.status, "accepted")
+        self.assertEqual(Decimal(revision.discount), Decimal("1.50"))
+        self.assertEqual(revision.notes, "订单谈判后的付款条款")
+        self.assertEqual(Decimal(quote.discount), Decimal("0"))
+
+    def test_order_changes_create_a_child_revision_of_the_selected_quote_version(self):
+        root = self.create_quote(items=[{"sku": self.sku.id, "quantity": "1.00", "unit_price": "10.00"}])
+        first = self.client.post(f"/api/quotes/{root.id}/revise/", {"revision_summary": "首次修改"}, format="json")
+        second = self.client.post(f"/api/quotes/{root.id}/revise/", {"revision_summary": "第二次修改"}, format="json")
+        self.assertEqual(first.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(second.status_code, status.HTTP_201_CREATED)
+
+        source = Quote.objects.get(pk=second.data["id"])
+        draft = self.client.get(f"/api/quotes/{source.id}/order-draft/").data
+        draft["shipping_fee"] = "1.00"
+        saved = self.client.post("/api/orders/", draft, format="json")
+
+        self.assertEqual(saved.status_code, status.HTTP_201_CREATED, getattr(saved, "data", None))
+        revision = Order.objects.get(pk=saved.data["id"]).quote
+        self.assertEqual(revision.parent_quote_id, source.id)
+        self.assertEqual(revision.quote_no, f"{root.quote_no}-2-1")
+
     def test_invalid_order_with_quote_does_not_accept_the_quote(self):
         quote = self.create_quote()
 
@@ -755,6 +805,43 @@ class OrderWorkbenchTests(TestCase):
         self.assertEqual(response.data["inventory"][0]["movement_no"], "IM-ORDER-WORKBENCH")
         self.assertEqual(Decimal(response.data["payment_summary"]["paid_amount"]), Decimal("20.00"))
         self.assertEqual(Decimal(response.data["fulfillment_summary"]["shipped_quantity"]), Decimal("1.00"))
+
+    def test_fulfilled_order_allows_noncommercial_update_when_put_repeats_unchanged_items(self):
+        Shipment.objects.create(
+            shipment_no="SH-ORDER-WORKBENCH",
+            order=self.order,
+            shipment_date=date(2026, 8, 21),
+            status="confirmed",
+        )
+        original_item_id = self.order.items.get().id
+        response = self.client.put(
+            f"/api/orders/{self.order.id}/",
+            {
+                "order_no": self.order.order_no,
+                "customer": self.customer.id,
+                "quote": self.quote.id,
+                "order_date": "2026-08-19",
+                "expected_ship_date": "2026-09-06",
+                "status": "production",
+                "currency": "USD",
+                "exchange_rate": "1.000000",
+                "shipping_fee": "0.00",
+                "discount": "0.00",
+                "notes": "",
+                "items": [{
+                    "sku": self.sku.id,
+                    "quantity": "3.00",
+                    "unit_price": "15.00",
+                    "cost_price": "7.00",
+                    "notes": "",
+                }],
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.data["expected_ship_date"], "2026-09-06")
+        self.assertEqual(Order.objects.get(pk=self.order.pk).items.get().id, original_item_id)
 
 
 class QuoteExportTests(TestCase):
@@ -859,9 +946,9 @@ class QuoteExportTests(TestCase):
     def test_export_uses_saved_buyer_and_sku_snapshots_after_sources_change(self):
         self.customer.name = "Renamed Export Buyer"
         self.customer.save(update_fields=["name"])
-        self.sku_1.sku = "RENAMED-SKU"
+        self.sku_1.sales_model = "RENAMED-MODEL"
         self.sku_1.unit = "box"
-        self.sku_1.save(update_fields=["sku", "unit"])
+        self.sku_1.save(update_fields=["sales_model", "unit"])
 
         response = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
 
@@ -924,7 +1011,7 @@ class QuoteExportTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         sheet_xml = unzip_member(response.content, "xl/worksheets/sheet1.xml")
-        self.assertIn(b"SKU-004", sheet_xml)
+        self.assertEqual(xlsx_cell_text(response.content, "C14"), "MODEL-004")
         self.assertEqual(xlsx_cell_text(response.content, "A24"), "BANK INFORMATION")
         self.assertEqual(xlsx_cell_text(response.content, "I3"), "Guangzhou Sunjack Lighting Co., Ltd.")
         self.assertEqual(xlsx_cell_text(response.content, "C25"), "Guangzhou Sunjack Lighting Co., Ltd.")

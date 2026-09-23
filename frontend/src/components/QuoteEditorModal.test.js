@@ -21,3 +21,14 @@ test('SKU picker keeps a fixed height while search results scroll', async () => 
   assert.match(source, /\.sku-picker-list\{display:flex;flex-direction:column/)
   assert.match(source, /\.sku-picker-options\{flex:1 1 auto;min-height:0;overflow:auto/)
 })
+
+test('quote editor lets users save without exporting the Excel file', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /async function save\(shouldExport = false\)/)
+  assert.match(source, /if \(!shouldExport\) \{ emit\('close'\); return \}/)
+  assert.match(source, /@click="save\(false\)"/)
+  assert.match(source, /保存报价/)
+  assert.match(source, /@click="save\(true\)"/)
+  assert.match(source, /保存并导出 Excel/)
+})

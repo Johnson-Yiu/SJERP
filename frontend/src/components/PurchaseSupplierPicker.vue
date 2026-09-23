@@ -1,0 +1,17 @@
+<script setup>
+import { onMounted, ref, computed } from 'vue'
+import { api } from '../api'
+const props = defineProps({ sku: Object, fixedSupplier: [Number, String] })
+const emit = defineEmits(['close', 'selected'])
+const candidates = ref([]), loading = ref(true), error = ref(''), selected = ref(''), sourceId = ref('')
+const choice = computed(() => candidates.value.find(s => s.supplier === Number(selected.value)))
+onMounted(async () => {
+  try { candidates.value = (await api.get(`/skus/${props.sku.id}/supplier-candidates/`)).data.candidates.filter(s => !props.fixedSupplier || s.supplier === Number(props.fixedSupplier)) }
+  catch (e) { error.value = e.message } finally { loading.value = false }
+})
+function choose(candidate) { selected.value = candidate.supplier; sourceId.value = candidate.recommended_supplier_sku_id || '' }
+</script>
+<template><Teleport to="body"><div class="purchase-match-backdrop" @mousedown.self="emit('close')"><aside role="dialog" aria-modal="true" aria-label="匹配采购供应商"><header><h3>匹配供应商</h3><button type="button" @click="emit('close')">关闭</button></header><main><strong>{{ sku.display_name_cn }}</strong><p>一张采购单对应一家供应商；选择后将应用于整张采购单。尚无供货档案的候选会在保存采购单时按现有规则生成 Supplier SKU。</p><p v-if="loading">加载中…</p><p v-if="error" role="alert">{{ error }}</p><p v-if="!loading && !error && !candidates.length">暂无候选供应商，请先在产品的 SKU 管理中绑定候选。</p><article v-for="candidate in candidates" :key="candidate.supplier" :class="{ selected: selected === candidate.supplier }"><label><input type="radio" :checked="selected === candidate.supplier" @change="choose(candidate)" />{{ candidate.supplier_name }}</label><dl><template v-for="(value,key) in candidate.characteristics" :key="key"><dt>{{ key }}</dt><dd>{{ value || '—' }}</dd></template></dl><select v-if="selected === candidate.supplier && candidate.supplier_skus.length" v-model="sourceId" aria-label="供货档案"><option value="" disabled>请选择供货档案</option><option v-for="source in candidate.supplier_skus" :key="source.id" :value="source.id">{{ source.model || source.code }} · {{ source.code }}</option></select></article></main><footer><button class="btn btn-primary" :disabled="!choice || (choice.supplier_skus.length > 0 && !sourceId)" @click="emit('selected', { supplier: choice.supplier, supplier_sku: sourceId })">确认选择</button></footer></aside></div></Teleport></template>
+<style scoped>
+.purchase-match-backdrop{position:fixed;inset:0;z-index:320;background:#15372b66;display:flex;justify-content:flex-end}.purchase-match-backdrop aside{width:min(590px,100vw);height:100%;background:#f5f9f7;display:flex;flex-direction:column}.purchase-match-backdrop header,.purchase-match-backdrop footer{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:white}.purchase-match-backdrop main{flex:1;overflow:auto;padding:24px}.purchase-match-backdrop p{font-size:12px;line-height:1.7;color:#6c8277}.purchase-match-backdrop article{padding:16px;background:white;border:1px solid #d7e6de;border-radius:10px;margin-top:14px}.purchase-match-backdrop article.selected{border-color:#197d60}.purchase-match-backdrop label{display:flex;gap:10px;font-weight:600}.purchase-match-backdrop dl{display:grid;grid-template-columns:105px 1fr;gap:8px;font-size:12px}.purchase-match-backdrop dt{color:#75867c}.purchase-match-backdrop dd{margin:0;overflow-wrap:anywhere}.purchase-match-backdrop select{width:100%;padding:8px;border:1px solid #d7e6de}.purchase-match-backdrop footer{justify-content:flex-end}
+</style>

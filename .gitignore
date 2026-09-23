@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 backend/db.sqlite3
+backend/backups/
 backend/staticfiles/
 frontend/node_modules/
 node_modules/
@@ -10,3 +11,72 @@ frontend/dist/
 .codex-inspect-template.mjs
 .codex-template-preview.png
 .worktrees/
+
+backend/db.before-sku-plans-*.sqlite3
+backend/db.before-trade-units-*.sqlite3
+
+# Environment variables and local secrets
+.env
+.env.*
+
+# Python virtual environments and bytecode
+venv/
+env/
+ENV/
+*.pyo
+
+# JavaScript dependencies and build output
+dist/
+build/
+
+# Logs and runtime output
+*.log
+logs/
+log/
+
+# IDE/editor temporary files
+.idea/
+.vscode/
+.vs/
+*.suo
+*.user
+*.swp
+*.swo
+
+# Local caches and test coverage
+.cache/
+cache/
+.superpowers/
+.vite/
+.parcel-cache/
+.eslintcache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local databases and database backups
+*.sqlite3
+*.sqlite3-*
+*.sqlite
+*.db
+backups/
+
+# Uploaded files and local business data
+media/
+backend/media/
+uploads/
+backend/uploads/
+data/
+local-data/
+test-data/
+fixtures/local/
+
+# Business-data exports; commit only sanitized, intentional fixtures elsewhere
+*.csv
+*.tsv
+*.xlsx
+*.xls

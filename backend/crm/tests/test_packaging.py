@@ -46,6 +46,22 @@ class PackagingDomainTests(TestCase):
         self.assertEqual(plan.total_cartons, 2)
         self.assertTrue(plan.warnings)
 
+    def test_order_tail_goods_policy_overrides_sku_template_policy(self):
+        customer = Customer.objects.create(code="C-ORDER-PACK", name="Order Packing Buyer")
+        order = Order.objects.create(order_no="SO-POLICY", customer=customer, order_date=date.today(), tail_goods_policy="MANUAL")
+        order.items.create(sku=self.sku, quantity="120", unit_price="1")
+        SKUPackagingProfile.objects.create(sku=self.sku, packaging_template=self.template, unit_net_weight="0.2")
+
+        plan = generate_packing_plan(order)
+        self.assertEqual(plan.total_cartons, 2)
+        self.assertTrue(plan.warnings)
+
+        order.tail_goods_policy = "REPACK"
+        order.save(update_fields=["tail_goods_policy"])
+        plan = generate_packing_plan(order)
+        self.assertEqual(plan.total_cartons, 3)
+        self.assertTrue(plan.cartons.last().requires_confirmation)
+
     def test_actual_packing_is_independent_and_can_mix_skus(self):
         customer = Customer.objects.create(code="C-ACTUAL", name="Actual Buyer")
         order = Order.objects.create(order_no="SO-PACK", customer=customer, order_date=date.today())

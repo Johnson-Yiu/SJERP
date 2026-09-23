@@ -29,7 +29,7 @@ from .quote_snapshots import create_quote_items
 from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, HSCodeSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.finance import allocate_advance, approve_contract_change, record_contract_payment, record_transaction, void_transaction
-from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, sku_metrics
+from .services.fulfillment import cancel_order, complete_order, confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, sku_metrics
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
 from .services.sku_plans import apply_category_attribute_reorder, preview_category_attribute_reorder
 from .sku_identity import normalize_abbreviation_key
@@ -308,10 +308,12 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         sales = OrderItem.objects.filter(order__customer=OuterRef("pk")).exclude(order__status="cancelled").values("order__customer").annotate(total=Sum(sales_value)).values("total")
         order_count = Order.objects.filter(customer=OuterRef("pk")).exclude(status="cancelled").values("customer").annotate(total=Count("id")).values("total")
         contact_count = Contact.objects.filter(customer=OuterRef("pk")).values("customer").annotate(total=Count("id")).values("total")
+        primary_contact_email = Contact.objects.filter(customer=OuterRef("pk")).exclude(email="").order_by("-is_primary", "id").values("email")[:1]
         return Customer.objects.annotate(
             contact_count=Coalesce(Subquery(contact_count, output_field=IntegerField()), 0),
             order_count=Coalesce(Subquery(order_count, output_field=IntegerField()), 0),
             sales_amount=Coalesce(Subquery(sales, output_field=MONEY), Decimal("0"), output_field=MONEY),
+            primary_contact_email=Coalesce(Subquery(primary_contact_email), Value("")),
         ).order_by("-updated_at")
 
     @action(detail=False, methods=["get"], url_path="next-code")
@@ -1151,6 +1153,24 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         record_operation(request=request, instance=self.get_object(), action="custom", action_label="确认订单发货", metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
         return Response({"id": shipment.id, "shipment_no": shipment.shipment_no, "status": shipment.status}, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"])
+    def complete(self, request, pk=None):
+        try:
+            order = complete_order(self.get_object())
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        record_operation(request=request, instance=order, action="custom", action_label="完成订单")
+        return Response(self.get_serializer(order).data)
+
+    @action(detail=True, methods=["post"])
+    def cancel(self, request, pk=None):
+        try:
+            order = cancel_order(self.get_object())
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        record_operation(request=request, instance=order, action="custom", action_label="取消订单")
+        return Response(self.get_serializer(order).data)
 
     @action(detail=True, methods=["get"])
     def workbench(self, request, pk=None):

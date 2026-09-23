@@ -11,7 +11,7 @@ export const resourceConfigs = {
     description: '集中维护客户画像、归属、状态和下一步跟进计划。',
     columns: [
       ['code', '客户编号'], ['name', '客户名称'], ['country', '国家/地区'], ['region', '业务区域'], ['status', '状态', 'status'],
-      ['owner', '负责人'], ['order_count', '订单数', 'number'], ['sales_amount', '累计销售额', 'rmb'], ['next_follow_up', '下次跟进', 'date'],
+      ['owner', '负责人'], ['primary_contact_email', '主联系人邮箱'], ['order_count', '订单数', 'number'], ['sales_amount', '累计销售额', 'rmb'], ['next_follow_up', '下次跟进', 'date'],
     ],
     fields: [
       ['code', '客户编号', 'readonly', true], ['name', '客户名称', 'text', true], ['country', '国家/地区'], ['region', '业务区域'], ['source', '客户来源', 'combo', false, 'customers/sources'],

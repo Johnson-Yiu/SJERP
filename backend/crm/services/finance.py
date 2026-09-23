@@ -108,6 +108,10 @@ def record_transaction(payload):
             contract = order if kind == "customer_receipt" else purchase
             if not contract:
                 raise ValidationError("客户收款必须关联销售订单，供应商付款必须关联采购单。")
+            # The amount was normalized above, but the contract-payment service
+            # receives a fresh payload and validates it again while distributing
+            # across payment plans.  Preserve the normalized value here.
+            payload["amount"] = amount
             return record_contract_payment(contract, payload)
     exchange_rate = positive_decimal(payload.get("exchange_rate", 1), "汇率")
     if payload.get("currency") == "CNY" and exchange_rate != 1:

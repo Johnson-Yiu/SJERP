@@ -246,8 +246,6 @@ def validate_contract_edit(instance, attrs, *, purchase=False):
         raise serializers.ValidationError("合同已有业务记录，不能直接取消或退回草稿。")
     if new_status != instance.status and new_status in ({"partial", "completed"} if purchase else {"shipped"}):
         raise serializers.ValidationError("到货、发货状态由实际出入库记录自动更新。")
-    if not purchase and new_status != instance.status and new_status == "completed":
-        raise serializers.ValidationError("订单完成需在订单工作台执行；系统会核验全部发货和全部回款。")
 
 
 def sync_unsettled_contract_plans(instance, changed):
@@ -439,7 +437,6 @@ class CustomerSerializer(serializers.ModelSerializer):
     contact_count = serializers.IntegerField(read_only=True, default=0)
     order_count = serializers.IntegerField(read_only=True, default=0)
     sales_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True, default=0)
-    primary_contact_email = serializers.CharField(read_only=True, default="")
     contacts = CustomerContactInputSerializer(many=True, write_only=True, required=False)
 
     class Meta:

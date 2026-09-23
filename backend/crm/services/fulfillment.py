@@ -227,40 +227,6 @@ def _shipped_quantity(order_item: OrderItem) -> Decimal:
 
 
 @transaction.atomic
-def complete_order(order: Order) -> Order:
-    """Close an order only after fulfillment and receivable work is complete."""
-    order = Order.objects.select_for_update().get(pk=order.pk)
-    if order.status != "shipped":
-        raise ValidationError("只有全部发货后的订单才能完成。")
-    if any(_shipped_quantity(item) < item.quantity for item in order.items.select_for_update()):
-        raise ValidationError("订单仍有待发数量，不能完成。")
-    plans = list(order.payment_plans.select_for_update().exclude(status="cancelled"))
-    if order.total_amount > 0 and (not plans or any(plan.remaining_amount > 0 for plan in plans)):
-        raise ValidationError("订单仍有待收款计划，全部结清后才能完成。")
-    order.status = "completed"
-    order.save(update_fields=["status", "updated_at"])
-    allocate_order(order)
-    return order
-
-
-@transaction.atomic
-def cancel_order(order: Order) -> Order:
-    """Cancel an unexecuted order and release its inventory reservation."""
-    order = Order.objects.select_for_update().get(pk=order.pk)
-    if order.status in {"cancelled", "completed"}:
-        raise ValidationError("已取消或已完成订单不能再次取消。")
-    history = order.shipments.exists() or order.purchase_orders.exclude(status="cancelled").exists()
-    financial = order.transactions.exists() or order.payment_plans.filter(settled_amount__gt=0).exists() or order.payment_plans.filter(advance_allocations__isnull=False).exists()
-    if history or financial:
-        raise ValidationError("订单已有采购、发货或收付款记录，不能直接取消；请按实际业务办理退货或退款。")
-    order.status = "cancelled"
-    order.save(update_fields=["status", "updated_at"])
-    order.payment_plans.filter(settled_amount=0).update(status="cancelled")
-    allocate_order(order)
-    return order
-
-
-@transaction.atomic
 def confirm_shipment(order: Order, payload: dict) -> Shipment:
     order = Order.objects.select_for_update().get(pk=order.pk)
     if order.status not in ACTIVE_ORDER_STATUSES:

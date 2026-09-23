@@ -37,9 +37,7 @@ const completeValue = computed(() => {
 
 function emitValue() {
   if (completeValue.value) emit('update:modelValue', completeValue.value)
-  // Clear optional values immediately when the visible value is incomplete.
-  // Keeping the previous value made a cleared date submit as stale data.
-  else emit('update:modelValue', '')
+  else if (![year.value, month.value, day.value, hour.value, minute.value].some(Boolean)) emit('update:modelValue', '')
 }
 function onYearInput() {
   year.value = digits(year.value, 4)

@@ -62,20 +62,6 @@ async function generatePackingPlan() {
   try { packingPlan.value = (await api.post(`/orders/${props.id}/packing-plan/`)).data }
   catch (err) { error.value = err.message }
 }
-async function completeOrder() {
-  if (!window.confirm('确认完成此订单？系统将核验全部发货和全部回款。')) return
-  try {
-    await api.post(`/orders/${props.id}/complete/`)
-    await load()
-  } catch (err) { error.value = err.response?.data?.detail || err.message }
-}
-async function cancelOrder() {
-  if (!window.confirm('确认取消此订单？未发生的库存预留和收付款计划会被释放。')) return
-  try {
-    await api.post(`/orders/${props.id}/cancel/`)
-    await load()
-  } catch (err) { error.value = err.response?.data?.detail || err.message }
-}
 function openSupplierAllocation(item) { allocationItem.value = item }
 async function supplierAllocationSaved() { allocationItem.value = null; await load() }
 async function load() {
@@ -115,7 +101,7 @@ watch(() => props.refreshKey, load)
       <div v-else-if="error" class="detail-error"><AlertTriangle :size="27" /><strong>加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load">重试</button></div>
       <template v-else>
         <header class="detail-header">
-          <div class="detail-nav"><div class="detail-nav-start"><button class="detail-close" aria-label="关闭订单详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button><span>订单工作台 · 履约与回款</span></div><div class="detail-actions"><button v-if="order.status === 'shipped'" class="btn btn-primary" @click="completeOrder">完成订单</button><button v-if="['draft', 'confirmed', 'production'].includes(order.status)" class="btn btn-secondary" @click="cancelOrder">取消订单</button><button class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> 编辑订单</button><button class="detail-close" aria-label="关闭订单详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button></div></div>
+          <div class="detail-nav"><div class="detail-nav-start"><button class="detail-close" aria-label="关闭订单详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button><span>订单工作台 · 履约与回款</span></div><div class="detail-actions"><button class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> 编辑订单</button><button class="detail-close" aria-label="关闭订单详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button></div></div>
           <div class="detail-identity"><div><p class="detail-subtitle">{{ order.customer_name }} · 下单于 {{ date(order.order_date) }}</p><h2>{{ order.order_no }}</h2><small>预计交期：{{ date(order.expected_ship_date) }}</small></div><span class="detail-badge">{{ order.status_display }}</span></div>
         </header>
         <main class="detail-content">

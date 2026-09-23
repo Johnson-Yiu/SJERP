@@ -121,14 +121,9 @@ function choosePurchase() {
 }
 async function save() {
   if (saving.value) return
-  const amount = Number(form.amount)
-  if (!Number.isFinite(amount) || amount <= 0) {
-    error.value = '请输入大于 0 的有效金额。'
-    return
-  }
   saving.value = true
   try {
-    const payload = { ...form, amount: String(amount) }
+    const payload = { ...form }
     if (!payload.transaction_no) delete payload.transaction_no
     await api.post('/transactions/', payload)
     showForm.value = false
@@ -178,7 +173,7 @@ onMounted(async () => {
         </label>
         <label>日期<input v-model="form.transaction_date" type="date" required></label>
         <p class="category-hint">分类由所选类型自动生成：{{ form.category }}，无需重复填写。</p>
-        <label>原币金额<input v-model.number="form.amount" type="number" min="0.0001" step="any" required></label>
+        <label>原币金额<input v-model="form.amount" v-money-input type="number" min="0.0001" step="any" required></label>
         <label>币种<select v-model="form.currency" required @change="onCurrencyChange"><option v-for="currency in currencies" :key="currency.value" :value="currency.value">{{ currency.label }}</option></select></label>
         <label>结汇汇率 <small>1 外币 ≈ 人民币</small><input v-model="form.exchange_rate" type="number" min="0.000001" step="0.000001" required></label>
         <div v-if="contractKinds.includes(form.kind)" class="order-picker">

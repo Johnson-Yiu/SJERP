@@ -19,10 +19,10 @@ function displayValue(value) {
   <section class="operation-log-panel">
     <div class="operation-log-head">
       <div><h3>操作日志</h3><p>记录创建、修改、删除及业务状态变更。</p></div>
-      <span>{{ enabled ? `${logs.length} 条` : '正式审计未启用' }}</span>
+      <span>{{ enabled ? `${logs.length} 条` : '开发环境暂不记录' }}</span>
     </div>
     <div v-if="loading" class="operation-log-empty">正在加载操作日志…</div>
-    <div v-else-if="!enabled" class="operation-log-empty">当前为开发身份：不会把默认开发姓名写入正式审计日志。进入内测并启用真实身份认证后，可开启正式审计记录。</div>
+    <div v-else-if="!enabled" class="operation-log-empty">当前为开发环境，操作日志记录开关尚未开启。</div>
     <div v-else-if="!logs.length" class="operation-log-empty">暂无操作日志。</div>
     <ol v-else class="operation-log-list">
       <li v-for="log in logs" :key="log.id">

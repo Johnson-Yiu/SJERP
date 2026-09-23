@@ -1598,12 +1598,6 @@ class ShipmentPackageSerializer(serializers.ModelSerializer):
             ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=instance, **item) for item in items])
         return instance
 
-    def validate(self, attrs):
-        if bool(attrs.get("order")) == bool(attrs.get("purchase_order")):
-            raise serializers.ValidationError("变更单必须且只能关联一个订单或采购单。")
-        return attrs
-
-
 class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSerializer):
     movement_no = serializers.CharField(read_only=True)
     related_orders = serializers.PrimaryKeyRelatedField(many=True, queryset=Order.objects.all(), required=False)

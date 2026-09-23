@@ -147,6 +147,40 @@ class TradeFinanceUpgradeTests(TestCase):
         void_transaction(row)
         self.assertEqual(self.client.patch(f"/api/transactions/{row.pk}/", {"status": "confirmed"}, format="json").status_code, 400)
 
+    def test_direct_customer_receipt_without_payment_plan_records_contract_payment(self):
+        row = record_transaction({
+            "order": self.order,
+            "customer": self.order.customer,
+            "direction": "income",
+            "kind": "customer_receipt",
+            "category": "客户收款",
+            "amount": Decimal("100"),
+            "currency": self.order.currency,
+            "transaction_date": self.day,
+        })
+        self.assertIsInstance(row, Transaction)
+        self.assertEqual(row.status, "confirmed")
+        self.assertEqual(row.order, self.order)
+        self.assertEqual(sum(Transaction.objects.filter(order=self.order, status="confirmed").values_list("amount", flat=True)), Decimal("100"))
+
+    def test_direct_supplier_payment_without_payment_plan_records_contract_payment(self):
+        self.purchase_item.unit_price = Decimal("10")
+        self.purchase_item.save(update_fields=["unit_price"])
+        row = record_transaction({
+            "purchase_order": self.purchase,
+            "supplier": self.purchase.supplier,
+            "direction": "expense",
+            "kind": "supplier_payment",
+            "category": "供应商付款",
+            "amount": Decimal("100"),
+            "currency": self.purchase.currency,
+            "transaction_date": self.day,
+        })
+        self.assertIsInstance(row, Transaction)
+        self.assertEqual(row.status, "confirmed")
+        self.assertEqual(row.purchase_order, self.purchase)
+        self.assertEqual(sum(Transaction.objects.filter(purchase_order=self.purchase, status="confirmed").values_list("amount", flat=True)), Decimal("100"))
+
     def test_report_excludes_void_and_out_of_period_transactions(self):
         self.plan()
         row = record_contract_payment(self.order, {"amount": 100, "category": "receipt", "transaction_date": self.day})

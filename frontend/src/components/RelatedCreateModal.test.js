@@ -34,3 +34,10 @@ test('follow-up creation links days-after input to the next follow-up date', asy
   assert.match(source, /下次跟进天数/)
   assert.match(source, /setFollowUpDate/)
 })
+
+test('related create payload serializes empty optional dates as null', async () => {
+  const source = await readFile(new URL('./RelatedCreateModal.vue', import.meta.url), 'utf8')
+
+  assert.match(source, /if \(type === 'date' && value === ''\) value = null/)
+  assert.match(source, /form\.next_follow_up = ''/)
+})

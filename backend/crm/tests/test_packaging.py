@@ -2,6 +2,7 @@ from datetime import date
 from decimal import Decimal
 
 from django.test import TestCase
+from rest_framework.test import APIClient
 
 from crm.models import Customer, Order, PackagingTemplate, Product, Quote, SKU, Shipment, ShipmentPackage, SKUPackagingProfile
 from crm.services.packaging import copy_estimated_to_actual, generate_packing_plan, resolve_packaging
@@ -9,6 +10,7 @@ from crm.services.packaging import copy_estimated_to_actual, generate_packing_pl
 
 class PackagingDomainTests(TestCase):
     def setUp(self):
+        self.client = APIClient()
         self.product = Product.objects.create(code="P-PACK", name="Packaging Light")
         self.sku = SKU.objects.create(product=self.product, sku="SKU-PACK")
         self.template = PackagingTemplate.objects.create(code="CTN-50", name="50 pcs carton", carton_length="50", carton_width="40", carton_height="30", qty_per_carton="50", carton_tare_weight="1.5")
@@ -76,3 +78,22 @@ class PackagingDomainTests(TestCase):
         package.length = "60"; package.save()
         self.assertEqual(SKUPackagingProfile.objects.get(sku=self.sku).packaging_template_id, self.template.id)
         self.assertEqual(package.items.count(), 2)
+
+    def test_shipment_package_api_creates_package_for_current_shipment(self):
+        customer = Customer.objects.create(code="C-PACK-API", name="Packing API Buyer")
+        order = Order.objects.create(order_no="SO-PACK-API", customer=customer, order_date=date.today())
+        shipment = Shipment.objects.create(shipment_no="SH-PACK-API", order=order, shipment_date=date.today())
+
+        response = self.client.post(f"/api/shipments/{shipment.pk}/packages/", {
+            "carton_no": 1,
+            "length": "50",
+            "width": "40",
+            "height": "30",
+            "actual_net_weight": "10",
+            "actual_gross_weight": "11",
+            "items": [{"sku": self.sku.pk, "quantity": "10"}],
+        }, format="json")
+
+        self.assertEqual(response.status_code, 201, response.data)
+        package = ShipmentPackage.objects.get(pk=response.data["id"])
+        self.assertEqual(package.shipment, shipment)

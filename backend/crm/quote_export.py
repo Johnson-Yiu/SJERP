@@ -1,17 +1,7 @@
-import json
-import os
 from decimal import Decimal, ROUND_HALF_UP
-from pathlib import Path
-import subprocess
-import tempfile
-
-from django.conf import settings
 
 from .quotation_export_dto import build_quotation_export_dto
-
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-WORKER_PATH = PROJECT_ROOT / "scripts" / "generate_quote_xlsx.mjs"
+from .quote_xlsx_renderer import QuoteXlsxRendererError, render_quote_xlsx
 TWO_PLACES = Decimal("0.01")
 
 
@@ -78,38 +68,7 @@ def build_pi_export_payload(quote, *, template_id=None):
         raise QuoteExportError("PI total amount cannot be negative.")
     payload = dto.as_renderer_payload()
     payload["totals"]["amount_words"] = _amount_words(total_amount, quote.currency)
-    temporary = tempfile.TemporaryDirectory(prefix="quote-export-")
     try:
-        temporary_path = Path(temporary.name)
-        input_path = temporary_path / "payload.json"
-        output_path = temporary_path / f"{quote.quote_no}.xlsx"
-        input_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
-
-        node_binary = getattr(settings, "QUOTE_XLSX_NODE_BINARY", None) or os.environ.get("QUOTE_XLSX_NODE_BINARY") or "node"
-        try:
-            completed = subprocess.run(
-                [
-                    node_binary,
-                    str(WORKER_PATH),
-                    "--input-json",
-                    str(input_path),
-                    "--output-xlsx",
-                    str(output_path),
-                ],
-                cwd=PROJECT_ROOT,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                timeout=120,
-                check=False,
-            )
-        except (OSError, subprocess.TimeoutExpired) as exc:
-            raise QuoteExportError("PI workbook generation could not start.") from exc
-
-        if completed.returncode != 0 or not output_path.is_file():
-            detail = (completed.stderr or completed.stdout or "Unknown worker error").strip()[-1000:]
-            raise QuoteExportError(f"PI workbook generation failed: {detail}")
-        return output_path.read_bytes()
-    finally:
-        temporary.cleanup()
+        return render_quote_xlsx(payload)
+    except QuoteXlsxRendererError as exc:
+        raise QuoteExportError(f"PI workbook generation failed: {exc}") from exc

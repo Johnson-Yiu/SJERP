@@ -1,7 +1,10 @@
 from datetime import date
 from decimal import Decimal
+from copy import copy
 import io
+from pathlib import Path
 import tempfile
+from unittest.mock import patch
 import zipfile
 from xml.etree import ElementTree
 
@@ -16,6 +19,9 @@ from rest_framework.test import APIClient
 from crm.models import Contact, Customer, InventoryMovement, Order, Product, Quote, QuoteItem, QuoteRevisionCounter, Shipment, SKU, Transaction
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.quote_snapshots import create_quote_items
+from crm.quotation_template_config import quotation_templates
+from crm.quote_xlsx_renderer import QuoteXlsxRendererError
+from openpyxl import load_workbook
 
 
 def unzip_member(xlsx_bytes, member_name):
@@ -29,6 +35,9 @@ def xlsx_cell_text(xlsx_bytes, cell_reference):
     cell = sheet.find(f".//x:c[@r='{cell_reference}']", namespace)
     if cell is None:
         return None
+    if cell.get("t") == "inlineStr":
+        inline = cell.find("x:is", namespace)
+        return "".join(inline.itertext()) if inline is not None else ""
     value = cell.findtext("x:v", default="", namespaces=namespace)
     if cell.get("t") != "s":
         return value
@@ -710,7 +719,7 @@ class QuoteApiTests(TestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, getattr(response, "data", None))
         order = Order.objects.get(pk=saved.data["id"])
         revision = order.quote
         self.assertNotEqual(revision.pk, quote.pk)
@@ -1020,6 +1029,51 @@ class QuoteExportTests(TestCase):
         self.assertEqual(xlsx_cell_text(response.content, "A33"), "Branch Code")
         self.assertTrue(xlsx_cell_text(response.content, "A34").startswith("IMPORTANT NOTICE"))
 
+    def test_export_four_items_preserves_added_rows_merges_and_styles(self):
+        quote = self.create_quote(
+            quote_no="SJ20260815DE100",
+            items=[
+                (self.sku_1, "Panel one", "1.00", "10.00"),
+                (self.sku_2, "Panel two", "2.00", "11.00"),
+                (self.sku_3, "Panel three", "3.00", "12.00"),
+                (self.sku_4, "Panel four", "4.00", "13.00"),
+            ],
+        )
+
+        response = self.client.get(f"/api/quotes/{quote.id}/export/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, getattr(response, "data", None))
+        workbook = load_workbook(io.BytesIO(response.content))
+        worksheet = workbook["PI"]
+        template_path = Path(__file__).resolve().parents[3] / quotation_templates[
+            "standard_en_with_discount"
+        ].file
+        template_sheet = load_workbook(template_path)["PI"]
+
+        self.assertEqual([worksheet[f"C{row}"].value for row in range(11, 15)], [
+            "MODEL-001", "MODEL-002", "MODEL-003", "MODEL-004",
+        ])
+        self.assertEqual(
+            [worksheet[cell].value for cell in ("J11", "K11", "L11", "M11")],
+            [Decimal("1.00"), "pcs", Decimal("10.00"), Decimal("10.00")],
+        )
+        self.assertEqual(worksheet["A24"].value, "BANK INFORMATION")
+        self.assertEqual(worksheet["A32"].value, "Bank Code")
+        self.assertEqual(worksheet["C32"].value, "007")
+        self.assertEqual(worksheet["A33"].value, "Branch Code")
+        self.assertTrue(worksheet["A34"].value.startswith("IMPORTANT NOTICE"))
+
+        merged_ranges = {str(merged) for merged in worksheet.merged_cells.ranges}
+        self.assertTrue({"D13:I13", "D14:I14"}.issubset(merged_ranges))
+        for column in ("C", "D", "J", "L", "M"):
+            source = template_sheet[f"{column}12"]
+            copied = worksheet[f"{column}13"]
+            self.assertEqual(copy(copied.font), copy(source.font))
+            self.assertEqual(copy(copied.fill), copy(source.fill))
+            self.assertEqual(copy(copied.border), copy(source.border))
+            self.assertEqual(copy(copied.alignment), copy(source.alignment))
+            self.assertEqual(copied.number_format, source.number_format)
+
     def test_export_uses_no_discount_template_when_discount_is_zero(self):
         self.multi_item_quote.discount = Decimal("0.00")
         self.multi_item_quote.save(update_fields=["discount"])
@@ -1041,11 +1095,14 @@ class QuoteExportTests(TestCase):
         self.assertTrue(xlsx_cell_text(response.content, "A17").startswith("NOTES:"))
         self.assertEqual(xlsx_cell_text(response.content, "A22"), "BANK INFORMATION")
 
-    @override_settings(QUOTE_XLSX_NODE_BINARY="definitely-not-a-real-node-binary")
     def test_export_failure_returns_422_without_changing_quote(self):
         before = Quote.objects.get(pk=self.multi_item_quote.pk)
 
-        response = self.client.get(f"/api/quotes/{before.id}/export/")
+        with patch(
+            "crm.quote_export.render_quote_xlsx",
+            side_effect=QuoteXlsxRendererError("forced renderer failure"),
+        ):
+            response = self.client.get(f"/api/quotes/{before.id}/export/")
 
         after = Quote.objects.get(pk=before.pk)
         self.assertEqual(response.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)

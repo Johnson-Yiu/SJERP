@@ -51,9 +51,9 @@ npm run dev
 - 已保存报价是不可变快照。调整价格、明细或条款时请使用“创建修订版”，并填写本次修改说明；原报价保留不变。新版本仍按 `<根报价号>-1`、`<根报价号>-2` 顺序编号，但会记录实际从哪个版本修改而来。
 - 编辑器中的“预览 PI”只预览当前草稿，不会保存。保存并导出后，Excel 文件名严格使用完整报价号，例如 `SJ20260815DE001-2.xlsx`；工作表中的 `Invoice No.` 与文件名中的报价号完全一致。
 
-PI Excel 由后端读取已保存的报价快照，组装 Export DTO 后调用 Node.js 执行 `scripts/generate_quote_xlsx.mjs`。部署机器需安装 Node.js，并确保项目根目录可解析 `@oai/artifact-tool`；如果 `node` 不在 `PATH` 中，可设置 `QUOTE_XLSX_NODE_BINARY` 为 Node.js 可执行文件的绝对路径。
+PI Excel 由后端读取已保存的报价快照，组装 Export DTO 后直接使用 Python `openpyxl` 生成 XLSX。部署环境只需按 `backend/requirements.txt` 安装后端 Python 依赖，不需要 Node.js 或额外的报价导出运行时。
 
-默认模板位于 `templates/quotation/报价单模板.xlsx`。字体、颜色、Logo、边框、列宽、静态文案、打印设置等请直接编辑该文件；代码会保留其样式并只填入数据、复制动态商品行、插入图片和移动下方区域。模板中动态区域的位置集中在 `scripts/quotation_template_config.mjs`，仅在更改数据槽位或行结构时才需同步修改该映射。
+报价模板位于 `templates/quotation/`。字体、颜色、Logo、边框、列宽、静态文案、打印设置等请直接编辑对应模板；代码会保留其样式并只填入数据、复制动态商品行、插入图片和移动下方区域。模板中动态区域的位置集中在 `backend/crm/quotation_template_config.py`，仅在更改数据槽位或行结构时才需同步修改该映射。
 
 ## PostgreSQL 切换
 

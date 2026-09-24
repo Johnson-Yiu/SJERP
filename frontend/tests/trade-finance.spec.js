@@ -49,6 +49,25 @@ describe('trade finance interactions', () => {
     wrapper.unmount()
   })
 
+  it('requires a reason for root transaction void and hides child void actions', async () => {
+    const rows = [
+      { id: 11, transaction_date: '2026-09-01', transaction_no: 'FIN-11', direction: 'income', direction_display: '收入', kind: 'customer_receipt', amount: '30', currency: 'USD', rmb_amount: '210', status: 'confirmed', status_display: '已确认', customer_name: '客户甲', order_no: 'SO-11', allocations: [], allocated_amount: '0' },
+      { id: 12, transaction_date: '2026-09-01', transaction_no: 'FIN-12', direction: 'income', direction_display: '收入', kind: 'customer_receipt', amount: '20', currency: 'USD', rmb_amount: '140', status: 'confirmed', status_display: '已确认', customer_name: '客户甲', order_no: 'SO-11', split_from: 11, allocations: [], allocated_amount: '0' },
+    ]
+    mocks.listAll.mockImplementation(async url => url === '/transactions/' ? rows : [])
+    const wrapper = mount(TransactionPage, options)
+    await flushPromises()
+    expect(wrapper.findAll('button').filter(button => button.text() === '作废')).toHaveLength(1)
+    await wrapper.findAll('button').find(button => button.text() === '作废').trigger('click')
+    expect(wrapper.text()).toContain('该操作将同时作废相关拆分流水，并恢复对应收付款计划。')
+    const dialog = wrapper.find('form.dialog')
+    await dialog.find('textarea').setValue('收款金额录入错误')
+    await dialog.trigger('submit')
+    await flushPromises()
+    expect(mocks.post).toHaveBeenCalledWith('/transactions/11/void/', { reason: '收款金额录入错误' })
+    wrapper.unmount()
+  })
+
   it('requires inspection acknowledgement and submits accepted quantity with notes', async () => {
     const purchase = { id: 2, purchase_no: 'PO-2', status: 'ordered', currency: 'USD', items: [{ id: 7, sku_code: 'SKU-7', quantity: '10', received_quantity: '0', remaining_quantity: '10', unit_price: '3' }] }
     mocks.listAll.mockImplementation(async url => url === '/purchase-orders/' ? [purchase] : [])

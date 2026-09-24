@@ -6,6 +6,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 
 from crm.models import Customer, InventoryMovement, Order, Product, ProductCategory, PurchaseOrder, SKU, Supplier, Transaction
+from crm.services.finance import void_transaction
 
 
 class ReportingTests(TestCase):
@@ -94,6 +95,18 @@ class ReportingTests(TestCase):
         self.assertEqual(data['totals']['amount'], Decimal(30))
         self.assertEqual(data['totals']['count'], 2)
         self.assertEqual(self.query(source="cash", filter_direction="expense")['totals']['amount'], Decimal(-20))
+
+    def test_voided_transaction_is_excluded_from_cash_dashboard(self):
+        row = Transaction.objects.create(
+            transaction_no="R-VOID", transaction_date=date(2026, 9, 1), direction="income",
+            kind="other_income", category="其他收入", amount=Decimal("50"),
+            exchange_rate=Decimal("7"), rmb_amount=Decimal("350"), currency="USD",
+        )
+        void_transaction(row, "报表测试作废")
+
+        data = self.query(source="cash", group_by="direction")
+        self.assertEqual(data['totals']['amount'], Decimal("0"))
+        self.assertEqual(data['totals']['count'], 0)
 
     def test_inventory_net_change_per_unit(self):
         for i, (kind, quantity) in enumerate([('purchase_in', 10), ('sale_out', 4)]):

@@ -312,7 +312,7 @@ class TradeFinanceUpgradeTests(TestCase):
         self.assertFalse(self.purchase.payment_plans.filter(status="open").exists())
         self.assertEqual(self.purchase.paid_amount, 50)
         self.assertFalse(Transaction.objects.filter(kind="unallocated_advance").exists())
-        void_transaction(Transaction.objects.get(pk=response.data["id"]))
+        void_transaction(Transaction.objects.get(pk=response.data["id"]), "付款录入错误")
         self.assertEqual(self.purchase.paid_amount, 0)
         self.assertEqual(self.purchase.payment_plans.filter(status="open", settled_amount=0).count(), 2)
 
@@ -327,7 +327,7 @@ class TradeFinanceUpgradeTests(TestCase):
         report = self.client.get("/api/finance-dashboard/", {"date_from": "2026-09-01", "date_to": "2026-09-30"}).data
         self.assertEqual(report["metrics"]["income_rmb"], 560)
         self.assertEqual(report["metrics"]["advance_receipt_rmb"], 140)
-        void_transaction(advance)
+        void_transaction(advance, "预收款录入错误")
         plan.refresh_from_db()
         self.assertEqual(plan.settled_amount, 0)
         self.assertEqual(self.order.paid_amount, 0)
@@ -356,7 +356,7 @@ class TradeFinanceUpgradeTests(TestCase):
     def test_transaction_cannot_be_deleted_or_reactivated_by_patch(self):
         row = record_transaction({"plan": self.plan(), "amount": 10, "category": "receipt"})
         self.assertEqual(self.client.delete(f"/api/transactions/{row.pk}/").status_code, 400)
-        void_transaction(row)
+        void_transaction(row, "流水录入错误")
         self.assertEqual(self.client.patch(f"/api/transactions/{row.pk}/", {"status": "confirmed"}, format="json").status_code, 400)
 
     def test_direct_customer_receipt_without_payment_plan_records_contract_payment(self):
@@ -396,7 +396,7 @@ class TradeFinanceUpgradeTests(TestCase):
     def test_report_excludes_void_and_out_of_period_transactions(self):
         self.plan()
         row = record_contract_payment(self.order, {"amount": 100, "category": "receipt", "transaction_date": self.day})
-        void_transaction(row)
+        void_transaction(row, "收款金额录入错误")
         report = self.client.get("/api/finance-dashboard/", {"date_from": "2026-09-01", "date_to": "2026-09-30"})
         self.assertEqual(report.status_code, 200)
         self.assertEqual(report.data["metrics"]["income_rmb"], 0)
@@ -460,7 +460,7 @@ class TradeFinanceUpgradeTests(TestCase):
     def test_excess_split_is_voided_with_original_cash_event(self):
         row = record_transaction({"plan": self.plan(), "amount": 120, "category": "receipt", "exchange_rate": 7})
         self.assertEqual(sum(Transaction.objects.values_list('rmb_amount', flat=True)), 840)
-        void_transaction(row)
+        void_transaction(row, "超额收款录入错误")
         self.assertFalse(Transaction.objects.filter(status='confirmed').exists())
 
     def test_import_cannot_overwrite_existing_cash(self):

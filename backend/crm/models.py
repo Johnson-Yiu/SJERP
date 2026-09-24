@@ -1368,6 +1368,8 @@ class Transaction(TimestampedModel):
     plan = models.ForeignKey(PaymentPlan, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
     replaces = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True, related_name="replacements")
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="confirmed")
+    voided_at = models.DateTimeField(null=True, blank=True)
+    void_reason = models.TextField(blank=True)
     payment_method = models.CharField("支付方式", max_length=100, blank=True)
     reference = models.CharField("外部参考号", max_length=100, blank=True)
     notes = models.TextField("备注", blank=True)

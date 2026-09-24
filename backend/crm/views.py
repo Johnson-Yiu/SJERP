@@ -26,7 +26,7 @@ from .permissions import HSCodeMaintenancePermission, PermissionAdminOnly, Quote
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.finance import allocate_advance, approve_contract_change, record_contract_payment, record_transaction, void_transaction
 from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_receipt as reverse_receipt_service, reverse_shipment as reverse_shipment_service, sku_metrics
@@ -1346,12 +1346,27 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def void(self, request, pk=None):
         source = self.get_object()
+        input_serializer = TransactionVoidInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
         before = snapshot(source)
         try:
-            row = void_transaction(source)
+            row = void_transaction(source, input_serializer.validated_data["reason"])
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        record_operation(request=request, instance=row, action="custom", action_label="作废财务流水", before=before)
+        split_ids = []
+        frontier = [row.pk]
+        while frontier:
+            child_ids = list(Transaction.objects.filter(split_from_id__in=frontier).values_list("pk", flat=True))
+            split_ids.extend(child_ids)
+            frontier = child_ids
+        record_operation(
+            request=request,
+            instance=row,
+            action="custom",
+            action_label="作废财务流水",
+            before=before,
+            metadata={"transaction_id": row.id, "reason": row.void_reason, "split_transaction_ids": split_ids},
+        )
         return Response(self.get_serializer(row).data)
 
     @action(detail=True, methods=["post"])

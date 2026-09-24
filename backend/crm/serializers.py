@@ -174,6 +174,10 @@ class ReceiptReversalInputSerializer(serializers.Serializer):
     reason = serializers.CharField(max_length=500, allow_blank=False, trim_whitespace=True)
 
 
+class TransactionVoidInputSerializer(serializers.Serializer):
+    reason = serializers.CharField(max_length=500, allow_blank=False, trim_whitespace=True)
+
+
 class PurchaseOrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer):
     amount = serializers.DecimalField(max_digits=28, decimal_places=4, read_only=True)
     sku_code = serializers.CharField(source="sku_code_snapshot", read_only=True)
@@ -1411,7 +1415,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = "__all__"
         extra_kwargs = {"transaction_no": {"required": False}}
-        read_only_fields = ["status", "allocated_amount", "split_from"]
+        read_only_fields = ["status", "allocated_amount", "split_from", "voided_at", "void_reason"]
 
     def get_allocations(self, obj):
         return [{"id": row.id, "plan": row.plan_id, "contract_no": row.plan.order.order_no if row.plan.order_id else row.plan.purchase_order.purchase_no,

@@ -142,31 +142,74 @@ def record_transaction(payload):
 
 
 @transaction.atomic
-def void_transaction(row):
-    row = Transaction.objects.select_for_update().select_related("plan").get(pk=row.pk)
-    if row.status != "confirmed":
+def void_transaction(row, reason):
+    reason = str(reason or "").strip()
+    if not reason:
+        raise ValidationError("作废原因不能为空。")
+
+    root = Transaction.objects.select_for_update().get(pk=row.pk)
+    if root.split_from_id:
+        raise ValidationError("拆分流水必须通过原始流水统一作废。")
+    if root.status != "confirmed":
         raise ValidationError("只有已确认流水可以作废。")
-    for child in row.split_rows.filter(status="confirmed").order_by("pk"):
-        void_transaction(child)
-    allocations = list(row.allocations.filter(is_active=True).order_by("plan_id"))
-    if row.allocated_amount != sum((allocation.amount for allocation in allocations), Decimal("0")):
-        raise ValidationError("该历史预收预付缺少核销明细，请先人工核对，不能直接作废。")
-    for allocation in allocations:
-        target = PaymentPlan.objects.select_for_update().get(pk=allocation.plan_id)
-        target.settled_amount -= allocation.amount
-        target.status = "open"
-        target.save(update_fields=["settled_amount", "status", "updated_at"])
+
+    rows = []
+
+    def collect(current):
+        current = Transaction.objects.select_for_update().get(pk=current.pk)
+        rows.append(current)
+        for child in current.split_rows.select_for_update().filter(status="confirmed").order_by("pk"):
+            collect(child)
+
+    collect(root)
+    root = rows[0]
+
+    plan_deltas = {}
+    active_allocations = []
+    for current in rows:
+        allocations = list(
+            AdvanceAllocation.objects.select_for_update()
+            .filter(advance=current, is_active=True)
+            .order_by("pk")
+        )
+        allocation_total = sum((allocation.amount for allocation in allocations), Decimal("0"))
+        if current.allocated_amount != allocation_total:
+            raise ValidationError("该历史预收预付缺少核销明细，请先人工核对，不能直接作废。")
+        active_allocations.extend(allocations)
+        for allocation in allocations:
+            plan_deltas[allocation.plan_id] = plan_deltas.get(allocation.plan_id, Decimal("0")) + allocation.amount
+        if current.plan_id:
+            plan_deltas[current.plan_id] = plan_deltas.get(current.plan_id, Decimal("0")) + current.amount
+
+    plans = {
+        plan.pk: plan
+        for plan in PaymentPlan.objects.select_for_update()
+        .filter(pk__in=plan_deltas)
+        .order_by("pk")
+    }
+    if len(plans) != len(plan_deltas):
+        raise ValidationError("关联收付款计划缺失，不能安全作废。")
+    for plan_id, delta in plan_deltas.items():
+        if plans[plan_id].settled_amount < delta or plans[plan_id].settled_amount - delta < 0:
+            raise ValidationError("收付款计划已结金额不足，不能安全作废。")
+
+    for plan_id, delta in sorted(plan_deltas.items()):
+        plan = plans[plan_id]
+        plan.settled_amount -= delta
+        plan.status = "settled" if plan.settled_amount == plan.planned_amount else "open"
+        plan.save(update_fields=["settled_amount", "status", "updated_at"])
+    for allocation in active_allocations:
         allocation.is_active = False
         allocation.save(update_fields=["is_active", "updated_at"])
-    if row.plan_id:
-        plan = PaymentPlan.objects.select_for_update().get(pk=row.plan_id)
-        plan.settled_amount -= row.amount
-        plan.status = "open"
-        plan.save(update_fields=["settled_amount", "status", "updated_at"])
-    row.status = "cancelled"
-    row.allocated_amount = 0
-    row.save(update_fields=["status", "allocated_amount", "updated_at"])
-    return row
+
+    voided_at = timezone.now()
+    for current in rows:
+        current.status = "cancelled"
+        current.allocated_amount = 0
+        current.voided_at = voided_at
+        current.void_reason = reason
+        current.save(update_fields=["status", "allocated_amount", "voided_at", "void_reason", "updated_at"])
+    return root
 
 
 @transaction.atomic

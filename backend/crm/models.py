@@ -1018,7 +1018,7 @@ class PurchaseOrderItem(TradeUnitLine):
 
     @property
     def received_quantity(self):
-        return sum((receipt.quantity for receipt in self.receipts.all()), Decimal("0"))
+        return sum((receipt.quantity for receipt in self.receipts.filter(reversal_inventory_movement__isnull=True)), Decimal("0"))
 
     @property
     def remaining_quantity(self):
@@ -1240,7 +1240,7 @@ class InventoryMovement(TradeUnitLine, TimestampedModel):
     source_type = models.CharField(
         "来源类型",
         max_length=20,
-        choices=[("manual", "手工"), ("receipt", "到货"), ("shipment", "发货"), ("return", "退货")],
+        choices=[("manual", "手工"), ("receipt", "到货"), ("shipment", "发货"), ("return", "退货"), ("reversal", "冲销")],
         default="manual",
     )
     source_no = models.CharField("来源单号", max_length=50, blank=True)
@@ -1282,6 +1282,15 @@ class GoodsReceipt(TradeUnitLine, TimestampedModel):
         null=True,
         blank=True,
     )
+    reversal_inventory_movement = models.OneToOneField(
+        InventoryMovement,
+        on_delete=models.PROTECT,
+        related_name="reversed_goods_receipt",
+        null=True,
+        blank=True,
+    )
+    reversed_at = models.DateTimeField(null=True, blank=True)
+    reversal_reason = models.TextField(blank=True)
 
     class Meta:
         constraints = [

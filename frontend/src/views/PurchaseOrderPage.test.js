@@ -19,3 +19,13 @@ test('purchase desk connects creation, receipt and supplier payment actions', as
   assert.match(source, /route\.query\.supplier/)
   assert.match(source, /inheritedSupplier/)
 })
+
+test('purchase desk exposes receipt history and the reversal flow', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /item\.receipts/)
+  assert.match(source, /receipts\/\$\{reversalTarget\.value\.receipt\.id\}\/reverse/)
+  assert.match(source, /冲销采购入库/)
+  assert.match(source, /已冲销/)
+  assert.match(source, /reversalReason/)
+})

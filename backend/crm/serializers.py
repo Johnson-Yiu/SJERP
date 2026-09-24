@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.utils.html import strip_tags
 from rest_framework import serializers
 
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .quote_snapshots import create_quote_items
 from .sku_identity import build_sku_identity, category_attributes, complete_sales_model_abbreviations, identity_conflict_messages, identity_signature, normalize_display_name, normalize_sales_model_abbreviations, parameter_pairs, raw_parameter_value
@@ -163,6 +163,17 @@ class OperationLogSerializer(serializers.ModelSerializer):
         return obj.operator.get_username() if obj.operator else "系统"
 
 
+class GoodsReceiptSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GoodsReceipt
+        fields = ["id", "receipt_date", "quantity", "unit_cost", "notes", "inventory_movement", "reversal_inventory_movement", "reversed_at", "reversal_reason"]
+        read_only_fields = fields
+
+
+class ReceiptReversalInputSerializer(serializers.Serializer):
+    reason = serializers.CharField(max_length=500, allow_blank=False, trim_whitespace=True)
+
+
 class PurchaseOrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer):
     amount = serializers.DecimalField(max_digits=28, decimal_places=4, read_only=True)
     sku_code = serializers.CharField(source="sku_code_snapshot", read_only=True)
@@ -174,10 +185,14 @@ class PurchaseOrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSer
     supplier_barcode = serializers.CharField(source="supplier_barcode_snapshot", read_only=True)
     received_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     remaining_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    receipts = serializers.SerializerMethodField()
+
+    def get_receipts(self, obj):
+        return GoodsReceiptSerializer(obj.receipts.all(), many=True).data
 
     class Meta:
         model = PurchaseOrderItem
-        fields = ["id", "sku", "supplier_sku", "sku_code", "display_name", "sales_model", "supplier_name", "supplier_model", "supplier_sku_code", "supplier_barcode", "supplier_characteristics_snapshot", "quantity", "unit_price", "received_quantity", "remaining_quantity", "amount"] + TRADE_FIELDS
+        fields = ["id", "sku", "supplier_sku", "sku_code", "display_name", "sales_model", "supplier_name", "supplier_model", "supplier_sku_code", "supplier_barcode", "supplier_characteristics_snapshot", "quantity", "unit_price", "received_quantity", "remaining_quantity", "amount", "receipts"] + TRADE_FIELDS
         read_only_fields = ["supplier_characteristics_snapshot"]
 
 

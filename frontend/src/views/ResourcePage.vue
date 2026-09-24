@@ -257,6 +257,7 @@ function payload() {
     if (type === 'remote_multi') value = (value || []).map(Number)
     if (type === 'remote') value = value ? Number(value) : null
     if (type === 'number') value = value === '' ? 0 : value
+    if (type === 'date' && value === '') value = null
     if (type === 'datetime-local' && value && value.length === 16) value += ':00+08:00'
     if (['website', 'store_url'].includes(name)) value = normalizeWebsite(value)
     data[name] = value

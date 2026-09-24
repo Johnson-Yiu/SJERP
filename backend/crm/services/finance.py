@@ -59,7 +59,7 @@ def ensure_default_payment_plans(contract, deposit_ratio=None):
 def record_transaction(payload):
     payload = payload.copy()
     plan = payload.pop("plan", None)
-    amount = positive_decimal(payload.pop("amount", None), "收付款金额")
+    amount = positive_decimal(payload.get("amount"), "收付款金额")
     # Transaction status is controlled by this service; callers cannot override it.
     payload.pop("status", None)
     payload.pop("allocated_amount", None)
@@ -114,6 +114,7 @@ def record_transaction(payload):
         raise ValidationError("人民币流水汇率必须为 1。")
     payload["exchange_rate"] = exchange_rate
     payload.setdefault("rmb_amount", (applied_amount * exchange_rate).quantize(Decimal("0.0001")))
+    payload.pop("amount", None)
     row = Transaction.objects.create(
         transaction_no=payload.pop("transaction_no", None) or _transaction_no(),
         transaction_date=payload.pop("transaction_date", None) or timezone.localdate(),

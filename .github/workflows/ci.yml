@@ -2,9 +2,6 @@ name: CI
 
 on:
   push:
-    branches:
-      - master
-      - 'phase-*'
   pull_request:
     branches:
       - master

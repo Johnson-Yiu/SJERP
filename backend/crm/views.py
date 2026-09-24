@@ -26,10 +26,10 @@ from .permissions import HSCodeMaintenancePermission, PermissionAdminOnly, Quote
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.finance import allocate_advance, approve_contract_change, record_contract_payment, record_transaction, void_transaction
-from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_receipt as reverse_receipt_service, sku_metrics
+from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_receipt as reverse_receipt_service, reverse_shipment as reverse_shipment_service, sku_metrics
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
 from .services.sku_plans import apply_category_attribute_reorder, preview_category_attribute_reorder
 from .sku_identity import normalize_abbreviation_key
@@ -774,6 +774,37 @@ class ShipmentViewSet(AuditTrailMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.Serializer  # read endpoints below use explicit responses
     queryset = Shipment.objects.select_related("order").prefetch_related("packages__items__sku")
 
+    @action(detail=True, methods=["post"], url_path="reverse")
+    def reverse(self, request, pk=None):
+        shipment = self.get_object()
+        input_serializer = ShipmentReversalInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        try:
+            shipment = reverse_shipment_service(shipment, input_serializer.validated_data["reason"])
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        reversal_ids = list(shipment.items.values_list("reversal_inventory_movement_id", flat=True))
+        record_operation(
+            request=request,
+            instance=shipment.order,
+            action="custom",
+            action_label="冲销销售发货",
+            metadata={
+                "shipment_id": shipment.id,
+                "reversal_inventory_movement_id": reversal_ids[0] if len(reversal_ids) == 1 else reversal_ids,
+                "reversal_inventory_movement_ids": reversal_ids,
+                "reason": shipment.reversal_reason,
+            },
+        )
+        return Response({
+            "id": shipment.id,
+            "shipment_no": shipment.shipment_no,
+            "status": shipment.status,
+            "reversed_at": shipment.reversed_at,
+            "reversal_reason": shipment.reversal_reason,
+            "reversal_inventory_movement_ids": reversal_ids,
+        })
+
     @action(detail=True, methods=["get", "post"], url_path="packages")
     def packages(self, request, pk=None):
         shipment = self.get_object()
@@ -1150,7 +1181,14 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "shipments": [{
                 "id": shipment.id, "shipment_no": shipment.shipment_no,
                 "shipment_date": shipment.shipment_date, "status": shipment.status,
-                "items": [{"sku_code": line.sku.sku, "quantity": line.quantity, "is_overage": line.is_overage} for line in shipment.items.all()],
+                "reversed_at": shipment.reversed_at, "reversal_reason": shipment.reversal_reason,
+                "has_overage": any(line.is_overage for line in shipment.items.all()),
+                "items": [{
+                    "id": line.id, "sku_code": line.sku.sku, "quantity": line.quantity,
+                    "is_overage": line.is_overage,
+                    "inventory_movement": line.inventory_movement_id,
+                    "reversal_inventory_movement": line.reversal_inventory_movement_id,
+                } for line in shipment.items.all()],
             } for shipment in shipments],
         })
 

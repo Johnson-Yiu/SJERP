@@ -255,6 +255,7 @@ def reverse_receipt(receipt: GoodsReceipt, reason: str) -> GoodsReceipt:
         raise ValidationError("当前 SKU 实际库存不足以冲销，请先处理后续出库。")
     original_movement = receipt.inventory_movement
     movement = InventoryMovement.objects.create(
+        **{k: getattr(receipt, k) for k in TRADE_FIELDS},
         movement_no=_movement_no("REV"),
         movement_date=timezone.localdate(),
         type="adjust_out",
@@ -313,6 +314,7 @@ def confirm_shipment(order: Order, payload: dict) -> Shipment:
         waybill_no=payload.get("waybill_no", ""),
         status="confirmed",
         notes=payload.get("notes", ""),
+        order_status_before_confirm=order.status,
     )
     for line in payload["items"]:
         item = OrderItem.objects.select_for_update().select_related("sku").get(
@@ -402,6 +404,92 @@ def confirm_shipment(order: Order, payload: dict) -> Shipment:
         order.status = "shipped"
         order.save(update_fields=["status", "updated_at"])
     allocate_order(order)
+    return shipment
+
+
+@transaction.atomic
+def reverse_shipment(shipment: Shipment, reason: str) -> Shipment:
+    reason = str(reason or "").strip()
+    if not reason:
+        raise ValidationError("冲销原因不能为空。")
+
+    shipment = Shipment.objects.select_for_update().get(pk=shipment.pk)
+    if shipment.status != "confirmed":
+        if shipment.status == "cancelled" or shipment.reversed_at:
+            raise ValidationError("该发货单已经冲销，不能重复操作。")
+        raise ValidationError("只有已确认的发货单可以冲销。")
+
+    order = Order.objects.select_for_update().get(pk=shipment.order_id)
+    if order.status in {"completed", "cancelled"}:
+        raise ValidationError("已完成或已取消的订单不能冲销发货。")
+
+    items = list(
+        ShipmentItem.objects.select_for_update()
+        .select_related("sku", "order_item", "inventory_movement")
+        .filter(shipment=shipment)
+        .order_by("pk")
+    )
+    if any(item.is_overage for item in items):
+        raise ValidationError("该发货单包含超发、客户追加、赠品或包装尾差，涉及订单金额或增补明细，本阶段不能直接冲销。")
+
+    original_movements = {}
+    for item in items:
+        original_movement = item.inventory_movement
+        if (
+            original_movement is None
+            or original_movement.type != "sale_out"
+            or original_movement.source_type != "shipment"
+            or original_movement.sku_id != item.sku_id
+            or original_movement.order_id != shipment.order_id
+            or original_movement.quantity != item.quantity
+        ):
+            raise ValidationError("原销售出库流水缺失或异常，无法安全冲销，请先检查库存流水。")
+        if item.reversal_inventory_movement_id:
+            raise ValidationError("该发货明细已经冲销，不能重复操作。")
+        original_movements[item.pk] = original_movement
+
+    sku_ids = sorted({item.sku_id for item in items})
+    locked_skus = {
+        sku.pk: sku
+        for sku in SKU.objects.select_for_update().filter(pk__in=sku_ids).order_by("pk")
+    }
+    now = timezone.now()
+    for item in items:
+        original_movement = original_movements[item.pk]
+        movement = InventoryMovement.objects.create(
+            **{k: getattr(item, k) for k in TRADE_FIELDS},
+            movement_no=_movement_no("REV"),
+            movement_date=timezone.localdate(),
+            type="adjust_in",
+            sku=locked_skus[item.sku_id],
+            supplier_sku=original_movement.supplier_sku,
+            order=order,
+            quantity=item.quantity,
+            warehouse=original_movement.warehouse,
+            unit_cost=original_movement.unit_cost,
+            reference=original_movement.movement_no,
+            source_type="reversal",
+            source_no=shipment.shipment_no,
+            is_automatic=True,
+            notes=f"冲销销售发货 {shipment.shipment_no}：{reason}",
+        )
+        item.reversal_inventory_movement = movement
+        item.save(update_fields=["reversal_inventory_movement"])
+
+    shipment.status = "cancelled"
+    shipment.reversed_at = now
+    shipment.reversal_reason = reason
+    shipment.save(update_fields=["status", "reversed_at", "reversal_reason", "updated_at"])
+
+    order_items = list(order.items.all())
+    if order_items and all(_shipped_quantity(item) >= item.quantity for item in order_items):
+        order.status = "shipped"
+    else:
+        order.status = shipment.order_status_before_confirm if shipment.order_status_before_confirm in {"confirmed", "production"} else "confirmed"
+    order.save(update_fields=["status", "updated_at"])
+
+    for sku in locked_skus.values():
+        rebalance_sku_reservations(sku)
     return shipment
 
 

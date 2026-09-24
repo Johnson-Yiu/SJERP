@@ -432,6 +432,22 @@ def reverse_shipment(shipment: Shipment, reason: str) -> Shipment:
     if any(item.is_overage for item in items):
         raise ValidationError("该发货单包含超发、客户追加、赠品或包装尾差，涉及订单金额或增补明细，本阶段不能直接冲销。")
 
+    original_movements = {}
+    for item in items:
+        original_movement = item.inventory_movement
+        if (
+            original_movement is None
+            or original_movement.type != "sale_out"
+            or original_movement.source_type != "shipment"
+            or original_movement.sku_id != item.sku_id
+            or original_movement.order_id != shipment.order_id
+            or original_movement.quantity != item.quantity
+        ):
+            raise ValidationError("原销售出库流水缺失或异常，无法安全冲销，请先检查库存流水。")
+        if item.reversal_inventory_movement_id:
+            raise ValidationError("该发货明细已经冲销，不能重复操作。")
+        original_movements[item.pk] = original_movement
+
     sku_ids = sorted({item.sku_id for item in items})
     locked_skus = {
         sku.pk: sku
@@ -439,21 +455,19 @@ def reverse_shipment(shipment: Shipment, reason: str) -> Shipment:
     }
     now = timezone.now()
     for item in items:
-        if item.reversal_inventory_movement_id:
-            raise ValidationError("该发货明细已经冲销，不能重复操作。")
-        original_movement = item.inventory_movement
+        original_movement = original_movements[item.pk]
         movement = InventoryMovement.objects.create(
             **{k: getattr(item, k) for k in TRADE_FIELDS},
             movement_no=_movement_no("REV"),
             movement_date=timezone.localdate(),
             type="adjust_in",
             sku=locked_skus[item.sku_id],
-            supplier_sku=original_movement.supplier_sku if original_movement else None,
+            supplier_sku=original_movement.supplier_sku,
             order=order,
             quantity=item.quantity,
-            warehouse=original_movement.warehouse if original_movement else "默认仓",
-            unit_cost=original_movement.unit_cost if original_movement else Decimal("0"),
-            reference=original_movement.movement_no if original_movement else shipment.shipment_no,
+            warehouse=original_movement.warehouse,
+            unit_cost=original_movement.unit_cost,
+            reference=original_movement.movement_no,
             source_type="reversal",
             source_no=shipment.shipment_no,
             is_automatic=True,

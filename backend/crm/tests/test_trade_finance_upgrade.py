@@ -261,6 +261,29 @@ class TradeFinanceUpgradeTests(TestCase):
         self.assertEqual(response.data["reversal_reason"], "API 发货冲销")
         self.assertTrue(response.data["reversal_inventory_movement_ids"])
 
+    def test_shipment_reversal_rejects_missing_original_movement_without_changes(self):
+        self.receive("10")
+        shipment = self.ship("10")
+        line = shipment.items.get()
+        line.inventory_movement = None
+        line.save(update_fields=["inventory_movement"])
+        self.order.refresh_from_db()
+        before_status = self.order.status
+        before_actual = sku_metrics(self.sku)["actual_quantity"]
+        before_reserved = sku_metrics(self.sku)["reserved_quantity"]
+        before_reversals = InventoryMovement.objects.filter(source_type="reversal").count()
+
+        with self.assertRaisesMessage(ValidationError, "原销售出库流水缺失或异常，无法安全冲销，请先检查库存流水。"):
+            reverse_shipment(shipment, "原流水缺失")
+
+        shipment.refresh_from_db()
+        self.order.refresh_from_db()
+        self.assertEqual(shipment.status, "confirmed")
+        self.assertEqual(self.order.status, before_status)
+        self.assertEqual(sku_metrics(self.sku)["actual_quantity"], before_actual)
+        self.assertEqual(sku_metrics(self.sku)["reserved_quantity"], before_reserved)
+        self.assertEqual(InventoryMovement.objects.filter(source_type="reversal").count(), before_reversals)
+
     def test_malformed_and_foreign_shipment_lines_return_400(self):
         for line in ({"quantity": "abc"}, {"order_item": 999999, "quantity": "1"}):
             response = self.client.post(f"/api/orders/{self.order.pk}/ship/", {"shipment_date": self.day.isoformat(), "items": [line]}, format="json")

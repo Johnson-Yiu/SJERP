@@ -44,9 +44,12 @@ jobs:
       - name: Frontend unit tests
         working-directory: frontend
         run: npm run test:unit
+      - name: Frontend Node-only tests
+        working-directory: frontend
+        run: node --test tests/detail-drawer-typography.spec.js
       - name: Frontend Vitest tests
         working-directory: frontend
-        run: npx --no-install vitest run tests --environment jsdom
+        run: npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js
       - name: Frontend build
         working-directory: frontend
         run: npm run build

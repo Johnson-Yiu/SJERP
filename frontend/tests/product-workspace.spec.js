@@ -20,7 +20,7 @@ it('separates currency and units and counts distinct orders', async () => {
 })
 it('navigates from overview and emits the selected order', async () => {
   const w = mount(ProductWorkspace, { props: { data, activeTab: '__overview' } })
-  await w.find('.quick-links button').trigger('click')
+  await w.findAll('.preview-grid section')[1].find('button').trigger('click')
   expect(w.emitted('update:activeTab')[0]).toEqual(['skus'])
   await w.setProps({ activeTab: 'sales' })
   await w.find('.sales-table tbody button').trigger('click')

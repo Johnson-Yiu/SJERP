@@ -21,15 +21,15 @@ from rest_framework.decorators import action, api_view, parser_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, Supplier, SupplierSKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, Supplier, SupplierSKU, Transaction
 from .permissions import HSCodeMaintenancePermission, PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, HSCodeSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.finance import allocate_advance, approve_contract_change, record_contract_payment, record_transaction, void_transaction
-from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, sku_metrics
+from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_receipt as reverse_receipt_service, sku_metrics
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
 from .services.sku_plans import apply_category_attribute_reorder, preview_category_attribute_reorder
 from .sku_identity import normalize_abbreviation_key
@@ -190,6 +190,29 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "is_overage": receipt.is_overage,
             "inventory_movement": receipt.inventory_movement_id,
         }, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"], url_path=r"receipts/(?P<receipt_id>[^/.]+)/reverse")
+    def reverse_receipt(self, request, pk=None, receipt_id=None):
+        purchase = self.get_object()
+        receipt = get_object_or_404(GoodsReceipt, pk=receipt_id, purchase_item__purchase_order=purchase)
+        input_serializer = ReceiptReversalInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        try:
+            receipt = reverse_receipt_service(receipt, input_serializer.validated_data["reason"])
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        record_operation(
+            request=request,
+            instance=purchase,
+            action="custom",
+            action_label="冲销采购入库",
+            metadata={
+                "receipt_id": receipt.id,
+                "reversal_inventory_movement_id": receipt.reversal_inventory_movement_id,
+                "reason": receipt.reversal_reason,
+            },
+        )
+        return Response(GoodsReceiptSerializer(receipt).data)
 
     @action(detail=True, methods=["post"])
     def pay(self, request, pk=None):

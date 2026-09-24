@@ -5,9 +5,9 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-from crm.models import Customer, InventoryMovement, Order, PaymentPlan, Product, PurchaseOrder, SKU, Supplier, Transaction
+from crm.models import Customer, GoodsReceipt, InventoryMovement, InventoryReservation, Order, PaymentPlan, Product, PurchaseOrder, SKU, Supplier, Transaction
 from crm.services.finance import allocate_advance, ensure_default_payment_plans, record_contract_payment, record_transaction, void_transaction
-from crm.services.fulfillment import allocate_order, confirm_shipment, order_item_metrics, record_receipt, sku_metrics
+from crm.services.fulfillment import allocate_order, confirm_shipment, order_item_metrics, record_receipt, reverse_receipt, sku_metrics
 
 
 class TradeFinanceUpgradeTests(TestCase):
@@ -71,6 +71,77 @@ class TradeFinanceUpgradeTests(TestCase):
             self.receive("1")
         with self.assertRaises(ValidationError):
             self.ship("1")
+
+    def test_receipt_reversal_restores_inventory_received_quantity_and_purchase_status(self):
+        receipt = self.receive("10")
+        reverse_receipt(receipt, "数量录错")
+
+        receipt.refresh_from_db()
+        self.purchase.refresh_from_db()
+        self.purchase_item.refresh_from_db()
+        self.assertEqual(receipt.quantity, Decimal("10"))
+        self.assertIsNotNone(receipt.reversal_inventory_movement_id)
+        self.assertEqual(receipt.reversal_inventory_movement.source_type, "reversal")
+        self.assertEqual(sku_metrics(self.sku)["actual_quantity"], Decimal("0"))
+        self.assertEqual(self.purchase_item.received_quantity, Decimal("0"))
+        self.assertEqual(self.purchase_item.remaining_quantity, Decimal("10"))
+        self.assertEqual(self.purchase.status, "ordered")
+
+    def test_partial_receipt_reversal_keeps_remaining_received_quantity_and_status(self):
+        self.receive("4")
+        second = self.receive("6")
+        reverse_receipt(second, "第二批数量录错")
+
+        self.purchase.refresh_from_db()
+        self.purchase_item.refresh_from_db()
+        self.assertEqual(self.purchase_item.received_quantity, Decimal("4"))
+        self.assertEqual(self.purchase_item.remaining_quantity, Decimal("6"))
+        self.assertEqual(self.purchase.status, "partial")
+
+    def test_receipt_cannot_be_reversed_twice(self):
+        receipt = self.receive("10")
+        reverse_receipt(receipt, "首次冲销")
+        with self.assertRaises(ValidationError):
+            reverse_receipt(receipt, "重复冲销")
+
+    def test_receipt_reversal_rejects_insufficient_actual_inventory_without_changes(self):
+        receipt = self.receive("10")
+        self.ship("6")
+        self.purchase.refresh_from_db()
+        before_movement_count = InventoryMovement.objects.count()
+        before_status = self.purchase.status
+        with self.assertRaises(ValidationError):
+            reverse_receipt(receipt, "库存已被消耗")
+
+        receipt.refresh_from_db()
+        self.purchase.refresh_from_db()
+        self.assertIsNone(receipt.reversal_inventory_movement_id)
+        self.assertEqual(InventoryMovement.objects.count(), before_movement_count)
+        self.assertEqual(self.purchase.status, before_status)
+        self.assertEqual(sku_metrics(self.sku)["actual_quantity"], Decimal("4"))
+
+    def test_receipt_reversal_rebalances_current_sku_reservations(self):
+        receipt = self.receive("10")
+        self.assertEqual(sku_metrics(self.sku)["reserved_quantity"], Decimal("10"))
+        reverse_receipt(receipt, "冲销并释放预留")
+        metrics = sku_metrics(self.sku)
+        self.assertLessEqual(metrics["reserved_quantity"], metrics["actual_quantity"])
+        self.assertEqual(InventoryReservation.objects.filter(sku=self.sku).count(), 0)
+
+    def test_receipt_reversal_api_requires_reason_and_succeeds(self):
+        receipt = self.receive("10")
+        url = f"/api/purchase-orders/{self.purchase.pk}/receipts/{receipt.pk}/reverse/"
+        response = self.client.post(url, {}, format="json")
+        self.assertEqual(response.status_code, 400, response.data)
+        receipt.refresh_from_db()
+        self.assertIsNone(receipt.reversal_inventory_movement_id)
+
+        response = self.client.post(url, {"reason": "API 冲销原因"}, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        receipt.refresh_from_db()
+        self.assertEqual(response.data["id"], receipt.id)
+        self.assertEqual(response.data["reversal_reason"], "API 冲销原因")
+        self.assertIsNotNone(response.data["reversal_inventory_movement"])
 
     def test_malformed_and_foreign_shipment_lines_return_400(self):
         for line in ({"quantity": "abc"}, {"order_item": 999999, "quantity": "1"}):

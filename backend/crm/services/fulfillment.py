@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Case, DecimalField, F, Q, Sum, When
 from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 from crm.models import (
     GoodsReceipt,
@@ -59,7 +60,7 @@ def active_reservation_quantity(sku: SKU) -> Decimal:
 
 def received_quantity_for_sku(sku: SKU) -> Decimal:
     return PurchaseOrderItem.objects.filter(sku=sku).aggregate(
-        total=Coalesce(Sum("receipts__quantity"), Decimal("0"), output_field=QUANTITY_FIELD)
+        total=Coalesce(Sum("receipts__quantity", filter=Q(receipts__reversal_inventory_movement__isnull=True)), Decimal("0"), output_field=QUANTITY_FIELD)
     )["total"]
 
 
@@ -210,6 +211,73 @@ def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsRece
     purchase_order.save(update_fields=["status", "updated_at"])
     if purchase_order.order_id:
         allocate_order(purchase_order.order)
+    return receipt
+
+
+def rebalance_sku_reservations(sku: SKU):
+    """Rebuild active reservations for one SKU in order-date order."""
+    InventoryReservation.objects.filter(
+        sku_id=sku.pk,
+        order_item__order__status__in=ACTIVE_ORDER_STATUSES,
+    ).delete()
+    available = max(Decimal("0"), signed_inventory_quantity(sku))
+    created = []
+    for item in OrderItem.objects.filter(
+        sku_id=sku.pk,
+        order__status__in=ACTIVE_ORDER_STATUSES,
+    ).select_related("order").order_by("order__order_date", "pk"):
+        needed = max(Decimal("0"), item.quantity - _shipped_quantity(item))
+        quantity = min(needed, available)
+        if quantity > 0:
+            created.append(InventoryReservation.objects.create(order_item=item, sku=sku, quantity=quantity))
+            available -= quantity
+        if available <= 0:
+            break
+    return created
+
+
+@transaction.atomic
+def reverse_receipt(receipt: GoodsReceipt, reason: str) -> GoodsReceipt:
+    reason = str(reason or "").strip()
+    if not reason:
+        raise ValidationError("冲销原因不能为空。")
+    receipt = GoodsReceipt.objects.select_for_update().select_related(
+        "purchase_item__purchase_order", "purchase_item__sku", "inventory_movement"
+    ).get(pk=receipt.pk)
+    if receipt.reversal_inventory_movement_id:
+        raise ValidationError("该入库记录已经冲销，不能重复操作。")
+    purchase_item = PurchaseOrderItem.objects.select_for_update().select_related(
+        "purchase_order", "sku", "supplier_sku"
+    ).get(pk=receipt.purchase_item_id)
+    sku = SKU.objects.select_for_update().get(pk=purchase_item.sku_id)
+    actual_quantity = signed_inventory_quantity(sku)
+    if actual_quantity < receipt.quantity:
+        raise ValidationError("当前 SKU 实际库存不足以冲销，请先处理后续出库。")
+    original_movement = receipt.inventory_movement
+    movement = InventoryMovement.objects.create(
+        movement_no=_movement_no("REV"),
+        movement_date=timezone.localdate(),
+        type="adjust_out",
+        sku=sku,
+        supplier_sku=purchase_item.supplier_sku,
+        order=purchase_item.purchase_order.order,
+        quantity=receipt.quantity,
+        warehouse=original_movement.warehouse if original_movement else "默认仓",
+        unit_cost=receipt.unit_cost,
+        reference=original_movement.movement_no if original_movement else "",
+        source_type="reversal",
+        source_no=purchase_item.purchase_order.purchase_no,
+        is_automatic=True,
+        notes=f"冲销采购入库 #{receipt.pk}：{reason}",
+    )
+    receipt.reversal_inventory_movement = movement
+    receipt.reversed_at = timezone.now()
+    receipt.reversal_reason = reason
+    receipt.save(update_fields=["reversal_inventory_movement", "reversed_at", "reversal_reason", "updated_at"])
+    purchase_order = purchase_item.purchase_order
+    purchase_order.status = _receipt_status(purchase_order)
+    purchase_order.save(update_fields=["status", "updated_at"])
+    rebalance_sku_reservations(sku)
     return receipt
 
 

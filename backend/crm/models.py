@@ -1106,6 +1106,9 @@ class Shipment(TimestampedModel):
     waybill_no = models.CharField("物流单号", max_length=100, blank=True)
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
     notes = models.TextField("备注", blank=True)
+    order_status_before_confirm = models.CharField("确认发货前订单状态", max_length=20, blank=True)
+    reversed_at = models.DateTimeField(null=True, blank=True)
+    reversal_reason = models.TextField(blank=True)
 
     class Meta:
         ordering = ["-shipment_date", "-id"]
@@ -1311,6 +1314,13 @@ class ShipmentItem(TradeUnitLine):
         InventoryMovement,
         on_delete=models.PROTECT,
         related_name="shipment_item",
+        null=True,
+        blank=True,
+    )
+    reversal_inventory_movement = models.OneToOneField(
+        InventoryMovement,
+        on_delete=models.PROTECT,
+        related_name="reversed_shipment_item",
         null=True,
         blank=True,
     )

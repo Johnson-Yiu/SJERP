@@ -40,6 +40,7 @@ function money(value) { return Number(value || 0).toLocaleString('zh-CN', { mini
 function date(value) { return value || '—' }
 const shipmentTarget = ref(null), shipmentSku = ref(null), shipmentSaving = ref(false)
 const shipmentForm = ref({})
+const shipmentReversalTarget = ref(null), shipmentReversalReason = ref(''), shipmentReversalSaving = ref(false)
 async function ship(item) {
   error.value = ''
   try {
@@ -57,6 +58,24 @@ async function submitShipment() {
     await load()
   } catch (err) { error.value = err.response?.data?.detail || JSON.stringify(err.response?.data || err.message) }
   finally { shipmentSaving.value = false }
+}
+function openShipmentReversal(shipment) {
+  shipmentReversalTarget.value = shipment
+  shipmentReversalReason.value = ''
+  error.value = ''
+}
+async function submitShipmentReversal() {
+  const reason = shipmentReversalReason.value.trim()
+  if (!reason || shipmentReversalSaving.value) return
+  shipmentReversalSaving.value = true
+  error.value = ''
+  try {
+    await api.post(`/shipments/${shipmentReversalTarget.value.id}/reverse/`, { reason })
+    shipmentReversalTarget.value = null
+    shipmentReversalReason.value = ''
+    await load()
+  } catch (err) { error.value = err.response?.data?.detail || JSON.stringify(err.response?.data || err.message) }
+  finally { shipmentReversalSaving.value = false }
 }
 async function generatePackingPlan() {
   try { packingPlan.value = (await api.post(`/orders/${props.id}/packing-plan/`)).data }
@@ -94,7 +113,7 @@ watch(() => props.refreshKey, load)
 </script>
 
 <template>
-  <Teleport to="body"><div v-if="shipmentTarget" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitShipment"><h3>确认发货 · {{ shipmentTarget.sku_code }}</h3><p>待发 {{ shipmentTarget.unshipped_quantity }} {{ shipmentSku?.unit }}。选择实际发货规格，库存按基础单位扣减。</p><TradeUnitPicker :line="shipmentForm" :sku="shipmentSku" :price-field="null" preserve-base-quantity :historical-unit="shipmentTarget.historical_unit" /><label>发货数量<input v-model="shipmentForm.quantity" type="number" min="0.01" step="0.01" required /></label><label v-if="baseQuantity(shipmentForm) > Number(shipmentTarget.unshipped_quantity)">超发原因<select v-model="shipmentForm.overage_reason" required><option value="">请选择</option><option value="customer_addon">客户追加</option><option value="gift_or_sample">赠品或样品</option><option value="packing_variance">包装尾差</option></select></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="shipmentTarget = null">取消</button><button class="btn btn-primary" :disabled="shipmentSaving">{{ shipmentSaving ? '保存中…' : '确认发货' }}</button></footer></form></div></Teleport>
+  <Teleport to="body"><div v-if="shipmentTarget" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitShipment"><h3>确认发货 · {{ shipmentTarget.sku_code }}</h3><p>待发 {{ shipmentTarget.unshipped_quantity }} {{ shipmentSku?.unit }}。选择实际发货规格，库存按基础单位扣减。</p><TradeUnitPicker :line="shipmentForm" :sku="shipmentSku" :price-field="null" preserve-base-quantity :historical-unit="shipmentTarget.historical_unit" /><label>发货数量<input v-model="shipmentForm.quantity" type="number" min="0.01" step="0.01" required /></label><label v-if="baseQuantity(shipmentForm) > Number(shipmentTarget.unshipped_quantity)">超发原因<select v-model="shipmentForm.overage_reason" required><option value="">请选择</option><option value="customer_addon">客户追加</option><option value="gift_or_sample">赠品或样品</option><option value="packing_variance">包装尾差</option></select></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="shipmentTarget = null">取消</button><button class="btn btn-primary" :disabled="shipmentSaving">{{ shipmentSaving ? '保存中…' : '确认发货' }}</button></footer></form></div><div v-if="shipmentReversalTarget" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitShipmentReversal"><h3>冲销发货 · {{ shipmentReversalTarget.shipment_no }}</h3><p>原发货记录将保留，并生成对应的库存回收入库流水。</p><label>冲销原因<textarea v-model="shipmentReversalReason" maxlength="500" rows="4" required /></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="shipmentReversalTarget = null">取消</button><button class="btn btn-primary" :disabled="shipmentReversalSaving || !shipmentReversalReason.trim()">{{ shipmentReversalSaving ? '保存中…' : '确认冲销' }}</button></footer></form></div></Teleport>
   <div class="modal-backdrop detail-backdrop" @mousedown.self="emit('close')">
     <article class="detail-modal order-workbench" role="dialog" aria-modal="true" aria-label="订单工作台">
       <div v-if="loading" class="detail-loading"><div class="spinner" /> 正在加载订单工作台…</div>
@@ -123,7 +142,7 @@ watch(() => props.refreshKey, load)
         </main>
       </template>
       <section v-if="!loading && !error && activeTab === 'payments' && workbench?.advance_allocations?.length" class="workbench-card"><h3>预收款核销记录</h3><p>以下金额已计入本订单回款；原始收款可在财务流水中查看。</p><div class="workbench-table-wrap"><table class="workbench-table"><thead><tr><th>原始收款日期</th><th>流水号</th><th>核销金额</th><th>状态</th></tr></thead><tbody><tr v-for="row in workbench.advance_allocations" :key="row.id"><td>{{ row.transaction_date }}</td><td>{{ row.transaction_no }}</td><td>{{ row.currency }} {{ money(row.amount) }}</td><td>{{ row.is_active ? '已核销' : '已撤回' }}</td></tr></tbody></table></div></section>
-       <section v-if="!loading && !error && activeTab === 'fulfillment'" class="fulfillment-panel"><div class="section-heading"><div><h3>采购与发货</h3><p>订单确认后会预留现货；缺口按采购、到货和在途数量持续更新。供应商选择只作用于本订单行，不改写 SKU 主档。</p></div></div><div class="workbench-table-wrap"><table class="workbench-table"><thead><tr><th>SKU</th><th>本次供应商</th><th>订单</th><th>预留</th><th>已采购</th><th>已到 / 在途</th><th>已发 / 待发</th><th></th></tr></thead><tbody><tr v-for="item in fulfillment?.items || []" :key="item.id"><td>{{ item.sku_code }}<small>基础单位：{{ item.base_unit }}</small></td><td>{{ item.supplier_name || '未分配' }}<small v-if="item.supplier_sku_code">{{ item.supplier_sku_code }}</small></td><td>{{ item.quantity }}</td><td>{{ item.allocated_quantity }}</td><td>{{ item.purchased_quantity }}</td><td>{{ item.arrived_quantity }} / {{ item.in_transit_quantity }}</td><td>{{ item.shipped_quantity }} / {{ item.unshipped_quantity }}</td><td><button class="text-btn" :disabled="['cancelled', 'completed'].includes(order.status)" @click="openSupplierAllocation(item)">{{ item.supplier_name ? '更换供应商' : '选择供应商' }}</button><button class="text-btn" :disabled="Number(item.unshipped_quantity) <= 0 || ['draft', 'cancelled', 'completed'].includes(order.status)" @click="ship(item)">确认发货</button></td></tr></tbody></table></div><p v-if="!(fulfillment?.purchase_orders || []).length" class="muted">尚未创建采购单；选择供应商后，按待采购数量建立采购单会优先继承订单行的 Supplier SKU。</p></section>
+       <section v-if="!loading && !error && activeTab === 'fulfillment'" class="fulfillment-panel"><div class="section-heading"><div><h3>采购与发货</h3><p>订单确认后会预留现货；缺口按采购、到货和在途数量持续更新。供应商选择只作用于本订单行，不改写 SKU 主档。</p></div></div><div class="workbench-table-wrap"><table class="workbench-table"><thead><tr><th>SKU</th><th>本次供应商</th><th>订单</th><th>预留</th><th>已采购</th><th>已到 / 在途</th><th>已发 / 待发</th><th></th></tr></thead><tbody><tr v-for="item in fulfillment?.items || []" :key="item.id"><td>{{ item.sku_code }}<small>基础单位：{{ item.base_unit }}</small></td><td>{{ item.supplier_name || '未分配' }}<small v-if="item.supplier_sku_code">{{ item.supplier_sku_code }}</small></td><td>{{ item.quantity }}</td><td>{{ item.allocated_quantity }}</td><td>{{ item.purchased_quantity }}</td><td>{{ item.arrived_quantity }} / {{ item.in_transit_quantity }}</td><td>{{ item.shipped_quantity }} / {{ item.unshipped_quantity }}</td><td><button class="text-btn" :disabled="['cancelled', 'completed'].includes(order.status)" @click="openSupplierAllocation(item)">{{ item.supplier_name ? '更换供应商' : '选择供应商' }}</button><button class="text-btn" :disabled="Number(item.unshipped_quantity) <= 0 || ['draft', 'cancelled', 'completed'].includes(order.status)" @click="ship(item)">确认发货</button></td></tr></tbody></table></div><p v-if="!(fulfillment?.purchase_orders || []).length" class="muted">尚未创建采购单；选择供应商后，按待采购数量建立采购单会优先继承订单行的 Supplier SKU。</p><div class="shipment-history"><div class="section-heading"><div><h3>发货记录</h3><p>已确认的发货单可以整单冲销；包含超发或增补的发货单需按后续业务处理。</p></div><strong>{{ (fulfillment?.shipments || []).length }} 条</strong></div><div v-if="!(fulfillment?.shipments || []).length" class="workbench-empty"><Truck :size="28" /><strong>暂无发货记录</strong></div><div v-else class="shipment-history-list"><article v-for="shipment in fulfillment.shipments" :key="shipment.id" class="shipment-history-card"><div class="shipment-history-head"><div><strong>{{ shipment.shipment_no }}</strong><small>{{ date(shipment.shipment_date) }}</small></div><span class="status" :class="shipment.status">{{ shipment.status === 'cancelled' ? '已冲销' : shipment.status === 'confirmed' ? '已确认' : shipment.status }}</span></div><div class="shipment-history-items"><span v-for="line in shipment.items" :key="line.id">{{ line.sku_code }} × {{ line.quantity }}</span></div><div class="shipment-history-actions"><span v-if="shipment.has_overage" class="muted">包含超发/增补，暂不能直接冲销</span><button v-else-if="shipment.status === 'confirmed'" class="text-btn" @click="openShipmentReversal(shipment)">冲销</button><span v-else-if="shipment.status === 'cancelled'" class="muted">已冲销</span><span v-else class="muted">暂不可操作</span></div></article></div></div></section>
      </article>
      <SupplierAllocationModal v-if="allocationItem" :order-id="props.id" :order-item="allocationItem" @close="allocationItem = null" @saved="supplierAllocationSaved" />
   </div>
@@ -134,5 +153,5 @@ watch(() => props.refreshKey, load)
 </style>
 
 <style scoped>
-.trade-shipment-mask{position:fixed;inset:0;z-index:150;background:#10261d77;display:grid;place-items:center}.trade-shipment-dialog{background:white;padding:24px;border-radius:14px;width:min(520px,92vw)}.trade-shipment-dialog label{display:grid;gap:8px;margin:16px 0}.trade-shipment-dialog input,.trade-shipment-dialog select{padding:9px;border:1px solid #d0dfd8;border-radius:6px}.trade-shipment-dialog footer{display:flex;justify-content:flex-end;gap:12px}
+.trade-shipment-mask{position:fixed;inset:0;z-index:150;background:#10261d77;display:grid;place-items:center}.trade-shipment-dialog{background:white;padding:24px;border-radius:14px;width:min(520px,92vw)}.trade-shipment-dialog label{display:grid;gap:8px;margin:16px 0}.trade-shipment-dialog input,.trade-shipment-dialog select,.trade-shipment-dialog textarea{padding:9px;border:1px solid #d0dfd8;border-radius:6px;font:inherit}.trade-shipment-dialog footer{display:flex;justify-content:flex-end;gap:12px}.shipment-history{margin-top:20px;padding:19px;border:1px solid #e0e8e4;border-radius:13px;background:#fff}.shipment-history-list{display:grid;gap:10px}.shipment-history-card{padding:12px 14px;border:1px solid #e3ebe7;border-radius:10px;background:#fbfdfc}.shipment-history-head,.shipment-history-actions{display:flex;align-items:center;justify-content:space-between;gap:12px}.shipment-history-head strong,.shipment-history-head small{display:block}.shipment-history-head small{margin-top:4px;color:#71817b}.shipment-history-items{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;color:#425b51}.shipment-history-actions{margin-top:9px}
 </style>

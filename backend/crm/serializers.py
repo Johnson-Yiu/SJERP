@@ -400,6 +400,10 @@ class ShipmentInputSerializer(serializers.Serializer):
     items = ShipmentLineInputSerializer(many=True, allow_empty=False)
 
 
+class ShipmentReversalInputSerializer(serializers.Serializer):
+    reason = serializers.CharField(max_length=500, allow_blank=False, trim_whitespace=True)
+
+
 class OrganizationUnitSerializer(serializers.ModelSerializer):
     type_display = serializers.CharField(source="get_type_display", read_only=True)
     positions = PositionSerializer(many=True, read_only=True)

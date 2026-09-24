@@ -5,9 +5,9 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-from crm.models import Customer, GoodsReceipt, InventoryMovement, InventoryReservation, Order, PaymentPlan, Product, PurchaseOrder, SKU, Supplier, Transaction
+from crm.models import Customer, GoodsReceipt, InventoryMovement, InventoryReservation, Order, PaymentPlan, Product, PurchaseOrder, Shipment, SKU, Supplier, Transaction
 from crm.services.finance import allocate_advance, ensure_default_payment_plans, record_contract_payment, record_transaction, void_transaction
-from crm.services.fulfillment import allocate_order, confirm_shipment, order_item_metrics, record_receipt, reverse_receipt, sku_metrics
+from crm.services.fulfillment import allocate_order, confirm_shipment, order_item_metrics, record_receipt, reverse_receipt, reverse_shipment, sku_metrics
 
 
 class TradeFinanceUpgradeTests(TestCase):
@@ -142,6 +142,124 @@ class TradeFinanceUpgradeTests(TestCase):
         self.assertEqual(response.data["id"], receipt.id)
         self.assertEqual(response.data["reversal_reason"], "API 冲销原因")
         self.assertIsNotNone(response.data["reversal_inventory_movement"])
+
+    def test_shipment_reversal_restores_inventory_order_progress_and_reservation(self):
+        self.receive("10")
+        shipment = self.ship("10")
+        original_movement = shipment.items.get().inventory_movement
+        reverse_shipment(shipment, "发货数量录错")
+
+        shipment.refresh_from_db()
+        self.order.refresh_from_db()
+        self.item.refresh_from_db()
+        self.assertEqual(shipment.status, "cancelled")
+        self.assertIsNotNone(shipment.reversed_at)
+        self.assertEqual(sku_metrics(self.sku)["actual_quantity"], Decimal("10"))
+        self.assertEqual(order_item_metrics(self.item)["shipped_quantity"], Decimal("0"))
+        self.assertEqual(order_item_metrics(self.item)["unshipped_quantity"], Decimal("10"))
+        self.assertEqual(self.order.status, "confirmed")
+        self.assertLessEqual(sku_metrics(self.sku)["reserved_quantity"], sku_metrics(self.sku)["actual_quantity"])
+        self.assertEqual(original_movement.type, "sale_out")
+        reversal = shipment.items.get().reversal_inventory_movement
+        self.assertEqual(reversal.type, "adjust_in")
+        self.assertEqual(reversal.source_type, "reversal")
+
+    def test_reversing_second_split_shipment_keeps_first_shipment_active(self):
+        self.receive("10")
+        self.ship("4")
+        second = self.ship("6")
+        reverse_shipment(second, "第二批发货录错")
+
+        self.order.refresh_from_db()
+        self.item.refresh_from_db()
+        self.assertEqual(self.order.status, "confirmed")
+        self.assertEqual(order_item_metrics(self.item)["shipped_quantity"], Decimal("4"))
+        self.assertEqual(order_item_metrics(self.item)["unshipped_quantity"], Decimal("6"))
+        self.assertEqual(sku_metrics(self.sku)["actual_quantity"], Decimal("6"))
+        self.assertEqual(sku_metrics(self.sku)["reserved_quantity"], Decimal("6"))
+
+    def test_shipment_cannot_be_reversed_twice(self):
+        self.stock("10")
+        shipment = self.ship("10")
+        reverse_shipment(shipment, "首次冲销")
+        with self.assertRaises(ValidationError):
+            reverse_shipment(shipment, "重复冲销")
+
+    def test_multi_sku_shipment_reversal_rebalances_each_sku(self):
+        second_sku = SKU.objects.create(sku="UP-SKU-2", product=Product.objects.create(code="UP-P-2", name="Downlight"))
+        second_item = self.order.items.create(sku=second_sku, quantity=5, unit_price=8)
+        self.stock("10")
+        InventoryMovement.objects.create(movement_no="UP-IN-SECOND", movement_date=self.day, type="adjust_in", sku=second_sku, quantity=5)
+        shipment = confirm_shipment(self.order, {"shipment_date": self.day, "items": [
+            {"order_item": self.item.pk, "quantity": Decimal("10")},
+            {"order_item": second_item.pk, "quantity": Decimal("5")},
+        ]})
+        reverse_shipment(shipment, "多 SKU 发货录错")
+
+        self.assertEqual(InventoryMovement.objects.filter(order=self.order, source_type="reversal", type="adjust_in").count(), 2)
+        self.assertEqual(sku_metrics(self.sku)["actual_quantity"], Decimal("10"))
+        self.assertEqual(sku_metrics(second_sku)["actual_quantity"], Decimal("5"))
+        self.assertLessEqual(sku_metrics(self.sku)["reserved_quantity"], sku_metrics(self.sku)["actual_quantity"])
+        self.assertLessEqual(sku_metrics(second_sku)["reserved_quantity"], sku_metrics(second_sku)["actual_quantity"])
+
+    def test_overage_shipment_cannot_be_reversed_and_data_is_unchanged(self):
+        self.stock("20")
+        shipment = confirm_shipment(self.order, {"shipment_date": self.day, "items": [{
+            "order_item": self.item.pk, "quantity": Decimal("11"), "overage_reason": "customer_addon",
+        }]})
+        before_movements = InventoryMovement.objects.count()
+        before_items = self.order.items.count()
+        before_plans = PaymentPlan.objects.count()
+        with self.assertRaises(ValidationError):
+            reverse_shipment(shipment, "包含增补")
+
+        shipment.refresh_from_db()
+        self.assertEqual(shipment.status, "confirmed")
+        self.assertEqual(InventoryMovement.objects.count(), before_movements)
+        self.assertEqual(self.order.items.count(), before_items)
+        self.assertEqual(PaymentPlan.objects.count(), before_plans)
+
+    def test_reversal_movements_inherit_trade_snapshots(self):
+        receipt = self.receive("10")
+        receipt.trade_quantity = Decimal("2")
+        receipt.trade_unit_price = Decimal("2.5000")
+        receipt.trade_snapshot = {"unit": "箱", "base_unit": "个", "factor": "5", "name": "五个装"}
+        receipt.save(update_fields=["trade_quantity", "trade_unit_price", "trade_snapshot"])
+        reverse_receipt(receipt, "采购规格录错")
+        receipt.refresh_from_db()
+        receipt_reversal = receipt.reversal_inventory_movement
+        self.assertEqual(receipt_reversal.trade_quantity, Decimal("2"))
+        self.assertEqual(receipt_reversal.trade_unit_price, Decimal("2.5000"))
+        self.assertEqual(receipt_reversal.trade_snapshot, receipt.trade_snapshot)
+
+        self.stock("10")
+        shipment = self.ship("10")
+        line = shipment.items.get()
+        line.trade_quantity = Decimal("2")
+        line.trade_unit_price = Decimal("5.0000")
+        line.trade_snapshot = {"unit": "箱", "base_unit": "个", "factor": "5", "name": "五个装"}
+        line.save(update_fields=["trade_quantity", "trade_unit_price", "trade_snapshot"])
+        reverse_shipment(shipment, "销售规格录错")
+        shipment_reversal = shipment.items.get().reversal_inventory_movement
+        self.assertEqual(shipment_reversal.trade_quantity, Decimal("2"))
+        self.assertEqual(shipment_reversal.trade_unit_price, Decimal("5.0000"))
+        self.assertEqual(shipment_reversal.trade_snapshot, line.trade_snapshot)
+
+    def test_shipment_reversal_api_requires_reason_and_succeeds(self):
+        self.stock("10")
+        shipment = self.ship("10")
+        url = f"/api/shipments/{shipment.pk}/reverse/"
+        response = self.client.post(url, {}, format="json")
+        self.assertEqual(response.status_code, 400, response.data)
+        shipment.refresh_from_db()
+        self.assertEqual(shipment.status, "confirmed")
+
+        response = self.client.post(url, {"reason": "API 发货冲销"}, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        shipment.refresh_from_db()
+        self.assertEqual(response.data["status"], "cancelled")
+        self.assertEqual(response.data["reversal_reason"], "API 发货冲销")
+        self.assertTrue(response.data["reversal_inventory_movement_ids"])
 
     def test_malformed_and_foreign_shipment_lines_return_400(self):
         for line in ({"quantity": "abc"}, {"order_item": 999999, "quantity": "1"}):

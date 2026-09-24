@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-from crm.models import ContractChangeRequest, Customer, Order, PaymentPlan, Product, PurchaseOrder, SKU, Supplier, Transaction
+from crm.models import AdvanceAllocation, ContractChangeRequest, Customer, Order, PaymentPlan, Product, PurchaseOrder, SKU, Supplier, Transaction
 from crm.services.finance import allocate_advance, approve_contract_change, ensure_default_payment_plans, record_contract_payment, record_transaction, void_transaction
 
 
@@ -145,6 +145,55 @@ class FinanceServiceTests(PaymentPlanModelTests):
         for plan in plans:
             plan.refresh_from_db()
         self.assertTrue(all(plan.status == "open" and plan.settled_amount == 0 for plan in plans))
+
+    def test_void_root_restores_cross_order_advance_allocation_and_split_history(self):
+        original_plan = PaymentPlan.objects.create(
+            order=self.order,
+            direction="receivable",
+            currency="USD",
+            planned_amount=Decimal("100"),
+        )
+        second_order = Order.objects.create(
+            order_no="SO-FIN-SECOND",
+            customer=self.customer,
+            order_date=date(2026, 8, 23),
+            currency="USD",
+        )
+        second_plan = PaymentPlan.objects.create(
+            order=second_order,
+            direction="receivable",
+            currency="USD",
+            planned_amount=Decimal("80"),
+        )
+
+        root = record_transaction({
+            "plan": original_plan,
+            "amount": Decimal("120"),
+            "currency": "USD",
+            "exchange_rate": Decimal("7"),
+            "category": "客户收款",
+        })
+        advance = Transaction.objects.get(split_from=root, kind="unallocated_advance")
+        allocate_advance(advance, second_plan, Decimal("20"))
+        allocation = AdvanceAllocation.objects.get(advance=advance, plan=second_plan)
+
+        void_transaction(root, "跨订单预收款录错")
+
+        root.refresh_from_db()
+        advance.refresh_from_db()
+        original_plan.refresh_from_db()
+        second_plan.refresh_from_db()
+        allocation.refresh_from_db()
+        rows = list(Transaction.objects.order_by("pk"))
+        self.assertEqual(root.status, "cancelled")
+        self.assertTrue(all(row.status == "cancelled" for row in rows))
+        self.assertFalse(allocation.is_active)
+        self.assertEqual(original_plan.settled_amount, Decimal("0"))
+        self.assertEqual(original_plan.status, "open")
+        self.assertEqual(second_plan.settled_amount, Decimal("0"))
+        self.assertEqual(second_plan.status, "open")
+        self.assertEqual(advance.allocated_amount, Decimal("0"))
+        self.assertTrue(all(row.void_reason == "跨订单预收款录错" and row.voided_at for row in rows))
 
     def test_split_child_cannot_be_voided_directly(self):
         plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))

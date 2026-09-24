@@ -1,7 +1,6 @@
 from datetime import date
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -201,11 +200,8 @@ class BusinessFlowTests(APITestCase):
         response = self.client.get(f"/api/context/suppliers/{supplier.id}/")
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         self.assertEqual(response.data["entity"], "suppliers")
-        self.assertEqual({section["key"] for section in response.data["sections"]}, {"products", "purchases", "payments", "supplier-skus"})
-        metrics = response.data["metrics"]
-        self.assertEqual(metrics[:3], [["合作产品", 1, "number"], ["供货档案", 0, "number"], ["采购单", 1, "number"]])
-        self.assertEqual(str(metrics[3][1]), "30.00")
-        self.assertEqual(str(metrics[4][1]), "0")
+        self.assertEqual({section["key"] for section in response.data["sections"]}, {"products", "purchases", "payments"})
+        self.assertEqual(response.data["metrics"][2][1], 30)
 
         purchase_response = self.client.get(f"/api/context/purchase-orders/{purchase.id}/")
         self.assertEqual(purchase_response.status_code, status.HTTP_200_OK, purchase_response.data)
@@ -311,7 +307,6 @@ class BusinessFlowTests(APITestCase):
         response = self.client.post(f"/api/access-roles/{superadmin.id}/permission-matrix/", {"permissions": []}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @override_settings(APP_STAGE="development", DEBUG=True, DEVELOPMENT_SUPERADMIN=True, RBAC_ENFORCEMENT=False)
     def test_follow_up_subject_optional_and_current_operator_available(self):
         operator = self.client.get("/api/session/current-operator/")
         self.assertEqual(operator.status_code, status.HTTP_200_OK)

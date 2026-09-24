@@ -1,4 +1,5 @@
-import { expect, it } from 'vitest'
+import test from 'node:test'
+import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 
 const drawers = [
@@ -7,19 +8,21 @@ const drawers = [
   'src/components/QuoteDetailModal.vue',
 ]
 
-it('all shared detail drawers use the system typography scale', async () => {
+test('all shared detail drawers use the system typography scale', async () => {
   for (const file of drawers) {
     const source = await readFile(file, 'utf8')
     const hardCodedSizes = source.match(/font-size\s*:\s*\d+(?:\.\d+)?px/g) ?? []
-    expect(hardCodedSizes).toEqual(
+    assert.deepEqual(
+      hardCodedSizes,
       file === 'src/components/EntityDetailModal.vue' ? ['font-size:13px'] : [],
+      `${file} has an unexpected hard-coded font size`,
     )
-    expect(source, `${file} needs a page-level drawer title`).toMatch(/\.detail-identity h2\{[^}]*font-size:var\(--text-page\)/)
-    expect(source, `${file} needs section headings`).toMatch(/font-size:var\(--text-section\)/)
-    expect(source, `${file} needs body typography`).toMatch(/font-size:var\(--text-body\)/)
-    expect(source, `${file} needs helper typography`).toMatch(/font-size:var\(--text-caption\)/)
+    assert.match(source, /\.detail-identity h2\{[^}]*font-size:var\(--text-page\)/, `${file} needs a page-level drawer title`)
+    assert.match(source, /font-size:var\(--text-section\)/, `${file} needs section headings`)
+    assert.match(source, /font-size:var\(--text-body\)/, `${file} needs body typography`)
+    assert.match(source, /font-size:var\(--text-caption\)/, `${file} needs helper typography`)
     if (file === 'src/components/EntityDetailModal.vue') {
-      expect(source, 'rich text must resolve to body typography').toMatch(/\.info-grid span,\.richtext-view\{font-size:var\(--text-body\)/)
+      assert.match(source, /\.info-grid span,\.richtext-view\{font-size:var\(--text-body\)/, 'rich text must resolve to body typography')
     }
   }
 })

@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - 'phase-*'
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        run: pip install -r backend/requirements.txt
+      - name: Django system check
+        working-directory: backend
+        run: python manage.py check
+      - name: Check migrations
+        working-directory: backend
+        run: python manage.py makemigrations --check --dry-run
+      - name: Backend tests
+        working-directory: backend
+        run: python manage.py test
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Frontend unit tests
+        working-directory: frontend
+        run: npm run test:unit
+      - name: Frontend Vitest tests
+        working-directory: frontend
+        run: npx --no-install vitest run tests --environment jsdom
+      - name: Frontend build
+        working-directory: frontend
+        run: npm run build

@@ -149,64 +149,100 @@ Django 与 Vite 已重新启动并进行了只读环境诊断：Vite `http://127
 **执行分支：** `phase-03b-real-ui-uat`
 **执行方式：** 仅使用 Codex 内置浏览器中的真实页面、按钮、输入框、下拉和弹窗；未使用 APIClient、curl、HTTP API、browser console、fetch、Django shell/ORM 写入、SQL、seed、fixture 或脚本创建业务数据。
 
-### 10.1 已通过真实 UI 创建的基础数据
+### 10.1 分类方案纠偏与真实 UI 操作
 
-- 客户：4 个（Customer A–D）。
-- 联系人：5 个；Customer A 有 2 个联系人，其余各 1 个。
-- 产品：3 个（LED Strip、LED Driver、Wireless Sensor）。
-- 产品分类：1 个（Lighting Components）。
-- 分类属性：2 个（Length、Color）；均在 UI 中启用中文 SKU、Sales Model 和必填。
-- SKU：1 个（LED Strip，单位 `m`，币种 USD）。
+上一轮记录的 `REAL BUSINESS BUG-01` 已撤销。当前真实契约和本轮复现结果为：
 
-### 10.2 SKU 创建阻断（停止点）
+- `EXPECTED CURRENT CONTRACT-01`：首个 SKU 创建后会建立 published `SKUParameterPlan`；`Product.sku_definitions` 优先读取 published plan，后续 CategoryAttribute 修改不会自动改写已有 Product 的参数 schema。现有测试 `test_category_changes_do_not_change_existing_product_schema` 也覆盖这一契约。
+- `UX ISSUE-01`：Product 已存在 published plan、分类模板后来新增/修改属性时，SKU 新建向导仍显示“该产品的分类尚未配置……”，没有说明应前往“参数变更与历史方案”升级 Product schema；本轮升级方案后向导即可识别参数。该 UX 问题本阶段只记录，不修 UI。
 
-在产品管理 UI 中完成分类分配、属性创建和属性排序后，重新打开“新建 SKU”向导并选择 LED Strip，向导仍显示：
+全部操作均通过浏览器中的产品详情、SKU 管理、参数方案弹窗和 SKU 表单完成，没有使用 API、数据库写入、seed、fixture 或脚本绕过 UI。
 
-> 该产品的分类尚未配置生成中文 SKU 或生成销售型号参数，请先在产品分类中配置。
+实际参数方案操作：
 
-同时，当前唯一 LED Strip 组合显示为“已有相同 SKU，请使用现有记录”，创建复选框被禁用。整个操作通过正常 UI 完成；没有通过 API、数据库或脚本绕过。
+1. 在 LED Strip 产品的“参数变更与历史方案”中创建 V2 草稿。
+2. 通过“新增参数”加入 Length、Color；Length 单位 `mm`；两项均启用 `include_in_sku`、`include_in_sales_model` 和 `required`。
+3. 为已有 SKU-000001 填写 Length=`5000`、Color=`Warm White`。
+4. “保存草稿并分析”显示 current_count=1、result_count=1、new_count=0，无 missing，原 SKU Code 保留；随后按 UI 确认发布 V2。
+5. 发布后已有 SKU 刷新为 `LED Strip-5000mm-Warm White` / `LSTRIP-WW`，SKU Code 保留；新建 SKU 向导已能正常显示 Length/Color。
 
-**实际结果：** 无法按 Phase 3B-1 要求继续创建 LED Strip 4 个组合、LED Driver 2 个组合和 Wireless Sensor 2 个组合。因此停止该场景，不创建供应商、SupplierSKU、报价、订单、采购或库存数据，也不伪造 A–D 订单流程。
+### 10.2 SKU 覆盖
 
-**预期与实际差异：** 分类属性已由 UI 配置并显示为已启用，但 SKU 创建向导未读取这些参数。该问题记录为：
+- LED Strip：通过新建 SKU 向导实际建立 4 个组合（已有 5000mm/Warm White，加新建 3000mm、1000mm、2000mm 三个组合），总计 4 个。
+- LED Driver：先在产品编辑 UI 绑定 Lighting Components 分类，再通过向导建立 `LDRIVER-24V1000`、`LDRIVER-48V1000`，总计 2 个。
+- Wireless Sensor：先在产品编辑 UI 绑定 Lighting Components 分类，再通过向导建立 `WSENSOR-IN2000`、`WSENSOR-OUT2000`，总计 2 个。
+- 所有 8 个 SKU 均已通过 UI 生成 Sales Model 和参数组合；LED Strip 使用单位 `m`，其余使用 `pcs`。
+- 一次未填写型号缩写的创建尝试被 UI 明确拒绝（要求为参与生成型号的参数填写 1–8 位缩写）；补齐缩写后创建成功，记录为已验证 UI guard。
 
-- `REAL BUSINESS BUG-01`：分类属性在 UI 完成配置/排序后未进入 SKU 创建向导，阻断必需 SKU 组合创建及其后续报价、订单 UAT。
+### 10.3 供应商、来源与包装
 
-### 10.3 停止时只读 ORM 盘点
+- 供应商：Supplier A、Supplier B、Supplier C，共 3 个，均通过供应商管理 UI 创建。
+- 产品级候选来源绑定：LED Strip 绑定 A/C；LED Driver 绑定 B；Wireless Sensor 绑定 B/C；只读盘点得到 `SupplierCandidateOverride=14`。
+- 实际 SupplierSKU 来源也通过 SKU 编辑 UI 建立并可回看：
+  - SKU-000001 → Supplier A / `SA-LSTRIP-5000`，参考价 USD 4.50，MOQ 10，交期 14 天，首选。
+  - SKU-000005 → Supplier B / `SB-LDRIVER-24V1000`，参考价 USD 15，MOQ 5，交期 10 天，首选。
+  - SKU-000007 → Supplier C / `SC-WSENSOR-INDOOR`，参考价 USD 20，MOQ 5，交期 12 天，首选。
+- 交易单位：8 个 SKU 均通过交易单位 UI 建立了卷/箱换算；当前 `SKUTradeUnit=10`，其中 SKU-000001 有重复 Roll-50、SKU-000002 有重复 Roll-30，均保留并记录，不通过数据库删除。
+- 包装：通过包装管理 UI 建立 `LED General Carton`（Supplier A、60×40×30 cm、皮重 1.2 kg、整箱优先）；当前模板存在，但尚未通过 UI 关联到 SKU，记为本批 UI coverage gap，不用数据库补写。
 
-只读盘点未执行任何写入：
+### 10.4 报价 A–D
 
-| 模型 | 数量 |
-|---|---:|
-| Customer | 4 |
-| Contact | 5 |
-| Product | 3 |
-| ProductCategory | 1 |
-| CategoryAttribute | 2 |
-| SKU | 1 |
-| SKUVersion | 1 |
-| SKUParameterPlan | 1（published）|
-| Supplier | 0 |
-| SupplierSKU | 0 |
-| Quote | 0 |
-| Order | 0 |
-| PurchaseOrder | 0 |
-| InventoryMovement | 0 |
-| PaymentPlan | 0 |
-| Transaction | 0 |
+通过报价管理 UI 建立 4 个原始报价（Quote ORM 行数为 8，包含修订/子记录）：
 
-编号序列属于已创建记录的系统派生数据（CustomerCodeSequence=1、ProductCodeSequence=1、SKUCodeSequence=1），未单独修改。
+| 场景 | 报价编号 | 客户 | 币种 | 状态 | 内容/总额 |
+|---|---|---|---|---|---|
+| Quote A | `SJ20260925US001` | Customer A | USD | 已发送 | LED Strip，5，含运费/折扣；USD 77.50 |
+| Quote B | `SJ20260925DE001` | Customer B | CNY | 已接受 | LED Driver，10；CNY 255.00 |
+| Quote C | `SJ20260925SG001` | Customer C | EUR | 草稿 | Wireless Sensor，2；EUR 85.00 |
+| Quote D | `SJ20260925AU001` | Customer D | GBP | 已发送 | LED Driver，3；GBP 100.00 |
 
-### 10.4 Phase 3B-1 场景状态
+Quote B 在保存时通过“保存并导出 Excel”触发过真实 UI 导出；随后在报价列表点击“导出 SJ20260925DE001”。浏览器自动化通道没有暴露 download event 或本地文件路径，因此本记录只确认“导出动作已触发”，不宣称已经验证文件落盘/解析。
 
-- Quote A–D：未开始；被 `REAL BUSINESS BUG-01` 阻断。
-- Order A–D：未开始；被 `REAL BUSINESS BUG-01` 阻断。
-- 供应商 / SupplierSKU：未开始；被 `REAL BUSINESS BUG-01` 阻断。
-- 库存调整：未开始；被 `REAL BUSINESS BUG-01` 阻断。
-- Quote B PI 导出：未执行；没有 Quote B 可供导出。
-- 采购、收货、发货、财务和异常场景：未开始；没有绕过 SKU 阻断继续造数据。
+### 10.5 订单 A–D
 
-### 10.5 回归验证
+通过订单管理 UI 建立并检查 4 个原始订单：
+
+| 场景 | 订单号 | 来源 | 客户 | 币种 | 状态 | 总额 |
+|---|---|---|---|---|---|---:|
+| Order A | `SO-2026-21939` | Quote A | Customer A | USD | 已确认 | USD 170 |
+| Order B | `SO-2026-52556` | Quote B | Customer B | CNY | 生产中 | CNY 265 |
+| Order C | `SO-2026-77325` | Quote C | Customer C | EUR | 已完成 | EUR 170 |
+| Order D | `SO-2026-42504` | Quote D | Customer D | GBP | 已确认 | GBP 190 |
+
+Order C 首次尝试直接以“已完成”创建时被 UI guard 拒绝（提示新合同需从草稿或已确认/已下单开始）；随后先创建已确认订单，再通过已有订单编辑 UI 设置为“已完成”成功。这与当前契约一致，也说明 `completed` 目前仍可人工选择；没有将其记录为业务 bug。
+
+### 10.6 库存与本批异常场景
+
+- 通过库存流水 UI 建立 1 条盘盈入库：SKU-000001，数量 100 `m`，单位成本 5，仓库 Main Warehouse，引用 `UAT-INV-A`，备注为 Phase 3B 初始库存；流水号 `IM-970061BEB5B24A0C`。
+- 已验证的 UI guard：SKU 型号缩写缺失时创建被阻止；Order C 直接创建“已完成”被阻止后按正常状态流转成功。
+- 本批没有通过 UI 创建采购单、收货、发货或财务流水；这些场景仍待当前 Phase 3B-1 的后续真实 UI 操作完成，不能以已有数量推断通过。
+
+### 10.7 当前只读盘点
+
+只读 ORM 复核未执行任何写入，结果如下：
+
+| 模型 | 数量 | 说明 |
+|---|---:|---|
+| Customer / Contact | 4 / 5 | A–D 客户，A 有 2 个联系人 |
+| Product / ProductCategory / CategoryAttribute | 3 / 1 / 2 | Lighting Components、Length、Color |
+| SKU / SKUParameterPlan / SKUVersion | 8 / 4 / 2 | 8 个销售组合；发布方案/历史版本保留 |
+| Supplier / SupplierCandidateOverride / SupplierSKU | 3 / 14 / 3 | 候选绑定与实际来源分开记录 |
+| Quote / 原始 Quote | 8 / 4 | 8 行含修订；4 个原始报价 |
+| Order | 4 | A–D |
+| InventoryMovement | 1 | +100 m |
+| PackagingTemplate | 1 | 尚未关联 SKU |
+| SKUTradeUnit | 10 | 8 个 SKU 覆盖，含一次重复记录 |
+| PurchaseOrder / GoodsReceipt / Shipment | 0 / 0 / 0 | 尚未开始该批采购/履约流程 |
+| PaymentPlan / Transaction | 4 / 0 | 订单创建产生的计划；尚未开始收款/核销流水 |
+
+### 10.8 当前范围与下一步
+
+- 本轮已完成参数方案纠偏、8 个 SKU、3 个供应商、3 个实际 SupplierSKU 来源、交易单位、包装模板、Quote A–D、Order A–D 和 1 条库存调整，均由真实 UI 操作产生。
+- `EXPECTED CURRENT CONTRACT-01` 与 `UX ISSUE-01` 已替代上一轮错误的 `REAL BUSINESS BUG-01`；没有确认新的生产业务 bug。
+- 包装模板尚未关联 SKU、Quote B Excel 下载未能在浏览器通道验证落盘，以及采购/收货/发货/财务仍未执行，均是当前 Phase 3B-1 的未完成项或 UI coverage gap，不通过 API/DB 补齐。
+- 不开始 Phase 3B-2；后续只继续 Phase 3B-1 尚未完成的真实 UI 场景。
+
+### 10.9 回归验证
 
 - `python manage.py check`：PASS。
 - `python manage.py makemigrations --check --dry-run`：PASS（No changes detected）。

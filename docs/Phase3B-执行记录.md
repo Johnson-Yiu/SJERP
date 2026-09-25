@@ -290,3 +290,107 @@ Order C 首次尝试直接以“已完成”创建时被 UI guard 拒绝（提�
 | B3 / SKU-000002 | 5 | 2 | 2 | 0 | 0 | 0 | 5 | 2（partial） |
 
 `available = actual - reserved` 对所有 SKU 成立；B1/B2/B3 的 full/partial/none 是初始 UI 验证语义，当前 `to_procure` 已因后续采购单存在而归零。未为恢复旧状态而改写数据库。
+
+## 11. Phase 3B-2：部分收货、部分发货与履约冲销
+
+**执行日期：** 2026-09-26
+**执行分支：** `phase-03b-real-ui-uat`
+**执行方式：** 只使用内置浏览器中的真实页面、按钮、输入框、下拉和弹窗；没有使用 APIClient、curl、Postman、browser console、fetch、Django shell/ORM 写入、SQL、seed、fixture 或脚本创建/修改业务数据。以下 ORM 内容仅为最终只读复核。
+
+### 11.1 Order E：部分收货与部分发货
+
+| 项目 | 结果 |
+|---|---|
+| 来源报价 | `SJ20260925US003` |
+| 订单 | `SO-20260926-281-2A82B3`，Customer A Lighting Ltd，USD 110.00 |
+| 采购单 | `PO-20260925-013407`，Supplier A，状态最终为 `completed` |
+| 订单行 | SKU-000007 / 10 pcs；SKU-000008 / 20 pcs；两行均通过 Supplier Allocation UI 选择 Supplier A |
+
+SKU-000007 先通过采购 UI 收货 4，再收剩余 6；页面实际显示 `采购 10.00 · 已到 4.00 · 剩余 6.00`，随后显示 `已到 10.00 · 剩余 0.00`。SKU-000008 通过同一采购单一次收货 20，页面显示 `已到 20.00 · 剩余 0.00`。
+
+之后通过订单工作台真实 UI 分两批发 SKU-000007（4、6），再发 SKU-000008（20）。订单页最终显示 `已发货`、已发 30、待发 0；没有重复 Shipment。
+
+只读 movement 链：
+
+| 业务记录 | 原始 movement | 数量 | source_type | 结果 |
+|---|---:|---:|---|---|
+| GoodsReceipt 47 / SKU-000007 | 95 | 4 | `receipt` | 保留 |
+| GoodsReceipt 48 / SKU-000007 | 96 | 6 | `receipt` | 保留 |
+| GoodsReceipt 49 / SKU-000008 | 97 | 20 | `receipt` | 保留 |
+| Shipment 44 / `SH-82F6FA6CD7084785` | 98 | 4 | `shipment` | confirmed |
+| Shipment 45 / `SH-1C7772774F2D4482` | 99 | 6 | `shipment` | confirmed |
+| Shipment 46 / `SH-90497A92ED584B1B` | 100 | 20 | `shipment` | confirmed |
+
+### 11.2 Order F：Receipt → Reversal → Re-receipt
+
+正式 F 场景严格通过 Quote→Order 完成：
+
+| 项目 | 结果 |
+|---|---|
+| Quote | `SJ20260925DE002`，Customer B GmbH，USD 10.00，已接受 |
+| Order | `SO-20260926-282-A5565B`，由上述报价工作台“转为订单”生成，已确认 |
+| PO | `PO-20260925-020722`，Supplier A，最终 `completed` |
+| PO 行 | SKU-000001，ordered 1.00，最终 received 1.00，remaining 0.00 |
+
+首次收货后通过 UI 验证 PO 为已完成、received=1、remaining=0；GoodsReceipt `52` 的原始 `purchase_in` movement 为 `108`。填写原因 `UAT formal receipt reversal` 后执行冲销，原 Receipt 和 movement 均保留，Receipt 显示“已冲销”，并生成 compensating `adjust_out` movement `109`；再次打开同一 Receipt 时 UI 不再提供普通“冲销”按钮（E14 UI GUARD）。随后通过正常收货 UI 新建 GoodsReceipt `53`，对应新的 `purchase_in` movement `110`，PO 恢复为 received=1、remaining=0。
+
+本场景另观察到 E16：冲销原因为空时“确认冲销”按钮保持 disabled，未产生任何记录。收货确认、冲销和重新收货均只产生预期数量的记录。
+
+### 11.3 Order G：Shipment → Reversal → Re-shipment
+
+| 项目 | 结果 |
+|---|---|
+| Order | `SO-2026-01061`，Customer C Pte Ltd，SKU-000001，ordered 2.00，confirmed |
+| 原始 Shipment | `SH-210A99D443934564`，Shipment id 47，2.00，confirmed |
+| 原始 movement | `104`，`sale_out`，`source_type=shipment` |
+| 冲销结果 | Shipment 保留并变为 `cancelled`；生成 `adjust_in` movement `105`，原因 `Phase 3B-2 shipment reversal UAT` |
+| 重新发货 | 新 Shipment `SH-AF3C12D68AA544D3`（id 48），新 `sale_out` movement `106`，2.00，confirmed |
+
+冲销后订单回到可发货状态，UI 再次发货后恢复为 `shipped`；原 Shipment、已冲销 Shipment 与新 Shipment 同时保留。E18 UI GUARD 已确认：已冲销 Shipment 不再显示普通“冲销”按钮。
+
+### 11.4 E09–E20 本批实际结果
+
+| 场景 | Execution / 实际结果 | 数据结果 |
+|---|---|---|
+| E09 库存不足发货 | 在 `SO-2026-77325` 的 SKU-000008 上通过 UI 提交 1 pcs，页面显示“库存不足，不能确认发货” | Shipment、`sale_out`、库存、reservation、shipped 数量均无变化 |
+| E10 超额发货无理由 | 在 Order F 辅助库存竞争场景中输入超过待发数量且不选超发原因，未提交成功 | 无 Shipment、无 movement；UI 仍停留在确认弹窗 |
+| E11 超额发货有理由 | 选择“客户追加”后再次提交，仍被实际库存不足保护拒绝 | 未生成 overage Shipment，未产生 movement；不把未成功误记为 overage 功能通过 |
+| E12 收货 0 / 负数 | 收货表单输入 0、-1 时确认按钮 disabled | 无 GoodsReceipt、无 InventoryMovement |
+| E13 超过剩余可收数量 | 在已完成 PO 上输入超过 remaining 的数量，确认按钮 disabled | 无部分写入 |
+| E14 Receipt 二次冲销 | 正式 F Receipt 冲销后重新打开 | UI 不再提供冲销入口，历史保留 |
+| E15 下游发货后 Receipt reversal | 对 Order E 的 SKU-000008 Receipt（20 已全部发货）提交冲销 | 弹窗显示“当前 SKU 实际库存不足以冲销，请先处理后续出库”，Receipt/PO/Shipment/库存/reservation 无变化 |
+| E16 空冲销原因 | Receipt reversal 空原因 | 确认按钮 disabled |
+| E17 | 本批不执行，留给 Phase 3C 自动化不变量测试 | — |
+| E18 Shipment 二次冲销 | 正式 G 原始 Shipment 冲销后重新打开 | UI 不再提供冲销入口，历史保留 |
+| E19 | 本批未产生成功的 overage Shipment，因此无可执行的普通 UI reversal；不人为构造 | — |
+| E20 completed Order + Shipment reversal | 独立订单 `SO-2026-40674` 先真实 UI 发货 1，再人工设置 `completed`，尝试冲销 Shipment `SH-EA92CC3A20B5483F` | 页面显示“已完成或已取消的订单不能冲销发货”，Shipment/库存/Order/shipped 数量不变，无 `adjust_in`；记录 `STATE-MACHINE GAP-01` 组合行为 |
+
+E38 仅做正常 UI 观察：收货 0/负数时提交控件 disabled；成功收货、发货、Receipt reversal、Shipment reversal 后均只出现预期的一条业务记录，没有用脚本并发或人为双击攻击。
+
+### 11.5 履约库存不变量（最终只读状态）
+
+服务层只读指标定义为 `actual = signed_inventory_quantity`、`reserved = active reservation`、`available = actual - reserved`。本批最终状态（包含并发订单与历史业务数据）如下：
+
+| SKU / 订单上下文 | actual | reserved | available | Order ordered / shipped / remaining |
+|---|---:|---:|---:|---|
+| SKU-000007（Order E 已发完；辅助 Order F 仍保留 4） | 4 | 4 | 0 | Order E 10 / 10 / 0 |
+| SKU-000008（Order E 已发完） | 0 | 0 | 0 | Order E 20 / 20 / 0 |
+| SKU-000001（Order G 重发后） | 108 | 16 | 92 | Order G 2 / 2 / 0 |
+| SKU-000001（正式 Order F） | 108 | 16 | 92 | Order F 1 / 0 / 1 |
+| SKU-000001（E20 completed guard） | 108 | 16 | 92 | E20 1 / 1 / 0 |
+
+所有列均满足 `available = actual - reserved`，没有出现负数。正式 F 的 Receipt 链为 `purchase_in 108 → adjust_out 109`，再收货为新的 `purchase_in 110`；正式 G 的 Shipment 链为 `sale_out 104 → adjust_in 105`，再发货为新的 `sale_out 106`。原始 movement 未被删除或覆盖，冲销 movement 通过 Receipt/Shipment reversal 字段及 reference 可追溯。
+
+### 11.6 本批问题分类与停止点
+
+- `REAL BUSINESS BUG`：0。E09/E11/E15/E20 均按当前库存或状态保护拒绝，且失败后无部分写入。
+- `UI COVERAGE GAP`：1，延续 `UI COVERAGE GAP-PACKAGING-01`；本批没有声称完整 packing workflow 已通过。
+- `UX ISSUE`：2，延续 `UX ISSUE-01` 与 `UX ISSUE-02`；本批没有修改 UI。
+- `TEST INFRASTRUCTURE BLOCKER`：1，延续 `TEST INFRASTRUCTURE BLOCKER-PI-01`。
+- `EXPECTED CURRENT CONTRACT`：1，延续 `EXPECTED CURRENT CONTRACT-01`。
+
+本批已完成 E/F/G 及 E09–E20 中属于真实 UI ACTION/UI GUARD 的项目；E17、E21、E40、E41 未执行，留给 Phase 3C temporary test database。停止进入 H–T、财务收款、advance、void 或 cost-allocation 后续专项。
+
+### 11.7 Phase 3B-2 回归验证
+
+待本次文档提交后执行：后端 `check`、`makemigrations --check --dry-run`、完整 `python manage.py test`；前端 unit、Node-only typography、Vitest（排除 Node-only）与 build。业务代码、测试、CI、数据库模型和迁移均未修改。

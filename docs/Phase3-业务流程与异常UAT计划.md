@@ -13,7 +13,7 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 
 本次基线验证已在本分支完成：Django `check`、migration dry-run 和 287 项测试均通过；前端 unit 57 项、Node typography 1 项、Vitest 31 项及 build 均通过。
 
-## 2. 完整业务流程树（11 条主链、61 个最小可操作子流程/分支）
+## 2. 完整业务流程树（11 条主链、69 个最小可操作子流程/分支）
 
 以下编号是 Phase 3B 的操作清单索引；“分支”指用户实际会作出的选择或系统必须拦截的转换，并非仅页面导航。
 
@@ -30,7 +30,7 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 1. **P01** 新建分类、层级分类与分类参数；验证重复属性、循环层级被拒绝。
 2. **P02** 新建产品并绑定分类、HS Code、英文/中文描述与销售规则。
 3. **P03** 按产品参数创建 SKU，确认 SKU Code、内部显示名、Sales Model 与 identity signature 的身份稳定性。
-4. **P04** 修改 SKU 描述、Sales Model、参数、图片；确认生成 SKUVersion 而不是替换历史单据快照。
+4. **P04** 修改 SKU 描述、Sales Model、参数、规格或产品明细等 material fields；确认生成 SKUVersion 而不是替换历史单据快照。SKU 图片修改单独验证当前 SKU 图片变化，以及历史 QuoteItem/PI 图片快照不被当前图片覆盖；图片变化本身不要求产生 SKUVersion。
 5. **P05** 新建多个交易单位（pcs、set、m、roll），指定 factor、默认单位与是否允许小数。
 6. **P06** 停用交易单位；新单据不可错误选用，历史交易行仍应使用其 trade snapshot 显示并可计算。
 7. **P07** 新建包装模板和 SKU 包装档案；生成报价/订单预计装箱并检查尾货策略。
@@ -42,7 +42,7 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 2. **S02** 为 SKU 建立单供应商、双供应商、三供应商及无来源四类样本。
 3. **S03** 设置/切换首选 SupplierSKU；确认每 SKU 仅一个启用的首选来源。
 4. **S04** 修改供应商名称、供应商型号、采购价、MOQ、特点或停用来源；检查历史订单/采购行保存的供应来源快照。
-5. **S05** 无 SupplierSKU、停用来源、MOQ/价格非法或重复供应商 SKU code 时，采购 UI 必须阻止或给出可理解反馈。
+5. **S05** 分别验证：(a) 订单行 Supplier Allocation 在无 SupplierSKU 时的 UI 行为；(b) 创建采购单时未显式指定 SupplierSKU 的真实行为；(c) 后端是否经 `ensure_purchase_source()` 自动创建 `AUTO-<SKU>` SupplierSKU；(d) 自动来源是否留下可追溯来源。停用来源、价格非法或重复供应商 SKU code 仍须有可理解反馈。SupplierSKU 的 MOQ 是供货档案/快照字段；当前未确认采购创建存在强制 MOQ 约束，Phase 3B 记录实际行为，不把未实现规则当作通过标准。销售端 SalesRule MOQ 另行测试。
 
 ### 2.4 报价、修订、PI 与历史快照（Q01–Q08）
 
@@ -61,7 +61,7 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 2. **O02** 确认订单：生成默认应收 PaymentPlan，按当时实际库存建立 SKU 级 reservation。
 3. **O03** 为订单行选择或更换 SupplierSKU；只影响本订单的供应来源快照，不改写 SKU 主档。
 4. **O04** 修改商业条件：必须生成 accepted 报价子版本/正确的合同追溯，既有报价与已结算计划不应被静默改写。
-5. **O05** 订单进入 production；检查手工不能把订单直接置为 shipped/partial/completed。
+5. **O05** 订单进入 production；`shipped` 必须由真实 Shipment 推进，手工不可设置。当前 `completed` 仍可由 UI 手工选择，后端对已有订单也没有等价限制；这是当前 contract 与预期状态机之间的差异（STATE-MACHINE GAP-01），Phase 3B 必须真实复现并确认业务规则，本阶段不修。
 6. **O06** 取消未履约订单：释放该订单的 reservation、取消未结计划；已有履约/财务历史时必须遵守后端禁止规则。
 7. **O07** 在订单工作台核对 ordered、purchased、received、reserved、shipped、remaining、支付和库存流水的交叉一致性。
 
@@ -127,7 +127,8 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 | Order | draft | 新建订单草稿 | 编辑、确认、取消 | 有履约/财务历史后不能随意回 draft/cancel |
 | Order | confirmed / production | 确认订单后；production 为合法业务推进 | 选择供应来源、采购、收款、发货 | 手工选 shipped 不合法；不能绕过 Shipment |
 | Order | shipped | 所有订单行有效发货量达到数量 | 看履约、继续财务操作 | 不是手工下拉状态；冲销后按规则回 confirmed/production |
-| Order | completed / cancelled | 受 serializer/既有历史约束 | 只读/受限操作 | 已完成/取消订单不允许冲销发货、登记不合法款项 |
+| Order | completed | **STATE-MACHINE GAP-01：** 当前 UI 允许人工选择 completed，后端也未禁止已有订单进入 completed；Phase 3B 必须真实复现并确认预期业务规则，本阶段不修。 | 记录实际 UI/后端结果及后续可操作性 | 不得把 completed 假定为由履约自动进入；已 completed 订单仍不允许冲销发货。 |
+| Order | cancelled | 受 serializer/既有历史约束 | 受限查看 | 已取消订单不允许冲销发货、登记不合法款项 |
 | PurchaseOrder | draft | 新建采购单 | 编辑、下单 | 不允许手工改 partial/completed |
 | PurchaseOrder | ordered | 下单 | 收货、付款、成本分配 | receipt 决定到货状态，不由下拉伪造 |
 | PurchaseOrder | partial / completed | 有效 GoodsReceipt 汇总小于/等于采购量 | 继续收货或查看历史 | 已冲销 receipt 必须排除；冲销后可回 ordered/partial |
@@ -248,7 +249,7 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 | S | 库存不足发货 | 失败原子性、无 Shipment/库存扣减 |
 | T | 端到端完整 happy path | 报价→订单→采购→收货→成本→发货→收款→Dashboard |
 
-## 7. 异常状态矩阵（30 项）
+## 7. 异常状态矩阵（31 项）
 
 | ID | 异常操作 | 预期 |
 |---|---|---|
@@ -256,8 +257,8 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 | E02 | 非法日期/起止日期倒置 | 清晰错误，不写入 |
 | E03 | 重复 SKU Code | 唯一性错误 |
 | E04 | 重复/循环分类或重复属性 | 规则错误 |
-| E05 | 无 SupplierSKU 创建来源采购 | 阻止或明确要求供应来源 |
-| E06 | MOQ 不满足 | 规则反馈/记录当前行为 |
+| E05 | 无 SupplierSKU 的订单行 Supplier Allocation、及采购单创建时未显式指定 SupplierSKU | 分别记录 UI 行为、采购创建真实结果、是否自动建立 `AUTO-<SKU>`，以及来源可追溯性；不预设必须拒绝。 |
+| E06 | MOQ 不满足 | SalesRule MOQ 单独验证其销售端规则；SupplierSKU MOQ 当前仅作为档案字段，记录采购真实行为，不预设强制拦截。 |
 | E07 | 非法/停用交易单位 | 新行不能错误使用；旧行保留快照 |
 | E08 | roll 等不允许小数规格填小数 | 数量校验失败 |
 | E09 | 库存不足确认发货 | 无 Shipment/出库流水/预留变化 |
@@ -280,8 +281,9 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 | E26 | 预收跨客户/跨供应商/跨方向/超余额核销 | 拒绝 |
 | E27 | 无效国家生成报价 | 规则错误 |
 | E28 | 报价修订尝试换客户 | 拒绝，原报价不变 |
-| E29 | 手工订单状态改 shipped/PO 改 partial/completed | 拒绝或 UI 不提供入口 |
-| E30 | 浏览器重复点击收货、发货、付款、冲销、作废 | 记录结果，不能产生重复业务副作用 |
+| E29 | 手工设置订单 shipped | 预期应被阻止；UI 不提供正常编辑入口，且后端不能接受人工推进。 |
+| E30 | 手工设置订单 completed | **STATE-MACHINE GAP-01：** 不预设拒绝；记录当前 UI/后端真实结果、后续履约限制与预期业务规则差异。 |
+| E31 | 浏览器重复点击收货、发货、付款、冲销、作废 | 记录结果，不能产生重复业务副作用 |
 
 ## 8. 主数据修改回归矩阵
 
@@ -328,7 +330,7 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 6. 建立 L–M，完成公共费用、多订单成本归属、库存归属和毛利核对。
 7. 建立 N–Q，按第 8、9 节主动修改主数据并完成历史快照/导出回归。
 8. 建立 R–T，完成取消订单、库存不足及完整 happy path。
-9. 执行第 7 节 30 个异常场景；每一项记录 UI 步骤、错误文本、前后只读核对、截图和关联对象 ID。
+9. 执行第 7 节 31 个异常场景；每一项记录 UI 步骤、错误文本、前后只读核对、截图和关联对象 ID。
 10. 汇总不变量 54 项、Dashboard/报表、已知风险和 UI gap；只在获得授权后提出 Phase 3B 后续缺陷修复任务。
 
 ## 12. 旧管理命令偏差（LEGACY TEST TOOL DRIFT，6 项）
@@ -342,13 +344,22 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 | LTD-05 | `seed_demo.py` | 直接 ORM `update_or_create` 业务主数据、订单、库存流水和财务流水，非真实用户路径。 | 禁止用于 Phase 3 UAT。 |
 | LTD-06 | `seed_demo.py` | 直接预设业务状态/流水，可能绕过当前状态机、快照、payment plan 和 reversal 约束。 | 保留为演示工具候选，需独立审查后才维护/删除。 |
 
-## 13. 验收标准与已知风险
+## 13. Current Contract Gaps / 待 Phase 3B 验证
+
+| ID | 当前契约差异 | Phase 3B 处理 |
+|---|---|---|
+| **STATE-MACHINE GAP-01** | `completed` 当前可由 DocumentPage 的 UI 手工选择，`validate_contract_edit()` 也未禁止已有销售订单进入该状态。 | 经真实 UI 复现，记录状态变化、后续履约限制与业务预期差异；本阶段不修复。 |
+| **POLICY GAP-01** | SupplierSKU 的 `moq` 当前确认是供货档案/快照信息，尚未确认采购创建存在强制 MOQ 约束。 | 分别记录 Supplier Allocation、采购创建、`AUTO-<SKU>` 自动来源及实际 MOQ 行为；不把未实现规则当作通过标准。 |
+
+这两项仅保证 Phase 3A 的测试计划如实描述当前系统，不构成在本阶段修改业务实现的授权。
+
+## 14. 验收标准与已知风险
 
 ### 验收标准
 
 1. 20 张订单全部按矩阵经 UI 建立，至少 8–12 张 PO、完整/部分/多次收发货和 20+ 条结构化财务流水均有可追溯证据。
 2. 54 条 Business Invariant 均有 PASS/FAIL/不适用结论；任何 FAIL 附复现步骤、对象 ID、截图、UI 错误和只读核对。
-3. 30 个异常场景均实际执行；所有要求原子失败的场景证明无部分副作用。
+3. 31 个异常场景均实际执行；所有要求原子失败的场景证明无部分副作用。
 4. PI 历史快照专项通过，旧报价/订单与 A-1 修订版可区分且 renderer 正常导出。
 5. 收货冲销、发货冲销、root 财务作废各至少一次成功、一次重复/非法失败；前后库存、预留、状态、计划和流水均符合矩阵。
 6. 所有发现的 UI 覆盖缺口和历史工具偏差均独立记录，不用 API/脚本绕过。
@@ -356,19 +367,23 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 ### 已知风险 / 待决项
 
 1. **GAP-01：** ContractChangeRequest 有后端 approve action，但当前正常 UI 没有专用批准入口；本轮不修复。
-2. 历史 2026-09 UAT 结果在 Phase 1/2/2C、CI baseline 与 quote renderer 迁移前完成，只能参考，不能作为当前通过凭据。
-3. SQLite 清库存在误删基础配置和附件文件关联风险；未核实白名单前不得执行。
-4. 真实 UI UAT 的数据规模与浏览器稳定性会影响工期；失败时应记录，不得降级为 API/脚本造数。
-5. 自动化测试通过只能证明代码基线，不证明 20 单 UI 业务组合已通过。
+2. **STATE-MACHINE GAP-01：** Order `completed` 当前可经 UI 手工设置，且后端未禁止已有订单进入该状态；Phase 3B 须复现并确认规则，本阶段不修复。
+3. **POLICY GAP-01：** SupplierSKU MOQ 目前未确认有采购强制约束；Phase 3B 记录实际行为，不把未实现规则当作测试通过标准。
+4. 历史 2026-09 UAT 结果在 Phase 1/2/2C、CI baseline 与 quote renderer 迁移前完成，只能参考，不能作为当前通过凭据。
+5. SQLite 清库存在误删基础配置和附件文件关联风险；未核实白名单前不得执行。
+6. 真实 UI UAT 的数据规模与浏览器稳定性会影响工期；失败时应记录，不得降级为 API/脚本造数。
+7. 自动化测试通过只能证明代码基线，不证明 20 单 UI 业务组合已通过。
 
-## 14. Phase 3A 交付摘要
+## 15. Phase 3A 交付摘要
 
 - 完整主业务链：**11** 条。
-- 最小可操作子流程/分支：**61** 个。
+- 最小可操作子流程/分支：**69** 个。
 - Business Invariant：**54** 条。
 - UI COVERAGE GAP：**1** 个。
+- STATE-MACHINE GAP：**1** 个。
+- POLICY GAP：**1** 个。
 - LEGACY TEST TOOL DRIFT：**6** 项。
 - 计划订单：**20** 张。
-- 计划异常场景：**30** 项。
+- 计划异常场景：**31** 项。
 
 本阶段到此停止，等待 Code Review；不清库、不造业务数据、不改业务代码，也不开始 Phase 3B。

@@ -1,5 +1,6 @@
 from datetime import date
 
+import pycountry
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import Max
@@ -56,10 +57,15 @@ MAX_REVISION_NO = 99
 
 
 def _country_iso_code(country: str) -> str:
-    country_code = COUNTRY_ISO_CODES.get(country.strip().casefold())
-    if not country_code:
+    normalized_country = country.strip()
+    country_code = COUNTRY_ISO_CODES.get(normalized_country.casefold())
+    if country_code:
+        return country_code
+
+    try:
+        return pycountry.countries.lookup(normalized_country).alpha_2
+    except LookupError:
         raise ValidationError({"country": f"Unsupported country: {country}"})
-    return country_code
 
 
 @transaction.atomic

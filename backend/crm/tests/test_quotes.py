@@ -82,6 +82,22 @@ class QuoteRevisionTests(TestCase):
         self.assertEqual(first, "SJ20260815DE001")
         self.assertEqual(second, "SJ20260815DE002")
 
+    def test_root_number_resolves_standard_iso_country_identifiers(self):
+        quote_date = date(2026, 8, 16)
+        for country, expected_quote_no in (
+            ("Sweden", "SJ20260816SE001"),
+            ("sweden", "SJ20260816SE002"),
+            ("SE", "SJ20260816SE003"),
+            ("SWE", "SJ20260816SE004"),
+        ):
+            with self.subTest(country=country):
+                self.assertEqual(allocate_root_quote_no(quote_date, country), expected_quote_no)
+
+        self.assertEqual(allocate_root_quote_no(quote_date, "Germany"), "SJ20260816DE001")
+        self.assertEqual(allocate_root_quote_no(quote_date, "United States"), "SJ20260816US001")
+        self.assertEqual(allocate_root_quote_no(quote_date, "USA"), "SJ20260816US002")
+        self.assertEqual(allocate_root_quote_no(quote_date, "中国"), "SJ20260816CN001")
+
     def test_revision_number_keeps_complete_root_identifier(self):
         root = self.create_quote(country="Germany", quote_date=date(2026, 8, 15))
         revision = self.create_revision(root)
@@ -124,6 +140,8 @@ class QuoteRevisionTests(TestCase):
     def test_unsupported_country_is_rejected(self):
         with self.assertRaises(ValidationError):
             allocate_root_quote_no(date(2026, 8, 15), "Atlantis")
+        with self.assertRaises(ValidationError):
+            allocate_root_quote_no(date(2026, 8, 15), "TestCountry123")
 
     def test_quote_snapshot_and_sku_image_fields_persist(self):
         quote = self.create_quote()

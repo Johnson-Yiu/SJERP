@@ -255,7 +255,7 @@ Phase 3C 专门验证正常 UI 无法制造的内部异常状态，且**只能**
 | S | 库存不足发货 | 失败原子性、无 Shipment/库存扣减 |
 | T | 端到端完整 happy path | 报价→订单→采购→收货→成本→发货→收款→Dashboard |
 
-## 7. 异常状态矩阵（39 项）
+## 7. 异常状态矩阵（43 项）
 
 **Execution Method 定义：**
 
@@ -284,26 +284,30 @@ Phase 3C 专门验证正常 UI 无法制造的内部异常状态，且**只能**
 | E17 | Shipment 原 sale_out 缺失、SKU/order/quantity/source_type 不一致 | AUTOMATED INVARIANT | Phase 3C 仅在临时测试库构造；全单拒绝，零 reversal、零库存/订单/预留变化。 |
 | E18 | Shipment 已冲销后再次冲销 | UI GUARD | UI 不再显示冲销按钮。 |
 | E19 | 含超发/增补 Shipment 冲销 | UI GUARD | UI 显示不可直接冲销说明，不提供正常冲销入口。 |
-| E20 | 已 completed/cancelled Order 冲销 Shipment | UI ACTION | 经真实 UI 触发时拒绝；记录当前状态机和错误反馈。 |
-| E21 | 对 split Transaction 单独作废 | UI GUARD | split child 无单独作废按钮，显示须由根流水统一作废。 |
-| E22 | root Transaction 作废时原因为空 | UI GUARD | 原因未填写时确认控件不可用或明确阻止。 |
-| E23 | root Transaction 已作废后再次从 UI 作废 | UI GUARD | cancelled row 无作废入口。 |
-| E24 | 直接重复调用 `void_transaction(root)` | AUTOMATED INVARIANT | Phase 3C 临时测试库验证服务层拒绝，且无额外状态变化。 |
-| E25 | `allocated_amount != Σ active AdvanceAllocation.amount` 后作废 | AUTOMATED INVARIANT | Phase 3C 构造 ledger mismatch，安全拒绝且无部分修改。 |
-| E26 | PaymentPlan `settled_amount` 被置为无法安全回滚的值 | AUTOMATED INVARIANT | Phase 3C 构造 rollback underflow，安全拒绝且无部分修改。 |
-| E27 | PaymentPlan 币种不匹配 | UI ACTION | 拒绝 |
-| E28 | 外币缺失/零/负汇率或 CNY 非 1 | UI ACTION | 拒绝 |
-| E29 | 预收跨客户/跨供应商/跨方向/超余额核销 | UI ACTION | 拒绝 |
-| E30 | 无效国家生成报价 | UI ACTION | 规则错误 |
-| E31 | 报价修订尝试换客户 | UI GUARD | 修订 UI 锁定客户，不提供跨客户修改入口。 |
-| E32 | 手工设置订单 shipped | UI GUARD | UI 不提供正常编辑入口，且后端不能接受人工推进。 |
-| E33 | 手工设置订单 completed | UI ACTION | **STATE-MACHINE GAP-01：** 不预设拒绝；记录当前 UI/后端真实结果、后续履约限制与预期业务规则差异。 |
-| E34 | 浏览器重复点击收货、发货、付款、冲销、作废 | UI ACTION | 记录页面的重复提交行为，不能产生重复业务副作用。 |
-| E35 | SKU Code database uniqueness / immutable identity | AUTOMATED INVARIANT | 由现有或 Phase 3C 自动测试验证数据库唯一性与创建后不可变身份；正常 SKU UI 不允许手填 Code。 |
-| E36 | 直接重复调用 `reverse_receipt()` | AUTOMATED INVARIANT | Phase 3C 临时测试库验证服务层拒绝，不新增 reversal InventoryMovement。 |
-| E37 | 直接重复调用 `reverse_shipment()` | AUTOMATED INVARIANT | Phase 3C 临时测试库验证服务层拒绝，不新增 reversal InventoryMovement。 |
-| E38 | 直接调用 `void_transaction(split_child)` | AUTOMATED INVARIANT | Phase 3C 临时测试库验证服务层拒绝，根/child/计划均不变化。 |
-| E39 | reversal/void 的内部异常原子性 | AUTOMATED INVARIANT | 对 Phase 3C 构造的每类内部异常，验证不创建部分 movement/transaction，库存、预留、订单、PO 与计划保持原值。 |
+| E20 | completed Order + confirmed Shipment reversal | UI ACTION | completed 可由当前 UI 人工设置；经真实 UI 尝试冲销时，确认后端拒绝并记录库存/Shipment/Order 不变。 |
+| E21 | cancelled Order + confirmed Shipment reversal | AUTOMATED INVARIANT | Phase 3C 临时测试库构造，因为已有 confirmed Shipment 的履约订单不能经正常 UI/serializer 合法改为 cancelled；验证 `reverse_shipment()` 拒绝且库存/Shipment/Order 不变。 |
+| E22 | 对 split Transaction 单独作废 | UI GUARD | split child 无单独作废按钮，显示须由根流水统一作废。 |
+| E23 | root Transaction 作废时原因为空 | UI GUARD | 原因未填写时确认控件不可用或明确阻止。 |
+| E24 | root Transaction 已作废后再次从 UI 作废 | UI GUARD | cancelled row 无作废入口。 |
+| E25 | 直接重复调用 `void_transaction(root)` | AUTOMATED INVARIANT | Phase 3C 临时测试库验证服务层拒绝，且无额外状态变化。 |
+| E26 | `allocated_amount != Σ active AdvanceAllocation.amount` 后作废 | AUTOMATED INVARIANT | Phase 3C 构造 ledger mismatch，安全拒绝且无部分修改。 |
+| E27 | PaymentPlan `settled_amount` 被置为无法安全回滚的值 | AUTOMATED INVARIANT | Phase 3C 构造 rollback underflow，安全拒绝且无部分修改。 |
+| E28 | PaymentPlan 结算时尝试修改计划币种 | UI GUARD | 结算 UI 不提供币种编辑；提交始终使用 selected PaymentPlan 的原币。 |
+| E29 | 以错误币种直接调用 settle / `record_transaction()` | AUTOMATED INVARIANT | Phase 3C 临时测试库构造，后端拒绝且 PaymentPlan/Transaction 无变化。 |
+| E30 | 外币缺失/零/负汇率或 CNY 非 1 | UI ACTION | 拒绝 |
+| E31 | 预收跨客户/跨供应商/跨方向/跨币种核销 | UI GUARD | 不匹配计划不会出现在 TransactionPage 的 `eligiblePlans` 中。 |
+| E32 | 预收核销金额超过 advance 未分配余额或 PaymentPlan remaining amount | UI ACTION | 用户输入并提交后，确认 UI/后端拒绝且无部分核销。 |
+| E33 | 直接调用 `allocate_advance()` 跨客户/跨供应商/跨方向/跨币种 | AUTOMATED INVARIANT | Phase 3C 临时测试库验证服务层拒绝，advance、allocation 与 PaymentPlan 不变。 |
+| E34 | 无效国家生成报价 | UI ACTION | 规则错误 |
+| E35 | 报价修订尝试换客户 | UI GUARD | 修订 UI 锁定客户，不提供跨客户修改入口。 |
+| E36 | 手工设置订单 shipped | UI GUARD | UI 不提供正常编辑入口，且后端不能接受人工推进。 |
+| E37 | 手工设置订单 completed | UI ACTION | **STATE-MACHINE GAP-01：** 不预设拒绝；记录当前 UI/后端真实结果、后续履约限制与预期业务规则差异。 |
+| E38 | 浏览器重复点击收货、发货、付款、冲销、作废 | UI ACTION | 记录页面的重复提交行为，不能产生重复业务副作用。 |
+| E39 | SKU Code database uniqueness / immutable identity | AUTOMATED INVARIANT | 由现有或 Phase 3C 自动测试验证数据库唯一性与创建后不可变身份；正常 SKU UI 不允许手填 Code。 |
+| E40 | 直接重复调用 `reverse_receipt()` | AUTOMATED INVARIANT | Phase 3C 临时测试库验证服务层拒绝，不新增 reversal InventoryMovement。 |
+| E41 | 直接重复调用 `reverse_shipment()` | AUTOMATED INVARIANT | Phase 3C 临时测试库验证服务层拒绝，不新增 reversal InventoryMovement。 |
+| E42 | 直接调用 `void_transaction(split_child)` | AUTOMATED INVARIANT | Phase 3C 临时测试库验证服务层拒绝，根/child/计划均不变化。 |
+| E43 | reversal/void 的内部异常原子性 | AUTOMATED INVARIANT | 对 Phase 3C 构造的每类内部异常，验证不创建部分 movement/transaction，库存、预留、订单、PO 与计划保持原值。 |
 
 ## 8. 主数据修改回归矩阵
 
@@ -367,14 +371,17 @@ Phase 3C 专门验证正常 UI 无法制造的内部异常状态，且**只能**
 | 项目 | 对应矩阵 | Phase 3C 验证目标 |
 |---|---|---|
 | A. Shipment movement integrity | E17 | 缺失 sale_out，以及 SKU、order、quantity、source_type 分别不一致时，整单 `reverse_shipment()` 安全拒绝。 |
-| B. Receipt reversal double execution | E36 | 第一次成功后直接重复调用 `reverse_receipt()` 被拒绝，未新增 reversal movement。 |
-| C. Shipment reversal double execution | E37 | 第一次成功后直接重复调用 `reverse_shipment()` 被拒绝，未新增 reversal movement。 |
-| D. Transaction split-child void | E38 | 直接 `void_transaction(split_child)` 被拒绝，根、child、PaymentPlan 与 allocation 不变。 |
-| E. Transaction repeated void | E24 | root 已作废后再次直接服务层调用被拒绝，void history 不被覆盖。 |
-| F. AdvanceAllocation ledger mismatch | E25 | `allocated_amount` 与 active allocation 合计不一致时作废安全拒绝。 |
-| G. PaymentPlan rollback underflow | E26 | 人为形成无法安全扣回的 settled amount 时作废安全拒绝。 |
-| H. reversal/void 原子性 | E39 | 上述每种失败均证明没有部分 InventoryMovement/Transaction、库存、预留、合同或计划变更。 |
-| I. 新发现的 UI 不可构造内部异常 | 待增补 | Phase 3B 发现后先证明无法用正常 UI 构造，再新增独立临时库测试和不变量断言。 |
+| B. Receipt reversal double execution | E40 | 第一次成功后直接重复调用 `reverse_receipt()` 被拒绝，未新增 reversal movement。 |
+| C. Shipment reversal double execution | E41 | 第一次成功后直接重复调用 `reverse_shipment()` 被拒绝，未新增 reversal movement。 |
+| D. Transaction split-child void | E42 | 直接 `void_transaction(split_child)` 被拒绝，根、child、PaymentPlan 与 allocation 不变。 |
+| E. Transaction repeated void | E25 | root 已作废后再次直接服务层调用被拒绝，void history 不被覆盖。 |
+| F. AdvanceAllocation ledger mismatch | E26 | `allocated_amount` 与 active allocation 合计不一致时作废安全拒绝。 |
+| G. PaymentPlan rollback underflow | E27 | 人为形成无法安全扣回的 settled amount 时作废安全拒绝。 |
+| H. PaymentPlan currency mismatch service protection | E29 | 以错误币种调用 settle / `record_transaction()` 时，后端拒绝且 PaymentPlan/Transaction 不变。 |
+| I. AdvanceAllocation cross party/direction/currency protection | E33 | 直接 `allocate_advance()` 跨主体、方向或币种时，服务层拒绝且 allocation/plan 不变。 |
+| J. cancelled Order shipment reversal protection | E21 | 构造 cancelled Order 与 confirmed Shipment 后，`reverse_shipment()` 拒绝且库存/Shipment/Order 不变。 |
+| K. reversal/void 原子性 | E43 | 上述每种失败均证明没有部分 InventoryMovement/Transaction、库存、预留、合同或计划变更。 |
+| L. 新发现的 UI 不可构造内部异常 | 待增补 | Phase 3B 发现后先证明无法用正常 UI 构造，再新增独立临时库测试和不变量断言。 |
 
 ## 13. 旧管理命令偏差（LEGACY TEST TOOL DRIFT，6 项）
 
@@ -427,9 +434,9 @@ Phase 3C 专门验证正常 UI 无法制造的内部异常状态，且**只能**
 - POLICY GAP：**1** 个。
 - LEGACY TEST TOOL DRIFT：**6** 项。
 - 计划订单：**20** 张。
-- 计划异常场景：**39** 项。
-- Phase 3B UI ACTION：**20** 项。
-- Phase 3B UI GUARD：**10** 项。
-- Phase 3C AUTOMATED INVARIANT：**9** 项。
+- 计划异常场景：**43** 项。
+- Phase 3B UI ACTION：**19** 项。
+- Phase 3B UI GUARD：**12** 项。
+- Phase 3C AUTOMATED INVARIANT：**12** 项。
 
 本阶段到此停止，等待 Code Review；不清库、不造业务数据、不改业务代码，也不开始 Phase 3B 或 Phase 3C。

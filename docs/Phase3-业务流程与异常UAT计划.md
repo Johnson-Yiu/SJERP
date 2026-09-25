@@ -9,7 +9,13 @@
 
 本计划以当前 `models`、serializers、views、`fulfillment.py`、`finance.py` 和 Vue 页面为准。`docs/业务流程与修改回归测试报告-20260922.md`、`docs/真实用户E2E-UAT-20260923.md` 与三个管理命令仅是历史参考，不能替代本次 UAT 结论。
 
-Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、输入框、下拉框、弹窗和表格操作创建或修改。禁止 seed、fixture、SQL、Django shell、脚本批量造数、APIClient、curl、Postman、浏览器 console 或历史管理命令造 Phase 3 业务数据。数据库只能用于开始前备份、开始前清理以及结束后的只读核对。
+### Phase 3B — Real UI UAT
+
+Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、输入框、下拉框、弹窗和表格操作创建或修改。它验证正常用户能够通过页面控件制造的成功、失败和异常业务场景。禁止 APIClient、curl、Postman、浏览器 console、Django shell、SQL、seed、fixture、脚本或历史管理命令造业务数据。数据库只能用于开始前备份、开始前清理以及结束后的只读核对。
+
+### Phase 3C — Invariant Fault Injection
+
+Phase 3C 专门验证正常 UI 无法制造的内部异常状态，且**只能**在 Django temporary test database 中执行。允许自动化测试构造缺失关联流水、篡改后的内部关联、allocation ledger mismatch、服务层重复调用及其他数据库内部不一致状态。这些测试不是 Phase 3B 的真实业务数据，绝不能写入开发数据库；加入 Phase 3C 不放松 Phase 3B 的真实 UI 原则。
 
 本次基线验证已在本分支完成：Django `check`、migration dry-run 和 287 项测试均通过；前端 unit 57 项、Node typography 1 项、Vitest 31 项及 build 均通过。
 
@@ -249,41 +255,55 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 | S | 库存不足发货 | 失败原子性、无 Shipment/库存扣减 |
 | T | 端到端完整 happy path | 报价→订单→采购→收货→成本→发货→收款→Dashboard |
 
-## 7. 异常状态矩阵（31 项）
+## 7. 异常状态矩阵（39 项）
 
-| ID | 异常操作 | 预期 |
-|---|---|---|
-| E01 | 必填字段为空（客户、报价、原因、金额） | 前端阻止或 400，零部分提交 |
-| E02 | 非法日期/起止日期倒置 | 清晰错误，不写入 |
-| E03 | 重复 SKU Code | 唯一性错误 |
-| E04 | 重复/循环分类或重复属性 | 规则错误 |
-| E05 | 无 SupplierSKU 的订单行 Supplier Allocation、及采购单创建时未显式指定 SupplierSKU | 分别记录 UI 行为、采购创建真实结果、是否自动建立 `AUTO-<SKU>`，以及来源可追溯性；不预设必须拒绝。 |
-| E06 | MOQ 不满足 | SalesRule MOQ 单独验证其销售端规则；SupplierSKU MOQ 当前仅作为档案字段，记录采购真实行为，不预设强制拦截。 |
-| E07 | 非法/停用交易单位 | 新行不能错误使用；旧行保留快照 |
-| E08 | roll 等不允许小数规格填小数 | 数量校验失败 |
-| E09 | 库存不足确认发货 | 无 Shipment/出库流水/预留变化 |
-| E10 | 超额发货无原因 | 拒绝 |
-| E11 | 超额发货有原因 | 创建可解释超发行；不可直接 reversal |
-| E12 | 收货数量为零/负数 | 拒绝 |
-| E13 | 未授权超到 | 拒绝 |
-| E14 | 重复收货冲销 | 拒绝，零新增流水 |
-| E15 | 下游出库后收货冲销 | 拒绝，库存/PO/预留不变 |
-| E16 | 收货冲销空原因 | 拒绝 |
-| E17 | Shipment 原流水缺失或 SKU/订单/数量/source 异常 | 全单拒绝，零 reversal |
-| E18 | 重复发货冲销 | 拒绝 |
-| E19 | 含超发/增补 Shipment 冲销 | 拒绝 |
-| E20 | 已完成/取消订单冲销发货 | 拒绝 |
-| E21 | split Transaction 直接作废 | 拒绝 |
-| E22 | root Transaction 重复/空原因作废 | 拒绝 |
-| E23 | allocation 明细与 allocated_amount 不一致时作废 | 安全拒绝 |
-| E24 | PaymentPlan 币种不匹配 | 拒绝 |
-| E25 | 外币缺失/零/负汇率或 CNY 非 1 | 拒绝 |
-| E26 | 预收跨客户/跨供应商/跨方向/超余额核销 | 拒绝 |
-| E27 | 无效国家生成报价 | 规则错误 |
-| E28 | 报价修订尝试换客户 | 拒绝，原报价不变 |
-| E29 | 手工设置订单 shipped | 预期应被阻止；UI 不提供正常编辑入口，且后端不能接受人工推进。 |
-| E30 | 手工设置订单 completed | **STATE-MACHINE GAP-01：** 不预设拒绝；记录当前 UI/后端真实结果、后续履约限制与预期业务规则差异。 |
-| E31 | 浏览器重复点击收货、发货、付款、冲销、作废 | 记录结果，不能产生重复业务副作用 |
+**Execution Method 定义：**
+
+- **UI ACTION**：用户能通过正常页面输入并提交；验收实际结果与无部分副作用。
+- **UI GUARD**：正常 UI 不提供非法入口、按钮 disabled，或在提交前明确阻止；验收该 UI 防线，不绕过 UI。
+- **AUTOMATED INVARIANT**：只有在 Phase 3C 的 Django temporary test database 中才能构造的内部不一致状态；不得污染 Phase 3B 开发数据库。
+
+| ID | 异常操作 | Execution Method | 预期 |
+|---|---|---|---|
+| E01 | 必填字段为空（客户、报价、原因、金额） | UI ACTION | 前端阻止或 400，零部分提交 |
+| E02 | 非法日期/起止日期倒置 | UI ACTION | 清晰错误，不写入 |
+| E03 | 通过 UI 创建重复 SKU 身份组合、重复 Sales Model 或重复内部名称 | UI ACTION | 当前可由用户输入制造的唯一性冲突应有规则错误；SKU Code 另见 E35。 |
+| E04 | 重复/循环分类或重复属性 | UI ACTION | 规则错误 |
+| E05 | 无 SupplierSKU 的订单行 Supplier Allocation、及采购单创建时未显式指定 SupplierSKU | UI ACTION | 分别记录 UI 行为、采购创建真实结果、是否自动建立 `AUTO-<SKU>`，以及来源可追溯性；不预设必须拒绝。 |
+| E06 | MOQ 不满足 | UI ACTION | SalesRule MOQ 单独验证销售端规则；SupplierSKU MOQ 当前仅为档案字段，记录采购真实行为，不预设强制拦截。 |
+| E07 | 选择非法/停用交易单位 | UI GUARD | 新行没有可用非法入口或被明确阻止；旧行保留 trade snapshot。 |
+| E08 | roll 等不允许小数规格输入小数 | UI ACTION | 数量校验失败 |
+| E09 | 库存不足确认发货 | UI ACTION | 无 Shipment/出库流水/预留变化 |
+| E10 | 超额发货无原因 | UI ACTION | 拒绝 |
+| E11 | 超额发货有原因 | UI ACTION | 创建可解释超发行；不可直接 reversal |
+| E12 | 收货数量为零/负数 | UI ACTION | 拒绝 |
+| E13 | 未授权超到 | UI ACTION | 拒绝 |
+| E14 | Receipt 已冲销后再次冲销 | UI GUARD | UI 不再显示冲销按钮，原记录和 reversal 历史可查看。 |
+| E15 | 下游出库后收货冲销 | UI ACTION | 拒绝，库存/PO/预留不变 |
+| E16 | 收货冲销空原因 | UI GUARD | 原因未填写时确认控件不可用或明确阻止。 |
+| E17 | Shipment 原 sale_out 缺失、SKU/order/quantity/source_type 不一致 | AUTOMATED INVARIANT | Phase 3C 仅在临时测试库构造；全单拒绝，零 reversal、零库存/订单/预留变化。 |
+| E18 | Shipment 已冲销后再次冲销 | UI GUARD | UI 不再显示冲销按钮。 |
+| E19 | 含超发/增补 Shipment 冲销 | UI GUARD | UI 显示不可直接冲销说明，不提供正常冲销入口。 |
+| E20 | 已 completed/cancelled Order 冲销 Shipment | UI ACTION | 经真实 UI 触发时拒绝；记录当前状态机和错误反馈。 |
+| E21 | 对 split Transaction 单独作废 | UI GUARD | split child 无单独作废按钮，显示须由根流水统一作废。 |
+| E22 | root Transaction 作废时原因为空 | UI GUARD | 原因未填写时确认控件不可用或明确阻止。 |
+| E23 | root Transaction 已作废后再次从 UI 作废 | UI GUARD | cancelled row 无作废入口。 |
+| E24 | 直接重复调用 `void_transaction(root)` | AUTOMATED INVARIANT | Phase 3C 临时测试库验证服务层拒绝，且无额外状态变化。 |
+| E25 | `allocated_amount != Σ active AdvanceAllocation.amount` 后作废 | AUTOMATED INVARIANT | Phase 3C 构造 ledger mismatch，安全拒绝且无部分修改。 |
+| E26 | PaymentPlan `settled_amount` 被置为无法安全回滚的值 | AUTOMATED INVARIANT | Phase 3C 构造 rollback underflow，安全拒绝且无部分修改。 |
+| E27 | PaymentPlan 币种不匹配 | UI ACTION | 拒绝 |
+| E28 | 外币缺失/零/负汇率或 CNY 非 1 | UI ACTION | 拒绝 |
+| E29 | 预收跨客户/跨供应商/跨方向/超余额核销 | UI ACTION | 拒绝 |
+| E30 | 无效国家生成报价 | UI ACTION | 规则错误 |
+| E31 | 报价修订尝试换客户 | UI GUARD | 修订 UI 锁定客户，不提供跨客户修改入口。 |
+| E32 | 手工设置订单 shipped | UI GUARD | UI 不提供正常编辑入口，且后端不能接受人工推进。 |
+| E33 | 手工设置订单 completed | UI ACTION | **STATE-MACHINE GAP-01：** 不预设拒绝；记录当前 UI/后端真实结果、后续履约限制与预期业务规则差异。 |
+| E34 | 浏览器重复点击收货、发货、付款、冲销、作废 | UI ACTION | 记录页面的重复提交行为，不能产生重复业务副作用。 |
+| E35 | SKU Code database uniqueness / immutable identity | AUTOMATED INVARIANT | 由现有或 Phase 3C 自动测试验证数据库唯一性与创建后不可变身份；正常 SKU UI 不允许手填 Code。 |
+| E36 | 直接重复调用 `reverse_receipt()` | AUTOMATED INVARIANT | Phase 3C 临时测试库验证服务层拒绝，不新增 reversal InventoryMovement。 |
+| E37 | 直接重复调用 `reverse_shipment()` | AUTOMATED INVARIANT | Phase 3C 临时测试库验证服务层拒绝，不新增 reversal InventoryMovement。 |
+| E38 | 直接调用 `void_transaction(split_child)` | AUTOMATED INVARIANT | Phase 3C 临时测试库验证服务层拒绝，根/child/计划均不变化。 |
+| E39 | reversal/void 的内部异常原子性 | AUTOMATED INVARIANT | 对 Phase 3C 构造的每类内部异常，验证不创建部分 movement/transaction，库存、预留、订单、PO 与计划保持原值。 |
 
 ## 8. 主数据修改回归矩阵
 
@@ -330,10 +350,33 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 6. 建立 L–M，完成公共费用、多订单成本归属、库存归属和毛利核对。
 7. 建立 N–Q，按第 8、9 节主动修改主数据并完成历史快照/导出回归。
 8. 建立 R–T，完成取消订单、库存不足及完整 happy path。
-9. 执行第 7 节 31 个异常场景；每一项记录 UI 步骤、错误文本、前后只读核对、截图和关联对象 ID。
+9. 执行第 7 节全部 **UI ACTION** 与 **UI GUARD** 场景：前者记录真实 UI 提交、错误文本与前后只读核对；后者记录不存在/disabled 的入口或明确的 UI 阻止。不得为覆盖内部异常而绕过 UI。
 10. 汇总不变量 54 项、Dashboard/报表、已知风险和 UI gap；只在获得授权后提出 Phase 3B 后续缺陷修复任务。
 
-## 12. 旧管理命令偏差（LEGACY TEST TOOL DRIFT，6 项）
+## 12. Phase 3C — Invariant Fault Injection Plan（仅规划，不执行）
+
+### 执行隔离与边界
+
+1. 仅以 Django temporary test database 运行；使用测试框架创建与销毁临时库，不连接、不读取、不写入 Phase 3B 的开发数据库。
+2. 自动化测试可为验证防线而构造内部损坏状态，但不能把这些对象当作真实用户 UAT 数据，也不能由 UI、APIClient 或脚本把它们写到开发库。
+3. 每个测试先建立最小一致基线，再只破坏目标关系；调用服务层后核对异常、所有受影响表的前后值及无新增部分流水。
+4. Phase 3C 是 Phase 3B 的补充，不替代 20 张订单、8–12 PO、客户/SKU/供应商修改、收货、发货、财务、快照、PI 与真实 UI 回滚。
+
+### 计划覆盖
+
+| 项目 | 对应矩阵 | Phase 3C 验证目标 |
+|---|---|---|
+| A. Shipment movement integrity | E17 | 缺失 sale_out，以及 SKU、order、quantity、source_type 分别不一致时，整单 `reverse_shipment()` 安全拒绝。 |
+| B. Receipt reversal double execution | E36 | 第一次成功后直接重复调用 `reverse_receipt()` 被拒绝，未新增 reversal movement。 |
+| C. Shipment reversal double execution | E37 | 第一次成功后直接重复调用 `reverse_shipment()` 被拒绝，未新增 reversal movement。 |
+| D. Transaction split-child void | E38 | 直接 `void_transaction(split_child)` 被拒绝，根、child、PaymentPlan 与 allocation 不变。 |
+| E. Transaction repeated void | E24 | root 已作废后再次直接服务层调用被拒绝，void history 不被覆盖。 |
+| F. AdvanceAllocation ledger mismatch | E25 | `allocated_amount` 与 active allocation 合计不一致时作废安全拒绝。 |
+| G. PaymentPlan rollback underflow | E26 | 人为形成无法安全扣回的 settled amount 时作废安全拒绝。 |
+| H. reversal/void 原子性 | E39 | 上述每种失败均证明没有部分 InventoryMovement/Transaction、库存、预留、合同或计划变更。 |
+| I. 新发现的 UI 不可构造内部异常 | 待增补 | Phase 3B 发现后先证明无法用正常 UI 构造，再新增独立临时库测试和不变量断言。 |
+
+## 13. 旧管理命令偏差（LEGACY TEST TOOL DRIFT，6 项）
 
 | ID | 工具 | 当前偏差 | Phase 3 处理 |
 |---|---|---|---|
@@ -344,7 +387,7 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 | LTD-05 | `seed_demo.py` | 直接 ORM `update_or_create` 业务主数据、订单、库存流水和财务流水，非真实用户路径。 | 禁止用于 Phase 3 UAT。 |
 | LTD-06 | `seed_demo.py` | 直接预设业务状态/流水，可能绕过当前状态机、快照、payment plan 和 reversal 约束。 | 保留为演示工具候选，需独立审查后才维护/删除。 |
 
-## 13. Current Contract Gaps / 待 Phase 3B 验证
+## 14. Current Contract Gaps / 待 Phase 3B 验证
 
 | ID | 当前契约差异 | Phase 3B 处理 |
 |---|---|---|
@@ -353,13 +396,13 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 
 这两项仅保证 Phase 3A 的测试计划如实描述当前系统，不构成在本阶段修改业务实现的授权。
 
-## 14. 验收标准与已知风险
+## 15. 验收标准与已知风险
 
 ### 验收标准
 
 1. 20 张订单全部按矩阵经 UI 建立，至少 8–12 张 PO、完整/部分/多次收发货和 20+ 条结构化财务流水均有可追溯证据。
 2. 54 条 Business Invariant 均有 PASS/FAIL/不适用结论；任何 FAIL 附复现步骤、对象 ID、截图、UI 错误和只读核对。
-3. 31 个异常场景均实际执行；所有要求原子失败的场景证明无部分副作用。
+3. 所有 UI ACTION 场景均通过真实 UI 实际执行；所有 UI GUARD 场景均确认正常 UI 不提供非法操作入口或明确阻止；所有 AUTOMATED INVARIANT 场景均在 Phase 3C 的临时测试数据库验证。任何 Phase 3C 自动化测试不得污染 Phase 3B 开发数据库。
 4. PI 历史快照专项通过，旧报价/订单与 A-1 修订版可区分且 renderer 正常导出。
 5. 收货冲销、发货冲销、root 财务作废各至少一次成功、一次重复/非法失败；前后库存、预留、状态、计划和流水均符合矩阵。
 6. 所有发现的 UI 覆盖缺口和历史工具偏差均独立记录，不用 API/脚本绕过。
@@ -374,7 +417,7 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 6. 真实 UI UAT 的数据规模与浏览器稳定性会影响工期；失败时应记录，不得降级为 API/脚本造数。
 7. 自动化测试通过只能证明代码基线，不证明 20 单 UI 业务组合已通过。
 
-## 15. Phase 3A 交付摘要
+## 16. Phase 3A 交付摘要
 
 - 完整主业务链：**11** 条。
 - 最小可操作子流程/分支：**69** 个。
@@ -384,6 +427,9 @@ Phase 3B 的每一条业务数据都必须经浏览器 UI 的页面、按钮、�
 - POLICY GAP：**1** 个。
 - LEGACY TEST TOOL DRIFT：**6** 项。
 - 计划订单：**20** 张。
-- 计划异常场景：**31** 项。
+- 计划异常场景：**39** 项。
+- Phase 3B UI ACTION：**20** 项。
+- Phase 3B UI GUARD：**10** 项。
+- Phase 3C AUTOMATED INVARIANT：**9** 项。
 
-本阶段到此停止，等待 Code Review；不清库、不造业务数据、不改业务代码，也不开始 Phase 3B。
+本阶段到此停止，等待 Code Review；不清库、不造业务数据、不改业务代码，也不开始 Phase 3B 或 Phase 3C。

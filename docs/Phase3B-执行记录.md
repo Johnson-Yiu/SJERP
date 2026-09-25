@@ -216,8 +216,8 @@ Order C 首次尝试直接以“已完成”创建时被 UI guard 拒绝（提�
 - 通过采购管理 UI 创建 9 张采购单（覆盖 Supplier A/B/C、Order A/B/C/D 及无订单的 SKU-000004 E05 场景），并对 PO-20260925-231818 登记 10 `m` 合格入库；采购页显示入库记录、剩余数量归零和可冲销按钮。
 - 已验证的 UI guard：SKU 型号缩写缺失时创建被阻止；Order C 直接创建“已完成”被阻止后按正常状态流转成功。
 - E01：报价缺少客户时点击保存，UI 显示“请选择客户”，未创建数据（PASS）。E03：重复 LED Strip 组合在新建 SKU 向导中显示“已有相同 SKU，请使用现有记录”，创建勾选 disabled（PASS）。E05：无显式 SupplierSKU 的采购 UI 明确显示“保存采购单时建立此供应商的供货档案”，实际生成 AUTO 来源后已通过 UI 停用并记录。E06：已维护 MOQ=5 的来源以数量 1 的采购单成功保存，当前未确认 MOQ 为采购强制约束。E07：重复交易单位通过 UI 停用保留历史。
-- E08（正确场景）：在 Quote UI 选择 SKU-000001 的 Roll-5m（`allow_fraction=false`），输入 `1.5` 卷并点击保存；UI 保留编辑器、未创建报价，页面出现“1.5 卷 = 7.5 m；此规格仅支持整包装”，但错误 toast 实际显示为 `[object Object]`。随后改为 `1` 卷保存成功，生成 `SJ20260925US002`，金额 USD 10.00。该场景证明业务保存被阻止且没有错误业务记录，同时记录错误信息展示不清晰的 UI observation。
-- E34（正确场景）：通过客户 UI 创建并保留 `Customer Unsupported Country`，country=`Sweden`；Quote UI 选择该客户和正常 SKU 后点击保存，显示 `Unsupported country: Sweden`，编辑器保持打开，Quote 数量未增加（只读查询确认该客户没有 Quote）。
+- E08（正确场景）：在 Quote UI 选择 SKU-000001 的 Roll-5m（`allow_fraction=false`），输入 `1.5` 卷并点击保存；UI 保留编辑器、未创建报价，页面出现“1.5 卷 = 7.5 m；此规格仅支持整包装”，但错误 toast 实际显示为 `[object Object]`。随后改为 `1` 卷保存成功，生成 `SJ20260925US002`，金额 USD 10.00。该场景证明业务保存被阻止且没有错误业务记录；错误 toast 记录为 `UX ISSUE-02`，本轮不修。
+- E34（回归通过）：在修复分支合并并重启当前分支 Django 服务后，通过 Quote UI 选择既有 `Customer Unsupported Country`（country=`Sweden`）和正常 SKU，点击保存成功，生成 `SJ20260925SE001`，金额 USD 10.00。随后通过客户 UI 创建并保留 `Customer Atlantis Unsupported`（country=`Atlantis`），Quote UI 选择该客户和正常 SKU 后点击保存，显示 `Unsupported country: Atlantis`，编辑器保持打开且未创建报价。`REAL BUSINESS BUG` 已修复并通过 UI regression。
 
 ### 10.7 当前只读盘点
 
@@ -225,11 +225,11 @@ Order C 首次尝试直接以“已完成”创建时被 UI guard 拒绝（提�
 
 | 模型 | 数量 | 说明 |
 |---|---:|---|
-| Customer / Contact | 5 / 6 | A–D 客户，另有 E34 临时 Sweden 客户 |
+| Customer / Contact | 6 / 7 | A–D 客户，另有 E34 Sweden 客户与 Atlantis 测试客户 |
 | Product / ProductCategory / CategoryAttribute | 3 / 1 / 2 | Lighting Components、Length、Color |
 | SKU / SKUParameterPlan / SKUVersion | 8 / 7 / 17 | 8 个销售组合；三套产品的发布方案/历史版本保留 |
 | Supplier / SupplierCandidateOverride / SupplierSKU | 3 / 14 / 15（14 active） | 实际来源矩阵与 E05 停用 AUTO 来源分开记录 |
-| Quote / 原始 Quote | 11 / 5 | 4 个正式原始报价、E08 合法保存的临时报价及修订链 |
+| Quote / 原始 Quote | 12 / 6 | 4 个正式原始报价、E08 合法保存的临时报价、E34 Sweden 回归报价及修订链 |
 | Order | 4 | A–D |
 | InventoryMovement | 3 | +100 m SKU-000001、+2 m SKU-000002、+10 m receipt |
 | PackagingTemplate | 1 | 尚未关联 SKU |
@@ -248,7 +248,7 @@ Order C 首次尝试直接以“已完成”创建时被 UI guard 拒绝（提�
 
 - `python manage.py check`：PASS。
 - `python manage.py makemigrations --check --dry-run`：PASS（No changes detected）。
-- `python manage.py test`：287/287 PASS。
+- `python manage.py test`：288/288 PASS。
 - `npm run test:unit`：57/57 PASS。
 - `node --test tests/detail-drawer-typography.spec.js`：1/1 PASS。
 - `npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js`：31/31 PASS。

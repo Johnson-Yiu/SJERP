@@ -1,8 +1,8 @@
 # Phase 3B-0 执行记录：备份、清理与空业务基线
 
 **执行阶段：** Phase 3B-0  
-**执行日期：** 2026-09-25  
-**执行分支：** `phase-03b-real-ui-uat`  
+**执行日期：** 2026-09-25
+**执行分支：** `phase-03b-real-ui-uat`
 **Phase 3A squash merge SHA：** `154a73792687fbc0d2ccec6359c427c59de16022`  
 **Phase 3B branch SHA（建立时）：** `154a73792687fbc0d2ccec6359c427c59de16022`
 
@@ -142,3 +142,76 @@ Django 与 Vite 已重新启动并进行了只读环境诊断：Vite `http://127
 4. `backend/media` 有 50 个未被数据库引用的历史文件；按指令仅记录，未删除。
 5. 未发现清库后的数据库完整性、迁移或后端业务测试失败。
 6. 本轮未创建客户、产品、SKU、供应商、报价、订单、采购、库存或财务测试数据；未开始 Phase 3B 数据录入，也未开始 Phase 3C。
+
+## 10. Phase 3B-1：基础主数据与第一批订单 A–D
+
+**执行日期：** 2026-09-25
+**执行分支：** `phase-03b-real-ui-uat`
+**执行方式：** 仅使用 Codex 内置浏览器中的真实页面、按钮、输入框、下拉和弹窗；未使用 APIClient、curl、HTTP API、browser console、fetch、Django shell/ORM 写入、SQL、seed、fixture 或脚本创建业务数据。
+
+### 10.1 已通过真实 UI 创建的基础数据
+
+- 客户：4 个（Customer A–D）。
+- 联系人：5 个；Customer A 有 2 个联系人，其余各 1 个。
+- 产品：3 个（LED Strip、LED Driver、Wireless Sensor）。
+- 产品分类：1 个（Lighting Components）。
+- 分类属性：2 个（Length、Color）；均在 UI 中启用中文 SKU、Sales Model 和必填。
+- SKU：1 个（LED Strip，单位 `m`，币种 USD）。
+
+### 10.2 SKU 创建阻断（停止点）
+
+在产品管理 UI 中完成分类分配、属性创建和属性排序后，重新打开“新建 SKU”向导并选择 LED Strip，向导仍显示：
+
+> 该产品的分类尚未配置生成中文 SKU 或生成销售型号参数，请先在产品分类中配置。
+
+同时，当前唯一 LED Strip 组合显示为“已有相同 SKU，请使用现有记录”，创建复选框被禁用。整个操作通过正常 UI 完成；没有通过 API、数据库或脚本绕过。
+
+**实际结果：** 无法按 Phase 3B-1 要求继续创建 LED Strip 4 个组合、LED Driver 2 个组合和 Wireless Sensor 2 个组合。因此停止该场景，不创建供应商、SupplierSKU、报价、订单、采购或库存数据，也不伪造 A–D 订单流程。
+
+**预期与实际差异：** 分类属性已由 UI 配置并显示为已启用，但 SKU 创建向导未读取这些参数。该问题记录为：
+
+- `REAL BUSINESS BUG-01`：分类属性在 UI 完成配置/排序后未进入 SKU 创建向导，阻断必需 SKU 组合创建及其后续报价、订单 UAT。
+
+### 10.3 停止时只读 ORM 盘点
+
+只读盘点未执行任何写入：
+
+| 模型 | 数量 |
+|---|---:|
+| Customer | 4 |
+| Contact | 5 |
+| Product | 3 |
+| ProductCategory | 1 |
+| CategoryAttribute | 2 |
+| SKU | 1 |
+| SKUVersion | 1 |
+| SKUParameterPlan | 1（published）|
+| Supplier | 0 |
+| SupplierSKU | 0 |
+| Quote | 0 |
+| Order | 0 |
+| PurchaseOrder | 0 |
+| InventoryMovement | 0 |
+| PaymentPlan | 0 |
+| Transaction | 0 |
+
+编号序列属于已创建记录的系统派生数据（CustomerCodeSequence=1、ProductCodeSequence=1、SKUCodeSequence=1），未单独修改。
+
+### 10.4 Phase 3B-1 场景状态
+
+- Quote A–D：未开始；被 `REAL BUSINESS BUG-01` 阻断。
+- Order A–D：未开始；被 `REAL BUSINESS BUG-01` 阻断。
+- 供应商 / SupplierSKU：未开始；被 `REAL BUSINESS BUG-01` 阻断。
+- 库存调整：未开始；被 `REAL BUSINESS BUG-01` 阻断。
+- Quote B PI 导出：未执行；没有 Quote B 可供导出。
+- 采购、收货、发货、财务和异常场景：未开始；没有绕过 SKU 阻断继续造数据。
+
+### 10.5 回归验证
+
+- `python manage.py check`：PASS。
+- `python manage.py makemigrations --check --dry-run`：PASS（No changes detected）。
+- `python manage.py test`：287/287 PASS。
+- `npm run test:unit`：57/57 PASS。
+- `node --test tests/detail-drawer-typography.spec.js`：1/1 PASS。
+- `npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js`：31/31 PASS。
+- `npm run build`：PASS。

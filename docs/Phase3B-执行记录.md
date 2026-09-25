@@ -215,7 +215,9 @@ Order C 首次尝试直接以“已完成”创建时被 UI guard 拒绝（提�
 - 通过库存流水 UI 建立 SKU-000001 +100 `m` 初始库存；又为 SKU-000002 通过 UI 建立 +2 `m` 调整。Order A 履约页显示 10/10 可预留；Order B 三行分别显示 SKU-000001 5/5、SKU-000002 2/5、SKU-000005 0/10，覆盖 full/partial/none。
 - 通过采购管理 UI 创建 9 张采购单（覆盖 Supplier A/B/C、Order A/B/C/D 及无订单的 SKU-000004 E05 场景），并对 PO-20260925-231818 登记 10 `m` 合格入库；采购页显示入库记录、剩余数量归零和可冲销按钮。
 - 已验证的 UI guard：SKU 型号缩写缺失时创建被阻止；Order C 直接创建“已完成”被阻止后按正常状态流转成功。
-- E01：报价缺少客户时点击保存，UI 显示“请选择客户”，未创建数据（PASS）。E03：重复 LED Strip 组合在新建 SKU 向导中显示“已有相同 SKU，请使用现有记录”，创建勾选 disabled（PASS）。E05：无显式 SupplierSKU 的采购 UI 明确显示“保存采购单时建立此供应商的供货档案”，实际生成 AUTO 来源后已通过 UI 停用并记录。E06：已维护 MOQ=5 的来源以数量 1 的采购单成功保存，当前未确认 MOQ 为采购强制约束。E07：重复交易单位通过 UI 停用保留历史；E08 小数 factor 可保存，随后已停用，记录为规则语义观察；E34 报价表单无独立 country 字段，无法通过正常 UI 构造“非法国家”数据，记为 UI guard/N/A。
+- E01：报价缺少客户时点击保存，UI 显示“请选择客户”，未创建数据（PASS）。E03：重复 LED Strip 组合在新建 SKU 向导中显示“已有相同 SKU，请使用现有记录”，创建勾选 disabled（PASS）。E05：无显式 SupplierSKU 的采购 UI 明确显示“保存采购单时建立此供应商的供货档案”，实际生成 AUTO 来源后已通过 UI 停用并记录。E06：已维护 MOQ=5 的来源以数量 1 的采购单成功保存，当前未确认 MOQ 为采购强制约束。E07：重复交易单位通过 UI 停用保留历史。
+- E08（正确场景）：在 Quote UI 选择 SKU-000001 的 Roll-5m（`allow_fraction=false`），输入 `1.5` 卷并点击保存；UI 保留编辑器、未创建报价，页面出现“1.5 卷 = 7.5 m；此规格仅支持整包装”，但错误 toast 实际显示为 `[object Object]`。随后改为 `1` 卷保存成功，生成 `SJ20260925US002`，金额 USD 10.00。该场景证明业务保存被阻止且没有错误业务记录，同时记录错误信息展示不清晰的 UI observation。
+- E34（正确场景）：通过客户 UI 创建并保留 `Customer Unsupported Country`，country=`Sweden`；Quote UI 选择该客户和正常 SKU 后点击保存，显示 `Unsupported country: Sweden`，编辑器保持打开，Quote 数量未增加（只读查询确认该客户没有 Quote）。
 
 ### 10.7 当前只读盘点
 
@@ -223,11 +225,11 @@ Order C 首次尝试直接以“已完成”创建时被 UI guard 拒绝（提�
 
 | 模型 | 数量 | 说明 |
 |---|---:|---|
-| Customer / Contact | 4 / 5 | A–D 客户，A 有 2 个联系人 |
+| Customer / Contact | 5 / 6 | A–D 客户，另有 E34 临时 Sweden 客户 |
 | Product / ProductCategory / CategoryAttribute | 3 / 1 / 2 | Lighting Components、Length、Color |
 | SKU / SKUParameterPlan / SKUVersion | 8 / 7 / 17 | 8 个销售组合；三套产品的发布方案/历史版本保留 |
 | Supplier / SupplierCandidateOverride / SupplierSKU | 3 / 14 / 15（14 active） | 实际来源矩阵与 E05 停用 AUTO 来源分开记录 |
-| Quote / 原始 Quote | 10 / 4 | 4 个原始报价及最终修订链 |
+| Quote / 原始 Quote | 11 / 5 | 4 个正式原始报价、E08 合法保存的临时报价及修订链 |
 | Order | 4 | A–D |
 | InventoryMovement | 3 | +100 m SKU-000001、+2 m SKU-000002、+10 m receipt |
 | PackagingTemplate | 1 | 尚未关联 SKU |
@@ -251,3 +253,40 @@ Order C 首次尝试直接以“已完成”创建时被 UI guard 拒绝（提�
 - `node --test tests/detail-drawer-typography.spec.js`：1/1 PASS。
 - `npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js`：31/31 PASS。
 - `npm run build`：PASS。
+
+### 10.10 Phase 3B-1 最后四项证据
+
+#### Quote → Order revision evidence
+
+只读 ORM 逐条核对 `Order.customer == Order.quote.customer`、订单实际指向 linked revision，且 linked quote total 与 order total 相等；原始报价金额保持不变。
+
+| Scenario | Order No | Order Total | Original Quote No / Total | Linked Quote ID | Linked Quote No / Total | Root Quote No | Parent Quote No | Revision No |
+|---|---|---:|---|---:|---|---|---|---:|
+| A | `SO-2026-21939` | USD 170.00 | `SJ20260925US001` / USD 77.50 | 273 | `SJ20260925US001-1` / USD 170.00 | `SJ20260925US001` | `SJ20260925US001` | 1 |
+| B | `SO-2026-52556` | CNY 640.00 | `SJ20260925DE001` / CNY 255.00 | 278 | `SJ20260925DE001-1-1` / CNY 640.00 | `SJ20260925DE001` | `SJ20260925DE001-1` | 2 |
+| C | `SO-2026-77325` | EUR 215.00 | `SJ20260925SG001` / EUR 85.00 | 277 | `SJ20260925SG001-1-1` / EUR 215.00 | `SJ20260925SG001` | `SJ20260925SG001-1` | 2 |
+| D | `SO-2026-42504` | GBP 190.00 | `SJ20260925AU001` / GBP 100.00 | 276 | `SJ20260925AU001-1` / GBP 190.00 | `SJ20260925AU001` | `SJ20260925AU001` | 1 |
+
+未发现 linked quote total 与 order total 不一致，未触发 `REAL BUSINESS BUG` 停止条件。
+
+#### Order D supplier scope evidence
+
+| 阶段 | 订单行供应商 | scope | SKU preferred SupplierSKU |
+|---|---|---|---|
+| before | Supplier B / `SB-LDRIVER-48V100` | `order_only` | Supplier A / `SA-LDRIVER-48V100` |
+| after `recommended` | Supplier B / `SB-LDRIVER-48V100` | `recommended` | Supplier B / `SB-LDRIVER-48V100` |
+
+两次均通过 Order Detail → 采购与发货 → Supplier Allocation UI 完成；未通过数据库修改 preferred，订单行仍为 Supplier B。未发现供应商范围不变量问题。
+
+#### A/B inventory invariant evidence
+
+以下为只读 ORM 服务层指标（`actual`、SKU 级 active reservation、`available=actual-reserved`、订单行 `to_procure/shipped/remaining`）；订单页同时确认了订单行 reservation。由于后续采购/收货已改变状态，表中是当前状态，早期基线另行保留在 10.6。
+
+| Order / SKU | ordered | actual | reserved (SKU active) | available | to_procure | shipped | remaining | 订单行 reservation |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| A / SKU-000001 | 10 | 110 | 15 | 95 | 0 | 0 | 10 | 10（full） |
+| B1 / SKU-000005 | 10 | 0 | 0 | 0 | 0 | 0 | 10 | 0（zero） |
+| B2 / SKU-000001 | 5 | 110 | 15 | 95 | 0 | 0 | 5 | 5（full） |
+| B3 / SKU-000002 | 5 | 2 | 2 | 0 | 0 | 0 | 5 | 2（partial） |
+
+`available = actual - reserved` 对所有 SKU 成立；B1/B2/B3 的 full/partial/none 是初始 UI 验证语义，当前 `to_procure` 已因后续采购单存在而归零。未为恢复旧状态而改写数据库。

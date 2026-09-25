@@ -160,17 +160,17 @@ Django 与 Vite 已重新启动并进行了只读环境诊断：Vite `http://127
 
 实际参数方案操作：
 
-1. 在 LED Strip 产品的“参数变更与历史方案”中创建 V2 草稿。
-2. 通过“新增参数”加入 Length、Color；Length 单位 `mm`；两项均启用 `include_in_sku`、`include_in_sales_model` 和 `required`。
-3. 为已有 SKU-000001 填写 Length=`5000`、Color=`Warm White`。
-4. “保存草稿并分析”显示 current_count=1、result_count=1、new_count=0，无 missing，原 SKU Code 保留；随后按 UI 确认发布 V2。
-5. 发布后已有 SKU 刷新为 `LED Strip-5000mm-Warm White` / `LSTRIP-WW`，SKU Code 保留；新建 SKU 向导已能正常显示 Length/Color。
+1. LED Strip 通过参数方案 UI 创建并发布 V3：Length/Color 的历史字段分别重命名为 Voltage（V）/CCT（K），新增 Width（mm），三项均按实际 SKU/销售型号/必填规则配置。
+2. 现有 4 个组合通过草稿、分析、发布流程保留原 SKU Code，并更新为 `24V/3000K/8mm`、`24V/4000K/8mm`、`24V/6000K/8mm`、`12V/3000K/5mm`。
+3. LED Driver 发布 V2：Output Voltage（V）、Power（W）、Color；保留 2 个组合 `24V/60W/White`、`48V/100W/White`。
+4. Wireless Sensor 发布 V2：Mode、Voltage（V）；保留 2 个组合 `Indoor/5V`、`Outdoor/5V`。
+5. 三次分析均显示 current_count=result_count、new_count=0、无 missing；发布后的新建 SKU 向导可识别对应已发布方案。SKU 描述也通过 SKU 编辑 UI 刷新为当前参数语义，历史版本保留。
 
 ### 10.2 SKU 覆盖
 
-- LED Strip：通过新建 SKU 向导实际建立 4 个组合（已有 5000mm/Warm White，加新建 3000mm、1000mm、2000mm 三个组合），总计 4 个。
-- LED Driver：先在产品编辑 UI 绑定 Lighting Components 分类，再通过向导建立 `LDRIVER-24V1000`、`LDRIVER-48V1000`，总计 2 个。
-- Wireless Sensor：先在产品编辑 UI 绑定 Lighting Components 分类，再通过向导建立 `WSENSOR-IN2000`、`WSENSOR-OUT2000`，总计 2 个。
+- LED Strip：4 个实际组合为 `LED Strip-24V-3000K-8mm`、`LED Strip-24V-4000K-8mm`、`LED Strip-24V-6000K-8mm`、`LED Strip-12V-3000K-5mm`。
+- LED Driver：2 个实际组合为 `LED Driver-24V-60W-White`、`LED Driver-48V-100W-White`。
+- Wireless Sensor：2 个实际组合为 `Wireless Sensor-Indoor-5V`、`Wireless Sensor-Outdoor-5V`。
 - 所有 8 个 SKU 均已通过 UI 生成 Sales Model 和参数组合；LED Strip 使用单位 `m`，其余使用 `pcs`。
 - 一次未填写型号缩写的创建尝试被 UI 明确拒绝（要求为参与生成型号的参数填写 1–8 位缩写）；补齐缩写后创建成功，记录为已验证 UI guard。
 
@@ -178,11 +178,8 @@ Django 与 Vite 已重新启动并进行了只读环境诊断：Vite `http://127
 
 - 供应商：Supplier A、Supplier B、Supplier C，共 3 个，均通过供应商管理 UI 创建。
 - 产品级候选来源绑定：LED Strip 绑定 A/C；LED Driver 绑定 B；Wireless Sensor 绑定 B/C；只读盘点得到 `SupplierCandidateOverride=14`。
-- 实际 SupplierSKU 来源也通过 SKU 编辑 UI 建立并可回看：
-  - SKU-000001 → Supplier A / `SA-LSTRIP-5000`，参考价 USD 4.50，MOQ 10，交期 14 天，首选。
-  - SKU-000005 → Supplier B / `SB-LDRIVER-24V1000`，参考价 USD 15，MOQ 5，交期 10 天，首选。
-  - SKU-000007 → Supplier C / `SC-WSENSOR-INDOOR`，参考价 USD 20，MOQ 5，交期 12 天，首选。
-- 交易单位：8 个 SKU 均通过交易单位 UI 建立了卷/箱换算；当前 `SKUTradeUnit=10`，其中 SKU-000001 有重复 Roll-50、SKU-000002 有重复 Roll-30，均保留并记录，不通过数据库删除。
+- 实际 SupplierSKU 来源均通过 SKU 编辑 UI 建立并可回看。最终业务矩阵为：SKU-000001 仅 Supplier A；SKU-000002 为 Supplier A+B；SKU-000003 为 Supplier A+B+C；SKU-000004 无启用 SupplierSKU。SKU-000005/006/007/008 另有实际来源供订单分配使用。E05 曾由采购 UI 自动建立 `AUTO-SKU-000004`，随后仅通过 UI 停用，保留历史证据。
+- 交易单位：SKU-000001 保留启用 Roll-50，并新增启用 Roll-5m（factor=5）与 Roll-10m（factor=10），均 `allow_fraction=false`；SKU-000001 的重复 Roll-50、SKU-000002 的重复 Roll-30 均通过 UI 停用而未删除。E08 临时创建的 0.5m factor 规格也已通过 UI 停用；该观察记录为“factor 可输入小数，需区分 factor 与包装数量规则”，不在本轮修改业务代码。
 - 包装：通过包装管理 UI 建立 `LED General Carton`（Supplier A、60×40×30 cm、皮重 1.2 kg、整箱优先）；当前模板存在，但尚未通过 UI 关联到 SKU，记为本批 UI coverage gap，不用数据库补写。
 
 ### 10.4 报价 A–D
@@ -196,7 +193,7 @@ Django 与 Vite 已重新启动并进行了只读环境诊断：Vite `http://127
 | Quote C | `SJ20260925SG001` | Customer C | EUR | 草稿 | Wireless Sensor，2；EUR 85.00 |
 | Quote D | `SJ20260925AU001` | Customer D | GBP | 已发送 | LED Driver，3；GBP 100.00 |
 
-Quote B 在保存时通过“保存并导出 Excel”触发过真实 UI 导出；随后在报价列表点击“导出 SJ20260925DE001”。浏览器自动化通道没有暴露 download event 或本地文件路径，因此本记录只确认“导出动作已触发”，不宣称已经验证文件落盘/解析。
+Quote B 最终修订 `SJ20260925DE001-1-1` 已通过报价列表真实点击“导出”；浏览器自动化通道没有暴露 download event 或本地文件路径，Windows Downloads 目录也未出现可核验文件，因此记录为 `TEST INFRASTRUCTURE BLOCKER-PI-01`，不宣称 PI 文件落盘/解析通过。
 
 ### 10.5 订单 A–D
 
@@ -205,17 +202,20 @@ Quote B 在保存时通过“保存并导出 Excel”触发过真实 UI 导出�
 | 场景 | 订单号 | 来源 | 客户 | 币种 | 状态 | 总额 |
 |---|---|---|---|---|---|---:|
 | Order A | `SO-2026-21939` | Quote A | Customer A | USD | 已确认 | USD 170 |
-| Order B | `SO-2026-52556` | Quote B | Customer B | CNY | 生产中 | CNY 265 |
-| Order C | `SO-2026-77325` | Quote C | Customer C | EUR | 已完成 | EUR 170 |
+| Order B | `SO-2026-52556` | Quote B 最终修订 | Customer B | CNY | 生产中 | CNY 640 |
+| Order C | `SO-2026-77325` | Quote C 最终修订 | Customer C | EUR | 已确认 | EUR 215 |
 | Order D | `SO-2026-42504` | Quote D | Customer D | GBP | 已确认 | GBP 190 |
 
 Order C 首次尝试直接以“已完成”创建时被 UI guard 拒绝（提示新合同需从草稿或已确认/已下单开始）；随后先创建已确认订单，再通过已有订单编辑 UI 设置为“已完成”成功。这与当前契约一致，也说明 `completed` 目前仍可人工选择；没有将其记录为业务 bug。
 
+本轮随后通过订单编辑 UI 将 Order C 恢复为已确认并补齐第二个 SKU；在“采购与发货”页为两行分别分配 Supplier A、Supplier B（均 `order_only`）。Order D 的同一 SKU 先分配 Supplier A（`recommended`），再切换为 Supplier B（`order_only`），页面保留最终来源快照。
+
 ### 10.6 库存与本批异常场景
 
-- 通过库存流水 UI 建立 1 条盘盈入库：SKU-000001，数量 100 `m`，单位成本 5，仓库 Main Warehouse，引用 `UAT-INV-A`，备注为 Phase 3B 初始库存；流水号 `IM-970061BEB5B24A0C`。
+- 通过库存流水 UI 建立 SKU-000001 +100 `m` 初始库存；又为 SKU-000002 通过 UI 建立 +2 `m` 调整。Order A 履约页显示 10/10 可预留；Order B 三行分别显示 SKU-000001 5/5、SKU-000002 2/5、SKU-000005 0/10，覆盖 full/partial/none。
+- 通过采购管理 UI 创建 9 张采购单（覆盖 Supplier A/B/C、Order A/B/C/D 及无订单的 SKU-000004 E05 场景），并对 PO-20260925-231818 登记 10 `m` 合格入库；采购页显示入库记录、剩余数量归零和可冲销按钮。
 - 已验证的 UI guard：SKU 型号缩写缺失时创建被阻止；Order C 直接创建“已完成”被阻止后按正常状态流转成功。
-- 本批没有通过 UI 创建采购单、收货、发货或财务流水；这些场景仍待当前 Phase 3B-1 的后续真实 UI 操作完成，不能以已有数量推断通过。
+- E01：报价缺少客户时点击保存，UI 显示“请选择客户”，未创建数据（PASS）。E03：重复 LED Strip 组合在新建 SKU 向导中显示“已有相同 SKU，请使用现有记录”，创建勾选 disabled（PASS）。E05：无显式 SupplierSKU 的采购 UI 明确显示“保存采购单时建立此供应商的供货档案”，实际生成 AUTO 来源后已通过 UI 停用并记录。E06：已维护 MOQ=5 的来源以数量 1 的采购单成功保存，当前未确认 MOQ 为采购强制约束。E07：重复交易单位通过 UI 停用保留历史；E08 小数 factor 可保存，随后已停用，记录为规则语义观察；E34 报价表单无独立 country 字段，无法通过正常 UI 构造“非法国家”数据，记为 UI guard/N/A。
 
 ### 10.7 当前只读盘点
 
@@ -225,21 +225,21 @@ Order C 首次尝试直接以“已完成”创建时被 UI guard 拒绝（提�
 |---|---:|---|
 | Customer / Contact | 4 / 5 | A–D 客户，A 有 2 个联系人 |
 | Product / ProductCategory / CategoryAttribute | 3 / 1 / 2 | Lighting Components、Length、Color |
-| SKU / SKUParameterPlan / SKUVersion | 8 / 4 / 2 | 8 个销售组合；发布方案/历史版本保留 |
-| Supplier / SupplierCandidateOverride / SupplierSKU | 3 / 14 / 3 | 候选绑定与实际来源分开记录 |
-| Quote / 原始 Quote | 8 / 4 | 8 行含修订；4 个原始报价 |
+| SKU / SKUParameterPlan / SKUVersion | 8 / 7 / 17 | 8 个销售组合；三套产品的发布方案/历史版本保留 |
+| Supplier / SupplierCandidateOverride / SupplierSKU | 3 / 14 / 15（14 active） | 实际来源矩阵与 E05 停用 AUTO 来源分开记录 |
+| Quote / 原始 Quote | 10 / 4 | 4 个原始报价及最终修订链 |
 | Order | 4 | A–D |
-| InventoryMovement | 1 | +100 m |
+| InventoryMovement | 3 | +100 m SKU-000001、+2 m SKU-000002、+10 m receipt |
 | PackagingTemplate | 1 | 尚未关联 SKU |
-| SKUTradeUnit | 10 | 8 个 SKU 覆盖，含一次重复记录 |
-| PurchaseOrder / GoodsReceipt / Shipment | 0 / 0 / 0 | 尚未开始该批采购/履约流程 |
-| PaymentPlan / Transaction | 4 / 0 | 订单创建产生的计划；尚未开始收款/核销流水 |
+| SKUTradeUnit | 13 | 8 个 SKU 覆盖；重复项与 E08 临时项均保留但已停用 |
+| PurchaseOrder / GoodsReceipt / Shipment | 9 / 1 / 0 | 9 张采购单、1 次收货；发货尚未开始 |
+| PaymentPlan / Transaction | 22 / 0 | 订单修订产生的计划；尚未开始收款/核销流水 |
 
 ### 10.8 当前范围与下一步
 
-- 本轮已完成参数方案纠偏、8 个 SKU、3 个供应商、3 个实际 SupplierSKU 来源、交易单位、包装模板、Quote A–D、Order A–D 和 1 条库存调整，均由真实 UI 操作产生。
+- 本轮已完成参数方案纠偏、8 个 SKU、3 个供应商及实际来源矩阵、交易单位、包装模板、Quote A–D、Order A–D、9 张采购单、1 次收货和库存覆盖，均由真实 UI 操作产生。
 - `EXPECTED CURRENT CONTRACT-01` 与 `UX ISSUE-01` 已替代上一轮错误的 `REAL BUSINESS BUG-01`；没有确认新的生产业务 bug。
-- 包装模板尚未关联 SKU、Quote B Excel 下载未能在浏览器通道验证落盘，以及采购/收货/发货/财务仍未执行，均是当前 Phase 3B-1 的未完成项或 UI coverage gap，不通过 API/DB 补齐。
+- 包装模板尚未通过 UI 关联到 SKU，记录为 `UI COVERAGE GAP-PACKAGING-01`；Quote B PI 文件记录为 `TEST INFRASTRUCTURE BLOCKER-PI-01`。发货、收款/核销及其余异常矩阵仍未执行，不通过 API/DB 补齐。
 - 不开始 Phase 3B-2；后续只继续 Phase 3B-1 尚未完成的真实 UI 场景。
 
 ### 10.9 回归验证

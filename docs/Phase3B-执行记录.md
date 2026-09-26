@@ -622,3 +622,106 @@ L1 UI 实际显示 `200 / 88 / 250 / 25 / 225 / 0 / 200`，L2 UI 实际显示 `3
 - `EXPECTED CURRENT CONTRACT`：1，延续 `EXPECTED CURRENT CONTRACT-01`。
 
 本批完成 L/M 采购成本分配、共享费用、部分收货和数量分摊预览；不开始 N–T，也不修改任何业务代码、测试、CI、模型或迁移。
+
+## 14. Phase 3B-5：Master Data Mutation / Historical Snapshot Regression（N–Q）
+
+**执行日期：** 2026-09-27
+**执行分支：** `phase-03b-real-ui-uat`
+**执行方式：** 本节中的业务数据创建、修改、停用、报价、订单、采购、收货和发货均通过内置浏览器中的真实页面、按钮、输入框、下拉和确认控件完成；没有使用 APIClient、curl、Postman、fetch、browser console、Django shell/ORM 写入、SQL、seed、fixture 或脚本创建/修改业务数据。ORM 查询仅用于只读复核历史快照、关联关系、版本和数量。
+
+### 14.1 N：Customer rename 与 Quote/Order snapshot
+
+为避免污染既有正式场景，本批新增客户 `Snapshot Buyer OLD`（id=72）、联系人 `Snapshot Buyer Contact`，并先通过真实 UI 创建报价、订单、采购、收货和发货链：
+
+| 对象 | 编号 / ID | 变更前证据 |
+|---|---|---|
+| Quote | `SJ20260926US005`（id=287） | buyer_company_name=`Snapshot Buyer OLD`，customer_id=72，total=USD 20.00 |
+| QuoteItem | id=295 | SKU=`SKU-000003`，sales_model=`LSTRIP-24V60K`，description 为旧值，trade=`Snapshot Roll 5` 2 roll=10 m |
+| Order | `SO-20260927-287-6370F5`（id=161） | confirmed，quote_id=287，order total=USD 20.00 |
+| Purchase | `PO-20260926-001634`（id=57） | supplier_id=18，purchase total=USD 8.60 |
+| GoodsReceipt | id=55 | 10.00 m，trade snapshot=`Snapshot Roll 5` |
+| Shipment | `SH-125A0F2018A14814`（id=51） | confirmed，ShipmentItem id=55，5.00 m |
+
+随后在客户管理页面将客户名称从 `Snapshot Buyer OLD` 改为 `Snapshot Buyer NEW`，保存成功。通过 UI 和只读复核确认：
+
+- 客户列表显示 `Snapshot Buyer NEW`；
+- 订单工作台的 `Order.customer` 是同一客户 id=72，页面实时显示 `Snapshot Buyer NEW`（LIVE RELATION）；
+- 原报价 `SJ20260926US005` 的 `buyer_company_name` 仍为 `Snapshot Buyer OLD`（SNAPSHOT），金额 USD 20.00 未变；
+- 改名后通过报价 UI 新建 `SJ20260926US006`，buyer_company_name=`Snapshot Buyer NEW`，customer_id=72，金额 USD 11.00；
+- 打开原报价的“创建报价修订版”编辑器时，客户 combobox 为 disabled，不能切换客户；该 E35 UI guard 通过，未保存无关修订。
+
+### 14.2 O：SKU Sales Model/description mutation 与 SKUVersion
+
+在 SKU 管理页面编辑 `SKU-000003`（id=347），保持 SKU Code 不变，仅修改：
+
+- Sales Model：`LSTRIP-24V60K` → `SNAP-MODEL-NEW`；
+- 中文描述追加 `Snapshot Description NEW`；
+- 英文描述追加 `Snapshot Description NEW`；
+- 未修改 SKU Code、显示名称、单位、图片或参数组合。
+
+UI 显示“确认 SKU 身份更新”，确认后保存成功。只读复核得到：
+
+- 当前 SKU Code 仍为 `SKU-000003`；
+- 当前 live Sales Model=`SNAP-MODEL-NEW`，当前英文描述包含 `Snapshot Description NEW`；
+- 新增 `SKUVersion` id=29、version_no=3，`sku_code_snapshot=SKU-000003`，旧 Sales Model/中文描述/英文描述均保留，`changed_fields=['description_cn','description_en','sales_model']`；
+- 旧 `QuoteItem` id=295、旧 `OrderItem` id=210、旧 `PurchaseOrderItem` id=61 的 Sales Model、描述和 SKU Code 快照仍为旧值；Receipt/Shipment 的 trade snapshot 亦未改变；
+- 通过 UI 新建 `SJ20260926US007` 后，QuoteItem 使用同一 SKU Code 但使用 `SNAP-MODEL-NEW` 和新描述；此前 `SJ20260926US006` 仍保留旧 Sales Model/旧描述；
+- 未把图片变化错误地计为 SKUVersion 变更，本批没有修改图片。
+
+### 14.3 P：Supplier/SupplierSKU mutation 与历史来源快照
+
+在供应商管理页面将 `Snapshot Supplier OLD`（id=18）改为 `Snapshot Supplier NEW`，保存成功。随后在 SKU 的 Supplier Sources 页面把该 SupplierSKU（id=27）通过 UI 修改为：
+
+| 字段 | 旧值 | 新值 |
+|---|---|---|
+| supplier_model | `SUP-MODEL-OLD` | `SUP-MODEL-NEW` |
+| supplier_sku_code | `SNAP-OLD` | `SNAP-NEW` |
+| supplier_product_name | `Snapshot Supplier Product OLD` | `Snapshot Supplier Product NEW` |
+| characteristics | `Characteristics OLD: amber jacket / OLD spec` | `Characteristics NEW: blue jacket / NEW spec` |
+
+保存后再通过 UI 停用该 SupplierSKU。复核结果：
+
+- 采购单头部 `PurchaseOrder.supplier` 为同一 supplier id=18，页面实时显示 `Snapshot Supplier NEW`（LIVE RELATION）；
+- 旧 `OrderItem` id=210 仍为 `supplier_name_snapshot=Snapshot Supplier OLD`、`SUP-MODEL-OLD`、`SNAP-OLD` 和 OLD characteristics；
+- 旧 `PurchaseOrderItem` id=61 同样保留 OLD supplier/model/code/characteristics 快照；
+- SupplierSKU id=27 当前为 `is_active=False`、`is_preferred=False`；
+- 订单 Supplier Allocation UI 中，该供应商因历史采购仍显示为候选，但 radio 明确为 disabled，并显示“待创建 Supplier SKU”；不能选择；
+- 新建采购单 UI 选择该供应商和 SKU 时没有旧 SupplierSKU 来源选项，仅显示“保存采购单时建立此供应商的供货档案”，未创建采购单。停用来源未被作为可选的有效来源。
+
+### 14.4 Q：Trade Unit inactivation 与历史交易快照
+
+在交易单位页面停用 `Snapshot Roll 5`（id=16），不删除、不修改换算关系。UI 结果为 `停用`，换算仍为 1 roll = 5.00 m，Roll-10 保持启用。
+
+历史链只读复核：
+
+- QuoteItem id=295 的 `trade_snapshot` 仍为 `Snapshot Roll 5`、factor=5、allow_fraction=false、trade_quantity=2；
+- OrderItem id=210 仍为相同 trade snapshot、2 roll=10 m；
+- PurchaseOrderItem id=61 仍为相同 trade snapshot、2 roll=10 m；
+- GoodsReceipt id=55 仍为相同 trade snapshot、10 m；
+- ShipmentItem id=55 仍为相同 trade snapshot、1 roll=5 m；
+- Quote/Order/Purchase/Receipt/Shipment 金额和数量未因停用而改变。
+
+新业务 UI guard：
+
+- 新报价选择 `SKU-000003` 时，交易单位下拉只显示基础单位 `m` 与启用的 `Roll-10`，不显示停用的 `Snapshot Roll 5`；
+- 新采购明细选择 `SKU-000003` 时，交易单位下拉同样只显示 `m` 与 `Roll-10`，不显示停用规格；
+- 两个新建表单均直接关闭，未保存新业务记录。
+
+### 14.5 N–Q LIVE relation / SNAPSHOT 复核表
+
+| 对象 | 当前 UI/关系值（LIVE RELATION） | 历史快照值（SNAPSHOT） |
+|---|---|---|
+| Order `SO-20260927-287-6370F5` | customer=`Snapshot Buyer NEW` | Quote buyer_company_name=`Snapshot Buyer OLD` |
+| Purchase `PO-20260926-001634` | supplier=`Snapshot Supplier NEW` | PurchaseOrderItem supplier_name/model/code=`Snapshot Supplier OLD` / OLD / OLD |
+| SKU id=347 | sales_model=`SNAP-MODEL-NEW` | Quote/Order/PO rows created before mutation仍为 `LSTRIP-24V60K` |
+| Trade Unit id=16 | active=`False` | Quote/Order/PO/Receipt/Shipment trade_snapshot 仍为 `Snapshot Roll 5` |
+
+### 14.6 现有阻断、问题分类与停止点
+
+- `REAL BUSINESS BUG`：0。客户、SKU、供应商、SupplierSKU、交易单位变更均未覆盖或改写历史快照；停用 SupplierSKU/Trade Unit 均未作为有效的新业务选择。
+- `UI COVERAGE GAP-PACKAGING-01`：延续，Packaging 正式 packing/shipment UAT 前仍需处理。
+- `TEST INFRASTRUCTURE BLOCKER-PI-01`：延续，未把 PI/XLSX 内容验证误报为通过。
+- `UX ISSUE-01`、`UX ISSUE-02`：延续，本批未修改 UI。
+- `STATE-MACHINE GAP-01`：延续，本批未测试或修改订单状态机。
+
+本批 N–Q 已完成；不开始 R–T，不修改业务代码、测试、CI、数据库模型或迁移。

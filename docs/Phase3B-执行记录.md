@@ -725,3 +725,139 @@ UI 显示“确认 SKU 身份更新”，确认后保存成功。只读复核得
 - `STATE-MACHINE GAP-01`：延续，本批未测试或修改订单状态机。
 
 本批 N–Q 已完成；不开始 R–T，不修改业务代码、测试、CI、数据库模型或迁移。
+
+## 15. Phase 3B-6：R / S / T 与剩余 UI 矩阵闭环
+
+本批继续使用现有开发数据库，所有新增或修改业务数据均通过 Vite 页面、按钮、输入框、下拉框和弹窗完成；只读复核使用 Django ORM，未使用 APIClient、curl、浏览器 console、Django shell 写入、SQL、seed 或 fixture 造数。除本执行记录外，本批没有修改业务代码、测试、CI、模型或迁移。
+
+### 15.1 E02：非法报价日期
+
+通过报价 UI 创建 `Customer A Lighting Ltd` 的报价，报价日期填写 `2026-09-27`，有效期填写 `2026-09-26`，选择 SKU-000001、数量 1、单价 USD 10.00 后点击“保存报价”。
+
+实际结果：页面没有显示日期倒置错误，成功生成草稿报价 `SJ20260927US001`（Quote id=290）；只读复核为 `quote_date=2026-09-27`、`valid_until=2026-09-26`。因此 E02 未达到计划中的“清晰错误、不写入”预期，确认：
+
+- `REAL BUSINESS BUG-02`：报价日期晚于有效期时，正常 UI/后端仍接受并持久化倒置日期；
+- 本轮不修改报价业务代码，也不删除该证据记录；待独立修复任务处理。
+
+### 15.2 E04：重复/循环分类
+
+通过产品分类 UI 创建 `UAT-E04-Parent`（id=50），再通过其“子分类”按钮创建 `UAT-E04-Child`（id=51，parent_id=50）。
+
+- 通过父分类编辑 UI 查看“上级分类”下拉时，子分类不在可选项中，正常 UI 没有把父分类改成其后代的入口；循环关系的 UI guard 通过；
+- 再次通过“新建根分类”输入完全重复的 `UAT-E04-Parent`，页面显示“具有 分类名称 的 product category 已存在。”，分类总数保持 3，未产生重复记录；
+- E04：`PASS`（UI ACTION + UI GUARD 均符合当前契约）。
+
+### 15.3 R：未履约订单取消
+
+通过报价 UI 新建并接受 `SJ20260927US002`（USD 30.00、SKU-000001 数量 2），再通过“转为订单”创建并确认：
+
+| 对象 | 结果 |
+|---|---|
+| Order | `SO-20260927-291-E5F8BC`（id=162），取消前 `confirmed`，通过订单 UI 改为 `cancelled` |
+| 取消前 reservation | id=89，SKU-000001，quantity=2 |
+| 取消后 reservation | 0 条，库存预留完全释放 |
+| PaymentPlan | id=388，保留记录，`status=cancelled`、`planned_amount=30.0000`、`settled_amount=0.0000` |
+| 下游对象 | Shipment=0、PurchaseOrder=0、Transaction=0、AdvanceAllocation=0、Order InventoryMovement=0 |
+
+取消后 SKU-000001 的实际库存未被扣减，PaymentPlan 没有被删除，且 UI 没有产生采购、收货、发货或财务流水。R：`PASS`。
+
+### 15.4 E36 / E37：订单状态 UI guard 与已知状态机差异
+
+- E36：在订单编辑 UI 中，`shipped` 只显示为“已发货（由出库自动更新）”，不是可人工推进的正常状态选项；正常 UI 不提供手工设置 shipped 的入口，`PASS — UI GUARD`。
+- E37：沿用此前真实 UI 证据（`SO-2026-40674`）：已有订单可通过 UI 选择 `completed`，后端也未禁止该人工状态。该结果继续标记为 `STATE-MACHINE GAP-01`，不是本轮修复项。
+
+### 15.5 S：库存不足发货的原子性
+
+通过 UI 新建并确认 `SO-20260927-292-3683C9`（来源报价 `SJ20260927DE001`，SKU-000002，ordered=1）。提交前只读基线：`actual=2`、`reserved=2`、`available=0`；OrderItem metrics 为 allocated=0、to_procure=1、purchased=0、received=0、shipped=0、unshipped=1；该订单 reservation=0、Shipment=0、Order InventoryMovement=0。
+
+在订单“采购与发货”中输入 1 并点击“确认发货”，页面显示 `库存不足，不能确认发货。`。关闭失败窗口后只读复核：订单仍 `confirmed`，metrics 和 SKU `actual/reserved/available` 完全不变，仍无 Shipment、sale_out 或 reservation。S：`PASS`，失败为库存保护且无部分写入。
+
+### 15.6 T：独立完整 happy path（达到 shipped，completed 被现有 guard 阻止）
+
+使用全新链路 `Customer A Lighting Ltd → SJ20260927US003 → SO-20260927-293-B5EC17`，全部通过 UI 完成：报价接受、订单确认、Supplier B 订单行分配、采购单创建、成本分配、Freight T 10.00 预览并保存、收货、客户收款、供应商付款、发货。
+
+| 环节 | 实际证据 |
+|---|---|
+| Quote / Order | `SJ20260927US003`（id=293，USD 50.00）→ `SO-20260927-293-B5EC17`（id=164，USD 50.00，Order.quote=293） |
+| Supplier Allocation | Supplier B / `SB-LDRIVER-24V1000`，仅本订单生效 |
+| Purchase | `PO-20260926-012342`（id=58，Supplier B，POItem id=62，SKU-000005 quantity=2，unit_price=15.00 USD） |
+| Cost Allocation | PurchaseCostAllocation id=9，target=Order 164，quantity=2；`Freight T=10.00 USD`，`cost_allocation_version=1` |
+| Receipt | GoodsReceipt id=56，合格入库 2 pcs，原 `purchase_in` movement id=116 |
+| Customer Payment | PaymentPlan id=390 `settled`，50.0000/50.0000；Transaction id=109，USD 50.00，`confirmed` |
+| Supplier Payment | Transaction id=110 + 111，均 `confirmed`，USD 9.00 + 21.00 = 30.00，reference=`T-SUPPLIER-PAY` |
+| Shipment | Shipment `SH-94182254C58B449`（id=52，confirmed），sale_out movement id=117，quantity=2 |
+| 最终状态 | Order 自动为 `shipped`；通过订单 UI 尝试改为 `completed` 时，后端显示“合同已有采购、出入库或收付款记录，不能改写商品、往来方及金额依据。请使用追加单或退款记录处理后续变化。” |
+
+因此 T 的 Quote→Order→Purchase→Receipt→Cost→Customer Payment→Supplier Payment→Shipment 链已闭环，但没有把已有履约/财务记录的订单强行改写为 `completed`。这不是本轮新增生产代码 bug；完整“completed”终态需按当前状态机契约另行决定。
+
+T 订单最终只读不变量：OrderItem `allocated=0`、`to_procure=0`、`purchased=2`、`received=2`、`in_transit=0`、`shipped=2`、`unshipped=0`；SKU-000005 `actual=0`、`reserved=0`、`available=0`、`in_transit=10`，满足 `available = actual - reserved`，没有负库存。订单概览显示分配商品成本 ¥216.00、附加费用 ¥72.00、预估毛利 ¥72.00（USD 50 × 7.2 − USD 30 × 7.2 − USD 10 × 7.2）。
+
+### 15.7 Dashboard 前后证据
+
+| 页面 | T 前 | T 后 |
+|---|---|---|
+| 经营概览 | 本年订单 16；本年销售额 ¥13,852.80；已确认收款 ¥144；已确认支出 ¥0 | 本年订单 17；本年销售额 ¥14,212.80；已确认收款 ¥504；已确认支出 ¥216；净现金流 ¥288 |
+| 财务概览 | 月度销售额 ¥14,248.80；期间收入 ¥144；期间支出 ¥0；净现金流 ¥144 | 月度销售额 ¥14,608.80；期间收入 ¥504；期间支出 ¥216；净现金流 ¥288；收支分类出现客户收款 ¥504 / 供应商付款 ¥216 |
+
+### 15.8 E01–E43 最终 UI / invariant 矩阵
+
+以下只把确有真实 UI 证据的场景记为 PASS；内部异常仍保留给 Phase 3C temporary test database。
+
+| ID | 最终结果 | Execution Method |
+|---|---|---|
+| E01 | PASS | UI ACTION |
+| E02 | REAL BUSINESS BUG-02：倒置日期被接受并落库 | UI ACTION |
+| E03 | PASS | UI ACTION |
+| E04 | PASS（重复名称错误；父→后代循环入口被 UI 排除） | UI ACTION / UI GUARD |
+| E05 | PASS | UI ACTION |
+| E06 | PASS（当前未确认 SupplierSKU MOQ 为采购强制约束） | UI ACTION |
+| E07 | PASS | UI GUARD |
+| E08 | PASS | UI ACTION |
+| E09 | PASS | UI ACTION |
+| E10 | PASS | UI ACTION |
+| E11 | PASS | UI ACTION |
+| E12 | PASS | UI ACTION |
+| E13 | PASS | UI ACTION |
+| E14 | PASS | UI GUARD |
+| E15 | PASS | UI ACTION |
+| E16 | PASS | UI GUARD |
+| E17 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
+| E18 | PASS | UI GUARD |
+| E19 | PASS | UI GUARD |
+| E20 | PASS（同时保留 STATE-MACHINE GAP-01） | UI ACTION |
+| E21 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
+| E22 | PASS | UI GUARD |
+| E23 | PASS | UI GUARD |
+| E24 | PASS | UI GUARD |
+| E25 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
+| E26 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
+| E27 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
+| E28 | PASS | UI GUARD |
+| E29 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
+| E30 | PASS | UI ACTION |
+| E31 | PASS | UI GUARD |
+| E32 | PASS | UI ACTION |
+| E33 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
+| E34 | PASS | UI ACTION |
+| E35 | PASS | UI GUARD |
+| E36 | PASS | UI GUARD |
+| E37 | STATE-MACHINE GAP-01：当前允许人工 completed | UI ACTION |
+| E38 | PASS | UI ACTION |
+| E39 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
+| E40 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
+| E41 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
+| E42 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
+| E43 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
+
+最终矩阵计数：UI ACTION 19 项（其中 E02 为 REAL BUSINESS BUG-02，E37 为 STATE-MACHINE GAP-01），UI GUARD 12 项，AUTOMATED INVARIANT 12 项；合计 43 项。
+
+### 15.9 Phase 3B-6 问题清单与封版判断
+
+- `REAL BUSINESS BUG`：1，新增 `REAL BUSINESS BUG-02`（E02 非法报价日期倒置仍被接受并持久化）。
+- `UI COVERAGE GAP`：1，延续 `UI COVERAGE GAP-PACKAGING-01`；本批未进入正式 packing/shipment UAT。
+- `TEST INFRASTRUCTURE BLOCKER`：1，延续 `TEST INFRASTRUCTURE BLOCKER-PI-01`。
+- `STATE-MACHINE GAP`：1，延续 `STATE-MACHINE GAP-01`（E37 completed 可人工设置；T 在已有履约/财务记录后被后端保护，保持 shipped）。
+- `UX ISSUE`：2，延续 `UX ISSUE-01`、`UX ISSUE-02`，本批未修改 UI。
+- `EXPECTED CURRENT CONTRACT`：1，延续 `EXPECTED CURRENT CONTRACT-01`。
+
+Phase 3B-6 的 R、S 以及 T 的完整业务链（至 shipped）已有真实 UI 与只读证据；但由于 E02 已确认真实业务 bug，且 T 的 `completed` 终态受现有状态机 guard 阻止，本记录不宣称 Phase 3B 全部封版，也不开始 Phase 3C、Phase 4 或其他后续阶段。

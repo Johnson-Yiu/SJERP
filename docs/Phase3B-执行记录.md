@@ -581,7 +581,7 @@ Receipt #1 `FIN-DD28FFE2D90D408A` 仍为 confirmed，20.00 USD，H 最终保留�
 
 通过采购单“验货入库” UI 登记合格入库 100 m，勾选“已核对”后确认。页面变为“部分到货”，显示已到 100 m、剩余 900 m。库存页面真实显示 `SKU-000001`：实际 206 m、预留 106 m、可用 100 m、在途 900 m；`available = actual - reserved = 206 - 106 = 100`。
 
-只读复核显示本 PO 新增 GoodsReceipt id=54（100.00 m）及唯一 `purchase_in` InventoryMovement id=113（100.00 m，`source_type=receipt`，unit_cost=10.00）。收货前该 SKU 实际库存 106 m，收货后 206 m，实际库存恰好增加 100 m，而不是 1000 m；成本分配阶段本身没有新增 GoodsReceipt/InventoryMovement。该 PO 没有 Transaction，故没有产生供应商付款或 PaymentPlan。
+只读复核显示本 PO 新增 GoodsReceipt id=54（100.00 m）及唯一 `purchase_in` InventoryMovement id=113（100.00 m，`source_type=receipt`，unit_cost=10.00）。收货前该 SKU 实际库存 106 m，收货后 206 m，实际库存恰好增加 100 m，而不是 1000 m；成本分配阶段本身没有新增 GoodsReceipt/InventoryMovement。该 PO 没有 Transaction；现有 2 条 PO 默认 payable PaymentPlan（订金/尾款）未因成本分配或公共费用新增或改变，未登记供应商付款。
 
 ### 13.8 本批结论、问题分类与停止点
 

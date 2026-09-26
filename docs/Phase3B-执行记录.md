@@ -350,11 +350,13 @@ SKU-000007 先通过采购 UI 收货 4，再收剩余 6；页面实际显示 `�
 
 ### 11.4 E09–E20 本批实际结果
 
+本批另建立独立的 `OVERAGE-UAT` 订单，避免复用正式 E/F/G 场景：Customer A Lighting Ltd，SKU-000001，ordered=1、shipped=0、remaining=1；执行前 SKU 库存只读基线为 `actual=108`、`reserved=17`、`available=91`，该订单 Shipment 数量为 0、订单 movement 数量为 0。库存充足且未被库存不足保护触发。
+
 | 场景 | Execution / 实际结果 | 数据结果 |
 |---|---|---|
 | E09 库存不足发货 | 在 `SO-2026-77325` 的 SKU-000008 上通过 UI 提交 1 pcs，页面显示“库存不足，不能确认发货” | Shipment、`sale_out`、库存、reservation、shipped 数量均无变化 |
-| E10 超额发货无理由 | 在 Order F 辅助库存竞争场景中输入超过待发数量且不选超发原因，未提交成功 | 无 Shipment、无 movement；UI 仍停留在确认弹窗 |
-| E11 超额发货有理由 | 选择“客户追加”后再次提交，仍被实际库存不足保护拒绝 | 未生成 overage Shipment，未产生 movement；不把未成功误记为 overage 功能通过 |
+| E10 超额发货无理由 | 在独立 `OVERAGE-UAT` 中通过真实发货 UI 输入 2（待发 1），保持“超发原因”为“请选择”并提交；页面拒绝并停留在确认弹窗 | 无 Shipment、无 `sale_out`、无 movement；订单仍 shipped=0、remaining=1，SKU 库存与 reservation 不变；本次失败原因为缺少 overage_reason，而非库存不足 |
+| E11 超额发货有理由 | 在同一 `OVERAGE-UAT` 中输入 2，选择“赠品或样品”（`gift_or_sample`）并确认发货；页面成功生成 1 个 Shipment，包含正常 1 + 超发 1 两条明细 | Shipment `SH-3AAD8D5602EA422C`（id=50）为 confirmed；ShipmentItem 53 为正常 1、movement 111；ShipmentItem 54 为 `is_overage=true`、`overage_reason=gift_or_sample`、movement 112 同样标记。订单拆为两个各 1 的明细行，状态为 shipped |
 | E12 收货 0 / 负数 | 收货表单输入 0、-1 时确认按钮 disabled | 无 GoodsReceipt、无 InventoryMovement |
 | E13 超过剩余可收数量 | 在已完成 PO 上输入超过 remaining 的数量，确认按钮 disabled | 无部分写入 |
 | E14 Receipt 二次冲销 | 正式 F Receipt 冲销后重新打开 | UI 不再提供冲销入口，历史保留 |
@@ -362,10 +364,10 @@ SKU-000007 先通过采购 UI 收货 4，再收剩余 6；页面实际显示 `�
 | E16 空冲销原因 | Receipt reversal 空原因 | 确认按钮 disabled |
 | E17 | 本批不执行，留给 Phase 3C 自动化不变量测试 | — |
 | E18 Shipment 二次冲销 | 正式 G 原始 Shipment 冲销后重新打开 | UI 不再提供冲销入口，历史保留 |
-| E19 | 本批未产生成功的 overage Shipment，因此无可执行的普通 UI reversal；不人为构造 | — |
+| E19 overage Shipment reversal guard | 在 `OVERAGE-UAT` 发货记录中重新打开该 overage Shipment | 页面明确显示“包含超发/增补，暂不能直接冲销”，普通“冲销”按钮数量为 0；未调用 API 或服务层 reversal |
 | E20 completed Order + Shipment reversal | 独立订单 `SO-2026-40674` 先真实 UI 发货 1，再人工设置 `completed`，尝试冲销 Shipment `SH-EA92CC3A20B5483F` | 页面显示“已完成或已取消的订单不能冲销发货”，Shipment/库存/Order/shipped 数量不变，无 `adjust_in`；记录 `STATE-MACHINE GAP-01` 组合行为 |
 
-E38 仅做正常 UI 观察：收货 0/负数时提交控件 disabled；成功收货、发货、Receipt reversal、Shipment reversal 后均只出现预期的一条业务记录，没有用脚本并发或人为双击攻击。
+E38 仅做正常 UI 观察：收货 0/负数时提交控件 disabled；本次 E11 点击“确认发货”后按钮立即出现 disabled 属性，最终只产生 1 个 Shipment（id=50），没有用脚本并发或人为双击攻击。
 
 ### 11.5 履约库存不变量（最终只读状态）
 
@@ -378,12 +380,14 @@ E38 仅做正常 UI 观察：收货 0/负数时提交控件 disabled；成功收
 | SKU-000001（Order G 重发后） | 108 | 16 | 92 | Order G 2 / 2 / 0 |
 | SKU-000001（正式 Order F） | 108 | 16 | 92 | Order F 1 / 0 / 1 |
 | SKU-000001（E20 completed guard） | 108 | 16 | 92 | E20 1 / 1 / 0 |
+| SKU-000001（独立 OVERAGE-UAT，E11 前） | 108 | 17 | 91 | OVERAGE-UAT 1 / 0 / 1 |
+| SKU-000001（独立 OVERAGE-UAT，E11 后） | 106 | 16 | 90 | OVERAGE-UAT 两行各 1 / 1 / 0 |
 
-所有列均满足 `available = actual - reserved`，没有出现负数。正式 F 的 Receipt 链为 `purchase_in 108 → adjust_out 109`，再收货为新的 `purchase_in 110`；正式 G 的 Shipment 链为 `sale_out 104 → adjust_in 105`，再发货为新的 `sale_out 106`。原始 movement 未被删除或覆盖，冲销 movement 通过 Receipt/Shipment reversal 字段及 reference 可追溯。
+所有列均满足 `available = actual - reserved`，没有出现负数。独立 OVERAGE-UAT 中 actual 从 108 减至 106，恰为本次 Shipment 总数量 2；reserved 从 17 变为 16，available 从 91 变为 90。正式 F 的 Receipt 链为 `purchase_in 108 → adjust_out 109`，再收货为新的 `purchase_in 110`；正式 G 的 Shipment 链为 `sale_out 104 → adjust_in 105`，再发货为新的 `sale_out 106`。原始 movement 未被删除或覆盖，冲销 movement 通过 Receipt/Shipment reversal 字段及 reference 可追溯。
 
 ### 11.6 本批问题分类与停止点
 
-- `REAL BUSINESS BUG`：0。E09/E11/E15/E20 均按当前库存或状态保护拒绝，且失败后无部分写入。
+- `REAL BUSINESS BUG`：0。E09/E10/E15/E20 均按当前库存、原因或状态保护工作，且失败后无部分写入；E11 合法 overage 正常完成，E19 UI guard 正常阻止冲销。
 - `UI COVERAGE GAP`：1，延续 `UI COVERAGE GAP-PACKAGING-01`；本批没有声称完整 packing workflow 已通过。
 - `UX ISSUE`：2，延续 `UX ISSUE-01` 与 `UX ISSUE-02`；本批没有修改 UI。
 - `TEST INFRASTRUCTURE BLOCKER`：1，延续 `TEST INFRASTRUCTURE BLOCKER-PI-01`。
@@ -393,4 +397,4 @@ E38 仅做正常 UI 观察：收货 0/负数时提交控件 disabled；成功收
 
 ### 11.7 Phase 3B-2 回归验证
 
-待本次文档提交后执行：后端 `check`、`makemigrations --check --dry-run`、完整 `python manage.py test`；前端 unit、Node-only typography、Vitest（排除 Node-only）与 build。业务代码、测试、CI、数据库模型和迁移均未修改。
+本批回归已执行并通过：后端 `check`、`makemigrations --check --dry-run`、完整 `python manage.py test`（288/288）；前端 unit（57/57）、Node-only typography（1/1）、Vitest（31/31，排除 Node-only）与 build 均通过。业务代码、测试、CI、数据库模型和迁移均未修改。E10、E11、E19 已形成完整闭环，Phase 3B-2 已完成并封版；不开始 Phase 3B-3。

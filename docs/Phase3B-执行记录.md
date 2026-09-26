@@ -399,4 +399,114 @@ E38 仅做正常 UI 观察：收货 0/负数时提交控件 disabled；本次 E1
 
 ### 11.7 Phase 3B-2 回归验证
 
-本批回归已执行并通过：后端 `check`、`makemigrations --check --dry-run`、完整 `python manage.py test`（288/288）；前端 unit（57/57）、Node-only typography（1/1）、Vitest（31/31，排除 Node-only）与 build 均通过。业务代码、测试、CI、数据库模型和迁移均未修改。E10、E11、E19 已形成完整闭环，Phase 3B-2 已完成并封版；不开始 Phase 3B-3。
+本批回归已执行并通过：后端 `check`、`makemigrations --check --dry-run`、完整 `python manage.py test`（288/288）；前端 unit（57/57）、Node-only typography（1/1）、Vitest（31/31，排除 Node-only）与 build 均通过。业务代码、测试、CI、数据库模型和迁移均未修改。E10、E11、E19 已形成完整闭环，Phase 3B-2 已完成并封版。
+
+## 12. Phase 3B-3：Finance H–K
+
+**执行日期：** 2026-09-26
+**执行分支：** `phase-03b-real-ui-uat`
+**执行方式：** Order、Quote、收款、核销与作废均通过内置浏览器中的真实页面、按钮、输入框、下拉和弹窗完成；未使用 APIClient、curl、Postman、fetch、browser console、Django shell/ORM 写入、SQL、seed、fixture 或脚本创建/修改业务数据。以下 ORM 内容仅为最终只读复核。
+
+### 12.1 H/J 基础订单
+
+| 场景 | Quote | Order | Customer / Currency | Total | PaymentPlan |
+|---|---|---|---|---:|---|
+| Order H | `SJ20260926US001` | `SO-20260926-283-4CD49B`（id=157） | Customer A Lighting Ltd / USD | 30.00 | id=379，planned=30.00，settled=0.00，remaining=30.00，open |
+| Order J | `SJ20260926US002` | `SO-20260926-284-022A30`（id=158） | Customer A Lighting Ltd / USD | 25.00 | id=380，planned=25.00，settled=0.00，remaining=25.00，open |
+
+两个订单均由接受状态 Quote 通过“转为订单”创建，状态为 `confirmed`，客户、币种和 PaymentPlan 方向均一致。
+
+### 12.2 H：两次独立客户收款
+
+第一次通过“应收计划 → 登记收款”完成：
+
+| 项目 | 结果 |
+|---|---|
+| Receipt #1 | Transaction id=106，`FIN-DD28FFE2D90D408A`，`customer_receipt`，20.00 USD，confirmed，plan=379 |
+| H 第一次收款后 | plan 379 settled=20.00，remaining=10.00，status=open；Order H paid=20.00，remaining receivable=10.00 |
+
+第二次通过“财务流水 → 新增记账 → 客户收款”关联 Order H，实际输入 20.00 USD。系统将该单现金事件拆为：
+
+| 链节点 | Transaction | kind | amount | plan / split_from | status |
+|---|---|---|---:|---|---|
+| Receipt #2 root | id=107，`FIN-B2230197D6014812` | `customer_receipt` | 10.00 | plan=379 | confirmed（作废前） |
+| 超额 child | id=108，`ADV-81802819CDD1478B` | `unallocated_advance` | 10.00 | split_from=107，未关联计划 | confirmed（作废前） |
+
+root 与 child 合计 20.00 USD，等于第二次实际收款金额。第二次收款后 H 的 plan 379 为 settled=30.00、remaining=0.00、status=settled，Order H paid=30.00；第一次 Receipt #1 仍独立存在。
+
+E22 UI GUARD：打开 child `ADV-81802819CDD1478B` 时没有独立“作废”按钮，页面显示“由原始流水统一作废”，通过。
+
+### 12.3 J：预收款核销与 E31/E32
+
+打开 child 的“核销”弹窗后，候选计划仅显示同一往来方、同一 USD、receivable、open 计划；列表没有其他客户、其他币种或应付计划，E31 UI GUARD 通过。Order J 的 plan 380 在候选列表中。
+
+先输入 11.00 USD（超过 advance 未分配余额 10.00），页面拒绝并显示“分配金额不能超过未分配余额”，没有生成 AdvanceAllocation，advance 与 plan 均不变，E32 超额核销通过。
+
+随后输入合法 10.00 USD 并确认：
+
+| 项目 | 结果 |
+|---|---|
+| AdvanceAllocation | id=2，advance=108，plan=380，amount=10.00，`is_active=true` |
+| Advance child | allocated_amount=10.00，未核销余额=0.00 |
+| Order J plan 380 | settled=10.00，remaining=15.00，status=open |
+| Order J | paid=10.00；未新增现金 Transaction |
+
+核销提交按钮在点击后立即 disabled，最终只有 1 条 allocation。
+
+### 12.4 K：作废第二次收款 root 与完整回滚
+
+只对 Receipt #2 root `FIN-B2230197D6014812` 操作，未作废 Receipt #1。E23 空原因验证时“确认作废”按钮为 disabled；填写 `Phase 3B-3 finance void UAT` 后通过 UI 确认。
+
+作废后整棵链保持历史记录但均为 cancelled：
+
+| Transaction | status | void_reason / voided_at |
+|---|---|---|
+| root 107 / `FIN-B2230197D6014812` | cancelled | `Phase 3B-3 finance void UAT` / 有值 |
+| child 108 / `ADV-81802819CDD1478B` | cancelled | 同上 / 有值 |
+
+回滚只撤销第二次收款的影响：
+
+| 对象 | 作废前 | 作废后 |
+|---|---:|---:|
+| H plan 379 settled | 30.00 | 20.00 |
+| H plan 379 remaining | 0.00 | 10.00 |
+| H Order paid | 30.00 | 20.00 |
+| J plan 380 settled | 10.00 | 0.00 |
+| J plan 380 remaining | 15.00 | 25.00 |
+| AdvanceAllocation 2 | active=true，10.00 | active=false，10.00 历史保留 |
+| Advance child allocated_amount | 10.00 | 0.00 |
+
+Receipt #1 `FIN-DD28FFE2D90D408A` 仍为 confirmed，20.00 USD，H 最终保留第一次收款结果。E24 UI GUARD 通过：root 重新打开后显示“已作废”、作废原因和时间，不再显示“作废”按钮。作废提交后只产生这一棵取消链，没有重复 side effect。
+
+### 12.5 E28/E30/E31/E38 结果
+
+| 场景 | 结果 |
+|---|---|
+| E28 PaymentPlan 币种 | PaymentPlan 收款弹窗只显示计划原币（H 显示 USD），没有用户可编辑的币种控件；通过 |
+| E30A 外币汇率 0 | 对现有 GBP PaymentPlan（`SO-2026-42504`）输入 1、汇率 0，UI 未关闭弹窗且未生成 Transaction；计划仍 settled=0.00，未写入 |
+| E30B CNY 汇率 2 | 对现有 CNY PaymentPlan（`SO-2026-52556`）输入 1、汇率 2，UI 显示“人民币流水汇率必须为 1。”，未生成 Transaction，计划未变化 |
+| E31 候选过滤 | 预收核销候选只列同客户、同币种、receivable、open 计划；通过 |
+| E38 重复提交保护 | 收款、核销提交后按钮立即 disabled；root 作废单次点击后仅生成 1 个 root+child cancelled 链、1 条 allocation 被撤回；未用脚本并发 |
+
+### 12.6 Finance H–K 金额去向总表
+
+| 阶段 | Order H（total / planned / settled / remaining / paid） | Order J（total / planned / settled / remaining / paid） | Advance / Allocation |
+|---|---|---|---|
+| before I（第一次收款后） | 30 / 30 / 20 / 10 / 20 | 25 / 25 / 0 / 25 / 0 | child 尚未产生 |
+| after I | 30 / 30 / 30 / 0 / 30 | 25 / 25 / 0 / 25 / 0 | child 108：10，allocated=0 |
+| after J | 30 / 30 / 30 / 0 / 30 | 25 / 25 / 10 / 15 / 10 | allocation 2：10，active=true |
+| after K | 30 / 30 / 20 / 10 / 20 | 25 / 25 / 0 / 25 / 0 | child 108：cancelled，allocated=0；allocation 2 inactive |
+
+### 12.7 本批问题分类与停止点
+
+- `REAL BUSINESS BUG`：0。H/I/J/K 及 E22/E23/E24/E28/E30/E31/E32 均按当前契约通过，作废和核销均无部分写入或幽灵余额。
+- `UI COVERAGE GAP`：1，延续 `UI COVERAGE GAP-PACKAGING-01`。
+- `UX ISSUE`：2，延续 `UX ISSUE-01` 与 `UX ISSUE-02`。
+- `TEST INFRASTRUCTURE BLOCKER`：1，延续 `TEST INFRASTRUCTURE BLOCKER-PI-01`。
+- `EXPECTED CURRENT CONTRACT`：1，延续 `EXPECTED CURRENT CONTRACT-01`。
+
+本批 H/I/J/K 已完成；E25、E26、E27、E29、E33 仍留给 Phase 3C temporary test database。本批不开始 L–T。
+
+### 12.8 Phase 3B-3 回归验证
+
+本批回归已执行并通过：后端 `python manage.py check`、`python manage.py makemigrations --check --dry-run`、完整 `python manage.py test`（288/288）；前端 `npm run test:unit`（57/57）、Node-only typography（1/1）、Vitest（31/31，排除 Node-only）与 `npm run build` 均通过。业务代码、测试、CI、数据库模型和迁移均未修改。

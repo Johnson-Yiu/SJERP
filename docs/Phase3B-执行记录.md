@@ -510,3 +510,85 @@ Receipt #1 `FIN-DD28FFE2D90D408A` 仍为 confirmed，20.00 USD，H 最终保留�
 ### 12.8 Phase 3B-3 回归验证
 
 本批回归已执行并通过：后端 `python manage.py check`、`python manage.py makemigrations --check --dry-run`、完整 `python manage.py test`（288/288）；前端 `npm run test:unit`（57/57）、Node-only typography（1/1）、Vitest（31/31，排除 Node-only）与 `npm run build` 均通过。业务代码、测试、CI、数据库模型和迁移均未修改。
+
+## 13. Phase 3B-4：Purchase Cost Allocation / Shared Expenses（L–M）
+
+**执行日期：** 2026-09-26
+**执行分支：** `phase-03b-real-ui-uat`
+**执行方式：** 订单、采购单、成本分配、公共费用、超额校验和到货均通过内置浏览器中的真实页面、按钮、输入框、下拉和弹窗完成；没有使用 APIClient、curl、Postman、fetch、browser console、Django shell/ORM 写入、SQL、seed、fixture 或脚本创建/修改业务数据。以下 ORM 内容仅用于最终只读复核。
+
+### 13.1 L1/L2 订单与独立采购单
+
+| 场景 | Quote | Order | SKU / 数量 | Customer / Currency | Order total | 状态 |
+|---|---|---|---:|---|---:|---|
+| L1 | `SJ20260926US003` | `SO-20260926-285-CF4831`（id=159） | `SKU-000001` / 200 m | Customer A Lighting Ltd / USD | 200.00 | confirmed |
+| L2 | `SJ20260926US004` | `SO-20260926-286-32BFE6`（id=160） | `SKU-000001` / 300 m | Customer A Lighting Ltd / USD | 300.00 | confirmed |
+
+两个订单均由 Quote 接受后通过“转为订单”创建，数量和金额在 UI 中确认。独立采购单通过“新建采购单”创建：
+
+| Purchase Order | Supplier | 关联订单 | Purchase Item | 数量 / 单位成本 | 创建后状态 |
+|---|---|---|---|---:|---|
+| `PO-20260926-220833`（id=56） | Supplier A | 无（`order_id=null`） | id=60，`SKU-000001` | 1000 m × USD 10.00 | 已下单 |
+
+采购单没有用订单头部关联 L1/L2，后续由成本分配明细分别归属订单与库存。
+
+### 13.2 初次成本分配与 Freight UAT 预览
+
+在“分配采购成本 / 公共费用”界面，第一次只填写订单归属 200、300，未分配的 500 自动显示为库存。保存前 UI 预览为：
+
+| 归属 | 数量 | 商品成本 | Freight UAT（按采购金额） | 合计 |
+|---|---:|---:|---:|---:|
+| L1 / `SO-20260926-285-CF4831` | 200 | 2,000.00 | 20.00 | 2,020.00 |
+| L2 / `SO-20260926-286-32BFE6` | 300 | 3,000.00 | 30.00 | 3,030.00 |
+| 库存 | 500 | 5,000.00 | 50.00 | 5,050.00 |
+| **合计** | **1000** | **10,000.00** | **100.00** | **10,100.00** |
+
+保存前只读复核仍为 `cost_allocation_version=0`、`additional_costs=[]`、无 `PurchaseCostAllocation`、无该 PO 的 GoodsReceipt/InventoryMovement/Transaction，证明预览不会持久化。保存后版本变为 1，三条归属和 `Freight UAT / 100.00 USD / method=amount` 持久化；成本分配没有创建入库、库存流水或财务流水。
+
+### 13.3 订单成本与库存归属
+
+保存后订单成本只计算订单归属，不把库存 500 m 计入订单毛利。正式重分配保存后（见 13.4）只读服务结果为：
+
+| Order | 销售额（RMB） | 订单商品成本（RMB） | 订单附加费用（RMB） | 预估毛利（RMB） |
+|---|---:|---:|---:|---:|
+| L1 / id=159 | 1,440.00 | 18,000.00（250×10×7.2） | 180.00（25×7.2） | -16,740.00 |
+| L2 / id=160 | 2,160.00 | 18,000.00（250×10×7.2） | 180.00（25×7.2） | -16,020.00 |
+
+库存归属 500 m 的商品成本 5,000.00 USD、Freight 50.00 USD 保留在库存成本分配中，不进入 L1/L2 的订单成本。
+
+### 13.4 未保存编辑、正式重分配与版本替换
+
+重新打开已保存结果后，通过 UI 把订单数量临时改为 250/250，预览显示 250/250/500 与 Freight 25/25/50；点击“关闭”取消后重新打开，已保存值仍为 200/300/500，证明未保存编辑不会写入。
+
+随后再次通过 UI 保存正式重分配 250/250/500。只读复核：
+
+- `cost_allocation_version` 从 1 增至 2；
+- 当前恰好三条 `PurchaseCostAllocation`：L1=250、L2=250、库存=500，无叠加重复行；
+- `additional_costs` 仍只有 `Freight UAT=100.00`，按采购金额分摊为 25/25/50；
+- PO 状态与订单状态不被成本分配改变。
+
+### 13.5 超额分配与归属名称校验
+
+将订单数量改为 800+300（合计 1100）并点击保存，UI 预览立即标记“`SKU-000001 分配数量超过采购数量`”，提交后对话框仍停留在未保存状态。只读复核确认版本仍为 2，持久化仍为 250/250/500，Freight 仍为 100.00，订单成本未变化，故 E 超额分配通过。
+
+将第一条归属切换为“其他”而不填写归属名称，UI 阻止预览并提示需要填写成本归属名称；提示文本出现现有的 `[object Object]` 展示问题，但没有写入，关闭后持久化数据不变。该表现记录为既有 UX 观察，不在本批修复。
+
+### 13.6 按数量公共费用预览
+
+新增未保存的 `Handling UAT=10.00 USD`，选择“按数量比例”，预览显示 2.50/2.50/5.00（L1/L2/库存），总附加费用 110.00；点击“关闭”不保存。重新读取 PO 后仍只有 `Freight UAT=100.00 / method=amount`，证明数量分摊预览不会产生额外费用。
+
+### 13.7 分配后部分收货与库存不变量
+
+通过采购单“验货入库” UI 登记合格入库 100 m，勾选“已核对”后确认。页面变为“部分到货”，显示已到 100 m、剩余 900 m。库存页面真实显示 `SKU-000001`：实际 206 m、预留 106 m、可用 100 m、在途 900 m；`available = actual - reserved = 206 - 106 = 100`。
+
+只读复核显示本 PO 新增 GoodsReceipt id=54（100.00 m）及唯一 `purchase_in` InventoryMovement id=113（100.00 m，`source_type=receipt`，unit_cost=10.00）。收货前该 SKU 实际库存 106 m，收货后 206 m，实际库存恰好增加 100 m，而不是 1000 m；成本分配阶段本身没有新增 GoodsReceipt/InventoryMovement。该 PO 没有 Transaction，故没有产生供应商付款或 PaymentPlan。
+
+### 13.8 本批结论、问题分类与停止点
+
+- `REAL BUSINESS BUG`：0。L/M 的订单归属、库存余量、共享费用比例、版本替换、超额保护与部分收货均符合当前契约。
+- `UI COVERAGE GAP`：1，延续 `UI COVERAGE GAP-PACKAGING-01`；本批未进入 packing/shipment 的正式 UAT。
+- `UX ISSUE`：2，延续 `UX ISSUE-01` 与 `UX ISSUE-02`；本批另观察到“其他归属”空名称验证沿用 `[object Object]` 展示，但未修改 UI。
+- `TEST INFRASTRUCTURE BLOCKER`：1，延续 `TEST INFRASTRUCTURE BLOCKER-PI-01`。
+- `EXPECTED CURRENT CONTRACT`：1，延续 `EXPECTED CURRENT CONTRACT-01`。
+
+本批完成 L/M 采购成本分配、共享费用、部分收货和数量分摊预览；不开始 N–T，也不修改任何业务代码、测试、CI、模型或迁移。

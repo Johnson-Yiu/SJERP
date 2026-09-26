@@ -227,7 +227,6 @@ def validate_contract_edit(instance, attrs, *, purchase=False):
 
         return (
             related_id(item["sku"]),
-            related_id(item.get("supplier_sku")),
             Decimal(item["quantity"]),
             Decimal(item["unit_price"]),
             Decimal(item.get("cost_price", 0)),
@@ -242,7 +241,6 @@ def validate_contract_edit(instance, attrs, *, purchase=False):
         != [
             (
                 item.sku_id,
-                item.supplier_sku_id,
                 Decimal(item.quantity),
                 Decimal(item.unit_price),
                 Decimal(getattr(item, "cost_price", 0)),
@@ -263,8 +261,17 @@ def validate_contract_edit(instance, attrs, *, purchase=False):
     new_status = attrs.get("status", instance.status)
     if new_status != instance.status and new_status in {"cancelled", "draft"} and (history or financial):
         raise serializers.ValidationError("合同已有业务记录，不能直接取消或退回草稿。")
-    if new_status != instance.status and new_status in ({"partial", "completed"} if purchase else {"shipped"}):
-        raise serializers.ValidationError("到货、发货状态由实际出入库记录自动更新。")
+    if new_status != instance.status and new_status in ({"partial", "completed"} if purchase else {"shipped", "completed"}):
+        if purchase or new_status == "shipped":
+            raise serializers.ValidationError("到货、发货状态由实际出入库记录自动更新。")
+        if instance.status != "shipped":
+            raise serializers.ValidationError("订单尚未全部发货，不能标记为已完成。")
+        from .services.fulfillment import order_item_metrics
+        if not instance.items.exists() or any(
+            order_item_metrics(item)["shipped_quantity"] < item.quantity
+            for item in instance.items.all()
+        ):
+            raise serializers.ValidationError("订单尚未全部发货，不能标记为已完成。")
 
 
 def sync_unsettled_contract_plans(instance, changed):
@@ -1084,6 +1091,10 @@ class QuoteSerializer(serializers.ModelSerializer):
         if source is None and view and getattr(view, 'action', '') == 'revise':
             source = view.get_object()
         validate_document_amount(attrs, source)
+        quote_date = attrs.get("quote_date", source.quote_date if source else None)
+        valid_until = attrs.get("valid_until", source.valid_until if source else None)
+        if quote_date and valid_until and valid_until < quote_date:
+            raise serializers.ValidationError({"valid_until": "有效期不能早于报价日期。"})
         return attrs
 
     def get_root_quote_no(self, obj):

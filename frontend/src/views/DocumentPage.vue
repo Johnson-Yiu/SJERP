@@ -26,6 +26,7 @@ const copy = computed(() => isOrder.value ? {
   title: '报价管理', description: '建立标准化报价明细，记录有效期与客户反馈状态。', no: 'quote_no', noLabel: '报价单号', date: 'quote_date', dateLabel: '创建时间', statuses: { draft: '草稿', sent: '已发送', accepted: '已接受', rejected: '已拒绝', expired: '已过期' }
 })
 const editableOrderStatuses = { draft: '草稿', confirmed: '已确认', production: '生产中', completed: '已完成', cancelled: '已取消' }
+const editableOrderStatusEntries = computed(() => Object.entries(editableOrderStatuses).filter(([key]) => key !== 'completed' || ['shipped', 'completed'].includes(form.status)))
 
 const rows = ref([]), customers = ref([]), skus = ref([]), quotes = ref([])
 const loading = ref(true), saving = ref(false), open = ref(false), editingId = ref(null), query = ref('')
@@ -284,7 +285,7 @@ onMounted(async () => {
           <div class="field"><label>客户 *</label><select v-model="form.customer" required :disabled="inheritedCustomer"><option value="">请选择</option><option v-for="c in customers" :key="c.id" :value="c.id">{{ c.name }}</option></select></div>
           <div class="field"><label>{{ copy.dateLabel }} *</label><SegmentedDateInput :model-value="form[copy.date]" required @update:model-value="setOrderDate" /></div>
           <div class="field"><label>预计交期</label><div class="lead-time-input"><input v-model="orderLeadTimeDays" type="number" min="0" step="1" placeholder="天数" aria-label="交期天数" @input="setOrderLeadTimeDays" /><span>天</span><SegmentedDateInput :model-value="form.expected_ship_date" @update:model-value="setExpectedShipDate" /></div></div>
-          <div class="field"><label>状态 *</label><select v-model="form.status"><option v-if="isOrder && form.status === 'shipped'" value="shipped" disabled>已发货（由出库自动更新）</option><option v-for="(label,key) in isOrder ? editableOrderStatuses : copy.statuses" :key="key" :value="key">{{ label }}</option></select><small v-if="isOrder" class="field-hint">“已发货”由确认出库自动更新。</small></div>
+          <div class="field"><label>状态 *</label><select v-model="form.status"><option v-if="isOrder && form.status === 'shipped'" value="shipped" disabled>已发货（由出库自动更新）</option><option v-for="([key,label]) in isOrder ? editableOrderStatusEntries : Object.entries(copy.statuses)" :key="key" :value="key">{{ label }}</option></select><small v-if="isOrder" class="field-hint">“已发货”由确认出库自动更新；仅已发货订单可进入已完成。</small></div>
           <div v-if="isOrder" class="field"><label>来源报价</label><select v-model="form.quote"><option value="">无</option><option v-for="q in quotes" :key="q.id" :value="q.id">{{ q.quote_no }}</option></select></div>
           <div class="field"><label>币种</label><select v-model="form.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
           <div class="field"><label>对人民币汇率</label><input v-model="form.exchange_rate" type="number" step="0.000001" /></div>

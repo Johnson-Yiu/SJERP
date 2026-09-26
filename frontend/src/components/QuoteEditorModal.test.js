@@ -32,3 +32,10 @@ test('quote editor lets users save without exporting the Excel file', async () =
   assert.match(source, /@click="save\(true\)"/)
   assert.match(source, /保存并导出 Excel/)
 })
+
+test('quote editor blocks a validity date earlier than the quote date', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /draft\.valid_until < draft\.quote_date/)
+  assert.match(source, /有效期不能早于报价日期。/)
+})

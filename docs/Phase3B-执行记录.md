@@ -373,6 +373,8 @@ E38 仅做正常 UI 观察：收货 0/负数时提交控件 disabled；本次 E1
 
 服务层只读指标定义为 `actual = signed_inventory_quantity`、`reserved = active reservation`、`available = actual - reserved`。本批最终状态（包含并发订单与历史业务数据）如下：
 
+其中 Order G、正式 Order F、E20 三行的 SKU-000001 数字是执行独立 OVERAGE-UAT 前的正式场景快照；独立场景改变全局库存后的当前值以 OVERAGE-UAT 的 E11 前/后两行记录为准。
+
 | SKU / 订单上下文 | actual | reserved | available | Order ordered / shipped / remaining |
 |---|---:|---:|---:|---|
 | SKU-000007（Order E 已发完；辅助 Order F 仍保留 4） | 4 | 4 | 0 | Order E 10 / 10 / 0 |

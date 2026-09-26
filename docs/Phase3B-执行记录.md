@@ -583,7 +583,37 @@ Receipt #1 `FIN-DD28FFE2D90D408A` 仍为 confirmed，20.00 USD，H 最终保留�
 
 只读复核显示本 PO 新增 GoodsReceipt id=54（100.00 m）及唯一 `purchase_in` InventoryMovement id=113（100.00 m，`source_type=receipt`，unit_cost=10.00）。收货前该 SKU 实际库存 106 m，收货后 206 m，实际库存恰好增加 100 m，而不是 1000 m；成本分配阶段本身没有新增 GoodsReceipt/InventoryMovement。该 PO 没有 Transaction；现有 2 条 PO 默认 payable PaymentPlan（订金/尾款）未因成本分配或公共费用新增或改变，未登记供应商付款。
 
-### 13.8 本批结论、问题分类与停止点
+### 13.8 L1/L2 shared purchase fulfillment evidence
+
+分别通过订单工作台的“采购与发货”页签读取真实 UI。UI 的“预留”列与只读 `order_item_metrics()` 的 `allocated_quantity` 一致；UI 没有单独渲染“待采购”列，因此该列以同一服务函数的只读结果记录，并未通过 UI 推断：
+
+| Order | ordered | allocated / reserved | purchased | received | in_transit | to_procure | shipped | unshipped |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| L1 / `SO-20260926-285-CF4831` | 200 | 88 | 250 | 25 | 225 | 0 | 0 | 200 |
+| L2 / `SO-20260926-286-32BFE6` | 300 | 0 | 250 | 25 | 225 | 75 | 0 | 300 |
+
+L1 UI 实际显示 `200 / 88 / 250 / 25 / 225 / 0 / 200`，L2 UI 实际显示 `300 / 0 / 250 / 25 / 225 / 0 / 300`（顺序为 ordered / reserved / purchased / received / in_transit / shipped / unshipped）。只读服务结果分别为：
+
+- L1：`allocated=88, purchased=250, received=25, in_transit=225, to_procure=0, shipped=0, unshipped=200`；
+- L2：`allocated=0, purchased=250, received=25, in_transit=225, to_procure=75, shipped=0, unshipped=300`。
+
+因此 PurchaseCostAllocation 的 250/250 分别进入 L1/L2 的 `purchased_quantity`；100 m Receipt 按共享采购行比例分配为各 25 m arrived、各 225 m in-transit；库存归属 500 m 没有被计入任何订单的 purchased 数量。未发现共享采购重复计算、订单错归或 received/in-transit 不守恒。
+
+### 13.9 Other target 合法 Preview
+
+重新打开 `PO-20260926-220833` 的“分配采购成本 / 公共费用”，将第一条临时切换为 `其他`，先保留空名称验证（UI 拒绝），随后填写 `UAT备用项目`，数量填写 100。实时 Preview 成功显示：
+
+| target_type | target_name | quantity | base_amount | additional_amount | total_amount |
+|---|---|---:|---:|---:|---:|
+| other | UAT备用项目 | 100 | 1,000.00 | 10.00 | 1,010.00 |
+
+该预览同时显示 L2=250、库存原有 500，剩余 150 自动归库存，合计仍为 1000 m。没有点击保存，直接关闭；重新打开后确认正式结果仍为 L1=250、L2=250、Inventory=500，`Freight UAT=100.00`，`cost_allocation_version=2`。Other 预览没有写入 `PurchaseCostAllocation` 或 `additional_costs`。
+
+### 13.10 Phase 3B-4 回归验证
+
+本轮文档更新前已完成完整回归：后端 `check`、`makemigrations --check --dry-run`、完整测试 `288/288 PASS`；前端 unit `57/57 PASS`、Node-only typography `1/1 PASS`、Vitest `31/31 PASS`、`npm run build` PASS。除本执行记录外未修改业务代码、测试、CI、模型或迁移。
+
+### 13.11 本批结论、问题分类与停止点
 
 - `REAL BUSINESS BUG`：0。L/M 的订单归属、库存余量、共享费用比例、版本替换、超额保护与部分收货均符合当前契约。
 - `UI COVERAGE GAP`：1，延续 `UI COVERAGE GAP-PACKAGING-01`；本批未进入 packing/shipment 的正式 UAT。

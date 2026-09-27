@@ -12,6 +12,7 @@ const emit = defineEmits(['close', 'edit', 'open-quote'])
 const workbench = ref(null)
 const fulfillment = ref(null)
 const packingPlan = ref(null)
+const packingSaving = ref(false)
 const activeTab = ref('overview')
 const loading = ref(true)
 const error = ref('')
@@ -78,10 +79,14 @@ async function submitShipmentReversal() {
   finally { shipmentReversalSaving.value = false }
 }
 async function generatePackingPlan() {
+  if (packingSaving.value) return
+  packingSaving.value = true
   try { packingPlan.value = (await api.post(`/orders/${props.id}/packing-plan/`)).data }
   catch (err) { error.value = err.response?.data?.detail || err.message }
+  finally { packingSaving.value = false }
 }
 async function regeneratePackingPlan() {
+  if (packingSaving.value) return
   if (!window.confirm('重新生成会使用当前 SKU 包装配置，并替换当前订单的预计装箱方案。')) return
   await generatePackingPlan()
 }
@@ -149,9 +154,9 @@ watch(() => props.refreshKey, load)
 
           <section v-else-if="activeTab === 'packing'" class="packing-plan-panel">
             <div class="section-heading"><div><h3><Boxes :size="16" /> 预计装箱</h3><p>预计装箱方案只保存当前订单的包装快照，不会自动创建发货或实际装箱记录。</p></div></div>
-            <div v-if="!packingPlan" class="workbench-empty packing-plan-empty"><Boxes :size="28" /><strong>尚未生成预计装箱方案</strong><p>生成后会根据当前 SKU 包装配置保存可追溯的箱规快照。</p><button type="button" class="btn btn-primary" @click="generatePackingPlan">生成预计装箱方案</button></div>
+            <div v-if="!packingPlan" class="workbench-empty packing-plan-empty"><Boxes :size="28" /><strong>尚未生成预计装箱方案</strong><p>生成后会根据当前 SKU 包装配置保存可追溯的箱规快照。</p><button type="button" class="btn btn-primary" :disabled="packingSaving" @click="generatePackingPlan">{{ packingSaving ? '生成中…' : '生成预计装箱方案' }}</button></div>
             <template v-else>
-              <div class="packing-plan-toolbar"><div><span class="packing-status" :class="packingPlan.status">{{ packingStatusLabel(packingPlan.status) }}</span><span class="packing-plan-caption">重新生成会替换当前方案</span></div><button type="button" class="btn btn-secondary" @click="regeneratePackingPlan">重新生成预计装箱方案</button></div>
+              <div class="packing-plan-toolbar"><div><span class="packing-status" :class="packingPlan.status">{{ packingStatusLabel(packingPlan.status) }}</span><span class="packing-plan-caption">重新生成会替换当前方案</span></div><button type="button" class="btn btn-secondary" :disabled="packingSaving" @click="regeneratePackingPlan">{{ packingSaving ? '生成中…' : '重新生成预计装箱方案' }}</button></div>
               <div class="packing-plan-summary"><div><small>预计箱数</small><strong>{{ packingPlan.total_cartons }}</strong></div><div><small>预计净重</small><strong>{{ packingPlan.total_net_weight }} kg</strong></div><div><small>预计毛重</small><strong>{{ packingPlan.total_gross_weight }} kg</strong></div><div><small>预计 CBM</small><strong>{{ packingPlan.total_cbm }} m³</strong></div></div>
               <div v-if="packingPlan.warnings?.length" class="packing-plan-warnings" role="alert"><AlertTriangle :size="17" /><div><strong>包装方案需要注意</strong><p v-for="warning in packingPlan.warnings" :key="warning">{{ warning }}</p><p>如提示 SKU 包装资料未配置，请先在报价编辑器/包装配置中补充 SKU 默认包装。</p></div></div>
               <div v-if="!packingPlan.cartons?.length" class="workbench-empty"><Boxes :size="28" /><strong>暂无箱明细</strong><p>请根据上方警告补充包装配置后，再重新生成方案。</p></div>

@@ -39,7 +39,9 @@
 
 第二次 PostgreSQL CI：`36325725537`。结果为 `1 error / 1 failure`。失败根因已确认是 `HSMigrationTests` 的测试隔离问题：测试将 schema 降级到 0053 后，`finally` 只恢复到固定的 0053，污染了后续 PostgreSQL `TransactionTestCase`；这不是 migration 本身失败，也不是业务逻辑失败。主流程 `migrate --noinput` 已成功迁移至 0066。修复方式是在降级前保存当前 `crm` migration graph 的 `leaf_nodes("crm")`，测试结束时恢复该最新 leaf。
 
-修复后的验证 CI：`36326712291`。`backend` 与 `frontend` PASS；`backend-postgres` 的 migration、schema check 均 PASS，测试仅剩 1 个 harness fixture error：并发成本测试直接调用 service 时传入字符串数量，触发 `Decimal + str`，与 API serializer 的正常输入契约不一致。已将 fixture 改为 `Decimal("100")`，等待下一次 CI 验证。
+修复后的验证 CI：`36326712291`。`backend` 与 `frontend` PASS；`backend-postgres` 的 migration、schema check 均 PASS，测试仅剩 1 个 harness fixture error：并发成本测试直接调用 service 时传入字符串数量，触发 `Decimal + str`，与 API serializer 的正常输入契约不一致。已将 fixture 改为 `Decimal("100")`。
+
+最终验证 CI：`36327168746`。`backend`、`backend-postgres`、`frontend` 三个 job 全部 SUCCESS；PostgreSQL 17 migration、schema sanity 和完整 `320 tests` 均通过，四个 PostgreSQL-only concurrency/sanity tests 均实际执行且无 skip。Phase 4B-1 的 PostgreSQL compatibility bugs 与 TEST HARNESS / MIGRATION TEST ISOLATION 均 CLOSED；`REAL BUSINESS BUG-PG=0`。`DATA-MIGRATION-RISK-01` 保留，Phase 4B-2 尚未开始。
 
 ## 5. PostgreSQL CI job
 
@@ -92,11 +94,11 @@
 ## 9. Findings
 
 - `REAL BUSINESS BUG-PG`：0（本轮只修复已确认的 PostgreSQL query compatibility，不改变业务规则）。
-- `POSTGRESQL COMPATIBILITY BUG`：第一次 CI 确认的 2 类 query compatibility 问题已完成代码修复，最终 CI 结果待确认。
-- `TEST HARNESS / MIGRATION TEST ISOLATION`：已完成修复（恢复到测试开始前保存的最新 migration leaf），最终 CI 结果待确认。
+- `POSTGRESQL COMPATIBILITY BUG`：第一次 CI 确认的 2 类 query compatibility 问题已完成代码修复，`36327168746` backend-postgres PASS，状态 CLOSED。
+- `TEST HARNESS / MIGRATION TEST ISOLATION`：已完成修复（恢复到测试开始前保存的最新 migration leaf，并修正并发成本测试 Decimal fixture），`36327168746` PASS，状态 CLOSED。
 - `DATA/MIGRATION ISSUE`：0（未执行 data migration）。
-- `CONCURRENCY BUG`：0（本地只运行 skip；未把未运行当作通过）。
-- 当前不具备进入 data-migration rehearsal 的条件，必须先取得 PostgreSQL job 全绿并完成 staging restore/row-count/金额/库存校验。
+- `CONCURRENCY BUG`：0（本地 SQLite 对 4 个 PostgreSQL-only 测试 skip；`36327168746` PostgreSQL job 实际执行并全部通过）。
+- Phase 4B-1 已满足封版条件；不开始 data-migration rehearsal，Phase 4B-2 仍需另行授权并完成 staging restore/row-count/金额/库存校验。
 
 ## 10. Scope boundary
 

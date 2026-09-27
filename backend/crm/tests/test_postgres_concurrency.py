@@ -38,6 +38,14 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
     def test_supplier_category_through_table_exists(self):
         through = Supplier._meta.get_field("supply_categories").remote_field.through
         self.assertIn(through._meta.db_table, connection.introspection.table_names())
+        product_table = Product._meta.db_table
+        self.assertIn(product_table, connection.introspection.table_names())
+        with connection.cursor() as cursor:
+            columns = {
+                column.name
+                for column in connection.introspection.get_table_description(cursor, product_table)
+            }
+        self.assertIn(Product._meta.get_field("combination_rules").column, columns)
 
     def test_root_quote_number_is_unique_and_contiguous_under_concurrency(self):
         quote_date = date(2030, 1, 1)

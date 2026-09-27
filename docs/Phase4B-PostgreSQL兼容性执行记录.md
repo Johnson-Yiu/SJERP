@@ -37,6 +37,8 @@
 
 结果：SQLite `319/319 PASS`（3 个 PostgreSQL-only skipped）；`backend-postgres` 运行 316 tests，`1 failure / 75 errors`。失败分类为：POSTGRESQL COMPATIBILITY BUG（FOR UPDATE 与 nullable outer join、DISTINCT 与 FOR UPDATE）、TEST ASSUMPTION（Supplier.code 超过 max_length=2）、TEST ENVIRONMENT/HARNESS（development-only export test 环境未声明完整、reset_sequences 导致 sequence reset 问题）。本轮不放宽业务断言。
 
+第二次 PostgreSQL CI：`36325725537`。结果为 `1 error / 1 failure`。失败根因已确认是 `HSMigrationTests` 的测试隔离问题：测试将 schema 降级到 0053 后，`finally` 只恢复到固定的 0053，污染了后续 PostgreSQL `TransactionTestCase`；这不是 migration 本身失败，也不是业务逻辑失败。主流程 `migrate --noinput` 已成功迁移至 0066。修复方式是在降级前保存当前 `crm` migration graph 的 `leaf_nodes("crm")`，测试结束时恢复该最新 leaf。
+
 ## 5. PostgreSQL CI job
 
 `.github/workflows/ci.yml` 新增独立 `backend-postgres` job：
@@ -58,9 +60,9 @@
 2. `allocate_revision_quote_no()`：5 个并发 worker，验证 revision counter 与 child suffix 唯一且连续。
 3. `save_costs()`：两个独立 transaction 使用同一 version，预期一个成功、一个 stale version 拒绝，最终 version 为 1。
 
-新增 supplier M2M through-table sanity assertion，使用 Django introspection 获取 through model 的实际表名；不写死 SQL 表名。
+新增 supplier M2M through-table sanity assertion，使用 Django introspection 获取 through model 的实际表名；同时确认 `crm_product` 存在 `Product.combination_rules` 对应列；不写死 SQL 表名。
 
-本地 SQLite 运行结果为 4 skipped；尚未声称 PostgreSQL concurrency PASS。
+本地 SQLite 运行结果为 4 skipped；PostgreSQL-only 四个测试在 SQLite 上不执行，最终 PostgreSQL 执行结果以修复后的 CI 为准。
 
 ## 7. Lock-query compatibility audit
 
@@ -81,14 +83,15 @@
 - 本轮没有新增业务 schema migration。
 - 本轮没有执行 SQLite → PostgreSQL 数据迁移。
 - 没有连接当前开发库以外的数据库，也没有导出或修改 UAT 数据。
-- 静态审计未发现需立即重写的历史 migration；PostgreSQL `migrate` 结果等待 CI。
+- 静态审计未发现需立即重写的历史 migration；第一次 PostgreSQL CI 已确认 `migrate --noinput` 成功至 0066，第二次失败属于测试 harness 隔离，修复后的最终 CI 结果待确认。
 - `UniqueConstraint`、JSONField、DecimalField、timezone、bulk 操作的完整 PostgreSQL 验证等待同一 CI suite。
 - `DATA-MIGRATION-RISK-01`：SQLite 不严格执行 varchar 长度；Phase 4B-2 前必须扫描真实开发库 `Supplier.code` 长度是否超过 2。若存在，必须人工映射为合法二字代码，禁止静默截断；本轮不修改开发数据库。
 
 ## 9. Findings
 
 - `REAL BUSINESS BUG-PG`：0（本轮只修复已确认的 PostgreSQL query compatibility，不改变业务规则）。
-- `POSTGRESQL COMPATIBILITY BUG`：第一次 CI 确认 2 类；已完成代码修复，最终状态等待下一次 CI。
+- `POSTGRESQL COMPATIBILITY BUG`：第一次 CI 确认的 2 类 query compatibility 问题已完成代码修复，最终 CI 结果待确认。
+- `TEST HARNESS / MIGRATION TEST ISOLATION`：已完成修复（恢复到测试开始前保存的最新 migration leaf），最终 CI 结果待确认。
 - `DATA/MIGRATION ISSUE`：0（未执行 data migration）。
 - `CONCURRENCY BUG`：0（本地只运行 skip；未把未运行当作通过）。
 - 当前不具备进入 data-migration rehearsal 的条件，必须先取得 PostgreSQL job 全绿并完成 staging restore/row-count/金额/库存校验。

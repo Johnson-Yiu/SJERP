@@ -65,6 +65,7 @@ class HSMigrationTests(TransactionTestCase):
         old = [('crm', '0052_alter_packingplancarton_partial_carton_policy_snapshot')]
         new = [('crm', '0053_hs_code_catalog')]
         executor = MigrationExecutor(connection)
+        latest = executor.loader.graph.leaf_nodes("crm")
         executor.migrate(old)
         try:
             ProductBefore = executor.loader.project_state(old).apps.get_model('crm', 'Product')
@@ -81,4 +82,4 @@ class HSMigrationTests(TransactionTestCase):
             executor.migrate(old)
             self.assertEqual(ProductBefore.objects.filter(hs_code='8539510000').count(), 2)
         finally:
-            MigrationExecutor(connection).migrate(new)
+            MigrationExecutor(connection).migrate(latest)

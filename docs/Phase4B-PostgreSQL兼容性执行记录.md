@@ -27,11 +27,17 @@
 
 - `python manage.py check`：PASS。
 - `python manage.py makemigrations --check --dry-run`：PASS，No changes detected。
-- 完整 backend：`319 tests`，`316 PASS`，`3 skipped`（PostgreSQL-only concurrency tests）。
+- 完整 backend：`320 tests`，`316 PASS`，`4 skipped`（PostgreSQL-only concurrency tests，新增 through-table sanity test）。
 - settings isolation tests：8/8 PASS。
 - 前端：unit `61/61`、node-only `1/1`、Vitest `31/31`、build PASS。
 
-## 4. PostgreSQL CI job
+## 4. First PostgreSQL CI failure
+
+第一次 PostgreSQL CI：`36322185884`。
+
+结果：SQLite `319/319 PASS`（3 个 PostgreSQL-only skipped）；`backend-postgres` 运行 316 tests，`1 failure / 75 errors`。失败分类为：POSTGRESQL COMPATIBILITY BUG（FOR UPDATE 与 nullable outer join、DISTINCT 与 FOR UPDATE）、TEST ASSUMPTION（Supplier.code 超过 max_length=2）、TEST ENVIRONMENT/HARNESS（development-only export test 环境未声明完整、reset_sequences 导致 sequence reset 问题）。本轮不放宽业务断言。
+
+## 5. PostgreSQL CI job
 
 `.github/workflows/ci.yml` 新增独立 `backend-postgres` job：
 
@@ -44,7 +50,7 @@
 
 本机没有 Docker 或 `psql`，因此不能在本地启动 PostgreSQL service；PostgreSQL 完整结果必须以 GitHub Actions `backend-postgres` job 为准。当前记录不把 SQLite 结果冒充 PostgreSQL 结果。
 
-## 5. PostgreSQL-specific concurrency tests
+## 6. PostgreSQL-specific concurrency tests
 
 新增 `backend/crm/tests/test_postgres_concurrency.py`，使用 `TransactionTestCase`、独立线程数据库连接，并在 SQLite 上明确 skip：
 
@@ -52,25 +58,42 @@
 2. `allocate_revision_quote_no()`：5 个并发 worker，验证 revision counter 与 child suffix 唯一且连续。
 3. `save_costs()`：两个独立 transaction 使用同一 version，预期一个成功、一个 stale version 拒绝，最终 version 为 1。
 
-本地 SQLite 运行结果为 3 skipped；尚未声称 PostgreSQL concurrency PASS。
+新增 supplier M2M through-table sanity assertion，使用 Django introspection 获取 through model 的实际表名；不写死 SQL 表名。
 
-## 6. Compatibility and migration status
+本地 SQLite 运行结果为 4 skipped；尚未声称 PostgreSQL concurrency PASS。
+
+## 7. Lock-query compatibility audit
+
+| 位置 | 原因 | 修复方式 |
+|---|---|---|
+| `finance.py:record_transaction` | PaymentPlan 的 order/purchase_order nullable，select_related 会生成 outer join | 先锁 PaymentPlan，再按非空 FK 单独锁 Order/PurchaseOrder，并锁 customer/supplier |
+| `finance.py:allocate_advance` | 同上 | 同样的两阶段锁 |
+| `finance.py:approve_contract_change` | ContractChangeRequest 的 order/purchase_order nullable | 先锁变更单，再单独锁实际 contract |
+| `fulfillment.py:reverse_receipt` | GoodsReceipt.inventory_movement、PurchaseOrderItem.supplier_sku nullable | 先锁 receipt、purchase item、SKU；存在时单独锁原 movement |
+| `fulfillment.py:reverse_shipment` | ShipmentItem.inventory_movement nullable | 锁 Shipment → Order → ShipmentItem；收集 movement IDs 后单独锁 InventoryMovement；再锁 SKU |
+| `sku_plans.py:apply_category_attribute_reorder` | DISTINCT + FOR UPDATE | 先 distinct 得到 Product IDs，再锁 Product base rows |
+| `supplier_allocation.py:allocate_order_item_supplier` | OrderItem.supplier_sku nullable | 锁 OrderItem 时只 join 非 nullable order/sku |
+
+锁没有被删除，且在验证到创建 reversal/更新成本前仍覆盖主体与实际关联行。
+
+## 8. Compatibility and migration status
 
 - 本轮没有新增业务 schema migration。
 - 本轮没有执行 SQLite → PostgreSQL 数据迁移。
 - 没有连接当前开发库以外的数据库，也没有导出或修改 UAT 数据。
 - 静态审计未发现需立即重写的历史 migration；PostgreSQL `migrate` 结果等待 CI。
 - `UniqueConstraint`、JSONField、DecimalField、timezone、bulk 操作的完整 PostgreSQL 验证等待同一 CI suite。
+- `DATA-MIGRATION-RISK-01`：SQLite 不严格执行 varchar 长度；Phase 4B-2 前必须扫描真实开发库 `Supplier.code` 长度是否超过 2。若存在，必须人工映射为合法二字代码，禁止静默截断；本轮不修改开发数据库。
 
-## 7. Findings
+## 9. Findings
 
-- `REAL BUSINESS BUG-PG`：0（本地未发现；PostgreSQL job 尚未返回）。
-- `POSTGRESQL COMPATIBILITY BUG`：0（待 CI 验证）。
+- `REAL BUSINESS BUG-PG`：0（本轮只修复已确认的 PostgreSQL query compatibility，不改变业务规则）。
+- `POSTGRESQL COMPATIBILITY BUG`：第一次 CI 确认 2 类；已完成代码修复，最终状态等待下一次 CI。
 - `DATA/MIGRATION ISSUE`：0（未执行 data migration）。
 - `CONCURRENCY BUG`：0（本地只运行 skip；未把未运行当作通过）。
 - 当前不具备进入 data-migration rehearsal 的条件，必须先取得 PostgreSQL job 全绿并完成 staging restore/row-count/金额/库存校验。
 
-## 8. Scope boundary
+## 10. Scope boundary
 
 本轮不开始 Authentication、RBAC、production security、data migration rehearsal 或任何 Phase 4B-2 工作。
 

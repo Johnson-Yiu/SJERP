@@ -18,6 +18,7 @@ from crm.models import (
     Shipment,
     ShipmentItem,
     SKU,
+    SupplierSKU,
     Transaction,
 )
 
@@ -241,26 +242,26 @@ def reverse_receipt(receipt: GoodsReceipt, reason: str) -> GoodsReceipt:
     reason = str(reason or "").strip()
     if not reason:
         raise ValidationError("冲销原因不能为空。")
-    receipt = GoodsReceipt.objects.select_for_update().select_related(
-        "purchase_item__purchase_order", "purchase_item__sku", "inventory_movement"
-    ).get(pk=receipt.pk)
+    receipt = GoodsReceipt.objects.select_for_update().get(pk=receipt.pk)
     if receipt.reversal_inventory_movement_id:
         raise ValidationError("该入库记录已经冲销，不能重复操作。")
-    purchase_item = PurchaseOrderItem.objects.select_for_update().select_related(
-        "purchase_order", "sku", "supplier_sku"
-    ).get(pk=receipt.purchase_item_id)
+    purchase_item = PurchaseOrderItem.objects.select_for_update().select_related("purchase_order", "sku").get(pk=receipt.purchase_item_id)
     sku = SKU.objects.select_for_update().get(pk=purchase_item.sku_id)
+    supplier_sku = SupplierSKU.objects.get(pk=purchase_item.supplier_sku_id) if purchase_item.supplier_sku_id else None
+    original_movement = (
+        InventoryMovement.objects.select_for_update().get(pk=receipt.inventory_movement_id)
+        if receipt.inventory_movement_id else None
+    )
     actual_quantity = signed_inventory_quantity(sku)
     if actual_quantity < receipt.quantity:
         raise ValidationError("当前 SKU 实际库存不足以冲销，请先处理后续出库。")
-    original_movement = receipt.inventory_movement
     movement = InventoryMovement.objects.create(
         **{k: getattr(receipt, k) for k in TRADE_FIELDS},
         movement_no=_movement_no("REV"),
         movement_date=timezone.localdate(),
         type="adjust_out",
         sku=sku,
-        supplier_sku=purchase_item.supplier_sku,
+        supplier_sku=supplier_sku,
         order=purchase_item.purchase_order.order,
         quantity=receipt.quantity,
         warehouse=original_movement.warehouse if original_movement else "默认仓",
@@ -423,18 +424,18 @@ def reverse_shipment(shipment: Shipment, reason: str) -> Shipment:
     if order.status in {"completed", "cancelled"}:
         raise ValidationError("已完成或已取消的订单不能冲销发货。")
 
-    items = list(
-        ShipmentItem.objects.select_for_update()
-        .select_related("sku", "order_item", "inventory_movement")
-        .filter(shipment=shipment)
-        .order_by("pk")
-    )
+    items = list(ShipmentItem.objects.select_for_update().filter(shipment=shipment).order_by("pk"))
     if any(item.is_overage for item in items):
         raise ValidationError("该发货单包含超发、客户追加、赠品或包装尾差，涉及订单金额或增补明细，本阶段不能直接冲销。")
 
+    movement_ids = [item.inventory_movement_id for item in items if item.inventory_movement_id]
+    locked_movements = {
+        movement.pk: movement
+        for movement in InventoryMovement.objects.select_for_update().filter(pk__in=movement_ids).order_by("pk")
+    }
     original_movements = {}
     for item in items:
-        original_movement = item.inventory_movement
+        original_movement = locked_movements.get(item.inventory_movement_id)
         if (
             original_movement is None
             or original_movement.type != "sale_out"

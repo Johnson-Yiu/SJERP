@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 
 from django.utils import timezone
-from crm.models import AdvanceAllocation, ContractChangeRequest, PaymentPlan, Transaction
+from crm.models import AdvanceAllocation, ContractChangeRequest, Order, PaymentPlan, PurchaseOrder, Transaction
 
 
 def positive_decimal(value, label):
@@ -67,7 +67,15 @@ def record_transaction(payload):
     if amount <= 0:
         raise ValidationError("收付款金额必须大于零。")
     if plan:
-        plan = PaymentPlan.objects.select_for_update().select_related("order__customer", "purchase_order__supplier").get(pk=plan.pk)
+        plan = PaymentPlan.objects.select_for_update().get(pk=plan.pk)
+        if plan.order_id:
+            contract = Order.objects.select_for_update().select_related("customer").get(pk=plan.order_id)
+            plan.order = contract
+        elif plan.purchase_order_id:
+            contract = PurchaseOrder.objects.select_for_update().select_related("supplier").get(pk=plan.purchase_order_id)
+            plan.purchase_order = contract
+        else:
+            raise ValidationError("收付款计划必须关联销售订单或采购单。")
         if plan.status != "open":
             raise ValidationError("只能核销待结清的收付款计划。")
         if payload.get("currency", plan.currency) != plan.currency:
@@ -215,7 +223,15 @@ def void_transaction(row, reason):
 @transaction.atomic
 def allocate_advance(advance, plan, amount):
     advance = Transaction.objects.select_for_update().get(pk=advance.pk)
-    plan = PaymentPlan.objects.select_for_update().select_related("order__customer", "purchase_order__supplier").get(pk=plan.pk)
+    plan = PaymentPlan.objects.select_for_update().get(pk=plan.pk)
+    if plan.order_id:
+        contract = Order.objects.select_for_update().select_related("customer").get(pk=plan.order_id)
+        plan.order = contract
+    elif plan.purchase_order_id:
+        contract = PurchaseOrder.objects.select_for_update().select_related("supplier").get(pk=plan.purchase_order_id)
+        plan.purchase_order = contract
+    else:
+        raise ValidationError("收付款计划必须关联销售订单或采购单。")
     amount = positive_decimal(amount, "分配金额")
     if advance.kind not in {"unallocated_advance", "unallocated_payment"} or advance.status != "confirmed":
         raise ValidationError("只能分配已确认的未分配预收预付。")
@@ -274,7 +290,15 @@ def record_contract_payment(contract, payload):
 
 @transaction.atomic
 def approve_contract_change(change):
-    change = ContractChangeRequest.objects.select_for_update().select_related("order", "purchase_order").get(pk=change.pk)
+    change = ContractChangeRequest.objects.select_for_update().get(pk=change.pk)
+    if change.order_id:
+        contract = Order.objects.select_for_update().get(pk=change.order_id)
+        change.order = contract
+    elif change.purchase_order_id:
+        contract = PurchaseOrder.objects.select_for_update().get(pk=change.purchase_order_id)
+        change.purchase_order = contract
+    else:
+        raise ValidationError("合同变更必须关联销售订单或采购单。")
     if change.status != "pending":
         raise ValidationError("只有待确认变更单可以确认。")
     contract = change.order or change.purchase_order

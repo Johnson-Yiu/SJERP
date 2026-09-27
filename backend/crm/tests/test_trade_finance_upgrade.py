@@ -461,7 +461,7 @@ class TradeFinanceUpgradeTests(TestCase):
         other_plan = PaymentPlan.objects.create(order=other_order, direction="receivable", currency="USD", planned_amount=Decimal("50"))
         eur_order = Order.objects.create(order_no="UP-SO-EUR", customer=self.customer, order_date=self.day, currency="EUR")
         eur_plan = PaymentPlan.objects.create(order=eur_order, direction="receivable", currency="EUR", planned_amount=Decimal("50"))
-        other_supplier = Supplier.objects.create(code="UP-OTHER", name="Other Upgrade Supplier")
+        other_supplier = Supplier.objects.create(code="UO", name="Other Upgrade Supplier")
         other_purchase = PurchaseOrder.objects.create(purchase_no="UP-PO-OTHER", supplier=other_supplier, order_date=self.day, status="ordered", currency="USD")
         payable_plan = PaymentPlan.objects.create(purchase_order=other_purchase, direction="payable", currency="USD", planned_amount=Decimal("50"))
         cancelled_plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("50"), status="cancelled")

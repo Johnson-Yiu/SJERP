@@ -24,8 +24,6 @@ from crm.services.purchase_costs import save_costs
 
 @unittest.skipUnless(connection.vendor == "postgresql", "PostgreSQL row-lock tests require PostgreSQL")
 class PostgreSQLConcurrencyTests(TransactionTestCase):
-    reset_sequences = True
-
     def run_workers(self, function, count):
         def worker(index):
             close_old_connections()
@@ -36,6 +34,10 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
 
         with ThreadPoolExecutor(max_workers=count) as executor:
             return list(executor.map(worker, range(count)))
+
+    def test_supplier_category_through_table_exists(self):
+        through = Supplier._meta.get_field("supply_categories").remote_field.through
+        self.assertIn(through._meta.db_table, connection.introspection.table_names())
 
     def test_root_quote_number_is_unique_and_contiguous_under_concurrency(self):
         quote_date = date(2030, 1, 1)
@@ -62,7 +64,7 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
 
     def test_purchase_cost_save_allows_one_writer_and_rejects_stale_writer(self):
         customer = Customer.objects.create(code="PG-COST-C", name="PostgreSQL Cost Customer")
-        supplier = Supplier.objects.create(code="PG-COST-S", name="PostgreSQL Cost Supplier")
+        supplier = Supplier.objects.create(code="PC", name="PostgreSQL Cost Supplier")
         sku = SKU.objects.create(sku="PG-COST-SKU", product=Product.objects.create(code="PG-COST-P", name="PostgreSQL Cost Product"))
         purchase = PurchaseOrder.objects.create(
             purchase_no="PG-COST-PO",

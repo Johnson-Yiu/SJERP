@@ -11,7 +11,7 @@ class PurchaseCostTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         customer = Customer.objects.create(code="COST", name="Buyer")
-        supplier = Supplier.objects.create(code="COST", name="Supplier")
+        supplier = Supplier.objects.create(code="CP", name="Supplier")
         sku = SKU.objects.create(sku="COST", product=Product.objects.create(code="COST", name="Wire"))
         self.a = Order.objects.create(order_no="COST-A", customer=customer, order_date=date.today())
         self.b = Order.objects.create(order_no="COST-B", customer=customer, order_date=date.today())

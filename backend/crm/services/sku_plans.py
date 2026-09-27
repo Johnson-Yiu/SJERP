@@ -131,7 +131,10 @@ def apply_category_attribute_reorder(category, attribute_ids):
         raise ValidationError({"duplicate_sku": list(dict.fromkeys(conflicts))})
 
     scope = _category_scope(category)
-    products = Product.objects.filter(Q(category_id__in=scope) | Q(additional_categories__in=scope)).distinct().select_for_update().prefetch_related("additional_categories")
+    product_ids = Product.objects.filter(
+        Q(category_id__in=scope) | Q(additional_categories__in=scope)
+    ).values_list("pk", flat=True).distinct()
+    products = Product.objects.select_for_update().filter(pk__in=product_ids).order_by("pk").prefetch_related("additional_categories")
     changes_by_product = {}
     for change in preview["changes"]:
         changes_by_product.setdefault(change["product_id"], {})[change["sku_id"]] = change

@@ -40,7 +40,7 @@ def supplier_options(order_item):
 @transaction.atomic
 def allocate_order_item_supplier(order_item_id, supplier_sku_id, *, scope="order_only", note=""):
     """Assign one active SupplierSKU to a sales-order line and snapshot it."""
-    item = OrderItem.objects.select_for_update().select_related("order", "sku", "supplier_sku").get(pk=order_item_id)
+    item = OrderItem.objects.select_for_update().select_related("order", "sku").get(pk=order_item_id)
     try:
         source = SupplierSKU.objects.select_for_update().select_related("supplier", "sku").get(pk=supplier_sku_id)
     except SupplierSKU.DoesNotExist as error:

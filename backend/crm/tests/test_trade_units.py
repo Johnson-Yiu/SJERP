@@ -17,7 +17,7 @@ class TradeUnitsTests(TestCase):
         self.customer = Customer.objects.create(code='TU-C', name='Trade Buyer', country='Germany')
         self.product = Product.objects.create(code='TU-P', name='Strip')
         self.sku = SKU.objects.create(product=self.product, sku='TU-S', unit='m')
-        self.supplier = Supplier.objects.create(code='TU-V', name='Supplier')
+        self.supplier = Supplier.objects.create(code='TV', name='Supplier')
         self.unit = SKUTradeUnit.objects.create(sku=self.sku, name='10m Roll', unit='Roll', factor=10)
         self.today = date.today().isoformat()
 
@@ -95,7 +95,7 @@ class TradeUnitsTests(TestCase):
         self.unit.refresh_from_db()
         self.assertFalse(self.unit.is_default)
         scoped = SKUTradeUnit.objects.create(sku=self.sku, supplier=self.supplier, name='Supplier roll', unit='Roll', factor=10)
-        other = Supplier.objects.create(code='TU-X', name='Other supplier')
+        other = Supplier.objects.create(code='TX', name='Other supplier')
         self.post('purchase-orders/', dict(purchase_no='TU-INVALID', supplier=other.pk, order_date=self.today, items=[self.line(unit=scoped)]), 400)
         response = self.client.patch(f'/api/skus/{self.sku.pk}/', {'unit': 'pcs'}, format='json')
         self.assertEqual(response.status_code, 400)

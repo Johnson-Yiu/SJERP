@@ -47,7 +47,7 @@ class PaymentPlanModelTests(TestCase):
 
 class FinanceServiceTests(PaymentPlanModelTests):
     def make_purchase_plan(self, amount=Decimal("100")):
-        supplier = Supplier.objects.create(code=f"SUP-{Supplier.objects.count()}", name="Finance Supplier")
+        supplier = Supplier.objects.create(code="FS", name="Finance Supplier")
         purchase = PurchaseOrder.objects.create(
             purchase_no=f"PO-FIN-{PurchaseOrder.objects.count()}", supplier=supplier,
             order_date=self.order.order_date, status="ordered", currency="USD",

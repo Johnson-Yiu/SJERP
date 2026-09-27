@@ -910,7 +910,7 @@ class OrderWorkbenchTests(TestCase):
         self.assertEqual(Order.objects.get(pk=self.order.pk).items.get().id, original_item_id)
 
     def test_status_only_edit_ignores_supplier_allocation_in_commercial_signature(self):
-        supplier = Supplier.objects.create(code="ORDER-WORKBENCH-SUP", name="Order Workbench Supplier")
+        supplier = Supplier.objects.create(code="OW", name="Order Workbench Supplier")
         source = SupplierSKU.objects.create(
             supplier=supplier,
             sku=self.sku,
@@ -1153,7 +1153,7 @@ class QuoteExportTests(TestCase):
         self.assertEqual(denied.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(allowed.status_code, status.HTTP_200_OK)
 
-    @override_settings(DEBUG=True)
+    @override_settings(APP_STAGE="development", DEBUG=True, DEVELOPMENT_SUPERADMIN=True, RBAC_ENFORCEMENT=False)
     def test_export_allows_anonymous_operator_in_development(self):
         response = APIClient().get(f"/api/quotes/{self.multi_item_quote.id}/export/")
 

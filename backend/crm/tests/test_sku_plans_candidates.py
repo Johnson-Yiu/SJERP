@@ -110,7 +110,11 @@ class SKUPlansCandidatesTests(TestCase):
         return response.data
 
     def purchase(self, supplier, no):
-        return self.client.post("/api/purchase-orders/", {"purchase_no": no, "supplier": supplier.pk, "order_date": "2026-09-15", "status": "ordered", "currency": "CNY", "items": [{"sku": self.sku.pk, "quantity": 10, "unit_price": "5"}]}, format="json")
+        response = self.client.post("/api/purchase-orders/", {"purchase_no": no, "supplier": supplier.pk, "order_date": "2026-09-15", "currency": "CNY", "items": [{"sku": self.sku.pk, "quantity": 10, "unit_price": "5"}]}, format="json")
+        if response.status_code == 201:
+            placed = self.client.post(f"/api/purchase-orders/{response.data['id']}/place/", {}, format="json")
+            self.assertEqual(placed.status_code, 200, placed.data)
+        return response
 
     def test_rules_are_dynamic_and_purchase_creates_source_on_demand(self):
         self.rule()

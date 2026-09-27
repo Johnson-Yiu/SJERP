@@ -74,13 +74,13 @@ class SupplierAllocationApiTests(TestCase):
                 "supplier": self.supplier_a.pk,
                 "order": self.order.pk,
                 "order_date": "2026-09-16",
-                "status": "ordered",
                 "currency": "USD",
                 "items": [{"sku": self.sku.pk, "quantity": "100", "unit_price": "3.20"}],
             },
             format="json",
         )
         self.assertEqual(purchase.status_code, status.HTTP_201_CREATED, purchase.data)
+        self.assertEqual(self.client.post(f"/api/purchase-orders/{purchase.data['id']}/place/", {}, format="json").status_code, status.HTTP_200_OK)
         purchase_item = PurchaseOrderItem.objects.get(purchase_order_id=purchase.data["id"])
         self.assertEqual(purchase_item.supplier_sku_id, self.source_a.pk)
         self.assertEqual(purchase_item.supplier_model_snapshot, "AA-MODEL-1")

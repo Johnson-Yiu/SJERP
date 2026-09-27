@@ -17,10 +17,11 @@ test('order draft contains one order-level tail-goods policy selector', async ()
   assert.match(source, /此选择对整张订单统一生效/)
 })
 
-test('order draft does not offer shipped or completed as manual initial statuses', async () => {
+test('order draft is always a draft and explains that confirmation performs formal actions', async () => {
   const source = await readFile(componentUrl, 'utf8')
 
-  assert.match(source, /“已发货”由确认出库自动更新/)
+  assert.match(source, /保存草稿不会接受报价、创建报价迭代版、预留库存或生成应收计划/)
+  assert.match(source, /<input value="草稿" readonly/)
   assert.doesNotMatch(source, /option value="shipped"/)
   assert.doesNotMatch(source, /option value="completed"/)
 })

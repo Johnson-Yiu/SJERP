@@ -42,6 +42,25 @@ function date(value) { return value || '—' }
 const shipmentTarget = ref(null), shipmentSku = ref(null), shipmentSaving = ref(false)
 const shipmentForm = ref({})
 const shipmentReversalTarget = ref(null), shipmentReversalReason = ref(''), shipmentReversalSaving = ref(false)
+const lifecycleSaving = ref(false)
+const cancelOpen = ref(false), cancellationReason = ref('')
+async function lifecycleAction(path, confirmation) {
+  if (lifecycleSaving.value || (confirmation && !window.confirm(confirmation))) return
+  lifecycleSaving.value = true
+  error.value = ''
+  try { await api.post(`/orders/${props.id}/${path}/`); await load() }
+  catch (err) { error.value = err.message }
+  finally { lifecycleSaving.value = false }
+}
+function openCancellation() { cancellationReason.value = ''; error.value = ''; cancelOpen.value = true }
+async function submitCancellation() {
+  const reason = cancellationReason.value.trim()
+  if (!reason || lifecycleSaving.value) return
+  lifecycleSaving.value = true
+  try { await api.post(`/orders/${props.id}/cancel/`, { reason }); cancelOpen.value = false; await load() }
+  catch (err) { error.value = err.message }
+  finally { lifecycleSaving.value = false }
+}
 async function ship(item) {
   error.value = ''
   try {
@@ -128,15 +147,15 @@ watch(() => props.refreshKey, load)
 </script>
 
 <template>
-  <Teleport to="body"><div v-if="shipmentTarget" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitShipment"><h3>确认发货 · {{ shipmentTarget.sku_code }}</h3><p>待发 {{ shipmentTarget.unshipped_quantity }} {{ shipmentSku?.unit }}。选择实际发货规格，库存按基础单位扣减。</p><TradeUnitPicker :line="shipmentForm" :sku="shipmentSku" :price-field="null" preserve-base-quantity :historical-unit="shipmentTarget.historical_unit" /><label>发货数量<input v-model="shipmentForm.quantity" type="number" min="0.01" step="0.01" required /></label><label v-if="baseQuantity(shipmentForm) > Number(shipmentTarget.unshipped_quantity)">超发原因<select v-model="shipmentForm.overage_reason" required><option value="">请选择</option><option value="customer_addon">客户追加</option><option value="gift_or_sample">赠品或样品</option><option value="packing_variance">包装尾差</option></select></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="shipmentTarget = null">取消</button><button class="btn btn-primary" :disabled="shipmentSaving">{{ shipmentSaving ? '保存中…' : '确认发货' }}</button></footer></form></div><div v-if="shipmentReversalTarget" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitShipmentReversal"><h3>冲销发货 · {{ shipmentReversalTarget.shipment_no }}</h3><p>原发货记录将保留，并生成对应的库存回收入库流水。</p><label>冲销原因<textarea v-model="shipmentReversalReason" maxlength="500" rows="4" required /></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="shipmentReversalTarget = null">取消</button><button class="btn btn-primary" :disabled="shipmentReversalSaving || !shipmentReversalReason.trim()">{{ shipmentReversalSaving ? '保存中…' : '确认冲销' }}</button></footer></form></div></Teleport>
+  <Teleport to="body"><div v-if="shipmentTarget" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitShipment"><h3>确认发货 · {{ shipmentTarget.sku_code }}</h3><p>待发 {{ shipmentTarget.unshipped_quantity }} {{ shipmentSku?.unit }}。选择实际发货规格，库存按基础单位扣减。</p><TradeUnitPicker :line="shipmentForm" :sku="shipmentSku" :price-field="null" preserve-base-quantity :historical-unit="shipmentTarget.historical_unit" /><label>发货数量<input v-model="shipmentForm.quantity" type="number" min="0.01" step="0.01" required /></label><label v-if="baseQuantity(shipmentForm) > Number(shipmentTarget.unshipped_quantity)">超发原因<select v-model="shipmentForm.overage_reason" required><option value="">请选择</option><option value="customer_addon">客户追加</option><option value="gift_or_sample">赠品或样品</option><option value="packing_variance">包装尾差</option></select></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="shipmentTarget = null">取消</button><button class="btn btn-primary" :disabled="shipmentSaving">{{ shipmentSaving ? '保存中…' : '确认发货' }}</button></footer></form></div><div v-if="shipmentReversalTarget" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitShipmentReversal"><h3>冲销发货 · {{ shipmentReversalTarget.shipment_no }}</h3><p>原发货记录将保留，并生成对应的库存回收入库流水。</p><label>冲销原因<textarea v-model="shipmentReversalReason" maxlength="500" rows="4" required /></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="shipmentReversalTarget = null">取消</button><button class="btn btn-primary" :disabled="shipmentReversalSaving || !shipmentReversalReason.trim()">{{ shipmentReversalSaving ? '保存中…' : '确认冲销' }}</button></footer></form></div><div v-if="cancelOpen" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitCancellation"><h3>取消订单</h3><p>取消会释放库存预留并取消未结应收计划；已有不可逆业务记录时系统会拒绝操作。</p><label>取消原因<textarea v-model="cancellationReason" maxlength="500" rows="4" required /></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="cancelOpen = false">返回</button><button class="btn btn-primary" :disabled="lifecycleSaving || !cancellationReason.trim()">{{ lifecycleSaving ? '提交中…' : '确认取消' }}</button></footer></form></div></Teleport>
   <div class="modal-backdrop detail-backdrop" @mousedown.self="emit('close')">
     <article class="detail-modal order-workbench" role="dialog" aria-modal="true" aria-label="订单工作台">
       <div v-if="loading" class="detail-loading"><div class="spinner" /> 正在加载订单工作台…</div>
       <div v-else-if="error" class="detail-error"><AlertTriangle :size="27" /><strong>加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load">重试</button></div>
       <template v-else>
         <header class="detail-header">
-          <div class="detail-nav"><div class="detail-nav-start"><button class="detail-close" aria-label="关闭订单详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button><span>订单工作台 · 履约与回款</span></div><div class="detail-actions"><button class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> 编辑订单</button><button class="detail-close" aria-label="关闭订单详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button></div></div>
-          <div class="detail-identity"><div><p class="detail-subtitle">{{ order.customer_name }} · 下单于 {{ date(order.order_date) }}</p><h2>{{ order.order_no }}</h2><small>预计交期：{{ date(order.expected_ship_date) }}</small></div><span class="detail-badge">{{ order.status_display }}</span></div>
+          <div class="detail-nav"><div class="detail-nav-start"><button class="detail-close" aria-label="关闭订单详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button><span>订单工作台 · 履约与回款</span></div><div class="detail-actions"><button v-if="order.status === 'draft'" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> 编辑草稿</button><button v-if="order.status === 'draft'" class="btn btn-secondary" :disabled="lifecycleSaving" @click="lifecycleAction('confirm', '确认后订单将进入正式履约，并生成库存预留和应收计划。是否继续？')">确认订单</button><button v-if="order.status === 'confirmed'" class="btn btn-secondary" :disabled="lifecycleSaving" @click="lifecycleAction('start-production')">开始生产</button><button v-if="order.status === 'shipped'" class="btn btn-secondary" :disabled="lifecycleSaving" @click="lifecycleAction('complete')">完成订单</button><button v-if="['draft', 'confirmed', 'production'].includes(order.status)" class="btn btn-secondary" :disabled="lifecycleSaving" @click="openCancellation">取消订单</button><button class="detail-close" aria-label="关闭订单详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button></div></div>
+          <div class="detail-identity"><div><p class="detail-subtitle">{{ order.customer_name }} · 下单于 {{ date(order.order_date) }}</p><h2>{{ order.order_no }}</h2><small>预计交期：{{ date(order.expected_ship_date) }}</small><p v-if="order.status === 'cancelled' && order.cancellation_reason" class="cancelled-context">取消原因：{{ order.cancellation_reason }}<span v-if="order.cancelled_at"> · {{ date(order.cancelled_at) }}</span></p></div><span class="detail-badge">{{ order.status_display }}</span></div>
         </header>
         <main class="detail-content">
           <nav class="workbench-tabs" aria-label="订单工作台分页"><button v-for="tab in tabs" :key="tab[0]" :class="{ active: activeTab === tab[0] }" @click="activeTab = tab[0]">{{ tab[1] }}</button></nav>

@@ -697,7 +697,7 @@ class QuoteApiTests(TestCase):
         )
         self.assertEqual([row["quote_no"] for row in response.data["revisions"]], [root.quote_no, revision.quote_no])
 
-    def test_order_draft_copies_quote_and_accepts_source_only_after_save(self):
+    def test_order_draft_copies_quote_without_formal_side_effects(self):
         quote = self.create_quote(
             shipping_fee="12.50",
             discount="2.00",
@@ -726,7 +726,9 @@ class QuoteApiTests(TestCase):
 
         self.assertEqual(saved.status_code, status.HTTP_201_CREATED, getattr(saved, "data", None))
         self.assertEqual(saved.data["quote"], quote.id)
-        self.assertEqual(quote.status, "accepted")
+        self.assertEqual(saved.data["status"], "draft")
+        self.assertEqual(quote.status, "draft")
+        self.assertFalse(PaymentPlan.objects.filter(order_id=saved.data["id"]).exists())
 
     def test_order_with_commercial_changes_creates_and_links_quote_revision(self):
         quote = self.create_quote(
@@ -748,6 +750,11 @@ class QuoteApiTests(TestCase):
 
         self.assertEqual(saved.status_code, status.HTTP_201_CREATED, getattr(saved, "data", None))
         order = Order.objects.get(pk=saved.data["id"])
+        self.assertEqual(order.quote_id, quote.id)
+        self.assertEqual(Quote.objects.count(), 1)
+        confirmed = self.client.post(f"/api/orders/{order.id}/confirm/", {}, format="json")
+        self.assertEqual(confirmed.status_code, status.HTTP_200_OK, confirmed.data)
+        order.refresh_from_db()
         revision = order.quote
         quote.refresh_from_db()
         self.assertNotEqual(revision.id, quote.id)
@@ -764,7 +771,7 @@ class QuoteApiTests(TestCase):
         self.assertEqual(Decimal(quote.items.get().quantity), Decimal("3.00"))
         self.assertEqual(quote.status, "draft")
 
-    def test_editing_order_commercial_terms_creates_and_links_quote_revision(self):
+    def test_editing_order_draft_defers_quote_revision_until_confirmation(self):
         quote = self.create_quote(items=[{"sku": self.sku.id, "quantity": "2.00", "unit_price": "10.00"}])
         draft = self.client.get(f"/api/quotes/{quote.id}/order-draft/").data
         saved = self.client.post("/api/orders/", draft, format="json")
@@ -777,6 +784,9 @@ class QuoteApiTests(TestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK, getattr(response, "data", None))
+        self.assertEqual(Quote.objects.count(), 1)
+        confirmed = self.client.post(f"/api/orders/{saved.data['id']}/confirm/", {}, format="json")
+        self.assertEqual(confirmed.status_code, status.HTTP_200_OK, confirmed.data)
         order = Order.objects.get(pk=saved.data["id"])
         revision = order.quote
         self.assertNotEqual(revision.pk, quote.pk)
@@ -799,6 +809,8 @@ class QuoteApiTests(TestCase):
         saved = self.client.post("/api/orders/", draft, format="json")
 
         self.assertEqual(saved.status_code, status.HTTP_201_CREATED, getattr(saved, "data", None))
+        confirmed = self.client.post(f"/api/orders/{saved.data['id']}/confirm/", {}, format="json")
+        self.assertEqual(confirmed.status_code, status.HTTP_200_OK, confirmed.data)
         revision = Order.objects.get(pk=saved.data["id"]).quote
         self.assertEqual(revision.parent_quote_id, source.id)
         self.assertEqual(revision.quote_no, f"{root.quote_no}-2-1")
@@ -888,7 +900,6 @@ class OrderWorkbenchTests(TestCase):
                 "quote": self.quote.id,
                 "order_date": "2026-08-19",
                 "expected_ship_date": "2026-09-06",
-                "status": "production",
                 "currency": "USD",
                 "exchange_rate": "1.000000",
                 "shipping_fee": "0.00",
@@ -909,7 +920,7 @@ class OrderWorkbenchTests(TestCase):
         self.assertEqual(response.data["expected_ship_date"], "2026-09-06")
         self.assertEqual(Order.objects.get(pk=self.order.pk).items.get().id, original_item_id)
 
-    def test_status_only_edit_ignores_supplier_allocation_in_commercial_signature(self):
+    def test_noncommercial_edit_preserves_supplier_allocation(self):
         supplier = Supplier.objects.create(code="OW", name="Order Workbench Supplier")
         source = SupplierSKU.objects.create(
             supplier=supplier,
@@ -940,7 +951,6 @@ class OrderWorkbenchTests(TestCase):
                 "quote": self.quote.id,
                 "order_date": "2026-08-19",
                 "expected_ship_date": "2026-09-06",
-                "status": "production",
                 "currency": "USD",
                 "exchange_rate": "1.000000",
                 "shipping_fee": "0.00",
@@ -994,13 +1004,15 @@ class OrderCompletionTests(TestCase):
         )
 
     def set_status(self, order, value):
+        if value == "completed":
+            return self.client.post(f"/api/orders/{order.pk}/complete/", {}, format="json")
         return self.client.patch(f"/api/orders/{order.pk}/", {"status": value}, format="json")
 
     def test_confirmed_order_cannot_be_completed_before_shipping(self):
         order, _ = self.create_order("confirmed")
         response = self.set_status(order, "completed")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("订单尚未全部发货", str(response.data))
+        self.assertIn("只有已发货订单可以完成", str(response.data))
         order.refresh_from_db()
         self.assertEqual(order.status, "confirmed")
 

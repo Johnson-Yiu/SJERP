@@ -26,11 +26,13 @@ from .permissions import HSCodeMaintenancePermission, PermissionAdminOnly, Quote
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.finance import allocate_advance, approve_contract_change, record_contract_payment, record_transaction, void_transaction
 from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_receipt as reverse_receipt_service, reverse_shipment as reverse_shipment_service, sku_metrics
+from .services.order_lifecycle import cancel_order, complete_order, confirm_order, start_order_production
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
+from .services.purchase_lifecycle import cancel_purchase_order, place_purchase_order
 from .services.sku_plans import apply_category_attribute_reorder, preview_category_attribute_reorder
 from .sku_identity import normalize_abbreviation_key
 from .sales_model_defaults import DEFAULT_SALES_MODEL_ABBREVIATIONS
@@ -145,6 +147,56 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = PurchaseOrderSerializer
     queryset = PurchaseOrder.objects.select_related("supplier", "order").prefetch_related("items__sku", "items__supplier_sku__supplier", "items__receipts", "transactions")
     search_fields = ["purchase_no", "supplier__name", "order__order_no"]
+
+    def create(self, request, *args, **kwargs):
+        if request.data.get("status") not in (None, "", "draft"):
+            return Response({"detail": "新建采购单只能保存为草稿，请使用确认下单动作。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if "status" in request.data:
+            return Response({"detail": "采购单状态只能通过确认下单、到货或取消等业务动作变更。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        purchase = self.get_object()
+        if purchase.status != "draft":
+            return Response({"detail": "正式采购单不能删除，请使用取消采购。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().destroy(request, *args, **kwargs)
+
+    @action(detail=True, methods=["post"])
+    def place(self, request, pk=None):
+        try:
+            with transaction.atomic():
+                purchase = place_purchase_order(self.get_object())
+                record_operation(
+                    request=request,
+                    instance=purchase,
+                    action="custom",
+                    action_label="确认采购下单",
+                    metadata={"purchase_order_id": purchase.id, "purchase_no": purchase.purchase_no},
+                )
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(self.get_serializer(purchase).data)
+
+    @action(detail=True, methods=["post"])
+    def cancel(self, request, pk=None):
+        input_serializer = CancellationInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        try:
+            with transaction.atomic():
+                purchase = cancel_purchase_order(self.get_object(), input_serializer.validated_data["reason"])
+                record_operation(
+                    request=request,
+                    instance=purchase,
+                    action="custom",
+                    action_label="取消采购单",
+                    metadata={"reason": purchase.cancellation_reason},
+                )
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(self.get_serializer(purchase).data)
 
     @action(detail=True, methods=["post"], url_path="cost-allocation-preview")
     def cost_allocation_preview(self, request, pk=None):
@@ -1136,6 +1188,79 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     queryset = Order.objects.select_related("customer", "quote").prefetch_related("items__sku__product", "items__supplier_sku__supplier", "transactions")
     search_fields = ["order_no", "customer__name"]
     ordering_fields = ["order_date", "expected_ship_date", "created_at"]
+
+    def create(self, request, *args, **kwargs):
+        if request.data.get("status") not in (None, "", "draft"):
+            return Response({"detail": "新建订单只能保存为草稿，请使用确认订单动作。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if "status" in request.data:
+            return Response({"detail": "订单状态只能通过确认、开始生产、发货、完成或取消等业务动作变更。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        order = self.get_object()
+        if order.status != "draft":
+            return Response({"detail": "正式订单不能删除，请使用取消订单。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().destroy(request, *args, **kwargs)
+
+    @action(detail=True, methods=["post"])
+    def confirm(self, request, pk=None):
+        try:
+            with transaction.atomic():
+                order = confirm_order(self.get_object())
+                record_operation(
+                    request=request,
+                    instance=order,
+                    action="custom",
+                    action_label="确认销售订单",
+                    metadata={
+                        "quote_id": order.quote_id,
+                        "quote_no": order.quote.quote_no if order.quote_id else "",
+                    },
+                )
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(self.get_serializer(order).data)
+
+    @action(detail=True, methods=["post"], url_path="start-production")
+    def start_production(self, request, pk=None):
+        try:
+            with transaction.atomic():
+                order = start_order_production(self.get_object())
+                record_operation(request=request, instance=order, action="custom", action_label="开始订单生产")
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(self.get_serializer(order).data)
+
+    @action(detail=True, methods=["post"])
+    def complete(self, request, pk=None):
+        try:
+            with transaction.atomic():
+                order = complete_order(self.get_object())
+                record_operation(request=request, instance=order, action="custom", action_label="完成销售订单")
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(self.get_serializer(order).data)
+
+    @action(detail=True, methods=["post"])
+    def cancel(self, request, pk=None):
+        input_serializer = CancellationInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        try:
+            with transaction.atomic():
+                order = cancel_order(self.get_object(), input_serializer.validated_data["reason"])
+                record_operation(
+                    request=request,
+                    instance=order,
+                    action="custom",
+                    action_label="取消销售订单",
+                    metadata={"reason": order.cancellation_reason},
+                )
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(self.get_serializer(order).data)
 
     def get_queryset(self):
         qs = super().get_queryset()

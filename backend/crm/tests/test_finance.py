@@ -21,6 +21,7 @@ class PaymentPlanModelTests(TestCase):
             customer=customer,
             order_date=date(2026, 8, 22),
             currency="USD",
+            status="confirmed",
         )
         self.order.items.create(sku=sku, quantity=Decimal("10"), unit_price=Decimal("10"))
 
@@ -178,6 +179,7 @@ class FinanceServiceTests(PaymentPlanModelTests):
             customer=self.customer,
             order_date=date(2026, 8, 23),
             currency="USD",
+            status="confirmed",
         )
         second_plan = PaymentPlan.objects.create(
             order=second_order,
@@ -330,7 +332,7 @@ class FinanceServiceTests(PaymentPlanModelTests):
 
     def test_record_transaction_rejects_wrong_currency_without_side_effects(self):
         usd_plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))
-        cny_order = Order.objects.create(order_no="SO-FIN-CNY", customer=self.customer, order_date=self.order.order_date, currency="CNY")
+        cny_order = Order.objects.create(order_no="SO-FIN-CNY", customer=self.customer, order_date=self.order.order_date, currency="CNY", status="confirmed")
         cny_plan = PaymentPlan.objects.create(order=cny_order, direction="receivable", currency="CNY", planned_amount=Decimal("100"))
         before = (Transaction.objects.count(), usd_plan.settled_amount, cny_plan.settled_amount)
 

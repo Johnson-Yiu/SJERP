@@ -49,20 +49,20 @@ test('orders reuse the compact summary cards used by the quotation desk', async 
   assert.match(source, /<SummaryCards v-if="isOrder" :items="orderMetrics"/)
 })
 
-test('order editor reserves shipped status for confirmed outbound fulfillment', async () => {
+test('order editor does not expose manual lifecycle status changes', async () => {
   const source = await readFile(componentUrl, 'utf8')
 
-  assert.match(source, /editableOrderStatuses/)
-  assert.match(source, /已发货（由出库自动更新）/)
-  assert.doesNotMatch(source, /option value="shipped">已发货<\/option>/)
+  assert.match(source, /草稿（确认后进入正式履约）/)
+  assert.match(source, /订单状态由确认、生产、发货、完成或取消等业务动作推进/)
+  assert.match(source, /if \(isOrder\.value\) delete data\.status/)
+  assert.doesNotMatch(source, /editableOrderStatuses/)
 })
 
-test('order editor only exposes completed after the order is shipped', async () => {
+test('order list limits edit and delete operations to drafts', async () => {
   const source = await readFile(componentUrl, 'utf8')
 
-  assert.match(source, /editableOrderStatusEntries = computed/)
-  assert.match(source, /key !== 'completed' \|\| \['shipped', 'completed'\]\.includes\(form\.status\)/)
-  assert.match(source, /仅已发货订单可进入已完成/)
+  assert.match(source, /v-if="row\.status === 'draft'" class="mini-btn" :aria-label="`编辑/)
+  assert.match(source, /v-if="row\.status === 'draft'" class="mini-btn" :aria-label="`删除/)
 })
 
 test('editing from the order workbench reloads the current order before opening the editor', async () => {

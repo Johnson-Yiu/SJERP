@@ -17,7 +17,7 @@ class TradeFinanceUpgradeTests(TestCase):
         self.customer = Customer.objects.create(code="UP-B", name="Upgrade Buyer")
         self.supplier = Supplier.objects.create(code="UP", name="Upgrade Supplier")
         self.sku = SKU.objects.create(sku="UP-SKU", product=Product.objects.create(code="UP-P", name="Light"))
-        self.order = Order.objects.create(order_no="UP-SO", customer=self.customer, order_date=self.day, currency="USD", exchange_rate=7)
+        self.order = Order.objects.create(order_no="UP-SO", customer=self.customer, order_date=self.day, currency="USD", exchange_rate=7, status="confirmed")
         self.item = self.order.items.create(sku=self.sku, quantity=10, unit_price=10)
         self.purchase = PurchaseOrder.objects.create(purchase_no="UP-PO", supplier=self.supplier, order=self.order, order_date=self.day, status="ordered", currency="USD", exchange_rate=7)
         self.purchase_item = self.purchase.items.create(sku=self.sku, quantity=10, unit_price=5)
@@ -83,7 +83,7 @@ class TradeFinanceUpgradeTests(TestCase):
 
     def test_shipping_cannot_consume_other_order_reservations(self):
         self.stock(5)
-        other = Order.objects.create(order_no="UP-SO-2", customer=self.customer, order_date=self.day)
+        other = Order.objects.create(order_no="UP-SO-2", customer=self.customer, order_date=self.day, status="confirmed")
         other.items.create(sku=self.sku, quantity=5, unit_price=1)
         allocate_order(other)
         with self.assertRaises(ValidationError):
@@ -457,9 +457,9 @@ class TradeFinanceUpgradeTests(TestCase):
 
     def test_advance_allocation_rejects_cross_party_direction_currency_and_closed_plan_atomically(self):
         other_customer = Customer.objects.create(code="UP-C-OTHER", name="Other Upgrade Buyer")
-        other_order = Order.objects.create(order_no="UP-SO-OTHER", customer=other_customer, order_date=self.day, currency="USD")
+        other_order = Order.objects.create(order_no="UP-SO-OTHER", customer=other_customer, order_date=self.day, currency="USD", status="confirmed")
         other_plan = PaymentPlan.objects.create(order=other_order, direction="receivable", currency="USD", planned_amount=Decimal("50"))
-        eur_order = Order.objects.create(order_no="UP-SO-EUR", customer=self.customer, order_date=self.day, currency="EUR")
+        eur_order = Order.objects.create(order_no="UP-SO-EUR", customer=self.customer, order_date=self.day, currency="EUR", status="confirmed")
         eur_plan = PaymentPlan.objects.create(order=eur_order, direction="receivable", currency="EUR", planned_amount=Decimal("50"))
         other_supplier = Supplier.objects.create(code="UO", name="Other Upgrade Supplier")
         other_purchase = PurchaseOrder.objects.create(purchase_no="UP-PO-OTHER", supplier=other_supplier, order_date=self.day, status="ordered", currency="USD")
@@ -558,7 +558,7 @@ class TradeFinanceUpgradeTests(TestCase):
         response = self.client.post("/api/purchase-orders/", {"purchase_no": "UP-DRAFT", "supplier": self.supplier.pk, "order_date": self.day.isoformat(), "status": "draft", "items": [{"sku": self.sku.pk, "quantity": "2", "unit_price": "3"}]}, format="json")
         self.assertEqual(response.status_code, 201, response.data)
         self.assertFalse(PaymentPlan.objects.filter(purchase_order_id=response.data["id"]).exists())
-        response = self.client.patch(f"/api/purchase-orders/{response.data['id']}/", {"status": "ordered"}, format="json")
+        response = self.client.post(f"/api/purchase-orders/{response.data['id']}/place/", {}, format="json")
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(PaymentPlan.objects.filter(purchase_order_id=response.data["id"]).count(), 2)
 
@@ -588,7 +588,7 @@ class TradeFinanceUpgradeTests(TestCase):
         plans[0].save()
         plans[1].planned_amount = 80
         plans[1].save()
-        response = self.client.patch(f"/api/orders/{self.order.pk}/", {"status": "production"}, format="json")
+        response = self.client.post(f"/api/orders/{self.order.pk}/start-production/", {}, format="json")
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(list(self.order.payment_plans.order_by('pk').values_list('planned_amount', flat=True)), [20, 80])
 

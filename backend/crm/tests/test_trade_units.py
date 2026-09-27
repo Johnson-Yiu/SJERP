@@ -32,15 +32,22 @@ class TradeUnitsTests(TestCase):
     def quote(self, line=None):
         return self.post('quotes/', dict(customer=self.customer.pk, quote_date=self.today, items=[line or self.line()]))
 
+    def confirm_order(self, order):
+        return self.post(f"orders/{order['id']}/confirm/", {}, 200)
+
+    def place_purchase(self, purchase):
+        return self.post(f"purchase-orders/{purchase['id']}/place/", {}, 200)
+
     def test_complete_quote_order_purchase_receipt_shipment_chain(self):
         quote = self.quote()
         self.assertEqual(Decimal(quote['items'][0]['quantity']), 20)
         self.assertEqual(Decimal(quote['total_amount']), 16)
         draft = self.client.get(f"/api/quotes/{quote['id']}/order-draft/").data
-        draft['status'] = 'confirmed'
         order = self.post('orders/', draft)
+        order = self.confirm_order(order)
         self.assertEqual(order['quote'], quote['id'])
-        purchase = self.post('purchase-orders/', dict(purchase_no='TU-PO', supplier=self.supplier.pk, order=order['id'], order_date=self.today, status='ordered', items=[self.line(price='5')]))
+        purchase = self.post('purchase-orders/', dict(purchase_no='TU-PO', supplier=self.supplier.pk, order=order['id'], order_date=self.today, items=[self.line(price='5')]))
+        purchase = self.place_purchase(purchase)
         receipt = dict(purchase_item=purchase['items'][0]['id'], receipt_date=self.today, quantity='1', trade_unit=self.unit.pk, trade_quantity='1', trade_unit_price='5', unit_cost='0')
         self.post(f"purchase-orders/{purchase['id']}/receive/", receipt)
         self.assertEqual(sku_metrics(self.sku)['actual_quantity'], 10)
@@ -114,8 +121,10 @@ class TradeUnitsTests(TestCase):
 
     def test_alternative_receipt_unit_and_atomic_over_shipment(self):
         large = SKUTradeUnit.objects.create(sku=self.sku, name='20m Roll', unit='Roll', factor=20)
-        order = self.post('orders/', dict(order_no='TU-ALT', customer=self.customer.pk, order_date=self.today, status='confirmed', items=[self.line('2')]))
-        purchase = self.post('purchase-orders/', dict(purchase_no='TU-ALT-PO', supplier=self.supplier.pk, order_date=self.today, status='ordered', items=[self.line('1', unit=large)]))
+        order = self.post('orders/', dict(order_no='TU-ALT', customer=self.customer.pk, order_date=self.today, items=[self.line('2')]))
+        order = self.confirm_order(order)
+        purchase = self.post('purchase-orders/', dict(purchase_no='TU-ALT-PO', supplier=self.supplier.pk, order_date=self.today, items=[self.line('1', unit=large)]))
+        purchase = self.place_purchase(purchase)
         self.post(f"purchase-orders/{purchase['id']}/receive/", dict(purchase_item=purchase['items'][0]['id'], receipt_date=self.today, trade_unit=self.unit.pk, trade_quantity='2', trade_unit_price='4'))
         self.assertEqual(PurchaseOrder.objects.get(pk=purchase['id']).status, 'completed')
         self.post(f"orders/{order['id']}/ship/", dict(shipment_date=self.today, items=[dict(order_item=order['items'][0]['id'], trade_unit=large.pk, trade_quantity='2', overage_reason='gift_or_sample')]), 400)
@@ -135,8 +144,8 @@ class TradeUnitsTests(TestCase):
         quote = self.quote()
         draft = self.client.get(f"/api/quotes/{quote['id']}/order-draft/").data
         draft['items'][0]['trade_quantity'] = '3'
-        draft['status'] = 'confirmed'
         order = self.post('orders/', draft)
+        order = self.confirm_order(order)
         self.assertNotEqual(order['quote'], quote['id'])
         revision = Quote.objects.get(pk=order['quote']).items.get()
         self.assertEqual(revision.trade_quantity, 3)
@@ -156,8 +165,8 @@ class TradeUnitsTests(TestCase):
         quote = self.post('quotes/', dict(customer=self.customer.pk, quote_date=self.today, items=[self.line('2', '8'), self.line('2', '15', large)]))
         self.assertEqual(Decimal(quote['total_amount']), 46)
         draft = self.client.get(f"/api/quotes/{quote['id']}/order-draft/").data
-        draft['status'] = 'confirmed'
         order = self.post('orders/', draft)
+        order = self.confirm_order(order)
         self.assertEqual([Decimal(row['quantity']) for row in order['items']], [20, 40])
         self.assertEqual(sku_metrics(self.sku)['reserved_quantity'], 60)
         self.post(f"orders/{order['id']}/ship/", dict(shipment_date=self.today, items=[

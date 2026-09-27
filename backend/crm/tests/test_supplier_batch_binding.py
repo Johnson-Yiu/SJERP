@@ -70,8 +70,9 @@ class SupplierBatchBindingTests(TestCase):
 
     def test_purchase_creates_supplier_sku_and_snapshots_traits(self):
         self.assertEqual(self.bind().status_code, 200)
-        response = self.client.post("/api/purchase-orders/", {"purchase_no": "PO-BIND", "supplier": self.b.pk, "order_date": "2026-09-16", "status": "ordered", "currency": "CNY", "items": [{"sku": self.skus[0].pk, "quantity": "2", "unit_price": "5"}]}, format="json")
+        response = self.client.post("/api/purchase-orders/", {"purchase_no": "PO-BIND", "supplier": self.b.pk, "order_date": "2026-09-16", "currency": "CNY", "items": [{"sku": self.skus[0].pk, "quantity": "2", "unit_price": "5"}]}, format="json")
         self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(self.client.post(f"/api/purchase-orders/{response.data['id']}/place/", {}, format="json").status_code, 200)
         source = SupplierSKU.objects.get(sku=self.skus[0], supplier=self.b)
         self.assertEqual(source.characteristics["质量等级"], "A+")
         self.assertEqual(source.purchase_items.get().supplier_characteristics_snapshot["其他备注"], "测试差异")

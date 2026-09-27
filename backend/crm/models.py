@@ -754,12 +754,14 @@ class Order(TimestampedModel):
     order_date = models.DateField("订单日期")
     expected_ship_date = models.DateField("预计交期", null=True, blank=True)
     tail_goods_policy = models.CharField("尾货策略", max_length=20, choices=TAIL_GOODS_POLICY_CHOICES, default="SAME_CARTON")
-    status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="confirmed")
+    status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
     currency = models.CharField("币种", max_length=10, default="USD")
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
     shipping_fee = models.DecimalField("运费", max_digits=14, decimal_places=4, default=0)
     discount = models.DecimalField("折扣金额", max_digits=14, decimal_places=4, default=0)
     notes = models.TextField("备注", blank=True)
+    cancelled_at = models.DateTimeField("取消时间", null=True, blank=True)
+    cancellation_reason = models.TextField("取消原因", blank=True)
 
     class Meta:
         ordering = ["-order_date", "-id"]
@@ -947,6 +949,8 @@ class PurchaseOrder(TimestampedModel):
     currency = models.CharField("币种", max_length=10, default="USD")
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
     notes = models.TextField("备注", blank=True)
+    cancelled_at = models.DateTimeField("取消时间", null=True, blank=True)
+    cancellation_reason = models.TextField("取消原因", blank=True)
 
     class Meta:
         ordering = ["-order_date", "-id"]

@@ -256,6 +256,8 @@ def validate_contract_edit(instance, attrs, *, purchase=False):
         key in attrs and attrs[key] != getattr(instance, key, None)
         for key in sensitive - {"items"}
     )
+    if instance.status != "draft" and changed:
+        raise serializers.ValidationError("正式合同不能直接改写商品、往来方、币种或金额依据；请在确认前编辑草稿，或使用对应的正式业务流程。")
     if changed and (history or financial):
         raise serializers.ValidationError("合同已有采购、出入库或收付款记录，不能改写商品、往来方及金额依据。请使用追加单或退款记录处理后续变化。")
     new_status = attrs.get("status", instance.status)
@@ -296,6 +298,7 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseOrder
         fields = "__all__"
+        read_only_fields = ["status", "cancelled_at", "cancellation_reason"]
 
     def validate(self, attrs):
         validate_contract_edit(self.instance, attrs, purchase=True)
@@ -347,15 +350,13 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
                 **item,
             ) for item in items
         ])
-        from .services.finance import ensure_default_payment_plans
-        ensure_default_payment_plans(purchase)
         return purchase
 
     @transaction.atomic
     def update(self, instance, validated_data):
         instance = PurchaseOrder.objects.select_for_update().get(pk=instance.pk)
         validate_contract_edit(instance, validated_data, purchase=True)
-        changed = any(key in validated_data for key in ("items", "currency")) or (instance.status in {"draft", "cancelled"} and validated_data.get("status", instance.status) not in {"draft", "cancelled"})
+        changed = any(key in validated_data for key in ("items", "currency"))
         items = validated_data.pop("items", None)
         if items is not None:
             instance.items.all().delete()
@@ -364,7 +365,6 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         for key, value in validated_data.items():
             setattr(instance, key, value)
         instance.save()
-        sync_unsettled_contract_plans(instance, changed)
         return instance
 
 
@@ -412,6 +412,10 @@ class ShipmentInputSerializer(serializers.Serializer):
 
 
 class ShipmentReversalInputSerializer(serializers.Serializer):
+    reason = serializers.CharField(max_length=500, allow_blank=False, trim_whitespace=True)
+
+
+class CancellationInputSerializer(serializers.Serializer):
     reason = serializers.CharField(max_length=500, allow_blank=False, trim_whitespace=True)
 
 
@@ -1171,6 +1175,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
+        read_only_fields = ["status", "cancelled_at", "cancellation_reason"]
 
     def get_balance_amount(self, obj):
         return (obj.total_amount - obj.paid_amount).quantize(Decimal("0.01"))
@@ -1182,9 +1187,9 @@ class OrderSerializer(serializers.ModelSerializer):
         for item in attrs.get("items", []):
             if not item["sku"].active and (self.instance is None or not self.instance.items.filter(sku=item["sku"]).exists()):
                 raise serializers.ValidationError({"items": "新订单行不能选择停用或已归档的 SKU。"})
-        source_quote = attrs.get("quote")
-        customer = attrs.get("customer")
-        if self.instance is None and source_quote and customer and source_quote.customer_id != customer.id:
+        source_quote = attrs.get("quote", getattr(self.instance, "quote", None))
+        customer = attrs.get("customer", getattr(self.instance, "customer", None))
+        if source_quote and customer and source_quote.customer_id != customer.id:
             raise serializers.ValidationError({"customer": "从报价创建订单时，客户必须与来源报价一致。"})
         return attrs
 
@@ -1349,9 +1354,10 @@ class OrderSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         items = validated_data.pop("items", [])
-        source_quote = validated_data.get("quote")
-        if source_quote:
-            validated_data["quote"] = self._create_quote_revision_if_needed(source_quote, validated_data, items)
+        # Draft creation deliberately has no lifecycle side effects.  Quote
+        # acceptance/revision, reservations and payment plans occur only in
+        # order_lifecycle.confirm_order().
+        validated_data.pop("status", None)
         order = Order.objects.create(**validated_data)
         source_items = list(order.quote.items.order_by("id")) if order.quote_id else []
         rows = []
@@ -1361,12 +1367,6 @@ class OrderSerializer(serializers.ModelSerializer):
             source = source_items[index] if index < len(source_items) and source_items[index].sku_id == item["sku"].pk else None
             rows.append(OrderItem(order=order, **item, **self._item_snapshots(item["sku"], source)))
         OrderItem.objects.bulk_create(rows)
-        from .services.fulfillment import allocate_order
-        allocate_order(order)
-        from .services.finance import ensure_default_payment_plans
-        ensure_default_payment_plans(order)
-        if order.quote_id:
-            Quote.objects.filter(pk=order.quote_id).update(status="accepted")
         return order
 
     @transaction.atomic
@@ -1376,24 +1376,9 @@ class OrderSerializer(serializers.ModelSerializer):
         items = validated_data.pop("items", None)
         previous_items = list(instance.items.order_by("id"))
         items_changed = items is not None and self._order_item_signature(items) != self._persisted_order_item_signature(previous_items)
-        changed = items_changed or any(
-            key in validated_data and validated_data[key] != getattr(instance, key)
-            for key in ("currency", "exchange_rate", "shipping_fee", "discount")
-        ) or (instance.status in {"draft", "cancelled"} and validated_data.get("status", instance.status) not in {"draft", "cancelled"})
-
-        # The order remains an executable contract, but commercial edits must retain
-        # an immutable quote version as their source of truth.  This mirrors initial
-        # quote-to-order conversion and prevents the order total from silently
-        # diverging from its linked quote.
-        commercial_edit = items_changed or any(
-            key in validated_data and validated_data[key] != getattr(instance, key)
-            for key in ("currency", "exchange_rate", "shipping_fee", "discount", "notes")
-        )
-        if instance.quote_id and commercial_edit:
-            revision_items = items if items is not None else self._existing_order_items_for_quote_revision(instance)
-            revision = self._create_quote_revision_if_needed(instance.quote, validated_data, revision_items)
-            if revision.pk != instance.quote_id:
-                validated_data["quote"] = revision
+        # A draft may change freely.  For a formal order, retain the existing
+        # contract-edit validation but never create a quote revision from PATCH;
+        # revisions are created atomically by the confirm action only.
         for key, value in validated_data.items():
             setattr(instance, key, value)
         instance.save()
@@ -1406,9 +1391,6 @@ class OrderSerializer(serializers.ModelSerializer):
                 source = previous_items[index] if index < len(previous_items) and previous_items[index].sku_id == item["sku"].pk else None
                 rows.append(OrderItem(order=instance, **item, **self._item_snapshots(item["sku"], source), **self._supplier_snapshots(source)))
             OrderItem.objects.bulk_create(rows)
-        from .services.fulfillment import allocate_order
-        allocate_order(instance)
-        sync_unsettled_contract_plans(instance, changed)
         return instance
 
 

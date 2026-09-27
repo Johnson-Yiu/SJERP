@@ -29,3 +29,13 @@ test('purchase desk exposes receipt history and the reversal flow', async () => 
   assert.match(source, /已冲销/)
   assert.match(source, /reversalReason/)
 })
+
+test('purchase desk keeps drafts editable and separates placement from draft save', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /function editDraft\(row\)/)
+  assert.match(source, /api\.put\(`\/purchase-orders\/\$\{editingPurchaseId\.value\}\//)
+  assert.match(source, /编辑草稿/)
+  assert.match(source, /确认下单/)
+  assert.match(source, /const \{ status, \.\.\.draftPayload \} = draft\.value/)
+})

@@ -92,13 +92,13 @@ class SupplierSKUApiTests(TestCase):
                 "supplier": self.supplier_a.id,
                 "order": self.order.id,
                 "order_date": "2026-08-23",
-                "status": "ordered",
                 "currency": "USD",
                 "items": [{"sku": self.sku.id, "supplier_sku": source.id, "quantity": "10", "unit_price": "3.0000"}],
             },
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(self.client.post(f"/api/purchase-orders/{response.data['id']}/place/", {}, format="json").status_code, status.HTTP_200_OK)
         item = PurchaseOrderItem.objects.get(purchase_order_id=response.data["id"])
         self.assertEqual(item.supplier_sku_id, source.id)
         self.assertEqual(item.supplier_name_snapshot, self.supplier_a.name)

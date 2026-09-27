@@ -18,7 +18,7 @@ class ReportingTests(TestCase):
         product = Product.objects.create(code="REPORT", name="Lamp", category=category)
         self.sku = SKU.objects.create(sku="REPORT-1", product=product, unit="pcs", specification="a")
         self.sku2 = SKU.objects.create(sku="REPORT-2", product=product, unit="box", specification="b")
-        self.order = Order.objects.create(order_no="REPORT-O", customer=self.customer, order_date=date(2026, 9, 1), currency="USD", exchange_rate=7, shipping_fee=3, discount=1)
+        self.order = Order.objects.create(order_no="REPORT-O", customer=self.customer, order_date=date(2026, 9, 1), currency="USD", exchange_rate=7, shipping_fee=3, discount=1, status="confirmed")
         self.order.items.create(sku=self.sku, quantity=2, unit_price=10)
         self.order.items.create(sku=self.sku2, quantity=1, unit_price=5)
 
@@ -56,7 +56,7 @@ class ReportingTests(TestCase):
         self.assertEqual(self.query(group_by="region", filter_region='')['rows'][0]['label'], '未填写')
 
     def test_time_buckets_zero_fill_and_comparison(self):
-        order = Order.objects.create(order_no="PREVIOUS", customer=self.customer, order_date=date(2026, 8, 2), shipping_fee=27)
+        order = Order.objects.create(order_no="PREVIOUS", customer=self.customer, order_date=date(2026, 8, 2), shipping_fee=27, status="confirmed")
         data = self.query(grain="day")
         self.assertEqual(len(data['rows']), 30)
         self.assertEqual(data['rows'][1]['amount'], 0)

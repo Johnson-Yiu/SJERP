@@ -90,8 +90,10 @@ async function save() {
   }
   saving.value = true
   error.value = ''
+  const draftPayload = { ...form }
+  delete draftPayload.status
   const payload = {
-    ...form,
+    ...draftPayload,
     customer: Number(form.customer),
     quote: Number(form.quote),
     items: form.items.map((item) => tradePayload({ ...item, sku: Number(item.sku) })),
@@ -110,13 +112,13 @@ async function save() {
         <button type="button" class="mini-btn" aria-label="关闭订单草稿" @click="emit('close')"><X :size="18" /></button>
       </div>
       <div class="modal-body">
-        <p class="draft-hint">订单草稿由当前报价版本预填。若修改商品、价格、币种、汇率、运费、折扣或条款，保存时会自动生成一份报价迭代版并关联订单。</p>
+        <p class="draft-hint">订单草稿由当前报价版本预填。保存草稿不会接受报价、创建报价迭代版、预留库存或生成应收计划；确认订单时才会一次性执行这些正式动作。</p>
         <div class="form-grid">
           <div class="field"><label>订单编号 *</label><input v-model="form.order_no" required /></div>
           <div class="field"><label>客户 *</label><input :value="customers.find((customer) => customer.id === Number(form.customer))?.name || '—'" readonly aria-label="来源报价客户" /></div>
           <div class="field"><label>订单日期 *</label><SegmentedDateInput :model-value="form.order_date" required @update:model-value="setOrderDate" /></div>
           <div class="field"><label>预计交期</label><div class="lead-time-input"><input v-model="leadTimeDays" type="number" min="0" step="1" placeholder="天数" aria-label="交期天数" @input="setLeadTimeDays" /><span>天</span><SegmentedDateInput :model-value="form.expected_ship_date" @update:model-value="setExpectedShipDate" /></div></div>
-          <div class="field"><label>状态 *</label><select v-model="form.status"><option value="draft">草稿</option><option value="confirmed">已确认</option><option value="production">生产中</option><option value="cancelled">已取消</option></select><small class="field-hint">“已发货”由确认出库自动更新。</small></div>
+          <div class="field"><label>状态</label><input value="草稿" readonly /><small class="field-hint">保存后可在订单工作台确认订单。</small></div>
           <div class="field tail-policy-field"><label>尾货策略 <button type="button" class="policy-help-trigger" aria-label="查看尾货策略说明" @click="tailPolicyHelpOpen = !tailPolicyHelpOpen">?</button></label><select v-model="form.tail_goods_policy"><option v-for="(label, key) in tailPolicyLabels" :key="key" :value="key">{{ label }}</option></select><div v-if="tailPolicyHelpOpen" class="policy-help" role="note"><strong>不同策略的区别</strong><ul><li><b>整箱优先：</b>尾货自动使用标准箱尺寸、皮重和 CBM。</li><li><b>尾箱待确认：</b>保留尾货箱数并标记待确认，尺寸和 CBM 等待补充。</li><li><b>人工装箱：</b>不自动生成尾货箱，余数作为警告交由人工处理。</li></ul><small>此选择对整张订单统一生效，优先于 SKU 包装模板。</small></div></div>
           <div class="field"><label>币种</label><select v-model="form.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
           <div class="field"><label>对人民币汇率</label><input v-model="form.exchange_rate" type="number" step="0.000001" /></div>

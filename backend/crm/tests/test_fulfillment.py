@@ -260,10 +260,13 @@ class FulfillmentApiTests(TestCase):
         )
         response = self.client.post("/api/purchase-orders/", {
             "purchase_no": "PO-API-001", "supplier": supplier.id, "order": order.id,
-            "order_date": "2026-08-21", "status": "ordered", "currency": "USD",
+            "order_date": "2026-08-21", "status": "draft", "currency": "USD",
             "exchange_rate": "1", "items": [{"sku": self.sku.id, "quantity": "4", "unit_price": "3"}],
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        placed = self.client.post(f"/api/purchase-orders/{response.data['id']}/place/", {}, format="json")
+        self.assertEqual(placed.status_code, status.HTTP_200_OK, placed.data)
+        response = self.client.get(f"/api/purchase-orders/{response.data['id']}/")
         self.assertEqual(response.data["unpaid_amount"], "12.00")
 
     def test_purchase_receipt_creates_automatic_inventory_movement(self):
@@ -338,7 +341,7 @@ class FulfillmentApiTests(TestCase):
         )
         response = self.client.post("/api/orders/", {
             "order_no": "SO-RESERVATION-API", "customer": Customer.objects.get(code="C-API").id,
-            "order_date": "2026-08-21", "status": "confirmed", "currency": "USD",
+            "order_date": "2026-08-21", "status": "draft", "currency": "USD",
             "exchange_rate": "1", "items": [{"sku": self.sku.id, "quantity": "5", "unit_price": "8"}],
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
@@ -346,6 +349,12 @@ class FulfillmentApiTests(TestCase):
         self.assertEqual(
             response.data["items"][0]["sku"], self.sku.id,
         )
+        self.assertEqual(
+            Order.objects.get(pk=response.data["id"]).items.first().reservations.count(),
+            0,
+        )
+        confirmed = self.client.post(f"/api/orders/{response.data['id']}/confirm/", {}, format="json")
+        self.assertEqual(confirmed.status_code, status.HTTP_200_OK, confirmed.data)
         self.assertEqual(
             Order.objects.get(pk=response.data["id"]).items.first().reservations.first().quantity,
             Decimal("3.00"),

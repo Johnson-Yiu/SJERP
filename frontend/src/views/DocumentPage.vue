@@ -25,8 +25,6 @@ const copy = computed(() => isOrder.value ? {
 } : {
   title: '报价管理', description: '建立标准化报价明细，记录有效期与客户反馈状态。', no: 'quote_no', noLabel: '报价单号', date: 'quote_date', dateLabel: '创建时间', statuses: { draft: '草稿', sent: '已发送', accepted: '已接受', rejected: '已拒绝', expired: '已过期' }
 })
-const editableOrderStatuses = { draft: '草稿', confirmed: '已确认', production: '生产中', completed: '已完成', cancelled: '已取消' }
-const editableOrderStatusEntries = computed(() => Object.entries(editableOrderStatuses).filter(([key]) => key !== 'completed' || ['shipped', 'completed'].includes(form.status)))
 
 const rows = ref([]), customers = ref([]), skus = ref([]), quotes = ref([])
 const loading = ref(true), saving = ref(false), open = ref(false), editingId = ref(null), query = ref('')
@@ -47,7 +45,7 @@ function fresh() {
   const now = new Date(), y = now.getFullYear(), m = String(now.getMonth() + 1).padStart(2, '0'), d = String(now.getDate()).padStart(2, '0')
   Object.keys(form).forEach(k => delete form[k])
   activeSkuId.value = ''
-  Object.assign(form, { customer: '', [copy.value.no]: `${isOrder.value ? 'SO' : 'QT'}-${y}-${String(Date.now()).slice(-5)}`, [copy.value.date]: `${y}-${m}-${d}`, status: isOrder.value ? 'confirmed' : 'draft', currency: 'USD', exchange_rate: '7.20', shipping_fee: 0, discount: 0, notes: '', items: [] })
+  Object.assign(form, { customer: '', [copy.value.no]: `${isOrder.value ? 'SO' : 'QT'}-${y}-${String(Date.now()).slice(-5)}`, [copy.value.date]: `${y}-${m}-${d}`, status: 'draft', currency: 'USD', exchange_rate: '7.20', shipping_fee: 0, discount: 0, notes: '', items: [] })
   if (isOrder.value) {
     Object.assign(form, { quote: '', expected_ship_date: '' })
     orderLeadTimeDays.value = ''
@@ -121,6 +119,7 @@ async function save() {
   if (!form.items.length || form.items.some(i => !i.sku)) return notify('请至少添加一条有效的 SKU 明细。', true)
   saving.value = true
   const data = { ...form, customer: Number(form.customer), items: form.items.map(i => tradePayload({ ...i, sku: Number(i.sku) })) }
+  if (isOrder.value) delete data.status
   if (isOrder.value) data.quote = form.quote ? Number(form.quote) : null
   try {
     const response = editingId.value ? await api.put(`/${props.type}/${editingId.value}/`, data) : await api.post(`/${props.type}/`, data)
@@ -270,7 +269,7 @@ onMounted(async () => {
       <div v-if="loading" class="loading"><div class="spinner" /></div>
       <div v-else-if="!rows.length" class="empty"><FileX2 :size="32" /><h3>还没有{{ isOrder ? '订单' : '报价' }}</h3><p>创建第一张业务单据，产品和客户数据会自动关联。</p></div>
       <div v-else-if="isOrder" class="table-wrap"><table class="data-table"><thead><tr><th>{{ copy.noLabel }}</th><th>客户</th><th>{{ copy.dateLabel }}</th><th>状态</th><th>明细</th><th>总金额</th><th>已收 / 未收</th><th style="text-align:right">操作</th></tr></thead>
-        <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row)" @keydown.enter="openDetail(row)"><td class="primary-cell">{{ row[copy.no] }}</td><td>{{ row.customer_name }}</td><td>{{ documentTimestamp(row) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></td><td><div class="table-actions"><button class="mini-btn" :aria-label="`编辑 ${row[copy.no]}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button class="mini-btn" :aria-label="`删除 ${row[copy.no]}`" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
+        <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row)" @keydown.enter="openDetail(row)"><td class="primary-cell">{{ row[copy.no] }}</td><td>{{ row.customer_name }}</td><td>{{ documentTimestamp(row) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></td><td><div class="table-actions"><button v-if="row.status === 'draft'" class="mini-btn" :aria-label="`编辑 ${row[copy.no]}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button v-if="row.status === 'draft'" class="mini-btn" :aria-label="`删除 ${row[copy.no]}`" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
       </table></div>
       <div v-else class="table-wrap"><table class="data-table quote-table"><thead><tr><th>报价单 / 层级</th><th>客户</th><th>更新时间</th><th>状态</th><th>明细</th><th>金额</th><th style="text-align:right">操作</th></tr></thead>
         <tbody><tr v-for="row in quoteTreeRows" :key="row.id" class="clickable-row quote-tree-row" :class="{ 'quote-root-row': row.isRoot, 'quote-child-row': !row.isRoot }" tabindex="0" @click="activateQuoteTreeRow(row)" @keydown.enter="activateQuoteTreeRow(row)"><td class="primary-cell"><div class="quote-tree-cell" :style="{ '--tree-depth': row.depth }"><span class="tree-indent" /><button v-if="row.hasChildren" class="quote-expand" :aria-label="`${expandedQuoteNodes.has(row.id) ? '收起' : '展开'} ${row.quote_no} 的修订报价`" @click.stop="toggleQuoteNode(row.id)"><ChevronDown v-if="expandedQuoteNodes.has(row.id)" :size="16" /><ChevronRight v-else :size="16" /></button><span v-else class="quote-expand-placeholder" /><span v-if="!row.isRoot" class="tree-branch" /><component :is="row.isRoot ? FolderOpen : row.depth > 1 ? FilePenLine : FileText" :size="18" class="quote-tree-icon" :class="row.isRoot ? 'root-icon' : 'revision-icon'" /><span class="quote-tree-copy"><strong>{{ row.quote_no }}</strong><small>{{ row.isRoot ? '原始报价' : (row.revision_summary || `基于 ${row.parent_quote_no} 修订`) }}</small></span></div></td><td>{{ row.customer_name }}</td><td>{{ documentTimestamp(row) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><div class="table-actions"><button class="mini-btn" :aria-label="`查看 ${row.quote_no}`" @click.stop="openDetail(row)"><Eye :size="14" /></button><button class="mini-btn" :aria-label="`编辑 ${row.quote_no}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button class="mini-btn" :aria-label="`导出 ${row.quote_no}`" @click.stop="exportQuote(row)"><Download :size="14" /></button></div></td></tr></tbody>
@@ -285,7 +284,7 @@ onMounted(async () => {
           <div class="field"><label>客户 *</label><select v-model="form.customer" required :disabled="inheritedCustomer"><option value="">请选择</option><option v-for="c in customers" :key="c.id" :value="c.id">{{ c.name }}</option></select></div>
           <div class="field"><label>{{ copy.dateLabel }} *</label><SegmentedDateInput :model-value="form[copy.date]" required @update:model-value="setOrderDate" /></div>
           <div class="field"><label>预计交期</label><div class="lead-time-input"><input v-model="orderLeadTimeDays" type="number" min="0" step="1" placeholder="天数" aria-label="交期天数" @input="setOrderLeadTimeDays" /><span>天</span><SegmentedDateInput :model-value="form.expected_ship_date" @update:model-value="setExpectedShipDate" /></div></div>
-          <div class="field"><label>状态 *</label><select v-model="form.status"><option v-if="isOrder && form.status === 'shipped'" value="shipped" disabled>已发货（由出库自动更新）</option><option v-for="([key,label]) in isOrder ? editableOrderStatusEntries : Object.entries(copy.statuses)" :key="key" :value="key">{{ label }}</option></select><small v-if="isOrder" class="field-hint">“已发货”由确认出库自动更新；仅已发货订单可进入已完成。</small></div>
+          <div v-if="isOrder" class="field"><label>状态</label><input value="草稿（确认后进入正式履约）" readonly /><small class="field-hint">订单状态由确认、生产、发货、完成或取消等业务动作推进。</small></div><div v-else class="field"><label>状态 *</label><select v-model="form.status"><option v-for="([key,label]) in Object.entries(copy.statuses)" :key="key" :value="key">{{ label }}</option></select></div>
           <div v-if="isOrder" class="field"><label>来源报价</label><select v-model="form.quote"><option value="">无</option><option v-for="q in quotes" :key="q.id" :value="q.id">{{ q.quote_no }}</option></select></div>
           <div class="field"><label>币种</label><select v-model="form.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
           <div class="field"><label>对人民币汇率</label><input v-model="form.exchange_rate" type="number" step="0.000001" /></div>

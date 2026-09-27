@@ -19,7 +19,6 @@ class BusinessFlowTests(APITestCase):
             "order_no": "T-SO-001",
             "customer": self.customer.id,
             "order_date": str(date.today()),
-            "status": "confirmed",
             "currency": "USD",
             "exchange_rate": "7.200000",
             "shipping_fee": "0",
@@ -29,6 +28,7 @@ class BusinessFlowTests(APITestCase):
         }
         response = self.client.post("/api/orders/", order_payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(self.client.post(f"/api/orders/{response.data['id']}/confirm/", {}, format="json").status_code, status.HTTP_200_OK)
         order = Order.objects.get(order_no="T-SO-001")
         self.assertEqual(order.items.count(), 1)
         self.assertEqual(order.total_amount, 600)
@@ -59,7 +59,7 @@ class BusinessFlowTests(APITestCase):
         self.assertGreaterEqual(float(response.data["summary"]["sales_ytd"]), 4320)
 
     def test_product_customer_reverse_lookup(self):
-        order = Order.objects.create(order_no="T-SO-002", customer=self.customer, order_date=date.today(), exchange_rate=7.2)
+        order = Order.objects.create(order_no="T-SO-002", customer=self.customer, order_date=date.today(), exchange_rate=7.2, status="confirmed")
         order.items.create(sku=self.sku, quantity=10, unit_price=6, cost_price=3)
         response = self.client.get(f"/api/products/{self.product.id}/customers/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -173,8 +173,8 @@ class BusinessFlowTests(APITestCase):
 
     def test_transaction_created_from_purchase_order_inherits_supplier(self):
         supplier = Supplier.objects.create(name="Inherited Supplier", code="IS")
-        order = Order.objects.create(order_no="T-SO-INHERIT", customer=self.customer, order_date=date.today())
-        purchase = PurchaseOrder.objects.create(purchase_no="T-PO-INHERIT", supplier=supplier, order=order, order_date=date.today(), currency="CNY")
+        order = Order.objects.create(order_no="T-SO-INHERIT", customer=self.customer, order_date=date.today(), status="confirmed")
+        purchase = PurchaseOrder.objects.create(purchase_no="T-PO-INHERIT", supplier=supplier, order=order, order_date=date.today(), currency="CNY", status="ordered")
 
         response = self.client.post("/api/transactions/", {
             "transaction_no": "T-TX-INHERIT",
@@ -194,8 +194,8 @@ class BusinessFlowTests(APITestCase):
     def test_supplier_and_purchase_order_context(self):
         supplier = Supplier.objects.create(name="Test Supplier", code="TS", contact_name="Ming")
         supplier.products.add(self.product)
-        order = Order.objects.create(order_no="T-SO-SUPPLIER", customer=self.customer, order_date=date.today(), exchange_rate=7.2)
-        purchase = PurchaseOrder.objects.create(purchase_no="T-PO-001", supplier=supplier, order=order, order_date=date.today(), currency="CNY", exchange_rate=1)
+        order = Order.objects.create(order_no="T-SO-SUPPLIER", customer=self.customer, order_date=date.today(), exchange_rate=7.2, status="confirmed")
+        purchase = PurchaseOrder.objects.create(purchase_no="T-PO-001", supplier=supplier, order=order, order_date=date.today(), currency="CNY", exchange_rate=1, status="ordered")
         purchase.items.create(sku=self.sku, quantity=10, unit_price=3)
 
         response = self.client.get(f"/api/context/suppliers/{supplier.id}/")

@@ -121,6 +121,26 @@ class FinanceServiceTests(PaymentPlanModelTests):
         self.assertEqual(plan.settled_amount, Decimal("0"))
         self.assertEqual(plan.status, "open")
 
+    def test_root_void_rejects_second_call_without_changing_void_history(self):
+        plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))
+        root = record_transaction({"plan": plan, "amount": Decimal("120"), "currency": "USD", "exchange_rate": Decimal("7"), "category": "客户收款"})
+        child = Transaction.objects.get(split_from=root)
+        void_transaction(root, "第一次作废")
+
+        before_rows = list(Transaction.objects.order_by("pk").values_list("pk", "status", "allocated_amount", "void_reason", "voided_at"))
+        plan.refresh_from_db()
+        before_plan = (plan.status, plan.settled_amount, plan.remaining_amount)
+        before_counts = (Transaction.objects.count(), AdvanceAllocation.objects.count())
+
+        with self.assertRaisesMessage(ValidationError, "只有已确认流水可以作废。"):
+            void_transaction(root, "第二次作废")
+
+        plan.refresh_from_db()
+        self.assertEqual(list(Transaction.objects.order_by("pk").values_list("pk", "status", "allocated_amount", "void_reason", "voided_at")), before_rows)
+        self.assertEqual((plan.status, plan.settled_amount, plan.remaining_amount), before_plan)
+        self.assertEqual((Transaction.objects.count(), AdvanceAllocation.objects.count()), before_counts)
+        self.assertEqual(Transaction.objects.get(pk=child.pk).status, "cancelled")
+
     def test_supplier_payment_void_restores_payable_plan(self):
         _, plan, _ = self.make_purchase_plan()
         row = record_transaction({"plan": plan, "amount": Decimal("40"), "currency": "USD", "exchange_rate": Decimal("7"), "category": "供应商付款"})
@@ -200,6 +220,7 @@ class FinanceServiceTests(PaymentPlanModelTests):
         root = record_transaction({"plan": plan, "amount": Decimal("120"), "currency": "USD", "exchange_rate": Decimal("7"), "category": "客户收款"})
         child = Transaction.objects.get(split_from=root)
         before_plan = PaymentPlan.objects.get(pk=plan.pk).settled_amount
+        before_counts = (Transaction.objects.count(), AdvanceAllocation.objects.count())
 
         with self.assertRaisesMessage(ValidationError, "拆分流水必须通过原始流水统一作废。"):
             void_transaction(child, "不应直接作废")
@@ -209,6 +230,7 @@ class FinanceServiceTests(PaymentPlanModelTests):
         self.assertEqual(child.status, "confirmed")
         self.assertEqual(root.status, "confirmed")
         self.assertEqual(PaymentPlan.objects.get(pk=plan.pk).settled_amount, before_plan)
+        self.assertEqual((Transaction.objects.count(), AdvanceAllocation.objects.count()), before_counts)
 
     def test_advance_allocation_void_deactivates_allocation_and_restores_plan(self):
         plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("80"))
@@ -254,6 +276,11 @@ class FinanceServiceTests(PaymentPlanModelTests):
         allocate_advance(advance, plan, Decimal("50"))
         advance.allocated_amount = Decimal("40")
         advance.save(update_fields=["allocated_amount"])
+        plan.refresh_from_db()
+        before_rows = list(Transaction.objects.order_by("pk").values_list("pk", "status", "allocated_amount", "void_reason", "voided_at"))
+        before_counts = (Transaction.objects.count(), AdvanceAllocation.objects.count())
+        before_advance = (advance.status, advance.allocated_amount)
+        before_plan = (plan.status, plan.settled_amount)
 
         with self.assertRaisesMessage(ValidationError, "缺少核销明细"):
             void_transaction(advance, "核销数据异常")
@@ -263,6 +290,10 @@ class FinanceServiceTests(PaymentPlanModelTests):
         self.assertEqual(advance.status, "confirmed")
         self.assertTrue(advance.allocations.get().is_active)
         self.assertEqual(plan.settled_amount, Decimal("50"))
+        self.assertEqual(list(Transaction.objects.order_by("pk").values_list("pk", "status", "allocated_amount", "void_reason", "voided_at")), before_rows)
+        self.assertEqual((Transaction.objects.count(), AdvanceAllocation.objects.count()), before_counts)
+        self.assertEqual((advance.status, advance.allocated_amount), before_advance)
+        self.assertEqual((plan.status, plan.settled_amount), before_plan)
 
     def test_insufficient_payment_plan_settlement_rejects_void_atomically(self):
         plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))
@@ -277,6 +308,40 @@ class FinanceServiceTests(PaymentPlanModelTests):
         self.assertEqual(row.status, "confirmed")
         self.assertIsNone(row.voided_at)
         self.assertEqual(plan.settled_amount, Decimal("10"))
+
+    def test_void_rollback_underflow_is_atomic_across_root_and_split_child(self):
+        plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))
+        root = record_transaction({"plan": plan, "amount": Decimal("120"), "currency": "USD", "exchange_rate": Decimal("7"), "category": "客户收款"})
+        child = Transaction.objects.get(split_from=root)
+        PaymentPlan.objects.filter(pk=plan.pk).update(settled_amount=Decimal("50"), status="open")
+        before = {
+            "rows": list(Transaction.objects.order_by("pk").values_list("pk", "status", "allocated_amount", "void_reason", "voided_at")),
+            "plan": PaymentPlan.objects.get(pk=plan.pk).settled_amount,
+            "counts": (Transaction.objects.count(), AdvanceAllocation.objects.count()),
+        }
+
+        with self.assertRaisesMessage(ValidationError, "收付款计划已结金额不足"):
+            void_transaction(root, "回滚下溢")
+
+        self.assertEqual(list(Transaction.objects.order_by("pk").values_list("pk", "status", "allocated_amount", "void_reason", "voided_at")), before["rows"])
+        self.assertEqual(PaymentPlan.objects.get(pk=plan.pk).settled_amount, before["plan"])
+        self.assertEqual((Transaction.objects.count(), AdvanceAllocation.objects.count()), before["counts"])
+        self.assertEqual(Transaction.objects.get(pk=child.pk).status, "confirmed")
+
+    def test_record_transaction_rejects_wrong_currency_without_side_effects(self):
+        usd_plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))
+        cny_order = Order.objects.create(order_no="SO-FIN-CNY", customer=self.customer, order_date=self.order.order_date, currency="CNY")
+        cny_plan = PaymentPlan.objects.create(order=cny_order, direction="receivable", currency="CNY", planned_amount=Decimal("100"))
+        before = (Transaction.objects.count(), usd_plan.settled_amount, cny_plan.settled_amount)
+
+        with self.assertRaisesMessage(ValidationError, "实际收付款币种必须与计划原币一致。"):
+            record_transaction({"plan": usd_plan, "amount": Decimal("10"), "currency": "EUR", "exchange_rate": Decimal("7"), "category": "客户收款"})
+        with self.assertRaisesMessage(ValidationError, "人民币流水汇率必须为 1。"):
+            record_transaction({"plan": cny_plan, "amount": Decimal("10"), "currency": "CNY", "exchange_rate": Decimal("2"), "category": "客户收款"})
+
+        usd_plan.refresh_from_db()
+        cny_plan.refresh_from_db()
+        self.assertEqual((Transaction.objects.count(), usd_plan.settled_amount, cny_plan.settled_amount), before)
 
     def test_refund_void_does_not_change_payment_plans(self):
         plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))

@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-from crm.models import Customer, GoodsReceipt, InventoryMovement, InventoryReservation, Order, PaymentPlan, Product, PurchaseOrder, Shipment, SKU, Supplier, Transaction
+from crm.models import AdvanceAllocation, Customer, GoodsReceipt, InventoryMovement, InventoryReservation, Order, PaymentPlan, Product, PurchaseOrder, Shipment, SKU, Supplier, Transaction
 from crm.services.finance import allocate_advance, ensure_default_payment_plans, record_contract_payment, record_transaction, void_transaction
 from crm.services.fulfillment import allocate_order, confirm_shipment, order_item_metrics, record_receipt, reverse_receipt, reverse_shipment, sku_metrics
 
@@ -30,6 +30,34 @@ class TradeFinanceUpgradeTests(TestCase):
 
     def ship(self, quantity):
         return confirm_shipment(self.order, {"shipment_date": self.day, "items": [{"order_item": self.item.pk, "quantity": Decimal(quantity)}]})
+
+    def _shipment_reversal_snapshot(self, shipment):
+        shipment.refresh_from_db()
+        self.order.refresh_from_db()
+        line = shipment.items.get()
+        return {
+            "movement_count": InventoryMovement.objects.count(),
+            "actual": sku_metrics(self.sku)["actual_quantity"],
+            "reserved": sku_metrics(self.sku)["reserved_quantity"],
+            "reservation_count": InventoryReservation.objects.filter(sku=self.sku).count(),
+            "order_status": self.order.status,
+            "shipment_status": shipment.status,
+            "shipment_reversed_at": shipment.reversed_at,
+            "shipment_reversal_reason": shipment.reversal_reason,
+            "line_reversal_id": line.reversal_inventory_movement_id,
+        }
+
+    def _assert_malformed_shipment_reversal_is_atomic(self, mutate):
+        self.receive("10")
+        shipment = self.ship("10")
+        line = shipment.items.get()
+        mutate(line, line.inventory_movement)
+        before = self._shipment_reversal_snapshot(shipment)
+
+        with self.assertRaisesMessage(ValidationError, "原销售出库流水缺失或异常，无法安全冲销，请先检查库存流水。"):
+            reverse_shipment(shipment, "原流水异常")
+
+        self.assertEqual(self._shipment_reversal_snapshot(shipment), before)
 
     def plan(self):
         return PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=100)
@@ -284,6 +312,88 @@ class TradeFinanceUpgradeTests(TestCase):
         self.assertEqual(sku_metrics(self.sku)["reserved_quantity"], before_reserved)
         self.assertEqual(InventoryMovement.objects.filter(source_type="reversal").count(), before_reversals)
 
+    def test_shipment_reversal_rejects_sku_mismatch_atomically(self):
+        second_sku = SKU.objects.create(sku="UP-SKU-MISMATCH", product=Product.objects.create(code="UP-P-MISMATCH", name="Mismatch Light"))
+        self._assert_malformed_shipment_reversal_is_atomic(
+            lambda _line, movement: (setattr(movement, "sku", second_sku), movement.save(update_fields=["sku"]))
+        )
+
+    def test_shipment_reversal_rejects_order_mismatch_atomically(self):
+        other_order = Order.objects.create(order_no="UP-SO-MISMATCH", customer=self.customer, order_date=self.day)
+        self._assert_malformed_shipment_reversal_is_atomic(
+            lambda _line, movement: (setattr(movement, "order", other_order), movement.save(update_fields=["order"]))
+        )
+
+    def test_shipment_reversal_rejects_quantity_mismatch_atomically(self):
+        def mutate(_line, movement):
+            movement.quantity = Decimal("9")
+            movement.save(update_fields=["quantity"])
+
+        self._assert_malformed_shipment_reversal_is_atomic(mutate)
+
+    def test_shipment_reversal_rejects_source_type_mismatch_atomically(self):
+        def mutate(_line, movement):
+            movement.source_type = "receipt"
+            movement.save(update_fields=["source_type"])
+
+        self._assert_malformed_shipment_reversal_is_atomic(mutate)
+
+    def test_cancelled_order_rejects_shipment_reversal_atomically(self):
+        self.stock("10")
+        shipment = self.ship("10")
+        self.order.status = "cancelled"
+        self.order.save(update_fields=["status"])
+        before = self._shipment_reversal_snapshot(shipment)
+
+        with self.assertRaisesMessage(ValidationError, "已完成或已取消的订单不能冲销发货。"):
+            reverse_shipment(shipment, "取消订单不应冲销")
+
+        self.assertEqual(self._shipment_reversal_snapshot(shipment), before)
+
+    def test_receipt_reversal_second_call_has_no_second_side_effect(self):
+        receipt = self.receive("10")
+        reverse_receipt(receipt, "首次冲销")
+        receipt.refresh_from_db()
+        self.purchase.refresh_from_db()
+        before = {
+            "movement_count": InventoryMovement.objects.count(),
+            "receipt_reversal_id": receipt.reversal_inventory_movement_id,
+            "reversed_at": receipt.reversed_at,
+            "reason": receipt.reversal_reason,
+            "purchase_status": self.purchase.status,
+            "received": self.purchase_item.received_quantity,
+            "actual": sku_metrics(self.sku)["actual_quantity"],
+            "reserved": sku_metrics(self.sku)["reserved_quantity"],
+        }
+
+        with self.assertRaisesMessage(ValidationError, "该入库记录已经冲销，不能重复操作。"):
+            reverse_receipt(receipt, "重复冲销")
+
+        receipt.refresh_from_db()
+        self.purchase.refresh_from_db()
+        after = {
+            "movement_count": InventoryMovement.objects.count(),
+            "receipt_reversal_id": receipt.reversal_inventory_movement_id,
+            "reversed_at": receipt.reversed_at,
+            "reason": receipt.reversal_reason,
+            "purchase_status": self.purchase.status,
+            "received": self.purchase_item.received_quantity,
+            "actual": sku_metrics(self.sku)["actual_quantity"],
+            "reserved": sku_metrics(self.sku)["reserved_quantity"],
+        }
+        self.assertEqual(after, before)
+
+    def test_shipment_reversal_second_call_has_no_second_side_effect(self):
+        self.stock("10")
+        shipment = self.ship("10")
+        reverse_shipment(shipment, "首次冲销")
+        before = self._shipment_reversal_snapshot(shipment)
+
+        with self.assertRaisesMessage(ValidationError, "该发货单已经冲销，不能重复操作。"):
+            reverse_shipment(shipment, "重复冲销")
+
+        self.assertEqual(self._shipment_reversal_snapshot(shipment), before)
+
     def test_malformed_and_foreign_shipment_lines_return_400(self):
         for line in ({"quantity": "abc"}, {"order_item": 999999, "quantity": "1"}):
             response = self.client.post(f"/api/orders/{self.order.pk}/ship/", {"shipment_date": self.day.isoformat(), "items": [line]}, format="json")
@@ -344,6 +454,42 @@ class TradeFinanceUpgradeTests(TestCase):
         plan.save()
         with self.assertRaises(ValidationError):
             allocate_advance(advance, plan, 5)
+
+    def test_advance_allocation_rejects_cross_party_direction_currency_and_closed_plan_atomically(self):
+        other_customer = Customer.objects.create(code="UP-C-OTHER", name="Other Upgrade Buyer")
+        other_order = Order.objects.create(order_no="UP-SO-OTHER", customer=other_customer, order_date=self.day, currency="USD")
+        other_plan = PaymentPlan.objects.create(order=other_order, direction="receivable", currency="USD", planned_amount=Decimal("50"))
+        eur_order = Order.objects.create(order_no="UP-SO-EUR", customer=self.customer, order_date=self.day, currency="EUR")
+        eur_plan = PaymentPlan.objects.create(order=eur_order, direction="receivable", currency="EUR", planned_amount=Decimal("50"))
+        other_supplier = Supplier.objects.create(code="UP-OTHER", name="Other Upgrade Supplier")
+        other_purchase = PurchaseOrder.objects.create(purchase_no="UP-PO-OTHER", supplier=other_supplier, order_date=self.day, status="ordered", currency="USD")
+        payable_plan = PaymentPlan.objects.create(purchase_order=other_purchase, direction="payable", currency="USD", planned_amount=Decimal("50"))
+        cancelled_plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("50"), status="cancelled")
+
+        advances = [
+            Transaction.objects.create(transaction_no="UP-E33-CUSTOMER", transaction_date=self.day, direction="income", kind="unallocated_advance", category="advance", customer=self.customer, amount=10, currency="USD"),
+            Transaction.objects.create(transaction_no="UP-E33-SUPPLIER", transaction_date=self.day, direction="expense", kind="unallocated_payment", category="advance", supplier=self.supplier, amount=10, currency="USD"),
+            Transaction.objects.create(transaction_no="UP-E33-DIRECTION", transaction_date=self.day, direction="expense", kind="unallocated_payment", category="advance", supplier=self.supplier, amount=10, currency="USD"),
+            Transaction.objects.create(transaction_no="UP-E33-CURRENCY", transaction_date=self.day, direction="income", kind="unallocated_advance", category="advance", customer=self.customer, amount=10, currency="USD"),
+            Transaction.objects.create(transaction_no="UP-E33-CLOSED", transaction_date=self.day, direction="income", kind="unallocated_advance", category="advance", customer=self.customer, amount=10, currency="USD"),
+        ]
+        cases = [
+            ("customer", advances[0], other_plan),
+            ("supplier", advances[1], payable_plan),
+            ("direction", advances[2], self.plan()),
+            ("currency", advances[3], eur_plan),
+            ("closed", advances[4], cancelled_plan),
+        ]
+        before_allocations = AdvanceAllocation.objects.count()
+        before_advance_amounts = {row.pk: row.allocated_amount for row in advances}
+        before_plans = {plan.pk: (plan.status, plan.settled_amount) for _, _, plan in cases}
+        for label, advance, plan in cases:
+            with self.subTest(label=label):
+                with self.assertRaises(ValidationError):
+                    allocate_advance(advance, plan, Decimal("5"))
+        self.assertEqual(AdvanceAllocation.objects.count(), before_allocations)
+        self.assertEqual({row.pk: Transaction.objects.get(pk=row.pk).allocated_amount for row in advances}, before_advance_amounts)
+        self.assertEqual({plan.pk: (PaymentPlan.objects.get(pk=plan.pk).status, PaymentPlan.objects.get(pk=plan.pk).settled_amount) for _, _, plan in cases}, before_plans)
 
     def test_settle_validates_payload_and_does_not_accept_mismatched_contract(self):
         plan = self.plan()

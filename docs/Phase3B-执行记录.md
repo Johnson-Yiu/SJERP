@@ -972,7 +972,7 @@ I01–I54 统计：`PASS 50`、`DEFERRED — Phase 3C 4`、`FAIL 0`、`NOT APPLI
 - 其余 E01–E43 保留前述证据与状态；E17、E20 相关内部异常部分、E21、E25–E27、E29、E33、E39–E43 中需要故障注入的项目继续标记为 `DEFERRED — Phase 3C`，不虚报为 UI PASS。
 - `REAL BUSINESS BUG`：0；`STATE-MACHINE GAP-01`：0（已 CLOSED/FIXED）。
 - `UI COVERAGE GAP-PACKAGING-01` 已由独立包装 UI 修复关闭；`I11` 已通过 PACK-OLD/PACK-NEW 真实 UI 快照证据验证。
-- `TEST INFRASTRUCTURE BLOCKER-PI-01` 的核心下载/解析证据在最终封版节补充；图片导出仍另有当前浏览器会话下载阻断，未宣称图片已嵌入 XLSX。
+- `TEST INFRASTRUCTURE BLOCKER-PI-01` 的核心下载/解析证据在最终封版节补充；图片导出最终结果见 17.7。
 - `UX ISSUE-01`、`UX ISSUE-02`、`EXPECTED CURRENT CONTRACT-01` 保留；本轮不修改 UX、契约或 Phase 3C/4 范围。
 
 ### 16.8 回归与封版前置条件
@@ -1002,7 +1002,7 @@ I01–I54 统计：`PASS 50`、`DEFERRED — Phase 3C 4`、`FAIL 0`、`NOT APPLI
 
 ### 17.2 PI 实际 UI 下载与 openpyxl 复核
 
-以下文件均由报价页面真实点击导出后出现在 Windows Downloads，并由 `openpyxl` 重新打开；没有调用导出 API。四个文件均只有 `PI` 工作表，合并区域和关键单元格可读：
+以下四个核心文件均由报价页面真实点击导出后出现在 Windows Downloads，并由 `openpyxl` 重新打开；没有调用导出 API。四个核心文件均只有 `PI` 工作表，合并区域和关键单元格可读：
 
 | 文件 | 大小 | SHA-256 | L9 | C11 | J/K/L/M |
 |---|---:|---|---|---|---|
@@ -1013,7 +1013,7 @@ I01–I54 统计：`PASS 50`、`DEFERRED — Phase 3C 4`、`FAIL 0`、`NOT APPLI
 
 实际解析结果：root/revision 文件各有 47 个 merged ranges，历史 OLD/NEW 文件各有 46 个；关键单元格字体、填充、边框、对齐和数字格式均可读取，银行信息、Bank Code、Branch Code、IMPORTANT NOTICE、notes、payment/trading terms 均存在。root 与 revision 的金额、数量和付款条件差异已在工作簿中体现；`SJ20260926US005` 与 `SJ20260926US007` 证明历史买方、Sales Model、描述快照没有被后续修改覆盖。
 
-图片证据单独记录如下：用户已通过 UI 上传并保留两个 SKU 图片；随后通过 UI 保存了 `SJ20260927US007`（SKU-000002，QuoteItem id=305）和 `SJ20260927US008`（SKU-000003，QuoteItem id=306），两条 QuoteItem 都有对应 `image_snapshot`。本次浏览器会话点击导出这两份报价时没有产生新的 Downloads 文件，且随后浏览器自动化通道无法重新建立；因此图片 XLSX 是否嵌入不能标记 PASS，也不归类为业务逻辑通过。当前实际可核验的 UI 下载 XLSX 数量为 **4**；图片导出保留为 `TEST INFRASTRUCTURE BLOCKER-PI-IMAGE-01`。
+图片证据单独记录于 17.7：用户已通过 UI 上传并保留两个 SKU 图片；`SJ20260927US007`（SKU-000002，QuoteItem id=305）和 `SJ20260927US008`（SKU-000003，QuoteItem id=306）的真实 UI 导出均已落盘并通过 media 内容 SHA256 对照。
 
 ### 17.3 A–T 最终矩阵与订单审计
 
@@ -1049,15 +1049,32 @@ Quote→Order 关系复核包含 customer、实际 linked revision、原始/修�
 
 - A–T：真实 UI 场景与只读审计证据齐全；distinct UAT Order=20。
 - Packaging P07/P08 与 I11：真实 UI 生成、重新生成确认、保存快照和缺失配置 warning 均已验证。
-- PI root/revision/历史 OLD/NEW：4 个实际 UI 下载文件已用 openpyxl 解析；图片报价快照已保存，但图片 XLSX 下载仍受浏览器会话阻断。
-- `REAL BUSINESS BUG`：0；`UI COVERAGE GAP`：1（ContractChange approve）；`TEST INFRASTRUCTURE BLOCKER`：图片导出 1 项；`UX ISSUE`：2；`EXPECTED CURRENT CONTRACT`：1。
+- PI root/revision/历史 OLD/NEW：6 个实际 UI 下载文件已用 openpyxl 解析，图片文件的 `xl/media` 内容与 QuoteItem 快照逐字节一致。
+- `REAL BUSINESS BUG`：0；`UI COVERAGE GAP`：1（ContractChange approve）；`TEST INFRASTRUCTURE BLOCKER`：0；`UX ISSUE`：2；`EXPECTED CURRENT CONTRACT`：1。
 - I01–I54：`PASS 50`、`DEFERRED — Phase 3C 4`、`FAIL 0`、`NOT APPLICABLE 0`。
 - 本轮不开始 Phase 3C，不修改业务代码，不清库，不删除既有 UAT 数据。
 
-本节记录了最终可核验的封版证据；图片 XLSX 导出和 ContractChange approve UI 仍需单独处理后，才能宣称所有 UI/图片验收无阻断。
+本节记录了最终可核验的封版证据；ContractChange approve UI 仍为已知非阻断覆盖缺口。
 
 ### 17.6 最终回归
 
 - Backend：`python manage.py check` PASS；`python manage.py makemigrations --check --dry-run` PASS；`python manage.py test` **297/297 PASS**。
 - Frontend：`npm run test:unit` **61/61 PASS**；`node --test tests/detail-drawer-typography.spec.js` **1/1 PASS**；`npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js` **31/31 PASS**；`npm run build` PASS。
 - 本次只修改本执行记录；未修改业务代码、测试、CI、模型、迁移或业务数据。
+
+### 17.7 PI Image XLSX Final Verification
+
+两个报价均先在 Downloads 中核对既有文件列表，再通过报价管理页面真实点击“导出”/报价详情“导出 Excel”，没有调用导出 API。导出结果：
+
+| Quote | QuoteItem / snapshot | XLSX | size | mtime | XLSX SHA256 | worksheet._images | xl/media |
+|---|---|---|---:|---|---|---:|---:|
+| `SJ20260927US007` | id=305，`cdebf0073a6a96cd1c2a462d9be222356c2d92878a9fea65380e9ad22d32f629` | `SJ20260927US007.xlsx` | 390337 | 2026-09-27 14:31:16 | `af47c4af96ab4fe56c0c677397f4c2774c72e1546f1c3ad5a300901b5d994a58` | 1 | 1 |
+| `SJ20260927US008` | id=306，`be98628aa1e0d6b40a7827248d433ba06fa77871d840ae8f164cc8ea71aaa0b0` | `SJ20260927US008.xlsx` | 192589 | 2026-09-27 14:32:04 | `9fd92288dbc64473faee163ae0d45b2336b23278b789b07a6e6f3e95305c5b97` | 1 | 1 |
+
+两个工作簿均由 `openpyxl.load_workbook()` 正常打开，sheet names 均为 `['PI']`，各有 46 个 merged ranges。zip 只读检查得到：
+
+- OLD：`xl/media/image1.jpeg`，383594 bytes，SHA256 `cdebf0073a6a96cd1c2a462d9be222356c2d92878a9fea65380e9ad22d32f629`，与 QuoteItem 305 的物理 snapshot 完全一致；
+- NEW：`xl/media/image1.jpeg`，192588 bytes，SHA256 `be98628aa1e0d6b40a7827248d433ba06fa77871d840ae8f164cc8ea71aaa0b0`，与 QuoteItem 306 的物理 snapshot 完全一致；
+- 两个 media SHA256 不同，证明 OLD/NEW 使用了不同图片快照，而不是仅仅“都有图片”。
+
+Q07/Q08 image snapshot：`PASS`。`TEST INFRASTRUCTURE BLOCKER-PI-IMAGE-01`：`CLOSED`。Phase 3B 最终状态：**SEALED — PASS WITH KNOWN NON-BLOCKING GAPS**；保留 `UI COVERAGE GAP-01`、`UX ISSUE-01`、`UX ISSUE-02`、`EXPECTED CURRENT CONTRACT-01` 与 Phase 3C deferred invariants，不进入 Phase 3C。

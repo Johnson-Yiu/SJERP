@@ -7,7 +7,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from crm.models import Customer, InventoryMovement, InventoryReservation, Order, PaymentPlan, Product, PurchaseCostAllocation, PurchaseOrder, Quote, SKU, Supplier, Transaction
+from crm.models import Customer, InventoryMovement, InventoryReservation, Order, PaymentPlan, Product, PurchaseCostAllocation, PurchaseOrder, Quote, SKU, Supplier, SupplierSKU, Transaction
 from crm.services.purchase_costs import order_purchase_cost
 
 
@@ -42,6 +42,16 @@ class ContractLifecycleApiTests(TestCase):
         return response
 
     def create_placed_purchase(self, supplier, purchase_no, *, order=None):
+        purchase = self.create_draft_purchase(supplier, purchase_no, order=order)
+        response = self.client.post(f"/api/purchase-orders/{purchase.id}/place/", {}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        return PurchaseOrder.objects.get(pk=response.data["id"])
+
+    def create_draft_purchase(self, supplier, purchase_no, *, order=None):
+        source = supplier.supplier_skus.filter(sku=self.sku).order_by("id").first()
+        item = {"sku": self.sku.id, "quantity": "2", "unit_price": "4"}
+        if source:
+            item["supplier_sku"] = source.id
         response = self.client.post("/api/purchase-orders/", {
             "purchase_no": purchase_no,
             "supplier": supplier.id,
@@ -49,11 +59,9 @@ class ContractLifecycleApiTests(TestCase):
             "order_date": self.day.isoformat(),
             "currency": "USD",
             "exchange_rate": "1",
-            "items": [{"sku": self.sku.id, "quantity": "2", "unit_price": "4"}],
+            "items": [item],
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-        response = self.client.post(f"/api/purchase-orders/{response.data['id']}/place/", {}, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         return PurchaseOrder.objects.get(pk=response.data["id"])
 
     def full_purchase_payload(self, purchase):
@@ -202,7 +210,7 @@ class ContractLifecycleApiTests(TestCase):
     def test_purchase_with_cost_allocation_can_cancel_without_irreversible_history(self):
         order = Order.objects.create(order_no="SO-LIFECYCLE-COST", customer=self.customer, order_date=self.day, status="confirmed", currency="USD")
         order.items.create(sku=self.sku, quantity="2", unit_price="10")
-        supplier = Supplier.objects.create(code="LCOST", name="Lifecycle Cost Supplier")
+        supplier = Supplier.objects.create(code="CT", name="Lifecycle Cost Supplier")
         purchase = self.create_placed_purchase(supplier, "PO-LIFECYCLE-COST")
         purchase_item = purchase.items.get()
         allocation = self.client.post(f"/api/purchase-orders/{purchase.id}/cost-allocation/", {
@@ -226,12 +234,26 @@ class ContractLifecycleApiTests(TestCase):
         self.assertEqual(order_purchase_cost(order), (Decimal("0"), Decimal("0")))
 
     def test_formal_purchase_full_put_with_same_items_is_idempotent_and_preserves_history(self):
-        supplier = Supplier.objects.create(code="LPUT", name="Lifecycle Put Supplier")
+        supplier = Supplier.objects.create(code="PT", name="Lifecycle Put Supplier")
         ordered = self.create_placed_purchase(supplier, "PO-LIFECYCLE-PUT-ORDERED")
         ordered_item_id = ordered.items.get().id
         response = self.client.put(f"/api/purchase-orders/{ordered.id}/", self.full_purchase_payload(ordered), format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         self.assertEqual(PurchaseOrder.objects.get(pk=ordered.id).items.get().id, ordered_item_id)
+
+        alternate_supplier_sku = SupplierSKU.objects.create(
+            supplier=supplier,
+            sku=self.sku,
+            supplier_sku_code="PT-ALT",
+        )
+        changed_supplier_sku = self.full_purchase_payload(ordered)
+        changed_supplier_sku["items"][0]["supplier_sku"] = alternate_supplier_sku.id
+        response = self.client.put(
+            f"/api/purchase-orders/{ordered.id}/",
+            changed_supplier_sku,
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         changed = self.full_purchase_payload(ordered)
         changed["items"][0]["unit_price"] = "5"
@@ -253,3 +275,24 @@ class ContractLifecycleApiTests(TestCase):
                 item.refresh_from_db()
                 self.assertEqual(item.id, purchase.items.get().id)
                 self.assertEqual(item.receipts.count(), 1)
+
+    def test_draft_purchase_can_change_supplier_sku(self):
+        supplier = Supplier.objects.create(code="DS", name="Draft Supplier SKU Supplier")
+        draft_purchase = self.create_draft_purchase(supplier, "PO-DRAFT-SUPPLIER-SKU")
+        alternate_supplier_sku = SupplierSKU.objects.create(
+            supplier=supplier,
+            sku=self.sku,
+            supplier_sku_code="DS-ALT",
+        )
+
+        payload = self.full_purchase_payload(draft_purchase)
+        payload["items"][0]["supplier_sku"] = alternate_supplier_sku.id
+        response = self.client.put(
+            f"/api/purchase-orders/{draft_purchase.id}/",
+            payload,
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        draft_purchase.refresh_from_db()
+        self.assertEqual(draft_purchase.items.get().supplier_sku_id, alternate_supplier_sku.id)

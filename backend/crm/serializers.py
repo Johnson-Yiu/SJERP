@@ -200,11 +200,11 @@ class PurchaseOrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSer
         read_only_fields = ["supplier_characteristics_snapshot"]
 
 
-def normalized_contract_item_signature(item):
+def normalized_contract_item_signature(item, *, include_supplier_sku=False):
     def related_id(value):
         return value.pk if hasattr(value, "pk") else value
 
-    return (
+    signature = (
         related_id(item["sku"]),
         Decimal(item["quantity"]),
         Decimal(item["unit_price"]),
@@ -214,11 +214,20 @@ def normalized_contract_item_signature(item):
         item.get("trade_quantity"),
         item.get("trade_unit_price"),
     )
+    if include_supplier_sku:
+        signature += (related_id(item.get("supplier_sku")),)
+    return signature
 
 
 def contract_items_match(instance, items):
-    return [normalized_contract_item_signature(item) for item in items] == [
-        (
+    include_supplier_sku = isinstance(instance, PurchaseOrder)
+    incoming_items = [
+        normalized_contract_item_signature(item, include_supplier_sku=include_supplier_sku)
+        for item in items
+    ]
+    existing_items = []
+    for item in instance.items.order_by("id"):
+        signature = (
             item.sku_id,
             Decimal(item.quantity),
             Decimal(item.unit_price),
@@ -228,8 +237,10 @@ def contract_items_match(instance, items):
             item.trade_quantity,
             item.trade_unit_price,
         )
-        for item in instance.items.order_by("id")
-    ]
+        if include_supplier_sku:
+            signature += (item.supplier_sku_id,)
+        existing_items.append(signature)
+    return incoming_items == existing_items
 
 
 def validate_contract_edit(instance, attrs, *, purchase=False):

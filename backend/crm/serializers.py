@@ -200,10 +200,40 @@ class PurchaseOrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSer
         read_only_fields = ["supplier_characteristics_snapshot"]
 
 
+def normalized_contract_item_signature(item):
+    def related_id(value):
+        return value.pk if hasattr(value, "pk") else value
+
+    return (
+        related_id(item["sku"]),
+        Decimal(item["quantity"]),
+        Decimal(item["unit_price"]),
+        Decimal(item.get("cost_price", 0)),
+        item.get("notes", ""),
+        related_id(item.get("trade_unit")),
+        item.get("trade_quantity"),
+        item.get("trade_unit_price"),
+    )
+
+
+def contract_items_match(instance, items):
+    return [normalized_contract_item_signature(item) for item in items] == [
+        (
+            item.sku_id,
+            Decimal(item.quantity),
+            Decimal(item.unit_price),
+            Decimal(getattr(item, "cost_price", 0)),
+            getattr(item, "notes", ""),
+            item.trade_unit_id,
+            item.trade_quantity,
+            item.trade_unit_price,
+        )
+        for item in instance.items.order_by("id")
+    ]
+
+
 def validate_contract_edit(instance, attrs, *, purchase=False):
     validate_document_amount(attrs, instance)
-    if instance and purchase and instance.cost_allocation_version and any(key in attrs for key in ("items", "currency", "exchange_rate", "order", "supplier")):
-        raise serializers.ValidationError("采购单已有成本分配，不能改写明细、币种、汇率或原始归属；请通过成本分配调整归属。")
     if attrs.get("exchange_rate", Decimal("1")) <= 0:
         raise serializers.ValidationError({"exchange_rate": "汇率必须大于零。"})
     if "items" in attrs and not attrs["items"]:
@@ -221,37 +251,11 @@ def validate_contract_edit(instance, attrs, *, purchase=False):
     sensitive = {"items", "currency", "exchange_rate", "shipping_fee", "discount", "supplier" if purchase else "customer", "order" if purchase else "quote"}
     if not purchase:
         sensitive.add("tail_goods_policy")
-    def normalized_item_signature(item):
-        def related_id(value):
-            return value.pk if hasattr(value, "pk") else value
-
-        return (
-            related_id(item["sku"]),
-            Decimal(item["quantity"]),
-            Decimal(item["unit_price"]),
-            Decimal(item.get("cost_price", 0)),
-            item.get("notes", ""),
-            related_id(item.get("trade_unit")),
-            item.get("trade_quantity"),
-            item.get("trade_unit_price"),
-        )
-
-    items_changed = "items" in attrs and (
-        [normalized_item_signature(item) for item in attrs["items"]]
-        != [
-            (
-                item.sku_id,
-                Decimal(item.quantity),
-                Decimal(item.unit_price),
-                Decimal(getattr(item, "cost_price", 0)),
-                getattr(item, "notes", ""),
-                item.trade_unit_id,
-                item.trade_quantity,
-                item.trade_unit_price,
-            )
-            for item in instance.items.order_by("id")
-        ]
-    )
+    items_changed = "items" in attrs and not contract_items_match(instance, attrs["items"])
+    if purchase and instance.cost_allocation_version and (
+        any(key in attrs for key in ("currency", "exchange_rate", "order", "supplier")) or items_changed
+    ):
+        raise serializers.ValidationError("采购单已有成本分配，不能改写明细、币种、汇率或原始归属；请通过成本分配调整归属。")
     changed = items_changed or any(
         key in attrs and attrs[key] != getattr(instance, key, None)
         for key in sensitive - {"items"}
@@ -356,9 +360,9 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance = PurchaseOrder.objects.select_for_update().get(pk=instance.pk)
         validate_contract_edit(instance, validated_data, purchase=True)
-        changed = any(key in validated_data for key in ("items", "currency"))
         items = validated_data.pop("items", None)
-        if items is not None:
+        items_match = items is not None and contract_items_match(instance, items)
+        if items is not None and (instance.status == "draft" or not items_match):
             instance.items.all().delete()
             for item in items:
                 PurchaseOrderItem.objects.create(purchase_order=instance, **item)

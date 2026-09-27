@@ -9,6 +9,7 @@ from rest_framework.exceptions import ValidationError
 
 from crm.models import (
     Customer,
+    Order,
     Product,
     PurchaseOrder,
     Quote,
@@ -20,6 +21,7 @@ from crm.models import (
 )
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.services.purchase_costs import save_costs
+from rest_framework.test import APIClient
 
 
 @unittest.skipUnless(connection.vendor == "postgresql", "PostgreSQL row-lock tests require PostgreSQL")
@@ -46,6 +48,23 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
                 for column in connection.introspection.get_table_description(cursor, product_table)
             }
         self.assertIn(Product._meta.get_field("combination_rules").column, columns)
+
+    def test_order_confirm_locks_nullable_quote_without_outer_join_error(self):
+        client = APIClient()
+        customer = Customer.objects.create(code="PG-LIFECYCLE-C", name="PostgreSQL Lifecycle Customer")
+        sku = SKU.objects.create(sku="PG-LIFECYCLE-SKU", product=Product.objects.create(code="PG-LIFECYCLE-P", name="PostgreSQL Lifecycle Product"))
+        quote = Quote.objects.create(quote_no="SJ20300101US001", customer=customer, quote_date=date(2030, 1, 1), currency="USD")
+        quote.items.create(sku=sku, quantity=1, unit_price=10)
+        quoted_order = Order.objects.create(order_no="PG-LIFECYCLE-QUOTE", customer=customer, quote=quote, order_date=date(2030, 1, 1), currency="USD")
+        quoted_order.items.create(sku=sku, quantity=1, unit_price=10)
+        unquoted_order = Order.objects.create(order_no="PG-LIFECYCLE-NO-QUOTE", customer=customer, order_date=date(2030, 1, 1), currency="USD")
+        unquoted_order.items.create(sku=sku, quantity=1, unit_price=10)
+
+        for order in (quoted_order, unquoted_order):
+            response = client.post(f"/api/orders/{order.id}/confirm/", {}, format="json")
+            self.assertEqual(response.status_code, 200, response.data)
+            order.refresh_from_db()
+            self.assertEqual(order.status, "confirmed")
 
     def test_root_quote_number_is_unique_and_contiguous_under_concurrency(self):
         quote_date = date(2030, 1, 1)

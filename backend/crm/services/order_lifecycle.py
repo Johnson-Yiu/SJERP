@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 
 from crm.models import AdvanceAllocation, InventoryReservation, Order, PaymentPlan, PurchaseOrder, Quote, Shipment
@@ -44,16 +45,18 @@ def _order_item_payload(items):
 @transaction.atomic
 def confirm_order(order):
     """Confirm one draft, creating all formal side effects together."""
-    order = Order.objects.select_for_update().select_related("customer", "quote").get(pk=order.pk)
+    # Lock only the Order row first.  ``quote`` is nullable, so joining it here
+    # would create a nullable outer join that PostgreSQL cannot lock.
+    order = Order.objects.select_for_update().get(pk=order.pk)
     if order.status != "draft":
         raise ValidationError("只有草稿订单可以确认。")
 
     items = _validate_order_for_confirmation(order)
-    final_quote = order.quote
-    if final_quote:
+    final_quote = None
+    if order.quote_id:
         # The revision allocator and copied quote rows are deliberately invoked only
         # here: editing a draft must not create a legal/commercial quote revision.
-        source_quote = Quote.objects.select_for_update().get(pk=final_quote.pk)
+        source_quote = Quote.objects.select_for_update().get(pk=order.quote_id)
         from crm.serializers import OrderSerializer
 
         final_quote = OrderSerializer()._create_quote_revision_if_needed(
@@ -111,7 +114,11 @@ def cancel_order(order, reason):
         raise ValidationError("当前订单状态不能取消。")
     if Shipment.objects.filter(order=order, status="confirmed").exists():
         raise ValidationError("订单已有有效发货记录，不能直接取消。")
-    if PurchaseOrder.objects.filter(order=order, status__in=["ordered", "partial", "completed"]).exists():
+    formal_purchase_statuses = ["ordered", "partial", "completed"]
+    if PurchaseOrder.objects.filter(
+        Q(order=order) | Q(items__cost_allocations__order=order),
+        status__in=formal_purchase_statuses,
+    ).exists():
         raise ValidationError("订单已有正式采购记录，不能直接取消。")
     if order.transactions.filter(status="confirmed").exists():
         raise ValidationError("订单已有正式收付款记录，不能直接取消。")

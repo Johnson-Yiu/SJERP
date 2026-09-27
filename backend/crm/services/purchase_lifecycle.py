@@ -60,9 +60,6 @@ def cancel_purchase_order(purchase, reason):
         raise ValidationError("采购单已有有效预付款核销，不能直接取消。")
     if purchase.payment_plans.filter(settled_amount__gt=Decimal("0")).exists():
         raise ValidationError("采购单已有已结算付款计划，不能直接取消。")
-    if purchase.cost_allocation_version:
-        raise ValidationError("采购单已有成本分配，不能直接取消。")
-
     purchase.status = "cancelled"
     purchase.cancelled_at = timezone.now()
     purchase.cancellation_reason = reason

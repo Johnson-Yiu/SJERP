@@ -142,6 +142,7 @@ async function selectCustomer() {
 function validate() {
   if (!draft.customer) return '请选择客户。'
   if (props.mode === 'revise' && !draft.revision_summary.trim()) return '请简要说明本次修改的内容。'
+  if (draft.quote_date && draft.valid_until && draft.valid_until < draft.quote_date) return '有效期不能早于报价日期。'
   if (!draft.items.length || draft.items.some(item => !item.sku)) return '请至少添加一条有效的 SKU 明细。'
   if (total.value < 0) return '报价合计不能为负数。'
   return ''

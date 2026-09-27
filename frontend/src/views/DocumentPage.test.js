@@ -57,6 +57,14 @@ test('order editor reserves shipped status for confirmed outbound fulfillment', 
   assert.doesNotMatch(source, /option value="shipped">已发货<\/option>/)
 })
 
+test('order editor only exposes completed after the order is shipped', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /editableOrderStatusEntries = computed/)
+  assert.match(source, /key !== 'completed' \|\| \['shipped', 'completed'\]\.includes\(form\.status\)/)
+  assert.match(source, /仅已发货订单可进入已完成/)
+})
+
 test('editing from the order workbench reloads the current order before opening the editor', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

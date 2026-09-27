@@ -16,11 +16,12 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from crm.models import Contact, Customer, InventoryMovement, Order, Product, Quote, QuoteItem, QuoteRevisionCounter, Shipment, SKU, Transaction
+from crm.models import Contact, Customer, InventoryMovement, Order, OrderItem, PaymentPlan, Product, Quote, QuoteItem, QuoteRevisionCounter, Shipment, ShipmentItem, SKU, Supplier, SupplierSKU, Transaction
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.quote_snapshots import create_quote_items
 from crm.quotation_template_config import quotation_templates
 from crm.quote_xlsx_renderer import QuoteXlsxRendererError
+from crm.services.fulfillment import confirm_shipment, reverse_shipment
 from openpyxl import load_workbook
 
 
@@ -217,6 +218,44 @@ class QuoteApiTests(TestCase):
         response = self.client.post("/api/quotes/", self.root_quote_payload(**overrides), format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         return Quote.objects.get(pk=response.data["id"])
+
+    def test_quote_date_and_valid_until_boundaries_are_validated(self):
+        for valid_until in ("2026-08-16", "2026-08-15", None):
+            with self.subTest(valid_until=valid_until):
+                response = self.client.post(
+                    "/api/quotes/",
+                    self.root_quote_payload(valid_until=valid_until),
+                    format="json",
+                )
+                self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
+        before_count = Quote.objects.count()
+        response = self.client.post(
+            "/api/quotes/",
+            self.root_quote_payload(valid_until="2026-08-14"),
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data["valid_until"][0], "有效期不能早于报价日期。")
+        self.assertEqual(Quote.objects.count(), before_count)
+
+    def test_quote_revision_rejects_valid_until_before_quote_date_without_persisting(self):
+        root = self.create_quote(valid_until="2026-09-01")
+        before_count = Quote.objects.count()
+
+        response = self.client.post(
+            f"/api/quotes/{root.id}/revise/",
+            {
+                "revision_summary": "非法日期范围",
+                "quote_date": "2026-09-10",
+                "valid_until": "2026-09-09",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data["valid_until"][0], "有效期不能早于报价日期。")
+        self.assertEqual(Quote.objects.count(), before_count)
 
     def test_create_populates_contact_snapshot_and_item_description(self):
         response = self.client.post("/api/quotes/", self.root_quote_payload(), format="json")
@@ -869,6 +908,156 @@ class OrderWorkbenchTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         self.assertEqual(response.data["expected_ship_date"], "2026-09-06")
         self.assertEqual(Order.objects.get(pk=self.order.pk).items.get().id, original_item_id)
+
+    def test_status_only_edit_ignores_supplier_allocation_in_commercial_signature(self):
+        supplier = Supplier.objects.create(code="ORDER-WORKBENCH-SUP", name="Order Workbench Supplier")
+        source = SupplierSKU.objects.create(
+            supplier=supplier,
+            sku=self.sku,
+            supplier_sku_code="ORDER-WORKBENCH-SOURCE",
+            supplier_model="ORDER-WORKBENCH-MODEL",
+        )
+        allocation = self.client.post(
+            f"/api/orders/{self.order.pk}/items/{self.order.items.get().pk}/supplier-allocation/",
+            {"supplier_sku": source.pk, "scope": "recommended"},
+            format="json",
+        )
+        self.assertEqual(allocation.status_code, status.HTTP_200_OK, allocation.data)
+        item = self.order.items.get()
+        original_item_id = item.pk
+        Shipment.objects.create(
+            shipment_no="SH-ORDER-WORKBENCH-SUPPLIER",
+            order=self.order,
+            shipment_date=date(2026, 8, 21),
+            status="confirmed",
+        )
+
+        response = self.client.put(
+            f"/api/orders/{self.order.id}/",
+            {
+                "order_no": self.order.order_no,
+                "customer": self.customer.id,
+                "quote": self.quote.id,
+                "order_date": "2026-08-19",
+                "expected_ship_date": "2026-09-06",
+                "status": "production",
+                "currency": "USD",
+                "exchange_rate": "1.000000",
+                "shipping_fee": "0.00",
+                "discount": "0.00",
+                "notes": "",
+                "items": [{
+                    "sku": self.sku.id,
+                    "quantity": "3.00",
+                    "unit_price": "15.00",
+                    "cost_price": "7.00",
+                    "notes": "",
+                }],
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        item.refresh_from_db()
+        self.assertEqual(item.pk, original_item_id)
+        self.assertEqual(item.supplier_sku_id, source.pk)
+        self.assertEqual(item.supplier_model_snapshot, source.supplier_model)
+        self.assertEqual(item.supplier_sku_code_snapshot, source.supplier_sku_code)
+
+
+class OrderCompletionTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.day = date(2026, 9, 20)
+        self.customer = Customer.objects.create(code="C-COMPLETION", name="Completion Buyer", country="Germany")
+        product = Product.objects.create(code="P-COMPLETION", name="Completion Product")
+        self.sku = SKU.objects.create(product=product, sku="SKU-COMPLETION", cost_price="3.00")
+
+    def create_order(self, status_value="confirmed", quantity="2"):
+        order = Order.objects.create(
+            order_no=f"SO-COMPLETION-{Order.objects.count() + 1}",
+            customer=self.customer,
+            order_date=self.day,
+            status=status_value,
+            currency="USD",
+        )
+        item = OrderItem.objects.create(order=order, sku=self.sku, quantity=quantity, unit_price="10.00", cost_price="3.00")
+        return order, item
+
+    def add_stock(self, quantity):
+        return InventoryMovement.objects.create(
+            movement_no=f"IM-COMPLETION-{InventoryMovement.objects.count() + 1}",
+            movement_date=self.day,
+            type="adjust_in",
+            sku=self.sku,
+            quantity=quantity,
+        )
+
+    def set_status(self, order, value):
+        return self.client.patch(f"/api/orders/{order.pk}/", {"status": value}, format="json")
+
+    def test_confirmed_order_cannot_be_completed_before_shipping(self):
+        order, _ = self.create_order("confirmed")
+        response = self.set_status(order, "completed")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("订单尚未全部发货", str(response.data))
+        order.refresh_from_db()
+        self.assertEqual(order.status, "confirmed")
+
+    def test_production_order_cannot_be_completed_before_full_shipping(self):
+        order, _ = self.create_order("production")
+        response = self.set_status(order, "completed")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        order.refresh_from_db()
+        self.assertEqual(order.status, "production")
+
+    def test_partial_fulfillment_cannot_be_completed(self):
+        order, item = self.create_order("confirmed", "2")
+        self.add_stock("2")
+        confirm_shipment(order, {"shipment_date": self.day, "items": [{"order_item": item.pk, "quantity": "1"}]})
+        order.refresh_from_db()
+        self.assertEqual(order.status, "confirmed")
+        response = self.set_status(order, "completed")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        order.refresh_from_db()
+        self.assertEqual(order.status, "confirmed")
+
+    def test_fully_shipped_order_can_be_completed_with_open_receivable(self):
+        order, item = self.create_order("confirmed", "2")
+        self.add_stock("2")
+        shipment = confirm_shipment(order, {"shipment_date": self.day, "items": [{"order_item": item.pk, "quantity": "2"}]})
+        PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount="20.00")
+        order.refresh_from_db()
+        self.assertEqual(order.status, "shipped")
+
+        response = self.set_status(order, "completed")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        order.refresh_from_db()
+        self.assertEqual(order.status, "completed")
+        self.assertEqual(order.payment_plans.get().settled_amount, Decimal("0"))
+        self.assertEqual(shipment.items.count(), 1)
+
+    def test_manual_shipped_transition_is_still_rejected(self):
+        order, _ = self.create_order("confirmed")
+        response = self.set_status(order, "shipped")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        order.refresh_from_db()
+        self.assertEqual(order.status, "confirmed")
+
+    def test_completed_order_still_blocks_shipment_reversal(self):
+        order, item = self.create_order("confirmed", "2")
+        self.add_stock("2")
+        shipment = confirm_shipment(order, {"shipment_date": self.day, "items": [{"order_item": item.pk, "quantity": "2"}]})
+        self.assertEqual(self.set_status(order, "completed").status_code, status.HTTP_200_OK)
+
+        with self.assertRaises(ValidationError):
+            reverse_shipment(shipment, "已完成订单不允许冲销")
+
+        shipment.refresh_from_db()
+        order.refresh_from_db()
+        self.assertEqual(shipment.status, "confirmed")
+        self.assertEqual(order.status, "completed")
 
 
 class QuoteExportTests(TestCase):

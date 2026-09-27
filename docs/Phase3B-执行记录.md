@@ -917,7 +917,7 @@ T 对象为 `SO-20260927-293-B5EC17`（Order id=164）。通过订单编辑 UI �
 | I08 | OrderItem 保存商品、供应商、交易单位快照 | PASS | N/P/Q/T |
 | I09 | PO/Receipt/Shipment 交易单位快照可回溯 | PASS | Q、E/F/G |
 | I10 | Quote buyer_company_name 为历史快照 | PASS | N |
-| I11 | Packing plan 使用包装尺寸重量快照 | DEFERRED — Phase 3C | Packaging UI coverage gap，未进入 packing/shipment 正式 UAT |
+| I11 | Packing plan 使用包装尺寸重量快照 | PASS | Order `SO-20260927-295-D2D1FC` 的 PACK-OLD 与 `SO-20260927-296-202D47` 的 PACK-NEW 均由真实 UI 生成；计划展示已保存的模板、尺寸、皮重、数量和重量快照 |
 | I12 | Supplier 改名/停用不改写历史采购快照 | PASS | P |
 | I13 | actual 由 InventoryMovement signed sum 得出 | PASS | E/F/G/L/M/T 只读复核 |
 | I14 | reserved 仅计活动 reservation 且非负 | PASS | R、S、L/M |
@@ -962,7 +962,7 @@ T 对象为 `SO-20260927-293-B5EC17`（Order id=164）。通过订单编辑 UI �
 | I53 | 失败 reversal/void 无部分库存、流水、预留或状态变化 | DEFERRED — Phase 3C | UI 可构造失败已通过；内部不一致原子性待 Phase 3C |
 | I54 | UI 可见状态、原因和已冲销/作废结果 | PASS | E14/E18、K、R、T |
 
-I01–I54 统计：`PASS 49`、`DEFERRED — Phase 3C 5`、`FAIL 0`、`NOT APPLICABLE 0`。
+I01–I54 统计：`PASS 50`、`DEFERRED — Phase 3C 4`、`FAIL 0`、`NOT APPLICABLE 0`。
 
 ### 16.7 E01–E43 最终变化与剩余阻断
 
@@ -971,8 +971,93 @@ I01–I54 统计：`PASS 49`、`DEFERRED — Phase 3C 5`、`FAIL 0`、`NOT APPLI
 - R：`PASS — UI GUARD`；取消订单不能发货，也不出现在新建采购单关联订单中。
 - 其余 E01–E43 保留前述证据与状态；E17、E20 相关内部异常部分、E21、E25–E27、E29、E33、E39–E43 中需要故障注入的项目继续标记为 `DEFERRED — Phase 3C`，不虚报为 UI PASS。
 - `REAL BUSINESS BUG`：0；`STATE-MACHINE GAP-01`：0（已 CLOSED/FIXED）。
-- 保留未修复范围：`UI COVERAGE GAP-PACKAGING-01`、`TEST INFRASTRUCTURE BLOCKER-PI-01`、`UX ISSUE-01`、`UX ISSUE-02`、`EXPECTED CURRENT CONTRACT-01`。本轮不修 Packaging/PI/UX，也不进入 Phase 3C 或 Phase 4。
+- `UI COVERAGE GAP-PACKAGING-01` 已由独立包装 UI 修复关闭；`I11` 已通过 PACK-OLD/PACK-NEW 真实 UI 快照证据验证。
+- `TEST INFRASTRUCTURE BLOCKER-PI-01` 的核心下载/解析证据在最终封版节补充；图片导出仍另有当前浏览器会话下载阻断，未宣称图片已嵌入 XLSX。
+- `UX ISSUE-01`、`UX ISSUE-02`、`EXPECTED CURRENT CONTRACT-01` 保留；本轮不修改 UX、契约或 Phase 3C/4 范围。
 
 ### 16.8 回归与封版前置条件
 
-本次仅更新本执行记录；回归结果与 GitHub Actions 状态以本次提交后的实际运行结果为准。只有文档提交、后端/前端回归和 UAT 分支 Actions 全部完成后，才提交 Phase 3B 最终封版审查。
+本次仅更新本执行记录；本地回归已在第 17.6 节实际完成。GitHub Actions 状态以本次提交后的运行结果为准。
+
+## 17. Phase 3B Final Closure Evidence
+
+**执行日期：** 2026-09-27
+**执行分支：** `phase-03b-real-ui-uat`
+**证据原则：** 本节只整理已经通过真实 UI 完成、并可由本地文件或只读查询复核的证据；没有用 API、shell 写入、SQL、fixture 或伪造 XLSX 补齐缺口。
+
+### 17.1 PACK-OLD / PACK-NEW 与 I11
+
+| 项目 | PACK-OLD | PACK-NEW |
+|---|---|---|
+| Order | `SO-20260927-295-D2D1FC`（id=165） | `SO-20260927-296-202D47`（id=166） |
+| PackingPlan | id=1 | id=2 |
+| 模板快照 | `UAT-PACK-OLD`，40×30×20 cm，tare 0.5 kg，qpc=5 | `UAT-PACK-NEW`，50×35×25 cm，tare 0.8 kg，qpc=5 |
+| cartons / quantity | 3 / 12 | 3 / 12 |
+| net / gross / CBM | 2.4 kg / 3.9 kg / 0.072000 | 2.4 kg / 4.8 kg / 0.131250 |
+| 真实 UI 结果 | 生成后显示旧模板快照；修改当前模板后未重新生成，旧计划仍显示 OLD | 新订单首次生成显示 NEW 模板快照 |
+
+每个 carton 的 `packaging_template_snapshot`、数量、尺寸、tare、净重、毛重、CBM、`is_partial` 和 `requires_confirmation` 均由计划保存值展示；没有在显示时动态读取当前模板。对 PACK-OLD 点击“重新生成预计装箱方案”后取消确认弹窗，计划保持不变；没有自动 POST 或自动替换计划。无包装资料的既有订单通过 UI 生成后显示 `needs_attention` 与 `SKU-000002: 包装资料未配置`，页面未崩溃。
+
+结论：`UI COVERAGE GAP-PACKAGING-01` 已关闭，`I11 = PASS — Phase 3B Real UI`。
+
+### 17.2 PI 实际 UI 下载与 openpyxl 复核
+
+以下文件均由报价页面真实点击导出后出现在 Windows Downloads，并由 `openpyxl` 重新打开；没有调用导出 API。四个文件均只有 `PI` 工作表，合并区域和关键单元格可读：
+
+| 文件 | 大小 | SHA-256 | L9 | C11 | J/K/L/M |
+|---|---:|---|---|---|---|
+| `SJ20260925US001.xlsx` | 10303 | `f6ab5ac394f9f9bf71c4d525271059577b0bb9d5b167ede035c2f2ac63483e12` | root quote | `LSTRIP-WW` | `5 m / 12.5 / 62.5` |
+| `SJ20260925US001-1.xlsx` | 10325 | `6215ad407309688408934851cb35f18fb9f1bc205b62e707277150a6704c2d44` | revision | `LSTRIP-WW` | `10 m / 15 / 150` |
+| `SJ20260926US005.xlsx` | 10212 | `7da85fe367100b63aba94d18d7c38c915ad31cafe8e1afb7a8a0f2ab7353e468` | old snapshot | `LSTRIP-24V60K` | `2 roll / 10 / 20` |
+| `SJ20260926US007.xlsx` | 10187 | `2fbda03f6863d4085d0814c8f795bed2daa99a22d82ade38f46355223c6288fa` | new snapshot | `SNAP-MODEL-NEW` | `1 m / 12 / 12` |
+
+实际解析结果：root/revision 文件各有 47 个 merged ranges，历史 OLD/NEW 文件各有 46 个；关键单元格字体、填充、边框、对齐和数字格式均可读取，银行信息、Bank Code、Branch Code、IMPORTANT NOTICE、notes、payment/trading terms 均存在。root 与 revision 的金额、数量和付款条件差异已在工作簿中体现；`SJ20260926US005` 与 `SJ20260926US007` 证明历史买方、Sales Model、描述快照没有被后续修改覆盖。
+
+图片证据单独记录如下：用户已通过 UI 上传并保留两个 SKU 图片；随后通过 UI 保存了 `SJ20260927US007`（SKU-000002，QuoteItem id=305）和 `SJ20260927US008`（SKU-000003，QuoteItem id=306），两条 QuoteItem 都有对应 `image_snapshot`。本次浏览器会话点击导出这两份报价时没有产生新的 Downloads 文件，且随后浏览器自动化通道无法重新建立；因此图片 XLSX 是否嵌入不能标记 PASS，也不归类为业务逻辑通过。当前实际可核验的 UI 下载 XLSX 数量为 **4**；图片导出保留为 `TEST INFRASTRUCTURE BLOCKER-PI-IMAGE-01`。
+
+### 17.3 A–T 最终矩阵与订单审计
+
+| 场景 | 真实对象 |
+|---|---|
+| A | Order id=147 `SO-2026-21939` |
+| B | Order id=148 `SO-2026-52556` |
+| C | Order id=149 `SO-2026-77325` |
+| D | Order id=150 `SO-2026-42504` |
+| E | Order id=151 `SO-20260926-281-2A82B3` |
+| F | Order id=155 `SO-20260926-282-A5565B` |
+| G | Order id=153 `SO-2026-01061` |
+| H | Order id=157 `SO-20260926-283-4CD49B` |
+| I | H 场景的超额收款/预收拆分对象 |
+| J | Order id=158 `SO-20260926-284-022A30` |
+| K | H/J 场景的 root void 与 allocation 回滚链 |
+| L | Order id=159 `SO-20260926-285-CF4831` |
+| M | Order id=160 `SO-20260926-286-32BFE6` |
+| N/O/P/Q | Order id=161 `SO-20260927-287-6370F5` |
+| R | Order id=162 `SO-20260927-291-E5F8BC` |
+| S | Order id=163 `SO-20260927-292-3683C9` |
+| T | Order id=164 `SO-20260927-293-B5EC17` |
+
+A–T 矩阵已逐项有对应真实场景或同场景履约/财务链证据；不是用 20 个空订单填充。数据库中保留的 distinct UAT Order 共 **20** 个：A–T 使用的 15 个订单，加上 supporting Order id=152、154、156（`OVERAGE-UAT`）、165（PACK-OLD）、166（PACK-NEW）。
+
+Quote→Order 关系复核包含 customer、实际 linked revision、原始/修订 Quote No、Quote total 与 Order total；商业条件变化时原 Quote 保持旧值、revision 保存变化、Order 指向 revision，未发现 linked Quote total 与 Order total 不一致。
+
+### 17.4 ContractChangeRequest UI 审计
+
+当前 Order Workbench 真实 UI 只有概览、明细、付款、采购与发货、预计装箱、库存流水和操作日志等入口，没有 ContractChangeRequest 审批/批准控件。后端服务和路由存在，但本轮未以 API 代替 UI。结论：`UI COVERAGE GAP-01 — ContractChangeRequest approve UI` 仍然开放，不能写成 UI PASS。
+
+### 17.5 Phase 3B 最终验收清单
+
+- A–T：真实 UI 场景与只读审计证据齐全；distinct UAT Order=20。
+- Packaging P07/P08 与 I11：真实 UI 生成、重新生成确认、保存快照和缺失配置 warning 均已验证。
+- PI root/revision/历史 OLD/NEW：4 个实际 UI 下载文件已用 openpyxl 解析；图片报价快照已保存，但图片 XLSX 下载仍受浏览器会话阻断。
+- `REAL BUSINESS BUG`：0；`UI COVERAGE GAP`：1（ContractChange approve）；`TEST INFRASTRUCTURE BLOCKER`：图片导出 1 项；`UX ISSUE`：2；`EXPECTED CURRENT CONTRACT`：1。
+- I01–I54：`PASS 50`、`DEFERRED — Phase 3C 4`、`FAIL 0`、`NOT APPLICABLE 0`。
+- 本轮不开始 Phase 3C，不修改业务代码，不清库，不删除既有 UAT 数据。
+
+本节记录了最终可核验的封版证据；图片 XLSX 导出和 ContractChange approve UI 仍需单独处理后，才能宣称所有 UI/图片验收无阻断。
+
+### 17.6 最终回归
+
+- Backend：`python manage.py check` PASS；`python manage.py makemigrations --check --dry-run` PASS；`python manage.py test` **297/297 PASS**。
+- Frontend：`npm run test:unit` **61/61 PASS**；`node --test tests/detail-drawer-typography.spec.js` **1/1 PASS**；`npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js` **31/31 PASS**；`npm run build` PASS。
+- 本次只修改本执行记录；未修改业务代码、测试、CI、模型、迁移或业务数据。

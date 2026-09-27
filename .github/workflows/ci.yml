@@ -26,6 +26,50 @@ jobs:
         working-directory: backend
         run: python manage.py test
 
+  backend-postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: sunjack_ci
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d sunjack_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      APP_STAGE: staging
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/sunjack_ci
+      DJANGO_DEBUG: 'false'
+      DJANGO_SECRET_KEY: ci-only-not-for-production
+      DJANGO_ALLOWED_HOSTS: localhost
+      DEVELOPMENT_SUPERADMIN: 'false'
+      RBAC_ENFORCEMENT: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        run: pip install -r backend/requirements.txt
+      - name: Django system check
+        working-directory: backend
+        run: python manage.py check
+      - name: Check migrations
+        working-directory: backend
+        run: python manage.py makemigrations --check --dry-run
+      - name: Apply migrations
+        working-directory: backend
+        run: python manage.py migrate --noinput
+      - name: PostgreSQL backend tests
+        working-directory: backend
+        run: python manage.py test
+
   frontend:
     runs-on: ubuntu-latest
     steps:

@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -53,12 +54,23 @@ TEMPLATES = [{
 }]
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {
-    "default": dj_database_url.config(
+def _database_config():
+    """Keep SQLite for development while requiring PostgreSQL outside development."""
+    database_url = os.getenv("DATABASE_URL", "").strip()
+    if APP_STAGE in {"staging", "production"}:
+        if not database_url:
+            raise ImproperlyConfigured("DATABASE_URL is required for staging/production.")
+        config = dj_database_url.parse(database_url, conn_max_age=60)
+        if config.get("ENGINE") != "django.db.backends.postgresql":
+            raise ImproperlyConfigured("DATABASE_URL must use PostgreSQL for staging/production.")
+        return config
+    return dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=60,
     )
-}
+
+
+DATABASES = {"default": _database_config()}
 
 AUTH_PASSWORD_VALIDATORS = []
 LANGUAGE_CODE = "zh-hans"

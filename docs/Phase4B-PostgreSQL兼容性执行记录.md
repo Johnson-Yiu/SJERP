@@ -2,7 +2,7 @@
 
 分支：`phase-04b-postgresql-runtime-ci`  
 基线：`master` / `1759c02a66353d2db6f709fd3b3ab27b46e2fc1b`  
-执行范围：仅 PostgreSQL runtime dependency、数据库环境选择、CI job、settings 测试和 PostgreSQL 并发测试；未修改业务模型、serializer、view、service、frontend，未迁移或清理开发数据库。
+执行范围：仅 PostgreSQL runtime dependency、数据库环境选择、CI job、settings 测试和 PostgreSQL 并发测试；未修改业务模型、serializer、view、migration 或 frontend。PostgreSQL CI 暴露真实兼容性问题后，对少量 service 的数据库锁查询进行了兼容性修复，未改变业务规则；未迁移或清理开发数据库。
 
 ## 1. Runtime dependency
 
@@ -87,8 +87,8 @@
 - 本轮没有新增业务 schema migration。
 - 本轮没有执行 SQLite → PostgreSQL 数据迁移。
 - 没有连接当前开发库以外的数据库，也没有导出或修改 UAT 数据。
-- 静态审计未发现需立即重写的历史 migration；第一次 PostgreSQL CI 已确认 `migrate --noinput` 成功至 0066，第二次失败属于测试 harness 隔离，修复后的最终 CI 结果待确认。
-- `UniqueConstraint`、JSONField、DecimalField、timezone、bulk 操作的完整 PostgreSQL 验证等待同一 CI suite。
+- 静态审计未发现需立即重写的历史 migration；最终 CI `36327524750` 已确认 PostgreSQL 17 `migrate --noinput` 成功至 0066。
+- 最终 CI `36327524750` 的 `backend-postgres` 为 `320/320 PASS`、`0 skipped`；Supplier through table 与 `crm_product.combination_rules` schema sanity，以及 root quote、revision、cost concurrency tests 均 PASS。
 - `DATA-MIGRATION-RISK-01`：SQLite 不严格执行 varchar 长度；Phase 4B-2 前必须扫描真实开发库 `Supplier.code` 长度是否超过 2。若存在，必须人工映射为合法二字代码，禁止静默截断；本轮不修改开发数据库。
 
 ## 9. Findings

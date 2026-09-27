@@ -730,14 +730,14 @@ UI 显示“确认 SKU 身份更新”，确认后保存成功。只读复核得
 
 本批继续使用现有开发数据库，所有新增或修改业务数据均通过 Vite 页面、按钮、输入框、下拉框和弹窗完成；只读复核使用 Django ORM，未使用 APIClient、curl、浏览器 console、Django shell 写入、SQL、seed 或 fixture 造数。除本执行记录外，本批没有修改业务代码、测试、CI、模型或迁移。
 
-### 15.1 E02：非法报价日期
+### 15.1 E02：非法报价日期（修复后 UI 回归）
 
-通过报价 UI 创建 `Customer A Lighting Ltd` 的报价，报价日期填写 `2026-09-27`，有效期填写 `2026-09-26`，选择 SKU-000001、数量 1、单价 USD 10.00 后点击“保存报价”。
+保留历史证据：此前的倒置日期尝试生成了 `SJ20260927US001`（Quote id=290），该记录不得删除。修复分支合并并重启当前 Django 服务后，重新通过报价 UI 选择 `Customer A Lighting Ltd`、SKU-000001、数量 1、单价 USD 10.00：
 
-实际结果：页面没有显示日期倒置错误，成功生成草稿报价 `SJ20260927US001`（Quote id=290）；只读复核为 `quote_date=2026-09-27`、`valid_until=2026-09-26`。因此 E02 未达到计划中的“清晰错误、不写入”预期，确认：
+- 报价日期 `2026-09-27`、有效期 `2026-09-26`：页面明确显示 `有效期不能早于报价日期。`，编辑器保持打开，报价数量没有增加；
+- 将有效期改为等于报价日期 `2026-09-27` 后保存成功，生成草稿 `SJ20260927US004`，报价数量仅增加这一条。
 
-- `REAL BUSINESS BUG-02`：报价日期晚于有效期时，正常 UI/后端仍接受并持久化倒置日期；
-- 本轮不修改报价业务代码，也不删除该证据记录；待独立修复任务处理。
+E02 当前为 `FIXED`、`PASS — UI ACTION`。历史 `SJ20260927US001` 仅作为修复前证据保留，不再计入当前失败。
 
 ### 15.2 E04：重复/循环分类
 
@@ -764,7 +764,7 @@ UI 显示“确认 SKU 身份更新”，确认后保存成功。只读复核得
 ### 15.4 E36 / E37：订单状态 UI guard 与已知状态机差异
 
 - E36：在订单编辑 UI 中，`shipped` 只显示为“已发货（由出库自动更新）”，不是可人工推进的正常状态选项；正常 UI 不提供手工设置 shipped 的入口，`PASS — UI GUARD`。
-- E37：沿用此前真实 UI 证据（`SO-2026-40674`）：已有订单可通过 UI 选择 `completed`，后端也未禁止该人工状态。该结果继续标记为 `STATE-MACHINE GAP-01`，不是本轮修复项。
+- E37：对已有但仍为 `confirmed`、未完全发货的 `SO-20260927-292-3683C9` 打开真实编辑 UI，状态下拉不提供 `completed`，并提示仅已发货订单可进入已完成；`shipped` 也不是人工可选项，`PASS — UI GUARD`。对已完整发货且收付款齐全的 T 订单，`completed` 通过真实 UI 保存成功，见 15.6。此前状态机差异 `STATE-MACHINE GAP-01` 已由本轮回归关闭。
 
 ### 15.5 S：库存不足发货的原子性
 
@@ -772,7 +772,7 @@ UI 显示“确认 SKU 身份更新”，确认后保存成功。只读复核得
 
 在订单“采购与发货”中输入 1 并点击“确认发货”，页面显示 `库存不足，不能确认发货。`。关闭失败窗口后只读复核：订单仍 `confirmed`，metrics 和 SKU `actual/reserved/available` 完全不变，仍无 Shipment、sale_out 或 reservation。S：`PASS`，失败为库存保护且无部分写入。
 
-### 15.6 T：独立完整 happy path（达到 shipped，completed 被现有 guard 阻止）
+### 15.6 T：独立完整 happy path（最终进入 completed）
 
 使用全新链路 `Customer A Lighting Ltd → SJ20260927US003 → SO-20260927-293-B5EC17`，全部通过 UI 完成：报价接受、订单确认、Supplier B 订单行分配、采购单创建、成本分配、Freight T 10.00 预览并保存、收货、客户收款、供应商付款、发货。
 
@@ -786,11 +786,11 @@ UI 显示“确认 SKU 身份更新”，确认后保存成功。只读复核得
 | Customer Payment | PaymentPlan id=390 `settled`，50.0000/50.0000；Transaction id=109，USD 50.00，`confirmed` |
 | Supplier Payment | Transaction id=110 + 111，均 `confirmed`，USD 9.00 + 21.00 = 30.00，reference=`T-SUPPLIER-PAY` |
 | Shipment | Shipment `SH-94182254C58B449`（id=52，confirmed），sale_out movement id=117，quantity=2 |
-| 最终状态 | Order 自动为 `shipped`；通过订单 UI 尝试改为 `completed` 时，后端显示“合同已有采购、出入库或收付款记录，不能改写商品、往来方及金额依据。请使用追加单或退款记录处理后续变化。” |
+| 最终状态 | Order 自动为 `shipped`；在 Django 服务重启加载修复后，通过订单 UI 将状态改为 `completed` 并保存成功，列表显示“已完成”。 |
 
-因此 T 的 Quote→Order→Purchase→Receipt→Cost→Customer Payment→Supplier Payment→Shipment 链已闭环，但没有把已有履约/财务记录的订单强行改写为 `completed`。这不是本轮新增生产代码 bug；完整“completed”终态需按当前状态机契约另行决定。
+因此 T 的 Quote→Order→Purchase→Receipt→Cost→Customer Payment→Supplier Payment→Shipment→completed 链已闭环；completed 保存只在完整履约/收付款条件满足时允许，未重建既有业务记录。
 
-T 订单最终只读不变量：OrderItem `allocated=0`、`to_procure=0`、`purchased=2`、`received=2`、`in_transit=0`、`shipped=2`、`unshipped=0`；SKU-000005 `actual=0`、`reserved=0`、`available=0`、`in_transit=10`，满足 `available = actual - reserved`，没有负库存。订单概览显示分配商品成本 ¥216.00、附加费用 ¥72.00、预估毛利 ¥72.00（USD 50 × 7.2 − USD 30 × 7.2 − USD 10 × 7.2）。
+T 订单最终只读不变量：OrderItem `allocated=0`、`to_procure=0`、`purchased=2`、`received=2`、`in_transit=0`、`shipped=2`、`unshipped=0`；SKU-000005 `actual=0`、`reserved=0`、`available=0`、`in_transit=10`，满足 `available = actual - reserved`，没有负库存。完成保存只改变订单状态/时间戳，未重建 OrderItem，也未新增 Quote、PurchaseOrder、Shipment、InventoryMovement 或 Transaction；Supplier B 的 supplier snapshots 与 allocation 保持不变。订单概览显示分配商品成本 ¥216.00、附加费用 ¥72.00、预估毛利 ¥72.00（USD 50 × 7.2 − USD 30 × 7.2 − USD 10 × 7.2）。
 
 ### 15.7 Dashboard 前后证据
 
@@ -806,7 +806,7 @@ T 订单最终只读不变量：OrderItem `allocated=0`、`to_procure=0`、`purc
 | ID | 最终结果 | Execution Method |
 |---|---|---|
 | E01 | PASS | UI ACTION |
-| E02 | REAL BUSINESS BUG-02：倒置日期被接受并落库 | UI ACTION |
+| E02 | FIXED；倒置日期被 UI 拒绝且不写入，等值日期保存成功（历史 `SJ20260927US001` 保留） | UI ACTION |
 | E03 | PASS | UI ACTION |
 | E04 | PASS（重复名称错误；父→后代循环入口被 UI 排除） | UI ACTION / UI GUARD |
 | E05 | PASS | UI ACTION |
@@ -841,7 +841,7 @@ T 订单最终只读不变量：OrderItem `allocated=0`、`to_procure=0`、`purc
 | E34 | PASS | UI ACTION |
 | E35 | PASS | UI GUARD |
 | E36 | PASS | UI GUARD |
-| E37 | STATE-MACHINE GAP-01：当前允许人工 completed | UI ACTION |
+| E37 | PASS；未完全发货订单的状态下拉不提供 completed，已完整发货 T 可合法进入 completed | UI GUARD / UI ACTION |
 | E38 | PASS | UI ACTION |
 | E39 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
 | E40 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
@@ -849,15 +849,130 @@ T 订单最终只读不变量：OrderItem `allocated=0`、`to_procure=0`、`purc
 | E42 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
 | E43 | DEFERRED — Phase 3C | AUTOMATED INVARIANT |
 
-最终矩阵计数：UI ACTION 19 项（其中 E02 为 REAL BUSINESS BUG-02，E37 为 STATE-MACHINE GAP-01），UI GUARD 12 项，AUTOMATED INVARIANT 12 项；合计 43 项。
+最终矩阵计数：UI ACTION 19 项，UI GUARD 12 项，AUTOMATED INVARIANT 12 项；合计 43 项。E02 已修复，E37 的 STATE-MACHINE GAP-01 已关闭。
 
 ### 15.9 Phase 3B-6 问题清单与封版判断
 
-- `REAL BUSINESS BUG`：1，新增 `REAL BUSINESS BUG-02`（E02 非法报价日期倒置仍被接受并持久化）。
+- `REAL BUSINESS BUG`：0。历史 `REAL BUSINESS BUG-02` 已由修复分支解决，并通过 E02 真实 UI 回归。
 - `UI COVERAGE GAP`：1，延续 `UI COVERAGE GAP-PACKAGING-01`；本批未进入正式 packing/shipment UAT。
 - `TEST INFRASTRUCTURE BLOCKER`：1，延续 `TEST INFRASTRUCTURE BLOCKER-PI-01`。
-- `STATE-MACHINE GAP`：1，延续 `STATE-MACHINE GAP-01`（E37 completed 可人工设置；T 在已有履约/财务记录后被后端保护，保持 shipped）。
+- `STATE-MACHINE GAP`：0。`STATE-MACHINE GAP-01` 已关闭：未完全发货订单的 UI 不提供 completed，完整履约/收付款的 T 订单可通过正常 UI 进入 completed。
 - `UX ISSUE`：2，延续 `UX ISSUE-01`、`UX ISSUE-02`，本批未修改 UI。
 - `EXPECTED CURRENT CONTRACT`：1，延续 `EXPECTED CURRENT CONTRACT-01`。
 
-Phase 3B-6 的 R、S 以及 T 的完整业务链（至 shipped）已有真实 UI 与只读证据；但由于 E02 已确认真实业务 bug，且 T 的 `completed` 终态受现有状态机 guard 阻止，本记录不宣称 Phase 3B 全部封版，也不开始 Phase 3C、Phase 4 或其他后续阶段。
+Phase 3B-6 的 R、S 以及 T 的完整业务链（含 T 的 completed 终态）已有真实 UI 与只读证据；E02 修复也已完成 UI 回归。本记录仍不开始 Phase 3C、Phase 4 或其他后续阶段，待最终封版审查。
+
+## 16. Phase 3B Final Blocker Fix：最终回归与不变量矩阵
+
+**执行日期：** 2026-09-27
+**执行分支：** `phase-03b-real-ui-uat`
+**执行方式：** 本节新增证据均通过内置浏览器真实页面、按钮、输入框、下拉和弹窗完成；ORM 仅用于只读复核。没有清库、恢复备份、seed、fixture、APIClient、curl、fetch、浏览器 console 或数据库写入。
+
+### 16.1 分支同步与历史数据保护
+
+`fix/phase3b-final-blockers` 已快进合并到 `master`，master CI 通过；随后以普通 merge 同步到本分支，未 rebase、未 squash。当前开发数据库保持原有 Phase 3B 数据，历史倒置日期证据 `SJ20260927US001`（Quote id=290）完整保留。
+
+### 16.2 E02 修复后的真实 UI 回归
+
+| 操作 | UI 结果 | 数据结果 |
+|---|---|---|
+| 报价日期 `2026-09-27`、有效期 `2026-09-26` | 显示 `有效期不能早于报价日期。`，编辑器保持打开 | Quote 数量不增加，无新 Quote |
+| 两日期均为 `2026-09-27` | 保存成功，列表出现 `SJ20260927US004` | 仅新增该合法草稿，历史 `SJ20260927US001` 未改写 |
+
+E02：`FIXED`、`PASS — UI ACTION`。
+
+### 16.3 E37 与 STATE-MACHINE GAP-01 回归
+
+对已有 confirmed、未完全发货的 `SO-20260927-292-3683C9` 打开订单编辑 UI：状态下拉仅显示草稿、已确认、生产中、已取消；`completed` 不在正常选择项中，页面提示“仅已发货订单可进入已完成”。`shipped` 同样不是人工可选项。对已完整履约、收付款均已完成的 T 订单，`completed` 通过 UI 保存成功。E37：`PASS`；`STATE-MACHINE GAP-01`：`CLOSED/FIXED`。
+
+### 16.4 T：completed 终态与历史快照复核
+
+T 对象为 `SO-20260927-293-B5EC17`（Order id=164）。通过订单编辑 UI 将既有 `shipped` 改为 `completed` 后保存成功。只读复核：
+
+- OrderItem id=213：SKU id=349、quantity=2、unit_price=25，Supplier B / `SB-LDRIVER-24V1000` / supplier SKU code 快照均未变化；
+- OrderItem metrics：`allocated=0`、`to_procure=0`、`purchased=2`、`received=2`、`in_transit=0`、`shipped=2`、`unshipped=0`；
+- Quote chain 仍只有原 Quote id=293；PurchaseOrder、Shipment、InventoryMovement、Transaction 数量均未增加；
+- PaymentPlan id=390 仍为 `settled`（50/50），Order paid=50、balance=0；PO 已完成，库存满足 `available = actual - reserved`；
+- 本次只改变 Order 状态与时间戳，没有重建商品、供应商分配、成本或财务历史。
+
+### 16.5 R：cancelled Order 的履约与采购保护
+
+对象 `SO-20260927-291-E5F8BC`（Order id=162）保持 `cancelled`。订单工作台“采购与发货”页显示 0 条发货记录；SKU 行的“选择供应商”和“确认发货”均为 disabled，不能从 UI 发起新发货。只读复核保持：Shipment=0、PurchaseOrder=0、InventoryMovement=0、Transaction=0、AdvanceAllocation=0、InventoryReservation=0，PaymentPlan id=388 保留且为 `cancelled`（30/0）。
+
+在“新建采购单”真实 UI 的“关联订单”下拉中，`SO-20260927-291-E5F8BC` 不在可选项；表单随后直接关闭，未保存。R：`PASS — UI GUARD`，没有重新激活订单、预留或 PaymentPlan。
+
+### 16.6 I01–I54 完整不变量矩阵
+
+状态仅使用 `PASS`、`DEFERRED — Phase 3C` 或 `NOT APPLICABLE`；没有证据的内部故障注入不标记为 PASS。
+
+| ID | 不变量摘要 | Status | 证据 / 说明 |
+|---|---|---|---|
+| I01 | SKU 主键与 SKU Code 身份稳定 | PASS | O/N/Q UI 与只读快照 |
+| I02 | SKU Code 不可改且身份键唯一 | PASS | E03、O |
+| I03 | SupplierSKU 不替代内部 SKU 身份 | PASS | P |
+| I04 | 每 SKU 至多一个启用首选 SupplierSKU | PASS | Supplier Allocation 与只读来源矩阵 |
+| I05 | 客户改名不改写关联关系 | PASS | N |
+| I06 | Quote revision root/parent 同树且不跨客户 | PASS | Quote revision UI guard 与 revision 复核 |
+| I07 | QuoteItem 保存创建时商品快照 | PASS | N/O/Q 历史 QuoteItem |
+| I08 | OrderItem 保存商品、供应商、交易单位快照 | PASS | N/P/Q/T |
+| I09 | PO/Receipt/Shipment 交易单位快照可回溯 | PASS | Q、E/F/G |
+| I10 | Quote buyer_company_name 为历史快照 | PASS | N |
+| I11 | Packing plan 使用包装尺寸重量快照 | DEFERRED — Phase 3C | Packaging UI coverage gap，未进入 packing/shipment 正式 UAT |
+| I12 | Supplier 改名/停用不改写历史采购快照 | PASS | P |
+| I13 | actual 由 InventoryMovement signed sum 得出 | PASS | E/F/G/L/M/T 只读复核 |
+| I14 | reserved 仅计活动 reservation 且非负 | PASS | R、S、L/M |
+| I15 | available = actual - reserved | PASS | L/M、E11、T |
+| I16 | 有效收货只产生一次 receipt purchase_in | PASS | E/F/L；重复提交保护 |
+| I17 | Receipt reversal 依据原 receipt 生成一次 reversal | PASS | F |
+| I18 | 库存不足时 Receipt reversal 原子拒绝 | PASS | E15 |
+| I19 | 每个正常 ShipmentItem 有匹配 sale_out | PASS | E/F/G/T |
+| I20 | Shipment reversal 前全单校验原 sale_out | DEFERRED — Phase 3C | 缺失/异常内部流水需临时测试库构造 |
+| I21 | 有效 Shipment reversal 逐行生成 adjust_in | PASS | G |
+| I22 | 手工库存调整限于允许类型，自动流水不可编辑 | PASS | 库存 UI 与历史流水复核 |
+| I23 | shipped_quantity 排除已冲销 Shipment | PASS | F/G 重发链 |
+| I24 | received_quantity 排除已冲销 Receipt | PASS | F |
+| I25 | PO 状态由有效 receipt 汇总驱动 | PASS | E/F/L |
+| I26 | reservation 重算按 SKU 且不影响其他 SKU | PASS | E/F/G、订单履约指标复核 |
+| I27 | 收货/发货冲销后 reservation 重新平衡且不越 actual | PASS | F/G/E11 |
+| I28 | purchased/received/in-transit/shipped 指标可解释 | PASS | E/F/G/L/M/T |
+| I29 | PaymentPlan remaining = planned - settled | PASS | H–K、T |
+| I30 | 订单/采购单各自只关联对应 PaymentPlan | PASS | H–K、T、R |
+| I31 | 金额、币种、方向、往来方与计划匹配 | PASS | E28/E30/E31、H–K |
+| I32 | 收付款 root/child split 可追溯 | PASS | H–K |
+| I33 | 真正超额部分才生成 unallocated advance | PASS | H–K |
+| I34 | allocated_amount 等于 active allocation 合计 | PASS | J/K |
+| I35 | AdvanceAllocation 仅同主体/方向/币种/open 计划 | PASS | E31、H–K |
+| I36 | void root 同步取消 child、停用 allocation 并归零 | PASS | K |
+| I37 | 不安全 void 状态原子拒绝 | DEFERRED — Phase 3C | 内部 ledger mismatch 需临时测试库 |
+| I38 | cancelled transaction 不计入现金流/advance/paid | PASS | K 与 Dashboard |
+| I39 | Quote/Order total 可由明细、费用、折扣复算 | PASS | A–D、E/F/G、L/M、T |
+| I40 | 商业条件变化生成 Quote revision | PASS | Quote→Order revision evidence |
+| I41 | 默认 PaymentPlan 合计等于有效合同 total | PASS | H–K、T |
+| I42 | PO total、付款、退款、advance 可解释 paid/unpaid | PASS | L/M、T |
+| I43 | 成本归属不超采购数量且公共费用可解释 | PASS | L/M |
+| I44 | 毛利包含销售、采购基础成本及附加费用 | PASS | L/M、T Dashboard |
+| I45 | 外币正汇率、CNY 汇率=1 | PASS | E30 |
+| I46 | shipped 只能由有效发货推进 | PASS | E36、E11/T |
+| I47 | PO partial/completed 由有效 receipt 驱动且可回退 | PASS | F、L/M |
+| I48 | 仅 confirmed Shipment 可冲销；completed/cancelled 被阻止 | PASS | E18/E19/E20、R |
+| I49 | 仅 confirmed Transaction root 可作废，child 不可单独作废 | DEFERRED — Phase 3C | child 直接服务调用留给临时测试库；root UI 作废已在 K 通过 |
+| I50 | Receipt reversal 保留原记录并阻止二次冲销 | PASS | F、E14 |
+| I51 | Shipment reversal 保留原记录及 reversal reference | PASS | G、E18 |
+| I52 | Transaction void 保留 root/child、reason、时间 | PASS | K |
+| I53 | 失败 reversal/void 无部分库存、流水、预留或状态变化 | DEFERRED — Phase 3C | UI 可构造失败已通过；内部不一致原子性待 Phase 3C |
+| I54 | UI 可见状态、原因和已冲销/作废结果 | PASS | E14/E18、K、R、T |
+
+I01–I54 统计：`PASS 49`、`DEFERRED — Phase 3C 5`、`FAIL 0`、`NOT APPLICABLE 0`。
+
+### 16.7 E01–E43 最终变化与剩余阻断
+
+- E02：`FIXED`、`PASS — UI ACTION`；倒置日期被拒绝且不写入，等值日期保存成功。
+- E37：`PASS — UI GUARD/UI ACTION`；未完全发货订单不能从 UI 选择 completed，完整履约 T 可进入 completed。
+- R：`PASS — UI GUARD`；取消订单不能发货，也不出现在新建采购单关联订单中。
+- 其余 E01–E43 保留前述证据与状态；E17、E20 相关内部异常部分、E21、E25–E27、E29、E33、E39–E43 中需要故障注入的项目继续标记为 `DEFERRED — Phase 3C`，不虚报为 UI PASS。
+- `REAL BUSINESS BUG`：0；`STATE-MACHINE GAP-01`：0（已 CLOSED/FIXED）。
+- 保留未修复范围：`UI COVERAGE GAP-PACKAGING-01`、`TEST INFRASTRUCTURE BLOCKER-PI-01`、`UX ISSUE-01`、`UX ISSUE-02`、`EXPECTED CURRENT CONTRACT-01`。本轮不修 Packaging/PI/UX，也不进入 Phase 3C 或 Phase 4。
+
+### 16.8 回归与封版前置条件
+
+本次仅更新本执行记录；回归结果与 GitHub Actions 状态以本次提交后的实际运行结果为准。只有文档提交、后端/前端回归和 UAT 分支 Actions 全部完成后，才提交 Phase 3B 最终封版审查。

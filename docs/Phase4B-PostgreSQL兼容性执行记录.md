@@ -39,6 +39,8 @@
 
 第二次 PostgreSQL CI：`36325725537`。结果为 `1 error / 1 failure`。失败根因已确认是 `HSMigrationTests` 的测试隔离问题：测试将 schema 降级到 0053 后，`finally` 只恢复到固定的 0053，污染了后续 PostgreSQL `TransactionTestCase`；这不是 migration 本身失败，也不是业务逻辑失败。主流程 `migrate --noinput` 已成功迁移至 0066。修复方式是在降级前保存当前 `crm` migration graph 的 `leaf_nodes("crm")`，测试结束时恢复该最新 leaf。
 
+修复后的验证 CI：`36326712291`。`backend` 与 `frontend` PASS；`backend-postgres` 的 migration、schema check 均 PASS，测试仅剩 1 个 harness fixture error：并发成本测试直接调用 service 时传入字符串数量，触发 `Decimal + str`，与 API serializer 的正常输入契约不一致。已将 fixture 改为 `Decimal("100")`，等待下一次 CI 验证。
+
 ## 5. PostgreSQL CI job
 
 `.github/workflows/ci.yml` 新增独立 `backend-postgres` job：

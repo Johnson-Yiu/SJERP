@@ -83,7 +83,7 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
         item = purchase.items.create(sku=sku, quantity=100, unit_price=10)
         payload = {
             "version": 0,
-            "allocations": [{"purchase_item": item.pk, "target_type": "inventory", "quantity": "100"}],
+            "allocations": [{"purchase_item": item.pk, "target_type": "inventory", "quantity": Decimal("100")}],
             "expenses": [],
         }
 

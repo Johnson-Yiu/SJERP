@@ -252,9 +252,11 @@ def validate_contract_edit(instance, attrs, *, purchase=False):
     if not purchase:
         sensitive.add("tail_goods_policy")
     items_changed = "items" in attrs and not contract_items_match(instance, attrs["items"])
-    if purchase and instance.cost_allocation_version and (
-        any(key in attrs for key in ("currency", "exchange_rate", "order", "supplier")) or items_changed
-    ):
+    scalar_contract_changed = any(
+        key in attrs and attrs[key] != getattr(instance, key, None)
+        for key in ("currency", "exchange_rate", "order", "supplier")
+    )
+    if purchase and instance.cost_allocation_version and (scalar_contract_changed or items_changed):
         raise serializers.ValidationError("采购单已有成本分配，不能改写明细、币种、汇率或原始归属；请通过成本分配调整归属。")
     changed = items_changed or any(
         key in attrs and attrs[key] != getattr(instance, key, None)

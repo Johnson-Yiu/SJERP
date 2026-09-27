@@ -213,6 +213,10 @@ class ContractLifecycleApiTests(TestCase):
         self.assertEqual(allocation.status_code, status.HTTP_200_OK, allocation.data)
         self.assertTrue(PurchaseCostAllocation.objects.filter(purchase_item=purchase_item).exists())
         self.assertNotEqual(order_purchase_cost(order), (Decimal("0"), Decimal("0")))
+        original_item_id = purchase_item.id
+        repeated_put = self.client.put(f"/api/purchase-orders/{purchase.id}/", self.full_purchase_payload(purchase), format="json")
+        self.assertEqual(repeated_put.status_code, status.HTTP_200_OK, repeated_put.data)
+        self.assertEqual(PurchaseOrder.objects.get(pk=purchase.id).items.get().id, original_item_id)
 
         cancelled = self.client.post(f"/api/purchase-orders/{purchase.id}/cancel/", {"reason": "供应商无法交货"}, format="json")
         self.assertEqual(cancelled.status_code, status.HTTP_200_OK, cancelled.data)

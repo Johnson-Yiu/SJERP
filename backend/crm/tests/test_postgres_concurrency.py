@@ -2,6 +2,8 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from decimal import Decimal
 import unittest
+from threading import Event
+from unittest.mock import patch
 
 from django.db import close_old_connections, connection, connections
 from django.test import TransactionTestCase
@@ -23,6 +25,7 @@ from crm.models import (
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.document_numbers import allocate_document_no, sync_document_sequence_from_number
 from crm.services.purchase_costs import save_costs
+from crm.views import _import_row
 from rest_framework.test import APIClient
 
 
@@ -84,27 +87,60 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
         self.assertEqual(DocumentNumberSequence.objects.get(document_type="SO", year=2030).last_value, 20)
         self.assertEqual(DocumentNumberSequence.objects.get(document_type="PO", year=2030).last_value, 20)
 
-    def test_imported_formal_order_number_sync_is_safe_with_concurrent_allocations(self):
+    def test_import_and_normal_order_creation_serialize_on_sequence_lock(self):
         customer = Customer.objects.create(code="PG-IMPORT-C", name="PostgreSQL Import Customer")
-        Order.objects.create(
-            order_no="SO-2031-00050",
-            customer=customer,
-            order_date=date(2031, 1, 1),
-        )
+        DocumentNumberSequence.objects.create(document_type="SO", year=2031, last_value=49)
+        import_row = {
+            "order_no": "SO-2031-00050",
+            "customer_code": customer.code,
+            "order_date": "2031-01-01",
+            "status": "draft",
+            "currency": "USD",
+            "exchange_rate": "1",
+            "notes": "",
+        }
+        sync_completed = Event()
+        release_import = Event()
+        normal_started = Event()
+        original_sync = sync_document_sequence_from_number
 
-        def sync_or_allocate(index):
-            if index == 0:
-                sync_document_sequence_from_number("SO", "SO-2031-00050")
-                return "SO-2031-00050"
-            return allocate_document_no("SO", year=2031)
+        def sync_and_pause(*args, **kwargs):
+            result = original_sync(*args, **kwargs)
+            sync_completed.set()
+            if not release_import.wait(timeout=10):
+                raise TimeoutError("timed out waiting to release historical import")
+            return result
 
-        results = self.run_workers(sync_or_allocate, 21)
-        allocated_numbers = results[1:]
+        def run_import():
+            close_old_connections()
+            try:
+                return _import_row("orders", import_row)
+            finally:
+                connections.close_all()
 
-        self.assertEqual(sorted(allocated_numbers), [f"SO-2031-{index:05d}" for index in range(51, 71)])
-        self.assertEqual(len(set(allocated_numbers)), 20)
-        self.assertEqual(DocumentNumberSequence.objects.get(document_type="SO", year=2031).last_value, 70)
-        self.assertEqual(allocate_document_no("SO", year=2031), "SO-2031-00071")
+        def run_normal_create():
+            close_old_connections()
+            try:
+                normal_started.set()
+                order_no = allocate_document_no("SO", year=2031)
+                Order.objects.create(order_no=order_no, customer=customer, order_date=date(2031, 1, 1))
+                return order_no
+            finally:
+                connections.close_all()
+
+        with patch("crm.document_numbers.sync_document_sequence_from_number", side_effect=sync_and_pause):
+            with ThreadPoolExecutor(max_workers=2) as executor:
+                import_future = executor.submit(run_import)
+                self.assertTrue(sync_completed.wait(timeout=10))
+                normal_future = executor.submit(run_normal_create)
+                self.assertTrue(normal_started.wait(timeout=10))
+                release_import.set()
+                self.assertTrue(import_future.result(timeout=10))
+                self.assertEqual(normal_future.result(timeout=10), "SO-2031-00051")
+
+        self.assertTrue(Order.objects.filter(order_no="SO-2031-00050").exists())
+        self.assertTrue(Order.objects.filter(order_no="SO-2031-00051").exists())
+        self.assertEqual(DocumentNumberSequence.objects.get(document_type="SO", year=2031).last_value, 51)
 
     def test_quote_revision_counters_are_unique_and_contiguous_under_concurrency(self):
         customer = Customer.objects.create(code="PG-REV-C", name="PostgreSQL Revision Customer")

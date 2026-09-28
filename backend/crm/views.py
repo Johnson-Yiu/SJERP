@@ -1734,16 +1734,17 @@ def _import_row(entity, row):
         _, created = SKU.objects.update_or_create(sku=row["sku"], defaults=defaults)
         return created
     if entity == "orders":
-        customer = Customer.objects.get(code=row["customer_code"])
-        defaults = {"customer": customer, "order_date": row["order_date"], "status": row.get("status") or "confirmed", "currency": row.get("currency") or "USD", "exchange_rate": _decimal(row.get("exchange_rate"), "1"), "notes": row.get("notes", "")}
-        from .serializers import validate_contract_edit
-        existing = Order.objects.filter(order_no=row["order_no"]).first()
-        validate_contract_edit(existing, defaults)
-        _, created = Order.objects.update_or_create(order_no=row["order_no"], defaults=defaults)
-        from .document_numbers import sync_document_sequence_from_number
+        with transaction.atomic():
+            customer = Customer.objects.get(code=row["customer_code"])
+            defaults = {"customer": customer, "order_date": row["order_date"], "status": row.get("status") or "confirmed", "currency": row.get("currency") or "USD", "exchange_rate": _decimal(row.get("exchange_rate"), "1"), "notes": row.get("notes", "")}
+            from .serializers import validate_contract_edit
+            existing = Order.objects.filter(order_no=row["order_no"]).first()
+            validate_contract_edit(existing, defaults)
+            from .document_numbers import sync_document_sequence_from_number
 
-        sync_document_sequence_from_number("SO", row["order_no"])
-        return created
+            sync_document_sequence_from_number("SO", row["order_no"])
+            _, created = Order.objects.update_or_create(order_no=row["order_no"], defaults=defaults)
+            return created
     customer = Customer.objects.filter(code=row.get("customer_code")).first() if row.get("customer_code") else None
     order = Order.objects.filter(order_no=row.get("order_no")).first() if row.get("order_no") else None
     defaults = {"transaction_date": row["transaction_date"], "direction": row["direction"], "category": row["category"], "amount": _decimal(row["amount"]), "currency": row.get("currency") or "USD", "exchange_rate": _decimal(row.get("exchange_rate"), "1"), "customer": customer or (order.customer if order else None), "order": order, "payment_method": row.get("payment_method", ""), "reference": row.get("reference", ""), "notes": row.get("notes", "")}

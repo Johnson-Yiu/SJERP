@@ -208,3 +208,13 @@ class DocumentNumberImportTests(TestCase):
         self.assertTrue(self.import_order("SO-2026-00008"))
         self.assertGreaterEqual(DocumentNumberSequence.objects.get(document_type="SO", year=2026).last_value, 8)
         self.assertEqual(self.create_order()["order_no"], "SO-2026-00009")
+
+    def test_failed_import_rolls_back_sequence_sync(self):
+        DocumentNumberSequence.objects.create(document_type="SO", year=2031, last_value=49)
+
+        with patch.object(Order.objects, "update_or_create", side_effect=RuntimeError("order save failed")):
+            with self.assertRaisesMessage(RuntimeError, "order save failed"):
+                self.import_order("SO-2031-00050")
+
+        self.assertFalse(Order.objects.filter(order_no="SO-2031-00050").exists())
+        self.assertEqual(DocumentNumberSequence.objects.get(document_type="SO", year=2031).last_value, 49)

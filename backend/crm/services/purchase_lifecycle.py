@@ -36,7 +36,7 @@ def _validate_purchase_for_placement(purchase):
 
 @transaction.atomic
 def place_purchase_order(purchase):
-    purchase = PurchaseOrder.objects.select_for_update().select_related("supplier", "order").get(pk=purchase.pk)
+    purchase = PurchaseOrder.objects.select_for_update(of=("self",)).select_related("supplier", "order").get(pk=purchase.pk)
     if purchase.status != "draft":
         raise ValidationError("只有采购草稿可以确认下单。")
     _validate_purchase_for_placement(purchase)

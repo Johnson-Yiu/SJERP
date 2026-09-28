@@ -159,7 +159,7 @@ def create_purchase_drafts(order, payload):
     if order.status not in GENERATABLE_ORDER_STATUSES:
         raise ValidationError("只有已确认或生产中的销售订单可以生成采购草稿。")
     items = list(
-        OrderItem.objects.select_for_update().select_related("sku", "supplier_sku", "supplier_sku__supplier")
+        OrderItem.objects.select_for_update(of=("self",)).select_related("sku", "supplier_sku", "supplier_sku__supplier")
         .filter(order=order).order_by("id")
     )
     list(PurchaseOrder.objects.select_for_update().filter(order=order, status="draft").order_by("id"))

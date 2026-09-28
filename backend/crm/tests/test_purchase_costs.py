@@ -2,7 +2,7 @@ from datetime import date
 from decimal import Decimal
 from django.test import TestCase
 from rest_framework.test import APIClient
-from crm.models import Customer, Order, Product, PurchaseOrder, SKU, Supplier
+from crm.models import Customer, Order, Product, PurchaseOrder, PurchaseCostAllocation, SKU, Supplier
 from crm.services.purchase_costs import cost_summary, order_purchase_cost, split_amount
 from crm.services.fulfillment import order_item_metrics
 
@@ -126,3 +126,14 @@ class PurchaseCostTests(TestCase):
         }, format="json").status_code, 200)
         self.assertEqual(order_purchase_cost(self.a), (Decimal(0), Decimal(0)))
         self.assertEqual(order_item_metrics(self.a.items.get())["purchased_quantity"], Decimal(0))
+
+    def test_version_zero_item_save_does_not_rewrite_existing_allocations(self):
+        PurchaseCostAllocation.objects.filter(purchase_item=self.item).delete()
+        PurchaseCostAllocation.objects.create(purchase_item=self.item, target_type="order", order=self.b, quantity="60")
+        PurchaseCostAllocation.objects.create(purchase_item=self.item, target_type="inventory", quantity="40")
+        self.item.unit_price = 12
+        self.item.save()
+        rows = list(self.item.cost_allocations.order_by("id"))
+        self.assertEqual([(row.target_type, row.order_id, row.quantity) for row in rows], [
+            ("order", self.b.id, Decimal("60")), ("inventory", None, Decimal("40")),
+        ])

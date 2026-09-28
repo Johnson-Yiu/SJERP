@@ -10,7 +10,7 @@ from django.db.models import Q
 from django.utils import timezone
 
 from crm.document_numbers import allocate_purchase_no
-from crm.models import Order, OrderItem, PurchaseOrder, PurchaseOrderItem
+from crm.models import Order, OrderItem, PurchaseOrder, PurchaseOrderItem, SupplierSKU
 from crm.services.fulfillment import order_item_metrics
 
 
@@ -18,16 +18,16 @@ ZERO = Decimal("0")
 GENERATABLE_ORDER_STATUSES = {"confirmed", "production"}
 
 
-def _draft_quantities_by_sku(order):
-    """Return each SKU's draft quantity attributable to this order exactly once."""
-    quantities = defaultdict(lambda: ZERO)
+def _draft_procurement_rows(order):
+    """Return draft quantities attributable to this order, preserving their source."""
+    quantities = []
     rows = PurchaseOrderItem.objects.filter(
         purchase_order__status="draft",
         sku_id__in=order.items.values("sku_id"),
     ).filter(
         Q(purchase_order__order=order, purchase_order__cost_allocation_version=0)
         | Q(cost_allocations__target_type="order", cost_allocations__order=order)
-    ).distinct().prefetch_related("cost_allocations")
+    ).distinct().select_related("purchase_order").prefetch_related("cost_allocations")
     for row in rows:
         if row.purchase_order.cost_allocation_version:
             quantity = sum(
@@ -40,20 +40,46 @@ def _draft_quantities_by_sku(order):
             )
         else:
             quantity = row.quantity
-        quantities[row.sku_id] += quantity
+        if quantity > ZERO:
+            quantities.append((row.sku_id, row.supplier_sku_id, quantity))
     return quantities
 
 
 def draft_procurement_quantities(order, items=None):
-    """Distribute draft coverage across repeated order SKUs in order-item ID order."""
+    """Distribute draft coverage by source first, then by SKU for legacy residuals."""
     items = list(items if items is not None else order.items.select_related("sku").order_by("id"))
-    remaining_by_sku = _draft_quantities_by_sku(order)
-    quantities = {}
+    remaining_by_item = {
+        item.id: order_item_metrics(item)["to_procure_quantity"] for item in items
+    }
+    quantities = {item.id: ZERO for item in items}
+    items_by_source = defaultdict(list)
+    items_by_sku = defaultdict(list)
     for item in items:
-        available = max(ZERO, remaining_by_sku[item.sku_id])
-        coverage = min(available, order_item_metrics(item)["to_procure_quantity"])
-        quantities[item.id] = coverage
-        remaining_by_sku[item.sku_id] -= coverage
+        items_by_sku[item.sku_id].append(item)
+        if item.supplier_sku_id:
+            items_by_source[(item.sku_id, item.supplier_sku_id)].append(item)
+
+    residual_by_sku = defaultdict(lambda: ZERO)
+    for sku_id, supplier_sku_id, quantity in _draft_procurement_rows(order):
+        remaining_draft = quantity
+        if supplier_sku_id:
+            for item in items_by_source[(sku_id, supplier_sku_id)]:
+                coverage = min(remaining_draft, remaining_by_item[item.id])
+                quantities[item.id] += coverage
+                remaining_by_item[item.id] -= coverage
+                remaining_draft -= coverage
+                if remaining_draft <= ZERO:
+                    break
+        residual_by_sku[sku_id] += remaining_draft
+
+    for sku_id, remaining_draft in residual_by_sku.items():
+        for item in items_by_sku[sku_id]:
+            coverage = min(remaining_draft, remaining_by_item[item.id])
+            quantities[item.id] += coverage
+            remaining_by_item[item.id] -= coverage
+            remaining_draft -= coverage
+            if remaining_draft <= ZERO:
+                break
     return quantities
 
 
@@ -97,7 +123,9 @@ def build_procurement_plan(order):
             lead_time_days = source.lead_time_days
         if moq and draftable_quantity and draftable_quantity < moq:
             warnings.append(f"待采购数量低于供应商 MOQ {moq}")
-        if not blocking_reason and draftable_quantity <= ZERO:
+        if order.status not in GENERATABLE_ORDER_STATUSES:
+            blocking_reason = "当前销售订单状态不允许生成采购草稿。"
+        elif not blocking_reason and draftable_quantity <= ZERO:
             blocking_reason = "当前没有可继续生成采购草稿的数量。"
         rows.append({
             "order_item": item.id,
@@ -162,6 +190,9 @@ def create_purchase_drafts(order, payload):
         OrderItem.objects.select_for_update(of=("self",)).select_related("sku", "supplier_sku", "supplier_sku__supplier")
         .filter(order=order).order_by("id")
     )
+    source_ids = sorted({item.supplier_sku_id for item in items if item.supplier_sku_id})
+    if source_ids:
+        list(SupplierSKU.objects.select_for_update().filter(pk__in=source_ids).order_by("id"))
     list(PurchaseOrder.objects.select_for_update().filter(order=order, status="draft").order_by("id"))
     plan = build_procurement_plan(order)
     plan_by_item = {row["order_item"]: row for row in plan["items"]}

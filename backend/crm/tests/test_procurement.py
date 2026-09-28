@@ -82,6 +82,62 @@ class ProcurementWorkflowTests(TestCase):
         self.assertEqual(rows[second.id]["draft_procurement_quantity"], Decimal("10"))
         self.assertEqual(rows[first.id]["draft_procurement_quantity"] + rows[second.id]["draft_procurement_quantity"], Decimal("70"))
 
+    def test_draft_coverage_prefers_matching_supplier_sku_for_repeated_sku(self):
+        source_b_sku_a = self.make_source(self.supplier_b, self.sku_a, "USD", "2.35", "0", 5)
+        first = self.add_item(self.sku_a, self.source_a_usd, "60")
+        second = self.add_item(self.sku_a, source_b_sku_a, "40")
+        purchase = PurchaseOrder.objects.create(
+            purchase_no="PO-PC-SOURCE-B", supplier=self.supplier_b, order=self.order,
+            order_date=date(2031, 1, 1), currency="USD",
+        )
+        purchase.items.create(sku=self.sku_a, supplier_sku=source_b_sku_a, quantity=Decimal("40"), unit_price=Decimal("2.35"))
+
+        rows = {row["order_item"]: row for row in build_procurement_plan(self.order)["items"]}
+        self.assertEqual(rows[first.id]["draft_procurement_quantity"], Decimal("0"))
+        self.assertEqual(rows[first.id]["draftable_quantity"], Decimal("60"))
+        self.assertEqual(rows[second.id]["draft_procurement_quantity"], Decimal("40"))
+        self.assertEqual(rows[second.id]["draftable_quantity"], Decimal("0"))
+
+        rejected = self.client.post(
+            f"/api/orders/{self.order.id}/generate-purchase-drafts/",
+            self.payload([self.group(self.supplier_b, "USD", [{"order_item": second.id, "quantity": "1", "unit_price": "2.35"}], "7")]),
+            format="json",
+        )
+        self.assertEqual(rejected.status_code, status.HTTP_400_BAD_REQUEST)
+        accepted = self.client.post(
+            f"/api/orders/{self.order.id}/generate-purchase-drafts/",
+            self.payload([self.group(self.supplier_a, "USD", [{"order_item": first.id, "quantity": "60", "unit_price": "2.15"}], "7")]),
+            format="json",
+        )
+        self.assertEqual(accepted.status_code, status.HTTP_201_CREATED, accepted.data)
+
+    def test_source_less_draft_falls_back_to_sku_level_coverage(self):
+        first = self.add_item(self.sku_a, self.source_a_usd, "60")
+        second = self.add_item(self.sku_a, self.source_a_usd, "40")
+        purchase = PurchaseOrder.objects.create(
+            purchase_no="PO-PC-LEGACY", supplier=self.supplier_a, order=self.order,
+            order_date=date(2031, 1, 1), currency="USD",
+        )
+        purchase.items.create(sku=self.sku_a, quantity=Decimal("70"), unit_price=Decimal("2.15"))
+
+        rows = {row["order_item"]: row for row in build_procurement_plan(self.order)["items"]}
+        self.assertEqual(rows[first.id]["draft_procurement_quantity"], Decimal("60"))
+        self.assertEqual(rows[second.id]["draft_procurement_quantity"], Decimal("10"))
+
+    def test_excess_source_specific_draft_falls_back_to_remaining_same_sku_demand(self):
+        source_b_sku_a = self.make_source(self.supplier_b, self.sku_a, "USD", "2.35", "0", 5)
+        first = self.add_item(self.sku_a, self.source_a_usd, "20")
+        second = self.add_item(self.sku_a, source_b_sku_a, "80")
+        purchase = PurchaseOrder.objects.create(
+            purchase_no="PO-PC-EXCESS", supplier=self.supplier_a, order=self.order,
+            order_date=date(2031, 1, 1), currency="USD",
+        )
+        purchase.items.create(sku=self.sku_a, supplier_sku=self.source_a_usd, quantity=Decimal("50"), unit_price=Decimal("2.15"))
+
+        rows = {row["order_item"]: row for row in build_procurement_plan(self.order)["items"]}
+        self.assertEqual(rows[first.id]["draft_procurement_quantity"], Decimal("20"))
+        self.assertEqual(rows[second.id]["draft_procurement_quantity"], Decimal("30"))
+
     def test_generate_groups_by_supplier_and_currency_and_uses_order_snapshots(self):
         first = self.add_item(self.sku_a, self.source_a_usd, "20")
         second = self.add_item(self.sku_b, self.source_b_usd, "30")
@@ -144,6 +200,18 @@ class ProcurementWorkflowTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("关联销售订单", response.data["detail"])
 
+    def test_non_generatable_status_keeps_plan_amounts_but_blocks_every_item(self):
+        item = self.add_item(self.sku_a, self.source_a_usd, "20")
+        for state in ("draft", "shipped", "completed", "cancelled"):
+            self.order.status = state
+            self.order.save(update_fields=["status"])
+            row = build_procurement_plan(self.order)["items"][0]
+            self.assertEqual(row["order_item"], item.id)
+            self.assertEqual(row["to_procure_quantity"], Decimal("20"))
+            self.assertEqual(row["draftable_quantity"], Decimal("20"))
+            self.assertFalse(row["can_generate"])
+            self.assertEqual(row["blocking_reason"], "当前销售订单状态不允许生成采购草稿。")
+
     def test_missing_inactive_mismatched_or_currency_changed_source_is_blocked(self):
         item = self.order.items.create(sku=self.sku_a, quantity=Decimal("10"), unit_price=Decimal("10"))
         self.assertIn("请先选择", build_procurement_plan(self.order)["items"][0]["blocking_reason"])
@@ -156,6 +224,16 @@ class ProcurementWorkflowTests(TestCase):
         self.source_a_usd.is_active = False
         self.source_a_usd.save(update_fields=["is_active"])
         self.assertIn("已停用", build_procurement_plan(self.order)["items"][0]["blocking_reason"])
+
+    def test_generation_rechecks_the_currently_locked_supplier_source(self):
+        item = self.add_item(self.sku_a, self.source_a_usd, "10")
+        self.source_a_usd.is_active = False
+        self.source_a_usd.save(update_fields=["is_active"])
+        with self.assertRaisesRegex(ValidationError, "已停用"):
+            create_purchase_drafts(
+                self.order,
+                self.payload([self.group(self.supplier_a, "USD", [{"order_item": item.id, "quantity": "10", "unit_price": "2.15"}], "7")]),
+            )
 
     def test_place_moves_draft_coverage_to_formal_procurement_and_cancel_restores_shortage(self):
         item = self.add_item(self.sku_a, self.source_a_usd, "30")

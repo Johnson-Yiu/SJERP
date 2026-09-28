@@ -116,3 +116,13 @@ class PurchaseCostTests(TestCase):
         response = self.client.post(self.url.replace("cost-allocation/", "cost-allocation-preview/"), data, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertEqual(self.item.cost_allocations.count(), 1)
+
+    def test_purchase_order_reference_is_not_cost_or_fulfillment_ownership(self):
+        self.assertEqual(self.item.cost_allocations.get().order_id, self.a.id)
+        self.assertEqual(self.client.post(self.url, {
+            "version": 0,
+            "allocations": [{"purchase_item": self.item.id, "target_type": "inventory", "quantity": "1000"}],
+            "expenses": [],
+        }, format="json").status_code, 200)
+        self.assertEqual(order_purchase_cost(self.a), (Decimal(0), Decimal(0)))
+        self.assertEqual(order_item_metrics(self.a.items.get())["purchased_quantity"], Decimal(0))

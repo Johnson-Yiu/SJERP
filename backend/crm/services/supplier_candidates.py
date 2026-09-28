@@ -104,14 +104,13 @@ def ensure_purchase_source(sku, supplier, order=None, currency=None):
         allocated_sources = list(order.items.filter(
             sku=sku,
             supplier_sku__supplier=supplier,
-            supplier_sku__is_active=True,
         ).values_list("supplier_sku_id", flat=True).distinct())
         if len(allocated_sources) > 1:
             raise ValidationError({"supplier_sku": "该销售订单中同一 SKU 已指定多个采购来源，请明确选择本次 Supplier SKU。"})
         if allocated_sources:
             allocated = SupplierSKU.objects.get(pk=allocated_sources[0])
             if not allocated.is_active:
-                raise ValidationError({"supplier_sku": "销售订单已指定的 Supplier SKU 已停用，请重新分配供应商。"})
+                raise ValidationError({"supplier_sku": "销售订单当前采购来源已停用，请先在订单中重新选择当前采购来源。"})
             return allocated
     if sku.candidate_overrides.filter(supplier=supplier, is_allowed=False).exists():
         raise ValidationError({"supplier": "此 SKU 已排除该供应商，请先恢复候选资格。"})

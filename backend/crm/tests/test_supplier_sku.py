@@ -176,6 +176,62 @@ class SupplierSKUApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(PurchaseOrderItem.objects.get(purchase_order_id=response.data["id"]).supplier_sku_id, first.id)
 
+    def test_inactive_order_source_is_not_silently_replaced_or_auto_created(self):
+        first = self.create_source(supplier_sku_code="A-INACTIVE")
+        alternate = self.create_source(supplier_sku_code="A-ACTIVE")
+        self.order.items.create(sku=self.sku, supplier_sku=first, quantity="1", unit_price="1")
+        first.is_active = False
+        first.save(update_fields=["is_active"])
+        response = self.client.post("/api/purchase-orders/", {
+            "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
+            "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("当前采购来源已停用", str(response.data))
+        self.assertFalse(PurchaseOrder.objects.exists())
+        self.assertEqual(SupplierSKU.objects.filter(supplier=self.supplier_a, sku=self.sku).count(), 2)
+
+        self.order.items.all().delete()
+        response = self.client.post("/api/purchase-orders/", {
+            "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
+            "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(PurchaseOrderItem.objects.get(purchase_order_id=response.data["id"]).supplier_sku_id, alternate.id)
+
+    def test_inactive_order_source_with_no_alternative_does_not_create_auto_source(self):
+        source = self.create_source(supplier_sku_code="A-ONLY-INACTIVE")
+        self.order.items.create(sku=self.sku, supplier_sku=source, quantity="1", unit_price="1")
+        source.is_active = False
+        source.save(update_fields=["is_active"])
+        response = self.client.post("/api/purchase-orders/", {
+            "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
+            "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("当前采购来源已停用", str(response.data))
+        self.assertFalse(SupplierSKU.objects.filter(supplier=self.supplier_a, supplier_sku_code=f"AUTO-{self.sku.sku}").exists())
+
+    def test_mixed_active_and_inactive_order_sources_remain_ambiguous_unless_explicit(self):
+        inactive = self.create_source(supplier_sku_code="A-MIXED-INACTIVE")
+        active = self.create_source(supplier_sku_code="A-MIXED-ACTIVE")
+        self.order.items.create(sku=self.sku, supplier_sku=inactive, quantity="1", unit_price="1")
+        self.order.items.create(sku=self.sku, supplier_sku=active, quantity="1", unit_price="1")
+        inactive.is_active = False
+        inactive.save(update_fields=["is_active"])
+        base_payload = {
+            "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
+            "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
+        }
+        response = self.client.post("/api/purchase-orders/", base_payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("多个采购来源", str(response.data))
+
+        base_payload["items"][0]["supplier_sku"] = active.id
+        response = self.client.post("/api/purchase-orders/", base_payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(PurchaseOrderItem.objects.get(purchase_order_id=response.data["id"]).supplier_sku_id, active.id)
+
     def test_auto_supplier_source_uses_purchase_currency(self):
         for supplier, currency in ((self.supplier_a, "CNY"), (self.supplier_b, "EUR")):
             response = self.client.post("/api/purchase-orders/", {

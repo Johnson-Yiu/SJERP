@@ -134,6 +134,100 @@ class SupplierSKUApiTests(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_create_and_draft_update_resolve_the_same_unique_source(self):
+        source = self.create_source()
+        created = self.client.post("/api/purchase-orders/", {
+            "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
+            "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
+        }, format="json")
+        self.assertEqual(created.status_code, status.HTTP_201_CREATED, created.data)
+        self.assertEqual(PurchaseOrderItem.objects.get(purchase_order_id=created.data["id"]).supplier_sku_id, source.id)
+
+        second_sku = SKU.objects.create(product=self.product, sku="SKU-SUPPLIER-UPDATE")
+        second_source = SupplierSKU.objects.create(supplier=self.supplier_a, sku=second_sku, supplier_sku_code="A-UPDATE")
+        payload = {
+            "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23", "currency": "USD",
+            "exchange_rate": "1", "items": [
+                {"sku": self.sku.id, "supplier_sku": source.id, "quantity": "1", "unit_price": "3"},
+                {"sku": second_sku.id, "quantity": "2", "unit_price": "4"},
+            ],
+        }
+        updated = self.client.put(f"/api/purchase-orders/{created.data['id']}/", payload, format="json")
+        self.assertEqual(updated.status_code, status.HTTP_200_OK, updated.data)
+        self.assertEqual(PurchaseOrderItem.objects.get(purchase_order_id=created.data["id"], sku=second_sku).supplier_sku_id, second_source.id)
+
+    def test_order_source_ambiguity_requires_explicit_source_but_same_source_inherits(self):
+        first = self.create_source(supplier_sku_code="A-ONE")
+        second = self.create_source(supplier_sku_code="A-TWO")
+        self.order.items.create(sku=self.sku, supplier_sku=first, quantity="1", unit_price="1")
+        self.order.items.create(sku=self.sku, supplier_sku=second, quantity="1", unit_price="1")
+        response = self.client.post("/api/purchase-orders/", {
+            "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
+            "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("多个采购来源", str(response.data))
+
+        self.order.items.filter(supplier_sku=second).delete()
+        response = self.client.post("/api/purchase-orders/", {
+            "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
+            "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(PurchaseOrderItem.objects.get(purchase_order_id=response.data["id"]).supplier_sku_id, first.id)
+
+    def test_auto_supplier_source_uses_purchase_currency(self):
+        for supplier, currency in ((self.supplier_a, "CNY"), (self.supplier_b, "EUR")):
+            response = self.client.post("/api/purchase-orders/", {
+                "supplier": supplier.id, "order_date": "2026-08-23", "currency": currency,
+                "exchange_rate": "1", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
+            }, format="json")
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+            source = PurchaseOrderItem.objects.get(purchase_order_id=response.data["id"]).supplier_sku
+            self.assertEqual(source.currency, currency)
+            self.assertEqual(source.purchase_price, Decimal("0"))
+
+    def test_draft_supplier_change_requires_items_and_draft_rejects_inactive_source(self):
+        source_a = self.create_source()
+        source_b = self.create_source(self.supplier_b, supplier_sku_code="B-24V")
+        draft = self.client.post("/api/purchase-orders/", {
+            "supplier": self.supplier_a.id, "order_date": "2026-08-23", "currency": "USD",
+            "items": [{"sku": self.sku.id, "supplier_sku": source_a.id, "quantity": "1", "unit_price": "3"}],
+        }, format="json")
+        self.assertEqual(draft.status_code, status.HTTP_201_CREATED, draft.data)
+        rejected = self.client.patch(f"/api/purchase-orders/{draft.data['id']}/", {"supplier": self.supplier_b.id}, format="json")
+        self.assertEqual(rejected.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("必须同时提交采购明细", str(rejected.data))
+
+        source_b.is_active = False
+        source_b.save(update_fields=["is_active"])
+        payload = {"supplier": self.supplier_b.id, "order_date": "2026-08-23", "currency": "USD", "exchange_rate": "1", "items": [{"sku": self.sku.id, "supplier_sku": source_b.id, "quantity": "1", "unit_price": "3"}]}
+        rejected = self.client.put(f"/api/purchase-orders/{draft.data['id']}/", payload, format="json")
+        self.assertEqual(rejected.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_new_purchase_rejects_inactive_source_but_formal_history_remains_idempotent(self):
+        source = self.create_source()
+        source.is_active = False
+        source.save(update_fields=["is_active"])
+        rejected = self.client.post("/api/purchase-orders/", {
+            "supplier": self.supplier_a.id, "order_date": "2026-08-23", "currency": "USD",
+            "items": [{"sku": self.sku.id, "supplier_sku": source.id, "quantity": "1", "unit_price": "3"}],
+        }, format="json")
+        self.assertEqual(rejected.status_code, status.HTTP_400_BAD_REQUEST)
+
+        source.is_active = True
+        source.save(update_fields=["is_active"])
+        created = self.client.post("/api/purchase-orders/", {
+            "supplier": self.supplier_a.id, "order_date": "2026-08-23", "currency": "USD",
+            "items": [{"sku": self.sku.id, "supplier_sku": source.id, "quantity": "1", "unit_price": "3"}],
+        }, format="json")
+        self.assertEqual(created.status_code, status.HTTP_201_CREATED, created.data)
+        self.assertEqual(self.client.post(f"/api/purchase-orders/{created.data['id']}/place/", {}, format="json").status_code, status.HTTP_200_OK)
+        source.is_active = False
+        source.save(update_fields=["is_active"])
+        payload = {"supplier": self.supplier_a.id, "order_date": "2026-08-23", "currency": "USD", "exchange_rate": "1", "items": [{"sku": self.sku.id, "supplier_sku": source.id, "quantity": "1", "unit_price": "3"}]}
+        self.assertEqual(self.client.put(f"/api/purchase-orders/{created.data['id']}/", payload, format="json").status_code, status.HTTP_200_OK)
+
     def test_referenced_supplier_source_cannot_be_deleted_but_unreferenced_can(self):
         referenced = self.create_source()
         purchase = PurchaseOrder.objects.create(

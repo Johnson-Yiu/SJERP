@@ -46,8 +46,8 @@ def allocate_order_item_supplier(order_item_id, supplier_sku_id, *, scope="order
     except SupplierSKU.DoesNotExist as error:
         raise ValidationError("所选 Supplier SKU 不存在。") from error
 
-    if item.order.status in {"cancelled", "completed"}:
-        raise ValidationError("已完成或已取消的订单不能重新分配供应商。")
+    if item.order.status not in {"draft", "confirmed", "production"}:
+        raise ValidationError("只有草稿、已确认或生产中的订单可以调整当前采购来源。")
     if not source.is_active:
         raise ValidationError("只能选择启用中的 Supplier SKU。")
     if source.sku_id != item.sku_id:

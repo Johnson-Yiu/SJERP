@@ -116,3 +116,17 @@ class SupplierAllocationApiTests(TestCase):
         self.order.save(update_fields=["status", "updated_at"])
         response = self.client.post(self.allocation_url(), {"supplier_sku": self.source_a.pk}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_allocation_allows_only_pre_shipment_order_statuses(self):
+        for state in ("draft", "confirmed", "production"):
+            with self.subTest(state=state):
+                self.order.status = state
+                self.order.save(update_fields=["status", "updated_at"])
+                response = self.client.post(self.allocation_url(), {"supplier_sku": self.source_a.pk}, format="json")
+                self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        for state in ("shipped", "completed", "cancelled"):
+            with self.subTest(state=state):
+                self.order.status = state
+                self.order.save(update_fields=["status", "updated_at"])
+                response = self.client.post(self.allocation_url(), {"supplier_sku": self.source_a.pk}, format="json")
+                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

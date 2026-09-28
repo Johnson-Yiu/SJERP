@@ -342,6 +342,14 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         validate_contract_edit(self.instance, attrs, purchase=True)
         supplier = attrs.get("supplier", getattr(self.instance, "supplier", None))
         unit_rows = attrs.get("items")
+        if (
+            self.instance is not None
+            and self.instance.status == "draft"
+            and "supplier" in attrs
+            and attrs["supplier"] != self.instance.supplier
+            and unit_rows is None
+        ):
+            raise serializers.ValidationError({"items": "更换采购供应商时必须同时提交采购明细，以重新确认各 SKU 的供应商来源。"})
         units = ([row.get("trade_unit") for row in unit_rows] if unit_rows is not None else
                  [row.trade_unit for row in self.instance.items.select_related("trade_unit")] if self.instance else [])
         if any(unit and unit.supplier_id and (not supplier or unit.supplier_id != supplier.pk) for unit in units):
@@ -357,8 +365,8 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
                 errors.append({"items": {index: {"supplier_sku": "供应商来源必须属于当前采购单供应商。"}}})
             if item.get("sku") and source.sku_id != item["sku"].pk:
                 errors.append({"items": {index: {"supplier_sku": "供应商来源必须对应当前采购明细 SKU。"}}})
-            if self.instance is None and not source.is_active:
-                errors.append({"items": {index: {"supplier_sku": "新建采购单只能选择启用中的供应商来源。"}}})
+            if (self.instance is None or self.instance.status == "draft") and not source.is_active:
+                errors.append({"items": {index: {"supplier_sku": "新建或编辑采购草稿只能选择启用中的供应商来源。"}}})
         if errors:
             raise serializers.ValidationError(errors[0])
         return attrs
@@ -367,12 +375,14 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         items = validated_data.pop("items")
         validated_data.pop("purchase_no", None)
-        from .services.supplier_candidates import ensure_purchase_source
+        from .services.supplier_candidates import resolve_purchase_item_sources
         for item in items:
             if not item["sku"].active:
                 raise serializers.ValidationError({"sku": "新采购不能选择停用或已归档的 SKU。"})
-            if not item.get("supplier_sku"):
-                item["supplier_sku"] = ensure_purchase_source(item["sku"], validated_data["supplier"], order=validated_data.get("order"))
+        resolve_purchase_item_sources(
+            items, validated_data["supplier"], order=validated_data.get("order"),
+            purchase_currency=validated_data.get("currency"),
+        )
         purchase = PurchaseOrder.objects.create(
             purchase_no=allocate_purchase_no(),
             **validated_data,
@@ -399,6 +409,14 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         instance = PurchaseOrder.objects.select_for_update().get(pk=instance.pk)
         validate_contract_edit(instance, validated_data, purchase=True)
         items = validated_data.pop("items", None)
+        if items is not None and instance.status == "draft":
+            from .services.supplier_candidates import resolve_purchase_item_sources
+            resolve_purchase_item_sources(
+                items,
+                validated_data.get("supplier", instance.supplier),
+                order=validated_data.get("order", instance.order),
+                purchase_currency=validated_data.get("currency", instance.currency),
+            )
         items_match = items is not None and contract_items_match(instance, items)
         if items is not None and (instance.status == "draft" or not items_match):
             instance.items.all().delete()

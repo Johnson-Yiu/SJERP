@@ -97,18 +97,22 @@ def candidates(sku):
     return list(result.values())
 
 
-def ensure_purchase_source(sku, supplier, order=None):
+def ensure_purchase_source(sku, supplier, order=None, currency=None):
     """Called within the purchase transaction, only when a real order is saved."""
     from .supplier_sku import create_supplier_sku
     if order is not None:
-        allocated = order.items.filter(
+        allocated_sources = list(order.items.filter(
             sku=sku,
             supplier_sku__supplier=supplier,
-        ).select_related("supplier_sku").order_by("id").first()
-        if allocated and allocated.supplier_sku:
-            if not allocated.supplier_sku.is_active:
+            supplier_sku__is_active=True,
+        ).values_list("supplier_sku_id", flat=True).distinct())
+        if len(allocated_sources) > 1:
+            raise ValidationError({"supplier_sku": "该销售订单中同一 SKU 已指定多个采购来源，请明确选择本次 Supplier SKU。"})
+        if allocated_sources:
+            allocated = SupplierSKU.objects.get(pk=allocated_sources[0])
+            if not allocated.is_active:
                 raise ValidationError({"supplier_sku": "销售订单已指定的 Supplier SKU 已停用，请重新分配供应商。"})
-            return allocated.supplier_sku
+            return allocated
     if sku.candidate_overrides.filter(supplier=supplier, is_allowed=False).exists():
         raise ValidationError({"supplier": "此 SKU 已排除该供应商，请先恢复候选资格。"})
     sources = list(sku.supplier_skus.filter(supplier=supplier, is_active=True).order_by("-is_preferred", "id"))
@@ -121,7 +125,18 @@ def ensure_purchase_source(sku, supplier, order=None):
         raise ValidationError({"supplier_sku": "自动供货档案已停用，请选择或恢复供货档案。"})
     candidate = next((r for r in candidates(sku) if r["supplier"] == supplier.pk), {})
     return create_supplier_sku({"sku": sku, "supplier": supplier, "supplier_sku_code": code,
-                                "characteristics": candidate.get("characteristics", {})})
+                                "characteristics": candidate.get("characteristics", {}), "currency": currency or "USD"})
+
+
+def resolve_purchase_item_sources(items, supplier, *, order=None, purchase_currency=None):
+    """Resolve absent draft/new purchase sources through the same business rules."""
+    for item in items:
+        source = item.get("supplier_sku")
+        if source is None:
+            item["supplier_sku"] = ensure_purchase_source(
+                item["sku"], supplier, order=order, currency=purchase_currency,
+            )
+    return items
 
 
 def eligible_suppliers(product):

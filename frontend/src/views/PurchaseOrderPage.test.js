@@ -49,3 +49,16 @@ test('purchase creation leaves number generation to the backend and never submit
   assert.match(source, /保存后由系统自动生成/)
   assert.match(source, /class="readonly-input" readonly/)
 })
+
+test('purchase price reference only carries across matching currencies and resets stale prices', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /source\.currency !== draft\.value\.currency/)
+  assert.match(source, /item\.unit_price = ''/)
+  assert.match(source, /function onCurrencyChanged\(\)/)
+  assert.match(source, /draft\.value\.items\.forEach\(item => \{ item\.unit_price = '';/)
+  assert.match(source, /function onSupplierChanged\(\)/)
+  assert.match(source, /supplierPriceWarning\(item\)/)
+  assert.match(source, /参考价未自动带入，请填写本次实际采购单价/)
+  assert.match(source, /source\.purchase_price \}\} \{\{ source\.currency/)
+})

@@ -11,6 +11,8 @@ from crm.services.finance import ensure_default_payment_plans
 
 
 def _validate_purchase_for_placement(purchase):
+    if purchase.order_id and purchase.order.status not in {"confirmed", "production"}:
+        raise ValidationError("关联销售订单当前状态不允许继续采购，请检查订单状态或改为独立采购。")
     items = list(purchase.items.select_related("sku", "supplier_sku", "trade_unit").order_by("id"))
     if not purchase.supplier_id:
         raise ValidationError("采购单必须选择供应商。")
@@ -34,7 +36,7 @@ def _validate_purchase_for_placement(purchase):
 
 @transaction.atomic
 def place_purchase_order(purchase):
-    purchase = PurchaseOrder.objects.select_for_update().select_related("supplier").get(pk=purchase.pk)
+    purchase = PurchaseOrder.objects.select_for_update().select_related("supplier", "order").get(pk=purchase.pk)
     if purchase.status != "draft":
         raise ValidationError("只有采购草稿可以确认下单。")
     _validate_purchase_for_placement(purchase)

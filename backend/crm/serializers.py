@@ -179,6 +179,24 @@ class TransactionVoidInputSerializer(serializers.Serializer):
     reason = serializers.CharField(max_length=500, allow_blank=False, trim_whitespace=True)
 
 
+class ProcurementDraftItemInputSerializer(serializers.Serializer):
+    order_item = serializers.IntegerField()
+    quantity = serializers.DecimalField(max_digits=18, decimal_places=2, min_value=Decimal("0"))
+    unit_price = serializers.DecimalField(max_digits=24, decimal_places=12, min_value=Decimal("0"))
+
+
+class ProcurementDraftGroupInputSerializer(serializers.Serializer):
+    supplier = serializers.IntegerField()
+    currency = serializers.CharField(max_length=10)
+    exchange_rate = serializers.DecimalField(max_digits=12, decimal_places=6, required=False, allow_null=True)
+    expected_arrival_date = serializers.DateField(required=False, allow_null=True)
+    items = ProcurementDraftItemInputSerializer(many=True)
+
+
+class ProcurementDraftInputSerializer(serializers.Serializer):
+    groups = ProcurementDraftGroupInputSerializer(many=True)
+
+
 class PurchaseOrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer):
     amount = serializers.DecimalField(max_digits=28, decimal_places=4, read_only=True)
     sku_code = serializers.CharField(source="sku_code_snapshot", read_only=True)

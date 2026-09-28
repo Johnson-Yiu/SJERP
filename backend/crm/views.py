@@ -26,12 +26,14 @@ from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
 from .serializers import AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
+from .serializers import ProcurementDraftInputSerializer
 from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.finance import allocate_advance, approve_contract_change, record_contract_payment, record_transaction, void_transaction
 from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_receipt as reverse_receipt_service, reverse_shipment as reverse_shipment_service, sku_metrics
 from .services.order_lifecycle import cancel_order, complete_order, confirm_order, start_order_production
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
 from .services.purchase_lifecycle import cancel_purchase_order, place_purchase_order
+from .services.procurement import build_procurement_plan, create_purchase_drafts, draft_procurement_quantities
 from .services.sku_plans import apply_category_attribute_reorder, preview_category_attribute_reorder
 from .sku_identity import normalize_abbreviation_key
 from .sales_model_defaults import DEFAULT_SALES_MODEL_ABBREVIATIONS
@@ -1275,6 +1277,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["get"])
     def fulfillment(self, request, pk=None):
         order = self.get_object()
+        draft_quantities = draft_procurement_quantities(order)
         rows = []
         for item in order.items.select_related("sku"):
             metrics = order_item_metrics(item)
@@ -1285,6 +1288,8 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "display_name": item.display_name_snapshot,
                 "quantity": item.quantity, "allocated_quantity": metrics["allocated_quantity"],
                 "to_procure_quantity": metrics["to_procure_quantity"],
+                "draft_procurement_quantity": draft_quantities[item.id],
+                "draftable_quantity": max(Decimal("0"), metrics["to_procure_quantity"] - draft_quantities[item.id]),
                 "purchased_quantity": metrics["purchased_quantity"],
                 "in_transit_quantity": metrics["in_transit_quantity"],
                 "arrived_quantity": metrics["received_quantity"],
@@ -1314,6 +1319,31 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 } for line in shipment.items.all()],
             } for shipment in shipments],
         })
+
+    @action(detail=True, methods=["get"], url_path="procurement-plan")
+    def procurement_plan(self, request, pk=None):
+        return Response(build_procurement_plan(self.get_object()))
+
+    @action(detail=True, methods=["post"], url_path="generate-purchase-drafts")
+    def generate_purchase_drafts(self, request, pk=None):
+        input_serializer = ProcurementDraftInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        try:
+            purchases = create_purchase_drafts(self.get_object(), input_serializer.validated_data)
+            for purchase in purchases:
+                record_operation(
+                    request=request,
+                    instance=purchase,
+                    action="custom",
+                    action_label="由销售订单生成采购草稿",
+                    metadata={"order_id": purchase.order_id, "order_no": purchase.order.order_no},
+                )
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            "created_count": len(purchases),
+            "purchase_orders": PurchaseOrderSerializer(purchases, many=True).data,
+        }, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["get", "post"], url_path="packing-plan")
     def packing_plan(self, request, pk=None):

@@ -2,9 +2,10 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from decimal import Decimal
 import unittest
-from threading import Event
+from threading import Barrier, Event
 from unittest.mock import patch
 
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import close_old_connections, connection, connections
 from django.test import TransactionTestCase
 from rest_framework.exceptions import ValidationError
@@ -21,10 +22,12 @@ from crm.models import (
     QuoteRevisionCounter,
     SKU,
     Supplier,
+    SupplierSKU,
 )
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.document_numbers import allocate_document_no, sync_document_sequence_from_number
 from crm.services.purchase_costs import save_costs
+from crm.services.procurement import create_purchase_drafts
 from crm.views import _import_row
 from rest_framework.test import APIClient
 
@@ -141,6 +144,34 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
         self.assertTrue(Order.objects.filter(order_no="SO-2031-00050").exists())
         self.assertTrue(Order.objects.filter(order_no="SO-2031-00051").exists())
         self.assertEqual(DocumentNumberSequence.objects.get(document_type="SO", year=2031).last_value, 51)
+
+    def test_purchase_draft_generation_does_not_duplicate_under_concurrency(self):
+        customer = Customer.objects.create(code="PG-PROC-C", name="PostgreSQL Procurement Customer")
+        supplier = Supplier.objects.create(code="PP", name="PostgreSQL Procurement Supplier")
+        sku = SKU.objects.create(sku="PG-PROC-SKU", product=Product.objects.create(code="PG-PROC-P", name="PostgreSQL Procurement Product"))
+        source = SupplierSKU.objects.create(supplier=supplier, sku=sku, supplier_sku_code="PG-PROC-SOURCE", currency="USD", purchase_price=2)
+        order = Order.objects.create(order_no="SO-PG-PROC", customer=customer, order_date=date(2031, 1, 1), status="confirmed")
+        item = order.items.create(sku=sku, supplier_sku=source, quantity=100, unit_price=10)
+        payload = {"groups": [{
+            "supplier": supplier.id, "currency": "USD", "exchange_rate": Decimal("7"),
+            "items": [{"order_item": item.id, "quantity": Decimal("100"), "unit_price": Decimal("2")}],
+        }]}
+        barrier = Barrier(2)
+
+        def generate_once(_index):
+            barrier.wait(timeout=10)
+            try:
+                created = create_purchase_drafts(Order.objects.get(pk=order.pk), payload)
+                return ("created", [purchase.purchase_no for purchase in created])
+            except DjangoValidationError as error:
+                return ("rejected", str(error))
+
+        results = self.run_workers(generate_once, 2)
+        self.assertEqual([result[0] for result in results].count("created"), 1)
+        self.assertEqual([result[0] for result in results].count("rejected"), 1)
+        drafts = PurchaseOrder.objects.filter(order=order, status="draft")
+        self.assertEqual(drafts.count(), 1)
+        self.assertEqual(sum(item.quantity for item in drafts.get().items.all()), Decimal("100"))
 
     def test_quote_revision_counters_are_unique_and_contiguous_under_concurrency(self):
         customer = Customer.objects.create(code="PG-REV-C", name="PostgreSQL Revision Customer")

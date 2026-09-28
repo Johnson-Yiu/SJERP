@@ -46,3 +46,16 @@ test('packing plan loading never generates a plan implicitly', async () => {
   assert.doesNotMatch(loadSection, /api\.post\(/)
   assert.match(source, /window\.confirm\('重新生成会使用当前 SKU 包装配置，并替换当前订单的预计装箱方案。'/)
 })
+
+test('order workbench exposes procurement shortage, draft coverage, generation and linked purchases', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /procurement-plan/)
+  assert.match(source, /生成采购草稿/)
+  assert.match(source, /待采购/)
+  assert.match(source, /采购草稿/)
+  assert.match(source, /draft_procurement_quantity/)
+  assert.match(source, /draftable_quantity/)
+  assert.match(source, /关联采购单/)
+  assert.match(source, /ProcurementDraftModal/)
+})

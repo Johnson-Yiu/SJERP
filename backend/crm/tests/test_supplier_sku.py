@@ -97,6 +97,8 @@ class SupplierSKUApiTests(TestCase):
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.order.status = "confirmed"
+        self.order.save(update_fields=["status"])
         self.assertEqual(self.client.post(f"/api/purchase-orders/{response.data['id']}/place/", {}, format="json").status_code, status.HTTP_200_OK)
         item = PurchaseOrderItem.objects.get(purchase_order_id=response.data["id"])
         self.assertEqual(item.supplier_sku_id, source.id)

@@ -109,14 +109,13 @@ def order_item_metrics(item: OrderItem) -> dict[str, Decimal]:
         total=Coalesce(Sum("quantity"), Decimal("0"), output_field=QUANTITY_FIELD)
     )["total"]
     purchase_items = PurchaseOrderItem.objects.filter(
-        Q(purchase_order__order=item.order, purchase_order__cost_allocation_version=0) | Q(cost_allocations__order=item.order),
+        cost_allocations__target_type="order", cost_allocations__order=item.order,
         sku=item.sku,
         purchase_order__status__in=["ordered", "partial", "completed"],
     ).distinct().select_related("purchase_order").prefetch_related("receipts", "cost_allocations")
     purchased = received = in_transit = Decimal(0)
     for row in purchase_items:
-        quantity = (sum((a.quantity for a in row.cost_allocations.all() if a.order_id == item.order_id), Decimal(0))
-            if row.purchase_order.cost_allocation_version else row.quantity)
+        quantity = sum((a.quantity for a in row.cost_allocations.all() if a.target_type == "order" and a.order_id == item.order_id), Decimal(0))
         # Receipts are recorded for the whole purchase line; attribute progress proportionally.
         arrived = min(row.received_quantity, row.quantity) * quantity / row.quantity
         purchased += quantity

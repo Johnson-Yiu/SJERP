@@ -1300,7 +1300,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "supplier_model": item.supplier_model_snapshot,
                 "supplier_sku_code": item.supplier_sku_code_snapshot,
             })
-        purchase_orders = PurchaseOrder.objects.filter(Q(order=order, cost_allocation_version=0) | Q(items__cost_allocations__order=order)).distinct().select_related("supplier").prefetch_related("items__receipts")
+        purchase_orders = PurchaseOrder.objects.filter(items__cost_allocations__target_type="order", items__cost_allocations__order=order).distinct().select_related("supplier").prefetch_related("items__receipts")
         shipments = Shipment.objects.filter(order=order).prefetch_related("items__sku")
         return Response({
             "order": OrderSerializer(order).data,

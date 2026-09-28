@@ -48,7 +48,7 @@ class PurchaseCostTests(TestCase):
             data["allocations"][0].update(patch)
             response = self.client.post(self.url, data, format="json")
             self.assertEqual(response.status_code, 400, response.data)
-            self.assertFalse(self.item.cost_allocations.exists())
+            self.assertEqual(self.item.cost_allocations.count(), 1)
         self.assertEqual(self.client.post(self.url, self.payload(), format="json").status_code, 200)
         self.assertEqual(self.client.post(self.url, self.payload(), format="json").status_code, 400)
         self.assertEqual(self.client.patch(f"/api/purchase-orders/{self.purchase.pk}/", {"exchange_rate": "8"}, format="json").status_code, 400)
@@ -104,7 +104,7 @@ class PurchaseCostTests(TestCase):
         self.purchase.refresh_from_db()
         self.assertEqual(self.purchase.cost_allocation_version, 0)
         self.assertEqual(self.purchase.additional_costs, [])
-        self.assertFalse(self.item.cost_allocations.exists())
+        self.assertEqual(self.item.cost_allocations.count(), 1)
         self.assertEqual(OperationLog.objects.count(), before_logs)
         saved = self.client.post(self.url, self.payload(), format="json")
         self.assertEqual(response.data["allocations"], saved.data["allocations"])
@@ -115,4 +115,4 @@ class PurchaseCostTests(TestCase):
         data["allocations"][0]["quantity"] = "1001"
         response = self.client.post(self.url.replace("cost-allocation/", "cost-allocation-preview/"), data, format="json")
         self.assertEqual(response.status_code, 400)
-        self.assertFalse(self.item.cost_allocations.exists())
+        self.assertEqual(self.item.cost_allocations.count(), 1)

@@ -4,7 +4,6 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import Q
 from django.utils import timezone
 
 from crm.models import AdvanceAllocation, InventoryReservation, Order, PaymentPlan, PurchaseOrder, Quote, Shipment
@@ -116,7 +115,8 @@ def cancel_order(order, reason):
         raise ValidationError("订单已有有效发货记录，不能直接取消。")
     formal_purchase_statuses = ["ordered", "partial", "completed"]
     if PurchaseOrder.objects.filter(
-        Q(order=order) | Q(items__cost_allocations__order=order),
+        items__cost_allocations__target_type="order",
+        items__cost_allocations__order=order,
         status__in=formal_purchase_statuses,
     ).exists():
         raise ValidationError("订单已有正式采购记录，不能直接取消。")

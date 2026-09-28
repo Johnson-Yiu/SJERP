@@ -25,21 +25,17 @@ def _draft_procurement_rows(order):
         purchase_order__status="draft",
         sku_id__in=order.items.values("sku_id"),
     ).filter(
-        Q(purchase_order__order=order, purchase_order__cost_allocation_version=0)
-        | Q(cost_allocations__target_type="order", cost_allocations__order=order)
+        cost_allocations__target_type="order", cost_allocations__order=order,
     ).distinct().select_related("purchase_order").prefetch_related("cost_allocations")
     for row in rows:
-        if row.purchase_order.cost_allocation_version:
-            quantity = sum(
-                (
-                    allocation.quantity
-                    for allocation in row.cost_allocations.all()
-                    if allocation.target_type == "order" and allocation.order_id == order.id
-                ),
-                ZERO,
-            )
-        else:
-            quantity = row.quantity
+        quantity = sum(
+            (
+                allocation.quantity
+                for allocation in row.cost_allocations.all()
+                if allocation.target_type == "order" and allocation.order_id == order.id
+            ),
+            ZERO,
+        )
         if quantity > ZERO:
             quantities.append((row.sku_id, row.supplier_sku_id, quantity))
     return quantities
@@ -262,5 +258,7 @@ def create_purchase_drafts(order, payload):
                 purchase_order=purchase, sku=item.sku, supplier_sku=item.supplier_sku,
                 quantity=quantity, unit_price=price,
             )
+        from crm.services.purchase_costs import rebuild_default_cost_allocations
+        rebuild_default_cost_allocations(purchase)
         purchases.append(purchase)
     return purchases

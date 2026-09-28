@@ -59,18 +59,21 @@ async function save() {
   } catch (e) { const data = e.response?.data; error.value = typeof data === 'string' ? data : data ? JSON.stringify(data) : e.message }
   finally { busy.value = false }
 }
+function requestClose() {
+  if (!dirty.value || window.confirm('当前成本分配有尚未保存的修改，确定放弃吗？')) emit('close')
+}
 </script>
 
 <template>
   <div class="modal-backdrop cost-backdrop">
     <section class="modal wide cost-modal" role="dialog" aria-modal="true" aria-labelledby="cost-title">
-      <header class="cost-header"><div><span class="eyebrow">采购管理 / 成本核算</span><h3 id="cost-title">采购成本分配 <span>{{ purchase.purchase_no }}</span></h3><p>将商品成本分配给订单与库存，再统一分摊公共费用。</p></div><button class="icon-btn" aria-label="关闭成本分配" :disabled="busy" @click="emit('close')"><X :size="19" /></button></header>
+      <header class="cost-header"><div><span class="eyebrow">采购管理 / 成本核算</span><h3 id="cost-title">采购成本分配 <span>{{ purchase.purchase_no }}</span></h3><p>将商品成本分配给订单与库存，再统一分摊公共费用。</p></div><button class="icon-btn" aria-label="关闭成本分配" :disabled="busy" @click="requestClose"><X :size="19" /></button></header>
       <div class="cost-overview"><article><span>采购商品金额</span><strong>{{ money(goodsTotal) }} <small>{{ purchase.currency }}</small></strong></article><article><span>公共附加费用</span><strong>{{ money(feeTotal) }} <small>{{ purchase.currency }}</small></strong></article><article class="overview-total"><span>本次核算总成本</span><strong>{{ money(goodsTotal + feeTotal) }} <small>{{ purchase.currency }}</small></strong></article></div>
       <p v-if="error" role="alert" class="cost-error">{{ error }}</p>
       <p v-if="!form && !error">正在加载成本分配…</p>
       <form v-if="form" id="purchase-cost-form" @submit.prevent="save" @input="changed" @change="changed">
         <fieldset :disabled="busy || purchase.status === 'cancelled'">
-          <p class="allocation-note"><Check :size="15" />{{ form.version ? '已启用明细分配，整单关联订单不再参与成本计算。' : '当前沿用原关联订单；无关联订单的采购归库存。保存后启用明细分配。' }}</p>
+          <p class="allocation-note"><Check :size="15" />{{ form.version ? `当前为人工成本分配版本 V${form.version}。` : '系统已建立默认成本归属：有来源订单的采购默认归该订单，无来源订单默认归库存。人工保存调整后将进入版本化成本分配。' }}</p>
           <div class="block-heading"><div><h4><Layers3 :size="17" /> 明细成本归属</h4><p>展开商品，填写每份归属的数量；未分配的余量自动归库存。</p></div><span class="count-badge">{{ purchase.items.length }} 项商品</span></div>
           <details v-for="item in purchase.items" :key="item.id" open class="cost-item">
             <summary><div class="item-title"><b>{{ item.display_name || item.sku_code }}</b><small>{{ item.sku_code }} · 采购 {{ item.trade_quantity ?? item.quantity }} {{ item.trade_snapshot?.unit }} × {{ item.trade_unit_price ?? item.unit_price }} · 分配基数 {{ item.quantity }} {{ item.trade_snapshot?.base_unit }}</small></div><span class="remaining-badge" :class="{ 'cost-error': remaining(item) < -0.001 }">剩余 {{ remaining(item).toFixed(2) }}</span></summary>
@@ -102,7 +105,7 @@ async function save() {
         <p>商品成本 {{ money(result.base_amount) }} ＋ 附加费用 {{ money(result.additional_amount) }} ＝ {{ purchase.currency }} {{ money(result.total_amount) }}</p>
         <p class="muted">草稿及取消采购不计入订单预估毛利；库存成本表示成本归属，不代表已到货库存。</p>
       </section>
-      <footer class="cost-footer"><span>{{ dirty ? '实时预览尚未保存' : '修改数量、归属或费用，自动更新预览' }}</span><div><button class="btn btn-secondary" :disabled="busy" @click="emit('close')">关闭</button><button v-if="form" class="btn btn-primary" type="submit" form="purchase-cost-form" :disabled="busy || purchase.status === 'cancelled'"><Check :size="16" />{{ busy ? '保存中…' : '保存成本分配' }}</button></div></footer>
+      <footer class="cost-footer"><span>{{ dirty ? '实时预览尚未保存' : '修改数量、归属或费用，自动更新预览' }}</span><div><button class="btn btn-secondary" :disabled="busy" @click="requestClose">关闭</button><button v-if="form" class="btn btn-primary" type="submit" form="purchase-cost-form" :disabled="busy || purchase.status === 'cancelled'"><Check :size="16" />{{ busy ? '保存中…' : '保存成本分配' }}</button></div></footer>
     </section>
   </div>
 </template>

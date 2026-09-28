@@ -402,6 +402,8 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
                 **item,
             ) for item in items
         ])
+        from .services.purchase_costs import rebuild_default_cost_allocations
+        rebuild_default_cost_allocations(purchase)
         return purchase
 
     @transaction.atomic
@@ -425,6 +427,9 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         for key, value in validated_data.items():
             setattr(instance, key, value)
         instance.save()
+        if instance.status == "draft" and instance.cost_allocation_version == 0:
+            from .services.purchase_costs import rebuild_default_cost_allocations
+            rebuild_default_cost_allocations(instance)
         return instance
 
 

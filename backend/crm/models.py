@@ -1045,6 +1045,7 @@ class PurchaseOrderItem(TradeUnitLine):
         return self.quantity - self.received_quantity
 
     def save(self, *args, **kwargs):
+        creating = self._state.adding
         if self._state.adding and self.sku_id:
             sku = self.sku
             self.sku_code_snapshot = self.sku_code_snapshot or sku.sku
@@ -1059,6 +1060,16 @@ class PurchaseOrderItem(TradeUnitLine):
             self.supplier_barcode_snapshot = self.supplier_barcode_snapshot or supplier_sku.supplier_barcode
             self.supplier_characteristics_snapshot = self.supplier_characteristics_snapshot or supplier_sku.characteristics
         super().save(*args, **kwargs)
+        if self.purchase_order.cost_allocation_version == 0:
+            if not creating:
+                self.cost_allocations.all().delete()
+            if creating or not self.cost_allocations.exists():
+                PurchaseCostAllocation.objects.create(
+                    purchase_item=self,
+                    target_type="order" if self.purchase_order.order_id else "inventory",
+                    order=self.purchase_order.order if self.purchase_order.order_id else None,
+                    quantity=self.quantity,
+                )
 
 
 class PaymentPlan(TimestampedModel):

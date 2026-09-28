@@ -10,6 +10,37 @@ from crm.models import Order, PurchaseOrder, PurchaseCostAllocation
 CENT = Decimal("0.01")
 
 
+def validate_allocation_integrity(purchase, records=None):
+    """Require every purchase line to have a complete persisted quantity attribution."""
+    totals = {}
+    if records is None:
+        records = PurchaseCostAllocation.objects.filter(purchase_item__purchase_order=purchase)
+    for record in records:
+        totals[record.purchase_item_id] = totals.get(record.purchase_item_id, Decimal(0)) + record.quantity
+    for item in purchase.items.all():
+        if totals.get(item.pk, Decimal(0)) != item.quantity:
+            raise serializers.ValidationError(f"{item.sku_code_snapshot} 的成本归属数量必须等于采购数量。")
+
+
+@transaction.atomic
+def rebuild_default_cost_allocations(purchase):
+    """Persist the version-zero default attribution; never replace manual allocations."""
+    purchase = PurchaseOrder.objects.select_for_update().get(pk=purchase.pk)
+    if purchase.cost_allocation_version != 0:
+        raise serializers.ValidationError("已有人工成本分配，不能重建默认归属。")
+    items = list(purchase.items.all())
+    PurchaseCostAllocation.objects.filter(purchase_item__purchase_order=purchase).delete()
+    PurchaseCostAllocation.objects.bulk_create([
+        PurchaseCostAllocation(
+            purchase_item=item,
+            target_type="order" if purchase.order_id else "inventory",
+            order=purchase.order if purchase.order_id else None,
+            quantity=item.quantity,
+        ) for item in items
+    ])
+    validate_allocation_integrity(purchase)
+
+
 class AllocationInput(serializers.Serializer):
     target_name = serializers.CharField(max_length=100, required=False, allow_blank=True, default="")
     purchase_item = serializers.IntegerField(min_value=1)
@@ -58,8 +89,6 @@ def cost_summary(purchase, records=None, expenses=None):
     rows = []
     for item in purchase.items.all():
         allocations = ([record for record in records if record.purchase_item_id == item.pk] if records is not None else list(item.cost_allocations.select_related("order")))
-        if records is None and purchase.cost_allocation_version == 0:
-            allocations = [PurchaseCostAllocation(purchase_item=item, target_type="order" if purchase.order_id else "inventory", order=purchase.order, quantity=item.quantity)]
         amounts = split_amount(item.amount, [a.quantity for a in allocations])
         for allocation, amount in zip(allocations, amounts):
             rows.append({"purchase_item": item.pk, "sku_code": item.sku_code_snapshot,
@@ -123,6 +152,7 @@ def save_costs(purchase, payload):
     records, expenses = prepare_costs(purchase, payload)
     PurchaseCostAllocation.objects.filter(purchase_item__purchase_order=purchase).delete()
     PurchaseCostAllocation.objects.bulk_create(records)
+    validate_allocation_integrity(purchase, records)
     purchase.additional_costs = expenses
     purchase.cost_allocation_version += 1
     purchase.save(update_fields=["additional_costs", "cost_allocation_version", "updated_at"])
@@ -130,7 +160,7 @@ def save_costs(purchase, payload):
 
 
 def order_purchase_cost(order):
-    purchases = PurchaseOrder.objects.filter(Q(order=order, cost_allocation_version=0) | Q(items__cost_allocations__order=order)).exclude(status__in=["draft", "cancelled"]).distinct()
+    purchases = PurchaseOrder.objects.filter(items__cost_allocations__target_type="order", items__cost_allocations__order=order).exclude(status__in=["draft", "cancelled"]).distinct()
     base = additional = Decimal(0)
     for purchase in purchases:
         for row in cost_summary(purchase)["allocations"]:

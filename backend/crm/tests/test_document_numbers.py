@@ -8,6 +8,7 @@ from rest_framework.test import APIClient
 
 from crm.document_numbers import allocate_document_no
 from crm.models import Customer, DocumentNumberSequence, Order, Product, PurchaseOrder, SKU, Supplier
+from crm.views import _import_row
 
 
 class DocumentNumberApiTests(TestCase):
@@ -138,3 +139,72 @@ class DocumentNumberApiTests(TestCase):
         DocumentNumberSequence.objects.create(document_type="SO", year=2026, last_value=99999)
         with self.assertRaisesMessage(ValidationError, "2026 年销售订单编号已超过 99999"):
             allocate_document_no("SO", year=2026)
+
+
+class DocumentNumberImportTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.customer = Customer.objects.create(code="DI-C", name="Document Import Customer")
+        self.sku = SKU.objects.create(
+            sku="DI-SKU",
+            product=Product.objects.create(code="DI-P", name="Document Import Product"),
+            default_price=10,
+        )
+        self.today = date(2026, 12, 31)
+
+    def create_order(self):
+        with patch("crm.document_numbers.timezone.localdate", return_value=self.today):
+            response = self.client.post(
+                "/api/orders/",
+                {
+                    "customer": self.customer.pk,
+                    "order_date": "2020-01-01",
+                    "currency": "USD",
+                    "exchange_rate": "1",
+                    "items": [{"sku": self.sku.pk, "quantity": "1", "unit_price": "10"}],
+                },
+                format="json",
+            )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        return response.data
+
+    def import_order(self, order_no):
+        return _import_row(
+            "orders",
+            {
+                "order_no": order_no,
+                "customer_code": self.customer.code,
+                "order_date": "2020-01-01",
+                "status": "draft",
+                "currency": "USD",
+                "exchange_rate": "1",
+                "notes": "",
+            },
+        )
+
+    def test_imported_larger_formal_number_advances_sequence_and_next_api_order(self):
+        DocumentNumberSequence.objects.create(document_type="SO", year=2026, last_value=10)
+
+        self.assertTrue(self.import_order("SO-2026-00050"))
+        self.assertTrue(Order.objects.filter(order_no="SO-2026-00050").exists())
+        self.assertEqual(DocumentNumberSequence.objects.get(document_type="SO", year=2026).last_value, 50)
+        self.assertEqual(self.create_order()["order_no"], "SO-2026-00051")
+
+    def test_imported_smaller_formal_number_does_not_move_sequence_backward(self):
+        DocumentNumberSequence.objects.create(document_type="SO", year=2026, last_value=50)
+
+        self.assertTrue(self.import_order("SO-2026-00020"))
+        self.assertEqual(DocumentNumberSequence.objects.get(document_type="SO", year=2026).last_value, 50)
+        self.assertEqual(self.create_order()["order_no"], "SO-2026-00051")
+
+    def test_legacy_imported_number_does_not_affect_sequence(self):
+        DocumentNumberSequence.objects.create(document_type="SO", year=2026, last_value=10)
+
+        self.assertTrue(self.import_order("LEGACY-SO-1001"))
+        self.assertTrue(Order.objects.filter(order_no="LEGACY-SO-1001").exists())
+        self.assertEqual(DocumentNumberSequence.objects.get(document_type="SO", year=2026).last_value, 10)
+
+    def test_imported_formal_number_initializes_missing_sequence(self):
+        self.assertTrue(self.import_order("SO-2026-00008"))
+        self.assertGreaterEqual(DocumentNumberSequence.objects.get(document_type="SO", year=2026).last_value, 8)
+        self.assertEqual(self.create_order()["order_no"], "SO-2026-00009")

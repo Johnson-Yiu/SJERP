@@ -25,30 +25,51 @@ def _initial_last_value(document_type, year):
     return maximum
 
 
-@transaction.atomic
-def allocate_document_no(document_type, *, year=None):
-    if document_type not in DOCUMENT_MODELS:
-        raise ValueError(f"Unsupported document type: {document_type}")
-
-    year = year or timezone.localdate().year
+def _locked_sequence(document_type, year):
     try:
-        sequence = DocumentNumberSequence.objects.select_for_update().get(
+        return DocumentNumberSequence.objects.select_for_update().get(
             document_type=document_type,
             year=year,
         )
     except DocumentNumberSequence.DoesNotExist:
         try:
             with transaction.atomic():
-                sequence = DocumentNumberSequence.objects.create(
+                return DocumentNumberSequence.objects.create(
                     document_type=document_type,
                     year=year,
                     last_value=_initial_last_value(document_type, year),
                 )
         except IntegrityError:
-            sequence = DocumentNumberSequence.objects.select_for_update().get(
+            return DocumentNumberSequence.objects.select_for_update().get(
                 document_type=document_type,
                 year=year,
             )
+
+
+@transaction.atomic
+def sync_document_sequence_from_number(document_type, document_no):
+    """Advance a formal document sequence to include an imported document number."""
+    if document_type not in DOCUMENT_MODELS:
+        raise ValueError(f"Unsupported document type: {document_type}")
+
+    match = re.fullmatch(rf"{document_type}-(\d{{4}})-(\d{{5}})", document_no or "")
+    if not match:
+        return
+
+    year, imported_value = (int(value) for value in match.groups())
+    sequence = _locked_sequence(document_type, year)
+    if imported_value > sequence.last_value:
+        sequence.last_value = imported_value
+        sequence.save(update_fields=["last_value"])
+
+
+@transaction.atomic
+def allocate_document_no(document_type, *, year=None):
+    if document_type not in DOCUMENT_MODELS:
+        raise ValueError(f"Unsupported document type: {document_type}")
+
+    year = year or timezone.localdate().year
+    sequence = _locked_sequence(document_type, year)
 
     next_value = sequence.last_value + 1
     if next_value > MAX_DOCUMENT_SEQUENCE:

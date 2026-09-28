@@ -1740,6 +1740,9 @@ def _import_row(entity, row):
         existing = Order.objects.filter(order_no=row["order_no"]).first()
         validate_contract_edit(existing, defaults)
         _, created = Order.objects.update_or_create(order_no=row["order_no"], defaults=defaults)
+        from .document_numbers import sync_document_sequence_from_number
+
+        sync_document_sequence_from_number("SO", row["order_no"])
         return created
     customer = Customer.objects.filter(code=row.get("customer_code")).first() if row.get("customer_code") else None
     order = Order.objects.filter(order_no=row.get("order_no")).first() if row.get("order_no") else None

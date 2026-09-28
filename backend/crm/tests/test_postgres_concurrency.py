@@ -21,7 +21,7 @@ from crm.models import (
     Supplier,
 )
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
-from crm.document_numbers import allocate_document_no
+from crm.document_numbers import allocate_document_no, sync_document_sequence_from_number
 from crm.services.purchase_costs import save_costs
 from rest_framework.test import APIClient
 
@@ -83,6 +83,28 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
         self.assertEqual(sorted(purchase_numbers), [f"PO-2030-{index:05d}" for index in range(1, 21)])
         self.assertEqual(DocumentNumberSequence.objects.get(document_type="SO", year=2030).last_value, 20)
         self.assertEqual(DocumentNumberSequence.objects.get(document_type="PO", year=2030).last_value, 20)
+
+    def test_imported_formal_order_number_sync_is_safe_with_concurrent_allocations(self):
+        customer = Customer.objects.create(code="PG-IMPORT-C", name="PostgreSQL Import Customer")
+        Order.objects.create(
+            order_no="SO-2031-00050",
+            customer=customer,
+            order_date=date(2031, 1, 1),
+        )
+
+        def sync_or_allocate(index):
+            if index == 0:
+                sync_document_sequence_from_number("SO", "SO-2031-00050")
+                return "SO-2031-00050"
+            return allocate_document_no("SO", year=2031)
+
+        results = self.run_workers(sync_or_allocate, 21)
+        allocated_numbers = results[1:]
+
+        self.assertEqual(sorted(allocated_numbers), [f"SO-2031-{index:05d}" for index in range(51, 71)])
+        self.assertEqual(len(set(allocated_numbers)), 20)
+        self.assertEqual(DocumentNumberSequence.objects.get(document_type="SO", year=2031).last_value, 70)
+        self.assertEqual(allocate_document_no("SO", year=2031), "SO-2031-00071")
 
     def test_quote_revision_counters_are_unique_and_contiguous_under_concurrency(self):
         customer = Customer.objects.create(code="PG-REV-C", name="PostgreSQL Revision Customer")

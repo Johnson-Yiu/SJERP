@@ -37,5 +37,15 @@ test('purchase desk keeps drafts editable and separates placement from draft sav
   assert.match(source, /api\.put\(`\/purchase-orders\/\$\{editingPurchaseId\.value\}\//)
   assert.match(source, /编辑草稿/)
   assert.match(source, /确认下单/)
-  assert.match(source, /const \{ status, \.\.\.draftPayload \} = draft\.value/)
+  assert.match(source, /const \{ status, purchase_no, \.\.\.draftPayload \} = draft\.value/)
+})
+
+test('purchase creation leaves number generation to the backend and never submits a number', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.doesNotMatch(source, /purchaseTimeSuffix/)
+  assert.doesNotMatch(source, /PO-\$\{today/)
+  assert.match(source, /const \{ status, purchase_no, \.\.\.draftPayload \} = draft\.value/)
+  assert.match(source, /保存后由系统自动生成/)
+  assert.match(source, /class="readonly-input" readonly/)
 })

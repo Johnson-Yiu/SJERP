@@ -9,6 +9,7 @@ from rest_framework.exceptions import ValidationError
 
 from crm.models import (
     Customer,
+    DocumentNumberSequence,
     Order,
     Product,
     PurchaseOrder,
@@ -20,6 +21,7 @@ from crm.models import (
     Supplier,
 )
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
+from crm.document_numbers import allocate_document_no
 from crm.services.purchase_costs import save_costs
 from rest_framework.test import APIClient
 
@@ -72,6 +74,15 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
 
         self.assertEqual(sorted(numbers), [f"SJ20300101SE{index:03d}" for index in range(1, 6)])
         self.assertEqual(QuoteNumberSequence.objects.get(quote_date=quote_date, country_code="SE").last_value, 5)
+
+    def test_order_and_purchase_numbers_are_unique_and_contiguous_under_concurrency(self):
+        order_numbers = self.run_workers(lambda _index: allocate_document_no("SO", year=2030), 20)
+        purchase_numbers = self.run_workers(lambda _index: allocate_document_no("PO", year=2030), 20)
+
+        self.assertEqual(sorted(order_numbers), [f"SO-2030-{index:05d}" for index in range(1, 21)])
+        self.assertEqual(sorted(purchase_numbers), [f"PO-2030-{index:05d}" for index in range(1, 21)])
+        self.assertEqual(DocumentNumberSequence.objects.get(document_type="SO", year=2030).last_value, 20)
+        self.assertEqual(DocumentNumberSequence.objects.get(document_type="PO", year=2030).last_value, 20)
 
     def test_quote_revision_counters_are_unique_and_contiguous_under_concurrency(self):
         customer = Customer.objects.create(code="PG-REV-C", name="PostgreSQL Revision Customer")

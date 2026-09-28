@@ -16,7 +16,6 @@ class BusinessFlowTests(APITestCase):
 
     def test_order_transaction_and_dashboard_flow(self):
         order_payload = {
-            "order_no": "T-SO-001",
             "customer": self.customer.id,
             "order_date": str(date.today()),
             "currency": "USD",
@@ -29,7 +28,7 @@ class BusinessFlowTests(APITestCase):
         response = self.client.post("/api/orders/", order_payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(self.client.post(f"/api/orders/{response.data['id']}/confirm/", {}, format="json").status_code, status.HTTP_200_OK)
-        order = Order.objects.get(order_no="T-SO-001")
+        order = Order.objects.get(pk=response.data["id"])
         self.assertEqual(order.items.count(), 1)
         self.assertEqual(order.total_amount, 600)
 

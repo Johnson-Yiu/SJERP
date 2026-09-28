@@ -716,6 +716,7 @@ class QuoteApiTests(TestCase):
         self.assertEqual(draft.data["quote"], quote.id)
         self.assertEqual(draft.data["customer"], self.customer.id)
         self.assertEqual(draft.data["status"], "draft")
+        self.assertNotIn("order_no", draft.data)
         self.assertEqual(Decimal(draft.data["shipping_fee"]), Decimal("12.50"))
         self.assertEqual(draft.data["items"][0]["sku"], self.sku.id)
         self.assertEqual(Decimal(draft.data["items"][0]["quantity"]), Decimal("3.00"))
@@ -895,7 +896,6 @@ class OrderWorkbenchTests(TestCase):
         response = self.client.put(
             f"/api/orders/{self.order.id}/",
             {
-                "order_no": self.order.order_no,
                 "customer": self.customer.id,
                 "quote": self.quote.id,
                 "order_date": "2026-08-19",
@@ -946,7 +946,6 @@ class OrderWorkbenchTests(TestCase):
         response = self.client.put(
             f"/api/orders/{self.order.id}/",
             {
-                "order_no": self.order.order_no,
                 "customer": self.customer.id,
                 "quote": self.quote.id,
                 "order_date": "2026-08-19",

@@ -45,7 +45,7 @@ function fresh() {
   const now = new Date(), y = now.getFullYear(), m = String(now.getMonth() + 1).padStart(2, '0'), d = String(now.getDate()).padStart(2, '0')
   Object.keys(form).forEach(k => delete form[k])
   activeSkuId.value = ''
-  Object.assign(form, { customer: '', [copy.value.no]: `${isOrder.value ? 'SO' : 'QT'}-${y}-${String(Date.now()).slice(-5)}`, [copy.value.date]: `${y}-${m}-${d}`, status: 'draft', currency: 'USD', exchange_rate: '7.20', shipping_fee: 0, discount: 0, notes: '', items: [] })
+  Object.assign(form, { customer: '', ...(isOrder.value ? {} : { quote_no: '' }), [copy.value.date]: `${y}-${m}-${d}`, status: 'draft', currency: 'USD', exchange_rate: '7.20', shipping_fee: 0, discount: 0, notes: '', items: [] })
   if (isOrder.value) {
     Object.assign(form, { quote: '', expected_ship_date: '' })
     orderLeadTimeDays.value = ''
@@ -119,7 +119,7 @@ async function save() {
   if (!form.items.length || form.items.some(i => !i.sku)) return notify('请至少添加一条有效的 SKU 明细。', true)
   saving.value = true
   const data = { ...form, customer: Number(form.customer), items: form.items.map(i => tradePayload({ ...i, sku: Number(i.sku) })) }
-  if (isOrder.value) delete data.status
+  if (isOrder.value) { delete data.status; delete data.order_no }
   if (isOrder.value) data.quote = form.quote ? Number(form.quote) : null
   try {
     const response = editingId.value ? await api.put(`/${props.type}/${editingId.value}/`, data) : await api.post(`/${props.type}/`, data)
@@ -280,7 +280,7 @@ onMounted(async () => {
       <div class="modal-head"><h3>{{ editingId ? '编辑' : '新建' }}{{ isOrder ? '订单' : '报价' }}</h3><button type="button" class="mini-btn" @click="closeEditor"><X :size="17" /></button></div>
       <div class="modal-body">
         <div class="form-grid">
-          <div class="field"><label>{{ copy.noLabel }} *</label><input v-model="form[copy.no]" required /></div>
+          <div class="field"><label>{{ copy.noLabel }}</label><input v-if="isOrder" :value="form.order_no || '保存后由系统自动生成'" class="readonly-input" readonly /><input v-else v-model="form[copy.no]" required /></div>
           <div class="field"><label>客户 *</label><select v-model="form.customer" required :disabled="inheritedCustomer"><option value="">请选择</option><option v-for="c in customers" :key="c.id" :value="c.id">{{ c.name }}</option></select></div>
           <div class="field"><label>{{ copy.dateLabel }} *</label><SegmentedDateInput :model-value="form[copy.date]" required @update:model-value="setOrderDate" /></div>
           <div class="field"><label>预计交期</label><div class="lead-time-input"><input v-model="orderLeadTimeDays" type="number" min="0" step="1" placeholder="天数" aria-label="交期天数" @input="setOrderLeadTimeDays" /><span>天</span><SegmentedDateInput :model-value="form.expected_ship_date" @update:model-value="setExpectedShipDate" /></div></div>

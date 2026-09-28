@@ -259,7 +259,7 @@ class FulfillmentApiTests(TestCase):
             order_date=date(2026, 8, 21), status="confirmed",
         )
         response = self.client.post("/api/purchase-orders/", {
-            "purchase_no": "PO-API-001", "supplier": supplier.id, "order": order.id,
+            "supplier": supplier.id, "order": order.id,
             "order_date": "2026-08-21", "status": "draft", "currency": "USD",
             "exchange_rate": "1", "items": [{"sku": self.sku.id, "quantity": "4", "unit_price": "3"}],
         }, format="json")
@@ -340,7 +340,7 @@ class FulfillmentApiTests(TestCase):
             type="purchase_in", sku=self.sku, quantity="3",
         )
         response = self.client.post("/api/orders/", {
-            "order_no": "SO-RESERVATION-API", "customer": Customer.objects.get(code="C-API").id,
+            "customer": Customer.objects.get(code="C-API").id,
             "order_date": "2026-08-21", "status": "draft", "currency": "USD",
             "exchange_rate": "1", "items": [{"sku": self.sku.id, "quantity": "5", "unit_price": "8"}],
         }, format="json")

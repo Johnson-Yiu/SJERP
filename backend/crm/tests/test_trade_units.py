@@ -46,7 +46,7 @@ class TradeUnitsTests(TestCase):
         order = self.post('orders/', draft)
         order = self.confirm_order(order)
         self.assertEqual(order['quote'], quote['id'])
-        purchase = self.post('purchase-orders/', dict(purchase_no='TU-PO', supplier=self.supplier.pk, order=order['id'], order_date=self.today, items=[self.line(price='5')]))
+        purchase = self.post('purchase-orders/', dict(supplier=self.supplier.pk, order=order['id'], order_date=self.today, items=[self.line(price='5')]))
         purchase = self.place_purchase(purchase)
         receipt = dict(purchase_item=purchase['items'][0]['id'], receipt_date=self.today, quantity='1', trade_unit=self.unit.pk, trade_quantity='1', trade_unit_price='5', unit_cost='0')
         self.post(f"purchase-orders/{purchase['id']}/receive/", receipt)
@@ -103,7 +103,7 @@ class TradeUnitsTests(TestCase):
         self.assertFalse(self.unit.is_default)
         scoped = SKUTradeUnit.objects.create(sku=self.sku, supplier=self.supplier, name='Supplier roll', unit='Roll', factor=10)
         other = Supplier.objects.create(code='TX', name='Other supplier')
-        self.post('purchase-orders/', dict(purchase_no='TU-INVALID', supplier=other.pk, order_date=self.today, items=[self.line(unit=scoped)]), 400)
+        self.post('purchase-orders/', dict(supplier=other.pk, order_date=self.today, items=[self.line(unit=scoped)]), 400)
         response = self.client.patch(f'/api/skus/{self.sku.pk}/', {'unit': 'pcs'}, format='json')
         self.assertEqual(response.status_code, 400)
 
@@ -121,9 +121,9 @@ class TradeUnitsTests(TestCase):
 
     def test_alternative_receipt_unit_and_atomic_over_shipment(self):
         large = SKUTradeUnit.objects.create(sku=self.sku, name='20m Roll', unit='Roll', factor=20)
-        order = self.post('orders/', dict(order_no='TU-ALT', customer=self.customer.pk, order_date=self.today, items=[self.line('2')]))
+        order = self.post('orders/', dict(customer=self.customer.pk, order_date=self.today, items=[self.line('2')]))
         order = self.confirm_order(order)
-        purchase = self.post('purchase-orders/', dict(purchase_no='TU-ALT-PO', supplier=self.supplier.pk, order_date=self.today, items=[self.line('1', unit=large)]))
+        purchase = self.post('purchase-orders/', dict(supplier=self.supplier.pk, order_date=self.today, items=[self.line('1', unit=large)]))
         purchase = self.place_purchase(purchase)
         self.post(f"purchase-orders/{purchase['id']}/receive/", dict(purchase_item=purchase['items'][0]['id'], receipt_date=self.today, trade_unit=self.unit.pk, trade_quantity='2', trade_unit_price='4'))
         self.assertEqual(PurchaseOrder.objects.get(pk=purchase['id']).status, 'completed')
@@ -153,7 +153,7 @@ class TradeUnitsTests(TestCase):
         self.assertEqual(Decimal(order['total_amount']), 24)
 
     def test_edit_draft_order_retains_units_and_updates_amount(self):
-        order = self.post('orders/', dict(order_no='TU-EDIT', customer=self.customer.pk, order_date=self.today, status='draft', items=[self.line()]))
+        order = self.post('orders/', dict(customer=self.customer.pk, order_date=self.today, status='draft', items=[self.line()]))
         response = self.client.patch(f"/api/orders/{order['id']}/", {'items': [self.line('3')]}, format='json')
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(Decimal(response.data['total_amount']), 24)

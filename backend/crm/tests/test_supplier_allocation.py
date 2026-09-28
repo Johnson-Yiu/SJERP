@@ -70,7 +70,6 @@ class SupplierAllocationApiTests(TestCase):
         purchase = self.client.post(
             "/api/purchase-orders/",
             {
-                "purchase_no": "PO-ALLOC",
                 "supplier": self.supplier_a.pk,
                 "order": self.order.pk,
                 "order_date": "2026-09-16",

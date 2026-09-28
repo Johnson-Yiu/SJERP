@@ -5,7 +5,6 @@ import json
 import time
 from datetime import date
 from decimal import Decimal, InvalidOperation
-from uuid import uuid4
 from urllib.request import urlopen
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -1019,7 +1018,6 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def order_draft(self, request, pk=None):
         quote = self.get_object()
         return Response({
-            "order_no": f"SO-{timezone.localdate():%Y%m%d}-{quote.id}-{uuid4().hex[:6].upper()}",
             "customer": quote.customer_id,
             "quote": quote.id,
             "order_date": timezone.localdate(),

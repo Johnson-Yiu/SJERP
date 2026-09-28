@@ -541,6 +541,22 @@ class QuoteNumberSequence(models.Model):
         constraints = [models.UniqueConstraint(fields=["quote_date", "country_code"], name="unique_quote_number_sequence")]
 
 
+class DocumentNumberSequence(models.Model):
+    DOCUMENT_TYPE_CHOICES = [("SO", "销售订单"), ("PO", "采购订单")]
+
+    document_type = models.CharField(max_length=2, choices=DOCUMENT_TYPE_CHOICES)
+    year = models.PositiveSmallIntegerField()
+    last_value = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["document_type", "year"],
+                name="unique_document_number_sequence",
+            ),
+        ]
+
+
 class ProductParameter(TimestampedModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="parameters")
     group = models.CharField("参数分组", max_length=100, blank=True, default="基础参数")

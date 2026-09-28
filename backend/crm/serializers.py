@@ -13,6 +13,7 @@ from rest_framework import serializers
 
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
+from .document_numbers import allocate_order_no, allocate_purchase_no
 from .quote_snapshots import create_quote_items
 from .sku_identity import build_sku_identity, category_attributes, complete_sales_model_abbreviations, identity_conflict_messages, identity_signature, normalize_display_name, normalize_sales_model_abbreviations, parameter_pairs, raw_parameter_value
 from .sku_numbers import allocate_sku_code
@@ -315,9 +316,11 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseOrder
         fields = "__all__"
-        read_only_fields = ["status", "cancelled_at", "cancellation_reason"]
+        read_only_fields = ["purchase_no", "status", "cancelled_at", "cancellation_reason"]
 
     def validate(self, attrs):
+        if "purchase_no" in self.initial_data:
+            raise serializers.ValidationError({"purchase_no": "采购单号由系统自动生成，不能手工指定。"})
         validate_contract_edit(self.instance, attrs, purchase=True)
         supplier = attrs.get("supplier", getattr(self.instance, "supplier", None))
         unit_rows = attrs.get("items")
@@ -345,13 +348,17 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         items = validated_data.pop("items")
+        validated_data.pop("purchase_no", None)
         from .services.supplier_candidates import ensure_purchase_source
         for item in items:
             if not item["sku"].active:
                 raise serializers.ValidationError({"sku": "新采购不能选择停用或已归档的 SKU。"})
             if not item.get("supplier_sku"):
                 item["supplier_sku"] = ensure_purchase_source(item["sku"], validated_data["supplier"], order=validated_data.get("order"))
-        purchase = PurchaseOrder.objects.create(**validated_data)
+        purchase = PurchaseOrder.objects.create(
+            purchase_no=allocate_purchase_no(),
+            **validated_data,
+        )
         PurchaseOrderItem.objects.bulk_create([
             PurchaseOrderItem(
                 purchase_order=purchase,
@@ -1192,12 +1199,14 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
-        read_only_fields = ["status", "cancelled_at", "cancellation_reason"]
+        read_only_fields = ["order_no", "status", "cancelled_at", "cancellation_reason"]
 
     def get_balance_amount(self, obj):
         return (obj.total_amount - obj.paid_amount).quantize(Decimal("0.01"))
 
     def validate(self, attrs):
+        if "order_no" in self.initial_data:
+            raise serializers.ValidationError({"order_no": "订单号由系统自动生成，不能手工指定。"})
         validate_contract_edit(self.instance, attrs)
         if self.instance is None and not attrs.get("items"):
             raise serializers.ValidationError({"items": "订单至少需要一条商品明细。"})
@@ -1375,7 +1384,8 @@ class OrderSerializer(serializers.ModelSerializer):
         # acceptance/revision, reservations and payment plans occur only in
         # order_lifecycle.confirm_order().
         validated_data.pop("status", None)
-        order = Order.objects.create(**validated_data)
+        validated_data.pop("order_no", None)
+        order = Order.objects.create(order_no=allocate_order_no(), **validated_data)
         source_items = list(order.quote.items.order_by("id")) if order.quote_id else []
         rows = []
         for index, item in enumerate(items):

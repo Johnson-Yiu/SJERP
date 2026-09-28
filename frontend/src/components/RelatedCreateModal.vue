@@ -201,9 +201,8 @@ async function initDocument() {
   quotes.value = result[2] ? listData(result[2]) : []
   Object.assign(form, {
     customer: props.query.customer || '',
-    [documentCopy.value.no]: isOrder.value ? `SO-${new Date().getFullYear()}-${String(Date.now()).slice(-5)}` : '',
     [documentCopy.value.date]: date,
-    status: isOrder.value ? 'confirmed' : 'draft',
+    status: 'draft',
     currency: 'USD', exchange_rate: '7.20', shipping_fee: 0, discount: 0, notes: '',
     items: props.query.sku ? [{ sku: props.query.sku, quantity: 1, unit_price: 0, cost_price: 0, notes: '' }] : [],
   })
@@ -293,7 +292,7 @@ async function save() {
     if (isDocument.value) {
       if (!form.items.length || form.items.some(item => !item.sku)) throw new Error('请至少添加一条有效的 SKU 明细。')
       const data = { ...form, customer: Number(form.customer), items: form.items.map(item => tradePayload({ ...item, sku: Number(item.sku) })) }
-      if (isOrder.value) data.quote = form.quote ? Number(form.quote) : null
+      if (isOrder.value) { data.quote = form.quote ? Number(form.quote) : null; delete data.order_no; delete data.status }
       response = await api.post(`/${props.entity}/`, data)
     } else {
       response = await api.post(`/${config.value.endpoint}/`, payloadGeneric())
@@ -372,7 +371,7 @@ onMounted(init)
 
           <template v-else-if="isDocument">
             <div class="form-grid">
-              <div class="field"><label>{{ isOrder ? '订单号' : '报价单号' }} <em v-if="isOrder">*</em></label><input v-if="isOrder" v-model="form[documentCopy.no]" required /><input v-else value="保存后自动生成" class="readonly-input" disabled /></div>
+              <div class="field"><label>{{ isOrder ? '订单号' : '报价单号' }}</label><input v-if="isOrder" value="保存后由系统自动生成" class="readonly-input" readonly /><input v-else value="保存后自动生成" class="readonly-input" disabled /></div>
               <div class="field"><label>客户 *</label><select v-model="form.customer" required :disabled="isInherited('customer')"><option value="">请选择</option><option v-for="customer in customers" :key="customer.id" :value="customer.id">{{ customer.name }}</option></select></div>
               <div class="field"><label>{{ isOrder ? '订单日期' : '报价日期' }} *</label><SegmentedDateInput :model-value="form[documentCopy.date]" required @update:model-value="setDocumentDate" /></div>
               <div class="field"><label>{{ isOrder ? '预计交期' : '有效期' }}</label><div class="lead-time-input"><input v-model="documentDurationDays" type="number" min="0" step="1" placeholder="天数" :aria-label="isOrder ? '交期天数' : '有效期天数'" @input="setDocumentDurationDays" /><span>天</span><SegmentedDateInput :model-value="form[isOrder ? 'expected_ship_date' : 'valid_until']" @update:model-value="setDocumentTargetDate" /></div></div>

@@ -88,7 +88,6 @@ class SupplierSKUApiTests(TestCase):
         response = self.client.post(
             "/api/purchase-orders/",
             {
-                "purchase_no": "PO-SUPPLIER-SKU",
                 "supplier": self.supplier_a.id,
                 "order": self.order.id,
                 "order_date": "2026-08-23",

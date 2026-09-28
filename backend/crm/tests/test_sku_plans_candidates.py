@@ -110,7 +110,7 @@ class SKUPlansCandidatesTests(TestCase):
         return response.data
 
     def purchase(self, supplier, no):
-        response = self.client.post("/api/purchase-orders/", {"purchase_no": no, "supplier": supplier.pk, "order_date": "2026-09-15", "currency": "CNY", "items": [{"sku": self.sku.pk, "quantity": 10, "unit_price": "5"}]}, format="json")
+        response = self.client.post("/api/purchase-orders/", {"supplier": supplier.pk, "order_date": "2026-09-15", "currency": "CNY", "items": [{"sku": self.sku.pk, "quantity": 10, "unit_price": "5"}]}, format="json")
         if response.status_code == 201:
             placed = self.client.post(f"/api/purchase-orders/{response.data['id']}/place/", {}, format="json")
             self.assertEqual(placed.status_code, 200, placed.data)
@@ -125,7 +125,7 @@ class SKUPlansCandidatesTests(TestCase):
             response = self.purchase(supplier, no)
             self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(SupplierSKU.objects.count(), 2)
-        item = PurchaseOrderItem.objects.get(purchase_order__purchase_no="PA")
+        item = PurchaseOrderItem.objects.get(purchase_order__supplier=self.a)
         self.assertEqual(item.supplier_characteristics_snapshot, {"背胶": "3M"})
         source = item.supplier_sku
         source.characteristics = {"背胶": "changed"}; source.save()

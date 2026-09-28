@@ -23,7 +23,6 @@ class ContractLifecycleApiTests(TestCase):
 
     def order_payload(self, **overrides):
         payload = {
-            "order_no": f"SO-LIFECYCLE-{Order.objects.count() + 1}",
             "customer": self.customer.id,
             "quote": self.quote.id,
             "order_date": self.day.isoformat(),
@@ -34,6 +33,7 @@ class ContractLifecycleApiTests(TestCase):
             "items": [{"sku": self.sku.id, "quantity": "2", "unit_price": "10"}],
         }
         payload.update(overrides)
+        payload.pop("order_no", None)
         return payload
 
     def create_draft(self, **overrides):
@@ -53,7 +53,6 @@ class ContractLifecycleApiTests(TestCase):
         if source:
             item["supplier_sku"] = source.id
         response = self.client.post("/api/purchase-orders/", {
-            "purchase_no": purchase_no,
             "supplier": supplier.id,
             "order": order.id if order else None,
             "order_date": self.day.isoformat(),
@@ -67,7 +66,6 @@ class ContractLifecycleApiTests(TestCase):
     def full_purchase_payload(self, purchase):
         item = purchase.items.get()
         return {
-            "purchase_no": purchase.purchase_no,
             "supplier": purchase.supplier_id,
             "order": purchase.order_id,
             "order_date": purchase.order_date.isoformat(),
@@ -155,7 +153,7 @@ class ContractLifecycleApiTests(TestCase):
     def test_purchase_draft_place_cancel_and_guards(self):
         supplier = Supplier.objects.create(code="LC", name="Lifecycle Supplier")
         payload = {
-            "purchase_no": "PO-LIFECYCLE-1", "supplier": supplier.id, "order_date": self.day.isoformat(),
+            "supplier": supplier.id, "order_date": self.day.isoformat(),
             "currency": "USD", "exchange_rate": "1", "items": [{"sku": self.sku.id, "quantity": "2", "unit_price": "4"}],
         }
         created = self.client.post("/api/purchase-orders/", payload, format="json")
@@ -176,7 +174,7 @@ class ContractLifecycleApiTests(TestCase):
     def test_purchase_cancel_rejects_confirmed_payment_history(self):
         supplier = Supplier.objects.create(code="LH", name="Lifecycle History Supplier")
         purchase = self.client.post("/api/purchase-orders/", {
-            "purchase_no": "PO-LIFECYCLE-HISTORY", "supplier": supplier.id, "order_date": self.day.isoformat(),
+            "supplier": supplier.id, "order_date": self.day.isoformat(),
             "currency": "USD", "exchange_rate": "1", "items": [{"sku": self.sku.id, "quantity": "2", "unit_price": "4"}],
         }, format="json")
         self.assertEqual(purchase.status_code, status.HTTP_201_CREATED, purchase.data)

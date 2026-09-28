@@ -54,8 +54,17 @@ test('order editor does not expose manual lifecycle status changes', async () =>
 
   assert.match(source, /草稿（确认后进入正式履约）/)
   assert.match(source, /订单状态由确认、生产、发货、完成或取消等业务动作推进/)
-  assert.match(source, /if \(isOrder\.value\) delete data\.status/)
+  assert.match(source, /delete data\.status; delete data\.order_no/)
   assert.doesNotMatch(source, /editableOrderStatuses/)
+})
+
+test('order creation leaves number generation to the backend and keeps saved numbers read-only', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.doesNotMatch(source, /Date\.now\(\)/)
+  assert.match(source, /保存后由系统自动生成/)
+  assert.match(source, /delete data\.order_no/)
+  assert.match(source, /class="readonly-input" readonly/)
 })
 
 test('order list limits edit and delete operations to drafts', async () => {

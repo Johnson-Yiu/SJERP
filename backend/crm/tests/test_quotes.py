@@ -743,6 +743,8 @@ class QuoteApiTests(TestCase):
                 "description": "Dimmable panel light",
             }],
         )
+        quote.status = "accepted"
+        quote.save(update_fields=["status"])
         draft = self.client.get(f"/api/quotes/{quote.id}/order-draft/").data
         draft["shipping_fee"] = "18.50"
         draft["items"][0]["quantity"] = "4.00"
@@ -770,7 +772,7 @@ class QuoteApiTests(TestCase):
         self.assertEqual(revision.items.get().description, "Dimmable panel light")
         self.assertEqual(Decimal(quote.shipping_fee), Decimal("12.50"))
         self.assertEqual(Decimal(quote.items.get().quantity), Decimal("3.00"))
-        self.assertEqual(quote.status, "draft")
+        self.assertEqual(quote.status, "accepted")
 
     def test_editing_order_draft_defers_quote_revision_until_confirmation(self):
         quote = self.create_quote(items=[{"sku": self.sku.id, "quantity": "2.00", "unit_price": "10.00"}])
@@ -1173,14 +1175,28 @@ class QuoteExportTests(TestCase):
 
     def test_export_uses_saved_buyer_and_sku_snapshots_after_sources_change(self):
         self.customer.name = "Renamed Export Buyer"
-        self.customer.save(update_fields=["name"])
+        self.customer.address = "New buyer address"
+        self.customer.save(update_fields=["name", "address"])
         self.sku_1.sales_model = "RENAMED-MODEL"
         self.sku_1.unit = "box"
         self.sku_1.save(update_fields=["sales_model", "unit"])
 
         response = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
+        pi = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/pi-data/")
+        detail = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(pi.status_code, status.HTTP_200_OK)
+        self.assertEqual(detail.status_code, status.HTTP_200_OK)
+        self.assertEqual(detail.data["customer_name"], "Renamed Export Buyer")
+        self.assertEqual(detail.data["buyer_company_name"], "Export Buyer GmbH")
+        self.assertEqual(pi.data["buyer"], {
+            "company_name": "Export Buyer GmbH",
+            "name": "Anna Schmidt",
+            "address": "Berlin, Germany",
+            "email": "anna@example.com",
+            "phone": "+49 30 123456",
+        })
         self.assertEqual(xlsx_cell_text(response.content, "B3"), "Export Buyer GmbH")
         self.assertEqual(xlsx_cell_text(response.content, "C11"), "MODEL-001")
         self.assertEqual(xlsx_cell_text(response.content, "K11"), "pcs")

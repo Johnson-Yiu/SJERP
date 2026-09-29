@@ -365,7 +365,7 @@ onMounted(async () => {
         </header>
 
         <component :is="isProduct ? ProductWorkspace : 'div'" :class="{ 'detail-content': !isProduct }" :data="data" :product-id="currentId" @changed="refreshSkuManagement" v-model:active-tab="activeTab" @drill="drill" @create-sku="openSkuCreate">
-          <section v-if="!isProduct" class="detail-info"><h3>基础信息</h3><div class="info-grid"><div v-for="item in data.info" :key="item[0]"><small>{{ item[0] }}</small><div v-if="item[2] === 'richtext'" class="richtext-view" v-html="richText(item[1])" /><span v-else>{{ item[1] }}</span></div></div></section>
+          <section v-if="!isProduct" class="detail-info"><h3>基础信息</h3><div class="info-grid"><div v-for="item in data.info" :key="item[0]"><small>{{ item[0] }}</small><div v-if="item[2] === 'richtext'" class="richtext-view" v-html="richText(item[1])" /><span v-else>{{ item[1] }}</span><small v-if="currentEntity === 'customers' && item[0] === '下次跟进'" class="computed-field-note">由最新跟进记录自动更新</small></div></div></section>
           <div :class="{ 'sku-create-workspace': isSkuSection && skuCreateOpen }">
           <SKUPage v-if="isSkuSection && skuCreateOpen" embedded inline :initial-product="currentId" @close="skuCreateOpen = false" @saved="skuCreated" />
           <section v-if="!isSkuSection" class="relation-area">

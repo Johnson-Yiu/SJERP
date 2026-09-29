@@ -39,3 +39,12 @@ test('quote editor blocks a validity date earlier than the quote date', async ()
   assert.match(source, /draft\.valid_until < draft\.quote_date/)
   assert.match(source, /有效期不能早于报价日期。/)
 })
+
+test('quote status is read-only and cannot be selected while creating or revising', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /label>状态<\/label><input value="草稿（保存后通过状态操作推进）" readonly/)
+  assert.doesNotMatch(source, /<select[^>]*v-model="draft\.status"/)
+  assert.doesNotMatch(source, /<option[^>]*value="(?:accepted|rejected|expired)"/)
+  assert.match(source, /mode === 'revise' \? '创建修订版'/)
+})

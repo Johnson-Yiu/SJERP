@@ -69,8 +69,10 @@ def entity_context(request, entity, pk):
 
 def _customer_context(pk):
     obj = get_object_or_404(Customer, pk=pk)
-    valid_items = OrderItem.objects.filter(order__customer=obj).exclude(order__status="cancelled")
-    sales_rmb = valid_items.aggregate(v=Coalesce(Sum(ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)), Decimal("0"), output_field=MONEY))["v"]
+    formal_statuses = ["confirmed", "production", "shipped", "completed"]
+    formal_orders = list(obj.orders.filter(status__in=formal_statuses).prefetch_related("items", "contract_changes"))
+    sales_rmb = sum((order.total_amount * order.exchange_rate for order in formal_orders), Decimal("0"))
+    valid_items = OrderItem.objects.filter(order__customer=obj, order__status__in=formal_statuses)
     contacts = _target(ContactSerializer(obj.contacts.all(), many=True).data, "contacts")
     orders = _target(OrderSerializer(obj.orders.prefetch_related("items__sku__product", "transactions"), many=True).data, "orders")
     quotes = _target(QuoteSerializer(obj.quotes.prefetch_related("items__sku__product"), many=True).data, "quotes")
@@ -84,7 +86,7 @@ def _customer_context(pk):
     return {
         "entity": "customers", "title": obj.name, "subtitle": f"{obj.code} · {obj.country or '未填写国家/地区'}", "badge": obj.get_status_display(),
         "info": [["负责人", obj.owner or "—"], ["来源", obj.source or "—"], ["网站", obj.website or "—"], ["地址", obj.address or "—"], ["下次跟进", obj.next_follow_up or "—"], ["备注", obj.notes or "—"]],
-        "metrics": [["累计销售额", sales_rmb, "rmb"], ["订单", len(orders), "number"], ["联系人", len(contacts), "number"], ["报价", len(quotes), "number"]],
+        "metrics": [["累计销售额", sales_rmb, "rmb"], ["订单", len(formal_orders), "number"], ["联系人", len(contacts), "number"], ["报价", len(quotes), "number"]],
         "sections": [
             _section("contacts", "联系人", "contacts", [["name", "姓名"], ["title", "职位"], ["email", "邮箱"], ["phone", "电话"], ["is_primary", "主联系人", "boolean"]], contacts),
             _section("orders", "订单", "orders", [["order_no", "订单号"], ["order_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"], ["currency", "币种"]], orders),

@@ -2,6 +2,7 @@ from datetime import date
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -270,19 +271,67 @@ class BusinessFlowTests(APITestCase):
             self.assertTrue(customer.contacts.get().is_primary)
 
     def test_sales_documents_advance_customer_stage(self):
-        customer = Customer.objects.create(code="T-C004", name="Stage Buyer", status="contact")
-        Contact.objects.create(customer=customer, name="Buyer")
-        Quote.objects.create(quote_no="T-Q-001", customer=customer, quote_date=date.today())
+        customer = Customer.objects.create(code="T-C004", name="Stage Buyer", country="Germany")
+        self.assertEqual(customer.status, "lead")
+
+        quote_response = self.client.post("/api/quotes/", {
+            "customer": customer.id,
+            "quote_date": str(date.today()),
+            "status": "accepted",
+            "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "10"}],
+        }, format="json")
+        self.assertEqual(quote_response.status_code, status.HTTP_201_CREATED, quote_response.data)
+        quote = Quote.objects.get(pk=quote_response.data["id"])
+        self.assertEqual(quote.status, "draft")
+        customer.refresh_from_db()
+        self.assertEqual(customer.status, "lead")
+
+        FollowUp.objects.create(customer=customer, followed_at=timezone.now(), type="email")
+        customer.refresh_from_db()
+        self.assertEqual(customer.status, "contact")
+        self.assertEqual(quote.status, "draft")
+
+        sent = self.client.post(f"/api/quotes/{quote.id}/mark-sent/", {}, format="json")
+        self.assertEqual(sent.status_code, status.HTTP_200_OK, sent.data)
         customer.refresh_from_db()
         self.assertEqual(customer.status, "opportunity")
 
-        Order.objects.create(order_no="T-SO-010", customer=customer, order_date=date.today())
+        def create_order():
+            response = self.client.post("/api/orders/", {
+                "customer": customer.id,
+                "order_date": str(date.today()),
+                "currency": "USD",
+                "exchange_rate": "1",
+                "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "10", "cost_price": "3"}],
+            }, format="json")
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+            return response.data["id"]
+
+        first_order_id = create_order()
+        customer.refresh_from_db()
+        self.assertEqual(customer.status, "opportunity")
+        first_confirmation = self.client.post(f"/api/orders/{first_order_id}/confirm/", {}, format="json")
+        self.assertEqual(first_confirmation.status_code, status.HTTP_200_OK, first_confirmation.data)
         customer.refresh_from_db()
         self.assertEqual(customer.status, "customer")
 
-        Order.objects.create(order_no="T-SO-011", customer=customer, order_date=date.today())
+        second_order_id = create_order()
+        customer.refresh_from_db()
+        self.assertEqual(customer.status, "customer")
+        second_confirmation = self.client.post(f"/api/orders/{second_order_id}/confirm/", {}, format="json")
+        self.assertEqual(second_confirmation.status_code, status.HTTP_200_OK, second_confirmation.data)
         customer.refresh_from_db()
         self.assertEqual(customer.status, "company")
+
+        cancelled = self.client.post(f"/api/orders/{second_order_id}/cancel/", {"reason": "stage regression test"}, format="json")
+        self.assertEqual(cancelled.status_code, status.HTTP_200_OK, cancelled.data)
+        customer.refresh_from_db()
+        self.assertEqual(customer.status, "customer")
+
+        cancelled = self.client.post(f"/api/orders/{first_order_id}/cancel/", {"reason": "stage regression test"}, format="json")
+        self.assertEqual(cancelled.status_code, status.HTTP_200_OK, cancelled.data)
+        customer.refresh_from_db()
+        self.assertEqual(customer.status, "opportunity")
 
     def test_organization_and_permission_templates(self):
         response = self.client.get("/api/organization/overview/")

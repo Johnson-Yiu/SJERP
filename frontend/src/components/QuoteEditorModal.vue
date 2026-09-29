@@ -211,7 +211,7 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) selectCus
 <template>
   <div class="modal-backdrop" @mousedown.self="$emit('close')">
     <form class="modal wide quote-editor-modal" aria-label="报价编辑器" @submit.prevent="save(false)">
-      <div class="modal-head"><div><h3>{{ mode === 'revise' ? '创建报价修订版' : '新建报价' }}</h3><small>{{ mode === 'revise' ? `源报价 ${quote.quote_no} 将保留不变` : '系统会在保存时生成报价单号' }}</small></div><button type="button" class="mini-btn" aria-label="关闭报价编辑器" @click="$emit('close')"><X :size="17" /></button></div>
+      <div class="modal-head"><div><h3>{{ mode === 'revise' ? '创建修订版' : '新建报价' }}</h3><small>{{ mode === 'revise' ? `源报价 ${quote.quote_no} 将保留不变` : '系统会在保存时生成报价单号' }}</small></div><button type="button" class="mini-btn" aria-label="关闭报价编辑器" @click="$emit('close')"><X :size="17" /></button></div>
       <div class="modal-body">
         <div v-if="errorMessage" class="quote-message error">{{ errorMessage }}</div>
         <div v-if="exportError" class="quote-message warning"><span>{{ exportError }}</span><button type="button" class="btn btn-secondary" :disabled="saving" @click="retryExport"><RotateCw :size="15" /> 重新导出 Excel</button></div>

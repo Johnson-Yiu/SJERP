@@ -381,9 +381,24 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     ordering_fields = ["name", "created_at", "updated_at", "next_follow_up"]
 
     def get_queryset(self):
-        sales_value = ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)
-        sales = OrderItem.objects.filter(order__customer=OuterRef("pk")).exclude(order__status="cancelled").values("order__customer").annotate(total=Sum(sales_value)).values("total")
-        order_count = Order.objects.filter(customer=OuterRef("pk")).exclude(status="cancelled").values("customer").annotate(total=Count("id")).values("total")
+        formal_statuses = ["confirmed", "production", "shipped", "completed"]
+        item_amount = OrderItem.objects.filter(order_id=OuterRef("pk")).values("order_id").annotate(
+            total=Sum(amount_expression("")),
+        ).values("total")
+        approved_changes = ContractChangeRequest.objects.filter(
+            order_id=OuterRef("pk"), status="approved",
+        ).values("order_id").annotate(total=Sum("amount_delta")).values("total")
+        formal_orders = Order.objects.filter(customer_id=OuterRef("pk"), status__in=formal_statuses).annotate(
+            item_amount=Coalesce(Subquery(item_amount, output_field=MONEY), Decimal("0"), output_field=MONEY),
+            approved_change_amount=Coalesce(Subquery(approved_changes, output_field=MONEY), Decimal("0"), output_field=MONEY),
+        ).annotate(
+            sales_rmb=ExpressionWrapper(
+                (F("item_amount") + F("shipping_fee") - F("discount") + F("approved_change_amount")) * F("exchange_rate"),
+                output_field=MONEY,
+            ),
+        )
+        sales = formal_orders.values("customer_id").annotate(total=Sum("sales_rmb")).values("total")
+        order_count = Order.objects.filter(customer_id=OuterRef("pk"), status__in=formal_statuses).values("customer_id").annotate(total=Count("id")).values("total")
         contact_count = Contact.objects.filter(customer=OuterRef("pk")).values("customer").annotate(total=Count("id")).values("total")
         return Customer.objects.annotate(
             contact_count=Coalesce(Subquery(contact_count, output_field=IntegerField()), 0),
@@ -409,16 +424,16 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def insights(self, request, pk=None):
         customer = self.get_object()
         year = timezone.localdate().year
-        line_total = ExpressionWrapper(amount_expression("items__") * F("exchange_rate"), output_field=MONEY)
+        formal_statuses = ["confirmed", "production", "shipped", "completed"]
         yearly = []
         for target in [year - 1, year]:
-            orders = customer.orders.exclude(status="cancelled").filter(order_date__year=target)
+            orders = list(customer.orders.filter(status__in=formal_statuses, order_date__year=target).prefetch_related("items", "contract_changes"))
             yearly.append({
                 "year": target,
-                "orders": orders.count(),
-                "sales": orders.aggregate(v=Coalesce(Sum(line_total), Decimal("0"), output_field=MONEY))["v"],
+                "orders": len(orders),
+                "sales": sum((order.total_amount * order.exchange_rate for order in orders), Decimal("0")),
             })
-        products = OrderItem.objects.filter(order__customer=customer).exclude(order__status="cancelled").values(
+        products = OrderItem.objects.filter(order__customer=customer, order__status__in=formal_statuses).values(
             "sku__product__id", "sku__product__name"
         ).annotate(
             sales=Sum(ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)),
@@ -428,7 +443,7 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "customer": CustomerSerializer(customer).data,
             "yearly": yearly,
             "top_products": list(products),
-            "recent_orders": OrderSerializer(customer.orders.prefetch_related("items__sku__product")[:5], many=True).data,
+            "recent_orders": OrderSerializer(customer.orders.exclude(status="cancelled").order_by("-order_date", "-id").prefetch_related("items__sku__product")[:5], many=True).data,
             "recent_follow_ups": FollowUpSerializer(customer.follow_ups.select_related("contact")[:5], many=True).data,
         })
 

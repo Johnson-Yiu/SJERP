@@ -586,6 +586,13 @@ class FollowUpSerializer(serializers.ModelSerializer):
     def get_attachments(self, obj):
         return FollowUpAttachmentSerializer(obj.attachments.all(), many=True, context=self.context).data
 
+    def validate(self, attrs):
+        customer = attrs.get("customer", getattr(self.instance, "customer", None))
+        contact = attrs.get("contact", getattr(self.instance, "contact", None))
+        if contact and customer and contact.customer_id != customer.id:
+            raise serializers.ValidationError({"contact": "所选联系人不属于当前客户。"})
+        return attrs
+
 
 class FollowUpAttachmentSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
@@ -1179,6 +1186,7 @@ class QuoteSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
+        validated_data["status"] = "draft"
         items = validated_data.pop("items", [])
         customer = validated_data["customer"]
         primary_contact = customer.contacts.order_by("-is_primary", "name").first()

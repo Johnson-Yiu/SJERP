@@ -1077,6 +1077,7 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         ]
         quote_values = {field: getattr(source, field) for field in copied_fields}
         quote_values.update(changes)
+        quote_values["status"] = "draft"
         revision = Quote.objects.create(
             quote_no=quote_no,
             root_quote=root_quote,

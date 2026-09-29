@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 
 from django.test import TestCase
 from rest_framework import status
@@ -300,4 +301,4 @@ class ProductCategorySkuIdentitySafetyTests(TestCase):
         response = self.client.get(f"/api/products/{self.product.pk}/customers/")
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         self.assertEqual(response.data[0]["order_count"], 1)
-        self.assertEqual(str(response.data[0]["sales"]), "10")
+        self.assertEqual(Decimal(str(response.data[0]["sales"])), Decimal("10"))

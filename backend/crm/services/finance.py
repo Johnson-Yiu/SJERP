@@ -117,6 +117,11 @@ def record_transaction(payload):
             if not contract:
                 raise ValidationError("客户收款必须关联销售订单，供应商付款必须关联采购单。")
             return record_contract_payment(contract, payload)
+        if kind in {"refund", "supplier_refund"}:
+            contract = order if kind == "refund" else purchase
+            if not contract:
+                raise ValidationError("客户退款必须关联销售订单，供应商退款必须关联采购单。")
+            return record_contract_refund(contract, payload)
     exchange_rate = positive_decimal(payload.get("exchange_rate", 1), "汇率")
     if payload.get("currency") == "CNY" and exchange_rate != 1:
         raise ValidationError("人民币流水汇率必须为 1。")
@@ -139,7 +144,9 @@ def record_transaction(payload):
         if excess > 0:
             Transaction.objects.create(
                 transaction_no=_transaction_no("ADV"), transaction_date=row.transaction_date,
-                direction=row.direction, kind="unallocated_advance", category="未分配预收预付",
+                direction=row.direction,
+                kind="unallocated_advance" if row.direction == "income" else "unallocated_payment",
+                category="未分配预收款" if row.direction == "income" else "未分配预付款",
                 amount=excess, currency=row.currency, exchange_rate=exchange_rate,
                 rmb_amount=(excess * exchange_rate).quantize(Decimal("0.0001")),
                 customer=row.customer, supplier=row.supplier, status="confirmed",
@@ -187,7 +194,8 @@ def void_transaction(row, reason):
         for allocation in allocations:
             plan_deltas[allocation.plan_id] = plan_deltas.get(allocation.plan_id, Decimal("0")) + allocation.amount
         if current.plan_id:
-            plan_deltas[current.plan_id] = plan_deltas.get(current.plan_id, Decimal("0")) + current.amount
+            delta = -current.amount if current.kind in {"refund", "supplier_refund"} else current.amount
+            plan_deltas[current.plan_id] = plan_deltas.get(current.plan_id, Decimal("0")) + delta
 
     plans = {
         plan.pk: plan
@@ -198,8 +206,11 @@ def void_transaction(row, reason):
     if len(plans) != len(plan_deltas):
         raise ValidationError("关联收付款计划缺失，不能安全作废。")
     for plan_id, delta in plan_deltas.items():
-        if plans[plan_id].settled_amount < delta or plans[plan_id].settled_amount - delta < 0:
+        revised_amount = plans[plan_id].settled_amount - delta
+        if revised_amount < 0:
             raise ValidationError("收付款计划已结金额不足，不能安全作废。")
+        if revised_amount > plans[plan_id].planned_amount:
+            raise ValidationError("收付款计划已结金额超过计划金额，不能安全作废。")
 
     for plan_id, delta in sorted(plan_deltas.items()):
         plan = plans[plan_id]
@@ -285,6 +296,70 @@ def record_contract_payment(contract, payload):
         remaining -= applied
         if remaining <= 0:
             break
+    return first
+
+
+@transaction.atomic
+def record_contract_refund(contract, payload):
+    """Record a real cash refund by reopening the latest settled installments first."""
+    contract = contract.__class__.objects.select_for_update().get(pk=contract.pk)
+    is_order = isinstance(contract, Order)
+    amount = positive_decimal(payload.get("amount"), "退款金额")
+    if payload.get("currency", contract.currency) != contract.currency:
+        raise ValidationError("合同收付款及退款币种必须与合同一致。")
+    if contract.status in {"draft", "cancelled"}:
+        raise ValidationError("草稿或已取消合同不能登记退款。")
+    if amount > contract.paid_amount:
+        raise ValidationError("退款金额不能超过该订单当前已收金额。" if is_order else "退款金额不能超过该采购单当前已付金额。")
+
+    plans = list(
+        contract.payment_plans.select_for_update()
+        .exclude(status="cancelled")
+        .filter(settled_amount__gt=0)
+        .order_by("-due_date", "-pk")
+    )
+    if not plans:
+        raise ValidationError("合同没有可回退的已结收付款计划。")
+
+    exchange_rate = positive_decimal(payload.get("exchange_rate", contract.exchange_rate), "汇率")
+    if contract.currency == "CNY" and exchange_rate != 1:
+        raise ValidationError("人民币流水汇率必须为 1。")
+    remaining = amount
+    first = None
+    for plan in plans:
+        applied = min(remaining, plan.settled_amount)
+        if applied <= 0:
+            continue
+        row = Transaction.objects.create(
+            transaction_no=payload.get("transaction_no") if first is None and payload.get("transaction_no") else _transaction_no(),
+            transaction_date=payload.get("transaction_date") or timezone.localdate(),
+            direction="expense" if is_order else "income",
+            kind="refund" if is_order else "supplier_refund",
+            category=payload.get("category") or ("客户退款" if is_order else "供应商退款"),
+            amount=applied,
+            currency=contract.currency,
+            exchange_rate=exchange_rate,
+            rmb_amount=(applied * exchange_rate).quantize(Decimal("0.0001")),
+            customer=contract.customer if is_order else None,
+            supplier=contract.supplier if not is_order else None,
+            order=contract if is_order else None,
+            purchase_order=contract if not is_order else None,
+            plan=plan,
+            status="confirmed",
+            split_from=first,
+            payment_method=payload.get("payment_method", ""),
+            reference=payload.get("reference", ""),
+            notes=payload.get("notes", ""),
+        )
+        first = first or row
+        plan.settled_amount -= applied
+        plan.status = "settled" if plan.settled_amount == plan.planned_amount else "open"
+        plan.save(update_fields=["settled_amount", "status", "updated_at"])
+        remaining -= applied
+        if remaining == 0:
+            break
+    if remaining != 0:
+        raise ValidationError("合同已结收付款计划不足，不能安全登记退款。")
     return first
 
 

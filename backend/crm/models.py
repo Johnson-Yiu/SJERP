@@ -788,7 +788,7 @@ class Order(TimestampedModel):
 
     @property
     def paid_amount(self):
-        receipts = sum((t.amount for t in self.transactions.filter(direction="income", status="confirmed").exclude(kind__in=["unallocated_advance", "unallocated_payment", "supplier_refund"])), Decimal("0"))
+        receipts = sum(self.transactions.filter(status="confirmed", kind="customer_receipt").values_list("amount", flat=True), Decimal("0"))
         refunds = sum((t.amount for t in self.transactions.filter(direction="expense", status="confirmed", kind="refund")), Decimal("0"))
         allocations = sum(AdvanceAllocation.objects.filter(plan__order=self, is_active=True, advance__status="confirmed").values_list("amount", flat=True), Decimal("0"))
         return receipts + allocations - refunds
@@ -977,10 +977,7 @@ class PurchaseOrder(TimestampedModel):
 
     @property
     def paid_amount(self):
-        paid = sum(
-            (row.amount for row in self.transactions.filter(direction="expense", status="confirmed").exclude(kind__in=["unallocated_advance", "unallocated_payment"])),
-            Decimal("0"),
-        )
+        paid = sum(self.transactions.filter(status="confirmed", kind="supplier_payment").values_list("amount", flat=True), Decimal("0"))
         allocations = sum(AdvanceAllocation.objects.filter(plan__purchase_order=self, is_active=True, advance__status="confirmed").values_list("amount", flat=True), Decimal("0"))
         refunds = sum(self.transactions.filter(direction="income", status="confirmed", kind="supplier_refund").values_list("amount", flat=True), Decimal("0"))
         return paid + allocations - refunds

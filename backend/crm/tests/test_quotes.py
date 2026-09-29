@@ -858,6 +858,7 @@ class OrderWorkbenchTests(TestCase):
             transaction_no="TX-ORDER-WORKBENCH",
             transaction_date=date(2026, 8, 20),
             direction="income",
+            kind="customer_receipt",
             category="订单定金",
             amount="20.00",
             customer=self.customer,

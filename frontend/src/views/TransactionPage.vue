@@ -20,7 +20,7 @@ const kindGroups = [
     options: [
       { value: 'customer_receipt', label: '客户收款' },
       { value: 'unallocated_advance', label: '未分配预收款' },
-      { value: 'supplier_refund', label: '供应商退款/返利' },
+      { value: 'supplier_refund', label: '供应商退款（原付款退回）' },
       { value: 'other_income', label: '其他收入' },
     ],
   },
@@ -42,7 +42,7 @@ const kindGroups = [
       { value: 'asset_expense', label: '设备/固定资产' },
       { value: 'period_expense', label: '其他期间费用' },
       { value: 'unallocated_payment', label: '未分配预付款' },
-      { value: 'refund', label: '客户退款/折让' },
+      { value: 'refund', label: '客户退款（原收款退回）' },
       { value: 'exchange_difference', label: '汇兑损失' },
       { value: 'other_expense', label: '其他支出' },
     ],
@@ -200,7 +200,8 @@ onMounted(async () => {
         <label v-if="form.kind === 'unallocated_payment'">供应商<select v-model="form.supplier" required><option :value="null">请选择供应商</option><option v-for="row in suppliers" :key="row.id" :value="row.id">{{ row.name }}</option></select></label>
         <label>支付方式<input v-model="form.payment_method" placeholder="银行转账、现金等"></label><label>银行参考号<input v-model="form.reference"></label><label>备注<input v-model="form.notes"></label>
         <p v-if="['customer_receipt', 'supplier_payment'].includes(form.kind)">款项将按合同计划顺序核销；超出计划的部分转为未分配预收预付。</p>
-        <p v-if="['refund', 'supplier_refund'].includes(form.kind)">退款登记实际资金退回，不自动更改合同金额或原收付款计划；涉及退货、折让时请核对合同与计划。</p>
+        <p v-if="form.kind === 'refund'">用于退回已经收到的订单货款；售后赔偿、运费补贴等请登记为订单费用。</p>
+        <p v-else-if="form.kind === 'supplier_refund'">用于供应商退回已经支付的采购款。</p>
         <p v-if="error" class="error">{{ error }}</p>
         <footer><button type="button" @click="showForm = false">取消</button><button :disabled="saving">{{ saving ? '保存中…' : '保存' }}</button></footer>
       </form>

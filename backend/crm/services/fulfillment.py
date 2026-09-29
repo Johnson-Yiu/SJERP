@@ -236,21 +236,36 @@ def rebalance_sku_reservations(sku: SKU):
                 received * allocation.quantity / purchase_item.quantity
             )
 
+    shipped_by_item = {item.pk: _shipped_quantity(item) for item in items}
+    shipped_by_order = {}
+    for item in items:
+        shipped_by_order[item.order_id] = shipped_by_order.get(item.order_id, Decimal("0")) + shipped_by_item[item.pk]
+    priority_by_order = {
+        order_id: max(Decimal("0"), quantity - shipped_by_order.get(order_id, Decimal("0")))
+        for order_id, quantity in received_by_order.items()
+    }
+
     created = []
+    reserved_by_item = {}
+
     def reserve(item, limit):
         nonlocal available
-        quantity = min(max(Decimal("0"), item.quantity - _shipped_quantity(item)), max(Decimal("0"), limit), available)
+        remaining_need = max(
+            Decimal("0"), item.quantity - shipped_by_item[item.pk] - reserved_by_item.get(item.pk, Decimal("0"))
+        )
+        quantity = min(remaining_need, max(Decimal("0"), limit), available)
         if quantity > 0:
             created.append(InventoryReservation.objects.create(order_item=item, sku=sku, quantity=quantity))
             available -= quantity
+            reserved_by_item[item.pk] = reserved_by_item.get(item.pk, Decimal("0")) + quantity
         return quantity
 
     # Received quantities explicitly assigned to an order take precedence.
     for item in items:
-        priority = received_by_order.get(item.order_id, Decimal("0"))
+        priority = priority_by_order.get(item.order_id, Decimal("0"))
         if priority > 0:
             used = reserve(item, priority)
-            received_by_order[item.order_id] -= used
+            priority_by_order[item.order_id] -= used
     # All remaining stock follows the stable general order.
     for item in items:
         reserve(item, available)

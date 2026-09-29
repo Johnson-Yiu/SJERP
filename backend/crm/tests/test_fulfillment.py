@@ -32,6 +32,7 @@ from crm.services.fulfillment import (
     record_receipt,
     record_supplier_payment,
     reverse_receipt,
+    sku_metrics,
 )
 
 
@@ -251,6 +252,56 @@ class ReservationRebalanceTests(TestCase):
         record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 100, "unit_cost": 2})
         self.assertEqual(self.reserved(self.a), Decimal("40"))
         self.assertEqual(self.reserved(self.b), Decimal("60"))
+
+    def test_priority_and_general_passes_cap_one_order_item_at_remaining_demand(self):
+        self.b.items.update(quantity=1)
+        item = self.make_purchase(order=self.a, quantity=4)
+        self.set_allocations(item, [("order", self.a, Decimal("4"))])
+        InventoryMovement.objects.create(
+            movement_no="RES-CAP-STOCK", movement_date=date(2026, 1, 3), type="adjust_in", sku=self.sku, quantity=100,
+        )
+        record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 4, "unit_cost": 2})
+        self.assertEqual(self.reserved(self.a), Decimal("10"))
+        self.assertLessEqual(self.reserved(self.a), self.a.items.get().quantity)
+        self.assertLessEqual(
+            sum((row.quantity for row in InventoryReservation.objects.filter(sku=self.sku)), Decimal("0")),
+            sku_metrics(self.sku)["actual_quantity"],
+        )
+
+    def test_shipped_quantity_reduces_received_allocation_priority(self):
+        self.a.items.update(quantity=100)
+        self.b.items.update(quantity=80)
+        item = self.make_purchase(order=self.a, quantity=60)
+        self.set_allocations(item, [("order", self.a, Decimal("60"))])
+        record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 60, "unit_cost": 2})
+        confirm_shipment(self.a, {
+            "shipment_no": "SH-RES-PRIORITY", "shipment_date": date(2026, 1, 3),
+            "items": [{"order_item": self.a.items.get().id, "quantity": 40}],
+        })
+        InventoryMovement.objects.create(
+            movement_no="RES-PRIORITY-STOCK", movement_date=date(2026, 1, 3), type="adjust_in", sku=self.sku, quantity=100,
+        )
+        rebalance_sku_reservations(self.sku)
+        # A's 60 allocated arrivals have already supplied 40 shipped units: only 20 remain priority.
+        self.assertEqual(self.reserved(self.b), Decimal("80"))
+        self.assertEqual(self.reserved(self.a), Decimal("40"))
+
+    def test_repeated_sku_order_lines_never_exceed_each_line_remaining_demand(self):
+        second = self.a.items.create(sku=self.sku, quantity=10, unit_price=5)
+        self.b.items.update(quantity=1)
+        item = self.make_purchase(order=self.a, quantity=10)
+        self.set_allocations(item, [("order", self.a, Decimal("10"))])
+        InventoryMovement.objects.create(
+            movement_no="RES-DUPLICATE-STOCK", movement_date=date(2026, 1, 3), type="adjust_in", sku=self.sku, quantity=100,
+        )
+        record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 10, "unit_cost": 2})
+        for line in self.a.items.filter(sku=self.sku):
+            reserved = InventoryReservation.objects.filter(order_item=line).aggregate(total=Sum("quantity"))["total"] or Decimal("0")
+            self.assertLessEqual(reserved, line.quantity)
+        self.assertLessEqual(
+            sum((row.quantity for row in InventoryReservation.objects.filter(sku=self.sku)), Decimal("0")),
+            sku_metrics(self.sku)["actual_quantity"],
+        )
 
     def test_cost_allocation_change_and_receipt_reversal_rebalance_reservations(self):
         from crm.services.purchase_costs import save_costs

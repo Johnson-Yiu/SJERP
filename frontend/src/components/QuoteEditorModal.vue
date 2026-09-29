@@ -149,7 +149,7 @@ function validate() {
 }
 function payload() {
   return {
-    customer: Number(draft.customer), quote_date: draft.quote_date, valid_until: draft.valid_until || null, status: draft.status,
+    customer: Number(draft.customer), quote_date: draft.quote_date, valid_until: draft.valid_until || null,
     currency: draft.currency, exchange_rate: draft.exchange_rate, shipping_fee: draft.shipping_fee || 0, discount: draft.discount || 0,
     recipient_name: draft.recipient_name, buyer_address: draft.buyer_address, buyer_email: draft.buyer_email, buyer_phone: draft.buyer_phone,
     lead_time_days: draft.lead_time_days || null, deposit_ratio: Math.min(100, Math.max(0, Number(draft.deposit_percent || 0))) / 100,
@@ -221,7 +221,7 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) selectCus
             <div class="field"><label>报价单号</label><input :value="draft.quote_no || '保存后自动生成'" disabled /></div>
             <div class="field"><label>客户 *</label><select v-model="draft.customer" required :disabled="mode === 'revise' || inheritedCustomer" @change="selectCustomer"><option value="">请选择</option><option v-for="customer in customers" :key="customer.id" :value="customer.id">{{ customer.name }}</option></select></div>
             <div class="field"><label>报价日期 *</label><SegmentedDateInput :model-value="draft.quote_date" required @update:model-value="setQuoteDate" /></div><div class="field"><label>有效期</label><div class="lead-time-input"><input v-model="validityDays" type="number" min="0" step="1" placeholder="天数" aria-label="有效期天数" @input="setValidityDays" /><span>天</span><SegmentedDateInput :model-value="draft.valid_until" @update:model-value="setValidUntil" /></div></div>
-            <div class="field"><label>状态</label><select v-model="draft.status"><option value="draft">草稿</option><option value="sent">已发送</option><option value="accepted">已接受</option><option value="rejected">已拒绝</option><option value="expired">已过期</option></select></div>
+            <div class="field"><label>状态</label><input value="草稿（保存后通过状态操作推进）" readonly /></div>
             <div class="field"><label>币种</label><select v-model="draft.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
             <div class="field"><label>对人民币汇率</label><input v-model="draft.exchange_rate" type="number" min="0" step="0.000001" /></div><div class="field"><label>交期（天）</label><input v-model="draft.lead_time_days" type="number" min="1" step="1" /></div>
             <div class="field"><label>定金比例（%）</label><input v-model="draft.deposit_percent" type="number" min="0" max="100" step="1" /></div><div class="field"><label>收件人</label><input v-model="draft.recipient_name" /></div>

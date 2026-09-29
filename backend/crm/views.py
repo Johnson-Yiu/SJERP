@@ -432,6 +432,12 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "recent_follow_ups": FollowUpSerializer(customer.follow_ups.select_related("contact")[:5], many=True).data,
         })
 
+    def destroy(self, request, *args, **kwargs):
+        customer = self.get_object()
+        if customer.follow_ups.exists() or customer.quotes.exists() or customer.orders.exists() or customer.transactions.exists():
+            return Response({"detail": "该客户已有业务历史，不能删除；请保留客户档案。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().destroy(request, *args, **kwargs)
+
 
 class ContactViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     queryset = Contact.objects.select_related("customer")
@@ -441,6 +447,12 @@ class ContactViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.filter(customer_id=self.request.query_params["customer"]) if self.request.query_params.get("customer") else qs
+
+    def destroy(self, request, *args, **kwargs):
+        contact = self.get_object()
+        if contact.follow_ups.exists():
+            return Response({"detail": "该联系人已有跟进历史，不能删除。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().destroy(request, *args, **kwargs)
 
 
 class FollowUpViewSet(AuditTrailMixin, viewsets.ModelViewSet):
@@ -946,6 +958,34 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         return Response({"detail": "已保存报价请创建迭代版本"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def _change_status(self, request, quote, target, allowed, label):
+        if quote.status not in allowed:
+            return Response({"detail": "当前报价状态不能执行此操作，请创建修订版重新报价。"}, status=status.HTTP_400_BAD_REQUEST)
+        quote.status = target
+        quote.save(update_fields=["status", "updated_at"])
+        record_operation(request=request, instance=quote, action="custom", action_label=label)
+        return Response(self.get_serializer(quote).data)
+
+    @action(detail=True, methods=["post"], url_path="mark-sent")
+    @transaction.atomic
+    def mark_sent(self, request, pk=None):
+        return self._change_status(request, self.get_object(), "sent", {"draft"}, "标记报价已发送")
+
+    @action(detail=True, methods=["post"])
+    @transaction.atomic
+    def accept(self, request, pk=None):
+        return self._change_status(request, self.get_object(), "accepted", {"draft", "sent"}, "客户接受报价")
+
+    @action(detail=True, methods=["post"])
+    @transaction.atomic
+    def reject(self, request, pk=None):
+        return self._change_status(request, self.get_object(), "rejected", {"draft", "sent"}, "客户拒绝报价")
+
+    @action(detail=True, methods=["post"])
+    @transaction.atomic
+    def expire(self, request, pk=None):
+        return self._change_status(request, self.get_object(), "expired", {"sent"}, "报价过期")
 
     def destroy(self, request, *args, **kwargs):
         return Response(

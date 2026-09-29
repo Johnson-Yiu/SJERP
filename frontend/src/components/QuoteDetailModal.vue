@@ -72,6 +72,7 @@ async function loadOperationLogs(id = props.id) {
     auditEnabled.value = Boolean(operatorResult.data?.audit_log_enabled)
   } finally { operationLogsLoading.value = false }
 }
+async function changeStatus(action) { try { await api.post(`/quotes/${quote.value.id}/${action}/`); await load() } catch (err) { actionError.value = err.message } }
 async function openPreview(id = quote.value?.id) {
   actionError.value = ''
   try {

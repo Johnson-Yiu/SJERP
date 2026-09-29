@@ -1,4 +1,5 @@
 from datetime import date
+from importlib import import_module
 
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
@@ -70,4 +71,19 @@ class PurchaseCostAllocationMigrationTests(TransactionTestCase):
             [("order", retained_order.id, 60), ("inventory", None, 40)],
         )
         self.assertEqual(NewPurchase.objects.get(pk=order_purchase.id).cost_allocation_version, 0)
+
+    def test_backfill_rejects_partial_version_zero_allocations_without_rewriting_them(self):
+        Allocation = self.apps.get_model("crm", "PurchaseCostAllocation")
+        _, item, order = self.make_purchase(order=True)
+        Allocation.objects.create(purchase_item=item, target_type="order", order=order, quantity=60)
+
+        migration = import_module("crm.migrations.0069_backfill_purchase_cost_allocations")
+        with self.assertRaisesRegex(RuntimeError, "manual review required"):
+            migration.backfill_default_allocations(self.apps, None)
+
+        self.assertEqual(
+            list(Allocation.objects.filter(purchase_item=item).values_list("target_type", "order_id", "quantity")),
+            [("order", order.id, 60)],
+        )
+        Allocation.objects.filter(purchase_item=item).delete()
 

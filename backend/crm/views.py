@@ -36,6 +36,13 @@ from .services.packaging import copy_estimated_to_actual, generate_packing_plan,
 from .services.purchase_lifecycle import cancel_purchase_order, place_purchase_order
 from .services.procurement import build_procurement_plan, create_purchase_drafts, draft_procurement_quantities
 from .services.sku_plans import apply_category_attribute_reorder, preview_category_attribute_reorder
+from .services.sku_schema import (
+    UNFROZEN_CATEGORY_HIERARCHY_MESSAGE,
+    UNFROZEN_SCHEMA_MESSAGE,
+    unfrozen_products_using_category_scope,
+    unfrozen_schema_error,
+)
+from .services.sales_model_prefix import apply_sales_model_prefix, preview_sales_model_prefix
 from .sku_identity import normalize_abbreviation_key
 from .sales_model_defaults import DEFAULT_SALES_MODEL_ABBREVIATIONS
 
@@ -528,10 +535,19 @@ class ProductCategoryViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def tree(self, request):
         return Response(self.get_serializer(self.get_queryset().order_by("parent_id", "sort_order", "id"), many=True).data)
 
+    def destroy(self, request, *args, **kwargs):
+        category = self.get_object()
+        if category.children.exists() or category.products.exists() or category.secondary_products.exists():
+            return Response(
+                {"detail": "该分类仍有子分类或关联产品，不能删除；请先调整产品分类关系。"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return super().destroy(request, *args, **kwargs)
+
     @action(detail=False, methods=["post"])
     @transaction.atomic
     def reorder(self, request):
-        category = get_object_or_404(ProductCategory, pk=request.data.get("id"))
+        category = get_object_or_404(ProductCategory.objects.select_for_update(), pk=request.data.get("id"))
         before = snapshot(category)
         parent_id = request.data.get("parent") or None
         new_parent = get_object_or_404(ProductCategory, pk=parent_id) if parent_id else None
@@ -541,6 +557,14 @@ class ProductCategoryViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 return Response({"detail": "不能把分类移动到自身或其子分类下。"}, status=status.HTTP_400_BAD_REQUEST)
             cursor = cursor.parent
         old_parent_id = category.parent_id
+        new_parent_id = new_parent.pk if new_parent else None
+        if old_parent_id != new_parent_id:
+            unsafe_products = unfrozen_products_using_category_scope(category)
+            if unsafe_products:
+                return Response(
+                    unfrozen_schema_error(unsafe_products, UNFROZEN_CATEGORY_HIERARCHY_MESSAGE),
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         category.parent = new_parent
         category.save(update_fields=["parent", "updated_at"])
         siblings = list(ProductCategory.objects.filter(parent=new_parent).exclude(pk=category.pk).order_by("sort_order", "id"))
@@ -548,7 +572,7 @@ class ProductCategoryViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         siblings.insert(index, category)
         for order, sibling in enumerate(siblings):
             ProductCategory.objects.filter(pk=sibling.pk).update(sort_order=order)
-        if old_parent_id != parent_id:
+        if old_parent_id != new_parent_id:
             for order, sibling in enumerate(ProductCategory.objects.filter(parent_id=old_parent_id).order_by("sort_order", "id")):
                 ProductCategory.objects.filter(pk=sibling.pk).update(sort_order=order)
         record_operation(request=request, instance=category, action="custom", action_label="调整产品分类顺序", before=before, metadata={"parent_id": parent_id, "index": index})
@@ -562,6 +586,16 @@ class CategoryAttributeViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.filter(category_id=self.request.query_params["category"]) if self.request.query_params.get("category") else qs
+
+    def destroy(self, request, *args, **kwargs):
+        attribute = self.get_object()
+        unsafe_products = unfrozen_products_using_category_scope(attribute.category)
+        if unsafe_products:
+            return Response(
+                unfrozen_schema_error(unsafe_products, UNFROZEN_SCHEMA_MESSAGE),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return super().destroy(request, *args, **kwargs)
 
     @action(detail=False, methods=["post"])
     @transaction.atomic
@@ -605,9 +639,36 @@ class ProductViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def next_code(self, request):
         return Response({"code": next_product_code()})
 
+    @action(detail=True, methods=["post"], url_path="sales-model-prefix-preview")
+    def sales_model_prefix_preview(self, request, pk=None):
+        product = self.get_object()
+        return Response(preview_sales_model_prefix(product, request.data.get("sales_model_prefix")))
+
+    @action(detail=True, methods=["post"], url_path="sales-model-prefix-apply")
+    def sales_model_prefix_apply(self, request, pk=None):
+        product = self.get_object()
+        result = apply_sales_model_prefix(
+            product.pk,
+            request.data.get("sales_model_prefix"),
+            request.data.get("baseline"),
+        )
+        record_operation(
+            request=request,
+            instance=Product.objects.get(pk=product.pk),
+            action="custom",
+            action_label="确认变更 Sales Model Prefix",
+            before={"sales_model_prefix": result["old_prefix"]},
+            after={"sales_model_prefix": result["new_prefix"]},
+            metadata={"affected_sku_ids": [row["sku_id"] for row in result["affected_skus"]]},
+        )
+        return Response(result)
+
     @action(detail=True, methods=["get"])
     def customers(self, request, pk=None):
-        rows = OrderItem.objects.filter(sku__product=self.get_object()).exclude(order__status="cancelled").values(
+        rows = OrderItem.objects.filter(
+            sku__product=self.get_object(),
+            order__status__in=["confirmed", "production", "shipped", "completed"],
+        ).values(
             "order__customer__id", "order__customer__name", "order__customer__country"
         ).annotate(
             sales=Sum(ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)),

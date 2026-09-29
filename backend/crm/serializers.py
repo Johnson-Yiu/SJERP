@@ -17,6 +17,13 @@ from .document_numbers import allocate_order_no, allocate_purchase_no
 from .quote_snapshots import create_quote_items
 from .sku_identity import build_sku_identity, category_attributes, complete_sales_model_abbreviations, identity_conflict_messages, identity_signature, normalize_display_name, normalize_sales_model_abbreviations, parameter_pairs, raw_parameter_value
 from .sku_numbers import allocate_sku_code
+from .services.sku_schema import (
+    UNFROZEN_CATEGORY_HIERARCHY_MESSAGE,
+    UNFROZEN_PRODUCT_CATEGORY_MESSAGE,
+    product_has_unfrozen_sku_schema,
+    unfrozen_products_using_category_scope,
+    unfrozen_schema_error,
+)
 
 
 def customer_sequence_suffix(value):
@@ -620,6 +627,15 @@ class CategoryAttributeSerializer(serializers.ModelSerializer):
         extra_kwargs = {"key": {"required": False}}
 
     def validate(self, attrs):
+        if self.instance:
+            if "key" in attrs and attrs["key"] != self.instance.key:
+                raise serializers.ValidationError({
+                    "key": "参数标识创建后不可修改；如业务含义发生变化，请新增参数并通过 SKU 参数方案处理。"
+                })
+            if "category" in attrs and attrs["category"].pk != self.instance.category_id:
+                raise serializers.ValidationError({"category": "参数创建后不能更换所属分类；如需调整请新建参数。"})
+            if "sort_order" in attrs and attrs["sort_order"] != self.instance.sort_order:
+                raise serializers.ValidationError({"sort_order": "参数排序请使用正式排序操作。"})
         if not attrs.get("key"):
             attrs["key"] = attrs.get("name", getattr(self.instance, "key", "")).strip()
         include_in_sku = attrs.get("include_in_sku", getattr(self.instance, "include_in_sku", False))
@@ -627,6 +643,18 @@ class CategoryAttributeSerializer(serializers.ModelSerializer):
         required = attrs.get("required", getattr(self.instance, "required", False))
         if required and not (include_in_sku or include_in_sales_model):
             raise serializers.ValidationError({"required": "开启“必填”需要先开启“生成中文SKU”或“生成销售型号”。"})
+        structural_fields = {
+            "include_in_sku", "include_in_sales_model", "uppercase", "required", "unit", "default_value",
+        }
+        is_structural_change = (
+            any(field in attrs and attrs[field] != getattr(self.instance, field) for field in structural_fields)
+            if self.instance else any(bool(attrs.get(field)) for field in ("include_in_sku", "include_in_sales_model", "required"))
+        )
+        if is_structural_change:
+            category = attrs.get("category", getattr(self.instance, "category", None))
+            unsafe_products = unfrozen_products_using_category_scope(category)
+            if unsafe_products:
+                raise serializers.ValidationError(unfrozen_schema_error(unsafe_products))
         return attrs
 
 
@@ -643,6 +671,13 @@ class ProductCategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def validate(self, attrs):
+        if self.instance and "parent" in attrs and attrs["parent"] != self.instance.parent:
+            unsafe_products = unfrozen_products_using_category_scope(self.instance)
+            if unsafe_products:
+                raise serializers.ValidationError(unfrozen_schema_error(
+                    unsafe_products,
+                    UNFROZEN_CATEGORY_HIERARCHY_MESSAGE,
+                ))
         parent = attrs.get("parent", self.instance.parent if self.instance else None)
         cursor = parent
         while cursor:
@@ -705,6 +740,23 @@ class ProductSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"hs_code": "HS 编码请通过“HS 编码维护”页面统一分配。"})
         if not self.instance and not attrs.get("sales_model_prefix"):
             raise serializers.ValidationError({"sales_model_prefix": "新建产品时必须填写销售型号。"})
+        if self.instance:
+            category_changed = "category" in attrs and attrs["category"] != self.instance.category
+            additional_changed = (
+                "additional_categories" in attrs
+                and {category.pk for category in attrs["additional_categories"]}
+                != set(self.instance.additional_categories.values_list("pk", flat=True))
+            )
+            if (category_changed or additional_changed) and product_has_unfrozen_sku_schema(self.instance):
+                raise serializers.ValidationError({"category": UNFROZEN_PRODUCT_CATEGORY_MESSAGE})
+            if (
+                "sales_model_prefix" in attrs
+                and attrs["sales_model_prefix"] != self.instance.sales_model_prefix
+                and self.instance.skus.exists()
+            ):
+                raise serializers.ValidationError({
+                    "sales_model_prefix": "该产品已有 SKU，销售型号前缀请使用预览并确认流程修改。"
+                })
         return attrs
 
     @transaction.atomic

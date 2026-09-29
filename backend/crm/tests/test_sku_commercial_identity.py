@@ -256,6 +256,32 @@ class SkuCommercialIdentityTests(TestCase):
         }
         sku, _ = self.create_sku(sales_model=None, sales_model_abbreviations=abbreviations)
         original_name, original_model = sku.display_name_cn, sku.sales_model
+        quote_response = self.client.post(
+            "/api/quotes/",
+            {
+                "customer": self.customer.id,
+                "quote_date": "2026-09-30",
+                "items": [{"sku": sku.id, "quantity": "1", "unit_price": "10"}],
+            },
+            format="json",
+        )
+        self.assertEqual(quote_response.status_code, status.HTTP_201_CREATED, quote_response.data)
+        quote_item = Quote.objects.get(pk=quote_response.data["id"]).items.get()
+        order = Order.objects.create(
+            order_no="SO-SKU-REORDER-SNAPSHOT",
+            customer=self.customer,
+            order_date=date(2026, 9, 30),
+            status="confirmed",
+        )
+        order_item = order.items.create(sku=sku, quantity=1, unit_price=10)
+        historical_snapshots = (
+            quote_item.sku_code_snapshot,
+            quote_item.sales_model_snapshot,
+            quote_item.product_name_snapshot,
+            order_item.sku_code_snapshot,
+            order_item.sales_model_snapshot,
+            order_item.display_name_snapshot,
+        )
         reordered_ids = [width.id, voltage.id]
 
         preview = self.client.post(
@@ -281,6 +307,19 @@ class SkuCommercialIdentityTests(TestCase):
         self.assertEqual(version.display_name_cn_snapshot, original_name)
         self.assertEqual(version.sales_model_snapshot, original_model)
         self.assertIn("分类属性排序变更", version.change_reason)
+        quote_item.refresh_from_db()
+        order_item.refresh_from_db()
+        self.assertEqual(
+            (
+                quote_item.sku_code_snapshot,
+                quote_item.sales_model_snapshot,
+                quote_item.product_name_snapshot,
+                order_item.sku_code_snapshot,
+                order_item.sales_model_snapshot,
+                order_item.display_name_snapshot,
+            ),
+            historical_snapshots,
+        )
 
     def test_confirmed_parameter_change_is_blocked_when_identity_duplicates_another_sku(self):
         first, _ = self.create_sku()

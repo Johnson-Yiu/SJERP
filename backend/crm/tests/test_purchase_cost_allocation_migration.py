@@ -35,7 +35,7 @@ class PurchaseCostAllocationMigrationTests(TransactionTestCase):
         PurchaseOrderItem = self.apps.get_model("crm", "PurchaseOrderItem")
         suffix = str(PurchaseOrder.objects.count() + 1)
         customer = Customer.objects.create(code=f"MC{suffix}", name=f"Migration Customer {suffix}")
-        supplier = Supplier.objects.create(code=f"MS{suffix}", name=f"Migration Supplier {suffix}")
+        supplier = Supplier.objects.create(code=f"M{suffix}", name=f"Migration Supplier {suffix}")
         product = Product.objects.create(code=f"MP{suffix}", name=f"Migration Product {suffix}")
         sku = SKU.objects.create(sku=f"MSKU-{suffix}", product=product)
         sales_order = Order.objects.create(order_no=f"SO-MIG-{suffix}", customer=customer, order_date=date(2031, 1, 1)) if order else None

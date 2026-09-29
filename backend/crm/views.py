@@ -3,6 +3,7 @@ import csv
 import io
 import json
 import time
+from collections import defaultdict
 from datetime import date
 from decimal import Decimal, InvalidOperation
 from urllib.request import urlopen
@@ -1686,23 +1687,33 @@ def dashboard(request):
     last_year_start = date(today.year - 1, 1, 1)
     last_year_same_day = date(today.year - 1, today.month, min(today.day, 28 if today.month == 2 else today.day))
     valid_orders = Order.objects.exclude(status="cancelled")
-    item_value = ExpressionWrapper(amount_expression("items__") * F("exchange_rate"), output_field=MONEY)
-
     def sales_between(start, end):
-        return valid_orders.filter(order_date__range=(start, end)).aggregate(
-            v=Coalesce(Sum(item_value), Decimal("0"), output_field=MONEY)
-        )["v"]
+        return sum(
+            (order.total_amount * order.exchange_rate for order in valid_orders.filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes")),
+            Decimal("0"),
+        )
 
-    monthly = valid_orders.filter(order_date__gte=last_year_start).annotate(month=TruncMonth("order_date")).values("month").annotate(
-        sales=Coalesce(Sum(item_value), Decimal("0"), output_field=MONEY), orders=Count("id", distinct=True)
-    ).order_by("month")
+    monthly_rows = defaultdict(lambda: {"sales": Decimal("0"), "orders": 0})
+    customer_rows = defaultdict(lambda: {"sales": Decimal("0"), "orders": 0, "name": "", "country": ""})
+    for order in valid_orders.filter(order_date__gte=last_year_start).select_related("customer").prefetch_related("items", "contract_changes"):
+        amount = order.total_amount * order.exchange_rate
+        month = order.order_date.strftime("%Y-%m")
+        monthly_rows[month]["sales"] += amount
+        monthly_rows[month]["orders"] += 1
+        if order.order_date >= year_start:
+            customer = customer_rows[order.customer_id]
+            customer["sales"] += amount
+            customer["orders"] += 1
+            customer["name"], customer["country"] = order.customer.name, order.customer.country
+    monthly = [{"month": month, **values} for month, values in sorted(monthly_rows.items())]
+    # Product-category sales deliberately remain item-only: contract adjustments have no SKU/category allocation.
     categories = OrderItem.objects.filter(order__order_date__gte=year_start).exclude(order__status="cancelled").values(
         "sku__product__category__name"
     ).annotate(sales=Sum(ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)), quantity=Sum("quantity")).order_by("-sales")[:8]
-    top_customers = Customer.objects.filter(orders__order_date__gte=year_start).exclude(orders__status="cancelled").values("id", "name", "country").annotate(
-        sales=Sum(ExpressionWrapper(amount_expression("orders__items__") * F("orders__exchange_rate"), output_field=MONEY)),
-        orders=Count("orders", distinct=True),
-    ).order_by("-sales")[:6]
+    top_customers = [
+        {"id": customer_id, **values}
+        for customer_id, values in sorted(customer_rows.items(), key=lambda row: row[1]["sales"], reverse=True)[:6]
+    ]
     income = Transaction.objects.filter(direction="income", status="confirmed", transaction_date__gte=year_start).aggregate(
         v=Coalesce(Sum(ExpressionWrapper(F("amount") * F("exchange_rate"), output_field=MONEY)), Decimal("0"), output_field=MONEY)
     )["v"]
@@ -1719,7 +1730,7 @@ def dashboard(request):
             "payments_rmb": expense,
             "follow_ups_due": FollowUp.objects.filter(next_follow_up__lte=today).count(),
         },
-        "monthly_sales": [{"month": row["month"].strftime("%Y-%m"), "sales": row["sales"], "orders": row["orders"]} for row in monthly],
+        "monthly_sales": monthly,
         "category_sales": list(categories),
         "top_customers": list(top_customers),
         "recent_orders": OrderSerializer(valid_orders.prefetch_related("items__sku__product")[:5], many=True).data,

@@ -1587,6 +1587,8 @@ class PaymentPlanSerializer(serializers.ModelSerializer):
 
 
 class ContractChangeRequestSerializer(serializers.ModelSerializer):
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
+
     class Meta:
         model = ContractChangeRequest
         fields = "__all__"

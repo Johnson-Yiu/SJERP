@@ -7,6 +7,7 @@ from rest_framework.test import APIClient
 
 from crm.models import AdvanceAllocation, ContractChangeRequest, Customer, Order, PaymentPlan, Product, PurchaseOrder, SKU, Supplier, Transaction
 from crm.services.finance import allocate_advance, approve_contract_change, ensure_default_payment_plans, record_contract_payment, record_transaction, reject_contract_change, void_transaction
+from crm.serializers import ContractChangeRequestSerializer
 
 
 class PaymentPlanModelTests(TestCase):
@@ -162,6 +163,17 @@ class FinanceServiceTests(PaymentPlanModelTests):
         self.assertEqual(purchase.total_amount, Decimal("50"))
         self.assertEqual(added.direction, "payable")
         self.assertEqual(added.status, "cancelled")
+
+    def test_dashboard_sales_use_adjusted_contract_total_and_change_status_display(self):
+        change = ContractChangeRequest.objects.create(order=self.order, amount_delta=Decimal("-20"), notes="折让")
+        PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))
+        approve_contract_change(change)
+
+        dashboard = self.client.get("/api/dashboard/").data
+        self.assertEqual(Decimal(str(dashboard["summary"]["sales_ytd"])), Decimal("80"))
+        self.assertEqual(Decimal(str(next(row for row in dashboard["monthly_sales"] if row["month"] == "2026-08")["sales"])), Decimal("80"))
+        self.assertEqual(Decimal(str(dashboard["top_customers"][0]["sales"])), Decimal("80"))
+        self.assertEqual(ContractChangeRequestSerializer(change).data["status_display"], change.get_status_display())
 
     def test_void_records_reason_timestamp_and_restores_payment_plan(self):
         plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))

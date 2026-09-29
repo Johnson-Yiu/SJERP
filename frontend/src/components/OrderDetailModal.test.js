@@ -9,8 +9,10 @@ test('order workbench exposes shipment history and reversal flow', async () => {
 
   assert.match(source, /发货记录/)
   assert.match(source, /shipments\/\$\{shipmentReversalTarget\.value\.id\}\/reverse/)
-  assert.match(source, /shipment\.has_overage/)
-  assert.match(source, /包含超发\/增补，暂不能直接冲销/)
+  assert.match(source, /shipmentReversalTarget\.has_overage/)
+  assert.match(source, /该发货单包含超发\/增补。冲销会同步撤销系统生成的增补订单明细；客户追加产生的未收款应收计划也会取消。如已发生收款，系统将拒绝冲销。/)
+  assert.match(source, /<button v-if="shipment\.status === 'confirmed'" class="text-btn" @click="openShipmentReversal\(shipment\)">冲销<\/button>/)
+  assert.doesNotMatch(source, /暂不能直接冲销/)
   assert.match(source, /已冲销/)
   assert.match(source, /shipmentReversalReason/)
 })
@@ -20,7 +22,7 @@ test('over-shipment requires an explicit warning before submitting', async () =>
   const submitSection = source.slice(source.indexOf('async function submitShipment()'), source.indexOf('function openShipmentReversal'))
 
   assert.match(submitSection, /baseQuantity\(shipmentForm\.value\) > Number\(shipmentTarget\.value\.unshipped_quantity\)/)
-  assert.match(submitSection, /本次发货超过订单待发数量，将生成超发\/增补记录。目前此类发货不能直接冲销。确认继续吗？/)
+  assert.match(submitSection, /本次发货超过订单待发数量，将生成超发\/增补记录。该发货单确认后可通过冲销安全撤回。确认继续吗？/)
   assert.match(submitSection, /window\.confirm/)
   assert.match(submitSection, /\) return\s+shipmentSaving\.value = true/)
   assert.match(submitSection, /api\.post\(`\/orders\/\$\{props\.id\}\/ship\//)

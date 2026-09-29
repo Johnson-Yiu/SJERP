@@ -271,6 +271,27 @@ class TradeFinanceUpgradeTests(TestCase):
         shipment.refresh_from_db()
         self.assertEqual(shipment.status, "confirmed")
 
+    def test_historical_customer_addon_without_payment_plan_cannot_be_reversed(self):
+        self.stock("20")
+        shipment = confirm_shipment(self.order, {"shipment_date": self.day, "items": [{
+            "order_item": self.item.pk, "quantity": Decimal("11"), "overage_reason": "customer_addon",
+        }]})
+        overage = shipment.items.get(is_overage=True)
+        overage.generated_payment_plan = None
+        overage.save(update_fields=["generated_payment_plan"])
+        before_movements = InventoryMovement.objects.count()
+        before_items = self.order.items.count()
+        before_plans = PaymentPlan.objects.count()
+
+        with self.assertRaisesMessage(ValidationError, "该历史客户追加记录缺少应收计划关联，需要人工核对后才能冲销。"):
+            reverse_shipment(shipment, "历史追加缺少应收计划")
+
+        shipment.refresh_from_db()
+        self.assertEqual(shipment.status, "confirmed")
+        self.assertEqual(InventoryMovement.objects.count(), before_movements)
+        self.assertEqual(self.order.items.count(), before_items)
+        self.assertEqual(PaymentPlan.objects.count(), before_plans)
+
     def test_reversal_movements_inherit_trade_snapshots(self):
         receipt = self.receive("10")
         receipt.trade_quantity = Decimal("2")

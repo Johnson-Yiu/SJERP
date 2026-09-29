@@ -480,7 +480,9 @@ def reverse_shipment(shipment: Shipment, reason: str) -> Shipment:
         if ShipmentItem.objects.filter(order_item=supplement, shipment__status="confirmed").exclude(pk=item.pk).exists():
             raise ValidationError("增补订单明细已被其他有效发货引用，无法安全冲销。")
         supplements.append(supplement)
-        if item.overage_reason == "customer_addon" and item.generated_payment_plan_id:
+        if item.overage_reason == "customer_addon":
+            if not item.generated_payment_plan_id:
+                raise ValidationError("该历史客户追加记录缺少应收计划关联，需要人工核对后才能冲销。")
             plan = item.generated_payment_plan
             if plan.settled_amount > 0 or plan.transactions.filter(status="confirmed").exists() or plan.advance_allocations.filter(is_active=True).exists():
                 raise ValidationError("该客户追加已经发生收款或预收款核销，请先处理相关财务流水后再冲销发货。")

@@ -1384,10 +1384,8 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         shipped_quantity = sum((order_item_metrics(item)["shipped_quantity"] for item in items), Decimal("0"))
         paid_amount = order.paid_amount
         planned_receivable = sum((plan.planned_amount for plan in plans if plan.status != "cancelled"), Decimal("0"))
-        expense_rmb = sum((row.rmb_amount or row.amount * row.exchange_rate for row in expenses), Decimal("0"))
-        from .services.purchase_costs import order_purchase_cost
-        purchase_base_rmb, purchase_additional_rmb = order_purchase_cost(order)
-        purchase_cost_rmb = purchase_base_rmb + purchase_additional_rmb
+        from .services.profit import order_profit_summary
+        profit_summary = order_profit_summary(order)
         return Response({
             "order": OrderSerializer(order).data,
             "source_quote": QuoteSerializer(order.quote).data if order.quote else None,
@@ -1401,8 +1399,8 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "balance_amount": order.total_amount - paid_amount,
                 "planned_amount": planned_receivable,
             },
-            "expense_summary": {"expense_rmb": expense_rmb},
-            "profit_summary": {"sales_rmb": order.total_amount * order.exchange_rate, "purchase_cost_rmb": purchase_cost_rmb, "purchase_base_rmb": purchase_base_rmb, "purchase_additional_rmb": purchase_additional_rmb, "expense_rmb": expense_rmb, "estimated_gross_profit_rmb": order.total_amount * order.exchange_rate - purchase_cost_rmb - expense_rmb},
+            "expense_summary": {"expense_rmb": profit_summary["expense_rmb"]},
+            "profit_summary": profit_summary,
             "fulfillment_summary": {
                 "ordered_quantity": ordered_quantity,
                 "shipped_quantity": shipped_quantity,
@@ -1425,8 +1423,13 @@ def finance_dashboard(request):
     receivables = plans.filter(direction="receivable")
     payables = plans.filter(direction="payable")
     remaining = lambda rows: sum((row.remaining_amount * (row.order.exchange_rate if row.order_id else row.purchase_order.exchange_rate) for row in rows), Decimal("0"))
-    month_start = today.replace(day=1)
-    monthly_sales = sum((order.total_amount * order.exchange_rate for order in Order.objects.exclude(status__in=["draft", "cancelled"]).filter(order_date__range=(month_start, today)).prefetch_related("items")), Decimal("0"))
+    from .services.profit import order_profit_summary
+    period_orders = Order.objects.exclude(status__in=["draft", "cancelled"]).filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes", "purchase_cost_allocations", "transactions")
+    profits = [order_profit_summary(order) for order in period_orders]
+    sales_rmb = sum((row["sales_rmb"] for row in profits), Decimal("0"))
+    purchase_cost_rmb = sum((row["purchase_cost_rmb"] for row in profits), Decimal("0"))
+    order_expense_rmb = sum((row["expense_rmb"] for row in profits), Decimal("0"))
+    estimated_profit_rmb = sum((row["estimated_profit_rmb"] for row in profits), Decimal("0"))
     cash = Transaction.objects.filter(status="confirmed", transaction_date__range=(start, end))
     income, expense = Decimal("0"), Decimal("0")
     categories, monthly = {}, {}
@@ -1453,7 +1456,8 @@ def finance_dashboard(request):
     ]
     return Response({"metrics": {
         "receivable_count": receivables.count(), "receivable_rmb": remaining(receivables),
-        "payable_count": payables.count(), "payable_rmb": remaining(payables), "monthly_sales_rmb": monthly_sales,
+        "payable_count": payables.count(), "payable_rmb": remaining(payables), "sales_rmb": sales_rmb, "monthly_sales_rmb": sales_rmb,
+        "purchase_cost_rmb": purchase_cost_rmb, "order_expense_rmb": order_expense_rmb, "estimated_profit_rmb": estimated_profit_rmb,
         "income_rmb": income, "expense_rmb": expense, "net_cash_rmb": income - expense,
         "advance_receipt_rmb": unallocated("income"), "advance_payment_rmb": unallocated("expense"),
     }, "period": {"date_from": start, "date_to": end}, "due_items": due_items,

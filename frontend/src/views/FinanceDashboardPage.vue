@@ -10,7 +10,8 @@ const dateFrom = ref(`${today.slice(0, 7)}-01`), dateTo = ref(today)
 const cards = [
   ['receivable_count', '待收笔数', '笔'], ['receivable_rmb', '待收款', '¥'],
   ['payable_count', '待付款笔数', '笔'], ['payable_rmb', '待付款', '¥'],
-  ['monthly_sales_rmb', '月度销售额', '¥'],
+  ['sales_rmb', '期间销售额', '¥'], ['estimated_profit_rmb', '预计订单利润', '¥'],
+  ['purchase_cost_rmb', '期间订单采购归属成本', '¥'], ['order_expense_rmb', '期间订单费用', '¥'],
   ['income_rmb', '期间实际收入', '¥'], ['expense_rmb', '期间实际支出', '¥'], ['net_cash_rmb', '期间净现金流', '¥'],
   ['advance_receipt_rmb', '未核销预收款', '¥'], ['advance_payment_rmb', '未核销预付款', '¥'],
 ]
@@ -37,7 +38,7 @@ onMounted(load)
   <section class="finance-page">
     <header><div><h2>财务概览</h2><p>经营资金台账，所有金额按人民币汇总。</p></div><button :disabled="loading" @click="load">刷新数据</button></header>
     <form class="report-filters" @submit.prevent="load"><label>开始日期 <input v-model="dateFrom" type="date" required></label><label>结束日期 <input v-model="dateTo" type="date" required></label><button :disabled="loading">查询报表</button><button type="button" :disabled="loading || !data.period || !!error" @click="exportReport">导出 CSV</button></form>
-    <p>期间收支按实际发生日期及登记汇率计算，仅含已确认流水；净现金流是收入减支出。应收应付及预收预付显示当前余额，月度销售额显示本月有效订单金额。</p>
+    <p>销售额按订单日期，现金收支按实际发生日期。预计订单利润 = 期间销售额 - 采购归属成本 - 订单费用，是经营估算，不等同于会计净利润。</p>
     <p v-if="error" class="error">{{ error }}</p>
     <div class="cards" v-if="!loading">
       <article v-for="[key, label, unit] in cards" :key="key"><span>{{ label }}</span><strong>{{ unit === '¥' ? `${unit}${money(data.metrics[key])}` : data.metrics[key] || 0 }}</strong></article>

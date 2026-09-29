@@ -1333,6 +1333,12 @@ class GoodsReceipt(TradeUnitLine, TimestampedModel):
 class ShipmentItem(TradeUnitLine):
     shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, related_name="items")
     order_item = models.ForeignKey(OrderItem, on_delete=models.PROTECT, related_name="shipment_items")
+    source_order_item = models.ForeignKey(
+        OrderItem, on_delete=models.PROTECT, null=True, blank=True, related_name="sourced_shipment_items"
+    )
+    generated_payment_plan = models.ForeignKey(
+        PaymentPlan, on_delete=models.PROTECT, null=True, blank=True, related_name="generated_shipment_items"
+    )
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="shipment_items")
     quantity = models.DecimalField("发货数量", max_digits=14, decimal_places=2)
     is_overage = models.BooleanField("超发", default=False)

@@ -377,7 +377,7 @@ def confirm_shipment(order: Order, payload: dict) -> Shipment:
         if quantity > sku_metrics(item.sku)["available_quantity"] + own_reserved:
             raise ValidationError("库存不足，不能确认发货。")
 
-        def create_line(order_item, line_quantity, overage=False, line_reason=""):
+        def create_line(order_item, line_quantity, overage=False, line_reason="", source_order_item=None):
             movement = InventoryMovement.objects.create(
                 **portion_trade(converted, line_quantity),
                 movement_no=_movement_no("SH"),
@@ -394,7 +394,7 @@ def confirm_shipment(order: Order, payload: dict) -> Shipment:
                 is_overage=overage,
                 overage_reason=line_reason,
             )
-            ShipmentItem.objects.create(
+            return ShipmentItem.objects.create(
                 **portion_trade(converted, line_quantity),
                 shipment=shipment,
                 order_item=order_item,
@@ -402,7 +402,8 @@ def confirm_shipment(order: Order, payload: dict) -> Shipment:
                 quantity=line_quantity,
                 is_overage=overage,
                 overage_reason=line_reason,
-                creates_supplement=overage and line_reason == "customer_addon",
+                creates_supplement=overage,
+                source_order_item=source_order_item,
                 inventory_movement=movement,
             )
 
@@ -423,13 +424,15 @@ def confirm_shipment(order: Order, payload: dict) -> Shipment:
                     "packing_variance": "包装尾差",
                 }[reason]),
             )
-            create_line(supplement, extra_quantity, True, reason)
+            shipment_item = create_line(supplement, extra_quantity, True, reason, source_order_item=item)
             if reason == "customer_addon":
                 from crm.models import PaymentPlan
                 if item.unit_price > 0:
-                    PaymentPlan.objects.create(order=order, direction="receivable", currency=order.currency,
+                    plan = PaymentPlan.objects.create(order=order, direction="receivable", currency=order.currency,
                         due_date=payload["shipment_date"], planned_amount=extra_quantity * item.unit_price,
                         notes=f"发货单 {shipment.shipment_no} 客户追加")
+                    shipment_item.generated_payment_plan = plan
+                    shipment_item.save(update_fields=["generated_payment_plan"])
         # Consume this order's reservations as stock leaves, including other lines of the same SKU.
         to_release = quantity
         for reservation in InventoryReservation.objects.filter(sku=item.sku, order_item__order=order).order_by("pk"):
@@ -464,8 +467,27 @@ def reverse_shipment(shipment: Shipment, reason: str) -> Shipment:
         raise ValidationError("已完成或已取消的订单不能冲销发货。")
 
     items = list(ShipmentItem.objects.select_for_update().filter(shipment=shipment).order_by("pk"))
-    if any(item.is_overage for item in items):
-        raise ValidationError("该发货单包含超发、客户追加、赠品或包装尾差，涉及订单金额或增补明细，本阶段不能直接冲销。")
+    overage_items = [item for item in items if item.is_overage]
+    supplements = []
+    addon_plans = []
+    for item in overage_items:
+        source = item.source_order_item
+        supplement = item.order_item
+        if not source or source.order_id != order.pk or source.sku_id != item.sku_id:
+            raise ValidationError("该历史超发记录缺少原订单明细关联，需要人工核对后才能冲销。")
+        if supplement.order_id != order.pk or supplement.sku_id != item.sku_id or not item.creates_supplement:
+            raise ValidationError("超发增补订单明细异常，无法安全冲销。")
+        if ShipmentItem.objects.filter(order_item=supplement, shipment__status="confirmed").exclude(pk=item.pk).exists():
+            raise ValidationError("增补订单明细已被其他有效发货引用，无法安全冲销。")
+        supplements.append(supplement)
+        if item.overage_reason == "customer_addon" and item.generated_payment_plan_id:
+            plan = item.generated_payment_plan
+            if plan.settled_amount > 0 or plan.transactions.filter(status="confirmed").exists() or plan.advance_allocations.filter(is_active=True).exists():
+                raise ValidationError("该客户追加已经发生收款或预收款核销，请先处理相关财务流水后再冲销发货。")
+            addon_plans.append(plan)
+    future_total = order.total_amount - sum((item.amount for item in supplements), Decimal("0"))
+    if overage_items and order.paid_amount > future_total:
+        raise ValidationError("冲销后订单已收金额将超过订单金额，请先处理相关收款或退款。")
 
     movement_ids = [item.inventory_movement_id for item in items if item.inventory_movement_id]
     locked_movements = {
@@ -515,6 +537,15 @@ def reverse_shipment(shipment: Shipment, reason: str) -> Shipment:
         )
         item.reversal_inventory_movement = movement
         item.save(update_fields=["reversal_inventory_movement"])
+
+    for item in overage_items:
+        item.order_item = item.source_order_item
+        item.save(update_fields=["order_item"])
+    for plan in addon_plans:
+        plan.status = "cancelled"
+        plan.save(update_fields=["status", "updated_at"])
+    for supplement in {item.pk: item for item in supplements}.values():
+        supplement.delete()
 
     shipment.status = "cancelled"
     shipment.reversed_at = now

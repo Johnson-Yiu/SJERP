@@ -231,22 +231,45 @@ class TradeFinanceUpgradeTests(TestCase):
         self.assertLessEqual(sku_metrics(self.sku)["reserved_quantity"], sku_metrics(self.sku)["actual_quantity"])
         self.assertLessEqual(sku_metrics(second_sku)["reserved_quantity"], sku_metrics(second_sku)["actual_quantity"])
 
-    def test_overage_shipment_cannot_be_reversed_and_data_is_unchanged(self):
+    def test_customer_addon_shipment_reversal_removes_supplement_and_cancels_plan(self):
         self.stock("20")
         shipment = confirm_shipment(self.order, {"shipment_date": self.day, "items": [{
             "order_item": self.item.pk, "quantity": Decimal("11"), "overage_reason": "customer_addon",
         }]})
-        before_movements = InventoryMovement.objects.count()
-        before_items = self.order.items.count()
-        before_plans = PaymentPlan.objects.count()
-        with self.assertRaises(ValidationError):
-            reverse_shipment(shipment, "包含增补")
+        overage = shipment.items.get(is_overage=True)
+        plan = overage.generated_payment_plan
+        self.assertEqual(overage.source_order_item_id, self.item.id)
+        reverse_shipment(shipment, "包含增补")
+        shipment.refresh_from_db()
+        plan.refresh_from_db()
+        overage.refresh_from_db()
+        self.assertEqual(shipment.status, "cancelled")
+        self.assertEqual(self.order.items.count(), 1)
+        self.assertEqual(plan.status, "cancelled")
+        self.assertEqual(overage.order_item_id, self.item.id)
 
+    def test_gift_overage_reversal_removes_zero_price_supplement(self):
+        self.stock("20")
+        shipment = confirm_shipment(self.order, {"shipment_date": self.day, "items": [{
+            "order_item": self.item.pk, "quantity": Decimal("11"), "overage_reason": "gift_or_sample",
+        }]})
+        self.assertFalse(shipment.items.get(is_overage=True).generated_payment_plan_id)
+        reverse_shipment(shipment, "赠品录错")
+        shipment.refresh_from_db()
+        self.assertEqual(self.order.items.count(), 1)
+        self.assertEqual(shipment.status, "cancelled")
+
+    def test_paid_customer_addon_cannot_be_reversed(self):
+        self.stock("20")
+        shipment = confirm_shipment(self.order, {"shipment_date": self.day, "items": [{
+            "order_item": self.item.pk, "quantity": Decimal("11"), "overage_reason": "customer_addon",
+        }]})
+        plan = shipment.items.get(is_overage=True).generated_payment_plan
+        record_transaction({"plan": plan, "amount": Decimal("10"), "currency": self.order.currency, "exchange_rate": self.order.exchange_rate, "category": "客户收款"})
+        with self.assertRaisesMessage(ValidationError, "已经发生收款或预收款核销"):
+            reverse_shipment(shipment, "已收款")
         shipment.refresh_from_db()
         self.assertEqual(shipment.status, "confirmed")
-        self.assertEqual(InventoryMovement.objects.count(), before_movements)
-        self.assertEqual(self.order.items.count(), before_items)
-        self.assertEqual(PaymentPlan.objects.count(), before_plans)
 
     def test_reversal_movements_inherit_trade_snapshots(self):
         receipt = self.receive("10")

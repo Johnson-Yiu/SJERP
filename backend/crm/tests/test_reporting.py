@@ -7,6 +7,7 @@ from rest_framework.test import APIClient
 
 from crm.models import ContractChangeRequest, Customer, InventoryMovement, Order, Product, ProductCategory, PurchaseOrder, SKU, Supplier, Transaction
 from crm.services.finance import void_transaction
+from crm.services.profit import order_profit_summary
 
 
 class ReportingTests(TestCase):
@@ -104,6 +105,15 @@ class ReportingTests(TestCase):
         self.assertEqual(self.query(source="purchase", group_by="supplier")["totals"]["amount"], Decimal("120"))
         ContractChangeRequest.objects.filter(purchase_order=purchase).update(amount_delta=Decimal("-20"))
         self.assertEqual(self.query(source="purchase", group_by="supplier")["totals"]["amount"], Decimal("80"))
+
+    def test_profit_report_excludes_draft_and_cancelled_contracts(self):
+        draft = Order.objects.create(order_no="REPORT-PROFIT-D", customer=self.customer, order_date=date(2026, 9, 2), status="draft")
+        draft.items.create(sku=self.sku, quantity=1, unit_price=99)
+        cancelled = Order.objects.create(order_no="REPORT-PROFIT-C", customer=self.customer, order_date=date(2026, 9, 2), status="cancelled")
+        cancelled.items.create(sku=self.sku, quantity=1, unit_price=99)
+        data = self.query(source="profit", group_by="customer")
+        self.assertEqual(data["totals"]["count"], 1)
+        self.assertEqual(data["totals"]["amount"], order_profit_summary(self.order)["estimated_profit_rmb"])
 
     def test_cash_only_confirmed_and_signed_actual_amount(self):
         for i, (direction, status, actual) in enumerate([('income', 'confirmed', 50), ('expense', 'confirmed', 20), ('income', 'pending', 100), ('income', 'cancelled', 200)]):

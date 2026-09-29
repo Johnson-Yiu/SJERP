@@ -8,6 +8,7 @@ from rest_framework.test import APIClient
 from crm.models import AdvanceAllocation, ContractChangeRequest, Customer, Order, PaymentPlan, Product, PurchaseOrder, SKU, Supplier, Transaction
 from crm.services.finance import allocate_advance, approve_contract_change, ensure_default_payment_plans, record_contract_payment, record_transaction, reject_contract_change, void_transaction
 from crm.serializers import ContractChangeRequestSerializer
+from crm.services.profit import order_profit_summary
 
 
 class PaymentPlanModelTests(TestCase):
@@ -48,6 +49,25 @@ class PaymentPlanModelTests(TestCase):
 
 
 class FinanceServiceTests(PaymentPlanModelTests):
+    def test_profit_summary_refund_only_changes_profit_after_contract_adjustment(self):
+        plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))
+        record_transaction({"plan": plan, "amount": Decimal("100"), "currency": "USD", "exchange_rate": Decimal("1"), "category": "客户收款"})
+        record_transaction({"kind": "refund", "direction": "expense", "order": self.order, "amount": Decimal("20"), "currency": "USD", "exchange_rate": Decimal("1"), "category": "客户退款"})
+        before = order_profit_summary(self.order)
+        self.assertEqual(before["sales_rmb"], Decimal("100"))
+        self.assertEqual(before["expense_rmb"], Decimal("0"))
+        change = ContractChangeRequest.objects.create(order=self.order, amount_delta=Decimal("-20"), notes="合同折让")
+        approve_contract_change(change)
+        self.assertEqual(order_profit_summary(self.order)["sales_rmb"], Decimal("80"))
+
+    def test_finance_dashboard_keeps_order_and_cash_dates_separate(self):
+        other = Order.objects.create(order_no="SO-FIN-OUTSIDE", customer=self.customer, order_date=date(2026, 7, 1), currency="USD", exchange_rate=1, status="confirmed")
+        other.items.create(sku=self.order.items.first().sku, quantity=Decimal("10"), unit_price=Decimal("10"))
+        Transaction.objects.create(transaction_no="FIN-IN", transaction_date=date(2026, 8, 25), direction="income", kind="other_income", category="现金", amount=Decimal("30"), rmb_amount=Decimal("30"), currency="USD", exchange_rate=1, order=other)
+        Transaction.objects.create(transaction_no="FIN-OUT", transaction_date=date(2026, 7, 25), direction="income", kind="other_income", category="现金", amount=Decimal("40"), rmb_amount=Decimal("40"), currency="USD", exchange_rate=1, order=self.order)
+        report = self.client.get("/api/finance-dashboard/", {"date_from": "2026-08-01", "date_to": "2026-08-31"}).data["metrics"]
+        self.assertEqual(report["sales_rmb"], Decimal("100"))
+        self.assertEqual(report["income_rmb"], Decimal("30"))
     def make_purchase_plan(self, amount=Decimal("100")):
         supplier = Supplier.objects.create(code="FS", name="Finance Supplier")
         purchase = PurchaseOrder.objects.create(

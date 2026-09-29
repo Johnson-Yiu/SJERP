@@ -15,6 +15,17 @@ test('order workbench exposes shipment history and reversal flow', async () => {
   assert.match(source, /shipmentReversalReason/)
 })
 
+test('over-shipment requires an explicit warning before submitting', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  const submitSection = source.slice(source.indexOf('async function submitShipment()'), source.indexOf('function openShipmentReversal'))
+
+  assert.match(submitSection, /baseQuantity\(shipmentForm\.value\) > Number\(shipmentTarget\.value\.unshipped_quantity\)/)
+  assert.match(submitSection, /本次发货超过订单待发数量，将生成超发\/增补记录。目前此类发货不能直接冲销。确认继续吗？/)
+  assert.match(submitSection, /window\.confirm/)
+  assert.match(submitSection, /\) return\s+shipmentSaving\.value = true/)
+  assert.match(submitSection, /api\.post\(`\/orders\/\$\{props\.id\}\/ship\//)
+})
+
 test('order workbench exposes explicit packing plan generation and snapshot display', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

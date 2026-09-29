@@ -1746,10 +1746,8 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
             instance.related_orders.set(related_orders)
         elif instance.order_id:
             instance.related_orders.set([instance.order_id])
-        if delta > 0:
-            from .services.fulfillment import ACTIVE_ORDER_STATUSES, allocate_order
-            for order in Order.objects.filter(status__in=ACTIVE_ORDER_STATUSES, items__sku=instance.sku).distinct().order_by("order_date", "pk"):
-                allocate_order(order)
+        from .services.fulfillment import rebalance_sku_reservations
+        rebalance_sku_reservations(instance.sku)
         return instance
 
     @transaction.atomic
@@ -1764,4 +1762,6 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
         instance = super().update(instance, validated_data)
         if related_orders is not None:
             instance.related_orders.set(related_orders)
+        from .services.fulfillment import rebalance_sku_reservations
+        rebalance_sku_reservations(instance.sku)
         return instance

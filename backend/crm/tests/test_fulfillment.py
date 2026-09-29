@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
+from django.db.models import Sum
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -10,11 +11,13 @@ from rest_framework.test import APIClient
 from crm.models import (
     Customer,
     InventoryMovement,
+    InventoryReservation,
     Order,
     Product,
     ProductCategory,
     PurchaseOrder,
     PurchaseOrderItem,
+    PurchaseCostAllocation,
     Shipment,
     ShipmentItem,
     SKU,
@@ -25,8 +28,10 @@ from crm.services.fulfillment import (
     allocate_order,
     confirm_shipment,
     order_item_metrics,
+    rebalance_sku_reservations,
     record_receipt,
     record_supplier_payment,
+    reverse_receipt,
 )
 
 
@@ -179,6 +184,104 @@ class FulfillmentServiceTests(TestCase):
                 "currency": "USD",
                 "exchange_rate": Decimal("1"),
             })
+
+
+class ReservationRebalanceTests(TestCase):
+    def setUp(self):
+        self.customer = Customer.objects.create(code="RF", name="Reservation Buyer")
+        self.supplier = Supplier.objects.create(code="RS", name="Reservation Supplier")
+        self.sku = SKU.objects.create(sku="SKU-RESERVE", product=Product.objects.create(code="PR", name="Reservation Product"))
+        self.a = self.make_order("SO-RES-A", date(2026, 1, 2))
+        self.b = self.make_order("SO-RES-B", date(2026, 1, 1))
+        self.client = APIClient()
+
+    def make_order(self, order_no, order_date, quantity=10):
+        order = Order.objects.create(order_no=order_no, customer=self.customer, order_date=order_date, status="confirmed")
+        order.items.create(sku=self.sku, quantity=quantity, unit_price=5)
+        return order
+
+    def make_purchase(self, *, order, quantity=10):
+        purchase = PurchaseOrder.objects.create(
+            purchase_no=f"PO-RES-{PurchaseOrder.objects.count() + 1}", supplier=self.supplier,
+            order=order, order_date=date(2026, 1, 3), status="ordered",
+        )
+        return purchase.items.create(sku=self.sku, quantity=quantity, unit_price=2)
+
+    def set_allocations(self, item, rows):
+        PurchaseCostAllocation.objects.filter(purchase_item=item).delete()
+        PurchaseCostAllocation.objects.bulk_create([
+            PurchaseCostAllocation(purchase_item=item, target_type=target, order=order, quantity=quantity)
+            for target, order, quantity in rows
+        ])
+
+    def reserved(self, order):
+        return InventoryReservation.objects.filter(order_item__order=order).aggregate(total=Sum("quantity"))["total"] or Decimal("0")
+
+    def test_independent_receipt_rebalances_available_stock_to_active_order(self):
+        item = self.make_purchase(order=None)
+        record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 10, "unit_cost": 2})
+        self.assertEqual(self.reserved(self.b), Decimal("10"))
+        self.assertEqual(self.reserved(self.a), Decimal("0"))
+
+    def test_receipt_uses_cost_allocation_not_purchase_reference(self):
+        item = self.make_purchase(order=self.a)
+        self.set_allocations(item, [("order", self.b, Decimal("10"))])
+        receipt = record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 10, "unit_cost": 2})
+        receipt.inventory_movement.refresh_from_db()
+        self.assertIsNone(receipt.inventory_movement.order_id)
+        self.assertEqual(list(receipt.inventory_movement.related_orders.values_list("id", flat=True)), [self.b.id])
+        self.assertEqual(self.reserved(self.b), Decimal("10"))
+        self.assertEqual(self.reserved(self.a), Decimal("0"))
+
+    def test_shared_partial_receipt_is_proportionally_reserved_without_duplication(self):
+        self.a.items.update(quantity=100)
+        self.b.items.update(quantity=100)
+        item = self.make_purchase(order=self.a, quantity=100)
+        self.set_allocations(item, [("order", self.a, Decimal("60")), ("order", self.b, Decimal("40"))])
+        record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 50, "unit_cost": 2})
+        self.assertEqual(self.reserved(self.a), Decimal("30"))
+        self.assertEqual(self.reserved(self.b), Decimal("20"))
+        self.assertEqual(sum((row.quantity for row in InventoryReservation.objects.filter(sku=self.sku)), Decimal("0")), Decimal("50"))
+
+    def test_inventory_remainder_follows_stable_order_after_allocated_priority(self):
+        self.a.items.update(quantity=40)
+        self.b.items.update(quantity=60)
+        item = self.make_purchase(order=self.a, quantity=100)
+        self.set_allocations(item, [("order", self.a, Decimal("40")), ("inventory", None, Decimal("60"))])
+        record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 100, "unit_cost": 2})
+        self.assertEqual(self.reserved(self.a), Decimal("40"))
+        self.assertEqual(self.reserved(self.b), Decimal("60"))
+
+    def test_cost_allocation_change_and_receipt_reversal_rebalance_reservations(self):
+        from crm.services.purchase_costs import save_costs
+
+        item = self.make_purchase(order=self.a)
+        receipt = record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 10, "unit_cost": 2})
+        save_costs(item.purchase_order, {"version": 0, "allocations": [
+            {"purchase_item": item.id, "target_type": "order", "order": self.b, "quantity": Decimal("10")},
+        ], "expenses": []})
+        self.assertEqual(self.reserved(self.b), Decimal("10"))
+        self.assertEqual(self.reserved(self.a), Decimal("0"))
+        reverse_receipt(receipt, "test reversal")
+        self.assertEqual(self.reserved(self.a), Decimal("0"))
+        self.assertEqual(self.reserved(self.b), Decimal("0"))
+
+    def test_manual_inventory_create_and_delete_rebalance_reservations(self):
+        response = self.client.post("/api/inventory-movements/", {
+            "movement_date": "2026-01-03", "type": "adjust_in", "sku": self.sku.id, "quantity": "10",
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(self.reserved(self.b), Decimal("10"))
+
+        outgoing = InventoryMovement.objects.create(
+            movement_no="MANUAL-RES-OUT", movement_date=date(2026, 1, 3), type="adjust_out", sku=self.sku,
+            quantity=5, source_type="manual", is_automatic=False,
+        )
+        rebalance_sku_reservations(self.sku)
+        self.assertEqual(self.reserved(self.b), Decimal("5"))
+        response = self.client.delete(f"/api/inventory-movements/{outgoing.id}/")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.data)
+        self.assertEqual(self.reserved(self.b), Decimal("10"))
 
 
 class FulfillmentApiTests(TestCase):

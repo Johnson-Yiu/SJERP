@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
@@ -84,7 +84,7 @@ class TradeFinanceUpgradeTests(TestCase):
 
     def test_shipping_cannot_consume_other_order_reservations(self):
         self.stock(5)
-        other = Order.objects.create(order_no="UP-SO-2", customer=self.customer, order_date=self.day, status="confirmed")
+        other = Order.objects.create(order_no="UP-SO-2", customer=self.customer, order_date=self.day - timedelta(days=1), status="confirmed")
         other.items.create(sku=self.sku, quantity=5, unit_price=1)
         allocate_order(other)
         with self.assertRaises(ValidationError):

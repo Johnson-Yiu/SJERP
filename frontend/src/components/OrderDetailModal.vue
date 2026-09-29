@@ -76,6 +76,7 @@ async function ship(item) {
 }
 async function submitShipment() {
   if (shipmentSaving.value) return
+  if (baseQuantity(shipmentForm.value) > Number(shipmentTarget.value.unshipped_quantity) && !window.confirm('本次发货超过订单待发数量，将生成超发/增补记录。目前此类发货不能直接冲销。确认继续吗？')) return
   shipmentSaving.value = true
   try {
     await api.post(`/orders/${props.id}/ship/`, { shipment_date: new Date().toLocaleDateString('en-CA'), items: [tradePayload({ ...shipmentForm.value, order_item: shipmentTarget.value.id }, null)] })

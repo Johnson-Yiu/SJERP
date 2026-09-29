@@ -5,7 +5,7 @@ from django.db import transaction
 from django.db.models import Q
 from rest_framework import serializers
 
-from crm.models import Order, PurchaseOrder, PurchaseCostAllocation
+from crm.models import Order, PurchaseOrder, PurchaseCostAllocation, SKU
 
 CENT = Decimal("0.01")
 
@@ -148,6 +148,8 @@ def preview_costs(purchase, payload):
 
 @transaction.atomic
 def save_costs(purchase, payload):
+    from crm.services.fulfillment import rebalance_sku_reservations
+
     purchase = PurchaseOrder.objects.select_for_update().get(pk=purchase.pk)
     records, expenses = prepare_costs(purchase, payload)
     PurchaseCostAllocation.objects.filter(purchase_item__purchase_order=purchase).delete()
@@ -156,6 +158,10 @@ def save_costs(purchase, payload):
     purchase.additional_costs = expenses
     purchase.cost_allocation_version += 1
     purchase.save(update_fields=["additional_costs", "cost_allocation_version", "updated_at"])
+    for sku in SKU.objects.filter(
+        pk__in=purchase.items.order_by("sku_id").values_list("sku_id", flat=True).distinct()
+    ).order_by("pk"):
+        rebalance_sku_reservations(sku)
     return cost_summary(purchase)  # Calculation failure rolls back the whole replacement.
 
 

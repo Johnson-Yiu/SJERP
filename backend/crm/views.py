@@ -1598,7 +1598,10 @@ class InventoryMovementViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         with transaction.atomic():
             row = self.get_object()
             self.get_serializer().check_stock(row.sku, -row.signed_quantity)
-            return super().destroy(request, *args, **kwargs)
+            response = super().destroy(request, *args, **kwargs)
+            from .services.fulfillment import rebalance_sku_reservations
+            rebalance_sku_reservations(row.sku)
+            return response
 
 
 class PaymentPlanViewSet(AuditTrailMixin, viewsets.ModelViewSet):

@@ -86,22 +86,12 @@ def sku_metrics(sku: SKU) -> dict[str, Decimal]:
 
 @transaction.atomic
 def allocate_order(order):
+    """Retain the order-facing entry point while using the SKU-wide allocator."""
     order = Order.objects.select_for_update().get(pk=order.pk)
-    list(SKU.objects.select_for_update().filter(pk__in=order.items.values("sku_id")).order_by("pk"))
-    InventoryReservation.objects.filter(order_item__order=order).delete()
-    if order.status not in ACTIVE_ORDER_STATUSES:
-        return []
     created = []
-    for item in order.items.select_related("sku").order_by("id"):
-        available = sku_metrics(item.sku)["available_quantity"]
-        quantity = min(max(Decimal("0"), item.quantity - _shipped_quantity(item)), max(Decimal("0"), available))
-        if quantity > 0:
-            created.append(InventoryReservation.objects.create(
-                order_item=item,
-                sku=item.sku,
-                quantity=quantity,
-            ))
-    return created
+    for sku in SKU.objects.filter(pk__in=order.items.values("sku_id")).order_by("pk"):
+        created.extend(rebalance_sku_reservations(sku))
+    return [row for row in created if row.order_item.order_id == order.pk]
 
 
 def order_item_metrics(item: OrderItem) -> dict[str, Decimal]:
@@ -183,7 +173,7 @@ def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsRece
         type="purchase_in",
         sku=purchase_item.sku,
         supplier_sku=purchase_item.supplier_sku,
-        order=purchase_item.purchase_order.order,
+        order=None,
         quantity=quantity,
         warehouse="默认仓",
         unit_cost=payload.get("unit_cost", Decimal("0")),
@@ -195,6 +185,12 @@ def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsRece
         overage_reason=reason,
         notes=payload.get("notes", ""),
     )
+    related_order_ids = list(
+        purchase_item.cost_allocations.filter(target_type="order", order__isnull=False)
+        .order_by("order_id").values_list("order_id", flat=True).distinct()
+    )
+    if related_order_ids:
+        movement.related_orders.set(related_order_ids)
     receipt = GoodsReceipt.objects.create(
         **{k: converted[k] for k in TRADE_FIELDS if k in converted},
         purchase_item=purchase_item,
@@ -209,28 +205,55 @@ def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsRece
     purchase_order = purchase_item.purchase_order
     purchase_order.status = _receipt_status(purchase_order)
     purchase_order.save(update_fields=["status", "updated_at"])
-    if purchase_order.order_id:
-        allocate_order(purchase_order.order)
+    rebalance_sku_reservations(purchase_item.sku)
     return receipt
 
 
+@transaction.atomic
 def rebalance_sku_reservations(sku: SKU):
-    """Rebuild active reservations for one SKU in order-date order."""
-    InventoryReservation.objects.filter(
-        sku_id=sku.pk,
-        order_item__order__status__in=ACTIVE_ORDER_STATUSES,
-    ).delete()
+    """Rebuild one SKU's reservations from stock and received purchase allocations."""
+    sku = SKU.objects.select_for_update().get(pk=sku.pk)
+    InventoryReservation.objects.filter(sku_id=sku.pk).delete()
     available = max(Decimal("0"), signed_inventory_quantity(sku))
-    created = []
-    for item in OrderItem.objects.filter(
+    items = list(OrderItem.objects.filter(
         sku_id=sku.pk,
         order__status__in=ACTIVE_ORDER_STATUSES,
-    ).select_related("order").order_by("order__order_date", "pk"):
-        needed = max(Decimal("0"), item.quantity - _shipped_quantity(item))
-        quantity = min(needed, available)
+    ).select_related("order").order_by("order__order_date", "order_id", "pk"))
+
+    received_by_order = {}
+    purchase_items = PurchaseOrderItem.objects.filter(
+        sku_id=sku.pk,
+        purchase_order__status__in=["ordered", "partial", "completed"],
+    ).prefetch_related("receipts", "cost_allocations")
+    for purchase_item in purchase_items:
+        received = min(purchase_item.received_quantity, purchase_item.quantity)
+        if received <= 0 or purchase_item.quantity <= 0:
+            continue
+        for allocation in purchase_item.cost_allocations.all():
+            if allocation.target_type != "order" or not allocation.order_id:
+                continue
+            received_by_order[allocation.order_id] = received_by_order.get(allocation.order_id, Decimal("0")) + (
+                received * allocation.quantity / purchase_item.quantity
+            )
+
+    created = []
+    def reserve(item, limit):
+        nonlocal available
+        quantity = min(max(Decimal("0"), item.quantity - _shipped_quantity(item)), max(Decimal("0"), limit), available)
         if quantity > 0:
             created.append(InventoryReservation.objects.create(order_item=item, sku=sku, quantity=quantity))
             available -= quantity
+        return quantity
+
+    # Received quantities explicitly assigned to an order take precedence.
+    for item in items:
+        priority = received_by_order.get(item.order_id, Decimal("0"))
+        if priority > 0:
+            used = reserve(item, priority)
+            received_by_order[item.order_id] -= used
+    # All remaining stock follows the stable general order.
+    for item in items:
+        reserve(item, available)
         if available <= 0:
             break
     return created
@@ -261,7 +284,7 @@ def reverse_receipt(receipt: GoodsReceipt, reason: str) -> GoodsReceipt:
         type="adjust_out",
         sku=sku,
         supplier_sku=supplier_sku,
-        order=purchase_item.purchase_order.order,
+        order=None,
         quantity=receipt.quantity,
         warehouse=original_movement.warehouse if original_movement else "默认仓",
         unit_cost=receipt.unit_cost,
@@ -271,6 +294,8 @@ def reverse_receipt(receipt: GoodsReceipt, reason: str) -> GoodsReceipt:
         is_automatic=True,
         notes=f"冲销采购入库 #{receipt.pk}：{reason}",
     )
+    if original_movement:
+        movement.related_orders.set(original_movement.related_orders.order_by("pk"))
     receipt.reversal_inventory_movement = movement
     receipt.reversed_at = timezone.now()
     receipt.reversal_reason = reason

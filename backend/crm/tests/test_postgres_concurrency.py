@@ -13,6 +13,7 @@ from rest_framework.exceptions import ValidationError
 from crm.models import (
     Customer,
     DocumentNumberSequence,
+    InventoryMovement,
     Order,
     Product,
     PurchaseOrder,
@@ -28,6 +29,7 @@ from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.document_numbers import allocate_document_no, sync_document_sequence_from_number
 from crm.services.purchase_costs import save_costs
 from crm.services.procurement import create_purchase_drafts
+from crm.services.fulfillment import confirm_shipment, record_receipt, sku_metrics
 from crm.views import _import_row
 from rest_framework.test import APIClient
 
@@ -222,3 +224,49 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
         purchase.refresh_from_db()
         self.assertEqual(purchase.cost_allocation_version, 1)
         self.assertEqual(purchase.items.get().cost_allocations.count(), 1)
+
+    def test_receipt_and_shipment_concurrently_rebalance_one_sku_without_deadlock(self):
+        customer = Customer.objects.create(code="PG-F1-C", name="PostgreSQL F1 Customer")
+        supplier = Supplier.objects.create(code="F1", name="PostgreSQL F1 Supplier")
+        sku = SKU.objects.create(sku="PG-F1-SKU", product=Product.objects.create(code="PG-F1-P", name="PostgreSQL F1 Product"))
+        order = Order.objects.create(order_no="SO-PG-F1", customer=customer, order_date=date(2031, 1, 1), status="confirmed")
+        order_item = order.items.create(sku=sku, quantity=10, unit_price=10)
+        # Existing stock makes either lock winner able to complete its business action.
+        InventoryMovement.objects.create(movement_no="PG-F1-OPEN", movement_date=date(2031, 1, 1), type="adjust_in", sku=sku, quantity=10)
+        purchase = PurchaseOrder.objects.create(purchase_no="PO-PG-F1", supplier=supplier, order=order, order_date=date(2031, 1, 1), status="ordered")
+        purchase_item = purchase.items.create(sku=sku, quantity=10, unit_price=2)
+        barrier = Barrier(2)
+
+        def receive():
+            close_old_connections()
+            try:
+                barrier.wait(timeout=10)
+                return record_receipt(PurchaseOrder.objects.get(pk=purchase.pk).items.get(pk=purchase_item.pk), {
+                    "receipt_date": date(2031, 1, 1), "quantity": Decimal("10"), "unit_cost": Decimal("2"),
+                }).pk
+            finally:
+                connections.close_all()
+
+        def ship():
+            close_old_connections()
+            try:
+                barrier.wait(timeout=10)
+                return confirm_shipment(Order.objects.get(pk=order.pk), {
+                    "shipment_no": "SH-PG-F1", "shipment_date": date(2031, 1, 1),
+                    "items": [{"order_item": order_item.pk, "quantity": Decimal("10")}],
+                }).pk
+            finally:
+                connections.close_all()
+
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            receipt_future = executor.submit(receive)
+            shipment_future = executor.submit(ship)
+            self.assertTrue(receipt_future.result(timeout=15))
+            self.assertTrue(shipment_future.result(timeout=15))
+
+        metrics = sku_metrics(SKU.objects.get(pk=sku.pk))
+        self.assertEqual(metrics["actual_quantity"], Decimal("10"))
+        self.assertGreaterEqual(metrics["reserved_quantity"], Decimal("0"))
+        self.assertLessEqual(metrics["reserved_quantity"], metrics["actual_quantity"])
+        self.assertEqual(InventoryMovement.objects.filter(sku=sku, type="purchase_in", source_type="receipt").count(), 1)
+        self.assertEqual(InventoryMovement.objects.filter(sku=sku, type="sale_out", source_type="shipment").count(), 1)

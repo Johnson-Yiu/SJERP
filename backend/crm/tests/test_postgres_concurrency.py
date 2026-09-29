@@ -89,7 +89,7 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
 
         results = self.run_workers(lambda index: transition(("accept", "reject")[index]), 2)
 
-        self.assertEqual(sorted(results), [400, 200])
+        self.assertEqual(sorted(results), [200, 400])
         quote.refresh_from_db()
         self.assertIn(quote.status, {"accepted", "rejected"})
 

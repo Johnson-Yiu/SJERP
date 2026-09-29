@@ -28,7 +28,7 @@ from .quote_snapshots import create_quote_items
 from .serializers import AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .serializers import ProcurementDraftInputSerializer
 from .audit import AuditTrailMixin, record_operation, snapshot
-from .services.finance import allocate_advance, approve_contract_change, record_contract_payment, record_transaction, void_transaction
+from .services.finance import allocate_advance, approve_contract_change, reject_contract_change, record_contract_payment, record_transaction, void_transaction
 from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_receipt as reverse_receipt_service, reverse_shipment as reverse_shipment_service, sku_metrics
 from .services.order_lifecycle import cancel_order, complete_order, confirm_order, start_order_production
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
@@ -1644,6 +1644,14 @@ class ContractChangeRequestViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = ContractChangeRequestSerializer
     queryset = ContractChangeRequest.objects.select_related("order", "purchase_order")
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.request.query_params.get("order"):
+            queryset = queryset.filter(order_id=self.request.query_params["order"])
+        if self.request.query_params.get("purchase_order"):
+            queryset = queryset.filter(purchase_order_id=self.request.query_params["purchase_order"])
+        return queryset
+
     @action(detail=True, methods=["post"])
     def approve(self, request, pk=None):
         try:
@@ -1653,6 +1661,21 @@ class ContractChangeRequestViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         record_operation(request=request, instance=request_item, action="custom", action_label="审批合同变更", metadata={"payment_plan_id": plan.id})
         return Response(PaymentPlanSerializer(plan).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"])
+    def reject(self, request, pk=None):
+        try:
+            request_item = reject_contract_change(self.get_object())
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        record_operation(request=request, instance=request_item, action="custom", action_label="拒绝合同变更")
+        return Response(self.get_serializer(request_item).data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.status != "pending":
+            return Response({"detail": "已处理的合同变更必须保留历史记录，不能删除。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().destroy(request, *args, **kwargs)
 
 
 

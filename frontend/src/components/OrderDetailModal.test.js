@@ -4,6 +4,12 @@ import test from 'node:test'
 
 const componentUrl = new URL('./OrderDetailModal.vue', import.meta.url)
 
+test('order workbench exposes retained contract amount adjustments', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  assert.match(source, /ContractAmountAdjustments/)
+  assert.match(source, /contract-type="order"/)
+})
+
 test('order workbench exposes shipment history and reversal flow', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

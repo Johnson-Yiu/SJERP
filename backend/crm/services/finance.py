@@ -377,17 +377,47 @@ def approve_contract_change(change):
     if change.status != "pending":
         raise ValidationError("只有待确认变更单可以确认。")
     contract = change.order or change.purchase_order
-    if contract is None or change.amount_delta <= 0 or contract.status in {"draft", "cancelled"}:
-        raise ValidationError("只有有效合同的正数增补可以确认。")
-    plan = PaymentPlan.objects.create(
-        order=change.order,
-        purchase_order=change.purchase_order,
-        direction="receivable" if change.order_id else "payable",
-        due_date=change.due_date,
-        planned_amount=change.amount_delta,
-        currency=contract.currency,
-        notes=f"变更单 #{change.pk}：{change.notes}",
-    )
+    if contract is None or contract.status in {"draft", "cancelled"}:
+        raise ValidationError("只有有效合同可以确认金额变更。")
+    if change.amount_delta > 0:
+        plan = PaymentPlan.objects.create(
+            order=change.order,
+            purchase_order=change.purchase_order,
+            direction="receivable" if change.order_id else "payable",
+            due_date=change.due_date,
+            planned_amount=change.amount_delta,
+            currency=contract.currency,
+            notes=f"变更单 #{change.pk}：{change.notes}",
+        )
+    else:
+        if contract.total_amount + change.amount_delta < contract.paid_amount:
+            raise ValidationError("金额调减后不能低于当前已收/已付金额，需先完成退款。")
+        remaining_reduction = -change.amount_delta
+        plans = list(contract.payment_plans.select_for_update().exclude(status="cancelled").order_by("-due_date", "-id"))
+        if sum((plan.remaining_amount for plan in plans), Decimal("0")) < remaining_reduction:
+            raise ValidationError("金额调减超过可减少的未结收付款计划余额。")
+        plan = None
+        for candidate in plans:
+            reduction = min(candidate.remaining_amount, remaining_reduction)
+            if reduction <= 0:
+                continue
+            candidate.planned_amount -= reduction
+            candidate.status = "cancelled" if candidate.planned_amount == 0 else ("settled" if candidate.planned_amount == candidate.settled_amount else "open")
+            candidate.save(update_fields=["planned_amount", "status", "updated_at"])
+            plan = candidate
+            remaining_reduction -= reduction
+            if remaining_reduction == 0:
+                break
     change.status = "approved"
     change.save(update_fields=["status", "updated_at"])
     return plan
+
+
+@transaction.atomic
+def reject_contract_change(change):
+    change = ContractChangeRequest.objects.select_for_update().get(pk=change.pk)
+    if change.status != "pending":
+        raise ValidationError("只有待确认变更单可以拒绝。")
+    change.status = "rejected"
+    change.save(update_fields=["status", "updated_at"])
+    return change

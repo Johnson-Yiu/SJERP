@@ -6,7 +6,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 
 from crm.models import AdvanceAllocation, ContractChangeRequest, Customer, Order, PaymentPlan, Product, PurchaseOrder, SKU, Supplier, Transaction
-from crm.services.finance import allocate_advance, approve_contract_change, ensure_default_payment_plans, record_contract_payment, record_transaction, void_transaction
+from crm.services.finance import allocate_advance, approve_contract_change, ensure_default_payment_plans, record_contract_payment, record_transaction, reject_contract_change, void_transaction
 
 
 class PaymentPlanModelTests(TestCase):
@@ -107,6 +107,61 @@ class FinanceServiceTests(PaymentPlanModelTests):
         self.assertEqual(change.status, "approved")
         self.assertEqual(plan.planned_amount, Decimal("20"))
         self.assertEqual(plan.direction, "receivable")
+
+    def test_negative_change_reduces_latest_unsettled_plan_and_keeps_history(self):
+        first = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("30"), due_date=date(2026, 9, 1))
+        latest = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("70"), due_date=date(2026, 10, 1))
+        change = ContractChangeRequest.objects.create(order=self.order, amount_delta=Decimal("-70"), notes="客户取消尾款")
+
+        approve_contract_change(change)
+
+        self.order.refresh_from_db(); first.refresh_from_db(); latest.refresh_from_db(); change.refresh_from_db()
+        self.assertEqual(self.order.base_amount, Decimal("100"))
+        self.assertEqual(self.order.total_amount, Decimal("30"))
+        self.assertEqual(first.status, "open")
+        self.assertEqual(latest.planned_amount, Decimal("0"))
+        self.assertEqual(latest.status, "cancelled")
+        self.assertEqual(change.status, "approved")
+
+    def test_negative_change_rejects_below_paid_amount_without_side_effects(self):
+        plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))
+        record_transaction({"plan": plan, "amount": Decimal("50"), "currency": "USD", "exchange_rate": Decimal("7"), "category": "客户收款"})
+        change = ContractChangeRequest.objects.create(order=self.order, amount_delta=Decimal("-60"), notes="错误调减")
+
+        with self.assertRaises(ValidationError):
+            approve_contract_change(change)
+
+        change.refresh_from_db(); plan.refresh_from_db()
+        self.assertEqual(change.status, "pending")
+        self.assertEqual(plan.planned_amount, Decimal("100"))
+
+    def test_negative_change_rejects_when_unsettled_plan_capacity_is_insufficient(self):
+        PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("10"))
+        change = ContractChangeRequest.objects.create(order=self.order, amount_delta=Decimal("-20"), notes="计划不足")
+        with self.assertRaises(ValidationError):
+            approve_contract_change(change)
+        change.refresh_from_db()
+        self.assertEqual(change.status, "pending")
+
+    def test_rejected_change_does_not_change_contract_and_cannot_be_approved(self):
+        change = ContractChangeRequest.objects.create(order=self.order, amount_delta=Decimal("20"), notes="客户未确认")
+        reject_contract_change(change)
+        change.refresh_from_db()
+        self.assertEqual(change.status, "rejected")
+        self.assertEqual(self.order.total_amount, Decimal("100"))
+        with self.assertRaises(ValidationError):
+            approve_contract_change(change)
+
+    def test_purchase_changes_use_payable_plan_and_negative_change(self):
+        purchase, plan, _ = self.make_purchase_plan(Decimal("50"))
+        positive = ContractChangeRequest.objects.create(purchase_order=purchase, amount_delta=Decimal("20"), notes="运费调整")
+        added = approve_contract_change(positive)
+        negative = ContractChangeRequest.objects.create(purchase_order=purchase, amount_delta=Decimal("-20"), notes="取消调整")
+        approve_contract_change(negative)
+        purchase.refresh_from_db(); added.refresh_from_db()
+        self.assertEqual(purchase.total_amount, Decimal("50"))
+        self.assertEqual(added.direction, "payable")
+        self.assertEqual(added.status, "cancelled")
 
     def test_void_records_reason_timestamp_and_restores_payment_plan(self):
         plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))

@@ -4,6 +4,12 @@ import test from 'node:test'
 
 const componentUrl = new URL('./PurchaseOrderPage.vue', import.meta.url)
 
+test('purchase desk exposes retained contract amount adjustment history', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  assert.match(source, /ContractAmountAdjustments/)
+  assert.match(source, /contract-type="purchase_order"/)
+})
+
 test('purchase desk connects creation, receipt and supplier payment actions', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

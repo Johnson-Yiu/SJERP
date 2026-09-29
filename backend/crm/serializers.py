@@ -328,6 +328,8 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     supplier_name = serializers.CharField(source="supplier.name", read_only=True)
     order_no = serializers.CharField(source="order.order_no", read_only=True)
     total_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    base_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    approved_change_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     paid_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     unpaid_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
 
@@ -1234,6 +1236,8 @@ class OrderSerializer(serializers.ModelSerializer):
     source_quote_no = serializers.CharField(source="quote.quote_no", read_only=True, default="")
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     total_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    base_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    approved_change_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     paid_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     balance_amount = serializers.SerializerMethodField()
 
@@ -1564,9 +1568,8 @@ class PaymentPlanSerializer(serializers.ModelSerializer):
         if self.instance:
             others = others.exclude(pk=self.instance.pk)
         planned = sum(others.values_list("planned_amount", flat=True), Decimal("0"))
-        additions = sum(contract.contract_changes.filter(status="approved").values_list("amount_delta", flat=True), Decimal("0"))
-        if planned + values["planned_amount"] > contract.total_amount + additions:
-            raise serializers.ValidationError("计划合计不能超过合同金额及已确认增补。调整分期比例时，请先调低原计划再调高另一笔。")
+        if planned + values["planned_amount"] > contract.total_amount:
+            raise serializers.ValidationError("计划合计不能超过当前合同金额。调整分期比例时，请先调低原计划再调高另一笔。")
         if self.instance and (self.instance.settled_amount or self.instance.transactions.exists() or self.instance.advance_allocations.exists()):
             if any(key in attrs for key in ("order", "purchase_order", "direction", "currency", "planned_amount")):
                 raise serializers.ValidationError("已有收付款记录的计划只能修改预计日期和备注。")
@@ -1595,8 +1598,8 @@ class ContractChangeRequestSerializer(serializers.ModelSerializer):
         order = attrs.get("order", getattr(self.instance, "order", None))
         purchase = attrs.get("purchase_order", getattr(self.instance, "purchase_order", None))
         amount = attrs.get("amount_delta", getattr(self.instance, "amount_delta", Decimal("0")))
-        if bool(order) == bool(purchase) or amount <= 0:
-            raise serializers.ValidationError("变更必须关联一个合同，且增补金额必须大于零。")
+        if bool(order) == bool(purchase) or amount == 0:
+            raise serializers.ValidationError("变更必须关联一个合同，且金额不能为零。")
         return attrs
 
 

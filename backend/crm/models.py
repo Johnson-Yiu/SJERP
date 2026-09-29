@@ -783,8 +783,16 @@ class Order(TimestampedModel):
         ordering = ["-order_date", "-id"]
 
     @property
-    def total_amount(self):
+    def base_amount(self):
         return sum((item.amount for item in self.items.all()), Decimal("0")) + self.shipping_fee - self.discount
+
+    @property
+    def approved_change_amount(self):
+        return sum(self.contract_changes.filter(status="approved").values_list("amount_delta", flat=True), Decimal("0"))
+
+    @property
+    def total_amount(self):
+        return self.base_amount + self.approved_change_amount
 
     @property
     def paid_amount(self):
@@ -972,8 +980,16 @@ class PurchaseOrder(TimestampedModel):
         ordering = ["-order_date", "-id"]
 
     @property
-    def total_amount(self):
+    def base_amount(self):
         return sum((item.amount for item in self.items.all()), Decimal("0"))
+
+    @property
+    def approved_change_amount(self):
+        return sum(self.contract_changes.filter(status="approved").values_list("amount_delta", flat=True), Decimal("0"))
+
+    @property
+    def total_amount(self):
+        return self.base_amount + self.approved_change_amount
 
     @property
     def paid_amount(self):
@@ -1087,7 +1103,10 @@ class PaymentPlan(TimestampedModel):
                 condition=(models.Q(order__isnull=False, purchase_order__isnull=True) | models.Q(order__isnull=True, purchase_order__isnull=False)),
                 name="payment_plan_one_contract",
             ),
-            models.CheckConstraint(condition=models.Q(planned_amount__gt=0), name="payment_plan_amount_positive"),
+            models.CheckConstraint(
+                condition=models.Q(planned_amount__gt=0) | models.Q(status="cancelled", planned_amount=0, settled_amount=0),
+                name="payment_plan_amount_positive",
+            ),
             models.CheckConstraint(condition=models.Q(settled_amount__gte=0), name="payment_plan_settled_non_negative"),
         ]
 
@@ -1118,8 +1137,8 @@ class ContractChangeRequest(TimestampedModel):
     def clean(self):
         if bool(self.order_id) == bool(self.purchase_order_id):
             raise ValidationError("变更单必须且只能关联一个订单或采购单。")
-        if self.amount_delta <= 0:
-            raise ValidationError("本期只允许通过变更单增加合同金额。")
+        if self.amount_delta == 0:
+            raise ValidationError("合同变更金额不能为零。")
 
 
 class Shipment(TimestampedModel):

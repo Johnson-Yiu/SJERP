@@ -8,6 +8,7 @@ from rest_framework.test import APIClient
 from crm.models import AdvanceAllocation, Customer, GoodsReceipt, InventoryMovement, InventoryReservation, Order, PaymentPlan, Product, PurchaseOrder, Shipment, SKU, Supplier, Transaction
 from crm.services.finance import allocate_advance, ensure_default_payment_plans, record_contract_payment, record_transaction, void_transaction
 from crm.services.fulfillment import allocate_order, confirm_shipment, order_item_metrics, record_receipt, reverse_receipt, reverse_shipment, sku_metrics
+from crm.services.purchase_costs import rebuild_default_cost_allocations
 
 
 class TradeFinanceUpgradeTests(TestCase):
@@ -565,6 +566,7 @@ class TradeFinanceUpgradeTests(TestCase):
     def test_shared_sku_purchase_is_not_counted_twice_for_procurement_gap(self):
         self.purchase_item.quantity = 6
         self.purchase_item.save()
+        rebuild_default_cost_allocations(self.purchase)
         self.item.quantity = 5
         self.item.save()
         second = self.order.items.create(sku=self.sku, quantity=5, unit_price=10)

@@ -61,7 +61,13 @@ class PurchaseCostAllocationMigrationTests(TransactionTestCase):
         NewPurchase = apps.get_model("crm", "PurchaseOrder")
         self.assertEqual(list(NewAllocation.objects.filter(purchase_item_id=order_item.id).values_list("target_type", "order_id", "quantity")), [("order", order.id, 100)])
         self.assertEqual(list(NewAllocation.objects.filter(purchase_item_id=inventory_item.id).values_list("target_type", "order_id", "quantity")), [("inventory", None, 100)])
-        self.assertEqual(NewAllocation.objects.filter(purchase_item_id=manual_item.id).count(), 2)
-        self.assertEqual(NewAllocation.objects.filter(purchase_item_id=retained_item.id).count(), 2)
+        self.assertEqual(
+            list(NewAllocation.objects.filter(purchase_item_id=manual_item.id).values_list("target_type", "order_id", "quantity")),
+            [("order", manual_order.id, 60), ("inventory", None, 40)],
+        )
+        self.assertEqual(
+            list(NewAllocation.objects.filter(purchase_item_id=retained_item.id).values_list("target_type", "order_id", "quantity")),
+            [("order", retained_order.id, 60), ("inventory", None, 40)],
+        )
         self.assertEqual(NewPurchase.objects.get(pk=order_purchase.id).cost_allocation_version, 0)
 

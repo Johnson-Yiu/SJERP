@@ -145,11 +145,20 @@ def _receipt_status(purchase_order):
 
 @transaction.atomic
 def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsReceipt:
-    purchase_item = PurchaseOrderItem.objects.select_for_update().select_related(
+    purchase_item = PurchaseOrderItem.objects.select_for_update(of=("self",)).select_related(
         "purchase_order", "sku"
     ).get(pk=purchase_item.pk)
     if purchase_item.purchase_order.status not in {"ordered", "partial", "completed"}:
         raise ValidationError("只有已下单的采购单可以登记验货入库。")
+    related_order_ids = list(
+        purchase_item.cost_allocations.filter(target_type="order", order__isnull=False)
+        .order_by("order_id").values_list("order_id", flat=True).distinct()
+    )
+    # Keep the shared sales-order -> SKU locking order used by shipment confirmation.
+    # This prevents receipt's related-order write from waiting on a shipment that is
+    # itself waiting for the same SKU lock.
+    if related_order_ids:
+        list(Order.objects.select_for_update().filter(pk__in=related_order_ids).order_by("pk"))
     SKU.objects.select_for_update().get(pk=purchase_item.sku_id)
     if not payload.get('trade_unit') and 'quantity' not in payload:
         raise ValidationError('请填写基础数量，或选择交易规格并填写交易数量。')
@@ -184,10 +193,6 @@ def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsRece
         is_overage=is_overage,
         overage_reason=reason,
         notes=payload.get("notes", ""),
-    )
-    related_order_ids = list(
-        purchase_item.cost_allocations.filter(target_type="order", order__isnull=False)
-        .order_by("order_id").values_list("order_id", flat=True).distinct()
     )
     if related_order_ids:
         movement.related_orders.set(related_order_ids)

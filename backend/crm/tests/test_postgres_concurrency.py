@@ -76,6 +76,23 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
             order.refresh_from_db()
             self.assertEqual(order.status, "confirmed")
 
+    def test_concurrent_accept_and_reject_only_allow_one_quote_transition(self):
+        customer = Customer.objects.create(code="PG-H2-C", name="PostgreSQL H2 Customer")
+        quote = Quote.objects.create(quote_no="SJ20300102US001", customer=customer, quote_date=date(2030, 1, 2))
+        barrier = Barrier(2)
+
+        def transition(action):
+            client = APIClient()
+            barrier.wait(timeout=10)
+            response = client.post(f"/api/quotes/{quote.id}/{action}/", {}, format="json")
+            return response.status_code
+
+        results = self.run_workers(lambda index: transition(("accept", "reject")[index]), 2)
+
+        self.assertEqual(sorted(results), [400, 200])
+        quote.refresh_from_db()
+        self.assertIn(quote.status, {"accepted", "rejected"})
+
     def test_root_quote_number_is_unique_and_contiguous_under_concurrency(self):
         quote_date = date(2030, 1, 1)
         numbers = self.run_workers(lambda _index: allocate_root_quote_no(quote_date, "SE"), 5)

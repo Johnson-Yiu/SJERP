@@ -36,3 +36,13 @@ test('terminal quote states render no status transition controls', async () => {
   assert.match(source, /quote\.status === 'sent'/)
   assert.match(source, /statusSaving/)
 })
+
+test('only non-terminal quotes expose the conversion-to-order actions', async () => {
+  const source = await readFile(detailUrl, 'utf8')
+
+  assert.match(source, /const canCreateOrder = computed\(\(\) => \['draft', 'sent', 'accepted'\]\.includes\(quote\.value\?\.status\)\)/)
+  assert.match(source, /v-if="canCreateOrder" class="btn btn-primary transfer-order"/)
+  assert.match(source, /v-if="canCreateOrder" class="btn btn-primary" @click="createOrder"/)
+  assert.match(source, /v-if="!canCreateOrder" class="quote-order-unavailable"/)
+  assert.match(source, /该报价已拒绝或过期，请先创建新的修订版后再转为订单。/)
+})

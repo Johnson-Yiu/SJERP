@@ -30,7 +30,7 @@ const supplierCodeServerError = ref('')
 const toast = reactive({ show: false, message: '', error: false })
 let searchTimer
 
-const statusLabels = { lead: '线索', contact: '联系人', opportunity: '商机', customer: '正式客户', company: '公司客户', development: '开发中', discontinued: '停产', draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
+const statusLabels = { lead: '线索', contact: '已建立联系', opportunity: '已进入报价阶段', customer: '已有1张正式订单', company: '已有2张及以上正式订单', development: '开发中', discontinued: '停产', draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
 const fieldOptions = computed(() => Object.fromEntries(props.config.fields.filter(field => field[2] === 'select').map(field => [field[0], field[4]])))
 const title = computed(() => editingId.value ? `编辑${props.config.title.replace('管理', '')}` : `新建${props.config.title.replace('管理', '')}`)
 const isCustomerCreate = computed(() => props.config.endpoint === 'customers' && !editingId.value)

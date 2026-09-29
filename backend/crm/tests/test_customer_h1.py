@@ -14,8 +14,10 @@ from crm.models import (
     Customer,
     FollowUp,
     FollowUpAttachment,
+    InventoryReservation,
     Order,
     OrderItem,
+    PaymentPlan,
     Product,
     Quote,
     SKU,
@@ -358,3 +360,184 @@ class QuoteLifecycleActionTests(TestCase):
         self.assertEqual(source.status, "accepted")
         self.assertEqual(revision.status, "draft")
         self.assertEqual(Quote.objects.count(), before + 1)
+
+
+class CustomerStageWriteGuardTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.customer = Customer.objects.create(code="H2-STAGE-C", name="H2 Stage Buyer", country="Germany")
+        self.product = Product.objects.create(code="H2-STAGE-P", name="H2 Stage Product")
+        self.sku = SKU.objects.create(product=self.product, sku="H2-STAGE-SKU")
+
+    def test_customer_status_is_read_only_and_derived_from_business_facts(self):
+        self.assertEqual(self.customer.status, "lead")
+
+        response = self.client.patch(
+            f"/api/customers/{self.customer.id}/",
+            {"status": "company"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.customer.refresh_from_db()
+        self.assertEqual(self.customer.status, "lead")
+
+        FollowUp.objects.create(
+            customer=self.customer,
+            followed_at="2026-09-30T09:00:00Z",
+            type="email",
+        )
+        self.customer.refresh_from_db()
+        self.assertEqual(self.customer.status, "contact")
+
+        response = self.client.patch(
+            f"/api/customers/{self.customer.id}/",
+            {"status": "lead"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.customer.refresh_from_db()
+        self.assertEqual(self.customer.status, "contact")
+
+        quote_response = self.client.post("/api/quotes/", {
+            "customer": self.customer.id,
+            "quote_date": "2026-09-30",
+            "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "10"}],
+        }, format="json")
+        self.assertEqual(quote_response.status_code, status.HTTP_201_CREATED, quote_response.data)
+        sent = self.client.post(f"/api/quotes/{quote_response.data['id']}/mark-sent/", {}, format="json")
+        self.assertEqual(sent.status_code, status.HTTP_200_OK, sent.data)
+        self.customer.refresh_from_db()
+        self.assertEqual(self.customer.status, "opportunity")
+
+        first_order = Order.objects.create(
+            order_no="H2-STAGE-SO-1",
+            customer=self.customer,
+            order_date=date(2026, 9, 30),
+            status="confirmed",
+        )
+        OrderItem.objects.create(order=first_order, sku=self.sku, quantity=1, unit_price=10)
+        self.customer.refresh_from_db()
+        self.assertEqual(self.customer.status, "customer")
+
+        second_order = Order.objects.create(
+            order_no="H2-STAGE-SO-2",
+            customer=self.customer,
+            order_date=date(2026, 9, 30),
+            status="confirmed",
+        )
+        OrderItem.objects.create(order=second_order, sku=self.sku, quantity=1, unit_price=10)
+        self.customer.refresh_from_db()
+        self.assertEqual(self.customer.status, "company")
+
+
+class QuoteOrderConversionGuardTests(TestCase):
+    terminal_message = "该报价已拒绝或过期，请先创建新的修订版后再转为订单。"
+    confirm_message = "来源报价已拒绝或过期，请先基于新的报价修订版更新订单来源。"
+
+    def setUp(self):
+        self.client = APIClient()
+        self.customer = Customer.objects.create(code="H2-QUOTE-C", name="H2 Quote Buyer", country="Germany")
+        self.product = Product.objects.create(code="H2-QUOTE-P", name="H2 Quote Product")
+        self.sku = SKU.objects.create(product=self.product, sku="H2-QUOTE-SKU", cost_price="4")
+
+    def create_quote(self, quote_status="draft"):
+        response = self.client.post("/api/quotes/", {
+            "customer": self.customer.id,
+            "quote_date": "2026-09-30",
+            "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "10"}],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        quote = Quote.objects.get(pk=response.data["id"])
+        if quote_status == "sent":
+            transition = self.client.post(f"/api/quotes/{quote.id}/mark-sent/", {}, format="json")
+        elif quote_status == "accepted":
+            transition = self.client.post(f"/api/quotes/{quote.id}/accept/", {}, format="json")
+        elif quote_status == "rejected":
+            transition = self.client.post(f"/api/quotes/{quote.id}/reject/", {}, format="json")
+        elif quote_status == "expired":
+            sent = self.client.post(f"/api/quotes/{quote.id}/mark-sent/", {}, format="json")
+            self.assertEqual(sent.status_code, status.HTTP_200_OK, sent.data)
+            transition = self.client.post(f"/api/quotes/{quote.id}/expire/", {}, format="json")
+        else:
+            return quote
+        self.assertEqual(transition.status_code, status.HTTP_200_OK, transition.data)
+        quote.refresh_from_db()
+        return quote
+
+    def order_draft(self, quote):
+        return self.client.get(f"/api/quotes/{quote.id}/order-draft/")
+
+    def test_only_draft_sent_and_accepted_quotes_can_create_and_confirm_orders(self):
+        for quote_status in ("draft", "sent", "accepted"):
+            with self.subTest(quote_status=quote_status):
+                quote = self.create_quote(quote_status)
+                draft_response = self.order_draft(quote)
+                self.assertEqual(draft_response.status_code, status.HTTP_200_OK, draft_response.data)
+                created = self.client.post("/api/orders/", draft_response.data, format="json")
+                self.assertEqual(created.status_code, status.HTTP_201_CREATED, created.data)
+                confirmed = self.client.post(f"/api/orders/{created.data['id']}/confirm/", {}, format="json")
+                self.assertEqual(confirmed.status_code, status.HTTP_200_OK, confirmed.data)
+                quote.refresh_from_db()
+                self.assertEqual(quote.status, "accepted")
+
+    def test_rejected_and_expired_quotes_cannot_supply_order_draft_or_direct_order(self):
+        for quote_status in ("rejected", "expired"):
+            with self.subTest(quote_status=quote_status):
+                quote = self.create_quote(quote_status)
+                draft_response = self.order_draft(quote)
+                self.assertEqual(draft_response.status_code, status.HTTP_400_BAD_REQUEST)
+                self.assertEqual(draft_response.data["detail"], self.terminal_message)
+
+                direct = self.client.post("/api/orders/", {
+                    "customer": self.customer.id,
+                    "quote": quote.id,
+                    "order_date": "2026-09-30",
+                    "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "10"}],
+                }, format="json")
+                self.assertEqual(direct.status_code, status.HTTP_400_BAD_REQUEST)
+                self.assertEqual(direct.data["quote"][0], self.terminal_message)
+
+    def test_draft_order_cannot_be_rebound_to_a_rejected_or_expired_quote(self):
+        source = self.create_quote()
+        draft = self.order_draft(source)
+        created = self.client.post("/api/orders/", draft.data, format="json")
+        self.assertEqual(created.status_code, status.HTTP_201_CREATED, created.data)
+        for quote_status in ("rejected", "expired"):
+            with self.subTest(quote_status=quote_status):
+                terminal = self.create_quote(quote_status)
+                updated = self.client.patch(
+                    f"/api/orders/{created.data['id']}/",
+                    {"quote": terminal.id},
+                    format="json",
+                )
+                self.assertEqual(updated.status_code, status.HTTP_400_BAD_REQUEST)
+                self.assertEqual(updated.data["quote"][0], self.terminal_message)
+
+    def test_confirming_after_source_quote_becomes_terminal_has_no_side_effects(self):
+        for terminal_action, expected_status in (("reject", "rejected"), ("expire", "expired")):
+            with self.subTest(terminal_action=terminal_action):
+                quote = self.create_quote()
+                draft = self.order_draft(quote)
+                created = self.client.post("/api/orders/", draft.data, format="json")
+                self.assertEqual(created.status_code, status.HTTP_201_CREATED, created.data)
+                order_id = created.data["id"]
+                if terminal_action == "expire":
+                    sent = self.client.post(f"/api/quotes/{quote.id}/mark-sent/", {}, format="json")
+                    self.assertEqual(sent.status_code, status.HTTP_200_OK, sent.data)
+                terminal = self.client.post(f"/api/quotes/{quote.id}/{terminal_action}/", {}, format="json")
+                self.assertEqual(terminal.status_code, status.HTTP_200_OK, terminal.data)
+                quote_count = Quote.objects.count()
+                accepted_count = Quote.objects.filter(status="accepted").count()
+
+                confirmed = self.client.post(f"/api/orders/{order_id}/confirm/", {}, format="json")
+
+                self.assertEqual(confirmed.status_code, status.HTTP_400_BAD_REQUEST)
+                self.assertEqual(confirmed.data["detail"], self.confirm_message)
+                order = Order.objects.get(pk=order_id)
+                quote.refresh_from_db()
+                self.assertEqual(order.status, "draft")
+                self.assertEqual(quote.status, expected_status)
+                self.assertFalse(InventoryReservation.objects.filter(order_item__order=order).exists())
+                self.assertFalse(PaymentPlan.objects.filter(order=order).exists())
+                self.assertEqual(Quote.objects.count(), quote_count)
+                self.assertEqual(Quote.objects.filter(status="accepted").count(), accepted_count)

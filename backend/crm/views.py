@@ -975,11 +975,22 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return Response({"detail": "已保存报价请创建迭代版本"}, status=status.HTTP_400_BAD_REQUEST)
 
     def _change_status(self, request, quote, target, allowed, label):
+        # The action target may have changed after the request was routed.
+        # Re-read it under a row lock so exactly one competing transition wins.
+        quote = Quote.objects.select_for_update().get(pk=quote.pk)
         if quote.status not in allowed:
             return Response({"detail": "当前报价状态不能执行此操作，请创建修订版重新报价。"}, status=status.HTTP_400_BAD_REQUEST)
+        before_status = quote.status
         quote.status = target
         quote.save(update_fields=["status", "updated_at"])
-        record_operation(request=request, instance=quote, action="custom", action_label=label)
+        record_operation(
+            request=request,
+            instance=quote,
+            action="custom",
+            action_label=label,
+            before={"status": before_status},
+            after={"status": target},
+        )
         return Response(self.get_serializer(quote).data)
 
     @action(detail=True, methods=["post"], url_path="mark-sent")
@@ -1075,6 +1086,11 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["get"], url_path="order-draft")
     def order_draft(self, request, pk=None):
         quote = self.get_object()
+        if quote.status in {"rejected", "expired"}:
+            return Response(
+                {"detail": "该报价已拒绝或过期，请先创建新的修订版后再转为订单。"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         return Response({
             "customer": quote.customer_id,
             "quote": quote.id,

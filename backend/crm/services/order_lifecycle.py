@@ -56,6 +56,8 @@ def confirm_order(order):
         # The revision allocator and copied quote rows are deliberately invoked only
         # here: editing a draft must not create a legal/commercial quote revision.
         source_quote = Quote.objects.select_for_update().get(pk=order.quote_id)
+        if source_quote.status in {"rejected", "expired"}:
+            raise ValidationError("来源报价已拒绝或过期，请先基于新的报价修订版更新订单来源。")
         from crm.serializers import OrderSerializer
 
         final_quote = OrderSerializer()._create_quote_revision_if_needed(

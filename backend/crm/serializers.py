@@ -543,7 +543,9 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = "__all__"
-        read_only_fields = ["code"]
+        # Customer status is a persisted projection of follow-ups, quotes and
+        # formal orders, rather than a manually maintained customer attribute.
+        read_only_fields = ["code", "status"]
 
     def validate(self, attrs):
         if self.instance is None and not attrs.get("contacts"):
@@ -1270,6 +1272,11 @@ class OrderSerializer(serializers.ModelSerializer):
         customer = attrs.get("customer", getattr(self.instance, "customer", None))
         if source_quote and customer and source_quote.customer_id != customer.id:
             raise serializers.ValidationError({"customer": "从报价创建订单时，客户必须与来源报价一致。"})
+        # A terminal quote is historical context only.  It cannot seed a new
+        # order or replace the source quote of an existing draft order.
+        quote_is_being_bound = self.instance is None or "quote" in attrs
+        if quote_is_being_bound and source_quote and source_quote.status in {"rejected", "expired"}:
+            raise serializers.ValidationError({"quote": "该报价已拒绝或过期，请先创建新的修订版后再转为订单。"})
         return attrs
 
     @staticmethod

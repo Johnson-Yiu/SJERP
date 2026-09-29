@@ -5,7 +5,7 @@ from zoneinfo import ZoneInfo
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-from crm.models import Customer, InventoryMovement, Order, Product, ProductCategory, PurchaseOrder, SKU, Supplier, Transaction
+from crm.models import ContractChangeRequest, Customer, InventoryMovement, Order, Product, ProductCategory, PurchaseOrder, SKU, Supplier, Transaction
 from crm.services.finance import void_transaction
 
 
@@ -87,6 +87,23 @@ class ReportingTests(TestCase):
         self.assertEqual(data['rows'][0]['label'], 'China')
         self.assertEqual(data['totals']['amount'], Decimal(84))
         self.assertEqual(self.query(source="purchase", group_by="supplier", filter_supplier=str(self.supplier.pk))['totals']['count'], 1)
+
+    def test_sales_report_includes_approved_contract_adjustments_as_separate_rows(self):
+        ContractChangeRequest.objects.create(order=self.order, amount_delta=Decimal("-20"), notes="折让", status="approved")
+        data = self.query(group_by="sku")
+        self.assertEqual(data["totals"]["amount"], Decimal("49"))  # (20 + 5 + 3 - 1 - 20) * 7
+        adjustment = next(row for row in data["rows"] if row["key"] == "__adjustment__")
+        self.assertEqual(adjustment["label"], "订单金额调整")
+        ContractChangeRequest.objects.filter(order=self.order).update(amount_delta=Decimal("20"))
+        self.assertEqual(self.query(group_by="customer")["totals"]["amount"], Decimal("329"))
+
+    def test_purchase_report_includes_approved_contract_adjustments_without_additional_costs(self):
+        purchase = PurchaseOrder.objects.create(purchase_no="REPORT-ADJUST", supplier=self.supplier, order_date=date(2026, 9, 2), status="ordered", exchange_rate=1)
+        purchase.items.create(sku=self.sku, quantity=10, unit_price=10)
+        ContractChangeRequest.objects.create(purchase_order=purchase, amount_delta=Decimal("20"), notes="加项", status="approved")
+        self.assertEqual(self.query(source="purchase", group_by="supplier")["totals"]["amount"], Decimal("120"))
+        ContractChangeRequest.objects.filter(purchase_order=purchase).update(amount_delta=Decimal("-20"))
+        self.assertEqual(self.query(source="purchase", group_by="supplier")["totals"]["amount"], Decimal("80"))
 
     def test_cash_only_confirmed_and_signed_actual_amount(self):
         for i, (direction, status, actual) in enumerate([('income', 'confirmed', 50), ('expense', 'confirmed', 20), ('income', 'pending', 100), ('income', 'cancelled', 200)]):

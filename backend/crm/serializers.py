@@ -424,11 +424,12 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         instance = PurchaseOrder.objects.select_for_update().get(pk=instance.pk)
         validate_contract_edit(instance, validated_data, purchase=True)
         items = validated_data.pop("items", None)
+        target_supplier = validated_data.get("supplier", instance.supplier)
         if items is not None and instance.status == "draft":
             from .services.supplier_candidates import resolve_purchase_item_sources
             resolve_purchase_item_sources(
                 items,
-                validated_data.get("supplier", instance.supplier),
+                target_supplier,
                 order=validated_data.get("order", instance.order),
                 purchase_currency=validated_data.get("currency", instance.currency),
             )
@@ -436,7 +437,10 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         if items is not None and (instance.status == "draft" or not items_match):
             instance.items.all().delete()
             for item in items:
-                PurchaseOrderItem.objects.create(purchase_order=instance, **item)
+                item_data = dict(item)
+                if item_data.get("supplier_sku") is None:
+                    item_data["supplier_name_snapshot"] = target_supplier.name
+                PurchaseOrderItem.objects.create(purchase_order=instance, **item_data)
         for key, value in validated_data.items():
             setattr(instance, key, value)
         instance.save()

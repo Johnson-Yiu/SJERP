@@ -254,6 +254,39 @@ class SupplierSKUApiTests(TestCase):
         item.refresh_from_db()
         self.assertEqual(item.supplier_name_snapshot, "供应商 A")
 
+    def test_draft_supplier_change_snapshots_target_supplier_without_source(self):
+        initial_source_count = SupplierSKU.objects.count()
+        created = self.client.post("/api/purchase-orders/", {
+            "supplier": self.supplier_a.id,
+            "order_date": "2026-08-23",
+            "currency": "USD",
+            "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
+        }, format="json")
+        self.assertEqual(created.status_code, status.HTTP_201_CREATED, created.data)
+        original_item = PurchaseOrderItem.objects.get(purchase_order_id=created.data["id"])
+        self.assertIsNone(original_item.supplier_sku)
+        self.assertEqual(original_item.supplier_name_snapshot, self.supplier_a.name)
+
+        updated = self.client.put(f"/api/purchase-orders/{created.data['id']}/", {
+            "supplier": self.supplier_b.id,
+            "order_date": "2026-08-23",
+            "currency": "USD",
+            "exchange_rate": "1",
+            "items": [{"sku": self.sku.id, "quantity": "2", "unit_price": "4"}],
+        }, format="json")
+        self.assertEqual(updated.status_code, status.HTTP_200_OK, updated.data)
+        purchase = PurchaseOrder.objects.get(pk=created.data["id"])
+        item = purchase.items.get()
+        self.assertEqual(purchase.supplier_id, self.supplier_b.id)
+        self.assertIsNone(item.supplier_sku)
+        self.assertEqual(item.supplier_name_snapshot, "供应商 B")
+        self.assertEqual(SupplierSKU.objects.count(), initial_source_count)
+
+        self.supplier_b.name = "供应商 B 新名称"
+        self.supplier_b.save(update_fields=["name"])
+        item.refresh_from_db()
+        self.assertEqual(item.supplier_name_snapshot, "供应商 B")
+
     def test_multiple_active_manual_sources_require_explicit_selection(self):
         first = self.create_source(supplier_sku_code="A-MANUAL-1")
         preferred = self.create_source(supplier_sku_code="A-MANUAL-2", is_preferred=True)

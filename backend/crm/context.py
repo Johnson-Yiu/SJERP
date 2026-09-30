@@ -54,7 +54,6 @@ def entity_context(request, entity, pk):
         "product-certificates": _certificate_context,
         "quotes": _quote_context,
         "orders": _order_context,
-        "suppliers": _supplier_context,
         "purchase-orders": _purchase_order_context,
         "transactions": _transaction_context,
         "inventory-movements": _inventory_context,
@@ -90,7 +89,7 @@ def _customer_context(pk):
         "sections": [
             _section("contacts", "联系人", "contacts", [["name", "姓名"], ["title", "职位"], ["email", "邮箱"], ["phone", "电话"], ["is_primary", "主联系人", "boolean"]], contacts),
             _section("orders", "订单", "orders", [["order_no", "订单号"], ["order_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"], ["currency", "币种"]], orders),
-            _section("purchases", "采购记录", "orders", [["order_date", "日期", "date"], ["order_no", "订单"], ["sku_code", "SKU"], ["product_name", "产品"], ["quantity", "数量", "number"], ["amount", "金额", "money"]], purchases),
+            _section("purchases", "订单商品记录", "orders", [["order_date", "日期", "date"], ["order_no", "订单"], ["sku_code", "SKU"], ["product_name", "产品"], ["quantity", "数量", "number"], ["amount", "金额", "money"]], purchases),
             _section("quotes", "报价记录", "quotes", [["quote_no", "报价单号"], ["quote_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"], ["currency", "币种"]], quotes),
             _section("followups", "跟进记录", "follow-ups", [["followed_at", "时间", "datetime"], ["subject", "主题"], ["content", "跟进记录 / 解决方案", "excerpt"], ["result", "客户回复 / 客户疑问", "excerpt"], ["type_display", "方式"], ["next_follow_up", "下次跟进", "date"]], followups),
             _section("cash", "财务流水", "transactions", [["transaction_date", "日期", "date"], ["transaction_no", "流水号"], ["direction_display", "方向"], ["category", "分类"], ["amount", "金额", "money"], ["currency", "币种"]], cash),
@@ -116,9 +115,10 @@ def _product_context(pk, include_inactive=False):
     certs = _target(ProductCertificateSerializer(obj.certificates.all(), many=True).data, "product-certificates")
     suppliers = _target(SupplierSerializer(obj.suppliers.all(), many=True).data, "suppliers")
     inventory = _target(InventoryMovementSerializer(InventoryMovement.objects.filter(sku__product=obj).select_related("sku__product", "order"), many=True).data, "inventory-movements")
-    sales_items = OrderItem.objects.filter(sku__product=obj).exclude(order__status="cancelled").select_related("order__customer", "sku")
+    formal_statuses = ["confirmed", "production", "shipped", "completed"]
+    sales_items = OrderItem.objects.filter(sku__product=obj, order__status__in=formal_statuses).select_related("order__customer", "sku")
     sales = _target([{"id": item.order_id, "order_no": item.order.order_no, "order_date": item.order.order_date, "customer_name": item.order.customer.name, "sku_code": item.sku.sku, "sales_model": item.sales_model_snapshot or item.sku.sales_model, "unit": item.unit_snapshot or item.sku.unit, "status_label": item.order.get_status_display(), "quantity": item.quantity, "amount": item.amount, "currency": item.order.currency} for item in sales_items.order_by("-order__order_date")], "orders")
-    today = date.today()
+    today = timezone.localdate()
     quarter_start_month = ((today.month - 1) // 3) * 3 + 1
     current_quarter_start = date(today.year, quarter_start_month, 1)
     previous_quarter_end = current_quarter_start - timedelta(days=1)
@@ -126,39 +126,18 @@ def _product_context(pk, include_inactive=False):
     periods = [("当年", date(today.year, 1, 1), today), ("上年", date(today.year - 1, 1, 1), date(today.year - 1, 12, 31)), ("上一季度", previous_quarter_start, previous_quarter_end), ("最近 3 个月", today - timedelta(days=89), today)]
     sales_periods = []
     for label, start, end in periods:
-        aggregate = sales_items.filter(order__order_date__range=(start, end)).aggregate(order_count=Count("order", distinct=True), sold_quantity=Sum("quantity"), sales=Sum(ExpressionWrapper(amount_expression(""), output_field=MONEY)))
+        aggregate = sales_items.filter(order__order_date__range=(start, end)).aggregate(order_count=Count("order", distinct=True), sold_quantity=Sum("quantity"), sales=Sum(ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)))
         sales_periods.append({"id": label, "period": label, "order_count": aggregate["order_count"], "quantity": aggregate["sold_quantity"] or 0, "sales": aggregate["sales"] or Decimal("0")})
     stock = sum(Decimal(row["stock_quantity"]) for row in skus)
     return {"entity": "products", "title": obj.name, "subtitle": f"{obj.code} · {obj.category.name if obj.category else '未分类'}", "badge": obj.get_status_display(), "info": [["产品编号", obj.code], ["英文名称", obj.name_en or "—"], ["HS 编码", obj.hs_code.code if obj.hs_code else "—"], ["分类", obj.category.name if obj.category else "未分类"], ["描述", obj.description or "—"]], "metrics": [["SKU", len(skus), "number"], ["供应商", len(suppliers), "number"], ["当前库存", stock, "number"], ["参数", len(params), "number"]], "sections": [
         _section("suppliers", "供应商", "suppliers", [["name", "供应商"], ["code", "二字代码"], ["country", "国家/地区"], ["main_products", "主要产品"], ["contact_name", "联系人"], ["phone", "电话"], ["email", "邮箱"], ["store_url", "店铺链接"], ["payment_terms", "付款条款"]], suppliers),
         _section("skus", "SKU 管理", "skus", [["sku", "SKU Code"], ["sales_model", "销售型号"], ["display_name_cn", "中文 SKU 名称"], ["specification", "规格"], ["stock_quantity", "库存", "number"], ["cost_price", "成本", "money"], ["default_price", "售价", "money"], ["currency", "币种"], ["active", "状态", "sku-active"]], skus),
-        _section("sales-summary", "销售统计", "sales-periods", [["period", "统计周期"], ["order_count", "订单数", "number"], ["quantity", "销量", "number"], ["sales", "销售额", "money"]], sales_periods),
-        _section("sales", "订单记录", "orders", [["order_date", "日期", "date"], ["order_no", "订单"], ["customer_name", "客户"], ["sku_code", "SKU"], ["quantity", "数量", "number"], ["amount", "金额", "money"]], sales),
+        _section("sales-summary", "销售统计", "sales-periods", [["period", "统计周期"], ["order_count", "订单数", "number"], ["quantity", "销量", "number"], ["sales", "商品销售额（人民币）", "rmb"]], sales_periods),
+        _section("sales", "订单记录", "orders", [["order_date", "日期", "date"], ["order_no", "订单"], ["customer_name", "客户"], ["sku_code", "SKU"], ["quantity", "数量", "number"], ["amount", "原币金额", "money"], ["currency", "币种"]], sales),
         _section("inventory", "出入库流水", "inventory-movements", [["movement_date", "日期", "date"], ["movement_no", "流水号"], ["type_display", "类型"], ["sku_code", "SKU"], ["signed_quantity", "变动", "signed"], ["warehouse", "仓库"]], inventory),
         _section("parameters", "产品参数", "product-parameters", [["group", "分组"], ["name", "参数"], ["value", "参数值"], ["unit", "单位"]], params),
         _section("certificates", "证书档案", "product-certificates", [["name", "证书"], ["certificate_no", "编号"], ["issuer", "签发机构"], ["expires_on", "有效期至", "date"]], certs),
     ]}
-
-
-def _supplier_context(pk):
-    obj = get_object_or_404(Supplier, pk=pk)
-    products = _target(ProductSerializer(obj.products.select_related("category"), many=True).data, "products")
-    purchases = PurchaseOrder.objects.filter(supplier=obj).select_related("order").prefetch_related("items__sku", "transactions")
-    purchase_rows = [{
-        "id": row.id, "purchase_no": row.purchase_no, "order_no": row.order.order_no,
-        "order_date": row.order_date, "status_display": row.get_status_display(), "currency": row.currency,
-        "total_amount": row.total_amount, "paid_amount": row.paid_amount, "unpaid_amount": row.unpaid_amount,
-    } for row in purchases]
-    payments = _target(TransactionSerializer(Transaction.objects.filter(purchase_order__supplier=obj).select_related("purchase_order"), many=True).data, "transactions")
-    paid_amount = sum((row.paid_amount for row in purchases), Decimal("0"))
-    return {"entity": "suppliers", "title": obj.name, "subtitle": obj.contact_name or "供应商", "badge": obj.code,
-        "info": [["国家/地区", obj.country or "—"], ["主要产品", obj.main_products or "—"], ["店铺链接", obj.store_url or "—"], ["联系人", obj.contact_name or "—"], ["电话", obj.phone or "—"], ["邮箱", obj.email or "—"], ["付款条款", obj.payment_terms or "—"], ["备注", obj.notes or "—"]],
-        "metrics": [["关联产品", len(products), "number"], ["采购单", len(purchase_rows), "number"], ["付款金额", paid_amount, "money"]],
-        "sections": [
-            _section("products", "关联产品", "products", [["code", "产品编号"], ["name", "产品名称"], ["category_name", "分类"], ["status", "状态", "status"]], products),
-            _section("purchases", "采购单", "purchase-orders", [["purchase_no", "采购单号"], ["order_no", "关联订单"], ["order_date", "下单日期", "date"], ["total_amount", "采购金额", "money"], ["paid_amount", "已付", "money"], ["unpaid_amount", "未付", "money"], ["status_display", "状态", "status"]], purchase_rows),
-            _section("payments", "收付款记录", "transactions", [["transaction_date", "日期", "date"], ["transaction_no", "流水号"], ["direction_display", "方向"], ["category", "分类"], ["amount", "金额", "money"], ["currency", "币种"]], payments),
-        ]}
 
 
 def _sku_context(pk):
@@ -282,11 +261,12 @@ def _supplier_context(pk):
     supplier_skus = _target(SupplierSKUSerializer(obj.supplier_skus.select_related("supplier", "sku", "sku__product"), many=True).data, "supplier-skus")
     purchases = _target(PurchaseOrderSerializer(obj.purchase_orders.select_related("supplier", "order").prefetch_related("items__sku", "items__receipts", "transactions"), many=True).data, "purchase-orders")
     payments = _target(TransactionSerializer(obj.transactions.select_related("customer", "order", "purchase_order"), many=True).data, "transactions")
-    total_purchases = sum((Decimal(row["total_amount"]) for row in purchases), Decimal("0"))
-    total_paid = sum((Decimal(row["amount"]) for row in payments if row["direction"] == "expense" and row["status"] == "confirmed"), Decimal("0"))
+    formal_purchases = [row for row in purchases if row["status"] in {"ordered", "partial", "completed"}]
+    total_purchases_rmb = sum((Decimal(row["total_amount"]) * Decimal(row["exchange_rate"]) for row in formal_purchases), Decimal("0"))
+    total_paid_rmb = sum((Decimal(row["paid_amount"]) * Decimal(row["exchange_rate"]) for row in formal_purchases), Decimal("0"))
     return {"entity": "suppliers", "title": obj.name, "subtitle": obj.contact_name or "供应商", "badge": obj.code,
         "info": [["二字代码", obj.code], ["国家/地区", obj.country or "—"], ["主要产品", obj.main_products or "—"], ["店铺链接", obj.store_url or "—"], ["联系人", obj.contact_name or "—"], ["电话", obj.phone or "—"], ["邮箱", obj.email or "—"], ["付款条款", obj.payment_terms or "—"], ["备注", obj.notes or "—"]],
-        "metrics": [["合作产品", len(products), "number"], ["供货档案", len(supplier_skus), "number"], ["采购单", len(purchases), "number"], ["采购金额", total_purchases, "money"], ["已付款", total_paid, "money"]],
+        "metrics": [["合作产品", len(products), "number"], ["供货档案", len(supplier_skus), "number"], ["采购单记录", len(formal_purchases), "number"], ["正式采购金额（人民币）", total_purchases_rmb, "rmb"], ["已付采购款（人民币）", total_paid_rmb, "rmb"]],
         "sections": [
             _section("products", "合作产品", "products", [["code", "产品编号"], ["name", "产品名称"], ["category_name", "分类"], ["status", "状态", "status"]], products),
             _section("supplier-skus", "供应商 SKU 档案", "supplier-skus", [["internal_sku_code", "内部 SKU"], ["internal_sku_name", "内部名称"], ["supplier_sku_code", "供应商 SKU"], ["supplier_model", "供应商型号"], ["purchase_price", "参考采购价", "money"], ["currency", "币种"], ["moq", "MOQ", "number"], ["lead_time_days", "交期（天）", "number"], ["is_preferred", "首选", "boolean"], ["is_active", "启用", "boolean"]], supplier_skus),
@@ -298,11 +278,11 @@ def _supplier_context(pk):
 def _purchase_order_context(pk):
     obj = get_object_or_404(PurchaseOrder.objects.select_related("supplier", "order").prefetch_related("items__sku__product", "transactions"), pk=pk)
     supplier = _target([SupplierSerializer(obj.supplier).data], "suppliers")
-    order = _target([OrderSerializer(obj.order).data], "orders")
+    order = _target([OrderSerializer(obj.order).data], "orders") if obj.order_id else []
     items = _target([{"id": item.sku_id, "sku_code": item.sku.sku, "product_name": item.sku.product.name, "quantity": item.quantity, "unit_price": item.unit_price, "amount": item.amount} for item in obj.items.all()], "skus")
     payments = _target(TransactionSerializer(obj.transactions.all(), many=True).data, "transactions")
     return {"entity": "purchase-orders", "title": obj.purchase_no, "subtitle": f"{obj.supplier.name} · {obj.order_date}", "badge": obj.get_status_display(),
-        "info": [["下单日期", obj.order_date], ["预计到货", obj.expected_arrival_date or "—"], ["币种", obj.currency], ["汇率", obj.exchange_rate], ["关联订单", obj.order.order_no], ["备注", obj.notes or "—"]],
+        "info": [["下单日期", obj.order_date], ["预计到货", obj.expected_arrival_date or "—"], ["币种", obj.currency], ["汇率", obj.exchange_rate], ["关联订单", obj.order.order_no if obj.order_id else "—"], ["备注", obj.notes or "—"]],
         "metrics": [["采购金额", obj.total_amount, "money"], ["已付款", obj.paid_amount, "money"], ["待付款", obj.unpaid_amount, "money"], ["明细", len(items), "number"]],
         "sections": [
             _section("supplier", "供应商", "suppliers", [["name", "供应商"], ["code", "二字代码"], ["store_url", "店铺链接"], ["contact_name", "联系人"], ["phone", "电话"]], supplier),

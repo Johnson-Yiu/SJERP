@@ -390,7 +390,7 @@ function openEdit(row) {
 async function loadSupplierSources(skuId) {
   if (!skuId) return
   supplierSourcesLoading.value = true
-  try { supplierSources.value = listData(await api.get('/supplier-skus/', { params: { sku: skuId } })) } catch (error) { notify(error.message, true) } finally { supplierSourcesLoading.value = false }
+  try { supplierSources.value = await listAll('/supplier-skus/', { params: { sku: skuId } }) } catch (error) { notify(error.message, true) } finally { supplierSourcesLoading.value = false }
 }
 function resetSupplierSourceForm() { supplierTraitsText.value = ''; Object.assign(supplierSourceForm, { supplier: '', supplier_model: '', supplier_product_name: '', supplier_sku_code: '', supplier_barcode: '', purchase_price: '0.00', currency: 'USD', moq: 0, lead_time_days: 0, is_active: true, is_preferred: false, remarks: '' }) }
 function openSupplierSourceCreate() { supplierSourceEditingId.value = null; resetSupplierSourceForm(); supplierSourceDialogOpen.value = true }
@@ -662,8 +662,8 @@ onMounted(async () => {
     listAll('/products/').then(items => { products.value = items }),
     api.get('/categories/tree/').then(response => { categories.value = listData(response) }),
     listAll('/product-parameters/').then(items => { parameters.value = items }),
-    api.get('/packaging-templates/').then(response => { packagingTemplates.value = listData(response).filter(item => item.active) }),
-    api.get('/suppliers/').then(response => { suppliers.value = listData(response) }),
+    listAll('/packaging-templates/').then(items => { packagingTemplates.value = items.filter(item => item.active) }),
+    listAll('/suppliers/').then(items => { suppliers.value = items }),
   ])
   if (props.embedded) openCreate(props.initialProduct)
   else openCreateFromRoute()

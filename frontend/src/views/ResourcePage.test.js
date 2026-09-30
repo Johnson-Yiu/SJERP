@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
+import { runInNewContext } from 'node:vm'
 import { resourceConfigs } from '../resourceConfigs.js'
 
 test('resource payload serializes empty optional dates as null', async () => {
@@ -25,4 +26,32 @@ test('customer projections are visible but not editable customer fields', async 
   assert.match(page, /company: '已有2张及以上正式订单'/)
   assert.match(detail, /currentEntity === 'customers' && item\[0\] === '下次跟进'/)
   assert.match(detail, /由最新跟进记录自动更新/)
+})
+
+test('automatic inventory movements are read-only while manual movements retain actions', async () => {
+  const source = await readFile(new URL('./ResourcePage.vue', import.meta.url), 'utf8')
+  const detail = await readFile(new URL('../components/EntityDetailModal.vue', import.meta.url), 'utf8')
+  const movementConfig = resourceConfigs['inventory-movements']
+  const typeOptions = movementConfig.fields.find(field => field[0] === 'type')[4]
+  const helper = source.match(/function isReadOnlyAutomaticMovement\(row\) \{[^}]+\}/)?.[0]
+  const context = { props: { config: { endpoint: 'inventory-movements' } } }
+
+  assert.ok(helper)
+  runInNewContext(`${helper}; this.isReadOnlyAutomaticMovement = isReadOnlyAutomaticMovement`, context)
+  assert.equal(context.isReadOnlyAutomaticMovement({ is_automatic: true }), true)
+  assert.equal(context.isReadOnlyAutomaticMovement({ is_automatic: false }), false)
+  assert.match(source, /title="查看详情"/)
+  assert.equal((source.match(/v-if="!isReadOnlyAutomaticMovement\(row\)"/g) || []).length, 2)
+  assert.match(detail, /isRoot && currentEntity !== 'inventory-movements'/)
+  assert.deepEqual(Object.keys(typeOptions), [
+    'adjust_in', 'adjust_out', 'sample_out', 'return_in', 'transfer_in', 'transfer_out',
+    'production_in', 'production_out', 'other_in', 'other_out',
+  ])
+  assert.doesNotMatch(JSON.stringify(typeOptions), /purchase_in|sale_out/)
+})
+
+test('follow-up history summary is distinguished from the current dashboard obligation', async () => {
+  const source = await readFile(new URL('./ResourcePage.vue', import.meta.url), 'utf8')
+  assert.match(source, /计划日期已到记录/)
+  assert.match(source, /历史跟进记录统计；当前待跟进以经营概览为准/)
 })

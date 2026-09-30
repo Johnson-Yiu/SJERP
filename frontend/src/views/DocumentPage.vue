@@ -4,7 +4,7 @@ import { fromTradeLine, tradePayload, withDefaultTradeUnit, restoreTradeLines } 
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Plus, Search, Pencil, Trash2, FileX2, X, MinusCircle, Download, ChevronDown, ChevronRight, FolderOpen, FileText, FilePenLine, Eye, Clock3, CircleCheck, CircleDollarSign, RotateCcw } from 'lucide-vue-next'
-import { api, downloadQuoteExport, listData } from '../api'
+import { api, downloadQuoteExport, listAll } from '../api'
 import QuoteDetailModal from '../components/QuoteDetailModal.vue'
 import QuoteEditorModal from '../components/QuoteEditorModal.vue'
 import OrderDraftModal from '../components/OrderDraftModal.vue'
@@ -57,16 +57,16 @@ async function load() {
   loading.value = true
   try {
     const quoteParams = !isOrder.value ? { status: quoteStatusFilter.value, customer: quoteCustomerFilter.value, ordering: quoteSort.value } : {}
-    rows.value = listData(await api.get(`/${props.type}/`, { params: { ...route.query, search: query.value, ...quoteParams } }))
+    rows.value = await listAll(`/${props.type}/`, { params: { ...route.query, search: query.value, ...quoteParams } })
     const visibleQuoteIds = new Set(rows.value.map(row => row.id))
     expandedQuoteNodes.value = new Set([...expandedQuoteNodes.value].filter(id => visibleQuoteIds.has(id)))
   } catch (e) { notify(e.message, true) } finally { loading.value = false }
 }
 async function loadOptions() {
   try {
-    const calls = [api.get('/customers/'), api.get('/skus/')]
-    if (isOrder.value) calls.push(api.get('/quotes/'))
-    const result = await Promise.all(calls); customers.value = listData(result[0]); skus.value = listData(result[1]); if (result[2]) quotes.value = listData(result[2])
+    const calls = [listAll('/customers/'), listAll('/skus/')]
+    if (isOrder.value) calls.push(listAll('/quotes/'))
+    const result = await Promise.all(calls); customers.value = result[0]; skus.value = result[1]; if (result[2]) quotes.value = result[2]
   } catch (e) { notify(e.message, true) }
 }
 async function create() {

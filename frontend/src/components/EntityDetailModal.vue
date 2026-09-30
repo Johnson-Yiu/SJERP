@@ -355,7 +355,7 @@ onMounted(async () => {
               <span v-else-if="isProduct">产品管理 / 产品详情</span><span v-else-if="!stack.length">关联详情</span>
             </div>
             <div class="detail-actions">
-              <button v-if="isRoot" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> {{ currentEntity === 'customers' ? '编辑客户' : '编辑主档' }}</button>
+              <button v-if="isRoot && currentEntity !== 'inventory-movements'" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> {{ currentEntity === 'customers' ? '编辑客户' : '编辑主档' }}</button>
               <RouterLink v-else-if="hasManagement(currentEntity)" class="btn btn-secondary" :to="`/${currentEntity}`" @click="emit('close')"><ExternalLink :size="14" /> 打开管理页</RouterLink>
               <button class="detail-close" aria-label="关闭详情" @click="emit('close')"><X :size="19" /><span>关闭</span></button>
             </div>

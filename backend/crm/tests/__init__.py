@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
@@ -6,7 +7,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from ..models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, FollowUp, InventoryMovement, Order, OrganizationUnit, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, Quote, RolePermission, SKU, Supplier, Transaction
+from ..models import AccessRole, CategoryAttribute, Contact, Customer, CustomerCodeSequence, FollowUp, InventoryMovement, Order, OrderItem, OrganizationUnit, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, Quote, RolePermission, SKU, Supplier, Transaction
 
 
 class BusinessFlowTests(APITestCase):
@@ -135,7 +136,7 @@ class BusinessFlowTests(APITestCase):
 
         customer_response = self.client.get(f"/api/context/customers/{self.customer.id}/")
         self.assertEqual(customer_response.status_code, status.HTTP_200_OK)
-        self.assertIn("采购记录", [section["title"] for section in customer_response.data["sections"]])
+        self.assertIn("订单商品记录", [section["title"] for section in customer_response.data["sections"]])
         followup_section = next(section for section in customer_response.data["sections"] if section["key"] == "followups")
         self.assertIn(["content", "跟进记录 / 解决方案", "excerpt"], followup_section["columns"])
         self.assertIn(["result", "客户回复 / 客户疑问", "excerpt"], followup_section["columns"])
@@ -204,13 +205,86 @@ class BusinessFlowTests(APITestCase):
         self.assertEqual(response.data["entity"], "suppliers")
         self.assertEqual({section["key"] for section in response.data["sections"]}, {"products", "purchases", "payments", "supplier-skus"})
         metrics = response.data["metrics"]
-        self.assertEqual(metrics[:3], [["合作产品", 1, "number"], ["供货档案", 0, "number"], ["采购单", 1, "number"]])
-        self.assertEqual(str(metrics[3][1]), "30.00")
-        self.assertEqual(str(metrics[4][1]), "0")
+        self.assertEqual(metrics[:3], [["合作产品", 1, "number"], ["供货档案", 0, "number"], ["采购单记录", 1, "number"]])
+        self.assertEqual(metrics[3], ["正式采购金额（人民币）", Decimal("30.00"), "rmb"])
+        self.assertEqual(metrics[4], ["已付采购款（人民币）", Decimal("0.00"), "rmb"])
 
         purchase_response = self.client.get(f"/api/context/purchase-orders/{purchase.id}/")
         self.assertEqual(purchase_response.status_code, status.HTTP_200_OK, purchase_response.data)
         self.assertEqual(purchase_response.data["title"], "T-PO-001")
+
+    def test_independent_purchase_order_context_has_empty_order_relation(self):
+        supplier = Supplier.objects.create(name="Independent Supplier", code="IN")
+        purchase = PurchaseOrder.objects.create(
+            purchase_no="T-PO-INDEPENDENT", supplier=supplier, order=None, order_date=timezone.localdate(),
+            currency="USD", exchange_rate="7", status="ordered",
+        )
+        purchase.items.create(sku=self.sku, quantity=2, unit_price=5)
+
+        response = self.client.get(f"/api/context/purchase-orders/{purchase.id}/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertIn(["关联订单", "—"], response.data["info"])
+        sections = {section["key"]: section for section in response.data["sections"]}
+        self.assertEqual(sections["order"]["rows"], [])
+        self.assertEqual(sections["supplier"]["rows"][0]["name"], supplier.name)
+        self.assertEqual(len(sections["items"]["rows"]), 1)
+        self.assertIn("payments", sections)
+
+    def test_product_context_uses_formal_sales_only_and_converts_to_rmb(self):
+        today = timezone.localdate()
+        orders = [
+            Order.objects.create(order_no="T-PRODUCT-DRAFT", customer=self.customer, order_date=today, currency="USD", exchange_rate=7, status="draft"),
+            Order.objects.create(order_no="T-PRODUCT-CONFIRMED", customer=self.customer, order_date=today, currency="USD", exchange_rate=7, status="confirmed"),
+            Order.objects.create(order_no="T-PRODUCT-CANCELLED", customer=self.customer, order_date=today, currency="CNY", exchange_rate=1, status="cancelled"),
+        ]
+        for order, amount in zip(orders, (100, 10, 200)):
+            OrderItem.objects.create(order=order, sku=self.sku, quantity=1, unit_price=amount)
+
+        response = self.client.get(f"/api/context/products/{self.product.id}/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        sections = {section["key"]: section for section in response.data["sections"]}
+        periods = {row["period"]: row for row in sections["sales-summary"]["rows"]}
+        self.assertEqual(Decimal(periods["当年"]["sales"]), Decimal("70.00"))
+        self.assertEqual(periods["当年"]["order_count"], 1)
+        self.assertEqual(sections["sales-summary"]["columns"][-1], ["sales", "商品销售额（人民币）", "rmb"])
+        self.assertIn(["amount", "原币金额", "money"], sections["sales"]["columns"])
+        self.assertIn(["currency", "币种"], sections["sales"]["columns"])
+        self.assertEqual([row["order_no"] for row in sections["sales"]["rows"]], ["T-PRODUCT-CONFIRMED"])
+        self.assertEqual(sections["sales"]["rows"][0]["amount"], Decimal("10.00"))
+        self.assertEqual(sections["sales"]["rows"][0]["currency"], "USD")
+
+    def test_supplier_context_reports_formal_procurement_and_paid_amounts_in_rmb(self):
+        supplier = Supplier.objects.create(name="Context Supplier", code="KC")
+        purchases = []
+        for number, status_value, amount, currency, exchange_rate in (
+            ("FORMAL-USD", "ordered", 10, "USD", 7),
+            ("FORMAL-CNY", "completed", 100, "CNY", 1),
+            ("DRAFT-USD", "draft", 1000, "USD", 7),
+            ("CANCEL-CNY", "cancelled", 1000, "CNY", 1),
+        ):
+            purchase = PurchaseOrder.objects.create(
+                purchase_no=f"T-PO-{number}", supplier=supplier, order_date=timezone.localdate(),
+                currency=currency, exchange_rate=exchange_rate, status=status_value,
+            )
+            purchase.items.create(sku=self.sku, quantity=1, unit_price=amount)
+            purchases.append(purchase)
+
+        payment = self.client.post(
+            f"/api/purchase-orders/{purchases[0].id}/pay/",
+            {"transaction_date": timezone.localdate().isoformat(), "amount": "5", "currency": "USD", "exchange_rate": "7"},
+            format="json",
+        )
+        self.assertEqual(payment.status_code, status.HTTP_201_CREATED, payment.data)
+
+        response = self.client.get(f"/api/context/suppliers/{supplier.id}/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        metrics = response.data["metrics"]
+        self.assertEqual(metrics[2], ["采购单记录", 2, "number"])
+        self.assertEqual(metrics[3], ["正式采购金额（人民币）", Decimal("170.00"), "rmb"])
+        self.assertEqual(metrics[4], ["已付采购款（人民币）", Decimal("35.00"), "rmb"])
 
     def test_create_customer_with_multiple_contacts_and_one_primary(self):
         preview = self.client.get("/api/customers/next-code/")

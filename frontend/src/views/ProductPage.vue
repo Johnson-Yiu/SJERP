@@ -2,7 +2,7 @@
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChevronDown, ChevronRight, Database, ListFilter, Pencil, Plus, Search, Trash2, X } from 'lucide-vue-next'
-import { api, listData } from '../api'
+import { api, listAll, listData } from '../api'
 import EntityDetailModal from '../components/EntityDetailModal.vue'
 import SummaryCards from '../components/SummaryCards.vue'
 
@@ -86,10 +86,10 @@ function notify(text, error = false) { Object.assign(message, { text, error }); 
 async function load() {
   loading.value = true
   try {
-    const [productResponse, categoryResponse, supplierResponse] = await Promise.all([api.get('/products/', { params: { search: query.value, category: categoryFilter.value } }), api.get('/categories/tree/'), api.get('/suppliers/')])
-    products.value = listData(productResponse)
+    const [productRows, categoryResponse, supplierRows] = await Promise.all([listAll('/products/', { params: { search: query.value, category: categoryFilter.value } }), api.get('/categories/tree/'), listAll('/suppliers/')])
+    products.value = productRows
     categories.value = listData(categoryResponse)
-    suppliers.value = listData(supplierResponse)
+    suppliers.value = supplierRows
   } catch (error) { notify(error.message, true) } finally { loading.value = false }
 }
 async function openCreate() {

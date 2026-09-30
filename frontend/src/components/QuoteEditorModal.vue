@@ -3,7 +3,7 @@ import TradeUnitPicker from './TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
 import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { AlertTriangle, Box, Eye, MinusCircle, PackageCheck, RotateCw, Save, Settings2, X } from 'lucide-vue-next'
-import { api, downloadQuoteExport, listData } from '../api'
+import { api, downloadQuoteExport, listAll } from '../api'
 import QuotePreviewModal from './QuotePreviewModal.vue'
 import SkuPickerPanel from './SkuPickerPanel.vue'
 import SegmentedDateInput from './SegmentedDateInput.vue'
@@ -134,7 +134,7 @@ async function selectCustomer() {
   draft.buyer_email = ''
   draft.buyer_phone = ''
   try {
-    const contacts = listData(await api.get('/contacts/', { params: { customer: customer.id } }))
+    const contacts = await listAll('/contacts/', { params: { customer: customer.id } })
     const contact = contacts.find(row => row.is_primary) || contacts[0]
     if (contact) { draft.recipient_name = contact.name; draft.buyer_email = contact.email || ''; draft.buyer_phone = contact.phone || '' }
   } catch { /* Backend will still populate snapshots on save. */ }
@@ -205,7 +205,7 @@ async function retryExport() {
   catch (error) { exportError.value = `Excel 导出仍未完成：${error.message}` }
   finally { saving.value = false }
 }
-onMounted(async () => { if (props.mode === 'create' && draft.customer) selectCustomer(); try { packagingTemplates.value = listData(await api.get('/packaging-templates/')).filter(item => item.active) } catch { packagingTemplates.value = [] } })
+onMounted(async () => { if (props.mode === 'create' && draft.customer) selectCustomer(); try { packagingTemplates.value = (await listAll('/packaging-templates/')).filter(item => item.active) } catch { packagingTemplates.value = [] } })
 </script>
 
 <template>

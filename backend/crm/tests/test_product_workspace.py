@@ -9,7 +9,7 @@ class ProductWorkspaceTests(TestCase):
         product = Product.objects.create(code="WORKSPACE", name="灯带", sales_model_prefix="COB")
         sku = SKU.objects.create(sku="WORKSPACE-SKU", product=product, sales_model="NEW", unit="pcs")
         customer = Customer.objects.create(code="WORKSPACE-C", name="Workspace customer")
-        order = Order.objects.create(order_no="WORKSPACE-O", customer=customer, order_date=date.today(), currency="USD")
+        order = Order.objects.create(order_no="WORKSPACE-O", customer=customer, order_date=date.today(), currency="USD", status="confirmed")
         OrderItem.objects.create(order=order, sku=sku, quantity=2, unit_price=10, unit_snapshot="m", sales_model_snapshot="OLD")
         cancelled = Order.objects.create(order_no="WORKSPACE-X", customer=customer, order_date=date.today(), currency="USD", status="cancelled")
         OrderItem.objects.create(order=cancelled, sku=sku, quantity=100, unit_price=10)

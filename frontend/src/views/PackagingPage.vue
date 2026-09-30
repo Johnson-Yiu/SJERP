@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ArrowDownUp, Box, ChevronDown, ChevronUp, Copy, Eye, Link2, Pencil, Plus, Search, X } from 'lucide-vue-next'
-import { api, listData } from '../api'
+import { api, listAll } from '../api'
 import SummaryCards from '../components/SummaryCards.vue'
 
 const templates = ref([]), suppliers = ref([]), skuRows = ref([]), query = ref(''), policy = ref(''), loading = ref(true), saving = ref(false)
@@ -26,7 +26,7 @@ const packagingMetrics = computed(() => [
 ])
 function notice(text, error = false) { Object.assign(toast, { text, error }); setTimeout(() => toast.text = '', 2600) }
 function resetForm(x = null) { Object.assign(form, { name: x?.name || '', supplier: x?.supplier || '', carton_length: x?.carton_length || '', carton_width: x?.carton_width || '', carton_height: x?.carton_height || '', carton_tare_weight: x?.carton_tare_weight || '', partial_carton_policy: x?.partial_carton_policy || 'SAME_CARTON', active: x?.active ?? true, description: x?.description || '' }); policyHelpOpen.value = false }
-async function load() { loading.value = true; try { [templates.value, suppliers.value, skuRows.value] = await Promise.all([api.get('/packaging-templates/').then(listData), api.get('/suppliers/').then(listData), api.get('/skus/').then(listData)]) } catch (e) { notice(e.message, true) } finally { loading.value = false } }
+async function load() { loading.value = true; try { [templates.value, suppliers.value, skuRows.value] = await Promise.all([listAll('/packaging-templates/'), listAll('/suppliers/'), listAll('/skus/')]) } catch (e) { notice(e.message, true) } finally { loading.value = false } }
 function create() { editingId.value = null; editingTemplate.value = null; resetForm(); formOpen.value = true }
 function edit(x) { editingId.value = x.id; editingTemplate.value = { ...x }; resetForm(x); formOpen.value = true }
 function details(x) { active.value = x; detailOpen.value = true }

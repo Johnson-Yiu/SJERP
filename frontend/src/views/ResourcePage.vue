@@ -3,7 +3,7 @@ import CategoryMultiPicker from "../components/CategoryMultiPicker.vue"
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChevronRight, Database, Paperclip, Pencil, Plus, Search, Trash2, UserRoundPlus, X } from 'lucide-vue-next'
-import { api, listData } from '../api'
+import { api, listAll } from '../api'
 import EntityDetailModal from '../components/EntityDetailModal.vue'
 import SimpleRichTextEditor from '../components/SimpleRichTextEditor.vue'
 import ComboInput from '../components/ComboInput.vue'
@@ -57,7 +57,7 @@ const resourceMetrics = computed(() => {
   if (endpoint === 'follow-ups') return [
     { label: '跟进记录', value: total, hint: '当前查询结果' },
     { label: '已关联客户', value: new Set(rows.value.map(row => row.customer || row.customer_name).filter(Boolean)).size, hint: '有沟通记录的客户' },
-    { label: '待跟进', value: rows.value.filter(row => row.next_follow_up && String(row.next_follow_up).slice(0, 10) <= today).length, hint: '今日或已逾期的计划' },
+    { label: '计划日期已到记录', value: rows.value.filter(row => row.next_follow_up && String(row.next_follow_up).slice(0, 10) <= today).length, hint: '历史跟进记录统计；当前待跟进以经营概览为准' },
     { label: '本月记录', value: rows.value.filter(row => String(row.followed_at || '').slice(0, 7) === today.slice(0, 7)).length, hint: '按跟进时间统计' },
   ]
   if (endpoint === 'transactions') return [
@@ -93,7 +93,7 @@ function setPrimaryContact(index) {
 function notify(message, error = false) { Object.assign(toast, { show: true, message, error }); setTimeout(() => { toast.show = false }, 2800) }
 async function load() {
   loading.value = true
-  try { rows.value = listData(await api.get(`/${props.config.endpoint}/`, { params: { ...route.query, search: query.value } })) }
+  try { rows.value = await listAll(`/${props.config.endpoint}/`, { params: { ...route.query, search: query.value } }) }
   catch (e) { notify(e.message, true) } finally { loading.value = false }
 }
 function delayedSearch() { clearTimeout(searchTimer); searchTimer = setTimeout(load, 300) }
@@ -101,7 +101,7 @@ async function loadOptions() {
   const remotes = props.config.fields.filter(f => ['remote', 'combo', 'remote_multi'].includes(f[2]))
   await Promise.all(remotes.map(async field => {
     if (options[field[4]]) return
-    try { options[field[4]] = listData(await api.get(`/${field[4]}/`)) } catch { options[field[4]] = [] }
+    try { options[field[4]] = await listAll(`/${field[4]}/`) } catch { options[field[4]] = [] }
   }))
 }
 function visibleOptions(field) {
@@ -314,6 +314,7 @@ function display(value, type, fieldName = '') {
   if (type === 'signed') return `${Number(value) > 0 ? '+' : ''}${Number(value).toLocaleString('zh-CN')}`
   return value
 }
+function isReadOnlyAutomaticMovement(row) { return props.config.endpoint === 'inventory-movements' && row.is_automatic === true }
 function formatAttachmentSize(value) {
   const size = Number(value || 0)
   if (size < 1024) return `${size} B`
@@ -360,7 +361,7 @@ watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null 
       <div v-else class="table-wrap"><table class="data-table"><thead><tr><th v-for="col in config.columns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
         <tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="detailId = row.id" @keydown.enter="detailId = row.id">
           <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><span :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
-          <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="detailId = row.id"><ChevronRight :size="14" /></button><button class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
+          <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="detailId = row.id"><ChevronRight :size="14" /></button><button v-if="!isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="!isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
         </tr>
       </tbody></table></div>
     </div>

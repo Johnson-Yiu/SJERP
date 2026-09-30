@@ -7,11 +7,31 @@ test('aggregated lists include subsequent pages and keep filters', async () => {
   const calls = []
   api.get = async (url, config) => {
     calls.push([url, config.params])
-    return { data: { results: [config.params.page], next: config.params.page === 1 ? '/next' : null } }
+    const results = config.params.page === 1
+      ? Array.from({ length: 50 }, (_, index) => ({ id: index + 1 }))
+      : Array.from({ length: 15 }, (_, index) => ({ id: index + 51 }))
+    return { data: { results, next: config.params.page === 1 ? '/next' : null } }
   }
   try {
-    assert.deepEqual(await listAll('/payment-plans/', { params: { status: 'open' } }), [1, 2])
-    assert.deepEqual(calls, [['/payment-plans/', { status: 'open', page: 1 }], ['/payment-plans/', { status: 'open', page: 2 }]])
+    for (const url of ['/customers/', '/quotes/', '/orders/', '/skus/']) {
+      const rows = await listAll(url, { params: url === '/customers/' ? { search: 'buyer' } : {} })
+      assert.equal(rows.length, 65, `${url} should include both pages`)
+      assert.equal(rows[50].id, 51)
+      assert.equal(rows[64].id, 65)
+    }
+    assert.deepEqual(calls.slice(0, 2), [['/customers/', { search: 'buyer', page: 1 }], ['/customers/', { search: 'buyer', page: 2 }]])
+    assert.equal(calls.length, 8)
+    assert.deepEqual(calls.filter(([url]) => url === '/orders/'), [['/orders/', { page: 1 }], ['/orders/', { page: 2 }]])
+  } finally { api.get = original }
+})
+
+test('listAll handles non-paginated array actions in one request', async () => {
+  const original = api.get
+  let callCount = 0
+  api.get = async () => { callCount += 1; return { data: [{ id: 1 }, { id: 2 }] } }
+  try {
+    assert.deepEqual(await listAll('/categories/tree/'), [{ id: 1 }, { id: 2 }])
+    assert.equal(callCount, 1)
   } finally { api.get = original }
 })
 

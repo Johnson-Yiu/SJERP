@@ -84,7 +84,7 @@ export const resourceConfigs = {
     columns: [['movement_date', '日期', 'date'], ['movement_no', '流水号'], ['type_display', '类型', 'tag'], ['sku_code', 'SKU'], ['product_name', '产品'], ['signed_quantity', '库存变动', 'signed'], ['warehouse', '仓库'], ['related_order_nos', '关联订单']],
     fields: [
       ['movement_no', '流水号', 'readonly'], ['movement_date', '发生日期', 'date', true],
-      ['type', '类型', 'select', true, { purchase_in: '采购入库', return_in: '客户退回', adjust_in: '盘盈入库', transfer_in: '调拨入库', production_in: '生产入库', other_in: '其他入库', sale_out: '销售出库', sample_out: '样品出库', adjust_out: '盘亏出库', transfer_out: '调拨出库', production_out: '生产领料', other_out: '其他出库' }],
+      ['type', '类型', 'select', true, { adjust_in: '盘盈入库', adjust_out: '盘亏出库', sample_out: '样品出库', return_in: '客户退回', transfer_in: '调拨入库', transfer_out: '调拨出库', production_in: '生产入库', production_out: '生产领料', other_in: '其他入库', other_out: '其他出库' }],
       ['sku', 'SKU', 'remote', true, 'skus', 'sku'], ['order', '关联订单', 'remote', false, 'orders', 'order_no'], ['quantity', '数量', 'number', true],
       ['warehouse', '仓库'], ['unit_cost', '单位成本', 'number'], ['reference', '参考号'], ['notes', '备注', 'textarea'],
     ], detail: true,

@@ -1,0 +1,2 @@
+transaction_no,transaction_date,direction,category,amount,currency,exchange_rate,customer_code,order_no,payment_method,reference,notes
+UAT-R1-CSV-FIN-NEW-001,2026-10-01,expense,UAT CSV first insert,1.00,CNY,1,,,Bank transfer,UAT CSV first insert ref,Imported through UI for first-insert verification

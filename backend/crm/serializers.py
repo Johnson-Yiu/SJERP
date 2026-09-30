@@ -8,6 +8,7 @@ import bleach
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models import Q
+from django.utils import timezone
 from django.utils.html import strip_tags
 from rest_framework import serializers
 
@@ -403,7 +404,10 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
                 sales_model_snapshot=item["sku"].sales_model or "",
                 display_name_snapshot=item["sku"].display_name_cn or item["sku"].product.name,
                 description_snapshot=item["sku"].description_en or item["sku"].description_cn or item["sku"].display_name_cn or item["sku"].product.name,
-                supplier_name_snapshot=item["supplier_sku"].supplier.name if item.get("supplier_sku") else "",
+                supplier_name_snapshot=(
+                    item["supplier_sku"].supplier.name
+                    if item.get("supplier_sku") else purchase.supplier.name
+                ),
                 supplier_model_snapshot=item["supplier_sku"].supplier_model if item.get("supplier_sku") else "",
                 supplier_sku_code_snapshot=item["supplier_sku"].supplier_sku_code if item.get("supplier_sku") else "",
                 supplier_barcode_snapshot=item["supplier_sku"].supplier_barcode if item.get("supplier_sku") else "",
@@ -1682,6 +1686,47 @@ class PackagingTemplateSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["code"]
 
+    def validate(self, attrs):
+        checks = {
+            "carton_length": ("箱长必须大于 0。", lambda value: value > 0),
+            "carton_width": ("箱宽必须大于 0。", lambda value: value > 0),
+            "carton_height": ("箱高必须大于 0。", lambda value: value > 0),
+            "qty_per_carton": ("每箱数量必须大于 0。", lambda value: value > 0),
+            "carton_tare_weight": ("纸箱皮重不能为负。", lambda value: value >= 0),
+        }
+        for field, (message, valid) in checks.items():
+            value = attrs.get(field)
+            if value is not None and not valid(value):
+                raise serializers.ValidationError({field: message})
+        return attrs
+
+    def update(self, instance, validated_data):
+        physical_fields = {
+            "carton_length", "carton_width", "carton_height", "qty_per_carton",
+            "carton_tare_weight", "partial_carton_policy",
+        }
+        with transaction.atomic():
+            template = PackagingTemplate.objects.select_for_update().get(pk=instance.pk)
+            physical_changed = any(
+                field in validated_data and validated_data[field] != getattr(template, field)
+                for field in physical_fields
+            )
+            for field, value in validated_data.items():
+                setattr(template, field, value)
+            template.save()
+            if physical_changed:
+                profiles = list(
+                    SKUPackagingProfile.objects.select_for_update().filter(
+                        packaging_template=template,
+                        verified_at__isnull=False,
+                    )
+                )
+                for profile in profiles:
+                    profile.verified_at = None
+                    profile.verified_by = None
+                    profile.save(update_fields=["verified_at", "verified_by", "updated_at"])
+        return template
+
 
 class SKUPackagingProfileSerializer(serializers.ModelSerializer):
     sku_code = serializers.CharField(source="sku.sku", read_only=True)
@@ -1693,6 +1738,45 @@ class SKUPackagingProfileSerializer(serializers.ModelSerializer):
         model = SKUPackagingProfile
         fields = "__all__"
         read_only_fields = ["verified_at", "verified_by"]
+
+    def validate(self, attrs):
+        if self.instance and "sku" in attrs and attrs["sku"].pk != self.instance.sku_id:
+            raise serializers.ValidationError({"sku": "SKU 包装配置创建后不能更换 SKU。"})
+
+        template = attrs.get("packaging_template", getattr(self.instance, "packaging_template", None))
+        current_template_id = getattr(self.instance, "packaging_template_id", None)
+        if template and not template.active and (self.instance is None or template.pk != current_template_id):
+            raise serializers.ValidationError({"packaging_template": "停用包装模板不能用于新的 SKU 包装配置。"})
+
+        checks = {
+            "qty_per_carton_override": ("每箱数量必须大于 0。", lambda value: value > 0),
+            "carton_length_override": ("箱长必须大于 0。", lambda value: value > 0),
+            "carton_width_override": ("箱宽必须大于 0。", lambda value: value > 0),
+            "carton_height_override": ("箱高必须大于 0。", lambda value: value > 0),
+            "unit_net_weight": ("单件净重不能为负。", lambda value: value >= 0),
+            "carton_tare_weight_override": ("纸箱皮重不能为负。", lambda value: value >= 0),
+            "gross_weight_override": ("整箱预计毛重不能为负。", lambda value: value >= 0),
+        }
+        for field, (message, valid) in checks.items():
+            value = attrs.get(field)
+            if value is not None and not valid(value):
+                raise serializers.ValidationError({field: message})
+        return attrs
+
+    def update(self, instance, validated_data):
+        effective_fields = {
+            "packaging_template", "unit_net_weight", "qty_per_carton_override",
+            "carton_length_override", "carton_width_override", "carton_height_override",
+            "carton_tare_weight_override", "gross_weight_override",
+        }
+        effective_changed = any(
+            field in validated_data and validated_data[field] != getattr(instance, field)
+            for field in effective_fields
+        )
+        if effective_changed:
+            validated_data["verified_at"] = None
+            validated_data["verified_by"] = None
+        return super().update(instance, validated_data)
 
     def get_packaging_status(self, obj):
         from .services.packaging import resolve_packaging

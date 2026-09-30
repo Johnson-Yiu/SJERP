@@ -84,6 +84,17 @@ class SupplierAllocationApiTests(TestCase):
         self.assertEqual(purchase_item.supplier_sku_id, self.source_a.pk)
         self.assertEqual(purchase_item.supplier_model_snapshot, "AA-MODEL-1")
 
+        self.source_a.supplier_model = "AA-MODEL-2"
+        self.source_a.purchase_price = Decimal("4.50")
+        self.source_a.moq = Decimal("50")
+        self.source_a.save(update_fields=["supplier_model", "purchase_price", "moq", "updated_at"])
+        self.item.refresh_from_db()
+        purchase_item.refresh_from_db()
+        self.assertEqual(self.item.supplier_model_snapshot, "AA-MODEL-1")
+        self.assertEqual(self.item.supplier_price_snapshot, Decimal("3.2000"))
+        self.assertEqual(self.item.supplier_moq_snapshot, Decimal("20"))
+        self.assertEqual(purchase_item.supplier_model_snapshot, "AA-MODEL-1")
+
     def test_legacy_historical_purchase_without_supplier_sku_remains_visible_as_pending_source(self):
         purchase = PurchaseOrder.objects.create(
             purchase_no="PO-ALLOC-HISTORY",

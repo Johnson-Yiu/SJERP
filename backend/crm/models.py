@@ -1072,6 +1072,11 @@ class PurchaseOrderItem(TradeUnitLine):
             self.supplier_sku_code_snapshot = self.supplier_sku_code_snapshot or supplier_sku.supplier_sku_code
             self.supplier_barcode_snapshot = self.supplier_barcode_snapshot or supplier_sku.supplier_barcode
             self.supplier_characteristics_snapshot = self.supplier_characteristics_snapshot or supplier_sku.characteristics
+        elif self._state.adding and self.purchase_order_id:
+            # A manual purchase may deliberately have no maintained SupplierSKU.
+            # Its supplier is still a historical business fact and must not change
+            # with a later supplier rename.
+            self.supplier_name_snapshot = self.supplier_name_snapshot or self.purchase_order.supplier.name
         super().save(*args, **kwargs)
         if creating and self.purchase_order.cost_allocation_version == 0 and not self.cost_allocations.exists():
             PurchaseCostAllocation.objects.create(

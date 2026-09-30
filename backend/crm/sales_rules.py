@@ -1,5 +1,6 @@
 """Sales restrictions, independent of SKU identity and purchasing MOQ."""
 from decimal import Decimal
+from types import SimpleNamespace
 from django.db.models import Q
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
@@ -65,8 +66,16 @@ class SalesRuleSerializer(serializers.ModelSerializer):
         validate_filters(product, value('filters', {}))
         if value('minimum_quantity', 0) <= 0:
             raise ValidationError({'minimum_quantity': '最低报价数量必须大于 0。'})
-        if sku and value('unit', 'pcs').strip().casefold() != sku.unit.strip().casefold():
-            raise ValidationError({'unit': f'请使用 SKU 的单位：{sku.unit}。'})
+        rule_unit = value('unit', 'pcs')
+        if sku and rule_unit.strip().casefold() != sku.unit.strip().casefold():
+            raise ValidationError({'unit': f'规则单位 {rule_unit} 与 SKU {sku.sku} 的基础单位 {sku.unit} 不一致。'})
+        if not sku:
+            rule_for_match = SimpleNamespace(filters=value('filters', {}))
+            for matched_sku in SKU.objects.filter(product=product, active=True).order_by('sku'):
+                if matches(matched_sku, rule_for_match) and rule_unit.strip().casefold() != matched_sku.unit.strip().casefold():
+                    raise ValidationError({
+                        'unit': f'规则单位 {rule_unit} 与 SKU {matched_sku.sku} 的基础单位 {matched_sku.unit} 不一致。'
+                    })
         if value('effective_from') and value('effective_until') and value('effective_until') < value('effective_from'):
             raise ValidationError({'effective_until': '结束日期不能早于开始日期。'})
         return attrs

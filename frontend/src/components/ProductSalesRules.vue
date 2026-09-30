@@ -37,7 +37,7 @@ const scope = row => row.sku ? (skus.value.find(s => s.id === row.sku)?.sales_mo
 </script>
 <template>
 <section class="sales-rules">
-  <header><div><h3>销售规则</h3><p>设置 SKU 如何报价。按报价日期生效，每一报价行均须满足最低数量；多条规则命中时取最严格要求。</p></div><button class="primary" :disabled="busy" @click="edit()">＋ 新增规则</button></header>
+  <header><div><h3>销售规则</h3><p>设置 SKU 如何报价。按报价日期生效，每一报价行均须满足最低数量；多条规则命中时取最严格要求。</p><p>MOQ 按 SKU 基础单位判断；使用卷/箱报价时，系统会先换算为基础数量。</p></div><button class="primary" :disabled="busy" @click="edit()">＋ 新增规则</button></header>
   <p v-if="error" class="error" role="alert">{{ error }}</p>
   <form v-if="draft" @submit.prevent="save">
     <h4>{{ draft.id ? '编辑' : '新增' }}最低报价数量规则</h4>

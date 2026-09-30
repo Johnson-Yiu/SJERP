@@ -5,7 +5,7 @@ import { api, listData } from '../api'
 import SummaryCards from '../components/SummaryCards.vue'
 
 const templates = ref([]), suppliers = ref([]), skuRows = ref([]), query = ref(''), policy = ref(''), loading = ref(true), saving = ref(false)
-const formOpen = ref(false), detailOpen = ref(false), linkedOpen = ref(false), policyHelpOpen = ref(false), editingId = ref(null), active = ref(null)
+const formOpen = ref(false), detailOpen = ref(false), linkedOpen = ref(false), policyHelpOpen = ref(false), editingId = ref(null), active = ref(null), editingTemplate = ref(null)
 const sort = reactive({ key: 'name', direction: 'asc' })
 const toast = reactive({ text: '', error: false })
 const form = reactive({ name: '', supplier: '', carton_length: '', carton_width: '', carton_height: '', carton_tare_weight: '', partial_carton_policy: 'SAME_CARTON', active: true, description: '' })
@@ -27,20 +27,30 @@ const packagingMetrics = computed(() => [
 function notice(text, error = false) { Object.assign(toast, { text, error }); setTimeout(() => toast.text = '', 2600) }
 function resetForm(x = null) { Object.assign(form, { name: x?.name || '', supplier: x?.supplier || '', carton_length: x?.carton_length || '', carton_width: x?.carton_width || '', carton_height: x?.carton_height || '', carton_tare_weight: x?.carton_tare_weight || '', partial_carton_policy: x?.partial_carton_policy || 'SAME_CARTON', active: x?.active ?? true, description: x?.description || '' }); policyHelpOpen.value = false }
 async function load() { loading.value = true; try { [templates.value, suppliers.value, skuRows.value] = await Promise.all([api.get('/packaging-templates/').then(listData), api.get('/suppliers/').then(listData), api.get('/skus/').then(listData)]) } catch (e) { notice(e.message, true) } finally { loading.value = false } }
-function create() { editingId.value = null; resetForm(); formOpen.value = true }
-function edit(x) { editingId.value = x.id; resetForm(x); formOpen.value = true }
+function create() { editingId.value = null; editingTemplate.value = null; resetForm(); formOpen.value = true }
+function edit(x) { editingId.value = x.id; editingTemplate.value = { ...x }; resetForm(x); formOpen.value = true }
 function details(x) { active.value = x; detailOpen.value = true }
 function linked(x) { active.value = x; linkedOpen.value = true }
 function setSort(key) { if (sort.key === key) sort.direction = sort.direction === 'asc' ? 'desc' : 'asc'; else Object.assign(sort, { key, direction: 'asc' }) }
 function sortIcon(key) { return sort.key !== key ? ArrowDownUp : sort.direction === 'asc' ? ChevronUp : ChevronDown }
-async function save() { saving.value = true; const data = { ...form, supplier: form.supplier || null }; try { editingId.value ? await api.put(`/packaging-templates/${editingId.value}/`, data) : await api.post('/packaging-templates/', data); formOpen.value = false; await load(); notice(editingId.value ? '包装模板已更新' : '包装模板已创建') } catch (e) { notice(e.message, true) } finally { saving.value = false } }
+function physicalTemplateChanged() {
+  const original = editingTemplate.value
+  return original && ['carton_length', 'carton_width', 'carton_height', 'carton_tare_weight', 'partial_carton_policy']
+    .some(field => String(form[field] ?? '') !== String(original[field] ?? ''))
+}
+async function save() {
+  const linkedSkuCount = Number(editingTemplate.value?.linked_sku_count || 0)
+  if (editingId.value && linkedSkuCount > 0 && physicalTemplateChanged() && !window.confirm(`该模板已关联 ${linkedSkuCount} 个 SKU。修改包装参数后，这些 SKU 的包装验证状态将失效，需要重新确认。是否继续？`)) return
+  saving.value = true; const data = { ...form, supplier: form.supplier || null }
+  try { editingId.value ? await api.put(`/packaging-templates/${editingId.value}/`, data) : await api.post('/packaging-templates/', data); formOpen.value = false; await load(); notice(editingId.value ? '包装模板已更新' : '包装模板已创建') } catch (e) { notice(e.message, true) } finally { saving.value = false }
+}
 async function duplicate(x) { const { id, code, qty_per_carton, created_at, updated_at, cbm, supplier_name, linked_sku_count, ...data } = x; try { await api.post('/packaging-templates/', { ...data, name: `${x.name}（副本）` }); await load(); notice('已生成可编辑的新模板') } catch (e) { notice(e.message, true) } }
 onMounted(load)
 </script>
 
 <template>
   <section class="packaging-page">
-    <div class="page-head"><div><h2>包装管理</h2><p>管理通用包装模板，维护供应商、尺寸和装箱规则，并查看关联的 SKU。</p></div><button class="btn btn-primary" @click="create"><Plus :size="16" /> 新建模板</button></div>
+    <div class="page-head"><div><h2>包装管理</h2><p>管理通用包装模板，维护供应商、尺寸和装箱规则，并查看关联的 SKU。包装模板变化不会改写历史装箱方案。</p></div><button class="btn btn-primary" @click="create"><Plus :size="16" /> 新建模板</button></div>
     <SummaryCards :items="packagingMetrics" />
     <div class="panel list-panel"><div class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索模板名称或供应商" /></div><label>尾货策略 <select v-model="policy"><option value="">全部</option><option v-for="(label,key) in policyLabels" :key="key" :value="key">{{ label }}</option></select></label></div><div v-if="loading" class="loading"><div class="spinner" /></div><div v-else-if="!filtered.length" class="empty"><Box :size="34" /><h3>没有匹配的包装模板</h3><p>点击“新建模板”建立首个包装资料。</p></div><div v-else class="table-wrap"><table class="data-table"><thead><tr><th v-for="column in [{key:'name',label:'模板名称'},{key:'supplier',label:'供应商'},{key:'carton_length',label:'长 (cm)'},{key:'carton_width',label:'宽 (cm)'},{key:'carton_height',label:'高 (cm)'},{key:'volume',label:'体积 (m³)'},{key:'weight',label:'外箱皮重 (kg)'},{key:'policy',label:'尾货策略'},{key:'linked',label:'关联 SKU'}]" :key="column.key"><button class="sort-head" :class="{ active: sort.key === column.key }" @click="setSort(column.key)">{{ column.label }}<component :is="sortIcon(column.key)" :size="13" /></button></th><th>操作</th></tr></thead><tbody><tr v-for="x in sorted" :key="x.id"><td><button class="text-link primary-cell" @click="details(x)">{{ x.name }}</button></td><td>{{ x.supplier_name || '未指定' }}</td><td>{{ Number(x.carton_length || 0).toFixed(1) }}</td><td>{{ Number(x.carton_width || 0).toFixed(1) }}</td><td>{{ Number(x.carton_height || 0).toFixed(1) }}</td><td>{{ Number(x.cbm || 0).toFixed(4) }}</td><td>{{ x.carton_tare_weight }} kg</td><td><span class="tag">{{ policyLabels[x.partial_carton_policy] }}</span></td><td><button class="text-link" @click="linked(x)">{{ x.linked_sku_count || 0 }} 个 SKU</button></td><td><div class="table-actions"><button class="mini-btn" title="查看详情" @click="details(x)"><Eye :size="15" /></button><button class="mini-btn" title="复制模板" @click="duplicate(x)"><Copy :size="15" /></button><button class="mini-btn" title="编辑" @click="edit(x)"><Pencil :size="15" /></button></div></td></tr></tbody></table></div><div v-if="!loading && filtered.length" class="table-foot">共 {{ filtered.length }} 条包装模板</div></div>
 

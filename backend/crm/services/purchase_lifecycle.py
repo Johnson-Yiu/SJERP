@@ -26,9 +26,11 @@ def _validate_purchase_for_placement(purchase):
         if item.quantity <= 0 or item.unit_price < 0:
             raise ValidationError("采购数量必须大于零，单价不能为负。")
         source = item.supplier_sku
-        if not source or source.supplier_id != purchase.supplier_id or source.sku_id != item.sku_id:
+        # A manual purchase may intentionally have no maintained SupplierSKU.
+        # When a source is present it remains a strict purchasing identity.
+        if source and (source.supplier_id != purchase.supplier_id or source.sku_id != item.sku_id):
             raise ValidationError("采购明细的供应商来源必须匹配当前供应商和 SKU。")
-        if not source.is_active:
+        if source and not source.is_active:
             raise ValidationError("采购明细不能使用已停用的供应商来源。")
         if item.trade_unit_id and item.trade_unit.supplier_id and item.trade_unit.supplier_id != purchase.supplier_id:
             raise ValidationError("包装规格的供应商必须与采购单供应商一致。")

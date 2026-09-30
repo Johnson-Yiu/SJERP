@@ -116,21 +116,23 @@ class SKUPlansCandidatesTests(TestCase):
             self.assertEqual(placed.status_code, 200, placed.data)
         return response
 
-    def test_rules_are_dynamic_and_purchase_creates_source_on_demand(self):
+    def test_candidates_are_dynamic_and_manual_purchase_does_not_create_source(self):
         self.rule()
         self.assertFalse(SupplierSKU.objects.exists())
         pool = self.client.get(f"/api/skus/{self.sku.pk}/supplier-candidates/").data
         self.assertEqual(pool["candidates"][0]["supplier"], self.a.pk)
+        self.assertEqual(SupplierSKU.objects.count(), 0)
         for supplier, no in [(self.a, "PA"), (self.b, "PB")]:
             response = self.purchase(supplier, no)
             self.assertEqual(response.status_code, 201, response.data)
-        self.assertEqual(SupplierSKU.objects.count(), 2)
+        self.assertEqual(SupplierSKU.objects.count(), 0)
         item = PurchaseOrderItem.objects.get(purchase_order__supplier=self.a)
-        self.assertEqual(item.supplier_characteristics_snapshot, {"背胶": "3M"})
-        source = item.supplier_sku
-        source.characteristics = {"背胶": "changed"}; source.save()
+        self.assertIsNone(item.supplier_sku)
+        self.assertEqual(item.supplier_name_snapshot, self.a.name)
+        self.assertEqual(item.supplier_characteristics_snapshot, {})
+        self.a.name = "供应商甲新名称"; self.a.save(update_fields=["name"])
         item.refresh_from_db()
-        self.assertEqual(item.supplier_characteristics_snapshot, {"背胶": "3M"})
+        self.assertEqual(item.supplier_name_snapshot, "供应商甲")
 
     def test_exclusion_wins_over_rules_and_blocks_purchase(self):
         self.rule()

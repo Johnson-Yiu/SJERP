@@ -98,8 +98,12 @@ def candidates(sku):
 
 
 def ensure_purchase_source(sku, supplier, order=None, currency=None):
-    """Called within the purchase transaction, only when a real order is saved."""
-    from .supplier_sku import create_supplier_sku
+    """Resolve a real, maintained source when one is available.
+
+    A candidate is not itself a SupplierSKU.  Manual purchases may therefore
+    proceed without a source record rather than creating fictitious AUTO data.
+    ``currency`` remains accepted for compatibility with existing callers.
+    """
     if order is not None:
         allocated_sources = list(order.items.filter(
             sku=sku,
@@ -117,14 +121,9 @@ def ensure_purchase_source(sku, supplier, order=None, currency=None):
     sources = list(sku.supplier_skus.filter(supplier=supplier, is_active=True).order_by("-is_preferred", "id"))
     if sources:
         if len(sources) > 1 and not sources[0].is_preferred:
-            raise ValidationError({"supplier_sku": "该供应商有多个供货档案，请明确选择本次采购来源。"})
+            raise ValidationError({"supplier_sku": "该供应商有多个启用中的供货档案，请明确选择本次 Supplier SKU。"})
         return sources[0]
-    code = f"AUTO-{sku.sku}"
-    if SupplierSKU.objects.filter(supplier=supplier, supplier_sku_code=code).exists():
-        raise ValidationError({"supplier_sku": "自动供货档案已停用，请选择或恢复供货档案。"})
-    candidate = next((r for r in candidates(sku) if r["supplier"] == supplier.pk), {})
-    return create_supplier_sku({"sku": sku, "supplier": supplier, "supplier_sku_code": code,
-                                "characteristics": candidate.get("characteristics", {}), "currency": currency or "USD"})
+    return None
 
 
 def resolve_purchase_item_sources(items, supplier, *, order=None, purchase_currency=None):

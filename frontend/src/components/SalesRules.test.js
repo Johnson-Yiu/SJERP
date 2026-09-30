@@ -46,3 +46,8 @@ test('valid MOQ check allows quote creation and ignores stale check responses', 
   await old
   assert.equal(context.state.salesChecks.value[0].errors[0], 'current')
 })
+
+test('sales-rule editor explains that MOQ uses the SKU base quantity', async () => {
+  const source = await readFile(new URL('./ProductSalesRules.vue', import.meta.url), 'utf8')
+  assert.match(source, /MOQ 按 SKU 基础单位判断；使用卷\/箱报价时，系统会先换算为基础数量。/)
+})

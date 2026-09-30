@@ -95,8 +95,14 @@ class TradeUnitsTests(TestCase):
         self.assertAlmostEqual(Quote.objects.get(pk=quote['id']).items.annotate(value=amount_expression()).get().value, Decimal(100))
 
     def test_catalog_immutable_default_and_supplier_scope(self):
-        response = self.client.patch(f'/api/sku-trade-units/{self.unit.pk}/', {'factor': '20'}, format='json')
-        self.assertEqual(response.status_code, 400)
+        other_sku = SKU.objects.create(product=self.product, sku='TU-IMMUTABLE-OTHER', unit='m')
+        other_supplier = Supplier.objects.create(code='TI', name='Immutable supplier')
+        for change in (
+            {'sku': other_sku.pk}, {'supplier': other_supplier.pk}, {'name': '20m Roll'},
+            {'unit': 'Box'}, {'factor': '20'}, {'allow_fraction': True},
+        ):
+            response = self.client.patch(f'/api/sku-trade-units/{self.unit.pk}/', change, format='json')
+            self.assertEqual(response.status_code, 400, change)
         self.client.patch(f'/api/sku-trade-units/{self.unit.pk}/', {'is_default': True}, format='json')
         another = self.post('sku-trade-units/', dict(sku=self.sku.pk, name='20m Roll', unit='Roll', factor='20', is_default=True))
         self.unit.refresh_from_db()

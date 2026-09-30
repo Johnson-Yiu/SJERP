@@ -232,16 +232,48 @@ class SupplierSKUApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(PurchaseOrderItem.objects.get(purchase_order_id=response.data["id"]).supplier_sku_id, active.id)
 
-    def test_auto_supplier_source_uses_purchase_currency(self):
-        for supplier, currency in ((self.supplier_a, "CNY"), (self.supplier_b, "EUR")):
-            response = self.client.post("/api/purchase-orders/", {
-                "supplier": supplier.id, "order_date": "2026-08-23", "currency": currency,
-                "exchange_rate": "1", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
-            }, format="json")
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-            source = PurchaseOrderItem.objects.get(purchase_order_id=response.data["id"]).supplier_sku
-            self.assertEqual(source.currency, currency)
-            self.assertEqual(source.purchase_price, Decimal("0"))
+    def test_manual_purchase_without_source_keeps_supplier_fact_without_creating_source(self):
+        source_count = SupplierSKU.objects.count()
+        response = self.client.post("/api/purchase-orders/", {
+            "supplier": self.supplier_a.id, "order_date": "2026-08-23", "currency": "CNY",
+            "exchange_rate": "1", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        item = PurchaseOrderItem.objects.get(purchase_order_id=response.data["id"])
+        self.assertIsNone(item.supplier_sku)
+        self.assertEqual(item.supplier_name_snapshot, "供应商 A")
+        self.assertEqual(item.supplier_model_snapshot, "")
+        self.assertEqual(item.supplier_sku_code_snapshot, "")
+        self.assertEqual(item.supplier_barcode_snapshot, "")
+        self.assertEqual(item.supplier_characteristics_snapshot, {})
+        self.assertEqual(SupplierSKU.objects.count(), source_count)
+        self.assertEqual(self.client.post(f"/api/purchase-orders/{response.data['id']}/place/", {}, format="json").status_code, status.HTTP_200_OK)
+
+        self.supplier_a.name = "供应商 A 新名称"
+        self.supplier_a.save(update_fields=["name"])
+        item.refresh_from_db()
+        self.assertEqual(item.supplier_name_snapshot, "供应商 A")
+
+    def test_multiple_active_manual_sources_require_explicit_selection(self):
+        first = self.create_source(supplier_sku_code="A-MANUAL-1")
+        preferred = self.create_source(supplier_sku_code="A-MANUAL-2", is_preferred=True)
+        payload = {
+            "supplier": self.supplier_a.id, "order_date": "2026-08-23", "currency": "USD",
+            "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
+        }
+        automatic = self.client.post("/api/purchase-orders/", payload, format="json")
+        self.assertEqual(automatic.status_code, status.HTTP_201_CREATED, automatic.data)
+        self.assertEqual(PurchaseOrderItem.objects.get(purchase_order_id=automatic.data["id"]).supplier_sku_id, preferred.id)
+
+        preferred.is_preferred = False
+        preferred.save(update_fields=["is_preferred"])
+        rejected = self.client.post("/api/purchase-orders/", payload, format="json")
+        self.assertEqual(rejected.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("多个启用中的供货档案", str(rejected.data))
+
+        payload["items"][0]["supplier_sku"] = first.id
+        explicit = self.client.post("/api/purchase-orders/", payload, format="json")
+        self.assertEqual(explicit.status_code, status.HTTP_201_CREATED, explicit.data)
 
     def test_draft_supplier_change_requires_items_and_draft_rejects_inactive_source(self):
         source_a = self.create_source()
@@ -294,6 +326,11 @@ class SupplierSKUApiTests(TestCase):
         )
         PurchaseOrderItem.objects.create(purchase_order=purchase, sku=self.sku, supplier_sku=referenced, quantity=1, unit_price=2)
         response = self.client.delete(f"/api/supplier-skus/{referenced.id}/")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        order_referenced = self.create_source(self.supplier_b, supplier_sku_code="B-ORDER-REF")
+        self.order.items.create(sku=self.sku, supplier_sku=order_referenced, quantity=1, unit_price=2)
+        response = self.client.delete(f"/api/supplier-skus/{order_referenced.id}/")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         unused = self.create_source(self.supplier_b, supplier_sku_code="B-UNUSED")

@@ -2,6 +2,7 @@ from datetime import date
 from decimal import Decimal
 
 from django.test import TestCase
+from django.utils import timezone
 from rest_framework.test import APIClient
 
 from crm.models import Customer, Order, PackagingTemplate, Product, Quote, SKU, Shipment, ShipmentPackage, SKUPackagingProfile
@@ -97,3 +98,93 @@ class PackagingDomainTests(TestCase):
         self.assertEqual(response.status_code, 201, response.data)
         package = ShipmentPackage.objects.get(pk=response.data["id"])
         self.assertEqual(package.shipment, shipment)
+
+    def test_profile_effective_changes_clear_verification_but_same_value_does_not(self):
+        profile = SKUPackagingProfile.objects.create(
+            sku=self.sku, packaging_template=self.template, unit_net_weight="0.2",
+            verified_at=timezone.now(),
+        )
+        url = f"/api/sku-packaging-profiles/{profile.pk}/"
+        same = self.client.patch(url, {"unit_net_weight": "0.2"}, format="json")
+        self.assertEqual(same.status_code, 200, same.data)
+        profile.refresh_from_db()
+        self.assertIsNotNone(profile.verified_at)
+
+        changed = self.client.patch(url, {"unit_net_weight": "0.3"}, format="json")
+        self.assertEqual(changed.status_code, 200, changed.data)
+        profile.refresh_from_db()
+        self.assertIsNone(profile.verified_at)
+        self.assertIsNone(profile.verified_by)
+
+    def test_sku_packaging_save_then_verify_records_final_configuration(self):
+        response = self.client.put(f"/api/skus/{self.sku.pk}/packaging/", {
+            "packaging_template": self.template.pk,
+            "unit_net_weight": "0.4",
+            "verify": True,
+        }, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        profile = SKUPackagingProfile.objects.get(sku=self.sku)
+        self.assertEqual(profile.unit_net_weight, Decimal("0.4"))
+        self.assertIsNotNone(profile.verified_at)
+
+    def test_physical_template_update_invalidates_all_profiles_but_name_does_not(self):
+        other = SKU.objects.create(product=self.product, sku="SKU-PACK-OTHER")
+        first = SKUPackagingProfile.objects.create(sku=self.sku, packaging_template=self.template, verified_at=timezone.now())
+        second = SKUPackagingProfile.objects.create(sku=other, packaging_template=self.template, verified_at=timezone.now())
+        url = f"/api/packaging-templates/{self.template.pk}/"
+        renamed = self.client.patch(url, {"name": "renamed"}, format="json")
+        self.assertEqual(renamed.status_code, 200, renamed.data)
+        first.refresh_from_db(); second.refresh_from_db()
+        self.assertIsNotNone(first.verified_at)
+        self.assertIsNotNone(second.verified_at)
+
+        resized = self.client.patch(url, {"carton_length": "55"}, format="json")
+        self.assertEqual(resized.status_code, 200, resized.data)
+        first.refresh_from_db(); second.refresh_from_db()
+        self.assertIsNone(first.verified_at)
+        self.assertIsNone(second.verified_at)
+
+    def test_inactive_template_profile_identity_and_numeric_boundaries(self):
+        inactive = PackagingTemplate.objects.create(
+            code="CTN-INACTIVE", name="Inactive", active=False,
+            carton_length="50", carton_width="40", carton_height="30", carton_tare_weight="1",
+        )
+        rejected = self.client.post("/api/sku-packaging-profiles/", {
+            "sku": self.sku.pk, "packaging_template": inactive.pk,
+        }, format="json")
+        self.assertEqual(rejected.status_code, 400)
+        profile = SKUPackagingProfile.objects.create(sku=self.sku, packaging_template=inactive)
+        other = SKU.objects.create(product=self.product, sku="SKU-PACK-PROFILE-OTHER")
+        profile_url = f"/api/sku-packaging-profiles/{profile.pk}/"
+        self.assertEqual(self.client.patch(profile_url, {"sku": other.pk}, format="json").status_code, 400)
+        self.assertEqual(self.client.patch(profile_url, {"unit_net_weight": "0.1"}, format="json").status_code, 200)
+
+        for field, value in {
+            "qty_per_carton_override": "0",
+            "carton_length_override": "0",
+            "carton_width_override": "-1",
+            "carton_height_override": "0",
+            "unit_net_weight": "-0.1",
+            "carton_tare_weight_override": "-0.1",
+            "gross_weight_override": "-0.1",
+        }.items():
+            self.assertEqual(self.client.patch(profile_url, {field: value}, format="json").status_code, 400, field)
+
+    def test_linked_template_cannot_be_deleted_and_packing_snapshot_is_stable(self):
+        customer = Customer.objects.create(code="C-PACK-SNAPSHOT", name="Packing Snapshot Buyer")
+        quote = Quote.objects.create(quote_no="QT-PACK-SNAPSHOT", customer=customer, quote_date=date.today())
+        quote.items.create(sku=self.sku, quantity="50", unit_price="1")
+        SKUPackagingProfile.objects.create(sku=self.sku, packaging_template=self.template, unit_net_weight="0.2")
+        plan = generate_packing_plan(quote)
+        carton = plan.cartons.first()
+        original_snapshot = dict(carton.packaging_template_snapshot)
+        original_dimensions = (carton.length, carton.width, carton.height)
+        rejected = self.client.delete(f"/api/packaging-templates/{self.template.pk}/")
+        self.assertEqual(rejected.status_code, 400)
+        self.assertIn("仍被 SKU 使用", str(rejected.data))
+
+        updated = self.client.patch(f"/api/packaging-templates/{self.template.pk}/", {"carton_length": "60"}, format="json")
+        self.assertEqual(updated.status_code, 200, updated.data)
+        carton.refresh_from_db()
+        self.assertEqual(carton.packaging_template_snapshot, original_snapshot)
+        self.assertEqual((carton.length, carton.width, carton.height), original_dimensions)

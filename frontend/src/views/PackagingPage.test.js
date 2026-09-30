@@ -31,3 +31,12 @@ test('packaging form keeps dimensions in one row and shows policy help as a floa
   assert.match(source, /carton_length" type="number" min="0\.1" step="0\.1"/)
   assert.match(source, /Number\(x\.carton_length \|\| 0\)\.toFixed\(1\)/)
 })
+
+test('editing linked template physical data requires verification invalidation confirmation', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /physicalTemplateChanged/)
+  assert.match(source, /linkedSkuCount > 0/)
+  assert.match(source, /该模板已关联 \$\{linkedSkuCount\} 个 SKU。修改包装参数后，这些 SKU 的包装验证状态将失效，需要重新确认。是否继续？/)
+  assert.match(source, /包装模板变化不会改写历史装箱方案。/)
+})

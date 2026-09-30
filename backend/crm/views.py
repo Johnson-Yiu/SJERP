@@ -879,15 +879,21 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 return Response({"profile": SKUPackagingProfileSerializer(profile).data, "effective": packaging_summary(sku)})
             except SKUPackagingProfile.DoesNotExist:
                 return Response({"profile": None, "effective": packaging_summary(sku)})
-        profile, created = SKUPackagingProfile.objects.get_or_create(sku=sku)
-        before = snapshot(profile)
-        serializer = SKUPackagingProfileSerializer(profile, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        profile = serializer.save()
-        if request.data.get("verify"):
-            profile.verified_at = timezone.now(); profile.verified_by = request.user if request.user.is_authenticated else None
-            profile.save(update_fields=["verified_at", "verified_by", "updated_at"])
-        record_operation(request=request, instance=profile, action="create" if created else "update", action_label="保存 SKU 包装配置", before=before, metadata={"sku_id": sku.id, "verified": bool(request.data.get("verify"))})
+        with transaction.atomic():
+            profile, created = SKUPackagingProfile.objects.get_or_create(sku=sku)
+            if not created:
+                profile = SKUPackagingProfile.objects.select_for_update().get(pk=profile.pk)
+            before = snapshot(profile)
+            serializer = SKUPackagingProfileSerializer(profile, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            profile = serializer.save()
+            if request.data.get("verify"):
+                # Verification is deliberately recorded only after the final
+                # effective values have been saved.
+                profile.verified_at = timezone.now()
+                profile.verified_by = request.user if request.user.is_authenticated else None
+                profile.save(update_fields=["verified_at", "verified_by", "updated_at"])
+            record_operation(request=request, instance=profile, action="create" if created else "update", action_label="保存 SKU 包装配置", before=before, metadata={"sku_id": sku.id, "verified": bool(request.data.get("verify"))})
         return Response({"profile": SKUPackagingProfileSerializer(profile).data, "effective": packaging_summary(sku)})
 
 
@@ -895,7 +901,18 @@ class PackagingTemplateViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = PackagingTemplateSerializer
     queryset = PackagingTemplate.objects.select_related("supplier").prefetch_related("sku_profiles")
     search_fields = ["code", "name", "supplier__name", "description"]
-    search_fields = ["code", "name", "description"]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.sku_profiles.exists():
+            return Response(
+                {"detail": "该包装模板仍被 SKU 使用，不能删除；请先更换关联 SKU 的包装模板，或将模板停用。"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            return super().destroy(request, *args, **kwargs)
+        except ProtectedError:
+            return Response({"detail": "该包装模板已被业务记录引用，不能删除；请将模板停用。"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SKUPackagingProfileViewSet(AuditTrailMixin, viewsets.ModelViewSet):

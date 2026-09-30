@@ -2,7 +2,7 @@ from datetime import date
 from decimal import Decimal
 from django.test import TestCase
 from rest_framework.test import APIClient
-from crm.models import CategoryAttribute, Customer, Product, ProductCategory, Quote, SalesRule, SKU
+from crm.models import CategoryAttribute, Customer, Product, ProductCategory, Quote, SalesRule, SKU, SKUTradeUnit
 from crm.sales_rules import check_rows
 
 
@@ -94,3 +94,40 @@ class SalesRulesTests(TestCase):
         self.white.parameter_values['voltage'] = '12'
         self.white.save()
         self.assertFalse(self.check(self.white, 50)['errors'])
+
+    def test_product_filter_rule_rejects_mismatched_active_sku_base_unit(self):
+        meter = SKU.objects.create(
+            product=self.product, sku='GREEN-METER', sales_model='GM',
+            parameter_values={'color': '绿色'}, unit='m',
+        )
+        rejected = self.client.post('/api/sales-rules/', {
+            'product': self.product.pk, 'name': '绿色错误单位',
+            'filters': {self.key: ['绿色']}, 'minimum_quantity': 10, 'unit': 'pcs',
+        }, format='json')
+        self.assertEqual(rejected.status_code, 400, rejected.data)
+        self.assertIn(f'SKU {meter.sku}', str(rejected.data))
+        self.assertIn('基础单位 m', str(rejected.data))
+
+        no_current_match = self.client.post('/api/sales-rules/', {
+            'product': self.product.pk, 'name': '未来绿色规则',
+            'filters': {self.key: ['黄色']}, 'minimum_quantity': 10, 'unit': 'm',
+        }, format='json')
+        self.assertEqual(no_current_match.status_code, 201, no_current_match.data)
+
+    def test_moq_uses_trade_converted_base_quantity_and_quote_snapshot_survives_deletion(self):
+        rolls = SKUTradeUnit.objects.create(sku=self.white, name='10 pcs roll', unit='roll', factor=10)
+        payload = lambda quantity: {
+            'customer': self.customer.pk, 'quote_date': '2026-09-16',
+            'items': [{'sku': self.white.pk, 'trade_unit': rolls.pk, 'trade_quantity': quantity, 'trade_unit_price': 10}],
+        }
+        self.assertEqual(self.client.post('/api/quotes/', payload(9), format='json').status_code, 400)
+        created = self.client.post('/api/quotes/', payload(10), format='json')
+        self.assertEqual(created.status_code, 201, created.data)
+        quote = Quote.objects.get(pk=created.data['id'])
+        snapshot = quote.items.get().sales_rules_snapshot
+        self.assertEqual(snapshot[0]['minimum_quantity'], '100.00')
+
+        self.rule.delete()
+        quote.refresh_from_db()
+        self.assertEqual(quote.items.get().sales_rules_snapshot, snapshot)
+        self.assertEqual(self.client.post('/api/quotes/', payload(1), format='json').status_code, 201)

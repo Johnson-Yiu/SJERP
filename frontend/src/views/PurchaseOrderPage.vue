@@ -2,7 +2,7 @@
 import TradeUnitPicker from '../components/TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
 import PurchaseSupplierPicker from '../components/PurchaseSupplierPicker.vue'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { CircleDollarSign, PackagePlus, Plus, RefreshCw, Save, X } from 'lucide-vue-next'
 import { api, listData, listAll } from '../api'
@@ -73,7 +73,7 @@ const purchaseMetrics = computed(() => [
   { label: '关联供应商', value: new Set(rows.value.map(row => row.supplier_name || row.supplier).filter(Boolean)).size, hint: '当前采购单涉及的供应商' },
 ])
 const message = (err, fallback) => err.response?.data?.detail || Object.values(err.response?.data || {}).flat().join(' ') || err.message || fallback
-async function load() { loading.value = true; error.value = ''; try { const [a,b,c,d] = await Promise.all([listAll('/purchase-orders/'), listAll('/suppliers/'), listAll('/orders/'), listAll('/skus/')]); rows.value = a; suppliers.value = b; orders.value = c; skus.value = d } catch (err) { error.value = message(err, '采购数据加载失败。') } finally { loading.value = false } }
+async function load() { loading.value = true; error.value = ''; try { const [a,b,c,d] = await Promise.all([listAll('/purchase-orders/'), listAll('/suppliers/'), listAll('/orders/'), listAll('/skus/')]); rows.value = a; suppliers.value = b; orders.value = c; skus.value = d; if (route.query.detail && rows.value.some(row => Number(row.id) === Number(route.query.detail))) expandedId.value = Number(route.query.detail) } catch (err) { error.value = message(err, '采购数据加载失败。') } finally { loading.value = false } }
 function startCreate() {
   editingPurchaseId.value = null
   draft.value = { ...newDraft(), supplier: route.query.supplier || '', order: route.query.order || '' }
@@ -174,6 +174,9 @@ function pay(row) { paymentTarget.value = row }
 onMounted(async () => {
   await load()
   if (route.query.create === '1') startCreate()
+})
+watch(() => route.query.detail, id => {
+  expandedId.value = id ? Number(id) : null
 })
 </script>
 

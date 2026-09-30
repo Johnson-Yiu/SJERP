@@ -47,23 +47,6 @@ def _locked_sequence(document_type, year):
 
 
 @transaction.atomic
-def sync_document_sequence_from_number(document_type, document_no):
-    """Advance a formal document sequence to include an imported document number."""
-    if document_type not in DOCUMENT_MODELS:
-        raise ValueError(f"Unsupported document type: {document_type}")
-
-    match = re.fullmatch(rf"{document_type}-(\d{{4}})-(\d{{5}})", document_no or "")
-    if not match:
-        return
-
-    year, imported_value = (int(value) for value in match.groups())
-    sequence = _locked_sequence(document_type, year)
-    if imported_value > sequence.last_value:
-        sequence.last_value = imported_value
-        sequence.save(update_fields=["last_value"])
-
-
-@transaction.atomic
 def allocate_document_no(document_type, *, year=None):
     if document_type not in DOCUMENT_MODELS:
         raise ValueError(f"Unsupported document type: {document_type}")

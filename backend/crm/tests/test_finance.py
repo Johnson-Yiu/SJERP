@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.utils import timezone
 from rest_framework.test import APIClient
 
 from crm.models import AdvanceAllocation, ContractChangeRequest, Customer, Order, PaymentPlan, Product, PurchaseOrder, SKU, Supplier, Transaction
@@ -68,6 +69,25 @@ class FinanceServiceTests(PaymentPlanModelTests):
         report = self.client.get("/api/finance-dashboard/", {"date_from": "2026-08-01", "date_to": "2026-08-31"}).data["metrics"]
         self.assertEqual(report["sales_rmb"], Decimal("100"))
         self.assertEqual(report["income_rmb"], Decimal("30"))
+
+    def test_finance_dashboard_due_items_include_contract_ids_for_navigation(self):
+        due_date = timezone.localdate()
+        order_plan = PaymentPlan.objects.create(
+            order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("10"), due_date=due_date,
+        )
+        purchase, purchase_plan, _ = self.make_purchase_plan(Decimal("10"))
+        purchase_plan.due_date = due_date
+        purchase_plan.save(update_fields=["due_date"])
+
+        response = self.client.get("/api/finance-dashboard/", {"date_from": due_date.isoformat(), "date_to": due_date.isoformat()})
+
+        self.assertEqual(response.status_code, 200)
+        rows = {row["id"]: row for row in response.data["due_items"]}
+        self.assertEqual(rows[order_plan.pk]["order"], self.order.pk)
+        self.assertIsNone(rows[order_plan.pk]["purchase_order"])
+        self.assertEqual(rows[purchase_plan.pk]["purchase_order"], purchase.pk)
+        self.assertIsNone(rows[purchase_plan.pk]["order"])
+
     def make_purchase_plan(self, amount=Decimal("100")):
         supplier = Supplier.objects.create(code="FS", name="Finance Supplier")
         purchase = PurchaseOrder.objects.create(

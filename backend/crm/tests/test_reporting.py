@@ -106,6 +106,22 @@ class ReportingTests(TestCase):
         ContractChangeRequest.objects.filter(purchase_order=purchase).update(amount_delta=Decimal("-20"))
         self.assertEqual(self.query(source="purchase", group_by="supplier")["totals"]["amount"], Decimal("80"))
 
+    def test_purchase_report_excludes_draft_and_cancelled_contracts(self):
+        for purchase_no, status, amount in (
+            ("REPORT-PO-ORDERED", "ordered", "200"),
+            ("REPORT-PO-DRAFT", "draft", "100"),
+            ("REPORT-PO-CANCELLED", "cancelled", "300"),
+        ):
+            purchase = PurchaseOrder.objects.create(
+                purchase_no=purchase_no, supplier=self.supplier, order_date=date(2026, 9, 3), status=status,
+            )
+            purchase.items.create(sku=self.sku, quantity=1, unit_price=Decimal(amount))
+
+        data = self.query(source="purchase", group_by="supplier")
+
+        self.assertEqual(data["totals"]["amount"], Decimal("200"))
+        self.assertEqual(data["totals"]["count"], 1)
+
     def test_profit_report_excludes_draft_and_cancelled_contracts(self):
         draft = Order.objects.create(order_no="REPORT-PROFIT-D", customer=self.customer, order_date=date(2026, 9, 2), status="draft")
         draft.items.create(sku=self.sku, quantity=1, unit_price=99)

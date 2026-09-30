@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Bell, Search, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck, Barcode } from 'lucide-vue-next'
+import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck, Barcode } from 'lucide-vue-next'
 import { api } from './api'
 
 const route = useRoute()
@@ -14,9 +14,10 @@ const nav = [
   { label: '客户管理', path: '/customers', icon: Users },
   { label: '联系人', path: '/contacts', icon: ContactRound },
   { label: '跟进记录', path: '/follow-ups', icon: MessageSquareText },
-  { section: '业务' },
+  { section: '销售业务' },
   { label: '报价管理', path: '/quotes', icon: FileText },
   { label: '订单管理', path: '/orders', icon: ShoppingCart },
+  { section: '产品与供应链' },
   { label: '供应商管理', path: '/suppliers', icon: Truck },
   { label: '采购管理', path: '/purchase-orders', icon: ShoppingCart },
   { label: '产品管理', path: '/products', icon: Package },
@@ -39,7 +40,7 @@ const nav = [
 ]
 nav.splice(nav.findIndex(item => item.path === '/inventory-movements'), 0, { label: '库存', path: '/inventory', icon: Warehouse })
 const currentDate = computed(() => new Intl.DateTimeFormat('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' }).format(new Date()))
-const operatorInitial = computed(() => operator.name?.slice(0, 1).toUpperCase() || 'J')
+const operatorInitial = computed(() => operator.name && operator.name !== '加载中' ? operator.name.trim().slice(0, 1).toUpperCase() : '—')
 const isAdmin = computed(() => operator.can_manage_hs_codes === true)
 const visibleNav = computed(() => nav.filter(item => !item.requiresAdmin || isAdmin.value))
 onMounted(async () => {
@@ -78,10 +79,8 @@ onMounted(async () => {
           <h1>{{ route.meta.title }}</h1>
         </div>
         <div class="top-actions">
-          <div class="quick-search"><Search :size="17" /><span>搜索客户、订单...</span><kbd>⌘ K</kbd></div>
           <span class="date-pill">{{ currentDate }}</span>
-          <button class="icon-btn"><Bell :size="19" /><i /></button>
-          <div class="avatar">J</div>
+          <div class="avatar" :title="operator.name">{{ operatorInitial }}</div>
         </div>
       </header>
       <section class="content"><RouterView :key="route.fullPath" /></section>

@@ -1,0 +1,193 @@
+import csv
+import io
+from datetime import date
+from decimal import Decimal
+
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase
+from django.utils import timezone
+from rest_framework.test import APIClient
+
+from crm.models import (
+    Customer,
+    Order,
+    OrderItem,
+    Product,
+    ProductCategory,
+    SKU,
+    Transaction,
+)
+
+
+class DashboardImportTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.customer = Customer.objects.create(code="J1-CUSTOMER", name="J1 Buyer")
+        self.category = ProductCategory.objects.create(name="J1 Lights")
+        self.product = Product.objects.create(
+            code="J1-PRODUCT", name="J1 Lamp", sales_model_prefix="J1L", category=self.category,
+        )
+        self.sku = SKU.objects.create(sku="J1-SKU", product=self.product, specification="Warm", unit="pcs")
+
+    def create_order(self, number, status, amount, order_date=None):
+        order = Order.objects.create(
+            order_no=number, customer=self.customer, order_date=order_date or timezone.localdate(), status=status,
+        )
+        OrderItem.objects.create(order=order, sku=self.sku, quantity=1, unit_price=Decimal(amount))
+        return order
+
+    def upload_csv(self, entity, headers, rows):
+        buffer = io.StringIO(newline="")
+        writer = csv.writer(buffer)
+        writer.writerow(headers)
+        writer.writerows(rows)
+        upload = SimpleUploadedFile("import.csv", buffer.getvalue().encode("utf-8"), content_type="text/csv")
+        return self.client.post("/api/import/csv/", {"entity": entity, "file": upload}, format="multipart")
+
+    def test_dashboard_sales_metrics_exclude_draft_and_cancelled_orders(self):
+        self.create_order("J1-DRAFT", "draft", "100")
+        formal = self.create_order("J1-CONFIRMED", "confirmed", "200")
+        self.create_order("J1-CANCELLED", "cancelled", "300")
+
+        response = self.client.get("/api/dashboard/")
+
+        self.assertEqual(response.status_code, 200)
+        data = response.data
+        self.assertEqual(Decimal(str(data["summary"]["sales_ytd"])), Decimal("200"))
+        self.assertEqual(data["summary"]["orders_ytd"], 1)
+        month_row = next(row for row in data["monthly_sales"] if row["month"] == formal.order_date.strftime("%Y-%m"))
+        self.assertEqual(Decimal(str(month_row["sales"])), Decimal("200"))
+        self.assertEqual(month_row["orders"], 1)
+        self.assertEqual(data["top_customers"][0]["orders"], 1)
+        self.assertEqual(Decimal(str(data["top_customers"][0]["sales"])), Decimal("200"))
+        self.assertEqual(sum((Decimal(str(row["sales"])) for row in data["category_sales"]), Decimal("0")), Decimal("200"))
+        self.assertEqual([row["order_no"] for row in data["recent_orders"]], ["J1-CONFIRMED"])
+
+    def test_dashboard_and_sales_report_use_same_formal_order_total(self):
+        today = timezone.localdate()
+        order = self.create_order("J1-REPORT-MATCH", "confirmed", "200", today)
+        order.shipping_fee = Decimal("10")
+        order.discount = Decimal("5")
+        order.save(update_fields=["shipping_fee", "discount"])
+        dashboard = self.client.get("/api/dashboard/").data
+        report = self.client.get("/api/reports/data/", {
+            "source": "sales", "group_by": "customer", "date_from": date(today.year, 1, 1).isoformat(),
+            "date_to": today.isoformat(),
+        })
+
+        self.assertEqual(report.status_code, 200)
+        self.assertEqual(Decimal(str(dashboard["summary"]["sales_ytd"])), report.data["totals"]["amount"])
+        self.assertEqual(report.data["totals"]["amount"], order.total_amount)
+
+    def test_customer_import_ignores_status_and_follow_up_projection(self):
+        customer_fields = self.client.get("/api/import/templates/").data["customers"]
+        self.assertNotIn("status", customer_fields)
+        self.assertNotIn("next_follow_up", customer_fields)
+        existing = Customer.objects.create(
+            code="J1-EXISTING", name="Existing Buyer", status="company", next_follow_up=date(2026, 11, 1),
+        )
+        response = self.upload_csv(
+            "customers",
+            ["code", "name", "status", "next_follow_up", "country"],
+            [["J1-NEW", "Imported Lead", "company", "2026-10-01", "China"],
+             ["J1-EXISTING", "Existing Buyer Updated", "lead", "2026-10-02", "Japan"]],
+        )
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["created"], 1)
+        self.assertEqual(response.data["updated"], 1)
+        new_customer = Customer.objects.get(code="J1-NEW")
+        existing.refresh_from_db()
+        self.assertEqual(new_customer.status, "lead")
+        self.assertIsNone(new_customer.next_follow_up)
+        self.assertEqual(existing.status, "company")
+        self.assertEqual(existing.next_follow_up, date(2026, 11, 1))
+        self.assertEqual(existing.country, "Japan")
+
+    def test_product_import_requires_an_existing_category(self):
+        response = self.upload_csv(
+            "products", ["code", "name", "sales_model_prefix", "category"],
+            [["J1-MISSING-CAT", "New product", "J1M", "Not established"]],
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["errors"][0]["message"], "产品分类不存在，请先建立分类。")
+        self.assertFalse(Product.objects.filter(code="J1-MISSING-CAT").exists())
+        self.assertFalse(ProductCategory.objects.filter(name="Not established").exists())
+
+    def test_product_import_creates_with_existing_category_and_serializer_fields(self):
+        response = self.upload_csv(
+            "products", ["code", "name", "sales_model_prefix", "category", "description"],
+            [["J1-NEW-PRODUCT", "New catalog item", "J1N", self.category.name, "catalog import"]],
+        )
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["created"], 1)
+        imported = Product.objects.get(code="J1-NEW-PRODUCT")
+        self.assertEqual(imported.category_id, self.category.pk)
+        self.assertEqual(imported.sales_model_prefix, "J1N")
+
+    def test_product_import_rejects_category_change_for_unfrozen_sku_schema(self):
+        other_category = ProductCategory.objects.create(name="J1 Other")
+        response = self.upload_csv(
+            "products", ["code", "name", "category"],
+            [[self.product.code, self.product.name, other_category.name]],
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data["errors"]), 1)
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.category_id, self.category.pk)
+
+    def test_sku_import_obeys_unit_freeze_when_business_records_exist(self):
+        self.create_order("J1-SKU-USED", "confirmed", "100")
+        response = self.upload_csv(
+            "skus", ["sku", "product_code", "specification", "unit", "cost_price", "default_price", "currency"],
+            [[self.sku.sku, self.product.code, self.sku.specification, "box", "3", "10", "USD"]],
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data["errors"]), 1)
+        self.assertIn("已有业务记录的 SKU 不能更换计量单位", response.data["errors"][0]["message"])
+        self.sku.refresh_from_db()
+        self.assertEqual(self.sku.unit, "pcs")
+
+    def test_sku_import_creates_new_sku_through_serializer_rules(self):
+        response = self.upload_csv(
+            "skus", ["sku", "product_code", "specification", "unit", "cost_price", "default_price", "currency"],
+            [["J1-SKU-NEW", self.product.code, "Cool", "pcs", "3", "10", "USD"]],
+        )
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["created"], 1)
+        imported = SKU.objects.get(sku="J1-SKU-NEW")
+        self.assertEqual(imported.product_id, self.product.pk)
+        self.assertEqual(imported.specification, "Cool")
+        self.assertTrue(imported.schema_version)
+
+    def test_transaction_import_records_formal_receipt_and_duplicate_does_not_overwrite(self):
+        order = self.create_order("J1-RECEIPT-ORDER", "confirmed", "100")
+        response = self.upload_csv(
+            "transactions",
+            ["transaction_no", "transaction_date", "direction", "category", "amount", "currency", "exchange_rate", "customer_code", "order_no", "reference", "notes"],
+            [["J1-RECEIPT", timezone.localdate().isoformat(), "income", "客户收款", "25", "USD", "1", self.customer.code, order.order_no, "bank-1", "imported receipt"]],
+        )
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["created"], 1)
+        receipt = Transaction.objects.get(transaction_no="J1-RECEIPT")
+        self.assertEqual(receipt.kind, "customer_receipt")
+        self.assertEqual(receipt.order_id, order.pk)
+        self.assertEqual(receipt.amount, Decimal("25"))
+
+        duplicate = self.upload_csv(
+            "transactions",
+            ["transaction_no", "transaction_date", "direction", "category", "amount", "currency", "exchange_rate", "customer_code", "order_no", "reference", "notes"],
+            [["J1-RECEIPT", timezone.localdate().isoformat(), "income", "客户收款", "90", "USD", "1", self.customer.code, order.order_no, "changed", "must not overwrite"]],
+        )
+        receipt.refresh_from_db()
+        self.assertEqual(duplicate.status_code, 200)
+        self.assertEqual(len(duplicate.data["errors"]), 1)
+        self.assertEqual(receipt.amount, Decimal("25"))
+        self.assertEqual(receipt.reference, "bank-1")
+        self.assertEqual(receipt.notes, "imported receipt")

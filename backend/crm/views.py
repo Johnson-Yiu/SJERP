@@ -1599,6 +1599,7 @@ def finance_dashboard(request):
     due_items = [
         {
             "id": row.id, "direction": row.direction, "contract_no": row.order.order_no if row.order_id else row.purchase_order.purchase_no,
+            "order": row.order_id, "purchase_order": row.purchase_order_id,
             "counterparty_name": row.order.customer.name if row.order_id else row.purchase_order.supplier.name,
             "due_date": row.due_date, "remaining_amount": row.remaining_amount, "currency": row.currency,
         }
@@ -1840,7 +1841,8 @@ def dashboard(request):
     year_start = date(today.year, 1, 1)
     last_year_start = date(today.year - 1, 1, 1)
     last_year_same_day = date(today.year - 1, today.month, min(today.day, 28 if today.month == 2 else today.day))
-    valid_orders = Order.objects.exclude(status="cancelled")
+    formal_statuses = ["confirmed", "production", "shipped", "completed"]
+    valid_orders = Order.objects.filter(status__in=formal_statuses)
     def sales_between(start, end):
         return sum(
             (order.total_amount * order.exchange_rate for order in valid_orders.filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes")),
@@ -1861,7 +1863,7 @@ def dashboard(request):
             customer["name"], customer["country"] = order.customer.name, order.customer.country
     monthly = [{"month": month, **values} for month, values in sorted(monthly_rows.items())]
     # Product-category sales deliberately remain item-only: contract adjustments have no SKU/category allocation.
-    categories = OrderItem.objects.filter(order__order_date__gte=year_start).exclude(order__status="cancelled").values(
+    categories = OrderItem.objects.filter(order__status__in=formal_statuses, order__order_date__gte=year_start).values(
         "sku__product__category__name"
     ).annotate(sales=Sum(ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)), quantity=Sum("quantity")).order_by("-sales")[:8]
     top_customers = [
@@ -1893,12 +1895,12 @@ def dashboard(request):
 
 
 IMPORT_FIELDS = {
-    "customers": ["code", "name", "country", "source", "status", "owner", "website", "address", "notes"],
-    "products": ["code", "name", "category", "description", "status"],
+    "customers": ["code", "name", "country", "source", "owner", "website", "address", "notes"],
+    "products": ["code", "name", "sales_model_prefix", "category", "description", "status"],
     "skus": ["sku", "product_code", "specification", "unit", "cost_price", "default_price", "currency"],
-    "orders": ["order_no", "customer_code", "order_date", "status", "currency", "exchange_rate", "notes"],
     "transactions": ["transaction_no", "transaction_date", "direction", "category", "amount", "currency", "exchange_rate", "customer_code", "order_no", "payment_method", "reference", "notes"],
 }
+ORDER_IMPORT_DISABLED_MESSAGE = "正式订单导入暂未开放，请通过订单业务流程创建；避免绕过报价、库存预留和收款计划。"
 
 
 @api_view(["GET"])
@@ -1911,6 +1913,8 @@ def import_templates(request):
 def import_csv(request):
     entity = request.data.get("entity")
     upload = request.FILES.get("file")
+    if entity == "orders":
+        return Response({"detail": ORDER_IMPORT_DISABLED_MESSAGE}, status=status.HTTP_400_BAD_REQUEST)
     if entity not in IMPORT_FIELDS or not upload:
         return Response({"detail": "请选择有效的数据类型和 CSV 文件。"}, status=status.HTTP_400_BAD_REQUEST)
     try:
@@ -1939,33 +1943,57 @@ def _decimal(value, default="0"):
 
 
 def _import_row(entity, row):
+    if entity == "orders":
+        raise ValueError(ORDER_IMPORT_DISABLED_MESSAGE)
     if entity == "customers":
-        _, created = Customer.objects.update_or_create(code=row["code"], defaults={k: row.get(k, "") for k in IMPORT_FIELDS[entity] if k != "code"})
-        return created
+        instance = Customer.objects.filter(code=row["code"]).first()
+        fields = ("name", "country", "source", "owner", "website", "address", "notes")
+        payload = {field: row.get(field, "") for field in fields}
+        serializer = CustomerSerializer(
+            instance, data=payload, partial=bool(instance),
+            context={"allow_import_without_contacts": True, "allow_import_code": True},
+        )
+        serializer.is_valid(raise_exception=True)
+        if instance:
+            serializer.save()
+            return False
+        serializer.save(imported_code=row["code"])
+        return True
     if entity == "products":
         category = None
         if row.get("category"):
-            category, _ = ProductCategory.objects.get_or_create(name=row["category"])
-        defaults = {"name": row["name"], "category": category, "description": row.get("description", ""), "status": row.get("status") or "active"}
-        _, created = Product.objects.update_or_create(code=row["code"], defaults=defaults)
-        return created
+            category = ProductCategory.objects.filter(name=row["category"]).first()
+            if not category:
+                raise ValueError("产品分类不存在，请先建立分类。")
+        instance = Product.objects.filter(code=row["code"]).first()
+        payload = {
+            "name": row.get("name", ""), "category": category.pk if category else None,
+            "description": row.get("description", ""), "status": row.get("status") or "active",
+        }
+        if row.get("sales_model_prefix"):
+            payload["sales_model_prefix"] = row["sales_model_prefix"]
+        serializer = ProductSerializer(instance, data=payload, partial=bool(instance), context={"allow_import_code": True})
+        serializer.is_valid(raise_exception=True)
+        if instance:
+            serializer.save()
+            return False
+        serializer.save(imported_code=row["code"])
+        return True
     if entity == "skus":
         product = Product.objects.get(code=row["product_code"])
-        defaults = {"product": product, "specification": row.get("specification", ""), "unit": row.get("unit") or "pcs", "cost_price": _decimal(row.get("cost_price")), "default_price": _decimal(row.get("default_price")), "currency": row.get("currency") or "USD"}
-        _, created = SKU.objects.update_or_create(sku=row["sku"], defaults=defaults)
-        return created
-    if entity == "orders":
-        with transaction.atomic():
-            customer = Customer.objects.get(code=row["customer_code"])
-            defaults = {"customer": customer, "order_date": row["order_date"], "status": row.get("status") or "confirmed", "currency": row.get("currency") or "USD", "exchange_rate": _decimal(row.get("exchange_rate"), "1"), "notes": row.get("notes", "")}
-            from .serializers import validate_contract_edit
-            existing = Order.objects.filter(order_no=row["order_no"]).first()
-            validate_contract_edit(existing, defaults)
-            from .document_numbers import sync_document_sequence_from_number
-
-            sync_document_sequence_from_number("SO", row["order_no"])
-            _, created = Order.objects.update_or_create(order_no=row["order_no"], defaults=defaults)
-            return created
+        instance = SKU.objects.filter(sku=row["sku"]).first()
+        payload = {
+            "product": product.pk, "specification": row.get("specification", ""),
+            "unit": row.get("unit") or "pcs", "cost_price": _decimal(row.get("cost_price")),
+            "default_price": _decimal(row.get("default_price")), "currency": row.get("currency") or "USD",
+        }
+        serializer = SKUSerializer(instance, data=payload, partial=bool(instance))
+        serializer.is_valid(raise_exception=True)
+        if instance:
+            serializer.save()
+            return False
+        serializer.save(sku=row["sku"])
+        return True
     customer = Customer.objects.filter(code=row.get("customer_code")).first() if row.get("customer_code") else None
     order = Order.objects.filter(order_no=row.get("order_no")).first() if row.get("order_no") else None
     defaults = {"transaction_date": row["transaction_date"], "direction": row["direction"], "category": row["category"], "amount": _decimal(row["amount"]), "currency": row.get("currency") or "USD", "exchange_rate": _decimal(row.get("exchange_rate"), "1"), "customer": customer or (order.customer if order else None), "order": order, "payment_method": row.get("payment_method", ""), "reference": row.get("reference", ""), "notes": row.get("notes", "")}

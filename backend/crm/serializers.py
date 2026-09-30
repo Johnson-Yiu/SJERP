@@ -563,14 +563,15 @@ class CustomerSerializer(serializers.ModelSerializer):
         read_only_fields = ["code", "status"]
 
     def validate(self, attrs):
-        if self.instance is None and not attrs.get("contacts"):
+        if self.instance is None and not attrs.get("contacts") and not self.context.get("allow_import_without_contacts"):
             raise serializers.ValidationError({"contacts": "新建客户时请至少填写一位联系人。"})
         return attrs
 
     @transaction.atomic
     def create(self, validated_data):
-        contacts = validated_data.pop("contacts")
-        customer = Customer.objects.create(code=allocate_customer_code(), **validated_data)
+        contacts = validated_data.pop("contacts", [])
+        imported_code = validated_data.pop("imported_code", None) if self.context.get("allow_import_code") else None
+        customer = Customer.objects.create(code=imported_code or allocate_customer_code(), **validated_data)
         primary_index = next((index for index, row in enumerate(contacts) if row.get("is_primary")), 0)
         for index, row in enumerate(contacts):
             row["is_primary"] = index == primary_index
@@ -770,9 +771,10 @@ class ProductSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         validated_data.pop("code", None)
+        imported_code = validated_data.pop("imported_code", None) if self.context.get("allow_import_code") else None
         additional_categories = validated_data.pop("additional_categories", [])
         suppliers = validated_data.pop("suppliers", [])
-        product = Product.objects.create(code=allocate_product_code(), **validated_data)
+        product = Product.objects.create(code=imported_code or allocate_product_code(), **validated_data)
         product.additional_categories.set(additional_categories)
         product.suppliers.set(suppliers)
         return product

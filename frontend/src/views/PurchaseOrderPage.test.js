@@ -56,6 +56,13 @@ test('purchase creation leaves number generation to the backend and never submit
   assert.match(source, /class="readonly-input" readonly/)
 })
 
+test('missing supplier source is described as optional without implying automatic creation', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /未维护供应商来源（本次采购仍可继续）/)
+  assert.doesNotMatch(source, /保存采购单时建立此供应商的供货档案/)
+})
+
 test('purchase price reference only carries across matching currencies and resets stale prices', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

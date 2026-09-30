@@ -1884,13 +1884,26 @@ def dashboard(request):
             "active_customers": Customer.objects.filter(status__in=["customer", "company"]).count(),
             "receipts_rmb": income,
             "payments_rmb": expense,
-            "follow_ups_due": FollowUp.objects.filter(next_follow_up__lte=today).count(),
+            "follow_ups_due": Customer.objects.filter(next_follow_up__isnull=False, next_follow_up__lte=today).count(),
         },
         "monthly_sales": monthly,
         "category_sales": list(categories),
         "top_customers": list(top_customers),
         "recent_orders": OrderSerializer(valid_orders.prefetch_related("items__sku__product")[:5], many=True).data,
-        "due_follow_ups": FollowUpSerializer(FollowUp.objects.filter(next_follow_up__lte=today).select_related("customer", "contact")[:5], many=True).data,
+        "due_follow_ups": FollowUpSerializer(
+            FollowUp.objects.annotate(
+                latest_for_customer_id=Subquery(
+                    FollowUp.objects.filter(customer_id=OuterRef("customer_id"))
+                    .order_by("-followed_at", "-id")
+                    .values("id")[:1]
+                )
+            )
+            .filter(id=F("latest_for_customer_id"), next_follow_up__lte=today)
+            .select_related("customer", "contact")
+            .prefetch_related("attachments")
+            .order_by("next_follow_up", "id")[:5],
+            many=True,
+        ).data,
     })
 
 

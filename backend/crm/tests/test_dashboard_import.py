@@ -1,7 +1,8 @@
 import csv
 import io
-from datetime import date
+from datetime import date, datetime, timezone as datetime_timezone
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
@@ -10,6 +11,7 @@ from rest_framework.test import APIClient
 
 from crm.models import (
     Customer,
+    FollowUp,
     Order,
     OrderItem,
     Product,
@@ -191,3 +193,56 @@ class DashboardImportTests(TestCase):
         self.assertEqual(receipt.amount, Decimal("25"))
         self.assertEqual(receipt.reference, "bank-1")
         self.assertEqual(receipt.notes, "imported receipt")
+
+
+class DashboardCurrentFollowUpTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+    def create_follow_up(self, customer_code, name, followed_day, next_date):
+        customer, _ = Customer.objects.get_or_create(code=customer_code, defaults={"name": name})
+        return FollowUp.objects.create(
+            customer=customer,
+            followed_at=datetime(2026, 9, followed_day, 9, 0, tzinfo=datetime_timezone.utc),
+            type="call",
+            next_follow_up=date.fromisoformat(next_date) if next_date is not None else None,
+        )
+
+    @patch("crm.views.timezone.localdate", return_value=date(2026, 9, 30))
+    def test_dashboard_counts_and_lists_only_each_customers_latest_follow_up(self, _today):
+        old_a = self.create_follow_up("J1-DUE-A", "Future follow-up", 1, "2026-09-10")
+        latest_a = self.create_follow_up("J1-DUE-A", "Future follow-up", 20, "2026-10-10")
+        old_b = self.create_follow_up("J1-DUE-B", "Overdue follow-up", 1, "2026-09-10")
+        latest_b = self.create_follow_up("J1-DUE-B", "Overdue follow-up", 20, "2026-09-25")
+        old_c = self.create_follow_up("J1-DUE-C", "No next follow-up", 1, "2026-09-10")
+        latest_c = self.create_follow_up("J1-DUE-C", "No next follow-up", 20, None)
+
+        self.assertEqual(Customer.objects.get(code="J1-DUE-A").next_follow_up, date(2026, 10, 10))
+        self.assertEqual(Customer.objects.get(code="J1-DUE-B").next_follow_up, date(2026, 9, 25))
+        self.assertIsNone(Customer.objects.get(code="J1-DUE-C").next_follow_up)
+
+        response = self.client.get("/api/dashboard/")
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["summary"]["follow_ups_due"], 1)
+        self.assertEqual([row["id"] for row in response.data["due_follow_ups"]], [latest_b.id])
+        self.assertNotIn(old_a.id, [row["id"] for row in response.data["due_follow_ups"]])
+        self.assertNotIn(latest_a.id, [row["id"] for row in response.data["due_follow_ups"]])
+        self.assertNotIn(old_b.id, [row["id"] for row in response.data["due_follow_ups"]])
+        self.assertNotIn(old_c.id, [row["id"] for row in response.data["due_follow_ups"]])
+        self.assertNotIn(latest_c.id, [row["id"] for row in response.data["due_follow_ups"]])
+
+    @patch("crm.views.timezone.localdate", return_value=date(2026, 9, 30))
+    def test_deleting_latest_follow_up_restores_previous_overdue_dashboard_item(self, _today):
+        previous = self.create_follow_up("J1-DUE-DELETE", "Restored follow-up", 1, "2026-09-10")
+        latest = self.create_follow_up("J1-DUE-DELETE", "Restored follow-up", 20, "2026-09-25")
+        latest.delete()
+
+        customer = Customer.objects.get(code="J1-DUE-DELETE")
+        self.assertEqual(customer.next_follow_up, date(2026, 9, 10))
+
+        response = self.client.get("/api/dashboard/")
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["summary"]["follow_ups_due"], 1)
+        self.assertEqual([row["id"] for row in response.data["due_follow_ups"]], [previous.id])

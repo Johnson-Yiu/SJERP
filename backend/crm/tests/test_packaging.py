@@ -127,6 +127,36 @@ class PackagingDomainTests(TestCase):
         self.assertEqual(profile.unit_net_weight, Decimal("0.4"))
         self.assertIsNotNone(profile.verified_at)
 
+    def test_sku_packaging_template_and_overrides_persist_across_detail_reads(self):
+        saved = self.client.put(f"/api/skus/{self.sku.pk}/packaging/", {
+            "packaging_template": self.template.pk,
+            "qty_per_carton_override": "10",
+            "unit_net_weight": "0.500",
+        }, format="json")
+
+        self.assertEqual(saved.status_code, 200, saved.data)
+        sku_detail = self.client.get(f"/api/skus/{self.sku.pk}/")
+        packaging_detail = self.client.get(f"/api/skus/{self.sku.pk}/packaging/")
+        template_detail = self.client.get(f"/api/packaging-templates/{self.template.pk}/")
+
+        self.assertEqual(sku_detail.status_code, 200, sku_detail.data)
+        self.assertEqual(sku_detail.data["packaging"]["template"], self.template.pk)
+        self.assertEqual(packaging_detail.data["profile"]["packaging_template"], self.template.pk)
+        self.assertEqual(packaging_detail.data["profile"]["qty_per_carton_override"], "10.00")
+        self.assertEqual(packaging_detail.data["profile"]["unit_net_weight"], "0.500")
+        self.assertEqual(template_detail.data["linked_sku_count"], 1)
+
+        changed = self.client.put(f"/api/skus/{self.sku.pk}/packaging/", {
+            "packaging_template": self.template.pk,
+            "qty_per_carton_override": "12",
+            "unit_net_weight": "0.750",
+        }, format="json")
+        self.assertEqual(changed.status_code, 200, changed.data)
+        packaging_detail = self.client.get(f"/api/skus/{self.sku.pk}/packaging/")
+        self.assertEqual(packaging_detail.data["profile"]["packaging_template"], self.template.pk)
+        self.assertEqual(packaging_detail.data["profile"]["qty_per_carton_override"], "12.00")
+        self.assertEqual(packaging_detail.data["profile"]["unit_net_weight"], "0.750")
+
     def test_physical_template_update_invalidates_all_profiles_but_name_does_not(self):
         other = SKU.objects.create(product=self.product, sku="SKU-PACK-OTHER")
         first = SKUPackagingProfile.objects.create(sku=self.sku, packaging_template=self.template, verified_at=timezone.now())

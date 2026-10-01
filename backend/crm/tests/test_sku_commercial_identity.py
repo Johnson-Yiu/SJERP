@@ -6,7 +6,7 @@ from rest_framework.test import APIClient
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from crm.models import CategoryAttribute, Contact, Customer, InventoryMovement, Order, Product, ProductCategory, PurchaseOrder, PurchaseOrderItem, Quote, SKU, SKUVersion, Supplier
+from crm.models import CategoryAttribute, Contact, Customer, InventoryMovement, Order, OrderItem, Product, ProductCategory, PurchaseOrder, PurchaseOrderItem, Quote, QuoteItem, SKU, SKUVersion, Supplier
 
 
 class SkuCommercialIdentityTests(TestCase):
@@ -177,7 +177,61 @@ class SkuCommercialIdentityTests(TestCase):
         self.assertEqual(version.sales_model_snapshot, "CB8-24-A1")
         self.assertIn("parameter_values", version.changed_fields)
 
-    def test_parameter_change_refreshes_sales_model_and_preserves_quote_snapshot(self):
+    def test_quote_and_order_history_block_parameter_identity_changes_but_allow_display_renames(self):
+        quoted, _ = self.create_sku()
+        quote = Quote.objects.create(quote_no="QT-SKU-HISTORY", customer=self.customer, quote_date=date(2026, 8, 23))
+        quote_item = QuoteItem.objects.create(quote=quote, sku=quoted, quantity="2", unit_price="10")
+        quote_snapshot = (quote_item.product_name_snapshot, quote_item.sales_model_snapshot, quote_item.unit_snapshot)
+
+        quote_change = self.client.patch(f"/api/skus/{quoted.pk}/", {
+            "parameter_values": {"voltage": "12", "width": "8"},
+            "specification": "12V / 8mm",
+            "identity_change_confirmed": True,
+        }, format="json")
+        self.assertEqual(quote_change.status_code, status.HTTP_400_BAD_REQUEST, quote_change.data)
+        self.assertEqual(
+            quote_change.data["non_field_errors"][0],
+            "该 SKU 已存在业务历史，不能直接修改身份参数；如产品规格发生实质变化，请新建 SKU 或通过正式 SKU 参数演化流程处理。",
+        )
+        quoted.refresh_from_db()
+        quote_item.refresh_from_db()
+        self.assertEqual(quoted.parameter_values, {"voltage": "24", "width": "8"})
+        self.assertEqual((quote_item.product_name_snapshot, quote_item.sales_model_snapshot, quote_item.unit_snapshot), quote_snapshot)
+
+        order_sku, _ = self.create_sku(
+            parameter_values={"voltage": "24", "width": "10"},
+            specification="24V / 10mm",
+            sales_model="CB8-24-A2",
+        )
+        order = Order.objects.create(order_no="SO-SKU-HISTORY", customer=self.customer, order_date=date(2026, 8, 23), status="confirmed")
+        order_item = OrderItem.objects.create(order=order, sku=order_sku, quantity="3", unit_price="12")
+        order_snapshot = (order_item.display_name_snapshot, order_item.sales_model_snapshot, order_item.unit_snapshot)
+
+        order_change = self.client.put(f"/api/skus/{order_sku.pk}/", {
+            "product": self.product.pk,
+            "unit": order_sku.unit,
+            "parameter_values": {"voltage": "12", "width": "10"},
+            "specification": "12V / 10mm",
+            "identity_change_confirmed": True,
+        }, format="json")
+        self.assertEqual(order_change.status_code, status.HTTP_400_BAD_REQUEST, order_change.data)
+        self.assertEqual(order_change.data["non_field_errors"][0], quote_change.data["non_field_errors"][0])
+        order_sku.refresh_from_db()
+        order_item.refresh_from_db()
+        self.assertEqual(order_sku.parameter_values, {"voltage": "24", "width": "10"})
+        self.assertEqual((order_item.display_name_snapshot, order_item.sales_model_snapshot, order_item.unit_snapshot), order_snapshot)
+
+        display_change = self.client.patch(f"/api/skus/{quoted.pk}/", {
+            "display_name_cn": "历史产品 24V 显示名称更新",
+            "sales_model": "CB8-24-A1-NEW",
+            "identity_change_confirmed": True,
+        }, format="json")
+        self.assertEqual(display_change.status_code, status.HTTP_200_OK, display_change.data)
+        self.assertEqual(SKUVersion.objects.filter(sku=quoted).count(), 1)
+        quote_item.refresh_from_db()
+        self.assertEqual((quote_item.product_name_snapshot, quote_item.sales_model_snapshot, quote_item.unit_snapshot), quote_snapshot)
+
+    def test_parameter_change_with_quote_history_is_rejected_and_preserves_snapshot(self):
         voltage = CategoryAttribute.objects.get(key="voltage")
         voltage.include_in_sales_model = True
         voltage.save(update_fields=["include_in_sales_model"])
@@ -198,15 +252,13 @@ class SkuCommercialIdentityTests(TestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         sku.refresh_from_db()
         self.assertEqual(sku.sku, original_code)
-        self.assertNotEqual(sku.display_name_cn, original_name)
-        self.assertNotEqual(sku.sales_model, original_model)
-        self.assertEqual(sku.sales_model, "COB320-12V")
-        version = SKUVersion.objects.get(sku=sku)
-        self.assertEqual(version.display_name_cn_snapshot, original_name)
-        self.assertEqual(version.sales_model_snapshot, original_model)
+        self.assertEqual(sku.display_name_cn, original_name)
+        self.assertEqual(sku.sales_model, original_model)
+        self.assertEqual(sku.parameter_values, {"voltage": "24", "width": "8"})
+        self.assertFalse(SKUVersion.objects.filter(sku=sku).exists())
         item = Quote.objects.get(pk=quote_response.data["id"]).items.get()
         self.assertEqual(item.product_name_snapshot, original_name)
         self.assertEqual(item.sales_model_snapshot, original_model)

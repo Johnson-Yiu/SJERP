@@ -16,7 +16,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from crm.models import Contact, Customer, InventoryMovement, Order, OrderItem, PaymentPlan, Product, Quote, QuoteItem, QuoteRevisionCounter, Shipment, ShipmentItem, SKU, Supplier, SupplierSKU, Transaction
+from crm.models import Contact, Customer, InventoryMovement, InventoryReservation, Order, OrderItem, PaymentPlan, Product, Quote, QuoteItem, QuoteRevisionCounter, Shipment, ShipmentItem, SKU, Supplier, SupplierSKU, Transaction
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.quote_snapshots import create_quote_items
 from crm.quotation_template_config import quotation_templates
@@ -728,8 +728,36 @@ class QuoteApiTests(TestCase):
         self.assertEqual(saved.status_code, status.HTTP_201_CREATED, getattr(saved, "data", None))
         self.assertEqual(saved.data["quote"], quote.id)
         self.assertEqual(saved.data["status"], "draft")
+        self.assertTrue(saved.data["order_no"].startswith("SO-"))
         self.assertEqual(quote.status, "draft")
         self.assertFalse(PaymentPlan.objects.filter(order_id=saved.data["id"]).exists())
+        self.assertFalse(InventoryReservation.objects.filter(order_item__order_id=saved.data["id"]).exists())
+
+    def test_draft_sent_and_accepted_quotes_can_seed_drafts_but_rejected_and_expired_cannot(self):
+        for index, quote_status in enumerate(("draft", "sent", "accepted"), start=1):
+            with self.subTest(quote_status=quote_status):
+                quote = self.create_quote(quote_no=f"UAT-ORDER-DRAFT-{index}")
+                quote.status = quote_status
+                quote.save(update_fields=["status"])
+
+                draft = self.client.get(f"/api/quotes/{quote.pk}/order-draft/")
+                self.assertEqual(draft.status_code, status.HTTP_200_OK, draft.data)
+                saved = self.client.post("/api/orders/", draft.data, format="json")
+                self.assertEqual(saved.status_code, status.HTTP_201_CREATED, saved.data)
+                quote.refresh_from_db()
+                self.assertEqual(quote.status, quote_status)
+                self.assertEqual(saved.data["quote"], quote.pk)
+                self.assertEqual(saved.data["status"], "draft")
+                self.assertFalse(PaymentPlan.objects.filter(order_id=saved.data["id"]).exists())
+                self.assertFalse(InventoryReservation.objects.filter(order_item__order_id=saved.data["id"]).exists())
+
+        for index, quote_status in enumerate(("rejected", "expired"), start=1):
+            with self.subTest(quote_status=quote_status):
+                quote = self.create_quote(quote_no=f"UAT-ORDER-DRAFT-BLOCKED-{index}")
+                quote.status = quote_status
+                quote.save(update_fields=["status"])
+                blocked = self.client.get(f"/api/quotes/{quote.pk}/order-draft/")
+                self.assertEqual(blocked.status_code, status.HTTP_400_BAD_REQUEST, blocked.data)
 
     def test_order_with_commercial_changes_creates_and_links_quote_revision(self):
         quote = self.create_quote(
@@ -975,6 +1003,57 @@ class OrderWorkbenchTests(TestCase):
         self.assertEqual(item.supplier_sku_id, source.pk)
         self.assertEqual(item.supplier_model_snapshot, source.supplier_model)
         self.assertEqual(item.supplier_sku_code_snapshot, source.supplier_sku_code)
+
+    def test_document_page_payload_updates_draft_order_without_formal_side_effects(self):
+        product = Product.objects.create(code="P-ORDER-WORKBENCH-EDIT", name="Order Workbench Edit Product")
+        replacement_sku = SKU.objects.create(product=product, sku="SKU-ORDER-WORKBENCH-EDIT", cost_price="4.00")
+        draft = Order.objects.create(
+            order_no="SO-ORDER-WORKBENCH-DRAFT-EDIT",
+            customer=self.customer,
+            quote=self.quote,
+            order_date=date(2026, 8, 19),
+            expected_ship_date=date(2026, 9, 3),
+            status="draft",
+        )
+        draft.items.create(sku=self.sku, quantity="2", unit_price="12.30", cost_price="7.00")
+        quote_count = Quote.objects.count()
+        movement_count = InventoryMovement.objects.count()
+        payload = {
+            "customer": self.customer.pk,
+            "quote": self.quote.pk,
+            "order_date": "2026-08-19",
+            "expected_ship_date": "2026-09-03",
+            "tail_goods_policy": "SAME_CARTON",
+            "currency": "USD",
+            "exchange_rate": "1.000000",
+            "shipping_fee": "0.0000",
+            "discount": "0.0000",
+            "notes": "",
+            "items": [{
+                "sku": replacement_sku.pk,
+                "quantity": "3.00",
+                "unit_price": "9.50",
+                "cost_price": "4.00",
+                "notes": "",
+                "trade_unit": None,
+            }],
+        }
+
+        response = self.client.put(f"/api/orders/{draft.pk}/", payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        draft.refresh_from_db()
+        line = draft.items.get()
+        self.assertEqual(line.sku_id, replacement_sku.pk)
+        self.assertEqual(line.quantity, Decimal("3.00"))
+        self.assertEqual(line.unit_price, Decimal("9.500000000000"))
+        self.assertEqual(draft.total_amount, Decimal("28.500000000000"))
+        self.assertEqual(draft.status, "draft")
+        self.assertEqual(Quote.objects.count(), quote_count)
+        self.assertEqual(self.quote.status, "draft")
+        self.assertFalse(PaymentPlan.objects.filter(order=draft).exists())
+        self.assertFalse(InventoryReservation.objects.filter(order_item__order=draft).exists())
+        self.assertEqual(InventoryMovement.objects.count(), movement_count)
 
 
 class OrderCompletionTests(TestCase):

@@ -472,6 +472,84 @@ class FulfillmentApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
         self.assertTrue(InventoryMovement.objects.filter(source_type="shipment", source_no="SH-API-001", type="sale_out").exists())
 
+    def test_reserved_production_order_can_ship_partially_through_api(self):
+        order = Order.objects.create(order_no="SO-SHIP-RESERVED-API", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="production")
+        item = order.items.create(sku=self.sku, quantity="20", unit_price="5")
+        InventoryMovement.objects.create(movement_no="IN-SHIP-RESERVED-API", movement_date=date(2026, 8, 21), type="purchase_in", sku=self.sku, quantity="20")
+        reservations = allocate_order(order)
+        self.assertEqual(sum((row.quantity for row in reservations), Decimal("0")), Decimal("20.00"))
+
+        payload = {
+            "shipment_date": "2026-08-21",
+            "items": [{"order_item": item.id, "quantity": "10", "trade_unit": None, "overage_reason": ""}],
+        }
+        response = self.client.post(f"/api/orders/{order.id}/ship/", payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
+        self.assertEqual(Shipment.objects.filter(order=order, status="confirmed").count(), 1)
+        self.assertEqual(ShipmentItem.objects.filter(shipment__order=order).aggregate(total=Sum("quantity"))["total"], Decimal("10.00"))
+        self.assertEqual(InventoryMovement.objects.filter(order=order, type="sale_out", source_type="shipment").aggregate(total=Sum("quantity"))["total"], Decimal("10.00"))
+        self.assertEqual(InventoryReservation.objects.filter(order_item=item).aggregate(total=Sum("quantity"))["total"], Decimal("10.00"))
+
+        response = self.client.post(f"/api/orders/{order.id}/ship/", payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
+        order.refresh_from_db()
+        self.assertEqual(order.status, "shipped")
+        self.assertEqual(Shipment.objects.filter(order=order, status="confirmed").count(), 2)
+        self.assertEqual(ShipmentItem.objects.filter(shipment__order=order).aggregate(total=Sum("quantity"))["total"], Decimal("20.00"))
+        self.assertEqual(InventoryMovement.objects.filter(order=order, type="sale_out", source_type="shipment").aggregate(total=Sum("quantity"))["total"], Decimal("20.00"))
+
+        repeated = self.client.post(f"/api/orders/{order.id}/ship/", payload, format="json")
+        self.assertEqual(repeated.status_code, status.HTTP_400_BAD_REQUEST, repeated.data)
+        self.assertEqual(Shipment.objects.filter(order=order, status="confirmed").count(), 2)
+        self.assertEqual(InventoryMovement.objects.filter(order=order, type="sale_out", source_type="shipment").aggregate(total=Sum("quantity"))["total"], Decimal("20.00"))
+
+    def test_reserved_order_with_inventory_exactly_equal_to_reservation_can_ship_all(self):
+        sku = SKU.objects.create(product=self.sku.product, sku="SKU-SHIP-EXACT-API")
+        order = Order.objects.create(order_no="SO-SHIP-EXACT-API", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="confirmed")
+        item = order.items.create(sku=sku, quantity="2", unit_price="5")
+        supplier = Supplier.objects.create(name="Shipment receipt supplier", code="SR")
+        purchase = PurchaseOrder.objects.create(
+            purchase_no="PO-SHIP-EXACT-API", supplier=supplier, order=order,
+            order_date=date(2026, 8, 21), status="ordered",
+        )
+        purchase_item = purchase.items.create(sku=sku, quantity="2", unit_price="3")
+        record_receipt(purchase_item, {
+            "receipt_date": date(2026, 8, 21), "quantity": Decimal("2"), "unit_cost": Decimal("3"),
+        })
+        self.assertEqual(sku_metrics(sku)["actual_quantity"], Decimal("2.00"))
+        self.assertEqual(sku_metrics(sku)["reserved_quantity"], Decimal("2.00"))
+
+        response = self.client.post(f"/api/orders/{order.id}/ship/", {
+            "shipment_date": "2026-08-21",
+            "items": [{"order_item": item.id, "quantity": "2", "trade_unit": None, "overage_reason": ""}],
+        }, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        order.refresh_from_db()
+        self.assertEqual(order.status, "shipped")
+        self.assertEqual(InventoryMovement.objects.filter(sku=sku, type="sale_out", source_type="shipment").aggregate(total=Sum("quantity"))["total"], Decimal("2.00"))
+        self.assertFalse(InventoryReservation.objects.filter(order_item=item).exists())
+
+    def test_insufficient_inventory_shipment_rolls_back_all_records(self):
+        order = Order.objects.create(order_no="SO-SHIP-SHORT-API", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="production")
+        item = order.items.create(sku=self.sku, quantity="2", unit_price="5")
+        InventoryMovement.objects.create(movement_no="IN-SHIP-SHORT-API", movement_date=date(2026, 8, 21), type="purchase_in", sku=self.sku, quantity="1")
+        reservation = InventoryReservation.objects.create(order_item=item, sku=self.sku, quantity="2")
+
+        response = self.client.post(f"/api/orders/{order.id}/ship/", {
+            "shipment_date": "2026-08-21",
+            "items": [{"order_item": item.id, "quantity": "2", "trade_unit": None, "overage_reason": ""}],
+        }, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.data["detail"], "库存不足，不能确认发货。")
+        self.assertFalse(Shipment.objects.filter(order=order).exists())
+        self.assertFalse(ShipmentItem.objects.filter(order_item=item).exists())
+        self.assertFalse(InventoryMovement.objects.filter(order=order, source_type="shipment").exists())
+        self.assertEqual(InventoryMovement.objects.filter(sku=self.sku, type="purchase_in").aggregate(total=Sum("quantity"))["total"], Decimal("1.00"))
+        self.assertEqual(InventoryReservation.objects.get(pk=reservation.pk).quantity, Decimal("2.00"))
+
     def test_over_shipment_returns_a_user_facing_validation_error(self):
         order = Order.objects.create(order_no="SO-OVER-SHIP", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="confirmed")
         item = order.items.create(sku=self.sku, quantity="1", unit_price="5")

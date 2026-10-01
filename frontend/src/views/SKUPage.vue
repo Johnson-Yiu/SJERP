@@ -1,6 +1,7 @@
 <script setup>
 import SkuCombinationRuleEditor from "../components/SkuCombinationRuleEditor.vue"
 import { matchesCombinationRules } from "../utils/skuCombinationRules"
+import { resolveDetailForPreview } from '../utils/skuDetails'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Database, History, Layers3, Pencil, Plus, Search, Trash2, X } from 'lucide-vue-next'
@@ -274,7 +275,10 @@ function savedCombinationRules(rules) {
 }
 watch(() => form.product, () => { previewRules.value = null; combinationRulesDirty.value = false })
 function newDetail(name = product.value?.name || '', key = '') { return { preview_key: key, product_name: name, unit: form.unit || 'pcs', notes: '', unit_weight: 0, carton_quantity: 0, packaging_template: '', packaging_query: '' } }
-function detailFor(preview) { return details.value.find(detail => detail.preview_key === preview.key) || newDetail(product.value?.name || '', preview.key) }
+function detailFor(preview) {
+  return resolveDetailForPreview(details.value, preview, allPreviews.value.length,
+    () => newDetail(product.value?.name || '', preview.key))
+}
 function syncDetails(previews) {
   const saved = new Map(details.value.map(detail => [detail.preview_key, detail]))
   const existingSingle = previews.length === 1 && details.value.length === 1 ? details.value[0] : null

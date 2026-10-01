@@ -67,6 +67,16 @@ test('order creation leaves number generation to the backend and keeps saved num
   assert.match(source, /class="readonly-input" readonly/)
 })
 
+test('order draft edits use PUT, close and refresh on success, and surface failed saves', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  const save = source.slice(source.indexOf('async function save()'), source.indexOf('async function handleQuoteSaved'))
+
+  assert.match(save, /delete data\.status; delete data\.order_no/)
+  assert.match(save, /api\.put\(`\/\$\{props\.type\}\/\$\{editingId\.value\}\/`, data\)/)
+  assert.match(save, /open\.value = false\s+notify\('单据已保存'\)\s+await load\(\)/)
+  assert.match(save, /catch \(e\) \{ notify\(e\.message, true\) \}/)
+})
+
 test('order list limits edit and delete operations to drafts', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

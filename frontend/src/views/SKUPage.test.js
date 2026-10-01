@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
+import { resolveDetailForPreview } from '../utils/skuDetails.js'
 
 const componentUrl = new URL('./SKUPage.vue', import.meta.url)
 
@@ -36,6 +37,17 @@ test('SKU creation relies on generated Sales Model and reviews identity changes 
   assert.match(source, /identityReviewOpen/)
   assert.match(source, /diff-removed/)
   assert.match(source, /确认后系统会再次检查中文名称、Sales Model 和参数组合是否与其他 SKU 重复/)
+})
+
+test('editing one SKU keeps its packaging detail when the computed preview key changes', () => {
+  const detail = { preview_key: '', packaging_template: 17, packaging_query: 'Template A', unit_weight: 0.5, carton_quantity: 10 }
+  const resolved = resolveDetailForPreview([detail], { key: '12W|3000K' }, 1, () => ({ packaging_template: '' }))
+
+  assert.equal(resolved, detail)
+  assert.equal(resolved.preview_key, '12W|3000K')
+  assert.equal(resolved.packaging_template, 17)
+  assert.equal(resolved.unit_weight, 0.5)
+  assert.equal(resolved.carton_quantity, 10)
 })
 
 

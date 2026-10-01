@@ -92,6 +92,7 @@ async function save() {
   error.value = ''
   const draftPayload = { ...form }
   delete draftPayload.status
+  delete draftPayload.order_no
   const payload = {
     ...draftPayload,
     customer: Number(form.customer),
@@ -114,7 +115,7 @@ async function save() {
       <div class="modal-body">
         <p class="draft-hint">订单草稿由当前报价版本预填。保存草稿不会接受报价、创建报价迭代版、预留库存或生成应收计划；确认订单时才会一次性执行这些正式动作。</p>
         <div class="form-grid">
-          <div class="field"><label>订单编号 *</label><input v-model="form.order_no" required /></div>
+          <div class="field"><label>订单编号</label><input value="保存后由系统自动生成" readonly aria-label="订单编号保存后自动生成" /></div>
           <div class="field"><label>客户 *</label><input :value="customers.find((customer) => customer.id === Number(form.customer))?.name || '—'" readonly aria-label="来源报价客户" /></div>
           <div class="field"><label>订单日期 *</label><SegmentedDateInput :model-value="form.order_date" required @update:model-value="setOrderDate" /></div>
           <div class="field"><label>预计交期</label><div class="lead-time-input"><input v-model="leadTimeDays" type="number" min="0" step="1" placeholder="天数" aria-label="交期天数" @input="setLeadTimeDays" /><span>天</span><SegmentedDateInput :model-value="form.expected_ship_date" @update:model-value="setExpectedShipDate" /></div></div>

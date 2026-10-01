@@ -886,6 +886,14 @@ class SKUSerializer(serializers.ModelSerializer):
             }
             if "parameter_values" in changed_identity_fields and identity_signature(self.instance.product, self.instance.parameter_values) == identity_signature(self.instance.product, attrs["parameter_values"]):
                 changed_identity_fields.discard("parameter_values")
+            has_business_history = any(
+                getattr(self.instance, relation).exists()
+                for relation in ("quote_items", "order_items", "purchase_order_items", "inventory_movements")
+            )
+            if has_business_history and changed_identity_fields.intersection({"parameter_values", "specification"}):
+                raise serializers.ValidationError(
+                    "该 SKU 已存在业务历史，不能直接修改身份参数；如产品规格发生实质变化，请新建 SKU 或通过正式 SKU 参数演化流程处理。"
+                )
             if changed_identity_fields and not identity_change_confirmed:
                 labels = {
                     "product": "所属产品",

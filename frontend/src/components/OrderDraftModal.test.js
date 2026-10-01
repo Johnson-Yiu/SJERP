@@ -25,3 +25,11 @@ test('order draft is always a draft and explains that confirmation performs form
   assert.doesNotMatch(source, /option value="shipped"/)
   assert.doesNotMatch(source, /option value="completed"/)
 })
+
+test('order draft does not ask for or submit a backend-generated order number', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /订单编号保存后自动生成/)
+  assert.match(source, /delete draftPayload\.order_no/)
+  assert.doesNotMatch(source, /v-model="form\.order_no"\s+required/)
+})

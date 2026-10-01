@@ -29,9 +29,11 @@
 
 - SQLite 完整后端套件：`459 tests` 通过，`10 skipped`（PostgreSQL 专用）。
 - 聚焦后端模块：`132 tests` 通过。
-- 前端 Node-only：`96 tests` 通过（新增断言计入后待最终复跑）。
+- 前端 Node-only：`97 tests` 通过。
 - Vitest：`4 tests` 通过。
 - Vite production build：通过；保留既有大 bundle 提示。
 - `manage.py check`：通过。
 - `makemigrations --check --dry-run`：`No changes detected`，无 migration。
-- PostgreSQL 完整套件与 CI Run：待推送后记录。
+- PostgreSQL 后端 CI 测试套件：通过。
+- GitHub Actions CI Run `#101`：`backend`、`backend-postgres`、`frontend` 全部 SUCCESS；运行详情见 [CI Run #101](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/36880651281)。
+- 已推送至 `master`：`56a794567b34cd22da317544c718039410ebd4ef`（父提交 `12e7022e56fbd50b7f2d18941a2fcc522237bc2f`）。

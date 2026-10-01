@@ -186,3 +186,95 @@
 - 仍未执行或未能验证及原因：①Q07 报价 Excel 点击无浏览器下载事件，内容待人工核验；②IMP07 已准备唯一流水 CSV 且 UI 确认流水号不存在，但当前 Browser Use 不支持文件输入，Computer Use 服务未配置，导入未提交；③PO11 采购取消需要 `window.prompt()`，内置自动化报 `prompt() is not supported`，替代 Chrome/Computer Use 未能连接，`PO-2026-00005` 保持已下单；④PKG04 页面没有 verification/重新验证状态或操作入口；⑤SUP04 已确认删除，但后端返回“后端服务暂时不可用”，有关联的供应商仍存在，未重复删除；⑥SH01/SH02 之后所有必须先有 Shipment 的销售闭环、超发/附加收款/冲销与发货关联退货均被 UAT-SHIP-001 阻断；⑦UAT-ORD-001 关联的报价转订单分支未重复重试；⑧IMP04 的无分类 Product 仅验证了既有行更新，首次插入未验证；⑨已被 SKU/业务引用的产品参数删除及分类/命名规则 schema freeze 未执行，以免在未得到单独确认前进行不可逆的引用主数据删除/变更。FollowUp 已保存附件删除的 UI 控件缺失、手工库存流水删除不生效及普通超采负剩余均已按实际结果记录 FAIL，不列作未执行。
 - 已知限制及数据副作用：`PO-2026-00005` 因取消提示无法输入仍处于已下单/未付款状态；`PO-2026-00006` 仍部分到货；`PO-2026-00004` 仍为草稿；`PO-2026-00008` 留有普通超采 1 pcs 的业务样本；`IM-67A35DF8FEE147E3` 手工盘盈 +1 因删除失败仍保留；九条潜客、跟进与草稿报价以及唯一交易 CSV 输入样本均保留为 UAT 数据/evidence。未因测试失败而绕过业务规则或直接修改数据库。
 - 执行与代码：业务数据变更均经 SUNJACK ERP 真实前端 UI 及业务流程操作；未通过 API、ORM、SQL、Django shell 或脚本写入业务数据。本轮仅更新本 UAT 文档并新增一份 `docs/uat-evidence/` 下的 CSV 输入样本；没有修改业务代码、前端、后端、模型、migration 或测试代码。
+
+## Formal UAT Round 1 — P1 Targeted Re-UAT（2026-10-02）
+
+本节为 `fbf38a44ac30ee2d7ecd52983fa3b6df0fa9fa53` 基线上的新增重测记录；上方原始 Round 1 结果和 Fix Batch 1 记录未改写。本轮通过 Codex 内置浏览器的真实 SUNJACK ERP 页面执行；没有通过 API、ORM、SQL、Django shell 或脚本制造/修改 UAT 业务数据，不清空数据库，不执行 P2 或完整 20 条闭环。
+
+| P1 | 最终状态 | UI 复测对象 |
+| --- | --- | --- |
+| UAT-ORD-001 | PASS | `SJ20260930DE004` → `SO-2026-00006` |
+| UAT-PKG-001 | PASS | `SKU-000001` / `UAT-R1 10pcs 标准外箱` |
+| UAT-SHIP-001 | FAIL（真实 UI 失败复现；根因分析 BLOCKED） | `SO-2026-00001`、`SO-2026-00002` |
+| UAT-SKU-001 | PASS | 历史 SKU `SKU-000001` |
+| UAT-ORD-004 | FAIL | 草稿 `SO-2026-00005` |
+
+### UAT-ORD-001 — Quote → Order — PASS
+
+在报价 UI 打开已接受、1 项、USD 1,217.70 的 `SJ20260930DE004`。点击“转为订单”后，订单编号区域显示“保存后由系统自动生成”，不是必填输入；不输入订单号直接保存。页面生成 `SO-2026-00006`。关闭并重开报价工作台后仍显示已接受；订单页签显示关联 `SO-2026-00006`，其状态为草稿、来源报价为 `SJ20260930DE004`。订单工作台回款页签为 0、应收计划 USD 0.00，采购与发货页签预留为 0，库存流水为 0；报价版本摘要仍为 1 个版本。UI 保存后重新读取结果与预期一致。
+
+### UAT-PKG-001 — SKU Packaging — PASS
+
+在包装 UI 确认 `UAT-R1 10pcs 标准外箱` 关联 SKU 数为 1；编辑 `SKU-000001`，模板为该模板、单个重量 0.5 kg、整件数量 10。保存并关闭 SKU 编辑，再从列表重新打开，三项均仍存在。再次在模板保持选中的情况下只把重量/数量改为 0.55/11，保存并重新打开，模板仍为 `UAT-R1 10pcs 标准外箱`，数值为 0.55/11；包装模板页关联数仍为 1。随后通过 UI 恢复重量/数量为 0.5/10 并保存、重开；最终包装页仍显示 1 个关联 SKU。
+
+SKU 编辑保存产生了 `product_details` 历史版本 v6、v7，这是包装 UAT 保存时观察到的既有版本行为；后续 Sales Model 临时变更与恢复分别产生 v8、v9。身份参数拒绝操作本身没有新增版本（拒绝前已有 v1–v7，包含原 UAT 留下的 v4）。
+
+### UAT-SHIP-001 — Shipment — FAIL（复现；根因分析 BLOCKED）
+
+先在原订单 `SO-2026-00002` 工作台检查：订单仍为已确认；`SKU-000001` 订单/预留均为 10 pcs，CSV SKU `UAT-R1-CSV-SKU-001` 订单/预留均为 2 pcs。库存 UI 显示 `SKU-000001` 实际 105、预留 31、可用 74、在途 7；CSV SKU 实际 5、预留 2、可用 3，故本次点击前两行库存和预留均满足足额条件。对 CSV 行全量 2 pcs 的既有失败尝试在本轮初始复测中仍显示通用不可用提示；另从 `SKU-000001` 行提交全量 10 pcs，真实页面仍显示“后端服务暂时不可用，请稍后重试”。关闭失败提示后工作台“重试”仍加载失败，订单列表仍为“已确认”。
+
+随后对原订单 `SO-2026-00001`（生产中，订单/预留 20 pcs；采购与发货页显示已到 21 pcs）从工作台打开 SKU-000001 发货表单，输入部分发货 10 pcs 并提交；同样显示“后端服务暂时不可用，请稍后重试”。离开工作台后在库存流水 UI 检查，没有出现 SO-00001 的销售出库行；库存页仍为 SKU-000001 实际 105、预留 31、可用 74。SO2 的库存流水页仅见采购入库等历史行，没有本次 `sale_out`；SKU-000001 / CSV SKU 预留与可用数量未因失败提交改变。发货记录创建、ShipmentItem、reservation release、库存守恒后的出库数量、订单状态推进及重复发货均因 UI 提交失败而无法完成验证。
+
+失败证据与限制：
+
+- 页面请求入口由 `frontend/src/components/OrderDetailModal.vue` 的 `submitShipment()` 发起 `POST /api/orders/{id}/ship/`；SO2/SO1 对应 `/api/orders/2/ship/` 与 `/api/orders/1/ship/`。UI 实际数量分别为 SO2 SKU-000001 10、CSV SKU 2，以及 SO1 SKU-000001 10。代码形成的 payload 字段为 `shipment_date`、`items[]` 中的 `order_item`、`quantity`、`overage_reason`、`trade_unit`；本次为本地日期、相应行项目、上述数量、空超发原因、基础单位（`trade_unit: null`）。Browser 工具呈现的页面没有行项目数据库 ID，当前自动化也没有 Network 面板，因此未能取得线上实际 JSON 中的数值型 `order_item` ID，不能把推导值冒充抓包 payload。
+- 实际 HTTP status、原始 response body 及 Django traceback 未能取得。`frontend/src/api.js` 的响应拦截器会把“无 status”或 HTTP 500/502/503/504 统一替换为“后端服务暂时不可用，请稍后重试”，并丢弃原始 response；故该提示只能确定在这组情况中，不能精确判断 HTTP code/body。浏览器 Console 本轮无 JS error。`tab.dev.logs` 只提供 Console；tab capabilities 没有 Network；Codex 当前线程没有附加 backend terminal，仓库内也未发现 server log 文件；桌面窗口枚举接口在当前 Browser runtime 不可用。
+- 当前运行中 UAT 服务实际使用的数据库引擎未从真实 UI 暴露；本机没有 Docker/psql，不能在本机重放 PostgreSQL。仓库已有 CI Run #101 的记录为 backend、backend-postgres、frontend SUCCESS（Fix Batch 1 文档所记历史 run），但该 run 不包含本轮刚新增的两条测试；GitHub CLI 本次查询返回 404，无法核实更新的远端 run。SQLite 与 PostgreSQL 的本轮现场差异因此未确定。
+- 没有查明具体 failing service/serializer/view/transaction，也没有真实 traceback，不能猜测根因或实施修复。此项是“UI 发货失败已复现；根因与数据库差异证据 blocked”，不是“本地无法复现”或“已修复”。需要可读的浏览器 Network/HAR 与正在运行的 Django server log 后，才能完成根因闭环。
+
+### UAT-SKU-001 — Historical SKU Identity — PASS
+
+在 `SKU-000001` 编辑 UI 用历史值 12W 改为 24W，页面先显示身份更新确认，再确认保存；收到明确错误：“该 SKU 已存在业务历史，不能直接修改身份参数；如产品规格发生实质变化，请新建 SKU 或通过正式 SKU 参数演化流程处理。”取消草稿并重新打开，SKU Code 仍为 `SKU-000001`，参数仍为 12W / 3000K，内部名称和 Sales Model 仍为原值。再次将色温尝试改为 4000K（该页面由参数值派生规格；没有独立 specification 输入控件），确认框呈现变更前后名称/型号，确认后同样被明确拒绝；重新打开仍为 12W / 3000K。两次拒绝均未生成新的 SKUVersion。
+
+随后按允许路径只改 Sales Model 为 `UATP-1230K-UAT-R1-REUAT`，UI 显示“SKU 已更新”，版本历史新增 v8、`changed_fields=sales_model`。通过报价 `SJ20260930DE004`、订单 `SO-2026-00006` 的详情页复查，旧快照仍为 `UATP-1230K`、`UAT-R1 智能面板灯-12W-3000K`、旧英文描述；采购单 `PO-2026-00001` 仍显示原内部 SKU 名称及供应商型号。随后通过 UI 将 Sales Model 恢复为 `UATP-1230K-UAT`；列表重新读取显示原型号。恢复动作生成 v9（记录旧 Sales Model 为临时测试型号），这是允许的展示修改版本，不是拒绝身份修改产生的错误版本。
+
+已按任务新增两条后端回归测试（仅测试代码）：`test_purchase_order_item_history_blocks_parameter_identity_change`、`test_inventory_movement_history_blocks_parameter_identity_change`，分别构造 PurchaseOrderItem / InventoryMovement 历史引用，通过 APIClient 辅助验证身份变更返回 400、SKU 身份字段及历史快照不变、无 SKUVersion。两条定向测试通过。真实 UI UAT 结果仍以本节页面操作/保存后重读为准。
+
+### UAT-ORD-004 — Draft Order Edit — FAIL
+
+在订单列表打开原草稿 `SO-2026-00005`，初始明细为 SKU-000001，交易数量 2 袋（每袋 5 pcs，即 10 pcs），USD 12.30，合计 USD 24.60。通过真实编辑表单将 SKU 改为 `UAT-R1-CSV-SKU-001`、数量改为 3、单价改为 USD 9.50，并把交期天数改为 45；表单即时合计 USD 28.50。点击/提交“保存单据”后未成功保存，页面显示“后端服务暂时不可用，请稍后重试”，工作台出现“加载失败”。取消未保存表单后从订单列表重新打开，明细仍是原 SKU-000001、2 袋、USD 12.30、总额 USD 24.60，故本次修改没有持久化。工作台显示回款 0、应收计划 USD 0.00、采购与发货预留 0、库存流水 0；无来源报价，因此没有生成 PaymentPlan、InventoryReservation、InventoryMovement 或 Quote revision。
+
+无效输入分支：把数量设为 0（控件 `min=0.01`、`required`）后点击保存，页面无应用级明确错误，表单仍打开；Console 无 JS error。前端表单为 `@submit.prevent="save"`，原生约束会在 submit handler 之前拦截该输入。另将全部 SKU 取消选择后以键盘 Enter 提交，前端显示明确提示“请至少添加一条有效的 SKU 明细。”。因此缺 SKU 分支有可读提示，但数量为 0 的无效分支未向用户呈现明确应用级反馈。
+
+可从 `frontend/src/views/DocumentPage.vue` 确认草稿保存 handler 调用 PUT 并在 catch 显示错误；失败文案由 `frontend/src/api.js` 的拦截器统一替换。该 UI 自动化接口没有 Network 面板，所以不能报告这次 PUT 的确切 status/原始 body/服务器 traceback；按钮提交后通用不可用提示及重开后仍是旧值已通过真实 UI 观察。
+
+## 本轮验证与范围结论
+
+- 业务代码：未修改。新增回归断言仅在 `backend/crm/tests/test_sku_commercial_identity.py`；本节仅追加本 UAT 文档。无 migration、无业务数据脚本改动，无 P2 修复。
+- Backend SQLite：`python manage.py test`，461 tests，OK，10 skipped（PostgreSQL-only）。系统检查通过。
+- Backend PostgreSQL：本机无 Docker/psql，未能执行。本仓库此前记录的 CI Run #101 为 backend-postgres SUCCESS，但早于本轮两个新增测试；当前 GH CLI 查询返回 404，无法证明新测试通过 PostgreSQL。
+- Frontend：`npm run test:unit` 97/97 PASS；`node --test tests/detail-drawer-typography.spec.js` 1/1 PASS；Vitest 7 files / 31 tests PASS；`npm run build` PASS（保留已有大 chunk 警告）。
+- Migration：`python manage.py makemigrations --check --dry-run` → `No changes detected`，无新 migration。
+- CI：仓库已有记录的 GitHub Actions Run #101 显示 backend、backend-postgres、frontend 均 SUCCESS（[CI Run #101](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/36880651281)）；本次无法读取更新远端状态，且 Run #101 不含本轮两条新测试。
+- 当前及最终 HEAD：`fbf38a44ac30ee2d7ecd52983fa3b6df0fa9fa53`（未创建新 commit；UAT 文档与测试文件保留工作区改动）。
+- P1 汇总：3 PASS、2 FAIL。UAT-SHIP-001 的 UI 失败已复现，但因本地浏览器无 Network/HAR 接口、server console/log 未连接，根因证据未完成；UAT-ORD-004 草稿 PUT 未保存且 quantity=0 无明确应用反馈。未进入下一阶段，也未开始 20 条完整闭环。
+
+## P1 Root Cause Investigation / Fix Round 2（2026-10-02）
+
+任务指定开始基线为 `master` `8b1f01665957ef8655bbd3aaaafe63327eb27503`、CI Run #103（backend / backend-postgres / frontend 均 SUCCESS）。本地 checkout 实际为 `fbf38a44ac30ee2d7ecd52983fa3b6df0fa9fa53`；在调查结束前远端 fetch 因 GitHub 连接返回空响应而无法取得/核验 `8b1f…` 对象。保留上方 Round 1 和 Targeted Re-UAT 的历史结论；本节只记录 `UAT-SHIP-001` 与 `UAT-ORD-004` 的根因闭环和重新验证。未清空 UAT 数据库、未通过 API/ORM/SQL/Django shell 造业务数据，未进入 P2 或 20 条闭环。
+
+### 先决环境与根因证据
+
+- 真实 UI 将 `SO-2026-00005` 草稿从 `SKU-000001` 改为 `UAT-R1-CSV-SKU-001`，数量 3、单价 USD 9.50、交期 45 天后点击保存。浏览器实际发出 `PUT /api/orders/5/`；后端单一 `--noreload` 实例记录 HTTP **500**。Django traceback 落在 `OrderSerializer.update()` 的 `instance.items.all().delete()`（`backend/crm/serializers.py:1543`）的级联收集阶段，根本异常为 `django.db.utils.OperationalError: no such column: crm_shipmentitem.source_order_item_id`。
+- 同一环境的 `manage.py showmigrations crm` 显示 UAT SQLite 已应用至 `0069_backfill_purchase_cost_allocations`，但仓库内已存在且未应用的 `0070_shipmentitem_overage_reversal_links` 与 `0071_paymentplan_cancelled_zero_amount`。`0070` 正是新增 `ShipmentItem.source_order_item`、`generated_payment_plan` 两字段的迁移。`makemigrations --check --dry-run` 为 `No changes detected`，故根因是**运行数据库迁移落后于代码**，不是需要新增 migration 的模型漂移，也不是前端按钮未触发。
+- 原失败 UI 的字段输入由页面可见表单确认（SO5：SKU CSV、数量 3、USD 9.50、交期 45）；临时浏览器诊断因 Console 仅显示 `Object` 而未保留 JSON 串，无法诚实地把推导出的序列化 JSON 伪称为抓包 payload。后端 traceback、URL、方法、状态和触发路径均已取得。失败发生在事务中的订单明细删除前，异常导致该原子事务回滚；重新打开 SO5 仍是旧明细，证实没有局部写入。
+- 为修复现有 UAT 环境，仅执行仓库已有迁移 `python manage.py migrate crm`：`0070 ... OK`、`0071 ... OK`。未新增或修改 migration，未修改后端模型/服务/序列化器，也未清空业务数据。此前同时存在两组 `runserver` autoreloader 进程；调查时已停止旧进程并以单一 `--noreload` 后端复测，避免多实例造成的不可重复运行态。
+
+### UAT-ORD-004 — Draft Order Edit — PASS
+
+同一真实编辑 UI 中，在迁移完成后再次保存 SO5 的 SKU 替换、数量 3、USD 9.50、交期 45 天。`PUT /api/orders/5/` 返回 **200**；页面关闭编辑表单、列表刷新，`SO-2026-00005` 重读为草稿、1 项、USD 28.50，SKU 为 `UAT-R1-CSV-SKU-001`，数量 3、单价 USD 9.50、交期 `2026-11-14`。工作台仍显示回款 0、应收计划 0、库存流水 0、采购与发货预留 0，未生成 PaymentPlan、InventoryReservation、InventoryMovement 或 Quote revision。
+
+无效分支随后以真实 UI 输入数量 0 并点击保存：修复前浏览器原生 `min=0.01`/`required` 拦截 submit，既无 PUT 也无应用内信息。最小前端修复为订单表单 `novalidate` 加现有 `save()` 的前置检查；修复后同一 UI 显示明确 toast：`每条 SKU 明细的数量必须大于 0。`，表单保持打开，后端日志确认没有新增 PUT。新增前端回归断言 `frontend/src/views/DocumentPage.test.js` 覆盖该 UX 分支。
+
+### UAT-SHIP-001 — Shipment — PASS（原 500 已关闭；SO2 全单前提差异已记录）
+
+- SO1：从 `SO-2026-00001` 工作台“采购与发货”打开 `SKU-000001` 发货表单，真实 UI 输入部分发货 10 pcs 并提交。创建 `SH-3C0ACC8BE33B4E7A`，后端记录 `POST /api/orders/1/ship/` **201**；库存流水 UI 出现 `SH-7A558D562BC2487B` 销售出库 -10，关联 SO1。订单保持生产中且待发 10，符合部分发货。
+- SO2：复测时 `SO-2026-00002` 的 `SKU-000001` 行已显示实际库存 0 / 待发 10，已不满足原 Round 1 的“足额库存 + 足额预留全单发货”先决条件，故不伪造库存或把业务规则阻止误记为 P1。其 CSV SKU 仍有实际 3、预留 2、待发 2；通过真实 UI 全量发货 2，创建 `SH-D4FB7258774C4245`，后端记录 `POST /api/orders/2/ship/` **201**，库存流水 UI 出现 `SH-F5F06A622ED846E0` 销售出库 -2，关联 SO2。CSV 行随后显示已发 2 / 待发 0、预留 0。
+- 发货后库存 UI：`SKU-000001` 实际 95、预留 21、可用 74（95 = 21 + 74）；CSV SKU 实际 3、预留 0、可用 3（3 = 0 + 3）。两条新 sale_out 分别为 -10、-2，与工作台 Shipment 记录一一对应。每次提交后的页面刷新仅显示一条对应 Shipment/sale_out；未观察到重复扣减。
+- 根因修复后 SO1、SO2 的真实 UI 发货请求均为 201；原“后端服务暂时不可用”在已满足发货条件的操作上不再复现。SO2 的**全单完成和订单状态最终推进**因该订单另一 SKU 的真实库存不足而未验证，属于测试数据先决条件差异，不是原 P1 500 的残留。SQLite 现场根因由缺列直接确认；PostgreSQL 不存在该落后迁移状态的现场复现证据，后续 CI 将覆盖迁移后的测试数据库。
+
+### 本节变更与后续验证范围
+
+- 业务代码：仅 `frontend/src/views/DocumentPage.vue` 的无效数量 UI 提示；无后端业务代码、模型或 migration 修改。临时 `frontend/src/api.js` 诊断已在提交前移除。
+- 测试资产：新增 `frontend/src/views/DocumentPage.test.js` 的非正数量回归断言。仓库已有 `backend/crm/tests/test_shipment_overage_migration.py` 已以真实 0069→0070 迁移测试并访问新增字段；本次现场暴露的是生产式 UAT SQLite 未执行该已有迁移，而非迁移文件缺失。
+- 本地提交前验证：backend SQLite `461` tests PASS（`10` skipped）；`manage.py check` PASS；`makemigrations --check --dry-run` 为 `No changes detected`；frontend `npm run test:unit` 为 `98/98` PASS，`npm run build` PASS（仅既有大 chunk 警告）。backend-postgres 仅能在 GitHub Actions 的测试数据库中验证；提交/推送后的 CI Run、最终 SHA 将续记于本节末尾。未开始任何 P2 或完整闭环。

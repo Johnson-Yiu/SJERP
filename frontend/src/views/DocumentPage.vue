@@ -117,6 +117,7 @@ const subtotal = computed(() => (form.items || []).reduce((sum, i) => sum + Numb
 const total = computed(() => subtotal.value + Number(form.shipping_fee || 0) - Number(form.discount || 0))
 async function save() {
   if (!form.items.length || form.items.some(i => !i.sku)) return notify('请至少添加一条有效的 SKU 明细。', true)
+  if (form.items.some(i => Number(i.quantity) <= 0)) return notify('每条 SKU 明细的数量必须大于 0。', true)
   saving.value = true
   const data = { ...form, customer: Number(form.customer), items: form.items.map(i => tradePayload({ ...i, sku: Number(i.sku) })) }
   if (isOrder.value) { delete data.status; delete data.order_no }
@@ -277,7 +278,7 @@ onMounted(async () => {
       </table></div>
     </div>
 
-    <div v-if="open && isOrder" class="modal-backdrop" @mousedown.self="closeEditor"><form class="modal wide" @submit.prevent="save">
+    <div v-if="open && isOrder" class="modal-backdrop" @mousedown.self="closeEditor"><form class="modal wide" novalidate @submit.prevent="save">
       <div class="modal-head"><h3>{{ editingId ? '编辑' : '新建' }}{{ isOrder ? '订单' : '报价' }}</h3><button type="button" class="mini-btn" @click="closeEditor"><X :size="17" /></button></div>
       <div class="modal-body">
         <div class="form-grid">

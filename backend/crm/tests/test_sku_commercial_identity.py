@@ -512,6 +512,71 @@ class SkuCommercialIdentityTests(TestCase):
         self.assertEqual(movement.sales_model_snapshot, sku.sales_model)
         self.assertEqual(movement.sku_code_snapshot, sku.sku)
 
+    def test_purchase_order_item_history_blocks_parameter_identity_change(self):
+        sku, _ = self.create_sku()
+        supplier = Supplier.objects.create(name="SKU Purchase History Supplier", code="SH")
+        purchase = PurchaseOrder.objects.create(
+            purchase_no="PO-SKU-IDENTITY-HISTORY",
+            supplier=supplier,
+            order_date=date(2026, 8, 23),
+        )
+        item = PurchaseOrderItem.objects.create(
+            purchase_order=purchase,
+            sku=sku,
+            quantity="1",
+            unit_price="5",
+        )
+        original_identity = (sku.sku, sku.parameter_values, sku.specification)
+        original_snapshot = (item.sku_code_snapshot, item.sales_model_snapshot)
+
+        response = self.client.put(f"/api/skus/{sku.pk}/", {
+            "product": sku.product_id,
+            "unit": sku.unit,
+            "parameter_values": {"voltage": "12", "width": "8"},
+            "specification": "12V / 8mm",
+            "identity_change_confirmed": True,
+        }, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(
+            response.data["non_field_errors"][0],
+            "该 SKU 已存在业务历史，不能直接修改身份参数；如产品规格发生实质变化，请新建 SKU 或通过正式 SKU 参数演化流程处理。",
+        )
+        sku.refresh_from_db()
+        item.refresh_from_db()
+        self.assertEqual((sku.sku, sku.parameter_values, sku.specification), original_identity)
+        self.assertEqual((item.sku_code_snapshot, item.sales_model_snapshot), original_snapshot)
+        self.assertFalse(SKUVersion.objects.filter(sku=sku).exists())
+
+    def test_inventory_movement_history_blocks_parameter_identity_change(self):
+        sku, _ = self.create_sku()
+        movement = InventoryMovement.objects.create(
+            movement_no="IM-SKU-IDENTITY-HISTORY",
+            movement_date=date(2026, 8, 23),
+            type="adjust_in",
+            sku=sku,
+            quantity="1",
+        )
+        original_identity = (sku.sku, sku.parameter_values, sku.specification)
+        original_snapshot = (movement.sku_code_snapshot, movement.sales_model_snapshot)
+
+        response = self.client.patch(f"/api/skus/{sku.pk}/", {
+            "parameter_values": {"voltage": "12", "width": "8"},
+            "specification": "12V / 8mm",
+            "identity_change_confirmed": True,
+        }, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(
+            response.data["non_field_errors"][0],
+            "该 SKU 已存在业务历史，不能直接修改身份参数；如产品规格发生实质变化，请新建 SKU 或通过正式 SKU 参数演化流程处理。",
+        )
+        sku.refresh_from_db()
+        movement.refresh_from_db()
+        self.assertEqual((sku.sku, sku.parameter_values, sku.specification), original_identity)
+        self.assertEqual((movement.sku_code_snapshot, movement.sales_model_snapshot), original_snapshot)
+        self.assertFalse(SKUVersion.objects.filter(sku=sku).exists())
+
     def test_referenced_sku_cannot_be_deleted_but_can_be_disabled(self):
         sku, _ = self.create_sku()
         InventoryMovement.objects.create(movement_no="IM-SKU-PROTECT", movement_date=date(2026, 8, 23), type="adjust_in", sku=sku, quantity="1")

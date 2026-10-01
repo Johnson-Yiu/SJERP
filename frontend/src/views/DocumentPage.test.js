@@ -77,6 +77,15 @@ test('order draft edits use PUT, close and refresh on success, and surface faile
   assert.match(save, /catch \(e\) \{ notify\(e\.message, true\) \}/)
 })
 
+test('order editor reports an invalid non-positive line quantity before sending a request', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  const save = source.slice(source.indexOf('async function save()'), source.indexOf('async function handleQuoteSaved'))
+
+  assert.match(source, /<form class="modal wide" novalidate @submit\.prevent="save">/)
+  assert.match(save, /form\.items\.some\(i => Number\(i\.quantity\) <= 0\)/)
+  assert.match(save, /每条 SKU 明细的数量必须大于 0。/)
+})
+
 test('order list limits edit and delete operations to drafts', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

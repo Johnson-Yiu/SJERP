@@ -278,3 +278,55 @@ SKU 编辑保存产生了 `product_details` 历史版本 v6、v7，这是包装 
 - 业务代码：仅 `frontend/src/views/DocumentPage.vue` 的无效数量 UI 提示；无后端业务代码、模型或 migration 修改。临时 `frontend/src/api.js` 诊断已在提交前移除。
 - 测试资产：新增 `frontend/src/views/DocumentPage.test.js` 的非正数量回归断言。仓库已有 `backend/crm/tests/test_shipment_overage_migration.py` 已以真实 0069→0070 迁移测试并访问新增字段；本次现场暴露的是生产式 UAT SQLite 未执行该已有迁移，而非迁移文件缺失。
 - 本地提交前验证：backend SQLite `461` tests PASS（`10` skipped）；`manage.py check` PASS；`makemigrations --check --dry-run` 为 `No changes detected`；frontend `npm run test:unit` 为 `98/98` PASS，`npm run build` PASS（仅既有大 chunk 警告）。backend-postgres 仅能在 GitHub Actions 的测试数据库中验证；提交/推送后的 CI Run、最终 SHA 将续记于本节末尾。未开始任何 P2 或完整闭环。
+
+## Formal UAT Round 1 — Full Closed-Loop UAT（2026-10-02）
+
+### 执行范围与计数口径
+
+本节记录本轮通过真实前端 UI 完成并在 UI 重新打开核对的严格闭环样本。计入的 20 条为 `SO-2026-00006`、`SO-2026-00007` 至 `SO-2026-00025`：这些订单均有 UI 可回溯的已接受 Quote、Customer 的 FollowUp、订单、履约、回款及完成状态。此前的 `SO-2026-00001`、`SO-2026-00002`、`SO-2026-00004` 保留为历史/异常样本，不计入本表，因为订单工作台显示未关联来源报价；它们的发货与回款结果仍保留在上方历史章节。
+
+FollowUp 页面本轮确认 12 个客户均有可见记录（CSV Stage 客户本轮新增 `CSV Stage 闭环需求确认`，其余客户沿用既有 UAT 跟进记录）。所有订单均通过报价页“客户接受”→“转为订单”、订单工作台确认、真实采购/库存发货、财务流水收款及“完成订单”完成；没有 API、ORM、SQL、fixture 或脚本写入业务数据。
+
+| Loop ID | Customer / FollowUp | Quote | Sales Order | Purchase Order | Receipt | Shipment / sale_out（UI） | PaymentPlan（UI 回款页签） | Transaction（客户收款） | 最终订单状态 | 库存结果 | 最终结果 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| LOOP-01 | UAT-R1 客户 Alpha GmbH | SJ20260930DE004 | SO-2026-00006 | 直接库存 | 既有库存 | SH-7B4F720440BA439F / sale_out -99 | USD 1,217.70，已核销 | FIN-8C3617D223D04304，USD 1,217.70 | 已完成 | 99/99 | PASS |
+| LOOP-02 | UAT-R1 潜客 07 · 阿联酋商场新建项目 | SJ20261001AE001 | SO-2026-00007 | PO-2026-00009 | GR-C82F0E811E8B4B46，5 pcs | SH-31C119E9639942E2；sale_out SH-52511F4D85C44308 -8 | USD 79.20，已核销 | FIN-7FA54136C9724392，USD 79.20 | 已完成 | 8/8 | PASS |
+| LOOP-03 | UAT-R1 潜客 09 · 新加坡办公园区 | SJ20261002SG001 | SO-2026-00008 | PO-2026-00010 库存池 | GR-77208187AB424872，1,500 pcs | SH-4D7A714E7E9F488B；sale_out SH-96F9ADCA31A84AED -100 | USD 123.00，已核销 | FIN-B8E3E3EE3D964965，USD 123.00 | 已完成 | 100/100 | PASS |
+| LOOP-04 | UAT-R1 潜客 08 · 南非仓库更新项目 | SJ20261002ZA001 | SO-2026-00009 | PO-2026-00010 库存池 | GR-77208187AB424872 | sale_out SH-53F7034A970F437A -100 | USD 115.00，已核销 | FIN-F8E04BB4A17640B0，USD 115.00 | 已完成 | 100/100 | PASS |
+| LOOP-05 | UAT-R1 潜客 07 · 阿联酋商场新建项目 | SJ20261002AE001 | SO-2026-00010 | PO-2026-00010 库存池 | GR-77208187AB424872 | sale_out SH-8E3C7530D2A04D4C -100 | USD 108.00，已核销 | FIN-D47449DC4B3747C0，USD 108.00 | 已完成 | 100/100 | PASS |
+| LOOP-06 | UAT-R1 潜客 06 · 巴西商业空间改造 | SJ20261002BR001 | SO-2026-00011 | PO-2026-00010 库存池 | GR-77208187AB424872 | sale_out SH-11D92B1A4295464A -100 | USD 111.00，已核销 | FIN-A8F6A5159754429C，USD 111.00 | 已完成 | 100/100 | PASS |
+| LOOP-07 | UAT-R1 潜客 05 · 澳大利亚户外项目 | SJ20261002AU001 | SO-2026-00012 | PO-2026-00010 库存池 | GR-77208187AB424872 | sale_out SH-4392CED1BB494308 -100 | USD 114.00，已核销 | FIN-4E86FA58D9094675，USD 114.00 | 已完成 | 100/100 | PASS |
+| LOOP-08 | UAT-R1 潜客 04 · 日本零售陈列改造 | SJ20261002JP001 | SO-2026-00013 | PO-2026-00010 库存池 | GR-77208187AB424872 | sale_out SH-B5A74BABF77B42FF -100 | USD 117.00，已核销 | FIN-FBE98EDD52BE408E，USD 117.00 | 已完成 | 100/100 | PASS |
+| LOOP-09 | UAT-R1 潜客 03 · 北美仓储节能照明 | SJ20261002US001 | SO-2026-00014 | PO-2026-00010 库存池 | GR-77208187AB424872 | sale_out SH-4E45815E134A4445 -100 | USD 120.00，已核销 | FIN-16E9C1C82119476E，USD 120.00 | 已完成 | 100/100 | PASS |
+| LOOP-10 | UAT-R1 潜客 02 · 英国酒店改造照明 | SJ20261002GB001 | SO-2026-00015 | PO-2026-00010 库存池 | GR-77208187AB424872 | sale_out SH-301C2997D1AA46B3 -100 | USD 123.00，已核销 | FIN-5B322C7F63614BCC，USD 123.00 | 已完成 | 100/100 | PASS |
+| LOOP-11 | UAT-R1 潜客 01 · 欧盟住宅照明 | SJ20261002FR001 | SO-2026-00016 | PO-2026-00010 库存池 | GR-77208187AB424872 | sale_out SH-AE7FC64360E14993 -100 | USD 126.00，已核销 | FIN-9CFD48242D204A6B，USD 126.00 | 已完成 | 100/100 | PASS |
+| LOOP-12 | UAT-R1 客户 Alpha GmbH | SJ20261002DE001 | SO-2026-00017 | PO-2026-00010 库存池 | GR-77208187AB424872 | sale_out SH-722D48AF63384F64 -100 | USD 129.00，已核销 | FIN-5FC5007A52ED4679，USD 129.00 | 已完成 | 100/100 | PASS |
+| LOOP-13 | UAT-R1 CSV Test Customer | SJ20261002CA001 | SO-2026-00018 | PO-2026-00010 库存池 | GR-77208187AB424872 | sale_out SH-D81BE0F7537E4161 -100 | USD 132.00，已核销 | FIN-D0213E9B548B4A26，USD 132.00 | 已完成 | 100/100 | PASS |
+| LOOP-14 | UAT-R1 CSV Stage Injection | SJ20261002GB002 | SO-2026-00019 | PO-2026-00010 库存池 | GR-77208187AB424872 | sale_out SH-C01E23B4C7D346AA -100 | USD 135.00，已核销 | FIN-10C7DF5301D74D40，USD 135.00 | 已完成 | 100/100 | PASS |
+| LOOP-15 | UAT-R1 潜客 09 · 新加坡办公园区 | SJ20261002SG002 | SO-2026-00020 | PO-2026-00010 库存池 | GR-77208187AB424872 | sale_out SH-85A145A3CDBC4B6D -100 | USD 138.00，已核销 | FIN-1B1B49EBA5C941C8，USD 138.00 | 已完成 | 100/100 | PASS |
+| LOOP-16 | UAT-R1 潜客 07 · 阿联酋商场新建项目 | SJ20261002AE002 | SO-2026-00021 | PO-2026-00011 库存池 | GR-F0ADB12CAE86437A，200 pcs | sale_out SH-FF24ABAE8B7749C0 -100 | USD 141.00，已核销 | FIN-5434BA3124694E32，USD 141.00 | 已完成 | 100/100 | PASS |
+| LOOP-17 | UAT-R1 潜客 06 · 巴西商业空间改造 | SJ20261002BR002 | SO-2026-00022 | PO-2026-00011 库存池 | GR-F0ADB12CAE86437A | sale_out SH-636373A26FAB4932 -100 | USD 144.00，已核销 | FIN-4BE510DE2FBF4151，USD 144.00 | 已完成 | 100/100 | PASS |
+| LOOP-18 | UAT-R1 客户 Alpha GmbH | SJ20261002DE002 | SO-2026-00023 | 既有库存/PO-2026-00010 库存池 | 既有库存 | sale_out SH-7670DC4D9FDE4841 -100 | USD 1,500.00，已核销 | FIN-3E687964A9D24205，USD 1,500.00 | 已完成 | 100/100 | PASS |
+| LOOP-19 | UAT-R1 CSV Test Customer | SJ20261002CA002 | SO-2026-00024 | PO-2026-00012 | GR-849D62DEFE3F4261，25 pcs | sale_out SH-4D09F3CB468449D3 -100 | USD 1,530.00，已核销 | FIN-E520483BF5764705，USD 1,530.00 | 已完成 | 100/100 | PASS |
+| LOOP-20 | UAT-R1 潜客 09 · 新加坡办公园区 | SJ20261002SG003 | SO-2026-00025 | PO-2026-00013 | GR-B74F1625FEE14700，100 pcs | sale_out SH-153D79C225B243AD -100 | USD 1,560.00，已核销 | FIN-8D5424FC57A44B51，USD 1,560.00 | 已完成 | 100/100 | PASS |
+
+### 多样化组合覆盖
+
+- 多 SKU：历史 `SO-2026-00002` 保留为两行商品样本；本表 20 条正常闭环为单 SKU，但不改变历史多 SKU 证据。
+- 直接库存：`SO-2026-00006`、`SO-2026-00023` 使用已有可用库存；采购库存池：`PO-2026-00010`、`PO-2026-00011` 支撑多个订单；订单专属采购：`PO-2026-00009`、`PO-2026-00012`、`PO-2026-00013`。
+- 部分库存/采购与部分到货：`SO-2026-00007` 使用 PO-00009 的 5 pcs 到货后发货；`SO-2026-00024` 通过 PO-00012 补足 25 pcs 后发货；`SO-2026-00025` 通过 PO-00013 全量收货后发货。
+- 部分发货/再发货：历史 `SO-2026-00001`、`SO-2026-00002` 通过两次 UI 发货完成；本表各单最后一批发货后均显示已完成。
+- 定金/尾款、多次收款、运费/订单费用、折扣、交易单位/包装单位等差异由历史 `SO-2026-00001`、`SO-2026-00002`、`SO-2026-00004` 及前述 P1 UAT 保留；本轮未删除或改写这些异常样本。
+
+### 最终 UI 汇总与结论
+
+- 订单列表 UI：25 张订单中 23 张为已完成；本表严格计入 20 张具有 Quote 来源的闭环（SO6、SO7–SO25）。`SO-2026-00003` 取消、`SO-2026-00005` 草稿等异常样本继续保留。
+- 库存 UI（`SKU-000001`）：实际 `0`、预留 `0`、可用 `0`、在途 `7`、待采购 `0`；CSV SKU 各字段均为 `0`。守恒成立，未见残留 reservation。
+- 库存流水 UI 可见本表所有 sale_out 与对应 SO；PO-00009/10/11/12/13 的采购入库流水均可见。交易流水 UI 可见本表 20 条客户收款，均为已确认且订单未收为 `0.00`。
+- PaymentPlan：20 条订单工作台“回款”页签均显示 1 条已核销计划，订单概览应收计划等于合同金额、已收等于合同金额、待收 `USD 0.00`；应收计划列表在全部核销后显示暂无未结计划，这是 UI 的已结清呈现，不是缺少计划。
+- 本轮未发现新的 P0/P1；P1 当前状态沿用上一节的五项 PASS。P2/P3 不在本轮修复范围内。闭环结果：**20/20 PASS**。
+
+### 本轮验证资产与提交前检查
+
+- 本轮只新增本节 UAT 记录；未修改业务代码、模型、迁移或自动化测试。通过 UI 新增/推进的业务数据与上述编号均保留在 UAT 数据库中。
+- 完成闭环后执行：`python manage.py check`、`python manage.py makemigrations --check --dry-run`（预期 `No changes detected`）、Backend SQLite 全套、Frontend unit/Node/Vitest/build；结果与 CI 将在本节末尾续记。

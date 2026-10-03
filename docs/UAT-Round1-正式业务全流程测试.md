@@ -330,3 +330,151 @@ FollowUp 页面本轮确认 12 个客户均有可见记录（CSV Stage 客户本
 
 - 本轮只新增本节 UAT 记录；未修改业务代码、模型、迁移或自动化测试。通过 UI 新增/推进的业务数据与上述编号均保留在 UAT 数据库中。
 - 完成闭环后执行：`python manage.py check`、`python manage.py makemigrations --check --dry-run`（预期 `No changes detected`）、Backend SQLite 全套、Frontend unit/Node/Vitest/build；结果与 CI 将在本节末尾续记。
+
+## Formal UAT Round 1 — Advanced Closed-Loop Coverage（进行中，2026-10-02）
+
+### 已完成的真实 UI 高级闭环：ADV-01 — PASS
+
+`SJ20261002DE003`（UAT-R1 客户 Alpha GmbH，USD 330.00）在报价 UI 中选择两个 SKU：`SKU-000001` 10 箱 = 100 pcs、`UAT-R1-CSV-SKU-001` 20 pcs；设置运费 USD 20、折扣 USD 10、定金比例 30%。报价经“客户接受”转为 `SO-2026-00026` 并确认。
+
+- 采购来源 UI 分别选择 UAT 供应商 A（SKU-000001）与 UAT 供应商 B-历史快照测试（CSV SKU），生成并确认 `PO-2026-00014`（100 pcs / USD 650）与 `PO-2026-00015`（20 pcs / USD 70）。
+- Receipt：PO-00014 第一次真实收货 40 pcs，状态显示“部分到货”；第二次在交易单位 UI 选择 10 pcs/箱并输入 6 箱，实际入库 60 pcs，PO 显示已完成且两条 Receipt 记录为 40、60。PO-00015 全量收货 20 pcs，显示已完成。
+- Shipment：`SH-CBD383B54663411D`（SKU-000001 4 箱 = 40 pcs）、`SH-F0C3A2518E594C38`（CSV SKU 20 pcs）、`SH-C15BCCBCAED94A98`（SKU-000001 6 箱 = 60 pcs）。订单工作台最终已出库 120 / 待出库 0，未见残余预留。
+- Customer receipt：操作员通过“财务流水” UI 实际提交两次收款输入 USD 99（定金）及 USD 231（尾款）。订单 UI 的最终回款为 USD 330、余额 USD 0、PaymentPlan USD 330 已核销。系统最终呈现三条已确认回款：`FIN-DA6CD5B811C947E1` USD 99、`FIN-64E0EDF4D3C448D2` USD 132、`FIN-D2E3CF9C90C54883` USD 99（后者标为拆分记录）；三条之和 USD 330。该自动拆分呈现与两次 UI 输入的直觉一对一对应不同，但不影响本订单“已收 = 合同额、剩余 = 0”的闭环结果，作为后续审查观察项保留。
+- 最终点击“完成订单”后 `SO-2026-00026` 显示已完成。
+
+### 覆盖矩阵（当前中间状态）
+
+| 场景 | Advanced Loop | Quote | Sales Order | Purchase Order | Supplier | Receipt | Shipment | Transaction | 最终状态 |
+|---|---|---|---|---|---|---|---|---|---|
+| Multi SKU | ADV-01 | SJ20261002DE003 | SO-2026-00026 | PO-00014 / PO-00015 | A / B | 40+60 / 20 pcs | 40+20+60 pcs | USD 330 | PASS |
+| Multi Supplier | ADV-01 | 同上 | 同上 | PO-00014 / PO-00015 | A / B | 已完成 | 已完成 | 已核销 | PASS |
+| Partial Receipt | ADV-01 | 同上 | 同上 | PO-00014 | A | 40 后 60 | 后续完成 | 已核销 | PASS |
+| Multiple Receipts | ADV-01 | 同上 | 同上 | PO-00014 | A | 2 条 | 后续完成 | 已核销 | PASS |
+| Partial Shipment | ADV-01 | 同上 | 同上 | 两张 PO | A / B | 已完成 | SKU-000001：40 后 60 | 已核销 | PASS |
+| Multiple Shipments | ADV-01 | 同上 | 同上 | 两张 PO | A / B | 已完成 | 3 条 | 已核销 | PASS |
+| Deposit + Balance | ADV-01 | 同上 | 同上 | 两张 PO | A / B | 已完成 | 已完成 | 两次 UI 输入、三条系统流水 | PASS（自动拆分待审查） |
+| Multiple Payments | ADV-01 | 同上 | 同上 | 两张 PO | A / B | 已完成 | 已完成 | 合计 USD 330 | PASS |
+| Shipping Fee | ADV-01 | USD 20 | USD 20 | 两张 PO | A / B | 已完成 | 已完成 | 合同 USD 330 | PASS |
+| Discount | ADV-01 | USD 10 | USD 10 | 两张 PO | A / B | 已完成 | 已完成 | 合同 USD 330 | PASS |
+| Trade Unit / Packaging Unit | ADV-01 | 10 箱=100 pcs | 10 箱=100 pcs | PO-00014：10 箱 | A | 6 箱=60 pcs | 4+6 箱=100 pcs | 已核销 | PASS |
+| Existing Stock Only | 待续 | — | — | PO-00016 已收货 14 箱=140 pcs | A | 已完成 | — | — | BLOCKED |
+| Partial Stock + Purchase | 待续 | — | — | PO-00016 已收货 14 箱=140 pcs | A | 已完成 | — | — | BLOCKED |
+| One PO → Multiple Sales Orders | 待续 | — | — | — | — | — | — | — | BLOCKED |
+
+### 当前 BLOCKED：订单列表交互无法继续（非业务根因结论）
+
+为后续 Existing Stock Only / Partial Stock + Purchase 建立公共库存，已通过采购 UI 创建、确认并收货 `PO-2026-00016`：14 箱 = 140 pcs，USD 910。随后通过 Quote UI 新建 `SJ20261002FR002`（100 pcs）并转为 `SO-2026-00027` 草稿。
+
+在本轮后续 Browser Use 会话中，订单管理页的订单行、`编辑 SO-2026-00027`、订单页“新建订单”均无法触发 UI 状态变化；以 DOM click、force click、键盘 Enter、可见截图坐标点击分别重试，页面均停留在列表。无 console error、无可用的 Browser Network 面板，也未观察到请求。此前同一轮中报价、采购、收货、发货、财务 UI 操作均成功，因此此处不能将现象直接归因为后端或业务代码缺陷；当前证据只能结论为 **本 Browser Use 会话对订单列表交互失效，导致剩余高级场景的真实 UI 执行 BLOCKED**。备用 Chrome 会话创建也失败（浏览器连接不可用）。未通过 API、ORM、SQL 或脚本绕过该问题。
+
+截至此记录，Advanced Closed Loops：**1/1 PASS；其余复杂场景尚未创建完整闭环，不得计为 PASS**。Standard Closed Loops 仍为 **20/20 PASS**。尚未执行本 Advanced 章节的最终测试、提交或 CI；不应将本中间记录误解为完成本轮任务。
+
+## Formal UAT Round 1 — Advanced Closed-Loop Coverage（完成更新，2026-10-03）
+
+### Dialog Browser Use Smoke Test — PASS
+
+本轮先在当前应用的正常 DOM Dialog 上完成 Browser Use 冒烟；全程未切换 Computer Use，未出现浏览器原生 confirm / prompt / alert。
+
+- 普通 Confirm：在 SKU 工作台执行“重新启用”确认；Browser Use 识别并点击应用内 `确认重新启用 SKU` Dialog。
+- 危险 Confirm：对同一可逆 UAT SKU 执行“确认停用 SKU”；先点击 `取消`，Dialog 正常关闭；再次打开后点击 `确认停用`，操作生效。
+- Input Dialog：在报价重要备注中执行“插入链接”，Browser Use 识别 `插入链接` Dialog，填写 `https://example.com/uat-dialog-smoke` 后确认；随后取消该临时备注，不保留无关业务数据。
+
+结论：Dialog 为可识别、可点击、可填写的应用内 DOM；Browser Use 可完成取消、确认及输入，不需要 Computer Use。原中间记录中的“Browser Use 无法点击系统确认框”是 Dialog 标准化前的工具现象，**Current Result = NOT REPRODUCED**，不构成当前产品缺陷。
+
+### ADV-01 三笔收款流水复核 — PASS（数据模型 B）
+
+Quote `SJ20261002DE003` / `SO-2026-00026` 的两次 UI 收款并非生成了一条重复 Transaction。只读数据核验如下：
+
+| 创建顺序 | Transaction No. | Amount / Currency | PaymentPlan | Source / Status | 解释 |
+|---|---|---:|---|---|---|
+| 1 | `FIN-DA6CD5B811C947E1` | USD 99 | 56 | `customer_receipt` / confirmed；UI 定金输入 `ADV01-DEPOSIT-99` | 正常第一笔收款 |
+| 2 | `FIN-64E0EDF4D3C448D2` | USD 132 | 56 | `customer_receipt` / confirmed；UI 尾款输入 `ADV01-BALANCE-231` | 尾款输入按未结计划拆分的原始流水部分 |
+| 3 | `FIN-D2E3CF9C90C54883` | USD 99 | 55 | `customer_receipt` / confirmed；`split_from=55`，同一尾款参考号 | 同一次 USD 231 尾款输入拆分出的合法子流水 |
+
+PaymentPlan 55：planned / settled = USD 231 / 231；PaymentPlan 56：USD 99 / 99。三条 Transaction 合计 USD 330，与合同、已收及剩余 USD 0 一致。结论为 **B：一次付款跨未结计划的正常拆分模型**，不是额外生成的收款 Transaction；本轮无新增 UAT Bug。
+
+### ADV-02 — Existing Stock Only — PASS
+
+`SJ20261002FR002` → `SO-2026-00027`（100 pcs，USD 150）。该 Quote / Order 创建前，`SKU-000001` 已由正常采购和收货的 `PO-2026-00016` 建立库存：actual 140、reserved 0、available 140。
+
+- 确认 SO 后：reserved 100、available 40；订单履约显示待采购 0，未生成关联采购需求或采购单。
+- Shipment：`SH-66BFA6F348084960`，100 pcs；对应 `sale_out` `SH-98285E449E414B9D`。
+- Receipt / Payment：既有库存来源为 PO-16 的正常 `purchase_in`；客户收款 `FIN-A0A9040E7B104649` USD 150，PaymentPlan 63 USD 150 / 150 settled。
+- 完成后：SO-27 completed，actual 40、reserved 0、available 40，满足 `actual = reserved + available`；合同 USD 150、Paid USD 150、Remaining USD 0。
+
+### ADV-03 — Partial Stock + Purchase — PASS
+
+`SJ20261002FR003` → `SO-2026-00028`（100 pcs，USD 150）。订单确认前同一 SKU 为 actual 40、reserved 0、available 40。
+
+- 确认 SO 后：订单 100，既有库存真实 reservation 40，purchase required 60；未把全量采购伪装为混合履约。
+- 通过正常 UI 生成、确认并收货 `PO-2026-00017`：60 pcs，USD 390；Receipt 后 actual 100、reserved 100、available 0。
+- Shipment：`SH-3B091FE4B30A4EB8`，100 pcs；对应 `sale_out` `SH-A8D42307134A45BB`。
+- Customer receipt：`FIN-6C50641371924972` USD 150；PaymentPlan 64 USD 150 / 150 settled。完成后 SO-28 completed，最终 actual 0、reserved 0、available 0，合同 USD 150、Paid USD 150、Remaining USD 0。
+
+### ADV-04 — One PO → Multiple Sales Orders Allocation — PASS
+
+此场景按真实前端路径执行，而非把共享库存池误计为订单分摊：
+
+1. 两张新 Quote 均经客户接受并转单、确认：`SJ20261003FR001` → `SO-2026-00029`（A），`SJ20261003FR002` → `SO-2026-00030`（B）；各 10 箱 = 100 pcs，合同 USD 150。
+2. 在采购 UI 创建无单一来源订单的公共 `PO-2026-00018`：20 箱 = 200 pcs，UAT 供应商 A，USD 1,300；确认下单后在前端“分配采购成本 / 公共费用”工作流中实际保存成本分配版本 V1。
+3. 同一个 Purchase Item 的真实 `PurchaseCostAllocation`：Order A 100 pcs、Order B 100 pcs。商品成本 USD 1,300 按数量分为 USD 650 / USD 650；公共运费 USD 20 使用“按数量比例”，各分 USD 10，界面保存结果为每单 USD 660。
+4. PO-18 收货 200 pcs：`GR-7C69FB7D7A874A03` / `purchase_in`，随后两订单分别发货、收款和完成：
+   - A：`SH-841E288AED45496A` / `sale_out` `SH-84CA229E11D346D3`；`FIN-9B359FF43B3A4F1A` USD 150；PaymentPlan 67 settled；completed。
+   - B：`SH-509EB6683ABC47FE` / `sale_out` `SH-EA6466E2C8564599`；`FIN-AA31EC535BAC4BE5` USD 150；PaymentPlan 68 settled；completed。
+
+只读核验确认 PO-18 `order_id = None`，但其唯一 Purchase Item 的两条 allocation 均为 `target_type=order`，分别精确指向 SO-29 / SO-30、quantity 100。这证明了 **Purchase Item → Allocation → Order A / Order B** 的真实业务关系；不存在“仅公共库存池满足两张订单”的替代解释。前端工作流与后端 model / API 均可用，**未发现 Functional Gap**。
+
+### Advanced Coverage Matrix（最终）
+
+| 场景 | 证据 | Current Result |
+|---|---|---|
+| Multi SKU | ADV-01 / SO-26 | PASS |
+| Multi Supplier | ADV-01 / PO-14、PO-15 | PASS |
+| Existing Stock Only | ADV-02 / SO-27，无关联采购需求 | PASS |
+| Partial Stock + Purchase | ADV-03 / 40 既有库存 + PO-17 60 pcs | PASS |
+| One PO → Multiple Sales Orders | ADV-04 / PO-18 → SO-29、SO-30 各 100 pcs | PASS |
+| Partial Receipt | ADV-01 / PO-14：40 后 60 | PASS |
+| Multiple Receipts | ADV-01 / PO-14 两条 Receipt | PASS |
+| Partial Shipment | ADV-01 / SKU-000001：40 后 60 | PASS |
+| Multiple Shipments | ADV-01 / 三条 Shipment | PASS |
+| Deposit + Balance | ADV-01 / USD 99 + USD 231 输入、计划拆分 | PASS |
+| Multiple Payments | ADV-01 / 合计 USD 330 | PASS |
+| Shipping Fee | ADV-01 / USD 20 | PASS |
+| Discount | ADV-01 / USD 10 | PASS |
+| Trade Unit / Packaging Unit | ADV-01、ADV-02 至 ADV-04 / 箱 ↔ pcs | PASS |
+
+**Advanced Closed Loops: 4/4 PASS**
+
+**Advanced Coverage Matrix: 14/14 PASS**
+**Standard Closed Loops: 20/20 PASS**
+
+### 库存与财务一致性（最终只读核验）
+
+- `SKU-000001` 最终 actual 0、reserved 0、available 0、in transit 7；`actual = reserved + available` 成立。SO-27、SO-28、SO-29、SO-30 的 reservation 均为 0。
+- 所有新增 Receipt 均有 `purchase_in`：ADV-04 的 PO-18 200 pcs 为 `GR-7C69FB7D7A874A03`；所有新增 Shipment 均有对应 ShipmentItem 与 `sale_out`：SO-27 至 SO-30 均为 100 pcs。
+- SO-27 至 SO-30 合同额均 USD 150，PaymentPlan 分别为 63 / 64 / 67 / 68，planned = settled = USD 150；每单各一条 confirmed customer receipt，Paid USD 150、Remaining USD 0，且状态均 completed。
+
+### 历史问题、风险分级与状态
+
+| 分类 | Original Result | Current Result | 结论 |
+|---|---|---|---|
+| Browser Use 订单列表交互 | 中间记录 BLOCKED | NOT REPRODUCED | Dialog 标准化后 Browser Use 可正常完成订单确认、发货、收款、完成；不是当前业务缺陷。 |
+| ADV-01 三条流水 | NEEDS MANUAL VERIFICATION | PASS（模型 B 已解释） | 一次尾款跨 PaymentPlan 的合法拆分，不是重复 Transaction。 |
+| Existing Stock / Partial Stock / One PO 多订单 | BLOCKED | PASS | 已通过正常 UI 完成并保留可复核数据。 |
+
+- P0：无新增。
+- P1：无新增。
+- P2：无新增；本轮未进入 P2 开发。
+- P3：无新增。
+- FAIL：历史 FAIL 不删除；本更新未发现新的 FAIL。
+- BLOCKED：无当前 BLOCKED。
+- NEEDS MANUAL VERIFICATION：无当前项目；ADV-01 流水项已完成模型核验。
+- NOT REPRODUCED：原 Browser Use 系统 Dialog / 订单列表交互阻塞。
+- Functional Gap：无；ADV-04 backend capability 与 frontend workflow 均已通过实际 UI 证实。
+
+### CI 历史与提交后验收
+
+- Standard Closed-Loop Commit：`d4966300e150a581772f935285f4af35f9053a07`；CI #105：backend SUCCESS、backend-postgres SUCCESS、frontend SUCCESS。
+- Dialog Standardization Commit：`9869bd447dc9e62bd82b65d307d8f1a7549561e5`；CI #106：backend SUCCESS、backend-postgres SUCCESS、frontend SUCCESS。
+- 本 Advanced UAT 更新仅包含本 Markdown 和必要 UAT 证据；提交、push 与本次对应 CI 结果将在本节末尾续记。

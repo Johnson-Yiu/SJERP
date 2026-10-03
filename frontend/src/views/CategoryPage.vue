@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { Check, ChevronRight, FolderPlus, GripVertical, Layers3, Pencil, Plus, Settings2, Tags, Trash2, X } from 'lucide-vue-next'
 import { api, listData } from '../api'
+import { confirmDialog } from '../dialogs'
 
 const categories = ref([])
 const loading = ref(true)
@@ -111,7 +112,7 @@ async function saveCategory() {
   } catch (e) { notify(e.message, true) } finally { saving.value = false }
 }
 async function removeCategory(node) {
-  if (!confirm(`确定删除分类“${node.name}”吗？存在子分类或关联产品时系统会阻止删除。`)) return
+  if (!await confirmDialog({ title: '确认删除分类', message: `确定删除分类“${node.name}”吗？存在子分类或关联产品时系统会阻止删除。`, confirmText: '确认删除', danger: true })) return
   try { await api.delete(`/categories/${node.id}/`); await load(); notify('分类已删除') } catch (e) { notify(e.message, true) }
 }
 function startAttribute() { Object.assign(newAttribute, { name: '', include_in_sku: false, include_in_sales_model: false, uppercase: false, required: false }); addingAttribute.value = true }
@@ -213,7 +214,7 @@ async function toggleRule(attribute, field, event = null) {
   }
 }
 async function removeAttribute(attribute) {
-  if (!confirm(`确定删除属性“${attribute.name}”吗？`)) return
+  if (!await confirmDialog({ title: '确认删除属性', message: `确定删除属性“${attribute.name}”吗？`, confirmText: '确认删除', danger: true })) return
   try { await api.delete(`/category-attributes/${attribute.id}/`); await load(selectedId.value); notify('属性已删除') } catch (e) { notify(e.message, true) }
 }
 function startAttributeDrag(attribute, event) {

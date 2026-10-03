@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck, Barcode } from 'lucide-vue-next'
 import { api } from './api'
+import AppDialogHost from './components/AppDialogHost.vue'
 
 const route = useRoute()
 const menuOpen = ref(false)
@@ -85,5 +86,6 @@ onMounted(async () => {
       </header>
       <section class="content"><RouterView :key="route.fullPath" /></section>
     </main>
+    <AppDialogHost />
   </div>
 </template>

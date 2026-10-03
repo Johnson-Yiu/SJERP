@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChevronDown, ChevronRight, Database, ListFilter, Pencil, Plus, Search, Trash2, X } from 'lucide-vue-next'
 import { api, listAll, listData } from '../api'
+import { confirmDialog } from '../dialogs'
 import EntityDetailModal from '../components/EntityDetailModal.vue'
 import SummaryCards from '../components/SummaryCards.vue'
 
@@ -216,7 +217,7 @@ async function confirmPrefixChange() {
   } catch (error) { notify(error.message, true) } finally { saving.value = false }
 }
 async function remove(product) {
-  if (!confirm(`确定删除产品“${product.name}”吗？`)) return
+  if (!await confirmDialog({ title: '确认删除产品', message: `确定删除产品“${product.name}”吗？`, confirmText: '确认删除', danger: true })) return
   try { await api.delete(`/products/${product.id}/`); notify('产品已删除'); await load() } catch (error) { notify(error.message, true) }
 }
 onMounted(async () => {

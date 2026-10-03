@@ -7,6 +7,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { Database, History, Layers3, Pencil, Plus, Search, Trash2, X } from 'lucide-vue-next'
 import { pinyin } from 'pinyin-pro'
 import { api, listData, listAll } from '../api'
+import { confirmDialog } from '../dialogs'
 import ComboInput from '../components/ComboInput.vue'
 import { formatMoney, normalizeMoneyInput } from '../utils/money'
 import SummaryCards from '../components/SummaryCards.vue'
@@ -650,7 +651,7 @@ async function save() {
   }
   await persistSave(pending)
 }
-async function deactivateRow(row) { if (!confirm(`确定停用 SKU “${row.display_name_cn || row.sku_code || row.sku}”吗？停用后会保留历史记录。`)) return; try { await api.patch(`/skus/${row.id}/`, { active: false }); await load(); notify('SKU 已停用') } catch (error) { notify(apiErrorMessage(error), true) } }
+async function deactivateRow(row) { if (!await confirmDialog({ title: '确认停用 SKU', message: `确定停用 SKU “${row.display_name_cn || row.sku_code || row.sku}”吗？停用后会保留历史记录。`, confirmText: '确认停用', danger: true })) return; try { await api.patch(`/skus/${row.id}/`, { active: false }); await load(); notify('SKU 已停用') } catch (error) { notify(apiErrorMessage(error), true) } }
 watch(() => form.unit, value => details.value.forEach(detail => { detail.unit = value || 'pcs' }))
 watch(() => form.description_en, value => {
   const translated = translateLightingTerms(value)

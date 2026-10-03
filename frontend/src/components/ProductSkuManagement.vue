@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { api, listAll } from '../api'
+import { confirmDialog } from '../dialogs'
 import SupplierBatchBindingDrawer from './SupplierBatchBindingDrawer.vue'
 const props = defineProps({ productId: [Number, String], initialTab: { type: String, default: 'suppliers' }, refreshKey: Number })
 const emit = defineEmits(['changed', 'drill'])
@@ -68,7 +69,7 @@ function openSkuRecord(row) { emit('drill', { id: row.sku_id || row.id, _target_
 function selectAll(checked) { selectedIds.value = checked ? candidatePoolRows.value.map(row => row.sku_id) : [] }
 async function setSelectedActive(active) {
   const rows = active ? selectedInactive.value : selectedActive.value
-  if (!rows.length || !window.confirm(`确认${active ? '重新启用' : '停用'} ${rows.length} 个 SKU？历史单据不受影响。`)) return
+  if (!rows.length || !await confirmDialog({ title: `确认${active ? '重新启用' : '停用'} SKU`, message: `确认${active ? '重新启用' : '停用'} ${rows.length} 个 SKU？历史单据不受影响。`, confirmText: `确认${active ? '启用' : '停用'}`, danger: !active })) return
   await run(async () => {
     const results = await Promise.allSettled(rows.map(row => api.patch(`/skus/${row.id}/`, { active })))
     const failed = results.filter(result => result.status === 'rejected')

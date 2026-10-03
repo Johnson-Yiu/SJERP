@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { AlertTriangle, ArrowLeft, ArrowRight, Download, Eye, FileText, GitBranch, Pencil, Plus, ShoppingCart, StickyNote, X } from 'lucide-vue-next'
 import { api, downloadQuoteExport } from '../api'
+import { confirmDialog } from '../dialogs'
 import QuotePreviewModal from './QuotePreviewModal.vue'
 import RichTextEditor from './RichTextEditor.vue'
 import OperationLogPanel from './OperationLogPanel.vue'
@@ -111,7 +112,7 @@ async function createNote() {
   finally { noteSaving.value = false }
 }
 async function deactivateNote(note) {
-  if (!window.confirm('标记后备注不会删除，但会显示为不再生效。确定继续吗？')) return
+  if (!await confirmDialog({ title: '确认停用备注', message: '标记后备注不会删除，但会显示为不再生效。确定继续吗？', confirmText: '确认停用', danger: true })) return
   actionError.value = ''
   try { await api.post(`/quotes/${quote.value.id}/important-notes/${note.id}/deactivate/`); await load(quote.value.id) }
   catch (err) { actionError.value = err.message }

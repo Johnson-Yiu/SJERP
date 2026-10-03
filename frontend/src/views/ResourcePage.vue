@@ -4,6 +4,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChevronRight, Database, Paperclip, Pencil, Plus, Search, Trash2, UserRoundPlus, X } from 'lucide-vue-next'
 import { api, listAll } from '../api'
+import { confirmDialog } from '../dialogs'
 import EntityDetailModal from '../components/EntityDetailModal.vue'
 import SimpleRichTextEditor from '../components/SimpleRichTextEditor.vue'
 import ComboInput from '../components/ComboInput.vue'
@@ -297,7 +298,7 @@ async function handleInventoryMovementCreated(records) {
   await load()
 }
 async function remove(row) {
-  if (!window.confirm(`确定删除“${row[props.config.key]}”吗？此操作无法撤销。`)) return
+  if (!await confirmDialog({ title: '确认删除', message: `确定删除“${row[props.config.key]}”吗？此操作无法撤销。`, confirmText: '确认删除', danger: true })) return
   try { await api.delete(`/${props.config.endpoint}/${row.id}/`); notify('删除成功'); await load() } catch (e) { notify(e.message, true) }
 }
 function display(value, type, fieldName = '') {

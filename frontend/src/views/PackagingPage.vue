@@ -2,6 +2,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ArrowDownUp, Box, ChevronDown, ChevronUp, Copy, Eye, Link2, Pencil, Plus, Search, X } from 'lucide-vue-next'
 import { api, listAll } from '../api'
+import { confirmDialog } from '../dialogs'
 import SummaryCards from '../components/SummaryCards.vue'
 
 const templates = ref([]), suppliers = ref([]), skuRows = ref([]), query = ref(''), policy = ref(''), loading = ref(true), saving = ref(false)
@@ -40,7 +41,7 @@ function physicalTemplateChanged() {
 }
 async function save() {
   const linkedSkuCount = Number(editingTemplate.value?.linked_sku_count || 0)
-  if (editingId.value && linkedSkuCount > 0 && physicalTemplateChanged() && !window.confirm(`该模板已关联 ${linkedSkuCount} 个 SKU。修改包装参数后，这些 SKU 的包装验证状态将失效，需要重新确认。是否继续？`)) return
+  if (editingId.value && linkedSkuCount > 0 && physicalTemplateChanged() && !await confirmDialog({ title: '确认修改包装模板', message: `该模板已关联 ${linkedSkuCount} 个 SKU。修改包装参数后，这些 SKU 的包装验证状态将失效，需要重新确认。是否继续？`, confirmText: '确认继续', danger: true })) return
   saving.value = true; const data = { ...form, supplier: form.supplier || null }
   try { editingId.value ? await api.put(`/packaging-templates/${editingId.value}/`, data) : await api.post('/packaging-templates/', data); formOpen.value = false; await load(); notice(editingId.value ? '包装模板已更新' : '包装模板已创建') } catch (e) { notice(e.message, true) } finally { saving.value = false }
 }

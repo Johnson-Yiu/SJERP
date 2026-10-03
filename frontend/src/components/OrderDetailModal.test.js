@@ -29,7 +29,7 @@ test('over-shipment requires an explicit warning before submitting', async () =>
 
   assert.match(submitSection, /baseQuantity\(shipmentForm\.value\) > Number\(shipmentTarget\.value\.unshipped_quantity\)/)
   assert.match(submitSection, /本次发货超过订单待发数量，将生成超发\/增补记录。该发货单确认后可通过冲销安全撤回。确认继续吗？/)
-  assert.match(submitSection, /window\.confirm/)
+  assert.match(submitSection, /confirmDialog/)
   assert.match(submitSection, /\) return\s+shipmentSaving\.value = true/)
   assert.match(submitSection, /api\.post\(`\/orders\/\$\{props\.id\}\/ship\//)
 })
@@ -63,7 +63,7 @@ test('packing plan loading never generates a plan implicitly', async () => {
   assert.equal([...source.matchAll(/:disabled="packingSaving"/g)].length, 2)
   assert.match(loadSection, /api\.get\(`\/orders\/\$\{props\.id\}\/packing-plan\//)
   assert.doesNotMatch(loadSection, /api\.post\(/)
-  assert.match(source, /window\.confirm\('重新生成会使用当前 SKU 包装配置，并替换当前订单的预计装箱方案。'/)
+  assert.match(source, /confirmDialog\(\{ title: '确认重新生成'/)
 })
 
 test('order workbench exposes procurement shortage, draft coverage, generation and linked purchases', async () => {

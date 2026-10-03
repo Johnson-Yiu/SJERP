@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowLeft, CheckSquare, ChevronRight, ExternalLink, Paperclip, Pencil, Plus, Rows3, Search, Trash2, X } from 'lucide-vue-next'
 import { api, listData } from '../api'
+import { confirmDialog } from '../dialogs'
 import { resourceConfigs } from '../resourceConfigs'
 import RelatedCreateModal from './RelatedCreateModal.vue'
 import OperationLogPanel from './OperationLogPanel.vue'
@@ -111,7 +112,7 @@ function openWhatsApp() {
   if (phone) window.open(`https://wa.me/${phone}`, '_blank', 'noopener')
 }
 async function deleteFollowUp() {
-  if (!isFollowUpDetail.value || !window.confirm('确定删除这条跟进记录吗？此操作无法撤销。')) return
+  if (!isFollowUpDetail.value || !await confirmDialog({ title: '确认删除跟进记录', message: '确定删除这条跟进记录吗？此操作无法撤销。', confirmText: '确认删除', danger: true })) return
   try {
     await api.delete(`/follow-ups/${currentId.value}/`)
     emit('changed')
@@ -198,7 +199,7 @@ function toggleSkuMultiSelect() {
 }
 async function deactivateSelectedSkus() {
   const ids = selectedActiveSkuIds.value
-  if (!ids.length || !confirm(`确定停用选中的 ${ids.length} 个 SKU 吗？停用后将默认从 ERP 列表隐藏。`)) return
+  if (!ids.length || !await confirmDialog({ title: '确认停用 SKU', message: `确定停用选中的 ${ids.length} 个 SKU 吗？停用后将默认从 ERP 列表隐藏。`, confirmText: '确认停用', danger: true })) return
   try {
     await Promise.all(ids.map(id => api.patch(`/skus/${id}/`, { active: false })))
     selectedSkuIds.value = []
@@ -207,7 +208,7 @@ async function deactivateSelectedSkus() {
 }
 async function reactivateSelectedSkus() {
   const ids = selectedInactiveSkuIds.value
-  if (!ids.length || !confirm(`确定重新启用选中的 ${ids.length} 个 SKU 吗？`)) return
+  if (!ids.length || !await confirmDialog({ title: '确认重新启用 SKU', message: `确定重新启用选中的 ${ids.length} 个 SKU 吗？`, confirmText: '确认启用' })) return
   try {
     await Promise.all(ids.map(id => api.patch(`/skus/${id}/`, { active: true })))
     selectedSkuIds.value = []

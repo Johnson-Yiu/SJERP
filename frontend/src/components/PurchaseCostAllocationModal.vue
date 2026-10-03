@@ -2,6 +2,7 @@
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { X, Plus, Layers3, Truck, Check } from 'lucide-vue-next'
 import { api } from '../api'
+import { confirmDialog } from '../dialogs'
 const props = defineProps({ purchase: Object, orders: Array })
 const emit = defineEmits(['close', 'saved'])
 const form = ref(null), result = ref(null), error = ref(''), busy = ref(false), dirty = ref(false)
@@ -59,8 +60,8 @@ async function save() {
   } catch (e) { const data = e.response?.data; error.value = typeof data === 'string' ? data : data ? JSON.stringify(data) : e.message }
   finally { busy.value = false }
 }
-function requestClose() {
-  if (!dirty.value || window.confirm('当前成本分配有尚未保存的修改，确定放弃吗？')) emit('close')
+async function requestClose() {
+  if (!dirty.value || await confirmDialog({ title: '放弃未保存修改', message: '当前成本分配有尚未保存的修改，确定放弃吗？', confirmText: '放弃修改', danger: true })) emit('close')
 }
 </script>
 

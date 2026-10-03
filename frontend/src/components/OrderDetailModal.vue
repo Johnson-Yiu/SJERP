@@ -4,6 +4,7 @@ import { tradePayload, baseQuantity, tradeLabel } from '../utils/tradeUnits'
 import { computed, onMounted, ref, watch } from 'vue'
 import { AlertTriangle, Boxes, FileText, PackageCheck, Pencil, Truck, WalletCards, X } from 'lucide-vue-next'
 import { api } from '../api'
+import { confirmDialog } from '../dialogs'
 import OperationLogPanel from './OperationLogPanel.vue'
 import SupplierAllocationModal from './SupplierAllocationModal.vue'
 import ProcurementDraftModal from './ProcurementDraftModal.vue'
@@ -51,7 +52,7 @@ const shipmentReversalTarget = ref(null), shipmentReversalReason = ref(''), ship
 const lifecycleSaving = ref(false)
 const cancelOpen = ref(false), cancellationReason = ref('')
 async function lifecycleAction(path, confirmation) {
-  if (lifecycleSaving.value || (confirmation && !window.confirm(confirmation))) return
+  if (lifecycleSaving.value || (confirmation && !await confirmDialog({ title: '确认订单操作', message: confirmation, confirmText: '确认继续', danger: true }))) return
   lifecycleSaving.value = true
   error.value = ''
   try { await api.post(`/orders/${props.id}/${path}/`); await load() }
@@ -77,7 +78,7 @@ async function ship(item) {
 }
 async function submitShipment() {
   if (shipmentSaving.value) return
-  if (baseQuantity(shipmentForm.value) > Number(shipmentTarget.value.unshipped_quantity) && !window.confirm('本次发货超过订单待发数量，将生成超发/增补记录。该发货单确认后可通过冲销安全撤回。确认继续吗？')) return
+  if (baseQuantity(shipmentForm.value) > Number(shipmentTarget.value.unshipped_quantity) && !await confirmDialog({ title: '确认超发', message: '本次发货超过订单待发数量，将生成超发/增补记录。该发货单确认后可通过冲销安全撤回。确认继续吗？', confirmText: '确认继续', danger: true })) return
   shipmentSaving.value = true
   try {
     await api.post(`/orders/${props.id}/ship/`, { shipment_date: new Date().toLocaleDateString('en-CA'), items: [tradePayload({ ...shipmentForm.value, order_item: shipmentTarget.value.id }, null)] })
@@ -113,7 +114,7 @@ async function generatePackingPlan() {
 }
 async function regeneratePackingPlan() {
   if (packingSaving.value) return
-  if (!window.confirm('重新生成会使用当前 SKU 包装配置，并替换当前订单的预计装箱方案。')) return
+  if (!await confirmDialog({ title: '确认重新生成', message: '重新生成会使用当前 SKU 包装配置，并替换当前订单的预计装箱方案。', confirmText: '确认重新生成', danger: true })) return
   await generatePackingPlan()
 }
 function packingStatusLabel(status) {

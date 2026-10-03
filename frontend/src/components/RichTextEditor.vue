@@ -1,6 +1,7 @@
 <script setup>
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { Bold, Link, List, ListOrdered } from 'lucide-vue-next'
+import { alertDialog, inputDialog } from '../dialogs'
 
 const props = defineProps({ modelValue: { type: String, default: '' } })
 const emit = defineEmits(['update:modelValue'])
@@ -14,9 +15,14 @@ function format(command, value = null) {
   document.execCommand(command, false, value)
   sync()
 }
-function addLink() {
-  const url = window.prompt('请输入链接地址（http、https 或 mailto）：')
-  if (url) format('createLink', url.trim())
+async function addLink() {
+  const url = await inputDialog({ title: '插入链接', message: '请输入以 http、https 或 mailto 开头的链接地址。', label: '链接地址', placeholder: 'https://example.com', required: true, maxLength: 2000, confirmText: '插入链接' })
+  if (!url) return
+  if (!/^(https?:|mailto:)/i.test(url)) {
+    await alertDialog({ title: '链接格式不支持', message: '链接必须以 http、https 或 mailto 开头。' })
+    return
+  }
+  format('createLink', url)
 }
 onMounted(() => { if (editor.value) editor.value.innerHTML = props.modelValue })
 watch(() => props.modelValue, async value => {

@@ -1,6 +1,8 @@
 import { beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import ProductSkuManagement from '../src/components/ProductSkuManagement.vue'
+import AppDialogHost from '../src/components/AppDialogHost.vue'
 const { api, listAll } = vi.hoisted(() => ({ api: { get: vi.fn(), post: vi.fn(), patch: vi.fn(), delete: vi.fn() }, listAll: vi.fn() }))
 vi.mock('../src/api', () => ({ api, listAll }))
 const definition = { category_id: 1, key: 'voltage', name: '电压', unit: 'V', default_value: '', include_in_sku: true, include_in_sales_model: false, required: false, uppercase: false }
@@ -54,15 +56,18 @@ it('reloads SKU data after an archive edit without clearing the keyword', async 
   w.unmount()
 })
 it('bulk status writes only selected SKU and reports API failure', async () => {
-  const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true)
+  const dialogHost = mount(AppDialogHost)
   const w = mount(ProductSkuManagement, { props: { productId: 1 } }); await flushPromises()
   api.patch.mockRejectedValueOnce(new Error('该 SKU 不允许停用'))
   await w.find('.candidate-table tbody input').setValue(true)
   await click(w, '停用 1 项')
+  await nextTick()
+  document.querySelector('[data-testid="dialog-confirm"]').click()
+  await new Promise(resolve => setTimeout(resolve, 0)); await flushPromises()
   expect(api.patch).toHaveBeenCalledWith('/skus/1/', { active: false })
   expect(w.text()).toContain('1 个操作失败')
   expect(w.text()).toContain('该 SKU 不允许停用')
-  w.unmount(); confirm.mockRestore()
+  w.unmount(); dialogHost.unmount()
 })
 beforeEach(() => {
   vi.clearAllMocks()

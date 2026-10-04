@@ -334,7 +334,9 @@ def reverse_manual_inventory_movement(movement: InventoryMovement, reason: str) 
     if not reason:
         raise ValidationError("冲销原因不能为空。")
 
-    movement = InventoryMovement.objects.select_for_update().select_related("sku", "supplier_sku", "order").get(pk=movement.pk)
+    # Restrict the row lock to the movement itself: supplier/order are nullable
+    # joins and PostgreSQL cannot lock the nullable side of an outer join.
+    movement = InventoryMovement.objects.select_for_update(of=("self",)).select_related("sku", "supplier_sku", "order").get(pk=movement.pk)
     if movement.type == "purchase_in":
         raise ValidationError("采购入库请从采购到货记录执行冲销。")
     if movement.type == "sale_out":

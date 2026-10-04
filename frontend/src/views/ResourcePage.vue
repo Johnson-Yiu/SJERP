@@ -403,8 +403,17 @@ async function syncModalFromRoute() {
   }
 }
 
+function routeCreatePrefillSignature() {
+  const fields = props.config.fields.map(([name]) => name)
+  return JSON.stringify(fields.map(name => [name, route.query[name] ?? null]))
+}
+
 watch(() => routeDataQuerySignature(route.query), load)
-watch([() => route.query.create, () => route.query.edit], syncModalFromRoute, { immediate: true })
+watch([() => route.query.create, () => route.query.edit, routeCreatePrefillSignature], (current, previous) => {
+  const prefillOnlyChanged = previous && current[0] === previous[0] && current[1] === previous[1]
+  if (prefillOnlyChanged && route.query.create !== '1') return
+  void syncModalFromRoute()
+}, { immediate: true })
 watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null }, { immediate: true })
 onMounted(load)
 </script>

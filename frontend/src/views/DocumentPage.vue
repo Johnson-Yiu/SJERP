@@ -178,6 +178,10 @@ function syncDetailFromRoute() {
   quoteDetailId.value = detailState.quoteDetailId
   orderDetailId.value = detailState.orderDetailId
 }
+function routeCreatePrefillSignature() {
+  const fields = isOrder.value ? ['customer', 'quote'] : ['customer']
+  return JSON.stringify(fields.map(field => [field, route.query[field] ?? null]))
+}
 async function syncModalFromRoute() {
   const version = ++routeActionVersion
   const isCurrent = () => version === routeActionVersion
@@ -301,7 +305,11 @@ async function handleOrderEdit() {
 watch(() => props.type, load)
 watch(() => routeDataQuerySignature(route.query), load)
 watch([() => props.type, () => route.query.detail], syncDetailFromRoute, { immediate: true })
-watch([() => route.query.create, () => route.query.edit], syncModalFromRoute, { immediate: true })
+watch([() => props.type, () => route.query.create, () => route.query.edit, routeCreatePrefillSignature], (current, previous) => {
+  const prefillOnlyChanged = previous && current[0] === previous[0] && current[1] === previous[1] && current[2] === previous[2]
+  if (prefillOnlyChanged && route.query.create !== '1') return
+  void syncModalFromRoute()
+}, { immediate: true })
 onMounted(load)
 </script>
 

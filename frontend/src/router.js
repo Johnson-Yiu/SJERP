@@ -15,7 +15,7 @@ import TransactionPage from './views/TransactionPage.vue'
 import PackagingPage from './views/PackagingPage.vue'
 import HSCodePage from './views/HSCodePage.vue'
 import { resourceConfigs } from './resourceConfigs'
-import { internalPagePath, isModalRoute, modalOrigin } from './utils/modalNavigation'
+import { installModalNavigationGuard } from './utils/modalNavigation'
 
 const routes = [
   { path: '/sku-trade-units', component: () => import('./views/TradeUnitsPage.vue'), meta: { title: 'SKU 交易单位', eyebrow: 'Transaction units' } },
@@ -45,22 +45,6 @@ const routes = [
 ]
 
 const router = createRouter({ history: createWebHistory(), routes })
-
-router.beforeEach((to, from) => {
-  const sourceWasModal = isModalRoute(from)
-  const targetIsModal = isModalRoute(to)
-  const origin = modalOrigin(from)
-
-  // Closing removes the action query on the same route. Do not intercept
-  // deliberate navigation to another page, such as a sidebar click.
-  if (sourceWasModal && !targetIsModal && to.path === from.path && origin) return origin
-  if (!targetIsModal || modalOrigin(to)) return true
-
-  // Nested modal routes keep the original page. Directly opened modal URLs
-  // have no predecessor and therefore close back to their own list page.
-  const inheritedOrigin = origin || (from.matched?.length ? internalPagePath(from.fullPath) : '')
-  if (!inheritedOrigin) return true
-  return { path: to.path, query: { ...to.query, returnTo: inheritedOrigin }, hash: to.hash, replace: true }
-})
+installModalNavigationGuard(router)
 
 export default router

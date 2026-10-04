@@ -24,13 +24,18 @@ import DocumentPage from '../src/views/DocumentPage.vue'
 import PurchaseOrderPage from '../src/views/PurchaseOrderPage.vue'
 import ResourcePage from '../src/views/ResourcePage.vue'
 import { resourceConfigs } from '../src/resourceConfigs.js'
+import { installModalNavigationGuard } from '../src/utils/modalNavigation.js'
 
 const orderRows = [
   { id: 4, order_no: 'SO-2026-00004', customer: 5, customer_name: '森爵客户', order_date: '2026-01-04', status: 'draft', currency: 'USD', total_amount: '40', balance_amount: '40', items: [] },
   { id: 26, order_no: 'SO-2026-00026', customer: 5, customer_name: '森爵客户', order_date: '2026-01-26', status: 'draft', currency: 'USD', total_amount: '260', balance_amount: '260', items: [] },
 ]
-const quoteRows = [{ id: 14, quote_no: 'QT-2026-00014', customer: 5, customer_name: '森爵客户', quote_date: '2026-01-14', status: 'draft', currency: 'USD', total_amount: '14', items: [] }]
-const customers = [{ id: 5, name: '森爵客户' }]
+const quoteRows = [
+  { id: 14, quote_no: 'QT-2026-00014', customer: 5, customer_name: '森爵客户', quote_date: '2026-01-14', status: 'draft', currency: 'USD', total_amount: '14', items: [] },
+  { id: 15, quote_no: 'QT-2026-00015', customer: 6, customer_name: '备用客户', quote_date: '2026-01-15', status: 'draft', currency: 'USD', total_amount: '15', items: [] },
+]
+const customers = [{ id: 5, name: '森爵客户' }, { id: 6, name: '备用客户' }]
+const contacts = [{ id: 1, name: '主联系人', customer: 5 }, { id: 2, name: '备用联系人', customer: 6 }]
 const suppliers = [{ id: 9, name: '森爵供应商' }]
 const orders = [{ id: 8, order_no: 'SO-2026-00008', customer_name: '森爵客户', status: 'confirmed' }]
 
@@ -131,6 +136,7 @@ function rowsFor(url, params = {}) {
   if (url === '/quotes/') return quoteRows
   if (url === '/follow-ups/') return [followUpRow(10), followUpRow(11)]
   if (url === '/customers/') return customers
+  if (url === '/contacts/') return contacts
   if (url === '/suppliers/') return suppliers
   if (url === '/purchase-orders/') return []
   if (url === '/skus/') return []
@@ -147,13 +153,16 @@ async function mountAt(path, pageType) {
     { path: '/', component: StubPage, meta: { title: 'Home', eyebrow: 'Home' } },
     { path: '/orders', component: DocumentPage, props: { type: 'orders' }, meta: { title: 'Orders', eyebrow: 'Sales' } },
     { path: '/quotes', component: DocumentPage, props: { type: 'quotes' }, meta: { title: 'Quotes', eyebrow: 'Sales' } },
+    { path: '/customers', component: ResourcePage, props: { config: resourceConfigs.customers }, meta: { title: 'Customers', eyebrow: 'CRM' } },
     { path: '/follow-ups', component: ResourcePage, props: { config: resourceConfigs['follow-ups'] }, meta: { title: 'Follow ups', eyebrow: 'CRM' } },
     { path: '/purchase-orders', component: PurchaseOrderPage, meta: { title: 'Purchases', eyebrow: 'Procurement' } },
+    { path: '/:pathMatch(.*)*', component: StubPage, meta: { title: 'Stub', eyebrow: 'Stub' } },
   ]
   router = createRouter({ history: createMemoryHistory(), routes })
+  installModalNavigationGuard(router)
   await router.push(path)
   await router.isReady()
-  wrapper = mount(App, { global: { plugins: [router], stubs } })
+  wrapper = mount(App, { global: { plugins: [router], stubs, directives: { 'money-input': {} } } })
   await flushPromises()
   return { wrapper, router, pageType }
 }
@@ -230,7 +239,7 @@ describe('query route lifecycle', () => {
     expect(wrapper.find('[data-test="order-detail"]').text()).toContain('4')
 
     wrapper.unmount()
-    wrapper = mount(App, { global: { plugins: [router], stubs } })
+    wrapper = mount(App, { global: { plugins: [router], stubs, directives: { 'money-input': {} } } })
     await flushPromises()
 
     expect(router.currentRoute.value.fullPath).toBe('/orders?detail=4')
@@ -247,6 +256,111 @@ describe('query route lifecycle', () => {
     await flushPromises()
     expect(router.currentRoute.value.query).toMatchObject({ customer: '5', status: 'accepted' })
     expect(router.currentRoute.value.query.create).toBeUndefined()
+  })
+
+  it('updates only order create prefills when customer or quote query values change', async () => {
+    await mountAt('/orders', 'orders')
+    const search = wrapper.find('input[placeholder*="搜索订单号"]')
+    await search.setValue('SO-2026-00026')
+    await vi.waitFor(() => expect(wrapper.text()).toContain('SO-2026-00026'))
+
+    await router.push('/orders?create=1&customer=5&quote=14')
+    await flushPromises()
+    const customerSelect = wrapper.find('.modal select')
+    const quoteSelect = wrapper.findAll('.modal select')[1]
+    expect(customerSelect.element.value).toBe('5')
+    expect(quoteSelect.element.value).toBe('14')
+    await router.push('/orders?create=1&customer=6&quote=15')
+    await flushPromises()
+    expect(customerSelect.element.value).toBe('6')
+    expect(quoteSelect.element.value).toBe('15')
+    expect(search.element.value).toBe('SO-2026-00026')
+  })
+
+  it('updates a route-controlled quote customer prefill without reopening unrelated manual modals', async () => {
+    await mountAt('/quotes', 'quotes')
+    await router.push('/quotes?create=1&customer=5')
+    await flushPromises()
+    expect(wrapper.find('[data-test="quote-customer"]').text()).toBe('5')
+    await router.push('/quotes?create=1&customer=6')
+    await flushPromises()
+    expect(wrapper.find('[data-test="quote-customer"]').text()).toBe('6')
+  })
+
+  it('updates configured ResourcePage prefills only for route-controlled create modals', async () => {
+    await mountAt('/follow-ups', 'resources')
+    await router.push('/follow-ups?create=1&customer=5&contact=1')
+    await flushPromises()
+    let selects = wrapper.findAll('.modal select')
+    expect(selects[0].element.value).toBe('5')
+    expect(selects[1].element.value).toBe('1')
+
+    await router.push('/follow-ups?create=1&customer=6&contact=2')
+    await flushPromises()
+    selects = wrapper.findAll('.modal select')
+    expect(selects[0].element.value).toBe('6')
+    expect(selects[1].element.value).toBe('2')
+
+    await wrapper.find('.modal-backdrop button').trigger('click')
+    await flushPromises()
+    await router.replace('/follow-ups')
+    await flushPromises()
+    await wrapper.find('.page-head .btn-primary').trigger('click')
+    await flushPromises()
+    selects = wrapper.findAll('.modal select')
+    await selects[0].setValue('5')
+    await router.push('/follow-ups?customer=5')
+    await flushPromises()
+    expect(wrapper.findAll('.modal select')[0].element.value).toBe('5')
+  })
+
+  it('uses the production modal guard to retain origin context through modal history and close', async () => {
+    await mountAt('/customers?detail=5&status=active', 'customers')
+    await router.push({ path: '/purchase-orders', query: { create: '1', order: '8' } })
+    await flushPromises()
+    expect(router.currentRoute.value.query.returnTo).toBe('/customers?detail=5&status=active')
+
+    await router.back()
+    await flushPromises()
+    expect(router.currentRoute.value.fullPath).toBe('/customers?detail=5&status=active')
+    await router.forward()
+    await flushPromises()
+    expect(router.currentRoute.value.query.returnTo).toBe('/customers?detail=5&status=active')
+
+    await wrapper.find('.purchase-create-modal button[aria-label="关闭"]').trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.fullPath).toBe('/customers?detail=5&status=active')
+  })
+
+  it('preserves FollowUp edit returnTo through Back/Forward and removes stale action query on close', async () => {
+    await mountAt('/follow-ups?detail=10&customer=5', 'resources')
+    const returnTo = '/follow-ups?detail=10&customer=5'
+    await router.push({ path: '/follow-ups', query: { edit: '10', returnTo } })
+    await flushPromises()
+    expect(router.currentRoute.value.query.returnTo).toBe(returnTo)
+    expect(wrapper.find('.modal-backdrop').exists()).toBe(true)
+
+    await router.back()
+    await flushPromises()
+    expect(router.currentRoute.value.fullPath).toBe(returnTo)
+    await router.forward()
+    await flushPromises()
+    expect(router.currentRoute.value.query.edit).toBe('10')
+    expect(router.currentRoute.value.query.returnTo).toBe(returnTo)
+
+    await wrapper.find('.modal-backdrop button').trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.fullPath).toBe(returnTo)
+    expect(router.currentRoute.value.query.edit).toBeUndefined()
+    expect(router.currentRoute.value.query.returnTo).toBeUndefined()
+  })
+
+  it('leaves a directly opened modal without an invented predecessor', async () => {
+    await mountAt('/purchase-orders?create=1&order=8', 'purchases')
+    expect(router.currentRoute.value.query.returnTo).toBeUndefined()
+    await wrapper.find('.purchase-create-modal button[aria-label="关闭"]').trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.fullPath).toBe('/purchase-orders?order=8')
   })
 
   it('opens edit queries dynamically and updates the same modal when the id changes', async () => {

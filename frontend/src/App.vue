@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck, Barcode } from 'lucide-vue-next'
 import { api } from './api'
 import AppDialogHost from './components/AppDialogHost.vue'
+import { pageIdentityKey } from './utils/routePageState'
 
 const route = useRoute()
 const menuOpen = ref(false)
@@ -84,7 +85,7 @@ onMounted(async () => {
           <div class="avatar" :title="operator.name">{{ operatorInitial }}</div>
         </div>
       </header>
-      <section class="content"><RouterView :key="route.fullPath" /></section>
+      <section class="content"><RouterView :key="pageIdentityKey(route)" /></section>
     </main>
     <AppDialogHost />
   </div>

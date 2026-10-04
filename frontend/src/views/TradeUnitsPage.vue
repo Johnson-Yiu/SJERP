@@ -1,10 +1,11 @@
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { api, listAll } from '../api'
 import SkuPickerPanel from '../components/SkuPickerPanel.vue'
 const route = useRoute()
 const skus = ref([]), suppliers = ref([]), units = ref([]), selected = ref(route.query.sku || ''), error = ref(''), loading = ref(false), saving = ref(false)
+watch(() => route.query.sku, value => { selected.value = value || '' })
 const form = reactive({ name: '', unit: '卷', factor: '', supplier: '', allow_fraction: false, is_default: false, notes: '' })
 const sku = computed(() => skus.value.find(s => s.id === Number(selected.value)))
 const rows = computed(() => units.value.filter(u => !selected.value || u.sku === Number(selected.value)))

@@ -14,6 +14,7 @@ import InventoryMovementCreateModal from '../components/InventoryMovementCreateM
 import { addDays, daysBetween } from '../utils/orderDate'
 import { confirmAndDeleteSavedFollowUpAttachment, removeSavedFollowUpAttachmentFromRows } from '../utils/followUpAttachments'
 import { clearModalRoute } from '../utils/modalNavigation'
+import { routeDataQuery, routeDataQuerySignature } from '../utils/routePageState'
 
 const props = defineProps({ config: Object })
 const route = useRoute()
@@ -31,6 +32,8 @@ const currentOperator = ref('')
 const supplierCodeServerError = ref('')
 const toast = reactive({ show: false, message: '', error: false })
 let searchTimer
+let routeActionVersion = 0
+const routeModalOpen = ref(false)
 
 const statusLabels = { lead: '线索', contact: '已建立联系', opportunity: '已进入报价阶段', customer: '已有1张正式订单', company: '已有2张及以上正式订单', development: '开发中', discontinued: '停产', draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
 const fieldOptions = computed(() => Object.fromEntries(props.config.fields.filter(field => field[2] === 'select').map(field => [field[0], field[4]])))
@@ -95,7 +98,7 @@ function setPrimaryContact(index) {
 function notify(message, error = false) { Object.assign(toast, { show: true, message, error }); setTimeout(() => { toast.show = false }, 2800) }
 async function load() {
   loading.value = true
-  try { rows.value = await listAll(`/${props.config.endpoint}/`, { params: { ...route.query, search: query.value } }) }
+  try { rows.value = await listAll(`/${props.config.endpoint}/`, { params: { ...routeDataQuery(route.query), search: query.value } }) }
   catch (e) { notify(e.message, true) } finally { loading.value = false }
 }
 function delayedSearch() { clearTimeout(searchTimer); searchTimer = setTimeout(load, 300) }
@@ -220,7 +223,7 @@ function isInherited(fieldName) {
   const value = route.query?.[fieldName]
   return !editingId.value && value !== undefined && value !== null && value !== ''
 }
-async function openCreate() {
+async function openCreate({ isCurrent = () => true } = {}) {
   keepDetailOpen.value = false
   editingId.value = null; resetForm()
   if (props.config.endpoint === 'follow-ups' && !form.followed_at) form.followed_at = datetimeLocal()
@@ -234,12 +237,13 @@ async function openCreate() {
   pendingFollowUpFiles.value = []
   applyDefaultContact()
   syncFollowUpDaysFromDate()
-  modalOpen.value = true
+  if (isCurrent()) modalOpen.value = true
 }
-async function openEdit(row, { keepDetail = false } = {}) {
+async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}) {
   if (!keepDetail) detailId.value = null
   keepDetailOpen.value = keepDetail
   editingId.value = row.id; resetForm(); await loadOptions()
+  if (!isCurrent()) return
   props.config.fields.forEach(([name, , type]) => {
     let value = row[name]
     if (type === 'datetime-local' && value) value = value.slice(0, 16)
@@ -303,7 +307,7 @@ async function save() {
       }
     }
     const refreshDetail = keepDetailOpen.value
-    modalOpen.value = false; notify(attachmentError ? `记录已保存，但${attachmentError}` : (wasEditing ? '更新成功' : '创建成功'), Boolean(attachmentError)); await load()
+    modalOpen.value = false; notify(attachmentError ? `记录已保存，但${attachmentError}` : (wasEditing ? '更新成功' : '创建成功'), Boolean(attachmentError)); await clearModalRoute(router, route); await load()
     if (refreshDetail) detailRefresh.value += 1
     keepDetailOpen.value = false
   } catch (e) {
@@ -314,6 +318,7 @@ async function save() {
 async function handleInventoryMovementCreated(records) {
   modalOpen.value = false
   notify(`已创建 ${Array.isArray(records) ? records.length : 1} 条库存流水`)
+  await clearModalRoute(router, route)
   await load()
 }
 async function remove(row) {
@@ -372,16 +377,36 @@ async function handleDetailChanged() {
   if (detailId.value) detailRefresh.value += 1
 }
 
-watch(() => route.query, load)
-onMounted(async () => {
-  await load()
-  if (route.query.detail) detailId.value = Number(route.query.detail)
-  if (route.query.create === '1') await openCreate()
-  if (route.query.edit && props.config.endpoint === 'follow-ups') {
-    try { await openEdit((await api.get(`/follow-ups/${route.query.edit}/`)).data) } catch (e) { notify(e.message, true) }
+async function syncModalFromRoute() {
+  const version = ++routeActionVersion
+  const isCurrent = () => version === routeActionVersion
+  if (route.query.create === '1') {
+    routeModalOpen.value = true
+    await openCreate({ isCurrent })
+    return
   }
-})
-watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null })
+  if (route.query.edit) {
+    routeModalOpen.value = true
+    try {
+      const row = (await api.get(`/${props.config.endpoint}/${route.query.edit}/`)).data
+      if (isCurrent() && String(route.query.edit) === String(row.id)) await openEdit(row, { isCurrent })
+    } catch (error) { if (isCurrent()) notify(error.message, true) }
+    return
+  }
+  if (routeModalOpen.value) {
+    routeModalOpen.value = false
+    modalOpen.value = false
+    editingId.value = null
+    keepDetailOpen.value = false
+    followUpAttachments.value = []
+    pendingFollowUpFiles.value = []
+  }
+}
+
+watch(() => routeDataQuerySignature(route.query), load)
+watch([() => route.query.create, () => route.query.edit], syncModalFromRoute, { immediate: true })
+watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null }, { immediate: true })
+onMounted(load)
 </script>
 
 <template>

@@ -15,6 +15,7 @@ import { clearModalRoute } from '../utils/modalNavigation'
 
 const props = defineProps({ embedded: Boolean, inline: Boolean, initialProduct: [Number, String] })
 const emit = defineEmits(['close', 'saved'])
+const routeCreateOpen = ref(false)
 const rows = ref([]), products = ref([]), categories = ref([]), parameters = ref([]), packagingTemplates = ref([])
 const route = useRoute(), router = useRouter()
 const query = ref(''), loading = ref(true), modalOpen = ref(false), saving = ref(false), editingId = ref(null)
@@ -353,12 +354,14 @@ async function openCreate(productId = '') {
   modalOpen.value = true
 }
 function openCreateFromRoute() {
-  if (route.query.create !== '1' || modalOpen.value) return
+  if (route.query.create !== '1' || (modalOpen.value && !routeCreateOpen.value)) return
+  routeCreateOpen.value = true
   openCreate(route.query.product)
 }
 function closeModal() {
   identityReviewOpen.value = false; identityReviewError.value = ''; pendingIdentitySave.value = null
   modalOpen.value = false
+  routeCreateOpen.value = false
   supplierSourceDialogOpen.value = false
   resetImagePicker()
   if (props.embedded) return emit('close')
@@ -673,7 +676,14 @@ onMounted(async () => {
   if (props.embedded) openCreate(props.initialProduct)
   else openCreateFromRoute()
 })
-watch(() => route.query.create, () => { if (!props.embedded) openCreateFromRoute() })
+watch([() => route.query.create, () => route.query.product], ([value]) => {
+  if (props.embedded) return
+  if (value === '1') openCreateFromRoute()
+  else if (routeCreateOpen.value) {
+    routeCreateOpen.value = false
+    closeModal()
+  }
+})
 onBeforeUnmount(() => { document.removeEventListener('pointerdown', closePackagingPickerOnOutsideClick); revokeImagePreview() })
 </script>
 

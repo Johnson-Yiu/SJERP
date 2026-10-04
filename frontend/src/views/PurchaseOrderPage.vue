@@ -18,6 +18,8 @@ const rows = ref([]), suppliers = ref([]), orders = ref([]), skus = ref([]), sup
 const loading = ref(true), saving = ref(false), error = ref(''), notice = ref(''), openCreate = ref(false), expandedId = ref(null), editingPurchaseId = ref(null)
 const route = useRoute()
 const router = useRouter()
+const routeCreateOpen = ref(false)
+let routeCreateSignature = ''
 const today = new Date().toISOString().slice(0, 10)
 function newDraft() { return { supplier: '', order: '', order_date: today, expected_arrival_date: '', status: 'draft', currency: 'CNY', exchange_rate: '1', notes: '', items: [] } }
 const draft = ref(newDraft())
@@ -108,7 +110,7 @@ async function editDraft(row) {
   supplierSkuOptions.value = {}; notice.value = ''; error.value = ''; openCreate.value = true
   await Promise.all(draft.value.items.map(loadSupplierSkuOptions))
 }
-function closeCreate() { openCreate.value = false; void clearModalRoute(router, route) }
+function closeCreate() { openCreate.value = false; routeCreateOpen.value = false; routeCreateSignature = ''; void clearModalRoute(router, route) }
 const matchingItem = ref(null)
 async function matchedSupplier(selection) {
   const item = matchingItem.value
@@ -172,10 +174,24 @@ async function place(row) { if (!await confirmDialog({ title: '确认采购下�
 async function cancelPurchase(row) { const reason = await inputDialog({ title: '取消采购', message: `请填写取消采购单 ${row.purchase_no} 的原因。`, label: '取消原因', placeholder: '请输入取消原因', required: true, maxLength: 500, confirmText: '确认取消', danger: true }); if (!reason) return; try { await api.post(`/purchase-orders/${row.id}/cancel/`, { reason }); notice.value = '采购单已取消。'; await load() } catch (err) { error.value = message(err, '取消采购失败。') } }
 async function deleteDraft(row) { if (!await confirmDialog({ title: '确认删除采购草稿', message: `确定删除草稿 ${row.purchase_no} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/purchase-orders/${row.id}/`); notice.value = '采购草稿已删除。'; await load() } catch (err) { error.value = message(err, '删除采购草稿失败。') } }
 function pay(row) { paymentTarget.value = row }
-onMounted(async () => {
-  await load()
-  if (route.query.create === '1') startCreate()
-})
+onMounted(load)
+watch(() => [route.query.create, route.query.order, route.query.supplier], ([create, order, supplier]) => {
+  if (create === '1') {
+    const signature = JSON.stringify([create, order, supplier])
+    if (!routeCreateOpen.value || signature !== routeCreateSignature) {
+      routeCreateOpen.value = true
+      routeCreateSignature = signature
+      startCreate()
+    }
+    return
+  }
+  if (routeCreateOpen.value) {
+    routeCreateOpen.value = false
+    routeCreateSignature = ''
+    openCreate.value = false
+    editingPurchaseId.value = null
+  }
+}, { immediate: true })
 watch(() => route.query.detail, id => {
   expandedId.value = id ? Number(id) : null
 })

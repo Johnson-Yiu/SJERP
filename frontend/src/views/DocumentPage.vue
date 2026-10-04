@@ -16,6 +16,7 @@ import SummaryCards from '../components/SummaryCards.vue'
 import { addDays, daysBetween } from '../utils/orderDate'
 import { clearModalRoute } from '../utils/modalNavigation'
 import { documentDetailState, withDocumentDetailQuery, withoutDocumentDetailQuery } from '../utils/documentDetailRoute'
+import { routeDataQuery, routeDataQuerySignature } from '../utils/routePageState'
 
 const props = defineProps({ type: String })
 const route = useRoute()
@@ -41,6 +42,8 @@ const expandedQuoteNodes = ref(new Set())
 const toast = reactive({ show: false, message: '', error: false })
 const form = reactive({})
 const activeSkuId = ref('')
+const routeActionOpen = ref(false)
+let routeActionVersion = 0
 let timer
 
 function fresh() {
@@ -59,7 +62,7 @@ async function load() {
   loading.value = true
   try {
     const quoteParams = !isOrder.value ? { status: quoteStatusFilter.value, customer: quoteCustomerFilter.value, ordering: quoteSort.value } : {}
-    rows.value = await listAll(`/${props.type}/`, { params: { ...route.query, search: query.value, ...quoteParams } })
+    rows.value = await listAll(`/${props.type}/`, { params: { ...routeDataQuery(route.query), search: query.value, ...quoteParams } })
     const visibleQuoteIds = new Set(rows.value.map(row => row.id))
     expandedQuoteNodes.value = new Set([...expandedQuoteNodes.value].filter(id => visibleQuoteIds.has(id)))
   } catch (e) { notify(e.message, true) } finally { loading.value = false }
@@ -71,26 +74,29 @@ async function loadOptions() {
     const result = await Promise.all(calls); customers.value = result[0]; skus.value = result[1]; if (result[2]) quotes.value = result[2]
   } catch (e) { notify(e.message, true) }
 }
-async function create() {
+async function create({ isCurrent = () => true } = {}) {
   if (!isOrder.value) {
     await loadOptions()
+    if (!isCurrent()) return
     quoteEditorQuote.value = route.query.customer ? { customer: Number(route.query.customer) } : null
     quoteEditorOpen.value = true
     return
   }
   returnToOrderDetailId.value = null
-  editingId.value = null; fresh(); await loadOptions(); open.value = true
+  editingId.value = null; fresh(); await loadOptions(); if (isCurrent()) open.value = true
 }
-async function edit(row, { closeDetail = true } = {}) {
+async function edit(row, { closeDetail = true, isCurrent = () => true } = {}) {
   if (closeDetail) await closeDocumentDetail()
   if (!isOrder.value) {
     await loadOptions()
+    if (!isCurrent()) return
     quoteEditorQuote.value = row
     quoteEditorOpen.value = true
     return
   }
   returnToOrderDetailId.value = closeDetail ? null : row.id
   editingId.value = row.id; fresh(); await loadOptions()
+  if (!isCurrent()) return
   Object.keys(form).forEach(k => { if (row[k] !== undefined && k !== 'items') form[k] = row[k] ?? '' })
   form.items = row.items.map(i => fromTradeLine({ ...i, cost_price: i.cost_price || 0, notes: i.notes || '' }))
   orderLeadTimeDays.value = daysBetween(form.order_date, form.expected_ship_date)
@@ -129,6 +135,7 @@ async function save() {
     const detailId = returnToOrderDetailId.value || (isOrder.value ? response.data.id : null)
     open.value = false
     notify('单据已保存')
+    await clearModalRoute(router, route)
     await load()
     if (detailId && returnToOrderDetailId.value) orderWorkbenchRefresh.value += 1
     returnToOrderDetailId.value = null
@@ -136,6 +143,7 @@ async function save() {
 }
 async function handleQuoteSaved(row) {
   notify(`报价 ${row.quote_no} 已保存`)
+  await clearModalRoute(router, route)
   await load()
   if (quoteDetailId.value) workbenchRefresh.value += 1
 }
@@ -169,6 +177,35 @@ function syncDetailFromRoute() {
   const detailState = documentDetailState(props.type, route.query.detail)
   quoteDetailId.value = detailState.quoteDetailId
   orderDetailId.value = detailState.orderDetailId
+}
+async function syncModalFromRoute() {
+  const version = ++routeActionVersion
+  const isCurrent = () => version === routeActionVersion
+  if (route.query.create === '1') {
+    routeActionOpen.value = true
+    await create({ isCurrent })
+    if (!isCurrent() || route.query.create !== '1') return
+    if (isOrder.value) {
+      form.customer = route.query.customer ? Number(route.query.customer) : ''
+      form.quote = route.query.quote ? Number(route.query.quote) : ''
+    }
+    return
+  }
+  if (route.query.edit) {
+    routeActionOpen.value = true
+    try {
+      const row = (await api.get(`/${props.type}/${route.query.edit}/`)).data
+      if (isCurrent() && String(route.query.edit) === String(row.id)) await edit(row, { isCurrent })
+    } catch (error) { if (isCurrent()) notify(`无法读取单据：${error.message}`, true) }
+    return
+  }
+  if (routeActionOpen.value) {
+    routeActionOpen.value = false
+    open.value = false
+    quoteEditorOpen.value = false
+    orderDraft.value = null
+    returnToOrderDetailId.value = null
+  }
 }
 async function closeDocumentDetail() {
   quoteDetailId.value = null
@@ -262,16 +299,10 @@ async function handleOrderEdit() {
   else notify('请前往订单管理编辑订单。')
 }
 watch(() => props.type, load)
-watch(() => route.query, load)
+watch(() => routeDataQuerySignature(route.query), load)
 watch([() => props.type, () => route.query.detail], syncDetailFromRoute, { immediate: true })
-onMounted(async () => {
-  await load()
-  if (route.query.create === '1') {
-    await create()
-    if (route.query.customer && isOrder.value) form.customer = Number(route.query.customer)
-    if (isOrder.value && route.query.quote) form.quote = Number(route.query.quote)
-  }
-})
+watch([() => route.query.create, () => route.query.edit], syncModalFromRoute, { immediate: true })
+onMounted(load)
 </script>
 
 <template>

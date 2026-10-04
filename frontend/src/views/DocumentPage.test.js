@@ -79,7 +79,7 @@ test('order draft edits use PUT, close and refresh on success, and surface faile
 
   assert.match(save, /delete data\.status; delete data\.order_no/)
   assert.match(save, /api\.put\(`\/\$\{props\.type\}\/\$\{editingId\.value\}\/`, data\)/)
-  assert.match(save, /open\.value = false\s+notify\('单据已保存'\)\s+await load\(\)/)
+  assert.match(save, /open\.value = false\s+notify\('单据已保存'\)\s+await clearModalRoute\(router, route\)\s+await load\(\)/)
   assert.match(save, /catch \(e\) \{ notify\(e\.message, true\) \}/)
 })
 

@@ -137,3 +137,45 @@ Formal UAT 覆盖核心闭环，不等于覆盖所有可用 API。最显著的�
 - 后端能力：`backend/crm/views.py:431,666,967-995,1033`；快照/关联：`backend/crm/models.py:593-653,765-854,1043-1102,1171-1265`。
 
 本审查未修改 `frontend/`、`backend/`、数据库或业务逻辑。结论待独立审查和重新排期。
+
+## Product Optimization Phase 2A — PCR-001
+
+| Item | Result |
+|---|---|
+| PCR-001 原始状态 | OPEN（保留上方原始审查记录） |
+| 当前状态 | PASS |
+| 范围 | 仅导航与页面状态基础；未开始 PCR-002、PCR-003 或 PCR-004+ |
+
+### 根因与修复
+
+`App.vue` 原先以 `route.fullPath` 作为 `RouterView` key。同一路径增加或更改 `detail`、`create`、`edit` 等 query 时，key 随完整 URL 改变，Vue 因而销毁并重建顶层页面；订单列表的本地搜索、过滤结果及滚动位置随实例丢失。将 key 改为稳定的 `route.path` 后，同一路径的 query 更新保留页面实例，不同路径仍正常切换页面。
+
+移除 query remount 后，显式 watcher 负责详情、创建、编辑和预填状态。列表请求只使用非动作 query；详情/创建/编辑/returnTo 不触发数据重载，业务筛选及上下文 query 仍保留。关闭 route modal 只清 `create`、`edit`、`returnTo`，保留 `customer`、`supplier`、`order`、`status` 等上下文。未引入全局状态库或存储滚动状态。
+
+### Query 驱动页面审计
+
+本轮扫描到 8 个直接读取 route query 的顶层页面组件：
+
+| 页面 | 原有 query 职责 | Phase 2A 处理 |
+|---|---|---|
+| `DocumentPage.vue` | `detail`、`create`、`edit`、客户/报价上下文 | 增加 detail/create/edit 即时同步；按筛选 query signature 加载列表；动作 query 不触发列表重载 |
+| `ResourcePage.vue` | `detail`、`create`、`edit` 与实体预填 | 增加动态 create/edit/detail 同步；筛选 query signature 驱动列表加载；异步 edit 防过期响应 |
+| `PurchaseOrderPage.vue` | `detail`、`create`、`order`、`supplier` | 增加动态 create/context 同步；切换预填上下文重置表单；关闭保留来源上下文 |
+| `ProductPage.vue` | 产品详情 query | 原已有详情 watcher；稳定 path key 下继续响应 query |
+| `SKUPage.vue` | `create`、`product` | create/product 动态变化时更新表单预填，移除 create 时关闭 route 打开的 modal |
+| `TradeUnitsPage.vue` | `sku` 选择上下文 | 增加 watcher，使同页 SKU query 切换同步选择项 |
+| `Dashboard.vue` | 生成客户/跟进详情目标链接 | 链接生产者；目标页按各自 watcher 消费 query |
+| `FinanceDashboardPage.vue` | 生成订单/采购详情目标链接 | 链接生产者；目标页按各自 watcher 消费 query |
+
+另检查了 `InventoryPage.vue`、`PaymentPlanPage.vue`、`TransactionPage.vue`、`EntityDetailModal.vue`、`QuoteDetailModal.vue`、`OrderDetailModal.vue`、`modalNavigation.js` 及其它 `router.push` / `router.replace` / `RouterLink` query 用法。前三个页面无直接 route-query 状态；实体详情组件使用 route query 构造来源/返回导航，订单与报价详情弹窗通过 id prop 并已有 prop watcher。订单/报价/跟进列表与采购页曾依靠 remount 时的 mounted 初始化处理 query 动作，现改为显式 watcher；Product 详情已由 watcher 驱动。未发现需要重写的全局路由或状态架构。
+
+### 自动化与真实 UI 证据
+
+- 订单列表搜索 `SO-2026-00026` 后打开 `?detail=26`：搜索值、过滤行、列表 DOM 与 scrollTop 在当前实例内保留；detail query 没有引发订单列表请求。
+- 详情从 4 切换到 5，浏览器 Back/Forward 后 URL、drawer 内容与搜索状态一致；直接打开 `orders?detail=26` 和 `quotes?detail=44` 均显示详情，订单页面整页刷新后详情恢复。
+- `quotes?create=1&customer=5` 动态打开创建 modal 并预填客户；`follow-ups?edit=10` 切换到 `edit=11` 后同一 modal 更新为记录 11。
+- `purchase-orders?create=1&order=26` 预填订单；`purchase-orders?create=1&supplier=1` 预填供应商。关闭采购创建 modal 移除 create action 并保留 supplier 上下文。
+- 自动化：前端 unit 109 项通过；CI 等价 Vitest 61 项通过；Node-only 1 项通过；production build 通过。后端检查及 migration 检查通过；SQLite 后端 472 项通过、10 项按项目配置跳过。PostgreSQL 本机不可用，等待推送后的 `backend-postgres` CI job 验证。
+- 没有生成 migration，也没有修改后端模型或业务数据。
+
+以上记录只完成 PCR-001。其他 PCR 仍按原审查记录等待独立审查与后续排期。

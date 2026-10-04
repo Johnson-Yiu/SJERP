@@ -1,7 +1,4 @@
-const modalContextKeys = new Set([
-  'create', 'edit', 'returnTo', 'product', 'customer', 'contact',
-  'supplier', 'order', 'quote', 'purchase_order', 'sku',
-])
+import { withoutModalActionQuery } from './routePageState.js'
 
 export function isModalRoute(route) {
   return route?.query?.create === '1' || Boolean(route?.query?.edit)
@@ -23,6 +20,6 @@ export function modalOrigin(route) {
 
 export function clearModalRoute(router, route) {
   if (!isModalRoute(route)) return Promise.resolve()
-  const query = Object.fromEntries(Object.entries(route.query).filter(([key]) => !modalContextKeys.has(key)))
+  const query = withoutModalActionQuery(route.query)
   return router.replace({ path: route.path, query, hash: route.hash })
 }

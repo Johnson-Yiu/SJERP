@@ -1,7 +1,8 @@
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 
 from django.test import TestCase
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -50,8 +51,56 @@ class PurchaseOverageProjectionTests(TestCase):
         self.assertEqual(self.item.received_quantity, Decimal("0"))
         self.assertEqual(self.item.remaining_quantity, Decimal("10"))
         self.assertEqual(self.item.overage_quantity, Decimal("0"))
+        self.assertEqual(receipt.overage_quantity, Decimal("5"))
         self.assertEqual(self.purchase.status, "ordered")
         self.assertEqual(plan.planned_amount, planned_amount)
+
+    def test_overage_after_a_reversed_overage_and_partial_re_receipt_uses_creation_time_active_quantity(self):
+        receipt_a = record_receipt(self.item, {
+            "receipt_date": self.day, "quantity": Decimal("15"), "unit_cost": Decimal("5"),
+            "is_overage": True, "overage_reason": "gift",
+        })
+        reverse_receipt(receipt_a, "超到历史冲销")
+        receipt_b = record_receipt(self.item, {
+            "receipt_date": self.day, "quantity": Decimal("5"), "unit_cost": Decimal("5"),
+        })
+        receipt_c = record_receipt(self.item, {
+            "receipt_date": self.day, "quantity": Decimal("10"), "unit_cost": Decimal("5"),
+            "is_overage": True, "overage_reason": "overprocurement",
+        })
+
+        origin = timezone.now()
+        type(receipt_a).objects.filter(pk=receipt_a.pk).update(created_at=origin, reversed_at=origin + timedelta(seconds=1))
+        type(receipt_b).objects.filter(pk=receipt_b.pk).update(created_at=origin + timedelta(seconds=2))
+        type(receipt_c).objects.filter(pk=receipt_c.pk).update(created_at=origin + timedelta(seconds=3))
+        receipt_a.refresh_from_db()
+        receipt_b.refresh_from_db()
+        receipt_c.refresh_from_db()
+        self.item.refresh_from_db()
+
+        self.assertEqual(receipt_a.overage_quantity, Decimal("5"))
+        self.assertEqual(receipt_b.overage_quantity, Decimal("0"))
+        self.assertEqual(receipt_c.overage_quantity, Decimal("5"))
+        self.assertEqual(self.item.received_quantity, Decimal("15"))
+        self.assertEqual(self.item.remaining_quantity, Decimal("0"))
+        self.assertEqual(self.item.overage_quantity, Decimal("5"))
+
+    def test_later_reversal_does_not_rewrite_a_later_receipts_historical_overage(self):
+        receipt_a = record_receipt(self.item, {
+            "receipt_date": self.day, "quantity": Decimal("8"), "unit_cost": Decimal("5"),
+        })
+        receipt_b = record_receipt(self.item, {
+            "receipt_date": self.day, "quantity": Decimal("5"), "unit_cost": Decimal("5"),
+            "is_overage": True, "overage_reason": "gift",
+        })
+        reverse_receipt(receipt_a, "后续发现数量有误")
+
+        origin = timezone.now()
+        type(receipt_a).objects.filter(pk=receipt_a.pk).update(created_at=origin, reversed_at=origin + timedelta(seconds=2))
+        type(receipt_b).objects.filter(pk=receipt_b.pk).update(created_at=origin + timedelta(seconds=1))
+        receipt_b.refresh_from_db()
+
+        self.assertEqual(receipt_b.overage_quantity, Decimal("3"))
 
 
 class InventoryMovementReversalApiTests(TestCase):

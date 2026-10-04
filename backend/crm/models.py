@@ -1398,7 +1398,11 @@ class GoodsReceipt(TradeUnitLine, TimestampedModel):
         for receipt in self.purchase_item.receipts.order_by("created_at", "pk"):
             if receipt.pk == self.pk:
                 break
-            received_before += receipt.quantity
+            # Reconstruct this receipt's creation-time projection. A receipt
+            # reversed before this event no longer consumed contract quantity;
+            # a later reversal must not rewrite this event's audit history.
+            if receipt.reversed_at is None or receipt.reversed_at > self.created_at:
+                received_before += receipt.quantity
         return min(self.quantity, max(Decimal("0"), received_before + self.quantity - self.purchase_item.quantity))
 
 

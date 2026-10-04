@@ -562,3 +562,15 @@ Formal UAT Round 1 PASS 表示本节所列 20 条标准完整闭环、4 条高�
 | UAT-FUP-002 | FAIL | DEFERRED — WAIT CODE REVIEW | 修复前编辑窗只有已保存附件名称，无逐项操作。修复后真实 UI 为 3 个已保存附件各提供“查看/删除”，App 确认框明确删除立即生效；取消确认后 README 仍保留。用户明确要求暂不删除 `README.md`，待代码审查后再决定，因此没有执行不可撤销的真实 UI DELETE，不能将本项记为 PASS。自动化测试覆盖成功删除、跨 FollowUp 拒绝、失败保留和审计元数据。开发环境操作日志面板未启用；自动化审计测试在启用日志并认证测试用户时验证了“删除跟进附件”及文件名。 |
 
 当前未关闭 P2：**4 → 3**。余项为 `UAT-QTE-001`、`UAT-DRILL-001`、`UAT-FUP-002`。`README.md` 与另外两个已保存附件均保持原状；`UAT-FUP-002` 的真实 UI 删除复测等待代码审查后再决定。无 migration。
+
+## P2-C Review Fix — FollowUp 附件删除后的列表快照同步 Re-UAT（2026-10-04）
+
+本节续记 `UAT-FUP-002`。保留上方首次 FAIL 与 Batch C 的 DEFERRED 历史记录，不覆盖第一次 Re-UAT 暴露的同页旧列表快照问题。
+
+| 缺陷 | Original Result | Current Result | Re-UAT 证据 |
+|---|---|---|---|
+| UAT-FUP-002 | FAIL | PASS | 第一次 P2-C Re-UAT 已确认：附件 DELETE、详情与存储均成功，但当前页面 `rows` 中的旧 `row.attachments` 快照未更新，因而同页再次编辑会复现已删除附件。修复后真实 UI 上传并保存专用附件 `UAT-FUP-002-DELETE-ME-2.txt`，重新进入编辑确认其为已保存附件。第一次删除确认框点击“取消”后附件仍存在；第二次确认删除后，当前编辑列表立即移除该文件。关闭编辑后，不按 F5、不切页，在同一跟进列表直接再次编辑，临时附件不存在；重新打开详情及再进入编辑也均不存在。`reports-desktop-qa.png`、`README.md`、`clipboard.png` 始终保留。辅助核对：`FollowUpAttachment` 记录不存在、storage 文件不存在。开发环境操作日志记录开关未启用，不作为失败条件。 |
+
+实现先同步当前编辑附件状态与 `rows` 中对应 FollowUp 的附件快照，再触发详情刷新并重新拉取服务端列表；若列表重拉失败，本地已删除状态仍保持。新增回归测试覆盖 DELETE 成功、双快照同步、同一行重开编辑，以及列表重拉失败时不恢复陈旧附件。DELETE 失败、Cancel 与 pending attachment 的既有测试继续覆盖。
+
+本轮无 migration。当前未关闭 P2：**3 → 2**。余项为 `UAT-QTE-001`、`UAT-DRILL-001`。不在本轮开始其余 UAT。

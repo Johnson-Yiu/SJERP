@@ -12,7 +12,7 @@ import SegmentedDateInput from '../components/SegmentedDateInput.vue'
 import SummaryCards from '../components/SummaryCards.vue'
 import InventoryMovementCreateModal from '../components/InventoryMovementCreateModal.vue'
 import { addDays, daysBetween } from '../utils/orderDate'
-import { confirmAndDeleteSavedFollowUpAttachment } from '../utils/followUpAttachments'
+import { confirmAndDeleteSavedFollowUpAttachment, removeSavedFollowUpAttachmentFromRows } from '../utils/followUpAttachments'
 import { clearModalRoute } from '../utils/modalNavigation'
 
 const props = defineProps({ config: Object })
@@ -166,10 +166,12 @@ async function deleteSavedFollowUpAttachment(attachment) {
     attachment,
     api,
     confirmDialog,
-    onDeleted: deleted => {
-      followUpAttachments.value = followUpAttachments.value.filter(item => item.id !== deleted.id)
+    onDeleted: async deleted => {
+      followUpAttachments.value = followUpAttachments.value.filter(item => String(item.id) !== String(deleted.id))
+      rows.value = removeSavedFollowUpAttachmentFromRows(rows.value, editingId.value, deleted.id)
       if (keepDetailOpen.value) detailRefresh.value += 1
       notify(`已删除附件“${deleted.name}”`)
+      await load()
     },
     onError: error => notify(error.message || '删除附件失败', true),
   })

@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from 'vitest'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { resourceConfigs } from '../src/resourceConfigs.js'
-import { confirmAndDeleteSavedFollowUpAttachment } from '../src/utils/followUpAttachments.js'
+import {
+  confirmAndDeleteSavedFollowUpAttachment,
+  removeSavedFollowUpAttachmentFromRows,
+} from '../src/utils/followUpAttachments.js'
 import { renderRichText } from '../src/utils/richText.js'
 
 describe('FollowUp rich text display protocol', () => {
@@ -70,6 +73,9 @@ describe('saved and pending FollowUp attachments', () => {
     const api = { delete: vi.fn() }
     const confirmDialog = vi.fn().mockResolvedValue(false)
     const onDeleted = vi.fn()
+    const rows = [{ id: 9, attachments: [attachment] }]
+    const editorAttachments = [attachment]
+    const refreshDetail = vi.fn()
 
     await expect(confirmAndDeleteSavedFollowUpAttachment({
       followUpId: 9, attachment, api, confirmDialog, onDeleted,
@@ -81,6 +87,9 @@ describe('saved and pending FollowUp attachments', () => {
     }))
     expect(api.delete).not.toHaveBeenCalled()
     expect(onDeleted).not.toHaveBeenCalled()
+    expect(editorAttachments).toEqual([attachment])
+    expect(rows[0].attachments).toEqual([attachment])
+    expect(refreshDetail).not.toHaveBeenCalled()
   })
 
   it('calls the existing attachment endpoint and removes it only after success', async () => {
@@ -98,11 +107,45 @@ describe('saved and pending FollowUp attachments', () => {
     expect(saved.map(item => item.name)).toEqual(['A.png'])
   })
 
+  it('removes a deleted attachment from the editor and row snapshots before reopening edit', async () => {
+    const deleteMe = { id: 83, name: 'DELETE_ME.txt' }
+    const before = [attachment, deleteMe, { id: 82, name: 'A.png' }]
+    let rows = [{ id: 9, attachments: before }, { id: 10, attachments: [deleteMe] }]
+    let editorAttachments = [...before]
+    const api = { delete: vi.fn().mockResolvedValue({ status: 204 }) }
+    const confirmDialog = vi.fn().mockResolvedValue(true)
+    const reloadList = vi.fn().mockRejectedValue(new Error('list unavailable'))
+    const onDeleted = vi.fn(async deleted => {
+      editorAttachments = editorAttachments.filter(item => String(item.id) !== String(deleted.id))
+      rows = removeSavedFollowUpAttachmentFromRows(rows, 9, deleted.id)
+      try {
+        rows = await reloadList()
+      } catch {
+        // A failed refresh must not restore the stale pre-delete row snapshot.
+      }
+    })
+
+    await expect(confirmAndDeleteSavedFollowUpAttachment({
+      followUpId: 9, attachment: deleteMe, api, confirmDialog, onDeleted,
+    })).resolves.toBe(true)
+
+    expect(editorAttachments.map(item => item.name)).toEqual(['README.md', 'A.png'])
+    expect(rows[0].attachments.map(item => item.name)).toEqual(['README.md', 'A.png'])
+    expect(rows[1].attachments).toEqual([deleteMe])
+    expect(reloadList).toHaveBeenCalledOnce()
+
+    // openEdit(row) reads row.attachments; re-opening from the current rows must stay clean.
+    editorAttachments = rows.find(row => row.id === 9).attachments
+    expect(editorAttachments.map(item => item.name)).toEqual(['README.md', 'A.png'])
+    expect(editorAttachments).not.toContainEqual(deleteMe)
+  })
+
   it('keeps the saved attachment when DELETE fails and surfaces the error', async () => {
     const failure = new Error('删除失败，请重试')
     const api = { delete: vi.fn().mockRejectedValue(failure) }
     const confirmDialog = vi.fn().mockResolvedValue(true)
     const saved = [attachment]
+    const rows = [{ id: 9, attachments: [attachment] }]
     const onDeleted = vi.fn(item => { saved.splice(saved.indexOf(item), 1) })
     const onError = vi.fn()
 
@@ -111,6 +154,7 @@ describe('saved and pending FollowUp attachments', () => {
     })).resolves.toBe(false)
 
     expect(saved).toEqual([attachment])
+    expect(rows[0].attachments).toEqual([attachment])
     expect(onDeleted).not.toHaveBeenCalled()
     expect(onError).toHaveBeenCalledWith(failure)
   })
@@ -125,5 +169,8 @@ describe('saved and pending FollowUp attachments', () => {
     expect(page).toMatch(/aria-label="移除待上传附件"[^>]*@click="removePendingFollowUpFile\(index\)"/)
     expect(pendingRemove).toBe('function removePendingFollowUpFile(index) { pendingFollowUpFiles.value.splice(index, 1) }')
     expect(pendingRemove).not.toMatch(/api\.delete/)
+    const deleteHandler = page.match(/async function deleteSavedFollowUpAttachment\(attachment\) \{([\s\S]*?)\n\}/)?.[1]
+    expect(deleteHandler).toMatch(/rows\.value = removeSavedFollowUpAttachmentFromRows\(rows\.value, editingId\.value, deleted\.id\)/)
+    expect(deleteHandler.indexOf('rows.value = removeSavedFollowUpAttachmentFromRows')).toBeLessThan(deleteHandler.indexOf('await load()'))
   })
 })

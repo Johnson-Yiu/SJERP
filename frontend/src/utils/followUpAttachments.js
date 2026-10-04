@@ -1,3 +1,12 @@
+export function removeSavedFollowUpAttachmentFromRows(rows, followUpId, attachmentId) {
+  return rows.map(row => String(row.id) === String(followUpId)
+    ? {
+        ...row,
+        attachments: (row.attachments || []).filter(item => String(item.id) !== String(attachmentId)),
+      }
+    : row)
+}
+
 export async function confirmAndDeleteSavedFollowUpAttachment({
   followUpId,
   attachment,
@@ -19,10 +28,11 @@ export async function confirmAndDeleteSavedFollowUpAttachment({
 
   try {
     await api.delete(`/follow-ups/${followUpId}/attachments/${attachment.id}/`)
-    onDeleted?.(attachment)
-    return true
   } catch (error) {
     onError?.(error)
     return false
   }
+
+  await onDeleted?.(attachment)
+  return true
 }

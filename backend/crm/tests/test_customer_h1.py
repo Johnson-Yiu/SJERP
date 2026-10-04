@@ -1,7 +1,9 @@
 from datetime import date, datetime, timezone as datetime_timezone
 from decimal import Decimal
+from pathlib import Path
 import tempfile
 
+from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.utils import timezone
@@ -17,6 +19,7 @@ from crm.models import (
     InventoryReservation,
     Order,
     OrderItem,
+    OperationLog,
     PaymentPlan,
     Product,
     Quote,
@@ -217,6 +220,84 @@ class FollowUpOwnershipAndAttachmentTests(TestCase):
         self.assertEqual(updated.data["next_follow_up"], "2026-09-25")
         self.assertEqual(len(updated.data["attachments"]), 1)
         self.assertEqual(updated.data["attachments"][0]["id"], attachment.id)
+
+    def test_delete_follow_up_attachment_removes_record_and_stored_file(self):
+        follow_up = FollowUp.objects.create(
+            customer=self.customer_a,
+            contact=self.contact_a,
+            followed_at=timezone.now(),
+            type="email",
+            subject="Attachment delete test",
+        )
+        attachment = FollowUpAttachment.objects.create(
+            follow_up=follow_up,
+            file=SimpleUploadedFile("delete-this.txt", b"stored contents", content_type="text/plain"),
+            name="delete-this.txt",
+            content_type="text/plain",
+            size=15,
+        )
+        stored_path = attachment.file.path
+        self.assertTrue(Path(stored_path).exists())
+
+        response = self.client.delete(f"/api/follow-ups/{follow_up.id}/attachments/{attachment.id}/")
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(FollowUpAttachment.objects.filter(pk=attachment.pk).exists())
+        self.assertFalse(Path(stored_path).exists())
+
+    def test_follow_up_attachment_cannot_be_deleted_through_another_follow_up(self):
+        follow_up_a = FollowUp.objects.create(
+            customer=self.customer_a,
+            contact=self.contact_a,
+            followed_at=timezone.now(),
+            type="email",
+            subject="Owner follow-up",
+        )
+        follow_up_b = FollowUp.objects.create(
+            customer=self.customer_b,
+            contact=self.contact_b,
+            followed_at=timezone.now(),
+            type="email",
+            subject="Other follow-up",
+        )
+        attachment = FollowUpAttachment.objects.create(
+            follow_up=follow_up_a,
+            file=SimpleUploadedFile("owned-by-a.txt", b"keep me", content_type="text/plain"),
+            name="owned-by-a.txt",
+            content_type="text/plain",
+            size=7,
+        )
+        stored_path = attachment.file.path
+
+        response = self.client.delete(f"/api/follow-ups/{follow_up_b.id}/attachments/{attachment.id}/")
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue(FollowUpAttachment.objects.filter(pk=attachment.pk, follow_up=follow_up_a).exists())
+        self.assertTrue(Path(stored_path).exists())
+
+    @override_settings(AUDIT_LOG_ENABLED=True)
+    def test_delete_follow_up_attachment_logs_filename_when_audit_is_enabled(self):
+        follow_up = FollowUp.objects.create(
+            customer=self.customer_a,
+            contact=self.contact_a,
+            followed_at=timezone.now(),
+            type="email",
+            subject="Attachment audit test",
+        )
+        attachment = FollowUpAttachment.objects.create(
+            follow_up=follow_up,
+            file=SimpleUploadedFile("audit-target.md", b"notes", content_type="text/markdown"),
+            name="audit-target.md",
+            content_type="text/markdown",
+            size=5,
+        )
+        self.client.force_authenticate(get_user_model().objects.create_user(username="attachment-auditor"))
+
+        response = self.client.delete(f"/api/follow-ups/{follow_up.id}/attachments/{attachment.id}/")
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        log = OperationLog.objects.get(object_id=str(follow_up.id), action_label="删除跟进附件")
+        self.assertEqual(log.metadata["file_name"], "audit-target.md")
 
 
 class CustomerAndContactDeleteGuardTests(TestCase):

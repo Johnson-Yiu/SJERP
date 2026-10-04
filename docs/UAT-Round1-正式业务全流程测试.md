@@ -551,3 +551,14 @@ Formal UAT Round 1 PASS 表示本节所列 20 条标准完整闭环、4 条高�
 当前未关闭 P2：**6 → 4**。余项为 `UAT-QTE-001`、`UAT-DRILL-001`、`UAT-FUP-001`、`UAT-FUP-002`。
 
 独立 Code Review 补充覆盖了“Receipt 超到 → 冲销 → 重新收货 → 再次超到”历史投影边界；`UAT-PUR-001` 与 `UAT-INV-001` 的 PASS 结论不变，当前未关闭 P2 仍为 **4**。
+
+## P2 Cleanup Batch C — 跟进富文本一致性 + 已保存附件管理 Re-UAT（2026-10-04）
+
+本节仅复测 `UAT-FUP-001` 与 `UAT-FUP-002`；保留上方原始 FAIL 记录，不改写历史结论。
+
+| 缺陷 | Original Result | Current Result | Re-UAT 证据 |
+|---|---|---|---|
+| UAT-FUP-001 | FAIL | PASS | 修复前真实 UI 复测确认 `content` 已能将有效 Markdown 渲染为格式，但 `result` 在摘要与反馈区仍按普通文本显示控制字符。修复后专用 FollowUp 的详情中，`content` 和 `result` 均生成加粗、斜体、无序/有序列表结构；没有裸露控制字符。原 `UAT-R1 富文本与多附件回归` 中通过剪贴板粘贴的 PNG 仍可显示，附件记录仍在。 |
+| UAT-FUP-002 | FAIL | DEFERRED — WAIT CODE REVIEW | 修复前编辑窗只有已保存附件名称，无逐项操作。修复后真实 UI 为 3 个已保存附件各提供“查看/删除”，App 确认框明确删除立即生效；取消确认后 README 仍保留。用户明确要求暂不删除 `README.md`，待代码审查后再决定，因此没有执行不可撤销的真实 UI DELETE，不能将本项记为 PASS。自动化测试覆盖成功删除、跨 FollowUp 拒绝、失败保留和审计元数据。开发环境操作日志面板未启用；自动化审计测试在启用日志并认证测试用户时验证了“删除跟进附件”及文件名。 |
+
+当前未关闭 P2：**4 → 3**。余项为 `UAT-QTE-001`、`UAT-DRILL-001`、`UAT-FUP-002`。`README.md` 与另外两个已保存附件均保持原状；`UAT-FUP-002` 的真实 UI 删除复测等待代码审查后再决定。无 migration。

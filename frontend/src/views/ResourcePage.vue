@@ -12,6 +12,7 @@ import SegmentedDateInput from '../components/SegmentedDateInput.vue'
 import SummaryCards from '../components/SummaryCards.vue'
 import InventoryMovementCreateModal from '../components/InventoryMovementCreateModal.vue'
 import { addDays, daysBetween } from '../utils/orderDate'
+import { confirmAndDeleteSavedFollowUpAttachment } from '../utils/followUpAttachments'
 import { clearModalRoute } from '../utils/modalNavigation'
 
 const props = defineProps({ config: Object })
@@ -159,6 +160,20 @@ async function uploadFollowUpFiles(id) {
   const response = await api.post(`/follow-ups/${id}/attachments/`, data, { timeout: 120000 })
   return response.data
 }
+async function deleteSavedFollowUpAttachment(attachment) {
+  await confirmAndDeleteSavedFollowUpAttachment({
+    followUpId: editingId.value,
+    attachment,
+    api,
+    confirmDialog,
+    onDeleted: deleted => {
+      followUpAttachments.value = followUpAttachments.value.filter(item => item.id !== deleted.id)
+      if (keepDetailOpen.value) detailRefresh.value += 1
+      notify(`已删除附件“${deleted.name}”`)
+    },
+    onError: error => notify(error.message || '删除附件失败', true),
+  })
+}
 function onDateFieldChange(field, value) {
   form[field[0]] = value
   if (props.config.endpoint === 'follow-ups' && field[0] === 'followed_at') syncFollowUpDaysFromDate()
@@ -234,7 +249,9 @@ async function openEdit(row, { keepDetail = false } = {}) {
   modalOpen.value = true
 }
 function closeModal() {
+  const refreshDetail = keepDetailOpen.value
   modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []
+  if (refreshDetail) detailRefresh.value += 1
   void clearModalRoute(router, route)
 }
 function closeDetail() {
@@ -409,8 +426,14 @@ watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null 
             <label class="follow-up-attachment-picker"><Paperclip :size="14" /> 添加附件<input ref="followUpFileInput" type="file" multiple @change="onFollowUpFileInput" /></label>
           </div>
           <div v-if="followUpAttachments.length || pendingFollowUpFiles.length" class="follow-up-attachment-editor-list">
-            <div v-for="attachment in followUpAttachments" :key="`saved-${attachment.id}`" class="follow-up-attachment-editor-item saved"><Paperclip :size="16" /><span><strong>{{ attachment.name }}</strong><small>已上传 · {{ formatAttachmentSize(attachment.size) }}</small></span></div>
-            <div v-for="(file, index) in pendingFollowUpFiles" :key="`pending-${file.name}-${file.size}-${file.lastModified}`" class="follow-up-attachment-editor-item"><Paperclip :size="16" /><span><strong>{{ file.name }}</strong><small>待上传 · {{ formatAttachmentSize(file.size) }}</small></span><button type="button" aria-label="移除附件" @click="removePendingFollowUpFile(index)"><X :size="14" /></button></div>
+            <strong v-if="followUpAttachments.length" class="follow-up-attachment-editor-group-title">已保存附件</strong>
+            <div v-for="attachment in followUpAttachments" :key="`saved-${attachment.id}`" class="follow-up-attachment-editor-item saved">
+              <Paperclip :size="16" />
+              <span><strong>{{ attachment.name }}</strong><small>已上传 · {{ formatAttachmentSize(attachment.size) }}</small></span>
+              <div class="follow-up-attachment-editor-actions"><a :href="attachment.url || attachment.file" target="_blank" rel="noreferrer">查看</a><button type="button" :aria-label="`删除已保存附件 ${attachment.name}`" @click="deleteSavedFollowUpAttachment(attachment)">删除</button></div>
+            </div>
+            <strong v-if="pendingFollowUpFiles.length" class="follow-up-attachment-editor-group-title">待上传附件</strong>
+            <div v-for="(file, index) in pendingFollowUpFiles" :key="`pending-${file.name}-${file.size}-${file.lastModified}`" class="follow-up-attachment-editor-item"><Paperclip :size="16" /><span><strong>{{ file.name }}</strong><small>待上传 · {{ formatAttachmentSize(file.size) }}</small></span><button type="button" aria-label="移除待上传附件" @click="removePendingFollowUpFile(index)">移除</button></div>
           </div>
           <div v-else class="follow-up-attachment-editor-empty"><Paperclip :size="16" /> 尚未添加附件</div>
         </section>
@@ -461,6 +484,7 @@ watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null 
 .follow-up-attachment-editor-head{display:flex;align-items:center;justify-content:space-between;gap:16px}.follow-up-attachment-editor-head>div{min-width:0}.follow-up-attachment-editor-head strong{display:flex;align-items:center;gap:7px;color:var(--ink);font-size:var(--text-body)}.follow-up-attachment-editor-head strong svg{color:var(--green-2)}.follow-up-attachment-editor-head span{display:block;margin-top:4px;color:var(--muted);font-size:var(--text-body)}
 .follow-up-attachment-picker{display:flex;align-items:center;gap:6px;flex:none;padding:8px 11px;border:1px solid #c8ddd4;border-radius:7px;background:#f1f8f4;color:var(--green-2);font-size:var(--text-body);font-weight:600;cursor:pointer}.follow-up-attachment-picker:hover{background:#e6f3ec}.follow-up-attachment-picker input{display:none}
 .follow-up-attachment-editor-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}.follow-up-attachment-editor-item{display:flex;align-items:center;gap:8px;min-width:0;padding:9px 10px;border:1px solid #dfe9e4;border-radius:8px;background:#fbfdfc;color:#315a4c}.follow-up-attachment-editor-item>svg{flex:none;color:#5e9c86}.follow-up-attachment-editor-item>span{display:grid;flex:1;min-width:0;gap:2px}.follow-up-attachment-editor-item strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--text-body)}.follow-up-attachment-editor-item small{color:#81938b;font-size:var(--text-caption)}.follow-up-attachment-editor-item.saved{background:#f3faf6}.follow-up-attachment-editor-item button{display:grid;place-items:center;flex:none;padding:3px;border:0;background:transparent;color:#9a6b6b;cursor:pointer}.follow-up-attachment-editor-empty{display:flex;align-items:center;justify-content:center;gap:7px;min-height:60px;margin-top:12px;border:1px dashed #bfd4ca;border-radius:8px;background:#fbfdfc;color:#879991;font-size:var(--text-body)}.follow-up-attachment-editor-empty svg{color:#abc1b7}
+.follow-up-attachment-editor-group-title{grid-column:1/-1;margin-top:5px;color:#64776f;font-size:var(--text-secondary)}.follow-up-attachment-editor-actions{display:flex;align-items:center;gap:8px;flex:none}.follow-up-attachment-editor-actions a,.follow-up-attachment-editor-actions button,.follow-up-attachment-editor-item>button{display:inline-flex!important;align-items:center;justify-content:center;padding:5px 8px!important;border:1px solid #d5e4dc!important;border-radius:6px;background:#fff!important;color:#28634f!important;font-size:var(--text-caption);line-height:1.2;text-decoration:none;white-space:nowrap}.follow-up-attachment-editor-actions button,.follow-up-attachment-editor-item>button{border-color:#ecd8d8!important;color:#985656!important}.follow-up-attachment-editor-actions a:hover{background:#eef7f2!important}.follow-up-attachment-editor-actions button:hover,.follow-up-attachment-editor-item>button:hover{background:#fff4f4!important}
 .contact-create-head,.contact-card-head,.contact-card-actions,.primary-switch{display:flex;align-items:center}
 .contact-create-head,.contact-card-head{justify-content:space-between;gap:16px}
 .contact-create-head>div>span{font-size:var(--text-section);font-weight:700;color:var(--ink)}

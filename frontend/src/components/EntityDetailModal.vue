@@ -5,6 +5,7 @@ import { ArrowLeft, CheckSquare, ChevronRight, ExternalLink, Paperclip, Pencil, 
 import { api, listData } from '../api'
 import { confirmDialog } from '../dialogs'
 import { resourceConfigs } from '../resourceConfigs'
+import { renderRichText as richText } from '../utils/richText'
 import RelatedCreateModal from './RelatedCreateModal.vue'
 import OperationLogPanel from './OperationLogPanel.vue'
 import SKUPage from '../views/SKUPage.vue'
@@ -222,30 +223,6 @@ async function toggleInactiveSkus() {
   await load()
   if (data.value?.sections.some(section => section.key === previousTab)) activeTab.value = previousTab
 }
-function richText(value) {
-  const images = []
-  const source = String(value ?? '').replace(/!\[([^\]]*)\]\(((?:data:image\/|\/media\/|https?:\/\/)[^\s)]+)\)/g, (_, alt, url) => {
-    const token = `\u0000IMG${images.length}\u0000`
-    const safeAlt = alt.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
-    images.push(`<img src="${url}" alt="${safeAlt}" loading="lazy" />`)
-    return token
-  })
-  const escape = source.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
-  const inline = text => text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/_(.+?)_/g, '<em>$1</em>').replace(/\u0000IMG(\d+)\u0000/g, (_, index) => images[Number(index)] || '')
-  const lines = escape.split('\n')
-  let html = '', listType = ''
-  const closeList = () => { if (listType) { html += `</${listType}>`; listType = '' } }
-  lines.forEach(line => {
-    const unordered = line.match(/^\s*-\s+(.+)$/), ordered = line.match(/^\s*\d+\.\s+(.+)$/)
-    const nextType = unordered ? 'ul' : ordered ? 'ol' : ''
-    if (nextType) {
-      if (listType !== nextType) { closeList(); listType = nextType; html += `<${listType}>` }
-      html += `<li>${inline((unordered || ordered)[1])}</li>`
-    } else { closeList(); html += `<p>${inline(line) || '&nbsp;'}</p>` }
-  })
-  closeList()
-  return html
-}
 function format(value, type) {
   if (value === null || value === undefined || value === '') return '—'
   if (type === 'money') return Number(value).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -306,7 +283,7 @@ onMounted(async () => {
             <div class="follow-up-summary">
               <div><small>跟进对象</small><strong>{{ followUpCustomer?.name || '—' }}<template v-if="followUpCustomer?.country">（{{ followUpCustomer.country }}）</template></strong></div>
               <div><small>跟进方式 / 主题</small><strong>{{ data.title }}</strong><span>{{ data.badge }}</span></div>
-              <div><small>跟进结果</small><strong><i class="summary-dot" />{{ followUpInfo['客户回复 / 客户疑问'] || '待记录' }}</strong></div>
+              <div><small>跟进结果</small><div class="follow-up-summary-result"><i class="summary-dot" /><div v-html="richText(followUpInfo['客户回复 / 客户疑问'] || '待记录')" /></div></div>
               <div><small>下次跟进时间</small><strong>{{ followUpInfo['下次跟进'] || '未安排' }}</strong></div>
               <div><small>负责人</small><strong><span class="owner-avatar">{{ String(followUpInfo['跟进人'] || '—').slice(0, 1) }}</span>{{ followUpInfo['跟进人'] || '—' }}</strong></div>
             </div>
@@ -318,7 +295,7 @@ onMounted(async () => {
                 <div class="follow-up-richtext" v-html="richText(followUpInfo['跟进记录 / 解决方案'])" />
                 <div v-if="followUpInfo['下一步'] && followUpInfo['下一步'] !== '—'" class="follow-up-next-action"><strong>下一步计划</strong><p>{{ followUpInfo['下一步'] }}</p></div>
               </section>
-              <section class="follow-up-card follow-up-feedback-card"><div class="follow-up-card-head"><h3><Rows3 :size="16" /> 客户反馈 / 问题</h3></div><p>{{ followUpInfo['客户回复 / 客户疑问'] || '暂无客户反馈。' }}</p></section>
+              <section class="follow-up-card follow-up-feedback-card"><div class="follow-up-card-head"><h3><Rows3 :size="16" /> 客户反馈 / 问题</h3></div><div class="follow-up-richtext" v-html="richText(followUpInfo['客户回复 / 客户疑问'] || '暂无客户反馈。')" /></section>
               <section class="follow-up-card follow-up-attachments-card">
                 <div class="follow-up-card-head"><h3><Paperclip :size="16" /> 附件</h3><span>{{ followUpAttachments.length }} 个附件</span></div>
                 <div v-if="followUpAttachments.length" class="follow-up-attachment-list">
@@ -449,6 +426,7 @@ onMounted(async () => {
 .follow-up-summary>div:last-child{border-right:0}
 .follow-up-summary small{display:block;margin-bottom:7px;color:#a8c5bc;font-size:var(--text-caption)}
 .follow-up-summary strong{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;color:#fff;font-size:var(--text-body);font-weight:600;line-height:1.35;white-space:nowrap;text-overflow:ellipsis}
+.follow-up-summary-result{display:flex;align-items:flex-start;gap:6px;max-height:5.4em;overflow:auto;color:#fff;font-size:var(--text-body);font-weight:600;line-height:1.35;white-space:normal;word-break:break-word}.follow-up-summary-result>div{min-width:0}.follow-up-summary-result :deep(p){margin:0 0 2px}.follow-up-summary-result :deep(ul),.follow-up-summary-result :deep(ol){margin:2px 0;padding-left:16px}.follow-up-summary-result :deep(img){max-width:100%;height:auto}
 .follow-up-summary span:not(.owner-avatar){display:block;margin-top:4px;color:#a8c5bc;font-size:var(--text-body)}
 .summary-dot{display:inline-block;width:8px;height:8px;flex:0 0 auto;border-radius:50%;background:#42d69c}
 .owner-avatar{display:inline-grid!important;place-items:center;width:23px;height:23px;margin-right:3px;border-radius:50%;background:#d6e7e1;color:#1e5548!important;font-size:var(--text-body)!important}
@@ -482,7 +460,7 @@ onMounted(async () => {
 .follow-up-timeline-item strong{display:block;color:#2f5a4d;font-size:var(--text-body)}.follow-up-timeline-item p{margin:5px 0;color:#536a61;font-size:var(--text-body)}.follow-up-timeline-item time{color:#71857c;font-size:var(--text-body);white-space:nowrap}
 .follow-up-detail-side-rail .follow-up-timeline-item{grid-template-columns:18px minmax(0,1fr)}.follow-up-detail-side-rail .follow-up-timeline-item time{grid-column:2;margin-top:3px;white-space:normal}
 .timeline-tag{display:inline-block;padding:3px 7px;border-radius:5px;font-size:var(--text-secondary)}.timeline-tag.success{background:#e3f7ed;color:#2d8766}.timeline-tag.planned-tag{background:#fff1d8;color:#b77b25}
-.follow-up-feedback-card>p{flex:1;margin:0;padding:16px 19px;color:#526960;font-size:var(--text-body);line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.follow-up-feedback-card>.follow-up-richtext{min-height:180px;padding:16px 19px;color:#526960;font-size:var(--text-body);line-height:1.7;word-break:break-word}
 .follow-up-detail-side-rail{display:grid;grid-column:2;grid-row:1;align-content:start;align-self:start;gap:16px;min-width:0}
 .follow-up-tags{display:flex;flex-wrap:wrap;gap:7px;padding:16px 19px}.follow-up-tags span{padding:6px 9px;border-radius:6px;background:#e8f5ef;color:#28735b;font-size:var(--text-secondary)}
 .follow-up-related-row{display:flex;align-items:center;width:100%;gap:10px;padding:13px 18px;border:0;border-top:1px solid #edf2ef;background:#fff;color:#33594d;text-align:left;cursor:pointer}.follow-up-related-row:hover{background:#f5faf7}.related-icon{display:grid;place-items:center;width:28px;height:28px;border-radius:7px;font-size:var(--text-section)}.customer-icon{background:#dff2e9;color:#2d966e}.contact-icon{background:#fff0d7;color:#bf812b}.follow-up-related-row>span:nth-child(2){display:grid;flex:1;gap:3px;min-width:0}.follow-up-related-row strong{font-size:var(--text-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.follow-up-related-row small{color:#819189;font-size:var(--text-caption)}.follow-up-related-row>svg{flex:0 0 auto;color:#9aa9a2}

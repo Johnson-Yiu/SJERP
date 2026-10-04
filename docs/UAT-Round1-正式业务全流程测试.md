@@ -463,10 +463,7 @@ PaymentPlan 55：planned / settled = USD 231 / 231；PaymentPlan 56：USD 99 / 9
 | ADV-01 三条流水 | NEEDS MANUAL VERIFICATION | PASS（模型 B 已解释） | 一次尾款跨 PaymentPlan 的合法拆分，不是重复 Transaction。 |
 | Existing Stock / Partial Stock / One PO 多订单 | BLOCKED | PASS | 已通过正常 UI 完成并保留可复核数据。 |
 
-- P0：无新增。
-- P1：无新增。
-- P2：无新增；本轮未进入 P2 开发。
-- P3：无新增。
+- Advanced UAT 新增问题：P0 0、P1 0、P2 0、P3 0；这不改变本轮之前已登记的历史缺陷存量。
 - FAIL：历史 FAIL 不删除；本更新未发现新的 FAIL。
 - BLOCKED：无当前 BLOCKED。
 - NEEDS MANUAL VERIFICATION：无当前项目；ADV-01 流水项已完成模型核验。
@@ -477,4 +474,56 @@ PaymentPlan 55：planned / settled = USD 231 / 231；PaymentPlan 56：USD 99 / 9
 
 - Standard Closed-Loop Commit：`d4966300e150a581772f935285f4af35f9053a07`；CI #105：backend SUCCESS、backend-postgres SUCCESS、frontend SUCCESS。
 - Dialog Standardization Commit：`9869bd447dc9e62bd82b65d307d8f1a7549561e5`；CI #106：backend SUCCESS、backend-postgres SUCCESS、frontend SUCCESS。
-- 本 Advanced UAT 更新仅包含本 Markdown 和必要 UAT 证据；提交、push 与本次对应 CI 结果将在本节末尾续记。
+- Advanced Closed-Loop Commit：`48ad237f013985f33429fe3af813f5da49b24402`；CI #107：backend SUCCESS、backend-postgres SUCCESS、frontend SUCCESS。该 commit 仅更新 Formal UAT 文档，没有修改业务代码、模型或 migration。
+
+## Formal UAT Round 1 — Final Current Status
+
+### 当前验收结论
+
+**Formal UAT Round 1 PASS。** 核心业务流程和高级组合流程均已按正常前端业务路径完成验证：
+
+- **Standard Closed Loops：20/20 PASS**
+- **Advanced Closed Loops：4/4 PASS**
+- **Advanced Coverage Matrix：14/14 PASS**
+- **Current BLOCKED：0**
+- **Current NEEDS MANUAL VERIFICATION：0**
+- **Current Functional Gap：0**
+- **New P0：0**
+- **New P1：0**
+
+本轮已验证库存一致性与 Reservation，Receipt / `purchase_in`，Shipment / `sale_out`，PaymentPlan / Transaction；并覆盖 Existing Stock、Partial Stock + Purchase、Multi SKU、Multi Supplier、Partial / Multiple Receipt、Partial / Multiple Shipment、Deposit + Balance、Shipping Fee / Discount、Trade Unit，以及 One PO → Multiple Sales Orders Allocation。
+
+### 历史缺陷存量重新统计
+
+下表的“当前未关闭”是 Round 1 收尾时仍需后续处理的产品问题数；“Advanced UAT 新增问题为 0”不代表历史 P2/P3 自动归零。
+
+| 级别 | 原始登记 | 已关闭或非产品缺陷 | 当前未关闭 | Current Status |
+|---|---:|---:|---:|---|
+| P0 | 0 | 0 | **0** | 无当前未关闭 P0。 |
+| P1 | 5 | 5 | **0** | 五项均已 Re-UAT 关闭，详情见下表。 |
+| P2 | 8 | 0 | **8** | 不阻断本次已完成的主业务闭环，进入后续缺陷清理阶段。 |
+| P3 | 0 | 0 | **0** | 无当前未关闭 P3。 |
+
+历史 P1 保留其原始失败记录，不以收尾 PASS 覆盖历史：
+
+| 缺陷 | Original Result | Current Result | 分类 |
+|---|---|---|---|
+| UAT-ORD-001 | FAIL | PASS | 已修复并经 Re-UAT 关闭。 |
+| UAT-PKG-001 | FAIL | PASS | 已修复并经 Re-UAT 关闭。 |
+| UAT-SHIP-001 | FAIL | PASS | 已修复并经 Re-UAT 关闭。 |
+| UAT-SKU-001 | FAIL | PASS | 已修复并经 Re-UAT 关闭。 |
+| UAT-ORD-004 | FAIL | PASS | 已修复并经 Re-UAT 关闭。 |
+
+当前仍待后续处理的历史 P2 为：UAT-QTE-001、UAT-ORD-002、UAT-DRILL-001、UAT-ORD-003、UAT-FUP-001、UAT-FUP-002、UAT-PUR-001、UAT-INV-001。它们均属于不阻断本次主业务闭环的后续改进/缺陷清理范围。
+
+历史中 Browser Use 系统 Dialog / 订单列表交互阻塞属于工具与旧原生 Dialog 组合造成的中间记录，当前结果为 **NOT REPRODUCED**，不是产品缺陷；ADV-01 三笔流水已确认为一次尾款跨 PaymentPlan 的合法拆分。上述历史记录继续保留，但不计入 Current BLOCKED、Current NEEDS MANUAL VERIFICATION 或 Current Functional Gap。
+
+### 结论边界与 CI 追溯
+
+Formal UAT Round 1 PASS 表示本节所列 20 条标准完整闭环、4 条高级完整闭环及 14/14 高级覆盖已通过；它不表示整个 ERP 已不存在 P2/P3 改进项。当前未关闭的 8 项 P2 将进入后续缺陷清理阶段，本轮不修复、不扩大 UAT 范围。
+
+| 验收阶段 | Commit | GitHub Actions | backend | backend-postgres | frontend |
+|---|---|---|---|---|---|
+| Standard Closed-Loop | `d4966300e150a581772f935285f4af35f9053a07` | CI #105 | SUCCESS | SUCCESS | SUCCESS |
+| Dialog Standardization | `9869bd447dc9e62bd82b65d307d8f1a7549561e5` | CI #106 | SUCCESS | SUCCESS | SUCCESS |
+| Advanced Closed-Loop | `48ad237f013985f33429fe3af813f5da49b24402` | CI #107 | SUCCESS | SUCCESS | SUCCESS |

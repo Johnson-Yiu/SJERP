@@ -327,6 +327,54 @@ def reverse_receipt(receipt: GoodsReceipt, reason: str) -> GoodsReceipt:
     return receipt
 
 
+@transaction.atomic
+def reverse_manual_inventory_movement(movement: InventoryMovement, reason: str) -> InventoryMovement:
+    """Append a compensating movement for one manually entered stock movement."""
+    reason = str(reason or "").strip()
+    if not reason:
+        raise ValidationError("冲销原因不能为空。")
+
+    movement = InventoryMovement.objects.select_for_update().select_related("sku", "supplier_sku", "order").get(pk=movement.pk)
+    if movement.type == "purchase_in":
+        raise ValidationError("采购入库请从采购到货记录执行冲销。")
+    if movement.type == "sale_out":
+        raise ValidationError("销售出库请从发货记录执行冲销。")
+    if movement.is_automatic or movement.source_type != "manual" or movement.type not in {
+        "adjust_in", "adjust_out", "sample_out", "return_in", "transfer_in", "transfer_out", "production_in", "production_out", "other_in", "other_out",
+    }:
+        raise ValidationError("只有手工登记的库存流水可以执行冲销。")
+    if InventoryMovement.objects.select_for_update().filter(source_type="reversal", source_no=movement.movement_no).exists():
+        raise ValidationError("该库存流水已经冲销，不能重复操作。")
+
+    sku = SKU.objects.select_for_update().get(pk=movement.sku_id)
+    reversal_type = "adjust_out" if movement.signed_quantity > 0 else "adjust_in"
+    if reversal_type in OUTGOING_MOVEMENT_TYPES:
+        available = signed_inventory_quantity(sku) - active_reservation_quantity(sku)
+        if available < movement.quantity:
+            raise ValidationError("当前可用库存不足，无法完整冲销该流水；请先处理相关预留/业务单据。")
+
+    reversal = InventoryMovement.objects.create(
+        **{key: getattr(movement, key) for key in TRADE_FIELDS},
+        movement_no=_movement_no("REV"),
+        movement_date=timezone.localdate(),
+        type=reversal_type,
+        sku=sku,
+        supplier_sku=movement.supplier_sku,
+        order=movement.order,
+        quantity=movement.quantity,
+        warehouse=movement.warehouse,
+        unit_cost=movement.unit_cost,
+        reference=movement.movement_no,
+        source_type="reversal",
+        source_no=movement.movement_no,
+        is_automatic=True,
+        notes=f"冲销库存流水 {movement.movement_no}：{reason}",
+    )
+    reversal.related_orders.set(movement.related_orders.order_by("pk"))
+    rebalance_sku_reservations(sku)
+    return reversal
+
+
 def _shipped_quantity(order_item: OrderItem) -> Decimal:
     confirmed = order_item.shipment_items.filter(shipment__status="confirmed").aggregate(
         total=Coalesce(Sum("quantity"), Decimal("0"), output_field=QUANTITY_FIELD)

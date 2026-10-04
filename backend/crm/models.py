@@ -1073,7 +1073,11 @@ class PurchaseOrderItem(TradeUnitLine):
 
     @property
     def remaining_quantity(self):
-        return self.quantity - self.received_quantity
+        return max(Decimal("0"), self.quantity - self.received_quantity)
+
+    @property
+    def overage_quantity(self):
+        return max(Decimal("0"), self.received_quantity - self.quantity)
 
     def save(self, *args, **kwargs):
         creating = self._state.adding
@@ -1325,6 +1329,17 @@ class InventoryMovement(TradeUnitLine, TimestampedModel):
     def signed_quantity(self):
         return -self.quantity if self.type in INVENTORY_OUTBOUND_TYPES else self.quantity
 
+    @property
+    def overage_quantity(self):
+        """Return the recorded receipt's contract-overage portion when available."""
+        if not self.is_overage:
+            return Decimal("0")
+        try:
+            return self.goods_receipt.overage_quantity
+        except GoodsReceipt.DoesNotExist:
+            # Historical imports may flag an overage without a linked receipt.
+            return self.quantity
+
     def save(self, *args, **kwargs):
         if self._state.adding and self.sku_id:
             sku = self.sku
@@ -1367,6 +1382,24 @@ class GoodsReceipt(TradeUnitLine, TimestampedModel):
             models.CheckConstraint(condition=models.Q(quantity__gt=0), name="goods_receipt_quantity_positive"),
             models.CheckConstraint(condition=models.Q(unit_cost__gte=0), name="goods_receipt_cost_non_negative"),
         ]
+
+    @property
+    def overage_quantity(self):
+        """The part of this receipt that was beyond its line's contract quantity.
+
+        This is derived from the receipt sequence instead of treating an entire
+        mixed receipt as overage (for example, receiving 10 against 5 remaining).
+        It deliberately keeps the original event's classification visible after a
+        later reversal, which is important for the audit history.
+        """
+        if not self.is_overage:
+            return Decimal("0")
+        received_before = Decimal("0")
+        for receipt in self.purchase_item.receipts.order_by("created_at", "pk"):
+            if receipt.pk == self.pk:
+                break
+            received_before += receipt.quantity
+        return min(self.quantity, max(Decimal("0"), received_before + self.quantity - self.purchase_item.quantity))
 
 
 class ShipmentItem(TradeUnitLine):

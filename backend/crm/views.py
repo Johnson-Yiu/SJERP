@@ -26,11 +26,11 @@ from .permissions import HSCodeMaintenancePermission, PermissionAdminOnly, Quote
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementReversalInputSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .serializers import ProcurementDraftInputSerializer
 from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.finance import allocate_advance, approve_contract_change, reject_contract_change, record_contract_payment, record_transaction, void_transaction
-from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_receipt as reverse_receipt_service, reverse_shipment as reverse_shipment_service, sku_metrics
+from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_manual_inventory_movement, reverse_receipt as reverse_receipt_service, reverse_shipment as reverse_shipment_service, sku_metrics
 from .services.order_lifecycle import cancel_order, complete_order, confirm_order, start_order_production
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
 from .services.purchase_lifecycle import cancel_purchase_order, place_purchase_order
@@ -1744,20 +1744,35 @@ class InventoryMovementViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return Response(self.get_serializer(records, many=True).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
-        if self.get_object().is_automatic:
+        movement = self.get_object()
+        if movement.is_automatic:
             return Response({"detail": "系统自动生成的库存流水不能修改。"}, status=status.HTTP_400_BAD_REQUEST)
+        if InventoryMovement.objects.filter(source_type="reversal", source_no=movement.movement_no).exists():
+            return Response({"detail": "已冲销的库存流水不能修改。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().update(request, *args, **kwargs)
 
+    @action(detail=True, methods=["post"])
+    def reverse(self, request, pk=None):
+        input_serializer = InventoryMovementReversalInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        original = self.get_object()
+        try:
+            reversal = reverse_manual_inventory_movement(original, input_serializer.validated_data["reason"])
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        record_operation(
+            request=request,
+            instance=original,
+            action="custom",
+            action_label="冲销库存流水",
+            metadata={"reversal_movement_id": reversal.id, "reversal_movement_no": reversal.movement_no, "reason": input_serializer.validated_data["reason"]},
+        )
+        record_operation(request=request, instance=reversal, action="create", action_label="生成库存冲销流水", metadata={"source_movement_no": original.movement_no})
+        return Response(self.get_serializer(reversal).data, status=status.HTTP_201_CREATED)
+
     def destroy(self, request, *args, **kwargs):
-        if self.get_object().is_automatic:
-            return Response({"detail": "系统自动生成的库存流水不能删除。"}, status=status.HTTP_400_BAD_REQUEST)
-        with transaction.atomic():
-            row = self.get_object()
-            self.get_serializer().check_stock(row.sku, -row.signed_quantity)
-            response = super().destroy(request, *args, **kwargs)
-            from .services.fulfillment import rebalance_sku_reservations
-            rebalance_sku_reservations(row.sku)
-            return response
+        self.get_object()
+        return Response({"detail": "库存流水属于库存审计记录，不能直接删除，请使用冲销。"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PaymentPlanViewSet(AuditTrailMixin, viewsets.ModelViewSet):

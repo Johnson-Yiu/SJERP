@@ -173,13 +173,26 @@ class OperationLogSerializer(serializers.ModelSerializer):
 
 
 class GoodsReceiptSerializer(serializers.ModelSerializer):
+    overage_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    overage_reason_display = serializers.CharField(source="get_overage_reason_display", read_only=True)
+    overage_summary = serializers.SerializerMethodField()
+
+    def get_overage_summary(self, obj):
+        if not obj.is_overage or obj.overage_quantity <= 0:
+            return ""
+        return f"超到 {obj.overage_quantity}（{obj.get_overage_reason_display()}）"
+
     class Meta:
         model = GoodsReceipt
-        fields = ["id", "receipt_date", "quantity", "unit_cost", "notes", "inventory_movement", "reversal_inventory_movement", "reversed_at", "reversal_reason"]
+        fields = ["id", "receipt_date", "quantity", "unit_cost", "notes", "is_overage", "overage_reason", "overage_reason_display", "overage_quantity", "overage_summary", "inventory_movement", "reversal_inventory_movement", "reversed_at", "reversal_reason"]
         read_only_fields = fields
 
 
 class ReceiptReversalInputSerializer(serializers.Serializer):
+    reason = serializers.CharField(max_length=500, allow_blank=False, trim_whitespace=True)
+
+
+class InventoryMovementReversalInputSerializer(serializers.Serializer):
     reason = serializers.CharField(max_length=500, allow_blank=False, trim_whitespace=True)
 
 
@@ -216,6 +229,7 @@ class PurchaseOrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSer
     supplier_barcode = serializers.CharField(source="supplier_barcode_snapshot", read_only=True)
     received_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     remaining_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    overage_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     receipts = serializers.SerializerMethodField()
 
     def get_receipts(self, obj):
@@ -223,7 +237,7 @@ class PurchaseOrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSer
 
     class Meta:
         model = PurchaseOrderItem
-        fields = ["id", "sku", "supplier_sku", "sku_code", "display_name", "sales_model", "supplier_name", "supplier_model", "supplier_sku_code", "supplier_barcode", "supplier_characteristics_snapshot", "quantity", "unit_price", "received_quantity", "remaining_quantity", "amount", "receipts"] + TRADE_FIELDS
+        fields = ["id", "sku", "supplier_sku", "sku_code", "display_name", "sales_model", "supplier_name", "supplier_model", "supplier_sku_code", "supplier_barcode", "supplier_characteristics_snapshot", "quantity", "unit_price", "received_quantity", "remaining_quantity", "overage_quantity", "amount", "receipts"] + TRADE_FIELDS
         read_only_fields = ["supplier_characteristics_snapshot"]
 
 
@@ -1863,6 +1877,43 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
     order_no = serializers.CharField(source="order.order_no", read_only=True, default="")
     type_display = serializers.CharField(source="get_type_display", read_only=True)
     signed_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    overage_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    overage_summary = serializers.SerializerMethodField()
+    reversal_movement = serializers.SerializerMethodField()
+    is_reversed = serializers.SerializerMethodField()
+    reversal_status = serializers.SerializerMethodField()
+
+    def get_overage_summary(self, obj):
+        if not obj.is_overage or obj.overage_quantity <= 0:
+            return ""
+        return f"超到 {obj.overage_quantity}（{obj.get_overage_reason_display()}）"
+
+    def _reversal_movement(self, obj):
+        if not hasattr(obj, "_reversal_movement_cache"):
+            obj._reversal_movement_cache = InventoryMovement.objects.filter(
+                source_type="reversal", source_no=obj.movement_no
+            ).order_by("id").first()
+        return obj._reversal_movement_cache
+
+    def get_reversal_movement(self, obj):
+        reversal = self._reversal_movement(obj)
+        if not reversal:
+            return None
+        return {
+            "id": reversal.id,
+            "movement_no": reversal.movement_no,
+            "movement_date": reversal.movement_date,
+            "reason": reversal.notes,
+        }
+
+    def get_is_reversed(self, obj):
+        return self._reversal_movement(obj) is not None
+
+    def get_reversal_status(self, obj):
+        if obj.source_type == "reversal":
+            return "冲销流水"
+        reversal = self._reversal_movement(obj)
+        return f"已冲销 · {reversal.movement_no}" if reversal else ""
 
     class Meta:
         model = InventoryMovement

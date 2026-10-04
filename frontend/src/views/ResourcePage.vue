@@ -2,9 +2,9 @@
 import CategoryMultiPicker from "../components/CategoryMultiPicker.vue"
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ChevronRight, Database, Paperclip, Pencil, Plus, Search, Trash2, UserRoundPlus, X } from 'lucide-vue-next'
+import { ChevronRight, Database, Paperclip, Pencil, Plus, RotateCcw, Search, Trash2, UserRoundPlus, X } from 'lucide-vue-next'
 import { api, listAll } from '../api'
-import { confirmDialog } from '../dialogs'
+import { confirmDialog, inputDialog } from '../dialogs'
 import EntityDetailModal from '../components/EntityDetailModal.vue'
 import SimpleRichTextEditor from '../components/SimpleRichTextEditor.vue'
 import ComboInput from '../components/ComboInput.vue'
@@ -301,6 +301,19 @@ async function remove(row) {
   if (!await confirmDialog({ title: '确认删除', message: `确定删除“${row[props.config.key]}”吗？此操作无法撤销。`, confirmText: '确认删除', danger: true })) return
   try { await api.delete(`/${props.config.endpoint}/${row.id}/`); notify('删除成功'); await load() } catch (e) { notify(e.message, true) }
 }
+async function reverseInventoryMovement(row) {
+  const reason = await inputDialog({
+    title: '冲销库存流水',
+    message: `将保留原流水并创建反向库存流水。\n流水：${row.movement_no}\nSKU：${row.sku_code || row.display_name || row.product_name || '—'}\n类型：${row.type_display}\n数量：${row.quantity}`,
+    label: '冲销原因', placeholder: '请填写冲销原因', required: true, maxLength: 500, confirmText: '确认冲销', danger: true,
+  })
+  if (!reason) return
+  try {
+    await api.post(`/inventory-movements/${row.id}/reverse/`, { reason })
+    notify('已生成冲销流水，库存与预留已同步。')
+    await load()
+  } catch (e) { notify(e.message, true) }
+}
 function display(value, type, fieldName = '') {
   if (value === null || value === undefined || value === '') return '—'
   if (Array.isArray(value)) return value.length ? value.join('、') : '—'
@@ -315,7 +328,8 @@ function display(value, type, fieldName = '') {
   if (type === 'signed') return `${Number(value) > 0 ? '+' : ''}${Number(value).toLocaleString('zh-CN')}`
   return value
 }
-function isReadOnlyAutomaticMovement(row) { return props.config.endpoint === 'inventory-movements' && row.is_automatic === true }
+function isReadOnlyAutomaticMovement(row) { return props.config.endpoint === 'inventory-movements' && (row.is_automatic === true || Boolean(row.is_reversed)) }
+function canReverseInventoryMovement(row) { return props.config.endpoint === 'inventory-movements' && row.is_automatic !== true && row.source_type === 'manual' && !row.is_reversed }
 function formatAttachmentSize(value) {
   const size = Number(value || 0)
   if (size < 1024) return `${size} B`
@@ -362,7 +376,7 @@ watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null 
       <div v-else class="table-wrap"><table class="data-table"><thead><tr><th v-for="col in config.columns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
         <tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="detailId = row.id" @keydown.enter="detailId = row.id">
           <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><span :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
-          <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="detailId = row.id"><ChevronRight :size="14" /></button><button v-if="!isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="!isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
+          <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="detailId = row.id"><ChevronRight :size="14" /></button><button v-if="!isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="canReverseInventoryMovement(row)" class="mini-btn" title="冲销" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
         </tr>
       </tbody></table></div>
     </div>

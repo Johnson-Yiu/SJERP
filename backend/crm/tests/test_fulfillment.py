@@ -317,7 +317,7 @@ class ReservationRebalanceTests(TestCase):
         self.assertEqual(self.reserved(self.a), Decimal("0"))
         self.assertEqual(self.reserved(self.b), Decimal("0"))
 
-    def test_manual_inventory_create_and_delete_rebalance_reservations(self):
+    def test_manual_inventory_create_and_reversal_rebalance_reservations(self):
         response = self.client.post("/api/inventory-movements/", {
             "movement_date": "2026-01-03", "type": "adjust_in", "sku": self.sku.id, "quantity": "10",
         }, format="json")
@@ -331,7 +331,10 @@ class ReservationRebalanceTests(TestCase):
         rebalance_sku_reservations(self.sku)
         self.assertEqual(self.reserved(self.b), Decimal("5"))
         response = self.client.delete(f"/api/inventory-movements/{outgoing.id}/")
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertTrue(InventoryMovement.objects.filter(pk=outgoing.pk).exists())
+        response = self.client.post(f"/api/inventory-movements/{outgoing.id}/reverse/", {"reason": "盘点更正"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(self.reserved(self.b), Decimal("10"))
 
 

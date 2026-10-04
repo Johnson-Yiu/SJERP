@@ -28,7 +28,7 @@ test('customer projections are visible but not editable customer fields', async 
   assert.match(detail, /由最新跟进记录自动更新/)
 })
 
-test('automatic inventory movements are read-only while manual movements retain actions', async () => {
+test('automatic inventory movements are read-only while manual movements are reversed, not deleted', async () => {
   const source = await readFile(new URL('./ResourcePage.vue', import.meta.url), 'utf8')
   const detail = await readFile(new URL('../components/EntityDetailModal.vue', import.meta.url), 'utf8')
   const movementConfig = resourceConfigs['inventory-movements']
@@ -41,7 +41,12 @@ test('automatic inventory movements are read-only while manual movements retain 
   assert.equal(context.isReadOnlyAutomaticMovement({ is_automatic: true }), true)
   assert.equal(context.isReadOnlyAutomaticMovement({ is_automatic: false }), false)
   assert.match(source, /title="查看详情"/)
-  assert.equal((source.match(/v-if="!isReadOnlyAutomaticMovement\(row\)"/g) || []).length, 2)
+  assert.match(source, /function canReverseInventoryMovement\(row\)/)
+  assert.match(source, /reverseInventoryMovement\(row\)/)
+  assert.match(source, /inputDialog\(\{/)
+  assert.match(source, /\/inventory-movements\/\$\{row\.id\}\/reverse\//)
+  assert.match(source, /title="冲销"/)
+  assert.match(source, /config\.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement\(row\)/)
   assert.match(detail, /isRoot && currentEntity !== 'inventory-movements'/)
   assert.deepEqual(Object.keys(typeOptions), [
     'adjust_in', 'adjust_out', 'sample_out', 'return_in', 'transfer_in', 'transfer_out',

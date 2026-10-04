@@ -36,6 +36,16 @@ test('purchase desk exposes receipt history and the reversal flow', async () => 
   assert.match(source, /reversalReason/)
 })
 
+test('purchase desk labels ordered, received, remaining and overage quantities separately', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /下单 \{\{ item\.trade_quantity \?\? item\.quantity \}\}/)
+  assert.match(source, /已到 \{\{ item\.received_quantity \}\}/)
+  assert.match(source, /剩余 \{\{ item\.remaining_quantity \}\}/)
+  assert.match(source, /item\.overage_quantity/)
+  assert.match(source, /receipt\.overage_summary/)
+})
+
 test('purchase desk keeps drafts editable and separates placement from draft save', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

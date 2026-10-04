@@ -49,6 +49,64 @@ class PaymentPlanModelTests(TestCase):
         plan.full_clean()
 
 
+class OrderReceivableProjectionTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.customer = Customer.objects.create(code="C-RECEIVABLE-PROJECTION", name="Receivable Projection Buyer")
+        product = Product.objects.create(code="P-RECEIVABLE-PROJECTION", name="Receivable Projection Light")
+        self.sku = SKU.objects.create(product=product, sku="SKU-RECEIVABLE-PROJECTION")
+
+    def order(self, number, status_value="confirmed", amount=Decimal("100")):
+        order = Order.objects.create(
+            order_no=number, customer=self.customer, order_date=date(2026, 10, 4),
+            currency="USD", exchange_rate=Decimal("1"), status=status_value,
+        )
+        order.items.create(sku=self.sku, quantity=Decimal("1"), unit_price=amount)
+        return order
+
+    def test_current_receivable_is_payment_plan_based_across_order_lifecycles(self):
+        draft = self.order("SO-RECEIVABLE-DRAFT", "draft")
+        confirmed = self.order("SO-RECEIVABLE-CONFIRMED")
+        PaymentPlan.objects.create(order=confirmed, direction="receivable", currency="USD", planned_amount=Decimal("100"))
+        partial = self.order("SO-RECEIVABLE-PARTIAL")
+        PaymentPlan.objects.create(order=partial, direction="receivable", currency="USD", planned_amount=Decimal("100"), settled_amount=Decimal("30"))
+        paid = self.order("SO-RECEIVABLE-PAID")
+        PaymentPlan.objects.create(order=paid, direction="receivable", currency="USD", planned_amount=Decimal("100"), settled_amount=Decimal("100"), status="settled")
+        cancelled = self.order("SO-RECEIVABLE-CANCELLED", "cancelled")
+        PaymentPlan.objects.create(order=cancelled, direction="receivable", currency="USD", planned_amount=Decimal("100"), status="cancelled")
+
+        adjusted = self.order("SO-RECEIVABLE-ADJUSTED")
+        PaymentPlan.objects.create(order=adjusted, direction="receivable", currency="USD", planned_amount=Decimal("100"))
+        change = ContractChangeRequest.objects.create(order=adjusted, amount_delta=Decimal("20"), notes="增加合同金额")
+        approve_contract_change(change)
+
+        self.assertEqual(draft.paid_amount, Decimal("0"))
+        self.assertEqual(draft.outstanding_amount, Decimal("0"))
+        self.assertEqual(confirmed.outstanding_amount, Decimal("100"))
+        self.assertEqual(partial.outstanding_amount, Decimal("70"))
+        self.assertEqual(paid.outstanding_amount, Decimal("0"))
+        self.assertEqual(cancelled.outstanding_amount, Decimal("0"))
+        self.assertEqual(adjusted.outstanding_amount, Decimal("120"))
+
+        response = self.client.get("/api/orders/")
+        self.assertEqual(response.status_code, 200, response.data)
+        rows = {row["order_no"]: row for row in response.data["results"]}
+        self.assertEqual(Decimal(rows[draft.order_no]["balance_amount"]), Decimal("0"))
+        self.assertEqual(Decimal(rows[confirmed.order_no]["balance_amount"]), Decimal("100"))
+        self.assertEqual(Decimal(rows[partial.order_no]["balance_amount"]), Decimal("70"))
+        self.assertEqual(Decimal(rows[paid.order_no]["balance_amount"]), Decimal("0"))
+        self.assertEqual(Decimal(rows[cancelled.order_no]["balance_amount"]), Decimal("0"))
+        self.assertEqual(Decimal(rows[adjusted.order_no]["balance_amount"]), Decimal("120"))
+        self.assertEqual(sum(Decimal(row["balance_amount"]) > 0 for row in rows.values()), 3)
+
+        workbench = self.client.get(f"/api/orders/{cancelled.id}/workbench/")
+        self.assertEqual(workbench.status_code, 200, workbench.data)
+        self.assertEqual(Decimal(workbench.data["payment_summary"]["balance_amount"]), Decimal("0"))
+        context = self.client.get(f"/api/context/orders/{draft.id}/")
+        self.assertEqual(context.status_code, 200, context.data)
+        self.assertIn(["当前待收款", Decimal("0"), "money"], context.data["metrics"])
+
+
 class FinanceServiceTests(PaymentPlanModelTests):
     def test_profit_summary_refund_only_changes_profit_after_contract_adjustment(self):
         plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=Decimal("100"))

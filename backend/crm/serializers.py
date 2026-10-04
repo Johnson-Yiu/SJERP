@@ -1327,7 +1327,7 @@ class OrderSerializer(serializers.ModelSerializer):
         read_only_fields = ["order_no", "status", "cancelled_at", "cancellation_reason"]
 
     def get_balance_amount(self, obj):
-        return (obj.total_amount - obj.paid_amount).quantize(Decimal("0.01"))
+        return obj.outstanding_amount.quantize(Decimal("0.01"))
 
     def validate(self, attrs):
         if "order_no" in self.initial_data:

@@ -796,10 +796,28 @@ class Order(TimestampedModel):
 
     @property
     def paid_amount(self):
+        # A draft has no formal receivable yet.  Keep it out of payment
+        # projections even if historical/imported rows happen to be linked.
+        if self.status == "draft":
+            return Decimal("0")
         receipts = sum(self.transactions.filter(status="confirmed", kind="customer_receipt").values_list("amount", flat=True), Decimal("0"))
         refunds = sum((t.amount for t in self.transactions.filter(direction="expense", status="confirmed", kind="refund")), Decimal("0"))
         allocations = sum(AdvanceAllocation.objects.filter(plan__order=self, is_active=True, advance__status="confirmed").values_list("amount", flat=True), Decimal("0"))
         return receipts + allocations - refunds
+
+    @property
+    def outstanding_amount(self):
+        """Current receivable, derived solely from effective payment plans.
+
+        Contract amount remains historical/commercial information.  A draft or
+        cancelled order has no current receivable, while a formal order's
+        receivable is the sum of its still-open receivable-plan balances.
+        """
+        if self.status in {"draft", "cancelled"}:
+            return Decimal("0")
+        return self.payment_plans.filter(
+            direction="receivable", status="open",
+        ).aggregate(total=models.Sum(models.F("planned_amount") - models.F("settled_amount")))["total"] or Decimal("0")
 
 
 class OrderItem(TradeUnitLine):

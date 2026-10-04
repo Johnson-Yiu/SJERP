@@ -1546,7 +1546,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "inventory": InventoryMovementSerializer(inventory, many=True).data,
             "payment_summary": {
                 "paid_amount": paid_amount,
-                "balance_amount": order.total_amount - paid_amount,
+                "balance_amount": order.outstanding_amount,
                 "planned_amount": planned_receivable,
             },
             "expense_summary": {"expense_rmb": profit_summary["expense_rmb"]},

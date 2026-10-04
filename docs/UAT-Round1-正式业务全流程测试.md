@@ -527,3 +527,14 @@ Formal UAT Round 1 PASS 表示本节所列 20 条标准完整闭环、4 条高�
 | Standard Closed-Loop | `d4966300e150a581772f935285f4af35f9053a07` | CI #105 | SUCCESS | SUCCESS | SUCCESS |
 | Dialog Standardization | `9869bd447dc9e62bd82b65d307d8f1a7549561e5` | CI #106 | SUCCESS | SUCCESS | SUCCESS |
 | Advanced Closed-Loop | `48ad237f013985f33429fe3af813f5da49b24402` | CI #107 | SUCCESS | SUCCESS | SUCCESS |
+
+## P2 Cleanup Batch A — 订单财务投影一致性 Re-UAT（2026-10-04）
+
+本节仅复测 `UAT-ORD-002` 与 `UAT-ORD-003`；保留上方原始 FAIL 记录，不改写历史结论。
+
+| 缺陷 | Original Result | Current Result | Re-UAT 证据 |
+|---|---|---|---|
+| UAT-ORD-002 | FAIL | PASS | 真实 UI 回查 `SO-2026-00003`：订单列表显示合同金额 USD 12.30、已收 0.00 / 当前待收“已取消”；工作台显示“历史合同额 USD 12.30”“当前待收 已取消”、应收计划 USD 0.00；订单页“待收款订单”为 0，财务概览待收笔数/待收款均为 0。已取消 PaymentPlan 历史仍保留。 |
+| UAT-ORD-003 | FAIL | PASS | 真实 UI 回查 `SO-2026-00005`：当前草稿合同金额为 USD 28.50（原 FAIL 时的 USD 24.60 已在后续 UAT 中调整），列表显示已收 0.00 / “尚未生效”；工作台显示“合同草稿金额 USD 28.50”“当前待收 尚未生效”、应收计划 USD 0.00；不进入待收款订单或财务待收汇总。 |
+
+当前未关闭 P2：**8 → 6**。其余 P2 不在本批次范围内。

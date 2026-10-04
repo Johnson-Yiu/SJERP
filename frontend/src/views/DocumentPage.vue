@@ -15,6 +15,7 @@ import SegmentedDateInput from '../components/SegmentedDateInput.vue'
 import SummaryCards from '../components/SummaryCards.vue'
 import { addDays, daysBetween } from '../utils/orderDate'
 import { clearModalRoute } from '../utils/modalNavigation'
+import { documentDetailState, withDocumentDetailQuery, withoutDocumentDetailQuery } from '../utils/documentDetailRoute'
 
 const props = defineProps({ type: String })
 const route = useRoute()
@@ -81,7 +82,7 @@ async function create() {
   editingId.value = null; fresh(); await loadOptions(); open.value = true
 }
 async function edit(row, { closeDetail = true } = {}) {
-  if (closeDetail) { quoteDetailId.value = null; orderDetailId.value = null }
+  if (closeDetail) await closeDocumentDetail()
   if (!isOrder.value) {
     await loadOptions()
     quoteEditorQuote.value = row
@@ -164,7 +165,17 @@ function syncSelectedSkus(ids) {
   form.items = restoreTradeLines(form.items, previousLines)
   if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
 }
-function openDetail(row) { if (isOrder.value) orderDetailId.value = row.id; else quoteDetailId.value = row.id }
+function syncDetailFromRoute() {
+  const detailState = documentDetailState(props.type, route.query.detail)
+  quoteDetailId.value = detailState.quoteDetailId
+  orderDetailId.value = detailState.orderDetailId
+}
+async function closeDocumentDetail() {
+  quoteDetailId.value = null
+  orderDetailId.value = null
+  if (route.query.detail !== undefined) await router.replace(withoutDocumentDetailQuery(route))
+}
+function openDetail(row) { void router.push(withDocumentDetailQuery(route, row.id)) }
 function activateQuoteTreeRow(row) {
   if (row.isRoot) {
     if (row.hasChildren) toggleQuoteNode(row.id)
@@ -235,10 +246,10 @@ async function handleOrderDraftSaved(row) {
   notify(`订单 ${row.order_no} 已保存`)
   await load()
   quoteDetailId.value = null
-  orderDetailId.value = row.id
+  await router.push({ path: '/orders', query: { detail: String(row.id) } })
 }
-function openOrderDetail(id) { quoteDetailId.value = null; orderDetailId.value = id }
-function openSourceQuote(id) { orderDetailId.value = null; quoteDetailId.value = id }
+function openOrderDetail(id) { void router.push({ path: '/orders', query: { detail: String(id) } }) }
+function openSourceQuote(id) { void router.push({ path: '/quotes', query: { detail: String(id) } }) }
 async function editRelatedOrder() {
   if (!orderDetailId.value) return
   try {
@@ -252,6 +263,7 @@ async function handleOrderEdit() {
 }
 watch(() => props.type, load)
 watch(() => route.query, load)
+watch([() => props.type, () => route.query.detail], syncDetailFromRoute, { immediate: true })
 onMounted(async () => {
   await load()
   if (route.query.create === '1') {
@@ -314,10 +326,10 @@ onMounted(async () => {
     <QuoteEditorModal v-if="quoteEditorOpen" :quote="quoteEditorQuote" :customers="customers" :skus="skus" :mode="quoteEditorQuote?.id ? 'revise' : 'create'" @close="closeQuoteEditor" @saved="handleQuoteSaved" />
     <OrderDraftModal v-if="orderDraft" :draft="orderDraft" :customers="customers" :skus="skus" @close="orderDraft = null" @saved="handleOrderDraftSaved" />
     <Transition name="detail-drawer" appear>
-      <QuoteDetailModal v-if="quoteDetailId" :id="quoteDetailId" :refresh-key="workbenchRefresh" @close="quoteDetailId = null" @revise="reviseFromDetail" @status-updated="handleQuoteStatusUpdated" @create-order="openOrderDraft" @open-order="openOrderDetail" />
+      <QuoteDetailModal v-if="quoteDetailId" :id="quoteDetailId" :refresh-key="workbenchRefresh" @close="closeDocumentDetail" @revise="reviseFromDetail" @status-updated="handleQuoteStatusUpdated" @create-order="openOrderDraft" @open-order="openOrderDetail" />
     </Transition>
     <Transition name="detail-drawer" appear>
-      <OrderDetailModal v-if="orderDetailId" :id="orderDetailId" :refresh-key="orderWorkbenchRefresh" @close="orderDetailId = null" @edit="handleOrderEdit" @open-quote="openSourceQuote" />
+      <OrderDetailModal v-if="orderDetailId" :id="orderDetailId" :refresh-key="orderWorkbenchRefresh" @close="closeDocumentDetail" @edit="handleOrderEdit" @open-quote="openSourceQuote" />
     </Transition>
     <div v-if="toast.show" class="toast" :class="{ error: toast.error }">{{ toast.message }}</div>
   </div>

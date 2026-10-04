@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { Printer, X } from 'lucide-vue-next'
+import { formatPiAmountWords } from '../utils/piAmountWords'
 
 const props = defineProps({ draft: { type: Object, required: true } })
 defineEmits(['close'])
@@ -29,32 +30,7 @@ function money(value) {
   return Number(value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-function wholeNumberWords(value) {
-  if (!value) return 'ZERO'
-  const ones = ['', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN', 'FIFTEEN', 'SIXTEEN', 'SEVENTEEN', 'EIGHTEEN', 'NINETEEN']
-  const tens = ['', '', 'TWENTY', 'THIRTY', 'FORTY', 'FIFTY', 'SIXTY', 'SEVENTY', 'EIGHTY', 'NINETY']
-  const belowThousand = (number) => {
-    const words = []
-    if (number >= 100) { words.push(ones[Math.floor(number / 100)], 'HUNDRED'); number %= 100 }
-    if (number >= 20) { words.push(tens[Math.floor(number / 10)]); if (number % 10) words.push(ones[number % 10]) }
-    else if (number) words.push(ones[number])
-    return words
-  }
-  const words = []
-  for (const [divisor, label] of [[1_000_000_000, 'BILLION'], [1_000_000, 'MILLION'], [1_000, 'THOUSAND']]) {
-    if (value >= divisor) { words.push(...belowThousand(Math.floor(value / divisor)), label); value %= divisor }
-  }
-  words.push(...belowThousand(value))
-  return words.join(' ')
-}
-
-const amountWords = computed(() => {
-  const rounded = Math.round((Number(props.draft.totals.total_amount) + Number.EPSILON) * 100) / 100
-  const whole = Math.floor(rounded)
-  const cents = Math.round((rounded - whole) * 100)
-  const currency = { USD: 'US DOLLARS', EUR: 'EUROS', GBP: 'POUNDS STERLING', CNY: 'CHINA YUAN', RMB: 'CHINA YUAN' }[props.draft.currency] || props.draft.currency
-  return `SAY TOTAL ${currency} ${wholeNumberWords(whole)}${cents ? ` AND CENTS ${wholeNumberWords(cents)}` : ''} ONLY`
-})
+const amountWords = computed(() => formatPiAmountWords(props.draft.totals?.total_amount, props.draft.currency))
 
 const validityDays = computed(() => {
   if (!props.draft.valid_until || !props.draft.quote_date) return 30

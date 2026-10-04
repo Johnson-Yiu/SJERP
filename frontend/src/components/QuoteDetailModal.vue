@@ -95,6 +95,7 @@ async function openPreview(id = quote.value?.id) {
       quote_no: data.invoice_no,
       quote_date: data.terms.quote_date,
       valid_until: data.terms.valid_until,
+      currency: data.totals.currency,
       buyer: { company_name: data.buyer.company_name, recipient: data.buyer.name, address: data.buyer.address, email: data.buyer.email, phone: data.buyer.phone },
       products: data.products.map((item, index) => ({ ...item, key: `${item.model || item.sku}-${index}` })),
     }

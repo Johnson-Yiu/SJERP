@@ -574,3 +574,29 @@ Formal UAT Round 1 PASS 表示本节所列 20 条标准完整闭环、4 条高�
 实现先同步当前编辑附件状态与 `rows` 中对应 FollowUp 的附件快照，再触发详情刷新并重新拉取服务端列表；若列表重拉失败，本地已删除状态仍保持。新增回归测试覆盖 DELETE 成功、双快照同步、同一行重开编辑，以及列表重拉失败时不恢复陈旧附件。DELETE 失败、Cancel 与 pending attachment 的既有测试继续覆盖。
 
 本轮无 migration。当前未关闭 P2：**3 → 2**。余项为 `UAT-QTE-001`、`UAT-DRILL-001`。不在本轮开始其余 UAT。
+
+## P2 Cleanup Batch D — PI 金额大写 + Finance → Order Deep Link Re-UAT（2026-10-04）
+
+本节仅复测历史 `UAT-QTE-001` 与 `UAT-DRILL-001`；保留上方原始 FAIL 及此前批次记录，不覆盖历史结论。Finance → Order 点击验证前，为使 `SO-2026-00004` 出现在财务到期计划中，通过订单 UI 临时增加两笔各 USD 1.00 的调整；验证完成后再通过同一 UI 确认 USD -2.00 调整，订单恢复原值 USD 16.30，已收 USD 16.30，待收 USD 0.00。
+
+| 缺陷 | Original Result | Current Result | Re-UAT 证据 |
+|---|---|---|---|
+| UAT-QTE-001 | FAIL | PASS | 真实 UI 打开已保存报价 `SJ20260930DE001`，PI 总额 USD 246.00，实际显示 `SAY TOTAL US DOLLARS TWO HUNDRED FORTY SIX ONLY`，不含 undefined。已保存报价 PI DTO 的正式币种字段位于 `totals.currency`；预览映射将其作为统一 `draft.currency` 传给 renderer，不使用 USD 兜底。自动化边界测试覆盖 USD 246.00、USD 246.50（`AND CENTS FIFTY`）、EUR、GBP、CNY/RMB、零金额及无效输入；保存报价编辑器预览也使用相同金额大写 helper。以只读 XLSX 检查确认正式 Excel PI `payload.totals.amount_words` 为 `SAY TOTAL US DOLLARS TWO HUNDRED FORTY SIX ONLY`，与浏览器预览语义一致。 |
+| UAT-DRILL-001 | FAIL | PASS | Finance Dashboard 原有 `/orders?detail=4` 链接正确，无需改 Finance 页面。真实 UI 点击 `SO-2026-00004` 后打开对应订单工作台，URL 为 `/orders?detail=4`；刷新后详情仍打开。关闭后 URL 变为 `/orders`，再刷新详情仍关闭。另已验证列表打开订单会同步 `detail`；Browser Back 关闭详情、Forward 重新打开；`/quotes?detail=1` 能打开报价；`/purchase-orders?detail=1` 原有深链正常，未修改采购订单页；无效 `/orders?detail=999999999` 显示找不到记录且订单列表可继续使用。修复在共享 `DocumentPage` 中监听 `type` 与 `route.query.detail`，据此同步 quote/order drawer state；列表打开、工作台内跨单据导航使用 router query；关闭 drawer 只清除 `detail` 并保留其他 query/hash。临时金额调整已按前述方式抵销，不遗留本次人为改变的订单金额或待收款。 |
+
+本轮无 migration。P2 汇总：原始 **8** 项，已关闭 **8** 项，当前未关闭 **0** 项。
+
+## P2 Cleanup Final Status（2026-10-04）
+
+| 历史 P2 | Original Result | Current Result |
+|---|---|---|
+| UAT-QTE-001 | FAIL | PASS |
+| UAT-ORD-002 | FAIL | PASS |
+| UAT-DRILL-001 | FAIL | PASS |
+| UAT-ORD-003 | FAIL | PASS |
+| UAT-FUP-001 | FAIL | PASS |
+| UAT-FUP-002 | FAIL | PASS |
+| UAT-PUR-001 | FAIL | PASS |
+| UAT-INV-001 | FAIL | PASS |
+
+Formal UAT 历史结果保持原样；后续各 Cleanup Batch 的定向 Re-UAT 已依次关闭原始 8 项 P2。当前未关闭 P2：**0**。本节没有开始 QTE/DRILL 以外的新 UAT，也没有开始下一阶段 UI/流程优化。

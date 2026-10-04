@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
+import {
+  documentDetailState,
+  parseDocumentDetailId,
+  withDocumentDetailQuery,
+  withoutDocumentDetailQuery,
+} from '../utils/documentDetailRoute.js'
 
 const componentUrl = new URL('./DocumentPage.vue', import.meta.url)
 
@@ -99,4 +105,53 @@ test('editing from the order workbench reloads the current order before opening 
   assert.match(source, /async function editRelatedOrder\(\)/)
   assert.match(source, /await api\.get\(`\/orders\/\$\{orderDetailId\.value\}\/`\)/)
   assert.match(source, /await edit\(row, \{ closeDetail: false \}\)/)
+})
+
+test('document deep links initialize and dynamically synchronize quote and order details', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.deepEqual(documentDetailState('orders', '4'), { quoteDetailId: null, orderDetailId: 4 })
+  assert.deepEqual(documentDetailState('quotes', '10'), { quoteDetailId: 10, orderDetailId: null })
+  assert.deepEqual(documentDetailState('orders', '5'), { quoteDetailId: null, orderDetailId: 5 })
+  assert.deepEqual(documentDetailState('orders', undefined), { quoteDetailId: null, orderDetailId: null })
+  assert.match(source, /watch\(\[\(\) => props\.type, \(\) => route\.query\.detail\], syncDetailFromRoute, \{ immediate: true \}\)/)
+})
+
+test('closing a document detail removes only detail and preserves remaining route state', async () => {
+  const route = {
+    path: '/orders',
+    query: { detail: '4', search: 'SO-4', customer: '7', status: 'confirmed', create: '1' },
+    hash: '#payments',
+  }
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.deepEqual(withoutDocumentDetailQuery(route), {
+    path: '/orders',
+    query: { search: 'SO-4', customer: '7', status: 'confirmed', create: '1' },
+    hash: '#payments',
+  })
+  assert.match(source, /router\.replace\(withoutDocumentDetailQuery\(route\)\)/)
+  assert.match(source, /@close="closeDocumentDetail"/)
+})
+
+test('opening list rows pushes their detail id into the current route for refresh and history', async () => {
+  const route = { path: '/orders', query: { search: 'SO', customer: '7' }, hash: '#items' }
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.deepEqual(withDocumentDetailQuery(route, 4), {
+    path: '/orders',
+    query: { search: 'SO', customer: '7', detail: '4' },
+    hash: '#items',
+  })
+  assert.match(source, /function openDetail\(row\) \{ void router\.push\(withDocumentDetailQuery\(route, row\.id\)\) \}/)
+  assert.match(source, /function openOrderDetail\(id\) \{ void router\.push\(\{ path: '\/orders', query: \{ detail: String\(id\) \} \}\) \}/)
+  assert.match(source, /function openSourceQuote\(id\) \{ void router\.push\(\{ path: '\/quotes', query: \{ detail: String\(id\) \} \}\) \}/)
+})
+
+test('invalid document ids cannot break the list route and large not-found ids remain loadable as details', () => {
+  assert.equal(parseDocumentDetailId('999999999'), 999999999)
+  for (const value of ['0', '-4', 'not-an-id', 'NaN', 'undefined', 'null', Number.MAX_SAFE_INTEGER + 1, ['4', '5']]) {
+    assert.equal(parseDocumentDetailId(value), null)
+  }
+  assert.deepEqual(documentDetailState('orders', 'not-an-id'), { quoteDetailId: null, orderDetailId: null })
 })

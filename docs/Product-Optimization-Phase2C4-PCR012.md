@@ -2,7 +2,7 @@
 
 ## 验收状态
 
-**实现与自动化回归已完成；PCR-012 整体状态为待真实 UI UAT，不标记 PASS。** 必须完成的 UAT-P2C4-001 至 009 尚未执行，原因是本轮 Browser 插件的 REPL 已重置且没有可复用的 Browser agent。按 Browser 插件文档要求，本轮没有改用 Computer use、底层浏览器 RPC 或其他浏览器通道。
+**PCR-012 实现、自动化回归及真实 UI UAT 均通过；UAT-P2C4-001 至 009 为 9/9 PASS。** 本地代码回归结果见下文。当前 GitHub Actions 运行状态无法核验，单独记录为 CI 限制，不代表远端 job 已通过。
 
 ## 当前待跟进定义
 
@@ -34,21 +34,21 @@
 
 | 用例 | 状态 | 记录 |
 | --- | --- | --- |
-| UAT-P2C4-001 Dashboard 查看全部 | 未执行 | 待在内置 Browser 中确认 URL 与上下文条。 |
-| UAT-P2C4-002 计数一致 | 未执行 | 自动化 API 测试确认 Dashboard 总数等于 due API 完整 count；真实 UI 对照待执行。 |
-| UAT-P2C4-003 仅当前记录 | 未执行 | 后端自动化覆盖 superseded future/no-date 历史；真实数据行检查待执行。 |
-| UAT-P2C4-004 Dashboard 项目打开详情 | 未执行 | 待真实 UI 确认 URL 同时保留 due 与正确 detail。 |
-| UAT-P2C4-005 关闭详情 | 未执行 | 自动化路由测试覆盖清理 detail 时保留 due/customer；真实 UI 待执行。 |
-| UAT-P2C4-006 待跟进内搜索 | 未执行 | 自动化路由与 API 测试覆盖过滤组合；真实 UI 待执行。 |
-| UAT-P2C4-007 清除待跟进筛选 | 未执行 | 自动化路由测试覆盖仅移除 due 并保留其他键；真实 UI 待执行。 |
-| UAT-P2C4-008 直接 URL 与刷新 | 未执行 | 路由自动化覆盖直接 URL/remount；真实浏览器刷新待执行。 |
-| UAT-P2C4-009 Back/Forward | 未执行 | 自动化路由测试覆盖状态恢复；真实浏览器历史操作待执行。 |
+| UAT-P2C4-001 Dashboard 查看全部 | PASS | Dashboard 显示待跟进 4；点击「查看全部」进入 `/follow-ups?due=true`，提示条可见。 |
+| UAT-P2C4-002 计数一致 | PASS | Dashboard 数量为 4，筛选页「当前查询结果」为 4，列表显示全部 4 条。 |
+| UAT-P2C4-003 仅当前记录 | PASS | 4 条当前项日期分别为 09-30、10-03、10-04、10-05，均不晚于本地日期 2026-10-05。历史列表共 15 条；Alpha 的 2 条逾期记录中，仅最新一条出现在当前列表。CSV Test Customer 的较新记录没有下次日期，其旧的 10-05/10-07 计划未进入当前列表。 |
+| UAT-P2C4-004 Dashboard 项目打开详情 | PASS | 点击 Alpha 的 Dashboard 项目后，URL 为 `/follow-ups?due=true&detail=2`，详情标题和客户匹配。 |
+| UAT-P2C4-005 关闭详情 | PASS | 关闭详情回到 `/follow-ups?due=true`；提示条及 4 条当前项保留。 |
+| UAT-P2C4-006 待跟进内搜索 | PASS | 搜索 `Alpha` 得到 1 条符合记录；清空搜索后恢复 4 条且 `due=true` 提示仍在。 |
+| UAT-P2C4-007 清除待跟进筛选 | PASS | 从 `/follow-ups?due=true&customer=1` 清除后变为 `/follow-ups?customer=1`；提示条消失，客户的 2 条历史记录显示。 |
+| UAT-P2C4-008 直接 URL 与刷新 | PASS | 直接打开 `/follow-ups?due=true` 并刷新后，提示条和 4 条当前项仍在。 |
+| UAT-P2C4-009 Back/Forward | PASS | Dashboard → due 列表 → Back 回 Dashboard → Forward 返回 `/follow-ups?due=true`；提示条和 4 条当前项恢复。 |
 
 ## CI 与限制
 
 - PCR-012 开始基线 commit `6886f635e678beb8b52df1ef41f9d52d1f99442b` 的 CI #131：backend、backend-postgres、frontend 均为 SUCCESS（来自本任务提供的交接记录）。
-- 当前变更已推送到 `master`，commit `3f27a99`。推送后通过 `gh run list` 查询 GitHub Actions 返回 HTTP 404，因此本次 run 编号及 backend/backend-postgres/frontend 结果无法核验。本地未安装 Docker/psql，也没有可用的 PostgreSQL Windows 服务，故未在本机重跑 `backend-postgres`。
-- 当前主要限制是必须完成的 9 项真实 UI UAT。完成前不得将 PCR-012 标为 PASS。
+- 代码已推送到 `master`，功能 commit `3f27a99`。通过内置 Browser 打开 GitHub Actions 时页面显示 `Page not found` 并要求登录；`gh run list` 同样返回 HTTP 404。本次远端 run 编号及 backend/backend-postgres/frontend 结果无法核验。基线 #131 的三个 job 均 SUCCESS（来自交接记录）。
+- 本地未安装 Docker/psql，也没有可用的 PostgreSQL Windows 服务，故没有在本机重跑 `backend-postgres`。浏览器真实 UI UAT 已全部通过；当前剩余限制仅是本次远端 CI 结果无法读取。
 
 ## 变更文件
 

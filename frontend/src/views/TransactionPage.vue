@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { api, listAll } from '../api'
 import SummaryCards from '../components/SummaryCards.vue'
 import { formatMoney } from '../utils/money'
+import { orderDetailLocation, purchaseDetailLocation } from '../utils/detailNavigation'
 
 const today = new Date().toISOString().slice(0, 10)
 const rows = ref([]), error = ref(''), query = ref(''), orderQuery = ref(''), showForm = ref(false), orders = ref([])
@@ -77,6 +78,16 @@ const transactionMetrics = computed(() => {
 
 function kindLabel(kind) { return kindLookup.get(kind)?.label || legacyKindLabels[kind] || kind || '—' }
 function directionLabel(direction) { return direction === 'income' ? '收入' : direction === 'expense' ? '支出' : '—' }
+function contractLocation(row) {
+  if (row.order) return orderDetailLocation(row.order)
+  if (row.purchase_order) return purchaseDetailLocation(row.purchase_order)
+  return null
+}
+function allocationLocation(item) {
+  if (item.order) return orderDetailLocation(item.order)
+  if (item.purchase_order) return purchaseDetailLocation(item.purchase_order)
+  return null
+}
 function syncKind() {
   const meta = kindLookup.get(form.kind)
   if (meta) {
@@ -173,7 +184,7 @@ onMounted(async () => {
     <p v-if="error" class="error">{{ error }}</p>
     <table>
       <thead><tr><th>日期 / 流水号</th><th>收支 / 类型</th><th>往来方 / 合同</th><th>原币金额</th><th>人民币</th><th>状态 / 核销</th><th>操作</th></tr></thead>
-      <tbody><tr v-if="loading"><td colspan="7">正在加载…</td></tr><tr v-else-if="!rows.length"><td colspan="7">当前条件下暂无流水。</td></tr><tr v-for="row in rows" :key="row.id"><td>{{ row.transaction_date }}<small>{{ row.transaction_no }}<span v-if="row.split_from"> · 拆分记录</span></small></td><td>{{ row.direction_display || directionLabel(row.direction) }}<small>{{ kindLabel(row.kind) }}</small></td><td>{{ row.customer_name || row.supplier_name || '—' }}<small>{{ row.order_no || row.purchase_no || '未关联合同' }}</small></td><td>{{ row.currency }} {{ formatMoney(row.amount) }}</td><td>¥{{ formatMoney(row.rmb_amount) }}</td><td>{{ row.status_display }}<small v-if="['unallocated_advance', 'unallocated_payment'].includes(row.kind)">未核销 {{ row.currency }} {{ formatMoney(Number(row.amount) - Number(row.allocated_amount)) }}</small><small v-for="item in row.allocations" :key="item.id">{{ item.contract_no }}：{{ formatMoney(item.amount) }} {{ item.is_active ? '已核销' : '已撤回' }}</small><small v-if="row.status === 'cancelled' && row.void_reason">作废原因：{{ row.void_reason }}{{ row.voided_at ? ' · ' + row.voided_at : '' }}</small></td><td><button v-if="row.status === 'confirmed' && ['unallocated_advance', 'unallocated_payment'].includes(row.kind) && Number(row.amount) > Number(row.allocated_amount)" @click="openAllocate(row)">核销</button><button v-if="row.status === 'confirmed' && !row.split_from" @click="openVoid(row)">作废</button><small v-if="row.split_from">由原始流水统一作废</small><small v-else-if="row.status === 'cancelled'">已作废</small></td></tr></tbody>
+      <tbody><tr v-if="loading"><td colspan="7">正在加载…</td></tr><tr v-else-if="!rows.length"><td colspan="7">当前条件下暂无流水。</td></tr><tr v-for="row in rows" :key="row.id"><td>{{ row.transaction_date }}<small>{{ row.transaction_no }}<span v-if="row.split_from"> · 拆分记录</span></small></td><td>{{ row.direction_display || directionLabel(row.direction) }}<small>{{ kindLabel(row.kind) }}</small></td><td>{{ row.customer_name || row.supplier_name || '—' }}<small><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.order ? row.order_no : row.purchase_no }}</RouterLink><span v-else>未关联合同</span></small></td><td>{{ row.currency }} {{ formatMoney(row.amount) }}</td><td>¥{{ formatMoney(row.rmb_amount) }}</td><td>{{ row.status_display }}<small v-if="['unallocated_advance', 'unallocated_payment'].includes(row.kind)">未核销 {{ row.currency }} {{ formatMoney(Number(row.amount) - Number(row.allocated_amount)) }}</small><small v-for="item in row.allocations" :key="item.id"><RouterLink v-if="allocationLocation(item)" :to="allocationLocation(item)" class="contract-link">{{ item.contract_no }}</RouterLink><span v-else>{{ item.contract_no }}</span>：{{ formatMoney(item.amount) }} {{ item.is_active ? '已核销' : '已撤回' }}</small><small v-if="row.status === 'cancelled' && row.void_reason">作废原因：{{ row.void_reason }}{{ row.voided_at ? ' · ' + row.voided_at : '' }}</small></td><td><button v-if="row.status === 'confirmed' && ['unallocated_advance', 'unallocated_payment'].includes(row.kind) && Number(row.amount) > Number(row.allocated_amount)" @click="openAllocate(row)">核销</button><button v-if="row.status === 'confirmed' && !row.split_from" @click="openVoid(row)">作废</button><small v-if="row.split_from">由原始流水统一作废</small><small v-else-if="row.status === 'cancelled'">已作废</small></td></tr></tbody>
     </table>
 
     <div v-if="showForm" class="mask" @click.self="showForm = false">
@@ -212,6 +223,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.contract-link{color:#08705f;text-decoration:none}.contract-link:hover{text-decoration:underline}
 .txn td small{display:block;color:#718078;font-size:var(--text-caption);margin-top:4px}.toolbar{flex-wrap:wrap}.toolbar input[type=date]{min-width:140px}.toolbar select{padding:8px;border:1px solid #d8e1dd;border-radius:8px}
 .txn{padding:34px}.txn>header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.txn h2{margin:0}.txn p{color:#718078}.txn button{padding:8px 13px;border:1px solid #d8e1dd;border-radius:8px;background:#fff;cursor:pointer}.txn button:hover{border-color:#8db7a7;background:#f5faf7}.toolbar{display:flex;gap:8px;margin:20px 0}.toolbar input{padding:9px;min-width:280px;border:1px solid #d8e1dd;border-radius:8px}table{background:#fff;width:100%;border-collapse:collapse;border:1px solid #e2e8e4}th,td{padding:12px;text-align:left;border-bottom:1px solid #edf1ee}th{color:#60736b;background:#f6faf8;font-size:var(--text-body)}.mask{position:fixed;inset:0;background:#10261d66;display:grid;place-items:center;z-index:30;padding:16px}.dialog{background:#fff;padding:24px;border-radius:14px;width:min(500px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;box-shadow:0 22px 60px #001a1340}.dialog h3{margin:0 0 18px}.dialog label{display:grid;gap:5px;margin:10px 0;color:#3d5149;font-size:var(--text-body)}.dialog input,.dialog select,.dialog textarea{box-sizing:border-box;width:100%;padding:9px;border:1px solid #d8e1dd;border-radius:7px;background:#fff;color:#253b33;font:inherit}.dialog textarea{resize:vertical}.dialog label>small{font-size:var(--text-caption);color:#71847c;font-weight:400}.void-summary{display:grid;grid-template-columns:100px 1fr;gap:8px;margin:0 0 14px;font-size:var(--text-body)}.void-summary dt{color:#718078}.void-summary dd{margin:0;color:#253b33}.field-hint,.category-hint{display:block;margin:-4px 0 10px;color:#71847c;font-size:var(--text-caption)}.category-hint{padding:8px 10px;border-radius:7px;background:#f3f8f5}.order-picker{margin-top:8px}.order-picker>p{margin:8px 0 0;font-size:var(--text-caption)}.order{display:block;width:100%;margin:5px 0;text-align:left}.dialog footer{display:flex;justify-content:end;gap:8px;margin-top:18px}.dialog footer button:last-child{background:#0d4b40;color:#fff;border-color:#0d4b40}.error{color:#b42318}.txn .summary-cards{margin-top:16px}@media(max-width:620px){.txn{padding:20px 14px}.txn>header{flex-direction:column}.txn>header>button{width:100%}.toolbar{flex-wrap:wrap}.toolbar input{min-width:0;width:100%}table{display:block;overflow:auto;white-space:nowrap}.dialog{padding:20px}}
 </style>

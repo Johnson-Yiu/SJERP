@@ -2,6 +2,8 @@ from datetime import date, timedelta
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.test import TestCase
 from rest_framework.test import APIClient
 
@@ -682,3 +684,110 @@ class TradeFinanceUpgradeTests(TestCase):
         self.assertEqual(response.data['settled_amount'], '10.0000')
         response = self.client.get(f'/api/transactions/{advance.pk}/')
         self.assertEqual(response.data['allocations'][0]['plan'], plan.pk)
+
+    def _advance(self, number, *, purchase=False, amount=Decimal("50")):
+        return Transaction.objects.create(
+            transaction_no=number,
+            transaction_date=self.day,
+            direction="expense" if purchase else "income",
+            kind="unallocated_payment" if purchase else "unallocated_advance",
+            category="advance",
+            amount=amount,
+            rmb_amount=amount * Decimal("7"),
+            currency="USD",
+            exchange_rate=Decimal("7"),
+            supplier=self.supplier if purchase else None,
+            customer=None if purchase else self.customer,
+        )
+
+    def test_transaction_allocation_payload_exposes_order_id_and_keeps_unallocated_shape(self):
+        unallocated = self._advance("UP-ALLOC-SO-EMPTY")
+        response = self.client.get(f"/api/transactions/{unallocated.pk}/")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["allocations"], [])
+
+        plan = self.plan()
+        advance = self._advance("UP-ALLOC-SO")
+        allocate_advance(advance, plan, Decimal("20"))
+        response = self.client.get(f"/api/transactions/{advance.pk}/")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["allocations"], [{
+            "id": AdvanceAllocation.objects.get(advance=advance).pk,
+            "plan": plan.pk,
+            "contract_no": self.order.order_no,
+            "order": self.order.pk,
+            "purchase_order": None,
+            "amount": Decimal("20.0000"),
+            "is_active": True,
+        }])
+
+    def test_transaction_allocation_payload_exposes_purchase_order_id(self):
+        plan = PaymentPlan.objects.create(
+            purchase_order=self.purchase, direction="payable", currency="USD", planned_amount=Decimal("50"),
+        )
+        advance = self._advance("UP-ALLOC-PO", purchase=True)
+        allocate_advance(advance, plan, Decimal("15"))
+        response = self.client.get(f"/api/transactions/{advance.pk}/")
+        self.assertEqual(response.status_code, 200, response.data)
+        item = response.data["allocations"][0]
+        self.assertEqual(item["contract_no"], self.purchase.purchase_no)
+        self.assertIsNone(item["order"])
+        self.assertEqual(item["purchase_order"], self.purchase.pk)
+        self.assertEqual(item["amount"], Decimal("15.0000"))
+
+    def test_inactive_allocation_keeps_contract_navigation_ids(self):
+        plan = self.plan()
+        advance = self._advance("UP-ALLOC-INACTIVE")
+        allocate_advance(advance, plan, Decimal("10"))
+        allocation = AdvanceAllocation.objects.get(advance=advance)
+        allocation.is_active = False
+        allocation.save(update_fields=["is_active"])
+
+        response = self.client.get(f"/api/transactions/{advance.pk}/")
+
+        item = response.data["allocations"][0]
+        self.assertFalse(item["is_active"])
+        self.assertEqual(item["order"], self.order.pk)
+        self.assertIsNone(item["purchase_order"])
+
+    def test_multiple_transaction_allocations_keep_each_contract_id_and_number(self):
+        other_order = Order.objects.create(
+            order_no="CUSTOM-SALES-2", customer=self.customer, order_date=self.day,
+            currency="USD", exchange_rate=7, status="confirmed",
+        )
+        other_order.items.create(sku=self.sku, quantity=10, unit_price=10)
+        first_plan = self.plan()
+        second_plan = PaymentPlan.objects.create(
+            order=other_order, direction="receivable", currency="USD", planned_amount=Decimal("100"),
+        )
+        advance = self._advance("UP-ALLOC-MULTI", amount=Decimal("50"))
+        allocate_advance(advance, first_plan, Decimal("10"))
+        allocate_advance(advance, second_plan, Decimal("15"))
+
+        response = self.client.get(f"/api/transactions/{advance.pk}/")
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual([
+            (item["order"], item["purchase_order"], item["contract_no"])
+            for item in response.data["allocations"]
+        ], [
+            (self.order.pk, None, self.order.order_no),
+            (other_order.pk, None, other_order.order_no),
+        ])
+
+    def test_transaction_list_allocation_serialization_does_not_add_per_row_queries(self):
+        first_plan = self.plan()
+        first_advance = self._advance("UP-ALLOC-QUERY-1")
+        allocate_advance(first_advance, first_plan, Decimal("5"))
+        with CaptureQueriesContext(connection) as one_row_queries:
+            first_response = self.client.get("/api/transactions/")
+        self.assertEqual(first_response.status_code, 200, first_response.data)
+
+        for index in range(2, 5):
+            advance = self._advance(f"UP-ALLOC-QUERY-{index}")
+            allocate_advance(advance, first_plan, Decimal("5"))
+        with CaptureQueriesContext(connection) as several_row_queries:
+            response = self.client.get("/api/transactions/")
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(len(one_row_queries), len(several_row_queries))

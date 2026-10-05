@@ -1612,8 +1612,18 @@ class TransactionSerializer(serializers.ModelSerializer):
         read_only_fields = ["status", "allocated_amount", "split_from", "voided_at", "void_reason"]
 
     def get_allocations(self, obj):
-        return [{"id": row.id, "plan": row.plan_id, "contract_no": row.plan.order.order_no if row.plan.order_id else row.plan.purchase_order.purchase_no,
-            "amount": row.amount, "is_active": row.is_active} for row in obj.allocations.select_related("plan__order", "plan__purchase_order")]
+        allocations = getattr(obj, "_prefetched_objects_cache", {}).get("allocations")
+        if allocations is None:
+            allocations = obj.allocations.select_related("plan__order", "plan__purchase_order")
+        return [{
+            "id": row.id,
+            "plan": row.plan_id,
+            "contract_no": row.plan.order.order_no if row.plan.order_id else row.plan.purchase_order.purchase_no,
+            "order": row.plan.order_id,
+            "purchase_order": row.plan.purchase_order_id,
+            "amount": row.amount,
+            "is_active": row.is_active,
+        } for row in allocations]
 
     def get_rmb_amount(self, obj):
         return obj.rmb_amount or (obj.amount * obj.exchange_rate).quantize(Decimal("0.0001"))

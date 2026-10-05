@@ -27,12 +27,18 @@ import { resourceConfigs } from '../src/resourceConfigs.js'
 import { installModalNavigationGuard } from '../src/utils/modalNavigation.js'
 
 const orderRows = [
-  { id: 4, order_no: 'SO-2026-00004', customer: 5, customer_name: '森爵客户', order_date: '2026-01-04', status: 'draft', currency: 'USD', total_amount: '40', balance_amount: '40', items: [] },
-  { id: 26, order_no: 'SO-2026-00026', customer: 5, customer_name: '森爵客户', order_date: '2026-01-26', status: 'draft', currency: 'USD', total_amount: '260', balance_amount: '260', items: [] },
+  { id: 4, order_no: 'SO-2026-00004', customer: 5, customer_name: '森爵客户', order_date: '2026-01-04', expected_ship_date: '2026-11-01', status: 'draft', status_display: '草稿', currency: 'USD', total_amount: '40', balance_amount: '40', items: [] },
+  { id: 26, order_no: 'SO-2026-00026', customer: 5, customer_name: '森爵客户', order_date: '2026-01-26', expected_ship_date: '2026-11-01', status: 'draft', status_display: '草稿', currency: 'USD', total_amount: '260', balance_amount: '260', items: [] },
+  { id: 30, order_no: 'SO-2026-00030', customer: 5, customer_name: '森爵客户', order_date: '2026-01-30', expected_ship_date: '2026-10-05', status: 'production', status_display: '生产中', currency: 'USD', total_amount: '300', balance_amount: '300', items: [] },
+  { id: 31, order_no: 'SO-2026-00031', customer: 5, customer_name: '森爵客户', order_date: '2026-01-31', expected_ship_date: '2026-10-05', status: 'confirmed', status_display: '已确认', currency: 'USD', total_amount: '310', balance_amount: '310', items: [] },
+  { id: 32, order_no: 'SO-2026-00032', customer: 5, customer_name: '森爵客户', order_date: '2026-02-01', expected_ship_date: '2026-10-01', status: 'shipped', status_display: '已发货', currency: 'USD', total_amount: '320', balance_amount: '320', items: [] },
+  { id: 33, order_no: 'SO-2026-00033', customer: 5, customer_name: '森爵客户', order_date: '2026-02-02', expected_ship_date: '2026-10-01', status: 'completed', status_display: '已完成', currency: 'USD', total_amount: '330', balance_amount: '330', items: [] },
+  { id: 34, order_no: 'SO-2026-00034', customer: 5, customer_name: '森爵客户', order_date: '2026-02-03', expected_ship_date: '2026-10-01', status: 'cancelled', status_display: '已取消', currency: 'USD', total_amount: '340', balance_amount: '340', items: [] },
+  { id: 35, order_no: 'SO-2026-00035', customer: 5, customer_name: '森爵客户', order_date: '2026-02-04', expected_ship_date: '2026-10-20', status: 'production', status_display: '生产中', currency: 'USD', total_amount: '350', balance_amount: '350', items: [] },
 ]
 const quoteRows = [
-  { id: 14, quote_no: 'QT-2026-00014', customer: 5, customer_name: '森爵客户', quote_date: '2026-01-14', status: 'draft', currency: 'USD', total_amount: '14', items: [] },
-  { id: 15, quote_no: 'QT-2026-00015', customer: 6, customer_name: '备用客户', quote_date: '2026-01-15', status: 'draft', currency: 'USD', total_amount: '15', items: [] },
+  { id: 14, quote_no: 'QT-2026-00014', customer: 5, customer_name: '森爵客户', quote_date: '2026-01-14', status: 'draft', status_display: '草稿', currency: 'USD', total_amount: '14', items: [] },
+  { id: 15, quote_no: 'QT-2026-00015', customer: 6, customer_name: '备用客户', quote_date: '2026-01-15', status: 'accepted', status_display: '已接受', currency: 'USD', total_amount: '15', items: [] },
 ]
 const customers = [{ id: 5, name: '森爵客户' }, { id: 6, name: '备用客户' }]
 const contacts = [{ id: 1, name: '主联系人', customer: 5 }, { id: 2, name: '备用联系人', customer: 6 }]
@@ -131,9 +137,22 @@ function rowsFor(url, params = {}) {
   if (url === '/orders/') {
     if (!Object.keys(params).length) return orders
     const search = String(params.search || '').toLowerCase()
-    return orderRows.filter(row => !search || row.order_no.toLowerCase().includes(search))
+    return orderRows.filter(row =>
+      (!search || row.order_no.toLowerCase().includes(search)) &&
+      (!params.status || row.status === params.status) &&
+      (!params.customer || String(row.customer) === String(params.customer)) &&
+      (!params.todo || (params.todo === 'unshipped' && ['confirmed', 'production'].includes(row.status)) ||
+        (params.todo === 'due' && ['confirmed', 'production'].includes(row.status) && row.expected_ship_date && row.expected_ship_date <= '2026-10-05')),
+    )
   }
-  if (url === '/quotes/') return quoteRows
+  if (url === '/quotes/') {
+    const search = String(params.search || '').toLowerCase()
+    return quoteRows.filter(row =>
+      (!search || row.quote_no.toLowerCase().includes(search)) &&
+      (!params.status || row.status === params.status) &&
+      (!params.customer || String(row.customer) === String(params.customer)),
+    )
+  }
   if (url === '/follow-ups/') return [followUpRow(10), followUpRow(11)]
   if (url === '/customers/') return customers
   if (url === '/contacts/') return contacts
@@ -394,5 +413,137 @@ describe('query route lifecycle', () => {
     expect(router.currentRoute.value.query.create).toBeUndefined()
     expect(router.currentRoute.value.query.supplier).toBe('9')
     expect(wrapper.find('.purchase-create-modal').exists()).toBe(false)
+  })
+})
+
+describe('sales document list filters', () => {
+  it('restores order status and todo controls from a direct filtered URL after remount', async () => {
+    await mountAt('/orders?status=production&todo=due&customer=5&quote=14', 'orders')
+    const status = wrapper.find('select[aria-label="按订单状态筛选"]')
+    const todo = wrapper.find('select[aria-label="按订单待办筛选"]')
+    expect(status.element.value).toBe('production')
+    expect(todo.element.value).toBe('due')
+    expect(wrapper.findAll('.data-table tbody tr').map(row => row.find('.primary-cell').text())).toEqual(['SO-2026-00030'])
+    expect(mocks.listAll.mock.calls.filter(([url]) => url === '/orders/').at(-1)[1].params).toMatchObject({
+      status: 'production', todo: 'due', customer: '5', quote: '14',
+    })
+
+    wrapper.unmount()
+    wrapper = mount(App, { global: { plugins: [router], stubs, directives: { 'money-input': {} } } })
+    await flushPromises()
+    expect(wrapper.find('select[aria-label="按订单状态筛选"]').element.value).toBe('production')
+    expect(wrapper.find('select[aria-label="按订单待办筛选"]').element.value).toBe('due')
+    expect(wrapper.findAll('.data-table tbody tr').map(row => row.find('.primary-cell').text())).toEqual(['SO-2026-00030'])
+  })
+
+  it('keeps order URL, controls, and rows synchronized through Back and Forward', async () => {
+    await mountAt('/orders', 'orders')
+    await wrapper.find('select[aria-label="按订单状态筛选"]').setValue('production')
+    await flushPromises()
+    expect(router.currentRoute.value.query.status).toBe('production')
+    expect(wrapper.findAll('.data-table tbody tr').map(row => row.find('.primary-cell').text())).toEqual(['SO-2026-00030', 'SO-2026-00035'])
+
+    await wrapper.find('select[aria-label="按订单待办筛选"]').setValue('due')
+    await flushPromises()
+    expect(router.currentRoute.value.query).toMatchObject({ status: 'production', todo: 'due' })
+    expect(wrapper.findAll('.data-table tbody tr').map(row => row.find('.primary-cell').text())).toEqual(['SO-2026-00030'])
+
+    await router.back()
+    await flushPromises()
+    expect(router.currentRoute.value.query.status).toBe('production')
+    expect(router.currentRoute.value.query.todo).toBeUndefined()
+    expect(wrapper.find('select[aria-label="按订单待办筛选"]').element.value).toBe('')
+    expect(wrapper.findAll('.data-table tbody tr')).toHaveLength(2)
+
+    await router.forward()
+    await flushPromises()
+    expect(router.currentRoute.value.query.todo).toBe('due')
+    expect(wrapper.find('select[aria-label="按订单待办筛选"]').element.value).toBe('due')
+    expect(wrapper.findAll('.data-table tbody tr')).toHaveLength(1)
+  })
+
+  it('combines local order search with a route todo filter', async () => {
+    vi.useFakeTimers()
+    await mountAt('/orders', 'orders')
+    const search = wrapper.find('input[placeholder*="搜索订单号"]')
+    await search.setValue('SO-2026-00030')
+    await vi.advanceTimersByTimeAsync(301)
+    await flushPromises()
+    await wrapper.find('select[aria-label="按订单待办筛选"]').setValue('due')
+    await flushPromises()
+
+    expect(mocks.listAll.mock.calls.filter(([url]) => url === '/orders/').at(-1)[1].params).toMatchObject({
+      search: 'SO-2026-00030', todo: 'due',
+    })
+    expect(wrapper.findAll('.data-table tbody tr').map(row => row.find('.primary-cell').text())).toEqual(['SO-2026-00030'])
+  })
+
+  it('preserves search and route filters while opening and closing an order detail', async () => {
+    vi.useFakeTimers()
+    await mountAt('/orders', 'orders')
+    const search = wrapper.find('input[placeholder*="搜索订单号"]')
+    await search.setValue('SO-2026-00030')
+    await vi.advanceTimersByTimeAsync(301)
+    await wrapper.find('select[aria-label="按订单状态筛选"]').setValue('production')
+    await flushPromises()
+    await wrapper.find('select[aria-label="按订单待办筛选"]').setValue('due')
+    await flushPromises()
+    const listCallsBeforeDetail = mocks.listAll.mock.calls.filter(([url]) => url === '/orders/').length
+
+    await wrapper.find('.data-table tbody tr').trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.query).toMatchObject({ status: 'production', todo: 'due', detail: '30' })
+    expect(wrapper.find('[data-test="order-detail"]').text()).toContain('30')
+    expect(search.element.value).toBe('SO-2026-00030')
+    expect(wrapper.find('select[aria-label="按订单状态筛选"]').element.value).toBe('production')
+    expect(wrapper.find('select[aria-label="按订单待办筛选"]').element.value).toBe('due')
+    expect(mocks.listAll.mock.calls.filter(([url]) => url === '/orders/')).toHaveLength(listCallsBeforeDetail)
+
+    await wrapper.find('[data-test="order-detail"] button').trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.query.detail).toBeUndefined()
+    expect(router.currentRoute.value.query).toMatchObject({ status: 'production', todo: 'due' })
+    expect(search.element.value).toBe('SO-2026-00030')
+    expect(wrapper.findAll('.data-table tbody tr').map(row => row.find('.primary-cell').text())).toEqual(['SO-2026-00030'])
+  })
+
+  it('resets only order search and filters while preserving customer, quote, and detail context', async () => {
+    vi.useFakeTimers()
+    await mountAt('/orders?status=production&todo=unshipped&customer=5&quote=14&detail=30', 'orders')
+    const search = wrapper.find('input[placeholder*="搜索订单号"]')
+    await search.setValue('SO-2026')
+    await wrapper.find('button.filter-reset').trigger('click')
+    await flushPromises()
+
+    expect(search.element.value).toBe('')
+    expect(router.currentRoute.value.query).toMatchObject({ customer: '5', quote: '14', detail: '30' })
+    expect(router.currentRoute.value.query.status).toBeUndefined()
+    expect(router.currentRoute.value.query.todo).toBeUndefined()
+    expect(wrapper.find('select[aria-label="按订单状态筛选"]').element.value).toBe('')
+    expect(wrapper.find('select[aria-label="按订单待办筛选"]').element.value).toBe('')
+  })
+
+  it('keeps quote search, status, customer, sorting, and reset behavior unchanged', async () => {
+    vi.useFakeTimers()
+    await mountAt('/quotes', 'quotes')
+    const search = wrapper.find('input[placeholder*="搜索报价单号"]')
+    await search.setValue('QT-2026')
+    await vi.advanceTimersByTimeAsync(301)
+    await flushPromises()
+    await wrapper.find('select[aria-label="按报价状态筛选"]').setValue('accepted')
+    await flushPromises()
+    await wrapper.find('select[aria-label="按客户筛选"]').setValue('6')
+    await wrapper.find('select[aria-label="报价排序"]').setValue('quote_date')
+    await flushPromises()
+
+    expect(mocks.listAll.mock.calls.filter(([url]) => url === '/quotes/').at(-1)[1].params).toMatchObject({
+      search: 'QT-2026', status: 'accepted', customer: 6, ordering: 'quote_date',
+    })
+    await wrapper.find('button.filter-reset').trigger('click')
+    await flushPromises()
+    expect(search.element.value).toBe('')
+    expect(wrapper.find('select[aria-label="按报价状态筛选"]').element.value).toBe('')
+    expect(wrapper.find('select[aria-label="按客户筛选"]').element.value).toBe('')
+    expect(wrapper.find('select[aria-label="报价排序"]').element.value).toBe('-updated_at')
   })
 })

@@ -1432,6 +1432,17 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             qs = qs.filter(items__sku__product_id=self.request.query_params["product"]).distinct()
         if self.request.query_params.get("sku"):
             qs = qs.filter(items__sku_id=self.request.query_params["sku"]).distinct()
+        if self.request.query_params.get("status"):
+            qs = qs.filter(status=self.request.query_params["status"])
+        todo = self.request.query_params.get("todo")
+        if todo == "unshipped":
+            qs = qs.filter(status__in=["confirmed", "production"])
+        elif todo == "due":
+            qs = qs.filter(
+                status__in=["confirmed", "production"],
+                expected_ship_date__isnull=False,
+                expected_ship_date__lte=timezone.localdate(),
+            )
         return qs
 
     @action(detail=True, methods=["get"])

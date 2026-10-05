@@ -47,7 +47,7 @@
 ## CI 与限制
 
 - PCR-012 开始基线 commit `6886f635e678beb8b52df1ef41f9d52d1f99442b` 的 CI #131：backend、backend-postgres、frontend 均为 SUCCESS（来自本任务提供的交接记录）。
-- 当前变更的 GitHub Actions run 尚未核验。本地未安装 Docker/psql，也没有可用的 PostgreSQL Windows 服务，故未在本机重跑 `backend-postgres`；需要提交推送后查看远端 CI。
+- 当前变更已推送到 `master`，commit `3f27a99`。推送后通过 `gh run list` 查询 GitHub Actions 返回 HTTP 404，因此本次 run 编号及 backend/backend-postgres/frontend 结果无法核验。本地未安装 Docker/psql，也没有可用的 PostgreSQL Windows 服务，故未在本机重跑 `backend-postgres`。
 - 当前主要限制是必须完成的 9 项真实 UI UAT。完成前不得将 PCR-012 标为 PASS。
 
 ## 变更文件

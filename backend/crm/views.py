@@ -165,6 +165,9 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        sku_id = self.request.query_params.get("sku")
+        if sku_id:
+            queryset = queryset.filter(items__sku_id=sku_id).distinct()
         purchase_status = self.request.query_params.get("status")
         if purchase_status:
             queryset = queryset.filter(status=purchase_status)
@@ -839,7 +842,7 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             } for purchase in purchases],
             "shipments": [{
                 "id": shipment.id, "shipment_no": shipment.shipment_no, "shipment_date": shipment.shipment_date,
-                "order_no": shipment.order.order_no, "customer_name": shipment.order.customer.name,
+                "order": shipment.order_id, "order_no": shipment.order.order_no, "customer_name": shipment.order.customer.name,
                 "status": shipment.status, "status_display": shipment.get_status_display(),
                 "quantity": sum((item.quantity for item in shipment.items.filter(sku=sku)), Decimal("0")),
             } for shipment in shipments],

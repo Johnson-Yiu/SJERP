@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { clearModalRoute } from './modalNavigation.js'
 import { pageIdentityKey, routeDataQuery, routeDataQuerySignature, withoutModalActionQuery } from './routePageState.js'
+import { skuContextId, skuContextLabel, withoutSkuContext } from './skuContext.js'
 
 test('page identity stays on the same path across transient query changes', () => {
   assert.equal(pageIdentityKey({ path: '/orders', fullPath: '/orders?detail=4' }), '/orders')
@@ -23,4 +24,18 @@ test('closing a route modal removes action keys and preserves all context query 
   let replaced
   await clearModalRoute({ replace: async value => { replaced = value } }, { path: '/purchase-orders', query, hash: '#create' })
   assert.deepEqual(replaced, { path: '/purchase-orders', query: { customer: '5', supplier: '9', status: 'confirmed', order: '8' }, hash: '#create' })
+})
+
+test('SKU labels come from records with a matching numeric foreign key and clearing preserves unrelated route state', () => {
+  const rows = [
+    { sku: 13, sku_code: 'SKU-000013' },
+    { id: 4, items: [{ sku: 12, sku_code: 'SKU-000012' }] },
+  ]
+  assert.equal(skuContextLabel(rows, '12'), 'SKU-000012')
+  assert.equal(skuContextLabel(rows, '99'), 'SKU #99')
+  assert.equal(skuContextId(['12']), '12')
+  assert.equal(skuContextId(['12', '13']), '')
+  assert.deepEqual(withoutSkuContext({ path: '/orders', query: { sku: '12', status: 'production', detail: '7' }, hash: '#list' }), {
+    path: '/orders', query: { status: 'production', detail: '7' }, hash: '#list',
+  })
 })

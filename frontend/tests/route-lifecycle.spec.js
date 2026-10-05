@@ -28,8 +28,8 @@ import { installModalNavigationGuard } from '../src/utils/modalNavigation.js'
 
 const orderRows = [
   { id: 4, order_no: 'SO-2026-00004', customer: 5, customer_name: '森爵客户', order_date: '2026-01-04', expected_ship_date: '2026-11-01', status: 'draft', status_display: '草稿', currency: 'USD', total_amount: '40', balance_amount: '40', items: [] },
-  { id: 26, order_no: 'SO-2026-00026', customer: 5, customer_name: '森爵客户', order_date: '2026-01-26', expected_ship_date: '2026-11-01', status: 'draft', status_display: '草稿', currency: 'USD', total_amount: '260', balance_amount: '260', items: [] },
-  { id: 30, order_no: 'SO-2026-00030', customer: 5, customer_name: '森爵客户', order_date: '2026-01-30', expected_ship_date: '2026-10-05', status: 'production', status_display: '生产中', currency: 'USD', total_amount: '300', balance_amount: '300', items: [] },
+  { id: 26, order_no: 'SO-2026-00026', customer: 5, customer_name: '森爵客户', order_date: '2026-01-26', expected_ship_date: '2026-11-01', status: 'draft', status_display: '草稿', currency: 'USD', total_amount: '260', balance_amount: '260', items: [{ id: 1, sku: 12, sku_code: 'SKU-CTX-12', quantity: '1' }] },
+  { id: 30, order_no: 'SO-2026-00030', customer: 5, customer_name: '森爵客户', order_date: '2026-01-30', expected_ship_date: '2026-10-05', status: 'production', status_display: '生产中', currency: 'USD', total_amount: '300', balance_amount: '300', items: [{ id: 2, sku: 12, sku_code: 'SKU-CTX-12', quantity: '1' }] },
   { id: 31, order_no: 'SO-2026-00031', customer: 5, customer_name: '森爵客户', order_date: '2026-01-31', expected_ship_date: '2026-10-05', status: 'confirmed', status_display: '已确认', currency: 'USD', total_amount: '310', balance_amount: '310', items: [] },
   { id: 32, order_no: 'SO-2026-00032', customer: 5, customer_name: '森爵客户', order_date: '2026-02-01', expected_ship_date: '2026-10-01', status: 'shipped', status_display: '已发货', currency: 'USD', total_amount: '320', balance_amount: '320', items: [] },
   { id: 33, order_no: 'SO-2026-00033', customer: 5, customer_name: '森爵客户', order_date: '2026-02-02', expected_ship_date: '2026-10-01', status: 'completed', status_display: '已完成', currency: 'USD', total_amount: '330', balance_amount: '330', items: [] },
@@ -46,6 +46,21 @@ const customers = [{ id: 5, name: '森爵客户' }, { id: 6, name: '备用客户
 const contacts = [{ id: 1, name: '主联系人', customer: 5 }, { id: 2, name: '备用联系人', customer: 6 }]
 const suppliers = [{ id: 9, name: '森爵供应商' }]
 const orders = [{ id: 8, order_no: 'SO-2026-00008', customer_name: '森爵客户', status: 'confirmed' }]
+const movementRows = [
+  { id: 55, movement_no: 'IM-CTX-55', sku: 12, sku_code: 'SKU-CTX-12', movement_date: '2026-10-05', type_display: '盘盈入库', signed_quantity: '1', warehouse: '默认仓' },
+  { id: 56, movement_no: 'IM-CTX-56', sku: 13, sku_code: 'SKU-CTX-13', movement_date: '2026-10-05', type_display: '盘盈入库', signed_quantity: '2', warehouse: '默认仓' },
+]
+const EntityDetailStub = defineComponent({
+  name: 'EntityDetailModal',
+  props: { entity: String, id: [String, Number] },
+  emits: ['close'],
+  setup(props, { emit }) {
+    return () => h('aside', { 'data-test': 'entity-detail' }, [
+      h('span', `${props.entity}:${props.id}`),
+      h('button', { onClick: () => emit('close') }, '关闭详情'),
+    ])
+  },
+})
 
 const OrderDetailStub = defineComponent({
   name: 'OrderDetailModal',
@@ -93,7 +108,7 @@ const stubs = {
   QuoteDetailModal: QuoteDetailStub,
   OrderDetailModal: OrderDetailStub,
   QuoteEditorModal: QuoteEditorStub,
-  EntityDetailModal: true,
+  EntityDetailModal: EntityDetailStub,
   SimpleRichTextEditor: true,
   ComboInput: true,
   CategoryMultiPicker: true,
@@ -141,6 +156,7 @@ function rowsFor(url, params = {}) {
     const search = String(params.search || '').toLowerCase()
     return orderRows.filter(row =>
       (!search || row.order_no.toLowerCase().includes(search)) &&
+      (!params.sku || row.items.some(item => String(item.sku) === String(params.sku))) &&
       (!params.status || row.status === params.status) &&
       (!params.customer || String(row.customer) === String(params.customer)) &&
       (!params.todo || (params.todo === 'unshipped' && ['confirmed', 'production'].includes(row.status)) ||
@@ -168,6 +184,7 @@ function rowsFor(url, params = {}) {
   if (url === '/suppliers/') return suppliers
   if (url === '/purchase-orders/') return []
   if (url === '/skus/') return []
+  if (url === '/inventory-movements/') return movementRows.filter(row => !params.sku || String(row.sku) === String(params.sku))
   if (url === '/orders/options/') return orders
   return []
 }
@@ -184,6 +201,7 @@ async function mountAt(path, pageType) {
     { path: '/customers', component: ResourcePage, props: { config: resourceConfigs.customers }, meta: { title: 'Customers', eyebrow: 'CRM' } },
     { path: '/follow-ups', component: ResourcePage, props: { config: resourceConfigs['follow-ups'] }, meta: { title: 'Follow ups', eyebrow: 'CRM' } },
     { path: '/purchase-orders', component: PurchaseOrderPage, meta: { title: 'Purchases', eyebrow: 'Procurement' } },
+    { path: '/inventory-movements', component: ResourcePage, props: { config: resourceConfigs['inventory-movements'] }, meta: { title: 'Inventory', eyebrow: 'Inventory' } },
     { path: '/:pathMatch(.*)*', component: StubPage, meta: { title: 'Stub', eyebrow: 'Stub' } },
   ]
   router = createRouter({ history: createMemoryHistory(), routes })
@@ -255,6 +273,39 @@ describe('query route lifecycle', () => {
     await flushPromises()
     expect(router.currentRoute.value.query.detail).toBe('5')
     expect(wrapper.find('[data-test="order-detail"]').text()).toContain('5')
+  })
+
+  it('filters Orders by SKU and preserves SKU context when closing detail or clearing the context', async () => {
+    await mountAt('/orders?sku=12&status=production&todo=unshipped&detail=30', 'orders')
+    const orderCalls = mocks.listAll.mock.calls.filter(([url]) => url === '/orders/')
+    expect(orderCalls.at(-1)[1].params).toMatchObject({ sku: '12', status: 'production', todo: 'unshipped' })
+    expect(wrapper.text()).toContain('当前 SKU 筛选：SKU-CTX-12')
+    expect(wrapper.text()).toContain('SO-2026-00030')
+    expect(wrapper.text()).not.toContain('SO-2026-00026')
+
+    await wrapper.find('[data-test="order-detail"] button').trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.query).toEqual({ sku: '12', status: 'production', todo: 'unshipped' })
+    await wrapper.find('.sku-context-banner button').trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.query).toEqual({ status: 'production', todo: 'unshipped' })
+    expect(mocks.listAll.mock.calls.filter(([url]) => url === '/orders/').at(-1)[1].params).not.toHaveProperty('sku')
+  })
+
+  it('filters Inventory Movements by SKU and preserves unrelated state on detail close and context clear', async () => {
+    await mountAt('/inventory-movements?sku=12&source_type=manual&detail=55', 'movements')
+    const movementCalls = mocks.listAll.mock.calls.filter(([url]) => url === '/inventory-movements/')
+    expect(movementCalls.at(-1)[1].params).toMatchObject({ sku: '12', source_type: 'manual' })
+    expect(wrapper.text()).toContain('当前 SKU 筛选：SKU-CTX-12')
+    expect(wrapper.text()).toContain('IM-CTX-55')
+    expect(wrapper.text()).not.toContain('IM-CTX-56')
+
+    await wrapper.find('[data-test="entity-detail"] button').trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.query).toEqual({ sku: '12', source_type: 'manual' })
+    await wrapper.find('.sku-context-banner button').trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.query).toEqual({ source_type: 'manual' })
   })
 
   it('opens quote detail from a direct query URL', async () => {

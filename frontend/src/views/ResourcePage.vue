@@ -11,10 +11,12 @@ import ComboInput from '../components/ComboInput.vue'
 import SegmentedDateInput from '../components/SegmentedDateInput.vue'
 import SummaryCards from '../components/SummaryCards.vue'
 import InventoryMovementCreateModal from '../components/InventoryMovementCreateModal.vue'
+import SkuContextBanner from '../components/SkuContextBanner.vue'
 import { addDays, daysBetween } from '../utils/orderDate'
 import { confirmAndDeleteSavedFollowUpAttachment, removeSavedFollowUpAttachmentFromRows } from '../utils/followUpAttachments'
 import { clearModalRoute } from '../utils/modalNavigation'
 import { routeDataQuery, routeDataQuerySignature } from '../utils/routePageState'
+import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuContext'
 
 const props = defineProps({ config: Object })
 const route = useRoute()
@@ -41,6 +43,8 @@ const title = computed(() => editingId.value ? `编辑${props.config.title.repla
 const isCustomerCreate = computed(() => props.config.endpoint === 'customers' && !editingId.value)
 const isWideForm = computed(() => isCustomerCreate.value || props.config.endpoint === 'follow-ups')
 const isTransactionPage = computed(() => props.config.endpoint === 'transactions')
+const hasSkuContext = computed(() => props.config.endpoint === 'inventory-movements' && Boolean(skuContextId(route.query.sku)))
+const activeSkuContextLabel = computed(() => skuContextLabel(rows.value, route.query.sku))
 const supplierCodeConflict = computed(() => {
   if (props.config.endpoint !== 'suppliers') return null
   const code = String(form.code || '').trim().toUpperCase()
@@ -266,6 +270,7 @@ function closeDetail() {
   const { detail, ...query } = route.query
   void router.replace({ path: route.path, query, hash: route.hash })
 }
+function clearSkuFilter() { void router.push(withoutSkuContext(route)) }
 function detailReturnPath() {
   const query = new URLSearchParams()
   Object.entries(route.query).forEach(([key, value]) => {
@@ -422,6 +427,7 @@ onMounted(load)
   <div class="resource-page" :class="{ 'finance-resource-page': isTransactionPage }">
     <div class="page-head"><div><h2>{{ config.title }}</h2><p>{{ config.description }}</p></div><button class="btn btn-primary" @click="openCreate"><Plus :size="16" /> 新建记录</button></div>
     <SummaryCards :items="resourceMetrics" />
+    <SkuContextBanner v-if="hasSkuContext" :label="activeSkuContextLabel" @clear="clearSkuFilter" />
     <div class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索当前列表..." @input="delayedSearch" /></div></div>
     <div class="panel">
       <div v-if="loading" class="loading"><div class="spinner" /></div>

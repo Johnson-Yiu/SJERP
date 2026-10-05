@@ -135,16 +135,16 @@ test('closing a document detail removes only detail and preserves remaining rout
 })
 
 test('opening list rows pushes their detail id into the current route for refresh and history', async () => {
-  const route = { path: '/orders', query: { search: 'SO', customer: '7' }, hash: '#items' }
+  const route = { path: '/orders', query: { search: 'SO', customer: '7', sku: '12' }, hash: '#items' }
   const source = await readFile(componentUrl, 'utf8')
 
   assert.deepEqual(withDocumentDetailQuery(route, 4), {
     path: '/orders',
-    query: { search: 'SO', customer: '7', detail: '4' },
+    query: { search: 'SO', customer: '7', sku: '12', detail: '4' },
     hash: '#items',
   })
   assert.match(source, /function openDetail\(row\) \{ void router\.push\(withDocumentDetailQuery\(route, row\.id\)\) \}/)
-  assert.match(source, /function openOrderDetail\(id\) \{ void router\.push\(\{ path: '\/orders', query: \{ detail: String\(id\) \} \}\) \}/)
+  assert.match(source, /function openOrderDetail\(id\) \{ void router\.push\(withDocumentDetailQuery\(route, id\)\) \}/)
   assert.match(source, /function openSourceQuote\(id\) \{ void router\.push\(\{ path: '\/quotes', query: \{ detail: String\(id\) \} \}\) \}/)
 })
 

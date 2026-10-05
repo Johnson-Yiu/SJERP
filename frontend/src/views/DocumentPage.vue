@@ -13,10 +13,12 @@ import SkuPickerPanel from '../components/SkuPickerPanel.vue'
 import OrderDetailModal from '../components/OrderDetailModal.vue'
 import SegmentedDateInput from '../components/SegmentedDateInput.vue'
 import SummaryCards from '../components/SummaryCards.vue'
+import SkuContextBanner from '../components/SkuContextBanner.vue'
 import { addDays, daysBetween } from '../utils/orderDate'
 import { clearModalRoute } from '../utils/modalNavigation'
 import { documentDetailState, withDocumentDetailQuery, withoutDocumentDetailQuery } from '../utils/documentDetailRoute'
 import { routeDataQuery, routeDataQuerySignature } from '../utils/routePageState'
+import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuContext'
 
 const props = defineProps({ type: String })
 const route = useRoute()
@@ -34,6 +36,8 @@ const loading = ref(true), saving = ref(false), open = ref(false), editingId = r
 const quoteStatusFilter = ref(''), quoteCustomerFilter = ref(''), quoteSort = ref('-updated_at')
 const orderStatusFilter = computed(() => typeof route.query.status === 'string' ? route.query.status : '')
 const orderTodoFilter = computed(() => typeof route.query.todo === 'string' ? route.query.todo : '')
+const hasSkuContext = computed(() => isOrder.value && Boolean(skuContextId(route.query.sku)))
+const activeSkuContextLabel = computed(() => skuContextLabel(rows.value, route.query.sku))
 const quoteDetailId = ref(null), orderDetailId = ref(null)
 const returnToOrderDetailId = ref(null)
 const orderWorkbenchRefresh = ref(0)
@@ -238,6 +242,7 @@ async function closeDocumentDetail() {
   if (route.query.detail !== undefined) await router.replace(withoutDocumentDetailQuery(route))
 }
 function openDetail(row) { void router.push(withDocumentDetailQuery(route, row.id)) }
+function clearSkuFilter() { void router.push(withoutSkuContext(route)) }
 function activateQuoteTreeRow(row) {
   if (row.isRoot) {
     if (row.hasChildren) toggleQuoteNode(row.id)
@@ -310,9 +315,9 @@ async function handleOrderDraftSaved(row) {
   notify(`订单 ${row.order_no} 已保存`)
   await load()
   quoteDetailId.value = null
-  await router.push({ path: '/orders', query: { detail: String(row.id) } })
+  await router.push(withDocumentDetailQuery(route, row.id))
 }
-function openOrderDetail(id) { void router.push({ path: '/orders', query: { detail: String(id) } }) }
+function openOrderDetail(id) { void router.push(withDocumentDetailQuery(route, id)) }
 function openSourceQuote(id) { void router.push({ path: '/quotes', query: { detail: String(id) } }) }
 async function editRelatedOrder() {
   if (!orderDetailId.value) return
@@ -340,6 +345,7 @@ onMounted(load)
   <div>
     <div class="page-head"><div><h2>{{ copy.title }}</h2><p>{{ copy.description }}</p></div><button class="btn btn-primary" @click="create"><Plus :size="16" /> 新建{{ isOrder ? '订单' : '报价' }}</button></div>
     <SummaryCards v-if="isOrder" :items="orderMetrics" />
+    <SkuContextBanner v-if="hasSkuContext" :label="activeSkuContextLabel" @clear="clearSkuFilter" />
     <section v-if="!isOrder" class="quote-metrics" aria-label="报价汇总"><article><span>总报价数</span><strong>{{ quoteMetrics.total }}</strong><i class="metric-icon mint"><FileText :size="19" /></i><small>原始报价单数</small></article><article><span>待跟进</span><strong>{{ quoteMetrics.pending }}</strong><i class="metric-icon amber"><Clock3 :size="19" /></i><small>草稿与已发送报价</small></article><article><span>已接受</span><strong>{{ quoteMetrics.accepted }}</strong><i class="metric-icon green"><CircleCheck :size="19" /></i><small>当前筛选结果</small></article><article><span>已接受金额</span><strong>USD {{ money(quoteMetrics.acceptedAmount) }}</strong><i class="metric-icon blue"><CircleDollarSign :size="19" /></i><small>按报价金额汇总</small></article></section>
     <div class="toolbar" :class="{ 'quote-toolbar': !isOrder }"><div class="search-box"><Search :size="17" /><input v-model="query" :placeholder="`搜索${copy.noLabel}或客户...`" @input="delayed" /></div><template v-if="isOrder"><select :value="orderStatusFilter" aria-label="按订单状态筛选" @change="setOrderFilter('status', $event.target.value)"><option value="">全部状态</option><option value="draft">草稿</option><option value="confirmed">已确认</option><option value="production">生产中</option><option value="shipped">已发货</option><option value="completed">已完成</option><option value="cancelled">已取消</option></select><select :value="orderTodoFilter" aria-label="按订单待办筛选" @change="setOrderFilter('todo', $event.target.value)"><option value="">全部待办</option><option value="unshipped">待出库</option><option value="due">交期已到</option></select><button type="button" class="filter-reset" @click="resetOrderFilters"><RotateCcw :size="15" /> 重置</button></template><template v-else><select v-model="quoteStatusFilter" aria-label="按报价状态筛选" @change="load"><option value="">全部状态</option><option value="draft">草稿</option><option value="sent">已发送</option><option value="accepted">已接受</option><option value="rejected">已拒绝</option><option value="expired">已过期</option></select><select v-model="quoteCustomerFilter" aria-label="按客户筛选" @change="load"><option value="">全部客户</option><option v-for="customer in quoteCustomers" :key="customer.id" :value="customer.id">{{ customer.name }}</option></select><select v-model="quoteSort" aria-label="报价排序" @change="load"><option value="-updated_at">最近更新时间</option><option value="updated_at">最早更新时间</option><option value="-quote_date">报价日期（新到旧）</option><option value="quote_date">报价日期（旧到新）</option></select><button type="button" class="filter-reset" @click="resetQuoteFilters"><RotateCcw :size="15" /> 重置</button></template></div>
     <div class="panel">

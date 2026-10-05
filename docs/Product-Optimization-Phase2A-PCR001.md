@@ -52,7 +52,7 @@ The browser UAT used direct URLs for route-prefill entry points that have no vis
 | Django system check | PASS — no issues |
 | Django migration check (`makemigrations --check --dry-run`) | PASS — no changes detected |
 | Django SQLite test suite | PASS — 472 tests, 10 skipped by project configuration |
-| PostgreSQL CI | Runs on the pushed commit; record its result in the final handoff. |
+| PostgreSQL CI | PASS — CI #118, backend-postgres SUCCESS. |
 
 ## Scope and data
 

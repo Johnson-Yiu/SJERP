@@ -259,3 +259,71 @@ class ProcurementWorkflowTests(TestCase):
             ]))
         self.assertEqual(PurchaseOrder.objects.count(), 0)
         self.assertFalse(DocumentNumberSequence.objects.filter(document_type="PO", year=date.today().year).exists())
+
+
+class PurchaseOrderListFilterTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        customer = Customer.objects.create(code="PO-FILTER-C", name="Filter Customer")
+        self.supplier_a = Supplier.objects.create(code="PO-FILTER-SA", name="Filter Supplier Alpha")
+        self.supplier_b = Supplier.objects.create(code="PO-FILTER-SB", name="Filter Supplier Beta")
+        self.order_a = Order.objects.create(
+            order_no="SO-FILTER-001", customer=customer, order_date=date(2031, 1, 1), status="confirmed",
+        )
+        self.order_b = Order.objects.create(
+            order_no="SO-FILTER-002", customer=customer, order_date=date(2031, 1, 2), status="confirmed",
+        )
+        self.order_c = Order.objects.create(
+            order_no="SO-FILTER-003", customer=customer, order_date=date(2031, 1, 3), status="confirmed",
+        )
+        self.purchase("PO-FILTER-001", self.supplier_a, self.order_a, "draft")
+        self.purchase("PO-FILTER-002", self.supplier_a, self.order_b, "ordered")
+        self.purchase("PO-FILTER-003", self.supplier_b, self.order_b, "partial")
+        self.purchase("PO-FILTER-004", self.supplier_b, self.order_c, "completed")
+        self.purchase("PO-FILTER-005", self.supplier_a, self.order_c, "cancelled")
+
+    @staticmethod
+    def purchase(purchase_no, supplier, order, purchase_status):
+        return PurchaseOrder.objects.create(
+            purchase_no=purchase_no,
+            supplier=supplier,
+            order=order,
+            order_date=date(2031, 1, 1),
+            status=purchase_status,
+        )
+
+    def purchase_numbers(self, **params):
+        response = self.client.get("/api/purchase-orders/", params)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        rows = response.data.get("results", response.data)
+        return {row["purchase_no"] for row in rows}
+
+    def test_search_matches_purchase_number(self):
+        self.assertEqual(self.purchase_numbers(search="PO-FILTER-001"), {"PO-FILTER-001"})
+
+    def test_search_matches_supplier_name(self):
+        self.assertEqual(
+            self.purchase_numbers(search="Filter Supplier Beta"),
+            {"PO-FILTER-003", "PO-FILTER-004"},
+        )
+
+    def test_search_matches_source_order_number(self):
+        self.assertEqual(
+            self.purchase_numbers(search="SO-FILTER-002"),
+            {"PO-FILTER-002", "PO-FILTER-003"},
+        )
+
+    def test_status_filter_is_exact(self):
+        self.assertEqual(self.purchase_numbers(status="ordered"), {"PO-FILTER-002"})
+
+    def test_pending_receipt_includes_only_ordered_and_partial(self):
+        self.assertEqual(
+            self.purchase_numbers(pending_receipt="1"),
+            {"PO-FILTER-002", "PO-FILTER-003"},
+        )
+
+    def test_search_combines_with_pending_receipt_filter(self):
+        self.assertEqual(
+            self.purchase_numbers(search="PO-FILTER-00", pending_receipt="1"),
+            {"PO-FILTER-002", "PO-FILTER-003"},
+        )

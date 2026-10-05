@@ -157,6 +157,15 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.select_related("supplier", "order").prefetch_related("items__sku", "items__supplier_sku__supplier", "items__receipts", "transactions")
     search_fields = ["purchase_no", "supplier__name", "order__order_no"]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        purchase_status = self.request.query_params.get("status")
+        if purchase_status:
+            queryset = queryset.filter(status=purchase_status)
+        if self.request.query_params.get("pending_receipt") == "1":
+            queryset = queryset.filter(status__in=["ordered", "partial"])
+        return queryset
+
     def create(self, request, *args, **kwargs):
         if request.data.get("status") not in (None, "", "draft"):
             return Response({"detail": "新建采购单只能保存为草稿，请使用确认下单动作。"}, status=status.HTTP_400_BAD_REQUEST)

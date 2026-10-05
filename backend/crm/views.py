@@ -18,6 +18,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import permissions, serializers, status, viewsets
 from rest_framework.decorators import action, api_view, parser_classes
+from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
@@ -1798,7 +1799,25 @@ class InventoryMovementViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 class PaymentPlanViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = PaymentPlanSerializer
     queryset = PaymentPlan.objects.select_related("order__customer", "purchase_order__supplier")
+    search_fields = [
+        "order__order_no",
+        "order__customer__name",
+        "purchase_order__purchase_no",
+        "purchase_order__supplier__name",
+    ]
     ordering_fields = ["due_date", "planned_amount", "created_at"]
+
+    def _date_filter(self, key):
+        value = self.request.query_params.get(key)
+        if not value:
+            return None
+        try:
+            parsed = date.fromisoformat(value)
+        except (TypeError, ValueError):
+            raise DRFValidationError({key: "日期格式无效，请使用 YYYY-MM-DD。"})
+        if parsed.isoformat() != value:
+            raise DRFValidationError({key: "日期格式无效，请使用 YYYY-MM-DD。"})
+        return parsed
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -1807,6 +1826,14 @@ class PaymentPlanViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 qs = qs.filter(**{f"{key}_id" if key in {"order", "purchase_order"} else key: self.request.query_params[key]})
         if self.request.query_params.get("overdue") == "true":
             qs = qs.filter(status="open", due_date__lt=timezone.localdate())
+        due_from = self._date_filter("due_from")
+        due_to = self._date_filter("due_to")
+        if due_from and due_to and due_from > due_to:
+            raise DRFValidationError({"due_from": "不能晚于 due_to。"})
+        if due_from:
+            qs = qs.filter(due_date__gte=due_from)
+        if due_to:
+            qs = qs.filter(due_date__lte=due_to)
         return qs
 
     @action(detail=True, methods=["post"])

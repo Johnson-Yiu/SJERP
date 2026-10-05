@@ -54,6 +54,6 @@
 
 ## CI 与限制
 
-基线 CI #122（实现前）backend、backend-postgres、frontend 均为 SUCCESS。实现提交推送后的 CI 运行编号及三个 job 结论将在运行完成后补记。
+基线 CI #122（实现前）backend、backend-postgres、frontend 均为 SUCCESS。实现提交 CI #123 的 backend 与 frontend 通过；backend-postgres 暴露了测试供应商编码超过 `Supplier.code` 两字符字段长度的问题。提交 `95802a6` 将夹具编码修正为合法两字符后，CI #124（运行 ID `37300563221`）的 backend、backend-postgres、frontend 均为 SUCCESS。
 
 没有未通过的 PCR-011 项，也没有已知功能限制。UAT 使用已有本地开发计划数据；没有增加库存、采购、应收应付、结算或财务流水记录。

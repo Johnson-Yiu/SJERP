@@ -17,7 +17,7 @@ import HSCodePage from './views/HSCodePage.vue'
 import { resourceConfigs } from './resourceConfigs'
 import { installModalNavigationGuard } from './utils/modalNavigation'
 
-const routes = [
+export const routes = [
   { path: '/sku-trade-units', component: () => import('./views/TradeUnitsPage.vue'), meta: { title: 'SKU 交易单位', eyebrow: 'Transaction units' } },
   { path: '/reports', component: () => import('./views/ReportsPage.vue'), meta: { title: '报表中心', eyebrow: 'Reports & analytics' } },
   { path: '/', component: Dashboard, meta: { title: '经营概览', eyebrow: 'Business overview' } },

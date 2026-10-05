@@ -23,6 +23,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, Supplier, SupplierSKU, Transaction
+from .querysets import prefetch_purchase_related_orders
 from .permissions import HSCodeMaintenancePermission, PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
@@ -155,7 +156,11 @@ class SupplierSKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
 class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = PurchaseOrderSerializer
-    queryset = PurchaseOrder.objects.select_related("supplier", "order").prefetch_related("items__sku", "items__supplier_sku__supplier", "items__receipts", "transactions")
+    queryset = prefetch_purchase_related_orders(
+        PurchaseOrder.objects.select_related("supplier", "order").prefetch_related(
+            "items__sku", "items__supplier_sku__supplier", "items__receipts", "transactions"
+        )
+    )
     search_fields = ["purchase_no", "supplier__name", "order__order_no"]
 
     def get_queryset(self):
@@ -1472,7 +1477,14 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "supplier_model": item.supplier_model_snapshot,
                 "supplier_sku_code": item.supplier_sku_code_snapshot,
             })
-        purchase_orders = PurchaseOrder.objects.filter(items__cost_allocations__target_type="order", items__cost_allocations__order=order).distinct().select_related("supplier").prefetch_related("items__receipts")
+        purchase_orders = prefetch_purchase_related_orders(
+            PurchaseOrder.objects.filter(
+                items__cost_allocations__target_type="order",
+                items__cost_allocations__order=order,
+            ).distinct().select_related("supplier", "order").prefetch_related(
+                "items__receipts", "transactions"
+            )
+        )
         shipments = Shipment.objects.filter(order=order).prefetch_related("items__sku")
         return Response({
             "order": OrderSerializer(order).data,
@@ -1512,9 +1524,15 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 )
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        purchase_ids = [purchase.pk for purchase in purchases]
+        serialized_purchases = prefetch_purchase_related_orders(
+            PurchaseOrder.objects.filter(pk__in=purchase_ids)
+            .select_related("supplier", "order")
+            .prefetch_related("items__sku", "items__receipts", "transactions")
+        )
         return Response({
             "created_count": len(purchases),
-            "purchase_orders": PurchaseOrderSerializer(purchases, many=True).data,
+            "purchase_orders": PurchaseOrderSerializer(serialized_purchases, many=True).data,
         }, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["get", "post"], url_path="packing-plan")

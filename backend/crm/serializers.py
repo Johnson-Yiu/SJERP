@@ -349,6 +349,7 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     items = PurchaseOrderItemSerializer(many=True)
     supplier_name = serializers.CharField(source="supplier.name", read_only=True)
     order_no = serializers.CharField(source="order.order_no", read_only=True)
+    related_orders = serializers.SerializerMethodField()
     total_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     base_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     approved_change_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
@@ -359,6 +360,35 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         model = PurchaseOrder
         fields = "__all__"
         read_only_fields = ["purchase_no", "status", "cancelled_at", "cancellation_reason"]
+
+    def get_related_orders(self, obj):
+        prefetched_items = getattr(obj, "_prefetched_objects_cache", {}).get("items")
+        allocations_are_prefetched = prefetched_items is not None and all(
+            "cost_allocations" in item._prefetched_objects_cache for item in prefetched_items
+        )
+        if allocations_are_prefetched:
+            allocations = (
+                allocation
+                for item in prefetched_items
+                for allocation in item.cost_allocations.all()
+            )
+        else:
+            from .models import PurchaseCostAllocation
+
+            allocations = PurchaseCostAllocation.objects.filter(
+                purchase_item__purchase_order_id=obj.pk,
+                target_type="order",
+                order__isnull=False,
+            ).select_related("order").order_by("order_id", "id")
+
+        unique_orders = {}
+        for allocation in allocations:
+            if allocation.target_type == "order" and allocation.order_id and allocation.order_id not in unique_orders:
+                unique_orders[allocation.order_id] = allocation.order
+        return [
+            {"id": order_id, "order_no": unique_orders[order_id].order_no}
+            for order_id in sorted(unique_orders)
+        ]
 
     def validate(self, attrs):
         if "purchase_no" in self.initial_data:

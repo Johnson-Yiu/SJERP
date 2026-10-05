@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import Contact, Customer, FollowUp, InventoryMovement, Order, OrderItem, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
+from .querysets import prefetch_purchase_related_orders
 from .serializers import ContactSerializer, CustomerSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, QuoteSerializer, SKUSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
@@ -259,7 +260,7 @@ def _supplier_context(pk):
     obj = get_object_or_404(Supplier, pk=pk)
     products = _target(ProductSerializer(obj.products.select_related("category"), many=True).data, "products")
     supplier_skus = _target(SupplierSKUSerializer(obj.supplier_skus.select_related("supplier", "sku", "sku__product"), many=True).data, "supplier-skus")
-    purchases = _target(PurchaseOrderSerializer(obj.purchase_orders.select_related("supplier", "order").prefetch_related("items__sku", "items__receipts", "transactions"), many=True).data, "purchase-orders")
+    purchases = _target(PurchaseOrderSerializer(prefetch_purchase_related_orders(obj.purchase_orders.select_related("supplier", "order").prefetch_related("items__sku", "items__receipts", "transactions")), many=True).data, "purchase-orders")
     payments = _target(TransactionSerializer(obj.transactions.select_related("customer", "order", "purchase_order"), many=True).data, "transactions")
     formal_purchases = [row for row in purchases if row["status"] in {"ordered", "partial", "completed"}]
     total_purchases_rmb = sum((Decimal(row["total_amount"]) * Decimal(row["exchange_rate"]) for row in formal_purchases), Decimal("0"))

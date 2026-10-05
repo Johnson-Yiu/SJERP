@@ -265,8 +265,8 @@ class PurchaseOrderListFilterTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         customer = Customer.objects.create(code="PO-FILTER-C", name="Filter Customer")
-        self.supplier_a = Supplier.objects.create(code="PO-FILTER-SA", name="Filter Supplier Alpha")
-        self.supplier_b = Supplier.objects.create(code="PO-FILTER-SB", name="Filter Supplier Beta")
+        self.supplier_a = Supplier.objects.create(code="FA", name="Filter Supplier Alpha")
+        self.supplier_b = Supplier.objects.create(code="FB", name="Filter Supplier Beta")
         self.order_a = Order.objects.create(
             order_no="SO-FILTER-001", customer=customer, order_date=date(2031, 1, 1), status="confirmed",
         )

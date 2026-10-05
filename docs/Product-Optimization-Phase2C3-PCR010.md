@@ -39,6 +39,6 @@ Tested against existing SKU `SKU-000001` (ID `1`). Its Inventory detail showed 1
 
 ## CI and limitations
 
-Baseline CI #129 passed all three jobs (`backend`, `backend-postgres`, `frontend`). The PCR-010 commit's CI result will be recorded here after push and completion of its workflow run.
+Baseline CI #129 passed all three jobs (`backend`, `backend-postgres`, `frontend`). PCR-010 commit `844e148` was pushed to `origin/master`. Its Actions run number and job conclusions could not be retrieved from this environment: `gh auth status` reports the configured GitHub token is invalid, and the Actions API request returns 404. Treat the remote CI result as unverified until GitHub access is restored. The complete local CI-relevant suites listed above passed.
 
 The local production build reports Vite's existing bundle-size advisory for a chunk above 500 KB. No database migration is required. The UI UAT used existing local development data and verified navigation/filter context; it did not create or modify business records.

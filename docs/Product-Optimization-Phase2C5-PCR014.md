@@ -44,8 +44,8 @@
 ## CI 与限制
 
 - 开始时基线 `ca41778575bb7e3c735de5d8aabcdcd4d0072e12` 的 CI #134：backend、backend-postgres、frontend 均为 SUCCESS（来自本次交接请求）。
-- 本次工作在本地运行了 workflow 的 backend 与 frontend 对应检查；PostgreSQL 服务版测试需要在 push 后的 GitHub Actions `backend-postgres` job 验证。远端本次 run 编号与 job 状态将在 push 后核查。
-- 限制：本次没有本地 PostgreSQL 服务；构建保留现有主 bundle 体积警告。两项均不影响本次已通过的应用行为与 UI UAT。
+- PCR-014 提交 `eca26c3` 已正常推送到 `master`。本地已运行 workflow 的 backend 和 frontend 检查；完整 GitHub Actions run 编号及本次三个 job 的远端状态无法读取：`gh auth status` 显示存储的 GitHub CLI token 已失效，内置 Browser 打开 Actions 页面显示 GitHub `Page not found`。因此 #134 是目前可核验的最近 CI 编号，不能据此声称本次 push 的远端 job 已通过。
+- 本机没有 PostgreSQL、Docker 或 psql，因此未本地运行 PostgreSQL 服务版测试。构建保留现有主 bundle 体积警告。PCR-014 没有后端或模型改动。
 
 ## 变更文件
 

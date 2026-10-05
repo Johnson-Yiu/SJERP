@@ -58,6 +58,6 @@
 
 ## CI 与限制
 
-实现与 UAT 文档已准备提交；远端 CI 将在提交推送后运行，具体工作流运行编号和 backend、backend-postgres、frontend 作业结论待完成后补记。
+实现提交 `aa8220533461b26fcb53d92c727df92d44a33718` 的 [CI #126](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37315878058) 已完成：`backend`、`backend-postgres`、`frontend` 均为 SUCCESS。
 
 真实 UAT 数据没有来源订单与实际订单分配不同、也没有多订单分配的待收货例子；相关区别、多目标排序和多 CTA 已由自动化测试覆盖。构建仍显示既有的大包体提示，不影响构建和测试。

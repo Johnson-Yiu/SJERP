@@ -253,20 +253,22 @@ function toggleQuoteNode(quoteId) {
 const quoteTreeRows = computed(() => {
   const nodes = new Map(rows.value.map(row => [row.id, { ...row, children: [] }]))
   const roots = []
-  nodes.forEach(node => {
+  // Backend ordering is authoritative for roots and siblings. Attach every
+  // child before rendering so a globally earlier revision cannot escape its
+  // root group.
+  rows.value.forEach(row => {
+    const node = nodes.get(row.id)
     const parent = node.parent_quote && nodes.get(node.parent_quote)
     if (parent) parent.children.push(node)
     else roots.push(node)
   })
-  const compareQuotes = (a, b) => (a.quote_no || '').localeCompare(b.quote_no || '', undefined, { numeric: true }) || a.id - b.id
   const output = []
   const visit = (node, depth = 0) => {
-    node.children.sort(compareQuotes)
     const hasChildren = node.children.length > 0
     output.push({ ...node, depth, hasChildren, isRoot: !node.parent_quote })
     if (hasChildren && expandedQuoteNodes.value.has(node.id)) node.children.forEach(child => visit(child, depth + 1))
   }
-  roots.sort(compareQuotes).forEach(root => visit(root))
+  roots.forEach(root => visit(root))
   return output
 })
 const quoteCustomers = computed(() => [...new Map(rows.value.map(row => [row.customer, { id: row.customer, name: row.customer_name }])).values()].sort((a, b) => a.name.localeCompare(b.name)))

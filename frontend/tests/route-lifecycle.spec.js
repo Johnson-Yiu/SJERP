@@ -37,8 +37,10 @@ const orderRows = [
   { id: 35, order_no: 'SO-2026-00035', customer: 5, customer_name: '森爵客户', order_date: '2026-02-04', expected_ship_date: '2026-10-20', status: 'production', status_display: '生产中', currency: 'USD', total_amount: '350', balance_amount: '350', items: [] },
 ]
 const quoteRows = [
-  { id: 14, quote_no: 'QT-2026-00014', customer: 5, customer_name: '森爵客户', quote_date: '2026-01-14', status: 'draft', status_display: '草稿', currency: 'USD', total_amount: '14', items: [] },
-  { id: 15, quote_no: 'QT-2026-00015', customer: 6, customer_name: '备用客户', quote_date: '2026-01-15', status: 'accepted', status_display: '已接受', currency: 'USD', total_amount: '15', items: [] },
+  { id: 14, quote_no: 'QT-2026-00020', customer: 5, customer_name: '森爵客户', quote_date: '2026-01-10', updated_at: '2026-03-30T00:00:00Z', status: 'draft', status_display: '草稿', currency: 'USD', total_amount: '14', items: [] },
+  { id: 16, quote_no: 'QT-2026-00001-R1', parent_quote: 14, parent_quote_no: 'QT-2026-00020', revision_summary: '排序验收修订版', customer: 5, customer_name: '森爵客户', quote_date: '2026-04-10', updated_at: '2026-04-10T00:00:00Z', status: 'draft', status_display: '草稿', currency: 'USD', total_amount: '16', items: [] },
+  { id: 15, quote_no: 'QT-2026-00010', customer: 6, customer_name: '备用客户', quote_date: '2026-02-10', updated_at: '2026-01-10T00:00:00Z', status: 'accepted', status_display: '已接受', currency: 'USD', total_amount: '15', items: [] },
+  { id: 17, quote_no: 'QT-2026-00030', customer: 5, customer_name: '森爵客户', quote_date: '2026-03-10', updated_at: '2026-02-20T00:00:00Z', status: 'sent', status_display: '已发送', currency: 'USD', total_amount: '17', items: [] },
 ]
 const customers = [{ id: 5, name: '森爵客户' }, { id: 6, name: '备用客户' }]
 const contacts = [{ id: 1, name: '主联系人', customer: 5 }, { id: 2, name: '备用联系人', customer: 6 }]
@@ -147,11 +149,18 @@ function rowsFor(url, params = {}) {
   }
   if (url === '/quotes/') {
     const search = String(params.search || '').toLowerCase()
-    return quoteRows.filter(row =>
+    const matchingRows = quoteRows.filter(row =>
       (!search || row.quote_no.toLowerCase().includes(search)) &&
       (!params.status || row.status === params.status) &&
       (!params.customer || String(row.customer) === String(params.customer)),
     )
+    const ordering = String(params.ordering || '-updated_at')
+    const descending = ordering.startsWith('-')
+    const field = descending ? ordering.slice(1) : ordering
+    return matchingRows.sort((a, b) => {
+      const comparison = String(a[field] || '').localeCompare(String(b[field] || ''))
+      return (descending ? -comparison : comparison) || a.id - b.id
+    })
   }
   if (url === '/follow-ups/') return [followUpRow(10), followUpRow(11)]
   if (url === '/customers/') return customers
@@ -539,11 +548,42 @@ describe('sales document list filters', () => {
     expect(mocks.listAll.mock.calls.filter(([url]) => url === '/quotes/').at(-1)[1].params).toMatchObject({
       search: 'QT-2026', status: 'accepted', customer: 6, ordering: 'quote_date',
     })
+    expect(wrapper.findAll('.quote-tree-row .quote-tree-copy strong').map(node => node.text())).toEqual(['QT-2026-00010'])
     await wrapper.find('button.filter-reset').trigger('click')
     await flushPromises()
     expect(search.element.value).toBe('')
     expect(wrapper.find('select[aria-label="按报价状态筛选"]').element.value).toBe('')
     expect(wrapper.find('select[aria-label="按客户筛选"]').element.value).toBe('')
     expect(wrapper.find('select[aria-label="报价排序"]').element.value).toBe('-updated_at')
+    expect(wrapper.findAll('.quote-tree-row .quote-tree-copy strong').map(node => node.text())).toEqual([
+      'QT-2026-00020', 'QT-2026-00030', 'QT-2026-00010',
+    ])
+  })
+
+  it('renders each backend Quote ordering while keeping revisions nested and expandable', async () => {
+    await mountAt('/quotes', 'quotes')
+    const rootA = 'QT-2026-00020'
+    const rootB = 'QT-2026-00010'
+    const rootC = 'QT-2026-00030'
+    const revision = 'QT-2026-00001-R1'
+    const visibleOrder = () => wrapper.findAll('.quote-tree-row .quote-tree-copy strong').map(node => node.text())
+
+    await wrapper.find(`button[aria-label="展开 ${rootA} 的修订报价"]`).trigger('click')
+    expect(visibleOrder()).toEqual([rootA, revision, rootC, rootB])
+
+    const sort = wrapper.find('select[aria-label="报价排序"]')
+    for (const [ordering, expected] of [
+      ['updated_at', [rootB, rootC, rootA, revision]],
+      ['-quote_date', [rootC, rootB, rootA, revision]],
+      ['quote_date', [rootA, revision, rootB, rootC]],
+      ['-updated_at', [rootA, revision, rootC, rootB]],
+    ]) {
+      await sort.setValue(ordering)
+      await flushPromises()
+      expect(visibleOrder()).toEqual(expected)
+    }
+
+    await wrapper.find('button[aria-label="收起 QT-2026-00020 的修订报价"]').trigger('click')
+    expect(visibleOrder()).toEqual([rootA, rootC, rootB])
   })
 })

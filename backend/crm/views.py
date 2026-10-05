@@ -23,7 +23,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, Supplier, SupplierSKU, Transaction
-from .querysets import prefetch_purchase_related_orders
+from .querysets import current_due_follow_ups, prefetch_purchase_related_orders
 from .permissions import HSCodeMaintenancePermission, PermissionAdminOnly, QuoteExportPermission
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
@@ -513,7 +513,7 @@ class FollowUpViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         if self.request.query_params.get("customer"):
             qs = qs.filter(customer_id=self.request.query_params["customer"])
         if self.request.query_params.get("due") == "true":
-            qs = qs.filter(next_follow_up__lte=timezone.localdate())
+            qs = current_due_follow_ups(qs, today=timezone.localdate())
         return qs
 
     @action(detail=True, methods=["post"], parser_classes=[MultiPartParser, FormParser], url_path="attachments")
@@ -1959,6 +1959,7 @@ def dashboard(request):
     expense = Transaction.objects.filter(direction="expense", status="confirmed", transaction_date__gte=year_start).aggregate(
         v=Coalesce(Sum(ExpressionWrapper(F("amount") * F("exchange_rate"), output_field=MONEY)), Decimal("0"), output_field=MONEY)
     )["v"]
+    due_follow_ups = current_due_follow_ups(today=today).select_related("customer", "contact").prefetch_related("attachments")
     return Response({
         "summary": {
             "sales_ytd": sales_between(year_start, today),
@@ -1967,26 +1968,13 @@ def dashboard(request):
             "active_customers": Customer.objects.filter(status__in=["customer", "company"]).count(),
             "receipts_rmb": income,
             "payments_rmb": expense,
-            "follow_ups_due": Customer.objects.filter(next_follow_up__isnull=False, next_follow_up__lte=today).count(),
+            "follow_ups_due": due_follow_ups.count(),
         },
         "monthly_sales": monthly,
         "category_sales": list(categories),
         "top_customers": list(top_customers),
         "recent_orders": OrderSerializer(valid_orders.prefetch_related("items__sku__product")[:5], many=True).data,
-        "due_follow_ups": FollowUpSerializer(
-            FollowUp.objects.annotate(
-                latest_for_customer_id=Subquery(
-                    FollowUp.objects.filter(customer_id=OuterRef("customer_id"))
-                    .order_by("-followed_at", "-id")
-                    .values("id")[:1]
-                )
-            )
-            .filter(id=F("latest_for_customer_id"), next_follow_up__lte=today)
-            .select_related("customer", "contact")
-            .prefetch_related("attachments")
-            .order_by("next_follow_up", "id")[:5],
-            many=True,
-        ).data,
+        "due_follow_ups": FollowUpSerializer(due_follow_ups[:5], many=True).data,
     })
 
 

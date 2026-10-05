@@ -119,7 +119,7 @@ const stubs = {
   ContractAmountAdjustments: true,
 }
 
-function followUpRow(id) {
+function followUpRow(id, overrides = {}) {
   return {
     id,
     customer: 5,
@@ -134,8 +134,15 @@ function followUpRow(id) {
     next_follow_up: '2026-10-06',
     owner: '开发身份',
     attachments: [],
+    ...overrides,
   }
 }
+
+const followUpRows = [
+  followUpRow(10, { customer_name: 'Alpha Lighting', subject: 'ABC annual forecast', next_follow_up: '2026-10-05' }),
+  followUpRow(11, { customer: 6, customer_name: 'Beta Lighting', subject: 'Beta overdue task', next_follow_up: '2026-10-01' }),
+  followUpRow(12, { customer_name: 'Alpha Lighting', subject: 'Historical future plan', next_follow_up: '2026-10-20' }),
+]
 
 function responseFor(url) {
   if (url === '/session/current-operator/') return { data: { name: '开发身份', role: '开发超级管理员', development_superadmin: true, has_all_permissions: true } }
@@ -178,7 +185,14 @@ function rowsFor(url, params = {}) {
       return (descending ? -comparison : comparison) || a.id - b.id
     })
   }
-  if (url === '/follow-ups/') return [followUpRow(10), followUpRow(11)]
+  if (url === '/follow-ups/') {
+    const search = String(params.search || '').toLowerCase()
+    return followUpRows.filter(row =>
+      (params.due !== 'true' || (row.next_follow_up && row.next_follow_up <= '2026-10-05')) &&
+      (!params.customer || String(row.customer) === String(params.customer)) &&
+      (!search || [row.subject, row.content, row.customer_name, row.owner].some(value => String(value || '').toLowerCase().includes(search))),
+    )
+  }
   if (url === '/customers/') return customers
   if (url === '/contacts/') return contacts
   if (url === '/suppliers/') return suppliers
@@ -306,6 +320,83 @@ describe('query route lifecycle', () => {
     await wrapper.find('.sku-context-banner button').trigger('click')
     await flushPromises()
     expect(router.currentRoute.value.query).toEqual({ source_type: 'manual' })
+  })
+
+  it('loads direct current-due URLs, opens details, and clears only due while preserving customer context', async () => {
+    await mountAt('/follow-ups?due=true&customer=5&detail=10', 'follow-ups')
+    const calls = mocks.listAll.mock.calls.filter(([url]) => url === '/follow-ups/')
+    expect(calls.at(-1)[1].params).toMatchObject({ due: 'true', customer: '5', search: '' })
+    expect(calls.at(-1)[1].params).not.toHaveProperty('detail')
+    expect(wrapper.text()).toContain('当前筛选：今日及逾期待跟进')
+    expect(wrapper.text()).toContain('ABC annual forecast')
+    expect(wrapper.text()).not.toContain('Historical future plan')
+    expect(wrapper.find('[data-test="entity-detail"]').text()).toContain('follow-ups:10')
+
+    await wrapper.find('[data-test="entity-detail"] button').trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.query).toEqual({ due: 'true', customer: '5' })
+    expect(wrapper.text()).toContain('当前筛选：今日及逾期待跟进')
+
+    await wrapper.find('.follow-up-due-context button').trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.query).toEqual({ customer: '5' })
+    expect(mocks.listAll.mock.calls.filter(([url]) => url === '/follow-ups/').at(-1)[1].params).toMatchObject({ customer: '5' })
+    expect(mocks.listAll.mock.calls.filter(([url]) => url === '/follow-ups/').at(-1)[1].params).not.toHaveProperty('due')
+    expect(wrapper.text()).toContain('Historical future plan')
+  })
+
+  it('combines local search with due=true and leaves due active when search is cleared', async () => {
+    vi.useFakeTimers()
+    await mountAt('/follow-ups?due=true', 'follow-ups')
+    expect(wrapper.text()).toContain('当前筛选：今日及逾期待跟进')
+    expect(wrapper.text()).toContain('ABC annual forecast')
+    expect(wrapper.text()).toContain('Beta overdue task')
+    expect(wrapper.text()).not.toContain('Historical future plan')
+
+    const search = wrapper.find('input[placeholder="搜索当前列表..."]')
+    await search.setValue('Alpha')
+    await vi.advanceTimersByTimeAsync(301)
+    await flushPromises()
+    let request = mocks.listAll.mock.calls.filter(([url]) => url === '/follow-ups/').at(-1)[1]
+    expect(request.params).toMatchObject({ due: 'true', search: 'Alpha' })
+    expect(wrapper.text()).toContain('ABC annual forecast')
+    expect(wrapper.text()).not.toContain('Beta overdue task')
+
+    await search.setValue('')
+    await vi.advanceTimersByTimeAsync(301)
+    await flushPromises()
+    request = mocks.listAll.mock.calls.filter(([url]) => url === '/follow-ups/').at(-1)[1]
+    expect(request.params).toMatchObject({ due: 'true', search: '' })
+    expect(wrapper.text()).toContain('当前筛选：今日及逾期待跟进')
+    expect(wrapper.text()).toContain('Beta overdue task')
+    expect(wrapper.text()).not.toContain('Historical future plan')
+  })
+
+  it('restores current-due state through Back and Forward and leaves the ordinary list historical', async () => {
+    await mountAt('/follow-ups', 'follow-ups')
+    expect(wrapper.text()).not.toContain('当前筛选：今日及逾期待跟进')
+    expect(wrapper.text()).toContain('Historical future plan')
+    expect(mocks.listAll.mock.calls.filter(([url]) => url === '/follow-ups/').at(-1)[1].params).not.toHaveProperty('due')
+
+    await router.push('/follow-ups?due=true')
+    await flushPromises()
+    expect(router.currentRoute.value.query.due).toBe('true')
+    expect(wrapper.text()).toContain('当前筛选：今日及逾期待跟进')
+    expect(wrapper.text()).not.toContain('Historical future plan')
+    expect(mocks.listAll.mock.calls.filter(([url]) => url === '/follow-ups/').at(-1)[1].params.due).toBe('true')
+
+    await router.back()
+    await flushPromises()
+    expect(router.currentRoute.value.fullPath).toBe('/follow-ups')
+    expect(wrapper.text()).not.toContain('当前筛选：今日及逾期待跟进')
+    expect(wrapper.text()).toContain('Historical future plan')
+
+    await router.forward()
+    await flushPromises()
+    expect(router.currentRoute.value.fullPath).toBe('/follow-ups?due=true')
+    expect(wrapper.text()).toContain('当前筛选：今日及逾期待跟进')
+    expect(wrapper.text()).not.toContain('Historical future plan')
+    expect(mocks.listAll.mock.calls.filter(([url]) => url === '/follow-ups/').at(-1)[1].params.due).toBe('true')
   })
 
   it('opens quote detail from a direct query URL', async () => {

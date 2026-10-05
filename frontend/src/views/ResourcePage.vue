@@ -45,6 +45,7 @@ const isWideForm = computed(() => isCustomerCreate.value || props.config.endpoin
 const isTransactionPage = computed(() => props.config.endpoint === 'transactions')
 const hasSkuContext = computed(() => props.config.endpoint === 'inventory-movements' && Boolean(skuContextId(route.query.sku)))
 const activeSkuContextLabel = computed(() => skuContextLabel(rows.value, route.query.sku))
+const hasCurrentDueFollowUpContext = computed(() => props.config.endpoint === 'follow-ups' && route.query.due === 'true')
 const supplierCodeConflict = computed(() => {
   if (props.config.endpoint !== 'suppliers') return null
   const code = String(form.code || '').trim().toUpperCase()
@@ -271,6 +272,10 @@ function closeDetail() {
   void router.replace({ path: route.path, query, hash: route.hash })
 }
 function clearSkuFilter() { void router.push(withoutSkuContext(route)) }
+function clearFollowUpDueFilter() {
+  const { due, ...query } = route.query
+  void router.push({ path: route.path, query, hash: route.hash })
+}
 function detailReturnPath() {
   const query = new URLSearchParams()
   Object.entries(route.query).forEach(([key, value]) => {
@@ -427,6 +432,7 @@ onMounted(load)
   <div class="resource-page" :class="{ 'finance-resource-page': isTransactionPage }">
     <div class="page-head"><div><h2>{{ config.title }}</h2><p>{{ config.description }}</p></div><button class="btn btn-primary" @click="openCreate"><Plus :size="16" /> 新建记录</button></div>
     <SummaryCards :items="resourceMetrics" />
+    <div v-if="hasCurrentDueFollowUpContext" class="follow-up-due-context" aria-label="当前跟进筛选"><span>当前筛选：<strong>今日及逾期待跟进</strong></span><button type="button" @click="clearFollowUpDueFilter">清除待跟进筛选</button></div>
     <SkuContextBanner v-if="hasSkuContext" :label="activeSkuContextLabel" @clear="clearSkuFilter" />
     <div class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索当前列表..." @input="delayedSearch" /></div></div>
     <div class="panel">
@@ -563,4 +569,5 @@ onMounted(load)
 @media(max-width:760px){.contact-fields{grid-template-columns:1fr 1fr}.follow-up-attachment-editor-head{align-items:flex-start;flex-direction:column}.follow-up-attachment-picker{width:100%;justify-content:center}.follow-up-attachment-editor-list{grid-template-columns:1fr}}
 @media(max-width:520px){.contact-create-head,.contact-card-head{align-items:flex-start}.contact-card-head{flex-direction:column}.contact-fields{grid-template-columns:1fr}.contact-card-actions{width:100%;justify-content:space-between}}
 .supply-category-options{display:flex;flex-wrap:wrap;gap:10px;max-height:190px;overflow:auto;padding:12px;border:1px solid #dce7e1;border-radius:8px}.supply-category-options label{display:flex;align-items:center;gap:6px}.supply-category-options small{flex-basis:100%;color:#71857b}
+.follow-up-due-context{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding:9px 12px;border:1px solid #c8d8ed;border-radius:9px;background:#f4f8fd;color:#42546b;font-size:13px}.follow-up-due-context strong{color:#173f70}.follow-up-due-context button{padding:2px 0;border:0;background:transparent;color:#245b91;font:inherit;cursor:pointer}.follow-up-due-context button:hover{text-decoration:underline}
 </style>

@@ -10,6 +10,16 @@ test('related create modal supports inherited relationships', async () => {
   assert.doesNotMatch(source, /已继承/)
 })
 
+test('related quote creation seeds the customer and keeps it locked in create mode', async () => {
+  const relatedCreate = await readFile(new URL('./RelatedCreateModal.vue', import.meta.url), 'utf8')
+  const quoteEditor = await readFile(new URL('./QuoteEditorModal.vue', import.meta.url), 'utf8')
+
+  assert.match(relatedCreate, /quoteSeed\.value\s*=\s*\{\s*customer:\s*props\.query\.customer/)
+  assert.match(relatedCreate, /:quote="quoteSeed"[^>]*mode="create"/)
+  assert.match(quoteEditor, /const inheritedCustomer = computed\(\(\) => props\.mode === 'create' && Boolean\(props\.quote\?\.customer\)\)/)
+  assert.match(quoteEditor, /:disabled="mode === 'revise' \|\| inheritedCustomer"/)
+})
+
 test('detail relation context carries parent customer and contact', async () => {
   const source = await readFile(new URL('./EntityDetailModal.vue', import.meta.url), 'utf8')
   assert.match(source, /if \(root === 'contacts'\) \{ ids\.contact = id; ids\.customer = sectionRowId\('company'\) \}/)

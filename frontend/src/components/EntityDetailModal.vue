@@ -49,6 +49,11 @@ const selectedInactiveSkuIds = computed(() => visibleSectionRows.value.filter(ro
 const isFollowUpDetail = computed(() => currentEntity.value === 'follow-ups')
 const followUpInfo = computed(() => Object.fromEntries((data.value?.info || []).map(item => [item[0], item[1]])))
 const followUpCustomer = computed(() => data.value?.sections?.find(section => section.key === 'customer')?.rows?.[0] || null)
+const relationCustomerId = computed(() => relationContext().customer)
+const hasRelationCustomerId = computed(() => {
+  const customerId = Number(relationCustomerId.value)
+  return Number.isSafeInteger(customerId) && customerId > 0
+})
 const followUpContact = computed(() => data.value?.sections?.find(section => section.key === 'contact')?.rows?.[0] || null)
 const followUpCreatedAt = computed(() => {
   const parts = String(data.value?.subtitle || '').split(' · ')
@@ -139,6 +144,13 @@ function relationContext() {
   if (root === 'transactions') { ids.customer = sectionRowId('customer'); ids.supplier = sectionRowId('supplier'); ids.order = sectionRowId('order'); ids.purchase_order = sectionRowId('purchase-order') }
   if (root === 'inventory-movements') { ids.sku = sectionRowId('sku'); ids.product = sectionRowId('product'); ids.order = sectionRowId('order') }
   return ids
+}
+function openQuoteForCustomer(customerId) {
+  const rawId = String(customerId ?? '').trim()
+  if (!/^\d+$/.test(rawId)) return
+  const id = Number(rawId)
+  if (!Number.isSafeInteger(id) || id <= 0) return
+  quickCreate.value = { entity: 'quotes', query: { customer: id } }
 }
 function relationQuery(section) {
   const ids = relationContext()
@@ -273,6 +285,7 @@ onMounted(async () => {
                 <button class="follow-up-action" @click="emit('edit', { entity: currentEntity, id: currentId })"><Pencil :size="15" /> 编辑</button>
                 <button class="follow-up-action" @click="deleteFollowUp"><Trash2 :size="15" /> 删除</button>
                 <button class="follow-up-action" @click="stack.length ? back() : emit('close')"><ArrowLeft :size="15" /> 返回</button>
+                <button v-if="hasRelationCustomerId" class="follow-up-action" @click="openQuoteForCustomer(relationCustomerId)"><Plus :size="15" /> 新建报价</button>
                 <button class="follow-up-action primary" :disabled="!followUpContact?.phone" @click="openWhatsApp"><ExternalLink :size="15" /> 发送 WhatsApp</button>
               </div>
             </div>
@@ -333,6 +346,7 @@ onMounted(async () => {
               <span v-else-if="isProduct">产品管理 / 产品详情</span><span v-else-if="!stack.length">关联详情</span>
             </div>
             <div class="detail-actions">
+              <button v-if="isRoot && currentEntity === 'customers' && hasRelationCustomerId" class="btn btn-secondary" @click="openQuoteForCustomer(relationCustomerId)"><Plus :size="14" /> 新建报价</button>
               <button v-if="isRoot && currentEntity !== 'inventory-movements'" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> {{ currentEntity === 'customers' ? '编辑客户' : '编辑主档' }}</button>
               <RouterLink v-else-if="hasManagement(currentEntity)" class="btn btn-secondary" :to="`/${currentEntity}`" @click="emit('close')"><ExternalLink :size="14" /> 打开管理页</RouterLink>
               <button class="detail-close" aria-label="关闭详情" @click="emit('close')"><X :size="19" /><span>关闭</span></button>

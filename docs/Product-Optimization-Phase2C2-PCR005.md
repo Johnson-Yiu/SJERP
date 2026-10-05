@@ -57,6 +57,6 @@
 
 ## CI 与限制
 
-PCR-005 提交后的 GitHub Actions CI 结果待补。
+实现提交 `7bd2e3bfb3bee72819b6e40df2d9e7c6eb3177c4` 的 [GitHub Actions CI #128](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37321735499) 已完成：`backend`、`backend-postgres`、`frontend` 均为 SUCCESS。
 
 真实数据中没有可在 UI 验证的采购合同分配历史，也没有财务概览应收方向的到期样例；对应导航均由自动化测试覆盖。没有创建交易或改动财务记录。

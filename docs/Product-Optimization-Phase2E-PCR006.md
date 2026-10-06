@@ -121,6 +121,30 @@ The stock delta for SKU A is unresolved UAT data, not a claim of completed clean
 
 PCR-006 is **not marked PASS** until UAT-P2E-001 through UAT-P2E-006 and UAT-P2E-010 can be completed with one disposable multi-line UAT Order and adequate free stock, followed by reversal of that same Shipment. The present test data does not satisfy those preconditions.
 
+## Previous UAT contamination recovery — 2026-10-06
+
+This recovery phase followed the isolated-UAT instructions. All inspection and the attempted cancellation used the normal ERP UI. No API, database, Django shell, fixture, order-quantity edit, or inventory adjustment was used.
+
+### Orders consuming `SKU-000001` reservations
+
+The Inventory → `SKU-000001` → 关联订单 view showed three older active orders after the disposable `SO-2026-00035` was canceled. Their line quantities, reserved amounts, shipped amounts, and activity were checked in each Order workspace.
+
+| Order | Customer / status | Ordered / reserved / shipped | Payment and receivable | Shipment | Procurement / receipt | UAT classification and recovery decision |
+|---|---|---:|---|---|---|---|
+| `SO-2026-00031` | `UAT-R1 客户 Alpha GmbH` / 生产中 | 10 / 10 / 0 pcs | Paid USD 0; open receivable plan USD 10 | None; inventory movement count 0 | No linked Purchase Order or receipt | Clearly UAT order; not canceled after SO-33 triggered the safety stop. |
+| `SO-2026-00032` | `UAT-R1 客户 Alpha GmbH` / 已确认 | 10 / 10 / 0 pcs | Paid USD 0; open receivable plan USD 10 | None; inventory movement count 0 | No linked Purchase Order or receipt | Clearly UAT order; not canceled after SO-33 triggered the safety stop. |
+| `SO-2026-00033` | `UAT-R1 客户 Alpha GmbH` / 已确认 | 10 / 1.02 / 0 pcs | Paid USD 0; open receivable plan USD 10 | None; inventory movement count 1 (procurement receipt context, no sale-out) | Linked `PO-2026-00019`, supplier `UAT 供应商 A`, USD 0.10; 1.00 pcs ordered, 0.01 pcs received on 2026-10-05, 0.99 pcs outstanding, USD 0.10 unpaid | Customer, supplier, amount, and context identify UAT data. However, ERP rejected cancellation because a formal procurement record is linked; preserved without modification. |
+
+The current reserved quantities total `21.02 pcs` (10 + 10 + 1.02), matching Inventory's aggregate reserved amount. The screen evidence is consistent with temporary stock being allocated through the normal reservation process to older active demand. This is expected reservation behavior, not an observed PCR-006 production defect.
+
+### Recovery safety gate and inventory result
+
+Cancellation of `SO-2026-00033` was attempted through its Order workspace with reason `PCR-006 PREVIOUS UAT CLEANUP`. ERP refused with: `订单已有正式采购记录，不能直接取消。` The order remained **已确认**, with its linked PO and receipt intact. `SO-2026-00031` and `SO-2026-00032` were not canceled because not all reservation consumers passed the safety gate. The two active `SKU-000001` stock-in movements (`IM-3697213DBA9246C0` +11 and `IM-B3FFBA2513D44997` +10) were not reversed during this recovery phase. No PO, receipt, shipment, payment, order quantity, or reservation was edited.
+
+The Inventory page still showed `SKU-000001` actual `21.02 pcs`, reserved `21.02 pcs`, available `0 pcs`, against the pre-UAT baseline `0.02 / 0.02 / 0 pcs`. Baseline is **not restored**; the unresolved delta remains `+21 pcs` actual and reserved. `UAT-R1-CSV-SKU-001` remains at `0 / 0 / 0 pcs`; its earlier +9 temporary movement is reversed as recorded above.
+
+Per the safety gate, recovery stopped here. No isolated SKU was created, no new UAT stock or order was added, and no new Shipment UAT was attempted. This branch is blocked by the linked formal procurement record on `SO-2026-00033`; PCR-006 remains **OPEN / NOT PASS** until the contaminated stock can be safely recovered and the isolated live UAT can be completed.
+
 ## CI and limitations
 
 GitHub Actions **run #142** for implementation commit `255245118237df9062a7dbf3bc59f90654ba51b9` completed successfully before this documentation-only UAT update:

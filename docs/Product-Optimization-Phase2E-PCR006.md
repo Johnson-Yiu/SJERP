@@ -154,3 +154,130 @@ GitHub Actions **run #142** for implementation commit `255245118237df9062a7dbf3b
 - `frontend`: success
 
 PCR-006 remains open while the mandatory multi-line live UAT is unavailable, even if automated suites and CI pass.
+
+## Safe UAT chain unwind and isolated final live UAT — 2026-10-06
+
+This completion followed the safe lifecycle through the real ERP UI. No API,
+database, Django shell, fixture, or direct data edit was used. The prior failed
+attempts and recovery stop above are retained as historical evidence; the
+results below supersede their open status after final CI verification.
+
+### Procurement and prior UAT cleanup
+
+Before changing `PO-2026-00019`, the UI showed supplier `UAT 供应商 A`, USD
+0.10, one 0.01 pcs receipt, no supplier payment, and no active advance-payment
+allocation. The receipt was reversed through the Purchase Order UI with reason
+`PCR-006 PREVIOUS UAT PROCUREMENT CLEANUP`:
+
+| Record | Result |
+|---|---|
+| GoodsReceipt | `GR-A5C02E7173C642AA`, 0.01 pcs; now **已冲销**. The original receipt movement reference was not separately captured. |
+| Reversal movement | `REV-1223FB8FC4EB4A74`, −0.01 pcs. |
+| PO after receipt reversal | Recalculated to **已下单**, received 0, outstanding 1.00 pcs. |
+| Purchase Order | `PO-2026-00019` then canceled through the UI with the same reason; now **已取消**, with no active receipt exposure. |
+
+After the PO was canceled, the three clearly identified UAT orders were
+rechecked in the UI: customer `UAT-R1 客户 Alpha GmbH`, no confirmed shipment,
+no confirmed payment, and no other newly discovered formal activity. Each was
+canceled with reason `PCR-006 PREVIOUS UAT CLEANUP`:
+
+| Order | Before cancellation | Result |
+|---|---|---|
+| `SO-2026-00031` | No shipment; paid USD 0; no linked PO. | **已取消**; reservation released. |
+| `SO-2026-00032` | No shipment; paid USD 0; no linked PO. | **已取消**; reservation released. |
+| `SO-2026-00033` | No shipment; paid USD 0; linked PO-19/receipt had already been reversed and PO canceled. | **已取消**; reservation released. |
+
+With those reservation consumers cleared, the two prior temporary stock-in
+movements were reversed in the Inventory UI with reason
+`PCR-006 TEMP UAT STOCK CLEANUP`:
+
+| Original movement | Quantity | Reversal movement |
+|---|---:|---|
+| `IM-3697213DBA9246C0` | +11 pcs | `REV-EE63B0C967B346F1` |
+| `IM-B3FFBA2513D44997` | +10 pcs | `REV-4198B418E1814CF1` |
+
+The Inventory page then showed `SKU-000001` actual 0.01 pcs, reserved 0,
+available 0.01 pcs, in-transit 6.99 pcs, and to-purchase 0. The in-transit
+quantity is separate from on-hand availability and belongs to other open
+procurement; it is not a residual PCR-006 stock adjustment. Compared with the
+old pre-PCR-006 baseline of actual/reserved/available `0.02 / 0.02 / 0`, actual
+is lower by 0.01 because the PO-19 receipt was reversed, reserved is lower by
+0.02 because SO-31/32/33 were canceled and released their old reservations,
+and available correctly equals actual minus reserved (`0.01`). No active +11
+or +10 PCR-006 movement, active PO-19 receipt, or reservation on the canceled
+orders remains.
+
+### Isolated test stock and dedicated order
+
+Immediately before the isolated run, the Inventory UI confirmed SKU A
+`UAT-R1-CSV-SKU-001` at actual/reserved/available `0 / 0 / 0`, with no active
+unfulfilled Order demand. Its associated history consisted of canceled,
+shipped, completed, or draft orders; there was no active reservation. SKU B
+was created through the SKU UI from the existing UAT product/category:
+
+| SKU | UI-created identity | Pre-test history and inventory |
+|---|---|---|
+| A: `UAT-R1-CSV-SKU-001` | Existing UAT-R1 CSV Product SKU. | Actual/reserved/available/in-transit `0 / 0 / 0 / 0`; no active unfulfilled demand. |
+| B: `SKU-000003` | `UAT-R1 CSV Product-6W-2700K`, 6W, 2700K, model `UTCSV-6W27K`; note `PCR006 UAT Batch SKU B — dedicated live acceptance SKU`. | Newly created; no prior orders, inventory history, reservation, or in-transit quantity. |
+
+Both isolated SKUs had baseline actual/reserved/available/in-transit of
+`0 / 0 / 0 / 0`. Inventory UI stock-in entries used reference
+`PCR-006 ISOLATED LIVE UAT STOCK` and were immediately checked at actual 20,
+reserved 0, available 20 for each SKU:
+
+| SKU | +20 movement |
+|---|---|
+| A `UAT-R1-CSV-SKU-001` | `IM-EE697878E1F24A2E` |
+| B `SKU-000003` | `IM-1DD0BF6A976C4FA6` |
+
+One confirmed UAT order was created through the Orders UI for
+`UAT-R1 客户 Alpha GmbH`:
+
+| Order | Line A | Line B | Total / payment | Confirmed reservations |
+|---|---|---|---|---|
+| `SO-2026-00036` | SKU A × 10 pcs at USD 9.90 | SKU B × 8 pcs at USD 0.00 | USD 99.00; paid USD 0 | SKU A 10 pcs; SKU B 8 pcs |
+
+The order had no procurement or prior shipment. Its test-only note identifies
+the isolated multi-SKU shipment UAT.
+
+### Final live UAT — UAT-P2E-001 through UAT-P2E-010
+
+| UAT | Result | Evidence |
+|---|---|---|
+| P2E-001 — Batch dialog | **PASS** | Both lines appeared selected by default with remaining 10/8; quantities could be edited independently. Values were returned to the requested shipment amounts before submission. |
+| P2E-002 — Selection | **PASS** | Unchecking SKU B changed selected count to 1; reselecting it returned the count to 2. |
+| P2E-003 — One mixed shipment | **PASS** | One submit created exactly one Shipment: SKU A 10/10 and SKU B 3/8. |
+| P2E-004 — Shipment history | **PASS** | One history card for the one Shipment, containing both ShipmentItems; after reversal that card remained and showed **已冲销** with both lines reversed. |
+| P2E-005 — Fulfillment | **PASS** | After shipment, SKU A shipped 10 / remaining 0; SKU B shipped 3 / remaining 5. |
+| P2E-006 — Inventory references | **PASS** | SKU A sale-out `SH-64670382E4E0406A` (−10) and SKU B sale-out `SH-35759BA4BFE842C2` (−3) both referenced Shipment `SH-E59265871A1D47E0`. |
+| P2E-007 — Row-level action | **PASS** | SKU B's row-level **确认发货** opened the shared dialog with only SKU B selected and 5 remaining; it was canceled without submission. |
+| P2E-008 — Trade Unit | **PASS — accepted automated evidence** | The UI showed no Trade Units for either isolated SKU (0 items); no unnecessary Trade Unit was created. Existing automated TradeUnit conversion evidence was used as instructed. |
+| P2E-009 — Atomic stock failure | **PASS — automated evidence** | Existing `test_multi_line_batch_stock_failure_rolls_back_earlier_line_and_reservation` covers rollback of earlier line writes and preservation of reservations. |
+| P2E-010 — Whole Shipment reversal | **PASS** | The one Shipment was reversed through the UI; it became **已冲销**, both lines reversed, both deductions restored, and the order returned to shipped 0 / remaining A 10 and B 8. No partial reversal remained. |
+
+The tested Shipment was `SH-E59265871A1D47E0`. Reversal reason was
+`PCR-006 ISOLATED LIVE UAT BATCH REVERSAL`; replenishment movements were
+`REV-B83F46EF0D4B48AB` (+3 for SKU B) and `REV-9E4320417E9F4B40` (+10 for
+SKU A). The order returned to reservation A 10 / B 8 after reversal.
+
+### Final isolated cleanup and status
+
+After Shipment reversal, `SO-2026-00036` was canceled through the UI with
+reason `PCR-006 ISOLATED UAT CLEANUP`; paid amount was 0 and both reservations
+returned to 0. The two +20 stock movements were then reversed through
+Inventory with reason `PCR-006 ISOLATED TEMP STOCK CLEANUP`:
+
+| Original +20 movement | Reversal movement |
+|---|---|
+| A `IM-EE697878E1F24A2E` | `REV-0557545B36C246C9` |
+| B `IM-1DD0BF6A976C4FA6` | `REV-7884CC577EF0401D` |
+
+Final Inventory UI values were actual/reserved/available/in-transit/to-purchase
+`0 / 0 / 0 / 0 / 0` for both isolated SKUs. Audit records for the orders,
+Shipment, and reversals remain visible. No production code, schema, business
+logic, test fixture, or migration was changed; this completion is a
+documentation-only repository change. The live UAT gates and cleanup are
+complete. Final PCR-006 closure is contingent on the pushed documentation
+HEAD's GitHub Actions run completing with `backend`, `backend-postgres`, and
+`frontend` all successful; that run number and conclusions will be recorded
+after verification.

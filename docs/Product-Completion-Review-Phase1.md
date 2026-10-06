@@ -150,7 +150,7 @@ findings.
 
 | PCR | Current disposition |
 |---|---|
-| PCR-020 | Live UAT **PASS**; waiting for the implementation commit's final GitHub Actions run before closure. Details: [Phase 2F PCR-020](Product-Optimization-Phase2F-PCR020.md). |
+| PCR-020 | Live UAT and implementation CI **PASS / CLOSED**; implementation run #147 passed `backend`, `backend-postgres`, and `frontend`. Details: [Phase 2F PCR-020](Product-Optimization-Phase2F-PCR020.md). |
 | PCR-015 | Current `ProductSkuManagement` batch supplier binding, `SupplierBatchBindingDrawer`, and supplier capability rules cover the supplier-to-SKU workflow; no new development is currently required. |
 | PCR-009 | Product-side sales/customer insight is substantially covered by the current `ProductWorkspace` sales summary. Remaining customer annual insight stays **Enhancement-Later**. |
 | PCR-007 | **Enhancement-Later**. |

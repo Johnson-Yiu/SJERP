@@ -49,9 +49,13 @@ Local frontend checks:
 - Full Vitest suite: **140 passed across 21 files**.
 - `npm run build`: **passed**. Vite emitted the existing large-chunk advisory.
 
-Backend source and settlement accounting were unchanged. GitHub Actions for
-the implementation and UAT evidence commit is pending; its run number and
-three job conclusions will be recorded after the push.
+Backend source and settlement accounting were unchanged. GitHub Actions
+**run #147** for the implementation and UAT evidence commit
+`a4c26a968f8861347fe18845aaf579bf347e627e` completed successfully:
+
+- `backend`: success
+- `backend-postgres`: success
+- `frontend`: success
 
 ## Real UI UAT — 2026-10-06
 
@@ -77,4 +81,6 @@ Order: USD 6.93 due 2026-10-04 and USD 2.97 due 2026-10-05.
 
 Draft/cancelled exclusion and completed-with-balance visibility are covered by
 automated component tests; completed zero-balance behavior was also checked in
-the live UI. PCR-020 UAT is **PASS**; final closure awaits the required CI run.
+the live UI. PCR-020 is **PASS / CLOSED** after the live UAT and successful
+run #147. The follow-up documentation-only commit is independently verified
+by its own final-HEAD Actions run and reported in the handoff.

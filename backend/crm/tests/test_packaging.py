@@ -71,7 +71,8 @@ class PackagingDomainTests(TestCase):
         order.items.create(sku=self.sku, quantity="100", unit_price="1")
         SKUPackagingProfile.objects.create(sku=self.sku, packaging_template=self.template, unit_net_weight="0.2")
         plan = generate_packing_plan(order)
-        shipment = Shipment.objects.create(shipment_no="SH-PACK", order=order, shipment_date=date.today())
+        shipment = Shipment.objects.create(shipment_no="SH-PACK", order=order, shipment_date=date.today(), status="confirmed")
+        shipment.items.create(order_item=order.items.get(), sku=self.sku, quantity="100")
         copy_estimated_to_actual(shipment, plan)
         package = shipment.packages.first()
         other = SKU.objects.create(product=self.product, sku="SKU-MIX")
@@ -83,7 +84,9 @@ class PackagingDomainTests(TestCase):
     def test_shipment_package_api_creates_package_for_current_shipment(self):
         customer = Customer.objects.create(code="C-PACK-API", name="Packing API Buyer")
         order = Order.objects.create(order_no="SO-PACK-API", customer=customer, order_date=date.today())
-        shipment = Shipment.objects.create(shipment_no="SH-PACK-API", order=order, shipment_date=date.today())
+        shipment = Shipment.objects.create(shipment_no="SH-PACK-API", order=order, shipment_date=date.today(), status="confirmed")
+        line = order.items.create(sku=self.sku, quantity="10", unit_price="1")
+        shipment.items.create(order_item=line, sku=self.sku, quantity="10")
 
         response = self.client.post(f"/api/shipments/{shipment.pk}/packages/", {
             "carton_no": 1,

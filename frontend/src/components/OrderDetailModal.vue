@@ -10,6 +10,7 @@ import OperationLogPanel from './OperationLogPanel.vue'
 import SupplierAllocationModal from './SupplierAllocationModal.vue'
 import ProcurementDraftModal from './ProcurementDraftModal.vue'
 import ContractAmountAdjustments from './ContractAmountAdjustments.vue'
+import ShipmentActualPacking from './ShipmentActualPacking.vue'
 
 const props = defineProps({ id: { type: [Number, String], required: true }, refreshKey: { type: Number, default: 0 } })
 const emit = defineEmits(['close', 'edit', 'open-quote'])
@@ -17,6 +18,7 @@ const workbench = ref(null)
 const fulfillment = ref(null)
 const packingPlan = ref(null)
 const packingSaving = ref(false)
+const actualPackingCache = ref({})
 const activeTab = ref('overview')
 const loading = ref(true)
 const error = ref('')
@@ -31,7 +33,7 @@ const procurementMessage = ref('')
 const order = computed(() => workbench.value?.order)
 const tabs = computed(() => [
   ['overview', '概览'], ['items', `订单明细 (${workbench.value?.items?.length || 0})`],
-  ['payments', `回款 (${workbench.value?.payments?.length || 0})`], ['fulfillment', '采购与发货'], ['packing', '预计装箱'], ['inventory', `库存流水 (${workbench.value?.inventory?.length || 0})`],
+  ['payments', `回款 (${workbench.value?.payments?.length || 0})`], ['fulfillment', '采购与发货'], ['packing', '装箱'], ['inventory', `库存流水 (${workbench.value?.inventory?.length || 0})`],
   ['operation_logs', `操作日志 (${operationLogs.value.length})`],
 ])
 const paymentPercent = computed(() => {
@@ -255,6 +257,7 @@ async function procurementDraftsCreated(result) {
   await load()
 }
 async function load() {
+  actualPackingCache.value = {}
   loading.value = true
   error.value = ''
   try {
@@ -349,6 +352,7 @@ watch(() => props.refreshKey, load)
               <div v-if="!packingPlan.cartons?.length" class="workbench-empty"><Boxes :size="28" /><strong>暂无箱明细</strong><p>请根据上方警告补充包装配置后，再重新生成方案。</p></div>
               <div v-else class="packing-carton-list"><article v-for="carton in packingPlan.cartons" :key="carton.id" class="packing-carton-card"><header><div><strong>第 {{ carton.carton_no }} 箱</strong><span>{{ packingTemplateName(carton.packaging_template_snapshot) }}</span></div><div class="packing-carton-flags"><span v-if="carton.is_partial">尾箱</span><span v-if="carton.requires_confirmation">待确认</span></div></header><dl class="packing-carton-data"><dt>包装模板快照</dt><dd>{{ carton.packaging_template_snapshot?.name || carton.packaging_template_snapshot?.code || '—' }}</dd><dt>每箱数量快照</dt><dd>{{ carton.qty_per_carton_snapshot ?? '—' }}</dd><dt>尺寸</dt><dd>{{ carton.length ?? '—' }} × {{ carton.width ?? '—' }} × {{ carton.height ?? '—' }} cm</dd><dt>预计净重</dt><dd>{{ carton.estimated_net_weight }} kg</dd><dt>预计毛重</dt><dd>{{ carton.estimated_gross_weight }} kg</dd><dt>预计 CBM</dt><dd>{{ carton.estimated_cbm }} m³</dd></dl><div class="packing-carton-items"><span v-for="item in carton.items || []" :key="item.id">{{ item.sku_code_snapshot }} · {{ item.sku_name_snapshot }} × {{ item.quantity }}</span></div></article></div>
             </template>
+            <ShipmentActualPacking :shipments="fulfillment?.shipments || []" :has-plan="Boolean(packingPlan)" :cache="actualPackingCache" />
           </section>
           <section v-else-if="activeTab === 'inventory'" class="workbench-card"><div class="section-heading"><div><h3><Truck :size="16" /> 履约流水</h3><p>关联此订单的出入库动作会在这里集中展示。</p></div><strong>{{ workbench.inventory.length }} 条</strong></div><div v-if="!workbench.inventory.length" class="workbench-empty"><Truck :size="28" /><strong>暂无出入库流水</strong><p>在库存流水中关联本订单后，履约进度会自动更新。</p></div><div v-else class="workbench-table-wrap"><table class="workbench-table"><thead><tr><th>日期</th><th>流水号</th><th>类型</th><th>SKU</th><th>数量</th><th>仓库</th></tr></thead><tbody><tr v-for="movement in workbench.inventory" :key="movement.id"><td>{{ date(movement.movement_date) }}</td><td>{{ movement.movement_no }}</td><td>{{ movement.type_display }}</td><td>{{ movement.sku_code }}</td><td>{{ movement.signed_quantity }}</td><td>{{ movement.warehouse }}</td></tr></tbody></table></div></section>
           <OperationLogPanel v-else :logs="operationLogs" :loading="operationLogsLoading" :enabled="auditEnabled" />

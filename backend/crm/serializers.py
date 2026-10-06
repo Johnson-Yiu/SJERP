@@ -1899,13 +1899,67 @@ class ShipmentPackageSerializer(serializers.ModelSerializer):
         fields = ["id", "shipment", "carton_no", "packaging_template", "length", "width", "height", "actual_net_weight", "actual_gross_weight", "actual_cbm", "notes", "items"]
         read_only_fields = ["shipment"]
 
+    def validate(self, attrs):
+        shipment = self.context.get("shipment") or (self.instance.shipment if self.instance else attrs.get("shipment"))
+        ZERO = Decimal("0")
+        if shipment is None:
+            raise serializers.ValidationError("实际箱单必须属于发货单。")
+        if shipment.status != "confirmed":
+            raise serializers.ValidationError("只有已确认的发货单可以修改实际箱单。")
+        def value(name, default=None):
+            return attrs.get(name, getattr(self.instance, name, default))
+        carton_no = value("carton_no")
+        if carton_no is None or carton_no <= 0:
+            raise serializers.ValidationError({"carton_no": "箱号必须大于零。"})
+        other_packages = shipment.packages.all()
+        if self.instance:
+            other_packages = other_packages.exclude(pk=self.instance.pk)
+        if other_packages.filter(carton_no=carton_no).exists():
+            raise serializers.ValidationError({"carton_no": "该发货单已存在此箱号，请使用其他箱号。"})
+        dimensions = [value(name) for name in ("length", "width", "height")]
+        if any(d is not None for d in dimensions) and not all(d is not None and d > 0 for d in dimensions):
+            raise serializers.ValidationError("箱长、宽、高须同时填写且大于零，或全部留空。")
+        net, gross = value("actual_net_weight", ZERO), value("actual_gross_weight", ZERO)
+        if net < 0 or gross < 0 or gross < net:
+            raise serializers.ValidationError("净重、毛重不得为负，且毛重不得低于净重。")
+        items = attrs.get("items")
+        if items is None and self.instance:
+            items = [{"sku": item.sku, "quantity": item.quantity} for item in self.instance.items.all()]
+        if not items:
+            raise serializers.ValidationError({"items": "请填写至少一条箱内 SKU 明细。"})
+        shipped = {}
+        for item in shipment.items.all():
+            shipped[item.sku_id] = shipped.get(item.sku_id, ZERO) + item.quantity
+        packed = {}
+        for item in ShipmentPackageItem.objects.filter(shipment_package__in=other_packages):
+            packed[item.sku_id] = packed.get(item.sku_id, ZERO) + item.quantity
+        seen = set()
+        for item in items:
+            sku_id, quantity = item["sku"].pk, item["quantity"]
+            if quantity <= 0:
+                raise serializers.ValidationError({"items": "实际装箱数量必须大于零。"})
+            if sku_id not in shipped:
+                raise serializers.ValidationError({"items": "箱内 SKU 必须属于本次发货。"})
+            if sku_id in seen:
+                raise serializers.ValidationError({"items": "同一箱内不能重复填写同一 SKU。"})
+            seen.add(sku_id)
+            if packed.get(sku_id, ZERO) + quantity > shipped[sku_id]:
+                raise serializers.ValidationError({"items": f"SKU {item['sku'].sku} 累计装箱数量不能超过本次发货数量 {shipped[sku_id]}。"})
+        return attrs
+
+    @transaction.atomic
     def create(self, validated_data):
+        self.context["shipment"] = Shipment.objects.select_for_update().get(pk=validated_data["shipment"].pk)
+        self.validate(validated_data)
         items = validated_data.pop("items", [])
         package = ShipmentPackage.objects.create(**validated_data)
         ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
         return package
 
+    @transaction.atomic
     def update(self, instance, validated_data):
+        self.context["shipment"] = Shipment.objects.select_for_update().get(pk=instance.shipment_id)
+        self.validate(validated_data)
         items = validated_data.pop("items", None)
         for key, value in validated_data.items(): setattr(instance, key, value)
         instance.save()

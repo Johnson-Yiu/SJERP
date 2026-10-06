@@ -40,7 +40,7 @@ test('batch over-shipment requires a line-specific reason and one explicit batch
 test('order workbench exposes explicit packing plan generation and snapshot display', async () => {
   const source = await readFile(componentUrl, 'utf8')
 
-  assert.match(source, /\['packing', '预计装箱'\]/)
+  assert.match(source, /\['packing', '装箱'\]/)
   assert.match(source, /尚未生成预计装箱方案/)
   assert.match(source, /生成预计装箱方案/)
   assert.match(source, /重新生成预计装箱方案/)

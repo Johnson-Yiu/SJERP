@@ -2,8 +2,10 @@ from dataclasses import dataclass
 from decimal import Decimal, ROUND_CEILING
 
 from django.db import transaction
+from django.core.exceptions import ValidationError
+from django.db.models import Sum
 
-from crm.models import PackingPlan, PackingPlanCarton, PackingPlanCartonItem, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile
+from crm.models import PackingPlan, PackingPlanCarton, PackingPlanCartonItem, Shipment, SKUPackagingProfile
 
 
 ZERO = Decimal("0")
@@ -125,10 +127,33 @@ def generate_packing_plan(source):
 
 
 @transaction.atomic
-def copy_estimated_to_actual(shipment, plan):
+def copy_estimated_to_actual(shipment, plan, *, replace=False):
+    shipment = Shipment.objects.select_for_update().get(pk=shipment.pk)
+    if shipment.status != "confirmed":
+        raise ValidationError("只有已确认的发货单可以修改实际箱单。")
+    if plan.order_id != shipment.order_id:
+        raise ValidationError("预计装箱方案不属于本次发货的订单。")
+    # Lock the source so regeneration cannot replace cartons during the copy.
+    try:
+        plan = PackingPlan.objects.select_for_update().get(pk=plan.pk)
+    except PackingPlan.DoesNotExist:
+        raise ValidationError("预计装箱方案已变更，请重新加载后再复制。")
+    planned = dict(plan.cartons.values("items__sku_id").annotate(total=Sum("items__quantity")).values_list("items__sku_id", "total"))
+    shipped = dict(shipment.items.values("sku_id").annotate(total=Sum("quantity")).values_list("sku_id", "total"))
+    if not shipped or planned != shipped:
+        raise ValidationError("预计装箱对应整张订单，本次发货数量与预计装箱不一致，请手工录入本次实际箱单。")
+    if shipment.packages.exists() and replace is not True:
+        raise ValidationError("现有实际箱单将被预计装箱方案替换，请明确确认替换。")
     shipment.packages.all().delete()
+    # Reuse the same physical and quantity rules as manual actual-packing entry.
+    from crm.serializers import ShipmentPackageSerializer
     for carton in plan.cartons.prefetch_related("items").all():
-        package = ShipmentPackage.objects.create(shipment=shipment, carton_no=carton.carton_no, length=carton.length, width=carton.width,
-            height=carton.height, actual_net_weight=carton.estimated_net_weight, actual_gross_weight=carton.estimated_gross_weight)
-        ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, sku=item.sku, quantity=item.quantity) for item in carton.items.all()])
+        serializer = ShipmentPackageSerializer(data={
+            "carton_no": carton.carton_no, "length": carton.length, "width": carton.width,
+            "height": carton.height, "actual_net_weight": carton.estimated_net_weight,
+            "actual_gross_weight": carton.estimated_gross_weight,
+            "items": [{"sku": item.sku_id, "quantity": item.quantity} for item in carton.items.all()],
+        }, context={"shipment": shipment})
+        serializer.is_valid(raise_exception=True)
+        serializer.save(shipment=shipment)
     return shipment

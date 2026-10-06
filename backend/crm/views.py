@@ -983,32 +983,49 @@ class ShipmentViewSet(AuditTrailMixin, viewsets.ReadOnlyModelViewSet):
         })
 
     @action(detail=True, methods=["get", "post"], url_path="packages")
+    @transaction.atomic
     def packages(self, request, pk=None):
         shipment = self.get_object()
         if request.method == "GET":
             return Response(ShipmentPackageSerializer(shipment.packages.prefetch_related("items__sku"), many=True).data)
-        serializer = ShipmentPackageSerializer(data=request.data)
+        shipment = Shipment.objects.select_for_update().get(pk=shipment.pk)
+        serializer = ShipmentPackageSerializer(data=request.data, context={"shipment": shipment})
         serializer.is_valid(raise_exception=True)
         package = serializer.save(shipment=shipment)
         record_operation(request=request, instance=shipment, action="custom", action_label="新增装箱明细", metadata={"package_id": package.id})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=["post"], url_path=r"packages/(?P<package_id>[^/.]+)")
+    @action(detail=True, methods=["post", "put", "patch", "delete"], url_path=r"packages/(?P<package_id>[^/.]+)")
+    @transaction.atomic
     def update_package(self, request, pk=None, package_id=None):
         shipment = self.get_object()
+        shipment = Shipment.objects.select_for_update().get(pk=shipment.pk)
+        if shipment.status != "confirmed":
+            return Response({"detail": "只有已确认的发货单可以修改实际箱单。"}, status=status.HTTP_400_BAD_REQUEST)
         package = get_object_or_404(ShipmentPackage, pk=package_id, shipment=shipment)
         before = snapshot(package)
-        serializer = ShipmentPackageSerializer(package, data=request.data)
+        if request.method == "DELETE":
+            package.delete()
+            record_operation(request=request, instance=shipment, action="custom", action_label="删除装箱明细", before={"package": before}, metadata={"package_id": package_id})
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        serializer = ShipmentPackageSerializer(package, data=request.data, partial=request.method == "PATCH", context={"shipment": shipment})
         serializer.is_valid(raise_exception=True); serializer.save()
         record_operation(request=request, instance=shipment, action="custom", action_label="修改装箱明细", before={"package": before}, metadata={"package_id": package.id})
         return Response(serializer.data)
 
     @action(detail=True, methods=["post"], url_path="copy-estimated-packing")
+    @transaction.atomic
     def copy_estimated_packing(self, request, pk=None):
         shipment = self.get_object()
+        shipment = Shipment.objects.select_for_update().get(pk=shipment.pk)
+        if shipment.status != "confirmed":
+            return Response({"detail": "只有已确认的发货单可以修改实际箱单。"}, status=status.HTTP_400_BAD_REQUEST)
         plan = getattr(shipment.order, "packing_plan", None)
         if not plan: return Response({"detail": "该订单尚未生成预计装箱。"}, status=status.HTTP_400_BAD_REQUEST)
-        copy_estimated_to_actual(shipment, plan)
+        try:
+            copy_estimated_to_actual(shipment, plan, replace=request.data.get("replace") is True)
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         record_operation(request=request, instance=shipment, action="custom", action_label="复制预计装箱方案", metadata={"packing_plan_id": plan.id})
         return Response(ShipmentPackageSerializer(shipment.packages.prefetch_related("items__sku"), many=True).data)
 
@@ -1521,7 +1538,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "items__receipts", "transactions"
             )
         )
-        shipments = Shipment.objects.filter(order=order).prefetch_related("items__sku")
+        shipments = Shipment.objects.filter(order=order).prefetch_related("items__sku", "items__inventory_movement", "items__order_item")
         return Response({
             "order": OrderSerializer(order).data,
             "items": rows,
@@ -1532,7 +1549,11 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "reversed_at": shipment.reversed_at, "reversal_reason": shipment.reversal_reason,
                 "has_overage": any(line.is_overage for line in shipment.items.all()),
                 "items": [{
-                    "id": line.id, "sku_code": line.sku.sku, "quantity": line.quantity,
+                    "id": line.id, "sku": line.sku_id,
+                    "sku_code": (line.inventory_movement.sku_code_snapshot if line.inventory_movement else "") or line.order_item.sku_code_snapshot or line.sku.sku,
+                    "display_name": (line.inventory_movement.display_name_snapshot if line.inventory_movement else "") or line.order_item.display_name_snapshot or line.sku.display_name_cn,
+                    "base_unit": (line.trade_snapshot or {}).get("base_unit") or line.sku.unit,
+                    "quantity": line.quantity,
                     "is_overage": line.is_overage,
                     "inventory_movement": line.inventory_movement_id,
                     "reversal_inventory_movement": line.reversal_inventory_movement_id,

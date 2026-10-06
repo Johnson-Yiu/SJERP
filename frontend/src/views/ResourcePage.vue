@@ -1,5 +1,7 @@
 <script setup>
 import CategoryMultiPicker from "../components/CategoryMultiPicker.vue"
+import CertificateExpiryBadge from '../components/CertificateExpiryBadge.vue'
+import { certificateFilters, certificateFilterLabels, certificateFilterQuery } from '../utils/certificateExpiry'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChevronRight, Database, Paperclip, Pencil, Plus, RotateCcw, Search, Trash2, UserRoundPlus, X } from 'lucide-vue-next'
@@ -21,6 +23,9 @@ import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuCo
 const props = defineProps({ config: Object })
 const route = useRoute()
 const router = useRouter()
+const isCertificatePage = computed(() => props.config.endpoint === 'product-certificates')
+const certificateFilterLabel = computed(() => isCertificatePage.value ? certificateFilterLabels[route.query.expiry] : '')
+function setCertificateFilter(expiry) { router.push({ path: route.path, query: certificateFilterQuery(route.query, expiry) }) }
 const rows = ref([]), loading = ref(true), saving = ref(false), query = ref('')
 const modalOpen = ref(false), detailId = ref(null), editingId = ref(null)
 const detailRefresh = ref(0), keepDetailOpen = ref(false)
@@ -432,6 +437,8 @@ onMounted(load)
   <div class="resource-page" :class="{ 'finance-resource-page': isTransactionPage }">
     <div class="page-head"><div><h2>{{ config.title }}</h2><p>{{ config.description }}</p></div><button class="btn btn-primary" @click="openCreate"><Plus :size="16" /> 新建记录</button></div>
     <SummaryCards :items="resourceMetrics" />
+    <div v-if="isCertificatePage" class="certificate-filters" aria-label="证书有效期筛选"><button v-for="[value, label] in certificateFilters" :key="value" type="button" class="btn" :class="{ 'btn-primary': (route.query.expiry || '') === value }" :aria-pressed="(route.query.expiry || '') === value" @click="setCertificateFilter(value)">{{ label }}</button></div>
+    <div v-if="certificateFilterLabel" class="follow-up-due-context" aria-label="当前证书筛选"><span>当前筛选：<strong>{{ certificateFilterLabel }}</strong></span><button type="button" @click="setCertificateFilter('')">清除筛选</button></div>
     <div v-if="hasCurrentDueFollowUpContext" class="follow-up-due-context" aria-label="当前跟进筛选"><span>当前筛选：<strong>今日及逾期待跟进</strong></span><button type="button" @click="clearFollowUpDueFilter">清除待跟进筛选</button></div>
     <SkuContextBanner v-if="hasSkuContext" :label="activeSkuContextLabel" @clear="clearSkuFilter" />
     <div class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索当前列表..." @input="delayedSearch" /></div></div>
@@ -440,7 +447,7 @@ onMounted(load)
       <div v-else-if="!rows.length" class="empty"><Database :size="32" /><h3>还没有数据</h3><p>点击“新建记录”开始建立业务资料。</p></div>
       <div v-else class="table-wrap"><table class="data-table"><thead><tr><th v-for="col in config.columns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
         <tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="detailId = row.id" @keydown.enter="detailId = row.id">
-          <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><span :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
+          <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><CertificateExpiryBadge v-if="isCertificatePage && col[0] === 'expiry_status'" :certificate="row" /><span v-else :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
           <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="detailId = row.id"><ChevronRight :size="14" /></button><button v-if="!isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="canReverseInventoryMovement(row)" class="mini-btn" title="冲销" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
         </tr>
       </tbody></table></div>
@@ -526,6 +533,8 @@ onMounted(load)
 </template>
 
 <style scoped>
+.certificate-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+
 .contact-create-section{margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
 .follow-up-date-control{display:flex;align-items:center;gap:6px}.follow-up-date-control>input{flex:0 0 10ch!important;width:10ch!important;min-width:0}.follow-up-date-control>span{color:#70817b;font-size:var(--text-body);white-space:nowrap}.follow-up-date-control :deep(.segmented-date){flex:1 1 auto;min-width:0}
 .follow-up-attachment-editor{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}

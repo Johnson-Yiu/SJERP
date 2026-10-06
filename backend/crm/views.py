@@ -4,7 +4,7 @@ import io
 import json
 import time
 from collections import defaultdict
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation
 from urllib.request import urlopen
 
@@ -28,7 +28,7 @@ from .permissions import HSCodeMaintenancePermission, PermissionAdminOnly, Quote
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementReversalInputSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteAvailabilityPreviewInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
+from .serializers import certificate_expiry, AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementReversalInputSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteAvailabilityPreviewInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .serializers import ProcurementDraftInputSerializer
 from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.finance import allocate_advance, approve_contract_change, reject_contract_change, record_contract_payment, record_transaction, void_transaction
@@ -1047,7 +1047,20 @@ class ProductCertificateViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(product_id=self.request.query_params["product"]) if self.request.query_params.get("product") else qs
+        if self.request.query_params.get("product"):
+            qs = qs.filter(product_id=self.request.query_params["product"])
+        today = timezone.localdate()
+        expiry = self.request.query_params.get("expiry")
+        filters = {
+            "attention": {"expires_on__lte": today + timedelta(days=90)},
+            "expired": {"expires_on__lt": today},
+            "expiring": {"expires_on__range": (today, today + timedelta(days=90))},
+            "valid": {"expires_on__gt": today + timedelta(days=90)},
+            "no_expiry": {"expires_on__isnull": True},
+        }
+        if expiry in filters:
+            qs = qs.filter(**filters[expiry]).order_by("expires_on", "id")
+        return qs
 
 
 class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
@@ -2014,8 +2027,19 @@ def dashboard(request):
         v=Coalesce(Sum(ExpressionWrapper(F("amount") * F("exchange_rate"), output_field=MONEY)), Decimal("0"), output_field=MONEY)
     )["v"]
     due_follow_ups = current_due_follow_ups(today=today).select_related("customer", "contact").prefetch_related("attachments")
+    certificates = ProductCertificate.objects.filter(expires_on__lte=today + timedelta(days=90)).select_related("product")
+    certificate_alerts = [
+        {"id": c.id, "product_id": c.product_id, "product_name": c.product.name,
+         "certificate_name": c.name, "certificate_no": c.certificate_no, "expires_on": c.expires_on,
+         **certificate_expiry(c.expires_on, today)}
+        for c in certificates.order_by("expires_on", "id")[:5]
+    ]
     return Response({
+        "certificate_alerts": certificate_alerts,
         "summary": {
+            "certificate_attention": certificates.count(),
+            "certificate_expired": certificates.filter(expires_on__lt=today).count(),
+            "certificate_expiring": certificates.filter(expires_on__gte=today).count(),
             "sales_ytd": sales_between(year_start, today),
             "sales_last_ytd": sales_between(last_year_start, last_year_same_day),
             "orders_ytd": valid_orders.filter(order_date__gte=year_start).count(),

@@ -1205,7 +1205,36 @@ class ProductParameterSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+def certificate_expiry(expires_on, today=None):
+    today = today or timezone.localdate()
+    days = (expires_on - today).days if expires_on else None
+    if days is None:
+        status, display = "no_expiry", "无有效期"
+    elif days < 0:
+        status, display = "expired", "已过期"
+    elif days <= 30:
+        status, display = "expiring_30", "今日到期" if days == 0 else "30 天内到期"
+    elif days <= 90:
+        status, display = "expiring_90", "90 天内到期"
+    else:
+        status, display = "valid", "有效"
+    return {"expiry_status": status, "expiry_status_display": display, "days_to_expiry": days}
+
+
 class ProductCertificateSerializer(serializers.ModelSerializer):
+    expiry_status = serializers.SerializerMethodField()
+    expiry_status_display = serializers.SerializerMethodField()
+    days_to_expiry = serializers.SerializerMethodField()
+
+    def get_expiry_status(self, obj):
+        return certificate_expiry(obj.expires_on)["expiry_status"]
+
+    def get_expiry_status_display(self, obj):
+        return certificate_expiry(obj.expires_on)["expiry_status_display"]
+
+    def get_days_to_expiry(self, obj):
+        return certificate_expiry(obj.expires_on)["days_to_expiry"]
+
     product_name = serializers.CharField(source="product.name", read_only=True)
 
     class Meta:

@@ -61,6 +61,7 @@ Screenshot evidence was saved outside the repository at the Codex visualization 
 ## CI and limitations
 
 - No migration is expected; `makemigrations --check --dry-run` reported no changes.
+- PCR-008 commit `97ea6917ee8cfc56928c8bff661ce47dcfd9c14b` was pushed to `master` and is present in the private repository. The post-push Actions run number and job results could not be retrieved: the GitHub Actions page returned a signed-out 404, the local `gh` token is invalid, the connected commit-status query returned no checks, and the available workflow-run query only returns PR-triggered runs. The post-push `backend`, `backend-postgres`, and `frontend` results therefore remain unverified; CI #136 above is the user-provided baseline, not the PCR-008 run.
 - The local complete Django suite and frontend CI suites are recorded in the delivery response. PostgreSQL CI is run by GitHub Actions; this workstation did not expose a local Docker command/service for reproducing its PostgreSQL service.
 - UAT inventory data had no positive available quantity, so the real UI coverage check used the exact zero-demand/zero-available boundary, then verified a positive shortage. Positive covered demand is covered by the frontend automated test.
 - PCR-008 does not introduce procurement lead-time estimates, stock history, allocation, reservation, or polling.

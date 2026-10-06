@@ -270,6 +270,10 @@ function closeModal() {
   if (refreshDetail) detailRefresh.value += 1
   void clearModalRoute(router, route)
 }
+function openDetail(id) {
+  detailId.value = id
+  if (props.config.endpoint === 'customers') void router.push({ path: route.path, query: { ...route.query, detail: String(id) } })
+}
 function closeDetail() {
   detailId.value = null
   if (!route.query.detail) return
@@ -446,9 +450,9 @@ onMounted(load)
       <div v-if="loading" class="loading"><div class="spinner" /></div>
       <div v-else-if="!rows.length" class="empty"><Database :size="32" /><h3>还没有数据</h3><p>点击“新建记录”开始建立业务资料。</p></div>
       <div v-else class="table-wrap"><table class="data-table"><thead><tr><th v-for="col in config.columns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
-        <tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="detailId = row.id" @keydown.enter="detailId = row.id">
+        <tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row.id)" @keydown.enter="openDetail(row.id)">
           <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><CertificateExpiryBadge v-if="isCertificatePage && col[0] === 'expiry_status'" :certificate="row" /><span v-else :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
-          <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="detailId = row.id"><ChevronRight :size="14" /></button><button v-if="!isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="canReverseInventoryMovement(row)" class="mini-btn" title="冲销" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
+          <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="openDetail(row.id)"><ChevronRight :size="14" /></button><button v-if="!isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="canReverseInventoryMovement(row)" class="mini-btn" title="冲销" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
         </tr>
       </tbody></table></div>
     </div>

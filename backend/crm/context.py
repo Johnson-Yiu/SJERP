@@ -85,14 +85,14 @@ def _customer_context(pk):
     } for item in valid_items.select_related("order", "sku__product").order_by("-order__order_date")], "orders")
     return {
         "entity": "customers", "title": obj.name, "subtitle": f"{obj.code} · {obj.country or '未填写国家/地区'}", "badge": obj.get_status_display(),
-        "info": [["负责人", obj.owner or "—"], ["来源", obj.source or "—"], ["网站", obj.website or "—"], ["地址", obj.address or "—"], ["下次跟进", obj.next_follow_up or "—"], ["备注", obj.notes or "—"]],
-        "metrics": [["累计销售额", sales_rmb, "rmb"], ["订单", len(formal_orders), "number"], ["联系人", len(contacts), "number"], ["报价", len(quotes), "number"]],
+        "info": [["负责人", obj.owner or "—"], ["业务区域", obj.region or "—"], ["来源", obj.source or "—"], ["网站", obj.website or "—"], ["地址", obj.address or "—"], ["备注", obj.notes or "—"]],
+        "metrics": [["累计销售额", sales_rmb, "rmb"], ["订单", len(formal_orders), "number"], ["报价", len(quotes), "number"], ["下次跟进", obj.next_follow_up or "未安排", "date"]],
         "sections": [
-            _section("contacts", "联系人", "contacts", [["name", "姓名"], ["title", "职位"], ["email", "邮箱"], ["phone", "电话"], ["is_primary", "主联系人", "boolean"]], contacts),
-            _section("orders", "订单", "orders", [["order_no", "订单号"], ["order_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"], ["currency", "币种"]], orders),
-            _section("purchases", "订单商品记录", "orders", [["order_date", "日期", "date"], ["order_no", "订单"], ["sku_code", "SKU"], ["product_name", "产品"], ["quantity", "数量", "number"], ["amount", "金额", "money"]], purchases),
-            _section("quotes", "报价记录", "quotes", [["quote_no", "报价单号"], ["quote_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"], ["currency", "币种"]], quotes),
             _section("followups", "跟进记录", "follow-ups", [["followed_at", "时间", "datetime"], ["subject", "主题"], ["content", "跟进记录 / 解决方案", "excerpt"], ["result", "客户回复 / 客户疑问", "excerpt"], ["type_display", "方式"], ["next_follow_up", "下次跟进", "date"]], followups),
+            _section("quotes", "报价记录", "quotes", [["quote_no", "报价单号"], ["quote_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"], ["currency", "币种"]], quotes),
+            _section("orders", "订单", "orders", [["order_no", "订单号"], ["order_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"], ["currency", "币种"]], orders),
+            _section("contacts", "联系人", "contacts", [["name", "姓名"], ["title", "职位"], ["email", "邮箱"], ["phone", "电话"], ["is_primary", "主联系人", "boolean"]], contacts),
+            _section("purchases", "成交商品记录", "orders", [["order_date", "日期", "date"], ["order_no", "订单"], ["sku_code", "SKU"], ["product_name", "产品"], ["quantity", "数量", "number"], ["amount", "金额", "money"]], purchases),
             _section("cash", "财务流水", "transactions", [["transaction_date", "日期", "date"], ["transaction_no", "流水号"], ["direction_display", "方向"], ["category", "分类"], ["amount", "金额", "money"], ["currency", "币种"]], cash),
         ],
     }
@@ -234,9 +234,9 @@ def _quote_context(pk):
     root = obj.root_quote or obj
     revision_label = f"Revision {obj.revision_no}" if obj.revision_no else "Original"
     return {"entity": "quotes", "title": obj.quote_no, "subtitle": f"{obj.buyer_company_name} · {obj.quote_date}", "badge": obj.get_status_display(), "lineage": {"root_quote_id": root.id, "root_quote_no": root.quote_no, "revision_no": obj.revision_no, "revision_label": revision_label}, "info": [["报价日期", obj.quote_date], ["有效期至", obj.valid_until or "—"], ["原始报价", root.quote_no], ["当前版本", revision_label], ["币种", obj.currency], ["汇率", obj.exchange_rate], ["备注", obj.notes or "—"]], "metrics": [["报价总额", obj.total_amount, "money"], ["明细", len(items), "number"], ["转订单", len(orders), "number"]], "sections": [
-        _section("customer", "客户", "customers", [["code", "客户编号"], ["name", "客户名称"], ["country", "国家"], ["owner", "负责人"]], customer),
         _section("items", "报价明细", "skus", [["sales_model", "Model"], ["sku_code", "SKU Code"], ["product_name", "内部名称"], ["quantity", "数量", "number"], ["unit_price", "单价", "money"], ["amount", "小计", "money"]], items),
         _section("orders", "关联订单", "orders", [["order_no", "订单号"], ["order_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"]], orders),
+        _section("customer", "客户", "customers", [["code", "客户编号"], ["name", "客户名称"], ["country", "国家"], ["owner", "负责人"]], customer),
     ]}
 
 
@@ -248,11 +248,11 @@ def _order_context(pk):
     payments = _target(TransactionSerializer(obj.transactions.all(), many=True).data, "transactions")
     inventory = _target(InventoryMovementSerializer(obj.inventory_movements.select_related("sku__product"), many=True).data, "inventory-movements")
     return {"entity": "orders", "title": obj.order_no, "subtitle": f"{obj.customer.name} · {obj.order_date}", "badge": obj.get_status_display(), "info": [["订单日期", obj.order_date], ["预计交期", obj.expected_ship_date or "—"], ["币种", obj.currency], ["汇率", obj.exchange_rate], ["来源报价", obj.quote.quote_no if obj.quote else "—"], ["备注", obj.notes or "—"]], "metrics": [["订单金额", obj.total_amount, "money"], ["已收款", obj.paid_amount, "money"], ["当前待收款", obj.outstanding_amount, "money"], ["明细", len(items), "number"]], "sections": [
-        _section("customer", "客户", "customers", [["code", "客户编号"], ["name", "客户名称"], ["country", "国家"], ["owner", "负责人"]], customer),
         _section("items", "订单明细", "skus", [["sales_model", "Model"], ["sku_code", "SKU Code"], ["product_name", "内部名称"], ["supplier_name", "本次供应商"], ["supplier_sku_code", "供应商 SKU"], ["quantity", "数量", "number"], ["unit_price", "售价", "money"], ["cost_price", "成本", "money"], ["amount", "小计", "money"]], items),
         _section("payments", "收付款流水", "transactions", [["transaction_date", "日期", "date"], ["transaction_no", "流水号"], ["direction_display", "方向"], ["category", "分类"], ["amount", "金额", "money"], ["currency", "币种"]], payments),
         _section("inventory", "出入库流水", "inventory-movements", [["movement_date", "日期", "date"], ["movement_no", "流水号"], ["type_display", "类型"], ["sku_code", "SKU"], ["signed_quantity", "变动", "signed"], ["warehouse", "仓库"]], inventory),
         _section("quote", "来源报价", "quotes", [["quote_no", "报价单号"], ["quote_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"]], quote),
+        _section("customer", "客户", "customers", [["code", "客户编号"], ["name", "客户名称"], ["country", "国家"], ["owner", "负责人"]], customer),
     ]}
 
 

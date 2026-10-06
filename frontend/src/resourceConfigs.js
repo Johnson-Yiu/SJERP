@@ -10,8 +10,8 @@ export const resourceConfigs = {
     title: '客户管理', eyebrow: 'Customer portfolio', endpoint: 'customers', key: 'name',
     description: '集中维护客户画像与归属；客户阶段由跟进、报价和正式订单自动更新。下次跟进由最新跟进记录自动更新。',
     columns: [
-      ['code', '客户编号'], ['name', '客户名称'], ['country', '国家/地区'], ['region', '业务区域'], ['status', '状态', 'status'],
-      ['owner', '负责人'], ['order_count', '订单数', 'number'], ['sales_amount', '累计销售额', 'rmb'], ['next_follow_up', '下次跟进', 'date'],
+      ['name', '客户名称'], ['code', '客户编号'], ['status', '状态', 'status'], ['country', '国家/地区'], ['region', '业务区域'],
+      ['owner', '负责人'], ['next_follow_up', '下次跟进', 'date'], ['order_count', '订单数', 'number'], ['sales_amount', '累计销售额', 'rmb'],
     ],
     fields: [
       ['code', '客户编号', 'readonly', true], ['name', '客户名称', 'text', true], ['country', '国家/地区'], ['region', '业务区域'], ['source', '客户来源', 'combo', false, 'customers/sources'],

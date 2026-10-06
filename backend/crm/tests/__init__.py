@@ -136,7 +136,7 @@ class BusinessFlowTests(APITestCase):
 
         customer_response = self.client.get(f"/api/context/customers/{self.customer.id}/")
         self.assertEqual(customer_response.status_code, status.HTTP_200_OK)
-        self.assertIn("订单商品记录", [section["title"] for section in customer_response.data["sections"]])
+        self.assertIn("成交商品记录", [section["title"] for section in customer_response.data["sections"]])
         followup_section = next(section for section in customer_response.data["sections"] if section["key"] == "followups")
         self.assertIn(["content", "跟进记录 / 解决方案", "excerpt"], followup_section["columns"])
         self.assertIn(["result", "客户回复 / 客户疑问", "excerpt"], followup_section["columns"])

@@ -1236,6 +1236,14 @@ class QuoteImportantNoteSerializer(serializers.ModelSerializer):
         return obj.deactivated_by.get_username() if obj.deactivated_by else "系统"
 
 
+class QuoteAvailabilityPreviewInputSerializer(serializers.Serializer):
+    sku_ids = serializers.ListField(
+        child=serializers.IntegerField(min_value=1),
+        allow_empty=False,
+        max_length=200,
+    )
+
+
 class QuoteItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer):
     sku_code = serializers.CharField(source="sku_code_snapshot", read_only=True)
     model = serializers.CharField(source="sales_model_snapshot", read_only=True)

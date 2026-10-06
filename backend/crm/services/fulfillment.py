@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import Case, DecimalField, F, Q, Sum, When
+from django.db.models import Case, DecimalField, F, OuterRef, Q, Subquery, Sum, Value, When
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 
@@ -82,6 +82,93 @@ def sku_metrics(sku: SKU) -> dict[str, Decimal]:
         "in_transit_quantity": sum((max(Decimal("0"), item.quantity - item.received_quantity)
             for item in PurchaseOrderItem.objects.filter(sku=sku, purchase_order__status__in=OPEN_PURCHASE_STATUSES).prefetch_related("receipts")), Decimal("0")),
     }
+
+
+def bulk_sku_metrics(sku_ids) -> dict[int, dict[str, Decimal]]:
+    """Return the authoritative stock metrics for many SKUs with fixed query count.
+
+    Keep the same signed movement, active order reservation, and open purchase
+    semantics as ``sku_metrics``. Receipt totals are correlated per purchase
+    line so each line's remaining quantity is clamped at zero before grouping by
+    SKU; reversed receipts are excluded just like ``PurchaseOrderItem`` does.
+    """
+    ids = []
+    seen = set()
+    for sku_id in sku_ids or ():
+        try:
+            normalized_id = int(sku_id)
+        except (TypeError, ValueError):
+            continue
+        if normalized_id > 0 and normalized_id not in seen:
+            ids.append(normalized_id)
+            seen.add(normalized_id)
+    if not ids:
+        return {}
+
+    zero = Decimal("0")
+    metrics = {
+        sku_id: {
+            "actual_quantity": zero,
+            "reserved_quantity": zero,
+            "available_quantity": zero,
+            "in_transit_quantity": zero,
+        }
+        for sku_id in ids
+    }
+
+    actual_rows = InventoryMovement.objects.filter(sku_id__in=ids).order_by().values("sku_id").annotate(
+        total=Coalesce(
+            Sum(Case(
+                When(type__in=OUTGOING_MOVEMENT_TYPES, then=-F("quantity")),
+                default=F("quantity"),
+                output_field=QUANTITY_FIELD,
+            )),
+            Value(zero),
+            output_field=QUANTITY_FIELD,
+        )
+    )
+    for row in actual_rows:
+        metrics[row["sku_id"]]["actual_quantity"] = row["total"]
+
+    reservation_rows = InventoryReservation.objects.filter(
+        sku_id__in=ids,
+        order_item__order__status__in=ACTIVE_ORDER_STATUSES,
+    ).order_by().values("sku_id").annotate(
+        total=Coalesce(Sum("quantity"), Value(zero), output_field=QUANTITY_FIELD)
+    )
+    for row in reservation_rows:
+        metrics[row["sku_id"]]["reserved_quantity"] = row["total"]
+
+    received_per_purchase_item = GoodsReceipt.objects.filter(
+        purchase_item_id=OuterRef("pk"),
+        reversal_inventory_movement__isnull=True,
+    ).order_by().values("purchase_item_id").annotate(
+        total=Sum("quantity", output_field=QUANTITY_FIELD)
+    ).values("total")[:1]
+    purchase_rows = PurchaseOrderItem.objects.filter(
+        sku_id__in=ids,
+        purchase_order__status__in=OPEN_PURCHASE_STATUSES,
+    ).order_by().annotate(
+        received_quantity=Coalesce(
+            Subquery(received_per_purchase_item, output_field=QUANTITY_FIELD),
+            Value(zero),
+            output_field=QUANTITY_FIELD,
+        )
+    ).annotate(
+        remaining_quantity=Case(
+            When(quantity__gt=F("received_quantity"), then=F("quantity") - F("received_quantity")),
+            default=Value(zero),
+            output_field=QUANTITY_FIELD,
+        )
+    ).values("sku_id").annotate(
+        total=Coalesce(Sum("remaining_quantity"), Value(zero), output_field=QUANTITY_FIELD)
+    )
+    for row in purchase_rows:
+        metrics[row["sku_id"]]["in_transit_quantity"] = row["total"]
+
+    for values in metrics.values():
+        values["available_quantity"] = values["actual_quantity"] - values["reserved_quantity"]
+    return metrics
 
 
 @transaction.atomic

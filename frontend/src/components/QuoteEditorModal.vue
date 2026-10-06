@@ -94,6 +94,76 @@ const selectedSkuIds = computed({
 })
 const activeSku = computed(() => props.skus.find(sku => String(sku.id) === String(activeSkuId.value)) || props.skus.find(sku => String(sku.id) === selectedSkuIds.value[0]) || null)
 const activeItem = computed(() => draft.items.find(item => String(item.sku) === String(activeSku.value?.id)) || null)
+const availabilityBySku = ref({})
+const availabilityLoading = ref(false)
+const availabilityError = ref(false)
+const availabilityLastRefreshed = ref('')
+let availabilityRequest = 0
+const availabilitySkuSetKey = computed(() => selectedSkuIds.value
+  .map(Number)
+  .filter(id => Number.isSafeInteger(id) && id > 0)
+  .sort((left, right) => left - right)
+  .join(','))
+const quoteDemandBySku = computed(() => {
+  const demand = {}
+  draft.items.forEach(item => {
+    const skuId = Number(item.sku)
+    const quantity = baseQuantity(item)
+    if (!Number.isSafeInteger(skuId) || skuId <= 0 || !Number.isFinite(quantity)) return
+    demand[skuId] = (demand[skuId] || 0) + quantity
+  })
+  return demand
+})
+const inventoryReferenceRows = computed(() => selectedSkuIds.value.map(value => {
+  const skuId = Number(value)
+  const sku = props.skus.find(row => Number(row.id) === skuId)
+  const metrics = availabilityBySku.value[skuId] || null
+  const demand = Number(quoteDemandBySku.value[skuId] || 0)
+  const available = metrics ? Number(metrics.available_quantity) : null
+  return {
+    skuId,
+    sku,
+    metrics,
+    demand,
+    unit: sku?.unit || 'pcs',
+    shortage: metrics ? Math.max(0, demand - available) : null,
+  }
+}))
+function formatInventoryQuantity(value) {
+  return new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 2 }).format(Number(value || 0))
+}
+async function refreshInventoryAvailability() {
+  const skuIds = availabilitySkuSetKey.value ? availabilitySkuSetKey.value.split(',').map(Number) : []
+  const request = ++availabilityRequest
+  if (!skuIds.length) {
+    availabilityBySku.value = {}
+    availabilityLoading.value = false
+    availabilityError.value = false
+    availabilityLastRefreshed.value = ''
+    return
+  }
+
+  availabilityLoading.value = true
+  availabilityError.value = false
+  availabilityBySku.value = {}
+  availabilityLastRefreshed.value = ''
+  try {
+    const response = await api.post('/quotes/availability-preview/', { sku_ids: skuIds })
+    if (request !== availabilityRequest || availabilitySkuSetKey.value !== skuIds.join(',')) return
+    const selectedIds = new Set(skuIds)
+    availabilityBySku.value = Object.fromEntries((response.data?.items || [])
+      .filter(item => selectedIds.has(Number(item.sku)))
+      .map(item => [Number(item.sku), item]))
+    availabilityLastRefreshed.value = new Intl.DateTimeFormat('zh-CN', {
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+    }).format(new Date())
+  } catch {
+    if (request === availabilityRequest && availabilitySkuSetKey.value === skuIds.join(',')) availabilityError.value = true
+  } finally {
+    if (request === availabilityRequest) availabilityLoading.value = false
+  }
+}
+watch(availabilitySkuSetKey, () => { void refreshInventoryAvailability() }, { immediate: true })
 function packagingFor(sku) { return packagingOverrides[sku.id] || sku.packaging || {} }
 const packingProjection = computed(() => {
   const cartons = [], missing = [], warnings = []
@@ -174,7 +244,7 @@ watch(() => JSON.stringify([draft.quote_date, draft.items.map(i => [i.sku, i.qua
   ++salesRequest; salesChecks.value = []; salesCheckError.value = ''; clearTimeout(salesTimer)
   salesTimer = setTimeout(checkSalesRules, 300)
 }, { immediate: true })
-onBeforeUnmount(() => { clearTimeout(salesTimer); ++salesRequest })
+onBeforeUnmount(() => { clearTimeout(salesTimer); ++salesRequest; ++availabilityRequest })
 async function openPreview() {
   errorMessage.value = validate()
   if (errorMessage.value) return
@@ -231,6 +301,18 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) selectCus
           <div class="items-head"><div><strong>产品明细</strong><small>先在上方选择一个或多个 SKU；每个选择都会自动生成一行报价明细。</small></div></div>
           <SkuPickerPanel class="sku-selection-panel" v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus"><template #preview><label>报价描述（可修改）<textarea v-if="activeItem" v-model="activeItem.description" aria-label="已选 SKU 的报价描述" /></label></template></SkuPickerPanel>
           <div v-if="draft.items.length" class="quote-line-items"><div class="quote-line-header"><span>SKU</span><span>Model</span><span>数量</span><span>单价</span><span>产品描述</span><span>小计</span><span></span></div><div v-for="(item,index) in draft.items" :key="index" class="quote-line-row"><span class="quote-sku">{{ skus.find(sku => sku.id === Number(item.sku))?.sku || '—' }}<TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="draft.items.splice(index + 1, 0, { ...item })">增加规格行</button></span><input v-model.trim="item.sales_model_snapshot" aria-label="报价型号" placeholder="可按客户要求修改" /><input v-model="item.quantity" aria-label="数量" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" v-money-input aria-label="单价" type="number" min="0" step="any" required /><input v-model="item.description" aria-label="产品描述" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" aria-label="取消选择该 SKU" @click="draft.items.splice(index, 1)"><MinusCircle :size="17" /></button></div></div><p v-else class="quote-items-empty">请先从上方选择至少一个 SKU。</p>
+          <section v-if="inventoryReferenceRows.length" class="quote-inventory-reference" aria-label="库存参考">
+            <header class="quote-inventory-head"><div><strong>库存参考 · 按 SKU 基础单位</strong><small v-if="availabilityLastRefreshed">最近刷新 {{ availabilityLastRefreshed }}</small></div><button type="button" class="btn btn-secondary" :disabled="availabilityLoading" @click="refreshInventoryAvailability"><RotateCw :size="15" :class="{ spinning: availabilityLoading }" /> {{ availabilityLoading ? '正在刷新…' : '刷新库存' }}</button></header>
+            <p class="quote-inventory-disclaimer">库存数据为当前参考值，报价不会锁定库存。在途数量不计入当前可用量，最终以订单确认时的库存及采购状态为准。</p>
+            <p class="quote-inventory-lead-time">当前报价交期：{{ Number(draft.lead_time_days || 0) }} 天（报价参考）</p>
+            <p v-if="availabilityLoading" class="quote-inventory-state">正在读取库存参考…</p>
+            <p v-else-if="availabilityError" class="quote-inventory-state warning">库存参考暂时无法读取，可继续报价。</p>
+            <div class="quote-inventory-rows"><article v-for="row in inventoryReferenceRows" :key="row.skuId" class="quote-inventory-row">
+              <div class="quote-inventory-row-head"><strong>{{ row.sku?.sku || row.skuId }} · {{ row.sku?.display_name_cn || row.sku?.product_name || 'SKU' }}</strong><span v-if="row.metrics" :class="row.shortage > 0 ? 'shortage' : 'covered'">{{ row.shortage > 0 ? '库存不足' : '库存可覆盖' }}</span><span v-else>暂无库存参考</span></div>
+              <dl v-if="row.metrics"><div><dt>实际</dt><dd>{{ formatInventoryQuantity(row.metrics.actual_quantity) }} {{ row.unit }}</dd></div><div><dt>预留</dt><dd>{{ formatInventoryQuantity(row.metrics.reserved_quantity) }} {{ row.unit }}</dd></div><div><dt>可用</dt><dd>{{ formatInventoryQuantity(row.metrics.available_quantity) }} {{ row.unit }}</dd></div><div><dt>本报价需求</dt><dd>{{ formatInventoryQuantity(row.demand) }} {{ row.unit }}</dd></div><div><dt>在途</dt><dd>{{ formatInventoryQuantity(row.metrics.in_transit_quantity) }} {{ row.unit }}</dd></div></dl>
+              <p v-if="row.metrics && row.shortage > 0" class="quote-inventory-shortage">缺口：{{ formatInventoryQuantity(row.shortage) }} {{ row.unit }}</p>
+            </article></div>
+          </section>
           <section v-if="salesCheckError || salesChecks.some(row => row.rules.length)" class="sales-rule-notices" aria-live="polite"><h4>销售规则校验</h4><p v-if="salesCheckError" class="sales-rule-error">{{ salesCheckError }}</p><div v-for="row in salesChecks.filter(r => r.rules.length)" :key="row.line"><strong>第 {{ row.line }} 行</strong><span v-for="rule in row.rules" :key="rule.id"> · {{ rule.name }}：最低 {{ Number(rule.minimum_quantity) }} {{ rule.unit }}</span><p v-for="message in row.errors" :key="message" class="sales-rule-error">{{ message }}</p></div></section>
           <section v-if="draft.items.length" class="packing-estimate"><div class="packing-head"><div><small>预计装箱单</small><h4>按 SKU 默认包装配置估算</h4></div><button type="button" class="btn btn-secondary" @click="packingOpen = !packingOpen"><Box :size="15" /> {{ packingOpen ? '收起预计装箱单' : '生成预计装箱单' }}</button></div><template v-if="packingOpen"><div v-if="packingProjection.missing.length" class="packing-warning"><AlertTriangle :size="18" /><div><strong>以下 SKU 缺少包装配置，请补充。</strong><p>补充后会保存为该 SKU 的默认包装配置，供后续报价、订单和出货使用。</p><div class="packing-missing-list"><button v-for="sku in packingProjection.missing" :key="sku.id" type="button" @click="openPackaging(sku)"><Settings2 :size="14" /> {{ sku.sku }} · 补充默认包装</button></div></div></div><template v-else><div class="packing-summary"><div><span>预计件数</span><strong>{{ packingProjection.cartons.length }} 箱</strong></div><div><span>产品数量</span><strong>{{ packingProjection.totalPieces }}</strong></div><div><span>总净重</span><strong>{{ packingProjection.totalNet.toFixed(3) }} kg</strong></div><div><span>总重量</span><strong>{{ packingProjection.totalGross.toFixed(3) }} kg</strong></div><div><span>总体积</span><strong>{{ packingProjection.totalCbm.toFixed(4) }} m³</strong></div></div><p v-for="warning in packingProjection.warnings" :key="warning" class="packing-note">{{ warning }}</p><div class="packing-table-wrap"><table><thead><tr><th>SKU</th><th>件数</th><th>包装尺寸 (cm)</th><th>包装重量</th><th>单件体积</th><th>总体积</th></tr></thead><tbody><tr v-for="(carton, index) in packingProjection.cartons" :key="`${carton.sku.id}-${index}`"><td>{{ carton.sku.sku }}<small v-if="carton.partial">尾箱</small></td><td>{{ carton.quantity }}</td><td>{{ carton.length }} × {{ carton.width }} × {{ carton.height }}</td><td>{{ carton.gross.toFixed(3) }} kg</td><td>{{ carton.cbm.toFixed(4) }} m³</td><td>{{ carton.cbm.toFixed(4) }} m³</td></tr></tbody></table></div></template></template></section>
           <div class="totals"><label>运费 <input v-model="draft.shipping_fee" v-money-input type="number" step="any" /></label><label>折扣 <input v-model="draft.discount" v-money-input type="number" step="any" /></label><div><span>合计</span><strong>{{ draft.currency }} {{ money(total) }}</strong></div></div>
@@ -263,4 +345,5 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) selectCus
 
 <style scoped>
 .sales-rule-notices{padding:14px;background:#f2f8f5;border:1px solid #d9e6df;border-radius:8px;margin:12px 0;font-size:13px}.sales-rule-notices h4{margin:0 0 10px}.sales-rule-notices>div{padding:6px 0}.sales-rule-error{color:#b42318}
+.quote-inventory-reference{margin:12px 0 16px;padding:14px;border:1px solid #cfe1d7;border-radius:10px;background:#f8fbf9;color:#35564b}.quote-inventory-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.quote-inventory-head>div{display:grid;gap:3px}.quote-inventory-head>div>strong{font-size:var(--text-body)}.quote-inventory-head small{color:#80938a;font-size:var(--text-caption)}.quote-inventory-head .btn{flex:none;padding:7px 10px;font-size:var(--text-body)}.quote-inventory-disclaimer{margin:9px 0;padding:8px 10px;border-radius:7px;background:#edf5f0;color:#607a6f;font-size:var(--text-caption);line-height:1.5}.quote-inventory-state{margin:8px 0;color:#6b8177;font-size:var(--text-body)}.quote-inventory-state.warning{color:#9a6419}.quote-inventory-rows{display:grid;gap:8px}.quote-inventory-row{padding:10px 11px;border:1px solid #e1ebe5;border-radius:8px;background:#fff}.quote-inventory-row-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.quote-inventory-row-head>strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#2a5144;font-size:var(--text-body)}.quote-inventory-row-head>span{flex:none;color:#71857b;font-size:var(--text-caption)}.quote-inventory-row-head>span.covered{color:#24724f}.quote-inventory-row-head>span.shortage{color:#ad3737}.quote-inventory-row dl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:8px 0 0}.quote-inventory-row dl>div{min-width:0;padding:6px 8px;border-radius:6px;background:#f5f8f6}.quote-inventory-row dt{color:#819087;font-size:var(--text-caption)}.quote-inventory-row dd{margin:3px 0 0;color:#294d41;font-size:var(--text-body);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}.quote-inventory-shortage{margin:8px 0 0;color:#ad3737;font-size:var(--text-body);font-weight:700}@media(max-width:760px){.quote-inventory-row dl{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:480px){.quote-inventory-head{align-items:flex-start;flex-direction:column}.quote-inventory-row dl{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>

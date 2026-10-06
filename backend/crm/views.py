@@ -28,11 +28,11 @@ from .permissions import HSCodeMaintenancePermission, PermissionAdminOnly, Quote
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementReversalInputSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
+from .serializers import AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementReversalInputSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteAvailabilityPreviewInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .serializers import ProcurementDraftInputSerializer
 from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.finance import allocate_advance, approve_contract_change, reject_contract_change, record_contract_payment, record_transaction, void_transaction
-from .services.fulfillment import confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_manual_inventory_movement, reverse_receipt as reverse_receipt_service, reverse_shipment as reverse_shipment_service, sku_metrics
+from .services.fulfillment import bulk_sku_metrics, confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_manual_inventory_movement, reverse_receipt as reverse_receipt_service, reverse_shipment as reverse_shipment_service
 from .services.order_lifecycle import cancel_order, complete_order, confirm_order, start_order_production
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
 from .services.purchase_lifecycle import cancel_purchase_order, place_purchase_order
@@ -1047,14 +1047,47 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             qs = qs.filter(status=self.request.query_params["status"])
         return qs.order_by("-updated_at", "-id")
 
+    @action(detail=False, methods=["post"], url_path="availability-preview")
+    def availability_preview(self, request):
+        serializer = QuoteAvailabilityPreviewInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        sku_ids = list(dict.fromkeys(serializer.validated_data["sku_ids"]))
+        found_ids = set(SKU.objects.filter(pk__in=sku_ids).values_list("pk", flat=True))
+        unknown_ids = [sku_id for sku_id in sku_ids if sku_id not in found_ids]
+        if unknown_ids:
+            return Response(
+                {"sku_ids": [f"未知 SKU ID：{', '.join(str(sku_id) for sku_id in unknown_ids)}"]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        metrics = bulk_sku_metrics(sku_ids)
+        return Response({"items": [
+            {
+                "sku": sku_id,
+                "actual_quantity": f"{metrics[sku_id]['actual_quantity']:.2f}",
+                "reserved_quantity": f"{metrics[sku_id]['reserved_quantity']:.2f}",
+                "available_quantity": f"{metrics[sku_id]['available_quantity']:.2f}",
+                "in_transit_quantity": f"{metrics[sku_id]['in_transit_quantity']:.2f}",
+            }
+            for sku_id in sku_ids
+        ]})
+
     @action(detail=True, methods=["get"])
     def availability(self, request, pk=None):
         quote = self.get_object()
+        items = list(quote.items.select_related("sku").order_by("id"))
+        metrics = bulk_sku_metrics(item.sku_id for item in items)
         return Response({"quote": quote.id, "items": [
-            {"quote_item": item.id, "sku": item.sku_id,
-             "available_quantity": sku_metrics(item.sku)["available_quantity"],
-             "reference_lead_time_days": quote.lead_time_days}
-            for item in quote.items.select_related("sku")
+            {
+                "quote_item": item.id,
+                "sku": item.sku_id,
+                "actual_quantity": f"{metrics[item.sku_id]['actual_quantity']:.2f}",
+                "reserved_quantity": f"{metrics[item.sku_id]['reserved_quantity']:.2f}",
+                "available_quantity": metrics[item.sku_id]["available_quantity"],
+                "in_transit_quantity": f"{metrics[item.sku_id]['in_transit_quantity']:.2f}",
+                "reference_lead_time_days": quote.lead_time_days,
+            }
+            for item in items
         ]})
 
     @action(detail=True, methods=["get", "post"], url_path="packing-plan")

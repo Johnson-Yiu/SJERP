@@ -13,6 +13,7 @@ from crm.models import (
     InventoryMovement,
     InventoryReservation,
     Order,
+    PaymentPlan,
     Product,
     ProductCategory,
     PurchaseOrder,
@@ -506,6 +507,142 @@ class FulfillmentApiTests(TestCase):
         self.assertEqual(repeated.status_code, status.HTTP_400_BAD_REQUEST, repeated.data)
         self.assertEqual(Shipment.objects.filter(order=order, status="confirmed").count(), 2)
         self.assertEqual(InventoryMovement.objects.filter(order=order, type="sale_out", source_type="shipment").aggregate(total=Sum("quantity"))["total"], Decimal("20.00"))
+
+    def test_one_api_batch_ships_multiple_skus_with_full_and_partial_lines(self):
+        sku_b = SKU.objects.create(product=self.sku.product, sku="SKU-BATCH-B")
+        order = Order.objects.create(order_no="SO-BATCH-PARTIAL", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="confirmed")
+        line_a = order.items.create(sku=self.sku, quantity="2", unit_price="5")
+        line_b = order.items.create(sku=sku_b, quantity="3", unit_price="7")
+        InventoryMovement.objects.create(movement_no="IN-BATCH-A", movement_date=date(2026, 8, 21), type="purchase_in", sku=self.sku, quantity="2")
+        InventoryMovement.objects.create(movement_no="IN-BATCH-B", movement_date=date(2026, 8, 21), type="purchase_in", sku=sku_b, quantity="3")
+        allocate_order(order)
+
+        response = self.client.post(f"/api/orders/{order.id}/ship/", {
+            "shipment_date": "2026-08-21",
+            "items": [
+                {"order_item": line_a.id, "quantity": "2"},
+                {"order_item": line_b.id, "quantity": "1.25"},
+            ],
+        }, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        shipments = Shipment.objects.filter(order=order, status="confirmed")
+        self.assertEqual(shipments.count(), 1)
+        shipment = shipments.get()
+        shipment_items = list(ShipmentItem.objects.filter(shipment=shipment).order_by("pk"))
+        self.assertEqual({row.order_item_id for row in shipment_items}, {line_a.id, line_b.id})
+        self.assertEqual(len(shipment_items), 2)
+        movements = list(InventoryMovement.objects.filter(order=order, source_type="shipment", type="sale_out"))
+        self.assertEqual(len(movements), 2)
+        self.assertEqual({movement.source_no for movement in movements}, {shipment.shipment_no})
+        line_a.refresh_from_db()
+        line_b.refresh_from_db()
+        self.assertEqual(order_item_metrics(line_a)["unshipped_quantity"], Decimal("0.00"))
+        self.assertEqual(order_item_metrics(line_b)["unshipped_quantity"], Decimal("1.75"))
+
+    def test_multi_line_batch_stock_failure_rolls_back_earlier_line_and_reservation(self):
+        sku_b = SKU.objects.create(product=self.sku.product, sku="SKU-BATCH-EMPTY")
+        order = Order.objects.create(order_no="SO-BATCH-ATOMIC", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="production")
+        line_a = order.items.create(sku=self.sku, quantity="2", unit_price="5")
+        line_b = order.items.create(sku=sku_b, quantity="1", unit_price="7")
+        InventoryMovement.objects.create(movement_no="IN-BATCH-ATOMIC", movement_date=date(2026, 8, 21), type="purchase_in", sku=self.sku, quantity="2")
+        reservation = InventoryReservation.objects.create(order_item=line_a, sku=self.sku, quantity="2")
+        before_sale_out = InventoryMovement.objects.filter(type="sale_out").count()
+
+        response = self.client.post(f"/api/orders/{order.id}/ship/", {
+            "shipment_date": "2026-08-21",
+            "items": [
+                {"order_item": line_a.id, "quantity": "1"},
+                {"order_item": line_b.id, "quantity": "1"},
+            ],
+        }, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.data["detail"], "库存不足，不能确认发货。")
+        self.assertFalse(Shipment.objects.filter(order=order).exists())
+        self.assertFalse(ShipmentItem.objects.filter(order_item__order=order).exists())
+        self.assertEqual(InventoryMovement.objects.filter(type="sale_out").count(), before_sale_out)
+        self.assertEqual(InventoryReservation.objects.get(pk=reservation.pk).quantity, Decimal("2.00"))
+        line_a.refresh_from_db()
+        self.assertEqual(order_item_metrics(line_a)["unshipped_quantity"], Decimal("2.00"))
+
+    def test_batch_rejects_duplicate_and_foreign_order_item_ids(self):
+        order = Order.objects.create(order_no="SO-BATCH-IDS", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="confirmed")
+        line = order.items.create(sku=self.sku, quantity="2", unit_price="5")
+        other_order = Order.objects.create(order_no="SO-BATCH-OTHER", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="confirmed")
+        foreign_line = other_order.items.create(sku=self.sku, quantity="2", unit_price="5")
+
+        duplicate = self.client.post(f"/api/orders/{order.id}/ship/", {
+            "shipment_date": "2026-08-21", "items": [
+                {"order_item": line.id, "quantity": "1"}, {"order_item": line.id, "quantity": "1"},
+            ],
+        }, format="json")
+        foreign = self.client.post(f"/api/orders/{order.id}/ship/", {
+            "shipment_date": "2026-08-21", "items": [{"order_item": foreign_line.id, "quantity": "1"}],
+        }, format="json")
+
+        self.assertEqual(duplicate.status_code, status.HTTP_400_BAD_REQUEST, duplicate.data)
+        self.assertEqual(foreign.status_code, status.HTTP_400_BAD_REQUEST, foreign.data)
+        self.assertFalse(Shipment.objects.filter(order=order).exists())
+
+    def test_mixed_normal_and_customer_addon_lines_create_receivable_only_for_overage(self):
+        sku_b = SKU.objects.create(product=self.sku.product, sku="SKU-BATCH-ADDON")
+        order = Order.objects.create(order_no="SO-BATCH-ADDON", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="confirmed", currency="USD")
+        normal = order.items.create(sku=self.sku, quantity="2", unit_price="5")
+        addon = order.items.create(sku=sku_b, quantity="1", unit_price="8")
+        InventoryMovement.objects.create(movement_no="IN-BATCH-ADDON-A", movement_date=date(2026, 8, 21), type="purchase_in", sku=self.sku, quantity="2")
+        InventoryMovement.objects.create(movement_no="IN-BATCH-ADDON-B", movement_date=date(2026, 8, 21), type="purchase_in", sku=sku_b, quantity="2")
+
+        response = self.client.post(f"/api/orders/{order.id}/ship/", {
+            "shipment_date": "2026-08-21",
+            "items": [
+                {"order_item": normal.id, "quantity": "2"},
+                {"order_item": addon.id, "quantity": "2", "overage_reason": "customer_addon"},
+            ],
+        }, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        shipment = Shipment.objects.get(order=order)
+        normal_item = ShipmentItem.objects.get(shipment=shipment, order_item=normal)
+        overage_item = ShipmentItem.objects.get(shipment=shipment, is_overage=True)
+        self.assertFalse(normal_item.is_overage)
+        self.assertEqual(overage_item.source_order_item_id, addon.id)
+        self.assertEqual(overage_item.overage_reason, "customer_addon")
+        self.assertEqual(ShipmentItem.objects.filter(shipment=shipment).count(), 3)
+        plans = PaymentPlan.objects.filter(order=order, direction="receivable")
+        self.assertEqual(plans.count(), 1)
+        self.assertEqual(plans.get().planned_amount, Decimal("8.00"))
+        self.assertEqual(overage_item.generated_payment_plan_id, plans.get().id)
+
+    def test_multi_sku_batch_reversal_restores_all_movements_and_reservations(self):
+        sku_b = SKU.objects.create(product=self.sku.product, sku="SKU-BATCH-REVERSE")
+        order = Order.objects.create(order_no="SO-BATCH-REVERSE", customer=Customer.objects.get(code="C-API"), order_date=date(2026, 8, 21), status="confirmed")
+        line_a = order.items.create(sku=self.sku, quantity="2", unit_price="5")
+        line_b = order.items.create(sku=sku_b, quantity="3", unit_price="7")
+        InventoryMovement.objects.create(movement_no="IN-BATCH-REV-A", movement_date=date(2026, 8, 21), type="purchase_in", sku=self.sku, quantity="2")
+        InventoryMovement.objects.create(movement_no="IN-BATCH-REV-B", movement_date=date(2026, 8, 21), type="purchase_in", sku=sku_b, quantity="3")
+        allocate_order(order)
+        shipment_response = self.client.post(f"/api/orders/{order.id}/ship/", {
+            "shipment_date": "2026-08-21", "items": [
+                {"order_item": line_a.id, "quantity": "2"}, {"order_item": line_b.id, "quantity": "3"},
+            ],
+        }, format="json")
+        self.assertEqual(shipment_response.status_code, status.HTTP_201_CREATED, shipment_response.data)
+        shipment = Shipment.objects.get(order=order)
+
+        reversal = self.client.post(f"/api/shipments/{shipment.id}/reverse/", {"reason": "PCR-006 API batch reversal"}, format="json")
+
+        self.assertEqual(reversal.status_code, status.HTTP_200_OK, reversal.data)
+        shipment.refresh_from_db()
+        order.refresh_from_db()
+        self.assertEqual(shipment.status, "cancelled")
+        self.assertEqual(order.status, "confirmed")
+        self.assertEqual(ShipmentItem.objects.filter(shipment=shipment).count(), 2)
+        for line, sku in ((line_a, self.sku), (line_b, sku_b)):
+            line.refresh_from_db()
+            self.assertEqual(order_item_metrics(line)["unshipped_quantity"], line.quantity)
+            self.assertEqual(InventoryReservation.objects.filter(order_item=line).aggregate(total=Sum("quantity"))["total"], line.quantity)
+            self.assertEqual(InventoryMovement.objects.filter(source_type="reversal", source_no=shipment.shipment_no, sku=sku, type="adjust_in").aggregate(total=Sum("quantity"))["total"], line.quantity)
 
     def test_reserved_order_with_inventory_exactly_equal_to_reservation_can_ship_all(self):
         sku = SKU.objects.create(product=self.sku.product, sku="SKU-SHIP-EXACT-API")

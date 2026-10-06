@@ -23,14 +23,17 @@ test('order workbench exposes shipment history and reversal flow', async () => {
   assert.match(source, /shipmentReversalReason/)
 })
 
-test('over-shipment requires an explicit warning before submitting', async () => {
+test('batch over-shipment requires a line-specific reason and one explicit batch warning before submitting', async () => {
   const source = await readFile(componentUrl, 'utf8')
   const submitSection = source.slice(source.indexOf('async function submitShipment()'), source.indexOf('function openShipmentReversal'))
 
-  assert.match(submitSection, /baseQuantity\(shipmentForm\.value\) > Number\(shipmentTarget\.value\.unshipped_quantity\)/)
-  assert.match(submitSection, /本次发货超过订单待发数量，将生成超发\/增补记录。该发货单确认后可通过冲销安全撤回。确认继续吗？/)
+  assert.match(submitSection, /baseQuantity\(line\) > Number\(line\.unshipped_quantity\)/)
+  assert.match(submitSection, /每条超发明细都必须分别选择超发原因。/)
+  assert.match(submitSection, /message: shipmentOverageSummary\(overageShipmentLines\.value\)/)
+  assert.match(submitSection, /overage_reason: baseQuantity\(line\) > Number\(line\.unshipped_quantity\) \? line\.overage_reason : ''/)
   assert.match(submitSection, /confirmDialog/)
-  assert.match(submitSection, /\) return\s+shipmentSaving\.value = true/)
+  assert.match(submitSection, /shipmentSaving\.value = true/)
+  assert.match(submitSection, /catch \(err\) \{ shipmentError\.value = shipmentErrorMessage\(err\) \}/)
   assert.match(submitSection, /api\.post\(`\/orders\/\$\{props\.id\}\/ship\//)
 })
 

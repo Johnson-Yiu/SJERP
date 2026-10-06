@@ -117,9 +117,20 @@ not modified. All actual packing records created by this UAT were cleaned up.
 
 ## CI and status
 
-Live UAT: **PASS**. Final GitHub Actions verification is pending the normal
-commit/push. PCR-007 is not closed until the final required backend,
-backend-postgres and frontend jobs all succeed.
+Live UAT: **PASS**. Implementation and UAT evidence commit:
+`588dc374efa0d1792cdd8a5fbc068f4afa3bf15d`.
+GitHub Actions [CI #149](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37497213075)
+completed successfully for that exact commit:
+
+| Job | Conclusion |
+|---|---|
+| backend | SUCCESS |
+| backend-postgres | SUCCESS |
+| frontend | SUCCESS |
+
+PCR-007: **PASS / CLOSED** after mandatory UAT and all three CI jobs passed.
+The documentation follow-up's final-HEAD Actions run is independently verified
+and reported in the delivery record.
 
 Remaining limitation: formal Packing List PDF/Excel export is not implemented.
 No invoices, labels, barcodes, carriers, picking or container-loading features

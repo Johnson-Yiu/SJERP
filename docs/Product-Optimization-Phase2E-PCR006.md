@@ -277,7 +277,13 @@ Final Inventory UI values were actual/reserved/available/in-transit/to-purchase
 Shipment, and reversals remain visible. No production code, schema, business
 logic, test fixture, or migration was changed; this completion is a
 documentation-only repository change. The live UAT gates and cleanup are
-complete. Final PCR-006 closure is contingent on the pushed documentation
-HEAD's GitHub Actions run completing with `backend`, `backend-postgres`, and
-`frontend` all successful; that run number and conclusions will be recorded
-after verification.
+complete. GitHub Actions **run #145** for the UAT evidence commit
+`36de593164dba339cde445ff144ca0a73eeea8b2` completed successfully:
+
+- `backend`: success
+- `backend-postgres`: success
+- `frontend`: success
+
+The live acceptance and cleanup gates are **PASS**. The follow-up commit that
+records these CI results is documentation-only; its own Actions run is checked
+separately before the final repository status is reported.

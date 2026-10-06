@@ -28,7 +28,7 @@ class QuoteAvailabilityTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.customer = Customer.objects.create(code="C-QUOTE-AVAIL", name="Quote Availability Buyer", country="Canada")
-        self.supplier = Supplier.objects.create(code="S-QUOTE-AVAIL", name="Quote Availability Supplier")
+        self.supplier = Supplier.objects.create(code="QV", name="Quote Availability Supplier")
         self.product = Product.objects.create(code="P-QUOTE-AVAIL", name="Quote Availability Light")
         self.sku = SKU.objects.create(product=self.product, sku="SKU-QUOTE-AVAIL-1", unit="pcs")
         self.sku2 = SKU.objects.create(product=self.product, sku="SKU-QUOTE-AVAIL-2", unit="pcs")

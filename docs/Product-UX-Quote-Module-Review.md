@@ -65,7 +65,16 @@ Module 1 客户精确工作台 RouterLink、普通历史 push 与浏览器 Back 
 
 ## CI 与评审状态
 
-实现提交 CI 待推送后核对记录。包含 CI 记录的最终文档提交也必须独立核对其 HEAD 的三个作业。
+实现提交：`fbf78a16e8023e09ef2938e9ebdfc2635ab09e32`。
+已独立读取 [CI #155](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37507361222)，最终 headSha 与实现提交一致。
+
+| 作业 | 结论 |
+| --- | --- |
+| backend | SUCCESS |
+| backend-postgres | SUCCESS |
+| frontend | SUCCESS |
+
+包含本 CI 记录的最终文档提交也必须独立核对其 HEAD 的三个作业。
 最终 SHA、最终工作流号与三个结论记录在最终交付报告；不提前声称未完成的 CI 通过。
 独立 ChatGPT 评审尚未收到，当前不宣布 UX-FROZEN。
 正常 commit/push，不 force push、reset 或远程历史 rebase；非快进即停止。

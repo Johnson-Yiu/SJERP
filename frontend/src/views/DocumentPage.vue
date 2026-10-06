@@ -33,7 +33,9 @@ const copy = computed(() => isOrder.value ? {
 
 const rows = ref([]), customers = ref([]), skus = ref([]), quotes = ref([])
 const loading = ref(true), saving = ref(false), open = ref(false), editingId = ref(null), query = ref('')
-const quoteStatusFilter = ref(''), quoteCustomerFilter = ref(''), quoteSort = ref('-updated_at')
+const quoteStatusFilter = computed(() => typeof route.query.status === 'string' ? route.query.status : '')
+const quoteCustomerFilter = computed(() => typeof route.query.customer === 'string' ? route.query.customer : '')
+const quoteSort = computed(() => typeof route.query.ordering === 'string' ? route.query.ordering : '-updated_at')
 const orderStatusFilter = computed(() => typeof route.query.status === 'string' ? route.query.status : '')
 const orderTodoFilter = computed(() => typeof route.query.todo === 'string' ? route.query.todo : '')
 const hasSkuContext = computed(() => isOrder.value && Boolean(skuContextId(route.query.sku)))
@@ -73,9 +75,20 @@ async function load() {
     expandedQuoteNodes.value = new Set([...expandedQuoteNodes.value].filter(id => visibleQuoteIds.has(id)))
   } catch (e) { notify(e.message, true) } finally { loading.value = false }
 }
+let customerOptionsPromise
+function loadCustomerOptions() {
+  if (!customerOptionsPromise) customerOptionsPromise = listAll('/customers/').then(result => {
+    customers.value = result
+    return result
+  }).catch(error => { customerOptionsPromise = null; throw error })
+  return customerOptionsPromise
+}
+function loadQuoteCustomerOptions() {
+  if (!isOrder.value) void loadCustomerOptions().catch(e => notify(e.message, true))
+}
 async function loadOptions() {
   try {
-    const calls = [listAll('/customers/'), listAll('/skus/')]
+    const calls = [loadCustomerOptions(), listAll('/skus/')]
     if (isOrder.value) calls.push(listAll('/quotes/'))
     const result = await Promise.all(calls); customers.value = result[0]; skus.value = result[1]; if (result[2]) quotes.value = result[2]
   } catch (e) { notify(e.message, true) }
@@ -243,13 +256,7 @@ async function closeDocumentDetail() {
 }
 function openDetail(row) { void router.push(withDocumentDetailQuery(route, row.id)) }
 function clearSkuFilter() { void router.push(withoutSkuContext(route)) }
-function activateQuoteTreeRow(row) {
-  if (row.isRoot) {
-    if (row.hasChildren) toggleQuoteNode(row.id)
-    return
-  }
-  openDetail(row)
-}
+function activateQuoteTreeRow(row) { openDetail(row) }
 function toggleQuoteNode(quoteId) {
   const next = new Set(expandedQuoteNodes.value)
   next.has(quoteId) ? next.delete(quoteId) : next.add(quoteId)
@@ -276,29 +283,34 @@ const quoteTreeRows = computed(() => {
   roots.forEach(root => visit(root))
   return output
 })
-const quoteCustomers = computed(() => [...new Map(rows.value.map(row => [row.customer, { id: row.customer, name: row.customer_name }])).values()].sort((a, b) => a.name.localeCompare(b.name)))
-const quoteMetrics = computed(() => {
-  const rootQuotes = rows.value.filter(row => !row.parent_quote)
-  const accepted = rows.value.filter(row => row.status === 'accepted')
-  return {
-    total: rootQuotes.length,
-    pending: rows.value.filter(row => ['draft', 'sent'].includes(row.status)).length,
-    accepted: accepted.length,
-    acceptedAmount: accepted.reduce((sum, row) => sum + Number(row.total_amount || 0), 0),
-  }
-})
+const quoteCustomers = computed(() => [...customers.value].sort((a, b) => a.name.localeCompare(b.name)))
+const quoteMetrics = computed(() => ({
+  projects: rows.value.filter(row => !row.parent_quote).length,
+  versions: rows.value.length,
+  pending: rows.value.filter(row => ['draft', 'sent'].includes(row.status)).length,
+  accepted: rows.value.filter(row => row.status === 'accepted').length,
+}))
 const orderMetrics = computed(() => [
   { label: '订单总数', value: rows.value.length, hint: '当前筛选范围' },
   { label: '执行中', value: rows.value.filter(row => ['confirmed', 'production', 'shipped'].includes(row.status)).length, hint: '已确认、生产中或已发货' },
   { label: '已完成', value: rows.value.filter(row => row.status === 'completed').length, hint: '已完成交付的订单' },
   { label: '待收款订单', value: rows.value.filter(row => Number(row.balance_amount || 0) > 0).length, hint: '有有效应收计划且仍有待结余额的订单' },
 ])
+function setQuoteFilter(key, value) {
+  const next = { ...route.query }
+  if (value) next[key] = value
+  else delete next[key]
+  void router.push({ path: route.path, query: next, hash: route.hash })
+}
 function resetQuoteFilters() {
+  const hadSearch = Boolean(query.value)
   query.value = ''
-  quoteStatusFilter.value = ''
-  quoteCustomerFilter.value = ''
-  quoteSort.value = '-updated_at'
-  load()
+  const { status, customer, ordering, ...next } = route.query
+  if (routeDataQuerySignature(next) === routeDataQuerySignature(route.query)) {
+    if (hadSearch) void load()
+    return
+  }
+  void router.push({ path: route.path, query: next, hash: route.hash })
 }
 function reviseFromDetail(row) { if (row) edit(row, { closeDetail: false }) }
 async function openOrderDraft(sourceQuote) {
@@ -330,7 +342,7 @@ async function handleOrderEdit() {
   if (isOrder.value) await editRelatedOrder()
   else notify('请前往订单管理编辑订单。')
 }
-watch(() => props.type, load)
+watch(() => props.type, () => { load(); loadQuoteCustomerOptions() })
 watch(() => routeDataQuerySignature(route.query), load)
 watch([() => props.type, () => route.query.detail], syncDetailFromRoute, { immediate: true })
 watch([() => props.type, () => route.query.create, () => route.query.edit, routeCreatePrefillSignature], (current, previous) => {
@@ -338,7 +350,7 @@ watch([() => props.type, () => route.query.create, () => route.query.edit, route
   if (prefillOnlyChanged && route.query.create !== '1') return
   void syncModalFromRoute()
 }, { immediate: true })
-onMounted(load)
+onMounted(() => { load(); loadQuoteCustomerOptions() })
 </script>
 
 <template>
@@ -346,8 +358,8 @@ onMounted(load)
     <div class="page-head"><div><h2>{{ copy.title }}</h2><p>{{ copy.description }}</p></div><button class="btn btn-primary" @click="create"><Plus :size="16" /> 新建{{ isOrder ? '订单' : '报价' }}</button></div>
     <SummaryCards v-if="isOrder" :items="orderMetrics" />
     <SkuContextBanner v-if="hasSkuContext" :label="activeSkuContextLabel" @clear="clearSkuFilter" />
-    <section v-if="!isOrder" class="quote-metrics" aria-label="报价汇总"><article><span>总报价数</span><strong>{{ quoteMetrics.total }}</strong><i class="metric-icon mint"><FileText :size="19" /></i><small>原始报价单数</small></article><article><span>待跟进</span><strong>{{ quoteMetrics.pending }}</strong><i class="metric-icon amber"><Clock3 :size="19" /></i><small>草稿与已发送报价</small></article><article><span>已接受</span><strong>{{ quoteMetrics.accepted }}</strong><i class="metric-icon green"><CircleCheck :size="19" /></i><small>当前筛选结果</small></article><article><span>已接受金额</span><strong>USD {{ money(quoteMetrics.acceptedAmount) }}</strong><i class="metric-icon blue"><CircleDollarSign :size="19" /></i><small>按报价金额汇总</small></article></section>
-    <div class="toolbar" :class="{ 'quote-toolbar': !isOrder }"><div class="search-box"><Search :size="17" /><input v-model="query" :placeholder="`搜索${copy.noLabel}或客户...`" @input="delayed" /></div><template v-if="isOrder"><select :value="orderStatusFilter" aria-label="按订单状态筛选" @change="setOrderFilter('status', $event.target.value)"><option value="">全部状态</option><option value="draft">草稿</option><option value="confirmed">已确认</option><option value="production">生产中</option><option value="shipped">已发货</option><option value="completed">已完成</option><option value="cancelled">已取消</option></select><select :value="orderTodoFilter" aria-label="按订单待办筛选" @change="setOrderFilter('todo', $event.target.value)"><option value="">全部待办</option><option value="unshipped">待出库</option><option value="due">交期已到</option></select><button type="button" class="filter-reset" @click="resetOrderFilters"><RotateCcw :size="15" /> 重置</button></template><template v-else><select v-model="quoteStatusFilter" aria-label="按报价状态筛选" @change="load"><option value="">全部状态</option><option value="draft">草稿</option><option value="sent">已发送</option><option value="accepted">已接受</option><option value="rejected">已拒绝</option><option value="expired">已过期</option></select><select v-model="quoteCustomerFilter" aria-label="按客户筛选" @change="load"><option value="">全部客户</option><option v-for="customer in quoteCustomers" :key="customer.id" :value="customer.id">{{ customer.name }}</option></select><select v-model="quoteSort" aria-label="报价排序" @change="load"><option value="-updated_at">最近更新时间</option><option value="updated_at">最早更新时间</option><option value="-quote_date">报价日期（新到旧）</option><option value="quote_date">报价日期（旧到新）</option></select><button type="button" class="filter-reset" @click="resetQuoteFilters"><RotateCcw :size="15" /> 重置</button></template></div>
+    <section v-if="!isOrder" class="quote-metrics" aria-label="报价汇总"><article><span>报价项目</span><strong>{{ quoteMetrics.projects }}</strong><i class="metric-icon mint"><FolderOpen :size="19" /></i><small>原始报价链数量</small></article><article><span>报价版本</span><strong>{{ quoteMetrics.versions }}</strong><i class="metric-icon blue"><FileText :size="19" /></i><small>包含原始报价与修订版</small></article><article><span>进行中</span><strong>{{ quoteMetrics.pending }}</strong><i class="metric-icon amber"><Clock3 :size="19" /></i><small>草稿与已发送</small></article><article><span>已接受</span><strong>{{ quoteMetrics.accepted }}</strong><i class="metric-icon green"><CircleCheck :size="19" /></i><small>已接受的报价版本</small></article></section>
+    <div class="toolbar" :class="{ 'quote-toolbar': !isOrder }"><div class="search-box"><Search :size="17" /><input v-model="query" :placeholder="`搜索${copy.noLabel}或客户...`" @input="delayed" /></div><template v-if="isOrder"><select :value="orderStatusFilter" aria-label="按订单状态筛选" @change="setOrderFilter('status', $event.target.value)"><option value="">全部状态</option><option value="draft">草稿</option><option value="confirmed">已确认</option><option value="production">生产中</option><option value="shipped">已发货</option><option value="completed">已完成</option><option value="cancelled">已取消</option></select><select :value="orderTodoFilter" aria-label="按订单待办筛选" @change="setOrderFilter('todo', $event.target.value)"><option value="">全部待办</option><option value="unshipped">待出库</option><option value="due">交期已到</option></select><button type="button" class="filter-reset" @click="resetOrderFilters"><RotateCcw :size="15" /> 重置</button></template><template v-else><select :value="quoteStatusFilter" aria-label="按报价状态筛选" @change="setQuoteFilter('status', $event.target.value)"><option value="">全部状态</option><option value="draft">草稿</option><option value="sent">已发送</option><option value="accepted">已接受</option><option value="rejected">已拒绝</option><option value="expired">已过期</option></select><select :value="quoteCustomerFilter" aria-label="按客户筛选" @change="setQuoteFilter('customer', $event.target.value)"><option value="">全部客户</option><option v-for="customer in quoteCustomers" :key="customer.id" :value="customer.id">{{ customer.name }}</option></select><select :value="quoteSort" aria-label="报价排序" @change="setQuoteFilter('ordering', $event.target.value)"><option value="-updated_at">最近更新时间</option><option value="updated_at">最早更新时间</option><option value="-quote_date">报价日期（新到旧）</option><option value="quote_date">报价日期（旧到新）</option></select><button type="button" class="filter-reset" @click="resetQuoteFilters"><RotateCcw :size="15" /> 重置</button></template></div>
     <div class="panel">
       <div v-if="loading" class="loading"><div class="spinner" /></div>
       <div v-else-if="!rows.length" class="empty"><FileX2 :size="32" /><h3>还没有{{ isOrder ? '订单' : '报价' }}</h3><p>创建第一张业务单据，产品和客户数据会自动关联。</p></div>
@@ -355,7 +367,7 @@ onMounted(load)
         <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row)" @keydown.enter="openDetail(row)"><td class="primary-cell">{{ row[copy.no] }}</td><td>{{ row.customer_name }}</td><td>{{ documentTimestamp(row) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><template v-if="row.status === 'draft'"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">尚未生效</span></template><template v-else-if="row.status === 'cancelled'"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">已取消</span></template><template v-else><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></template></td><td><div class="table-actions"><button v-if="row.status === 'draft'" class="mini-btn" :aria-label="`编辑 ${row[copy.no]}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button v-if="row.status === 'draft'" class="mini-btn" :aria-label="`删除 ${row[copy.no]}`" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
       </table></div>
       <div v-else class="table-wrap"><table class="data-table quote-table"><thead><tr><th>报价单 / 层级</th><th>客户</th><th>更新时间</th><th>状态</th><th>明细</th><th>金额</th><th style="text-align:right">操作</th></tr></thead>
-        <tbody><tr v-for="row in quoteTreeRows" :key="row.id" class="clickable-row quote-tree-row" :class="{ 'quote-root-row': row.isRoot, 'quote-child-row': !row.isRoot }" tabindex="0" @click="activateQuoteTreeRow(row)" @keydown.enter="activateQuoteTreeRow(row)"><td class="primary-cell"><div class="quote-tree-cell" :style="{ '--tree-depth': row.depth }"><span class="tree-indent" /><button v-if="row.hasChildren" class="quote-expand" :aria-label="`${expandedQuoteNodes.has(row.id) ? '收起' : '展开'} ${row.quote_no} 的修订报价`" @click.stop="toggleQuoteNode(row.id)"><ChevronDown v-if="expandedQuoteNodes.has(row.id)" :size="16" /><ChevronRight v-else :size="16" /></button><span v-else class="quote-expand-placeholder" /><span v-if="!row.isRoot" class="tree-branch" /><component :is="row.isRoot ? FolderOpen : row.depth > 1 ? FilePenLine : FileText" :size="18" class="quote-tree-icon" :class="row.isRoot ? 'root-icon' : 'revision-icon'" /><span class="quote-tree-copy"><strong>{{ row.quote_no }}</strong><small>{{ row.isRoot ? '原始报价' : (row.revision_summary || `基于 ${row.parent_quote_no} 修订`) }}</small></span></div></td><td>{{ row.customer_name }}</td><td>{{ documentTimestamp(row) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><div class="table-actions"><button class="mini-btn" :aria-label="`查看 ${row.quote_no}`" @click.stop="openDetail(row)"><Eye :size="14" /></button><button class="mini-btn" :aria-label="`创建修订版 ${row.quote_no}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button class="mini-btn" :aria-label="`导出 ${row.quote_no}`" @click.stop="exportQuote(row)"><Download :size="14" /></button></div></td></tr></tbody>
+        <tbody><tr v-for="row in quoteTreeRows" :key="row.id" class="clickable-row quote-tree-row" :class="{ 'quote-root-row': row.isRoot, 'quote-child-row': !row.isRoot }" tabindex="0" @click="activateQuoteTreeRow(row)" @keydown.enter="activateQuoteTreeRow(row)"><td class="primary-cell"><div class="quote-tree-cell" :style="{ '--tree-depth': row.depth }"><span class="tree-indent" /><button v-if="row.hasChildren" class="quote-expand" :aria-label="`${expandedQuoteNodes.has(row.id) ? '收起' : '展开'} ${row.quote_no} 的修订报价`" @click.stop="toggleQuoteNode(row.id)" @keydown.enter.stop><ChevronDown v-if="expandedQuoteNodes.has(row.id)" :size="16" /><ChevronRight v-else :size="16" /></button><span v-else class="quote-expand-placeholder" /><span v-if="!row.isRoot" class="tree-branch" /><component :is="row.isRoot ? FolderOpen : row.depth > 1 ? FilePenLine : FileText" :size="18" class="quote-tree-icon" :class="row.isRoot ? 'root-icon' : 'revision-icon'" /><span class="quote-tree-copy"><strong>{{ row.quote_no }}</strong><small>{{ row.isRoot ? '原始报价' : (row.revision_summary || `基于 ${row.parent_quote_no} 修订`) }}</small></span></div></td><td>{{ row.customer_name }}</td><td>{{ documentTimestamp(row) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><div class="table-actions"><button class="mini-btn" :aria-label="`查看 ${row.quote_no}`" @click.stop="openDetail(row)"><Eye :size="14" /></button><button class="mini-btn" :aria-label="`创建修订版 ${row.quote_no}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button class="mini-btn" :aria-label="`导出 ${row.quote_no}`" @click.stop="exportQuote(row)"><Download :size="14" /></button></div></td></tr></tbody>
       </table></div>
     </div>
 

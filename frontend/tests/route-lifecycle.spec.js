@@ -684,11 +684,12 @@ describe('sales document list filters', () => {
     await wrapper.find('select[aria-label="按报价状态筛选"]').setValue('accepted')
     await flushPromises()
     await wrapper.find('select[aria-label="按客户筛选"]').setValue('6')
+    await flushPromises()
     await wrapper.find('select[aria-label="报价排序"]').setValue('quote_date')
     await flushPromises()
 
     expect(mocks.listAll.mock.calls.filter(([url]) => url === '/quotes/').at(-1)[1].params).toMatchObject({
-      search: 'QT-2026', status: 'accepted', customer: 6, ordering: 'quote_date',
+      search: 'QT-2026', status: 'accepted', customer: '6', ordering: 'quote_date',
     })
     expect(wrapper.findAll('.quote-tree-row .quote-tree-copy strong').map(node => node.text())).toEqual(['QT-2026-00010'])
     await wrapper.find('button.filter-reset').trigger('click')

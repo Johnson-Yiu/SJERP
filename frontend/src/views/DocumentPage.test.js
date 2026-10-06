@@ -33,18 +33,17 @@ test('quote list provides summary metrics, filters, and newest-first sorting', a
   const source = await readFile(componentUrl, 'utf8')
 
   assert.match(source, /const quoteMetrics = computed/)
-  assert.match(source, /quoteStatusFilter = ref\(''\)/)
-  assert.match(source, /quoteSort = ref\('-updated_at'\)/)
+  assert.match(source, /quoteStatusFilter = computed/)
+  assert.match(source, /quoteSort = computed/)
   assert.match(source, /ordering: quoteSort\.value/)
   assert.match(source, /status: quoteStatusFilter\.value/)
 })
 
-test('clicking a root quote only expands revisions and never opens quote details', async () => {
+test('every quote row opens detail and dedicated expansion stops propagation', async () => {
   const source = await readFile(componentUrl, 'utf8')
-
-  assert.match(source, /function activateQuoteTreeRow\(row\)/)
-  assert.match(source, /if \(row\.isRoot\) \{\s*if \(row\.hasChildren\) toggleQuoteNode\(row\.id\)\s*return/s)
-  assert.match(source, /\}\s*openDetail\(row\)/s)
+  assert.match(source, /function activateQuoteTreeRow\(row\) \{ openDetail\(row\) \}/)
+  assert.match(source, /@click\.stop="toggleQuoteNode\(row.id\)"/)
+  assert.doesNotMatch(source, /acceptedAmount|已接受金额/)
 })
 
 test('orders reuse the compact summary cards used by the quotation desk', async () => {

@@ -1,14 +1,20 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { api, listAll } from '../api'
 import SummaryCards from '../components/SummaryCards.vue'
 import { formatMoney } from '../utils/money'
 import { orderDetailLocation, purchaseDetailLocation } from '../utils/detailNavigation'
 
 const props = defineProps({ direction: { type: String, required: true } })
+const route = useRoute()
+const router = useRouter()
 const rows = ref([]), loading = ref(false), error = ref(''), selected = ref(null)
 const saving = ref(false)
 const editing = ref(null), editForm = reactive({ due_date: '', planned_amount: '', notes: '' })
+const contextOrder = ref(null), contextLoading = ref(false), contextError = ref('')
+let contextRequestVersion = 0
+let listRequestVersion = 0
 function openEdit(row) {
   editing.value = row; error.value = ''
   Object.assign(editForm, { due_date: row.due_date || '', planned_amount: row.planned_amount, notes: row.notes || '' })
@@ -32,6 +38,14 @@ const searchPlaceholder = computed(() => props.direction === 'receivable' ? '搜
 const rangeError = computed(() => filters.dueFrom && filters.dueTo && filters.dueFrom > filters.dueTo ? '到期日开始日期不能晚于结束日期。' : '')
 const actionLabel = computed(() => props.direction === 'receivable' ? '登记收款' : '登记付款')
 const category = computed(() => props.direction === 'receivable' ? '客户收款' : '供应商付款')
+const hasOrderContext = computed(() => props.direction === 'receivable' && Object.prototype.hasOwnProperty.call(route.query, 'order'))
+const orderContextId = computed(() => {
+  if (!hasOrderContext.value) return ''
+  const raw = route.query.order
+  if (typeof raw !== 'string' || !/^[1-9]\d*$/.test(raw) || !Number.isSafeInteger(Number(raw))) return ''
+  return raw
+})
+const invalidOrderContext = computed(() => hasOrderContext.value && !orderContextId.value)
 function contractLocation(row) {
   if (props.direction === 'receivable' && row.order) return orderDetailLocation(row.order)
   if (props.direction === 'payable' && row.purchase_order) return purchaseDetailLocation(row.purchase_order)
@@ -45,17 +59,56 @@ const planMetrics = computed(() => [
 ])
 
 async function load() {
-  if (rangeError.value) { error.value = rangeError.value; return }
+  const requestVersion = ++listRequestVersion
+  if (rangeError.value) { error.value = rangeError.value; loading.value = false; return }
+  if (invalidOrderContext.value) {
+    rows.value = []
+    error.value = ''
+    loading.value = false
+    return
+  }
   loading.value = true; error.value = ''
   try {
     const params = { direction: props.direction }
+    if (orderContextId.value) params.order = orderContextId.value
     if (filters.status) params.status = filters.status
     if (filters.overdue) params.overdue = 'true'
     if (searchTerm.value) params.search = searchTerm.value
     if (filters.dueFrom) params.due_from = filters.dueFrom
     if (filters.dueTo) params.due_to = filters.dueTo
-    rows.value = await listAll('/payment-plans/', { params })
-  } catch (err) { error.value = err.message } finally { loading.value = false }
+    const result = await listAll('/payment-plans/', { params })
+    if (requestVersion === listRequestVersion) rows.value = result
+  } catch (err) { if (requestVersion === listRequestVersion) error.value = err.message } finally { if (requestVersion === listRequestVersion) loading.value = false }
+}
+async function loadOrderContext() {
+  const requestVersion = ++contextRequestVersion
+  contextOrder.value = null
+  contextError.value = ''
+  contextLoading.value = false
+  if (!hasOrderContext.value) { void load(); return }
+  if (!orderContextId.value) {
+    contextError.value = '订单筛选编号无效，请清除订单筛选后重试。'
+    void load()
+    return
+  }
+  contextLoading.value = true
+  try {
+    const { data } = await api.get(`/orders/${orderContextId.value}/`)
+    if (requestVersion !== contextRequestVersion) return
+    if (!data?.order_no || (data.id != null && String(data.id) !== orderContextId.value)) throw new Error('订单资料不完整')
+    contextOrder.value = data
+  } catch {
+    if (requestVersion === contextRequestVersion) contextError.value = '无法加载订单信息；应收列表仍按订单编号筛选。'
+  } finally {
+    if (requestVersion === contextRequestVersion) {
+      contextLoading.value = false
+      void load()
+    }
+  }
+}
+async function clearOrderContext() {
+  const { order: _order, ...query } = route.query
+  await router.replace({ path: route.path, query, hash: route.hash })
 }
 function resetFilters() {
   clearTimeout(searchTimer)
@@ -93,12 +146,11 @@ watch(searchInput, value => {
   clearTimeout(searchTimer)
   searchTimer = setTimeout(() => { searchTerm.value = value.trim(); void load() }, 300)
 }, { flush: 'sync' })
-watch(() => props.direction, () => {
+watch([() => props.direction, () => route.query.order], () => {
   clearTimeout(searchTimer)
   searchTerm.value = searchInput.value.trim()
-  void load()
-})
-onMounted(load)
+  void loadOrderContext()
+}, { immediate: true })
 onBeforeUnmount(() => clearTimeout(searchTimer))
 </script>
 
@@ -106,6 +158,17 @@ onBeforeUnmount(() => clearTimeout(searchTimer))
   <section class="plan-page">
     <header><div><h2>{{ title }}</h2><p>按合同原币跟踪计划、已核销与待结清金额。</p></div><button @click="load">刷新</button></header>
     <SummaryCards :items="planMetrics" />
+    <section v-if="hasOrderContext" class="order-context-banner" aria-label="订单应收筛选上下文">
+      <div>
+        <strong v-if="contextLoading">当前仅显示订单：正在加载…</strong>
+        <strong v-else-if="contextOrder">当前仅显示订单：{{ contextOrder.order_no }}</strong>
+        <p v-else class="error" role="alert">{{ contextError || '无法加载订单信息。' }}</p>
+      </div>
+      <nav aria-label="订单上下文操作">
+        <RouterLink v-if="contextOrder && orderContextId" :to="orderDetailLocation(orderContextId)">查看订单</RouterLink>
+        <button type="button" @click="clearOrderContext">清除订单筛选</button>
+      </nav>
+    </section>
     <div class="filters" aria-label="收付款计划筛选">
       <label class="plan-search"><span>搜索往来方或合同号</span><input v-model="searchInput" type="search" :placeholder="searchPlaceholder" aria-label="搜索往来方或合同号"></label>
       <label class="plan-status"><span>状态</span><select v-model="filters.status" aria-label="收付款计划状态" @change="load"><option value="open">待结清</option><option value="settled">已结清</option><option value="">全部状态</option></select></label>
@@ -123,5 +186,6 @@ onBeforeUnmount(() => clearTimeout(searchTimer))
 
 <style scoped>
 .contract-link{color:#08705f;font-weight:700;text-decoration:none}.contract-link:hover{text-decoration:underline}
+.order-context-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:16px 0;padding:14px 16px;border:1px solid #b8d8ca;border-radius:10px;background:#eff8f3;color:#1d4d40}.order-context-banner strong{font-size:var(--text-body)}.order-context-banner nav{display:flex;align-items:center;gap:12px}.order-context-banner a{color:#08705f;font-weight:700;text-decoration:none}.order-context-banner button{cursor:pointer}.order-context-banner p{margin:0}.order-context-banner .error{color:#b42318}@media(max-width:600px){.order-context-banner{align-items:flex-start;flex-direction:column}.order-context-banner nav{flex-wrap:wrap}}
 .plan-page{padding:34px}.plan-page>header,.dialog header,.dialog footer{display:flex;justify-content:space-between;align-items:center}.plan-page h2,.dialog h3{margin:0}.plan-page p{color:#718078}.plan-page button{border:1px solid #d8e1dd;background:#fff;border-radius:8px;padding:8px 13px}.filters{display:flex;align-items:end;gap:10px;margin:20px 0;flex-wrap:wrap}.filters>label{display:grid;gap:5px;color:#52655e;font-size:var(--text-caption)}.filters .plan-search{flex:1 1 250px;min-width:220px}.filters input:not([type=checkbox]),.filters select{height:39px;box-sizing:border-box;padding:0 10px;border:1px solid #d8e1dd;border-radius:8px;background:#fff;color:#263e36;font:inherit;font-size:var(--text-body)}.filters .plan-status{min-width:130px}.filters .plan-overdue{display:flex;align-items:center;gap:7px;min-height:39px;white-space:nowrap}.filters .plan-date{min-width:150px}.filters .filter-reset{height:39px;cursor:pointer}.filters .filter-reset:hover{border-color:#a9cbbd;color:#1e6d59;background:#f4faf7}.table-wrap{background:#fff;border:1px solid #e2e8e4;border-radius:14px;overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:13px;text-align:left;border-bottom:1px solid #edf1ee;white-space:nowrap}.link{color:#08705f;font-weight:700}.tag,.overdue{padding:4px 8px;border-radius:12px;background:#e7f4ec;color:#08705f}.overdue{background:#fff1e9;color:#c45012}.error{color:#b42318}.mask{position:fixed;inset:0;background:#10261d66;display:grid;place-items:center;z-index:30}.dialog{width:min(520px,calc(100vw - 32px));background:#fff;padding:24px;border-radius:14px}.dialog label{display:grid;gap:6px;margin:12px 0;color:#496057;font-size:var(--text-body)}.dialog input,.dialog textarea{padding:9px;border:1px solid #d8e1dd;border-radius:7px}.dialog textarea{min-height:64px}.dialog footer{margin-top:18px}.primary{background:#08705f!important;color:white;border-color:#08705f!important}
 </style>

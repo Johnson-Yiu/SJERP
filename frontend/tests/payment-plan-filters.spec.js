@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
+import { createMemoryHistory, createRouter } from 'vue-router'
 import PaymentPlanPage from '../src/views/PaymentPlanPage.vue'
 
 const mocks = vi.hoisted(() => ({ listAll: vi.fn(), get: vi.fn(), post: vi.fn(), patch: vi.fn() }))
@@ -9,8 +10,17 @@ const options = { global: { directives: { 'money-input': {} } } }
 const receivable = { id: 1, direction: 'receivable', contract_no: 'SO-2026-00032', counterparty_name: 'Alpha GmbH', due_date: '2026-10-15', currency: 'USD', planned_amount: '100', settled_amount: '0', remaining_amount: '100', remaining_rmb: 700, status: 'open', is_overdue: false }
 const settled = { ...receivable, id: 2, contract_no: 'SO-2026-00033', counterparty_name: 'Beta GmbH', status: 'settled', settled_amount: '100', remaining_amount: '0' }
 
-function mountPage(direction = 'receivable') {
-  return mount(PaymentPlanPage, { ...options, props: { direction } })
+async function mountPage(direction = 'receivable') {
+  const router = createRouter({
+    history: createMemoryHistory(),
+    routes: [
+      { path: '/receivables', component: { template: '<main />' } },
+      { path: '/payables', component: { template: '<main />' } },
+    ],
+  })
+  await router.push(direction === 'payable' ? '/payables' : '/receivables')
+  await router.isReady()
+  return { wrapper: mount(PaymentPlanPage, { ...options, props: { direction }, global: { plugins: [router], ...options.global } }), router }
 }
 
 beforeEach(() => {
@@ -24,7 +34,7 @@ beforeEach(() => {
 describe('payment plan list filters', () => {
   it('always requests the active direction and reloads when direction changes', async () => {
     mocks.listAll.mockResolvedValue([receivable])
-    const wrapper = mountPage('receivable')
+    const { wrapper } = await mountPage('receivable')
     await flushPromises()
 
     expect(mocks.listAll).toHaveBeenLastCalledWith('/payment-plans/', { params: { direction: 'receivable', status: 'open' } })
@@ -40,7 +50,7 @@ describe('payment plan list filters', () => {
 
   it('debounces counterparty search and combines it with status, overdue, and due dates', async () => {
     vi.useFakeTimers()
-    const wrapper = mountPage('payable')
+    const { wrapper } = await mountPage('payable')
     await flushPromises()
     await wrapper.find('select[aria-label="收付款计划状态"]').setValue('settled')
     await wrapper.find('input[aria-label="仅看逾期"]').setValue(true)
@@ -66,7 +76,7 @@ describe('payment plan list filters', () => {
 
   it('reset restores default filters for the active direction', async () => {
     vi.useFakeTimers()
-    const wrapper = mountPage('receivable')
+    const { wrapper } = await mountPage('receivable')
     await flushPromises()
     await wrapper.find('input[aria-label="搜索往来方或合同号"]').setValue('SO-2026-00032')
     await vi.advanceTimersByTimeAsync(300)
@@ -93,7 +103,7 @@ describe('payment plan list filters', () => {
 
   it('shows server-returned rows as-is and prevents an invalid date range request', async () => {
     mocks.listAll.mockResolvedValue([receivable, settled])
-    const wrapper = mountPage('receivable')
+    const { wrapper } = await mountPage('receivable')
     await flushPromises()
     expect(wrapper.text()).toContain('SO-2026-00032')
     expect(wrapper.text()).toContain('SO-2026-00033')

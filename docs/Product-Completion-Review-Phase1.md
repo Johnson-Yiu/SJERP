@@ -141,3 +141,21 @@ Formal UAT 覆盖核心闭环，不等于覆盖所有可用 API。最显著的�
 ## PCR-001 remediation record
 
 Current PCR-001 status and acceptance evidence are maintained in [Product-Optimization-Phase2A-PCR001.md](Product-Optimization-Phase2A-PCR001.md). This reference replaces the previously appended Phase 2A block; the Phase 1 audit above is preserved.
+
+## Phase 2F current remaining-PCR reassessment — 2026-10-06
+
+This brief reassessment updates the active optimization view after PCR-020
+implementation and UAT. It does not rewrite the Phase 1 audit or its historical
+findings.
+
+| PCR | Current disposition |
+|---|---|
+| PCR-020 | Live UAT **PASS**; waiting for the implementation commit's final GitHub Actions run before closure. Details: [Phase 2F PCR-020](Product-Optimization-Phase2F-PCR020.md). |
+| PCR-015 | Current `ProductSkuManagement` batch supplier binding, `SupplierBatchBindingDrawer`, and supplier capability rules cover the supplier-to-SKU workflow; no new development is currently required. |
+| PCR-009 | Product-side sales/customer insight is substantially covered by the current `ProductWorkspace` sales summary. Remaining customer annual insight stays **Enhancement-Later**. |
+| PCR-007 | **Enhancement-Later**. |
+| PCR-013 | **P3-Later**. |
+| PCR-016 | **P3-Later**. |
+| PCR-017 | Observe a real 50–100 SKU maintenance workload before planning additional development. |
+| PCR-018 | **Enhancement-Later**. |
+| PCR-019 | Recommended next small optimization after PCR-020; not started in this task. |

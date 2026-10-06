@@ -4,7 +4,7 @@
 
 接受基线：`bd205c1af0b1ba334fbb437af60ae3190f5cb362`，CI #152 三项 SUCCESS。
 这是模块逐项 UX 评审的第一项，只调整 Customer / CRM 信息层级与关系视图导航。
-实现、自动化测试及真实 UI UAT 已完成；CI 待推送核验，独立 ChatGPT 评审待完成。
+实现、自动化测试及真实 UI UAT 已完成；实现提交 CI #153 已核对三项 SUCCESS。最终文档提交仍须核对对应 CI，独立 ChatGPT 评审待完成。
 **不得提前标记 UX-FROZEN；仅当最终 HEAD 三项 CI 全部 SUCCESS 且独立 ChatGPT 评审通过后，本轮 Customer / CRM 层才可冻结。全 ERP 不在冻结范围内。**
 
 无新模型、迁移、全局样式或权限变化。Customer/FollowUp 自动生命周期、销售人民币金额与正式订单统计、报价/订单状态、库存和财务计算均未调整。
@@ -73,7 +73,16 @@ QuoteDetailModal、OrderDetailModal 的完整工作台没有修改；PCR-020、P
 
 ## CI 与独立评审门槛
 
-待记录实现提交的 GitHub CI。最终文档提交也须核对对应 HEAD 的 backend、backend-postgres、frontend 三个结论。
+实现提交：`487c2d3c6e6b7736e7b87db6497939d99b846453`。
+已读取 [CI #153](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37504462772) 的最终结果，headSha 与实现提交一致。
+
+| 作业 | 结论 |
+| --- | --- |
+| backend | SUCCESS |
+| backend-postgres | SUCCESS |
+| frontend | SUCCESS |
+
+包含本记录的最终文档提交也须核对对应 HEAD 的 backend、backend-postgres、frontend 三个结论。
 最终 SHA、最终运行号和作业结论在交付报告列出；文档不会提前声称未运行的提交通过。
 独立 ChatGPT 评审结果尚未收到，因此当前不宣布 Customer / CRM 为 UX-FROZEN。
 正常 commit/push；不 force push、reset、远程历史 rebase。遇非快进停止。

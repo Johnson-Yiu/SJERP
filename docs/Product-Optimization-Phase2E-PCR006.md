@@ -61,4 +61,10 @@ PCR-006 is **not marked PASS** until UAT-P2E-001 through UAT-P2E-006 and UAT-P2E
 
 ## CI and limitations
 
-The replacement GitHub Actions run number and the backend, backend-postgres, and frontend job conclusions must be recorded after push. PCR-006 remains open while the mandatory multi-line live UAT is unavailable, even if automated suites and CI pass.
+GitHub Actions **run #141** for implementation commit `2d68a452f6200908f8f56e9adae7bf1a85002f1a` completed successfully:
+
+- `backend`: success
+- `backend-postgres`: success
+- `frontend`: success
+
+PCR-006 remains open while the mandatory multi-line live UAT is unavailable, even if automated suites and CI pass.

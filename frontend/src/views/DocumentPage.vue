@@ -1,7 +1,7 @@
 <script setup>
 import TradeUnitPicker from '../components/TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Plus, Search, Pencil, Trash2, FileX2, X, MinusCircle, Download, ChevronDown, ChevronRight, FolderOpen, FileText, FilePenLine, Eye, Clock3, CircleCheck, CircleDollarSign, RotateCcw } from 'lucide-vue-next'
 import { api, downloadQuoteExport, listAll } from '../api'
@@ -14,6 +14,7 @@ import OrderDetailModal from '../components/OrderDetailModal.vue'
 import SegmentedDateInput from '../components/SegmentedDateInput.vue'
 import SummaryCards from '../components/SummaryCards.vue'
 import SkuContextBanner from '../components/SkuContextBanner.vue'
+import { deliveryState } from '../utils/orderOverview.js'
 import { addDays, daysBetween } from '../utils/orderDate'
 import { clearModalRoute } from '../utils/modalNavigation'
 import { documentDetailState, withDocumentDetailQuery, withoutDocumentDetailQuery } from '../utils/documentDetailRoute'
@@ -26,13 +27,13 @@ const router = useRouter()
 const isOrder = computed(() => props.type === 'orders')
 const inheritedCustomer = computed(() => isOrder.value && Boolean(route.query.customer))
 const copy = computed(() => isOrder.value ? {
-  title: '订单管理', description: '从客户需求到交付和回款，保持订单、产品与流水一一对应。', no: 'order_no', noLabel: '订单号', date: 'order_date', dateLabel: '创建时间', statuses: { draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
+  title: '订单管理', description: '从客户需求到交付和回款，保持订单、产品与流水一一对应。', no: 'order_no', noLabel: '订单号', date: 'order_date', dateLabel: '订单日期', statuses: { draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
 } : {
   title: '报价管理', description: '建立标准化报价明细，记录有效期与客户反馈状态。', no: 'quote_no', noLabel: '报价单号', date: 'quote_date', dateLabel: '创建时间', statuses: { draft: '草稿', sent: '已发送', accepted: '已接受', rejected: '已拒绝', expired: '已过期' }
 })
 
 const rows = ref([]), customers = ref([]), skus = ref([]), quotes = ref([])
-const loading = ref(true), saving = ref(false), open = ref(false), editingId = ref(null), query = ref('')
+const loading = ref(true), saving = ref(false), open = ref(false), editingId = ref(null), query = ref(props.type === 'orders' && typeof route.query.search === 'string' ? route.query.search : '')
 const quoteStatusFilter = computed(() => typeof route.query.status === 'string' ? route.query.status : '')
 const quoteCustomerFilter = computed(() => typeof route.query.customer === 'string' ? route.query.customer : '')
 const quoteSort = computed(() => typeof route.query.ordering === 'string' ? route.query.ordering : '-updated_at')
@@ -70,7 +71,7 @@ async function load() {
   loading.value = true
   try {
     const quoteParams = !isOrder.value ? { status: quoteStatusFilter.value, customer: quoteCustomerFilter.value, ordering: quoteSort.value } : {}
-    rows.value = await listAll(`/${props.type}/`, { params: { ...routeDataQuery(route.query), search: query.value, ...quoteParams } })
+    rows.value = await listAll(`/${props.type}/`, { params: { ...routeDataQuery(route.query), search: isOrder.value ? (route.query.search || '') : query.value, ...quoteParams } })
     const visibleQuoteIds = new Set(rows.value.map(row => row.id))
     expandedQuoteNodes.value = new Set([...expandedQuoteNodes.value].filter(id => visibleQuoteIds.has(id)))
   } catch (e) { notify(e.message, true) } finally { loading.value = false }
@@ -169,7 +170,17 @@ async function handleQuoteSaved(row) {
 async function handleQuoteStatusUpdated() { await load() }
 async function exportQuote(row) { try { await downloadQuoteExport(row.id, row.quote_no) } catch (e) { notify(`导出 ${row.quote_no} 失败：${e.message}`, true) } }
 async function remove(row) { if (!isOrder.value || !await confirmDialog({ title: '确认删除订单', message: `确定删除 ${row[copy.value.no]} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/${props.type}/${row.id}/`); notify('已删除'); load() } catch (e) { notify(e.message, true) } }
-function delayed() { clearTimeout(timer); timer = setTimeout(load, 300) }
+function delayed() {
+  clearTimeout(timer)
+  timer = setTimeout(() => {
+    if (!isOrder.value) return void load()
+    const nextQuery = { ...route.query }
+    if (query.value) nextQuery.search = query.value
+    else delete nextQuery.search
+    if (routeDataQuerySignature(nextQuery) !== routeDataQuerySignature(route.query)) void router.replace({ path: route.path, query: nextQuery, hash: route.hash })
+  }, 300)
+}
+onBeforeUnmount(() => clearTimeout(timer))
 function setOrderFilter(key, value) {
   if (!isOrder.value || !['status', 'todo'].includes(key)) return
   const nextQuery = { ...route.query }
@@ -181,13 +192,11 @@ function setOrderFilter(key, value) {
 function resetOrderFilters() {
   query.value = ''
   clearTimeout(timer)
-  const hasRouteFilters = Boolean(route.query.status || route.query.todo)
-  if (hasRouteFilters) {
-    const nextQuery = { ...route.query }
-    delete nextQuery.status
-    delete nextQuery.todo
-    void router.push({ path: route.path, query: nextQuery, hash: route.hash })
-  } else void load()
+  const nextQuery = { ...route.query }
+  delete nextQuery.search
+  delete nextQuery.status
+  delete nextQuery.todo
+  if (routeDataQuerySignature(nextQuery) !== routeDataQuerySignature(route.query)) void router.push({ path: route.path, query: nextQuery, hash: route.hash })
 }
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 function documentTimestamp(row) {
@@ -291,10 +300,10 @@ const quoteMetrics = computed(() => ({
   accepted: rows.value.filter(row => row.status === 'accepted').length,
 }))
 const orderMetrics = computed(() => [
-  { label: '订单总数', value: rows.value.length, hint: '当前筛选范围' },
   { label: '执行中', value: rows.value.filter(row => ['confirmed', 'production', 'shipped'].includes(row.status)).length, hint: '已确认、生产中或已发货' },
+  { label: '待出库', value: rows.value.filter(row => ['confirmed', 'production'].includes(row.status)).length, hint: '已确认或生产中' },
+  { label: '待收款', value: rows.value.filter(row => Number(row.balance_amount || 0) > 0 && !['draft', 'cancelled'].includes(row.status)).length, hint: '正式订单仍有待收余额' },
   { label: '已完成', value: rows.value.filter(row => row.status === 'completed').length, hint: '已完成交付的订单' },
-  { label: '待收款订单', value: rows.value.filter(row => Number(row.balance_amount || 0) > 0).length, hint: '有有效应收计划且仍有待结余额的订单' },
 ])
 function setQuoteFilter(key, value) {
   const next = { ...route.query }
@@ -343,6 +352,9 @@ async function handleOrderEdit() {
   else notify('请前往订单管理编辑订单。')
 }
 watch(() => props.type, () => { load(); loadQuoteCustomerOptions() })
+watch(() => route.query.search, () => {
+  if (isOrder.value) { clearTimeout(timer); query.value = typeof route.query.search === 'string' ? route.query.search : '' }
+})
 watch(() => routeDataQuerySignature(route.query), load)
 watch([() => props.type, () => route.query.detail], syncDetailFromRoute, { immediate: true })
 watch([() => props.type, () => route.query.create, () => route.query.edit, routeCreatePrefillSignature], (current, previous) => {
@@ -363,8 +375,8 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
     <div class="panel">
       <div v-if="loading" class="loading"><div class="spinner" /></div>
       <div v-else-if="!rows.length" class="empty"><FileX2 :size="32" /><h3>还没有{{ isOrder ? '订单' : '报价' }}</h3><p>创建第一张业务单据，产品和客户数据会自动关联。</p></div>
-      <div v-else-if="isOrder" class="table-wrap"><table class="data-table"><thead><tr><th>{{ copy.noLabel }}</th><th>客户</th><th>{{ copy.dateLabel }}</th><th>状态</th><th>明细</th><th>合同金额</th><th>已收 / 当前待收</th><th style="text-align:right">操作</th></tr></thead>
-        <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row)" @keydown.enter="openDetail(row)"><td class="primary-cell">{{ row[copy.no] }}</td><td>{{ row.customer_name }}</td><td>{{ documentTimestamp(row) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><template v-if="row.status === 'draft'"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">尚未生效</span></template><template v-else-if="row.status === 'cancelled'"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">已取消</span></template><template v-else><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></template></td><td><div class="table-actions"><button v-if="row.status === 'draft'" class="mini-btn" :aria-label="`编辑 ${row[copy.no]}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button v-if="row.status === 'draft'" class="mini-btn" :aria-label="`删除 ${row[copy.no]}`" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
+      <div v-else-if="isOrder" class="table-wrap"><table class="data-table"><thead><tr><th>{{ copy.noLabel }}</th><th>客户</th><th>订单日期</th><th>预计交期</th><th>状态</th><th>明细</th><th>订单金额</th><th>已收 / 待收</th><th style="text-align:right">操作</th></tr></thead>
+        <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row)" @keydown.enter="openDetail(row)"><td class="primary-cell">{{ row[copy.no] }}</td><td>{{ row.customer_name }}</td><td>{{ row.order_date || '—' }}</td><td><span :class="{ muted: !row.expected_ship_date }">{{ row.expected_ship_date || '未设置' }}</span><small v-if="deliveryState(row)" class="delivery-helper" :class="deliveryState(row).kind">{{ deliveryState(row).label }}</small></td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><template v-if="row.status === 'draft'"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">尚未生效</span></template><template v-else-if="row.status === 'cancelled'"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">已取消</span></template><template v-else><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></template></td><td><div class="table-actions"><button v-if="row.status === 'draft'" class="mini-btn" :aria-label="`编辑 ${row[copy.no]}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button v-if="row.status === 'draft'" class="mini-btn" :aria-label="`删除 ${row[copy.no]}`" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
       </table></div>
       <div v-else class="table-wrap"><table class="data-table quote-table"><thead><tr><th>报价单 / 层级</th><th>客户</th><th>更新时间</th><th>状态</th><th>明细</th><th>金额</th><th style="text-align:right">操作</th></tr></thead>
         <tbody><tr v-for="row in quoteTreeRows" :key="row.id" class="clickable-row quote-tree-row" :class="{ 'quote-root-row': row.isRoot, 'quote-child-row': !row.isRoot }" tabindex="0" @click="activateQuoteTreeRow(row)" @keydown.enter="activateQuoteTreeRow(row)"><td class="primary-cell"><div class="quote-tree-cell" :style="{ '--tree-depth': row.depth }"><span class="tree-indent" /><button v-if="row.hasChildren" class="quote-expand" :aria-label="`${expandedQuoteNodes.has(row.id) ? '收起' : '展开'} ${row.quote_no} 的修订报价`" @click.stop="toggleQuoteNode(row.id)" @keydown.enter.stop><ChevronDown v-if="expandedQuoteNodes.has(row.id)" :size="16" /><ChevronRight v-else :size="16" /></button><span v-else class="quote-expand-placeholder" /><span v-if="!row.isRoot" class="tree-branch" /><component :is="row.isRoot ? FolderOpen : row.depth > 1 ? FilePenLine : FileText" :size="18" class="quote-tree-icon" :class="row.isRoot ? 'root-icon' : 'revision-icon'" /><span class="quote-tree-copy"><strong>{{ row.quote_no }}</strong><small>{{ row.isRoot ? '原始报价' : (row.revision_summary || `基于 ${row.parent_quote_no} 修订`) }}</small></span></div></td><td>{{ row.customer_name }}</td><td>{{ documentTimestamp(row) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><div class="table-actions"><button class="mini-btn" :aria-label="`查看 ${row.quote_no}`" @click.stop="openDetail(row)"><Eye :size="14" /></button><button class="mini-btn" :aria-label="`创建修订版 ${row.quote_no}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button class="mini-btn" :aria-label="`导出 ${row.quote_no}`" @click.stop="exportQuote(row)"><Download :size="14" /></button></div></td></tr></tbody>
@@ -420,4 +432,8 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
 .lead-time-input{display:flex;align-items:center;gap:6px}.lead-time-input>input{flex:0 0 10ch!important;width:10ch!important;min-width:0}.lead-time-input>span{color:#70817b;font-size:var(--text-body)}.lead-time-input :deep(.segmented-date){flex:1 1 auto;min-width:0}
 .quote-table{border-collapse:collapse;border-spacing:0;margin:0}.quote-table thead th{border-bottom:1px solid #e3ece8;background:#f7faf8;color:#6c7e77}.quote-tree-row td{height:66px;background:#fff;border-bottom:1px solid #e7eeea}.quote-tree-row:hover td{background:#f3faf6}.quote-root-row td{background:#fcfefd}.quote-root-row:hover td{background:#eef8f3}.quote-tree-cell{--tree-depth:0;display:flex;min-width:340px;align-items:center}.tree-indent{width:calc(var(--tree-depth) * 27px);height:34px;flex:0 0 calc(var(--tree-depth) * 27px);border-left:1px solid transparent}.quote-child-row .tree-indent{border-left-color:#c8e4d8}.quote-expand,.quote-expand-placeholder{width:24px;height:24px;margin:0 7px 0 0;flex:0 0 24px}.quote-expand{display:grid;padding:0;place-items:center;border:1px solid #d4e3dc;border-radius:6px;background:#fff;color:#397060}.quote-expand:hover{background:#dff1e8;border-color:#9fcdb7}.quote-expand-placeholder{display:inline-block}.tree-branch{position:relative;width:15px;height:24px;margin:0 4px 0 -2px;flex:0 0 15px;border-left:1px solid #9acdb9;border-bottom:1px solid #9acdb9;border-radius:0 0 0 6px}.tree-branch:before{content:'';position:absolute;top:11px;left:-1px;width:12px;border-top:1px solid #9acdb9}.quote-tree-icon{margin-right:9px;flex:0 0 auto}.root-icon{color:#087b70}.revision-icon{color:#4f8ac6}.quote-tree-copy{display:grid;gap:3px;min-width:0}.quote-tree-copy strong{color:#173f36;font-size:var(--text-body);font-weight:750}.quote-tree-copy small{overflow:hidden;color:#789088;font-size:var(--text-caption);text-overflow:ellipsis;white-space:nowrap}.quote-child-row .quote-tree-copy strong{font-weight:650}.quote-child-row td:first-child{box-shadow:inset 3px 0 #d4ebdf}.quote-root-row td:first-child{box-shadow:inset 3px 0 #13806f}.quote-table .table-actions{justify-content:flex-end}.quote-table .mini-btn{width:30px;height:30px}.quote-table .amount{font-weight:650;color:#1e5146}
 .quote-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:0 0 16px}.quote-metrics article{position:relative;min-height:114px;padding:16px 18px;border:1px solid #e3ebe7;border-radius:12px;background:#fff;box-shadow:0 4px 14px #143f330b}.quote-metrics span,.quote-metrics small{display:block;color:#80908a;font-size:var(--text-caption)}.quote-metrics strong{display:block;margin:12px 42px 7px 0;color:#123f36;font-size:var(--text-page);line-height:1.1}.quote-metrics article:last-child strong{font-size:var(--text-dialog)}.quote-metrics small{font-size:var(--text-caption)}.metric-icon{position:absolute;right:18px;top:28px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center}.metric-icon.mint{background:#ddf4f0;color:#008a80}.metric-icon.amber{background:#fff0de;color:#e28b31}.metric-icon.green{background:#e1f6e8;color:#2da45c}.metric-icon.blue{background:#e7f0ff;color:#4382df}.quote-toolbar{align-items:center;flex-wrap:wrap}.quote-toolbar select,.filter-reset{height:39px;border:1px solid #dce6e1;border-radius:8px;background:#fff;color:#52655e;padding:0 11px;font:inherit;font-size:var(--text-body)}.quote-toolbar select:focus{outline:0;border-color:#8ab8a8;box-shadow:0 0 0 3px #dcebe6}.filter-reset{display:inline-flex;align-items:center;gap:6px;cursor:pointer}.filter-reset:hover{border-color:#a9cbbd;color:#1e6d59;background:#f4faf7}@media(max-width:980px){.quote-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.quote-metrics{grid-template-columns:1fr}.quote-toolbar select,.filter-reset{flex:1}.quote-toolbar .search-box{width:100%}}
+</style>
+
+<style scoped>
+.delivery-helper{display:block;width:max-content;margin-top:4px;font-size:12px;color:#71817B}.delivery-helper.today,.delivery-helper.overdue{font-weight:600;border-radius:6px;padding:2px 6px}.delivery-helper.today{color:#A25F22;background:#FFF0DC}.delivery-helper.overdue{color:#A84444;background:#FBE5E5}
 </style>

@@ -254,7 +254,7 @@ describe('query route lifecycle', () => {
     const table = wrapper.find('.table-wrap').element
     table.scrollTop = 123
     const listCallsBeforeDetail = mocks.listAll.mock.calls.filter(([url]) => url === '/orders/').length
-    await router.push('/orders?detail=26')
+    await router.push({ path: '/orders', query: { ...router.currentRoute.value.query, detail: '26' } })
     await flushPromises()
 
     expect(wrapper.find('[data-test="order-detail"]').text()).toContain('26')

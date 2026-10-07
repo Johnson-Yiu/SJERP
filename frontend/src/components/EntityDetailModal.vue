@@ -1,4 +1,5 @@
 <script setup>
+import { movementSource, sourceLabels, movementStatus, signedMovement } from '../utils/inventoryLedger'
 import CertificateExpiryBadge from './CertificateExpiryBadge.vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -15,6 +16,15 @@ import ProductWorkspace from './ProductWorkspace.vue'
 const props = defineProps({ entity: String, id: [Number, String], refreshKey: { type: Number, default: 0 } })
 const emit = defineEmits(['close', 'edit', 'changed'])
 const data = ref(null), loading = ref(true), error = ref(''), activeTab = ref(''), stack = ref([])
+const movementRecord = ref(null)
+const isMovementDetail = computed(() => currentEntity.value === 'inventory-movements')
+const detailInfo = computed(() => {
+  if (!isMovementDetail.value || !movementRecord.value) return data.value?.info || []
+  const row = movementRecord.value
+  const sku = data.value?.sections?.find(section => section.key === 'sku')?.rows?.[0]
+  const unit = row.trade_snapshot?.base_unit || sku?.unit || ''
+  return [['流水号',row.movement_no],['日期',row.movement_date],['SKU',row.sku_code || sku?.sku || '—'],['类型',row.type_display],['数量变化',signedMovement(row,unit)],['交易单位 / 登记规格',row.trade_snapshot?.name || '基础单位登记'],['交易数量',row.trade_unit ? `${row.trade_quantity} ${row.trade_snapshot?.unit || ''}` : '—'],['仓库',row.warehouse],['关联订单',(row.related_order_nos || []).join('、') || row.order_no || '—'],['关联单据',row.reference || row.source_no || '—'],['来源',sourceLabels[movementSource(row)] || '未标注'],['备注',row.notes || '—'],['冲销状态',movementStatus(row)],['冲销记录',row.reversal_status || '—'],['超到说明',row.overage_summary || '—'],['单位成本',row.unit_cost]]
+})
 const operationLogs = ref([]), operationLogsLoading = ref(false), auditEnabled = ref(false)
 const quickCreate = ref(null)
 const skuCreateOpen = ref(false)
@@ -81,11 +91,13 @@ async function refreshSkuManagement() {
 async function load(entity = currentEntity.value, id = currentId.value) {
   loading.value = true; error.value = ''
   try {
-    const [contextResponse] = await Promise.all([
+    const [contextResponse, movementResponse] = await Promise.all([
       api.get(`/context/${entity}/${id}/`, { params: entity === 'products' && showInactiveSkus.value ? { include_inactive: '1' } : {} }),
+      entity === 'inventory-movements' ? api.get(`/inventory-movements/${id}/`) : Promise.resolve(null),
       loadOperationLogs(entity, id),
     ])
     data.value = contextResponse.data
+    movementRecord.value = movementResponse?.data || null
     currentEntity.value = entity; currentId.value = id
     activeTab.value = entity === 'products' ? '__overview' : data.value.sections[0]?.key || ''
   } catch (e) { error.value = e.message } finally { loading.value = false }
@@ -369,14 +381,14 @@ onMounted(async () => {
         </header>
 
         <component :is="isProduct ? ProductWorkspace : 'div'" :class="{ 'detail-content': !isProduct }" :data="data" :product-id="currentId" @changed="refreshSkuManagement" v-model:active-tab="activeTab" @drill="drill" @create-sku="openSkuCreate">
-          <section v-if="!isProduct" class="detail-info"><h3>基础信息</h3><div class="info-grid"><div v-for="item in data.info" :key="item[0]"><small>{{ item[0] }}</small><div v-if="item[2] === 'richtext'" class="richtext-view" v-html="richText(item[1])" /><span v-else>{{ item[1] }}</span><small v-if="currentEntity === 'customers' && item[0] === '下次跟进'" class="computed-field-note">由最新跟进记录自动更新</small></div></div></section>
+          <section v-if="!isProduct" class="detail-info"><h3>基础信息</h3><div class="info-grid"><div v-for="item in detailInfo" :key="item[0]"><small>{{ item[0] }}</small><div v-if="item[2] === 'richtext'" class="richtext-view" v-html="richText(item[1])" /><span v-else>{{ item[1] }}</span><small v-if="currentEntity === 'customers' && item[0] === '下次跟进'" class="computed-field-note">由最新跟进记录自动更新</small></div></div></section>
           <div :class="{ 'sku-create-workspace': isSkuSection && skuCreateOpen }">
           <SKUPage v-if="isSkuSection && skuCreateOpen" embedded inline :initial-product="currentId" @close="skuCreateOpen = false" @saved="skuCreated" />
           <section v-if="!isSkuSection" class="relation-area">
             <div class="relation-top"><div><h3>{{ isProduct ? activeSection?.title || '操作日志' : currentEntity === 'customers' ? '客户业务记录' : '关联数据' }}</h3><p>点击记录查看详情</p></div><div class="relation-actions"><button v-if="isSkuSection && canBulkDeleteSku" class="manage-link" :class="{ 'multi-select-active': skuMultiSelect }" @click="toggleSkuMultiSelect"><CheckSquare :size="13" /> {{ skuMultiSelect ? '取消多选' : '多选' }}</button><button v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect && selectedActiveSkuIds.length" class="manage-link danger-link" @click="deactivateSelectedSkus"><Trash2 :size="13" /> 停用 {{ selectedActiveSkuIds.length }} 个 SKU</button><button v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect && selectedInactiveSkuIds.length" class="manage-link restore-link" @click="reactivateSelectedSkus"><CheckSquare :size="13" /> 重新启用 {{ selectedInactiveSkuIds.length }} 个 SKU</button><button v-if="isSkuSection" class="manage-link" :class="{ 'inactive-toggle': showInactiveSkus }" @click="toggleInactiveSkus"><CheckSquare :size="13" /> {{ showInactiveSkus ? '隐藏已停用 SKU' : '显示已停用 SKU' }}</button><button v-if="isSkuSection" class="manage-link" @click="openSkuCreate"><Plus :size="13" /> 新增 SKU</button><button v-else-if="canManage" class="manage-link" @click="openRelatedCreate"><Plus :size="13" /> {{ createLabel(activeSection) }}</button></div></div>
               <label v-if="isSkuSection" class="sku-context-search"><Search :size="16" /><input v-model.trim="skuQuery" placeholder="搜索中文名称、销售型号、SKU Code 或规格..." /><span v-if="skuQuery">{{ visibleSectionRows.length }} / {{ activeSection.rows.length }}</span></label>
-            <div v-if="!isProduct" class="detail-tabs"><button v-for="section in data.sections" :key="section.key" :class="{ active: activeTab === section.key }" @click="activeTab = section.key">{{ section.title }} <span>{{ section.rows.length }}</span></button><button :class="{ active: isOperationLogTab }" @click="activeTab = '__operation_logs'">操作日志 <span>{{ operationLogs.length }}</span></button></div>
-            <OperationLogPanel v-if="isOperationLogTab" :logs="operationLogs" :loading="operationLogsLoading" :enabled="auditEnabled" />
+            <div v-if="!isProduct" class="detail-tabs"><button v-for="section in data.sections" :key="section.key" :class="{ active: activeTab === section.key }" @click="activeTab = section.key">{{ section.title }} <span>{{ section.rows.length }}</span></button><button :class="{ active: isOperationLogTab }" @click="activeTab = '__operation_logs'">{{ isMovementDetail ? '流水操作日志' : '操作日志' }} <span>{{ operationLogs.length }}</span></button></div>
+            <OperationLogPanel v-if="isOperationLogTab" :title="isMovementDetail ? '流水操作日志' : '操作日志'" :logs="operationLogs" :loading="operationLogsLoading" :enabled="auditEnabled" />
             <div v-else-if="activeSection" class="context-table-wrap">
               <div v-if="!visibleSectionRows.length" class="context-empty"><Rows3 :size="27" /><strong>{{ isSkuSection && skuQuery ? '未找到匹配的 SKU' : `暂无${activeSection.title}` }}</strong><p>{{ isSkuSection && skuQuery ? '请调整关键词后重试。' : '点击右上角新增记录并自动建立关联。' }}</p></div>
               <table v-else class="context-table" :class="{ 'followup-table': activeSection.key === 'followups', 'sku-context-table': isSkuSection, 'multi-select-table': skuMultiSelect }"><thead><tr><th v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect" class="selection-cell"><label class="selection-check"><input type="checkbox" :checked="allSkuSelected" @click.stop @change="toggleAllSkuSelection" /><CheckSquare :size="15" /></label></th><th v-for="column in activeSection.columns" :key="column[0]">{{ column[1] }}</th><th></th></tr></thead><tbody>

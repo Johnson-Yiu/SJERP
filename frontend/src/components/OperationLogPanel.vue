@@ -1,5 +1,6 @@
 <script setup>
 defineProps({
+  title: { type: String, default: '操作日志' },
   logs: { type: Array, default: () => [] },
   loading: { type: Boolean, default: false },
   enabled: { type: Boolean, default: false },
@@ -18,7 +19,7 @@ function displayValue(value) {
 <template>
   <section class="operation-log-panel">
     <div class="operation-log-head">
-      <div><h3>操作日志</h3><p>记录创建、修改、删除及业务状态变更。</p></div>
+      <div><h3>{{ title }}</h3><p>记录创建、修改、删除及业务状态变更。</p></div>
       <span>{{ enabled ? `${logs.length} 条` : '开发环境暂不记录' }}</span>
     </div>
     <div v-if="loading" class="operation-log-empty">正在加载操作日志…</div>

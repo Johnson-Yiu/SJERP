@@ -1,8 +1,9 @@
 <script setup>
+import { movementTypes, movementDirection, movementSource, sourceLabels, movementStatus, ledgerFilters, filteredMovements, movementSummary, movementUnit, signedMovement } from '../utils/inventoryLedger'
 import CategoryMultiPicker from "../components/CategoryMultiPicker.vue"
 import CertificateExpiryBadge from '../components/CertificateExpiryBadge.vue'
 import { certificateFilters, certificateFilterLabels, certificateFilterQuery } from '../utils/certificateExpiry'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChevronRight, Database, Paperclip, Pencil, Plus, RotateCcw, Search, Trash2, UserRoundPlus, X } from 'lucide-vue-next'
 import { api, listAll } from '../api'
@@ -23,6 +24,21 @@ import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuCo
 const props = defineProps({ config: Object })
 const route = useRoute()
 const router = useRouter()
+const isMovementPage = computed(() => props.config.endpoint === 'inventory-movements')
+const movementSkus = ref([])
+const movementFilters = computed(() => ledgerFilters(route.query))
+const visibleRows = computed(() => isMovementPage.value ? filteredMovements(rows.value, route.query) : rows.value)
+let ledgerUpdates = Promise.resolve(), ledgerRequest = 0
+function updateLedgerQuery(patch, replace = false) {
+  ledgerUpdates = ledgerUpdates.catch(() => {}).then(() => {
+    const next = { ...route.query, ...patch }
+    Object.keys(next).forEach(key => { if (next[key] === undefined || next[key] === '') delete next[key] })
+    return router[replace ? 'replace' : 'push']({ path: route.path, query: next, hash: route.hash })
+  })
+  return ledgerUpdates
+}
+function resetLedgerFilters() { clearTimeout(searchTimer); query.value = ''; return updateLedgerQuery({ search:undefined,type:undefined,direction:undefined,source:undefined }) }
+function ledgerDataQuery() { const { type, direction, source, ...params } = routeDataQuery(route.query); return params }
 const isCertificatePage = computed(() => props.config.endpoint === 'product-certificates')
 const certificateFilterLabel = computed(() => isCertificatePage.value ? certificateFilterLabels[route.query.expiry] : '')
 function setCertificateFilter(expiry) { router.push({ path: route.path, query: certificateFilterQuery(route.query, expiry) }) }
@@ -49,7 +65,10 @@ const isCustomerCreate = computed(() => props.config.endpoint === 'customers' &&
 const isWideForm = computed(() => isCustomerCreate.value || props.config.endpoint === 'follow-ups')
 const isTransactionPage = computed(() => props.config.endpoint === 'transactions')
 const hasSkuContext = computed(() => props.config.endpoint === 'inventory-movements' && Boolean(skuContextId(route.query.sku)))
-const activeSkuContextLabel = computed(() => skuContextLabel(rows.value, route.query.sku))
+const activeSkuContextLabel = computed(() => {
+  const sku = movementSkus.value.find(sku => String(sku.id) === skuContextId(route.query.sku))
+  return sku ? `${sku.sku} · ${sku.display_name_cn || sku.product_name || ''}` : skuContextLabel(rows.value, route.query.sku)
+})
 const hasCurrentDueFollowUpContext = computed(() => props.config.endpoint === 'follow-ups' && route.query.due === 'true')
 const supplierCodeConflict = computed(() => {
   if (props.config.endpoint !== 'suppliers') return null
@@ -61,6 +80,7 @@ const supplierCodeConflict = computed(() => {
 const supplierCodeError = computed(() => supplierCodeConflict.value || supplierCodeServerError.value)
 const resourceMetrics = computed(() => {
   const endpoint = props.config.endpoint
+  if (isMovementPage.value) return movementSummary(visibleRows.value)
   const total = rows.value.length
   const today = new Date().toISOString().slice(0, 10)
   if (endpoint === 'customers') return [
@@ -108,10 +128,24 @@ function setPrimaryContact(index) {
 function notify(message, error = false) { Object.assign(toast, { show: true, message, error }); setTimeout(() => { toast.show = false }, 2800) }
 async function load() {
   loading.value = true
-  try { rows.value = await listAll(`/${props.config.endpoint}/`, { params: { ...routeDataQuery(route.query), search: query.value } }) }
-  catch (e) { notify(e.message, true) } finally { loading.value = false }
+  if (!isMovementPage.value) {
+    try { rows.value = await listAll(`/${props.config.endpoint}/`, { params: { ...routeDataQuery(route.query), search: query.value } }) }
+    catch (e) { notify(e.message, true) } finally { loading.value = false }
+    return
+  }
+  const request = ++ledgerRequest
+  try {
+    const result = await listAll('/inventory-movements/', { params: { ...ledgerDataQuery(), search: typeof route.query.search === 'string' ? route.query.search : '' } })
+    if (request === ledgerRequest) rows.value = result
+  } catch (e) { if (request === ledgerRequest) notify(e.message, true) }
+  finally { if (request === ledgerRequest) loading.value = false }
 }
-function delayedSearch() { clearTimeout(searchTimer); searchTimer = setTimeout(load, 300) }
+function delayedSearch() {
+  clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => isMovementPage.value ? updateLedgerQuery({ search:query.value || undefined }) : load(), 300)
+}
+watch(() => route.query.search, value => { if (isMovementPage.value) { clearTimeout(searchTimer); query.value = typeof value === 'string' ? value : '' } }, { immediate:true })
+onBeforeUnmount(() => { clearTimeout(searchTimer); ledgerRequest++ })
 async function loadOptions() {
   const remotes = props.config.fields.filter(f => ['remote', 'combo', 'remote_multi'].includes(f[2]))
   await Promise.all(remotes.map(async field => {
@@ -272,11 +306,13 @@ function closeModal() {
 }
 function openDetail(id) {
   detailId.value = id
+  if (isMovementPage.value) { void updateLedgerQuery({ detail:String(id) }); return }
   if (props.config.endpoint === 'customers') void router.push({ path: route.path, query: { ...route.query, detail: String(id) } })
 }
 function closeDetail() {
   detailId.value = null
   if (!route.query.detail) return
+  if (isMovementPage.value) { void updateLedgerQuery({ detail:undefined }, true); return }
   const { detail, ...query } = route.query
   void router.replace({ path: route.path, query, hash: route.hash })
 }
@@ -345,9 +381,10 @@ async function remove(row) {
   try { await api.delete(`/${props.config.endpoint}/${row.id}/`); notify('删除成功'); await load() } catch (e) { notify(e.message, true) }
 }
 async function reverseInventoryMovement(row) {
+  if (!canReverseInventoryMovement(row)) return
   const reason = await inputDialog({
     title: '冲销库存流水',
-    message: `将保留原流水并创建反向库存流水。\n流水：${row.movement_no}\nSKU：${row.sku_code || row.display_name || row.product_name || '—'}\n类型：${row.type_display}\n数量：${row.quantity}`,
+    message: `冲销不会删除原流水，系统将保留原记录并生成一条反向流水。\n流水号：${row.movement_no}\nSKU：${row.sku_code || row.display_name || row.product_name || '—'}\n类型：${row.type_display}\n原数量：${row.quantity} ${movementUnit(row, movementSkus.value)}\n发生日期：${row.movement_date}\n关联订单：${(row.related_order_nos || []).join('、') || row.order_no || '—'}`,
     label: '冲销原因', placeholder: '请填写冲销原因', required: true, maxLength: 500, confirmText: '确认冲销', danger: true,
   })
   if (!reason) return
@@ -427,32 +464,40 @@ function routeCreatePrefillSignature() {
   return JSON.stringify(fields.map(name => [name, route.query[name] ?? null]))
 }
 
-watch(() => routeDataQuerySignature(route.query), load)
+watch(() => isMovementPage.value ? JSON.stringify(ledgerDataQuery()) : routeDataQuerySignature(route.query), load)
 watch([() => route.query.create, () => route.query.edit, routeCreatePrefillSignature], (current, previous) => {
   const prefillOnlyChanged = previous && current[0] === previous[0] && current[1] === previous[1]
   if (prefillOnlyChanged && route.query.create !== '1') return
   void syncModalFromRoute()
 }, { immediate: true })
 watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null }, { immediate: true })
-onMounted(load)
+onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.value = await listAll('/skus/', { params:{ include_inactive:1 } }) } catch { movementSkus.value = [] } } })
 </script>
 
 <template>
-  <div class="resource-page" :class="{ 'finance-resource-page': isTransactionPage }">
+  <div class="resource-page" :class="{ 'finance-resource-page': isTransactionPage, 'inventory-ledger-page': isMovementPage }">
     <div class="page-head"><div><h2>{{ config.title }}</h2><p>{{ config.description }}</p></div><button class="btn btn-primary" @click="openCreate"><Plus :size="16" /> 新建记录</button></div>
     <SummaryCards :items="resourceMetrics" />
     <div v-if="isCertificatePage" class="certificate-filters" aria-label="证书有效期筛选"><button v-for="[value, label] in certificateFilters" :key="value" type="button" class="btn" :class="{ 'btn-primary': (route.query.expiry || '') === value }" :aria-pressed="(route.query.expiry || '') === value" @click="setCertificateFilter(value)">{{ label }}</button></div>
     <div v-if="certificateFilterLabel" class="follow-up-due-context" aria-label="当前证书筛选"><span>当前筛选：<strong>{{ certificateFilterLabel }}</strong></span><button type="button" @click="setCertificateFilter('')">清除筛选</button></div>
     <div v-if="hasCurrentDueFollowUpContext" class="follow-up-due-context" aria-label="当前跟进筛选"><span>当前筛选：<strong>今日及逾期待跟进</strong></span><button type="button" @click="clearFollowUpDueFilter">清除待跟进筛选</button></div>
     <SkuContextBanner v-if="hasSkuContext" :label="activeSkuContextLabel" @clear="clearSkuFilter" />
-    <div class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索当前列表..." @input="delayedSearch" /></div></div>
+    <div v-if="isMovementPage" class="ledger-filter-bar" aria-label="库存流水筛选">
+      <label>搜索<input v-model="query" aria-label="搜索库存流水" placeholder="流水号、SKU、产品、订单、仓库、参考号" @input="delayedSearch" /></label>
+      <label>类型<select :value="movementFilters.type" aria-label="按流水类型筛选" @change="updateLedgerQuery({type:$event.target.value || undefined})"><option value="">全部类型</option><option v-for="(label,value) in movementTypes" :key="value" :value="value">{{ label }}</option></select></label>
+      <label>方向<select :value="movementFilters.direction" aria-label="按库存方向筛选" @change="updateLedgerQuery({direction:$event.target.value || undefined})"><option value="">全部方向</option><option value="in">入库</option><option value="out">出库</option></select></label>
+      <label>来源<select :value="movementFilters.source" aria-label="按流水来源筛选" @change="updateLedgerQuery({source:$event.target.value || undefined})"><option value="">全部来源</option><option value="automatic">系统自动</option><option value="manual">手工登记</option><option value="reversal">冲销</option></select></label>
+      <button class="btn btn-secondary" @click="resetLedgerFilters">重置</button>
+    </div>
+    <p v-if="isMovementPage" class="ledger-help">系统自动流水由采购入库、订单发货等业务生成，不能手工修改。数量以对应 SKU 基础单位显示，概览仅统计记录数。</p>
+    <div v-else class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索当前列表..." @input="delayedSearch" /></div></div>
     <div class="panel">
       <div v-if="loading" class="loading"><div class="spinner" /></div>
-      <div v-else-if="!rows.length" class="empty"><Database :size="32" /><h3>还没有数据</h3><p>点击“新建记录”开始建立业务资料。</p></div>
+      <div v-else-if="!visibleRows.length" class="empty"><Database :size="32" /><h3>{{ isMovementPage ? '没有匹配的库存流水' : '还没有数据' }}</h3><p>{{ isMovementPage ? '请调整搜索或筛选条件。' : '点击“新建记录”开始建立业务资料。' }}</p></div>
       <div v-else class="table-wrap"><table class="data-table"><thead><tr><th v-for="col in config.columns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
-        <tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row.id)" @keydown.enter="openDetail(row.id)">
-          <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><CertificateExpiryBadge v-if="isCertificatePage && col[0] === 'expiry_status'" :certificate="row" /><span v-else :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
-          <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="openDetail(row.id)"><ChevronRight :size="14" /></button><button v-if="!isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="canReverseInventoryMovement(row)" class="mini-btn" title="冲销" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
+        <tr v-for="row in visibleRows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row.id)" @keydown.enter="openDetail(row.id)">
+          <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><template v-if="isMovementPage && col[0] === 'sku_code'"><strong>{{ row.sku_code || row.sku_code_snapshot || '—' }}</strong><small class="ledger-secondary">{{ row.product_name || row.display_name }}</small><small v-if="movementUnit(row,movementSkus)" class="ledger-secondary">基础单位：{{ movementUnit(row,movementSkus) }}</small></template><span v-else-if="isMovementPage && col[0] === 'source_type'" class="ledger-source" :class="movementSource(row)">{{ sourceLabels[movementSource(row)] || '未标注' }}</span><span v-else-if="isMovementPage && col[0] === 'signed_quantity'" :class="cellClass('signed',row.signed_quantity)">{{ signedMovement(row,movementUnit(row,movementSkus)) }}</span><template v-else-if="isMovementPage && col[0] === 'reference'"><span>{{ row.reference || row.source_no || '—' }}</span><small class="ledger-secondary">{{ (row.related_order_nos || []).join('、') || row.order_no }}</small><small v-if="row.overage_summary" class="ledger-secondary">{{ row.overage_summary }}</small></template><span v-else-if="isMovementPage && col[0] === 'reversal_status'" :title="row.reversal_status">{{ movementStatus(row) }}</span><CertificateExpiryBadge v-else-if="isCertificatePage && col[0] === 'expiry_status'" :certificate="row" /><span v-else :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
+          <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="openDetail(row.id)"><ChevronRight :size="14" /></button><button v-if="!isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="canReverseInventoryMovement(row)" class="mini-btn danger" title="冲销" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
         </tr>
       </tbody></table></div>
     </div>
@@ -583,4 +628,6 @@ onMounted(load)
 @media(max-width:520px){.contact-create-head,.contact-card-head{align-items:flex-start}.contact-card-head{flex-direction:column}.contact-fields{grid-template-columns:1fr}.contact-card-actions{width:100%;justify-content:space-between}}
 .supply-category-options{display:flex;flex-wrap:wrap;gap:10px;max-height:190px;overflow:auto;padding:12px;border:1px solid #dce7e1;border-radius:8px}.supply-category-options label{display:flex;align-items:center;gap:6px}.supply-category-options small{flex-basis:100%;color:#71857b}
 .follow-up-due-context{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding:9px 12px;border:1px solid #c8d8ed;border-radius:9px;background:#f4f8fd;color:#42546b;font-size:13px}.follow-up-due-context strong{color:#173f70}.follow-up-due-context button{padding:2px 0;border:0;background:transparent;color:#245b91;font:inherit;cursor:pointer}.follow-up-due-context button:hover{text-decoration:underline}
+.ledger-filter-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:12px}.ledger-filter-bar label{display:grid;gap:6px;color:#71817b;font-size:var(--text-caption)}.ledger-filter-bar label:first-child{flex:1;min-width:260px}.ledger-filter-bar input,.ledger-filter-bar select{padding:9px 11px;border:1px solid #d7e3dd;border-radius:8px;background:#fff;color:#31594c;font:inherit}.ledger-help{color:#71817b;font-size:12px;line-height:1.6}.ledger-secondary{display:block;color:#82928b;margin-top:4px;font-size:var(--text-caption)}.ledger-source{display:inline-block;padding:4px 8px;border-radius:12px;white-space:nowrap}.ledger-source.automatic{background:#eef3f6;color:#55717c}.ledger-source.manual{background:#eef7f2;color:#2d6a56}.ledger-source.reversal{background:#fff2e8;color:#8a5d2e}
+.inventory-ledger-page .data-table{min-width:1300px}.inventory-ledger-page .data-table th{white-space:nowrap}.inventory-ledger-page .data-table td:nth-child(1),.inventory-ledger-page .data-table td:nth-child(2),.inventory-ledger-page .data-table td:nth-child(4),.inventory-ledger-page .data-table td:nth-child(5){white-space:nowrap}.inventory-ledger-page .data-table td:nth-child(3){min-width:180px}.inventory-ledger-page .data-table td:nth-child(8){min-width:170px}.inventory-ledger-page .data-table th:last-child,.inventory-ledger-page .data-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 8px #143f3308}.inventory-ledger-page .data-table td .tag{white-space:nowrap}
 </style>

@@ -81,3 +81,59 @@ attention=1 下列表为空仍成功直达 SKU1，实证筛选外详情不会被
 ## CI 与验收
 
 最终提交后的 HEAD SHA、CI run 链接、backend/backend-postgres/frontend 结果在交付回复中记录，避免文档自引用提交哈希。必须确认三项 SUCCESS 后交付；独立 ChatGPT review 仍待外部审查。Phase A 实施与验证不代表 Inventory UX-FROZEN；不启动 Phase B。
+
+# Inventory Phase B — 库存流水与手工调整 UX
+
+实施与 UAT：2026-10-07 至 2026-10-08。起点 `93170f6ebb4154345eba71fe149fad302ac4c6db`；Phase A 已由用户接受，基线 CI #164 三项 SUCCESS。此节更新前节的历史阶段状态。
+
+## 流水与导航
+
+沿用 ResourcePage、InventoryMovementCreateModal、EntityDetailModal。仅库存流水的 search/type/direction/source/detail 成为 URL 状态，搜索继续调用后端原搜索能力并保持 300ms 防抖。类型为十种手工类型；方向按 type 语义映射，同时识别自动 purchase_in/sale_out；来源依据 is_automatic/source_type 区分系统自动、手工登记、冲销生成。筛选在完整分页结果上执行，未新增后端逻辑。
+
+重置只移除四个筛选字段；详情关闭只移除 detail，保留 sku 和其余上下文。关闭使用 replace，使 Inventory → Movement → 关闭 → Back 恢复来源工作台的 search/sort/direction/detail/tab，无 returnTo。SkuContextBanner 保留，SKU 名称与基础单位从精确 SKU 或历史交易快照取得。
+
+四张卡仅统计当前筛选的流水、入库、出库、冲销记录数，不混合汇总 SKU 数量。列表顺序为日期、流水号、SKU/产品、类型、库存变动、来源、仓库、关联单据、冲销状态、操作。数量带安全基础单位；窄屏横向滚动并固定操作列。三类来源使用独立徽标，状态区分正常、已冲销、冲销流水。
+
+详情先显示流水号、日期、SKU、类型、基础数量变化、交易规格/数量、仓库、订单/单据、来源、备注、冲销状态。流水操作日志仍查询 crm.inventorymovement。其他资源搜索及 Customer 详情路由不变。
+
+## 手工登记与冲销
+
+创建表单分为流水基本信息、关联业务、SKU 明细、保存说明。流水号只读自动生成；保留可选多订单和多个 SKU，每个 SKU 一条独立流水，沿用现有 SKU 选择模型（每个 SKU 一行）。补齐现有后端支持的生产入库/生产领料选项。交易单位控件独立成列，原 tradePayload 与批量 API 不变。默认仓、可选成本和成功刷新/toast 保留。
+
+明确提示正式采购使用“验货入库”、正式销售使用“确认发货”；手工流水仅用于非标准调整。数量必须正数，方向由类型决定；成本参考依现有规则。底部说明保存后生成 N 条独立流水。
+
+自动或已冲销流水没有编辑；只有未冲销手工流水可以冲销；所有流水没有删除。冲销对话框说明保留原记录并生成反向流水，展示原流水号/SKU/类型/数量/日期/订单，原因必填、确认按钮为破坏性样式。原 API、库存效果和业务校验不变。
+
+## 真实 UI UAT
+
+使用 localhost:5191 现有数据。只读取、导航、填写后取消；未保存新流水或执行冲销。
+
+| UAT | 结果 |
+|---|---|
+| B001 | PASS；90条，入库41/出库49/冲销12；四卡与十列层级正确 |
+| B002 | PASS；sku=1 搜索 GR-BC0D4E04B9CE4171，刷新保留搜索及 SKU 名称 |
+| B003 | PASS；手工/入库/盘盈筛选9条，日期、SKU、数量、来源与参考号可辨 |
+| B004 | PASS；点击 GR-BC0D4E04B9CE4171 得 detail=75，刷新同一详情 |
+| B005 | PASS；来源库存 SKU1/movements → REV-4198B418E1814CF1（detail=82）→ 关闭保留sku=1 → Back恢复原完整工作台 URL；键盘激活链接验证 |
+| B006 | PASS；自动采购入库 GR-BC0D4E04B9CE4171 明确来源，无编辑/冲销/删除 |
+| B007 | PASS；手工 IM-67A35DF8FEE147E3 有编辑/冲销，无删除；未执行冲销 |
+| B008 | PASS；创建四层级、采购/销售正式流程边界与正数提示明确 |
+| B009 | PASS；SKU000001用箱（2箱=20pcs），SKU000003用pcs；独立数量2/3、成本7.1/8.2、仓库A/B、参考号及备注，取消不保存 |
+| B010 | PASS；冲销对话框展示原记录与反向流水说明，原因空时确认禁用，取消 |
+
+证据：`uat-evidence/inventory-phase-b/ledger.jpg`、`movement-detail.jpg`、`manual-create.jpg`、`multi-sku.jpg`、`reversal-dialog.jpg`。
+
+## 自动化与回归
+
+新增 inventory-ledger.spec.js 20项挂载交互测试，覆盖规范28项要求，包括真实 Router/RouterView 回退、详情刷新、筛选保留上下文、混合单位仅计数、操作保护、精确冲销ID/原因、取消无提交、多SKU TradeUnit精确payload、成功刷新、正数校验与失败保留输入。其他资源搜索行为有回归断言。
+
+- Vitest 全前端：282 PASS（31文件）。
+- Node 单元：111 PASS；抽屉字体检查：1 PASS。
+- Vite build：PASS（最终布局再次构建）；现有大包体提示保留。
+- Django：565 tests OK，10 skipped；system check 无问题。
+- makemigrations --check --dry-run：No changes detected。
+- 无后端生产代码、模型、迁移、权限或库存核算语义变动。
+
+## CI 与阶段状态
+
+最终 HEAD 与 CI run/三项结果在交付回复记录，避免提交哈希自引用。仅正常 commit/push。Phase B 实施及验证完成，等待独立 ChatGPT review；尚未 UX-FROZEN，未启动 Finance UX。

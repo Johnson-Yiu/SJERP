@@ -6,7 +6,12 @@ import PurchaseOrderPage from '../src/views/PurchaseOrderPage.vue'
 
 const mocks = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), patch: vi.fn(), listAll: vi.fn() }))
 vi.mock('../src/api', () => ({ api: mocks, listAll: mocks.listAll, listData: response => response.data.results || response.data }))
-vi.mock('vue-router', () => ({ useRoute: () => ({ query: {} }), useRouter: () => ({ replace: vi.fn() }) }))
+import { createRouter, createMemoryHistory } from 'vue-router'
+async function purchaseRouter() {
+  const router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/purchase-orders', component: { template: '<div />' } }] })
+  await router.push('/purchase-orders')
+  return router
+}
 const plan = { id: 1, direction: 'receivable', customer_id: 4, order: 3, contract_no: 'SO-3', counterparty_name: '客户甲', planned_amount: '100', settled_amount: '0', remaining_amount: '100', remaining_rmb: 700, exchange_rate: '7', currency: 'USD', status: 'open' }
 const options = { global: { directives: { 'money-input': {} } } }
 
@@ -20,7 +25,7 @@ beforeEach(() => {
 describe('trade finance interactions', () => {
   it('settles a populated plan with inherited currency and exchange rate', async () => {
     mocks.listAll.mockResolvedValue([plan])
-    const wrapper = mount(PaymentPlanPage, { ...options, props: { direction: 'receivable' } })
+    const wrapper = mount(PaymentPlanPage, { ...options, global: { ...options.global, plugins: [await purchaseRouter()] }, props: { direction: 'receivable' } })
     await flushPromises()
     expect(wrapper.text()).toContain('700.00')
     await wrapper.findAll('button').find(button => button.text() === '登记收款').trigger('click')
@@ -71,9 +76,11 @@ describe('trade finance interactions', () => {
   it('requires inspection acknowledgement and submits accepted quantity with notes', async () => {
     const purchase = { id: 2, purchase_no: 'PO-2', status: 'ordered', currency: 'USD', items: [{ id: 7, sku_code: 'SKU-7', quantity: '10', received_quantity: '0', remaining_quantity: '10', unit_price: '3' }] }
     mocks.listAll.mockImplementation(async url => url === '/purchase-orders/' ? [purchase] : [])
-    const wrapper = mount(PurchaseOrderPage, { ...options, global: { ...options.global, stubs: { RouterLink: true } } })
+    const wrapper = mount(PurchaseOrderPage, { ...options, global: { ...options.global, plugins: [await purchaseRouter()], stubs: { RouterLink: true, ContractAmountAdjustments: true } } })
     await flushPromises()
-    await wrapper.findAll('button').find(button => button.text() === '操作').trigger('click')
+    await wrapper.get('.purchase-list-row').trigger('click')
+    await flushPromises()
+    await wrapper.findAll('.workbench-tabs button').find(button => button.text() === '收货').trigger('click')
     await wrapper.findAll('button').find(button => button.text() === '验货入库').trigger('click')
     const dialog = wrapper.find('form.receipt-dialog')
     expect(dialog.findAll('button').at(-1).attributes('disabled')).toBeDefined()

@@ -6,8 +6,9 @@ const componentUrl = new URL('./PurchaseOrderPage.vue', import.meta.url)
 
 test('purchase desk exposes retained contract amount adjustment history', async () => {
   const source = await readFile(componentUrl, 'utf8')
-  assert.match(source, /ContractAmountAdjustments/)
-  assert.match(source, /contract-type="purchase_order"/)
+  assert.match(source, /PurchaseDetailModal/)
+  const detail = await readFile(new URL('../components/PurchaseDetailModal.vue', import.meta.url), 'utf8')
+  assert.match(detail, /contract-type="purchase_order"/)
 })
 
 test('purchase desk connects creation, receipt and supplier payment actions', async () => {
@@ -29,15 +30,16 @@ test('purchase desk connects creation, receipt and supplier payment actions', as
 test('purchase desk exposes receipt history and the reversal flow', async () => {
   const source = await readFile(componentUrl, 'utf8')
 
-  assert.match(source, /item\.receipts/)
+  const detail = await readFile(new URL('../components/PurchaseDetailModal.vue', import.meta.url), 'utf8')
+  assert.match(detail, /item\.receipts/)
   assert.match(source, /receipts\/\$\{reversalTarget\.value\.receipt\.id\}\/reverse/)
   assert.match(source, /冲销采购入库/)
-  assert.match(source, /已冲销/)
+  assert.match(detail, /已冲销/)
   assert.match(source, /reversalReason/)
 })
 
 test('purchase desk labels ordered, received, remaining and overage quantities separately', async () => {
-  const source = await readFile(componentUrl, 'utf8')
+  const source = await readFile(new URL('../components/PurchaseDetailModal.vue', import.meta.url), 'utf8')
 
   assert.match(source, /下单 \{\{ item\.trade_quantity \?\? item\.quantity \}\}/)
   assert.match(source, /已到 \{\{ item\.received_quantity \}\}/)
@@ -51,8 +53,9 @@ test('purchase desk keeps drafts editable and separates placement from draft sav
 
   assert.match(source, /function editDraft\(row\)/)
   assert.match(source, /api\.put\(`\/purchase-orders\/\$\{editingPurchaseId\.value\}\//)
-  assert.match(source, /编辑草稿/)
-  assert.match(source, /确认下单/)
+  const detail = await readFile(new URL('../components/PurchaseDetailModal.vue', import.meta.url), 'utf8')
+  assert.match(detail, /编辑草稿/)
+  assert.match(detail, /确认下单/)
   assert.match(source, /const \{ status, purchase_no, \.\.\.draftPayload \} = draft\.value/)
 })
 

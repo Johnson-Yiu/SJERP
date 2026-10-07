@@ -18,7 +18,7 @@ test('finance due contracts navigate by their returned record IDs', async () => 
   assert.match(view, /row\.order \? '\/orders' : '\/purchase-orders'/)
   assert.match(view, /detail: row\.order \|\| row\.purchase_order/)
   assert.match(purchaseView, /route\.query\.detail/)
-  assert.match(purchaseView, /expandedId\.value = Number\(route\.query\.detail\)/)
+  assert.match(purchaseView, /parseDocumentDetailId\(route\.query\.detail\)/)
 })
 
 test('import page exposes only supported types and explains insert-only finance imports', async () => {

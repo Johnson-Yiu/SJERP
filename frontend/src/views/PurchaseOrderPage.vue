@@ -2,9 +2,9 @@
 import TradeUnitPicker from '../components/TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
 import PurchaseSupplierPicker from '../components/PurchaseSupplierPicker.vue'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { CircleDollarSign, PackagePlus, Plus, RefreshCw, Save, X } from 'lucide-vue-next'
+import { Eye, PackagePlus, Plus, RefreshCw, Save, X } from 'lucide-vue-next'
 import { api, listData, listAll } from '../api'
 import { confirmDialog, inputDialog } from '../dialogs'
 import PurchasePaymentModal from '../components/PurchasePaymentModal.vue'
@@ -16,13 +16,45 @@ import { clearModalRoute } from '../utils/modalNavigation'
 import { orderDetailLocation } from '../utils/detailNavigation'
 import { withoutDocumentDetailQuery } from '../utils/documentDetailRoute'
 import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuContext'
-import ContractAmountAdjustments from '../components/ContractAmountAdjustments.vue'
+import PurchaseDetailModal from '../components/PurchaseDetailModal.vue'
+import { purchaseArrival } from '../utils/purchaseOverview.js'
+import { parseDocumentDetailId, withDocumentDetailQuery } from '../utils/documentDetailRoute'
 
 const rows = ref([]), suppliers = ref([]), orders = ref([]), skus = ref([]), supplierSkuOptions = ref({})
 const loading = ref(true), saving = ref(false), error = ref(''), notice = ref(''), openCreate = ref(false), expandedId = ref(null), editingPurchaseId = ref(null)
 const route = useRoute()
 const router = useRouter()
-const searchInput = ref(''), searchQuery = ref(''), statusFilter = ref(''), pendingReceiptOnly = ref(false)
+const searchInput = ref(String(route.query.search || ''))
+const searchQuery = computed(() => String(route.query.search || ''))
+const pendingFilterQuery = shallowRef(null)
+const statusFilter = computed({ get: () => String((pendingFilterQuery.value || route.query).status || ''), set: value => updateFilter('status', value) })
+const pendingReceiptOnly = computed({ get: () => (pendingFilterQuery.value || route.query).pending_receipt === '1', set: value => updateFilter('pending_receipt', value ? '1' : '') })
+const detailPurchase = ref(null), detailLoading = ref(false), detailError = ref('')
+let detailRequest = 0
+function updateFilter(key, value) {
+  const query = { ...(pendingFilterQuery.value || route.query) }
+  if (value) query[key] = value
+  else delete query[key]
+  pendingFilterQuery.value = query
+  return router.push({ path: route.path, query, hash: route.hash }).finally(() => { if (pendingFilterQuery.value === query) pendingFilterQuery.value = null })
+}
+async function loadDetail() {
+  const id = parseDocumentDetailId(route.query.detail)
+  const request = ++detailRequest
+  expandedId.value = id
+  detailError.value = ''
+  detailPurchase.value = null
+  detailLoading.value = Boolean(id)
+  if (!id) return
+  try {
+    const row = rows.value.find(row => Number(row.id) === id)
+    const purchase = row || (await api.get(`/purchase-orders/${id}/`)).data
+    if (request === detailRequest) detailPurchase.value = purchase
+  } catch (err) {
+    if (request === detailRequest) detailError.value = message(err, '采购详情加载失败。')
+  } finally { if (request === detailRequest) detailLoading.value = false }
+}
+function closeDetail() { return router.push(withoutDocumentDetailQuery(route)) }
 const hasSkuContext = computed(() => Boolean(skuContextId(route.query.sku)))
 const activeSkuContextLabel = computed(() => skuContextLabel(rows.value, route.query.sku))
 const hasActiveFilters = computed(() => Boolean(searchQuery.value || statusFilter.value || pendingReceiptOnly.value || hasSkuContext.value))
@@ -88,10 +120,10 @@ const inheritedSupplier = computed(() => Boolean(route.query.supplier))
 const inheritedOrder = computed(() => Boolean(route.query.order))
 const money = value => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 const purchaseMetrics = computed(() => [
-  { label: '采购单数', value: rows.value.length, hint: '当前筛选结果' },
+  { label: '执行中', value: rows.value.filter(row => ['ordered', 'partial'].includes(row.status)).length, hint: '当前筛选结果' },
   { label: '待到货', value: rows.value.filter(row => ['ordered', 'partial'].includes(row.status) && (row.items || []).some(item => Number(item.remaining_quantity || 0) > 0)).length, hint: '当前结果中有剩余到货数量' },
   { label: '待付款', value: rows.value.filter(row => !['draft', 'cancelled'].includes(row.status) && Number(row.unpaid_amount || 0) > 0).length, hint: '当前结果中仍有未付余额' },
-  { label: '关联供应商', value: new Set(rows.value.map(row => row.supplier_name || row.supplier).filter(Boolean)).size, hint: '当前结果涉及的供应商' },
+  { label: '已完成', value: rows.value.filter(row => row.status === 'completed').length, hint: '当前结果中已完成采购' },
 ])
 const message = (err, fallback) => err.response?.data?.detail || Object.values(err.response?.data || {}).flat().join(' ') || err.message || fallback
 function purchaseListParams() {
@@ -107,11 +139,7 @@ async function loadPurchaseRows() {
   const nextRows = await listAll('/purchase-orders/', { params: purchaseListParams() })
   if (requestId !== purchaseListRequest) return
   rows.value = nextRows
-  if (route.query.detail && rows.value.some(row => Number(row.id) === Number(route.query.detail))) {
-    expandedId.value = Number(route.query.detail)
-  } else if (expandedId.value && !rows.value.some(row => Number(row.id) === Number(expandedId.value))) {
-    expandedId.value = null
-  }
+  await loadDetail()
 }
 async function loadReferenceOptions() {
   const [nextSuppliers, nextOrders, nextSkus] = await Promise.all([
@@ -138,19 +166,12 @@ async function load({ includeReferenceData = false } = {}) {
 function resetFilters() {
   clearTimeout(searchDebounceTimer)
   searchInput.value = ''
-  searchQuery.value = ''
-  statusFilter.value = ''
-  pendingReceiptOnly.value = false
+  const query = { ...route.query }
+  for (const key of ['search', 'status', 'pending_receipt']) delete query[key]
+  void router.push({ path: route.path, query, hash: route.hash })
 }
 function clearSkuFilter() { void router.push(withoutSkuContext(route)) }
-function togglePurchaseDetail(row) {
-  if (expandedId.value === row.id) {
-    expandedId.value = null
-    if (Number(route.query.detail) === Number(row.id)) void router.replace(withoutDocumentDetailQuery(route))
-    return
-  }
-  expandedId.value = row.id
-}
+function togglePurchaseDetail(row) { void router.push(withDocumentDetailQuery(route, row.id)) }
 function startCreate() {
   editingPurchaseId.value = null
   draft.value = { ...newDraft(), supplier: route.query.supplier || '', order: route.query.order || '' }
@@ -246,15 +267,19 @@ function syncSelectedSkus(ids) {
 async function createPurchase() { if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
 async function place(row) { if (!await confirmDialog({ title: '确认采购下单', message: '确认下单后将生成应付计划并进入在途采购。是否继续？', confirmText: '确认下单', danger: true })) return; try { await api.post(`/purchase-orders/${row.id}/place/`); notice.value = '采购单已确认下单。'; await load() } catch (err) { error.value = message(err, '确认下单失败。') } }
 async function cancelPurchase(row) { const reason = await inputDialog({ title: '取消采购', message: `请填写取消采购单 ${row.purchase_no} 的原因。`, label: '取消原因', placeholder: '请输入取消原因', required: true, maxLength: 500, confirmText: '确认取消', danger: true }); if (!reason) return; try { await api.post(`/purchase-orders/${row.id}/cancel/`, { reason }); notice.value = '采购单已取消。'; await load() } catch (err) { error.value = message(err, '取消采购失败。') } }
-async function deleteDraft(row) { if (!await confirmDialog({ title: '确认删除采购草稿', message: `确定删除草稿 ${row.purchase_no} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/purchase-orders/${row.id}/`); notice.value = '采购草稿已删除。'; await load() } catch (err) { error.value = message(err, '删除采购草稿失败。') } }
+async function deleteDraft(row) { if (!await confirmDialog({ title: '确认删除采购草稿', message: `确定删除草稿 ${row.purchase_no} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/purchase-orders/${row.id}/`); notice.value = '采购草稿已删除。'; if (Number(route.query.detail) === row.id) await closeDetail(); await load() } catch (err) { error.value = message(err, '删除采购草稿失败。') } }
 function pay(row) { paymentTarget.value = row }
 onMounted(() => load({ includeReferenceData: true }))
 watch(searchInput, value => {
   clearTimeout(searchDebounceTimer)
-  searchDebounceTimer = setTimeout(() => { searchQuery.value = value.trim() }, 300)
+  if (value === searchQuery.value) return
+  searchDebounceTimer = setTimeout(() => { void updateFilter('search', value.trim()) }, 300)
 })
-watch([searchQuery, statusFilter, pendingReceiptOnly], () => { void load() })
-watch(() => route.query.sku, () => { void load() })
+watch(() => route.query.search, () => {
+  clearTimeout(searchDebounceTimer)
+  searchInput.value = searchQuery.value
+})
+watch(() => [route.query.search, route.query.status, route.query.pending_receipt, route.query.sku], () => { void load() })
 onBeforeUnmount(() => clearTimeout(searchDebounceTimer))
 watch(() => [route.query.create, route.query.order, route.query.supplier], ([create, order, supplier]) => {
   if (create === '1') {
@@ -274,7 +299,7 @@ watch(() => [route.query.create, route.query.order, route.query.supplier], ([cre
   }
 }, { immediate: true })
 watch(() => route.query.detail, id => {
-  expandedId.value = id ? Number(id) : null
+  void loadDetail()
 })
 </script>
 
@@ -291,11 +316,11 @@ watch(() => route.query.detail, id => {
       <label class="purchase-pending-filter"><input v-model="pendingReceiptOnly" type="checkbox" /> 仅看待到货</label>
       <button class="btn btn-secondary" type="button" :disabled="!hasActiveFilters && !searchInput" @click="resetFilters">重置</button>
     </div>
-    <p v-if="notice" class="notice">{{ notice }}</p><p v-if="error" class="form-error">{{ error }}</p><div v-if="receiptSuccess && expandedId === receiptSuccess.purchaseId" class="notice receipt-success" role="status"><span>{{ receiptSuccess.message }}</span><RouterLink v-if="receiptSuccess.relatedOrders.length === 1" class="order-navigation-link" :to="orderDetailLocation(receiptSuccess.relatedOrders[0].id)">查看关联订单 {{ receiptSuccess.relatedOrders[0].order_no }}</RouterLink><div v-else-if="receiptSuccess.relatedOrders.length > 1" class="receipt-success-orders"><span>关联订单：</span><RouterLink v-for="order in receiptSuccess.relatedOrders" :key="order.id" class="order-navigation-link" :to="orderDetailLocation(order.id)">{{ order.order_no }}</RouterLink></div></div>
+    <p v-if="notice && !expandedId" class="notice">{{ notice }}</p><p v-if="error && !expandedId" class="form-error">{{ error }}</p>
     <div v-if="openCreate" class="modal-backdrop purchase-create-backdrop" @mousedown.self="closeCreate"><section class="modal wide purchase-create-modal" role="dialog" aria-modal="true" aria-labelledby="purchase-create-title"><div class="section-heading modal-head"><div><h3 id="purchase-create-title">{{ editingPurchaseId ? '编辑采购草稿' : '新建采购单' }}</h3><p>采购数量可参考订单履约中的“待采购”；供应商来源仅作为采购识别与参考价，不改变内部 SKU。</p></div><button class="icon-btn" aria-label="关闭" @click="closeCreate"><X :size="17" /></button></div><form @submit.prevent="createPurchase"><div class="form-grid"><label>采购单号<input :value="draft.purchase_no || '保存后由系统自动生成'" class="readonly-input" readonly /></label><label>供应商<select v-model="draft.supplier" required :disabled="inheritedSupplier" @change="onSupplierChanged"><option value="">选择供应商</option><option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.id">{{ supplier.name }}</option></select></label><label>来源销售订单（可选）<select v-model="draft.order" :disabled="inheritedOrder"><option value="">不关联订单</option><option v-for="order in orders.filter(row => row.status !== 'cancelled')" :key="order.id" :value="order.id">{{ order.order_no }} · {{ order.customer_name }}</option></select></label><label>下单日期<input v-model="draft.order_date" type="date" required /></label><label>预计到货<input v-model="draft.expected_arrival_date" type="date" /></label><label>币种<select v-model="draft.currency" required @change="onCurrencyChanged"><option v-for="[code, name] in currencies" :key="code" :value="code">{{ code }} · {{ name }}</option></select></label><label v-if="draft.currency !== 'CNY'">对人民币汇率<input v-model="draft.exchange_rate" type="number" min="0.000001" step="0.000001" placeholder="1 单位外币兑换人民币金额" required /></label></div><div class="line-editor"><h4>采购明细 <small v-if="selectedOrder">关联：{{ selectedOrder.order_no }}</small></h4><SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" :show-price="false" /><div v-for="(item,index) in draft.items" :key="index" class="purchase-line"><span class="purchase-sku"><b>{{ skus.find(sku => sku.id === Number(item.sku))?.display_name_cn || skus.find(sku => sku.id === Number(item.sku))?.product_name || '—' }}</b><small>SKU: {{ skus.find(sku => sku.id === Number(item.sku))?.sku_code || item.sku || '—' }} · Sales Model: {{ skus.find(sku => sku.id === Number(item.sku))?.sales_model || '—' }}</small><TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" :supplier="draft.supplier" /><button type="button" class="text-btn" @click="draft.items.splice(index + 1, 0, { ...item })">增加规格行</button><button type="button" class="text-btn" @click="matchingItem = item">匹配供应商</button></span><select v-model="item.supplier_sku" :disabled="!draft.supplier || !item.sku" @change="applySupplierSkuPrice(item)"><option v-if="!draft.supplier || !item.sku" value="">供应商来源（可选）</option><option v-else-if="!supplierSourcesFor(item).length" value="">未维护供应商来源（本次采购仍可继续）</option><option v-for="source in supplierSourcesFor(item)" :key="source.id" :value="source.id">{{ source.supplier_model || source.supplier_sku_code }} · {{ source.supplier_sku_code }} · {{ source.purchase_price }} {{ source.currency }}</option></select><p v-if="supplierPriceWarning(item)" class="supplier-price-warning">{{ supplierPriceWarning(item) }}</p><input v-model="item.quantity" type="number" min="0.01" step="0.01" placeholder="采购数量" required /><input v-model="item.unit_price" v-money-input type="number" min="0" step="any" placeholder="采购单价" required /><button v-if="draft.items.length > 1" type="button" class="text-btn danger" @click="draft.items.splice(index, 1)">删除</button></div><p v-if="!draft.items.length" class="purchase-empty">请先从上方选择至少一个 SKU。</p></div><div class="editor-actions"><button type="button" class="btn btn-secondary" @click="closeCreate">取消</button><button class="btn btn-primary" :disabled="saving"><Save :size="16" /> {{ saving ? '保存中…' : (editingPurchaseId ? '保存采购草稿' : '创建采购单') }}</button></div></form></section></div>
-    <section class="panel"><div v-if="loading && !rows.length" class="loading"><div class="spinner" /></div><div v-else-if="!rows.length" class="empty"><PackagePlus :size="32" /><h3>{{ hasActiveFilters ? '没有符合筛选条件的采购单' : '暂无采购单' }}</h3><p>{{ hasActiveFilters ? '请调整筛选条件或重置筛选。' : '可独立创建采购草稿，确认下单后再进入收货、付款与成本分配。' }}</p></div><div v-else class="table-wrap"><table class="data-table"><thead><tr><th>采购单号</th><th>供应商</th><th>来源订单</th><th>预计到货</th><th>采购金额</th><th>已付 / 未付</th><th>状态</th><th></th></tr></thead><tbody><template v-for="row in rows" :key="row.id"><tr><td class="primary-cell">{{ row.purchase_no }}</td><td>{{ row.supplier_name }}</td><td><RouterLink v-if="row.order && row.order_no" class="order-navigation-link" :aria-label="`查看来源订单 ${row.order_no}`" :to="orderDetailLocation(row.order)">{{ row.order_no }}</RouterLink><span v-else>—</span></td><td>{{ row.expected_arrival_date || '—' }}</td><td>{{ row.currency }} {{ money(row.total_amount) }}</td><td>{{ money(row.paid_amount) }} / {{ money(row.unpaid_amount) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td><button class="text-btn" @click="togglePurchaseDetail(row)">{{ expandedId === row.id ? '收起' : '操作' }}</button></td></tr><tr v-if="expandedId === row.id" class="detail-row"><td colspan="8"><div class="detail-row-actions"><button v-if="row.status === 'draft'" class="btn btn-primary" @click="place(row)">确认下单</button><button v-if="row.status === 'draft'" class="btn btn-secondary" @click="editDraft(row)">编辑草稿</button><button v-if="row.status === 'draft'" class="btn btn-secondary" @click="deleteDraft(row)">删除草稿</button><button v-if="['draft', 'ordered'].includes(row.status)" class="btn btn-secondary" @click="cancelPurchase(row)">取消采购</button><button v-if="!['draft', 'cancelled'].includes(row.status)" class="btn btn-secondary" @click="costTarget = row">分配采购成本 / 公共费用</button></div><div class="related-order-panel"><strong>履约关联订单</strong><div v-if="row.related_orders?.length" class="related-order-links"><RouterLink v-for="order in row.related_orders" :key="order.id" class="order-navigation-link" :to="orderDetailLocation(order.id)">{{ order.order_no }}</RouterLink></div><span v-else class="muted">暂无销售订单归属</span></div><p v-if="row.status === 'cancelled' && row.cancellation_reason" class="purchase-empty">取消原因：{{ row.cancellation_reason }}<span v-if="row.cancelled_at"> · {{ row.cancelled_at }}</span></p><div v-if="row.status !== 'draft'" class="purchase-detail"><div><h4>分批验货入库</h4><p>核对型号、数量及外观后，登记合格数量。不合格品不计可用库存，在备注记录拒收或待补货情况。</p><p v-for="item in row.items" :key="item.id"><button class="text-btn" @click="costTarget = row">{{ item.display_name || skus.find(sku => sku.id === Number(item.sku))?.display_name_cn || item.sku_code }} · 分配成本</button><span v-if="item.supplier_name"> · {{ item.supplier_name }} / {{ item.supplier_model || item.supplier_sku_code }}</span><small v-if="Object.keys(item.supplier_characteristics_snapshot || {}).length"> · {{ Object.entries(item.supplier_characteristics_snapshot).map(([k,v]) => `${k}：${v}`).join('；') }}</small>　下单 {{ item.trade_quantity ?? item.quantity }} {{ tradeLabel(item) }}<small v-if="item.trade_unit">（{{ item.quantity }} {{ item.trade_snapshot.base_unit }}）</small> · 已到 {{ item.received_quantity }} {{ item.trade_snapshot?.base_unit }} · 剩余 {{ item.remaining_quantity }} {{ item.trade_snapshot?.base_unit }}<span v-if="Number(item.overage_quantity) > 0"> · 超到 {{ item.overage_quantity }} {{ item.trade_snapshot?.base_unit }}</span> <button class="text-btn" :disabled="row.status === 'cancelled'" @click="openReceipt(row, item)">验货入库</button><span v-if="item.receipts?.length" class="receipt-history"><b>入库记录</b><span v-for="receipt in item.receipts" :key="receipt.id" class="receipt-history-row">{{ receipt.receipt_date }} · 到货 {{ receipt.quantity }} · {{ receipt.unit_cost }}<small v-if="receipt.overage_summary"> · {{ receipt.overage_summary }}</small><button v-if="!receipt.reversed_at" class="text-btn" @click="openReceiptReversal(row, item, receipt)">冲销</button><span v-else>已冲销</span></span></span></p></div><div><h4>供应商付款</h4><p>已付 {{ row.currency }} {{ money(row.paid_amount) }}，未付 {{ row.currency }} {{ money(row.unpaid_amount) }}</p><button class="btn btn-secondary" :disabled="Number(row.unpaid_amount) <= 0 || row.status === 'cancelled'" @click="pay(row)"><CircleDollarSign :size="16" /> 登记付款</button></div></div><p v-else class="purchase-empty">草稿尚未下单；确认下单后才可登记到货、付款和成本分配。</p></td></tr></template></tbody></table></div></section>
+    <section class="panel"><div v-if="loading && !rows.length" class="loading"><div class="spinner" /></div><div v-else-if="!rows.length" class="empty"><PackagePlus :size="32" /><h3>{{ hasActiveFilters ? '没有符合筛选条件的采购单' : '暂无采购单' }}</h3><p>{{ hasActiveFilters ? '请调整筛选条件或重置筛选。' : '可独立创建采购草稿，确认下单后再进入收货、付款与成本分配。' }}</p></div><div v-else class="table-wrap"><table class="data-table"><thead><tr><th>采购单号</th><th>供应商</th><th>来源订单</th><th>下单日期</th><th>预计到货</th><th>状态</th><th>采购金额</th><th>已付 / 未付</th><th>操作</th></tr></thead><tbody><tr v-for="row in rows" :key="row.id" class="purchase-list-row" tabindex="0" @click="togglePurchaseDetail(row)" @keydown.enter.self="togglePurchaseDetail(row)"><td class="primary-cell">{{ row.purchase_no }}</td><td>{{ row.supplier_name }}</td><td><RouterLink v-if="row.order && row.order_no" @click.stop class="order-navigation-link" :aria-label="`查看来源订单 ${row.order_no}`" :to="orderDetailLocation(row.order)">{{ row.order_no }}</RouterLink><span v-else>—</span></td><td>{{ row.order_date || '—' }}</td><td><div>{{ row.expected_arrival_date || '—' }}</div><small v-if="purchaseArrival(row)" class="arrival-helper" :class="purchaseArrival(row).kind">{{ purchaseArrival(row).label }}</small></td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.currency }} {{ money(row.total_amount) }}</td><td>{{ money(row.paid_amount) }} / {{ money(row.unpaid_amount) }}</td><td><button class="text-btn" @click.stop="togglePurchaseDetail(row)" :aria-label="`查看采购单 ${row.purchase_no}`"><Eye :size="16" /></button></td></tr></tbody></table></div></section>
 
-    <ContractAmountAdjustments v-for="row in rows.filter(item => item.id === expandedId && item.status !== 'draft')" :key="`adjust-${row.id}`" contract-type="purchase_order" :contract="row" @changed="load" />
+    <PurchaseDetailModal v-if="expandedId" :key="expandedId" :purchase="detailPurchase" :loading="detailLoading" :error="detailError" :skus="skus" @close="closeDetail" @retry="loadDetail" @confirm="place" @edit="editDraft" @delete="deleteDraft" @cancel="cancelPurchase" @pay="pay" @allocate-cost="costTarget = $event" @receive="openReceipt" @reverse-receipt="openReceiptReversal" @changed="load"><template #feedback><p v-if="notice" class="notice">{{ notice }}</p><p v-if="error" class="form-error">{{ error }}</p><div v-if="receiptSuccess && expandedId === receiptSuccess.purchaseId" class="notice receipt-success" role="status"><span>{{ receiptSuccess.message }}</span><RouterLink v-if="receiptSuccess.relatedOrders.length === 1" class="order-navigation-link" :to="orderDetailLocation(receiptSuccess.relatedOrders[0].id)">查看关联订单 {{ receiptSuccess.relatedOrders[0].order_no }}</RouterLink><div v-else-if="receiptSuccess.relatedOrders.length > 1" class="receipt-success-orders"><span>关联订单：</span><RouterLink v-for="order in receiptSuccess.relatedOrders" :key="order.id" class="order-navigation-link" :to="orderDetailLocation(order.id)">{{ order.order_no }}</RouterLink></div></div></template></PurchaseDetailModal>
     <div v-if="receiptTarget" class="receipt-mask" @click.self="receiptTarget = null"><form class="receipt-dialog" @submit.prevent="submitReceipt"><h3>验货合格入库</h3><p>{{ receiptTarget.row.purchase_no }} · {{ receiptTarget.item.display_name || receiptTarget.item.sku_code }}</p><p>待到货 {{ receiptTarget.item.remaining_quantity }} {{ receiptTarget.item.trade_snapshot?.base_unit }}。不合格或拒收数量请写入备注，等待补货后再登记入库。</p><label>实际入库日期<input v-model="receiptForm.receipt_date" type="date" required></label><TradeUnitPicker :line="receiptForm" :sku="skus.find(s => s.id === receiptTarget.item.sku)" :supplier="receiptTarget.row.supplier" price-field="unit_cost" preserve-base-quantity :historical-unit="receiptTarget.item.trade_unit" /><label>合格入库数量<input v-model="receiptForm.quantity" type="number" min="0.01" step="0.01" required></label><label>实际单价（{{ receiptTarget.row.currency }}）<input v-model="receiptForm.unit_cost" type="number" min="0" step="0.0001" required></label><label v-if="baseQuantity(receiptForm) > Number(receiptTarget.item.remaining_quantity)"><span><input v-model="receiptForm.is_overage" type="checkbox" required> 确认超到</span><select v-model="receiptForm.overage_reason" required><option value="">选择超到原因</option><option value="overprocurement">超采</option><option value="gift">供应商赠品</option><option value="carton_variance">包装尾差</option></select></label><label>验货备注 / 异常说明<textarea v-model="receiptForm.notes" placeholder="例如：拒收破损 2 件，已联系供应商补货"></textarea></label><label><span><input v-model="receiptForm.checked" type="checkbox" required> 已核对型号、数量及外观，仅登记合格品</span></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" @click="receiptTarget = null">取消</button><button :disabled="receiptSaving || !receiptForm.checked">{{ receiptSaving ? '保存中…' : '确认入库' }}</button></footer></form></div>
     <div v-if="reversalTarget" class="receipt-mask" @click.self="reversalTarget = null"><form class="receipt-dialog" @submit.prevent="submitReceiptReversal"><h3>冲销采购入库</h3><p>{{ reversalTarget.row.purchase_no }} · {{ reversalTarget.item.display_name || reversalTarget.item.sku_code }} · {{ reversalTarget.receipt.quantity }}</p><label>冲销原因<textarea v-model="reversalReason" maxlength="500" required placeholder="请填写冲销原因"></textarea></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" @click="reversalTarget = null">取消</button><button :disabled="reversalSaving || !reversalReason.trim()">{{ reversalSaving ? '提交中…' : '确认冲销' }}</button></footer></form></div>
   </div>
@@ -306,7 +331,7 @@ watch(() => route.query.detail, id => {
 .purchase-list-toolbar{display:grid;grid-template-columns:minmax(240px,1fr) minmax(150px,210px) auto auto;align-items:end;gap:12px;margin:16px 0 18px;padding:14px;border:1px solid var(--line);border-radius:10px;background:#fff}.purchase-search,.purchase-status-filter{display:grid;gap:6px;color:#536961;font-size:var(--text-caption);font-weight:700}.purchase-search input,.purchase-status-filter select{box-sizing:border-box;width:100%;min-height:38px;border:1px solid #d8e3de;border-radius:8px;padding:7px 9px;background:#fff;color:#263d35;font:inherit}.purchase-pending-filter{display:flex;align-items:center;gap:8px;min-height:38px;color:#39564b;font-size:var(--text-body);white-space:nowrap}.purchase-pending-filter input{width:16px;height:16px;accent-color:#236657}.purchase-list-toolbar>.btn{min-height:38px;white-space:nowrap}@media(max-width:760px){.purchase-list-toolbar{grid-template-columns:minmax(0,1fr) minmax(130px,1fr)}.purchase-search{grid-column:1/-1}.purchase-pending-filter{grid-column:1}.purchase-list-toolbar>.btn{justify-self:end}}
 .receipt-mask{position:fixed;inset:0;background:#10261d66;display:grid;place-items:center;z-index:100}.receipt-dialog{width:min(540px,90vw);max-height:90vh;overflow:auto;padding:24px;background:white;border-radius:14px}.receipt-dialog label{display:grid;gap:6px;margin:14px 0}.receipt-dialog input:not([type=checkbox]),.receipt-dialog select,.receipt-dialog textarea{padding:9px;border:1px solid #d8e1dd;border-radius:7px}.receipt-dialog footer{display:flex;justify-content:flex-end;gap:10px}.receipt-dialog button{padding:9px 14px}.receipt-dialog p{font-size:var(--text-body);color:#718078}
 
-.page-actions,.editor-actions,.detail-row-actions{display:flex;gap:9px}.notice{margin:0 0 14px;padding:10px 13px;border:1px solid #b9dfce;border-radius:9px;background:#eff9f3;color:#216348}.form-error{margin:0 0 14px;padding:10px 13px;border:1px solid #efcaca;border-radius:9px;background:#fff5f5;color:#a44343}.editor{margin-bottom:18px}.section-heading{display:flex;justify-content:space-between;gap:12px}.section-heading h3,.line-editor h4{margin:0;color:#1d493d}.section-heading p{margin:5px 0 0;color:#74847d;font-size:var(--text-body)}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}.form-grid label{display:grid;gap:6px;color:#536961;font-size:var(--text-body);font-weight:700}.form-grid input,.form-grid select,.purchase-line input,.purchase-line select{min-height:38px;border:1px solid #d8e3de;border-radius:8px;padding:7px 9px;background:#fff;color:#263d35}.form-grid select:disabled{background:#f1f5f3;color:#5d756b;cursor:not-allowed}.line-editor{margin-top:20px;padding-top:16px;border-top:1px solid #e5ece8}.line-editor small{color:#778881;font-weight:400}.purchase-line{display:grid;grid-template-columns:2fr 2fr 1fr 1fr auto;gap:9px;margin:9px 0}.purchase-sku{min-width:0}.purchase-sku b,.purchase-sku small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.purchase-sku b{color:#294a41;font-size:var(--text-body)}.purchase-sku small{margin-top:3px;color:#81908a;font-size:var(--text-caption)}.purchase-empty{margin:10px 18px;padding:15px;border:1px dashed #cddbd4;border-radius:8px;color:#82918b;text-align:center;font-size:var(--text-body)}.editor-actions{justify-content:flex-end;margin-top:20px}.detail-row td{padding:0!important;background:#f7faf8}.detail-row-actions{padding:16px 18px 0}.purchase-detail{display:grid;grid-template-columns:2fr 1fr;gap:20px;padding:15px 18px}.purchase-detail h4{margin:0 0 8px;color:#234a3e}.purchase-detail p{margin:7px 0;color:#526961;font-size:var(--text-body)}.purchase-detail p span{color:#668278;font-size:var(--text-body)}.text-btn{border:0;background:transparent;padding:6px 8px;border-radius:6px;color:#28624e;font:inherit;font-size:var(--text-body);cursor:pointer}.text-btn:hover{background:#e7f1eb}.text-btn:disabled{opacity:.45;cursor:not-allowed}.danger{color:#a74b4b}@media(max-width:760px){.form-grid,.purchase-detail{grid-template-columns:1fr}.purchase-line{grid-template-columns:1fr}.page-head{align-items:flex-start}.page-actions{flex-wrap:wrap}}
+.page-actions,.editor-actions{display:flex;gap:9px}.notice{margin:0 0 14px;padding:10px 13px;border:1px solid #b9dfce;border-radius:9px;background:#eff9f3;color:#216348}.form-error{margin:0 0 14px;padding:10px 13px;border:1px solid #efcaca;border-radius:9px;background:#fff5f5;color:#a44343}.editor{margin-bottom:18px}.section-heading{display:flex;justify-content:space-between;gap:12px}.section-heading h3,.line-editor h4{margin:0;color:#1d493d}.section-heading p{margin:5px 0 0;color:#74847d;font-size:var(--text-body)}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}.form-grid label{display:grid;gap:6px;color:#536961;font-size:var(--text-body);font-weight:700}.form-grid input,.form-grid select,.purchase-line input,.purchase-line select{min-height:38px;border:1px solid #d8e3de;border-radius:8px;padding:7px 9px;background:#fff;color:#263d35}.form-grid select:disabled{background:#f1f5f3;color:#5d756b;cursor:not-allowed}.line-editor{margin-top:20px;padding-top:16px;border-top:1px solid #e5ece8}.line-editor small{color:#778881;font-weight:400}.purchase-line{display:grid;grid-template-columns:2fr 2fr 1fr 1fr auto;gap:9px;margin:9px 0}.purchase-sku{min-width:0}.purchase-sku b,.purchase-sku small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.purchase-sku b{color:#294a41;font-size:var(--text-body)}.purchase-sku small{margin-top:3px;color:#81908a;font-size:var(--text-caption)}.purchase-empty{margin:10px 18px;padding:15px;border:1px dashed #cddbd4;border-radius:8px;color:#82918b;text-align:center;font-size:var(--text-body)}.editor-actions{justify-content:flex-end;margin-top:20px}.text-btn{border:0;background:transparent;padding:6px 8px;border-radius:6px;color:#28624e;font:inherit;font-size:var(--text-body);cursor:pointer}.text-btn:hover{background:#e7f1eb}.text-btn:disabled{opacity:.45;cursor:not-allowed}.danger{color:#a74b4b}@media(max-width:760px){.form-grid{grid-template-columns:1fr}.purchase-line{grid-template-columns:1fr}.page-head{align-items:flex-start}.page-actions{flex-wrap:wrap}}
 </style>
 
 <style scoped>
@@ -328,4 +353,8 @@ watch(() => route.query.detail, id => {
 .purchase-create-modal .form-grid{margin-top:0}
 .purchase-create-modal .editor-actions{position:sticky;bottom:-22px;margin:20px -22px -22px;padding:16px 22px;background:#fafbfa;border-top:1px solid var(--line);z-index:2}
 @media(max-width:560px){.purchase-create-modal{width:100%;height:100%;max-height:100vh;border-radius:0}.purchase-create-modal>form{padding:0 16px 16px}.purchase-create-modal .editor-actions{bottom:-16px;margin:20px -16px -16px;padding:14px 16px}}
+</style>
+
+<style scoped>
+.purchase-list-row{cursor:pointer}.purchase-list-row:hover{background:#F8FBF9}.arrival-helper{display:inline-block;margin-top:4px;font-size:12px;color:#71817B}.arrival-helper.today,.arrival-helper.overdue{font-weight:600;border-radius:6px;padding:2px 6px}.arrival-helper.today{color:#A25F22;background:#FFF0DC}.arrival-helper.overdue{color:#A84444;background:#FBE5E5}
 </style>

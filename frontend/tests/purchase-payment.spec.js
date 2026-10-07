@@ -4,13 +4,19 @@ import PurchasePaymentModal from '../src/components/PurchasePaymentModal.vue'
 import PurchaseOrderPage from '../src/views/PurchaseOrderPage.vue'
 const mocks = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), listAll: vi.fn() }))
 vi.mock('../src/api', () => ({ api: mocks, listAll: mocks.listAll, listData: r => r.data }))
-vi.mock('vue-router', () => ({ useRoute: () => ({ query: {} }), useRouter: () => ({ replace: vi.fn() }) }))
+import { createRouter, createMemoryHistory } from 'vue-router'
+async function purchaseRouter() {
+  const router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/purchase-orders', component: { template: '<div />' } }] })
+  await router.push('/purchase-orders')
+  return router
+}
 const purchase = { id: 2, purchase_no: 'PO-2', supplier_name: 'Supplier', currency: 'USD', exchange_rate: '7', total_amount: '100', paid_amount: '20', unpaid_amount: '80', status: 'ordered', items: [] }
 beforeEach(() => { vi.clearAllMocks(); mocks.listAll.mockImplementation(async url => url === '/purchase-orders/' ? [purchase] : []); mocks.post.mockResolvedValue({ data: {} }) })
 it('opens payment from the purchase row and submits inherited currency', async () => {
-  const wrapper = mount(PurchaseOrderPage, { global: { directives: { 'money-input': {} } } })
+  const wrapper = mount(PurchaseOrderPage, { global: { plugins: [await purchaseRouter()], directives: { 'money-input': {} }, stubs: { ContractAmountAdjustments: true } } })
   await flushPromises()
-  await wrapper.findAll('button').find(b => b.text() === '操作').trigger('click')
+  await wrapper.get('.purchase-list-row').trigger('click')
+  await flushPromises()
   await wrapper.findAll('button').find(b => b.text() === '登记付款').trigger('click')
   expect(wrapper.find('[aria-labelledby="payment-title"]').exists()).toBe(true)
   await wrapper.find('.payment-modal input[type="number"]').setValue('30')
@@ -36,7 +42,7 @@ it('rejects overpayment and preserves input on server failure', async () => {
   wrapper.unmount()
 })
 it('defaults new purchases to CNY and asks for a rate for foreign currency', async () => {
-  const wrapper = mount(PurchaseOrderPage, { global: { directives: { 'money-input': {} } } })
+  const wrapper = mount(PurchaseOrderPage, { global: { plugins: [await purchaseRouter()], directives: { 'money-input': {} }, stubs: { ContractAmountAdjustments: true } } })
   await flushPromises()
   await wrapper.findAll('button').find(b => b.text() === '新建采购单').trigger('click')
   const currency = wrapper.findAll('.form-grid select').at(-1)

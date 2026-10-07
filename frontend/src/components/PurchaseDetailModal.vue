@@ -1,0 +1,68 @@
+<script setup>
+import { computed, ref } from 'vue'
+import { X } from 'lucide-vue-next'
+import ContractAmountAdjustments from './ContractAmountAdjustments.vue'
+import { tradeLabel } from '../utils/tradeUnits'
+import { orderDetailLocation } from '../utils/detailNavigation'
+import { purchaseTasks, receiptProgress, purchaseArrival } from '../utils/purchaseOverview.js'
+const props = defineProps({ purchase: Object, loading: Boolean, error: String, skus: { type: Array, default: () => [] } })
+const emit = defineEmits(['close', 'retry', 'confirm', 'edit', 'delete', 'cancel', 'pay', 'allocate-cost', 'receive', 'reverse-receipt', 'changed'])
+const activeTab = ref('overview')
+const tabs = [['overview', '概览'], ['items', '采购明细'], ['receipt', '收货'], ['payment', '付款'], ['orders', '关联订单']]
+const row = computed(() => props.purchase)
+const items = computed(() => row.value?.items || [])
+const tasks = computed(() => row.value ? purchaseTasks(row.value) : [])
+const progress = computed(() => receiptProgress(items.value))
+const formal = computed(() => row.value && !['draft', 'cancelled'].includes(row.value.status))
+const canPay = computed(() => formal.value && Number(row.value.unpaid_amount) > 0)
+const paymentPercent = computed(() => Number(row.value?.total_amount) > 0 ? Math.min(100, Math.round(Number(row.value.paid_amount || 0) / Number(row.value.total_amount) * 100)) : 0)
+const money = value => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const product = item => item.display_name || props.skus.find(sku => Number(sku.id) === Number(item.sku))?.display_name_cn || item.sku_code
+function taskAction(task) { if (task.target === 'confirm') emit('confirm', row.value); else activeTab.value = task.target }
+</script>
+<template>
+  <div class="purchase-workbench-mask" @mousedown.self="emit('close')" @keydown.esc="emit('close')">
+    <section class="purchase-workbench" role="dialog" aria-modal="true" aria-label="采购工作台" tabindex="-1">
+      <header class="workbench-header">
+        <button class="close-action" aria-label="关闭采购详情" @click="emit('close')"><X :size="20" /></button>
+        <template v-if="row">
+          <p>{{ row.supplier_name }} · 下单日期 {{ row.order_date || '—' }}</p>
+          <h2>{{ row.purchase_no }} <span class="status" :class="row.status">{{ row.status_display }}</span></h2>
+          <p>预计到货 {{ row.expected_arrival_date || '—' }} <span v-if="purchaseArrival(row)">{{ purchaseArrival(row).label }}</span></p>
+          <div class="header-actions">
+            <button v-if="row.status === 'draft'" class="primary" @click="emit('confirm', row)">确认下单</button>
+            <button v-if="row.status === 'draft'" class="secondary" @click="emit('edit', row)">编辑草稿</button>
+            <button v-if="row.status === 'draft'" class="destructive" @click="emit('delete', row)">删除草稿</button>
+            <button v-if="['draft', 'ordered'].includes(row.status)" class="destructive" @click="emit('cancel', row)">取消采购</button>
+          </div>
+        </template><h2 v-else>采购工作台</h2>
+      </header>
+      <div v-if="loading" class="workbench-body" role="status">正在加载采购详情…</div>
+      <div v-else-if="error" class="workbench-body" role="alert">{{ error }} <button @click="emit('retry')">重试</button></div>
+      <template v-else-if="row">
+        <nav class="workbench-tabs" aria-label="采购工作台页签"><button v-for="[key,label] in tabs" :key="key" :class="{ active: activeTab === key }" :aria-pressed="activeTab === key" @click="activeTab = key">{{ label }}</button></nav>
+        <main class="workbench-body">
+          <slot name="feedback" />
+          <template v-if="activeTab === 'overview'">
+            <article class="card"><h3>采购摘要</h3><div class="summary-grid"><div><small>采购金额</small><strong>{{ row.currency }} {{ money(row.total_amount) }}</strong></div><div><small>商品项数</small><strong>{{ items.length }}</strong></div><div><small>已付金额</small><strong>{{ row.currency }} {{ money(row.paid_amount) }}</strong></div><div><small>未付金额</small><strong>{{ row.currency }} {{ money(row.unpaid_amount) }}</strong></div></div></article>
+            <article class="card current-todo"><h3>当前待办</h3><div v-for="task in tasks" :key="task.title" class="task-row"><div><b>{{ task.title }}</b><p>{{ task.description }}</p></div><button v-if="task.action" @click="taskAction(task)">{{ task.action }}</button></div><p v-if="!tasks.length">当前无待处理采购履约事项。</p></article>
+            <div class="overview-grid">
+              <article class="card"><h3>到货进度</h3><dl><dt>{{ progress.lines ? '采购明细' : '采购数量' }}</dt><dd>{{ progress.ordered }} {{ progress.unit }}</dd><dt>{{ progress.lines ? '已完成明细' : '已到货' }}</dt><dd>{{ progress.received }}</dd><dt>{{ progress.lines ? '待到货明细' : '待到货' }}</dt><dd>{{ progress.remaining }}</dd><dt>完成比例</dt><dd>{{ progress.percent }}%</dd></dl></article>
+              <article class="card"><h3>付款进度</h3><dl><dt>应付 / 合同金额</dt><dd>{{ row.currency }} {{ money(row.total_amount) }}</dd><dt>已付</dt><dd>{{ money(row.paid_amount) }}</dd><dt>未付</dt><dd>{{ money(row.unpaid_amount) }}</dd><dt>付款百分比</dt><dd>{{ paymentPercent }}%</dd></dl><button v-if="canPay" @click="emit('pay', row)">登记付款</button></article>
+              <article class="card"><h3>成本分配</h3><p>采购商品成本及公共费用可分配到关联销售订单，用于订单毛利分析。</p><button v-if="formal" @click="emit('allocate-cost', row)">分配采购成本 / 公共费用</button></article>
+            </div>
+            <p v-if="row.cancellation_reason" class="card">取消原因：{{ row.cancellation_reason }} <small>{{ row.cancelled_at }}</small></p>
+            <ContractAmountAdjustments v-if="row.status !== 'draft'" contract-type="purchase_order" :contract="row" @changed="emit('changed')" />
+          </template>
+          <article v-if="activeTab === 'items'" class="card table-wrap"><h3>采购明细</h3><table class="data-table"><thead><tr><th>SKU / 产品</th><th>供应商来源</th><th>采购数量</th><th>采购单价</th><th>金额</th><th>已到</th><th>待到</th><th>状态</th></tr></thead><tbody><tr v-for="item in items" :key="item.id"><td><b>{{ item.sku_code }}</b><small>{{ product(item) }}</small></td><td>{{ item.supplier_name || '—' }}<small>{{ item.supplier_model || '—' }}<span v-if="item.supplier_sku_code"> · {{ item.supplier_sku_code }}</span></small><small v-for="(value,key) in item.supplier_characteristics_snapshot" :key="key">{{ key }}：{{ value }}</small></td><td>{{ item.trade_quantity ?? item.quantity }} {{ tradeLabel(item) }}<small v-if="item.trade_unit">{{ item.quantity }} {{ item.trade_snapshot?.base_unit }}</small></td><td>{{ row.currency }} {{ money(item.trade_unit_price ?? item.unit_price) }}</td><td>{{ row.currency }} {{ money(item.total_amount ?? Number(item.quantity) * Number(item.unit_price)) }}</td><td>{{ item.received_quantity }} {{ item.trade_snapshot?.base_unit }}</td><td>{{ item.remaining_quantity }} {{ item.trade_snapshot?.base_unit }}</td><td>{{ row.status === 'draft' ? '未下单' : row.status === 'cancelled' ? '已取消' : Number(item.remaining_quantity) > 0 ? '待到货' : '已到齐' }}</td></tr></tbody></table></article>
+          <div v-if="activeTab === 'receipt'" class="purchase-detail"><p class="card">核对型号、数量及外观后，登记合格数量。不合格品不计可用库存，在备注记录拒收或待补货情况。</p><article v-for="item in items" :key="item.id" class="card"><div class="receipt-heading"><div><h3>{{ item.sku_code }} · {{ product(item) }}</h3><p>下单 {{ item.trade_quantity ?? item.quantity }} {{ tradeLabel(item) }} <small v-if="item.trade_unit">（{{ item.quantity }} {{ item.trade_snapshot?.base_unit }}）</small> · 已到 {{ item.received_quantity }} {{ item.trade_snapshot?.base_unit }} · 剩余 {{ item.remaining_quantity }} {{ item.trade_snapshot?.base_unit }}<span v-if="Number(item.overage_quantity) > 0"> · 超到 {{ item.overage_quantity }} {{ item.trade_snapshot?.base_unit }}</span></p></div><button v-if="formal" @click="emit('receive', row, item)">验货入库</button></div><h4>入库记录</h4><div v-for="receipt in item.receipts" :key="receipt.id" class="receipt-history-row"><span>{{ receipt.receipt_date }} · 到货 {{ receipt.quantity }} · {{ row.currency }} {{ receipt.unit_cost }}<small v-if="receipt.overage_summary">{{ receipt.overage_summary }}</small></span><button v-if="!receipt.reversed_at" @click="emit('reverse-receipt', row, item, receipt)">冲销</button><span v-else>已冲销</span></div><p v-if="!item.receipts?.length">暂无入库记录</p></article></div>
+          <article v-if="activeTab === 'payment'" class="card"><h3>供应商付款</h3><div class="summary-grid"><div><small>采购金额</small><strong>{{ row.currency }} {{ money(row.total_amount) }}</strong></div><div><small>已付</small><strong>{{ row.currency }} {{ money(row.paid_amount) }}</strong></div><div><small>未付</small><strong>{{ row.currency }} {{ money(row.unpaid_amount) }}</strong></div></div><button v-if="canPay" @click="emit('pay', row)">登记付款</button><p v-if="Number(row.unpaid_amount) <= 0">本采购单已无待付余额</p><p v-else-if="!formal">{{ row.status === 'draft' ? '草稿尚未下单，确认下单后可登记付款。' : '采购已取消，仅保留历史付款信息。' }}</p></article>
+          <article v-if="activeTab === 'orders'" class="card related-order-panel"><h3>履约关联订单</h3><RouterLink v-for="order in row.related_orders || []" :key="order.id" class="order-navigation-link order-card" :to="orderDetailLocation(order.id)">{{ order.order_no }}<small v-if="order.customer_name">{{ order.customer_name }}</small></RouterLink><p v-if="!row.related_orders?.length">暂无销售订单归属</p></article>
+        </main>
+      </template>
+    </section>
+  </div>
+</template>
+<style scoped>
+.purchase-workbench-mask{position:fixed;inset:0;background:#10261d66;z-index:60;display:flex;justify-content:flex-end}.purchase-workbench{width:min(1080px,100%);height:100%;display:flex;flex-direction:column;background:#F6F8F5;box-shadow:-12px 0 40px #10261d22}.workbench-header{flex-shrink:0;position:relative;background:#123C36;padding:20px 28px 22px;color:white}.workbench-header h2{font-size:24px;font-weight:700;margin:8px 36px 10px 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}.workbench-header p{font-size:12px;color:#B6D3CA;margin:0 36px 0 0}.close-action{position:absolute;right:20px;top:20px;background:transparent!important;color:white!important;border:0!important;padding:6px!important}.header-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}.header-actions button{height:36px;border-radius:8px;font-size:14px}.header-actions .primary{padding:0 13px;border:1px solid #B8DCCF;background:#F5FCF8;color:#174C41;font-weight:700}.header-actions .secondary{padding:0 11px;border:1px solid #FFFFFF28;background:#FFFFFF12;color:white}.header-actions .destructive{padding:0 11px;border:1px solid #E7CACA;background:#FFF7F7;color:#A84444;font-weight:600}.workbench-tabs{flex:0 0 auto;display:flex;background:white;border-bottom:1px solid #E0E8E4;padding:0 28px;overflow:auto;flex-shrink:0}.workbench-tabs button{border:0;border-radius:0;background:none;padding:15px 18px;white-space:nowrap;color:#71817B}.workbench-tabs .active{color:#174C41;border-bottom:3px solid #174C41;font-weight:700}.workbench-body{min-height:0;overscroll-behavior:contain;padding:22px 28px;overflow:auto;flex:1}.card{padding:18px;border-radius:13px;border:1px solid #E0E8E4;background:white;margin-bottom:16px}.card h3{margin:0 0 16px;font-size:16px;font-weight:700;color:#1D3F36}.card p{font-size:12px;color:#71817B;line-height:1.7}.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:12px}.summary-grid small{display:block;color:#71817B;font-size:12px}.summary-grid strong{display:block;color:#174C41;font-size:18px;margin-top:8px;overflow-wrap:anywhere}.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.overview-grid .card{margin-bottom:0}.overview-grid{margin-bottom:16px}.task-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:10px 12px;background:#F8FBF9;border-radius:9px;margin-top:8px}.task-row b{font-size:14px;color:#294A41}.task-row p{margin:4px 0 0}.purchase-workbench button{cursor:pointer}.workbench-body button{height:32px;padding:0 10px;border-radius:7px;border:1px solid #CFE1D9;background:white;color:#236657;font-size:13px;font-weight:700;flex-shrink:0}dl{display:grid;grid-template-columns:1fr auto;gap:12px;font-size:13px}dt{color:#71817B}dd{margin:0;color:#294A41;font-weight:600}.data-table{min-width:850px}.data-table small{display:block;font-size:12px;color:#71817B;margin-top:4px}.receipt-heading,.receipt-history-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.receipt-history-row{padding:12px 0;border-top:1px solid #E0E8E4;font-size:13px;color:#294A41}.receipt-history-row small{display:block;color:#71817B;margin-top:4px}.order-card{display:block;border:1px solid #E0E8E4;border-radius:9px;padding:14px;margin-top:10px;color:#236657;text-decoration:none;font-weight:700}.order-card small{display:block;color:#71817B;margin-top:6px;font-weight:400}@media(max-width:980px){.purchase-workbench{width:100%}}@media(max-width:700px){.overview-grid{grid-template-columns:1fr}.summary-grid{grid-template-columns:1fr 1fr}.workbench-body{min-height:0;overscroll-behavior:contain;padding:16px}.workbench-header{padding:20px 20px 22px}.workbench-tabs{padding:0 8px}.task-row,.receipt-heading{flex-wrap:wrap}}
+</style>

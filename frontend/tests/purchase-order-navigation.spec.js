@@ -91,6 +91,7 @@ async function mountPurchasePage(row, path = `/purchase-orders?detail=${row.id}`
 }
 
 async function recordReceipt(wrapper) {
+  await wrapper.findAll('.workbench-tabs button').find(button => button.text() === '收货').trigger('click')
   await wrapper.findAll('.purchase-detail button').find(button => button.text().includes('验货入库')).trigger('click')
   await flushPromises()
   await wrapper.get('.receipt-dialog input[type="checkbox"]').setValue(true)
@@ -156,6 +157,7 @@ describe('purchase order navigation and receipt links', () => {
     const row = purchase({ related_orders: [allocatedOrder, secondAllocatedOrder] })
     const { wrapper, router } = await mountPurchasePage(row)
 
+    await wrapper.findAll('.workbench-tabs button').find(button => button.text() === '关联订单').trigger('click')
     const sourceLink = wrapper.get('a[aria-label="查看来源订单 SO-UAT-SOURCE"]')
     const relatedLinks = wrapper.findAll('.related-order-panel a.order-navigation-link')
     expect(sourceLink.attributes('href')).toBe('/orders?detail=11')
@@ -205,4 +207,14 @@ describe('purchase order navigation and receipt links', () => {
     ])
     wrapper.unmount()
   })
+  it('opens existing cost and payment modals from the authoritative workbench', async () => {
+    const row = purchase()
+    const { wrapper } = await mountPurchasePage(row)
+    await wrapper.findAll('button').find(button => button.text() === '分配采购成本 / 公共费用').trigger('click')
+    expect(wrapper.getComponent({ name: 'PurchaseCostAllocationModal' }).props('purchase')).toEqual(row)
+    await wrapper.findAll('button').find(button => button.text() === '登记付款').trigger('click')
+    expect(wrapper.getComponent({ name: 'PurchasePaymentModal' }).props('purchase')).toEqual(row)
+    wrapper.unmount()
+  })
+
 })

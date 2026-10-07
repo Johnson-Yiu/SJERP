@@ -147,6 +147,6 @@ Order UX Phase A：实现与本地回归完成，等待独立接受；整个订�
 | migration drift | No changes detected |
 | git diff --check | PASS |
 
-普通 commit/push，不强推、不 reset、不远程历史 rebase。最终提交对应 CI 的 backend/backend-postgres/frontend 三作业及精确 SHA 另行核对并在交付报告记录；未完成前不标记成功。
+普通 commit/push，不强推、不 reset、不远程历史 rebase。实现提交 `fb086fa8bf3a8d1b94a0cfe6f8d52577ae8dff01` 的 [CI #160](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37582436626) 已全部完成：backend SUCCESS、backend-postgres SUCCESS、frontend SUCCESS，headSha 精确匹配。包含此验收记录的最终文档提交另行核对对应 HEAD 的三个作业，最终 SHA 和 CI 结果在交付报告记录。
 
 Phase B 实现与本地 UAT 完成，等待 Phase A+B+跨模块导航的独立接受，**不自动标记 Order 模块 UX-FROZEN**。

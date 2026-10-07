@@ -85,3 +85,68 @@ Order UX Phase A：实现与本地回归完成，等待独立接受；整个订�
 修复验证使用 DRF 3.18.3：交易单位专项 16 项 PASS；完整后端 565 项（SQLite 跳过 10 项 PostgreSQL 专用测试）；Django check 与 makemigrations drift 检查通过。前端 Node 111、字体 1、Vitest 201 项通过，生产构建通过。无模型/迁移/权限/Order Phase A 前端变更。
 
 替代 [CI #158](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37580165250) 已完成，headSha 精确匹配修复提交 `2634bd6ccef7e8a0ddcafcfe80f90dc7bccf0bef`：backend SUCCESS、backend-postgres SUCCESS、frontend SUCCESS。包含此记录的最终文档提交仍须独立核对其 HEAD 的三个作业，最终 SHA、CI run 与结论在交付报告记录。Phase A 的 CI 阻塞已解决，仍等待独立接受，不开始 Phase B，也不宣布整个订单模块 UX-FROZEN。
+
+
+## Order UX Phase B — Procurement & Shipment Workspace
+
+日期：2026-10-07；已接受 Phase A 基线 `78ade4beea22deaabafe0e2adbba18958882a673`，CI #159 三作业成功。Phase B 仅改 OrderDetailModal 的采购与发货工作区，未开始采购管理 UX，也未更改后端、权限、模型或迁移。
+
+### 层级与数据语义
+
+原表将十类数量/操作摊为十列，用户须解码斜杠和自行判断当前任务。现在同一工作区依次展示履约状态摘要、SKU 履约明细、关联采购单、发货记录，无嵌套标签。
+
+四张紧凑摘要：待采购 SKU、采购中 SKU 按 SKU 去重；待发货明细、已完成明细按 OrderItem 行计数。前两者分别依据 draftable_quantity > 0，以及 purchased_quantity > arrived_quantity 或 in_transit_quantity > 0；后两者分别依据 unshipped_quantity > 0 / <= 0。汇总不影响业务行，同 SKU 不同 OrderItem 和包装仍各一行，以 item.id 作 key。
+
+七列为 SKU / 当前状态、采购来源、订单需求、采购进度、到货进度、发货进度、操作，最小宽度 940px，固定分配列宽避免长商品名挤压数量列。需求显示订单和已预留；采购保留待采购、可建草稿、采购草稿、已采购，非零次级数量按需显示，历史采购不会随缺口清零消失；到货明确标注已到/在途，无采购/到货时用 —；发货明确已发/待发，完成标为已全部发货。原十个 quantity 字段均直接使用 API 值，没有新计算或持久化。
+
+`fulfillmentItemState(item)` 为只读前端展示：按 completed → needs_supplier → needs_procurement → purchasing → ready_to_ship → waiting_stock 优先级，严格采用要求中的字段条件，不赋予新操作权限。
+
+批量发货是主按钮，生成采购草稿为次按钮，沿用 canBatchShip/canOpenProcurement。行确认发货仅在原许可状态且待发 > 0 时展示；采购来源为次级动作，原状态限制不改。行点击仍 ship(item) → openShipmentDialog([item.id])；来源弹窗接收完整精确 OrderItem。
+
+### 采购与发货历史
+
+采购卡按号码/供应商、状态/金额、预计到货、SKU 摘要分层，号码独占链接，仍 purchaseDetailLocation(purchase.id)，无额外查看按钮。ETA 只读本地 YYYY-MM-DD 日历差，placed/partial 显示未来/今日/逾期；实际接口把 placed 称为 ordered，因此一并兼容 ordered；completed/cancelled/draft 不显示警示。无后端状态转换。
+
+发货卡保留发货单号、日期、状态、SKU 行及上下文动作；confirmed 仍整单冲销，cancelled 显示已冲销。冲销为低权重红色文字按钮。采购空状态区分无需采购与尚未建立关联采购；发货空状态说明库存就绪后可操作。成功提示继续留在当前页。
+
+### PCR-006 与回归边界
+
+本阶段没有编辑发货、冲销、采购草稿、供应商分配业务函数，也没有编辑弹窗内部、装箱、实际装箱、PurchaseOrderPage 或 detailNavigation。PCR-006 既有测试验证 OrderItem ID 独立选择、同 SKU 多行、单一 Shipment 请求、批量原子失败呈现、每行超发原因、整单冲销。仅将原“不可发货时显示禁用按钮”的断言改为本阶段要求的“隐藏无关发货按钮”；其余业务断言保留。
+
+### 真实 UI UAT
+
+只操作已有历史 UAT 订单，没有新建、保存、状态变更、采购生成、发货或冲销提交。
+
+| UAT | 结果 | 实际证据 |
+| --- | --- | --- |
+| UAT-ORDER-B-001 | PASS（真实 UI） | SO-2026-00026 两条明细，七列取代十列 |
+| UAT-ORDER-B-002 | PASS（真实 UI） | ID26 四张摘要 0 / 0 / 0 / 2 |
+| UAT-ORDER-B-003 | PASS（真实 UI） | SKU-000001 订单100/采购100/已到100/已发100；CSV SKU 订单20/采购20/已到20/已发20，基础单位 pcs，各段带标签 |
+| UAT-ORDER-B-004 | PASS（真实 UI） | 两行均已完成，与待发0和历史发货吻合；其他状态由六状态参数化测试补证 |
+| UAT-ORDER-B-005 | PASS（自动化补证） | 两个同 SKU OrderItem 701/702 保留两行、不同精确动作；未为测试制造正式业务记录 |
+| UAT-ORDER-B-006 | PASS（真实 UI） | PO-2026-00015 点击到 `/purchase-orders?detail=15` 并准确展开该采购详情；Back 返回 `/orders?status=completed&search=SO-2026-00026&detail=26`。当前 tab 非路由状态，返回默认概览，未引入新路由体系 |
+| UAT-ORDER-B-007 | PASS（真实 UI） | ID26 采购卡 PO15/供应商B/USD70/完成/2026-10-09/CSV20 与 PO14/供应商A/USD650/完成/2026-10-17/SKU100 分层可见 |
+| UAT-ORDER-B-008 | PASS（真实 UI） | 三笔发货号、2026-10-02 日期、已确认、数量60/20/40及冲销文字清晰，仅检查未提交 |
+| UAT-ORDER-B-009 | PASS（自动化补证） | 当前安全历史订单无可发货操作；既有 PCR-006 及新组件测试验证批量按钮条件和精确行 ID，仅模拟 API |
+| UAT-ORDER-B-010 | PASS（真实 UI） | 带 search/status 打开 ID26，概览 CTA → fulfillment → PO → Back → 同订单；关闭仅移除 detail，仍保留 search/status 与同一列表结果 |
+
+截图：任务 visualizations 目录 `order-fulfillment-phase-b-uat.png`。
+
+### 测试、CI 与接受状态
+
+新增 `order-fulfillment-ux.spec.js` 15 项，覆盖摘要数量口径、同 SKU 独立行、七列/数量标签、六状态优先级、精确来源/发货行、采购链接/Back、三种活动采购 ETA、关闭状态无警示及空历史。完整前端继续覆盖 Phase A 搜索、筛选、应收与客户/SKU/采购导航、采购和装箱及 PCR-006。
+
+| 检查 | 结果 |
+| --- | --- |
+| frontend Node | 111 PASS |
+| typography | 1 PASS |
+| frontend Vitest | 27 文件 / 216 PASS |
+| frontend build | PASS（既有大 chunk 提示） |
+| backend full suite，DRF 3.18.3 | 565 项 OK，本地 SQLite 跳过10项 PostgreSQL 专用测试 |
+| Django check | 无问题 |
+| migration drift | No changes detected |
+| git diff --check | PASS |
+
+普通 commit/push，不强推、不 reset、不远程历史 rebase。最终提交对应 CI 的 backend/backend-postgres/frontend 三作业及精确 SHA 另行核对并在交付报告记录；未完成前不标记成功。
+
+Phase B 实现与本地 UAT 完成，等待 Phase A+B+跨模块导航的独立接受，**不自动标记 Order 模块 UX-FROZEN**。

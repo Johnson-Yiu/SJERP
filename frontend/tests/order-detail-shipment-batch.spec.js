@@ -123,7 +123,7 @@ describe('OrderDetailModal batch shipment', () => {
       setupApi({ status })
       const wrapper = await mountOrder()
       expect(wrapper.text()).not.toContain('批量发货')
-      expect(wrapper.findAll('.text-btn').find(button => button.text() === '确认发货').attributes('disabled')).toBeDefined()
+      expect(wrapper.findAll('.fulfillment-ship-action')).toHaveLength(0)
       wrapper.unmount()
       wrappers.pop()
     }

@@ -95,3 +95,80 @@
 ## CI 与交付
 
 正常 commit + push 至 master，无 force/reset/rebase。GitHub CI 工作流 `.github/workflows/ci.yml` 对最终 HEAD 分别运行 backend、backend-postgres、frontend；最终 SHA、run 链接与实际三项结论在交付回复中记录，不能以基线或本地结果代替最终 HEAD CI。独立 ChatGPT 评审完成之前，Phase A 状态为“实现与验证完成，待独立评审”，不标记全模块冻结。
+
+
+# Purchase UX Phase B：采购草稿编辑与验货入库
+
+日期：2026-10-07（Asia/Shanghai）。基线：`ce02306e7d0c41e6b85d1cf530f8799042fbd827`，CI #162 三项 SUCCESS。[Phase A 最终 CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37586683975)。用户 Phase B 任务明确将 Phase A 标记为 ACCEPTED；上文“待独立评审”是 Phase A 初次交付时的历史状态。
+
+## 草稿编辑器层级
+
+保留原新建/编辑 modal，内部依次为采购基本信息、采购商品、采购金额汇总和原 sticky 保存区。基本信息使用三列网格及独立卡片，采购单号作为标题旁低权重只读身份；不是业务输入，也不参与提交。来源订单说明明确：这里只记录主要来源，多订单归属仍由成本分配处理。
+
+供应商字段说明整张采购单全部商品向同一供应商采购。route 继承供应商时显示“由订单履约带入”，原 inheritedSupplier / inheritedOrder 的 disabled 条件不变。查找其他供应商继续打开 PurchaseSupplierPicker，新增说明“选择其他供应商后，将修改整张采购单的供应商，并重新匹配其他采购明细的供货档案。”候选特点、推荐 SupplierSKU、fixedSupplier 过滤及自动建档规则不变。
+
+## 商品卡片、规格和金额
+
+每个 PurchaseItem 独立卡片：产品/SKU/Sales Model 与删除按钮（可删除最后一行，但原空明细保存校验仍阻止保存）；来源规格行分开显示交易单位、供应商供货档案、查找供应商；商务行明确数量、单价、本行金额。底部“增加同 SKU 规格行”沿用 `{ ...item }` 克隆语义；同 SKU 不合并、不归一化历史包装明细。
+
+供应商供货档案仍绑定 supplier_sku，显示历史模型/编码、参考价格和币种。未维护供货档案时提示“本次采购仍可继续”，不会因缺少档案阻断草稿。供应商币种不一致时沿用 supplierPriceWarning，显示黄色警示，单价不静默换算。
+
+TradeUnitPicker、fromTradeLine、baseQuantity、tradePayload、restoreTradeLines 均继续复用，未增加单位转换实现。数量辅助说明为“折合 X 基础单位”。行金额为当前录入 quantity × unit_price（包装数量对应包装单价）；金额汇总为当前全部明细相加，商品项数按行计，币种取整张采购单的 currency。没有跨币种汇总、没有额外总额持久化、没有改汇率逻辑。
+
+保存区提示草稿不会生成应付或在途采购，仍由原 createPurchase 保存或编辑，不自动 place。历史草稿的供应商、来源、日期、币种/汇率、SupplierSKU、交易单位、数量、价格及同 SKU 多行通过原恢复逻辑保留。
+
+## 收货进度和预览
+
+原 receipt dialog 展示采购单号、SKU/产品、采购供应商，顶部显示下单数量/已到货/当前待到，全部使用 PurchaseItem 基础数量。按实际入库日期、交易规格、本次合格数量、实际采购单价、超到确认、异常备注、验货确认组织输入。
+
+本次入库数量解释复用 baseQuantity(receiptForm)；包装单位显示“交易数量 = 基础数量”。预计待到为 remaining_quantity − baseQuantity；负数显示超到数量。预览只解释数据，不替代后端校验；不添加请求或持久化字段。
+
+超到时显示专门警示区，解释待到/本次/超到，沿用 required 确认和超到原因（overprocurement/gift/carton_variance），未改变超到验证。验货 acknowledgement 独立卡片且仍 required；原 checked 提交保护与 saving 保护保留。
+
+保存说明仅列库存、订单预留、采购到货和在途数量，不声称自动改变财务。服务器拒绝后错误直接展示于 dialog，数量、价格、备注和验货确认不丢失；成功后沿用原关闭和刷新/PCR-004 导航。冲销保留原 receipt ID、数量、必填原因和原提交函数，只补充 SKU 身份及危险样式。
+
+## 回归边界
+
+未修改后端生产代码、模型、迁移、采购生命周期/编号、Purchase.order、SupplierSKU 自动生成、单位转换、成本/毛利、付款计划、付款、库存计算、订单 UX、Phase A 列表/详情路由。PurchasePaymentModal 和 PurchaseCostAllocationModal 文件未改动；既有付款、成本分配、订单 ↔ 采购和收货成功导航测试完整运行。没有开始 Inventory UX。
+
+## UAT B001–B010
+
+使用已有开发环境 UAT 记录，仅改变未保存表单，不创建采购草稿、不登记付款/收货/冲销/成本分配。
+
+| UAT | 结果 | 实测证据 |
+|---|---|---|
+| UAT-PURCHASE-B-001 | PASS | 新建弹窗显示采购基本信息、采购商品、采购金额汇总和固定保存说明 |
+| UAT-PURCHASE-B-002 | PASS | 供应商 A + SKU-000001，商品身份/包装/供货档案/数量/价格分区可读 |
+| UAT-PURCHASE-B-003 | PASS | A12-30K · UA-12W-30K · 6.5000 USD 供货档案可读，未保存 |
+| UAT-PURCHASE-B-004 | PASS | CNY 草稿选 USD 档案：黄色警示显示，单价起初为空；没有自动跨币种转换 |
+| UAT-PURCHASE-B-005 | PASS | 两行同 SKU 独立：2 箱 × CNY 65 与 1 袋 × CNY 32.50，基础量 20 / 5 pcs，总额 CNY 162.50，取消未保存 |
+| UAT-PURCHASE-B-006 | PASS | 编辑已有 PO-2026-00004：供应商 C、日期 2026-09-30、基础单位、2 × CNY 8.80 回填；多包装/档案/汇率完整恢复另有自动化验证，取消未保存 |
+| UAT-PURCHASE-B-007 | PASS | PO-2026-00006：下单20 / 已到15 / 当前待到5 pcs；默认1袋、单价USD34 |
+| UAT-PURCHASE-B-008 | PASS | 默认1袋=5pcs；切到基础单位输入3pcs，预计待到2pcs；原包装选择保持基础数量逻辑，未提交 |
+| UAT-PURCHASE-B-009 | PASS | 输入2袋=10pcs，超到5pcs，警示面板显示待到/本次/超到、原因和确认，未提交 |
+| UAT-PURCHASE-B-010 | PASS | 采购工作台 → 付款原弹窗 → 成本原弹窗 → 收货 → 取消/关闭，detail=6始终保留直到关闭工作台；路由筛选上下文另有完整回归覆盖 |
+
+截图：
+
+![编辑器结构与现有草稿](uat-evidence/purchase-phase-b/draft-editor.jpg)
+
+![同 SKU 独立规格行与金额](uat-evidence/purchase-phase-b/draft-lines-total.jpg)
+
+![基础数量与预计剩余](uat-evidence/purchase-phase-b/receipt-progress.jpg)
+
+![超到说明与确认](uat-evidence/purchase-phase-b/receipt-overage.jpg)
+
+## Phase B 自动化与 CI
+
+新增 `frontend/tests/purchase-editor-receipt.spec.js` 13 项交互测试，覆盖分区/编号/解释、继承约束、独立包装明细与 payload、币种不匹配、无档案保存、Picker 警示/特点/推荐档案、历史草稿恢复、基础进度/包装换算/剩余、超到必填项、失败输入保留、成功刷新和冲销精确目标。
+
+- 前端 Vitest：29 文件，243/243 PASS，包含付款、成本和订单采购导航回归。
+- 前端 Node：111/111 PASS。
+- Node-only detail-drawer-typography：1/1 PASS。
+- Production build：PASS；原有 bundle 大小提示仍存在。
+- 后端回归：565 项 PASS，10 skip。
+- Django system check：无问题；迁移漂移：No changes detected。
+
+正常提交并推送，不 force/reset/rebase。最终 SHA 及对应 GitHub CI run 的 backend/backend-postgres/frontend 实际结果以交付回复为准，不以本地测试替代最终 HEAD CI。
+
+Phase B 状态：实现、自动化和 UAT 完成，最终 CI 提交后核验；仍由 ChatGPT 独立评审 Phase A + B、Order ↔ Purchase 和 receipt/payment/cost 回归。未经该评审接受，不自行标记采购模块 UX-FROZEN。

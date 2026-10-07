@@ -84,4 +84,4 @@ Order UX Phase A：实现与本地回归完成，等待独立接受；整个订�
 
 修复验证使用 DRF 3.18.3：交易单位专项 16 项 PASS；完整后端 565 项（SQLite 跳过 10 项 PostgreSQL 专用测试）；Django check 与 makemigrations drift 检查通过。前端 Node 111、字体 1、Vitest 201 项通过，生产构建通过。无模型/迁移/权限/Order Phase A 前端变更。
 
-替代 CI：修复提交普通推送后逐项核对 backend、backend-postgres、frontend；最终精确 SHA、CI run 与结论以交付报告记录，未完成前不标记成功。Phase A 仍等待独立接受，不开始 Phase B，也不宣布整个订单模块 UX-FROZEN。
+替代 [CI #158](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37580165250) 已完成，headSha 精确匹配修复提交 `2634bd6ccef7e8a0ddcafcfe80f90dc7bccf0bef`：backend SUCCESS、backend-postgres SUCCESS、frontend SUCCESS。包含此记录的最终文档提交仍须独立核对其 HEAD 的三个作业，最终 SHA、CI run 与结论在交付报告记录。Phase A 的 CI 阻塞已解决，仍等待独立接受，不开始 Phase B，也不宣布整个订单模块 UX-FROZEN。

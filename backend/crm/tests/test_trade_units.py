@@ -2,12 +2,13 @@ from datetime import date
 from decimal import Decimal
 
 from django.test import TestCase
+from django.db import IntegrityError, transaction
 from rest_framework.test import APIClient
 
 from crm.models import Customer, Product, SKU, Supplier, SKUTradeUnit, Quote, Order, PurchaseOrder, InventoryMovement
 from crm.services.fulfillment import sku_metrics
 from crm.quotation_export_dto import build_quotation_export_dto
-from crm.trade_units import amount_expression
+from crm.trade_units import amount_expression, SKUTradeUnitSerializer
 from crm.tests.test_quotes import xlsx_cell_text
 
 
@@ -112,6 +113,44 @@ class TradeUnitsTests(TestCase):
         self.post('purchase-orders/', dict(supplier=other.pk, order_date=self.today, items=[self.line(unit=scoped)]), 400)
         response = self.client.patch(f'/api/skus/{self.sku.pk}/', {'unit': 'pcs'}, format='json')
         self.assertEqual(response.status_code, 400)
+
+    def test_catalog_multiple_units_and_default_switch(self):
+        first = self.post('sku-trade-units/', dict(sku=self.sku.pk, name='20m Roll', unit='Roll', factor='20'))
+        second = self.post('sku-trade-units/', dict(sku=self.sku.pk, name='100m Roll', unit='Roll', factor='100'))
+        self.assertFalse(first['is_default'])
+        self.assertFalse(second['is_default'])
+        self.assertEqual(SKUTradeUnit.objects.filter(sku=self.sku).count(), 3)
+        response = self.client.patch(f'/api/sku-trade-units/{self.unit.pk}/', {'is_default': True}, format='json')
+        self.assertEqual(response.status_code, 200, response.data)
+        default = self.post('sku-trade-units/', dict(sku=self.sku.pk, name='50m Roll', unit='Roll', factor='50', is_default=True))
+        self.unit.refresh_from_db()
+        self.assertFalse(self.unit.is_default)
+        self.assertTrue(SKUTradeUnit.objects.get(pk=default['id']).is_default)
+        self.assertEqual(SKUTradeUnit.objects.filter(sku=self.sku, is_default=True).count(), 1)
+
+    def test_catalog_invalid_factor_and_inactive_default(self):
+        for factor in ('0', '-1'):
+            self.post('sku-trade-units/', dict(sku=self.sku.pk, name='Invalid', unit='Roll', factor=factor), 400)
+        inactive = self.post('sku-trade-units/', dict(sku=self.sku.pk, name='Inactive', unit='Roll', factor='20', is_default=True, active=False))
+        self.assertFalse(inactive['is_default'])
+        self.assertFalse(inactive['active'])
+        scoped = self.post('sku-trade-units/', dict(sku=self.sku.pk, supplier=self.supplier.pk, name='Supplier roll', unit='Roll', factor='20'))
+        self.assertEqual(scoped['supplier'], self.supplier.pk)
+
+    def test_catalog_database_constraints_and_failed_switch_rollback(self):
+        self.unit.is_default = True
+        self.unit.save(update_fields=['is_default'])
+        other_sku = SKU.objects.create(product=self.product, sku='TU-CONSTRAINTS', unit='m')
+        # Use an SKU without a default to isolate the active/factor checks.
+        for sku, values in ((self.sku, {'is_default': True}), (other_sku, {'factor': 0}), (other_sku, {'is_default': True, 'active': False})):
+            with self.assertRaises(IntegrityError), transaction.atomic():
+                SKUTradeUnit.objects.create(**{**dict(sku=sku, name='Invalid', unit='Roll', factor=20), **values})
+        # Failure after the old default is cleared must roll the switch back.
+        with self.assertRaises(IntegrityError):
+            SKUTradeUnitSerializer().create(dict(sku=self.sku, name='Invalid replacement', unit='Roll', factor=0, is_default=True))
+        self.unit.refresh_from_db()
+        self.assertTrue(self.unit.is_default)
+        self.assertEqual(SKUTradeUnit.objects.filter(sku=self.sku, is_default=True).count(), 1)
 
     def test_manual_stock_units_and_overdraw_are_atomic(self):
         data = dict(movement_date=self.today, type='adjust_in', **self.line('3', '6'))

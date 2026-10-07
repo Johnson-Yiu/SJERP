@@ -159,6 +159,11 @@ class SKUTradeUnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = SKUTradeUnit
         fields = '__all__'
+        # A new default replaces the old one inside create/update's SKU lock.
+        # DRF's automatic conditional uniqueness check runs before that switch.
+        # This model has no other automatic object-level uniqueness validators;
+        # explicit validation and all database constraints remain in force.
+        validators = []
 
     def validate(self, attrs):
         if self.instance:

@@ -60,3 +60,28 @@
 采用普通 commit/push；不 force push/reset/rebase。非快进停止。最终提交 SHA 与该 SHA 对应 CI run、backend/backend-postgres/frontend 结论在最终交付报告记录；不提前声称 CI 通过。
 
 Order UX Phase A：实现与本地回归完成，等待独立接受；整个订单模块尚未 UX-FROZEN。
+
+
+## Phase A 验收阻塞修复：DRF 条件唯一校验
+
+历史 [CI #157](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37578392791) 对实现提交 `45ed9a5268570c1790f288aaafccab6d351b0dda`：frontend SUCCESS，backend/backend-postgres FAILURE，均为 `test_catalog_immutable_default_and_supplier_scope` 创建替代默认规格期望 201，实际返回 400。保留该失败记录，不将原 CI 改写为通过。
+
+独立读取安装日志确认：[#156](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37507773985) 使用 DRF 3.18.1 并通过；#157 使用 DRF 3.18.3。两次 CI 的 Django 均为 6.0.9。
+
+修改前先检查本地 DRF 3.18.0：`SKUTradeUnitSerializer().get_validators()` 为 `[]`。在 `.venv/ci-drf-3183` 隔离安装 CI 解析版本，以 PYTHONPATH 加载（不降级依赖、不改 requirements），检查 DRF 3.18.3 实际输出：
+
+```text
+[<UniqueTogetherValidator(queryset=SKUTradeUnit.objects.all(), fields=('sku',), condition=<Q: (AND: ('is_default', True))>)>]
+```
+
+它对应模型唯一的 `trade_unit_one_default` 条件唯一约束。检查模型全部约束：正系数 CheckConstraint、条件 UniqueConstraint、默认必须启用 CheckConstraint；无其他自动对象级唯一校验器。未修复时，DRF 3.18.3 运行原失败测试准确复现 400/201 差异。
+
+检查已安装 DRF 源码：旧版本只枚举 `len(constraint.fields) > 1` 的唯一约束；3.18.3 已枚举此单字段条件唯一约束并生成 UniqueTogetherValidator。这个请求是“切换默认”操作，校验时旧默认仍存在；默认切换原本在 create/update 的原子事务与 SKU 行锁内完成，自动校验先于它而错误拦截。
+
+最终修复只在 `SKUTradeUnitSerializer.Meta` 明确设置 `validators = []`，并注释原因。没有依赖私有校验器属性过滤逻辑；检查确认该 serializer 当前唯一自动对象级校验器即冲突项，因此没有丢失其他自动对象级唯一规则。现有不可改写定义、factor > 0、停用时清除默认的显式校验保留；创建/更新的 SKU 锁、先清旧默认、再写新默认的事务保留；数据库三个约束不变。
+
+新增 3 项 API/数据库回归：同 SKU 两个非默认规格创建成功；POST 新默认返回 201 并清除旧默认，数据库恰一条默认；非法系数拒绝；停用默认不保留默认标记；供应商范围规格创建成功；绕过 serializer 的非法写入仍被数据库拒绝；清旧默认后的写入失败回滚恢复旧默认。既有不可变字段与供应商范围、报价→订单→采购→到货→发货测试保持。
+
+修复验证使用 DRF 3.18.3：交易单位专项 16 项 PASS；完整后端 565 项（SQLite 跳过 10 项 PostgreSQL 专用测试）；Django check 与 makemigrations drift 检查通过。前端 Node 111、字体 1、Vitest 201 项通过，生产构建通过。无模型/迁移/权限/Order Phase A 前端变更。
+
+替代 CI：修复提交普通推送后逐项核对 backend、backend-postgres、frontend；最终精确 SHA、CI run 与结论以交付报告记录，未完成前不标记成功。Phase A 仍等待独立接受，不开始 Phase B，也不宣布整个订单模块 UX-FROZEN。

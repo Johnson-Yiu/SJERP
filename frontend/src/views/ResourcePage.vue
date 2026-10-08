@@ -13,6 +13,7 @@ import SimpleRichTextEditor from '../components/SimpleRichTextEditor.vue'
 import ComboInput from '../components/ComboInput.vue'
 import SegmentedDateInput from '../components/SegmentedDateInput.vue'
 import SummaryCards from '../components/SummaryCards.vue'
+import { customerListStatus } from '../utils/customerListStatus'
 import InventoryMovementCreateModal from '../components/InventoryMovementCreateModal.vue'
 import SkuContextBanner from '../components/SkuContextBanner.vue'
 import { addDays, daysBetween } from '../utils/orderDate'
@@ -25,6 +26,10 @@ const props = defineProps({ config: Object })
 const route = useRoute()
 const router = useRouter()
 const isCustomerPage = computed(() => props.config.endpoint === 'customers')
+const isCoreListPage = computed(() => isCustomerPage.value || isMovementPage.value)
+const primaryAction = computed(() => isCustomerPage.value ? '新建客户' : isMovementPage.value ? '新建库存调整' : '新建记录')
+const listNoun = computed(() => isCustomerPage.value ? '客户' : '库存流水')
+const hasListFilters = computed(() => Boolean(query.value || (isMovementPage.value && [movementFilters.value.type, movementFilters.value.direction, movementFilters.value.source, route.query.sku].some(Boolean))))
 const isMovementPage = computed(() => props.config.endpoint === 'inventory-movements')
 const movementSkus = ref([])
 const movementFilters = computed(() => ledgerFilters(route.query))
@@ -85,10 +90,10 @@ const resourceMetrics = computed(() => {
   const total = rows.value.length
   const today = new Date().toISOString().slice(0, 10)
   if (endpoint === 'customers') return [
-    { label: '客户总数', value: total, hint: '当前客户档案' },
-    { label: '正式客户', value: rows.value.filter(row => ['customer', 'company'].includes(row.status)).length, hint: '已成交或有返单' },
-    { label: '待开发', value: rows.value.filter(row => ['lead', 'contact', 'opportunity'].includes(row.status)).length, hint: '线索、联系人与商机' },
-    { label: '累计销售额', value: `¥ ${rows.value.reduce((sum, row) => sum + Number(row.sales_amount || 0), 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, hint: '当前列表客户累计值' },
+    { label: '客户总数', value: total, hint: '全部客户档案' },
+    { label: '正式客户', value: rows.value.filter(row => ['customer', 'company'].includes(row.status)).length, hint: '已有正式订单' },
+    { label: '待开发', value: rows.value.filter(row => ['lead', 'contact', 'opportunity'].includes(row.status)).length, hint: '尚未成交' },
+    { label: '累计销售额', value: `¥ ${rows.value.reduce((sum, row) => sum + Number(row.sales_amount || 0), 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, hint: '当前列表累计' },
   ]
   if (endpoint === 'follow-ups') return [
     { label: '跟进记录', value: total, hint: '当前查询结果' },
@@ -476,8 +481,8 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
 </script>
 
 <template>
-  <div class="resource-page" :class="{ 'finance-resource-page': isTransactionPage, 'inventory-ledger-page': isMovementPage }">
-    <div class="page-head"><div><h2>{{ config.title }}</h2><p>{{ config.description }}</p></div><button class="btn btn-primary" @click="openCreate"><Plus :size="16" /> 新建记录</button></div>
+  <div class="resource-page" :class="{ 'finance-resource-page': isTransactionPage, 'inventory-ledger-page': isMovementPage, 'core-list-page': isCoreListPage }">
+    <div class="page-head" :class="{ 'list-intro': isCoreListPage }"><div><h2 v-if="!isCoreListPage">{{ config.title }}</h2><p>{{ config.description }}</p></div><button class="btn btn-primary" @click="openCreate"><Plus :size="16" /> {{ primaryAction }}</button></div>
     <SummaryCards :items="resourceMetrics" />
     <div v-if="isCertificatePage" class="certificate-filters" aria-label="证书有效期筛选"><button v-for="[value, label] in certificateFilters" :key="value" type="button" class="btn" :class="{ 'btn-primary': (route.query.expiry || '') === value }" :aria-pressed="(route.query.expiry || '') === value" @click="setCertificateFilter(value)">{{ label }}</button></div>
     <div v-if="certificateFilterLabel" class="follow-up-due-context" aria-label="当前证书筛选"><span>当前筛选：<strong>{{ certificateFilterLabel }}</strong></span><button type="button" @click="setCertificateFilter('')">清除筛选</button></div>
@@ -490,14 +495,14 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
       <label>来源<select :value="movementFilters.source" aria-label="按流水来源筛选" @change="updateLedgerQuery({source:$event.target.value || undefined})"><option value="">全部来源</option><option value="automatic">系统自动</option><option value="manual">手工登记</option><option value="reversal">冲销</option></select></label>
       <button class="btn btn-secondary" @click="resetLedgerFilters">重置</button>
     </div>
-    <p v-if="isMovementPage" class="ledger-help">系统自动流水由采购入库、订单发货等业务生成，不能手工修改。数量以对应 SKU 基础单位显示，概览仅统计记录数。</p>
+    <p v-if="isMovementPage" class="ledger-help">数量按 SKU 基础单位显示；自动流水不可手工修改。</p>
     <div v-else class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索当前列表..." @input="delayedSearch" /></div></div>
     <div class="panel">
       <div v-if="loading" class="loading"><div class="spinner" /></div>
-      <div v-else-if="!visibleRows.length" class="empty"><Database :size="32" /><h3>{{ isMovementPage ? '没有匹配的库存流水' : '还没有数据' }}</h3><p>{{ isMovementPage ? '请调整搜索或筛选条件。' : '点击“新建记录”开始建立业务资料。' }}</p></div>
-      <div v-else class="table-wrap"><table class="data-table"><thead><tr><th v-for="col in config.columns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
+      <div v-else-if="!visibleRows.length" class="empty"><Database :size="32" /><h3>{{ isCoreListPage ? (hasListFilters ? `没有匹配的${listNoun}` : `暂无${listNoun}`) : '还没有数据' }}</h3><p>{{ isCoreListPage ? (hasListFilters ? '请调整筛选条件。' : `点击“${primaryAction}”开始录入。`) : '点击“新建记录”开始建立业务资料。' }}</p></div>
+      <div v-else class="table-wrap"><table class="data-table" :class="{ 'customer-list-table': isCustomerPage }"><thead><tr><th v-for="col in config.columns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
         <tr v-for="row in visibleRows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row.id)" @keydown.enter="openDetail(row.id)">
-          <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><template v-if="isMovementPage && col[0] === 'sku_code'"><strong>{{ row.sku_code || row.sku_code_snapshot || '—' }}</strong><small class="ledger-secondary">{{ row.product_name || row.display_name }}</small><small v-if="movementUnit(row,movementSkus)" class="ledger-secondary">基础单位：{{ movementUnit(row,movementSkus) }}</small></template><span v-else-if="isMovementPage && col[0] === 'source_type'" class="ledger-source" :class="movementSource(row)">{{ sourceLabels[movementSource(row)] || '未标注' }}</span><span v-else-if="isMovementPage && col[0] === 'signed_quantity'" :class="cellClass('signed',row.signed_quantity)">{{ signedMovement(row,movementUnit(row,movementSkus)) }}</span><template v-else-if="isMovementPage && col[0] === 'reference'"><span>{{ row.reference || row.source_no || '—' }}</span><small class="ledger-secondary">{{ (row.related_order_nos || []).join('、') || row.order_no }}</small><small v-if="row.overage_summary" class="ledger-secondary">{{ row.overage_summary }}</small></template><span v-else-if="isMovementPage && col[0] === 'reversal_status'" :title="row.reversal_status">{{ movementStatus(row) }}</span><CertificateExpiryBadge v-else-if="isCertificatePage && col[0] === 'expiry_status'" :certificate="row" /><span v-else :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
+          <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><template v-if="isMovementPage && col[0] === 'sku_code'"><strong>{{ row.sku_code || row.sku_code_snapshot || '—' }}</strong><small class="ledger-secondary">{{ row.product_name || row.display_name }}</small><small v-if="movementUnit(row,movementSkus)" class="ledger-secondary">基础单位：{{ movementUnit(row,movementSkus) }}</small></template><span v-else-if="isMovementPage && col[0] === 'source_type'" class="ledger-source" :class="movementSource(row)">{{ sourceLabels[movementSource(row)] || '未标注' }}</span><span v-else-if="isMovementPage && col[0] === 'signed_quantity'" :class="cellClass('signed',row.signed_quantity)">{{ signedMovement(row,movementUnit(row,movementSkus)) }}</span><template v-else-if="isMovementPage && col[0] === 'reference'"><span>{{ row.reference || row.source_no || '—' }}</span><small class="ledger-secondary">{{ (row.related_order_nos || []).join('、') || row.order_no }}</small><small v-if="row.overage_summary" class="ledger-secondary">{{ row.overage_summary }}</small></template><span v-else-if="isMovementPage && col[0] === 'reversal_status'" :title="row.reversal_status">{{ movementStatus(row) }}</span><CertificateExpiryBadge v-else-if="isCertificatePage && col[0] === 'expiry_status'" :certificate="row" /><span v-else-if="isCustomerPage && col[0] === 'name'" class="customer-name" :title="row.name">{{ row.name }}</span><span v-else-if="isCustomerPage && col[0] === 'status'" class="status" :class="row.status" :title="row.status_display || statusLabels[row.status]">{{ customerListStatus(row.status, display(row.status, 'status', 'status')) }}</span><span v-else :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
           <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="openDetail(row.id)"><ChevronRight :size="14" /></button><button v-if="!isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="canReverseInventoryMovement(row)" class="mini-btn danger" title="冲销" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
         </tr>
       </tbody></table></div>

@@ -94,3 +94,84 @@
 测试文件：`src/views/DocumentPage.test.js`、`tests/second-review-foundation.spec.js`（新增）、`tests/customer-ux.spec.js`、`tests/entity-detail-quote-create.spec.js`、`tests/order-fulfillment-ux.spec.js`、`tests/order-overview-ux.spec.js`、`tests/purchase-editor-receipt.spec.js`、`tests/purchase-order-navigation.spec.js`、`tests/trade-finance.spec.js`。
 
 未修改 backend 生产代码、models、migrations、权限设置或业务计算；未开展 Finance UX、sidebar/topbar 重设计、卡片布局、表格密度或 drawer 宽度调整。
+
+## Phase 2A — Global List Visual + Copy Pass
+
+实施基线：`634a322b925fd4ea1f37953c2aae8f2b44971f4e`（基线 CI #166）。本节是实施和验证记录，Phase 2A 最终 UI 验收由 ChatGPT 独立检查 diff、业务回归、CI、对比截图、文案及视觉一致性后决定，Codex 不宣告 Phase 2A PASS。未开始 Phase 2B 或 Finance UX。
+
+### 布局与侧栏
+
+- Customer、Quote、Order、Purchase、Inventory、Inventory Movement 删除内容区重复 H2；全局顶栏的英文 eyebrow 和中文 H1 保留。内容区改为说明/操作行，min-height 42px、下间距 18px、说明文字 13px/#71817B。
+- 侧栏保持 248px，导航项实测 40px；组标题留白为上 14px、下 6px。保留原有权限判断、全部 25 个模块入口及路由。
+- 分组：经营（经营概览/报表中心）、客户（客户管理/联系人/跟进记录）、销售（报价管理/订单管理）、采购与库存（供应商管理/采购管理/库存/库存流水）、产品资料（产品管理/SKU 管理/产品分类/产品参数/包装管理/交易单位/产品证书/HS 编码维护）、财务与工具（原次序）、组织与系统（组织与权限）。
+- 列表表头统一为 42px、现有浅色背景、取消中文标题的 uppercase/额外字距，行内容居中。CSS 通过列表根容器及专用表格 class 限定，详情工作台和编辑器不做视觉重设计。
+
+### Human copy pass
+
+| 页面 | 新说明/辅助文案 |
+| --- | --- |
+| Customer | 管理客户资料、负责人和跟进计划。客户阶段会根据报价和订单自动更新。卡片提示：全部客户档案/已有正式订单/尚未成交/当前列表累计。主操作：新建客户 |
+| Quote | 管理报价版本、状态和成交转单。指标提示：报价主单数/含所有修订版/草稿或已发送/客户已接受。主操作：新建报价 |
+| Order | 管理订单、交付和收款进度。提示：已确认 / 生产中 / 已发货、尚未完成发货、仍有应收余额、已完成交付。主操作：新建订单 |
+| Purchase | 管理采购、到货和供应商付款。提示：已下单 / 部分到货、尚未全部到货、仍有应付余额、已完成采购。主操作：新建采购单 |
+| Inventory | 查看各 SKU 的实际库存、预留、可用量和采购缺口。提示缩短为当前列表/按基础单位汇总/已扣除预留/已下单未到货/采购缺口 / 数据异常；保留刷新及业务链接，无创建主操作 |
+| Inventory Movement | 查看每次库存增减及其来源。辅助说明：数量按 SKU 基础单位显示；自动流水不可手工修改。保留类型/方向/来源。主操作：新建库存调整 |
+
+各核心列表空状态使用“暂无…”与具体新建操作；过滤为空使用“没有匹配的…”和“请调整筛选条件。”库存无创建操作，引导进入 SKU 管理。Customer、Quote、Order、Purchase、Movement 指标数量与计算公式未改变。
+
+已把永久质量规则写入项目 AGENTS.md：前端任务同时要求自动回归和真实 Chrome 检查；可见文案做人工语言检查。UI helper 可改写，正式字段只在含义不变时简化，实际状态值/数据不得改写。SKU、预留、冲销、采购草稿、应收、应付、交易单位、入库、出库等术语保留。
+
+### 客户状态与表格
+
+只在列表显示映射：lead → 线索、contact → 已联系、opportunity → 商机、customer → 正式客户、company → 返单客户。实际 company key 已在模型及当前生命周期文案中核对；完整“已有2张及以上正式订单”等说明保留在 title tooltip。现有字段、状态 class、后端语义、详情文案未改动，未知状态保留原显示。
+
+客户名称最多两行并保留完整名称 tooltip；编号、状态、国家/地区、业务区域、负责人、日期、订单数、金额保持单行。仅客户列表收紧列内水平留白至 6px，保留 14px 正文字号。实测表格与可视容器均为 1107px，金额和操作列可完整显示。
+
+Order 列设定最小宽度：订单号 125、客户 180、日期/交期各 100、状态 78、明细 60、金额 105、已收/待收 120、操作 80px；编号/日期/状态/数量/金额不换行，客户可换行。1440 桌面下表格与容器均为 1107px，无整页水平溢出。Purchase 编号/日期/状态/金额同样保持单行；金额列右对齐。较窄视口保留表格内部水平滚动。
+
+### 库存
+
+桌面库存卡片改为 `repeat(5, minmax(0, 1fr))`；1200px 以下使用 3 列，700px 以下 2 列，480px 以下 1 列。1440 桌面五卡同排，实测 y 坐标均为 171。
+
+“待关注”卡片保留唯一过滤入口，使用原 toggleAttention/URL attention=1 和原缺口/异常判定；保留 active 样式及 aria-pressed。移除同功能的工具栏按钮。实际库存、预留、可用、在途、待采购计算未修改，混合基础单位分别汇总。
+
+### Chrome 检查与截图
+
+Chrome Use 操作真实 Chrome，本地 ERP `http://127.0.0.1:5191`；1440×900、Ctrl+0 恢复 100%，DOM 实测 devicePixelRatio=1、visualViewport.scale=1。改动前先采六页，改动后采相同数据列表及侧栏三段；仅浏览/切换筛选/展开树，没有业务数据修改。
+
+| 页面/检查 | 观察结果 |
+| --- | --- |
+| Customer | 单一中文页面标题，新建客户；短状态单行并带完整说明；名称最多两行；全部列可见 |
+| Quote | 单一标题、新建报价、四指标保持；真实树展开 42→44 行，收起恢复 42 行 |
+| Order | 单一标题、新建订单；订单号/日期/已取消等状态单行；表格完整显示 |
+| Purchase | 单一标题、新建采购单；日期/编号/状态/金额单行；列表筛选控件保留 |
+| Inventory | 五卡同排；唯一待关注卡片点击写 attention=1/aria-pressed=true，再次点击删除过滤并恢复 3 条 SKU |
+| Movement | 单一标题、新建库存调整；类型/方向/来源仍在，90 条流水数据保持，自动/冲销标记仍清晰 |
+| 侧栏 | 七组、25 个模块入口；产品资料中部及组织与系统底部可滚动访问，当前项高亮；权限入口规则不变 |
+
+截图根目录（非 Git）：
+`C:/Users/Johnson/.codex/visualizations/2026/10/08/01a11977-80e0-77b0-ad46-fafa2f93bdc7/erp-phase-2a/`
+
+BEFORE 文件在 `before/`，AFTER 文件在 `after/`；15 张全部加载完成且经逐图检查，未提交 Git：
+
+- BEFORE_01_customer_list.png → AFTER_01_customer_list.png
+- BEFORE_02_quote_list.png → AFTER_02_quote_list.png
+- BEFORE_03_order_list.png → AFTER_03_order_list.png
+- BEFORE_04_purchase_list.png → AFTER_04_purchase_list.png
+- BEFORE_05_inventory_list.png → AFTER_05_inventory_list.png
+- BEFORE_06_inventory_movement_list.png → AFTER_06_inventory_movement_list.png
+- AFTER_07_sidebar_top.png、AFTER_08_sidebar_middle.png、AFTER_09_sidebar_bottom.png
+
+截图接口原始文件为 JPEG，另存 PNG 时未裁剪/缩放/修图。页面视口均为 1440×900/100%；接口部分输出 1425×891，库存及侧栏中部为 1440×900。QA 联系表仅用于检查，独立验收应查看原尺寸 PNG。
+
+### 自动验证与 CI
+
+- 新增 `frontend/tests/phase2a-list-shell.spec.js`，19 项集成/样式检查：六页顶栏及无重复 H2、主操作文字、实际状态 key/tooltip、不换行/列宽、报价树及指标、Order/Purchase/Movement 筛选、按单位库存汇总、唯一 attention/URL/active 状态、全部模块路由和七组次序、初始/过滤空状态。
+- 更新 ResourcePage、inventory-workbench、inventory-ledger、quote-list 旧测试中已改变的列表文字；既有工作台、导航、订单/采购业务回归保留。
+- 全量 Vitest：33 个文件、326/326 通过。
+- Node 单元测试：111/111 通过；字体检查：1/1 通过；生产构建通过（原有 bundle-size 提示）。
+- Backend：565 tests，OK，10 skipped，独立测试数据库已销毁；Django check 无问题，makemigrations --check --dry-run 无漂移。
+- 范围核对：backend、models/migrations、router、详情组件均无 diff；开发超级管理员权限规则保持原样。
+- 正常 commit + push master 后核验最终 HEAD 的 backend、backend-postgres、frontend 全部成功；最终 SHA 和实际运行链接记录在本次最终交付回复。[master CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/workflows/ci.yml?query=branch%3Amaster)。这些验证记录供独立 UI 验收使用，不代替最终验收结论。
+
+本轮实现文件：App.vue、styles.css、resourceConfigs.js、DocumentPage.vue、ResourcePage.vue、PurchaseOrderPage.vue、InventoryPage.vue、utils/customerListStatus.js（新增）、utils/inventoryLedger.js；另有 AGENTS.md、本文档、新增测试和四个更新的测试文件。

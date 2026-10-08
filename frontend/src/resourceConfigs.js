@@ -8,7 +8,7 @@ export const resourceConfigs = {
   },
   customers: {
     title: '客户管理', eyebrow: 'Customer portfolio', endpoint: 'customers', key: 'name',
-    description: '集中维护客户画像与归属；客户阶段由跟进、报价和正式订单自动更新。下次跟进由最新跟进记录自动更新。',
+    description: '管理客户资料、负责人和跟进计划。客户阶段会根据报价和订单自动更新。',
     columns: [
       ['name', '客户名称'], ['code', '客户编号'], ['status', '状态', 'status'], ['country', '国家/地区'], ['region', '业务区域'],
       ['owner', '负责人'], ['next_follow_up', '下次跟进', 'date'], ['order_count', '订单数', 'number'], ['sales_amount', '累计销售额', 'rmb'],
@@ -80,7 +80,7 @@ export const resourceConfigs = {
   },
   'inventory-movements': {
     title: '库存流水', eyebrow: 'Inventory ledger', endpoint: 'inventory-movements', key: 'movement_no',
-    description: '按 SKU 记录真实出入库，自动形成当前库存。',
+    description: '查看每次库存增减及其来源。',
     columns: [['movement_date', '日期', 'date'], ['movement_no', '流水号'], ['sku_code', 'SKU / 产品'], ['type_display', '类型', 'tag'], ['signed_quantity', '库存变动', 'signed'], ['source_type', '来源'], ['warehouse', '仓库'], ['reference', '关联单据'], ['reversal_status', '冲销状态']],
     fields: [
       ['movement_no', '流水号', 'readonly'], ['movement_date', '发生日期', 'date', true],

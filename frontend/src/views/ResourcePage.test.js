@@ -19,7 +19,7 @@ test('customer projections are visible but not editable customer fields', async 
   assert.equal(customer.fields.some(field => field[0] === 'next_follow_up'), false)
   assert.equal(customer.columns.some(column => column[0] === 'status'), true)
   assert.equal(customer.fields.some(field => field[0] === 'status'), false)
-  assert.match(customer.description, /客户阶段由跟进、报价和正式订单自动更新/)
+  assert.match(customer.description, /客户阶段会根据报价和订单自动更新/)
   assert.match(page, /contact: '已建立联系'/)
   assert.match(page, /opportunity: '已进入报价阶段'/)
   assert.match(page, /customer: '已有1张正式订单'/)

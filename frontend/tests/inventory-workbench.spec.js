@@ -85,7 +85,7 @@ it('debounces search for 300ms while preserving attention and sort updates', asy
   try {
     await wrapper.find('[aria-label="搜索库存"]').setValue('Context')
     await vi.advanceTimersByTimeAsync(299); expect(router.currentRoute.value.query.search).toBeUndefined()
-    await click('仅看待关注'); await click('可用库存')
+    await click('待关注'); await click('可用库存')
     await vi.advanceTimersByTimeAsync(1); await flushPromises()
     expect(router.currentRoute.value.query).toMatchObject({ search: 'Context', attention: '1', sort: 'available_quantity' })
   } finally { vi.useRealTimers() }
@@ -106,7 +106,7 @@ it('filters exactly anomaly or procurement gap, excludes zero-only SKU, toggles 
 })
 it('keeps mixed-unit sums separate and makes base quantity labels explicit', async () => {
   expect(wrapper.find('.inventory-summary').text()).toContain('8 pcs / 340 m')
-  expect(wrapper.find('.inventory-helper').text()).toBe('所有库存数量均以 SKU 基础单位显示。')
+  expect(wrapper.find('.inventory-helper').text()).toBe('数量按 SKU 基础单位显示。')
   expect(wrapper.findAll('thead th').map(x => x.text())).toEqual(['SKU', '中文 SKU 名称', '实际库存', '已预留', '可用库存', '在途采购', '待采购', '状态'])
 })
 it('opens row with preserved context, closes only detail/tab', async () => {

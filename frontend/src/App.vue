@@ -10,27 +10,30 @@ const route = useRoute()
 const menuOpen = ref(false)
 const operator = reactive({ name: '加载中', role: '身份待确认', development_superadmin: false, has_all_permissions: false })
 const nav = [
+  { section: '经营' },
   { label: '经营概览', path: '/', icon: LayoutDashboard },
   { label: '报表中心', path: '/reports', icon: LayoutDashboard },
   { section: '客户' },
   { label: '客户管理', path: '/customers', icon: Users },
   { label: '联系人', path: '/contacts', icon: ContactRound },
   { label: '跟进记录', path: '/follow-ups', icon: MessageSquareText },
-  { section: '销售业务' },
+  { section: '销售' },
   { label: '报价管理', path: '/quotes', icon: FileText },
   { label: '订单管理', path: '/orders', icon: ShoppingCart },
-  { section: '产品与供应链' },
+  { section: '采购与库存' },
   { label: '供应商管理', path: '/suppliers', icon: Truck },
   { label: '采购管理', path: '/purchase-orders', icon: ShoppingCart },
+  { label: '库存', path: '/inventory', icon: Warehouse },
+  { label: '库存流水', path: '/inventory-movements', icon: Warehouse },
+  { section: '产品资料' },
   { label: '产品管理', path: '/products', icon: Package },
-  { label: 'HS 编码维护', path: '/hs-codes', icon: Barcode, requiresAdmin: true },
   { label: 'SKU 管理', path: '/skus', icon: Boxes },
+  { label: '产品分类', path: '/categories', icon: Tags },
+  { label: '产品参数', path: '/product-parameters', icon: SlidersHorizontal },
   { label: '包装管理', path: '/sku-packaging', icon: Package },
   { label: '交易单位', path: '/sku-trade-units', icon: Boxes },
-  { label: '库存流水', path: '/inventory-movements', icon: Warehouse },
-  { label: '产品参数', path: '/product-parameters', icon: SlidersHorizontal },
   { label: '产品证书', path: '/product-certificates', icon: BadgeCheck },
-  { label: '产品分类', path: '/categories', icon: Tags },
+  { label: 'HS 编码维护', path: '/hs-codes', icon: Barcode, requiresAdmin: true },
   { section: '财务与工具' },
   { label: '财务概览', path: '/finance', icon: WalletCards },
   { label: '应收计划', path: '/receivables', icon: WalletCards },
@@ -40,7 +43,6 @@ const nav = [
   { section: '组织与系统' },
   { label: '组织与权限', path: '/organization', icon: ShieldCheck },
 ]
-nav.splice(nav.findIndex(item => item.path === '/inventory-movements'), 0, { label: '库存', path: '/inventory', icon: Warehouse })
 const currentDate = computed(() => new Intl.DateTimeFormat('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' }).format(new Date()))
 const operatorInitial = computed(() => operator.name && operator.name !== '加载中' ? operator.name.trim().slice(0, 1).toUpperCase() : '—')
 const isAdmin = computed(() => operator.can_manage_hs_codes === true)

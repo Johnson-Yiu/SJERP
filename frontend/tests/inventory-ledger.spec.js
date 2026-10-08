@@ -40,7 +40,7 @@ describe('Inventory ledger Phase B',()=>{
  it('generic resource search stays local and retains prior behavior',async()=>{await setup('/contacts');await wrapper.get('.search-box input').setValue('name');await new Promise(r=>setTimeout(r,310));await flushPromises();expect(router.currentRoute.value.query.search).toBeUndefined();expect(mocks.listAll).toHaveBeenCalledWith('/contacts/',{params:{search:'name'}})})
 })
 describe('Manual movement batch UX',()=>{
- async function open(){await setup('/inventory-movements?sku=12');await click('新建记录');return wrapper.getComponent(InventoryMovementCreateModal)}
+ async function open(){await setup('/inventory-movements?sku=12');await click('新建库存调整');return wrapper.getComponent(InventoryMovementCreateModal)}
  async function select(modal){modal.getComponent(SkuPickerPanel).vm.$emit('update:modelValue',['12','13']);await flushPromises()}
  const body=()=>wrapper.element
  it('keeps four sections and formal workflow, positive quantity and cost reference explanations',async()=>{await open();for(const text of ['流水基本信息','关联业务','SKU 明细','保存说明','正式采购入库请使用采购“验货入库”','正式销售出库请使用订单“确认发货”','数量填写正数','不会替代正式订单发货流程','成本参考'])expect(body().textContent).toContain(text);expect(body().querySelector('[aria-label="流水号"]').readOnly).toBe(true);expect(router.currentRoute.value.query.sku).toBe('12')})

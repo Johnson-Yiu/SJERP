@@ -9,6 +9,25 @@ const mountDetail = overrides => mount(PurchaseDetailModal, { props: { purchase:
 const click = async (wrapper, label) => wrapper.findAll('button').find(button => button.text() === label).trigger('click')
 
 describe('purchase workbench Phase A', () => {
+  it('formats receipt cost without changing raw precision, quantity or reversal targets', async () => {
+    const receipt = { ...item.receipts[0], unit_cost: '6.500000000000' }
+    const receiptItem = { ...item, receipts: [receipt, item.receipts[1]] }
+    const original = { ...purchase, items: [receiptItem] }
+    const wrapper = mountDetail(original)
+    await click(wrapper, '收货')
+    const history = wrapper.findAll('.receipt-history-row')[0].text()
+    expect(history).toContain('到货 4 · USD 6.50')
+    expect(history).not.toContain('6.500000000000')
+    expect(history).toContain('赠品 1 件')
+    expect(wrapper.text()).toContain('已冲销')
+    await click(wrapper, '验货入库')
+    expect(wrapper.emitted('receive')[0]).toEqual([original, receiptItem])
+    await click(wrapper, '冲销')
+    expect(wrapper.emitted('reverse-receipt')[0]).toEqual([original, receiptItem, receipt])
+    expect(receipt.unit_cost).toBe('6.500000000000')
+    expect(receipt.quantity).toBe('4')
+    wrapper.unmount()
+  })
   it('renders header identity, exactly one close and five tabs with overview cards', () => {
     const wrapper = mountDetail()
     const header = wrapper.get('header').text()

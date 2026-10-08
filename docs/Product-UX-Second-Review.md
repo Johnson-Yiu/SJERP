@@ -265,3 +265,27 @@ BEFORE 文件在 `before/`，AFTER 文件在 `after/`；15 张全部加载完成
 - 正常提交并推送 master 后核验最终 HEAD 的 backend、backend-postgres、frontend 均 SUCCESS；实际 SHA、CI 运行链接及最终测试计数记录于交付回复。[master CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/workflows/ci.yml?query=branch%3Amaster)。此记录供独立视觉验收，不代替用户验收结论。
 
 本轮未启动 Phase 2C 或 Finance UX。
+
+
+### Post-visual-review repair — 2026-10-09
+
+基线 `4fe5bebc4950553ab276e1a41db7efdda5b12936`，仅处理独立视觉复核发现的三处问题。
+
+- Customer 根详情：跟进及报价页签的通用关联新增入口与页头重复。仅在根客户的 `followups` / `quotes` 隐藏关联新增按钮；页头新增跟进、新建报价行为保留，联系人新增、嵌套详情及返回保留。
+- Quote：移除订单页签标题旁重复的“转为订单”，保留页头主按钮、订单列表及空状态、拒绝/过期提示。转单条件、草稿流程、事件、路由和状态转换保持原有实现。
+- Purchase 入库记录：将原始 `receipt.unit_cost` 显示改用已有 `money()`，例如 `6.500000000000` 显示 `USD 6.50`。同一历史行没有其他直接显示的货币字段；数量、超到说明、冲销状态和事件参数保留，原始 Decimal 数据不变。
+
+验证：Vitest 33 个文件 / 341 项 PASS；Node 单元测试 111 项 PASS；详情字体检查 1 项 PASS；生产构建 PASS（原有大包提示）。覆盖客户唯一新增入口、联系人关联新增、保存刷新、嵌套返回、报价五种状态及唯一页头转单/草稿流程、原始金额不变及收货/冲销参数，以及 Foundation 页签路由和 Customer→Quote→Back、Quote→Order→Back 回归。
+
+Chrome 实际视口 DOM 为 1440×900，DPR 1、缩放 100%。只读现有客户 12、报价 39、采购 13，未提交业务数据。截图接口输出 1425×891，按原尺寸从 JPEG 转 PNG，无裁剪、缩放或修图。截图保存在 Git 外：
+
+`C:/Users/Johnson/.codex/visualizations/2026/10/08/01a11977-80e0-77b0-ad46-fafa2f93bdc7/erp-phase-2b/focused-repair/`
+
+| 截图 | 核验结果 |
+| --- | --- |
+| B2_FIX_01_customer_followups.png | 页头新增跟进保留，内容区无重复新增跟进记录 |
+| B2_FIX_02_customer_quotes.png | 页头新建报价保留，内容区无重复报价新增 |
+| B2_FIX_03_quote_orders.png | 订单页签仅有一个页头转为订单主按钮 |
+| B2_FIX_04_purchase_receipt.png | 入库记录显示 USD 6.50，数量 100.00 和冲销入口保留 |
+
+Git / CI：正常提交并推送 master，最终 SHA 和对应 CI 的 backend、backend-postgres、frontend 结果记录于本次交付回复；以该提交的 GitHub Actions 结果为准。未修改后端、模型、迁移或业务计算；未开始 Phase 2C 或 Finance UX。

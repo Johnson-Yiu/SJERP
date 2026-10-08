@@ -143,7 +143,7 @@ describe('Customer and FollowUp quote shortcuts', () => {
     expect(wrapper.findComponent(RelatedCreateHarness).exists()).toBe(false)
   })
 
-  it('keeps the existing Customer quote-tab create and refreshes the selected tab after save', async () => {
+  it('creates from the Customer header and refreshes the selected quote tab after save', async () => {
     let contextLoads = 0
     const mounted = await mountDetail({
       entity: 'customers', id: 501, path: '/customers?detail=501',
@@ -153,7 +153,8 @@ describe('Customer and FollowUp quote shortcuts', () => {
 
     await wrapper.findAll('.detail-tabs button').find(button => button.text().includes('报价记录')).trigger('click')
     await flushPromises()
-    await wrapper.findAll('.relation-actions button').find(button => button.text().includes('新增报价')).trigger('click')
+    expect(wrapper.findAll('.relation-actions button')).toHaveLength(0)
+    await wrapper.findAll('.detail-header button').find(button => button.text() === '新建报价').trigger('click')
     await flushPromises()
 
     const quoteCreate = wrapper.findComponent(RelatedCreateHarness)

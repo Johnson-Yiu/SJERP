@@ -42,7 +42,7 @@ test('only non-terminal quotes expose the conversion-to-order actions', async ()
 
   assert.match(source, /const canCreateOrder = computed\(\(\) => \['draft', 'sent', 'accepted'\]\.includes\(quote\.value\?\.status\)\)/)
   assert.match(source, /v-if="canCreateOrder" class="btn btn-primary transfer-order"/)
-  assert.match(source, /v-if="canCreateOrder" class="btn btn-primary" @click="createOrder"/)
+  assert.doesNotMatch(source, /v-if="canCreateOrder" class="btn btn-primary" @click="createOrder"/)
   assert.match(source, /v-if="!canCreateOrder" class="quote-order-unavailable"/)
   assert.match(source, /报价已拒绝或过期，请先创建修订版。/)
 })

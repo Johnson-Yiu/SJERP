@@ -174,6 +174,10 @@ it.each(['draft','sent','accepted','rejected','expired'])('Phase 2B Quote retain
   const actions = status === 'draft' ? [['标记已发送','mark-sent'],['客户接受','accept'],['客户拒绝','reject']] : status === 'sent' ? [['客户接受','accept'],['客户拒绝','reject'],['标记过期','expire']] : []
   expect(wrapper.findAll('.quote-status-actions button').map(button => button.text())).toEqual(actions.map(action => action[0]))
   expect(wrapper.find('.transfer-order').exists()).toBe(['draft','sent','accepted'].includes(status))
+  await click('订单 (1)')
+  expect(wrapper.findAll('button').filter(button => button.text() === '转为订单')).toHaveLength(['draft','sent','accepted'].includes(status) ? 1 : 0)
+  expect(wrapper.findAll('.section-heading button')).toHaveLength(0)
+  if (['rejected','expired'].includes(status)) expect(wrapper.text()).toContain('报价已拒绝或过期，请先创建修订版。')
   for (const [label, endpoint] of actions) {
     await click(label)
     expect(mocks.api.post).toHaveBeenCalledWith(`/quotes/14/${endpoint}/`)
@@ -230,6 +234,10 @@ it('Phase 2B Quote keeps conversion and revision actions with primary and utilit
   const actions = wrapper.get('.workbench-actions').findAll('button').map(button => button.text())
   expect(actions).toEqual(['创建修订版', '预览 PI', '导出 Excel', '转为订单'])
   expect(wrapper.get('.summary-metrics').text()).toContain('USD 100.00')
+  await click('订单 (1)')
+  expect(wrapper.findAll('button').filter(button => button.text() === '转为订单')).toHaveLength(1)
+  expect(wrapper.get('.workbench-actions .btn-primary').text()).toBe('转为订单')
+  expect(wrapper.findAll('.section-heading button')).toHaveLength(0)
   await wrapper.get('.transfer-order').trigger('click'); await flushPromises()
   expect(wrapper.findComponent({ name: 'OrderDraftModal' }).exists()).toBe(true)
   expect(mocks.api.get).toHaveBeenCalledWith('/quotes/14/order-draft/')

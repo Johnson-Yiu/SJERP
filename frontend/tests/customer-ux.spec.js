@@ -111,6 +111,18 @@ describe('Customer UX hierarchy and navigation',()=>{
  beforeEach(()=>vi.clearAllMocks())
  async function detail(){const result=await mountDetail({entity:'customers',id:501,path:'/customers?detail=501',getContext:url=>url.includes('/customers/')?customerUX():url.includes('/quotes/')?nestedUX('quotes',45):url.includes('/orders/')?nestedUX('orders',46):nestedUX('contacts',47)});wrapper=result.wrapper;return result}
  async function click(text){await wrapper.findAll('button').find(b=>b.text().includes(text)).trigger('click');await flushPromises()}
+ it('keeps one root followup and quote entry while retaining contextual contact creation',async()=>{
+  await detail()
+  expect(wrapper.findAll('button').filter(b=>b.text()==='新增跟进')).toHaveLength(1)
+  expect(wrapper.findAll('.relation-actions button')).toHaveLength(0)
+  await click('报价记录')
+  expect(wrapper.findAll('button').filter(b=>b.text()==='新建报价')).toHaveLength(1)
+  expect(wrapper.findAll('.relation-actions button')).toHaveLength(0)
+  await click('联系人')
+  expect(wrapper.get('.relation-actions button').text()).toBe('新增联系人')
+  await wrapper.get('.relation-actions button').trigger('click');await flushPromises()
+  expect(wrapper.findComponent(RelatedCreateHarness).props()).toMatchObject({entity:'contacts',query:{customer:501}})
+ })
  it('customer columns follow daily recognition priority',()=>expect(resourceConfigs.customers.columns.map(c=>c[0])).toEqual(['name','code','status','country','region','owner','next_follow_up','order_count','sales_amount']))
  it('defaults to followup and shows summary/actions/edit event',async()=>{await detail();expect(wrapper.get('.detail-tabs button.active').text()).toContain('跟进记录');expect(wrapper.text()).toContain('业务记录');expect(wrapper.findAll('.detail-metrics small').map(e=>e.text())).toEqual(['累计销售额','订单','报价','下次跟进']);await click('编辑客户');expect(wrapper.emitted('edit')).toHaveLength(1)})
  it('adds followup through shared related editor with current customer and cancels',async()=>{await detail();await click('新增跟进');expect(wrapper.findComponent(RelatedCreateHarness).props()).toMatchObject({entity:'follow-ups',query:{customer:501}});await wrapper.get('[data-test="related-close"]').trigger('click');await flushPromises();expect(wrapper.findComponent(RelatedCreateHarness).exists()).toBe(false);expect(mocks.api.post).not.toHaveBeenCalled()})

@@ -7,12 +7,12 @@ export function purchaseArrival(purchase, now = new Date()) {
 }
 export function purchaseTasks(purchase) {
   const tasks = []
-  if (purchase.status === 'draft') tasks.push({ title: '采购单尚未确认', description: '确认下单后才会生成应付计划，并进入正式采购流程。', action: '确认下单', target: 'confirm' })
+  if (purchase.status === 'draft') tasks.push({ title: '采购单待确认', description: '确认后进入正式采购流程。', action: '确认下单', target: 'confirm' })
   const remaining = (purchase.items || []).filter(item => Number(item.remaining_quantity) > 0).length
-  if (['ordered', 'partial'].includes(purchase.status) && remaining) tasks.push({ title: '存在待到货商品', description: `${remaining} 条采购明细仍有待到货数量。`, action: '查看收货', target: 'receipt' })
-  if (!['draft', 'cancelled'].includes(purchase.status) && Number(purchase.unpaid_amount) > 0) tasks.push({ title: '存在待付款', description: `待付 ${purchase.currency} ${Number(purchase.unpaid_amount).toFixed(2)}`, action: '查看 / 登记付款', target: 'payment' })
-  if (purchase.status === 'completed' && !tasks.length) tasks.push({ title: '采购已完成', description: '当前无待处理采购履约事项。' })
-  if (purchase.status === 'cancelled') tasks.push({ title: '采购已取消', description: '仅保留历史采购记录。' })
+  if (['ordered', 'partial'].includes(purchase.status) && remaining) tasks.push({ title: '待到货', description: `还有 ${remaining} 条明细未全部到货。`, action: '查看收货', target: 'receipt' })
+  if (!['draft', 'cancelled'].includes(purchase.status) && Number(purchase.unpaid_amount) > 0) tasks.push({ title: '待付款', description: `待付 ${purchase.currency} ${Number(purchase.unpaid_amount).toFixed(2)}`, action: '查看 / 登记付款', target: 'payment' })
+  if (purchase.status === 'completed' && !tasks.length) tasks.push({ title: '采购已完成', description: '当前没有待处理事项。' })
+  if (purchase.status === 'cancelled') tasks.push({ title: '采购已取消', description: '采购单已取消。' })
   return tasks
 }
 export function receiptProgress(items = []) {

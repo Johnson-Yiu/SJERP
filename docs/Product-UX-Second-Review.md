@@ -195,3 +195,73 @@ BEFORE 文件在 `before/`，AFTER 文件在 `after/`；15 张全部加载完成
 - `FIX_03_sidebar_scrollbar.png`：已完成，1440×900。
 
 保留接口原始 JPEG，并按原尺寸转存 PNG，无裁剪、缩放或修图，截图未提交 Git。正常提交并推送 master 后，最终 HEAD 的三项 CI 结果及 SHA 记录于交付回复。本次未启动 Phase 2B 或 Finance UX。
+
+## Phase 2B — Core Detail Workbench Visual + Copy Pass
+
+2026-10-08。起点为已接受的 `694c7a65e195bfde1584cfa9a53852b90793e1c5`，CI #168。保留第一轮架构，仅优化 Customer、Quote、Order、Purchase、SKU Inventory、Inventory Movement 六类详情的视觉层级及显示文案。
+
+### 视觉与操作统一
+
+- 六类头部沿用 #123C36，主标识 24px/700，辅助信息 12px；目标内边距 22px 26px。共用字体 token，不新增调色板或通用详情组件。
+- Customer 根详情显示“客户详情”、实际客户名称、编号/国家、负责人和原阶段徽章。负责人从当前 context 的基础信息读取，缺失时不显示。保留新增跟进、新建报价、编辑客户；新增跟进视觉突出。业务区域、国家、阶段没有重新定义。
+- Quote 将转为订单作为主操作，创建修订版/预览 PI 为次操作，导出 Excel 为工具操作；状态转换按钮独立分组并降低视觉权重。原状态条件、API、订单草稿与 PI 行为保持。版本标识/日期/状态及版本操作补齐间距。
+- Order 保留客户、订单号、订单日期、预计交期、状态；确认/生产/完成与取消操作原条件保持，破坏性操作继续分开。卡片间距 16px，明显偏大的卡片内边距收至 16px。
+- Purchase 补上工作台上下文和带文字的关闭按钮，保留供应商、采购号、日期、预计到货、状态和全部生命周期操作。页签改为 44px/13px 水平留白，与其他工作台的绿色底边、文字节奏一致。
+- SKU Inventory 头部由五行定义收为一条紧凑说明；其余指标定义移至对应指标 title。六项指标值、筛选/排序/路由保持，主编号 24px，关闭按钮带文字，页签 44px。
+- Inventory Movement 头部补上实际 SKU、来源和冲销状态。移除重复“返回库存流水”；保留唯一“关闭”，关闭保留流水筛选。所有 movement endpoint 的主档创建操作隐藏，包括泛型关联 SKU 的“新增SKU”；Product 的 SKU 创建行为保持。
+- Customer/Movement 卡片边框 #E0E8E4、圆角 13px、内边距及卡片间距 16px，其他模块只归一明显差异。根关闭均一个；Customer 嵌套 Back 和 Quote 版本 Back 保留。
+- Chrome 发现库存明细的多行流水编号点击中心可能落在行间空隙；编号链接改为 inline-block/nowrap，保留表格内横向滚动，实测鼠标点击和键盘 Enter 均能进入准确流水。
+
+### Human Copy Pass
+
+| 原显示 | 本轮显示 |
+| --- | --- |
+| 客户业务记录 / 点击记录查看详情 | 业务记录，去掉低价值操作说明 |
+| 由最新跟进记录自动更新 | 随最新跟进自动更新 |
+| 点击右上角新增记录并自动建立关联 | 客户各页签使用暂无跟进记录、暂无报价、暂无订单等专属空状态 |
+| 该原始报价链已转出 X 张订单 | 已生成 X 张订单 |
+| 展示当前原始报价及全部迭代版本转出的订单 | 查看该报价及修订版生成的订单 |
+| 本页只展示当前版本的固定商品快照 | 当前版本的商品明细 |
+| 树状关系记录每个版本实际从哪一版修改而来… | 查看各修订版之间的关系 |
+| 存在待采购商品 / 存在待发货商品 / 存在待收款 | 待采购 / 待发货 / 待收款，保留实际 SKU 数及金额 |
+| 当前无待处理业务 / 采购履约事项 | 当前没有待处理事项 |
+| 采购商品成本及公共费用可分配到关联销售订单… | 将采购成本和公共费用分配到关联订单 |
+| 存在待到货商品 | 待到货，还有 X 条明细未全部到货 |
+| 五行常驻库存定义 | 库存均按 SKU 基础单位计算。可用库存 = 实际库存 - 已预留 |
+| 查看采购单 / 查看销售订单 / 查看库存流水 | 采购单 / 销售订单 / 库存流水 |
+| 支持按关键词筛选，点击列标题切换排序 | 去掉；保留搜索框和排序图标 |
+| 这里只显示 SKU 本身的操作记录… | 仅记录 SKU 主档操作。库存增减请查看“库存流水” |
+
+订单待办原逻辑按唯一 SKU 计数，因此显示“X 个 SKU”，没有改写成“X 条明细”。采购待到货沿用实际明细条数。商品快照、采购草稿尚未下单、预计装箱不会创建发货、冲销后果、验货不合格品处理、合同调整不自动退款等重要业务含义仍保留；只缩短说明。正式状态、持久化值、SKU/预留/冲销/交易单位/应收/应付/入库/出库术语保持。
+
+### Chrome UAT 与截图
+
+使用真实 Chrome Use，1440×900 视口、100% 缩放，DOM 实测 devicePixelRatio=1、visualViewport.scale=1。先采九张 BEFORE，再改代码，再采相同记录和页签的九张 AFTER；仅浏览与切换页签，没有业务数据修改。
+
+| 视图 | 实际记录及观察 |
+| --- | --- |
+| Customer | 客户 12，UAT-R1 潜客 09；头部姓名/编号/国家/负责人/阶段清楚，三动作和业务页签完整 |
+| Quote overview/orders | 报价 39，SJ20261002SG003；USD 1,560、1 项、关联 1 张订单保持，主动作与工具动作有区分 |
+| Order overview/fulfillment | 订单 25，SO-2026-00025；100 pcs、USD 1,560、已收 1,560、待收 0；四段履约数量不变 |
+| Purchase overview/receipt | 采购 13，PO-2026-00013；USD 650、100 pcs 到齐、已付 650、待付 0，验货入库/冲销仍显示 |
+| Inventory | SKU 1；实际 0.01、预留 0、可用 0.01、在途 6.99、待采购 0、原状态保持 |
+| Movement | 流水 82，REV-4198B418E1814CF1；日期、SKU、盘亏出库、-11 pcs、冲销生成/冲销流水保持，无多余返回或新增 SKU |
+
+五条往返链路全部复核：Customer→Quote→Back 恢复 customer 12/quotes；Quote→Order→Back 恢复 quote 39/orders；Order→Purchase→Back 恢复 order 25/fulfillment；Purchase→Order→Back 恢复 purchase 13/orders；Inventory→Movement→Close→Back 保留 sku=1 并恢复 inventory detail=1/movements。Customer 嵌套报价 Back 仍回客户原页签。装箱空状态另行检查，生成按钮和重要提示保留。Quote 页签实测均为 44px。未发现新整页裁切，宽表格保留内部横向滚动。
+
+截图根目录（非 Git）：`C:/Users/Johnson/.codex/visualizations/2026/10/08/01a11977-80e0-77b0-ad46-fafa2f93bdc7/erp-phase-2b/`。
+
+`before/` 和 `after/` 各九张，全部逐图检查，编号对应：01 customer_detail、02 quote_overview、03 quote_orders、04 order_overview、05 order_fulfillment、06 purchase_overview、07 purchase_receipt、08 inventory_detail、09 movement_detail；文件分别为 `B2_BEFORE_01_customer_detail.png` 等及 `B2_AFTER_01_customer_detail.png` 等。
+
+保留原始 JPEG，原尺寸转存 PNG，无裁剪、缩放或修图。页面视口统一 1440×900；接口库存输出为 1440×900，其他八个视图为 1425×891。截图未提交 Git。
+
+### 自动回归、范围与 CI
+
+- 前端回归包含六类根关闭、Movement 去重复返回/隐藏不适用创建、客户真实身份与三动作、Quote 主操作及五种状态下原转换请求、Order/Purchase 生命周期、全部 Foundation 页签与嵌套/跨模块 Back、原工作台/库存指标。
+- 更新已改变的显示文案断言；保留 API 参数、事件对象、计数、金额、库存值、导航断言。
+- 全量 Vitest 33 个文件、339/339；Node 单元测试 111/111，字体检查 1/1。生产构建通过，保留原有 bundle-size 提示。
+- Backend：565 tests，OK，10 skipped，测试数据库已销毁；Django check 无问题；makemigrations --check --dry-run 无漂移。
+- backend、models/migrations、权限与业务计算无修改。orderOverview/purchaseOverview 只改显示字符串，任务判定、统计与 action/target/key 保持。
+- 正常提交并推送 master 后核验最终 HEAD 的 backend、backend-postgres、frontend 均 SUCCESS；实际 SHA、CI 运行链接及最终测试计数记录于交付回复。[master CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/workflows/ci.yml?query=branch%3Amaster)。此记录供独立视觉验收，不代替用户验收结论。
+
+本轮未启动 Phase 2C 或 Finance UX。

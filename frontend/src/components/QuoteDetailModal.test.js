@@ -44,7 +44,7 @@ test('only non-terminal quotes expose the conversion-to-order actions', async ()
   assert.match(source, /v-if="canCreateOrder" class="btn btn-primary transfer-order"/)
   assert.match(source, /v-if="canCreateOrder" class="btn btn-primary" @click="createOrder"/)
   assert.match(source, /v-if="!canCreateOrder" class="quote-order-unavailable"/)
-  assert.match(source, /该报价已拒绝或过期，请先创建新的修订版后再转为订单。/)
+  assert.match(source, /报价已拒绝或过期，请先创建修订版。/)
 })
 
 test('saved and revised PI previews use the currency in the official totals DTO', async () => {

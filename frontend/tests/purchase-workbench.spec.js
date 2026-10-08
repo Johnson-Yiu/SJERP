@@ -15,7 +15,7 @@ describe('purchase workbench Phase A', () => {
     for (const text of ['PO-41','供应商甲','2026-10-01','2026-10-08','部分到货']) expect(header).toContain(text)
     expect(wrapper.findAll('[aria-label="关闭采购详情"]')).toHaveLength(1)
     expect(wrapper.findAll('.workbench-tabs button').map(button => button.text())).toEqual(['概览','采购明细','收货','付款','关联订单'])
-    for (const text of ['采购摘要','当前待办','到货进度','付款进度','成本分配','存在待到货商品','存在待付款']) expect(wrapper.text()).toContain(text)
+    for (const text of ['采购摘要','当前待办','到货进度','付款进度','成本分配','待到货','待付款']) expect(wrapper.text()).toContain(text)
     expect(wrapper.getComponent({ name: 'ContractAmountAdjustments' }).props('contract')).toEqual(purchase)
     wrapper.unmount()
   })
@@ -25,14 +25,14 @@ describe('purchase workbench Phase A', () => {
       await wrapper.findAll('header button').find(button => button.text() === label).trigger('click')
       expect(wrapper.emitted(event)[0][0].id).toBe(41)
     }
-    expect(wrapper.text()).toContain('采购单尚未确认')
+    expect(wrapper.text()).toContain('采购单待确认')
     expect(wrapper.findComponent({ name: 'ContractAmountAdjustments' }).exists()).toBe(false)
     for (const status of ['partial','completed','cancelled']) {
       await wrapper.setProps({ purchase: { ...purchase, status } })
       expect(wrapper.findAll('header button')).toHaveLength(1)
     }
     await wrapper.setProps({ purchase: { ...purchase, status: 'ordered' } })
-    expect(wrapper.findAll('header button').map(button => button.text())).toEqual(['','取消采购'])
+    expect(wrapper.findAll('header button').map(button => button.text())).toEqual(['关闭','取消采购'])
     wrapper.unmount()
   })
   it('switches todo to receipt and preserves exact receipt and reversal targets', async () => {
@@ -70,9 +70,9 @@ describe('purchase workbench Phase A', () => {
   })
   it('keeps completed unpaid work visible and suppresses receipt tasks for terminal states', () => {
     expect(purchaseTasks({ ...purchase, status: 'completed', unpaid_amount: '0' }).map(task => task.title)).toEqual(['采购已完成'])
-    expect(purchaseTasks({ ...purchase, status: 'completed' }).map(task => task.title)).toEqual(['存在待付款'])
+    expect(purchaseTasks({ ...purchase, status: 'completed' }).map(task => task.title)).toEqual(['待付款'])
     expect(purchaseTasks({ ...purchase, status: 'cancelled' }).map(task => task.title)).toEqual(['采购已取消'])
-    expect(purchaseTasks({ ...purchase, items: [item,{...item,id:72}] })[0].description).toBe('2 条采购明细仍有待到货数量。')
+    expect(purchaseTasks({ ...purchase, items: [item,{...item,id:72}] })[0].description).toBe('还有 2 条明细未全部到货。')
   })
   it('uses calendar dates for arrival and excludes inactive statuses', () => {
     const now = new Date(2026,9,7,23,50)

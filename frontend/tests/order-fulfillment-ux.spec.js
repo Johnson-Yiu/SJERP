@@ -82,7 +82,7 @@ it('shows state-specific empty history and hides unavailable shipment actions', 
   purchases = []; lines = [{ ...base, id: 701, draftable_quantity: 0, to_procure_quantity: 0, purchased_quantity: 0, arrived_quantity: 0, in_transit_quantity: 0 }]; status = 'completed'
   await setup()
   expect(wrapper.get('.purchase-history').text()).toContain('当前无需关联采购单')
-  expect(wrapper.get('.shipment-history').text()).toContain('待订单具备可发库存后，可从上方明细确认发货。')
+  expect(wrapper.get('.shipment-history').text()).toContain('有可发库存后，可在明细中确认发货。')
   expect(wrapper.findAll('.fulfillment-ship-action')).toHaveLength(0)
   expect(wrapper.get('.fulfillment-table').text()).toContain('无需采购')
 })

@@ -25,7 +25,7 @@ test('customer projections are visible but not editable customer fields', async 
   assert.match(page, /customer: '已有1张正式订单'/)
   assert.match(page, /company: '已有2张及以上正式订单'/)
   assert.match(detail, /currentEntity === 'customers' && item\[0\] === '下次跟进'/)
-  assert.match(detail, /由最新跟进记录自动更新/)
+  assert.match(detail, /随最新跟进自动更新/)
 })
 
 test('automatic inventory movements are read-only while manual movements are reversed, not deleted', async () => {

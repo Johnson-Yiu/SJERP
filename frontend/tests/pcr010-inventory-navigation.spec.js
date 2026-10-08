@@ -72,9 +72,9 @@ describe('PCR-010 Inventory SKU navigation', () => {
     await openSkuDrawer()
     const links = wrapper.findAll('.sku-context-actions a')
     expect(links.map(link => [link.text(), link.attributes('href')])).toEqual([
-      ['查看采购单', '/purchase-orders?sku=12'],
-      ['查看销售订单', '/orders?sku=12'],
-      ['查看库存流水', '/inventory-movements?sku=12'],
+      ['采购单', '/purchase-orders?sku=12'],
+      ['销售订单', '/orders?sku=12'],
+      ['库存流水', '/inventory-movements?sku=12'],
     ])
   })
 

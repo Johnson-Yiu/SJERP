@@ -70,8 +70,8 @@ it.each(['draft','confirmed','production','shipped','completed','cancelled'])('d
   expect(wrapper.findAll('.workbench-tabs button').map(x=>x.text().replace(/ \(.*\)/,''))).toEqual(['概览','订单明细','采购与发货','回款','装箱','库存流水','操作日志'])
   expect(wrapper.get('.current-todo-card').text()).toContain('当前待办')
   const keys = wrapper.findAll('.task-row strong').map(x=>x.text())
-  if (value === 'draft') expect(keys).toEqual(['订单尚未确认'])
-  if (['confirmed','production'].includes(value)) expect(keys).toEqual(['存在待采购商品','存在待发货商品','存在待收款'])
+  if (value === 'draft') expect(keys).toEqual(['订单待确认'])
+  if (['confirmed','production'].includes(value)) expect(keys).toEqual(['待采购','待发货','待收款'])
   if (value === 'shipped') expect(keys).toContain('货物已全部发出')
   if (['completed','cancelled'].includes(value)) { expect(wrapper.findAll('.task-row .task-action')).toHaveLength(0); expect(keys).toEqual([value === 'completed' ? '订单已完成' : '订单已取消']) }
   expect(wrapper.find('.lifecycle-destructive').exists()).toBe(['draft','confirmed','production'].includes(value))

@@ -140,9 +140,10 @@ it.each(['invalid', '404'])('keeps invalid/deleted detail %s visible with retry 
 })
 it('shows exact identity, unchanged six metrics, semantic help and correct tab order', async () => {
   await routeTo({ detail: '12' })
+  expect(wrapper.findAll('[aria-label="关闭库存详情"]')).toHaveLength(1)
   expect(wrapper.find('.sku-detail header').text()).toContain('中文灯具 · 基础单位：pcs · 有库存')
   expect(wrapper.findAll('.detail-metrics strong').map(x => x.text())).toEqual(['4','0','4','0','0','有库存'])
-  expect(wrapper.find('.inventory-semantics').text()).toContain('可用库存：实际库存 - 已预留')
+  expect(wrapper.find('.inventory-semantics').text()).toBe('库存均按 SKU 基础单位计算。可用库存 = 实际库存 - 已预留。')
   expect(wrapper.findAll('.detail-tabs button').map(x => x.text().replace(/ \d+$/, ''))).toEqual(['库存流水','关联订单','采购记录','出库记录','SKU 操作日志'])
 })
 it('maps all five contextual metrics to tabs preserving context and clearing tab search', async () => {
@@ -166,8 +167,8 @@ it.each([['purchases','purchase-orders','301'],['orders','orders','501'],['movem
 })
 it('clarifies SKU audit scope and retains existing audit entity', async () => {
   await routeTo({ detail: '12', tab: 'operation_logs' })
-  expect(wrapper.find('.sku-log-scope').text()).toContain('这里只显示 SKU 本身的操作记录；库存增减、入库、出库和冲销请查看“库存流水”。')
-  expect(wrapper.find('.sku-log-scope').text()).toContain('暂无 SKU 本身的操作记录。')
+  expect(wrapper.find('.sku-log-scope').text()).toContain('仅记录 SKU 主档操作。库存增减请查看“库存流水”。')
+  expect(wrapper.find('.sku-log-scope').text()).toContain('暂无 SKU 主档操作记录。')
   expect(mocks.api.get).toHaveBeenCalledWith('/operation-logs/', { params: { entity:'crm.sku',object_id:12,ordering:'-created_at' } })
 })
 it('retries detail failure retaining exact tab and search', async () => {

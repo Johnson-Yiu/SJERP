@@ -17,7 +17,7 @@ const order = { id: 34, order_no: 'SO-34', customer: 501, customer_name: custome
 const purchase = { id: 13, purchase_no: 'PO-13', supplier_name: 'UAT Supplier', status: 'completed', currency: 'USD', items: [], related_orders: [order], total_amount: '100', unpaid_amount: '0', paid_amount: '100' }
 const section = (key, title, entity, rows = [], columns = []) => ({ key, title, entity, rows, columns })
 const customerContext = {
-  entity: 'customers', title: customer.name, metrics: [], info: [], sections: [
+  entity: 'customers', title: customer.name, subtitle: 'C501 · Germany', badge: '正式客户', metrics: [], info: [['负责人', 'Johnson']], sections: [
     section('followups', '跟进记录', 'follow-ups'), section('quotes', '报价记录', 'quotes', [quote], [['quote_no', '报价单号']]),
     section('orders', '订单', 'orders', [order]), section('contacts', '联系人', 'contacts'),
     section('purchases', '成交商品记录', 'orders'), section('cash', '财务流水', 'transactions'),
@@ -25,7 +25,7 @@ const customerContext = {
 }
 const quoteContext = { entity: 'quotes', title: quote.quote_no, metrics: [], info: [], sections: [] }
 let wrapper
-const stubs = { ContractAmountAdjustments: true, OperationLogPanel: true, QuotePreviewModal: true, RelatedCreateModal: true, ShipmentActualPacking: true, SkuPickerPanel: true, TradeUnitPicker: true, SummaryCards: true }
+const stubs = { ContractAmountAdjustments: true, OrderDraftModal: true, OperationLogPanel: true, QuotePreviewModal: true, RelatedCreateModal: true, ShipmentActualPacking: true, SkuPickerPanel: true, TradeUnitPicker: true, SummaryCards: true }
 async function setup(url) {
   const router = createRouter({ history: createMemoryHistory(), routes: [
     { path: '/customers', component: ResourcePage, props: { config: resourceConfigs.customers } },
@@ -152,14 +152,42 @@ it('Quote reset removes only search/status/customer/ordering', async () => {
   await wrapper.get('.filter-reset').trigger('click'); await flushPromises()
   expect(router.currentRoute.value.query).toEqual({ detail: '14', tab: 'orders', create: '0', edit: '0', returnTo: '/customers', sku: '1' })
 })
-it.each([['/customers?detail=501&tab=quotes', '关闭详情'], ['/quotes?detail=14', '关闭报价详情'], ['/inventory-movements?detail=1&sku=7', '关闭详情']])('%s has one Close action', async (url, label) => {
+it.each([['/customers?detail=501&tab=quotes', '关闭详情'], ['/quotes?detail=14', '关闭报价详情'], ['/orders?detail=34', '关闭订单详情'], ['/purchase-orders?detail=13', '关闭采购详情'], ['/inventory-movements?detail=1&sku=7', '关闭详情']])('%s has one Close action', async (url, label) => {
   await setup(url)
-  expect(wrapper.findAll(`.detail-header [aria-label="${label}"]`)).toHaveLength(1)
+  expect(wrapper.findAll(`[aria-label="${label}"]`)).toHaveLength(1)
   if (url.startsWith('/inventory-movements')) {
     expect(wrapper.get('.detail-nav-start').text()).toContain('库存流水详情')
-    expect(wrapper.get('.detail-actions a').text()).toContain('返回库存流水')
-    expect(wrapper.get('.detail-actions a').attributes('href')).toBe('/inventory-movements?sku=7')
+    expect(wrapper.find('.detail-actions a').exists()).toBe(false)
+    expect(wrapper.text()).not.toContain('返回库存流水')
+    expect(wrapper.findAll('.relation-actions button')).toHaveLength(0)
   }
+})
+
+it.each(['draft','sent','accepted','rejected','expired'])('Phase 2B Quote retains exact status controls and requests for %s', async status => {
+  const get = mocks.api.get.getMockImplementation()
+  mocks.api.get.mockImplementation(async url => {
+    const response = await get(url)
+    if (url === '/quotes/14/workbench/') response.data.quote = { ...quote, status }
+    return response
+  })
+  await setup('/quotes?detail=14')
+  const actions = status === 'draft' ? [['标记已发送','mark-sent'],['客户接受','accept'],['客户拒绝','reject']] : status === 'sent' ? [['客户接受','accept'],['客户拒绝','reject'],['标记过期','expire']] : []
+  expect(wrapper.findAll('.quote-status-actions button').map(button => button.text())).toEqual(actions.map(action => action[0]))
+  expect(wrapper.find('.transfer-order').exists()).toBe(['draft','sent','accepted'].includes(status))
+  for (const [label, endpoint] of actions) {
+    await click(label)
+    expect(mocks.api.post).toHaveBeenCalledWith(`/quotes/14/${endpoint}/`)
+  }
+})
+
+it('Phase 2B Movement hides master-data creation even with a related SKU section', async () => {
+  const get = mocks.api.get.getMockImplementation()
+  mocks.api.get.mockImplementation(url => url.startsWith('/context/inventory-movements/') ? Promise.resolve({ data: { title: 'IM-1', metrics: [], info: [], sections: [section('sku','关联 SKU','skus',[{ id: 7, sku: 'SKU-7' }],[['sku','SKU']])] } }) : get(url))
+  await setup('/inventory-movements?detail=1&sku=7')
+  expect(wrapper.get('.detail-tabs').text()).toContain('关联 SKU 1')
+  expect(wrapper.get('.context-table').text()).toContain('SKU-7')
+  expect(wrapper.findAll('.relation-actions button')).toHaveLength(0)
+  expect(wrapper.text()).not.toMatch(/新增\s*SKU|返回库存流水|打开管理页|点击记录查看详情/)
 })
 it('nested EntityDetail Back retains its behavior and root quote tab', async () => {
   const router = await setup('/customers?detail=501&tab=quotes')
@@ -176,11 +204,36 @@ it.each([['/quotes', '14'], ['/orders', '34'], ['/purchase-orders', '13']])('%s 
   await router.replace({ path, query: { detail: id, tab: ['items', 'overview'], sku: '1' } }); await flushPromises()
   expect(router.currentRoute.value.query.tab).toBe('overview')
 })
-it('Inventory Movement return action preserves SKU and closes detail', async () => {
+it('Inventory Movement authoritative Close preserves SKU and closes detail', async () => {
   const router = await setup('/inventory-movements?detail=1&sku=7')
-  await wrapper.get('.detail-actions a').trigger('click'); await flushPromises()
+  await wrapper.get('.detail-close').trigger('click'); await flushPromises()
   expect(router.currentRoute.value.fullPath).toBe('/inventory-movements?sku=7')
   expect(wrapper.find('.detail-modal').exists()).toBe(false)
+})
+
+it('Phase 2B Customer identity and root actions use actual context without generic instructions', async () => {
+  await setup('/customers?detail=501&tab=followups')
+  const header = wrapper.get('.customer-detail-root .detail-header')
+  for (const text of ['客户详情', 'UAT Customer', 'C501', 'Germany', '负责人：Johnson', '正式客户']) expect(header.text()).toContain(text)
+  expect(header.findAll('.detail-actions button').map(button => button.text())).toEqual(['新增跟进', '新建报价', '编辑客户'])
+  expect(wrapper.get('.context-empty strong').text()).toBe('暂无跟进记录')
+  expect(wrapper.text()).not.toContain('点击记录查看详情')
+  expect(wrapper.text()).not.toContain('自动建立关联')
+  await click('报价记录 1')
+  expect(wrapper.get('.detail-tabs button.active').text()).toBe('报价记录 1')
+})
+
+it('Phase 2B Quote keeps conversion and revision actions with primary and utility distinction', async () => {
+  await setup('/quotes?detail=14')
+  expect(wrapper.get('.workbench-actions .transfer-order').text()).toBe('转为订单')
+  expect(wrapper.get('.workbench-actions .quote-utility').text()).toBe('导出 Excel')
+  const actions = wrapper.get('.workbench-actions').findAll('button').map(button => button.text())
+  expect(actions).toEqual(['创建修订版', '预览 PI', '导出 Excel', '转为订单'])
+  expect(wrapper.get('.summary-metrics').text()).toContain('USD 100.00')
+  await wrapper.get('.transfer-order').trigger('click'); await flushPromises()
+  expect(wrapper.findComponent({ name: 'OrderDraftModal' }).exists()).toBe(true)
+  expect(mocks.api.get).toHaveBeenCalledWith('/quotes/14/order-draft/')
+  expect(mocks.api.post).not.toHaveBeenCalled()
 })
 it('post-create Quote Order path goes to Orders and Back keeps the originating tab', async () => {
   const router = await setup('/quotes?detail=14&tab=orders')

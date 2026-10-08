@@ -13,6 +13,7 @@ import SupplierAllocationModal from './SupplierAllocationModal.vue'
 import ProcurementDraftModal from './ProcurementDraftModal.vue'
 import ContractAmountAdjustments from './ContractAmountAdjustments.vue'
 import ShipmentActualPacking from './ShipmentActualPacking.vue'
+import { useDetailTab } from '../utils/useDetailTab'
 
 const props = defineProps({ id: { type: [Number, String], required: true }, refreshKey: { type: Number, default: 0 } })
 const emit = defineEmits(['close', 'edit', 'open-quote'])
@@ -21,7 +22,7 @@ const fulfillment = ref(null)
 const packingPlan = ref(null)
 const packingSaving = ref(false)
 const actualPackingCache = ref({})
-const activeTab = ref('overview')
+const activeTab = useDetailTab('/orders', ['overview', 'items', 'fulfillment', 'payments', 'packing', 'inventory', 'operation_logs'], 'overview', () => props.id)
 const loading = ref(true)
 const error = ref('')
 const operationLogs = ref([])

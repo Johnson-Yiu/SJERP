@@ -13,7 +13,7 @@ const sources = [{id:20,supplier_model:'M1',supplier_sku_code:'SUP-1',purchase_p
 const line = {id:71,sku:3,sku_code:'SKU-3',display_name:'测试灯带',supplier_sku:20,quantity:'100',trade_unit:1,trade_quantity:'10',trade_unit_price:'20',trade_snapshot:{...units[0]},unit_price:'2',received_quantity:'60',remaining_quantity:'40',receipts:[{id:91,receipt_date:'2026-10-01',quantity:'60',unit_cost:'2'}]}
 const purchase = {id:41,purchase_no:'PO-41',supplier:9,supplier_name:'测试供应商',order:11,order_no:'SO-11',order_date:'2026-10-01',expected_arrival_date:'2026-10-12',status:'ordered',status_display:'已下单',currency:'USD',exchange_rate:'7',total_amount:'200',paid_amount:'0',unpaid_amount:'200',items:[line],related_orders:[]}
 let wrapper, router
-const click = async label => wrapper.findAll('button').find(button => button.text() === label).trigger('click')
+const click = async label => { await wrapper.findAll('button').find(button => button.text() === label).trigger('click'); await flushPromises() }
 async function mountPage(path='/purchase-orders') {
   router = createRouter({history:createMemoryHistory(),routes:[{path:'/purchase-orders',component:PurchaseOrderPage},{path:'/orders',component:{template:'<div />'}}]})
   await router.push(path)

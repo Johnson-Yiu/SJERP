@@ -24,6 +24,7 @@ import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuCo
 const props = defineProps({ config: Object })
 const route = useRoute()
 const router = useRouter()
+const isCustomerPage = computed(() => props.config.endpoint === 'customers')
 const isMovementPage = computed(() => props.config.endpoint === 'inventory-movements')
 const movementSkus = ref([])
 const movementFilters = computed(() => ledgerFilters(route.query))
@@ -142,9 +143,9 @@ async function load() {
 }
 function delayedSearch() {
   clearTimeout(searchTimer)
-  searchTimer = setTimeout(() => isMovementPage.value ? updateLedgerQuery({ search:query.value || undefined }) : load(), 300)
+  searchTimer = setTimeout(() => isCustomerPage.value ? updateLedgerQuery({ search:query.value || undefined }, true) : isMovementPage.value ? updateLedgerQuery({ search:query.value || undefined }) : load(), 300)
 }
-watch(() => route.query.search, value => { if (isMovementPage.value) { clearTimeout(searchTimer); query.value = typeof value === 'string' ? value : '' } }, { immediate:true })
+watch(() => route.query.search, value => { if (isMovementPage.value || isCustomerPage.value) { clearTimeout(searchTimer); query.value = typeof value === 'string' ? value : '' } }, { immediate:true })
 onBeforeUnmount(() => { clearTimeout(searchTimer); ledgerRequest++ })
 async function loadOptions() {
   const remotes = props.config.fields.filter(f => ['remote', 'combo', 'remote_multi'].includes(f[2]))
@@ -307,13 +308,13 @@ function closeModal() {
 function openDetail(id) {
   detailId.value = id
   if (isMovementPage.value) { void updateLedgerQuery({ detail:String(id) }); return }
-  if (props.config.endpoint === 'customers') void router.push({ path: route.path, query: { ...route.query, detail: String(id) } })
+  if (props.config.endpoint === 'customers') void router.push({ path: route.path, query: { ...route.query, detail: String(id), tab: 'followups' } })
 }
 function closeDetail() {
   detailId.value = null
   if (!route.query.detail) return
   if (isMovementPage.value) { void updateLedgerQuery({ detail:undefined }, true); return }
-  const { detail, ...query } = route.query
+  const { detail, tab, ...query } = route.query
   void router.replace({ path: route.path, query, hash: route.hash })
 }
 function clearSkuFilter() { void router.push(withoutSkuContext(route)) }

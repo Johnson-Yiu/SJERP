@@ -17,6 +17,7 @@ import SkuContextBanner from '../components/SkuContextBanner.vue'
 import { deliveryState } from '../utils/orderOverview.js'
 import { addDays, daysBetween } from '../utils/orderDate'
 import { clearModalRoute } from '../utils/modalNavigation'
+import { orderDetailLocation } from '../utils/detailNavigation'
 import { documentDetailState, withDocumentDetailQuery, withoutDocumentDetailQuery } from '../utils/documentDetailRoute'
 import { routeDataQuery, routeDataQuerySignature } from '../utils/routePageState'
 import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuContext'
@@ -33,7 +34,7 @@ const copy = computed(() => isOrder.value ? {
 })
 
 const rows = ref([]), customers = ref([]), skus = ref([]), quotes = ref([])
-const loading = ref(true), saving = ref(false), open = ref(false), editingId = ref(null), query = ref(props.type === 'orders' && typeof route.query.search === 'string' ? route.query.search : '')
+const loading = ref(true), saving = ref(false), open = ref(false), editingId = ref(null), query = ref(typeof route.query.search === 'string' ? route.query.search : '')
 const quoteStatusFilter = computed(() => typeof route.query.status === 'string' ? route.query.status : '')
 const quoteCustomerFilter = computed(() => typeof route.query.customer === 'string' ? route.query.customer : '')
 const quoteSort = computed(() => typeof route.query.ordering === 'string' ? route.query.ordering : '-updated_at')
@@ -71,7 +72,7 @@ async function load() {
   loading.value = true
   try {
     const quoteParams = !isOrder.value ? { status: quoteStatusFilter.value, customer: quoteCustomerFilter.value, ordering: quoteSort.value } : {}
-    rows.value = await listAll(`/${props.type}/`, { params: { ...routeDataQuery(route.query), search: isOrder.value ? (route.query.search || '') : query.value, ...quoteParams } })
+    rows.value = await listAll(`/${props.type}/`, { params: { ...routeDataQuery(route.query), search: route.query.search || '', ...quoteParams } })
     const visibleQuoteIds = new Set(rows.value.map(row => row.id))
     expandedQuoteNodes.value = new Set([...expandedQuoteNodes.value].filter(id => visibleQuoteIds.has(id)))
   } catch (e) { notify(e.message, true) } finally { loading.value = false }
@@ -173,7 +174,6 @@ async function remove(row) { if (!isOrder.value || !await confirmDialog({ title:
 function delayed() {
   clearTimeout(timer)
   timer = setTimeout(() => {
-    if (!isOrder.value) return void load()
     const nextQuery = { ...route.query }
     if (query.value) nextQuery.search = query.value
     else delete nextQuery.search
@@ -312,11 +312,10 @@ function setQuoteFilter(key, value) {
   void router.push({ path: route.path, query: next, hash: route.hash })
 }
 function resetQuoteFilters() {
-  const hadSearch = Boolean(query.value)
+  clearTimeout(timer)
   query.value = ''
-  const { status, customer, ordering, ...next } = route.query
+  const { search, status, customer, ordering, ...next } = route.query
   if (routeDataQuerySignature(next) === routeDataQuerySignature(route.query)) {
-    if (hadSearch) void load()
     return
   }
   void router.push({ path: route.path, query: next, hash: route.hash })
@@ -336,9 +335,9 @@ async function handleOrderDraftSaved(row) {
   notify(`订单 ${row.order_no} 已保存`)
   await load()
   quoteDetailId.value = null
-  await router.push(withDocumentDetailQuery(route, row.id))
+  await router.push(orderDetailLocation(row.id))
 }
-function openOrderDetail(id) { void router.push(withDocumentDetailQuery(route, id)) }
+function openOrderDetail(id) { void router.push(orderDetailLocation(id)) }
 function openSourceQuote(id) { void router.push({ path: '/quotes', query: { detail: String(id) } }) }
 async function editRelatedOrder() {
   if (!orderDetailId.value) return
@@ -353,7 +352,7 @@ async function handleOrderEdit() {
 }
 watch(() => props.type, () => { load(); loadQuoteCustomerOptions() })
 watch(() => route.query.search, () => {
-  if (isOrder.value) { clearTimeout(timer); query.value = typeof route.query.search === 'string' ? route.query.search : '' }
+  clearTimeout(timer); query.value = typeof route.query.search === 'string' ? route.query.search : ''
 })
 watch(() => routeDataQuerySignature(route.query), load)
 watch([() => props.type, () => route.query.detail], syncDetailFromRoute, { immediate: true })

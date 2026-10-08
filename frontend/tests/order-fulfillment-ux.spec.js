@@ -22,7 +22,7 @@ async function setup() {
   await router.push('/orders?search=SO-321&status=confirmed&detail=321'); await router.isReady()
   wrapper = mount(OrderDetailModal, { props: { id: 321 }, global: { plugins: [router], stubs: { Teleport: true, SupplierAllocationModal: true, ProcurementDraftModal: true, ContractAmountAdjustments: true, OperationLogPanel: true } } })
   await flushPromises()
-  await wrapper.get('.fulfillment-overview button').trigger('click')
+  await wrapper.get('.fulfillment-overview button').trigger('click'); await flushPromises()
   return router
 }
 it('counts unique procurement SKUs but counts shipment OrderItems and preserves each business row', async () => {
@@ -68,7 +68,7 @@ it('keeps exact purchase navigation and Back restores the original order query',
   await wrapper.get('.purchase-navigation-link').trigger('click'); await flushPromises()
   expect(router.currentRoute.value.query.detail).toBe('41')
   router.back(); await flushPromises()
-  expect(router.currentRoute.value.fullPath).toBe('/orders?search=SO-321&status=confirmed&detail=321')
+  expect(router.currentRoute.value.fullPath).toBe('/orders?search=SO-321&status=confirmed&detail=321&tab=fulfillment')
 })
 it.each(['ordered','placed','partial'])('uses local business dates for purchase ETA (%s)', status => {
   const now = new Date(2026,9,7,23,59)

@@ -5,9 +5,10 @@ import ContractAmountAdjustments from './ContractAmountAdjustments.vue'
 import { tradeLabel } from '../utils/tradeUnits'
 import { orderDetailLocation } from '../utils/detailNavigation'
 import { purchaseTasks, receiptProgress, purchaseArrival } from '../utils/purchaseOverview.js'
+import { useDetailTab } from '../utils/useDetailTab'
 const props = defineProps({ purchase: Object, loading: Boolean, error: String, skus: { type: Array, default: () => [] } })
 const emit = defineEmits(['close', 'retry', 'confirm', 'edit', 'delete', 'cancel', 'pay', 'allocate-cost', 'receive', 'reverse-receipt', 'changed'])
-const activeTab = ref('overview')
+const activeTab = useDetailTab('/purchase-orders', ['overview', 'items', 'receipt', 'payment', 'orders'], 'overview', () => props.purchase?.id)
 const tabs = [['overview', '概览'], ['items', '采购明细'], ['receipt', '收货'], ['payment', '付款'], ['orders', '关联订单']]
 const row = computed(() => props.purchase)
 const items = computed(() => row.value?.items || [])

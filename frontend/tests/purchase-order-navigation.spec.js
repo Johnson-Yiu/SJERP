@@ -91,7 +91,7 @@ async function mountPurchasePage(row, path = `/purchase-orders?detail=${row.id}`
 }
 
 async function recordReceipt(wrapper) {
-  await wrapper.findAll('.workbench-tabs button').find(button => button.text() === '收货').trigger('click')
+  await wrapper.findAll('.workbench-tabs button').find(button => button.text() === '收货').trigger('click'); await flushPromises()
   await wrapper.findAll('.purchase-detail button').find(button => button.text().includes('验货入库')).trigger('click')
   await flushPromises()
   await wrapper.get('.receipt-dialog input[type="checkbox"]').setValue(true)
@@ -138,7 +138,7 @@ describe('purchase order navigation and receipt links', () => {
       },
     })
     await flushPromises()
-    await wrapper.findAll('.workbench-tabs button').find(button => button.text().includes('采购与发货')).trigger('click')
+    await wrapper.findAll('.workbench-tabs button').find(button => button.text().includes('采购与发货')).trigger('click'); await flushPromises()
 
     const purchaseLink = wrapper.get('a.purchase-navigation-link')
     expect(purchaseLink.attributes('href')).toBe('/purchase-orders?detail=41')
@@ -149,7 +149,7 @@ describe('purchase order navigation and receipt links', () => {
 
     await router.back()
     await flushPromises()
-    expect(router.currentRoute.value.fullPath).toBe('/orders?detail=101&edit=8&returnTo=%2Fquotes')
+    expect(router.currentRoute.value.fullPath).toBe('/orders?detail=101&edit=8&returnTo=/quotes&tab=fulfillment')
     wrapper.unmount()
   })
 
@@ -157,7 +157,7 @@ describe('purchase order navigation and receipt links', () => {
     const row = purchase({ related_orders: [allocatedOrder, secondAllocatedOrder] })
     const { wrapper, router } = await mountPurchasePage(row)
 
-    await wrapper.findAll('.workbench-tabs button').find(button => button.text() === '关联订单').trigger('click')
+    await wrapper.findAll('.workbench-tabs button').find(button => button.text() === '关联订单').trigger('click'); await flushPromises()
     const sourceLink = wrapper.get('a[aria-label="查看来源订单 SO-UAT-SOURCE"]')
     const relatedLinks = wrapper.findAll('.related-order-panel a.order-navigation-link')
     expect(sourceLink.attributes('href')).toBe('/orders?detail=11')
@@ -170,7 +170,7 @@ describe('purchase order navigation and receipt links', () => {
     expect(router.currentRoute.value.query).toEqual({ detail: '22' })
     await router.back()
     await flushPromises()
-    expect(router.currentRoute.value.fullPath).toBe('/purchase-orders?detail=41')
+    expect(router.currentRoute.value.fullPath).toBe('/purchase-orders?detail=41&tab=orders')
     wrapper.unmount()
   })
 

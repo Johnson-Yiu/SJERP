@@ -139,11 +139,11 @@ test('opening list rows pushes their detail id into the current route for refres
 
   assert.deepEqual(withDocumentDetailQuery(route, 4), {
     path: '/orders',
-    query: { search: 'SO', customer: '7', sku: '12', detail: '4' },
+    query: { search: 'SO', customer: '7', sku: '12', detail: '4', tab: 'overview' },
     hash: '#items',
   })
   assert.match(source, /function openDetail\(row\) \{ void router\.push\(withDocumentDetailQuery\(route, row\.id\)\) \}/)
-  assert.match(source, /function openOrderDetail\(id\) \{ void router\.push\(withDocumentDetailQuery\(route, id\)\) \}/)
+  assert.match(source, /function openOrderDetail\(id\) \{ void router\.push\(orderDetailLocation\(id\)\) \}/)
   assert.match(source, /function openSourceQuote\(id\) \{ void router\.push\(\{ path: '\/quotes', query: \{ detail: String\(id\) \} \}\) \}/)
 })
 

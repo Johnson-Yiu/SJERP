@@ -152,6 +152,7 @@ describe('Customer and FollowUp quote shortcuts', () => {
     wrapper = mounted.wrapper
 
     await wrapper.findAll('.detail-tabs button').find(button => button.text().includes('报价记录')).trigger('click')
+    await flushPromises()
     await wrapper.findAll('.relation-actions button').find(button => button.text().includes('新增报价')).trigger('click')
     await flushPromises()
 

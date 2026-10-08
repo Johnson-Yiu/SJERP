@@ -45,6 +45,18 @@ const hasManagement = (entity) => Boolean(resourceConfigs[entity] || documentEnt
 const quickCreatable = new Set(['contacts', 'follow-ups', 'orders', 'quotes', 'purchase-orders', 'transactions', 'inventory-movements', 'skus', 'product-parameters', 'product-certificates', 'categories'])
 const canManage = computed(() => Boolean(activeSection.value && quickCreatable.has(activeSection.value.entity)))
 const isRoot = computed(() => currentEntity.value === props.entity && String(currentId.value) === String(props.id))
+const isCustomerRoot = computed(() => isRoot.value && currentEntity.value === 'customers' && route.path === '/customers')
+function restoreCustomerTab() {
+  if (!isCustomerRoot.value || !data.value) return
+  const key = route.query.tab
+  const valid = key === 'operation_logs' || data.value.sections.some(section => section.key === key)
+  activeTab.value = key === 'operation_logs' ? '__operation_logs' : valid ? key : 'followups'
+  if (!valid && key !== undefined) void router.replace({ path: route.path, query: { ...route.query, tab: 'followups' }, hash: route.hash })
+}
+async function selectSection(key) {
+  if (isCustomerRoot.value) await router.replace({ path: route.path, query: { ...route.query, tab: key === '__operation_logs' ? 'operation_logs' : key }, hash: route.hash })
+  activeTab.value = key
+}
 const isSkuSection = computed(() => currentEntity.value === 'products' && activeSection.value?.entity === 'skus')
 const visibleSectionRows = computed(() => {
   const rows = activeSection.value?.rows || []
@@ -100,6 +112,7 @@ async function load(entity = currentEntity.value, id = currentId.value) {
     movementRecord.value = movementResponse?.data || null
     currentEntity.value = entity; currentId.value = id
     activeTab.value = entity === 'products' ? '__overview' : data.value.sections[0]?.key || ''
+    restoreCustomerTab()
   } catch (e) { error.value = e.message } finally { loading.value = false }
 }
 async function loadOperationLogs(entity = currentEntity.value, id = currentId.value) {
@@ -186,10 +199,11 @@ function openCustomerFollowUp() {
 }
 const managementTarget = computed(() => ['quotes', 'orders'].includes(currentEntity.value)
   ? { path: `/${currentEntity.value}`, query: { detail: currentId.value } }
+  : isMovementDetail.value ? { path: '/inventory-movements', query: route.query.sku ? { sku: route.query.sku } : {} }
   : `/${currentEntity.value}`)
-const managementLabel = computed(() => currentEntity.value === 'quotes' ? '打开报价工作台' : currentEntity.value === 'orders' ? '打开订单工作台' : '打开管理页')
+const managementLabel = computed(() => currentEntity.value === 'quotes' ? '打开报价工作台' : currentEntity.value === 'orders' ? '打开订单工作台' : isMovementDetail.value ? '返回库存流水' : '打开管理页')
 function managementNavigation() {
-  if (!['quotes', 'orders'].includes(currentEntity.value)) emit('close')
+  if (!['quotes', 'orders', 'inventory-movements'].includes(currentEntity.value)) emit('close')
 }
 function openRelatedCreate() {
   if (!activeSection.value) return
@@ -284,6 +298,7 @@ function valueClass(type, value) { return { 'ctx-status': type === 'status', 'ct
 
 watch(() => [props.entity, props.id], () => { stack.value = []; currentEntity.value = props.entity; currentId.value = props.id; selectedSkuIds.value = []; skuMultiSelect.value = false; load() })
 watch(() => props.refreshKey, () => load())
+watch(() => route.query.tab, restoreCustomerTab)
 watch(activeTab, () => { selectedSkuIds.value = []; skuQuery.value = ''; skuMultiSelect.value = false })
 onMounted(async () => {
   await Promise.all([
@@ -295,7 +310,7 @@ onMounted(async () => {
 
 <template>
   <div class="modal-backdrop detail-backdrop" :class="{ 'follow-up-detail-backdrop': isFollowUpDetail, 'product-detail-backdrop': isProduct }" @mousedown.self="emit('close')">
-    <article class="detail-modal" :class="{ 'follow-up-detail-modal': isFollowUpDetail, 'product-detail-modal': isProduct }" :aria-label="isFollowUpDetail ? '跟进详情' : '关联详情'">
+    <article class="detail-modal" :class="{ 'follow-up-detail-modal': isFollowUpDetail, 'product-detail-modal': isProduct }" :aria-label="isFollowUpDetail ? '跟进详情' : isMovementDetail ? '库存流水详情' : '关联详情'">
       <div v-if="loading" class="detail-loading"><div class="spinner" /><span>正在整理关联数据...</span></div>
       <div v-else-if="error" class="detail-error"><strong>详情加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load()">重试</button></div>
       <template v-else-if="data">
@@ -366,14 +381,14 @@ onMounted(async () => {
               <button v-if="!isProduct" class="detail-close" aria-label="关闭详情" @click="emit('close')"><X :size="19" /><span>关闭</span></button>
               <button v-if="stack.length" class="detail-back" @click="back"><ArrowLeft :size="17" /> 返回 {{ stack[stack.length - 1].title }}</button>
               <span v-if="currentEntity === 'follow-ups'">跟进详情</span>
-              <span v-else-if="isProduct">产品管理 / 产品详情</span><span v-else-if="!stack.length">关联详情</span>
+              <span v-else-if="isProduct">产品管理 / 产品详情</span><span v-else-if="isMovementDetail">库存流水详情</span><span v-else-if="!stack.length">关联详情</span>
             </div>
             <div class="detail-actions">
               <button v-if="isRoot && currentEntity === 'customers'" class="btn btn-secondary" @click="openCustomerFollowUp"><Plus :size="14" /> 新增跟进</button>
               <button v-if="isRoot && currentEntity === 'customers' && hasRelationCustomerId" class="btn btn-secondary" @click="openQuoteForCustomer(relationCustomerId)"><Plus :size="14" /> 新建报价</button>
               <button v-if="isRoot && currentEntity !== 'inventory-movements'" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> {{ currentEntity === 'customers' ? '编辑客户' : '编辑主档' }}</button>
               <RouterLink v-else-if="hasManagement(currentEntity)" class="btn btn-secondary" :to="managementTarget" @click="managementNavigation"><ExternalLink :size="14" /> {{ managementLabel }}</RouterLink>
-              <button class="detail-close" aria-label="关闭详情" @click="emit('close')"><X :size="19" /><span>关闭</span></button>
+              <button v-if="isProduct" class="detail-close" aria-label="关闭详情" @click="emit('close')"><X :size="19" /><span>关闭</span></button>
             </div>
           </div>
           <div class="detail-identity"><div><span class="detail-subtitle">{{ data.subtitle }}</span><h2>{{ data.title }}</h2></div><span class="detail-badge">{{ data.badge }}</span></div>
@@ -387,7 +402,7 @@ onMounted(async () => {
           <section v-if="!isSkuSection" class="relation-area">
             <div class="relation-top"><div><h3>{{ isProduct ? activeSection?.title || '操作日志' : currentEntity === 'customers' ? '客户业务记录' : '关联数据' }}</h3><p>点击记录查看详情</p></div><div class="relation-actions"><button v-if="isSkuSection && canBulkDeleteSku" class="manage-link" :class="{ 'multi-select-active': skuMultiSelect }" @click="toggleSkuMultiSelect"><CheckSquare :size="13" /> {{ skuMultiSelect ? '取消多选' : '多选' }}</button><button v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect && selectedActiveSkuIds.length" class="manage-link danger-link" @click="deactivateSelectedSkus"><Trash2 :size="13" /> 停用 {{ selectedActiveSkuIds.length }} 个 SKU</button><button v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect && selectedInactiveSkuIds.length" class="manage-link restore-link" @click="reactivateSelectedSkus"><CheckSquare :size="13" /> 重新启用 {{ selectedInactiveSkuIds.length }} 个 SKU</button><button v-if="isSkuSection" class="manage-link" :class="{ 'inactive-toggle': showInactiveSkus }" @click="toggleInactiveSkus"><CheckSquare :size="13" /> {{ showInactiveSkus ? '隐藏已停用 SKU' : '显示已停用 SKU' }}</button><button v-if="isSkuSection" class="manage-link" @click="openSkuCreate"><Plus :size="13" /> 新增 SKU</button><button v-else-if="canManage" class="manage-link" @click="openRelatedCreate"><Plus :size="13" /> {{ createLabel(activeSection) }}</button></div></div>
               <label v-if="isSkuSection" class="sku-context-search"><Search :size="16" /><input v-model.trim="skuQuery" placeholder="搜索中文名称、销售型号、SKU Code 或规格..." /><span v-if="skuQuery">{{ visibleSectionRows.length }} / {{ activeSection.rows.length }}</span></label>
-            <div v-if="!isProduct" class="detail-tabs"><button v-for="section in data.sections" :key="section.key" :class="{ active: activeTab === section.key }" @click="activeTab = section.key">{{ section.title }} <span>{{ section.rows.length }}</span></button><button :class="{ active: isOperationLogTab }" @click="activeTab = '__operation_logs'">{{ isMovementDetail ? '流水操作日志' : '操作日志' }} <span>{{ operationLogs.length }}</span></button></div>
+            <div v-if="!isProduct" class="detail-tabs"><button v-for="section in data.sections" :key="section.key" :class="{ active: activeTab === section.key }" @click="selectSection(section.key)">{{ section.title }} <span>{{ section.rows.length }}</span></button><button :class="{ active: isOperationLogTab }" @click="selectSection('__operation_logs')">{{ isMovementDetail ? '流水操作日志' : '操作日志' }} <span>{{ operationLogs.length }}</span></button></div>
             <OperationLogPanel v-if="isOperationLogTab" :title="isMovementDetail ? '流水操作日志' : '操作日志'" :logs="operationLogs" :loading="operationLogsLoading" :enabled="auditEnabled" />
             <div v-else-if="activeSection" class="context-table-wrap">
               <div v-if="!visibleSectionRows.length" class="context-empty"><Rows3 :size="27" /><strong>{{ isSkuSection && skuQuery ? '未找到匹配的 SKU' : `暂无${activeSection.title}` }}</strong><p>{{ isSkuSection && skuQuery ? '请调整关键词后重试。' : '点击右上角新增记录并自动建立关联。' }}</p></div>

@@ -21,12 +21,12 @@ export function documentDetailState(type, rawId) {
 export function withDocumentDetailQuery(route, id) {
   return {
     path: route.path,
-    query: { ...route.query, detail: String(id) },
+    query: { ...route.query, detail: String(id), tab: 'overview' },
     hash: route.hash,
   }
 }
 
 export function withoutDocumentDetailQuery(route) {
-  const { detail: _detail, ...query } = route.query || {}
+  const { detail: _detail, tab: _tab, ...query } = route.query || {}
   return { path: route.path, query, hash: route.hash }
 }

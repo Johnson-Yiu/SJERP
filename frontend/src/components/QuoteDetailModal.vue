@@ -1,16 +1,18 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, inject, onMounted, ref, watch } from 'vue'
+import { routeLocationKey, routerKey } from 'vue-router'
 import { AlertTriangle, ArrowLeft, ArrowRight, Download, Eye, FileText, GitBranch, Pencil, Plus, ShoppingCart, StickyNote, X } from 'lucide-vue-next'
 import { api, downloadQuoteExport } from '../api'
 import { confirmDialog } from '../dialogs'
 import QuotePreviewModal from './QuotePreviewModal.vue'
 import RichTextEditor from './RichTextEditor.vue'
 import OperationLogPanel from './OperationLogPanel.vue'
+import { useDetailTab } from '../utils/useDetailTab'
 
 const props = defineProps({ id: { type: [Number, String], required: true }, refreshKey: { type: Number, default: 0 } })
 const emit = defineEmits(['close', 'revise', 'status-updated', 'create-order', 'open-order'])
 const workbench = ref(null)
-const activeTab = ref('overview')
+const activeTab = useDetailTab('/quotes', ['overview', 'items', 'lineage', 'orders', 'notes', 'operation_logs'], 'overview', () => props.id)
 const loading = ref(true)
 const error = ref('')
 const preview = ref(null)
@@ -18,6 +20,8 @@ const noteContent = ref('')
 const noteSaving = ref(false)
 const noteEditorOpen = ref(false)
 const versionHistory = ref([])
+const route = inject(routeLocationKey, null)
+const router = inject(routerKey, null)
 const actionError = ref('')
 const statusSaving = ref(false)
 const operationLogs = ref([])
@@ -126,12 +130,16 @@ async function restoreNote(note) {
 function changeVersion(row) {
   if (row.id === quote.value.id) return
   versionHistory.value.push(quote.value.id)
-  activeTab.value = 'overview'
-  load(row.id)
+  openVersion(row.id)
+}
+function openVersion(id) {
+  if (route?.path === '/quotes' && route.query.detail) {
+    void router.push({ path: '/quotes', query: { ...route.query, detail: String(id), tab: 'overview' }, hash: route.hash })
+  } else { activeTab.value = 'overview'; void load(id) }
 }
 function returnToPreviousVersion() {
   const previousId = versionHistory.value.pop()
-  if (previousId) { activeTab.value = 'overview'; load(previousId) }
+  if (previousId) openVersion(previousId)
 }
 function createOrder() { emit('create-order', { id: quote.value.id, quote_no: quote.value.quote_no }) }
 function closeNoteEditor() { noteContent.value = ''; noteEditorOpen.value = false }
@@ -148,7 +156,7 @@ watch(() => props.refreshKey, () => load(quote.value?.id || props.id))
       <div v-else-if="error" class="detail-error"><AlertTriangle :size="27" /><strong>加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load()">重试</button></div>
       <template v-else>
         <header class="detail-header">
-          <div class="detail-nav"><div class="detail-nav-start"><button class="detail-close" aria-label="关闭报价详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button><button v-if="versionHistory.length" class="detail-back" @click="returnToPreviousVersion"><ArrowLeft :size="18" /> 返回上一版本</button><span v-else>报价工作台 · {{ workbench.root_quote_no }}</span></div><div class="detail-actions"><button class="btn btn-secondary" @click="emit('revise', quote)"><Pencil :size="14" /> 创建修订版</button><button class="detail-close" aria-label="关闭报价详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button></div></div>
+          <div class="detail-nav"><div class="detail-nav-start"><button class="detail-close" aria-label="关闭报价详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button><button v-if="versionHistory.length" class="detail-back" @click="returnToPreviousVersion"><ArrowLeft :size="18" /> 返回上一版本</button><span v-else>报价工作台 · {{ workbench.root_quote_no }}</span></div><div class="detail-actions"><button class="btn btn-secondary" @click="emit('revise', quote)"><Pencil :size="14" /> 创建修订版</button></div></div>
           <div class="detail-identity"><div><p class="detail-subtitle">{{ quote.customer_name }} · {{ revisionLabel(quote) }}</p><h2>{{ quote.quote_no }}</h2><small>原始报价：{{ workbench.root_quote_no }}</small></div><span class="detail-badge">{{ quote.status_display }}</span></div>
           <div v-if="quote.status === 'draft' || quote.status === 'sent'" class="quote-status-actions" aria-label="报价状态操作">
             <button v-if="quote.status === 'draft'" class="btn btn-secondary" :disabled="statusSaving" @click="changeStatus('mark-sent')">标记已发送</button>

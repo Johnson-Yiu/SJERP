@@ -80,7 +80,7 @@ describe('trade finance interactions', () => {
     await flushPromises()
     await wrapper.get('.purchase-list-row').trigger('click')
     await flushPromises()
-    await wrapper.findAll('.workbench-tabs button').find(button => button.text() === '收货').trigger('click')
+    await wrapper.findAll('.workbench-tabs button').find(button => button.text() === '收货').trigger('click'); await flushPromises()
     await wrapper.findAll('button').find(button => button.text() === '验货入库').trigger('click')
     const dialog = wrapper.find('form.receipt-dialog')
     expect(dialog.findAll('button').at(-1).attributes('disabled')).toBeDefined()

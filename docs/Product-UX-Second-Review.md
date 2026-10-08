@@ -288,4 +288,4 @@ Chrome 实际视口 DOM 为 1440×900，DPR 1、缩放 100%。只读现有客户
 | B2_FIX_03_quote_orders.png | 订单页签仅有一个页头转为订单主按钮 |
 | B2_FIX_04_purchase_receipt.png | 入库记录显示 USD 6.50，数量 100.00 和冲销入口保留 |
 
-Git / CI：正常提交并推送 master，最终 SHA 和对应 CI 的 backend、backend-postgres、frontend 结果记录于本次交付回复；以该提交的 GitHub Actions 结果为准。未修改后端、模型、迁移或业务计算；未开始 Phase 2C 或 Finance UX。
+Git / CI：修复提交 `0f8fe1583e2c71e351da01da15482e1c729b8768` 正常推送 master；[CI #170](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37810050185) 全部成功：backend SUCCESS（46s）、backend-postgres SUCCESS（1m45s）、frontend SUCCESS（1m5s，341 项 Vitest PASS）。本次 CI 证据补录提交的最终 SHA / CI 另见交付回复。未修改后端、模型、迁移或业务计算；未开始 Phase 2C 或 Finance UX。

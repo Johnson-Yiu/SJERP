@@ -10,6 +10,7 @@ import PurchaseOrderPage from '../src/views/PurchaseOrderPage.vue'
 import InventoryPage from '../src/views/InventoryPage.vue'
 import { resourceConfigs } from '../src/resourceConfigs'
 import { customerListStatus } from '../src/utils/customerListStatus'
+import { movementSummary, movementSource } from '../src/utils/inventoryLedger'
 
 const mocks = vi.hoisted(() => ({ api: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() }, listAll: vi.fn() }))
 vi.mock('../src/api.js', () => ({ ...mocks, downloadQuoteExport: vi.fn(), listData: r => r.data?.results || r.data || [] }))
@@ -131,6 +132,42 @@ it('List-only CSS defines nowrap, minimum widths, desktop five cards and readabl
   expect(css).toMatch(/\.inventory-summary[^}]+repeat\(5, minmax\(0, 1fr\)\)/)
   expect(css).toMatch(/@media \(max-width: 1200px\)[^}]+repeat\(3, minmax\(0, 1fr\)\)/)
   expect(css).toMatch(/\.nav-item[^}]+min-height: 40px/)
+})
+it('Focused repair separates original inventory name/unit values into two styled blocks', async () => {
+  await setup('/inventory')
+  const cells = wrapper.findAll('.inventory-name-cell')
+  expect(cells.map(cell => cell.get('span').text())).toEqual(['Cable', 'Lamp'])
+  expect(cells.map(cell => cell.get('small').text())).toEqual(['基础单位：m', '基础单位：pcs'])
+  expect(wrapper.findAll('.inventory-row .primary-cell').map(cell => cell.text())).toEqual(['SKU-M', 'SKU-PCS'])
+  const source = readFileSync('src/views/InventoryPage.vue', 'utf8')
+  expect(source).toMatch(/\.inventory-name-cell > span\{display:block;color:inherit;line-height:1.45\}/)
+  expect(source).toMatch(/\.inventory-name-cell > small\{display:block;margin-top:3px;font-size:var\(--text-caption\);color:#81908a\}/)
+})
+it('Focused repair styles only sidebar navigation scrollbars and preserves visible scrolling', () => {
+  const css = readFileSync('src/styles.css', 'utf8')
+  expect(css).toMatch(/\.sidebar nav \{ scrollbar-width: thin; scrollbar-color: rgba\(198, 222, 213, \.38\) transparent;/)
+  expect(css).toMatch(/\.sidebar nav::-webkit-scrollbar \{ width: 6px;/)
+  expect(css).toMatch(/\.sidebar nav::-webkit-scrollbar-track \{ background: transparent;/)
+  expect(css).toMatch(/\.sidebar nav::-webkit-scrollbar-thumb \{[^}]+border-radius: 999px/)
+  expect(css).toMatch(/\.sidebar nav::-webkit-scrollbar-thumb:hover \{ background: rgba\(198, 222, 213, \.58\)/)
+  const scrollbarRules = [...css.matchAll(/([^{}]+)\{[^{}]*(?:scrollbar-|::-webkit-scrollbar)[^{}]*\}/g)]
+  expect(scrollbarRules.length).toBeGreaterThan(0)
+  expect(scrollbarRules.every(rule => rule[1].trim().startsWith('.sidebar nav'))).toBe(true)
+  expect(css.replace(/\/\*[\s\S]*?\*\//g, '')).not.toMatch(/(?:^|})\s*(?:body|html|\*)[^{}]*::-webkit-scrollbar/)
+})
+it('Focused repair keeps movement labels/counts and uses exactly four distinct hints', () => {
+  const rows = [
+    { type: 'purchase_in', is_automatic: true }, { type: 'sale_out', is_automatic: true },
+    { type: 'adjust_in', source_type: 'manual' }, { type: 'adjust_out', source_type: 'manual', is_reversed: true },
+    { type: 'return_in', source_type: 'reversal' }, { type: 'unknown', source_type: 'manual' },
+  ]
+  const summary = movementSummary(rows)
+  expect(summary.map(item => item.label)).toEqual(['流水记录', '入库记录', '出库记录', '冲销记录'])
+  expect(summary.map(item => item.value)).toEqual([6, 3, 2, 1])
+  expect(summary.map(item => item.hint)).toEqual(['当前筛选结果', '库存增加', '库存减少', '冲销生成'])
+  const filtered = rows.filter(row => movementSource(row) === 'manual')
+  expect(movementSummary(filtered).map(item => item.value)).toEqual([3, 1, 1, 0])
+  expect(movementSummary([]).map(item => item.value)).toEqual([0, 0, 0, 0])
 })
 it.each(core.filter(c => c[0] !== '/inventory'))('%s has concise initial and filtered empty states', async (path, title, component, props, action) => {
   mocks.listAll.mockResolvedValue([])

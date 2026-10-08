@@ -175,3 +175,23 @@ BEFORE 文件在 `before/`，AFTER 文件在 `after/`；15 张全部加载完成
 - 正常 commit + push master 后核验最终 HEAD 的 backend、backend-postgres、frontend 全部成功；最终 SHA 和实际运行链接记录在本次最终交付回复。[master CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/workflows/ci.yml?query=branch%3Amaster)。这些验证记录供独立 UI 验收使用，不代替最终验收结论。
 
 本轮实现文件：App.vue、styles.css、resourceConfigs.js、DocumentPage.vue、ResourcePage.vue、PurchaseOrderPage.vue、InventoryPage.vue、utils/customerListStatus.js（新增）、utils/inventoryLedger.js；另有 AGENTS.md、本文档、新增测试和四个更新的测试文件。
+
+### Post-visual-review repair
+
+2026-10-08，Phase 2A 独立视觉复核后的三项定点修复：
+
+- 库存中文 SKU 名称与基础单位原先同排：增加专用 `inventory-name-cell`，名称和单位分别显示为 block；单位上留 3px 间距、12px caption 字号、#81908a。长名称自然换行，原名称、单位和库存值保持。
+- 侧栏滚动条原先显示亮白条：仅 `.sidebar nav` 使用透明轨道、6px 圆角浅绿半透明滑块，hover 加深；Firefox 使用 thin/scrollbar-color。Chromium 在支持 WebKit 伪元素时恢复标准 scrollbar 属性为 auto，避免覆盖自定义滑块。主内容滚动条保持，侧栏仍可滚动到底部。
+- 流水四卡原先重复“当前列表记录数”：按原顺序改为“当前筛选结果 / 库存增加 / 库存减少 / 冲销生成”；标签及计数表达式保持。
+
+验证：全量 Vitest 33 个文件、329/329；Node 单元测试 111/111；字体检查 1/1；生产构建通过。新增库存原值与两块样式、侧栏 scrollbar 作用范围、流水原标签/计数/精确提示回归，既有 Phase 2A 测试全部通过。后端、业务逻辑、权限、详情布局无修改。
+
+真实 Chrome Use：1440×900 视口、100% 缩放，未修改业务数据。库存三行名称/单位分开，长名称自然换行；流水实测计数仍为 90 / 41 / 49 / 12，四提示可读；侧栏滚动位置从顶部到 645px，底部组织入口可见，滑块细且无亮白轨道；未发现新裁切。
+
+截图位于 Git 外目录 `C:/Users/Johnson/.codex/visualizations/2026/10/08/01a11977-80e0-77b0-ad46-fafa2f93bdc7/erp-phase-2a/focused-repair/`，三张均已逐图检查：
+
+- `FIX_01_inventory_list.png`：已完成，1440×900。
+- `FIX_02_inventory_movement_list.png`：已完成；页面视口 1440×900，截图接口原始输出 1425×891。
+- `FIX_03_sidebar_scrollbar.png`：已完成，1440×900。
+
+保留接口原始 JPEG，并按原尺寸转存 PNG，无裁剪、缩放或修图，截图未提交 Git。正常提交并推送 master 后，最终 HEAD 的三项 CI 结果及 SHA 记录于交付回复。本次未启动 Phase 2B 或 Finance UX。

@@ -107,6 +107,10 @@ it('filters exactly anomaly or procurement gap, excludes zero-only SKU, toggles 
 it('keeps mixed-unit sums separate and makes base quantity labels explicit', async () => {
   expect(wrapper.find('.inventory-summary').text()).toContain('8 pcs / 340 m')
   expect(wrapper.find('.inventory-helper').text()).toBe('数量按 SKU 基础单位显示。')
+  const nameCell = wrapper.findAll('.inventory-name-cell').find(cell => cell.text().includes('中文灯具'))
+  expect(nameCell.get('span').text()).toBe('中文灯具')
+  expect(nameCell.get('small').text()).toBe('基础单位：pcs')
+  expect(nameCell.element.children).toHaveLength(2)
   expect(wrapper.findAll('thead th').map(x => x.text())).toEqual(['SKU', '中文 SKU 名称', '实际库存', '已预留', '可用库存', '在途采购', '待采购', '状态'])
 })
 it('opens row with preserved context, closes only detail/tab', async () => {

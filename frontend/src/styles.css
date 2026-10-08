@@ -44,6 +44,15 @@ nav { flex: 1; overflow: auto; padding-top: 15px; }
 .nav-section { color: #779b91; font-size:var(--text-caption); letter-spacing: .04em; padding: 14px 12px 6px; }
 .nav-item { display: flex; min-height: 40px; align-items: center; gap: 12px; color: #c4d8d2; text-decoration: none; padding: 8px 12px; border-radius: 9px; margin: 2px 0; font-size:var(--text-body); transition: .18s; }
 .nav-item:hover { background: #ffffff0d; color: #fff; }
+.sidebar nav { scrollbar-width: thin; scrollbar-color: rgba(198, 222, 213, .38) transparent; }
+.sidebar nav::-webkit-scrollbar { width: 6px; }
+.sidebar nav::-webkit-scrollbar-track { background: transparent; }
+.sidebar nav::-webkit-scrollbar-thumb { background: rgba(198, 222, 213, .38); border-radius: 999px; }
+.sidebar nav::-webkit-scrollbar-thumb:hover { background: rgba(198, 222, 213, .58); }
+/* Chromium uses the rounded 6px thumb; Firefox keeps the standard thin style. */
+@supports selector(::-webkit-scrollbar) {
+  .sidebar nav { scrollbar-width: auto; scrollbar-color: auto; }
+}
 .nav-item.router-link-active { background: #f8faf8; color: var(--green); box-shadow: 0 6px 20px #09282250; font-weight: 600; }
 .sidebar-foot { border-top: 1px solid #ffffff18; padding: 18px 8px 0; display: flex; gap: 10px; align-items: center; }
 .team-avatars { display: flex; }

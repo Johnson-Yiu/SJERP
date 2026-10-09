@@ -1,17 +1,21 @@
 <script setup>
 import { computed } from 'vue'
+import { scaleDecimalInput } from '../utils/decimalInput'
 import { baseQuantity } from '../utils/tradeUnits'
-const props = defineProps({ line: { type: Object, required: true }, sku: Object, supplier: [String, Number], priceField: { type: String, default: 'unit_price' }, preserveBaseQuantity: Boolean, historicalUnit: [String, Number] })
+const props = defineProps({ line: { type: Object, required: true }, sku: Object, supplier: [String, Number], priceField: { type: String, default: 'unit_price' }, preserveBaseQuantity: Boolean, exactDecimalPrice: Boolean, historicalUnit: [String, Number] })
 const options = computed(() => (props.sku?.trade_units || []).filter(u => (u.active || u.id === Number(props.line.trade_unit) || u.id === Number(props.historicalUnit || props.line._historical_trade_unit)) && (!props.supplier || !u.supplier || Number(u.supplier) === Number(props.supplier))))
 function select(event) {
-  const previous = Number(props.line.trade_unit ? props.line.trade_snapshot?.factor || 1 : 1)
+  const previousFactor = props.line.trade_unit ? props.line.trade_snapshot?.factor || 1 : 1
+  const previous = Number(previousFactor)
   const previousQuantity = baseQuantity(props.line)
   const unit = options.value.find(u => u.id === Number(event.target.value))
   props.line.trade_unit = unit?.id || null
   props.line.trade_snapshot = unit ? { name: unit.name, unit: unit.unit, factor: unit.factor, base_unit: unit.base_unit, allow_fraction: unit.allow_fraction } : { unit: props.sku?.unit, base_unit: props.sku?.unit, factor: '1' }
   if (props.preserveBaseQuantity) props.line.quantity = Number((previousQuantity / Number(unit?.factor || 1)).toPrecision(12))
   if (props.priceField && props.line[props.priceField] !== '' && props.line[props.priceField] != null) {
-    props.line[props.priceField] = Number((Number(props.line[props.priceField]) / previous * Number(unit?.factor || 1)).toFixed(4))
+    props.line[props.priceField] = props.exactDecimalPrice
+      ? scaleDecimalInput(props.line[props.priceField], previousFactor, unit?.factor || 1)
+      : Number((Number(props.line[props.priceField]) / previous * Number(unit?.factor || 1)).toFixed(4))
   }
 }
 </script>

@@ -1,4 +1,5 @@
 <script setup>
+import { compactDecimalInput } from '../utils/decimalInput'
 import TradeUnitPicker from '../components/TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
 import PurchaseSupplierPicker from '../components/PurchaseSupplierPicker.vue'
@@ -87,6 +88,7 @@ function openReceipt(row, item) {
   receiptSuccess.value = null
   receiptForm.value = { purchase_item: item.id, receipt_date: new Date().toLocaleDateString('en-CA'), quantity: Math.max(0, Number(item.remaining_quantity)), unit_cost: item.unit_price, is_overage: false, overage_reason: '', notes: '', checked: false }
   if (item.trade_unit && Number(item.remaining_quantity) % Number(item.trade_snapshot.factor) === 0) Object.assign(receiptForm.value, { trade_unit: item.trade_unit, trade_snapshot: item.trade_snapshot, quantity: Number(item.remaining_quantity) / Number(item.trade_snapshot.factor), unit_cost: item.trade_unit_price })
+  receiptForm.value.unit_cost = compactDecimalInput(receiptForm.value.unit_cost)
   error.value = ''
 }
 async function submitReceipt() {
@@ -193,7 +195,7 @@ async function editDraft(row) {
     expected_arrival_date: row.expected_arrival_date || '',
     status: 'draft',
     currency: row.currency,
-    exchange_rate: row.exchange_rate,
+    exchange_rate: compactDecimalInput(row.exchange_rate),
     notes: row.notes || '',
     items: (row.items || []).map(item => fromTradeLine({
       sku: item.sku,
@@ -376,7 +378,7 @@ watch(() => route.query.detail, id => {
         <div class="receipt-progress"><div><small>下单数量</small><strong>{{ receiptTarget.item.quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div><div><small>已到货</small><strong>{{ receiptTarget.item.received_quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div><div><small>当前待到</small><strong>{{ receiptTarget.item.remaining_quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div></div>
         <p>不合格或拒收数量请写入备注，等待补货后再登记入库。</p>
         <label>实际入库日期 *<input v-model="receiptForm.receipt_date" type="date" required></label>
-        <div class="receipt-unit-field"><span>交易单位 / 包装规格</span><TradeUnitPicker :line="receiptForm" :sku="skus.find(s => s.id === receiptTarget.item.sku)" :supplier="receiptTarget.row.supplier" price-field="unit_cost" preserve-base-quantity :historical-unit="receiptTarget.item.trade_unit" /></div>
+        <div class="receipt-unit-field"><span>交易单位 / 包装规格</span><TradeUnitPicker :line="receiptForm" :sku="skus.find(s => s.id === receiptTarget.item.sku)" :supplier="receiptTarget.row.supplier" price-field="unit_cost" exact-decimal-price preserve-base-quantity :historical-unit="receiptTarget.item.trade_unit" /></div>
         <label>本次合格入库数量 *<input v-model="receiptForm.quantity" type="number" min="0.01" step="0.01" required></label>
         <div class="receipt-quantity-preview"><span>本次入库：{{ receiptForm.quantity || 0 }} {{ tradeLabel(receiptForm, itemBaseUnit(receiptTarget.item)) }}<template v-if="receiptForm.trade_unit"> = {{ baseQuantity(receiptForm) }} {{ itemBaseUnit(receiptTarget.item) }}</template></span><strong v-if="receiptRemaining >= 0">入库后预计待到：{{ Number(receiptRemaining.toFixed(6)) }} {{ itemBaseUnit(receiptTarget.item) }}</strong><strong v-else>超到：{{ Number((-receiptRemaining).toFixed(6)) }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div>
         <label>实际采购单价（{{ receiptTarget.row.currency }}） *<input v-model="receiptForm.unit_cost" type="number" min="0" step="0.0001" required></label>

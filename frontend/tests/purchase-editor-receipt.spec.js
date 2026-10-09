@@ -204,3 +204,41 @@ it('supplier picker preserves fixed candidates, characteristics and recommended 
  expect(picker.emitted('selected')[0][0]).toEqual({supplier:9,supplier_sku:20})
  picker.unmount()
 })
+
+it('foreign purchase draft compacts exchange rate and preserves source / numeric PUT payload',async()=>{
+ const editable={...purchase,status:'draft',status_display:'草稿',exchange_rate:'7.200000'}
+ const raw=JSON.stringify(editable)
+ const oldList=mocks.listAll.getMockImplementation()
+ mocks.listAll.mockImplementation((url,...args)=>url==='/purchase-orders/'?Promise.resolve([editable]):oldList(url,...args))
+ mocks.api.get.mockImplementation(async url=>({data:url==='/supplier-skus/'?sources:editable}))
+ await mountPage('/purchase-orders?detail=41');await click('编辑草稿')
+ const editor=wrapper.get('.purchase-create-modal')
+ expect(editor.findAll('label').find(l=>l.text().startsWith('对人民币汇率')).get('input').element.value).toBe('7.2')
+ await editor.get('form').trigger('submit');await flushPromises()
+ const payload=mocks.api.put.mock.calls.find(([url])=>url==='/purchase-orders/41/')[1]
+ expect(Number(payload.exchange_rate)).toBe(Number(editable.exchange_rate))
+ expect(JSON.stringify(editable)).toBe(raw)
+})
+it.each(['34.0000','34.1257000','0.000001'])('receipt retains %s significant cost, exact packaging conversion and payload meaning',async cost=>{
+ const item={...line,trade_unit_price:cost}
+ const source={...purchase,items:[item]}
+ const raw=JSON.stringify(source)
+ const oldList=mocks.listAll.getMockImplementation()
+ mocks.listAll.mockImplementation((url,...args)=>url==='/purchase-orders/'?Promise.resolve([source]):oldList(url,...args))
+ mocks.api.get.mockResolvedValue({data:source})
+ await receipt()
+ const dialog=wrapper.get('.goods-receipt-dialog')
+ const costInput=()=>dialog.findAll('input[type="number"]')[1]
+ expect(costInput().element.value).toBe(cost==='34.0000'?'34':cost==='34.1257000'?'34.1257':cost)
+ await dialog.get('[aria-label="交易单位与包装规格"]').setValue('2')
+ expect(Number(costInput().element.value)).toBe(Number(cost)*2)
+ await dialog.get('[aria-label="交易单位与包装规格"]').setValue('1')
+ expect(Number(costInput().element.value)).toBe(Number(cost))
+ expect(JSON.stringify(source)).toBe(raw)
+ await dialog.get('.inspection-acknowledgement input').setValue(true)
+ await dialog.trigger('submit');await flushPromises()
+ const payload=mocks.api.post.mock.calls.find(([url])=>url==='/purchase-orders/41/receive/')[1]
+ expect(Number(payload.trade_unit_price)).toBe(Number(cost))
+ expect(payload.trade_unit).toBe(1)
+ expect(JSON.stringify(source)).toBe(raw)
+})

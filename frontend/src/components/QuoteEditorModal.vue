@@ -1,4 +1,5 @@
 <script setup>
+import { compactDecimalInput } from '../utils/decimalInput'
 import TradeUnitPicker from './TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
 import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
@@ -43,7 +44,7 @@ function makeDraft() {
   return {
     customer: quote.customer || '', quote_no: quote.quote_no || '', quote_date: quoteDate,
     valid_until: quote.valid_until || addDays(quoteDate, 30), status: quote.status || 'draft', currency: quote.currency || 'USD',
-    exchange_rate: quote.exchange_rate || '7.200000', shipping_fee: quote.shipping_fee || 0, discount: quote.discount || 0,
+    exchange_rate: compactDecimalInput(quote.exchange_rate || '7.200000'), shipping_fee: quote.shipping_fee || 0, discount: quote.discount || 0,
     recipient_name: quote.recipient_name || '', buyer_address: quote.buyer_address || '', buyer_email: quote.buyer_email || '', buyer_phone: quote.buyer_phone || '',
     lead_time_days: quote.lead_time_days || 10, deposit_percent: Number(quote.deposit_ratio ?? 1) * 100,
     revision_summary: '',

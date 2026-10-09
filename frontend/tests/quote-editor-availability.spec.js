@@ -352,4 +352,20 @@ describe('QuoteEditorModal inventory reference', () => {
     expect(source.quote_no).toBe('QT-44'); expect(source.items[0].quantity).toBe('2')
   })
 
+  it.each(['create','revise'])('compacts %s exchange rate without mutating source or payload meaning',async mode=>{
+    const source={id:44,customer:customer.id,quote_no:'QT-44',exchange_rate:'7.200000',items:[{sku:skuA.id,quantity:'2',unit_price:'3',sales_model_snapshot:'HIST-A'}]}
+    const raw=JSON.stringify(source)
+    const wrapper=await mountEditor({mode,quote:source});wrappers.push(wrapper)
+    const field=wrapper.findAll('.field').find(f=>f.find('label').text()==='对人民币汇率')
+    expect(field.get('input').element.value).toBe('7.2')
+    if(mode==='revise')await wrapper.get('.revision-summary textarea').setValue('UAT precision')
+    await wrapper.findAll('button').find(b=>b.text()==='保存报价').trigger('click');await settle()
+    const payload=mocks.api.post.mock.calls.find(([url])=>url===(mode==='revise'?'/quotes/44/revise/':'/quotes/'))[1]
+    expect(Number(payload.exchange_rate)).toBe(Number(source.exchange_rate))
+    expect(JSON.stringify(source)).toBe(raw)
+  })
+  it('new quote default exchange rate is compact',async()=>{
+    const wrapper=await mountEditor();wrappers.push(wrapper)
+    expect(wrapper.findAll('.field').find(f=>f.find('label').text()==='对人民币汇率').get('input').element.value).toBe('7.2')
+  })
 })

@@ -359,3 +359,17 @@ Git / CI：修复提交 `0f8fe1583e2c71e351da01da15482e1c729b8768` 正常推送 
 正常提交/推送 master 后检查最终 HEAD 的 backend、backend-postgres、frontend；master 最终 SHA、实际 CI 运行与证据分支 SHA 记录于最终交付回复。[master CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/workflows/ci.yml?query=branch%3Amaster)。证据分支只新增上述视觉文件，未合并进 master。
 
 首次实现提交 `c31280d5df6ffa209c6646e37589f67519fb0b85` 的 [CI #172](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37915770322) SUCCESS。提交前后复核另清理了重复的收货页 scoped CSS 声明，仅保留末尾同一规则，渲染与业务行为不变；最终 HEAD CI 仍单独核验并记录于回复。
+
+### Post-visual-review decimal display repair
+
+视觉复核发现：可编辑汇率直接显示后端 Decimal `7.200000`，收货历史交易单价显示 `34.0000`。本次仅修复这些输入初值，不改表单布局、后端、迁移、权限、生命周期或提交契约。
+
+`compactDecimalInput` 直接处理字符串，仅删除小数末尾的 0 和空小数点：`7.200000 → 7.2`、`34.0000 → 34`、`34.1250 → 34.125`；`34.1257`、`0.000001`、整数及有效位保持不变。null/undefined 返回空字符串。规范化不使用 Number 转换、toFixed、舍入或小数位上限，不改源对象。提交仍沿用原 payload 构建逻辑，数值含义保持等价。
+
+覆盖 Quote 新建默认值与修订继承汇率、Order 编辑与来源报价 OrderDraftModal 汇率、Purchase 外币草稿编辑汇率、Receipt 打开后的基础/历史交易单价。CNY 汇率 1 和币种切换规则保留。Receipt 的 TradeUnitPicker 单独启用精确十进制价格转换：仍使用原价 ÷ 原因子 × 新因子，有限十进制用 BigInt 有理数计算后输出字符串，移除原四位截断；其他表单包装选择行为不变。无限循环小数仍采用原 JavaScript 数值换算，不额外限制为四位；不承诺把无限小数表示为有限精确字符串。数量、包装快照、筛选、库存和 payload 逻辑保留。
+
+新增 decimal-input、decimal-order-editors，扩充 quote-editor-availability、purchase-editor-receipt 可执行测试：包含所列尾零例子、空值、超长有效位、`34.1257` 与 `0.000001`、包装往返转换；Quote create/revise、Order edit/draft、Purchase edit、Receipt submit 验证源对象不变及请求数值等价。完整 Phase 2A/2B/2C 前端回归：Vitest 36 文件 / 368 项通过，Node 111 项通过，详情字体 1 项通过，生产构建通过（既有 bundle-size 提示）。Backend 565 tests OK（10 skipped）；Django check 无问题；makemigrations --check --dry-run 无漂移。
+
+真实 Chrome UAT：DOM 1440×900、DPR 1、缩放 100%。新建报价、报价 SJ20261002SG003 修订、SO-2026-00005 编辑均显示 `7.2`；PO-2026-00006 收货显示 `34`，5 pcs 袋 → 10 pcs 箱 → 5 pcs 袋显示 `34 → 68 → 34`。四张原图逐张目视核验。现有可编辑采购草稿 PO-2026-00004 为 CNY；额外目视检查其未保存的 USD 切换及 `7.2` 输入后取消，真实外币草稿原值的加载规范化由自动测试覆盖。未创建/保存/入库任何业务数据；Chrome 错误日志为空。
+
+证据仅为 `ux-review-evidence` 下 `ux-review/phase-2c/focused-repair/` 的 C_FIX_01_quote_create.png、C_FIX_02_quote_revision.png、C_FIX_03_order_edit.png、C_FIX_04_purchase_receipt.png，4/4 完成，缺失 0。不提交截图到 master、不合并证据分支。原始 JPEG 原尺寸转 PNG，无裁剪、重绘或缩放；截图接口输出 1425×891，实际 DOM 视口如上。最终正常推送 master 后核验该 HEAD 的 backend、backend-postgres、frontend CI，实际运行链接与两分支最终 SHA 记录于交付回复；[master CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/workflows/ci.yml?query=branch%3Amaster)。未进入 Finance UX 或 Second Review Final Regression。

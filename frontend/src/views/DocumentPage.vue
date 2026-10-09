@@ -1,4 +1,5 @@
 <script setup>
+import { compactDecimalInput } from '../utils/decimalInput'
 import TradeUnitPicker from '../components/TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
 import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
@@ -60,7 +61,7 @@ function fresh() {
   const now = new Date(), y = now.getFullYear(), m = String(now.getMonth() + 1).padStart(2, '0'), d = String(now.getDate()).padStart(2, '0')
   Object.keys(form).forEach(k => delete form[k])
   activeSkuId.value = ''
-  Object.assign(form, { customer: '', ...(isOrder.value ? {} : { quote_no: '' }), [copy.value.date]: `${y}-${m}-${d}`, status: 'draft', currency: 'USD', exchange_rate: '7.20', shipping_fee: 0, discount: 0, notes: '', items: [] })
+  Object.assign(form, { customer: '', ...(isOrder.value ? {} : { quote_no: '' }), [copy.value.date]: `${y}-${m}-${d}`, status: 'draft', currency: 'USD', exchange_rate: '7.2', shipping_fee: 0, discount: 0, notes: '', items: [] })
   if (isOrder.value) {
     Object.assign(form, { quote: '', expected_ship_date: '' })
     orderLeadTimeDays.value = ''
@@ -119,6 +120,7 @@ async function edit(row, { closeDetail = true, isCurrent = () => true } = {}) {
   editingId.value = row.id; fresh(); await loadOptions()
   if (!isCurrent()) return
   Object.keys(form).forEach(k => { if (row[k] !== undefined && k !== 'items') form[k] = row[k] ?? '' })
+  form.exchange_rate = compactDecimalInput(form.exchange_rate)
   form.items = row.items.map(i => fromTradeLine({ ...i, cost_price: i.cost_price || 0, notes: i.notes || '' }))
   orderLeadTimeDays.value = daysBetween(form.order_date, form.expected_ship_date)
   open.value = true

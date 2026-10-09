@@ -1,4 +1,5 @@
 <script setup>
+import { compactDecimalInput } from '../utils/decimalInput'
 import TradeUnitPicker from './TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
 import { computed, reactive, ref, watch } from 'vue'
@@ -25,6 +26,7 @@ function resetForm(draft) {
   Object.keys(form).forEach((key) => delete form[key])
   Object.assign(form, {
     ...draft,
+    exchange_rate: compactDecimalInput(draft.exchange_rate),
     tail_goods_policy: draft.tail_goods_policy || 'SAME_CARTON',
     customer: draft.customer ? Number(draft.customer) : '',
     quote: draft.quote ? Number(draft.quote) : '',

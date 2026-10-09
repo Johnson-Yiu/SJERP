@@ -55,6 +55,19 @@ class PurchaseOverageProjectionTests(TestCase):
         self.assertEqual(self.purchase.status, "ordered")
         self.assertEqual(plan.planned_amount, planned_amount)
 
+    def test_reversed_receipt_ledger_resolves_explicit_link_without_changing_source(self):
+        from crm.serializers import InventoryMovementSerializer
+        receipt = record_receipt(self.item, {"receipt_date": self.day, "quantity": Decimal("2"), "unit_cost": Decimal("5")})
+        original = receipt.inventory_movement
+        reverse_receipt(receipt, "核对原流水冲销标识")
+        receipt.refresh_from_db()
+        result = InventoryMovementSerializer(original).data
+        self.assertTrue(result["is_reversed"])
+        self.assertEqual(result["reversal_movement"]["id"], receipt.reversal_inventory_movement_id)
+        self.assertIn("已冲销", result["reversal_status"])
+        self.assertEqual(result["source_no"], self.purchase.purchase_no)
+
+
     def test_overage_after_a_reversed_overage_and_partial_re_receipt_uses_creation_time_active_quantity(self):
         receipt_a = record_receipt(self.item, {
             "receipt_date": self.day, "quantity": Decimal("15"), "unit_cost": Decimal("5"),

@@ -406,6 +406,7 @@ async function reverseInventoryMovement(row) {
     await api.post(`/inventory-movements/${row.id}/reverse/`, { reason })
     notify('已生成冲销流水，库存与预留已同步。')
     await load()
+    if (detailId.value) detailRefresh.value += 1
   } catch (e) { notify(e.message, true) }
 }
 function display(value, type, fieldName = '') {

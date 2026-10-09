@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.utils.html import strip_tags
 from rest_framework import serializers
 
+from .models import ShipmentItem
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .document_numbers import allocate_order_no, allocate_purchase_no
@@ -2024,6 +2025,14 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
             obj._reversal_movement_cache = InventoryMovement.objects.filter(
                 source_type="reversal", source_no=obj.movement_no
             ).order_by("id").first()
+            if obj._reversal_movement_cache is None:
+                receipt = GoodsReceipt.objects.filter(inventory_movement=obj).select_related("reversal_inventory_movement").first()
+                if receipt and receipt.reversal_inventory_movement_id:
+                    obj._reversal_movement_cache = receipt.reversal_inventory_movement
+                else:
+                    shipment_item = ShipmentItem.objects.filter(inventory_movement=obj).select_related("reversal_inventory_movement").first()
+                    if shipment_item and shipment_item.reversal_inventory_movement_id:
+                        obj._reversal_movement_cache = shipment_item.reversal_inventory_movement
         return obj._reversal_movement_cache
 
     def get_reversal_movement(self, obj):

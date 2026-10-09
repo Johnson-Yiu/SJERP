@@ -426,3 +426,135 @@ Baseline automated checks: Vitest36files368pass; Node111pass; font smoke1pass; b
 ### Additional defect recorded during AFTER UAT, before repair
 
 FR-008 P1 — Direct Order create: select dedicated customer13 and SKU4, qty2/price5, leave optional expected ship date blank, save. Actual: Chinese date-format error, form retained and no order created. Expected: optional blank date saved as null (valid dates unchanged). Scope: DocumentPage order payload and quote-generated OrderDraftModal equivalent date contract; no backend validation/lifecycle change. Original screenshot `DEFECT_P1_order-empty-expected-date.png` records the form; error toast is short-lived and additionally recorded in Chrome DOM. This was discovered after FR-001–007 repair, before any FR-008 production edit.
+
+### Focused repairs and final Chrome results (2026-10-10)
+
+All eight documented P1 defects have focused repairs, automated coverage and affected real Chrome AFTER checks. Seven source/test repair commits, plus initial and final documentation commits, are kept separate from visual evidence. No broad redesign, Finance UX, permissions/RBAC change, migration, database wipe, direct API UAT mutation or remote-history rewrite.
+
+| Defect | Repair / AFTER result | AFTER evidence |
+|---|---|---|
+| FR-001 | EntityDetailModal emits changed after related create; customer13 follow-up3 next16 saves, list and detail both Oct16 without F5; exact search/detail/tab retained | AFTER_customer-list-stale-followup.png; AFTER_customer-list-date.png |
+| FR-002 | Blank/unsupported country errors give Chinese guidance; customer13 country temporarily cleared, new quote with SKU4 rejected with `客户尚未填写国家/地区，请先在客户资料中补充后再保存报价。`; selected SKU and values retained. Cancelled unsaved quote, restored Germany | AFTER_quote-country-error.png |
+| FR-003 | Shared-SKU totals explicitly labelled 本单同 SKU 合计采购/到货/在途; independent 2pcs箱/4pcs箱 identities shown. Order37 each row demand4, SKU4 aggregate procurement/arrival8, transit0; no allocation/math change | AFTER_same-sku-procurement-progress.png |
+| FR-004 | Readiness uses remaining allocated reservation, not historical shipped quantity. Dedicated order38 qty2 partially ships1; remaining1 reserved1 and 可发货/确认发货 immediately. Original three-line partial/final shipment sequence remains intact | AFTER_partial-shipment-readiness.png |
+| FR-005 | Serializer follows authoritative GoodsReceipt/ShipmentItem reversal links as well as manual source links; original GR-58C1323DDF904365 now 已冲销 with REV-195898FB544741D6. Ledger source fields/history retained | AFTER_receipt-ledger-reversal-status.png |
+| FR-006 | Inventory internal search/sort persisted in route. GR-3C3C/date ascending → movement96 → Back restores exact SKU/tab/list search/internal search/sort; F5 also retains them | AFTER_inventory-movement-filter-back.png; FINAL_09_inventory_sku.png |
+| FR-007 | ResourcePage refreshes current detail after reversal. IM-0B72934D8B1F4720 reversed while original drawer stays open: 已冲销 and REV-4155257824E946AA update automatically, no F5 | AFTER_manual-reversal-stale-detail.png |
+| FR-008 | Optional blank expected_ship_date normalized to null in direct order/quote draft payload. Real Chrome saves order38 USD10 with 未设置; mandatory order date and valid expected dates retain original validation | AFTER_order-empty-expected-date.png |
+
+| Flow | Final result | Evidence / final verification |
+|---|---|---|
+| A customer → follow-up | PARTIAL | Create/save/reopen/edit/Back/search and immediate list/detail dates PASS after FR-001. Attachment picker works, upload not completed due extension local-file permission |
+| B customer → quote | PASS | Customer inherited, quote46/47 USD60, factors2/4, three independent lines, exact Back; FR-002 error human-readable |
+| C quote revision | PASS | Original46 retained, revision47 lead11 versus original10, summary visible, relationship/current version clear |
+| D quote → order | PASS | Original quote retained; order37 URL /orders?detail=37, original snapshot/amounts; Back exact source quote/tab |
+| E order confirmation | PASS | Original37 confirm creates receivable and procurement; additional38 reserves2 and no stale draft state. Duplicate visual buttons remain P2, no duplicate business confirmation observed |
+| F order → purchase | PASS | PO20 single document supplier, independent SKU4 packing lines, quantities/prices and exact Back; aggregate labels clarified by FR-003 |
+| G purchase confirmation | PASS | SKU4 transit8/SKU5 transit4, ordered lifecycle and order fulfillment update |
+| H partial receipt | PASS | 1box=2pcs, USD6/box=USD3/pcs; receipt, stock, reservation, transit, remaining and ledger agree |
+| I final receipt | PASS | All 12pcs arrive, transit0; before shipment actual/reserved SKU4=8/8, SKU5=4/4 |
+| J receipt reversal | PASS | Original retained, reverse2pcs restores transit/remaining2 and actual/reserved6; rereceipt restores8; original ledger reversal status fixed |
+| K inventory workbench | PASS | Exact96 navigation; Back and refresh retain SKU4/movements/list/internal filter and sort; all five stock metrics zero at completion |
+| L manual adjustment | PASS | +1 then -1 initial; additional +2 then -2 AFTER. Direction derives from movement type, quantity positive; original/reversal retained, exact baseline stock0 restored |
+| M shipment | PASS | Original37 two batches each2×3, multi-line independent; actual/reserved decrease exactly; additional38 1/2 partial readiness PASS, then reversal/cleanup |
+| N operational payment | PASS | Order37 USD60 / purchase20 USD32 app-only registrations, unpaid0, ledger and todo correct. No external bank payment |
+| O completion | PASS | Original37 completed, shipment12/12, payment60/60; PO20 received12/12 paid32/32; dedicated SKU4/5 actual/reserved/available/transit/to-procure0 |
+
+A's attachment check prevents declaring Final Regression fully PASS. Overall Second Review acceptance is explicitly left to independent review/user decision. Closed P1 repairs do not erase screenshot limitations or the open P2 decision list.
+
+### Additional UAT mutations / cleanup
+
+- Customer13 follow-up3 `UAT-SR-FINAL 修复后新增跟进即时同步`, Oct10 01:05, phone, next Oct16; latest list/detail both16. No attached file was uploaded. Existing initial/revised follow-up records remain.
+- Country temporarily blank twice for AFTER validation; both unsaved quotes cancelled, Germany restored. No extra quote document allocated. Customer13 name/address changed to `UAT-SR-FINAL-20261009-NEW` / `UAT-SR-FINAL 专用快照地址 NEW` solely for snapshot regression and intentionally retained as dedicated test data.
+- Dedicated SKU4 supplier mapping model SUP-A → `UAT-SR-FINAL-SUP-A-NEW`, source code SUP-A and price3USD unchanged. Existing shared supplier master names were not edited.
+- Dedicated order38 `SO-2026-00038`, one SKU4 item45 qty2 price5USD, total10USD, blank optional expected date, notes clearly identify AFTER test. Created and confirmed through UI. Manual `IM-0B72934D8B1F4720` +2pcs at3USD, reference `UAT-SR-FINAL-AFTER-RESERVE`, creates stock2; order reserves2. Shipment `SH-2DFCD6EE06FB4AB5` ships1, then reversed with reason to restore2 (return movement `REV-EC8FCA2A161E4A69`). Order38 cancelled with explicit UAT reason to release reservation/cancel unpaid receivable. Original manual +2 reversed via `REV-4155257824E946AA` -2. Final actual/reserved/available0, transit0, procurement0. All originals, reversals and cancelled order retained; no deletes.
+- Completed order37/PO20 and their payment/receipt/shipment history were not undone for AFTER testing. No unrelated existing records changed.
+
+### Snapshot regression after master edits
+
+| Check | Real Chrome observation | Result |
+|---|---|---|
+| Customer name/address where applicable | Current customer has NEW name/address; quote47 PI Buyer Name remains UAT-SR-FINAL-20261009 and Address — (saved empty snapshot). Quote workbench customer heading shows live NEW name, expected navigation identity | PASS |
+| SKU sales model/display/description | Current SKU4 A-NEW; saved quote47 and order37 model/description A, original internal display retained | PASS |
+| Quote item snapshot | Two SKU4 packing factors2/4, qty2boxes/1box →4pcs each, unitprices10/20, amount20 each; SKU5 qty4×5=20; total60 | PASS |
+| Order item snapshot | Order37 same original model/description, quantities, prices and packing after SKU/customer/source changes; total60 | PASS |
+| Supplier purchase snapshot | Current dedicated source model SUP-A-NEW; PO20/Order37 supplier source model remains SUP-A, code SUP-A, supplier A, qty/price unchanged | PASS (dedicated mapping edit) |
+
+Supplier master name rename was deliberately not repeated against shared suppliers. Historical supplier B name examples also inspected read-only. Coverage above is for dedicated mapping mutation plus original supplier snapshot, not a claim that every master field was mutated.
+
+### Back/context and refresh/deep-link matrices
+
+| Back sequence | Exact restored source | Result |
+|---|---|---|
+| Customer Quotes → Quote → Back | customer13, tab=quotes, search=UAT-SR-FINAL | PASS |
+| Quote Orders → Order → Back | quote47, original orders/overview tab as entered | PASS |
+| Order Fulfillment → Purchase → Back | order37, tab=fulfillment | PASS |
+| Purchase Related Orders → Order → Back | PO20, tab=orders | PASS |
+| Inventory Movements → movement96 → Back | SKU4, tab=movements, search=SKU-000004; internal GR-3C3C, date ascending (AFTER) | PASS |
+
+| Refresh / direct new Chrome tab | Observed restored identity | Result |
+|---|---|---|
+| customers?detail=13&tab=quotes&search=UAT-SR-FINAL | exact customer13/Quotes/search | PASS refresh + new tab |
+| quotes?detail=47&tab=lineage | exact revision47/version lineage | PASS refresh + new tab |
+| orders?detail=37&tab=fulfillment | exact37/fulfillment | PASS refresh + new tab |
+| purchase-orders?detail=20&tab=receipt | exact20/receipt | PASS refresh + new tab |
+| inventory?detail=4&tab=movements&search=SKU-000004 | exactSKU4/movements/search | PASS refresh + new tab |
+| inventory internal filter AFTER | detailSearch=GR-3C3C&detailSort=movement_date&detailDirection=asc retained after Back/F5 | PASS |
+
+### Validation and stale-data review
+
+| Validation spot check | Outcome |
+|---|---|
+| Customer required field missing | Native field constraint identifies required value, form retained, no created record |
+| Quote without valid SKU | Human SKU guidance, no save; blank country AFTER gives actionable Chinese, selected SKU retained |
+| Purchase without SKU | Inline human guidance, no save, form retained |
+| Receipt without inspection acknowledgement | Submit disabled until acknowledged |
+| Receipt overage without confirmation/reason | Native Chinese field validation; missing required selection/checkbox blocked; no stock movement |
+| Receipt/manual/shipment reversal without reason | Application dialog, disabled confirm; custom reason required; no native confirm/alert |
+| Direct order optional expected date | Initial P1 date-format error recorded; AFTER blank date saves as null, 未设置 shown |
+
+Major operations checked before manual refresh: new follow-up, quote/revision, order/purchase confirmation, receipts, shipment, app payment and reversals. Customer-list date FR-001 and open manual-ledger FR-007 were stale; both AFTER now auto-update. Receipt original ledger FR-005 was a linkage presentation defect, not corrected by F5 until repair; AFTER resolves it. No remaining P1 stale-data finding in these tested surfaces. Async load completion was awaited; no claim of zero network latency.
+
+### Remaining visual / human-copy decisions
+
+No open P0 or P1 product defects observed after these affected checks. Attachment environment blocker and evidence gaps remain separate incomplete acceptance items.
+
+| Open P2 | Observed text/layout / reproduction | Classification / decision |
+|---|---|---|
+| P2-01 Decimal read-only display | Quote overview USD / 7.200000; ledger detail unit cost3.0000 | Nice to improve. Editable precision fix remains intact; no new number rounding |
+| P2-02 duplicate confirm presentation | Order draft38 header + todo both 确认订单; purchase draft initial same pattern | Nice to improve one clear primary entry; duplicate submission not observed |
+| P2-03 fulfillment helper | Completed37 still says 当前采购缺口；采购草稿尚未下单。 despite zero procurement and completed state | Nice to improve status-aware wording; actual metrics correct |
+| P2-04 detail table spacing | Quote/order internal name + SKU concatenate; trade/base quantity `2.004.00 pcs` adjacent without visual separation; long identifiers wrap | Nice to improve, requires visual spacing decision; source quantities unchanged |
+| P2-05 contacted badge | Initial customer13 contacted-state detail used 联系人 versus list 已联系 | Nice to improve consistent stage label; original screenshot missing, customer now formal |
+| P2-06 saved PI caption | Saved quote47 PI still shows 当前未保存内容 · 关闭后可继续编辑 | Nice to improve context-aware preview caption; PI snapshot values correct |
+
+Acceptable terms: 预留、在途、基础单位、验货入库、冲销、快照 explain actual business meaning. No blind repository-wide copy replacement. Long inventory remarks/wide table use local horizontal scrolling; no unexpected full-page horizontal overflow noted at 1440×900. Primary form footer controls accessible, custom reversal dialogs/cancel retained. Saved PI itself verified correct. Finance UX not started.
+
+### Visual evidence delivery and limitations
+
+Evidence commit **`e958fe1518093d6179f8281f12bc5c722edd707e`** on **ux-review-evidence**, path **ux-review/second-review-final/**. [Immutable evidence folder](https://github.com/Johnson-Yiu/SUNJACK-ERP/tree/e958fe1518093d6179f8281f12bc5c722edd707e/ux-review/second-review-final). 39 PNGs: 12 FINAL, 9 AFTER, 7 P1 DEFECT, 7 P2 DEFECT, 4 SNAPSHOT. All required FINAL screenshots present, 12/12, missing required FINAL=0. All eight P1 AFTER checks have corresponding images (FR-001 has two). Original JPEG decoded to PNG at original dimensions, pixel identity checked, no crop/resize/redraw. Saved-preview-caption image is the same unmodified PI original also used for snapshot evidence. DOM viewport1440×900, DPR1/100%; Chrome original bitmap sizes1425×891/1440×900, not artificially padded.
+
+| Required screenshot | Completed |
+|---|---|
+| FINAL_01_customer_followup.png | yes |
+| FINAL_02_customer_quotes.png | yes |
+| FINAL_03_quote_workbench.png | yes |
+| FINAL_04_quote_revision.png | yes |
+| FINAL_05_order_overview.png | yes |
+| FINAL_06_order_fulfillment.png | yes |
+| FINAL_07_purchase_overview.png | yes |
+| FINAL_08_purchase_receipt.png | yes |
+| FINAL_09_inventory_sku.png | yes |
+| FINAL_10_inventory_movement.png | yes |
+| FINAL_11_shipment.png | yes |
+| FINAL_12_payment.png | yes |
+
+Evidence limitations explicitly retained, not retroactively fabricated: `DEFECT_P1_manual-reversal-stale-detail.png` before repair was not captured; its original observation is DOM/documentation only, AFTER is complete. `DEFECT_P1_inventory-movement-filter-back.png` initial original caught a loading view and does not visually prove filter loss; exact failed Back observation was documented before repair, AFTER clearly proves retained filter. Original receipt-ledger defect screenshot has status column offscreen, so original normal-status claim additionally relies on recorded DOM; AFTER detail clearly shows reversed status. FR-008 original screenshot preserves filled form but its short toast was recorded in DOM. `DEFECT_P2_customer-contacted-badge.png` is missing; customer13 initial stage has since advanced, no fake BEFORE substituted. Purchase duplicate-confirm was additionally captured read-only against existing draft4, no business mutation. Missing attachment upload/success evidence is an environment blocker. These gaps mean the evidence set does not meet the prompt's every-defect-original-image requirement in full, despite 12/12 required FINAL images.
+
+### Automated verification / Git / CI
+
+Final complete local front-end suite after FR-008: **36 Vitest files / 370 tests PASS**, Node **111 PASS**, drawer typography **1 PASS**; production build PASS (existing >500kB chunk-size advisory). Backend after all backend repairs: **567 tests OK, 10 skipped**; Django check clean, makemigrations --check --dry-run **No changes detected**. No model/migration changes. New meaningful regression cases cover remaining-reservation readiness, receipt reversal linkage, internal inventory route restoration; order editor assertions cover blank optional-date payload. Original Phase2A/2B/2C, navigation, inventory, receipt/reversal, shipment and snapshot suites retained.
+
+Source repair HEAD **`3f1ad9df5c83b2070d72a2ac527d359a0f6a3899`**, [CI #178](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37964832222) **SUCCESS**, backend **SUCCESS**, backend-postgres **SUCCESS** (567 tests, PostgreSQL17), frontend **SUCCESS**. Earlier grouped repairs `944791cb147fbe02c7be402b303c10e37521bc80` also [CI #177](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37962114927) SUCCESS. Final documentation-only master HEAD and its separate final CI run are reported in the delivery response after normal push; [master CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/workflows/ci.yml?query=branch%3Amaster).
+
+Master commits before final documentation: `3b6fb1c` initial defect record; `21e17ee` customer list; `5ee9d51` quote country guidance; `f5075ba` shared SKU presentation; `421a972` partial-shipment readiness; `c6a9594` reversal links/open detail refresh; `944791c` inventory route filter; `3f1ad9d` optional order date. Normal commit/push only. Evidence commit contains only screenshots; no evidence branch merge to master. Production source/tests/docs remain master.

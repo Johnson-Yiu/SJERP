@@ -373,3 +373,52 @@ Git / CI：修复提交 `0f8fe1583e2c71e351da01da15482e1c729b8768` 正常推送 
 真实 Chrome UAT：DOM 1440×900、DPR 1、缩放 100%。新建报价、报价 SJ20261002SG003 修订、SO-2026-00005 编辑均显示 `7.2`；PO-2026-00006 收货显示 `34`，5 pcs 袋 → 10 pcs 箱 → 5 pcs 袋显示 `34 → 68 → 34`。四张原图逐张目视核验。现有可编辑采购草稿 PO-2026-00004 为 CNY；额外目视检查其未保存的 USD 切换及 `7.2` 输入后取消，真实外币草稿原值的加载规范化由自动测试覆盖。未创建/保存/入库任何业务数据；Chrome 错误日志为空。
 
 证据仅为 `ux-review-evidence` 下 `ux-review/phase-2c/focused-repair/` 的 C_FIX_01_quote_create.png、C_FIX_02_quote_revision.png、C_FIX_03_order_edit.png、C_FIX_04_purchase_receipt.png，4/4 完成，缺失 0。不提交截图到 master、不合并证据分支。原始 JPEG 原尺寸转 PNG，无裁剪、重绘或缩放；截图接口输出 1425×891，实际 DOM 视口如上。最终正常推送 master 后核验该 HEAD 的 backend、backend-postgres、frontend CI，实际运行链接与两分支最终 SHA 记录于交付回复；[master CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/workflows/ci.yml?query=branch%3Amaster)。未进入 Finance UX 或 Second Review Final Regression。
+
+## Second Review — Final Regression
+
+### Initial Chrome UAT (2026-10-09–10; baseline 73b20b9)
+
+Real Chrome, development superadmin, local UI on port 5191. No business mutation through APIs or DB scripts. Viewport requested 1440×900 at 100%; native original captures include 1425×891/1440×900, no resize/crop. Initial regression finished before production repair. This is not overall Second Review acceptance; Finance UX remains out of scope.
+
+| Flow | Initial result | Observed business result |
+|---|---|---|
+| A customer/follow-up | FAIL | Create/save/reopen/edit and return customer13/search work; new follow-up refreshes detail but customer list date stale. Attachment picker opens; file upload blocked by Chrome extension file-URL permission. |
+| B quote creation | FAIL | Three independent trade lines saved as quote46 USD60; Back returns customer Quotes. Empty customer country fails with English Unsupported country. |
+| C revision | PASS | quote47 -1 changes lead10→11 with human summary; original46 retained. Accepted revision shown correctly. |
+| D quote→order | PASS | Draft saved to /orders?detail=37; Back same quote47 overview. |
+| E confirm order | PASS | confirmed, USD60 receivable, stock0/reserved0 initially, procurement todo2 SKU. |
+| F purchase draft | FAIL (presentation) | PO20 USD32, single supplier and three lines retained; SKU4 has 2pcs-box/4pcs-box separately. Repeated per-SKU procurement totals appear as per-line totals. |
+| G confirm purchase | PASS | ordered, SKU4 transit8/SKU5 transit4; linked order updates. |
+| H partial receipt | PASS | 1 box→2pcs at USD3/pcs; actual2/reserved2/available0/transit6. |
+| I final receipt | PASS | actual8/8 reserved for SKU4; SKU5 4/4; transit0, completed arrival. |
+| J reverse receipt | FAIL (ledger presentation) | Original receipt retained, reverse2pcs restores actual6/reserved6/transit2; rereceived2pcs. Original inventory movement incorrectly says normal. |
+| K stock→movement | FAIL | Exact movement96 deep link; Back SKU4/movements/list search retained, internal movement search lost. |
+| L manual adjustment | FAIL (stale detail) | 1pcs inbound and reversal restore stock0, original retained/marked reversed on reentry; original open detail stale normal after reversal. |
+| M partial/final shipment | FAIL (readiness label) | Two batches each 2pcs×3; actual/reserved 4/4 and2/2 after partial, zero after final; partial rows incorrectly waiting stock. |
+| N operational payments | PASS | Order60USD FIN-A578027B3C8240E2 and purchase32USD app-only test registrations; both unpaid0 and no stale todo on workbench reentry. |
+| O completion | PASS | Order37 completed, shipment12/12, collected60/60, purchase received12/12 paid32/32, dedicated stock0. |
+
+### UAT mutations and arithmetic
+
+Customer13 UAT-SR-FINAL-20261009/contact, country initially blank then Germany. Two follow-ups: initial next12→edit13; new follow-up next15 (Oct10). Two dedicated SKUs4/5, category parameter values18W/24W/4000K added through generator; initial models UATP-1840K/2440K renamed UAT-SR-FINAL-A/B. SKU4 two active nondefault trade units IDs4/5 factors2/4. Dedicated supplier mappings A/B to existing UAT supplier A, costs3/2USD. Quote46 and revision47, order37 items42/43/44 each4pcs (4+4 SKU4, 4 SKU5), PO20 three4pcs lines at3/3/2. Receipt movements91/92/93/94, reverse95 (receipt29), rereceipt96. Shipment SH-9494D128A35C4915 and SH-FF8F4D1E194A4875 create six sales-out movements97–102. Manual IM-D6114496C9604E64 +1 and REV-5362EED5D90C4EC9 -1. Test receipts/payment records retained for audit; no unrelated record deleted. SKU4 model/descriptions updated to UAT-SR-FINAL-A-NEW for snapshot check; historical quote/order still A and packing factors2/4. Existing supplier historical PO names checked read-only; no shared supplier rename.
+
+Back matrix: customer→quote→Back PASS; quote→order→Back PASS; order fulfillment→PO→Back PASS; PO orders→order→Back PASS; inventory movement→Back partial FAIL (internal filter only).
+Refresh/new-tab matrix: customer13 Quotes/search; quote47 lineage; order37 fulfillment; PO20 receipt; SKU4 movements/search all refresh correctly. New Chrome tab verifies same five exact deep links. Movement96 exact detail opens. Internal inventory table filter not route-persisted.
+Snapshot: SKU model/descriptions change preserves quote47/order37 original A, quantities/prices/2pcs+4pcs packing. Purchase20 supplier source snapshot SUP-A remains. Supplier/customer full name/address mutation checks still pending; do not infer PASS from automated tests alone.
+Validation: missing required customer field, missing quote SKU checked during creation; empty country fails with unhelpful English. Purchase missing SKU gives human inline guidance, retains form and creates nothing. Receipt ack disables submission; excess receipt requires checkbox plus reason (native Chinese field validation, no mutation). Receipt/manual reversal empty reason disabled. No native alert/confirm observed.
+
+### Defects documented before focused repair
+
+| ID / severity | Reproduction / actual | Expected | Modules / focused scope | Evidence |
+|---|---|---|---|---|
+| FR-001 P1 | Customer13 followups: add next15, save, close detail; list stays13 while detail15 | Detail and list update without F5 | EntityDetailModal relatedSaved changed event; ResourcePage reload only | DEFECT_P1_customer-list-stale-followup.png |
+| FR-002 P1 | Quote customer country blank; save → Unsupported country: | Chinese message tells user edit customer country; preserve form | quote_numbers validation text only | DEFECT_P1_quote-country-error.png |
+| FR-003 P1 | order37 two SKU4 rows need4 each show purchased8/arrived2/transit6 on each | Explicit shared-SKU aggregate scope plus individual packing identity; no double-count interpretation | OrderDetailModal labels only, preserve business allocator | DEFECT_P1_same-sku-procurement-progress.png |
+| FR-004 P1 | Partial shipment2/4 leaves reserved2/remain2; waiting stock | Ready when reserved covers remaining | orderFulfillment readiness predicate only | DEFECT_P1_partial-shipment-readiness.png |
+| FR-005 P1 | Receipt29 reversed, ledger92 still normal after reload | Original linked to reversal95 | InventoryMovementSerializer resolve explicit receipt/shipment reversal links, preserve ledger fields/history | DEFECT_P1_receipt-ledger-reversal-status.png |
+| FR-006 P1 | SKU4 internal movement search GR-3C3C→exact96→Back | Same search/sort/tab/SKU/list context | InventoryPage route persistence of internal filters | DEFECT_P1_inventory-movement-filter-back.png |
+| FR-007 P1 | Manual +1 row reverse opens original detail; it displays normal despite reversal and stock0 | Current open original detail updates | ResourcePage detail refresh after reverse | DEFECT_P1_manual-reversal-stale-detail.png (pending capture) |
+
+P0 none observed. P2 decision list (not repaired): raw quote rate7.200000 / ledger cost3.0000; duplicate confirm actions top+todo; unconditional procurement helper after completion; quote/order table secondary text and trade/base quantities concatenate (2.004.00pcs), needs visual spacing; customer contacted badge naming inconsistency. Inventory table has intentional horizontal scroll; long trade notes/IDs wrap; no cropped evidence used to claim clean layout.
+
+Baseline automated checks: Vitest36files368pass; Node111pass; font smoke1pass; backend565tests OK skipped10; production build passes with existing chunk warning. Final repairs/tests/CI/evidence delivery pending below.

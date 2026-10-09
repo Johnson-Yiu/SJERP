@@ -153,7 +153,10 @@ async function save() {
   saving.value = true
   const data = { ...form, customer: Number(form.customer), items: form.items.map(i => tradePayload({ ...i, sku: Number(i.sku) })) }
   if (isOrder.value) { delete data.status; delete data.order_no }
-  if (isOrder.value) data.quote = form.quote ? Number(form.quote) : null
+  if (isOrder.value) {
+    data.quote = form.quote ? Number(form.quote) : null
+    data.expected_ship_date = form.expected_ship_date || null
+  }
   try {
     const response = editingId.value ? await api.put(`/${props.type}/${editingId.value}/`, data) : await api.post(`/${props.type}/`, data)
     const detailId = returnToOrderDetailId.value || (isOrder.value ? response.data.id : null)

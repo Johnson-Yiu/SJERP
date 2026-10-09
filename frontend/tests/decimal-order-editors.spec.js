@@ -25,6 +25,7 @@ it('order edit compacts loaded rate without changing source or numeric PUT paylo
  await wrapper.get('form.modal').trigger('submit');await flushPromises()
  const payload=mocks.api.put.mock.calls.find(([url])=>url==='/orders/5/')[1]
  expect(Number(payload.exchange_rate)).toBe(Number(source.exchange_rate))
+ expect(payload.expected_ship_date).toBeNull()
  expect(JSON.stringify(source)).toBe(raw)
 })
 it('quote-generated OrderDraft compacts rate and retains source / numeric POST payload',async()=>{
@@ -36,5 +37,6 @@ it('quote-generated OrderDraft compacts rate and retains source / numeric POST p
  await wrapper.get('form').trigger('submit');await flushPromises()
  expect(mocks.api.post).toHaveBeenCalledWith('/orders/',expect.objectContaining({quote:39,exchange_rate:'7.2'}))
  expect(Number(mocks.api.post.mock.calls[0][1].exchange_rate)).toBe(Number(draft.exchange_rate))
+ expect(mocks.api.post.mock.calls[0][1].expected_ship_date).toBeNull()
  expect(JSON.stringify(draft)).toBe(raw)
 })

@@ -422,3 +422,7 @@ Validation: missing required customer field, missing quote SKU checked during cr
 P0 none observed. P2 decision list (not repaired): raw quote rate7.200000 / ledger cost3.0000; duplicate confirm actions top+todo; unconditional procurement helper after completion; quote/order table secondary text and trade/base quantities concatenate (2.004.00pcs), needs visual spacing; customer contacted badge naming inconsistency. Inventory table has intentional horizontal scroll; long trade notes/IDs wrap; no cropped evidence used to claim clean layout.
 
 Baseline automated checks: Vitest36files368pass; Node111pass; font smoke1pass; backend565tests OK skipped10; production build passes with existing chunk warning. Final repairs/tests/CI/evidence delivery pending below.
+
+### Additional defect recorded during AFTER UAT, before repair
+
+FR-008 P1 — Direct Order create: select dedicated customer13 and SKU4, qty2/price5, leave optional expected ship date blank, save. Actual: Chinese date-format error, form retained and no order created. Expected: optional blank date saved as null (valid dates unchanged). Scope: DocumentPage order payload and quote-generated OrderDraftModal equivalent date contract; no backend validation/lifecycle change. Original screenshot `DEFECT_P1_order-empty-expected-date.png` records the form; error toast is short-lived and additionally recorded in Chrome DOM. This was discovered after FR-001–007 repair, before any FR-008 production edit.

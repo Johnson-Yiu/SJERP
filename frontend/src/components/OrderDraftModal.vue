@@ -100,6 +100,7 @@ async function save() {
     ...draftPayload,
     customer: Number(form.customer),
     quote: Number(form.quote),
+    expected_ship_date: form.expected_ship_date || null,
     items: form.items.map((item) => tradePayload({ ...item, sku: Number(item.sku) })),
   }
   try { emit('saved', (await api.post('/orders/', payload)).data) }

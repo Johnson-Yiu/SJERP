@@ -67,6 +67,11 @@ const shippableItems = computed(() => (fulfillment.value?.items || []).filter(it
 const fulfillmentSummaryCards = computed(() => fulfillmentMetrics(fulfillment.value?.items || []))
 const canBatchShip = computed(() => canShipOrder.value && shippableItems.value.length > 0)
 
+function sharedSkuProcurement(item) { return (fulfillment.value?.items || []).filter(row => row.sku === item.sku).length > 1 }
+function linePacking(item) {
+  const saved = (workbench.value?.items || []).find(row => row.id === item.id)
+  return saved?.trade_unit ? `${saved.trade_snapshot?.name} · ${saved.trade_quantity} ${saved.trade_snapshot?.unit}` : `明细 #${item.id} · 基础单位`
+}
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 function date(value) { return value || '—' }
 function localDateInputValue(value = new Date()) {
@@ -381,11 +386,11 @@ watch(() => props.refreshKey, load)
           <div v-if="!(fulfillment?.items || []).length" class="workbench-empty"><strong>暂无履约明细</strong></div>
           <div v-else class="workbench-table-wrap"><table class="workbench-table fulfillment-table"><thead><tr><th>SKU / 当前状态</th><th>采购来源</th><th>订单需求</th><th>采购进度</th><th>到货进度</th><th>发货进度</th><th>操作</th></tr></thead><tbody>
             <tr v-for="item in fulfillment?.items || []" :key="item.id" :data-order-item-id="item.id">
-              <td><strong>{{ item.sku_code }}</strong><small v-if="item.display_name">{{ item.display_name }}</small><small>基础单位：{{ item.base_unit }}</small><span class="fulfillment-state" :class="fulfillmentItemState(item)">{{ fulfillmentStateLabels[fulfillmentItemState(item)] }}</span></td>
+              <td><strong>{{ item.sku_code }}</strong><small v-if="item.display_name">{{ item.display_name }}</small><small>基础单位：{{ item.base_unit }}</small><small>{{ linePacking(item) }}</small><span class="fulfillment-state" :class="fulfillmentItemState(item)">{{ fulfillmentStateLabels[fulfillmentItemState(item)] }}</span></td>
               <td><strong>{{ item.supplier_name || '未分配' }}</strong><small v-if="item.supplier_sku_code">{{ item.supplier_sku_code }}</small></td>
               <td><strong>订单 {{ item.quantity }} {{ item.base_unit }}</strong><small>已预留 {{ item.allocated_quantity }} {{ item.base_unit }}</small></td>
-              <td><strong :class="{ 'procurement-needed': Number(item.draftable_quantity) > 0 }">{{ Number(item.to_procure_quantity) > 0 ? `待采购 ${item.to_procure_quantity} ${item.base_unit}` : '无需采购' }}</strong><small v-if="Number(item.draftable_quantity) > 0">可建草稿 {{ item.draftable_quantity }} {{ item.base_unit }}</small><small v-if="Number(item.draft_procurement_quantity) > 0">采购草稿 {{ item.draft_procurement_quantity }} {{ item.base_unit }}</small><small v-if="Number(item.purchased_quantity) > 0">已采购 {{ item.purchased_quantity }} {{ item.base_unit }}</small></td>
-              <td><template v-if="Number(item.arrived_quantity) > 0 || Number(item.in_transit_quantity) > 0 || Number(item.purchased_quantity) > 0"><strong>已到 {{ item.arrived_quantity }} {{ item.base_unit }}</strong><small>在途 {{ item.in_transit_quantity }} {{ item.base_unit }}</small></template><span v-else class="muted">—</span></td>
+              <td><strong :class="{ 'procurement-needed': Number(item.draftable_quantity) > 0 }">{{ Number(item.to_procure_quantity) > 0 ? `待采购 ${item.to_procure_quantity} ${item.base_unit}` : '无需采购' }}</strong><small v-if="Number(item.draftable_quantity) > 0">可建草稿 {{ item.draftable_quantity }} {{ item.base_unit }}</small><small v-if="Number(item.draft_procurement_quantity) > 0">采购草稿 {{ item.draft_procurement_quantity }} {{ item.base_unit }}</small><small v-if="Number(item.purchased_quantity) > 0">{{ sharedSkuProcurement(item) ? '本单同 SKU 合计采购' : '已采购' }} {{ item.purchased_quantity }} {{ item.base_unit }}</small></td>
+              <td><template v-if="Number(item.arrived_quantity) > 0 || Number(item.in_transit_quantity) > 0 || Number(item.purchased_quantity) > 0"><strong>{{ sharedSkuProcurement(item) ? '本单同 SKU 合计到货' : '已到' }} {{ item.arrived_quantity }} {{ item.base_unit }}</strong><small>{{ sharedSkuProcurement(item) ? '本单同 SKU 合计在途' : '在途' }} {{ item.in_transit_quantity }} {{ item.base_unit }}</small></template><span v-else class="muted">—</span></td>
               <td><small>已发 {{ item.shipped_quantity }} {{ item.base_unit }}</small><strong v-if="Number(item.unshipped_quantity) <= 0" class="shipment-complete">已全部发货</strong><strong v-else class="shipment-pending">待发 {{ item.unshipped_quantity }} {{ item.base_unit }}</strong></td>
               <td><div class="fulfillment-row-actions"><button v-if="Number(item.unshipped_quantity) > 0 && canShipOrder" class="text-btn fulfillment-ship-action" @click="ship(item)">确认发货</button><button class="fulfillment-source-action" :disabled="!['draft', 'confirmed', 'production'].includes(order.status)" @click="openSupplierAllocation(item)">{{ item.supplier_name ? '更换来源' : '选择来源' }}</button></div></td>
             </tr>

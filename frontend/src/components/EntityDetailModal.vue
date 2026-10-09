@@ -235,6 +235,7 @@ async function relatedSaved() {
   quickCreate.value = null
   await load()
   if (data.value?.sections.some(section => section.key === previousTab)) activeTab.value = previousTab
+  emit('changed')
 }
 function toggleSkuSelection(id) {
   selectedSkuIds.value = selectedSkuIds.value.includes(id)

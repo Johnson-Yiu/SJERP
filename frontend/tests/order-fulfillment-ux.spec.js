@@ -38,6 +38,7 @@ it.each([
   [{ supplier_name: '供应商' }, 'needs_procurement'],
   [{ draftable_quantity: 0 }, 'purchasing'],
   [{ draftable_quantity: 0, purchased_quantity: 5, in_transit_quantity: 0 }, 'ready_to_ship'],
+  [{ quantity: 4, shipped_quantity: 2, unshipped_quantity: 2, allocated_quantity: 2, draftable_quantity: 0, purchased_quantity: 4, arrived_quantity: 4, in_transit_quantity: 0 }, 'ready_to_ship'],
   [{ draftable_quantity: 0, purchased_quantity: 0, in_transit_quantity: 0, allocated_quantity: 0 }, 'waiting_stock'],
 ])('derives ordered state priority without changing any quantities: %s', (values,state) => {
   const item = { ...base, ...values }; const original = { ...item }
@@ -46,7 +47,7 @@ it.each([
 it('retains every quantity with labels, purchase history and completed shipment', async () => {
   await setup()
   const row = wrapper.get('[data-order-item-id="701"]')
-  for (const label of ['订单 100 m','已预留 30 m','待采购 70 m','可建草稿 60 m','采购草稿 10 m','已采购 20 m','已到 5 m','在途 15 m','已发 10 m','待发 90 m']) expect(row.text()).toContain(label)
+  for (const label of ['订单 100 m','已预留 30 m','待采购 70 m','可建草稿 60 m','采购草稿 10 m','本单同 SKU 合计采购 20 m','本单同 SKU 合计到货 5 m','本单同 SKU 合计在途 15 m','已发 10 m','待发 90 m']) expect(row.text()).toContain(label)
   expect(wrapper.get('[data-order-item-id="703"]').text()).toContain('已全部发货')
   const purchase = wrapper.get('.purchase-history-card')
   for (const label of ['PO-41','供应商','已下单','CNY 300.00','预计到货 2026-10-01','SKU-A × 20']) expect(purchase.text()).toContain(label)

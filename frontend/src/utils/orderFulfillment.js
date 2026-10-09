@@ -9,7 +9,7 @@ export function fulfillmentItemState(item) {
   if (Number(item.unshipped_quantity) <= 0) return 'completed'
   if (Number(item.draftable_quantity) > 0) return item.supplier_name ? 'needs_procurement' : 'needs_supplier'
   if (Number(item.purchased_quantity) > Number(item.arrived_quantity) || Number(item.in_transit_quantity) > 0) return 'purchasing'
-  if (Number(item.unshipped_quantity) > 0 && Number(item.allocated_quantity) > Number(item.shipped_quantity) && Number(item.draftable_quantity) <= 0) return 'ready_to_ship'
+  if (Number(item.unshipped_quantity) > 0 && Number(item.allocated_quantity) > 0 && Number(item.draftable_quantity) <= 0) return 'ready_to_ship'
   return 'waiting_stock'
 }
 

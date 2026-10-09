@@ -357,3 +357,5 @@ Git / CI：修复提交 `0f8fe1583e2c71e351da01da15482e1c729b8768` 正常推送 
 全量 Vitest 34 文件、346 项 PASS；Node 单元测试 111 项 PASS；详情字体测试 1 项 PASS；生产构建 PASS（保留原 bundle-size 提示）。Backend 565 tests，OK（10 skipped）；Django check 无问题，makemigrations --check --dry-run 无漂移。未改 backend、models、migrations、权限/RBAC、计算、库存、生命周期、快照、交易单位或业务分摊语义。
 
 正常提交/推送 master 后检查最终 HEAD 的 backend、backend-postgres、frontend；master 最终 SHA、实际 CI 运行与证据分支 SHA 记录于最终交付回复。[master CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/workflows/ci.yml?query=branch%3Amaster)。证据分支只新增上述视觉文件，未合并进 master。
+
+首次实现提交 `c31280d5df6ffa209c6646e37589f67519fb0b85` 的 [CI #172](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37915770322) SUCCESS。提交前后复核另清理了重复的收货页 scoped CSS 声明，仅保留末尾同一规则，渲染与业务行为不变；最终 HEAD CI 仍单独核验并记录于回复。

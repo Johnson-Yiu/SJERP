@@ -35,7 +35,7 @@ describe('Purchase Phase B draft editor',()=>{
  it('renders sections, subordinate readonly number and document-level explanations',async()=>{
   await newEditor()
   const editor=wrapper.get('.purchase-create-modal')
-  for(const label of ['采购基本信息','采购商品','采购金额汇总','当前采购单的全部商品将向同一供应商采购。','多订单成本归属仍在“成本分配”中处理。','草稿保存不会生成应付或在途采购']) expect(editor.text()).toContain(label)
+  for(const label of ['采购基本信息','采购商品','采购金额汇总','整张采购单使用同一供应商。','多订单归属在成本分配中处理。','草稿保存不会生成应付或在途采购']) expect(editor.text()).toContain(label)
   expect(editor.get('.purchase-identity input').attributes('readonly')).toBeDefined()
   expect(editor.get('.purchase-identity input').element.value).toContain('保存后')
   expect(editor.findAll('.form-grid input[readonly]')).toHaveLength(0)
@@ -183,6 +183,8 @@ describe('Purchase Phase B receipt workflow',()=>{
   await mountPage('/purchase-orders?detail=41');await click('收货');await click('冲销')
   const dialog=wrapper.get('form.receipt-dialog')
   expect(dialog.text()).toContain('PO-41 · SKU-3 / 测试灯带 · 原入库 60 m')
+  expect(dialog.text()).toContain('冲销原因 *')
+  expect(dialog.text()).toContain('原入库记录保留')
   expect(dialog.get('textarea').attributes('required')).toBeDefined()
   expect(dialog.get('.receipt-danger').attributes('disabled')).toBeDefined()
   await dialog.get('textarea').setValue('原数量填写有误')

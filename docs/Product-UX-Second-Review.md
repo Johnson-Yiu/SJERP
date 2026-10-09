@@ -289,3 +289,71 @@ Chrome 实际视口 DOM 为 1440×900，DPR 1、缩放 100%。只读现有客户
 | B2_FIX_04_purchase_receipt.png | 入库记录显示 USD 6.50，数量 100.00 和冲销入口保留 |
 
 Git / CI：修复提交 `0f8fe1583e2c71e351da01da15482e1c729b8768` 正常推送 master；[CI #170](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37810050185) 全部成功：backend SUCCESS（46s）、backend-postgres SUCCESS（1m45s）、frontend SUCCESS（1m5s，341 项 Vitest PASS）。本次 CI 证据补录提交的最终 SHA / CI 另见交付回复。未修改后端、模型、迁移或业务计算；未开始 Phase 2C 或 Finance UX。
+
+## Phase 2C — Create / Edit / Action Flow
+
+执行日期：2026-10-09。起点为已验收基线 `91a7f071ed0ba83f1a1c604911c5b89f7765883b` / CI #171。本节记录实现与证据，不声明 Phase 2C accepted 或 Second Review complete；仍需 ChatGPT 独立复核及用户决定。
+
+### 编辑器层级与文案
+
+- Customer：客户名称、编号、国家、区域、负责人、来源优先；创建联系人放在补充信息前。网站、地址、备注单独归入补充信息。三列基本信息、小屏回落两列/一列；保留所有模型字段、必填条件及联系人默认规则。按钮为保存客户。
+- Follow-up：保留客户/联系人、时间/方式、主题、双列富文本、下一步/下次跟进、跟进人、附件的原有业务顺序；标题新建/编辑跟进记录，按钮保存跟进。联系人过滤、附件粘贴/拖入/多选/上传/移除行为不变。
+- Quote：客户优先，基本信息三列；SKU 明细和金额先于收件信息、地址及条款。增加商品小计显示，合计仍突出，运费/折扣及公式不变。修订标题为创建报价修订版，显示来源报价和“将创建新版本，原报价保留”。数量、单价标记必填；所有 snapshot/trade-unit 原参数保留。
+- Order：来源报价生成的订单标题为新建订单，短句说明草稿保存与确认订单后的预留/应收。编辑显示现有订单号，修复原编号控件误显示自动生成占位符。已有来源报价显示为只读历史关联；无来源草稿的原选择行为保留。增加商品小计显示，保存订单为主按钮。
+- Purchase：供应商继续为整单字段，来源订单帮助说明缩短；标题区说明草稿后可确认下单。日期、币种、汇率、数量/价格按原必填约束加星号；供应商、同 SKU 独立规格行、交易单位、金额计算不变。
+- Receipt：保留 SKU、下单/已到/待到、本次数量、交易/基础换算、入库后待到、超到原因/勾选、验货确认及重要后果。固定滚动区底部动作，取消和确认入库可见；滚动或 Tab 可到达验货勾选。冲销显示原记录身份、保留原入库记录和库存/预留/到货回退后果；原因必填，危险按钮与取消有区分。
+- Payment / Cost：仅采购入口弹窗；付款金额及日期必填标记，现有未付金额/后果保留。成本明细展示改用现有 money() 两位小数及币种，例如 USD 34.00；压缩默认归属文案，次按钮为取消。未改成本、付款或会计逻辑，未开始 Finance 模块 UX。
+- Inventory：标题库存调整；正式验货入库、确认发货与手工调整区别保留，用两行提醒。正数输入、类型决定方向和每 SKU 独立流水说明保留。手工冲销使用原自定义应用弹窗、原因必填及确认冲销，无浏览器原生 confirm/alert/prompt。
+
+客户/跟进、报价、订单、采购保存新增 saving guard，原保存状态/禁用按钮继续保留；未新增通知系统。现有字段验证、业务错误及后端详细错误继续展示，没有吞掉业务错误或更改校验规则。
+
+### 回归覆盖（任务的 30 类）
+
+| 类别 | 验证来源 / 保留内容 |
+| --- | --- |
+| 1–4 Customer | phase2c-editors：创建/编辑专用标题、必填条件、原 POST/PUT 全字段及 contacts；重复保存只发一个请求 |
+| 5–7 Follow-up | phase2c-editors、follow-up-richtext-and-attachments：客户/联系人过滤、富文本、日期、附件多选/粘贴/上传/移除及原保存/编辑参数 |
+| 8–12 Quote | quote-editor-availability、QuoteEditorModal：创建/修订区分、来源原对象保留、数量价格/小计/运费/折扣合计、revision_summary、交易单位及商业型号快照参数 |
+| 13–15 Order | phase2c-editors、OrderDraftModal、DocumentPage：来源报价草稿、原 source snapshot、trade-unit 参数、POST/PUT、后端生成单号及生命周期参数排除 |
+| 16–18 Purchase | purchase-editor-receipt、purchase-workbench：整单供应商、同 SKU 多规格行、交易单位、原总额与请求 |
+| 19–22 Receipt | purchase-editor-receipt：下单/已收/待到、超到勾选及原因、验货确认、单位换算和原 submit/reverse 参数 |
+| 23–25 Inventory | inventory-ledger：正数输入、入出库类型方向、批次各行独立创建、部分失败保留待处理行 |
+| 26–27 Dialog | inventory-ledger、purchase-editor-receipt、应用弹窗单元测试：自定义确认/输入、必填原因及取消不发业务请求 |
+| 28 Phase 2A | phase2a-list-shell、采购筛选及列表回归全部通过 |
+| 29 Phase 2B | purchase-workbench、order-overview/fulfillment、quote-workbench、库存详情及工作台回归全部通过 |
+| 30 Foundation | second-review-foundation、purchase-order-navigation 等：Back、根/嵌套详情、页签路由恢复全部通过 |
+
+新增四项可执行编辑器测试及一项修订 payload 测试，更新显示文案断言；原金额、数量、snapshot、trade-unit、导航及事件断言保留。成本测试另核验两位金额和取消按钮。
+
+### Chrome UAT 与视觉证据
+
+真实 Chrome UI 操作，DOM 视口 1440×900，DPR 1、缩放 100%；不通过 API 绕过 UI。使用现有客户 12、联系人 09、报价 39（SJ20261002SG003）、草稿订单 5、草稿采购 4、部分到货采购 6（20 pcs / 已到15 / 待到5）、SKU 1、手工流水 IM-EC04EACB569F4A1E。
+
+各编辑器打开、内容/来源读取、取消与滚动已核验；跟进编辑联系人正确、富文本及附件入口保留。Receipt 从 1 袋=5 pcs 改填 2 袋=10 pcs 后正确展示超到5 pcs及原因/确认勾选；取消后仍为原部分到货状态。库存选择 SKU、改盘亏类型仍使用正数 convention；冲销空原因禁用，填原因后启用，取消后原流水保留。Tab 能将验货勾选区和次按钮带入视野，表单主按钮可见。未提交客户、跟进、报价、订单、采购、收货、付款、成本分配、库存或冲销业务数据；保存业务参数由自动回归验证。最终浏览器错误日志为空。
+
+按用户最新 VISUAL EVIDENCE DELIVERY 要求，覆盖提示词原“截图不提交 Git”约定：所有 PNG 仅提交到 `ux-review-evidence` 的 `ux-review/phase-2c/`，绝不合并进 master；master 只含生产源码、测试与此文档。BEFORE 在改代码前已全部采集；AFTER 对应同一表单/UAT 记录。保存原始 JPEG，原尺寸转 PNG，无裁剪、缩放或修图。Chrome 截图接口输出 1425×891（页面实际视口如上），不伪造为 1440×900。
+
+本地原件：`C:/Users/Johnson/.codex/visualizations/2026/10/08/01a11977-80e0-77b0-ad46-fafa2f93bdc7/erp-phase-2c/`。
+
+| 必需截图（BEFORE 与 AFTER 各一张） | 状态 |
+| --- | --- |
+| C_BEFORE_01_customer_create.png / C_AFTER_01_customer_create.png | 完成 |
+| C_BEFORE_02_customer_edit.png / C_AFTER_02_customer_edit.png | 完成 |
+| C_BEFORE_03_followup_create.png / C_AFTER_03_followup_create.png | 完成 |
+| C_BEFORE_04_quote_create.png / C_AFTER_04_quote_create.png | 完成 |
+| C_BEFORE_05_quote_revision.png / C_AFTER_05_quote_revision.png | 完成 |
+| C_BEFORE_06_order_draft.png / C_AFTER_06_order_draft.png | 完成 |
+| C_BEFORE_07_order_edit.png / C_AFTER_07_order_edit.png | 完成 |
+| C_BEFORE_08_purchase_create.png / C_AFTER_08_purchase_create.png | 完成 |
+| C_BEFORE_09_purchase_edit.png / C_AFTER_09_purchase_edit.png | 完成 |
+| C_BEFORE_10_purchase_receipt.png / C_AFTER_10_purchase_receipt.png | 完成 |
+| C_BEFORE_11_inventory_adjustment.png / C_AFTER_11_inventory_adjustment.png | 完成 |
+| C_BEFORE_12_reversal_dialog.png / C_AFTER_12_reversal_dialog.png | 完成 |
+
+补充证据：C_UAT_01_receipt_overage.png、C_UAT_02_purchase_payment.png、C_UAT_03_purchase_cost.png、C_UAT_04_followup_edit.png、C_UAT_05_inventory_reversal.png、C_UAT_06_receipt_acknowledgement.png。必需截图 24/24，缺失 0。
+
+### 自动验证与 Git / CI
+
+全量 Vitest 34 文件、346 项 PASS；Node 单元测试 111 项 PASS；详情字体测试 1 项 PASS；生产构建 PASS（保留原 bundle-size 提示）。Backend 565 tests，OK（10 skipped）；Django check 无问题，makemigrations --check --dry-run 无漂移。未改 backend、models、migrations、权限/RBAC、计算、库存、生命周期、快照、交易单位或业务分摊语义。
+
+正常提交/推送 master 后检查最终 HEAD 的 backend、backend-postgres、frontend；master 最终 SHA、实际 CI 运行与证据分支 SHA 记录于最终交付回复。[master CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/workflows/ci.yml?query=branch%3Amaster)。证据分支只新增上述视觉文件，未合并进 master。

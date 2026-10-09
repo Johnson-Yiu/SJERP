@@ -65,6 +65,13 @@ let routeActionVersion = 0
 const routeModalOpen = ref(false)
 
 const statusLabels = { lead: '线索', contact: '已建立联系', opportunity: '已进入报价阶段', customer: '已有1张正式订单', company: '已有2张及以上正式订单', development: '开发中', discontinued: '停产', draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
+const editorFields = computed(() => {
+  if (props.config.endpoint !== 'customers') return props.config.fields
+  const order = ['name', 'code', 'country', 'region', 'owner', 'source', 'website', 'address', 'notes']
+  return [...props.config.fields].sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]))
+})
+const editorGroups = computed(() => props.config.endpoint === 'customers' ? [editorFields.value.filter(f => !['website', 'address', 'notes'].includes(f[0])), editorFields.value.filter(f => ['website', 'address', 'notes'].includes(f[0]))] : [editorFields.value])
+const saveLabel = computed(() => props.config.endpoint === 'customers' ? '保存客户' : props.config.endpoint === 'follow-ups' ? '保存跟进' : '保存')
 const fieldOptions = computed(() => Object.fromEntries(props.config.fields.filter(field => field[2] === 'select').map(field => [field[0], field[4]])))
 const title = computed(() => editingId.value ? `编辑${props.config.title.replace('管理', '')}` : `新建${props.config.title.replace('管理', '')}`)
 const isCustomerCreate = computed(() => props.config.endpoint === 'customers' && !editingId.value)
@@ -351,6 +358,7 @@ function payload() {
   return data
 }
 async function save() {
+  if (saving.value) return
   if (supplierCodeError.value) return notify(supplierCodeError.value, true)
   saving.value = true
   try {
@@ -390,7 +398,7 @@ async function reverseInventoryMovement(row) {
   if (!canReverseInventoryMovement(row)) return
   const reason = await inputDialog({
     title: '冲销库存流水',
-    message: `冲销不会删除原流水，系统将保留原记录并生成一条反向流水。\n流水号：${row.movement_no}\nSKU：${row.sku_code || row.display_name || row.product_name || '—'}\n类型：${row.type_display}\n原数量：${row.quantity} ${movementUnit(row, movementSkus.value)}\n发生日期：${row.movement_date}\n关联订单：${(row.related_order_nos || []).join('、') || row.order_no || '—'}`,
+    message: `冲销后原流水保留，并生成一条反向流水。\n流水号：${row.movement_no}\nSKU：${row.sku_code || row.display_name || row.product_name || '—'}\n类型：${row.type_display}\n原数量：${row.quantity} ${movementUnit(row, movementSkus.value)}\n发生日期：${row.movement_date}\n关联订单：${(row.related_order_nos || []).join('、') || row.order_no || '—'}`,
     label: '冲销原因', placeholder: '请填写冲销原因', required: true, maxLength: 500, confirmText: '确认冲销', danger: true,
   })
   if (!reason) return
@@ -509,9 +517,9 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
     </div>
 
     <InventoryMovementCreateModal v-if="modalOpen && config.endpoint === 'inventory-movements' && !editingId" @close="closeModal" @saved="handleInventoryMovementCreated" />
-    <div v-else-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal" :class="{ wide: isWideForm }" @submit.prevent="save">
+    <div v-else-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal" :class="{ wide: isWideForm, 'customer-editor': isCustomerPage }" @submit.prevent="save">
       <div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" @click="closeModal"><X :size="17" /></button></div>
-      <div class="modal-body"><div class="form-grid"><div v-for="field in config.fields" :key="field[0]" class="field" :class="{ full: ['textarea', 'remote_multi'].includes(field[2]) || (config.endpoint === 'follow-ups' && field[0] === 'subject'), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
+      <div class="modal-body"><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group" :key="field[0]" class="field" :class="{ full: ['textarea', 'remote_multi'].includes(field[2]) || (config.endpoint === 'follow-ups' && field[0] === 'subject'), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
         <label>{{ field[1] }} <em v-if="field[3]">*</em></label>
         <textarea v-if="field[2] === 'textarea'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" />
         <SimpleRichTextEditor v-else-if="field[2] === 'richtext'" v-model="form[field[0]]" @paste-files="addFollowUpFiles" />
@@ -526,31 +534,12 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
           <SegmentedDateInput :model-value="form.next_follow_up" @update:model-value="setFollowUpDate" />
         </div>
         <SegmentedDateInput v-else-if="field[2] === 'date' || field[2] === 'datetime-local'" :model-value="form[field[0]]" :required="field[3]" :with-time="field[2] === 'datetime-local'" @update:model-value="value => onDateFieldChange(field, value)" />
-        <input v-else v-model="form[field[0]]" :type="field[2] === 'readonly' || ['website', 'store_url'].includes(field[0]) ? 'text' : (field[2] || 'text')" :readonly="field[2] === 'readonly'" :placeholder="field[0] === 'store_url' ? 'https://...' : undefined" :class="{ 'readonly-input': field[2] === 'readonly', 'field-invalid': config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError }" :aria-invalid="config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError ? 'true' : undefined" :step="field[2] === 'number' ? '0.0001' : undefined" :maxlength="config.endpoint === 'suppliers' && field[0] === 'code' ? 2 : undefined" :pattern="config.endpoint === 'suppliers' && field[0] === 'code' ? '[A-Za-z]{2}' : undefined" :required="field[3]" :disabled="isInherited(field[0])" @input="config.endpoint === 'suppliers' && field[0] === 'code' && normalizeSupplierCode()" />
+        <input v-else v-model="form[field[0]]" :type="field[2] === 'readonly' || ['website', 'store_url'].includes(field[0]) ? 'text' : (field[2] || 'text')" :readonly="field[2] === 'readonly'" :placeholder="field[0] === 'store_url' ? 'https://...' : isCustomerPage && field[0] === 'name' ? '输入客户名称' : undefined" :class="{ 'readonly-input': field[2] === 'readonly', 'field-invalid': config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError }" :aria-invalid="config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError ? 'true' : undefined" :step="field[2] === 'number' ? '0.0001' : undefined" :maxlength="config.endpoint === 'suppliers' && field[0] === 'code' ? 2 : undefined" :pattern="config.endpoint === 'suppliers' && field[0] === 'code' ? '[A-Za-z]{2}' : undefined" :required="field[3]" :disabled="isInherited(field[0])" @input="config.endpoint === 'suppliers' && field[0] === 'code' && normalizeSupplierCode()" />
         <p v-if="config.endpoint === 'suppliers' && field[0] === 'code'" class="field-help" :class="{ error: supplierCodeError }">{{ supplierCodeError || '填写两个英文字母，用于供应商 SKU 编码。' }}</p>
       </div></div>
-
-        <section v-if="config.endpoint === 'follow-ups'" class="follow-up-attachment-editor" @dragover.prevent @drop.prevent="onFollowUpFileDrop">
-          <div class="follow-up-attachment-editor-head">
-            <div><strong><Paperclip :size="16" /> 附件</strong><span>支持在编辑器中粘贴图片或附件，也可拖拽、选择文件</span></div>
-            <label class="follow-up-attachment-picker"><Paperclip :size="14" /> 添加附件<input ref="followUpFileInput" type="file" multiple @change="onFollowUpFileInput" /></label>
-          </div>
-          <div v-if="followUpAttachments.length || pendingFollowUpFiles.length" class="follow-up-attachment-editor-list">
-            <strong v-if="followUpAttachments.length" class="follow-up-attachment-editor-group-title">已保存附件</strong>
-            <div v-for="attachment in followUpAttachments" :key="`saved-${attachment.id}`" class="follow-up-attachment-editor-item saved">
-              <Paperclip :size="16" />
-              <span><strong>{{ attachment.name }}</strong><small>已上传 · {{ formatAttachmentSize(attachment.size) }}</small></span>
-              <div class="follow-up-attachment-editor-actions"><a :href="attachment.url || attachment.file" target="_blank" rel="noreferrer">查看</a><button type="button" :aria-label="`删除已保存附件 ${attachment.name}`" @click="deleteSavedFollowUpAttachment(attachment)">删除</button></div>
-            </div>
-            <strong v-if="pendingFollowUpFiles.length" class="follow-up-attachment-editor-group-title">待上传附件</strong>
-            <div v-for="(file, index) in pendingFollowUpFiles" :key="`pending-${file.name}-${file.size}-${file.lastModified}`" class="follow-up-attachment-editor-item"><Paperclip :size="16" /><span><strong>{{ file.name }}</strong><small>待上传 · {{ formatAttachmentSize(file.size) }}</small></span><button type="button" aria-label="移除待上传附件" @click="removePendingFollowUpFile(index)">移除</button></div>
-          </div>
-          <div v-else class="follow-up-attachment-editor-empty"><Paperclip :size="16" /> 尚未添加附件</div>
-        </section>
-
-        <section v-if="isCustomerCreate" class="contact-create-section">
+        <section v-if="isCustomerCreate && groupIndex === 0" class="contact-create-section">
           <div class="contact-create-head">
-            <div><span>联系人信息</span><p>新建客户时至少登记一位联系人，第一位默认设为主联系人。</p></div>
+            <div><span>联系人信息</span><p>至少登记一位联系人，可指定默认联系人。</p></div>
             <span class="contact-count">{{ customerContacts.length }} 位</span>
           </div>
           <div v-for="(contact, index) in customerContacts" :key="index" class="contact-create-card">
@@ -576,8 +565,29 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
           </div>
           <button type="button" class="add-contact-btn" @click="addCustomerContact"><UserRoundPlus :size="16" /> 新增联系人</button>
         </section>
+      </template>
+
+        <section v-if="config.endpoint === 'follow-ups'" class="follow-up-attachment-editor" @dragover.prevent @drop.prevent="onFollowUpFileDrop">
+          <div class="follow-up-attachment-editor-head">
+            <div><strong><Paperclip :size="16" /> 附件</strong><span>支持在编辑器中粘贴图片或附件，也可拖拽、选择文件</span></div>
+            <label class="follow-up-attachment-picker"><Paperclip :size="14" /> 添加附件<input ref="followUpFileInput" type="file" multiple @change="onFollowUpFileInput" /></label>
+          </div>
+          <div v-if="followUpAttachments.length || pendingFollowUpFiles.length" class="follow-up-attachment-editor-list">
+            <strong v-if="followUpAttachments.length" class="follow-up-attachment-editor-group-title">已保存附件</strong>
+            <div v-for="attachment in followUpAttachments" :key="`saved-${attachment.id}`" class="follow-up-attachment-editor-item saved">
+              <Paperclip :size="16" />
+              <span><strong>{{ attachment.name }}</strong><small>已上传 · {{ formatAttachmentSize(attachment.size) }}</small></span>
+              <div class="follow-up-attachment-editor-actions"><a :href="attachment.url || attachment.file" target="_blank" rel="noreferrer">查看</a><button type="button" :aria-label="`删除已保存附件 ${attachment.name}`" @click="deleteSavedFollowUpAttachment(attachment)">删除</button></div>
+            </div>
+            <strong v-if="pendingFollowUpFiles.length" class="follow-up-attachment-editor-group-title">待上传附件</strong>
+            <div v-for="(file, index) in pendingFollowUpFiles" :key="`pending-${file.name}-${file.size}-${file.lastModified}`" class="follow-up-attachment-editor-item"><Paperclip :size="16" /><span><strong>{{ file.name }}</strong><small>待上传 · {{ formatAttachmentSize(file.size) }}</small></span><button type="button" aria-label="移除待上传附件" @click="removePendingFollowUpFile(index)">移除</button></div>
+          </div>
+          <div v-else class="follow-up-attachment-editor-empty"><Paperclip :size="16" /> 尚未添加附件</div>
+        </section>
+
+
       </div>
-      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中...' : '保存' }}</button></div>
+      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : saveLabel }}</button></div>
     </form></div>
 
     <Transition name="detail-drawer" appear>
@@ -588,6 +598,11 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
 </template>
 
 <style scoped>
+.customer-editor .form-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.customer-editor textarea{min-height:58px;height:58px}
+.customer-editor .modal-body{padding-bottom:24px}.optional-heading{margin:24px 0 16px;font-size:var(--text-section)}
+@media(max-width:760px){.customer-editor .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.customer-editor .form-grid{grid-template-columns:1fr}}
 .certificate-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 
 .contact-create-section{margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}

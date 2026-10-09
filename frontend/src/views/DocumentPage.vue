@@ -145,6 +145,7 @@ function selectSku(item) {
 const subtotal = computed(() => (form.items || []).reduce((sum, i) => sum + Number(i.quantity || 0) * Number(i.unit_price || 0), 0))
 const total = computed(() => subtotal.value + Number(form.shipping_fee || 0) - Number(form.discount || 0))
 async function save() {
+  if (saving.value) return
   if (!form.items.length || form.items.some(i => !i.sku)) return notify('请至少添加一条有效的 SKU 明细。', true)
   if (form.items.some(i => Number(i.quantity) <= 0)) return notify('每条 SKU 明细的数量必须大于 0。', true)
   saving.value = true
@@ -383,22 +384,22 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
     </div>
 
     <div v-if="open && isOrder" class="modal-backdrop" @mousedown.self="closeEditor"><form class="modal wide" novalidate @submit.prevent="save">
-      <div class="modal-head"><h3>{{ editingId ? '编辑' : '新建' }}{{ isOrder ? '订单' : '报价' }}</h3><button type="button" class="mini-btn" @click="closeEditor"><X :size="17" /></button></div>
+      <div class="modal-head"><div><h3>{{ editingId ? '编辑' : '新建' }}{{ isOrder ? '订单' : '报价' }}</h3><small v-if="editingId">{{ rows.find(row => row.id === editingId)?.order_no }}</small></div><button type="button" class="mini-btn" @click="closeEditor"><X :size="17" /></button></div>
       <div class="modal-body">
         <div class="form-grid">
-          <div class="field"><label>{{ copy.noLabel }}</label><input v-if="isOrder" :value="form.order_no || '保存后由系统自动生成'" class="readonly-input" readonly /><input v-else v-model="form[copy.no]" required /></div>
+          <div class="field"><label>{{ copy.noLabel }}</label><input v-if="isOrder" :value="(editingId ? rows.find(row => row.id === editingId)?.order_no : form.order_no) || '保存后由系统自动生成'" class="readonly-input" readonly /><input v-else v-model="form[copy.no]" required /></div>
           <div class="field"><label>客户 *</label><select v-model="form.customer" required :disabled="inheritedCustomer"><option value="">请选择</option><option v-for="c in customers" :key="c.id" :value="c.id">{{ c.name }}</option></select></div>
           <div class="field"><label>{{ copy.dateLabel }} *</label><SegmentedDateInput :model-value="form[copy.date]" required @update:model-value="setOrderDate" /></div>
           <div class="field"><label>预计交期</label><div class="lead-time-input"><input v-model="orderLeadTimeDays" type="number" min="0" step="1" placeholder="天数" aria-label="交期天数" @input="setOrderLeadTimeDays" /><span>天</span><SegmentedDateInput :model-value="form.expected_ship_date" @update:model-value="setExpectedShipDate" /></div></div>
-          <div v-if="isOrder" class="field"><label>状态</label><input value="草稿（确认后进入正式履约）" readonly /><small class="field-hint">订单状态由确认、生产、发货、完成或取消等业务动作推进。</small></div><div v-else class="field"><label>状态 *</label><select v-model="form.status"><option v-for="([key,label]) in Object.entries(copy.statuses)" :key="key" :value="key">{{ label }}</option></select></div>
-          <div v-if="isOrder" class="field"><label>来源报价</label><select v-model="form.quote"><option value="">无</option><option v-for="q in quotes" :key="q.id" :value="q.id">{{ q.quote_no }}</option></select></div>
+          <div v-if="isOrder" class="field"><label>状态</label><input value="草稿" readonly /><small class="field-hint">保存为草稿，确认后开始履约。</small></div><div v-else class="field"><label>状态 *</label><select v-model="form.status"><option v-for="([key,label]) in Object.entries(copy.statuses)" :key="key" :value="key">{{ label }}</option></select></div>
+          <div v-if="isOrder" class="field"><label>来源报价</label><input v-if="editingId && form.quote" :value="quotes.find(q => q.id === Number(form.quote))?.quote_no || '—'" readonly /><select v-else v-model="form.quote"><option value="">无</option><option v-for="q in quotes" :key="q.id" :value="q.id">{{ q.quote_no }}</option></select></div>
           <div class="field"><label>币种</label><select v-model="form.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
           <div class="field"><label>对人民币汇率</label><input v-model="form.exchange_rate" type="number" step="0.000001" /></div>
         </div>
         <div class="items-head"><div><strong>产品明细</strong><small>先选择一个或多个 SKU，再填写数量与价格</small></div></div>
         <SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" />
         <div class="line-items">
-          <div class="line-header"><span>SKU</span><span>数量</span><span>单价</span><span v-if="isOrder">成本</span><span>小计</span><span></span></div>
+          <div class="line-header"><span>SKU</span><span>数量 *</span><span>单价 *</span><span v-if="isOrder">成本</span><span>小计</span><span></span></div>
           <div v-for="(item,index) in form.items" :key="index" class="line-row" :class="{ order: isOrder }">
             <span class="sku-cell"><b>{{ skus.find(sku => sku.id === Number(item.sku))?.display_name_cn || skus.find(sku => sku.id === Number(item.sku))?.product_name || '—' }}</b><small>SKU: {{ skus.find(sku => sku.id === Number(item.sku))?.sku_code || item.sku || '—' }} · Sales Model: {{ skus.find(sku => sku.id === Number(item.sku))?.sales_model || '—' }}</small><TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="form.items.splice(index + 1, 0, { ...item })">增加规格行</button></span>
             <input v-model="item.quantity" type="number" min="0.01" step="0.01" required />
@@ -409,10 +410,10 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
           </div>
           <p v-if="!form.items.length" class="quote-items-empty">请先从上方选择至少一个 SKU。</p>
         </div>
-        <div class="totals"><label>运费 <input v-model="form.shipping_fee" v-money-input type="number" step="any" /></label><label>折扣 <input v-model="form.discount" v-money-input type="number" step="any" /></label><div><span>合计</span><strong>{{ form.currency }} {{ money(total) }}</strong></div></div>
+        <div class="totals"><label>运费 <input v-model="form.shipping_fee" v-money-input type="number" step="any" /></label><label>折扣 <input v-model="form.discount" v-money-input type="number" step="any" /></label><div><small>商品小计 {{ form.currency }} {{ money(subtotal) }}</small><span>合计</span><strong>{{ form.currency }} {{ money(total) }}</strong></div></div>
         <div class="field notes"><label>条款 / 备注</label><textarea v-model="form.notes" /></div>
       </div>
-      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeEditor">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中...' : '保存单据' }}</button></div>
+      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeEditor">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : '保存订单' }}</button></div>
     </form></div>
     <QuoteEditorModal v-if="quoteEditorOpen" :quote="quoteEditorQuote" :customers="customers" :skus="skus" :mode="quoteEditorQuote?.id ? 'revise' : 'create'" @close="closeQuoteEditor" @saved="handleQuoteSaved" />
     <OrderDraftModal v-if="orderDraft" :draft="orderDraft" :customers="customers" :skus="skus" @close="orderDraft = null" @saved="handleOrderDraftSaved" />

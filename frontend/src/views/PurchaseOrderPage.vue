@@ -269,7 +269,7 @@ function syncSelectedSkus(ids) {
   })
   if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
 }
-async function createPurchase() { if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
+async function createPurchase() { if (saving.value) return; if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
 async function place(row) { if (!await confirmDialog({ title: '确认采购下单', message: '确认下单后将生成应付计划并进入在途采购。是否继续？', confirmText: '确认下单', danger: true })) return; try { await api.post(`/purchase-orders/${row.id}/place/`); notice.value = '采购单已确认下单。'; await load() } catch (err) { error.value = message(err, '确认下单失败。') } }
 async function cancelPurchase(row) { const reason = await inputDialog({ title: '取消采购', message: `请填写取消采购单 ${row.purchase_no} 的原因。`, label: '取消原因', placeholder: '请输入取消原因', required: true, maxLength: 500, confirmText: '确认取消', danger: true }); if (!reason) return; try { await api.post(`/purchase-orders/${row.id}/cancel/`, { reason }); notice.value = '采购单已取消。'; await load() } catch (err) { error.value = message(err, '取消采购失败。') } }
 async function deleteDraft(row) { if (!await confirmDialog({ title: '确认删除采购草稿', message: `确定删除草稿 ${row.purchase_no} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/purchase-orders/${row.id}/`); notice.value = '采购草稿已删除。'; if (Number(route.query.detail) === row.id) await closeDetail(); await load() } catch (err) { error.value = message(err, '删除采购草稿失败。') } }
@@ -325,24 +325,24 @@ watch(() => route.query.detail, id => {
     <div v-if="openCreate" class="modal-backdrop purchase-create-backdrop" @mousedown.self="closeCreate">
       <section class="modal wide purchase-create-modal" role="dialog" aria-modal="true" aria-labelledby="purchase-create-title">
         <div class="section-heading modal-head">
-          <div><h3 id="purchase-create-title">{{ editingPurchaseId ? '编辑采购草稿' : '新建采购单' }}</h3><p>先确认采购基本信息，再逐条填写商品的规格、供货档案、数量和价格。</p></div>
+          <div><h3 id="purchase-create-title">{{ editingPurchaseId ? '编辑采购草稿' : '新建采购单' }}</h3><p>草稿保存后可确认下单。</p></div>
           <button class="icon-btn" aria-label="关闭" @click="closeCreate"><X :size="17" /></button>
         </div>
         <form @submit.prevent="createPurchase">
           <section class="draft-section">
             <div class="draft-section-heading"><h4>采购基本信息</h4><label class="purchase-identity">采购单号<input :value="draft.purchase_no || '保存后由系统自动生成'" class="readonly-input" readonly /></label></div>
             <div class="form-grid">
-              <label>供应商 <span v-if="inheritedSupplier" class="inherited-badge">由订单履约带入</span><select v-model="draft.supplier" aria-label="供应商" required :disabled="inheritedSupplier" @change="onSupplierChanged"><option value="">选择供应商</option><option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.id">{{ supplier.name }}</option></select><small>当前采购单的全部商品将向同一供应商采购。</small></label>
-              <label>来源销售订单（可选）<select v-model="draft.order" aria-label="来源销售订单（可选）" :disabled="inheritedOrder"><option value="">不关联订单</option><option v-for="order in orders.filter(row => row.status !== 'cancelled')" :key="order.id" :value="order.id">{{ order.order_no }} · {{ order.customer_name }}</option></select><small>这里只记录本采购单的主要来源订单；多订单成本归属仍在“成本分配”中处理。</small></label>
-              <label>下单日期<input v-model="draft.order_date" type="date" required /></label>
+              <label>供应商 * <span v-if="inheritedSupplier" class="inherited-badge">由订单履约带入</span><select v-model="draft.supplier" aria-label="供应商" required :disabled="inheritedSupplier" @change="onSupplierChanged"><option value="">选择供应商</option><option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.id">{{ supplier.name }}</option></select><small>整张采购单使用同一供应商。</small></label>
+              <label>来源销售订单（可选）<select v-model="draft.order" aria-label="来源销售订单（可选）" :disabled="inheritedOrder"><option value="">不关联订单</option><option v-for="order in orders.filter(row => row.status !== 'cancelled')" :key="order.id" :value="order.id">{{ order.order_no }} · {{ order.customer_name }}</option></select><small>主要来源订单；多订单归属在成本分配中处理。</small></label>
+              <label>下单日期 *<input v-model="draft.order_date" type="date" required /></label>
               <label>预计到货<input v-model="draft.expected_arrival_date" type="date" /></label>
-              <label>币种<select v-model="draft.currency" required @change="onCurrencyChanged"><option v-for="[code, name] in currencies" :key="code" :value="code">{{ code }} · {{ name }}</option></select></label>
-              <label v-if="draft.currency !== 'CNY'">对人民币汇率<input v-model="draft.exchange_rate" type="number" min="0.000001" step="0.000001" placeholder="1 单位外币兑换人民币金额" required /></label>
+              <label>币种 *<select v-model="draft.currency" required @change="onCurrencyChanged"><option v-for="[code, name] in currencies" :key="code" :value="code">{{ code }} · {{ name }}</option></select></label>
+              <label v-if="draft.currency !== 'CNY'">对人民币汇率 *<input v-model="draft.exchange_rate" type="number" min="0.000001" step="0.000001" placeholder="1 单位外币兑换人民币金额" required /></label>
             </div>
           </section>
           <section class="draft-section line-editor">
             <div class="draft-section-heading"><h4>采购商品</h4><small v-if="selectedOrder">关联：{{ selectedOrder.order_no }}</small></div>
-            <p class="section-help">先选择 SKU，再为每条采购明细确认规格、供应商供货档案、数量与价格。</p>
+            <p class="section-help">选择 SKU 后填写规格、数量和单价。</p>
             <SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" :show-price="false" />
             <article v-for="(item,index) in draft.items" :key="index" class="purchase-line">
               <header class="purchase-line-heading"><div class="purchase-sku"><b>{{ itemSku(item)?.display_name_cn || itemSku(item)?.product_name || '—' }}</b><small>SKU: {{ itemSku(item)?.sku_code || item.sku || '—' }} · Sales Model: {{ itemSku(item)?.sales_model || '—' }}</small></div><button type="button" class="text-btn danger" @click="draft.items.splice(index, 1)">删除</button></header>
@@ -353,8 +353,8 @@ watch(() => route.query.detail, id => {
               </div>
               <p v-if="supplierPriceWarning(item)" class="supplier-price-warning">{{ supplierPriceWarning(item) }}</p>
               <div class="line-business-grid">
-                <label class="line-field">采购数量<input v-model="item.quantity" type="number" min="0.01" step="0.01" placeholder="采购数量" required /><small v-if="item.trade_unit">折合 {{ baseQuantity(item) }} {{ itemBaseUnit(item) }}</small></label>
-                <label class="line-field">采购单价（{{ draft.currency }}）<input v-model="item.unit_price" v-money-input type="number" min="0" step="any" placeholder="采购单价" required /></label>
+                <label class="line-field">采购数量 *<input v-model="item.quantity" type="number" min="0.01" step="0.01" placeholder="采购数量" required /><small v-if="item.trade_unit">折合 {{ baseQuantity(item) }} {{ itemBaseUnit(item) }}</small></label>
+                <label class="line-field">采购单价（{{ draft.currency }}） *<input v-model="item.unit_price" v-money-input type="number" min="0" step="any" placeholder="采购单价" required /></label>
                 <div class="line-field line-total"><span>本行金额</span><strong>{{ draft.currency }} {{ money(lineAmount(item)) }}</strong></div>
               </div>
               <footer class="purchase-line-footer"><button type="button" class="text-btn" title="用于同一 SKU 以不同包装规格采购。" @click="draft.items.splice(index + 1, 0, { ...item })">增加同 SKU 规格行</button><small>用于同一 SKU 以不同包装规格采购。</small></footer>
@@ -375,24 +375,29 @@ watch(() => route.query.detail, id => {
         <header><h3 id="receipt-title">验货合格入库</h3><p>{{ receiptTarget.row.purchase_no }} · {{ receiptTarget.item.sku_code }} / {{ receiptTarget.item.display_name || itemSku(receiptTarget.item)?.display_name_cn || '—' }}</p><p>供应商：{{ receiptTarget.row.supplier_name || '—' }}</p></header>
         <div class="receipt-progress"><div><small>下单数量</small><strong>{{ receiptTarget.item.quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div><div><small>已到货</small><strong>{{ receiptTarget.item.received_quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div><div><small>当前待到</small><strong>{{ receiptTarget.item.remaining_quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div></div>
         <p>不合格或拒收数量请写入备注，等待补货后再登记入库。</p>
-        <label>实际入库日期<input v-model="receiptForm.receipt_date" type="date" required></label>
+        <label>实际入库日期 *<input v-model="receiptForm.receipt_date" type="date" required></label>
         <div class="receipt-unit-field"><span>交易单位 / 包装规格</span><TradeUnitPicker :line="receiptForm" :sku="skus.find(s => s.id === receiptTarget.item.sku)" :supplier="receiptTarget.row.supplier" price-field="unit_cost" preserve-base-quantity :historical-unit="receiptTarget.item.trade_unit" /></div>
-        <label>本次合格入库数量<input v-model="receiptForm.quantity" type="number" min="0.01" step="0.01" required></label>
+        <label>本次合格入库数量 *<input v-model="receiptForm.quantity" type="number" min="0.01" step="0.01" required></label>
         <div class="receipt-quantity-preview"><span>本次入库：{{ receiptForm.quantity || 0 }} {{ tradeLabel(receiptForm, itemBaseUnit(receiptTarget.item)) }}<template v-if="receiptForm.trade_unit"> = {{ baseQuantity(receiptForm) }} {{ itemBaseUnit(receiptTarget.item) }}</template></span><strong v-if="receiptRemaining >= 0">入库后预计待到：{{ Number(receiptRemaining.toFixed(6)) }} {{ itemBaseUnit(receiptTarget.item) }}</strong><strong v-else>超到：{{ Number((-receiptRemaining).toFixed(6)) }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div>
-        <label>实际采购单价（{{ receiptTarget.row.currency }}）<input v-model="receiptForm.unit_cost" type="number" min="0" step="0.0001" required></label>
-        <section v-if="baseQuantity(receiptForm) > Number(receiptTarget.item.remaining_quantity)" class="receipt-overage-panel"><h4>本次数量超过当前待到数量</h4><p>待到 {{ receiptTarget.item.remaining_quantity }} · 本次 {{ baseQuantity(receiptForm) }} · 超到 {{ Number((-receiptRemaining).toFixed(6)) }} {{ itemBaseUnit(receiptTarget.item) }}</p><label class="receipt-check"><input v-model="receiptForm.is_overage" type="checkbox" required> 确认超到</label><label>超到原因<select v-model="receiptForm.overage_reason" required><option value="">选择超到原因</option><option value="overprocurement">超采</option><option value="gift">供应商赠品</option><option value="carton_variance">包装尾差</option></select></label></section>
+        <label>实际采购单价（{{ receiptTarget.row.currency }}） *<input v-model="receiptForm.unit_cost" type="number" min="0" step="0.0001" required></label>
+        <section v-if="baseQuantity(receiptForm) > Number(receiptTarget.item.remaining_quantity)" class="receipt-overage-panel"><h4>本次数量超过当前待到数量</h4><p>待到 {{ receiptTarget.item.remaining_quantity }} · 本次 {{ baseQuantity(receiptForm) }} · 超到 {{ Number((-receiptRemaining).toFixed(6)) }} {{ itemBaseUnit(receiptTarget.item) }}</p><label class="receipt-check"><input v-model="receiptForm.is_overage" type="checkbox" required> 确认超到</label><label>超到原因 *<select v-model="receiptForm.overage_reason" required><option value="">选择超到原因</option><option value="overprocurement">超采</option><option value="gift">供应商赠品</option><option value="carton_variance">包装尾差</option></select></label></section>
         <label>验货备注 / 异常说明<textarea v-model="receiptForm.notes" placeholder="例如：拒收破损 2 件，已联系供应商补货"></textarea></label>
         <label class="receipt-check inspection-acknowledgement"><input v-model="receiptForm.checked" type="checkbox" required> 已核对型号、数量及外观，仅登记合格品</label>
         <p v-if="error" class="error" role="alert">{{ error }}</p>
         <footer><small>保存后将立即更新：库存、订单预留、采购到货数量、在途数量。</small><div><button type="button" class="btn btn-secondary" @click="receiptTarget = null">取消</button><button class="btn btn-primary" :disabled="receiptSaving || !receiptForm.checked">{{ receiptSaving ? '保存中…' : '确认入库' }}</button></div></footer>
       </form>
     </div>
-    <div v-if="reversalTarget" class="receipt-mask" @click.self="reversalTarget = null"><form class="receipt-dialog" @submit.prevent="submitReceiptReversal"><h3>冲销采购入库</h3><p>{{ reversalTarget.row.purchase_no }} · {{ reversalTarget.item.sku_code }} / {{ reversalTarget.item.display_name || '—' }} · 原入库 {{ reversalTarget.receipt.quantity }} {{ itemBaseUnit(reversalTarget.item) }}</p><label>冲销原因<textarea v-model="reversalReason" maxlength="500" required placeholder="请填写冲销原因"></textarea></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" @click="reversalTarget = null">取消</button><button class="receipt-danger" :disabled="reversalSaving || !reversalReason.trim()">{{ reversalSaving ? '提交中…' : '确认冲销' }}</button></footer></form></div>
+    <div v-if="reversalTarget" class="receipt-mask" @click.self="reversalTarget = null"><form class="receipt-dialog" role="dialog" aria-modal="true" aria-label="冲销采购入库" @submit.prevent="submitReceiptReversal"><h3>冲销采购入库</h3><p>{{ reversalTarget.row.purchase_no }} · {{ reversalTarget.item.sku_code }} / {{ reversalTarget.item.display_name || '—' }} · 原入库 {{ reversalTarget.receipt.quantity }} {{ itemBaseUnit(reversalTarget.item) }}</p><p class="reversal-effect">冲销后原入库记录保留，库存、预留及到货数量会同步回退。</p><label>冲销原因 *<textarea v-model="reversalReason" maxlength="500" required placeholder="请填写冲销原因"></textarea></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="reversalTarget = null">取消</button><button class="receipt-danger" :disabled="reversalSaving || !reversalReason.trim()">{{ reversalSaving ? '提交中…' : '确认冲销' }}</button></footer></form></div>
   </div>
 <PurchaseSupplierPicker v-if="matchingItem" :sku="skus.find(s => s.id === Number(matchingItem.sku))" :fixed-supplier="inheritedSupplier ? draft.supplier : null" @close="matchingItem = null" @selected="matchedSupplier" />
 </template>
 
 <style scoped>
+.goods-receipt-dialog footer{position:sticky;bottom:-24px;background:#fff;border-top:1px solid #d8e1dd;padding:14px 0;margin-top:16px;z-index:2}
+.goods-receipt-dialog{scroll-padding-bottom:105px}
+.receipt-danger{font:inherit;border-radius:7px;padding:10px 16px;cursor:pointer}
+.reversal-effect{background:#fff7e8;padding:12px;border-radius:8px;line-height:1.6}
+
 .purchase-list-toolbar{display:grid;grid-template-columns:minmax(240px,1fr) minmax(150px,210px) auto auto;align-items:end;gap:12px;margin:16px 0 18px;padding:14px;border:1px solid var(--line);border-radius:10px;background:#fff}.purchase-search,.purchase-status-filter{display:grid;gap:6px;color:#536961;font-size:var(--text-caption);font-weight:700}.purchase-search input,.purchase-status-filter select{box-sizing:border-box;width:100%;min-height:38px;border:1px solid #d8e3de;border-radius:8px;padding:7px 9px;background:#fff;color:#263d35;font:inherit}.purchase-pending-filter{display:flex;align-items:center;gap:8px;min-height:38px;color:#39564b;font-size:var(--text-body);white-space:nowrap}.purchase-pending-filter input{width:16px;height:16px;accent-color:#236657}.purchase-list-toolbar>.btn{min-height:38px;white-space:nowrap}@media(max-width:760px){.purchase-list-toolbar{grid-template-columns:minmax(0,1fr) minmax(130px,1fr)}.purchase-search{grid-column:1/-1}.purchase-pending-filter{grid-column:1}.purchase-list-toolbar>.btn{justify-self:end}}
 .receipt-mask{position:fixed;inset:0;background:#10261d66;display:grid;place-items:center;z-index:100}.receipt-dialog{width:min(540px,90vw);max-height:90vh;overflow:auto;padding:24px;background:white;border-radius:14px}.receipt-dialog label{display:grid;gap:6px;margin:14px 0}.receipt-dialog input:not([type=checkbox]),.receipt-dialog select,.receipt-dialog textarea{padding:9px;border:1px solid #d8e1dd;border-radius:7px}.receipt-dialog footer{display:flex;justify-content:flex-end;gap:10px}.receipt-dialog button{padding:9px 14px}.receipt-dialog p{font-size:var(--text-body);color:#718078}
 
@@ -400,6 +405,11 @@ watch(() => route.query.detail, id => {
 </style>
 
 <style scoped>
+.goods-receipt-dialog footer{position:sticky;bottom:-24px;background:#fff;border-top:1px solid #d8e1dd;padding:14px 0;margin-top:16px;z-index:2}
+.goods-receipt-dialog{scroll-padding-bottom:105px}
+.receipt-danger{font:inherit;border-radius:7px;padding:10px 16px;cursor:pointer}
+.reversal-effect{background:#fff7e8;padding:12px;border-radius:8px;line-height:1.6}
+
 .order-navigation-link,.purchase-navigation-link{display:inline-flex;align-items:center;gap:5px;color:#236657;font-weight:700;text-decoration:none}
 .order-navigation-link:hover,.purchase-navigation-link:hover{text-decoration:underline}
 .related-order-panel{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 18px 0;padding:10px 12px;border:1px solid #e2ebe6;border-radius:8px;background:#fff}
@@ -410,6 +420,11 @@ watch(() => route.query.detail, id => {
 </style>
 
 <style scoped>
+.goods-receipt-dialog footer{position:sticky;bottom:-24px;background:#fff;border-top:1px solid #d8e1dd;padding:14px 0;margin-top:16px;z-index:2}
+.goods-receipt-dialog{scroll-padding-bottom:105px}
+.receipt-danger{font:inherit;border-radius:7px;padding:10px 16px;cursor:pointer}
+.reversal-effect{background:#fff7e8;padding:12px;border-radius:8px;line-height:1.6}
+
 .receipt-mask{position:fixed;inset:0;background:#10261d66;display:grid;place-items:center;z-index:100}.receipt-dialog{width:min(540px,90vw);max-height:90vh;overflow:auto;padding:24px;background:white;border-radius:14px}.receipt-dialog label{display:grid;gap:6px;margin:14px 0}.receipt-dialog input:not([type=checkbox]),.receipt-dialog select,.receipt-dialog textarea{padding:9px;border:1px solid #d8e1dd;border-radius:7px}.receipt-dialog footer{display:flex;justify-content:flex-end;gap:10px}.receipt-dialog button{padding:9px 14px}.receipt-dialog p{font-size:var(--text-body);color:#718078}
 
 .purchase-create-backdrop{z-index:70}
@@ -421,9 +436,27 @@ watch(() => route.query.detail, id => {
 </style>
 
 <style scoped>
+.goods-receipt-dialog footer{position:sticky;bottom:-24px;background:#fff;border-top:1px solid #d8e1dd;padding:14px 0;margin-top:16px;z-index:2}
+.goods-receipt-dialog{scroll-padding-bottom:105px}
+.receipt-danger{font:inherit;border-radius:7px;padding:10px 16px;cursor:pointer}
+.reversal-effect{background:#fff7e8;padding:12px;border-radius:8px;line-height:1.6}
+
 .purchase-list-row{cursor:pointer}.purchase-list-row:hover{background:#F8FBF9}.arrival-helper{display:inline-block;margin-top:4px;font-size:12px;color:#71817B}.arrival-helper.today,.arrival-helper.overdue{font-weight:600;border-radius:6px;padding:2px 6px}.arrival-helper.today{color:#A25F22;background:#FFF0DC}.arrival-helper.overdue{color:#A84444;background:#FBE5E5}
 </style>
 
 <style scoped>
+.goods-receipt-dialog footer{position:sticky;bottom:-24px;background:#fff;border-top:1px solid #d8e1dd;padding:14px 0;margin-top:16px;z-index:2}
+.goods-receipt-dialog{scroll-padding-bottom:105px}
+.receipt-danger{font:inherit;border-radius:7px;padding:10px 16px;cursor:pointer}
+.reversal-effect{background:#fff7e8;padding:12px;border-radius:8px;line-height:1.6}
+
 .purchase-create-modal>form{background:#F6F8F5;padding-top:18px}.draft-section{background:#fff;border:1px solid #E0E8E4;border-radius:13px;padding:18px;margin-bottom:16px}.draft-section-heading{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}.draft-section h4,.purchase-total-summary h4{margin:0;font-size:16px;font-weight:700;color:#1D3F36}.purchase-identity{display:flex;align-items:center;gap:8px;font-size:12px;color:#81908A}.purchase-identity .readonly-input{width:180px;height:28px;min-height:0;border:0;background:transparent;color:#61756D;font-size:12px;padding:0;box-shadow:none}.purchase-create-modal .form-grid{margin-top:18px;gap:14px;align-items:start}.form-grid label,.line-field{font-size:12px;font-weight:600;color:#61756D}.form-grid small,.line-field small,.section-help,.purchase-line-footer small{font-size:12px;font-weight:400;color:#81908A;line-height:1.6}.form-grid input,.form-grid select,.line-field input,.line-field select{box-sizing:border-box;min-width:0;width:100%;height:38px;border:1px solid #D8E3DE;border-radius:8px;padding:0 10px;font:inherit;color:#263D35;background:#fff}.form-grid select:disabled{background:#F1F5F3}.inherited-badge{justify-self:start;border-radius:5px;background:#EFF7F3;padding:2px 6px;color:#3B665A;font-size:11px}.line-editor{margin-top:0;padding-top:18px;border-top:1px solid #E0E8E4}.section-help{margin:8px 0 14px}.purchase-line{display:grid;gap:12px;background:#fff;border:1px solid #E1E9E5;border-radius:10px;padding:15px;margin-top:10px}.purchase-line-heading{display:flex;justify-content:space-between;align-items:start;gap:12px}.purchase-sku b{font-size:14px;font-weight:700;color:#294A41}.purchase-sku small{font-size:12px;color:#81908A}.line-source-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) auto;gap:12px;align-items:start}.line-business-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:start}.line-field{display:grid;gap:6px;min-width:0}.line-field :deep(.trade-unit-picker){margin-top:0}.line-field :deep(.trade-unit-picker select){box-sizing:border-box;height:38px;border:1px solid #D8E3DE;border-radius:8px;padding:0 10px}.supplier-match-action{height:30px;margin-top:24px;padding:0 9px;border:1px solid #D3E1DB;border-radius:7px;background:#F8FBF9;color:#3B665A;font-size:12px;font-weight:600;cursor:pointer}.line-total strong{display:flex;align-items:center;min-height:38px;font-size:16px;color:#174C41;font-weight:700;overflow-wrap:anywhere}.purchase-line-footer{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid #EDF2EF;padding-top:8px}.supplier-price-warning{margin:0;background:#FFF8E8;border:1px solid #EADBB5;border-radius:7px;padding:8px 10px;color:#805C25;font-size:12px;line-height:1.6}.purchase-total-summary{background:#F4F9F6;border:1px solid #D9E8E0;border-radius:10px;padding:14px 16px}.purchase-total-summary>div{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:12px;color:#61756D;font-size:12px}.purchase-total-summary b{margin-left:8px;color:#294A41}.purchase-total-summary strong{margin-left:10px;font-size:20px;font-weight:700;color:#174C41}.purchase-create-modal .editor-actions{bottom:0;align-items:center;justify-content:space-between;gap:16px}.editor-actions>small{font-size:12px;color:#71817B;line-height:1.6;max-width:440px}.editor-actions>div{display:flex;gap:9px;flex-shrink:0}.goods-receipt-dialog{width:min(620px,calc(100vw - 32px));box-sizing:border-box}.goods-receipt-dialog h3{margin:0;color:#1D3F36;font-size:20px}.goods-receipt-dialog header p{margin:6px 0;overflow-wrap:anywhere}.receipt-progress{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:18px}.receipt-progress>div{background:#F7FAF8;border:1px solid #E3EBE7;border-radius:8px;padding:10px 12px}.receipt-progress small{display:block;color:#71817B;font-size:11px}.receipt-progress strong{display:block;margin-top:5px;color:#294A41;font-size:15px;font-weight:700;overflow-wrap:anywhere}.goods-receipt-dialog label,.receipt-unit-field{font-size:12px;color:#61756D;font-weight:600}.receipt-unit-field{margin:14px 0}.receipt-quantity-preview{display:grid;gap:5px;background:#EFF7F3;border-radius:7px;padding:8px 10px;color:#315C4E;font-size:12px}.receipt-quantity-preview strong{font-weight:600}.receipt-overage-panel{background:#FFF7E8;border:1px solid #EDD6AA;border-radius:9px;padding:12px;margin:14px 0}.receipt-overage-panel h4{margin:0;color:#875B1D;font-size:13px;font-weight:700}.receipt-overage-panel p{color:#875B1D}.goods-receipt-dialog .receipt-check{display:flex;align-items:center;gap:8px}.inspection-acknowledgement{background:#F5F9F7;border:1px solid #DCE8E2;border-radius:8px;padding:10px 12px}.goods-receipt-dialog .error{background:#FFF5F5;border:1px solid #EFCACA;border-radius:8px;padding:10px;color:#A44343}.goods-receipt-dialog footer{display:grid;gap:12px;padding-top:14px;border-top:1px solid #E0E8E4}.goods-receipt-dialog footer small{font-size:12px;color:#71817B;line-height:1.6}.goods-receipt-dialog footer>div{display:flex;justify-content:flex-end;gap:10px}.goods-receipt-dialog footer button{height:38px;padding:0 14px;border-radius:8px}.receipt-dialog .receipt-danger{background:#FFF7F7;color:#A84444;border:1px solid #E7CACA;border-radius:8px}.receipt-dialog .receipt-danger:disabled{opacity:.5}@media(max-width:760px){.line-source-grid{grid-template-columns:1fr 1fr}.supplier-match-action{margin-top:0;justify-self:start}.line-business-grid{grid-template-columns:1fr 1fr}.line-total{grid-column:1/-1}.purchase-create-modal .editor-actions{align-items:flex-start;flex-wrap:wrap}.editor-actions>div{margin-left:auto}}@media(max-width:560px){.line-source-grid,.line-business-grid{grid-template-columns:1fr}.purchase-total-summary>div{align-items:flex-start;flex-direction:column}.purchase-identity{flex-wrap:wrap}.goods-receipt-dialog{padding:18px}.receipt-progress>div{padding:8px}.receipt-progress strong{font-size:13px}}
+</style>
+
+<style scoped>
+.goods-receipt-dialog footer{position:sticky;bottom:-24px;background:#fff;border-top:1px solid #d8e1dd;padding:14px 0;margin-top:16px;z-index:2}
+.goods-receipt-dialog{scroll-padding-bottom:105px}
+.receipt-danger{font:inherit;border-radius:7px;padding:10px 16px;cursor:pointer}
+.reversal-effect{background:#fff7e8;padding:12px;border-radius:8px;line-height:1.6}
+
 </style>

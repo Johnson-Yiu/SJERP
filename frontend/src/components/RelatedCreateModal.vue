@@ -50,7 +50,7 @@ const titleNames = {
   orders: '订单',
   quotes: '报价',
 }
-const title = computed(() => `新增${titleNames[props.entity] || config.value?.title || '记录'}`)
+const title = computed(() => props.entity === 'follow-ups' ? '新建跟进记录' : props.entity === 'orders' ? '新建订单' : `新增${titleNames[props.entity] || config.value?.title || '记录'}`)
 const documentCopy = computed(() => isOrder.value ? {
   no: 'order_no', date: 'order_date', statuses: { draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' },
 } : {
@@ -405,7 +405,7 @@ onMounted(init)
         <div class="modal-foot">
           <button type="button" class="btn btn-secondary" @click="emit('close')">取消</button>
           <button v-if="isQuote && error" type="button" class="btn btn-primary" :disabled="loading" @click="init">重新加载</button>
-          <button v-else-if="!isQuote" class="btn btn-primary" :disabled="saving || loading">{{ saving ? '保存中...' : '保存' }}</button>
+          <button v-else-if="!isQuote" class="btn btn-primary" :disabled="saving || loading">{{ saving ? '保存中…' : props.entity === 'follow-ups' ? '保存跟进' : '保存' }}</button>
         </div>
       </form>
     </div>

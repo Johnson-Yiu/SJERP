@@ -11,6 +11,8 @@ beforeEach(() => { vi.clearAllMocks(); api.get.mockResolvedValue({ data: initial
 it('edits allocation, saves the revision and renders authoritative calculated totals', async () => {
   const wrapper = mount(PurchaseCostAllocationModal, { props })
   await flushPromises()
+  expect(wrapper.find('.item-title').text()).toContain('CNY 10.00')
+  expect(wrapper.find('.cost-footer .btn-secondary').text()).toBe('取消')
   await wrapper.find('.cost-row select').setValue('order')
   await wrapper.findAll('.cost-row select')[1].setValue(3)
   await wrapper.find('input[type="number"]').setValue('200')

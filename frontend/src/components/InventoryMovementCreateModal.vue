@@ -75,7 +75,7 @@ onMounted(init)
   <Teleport to="body">
     <div class="modal-backdrop inventory-movement-backdrop" @mousedown.self="emit('close')">
       <form role="dialog" aria-label="新建手工库存流水" class="modal inventory-movement-modal" @submit.prevent="save">
-        <div class="modal-head"><div><h3>新建手工库存流水</h3><p>可一次登记多个 SKU，每个 SKU 独立填写数量和明细。</p></div><button type="button" class="mini-btn" aria-label="关闭手工库存流水" @click="emit('close')"><X :size="17" /></button></div>
+        <div class="modal-head"><div><h3>库存调整</h3><p>每个 SKU 生成独立库存流水。</p></div><button type="button" class="mini-btn" aria-label="关闭手工库存流水" @click="emit('close')"><X :size="17" /></button></div>
         <div class="modal-body">
           <div v-if="error" class="inline-error">{{ error }}</div>
           <div v-if="loading" class="modal-loading">正在加载...</div>
@@ -85,8 +85,8 @@ onMounted(init)
               <div class="field"><label>发生日期 <em>*</em></label><SegmentedDateInput :model-value="form.movement_date" required @update:model-value="value => form.movement_date = value" /></div>
               <div class="field"><label>类型 <em>*</em></label><select aria-label="手工流水类型" v-model="form.type"><optgroup label="入库"><option v-for="item in inboundTypes" :key="item.value" :value="item.value">{{ item.label }}</option></optgroup><optgroup label="出库"><option v-for="item in outboundTypes" :key="item.value" :value="item.value">{{ item.label }}</option></optgroup></select></div>
             </div></section>
-            <section class="movement-section"><h4>关联业务</h4><div class="field"><label>关联订单 <small>可不选、可多选</small></label><ComboInput v-model="selectedOrderIds" :options="orderOptions" multiple :allow-custom="false" placeholder="搜索并选择订单" /><p class="movement-help">关联订单用于说明本次手工库存调整的业务背景；不会替代正式订单发货流程。</p></div></section>
-            <section class="movement-section"><h4>SKU 明细</h4><div class="movement-warning">手工库存流水仅用于盘盈 / 盘亏、样品、退货、调拨、生产和其他非标准库存调整。<br />正式采购入库请使用采购“验货入库”。正式销售出库请使用订单“确认发货”。</div><p class="movement-help">数量填写正数；入库/出库方向由“类型”决定。单位成本仅用于本次库存记录的成本参考；是否影响正式采购/订单成本仍按现有系统业务规则。</p><div class="field full"><label>选择 SKU <em>*</em> <small>支持搜索、分类筛选和多选；每个 SKU 独立登记</small></label><SkuPickerPanel v-model="selectedSkuIds" :skus="skus" :height="250" /></div>
+            <section class="movement-section"><h4>关联业务</h4><div class="field"><label>关联订单 <small>可不选、可多选</small></label><ComboInput v-model="selectedOrderIds" :options="orderOptions" multiple :allow-custom="false" placeholder="搜索并选择订单" /><p class="movement-help">可关联多个订单，仅记录调整来源。</p></div></section>
+            <section class="movement-section"><h4>SKU 明细</h4><div class="movement-warning">仅用于盘盈、盘亏、样品、退货、调拨、生产等调整。<br />采购入库请使用“验货入库”，销售出库请使用“确认发货”。</div><p class="movement-help">数量填正数，类型决定入库或出库方向。单位成本用于本次调整的成本参考。</p><div class="field full"><label>选择 SKU <em>*</em> <small>支持搜索、分类筛选和多选；每个 SKU 独立登记</small></label><SkuPickerPanel v-model="selectedSkuIds" :skus="skus" :height="250" /></div>
             <section class="movement-lines">
               <div class="movement-lines-head"><div><strong>SKU 明细</strong><span>每一行将生成一条库存流水。</span></div><b>{{ selectedSkus.length }} 项</b></div>
               <p v-if="!selectedSkus.length" class="movement-empty"><Plus :size="17" /> 请先从上方选择 SKU。</p>
@@ -94,7 +94,7 @@ onMounted(init)
             </section></section>
           </template>
         </div>
-        <div class="modal-foot"><div class="save-explanation"><strong>保存说明</strong><span>保存后将生成 {{ selectedSkus.length }} 条独立库存流水。</span></div><button type="button" class="btn btn-secondary" @click="emit('close')">取消</button><button class="btn btn-primary" :disabled="loading || saving || !selectedSkus.length">{{ saving ? '保存中...' : `保存 ${selectedSkus.length || ''} 条流水` }}</button></div>
+        <div class="modal-foot"><div class="save-explanation"><strong>保存说明</strong><span>保存后将生成 {{ selectedSkus.length }} 条独立库存流水。</span></div><button type="button" class="btn btn-secondary" @click="emit('close')">取消</button><button class="btn btn-primary" :disabled="loading || saving || !selectedSkus.length">{{ saving ? '保存中…' : selectedSkus.length ? `保存 ${selectedSkus.length} 条流水` : '保存库存调整' }}</button></div>
       </form>
     </div>
   </Teleport>

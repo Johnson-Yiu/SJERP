@@ -335,4 +335,21 @@ describe('QuoteEditorModal inventory reference', () => {
     expect(wrapper.text()).toContain('UAT-STOCK-A')
     expect(wrapper.text()).toContain('库存参考')
   })
+  it('Phase 2C distinguishes revision, prioritizes items before buyer fields and preserves source and amounts', async () => {
+    const source = { id:44,quote_no:'QT-44',customer:customer.id,quote_date:'2026-10-06',currency:'USD',shipping_fee:'2',discount:'1',revision_summary:'adjust price',items:[{sku:skuA.id,quantity:'2',unit_price:'3',description:'historical',sales_model_snapshot:'HIST-A'}] }
+    const wrapper = await mountEditor({mode:'revise',quote:source}); wrappers.push(wrapper)
+    expect(wrapper.get('h3').text()).toBe('创建报价修订版')
+    expect(wrapper.get('.modal-head').text()).toContain('基于 QT-44')
+    expect(wrapper.get('.modal-head').text()).toContain('原报价保留')
+    const buyer=wrapper.findAll('.field').find(f=>f.text()==='收件人')
+    expect(wrapper.get('.quote-line-items').element.compareDocumentPosition(buyer.element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(wrapper.get('.totals').text()).toContain('商品小计 USD 6.00')
+    expect(wrapper.get('.totals strong').text()).toBe('USD 7.00')
+    expect(wrapper.get('select').attributes('disabled')).toBeDefined()
+    await wrapper.get('.revision-summary textarea').setValue('adjust price')
+    await wrapper.get('button.btn-primary').trigger('click'); await settle()
+    expect(mocks.api.post).toHaveBeenCalledWith('/quotes/44/revise/',expect.objectContaining({customer:customer.id,shipping_fee:'2',discount:'1',revision_summary:'adjust price',items:[expect.objectContaining({sku:skuA.id,quantity:'2',unit_price:'3',sales_model_snapshot:'HIST-A'})]}))
+    expect(source.quote_no).toBe('QT-44'); expect(source.items[0].quantity).toBe('2')
+  })
+
 })

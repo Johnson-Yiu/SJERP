@@ -57,8 +57,8 @@ test('orders reuse the compact summary cards used by the quotation desk', async 
 test('order editor does not expose manual lifecycle status changes', async () => {
   const source = await readFile(componentUrl, 'utf8')
 
-  assert.match(source, /草稿（确认后进入正式履约）/)
-  assert.match(source, /订单状态由确认、生产、发货、完成或取消等业务动作推进/)
+  assert.match(source, /<input value="草稿" readonly/)
+  assert.match(source, /保存为草稿，确认后开始履约/)
   assert.match(source, /delete data\.status; delete data\.order_no/)
   assert.doesNotMatch(source, /editableOrderStatuses/)
 })

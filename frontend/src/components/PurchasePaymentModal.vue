@@ -31,7 +31,7 @@ async function submit() {
       <div class="payment-balance"><span>当前未付金额</span><strong>{{ purchase.currency }} {{ money(purchase.unpaid_amount) }}</strong><small>已付 {{ purchase.currency }} {{ money(purchase.paid_amount) }}</small></div>
       <form @submit.prevent="submit">
         <fieldset :disabled="saving">
-          <div class="payment-grid"><label>本次付款金额（{{ purchase.currency }}）<input v-model="form.amount" type="number" min="0.01" :max="purchase.unpaid_amount" step="0.01" placeholder="请输入付款金额" required autofocus /></label><label>付款日期<input v-model="form.transaction_date" type="date" required /></label><label>付款方式<select v-model="form.payment_method"><option value="">请选择（可选）</option><option>银行转账</option><option>支付宝</option><option>微信支付</option><option>现金</option><option>其他</option></select></label><label>凭证 / 参考号<input v-model="form.reference" maxlength="100" placeholder="填写转账流水号（可选）" /></label></div>
+          <div class="payment-grid"><label>本次付款金额（{{ purchase.currency }}） *<input v-model="form.amount" type="number" min="0.01" :max="purchase.unpaid_amount" step="0.01" placeholder="请输入付款金额" required autofocus /></label><label>付款日期 *<input v-model="form.transaction_date" type="date" required /></label><label>付款方式<select v-model="form.payment_method"><option value="">请选择（可选）</option><option>银行转账</option><option>支付宝</option><option>微信支付</option><option>现金</option><option>其他</option></select></label><label>凭证 / 参考号<input v-model="form.reference" maxlength="100" placeholder="填写转账流水号（可选）" /></label></div>
           <label class="payment-notes">备注<textarea v-model="form.notes" rows="2" placeholder="补充本次付款说明（可选）" /></label>
         </fieldset>
         <p v-if="error" class="payment-error" role="alert">{{ error }}</p>

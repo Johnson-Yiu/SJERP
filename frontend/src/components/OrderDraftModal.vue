@@ -84,6 +84,7 @@ function setLeadTimeDays() {
 }
 
 async function save() {
+  if (saving.value) return
   if (!form.items?.length || form.items.some((item) => !item.sku)) {
     error.value = '请至少保留一条有效的 SKU 明细。'
     return
@@ -109,11 +110,11 @@ async function save() {
   <div class="modal-backdrop order-draft-backdrop" @mousedown.self="emit('close')">
     <form class="modal wide order-draft-modal" role="dialog" aria-modal="true" aria-label="订单草稿" @submit.prevent="save">
       <div class="modal-head">
-        <div><h3>创建订单草稿</h3><p>来源报价：{{ draft.source_quote_no || draft.quote_no || '—' }}</p></div>
+        <div><h3>新建订单</h3><p>来源报价：{{ draft.source_quote_no || draft.quote_no || '—' }}</p></div>
         <button type="button" class="mini-btn" aria-label="关闭订单草稿" @click="emit('close')"><X :size="18" /></button>
       </div>
       <div class="modal-body">
-        <p class="draft-hint">订单草稿由当前报价版本预填。保存草稿不会接受报价、创建报价迭代版、预留库存或生成应收计划；确认订单时才会一次性执行这些正式动作。</p>
+        <p class="draft-hint">商品已从报价带入。保存为草稿，确认订单后才预留库存并生成应收计划。</p>
         <div class="form-grid">
           <div class="field"><label>订单编号</label><input value="保存后由系统自动生成" readonly aria-label="订单编号保存后自动生成" /></div>
           <div class="field"><label>客户 *</label><input :value="customers.find((customer) => customer.id === Number(form.customer))?.name || '—'" readonly aria-label="来源报价客户" /></div>
@@ -126,8 +127,8 @@ async function save() {
         </div>
         <div class="items-head"><div><strong>订单明细</strong><small>先选择一个或多个 SKU，再填写数量与价格。</small></div></div>
         <SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" />
-        <div class="line-items"><div class="line-header"><span>SKU / Model</span><span>数量</span><span>单价</span><span>成本</span><span>小计</span><span /></div><div v-for="(item, index) in form.items" :key="index" class="line-row"><span class="sku-cell"><b>{{ skus.find(sku => sku.id === Number(item.sku))?.display_name_cn || skus.find(sku => sku.id === Number(item.sku))?.product_name || '—' }}</b><small>SKU: {{ skus.find(sku => sku.id === Number(item.sku))?.sku_code || item.sku || '—' }} · Sales Model: {{ skus.find(sku => sku.id === Number(item.sku))?.sales_model || '—' }}</small><TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="form.items.splice(index + 1, 0, { ...item })">增加规格行</button></span><input v-model="item.quantity" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" v-money-input type="number" min="0" step="any" required /><input v-model="item.cost_price" v-money-input type="number" min="0" step="any" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" @click="form.items.splice(index, 1)"><MinusCircle :size="17" /></button></div><p v-if="!form.items.length" class="quote-items-empty">请先从上方选择至少一个 SKU。</p></div>
-        <div class="totals"><label>运费 <input v-model="form.shipping_fee" v-money-input type="number" step="any" /></label><label>折扣 <input v-model="form.discount" v-money-input type="number" step="any" /></label><div><span>合计</span><strong>{{ form.currency }} {{ money(total) }}</strong></div></div>
+        <div class="line-items"><div class="line-header"><span>SKU / Model</span><span>数量 *</span><span>单价 *</span><span>成本</span><span>小计</span><span /></div><div v-for="(item, index) in form.items" :key="index" class="line-row"><span class="sku-cell"><b>{{ skus.find(sku => sku.id === Number(item.sku))?.display_name_cn || skus.find(sku => sku.id === Number(item.sku))?.product_name || '—' }}</b><small>SKU: {{ skus.find(sku => sku.id === Number(item.sku))?.sku_code || item.sku || '—' }} · Sales Model: {{ skus.find(sku => sku.id === Number(item.sku))?.sales_model || '—' }}</small><TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="form.items.splice(index + 1, 0, { ...item })">增加规格行</button></span><input v-model="item.quantity" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" v-money-input type="number" min="0" step="any" required /><input v-model="item.cost_price" v-money-input type="number" min="0" step="any" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" @click="form.items.splice(index, 1)"><MinusCircle :size="17" /></button></div><p v-if="!form.items.length" class="quote-items-empty">请先从上方选择至少一个 SKU。</p></div>
+        <div class="totals"><label>运费 <input v-model="form.shipping_fee" v-money-input type="number" step="any" /></label><label>折扣 <input v-model="form.discount" v-money-input type="number" step="any" /></label><div><small>商品小计 {{ form.currency }} {{ money(subtotal) }}</small><span>合计</span><strong>{{ form.currency }} {{ money(total) }}</strong></div></div>
         <div class="field notes"><label>条款 / 备注</label><textarea v-model="form.notes" /></div>
         <p v-if="error" class="draft-error">{{ error }}</p>
       </div>

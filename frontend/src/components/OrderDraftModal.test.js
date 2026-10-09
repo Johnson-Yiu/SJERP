@@ -20,7 +20,7 @@ test('order draft contains one order-level tail-goods policy selector', async ()
 test('order draft is always a draft and explains that confirmation performs formal actions', async () => {
   const source = await readFile(componentUrl, 'utf8')
 
-  assert.match(source, /保存草稿不会接受报价、创建报价迭代版、预留库存或生成应收计划/)
+  assert.match(source, /保存为草稿，确认订单后才预留库存并生成应收计划/)
   assert.match(source, /<input value="草稿" readonly/)
   assert.doesNotMatch(source, /option value="shipped"/)
   assert.doesNotMatch(source, /option value="completed"/)

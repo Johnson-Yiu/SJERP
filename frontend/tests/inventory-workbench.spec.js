@@ -197,3 +197,18 @@ it('ignores stale responses when switching SKU while detail is loading', async (
   expect(wrapper.find('.sku-detail h2').text()).toBe('GAP')
   expect(wrapper.text()).not.toContain('STALE')
 })
+
+it('retains drawer filter and sort through exact movement navigation, Back and remount', async () => {
+  await routeTo({ detail:'12',tab:'movements',search:'Context' })
+  await wrapper.get('.detail-filter input').setValue('IM-CTX-201'); await flushPromises()
+  await wrapper.get('[aria-label="日期：未排序"]').trigger('click'); await flushPromises()
+  const context = { ...router.currentRoute.value.query }
+  await router.push('/inventory-movements?sku=12&detail=201'); await flushPromises()
+  router.back(); await flushPromises()
+  expect(router.currentRoute.value.query).toEqual(context)
+  expect(wrapper.get('.detail-filter input').element.value).toBe('IM-CTX-201')
+  expect(wrapper.get('[aria-label="日期：升序"]').exists()).toBe(true)
+  wrapper.unmount()
+  wrapper = mount(defineComponent({ template:'<RouterView />' }), { global:{ plugins:[router],stubs:{OperationLogPanel:true} } }); await flushPromises()
+  expect(wrapper.get('.detail-filter input').element.value).toBe('IM-CTX-201')
+})

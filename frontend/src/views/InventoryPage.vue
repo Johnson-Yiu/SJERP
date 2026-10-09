@@ -15,11 +15,11 @@ const attention = computed(() => route.query.attention === '1')
 const detailId = computed(() => scalar(route.query.detail))
 let searchTimer, requestId = 0
 let queryUpdates = Promise.resolve()
-function updateQuery(patch) {
+function updateQuery(patch, replace = false) {
   queryUpdates = queryUpdates.catch(() => {}).then(() => {
     const next = { ...route.query, ...patch }
     Object.keys(next).forEach(key => { if (next[key] === undefined || next[key] === '') delete next[key] })
-    return router.push({ path: '/inventory', query: next })
+    return router[replace ? 'replace' : 'push']({ path: '/inventory', query: next })
   })
   return queryUpdates
 }
@@ -33,7 +33,10 @@ function toggleAttention() { return updateQuery({ attention: attention.value ? u
 const needsAttention = row => row.has_anomaly || Number(row.to_procure_quantity || 0) > 0
 const selectedSku = ref(null), detail = ref(null), detailLoading = ref(false), detailError = ref('')
 const operationLogs = ref([]), operationLogsLoading = ref(false), auditEnabled = ref(false)
-const detailTab = computed(() => detailTabs.some(tab => tab.key === route.query.tab) ? route.query.tab : 'movements'), detailQuery = ref(''), detailSortKey = ref(''), detailSortDirection = ref('asc')
+const detailTab = computed(() => detailTabs.some(tab => tab.key === route.query.tab) ? route.query.tab : 'movements')
+const detailQuery = computed({ get: () => scalar(route.query.detailSearch), set: value => { void updateQuery({ detailSearch: value || undefined }, true) } })
+const detailSortKey = computed(() => activeDetailTab.value.columns.some(column => column.key === route.query.detailSort) ? route.query.detailSort : '')
+const detailSortDirection = computed(() => route.query.detailDirection === 'desc' ? 'desc' : 'asc')
 const columns = [
   ['sku', 'SKU'], ['display_name_cn', '中文 SKU 名称'], ['actual_quantity', '实际库存'], ['reserved_quantity', '已预留'],
   ['available_quantity', '可用库存'], ['in_transit_quantity', '在途采购'], ['to_procure_quantity', '待采购'], ['status', '状态'],
@@ -91,7 +94,7 @@ function detailSortValue(row, column) {
   if (column?.type === 'date') return new Date(row[column.key] || 0).getTime()
   return row[column?.key] ?? ''
 }
-function toggleDetailSort(key) { if (detailSortKey.value === key) detailSortDirection.value = detailSortDirection.value === 'asc' ? 'desc' : 'asc'; else { detailSortKey.value = key; detailSortDirection.value = 'asc' } }
+function toggleDetailSort(key) { return updateQuery({ detailSort: key, detailDirection: detailSortKey.value === key && detailSortDirection.value === 'asc' ? 'desc' : 'asc' }, true) }
 function detailSortLabel(key) { return detailSortKey.value === key ? (detailSortDirection.value === 'asc' ? '升序' : '降序') : '未排序' }
 function formatDetailCell(row, column) {
   if (column.type === 'trade') return row.trade_unit ? `${row.trade_quantity} ${row.trade_snapshot?.unit} · ${row.trade_snapshot?.name}（1 ${row.trade_snapshot?.unit} = ${row.trade_snapshot?.factor} ${row.trade_snapshot?.base_unit}）` : '基础单位登记'
@@ -113,8 +116,7 @@ function detailRecordLocation(row, column) {
   }
   return undefined
 }
-function selectDetailTab(key) { return updateQuery({ tab: key }) }
-watch(detailTab, () => { detailQuery.value = ''; detailSortKey.value = ''; detailSortDirection.value = 'asc' })
+function selectDetailTab(key) { return updateQuery({ tab: key, detailSearch: undefined, detailSort: undefined, detailDirection: undefined }) }
 function stockState(row) {
   const quantity = Number(row.available_quantity ?? row.stock_quantity ?? 0)
   if (row.has_anomaly || quantity < 0) return { label: '需处理', className: 'negative' }
@@ -128,11 +130,10 @@ async function load() {
   catch (requestError) { error.value = requestError.message || '库存数据加载失败，请稍后重试。' }
   finally { loading.value = false }
 }
-function openDetail(row) { return updateQuery({ detail: String(row.id), tab: 'movements' }) }
+function openDetail(row) { return updateQuery({ detail: String(row.id), tab: 'movements', detailSearch: undefined, detailSort: undefined, detailDirection: undefined }) }
 async function loadDetail() {
   const id = detailId.value, currentRequest = ++requestId
   selectedSku.value = null; detail.value = null; operationLogs.value = []; detailError.value = ''
-  detailQuery.value = ''; detailSortKey.value = ''; detailSortDirection.value = 'asc'
   if (!id) { detailLoading.value = false; return }
   detailLoading.value = true; operationLogsLoading.value = true
   try {
@@ -156,7 +157,7 @@ async function loadDetail() {
     if (currentRequest === requestId) { detailLoading.value = false; operationLogsLoading.value = false }
   }
 }
-function closeDetail() { return updateQuery({ detail: undefined, tab: undefined }) }
+function closeDetail() { return updateQuery({ detail: undefined, tab: undefined, detailSearch: undefined, detailSort: undefined, detailDirection: undefined }) }
 watch([detailId, loading], () => { if (!loading.value && route.path === '/inventory') loadDetail() })
 watch(() => route.path, () => clearTimeout(searchTimer))
 onMounted(load)

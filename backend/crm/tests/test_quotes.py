@@ -144,6 +144,10 @@ class QuoteRevisionTests(TestCase):
         with self.assertRaises(ValidationError):
             allocate_root_quote_no(date(2026, 8, 15), "TestCountry123")
 
+    def test_missing_country_message_identifies_customer_repair(self):
+        with self.assertRaisesMessage(ValidationError, "客户尚未填写国家/地区"):
+            allocate_root_quote_no(date(2026, 8, 15), "")
+
     def test_quote_snapshot_and_sku_image_fields_persist(self):
         quote = self.create_quote()
         quote.recipient_name = "Anna Schmidt"

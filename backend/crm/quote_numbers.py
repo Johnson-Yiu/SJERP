@@ -58,6 +58,8 @@ MAX_REVISION_NO = 99
 
 def _country_iso_code(country: str) -> str:
     normalized_country = country.strip()
+    if not normalized_country:
+        raise ValidationError({"country": "客户尚未填写国家/地区，请先在客户资料中补充后再保存报价。"})
     country_code = COUNTRY_ISO_CODES.get(normalized_country.casefold())
     if country_code:
         return country_code
@@ -65,7 +67,7 @@ def _country_iso_code(country: str) -> str:
     try:
         return pycountry.countries.lookup(normalized_country).alpha_2
     except LookupError:
-        raise ValidationError({"country": f"Unsupported country: {country}"})
+        raise ValidationError({"country": f"无法识别客户国家/地区“{country}”，请在客户资料中填写标准国家名称或国家代码后再保存报价。"})
 
 
 @transaction.atomic

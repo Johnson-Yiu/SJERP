@@ -101,7 +101,7 @@ class Command(BaseCommand):
 
         client.patch(f"/api/customers/{customer_id}/", {"country": "Mars"}, format="json")
         invalid_country_quote = post("/api/quotes/", {"customer": customer_id, "quote_date": today, "items": [{"sku": sku_id, "quantity": "1", "unit_price": "6"}]})
-        error("报价：不支持国家名称被提示", invalid_country_quote, "Unsupported country")
+        error("报价：不支持国家名称被提示", invalid_country_quote, "无法识别客户国家/地区")
         client.patch(f"/api/customers/{customer_id}/", {"country": "United States of America"}, format="json")
         quote = post("/api/quotes/", {"customer": customer_id, "quote_date": today, "valid_until": future, "currency": "USD", "items": [{"sku": sku_id, "quantity": "2", "unit_price": "6"}]})
         check("报价：支持国家可生成报价号", quote.status_code == 201 and "US" in quote.data["quote_no"], str(quote.data))

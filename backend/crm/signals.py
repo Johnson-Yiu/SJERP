@@ -50,25 +50,41 @@ def update_customer_stage_after_delete(sender, instance, **kwargs):
     refresh_customer_stage(instance.customer_id)
 
 
-def refresh_customer_next_follow_up(customer_id):
+def refresh_customer_next_follow_up(customer_id, *, removed_decision=False):
     customer = Customer.objects.filter(pk=customer_id).first()
-    if customer:
-        latest = customer.follow_ups.order_by("-followed_at", "-id").first()
-        Customer.objects.filter(pk=customer_id).update(next_follow_up=latest.next_follow_up if latest else None)
+    if not customer:
+        return
+    decision = customer.follow_ups.exclude(next_follow_up_mode="keep").order_by("-followed_at", "-id").first()
+    if decision:
+        next_date = decision.next_follow_up if decision.next_follow_up_mode == "set" else None
+    elif removed_decision:
+        next_date = None
+    else:
+        # No recorded decision: keep an existing manually arranged customer plan.
+        return
+    Customer.objects.filter(pk=customer_id).update(next_follow_up=next_date)
 
 
 @receiver(pre_save, sender=FollowUp)
 def remember_follow_up_customer(sender, instance, **kwargs):
-    instance._previous_customer_id = sender.objects.filter(pk=instance.pk).values_list("customer_id", flat=True).first() if instance.pk else None
+    previous = sender.objects.filter(pk=instance.pk).values("customer_id", "next_follow_up_mode").first() if instance.pk else None
+    instance._previous_customer_id = previous["customer_id"] if previous else None
+    instance._previous_follow_up_mode = previous["next_follow_up_mode"] if previous else "keep"
 
 
 @receiver(post_save, sender=FollowUp)
 @receiver(post_delete, sender=FollowUp)
-def update_follow_up_customer(sender, instance, **kwargs):
-    refresh_customer_stage(instance.customer_id); refresh_customer_next_follow_up(instance.customer_id)
+def update_follow_up_customer(sender, instance, signal, **kwargs):
     previous_id = getattr(instance, "_previous_customer_id", None)
+    previous_mode = getattr(instance, "_previous_follow_up_mode", "keep")
+    removed_here = (signal is post_delete and instance.next_follow_up_mode != "keep") or (
+        previous_id == instance.customer_id and previous_mode != "keep" and instance.next_follow_up_mode == "keep"
+    )
+    refresh_customer_stage(instance.customer_id)
+    refresh_customer_next_follow_up(instance.customer_id, removed_decision=removed_here)
     if previous_id and previous_id != instance.customer_id:
-        refresh_customer_stage(previous_id); refresh_customer_next_follow_up(previous_id)
+        refresh_customer_stage(previous_id)
+        refresh_customer_next_follow_up(previous_id, removed_decision=previous_mode != "keep")
 
 
 @receiver(post_delete, sender=Contact)

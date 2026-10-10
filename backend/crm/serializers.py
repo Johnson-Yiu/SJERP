@@ -674,6 +674,7 @@ class ContactSerializer(serializers.ModelSerializer):
 
 
 class FollowUpSerializer(serializers.ModelSerializer):
+    next_follow_up_mode_display = serializers.CharField(source="get_next_follow_up_mode_display", read_only=True)
     customer_name = serializers.CharField(source="customer.name", read_only=True)
     contact_name = serializers.CharField(source="contact.name", read_only=True, default="")
     type = serializers.CharField()
@@ -695,6 +696,18 @@ class FollowUpSerializer(serializers.ModelSerializer):
         contact = attrs.get("contact", getattr(self.instance, "contact", None))
         if contact and customer and contact.customer_id != customer.id:
             raise serializers.ValidationError({"contact": "所选联系人不属于当前客户。"})
+        content = attrs.get("content", getattr(self.instance, "content", ""))
+        result = attrs.get("result", getattr(self.instance, "result", ""))
+        if not str(content or "").strip() and not str(result or "").strip():
+            raise serializers.ValidationError("请至少填写跟进记录或客户回复，避免保存空白跟进。")
+        mode = attrs.get("next_follow_up_mode", getattr(self.instance, "next_follow_up_mode", "keep"))
+        next_date = attrs.get("next_follow_up", getattr(self.instance, "next_follow_up", None))
+        if mode == "set" and not next_date:
+            raise serializers.ValidationError({"next_follow_up": "请填写新的跟进日期。"})
+        if mode == "clear" and attrs.get("next_follow_up"):
+            raise serializers.ValidationError({"next_follow_up": "取消跟进计划时，下次跟进日期必须为空。"})
+        if mode != "set":
+            attrs["next_follow_up"] = None
         return attrs
 
 

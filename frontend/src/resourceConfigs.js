@@ -32,11 +32,11 @@ export const resourceConfigs = {
   'follow-ups': {
     title: '跟进记录', eyebrow: 'Relationship cadence', endpoint: 'follow-ups', key: 'subject',
     description: '保存每次沟通、结果与明确的下一步动作。',
-    columns: [['followed_at', '跟进时间', 'datetime'], ['customer_name', '客户'], ['subject', '主题'], ['type_display', '方式', 'tag'], ['result', '结果'], ['next_follow_up', '下次跟进', 'date'], ['owner', '跟进人']],
+    columns: [['followed_at', '跟进时间', 'datetime'], ['customer_name', '客户'], ['subject', '主题'], ['type_display', '方式', 'tag'], ['result', '结果'], ['next_follow_up_mode_display', '下次跟进安排'], ['next_follow_up', '下次跟进', 'date'], ['owner', '跟进人']],
     fields: [
       ['customer', '客户', 'remote', true, 'customers', 'name'], ['contact', '联系人', 'remote', false, 'contacts', 'name'], ['followed_at', '跟进时间', 'datetime-local', true],
       ['type', '跟进方式', 'combo', true, 'follow-ups/methods'],
-      ['subject', '主题'], ['content', '跟进记录 / 解决方案', 'richtext'], ['result', '客户回复 / 客户疑问', 'richtext'], ['next_action', '下一步'], ['next_follow_up', '下次跟进', 'date'], ['owner', '跟进人'],
+      ['subject', '主题'], ['content', '跟进记录 / 解决方案', 'richtext'], ['result', '客户回复 / 客户疑问', 'richtext'], ['next_action', '下一步'], ['next_follow_up_mode', '下次跟进安排', 'followup_schedule'], ['next_follow_up', '下次跟进', 'date'], ['owner', '跟进人'],
     ],
     detail: true,
   },

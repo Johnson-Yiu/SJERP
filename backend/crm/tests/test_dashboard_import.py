@@ -205,6 +205,7 @@ class DashboardCurrentFollowUpTests(TestCase):
             customer=customer,
             followed_at=datetime(2026, 9, followed_day, 9, 0, tzinfo=datetime_timezone.utc),
             type="call",
+            next_follow_up_mode="set" if next_date is not None else "clear",
             next_follow_up=date.fromisoformat(next_date) if next_date is not None else None,
         )
 

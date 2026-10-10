@@ -1,4 +1,5 @@
 <script setup>
+import { followUpError } from '../utils/followUpSafety'
 import TradeUnitPicker from './TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
 import CategoryMultiPicker from "./CategoryMultiPicker.vue"
@@ -25,6 +26,9 @@ const skus = ref([])
 const quotes = ref([])
 const documentDurationDays = ref('')
 const followUpDays = ref('')
+const currentFollowUpPlan = computed(() => (options.customers || []).find(customer => String(customer.id) === String(form.customer))?.next_follow_up)
+function visibleGenericField(field) { return !(props.entity === 'follow-ups' && field[0] === 'next_follow_up' && form.next_follow_up_mode !== 'set') }
+function changeFollowUpMode() { if (form.next_follow_up_mode !== 'set') { form.next_follow_up = ''; followUpDays.value = '' } }
 const pendingFollowUpFiles = ref([])
 const usdCnyReference = ref(null)
 const loadingUsdCnyReference = ref(false)
@@ -174,7 +178,7 @@ async function initGeneric() {
       ? name === 'active'
       : type === 'select'
         ? Object.keys(extra)[0]
-        : (props.query[name] || '')
+        : type === 'followup_schedule' ? 'keep' : (props.query[name] || '')
   })
   if (props.entity === 'follow-ups' && !form.followed_at) form.followed_at = datetimeLocal()
   const optionFields = config.value.fields.filter(field => ['remote', 'combo', 'remote_multi'].includes(field[2]))
@@ -279,12 +283,14 @@ function payloadGeneric() {
     if (type === 'number') value = value === '' ? 0 : value
     if (type === 'date' && value === '') value = null
     if (type === 'datetime-local' && value && value.length === 16) value += ':00+08:00'
+    if (props.entity === 'follow-ups' && name === 'next_follow_up' && form.next_follow_up_mode !== 'set') value = null
     data[name] = value
   })
   return data
 }
 async function save() {
   if (isQuote.value) return
+  if (props.entity === 'follow-ups' && followUpError(form)) { error.value = followUpError(form); return }
   saving.value = true
   error.value = ''
   try {
@@ -339,9 +345,14 @@ onMounted(init)
 
           <template v-else-if="!isQuote && !isDocument && config">
             <div class="form-grid">
-              <div v-for="field in config.fields" :key="field[0]" class="field" :class="{ full: ['textarea', 'remote_multi'].includes(field[2]) || (entity === 'follow-ups' && field[0] === 'subject') }">
+              <div v-for="field in config.fields.filter(visibleGenericField)" :key="field[0]" class="field" :class="{ full: ['textarea', 'remote_multi'].includes(field[2]) || (entity === 'follow-ups' && ['subject', 'next_follow_up_mode'].includes(field[0])) }">
                 <label>{{ field[1] }} <em v-if="field[3]">*</em></label>
-                <textarea v-if="field[2] === 'textarea'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" />
+                <div v-if="field[2] === 'followup_schedule'" class="follow-up-schedule" role="radiogroup" aria-label="下次跟进安排">
+                  <label v-for="(label, mode) in { keep: '保留当前计划', set: '设置新的跟进日期', clear: '暂不安排后续跟进' }" :key="mode"><input v-model="form.next_follow_up_mode" type="radio" name="next_follow_up_mode" :value="mode" @change="changeFollowUpMode" /> {{ label }}</label>
+                  <p v-if="form.next_follow_up_mode === 'keep'">当前计划：{{ currentFollowUpPlan || '暂无跟进日期' }}</p>
+                  <p v-else-if="form.next_follow_up_mode === 'clear'">这会清除该客户当前的下次跟进日期。</p>
+                </div>
+                <textarea v-else-if="field[2] === 'textarea'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" />
                 <SimpleRichTextEditor v-else-if="field[2] === 'richtext'" v-model="form[field[0]]" @paste-files="addFollowUpFiles" />
                 <ComboInput v-else-if="field[2] === 'combo'" v-model="form[field[0]]" :options="options[field[4]] || []" :required="field[3]" :disabled="isInherited(field[0])" />
                 <select v-else-if="field[2] === 'select'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])">
@@ -403,6 +414,7 @@ onMounted(init)
           </template>
         </div>
         <div class="modal-foot">
+          <p v-if="entity === 'follow-ups' && error" class="follow-up-validation" role="alert">{{ error }}</p>
           <button type="button" class="btn btn-secondary" @click="emit('close')">取消</button>
           <button v-if="isQuote && error" type="button" class="btn btn-primary" :disabled="loading" @click="init">重新加载</button>
           <button v-else-if="!isQuote" class="btn btn-primary" :disabled="saving || loading">{{ saving ? '保存中…' : props.entity === 'follow-ups' ? '保存跟进' : '保存' }}</button>
@@ -413,6 +425,12 @@ onMounted(init)
 </template>
 
 <style scoped>
+.follow-up-schedule { display: flex; flex-wrap: wrap; gap: 12px 20px; }
+.follow-up-schedule label { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.follow-up-schedule input[type="radio"] { width: 16px; min-width: 16px; height: 16px; min-height: 16px; flex: 0 0 16px; padding: 0; }
+.follow-up-schedule p { flex-basis: 100%; margin: 0; color: var(--muted); font-size: var(--text-caption); }
+.follow-up-validation { flex: 1; min-width: 0; align-self: center; margin: 0; color: #a23b32; font-size: var(--text-body); }
+
 .related-quote-editor{z-index:85}
 .related-create-backdrop{z-index:85}.related-create-modal{width:min(1120px,calc(100% - 48px));max-height:94vh}.inline-error{margin-bottom:14px;padding:10px 12px;background:#fff0f0;color:#a84444;border-radius:8px;font-size:var(--text-body)}.modal-loading{padding:50px;text-align:center;color:#74847e}.lead-time-input,.follow-up-date-control{display:flex;align-items:center;gap:6px}.lead-time-input>input,.follow-up-date-control>input{flex:0 0 10ch!important;width:10ch!important;min-width:0}.lead-time-input>span,.follow-up-date-control>span{color:#70817b;font-size:var(--text-body);white-space:nowrap}.lead-time-input :deep(.segmented-date),.follow-up-date-control :deep(.segmented-date){flex:1 1 auto;min-width:0}.quick-items-head{display:flex;align-items:center;justify-content:space-between;margin:24px 0 9px;padding-top:18px;border-top:1px solid #e3e8e4}.quick-items-head strong{font-size:var(--text-body)}.quick-lines{border:1px solid #e0e6e2;border-radius:9px;overflow:hidden}.quick-line{display:grid;grid-template-columns:2fr .6fr .8fr 1fr 32px;gap:8px;align-items:center;padding:9px;border-top:1px solid #edf0ee}.quick-line:first-child{border-top:0}.quick-line.order{grid-template-columns:2fr .55fr .7fr .7fr 1fr 32px}.quick-line select,.quick-line input{min-width:0;width:100%;padding:8px;border:1px solid #dce3df;border-radius:7px}.quick-line span{text-align:right;font-size:var(--text-body);font-weight:600}.quick-line button{border:0;background:transparent;color:#b05b5b}.quick-line button:disabled{opacity:.25}.quick-totals{display:flex;justify-content:flex-end;align-items:end;gap:13px;margin:14px 0 20px}.quick-totals label{font-size:var(--text-caption);color:#788680}.quick-totals input{display:block;width:100px;margin-top:4px;padding:7px;border:1px solid #dce3df;border-radius:7px}.quick-totals strong{padding:8px 0 8px 16px;border-left:1px solid #dce3df;color:#173f36}.related-create-modal :deep(.simple-editor textarea){min-height:155px}
 .related-follow-up-attachment-editor{margin-top:24px;padding-top:20px;border-top:1px solid #e3e8e4}.related-follow-up-attachment-head{display:flex;align-items:center;justify-content:space-between;gap:16px}.related-follow-up-attachment-head>div{min-width:0}.related-follow-up-attachment-head strong{display:flex;align-items:center;gap:7px;color:#29473d;font-size:var(--text-body)}.related-follow-up-attachment-head strong svg{color:#28735b}.related-follow-up-attachment-head span{display:block;margin-top:4px;color:#7d8e87;font-size:var(--text-body)}.related-follow-up-attachment-head label{display:flex;align-items:center;gap:6px;flex:none;padding:8px 11px;border:1px solid #c8ddd4;border-radius:7px;background:#f1f8f4;color:#28735b;font-size:var(--text-body);font-weight:600;cursor:pointer}.related-follow-up-attachment-head label:hover{background:#e6f3ec}.related-follow-up-attachment-head input{display:none}.related-follow-up-attachment-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}.related-follow-up-attachment-list>div{display:flex;align-items:center;gap:8px;min-width:0;padding:9px 10px;border:1px solid #dfe9e4;border-radius:8px;background:#fbfdfc;color:#315a4c}.related-follow-up-attachment-list>div>svg{flex:none;color:#5e9c86}.related-follow-up-attachment-list>div>span{display:grid;flex:1;min-width:0;gap:2px}.related-follow-up-attachment-list strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--text-body)}.related-follow-up-attachment-list small{color:#81938b;font-size:var(--text-caption)}.related-follow-up-attachment-list button{display:grid;place-items:center;flex:none;padding:3px;border:0;background:transparent;color:#9a6b6b;cursor:pointer}.related-follow-up-attachment-empty{display:flex;align-items:center;justify-content:center;gap:7px;min-height:60px;margin-top:12px;border:1px dashed #bfd4ca;border-radius:8px;background:#fbfdfc;color:#879991;font-size:var(--text-body)}.related-follow-up-attachment-empty svg{color:#abc1b7}

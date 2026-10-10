@@ -1,4 +1,5 @@
 <script setup>
+import { followUpError } from '../utils/followUpSafety'
 import PaymentTermsEditor from '../components/PaymentTermsEditor.vue'
 import { copyPaymentTerms, paymentTermsError } from '../utils/paymentTerms'
 import { movementTypes, movementDirection, movementSource, sourceLabels, movementStatus, ledgerFilters, filteredMovements, movementSummary, movementUnit, signedMovement } from '../utils/inventoryLedger'
@@ -56,6 +57,12 @@ const detailRefresh = ref(0), keepDetailOpen = ref(false)
 const form = reactive({}), options = reactive({})
 const customerContacts = ref([])
 const followUpDays = ref('')
+const followUpSaveAttempted = ref(false)
+const followUpScheduleError = computed(() => followUpError(form))
+const currentFollowUpPlan = computed(() => (options.customers || []).find(customer => String(customer.id) === String(form.customer))?.next_follow_up)
+function changeFollowUpMode() {
+  if (form.next_follow_up_mode !== 'set') { form.next_follow_up = ''; followUpDays.value = '' }
+}
 const followUpAttachments = ref([])
 const pendingFollowUpFiles = ref([])
 const followUpFileInput = ref(null)
@@ -164,9 +171,12 @@ onBeforeUnmount(() => { clearTimeout(searchTimer); ledgerRequest++ })
 async function loadOptions() {
   const remotes = props.config.fields.filter(f => ['remote', 'combo', 'remote_multi'].includes(f[2]))
   await Promise.all(remotes.map(async field => {
-    if (options[field[4]]) return
+    if (options[field[4]] && !(props.config.endpoint === 'follow-ups' && field[0] === 'customer')) return
     try { options[field[4]] = await listAll(`/${field[4]}/`) } catch { options[field[4]] = [] }
   }))
+}
+function visibleEditorField(field) {
+  return !(props.config.endpoint === 'follow-ups' && field[0] === 'next_follow_up' && form.next_follow_up_mode !== 'set')
 }
 function visibleOptions(field) {
   const rows = options[field[4]] || []
@@ -265,12 +275,14 @@ async function loadCurrentOperator() {
   return currentOperator.value
 }
 function resetForm() {
+  followUpSaveAttempted.value = false
   props.config.fields.forEach(([name, , type, , extra]) => {
     const supplierDefault = props.config.endpoint === 'suppliers' && !editingId.value
       ? { country: '中国', payment_terms: '30%预付款，70%尾款发货前结清' }[name]
       : undefined
     form[name] = type === 'remote_multi' ? [] : type === 'checkbox' ? name === 'active' : type === 'select' ? Object.keys(extra)[0] : (route.query[name] ?? supplierDefault ?? '')
     if (type === 'payment_terms') form[name] = copyPaymentTerms()
+    if (type === 'followup_schedule') form[name] = 'keep'
   })
   supplierCodeServerError.value = ''
 }
@@ -309,6 +321,7 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
     if (type === 'datetime-local' && value) value = value.slice(0, 16)
     form[name] = value ?? (type === 'checkbox' ? false : '')
     if (type === 'payment_terms') form[name] = copyPaymentTerms(value)
+    if (type === 'followup_schedule') form[name] = value || 'keep'
   })
   followUpAttachments.value = props.config.endpoint === 'follow-ups' ? (row.attachments || []) : []
   pendingFollowUpFiles.value = []
@@ -356,6 +369,7 @@ function payload() {
     if (type === 'date' && value === '') value = null
     if (type === 'datetime-local' && value && value.length === 16) value += ':00+08:00'
     if (['website', 'store_url'].includes(name)) value = normalizeWebsite(value)
+    if (props.config.endpoint === 'follow-ups' && name === 'next_follow_up' && form.next_follow_up_mode !== 'set') value = null
     data[name] = value
   })
   if (isCustomerCreate.value) data.contacts = customerContacts.value
@@ -365,6 +379,10 @@ async function save() {
   if (saving.value) return
   if (supplierCodeError.value) return notify(supplierCodeError.value, true)
   if (props.config.endpoint === 'suppliers' && paymentTermsError(form.payment_terms_config)) return notify(paymentTermsError(form.payment_terms_config), true)
+  if (props.config.endpoint === 'follow-ups') {
+    followUpSaveAttempted.value = true
+    if (followUpScheduleError.value) return notify(followUpScheduleError.value, true)
+  }
   saving.value = true
   try {
     const wasEditing = Boolean(editingId.value)
@@ -525,9 +543,14 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
     <InventoryMovementCreateModal v-if="modalOpen && config.endpoint === 'inventory-movements' && !editingId" @close="closeModal" @saved="handleInventoryMovementCreated" />
     <div v-else-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal" :class="{ wide: isWideForm, 'customer-editor': isCustomerPage }" @submit.prevent="save">
       <div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" @click="closeModal"><X :size="17" /></button></div>
-      <div class="modal-body"><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group" :key="field[0]" class="field" :class="{ full: ['textarea', 'remote_multi', 'payment_terms'].includes(field[2]) || (config.endpoint === 'follow-ups' && field[0] === 'subject'), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
+      <div class="modal-body"><p v-if="config.endpoint === 'follow-ups'" class="field-help">请至少填写跟进记录或客户回复。</p><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group.filter(visibleEditorField)" :key="field[0]" class="field" :class="{ full: ['textarea', 'remote_multi', 'payment_terms'].includes(field[2]) || (config.endpoint === 'follow-ups' && ['subject', 'next_follow_up_mode'].includes(field[0])), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
         <label>{{ field[1] }} <em v-if="field[3]">*</em></label>
-        <PaymentTermsEditor v-if="field[2] === 'payment_terms'" v-model="form[field[0]]" />
+        <div v-if="field[2] === 'followup_schedule'" class="follow-up-schedule" role="radiogroup" aria-label="下次跟进安排">
+          <label v-for="(label, mode) in { keep: '保留当前计划', set: '设置新的跟进日期', clear: '暂不安排后续跟进' }" :key="mode"><input v-model="form.next_follow_up_mode" type="radio" name="next_follow_up_mode" :value="mode" @change="changeFollowUpMode" /> {{ label }}</label>
+          <p v-if="form.next_follow_up_mode === 'keep'" class="field-help">当前计划：{{ currentFollowUpPlan || '暂无跟进日期' }}</p>
+          <p v-else-if="form.next_follow_up_mode === 'clear'" class="field-help">这会清除该客户当前的下次跟进日期。</p>
+        </div>
+        <PaymentTermsEditor v-else-if="field[2] === 'payment_terms'" v-model="form[field[0]]" />
         <textarea v-else-if="field[2] === 'textarea'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" />
         <SimpleRichTextEditor v-else-if="field[2] === 'richtext'" v-model="form[field[0]]" @paste-files="addFollowUpFiles" />
         <ComboInput v-else-if="field[2] === 'combo'" v-model="form[field[0]]" :options="options[field[4]] || []" :required="field[3]" :disabled="isInherited(field[0])" />
@@ -594,7 +617,7 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
 
 
       </div>
-      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving || (config.endpoint === 'suppliers' && !!paymentTermsError(form.payment_terms_config))">{{ saving ? '保存中…' : saveLabel }}</button></div>
+      <div class="modal-foot"><p v-if="config.endpoint === 'follow-ups' && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving || (config.endpoint === 'suppliers' && !!paymentTermsError(form.payment_terms_config))">{{ saving ? '保存中…' : saveLabel }}</button></div>
     </form></div>
 
     <Transition name="detail-drawer" appear>
@@ -605,6 +628,12 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
 </template>
 
 <style scoped>
+.follow-up-schedule { display: flex; flex-wrap: wrap; gap: 12px 20px; }
+.follow-up-schedule label { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.follow-up-schedule input[type="radio"] { width: 16px; min-width: 16px; height: 16px; min-height: 16px; flex: 0 0 16px; padding: 0; }
+.follow-up-validation { flex: 1; min-width: 0; align-self: center; margin: 0; color: #a23b32; font-size: var(--text-body); }
+.follow-up-schedule .field-help { flex-basis: 100%; margin: 0; }
+
 .customer-editor .form-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .customer-editor textarea{min-height:58px;height:58px}
 .customer-editor .modal-body{padding-bottom:24px}.optional-heading{margin:24px 0 16px;font-size:var(--text-section)}

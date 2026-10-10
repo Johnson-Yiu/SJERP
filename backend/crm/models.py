@@ -229,6 +229,8 @@ class FollowUp(TimestampedModel):
     content = models.TextField("跟进记录/解决方案", blank=True)
     result = models.CharField("客户回复/客户疑问", max_length=500, blank=True)
     next_action = models.CharField("下一步", max_length=200, blank=True)
+    NEXT_FOLLOW_UP_MODE_CHOICES = [("keep", "保留当前计划"), ("set", "设置新的跟进日期"), ("clear", "暂不安排后续跟进")]
+    next_follow_up_mode = models.CharField("下次跟进安排", max_length=5, choices=NEXT_FOLLOW_UP_MODE_CHOICES, default="keep")
     next_follow_up = models.DateField("下次跟进", null=True, blank=True)
     owner = models.CharField("跟进人", max_length=100, blank=True)
 

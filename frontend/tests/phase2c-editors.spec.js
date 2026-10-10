@@ -9,7 +9,7 @@ import OrderDraftModal from '../src/components/OrderDraftModal.vue'
 import { resourceConfigs } from '../src/resourceConfigs'
 let wrapper
 const customer = { id: 12, name: 'UAT Customer', code: 'C12', country: 'Singapore', region: 'APAC', owner: 'Johnson', source: 'Website', website: 'https://example.invalid', address: 'UAT', notes: 'original' }
-const followup = { id: 8, customer: 12, contact: 9, followed_at: '2026-10-09T10:30:00+08:00', type: 'Email', subject: 'UAT followup', content: '<p>content</p>', result: 'reply', next_action: 'quote', next_follow_up: '2026-10-11', owner: 'Johnson', attachments: [] }
+const followup = { id: 8, customer: 12, contact: 9, followed_at: '2026-10-09T10:30:00+08:00', type: 'Email', subject: 'UAT followup', content: '<p>content</p>', result: 'reply', next_action: 'quote', next_follow_up_mode: 'set', next_follow_up: '2026-10-11', owner: 'Johnson', attachments: [] }
 beforeEach(() => {
  vi.clearAllMocks()
  mocks.listAll.mockImplementation(async url => url === '/customers/' ? [customer] : url === '/contacts/' ? [{ id: 9, customer: 12, name: 'UAT Contact' }, { id: 10, customer: 99, name: 'Other Contact' }] : url === '/follow-ups/' ? [followup] : [])
@@ -58,7 +58,7 @@ it('Followup edit keeps customer contact filtering, rich text, dates, attachment
  expect(wrapper.get('.follow-up-attachment-picker input').attributes('multiple')).toBeDefined()
  expect(field('跟进方式').text()).toContain('*')
  await wrapper.get('form.modal').trigger('submit'); await flushPromises()
- expect(mocks.api.put).toHaveBeenCalledWith('/follow-ups/8/', { customer:12,contact:9,followed_at:'2026-10-09T10:30:00+08:00',type:'Email',subject:'UAT followup',content:'<p>content</p>',result:'reply',next_action:'quote',next_follow_up:'2026-10-11',owner:'Johnson' })
+ expect(mocks.api.put).toHaveBeenCalledWith('/follow-ups/8/', { customer:12,contact:9,followed_at:'2026-10-09T10:30:00+08:00',type:'Email',subject:'UAT followup',content:'<p>content</p>',result:'reply',next_action:'quote',next_follow_up_mode:'set',next_follow_up:'2026-10-11',owner:'Johnson' })
 })
 it('Quote-generated Order draft retains source, snapshots, totals and trade-unit save payload', async () => {
  const draft = { quote:39, source_quote_no:'QT-39', customer:12, order_date:'2026-10-09', currency:'USD', exchange_rate:'7.2', shipping_fee:'2', discount:'1', status:'draft', items:[{sku:3,quantity:'10',unit_price:'2',trade_unit:7,trade_quantity:'2',trade_unit_price:'10',trade_snapshot:{base_unit:'pcs',factor:'5',trade_unit:'box'},sales_model_snapshot:'Historical Model'}] }

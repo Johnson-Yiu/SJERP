@@ -26,9 +26,9 @@ def latest_follow_ups_per_customer(queryset=None):
 
 
 def current_due_follow_ups(queryset=None, *, today=None):
-    """Return each customer's latest FollowUp when its next action is due today or overdue."""
+    """Return each customer's latest FollowUp when its current customer plan is due today or overdue."""
     today = timezone.localdate() if today is None else today
     return latest_follow_ups_per_customer(queryset).filter(
-        next_follow_up__isnull=False,
-        next_follow_up__lte=today,
-    ).order_by("next_follow_up", "id")
+        customer__next_follow_up__isnull=False,
+        customer__next_follow_up__lte=today,
+    ).order_by("customer__next_follow_up", "id")

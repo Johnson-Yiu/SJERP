@@ -25,6 +25,7 @@ class CurrentDueFollowUpApiTests(TestCase):
             followed_at=datetime(2026, 9, day, hour, tzinfo=datetime_timezone.utc),
             type="call",
             subject=subject,
+            next_follow_up_mode="set" if due else "clear",
             next_follow_up=due,
         )
 
@@ -73,10 +74,10 @@ class CurrentDueFollowUpApiTests(TestCase):
         customer = self.customer("Timestamp tie")
         timestamp = datetime(2026, 10, 1, 9, tzinfo=datetime_timezone.utc)
         older_id = FollowUp.objects.create(
-            customer=customer, followed_at=timestamp, type="call", subject="Lower ID", next_follow_up=TODAY,
+            customer=customer, followed_at=timestamp, type="call", subject="Lower ID", next_follow_up_mode="set", next_follow_up=TODAY,
         )
         latest_id = FollowUp.objects.create(
-            customer=customer, followed_at=timestamp, type="call", subject="Higher ID", next_follow_up=TODAY,
+            customer=customer, followed_at=timestamp, type="call", subject="Higher ID", next_follow_up_mode="set", next_follow_up=TODAY,
         )
 
         rows = self.follow_up_rows(due="true")

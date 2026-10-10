@@ -301,7 +301,7 @@ def _follow_up_context(pk):
     followed_at = obj.followed_at
     if followed_at and timezone.is_aware(followed_at):
         followed_at = timezone.localtime(followed_at)
-    return {"entity": "follow-ups", "title": obj.subject or "跟进记录", "subtitle": f"{obj.customer.name} · {followed_at:%Y-%m-%d %H:%M}" if followed_at else obj.customer.name, "badge": obj.get_type_display(), "info": [["跟进人", obj.owner or "—"], ["跟进记录 / 解决方案", obj.content or "—", "richtext"], ["客户回复 / 客户疑问", obj.result or "—", "richtext"], ["下一步", obj.next_action or "—"], ["下次跟进", obj.next_follow_up or "—"]], "attachments": FollowUpAttachmentSerializer(obj.attachments.all(), many=True, context={}).data, "metrics": [], "sections": [
+    return {"entity": "follow-ups", "title": obj.subject or "跟进记录", "subtitle": f"{obj.customer.name} · {followed_at:%Y-%m-%d %H:%M}" if followed_at else obj.customer.name, "badge": obj.get_type_display(), "info": [["跟进人", obj.owner or "—"], ["跟进记录 / 解决方案", obj.content or "—", "richtext"], ["客户回复 / 客户疑问", obj.result or "—", "richtext"], ["下一步", obj.next_action or "—"], ["下次跟进安排", obj.get_next_follow_up_mode_display()], ["下次跟进", obj.next_follow_up or "—"]], "attachments": FollowUpAttachmentSerializer(obj.attachments.all(), many=True, context={}).data, "metrics": [], "sections": [
         _section("customer", "客户", "customers", [["code", "客户编号"], ["name", "客户名称"], ["country", "国家"], ["owner", "负责人"]], customer),
         _section("contact", "联系人", "contacts", [["name", "姓名"], ["title", "职位"], ["email", "邮箱"], ["phone", "电话"]], contact),
     ]}

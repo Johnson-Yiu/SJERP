@@ -91,6 +91,7 @@ class CustomerFollowUpProjectionTests(TestCase):
             customer=self.customer,
             followed_at=self.at(1),
             type="email",
+            next_follow_up_mode="set",
             next_follow_up=date(2026, 9, 10),
         )
         self.customer.refresh_from_db()
@@ -100,6 +101,7 @@ class CustomerFollowUpProjectionTests(TestCase):
             customer=self.customer,
             followed_at=self.at(5),
             type="call",
+            next_follow_up_mode="set",
             next_follow_up=date(2026, 9, 20),
         )
         self.customer.refresh_from_db()
@@ -115,7 +117,8 @@ class CustomerFollowUpProjectionTests(TestCase):
         self.assertEqual(self.customer.next_follow_up, date(2026, 9, 10))
 
         first.next_follow_up = None
-        first.save(update_fields=["next_follow_up"])
+        first.next_follow_up_mode = "clear"
+        first.save(update_fields=["next_follow_up", "next_follow_up_mode"])
         self.customer.refresh_from_db()
         self.assertIsNone(self.customer.next_follow_up)
 
@@ -125,12 +128,14 @@ class CustomerFollowUpProjectionTests(TestCase):
             customer=self.customer,
             followed_at=self.at(1),
             type="email",
+            next_follow_up_mode="set",
             next_follow_up=date(2026, 9, 10),
         )
         FollowUp.objects.create(
             customer=other,
             followed_at=self.at(5),
             type="call",
+            next_follow_up_mode="set",
             next_follow_up=date(2026, 9, 20),
         )
 
@@ -210,6 +215,7 @@ class FollowUpOwnershipAndAttachmentTests(TestCase):
             "content": "Updated content",
             "result": "Confirmed details",
             "next_action": "Send documents",
+            "next_follow_up_mode": "set",
             "next_follow_up": "2026-09-25",
         }, format="json")
         self.assertEqual(updated.status_code, status.HTTP_200_OK, updated.data)

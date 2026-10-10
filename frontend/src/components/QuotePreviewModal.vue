@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { Printer, X } from 'lucide-vue-next'
 import { formatPiAmountWords } from '../utils/piAmountWords'
 
-const props = defineProps({ draft: { type: Object, required: true } })
+const props = defineProps({ draft: { type: Object, required: true }, saved: { type: Boolean, default: false } })
 defineEmits(['close'])
 
 const seller = Object.freeze({
@@ -46,7 +46,7 @@ function printPreview() {
   <div class="modal-backdrop quote-preview-backdrop" @mousedown.self="$emit('close')">
     <section class="quote-preview-modal" role="dialog" aria-modal="true" aria-label="报价单预览">
       <header class="quote-preview-toolbar">
-        <div><strong>报价单预览</strong><small>当前未保存内容 · 关闭后可继续编辑</small></div>
+        <div><strong>报价单预览</strong><small>{{ saved ? '已保存报价预览' : '当前未保存内容 · 关闭后可继续编辑' }}</small></div>
         <div class="quote-preview-actions">
           <button type="button" class="btn btn-secondary" @click="printPreview"><Printer :size="15" /> 导出预览 PDF</button>
           <button type="button" class="mini-btn" aria-label="关闭预览" @click="$emit('close')"><X :size="17" /></button>

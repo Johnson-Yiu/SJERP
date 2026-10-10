@@ -1,4 +1,5 @@
 <script setup>
+import { compactDecimalInput } from '../utils/decimalInput'
 import { movementSource, sourceLabels, movementStatus, signedMovement } from '../utils/inventoryLedger'
 import CertificateExpiryBadge from './CertificateExpiryBadge.vue'
 import { computed, onMounted, ref, watch } from 'vue'
@@ -23,7 +24,7 @@ const detailInfo = computed(() => {
   const row = movementRecord.value
   const sku = data.value?.sections?.find(section => section.key === 'sku')?.rows?.[0]
   const unit = row.trade_snapshot?.base_unit || sku?.unit || ''
-  return [['流水号',row.movement_no],['日期',row.movement_date],['SKU',row.sku_code || sku?.sku || '—'],['类型',row.type_display],['数量变化',signedMovement(row,unit)],['交易单位 / 登记规格',row.trade_snapshot?.name || '基础单位登记'],['交易数量',row.trade_unit ? `${row.trade_quantity} ${row.trade_snapshot?.unit || ''}` : '—'],['仓库',row.warehouse],['关联订单',(row.related_order_nos || []).join('、') || row.order_no || '—'],['关联单据',row.reference || row.source_no || '—'],['来源',sourceLabels[movementSource(row)] || '未标注'],['备注',row.notes || '—'],['冲销状态',movementStatus(row)],['冲销记录',row.reversal_status || '—'],['超到说明',row.overage_summary || '—'],['单位成本',row.unit_cost]]
+  return [['流水号',row.movement_no],['日期',row.movement_date],['SKU',row.sku_code || sku?.sku || '—'],['类型',row.type_display],['数量变化',signedMovement(row,unit)],['交易单位 / 登记规格',row.trade_snapshot?.name || '基础单位登记'],['交易数量',row.trade_unit ? `${row.trade_quantity} ${row.trade_snapshot?.unit || ''}` : '—'],['仓库',row.warehouse],['关联订单',(row.related_order_nos || []).join('、') || row.order_no || '—'],['关联单据',row.reference || row.source_no || '—'],['来源',sourceLabels[movementSource(row)] || '未标注'],['备注',row.notes || '—'],['冲销状态',movementStatus(row)],['冲销记录',row.reversal_status || '—'],['超到说明',row.overage_summary || '—'],['单位成本',compactDecimalInput(row.unit_cost)]]
 })
 const operationLogs = ref([]), operationLogsLoading = ref(false), auditEnabled = ref(false)
 const quickCreate = ref(null)

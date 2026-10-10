@@ -48,7 +48,7 @@ function makeDraft() {
     valid_until: quote.valid_until || addDays(quoteDate, 30), status: quote.status || 'draft', currency: quote.currency || 'USD',
     exchange_rate: compactDecimalInput(quote.exchange_rate ?? defaultExchangeRate(quote.currency || 'USD')), shipping_fee: quote.shipping_fee || 0, discount: quote.discount || 0,
     recipient_name: quote.recipient_name || '', buyer_address: quote.buyer_address || '', buyer_email: quote.buyer_email || '', buyer_phone: quote.buyer_phone || '',
-    lead_time_days: quote.lead_time_days || 10, deposit_percent: Number(quote.deposit_ratio ?? 0.30) * 100,
+    lead_time_days: quote.lead_time_days ?? 10, deposit_percent: Number(quote.deposit_ratio ?? 0.30) * 100,
     revision_summary: '',
     trading_terms: quote.trading_terms || 'FOB Shenzhen', shipping_details: quote.shipping_details || '', notes: quote.notes || '',
     items: (quote.items || []).map(item => ({ ...fromTradeLine(item), sku: item.sku, quantity: item.trade_quantity ?? item.quantity, unit_price: item.trade_unit_price ?? item.unit_price, sales_model_snapshot: item.sales_model_snapshot ?? item.model ?? '', description: item.description || item.description_snapshot || '', notes: item.notes || '' })),
@@ -233,7 +233,7 @@ function payload() {
     customer: Number(draft.customer), quote_date: draft.quote_date, valid_until: draft.valid_until || null,
     currency: draft.currency, exchange_rate: draft.exchange_rate, shipping_fee: draft.shipping_fee || 0, discount: draft.discount || 0,
     recipient_name: draft.recipient_name, buyer_address: draft.buyer_address, buyer_email: draft.buyer_email, buyer_phone: draft.buyer_phone,
-    lead_time_days: draft.lead_time_days || null, deposit_ratio: Math.min(100, Math.max(0, Number(draft.deposit_percent || 0))) / 100,
+    lead_time_days: draft.lead_time_days === '' ? null : draft.lead_time_days ?? null, deposit_ratio: Math.min(100, Math.max(0, Number(draft.deposit_percent || 0))) / 100,
     trading_terms: draft.trading_terms, shipping_details: draft.shipping_details, notes: draft.notes,
     revision_summary: draft.revision_summary.trim(),
     items: draft.items.map(item => tradePayload({ ...item, sku: Number(item.sku) })),
@@ -305,7 +305,7 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) selectCus
             <div class="field"><label>报价日期 *</label><SegmentedDateInput :model-value="draft.quote_date" required @update:model-value="setQuoteDate" /></div><div class="field"><label>有效期</label><div class="lead-time-input"><input v-model="validityDays" type="number" min="0" step="1" placeholder="天数" aria-label="有效期天数" @input="setValidityDays" /><span>天</span><SegmentedDateInput :model-value="draft.valid_until" @update:model-value="setValidUntil" /></div></div>
             <div class="field"><label>状态</label><input value="草稿" readonly /></div>
             <div class="field"><label>币种</label><select :value="draft.currency" aria-label="单据币种" @change="changeCurrency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
-            <div class="field"><label>对人民币汇率</label><input v-model="draft.exchange_rate" :readonly="draft.currency === 'CNY'" aria-label="对人民币汇率" type="number" min="0" step="0.000001" /></div><div class="field"><label>交期（天）</label><input v-model="draft.lead_time_days" type="number" min="1" step="1" /></div>
+            <div class="field"><label>对人民币汇率</label><input v-model="draft.exchange_rate" :readonly="draft.currency === 'CNY'" aria-label="对人民币汇率" type="number" min="0" step="0.000001" /></div><div class="field"><label>交期（天）</label><input v-model="draft.lead_time_days" type="number" min="0" step="1" /></div>
             <div class="field"><label>定金比例（%）</label><input v-model="draft.deposit_percent" type="number" min="0" max="100" step="1" /></div>
 
             <div v-if="mode === 'revise'" class="field full revision-summary"><label>本次修改说明 *</label><textarea v-model="draft.revision_summary" required placeholder="例如：调整数量、价格、交期或付款条款" /><small>用于记录本次修订。</small></div>

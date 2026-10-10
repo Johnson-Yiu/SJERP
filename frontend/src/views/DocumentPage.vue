@@ -56,6 +56,7 @@ const form = reactive({})
 const activeSkuId = ref('')
 const sourceQuoteLoading = ref(false)
 let sourceQuoteRequest = 0
+let freshOrderDefaults = {}
 const eligibleSourceQuotes = computed(() => quotes.value.filter(q => ['draft', 'sent', 'accepted'].includes(q.status)))
 const routeActionOpen = ref(false)
 let routeActionVersion = 0
@@ -71,6 +72,7 @@ function fresh() {
   if (isOrder.value) {
     Object.assign(form, { quote: '', expected_ship_date: '' })
     orderLeadTimeDays.value = ''
+    freshOrderDefaults = Object.fromEntries(['order_date', 'expected_ship_date', 'currency', 'exchange_rate'].map(key => [key, form[key]]))
   }
   else form.valid_until = ''
 }
@@ -162,11 +164,14 @@ async function loadSourceQuote(value, { confirmOverwrite = true } = {}) {
   if (sourceQuoteLoading.value || (editingId.value && form.quote)) return
   if (!value) { form.quote = ''; notify('解除来源不会回滚已载入的订单内容。'); return }
   if (!eligibleSourceQuotes.value.some(q => Number(q.id) === Number(value))) return notify('请选择有效的来源报价。', true)
-  const hasContent = form.customer || form.items?.length || Number(form.shipping_fee) || Number(form.discount) || form.notes?.trim()
+  const changedDefaults = Object.keys(freshOrderDefaults).some(key => key === 'exchange_rate'
+    ? compactDecimalInput(form[key]) !== compactDecimalInput(freshOrderDefaults[key])
+    : form[key] !== freshOrderDefaults[key])
+  const hasContent = form.customer || form.items?.length || Number(form.shipping_fee) || Number(form.discount) || form.notes?.trim() || changedDefaults
   const request = ++sourceQuoteRequest
   sourceQuoteLoading.value = true
   try {
-    if (confirmOverwrite && hasContent && !await confirmDialog({ title: '从报价载入', message: '载入报价将覆盖当前订单草稿中的客户、商品、价格、币种及条款。是否继续？', confirmText: '载入报价' })) return
+    if (confirmOverwrite && hasContent && !await confirmDialog({ title: '从报价载入', message: '载入报价将覆盖当前订单草稿中的客户、商品、价格、日期、币种、汇率及条款。是否继续？', confirmText: '载入报价' })) return
     if (request !== sourceQuoteRequest) return
     const draft = (await api.get(`/quotes/${value}/order-draft/`)).data
     if (request !== sourceQuoteRequest) return

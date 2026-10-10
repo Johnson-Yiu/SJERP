@@ -73,3 +73,28 @@
 | R0A_10_direct_currency_mismatch.png | 补充，直接订单币种安全 |
 
 必需七张截图无缺失。R0-A 本轮未发现未解决的范围内问题；后续独立审查仍需完成。停止于 R0-A，不启动 R0-B/C/D，不声明全系统 UX-FROZEN。
+
+
+## Focused Repair — 2026-10-10
+
+基线：c36f6bae386176e36d9e9b6eb78a229ef46bbab4。仅修复独立复审的三个确认问题。
+
+- Quote lead_time_days 使用 ?? 默认10，输入允许0，保存 payload 保留0（空输入仍为null）。新增0/null/undefined修订初始化及保存测试。
+- Direct Order 比较 fresh() 保存的日期、预计交期、币种、汇率默认值，手工变更触发既有自定义确认。默认空白无需确认；汇率按 compactDecimalInput 比较。取消不发 order-draft 请求且不改变内容，确认才载入。
+- SkuPickerPanel 列表和详情显示 SKU 自身币种，如 USD 9.90、pcs / USD 9.90；缺失币种显示“币种未设置”。价格逻辑未改。价格不拆行，详情允许合理换行。
+
+新增 focused 测试11项；原 sales-safety 15项仍通过。完整 Frontend Vitest 39文件/415项、Node111项、独立排版1项均通过；Backend573项通过（本地SQLite跳过10个PostgreSQL专用测试）；Production build通过；Django check和makemigrations --check --dry-run通过。最终exact-head CI结果在交付回复报告。
+
+真实 Chrome 100% zoom 验收：新报价默认10天；通过UI新建专用0天报价SJ20261010DE002，创建SJ20261010DE002-1修订，初始化0天并保存。已保存修订转订单草稿显示0天，订单日期与预计交期均2026-10-10。再次打开原报价修订编辑器仍为0天，原报价未修改。仅创建专用报价及修订，未保存/确认订单。
+
+默认空白订单载入该报价无需确认。新空白订单手改日期至2026-10-11再载入弹出自定义确认，取消后日期仍为2026-10-11；再确认正确载入。另一次EUR/8.25/预计交期2026-10-15手工输入，载入取消后均保留。三个编辑入口SKU列表及详情USD9.90标签经截图人工检查，picker scrollWidth=clientWidth=919，无水平溢出。
+
+仅证据分支 ux-review-evidence，目录 ux-review/r0-a-sales-safety/focused-repair/，三张必需原始Chrome截图已完成（仅JPG转PNG，无裁剪或内容修改）：
+- R0A_FIX_01_zero_day_quote_revision.png
+- R0A_FIX_02_source_overwrite_date_confirm.png
+- R0A_FIX_03_sku_price_currency_label.png
+
+OPEN / deferred: Order reference cost currency semantics。
+OrderItem.cost_price 跨币种语义留待采购/财务/成本阶段统一设计；本轮未修改其值、业务逻辑或工作台显示。
+
+本轮三个修复无BLOCKED项。停止并等待独立ChatGPT复审，不进入R0-B。

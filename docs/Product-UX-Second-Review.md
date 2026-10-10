@@ -604,3 +604,29 @@ Evidence branch **`ux-review-evidence`**, screenshot-only commit **`2c585901f9e3
 ### Git and CI
 
 Source/test repair **`f936fda9d7276594dbe0edfe1b1f11ab3312c20d`**: [CI #182](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38013905993) **SUCCESS**; backend **SUCCESS**, backend-postgres **SUCCESS**, frontend **SUCCESS**. Normal commits/pushes only; no force push, reset or remote-history rewrite. Documentation-only final master SHA and its separate final CI are reported in the delivery response after push. Evidence remains exclusively on `ux-review-evidence`.
+
+## Second Review — Final Focused Repair: Order Item Columns
+
+2026-10-10; baseline `a8b0e4f97fa87528e4a1f65bf685e88314b501a7`. Only OrderDetailModal order-item presentation changed. Explicit column widths and a 1490px table minimum keep headers, quantities, units and currency amounts on one line. Long name/model/description/source text can wrap. Horizontal overflow is confined to the focusable order-item region, with keyboard scrolling; other workbench tables and QuoteDetailModal are unchanged. Chinese label reviewed: 订单明细表，左右滚动. No business data, backend, database, amount calculation, snapshot or lifecycle changes.
+
+Verification: related Vitest tests **46 PASS**; full frontend **37 files / 389 PASS**; Node **111 PASS**; drawer typography **1 PASS**; production build **PASS** (existing chunk-size advisory). Complete backend / PostgreSQL / frontend CI runs on the final master commit; exact SHA, run URL and results are recorded in the delivery response.
+
+Real Chrome, 100% zoom, existing completed Order37 and saved Quote47:
+
+| Viewport | Page client / scroll width | Order drawer client / scroll width | Order table container / content width | Result |
+| --- | --- | --- | --- | --- |
+| 1440 × 900 | 1425 / 1425 | 1080 / 1080 | 990 / 1490 | PASS |
+| 1280 × 800 | 1265 / 1265 | 1017 / 1017 | 927 / 1490 | PASS |
+
+All nine headers remain on one line. Numeric columns including base-quantity captions, units, prices and subtotal use nowrap. Entire order table is covered by separate full-viewport left/right captures at each viewport, including all three item rows and totals. No stitched or resized image is substituted. Quote item tables retain name/SKU and trade/base hierarchy at both sizes, with no page overflow. No data mutations performed. Original Chrome screenshots encoded to PNG without crop/scale; native bitmap sizes are 1425×891 / 1265×791.
+
+Evidence only on **ux-review-evidence**, folder **ux-review/second-review-final/focused-order-columns/**; not merged into master:
+
+- FOCUSED_01_order_items_1440_left.png — PASS / complete
+- FOCUSED_02_order_items_1440_right.png — PASS / complete
+- FOCUSED_03_quote_items_1440.png — PASS / complete
+- FOCUSED_04_order_items_1280_left.png — PASS / complete
+- FOCUSED_05_order_items_1280_right.png — PASS / complete
+- FOCUSED_06_quote_items_1280.png — PASS / complete
+
+No missing required evidence. This completes only the focused repair; independent review remains pending.

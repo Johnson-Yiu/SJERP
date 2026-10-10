@@ -558,3 +558,49 @@ Final complete local front-end suite after FR-008: **36 Vitest files / 370 tests
 Source repair HEAD **`3f1ad9df5c83b2070d72a2ac527d359a0f6a3899`**, [CI #178](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37964832222) **SUCCESS**, backend **SUCCESS**, backend-postgres **SUCCESS** (567 tests, PostgreSQL17), frontend **SUCCESS**. Earlier grouped repairs `944791cb147fbe02c7be402b303c10e37521bc80` also [CI #177](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/37962114927) SUCCESS. Final documentation-only master HEAD and its separate final CI run are reported in the delivery response after normal push; [master CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/workflows/ci.yml?query=branch%3Amaster).
 
 Master commits before final documentation: `3b6fb1c` initial defect record; `21e17ee` customer list; `5ee9d51` quote country guidance; `f5075ba` shared SKU presentation; `421a972` partial-shipment readiness; `c6a9594` reversal links/open detail refresh; `944791c` inventory route filter; `3f1ad9d` optional order date. Normal commit/push only. Evidence commit contains only screenshots; no evidence branch merge to master. Production source/tests/docs remain master.
+
+## Second Review — Final Polish
+
+2026-10-10. Baseline master `0e7d7c50cfe6ab096f7ad8100c44f9217ba12bf9` (CI #181 SUCCESS). Only the five confirmed P2 presentation findings were repaired. No backend production code, model, migration, inventory/accounting rule, permission or lifecycle value changed. Finance UX has not started. Overall Second Review acceptance and module freeze remain for the reviewer to decide.
+
+### Findings and repairs
+
+| Finding | Repair |
+| --- | --- |
+| Read-only trailing Decimal zeros | Quote overview exchange rate and Inventory Movement detail unit cost reuse `compactDecimalInput()`. `7.200000 → 7.2`, `3.0000 → 3`, `34.1250 → 34.125`; significant digits and `0.000001` remain exact. No rounding, source mutation or payload change. |
+| Duplicate draft lifecycle CTA | Order keeps header 确认订单; Purchase keeps header 确认下单. Current todo retains 订单待确认 / 采购单待确认 and the existing descriptions without another confirmation button. Procurement/shipment, receivable, receipt/payment and completion todo actions remain. APIs are unchanged. |
+| Completed fulfillment helper | Completed: 订单履约已完成。 Cancelled: 订单已取消，仅保留历史履约记录。 Active confirmed/production orders show 采购草稿不计入已采购。 only with a positive existing draftable quantity. Calculations are unchanged. |
+| Item secondary hierarchy | Quote and Order item tables use component-local `.items-table td small` blocks, 3px gap, existing muted token and 1.4 line height. Name precedes SKU; trade quantity precedes 基础数量：4.00 pcs. Quantities, units, snapshots, prices and totals are unchanged. Other fulfillment table styles are unaffected. |
+| Saved PI caption | `QuotePreviewModal.saved` defaults to false. Editor retains 当前未保存内容 · 关闭后可继续编辑; saved workbench preview passes `saved` and displays 已保存报价预览. Historical PI data, version selection, calculations, PDF printing and Excel export remain unchanged. |
+
+Customer contact-stage observation: **DEFERRED**. Original contacted-stage screenshot is not reproducible after the UAT customer's lifecycle advanced. No lifecycle label/value was guessed or changed. Touched helper/caption strings received human language review; formal business terminology is preserved.
+
+### Automated verification
+
+- `frontend/tests/final-polish.spec.js`: **19 focused tests PASS**, covering all 18 requested minimum assertions plus cancelled/active helpers, retained actions, editor input preservation and unchanged PI/export behavior.
+- Full frontend: **37 Vitest files / 389 tests PASS**; Node **111 PASS**; drawer typography **1 PASS**.
+- Production build **PASS** (existing >500kB chunk advisory).
+- Backend: **567 tests OK, 10 skipped** locally; Django check clean; migration drift **No changes detected**. No backend files changed.
+
+### Real Chrome UAT and evidence
+
+All eight captures **PASS / complete**, none missing. Existing saved records: Quote47 SJ20261009DE001-1; Movement96 GR-3C3C072DBBE34D81; draft Order5; draft Purchase4; completed Order37. Cancelled Order38 and unsaved editor preview were also checked. Temporary editor closed without saving; no business-data mutation performed.
+
+Rendered DOM viewport: **1440 × 900**, DPR **1**, zoom **100%**. Chrome returns its original bitmap at **1425 × 891** in this environment. Captures were preserved without cropping, scaling or content editing; browser JPEGs encoded as PNG for the required filenames. Visual checks confirmed compact decimals, one draft confirmation CTA, retained todo information, state-aware helper, separated item text and saved PI caption. No new clipping or excessive row height observed.
+
+Evidence branch **`ux-review-evidence`**, screenshot-only commit **`2c585901f9e3b7f245dc966940ef70fbd2bba237`**. Not merged into master. Folder **`ux-review/second-review-final/final-polish/`**.
+
+| Required screenshot | Status |
+| --- | --- |
+| POLISH_01_quote_overview_decimal.png | PASS / complete |
+| POLISH_02_ledger_unit_cost.png | PASS / complete |
+| POLISH_03_order_draft_single_confirm.png | PASS / complete |
+| POLISH_04_purchase_draft_single_confirm.png | PASS / complete |
+| POLISH_05_completed_fulfillment_copy.png | PASS / complete |
+| POLISH_06_quote_items_spacing.png | PASS / complete |
+| POLISH_07_saved_pi_caption.png | PASS / complete |
+| POLISH_08_order_items_spacing.png | PASS / complete |
+
+### Git and CI
+
+Source/test repair **`f936fda9d7276594dbe0edfe1b1f11ab3312c20d`**: [CI #182](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38013905993) **SUCCESS**; backend **SUCCESS**, backend-postgres **SUCCESS**, frontend **SUCCESS**. Normal commits/pushes only; no force push, reset or remote-history rewrite. Documentation-only final master SHA and its separate final CI are reported in the delivery response after push. Evidence remains exclusively on `ux-review-evidence`.

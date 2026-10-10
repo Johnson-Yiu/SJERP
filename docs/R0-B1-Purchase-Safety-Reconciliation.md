@@ -27,6 +27,7 @@
 - Production build PASS，既有chunk体积提示。
 - Django check / makemigrations --check --dry-run PASS，无迁移。
 - 最终exact-head三个CI作业及Actions链接在交付回复报告，不以旧提交结果替代。
+- 首次PostgreSQL CI发现新增测试供应商编码超出模型两位限制；已将隔离测试夹具改为RB，未修改模型或业务数据，重新执行最终提交CI。
 
 ## 真实Chrome UAT
 

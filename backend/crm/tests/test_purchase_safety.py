@@ -7,7 +7,7 @@ from crm.models import Product, SKU, Supplier, PurchaseOrder, Transaction
 class PurchaseSafetyTests(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.supplier = Supplier.objects.create(code="R0B1", name="R0B1 UAT Supplier")
+        self.supplier = Supplier.objects.create(code="RB", name="R0B1 UAT Supplier")
         self.sku = SKU.objects.create(sku="R0B1", product=Product.objects.create(code="R0B1", name="Safety sample"))
 
     def payload(self, currency="USD", rate="7"):

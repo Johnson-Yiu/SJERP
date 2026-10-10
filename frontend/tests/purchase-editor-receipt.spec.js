@@ -5,6 +5,7 @@ import { createRouter, createMemoryHistory } from 'vue-router'
 import PurchaseOrderPage from '../src/views/PurchaseOrderPage.vue'
 import PurchaseSupplierPicker from '../src/components/PurchaseSupplierPicker.vue'
 import SkuPickerPanel from '../src/components/SkuPickerPanel.vue'
+import { dialogState, resolveDialog } from '../src/dialogs'
 const mocks = vi.hoisted(() => ({ api: { get: vi.fn(), post: vi.fn(), put: vi.fn() }, listAll: vi.fn() }))
 vi.mock('../src/api', () => ({ api: mocks.api, listAll: mocks.listAll, listData: response => response.data }))
 const units = [{id:1,name:'10 米卷',unit:'卷',base_unit:'m',factor:'10',active:true,is_default:true,allow_fraction:false},{id:2,name:'20 米卷',unit:'卷',base_unit:'m',factor:'20',active:true,allow_fraction:false}]
@@ -91,6 +92,8 @@ describe('Purchase Phase B draft editor',()=>{
   await click('查找其他供应商')
   expect(wrapper.getComponent(PurchaseSupplierPicker).props('sku')).toEqual(sku)
   wrapper.getComponent(PurchaseSupplierPicker).vm.$emit('selected',{supplier:10,supplier_sku:''});await flushPromises()
+  expect(dialogState.current.message).toContain('更换供应商将清除')
+  resolveDialog(true);await flushPromises()
   expect(wrapper.get('[aria-label="供应商"]').element.value).toBe('10')
   expect(wrapper.get('.purchase-line').text()).toContain('未维护供应商供货档案，本次采购仍可继续。')
  })

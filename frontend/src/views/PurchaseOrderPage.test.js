@@ -81,9 +81,9 @@ test('purchase price reference only carries across matching currencies and reset
 
   assert.match(source, /source\.currency !== draft\.value\.currency/)
   assert.match(source, /item\.unit_price = ''/)
-  assert.match(source, /function onCurrencyChanged\(\)/)
-  assert.match(source, /draft\.value\.items\.forEach\(item => \{ item\.unit_price = '';/)
-  assert.match(source, /function onSupplierChanged\(\)/)
+  assert.match(source, /切换采购币种将清除当前采购价格。原价格不会自动换汇/)
+  assert.match(source, /await confirmDialog/)
+  assert.match(source, /更换供应商将清除当前商品的供应商来源/)
   assert.match(source, /supplierPriceWarning\(item\)/)
   assert.match(source, /参考价未自动带入，请填写本次实际采购单价/)
   assert.match(source, /source\.purchase_price \}\} \{\{ source\.currency/)

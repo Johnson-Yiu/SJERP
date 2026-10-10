@@ -73,9 +73,21 @@ const lineAmount = item => Number(item.quantity || 0) * Number(item.unit_price |
 const itemSku = item => skus.value.find(sku => Number(sku.id) === Number(item.sku))
 const itemBaseUnit = item => item.trade_snapshot?.base_unit || itemSku(item)?.unit || ''
 const currencies = [['CNY', '人民币'], ['USD', '美元'], ['EUR', '欧元'], ['GBP', '英镑'], ['HKD', '港币'], ['JPY', '日元'], ['AUD', '澳元'], ['CAD', '加元'], ['SGD', '新加坡元']]
-function onCurrencyChanged() {
-  draft.value.exchange_rate = draft.value.currency === 'CNY' ? '1' : ''
-  draft.value.items.forEach(item => { item.unit_price = ''; applySupplierSkuPrice(item) })
+const draftChanging = ref(false)
+const hasPrice = item => item.unit_price !== '' && item.unit_price != null
+async function onCurrencyChanged(event) {
+  const currency = event.target.value
+  event.target.value = draft.value.currency
+  if (draftChanging.value || currency === draft.value.currency) return
+  const current = draft.value
+  draftChanging.value = true
+  try {
+    if (current.items.some(hasPrice) && !await confirmDialog({ title: '切换采购币种', message: '切换采购币种将清除当前采购价格。原价格不会自动换汇。是否继续？', confirmText: '继续切换' })) return
+    if (draft.value !== current) return
+    current.currency = currency
+    current.exchange_rate = currency === 'CNY' ? '1' : ''
+    current.items.forEach(item => { item.unit_price = ''; applySupplierSkuPrice(item) })
+  } finally { event.target.value = draft.value.currency; draftChanging.value = false }
 }
 async function paymentSaved() { paymentTarget.value = null; notice.value = '供应商付款已记录为支出流水。'; await load() }
 const receiptTarget = ref(null), receiptSaving = ref(false)
@@ -217,10 +229,9 @@ const matchingItem = ref(null)
 async function matchedSupplier(selection) {
   const item = matchingItem.value
   if (!item) return
-  if (Number(draft.value.supplier) !== selection.supplier) {
-    draft.value.supplier = selection.supplier
-    draft.value.items.forEach(resetSupplierLine)
-    await Promise.all(draft.value.items.map(loadSupplierSkuOptions))
+  if (Number(draft.value.supplier) !== Number(selection.supplier)) {
+    matchingItem.value = null
+    if (!await changeSupplier(selection.supplier)) { matchingItem.value = item; return }
   } else await loadSupplierSkuOptions(item)
   item.supplier_sku = selection.supplier_sku
   applySupplierSkuPrice(item)
@@ -242,7 +253,26 @@ async function loadSupplierSkuOptions(item) {
   } catch (err) { error.value = message(err, '供应商 SKU 来源加载失败。') }
 }
 function resetSupplierLine(item) { item.supplier_sku = ''; item.unit_price = ''; item.trade_unit = null; item.trade_snapshot = {} }
-function onSupplierChanged() { draft.value.items.forEach(item => { resetSupplierLine(item); void loadSupplierSkuOptions(item) }) }
+async function changeSupplier(supplier) {
+  if (draftChanging.value) return false
+  if (String(supplier) === String(draft.value.supplier)) return true
+  const current = draft.value
+  draftChanging.value = true
+  try {
+    if (current.items.some(item => item.supplier_sku || hasPrice(item) || item.trade_unit) && !await confirmDialog({ title: '更换供应商', message: '更换供应商将清除当前商品的供应商来源、采购价格和供应商专属交易规格。是否继续？', confirmText: '更换供应商' })) return false
+    if (draft.value !== current) return false
+    current.supplier = supplier
+    current.items.forEach(resetSupplierLine)
+    await Promise.all(current.items.map(loadSupplierSkuOptions))
+    return true
+  } finally { draftChanging.value = false }
+}
+async function onSupplierChanged(event) {
+  const supplier = event.target.value
+  event.target.value = draft.value.supplier
+  await changeSupplier(supplier)
+  event.target.value = draft.value.supplier
+}
 function supplierPriceWarning(item) {
   const source = supplierSourcesFor(item).find(row => Number(row.id) === Number(item.supplier_sku))
   return source && source.currency !== draft.value.currency
@@ -271,8 +301,8 @@ function syncSelectedSkus(ids) {
   })
   if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
 }
-async function createPurchase() { if (saving.value) return; if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
-async function place(row) { if (!await confirmDialog({ title: '确认采购下单', message: '确认下单后将生成应付计划并进入在途采购。是否继续？', confirmText: '确认下单', danger: true })) return; try { await api.post(`/purchase-orders/${row.id}/place/`); notice.value = '采购单已确认下单。'; await load() } catch (err) { error.value = message(err, '确认下单失败。') } }
+async function createPurchase() { if (saving.value || draftChanging.value) return; if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
+async function place(row) { const zeroCount = (row.items || []).filter(item => Number(item.unit_price) === 0).length; if (!await confirmDialog({ title: '确认采购下单', message: `${zeroCount ? `当前采购单存在 ${zeroCount} 条 0 单价商品，请确认这是赠品、样品或其他合理的零价采购。\n` : ''}确认下单后将生成应付计划并进入在途采购。是否继续？`, confirmText: '确认下单', danger: true })) return; try { await api.post(`/purchase-orders/${row.id}/place/`); notice.value = '采购单已确认下单。'; await load() } catch (err) { error.value = message(err, '确认下单失败。') } }
 async function cancelPurchase(row) { const reason = await inputDialog({ title: '取消采购', message: `请填写取消采购单 ${row.purchase_no} 的原因。`, label: '取消原因', placeholder: '请输入取消原因', required: true, maxLength: 500, confirmText: '确认取消', danger: true }); if (!reason) return; try { await api.post(`/purchase-orders/${row.id}/cancel/`, { reason }); notice.value = '采购单已取消。'; await load() } catch (err) { error.value = message(err, '取消采购失败。') } }
 async function deleteDraft(row) { if (!await confirmDialog({ title: '确认删除采购草稿', message: `确定删除草稿 ${row.purchase_no} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/purchase-orders/${row.id}/`); notice.value = '采购草稿已删除。'; if (Number(route.query.detail) === row.id) await closeDetail(); await load() } catch (err) { error.value = message(err, '删除采购草稿失败。') } }
 function pay(row) { paymentTarget.value = row }
@@ -334,11 +364,11 @@ watch(() => route.query.detail, id => {
           <section class="draft-section">
             <div class="draft-section-heading"><h4>采购基本信息</h4><label class="purchase-identity">采购单号<input :value="draft.purchase_no || '保存后由系统自动生成'" class="readonly-input" readonly /></label></div>
             <div class="form-grid">
-              <label>供应商 * <span v-if="inheritedSupplier" class="inherited-badge">由订单履约带入</span><select v-model="draft.supplier" aria-label="供应商" required :disabled="inheritedSupplier" @change="onSupplierChanged"><option value="">选择供应商</option><option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.id">{{ supplier.name }}</option></select><small>整张采购单使用同一供应商。</small></label>
+              <label>供应商 * <span v-if="inheritedSupplier" class="inherited-badge">由订单履约带入</span><select :value="draft.supplier" aria-label="供应商" required :disabled="inheritedSupplier" @change="onSupplierChanged"><option value="">选择供应商</option><option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.id">{{ supplier.name }}</option></select><small>整张采购单使用同一供应商。</small></label>
               <label>来源销售订单（可选）<select v-model="draft.order" aria-label="来源销售订单（可选）" :disabled="inheritedOrder"><option value="">不关联订单</option><option v-for="order in orders.filter(row => row.status !== 'cancelled')" :key="order.id" :value="order.id">{{ order.order_no }} · {{ order.customer_name }}</option></select><small>主要来源订单；多订单归属在成本分配中处理。</small></label>
               <label>下单日期 *<input v-model="draft.order_date" type="date" required /></label>
               <label>预计到货<input v-model="draft.expected_arrival_date" type="date" /></label>
-              <label>币种 *<select v-model="draft.currency" required @change="onCurrencyChanged"><option v-for="[code, name] in currencies" :key="code" :value="code">{{ code }} · {{ name }}</option></select></label>
+              <label>币种 *<select :value="draft.currency" aria-label="采购币种" required @change="onCurrencyChanged"><option v-for="[code, name] in currencies" :key="code" :value="code">{{ code }} · {{ name }}</option></select></label>
               <label v-if="draft.currency !== 'CNY'">对人民币汇率 *<input v-model="draft.exchange_rate" type="number" min="0.000001" step="0.000001" placeholder="1 单位外币兑换人民币金额" required /></label>
             </div>
           </section>
@@ -365,7 +395,7 @@ watch(() => route.query.detail, id => {
           </section>
           <section class="purchase-total-summary"><h4>采购金额汇总</h4><div><span>商品项数 <b>{{ draft.items.length }}</b></span><span>币种 <b>{{ draft.currency }}</b></span><span>商品金额 <strong>{{ draft.currency }} {{ money(draftAmount) }}</strong></span></div></section>
           <p v-if="error" class="form-error" role="alert">{{ error }}</p>
-          <div class="editor-actions"><small>草稿保存不会生成应付或在途采购；确认下单后才进入正式采购流程。</small><div><button type="button" class="btn btn-secondary" @click="closeCreate">取消</button><button class="btn btn-primary" :disabled="saving"><Save :size="16" /> {{ saving ? '保存中…' : (editingPurchaseId ? '保存采购草稿' : '创建采购单') }}</button></div></div>
+          <div class="editor-actions"><small>草稿保存不会生成应付或在途采购；确认下单后才进入正式采购流程。</small><div><button type="button" class="btn btn-secondary" @click="closeCreate">取消</button><button class="btn btn-primary" :disabled="saving || draftChanging"><Save :size="16" /> {{ saving ? '保存中…' : (editingPurchaseId ? '保存采购草稿' : '创建采购单') }}</button></div></div>
         </form>
       </section>
     </div>

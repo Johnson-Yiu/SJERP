@@ -53,3 +53,26 @@ it('defaults new purchases to CNY and asks for a rate for foreign currency', asy
   expect(wrapper.find('.form-grid input[type="number"]').attributes('required')).toBeDefined()
   wrapper.unmount()
 })
+
+it('foreign payment uses the entered actual rate without changing the purchase contract', async () => {
+  const wrapper = mount(PurchasePaymentModal, { props: { purchase } })
+  expect(wrapper.get('[aria-label="本次实际汇率"]').element.value).toBe('7')
+  await wrapper.find('input[type="number"]').setValue('10')
+  await wrapper.get('[aria-label="本次实际汇率"]').setValue('7.45')
+  await wrapper.get('form').trigger('submit'); await flushPromises()
+  expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/pay/', expect.objectContaining({ exchange_rate: 7.45 }))
+  expect(purchase.exchange_rate).toBe('7'); wrapper.unmount()
+})
+it('CNY actual payment rate is readonly 1 regardless of historical contract input', async () => {
+  const wrapper = mount(PurchasePaymentModal, { props: { purchase: { ...purchase, currency: 'CNY', exchange_rate: '7' } } })
+  expect(wrapper.get('[aria-label="本次实际汇率"]').element.value).toBe('1')
+  expect(wrapper.get('[aria-label="本次实际汇率"]').attributes('readonly')).toBeDefined()
+  await wrapper.find('input[type="number"]').setValue('10'); await wrapper.get('form').trigger('submit'); await flushPromises()
+  expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/pay/', expect.objectContaining({ currency: 'CNY', exchange_rate: 1 })); wrapper.unmount()
+})
+it.each(['0', '-1', ''])('rejects an invalid actual payment rate (%s)', async rate => {
+  const wrapper = mount(PurchasePaymentModal, { props: { purchase } })
+  await wrapper.find('input[type="number"]').setValue('10'); await wrapper.get('[aria-label="本次实际汇率"]').setValue(rate)
+  await wrapper.get('form').trigger('submit'); await flushPromises()
+  expect(mocks.post).not.toHaveBeenCalled(); expect(wrapper.get('[role="alert"]').text()).toContain('实际汇率必须大于 0'); wrapper.unmount()
+})

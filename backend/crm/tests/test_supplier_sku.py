@@ -87,7 +87,7 @@ class SupplierSKUApiTests(TestCase):
         source = self.create_source()
         response = self.client.post(
             "/api/purchase-orders/",
-            {
+            {"exchange_rate": "1",
                 "supplier": self.supplier_a.id,
                 "order": self.order.id,
                 "order_date": "2026-08-23",
@@ -123,7 +123,7 @@ class SupplierSKUApiTests(TestCase):
         source = self.create_source()
         response = self.client.post(
             "/api/purchase-orders/",
-            {
+            {"exchange_rate": "1",
                 "purchase_no": "PO-SUPPLIER-MISMATCH",
                 "supplier": self.supplier_b.id,
                 "order": self.order.id,
@@ -136,7 +136,7 @@ class SupplierSKUApiTests(TestCase):
 
     def test_create_and_draft_update_resolve_the_same_unique_source(self):
         source = self.create_source()
-        created = self.client.post("/api/purchase-orders/", {
+        created = self.client.post("/api/purchase-orders/", {"exchange_rate": "1",
             "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
             "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
         }, format="json")
@@ -161,7 +161,7 @@ class SupplierSKUApiTests(TestCase):
         second = self.create_source(supplier_sku_code="A-TWO")
         self.order.items.create(sku=self.sku, supplier_sku=first, quantity="1", unit_price="1")
         self.order.items.create(sku=self.sku, supplier_sku=second, quantity="1", unit_price="1")
-        response = self.client.post("/api/purchase-orders/", {
+        response = self.client.post("/api/purchase-orders/", {"exchange_rate": "1",
             "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
             "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
         }, format="json")
@@ -169,7 +169,7 @@ class SupplierSKUApiTests(TestCase):
         self.assertIn("多个采购来源", str(response.data))
 
         self.order.items.filter(supplier_sku=second).delete()
-        response = self.client.post("/api/purchase-orders/", {
+        response = self.client.post("/api/purchase-orders/", {"exchange_rate": "1",
             "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
             "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
         }, format="json")
@@ -182,7 +182,7 @@ class SupplierSKUApiTests(TestCase):
         self.order.items.create(sku=self.sku, supplier_sku=first, quantity="1", unit_price="1")
         first.is_active = False
         first.save(update_fields=["is_active"])
-        response = self.client.post("/api/purchase-orders/", {
+        response = self.client.post("/api/purchase-orders/", {"exchange_rate": "1",
             "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
             "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
         }, format="json")
@@ -192,7 +192,7 @@ class SupplierSKUApiTests(TestCase):
         self.assertEqual(SupplierSKU.objects.filter(supplier=self.supplier_a, sku=self.sku).count(), 2)
 
         self.order.items.all().delete()
-        response = self.client.post("/api/purchase-orders/", {
+        response = self.client.post("/api/purchase-orders/", {"exchange_rate": "1",
             "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
             "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
         }, format="json")
@@ -204,7 +204,7 @@ class SupplierSKUApiTests(TestCase):
         self.order.items.create(sku=self.sku, supplier_sku=source, quantity="1", unit_price="1")
         source.is_active = False
         source.save(update_fields=["is_active"])
-        response = self.client.post("/api/purchase-orders/", {
+        response = self.client.post("/api/purchase-orders/", {"exchange_rate": "1",
             "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
             "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
         }, format="json")
@@ -219,7 +219,7 @@ class SupplierSKUApiTests(TestCase):
         self.order.items.create(sku=self.sku, supplier_sku=active, quantity="1", unit_price="1")
         inactive.is_active = False
         inactive.save(update_fields=["is_active"])
-        base_payload = {
+        base_payload = {"exchange_rate": "1",
             "supplier": self.supplier_a.id, "order": self.order.id, "order_date": "2026-08-23",
             "currency": "USD", "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
         }
@@ -256,7 +256,7 @@ class SupplierSKUApiTests(TestCase):
 
     def test_draft_supplier_change_snapshots_target_supplier_without_source(self):
         initial_source_count = SupplierSKU.objects.count()
-        created = self.client.post("/api/purchase-orders/", {
+        created = self.client.post("/api/purchase-orders/", {"exchange_rate": "1",
             "supplier": self.supplier_a.id,
             "order_date": "2026-08-23",
             "currency": "USD",
@@ -290,7 +290,7 @@ class SupplierSKUApiTests(TestCase):
     def test_multiple_active_manual_sources_require_explicit_selection(self):
         first = self.create_source(supplier_sku_code="A-MANUAL-1")
         preferred = self.create_source(supplier_sku_code="A-MANUAL-2", is_preferred=True)
-        payload = {
+        payload = {"exchange_rate": "1",
             "supplier": self.supplier_a.id, "order_date": "2026-08-23", "currency": "USD",
             "items": [{"sku": self.sku.id, "quantity": "1", "unit_price": "3"}],
         }
@@ -311,7 +311,7 @@ class SupplierSKUApiTests(TestCase):
     def test_draft_supplier_change_requires_items_and_draft_rejects_inactive_source(self):
         source_a = self.create_source()
         source_b = self.create_source(self.supplier_b, supplier_sku_code="B-24V")
-        draft = self.client.post("/api/purchase-orders/", {
+        draft = self.client.post("/api/purchase-orders/", {"exchange_rate": "1",
             "supplier": self.supplier_a.id, "order_date": "2026-08-23", "currency": "USD",
             "items": [{"sku": self.sku.id, "supplier_sku": source_a.id, "quantity": "1", "unit_price": "3"}],
         }, format="json")
@@ -330,7 +330,7 @@ class SupplierSKUApiTests(TestCase):
         source = self.create_source()
         source.is_active = False
         source.save(update_fields=["is_active"])
-        rejected = self.client.post("/api/purchase-orders/", {
+        rejected = self.client.post("/api/purchase-orders/", {"exchange_rate": "1",
             "supplier": self.supplier_a.id, "order_date": "2026-08-23", "currency": "USD",
             "items": [{"sku": self.sku.id, "supplier_sku": source.id, "quantity": "1", "unit_price": "3"}],
         }, format="json")
@@ -338,7 +338,7 @@ class SupplierSKUApiTests(TestCase):
 
         source.is_active = True
         source.save(update_fields=["is_active"])
-        created = self.client.post("/api/purchase-orders/", {
+        created = self.client.post("/api/purchase-orders/", {"exchange_rate": "1",
             "supplier": self.supplier_a.id, "order_date": "2026-08-23", "currency": "USD",
             "items": [{"sku": self.sku.id, "supplier_sku": source.id, "quantity": "1", "unit_price": "3"}],
         }, format="json")

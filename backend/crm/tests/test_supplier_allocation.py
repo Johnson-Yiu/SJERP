@@ -69,7 +69,7 @@ class SupplierAllocationApiTests(TestCase):
 
         purchase = self.client.post(
             "/api/purchase-orders/",
-            {
+            {"exchange_rate": "1",
                 "supplier": self.supplier_a.pk,
                 "order": self.order.pk,
                 "order_date": "2026-09-16",

@@ -602,7 +602,7 @@ class TradeFinanceUpgradeTests(TestCase):
         self.assertEqual(response.status_code, 400, response.data)
 
     def test_draft_contract_does_not_create_financial_obligations(self):
-        response = self.client.post("/api/purchase-orders/", {"supplier": self.supplier.pk, "order_date": self.day.isoformat(), "status": "draft", "items": [{"sku": self.sku.pk, "quantity": "2", "unit_price": "3"}]}, format="json")
+        response = self.client.post("/api/purchase-orders/", {"exchange_rate": "1", "supplier": self.supplier.pk, "order_date": self.day.isoformat(), "status": "draft", "items": [{"sku": self.sku.pk, "quantity": "2", "unit_price": "3"}]}, format="json")
         self.assertEqual(response.status_code, 201, response.data)
         self.assertFalse(PaymentPlan.objects.filter(purchase_order_id=response.data["id"]).exists())
         response = self.client.post(f"/api/purchase-orders/{response.data['id']}/place/", {}, format="json")

@@ -5,7 +5,7 @@ import { api } from '../api'
 const props = defineProps({ purchase: Object })
 const emit = defineEmits(['close', 'saved'])
 const saving = ref(false), error = ref('')
-const form = ref({ transaction_date: new Date().toLocaleDateString('en-CA'), amount: '', payment_method: '', reference: '', notes: '' })
+const form = ref({ transaction_date: new Date().toLocaleDateString('en-CA'), amount: '', payment_method: '', reference: '', notes: '', exchange_rate: props.purchase.currency === 'CNY' ? '1' : props.purchase.exchange_rate })
 const money = value => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 async function submit() {
   if (saving.value) return
@@ -13,9 +13,10 @@ async function submit() {
   if (!Number.isFinite(Number(form.value.amount)) || Number(form.value.amount) <= 0 || Number(form.value.amount) > Number(props.purchase.unpaid_amount)) {
     error.value = '付款金额须大于零，且不能超过当前未付金额。'; return
   }
+  if (!Number.isFinite(Number(form.value.exchange_rate)) || Number(form.value.exchange_rate) <= 0) { error.value = '本次实际汇率必须大于 0。'; return }
   saving.value = true
   try {
-    await api.post(`/purchase-orders/${props.purchase.id}/pay/`, { ...form.value, currency: props.purchase.currency, exchange_rate: props.purchase.exchange_rate })
+    await api.post(`/purchase-orders/${props.purchase.id}/pay/`, { ...form.value, currency: props.purchase.currency, exchange_rate: props.purchase.currency === 'CNY' ? 1 : form.value.exchange_rate })
     emit('saved')
   } catch (e) {
     const data = e.response?.data
@@ -31,7 +32,7 @@ async function submit() {
       <div class="payment-balance"><span>当前未付金额</span><strong>{{ purchase.currency }} {{ money(purchase.unpaid_amount) }}</strong><small>已付 {{ purchase.currency }} {{ money(purchase.paid_amount) }}</small></div>
       <form @submit.prevent="submit">
         <fieldset :disabled="saving">
-          <div class="payment-grid"><label>本次付款金额（{{ purchase.currency }}） *<input v-model="form.amount" type="number" min="0.01" :max="purchase.unpaid_amount" step="0.01" placeholder="请输入付款金额" required autofocus /></label><label>付款日期 *<input v-model="form.transaction_date" type="date" required /></label><label>付款方式<select v-model="form.payment_method"><option value="">请选择（可选）</option><option>银行转账</option><option>支付宝</option><option>微信支付</option><option>现金</option><option>其他</option></select></label><label>凭证 / 参考号<input v-model="form.reference" maxlength="100" placeholder="填写转账流水号（可选）" /></label></div>
+          <div class="payment-grid"><label>本次付款金额（{{ purchase.currency }}） *<input v-model="form.amount" type="number" min="0.01" :max="purchase.unpaid_amount" step="0.01" placeholder="请输入付款金额" required autofocus /></label><label>付款日期 *<input v-model="form.transaction_date" type="date" required /></label><label>本次实际汇率 *<input v-model="form.exchange_rate" aria-label="本次实际汇率" :readonly="purchase.currency === 'CNY'" type="number" min="0.000001" step="0.000001" required /></label><label>付款方式<select v-model="form.payment_method"><option value="">请选择（可选）</option><option>银行转账</option><option>支付宝</option><option>微信支付</option><option>现金</option><option>其他</option></select></label><label>凭证 / 参考号<input v-model="form.reference" maxlength="100" placeholder="填写转账流水号（可选）" /></label></div>
           <label class="payment-notes">备注<textarea v-model="form.notes" rows="2" placeholder="补充本次付款说明（可选）" /></label>
         </fieldset>
         <p v-if="error" class="payment-error" role="alert">{{ error }}</p>

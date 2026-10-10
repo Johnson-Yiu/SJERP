@@ -395,6 +395,12 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         if "purchase_no" in self.initial_data:
             raise serializers.ValidationError({"purchase_no": "采购单号由系统自动生成，不能手工指定。"})
         validate_contract_edit(self.instance, attrs, purchase=True)
+        currency = attrs.get("currency", getattr(self.instance, "currency", None))
+        rate = attrs.get("exchange_rate", getattr(self.instance, "exchange_rate", None))
+        if rate is None or rate <= 0:
+            raise serializers.ValidationError({"exchange_rate": "请输入大于 0 的采购单对人民币汇率。"})
+        if currency == "CNY" and rate != Decimal("1"):
+            raise serializers.ValidationError({"exchange_rate": "人民币采购单的对人民币汇率必须为 1。"})
         supplier = attrs.get("supplier", getattr(self.instance, "supplier", None))
         unit_rows = attrs.get("items")
         if (

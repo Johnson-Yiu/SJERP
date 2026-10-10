@@ -1,8 +1,8 @@
 export const resourceConfigs = {
   suppliers: {
     title: '供应商管理', eyebrow: 'Supplier directory', endpoint: 'suppliers', key: 'name',
-    description: '维护采购供应商、二字代码、主要产品、联系人与付款条款。',
-    columns: [['name', '供应商'], ['code', '二字代码', 'tag'], ['country', '国家/地区'], ['main_products', '主要产品'], ['supply_category_names', '可供分类', 'labels'], ['contact_name', '联系人'], ['phone', '电话'], ['email', '邮箱'], ['store_url', '店铺链接'], ['payment_terms', '付款条款']],
+    description: '维护供应商资料、付款条款备注与系统执行规则。',
+    columns: [['name', '供应商'], ['code', '二字代码', 'tag'], ['country', '国家/地区'], ['main_products', '主要产品'], ['supply_category_names', '可供分类', 'labels'], ['contact_name', '联系人'], ['phone', '电话'], ['email', '邮箱'], ['store_url', '店铺链接'], ['payment_terms', '付款条款说明（备注）'], ['payment_terms_summary', '系统执行付款规则']],
     fields: [['name', '供应商名称', 'text', true], ['code', '二字代码', 'text', true], ['country', '国家/地区'], ['main_products', '主要产品'], ['contact_name', '联系人'], ['phone', '电话'], ['email', '邮箱', 'email'], ['store_url', '店铺链接', 'url'], ['payment_terms', '付款条款说明（备注）'], ['payment_terms_config', '系统执行付款规则', 'payment_terms'], ['supply_categories', '可供产品分类', 'remote_multi', true, 'categories/tree', 'name'], ['notes', '备注', 'textarea']],
     detail: true,
   },

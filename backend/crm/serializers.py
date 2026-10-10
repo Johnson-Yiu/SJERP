@@ -14,6 +14,7 @@ from rest_framework import serializers
 
 from .models import ShipmentItem
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
+from .supplier_display import payment_terms_summary
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .document_numbers import allocate_order_no, allocate_purchase_no
 from .quote_snapshots import create_quote_items
@@ -96,6 +97,11 @@ class PositionSerializer(serializers.ModelSerializer):
 
 
 class SupplierSerializer(serializers.ModelSerializer):
+    payment_terms_summary = serializers.SerializerMethodField()
+
+    def get_payment_terms_summary(self, obj):
+        return payment_terms_summary(obj.payment_terms_config)
+
     def validate_payment_terms_config(self, value):
         from .payment_terms import validate_payment_terms
         try:

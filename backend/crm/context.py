@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import Contact, Customer, FollowUp, InventoryMovement, Order, OrderItem, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
+from .supplier_display import payment_terms_summary
 from .querysets import prefetch_purchase_related_orders
 from .serializers import ContactSerializer, CustomerSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, QuoteSerializer, SKUSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer
 
@@ -131,7 +132,7 @@ def _product_context(pk, include_inactive=False):
         sales_periods.append({"id": label, "period": label, "order_count": aggregate["order_count"], "quantity": aggregate["sold_quantity"] or 0, "sales": aggregate["sales"] or Decimal("0")})
     stock = sum(Decimal(row["stock_quantity"]) for row in skus)
     return {"entity": "products", "title": obj.name, "subtitle": f"{obj.code} · {obj.category.name if obj.category else '未分类'}", "badge": obj.get_status_display(), "info": [["产品编号", obj.code], ["英文名称", obj.name_en or "—"], ["HS 编码", obj.hs_code.code if obj.hs_code else "—"], ["分类", obj.category.name if obj.category else "未分类"], ["描述", obj.description or "—"]], "metrics": [["SKU", len(skus), "number"], ["供应商", len(suppliers), "number"], ["当前库存", stock, "number"], ["参数", len(params), "number"]], "sections": [
-        _section("suppliers", "供应商", "suppliers", [["name", "供应商"], ["code", "二字代码"], ["country", "国家/地区"], ["main_products", "主要产品"], ["contact_name", "联系人"], ["phone", "电话"], ["email", "邮箱"], ["store_url", "店铺链接"], ["payment_terms", "付款条款"]], suppliers),
+        _section("suppliers", "供应商", "suppliers", [["name", "供应商"], ["code", "二字代码"], ["country", "国家/地区"], ["main_products", "主要产品"], ["contact_name", "联系人"], ["phone", "电话"], ["email", "邮箱"], ["store_url", "店铺链接"], ["payment_terms", "付款条款说明（备注）"], ["payment_terms_summary", "系统执行付款规则"]], suppliers),
         _section("skus", "SKU 管理", "skus", [["sku", "SKU Code"], ["sales_model", "销售型号"], ["display_name_cn", "中文 SKU 名称"], ["specification", "规格"], ["stock_quantity", "库存", "number"], ["cost_price", "成本", "money"], ["default_price", "售价", "money"], ["currency", "币种"], ["active", "状态", "sku-active"]], skus),
         _section("sales-summary", "销售统计", "sales-periods", [["period", "统计周期"], ["order_count", "订单数", "number"], ["quantity", "销量", "number"], ["sales", "商品销售额（人民币）", "rmb"]], sales_periods),
         _section("sales", "订单记录", "orders", [["order_date", "日期", "date"], ["order_no", "订单"], ["customer_name", "客户"], ["sku_code", "SKU"], ["quantity", "数量", "number"], ["amount", "原币金额", "money"], ["currency", "币种"]], sales),
@@ -266,7 +267,7 @@ def _supplier_context(pk):
     total_purchases_rmb = sum((Decimal(row["total_amount"]) * Decimal(row["exchange_rate"]) for row in formal_purchases), Decimal("0"))
     total_paid_rmb = sum((Decimal(row["paid_amount"]) * Decimal(row["exchange_rate"]) for row in formal_purchases), Decimal("0"))
     return {"entity": "suppliers", "title": obj.name, "subtitle": obj.contact_name or "供应商", "badge": obj.code,
-        "info": [["二字代码", obj.code], ["国家/地区", obj.country or "—"], ["主要产品", obj.main_products or "—"], ["店铺链接", obj.store_url or "—"], ["联系人", obj.contact_name or "—"], ["电话", obj.phone or "—"], ["邮箱", obj.email or "—"], ["付款条款", obj.payment_terms or "—"], ["备注", obj.notes or "—"]],
+        "info": [["二字代码", obj.code], ["国家/地区", obj.country or "—"], ["主要产品", obj.main_products or "—"], ["店铺链接", obj.store_url or "—"], ["联系人", obj.contact_name or "—"], ["电话", obj.phone or "—"], ["邮箱", obj.email or "—"], ["付款条款说明（备注）", obj.payment_terms or "—"], ["系统执行付款规则", payment_terms_summary(obj.payment_terms_config)], ["备注", obj.notes or "—"]],
         "metrics": [["合作产品", len(products), "number"], ["供货档案", len(supplier_skus), "number"], ["采购单记录", len(formal_purchases), "number"], ["正式采购金额（人民币）", total_purchases_rmb, "rmb"], ["已付采购款（人民币）", total_paid_rmb, "rmb"]],
         "sections": [
             _section("products", "合作产品", "products", [["code", "产品编号"], ["name", "产品名称"], ["category_name", "分类"], ["status", "状态", "status"]], products),

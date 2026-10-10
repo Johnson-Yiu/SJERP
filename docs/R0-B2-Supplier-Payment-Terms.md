@@ -44,3 +44,16 @@
 全部完成，无缺失。原始Chrome截图仅转换JPG→PNG，不裁剪或重绘；图片不进master。
 
 未修改客户条款、Quote/Order、Finance整体UX、成本币种语义、SupplierSKU、库存、RBAC或Dashboard。不建立模板管理中心；不进入R0-C。完成后停止，等待独立ChatGPT审查。
+
+
+## Focused Repair：供应商付款条款显示语义（2026-10-10）
+
+基线：e11b6a0c5fa94cb7e0b56811b8100a974003e2aa。
+
+供应商列表、详情及产品关联供应商表统一将旧文字字段标为“付款条款说明（备注）”。共用服务端只读 formatter 根据 payment_terms_config 输出“系统执行付款规则”；自定义 50/50 显示“预付款 50% / 尾款 50%”，空配置显示“预付款 30% / 尾款 70%（系统默认）”。不解析备注，不修改配置、快照、付款计划生成、结构化编辑器或 migration。
+
+验证：新增后端 4 项测试覆盖自定义/默认、只读性、备注与规则隔离、Supplier/Product context 标签及高精度比例；新增前端 1 项展示配置回归。后端完整 585 项通过（SQLite 跳过 10 项 PostgreSQL 专用测试）；前端 Vitest 42 文件 433 项、Node 111 项、详情排版 1 项全部通过；production build、Django check、makemigrations --check --dry-run 通过。
+
+真实 Chrome：使用已有 UAT 供应商 C，无修改任何测试数据，详情同时显示原 30/70 备注与实际 50/50 规则；供应商列表空配置显示系统默认。产品详情使用已有数据，其供应商关联为空；有数据关联表由自动测试验证列标签及摘要。所触及中文文案已人工检查。
+
+截图仅在 ux-review-evidence：ux-review/r0-b2-payment-terms/focused-repair/R0B2_FIX_01_supplier_terms_semantics.png。1 张完成，无缺失。原始 Chrome 截图仅 JPG 转 PNG，不裁剪、不重绘。最终 production SHA、证据 SHA 及 exact-head CI 链接在交付回复中记录。完成后停止，等待独立 ChatGPT 审查。

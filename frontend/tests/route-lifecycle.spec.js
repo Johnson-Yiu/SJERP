@@ -145,6 +145,11 @@ const followUpRows = [
 ]
 
 function responseFor(url) {
+  const draftMatch = url.match(/^\/quotes\/(\d+)\/order-draft\/$/)
+  if (draftMatch) {
+    const quote = quoteRows.find(row => row.id === Number(draftMatch[1]))
+    return { data: { ...quote, quote: quote.id, order_date: '2026-10-10', expected_ship_date: '2026-10-20', exchange_rate: '7.2', shipping_fee: '0', discount: '0', notes: '', items: [] } }
+  }
   if (url === '/session/current-operator/') return { data: { name: '开发身份', role: '开发超级管理员', development_superadmin: true, has_all_permissions: true } }
   const editMatch = url.match(/^\/(follow-ups|orders|quotes)\/(\d+)\/$/)
   if (editMatch) {

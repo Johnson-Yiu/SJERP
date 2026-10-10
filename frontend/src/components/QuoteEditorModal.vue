@@ -1,4 +1,6 @@
 <script setup>
+import { defaultExchangeRate, skuDefaultPrice, currencyHint, salesRateError, changeDocumentCurrency } from '../utils/documentCurrency'
+import { confirmDialog } from '../dialogs'
 import { compactDecimalInput } from '../utils/decimalInput'
 import TradeUnitPicker from './TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
@@ -44,9 +46,9 @@ function makeDraft() {
   return {
     customer: quote.customer || '', quote_no: quote.quote_no || '', quote_date: quoteDate,
     valid_until: quote.valid_until || addDays(quoteDate, 30), status: quote.status || 'draft', currency: quote.currency || 'USD',
-    exchange_rate: compactDecimalInput(quote.exchange_rate || '7.200000'), shipping_fee: quote.shipping_fee || 0, discount: quote.discount || 0,
+    exchange_rate: compactDecimalInput(quote.exchange_rate ?? defaultExchangeRate(quote.currency || 'USD')), shipping_fee: quote.shipping_fee || 0, discount: quote.discount || 0,
     recipient_name: quote.recipient_name || '', buyer_address: quote.buyer_address || '', buyer_email: quote.buyer_email || '', buyer_phone: quote.buyer_phone || '',
-    lead_time_days: quote.lead_time_days || 10, deposit_percent: Number(quote.deposit_ratio ?? 1) * 100,
+    lead_time_days: quote.lead_time_days || 10, deposit_percent: Number(quote.deposit_ratio ?? 0.30) * 100,
     revision_summary: '',
     trading_terms: quote.trading_terms || 'FOB Shenzhen', shipping_details: quote.shipping_details || '', notes: quote.notes || '',
     items: (quote.items || []).map(item => ({ ...fromTradeLine(item), sku: item.sku, quantity: item.trade_quantity ?? item.quantity, unit_price: item.trade_unit_price ?? item.unit_price, sales_model_snapshot: item.sales_model_snapshot ?? item.model ?? '', description: item.description || item.description_snapshot || '', notes: item.notes || '' })),
@@ -85,10 +87,16 @@ const previewDraft = computed(() => {
     products: draft.items.map((item, index) => { const sku = props.skus.find(row => row.id === Number(item.sku)) || {}; return { key: `${index}-${item.sku}`, sku: sku.sku || '', sku_code: sku.sku_code || sku.sku || '', model: item.sales_model_snapshot || sku.sales_model || '', product_name: sku.display_name_cn || sku.product_name || '', description: item.description + (item.trade_unit ? `\n${item.trade_snapshot?.name}: 1 ${item.trade_snapshot?.unit} = ${item.trade_snapshot?.factor} ${item.trade_snapshot?.base_unit}; Total ${baseQuantity(item)} ${item.trade_snapshot?.base_unit}` : ''), quantity: item.quantity, unit: tradeLabel(item, sku.unit || 'pcs'), unit_price: item.unit_price, amount: Number(item.quantity || 0) * Number(item.unit_price || 0), image_url: sku.image || '' } }),
   }
 })
+async function changeCurrency(event) {
+  const currency = event.target.value
+  event.target.value = draft.currency
+  await changeDocumentCurrency(draft, currency, props.skus, confirmDialog)
+  event.target.value = draft.currency
+}
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 const activeSkuId = ref('')
 function skuDescription(sku) { return sku?.description_en || sku?.description_cn || sku?.display_name_cn || sku?.product_name || sku?.specification || '' }
-function makeItem(sku) { return withDefaultTradeUnit({ sku: sku.id, quantity: 1, unit_price: sku.default_price || 0, sales_model_snapshot: sku.sales_model || '', description: skuDescription(sku), notes: '' }, sku) }
+function makeItem(sku) { return withDefaultTradeUnit({ sku: sku.id, quantity: 1, unit_price: skuDefaultPrice(sku, draft.currency), sales_model_snapshot: sku.sales_model || '', description: skuDescription(sku), notes: '' }, sku) }
 const selectedSkuIds = computed({
   get: () => [...new Set(draft.items.map(item => String(item.sku)).filter(Boolean))],
   set: syncSelectedSkus,
@@ -211,6 +219,8 @@ async function selectCustomer() {
   } catch { /* Backend will still populate snapshots on save. */ }
 }
 function validate() {
+  if (salesRateError(draft)) return salesRateError(draft)
+  if (draft.items.some(item => item.unit_price === '' || item.unit_price == null || Number(item.unit_price) < 0)) return '请填写每条 SKU 的本次售价。'
   if (!draft.customer) return '请选择客户。'
   if (props.mode === 'revise' && !draft.revision_summary.trim()) return '请简要说明本次修改的内容。'
   if (draft.quote_date && draft.valid_until && draft.valid_until < draft.quote_date) return '有效期不能早于报价日期。'
@@ -294,15 +304,15 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) selectCus
             <div class="field"><label>报价单号</label><input :value="draft.quote_no || '保存后自动生成'" disabled /></div>
             <div class="field"><label>报价日期 *</label><SegmentedDateInput :model-value="draft.quote_date" required @update:model-value="setQuoteDate" /></div><div class="field"><label>有效期</label><div class="lead-time-input"><input v-model="validityDays" type="number" min="0" step="1" placeholder="天数" aria-label="有效期天数" @input="setValidityDays" /><span>天</span><SegmentedDateInput :model-value="draft.valid_until" @update:model-value="setValidUntil" /></div></div>
             <div class="field"><label>状态</label><input value="草稿" readonly /></div>
-            <div class="field"><label>币种</label><select v-model="draft.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
-            <div class="field"><label>对人民币汇率</label><input v-model="draft.exchange_rate" type="number" min="0" step="0.000001" /></div><div class="field"><label>交期（天）</label><input v-model="draft.lead_time_days" type="number" min="1" step="1" /></div>
+            <div class="field"><label>币种</label><select :value="draft.currency" aria-label="单据币种" @change="changeCurrency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
+            <div class="field"><label>对人民币汇率</label><input v-model="draft.exchange_rate" :readonly="draft.currency === 'CNY'" aria-label="对人民币汇率" type="number" min="0" step="0.000001" /></div><div class="field"><label>交期（天）</label><input v-model="draft.lead_time_days" type="number" min="1" step="1" /></div>
             <div class="field"><label>定金比例（%）</label><input v-model="draft.deposit_percent" type="number" min="0" max="100" step="1" /></div>
 
             <div v-if="mode === 'revise'" class="field full revision-summary"><label>本次修改说明 *</label><textarea v-model="draft.revision_summary" required placeholder="例如：调整数量、价格、交期或付款条款" /><small>用于记录本次修订。</small></div>
           </div>
           <div class="items-head"><div><strong>产品明细</strong><small>选择 SKU 后填写数量、交易单位和单价。</small></div></div>
           <SkuPickerPanel class="sku-selection-panel" v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus"><template #preview><label>报价描述（可修改）<textarea v-if="activeItem" v-model="activeItem.description" aria-label="已选 SKU 的报价描述" /></label></template></SkuPickerPanel>
-          <div v-if="draft.items.length" class="quote-line-items"><div class="quote-line-header"><span>SKU</span><span>Model</span><span>数量 *</span><span>单价 *</span><span>产品描述</span><span>小计</span><span></span></div><div v-for="(item,index) in draft.items" :key="index" class="quote-line-row"><span class="quote-sku">{{ skus.find(sku => sku.id === Number(item.sku))?.sku || '—' }}<TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="draft.items.splice(index + 1, 0, { ...item })">增加规格行</button></span><input v-model.trim="item.sales_model_snapshot" aria-label="报价型号" placeholder="可按客户要求修改" /><input v-model="item.quantity" aria-label="数量" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" v-money-input aria-label="单价" type="number" min="0" step="any" required /><input v-model="item.description" aria-label="产品描述" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" aria-label="取消选择该 SKU" @click="draft.items.splice(index, 1)"><MinusCircle :size="17" /></button></div></div><p v-else class="quote-items-empty">请先从上方选择至少一个 SKU。</p>
+          <div v-if="draft.items.length" class="quote-line-items"><div class="quote-line-header"><span>SKU</span><span>Model</span><span>数量 *</span><span>单价 *</span><span>产品描述</span><span>小计</span><span></span></div><div v-for="(item,index) in draft.items" :key="index" class="quote-line-row"><span class="quote-sku">{{ skus.find(sku => sku.id === Number(item.sku))?.sku || '—' }}<small v-if="currencyHint(skus.find(sku => sku.id === Number(item.sku)), draft.currency, item.unit_price)" class="currency-hint">{{ currencyHint(skus.find(sku => sku.id === Number(item.sku)), draft.currency, item.unit_price) }}</small><TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="draft.items.splice(index + 1, 0, { ...item })">增加规格行</button></span><input v-model.trim="item.sales_model_snapshot" aria-label="报价型号" placeholder="可按客户要求修改" /><input v-model="item.quantity" aria-label="数量" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" v-money-input aria-label="单价" type="number" min="0" step="any" required /><input v-model="item.description" aria-label="产品描述" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" aria-label="取消选择该 SKU" @click="draft.items.splice(index, 1)"><MinusCircle :size="17" /></button></div></div><p v-else class="quote-items-empty">请先从上方选择至少一个 SKU。</p>
           <section v-if="inventoryReferenceRows.length" class="quote-inventory-reference" aria-label="库存参考">
             <header class="quote-inventory-head"><div><strong>库存参考 · 按 SKU 基础单位</strong><small v-if="availabilityLastRefreshed">最近刷新 {{ availabilityLastRefreshed }}</small></div><button type="button" class="btn btn-secondary" :disabled="availabilityLoading" @click="refreshInventoryAvailability"><RotateCw :size="15" :class="{ spinning: availabilityLoading }" /> {{ availabilityLoading ? '正在刷新…' : '刷新库存' }}</button></header>
             <p class="quote-inventory-disclaimer">库存数据为当前参考值，报价不会锁定库存。在途数量不计入当前可用量，最终以订单确认时的库存及采购状态为准。</p>
@@ -346,9 +356,11 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) selectCus
 .sku-picker-list{min-height:0;overflow:hidden}.sku-picker-options{height:0;flex:1 1 0}
 @media(max-width:720px){.sku-selection-panel{grid-template-columns:1fr}.sku-picker-list{border-right:0;border-bottom:1px solid #e4ece7}}
 @media(max-width:560px){.sku-picker-filters{grid-template-columns:1fr}.sku-picker-options .sku-identifiers{display:block}.sku-picker-options .sku-identifiers span{display:block}}
+.currency-hint{display:block!important;white-space:normal!important;overflow:visible!important;color:#8b602c!important;font-size:var(--text-caption);line-height:1.5;margin-top:5px}
 </style>
 
 <style scoped>
 .sales-rule-notices{padding:14px;background:#f2f8f5;border:1px solid #d9e6df;border-radius:8px;margin:12px 0;font-size:13px}.sales-rule-notices h4{margin:0 0 10px}.sales-rule-notices>div{padding:6px 0}.sales-rule-error{color:#b42318}
 .quote-inventory-reference{margin:12px 0 16px;padding:14px;border:1px solid #cfe1d7;border-radius:10px;background:#f8fbf9;color:#35564b}.quote-inventory-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.quote-inventory-head>div{display:grid;gap:3px}.quote-inventory-head>div>strong{font-size:var(--text-body)}.quote-inventory-head small{color:#80938a;font-size:var(--text-caption)}.quote-inventory-head .btn{flex:none;padding:7px 10px;font-size:var(--text-body)}.quote-inventory-disclaimer{margin:9px 0;padding:8px 10px;border-radius:7px;background:#edf5f0;color:#607a6f;font-size:var(--text-caption);line-height:1.5}.quote-inventory-state{margin:8px 0;color:#6b8177;font-size:var(--text-body)}.quote-inventory-state.warning{color:#9a6419}.quote-inventory-rows{display:grid;gap:8px}.quote-inventory-row{padding:10px 11px;border:1px solid #e1ebe5;border-radius:8px;background:#fff}.quote-inventory-row-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.quote-inventory-row-head>strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#2a5144;font-size:var(--text-body)}.quote-inventory-row-head>span{flex:none;color:#71857b;font-size:var(--text-caption)}.quote-inventory-row-head>span.covered{color:#24724f}.quote-inventory-row-head>span.shortage{color:#ad3737}.quote-inventory-row dl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:8px 0 0}.quote-inventory-row dl>div{min-width:0;padding:6px 8px;border-radius:6px;background:#f5f8f6}.quote-inventory-row dt{color:#819087;font-size:var(--text-caption)}.quote-inventory-row dd{margin:3px 0 0;color:#294d41;font-size:var(--text-body);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}.quote-inventory-shortage{margin:8px 0 0;color:#ad3737;font-size:var(--text-body);font-weight:700}@media(max-width:760px){.quote-inventory-row dl{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:480px){.quote-inventory-head{align-items:flex-start;flex-direction:column}.quote-inventory-row dl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.currency-hint{display:block!important;white-space:normal!important;overflow:visible!important;color:#8b602c!important;font-size:var(--text-caption);line-height:1.5;margin-top:5px}
 </style>

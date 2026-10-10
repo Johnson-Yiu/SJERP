@@ -1301,6 +1301,19 @@ class QuoteItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer)
         return obj.description
 
 
+def validate_sales_exchange_rate(attrs, source=None):
+    currency = attrs.get("currency", getattr(source, "currency", "USD"))
+    rate = attrs.get("exchange_rate", getattr(source, "exchange_rate", None))
+    if source is None and rate is None:
+        rate = Decimal("1") if currency == "CNY" else Decimal("7.2") if currency == "USD" else None
+        if rate is not None:
+            attrs["exchange_rate"] = rate
+    if rate is None or rate <= 0:
+        raise serializers.ValidationError({"exchange_rate": "请输入大于 0 的对人民币汇率。"})
+    if currency == "CNY" and rate != Decimal("1"):
+        raise serializers.ValidationError({"exchange_rate": "人民币单据的对人民币汇率必须为 1。"})
+
+
 class QuoteSerializer(serializers.ModelSerializer):
     items = QuoteItemSerializer(many=True)
     # Lists and relationship filters must follow the live customer master record.
@@ -1323,6 +1336,7 @@ class QuoteSerializer(serializers.ModelSerializer):
         if source is None and view and getattr(view, 'action', '') == 'revise':
             source = view.get_object()
         validate_document_amount(attrs, source)
+        validate_sales_exchange_rate(attrs, source)
         quote_date = attrs.get("quote_date", source.quote_date if source else None)
         valid_until = attrs.get("valid_until", source.valid_until if source else None)
         if quote_date and valid_until and valid_until < quote_date:
@@ -1341,6 +1355,7 @@ class QuoteSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         validated_data["status"] = "draft"
+        validated_data.setdefault("deposit_ratio", Decimal("0.30"))
         items = validated_data.pop("items", [])
         customer = validated_data["customer"]
         primary_contact = customer.contacts.order_by("-is_primary", "name").first()
@@ -1415,6 +1430,7 @@ class OrderSerializer(serializers.ModelSerializer):
         if "order_no" in self.initial_data:
             raise serializers.ValidationError({"order_no": "订单号由系统自动生成，不能手工指定。"})
         validate_contract_edit(self.instance, attrs)
+        validate_sales_exchange_rate(attrs, self.instance)
         if self.instance is None and not attrs.get("items"):
             raise serializers.ValidationError({"items": "订单至少需要一条商品明细。"})
         for item in attrs.get("items", []):

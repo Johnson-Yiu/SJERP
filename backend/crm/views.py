@@ -1250,11 +1250,12 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 {"detail": "该报价已拒绝或过期，请先创建新的修订版后再转为订单。"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        order_date = timezone.localdate()
         return Response({
             "customer": quote.customer_id,
             "quote": quote.id,
-            "order_date": timezone.localdate(),
-            "expected_ship_date": None,
+            "order_date": order_date,
+            "expected_ship_date": order_date + timedelta(days=quote.lead_time_days) if quote.lead_time_days is not None else None,
             "status": "draft",
             "currency": quote.currency,
             "exchange_rate": quote.exchange_rate,

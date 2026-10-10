@@ -1,4 +1,6 @@
 <script setup>
+import { defaultExchangeRate, skuDefaultPrice, currencyHint, salesRateError, changeDocumentCurrency } from '../utils/documentCurrency'
+import { confirmDialog } from '../dialogs'
 import { compactDecimalInput } from '../utils/decimalInput'
 import TradeUnitPicker from './TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
@@ -46,7 +48,7 @@ watch(() => props.draft, resetForm, { immediate: true, deep: true })
 function selectSku(item) {
   const sku = props.skus.find((row) => row.id === Number(item.sku))
   if (sku) {
-    item.unit_price = Number(sku.default_price || 0)
+    item.unit_price = skuDefaultPrice(sku, form.currency)
     item.cost_price = Number(sku.cost_price || 0)
   }
 }
@@ -66,6 +68,12 @@ function syncSelectedSkus(ids) {
   })())
   form.items = restoreTradeLines(form.items, previousLines)
   if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
+}
+async function changeCurrency(event) {
+  const currency = event.target.value
+  event.target.value = form.currency
+  await changeDocumentCurrency(form, currency, props.skus, confirmDialog)
+  event.target.value = form.currency
 }
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 const subtotal = computed(() => (form.items || []).reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unit_price || 0), 0))
@@ -91,6 +99,8 @@ async function save() {
     error.value = '请至少保留一条有效的 SKU 明细。'
     return
   }
+  if (salesRateError(form)) { error.value = salesRateError(form); return }
+  if (form.items.some(item => item.unit_price === '' || item.unit_price == null || Number(item.unit_price) < 0)) { error.value = '请填写每条 SKU 的本次售价。'; return }
   saving.value = true
   error.value = ''
   const draftPayload = { ...form }
@@ -125,12 +135,12 @@ async function save() {
           <div class="field"><label>预计交期</label><div class="lead-time-input"><input v-model="leadTimeDays" type="number" min="0" step="1" placeholder="天数" aria-label="交期天数" @input="setLeadTimeDays" /><span>天</span><SegmentedDateInput :model-value="form.expected_ship_date" @update:model-value="setExpectedShipDate" /></div></div>
           <div class="field"><label>状态</label><input value="草稿" readonly /><small class="field-hint">保存后可在订单工作台确认订单。</small></div>
           <div class="field tail-policy-field"><label>尾货策略 <button type="button" class="policy-help-trigger" aria-label="查看尾货策略说明" @click="tailPolicyHelpOpen = !tailPolicyHelpOpen">?</button></label><select v-model="form.tail_goods_policy"><option v-for="(label, key) in tailPolicyLabels" :key="key" :value="key">{{ label }}</option></select><div v-if="tailPolicyHelpOpen" class="policy-help" role="note"><strong>不同策略的区别</strong><ul><li><b>整箱优先：</b>尾货自动使用标准箱尺寸、皮重和 CBM。</li><li><b>尾箱待确认：</b>保留尾货箱数并标记待确认，尺寸和 CBM 等待补充。</li><li><b>人工装箱：</b>不自动生成尾货箱，余数作为警告交由人工处理。</li></ul><small>此选择对整张订单统一生效，优先于 SKU 包装模板。</small></div></div>
-          <div class="field"><label>币种</label><select v-model="form.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
-          <div class="field"><label>对人民币汇率</label><input v-model="form.exchange_rate" type="number" step="0.000001" /></div>
+          <div class="field"><label>币种</label><select :value="form.currency" aria-label="单据币种" @change="changeCurrency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
+          <div class="field"><label>对人民币汇率</label><input v-model="form.exchange_rate" :readonly="form.currency === 'CNY'" aria-label="对人民币汇率" type="number" step="0.000001" /></div>
         </div>
         <div class="items-head"><div><strong>订单明细</strong><small>先选择一个或多个 SKU，再填写数量与价格。</small></div></div>
         <SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" />
-        <div class="line-items"><div class="line-header"><span>SKU / Model</span><span>数量 *</span><span>单价 *</span><span>成本</span><span>小计</span><span /></div><div v-for="(item, index) in form.items" :key="index" class="line-row"><span class="sku-cell"><b>{{ skus.find(sku => sku.id === Number(item.sku))?.display_name_cn || skus.find(sku => sku.id === Number(item.sku))?.product_name || '—' }}</b><small>SKU: {{ skus.find(sku => sku.id === Number(item.sku))?.sku_code || item.sku || '—' }} · Sales Model: {{ skus.find(sku => sku.id === Number(item.sku))?.sales_model || '—' }}</small><TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="form.items.splice(index + 1, 0, { ...item })">增加规格行</button></span><input v-model="item.quantity" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" v-money-input type="number" min="0" step="any" required /><input v-model="item.cost_price" v-money-input type="number" min="0" step="any" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" @click="form.items.splice(index, 1)"><MinusCircle :size="17" /></button></div><p v-if="!form.items.length" class="quote-items-empty">请先从上方选择至少一个 SKU。</p></div>
+        <div class="line-items"><div class="line-header"><span>SKU / Model</span><span>数量 *</span><span>单价 *</span><span>成本</span><span>小计</span><span /></div><div v-for="(item, index) in form.items" :key="index" class="line-row"><span class="sku-cell"><b>{{ skus.find(sku => sku.id === Number(item.sku))?.display_name_cn || skus.find(sku => sku.id === Number(item.sku))?.product_name || '—' }}</b><small>SKU: {{ skus.find(sku => sku.id === Number(item.sku))?.sku_code || item.sku || '—' }} · Sales Model: {{ skus.find(sku => sku.id === Number(item.sku))?.sales_model || '—' }}</small><small v-if="currencyHint(skus.find(sku => sku.id === Number(item.sku)), form.currency, item.unit_price)" class="currency-hint">{{ currencyHint(skus.find(sku => sku.id === Number(item.sku)), form.currency, item.unit_price) }}</small><TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="form.items.splice(index + 1, 0, { ...item })">增加规格行</button></span><input v-model="item.quantity" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" v-money-input type="number" min="0" step="any" required /><input v-model="item.cost_price" v-money-input type="number" min="0" step="any" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" @click="form.items.splice(index, 1)"><MinusCircle :size="17" /></button></div><p v-if="!form.items.length" class="quote-items-empty">请先从上方选择至少一个 SKU。</p></div>
         <div class="totals"><label>运费 <input v-model="form.shipping_fee" v-money-input type="number" step="any" /></label><label>折扣 <input v-model="form.discount" v-money-input type="number" step="any" /></label><div><small>商品小计 {{ form.currency }} {{ money(subtotal) }}</small><span>合计</span><strong>{{ form.currency }} {{ money(total) }}</strong></div></div>
         <div class="field notes"><label>条款 / 备注</label><textarea v-model="form.notes" /></div>
         <p v-if="error" class="draft-error">{{ error }}</p>
@@ -144,4 +154,5 @@ async function save() {
 .order-draft-backdrop{z-index:90;display:grid;place-items:center;padding:24px;background:#07191478;backdrop-filter:blur(3px)}.order-draft-modal{width:min(980px,100%);max-height:92vh;overflow:auto}.modal-head h3{margin:0}.modal-head p{margin:4px 0 0;color:#71817b;font-size:var(--text-body)}.draft-hint{margin:0 0 18px;padding:10px 12px;border-radius:8px;background:#eff7f2;color:#49675d;font-size:var(--text-caption)}.lead-time-input{display:flex;align-items:center;gap:6px}.lead-time-input>input{flex:0 0 10ch!important;width:10ch!important;min-width:0}.lead-time-input>span{color:#70817b;font-size:var(--text-body)}.lead-time-input :deep(.segmented-date){flex:1 1 auto;min-width:0}.tail-policy-field{position:relative}.policy-help-trigger{display:inline-grid;place-items:center;width:18px;height:18px;margin-left:4px;border:1px solid #83ab9d;border-radius:50%;background:#f3faf6;color:#26715d;font:700 var(--text-caption)/1 inherit;cursor:pointer}.policy-help-trigger:hover{background:#dff1e8}.policy-help{position:relative;z-index:2;margin-top:8px;padding:10px 12px;border:1px solid #bed8cc;border-radius:8px;background:#f7fcf9;color:#3e5e53;font-size:var(--text-caption);line-height:1.55;box-shadow:0 5px 13px #173f3612}.policy-help strong,.policy-help small{display:block}.policy-help ul{margin:6px 0;padding-left:18px}.policy-help li+li{margin-top:3px}.policy-help small{color:#6c8379}.items-head{display:flex;justify-content:space-between;align-items:center;margin:25px 0 10px;padding-top:21px;border-top:1px solid #e5eae7}.items-head strong,.items-head small{display:block}.items-head small{margin-top:3px;color:#82908b;font-size:var(--text-caption)}.line-items{border:1px solid #e0e6e2;border-radius:10px;overflow:hidden}.line-header,.line-row{display:grid;grid-template-columns:2fr .55fr .7fr .7fr .8fr 34px;gap:8px;align-items:center;padding:8px 10px}.line-header{background:#f5f8f6;color:#7a8984;font-size:var(--text-caption);text-transform:uppercase}.line-row{border-top:1px solid #edf0ee}.line-row select,.line-row input{min-width:0;width:100%;border:1px solid #dce3df;border-radius:7px;padding:8px;font-size:var(--text-body)}.line-row .amount{text-align:right}.remove-line{border:0;background:transparent;color:#b05b5b;display:grid;place-items:center}.remove-line:disabled{opacity:.25}.totals{display:flex;justify-content:flex-end;gap:14px;align-items:end;margin:15px 0 22px}.totals label{color:#778680;font-size:var(--text-body)}.totals input{display:block;width:105px;margin-top:5px;border:1px solid #dce3df;border-radius:7px;padding:8px}.totals div{border-left:1px solid #dae2de;padding-left:18px}.totals span,.totals strong{display:block}.totals span{color:#788680;font-size:var(--text-body)}.totals strong{margin-top:5px;color:#123c36;font-size:var(--text-dialog)}.notes textarea{min-height:65px}.draft-error{margin:14px 0 0;color:#a64444;font-size:var(--text-body)}@media(max-width:700px){.order-draft-backdrop{padding:10px}.line-items{overflow:auto}.line-header,.line-row{min-width:720px}.totals{flex-wrap:wrap}}
 .sku-cell{min-width:0}.sku-cell b,.sku-cell small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sku-cell b{color:#294a41;font-size:var(--text-body)}.sku-cell small{margin-top:3px;color:#81908a;font-size:var(--text-caption)}
 .policy-help{position:absolute;z-index:12;top:48px;left:0;width:min(360px,calc(100vw - 64px));margin:0;box-shadow:0 8px 20px #173f3624}
+.currency-hint{display:block!important;white-space:normal!important;overflow:visible!important;color:#8b602c!important;font-size:var(--text-caption);line-height:1.5;margin-top:5px}
 </style>

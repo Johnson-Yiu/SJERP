@@ -1,4 +1,5 @@
 <script setup>
+import { defaultExchangeRate, skuDefaultPrice, currencyHint, salesRateError, changeDocumentCurrency } from '../utils/documentCurrency'
 import { compactDecimalInput } from '../utils/decimalInput'
 import TradeUnitPicker from '../components/TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
@@ -17,7 +18,7 @@ import SummaryCards from '../components/SummaryCards.vue'
 import SkuContextBanner from '../components/SkuContextBanner.vue'
 import { deliveryState } from '../utils/orderOverview.js'
 import { addDays, daysBetween } from '../utils/orderDate'
-import { clearModalRoute } from '../utils/modalNavigation'
+import { clearModalRoute, modalOrigin } from '../utils/modalNavigation'
 import { orderDetailLocation } from '../utils/detailNavigation'
 import { documentDetailState, withDocumentDetailQuery, withoutDocumentDetailQuery } from '../utils/documentDetailRoute'
 import { routeDataQuery, routeDataQuerySignature } from '../utils/routePageState'
@@ -53,11 +54,16 @@ const expandedQuoteNodes = ref(new Set())
 const toast = reactive({ show: false, message: '', error: false })
 const form = reactive({})
 const activeSkuId = ref('')
+const sourceQuoteLoading = ref(false)
+let sourceQuoteRequest = 0
+const eligibleSourceQuotes = computed(() => quotes.value.filter(q => ['draft', 'sent', 'accepted'].includes(q.status)))
 const routeActionOpen = ref(false)
 let routeActionVersion = 0
 let timer
 
 function fresh() {
+  sourceQuoteRequest += 1
+  sourceQuoteLoading.value = false
   const now = new Date(), y = now.getFullYear(), m = String(now.getMonth() + 1).padStart(2, '0'), d = String(now.getDate()).padStart(2, '0')
   Object.keys(form).forEach(k => delete form[k])
   activeSkuId.value = ''
@@ -105,7 +111,9 @@ async function create({ isCurrent = () => true } = {}) {
     return
   }
   returnToOrderDetailId.value = null
-  editingId.value = null; fresh(); await loadOptions(); if (isCurrent()) open.value = true
+  editingId.value = null; fresh()
+  form.customer = route.query.customer ? Number(route.query.customer) : ''
+  await loadOptions(); if (isCurrent()) open.value = true
 }
 async function edit(row, { closeDetail = true, isCurrent = () => true } = {}) {
   if (closeDetail) await closeDocumentDetail()
@@ -138,18 +146,56 @@ function setOrderLeadTimeDays() {
   if (orderLeadTimeDays.value === '' || !form.order_date) return
   form.expected_ship_date = addDays(form.order_date, orderLeadTimeDays.value)
 }
-function closeEditor() { open.value = false; returnToOrderDetailId.value = null; void clearModalRoute(router, route) }
+function closeEditor() { sourceQuoteRequest += 1; sourceQuoteLoading.value = false; open.value = false; returnToOrderDetailId.value = null; void clearModalRoute(router, route) }
 function closeQuoteEditor() { quoteEditorOpen.value = false; void clearModalRoute(router, route) }
+async function changeCurrency(event) {
+  const currency = event.target.value
+  event.target.value = form.currency
+  await changeDocumentCurrency(form, currency, skus.value, confirmDialog)
+  event.target.value = form.currency
+}
 function selectSku(item) {
   const sku = skus.value.find(s => s.id === Number(item.sku))
-  if (sku) { item.unit_price = sku.default_price; item.cost_price = sku.cost_price }
+  if (sku) { item.unit_price = skuDefaultPrice(sku, form.currency); item.cost_price = sku.cost_price }
+}
+async function loadSourceQuote(value, { confirmOverwrite = true } = {}) {
+  if (sourceQuoteLoading.value || (editingId.value && form.quote)) return
+  if (!value) { form.quote = ''; notify('解除来源不会回滚已载入的订单内容。'); return }
+  if (!eligibleSourceQuotes.value.some(q => Number(q.id) === Number(value))) return notify('请选择有效的来源报价。', true)
+  const hasContent = form.customer || form.items?.length || Number(form.shipping_fee) || Number(form.discount) || form.notes?.trim()
+  const request = ++sourceQuoteRequest
+  sourceQuoteLoading.value = true
+  try {
+    if (confirmOverwrite && hasContent && !await confirmDialog({ title: '从报价载入', message: '载入报价将覆盖当前订单草稿中的客户、商品、价格、币种及条款。是否继续？', confirmText: '载入报价' })) return
+    if (request !== sourceQuoteRequest) return
+    const draft = (await api.get(`/quotes/${value}/order-draft/`)).data
+    if (request !== sourceQuoteRequest) return
+    Object.assign(form, {
+      customer: draft.customer, quote: draft.quote, order_date: draft.order_date,
+      currency: draft.currency, exchange_rate: compactDecimalInput(draft.exchange_rate),
+      shipping_fee: draft.shipping_fee, discount: draft.discount, notes: draft.notes,
+      expected_ship_date: draft.expected_ship_date || '',
+      items: draft.items.map(item => fromTradeLine({ ...item })),
+    })
+    orderLeadTimeDays.value = daysBetween(form.order_date, form.expected_ship_date)
+    activeSkuId.value = String(form.items[0]?.sku || '')
+  } catch (error) { notify(`无法载入报价：${error.message}`, true) }
+  finally { if (request === sourceQuoteRequest) sourceQuoteLoading.value = false }
+}
+async function changeSourceQuote(event) {
+  const value = event.target.value
+  event.target.value = form.quote || ''
+  await loadSourceQuote(value)
+  event.target.value = form.quote || ''
 }
 const subtotal = computed(() => (form.items || []).reduce((sum, i) => sum + Number(i.quantity || 0) * Number(i.unit_price || 0), 0))
 const total = computed(() => subtotal.value + Number(form.shipping_fee || 0) - Number(form.discount || 0))
 async function save() {
-  if (saving.value) return
+  if (saving.value || sourceQuoteLoading.value) return
   if (!form.items.length || form.items.some(i => !i.sku)) return notify('请至少添加一条有效的 SKU 明细。', true)
   if (form.items.some(i => Number(i.quantity) <= 0)) return notify('每条 SKU 明细的数量必须大于 0。', true)
+  if (salesRateError(form)) return notify(salesRateError(form), true)
+  if (form.items.some(item => item.unit_price === '' || item.unit_price == null || Number(item.unit_price) < 0)) return notify('请填写每条 SKU 的本次售价。', true)
   saving.value = true
   const data = { ...form, customer: Number(form.customer), items: form.items.map(i => tradePayload({ ...i, sku: Number(i.sku) })) }
   if (isOrder.value) { delete data.status; delete data.order_no }
@@ -158,21 +204,25 @@ async function save() {
     data.expected_ship_date = form.expected_ship_date || null
   }
   try {
+    const origin = modalOrigin(route)
     const response = editingId.value ? await api.put(`/${props.type}/${editingId.value}/`, data) : await api.post(`/${props.type}/`, data)
     const detailId = returnToOrderDetailId.value || (isOrder.value ? response.data.id : null)
     open.value = false
     notify('单据已保存')
     await clearModalRoute(router, route)
     await load()
+    if (detailId && !origin) await router.push(withDocumentDetailQuery(route, detailId))
     if (detailId && returnToOrderDetailId.value) orderWorkbenchRefresh.value += 1
     returnToOrderDetailId.value = null
   } catch (e) { notify(e.message, true) } finally { saving.value = false }
 }
 async function handleQuoteSaved(row) {
+  const origin = modalOrigin(route)
   notify(`报价 ${row.quote_no} 已保存`)
   await clearModalRoute(router, route)
   await load()
   if (quoteDetailId.value) workbenchRefresh.value += 1
+  if (!origin) await router.push(withDocumentDetailQuery(route, row.id))
 }
 async function handleQuoteStatusUpdated() { await load() }
 async function exportQuote(row) { try { await downloadQuoteExport(row.id, row.quote_no) } catch (e) { notify(`导出 ${row.quote_no} 失败：${e.message}`, true) } }
@@ -244,7 +294,7 @@ async function syncModalFromRoute() {
     if (!isCurrent() || route.query.create !== '1') return
     if (isOrder.value) {
       form.customer = route.query.customer ? Number(route.query.customer) : ''
-      form.quote = route.query.quote ? Number(route.query.quote) : ''
+      if (route.query.quote) await loadSourceQuote(route.query.quote, { confirmOverwrite: false })
     }
     return
   }
@@ -393,20 +443,20 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
       <div class="modal-body">
         <div class="form-grid">
           <div class="field"><label>{{ copy.noLabel }}</label><input v-if="isOrder" :value="(editingId ? rows.find(row => row.id === editingId)?.order_no : form.order_no) || '保存后由系统自动生成'" class="readonly-input" readonly /><input v-else v-model="form[copy.no]" required /></div>
-          <div class="field"><label>客户 *</label><select v-model="form.customer" required :disabled="inheritedCustomer"><option value="">请选择</option><option v-for="c in customers" :key="c.id" :value="c.id">{{ c.name }}</option></select></div>
+          <div class="field"><label>客户 *</label><select v-model="form.customer" required :disabled="inheritedCustomer || Boolean(form.quote) || sourceQuoteLoading"><option value="">请选择</option><option v-for="c in customers" :key="c.id" :value="c.id">{{ c.name }}</option></select></div>
           <div class="field"><label>{{ copy.dateLabel }} *</label><SegmentedDateInput :model-value="form[copy.date]" required @update:model-value="setOrderDate" /></div>
           <div class="field"><label>预计交期</label><div class="lead-time-input"><input v-model="orderLeadTimeDays" type="number" min="0" step="1" placeholder="天数" aria-label="交期天数" @input="setOrderLeadTimeDays" /><span>天</span><SegmentedDateInput :model-value="form.expected_ship_date" @update:model-value="setExpectedShipDate" /></div></div>
           <div v-if="isOrder" class="field"><label>状态</label><input value="草稿" readonly /><small class="field-hint">保存为草稿，确认后开始履约。</small></div><div v-else class="field"><label>状态 *</label><select v-model="form.status"><option v-for="([key,label]) in Object.entries(copy.statuses)" :key="key" :value="key">{{ label }}</option></select></div>
-          <div v-if="isOrder" class="field"><label>来源报价</label><input v-if="editingId && form.quote" :value="quotes.find(q => q.id === Number(form.quote))?.quote_no || '—'" readonly /><select v-else v-model="form.quote"><option value="">无</option><option v-for="q in quotes" :key="q.id" :value="q.id">{{ q.quote_no }}</option></select></div>
-          <div class="field"><label>币种</label><select v-model="form.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
-          <div class="field"><label>对人民币汇率</label><input v-model="form.exchange_rate" type="number" step="0.000001" /></div>
+          <div v-if="isOrder" class="field"><label>从报价载入（可选）</label><input v-if="editingId && form.quote" :value="quotes.find(q => q.id === Number(form.quote))?.quote_no || '—'" readonly /><select v-else :value="form.quote" :disabled="sourceQuoteLoading" aria-label="从报价载入（可选）" @change="changeSourceQuote"><option value="">不关联报价</option><option v-for="q in eligibleSourceQuotes" :key="q.id" :value="q.id">{{ q.quote_no }}</option></select></div>
+          <div class="field"><label>币种</label><select :value="form.currency" aria-label="单据币种" @change="changeCurrency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
+          <div class="field"><label>对人民币汇率</label><input v-model="form.exchange_rate" :readonly="form.currency === 'CNY'" aria-label="对人民币汇率" type="number" step="0.000001" /></div>
         </div>
         <div class="items-head"><div><strong>产品明细</strong><small>先选择一个或多个 SKU，再填写数量与价格</small></div></div>
         <SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" />
         <div class="line-items">
           <div class="line-header"><span>SKU</span><span>数量 *</span><span>单价 *</span><span v-if="isOrder">成本</span><span>小计</span><span></span></div>
           <div v-for="(item,index) in form.items" :key="index" class="line-row" :class="{ order: isOrder }">
-            <span class="sku-cell"><b>{{ skus.find(sku => sku.id === Number(item.sku))?.display_name_cn || skus.find(sku => sku.id === Number(item.sku))?.product_name || '—' }}</b><small>SKU: {{ skus.find(sku => sku.id === Number(item.sku))?.sku_code || item.sku || '—' }} · Sales Model: {{ skus.find(sku => sku.id === Number(item.sku))?.sales_model || '—' }}</small><TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="form.items.splice(index + 1, 0, { ...item })">增加规格行</button></span>
+            <span class="sku-cell"><b>{{ skus.find(sku => sku.id === Number(item.sku))?.display_name_cn || skus.find(sku => sku.id === Number(item.sku))?.product_name || '—' }}</b><small>SKU: {{ skus.find(sku => sku.id === Number(item.sku))?.sku_code || item.sku || '—' }} · Sales Model: {{ skus.find(sku => sku.id === Number(item.sku))?.sales_model || '—' }}</small><small v-if="currencyHint(skus.find(sku => sku.id === Number(item.sku)), form.currency, item.unit_price)" class="currency-hint">{{ currencyHint(skus.find(sku => sku.id === Number(item.sku)), form.currency, item.unit_price) }}</small><TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="form.items.splice(index + 1, 0, { ...item })">增加规格行</button></span>
             <input v-model="item.quantity" type="number" min="0.01" step="0.01" required />
             <input v-model="item.unit_price" v-money-input type="number" min="0" step="any" required />
             <input v-if="isOrder" v-model="item.cost_price" v-money-input type="number" min="0" step="any" />
@@ -418,7 +468,7 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
         <div class="totals"><label>运费 <input v-model="form.shipping_fee" v-money-input type="number" step="any" /></label><label>折扣 <input v-model="form.discount" v-money-input type="number" step="any" /></label><div><small>商品小计 {{ form.currency }} {{ money(subtotal) }}</small><span>合计</span><strong>{{ form.currency }} {{ money(total) }}</strong></div></div>
         <div class="field notes"><label>条款 / 备注</label><textarea v-model="form.notes" /></div>
       </div>
-      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeEditor">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : '保存订单' }}</button></div>
+      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeEditor">取消</button><button class="btn btn-primary" :disabled="saving || sourceQuoteLoading">{{ saving ? '保存中…' : '保存订单' }}</button></div>
     </form></div>
     <QuoteEditorModal v-if="quoteEditorOpen" :quote="quoteEditorQuote" :customers="customers" :skus="skus" :mode="quoteEditorQuote?.id ? 'revise' : 'create'" @close="closeQuoteEditor" @saved="handleQuoteSaved" />
     <OrderDraftModal v-if="orderDraft" :draft="orderDraft" :customers="customers" :skus="skus" @close="orderDraft = null" @saved="handleOrderDraftSaved" />
@@ -437,8 +487,10 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
 .lead-time-input{display:flex;align-items:center;gap:6px}.lead-time-input>input{flex:0 0 10ch!important;width:10ch!important;min-width:0}.lead-time-input>span{color:#70817b;font-size:var(--text-body)}.lead-time-input :deep(.segmented-date){flex:1 1 auto;min-width:0}
 .quote-table{border-collapse:collapse;border-spacing:0;margin:0}.quote-table thead th{border-bottom:1px solid #e3ece8;background:#f7faf8;color:#6c7e77}.quote-tree-row td{height:66px;background:#fff;border-bottom:1px solid #e7eeea}.quote-tree-row:hover td{background:#f3faf6}.quote-root-row td{background:#fcfefd}.quote-root-row:hover td{background:#eef8f3}.quote-tree-cell{--tree-depth:0;display:flex;min-width:340px;align-items:center}.tree-indent{width:calc(var(--tree-depth) * 27px);height:34px;flex:0 0 calc(var(--tree-depth) * 27px);border-left:1px solid transparent}.quote-child-row .tree-indent{border-left-color:#c8e4d8}.quote-expand,.quote-expand-placeholder{width:24px;height:24px;margin:0 7px 0 0;flex:0 0 24px}.quote-expand{display:grid;padding:0;place-items:center;border:1px solid #d4e3dc;border-radius:6px;background:#fff;color:#397060}.quote-expand:hover{background:#dff1e8;border-color:#9fcdb7}.quote-expand-placeholder{display:inline-block}.tree-branch{position:relative;width:15px;height:24px;margin:0 4px 0 -2px;flex:0 0 15px;border-left:1px solid #9acdb9;border-bottom:1px solid #9acdb9;border-radius:0 0 0 6px}.tree-branch:before{content:'';position:absolute;top:11px;left:-1px;width:12px;border-top:1px solid #9acdb9}.quote-tree-icon{margin-right:9px;flex:0 0 auto}.root-icon{color:#087b70}.revision-icon{color:#4f8ac6}.quote-tree-copy{display:grid;gap:3px;min-width:0}.quote-tree-copy strong{color:#173f36;font-size:var(--text-body);font-weight:750}.quote-tree-copy small{overflow:hidden;color:#789088;font-size:var(--text-caption);text-overflow:ellipsis;white-space:nowrap}.quote-child-row .quote-tree-copy strong{font-weight:650}.quote-child-row td:first-child{box-shadow:inset 3px 0 #d4ebdf}.quote-root-row td:first-child{box-shadow:inset 3px 0 #13806f}.quote-table .table-actions{justify-content:flex-end}.quote-table .mini-btn{width:30px;height:30px}.quote-table .amount{font-weight:650;color:#1e5146}
 .quote-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:0 0 16px}.quote-metrics article{position:relative;min-height:114px;padding:16px 18px;border:1px solid #e3ebe7;border-radius:12px;background:#fff;box-shadow:0 4px 14px #143f330b}.quote-metrics span,.quote-metrics small{display:block;color:#80908a;font-size:var(--text-caption)}.quote-metrics strong{display:block;margin:12px 42px 7px 0;color:#123f36;font-size:var(--text-page);line-height:1.1}.quote-metrics article:last-child strong{font-size:var(--text-dialog)}.quote-metrics small{font-size:var(--text-caption)}.metric-icon{position:absolute;right:18px;top:28px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center}.metric-icon.mint{background:#ddf4f0;color:#008a80}.metric-icon.amber{background:#fff0de;color:#e28b31}.metric-icon.green{background:#e1f6e8;color:#2da45c}.metric-icon.blue{background:#e7f0ff;color:#4382df}.quote-toolbar{align-items:center;flex-wrap:wrap}.quote-toolbar select,.filter-reset{height:39px;border:1px solid #dce6e1;border-radius:8px;background:#fff;color:#52655e;padding:0 11px;font:inherit;font-size:var(--text-body)}.quote-toolbar select:focus{outline:0;border-color:#8ab8a8;box-shadow:0 0 0 3px #dcebe6}.filter-reset{display:inline-flex;align-items:center;gap:6px;cursor:pointer}.filter-reset:hover{border-color:#a9cbbd;color:#1e6d59;background:#f4faf7}@media(max-width:980px){.quote-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.quote-metrics{grid-template-columns:1fr}.quote-toolbar select,.filter-reset{flex:1}.quote-toolbar .search-box{width:100%}}
+.currency-hint{display:block!important;white-space:normal!important;overflow:visible!important;color:#8b602c!important;font-size:var(--text-caption);line-height:1.5;margin-top:5px}
 </style>
 
 <style scoped>
 .delivery-helper{display:block;width:max-content;margin-top:4px;font-size:12px;color:#71817B}.delivery-helper.today,.delivery-helper.overdue{font-weight:600;border-radius:6px;padding:2px 6px}.delivery-helper.today{color:#A25F22;background:#FFF0DC}.delivery-helper.overdue{color:#A84444;background:#FBE5E5}
+.currency-hint{display:block!important;white-space:normal!important;overflow:visible!important;color:#8b602c!important;font-size:var(--text-caption);line-height:1.5;margin-top:5px}
 </style>

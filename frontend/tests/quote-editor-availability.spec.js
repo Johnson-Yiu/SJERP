@@ -61,6 +61,7 @@ const skuA = {
   display_name_cn: 'UAT Stock A',
   unit: 'pcs',
   default_price: '2.50',
+  currency: 'USD',
   trade_units: [],
 }
 const skuB = {
@@ -70,6 +71,7 @@ const skuB = {
   display_name_cn: 'UAT Stock B',
   unit: 'm',
   default_price: '3.00',
+  currency: 'USD',
   trade_units: [],
 }
 

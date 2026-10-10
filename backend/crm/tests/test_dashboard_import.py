@@ -43,8 +43,16 @@ class DashboardImportTests(TestCase):
         writer = csv.writer(buffer)
         writer.writerow(headers)
         writer.writerows(rows)
-        upload = SimpleUploadedFile("import.csv", buffer.getvalue().encode("utf-8"), content_type="text/csv")
-        return self.client.post("/api/import/csv/", {"entity": entity, "file": upload}, format="multipart")
+        content = buffer.getvalue().encode("utf-8")
+        preview = self.client.post("/api/import/csv/preview/", {
+            "entity": entity, "file": SimpleUploadedFile("import.csv", content, content_type="text/csv"),
+        }, format="multipart")
+        if preview.status_code != 200 or preview.data["errors"]:
+            return preview
+        return self.client.post("/api/import/csv/execute/", {
+            "entity": entity, "preview_token": preview.data["preview_token"],
+            "file": SimpleUploadedFile("import.csv", content, content_type="text/csv"),
+        }, format="multipart")
 
     def test_dashboard_sales_metrics_exclude_draft_and_cancelled_orders(self):
         self.create_order("J1-DRAFT", "draft", "100")

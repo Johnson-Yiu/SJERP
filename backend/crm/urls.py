@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from .context import entity_context
 from .sku_management import ProductCombinationRulesView, SupplierCapabilityViewSet, SupplierCandidatesView, ProductSKUPlanView, ProductSKUPlanActionView, ProductSupplierCandidatePoolView, OrderItemSupplierAllocationView
-from .views import AccessRoleViewSet, CategoryAttributeViewSet, ContactViewSet, ContractChangeRequestViewSet, CustomerViewSet, EmployeeProfileViewSet, FollowUpViewSet, HSCodeViewSet, InventoryMovementViewSet, OperationLogViewSet, OrderViewSet, OrganizationUnitViewSet, PackagingTemplateViewSet, PaymentPlanViewSet, PositionViewSet, ProductCategoryViewSet, ProductCertificateViewSet, ProductParameterViewSet, ProductViewSet, PurchaseOrderViewSet, QuoteViewSet, RolePermissionViewSet, ShipmentViewSet, SKUPackagingProfileViewSet, SKUViewSet, SupplierSKUViewSet, SupplierViewSet, TransactionViewSet, current_operator, dashboard, finance_dashboard, import_csv, import_templates, organization_overview, usd_cny_reference_rate
+from .views import AccessRoleViewSet, CategoryAttributeViewSet, ContactViewSet, ContractChangeRequestViewSet, CustomerViewSet, EmployeeProfileViewSet, FollowUpViewSet, HSCodeViewSet, InventoryMovementViewSet, OperationLogViewSet, OrderViewSet, OrganizationUnitViewSet, PackagingTemplateViewSet, PaymentPlanViewSet, PositionViewSet, ProductCategoryViewSet, ProductCertificateViewSet, ProductParameterViewSet, ProductViewSet, PurchaseOrderViewSet, QuoteViewSet, RolePermissionViewSet, ShipmentViewSet, SKUPackagingProfileViewSet, SKUViewSet, SupplierSKUViewSet, SupplierViewSet, TransactionViewSet, current_operator, dashboard, finance_dashboard, import_csv, import_csv_execute, import_csv_preview, import_templates, organization_overview, usd_cny_reference_rate
 
 from .sales_rules import SalesRuleViewSet
 
@@ -61,5 +61,7 @@ urlpatterns = [
     path("context/<str:entity>/<int:pk>/", entity_context),
     path("import/templates/", import_templates),
     path("import/csv/", import_csv),
+    path("import/csv/preview/", import_csv_preview),
+    path("import/csv/execute/", import_csv_execute),
     path("", include(router.urls)),
 ]

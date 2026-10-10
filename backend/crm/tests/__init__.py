@@ -109,12 +109,20 @@ class BusinessFlowTests(APITestCase):
         self.assertEqual(ProductCodeSequence.objects.count(), 1)
 
     def test_customer_csv_import_updates_by_code(self):
+        content = "code,name,country,status\nT-C002,CSV Buyer,France,lead\n".encode("utf-8")
         csv_file = SimpleUploadedFile(
             "customers.csv",
-            "code,name,country,status\nT-C002,CSV Buyer,France,lead\n".encode("utf-8"),
+            content,
             content_type="text/csv",
         )
-        response = self.client.post("/api/import/csv/", {"entity": "customers", "file": csv_file}, format="multipart")
+        preview = self.client.post("/api/import/csv/preview/", {"entity": "customers", "file": csv_file}, format="multipart")
+        self.assertEqual(preview.status_code, status.HTTP_200_OK)
+        self.assertEqual(preview.data["created"], 1)
+        self.assertFalse(Customer.objects.filter(code="T-C002").exists())
+        response = self.client.post("/api/import/csv/execute/", {
+            "entity": "customers", "preview_token": preview.data["preview_token"],
+            "file": SimpleUploadedFile("customers.csv", content, content_type="text/csv"),
+        }, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["created"], 1)
         self.assertTrue(Customer.objects.filter(code="T-C002", country="France").exists())

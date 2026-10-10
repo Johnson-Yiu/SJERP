@@ -1,5 +1,6 @@
 from .trade_units import amount_expression, trade_values
 import csv
+import hashlib
 import io
 import json
 import time
@@ -14,6 +15,7 @@ from django.db.models.deletion import ProtectedError
 from django.db.models import Case, Count, DecimalField, ExpressionWrapper, F, IntegerField, OuterRef, Q, Subquery, Sum, Value, When
 from django.db.models.functions import Coalesce, TruncMonth
 from django.http import HttpResponse
+from django.core import signing
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import permissions, serializers, status, viewsets
@@ -2072,6 +2074,15 @@ IMPORT_FIELDS = {
     "skus": ["sku", "product_code", "specification", "unit", "cost_price", "default_price", "currency"],
     "transactions": ["transaction_no", "transaction_date", "direction", "category", "amount", "currency", "exchange_rate", "customer_code", "order_no", "payment_method", "reference", "notes"],
 }
+IMPORT_REQUIRED_FIELDS = {
+    "customers": {"code", "name"},
+    "products": {"code", "name"},
+    "skus": {"sku", "product_code"},
+    "transactions": {"transaction_no", "transaction_date", "direction", "category", "amount"},
+}
+IMPORT_KEY_FIELDS = {"customers": "code", "products": "code", "skus": "sku", "transactions": "transaction_no"}
+IMPORT_PREVIEW_SALT = "crm.import.preview"
+IMPORT_PREVIEW_MAX_AGE_SECONDS = 30 * 60
 ORDER_IMPORT_DISABLED_MESSAGE = "正式订单导入暂未开放，请通过订单业务流程创建；避免绕过报价、库存预留和收款计划。"
 
 
@@ -2083,28 +2094,149 @@ def import_templates(request):
 @api_view(["POST"])
 @parser_classes([MultiPartParser, FormParser])
 def import_csv(request):
+    """Legacy endpoint is intentionally preview-only; it must never write data."""
+    return _import_csv_preview_request(request)
+
+
+@api_view(["POST"])
+@parser_classes([MultiPartParser, FormParser])
+def import_csv_preview(request):
+    return _import_csv_preview_request(request)
+
+
+def _import_csv_preview_request(request):
     entity = request.data.get("entity")
     upload = request.FILES.get("file")
-    if entity == "orders":
-        return Response({"detail": ORDER_IMPORT_DISABLED_MESSAGE}, status=status.HTTP_400_BAD_REQUEST)
-    if entity not in IMPORT_FIELDS or not upload:
-        return Response({"detail": "请选择有效的数据类型和 CSV 文件。"}, status=status.HTTP_400_BAD_REQUEST)
     try:
-        text = upload.read().decode("utf-8-sig")
-        rows = list(csv.DictReader(io.StringIO(text)))
-    except (UnicodeDecodeError, csv.Error):
-        return Response({"detail": "CSV 文件无法读取，请使用 UTF-8 编码。"}, status=status.HTTP_400_BAD_REQUEST)
+        rows, digest = _read_import_csv(entity, upload)
+    except ValueError as exc:
+        return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+    preview = _preview_import(entity, rows)
+    if not preview["errors"]:
+        preview["preview_token"] = signing.dumps({"entity": entity, "sha256": digest}, salt=IMPORT_PREVIEW_SALT)
+    return Response(preview)
 
-    created, updated, errors = 0, 0, []
+
+@api_view(["POST"])
+@parser_classes([MultiPartParser, FormParser])
+def import_csv_execute(request):
+    entity = request.data.get("entity")
+    upload = request.FILES.get("file")
+    token = request.data.get("preview_token")
+    try:
+        rows, digest = _read_import_csv(entity, upload)
+        signed = signing.loads(token or "", salt=IMPORT_PREVIEW_SALT, max_age=IMPORT_PREVIEW_MAX_AGE_SECONDS)
+    except signing.SignatureExpired:
+        return Response({"detail": "预览已过期，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
+    except signing.BadSignature:
+        return Response({"detail": "预览凭证无效，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError as exc:
+        return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+    if signed.get("entity") != entity or signed.get("sha256") != digest:
+        return Response({"detail": "文件或数据类型已变化，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Run the exact write path once in a transaction that is rolled back. This
+    # detects concurrent changes after preview without leaving any side effects.
+    validation = _preview_import(entity, rows)
+    if validation["errors"]:
+        return Response({"detail": "数据状态已变化，请重新预览后再导入。", "errors": validation["errors"]}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        with transaction.atomic():
+            created, updated = _apply_import_rows(entity, rows)
+    except Exception:
+        return Response({"detail": "数据状态已变化，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"total": len(rows), "created": created, "updated": updated})
+
+
+def _read_import_csv(entity, upload):
+    if entity == "orders":
+        raise ValueError(ORDER_IMPORT_DISABLED_MESSAGE)
+    if entity not in IMPORT_FIELDS or not upload:
+        raise ValueError("请选择有效的数据类型和 CSV 文件。")
+    raw = upload.read()
+    if not raw:
+        raise ValueError("CSV 文件为空。")
+    try:
+        text = raw.decode("utf-8-sig")
+        reader = csv.DictReader(io.StringIO(text))
+        if not reader.fieldnames:
+            raise ValueError("CSV 缺少表头。")
+        headers = {str(field or "").strip() for field in reader.fieldnames}
+        missing = IMPORT_REQUIRED_FIELDS[entity] - headers
+        if missing:
+            raise ValueError(f"CSV 缺少必要字段：{'、'.join(sorted(missing))}。")
+        rows = [{str(key or "").strip(): (value or "").strip() for key, value in row.items()} for row in reader]
+    except UnicodeDecodeError as exc:
+        raise ValueError("CSV 文件无法读取，请使用 UTF-8 或 UTF-8 BOM 编码。") from exc
+    except csv.Error as exc:
+        raise ValueError("CSV 文件格式无效。") from exc
+    if not rows:
+        raise ValueError("CSV 没有数据行。")
+    if len(rows) > 5000:
+        raise ValueError("CSV 最多允许 5000 行数据。")
+    key = IMPORT_KEY_FIELDS[entity]
+    duplicates = _duplicate_key_errors(rows, key)
+    if duplicates:
+        # File-level duplicate errors are returned by the preview with row data.
+        for row, message in duplicates:
+            rows[row - 2]["__import_error__"] = message
+    return rows, hashlib.sha256(raw).hexdigest()
+
+
+def _duplicate_key_errors(rows, key):
+    seen, errors = {}, []
     for index, row in enumerate(rows, start=2):
-        try:
-            with transaction.atomic():
-                was_created = _import_row(entity, {k: (v or "").strip() for k, v in row.items()})
+        value = row.get(key, "").strip()
+        if not value:
+            continue
+        if value in seen:
+            errors.append((index, f"文件内业务主键 {key} 重复：{value}（首次出现在第 {seen[value]} 行）。"))
+        else:
+            seen[value] = index
+    return errors
+
+
+def _preview_import(entity, rows):
+    created = updated = 0
+    errors = []
+    with transaction.atomic():
+        for index, row in enumerate(rows, start=2):
+            try:
+                if row.get("__import_error__"):
+                    raise ValueError(row["__import_error__"])
+                with transaction.atomic():
+                    was_created = _import_row(entity, row)
                 created += int(was_created)
                 updated += int(not was_created)
-        except Exception as exc:
-            errors.append({"row": index, "message": str(exc)})
-    return Response({"total": len(rows), "created": created, "updated": updated, "errors": errors})
+            except Exception as exc:
+                errors.append({"row": index, "message": _import_error_message(exc), "key": row.get(IMPORT_KEY_FIELDS[entity], "")})
+        transaction.set_rollback(True)
+    return {"total": len(rows), "created": created, "updated": updated, "errors": errors}
+
+
+def _apply_import_rows(entity, rows):
+    created = updated = 0
+    for row in rows:
+        was_created = _import_row(entity, row)
+        created += int(was_created)
+        updated += int(not was_created)
+    return created, updated
+
+
+def _import_error_message(exc):
+    if isinstance(exc, DRFValidationError):
+        return _flatten_import_validation_error(exc.detail)
+    if isinstance(exc, DjangoValidationError):
+        return "；".join(exc.messages)
+    return str(exc)
+
+
+def _flatten_import_validation_error(detail):
+    if isinstance(detail, dict):
+        return "；".join(_flatten_import_validation_error(item) for item in detail.values())
+    if isinstance(detail, (list, tuple)):
+        return "；".join(_flatten_import_validation_error(item) for item in detail)
+    return str(detail)
 
 
 def _decimal(value, default="0"):

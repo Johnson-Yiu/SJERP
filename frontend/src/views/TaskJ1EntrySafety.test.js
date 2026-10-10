@@ -30,6 +30,17 @@ test('import page exposes only supported types and explains insert-only finance 
   assert.doesNotMatch(view, /订单使用 <code>order_no<\/code>/)
 })
 
+test('import page uses preview and explicit confirmation before a write', async () => {
+  const view = await source('./ImportPage.vue')
+  assert.match(view, /\/import\/csv\/preview\//)
+  assert.match(view, /\/import\/csv\/execute\//)
+  assert.match(view, /confirmDialog\(\{ title: '确认执行导入'/)
+  assert.match(view, /预览并校验/)
+  assert.match(view, /确认执行导入/)
+  assert.match(view, /校验未通过，不会写入任何数据。/)
+  assert.match(view, /下载失败清单 CSV/)
+})
+
 test('top bar has no fake search or notification controls and uses current operator initials', async () => {
   const view = await source('../App.vue')
   assert.doesNotMatch(view, /quick-search|<Bell\b|<Search\b/)

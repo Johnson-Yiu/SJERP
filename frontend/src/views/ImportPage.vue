@@ -1,22 +1,42 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { UploadCloud, Download, FileSpreadsheet, CheckCircle2, AlertTriangle } from 'lucide-vue-next'
 import { api } from '../api'
+import { confirmDialog } from '../dialogs'
 
-const entity = ref('customers'), file = ref(null), templates = ref({}), uploading = ref(false), result = ref(null), error = ref('')
+const entity = ref('customers'), file = ref(null), templates = ref({}), previewing = ref(false), executing = ref(false), result = ref(null), error = ref('')
 const types = { customers: ['客户', '按客户编号匹配'], products: ['产品', '分类须预先建立'], skus: ['SKU', '按 SKU 与产品编号匹配'], transactions: ['财务流水', '只新增，不覆盖'] }
+const canExecute = computed(() => Boolean(result.value?.preview_token) && !result.value?.errors?.length)
 onMounted(async () => { try { templates.value = (await api.get('/import/templates/')).data } catch (e) { error.value = e.message } })
-function choose(e) { file.value = e.target.files[0]; result.value = null; error.value = '' }
+function invalidatePreview() { result.value = null; error.value = '' }
+function choose(e) { file.value = e.target.files[0]; invalidatePreview() }
+function changeEntity() { file.value = null; invalidatePreview() }
 function downloadTemplate() {
   const headers = templates.value[entity.value] || []
   const blob = new Blob(['\ufeff' + headers.join(',') + '\n'], { type: 'text/csv;charset=utf-8' })
   const url = URL.createObjectURL(blob), a = document.createElement('a'); a.href = url; a.download = `${entity.value}_template.csv`; a.click(); URL.revokeObjectURL(url)
 }
-async function upload() {
+async function preview() {
   if (!file.value) return error.value = '请先选择 CSV 文件。'
-  uploading.value = true; error.value = ''; result.value = null
+  previewing.value = true; error.value = ''; result.value = null
   const data = new FormData(); data.append('entity', entity.value); data.append('file', file.value)
-  try { result.value = (await api.post('/import/csv/', data)).data } catch (e) { error.value = e.message } finally { uploading.value = false }
+  try { result.value = (await api.post('/import/csv/preview/', data)).data } catch (e) { error.value = e.message } finally { previewing.value = false }
+}
+function downloadFailures() {
+  const rows = result.value?.errors || []
+  const text = '\ufeffrow,key,message\n' + rows.map(item => [item.row, item.key || '', item.message].map(value => `"${String(value).replaceAll('"', '""')}"`).join(',')).join('\n')
+  const url = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }))
+  const link = document.createElement('a'); link.href = url; link.download = `${entity.value}_import_failures.csv`; link.click(); URL.revokeObjectURL(url)
+}
+async function execute() {
+  if (!canExecute.value) return
+  const approved = await confirmDialog({ title: '确认执行导入', message: `确认导入 ${result.value.total} 行数据？执行成功后将正式修改系统数据。`, confirmText: '确认导入' })
+  if (!approved) return
+  executing.value = true; error.value = ''
+  const data = new FormData(); data.append('entity', entity.value); data.append('file', file.value); data.append('preview_token', result.value.preview_token)
+  try { result.value = { ...(await api.post('/import/csv/execute/', data)).data, errors: [], completed: true } }
+  catch (e) { error.value = e.message; result.value = null }
+  finally { executing.value = false }
 }
 </script>
 
@@ -26,13 +46,20 @@ async function upload() {
     <div class="import-layout">
       <div class="panel import-main">
         <div class="step"><span>01</span><div><h3>选择数据类型</h3><p>客户、产品和 SKU 按编号匹配；更新会经过当前业务规则校验，不会绕过主数据保护。</p></div></div>
-        <div class="type-grid"><label v-for="(copy,key) in types" :key="key" :class="{ selected: entity === key }"><input v-model="entity" type="radio" :value="key" /><FileSpreadsheet :size="20" /><strong>{{ copy[0] }}</strong><small>{{ copy[1] }}</small></label></div>
+        <div class="type-grid"><label v-for="(copy,key) in types" :key="key" :class="{ selected: entity === key }"><input v-model="entity" type="radio" :value="key" @change="changeEntity" /><FileSpreadsheet :size="20" /><strong>{{ copy[0] }}</strong><small>{{ copy[1] }}</small></label></div>
         <div class="step"><span>02</span><div><h3>准备并上传 CSV</h3><p>文件请保存为 UTF-8 编码，第一行字段名保持模板原样。</p></div></div>
         <button class="template-btn" @click="downloadTemplate"><Download :size="16" /><span><strong>下载 {{ types[entity][0] }} CSV 模板</strong><small>{{ (templates[entity] || []).join(' · ') }}</small></span></button>
         <label class="drop-zone"><input type="file" accept=".csv,text/csv" @change="choose" /><UploadCloud :size="34" /><strong>{{ file ? file.name : '点击选择 CSV 文件' }}</strong><small>{{ file ? `${(file.size/1024).toFixed(1)} KB` : '单次建议不超过 5,000 行' }}</small></label>
-        <button class="btn btn-primary upload-btn" :disabled="uploading || !file" @click="upload">{{ uploading ? '正在导入...' : '开始导入' }}</button>
+        <button class="btn btn-primary upload-btn" :disabled="previewing || executing || !file" @click="preview">{{ previewing ? '正在校验...' : '预览并校验' }}</button>
         <div v-if="error" class="result error-result"><AlertTriangle :size="18" />{{ error }}</div>
-        <div v-if="result" class="result success-result"><CheckCircle2 :size="20" /><div><strong>导入完成：共 {{ result.total }} 行，新增 {{ result.created }}，更新 {{ result.updated }}</strong><p v-if="result.errors.length">有 {{ result.errors.length }} 行失败，请检查：</p><ul v-if="result.errors.length"><li v-for="e in result.errors.slice(0,8)" :key="e.row">第 {{ e.row }} 行：{{ e.message }}</li></ul></div></div>
+        <div v-if="result" class="result" :class="result.completed || !result.errors.length ? 'success-result' : 'error-result'"><component :is="result.completed || !result.errors.length ? CheckCircle2 : AlertTriangle" :size="20" /><div>
+          <strong v-if="result.completed">导入成功：共 {{ result.total }} 行，新增 {{ result.created }}，更新 {{ result.updated }}</strong>
+          <strong v-else>共 {{ result.total }} 行，将新增 {{ result.created }}，将更新 {{ result.updated }}，错误 {{ result.errors.length }}</strong>
+          <p v-if="result.errors.length">校验未通过，不会写入任何数据。</p>
+          <ul v-if="result.errors.length"><li v-for="e in result.errors.slice(0,20)" :key="e.row">第 {{ e.row }} 行：{{ e.message }}</li></ul>
+          <button v-if="result.errors.length" class="inline-action" @click="downloadFailures">下载失败清单 CSV</button>
+          <button v-else-if="!result.completed" class="btn btn-primary execute-btn" :disabled="executing" @click="execute">{{ executing ? '正在执行...' : '确认执行导入' }}</button>
+        </div></div>
       </div>
       <aside class="panel guide"><h3>导入规则</h3><ol><li v-for="(copy,key,index) in types" :key="key"><span>{{ index+1 }}</span><div><strong>{{ copy[0] }}</strong><small>{{ copy[1] }}</small></div></li></ol><div class="tip"><strong>关联与历史安全</strong><p>客户、产品和 SKU 按编号匹配，修改仍受序列化器及业务完整性规则校验。财务流水只新增；重复流水号会报错，绝不覆盖原记录。</p><p>正式订单导入暂未开放，请通过订单业务流程创建；避免绕过报价、库存预留和收款计划。</p></div></aside>
     </div>

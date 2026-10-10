@@ -71,3 +71,58 @@ test('saved parameter suggestions include inherited categories and legacy keys i
   assert.deepEqual(Array.from(context.optionsFor({ id: 2 }, { key: '输入电压', name: '输入电压', default_value: '48V' }, false), item => item.value), ['12V', '24V'])
   assert.deepEqual(Array.from(context.optionsFor({ id: 2 }, { key: '色温/发光颜色', name: '色温/发光颜色' }, false), item => item.value), ['3000K'])
 })
+
+async function saveContext(editing = false, imageFails = false) {
+  const { runInNewContext } = await import('node:vm')
+  const source = await readFile(componentUrl, 'utf8')
+  const calls = [], notices = []
+  const detail = { packaging_template: 12, carton_quantity: 50, unit_weight: 0.15 }
+  const preview = { specification: '12W', parameterValuesForSku: { power: '12W' }, description_cn: 'Light' }
+  const ctx = {
+    api: { put: async (...args) => { calls.push(['put', ...args]) }, post: async (...args) => { calls.push(['post', ...args]); return { data: [{ id: 7 }] } } },
+    saveError: { value: '' }, saving: { value: false }, editingId: { value: editing ? 7 : null },
+    form: { product: 1, unit: 'pcs', currency: 'USD', active: true }, salesModelAbbreviations: {},
+    allPreviews: { value: [preview] }, chosenPreviews: { value: [preview] }, detailFor: () => detail,
+    cleanDetail: () => ({ carton_quantity: 50 }), ordinaryValues: () => ({}), translateLightingTerms: v => v,
+    selectedImage: { value: imageFails ? {} : null }, imageClearRequested: { value: false }, pendingImageSkuIds: { value: [] }, pendingImageFailurePrefix: { value: "" },
+    uploadImage: async () => { if (imageFails) throw new Error('network failed') },
+    load: async () => {}, closeModal: () => calls.push(['close']), emit: () => {},
+    notify: msg => notices.push(msg), reportSaveError: (error, prefix) => { ctx.saveError.value = prefix + error.message; notices.push(ctx.saveError.value) },
+  }
+  const helper = source.slice(source.indexOf('function packagingInput('), source.indexOf('async function openVersions'))
+  const persist = source.slice(source.indexOf('async function persistSave('), source.indexOf('async function confirmIdentitySave'))
+  runInNewContext(helper + persist + ';this.persistSave = persistSave', ctx)
+  await ctx.persistSave({ editingRow: { specification: '12W', parameter_values: {} }, parameterChanged: false, productChanged: false, identityChanged: false })
+  return { ctx, calls, notices }
+}
+
+test('create and edit include packaging in their single SKU database request', async () => {
+  for (const editing of [false, true]) {
+    const { calls } = await saveContext(editing)
+    const writes = calls.filter(([method]) => method === 'post' || method === 'put')
+    assert.equal(writes.length, 1)
+    const input = editing ? writes[0][2] : writes[0][2].items[0]
+    assert.equal(input.packaging_profile_input.packaging_template, 12)
+    assert.equal(input.packaging_profile_input.qty_per_carton_override, 50)
+    assert.equal(input.packaging_profile_input.unit_net_weight, 0.15)
+  }
+})
+
+test('image failure retains saved SKU IDs for independent retry and reports database success', async () => {
+  for (const editing of [false, true]) {
+    const { ctx, calls, notices } = await saveContext(editing, true)
+    assert.equal(ctx.pendingImageSkuIds.value[0], 7)
+    assert.ok(notices.some(msg => msg.includes(editing ? 'SKU 已更新，但图片上传失败' : 'SKU 已创建，但图片上传失败')))
+    assert.equal(calls.filter(([method]) => method === 'post' || method === 'put').length, 1)
+    assert.ok(!calls.some(([method]) => method === 'close'))
+  }
+})
+
+test('nested packaging validation messages remain readable', async () => {
+  const { runInNewContext } = await import('node:vm')
+  const source = await readFile(componentUrl, 'utf8')
+  const lines = source.split('\n').filter(line => line.startsWith('const errorMessages =') || line.startsWith('const apiErrorMessage =')).join('\n')
+  const ctx = {}
+  runInNewContext(lines + ';this.message = apiErrorMessage({response:{data:{packaging_profile_input:{qty_per_carton_override:["每箱数量必须大于 0。"]}}}})', ctx)
+  assert.equal(ctx.message, '每箱数量必须大于 0。')
+})

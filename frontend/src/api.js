@@ -22,7 +22,8 @@ api.interceptors.response.use(
     if (data instanceof Blob) {
       try { data = JSON.parse(await data.text()) } catch { /* Keep the generic fallback for non-JSON blobs. */ }
     }
-    const message = data?.detail || (data && typeof data === 'object' ? Object.values(data).flat().join('；') : '') || (retryable ? '后端服务暂时不可用，请稍后重试。' : '请求失败，请稍后重试。')
+    const nestedMessages = value => value == null ? [] : typeof value === 'object' ? Object.values(value).flatMap(nestedMessages) : [String(value)]
+    const message = (data?.packaging_profile_input ? nestedMessages(data.packaging_profile_input).join('；') : '') || data?.detail || (data && typeof data === 'object' ? Object.values(data).flat().join('；') : '') || (retryable ? '后端服务暂时不可用，请稍后重试。' : '请求失败，请稍后重试。')
     return Promise.reject(new Error(message))
   },
 )

@@ -924,12 +924,34 @@ class SKUSerializer(serializers.ModelSerializer):
     to_procure_quantity = serializers.SerializerMethodField()
     has_anomaly = serializers.SerializerMethodField()
     packaging = serializers.SerializerMethodField()
+    packaging_profile_input = serializers.DictField(write_only=True, required=False, allow_null=True)
     historical_matches = serializers.SerializerMethodField()
 
     class Meta:
         model = SKU
         fields = "__all__"
         extra_kwargs = {"sku": {"required": False, "read_only": True}, "identity_signature": {"read_only": True}, "schema_version": {"read_only": True}}
+
+    def _packaging_serializer(self, data, sku=None):
+        profile = SKUPackagingProfile.objects.filter(sku=sku).first() if sku else None
+        serializer = SKUPackagingProfileSerializer(profile, data=data, partial=True, context=self.context)
+        # The parent SKU owns this association; nested input cannot redirect it.
+        if "sku" in data:
+            raise serializers.ValidationError({"packaging_profile_input": "包装配置不能指定其他 SKU。"})
+        try:
+            serializer.is_valid(raise_exception=True)
+        except serializers.ValidationError as error:
+            raise serializers.ValidationError({"packaging_profile_input": error.detail})
+        return serializer
+
+    def validate_packaging_profile_input(self, value):
+        if value is not None:
+            self._packaging_serializer(value, self.instance)
+        return value
+
+    def _save_packaging(self, sku, data):
+        if data is not None:
+            self._packaging_serializer(data, sku).save(sku=sku)
 
     def _generated_identity(self, values):
         product = values.get("product", getattr(self.instance, "product", None))
@@ -1109,7 +1131,10 @@ class SKUSerializer(serializers.ModelSerializer):
         )
         if conflicts:
             raise serializers.ValidationError({"duplicate_sku": conflicts})
-        return super().create(validated_data)
+        packaging = validated_data.pop("packaging_profile_input", None)
+        instance = super().create(validated_data)
+        self._save_packaging(instance, packaging)
+        return instance
 
     @transaction.atomic
     def update(self, instance, validated_data):
@@ -1170,7 +1195,10 @@ class SKUSerializer(serializers.ModelSerializer):
                 changed_by=self.context["request"].user if self.context.get("request") and self.context["request"].user.is_authenticated else None,
                 change_reason=str(self.initial_data.get("change_reason", "")).strip(),
             )
-        return super().update(instance, validated_data)
+        packaging = validated_data.pop("packaging_profile_input", None)
+        instance = super().update(instance, validated_data)
+        self._save_packaging(instance, packaging)
+        return instance
 
     def _metrics(self, obj):
         from .services.fulfillment import sku_metrics

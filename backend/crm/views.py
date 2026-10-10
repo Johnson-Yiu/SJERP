@@ -733,16 +733,25 @@ class HSCodeViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
 
 class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
+    @transaction.atomic
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+
+    @transaction.atomic
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+
     @action(detail=False, methods=["post"], url_path="batch-create")
     @transaction.atomic
     def batch_create(self, request):
         items = request.data.get("items")
         if not isinstance(items, list) or not 1 <= len(items) <= 1000:
             return Response({"detail": "请选择 1–1000 个实际 SKU 组合。"}, status=400)
-        result = []
-        for item in items:
-            serializer = self.get_serializer(data=item)
+        serializers = [self.get_serializer(data=item) for item in items]
+        for serializer in serializers:
             serializer.is_valid(raise_exception=True)
+        result = []
+        for serializer in serializers:
             instance = serializer.save()
             record_operation(request=request, instance=instance, action="create", action_label="按需创建 SKU")
             result.append(serializer.data)

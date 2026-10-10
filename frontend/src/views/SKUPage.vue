@@ -38,7 +38,8 @@ function trackEditorStep() {
   editorStep.value = Number(current?.dataset.skuStep || 1)
 }
 
-const apiErrorMessage = error => error.response?.data?.detail || Object.values(error.response?.data || {}).flat().join(' ') || error.message || '操作失败。'
+const errorMessages = value => value == null ? [] : typeof value === 'object' ? Object.values(value).flatMap(errorMessages) : [String(value)]
+const apiErrorMessage = error => errorMessages(error.response?.data).join(' ') || error.message || '操作失败。'
 const form = reactive({ sku: '', product: '', sales_model: '', description_cn: '', description_en: '', unit: 'pcs', currency: 'USD', active: true })
 const parameterValues = reactive({})
 const salesModelAbbreviations = reactive({})
@@ -77,7 +78,7 @@ const batchDetailFields = reactive({ unit: '', notes: '', unit_weight: '', carto
 const packagingDialogOpen = ref(false), packagingSaving = ref(false), packagingTarget = ref(null)
 const packagingForm = reactive({ name: '', supplier: '', carton_length: '', carton_width: '', carton_height: '', carton_tare_weight: 0, partial_carton_policy: 'SAME_CARTON', active: true, description: '' })
 const imageInput = ref(null), selectedImage = ref(null), imagePreviewUrl = ref(''), savedImageUrl = ref('')
-const imageClearRequested = ref(false), pendingImageSkuIds = ref([])
+const imageClearRequested = ref(false), pendingImageSkuIds = ref([]), pendingImageFailurePrefix = ref('SKU 已创建，但图片上传失败：')
 const versionsOpen = ref(false), versions = ref([]), versionsLoading = ref(false)
 const supplierTraitsText = ref('')
 const supplierSources = ref([]), supplierSourcesLoading = ref(false), supplierSourceDialogOpen = ref(false), supplierSourceSaving = ref(false), supplierSourceEditingId = ref(null)
@@ -549,10 +550,9 @@ async function createPackaging() {
     resetPackagingForm()
   } catch (error) { notify(error.message, true) } finally { packagingSaving.value = false }
 }
-async function savePackaging(skuId, detail) {
-  if (!detail.packaging_template) return
-  if (!detail.carton_quantity || Number(detail.carton_quantity) <= 0) throw new Error(`销售型号 ${detail.sales_model || ''} 已选择包装信息，请填写大于 0 的整件数量。`)
-  await api.put(`/skus/${skuId}/packaging/`, { packaging_template: Number(detail.packaging_template), qty_per_carton_override: Number(detail.carton_quantity), unit_net_weight: Number(detail.unit_weight || 0) })
+function packagingInput(detail) {
+  if (!detail.packaging_template) return {}
+  return { packaging_profile_input: { packaging_template: Number(detail.packaging_template), qty_per_carton_override: Number(detail.carton_quantity), unit_net_weight: Number(detail.unit_weight || 0) } }
 }
 async function openVersions(row) {
   versionsOpen.value = true; versionsLoading.value = true; versions.value = []
@@ -576,22 +576,28 @@ async function persistSave({ editingRow, editingPreview, parameterChanged, produ
       const specification = parameterChanged || productChanged ? preview.specification : (editingRow?.specification || preview.specification)
       const parameters = parameterChanged || productChanged ? preview.parameterValuesForSku : { ...(editingRow?.parameter_values || preview.parameterValuesForSku), ...ordinaryValues() }
       const salesModel = parameterChanged ? (preview.sales_model || null) : (form.sales_model || null)
-      await api.put(`/skus/${editingId.value}/`, { ...shared, sales_model: salesModel, description_cn: form.description_cn || preview.description_cn, description_en: translateLightingTerms(form.description_en || preview.description_en), specification, product_details: [cleanDetail(detail)], parameter_values: parameters, identity_change_confirmed: identityChanged })
-      await savePackaging(editingId.value, detail)
-      if (imageClearRequested.value) await clearImage(editingId.value)
-      else if (selectedImage.value) await uploadImage(editingId.value, selectedImage.value)
+      await api.put(`/skus/${editingId.value}/`, { ...shared, ...packagingInput(detail), sales_model: salesModel, description_cn: form.description_cn || preview.description_cn, description_en: translateLightingTerms(form.description_en || preview.description_en), specification, product_details: [cleanDetail(detail)], parameter_values: parameters, identity_change_confirmed: identityChanged })
+      try {
+        if (imageClearRequested.value) await clearImage(editingId.value)
+        else if (selectedImage.value) await uploadImage(editingId.value, selectedImage.value)
+      } catch (error) {
+        if (selectedImage.value) { pendingImageSkuIds.value = [editingId.value]; pendingImageFailurePrefix.value = 'SKU 已更新，但图片上传失败：' }
+        await load()
+        reportSaveError(error, 'SKU 已更新，但图片上传失败：')
+        return false
+      }
     } else {
       const previews = [...chosenPreviews.value]
       const payloads = previews.map(preview => {
         const detail = detailFor(preview)
-        return { ...shared, sales_model: null, description_cn: form.description_cn || preview.description_cn, description_en: translateLightingTerms(form.description_en || preview.description_en), specification: preview.specification, product_details: [cleanDetail(detail)], parameter_values: preview.parameterValuesForSku }
+        return { ...shared, ...packagingInput(detail), sales_model: null, description_cn: form.description_cn || preview.description_cn, description_en: translateLightingTerms(form.description_en || preview.description_en), specification: preview.specification, product_details: [cleanDetail(detail)], parameter_values: preview.parameterValuesForSku }
       })
       const created = (await api.post('/skus/batch-create/', { items: payloads })).data
       const createdRows = created.map((row,index) => ({ row, detail: detailFor(previews[index]) }))
-      await Promise.all(createdRows.map(({ row, detail }) => savePackaging(row.id, detail)))
       if (selectedImage.value) {
         try { await Promise.all(createdRows.map(({ row }) => uploadImage(row.id, selectedImage.value))) }
         catch (error) {
+          pendingImageFailurePrefix.value = 'SKU 已创建，但图片上传失败：'
           pendingImageSkuIds.value = createdRows.map(({ row }) => row.id)
           editingId.value = createdRows[0]?.row.id || null
           await load()
@@ -628,7 +634,7 @@ async function save() {
       await Promise.all(pendingImageSkuIds.value.map(skuId => uploadImage(skuId, selectedImage.value)))
       pendingImageSkuIds.value = []
       closeModal(); emit('saved'); notify('SKU 图片已上传'); await load()
-    } catch (error) { reportSaveError(error, 'SKU 已创建，但图片上传失败：') } finally { saving.value = false }
+    } catch (error) { reportSaveError(error, pendingImageFailurePrefix.value) } finally { saving.value = false }
     return
   }
   if (!form.product) return notify('请选择所属产品。', true)

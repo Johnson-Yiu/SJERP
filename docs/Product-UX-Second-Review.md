@@ -669,3 +669,34 @@ Successful-upload/reopen/access/cancel-delete/delete-refresh screenshots remain 
 Manual steps: in Chrome open `chrome://extensions`, find the ChatGPT browser extension, open Details and enable **Allow access to file URLs** (see https://developers.openai.com/codex/app/chrome-extension#upload-files). Alternatively use Chrome's native file picker manually. Open `/follow-ups?customer=13`, locate the exact dated/title record above, edit and add the local temporary .txt file; save. Close/reopen and click the attachment to verify access. Edit, choose deletion for **only that newly uploaded temporary attachment**, cancel and confirm it remains; repeat deletion, confirm, and verify removal immediately without F5, then close/reopen again. Never delete the follow-up record or any pre-existing attachment. Capture each successful stage and append evidence before marking PASS.
 
 Independent ChatGPT acceptance remains pending. Work stops after CI/evidence/documentation delivery.
+
+### Final Acceptance retry after file permission enabled — 2026-10-10
+
+The user enabled the Chrome extension file permission and authorized retry. The original BLOCKED report above describes the first attempt only; the following results supersede its unexecuted upload/deletion checks. No production source or business rules changed.
+
+Using the same customer13 / 2026-10-10 01:05 follow-up, real Chrome selected the 79-byte temporary TXT through 添加附件 and saved through 保存跟进. The UI reported 更新成功. Reopening through the list showed **1 个附件**, the exact filename and 79 B.
+
+| Retry check | Result |
+| --- | --- |
+| Upload / save / reopen persistence | PASS |
+| Editor 查看 attachment access | PASS — Chrome displayed the exact original TXT contents at port 8100 |
+| Detail attachment link access | NOT PASS — its relative media link resolves to port 5191; clicks produced no completed download and opening that observed address in Chrome reported net::ERR_BLOCKED_BY_CLIENT |
+| Cancel attachment deletion | PASS — confirmation cancelled; saved attachment remained |
+| Confirm deletion / immediate refresh | PASS — only newly uploaded temporary TXT deleted; editor immediately showed 尚未添加附件 and deletion toast without reload |
+| Close editor / reopen after deletion | PASS — original follow-up remained, 0 个附件 / 暂无附件 |
+
+Overall acceptance is **not fully PASS**: the detail-link access discrepancy remains unresolved. It is separate from the now-resolved upload file permission. Do not infer a backend failure from the browser error. No API/database calls substituted for UI actions; no original follow-up, customer or pre-existing attachment was deleted. Only the explicitly disposable attachment created in this test was removed. The three original UAT follow-ups remain.
+
+Additional evidence on ux-review-evidence, same `ux-review/second-review-final/final-acceptance/` folder:
+
+- ACCEPT_04_upload_selected.png — filename and 79 B selected in editor.
+- ACCEPT_05_saved_reopened.png — reopened detail with persisted attachment.
+- ACCEPT_06_attachment_access.png — Chrome TXT contents via editor 查看 at port 8100.
+- ACCEPT_07_delete_confirmation.png — confirmation names only the temporary attachment.
+- ACCEPT_08_delete_cancelled.png — attachment remains after cancelling confirmation.
+- ACCEPT_09_deleted_immediate.png — immediately empty editor after confirmed deletion.
+- ACCEPT_10_deleted_reopened.png — reopened original detail with zero attachments.
+
+These seven stages are complete. Successful detail-link access evidence is missing because that check did not pass. The initial three blocked-attempt images remain as historical evidence. Screenshots preserve original Chrome content without cropping/resizing. No screenshots are committed to master.
+
+Manual remaining check: repeat with a disposable attachment in the same dedicated UAT record; after saving/reopening, click the detail attachment link and inspect Chrome's download/browser result. Compare the detail link (5191) with editor 查看 (8100), record browser blocking diagnostics, and obtain scope approval before a source fix. Remove only the newly created temporary attachment after the check. Documentation-only final commit and its exact-head CI are reported separately. Stop for independent ChatGPT review.

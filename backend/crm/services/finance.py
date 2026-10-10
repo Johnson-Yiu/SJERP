@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation
 from uuid import uuid4
 
@@ -33,6 +33,28 @@ def ensure_default_payment_plans(contract, deposit_ratio=None):
     if contract.status in {"draft", "cancelled"}:
         return []
     is_order = contract.__class__.__name__ == "Order"
+    if not is_order:
+        from crm.payment_terms import default_payment_terms, validate_payment_terms
+        relation = {"purchase_order": contract}
+        existing = PaymentPlan.objects.filter(**relation).order_by("id")
+        if existing.exists():
+            return list(existing)
+        terms = validate_payment_terms(contract.payment_terms_snapshot or default_payment_terms())
+        total = _contract_amount(contract)
+        if total <= 0:
+            return []
+        remaining = total
+        rows = []
+        for index, stage in enumerate(terms):
+            amount = remaining if index == len(terms) - 1 else min(remaining, (total * Decimal(stage["ratio"])).quantize(Decimal("0.0001")))
+            remaining -= amount
+            if amount <= 0:
+                continue
+            basis_date = getattr(contract, stage["due_basis"], None) if stage["due_basis"] != "no_date" else None
+            due_date = basis_date + timedelta(days=stage["offset_days"]) if basis_date else None
+            rows.append(PaymentPlan.objects.create(**relation, direction="payable", currency=contract.currency,
+                due_date=due_date, planned_amount=amount, notes=stage["label"]))
+        return rows
     if deposit_ratio is None:
         deposit_ratio = contract.quote.deposit_ratio if is_order and contract.quote_id else Decimal("0.30")
     deposit_ratio = Decimal(str(deposit_ratio))

@@ -915,6 +915,7 @@ class Supplier(TimestampedModel):
     email = models.EmailField("邮箱", blank=True)
     store_url = models.URLField("店铺链接", max_length=500, blank=True)
     payment_terms = models.CharField("付款条款", max_length=200, blank=True, default="30%预付款，70%尾款发货前结清")
+    payment_terms_config = models.JSONField("系统执行付款规则", default=list, blank=True)
     notes = models.TextField("备注", blank=True)
 
     class Meta:
@@ -973,6 +974,7 @@ class SupplierSKU(TimestampedModel):
 
 
 class PurchaseOrder(TimestampedModel):
+    payment_terms_snapshot = models.JSONField("本次付款计划", default=list, blank=True)
     cost_allocation_version = models.PositiveIntegerField(default=0, editable=False)
     additional_costs = models.JSONField(default=list, blank=True, editable=False)
     STATUS_CHOICES = [

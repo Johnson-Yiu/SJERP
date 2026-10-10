@@ -19,6 +19,32 @@ beforeEach(() => {
   mocks.api.post.mockResolvedValue({ data: {} })
 })
 afterEach(() => wrapper?.unmount())
+it('inherits supplier terms, isolates an override and protects it on supplier cancellation', async () => {
+  const fifty = [{ label: '预付款', ratio: '0.5', due_basis: 'order_date', offset_days: 0 }, { label: '尾款', ratio: '0.5', due_basis: 'no_date', offset_days: 0 }]
+  mocks.listAll.mockImplementation(async url => url === '/suppliers/' ? [{ id: 9, name: 'Old', payment_terms_config: fifty }, { id: 10, name: 'New' }] : [])
+  await editor()
+  wrapper.vm.draft.items = []
+  await wrapper.vm.changeSupplier(10)
+  await wrapper.vm.changeSupplier(9)
+  expect(wrapper.vm.draft.payment_terms_snapshot).toEqual(fifty)
+  wrapper.vm.draft.payment_terms_snapshot[0].ratio = '0.2'
+  wrapper.vm.draft.payment_terms_snapshot[1].ratio = '0.8'
+  expect(fifty[0].ratio).toBe('0.5')
+  const before = JSON.stringify(wrapper.vm.draft)
+  mocks.confirmDialog.mockResolvedValueOnce(false)
+  await wrapper.vm.changeSupplier(10)
+  expect(mocks.confirmDialog).toHaveBeenLastCalledWith(expect.objectContaining({ message: expect.stringContaining('更换供应商还将替换本次采购的付款计划。') }))
+  expect(JSON.stringify(wrapper.vm.draft)).toBe(before)
+  await wrapper.vm.changeSupplier(10)
+  expect(wrapper.vm.draft.payment_terms_snapshot.map(row => row.ratio)).toEqual(['0.30', '0.70'])
+})
+it('rejects an invalid purchase plan before posting', async () => {
+  await editor()
+  wrapper.vm.draft.payment_terms_snapshot[0].ratio = '0.2'
+  await wrapper.vm.createPurchase()
+  expect(mocks.api.post).not.toHaveBeenCalled()
+  expect(wrapper.vm.error).toContain('100%')
+})
 async function editor() {
   const router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/purchase-orders', component: { template: '<main />' } }] })
   await router.push('/purchase-orders')

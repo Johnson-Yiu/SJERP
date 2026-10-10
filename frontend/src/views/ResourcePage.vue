@@ -1,4 +1,6 @@
 <script setup>
+import PaymentTermsEditor from '../components/PaymentTermsEditor.vue'
+import { copyPaymentTerms, paymentTermsError } from '../utils/paymentTerms'
 import { movementTypes, movementDirection, movementSource, sourceLabels, movementStatus, ledgerFilters, filteredMovements, movementSummary, movementUnit, signedMovement } from '../utils/inventoryLedger'
 import CategoryMultiPicker from "../components/CategoryMultiPicker.vue"
 import CertificateExpiryBadge from '../components/CertificateExpiryBadge.vue'
@@ -75,7 +77,7 @@ const saveLabel = computed(() => props.config.endpoint === 'customers' ? '保存
 const fieldOptions = computed(() => Object.fromEntries(props.config.fields.filter(field => field[2] === 'select').map(field => [field[0], field[4]])))
 const title = computed(() => editingId.value ? `编辑${props.config.title.replace('管理', '')}` : `新建${props.config.title.replace('管理', '')}`)
 const isCustomerCreate = computed(() => props.config.endpoint === 'customers' && !editingId.value)
-const isWideForm = computed(() => isCustomerCreate.value || props.config.endpoint === 'follow-ups')
+const isWideForm = computed(() => isCustomerCreate.value || ['follow-ups', 'suppliers'].includes(props.config.endpoint))
 const isTransactionPage = computed(() => props.config.endpoint === 'transactions')
 const hasSkuContext = computed(() => props.config.endpoint === 'inventory-movements' && Boolean(skuContextId(route.query.sku)))
 const activeSkuContextLabel = computed(() => {
@@ -268,6 +270,7 @@ function resetForm() {
       ? { country: '中国', payment_terms: '30%预付款，70%尾款发货前结清' }[name]
       : undefined
     form[name] = type === 'remote_multi' ? [] : type === 'checkbox' ? name === 'active' : type === 'select' ? Object.keys(extra)[0] : (route.query[name] ?? supplierDefault ?? '')
+    if (type === 'payment_terms') form[name] = copyPaymentTerms()
   })
   supplierCodeServerError.value = ''
 }
@@ -305,6 +308,7 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
     let value = row[name]
     if (type === 'datetime-local' && value) value = value.slice(0, 16)
     form[name] = value ?? (type === 'checkbox' ? false : '')
+    if (type === 'payment_terms') form[name] = copyPaymentTerms(value)
   })
   followUpAttachments.value = props.config.endpoint === 'follow-ups' ? (row.attachments || []) : []
   pendingFollowUpFiles.value = []
@@ -360,6 +364,7 @@ function payload() {
 async function save() {
   if (saving.value) return
   if (supplierCodeError.value) return notify(supplierCodeError.value, true)
+  if (props.config.endpoint === 'suppliers' && paymentTermsError(form.payment_terms_config)) return notify(paymentTermsError(form.payment_terms_config), true)
   saving.value = true
   try {
     const wasEditing = Boolean(editingId.value)
@@ -520,9 +525,10 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
     <InventoryMovementCreateModal v-if="modalOpen && config.endpoint === 'inventory-movements' && !editingId" @close="closeModal" @saved="handleInventoryMovementCreated" />
     <div v-else-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal" :class="{ wide: isWideForm, 'customer-editor': isCustomerPage }" @submit.prevent="save">
       <div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" @click="closeModal"><X :size="17" /></button></div>
-      <div class="modal-body"><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group" :key="field[0]" class="field" :class="{ full: ['textarea', 'remote_multi'].includes(field[2]) || (config.endpoint === 'follow-ups' && field[0] === 'subject'), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
+      <div class="modal-body"><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group" :key="field[0]" class="field" :class="{ full: ['textarea', 'remote_multi', 'payment_terms'].includes(field[2]) || (config.endpoint === 'follow-ups' && field[0] === 'subject'), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
         <label>{{ field[1] }} <em v-if="field[3]">*</em></label>
-        <textarea v-if="field[2] === 'textarea'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" />
+        <PaymentTermsEditor v-if="field[2] === 'payment_terms'" v-model="form[field[0]]" />
+        <textarea v-else-if="field[2] === 'textarea'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" />
         <SimpleRichTextEditor v-else-if="field[2] === 'richtext'" v-model="form[field[0]]" @paste-files="addFollowUpFiles" />
         <ComboInput v-else-if="field[2] === 'combo'" v-model="form[field[0]]" :options="options[field[4]] || []" :required="field[3]" :disabled="isInherited(field[0])" />
         <select v-else-if="field[2] === 'select'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])"><option v-for="(label,key) in field[4]" :key="key" :value="key">{{ label }}</option></select>
@@ -588,7 +594,7 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
 
 
       </div>
-      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : saveLabel }}</button></div>
+      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving || (config.endpoint === 'suppliers' && !!paymentTermsError(form.payment_terms_config))">{{ saving ? '保存中…' : saveLabel }}</button></div>
     </form></div>
 
     <Transition name="detail-drawer" appear>

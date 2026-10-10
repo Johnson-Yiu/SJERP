@@ -96,6 +96,13 @@ class PositionSerializer(serializers.ModelSerializer):
 
 
 class SupplierSerializer(serializers.ModelSerializer):
+    def validate_payment_terms_config(self, value):
+        from .payment_terms import validate_payment_terms
+        try:
+            return validate_payment_terms(value, allow_default=True)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(exc.messages)
+
     supply_category_names = serializers.SlugRelatedField(source="supply_categories", slug_field="name", many=True, read_only=True)
 
     def validate(self, attrs):
@@ -302,6 +309,8 @@ def validate_contract_edit(instance, attrs, *, purchase=False):
         instance.shipments.exists() or instance.purchase_orders.exclude(status="cancelled").exists())
     financial = instance.transactions.exists() or instance.payment_plans.filter(settled_amount__gt=0).exists() or instance.payment_plans.filter(advance_allocations__isnull=False).exists()
     sensitive = {"items", "currency", "exchange_rate", "shipping_fee", "discount", "supplier" if purchase else "customer", "order" if purchase else "quote"}
+    if purchase:
+        sensitive.add("payment_terms_snapshot")
     if not purchase:
         sensitive.add("tail_goods_policy")
     items_changed = "items" in attrs and not contract_items_match(instance, attrs["items"])
@@ -346,6 +355,18 @@ def sync_unsettled_contract_plans(instance, changed):
 
 
 class PurchaseOrderSerializer(serializers.ModelSerializer):
+    payment_plans = serializers.SerializerMethodField()
+
+    def get_payment_plans(self, obj):
+        return PaymentPlanSerializer(obj.payment_plans.all().order_by("id"), many=True).data
+
+    def validate_payment_terms_snapshot(self, value):
+        from .payment_terms import validate_payment_terms
+        try:
+            return validate_payment_terms(value)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(exc.messages)
+
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     items = PurchaseOrderItemSerializer(many=True)
     supplier_name = serializers.CharField(source="supplier.name", read_only=True)
@@ -402,6 +423,14 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         if currency == "CNY" and rate != Decimal("1"):
             raise serializers.ValidationError({"exchange_rate": "人民币采购单的对人民币汇率必须为 1。"})
         supplier = attrs.get("supplier", getattr(self.instance, "supplier", None))
+        if "payment_terms_snapshot" not in attrs and (self.instance is None or (
+            self.instance.status == "draft" and supplier != self.instance.supplier
+        )):
+            from .payment_terms import default_payment_terms, validate_payment_terms
+            try:
+                attrs["payment_terms_snapshot"] = validate_payment_terms(supplier.payment_terms_config or default_payment_terms())
+            except DjangoValidationError as exc:
+                raise serializers.ValidationError({"payment_terms_snapshot": exc.messages})
         unit_rows = attrs.get("items")
         if (
             self.instance is not None

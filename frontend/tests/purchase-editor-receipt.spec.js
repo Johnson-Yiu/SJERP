@@ -43,7 +43,7 @@ describe('Purchase Phase B draft editor',()=>{
  })
  it('allows removing a line while retaining the existing empty-draft save guard',async()=>{
   await newEditor();await wrapper.get('[aria-label="供应商"]').setValue('10');await selectSku()
-  await click('删除')
+  await wrapper.get('.purchase-line button.danger').trigger('click');await flushPromises()
   expect(wrapper.findAll('.purchase-line')).toHaveLength(0)
   expect(wrapper.get('.purchase-total-summary').text()).toContain('CNY 0.00')
   await wrapper.get('.purchase-create-modal form').trigger('submit');await flushPromises()

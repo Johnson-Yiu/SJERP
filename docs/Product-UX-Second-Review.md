@@ -630,3 +630,42 @@ Evidence only on **ux-review-evidence**, folder **ux-review/second-review-final/
 - FOCUSED_06_quote_items_1280.png — PASS / complete
 
 No missing required evidence. This completes only the focused repair; independent review remains pending.
+
+## Second Review — Final Acceptance: CI and Follow-up Attachment UAT
+
+2026-10-10. Exact current production master checked against GitHub remote: **4ab2954798fcb77acffd9911f228023063183dae**. [CI #185](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38015614469) reports this exact `headSha`, completed / **SUCCESS**, with backend **SUCCESS**, backend-postgres **SUCCESS**, frontend **SUCCESS**. No earlier commit's CI was substituted. This pass makes no production-code, business-rule, database or permission changes. The documentation-only delivery commit and its own CI are reported separately in the final response.
+
+### Attachment UAT — BLOCKED
+
+Existing customer **UAT-SR-FINAL-20261009-NEW** (customer13), follow-up **UAT-SR-FINAL 修复后新增跟进即时同步**, dated **2026-10-10 01:05**, next follow-up **2026-10-16**. Opened through real Chrome follow-up list / customer filter, then 查看详情 → 编辑. Original attachment count: zero. Temporary file **SJERP-UAT-attachment-20261010.txt**, 79 bytes, contains only a dedicated UAT marker and no business/personal data.
+
+The 添加附件 UI opened Chrome's file chooser. Setting the test file was refused by the ChatGPT browser extension because **Allow access to file URLs** is not enabled. No upload, record save or delete was performed. No database/API substitute was used.
+
+Two bounded investigations completed, then stopped:
+
+1. Attempted read-only access to `chrome://extensions` to inspect the file permission. Browser automation URL policy blocks this protocol (only http/https allowed). No alternate surface, command or permission bypass attempted.
+2. Verified the absolute local test file exists, is only 79 bytes and has a simple .txt filename; the page has one file input and the pending filename is absent. This excludes a missing/oversized file and confirms no file was selected into the editor. The unsaved editor was cancelled. The original record was reopened: same content/date and zero attachments.
+
+| Requested check | Actual status |
+| --- | --- |
+| Open dedicated UAT record / file chooser | PASS |
+| Upload and save attachment | BLOCKED — extension local-file permission |
+| Close/reopen and access persisted attachment | NOT EXECUTED — depends on upload |
+| Cancel attachment deletion | NOT EXECUTED — no test attachment exists |
+| Confirm attachment deletion and immediate refresh | NOT EXECUTED — no test attachment exists |
+
+Overall attachment UAT **BLOCKED**, not PASS. No existing test record, attachment or business data was removed. No partial save was claimed. No changes to Customer lifecycle, Finance UX or product scope.
+
+### Evidence and manual completion
+
+Screenshots only on **ux-review-evidence**, folder **ux-review/second-review-final/final-acceptance/**:
+
+- ACCEPT_01_followup_before.png — original follow-up identity (attachment state recorded in DOM).
+- ACCEPT_02_upload_blocked_editor.png — real editor with 尚未添加附件 after failed file selection; this image does not itself contain the extension error. The precise tool error and cause are recorded above.
+- ACCEPT_03_followup_unchanged.png — reopened original record shows 0 个附件 / 暂无附件.
+
+Successful-upload/reopen/access/cancel-delete/delete-refresh screenshots remain **MISSING / not fabricated**. Original Chrome screenshots preserved and encoded to PNG without content editing. Evidence branch is not merged into master.
+
+Manual steps: in Chrome open `chrome://extensions`, find the ChatGPT browser extension, open Details and enable **Allow access to file URLs** (see https://developers.openai.com/codex/app/chrome-extension#upload-files). Alternatively use Chrome's native file picker manually. Open `/follow-ups?customer=13`, locate the exact dated/title record above, edit and add the local temporary .txt file; save. Close/reopen and click the attachment to verify access. Edit, choose deletion for **only that newly uploaded temporary attachment**, cancel and confirm it remains; repeat deletion, confirm, and verify removal immediately without F5, then close/reopen again. Never delete the follow-up record or any pre-existing attachment. Capture each successful stage and append evidence before marking PASS.
+
+Independent ChatGPT acceptance remains pending. Work stops after CI/evidence/documentation delivery.

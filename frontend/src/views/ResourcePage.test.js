@@ -70,3 +70,22 @@ test('follow-up history summary is distinguished from the current dashboard obli
   assert.match(source, /计划日期已到记录/)
   assert.match(source, /历史跟进记录统计；当前待跟进以经营概览为准/)
 })
+
+test('customer ownership uses scoped employee options instead of free text', async () => {
+  const customer = resourceConfigs.customers
+  const page = await readFile(new URL('./ResourcePage.vue', import.meta.url), 'utf8')
+  const organization = await readFile(new URL('./OrganizationPage.vue', import.meta.url), 'utf8')
+  const ownerField = customer.fields.find(field => field[0] === 'owner_profile')
+
+  assert.ok(ownerField)
+  assert.equal(ownerField[2], 'remote')
+  assert.equal(ownerField[4], 'customers/owner-options')
+  assert.equal(ownerField[5], 'label')
+  assert.equal(customer.fields.some(field => field[0] === 'owner'), false)
+  assert.ok(page.includes('accessState.operator?.employee_profile_id'))
+  assert.match(page, /data_scope === 'self'/)
+  assert.match(page, /ownerProfileReadOnly/)
+  assert.ok(page.includes("form.owner_profile === '' && originalOwnerProfileId.value !== null"))
+  assert.match(organization, /数据范围当前首先用于客户\/CRM\/销售记录/)
+})
+

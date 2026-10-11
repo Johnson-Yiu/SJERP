@@ -100,7 +100,7 @@ class SalesDataScopeTests(TestCase):
         return order, sku
 
     def make_supplier_source(self, sku, code):
-        supplier = Supplier.objects.create(name=f"Supplier {code}", code=code)
+        supplier = Supplier.objects.create(name=f"Supplier {code}", code=f"U{code[-1]}")
         return SupplierSKU.objects.create(
             supplier=supplier, sku=sku, supplier_sku_code=f"{code}-SKU",
             purchase_price=Decimal("3.20"), currency="USD",

@@ -15,7 +15,7 @@ export const resourceConfigs = {
     ],
     fields: [
       ['code', '客户编号', 'readonly', true], ['name', '客户名称', 'text', true], ['country', '国家/地区'], ['region', '业务区域'], ['source', '客户来源', 'combo', false, 'customers/sources'],
-      ['owner', '负责人'], ['website', '网站', 'url'], ['address', '地址', 'textarea'], ['notes', '备注', 'textarea'],
+      ['owner_profile', '负责人', 'remote', false, 'customers/owner-options', 'label'], ['website', '网站', 'url'], ['address', '地址', 'textarea'], ['notes', '备注', 'textarea'],
     ],
     detail: true,
   },
@@ -104,3 +104,4 @@ export const resourceConfigs = {
     detail: true,
   },
 }
+

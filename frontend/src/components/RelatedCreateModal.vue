@@ -1,4 +1,6 @@
 <script setup>
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
+
 import { followUpError } from '../utils/followUpSafety'
 import TradeUnitPicker from './TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
@@ -21,6 +23,8 @@ const loading = ref(true)
 const error = ref('')
 const options = reactive({})
 const form = reactive({})
+const guard = useUnsavedChangesGuard({ data: () => ({ form, files: pendingFollowUpFiles.value }), enabled: () => !loading.value && !isQuote.value })
+const requestClose = () => guard.requestClose(() => emit('close'))
 const customers = ref([])
 const skus = ref([])
 const quotes = ref([])
@@ -234,6 +238,7 @@ async function init() {
   } catch (e) {
     error.value = e.message
   } finally {
+    guard.markClean()
     loading.value = false
   }
 }
@@ -303,6 +308,7 @@ async function save() {
     } else {
       response = await api.post(`/${config.value.endpoint}/`, payloadGeneric())
     }
+    guard.markClean()
     if (props.entity === 'follow-ups' && pendingFollowUpFiles.value.length) {
       try {
         await uploadFollowUpFiles(response.data.id)
@@ -311,6 +317,7 @@ async function save() {
         return
       }
     }
+    guard.markClean()
     emit('saved', response.data)
   } catch (e) {
     error.value = e.message
@@ -333,11 +340,11 @@ onMounted(init)
 <template>
   <Teleport to="body">
     <QuoteEditorModal v-if="isQuote && !loading && !error" class="related-quote-editor" :quote="quoteSeed" :customers="customers" :skus="visibleDocumentSkus" mode="create" @saved="savedQuote = $event" @close="closeQuote" />
-    <div v-else class="modal-backdrop related-create-backdrop" @mousedown.self="emit('close')">
+    <div v-else class="modal-backdrop related-create-backdrop" @mousedown.self="requestClose">
       <form class="modal related-create-modal" @submit.prevent="save">
         <div class="modal-head">
           <h3>{{ title }}</h3>
-          <button type="button" class="mini-btn" @click="emit('close')"><X :size="17" /></button>
+          <button type="button" class="mini-btn" @click="requestClose"><X :size="17" /></button>
         </div>
         <div class="modal-body">
           <div v-if="error" class="inline-error">{{ error }}</div>
@@ -415,7 +422,7 @@ onMounted(init)
         </div>
         <div class="modal-foot">
           <p v-if="entity === 'follow-ups' && error" class="follow-up-validation" role="alert">{{ error }}</p>
-          <button type="button" class="btn btn-secondary" @click="emit('close')">取消</button>
+          <button type="button" class="btn btn-secondary" @click="requestClose">取消</button>
           <button v-if="isQuote && error" type="button" class="btn btn-primary" :disabled="loading" @click="init">重新加载</button>
           <button v-else-if="!isQuote" class="btn btn-primary" :disabled="saving || loading">{{ saving ? '保存中…' : props.entity === 'follow-ups' ? '保存跟进' : '保存' }}</button>
         </div>

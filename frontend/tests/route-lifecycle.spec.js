@@ -20,6 +20,7 @@ vi.mock('../src/api.js', () => ({
 }))
 
 import App from '../src/App.vue'
+import { resolveDialog } from '../src/dialogs'
 import DocumentPage from '../src/views/DocumentPage.vue'
 import PurchaseOrderPage from '../src/views/PurchaseOrderPage.vue'
 import ResourcePage from '../src/views/ResourcePage.vue'
@@ -484,7 +485,10 @@ describe('query route lifecycle', () => {
     await flushPromises()
     selects = wrapper.findAll('.modal select')
     await selects[0].setValue('5')
-    await router.push('/follow-ups?customer=5')
+    const navigation = router.push('/follow-ups?customer=5')
+    await flushPromises()
+    resolveDialog(false)
+    await navigation
     await flushPromises()
     expect(wrapper.findAll('.modal select')[0].element.value).toBe('5')
   })

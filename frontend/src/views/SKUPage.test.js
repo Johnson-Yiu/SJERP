@@ -80,6 +80,7 @@ async function saveContext(editing = false, imageFails = false) {
   const preview = { specification: '12W', parameterValuesForSku: { power: '12W' }, description_cn: 'Light' }
   const ctx = {
     api: { put: async (...args) => { calls.push(['put', ...args]) }, post: async (...args) => { calls.push(['post', ...args]); return { data: [{ id: 7 }] } } },
+    guard: { markClean: () => calls.push(['clean']) }, nextTick: async () => {},
     saveError: { value: '' }, saving: { value: false }, editingId: { value: editing ? 7 : null },
     form: { product: 1, unit: 'pcs', currency: 'USD', active: true }, salesModelAbbreviations: {},
     allPreviews: { value: [preview] }, chosenPreviews: { value: [preview] }, detailFor: () => detail,
@@ -115,6 +116,7 @@ test('image failure retains saved SKU IDs for independent retry and reports data
     assert.ok(notices.some(msg => msg.includes(editing ? 'SKU 已更新，但图片上传失败' : 'SKU 已创建，但图片上传失败')))
     assert.equal(calls.filter(([method]) => method === 'post' || method === 'put').length, 1)
     assert.ok(!calls.some(([method]) => method === 'close'))
+    assert.ok(calls.some(([method]) => method === 'clean'))
   }
 })
 

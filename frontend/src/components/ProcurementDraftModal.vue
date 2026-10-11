@@ -1,4 +1,5 @@
 <script setup>
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import { computed, onMounted, ref } from 'vue'
 import { AlertTriangle, Check, X } from 'lucide-vue-next'
 import { api } from '../api'
@@ -6,6 +7,8 @@ import { api } from '../api'
 const props = defineProps({ orderId: { type: [Number, String], required: true }, plan: { type: Object, required: true } })
 const emit = defineEmits(['close', 'created'])
 const saving = ref(false), error = ref(''), groups = ref([])
+const guard = useUnsavedChangesGuard({ data: () => groups.value })
+const requestClose = () => guard.requestClose(() => emit('close'))
 
 function reset() {
   groups.value = (props.plan.groups || []).map(group => ({
@@ -35,16 +38,17 @@ async function submit() {
         items: group.items.map(item => ({ order_item: item.order_item, quantity: item.quantity || '0', unit_price: item.unit_price || '0' })),
       })),
     })
+    guard.markClean()
     emit('created', response.data)
   } catch (err) { error.value = message(err) } finally { saving.value = false }
 }
-onMounted(reset)
+onMounted(() => { reset(); guard.markClean() })
 </script>
 
 <template>
-  <div class="procurement-backdrop" @mousedown.self="emit('close')">
+  <div class="procurement-backdrop" @mousedown.self="requestClose">
     <aside class="procurement-drawer" role="dialog" aria-modal="true" aria-label="采购草稿预览">
-      <header><div><span>销售订单 {{ plan.order_no }}</span><h2>采购草稿预览</h2><p>按供应商与币种分组。数量和实际单价仅作用于本次新建草稿。</p></div><button type="button" aria-label="关闭" @click="emit('close')"><X :size="20" /></button></header>
+      <header><div><span>销售订单 {{ plan.order_no }}</span><h2>采购草稿预览</h2><p>按供应商与币种分组。数量和实际单价仅作用于本次新建草稿。</p></div><button type="button" aria-label="关闭" @click="requestClose"><X :size="20" /></button></header>
       <main>
         <div v-if="!groups.length" class="empty"><AlertTriangle :size="24" /><strong>没有可自动生成的采购行</strong><p>请先为有缺口的订单行选择有效供应商。</p></div>
         <section v-for="group in groups" :key="`${group.supplier}-${group.currency}`" class="group-card">
@@ -55,7 +59,7 @@ onMounted(reset)
         <div v-if="(plan.items || []).filter(item => !item.can_generate && Number(item.draftable_quantity) > 0).length" class="blocked"><AlertTriangle :size="18" /><div><strong>以下行暂不能生成</strong><p v-for="item in plan.items.filter(row => !row.can_generate && Number(row.draftable_quantity) > 0)" :key="item.order_item">{{ item.sku_code }}：{{ item.blocking_reason }}</p></div></div>
         <p v-if="invalidQuantity" class="error">本次采购数量必须介于 0 与当前可生成数量之间。</p><p v-if="invalidExchange" class="error">非 CNY 采购草稿必须填写大于 0 的汇率。</p><p v-if="error" class="error">{{ error }}</p>
       </main>
-      <footer><button type="button" class="secondary" @click="emit('close')">取消</button><button type="button" class="primary" :disabled="saving || !canSubmit" @click="submit"><Check :size="16" />{{ saving ? '创建中…' : `创建 ${selectedCount ? '采购草稿' : ''}` }}</button></footer>
+      <footer><button type="button" class="secondary" @click="requestClose">取消</button><button type="button" class="primary" :disabled="saving || !canSubmit" @click="submit"><Check :size="16" />{{ saving ? '创建中…' : `创建 ${selectedCount ? '采购草稿' : ''}` }}</button></footer>
     </aside>
   </div>
 </template>

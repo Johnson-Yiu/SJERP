@@ -1,4 +1,6 @@
 <script setup>
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
+
 import { defaultExchangeRate, skuDefaultPrice, currencyHint, salesRateError, changeDocumentCurrency } from '../utils/documentCurrency'
 import { confirmDialog } from '../dialogs'
 import { compactDecimalInput } from '../utils/decimalInput'
@@ -30,6 +32,9 @@ const emit = defineEmits(['close', 'saved'])
  */
 const today = new Date().toISOString().slice(0, 10)
 const draft = reactive(makeDraft())
+const initialized = ref(false)
+const guard = useUnsavedChangesGuard({ data: () => draft })
+const requestClose = () => guard.requestClose(() => emit('close'))
 const previewOpen = ref(false)
 const saving = ref(false)
 const savedQuote = ref(null)
@@ -272,6 +277,7 @@ async function save(shouldExport = false) {
     clearTimeout(salesTimer)
     if (!await checkSalesRules()) { errorMessage.value = salesCheckError.value || '请先处理下方销售规则提示。'; return }
     const response = props.mode === 'revise' ? await api.post(`/quotes/${props.quote.id}/revise/`, payload()) : await api.post('/quotes/', payload())
+    guard.markClean()
     savedQuote.value = response.data
     emit('saved', response.data)
     if (!shouldExport) { emit('close'); return }
@@ -287,18 +293,18 @@ async function retryExport() {
   catch (error) { exportError.value = `Excel 导出仍未完成：${error.message}` }
   finally { saving.value = false }
 }
-onMounted(async () => { if (props.mode === 'create' && draft.customer) selectCustomer(); try { packagingTemplates.value = (await listAll('/packaging-templates/')).filter(item => item.active) } catch { packagingTemplates.value = [] } })
+onMounted(async () => { if (props.mode === 'create' && draft.customer) await selectCustomer(); guard.markClean(); initialized.value = true; try { packagingTemplates.value = (await listAll('/packaging-templates/')).filter(item => item.active) } catch { packagingTemplates.value = [] } })
 </script>
 
 <template>
-  <div class="modal-backdrop" @mousedown.self="$emit('close')">
+  <div class="modal-backdrop" @mousedown.self="requestClose">
     <form class="modal wide quote-editor-modal" aria-label="报价编辑器" @submit.prevent="save(false)">
-      <div class="modal-head"><div><h3>{{ mode === 'revise' ? '创建报价修订版' : '新建报价' }}</h3><small>{{ mode === 'revise' ? `基于 ${quote.quote_no} · 将创建新版本，原报价保留。` : '报价草稿' }}</small></div><button type="button" class="mini-btn" aria-label="关闭报价编辑器" @click="$emit('close')"><X :size="17" /></button></div>
+      <div class="modal-head"><div><h3>{{ mode === 'revise' ? '创建报价修订版' : '新建报价' }}</h3><small>{{ mode === 'revise' ? `基于 ${quote.quote_no} · 将创建新版本，原报价保留。` : '报价草稿' }}</small></div><button type="button" class="mini-btn" aria-label="关闭报价编辑器" @click="requestClose"><X :size="17" /></button></div>
       <div class="modal-body">
         <div v-if="errorMessage" class="quote-message error">{{ errorMessage }}</div>
         <div v-if="exportError" class="quote-message warning"><span>{{ exportError }}</span><button type="button" class="btn btn-secondary" :disabled="saving" @click="retryExport"><RotateCw :size="15" /> 重新导出 Excel</button></div>
         <div v-if="draft.items.some(item => { const sku = skus.find(row => row.id === Number(item.sku)); return item.sku && !(item.sales_model_snapshot || sku?.sales_model) })" class="quote-message warning">有 SKU 尚未设置对外商业型号；报价仍可保存，但客户版 Model 将留空，请先确认是否需要补充。</div>
-        <fieldset :disabled="Boolean(savedQuote)">
+        <fieldset :disabled="!initialized || Boolean(savedQuote)">
           <div class="form-grid">
             <div class="field"><label>客户 *</label><select v-model="draft.customer" required :disabled="mode === 'revise' || inheritedCustomer" @change="selectCustomer"><option value="">请选择</option><option v-for="customer in customers" :key="customer.id" :value="customer.id">{{ customer.name }}</option></select></div>
             <div class="field"><label>报价单号</label><input :value="draft.quote_no || '保存后自动生成'" disabled /></div>
@@ -333,7 +339,7 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) selectCus
           <div class="form-grid"><div class="field full"><label>贸易条款</label><textarea v-model="draft.trading_terms" /></div><div class="field full"><label>运输信息</label><textarea v-model="draft.shipping_details" /></div><div class="field full"><label>附加备注</label><textarea v-model="draft.notes" /></div></div>
         </fieldset>
       </div>
-      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="$emit('close')">取消</button><button v-if="!savedQuote" type="button" class="btn btn-secondary" @click="openPreview"><Eye :size="16" /> 预览报价单</button><button v-if="!savedQuote" type="button" class="btn btn-primary" :disabled="saving" @click="save(false)"><Save :size="16" /> {{ saving ? '保存中...' : '保存报价' }}</button><button v-if="!savedQuote" type="button" class="btn btn-secondary" :disabled="saving" @click="save(true)"><Save :size="16" /> {{ saving ? '保存中...' : '保存并导出 Excel' }}</button></div>
+      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="requestClose">取消</button><button v-if="!savedQuote" type="button" class="btn btn-secondary" @click="openPreview"><Eye :size="16" /> 预览报价单</button><button v-if="!savedQuote" type="button" class="btn btn-primary" :disabled="saving" @click="save(false)"><Save :size="16" /> {{ saving ? '保存中...' : '保存报价' }}</button><button v-if="!savedQuote" type="button" class="btn btn-secondary" :disabled="saving" @click="save(true)"><Save :size="16" /> {{ saving ? '保存中...' : '保存并导出 Excel' }}</button></div>
     </form>
     <div v-if="packagingSku" class="modal-backdrop packaging-config-backdrop" @mousedown.self="packagingSku = null"><form class="modal packaging-config-modal" @submit.prevent="savePackaging"><div class="modal-head"><div><h3>补充 SKU 默认包装</h3><small>{{ packagingSku.sku }} · 保存后将作为该 SKU 的默认包装配置</small></div><button type="button" class="mini-btn" @click="packagingSku = null"><X :size="17" /></button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>包装模板 *</label><select v-model="packagingForm.template" required><option value="">请选择包装模板</option><option v-for="template in packagingTemplates" :key="template.id" :value="template.id">{{ template.name }}<template v-if="template.supplier_name"> · {{ template.supplier_name }}</template></option></select></div><div class="field"><label>装箱数 (pcs) *</label><input v-model="packagingForm.qty_per_carton" type="number" min="0.01" step="0.01" required /></div><div class="field"><label>单件净重 (kg) *</label><input v-model="packagingForm.unit_net_weight" type="number" min="0" step="0.001" required /></div></div></div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="packagingSku = null">取消</button><button class="btn btn-primary" :disabled="packagingSaving"><PackageCheck :size="15" /> {{ packagingSaving ? '保存中...' : '保存默认包装' }}</button></div></form></div>
     <QuotePreviewModal v-if="previewOpen" :draft="previewDraft" @close="previewOpen = false" />

@@ -1,4 +1,6 @@
 <script setup>
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
+
 import PaymentTermsEditor from '../components/PaymentTermsEditor.vue'
 import { copyPaymentTerms, paymentTermsError } from '../utils/paymentTerms'
 import { compactDecimalInput } from '../utils/decimalInput'
@@ -69,6 +71,7 @@ let pageLoadRequest = 0
 const today = new Date().toISOString().slice(0, 10)
 function newDraft() { return { supplier: '', order: '', order_date: today, expected_arrival_date: '', status: 'draft', currency: 'CNY', exchange_rate: '1', notes: '', items: [] } }
 const draft = ref(newDraft())
+const guard = useUnsavedChangesGuard({ data: () => draft.value, enabled: () => openCreate.value })
 const initialTerms = ref('')
 const termsDirty = computed(() => JSON.stringify(draft.value.payment_terms_snapshot) !== initialTerms.value)
 function inheritPaymentTerms() {
@@ -205,7 +208,7 @@ function startCreate() {
   draft.value = { ...newDraft(), supplier: route.query.supplier || '', order: route.query.order || '' }
   inheritPaymentTerms()
   activeSkuId.value = ''
-  supplierSkuOptions.value = {}; notice.value = ''; openCreate.value = true
+  supplierSkuOptions.value = {}; notice.value = ''; guard.markClean(); openCreate.value = true
 }
 async function editDraft(row) {
   editingPurchaseId.value = row.id
@@ -235,8 +238,10 @@ async function editDraft(row) {
   initialTerms.value = JSON.stringify(draft.value.payment_terms_snapshot)
   supplierSkuOptions.value = {}; notice.value = ''; error.value = ''; openCreate.value = true
   await Promise.all(draft.value.items.map(loadSupplierSkuOptions))
+  guard.markClean()
 }
-function closeCreate() { openCreate.value = false; routeCreateOpen.value = false; routeCreateSignature = ''; void clearModalRoute(router, route) }
+const closeCreate = () => guard.requestClose(discardCreate)
+function discardCreate() { openCreate.value = false; routeCreateOpen.value = false; routeCreateSignature = ''; void clearModalRoute(router, route) }
 const matchingItem = ref(null)
 async function matchedSupplier(selection) {
   const item = matchingItem.value
@@ -314,7 +319,7 @@ function syncSelectedSkus(ids) {
   })
   if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
 }
-async function createPurchase() { if (saving.value || draftChanging.value) return; if (paymentTermsError(draft.value.payment_terms_snapshot)) { error.value = paymentTermsError(draft.value.payment_terms_snapshot); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
+async function createPurchase() { if (saving.value || draftChanging.value) return; if (paymentTermsError(draft.value.payment_terms_snapshot)) { error.value = paymentTermsError(draft.value.payment_terms_snapshot); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); guard.markClean(); await closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
 async function place(row) { const zeroCount = (row.items || []).filter(item => Number(item.unit_price) === 0).length; if (!await confirmDialog({ title: '确认采购下单', message: `${zeroCount ? `当前采购单存在 ${zeroCount} 条 0 单价商品，请确认这是赠品、样品或其他合理的零价采购。\n` : ''}确认下单后将生成应付计划并进入在途采购。是否继续？`, confirmText: '确认下单', danger: true })) return; try { await api.post(`/purchase-orders/${row.id}/place/`); notice.value = '采购单已确认下单。'; await load() } catch (err) { error.value = message(err, '确认下单失败。') } }
 async function cancelPurchase(row) { const reason = await inputDialog({ title: '取消采购', message: `请填写取消采购单 ${row.purchase_no} 的原因。`, label: '取消原因', placeholder: '请输入取消原因', required: true, maxLength: 500, confirmText: '确认取消', danger: true }); if (!reason) return; try { await api.post(`/purchase-orders/${row.id}/cancel/`, { reason }); notice.value = '采购单已取消。'; await load() } catch (err) { error.value = message(err, '取消采购失败。') } }
 async function deleteDraft(row) { if (!await confirmDialog({ title: '确认删除采购草稿', message: `确定删除草稿 ${row.purchase_no} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/purchase-orders/${row.id}/`); notice.value = '采购草稿已删除。'; if (Number(route.query.detail) === row.id) await closeDetail(); await load() } catch (err) { error.value = message(err, '删除采购草稿失败。') } }

@@ -1,4 +1,6 @@
 <script setup>
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
+
 import { defaultExchangeRate, skuDefaultPrice, currencyHint, salesRateError, changeDocumentCurrency } from '../utils/documentCurrency'
 import { compactDecimalInput } from '../utils/decimalInput'
 import TradeUnitPicker from '../components/TradeUnitPicker.vue'
@@ -53,6 +55,7 @@ const orderLeadTimeDays = ref('')
 const expandedQuoteNodes = ref(new Set())
 const toast = reactive({ show: false, message: '', error: false })
 const form = reactive({})
+const guard = useUnsavedChangesGuard({ data: () => form, enabled: () => open.value && isOrder.value })
 const activeSkuId = ref('')
 const sourceQuoteLoading = ref(false)
 let sourceQuoteRequest = 0
@@ -115,7 +118,7 @@ async function create({ isCurrent = () => true } = {}) {
   returnToOrderDetailId.value = null
   editingId.value = null; fresh()
   form.customer = route.query.customer ? Number(route.query.customer) : ''
-  await loadOptions(); if (isCurrent()) open.value = true
+  await loadOptions(); if (isCurrent()) { guard.markClean(); open.value = true }
 }
 async function edit(row, { closeDetail = true, isCurrent = () => true } = {}) {
   if (closeDetail) await closeDocumentDetail()
@@ -133,6 +136,7 @@ async function edit(row, { closeDetail = true, isCurrent = () => true } = {}) {
   form.exchange_rate = compactDecimalInput(form.exchange_rate)
   form.items = row.items.map(i => fromTradeLine({ ...i, cost_price: i.cost_price || 0, notes: i.notes || '' }))
   orderLeadTimeDays.value = daysBetween(form.order_date, form.expected_ship_date)
+  guard.markClean()
   open.value = true
 }
 function setOrderDate(value) {
@@ -148,7 +152,8 @@ function setOrderLeadTimeDays() {
   if (orderLeadTimeDays.value === '' || !form.order_date) return
   form.expected_ship_date = addDays(form.order_date, orderLeadTimeDays.value)
 }
-function closeEditor() { sourceQuoteRequest += 1; sourceQuoteLoading.value = false; open.value = false; returnToOrderDetailId.value = null; void clearModalRoute(router, route) }
+const closeEditor = () => guard.requestClose(discardEditor)
+function discardEditor() { sourceQuoteRequest += 1; sourceQuoteLoading.value = false; open.value = false; returnToOrderDetailId.value = null; void clearModalRoute(router, route) }
 function closeQuoteEditor() { quoteEditorOpen.value = false; void clearModalRoute(router, route) }
 async function changeCurrency(event) {
   const currency = event.target.value
@@ -184,6 +189,7 @@ async function loadSourceQuote(value, { confirmOverwrite = true } = {}) {
     })
     orderLeadTimeDays.value = daysBetween(form.order_date, form.expected_ship_date)
     activeSkuId.value = String(form.items[0]?.sku || '')
+    guard.markClean()
   } catch (error) { notify(`无法载入报价：${error.message}`, true) }
   finally { if (request === sourceQuoteRequest) sourceQuoteLoading.value = false }
 }
@@ -211,6 +217,7 @@ async function save() {
   try {
     const origin = modalOrigin(route)
     const response = editingId.value ? await api.put(`/${props.type}/${editingId.value}/`, data) : await api.post(`/${props.type}/`, data)
+    guard.markClean()
     const detailId = returnToOrderDetailId.value || (isOrder.value ? response.data.id : null)
     open.value = false
     notify('单据已保存')

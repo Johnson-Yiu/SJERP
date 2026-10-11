@@ -8,7 +8,7 @@ async function editor(post) {
   const source = await readFile(new URL('./QuoteEditorModal.vue', import.meta.url), 'utf8')
   const check = source.slice(source.indexOf('const salesChecks ='), source.indexOf('watch(() => JSON.stringify([draft.quote_date'))
   const save = source.slice(source.indexOf('async function save('), source.indexOf('async function retryExport'))
-  const context = vm.createContext({ baseQuantity, ref: value => ({ value }), api: { post }, draft: { quote_date: '2026-09-16', items: [{ sku: 7, quantity: 50 }] }, validate: () => '', payload: () => ({}), saving: { value: false }, errorMessage: { value: '' }, exportError: { value: '' }, savedQuote: { value: null }, props: { mode: 'create' }, emit: () => {}, clearTimeout })
+  const context = vm.createContext({ guard: { markClean() {} }, baseQuantity, ref: value => ({ value }), api: { post }, draft: { quote_date: '2026-09-16', items: [{ sku: 7, quantity: 50 }] }, validate: () => '', payload: () => ({}), saving: { value: false }, errorMessage: { value: '' }, exportError: { value: '' }, savedQuote: { value: null }, props: { mode: 'create' }, emit: () => {}, clearTimeout })
   vm.runInContext(`${check}\n${save}\nglobalThis.state = { salesChecks, salesCheckError };`, context)
   return context
 }

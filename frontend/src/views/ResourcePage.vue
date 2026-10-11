@@ -1,4 +1,6 @@
 <script setup>
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
+
 import { followUpError } from '../utils/followUpSafety'
 import PaymentTermsEditor from '../components/PaymentTermsEditor.vue'
 import { copyPaymentTerms, paymentTermsError } from '../utils/paymentTerms'
@@ -56,6 +58,7 @@ const modalOpen = ref(false), detailId = ref(null), editingId = ref(null)
 const detailRefresh = ref(0), keepDetailOpen = ref(false)
 const form = reactive({}), options = reactive({})
 const customerContacts = ref([])
+const guard = useUnsavedChangesGuard({ data: () => ({ form, contacts: customerContacts.value, files: pendingFollowUpFiles.value }), enabled: () => modalOpen.value && props.config.endpoint !== 'inventory-movements' })
 const followUpDays = ref('')
 const followUpSaveAttempted = ref(false)
 const followUpScheduleError = computed(() => followUpError(form))
@@ -309,7 +312,7 @@ async function openCreate({ isCurrent = () => true } = {}) {
   pendingFollowUpFiles.value = []
   applyDefaultContact()
   syncFollowUpDaysFromDate()
-  if (isCurrent()) modalOpen.value = true
+  if (isCurrent()) { guard.markClean(); modalOpen.value = true }
 }
 async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}) {
   if (!keepDetail) detailId.value = null
@@ -326,9 +329,11 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
   followUpAttachments.value = props.config.endpoint === 'follow-ups' ? (row.attachments || []) : []
   pendingFollowUpFiles.value = []
   syncFollowUpDaysFromDate()
+  guard.markClean()
   modalOpen.value = true
 }
-function closeModal() {
+const closeModal = () => guard.requestClose(discardModal)
+function discardModal() {
   const refreshDetail = keepDetailOpen.value
   modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []
   if (refreshDetail) detailRefresh.value += 1
@@ -387,6 +392,7 @@ async function save() {
   try {
     const wasEditing = Boolean(editingId.value)
     const response = wasEditing ? await api.put(`/${props.config.endpoint}/${editingId.value}/`, payload()) : await api.post(`/${props.config.endpoint}/`, payload())
+    guard.markClean()
     const savedId = response.data?.id || editingId.value
     let attachmentError = ''
     if (props.config.endpoint === 'follow-ups' && pendingFollowUpFiles.value.length) {

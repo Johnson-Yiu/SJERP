@@ -1,4 +1,7 @@
 <script setup>
+import { provideUnsavedChangesScope } from '../composables/useUnsavedChangesGuard'
+const unsavedScope = provideUnsavedChangesScope()
+const requestClose = () => unsavedScope.requestClose(() => emit('close'))
 import { compactDecimalInput } from '../utils/decimalInput'
 import { movementSource, sourceLabels, movementStatus, signedMovement } from '../utils/inventoryLedger'
 import CertificateExpiryBadge from './CertificateExpiryBadge.vue'
@@ -56,7 +59,8 @@ function restoreCustomerTab() {
   activeTab.value = key === 'operation_logs' ? '__operation_logs' : valid ? key : fallback
   if (!valid && key !== undefined) void router.replace({ path: route.path, query: { ...route.query, tab: fallback }, hash: route.hash })
 }
-async function selectSection(key) {
+const selectSection = key => unsavedScope.requestClose(() => selectCleanSection(key))
+async function selectCleanSection(key) {
   if (isRoot.value) await router.replace({ path: route.path, query: { ...route.query, tab: key === '__operation_logs' ? 'operation_logs' : key }, hash: route.hash })
   activeTab.value = key
 }
@@ -136,7 +140,8 @@ async function drill(row) {
   stack.value.push({ entity: currentEntity.value, id: currentId.value, title: data.value.title })
   await load(targetEntity, targetId)
 }
-async function back() {
+const back = () => unsavedScope.requestClose(backClean)
+async function backClean() {
   const previous = stack.value.pop()
   if (previous) await load(previous.entity, previous.id)
 }
@@ -316,7 +321,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="modal-backdrop detail-backdrop" :class="{ 'follow-up-detail-backdrop': isFollowUpDetail, 'product-detail-backdrop': isProduct }" @mousedown.self="emit('close')">
+  <div class="modal-backdrop detail-backdrop" :class="{ 'follow-up-detail-backdrop': isFollowUpDetail, 'product-detail-backdrop': isProduct }" @mousedown.self="requestClose">
     <article class="detail-modal" :class="{ 'follow-up-detail-modal': isFollowUpDetail, 'product-detail-modal': isProduct, 'customer-detail-root': isCustomerRoot, 'movement-detail': isMovementDetail }" :aria-label="isFollowUpDetail ? '跟进详情' : isMovementDetail ? '库存流水详情' : isCustomerRoot ? '客户详情' : '关联详情'">
       <div v-if="loading" class="detail-loading"><div class="spinner" /><span>正在整理关联数据...</span></div>
       <div v-else-if="error" class="detail-error"><strong>详情加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load()">重试</button></div>
@@ -324,12 +329,12 @@ onMounted(async () => {
         <template v-if="isFollowUpDetail">
           <header class="follow-up-hero">
             <div class="follow-up-hero-nav">
-              <button class="follow-up-return" @click="stack.length ? back() : emit('close')"><ArrowLeft :size="17" /> {{ stack.length ? `返回 ${stack[stack.length - 1].title}` : '返回列表' }}</button>
+              <button class="follow-up-return" @click="stack.length ? back() : requestClose()"><ArrowLeft :size="17" /> {{ stack.length ? `返回 ${stack[stack.length - 1].title}` : '返回列表' }}</button>
               <span class="follow-up-hero-label">跟进详情</span>
               <div class="follow-up-actions">
                 <button class="follow-up-action" @click="emit('edit', { entity: currentEntity, id: currentId })"><Pencil :size="15" /> 编辑</button>
                 <button class="follow-up-action" @click="deleteFollowUp"><Trash2 :size="15" /> 删除</button>
-                <button class="follow-up-action" @click="stack.length ? back() : emit('close')"><ArrowLeft :size="15" /> 返回</button>
+                <button class="follow-up-action" @click="stack.length ? back() : requestClose()"><ArrowLeft :size="15" /> 返回</button>
                 <button v-if="hasRelationCustomerId" class="follow-up-action" @click="openQuoteForCustomer(relationCustomerId)"><Plus :size="15" /> 新建报价</button>
                 <button class="follow-up-action primary" :disabled="!followUpContact?.phone" @click="openWhatsApp"><ExternalLink :size="15" /> 发送 WhatsApp</button>
               </div>
@@ -385,7 +390,7 @@ onMounted(async () => {
         <header class="detail-header">
           <div class="detail-nav">
             <div class="detail-nav-start">
-              <button v-if="!isProduct" class="detail-close" aria-label="关闭详情" @click="emit('close')"><X :size="19" /><span>关闭</span></button>
+              <button v-if="!isProduct" class="detail-close" aria-label="关闭详情" @click="requestClose"><X :size="19" /><span>关闭</span></button>
               <button v-if="stack.length" class="detail-back" @click="back"><ArrowLeft :size="17" /> 返回 {{ stack[stack.length - 1].title }}</button>
               <span v-if="currentEntity === 'follow-ups'">跟进详情</span>
               <span v-else-if="isProduct">产品管理 / 产品详情</span><span v-else-if="isMovementDetail">库存流水详情</span><span v-else-if="isCustomerRoot">客户详情</span><span v-else-if="!stack.length">关联详情</span>
@@ -395,14 +400,14 @@ onMounted(async () => {
               <button v-if="isRoot && currentEntity === 'customers' && hasRelationCustomerId" class="btn btn-secondary" @click="openQuoteForCustomer(relationCustomerId)"><Plus :size="14" /> 新建报价</button>
               <button v-if="isRoot && currentEntity !== 'inventory-movements'" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> {{ currentEntity === 'customers' ? '编辑客户' : '编辑主档' }}</button>
               <RouterLink v-else-if="!isMovementDetail && hasManagement(currentEntity)" class="btn btn-secondary" :to="managementTarget" @click="managementNavigation"><ExternalLink :size="14" /> {{ managementLabel }}</RouterLink>
-              <button v-if="isProduct" class="detail-close" aria-label="关闭详情" @click="emit('close')"><X :size="19" /><span>关闭</span></button>
+              <button v-if="isProduct" class="detail-close" aria-label="关闭详情" @click="requestClose"><X :size="19" /><span>关闭</span></button>
             </div>
           </div>
           <div class="detail-identity"><div><span class="detail-subtitle">{{ data.subtitle }}</span><h2>{{ data.title }}</h2><small v-if="isCustomerRoot && data.info?.find(item => item[0] === '负责人')?.[1]" class="detail-owner">负责人：{{ data.info.find(item => item[0] === '负责人')[1] }}</small><small v-if="isMovementDetail && movementRecord" class="movement-identity">{{ movementRecord.sku_code || detailInfo.find(item => item[0] === 'SKU')?.[1] }} · {{ sourceLabels[movementSource(movementRecord)] }} · {{ movementStatus(movementRecord) }}</small></div><span class="detail-badge">{{ data.badge }}</span></div>
           <div v-if="data.metrics.length" class="detail-metrics"><div v-for="metric in data.metrics" :key="metric[0]"><small>{{ metric[0] }}</small><strong>{{ format(metric[1], metric[2]) }}</strong></div></div>
         </header>
 
-        <component :is="isProduct ? ProductWorkspace : 'div'" :class="{ 'detail-content': !isProduct }" :data="data" :product-id="currentId" @changed="refreshSkuManagement" v-model:active-tab="activeTab" @drill="drill" @create-sku="openSkuCreate">
+        <component :is="isProduct ? ProductWorkspace : 'div'" :class="{ 'detail-content': !isProduct }" :data="data" :product-id="currentId" @changed="refreshSkuManagement" :active-tab="activeTab" @update:active-tab="selectSection" @drill="drill" @create-sku="openSkuCreate">
           <section v-if="!isProduct" class="detail-info"><h3>基础信息</h3><div class="info-grid"><div v-for="item in detailInfo" :key="item[0]"><small>{{ item[0] }}</small><div v-if="item[2] === 'richtext'" class="richtext-view" v-html="richText(item[1])" /><span v-else>{{ item[1] }}</span><small v-if="currentEntity === 'customers' && item[0] === '下次跟进'" class="computed-field-note">随最新跟进自动更新</small></div></div></section>
           <div :class="{ 'sku-create-workspace': isSkuSection && skuCreateOpen }">
           <SKUPage v-if="isSkuSection && skuCreateOpen" embedded inline :initial-product="currentId" @close="skuCreateOpen = false" @saved="skuCreated" />

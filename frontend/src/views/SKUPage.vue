@@ -1,8 +1,10 @@
 <script setup>
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
+
 import SkuCombinationRuleEditor from "../components/SkuCombinationRuleEditor.vue"
 import { matchesCombinationRules } from "../utils/skuCombinationRules"
 import { resolveDetailForPreview } from '../utils/skuDetails'
-import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Database, History, Layers3, Pencil, Plus, Search, Trash2, X } from 'lucide-vue-next'
 import { pinyin } from 'pinyin-pro'
@@ -79,6 +81,7 @@ const packagingDialogOpen = ref(false), packagingSaving = ref(false), packagingT
 const packagingForm = reactive({ name: '', supplier: '', carton_length: '', carton_width: '', carton_height: '', carton_tare_weight: 0, partial_carton_policy: 'SAME_CARTON', active: true, description: '' })
 const imageInput = ref(null), selectedImage = ref(null), imagePreviewUrl = ref(''), savedImageUrl = ref('')
 const imageClearRequested = ref(false), pendingImageSkuIds = ref([]), pendingImageFailurePrefix = ref('SKU 已创建，但图片上传失败：')
+const guard = useUnsavedChangesGuard({ data: () => ({ form, parameters: parameterValues, abbreviations: salesModelAbbreviations, details: details.value, combinations: selectedCombinations.value, image: selectedImage.value, clearImage: imageClearRequested.value }), enabled: () => modalOpen.value })
 const versionsOpen = ref(false), versions = ref([]), versionsLoading = ref(false)
 const supplierTraitsText = ref('')
 const supplierSources = ref([]), supplierSourcesLoading = ref(false), supplierSourceDialogOpen = ref(false), supplierSourceSaving = ref(false), supplierSourceEditingId = ref(null)
@@ -352,6 +355,9 @@ async function openCreate(productId = '') {
   Object.keys(salesModelAbbreviations).forEach(key => delete salesModelAbbreviations[key])
   details.value = []
   resetBatchFillState()
+  await loadAbbreviationSuggestions()
+  await nextTick()
+  guard.markClean()
   modalOpen.value = true
 }
 function openCreateFromRoute() {
@@ -359,7 +365,8 @@ function openCreateFromRoute() {
   routeCreateOpen.value = true
   openCreate(route.query.product)
 }
-function closeModal() {
+const closeModal = () => guard.requestClose(discardModal)
+function discardModal() {
   identityReviewOpen.value = false; identityReviewError.value = ''; pendingIdentitySave.value = null
   modalOpen.value = false
   routeCreateOpen.value = false
@@ -368,7 +375,7 @@ function closeModal() {
   if (props.embedded) return emit('close')
   void clearModalRoute(router, route)
 }
-function openEdit(row) {
+async function openEdit(row) {
   editingId.value = row.id
   identityReviewOpen.value = false; identityReviewError.value = ''; pendingIdentitySave.value = null
   supplierSources.value = []
@@ -392,8 +399,10 @@ function openEdit(row) {
   })
   Object.entries(row.sales_model_abbreviations || {}).forEach(([key, value]) => { salesModelAbbreviations[normalizeAbbreviationKey(key)] = String(value || '').trim().toUpperCase() })
   details.value = [{ ...(row.product_details?.[0] || newDetail(row.product_name)), preview_key: '', packaging_template: row.packaging?.template || '', packaging_query: row.packaging?.template_name || '', carton_quantity: row.packaging?.effective_qty_per_carton || row.product_details?.[0]?.carton_quantity || 0 }]
+  await loadAbbreviationSuggestions()
+  await nextTick()
+  guard.markClean()
   modalOpen.value = true
-  void loadAbbreviationSuggestions()
   void loadSupplierSources(row.id)
 }
 async function loadSupplierSources(skuId) {
@@ -577,12 +586,14 @@ async function persistSave({ editingRow, editingPreview, parameterChanged, produ
       const parameters = parameterChanged || productChanged ? preview.parameterValuesForSku : { ...(editingRow?.parameter_values || preview.parameterValuesForSku), ...ordinaryValues() }
       const salesModel = parameterChanged ? (preview.sales_model || null) : (form.sales_model || null)
       await api.put(`/skus/${editingId.value}/`, { ...shared, ...packagingInput(detail), sales_model: salesModel, description_cn: form.description_cn || preview.description_cn, description_en: translateLightingTerms(form.description_en || preview.description_en), specification, product_details: [cleanDetail(detail)], parameter_values: parameters, identity_change_confirmed: identityChanged })
+      guard.markClean()
       try {
         if (imageClearRequested.value) await clearImage(editingId.value)
         else if (selectedImage.value) await uploadImage(editingId.value, selectedImage.value)
       } catch (error) {
         if (selectedImage.value) { pendingImageSkuIds.value = [editingId.value]; pendingImageFailurePrefix.value = 'SKU 已更新，但图片上传失败：' }
         await load()
+        await nextTick(); guard.markClean()
         reportSaveError(error, 'SKU 已更新，但图片上传失败：')
         return false
       }
@@ -593,6 +604,7 @@ async function persistSave({ editingRow, editingPreview, parameterChanged, produ
         return { ...shared, ...packagingInput(detail), sales_model: null, description_cn: form.description_cn || preview.description_cn, description_en: translateLightingTerms(form.description_en || preview.description_en), specification: preview.specification, product_details: [cleanDetail(detail)], parameter_values: preview.parameterValuesForSku }
       })
       const created = (await api.post('/skus/batch-create/', { items: payloads })).data
+      guard.markClean()
       const createdRows = created.map((row,index) => ({ row, detail: detailFor(previews[index]) }))
       if (selectedImage.value) {
         try { await Promise.all(createdRows.map(({ row }) => uploadImage(row.id, selectedImage.value))) }
@@ -601,12 +613,13 @@ async function persistSave({ editingRow, editingPreview, parameterChanged, produ
           pendingImageSkuIds.value = createdRows.map(({ row }) => row.id)
           editingId.value = createdRows[0]?.row.id || null
           await load()
+          await nextTick(); guard.markClean()
           notify(`SKU 已创建，但图片上传失败：${error.message}`, true)
           return false
         }
       }
     }
-    closeModal(); emit('saved'); notify(wasEditing ? 'SKU 已更新' : `已创建 ${chosenPreviews.value.length} 个 SKU`); await load()
+    guard.markClean(); await closeModal(); emit('saved'); notify(wasEditing ? 'SKU 已更新' : `已创建 ${chosenPreviews.value.length} 个 SKU`); await load()
     return true
   } catch (error) {
     reportSaveError(error, wasEditing ? '保存 SKU 失败：' : '创建 SKU 失败：')
@@ -633,7 +646,7 @@ async function save() {
     try {
       await Promise.all(pendingImageSkuIds.value.map(skuId => uploadImage(skuId, selectedImage.value)))
       pendingImageSkuIds.value = []
-      closeModal(); emit('saved'); notify('SKU 图片已上传'); await load()
+      guard.markClean(); await closeModal(); emit('saved'); notify('SKU 图片已上传'); await load()
     } catch (error) { reportSaveError(error, pendingImageFailurePrefix.value) } finally { saving.value = false }
     return
   }

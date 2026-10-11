@@ -1,4 +1,5 @@
 <script setup>
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import { defaultExchangeRate, skuDefaultPrice, currencyHint, salesRateError, changeDocumentCurrency } from '../utils/documentCurrency'
 import { confirmDialog } from '../dialogs'
 import { compactDecimalInput } from '../utils/decimalInput'
@@ -20,6 +21,8 @@ const emit = defineEmits(['close', 'saved'])
 const saving = ref(false)
 const error = ref('')
 const form = reactive({})
+const guard = useUnsavedChangesGuard({ data: () => form })
+const requestClose = () => guard.requestClose(() => emit('close'))
 const leadTimeDays = ref('')
 const tailPolicyHelpOpen = ref(false)
 const tailPolicyLabels = { SAME_CARTON: '整箱优先', REPACK: '尾箱待确认', MANUAL: '人工装箱' }
@@ -42,6 +45,7 @@ function resetForm(draft) {
     })),
   })
   leadTimeDays.value = daysBetween(draft.order_date, draft.expected_ship_date)
+  guard.markClean()
 }
 watch(() => props.draft, resetForm, { immediate: true, deep: true })
 
@@ -113,18 +117,18 @@ async function save() {
     expected_ship_date: form.expected_ship_date || null,
     items: form.items.map((item) => tradePayload({ ...item, sku: Number(item.sku) })),
   }
-  try { emit('saved', (await api.post('/orders/', payload)).data) }
+  try { const response = await api.post('/orders/', payload); guard.markClean(); emit('saved', response.data) }
   catch (err) { error.value = err.message }
   finally { saving.value = false }
 }
 </script>
 
 <template>
-  <div class="modal-backdrop order-draft-backdrop" @mousedown.self="emit('close')">
+  <div class="modal-backdrop order-draft-backdrop" @mousedown.self="requestClose">
     <form class="modal wide order-draft-modal" role="dialog" aria-modal="true" aria-label="订单草稿" @submit.prevent="save">
       <div class="modal-head">
         <div><h3>新建订单</h3><p>来源报价：{{ draft.source_quote_no || draft.quote_no || '—' }}</p></div>
-        <button type="button" class="mini-btn" aria-label="关闭订单草稿" @click="emit('close')"><X :size="18" /></button>
+        <button type="button" class="mini-btn" aria-label="关闭订单草稿" @click="requestClose"><X :size="18" /></button>
       </div>
       <div class="modal-body">
         <p class="draft-hint">商品已从报价带入。保存为草稿，确认订单后才预留库存并生成应收计划。</p>
@@ -145,7 +149,7 @@ async function save() {
         <div class="field notes"><label>条款 / 备注</label><textarea v-model="form.notes" /></div>
         <p v-if="error" class="draft-error">{{ error }}</p>
       </div>
-      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="emit('close')">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : '保存订单' }}</button></div>
+      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="requestClose">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : '保存订单' }}</button></div>
     </form>
   </div>
 </template>

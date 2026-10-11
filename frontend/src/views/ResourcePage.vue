@@ -32,7 +32,7 @@ import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuCo
 import { useAccessControl } from '../accessControl'
 
 const props = defineProps({ config: Object })
-const { can } = useAccessControl()
+const { can, accessState } = useAccessControl()
 const route = useRoute()
 const router = useRouter()
 const isCustomerPage = computed(() => props.config.endpoint === 'customers')
@@ -61,6 +61,7 @@ function setCertificateFilter(expiry) { router.push({ path: route.path, query: c
 const rows = ref([]), loading = ref(true), hasLoaded = ref(false), loadError = ref(''), allRecordsExist = ref(false), saving = ref(false), query = ref('')
 const modalOpen = ref(false), detailId = ref(null), editingId = ref(null)
 const detailRefresh = ref(0), keepDetailOpen = ref(false)
+const originalOwnerProfileId = ref(null)
 const form = reactive({}), options = reactive({})
 const optionErrors = reactive({}), optionLoaded = reactive({})
 const requiredRemoteFields = computed(() => props.config.fields.filter(field => field[3] && ['remote', 'remote_multi', 'combo'].includes(field[2])))
@@ -88,7 +89,7 @@ const routeModalOpen = ref(false)
 const statusLabels = { lead: '线索', contact: '已建立联系', opportunity: '已进入报价阶段', customer: '已有1张正式订单', company: '已有2张及以上正式订单', development: '开发中', discontinued: '停产', draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
 const editorFields = computed(() => {
   if (props.config.endpoint !== 'customers') return props.config.fields
-  const order = ['name', 'code', 'country', 'region', 'owner', 'source', 'website', 'address', 'notes']
+  const order = ['name', 'code', 'country', 'region', 'owner_profile', 'source', 'website', 'address', 'notes']
   return [...props.config.fields].sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]))
 })
 const editorGroups = computed(() => props.config.endpoint === 'customers' ? [editorFields.value.filter(f => !['website', 'address', 'notes'].includes(f[0])), editorFields.value.filter(f => ['website', 'address', 'notes'].includes(f[0]))] : [editorFields.value])
@@ -96,6 +97,7 @@ const saveLabel = computed(() => props.config.endpoint === 'customers' ? '保存
 const fieldOptions = computed(() => Object.fromEntries(props.config.fields.filter(field => field[2] === 'select').map(field => [field[0], field[4]])))
 const title = computed(() => editingId.value ? `编辑${props.config.title.replace('管理', '')}` : `新建${props.config.title.replace('管理', '')}`)
 const isCustomerCreate = computed(() => props.config.endpoint === 'customers' && !editingId.value)
+const ownerProfileReadOnly = computed(() => props.config.endpoint === 'customers' && accessState.operator?.data_scope === 'self')
 const isWideForm = computed(() => isCustomerCreate.value || ['follow-ups', 'suppliers'].includes(props.config.endpoint))
 const isTransactionPage = computed(() => props.config.endpoint === 'transactions')
 const accessModule = computed(() => ({
@@ -358,6 +360,7 @@ async function openCreate({ isCurrent = () => true } = {}) {
   await loadOptions()
   if (props.config.endpoint === 'customers') {
     try { form.code = (await api.get('/customers/next-code/')).data.code } catch { form.code = '保存时自动生成' }
+    form.owner_profile = accessState.operator?.employee_profile_id || ''
   }
   if (['customers', 'follow-ups'].includes(props.config.endpoint) && !form.owner) form.owner = await loadCurrentOperator()
   followUpAttachments.value = []
@@ -379,6 +382,7 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
     if (type === 'payment_terms') form[name] = copyPaymentTerms(value)
     if (type === 'followup_schedule') form[name] = value || 'keep'
   })
+  if (props.config.endpoint === 'customers') originalOwnerProfileId.value = row.owner_profile ?? null
   followUpAttachments.value = props.config.endpoint === 'follow-ups' ? (row.attachments || []) : []
   pendingFollowUpFiles.value = []
   syncFollowUpDaysFromDate()
@@ -430,6 +434,7 @@ function payload() {
     if (props.config.endpoint === 'follow-ups' && name === 'next_follow_up' && form.next_follow_up_mode !== 'set') value = null
     data[name] = value
   })
+  if (props.config.endpoint === 'customers' && editingId.value && form.owner_profile === '' && originalOwnerProfileId.value !== null) delete data.owner_profile
   if (isCustomerCreate.value) data.contacts = customerContacts.value
   return data
 }
@@ -619,7 +624,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
         <ComboInput v-else-if="field[2] === 'combo'" v-model="form[field[0]]" :options="options[field[4]] || []" :required="field[3]" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]])" />
         <select v-else-if="field[2] === 'select'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])"><option v-for="(label,key) in field[4]" :key="key" :value="key">{{ label }}</option></select>
         <CategoryMultiPicker v-else-if="field[2] === 'remote_multi'" v-model="form[field[0]]" :categories="options[field[4]] || []" />
-        <select v-else-if="field[2] === 'remote'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]])" @change="onFieldChange(field)"><option value="">请选择</option><option v-for="option in visibleOptions(field)" :key="option.id" :value="option.id">{{ option[field[5]] }}</option></select>
+        <select v-else-if="field[2] === 'remote'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]]) || (field[0] === 'owner_profile' && ownerProfileReadOnly)" @change="onFieldChange(field)"><option value="">请选择</option><option v-for="option in visibleOptions(field)" :key="option.id" :value="option.id">{{ option[field[5]] }}</option></select>
         <label v-else-if="field[2] === 'checkbox'" class="checkbox-line"><input v-model="form[field[0]]" type="checkbox" :disabled="isInherited(field[0])" /> 是</label>
         <div v-else-if="config.endpoint === 'follow-ups' && field[0] === 'next_follow_up'" class="follow-up-date-control">
           <input v-model="followUpDays" type="number" min="0" step="1" placeholder="天数" aria-label="下次跟进天数" @input="updateFollowUpDate" />
@@ -751,3 +756,4 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 .ledger-filter-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:12px}.ledger-filter-bar label{display:grid;gap:6px;color:#71817b;font-size:var(--text-caption)}.ledger-filter-bar label:first-child{flex:1;min-width:260px}.ledger-filter-bar input,.ledger-filter-bar select{padding:9px 11px;border:1px solid #d7e3dd;border-radius:8px;background:#fff;color:#31594c;font:inherit}.ledger-help{color:#71817b;font-size:12px;line-height:1.6}.ledger-secondary{display:block;color:#82928b;margin-top:4px;font-size:var(--text-caption)}.ledger-source{display:inline-block;padding:4px 8px;border-radius:12px;white-space:nowrap}.ledger-source.automatic{background:#eef3f6;color:#55717c}.ledger-source.manual{background:#eef7f2;color:#2d6a56}.ledger-source.reversal{background:#fff2e8;color:#8a5d2e}
 .inventory-ledger-page .data-table{min-width:1300px}.inventory-ledger-page .data-table th{white-space:nowrap}.inventory-ledger-page .data-table td:nth-child(1),.inventory-ledger-page .data-table td:nth-child(2),.inventory-ledger-page .data-table td:nth-child(4),.inventory-ledger-page .data-table td:nth-child(5){white-space:nowrap}.inventory-ledger-page .data-table td:nth-child(3){min-width:180px}.inventory-ledger-page .data-table td:nth-child(8){min-width:170px}.inventory-ledger-page .data-table th:last-child,.inventory-ledger-page .data-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 8px #143f3308}.inventory-ledger-page .data-table td .tag{white-space:nowrap}
 </style>
+

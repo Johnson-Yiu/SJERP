@@ -120,7 +120,12 @@ class FunctionalRBACApiTests(TestCase):
 
     def test_context_hides_related_sections_without_their_module_view_permission(self):
         self.grant(self.role, "customers", can_view=True)
-        self.auth(self.make_user(roles=[self.role]))
+        user = self.make_user(roles=[self.role])
+        profile = EmployeeProfile.objects.get(user=user)
+        self.customer.owner_profile = profile
+        self.customer.owner = profile.display_name
+        self.customer.save(update_fields=["owner_profile", "owner"])
+        self.auth(user)
         response = self.client.get(f"/api/context/customers/{self.customer.pk}/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["sections"], [])

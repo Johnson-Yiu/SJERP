@@ -8,7 +8,7 @@ import ResourcePage from '../src/views/ResourcePage.vue'
 import OrderDraftModal from '../src/components/OrderDraftModal.vue'
 import { resourceConfigs } from '../src/resourceConfigs'
 let wrapper
-const customer = { id: 12, name: 'UAT Customer', code: 'C12', country: 'Singapore', region: 'APAC', owner: 'Johnson', source: 'Website', website: 'https://example.invalid', address: 'UAT', notes: 'original' }
+const customer = { id: 12, name: 'UAT Customer', code: 'C12', country: 'Singapore', region: 'APAC', owner: 'Johnson', owner_profile: null, source: 'Website', website: 'https://example.invalid', address: 'UAT', notes: 'original' }
 const followup = { id: 8, customer: 12, contact: 9, followed_at: '2026-10-09T10:30:00+08:00', type: 'Email', subject: 'UAT followup', content: '<p>content</p>', result: 'reply', next_action: 'quote', next_follow_up_mode: 'set', next_follow_up: '2026-10-11', owner: 'Johnson', attachments: [] }
 beforeEach(() => {
  vi.clearAllMocks()
@@ -40,7 +40,7 @@ it('Customer create prioritizes name and required contacts, preserves exact payl
  await wrapper.get('form.modal').trigger('submit'); await wrapper.get('form.modal').trigger('submit')
  expect(mocks.api.post).toHaveBeenCalledTimes(1)
  expect(wrapper.get('.modal-foot .btn-primary').text()).toBe('保存中…')
- expect(mocks.api.post).toHaveBeenCalledWith('/customers/', { name: 'Created Customer', code: 'C13', country: '', region: '', owner: 'Johnson', source: '', website: '', address: '', notes: '', contacts: [{name:'Created Contact',title:'',email:'',phone:'',whatsapp:'',notes:'',is_primary:true}] })
+ expect(mocks.api.post).toHaveBeenCalledWith('/customers/', { name: 'Created Customer', code: 'C13', country: '', region: '', owner_profile: null, source: '', website: '', address: '', notes: '', contacts: [{name:'Created Contact',title:'',email:'',phone:'',whatsapp:'',notes:'',is_primary:true}] })
  resolveSave({ data: { id: 13 } }); await flushPromises()
 })
 it('Customer edit has a dedicated identity and preserves all fields without create contacts', async () => {
@@ -48,7 +48,7 @@ it('Customer edit has a dedicated identity and preserves all fields without crea
  expect(wrapper.get('.modal h3').text()).toBe('编辑客户')
  expect(wrapper.find('.contact-create-section').exists()).toBe(false)
  await wrapper.get('form.modal').trigger('submit'); await flushPromises()
- const {id, ...payload} = customer
+ const {id, owner, ...payload} = customer
  expect(mocks.api.put).toHaveBeenCalledWith('/customers/12/', payload)
 })
 it('Followup edit keeps customer contact filtering, rich text, dates, attachment input and exact payload', async () => {

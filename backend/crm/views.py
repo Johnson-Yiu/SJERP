@@ -717,9 +717,14 @@ class ProductViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["get"])
     def customers(self, request, pk=None):
+        product = self.get_object()
+        scoped_orders = scope_customer_related_queryset(
+            Order.objects.filter(status__in=["confirmed", "production", "shipped", "completed"]),
+            request.user,
+        )
         rows = OrderItem.objects.filter(
-            sku__product=self.get_object(),
-            order__status__in=["confirmed", "production", "shipped", "completed"],
+            sku__product=product,
+            order__in=scoped_orders,
         ).values(
             "order__customer__id", "order__customer__name", "order__customer__country"
         ).annotate(
@@ -2118,7 +2123,7 @@ def dashboard(request):
             "sales_ytd": sales_between(year_start, today),
             "sales_last_ytd": sales_between(last_year_start, last_year_same_day),
             "orders_ytd": valid_orders.filter(order_date__gte=year_start).count(),
-            "active_customers": Customer.objects.filter(status__in=["customer", "company"]).count(),
+            "active_customers": scoped_customers.filter(status__in=["customer", "company"]).count(),
             "receipts_rmb": income,
             "payments_rmb": expense,
             "follow_ups_due": due_follow_ups.count(),

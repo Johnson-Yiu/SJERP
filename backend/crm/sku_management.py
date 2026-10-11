@@ -7,11 +7,14 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import OrderItem, Product, SKU, SKUParameterPlan, Supplier, SupplierCapability, SupplierCandidateOverride
+from .models import (
+    Order, OrderItem, Product, SKU, SKUParameterPlan, Supplier, SupplierCapability, SupplierCandidateOverride,
+)
 from .audit import AuditTrailMixin, record_operation
 from .services.sku_plans import draft_plan, analyze, publish, validate_definitions, definitions_for
 from .services.supplier_candidates import validate_filters, matches, candidates
 from .sku_identity import raw_parameter_value
+from .sales_scope import scope_customer_related_queryset
 
 
 class CapabilitySerializer(serializers.ModelSerializer):
@@ -179,15 +182,15 @@ class ProductSupplierCandidatePoolView(APIView):
 class OrderItemSupplierAllocationView(APIView):
     """Read and update the supplier selected for one sales-order line."""
 
-    def _item(self, order_id, item_id):
-        return get_object_or_404(
-            OrderItem.objects.select_related("order", "sku", "sku__product", "supplier_sku__supplier"),
-            pk=item_id,
-            order_id=order_id,
+    def _item(self, request, order_id, item_id):
+        scoped_orders = scope_customer_related_queryset(Order.objects.all(), request.user)
+        queryset = OrderItem.objects.select_related("order", "sku", "sku__product", "supplier_sku__supplier").filter(
+            order__in=scoped_orders,
         )
+        return get_object_or_404(queryset, pk=item_id, order_id=order_id)
 
     def get(self, request, order_id, item_id):
-        item = self._item(order_id, item_id)
+        item = self._item(request, order_id, item_id)
         from .services.supplier_allocation import supplier_allocation_payload, supplier_options
 
         return Response({
@@ -209,7 +212,7 @@ class OrderItemSupplierAllocationView(APIView):
     def post(self, request, order_id, item_id):
         from .services.supplier_allocation import allocate_order_item_supplier, supplier_allocation_payload
 
-        item = self._item(order_id, item_id)
+        item = self._item(request, order_id, item_id)
         supplier_sku_id = request.data.get("supplier_sku") or request.data.get("supplier_sku_id")
         if not supplier_sku_id:
             raise ValidationError({"supplier_sku": "请选择一个 Supplier SKU 作为本次采购来源。"})

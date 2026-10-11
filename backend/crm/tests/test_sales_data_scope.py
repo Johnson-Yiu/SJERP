@@ -14,6 +14,7 @@ from rest_framework.test import APIClient
 from crm.models import (
     AccessRole, Contact, Customer, EmployeeProfile, FollowUp, Order, OrderItem,
     OrganizationUnit, Position, Product, Quote, RolePermission, SKU, Shipment,
+    Supplier, SupplierSKU,
 )
 from crm.sales_scope import (
     allowed_employee_ids,
@@ -97,6 +98,13 @@ class SalesDataScopeTests(TestCase):
         )
         OrderItem.objects.create(order=order, sku=sku, quantity=1, unit_price=100, cost_price=20)
         return order, sku
+
+    def make_supplier_source(self, sku, code):
+        supplier = Supplier.objects.create(name=f"Supplier {code}", code=code)
+        return SupplierSKU.objects.create(
+            supplier=supplier, sku=sku, supplier_sku_code=f"{code}-SKU",
+            purchase_price=Decimal("3.20"), currency="USD",
+        )
 
     def test_effective_scope_uses_widest_active_role_and_override(self):
         extra = self.make_employee("scope-multi", self.sales, [self.roles["self"], self.roles["department"]])
@@ -213,6 +221,80 @@ class SalesDataScopeTests(TestCase):
         }, format="json")
         self.assertEqual(response.status_code, 403, response.data)
         self.assertFalse(Order.objects.filter(quote=quote).exists())
+
+    def test_supplier_allocation_denies_other_employee_get_and_post_without_disclosure(self):
+        order, sku = self.make_order(self.customer_b, "SCOPE-O-B-ALLOC")
+        item = order.items.get()
+        source = self.make_supplier_source(sku, "SCOPE-ALLOC-B")
+        url = f"/api/orders/{order.pk}/items/{item.pk}/supplier-allocation/"
+        self.login(self.employee_a)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+        self.assertNotIn(order.order_no, response.content.decode())
+        self.assertNotIn(sku.sku, response.content.decode())
+        self.assertNotIn(source.supplier.name, response.content.decode())
+
+        response = self.client.post(url, {"supplier_sku": source.pk}, format="json")
+        self.assertEqual(response.status_code, 404)
+        self.assertNotIn(order.order_no, response.content.decode())
+        item.refresh_from_db()
+        self.assertIsNone(item.supplier_sku_id)
+        self.assertEqual(item.supplier_name_snapshot, "")
+
+    def test_supplier_allocation_allows_own_and_department_orders(self):
+        own_order, own_sku = self.make_order(self.customer_a, "SCOPE-O-A-ALLOC")
+        own_item = own_order.items.get()
+        own_source = self.make_supplier_source(own_sku, "SCOPE-ALLOC-A")
+        own_url = f"/api/orders/{own_order.pk}/items/{own_item.pk}/supplier-allocation/"
+
+        self.login(self.employee_a)
+        self.assertEqual(self.client.get(own_url).status_code, 200)
+        response = self.client.post(own_url, {"supplier_sku": own_source.pk}, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        own_item.refresh_from_db()
+        self.assertEqual(own_item.supplier_sku_id, own_source.pk)
+
+        peer_order, peer_sku = self.make_order(self.customer_b, "SCOPE-O-B-MANAGER-ALLOC")
+        peer_item = peer_order.items.get()
+        peer_source = self.make_supplier_source(peer_sku, "SCOPE-ALLOC-M")
+        peer_url = f"/api/orders/{peer_order.pk}/items/{peer_item.pk}/supplier-allocation/"
+        self.login(self.manager)
+        self.assertEqual(self.client.get(peer_url).status_code, 200)
+        response = self.client.post(peer_url, {"supplier_sku": peer_source.pk}, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        peer_item.refresh_from_db()
+        self.assertEqual(peer_item.supplier_sku_id, peer_source.pk)
+
+    def test_product_customer_action_respects_sales_data_scope(self):
+        product = Product.objects.create(code="SCOPE-P-CUSTOMERS", name="客户范围产品")
+        sku = SKU.objects.create(product=product, sku="SCOPE-S-CUSTOMERS")
+        for customer, order_no in ((self.customer_a, "SCOPE-O-CUSTOMER-A"), (self.customer_b, "SCOPE-O-CUSTOMER-B")):
+            order = Order.objects.create(order_no=order_no, customer=customer, order_date=date.today(), status="confirmed", exchange_rate=1)
+            OrderItem.objects.create(order=order, sku=sku, quantity=1, unit_price=100)
+
+        self.login(self.employee_a)
+        response = self.client.get(f"/api/products/{product.pk}/customers/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([row["order__customer__id"] for row in response.data], [self.customer_a.pk])
+
+        self.login(self.manager)
+        response = self.client.get(f"/api/products/{product.pk}/customers/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual({row["order__customer__id"] for row in response.data}, {self.customer_a.pk, self.customer_b.pk})
+
+    def test_dashboard_active_customer_count_respects_sales_data_scope(self):
+        Customer.objects.filter(pk__in=[self.customer_a.pk, self.customer_b.pk, self.customer_c.pk]).update(status="customer")
+
+        self.login(self.employee_a)
+        response = self.client.get("/api/dashboard/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["summary"]["active_customers"], 1)
+
+        self.login(self.manager)
+        response = self.client.get("/api/dashboard/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["summary"]["active_customers"], 2)
 
     def test_owner_options_and_customer_owner_updates_follow_scope(self):
         self.login(self.employee_a)

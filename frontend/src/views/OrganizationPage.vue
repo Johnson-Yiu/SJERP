@@ -107,7 +107,7 @@ onMounted(load)
         <section v-if="selectedRole" class="panel matrix-panel">
           <div class="role-header">
             <div><span class="role-code">{{ selectedRole.code }}</span><h3>{{ selectedRole.name }}</h3><p>{{ selectedRole.description }}</p></div>
-            <div class="role-header-actions"><div class="scope-card"><small>默认数据范围</small><strong>{{ selectedRole.default_data_scope_display }}</strong></div><button v-if="accessState.operator?.can_manage_permissions" class="btn btn-primary" :disabled="!canEditSelected || saving" @click="savePermissions">{{ selectedRole.code === 'superadmin' ? '最高权限已锁定' : saving ? '保存中...' : '保存权限' }}</button></div>
+            <div class="role-header-actions"><div class="scope-card"><small>默认数据范围</small><strong>{{ selectedRole.default_data_scope_display }}</strong><p>数据范围当前首先用于客户/CRM/销售记录。产品、SKU、库存等共享主数据不按客户负责人切分。</p></div><button v-if="accessState.operator?.can_manage_permissions" class="btn btn-primary" :disabled="!canEditSelected || saving" @click="savePermissions">{{ selectedRole.code === 'superadmin' ? '最高权限已锁定' : saving ? '保存中...' : '保存权限' }}</button></div>
           </div>
           <div class="table-wrap"><table class="permission-table"><thead><tr><th>功能模块</th><th v-for="action in actions" :key="action[0]">{{ action[1] }}</th></tr></thead><tbody>
             <tr v-for="module in data.modules" :key="module.code"><td>{{ module.name }}</td><td v-for="action in actions" :key="action[0]"><label class="permission-check"><input type="checkbox" :checked="permissionFor(module.code)[action[0]]" :disabled="!canEditSelected" :aria-label="`${selectedRole.name} ${module.name} ${action[1]}`" @change="updatePermission(module.code, action[0], $event.target.checked)" /><span><Check :size="12" /></span></label></td></tr>
@@ -127,3 +127,4 @@ onMounted(load)
 @media(max-width:800px){.org-summary{grid-template-columns:1fr 1fr}.department-grid{grid-template-columns:1fr 1fr}.permission-layout{grid-template-columns:1fr}.role-list{display:grid;grid-template-columns:1fr 1fr;gap:4px}.role-list .section-title{grid-column:1/-1}}
 @media(max-width:520px){.org-summary,.department-grid,.role-list{grid-template-columns:1fr}.role-header{align-items:flex-start;flex-direction:column}.role-header-actions{width:100%;align-items:stretch;flex-direction:column}.scope-card{width:100%}.foundation-badge{align-self:flex-start}}
 </style>
+

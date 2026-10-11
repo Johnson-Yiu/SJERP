@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 30158)
+Total output lines: 2277
+
 from .trade_units import TradeLineSerializerMixin, TRADE_FIELDS, SKUTradeUnitSerializer, trade_values, validate_document_amount
 from decimal import Decimal
 import re
@@ -646,11 +649,35 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = "__all__"
         # Customer status is a persisted projection of follow-ups, quotes and
         # formal orders, rather than a manually maintained customer attribute.
-        read_only_fields = ["code", "status"]
+        read_only_fields = ["code", "status", "owner"]
 
     def validate(self, attrs):
+        from .sales_scope import allowed_employee_ids, effective_data_scope, employee_profile_for
+        from .permissions import user_can
+
         if self.instance is None and not attrs.get("contacts") and not self.context.get("allow_import_without_contacts"):
             raise serializers.ValidationError({"contacts": "新建客户时请至少填写一位联系人。"})
+        request = self.context.get("request")
+        user = request.user if request else self.context.get("user")
+        if "owner_profile" in attrs:
+            owner_profile = attrs["owner_profile"]
+            if owner_profile is None:
+                if effective_data_scope(user) != "all":
+                    raise PermissionDenied("当前账号必须为客户指定数据范围内的负责人。")
+            elif owner_profile.pk not in set(allowed_employee_ids(user)):
+                raise PermissionDenied("所选负责人不在当前账号的数据范围内。")
+            if self.instance and owner_profile != self.instance.owner_profile:
+                if not user_can(user, "customers", "update"):
+                    raise PermissionDenied("你没有修改客户负责人的权限。")
+            if owner_profile:
+                attrs["owner"] = owner_profile.display_name
+        elif self.instance is None and user is not None:
+            profile = employee_profile_for(user)
+            if profile and not getattr(user, "is_superuser", False):
+                attrs["owner_profile"] = profile
+                attrs["owner"] = profile.display_name
+            elif effective_data_scope(user) != "all":
+                raise PermissionDenied("当前账号没有可用的客户负责人资料。")
         return attrs
 
     @transaction.atomic
@@ -673,6 +700,13 @@ class ContactSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+    def validate_customer(self, customer):
+        from .sales_scope import customer_in_scope
+        request = self.context.get("request")
+        if request and not customer_in_scope(customer.pk, request.user):
+            raise PermissionDenied("所选客户不在当前账号的数据范围内。")
+        return customer
+
 class FollowUpSerializer(serializers.ModelSerializer):
     next_follow_up_mode_display = serializers.CharField(source="get_next_follow_up_mode_display", read_only=True)
     customer_name = serializers.CharField(source="customer.name", read_only=True)
@@ -692,8 +726,12 @@ class FollowUpSerializer(serializers.ModelSerializer):
         return FollowUpAttachmentSerializer(obj.attachments.all(), many=True, context=self.context).data
 
     def validate(self, attrs):
+        from .sales_scope import customer_in_scope
+        request = self.context.get("request")
         customer = attrs.get("customer", getattr(self.instance, "customer", None))
         contact = attrs.get("contact", getattr(self.instance, "contact", None))
+        if request and customer and not customer_in_scope(customer.pk, request.user):
+            raise PermissionDenied("所选客户不在当前账号的数据范围内。")
         if contact and customer and contact.customer_id != customer.id:
             raise serializers.ValidationError({"contact": "所选联系人不属于当前客户。"})
         content = attrs.get("content", getattr(self.instance, "content", ""))
@@ -817,607 +855,7 @@ class ProductCategorySerializer(serializers.ModelSerializer):
         return "-".join(parts)
 
 
-class ProductSerializer(serializers.ModelSerializer):
-    sku_definitions = serializers.SerializerMethodField()
-
-    def get_sku_definitions(self, obj):
-        plan = obj.sku_parameter_plans.filter(status="published").order_by("-version").first()
-        return plan.definitions if plan else None
-
-    category_name = serializers.CharField(source="category.name", read_only=True, default="未分类")
-    hs_code_value = serializers.CharField(source="hs_code.code", read_only=True, default="")
-    sku_count = serializers.IntegerField(read_only=True, default=0)
-    parameter_count = serializers.IntegerField(read_only=True, default=0)
-    certificate_count = serializers.IntegerField(read_only=True, default=0)
-
-    class Meta:
-        model = Product
-        fields = "__all__"
-        read_only_fields = ["code", "hs_code", "combination_rules"]
-
-    def validate_sales_model_prefix(self, value):
-        if value is None or not str(value).strip():
-            return None
-        value = str(value).strip().upper()
-        if not re.fullmatch(r"[A-Z0-9]+", value):
-            raise serializers.ValidationError("销售型号只能包含字母和数字，例如 BTY、COB320 或 SMD120。")
-        return value
-
-    def validate(self, attrs):
-        if "hs_code" in self.initial_data:
-            raise serializers.ValidationError({"hs_code": "HS 编码请通过“HS 编码维护”页面统一分配。"})
-        if not self.instance and not attrs.get("sales_model_prefix"):
-            raise serializers.ValidationError({"sales_model_prefix": "新建产品时必须填写销售型号。"})
-        if self.instance:
-            category_changed = "category" in attrs and attrs["category"] != self.instance.category
-            additional_changed = (
-                "additional_categories" in attrs
-                and {category.pk for category in attrs["additional_categories"]}
-                != set(self.instance.additional_categories.values_list("pk", flat=True))
-            )
-            if (category_changed or additional_changed) and product_has_unfrozen_sku_schema(self.instance):
-                raise serializers.ValidationError({"category": UNFROZEN_PRODUCT_CATEGORY_MESSAGE})
-            if (
-                "sales_model_prefix" in attrs
-                and attrs["sales_model_prefix"] != self.instance.sales_model_prefix
-                and self.instance.skus.exists()
-            ):
-                raise serializers.ValidationError({
-                    "sales_model_prefix": "该产品已有 SKU，销售型号前缀请使用预览并确认流程修改。"
-                })
-        return attrs
-
-    @transaction.atomic
-    def create(self, validated_data):
-        validated_data.pop("code", None)
-        imported_code = validated_data.pop("imported_code", None) if self.context.get("allow_import_code") else None
-        additional_categories = validated_data.pop("additional_categories", [])
-        suppliers = validated_data.pop("suppliers", [])
-        product = Product.objects.create(code=imported_code or allocate_product_code(), **validated_data)
-        product.additional_categories.set(additional_categories)
-        product.suppliers.set(suppliers)
-        return product
-
-
-class HSCodeSerializer(serializers.ModelSerializer):
-    product_count = serializers.IntegerField(read_only=True, default=0)
-
-    class Meta:
-        model = HSCode
-        fields = "__all__"
-
-    def validate_code(self, value):
-        value = str(value or "").strip()
-        if not re.fullmatch(r"[0-9A-Za-z.-]+", value):
-            raise serializers.ValidationError("HS 编码只能包含字母、数字、点号或连字符。")
-        return value
-
-
-class SKUSerializer(serializers.ModelSerializer):
-    trade_units = SKUTradeUnitSerializer(many=True, read_only=True)
-    image_thumbnail = serializers.SerializerMethodField()
-
-    def get_image_thumbnail(self, obj):
-        if not obj.image:
-            return ""
-        from django.urls import reverse
-        from hashlib import sha256
-        version = sha256(obj.image.name.encode()).hexdigest()[:16]
-        url = reverse("sku-thumbnail", args=[obj.pk]) + f"?v={version}"
-        request = self.context.get("request")
-        return request.build_absolute_uri(url) if request else url
-
-    sku_code = serializers.CharField(source="sku", read_only=True)
-    identity_change_confirmed = serializers.BooleanField(write_only=True, required=False, default=False)
-    product_name = serializers.CharField(source="product.name", read_only=True)
-    product_code = serializers.CharField(source="product.code", read_only=True)
-    category_names = serializers.SerializerMethodField()
-    status_label = serializers.SerializerMethodField()
-    quote_count = serializers.IntegerField(read_only=True, default=0)
-    order_count = serializers.IntegerField(read_only=True, default=0)
-    sales_model_missing = serializers.SerializerMethodField()
-    stock_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True, default=0)
-    actual_quantity = serializers.SerializerMethodField()
-    reserved_quantity = serializers.SerializerMethodField()
-    available_quantity = serializers.SerializerMethodField()
-    in_transit_quantity = serializers.SerializerMethodField()
-    to_procure_quantity = serializers.SerializerMethodField()
-    has_anomaly = serializers.SerializerMethodField()
-    packaging = serializers.SerializerMethodField()
-    packaging_profile_input = serializers.DictField(write_only=True, required=False, allow_null=True)
-    historical_matches = serializers.SerializerMethodField()
-
-    class Meta:
-        model = SKU
-        fields = "__all__"
-        extra_kwargs = {"sku": {"required": False, "read_only": True}, "identity_signature": {"read_only": True}, "schema_version": {"read_only": True}}
-
-    def _packaging_serializer(self, data, sku=None):
-        profile = SKUPackagingProfile.objects.filter(sku=sku).first() if sku else None
-        serializer = SKUPackagingProfileSerializer(profile, data=data, partial=True, context=self.context)
-        # The parent SKU owns this association; nested input cannot redirect it.
-        if "sku" in data:
-            raise serializers.ValidationError({"packaging_profile_input": "包装配置不能指定其他 SKU。"})
-        try:
-            serializer.is_valid(raise_exception=True)
-        except serializers.ValidationError as error:
-            raise serializers.ValidationError({"packaging_profile_input": error.detail})
-        return serializer
-
-    def validate_packaging_profile_input(self, value):
-        if value is not None:
-            self._packaging_serializer(value, self.instance)
-        return value
-
-    def _save_packaging(self, sku, data):
-        if data is not None:
-            self._packaging_serializer(data, sku).save(sku=sku)
-
-    def _generated_identity(self, values):
-        product = values.get("product", getattr(self.instance, "product", None))
-        if not product:
-            return {}
-        return build_sku_identity(
-            product,
-            values.get("specification", getattr(self.instance, "specification", "")),
-            values.get("parameter_values", getattr(self.instance, "parameter_values", {})),
-            values.get("product_details", getattr(self.instance, "product_details", [])),
-            values.get("sales_model_abbreviations", getattr(self.instance, "sales_model_abbreviations", {})),
-        )
-
-    def _complete_abbreviations(self, product, parameters, abbreviations):
-        return complete_sales_model_abbreviations(abbreviations, parameter_pairs(product, parameters))
-
-    def _ensure_unique_display_name(self, value):
-        normalized = normalize_display_name(value)
-        if not normalized:
-            return normalized
-        # Compare the normalized Python value as well as the indexed key so
-        # legacy rows which predate this field are also covered.
-        candidates = SKU.objects.exclude(pk=self.instance.pk if self.instance else None).values_list("display_name_cn", flat=True)
-        duplicate = next((name for name in candidates if normalize_display_name(name) == normalized), None)
-        if duplicate is not None:
-            # An unchanged legacy duplicate may still be edited for unrelated
-            # fields; only a new name or a name change is rejected here.
-            if not self.instance or normalize_display_name(self.instance.display_name_cn) != normalized:
-                raise serializers.ValidationError({"display_name_cn": f"内部识别名称已存在（不区分大小写）：{duplicate}"})
-        return normalized
-
-    def validate_display_name_cn(self, value):
-        self._ensure_unique_display_name(value)
-        return value
-
-    def validate(self, attrs):
-        attrs = super().validate(attrs)
-        if self.instance:
-            if attrs.get("active") and self.instance.successors.exists():
-                raise serializers.ValidationError({"active": "已拆分或合并的历史 SKU 不可重新启用。"})
-            if "product" in attrs and attrs["product"].pk != self.instance.product_id:
-                raise serializers.ValidationError({"product": "已有 SKU 不能更换所属产品，请新建 SKU。"})
-            if "unit" in attrs and attrs["unit"] != self.instance.unit and any(
-                getattr(self.instance, relation).exists() for relation in ("quote_items", "order_items", "purchase_order_items", "inventory_movements", "trade_units")
-            ):
-                raise serializers.ValidationError({"unit": "已有业务记录的 SKU 不能更换计量单位。"})
-        identity_change_confirmed = bool(attrs.get("identity_change_confirmed"))
-        identity_fields = {"product", "parameter_values", "specification", "display_name_cn", "sales_model"}
-        if self.instance:
-            changed_identity_fields = {
-                field for field in identity_fields
-                if field in attrs and getattr(self.instance, field) != attrs[field]
-            }
-            if "parameter_values" in changed_identity_fields and identity_signature(self.instance.product, self.instance.parameter_values) == identity_signature(self.instance.product, attrs["parameter_values"]):
-                changed_identity_fields.discard("parameter_values")
-            has_business_history = any(
-                getattr(self.instance, relation).exists()
-                for relation in ("quote_items", "order_items", "purchase_order_items", "inventory_movements")
-            )
-            if has_business_history and changed_identity_fields.intersection({"parameter_values", "specification"}):
-                raise serializers.ValidationError(
-                    "该 SKU 已存在业务历史，不能直接修改身份参数；如产品规格发生实质变化，请新建 SKU 或通过正式 SKU 参数演化流程处理。"
-                )
-            if changed_identity_fields and not identity_change_confirmed:
-                labels = {
-                    "product": "所属产品",
-                    "parameter_values": "SKU 参数",
-                    "specification": "规格顺序/内容",
-                    "display_name_cn": "内部识别名称",
-                    "sales_model": "Sales Model",
-                }
-                changed_labels = "、".join(labels[field] for field in sorted(changed_identity_fields))
-                raise serializers.ValidationError({
-                    "identity_change_confirmed": f"检测到身份字段变化（{changed_labels}）。请确认这是一次 SKU 身份变更；系统将保留旧版本快照。若只是批次或资料差异，请使用备注/版本信息，不要修改 SKU 身份。"
-                })
-        product = attrs.get("product", getattr(self.instance, "product", None))
-        parameters = attrs.get("parameter_values", getattr(self.instance, "parameter_values", {}))
-        if product and ("parameter_values" in attrs or "sales_model_abbreviations" in attrs):
-            attrs["sales_model_abbreviations"] = self._complete_abbreviations(
-                product,
-                parameters,
-                attrs.get("sales_model_abbreviations", getattr(self.instance, "sales_model_abbreviations", {})),
-            )
-        elif "sales_model_abbreviations" in attrs:
-            attrs["sales_model_abbreviations"] = normalize_sales_model_abbreviations(attrs["sales_model_abbreviations"])
-        if "product_details" in attrs:
-            # 销售型号属于 SKU 本身；包装尺寸统一来自包装模板。
-            attrs["product_details"] = [
-                {key: value for key, value in detail.items() if key not in {"model", "length", "width", "height"}}
-                for detail in attrs["product_details"]
-                if isinstance(detail, dict)
-            ]
-        if self.instance and not any(field in attrs and attrs[field] != getattr(self.instance, field)
-                                     for field in ("parameter_values", "product", "sales_model_abbreviations")):
-            return attrs
-        if product:
-            from .services.sku_combination_rules import validate_combination
-            validate_combination(product, parameters)
-            normalized_parameters = {
-                str(key).strip().casefold(): value
-                for key, value in (parameters or {}).items()
-            }
-            missing_required = []
-            for attribute in category_attributes(product):
-                if not attribute.required:
-                    continue
-                keys = [
-                    f"{attribute.category_id}:{attribute.key}",
-                    attribute.key,
-                    attribute.name,
-                ]
-                value = next(
-                    (normalized_parameters.get(str(key).strip().casefold()) for key in keys if str(key).strip().casefold() in normalized_parameters),
-                    "",
-                )
-                # Older clients used the selected category ID for inherited
-                # attributes.  Accept that key shape as well, so a filled value
-                # is never rejected merely because the attribute originates
-                # from a parent category.
-                if not value:
-                    suffix = f":{str(attribute.key).strip().casefold()}"
-                    value = next((item for key, item in normalized_parameters.items() if key.endswith(suffix)), "")
-                if not value:
-                    value = raw_parameter_value(parameters, keys[0], attribute.name)
-                values = value if isinstance(value, (list, tuple)) else [value]
-                if not any(str(item or "").strip() for item in values):
-                    missing_required.append(attribute.name)
-            if missing_required:
-                raise serializers.ValidationError({
-                    "parameter_values": f"请填写必填参数：{'、'.join(dict.fromkeys(missing_required))}。"
-                })
-            signature = identity_signature(product, parameters)
-            if signature:
-                conflicts = identity_conflict_messages(signature=signature, exclude_sku_id=self.instance.pk if self.instance else None)
-                if conflicts:
-                    raise serializers.ValidationError({"duplicate_sku": conflicts})
-                attrs["identity_signature"] = signature
-        if not product or not getattr(product, "sales_model_prefix", None):
-            return attrs
-        abbreviations = attrs.get("sales_model_abbreviations", getattr(self.instance, "sales_model_abbreviations", {})) or {}
-        missing = []
-        for pair in parameter_pairs(product, parameters):
-            if pair.get("include_in_sales_model") and not re.fullmatch(r"[A-Za-z0-9-]{1,8}", str(abbreviations.get(pair["abbreviation_key"], "")).strip()):
-                missing.append(pair["name"])
-        if missing:
-            raise serializers.ValidationError({"sales_model_abbreviations": f"请为参与生成型号的参数填写 1–8 位字母、数字或连字符缩写：{'、'.join(dict.fromkeys(missing))}。"})
-        return attrs
-
-    @transaction.atomic
-    def create(self, validated_data):
-        from .models import SKUParameterPlan
-        from .services.sku_plans import definitions_for
-        product = Product.objects.select_for_update().get(pk=validated_data["product"].pk)
-        if not product.sku_parameter_plans.filter(status="published").exists():
-            SKUParameterPlan.objects.create(product=product, version=(product.sku_parameter_plans.order_by("-version").values_list("version", flat=True).first() or 0) + 1, status="published", definitions=definitions_for(product), baseline="")
-        validated_data["schema_version"] = product.sku_parameter_plans.filter(status="published").order_by("-version").first().version
-        validated_data["product"] = product
-        self.instance = None
-        # Revalidate under the product lock so concurrent API creates cannot duplicate a combination.
-        validated_data = self.validate(dict(validated_data))
-        validated_data.pop("identity_change_confirmed", None)
-        validated_data.setdefault("sku", allocate_sku_code())
-        generated = self._generated_identity(validated_data)
-        sales_model_base = generated.pop("sales_model_base", "")
-        for field, value in generated.items():
-            if not validated_data.get(field):
-                validated_data[field] = value
-        validated_data["display_name_key"] = self._ensure_unique_display_name(validated_data.get("display_name_cn", ""))
-        # The create UI no longer supplies a model; retain an explicit API
-        # value for backward compatibility, otherwise use the generated base directly; collisions are rejected below.
-        if sales_model_base and not validated_data.get("sales_model"):
-            validated_data["sales_model"] = sales_model_base
-        conflicts = identity_conflict_messages(
-            display_name_cn=validated_data.get("display_name_cn", ""),
-            sales_model=validated_data.get("sales_model", ""),
-            signature=validated_data.get("identity_signature", ""),
-        )
-        if conflicts:
-            raise serializers.ValidationError({"duplicate_sku": conflicts})
-        packaging = validated_data.pop("packaging_profile_input", None)
-        instance = super().create(validated_data)
-        self._save_packaging(instance, packaging)
-        return instance
-
-    @transaction.atomic
-    def update(self, instance, validated_data):
-        Product.objects.select_for_update().get(pk=instance.product_id)
-        instance = SKU.objects.select_for_update().get(pk=instance.pk)
-        self.instance = instance
-        validated_data = self.validate(dict(validated_data))
-        validated_data.pop("identity_change_confirmed", None)
-        generated = self._generated_identity(validated_data)
-        generated.pop("sales_model_base", None)
-        parameter_changed = "parameter_values" in validated_data and validated_data["parameter_values"] != instance.parameter_values
-        identity_fields = {"product", "specification", "parameter_values"}
-        if identity_fields.intersection(validated_data):
-            for field, value in generated.items():
-                if parameter_changed and field == "display_name_cn":
-                    validated_data[field] = value
-                    continue
-                if field not in self.initial_data:
-                    validated_data[field] = value
-        if parameter_changed:
-            sales_model_base = self._generated_identity(validated_data).get("sales_model_base", "")
-            if sales_model_base:
-                validated_data["sales_model"] = sales_model_base
-            validated_data["display_name_key"] = normalize_display_name(validated_data.get("display_name_cn", "")) or None
-            conflicts = identity_conflict_messages(
-                display_name_cn=validated_data.get("display_name_cn", ""),
-                sales_model=validated_data.get("sales_model", instance.sales_model or ""),
-                signature=validated_data.get("identity_signature", ""),
-                exclude_sku_id=instance.pk,
-            )
-            if conflicts:
-                raise serializers.ValidationError({"duplicate_sku": conflicts})
-        if "display_name_cn" in validated_data and not parameter_changed:
-            validated_data["display_name_key"] = self._ensure_unique_display_name(validated_data["display_name_cn"])
-        if "sales_model" in validated_data and not parameter_changed:
-            conflicts = identity_conflict_messages(
-                display_name_cn=validated_data.get("display_name_cn", instance.display_name_cn),
-                sales_model=validated_data.get("sales_model", ""),
-                exclude_sku_id=instance.pk,
-            )
-            if conflicts:
-                raise serializers.ValidationError({"duplicate_sku": conflicts})
-        version_fields = {"sales_model", "display_name_cn", "description_cn", "description_en", "parameter_values", "specification", "product_details"}
-        changed_fields = [field for field in version_fields if field in validated_data and getattr(instance, field) != validated_data[field]]
-        if changed_fields:
-            SKUVersion.objects.create(
-                sku=instance,
-                version_no=(instance.versions.order_by("-version_no").values_list("version_no", flat=True).first() or 0) + 1,
-                sku_code_snapshot=instance.sku,
-                sales_model_snapshot=instance.sales_model or "",
-                display_name_cn_snapshot=instance.display_name_cn,
-                description_cn_snapshot=instance.description_cn,
-                description_en_snapshot=instance.description_en,
-                parameter_values_snapshot=instance.parameter_values,
-                product_details_snapshot=instance.product_details,
-                specification_snapshot=instance.specification,
-                changed_fields=sorted(changed_fields),
-                changed_by=self.context["request"].user if self.context.get("request") and self.context["request"].user.is_authenticated else None,
-                change_reason=str(self.initial_data.get("change_reason", "")).strip(),
-            )
-        packaging = validated_data.pop("packaging_profile_input", None)
-        instance = super().update(instance, validated_data)
-        self._save_packaging(instance, packaging)
-        return instance
-
-    def _metrics(self, obj):
-        from .services.fulfillment import sku_metrics
-        return sku_metrics(obj)
-
-    def get_actual_quantity(self, obj):
-        return self._metrics(obj)["actual_quantity"]
-
-    def get_reserved_quantity(self, obj):
-        return self._metrics(obj)["reserved_quantity"]
-
-    def get_available_quantity(self, obj):
-        return self._metrics(obj)["available_quantity"]
-
-    def get_in_transit_quantity(self, obj):
-        return self._metrics(obj)["in_transit_quantity"]
-
-    def get_to_procure_quantity(self, obj):
-        from .models import OrderItem
-        from .services.fulfillment import order_item_metrics
-        return sum((order_item_metrics(item)["to_procure_quantity"] for item in OrderItem.objects.filter(sku=obj, order__status__in=["confirmed", "production", "shipped"])), Decimal("0"))
-
-    def get_has_anomaly(self, obj):
-        return self.get_available_quantity(obj) < 0
-
-    def get_packaging(self, obj):
-        from .services.packaging import packaging_summary
-        return packaging_summary(obj)
-
-    def get_historical_matches(self, obj):
-        term = str(self.context.get("request").query_params.get("search", "") if self.context.get("request") else "").strip()
-        if not term:
-            return []
-        return list(obj.versions.filter(
-            Q(sku_code_snapshot__icontains=term) | Q(sales_model_snapshot__icontains=term) |
-            Q(display_name_cn_snapshot__icontains=term) | Q(description_cn_snapshot__icontains=term) |
-            Q(description_en_snapshot__icontains=term)
-        ).values("version_no", "sales_model_snapshot", "display_name_cn_snapshot", "changed_at", "changed_fields")[:5])
-
-    @staticmethod
-    def _category_path(category):
-        """Return the complete category hierarchy for a category.
-
-        Category names are unique today, but keeping the hierarchy in the
-        response makes the SKU list unambiguous and also lets the shared SKU
-        picker expose the same context.  The ``seen`` guard prevents malformed
-        legacy data with a parent cycle from causing an infinite loop.
-        """
-        parts = []
-        seen = set()
-        current = category
-        while current is not None and current.pk not in seen:
-            seen.add(current.pk)
-            parts.append(current.name)
-            current = current.parent
-        return " / ".join(reversed(parts))
-
-    def get_category_names(self, obj):
-        categories = [obj.product.category] if obj.product.category_id else []
-        categories.extend(obj.product.additional_categories.all())
-        return [self._category_path(category) for category in categories if category]
-
-    def get_status_label(self, obj):
-        return "启用" if obj.active else "停用"
-
-    def get_sales_model_missing(self, obj):
-        return not bool((obj.sales_model or "").strip())
-
-
-class SKUVersionSerializer(serializers.ModelSerializer):
-    changed_by_name = serializers.SerializerMethodField()
-
-    class Meta:
-        model = SKUVersion
-        fields = "__all__"
-        read_only_fields = ["sku", "version_no", "sku_code_snapshot", "sales_model_snapshot", "display_name_cn_snapshot", "description_cn_snapshot", "description_en_snapshot", "parameter_values_snapshot", "product_details_snapshot", "specification_snapshot", "changed_fields", "changed_at", "changed_by", "change_reason"]
-
-    def get_changed_by_name(self, obj):
-        return obj.changed_by.get_username() if obj.changed_by else "系统"
-
-
-class ProductParameterSerializer(serializers.ModelSerializer):
-    product_name = serializers.CharField(source="product.name", read_only=True)
-
-    class Meta:
-        model = ProductParameter
-        fields = "__all__"
-
-
-def certificate_expiry(expires_on, today=None):
-    today = today or timezone.localdate()
-    days = (expires_on - today).days if expires_on else None
-    if days is None:
-        status, display = "no_expiry", "无有效期"
-    elif days < 0:
-        status, display = "expired", "已过期"
-    elif days <= 30:
-        status, display = "expiring_30", "今日到期" if days == 0 else "30 天内到期"
-    elif days <= 90:
-        status, display = "expiring_90", "90 天内到期"
-    else:
-        status, display = "valid", "有效"
-    return {"expiry_status": status, "expiry_status_display": display, "days_to_expiry": days}
-
-
-class ProductCertificateSerializer(serializers.ModelSerializer):
-    expiry_status = serializers.SerializerMethodField()
-    expiry_status_display = serializers.SerializerMethodField()
-    days_to_expiry = serializers.SerializerMethodField()
-
-    def get_expiry_status(self, obj):
-        return certificate_expiry(obj.expires_on)["expiry_status"]
-
-    def get_expiry_status_display(self, obj):
-        return certificate_expiry(obj.expires_on)["expiry_status_display"]
-
-    def get_days_to_expiry(self, obj):
-        return certificate_expiry(obj.expires_on)["days_to_expiry"]
-
-    product_name = serializers.CharField(source="product.name", read_only=True)
-
-    class Meta:
-        model = ProductCertificate
-        fields = "__all__"
-
-
-class QuoteImportantNoteSerializer(serializers.ModelSerializer):
-    source_quote_no = serializers.CharField(source="source_quote.quote_no", read_only=True)
-    source_revision_no = serializers.IntegerField(source="source_quote.revision_no", read_only=True)
-    created_by_name = serializers.SerializerMethodField()
-    deactivated_by_name = serializers.SerializerMethodField()
-
-    class Meta:
-        model = QuoteImportantNote
-        fields = ["id", "content", "is_active", "source_quote_no", "source_revision_no", "created_by_name", "created_at", "deactivated_at", "deactivated_by_name"]
-        read_only_fields = ["is_active", "source_quote_no", "source_revision_no", "created_by_name", "created_at", "deactivated_at", "deactivated_by_name"]
-
-    def validate_content(self, value):
-        return sanitize_important_note(value)
-
-    def get_created_by_name(self, obj):
-        return obj.created_by.get_username() if obj.created_by else "系统"
-
-    def get_deactivated_by_name(self, obj):
-        if not obj.deactivated_at:
-            return ""
-        return obj.deactivated_by.get_username() if obj.deactivated_by else "系统"
-
-
-class QuoteAvailabilityPreviewInputSerializer(serializers.Serializer):
-    sku_ids = serializers.ListField(
-        child=serializers.IntegerField(min_value=1),
-        allow_empty=False,
-        max_length=200,
-    )
-
-
-class QuoteItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer):
-    sku_code = serializers.CharField(source="sku_code_snapshot", read_only=True)
-    model = serializers.CharField(source="sales_model_snapshot", read_only=True)
-    product_name = serializers.CharField(source="product_name_snapshot", read_only=True)
-    display_name_snapshot = serializers.CharField(source="product_name_snapshot", read_only=True)
-    unit = serializers.CharField(source="unit_snapshot", read_only=True)
-    description_snapshot = serializers.SerializerMethodField()
-    image = serializers.ImageField(source="image_snapshot", read_only=True)
-    amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
-
-    class Meta:
-        model = QuoteItem
-        fields = ["id", "sku", "sku_code", "sales_model_snapshot", "model", "product_name", "display_name_snapshot", "unit", "image", "quantity", "unit_price", "amount", "description", "description_snapshot", "notes", "sales_rules_snapshot"] + TRADE_FIELDS
-        read_only_fields = ["sales_rules_snapshot"]
-
-    def to_internal_value(self, data):
-        data = data.copy()
-        if "model" in data and "sales_model_snapshot" not in data:
-            data["sales_model_snapshot"] = data["model"]
-        if "description_snapshot" in data and "description" not in data:
-            data["description"] = data["description_snapshot"]
-        return super().to_internal_value(data)
-
-    def get_description_snapshot(self, obj):
-        return obj.description
-
-
-def validate_sales_exchange_rate(attrs, source=None):
-    currency = attrs.get("currency", getattr(source, "currency", "USD"))
-    rate = attrs.get("exchange_rate", getattr(source, "exchange_rate", None))
-    if source is None and rate is None:
-        rate = Decimal("1") if currency == "CNY" else Decimal("7.2") if currency == "USD" else None
-        if rate is not None:
-            attrs["exchange_rate"] = rate
-    if rate is None or rate <= 0:
-        raise serializers.ValidationError({"exchange_rate": "请输入大于 0 的对人民币汇率。"})
-    if currency == "CNY" and rate != Decimal("1"):
-        raise serializers.ValidationError({"exchange_rate": "人民币单据的对人民币汇率必须为 1。"})
-
-
-class QuoteSerializer(serializers.ModelSerializer):
-    items = QuoteItemSerializer(many=True)
-    # Lists and relationship filters must follow the live customer master record.
-    # The immutable buyer_company_name remains available for PI/export snapshots.
-    customer_name = serializers.CharField(source="customer.name", read_only=True)
-    status_display = serializers.CharField(source="get_status_display", read_only=True)
-    total_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
-    root_quote_no = serializers.SerializerMethodField()
-    revision_label = serializers.SerializerMethodField()
-    parent_quote_no = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Quote
-        fields = "__all__"
-        read_only_fields = ["quote_no", "root_quote", "parent_quote", "revision_no", "revision_summary", "buyer_company_name"]
-
-    def validate(self, attrs):
-        source = self.instance
-        view = self.context.get('view')
-        if source is None and view and getattr(view, 'action', '') == 'revise':
-            source = view.get_object()
-        validate_document_amount(attrs, source)
+class ProductSerializer(serializers.ModelS…8158 tokens truncated…  validate_document_amount(attrs, source)
         validate_sales_exchange_rate(attrs, source)
         quote_date = attrs.get("quote_date", source.quote_date if source else None)
         valid_until = attrs.get("valid_until", source.valid_until if source else None)
@@ -1520,6 +958,12 @@ class OrderSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"items": "新订单行不能选择停用或已归档的 SKU。"})
         source_quote = attrs.get("quote", getattr(self.instance, "quote", None))
         customer = attrs.get("customer", getattr(self.instance, "customer", None))
+        from .sales_scope import customer_in_scope
+        request = self.context.get("request")
+        if request and customer and not customer_in_scope(customer.pk, request.user):
+            raise PermissionDenied("所选客户不在当前账号的数据范围内。")
+        if request and source_quote and not customer_in_scope(source_quote.customer_id, request.user):
+            raise PermissionDenied("来源报价不在当前账号的数据范围内。")
         if source_quote and customer and source_quote.customer_id != customer.id:
             raise serializers.ValidationError({"customer": "从报价创建订单时，客户必须与来源报价一致。"})
         # A terminal quote is historical context only.  It cannot seed a new
@@ -1874,6 +1318,10 @@ class ContractChangeRequestSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("已处理的合同变更不能修改。")
         order = attrs.get("order", getattr(self.instance, "order", None))
         purchase = attrs.get("purchase_order", getattr(self.instance, "purchase_order", None))
+        from .sales_scope import customer_in_scope
+        request = self.context.get("request")
+        if request and order and not customer_in_scope(order.customer_id, request.user):
+            raise PermissionDenied("所选订单不在当前账号的数据范围内。")
         amount = attrs.get("amount_delta", getattr(self.instance, "amount_delta", Decimal("0")))
         if bool(order) == bool(purchase) or amount == 0:
             raise serializers.ValidationError("变更必须关联一个合同，且金额不能为零。")
@@ -2224,3 +1672,4 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
         from .services.fulfillment import rebalance_sku_reservations
         rebalance_sku_reservations(instance.sku)
         return instance
+

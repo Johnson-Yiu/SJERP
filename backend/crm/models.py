@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 20503)
-Total output lines: 1528
-
 from decimal import Decimal
 from django.utils import timezone
 
@@ -782,7 +779,46 @@ class Order(TimestampedModel):
     order_date = models.DateField("订单日期")
     expected_ship_date = models.DateField("预计交期", null=True, blank=True)
     tail_goods_policy = models.CharField("尾货策略", max_length=20, choices=TAIL_GOODS_POLICY_CHOICES, default="SAME_CARTON")
-    status = models.Char…503 tokens truncated…        Contract amount remains historical/commercial information.  A draft or
+    status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
+    currency = models.CharField("币种", max_length=10, default="USD")
+    exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
+    shipping_fee = models.DecimalField("运费", max_digits=14, decimal_places=4, default=0)
+    discount = models.DecimalField("折扣金额", max_digits=14, decimal_places=4, default=0)
+    notes = models.TextField("备注", blank=True)
+    cancelled_at = models.DateTimeField("取消时间", null=True, blank=True)
+    cancellation_reason = models.TextField("取消原因", blank=True)
+
+    class Meta:
+        ordering = ["-order_date", "-id"]
+
+    @property
+    def base_amount(self):
+        return sum((item.amount for item in self.items.all()), Decimal("0")) + self.shipping_fee - self.discount
+
+    @property
+    def approved_change_amount(self):
+        return sum(self.contract_changes.filter(status="approved").values_list("amount_delta", flat=True), Decimal("0"))
+
+    @property
+    def total_amount(self):
+        return self.base_amount + self.approved_change_amount
+
+    @property
+    def paid_amount(self):
+        # A draft has no formal receivable yet.  Keep it out of payment
+        # projections even if historical/imported rows happen to be linked.
+        if self.status == "draft":
+            return Decimal("0")
+        receipts = sum(self.transactions.filter(status="confirmed", kind="customer_receipt").values_list("amount", flat=True), Decimal("0"))
+        refunds = sum((t.amount for t in self.transactions.filter(direction="expense", status="confirmed", kind="refund")), Decimal("0"))
+        allocations = sum(AdvanceAllocation.objects.filter(plan__order=self, is_active=True, advance__status="confirmed").values_list("amount", flat=True), Decimal("0"))
+        return receipts + allocations - refunds
+
+    @property
+    def outstanding_amount(self):
+        """Current receivable, derived solely from effective payment plans.
+
+        Contract amount remains historical/commercial information.  A draft or
         cancelled order has no current receivable, while a formal order's
         receivable is the sum of its still-open receivable-plan balances.
         """
@@ -1489,4 +1525,3 @@ class SalesRule(TimestampedModel):
 
     class Meta:
         constraints = [models.CheckConstraint(condition=models.Q(minimum_quantity__gt=0), name="sales_moq_positive")]
-

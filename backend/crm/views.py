@@ -2111,9 +2111,10 @@ def _import_csv_preview_request(request):
         rows, digest = _read_import_csv(entity, upload)
     except ValueError as exc:
         return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+    preview_state = _import_state(entity, rows)
     preview = _preview_import(entity, rows)
     if not preview["errors"]:
-        preview["preview_token"] = signing.dumps({"entity": entity, "sha256": digest}, salt=IMPORT_PREVIEW_SALT)
+        preview["preview_token"] = signing.dumps({"entity": entity, "sha256": digest, "state": preview_state}, salt=IMPORT_PREVIEW_SALT)
     return Response(preview)
 
 
@@ -2134,6 +2135,8 @@ def import_csv_execute(request):
         return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
     if signed.get("entity") != entity or signed.get("sha256") != digest:
         return Response({"detail": "文件或数据类型已变化，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
+    if signed.get("state") != _import_state(entity, rows):
+        return Response({"detail": "数据状态已发生变化，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Run the exact write path once in a transaction that is rolled back. This
     # detects concurrent changes after preview without leaving any side effects.
@@ -2142,10 +2145,34 @@ def import_csv_execute(request):
         return Response({"detail": "数据状态已变化，请重新预览后再导入。", "errors": validation["errors"]}, status=status.HTTP_400_BAD_REQUEST)
     try:
         with transaction.atomic():
+            if signed.get("state") != _import_state(entity, rows, lock=True):
+                return Response({"detail": "数据状态已发生变化，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
             created, updated = _apply_import_rows(entity, rows)
     except Exception:
         return Response({"detail": "数据状态已变化，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
     return Response({"total": len(rows), "created": created, "updated": updated})
+
+
+def _import_state(entity, rows, lock=False):
+    model = {"customers": Customer, "products": Product, "skus": SKU, "transactions": Transaction}[entity]
+    key = IMPORT_KEY_FIELDS[entity]
+    targets = model.objects.filter(**{f"{key}__in": [row.get(key, "") for row in rows]})
+    if lock:
+        targets = targets.select_for_update()
+    records = {getattr(record, key): record for record in targets}
+    state = []
+    for row in rows:
+        business_key = row.get(key, "")
+        record = records.get(business_key)
+        entry = {"business_key": business_key, "action": "update" if record else "create"}
+        if record:
+            entry["id"] = record.pk
+            entry["updated_at"] = record.updated_at.isoformat()
+            # Include concrete values as well: QuerySet.update can bypass auto_now.
+            values = {field.attname: str(getattr(record, field.attname)) for field in model._meta.concrete_fields}
+            entry["version"] = hashlib.sha256(json.dumps(values, sort_keys=True).encode()).hexdigest()
+        state.append(entry)
+    return state
 
 
 def _read_import_csv(entity, upload):

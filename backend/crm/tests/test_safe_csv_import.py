@@ -6,7 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-from crm.models import Customer, Transaction
+from crm.models import Customer, Product, SKU, Transaction
 from crm.views import _import_row
 
 
@@ -33,6 +33,65 @@ class SafeCsvImportTests(TestCase):
             "entity": entity, "preview_token": token,
             "file": SimpleUploadedFile("test.csv", content, content_type="text/csv"),
         }, format="multipart")
+
+    def assert_state_rejected(self, entity, content, token):
+        response = self.execute(entity, content, token)
+        self.assertEqual(response.status_code, 400, response.data)
+        self.assertEqual(response.data["detail"], "数据状态已发生变化，请重新预览后再导入。")
+
+    def test_customer_create_becomes_existing_rejects_without_overwriting(self):
+        preview, content = self.preview("customers", ["code", "name"], [["STATE-C", "Imported"]])
+        customer = Customer.objects.create(code="STATE-C", name="Other operation")
+        self.assert_state_rejected("customers", content, preview.data["preview_token"])
+        customer.refresh_from_db()
+        self.assertEqual(customer.name, "Other operation")
+
+    def test_customer_update_changed_since_preview_rejects_all_rows(self):
+        customer = Customer.objects.create(code="STATE-C", name="Original")
+        preview, content = self.preview("customers", ["code", "name"], [["NEW-C", "New"], ["STATE-C", "Imported"]])
+        customer.name = "Other operation"
+        customer.save()
+        self.assert_state_rejected("customers", content, preview.data["preview_token"])
+        customer.refresh_from_db()
+        self.assertEqual(customer.name, "Other operation")
+        self.assertFalse(Customer.objects.filter(code="NEW-C").exists())
+
+    def test_product_update_changed_since_preview_rejects(self):
+        product = Product.objects.create(code="STATE-P", name="Original", sales_model_prefix="STATE")
+        preview, content = self.preview("products", ["code", "name"], [["STATE-P", "Imported"]])
+        self.assertFalse(preview.data["errors"], preview.data)
+        product.name = "Other operation"
+        product.save()
+        self.assert_state_rejected("products", content, preview.data["preview_token"])
+        product.refresh_from_db()
+        self.assertEqual(product.name, "Other operation")
+
+    def test_sku_bulk_update_without_timestamp_change_rejects(self):
+        product = Product.objects.create(code="STATE-P", name="Product", sales_model_prefix="STATE")
+        sku = SKU.objects.create(sku="STATE-S", product=product, specification="Original")
+        preview, content = self.preview("skus", ["sku", "product_code", "specification"], [["STATE-S", "STATE-P", "Original"]])
+        self.assertFalse(preview.data["errors"], preview.data)
+        SKU.objects.filter(pk=sku.pk).update(specification="Other operation")
+        self.assert_state_rejected("skus", content, preview.data["preview_token"])
+        sku.refresh_from_db()
+        self.assertEqual(sku.specification, "Other operation")
+
+    def test_transaction_created_since_preview_rejects(self):
+        preview, content = self.preview("transactions", ["transaction_no", "transaction_date", "direction", "category", "amount", "currency"], [["STATE-T", "2026-01-01", "income", "其他收入", "2", "CNY"]])
+        self.assertFalse(preview.data["errors"], preview.data)
+        existing = Transaction.objects.create(transaction_no="STATE-T", transaction_date="2026-01-01", direction="income", category="其他收入", amount=1, currency="CNY", exchange_rate=1)
+        self.assert_state_rejected("transactions", content, preview.data["preview_token"])
+        existing.refresh_from_db()
+        self.assertEqual(existing.amount, 1)
+        self.assertEqual(Transaction.objects.count(), 1)
+
+    def test_unchanged_update_executes_successfully(self):
+        customer = Customer.objects.create(code="STATE-C", name="Original")
+        preview, content = self.preview("customers", ["code", "name"], [["STATE-C", "Imported"]])
+        response = self.execute("customers", content, preview.data["preview_token"])
+        self.assertEqual(response.status_code, 200, response.data)
+        customer.refresh_from_db()
+        self.assertEqual(customer.name, "Imported")
 
     def test_valid_preview_returns_counts_and_writes_nothing(self):
         response, _ = self.preview("customers", ["code", "name"], [[f"CSV-{index}", f"Buyer {index}"] for index in range(10)])

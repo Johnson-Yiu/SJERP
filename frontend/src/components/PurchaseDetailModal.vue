@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { X } from 'lucide-vue-next'
 import ContractAmountAdjustments from './ContractAmountAdjustments.vue'
 import { tradeLabel } from '../utils/tradeUnits'
@@ -11,6 +12,7 @@ const emit = defineEmits(['close', 'retry', 'confirm', 'edit', 'delete', 'cancel
 const activeTab = useDetailTab('/purchase-orders', ['overview', 'items', 'receipt', 'payment', 'orders'], 'overview', () => props.purchase?.id)
 const tabs = [['overview', '概览'], ['items', '采购明细'], ['receipt', '收货'], ['payment', '付款'], ['orders', '关联订单']]
 const row = computed(() => props.purchase)
+const route = useRoute()
 const items = computed(() => row.value?.items || [])
 const tasks = computed(() => row.value ? purchaseTasks(row.value) : [])
 const progress = computed(() => receiptProgress(items.value))
@@ -59,7 +61,7 @@ function taskAction(task) { if (task.target === 'confirm') emit('confirm', row.v
           <div v-if="activeTab === 'receipt'" class="purchase-detail"><p class="card">核对型号、数量和外观后登记合格数量。不合格品不计可用库存，请备注拒收或待补货情况。</p><article v-for="item in items" :key="item.id" class="card"><div class="receipt-heading"><div><h3>{{ item.sku_code }} · {{ product(item) }}</h3><p>下单 {{ item.trade_quantity ?? item.quantity }} {{ tradeLabel(item) }} <small v-if="item.trade_unit">（{{ item.quantity }} {{ item.trade_snapshot?.base_unit }}）</small> · 已到 {{ item.received_quantity }} {{ item.trade_snapshot?.base_unit }} · 剩余 {{ item.remaining_quantity }} {{ item.trade_snapshot?.base_unit }}<span v-if="Number(item.overage_quantity) > 0"> · 超到 {{ item.overage_quantity }} {{ item.trade_snapshot?.base_unit }}</span></p></div><button v-if="formal" @click="emit('receive', row, item)">验货入库</button></div><h4>入库记录</h4><div v-for="receipt in item.receipts" :key="receipt.id" class="receipt-history-row"><span>{{ receipt.receipt_date }} · 到货 {{ receipt.quantity }} · {{ row.currency }} {{ money(receipt.unit_cost) }}<small v-if="receipt.overage_summary">{{ receipt.overage_summary }}</small></span><button v-if="!receipt.reversed_at" @click="emit('reverse-receipt', row, item, receipt)">冲销</button><span v-else>已冲销</span></div><p v-if="!item.receipts?.length">暂无入库记录</p></article></div>
           <article v-if="activeTab === 'payment'" class="card"><h3>供应商付款</h3><div class="summary-grid"><div><small>采购金额</small><strong>{{ row.currency }} {{ money(row.total_amount) }}</strong></div><div><small>已付</small><strong>{{ row.currency }} {{ money(row.paid_amount) }}</strong></div><div><small>未付</small><strong>{{ row.currency }} {{ money(row.unpaid_amount) }}</strong></div></div><button v-if="canPay" @click="emit('pay', row)">登记付款</button><p v-if="Number(row.unpaid_amount) <= 0">本采购单已无待付余额</p><p v-else-if="!formal">{{ row.status === 'draft' ? '草稿尚未下单，确认下单后可登记付款。' : '采购已取消，仅保留历史付款信息。' }}</p></article>
           <article v-if="activeTab === 'payment'" class="card table-wrap"><h3>应付计划</h3><table v-if="row.payment_plans?.length" class="data-table payable-table"><thead><tr><th>预计日期</th><th>阶段</th><th>应付</th><th>已付</th><th>待付</th><th>状态</th></tr></thead><tbody><tr v-for="plan in row.payment_plans" :key="plan.id"><td>{{ plan.due_date || '暂未确定' }}</td><td>{{ plan.notes || '—' }}</td><td>{{ plan.currency }} {{ money(plan.planned_amount) }}</td><td>{{ plan.currency }} {{ money(plan.settled_amount) }}</td><td>{{ plan.currency }} {{ money(plan.remaining_amount) }}</td><td>{{ { open: '待结清', settled: '已结清', cancelled: '已取消' }[plan.status] || plan.status }}</td></tr></tbody></table><p v-else>{{ row.status === 'draft' ? '确认下单后生成应付计划。' : '暂无应付计划。' }}</p></article>
-          <article v-if="activeTab === 'orders'" class="card related-order-panel"><h3>履约关联订单</h3><RouterLink v-for="order in row.related_orders || []" :key="order.id" class="order-navigation-link order-card" :to="orderDetailLocation(order.id)">{{ order.order_no }}<small v-if="order.customer_name">{{ order.customer_name }}</small></RouterLink><p v-if="!row.related_orders?.length">暂无关联订单</p></article>
+          <article v-if="activeTab === 'orders'" class="card related-order-panel"><h3>履约关联订单</h3><RouterLink v-for="order in row.related_orders || []" :key="order.id" class="order-navigation-link order-card" :to="orderDetailLocation(order.id, 'overview', route?.fullPath)">{{ order.order_no }}<small v-if="order.customer_name">{{ order.customer_name }}</small></RouterLink><p v-if="!row.related_orders?.length">暂无关联订单</p></article>
         </main>
       </template>
     </section>

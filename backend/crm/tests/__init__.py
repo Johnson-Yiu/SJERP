@@ -220,6 +220,7 @@ class BusinessFlowTests(APITestCase):
         purchase_response = self.client.get(f"/api/context/purchase-orders/{purchase.id}/")
         self.assertEqual(purchase_response.status_code, status.HTTP_200_OK, purchase_response.data)
         self.assertEqual(purchase_response.data["title"], "T-PO-001")
+        self.assertEqual([section["key"] for section in purchase_response.data["sections"]], ["items", "supplier", "order", "payments"])
 
     def test_independent_purchase_order_context_has_empty_order_relation(self):
         supplier = Supplier.objects.create(name="Independent Supplier", code="IN")

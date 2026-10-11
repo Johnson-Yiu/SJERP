@@ -65,7 +65,7 @@ it('passes exact OrderItem to allocation and preselects only that ID for shipmen
 })
 it('keeps exact purchase navigation and Back restores the original order query', async () => {
   const router = await setup()
-  expect(wrapper.get('.purchase-navigation-link').attributes('href')).toBe('/purchase-orders?detail=41')
+  expect(wrapper.get('.purchase-navigation-link').attributes('href')).toMatch(/^\/purchase-orders\?detail=41&tab=overview&returnTo=/)
   await wrapper.get('.purchase-navigation-link').trigger('click'); await flushPromises()
   expect(router.currentRoute.value.query.detail).toBe('41')
   router.back(); await flushPromises()

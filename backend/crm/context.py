@@ -287,9 +287,9 @@ def _purchase_order_context(pk):
         "info": [["下单日期", obj.order_date], ["预计到货", obj.expected_arrival_date or "—"], ["币种", obj.currency], ["汇率", obj.exchange_rate], ["关联订单", obj.order.order_no if obj.order_id else "—"], ["备注", obj.notes or "—"]],
         "metrics": [["采购金额", obj.total_amount, "money"], ["已付款", obj.paid_amount, "money"], ["待付款", obj.unpaid_amount, "money"], ["明细", len(items), "number"]],
         "sections": [
+            _section("items", "采购明细", "skus", [["sku_code", "SKU"], ["product_name", "产品"], ["quantity", "数量", "number"], ["unit_price", "单价", "money"], ["amount", "小计", "money"]], items),
             _section("supplier", "供应商", "suppliers", [["name", "供应商"], ["code", "二字代码"], ["store_url", "店铺链接"], ["contact_name", "联系人"], ["phone", "电话"]], supplier),
             _section("order", "关联订单", "orders", [["order_no", "订单号"], ["order_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"]], order),
-            _section("items", "采购明细", "skus", [["sku_code", "SKU"], ["product_name", "产品"], ["quantity", "数量", "number"], ["unit_price", "单价", "money"], ["amount", "小计", "money"]], items),
             _section("payments", "付款流水", "transactions", [["transaction_date", "日期", "date"], ["transaction_no", "流水号"], ["amount", "金额", "money"], ["currency", "币种"], ["status", "状态", "status"]], payments),
         ]}
 

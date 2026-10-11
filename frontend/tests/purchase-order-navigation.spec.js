@@ -141,11 +141,11 @@ describe('purchase order navigation and receipt links', () => {
     await wrapper.findAll('.workbench-tabs button').find(button => button.text().includes('采购与发货')).trigger('click'); await flushPromises()
 
     const purchaseLink = wrapper.get('a.purchase-navigation-link')
-    expect(purchaseLink.attributes('href')).toBe('/purchase-orders?detail=41')
+    expect(purchaseLink.attributes('href')).toMatch(/^\/purchase-orders\?detail=41&tab=overview&returnTo=/)
     await purchaseLink.trigger('click')
     await flushPromises()
-    expect(router.currentRoute.value.fullPath).toBe('/purchase-orders?detail=41')
-    expect(router.currentRoute.value.query).toEqual({ detail: '41' })
+    expect(router.currentRoute.value.fullPath).toMatch(/^\/purchase-orders\?detail=41&tab=overview&returnTo=/)
+    expect(router.currentRoute.value.query).toMatchObject({ detail: '41', tab: 'overview' })
 
     await router.back()
     await flushPromises()
@@ -160,14 +160,15 @@ describe('purchase order navigation and receipt links', () => {
     await wrapper.findAll('.workbench-tabs button').find(button => button.text() === '关联订单').trigger('click'); await flushPromises()
     const sourceLink = wrapper.get('a[aria-label="查看来源订单 SO-UAT-SOURCE"]')
     const relatedLinks = wrapper.findAll('.related-order-panel a.order-navigation-link')
-    expect(sourceLink.attributes('href')).toBe('/orders?detail=11')
+    expect(sourceLink.attributes('href')).toMatch(/^\/orders\?detail=11&tab=overview&returnTo=/)
     expect(relatedLinks.map(link => link.text())).toEqual(['SO-UAT-ALLOC', 'SO-UAT-ALLOC-2'])
-    expect(relatedLinks.map(link => link.attributes('href'))).toEqual(['/orders?detail=22', '/orders?detail=33'])
+    expect(relatedLinks.map(link => new URL(link.attributes('href'), 'http://localhost').searchParams.get('detail'))).toEqual(['22', '33'])
+    expect(relatedLinks.every(link => new URL(link.attributes('href'), 'http://localhost').searchParams.get('returnTo') === '/purchase-orders?detail=41&tab=orders')).toBe(true)
 
     await relatedLinks[0].trigger('click')
     await flushPromises()
-    expect(router.currentRoute.value.fullPath).toBe('/orders?detail=22')
-    expect(router.currentRoute.value.query).toEqual({ detail: '22' })
+    expect(router.currentRoute.value.fullPath).toMatch(/^\/orders\?detail=22&tab=overview&returnTo=/)
+    expect(router.currentRoute.value.query).toMatchObject({ detail: '22', tab: 'overview' })
     await router.back()
     await flushPromises()
     expect(router.currentRoute.value.fullPath).toBe('/purchase-orders?detail=41&tab=orders')
@@ -180,7 +181,7 @@ describe('purchase order navigation and receipt links', () => {
     await recordReceipt(first.wrapper)
     expect(first.wrapper.get('.receipt-success').text()).toContain('验货入库已完成，库存、预留及在途数量已同步。')
     expect(first.wrapper.findAll('.receipt-success a.order-navigation-link').map(link => link.text())).toEqual(['查看关联订单 SO-UAT-ALLOC'])
-    expect(first.wrapper.get('.receipt-success a.order-navigation-link').attributes('href')).toBe('/orders?detail=22')
+    expect(first.wrapper.get('.receipt-success a.order-navigation-link').attributes('href')).toMatch(/^\/orders\?detail=22&tab=overview&returnTo=/)
     first.wrapper.unmount()
 
     vi.clearAllMocks()
@@ -202,8 +203,8 @@ describe('purchase order navigation and receipt links', () => {
     expect(wrapper.findAll('.receipt-success a.order-navigation-link').map(link => link.text())).toEqual([
       'SO-UAT-ALLOC', 'SO-UAT-ALLOC-2',
     ])
-    expect(wrapper.findAll('.receipt-success a.order-navigation-link').map(link => link.attributes('href'))).toEqual([
-      '/orders?detail=22', '/orders?detail=33',
+    expect(wrapper.findAll('.receipt-success a.order-navigation-link').map(link => new URL(link.attributes('href'), 'http://localhost').searchParams.get('detail'))).toEqual([
+      '22', '33',
     ])
     wrapper.unmount()
   })

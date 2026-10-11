@@ -129,7 +129,7 @@ test('closing a document detail removes only detail and preserves remaining rout
     query: { search: 'SO-4', customer: '7', status: 'confirmed', create: '1' },
     hash: '#payments',
   })
-  assert.match(source, /router\.replace\(withoutDocumentDetailQuery\(route\)\)/)
+  assert.match(source, /router\.replace\(workbenchCloseLocation\(route\)\)/)
   assert.match(source, /@close="closeDocumentDetail"/)
 })
 
@@ -143,8 +143,8 @@ test('opening list rows pushes their detail id into the current route for refres
     hash: '#items',
   })
   assert.match(source, /function openDetail\(row\) \{ void router\.push\(withDocumentDetailQuery\(route, row\.id\)\) \}/)
-  assert.match(source, /function openOrderDetail\(id\) \{ void router\.push\(orderDetailLocation\(id\)\) \}/)
-  assert.match(source, /function openSourceQuote\(id\) \{ void router\.push\(\{ path: '\/quotes', query: \{ detail: String\(id\) \} \}\) \}/)
+  assert.match(source, /orderDetailLocation\(id, 'overview', route\.fullPath\)/)
+  assert.match(source, /quoteDetailLocation\(id, 'overview', route\.fullPath\)/)
 })
 
 test('invalid document ids cannot break the list route and large not-found ids remain loadable as details', () => {

@@ -13,6 +13,7 @@ import RelatedCreateModal from './RelatedCreateModal.vue'
 import OperationLogPanel from './OperationLogPanel.vue'
 import SKUPage from '../views/SKUPage.vue'
 import ProductWorkspace from './ProductWorkspace.vue'
+import { canCreateRelated, relationWorkbenchLocation } from '../utils/detailNavigation'
 
 const props = defineProps({ entity: String, id: [Number, String], refreshKey: { type: Number, default: 0 } })
 const emit = defineEmits(['close', 'edit', 'changed'])
@@ -43,20 +44,20 @@ const currentEntity = ref(props.entity), currentId = ref(props.id)
 const activeSection = computed(() => activeTab.value === '__operation_logs' ? null : (data.value?.sections.find(s => s.key === activeTab.value) || data.value?.sections[0]))
 const documentEntities = new Set(['orders', 'quotes', 'purchase-orders'])
 const hasManagement = (entity) => Boolean(resourceConfigs[entity] || documentEntities.has(entity))
-const quickCreatable = new Set(['contacts', 'follow-ups', 'orders', 'quotes', 'purchase-orders', 'transactions', 'inventory-movements', 'skus', 'product-parameters', 'product-certificates', 'categories'])
-const canManage = computed(() => Boolean(!isMovementDetail.value && activeSection.value && quickCreatable.has(activeSection.value.entity)))
+const canManage = computed(() => canCreateRelated(currentEntity.value, activeSection.value))
 const isRoot = computed(() => currentEntity.value === props.entity && String(currentId.value) === String(props.id))
 const showRelatedCreate = computed(() => canManage.value && !(isRoot.value && currentEntity.value === 'customers' && ['followups', 'quotes'].includes(activeSection.value?.key)))
 const isCustomerRoot = computed(() => isRoot.value && currentEntity.value === 'customers' && route.path === '/customers')
 function restoreCustomerTab() {
-  if (!isCustomerRoot.value || !data.value) return
+  if (!isRoot.value || route.path !== `/${props.entity}` || !data.value) return
   const key = route.query.tab
-  const valid = key === 'operation_logs' || data.value.sections.some(section => section.key === key)
-  activeTab.value = key === 'operation_logs' ? '__operation_logs' : valid ? key : 'followups'
-  if (!valid && key !== undefined) void router.replace({ path: route.path, query: { ...route.query, tab: 'followups' }, hash: route.hash })
+  const valid = key === 'operation_logs' || (isProduct.value && ['__overview', 'sales-rules'].includes(key)) || data.value.sections.some(section => section.key === key)
+  const fallback = isCustomerRoot.value ? 'followups' : isProduct.value ? '__overview' : data.value.sections[0]?.key || ''
+  activeTab.value = key === 'operation_logs' ? '__operation_logs' : valid ? key : fallback
+  if (!valid && key !== undefined) void router.replace({ path: route.path, query: { ...route.query, tab: fallback }, hash: route.hash })
 }
 async function selectSection(key) {
-  if (isCustomerRoot.value) await router.replace({ path: route.path, query: { ...route.query, tab: key === '__operation_logs' ? 'operation_logs' : key }, hash: route.hash })
+  if (isRoot.value) await router.replace({ path: route.path, query: { ...route.query, tab: key === '__operation_logs' ? 'operation_logs' : key }, hash: route.hash })
   activeTab.value = key
 }
 const isSkuSection = computed(() => currentEntity.value === 'products' && activeSection.value?.entity === 'skus')
@@ -129,6 +130,8 @@ async function drill(row) {
   const targetEntity = row._target_entity || activeSection.value?.entity
   const targetId = row._target_id || row.id
   if (!targetEntity || !targetId) return
+  const workbench = relationWorkbenchLocation(targetEntity, targetId, currentEntity.value, activeTab.value, detailReturnPath())
+  if (workbench) { await router.push(workbench); return }
   if (isProduct.value) { productDrawer.value = { entity: targetEntity, id: targetId }; return }
   stack.value.push({ entity: currentEntity.value, id: currentId.value, title: data.value.title })
   await load(targetEntity, targetId)
@@ -199,16 +202,16 @@ function createLabel(section) {
 function openCustomerFollowUp() {
   quickCreate.value = { entity: 'follow-ups', query: { customer: currentId.value } }
 }
-const managementTarget = computed(() => ['quotes', 'orders'].includes(currentEntity.value)
-  ? { path: `/${currentEntity.value}`, query: { detail: currentId.value } }
+const managementTarget = computed(() => documentEntities.has(currentEntity.value)
+  ? relationWorkbenchLocation(currentEntity.value, currentId.value, '', '', detailReturnPath())
   : isMovementDetail.value ? { path: '/inventory-movements', query: route.query.sku ? { sku: route.query.sku } : {} }
   : `/${currentEntity.value}`)
-const managementLabel = computed(() => currentEntity.value === 'quotes' ? '打开报价工作台' : currentEntity.value === 'orders' ? '打开订单工作台' : isMovementDetail.value ? '返回库存流水' : '打开管理页')
+const managementLabel = computed(() => currentEntity.value === 'quotes' ? '打开报价工作台' : currentEntity.value === 'orders' ? '打开订单工作台' : currentEntity.value === 'purchase-orders' ? '打开采购工作台' : isMovementDetail.value ? '返回库存流水' : '打开管理页')
 function managementNavigation() {
-  if (!['quotes', 'orders', 'inventory-movements'].includes(currentEntity.value)) emit('close')
+  if (!documentEntities.has(currentEntity.value) && !isMovementDetail.value) emit('close')
 }
 function openRelatedCreate() {
-  if (!activeSection.value) return
+  if (!canManage.value) return
   const query = relationQuery(activeSection.value)
   if (activeSection.value.entity === 'purchase-orders') {
     router.push({ path: '/purchase-orders', query: { create: '1', ...query, returnTo: detailReturnPath() } })
@@ -217,12 +220,8 @@ function openRelatedCreate() {
   quickCreate.value = { entity: activeSection.value.entity, query }
 }
 function detailReturnPath() {
-  const query = new URLSearchParams()
-  Object.entries(route.query).forEach(([key, value]) => {
-    if (!['create', 'edit', 'returnTo', 'detail'].includes(key) && typeof value === 'string') query.set(key, value)
-  })
-  query.set('detail', String(props.id))
-  return `${route.path}?${query.toString()}`
+  if (!isRoot.value) return route.fullPath
+  return router.resolve({ path: route.path, query: { ...route.query, detail: String(props.id), tab: activeTab.value === '__operation_logs' ? 'operation_logs' : activeTab.value }, hash: route.hash }).fullPath
 }
 function openSkuCreate() { activeTab.value = 'skus'; skuCreateOpen.value = true }
 async function skuCreated() {
@@ -302,6 +301,11 @@ function valueClass(type, value) { return { 'ctx-status': type === 'status', 'ct
 watch(() => [props.entity, props.id], () => { stack.value = []; currentEntity.value = props.entity; currentId.value = props.id; selectedSkuIds.value = []; skuMultiSelect.value = false; load() })
 watch(() => props.refreshKey, () => load())
 watch(() => route.query.tab, restoreCustomerTab)
+watch(activeTab, key => {
+  if (isProduct.value && isRoot.value && route.path === '/products' && !loading.value && route.query.tab !== key) {
+    void router.replace({ path: route.path, query: { ...route.query, tab: key }, hash: route.hash })
+  }
+})
 watch(activeTab, () => { selectedSkuIds.value = []; skuQuery.value = ''; skuMultiSelect.value = false })
 onMounted(async () => {
   await Promise.all([
@@ -408,7 +412,7 @@ onMounted(async () => {
             <div v-if="!isProduct" class="detail-tabs"><button v-for="section in data.sections" :key="section.key" :class="{ active: activeTab === section.key }" @click="selectSection(section.key)">{{ currentEntity === 'customers' && section.key === 'orders' ? '订单记录' : section.title }} <span>{{ section.rows.length }}</span></button><button :class="{ active: isOperationLogTab }" @click="selectSection('__operation_logs')">{{ isMovementDetail ? '流水操作日志' : '操作日志' }} <span>{{ operationLogs.length }}</span></button></div>
             <OperationLogPanel v-if="isOperationLogTab" :title="isMovementDetail ? '流水操作日志' : '操作日志'" :logs="operationLogs" :loading="operationLogsLoading" :enabled="auditEnabled" />
             <div v-else-if="activeSection" class="context-table-wrap">
-              <div v-if="!visibleSectionRows.length" class="context-empty"><Rows3 :size="27" /><strong>{{ isSkuSection && skuQuery ? '未找到匹配的 SKU' : currentEntity === 'customers' ? ({ followups: '暂无跟进记录', quotes: '暂无报价', orders: '暂无订单', contacts: '暂无联系人', sold_items: '暂无成交商品记录', cash: '暂无财务流水' }[activeSection.key] || `暂无${activeSection.title}`) : `暂无${activeSection.title}` }}</strong><p v-if="currentEntity !== 'customers' && !isMovementDetail">{{ isSkuSection && skuQuery ? '请调整关键词后重试。' : '点击右上角新增记录并自动建立关联。' }}</p></div>
+              <div v-if="!visibleSectionRows.length" class="context-empty"><Rows3 :size="27" /><strong>{{ isSkuSection && skuQuery ? '未找到匹配的 SKU' : currentEntity === 'customers' ? ({ followups: '暂无跟进记录', quotes: '暂无报价', orders: '暂无订单', contacts: '暂无联系人', sold_items: '暂无成交商品记录', cash: '暂无财务流水' }[activeSection.key] || `暂无${activeSection.title}`) : `暂无${activeSection.title}` }}</strong><p v-if="currentEntity !== 'customers' && !isMovementDetail && canManage">{{ isSkuSection && skuQuery ? '请调整关键词后重试。' : '点击右上角新增关联记录。' }}</p></div>
               <table v-else class="context-table" :class="{ 'followup-table': activeSection.key === 'followups', 'sku-context-table': isSkuSection, 'multi-select-table': skuMultiSelect }"><thead><tr><th v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect" class="selection-cell"><label class="selection-check"><input type="checkbox" :checked="allSkuSelected" @click.stop @change="toggleAllSkuSelection" /><CheckSquare :size="15" /></label></th><th v-for="column in activeSection.columns" :key="column[0]">{{ column[1] }}</th><th></th></tr></thead><tbody>
                 <tr v-for="(row,index) in visibleSectionRows" :key="row.id || index" :class="{ 'inactive-row': isSkuSection && !row.active }" @click="!skuMultiSelect && drill(row)"><td v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect" class="selection-cell"><label class="selection-check" :class="{ restore: !row.active }" @click.stop><input type="checkbox" :checked="selectedSkuIds.includes(row.id)" @change="toggleSkuSelection(row.id)" /><CheckSquare :size="15" /></label></td><td v-for="(column,colIndex) in activeSection.columns" :key="column[0]" :class="{ primary: colIndex === 0, 'excerpt-cell': column[2] === 'excerpt' }"><CertificateExpiryBadge v-if="column[2] === 'certificate-expiry'" :certificate="row" /><span v-else :class="valueClass(column[2], row[column[0]])" :title="column[2] === 'excerpt' ? String(row[column[0]] || '') : undefined">{{ format(row[column[0]], column[2]) }}</span></td><td class="drill-cell"><button v-if="!skuMultiSelect" class="context-drill" :aria-label="`查看 ${row.sku || '记录'} 详情`" @click.stop="drill(row)"><ChevronRight :size="17" /></button></td></tr>
               </tbody></table>
@@ -432,7 +436,7 @@ onMounted(async () => {
 .sku-create-workspace .context-table th{position:sticky;top:0;z-index:1}
 @media(max-width:800px){.sku-create-workspace .context-table-wrap{max-height:35vh}}
 
-.detail-backdrop{inset:0 0 0 248px;z-index:25;place-items:stretch end;padding:0;background:#0b221d66;backdrop-filter:blur(2px)}.detail-modal{height:100vh;width:min(1100px,100%);background:#f6f8f5;box-shadow:-24px 0 70px #06191452;overflow:auto;overscroll-behavior:contain;will-change:transform}.detail-loading,.detail-error{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#71817b}.detail-error strong{color:#9d4444}.detail-error p{font-size:var(--text-body)}.detail-header{background:#123c36;color:#fff;padding:20px 28px 24px;position:relative;overflow:hidden}.detail-header:after{content:'';position:absolute;width:300px;height:300px;border:60px solid #ffffff08;border-radius:50%;right:-80px;top:-140px}.detail-nav,.detail-nav-start{display:flex;align-items:center}.detail-nav{justify-content:space-between;position:relative;z-index:1;font-size:var(--text-body);color:#91b6aa;text-transform:uppercase;letter-spacing:.12em}.detail-nav-start{gap:10px}.detail-back{border:0;background:transparent;color:#b6d3ca;display:flex;gap:7px;align-items:center;padding:0}.detail-actions{display:flex;gap:8px;align-items:center}.detail-actions .btn{padding:7px 11px;font-size:var(--text-body);text-transform:none;letter-spacing:0;text-decoration:none}.detail-close{width:32px;height:32px;border:1px solid #ffffff28;background:#ffffff12;color:white;border-radius:8px;display:grid;place-items:center}.detail-identity{display:flex;gap:20px;align-items:end;justify-content:space-between;margin-top:23px;position:relative;z-index:1}.detail-subtitle{font-size:var(--text-caption);color:#9cc0b5}.detail-identity h2{font-size:var(--text-page);margin:5px 0 0}.detail-badge{background:#ffffff14;border:1px solid #ffffff22;padding:6px 10px;border-radius:20px;font-size:var(--text-secondary)}.detail-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#ffffff18;margin-top:22px;border-radius:10px;overflow:hidden;position:relative;z-index:1}.detail-metrics>div{padding:13px 15px;background:#18473f}.detail-metrics small,.detail-metrics strong{display:block}.detail-metrics small{font-size:var(--text-caption);color:#93b7ad}.detail-metrics strong{font-size:var(--text-metric);margin-top:5px}.detail-content{padding:22px 25px 40px}.detail-info,.relation-area{background:white;border:1px solid #e1e7e3;border-radius:13px;padding:19px;margin-bottom:15px}.detail-info h3,.relation-top h3{font-size:var(--text-section);margin:0}.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px 22px;margin-top:16px}.info-grid small,.info-grid span{display:block}.info-grid small{font-size:var(--text-caption);color:#8a9792;margin-bottom:4px}.info-grid span{font-size:var(--text-body);color:#3d5049;white-space:pre-wrap;word-break:break-word}.richtext-view{font-size:13px;color:#3d5049;word-break:break-word}.richtext-view :deep(p){margin:0 0 4px}.richtext-view :deep(ul),.richtext-view :deep(ol){margin:3px 0;padding-left:18px}.relation-top{display:flex;justify-content:space-between;align-items:center}.relation-top p{font-size:var(--text-caption);color:#8a9792;margin:4px 0 0}.manage-link{border:0;font-size:var(--text-body);color:#245e50;text-decoration:none;display:flex;align-items:center;gap:5px;background:#eaf3ef;padding:7px 10px;border-radius:7px}.detail-tabs{display:flex;gap:4px;margin:18px -19px 0;padding:0 19px;border-bottom:1px solid #e6ebe8;overflow:auto}.detail-tabs button{border:0;background:transparent;padding:10px 12px;color:#75837e;font-size:var(--text-body);white-space:nowrap;border-bottom:2px solid transparent}.detail-tabs button.active{color:#174c41;border-bottom-color:#1f6657;font-weight:700}.detail-tabs button span{background:#edf1ef;padding:2px 5px;border-radius:10px;margin-left:4px;font-size:var(--text-body)}.context-table-wrap{overflow:auto;margin:0 -19px -19px}.context-table{width:100%;min-width:650px;border-collapse:collapse}.context-table th{font-size:var(--text-body);text-transform:uppercase;letter-spacing:.07em;color:#84918d;text-align:left;background:#f8faf8;padding:10px 13px}.context-table td{font-size:var(--text-body);color:#586660;padding:12px 13px;border-top:1px solid #edf0ee}.context-table td.primary{font-weight:600;color:#253a33}.context-table tr{cursor:pointer}.context-table tbody tr:hover{background:#f5f9f7}.context-table td:last-child{width:30px;color:#9ba7a2}.ctx-status{background:#e6f1ec;color:#286851;border-radius:20px;padding:3px 7px}.ctx-money{font-variant-numeric:tabular-nums;font-weight:600}.positive{color:#287258;font-weight:700}.negative{color:#b44f4f;font-weight:700}.context-empty{text-align:center;padding:42px;color:#99a5a0}.context-empty strong,.context-empty p{display:block}.context-empty strong{font-size:var(--text-body);color:#586963;margin-top:8px}.context-empty p{font-size:var(--text-caption);margin:4px 0}.detail-actions .btn-secondary{background:#ffffff12;color:white;border-color:#ffffff28}
+.detail-backdrop{inset:0 0 0 248px;z-index:25;place-items:stretch end;padding:0;background:#0b221d66;backdrop-filter:blur(2px)}.detail-modal{height:100vh;width:min(1100px,100%);background:#f6f8f5;box-shadow:-24px 0 70px #06191452;overflow:auto;overscroll-behavior:contain;will-change:transform}.detail-loading,.detail-error{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#71817b}.detail-error strong{color:#9d4444}.detail-error p{font-size:var(--text-body)}.detail-header{background:#123c36;color:#fff;padding:20px 28px 24px;position:relative;overflow:hidden}.detail-header:after{content:'';position:absolute;width:300px;height:300px;border:60px solid #ffffff08;border-radius:50%;right:-80px;top:-140px}.detail-nav,.detail-nav-start{display:flex;align-items:center}.detail-nav{justify-content:space-between;position:relative;z-index:1;font-size:var(--text-body);color:#91b6aa;text-transform:uppercase;letter-spacing:.12em}.detail-nav-start{gap:10px}.detail-back{border:0;background:transparent;color:#b6d3ca;display:flex;gap:7px;align-items:center;padding:0}.detail-actions{display:flex;gap:8px;align-items:center}.detail-actions .btn{padding:7px 11px;font-size:var(--text-body);text-transform:none;letter-spacing:0;text-decoration:none}.detail-close{width:32px;height:32px;border:1px solid #ffffff28;background:#ffffff12;color:white;border-radius:8px;display:grid;place-items:center}.detail-identity{display:flex;gap:20px;align-items:end;justify-content:space-between;margin-top:23px;position:relative;z-index:1}.detail-subtitle{font-size:var(--text-caption);color:#9cc0b5}.detail-identity h2{font-size:var(--text-page);margin:5px 0 0}.detail-badge{background:#ffffff14;border:1px solid #ffffff22;padding:6px 10px;border-radius:20px;font-size:var(--text-secondary)}.detail-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:#ffffff18;margin-top:22px;border-radius:10px;overflow:hidden;position:relative;z-index:1}.detail-metrics>div{padding:13px 15px;background:#18473f}.detail-metrics small,.detail-metrics strong{display:block}.detail-metrics small{font-size:var(--text-caption);color:#93b7ad}.detail-metrics strong{font-size:var(--text-metric);margin-top:5px}.detail-content{padding:22px 25px 40px}.detail-info,.relation-area{background:white;border:1px solid #e1e7e3;border-radius:13px;padding:19px;margin-bottom:15px}.detail-info h3,.relation-top h3{font-size:var(--text-section);margin:0}.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px 22px;margin-top:16px}.info-grid small,.info-grid span{display:block}.info-grid small{font-size:var(--text-caption);color:#8a9792;margin-bottom:4px}.info-grid span{font-size:var(--text-body);color:#3d5049;white-space:pre-wrap;word-break:break-word}.richtext-view{font-size:13px;color:#3d5049;word-break:break-word}.richtext-view :deep(p){margin:0 0 4px}.richtext-view :deep(ul),.richtext-view :deep(ol){margin:3px 0;padding-left:18px}.relation-top{display:flex;justify-content:space-between;align-items:center}.relation-top p{font-size:var(--text-caption);color:#8a9792;margin:4px 0 0}.manage-link{border:0;font-size:var(--text-body);color:#245e50;text-decoration:none;display:flex;align-items:center;gap:5px;background:#eaf3ef;padding:7px 10px;border-radius:7px}.detail-tabs{display:flex;gap:4px;margin:18px -19px 0;padding:0 19px;border-bottom:1px solid #e6ebe8;overflow:auto}.detail-tabs button{border:0;background:transparent;padding:10px 12px;color:#75837e;font-size:var(--text-body);white-space:nowrap;border-bottom:2px solid transparent}.detail-tabs button.active{color:#174c41;border-bottom-color:#1f6657;font-weight:700}.detail-tabs button span{background:#edf1ef;padding:2px 5px;border-radius:10px;margin-left:4px;font-size:var(--text-body)}.context-table-wrap{overflow:auto;margin:0 -19px -19px}.context-table{width:100%;min-width:650px;border-collapse:collapse}.context-table th{font-size:var(--text-body);text-transform:uppercase;letter-spacing:.07em;color:#84918d;text-align:left;background:#f8faf8;padding:10px 13px}.context-table td{font-size:var(--text-body);color:#586660;padding:12px 13px;border-top:1px solid #edf0ee}.context-table td.primary{font-weight:600;color:#253a33}.context-table tr{cursor:pointer}.context-table tbody tr:hover{background:#f5f9f7}.context-table td:last-child{width:30px;color:#9ba7a2}.ctx-status{background:#e6f1ec;color:#286851;border-radius:20px;padding:3px 7px}.ctx-money{font-variant-numeric:tabular-nums;font-weight:600}.positive{color:#287258;font-weight:700}.negative{color:#b44f4f;font-weight:700}.context-empty{text-align:center;padding:42px;color:#99a5a0}.context-empty strong,.context-empty p{display:block}.context-empty strong{font-size:var(--text-body);color:#586963;margin-top:8px}.context-empty p{font-size:var(--text-caption);margin:4px 0}.detail-actions .btn-secondary{background:#ffffff12;color:white;border-color:#ffffff28}
 /* 同类详情模块的分区字号：顶部 +1px，基础信息与关联数据 +2px。 */
 .detail-modal{font-size:var(--text-body)}
 .detail-nav,.detail-actions .btn{font-size:var(--text-body)}
@@ -456,6 +460,10 @@ onMounted(async () => {
 @keyframes product-drawer-enter{from{transform:translateX(100%)}to{transform:translateX(0)}}
 @media(max-width:1000px){.product-detail-modal{width:calc(100vw - 16px)}}@media(max-width:600px){.product-detail-modal{width:100vw;border-radius:0}.product-detail-modal>.detail-header{padding:16px}}
 @media(prefers-reduced-motion:reduce){.product-detail-modal{animation:none}}
+</style>
+
+<style scoped>
+@media(max-width:420px){.detail-metrics{grid-template-columns:1fr}}
 </style>
 <style scoped>
 /* Follow-up detail workbench: a full-page layout matching the CRM detail reference. */

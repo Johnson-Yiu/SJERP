@@ -19,7 +19,7 @@ import SkuContextBanner from '../components/SkuContextBanner.vue'
 import { deliveryState } from '../utils/orderOverview.js'
 import { addDays, daysBetween } from '../utils/orderDate'
 import { clearModalRoute, modalOrigin } from '../utils/modalNavigation'
-import { orderDetailLocation } from '../utils/detailNavigation'
+import { orderDetailLocation, quoteDetailLocation, workbenchCloseLocation } from '../utils/detailNavigation'
 import { documentDetailState, withDocumentDetailQuery, withoutDocumentDetailQuery } from '../utils/documentDetailRoute'
 import { routeDataQuery, routeDataQuerySignature } from '../utils/routePageState'
 import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuContext'
@@ -322,7 +322,7 @@ async function syncModalFromRoute() {
 async function closeDocumentDetail() {
   quoteDetailId.value = null
   orderDetailId.value = null
-  if (route.query.detail !== undefined) await router.replace(withoutDocumentDetailQuery(route))
+  if (route.query.detail !== undefined) await router.replace(workbenchCloseLocation(route))
 }
 function openDetail(row) { void router.push(withDocumentDetailQuery(route, row.id)) }
 function clearSkuFilter() { void router.push(withoutSkuContext(route)) }
@@ -396,10 +396,10 @@ async function handleOrderDraftSaved(row) {
   notify(`订单 ${row.order_no} 已保存`)
   await load()
   quoteDetailId.value = null
-  await router.push(orderDetailLocation(row.id))
+  await router.push(orderDetailLocation(row.id, 'overview', route.fullPath))
 }
-function openOrderDetail(id) { void router.push(orderDetailLocation(id)) }
-function openSourceQuote(id) { void router.push({ path: '/quotes', query: { detail: String(id) } }) }
+function openOrderDetail(id) { void router.push(orderDetailLocation(id, 'overview', route.fullPath)) }
+function openSourceQuote(id) { void router.push(quoteDetailLocation(id, 'overview', route.fullPath)) }
 async function editRelatedOrder() {
   if (!orderDetailId.value) return
   try {

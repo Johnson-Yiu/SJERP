@@ -9,6 +9,7 @@ import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Plus, Search, Pencil, Trash2, FileX2, X, MinusCircle, Download, ChevronDown, ChevronRight, FolderOpen, FileText, FilePenLine, Eye, Clock3, CircleCheck, CircleDollarSign, RotateCcw } from 'lucide-vue-next'
 import { api, downloadQuoteExport, listAll } from '../api'
+import { apiErrorMessage } from '../utils/apiErrors.js'
 import { confirmDialog } from '../dialogs'
 import QuoteDetailModal from '../components/QuoteDetailModal.vue'
 import QuoteEditorModal from '../components/QuoteEditorModal.vue'
@@ -17,6 +18,8 @@ import SkuPickerPanel from '../components/SkuPickerPanel.vue'
 import OrderDetailModal from '../components/OrderDetailModal.vue'
 import SegmentedDateInput from '../components/SegmentedDateInput.vue'
 import SummaryCards from '../components/SummaryCards.vue'
+import PageLoadState from '../components/PageLoadState.vue'
+import ListEmptyState from '../components/ListEmptyState.vue'
 import SkuContextBanner from '../components/SkuContextBanner.vue'
 import { deliveryState } from '../utils/orderOverview.js'
 import { addDays, daysBetween } from '../utils/orderDate'
@@ -38,7 +41,8 @@ const copy = computed(() => isOrder.value ? {
 })
 
 const rows = ref([]), customers = ref([]), skus = ref([]), quotes = ref([])
-const loading = ref(true), saving = ref(false), open = ref(false), editingId = ref(null), query = ref(typeof route.query.search === 'string' ? route.query.search : '')
+const loading = ref(true), hasLoaded = ref(false), loadError = ref(''), allRecordsExist = ref(false), saving = ref(false), open = ref(false), editingId = ref(null), query = ref(typeof route.query.search === 'string' ? route.query.search : '')
+const optionErrors = reactive({}), optionLoaded = reactive({}), optionLoading = ref(false)
 const quoteStatusFilter = computed(() => typeof route.query.status === 'string' ? route.query.status : '')
 const quoteCustomerFilter = computed(() => typeof route.query.customer === 'string' ? route.query.customer : '')
 const quoteSort = computed(() => typeof route.query.ordering === 'string' ? route.query.ordering : '-updated_at')
@@ -64,6 +68,8 @@ const eligibleSourceQuotes = computed(() => quotes.value.filter(q => ['draft', '
 const routeActionOpen = ref(false)
 let routeActionVersion = 0
 let timer
+const hasDocumentFilters = computed(() => Boolean(query.value || (isOrder.value ? orderStatusFilter.value || orderTodoFilter.value : quoteStatusFilter.value || quoteCustomerFilter.value)))
+const filteredDocumentEmpty = computed(() => hasDocumentFilters.value && allRecordsExist.value)
 
 function fresh() {
   sourceQuoteRequest += 1
@@ -82,34 +88,49 @@ function fresh() {
 function notify(message, error = false) { Object.assign(toast, { show: true, message, error }); setTimeout(() => toast.show = false, 2800) }
 async function load() {
   loading.value = true
+  loadError.value = ''
   try {
     const quoteParams = !isOrder.value ? { status: quoteStatusFilter.value, customer: quoteCustomerFilter.value, ordering: quoteSort.value } : {}
     rows.value = await listAll(`/${props.type}/`, { params: { ...routeDataQuery(route.query), search: route.query.search || '', ...quoteParams } })
+    hasLoaded.value = true
+    allRecordsExist.value = rows.value.length > 0
+    if (!rows.value.length && hasDocumentFilters.value) {
+      try { allRecordsExist.value = (await listAll(`/${props.type}/`)).length > 0 } catch { allRecordsExist.value = false }
+    }
     const visibleQuoteIds = new Set(rows.value.map(row => row.id))
     expandedQuoteNodes.value = new Set([...expandedQuoteNodes.value].filter(id => visibleQuoteIds.has(id)))
-  } catch (e) { notify(e.message, true) } finally { loading.value = false }
+  } catch (e) { loadError.value = apiErrorMessage(e) } finally { loading.value = false }
 }
 let customerOptionsPromise
 function loadCustomerOptions() {
   if (!customerOptionsPromise) customerOptionsPromise = listAll('/customers/').then(result => {
     customers.value = result
+    optionLoaded.customers = true
+    delete optionErrors.customers
     return result
-  }).catch(error => { customerOptionsPromise = null; throw error })
+  }).catch(error => { customerOptionsPromise = null; optionErrors.customers = `客户资料加载失败：${apiErrorMessage(error)}`; throw error })
   return customerOptionsPromise
 }
 function loadQuoteCustomerOptions() {
-  if (!isOrder.value) void loadCustomerOptions().catch(e => notify(e.message, true))
+  if (!isOrder.value) void loadCustomerOptions().catch(() => {})
 }
 async function loadOptions() {
-  try {
-    const calls = [loadCustomerOptions(), listAll('/skus/')]
-    if (isOrder.value) calls.push(listAll('/quotes/'))
-    const result = await Promise.all(calls); customers.value = result[0]; skus.value = result[1]; if (result[2]) quotes.value = result[2]
-  } catch (e) { notify(e.message, true) }
+  optionLoading.value = true
+  const tasks = [
+    ['customers', '客户', loadCustomerOptions],
+    ['skus', 'SKU', () => listAll('/skus/').then(items => { skus.value = items; optionLoaded.skus = true; delete optionErrors.skus })],
+  ]
+  if (isOrder.value) tasks.push(['quotes', '报价', () => listAll('/quotes/').then(items => { quotes.value = items; optionLoaded.quotes = true; delete optionErrors.quotes })])
+  const results = await Promise.all(tasks.map(async ([key, label, task]) => {
+    try { await task(); return true }
+    catch (error) { optionErrors[key] ||= `${label}资料加载失败：${apiErrorMessage(error)}`; return false }
+  }))
+  optionLoading.value = false
+  return results.every(Boolean)
 }
 async function create({ isCurrent = () => true } = {}) {
   if (!isOrder.value) {
-    await loadOptions()
+    if (!await loadOptions()) return
     if (!isCurrent()) return
     quoteEditorQuote.value = route.query.customer ? { customer: Number(route.query.customer) } : null
     quoteEditorOpen.value = true
@@ -118,19 +139,19 @@ async function create({ isCurrent = () => true } = {}) {
   returnToOrderDetailId.value = null
   editingId.value = null; fresh()
   form.customer = route.query.customer ? Number(route.query.customer) : ''
-  await loadOptions(); if (isCurrent()) { guard.markClean(); open.value = true }
+  if (await loadOptions() && isCurrent()) { guard.markClean(); open.value = true }
 }
 async function edit(row, { closeDetail = true, isCurrent = () => true } = {}) {
   if (closeDetail) await closeDocumentDetail()
   if (!isOrder.value) {
-    await loadOptions()
+    if (!await loadOptions()) return
     if (!isCurrent()) return
     quoteEditorQuote.value = row
     quoteEditorOpen.value = true
     return
   }
   returnToOrderDetailId.value = closeDetail ? null : row.id
-  editingId.value = row.id; fresh(); await loadOptions()
+  editingId.value = row.id; fresh(); if (!await loadOptions()) return
   if (!isCurrent()) return
   Object.keys(form).forEach(k => { if (row[k] !== undefined && k !== 'items') form[k] = row[k] ?? '' })
   form.exchange_rate = compactDecimalInput(form.exchange_rate)
@@ -390,7 +411,7 @@ function resetQuoteFilters() {
 }
 function reviseFromDetail(row) { if (row) edit(row, { closeDetail: false }) }
 async function openOrderDraft(sourceQuote) {
-  await loadOptions()
+  if (!await loadOptions()) return
   try {
     const quoteId = typeof sourceQuote === 'object' ? sourceQuote.id : sourceQuote
     const draft = (await api.get(`/quotes/${quoteId}/order-draft/`)).data
@@ -407,6 +428,7 @@ async function handleOrderDraftSaved(row) {
 }
 function openOrderDetail(id) { void router.push(orderDetailLocation(id, 'overview', route.fullPath)) }
 function openSourceQuote(id) { void router.push(quoteDetailLocation(id, 'overview', route.fullPath)) }
+function clearDocumentFilters() { return isOrder.value ? resetOrderFilters() : resetQuoteFilters() }
 async function editRelatedOrder() {
   if (!orderDetailId.value) return
   try {
@@ -434,18 +456,20 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
 
 <template>
   <div class="core-list-page">
-    <div class="page-head list-intro"><p>{{ copy.description }}</p><button class="btn btn-primary" @click="create"><Plus :size="16" /> 新建{{ isOrder ? '订单' : '报价' }}</button></div>
-    <SummaryCards v-if="isOrder" :items="orderMetrics" />
+    <div class="page-head list-intro"><p>{{ copy.description }}</p><button class="btn btn-primary" :disabled="optionLoading" @click="create"><Plus :size="16" /> 新建{{ isOrder ? '订单' : '报价' }}</button></div>
+    <SummaryCards v-if="isOrder && hasLoaded" :items="orderMetrics" />
     <SkuContextBanner v-if="hasSkuContext" :label="activeSkuContextLabel" @clear="clearSkuFilter" />
-    <section v-if="!isOrder" class="quote-metrics" aria-label="报价汇总"><article><span>报价项目</span><strong>{{ quoteMetrics.projects }}</strong><i class="metric-icon mint"><FolderOpen :size="19" /></i><small>报价主单数</small></article><article><span>报价版本</span><strong>{{ quoteMetrics.versions }}</strong><i class="metric-icon blue"><FileText :size="19" /></i><small>含所有修订版</small></article><article><span>进行中</span><strong>{{ quoteMetrics.pending }}</strong><i class="metric-icon amber"><Clock3 :size="19" /></i><small>草稿或已发送</small></article><article><span>已接受</span><strong>{{ quoteMetrics.accepted }}</strong><i class="metric-icon green"><CircleCheck :size="19" /></i><small>客户已接受</small></article></section>
+    <section v-if="!isOrder && hasLoaded" class="quote-metrics" aria-label="报价汇总"><article><span>报价项目</span><strong>{{ quoteMetrics.projects }}</strong><i class="metric-icon mint"><FolderOpen :size="19" /></i><small>报价主单数</small></article><article><span>报价版本</span><strong>{{ quoteMetrics.versions }}</strong><i class="metric-icon blue"><FileText :size="19" /></i><small>含所有修订版</small></article><article><span>进行中</span><strong>{{ quoteMetrics.pending }}</strong><i class="metric-icon amber"><Clock3 :size="19" /></i><small>草稿或已发送</small></article><article><span>已接受</span><strong>{{ quoteMetrics.accepted }}</strong><i class="metric-icon green"><CircleCheck :size="19" /></i><small>客户已接受</small></article></section>
     <div class="toolbar" :class="{ 'quote-toolbar': !isOrder }"><div class="search-box"><Search :size="17" /><input v-model="query" :placeholder="`搜索${copy.noLabel}或客户...`" @input="delayed" /></div><template v-if="isOrder"><select :value="orderStatusFilter" aria-label="按订单状态筛选" @change="setOrderFilter('status', $event.target.value)"><option value="">全部状态</option><option value="draft">草稿</option><option value="confirmed">已确认</option><option value="production">生产中</option><option value="shipped">已发货</option><option value="completed">已完成</option><option value="cancelled">已取消</option></select><select :value="orderTodoFilter" aria-label="按订单待办筛选" @change="setOrderFilter('todo', $event.target.value)"><option value="">全部待办</option><option value="unshipped">待出库</option><option value="due">交期已到</option></select><button type="button" class="filter-reset" @click="resetOrderFilters"><RotateCcw :size="15" /> 重置</button></template><template v-else><select :value="quoteStatusFilter" aria-label="按报价状态筛选" @change="setQuoteFilter('status', $event.target.value)"><option value="">全部状态</option><option value="draft">草稿</option><option value="sent">已发送</option><option value="accepted">已接受</option><option value="rejected">已拒绝</option><option value="expired">已过期</option></select><select :value="quoteCustomerFilter" aria-label="按客户筛选" @change="setQuoteFilter('customer', $event.target.value)"><option value="">全部客户</option><option v-for="customer in quoteCustomers" :key="customer.id" :value="customer.id">{{ customer.name }}</option></select><select :value="quoteSort" aria-label="报价排序" @change="setQuoteFilter('ordering', $event.target.value)"><option value="-updated_at">最近更新时间</option><option value="updated_at">最早更新时间</option><option value="-quote_date">报价日期（新到旧）</option><option value="quote_date">报价日期（旧到新）</option></select><button type="button" class="filter-reset" @click="resetQuoteFilters"><RotateCcw :size="15" /> 重置</button></template></div>
+    <div v-if="Object.keys(optionErrors).length" class="option-load-error" role="alert"><span>{{ Object.values(optionErrors).join('；') }}</span><button type="button" :disabled="optionLoading" @click="loadOptions">重新加载关联资料</button></div>
+    <p v-else-if="optionLoading" class="option-loading-note" role="status">正在加载客户、SKU 和报价资料…</p>
     <div class="panel">
-      <div v-if="loading" class="loading"><div class="spinner" /></div>
-      <div v-else-if="!rows.length" class="empty"><FileX2 :size="32" /><h3>{{ (query || (isOrder ? orderStatusFilter || orderTodoFilter : quoteStatusFilter || quoteCustomerFilter)) ? `没有匹配的${isOrder ? '订单' : '报价'}` : `暂无${isOrder ? '订单' : '报价'}` }}</h3><p>{{ (query || (isOrder ? orderStatusFilter || orderTodoFilter : quoteStatusFilter || quoteCustomerFilter)) ? '请调整筛选条件。' : `点击“新建${isOrder ? '订单' : '报价'}”开始录入。` }}</p></div>
-      <div v-else-if="isOrder" class="table-wrap"><table class="data-table order-list-table"><thead><tr><th>{{ copy.noLabel }}</th><th>客户</th><th>订单日期</th><th>预计交期</th><th>状态</th><th>明细</th><th>订单金额</th><th>已收 / 待收</th><th style="text-align:right">操作</th></tr></thead>
+      <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
+      <ListEmptyState v-if="hasLoaded && !rows.length" :entity="isOrder ? '订单' : '报价'" :filtered="filteredDocumentEmpty" @clear="clearDocumentFilters"><template #action><p>点击“新建{{ isOrder ? '订单' : '报价' }}”开始录入。</p></template></ListEmptyState>
+      <div v-else-if="hasLoaded && isOrder && rows.length" class="table-wrap"><table class="data-table order-list-table"><thead><tr><th>{{ copy.noLabel }}</th><th>客户</th><th>订单日期</th><th>预计交期</th><th>状态</th><th>明细</th><th>订单金额</th><th>已收 / 待收</th><th style="text-align:right">操作</th></tr></thead>
         <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row)" @keydown.enter="openDetail(row)"><td class="primary-cell">{{ row[copy.no] }}</td><td>{{ row.customer_name }}</td><td>{{ row.order_date || '—' }}</td><td><span :class="{ muted: !row.expected_ship_date }">{{ row.expected_ship_date || '未设置' }}</span><small v-if="deliveryState(row)" class="delivery-helper" :class="deliveryState(row).kind">{{ deliveryState(row).label }}</small></td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><template v-if="row.status === 'draft'"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">尚未生效</span></template><template v-else-if="row.status === 'cancelled'"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">已取消</span></template><template v-else><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></template></td><td><div class="table-actions"><button v-if="row.status === 'draft'" class="mini-btn" :aria-label="`编辑 ${row[copy.no]}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button v-if="row.status === 'draft'" class="mini-btn" :aria-label="`删除 ${row[copy.no]}`" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
       </table></div>
-      <div v-else class="table-wrap"><table class="data-table quote-table"><thead><tr><th>报价单 / 层级</th><th>客户</th><th>更新时间</th><th>状态</th><th>明细</th><th>金额</th><th style="text-align:right">操作</th></tr></thead>
+      <div v-else-if="hasLoaded && rows.length" class="table-wrap"><table class="data-table quote-table"><thead><tr><th>报价单 / 层级</th><th>客户</th><th>更新时间</th><th>状态</th><th>明细</th><th>金额</th><th style="text-align:right">操作</th></tr></thead>
         <tbody><tr v-for="row in quoteTreeRows" :key="row.id" class="clickable-row quote-tree-row" :class="{ 'quote-root-row': row.isRoot, 'quote-child-row': !row.isRoot }" tabindex="0" @click="activateQuoteTreeRow(row)" @keydown.enter="activateQuoteTreeRow(row)"><td class="primary-cell"><div class="quote-tree-cell" :style="{ '--tree-depth': row.depth }"><span class="tree-indent" /><button v-if="row.hasChildren" class="quote-expand" :aria-label="`${expandedQuoteNodes.has(row.id) ? '收起' : '展开'} ${row.quote_no} 的修订报价`" @click.stop="toggleQuoteNode(row.id)" @keydown.enter.stop><ChevronDown v-if="expandedQuoteNodes.has(row.id)" :size="16" /><ChevronRight v-else :size="16" /></button><span v-else class="quote-expand-placeholder" /><span v-if="!row.isRoot" class="tree-branch" /><component :is="row.isRoot ? FolderOpen : row.depth > 1 ? FilePenLine : FileText" :size="18" class="quote-tree-icon" :class="row.isRoot ? 'root-icon' : 'revision-icon'" /><span class="quote-tree-copy"><strong>{{ row.quote_no }}</strong><small>{{ row.isRoot ? '原始报价' : (row.revision_summary || `基于 ${row.parent_quote_no} 修订`) }}</small></span></div></td><td>{{ row.customer_name }}</td><td>{{ documentTimestamp(row) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><div class="table-actions"><button class="mini-btn" :aria-label="`查看 ${row.quote_no}`" @click.stop="openDetail(row)"><Eye :size="14" /></button><button class="mini-btn" :aria-label="`创建修订版 ${row.quote_no}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button class="mini-btn" :aria-label="`导出 ${row.quote_no}`" @click.stop="exportQuote(row)"><Download :size="14" /></button></div></td></tr></tbody>
       </table></div>
     </div>

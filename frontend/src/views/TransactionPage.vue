@@ -1,13 +1,17 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { api, listAll } from '../api'
+import { apiErrorMessage } from '../utils/apiErrors.js'
 import SummaryCards from '../components/SummaryCards.vue'
+import PageLoadState from '../components/PageLoadState.vue'
+import ListEmptyState from '../components/ListEmptyState.vue'
 import { formatMoney } from '../utils/money'
 import { orderDetailLocation, purchaseDetailLocation } from '../utils/detailNavigation'
 
 const today = new Date().toISOString().slice(0, 10)
-const rows = ref([]), error = ref(''), query = ref(''), orderQuery = ref(''), showForm = ref(false), orders = ref([])
+const rows = ref([]), error = ref(''), loadError = ref(''), hasLoaded = ref(false), allTransactionsExist = ref(false), query = ref(''), orderQuery = ref(''), showForm = ref(false), orders = ref([])
 const customers = ref([]), suppliers = ref([]), purchases = ref([]), plans = ref([]), saving = ref(false), loading = ref(false)
+const referenceErrors = ref([]), referencesLoaded = ref(false), referencesLoading = ref(true), orderSearchError = ref(''), orderSearchLoading = ref(false)
 const allocation = ref(null), allocationPlan = ref(''), allocationAmount = ref('')
 const voidTarget = ref(null), voidReason = ref(''), voidSaving = ref(false)
 const filters = reactive({ status: 'confirmed', direction: '', date_from: '', date_to: '' })
@@ -75,6 +79,8 @@ const transactionMetrics = computed(() => {
     { label: '关联订单', value: new Set(rows.value.map(row => row.order || row.order_no).filter(Boolean)).size, hint: '有业务归属的流水' },
   ]
 })
+const filtersActive = computed(() => Boolean(query.value.trim() || filters.status || filters.direction || filters.date_from || filters.date_to))
+const referenceErrorText = computed(() => referenceErrors.value.join(' '))
 
 function kindLabel(kind) { return kindLookup.get(kind)?.label || legacyKindLabels[kind] || kind || '—' }
 function directionLabel(direction) { return direction === 'income' ? '收入' : direction === 'expense' ? '支出' : '—' }
@@ -113,13 +119,24 @@ function onCurrencyChange() {
   else if (form.exchange_rate === '1') form.exchange_rate = ''
 }
 async function load() {
-  loading.value = true; error.value = ''
-  try { rows.value = await listAll('/transactions/', { params: { ...filters, search: query.value } }) }
-  catch (err) { error.value = err.message } finally { loading.value = false }
+  loading.value = true; loadError.value = ''
+  try {
+    const result = await listAll('/transactions/', { params: { ...filters, search: query.value } })
+    rows.value = result
+    hasLoaded.value = true
+    allTransactionsExist.value = result.length > 0
+    if (!result.length && filtersActive.value) {
+      try { allTransactionsExist.value = (await listAll('/transactions/')).length > 0 } catch { /* only affects empty-state wording */ }
+    }
+  } catch (err) { loadError.value = apiErrorMessage(err) || '财务流水加载失败，请稍后重试。' } finally { loading.value = false }
 }
 async function searchOrders() {
   form.order = null
-  try { orders.value = (await listAll('/orders/', { params: { search: orderQuery.value } })).filter(row => !['draft', 'cancelled'].includes(row.status)) } catch (err) { error.value = err.message }
+  orderSearchError.value = ''
+  orderSearchLoading.value = true
+  try { orders.value = (await listAll('/orders/', { params: { search: orderQuery.value } })).filter(row => !['draft', 'cancelled'].includes(row.status)) }
+  catch (err) { orders.value = []; orderSearchError.value = apiErrorMessage(err) || '订单选项加载失败。' }
+  finally { orderSearchLoading.value = false }
 }
 function chooseOrder(row) {
   form.order = row.id
@@ -133,6 +150,8 @@ function choosePurchase() {
 }
 async function save() {
   if (saving.value) return
+  if (!referencesLoaded.value) { error.value = '客户、供应商或采购单资料尚未加载完成，请重试后再保存。'; return }
+  if (form.kind === 'customer_receipt' && (orderSearchLoading.value || orderSearchError.value)) { error.value = '订单选项尚未成功加载，请重试后再保存。'; return }
   saving.value = true
   try {
     const payload = { ...form }
@@ -140,7 +159,7 @@ async function save() {
     await api.post('/transactions/', payload)
     showForm.value = false
     await load()
-  } catch (err) { error.value = err.message } finally { saving.value = false }
+  } catch (err) { error.value = apiErrorMessage(err) || '流水保存失败。' } finally { saving.value = false }
 }
 function openVoid(row) {
   voidTarget.value = row
@@ -167,25 +186,43 @@ async function allocate() {
   saving.value = true
   try { await api.post(`/transactions/${allocation.value.id}/allocate/`, { plan: allocationPlan.value, amount: allocationAmount.value }); allocation.value = null; await load() } catch (err) { error.value = err.message } finally { saving.value = false }
 }
-onMounted(async () => {
+async function loadReferenceOptions() {
+  referencesLoading.value = true
+  const results = await Promise.allSettled([listAll('/customers/'), listAll('/suppliers/'), listAll('/purchase-orders/')])
+  const errors = []
+  if (results[0].status === 'fulfilled') customers.value = results[0].value; else errors.push(apiErrorMessage(results[0].reason) || '客户资料加载失败。')
+  if (results[1].status === 'fulfilled') suppliers.value = results[1].value; else errors.push(apiErrorMessage(results[1].reason) || '供应商资料加载失败。')
+  if (results[2].status === 'fulfilled') purchases.value = results[2].value; else errors.push(apiErrorMessage(results[2].reason) || '采购单资料加载失败。')
+  referenceErrors.value = errors
+  referencesLoaded.value = errors.length === 0
+  referencesLoading.value = false
+}
+async function clearFilters() {
+  query.value = ''
+  Object.assign(filters, { status: '', direction: '', date_from: '', date_to: '' })
   await load()
-  try { [customers.value, suppliers.value, purchases.value] = await Promise.all([listAll('/customers/'), listAll('/suppliers/'), listAll('/purchase-orders/')]) } catch (err) { error.value = err.message }
-})
+}
+onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
 </script>
 
 <template>
   <section class="txn">
     <header>
       <div><h2>财务流水</h2><p>统一登记实际收付款、订单费用与期间费用。</p></div>
-      <button @click="openForm">新增记账</button>
+      <button :disabled="!referencesLoaded" @click="openForm">新增记账</button>
     </header>
-    <SummaryCards :items="transactionMetrics" />
+    <div v-if="referenceErrorText" class="option-load-error" role="alert"><span>新增记账所需的关联资料未能全部加载，暂不能新增。{{ referenceErrorText }}</span><button type="button" @click="loadReferenceOptions">重试加载</button></div>
+    <p v-else-if="referencesLoading" class="option-loading-note" role="status">正在加载客户、供应商和采购单资料…</p>
+    <SummaryCards v-if="hasLoaded" :items="transactionMetrics" />
     <div class="toolbar"><input v-model="query" placeholder="搜索流水号、往来方、合同" @keyup.enter="load"><select v-model="filters.status" @change="load"><option value="confirmed">已确认</option><option value="cancelled">已作废</option><option value="">全部状态</option></select><select v-model="filters.direction" @change="load"><option value="">全部收支</option><option value="income">收入</option><option value="expense">支出</option></select><input v-model="filters.date_from" type="date" aria-label="开始日期"><input v-model="filters.date_to" type="date" aria-label="结束日期"><button :disabled="loading" @click="load">查询</button></div>
-    <p v-if="error" class="error">{{ error }}</p>
+    <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
+    <p v-if="error && !showForm && !allocation && !voidTarget" class="error" role="alert">{{ error }}</p>
+    <template v-if="hasLoaded">
     <table>
       <thead><tr><th>日期 / 流水号</th><th>收支 / 类型</th><th>往来方 / 合同</th><th>原币金额</th><th>人民币</th><th>状态 / 核销</th><th>操作</th></tr></thead>
-      <tbody><tr v-if="loading"><td colspan="7">正在加载…</td></tr><tr v-else-if="!rows.length"><td colspan="7">当前条件下暂无流水。</td></tr><tr v-for="row in rows" :key="row.id"><td>{{ row.transaction_date }}<small>{{ row.transaction_no }}<span v-if="row.split_from"> · 拆分记录</span></small></td><td>{{ row.direction_display || directionLabel(row.direction) }}<small>{{ kindLabel(row.kind) }}</small></td><td>{{ row.customer_name || row.supplier_name || '—' }}<small><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.order ? row.order_no : row.purchase_no }}</RouterLink><span v-else>未关联合同</span></small></td><td>{{ row.currency }} {{ formatMoney(row.amount) }}</td><td>¥{{ formatMoney(row.rmb_amount) }}</td><td>{{ row.status_display }}<small v-if="['unallocated_advance', 'unallocated_payment'].includes(row.kind)">未核销 {{ row.currency }} {{ formatMoney(Number(row.amount) - Number(row.allocated_amount)) }}</small><small v-for="item in row.allocations" :key="item.id"><RouterLink v-if="allocationLocation(item)" :to="allocationLocation(item)" class="contract-link">{{ item.contract_no }}</RouterLink><span v-else>{{ item.contract_no }}</span>：{{ formatMoney(item.amount) }} {{ item.is_active ? '已核销' : '已撤回' }}</small><small v-if="row.status === 'cancelled' && row.void_reason">作废原因：{{ row.void_reason }}{{ row.voided_at ? ' · ' + row.voided_at : '' }}</small></td><td><button v-if="row.status === 'confirmed' && ['unallocated_advance', 'unallocated_payment'].includes(row.kind) && Number(row.amount) > Number(row.allocated_amount)" @click="openAllocate(row)">核销</button><button v-if="row.status === 'confirmed' && !row.split_from" @click="openVoid(row)">作废</button><small v-if="row.split_from">由原始流水统一作废</small><small v-else-if="row.status === 'cancelled'">已作废</small></td></tr></tbody>
+      <tbody><tr v-if="!rows.length"><td colspan="7"><ListEmptyState entity="财务流水" :filtered="filtersActive && allTransactionsExist" @clear="clearFilters"><template #action>当前还没有财务流水。</template></ListEmptyState></td></tr><tr v-for="row in rows" :key="row.id"><td>{{ row.transaction_date }}<small>{{ row.transaction_no }}<span v-if="row.split_from"> · 拆分记录</span></small></td><td>{{ row.direction_display || directionLabel(row.direction) }}<small>{{ kindLabel(row.kind) }}</small></td><td>{{ row.customer_name || row.supplier_name || '—' }}<small><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.order ? row.order_no : row.purchase_no }}</RouterLink><span v-else>未关联合同</span></small></td><td>{{ row.currency }} {{ formatMoney(row.amount) }}</td><td>¥{{ formatMoney(row.rmb_amount) }}</td><td>{{ row.status_display }}<small v-if="['unallocated_advance', 'unallocated_payment'].includes(row.kind)">未核销 {{ row.currency }} {{ formatMoney(Number(row.amount) - Number(row.allocated_amount)) }}</small><small v-for="item in row.allocations" :key="item.id"><RouterLink v-if="allocationLocation(item)" :to="allocationLocation(item)" class="contract-link">{{ item.contract_no }}</RouterLink><span v-else>{{ item.contract_no }}</span>：{{ formatMoney(item.amount) }} {{ item.is_active ? '已核销' : '已撤回' }}</small><small v-if="row.status === 'cancelled' && row.void_reason">作废原因：{{ row.void_reason }}{{ row.voided_at ? ' · ' + row.voided_at : '' }}</small></td><td><button v-if="row.status === 'confirmed' && ['unallocated_advance', 'unallocated_payment'].includes(row.kind) && Number(row.amount) > Number(row.allocated_amount)" @click="openAllocate(row)">核销</button><button v-if="row.status === 'confirmed' && !row.split_from" @click="openVoid(row)">作废</button><small v-if="row.split_from">由原始流水统一作废</small><small v-else-if="row.status === 'cancelled'">已作废</small></td></tr></tbody>
     </table>
+    </template>
 
     <div v-if="showForm" class="mask" @click.self="showForm = false">
       <form class="dialog" @submit.prevent="save">
@@ -202,7 +239,7 @@ onMounted(async () => {
         <label>币种<select v-model="form.currency" required @change="onCurrencyChange"><option v-for="currency in currencies" :key="currency.value" :value="currency.value">{{ currency.label }}</option></select></label>
         <label>结汇汇率 <small>1 外币 ≈ 人民币</small><input v-model="form.exchange_rate" type="number" min="0.000001" step="0.000001" required></label>
         <div v-if="contractKinds.includes(form.kind)" class="order-picker">
-          <label>关联订单（客户收款必选，费用可选）<input v-model="orderQuery" placeholder="客户或订单号" @input="searchOrders"></label>
+          <label>关联订单（客户收款必选，费用可选）<input v-model="orderQuery" placeholder="客户或订单号" @input="searchOrders"></label><small v-if="orderSearchLoading">正在加载订单…</small><p v-if="orderSearchError" class="option-load-error-text" role="alert">{{ orderSearchError }} <button type="button" @click="searchOrders">重试</button></p>
           <button v-for="row in orders" :key="row.id" type="button" class="order" @click="chooseOrder(row)">{{ row.customer_name }}｜{{ row.customer_country || '—' }}｜{{ row.order_no }}｜{{ row.currency }} {{ formatMoney(row.total_amount) }}</button>
           <p v-if="form.order">已选择订单：{{ orders.find(row => row.id === form.order)?.order_no || form.order }}</p>
         </div>
@@ -214,7 +251,7 @@ onMounted(async () => {
         <p v-if="form.kind === 'refund'">用于退回已经收到的订单货款；售后赔偿、运费补贴等请登记为订单费用。</p>
         <p v-else-if="form.kind === 'supplier_refund'">用于供应商退回已经支付的采购款。</p>
         <p v-if="error" class="error">{{ error }}</p>
-        <footer><button type="button" @click="showForm = false">取消</button><button :disabled="saving">{{ saving ? '保存中…' : '保存' }}</button></footer>
+        <footer><button type="button" @click="showForm = false">取消</button><button :disabled="saving || !referencesLoaded || (form.kind === 'customer_receipt' && (orderSearchLoading || !!orderSearchError))">{{ saving ? '保存中…' : '保存' }}</button></footer>
       </form>
     </div>
     <div v-if="allocation" class="mask" @click.self="allocation = null"><form class="dialog" @submit.prevent="allocate"><h3>核销预收预付款</h3><p>只分配余额，不新增现金流水。{{ allocation.currency }}</p><label>同一往来方的待结计划<select v-model="allocationPlan" required><option value="">请选择</option><option v-for="plan in eligiblePlans" :key="plan.id" :value="plan.id">{{ plan.contract_no }} · {{ plan.notes }} · 待结 {{ formatMoney(plan.remaining_amount) }}</option></select></label><p v-if="!eligiblePlans.length">暂无币种与往来方匹配的待结计划。</p><label>核销金额<input v-model="allocationAmount" type="number" min="0.0001" step="0.0001" required></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" @click="allocation = null">取消</button><button :disabled="saving || !allocationPlan">确认核销</button></footer></form></div>

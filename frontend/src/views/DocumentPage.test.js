@@ -51,7 +51,7 @@ test('orders reuse the compact summary cards used by the quotation desk', async 
 
   assert.match(source, /import SummaryCards from '\.\.\/components\/SummaryCards\.vue'/)
   assert.match(source, /const orderMetrics = computed/)
-  assert.match(source, /<SummaryCards v-if="isOrder" :items="orderMetrics"/)
+  assert.match(source, /<SummaryCards v-if="isOrder && hasLoaded" :items="orderMetrics"/)
 })
 
 test('order editor does not expose manual lifecycle status changes', async () => {

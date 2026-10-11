@@ -15,8 +15,8 @@ test('core management lists and selectors use the tested all-pages loader', asyn
   ])
 
   assert.match(resource, /import \{ api, listAll \} from '\.\.\/api'/)
-  assert.match(resource, /rows\.value = await listAll\(/)
-  assert.match(resource, /options\[field\[4\]\] = await listAll\(/)
+  assert.match(resource, /const nextRows = await listAll\(/)
+  assert.match(resource, /options\[key\] = await listAll\(/)
 
   assert.match(documents, /rows\.value = await listAll\(`\/\$\{props\.type\}\//)
   assert.match(documents, /listAll\('\/customers\/'\)/)

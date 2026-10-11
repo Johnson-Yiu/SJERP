@@ -1,10 +1,12 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { api } from '../api'
+import PageLoadState from '../components/PageLoadState.vue'
 
 const data = ref({ metrics: {}, due_items: [] })
 const loading = ref(true)
 const error = ref('')
+const hasLoaded = ref(false)
 const today = new Date().toLocaleDateString('en-CA')
 const dateFrom = ref(`${today.slice(0, 7)}-01`), dateTo = ref(today)
 const cards = [
@@ -20,7 +22,7 @@ function money(value) { return Number(value || 0).toLocaleString('zh-CN', { mini
 async function load() {
   loading.value = true
   error.value = ''
-  try { data.value = (await api.get('/finance-dashboard/', { params: { date_from: dateFrom.value, date_to: dateTo.value } })).data } catch (err) { error.value = err.message } finally { loading.value = false }
+  try { data.value = (await api.get('/finance-dashboard/', { params: { date_from: dateFrom.value, date_to: dateTo.value } })).data; hasLoaded.value = true } catch (err) { error.value = err.message || '财务概览加载失败，请稍后重试。' } finally { loading.value = false }
 }
 function exportReport() {
   const rows = [['收支报表', data.value.period?.date_from, data.value.period?.date_to], ['月份', '实际收入（人民币）', '实际支出（人民币）', '净现金流（人民币）'],
@@ -39,14 +41,16 @@ onMounted(load)
     <header><div><h2>财务概览</h2><p>经营资金台账，所有金额按人民币汇总。</p></div><button :disabled="loading" @click="load">刷新数据</button></header>
     <form class="report-filters" @submit.prevent="load"><label>开始日期 <input v-model="dateFrom" type="date" required></label><label>结束日期 <input v-model="dateTo" type="date" required></label><button :disabled="loading">查询报表</button><button type="button" :disabled="loading || !data.period || !!error" @click="exportReport">导出 CSV</button></form>
     <p>销售额按订单日期，现金收支按实际发生日期。预计订单利润 = 期间销售额 - 采购归属成本 - 订单费用，是经营估算，不等同于会计净利润。</p>
-    <p v-if="error" class="error">{{ error }}</p>
-    <div class="cards" v-if="!loading">
+    <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="error" @retry="load" />
+    <template v-if="hasLoaded">
+    <div class="cards">
       <article v-for="[key, label, unit] in cards" :key="key"><span>{{ label }}</span><strong>{{ unit === '¥' ? `${unit}${money(data.metrics[key])}` : data.metrics[key] || 0 }}</strong></article>
     </div>
     <div class="panel"><h3>月度现金收支</h3><p v-if="!data.monthly_cash?.length">所选期间暂无已确认收支。</p><table v-else><thead><tr><th>月份</th><th>收入</th><th>支出</th><th>净现金流</th></tr></thead><tbody><tr v-for="row in data.monthly_cash" :key="row.month"><td>{{ row.month }}</td><td>¥{{ money(row.income) }}</td><td>¥{{ money(row.expense) }}</td><td>¥{{ money(row.net) }}</td></tr></tbody></table></div>
     <div class="panel"><h3>收支分类汇总</h3><p v-if="!data.categories?.length">暂无分类收支。</p><table v-else><thead><tr><th>方向</th><th>分类</th><th>人民币金额</th></tr></thead><tbody><tr v-for="row in data.categories" :key="`${row.direction}-${row.category}`"><td>{{ row.direction === 'income' ? '收入' : '支出' }}</td><td>{{ row.category }}</td><td>¥{{ money(row.amount) }}</td></tr></tbody></table></div>
     <p><RouterLink to="/receivables">管理应收</RouterLink> · <RouterLink to="/payables">管理应付</RouterLink> · <RouterLink to="/transactions">登记及核对流水</RouterLink></p>
-    <div class="panel"><h3>到期与逾期计划</h3><p v-if="loading">正在加载…</p><p v-else-if="!data.due_items.length">暂无到期或逾期计划。</p><table v-else><thead><tr><th>类型</th><th>合同</th><th>往来方</th><th>预计日期</th><th>待结金额</th></tr></thead><tbody><tr v-for="row in data.due_items" :key="row.id"><td>{{ row.direction === 'receivable' ? '应收' : '应付' }}</td><td><RouterLink :to="{ path: row.order ? '/orders' : '/purchase-orders', query: { detail: row.order || row.purchase_order } }">{{ row.contract_no }}</RouterLink></td><td>{{ row.counterparty_name }}</td><td>{{ row.due_date }}</td><td>{{ row.currency }} {{ money(row.remaining_amount) }}</td></tr></tbody></table></div>
+    <div class="panel"><h3>到期与逾期计划</h3><p v-if="!data.due_items.length">暂无到期或逾期计划。</p><table v-else><thead><tr><th>类型</th><th>合同</th><th>往来方</th><th>预计日期</th><th>待结金额</th></tr></thead><tbody><tr v-for="row in data.due_items" :key="row.id"><td>{{ row.direction === 'receivable' ? '应收' : '应付' }}</td><td><RouterLink :to="{ path: row.order ? '/orders' : '/purchase-orders', query: { detail: row.order || row.purchase_order } }">{{ row.contract_no }}</RouterLink></td><td>{{ row.counterparty_name }}</td><td>{{ row.due_date }}</td><td>{{ row.currency }} {{ money(row.remaining_amount) }}</td></tr></tbody></table></div>
+    </template>
   </section>
 </template>
 

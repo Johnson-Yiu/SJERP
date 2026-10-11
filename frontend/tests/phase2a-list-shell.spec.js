@@ -172,9 +172,17 @@ it('Focused repair keeps movement labels/counts and uses exactly four distinct h
 it.each(core.filter(c => c[0] !== '/inventory'))('%s has concise initial and filtered empty states', async (path, title, component, props, action) => {
   mocks.listAll.mockResolvedValue([])
   const router = await setup(path)
-  expect(wrapper.get('.empty h3').text()).toMatch(/^暂无/)
-  expect(wrapper.get('.empty p').text()).toBe(`点击“${action}”开始录入。`)
+  expect(wrapper.get('.list-empty-state h3').text()).toMatch(/^暂无/)
+  expect(wrapper.get('.list-empty-state').text()).toContain(action)
+  const endpoint = path === '/inventory-movements' ? '/inventory-movements/' : `${path}/`
+  const existing = path === '/customers' ? { id: 1, name: 'Existing Customer', code: 'C1', status: 'customer' }
+    : path === '/quotes' ? { id: 1, quote_no: 'QT-1', status: 'sent', items: [] }
+      : path === '/orders' ? { id: 1, order_no: 'SO-1', status: 'completed', items: [] }
+        : path === '/purchase-orders' ? { id: 1, purchase_no: 'PO-1', supplier_name: 'Supplier', status: 'completed', items: [] }
+          : { id: 1, movement_no: 'IM-1', type: 'adjust_in', quantity: 1, sku_code: 'SKU-1' }
+  mocks.listAll.mockImplementation(async (url, config = {}) => url === endpoint && config.params?.search === 'missing' ? [] : url === endpoint ? [existing] : [])
   await router.push({ path, query: { search: 'missing' } }); await flushPromises()
-  expect(wrapper.get('.empty h3').text()).toMatch(/^没有匹配的/)
-  expect(wrapper.get('.empty p').text()).toBe('请调整筛选条件。')
+  expect(wrapper.get('.list-empty-state h3').text()).toBe('没有符合当前条件的记录')
+  expect(wrapper.get('.list-empty-state p').text()).toBe('请调整搜索或筛选条件。')
+  expect(wrapper.get('.list-empty-clear').text()).toBe('清除筛选')
 })

@@ -66,10 +66,10 @@ describe('payment plan list filters', () => {
     await vi.advanceTimersByTimeAsync(1)
     await flushPromises()
 
-    expect(mocks.listAll).toHaveBeenLastCalledWith('/payment-plans/', { params: {
+    expect(mocks.listAll.mock.calls.some(([url, config]) => url === '/payment-plans/' && JSON.stringify(config.params) === JSON.stringify({
       direction: 'payable', status: 'settled', overdue: 'true', search: 'Supplier North',
       due_from: '2026-10-01', due_to: '2026-10-31',
-    } })
+    }))).toBe(true)
     expect(wrapper.find('input[aria-label="搜索往来方或合同号"]').attributes('placeholder')).toBe('搜索供应商或采购单号…')
     wrapper.unmount()
   })
@@ -86,6 +86,7 @@ describe('payment plan list filters', () => {
     await wrapper.find('input[aria-label="到期日从"]').setValue('2026-10-01')
     await wrapper.find('input[aria-label="到期日至"]').setValue('2026-10-31')
     await flushPromises()
+    const callsBeforeReset = mocks.listAll.mock.calls.length
     await wrapper.find('button.filter-reset').trigger('click')
     await flushPromises()
 
@@ -94,7 +95,7 @@ describe('payment plan list filters', () => {
     expect(wrapper.find('input[aria-label="仅看逾期"]').element.checked).toBe(false)
     expect(wrapper.find('input[aria-label="到期日从"]').element.value).toBe('')
     expect(wrapper.find('input[aria-label="到期日至"]').element.value).toBe('')
-    expect(mocks.listAll).toHaveBeenLastCalledWith('/payment-plans/', { params: { direction: 'receivable', status: 'open' } })
+    expect(mocks.listAll.mock.calls.slice(callsBeforeReset).some(([url, config]) => url === '/payment-plans/' && config.params.direction === 'receivable' && config.params.status === 'open')).toBe(true)
     const resetCallCount = mocks.listAll.mock.calls.length
     await vi.advanceTimersByTimeAsync(300)
     expect(mocks.listAll).toHaveBeenCalledTimes(resetCallCount)

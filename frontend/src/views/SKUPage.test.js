@@ -86,6 +86,7 @@ async function saveContext(editing = false, imageFails = false) {
     allPreviews: { value: [preview] }, chosenPreviews: { value: [preview] }, detailFor: () => detail,
     cleanDetail: () => ({ carton_quantity: 50 }), ordinaryValues: () => ({}), translateLightingTerms: v => v,
     selectedImage: { value: imageFails ? {} : null }, imageClearRequested: { value: false }, pendingImageSkuIds: { value: [] }, pendingImageFailurePrefix: { value: "" },
+    skuOptionsReady: { value: true },
     uploadImage: async () => { if (imageFails) throw new Error('network failed') },
     load: async () => {}, closeModal: () => calls.push(['close']), emit: () => {},
     notify: msg => notices.push(msg), reportSaveError: (error, prefix) => { ctx.saveError.value = prefix + error.message; notices.push(ctx.saveError.value) },
@@ -121,10 +122,6 @@ test('image failure retains saved SKU IDs for independent retry and reports data
 })
 
 test('nested packaging validation messages remain readable', async () => {
-  const { runInNewContext } = await import('node:vm')
-  const source = await readFile(componentUrl, 'utf8')
-  const lines = source.split('\n').filter(line => line.startsWith('const errorMessages =') || line.startsWith('const apiErrorMessage =')).join('\n')
-  const ctx = {}
-  runInNewContext(lines + ';this.message = apiErrorMessage({response:{data:{packaging_profile_input:{qty_per_carton_override:["每箱数量必须大于 0。"]}}}})', ctx)
-  assert.equal(ctx.message, '每箱数量必须大于 0。')
+  const { apiErrorMessage } = await import('../utils/apiErrors.js')
+  assert.equal(apiErrorMessage({ response: { status: 400, data: { packaging_profile_input: { qty_per_carton_override: ['每箱数量必须大于 0。'] } } }, status: 400 }), 'packaging_profile_input · qty_per_carton_override：每箱数量必须大于 0。')
 })

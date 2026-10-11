@@ -12,12 +12,15 @@ import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChevronRight, Database, Paperclip, Pencil, Plus, RotateCcw, Search, Trash2, UserRoundPlus, X } from 'lucide-vue-next'
 import { api, listAll } from '../api'
+import { apiErrorMessage } from '../utils/apiErrors.js'
 import { confirmDialog, inputDialog } from '../dialogs'
 import EntityDetailModal from '../components/EntityDetailModal.vue'
 import SimpleRichTextEditor from '../components/SimpleRichTextEditor.vue'
 import ComboInput from '../components/ComboInput.vue'
 import SegmentedDateInput from '../components/SegmentedDateInput.vue'
 import SummaryCards from '../components/SummaryCards.vue'
+import PageLoadState from '../components/PageLoadState.vue'
+import ListEmptyState from '../components/ListEmptyState.vue'
 import { customerListStatus } from '../utils/customerListStatus'
 import InventoryMovementCreateModal from '../components/InventoryMovementCreateModal.vue'
 import SkuContextBanner from '../components/SkuContextBanner.vue'
@@ -53,10 +56,14 @@ function ledgerDataQuery() { const { type, direction, source, ...params } = rout
 const isCertificatePage = computed(() => props.config.endpoint === 'product-certificates')
 const certificateFilterLabel = computed(() => isCertificatePage.value ? certificateFilterLabels[route.query.expiry] : '')
 function setCertificateFilter(expiry) { router.push({ path: route.path, query: certificateFilterQuery(route.query, expiry) }) }
-const rows = ref([]), loading = ref(true), saving = ref(false), query = ref('')
+const rows = ref([]), loading = ref(true), hasLoaded = ref(false), loadError = ref(''), allRecordsExist = ref(false), saving = ref(false), query = ref('')
 const modalOpen = ref(false), detailId = ref(null), editingId = ref(null)
 const detailRefresh = ref(0), keepDetailOpen = ref(false)
 const form = reactive({}), options = reactive({})
+const optionErrors = reactive({}), optionLoaded = reactive({})
+const requiredRemoteFields = computed(() => props.config.fields.filter(field => field[3] && ['remote', 'remote_multi', 'combo'].includes(field[2])))
+const optionsReady = computed(() => requiredRemoteFields.value.every(field => optionLoaded[field[4]] && !optionErrors[field[4]]))
+const filteredListEmpty = computed(() => hasListFilters.value && allRecordsExist.value)
 const customerContacts = ref([])
 const guard = useUnsavedChangesGuard({ data: () => ({ form, contacts: customerContacts.value, files: pendingFollowUpFiles.value }), enabled: () => modalOpen.value && props.config.endpoint !== 'inventory-movements' })
 const followUpDays = ref('')
@@ -153,30 +160,66 @@ function setPrimaryContact(index) {
 function notify(message, error = false) { Object.assign(toast, { show: true, message, error }); setTimeout(() => { toast.show = false }, 2800) }
 async function load() {
   loading.value = true
+  loadError.value = ''
   if (!isMovementPage.value) {
-    try { rows.value = await listAll(`/${props.config.endpoint}/`, { params: { ...routeDataQuery(route.query), search: query.value } }) }
-    catch (e) { notify(e.message, true) } finally { loading.value = false }
+    try {
+      const nextRows = await listAll(`/${props.config.endpoint}/`, { params: { ...routeDataQuery(route.query), search: query.value } })
+      rows.value = nextRows
+      hasLoaded.value = true
+      allRecordsExist.value = nextRows.length > 0
+      if (!nextRows.length && hasListFilters.value) {
+        try { allRecordsExist.value = (await listAll(`/${props.config.endpoint}/`)).length > 0 } catch { allRecordsExist.value = false }
+      }
+    } catch (e) { loadError.value = apiErrorMessage(e) } finally { loading.value = false }
     return
   }
   const request = ++ledgerRequest
   try {
     const result = await listAll('/inventory-movements/', { params: { ...ledgerDataQuery(), search: typeof route.query.search === 'string' ? route.query.search : '' } })
-    if (request === ledgerRequest) rows.value = result
-  } catch (e) { if (request === ledgerRequest) notify(e.message, true) }
+    if (request === ledgerRequest) {
+      rows.value = result
+      hasLoaded.value = true
+      allRecordsExist.value = result.length > 0
+      if (!result.length && hasListFilters.value) {
+        try { allRecordsExist.value = (await listAll('/inventory-movements/', { params: { sku: route.query.sku } })).length > 0 } catch { allRecordsExist.value = false }
+      }
+    }
+  } catch (e) { if (request === ledgerRequest) loadError.value = apiErrorMessage(e) }
   finally { if (request === ledgerRequest) loading.value = false }
 }
 function delayedSearch() {
   clearTimeout(searchTimer)
   searchTimer = setTimeout(() => isCustomerPage.value ? updateLedgerQuery({ search:query.value || undefined }, true) : isMovementPage.value ? updateLedgerQuery({ search:query.value || undefined }) : load(), 300)
 }
+function clearListFilters() {
+  query.value = ''
+  if (isMovementPage.value) return resetLedgerFilters()
+  if (isCustomerPage.value) return updateLedgerQuery({ search: undefined }, true)
+  return load()
+}
 watch(() => route.query.search, value => { if (isMovementPage.value || isCustomerPage.value) { clearTimeout(searchTimer); query.value = typeof value === 'string' ? value : '' } }, { immediate:true })
 onBeforeUnmount(() => { clearTimeout(searchTimer); ledgerRequest++ })
 async function loadOptions() {
   const remotes = props.config.fields.filter(f => ['remote', 'combo', 'remote_multi'].includes(f[2]))
-  await Promise.all(remotes.map(async field => {
-    if (options[field[4]] && !(props.config.endpoint === 'follow-ups' && field[0] === 'customer')) return
-    try { options[field[4]] = await listAll(`/${field[4]}/`) } catch { options[field[4]] = [] }
-  }))
+  await Promise.all(remotes.map(field => loadRemoteOption(field)))
+}
+async function loadRemoteOption(field, force = false) {
+  const key = field[4]
+  if (optionLoaded[key] && !force && !(props.config.endpoint === 'follow-ups' && field[0] === 'customer')) return !optionErrors[key]
+  try {
+    options[key] = await listAll(`/${key}/`)
+    optionLoaded[key] = true
+    delete optionErrors[key]
+    return true
+  } catch (error) {
+    optionErrors[key] = `${field[1]}资料加载失败：${apiErrorMessage(error)}`
+    return false
+  }
+}
+function retryRemoteOption(field) { return loadRemoteOption(field, true) }
+async function loadMovementSkus() {
+  try { movementSkus.value = await listAll('/skus/', { params:{ include_inactive:1 } }); delete optionErrors.skus }
+  catch (error) { optionErrors.skus = `SKU 资料加载失败：${apiErrorMessage(error)}` }
 }
 function visibleEditorField(field) {
   return !(props.config.endpoint === 'follow-ups' && field[0] === 'next_follow_up' && form.next_follow_up_mode !== 'set')
@@ -382,6 +425,7 @@ function payload() {
 }
 async function save() {
   if (saving.value) return
+  if (!optionsReady.value) return notify('关联资料尚未加载完成，请重试后再保存。', true)
   if (supplierCodeError.value) return notify(supplierCodeError.value, true)
   if (props.config.endpoint === 'suppliers' && paymentTermsError(form.payment_terms_config)) return notify(paymentTermsError(form.payment_terms_config), true)
   if (props.config.endpoint === 'follow-ups') {
@@ -515,13 +559,14 @@ watch([() => route.query.create, () => route.query.edit, routeCreatePrefillSigna
   void syncModalFromRoute()
 }, { immediate: true })
 watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null }, { immediate: true })
-onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.value = await listAll('/skus/', { params:{ include_inactive:1 } }) } catch { movementSkus.value = [] } } })
+onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus() })
 </script>
 
 <template>
   <div class="resource-page" :class="{ 'finance-resource-page': isTransactionPage, 'inventory-ledger-page': isMovementPage, 'core-list-page': isCoreListPage }">
     <div class="page-head" :class="{ 'list-intro': isCoreListPage }"><div><h2 v-if="!isCoreListPage">{{ config.title }}</h2><p>{{ config.description }}</p></div><button class="btn btn-primary" @click="openCreate"><Plus :size="16" /> {{ primaryAction }}</button></div>
-    <SummaryCards :items="resourceMetrics" />
+    <div v-if="isMovementPage && optionErrors.skus" class="option-load-error" role="alert">{{ optionErrors.skus }} <button type="button" @click="loadMovementSkus">重新加载 SKU 资料</button></div>
+    <SummaryCards v-if="hasLoaded" :items="resourceMetrics" />
     <div v-if="isCertificatePage" class="certificate-filters" aria-label="证书有效期筛选"><button v-for="[value, label] in certificateFilters" :key="value" type="button" class="btn" :class="{ 'btn-primary': (route.query.expiry || '') === value }" :aria-pressed="(route.query.expiry || '') === value" @click="setCertificateFilter(value)">{{ label }}</button></div>
     <div v-if="certificateFilterLabel" class="follow-up-due-context" aria-label="当前证书筛选"><span>当前筛选：<strong>{{ certificateFilterLabel }}</strong></span><button type="button" @click="setCertificateFilter('')">清除筛选</button></div>
     <div v-if="hasCurrentDueFollowUpContext" class="follow-up-due-context" aria-label="当前跟进筛选"><span>当前筛选：<strong>今日及逾期待跟进</strong></span><button type="button" @click="clearFollowUpDueFilter">清除待跟进筛选</button></div>
@@ -536,9 +581,9 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
     <p v-if="isMovementPage" class="ledger-help">数量按 SKU 基础单位显示；自动流水不可手工修改。</p>
     <div v-else class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索当前列表..." @input="delayedSearch" /></div></div>
     <div class="panel">
-      <div v-if="loading" class="loading"><div class="spinner" /></div>
-      <div v-else-if="!visibleRows.length" class="empty"><Database :size="32" /><h3>{{ isCoreListPage ? (hasListFilters ? `没有匹配的${listNoun}` : `暂无${listNoun}`) : '还没有数据' }}</h3><p>{{ isCoreListPage ? (hasListFilters ? '请调整筛选条件。' : `点击“${primaryAction}”开始录入。`) : '点击“新建记录”开始建立业务资料。' }}</p></div>
-      <div v-else class="table-wrap"><table class="data-table" :class="{ 'customer-list-table': isCustomerPage }"><thead><tr><th v-for="col in config.columns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
+      <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
+      <ListEmptyState v-if="hasLoaded && !visibleRows.length" :entity="listNoun || config.title.replace('管理','')" :filtered="filteredListEmpty" @clear="clearListFilters"><template #action><p>点击“{{ primaryAction }}”开始录入。</p></template></ListEmptyState>
+      <div v-else-if="hasLoaded" class="table-wrap"><table class="data-table" :class="{ 'customer-list-table': isCustomerPage }"><thead><tr><th v-for="col in config.columns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
         <tr v-for="row in visibleRows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row.id)" @keydown.enter="openDetail(row.id)">
           <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><template v-if="isMovementPage && col[0] === 'sku_code'"><strong>{{ row.sku_code || row.sku_code_snapshot || '—' }}</strong><small class="ledger-secondary">{{ row.product_name || row.display_name }}</small><small v-if="movementUnit(row,movementSkus)" class="ledger-secondary">基础单位：{{ movementUnit(row,movementSkus) }}</small></template><span v-else-if="isMovementPage && col[0] === 'source_type'" class="ledger-source" :class="movementSource(row)">{{ sourceLabels[movementSource(row)] || '未标注' }}</span><span v-else-if="isMovementPage && col[0] === 'signed_quantity'" :class="cellClass('signed',row.signed_quantity)">{{ signedMovement(row,movementUnit(row,movementSkus)) }}</span><template v-else-if="isMovementPage && col[0] === 'reference'"><span>{{ row.reference || row.source_no || '—' }}</span><small class="ledger-secondary">{{ (row.related_order_nos || []).join('、') || row.order_no }}</small><small v-if="row.overage_summary" class="ledger-secondary">{{ row.overage_summary }}</small></template><span v-else-if="isMovementPage && col[0] === 'reversal_status'" :title="row.reversal_status">{{ movementStatus(row) }}</span><CertificateExpiryBadge v-else-if="isCertificatePage && col[0] === 'expiry_status'" :certificate="row" /><span v-else-if="isCustomerPage && col[0] === 'name'" class="customer-name" :title="row.name">{{ row.name }}</span><span v-else-if="isCustomerPage && col[0] === 'status'" class="status" :class="row.status" :title="row.status_display || statusLabels[row.status]">{{ customerListStatus(row.status, display(row.status, 'status', 'status')) }}</span><span v-else :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
           <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="openDetail(row.id)"><ChevronRight :size="14" /></button><button v-if="!isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="canReverseInventoryMovement(row)" class="mini-btn danger" title="冲销" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
@@ -550,7 +595,7 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
     <div v-else-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal" :class="{ wide: isWideForm, 'customer-editor': isCustomerPage }" @submit.prevent="save">
       <div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" @click="closeModal"><X :size="17" /></button></div>
       <div class="modal-body"><p v-if="config.endpoint === 'follow-ups'" class="field-help">请至少填写跟进记录或客户回复。</p><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group.filter(visibleEditorField)" :key="field[0]" class="field" :class="{ full: ['textarea', 'remote_multi', 'payment_terms'].includes(field[2]) || (config.endpoint === 'follow-ups' && ['subject', 'next_follow_up_mode'].includes(field[0])), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
-        <label>{{ field[1] }} <em v-if="field[3]">*</em></label>
+        <label>{{ field[1] }} <em v-if="field[3]">*</em></label><p v-if="optionErrors[field[4]]" class="option-load-error" role="alert">{{ optionErrors[field[4]] }} <button type="button" @click="retryRemoteOption(field)">重新加载</button></p>
         <div v-if="field[2] === 'followup_schedule'" class="follow-up-schedule" role="radiogroup" aria-label="下次跟进安排">
           <label v-for="(label, mode) in { keep: '保留当前计划', set: '设置新的跟进日期', clear: '暂不安排后续跟进' }" :key="mode"><input v-model="form.next_follow_up_mode" type="radio" name="next_follow_up_mode" :value="mode" @change="changeFollowUpMode" /> {{ label }}</label>
           <p v-if="form.next_follow_up_mode === 'keep'" class="field-help">当前计划：{{ currentFollowUpPlan || '暂无跟进日期' }}</p>
@@ -559,10 +604,10 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
         <PaymentTermsEditor v-else-if="field[2] === 'payment_terms'" v-model="form[field[0]]" />
         <textarea v-else-if="field[2] === 'textarea'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" />
         <SimpleRichTextEditor v-else-if="field[2] === 'richtext'" v-model="form[field[0]]" @paste-files="addFollowUpFiles" />
-        <ComboInput v-else-if="field[2] === 'combo'" v-model="form[field[0]]" :options="options[field[4]] || []" :required="field[3]" :disabled="isInherited(field[0])" />
+        <ComboInput v-else-if="field[2] === 'combo'" v-model="form[field[0]]" :options="options[field[4]] || []" :required="field[3]" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]])" />
         <select v-else-if="field[2] === 'select'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])"><option v-for="(label,key) in field[4]" :key="key" :value="key">{{ label }}</option></select>
         <CategoryMultiPicker v-else-if="field[2] === 'remote_multi'" v-model="form[field[0]]" :categories="options[field[4]] || []" />
-        <select v-else-if="field[2] === 'remote'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" @change="onFieldChange(field)"><option value="">请选择</option><option v-for="option in visibleOptions(field)" :key="option.id" :value="option.id">{{ option[field[5]] }}</option></select>
+        <select v-else-if="field[2] === 'remote'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]])" @change="onFieldChange(field)"><option value="">请选择</option><option v-for="option in visibleOptions(field)" :key="option.id" :value="option.id">{{ option[field[5]] }}</option></select>
         <label v-else-if="field[2] === 'checkbox'" class="checkbox-line"><input v-model="form[field[0]]" type="checkbox" :disabled="isInherited(field[0])" /> 是</label>
         <div v-else-if="config.endpoint === 'follow-ups' && field[0] === 'next_follow_up'" class="follow-up-date-control">
           <input v-model="followUpDays" type="number" min="0" step="1" placeholder="天数" aria-label="下次跟进天数" @input="updateFollowUpDate" />
@@ -623,7 +668,7 @@ onMounted(async () => { load(); if (isMovementPage.value) { try { movementSkus.v
 
 
       </div>
-      <div class="modal-foot"><p v-if="config.endpoint === 'follow-ups' && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving || (config.endpoint === 'suppliers' && !!paymentTermsError(form.payment_terms_config))">{{ saving ? '保存中…' : saveLabel }}</button></div>
+      <div class="modal-foot"><p v-if="config.endpoint === 'follow-ups' && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving || !optionsReady || (config.endpoint === 'suppliers' && !!paymentTermsError(form.payment_terms_config))">{{ saving ? '保存中…' : saveLabel }}</button></div>
     </form></div>
 
     <Transition name="detail-drawer" appear>

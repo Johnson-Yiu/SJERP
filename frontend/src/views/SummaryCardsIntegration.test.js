@@ -16,6 +16,6 @@ test('main list pages reuse the shared summary cards', async () => {
   await Promise.all(pages.map(async name => {
     const source = await readFile(new URL(`./${name}`, import.meta.url), 'utf8')
     assert.match(source, /import SummaryCards from '\.\.\/components\/SummaryCards\.vue'/)
-    assert.match(source, /<SummaryCards :items=/)
+    assert.match(source, /<SummaryCards(?: v-if="[^"]+")? :items=/)
   }))
 })

@@ -3,13 +3,15 @@ import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api, listAll } from '../api'
 import SummaryCards from '../components/SummaryCards.vue'
+import PageLoadState from '../components/PageLoadState.vue'
+import ListEmptyState from '../components/ListEmptyState.vue'
 import { formatMoney } from '../utils/money'
 import { orderDetailLocation, purchaseDetailLocation } from '../utils/detailNavigation'
 
 const props = defineProps({ direction: { type: String, required: true } })
 const route = useRoute()
 const router = useRouter()
-const rows = ref([]), loading = ref(false), error = ref(''), selected = ref(null)
+const rows = ref([]), loading = ref(false), error = ref(''), loadError = ref(''), hasLoaded = ref(false), allPlansExist = ref(false), selected = ref(null)
 const saving = ref(false)
 const editing = ref(null), editForm = reactive({ due_date: '', planned_amount: '', notes: '' })
 const contextOrder = ref(null), contextLoading = ref(false), contextError = ref('')
@@ -57,17 +59,20 @@ const planMetrics = computed(() => [
   { label: '已逾期', value: rows.value.filter(row => row.is_overdue).length, hint: '当前筛选结果' },
   { label: '待结金额', value: `¥ ${formatMoney(rows.value.filter(row => row.status === 'open').reduce((sum, row) => sum + Number(row.remaining_rmb || 0), 0))}`, hint: '当前筛选结果，按合同汇率折合人民币' },
 ])
+const filtersActive = computed(() => Boolean(searchTerm.value || filters.status || filters.overdue || filters.dueFrom || filters.dueTo || orderContextId.value))
 
 async function load() {
   const requestVersion = ++listRequestVersion
-  if (rangeError.value) { error.value = rangeError.value; loading.value = false; return }
+  if (rangeError.value) { loadError.value = rangeError.value; loading.value = false; return }
   if (invalidOrderContext.value) {
     rows.value = []
-    error.value = ''
+    loadError.value = ''
+    allPlansExist.value = false
+    hasLoaded.value = true
     loading.value = false
     return
   }
-  loading.value = true; error.value = ''
+  loading.value = true; loadError.value = ''
   try {
     const params = { direction: props.direction }
     if (orderContextId.value) params.order = orderContextId.value
@@ -77,8 +82,15 @@ async function load() {
     if (filters.dueFrom) params.due_from = filters.dueFrom
     if (filters.dueTo) params.due_to = filters.dueTo
     const result = await listAll('/payment-plans/', { params })
-    if (requestVersion === listRequestVersion) rows.value = result
-  } catch (err) { if (requestVersion === listRequestVersion) error.value = err.message } finally { if (requestVersion === listRequestVersion) loading.value = false }
+    if (requestVersion === listRequestVersion) {
+      rows.value = result
+      hasLoaded.value = true
+      allPlansExist.value = result.length > 0
+      if (!result.length && filtersActive.value) {
+        try { allPlansExist.value = (await listAll('/payment-plans/', { params: { direction: props.direction } })).length > 0 } catch { /* keep a real empty result if the comparison request is unavailable */ }
+      }
+    }
+  } catch (err) { if (requestVersion === listRequestVersion) loadError.value = err.message || '收付款计划加载失败，请稍后重试。' } finally { if (requestVersion === listRequestVersion) loading.value = false }
 }
 async function loadOrderContext() {
   const requestVersion = ++contextRequestVersion
@@ -122,6 +134,18 @@ function resetFilters() {
   resettingSearch = false
   void load()
 }
+function clearListFilters() {
+  clearTimeout(searchTimer)
+  resettingSearch = true
+  searchInput.value = ''
+  searchTerm.value = ''
+  filters.status = ''
+  filters.overdue = false
+  filters.dueFrom = ''
+  filters.dueTo = ''
+  resettingSearch = false
+  void load()
+}
 function openSettle(row) {
   selected.value = row
   form.amount = row.remaining_amount
@@ -157,7 +181,7 @@ onBeforeUnmount(() => clearTimeout(searchTimer))
 <template>
   <section class="plan-page">
     <header><div><h2>{{ title }}</h2><p>按合同原币跟踪计划、已核销与待结清金额。</p></div><button @click="load">刷新</button></header>
-    <SummaryCards :items="planMetrics" />
+    <SummaryCards v-if="hasLoaded" :items="planMetrics" />
     <section v-if="hasOrderContext" class="order-context-banner" aria-label="订单应收筛选上下文">
       <div>
         <strong v-if="contextLoading">当前仅显示订单：正在加载…</strong>
@@ -177,8 +201,8 @@ onBeforeUnmount(() => clearTimeout(searchTimer))
       <label class="plan-date"><span>到期日至</span><input v-model="filters.dueTo" type="date" aria-label="到期日至" @change="load"></label>
       <button class="filter-reset" type="button" @click="resetFilters">重置</button>
     </div>
-    <p v-if="error" class="error">{{ error }}</p>
-    <div class="table-wrap"><table><thead><tr><th>预计日期</th><th>合同</th><th>往来方</th><th>原币计划</th><th>已核销</th><th>待结</th><th>状态</th><th /></tr></thead><tbody><tr v-if="loading"><td colspan="8">正在加载…</td></tr><tr v-else-if="!rows.length"><td colspan="8">暂无计划。</td></tr><tr v-for="row in rows" :key="row.id"><td>{{ row.due_date || '—' }}</td><td><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.contract_no }}</RouterLink><span v-else>{{ row.contract_no }}</span></td><td>{{ row.counterparty_name }}</td><td>{{ row.currency }} {{ formatMoney(row.planned_amount) }}</td><td>{{ formatMoney(row.settled_amount) }}</td><td><strong>{{ formatMoney(row.remaining_amount) }}</strong></td><td><span :class="row.is_overdue ? 'overdue' : 'tag'">{{ row.is_overdue ? '已逾期' : row.status === 'settled' ? '已结清' : row.status === 'cancelled' ? '已取消' : '待结清' }}</span></td><td><button v-if="row.status !== 'cancelled'" class="link" @click="openEdit(row)">调整计划</button><button v-if="row.status === 'open'" class="link" @click="openSettle(row)">{{ actionLabel }}</button></td></tr></tbody></table></div>
+    <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
+    <div v-if="hasLoaded" class="table-wrap"><ListEmptyState v-if="!rows.length" :entity="direction === 'receivable' ? '应收计划' : '应付计划'" :filtered="filtersActive && allPlansExist" @clear="clearListFilters"><template #action>暂时没有收付款计划。</template></ListEmptyState><table v-else><thead><tr><th>预计日期</th><th>合同</th><th>往来方</th><th>原币计划</th><th>已核销</th><th>待结</th><th>状态</th><th /></tr></thead><tbody><tr v-for="row in rows" :key="row.id"><td>{{ row.due_date || '—' }}</td><td><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.contract_no }}</RouterLink><span v-else>{{ row.contract_no }}</span></td><td>{{ row.counterparty_name }}</td><td>{{ row.currency }} {{ formatMoney(row.planned_amount) }}</td><td>{{ formatMoney(row.settled_amount) }}</td><td><strong>{{ formatMoney(row.remaining_amount) }}</strong></td><td><span :class="row.is_overdue ? 'overdue' : 'tag'">{{ row.is_overdue ? '已逾期' : row.status === 'settled' ? '已结清' : row.status === 'cancelled' ? '已取消' : '待结清' }}</span></td><td><button v-if="row.status !== 'cancelled'" class="link" @click="openEdit(row)">调整计划</button><button v-if="row.status === 'open'" class="link" @click="openSettle(row)">{{ actionLabel }}</button></td></tr></tbody></table></div>
     <div v-if="selected" class="mask" @click.self="selected = null"><form class="dialog" @submit.prevent="settle"><header><h3>{{ actionLabel }}</h3><button type="button" @click="selected = null">×</button></header><p>{{ selected.contract_no }} · {{ selected.counterparty_name }} · 待结 {{ selected.currency }} {{ formatMoney(selected.remaining_amount) }}</p><label>原币金额<input v-model="form.amount" v-money-input type="number" min="0.01" step="any" required></label><label>实际日期<input v-model="form.transaction_date" type="date" required></label><label>结汇汇率<input v-model="form.exchange_rate" type="number" min="0.000001" step="0.000001" required></label><label>支付方式<input v-model="form.payment_method"></label><label>参考号<input v-model="form.reference"></label><label>备注<textarea v-model="form.notes" /></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" @click="selected = null">取消</button><button class="primary" :disabled="saving">确认{{ actionLabel }}</button></footer></form></div>
     <div v-if="editing" class="mask" @click.self="editing = null"><form class="dialog" @submit.prevent="savePlan"><h3>调整收付款计划</h3><p>{{ editing.contract_no }} · {{ editing.currency }}；已有收付款的计划可调整日期和备注。</p><label>预计日期<input v-model="editForm.due_date" type="date"></label><label>计划原币金额<input v-model="editForm.planned_amount" :disabled="Number(editing.settled_amount) > 0" type="number" min="0.0001" step="0.0001" required></label><label>备注<textarea v-model="editForm.notes" /></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" @click="editing = null">取消</button><button :disabled="saving">保存计划</button></footer></form></div>
   </section>

@@ -28,6 +28,16 @@ test('customer projections are visible but not editable customer fields', async 
   assert.match(detail, /随最新跟进自动更新/)
 })
 
+test('customer detail shortcuts require the target module action permission', async () => {
+  const detail = await readFile(new URL('../components/EntityDetailModal.vue', import.meta.url), 'utf8')
+
+  assert.match(detail, /currentEntity === 'customers' && can\('followups', 'create'\)/)
+  assert.match(detail, /currentEntity === 'customers' && hasRelationCustomerId && can\('quotes', 'create'\)/)
+  assert.match(detail, /currentEntity !== 'inventory-movements' && can\(currentEntity, 'update'\)/)
+  assert.match(detail, /can\('followups', 'update'\).*编辑/)
+  assert.match(detail, /can\('followups', 'delete'\).*删除/)
+})
+
 test('automatic inventory movements are read-only while manual movements are reversed, not deleted', async () => {
   const source = await readFile(new URL('./ResourcePage.vue', import.meta.url), 'utf8')
   const detail = await readFile(new URL('../components/EntityDetailModal.vue', import.meta.url), 'utf8')

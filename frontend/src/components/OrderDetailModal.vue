@@ -15,9 +15,11 @@ import ProcurementDraftModal from './ProcurementDraftModal.vue'
 import ContractAmountAdjustments from './ContractAmountAdjustments.vue'
 import ShipmentActualPacking from './ShipmentActualPacking.vue'
 import { useDetailTab } from '../utils/useDetailTab'
+import { useAccessControl } from '../accessControl'
 
 const props = defineProps({ id: { type: [Number, String], required: true }, refreshKey: { type: Number, default: 0 } })
 const emit = defineEmits(['close', 'edit', 'open-quote'])
+const { can } = useAccessControl()
 const workbench = ref(null)
 const route = useRoute()
 const fulfillment = ref(null)
@@ -63,6 +65,9 @@ const fulfillmentHelper = computed(() => {
 const currentTasks = computed(() => orderTasks(order.value, fulfillment.value, workbench.value?.payment_summary))
 const totalCost = computed(() => Number(workbench.value?.profit_summary?.purchase_base_rmb || 0) + Number(workbench.value?.profit_summary?.purchase_additional_rmb || 0))
 function performTask(task) {
+  if (task.key === 'receivable' && !can('finance', 'view')) return
+  if (task.key === 'procurement' && !can('purchases', 'create')) return
+  if (!['receivable', 'confirm', 'procurement'].includes(task.key) && !can('orders', 'update')) return
   if (task.key === 'confirm') return lifecycleAction('confirm', '确认后订单将进入正式履约，并生成库存预留和应收计划。是否继续？')
   if (task.key === 'complete') return lifecycleAction('complete')
   activeTab.value = 'fulfillment'
@@ -122,7 +127,7 @@ function getShipmentSku(skuId) {
 }
 
 async function openShipmentDialog(initialOrderItemIds = null) {
-  if (!canShipOrder.value) return
+  if (!can('orders', 'update') || !canShipOrder.value) return
   const eligible = shippableItems.value
   if (!eligible.length) return
   const selectedIds = initialOrderItemIds == null ? null : new Set(initialOrderItemIds.map(Number))
@@ -185,7 +190,7 @@ function shipmentErrorMessage(err) {
 }
 
 async function submitShipment() {
-  if (shipmentSaving.value || shipmentSkuLoading.value) return
+  if (shipmentSaving.value || shipmentSkuLoading.value || !can('orders', 'update')) return
   const selected = selectedShipmentLines.value
   if (!selected.length) { shipmentError.value = '请至少选择一条发货明细。'; return }
   if (new Set(selected.map(line => line.order_item)).size !== selected.length) { shipmentError.value = '发货明细不能重复。'; return }
@@ -218,6 +223,7 @@ async function submitShipment() {
   finally { shipmentSaving.value = false }
 }
 async function lifecycleAction(path, confirmation) {
+  if (!can('orders', 'update')) return
   if (lifecycleSaving.value || (confirmation && !await confirmDialog({ title: '确认订单操作', message: confirmation, confirmText: '确认继续', danger: true }))) return
   lifecycleSaving.value = true
   error.value = ''
@@ -227,6 +233,7 @@ async function lifecycleAction(path, confirmation) {
 }
 function openCancellation() { cancellationReason.value = ''; error.value = ''; cancelOpen.value = true }
 async function submitCancellation() {
+  if (!can('orders', 'update')) return
   const reason = cancellationReason.value.trim()
   if (!reason || lifecycleSaving.value) return
   lifecycleSaving.value = true
@@ -241,6 +248,7 @@ function openShipmentReversal(shipment) {
   error.value = ''
 }
 async function submitShipmentReversal() {
+  if (!can('orders', 'update')) return
   const reason = shipmentReversalReason.value.trim()
   if (!reason || shipmentReversalSaving.value) return
   shipmentReversalSaving.value = true
@@ -255,6 +263,7 @@ async function submitShipmentReversal() {
 }
 async function generatePackingPlan() {
   if (packingSaving.value) return
+  if (!can('orders', 'update')) return
   packingSaving.value = true
   try { packingPlan.value = (await api.post(`/orders/${props.id}/packing-plan/`)).data }
   catch (err) { error.value = err.response?.data?.detail || err.message }
@@ -262,6 +271,7 @@ async function generatePackingPlan() {
 }
 async function regeneratePackingPlan() {
   if (packingSaving.value) return
+  if (!can('orders', 'update')) return
   if (!await confirmDialog({ title: '确认重新生成', message: '重新生成会使用当前 SKU 包装配置，并替换当前订单的预计装箱方案。', confirmText: '确认重新生成', danger: true })) return
   await generatePackingPlan()
 }
@@ -271,9 +281,9 @@ function packingStatusLabel(status) {
 function packingTemplateName(snapshot) {
   return snapshot?.name || snapshot?.code || '未记录包装模板'
 }
-function openSupplierAllocation(item) { allocationItem.value = item }
+function openSupplierAllocation(item) { if (can('orders', 'update')) allocationItem.value = item }
 async function supplierAllocationSaved() { allocationItem.value = null; await load() }
-function openProcurementDrafts() { procurementMessage.value = ''; procurementOpen.value = true }
+function openProcurementDrafts() { if (!can('purchases', 'create')) return; procurementMessage.value = ''; procurementOpen.value = true }
 async function procurementDraftsCreated(result) {
   procurementOpen.value = false
   procurementMessage.value = `已生成 ${result.created_count} 张采购草稿：${(result.purchase_orders || []).map(row => row.purchase_no).join('、')}`
@@ -312,7 +322,7 @@ watch(() => props.refreshKey, load)
 
 <template>
   <Teleport to="body">
-    <div v-if="shipmentDialogOpen" class="trade-shipment-mask">
+    <div v-if="shipmentDialogOpen && can('orders', 'update')" class="trade-shipment-mask">
       <form class="trade-shipment-dialog shipment-batch-dialog" role="dialog" aria-modal="true" aria-labelledby="shipment-dialog-title" @submit.prevent="submitShipment">
         <h3 id="shipment-dialog-title">确认发货</h3>
         <label class="shipment-date-field">发货日期<input v-model="shipmentDate" aria-label="发货日期" type="date" required /></label>
@@ -338,8 +348,8 @@ watch(() => props.refreshKey, load)
         <footer><button type="button" class="btn btn-secondary" :disabled="shipmentSaving" @click="closeShipmentDialog">取消</button><button type="submit" class="btn btn-primary" :disabled="!shipmentCanSubmit">{{ shipmentSaving ? '保存中…' : '确认发货' }}</button></footer>
       </form>
     </div>
-    <div v-if="shipmentReversalTarget" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitShipmentReversal"><h3>冲销发货 · {{ shipmentReversalTarget.shipment_no }}</h3><p>{{ shipmentReversalTarget.has_overage ? '该发货单包含超发/增补。冲销会同步撤销系统生成的增补订单明细；客户追加产生的未收款应收计划也会取消。如已发生收款，系统将拒绝冲销。' : '原发货记录将保留，并生成对应的库存回收入库流水。' }}</p><label>冲销原因<textarea v-model="shipmentReversalReason" maxlength="500" rows="4" required /></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="shipmentReversalTarget = null">取消</button><button class="btn btn-primary" :disabled="shipmentReversalSaving || !shipmentReversalReason.trim()">{{ shipmentReversalSaving ? '保存中…' : '确认冲销' }}</button></footer></form></div>
-    <div v-if="cancelOpen" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitCancellation"><h3>取消订单</h3><p>取消会释放库存预留并取消未结应收计划；已有不可逆业务记录时系统会拒绝操作。</p><label>取消原因<textarea v-model="cancellationReason" maxlength="500" rows="4" required /></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="cancelOpen = false">返回</button><button class="btn btn-primary" :disabled="lifecycleSaving || !cancellationReason.trim()">{{ lifecycleSaving ? '提交中…' : '确认取消' }}</button></footer></form></div>
+    <div v-if="shipmentReversalTarget && can('orders', 'update')" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitShipmentReversal"><h3>冲销发货 · {{ shipmentReversalTarget.shipment_no }}</h3><p>{{ shipmentReversalTarget.has_overage ? '该发货单包含超发/增补。冲销会同步撤销系统生成的增补订单明细；客户追加产生的未收款应收计划也会取消。如已发生收款，系统将拒绝冲销。' : '原发货记录将保留，并生成对应的库存回收入库流水。' }}</p><label>冲销原因<textarea v-model="shipmentReversalReason" maxlength="500" rows="4" required /></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="shipmentReversalTarget = null">取消</button><button class="btn btn-primary" :disabled="shipmentReversalSaving || !shipmentReversalReason.trim()">{{ shipmentReversalSaving ? '保存中…' : '确认冲销' }}</button></footer></form></div>
+    <div v-if="cancelOpen && can('orders', 'update')" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitCancellation"><h3>取消订单</h3><p>取消会释放库存预留并取消未结应收计划；已有不可逆业务记录时系统会拒绝操作。</p><label>取消原因<textarea v-model="cancellationReason" maxlength="500" rows="4" required /></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="cancelOpen = false">返回</button><button class="btn btn-primary" :disabled="lifecycleSaving || !cancellationReason.trim()">{{ lifecycleSaving ? '提交中…' : '确认取消' }}</button></footer></form></div>
   </Teleport>
   <div class="modal-backdrop detail-backdrop" @mousedown.self="emit('close')">
     <article class="detail-modal order-workbench" role="dialog" aria-modal="true" aria-label="订单工作台">
@@ -347,7 +357,7 @@ watch(() => props.refreshKey, load)
       <div v-else-if="error" class="detail-error"><AlertTriangle :size="27" /><strong>加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load">重试</button></div>
       <template v-else>
         <header class="detail-header">
-          <div class="detail-nav"><div class="detail-nav-start"><button class="detail-close" aria-label="关闭订单详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button><span>订单工作台 · 履约与回款</span></div><div class="detail-actions"><button v-if="order.status === 'draft'" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> 编辑草稿</button><button v-if="order.status === 'draft'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('confirm', '确认后订单将进入正式履约，并生成库存预留和应收计划。是否继续？')">确认订单</button><button v-if="order.status === 'confirmed'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('start-production')">开始生产</button><button v-if="order.status === 'shipped'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('complete')">完成订单</button><button v-if="['draft', 'confirmed', 'production'].includes(order.status)" class="btn lifecycle-destructive" :disabled="lifecycleSaving" @click="openCancellation">取消订单</button></div></div>
+          <div class="detail-nav"><div class="detail-nav-start"><button class="detail-close" aria-label="关闭订单详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button><span>订单工作台 · 履约与回款</span></div><div class="detail-actions"><button v-if="can('orders', 'update') && order.status === 'draft'" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> 编辑草稿</button><button v-if="can('orders', 'update') && order.status === 'draft'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('confirm', '确认后订单将进入正式履约，并生成库存预留和应收计划。是否继续？')">确认订单</button><button v-if="can('orders', 'update') && order.status === 'confirmed'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('start-production')">开始生产</button><button v-if="can('orders', 'update') && order.status === 'shipped'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('complete')">完成订单</button><button v-if="can('orders', 'update') && ['draft', 'confirmed', 'production'].includes(order.status)" class="btn lifecycle-destructive" :disabled="lifecycleSaving" @click="openCancellation">取消订单</button></div></div>
           <div class="detail-identity"><div><p class="detail-subtitle">{{ order.customer_name }} · 下单于 {{ date(order.order_date) }}</p><h2>{{ order.order_no }}</h2><small>预计交期：{{ order.expected_ship_date || '未设置' }}</small><p v-if="order.status === 'cancelled' && order.cancellation_reason" class="cancelled-context">取消原因：{{ order.cancellation_reason }}<span v-if="order.cancelled_at"> · {{ date(order.cancelled_at) }}</span></p></div><span class="detail-badge">{{ order.status_display }}</span></div>
         </header>
         <main class="detail-content" :class="{ 'fulfillment-content': activeTab === 'fulfillment' }">
@@ -355,11 +365,11 @@ watch(() => props.refreshKey, load)
 
           <section v-if="activeTab === 'overview'" class="workbench-grid">
             <article class="workbench-card summary-card"><h3><PackageCheck :size="18" /> 订单摘要</h3><div class="summary-metrics"><div><small>订单金额</small><strong>{{ order.currency }} {{ money(order.total_amount) }}</strong><small>{{ contractAmountLabel }}</small></div><div><small>商品项数</small><strong>{{ workbench.items.length }}</strong></div><div><small>订单数量</small><strong>{{ workbench.fulfillment_summary.ordered_quantity }}</strong></div><div><small>预计交期</small><strong>{{ order.expected_ship_date || '未设置' }}</strong></div></div></article>
-            <article class="workbench-card current-todo-card"><h3>当前待办</h3><div class="task-list"><div v-for="task in currentTasks" :key="task.key" class="task-row" :class="{ warning: task.warning }"><div><strong>{{ task.title }}</strong><p>{{ task.key === 'receivable' ? `待收 ${order.currency} ${money(task.amount)}` : task.description }}</p></div><RouterLink v-if="task.key === 'receivable'" class="task-action" :to="{ path: '/receivables', query: { order: String(order.id) } }">{{ task.action }}</RouterLink><button v-else-if="task.key !== 'confirm'" class="task-action" :disabled="lifecycleSaving" @click="performTask(task)">{{ task.action }}</button></div><div v-if="!currentTasks.length" class="task-row"><div><strong>{{ order.status === 'completed' ? '订单已完成' : order.status === 'cancelled' ? '订单已取消' : '当前没有待处理事项' }}</strong><p>{{ order.status === 'cancelled' ? '仅保留历史记录与审计信息。' : '当前没有待处理事项。' }}</p></div></div></div></article>
+            <article class="workbench-card current-todo-card"><h3>当前待办</h3><div class="task-list"><div v-for="task in currentTasks" :key="task.key" class="task-row" :class="{ warning: task.warning }"><div><strong>{{ task.title }}</strong><p>{{ task.key === 'receivable' ? `待收 ${order.currency} ${money(task.amount)}` : task.description }}</p></div><RouterLink v-if="task.key === 'receivable' && can('finance', 'view')" class="task-action" :to="{ path: '/receivables', query: { order: String(order.id) } }">{{ task.action }}</RouterLink><button v-else-if="task.key !== 'confirm' && (task.key === 'procurement' ? can('purchases', 'create') : can('orders', 'update'))" class="task-action" :disabled="lifecycleSaving" @click="performTask(task)">{{ task.action }}</button></div><div v-if="!currentTasks.length" class="task-row"><div><strong>{{ order.status === 'completed' ? '订单已完成' : order.status === 'cancelled' ? '订单已取消' : '当前没有待处理事项' }}</strong><p>{{ order.status === 'cancelled' ? '仅保留历史记录与审计信息。' : '当前没有待处理事项。' }}</p></div></div></div></article>
             <article class="workbench-card fulfillment-overview"><div class="section-heading"><div><h3><Truck :size="16" /> 履约进度</h3><p>按销售出库流水统计。</p></div><b>{{ fulfillmentPercent.toFixed(0) }}%</b></div><div class="progress-track fulfillment"><i :style="{ width: `${fulfillmentPercent}%` }" /></div><dl class="data-list compact"><dt>订单数量</dt><dd>{{ workbench.fulfillment_summary.ordered_quantity }}</dd><dt>已出库</dt><dd>{{ workbench.fulfillment_summary.shipped_quantity }}</dd><dt>待出库</dt><dd>{{ workbench.fulfillment_summary.remaining_quantity }}</dd></dl><button class="task-action" @click="activeTab = 'fulfillment'">查看采购与发货</button></article>
             <article class="workbench-card payment-card"><div class="section-heading"><div><h3><WalletCards :size="16" /> 回款进度</h3><p>已收含预收核销，并扣除退款。</p></div><b>{{ paymentPercent.toFixed(0) }}%</b></div><div class="progress-track"><i :style="{ width: `${paymentPercent}%` }" /></div><dl class="data-list compact"><dt>应收计划</dt><dd>{{ order.currency }} {{ money(workbench.payment_summary.planned_amount) }}</dd><dt>已收金额</dt><dd>{{ order.currency }} {{ money(workbench.payment_summary.paid_amount) }}</dd><dt>当前待收</dt><dd v-if="!receivableStatus">{{ order.currency }} {{ money(workbench.payment_summary.balance_amount) }}</dd><dd v-else>{{ receivableStatus }}</dd></dl><RouterLink v-if="canViewReceivable" class="receivable-cta" :to="{ path: '/receivables', query: { order: String(order.id) } }">查看 / 登记本单应收</RouterLink></article>
             <article class="workbench-card cost-profit-card"><h3>成本与毛利</h3><dl class="data-list compact"><dt>分配商品成本</dt><dd>¥ {{ money(workbench.profit_summary?.purchase_base_rmb) }}</dd><dt>分摊附加费用</dt><dd>¥ {{ money(workbench.profit_summary?.purchase_additional_rmb) }}</dd><dt>预估总成本</dt><dd>¥ {{ money(totalCost) }}</dd><dt>预估毛利</dt><dd :class="{ 'negative-profit': Number(workbench.profit_summary?.estimated_gross_profit_rmb) < 0 }">¥ {{ money(workbench.profit_summary?.estimated_gross_profit_rmb) }}</dd></dl></article>
-            <article class="workbench-card source-quote-card"><div class="section-heading"><div><h3><FileText :size="16" /> 来源报价</h3><p>成交时采用的报价版本。</p></div></div><template v-if="workbench.source_quote"><strong class="quote-no">{{ workbench.source_quote.quote_no }}</strong><p>{{ workbench.source_quote.status_display }} · {{ workbench.source_quote.currency }} {{ money(workbench.source_quote.total_amount) }}</p><button class="text-btn" @click="emit('open-quote', workbench.source_quote.id)">查看报价工作台</button></template><p v-else class="muted">该订单未关联来源报价。</p></article>
+            <article class="workbench-card source-quote-card"><div class="section-heading"><div><h3><FileText :size="16" /> 来源报价</h3><p>成交时采用的报价版本。</p></div></div><template v-if="workbench.source_quote"><strong class="quote-no">{{ workbench.source_quote.quote_no }}</strong><p>{{ workbench.source_quote.status_display }} · {{ workbench.source_quote.currency }} {{ money(workbench.source_quote.total_amount) }}</p><button v-if="can('quotes', 'view')" class="text-btn" @click="emit('open-quote', workbench.source_quote.id)">查看报价工作台</button></template><p v-else class="muted">该订单未关联来源报价。</p></article>
           </section>
           <ContractAmountAdjustments v-if="activeTab === 'overview' && order" contract-type="order" :contract="order" @changed="load" />
 
@@ -369,9 +379,9 @@ watch(() => props.refreshKey, load)
 
           <section v-else-if="activeTab === 'packing'" class="packing-plan-panel">
             <div class="section-heading"><div><h3><Boxes :size="16" /> 预计装箱</h3><p>预计装箱保留包装快照，不会创建发货或实际装箱记录。</p></div></div>
-            <div v-if="!packingPlan" class="workbench-empty packing-plan-empty"><Boxes :size="28" /><strong>尚未生成预计装箱方案</strong><p>按当前 SKU 包装配置生成箱规快照。</p><button type="button" class="btn btn-primary" :disabled="packingSaving" @click="generatePackingPlan">{{ packingSaving ? '生成中…' : '生成预计装箱方案' }}</button></div>
+            <div v-if="!packingPlan" class="workbench-empty packing-plan-empty"><Boxes :size="28" /><strong>尚未生成预计装箱方案</strong><p>按当前 SKU 包装配置生成箱规快照。</p><button v-if="can('orders', 'update')" type="button" class="btn btn-primary" :disabled="packingSaving" @click="generatePackingPlan">{{ packingSaving ? '生成中…' : '生成预计装箱方案' }}</button></div>
             <template v-else>
-              <div class="packing-plan-toolbar"><div><span class="packing-status" :class="packingPlan.status">{{ packingStatusLabel(packingPlan.status) }}</span><span class="packing-plan-caption">重新生成会替换当前方案</span></div><button type="button" class="btn btn-secondary" :disabled="packingSaving" @click="regeneratePackingPlan">{{ packingSaving ? '生成中…' : '重新生成预计装箱方案' }}</button></div>
+              <div class="packing-plan-toolbar"><div><span class="packing-status" :class="packingPlan.status">{{ packingStatusLabel(packingPlan.status) }}</span><span class="packing-plan-caption">重新生成会替换当前方案</span></div><button v-if="can('orders', 'update')" type="button" class="btn btn-secondary" :disabled="packingSaving" @click="regeneratePackingPlan">{{ packingSaving ? '生成中…' : '重新生成预计装箱方案' }}</button></div>
               <div class="packing-plan-summary"><div><small>预计箱数</small><strong>{{ packingPlan.total_cartons }}</strong></div><div><small>预计净重</small><strong>{{ packingPlan.total_net_weight }} kg</strong></div><div><small>预计毛重</small><strong>{{ packingPlan.total_gross_weight }} kg</strong></div><div><small>预计 CBM</small><strong>{{ packingPlan.total_cbm }} m³</strong></div></div>
               <div v-if="packingPlan.warnings?.length" class="packing-plan-warnings" role="alert"><AlertTriangle :size="17" /><div><strong>包装方案需要注意</strong><p v-for="warning in packingPlan.warnings" :key="warning">{{ warning }}</p><p>如提示 SKU 包装资料未配置，请先在报价编辑器/包装配置中补充 SKU 默认包装。</p></div></div>
               <div v-if="!packingPlan.cartons?.length" class="workbench-empty"><Boxes :size="28" /><strong>暂无箱明细</strong><p>请根据上方警告补充包装配置后，再重新生成方案。</p></div>
@@ -385,7 +395,7 @@ watch(() => props.refreshKey, load)
       </template>
       <section v-if="!loading && !error && activeTab === 'payments' && workbench?.advance_allocations?.length" class="workbench-card"><h3>预收款核销记录</h3><p>核销金额已计入回款，原始收款见财务流水。</p><div class="workbench-table-wrap"><table class="workbench-table"><thead><tr><th>原始收款日期</th><th>流水号</th><th>核销金额</th><th>状态</th></tr></thead><tbody><tr v-for="row in workbench.advance_allocations" :key="row.id"><td>{{ row.transaction_date }}</td><td>{{ row.transaction_no }}</td><td>{{ row.currency }} {{ money(row.amount) }}</td><td>{{ row.is_active ? '已核销' : '已撤回' }}</td></tr></tbody></table></div></section>
       <section v-if="!loading && !error && activeTab === 'fulfillment'" class="fulfillment-panel">
-        <div class="section-heading"><div><h3>采购与发货</h3><p v-if="fulfillmentHelper">{{ fulfillmentHelper }}</p></div><div class="fulfillment-header-actions"><button v-if="canBatchShip" class="btn fulfillment-batch-action" @click="openShipmentDialog()">批量发货</button><button class="btn fulfillment-procurement-action" :disabled="!canOpenProcurement" @click="openProcurementDrafts">生成采购草稿</button></div></div>
+        <div class="section-heading"><div><h3>采购与发货</h3><p v-if="fulfillmentHelper">{{ fulfillmentHelper }}</p></div><div class="fulfillment-header-actions"><button v-if="can('orders', 'update') && canBatchShip" class="btn fulfillment-batch-action" @click="openShipmentDialog()">批量发货</button><button v-if="can('purchases', 'create')" class="btn fulfillment-procurement-action" :disabled="!canOpenProcurement" @click="openProcurementDrafts">生成采购草稿</button></div></div>
         <section aria-label="履约状态摘要" class="fulfillment-summary"><article v-for="metric in fulfillmentSummaryCards" :key="metric.label"><span>{{ metric.label }}</span><strong>{{ metric.value }}</strong></article></section>
         <p v-if="procurementMessage" class="procurement-success">{{ procurementMessage }}</p>
         <section class="fulfillment-lines" aria-label="SKU 履约明细">
@@ -399,7 +409,7 @@ watch(() => props.refreshKey, load)
               <td><strong :class="{ 'procurement-needed': Number(item.draftable_quantity) > 0 }">{{ Number(item.to_procure_quantity) > 0 ? `待采购 ${item.to_procure_quantity} ${item.base_unit}` : '无需采购' }}</strong><small v-if="Number(item.draftable_quantity) > 0">可建草稿 {{ item.draftable_quantity }} {{ item.base_unit }}</small><small v-if="Number(item.draft_procurement_quantity) > 0">采购草稿 {{ item.draft_procurement_quantity }} {{ item.base_unit }}</small><small v-if="Number(item.purchased_quantity) > 0">{{ sharedSkuProcurement(item) ? '本单同 SKU 合计采购' : '已采购' }} {{ item.purchased_quantity }} {{ item.base_unit }}</small></td>
               <td><template v-if="Number(item.arrived_quantity) > 0 || Number(item.in_transit_quantity) > 0 || Number(item.purchased_quantity) > 0"><strong>{{ sharedSkuProcurement(item) ? '本单同 SKU 合计到货' : '已到' }} {{ item.arrived_quantity }} {{ item.base_unit }}</strong><small>{{ sharedSkuProcurement(item) ? '本单同 SKU 合计在途' : '在途' }} {{ item.in_transit_quantity }} {{ item.base_unit }}</small></template><span v-else class="muted">—</span></td>
               <td><small>已发 {{ item.shipped_quantity }} {{ item.base_unit }}</small><strong v-if="Number(item.unshipped_quantity) <= 0" class="shipment-complete">已全部发货</strong><strong v-else class="shipment-pending">待发 {{ item.unshipped_quantity }} {{ item.base_unit }}</strong></td>
-              <td><div class="fulfillment-row-actions"><button v-if="Number(item.unshipped_quantity) > 0 && canShipOrder" class="text-btn fulfillment-ship-action" @click="ship(item)">确认发货</button><button class="fulfillment-source-action" :disabled="!['draft', 'confirmed', 'production'].includes(order.status)" @click="openSupplierAllocation(item)">{{ item.supplier_name ? '更换来源' : '选择来源' }}</button></div></td>
+              <td><div class="fulfillment-row-actions"><button v-if="can('orders', 'update') && Number(item.unshipped_quantity) > 0 && canShipOrder" class="text-btn fulfillment-ship-action" @click="ship(item)">确认发货</button><button v-if="can('orders', 'update')" class="fulfillment-source-action" :disabled="!['draft', 'confirmed', 'production'].includes(order.status)" @click="openSupplierAllocation(item)">{{ item.supplier_name ? '更换来源' : '选择来源' }}</button></div></td>
             </tr>
           </tbody></table></div>
         </section>
@@ -407,11 +417,11 @@ watch(() => props.refreshKey, load)
           <div v-if="!(fulfillment?.purchase_orders || []).length" class="workbench-empty"><strong>{{ fulfillmentSummaryCards[0].value ? '尚未创建关联采购单' : '当前无需关联采购单' }}</strong><p v-if="fulfillmentSummaryCards[0].value">请先选择采购来源，再生成采购草稿。</p></div>
           <article v-for="purchase in fulfillment?.purchase_orders || []" :key="purchase.id" class="purchase-history-card"><div><RouterLink class="purchase-navigation-link" :to="purchaseDetailLocation(purchase.id, 'overview', route.fullPath)">{{ purchase.purchase_no }}</RouterLink><small>{{ purchase.supplier_name }}</small></div><div><span class="status" :class="purchase.status">{{ purchase.status_display }}</span><strong class="purchase-amount">{{ purchase.currency }} {{ money(purchase.total_amount) }}</strong></div><div class="purchase-eta"><span>预计到货 {{ date(purchase.expected_arrival_date) }}</span><small v-if="purchaseArrivalState(purchase)" :class="purchaseArrivalState(purchase).kind">{{ purchaseArrivalState(purchase).label }}</small></div><p class="purchase-sku-summary">{{ (purchase.items || []).map(line => `${line.sku_code} × ${line.quantity}`).join(' / ') }}</p></article>
         </section>
-        <section class="shipment-history"><div class="section-heading"><div><h3>发货记录</h3><p>整单冲销会同步撤销关联的超发或增补记录。</p></div><strong>{{ (fulfillment?.shipments || []).length }} 条</strong></div><div v-if="!(fulfillment?.shipments || []).length" class="workbench-empty"><Truck :size="28" /><strong>暂无发货记录</strong><p>有可发库存后，可在明细中确认发货。</p></div><div v-else class="shipment-history-list"><article v-for="shipment in fulfillment.shipments" :key="shipment.id" class="shipment-history-card"><div class="shipment-history-head"><div><strong>{{ shipment.shipment_no }}</strong><small>{{ date(shipment.shipment_date) }}</small></div><span class="status" :class="shipment.status">{{ shipment.status === 'cancelled' ? '已冲销' : shipment.status === 'confirmed' ? '已确认' : shipment.status }}</span></div><div class="shipment-history-items"><span v-for="line in shipment.items" :key="line.id">{{ line.sku_code }} × {{ line.quantity }}</span></div><div class="shipment-history-actions"><button v-if="shipment.status === 'confirmed'" class="text-btn" @click="openShipmentReversal(shipment)">冲销</button><span v-else-if="shipment.status === 'cancelled'" class="muted">已冲销</span><span v-else class="muted">暂不可操作</span></div></article></div></section>
+        <section class="shipment-history"><div class="section-heading"><div><h3>发货记录</h3><p>整单冲销会同步撤销关联的超发或增补记录。</p></div><strong>{{ (fulfillment?.shipments || []).length }} 条</strong></div><div v-if="!(fulfillment?.shipments || []).length" class="workbench-empty"><Truck :size="28" /><strong>暂无发货记录</strong><p>有可发库存后，可在明细中确认发货。</p></div><div v-else class="shipment-history-list"><article v-for="shipment in fulfillment.shipments" :key="shipment.id" class="shipment-history-card"><div class="shipment-history-head"><div><strong>{{ shipment.shipment_no }}</strong><small>{{ date(shipment.shipment_date) }}</small></div><span class="status" :class="shipment.status">{{ shipment.status === 'cancelled' ? '已冲销' : shipment.status === 'confirmed' ? '已确认' : shipment.status }}</span></div><div class="shipment-history-items"><span v-for="line in shipment.items" :key="line.id">{{ line.sku_code }} × {{ line.quantity }}</span></div><div class="shipment-history-actions"><button v-if="can('orders', 'update') && shipment.status === 'confirmed'" class="text-btn" @click="openShipmentReversal(shipment)">冲销</button><span v-else-if="shipment.status === 'cancelled'" class="muted">已冲销</span><span v-else class="muted">暂不可操作</span></div></article></div></section>
       </section>
      </article>
-     <SupplierAllocationModal v-if="allocationItem" :order-id="props.id" :order-item="allocationItem" @close="allocationItem = null" @saved="supplierAllocationSaved" />
-     <ProcurementDraftModal v-if="procurementOpen && procurementPlan" :order-id="props.id" :plan="procurementPlan" @close="procurementOpen = false" @created="procurementDraftsCreated" />
+     <SupplierAllocationModal v-if="allocationItem && can('orders', 'update')" :order-id="props.id" :order-item="allocationItem" @close="allocationItem = null" @saved="supplierAllocationSaved" />
+     <ProcurementDraftModal v-if="procurementOpen && procurementPlan && can('purchases', 'create')" :order-id="props.id" :plan="procurementPlan" @close="procurementOpen = false" @created="procurementDraftsCreated" />
   </div>
 </template>
 

@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChevronDown, ChevronRight, Database, ListFilter, Pencil, Plus, Search, Trash2, X } from 'lucide-vue-next'
 import { api, listAll, listData } from '../api'
+import { useAccessControl } from '../accessControl'
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import { confirmDialog } from '../dialogs'
 import EntityDetailModal from '../components/EntityDetailModal.vue'
@@ -12,6 +13,7 @@ import ListEmptyState from '../components/ListEmptyState.vue'
 
 const route = useRoute()
 const router = useRouter()
+const { can } = useAccessControl()
 const products = ref([])
 const suppliers = ref([])
 const query = ref('')
@@ -114,6 +116,7 @@ async function load() {
 }
 function clearProductFilters() { query.value = ''; categoryFilter.value = ''; return load() }
 async function openCreate() {
+  if (!can('products', 'create')) return
   keepDetailOpen.value = false
   editingId.value = null
   editingProduct.value = null
@@ -124,6 +127,7 @@ async function openCreate() {
   modalOpen.value = true
 }
 function openEdit(product, { keepDetail = false } = {}) {
+  if (!can('products', 'update')) return
   keepDetailOpen.value = keepDetail
   editingId.value = product.id
   editingProduct.value = { ...product, additional_categories: [...(product.additional_categories || [])], suppliers: [...(product.suppliers || [])] }
@@ -200,6 +204,7 @@ function hasOtherProductChanges() {
     || form.description !== (original.description || '')
 }
 async function save() {
+  if (!can('products', editingId.value ? 'update' : 'create')) return
   if (!formOptionsReady.value) return notify('产品分类或供应商资料尚未加载，请重试后再保存。', true)
   saving.value = true
   try {
@@ -222,6 +227,7 @@ async function save() {
   } catch (error) { notify(error.message, true) } finally { saving.value = false }
 }
 async function confirmPrefixChange() {
+  if (!can('products', 'update')) return
   saving.value = true
   try {
     await api.post(`/products/${editingId.value}/sales-model-prefix-apply/`, {
@@ -238,6 +244,7 @@ async function confirmPrefixChange() {
   } catch (error) { notify(error.message, true) } finally { saving.value = false }
 }
 async function remove(product) {
+  if (!can('products', 'delete')) return
   if (!await confirmDialog({ title: '确认删除产品', message: `确定删除产品“${product.name}”吗？`, confirmText: '确认删除', danger: true })) return
   try { await api.delete(`/products/${product.id}/`); notify('产品已删除'); await load() } catch (error) { notify(error.message, true) }
 }
@@ -250,14 +257,14 @@ watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null 
 
 <template>
   <div>
-    <div class="page-head"><div><h2>产品管理</h2><p>维护产品主档、分类归属与销售状态；SKU 编码在 SKU 管理中维护。</p></div><button class="btn btn-primary" @click="openCreate"><Plus :size="16" /> 新建产品</button></div>
+    <div class="page-head"><div><h2>产品管理</h2><p>维护产品主档、分类归属与销售状态；SKU 编码在 SKU 管理中维护。</p></div><button v-if="can('products', 'create')" class="btn btn-primary" @click="openCreate"><Plus :size="16" /> 新建产品</button></div>
     <SummaryCards v-if="hasLoaded" :items="productMetrics" />
     <div class="product-toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索产品编号、中文或英文名称..." @input="load" /></div><div class="filter-select"><ListFilter :size="16" aria-hidden="true" /><select v-model="categoryFilter" aria-label="产品分类筛选" @change="load"><option value="">全部分类</option><option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option></select><ChevronDown :size="16" aria-hidden="true" /></div></div>
     <div v-if="Object.keys(referenceErrors).length" class="option-load-error" role="alert"><span>{{ Object.values(referenceErrors).join('；') }}</span><button type="button" @click="load">重新加载关联资料</button></div>
     <section class="panel">
       <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
       <ListEmptyState v-if="hasLoaded && !products.length" entity="产品" :filtered="filteredProductEmpty" @clear="clearProductFilters"><template #action><p>点击“新建产品”开始建立产品主档。</p></template></ListEmptyState>
-      <div v-else-if="hasLoaded && products.length" class="table-wrap"><table class="data-table"><thead><tr><th>产品编号</th><th>产品名称</th><th>销售型号前缀</th><th>主分类</th><th>状态</th><th>SKU</th><th>参数</th><th>证书</th><th /></tr></thead><tbody><tr v-for="product in products" :key="product.id" class="clickable-row" @click="detailId = product.id"><td class="primary-cell">{{ product.code }}</td><td>{{ product.name }}</td><td>{{ product.sales_model_prefix || '—' }}</td><td>{{ product.category_name }}</td><td><span class="tag">{{ product.status === 'active' ? '在售' : product.status === 'development' ? '开发中' : '停产' }}</span></td><td>{{ product.sku_count }}</td><td>{{ product.parameter_count }}</td><td>{{ product.certificate_count }}</td><td><div class="table-actions"><button class="mini-btn" title="编辑产品" @click.stop="openEdit(product)"><Pencil :size="14" /></button><button class="mini-btn danger" title="删除产品" @click.stop="remove(product)"><Trash2 :size="14" /></button></div></td></tr></tbody></table></div>
+      <div v-else-if="hasLoaded && products.length" class="table-wrap"><table class="data-table"><thead><tr><th>产品编号</th><th>产品名称</th><th>销售型号前缀</th><th>主分类</th><th>状态</th><th>SKU</th><th>参数</th><th>证书</th><th /></tr></thead><tbody><tr v-for="product in products" :key="product.id" class="clickable-row" @click="detailId = product.id"><td class="primary-cell">{{ product.code }}</td><td>{{ product.name }}</td><td>{{ product.sales_model_prefix || '—' }}</td><td>{{ product.category_name }}</td><td><span class="tag">{{ product.status === 'active' ? '在售' : product.status === 'development' ? '开发中' : '停产' }}</span></td><td>{{ product.sku_count }}</td><td>{{ product.parameter_count }}</td><td>{{ product.certificate_count }}</td><td><div class="table-actions"><button v-if="can('products', 'update')" class="mini-btn" title="编辑产品" @click.stop="openEdit(product)"><Pencil :size="14" /></button><button v-if="can('products', 'delete')" class="mini-btn danger" title="删除产品" @click.stop="remove(product)"><Trash2 :size="14" /></button></div></td></tr></tbody></table></div>
     </section>
 
     <div v-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal product-modal" :style="productModalStyle" @submit.prevent="save"><div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" @click="closeModal"><X :size="17" /></button></div><div class="modal-body"><div v-if="Object.keys(referenceErrors).length" class="option-load-error" role="alert"><p v-for="(message,key) in referenceErrors" :key="key">{{ message }} <button type="button" @click="load">重新加载</button></p></div><div class="form-grid"><div class="field"><label>产品编号 <em>*</em></label><input v-model="form.code" class="readonly-input" readonly /></div><div class="field"><label>产品名称 <em>*</em></label><input v-model.trim="form.name" placeholder="如：BTY橱柜电源" required /></div>
@@ -267,7 +274,7 @@ watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null 
         <div class="field full supplier-field"><label>供应商</label><div class="supplier-picker"><div class="supplier-search"><Search :size="16" aria-hidden="true" /><input v-model.trim="supplierQuery" type="search" placeholder="搜索供应商名称、联系人、电话或邮箱" aria-label="搜索供应商" /><span v-if="form.suppliers.length" class="supplier-count">已选 {{ form.suppliers.length }}</span></div><div v-if="selectedSuppliers.length" class="selected-suppliers"><span v-for="supplier in selectedSuppliers" :key="supplier.id" class="supplier-chip">{{ supplier.name }}<button type="button" :aria-label="`移除供应商 ${supplier.name}`" @click="toggleSupplier(supplier.id)"><X :size="13" /></button></span></div><div class="supplier-options" role="listbox" aria-multiselectable="true"><label v-for="supplier in filteredSuppliers" :key="supplier.id" class="supplier-option" :class="{ selected: form.suppliers.map(Number).includes(Number(supplier.id)) }"><input type="checkbox" :checked="form.suppliers.map(Number).includes(Number(supplier.id))" @change="toggleSupplier(supplier.id)" /><span><strong>{{ supplier.name }}</strong><small>{{ [supplier.contact_name, supplier.phone, supplier.email].filter(Boolean).join(' · ') || '未维护联系人信息' }}</small></span></label><p v-if="!filteredSuppliers.length" class="supplier-empty">没有匹配的供应商</p></div></div><p class="field-help">可多选；输入关键词即可筛选供应商。</p></div>
         <div class="field full"><div class="additional-head"><label>附加分类</label><button type="button" class="text-add" @click.stop="addAdditionalCategory"><Plus :size="14" /> 新增</button></div><div v-if="form.additional_categories.length" class="additional-list"><div v-for="(id, index) in form.additional_categories" :key="index" class="additional-row category-field"><button type="button" class="category-select" @click.stop="openPicker(index)"><span>{{ categoryName(id) }}</span><ChevronDown :size="16" /></button><button type="button" class="mini-btn danger" title="移除附加分类" @click.stop="removeAdditionalCategory(index)"><Trash2 :size="14" /></button><div v-if="pickerOpen && pickerTarget === index" class="category-picker"><div class="picker-head"><strong>选择附加分类</strong><span>逐级选择最终分类</span></div><div class="cascade-columns"><div v-for="(column, columnIndex) in cascadeColumns" :key="columnIndex" class="cascade-column" :style="{ width: `${categoryPickerLayout.columnWidths[columnIndex] || 160}px` }"><button v-for="category in column" :key="category.id" type="button" class="cascade-option" :class="{ active: cascadePath[columnIndex] === category.id, selected: form.additional_categories.map(Number).includes(category.id) }" @click.stop="chooseCascadeCategory(category, columnIndex)"><span>{{ category.name }}</span><ChevronRight v-if="categories.some(item => Number(item.parent || 0) === Number(category.id))" :size="15" /></button></div></div></div></div></div><p v-else class="field-help">可为同一产品添加第二、第三个分类，用于多维筛选与分析。</p></div>
         <div class="field full"><label>产品描述</label><textarea v-model="form.description" /></div></div>
-      </div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving || !formOptionsReady">{{ saving ? '保存中…' : '保存' }}</button></div></form></div>
+      </div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button v-if="can('products', editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !formOptionsReady">{{ saving ? '保存中…' : '保存' }}</button></div></form></div>
     <div v-if="prefixReview" class="modal-backdrop prefix-review-backdrop" @mousedown.self="prefixReview = null"><section class="modal prefix-review-modal"><div class="modal-head"><h3>确认销售型号前缀变更</h3><button type="button" class="mini-btn" @click="prefixReview = null"><X :size="17" /></button></div><div class="modal-body"><p>前缀将从 <strong>{{ prefixReview.old_prefix || '未设置' }}</strong> 变更为 <strong>{{ prefixReview.new_prefix }}</strong>。以下当前 SKU 的销售型号将同步更新；SKU 编码与历史报价、订单、采购快照不会改变。</p><div v-if="prefixReview.affected_skus.length" class="prefix-review-list"><div v-for="sku in prefixReview.affected_skus" :key="sku.sku_id"><strong>{{ sku.sku_code }}</strong><span>{{ sku.old_sales_model || '—' }} → {{ sku.new_sales_model || '—' }}</span></div></div><p v-else class="field-help">当前没有需要更新销售型号的有效 SKU。</p></div><div class="modal-foot"><button type="button" class="btn btn-secondary" :disabled="saving" @click="prefixReview = null">取消</button><button type="button" class="btn btn-primary" :disabled="saving" @click="confirmPrefixChange">{{ saving ? '更新中…' : '确认更新' }}</button></div></section></div>
     <div v-if="message.text" class="toast" :class="{ error: message.error }">{{ message.text }}</div>
     <Transition name="detail-drawer" appear><EntityDetailModal v-if="detailId" entity="products" :id="detailId" :refresh-key="detailRefresh" @close="closeDetail" @edit="openEdit(products.find(product => product.id === detailId), { keepDetail: true })" /></Transition>

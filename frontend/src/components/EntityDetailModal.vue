@@ -17,9 +17,11 @@ import OperationLogPanel from './OperationLogPanel.vue'
 import SKUPage from '../views/SKUPage.vue'
 import ProductWorkspace from './ProductWorkspace.vue'
 import { canCreateRelated, relationWorkbenchLocation } from '../utils/detailNavigation'
+import { useAccessControl } from '../accessControl'
 
 const props = defineProps({ entity: String, id: [Number, String], refreshKey: { type: Number, default: 0 } })
 const emit = defineEmits(['close', 'edit', 'changed'])
+const { can } = useAccessControl()
 const data = ref(null), loading = ref(true), error = ref(''), activeTab = ref(''), stack = ref([])
 const movementRecord = ref(null)
 const isMovementDetail = computed(() => currentEntity.value === 'inventory-movements')
@@ -48,8 +50,9 @@ const activeSection = computed(() => activeTab.value === '__operation_logs' ? nu
 const documentEntities = new Set(['orders', 'quotes', 'purchase-orders'])
 const hasManagement = (entity) => Boolean(resourceConfigs[entity] || documentEntities.has(entity))
 const canManage = computed(() => canCreateRelated(currentEntity.value, activeSection.value))
+const relatedCreateModules = { contacts: 'contacts', 'follow-ups': 'followups', quotes: 'quotes', orders: 'orders', 'purchase-orders': 'purchases', skus: 'skus', 'product-parameters': 'parameters', 'product-certificates': 'certificates' }
 const isRoot = computed(() => currentEntity.value === props.entity && String(currentId.value) === String(props.id))
-const showRelatedCreate = computed(() => canManage.value && !(isRoot.value && currentEntity.value === 'customers' && ['followups', 'quotes'].includes(activeSection.value?.key)))
+const showRelatedCreate = computed(() => canManage.value && can(relatedCreateModules[activeSection.value?.entity], 'create') && !(isRoot.value && currentEntity.value === 'customers' && ['followups', 'quotes'].includes(activeSection.value?.key)))
 const isCustomerRoot = computed(() => isRoot.value && currentEntity.value === 'customers' && route.path === '/customers')
 function restoreCustomerTab() {
   if (!isRoot.value || route.path !== `/${props.entity}` || !data.value) return
@@ -71,7 +74,7 @@ const visibleSectionRows = computed(() => {
   const query = skuQuery.value.trim().toLowerCase()
   return rows.filter(row => [row.sku, row.display_name_cn, row.sales_model, row.specification, row.active ? '启用' : '已停用'].some(value => String(value || '').toLowerCase().includes(query)))
 })
-const canBulkDeleteSku = computed(() => /超级管理员|管理员/.test(operatorRole.value))
+const canBulkDeleteSku = computed(() => can('skus', 'delete'))
 const selectableSkuRows = computed(() => visibleSectionRows.value.filter(row => row.active))
 const allSkuSelected = computed(() => Boolean(selectableSkuRows.value.length) && selectableSkuRows.value.every(row => selectedSkuIds.value.includes(row.id)))
 const selectedActiveSkuIds = computed(() => selectableSkuRows.value.filter(row => selectedSkuIds.value.includes(row.id)).map(row => row.id))
@@ -182,6 +185,7 @@ function relationContext() {
   return ids
 }
 function openQuoteForCustomer(customerId) {
+  if (!can('quotes', 'create')) return
   const rawId = String(customerId ?? '').trim()
   if (!/^\d+$/.test(rawId)) return
   const id = Number(rawId)
@@ -205,6 +209,7 @@ function createLabel(section) {
   return `新增${labels[section?.entity] || section?.title || '记录'}`
 }
 function openCustomerFollowUp() {
+  if (!can('followups', 'create')) return
   quickCreate.value = { entity: 'follow-ups', query: { customer: currentId.value } }
 }
 const managementTarget = computed(() => documentEntities.has(currentEntity.value)
@@ -216,7 +221,7 @@ function managementNavigation() {
   if (!documentEntities.has(currentEntity.value) && !isMovementDetail.value) emit('close')
 }
 function openRelatedCreate() {
-  if (!canManage.value) return
+  if (!canManage.value || !can(relatedCreateModules[activeSection.value?.entity], 'create')) return
   const query = relationQuery(activeSection.value)
   if (activeSection.value.entity === 'purchase-orders') {
     router.push({ path: '/purchase-orders', query: { create: '1', ...query, returnTo: detailReturnPath() } })
@@ -228,7 +233,7 @@ function detailReturnPath() {
   if (!isRoot.value) return route.fullPath
   return router.resolve({ path: route.path, query: { ...route.query, detail: String(props.id), tab: activeTab.value === '__operation_logs' ? 'operation_logs' : activeTab.value }, hash: route.hash }).fullPath
 }
-function openSkuCreate() { activeTab.value = 'skus'; skuCreateOpen.value = true }
+function openSkuCreate() { if (!can('skus', 'create')) return; activeTab.value = 'skus'; skuCreateOpen.value = true }
 async function skuCreated() {
   skuCreateOpen.value = false
   const previousTab = activeTab.value
@@ -255,6 +260,7 @@ function toggleSkuMultiSelect() {
   selectedSkuIds.value = []
 }
 async function deactivateSelectedSkus() {
+  if (!can('skus', 'delete')) return
   const ids = selectedActiveSkuIds.value
   if (!ids.length || !await confirmDialog({ title: '确认停用 SKU', message: `确定停用选中的 ${ids.length} 个 SKU 吗？停用后将默认从 ERP 列表隐藏。`, confirmText: '确认停用', danger: true })) return
   try {
@@ -264,6 +270,7 @@ async function deactivateSelectedSkus() {
   } catch (e) { error.value = e.message || 'SKU 停用失败' }
 }
 async function reactivateSelectedSkus() {
+  if (!can('skus', 'update')) return
   const ids = selectedInactiveSkuIds.value
   if (!ids.length || !await confirmDialog({ title: '确认重新启用 SKU', message: `确定重新启用选中的 ${ids.length} 个 SKU 吗？`, confirmText: '确认启用' })) return
   try {
@@ -332,10 +339,10 @@ onMounted(async () => {
               <button class="follow-up-return" @click="stack.length ? back() : requestClose()"><ArrowLeft :size="17" /> {{ stack.length ? `返回 ${stack[stack.length - 1].title}` : '返回列表' }}</button>
               <span class="follow-up-hero-label">跟进详情</span>
               <div class="follow-up-actions">
-                <button class="follow-up-action" @click="emit('edit', { entity: currentEntity, id: currentId })"><Pencil :size="15" /> 编辑</button>
-                <button class="follow-up-action" @click="deleteFollowUp"><Trash2 :size="15" /> 删除</button>
+                <button v-if="can('followups', 'update')" class="follow-up-action" @click="emit('edit', { entity: currentEntity, id: currentId })"><Pencil :size="15" /> 编辑</button>
+                <button v-if="can('followups', 'delete')" class="follow-up-action" @click="deleteFollowUp"><Trash2 :size="15" /> 删除</button>
                 <button class="follow-up-action" @click="stack.length ? back() : requestClose()"><ArrowLeft :size="15" /> 返回</button>
-                <button v-if="hasRelationCustomerId" class="follow-up-action" @click="openQuoteForCustomer(relationCustomerId)"><Plus :size="15" /> 新建报价</button>
+                <button v-if="hasRelationCustomerId && can('quotes', 'create')" class="follow-up-action" @click="openQuoteForCustomer(relationCustomerId)"><Plus :size="15" /> 新建报价</button>
                 <button class="follow-up-action primary" :disabled="!followUpContact?.phone" @click="openWhatsApp"><ExternalLink :size="15" /> 发送 WhatsApp</button>
               </div>
             </div>
@@ -396,9 +403,9 @@ onMounted(async () => {
               <span v-else-if="isProduct">产品管理 / 产品详情</span><span v-else-if="isMovementDetail">库存流水详情</span><span v-else-if="isCustomerRoot">客户详情</span><span v-else-if="!stack.length">关联详情</span>
             </div>
             <div class="detail-actions">
-              <button v-if="isRoot && currentEntity === 'customers'" class="btn btn-secondary" @click="openCustomerFollowUp"><Plus :size="14" /> 新增跟进</button>
-              <button v-if="isRoot && currentEntity === 'customers' && hasRelationCustomerId" class="btn btn-secondary" @click="openQuoteForCustomer(relationCustomerId)"><Plus :size="14" /> 新建报价</button>
-              <button v-if="isRoot && currentEntity !== 'inventory-movements'" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> {{ currentEntity === 'customers' ? '编辑客户' : '编辑主档' }}</button>
+              <button v-if="isRoot && currentEntity === 'customers' && can('followups', 'create')" class="btn btn-secondary" @click="openCustomerFollowUp"><Plus :size="14" /> 新增跟进</button>
+              <button v-if="isRoot && currentEntity === 'customers' && hasRelationCustomerId && can('quotes', 'create')" class="btn btn-secondary" @click="openQuoteForCustomer(relationCustomerId)"><Plus :size="14" /> 新建报价</button>
+              <button v-if="isRoot && currentEntity !== 'inventory-movements' && can(currentEntity, 'update')" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> {{ currentEntity === 'customers' ? '编辑客户' : '编辑主档' }}</button>
               <RouterLink v-else-if="!isMovementDetail && hasManagement(currentEntity)" class="btn btn-secondary" :to="managementTarget" @click="managementNavigation"><ExternalLink :size="14" /> {{ managementLabel }}</RouterLink>
               <button v-if="isProduct" class="detail-close" aria-label="关闭详情" @click="requestClose"><X :size="19" /><span>关闭</span></button>
             </div>
@@ -412,7 +419,7 @@ onMounted(async () => {
           <div :class="{ 'sku-create-workspace': isSkuSection && skuCreateOpen }">
           <SKUPage v-if="isSkuSection && skuCreateOpen" embedded inline :initial-product="currentId" @close="skuCreateOpen = false" @saved="skuCreated" />
           <section v-if="!isSkuSection" class="relation-area">
-            <div class="relation-top"><div><h3>{{ isProduct ? activeSection?.title || '操作日志' : currentEntity === 'customers' ? '业务记录' : isMovementDetail ? '关联记录' : '关联数据' }}</h3><p v-if="currentEntity !== 'customers' && !isMovementDetail">点击记录查看详情</p></div><div class="relation-actions"><button v-if="isSkuSection && canBulkDeleteSku" class="manage-link" :class="{ 'multi-select-active': skuMultiSelect }" @click="toggleSkuMultiSelect"><CheckSquare :size="13" /> {{ skuMultiSelect ? '取消多选' : '多选' }}</button><button v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect && selectedActiveSkuIds.length" class="manage-link danger-link" @click="deactivateSelectedSkus"><Trash2 :size="13" /> 停用 {{ selectedActiveSkuIds.length }} 个 SKU</button><button v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect && selectedInactiveSkuIds.length" class="manage-link restore-link" @click="reactivateSelectedSkus"><CheckSquare :size="13" /> 重新启用 {{ selectedInactiveSkuIds.length }} 个 SKU</button><button v-if="isSkuSection" class="manage-link" :class="{ 'inactive-toggle': showInactiveSkus }" @click="toggleInactiveSkus"><CheckSquare :size="13" /> {{ showInactiveSkus ? '隐藏已停用 SKU' : '显示已停用 SKU' }}</button><button v-if="isSkuSection" class="manage-link" @click="openSkuCreate"><Plus :size="13" /> 新增 SKU</button><button v-else-if="showRelatedCreate" class="manage-link" @click="openRelatedCreate"><Plus :size="13" /> {{ createLabel(activeSection) }}</button></div></div>
+            <div class="relation-top"><div><h3>{{ isProduct ? activeSection?.title || '操作日志' : currentEntity === 'customers' ? '业务记录' : isMovementDetail ? '关联记录' : '关联数据' }}</h3><p v-if="currentEntity !== 'customers' && !isMovementDetail">点击记录查看详情</p></div><div class="relation-actions"><button v-if="isSkuSection && canBulkDeleteSku" class="manage-link" :class="{ 'multi-select-active': skuMultiSelect }" @click="toggleSkuMultiSelect"><CheckSquare :size="13" /> {{ skuMultiSelect ? '取消多选' : '多选' }}</button><button v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect && selectedActiveSkuIds.length" class="manage-link danger-link" @click="deactivateSelectedSkus"><Trash2 :size="13" /> 停用 {{ selectedActiveSkuIds.length }} 个 SKU</button><button v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect && selectedInactiveSkuIds.length" class="manage-link restore-link" @click="reactivateSelectedSkus"><CheckSquare :size="13" /> 重新启用 {{ selectedInactiveSkuIds.length }} 个 SKU</button><button v-if="isSkuSection" class="manage-link" :class="{ 'inactive-toggle': showInactiveSkus }" @click="toggleInactiveSkus"><CheckSquare :size="13" /> {{ showInactiveSkus ? '隐藏已停用 SKU' : '显示已停用 SKU' }}</button><button v-if="isSkuSection && can('skus', 'create')" class="manage-link" @click="openSkuCreate"><Plus :size="13" /> 新增 SKU</button><button v-else-if="showRelatedCreate" class="manage-link" @click="openRelatedCreate"><Plus :size="13" /> {{ createLabel(activeSection) }}</button></div></div>
               <label v-if="isSkuSection" class="sku-context-search"><Search :size="16" /><input v-model.trim="skuQuery" placeholder="搜索中文名称、销售型号、SKU Code 或规格..." /><span v-if="skuQuery">{{ visibleSectionRows.length }} / {{ activeSection.rows.length }}</span></label>
             <div v-if="!isProduct" class="detail-tabs"><button v-for="section in data.sections" :key="section.key" :class="{ active: activeTab === section.key }" @click="selectSection(section.key)">{{ currentEntity === 'customers' && section.key === 'orders' ? '订单记录' : section.title }} <span>{{ section.rows.length }}</span></button><button :class="{ active: isOperationLogTab }" @click="selectSection('__operation_logs')">{{ isMovementDetail ? '流水操作日志' : '操作日志' }} <span>{{ operationLogs.length }}</span></button></div>
             <OperationLogPanel v-if="isOperationLogTab" :title="isMovementDetail ? '流水操作日志' : '操作日志'" :logs="operationLogs" :loading="operationLogsLoading" :enabled="auditEnabled" />

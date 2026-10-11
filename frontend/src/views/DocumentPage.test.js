@@ -94,8 +94,8 @@ test('order editor reports an invalid non-positive line quantity before sending 
 test('order list limits edit and delete operations to drafts', async () => {
   const source = await readFile(componentUrl, 'utf8')
 
-  assert.match(source, /v-if="row\.status === 'draft'" class="mini-btn" :aria-label="`编辑/)
-  assert.match(source, /v-if="row\.status === 'draft'" class="mini-btn" :aria-label="`删除/)
+  assert.match(source, /v-if="can\('orders', 'update'\) && row\.status === 'draft'" class="mini-btn" :aria-label="`编辑/)
+  assert.match(source, /v-if="can\('orders', 'delete'\) && row\.status === 'draft'" class="mini-btn" :aria-label="`删除/)
 })
 
 test('editing from the order workbench reloads the current order before opening the editor', async () => {

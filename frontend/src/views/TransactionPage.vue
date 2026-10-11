@@ -7,8 +7,10 @@ import PageLoadState from '../components/PageLoadState.vue'
 import ListEmptyState from '../components/ListEmptyState.vue'
 import { formatMoney } from '../utils/money'
 import { orderDetailLocation, purchaseDetailLocation } from '../utils/detailNavigation'
+import { useAccessControl } from '../accessControl'
 
 const today = new Date().toISOString().slice(0, 10)
+const { can } = useAccessControl()
 const rows = ref([]), error = ref(''), loadError = ref(''), hasLoaded = ref(false), allTransactionsExist = ref(false), query = ref(''), orderQuery = ref(''), showForm = ref(false), orders = ref([])
 const customers = ref([]), suppliers = ref([]), purchases = ref([]), plans = ref([]), saving = ref(false), loading = ref(false)
 const referenceErrors = ref([]), referencesLoaded = ref(false), referencesLoading = ref(true), orderSearchError = ref(''), orderSearchLoading = ref(false)
@@ -108,6 +110,7 @@ function syncKind() {
   }
 }
 function openForm() {
+  if (!can('transactions', 'create')) return
   Object.assign(form, { transaction_no: '', transaction_date: new Date().toLocaleDateString('en-CA'), kind: 'period_expense', direction: 'expense', category: '其他期间费用', amount: '', currency: 'CNY', exchange_rate: '1', payment_method: '', reference: '', notes: '', order: null, customer: null, supplier: null, purchase_order: null })
   orderQuery.value = ''
   orders.value = []
@@ -149,7 +152,7 @@ function choosePurchase() {
   if (row) { form.currency = row.currency; form.exchange_rate = row.exchange_rate }
 }
 async function save() {
-  if (saving.value) return
+  if (saving.value || !can('transactions', 'create')) return
   if (!referencesLoaded.value) { error.value = '客户、供应商或采购单资料尚未加载完成，请重试后再保存。'; return }
   if (form.kind === 'customer_receipt' && (orderSearchLoading.value || orderSearchError.value)) { error.value = '订单选项尚未成功加载，请重试后再保存。'; return }
   saving.value = true
@@ -162,11 +165,13 @@ async function save() {
   } catch (err) { error.value = apiErrorMessage(err) || '流水保存失败。' } finally { saving.value = false }
 }
 function openVoid(row) {
+  if (!can('transactions', 'update')) return
   voidTarget.value = row
   voidReason.value = ''
   error.value = ''
 }
 async function submitVoid() {
+  if (!can('transactions', 'update')) return
   const reason = voidReason.value.trim()
   if (!reason || voidSaving.value) return
   voidSaving.value = true
@@ -179,10 +184,11 @@ async function submitVoid() {
   } catch (err) { error.value = err.response?.data?.detail || err.message } finally { voidSaving.value = false }
 }
 async function openAllocate(row) {
+  if (!can('transactions', 'update')) return
   try { plans.value = await listAll('/payment-plans/', { params: { status: 'open' } }); allocation.value = row; allocationPlan.value = ''; allocationAmount.value = String(Number(row.amount) - Number(row.allocated_amount)) } catch (err) { error.value = err.message }
 }
 async function allocate() {
-  if (saving.value) return
+  if (saving.value || !can('transactions', 'update')) return
   saving.value = true
   try { await api.post(`/transactions/${allocation.value.id}/allocate/`, { plan: allocationPlan.value, amount: allocationAmount.value }); allocation.value = null; await load() } catch (err) { error.value = err.message } finally { saving.value = false }
 }
@@ -209,7 +215,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
   <section class="txn">
     <header>
       <div><h2>财务流水</h2><p>统一登记实际收付款、订单费用与期间费用。</p></div>
-      <button :disabled="!referencesLoaded" @click="openForm">新增记账</button>
+      <button v-if="can('transactions', 'create')" :disabled="!referencesLoaded" @click="openForm">新增记账</button>
     </header>
     <div v-if="referenceErrorText" class="option-load-error" role="alert"><span>新增记账所需的关联资料未能全部加载，暂不能新增。{{ referenceErrorText }}</span><button type="button" @click="loadReferenceOptions">重试加载</button></div>
     <p v-else-if="referencesLoading" class="option-loading-note" role="status">正在加载客户、供应商和采购单资料…</p>
@@ -220,11 +226,11 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
     <template v-if="hasLoaded">
     <table>
       <thead><tr><th>日期 / 流水号</th><th>收支 / 类型</th><th>往来方 / 合同</th><th>原币金额</th><th>人民币</th><th>状态 / 核销</th><th>操作</th></tr></thead>
-      <tbody><tr v-if="!rows.length"><td colspan="7"><ListEmptyState entity="财务流水" :filtered="filtersActive && allTransactionsExist" @clear="clearFilters"><template #action>当前还没有财务流水。</template></ListEmptyState></td></tr><tr v-for="row in rows" :key="row.id"><td>{{ row.transaction_date }}<small>{{ row.transaction_no }}<span v-if="row.split_from"> · 拆分记录</span></small></td><td>{{ row.direction_display || directionLabel(row.direction) }}<small>{{ kindLabel(row.kind) }}</small></td><td>{{ row.customer_name || row.supplier_name || '—' }}<small><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.order ? row.order_no : row.purchase_no }}</RouterLink><span v-else>未关联合同</span></small></td><td>{{ row.currency }} {{ formatMoney(row.amount) }}</td><td>¥{{ formatMoney(row.rmb_amount) }}</td><td>{{ row.status_display }}<small v-if="['unallocated_advance', 'unallocated_payment'].includes(row.kind)">未核销 {{ row.currency }} {{ formatMoney(Number(row.amount) - Number(row.allocated_amount)) }}</small><small v-for="item in row.allocations" :key="item.id"><RouterLink v-if="allocationLocation(item)" :to="allocationLocation(item)" class="contract-link">{{ item.contract_no }}</RouterLink><span v-else>{{ item.contract_no }}</span>：{{ formatMoney(item.amount) }} {{ item.is_active ? '已核销' : '已撤回' }}</small><small v-if="row.status === 'cancelled' && row.void_reason">作废原因：{{ row.void_reason }}{{ row.voided_at ? ' · ' + row.voided_at : '' }}</small></td><td><button v-if="row.status === 'confirmed' && ['unallocated_advance', 'unallocated_payment'].includes(row.kind) && Number(row.amount) > Number(row.allocated_amount)" @click="openAllocate(row)">核销</button><button v-if="row.status === 'confirmed' && !row.split_from" @click="openVoid(row)">作废</button><small v-if="row.split_from">由原始流水统一作废</small><small v-else-if="row.status === 'cancelled'">已作废</small></td></tr></tbody>
+      <tbody><tr v-if="!rows.length"><td colspan="7"><ListEmptyState entity="财务流水" :filtered="filtersActive && allTransactionsExist" @clear="clearFilters"><template #action>当前还没有财务流水。</template></ListEmptyState></td></tr><tr v-for="row in rows" :key="row.id"><td>{{ row.transaction_date }}<small>{{ row.transaction_no }}<span v-if="row.split_from"> · 拆分记录</span></small></td><td>{{ row.direction_display || directionLabel(row.direction) }}<small>{{ kindLabel(row.kind) }}</small></td><td>{{ row.customer_name || row.supplier_name || '—' }}<small><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.order ? row.order_no : row.purchase_no }}</RouterLink><span v-else>未关联合同</span></small></td><td>{{ row.currency }} {{ formatMoney(row.amount) }}</td><td>¥{{ formatMoney(row.rmb_amount) }}</td><td>{{ row.status_display }}<small v-if="['unallocated_advance', 'unallocated_payment'].includes(row.kind)">未核销 {{ row.currency }} {{ formatMoney(Number(row.amount) - Number(row.allocated_amount)) }}</small><small v-for="item in row.allocations" :key="item.id"><RouterLink v-if="allocationLocation(item)" :to="allocationLocation(item)" class="contract-link">{{ item.contract_no }}</RouterLink><span v-else>{{ item.contract_no }}</span>：{{ formatMoney(item.amount) }} {{ item.is_active ? '已核销' : '已撤回' }}</small><small v-if="row.status === 'cancelled' && row.void_reason">作废原因：{{ row.void_reason }}{{ row.voided_at ? ' · ' + row.voided_at : '' }}</small></td><td><button v-if="can('transactions', 'update') && row.status === 'confirmed' && ['unallocated_advance', 'unallocated_payment'].includes(row.kind) && Number(row.amount) > Number(row.allocated_amount)" @click="openAllocate(row)">核销</button><button v-if="can('transactions', 'update') && row.status === 'confirmed' && !row.split_from" @click="openVoid(row)">作废</button><small v-if="row.split_from">由原始流水统一作废</small><small v-else-if="row.status === 'cancelled'">已作废</small></td></tr></tbody>
     </table>
     </template>
 
-    <div v-if="showForm" class="mask" @click.self="showForm = false">
+    <div v-if="showForm && can('transactions', 'create')" class="mask" @click.self="showForm = false">
       <form class="dialog" @submit.prevent="save">
         <h3>新增记账</h3>
         <label>类型
@@ -254,8 +260,8 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
         <footer><button type="button" @click="showForm = false">取消</button><button :disabled="saving || !referencesLoaded || (form.kind === 'customer_receipt' && (orderSearchLoading || !!orderSearchError))">{{ saving ? '保存中…' : '保存' }}</button></footer>
       </form>
     </div>
-    <div v-if="allocation" class="mask" @click.self="allocation = null"><form class="dialog" @submit.prevent="allocate"><h3>核销预收预付款</h3><p>只分配余额，不新增现金流水。{{ allocation.currency }}</p><label>同一往来方的待结计划<select v-model="allocationPlan" required><option value="">请选择</option><option v-for="plan in eligiblePlans" :key="plan.id" :value="plan.id">{{ plan.contract_no }} · {{ plan.notes }} · 待结 {{ formatMoney(plan.remaining_amount) }}</option></select></label><p v-if="!eligiblePlans.length">暂无币种与往来方匹配的待结计划。</p><label>核销金额<input v-model="allocationAmount" type="number" min="0.0001" step="0.0001" required></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" @click="allocation = null">取消</button><button :disabled="saving || !allocationPlan">确认核销</button></footer></form></div>
-    <div v-if="voidTarget" class="mask" @click.self="voidTarget = null"><form class="dialog" @submit.prevent="submitVoid"><h3>作废财务流水</h3><dl class="void-summary"><dt>流水号</dt><dd>{{ voidTarget.transaction_no }}</dd><dt>金额</dt><dd>{{ voidTarget.currency }} {{ formatMoney(voidTarget.amount) }}</dd><dt>往来方 / 合同</dt><dd>{{ voidTarget.customer_name || voidTarget.supplier_name || '—' }} / {{ voidTarget.order_no || voidTarget.purchase_no || '未关联合同' }}</dd></dl><p>该操作将同时作废相关拆分流水，并恢复对应收付款计划。</p><label>作废原因<textarea v-model="voidReason" maxlength="500" rows="4" required /></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" @click="voidTarget = null">取消</button><button :disabled="voidSaving || !voidReason.trim()">{{ voidSaving ? '保存中…' : '确认作废' }}</button></footer></form></div>
+    <div v-if="allocation && can('transactions', 'update')" class="mask" @click.self="allocation = null"><form class="dialog" @submit.prevent="allocate"><h3>核销预收预付款</h3><p>只分配余额，不新增现金流水。{{ allocation.currency }}</p><label>同一往来方的待结计划<select v-model="allocationPlan" required><option value="">请选择</option><option v-for="plan in eligiblePlans" :key="plan.id" :value="plan.id">{{ plan.contract_no }} · {{ plan.notes }} · 待结 {{ formatMoney(plan.remaining_amount) }}</option></select></label><p v-if="!eligiblePlans.length">暂无币种与往来方匹配的待结计划。</p><label>核销金额<input v-model="allocationAmount" type="number" min="0.0001" step="0.0001" required></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" @click="allocation = null">取消</button><button :disabled="saving || !allocationPlan">确认核销</button></footer></form></div>
+    <div v-if="voidTarget && can('transactions', 'update')" class="mask" @click.self="voidTarget = null"><form class="dialog" @submit.prevent="submitVoid"><h3>作废财务流水</h3><dl class="void-summary"><dt>流水号</dt><dd>{{ voidTarget.transaction_no }}</dd><dt>金额</dt><dd>{{ voidTarget.currency }} {{ formatMoney(voidTarget.amount) }}</dd><dt>往来方 / 合同</dt><dd>{{ voidTarget.customer_name || voidTarget.supplier_name || '—' }} / {{ voidTarget.order_no || voidTarget.purchase_no || '未关联合同' }}</dd></dl><p>该操作将同时作废相关拆分流水，并恢复对应收付款计划。</p><label>作废原因<textarea v-model="voidReason" maxlength="500" rows="4" required /></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" @click="voidTarget = null">取消</button><button :disabled="voidSaving || !voidReason.trim()">{{ voidSaving ? '保存中…' : '确认作废' }}</button></footer></form></div>
   </section>
 </template>
 

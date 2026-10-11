@@ -2,9 +2,11 @@
 import { computed, ref, watch, onBeforeUnmount } from 'vue'
 import { api } from '../../api'
 import { resolveBlock } from '../../reports/registry'
+import { useAccessControl } from '../../accessControl'
 
 const props = defineProps({ blockId: { type: String, default: 'sales-trend' }, config: { type: Object, default: () => ({}) }, filters: { type: Object, default: () => ({}) }, refreshKey: { type: Number, default: 0 } })
 const emit = defineEmits(['drill', 'loaded'])
+const { can } = useAccessControl()
 const definition = computed(() => resolveBlock(props.blockId, props.config))
 const params = computed(() => {
   const d = definition.value
@@ -57,6 +59,7 @@ const comparison = computed(() => {
 })
 function drill(row) { if (definition.value.group_by !== 'time') emit('drill', { dimension: definition.value.group_by, value: row.key, label: row.label, source: definition.value.source, date_field: data.value.date_field, filters: data.value.filters, filter_summary: data.value.filter_summary }) }
 async function exportCsv() {
+  if (!can('reports', 'export')) return
   exporting.value = true
   try {
     const response = await api.get('/reports/data/', { params: { ...params.value, export: 'csv' }, responseType: 'blob' })
@@ -70,7 +73,7 @@ async function exportCsv() {
 
 <template>
   <article class="report-block" :aria-busy="loading">
-    <header class="block-header"><div><small>经营统计</small><h2>{{ definition.title || '自定义报表' }}</h2></div><div class="block-actions"><select v-model="viewOverride" aria-label="图表显示方式"><option value="">默认图表</option><option value="bar">条形图</option><option value="line">折线图</option><option value="donut">环形图</option><option value="table">仅表格</option></select><button :disabled="loading || !data || exporting" @click="exportCsv">{{ exporting ? '导出中…' : '导出 CSV' }}</button></div></header>
+    <header class="block-header"><div><small>经营统计</small><h2>{{ definition.title || '自定义报表' }}</h2></div><div class="block-actions"><select v-model="viewOverride" aria-label="图表显示方式"><option value="">默认图表</option><option value="bar">条形图</option><option value="line">折线图</option><option value="donut">环形图</option><option value="table">仅表格</option></select><button v-if="can('reports', 'export')" :disabled="loading || !data || exporting" @click="exportCsv">{{ exporting ? '导出中…' : '导出 CSV' }}</button></div></header>
     <p v-if="loading" role="status">正在汇总完整数据…</p>
     <div v-else-if="error" role="alert" class="report-error">{{ error }} <button @click="load">重试</button></div>
     <template v-else-if="data">

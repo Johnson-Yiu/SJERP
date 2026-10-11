@@ -29,8 +29,10 @@ import { confirmAndDeleteSavedFollowUpAttachment, removeSavedFollowUpAttachmentF
 import { clearModalRoute } from '../utils/modalNavigation'
 import { routeDataQuery, routeDataQuerySignature } from '../utils/routePageState'
 import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuContext'
+import { useAccessControl } from '../accessControl'
 
 const props = defineProps({ config: Object })
+const { can } = useAccessControl()
 const route = useRoute()
 const router = useRouter()
 const isCustomerPage = computed(() => props.config.endpoint === 'customers')
@@ -96,6 +98,12 @@ const title = computed(() => editingId.value ? `编辑${props.config.title.repla
 const isCustomerCreate = computed(() => props.config.endpoint === 'customers' && !editingId.value)
 const isWideForm = computed(() => isCustomerCreate.value || ['follow-ups', 'suppliers'].includes(props.config.endpoint))
 const isTransactionPage = computed(() => props.config.endpoint === 'transactions')
+const accessModule = computed(() => ({
+  customers: 'customers', contacts: 'contacts', 'follow-ups': 'followups', suppliers: 'suppliers',
+  'inventory-movements': 'inventory', products: 'products', 'product-parameters': 'parameters',
+  'product-certificates': 'certificates', transactions: 'transactions', categories: 'categories',
+  'category-attributes': 'categories', 'sku-trade-units': 'trade_units',
+}[props.config.endpoint] || props.config.endpoint))
 const hasSkuContext = computed(() => props.config.endpoint === 'inventory-movements' && Boolean(skuContextId(route.query.sku)))
 const activeSkuContextLabel = computed(() => {
   const sku = movementSkus.value.find(sku => String(sku.id) === skuContextId(route.query.sku))
@@ -342,6 +350,7 @@ function isInherited(fieldName) {
   return !editingId.value && value !== undefined && value !== null && value !== ''
 }
 async function openCreate({ isCurrent = () => true } = {}) {
+  if (!can(accessModule.value, 'create')) return
   keepDetailOpen.value = false
   editingId.value = null; resetForm()
   if (props.config.endpoint === 'follow-ups' && !form.followed_at) form.followed_at = datetimeLocal()
@@ -358,6 +367,7 @@ async function openCreate({ isCurrent = () => true } = {}) {
   if (isCurrent()) { guard.markClean(); modalOpen.value = true }
 }
 async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}) {
+  if (!can(accessModule.value, 'update')) return
   if (!keepDetail) detailId.value = null
   keepDetailOpen.value = keepDetail
   editingId.value = row.id; resetForm(); await loadOptions()
@@ -424,6 +434,7 @@ function payload() {
   return data
 }
 async function save() {
+  if (!can(accessModule.value, editingId.value ? 'update' : 'create')) return
   if (saving.value) return
   if (!optionsReady.value) return notify('关联资料尚未加载完成，请重试后再保存。', true)
   if (supplierCodeError.value) return notify(supplierCodeError.value, true)
@@ -464,6 +475,7 @@ async function handleInventoryMovementCreated(records) {
   await load()
 }
 async function remove(row) {
+  if (!can(accessModule.value, 'delete')) return
   if (!await confirmDialog({ title: '确认删除', message: `确定删除“${row[props.config.key]}”吗？此操作无法撤销。`, confirmText: '确认删除', danger: true })) return
   try { await api.delete(`/${props.config.endpoint}/${row.id}/`); notify('删除成功'); await load() } catch (e) { notify(e.message, true) }
 }
@@ -564,7 +576,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 
 <template>
   <div class="resource-page" :class="{ 'finance-resource-page': isTransactionPage, 'inventory-ledger-page': isMovementPage, 'core-list-page': isCoreListPage }">
-    <div class="page-head" :class="{ 'list-intro': isCoreListPage }"><div><h2 v-if="!isCoreListPage">{{ config.title }}</h2><p>{{ config.description }}</p></div><button class="btn btn-primary" @click="openCreate"><Plus :size="16" /> {{ primaryAction }}</button></div>
+    <div class="page-head" :class="{ 'list-intro': isCoreListPage }"><div><h2 v-if="!isCoreListPage">{{ config.title }}</h2><p>{{ config.description }}</p></div><button v-if="can(accessModule, 'create')" class="btn btn-primary" @click="openCreate"><Plus :size="16" /> {{ primaryAction }}</button></div>
     <div v-if="isMovementPage && optionErrors.skus" class="option-load-error" role="alert">{{ optionErrors.skus }} <button type="button" @click="loadMovementSkus">重新加载 SKU 资料</button></div>
     <SummaryCards v-if="hasLoaded" :items="resourceMetrics" />
     <div v-if="isCertificatePage" class="certificate-filters" aria-label="证书有效期筛选"><button v-for="[value, label] in certificateFilters" :key="value" type="button" class="btn" :class="{ 'btn-primary': (route.query.expiry || '') === value }" :aria-pressed="(route.query.expiry || '') === value" @click="setCertificateFilter(value)">{{ label }}</button></div>
@@ -586,7 +598,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
       <div v-else-if="hasLoaded" class="table-wrap"><table class="data-table" :class="{ 'customer-list-table': isCustomerPage }"><thead><tr><th v-for="col in config.columns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
         <tr v-for="row in visibleRows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row.id)" @keydown.enter="openDetail(row.id)">
           <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><template v-if="isMovementPage && col[0] === 'sku_code'"><strong>{{ row.sku_code || row.sku_code_snapshot || '—' }}</strong><small class="ledger-secondary">{{ row.product_name || row.display_name }}</small><small v-if="movementUnit(row,movementSkus)" class="ledger-secondary">基础单位：{{ movementUnit(row,movementSkus) }}</small></template><span v-else-if="isMovementPage && col[0] === 'source_type'" class="ledger-source" :class="movementSource(row)">{{ sourceLabels[movementSource(row)] || '未标注' }}</span><span v-else-if="isMovementPage && col[0] === 'signed_quantity'" :class="cellClass('signed',row.signed_quantity)">{{ signedMovement(row,movementUnit(row,movementSkus)) }}</span><template v-else-if="isMovementPage && col[0] === 'reference'"><span>{{ row.reference || row.source_no || '—' }}</span><small class="ledger-secondary">{{ (row.related_order_nos || []).join('、') || row.order_no }}</small><small v-if="row.overage_summary" class="ledger-secondary">{{ row.overage_summary }}</small></template><span v-else-if="isMovementPage && col[0] === 'reversal_status'" :title="row.reversal_status">{{ movementStatus(row) }}</span><CertificateExpiryBadge v-else-if="isCertificatePage && col[0] === 'expiry_status'" :certificate="row" /><span v-else-if="isCustomerPage && col[0] === 'name'" class="customer-name" :title="row.name">{{ row.name }}</span><span v-else-if="isCustomerPage && col[0] === 'status'" class="status" :class="row.status" :title="row.status_display || statusLabels[row.status]">{{ customerListStatus(row.status, display(row.status, 'status', 'status')) }}</span><span v-else :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
-          <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="openDetail(row.id)"><ChevronRight :size="14" /></button><button v-if="!isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="canReverseInventoryMovement(row)" class="mini-btn danger" title="冲销" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
+          <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="openDetail(row.id)"><ChevronRight :size="14" /></button><button v-if="can(accessModule, 'update') && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="can('inventory', 'update') && canReverseInventoryMovement(row)" class="mini-btn danger" title="冲销" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="can(accessModule, 'delete') && config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
         </tr>
       </tbody></table></div>
     </div>
@@ -668,7 +680,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 
 
       </div>
-      <div class="modal-foot"><p v-if="config.endpoint === 'follow-ups' && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button class="btn btn-primary" :disabled="saving || !optionsReady || (config.endpoint === 'suppliers' && !!paymentTermsError(form.payment_terms_config))">{{ saving ? '保存中…' : saveLabel }}</button></div>
+      <div class="modal-foot"><p v-if="config.endpoint === 'follow-ups' && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (config.endpoint === 'suppliers' && !!paymentTermsError(form.payment_terms_config))">{{ saving ? '保存中…' : saveLabel }}</button></div>
     </form></div>
 
     <Transition name="detail-drawer" appear>

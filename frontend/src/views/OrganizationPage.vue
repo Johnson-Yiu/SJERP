@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { Building2, Check, ChevronRight, Crown, Database, KeyRound, ShieldCheck, UsersRound } from 'lucide-vue-next'
 import { api } from '../api'
+import { accessState } from '../accessControl'
 
 const data = ref({ units: [], roles: [], summary: {} })
 const loading = ref(true), saving = ref(false), error = ref(''), selectedRoleId = ref(null)
@@ -10,7 +11,7 @@ const company = computed(() => data.value.units.find(unit => unit.type === 'comp
 const departments = computed(() => data.value.units.filter(unit => unit.type === 'department'))
 const selectedRole = computed(() => data.value.roles.find(role => role.id === selectedRoleId.value) || data.value.roles[0])
 const globalRoles = computed(() => data.value.roles.filter(role => ['superadmin', 'admin'].includes(role.code)).sort((a, b) => a.priority - b.priority))
-const canEditSelected = computed(() => selectedRole.value && selectedRole.value.code !== 'superadmin')
+const canEditSelected = computed(() => accessState.operator?.can_manage_permissions === true && selectedRole.value && selectedRole.value.code !== 'superadmin')
 const roleByPosition = {
   SALES_MANAGER: 'sales_manager', SALESPERSON: 'salesperson', MERCHANDISER: 'merchandiser',
   OPS_MANAGER: 'ops_manager', WEBSITE_OPS: 'website_ops', PLATFORM_OPS: 'platform_ops',
@@ -105,7 +106,7 @@ onMounted(load)
         <section v-if="selectedRole" class="panel matrix-panel">
           <div class="role-header">
             <div><span class="role-code">{{ selectedRole.code }}</span><h3>{{ selectedRole.name }}</h3><p>{{ selectedRole.description }}</p></div>
-            <div class="role-header-actions"><div class="scope-card"><small>默认数据范围</small><strong>{{ selectedRole.default_data_scope_display }}</strong></div><button class="btn btn-primary" :disabled="!canEditSelected || saving" @click="savePermissions">{{ selectedRole.code === 'superadmin' ? '最高权限已锁定' : saving ? '保存中...' : '保存权限' }}</button></div>
+            <div class="role-header-actions"><div class="scope-card"><small>默认数据范围</small><strong>{{ selectedRole.default_data_scope_display }}</strong></div><button v-if="accessState.operator?.can_manage_permissions" class="btn btn-primary" :disabled="!canEditSelected || saving" @click="savePermissions">{{ selectedRole.code === 'superadmin' ? '最高权限已锁定' : saving ? '保存中...' : '保存权限' }}</button></div>
           </div>
           <div class="table-wrap"><table class="permission-table"><thead><tr><th>功能模块</th><th v-for="action in actions" :key="action[0]">{{ action[1] }}</th></tr></thead><tbody>
             <tr v-for="module in data.modules" :key="module.code"><td>{{ module.name }}</td><td v-for="action in actions" :key="action[0]"><label class="permission-check"><input type="checkbox" :checked="permissionFor(module.code)[action[0]]" :disabled="!canEditSelected" :aria-label="`${selectedRole.name} ${module.name} ${action[1]}`" @change="updatePermission(module.code, action[0], $event.target.checked)" /><span><Check :size="12" /></span></label></td></tr>

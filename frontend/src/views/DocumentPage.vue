@@ -28,11 +28,14 @@ import { orderDetailLocation, quoteDetailLocation, workbenchCloseLocation } from
 import { documentDetailState, withDocumentDetailQuery, withoutDocumentDetailQuery } from '../utils/documentDetailRoute'
 import { routeDataQuery, routeDataQuerySignature } from '../utils/routePageState'
 import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuContext'
+import { useAccessControl } from '../accessControl'
 
 const props = defineProps({ type: String })
+const { can } = useAccessControl()
 const route = useRoute()
 const router = useRouter()
 const isOrder = computed(() => props.type === 'orders')
+const accessModule = computed(() => isOrder.value ? 'orders' : 'quotes')
 const inheritedCustomer = computed(() => isOrder.value && Boolean(route.query.customer))
 const copy = computed(() => isOrder.value ? {
   title: '订单管理', description: '管理订单、交付和收款进度。', no: 'order_no', noLabel: '订单号', date: 'order_date', dateLabel: '订单日期', statuses: { draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
@@ -129,6 +132,7 @@ async function loadOptions() {
   return results.every(Boolean)
 }
 async function create({ isCurrent = () => true } = {}) {
+  if (!can(accessModule.value, 'create')) return
   if (!isOrder.value) {
     if (!await loadOptions()) return
     if (!isCurrent()) return
@@ -142,6 +146,7 @@ async function create({ isCurrent = () => true } = {}) {
   if (await loadOptions() && isCurrent()) { guard.markClean(); open.value = true }
 }
 async function edit(row, { closeDetail = true, isCurrent = () => true } = {}) {
+  if (!can(accessModule.value, 'update')) return
   if (closeDetail) await closeDocumentDetail()
   if (!isOrder.value) {
     if (!await loadOptions()) return
@@ -223,6 +228,7 @@ async function changeSourceQuote(event) {
 const subtotal = computed(() => (form.items || []).reduce((sum, i) => sum + Number(i.quantity || 0) * Number(i.unit_price || 0), 0))
 const total = computed(() => subtotal.value + Number(form.shipping_fee || 0) - Number(form.discount || 0))
 async function save() {
+  if (!can(accessModule.value, editingId.value ? 'update' : 'create')) return
   if (saving.value || sourceQuoteLoading.value) return
   if (!form.items.length || form.items.some(i => !i.sku)) return notify('请至少添加一条有效的 SKU 明细。', true)
   if (form.items.some(i => Number(i.quantity) <= 0)) return notify('每条 SKU 明细的数量必须大于 0。', true)
@@ -258,8 +264,8 @@ async function handleQuoteSaved(row) {
   if (!origin) await router.push(withDocumentDetailQuery(route, row.id))
 }
 async function handleQuoteStatusUpdated() { await load() }
-async function exportQuote(row) { try { await downloadQuoteExport(row.id, row.quote_no) } catch (e) { notify(`导出 ${row.quote_no} 失败：${e.message}`, true) } }
-async function remove(row) { if (!isOrder.value || !await confirmDialog({ title: '确认删除订单', message: `确定删除 ${row[copy.value.no]} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/${props.type}/${row.id}/`); notify('已删除'); load() } catch (e) { notify(e.message, true) } }
+async function exportQuote(row) { if (!can('quotes', 'export')) return; try { await downloadQuoteExport(row.id, row.quote_no) } catch (e) { notify(`导出 ${row.quote_no} 失败：${e.message}`, true) } }
+async function remove(row) { if (!isOrder.value || !can('orders', 'delete') || !await confirmDialog({ title: '确认删除订单', message: `确定删除 ${row[copy.value.no]} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/${props.type}/${row.id}/`); notify('已删除'); load() } catch (e) { notify(e.message, true) } }
 function delayed() {
   clearTimeout(timer)
   timer = setTimeout(() => {
@@ -411,6 +417,7 @@ function resetQuoteFilters() {
 }
 function reviseFromDetail(row) { if (row) edit(row, { closeDetail: false }) }
 async function openOrderDraft(sourceQuote) {
+  if (!can('orders', 'create')) return
   if (!await loadOptions()) return
   try {
     const quoteId = typeof sourceQuote === 'object' ? sourceQuote.id : sourceQuote
@@ -456,7 +463,7 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
 
 <template>
   <div class="core-list-page">
-    <div class="page-head list-intro"><p>{{ copy.description }}</p><button class="btn btn-primary" :disabled="optionLoading" @click="create"><Plus :size="16" /> 新建{{ isOrder ? '订单' : '报价' }}</button></div>
+    <div class="page-head list-intro"><p>{{ copy.description }}</p><button v-if="can(accessModule, 'create')" class="btn btn-primary" :disabled="optionLoading" @click="create"><Plus :size="16" /> 新建{{ isOrder ? '订单' : '报价' }}</button></div>
     <SummaryCards v-if="isOrder && hasLoaded" :items="orderMetrics" />
     <SkuContextBanner v-if="hasSkuContext" :label="activeSkuContextLabel" @clear="clearSkuFilter" />
     <section v-if="!isOrder && hasLoaded" class="quote-metrics" aria-label="报价汇总"><article><span>报价项目</span><strong>{{ quoteMetrics.projects }}</strong><i class="metric-icon mint"><FolderOpen :size="19" /></i><small>报价主单数</small></article><article><span>报价版本</span><strong>{{ quoteMetrics.versions }}</strong><i class="metric-icon blue"><FileText :size="19" /></i><small>含所有修订版</small></article><article><span>进行中</span><strong>{{ quoteMetrics.pending }}</strong><i class="metric-icon amber"><Clock3 :size="19" /></i><small>草稿或已发送</small></article><article><span>已接受</span><strong>{{ quoteMetrics.accepted }}</strong><i class="metric-icon green"><CircleCheck :size="19" /></i><small>客户已接受</small></article></section>
@@ -467,10 +474,10 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
       <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
       <ListEmptyState v-if="hasLoaded && !rows.length" :entity="isOrder ? '订单' : '报价'" :filtered="filteredDocumentEmpty" @clear="clearDocumentFilters"><template #action><p>点击“新建{{ isOrder ? '订单' : '报价' }}”开始录入。</p></template></ListEmptyState>
       <div v-else-if="hasLoaded && isOrder && rows.length" class="table-wrap"><table class="data-table order-list-table"><thead><tr><th>{{ copy.noLabel }}</th><th>客户</th><th>订单日期</th><th>预计交期</th><th>状态</th><th>明细</th><th>订单金额</th><th>已收 / 待收</th><th style="text-align:right">操作</th></tr></thead>
-        <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row)" @keydown.enter="openDetail(row)"><td class="primary-cell">{{ row[copy.no] }}</td><td>{{ row.customer_name }}</td><td>{{ row.order_date || '—' }}</td><td><span :class="{ muted: !row.expected_ship_date }">{{ row.expected_ship_date || '未设置' }}</span><small v-if="deliveryState(row)" class="delivery-helper" :class="deliveryState(row).kind">{{ deliveryState(row).label }}</small></td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><template v-if="row.status === 'draft'"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">尚未生效</span></template><template v-else-if="row.status === 'cancelled'"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">已取消</span></template><template v-else><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></template></td><td><div class="table-actions"><button v-if="row.status === 'draft'" class="mini-btn" :aria-label="`编辑 ${row[copy.no]}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button v-if="row.status === 'draft'" class="mini-btn" :aria-label="`删除 ${row[copy.no]}`" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
+        <tbody><tr v-for="row in rows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row)" @keydown.enter="openDetail(row)"><td class="primary-cell">{{ row[copy.no] }}</td><td>{{ row.customer_name }}</td><td>{{ row.order_date || '—' }}</td><td><span :class="{ muted: !row.expected_ship_date }">{{ row.expected_ship_date || '未设置' }}</span><small v-if="deliveryState(row)" class="delivery-helper" :class="deliveryState(row).kind">{{ deliveryState(row).label }}</small></td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><template v-if="row.status === 'draft'"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">尚未生效</span></template><template v-else-if="row.status === 'cancelled'"><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">已取消</span></template><template v-else><span class="paid">{{ money(row.paid_amount) }}</span> / <span class="owing">{{ money(row.balance_amount) }}</span></template></td><td><div class="table-actions"><button v-if="can('orders', 'update') && row.status === 'draft'" class="mini-btn" :aria-label="`编辑 ${row[copy.no]}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button v-if="can('orders', 'delete') && row.status === 'draft'" class="mini-btn" :aria-label="`删除 ${row[copy.no]}`" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td></tr></tbody>
       </table></div>
       <div v-else-if="hasLoaded && rows.length" class="table-wrap"><table class="data-table quote-table"><thead><tr><th>报价单 / 层级</th><th>客户</th><th>更新时间</th><th>状态</th><th>明细</th><th>金额</th><th style="text-align:right">操作</th></tr></thead>
-        <tbody><tr v-for="row in quoteTreeRows" :key="row.id" class="clickable-row quote-tree-row" :class="{ 'quote-root-row': row.isRoot, 'quote-child-row': !row.isRoot }" tabindex="0" @click="activateQuoteTreeRow(row)" @keydown.enter="activateQuoteTreeRow(row)"><td class="primary-cell"><div class="quote-tree-cell" :style="{ '--tree-depth': row.depth }"><span class="tree-indent" /><button v-if="row.hasChildren" class="quote-expand" :aria-label="`${expandedQuoteNodes.has(row.id) ? '收起' : '展开'} ${row.quote_no} 的修订报价`" @click.stop="toggleQuoteNode(row.id)" @keydown.enter.stop><ChevronDown v-if="expandedQuoteNodes.has(row.id)" :size="16" /><ChevronRight v-else :size="16" /></button><span v-else class="quote-expand-placeholder" /><span v-if="!row.isRoot" class="tree-branch" /><component :is="row.isRoot ? FolderOpen : row.depth > 1 ? FilePenLine : FileText" :size="18" class="quote-tree-icon" :class="row.isRoot ? 'root-icon' : 'revision-icon'" /><span class="quote-tree-copy"><strong>{{ row.quote_no }}</strong><small>{{ row.isRoot ? '原始报价' : (row.revision_summary || `基于 ${row.parent_quote_no} 修订`) }}</small></span></div></td><td>{{ row.customer_name }}</td><td>{{ documentTimestamp(row) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><div class="table-actions"><button class="mini-btn" :aria-label="`查看 ${row.quote_no}`" @click.stop="openDetail(row)"><Eye :size="14" /></button><button class="mini-btn" :aria-label="`创建修订版 ${row.quote_no}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button class="mini-btn" :aria-label="`导出 ${row.quote_no}`" @click.stop="exportQuote(row)"><Download :size="14" /></button></div></td></tr></tbody>
+        <tbody><tr v-for="row in quoteTreeRows" :key="row.id" class="clickable-row quote-tree-row" :class="{ 'quote-root-row': row.isRoot, 'quote-child-row': !row.isRoot }" tabindex="0" @click="activateQuoteTreeRow(row)" @keydown.enter="activateQuoteTreeRow(row)"><td class="primary-cell"><div class="quote-tree-cell" :style="{ '--tree-depth': row.depth }"><span class="tree-indent" /><button v-if="row.hasChildren" class="quote-expand" :aria-label="`${expandedQuoteNodes.has(row.id) ? '收起' : '展开'} ${row.quote_no} 的修订报价`" @click.stop="toggleQuoteNode(row.id)" @keydown.enter.stop><ChevronDown v-if="expandedQuoteNodes.has(row.id)" :size="16" /><ChevronRight v-else :size="16" /></button><span v-else class="quote-expand-placeholder" /><span v-if="!row.isRoot" class="tree-branch" /><component :is="row.isRoot ? FolderOpen : row.depth > 1 ? FilePenLine : FileText" :size="18" class="quote-tree-icon" :class="row.isRoot ? 'root-icon' : 'revision-icon'" /><span class="quote-tree-copy"><strong>{{ row.quote_no }}</strong><small>{{ row.isRoot ? '原始报价' : (row.revision_summary || `基于 ${row.parent_quote_no} 修订`) }}</small></span></div></td><td>{{ row.customer_name }}</td><td>{{ documentTimestamp(row) }}</td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.items.length }} 项</td><td class="amount">{{ row.currency }} {{ money(row.total_amount) }}</td><td><div class="table-actions"><button class="mini-btn" :aria-label="`查看 ${row.quote_no}`" @click.stop="openDetail(row)"><Eye :size="14" /></button><button v-if="can('quotes', 'update')" class="mini-btn" :aria-label="`创建修订版 ${row.quote_no}`" @click.stop="edit(row)"><Pencil :size="14" /></button><button v-if="can('quotes', 'export')" class="mini-btn" :aria-label="`导出 ${row.quote_no}`" @click.stop="exportQuote(row)"><Download :size="14" /></button></div></td></tr></tbody>
       </table></div>
     </div>
 

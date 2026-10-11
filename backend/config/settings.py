@@ -91,7 +91,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
+    "DEFAULT_PERMISSION_CLASSES": ["crm.permissions.ModuleActionPermission"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 50,
     "DEFAULT_FILTER_BACKENDS": [
@@ -99,3 +99,8 @@ REST_FRAMEWORK = {
         "rest_framework.filters.OrderingFilter",
     ],
 }
+
+# The legacy business-flow suite models the local unauthenticated development
+# operator. RBAC-specific tests override these values to exercise restricted
+# and production behavior explicitly.
+TEST_RUNNER = "crm.test_runner.DevelopmentAccessTestRunner"

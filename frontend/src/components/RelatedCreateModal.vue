@@ -15,9 +15,11 @@ import SkuPickerPanel from './SkuPickerPanel.vue'
 import SimpleRichTextEditor from './SimpleRichTextEditor.vue'
 import SegmentedDateInput from './SegmentedDateInput.vue'
 import { addDays, daysBetween } from '../utils/orderDate'
+import { useAccessControl } from '../accessControl'
 
 const props = defineProps({ entity: String, query: { type: Object, default: () => ({}) } })
 const emit = defineEmits(['close', 'saved'])
+const { can } = useAccessControl()
 const saving = ref(false)
 const loading = ref(true)
 const error = ref('')
@@ -41,6 +43,7 @@ const tailPolicyHelpOpen = ref(false)
 const tailPolicyLabels = { SAME_CARTON: '整箱优先', REPACK: '尾箱待确认', MANUAL: '人工装箱' }
 
 const config = computed(() => resourceConfigs[props.entity])
+const accessModule = computed(() => ({ 'follow-ups': 'followups', 'product-parameters': 'parameters', 'product-certificates': 'certificates', 'purchase-orders': 'purchases' }[props.entity] || props.entity))
 const isQuote = computed(() => props.entity === 'quotes')
 const isDocument = computed(() => props.entity === 'orders')
 const quoteSeed = ref(null)
@@ -294,6 +297,7 @@ function payloadGeneric() {
   return data
 }
 async function save() {
+  if (!can(accessModule.value, 'create')) return
   if (isQuote.value) return
   if (props.entity === 'follow-ups' && followUpError(form)) { error.value = followUpError(form); return }
   saving.value = true
@@ -339,8 +343,8 @@ onMounted(init)
 
 <template>
   <Teleport to="body">
-    <QuoteEditorModal v-if="isQuote && !loading && !error" class="related-quote-editor" :quote="quoteSeed" :customers="customers" :skus="visibleDocumentSkus" mode="create" @saved="savedQuote = $event" @close="closeQuote" />
-    <div v-else class="modal-backdrop related-create-backdrop" @mousedown.self="requestClose">
+    <QuoteEditorModal v-if="isQuote && can('quotes', 'create') && !loading && !error" class="related-quote-editor" :quote="quoteSeed" :customers="customers" :skus="visibleDocumentSkus" mode="create" @saved="savedQuote = $event" @close="closeQuote" />
+    <div v-else-if="can(accessModule, 'create')" class="modal-backdrop related-create-backdrop" @mousedown.self="requestClose">
       <form class="modal related-create-modal" @submit.prevent="save">
         <div class="modal-head">
           <h3>{{ title }}</h3>
@@ -428,6 +432,7 @@ onMounted(init)
         </div>
       </form>
     </div>
+    <p v-else class="related-create-denied" role="alert">无权新建此类记录。</p>
   </Teleport>
 </template>
 

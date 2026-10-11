@@ -3,7 +3,9 @@ import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { api, listAll } from '../api'
 import SkuPickerPanel from '../components/SkuPickerPanel.vue'
+import { useAccessControl } from '../accessControl'
 const route = useRoute()
+const { can } = useAccessControl()
 const skus = ref([]), suppliers = ref([]), units = ref([]), selected = ref(route.query.sku || ''), error = ref(''), loading = ref(false), saving = ref(false)
 watch(() => route.query.sku, value => { selected.value = value || '' })
 const form = reactive({ name: '', unit: '卷', factor: '', supplier: '', allow_fraction: false, is_default: false, notes: '' })
@@ -20,6 +22,7 @@ async function load() {
   catch (e) { error.value = message(e) } finally { loading.value = false }
 }
 async function create() {
+  if (!can('trade_units', 'create')) return
   saving.value = true; error.value = ''
   try {
     await api.post('/sku-trade-units/', { ...form, sku: Number(selected.value), supplier: form.supplier ? Number(form.supplier) : null })
@@ -27,6 +30,7 @@ async function create() {
   } catch (e) { error.value = message(e) } finally { saving.value = false }
 }
 async function change(row, patch) {
+  if (!can('trade_units', 'update')) return
   saving.value = true; error.value = ''
   try { await api.patch(`/sku-trade-units/${row.id}/`, patch); await load() }
   catch (e) { error.value = message(e) } finally { saving.value = false }
@@ -45,8 +49,8 @@ onMounted(load)
       </SkuPickerPanel>
     </section>
     <div class="units-layout">
-      <section class="panel"><h3>包装规格 <small>{{ rows.length }} 项</small></h3><p v-if="loading">正在加载…</p><p v-else-if="!rows.length">暂无规格。选择 SKU 后添加，例如 10 米/卷、20 米/卷。</p><div class="table-wrap"><table v-if="rows.length" class="data-table"><thead><tr><th>SKU / 规格</th><th>换算关系</th><th>供应商</th><th>数量规则</th><th>状态</th><th>操作</th></tr></thead><tbody><tr v-for="row in rows" :key="row.id"><td>{{ row.name }}<small>{{ row.sku_code }}</small></td><td>1 {{ row.unit }} = {{ row.factor }} {{ row.base_unit }}</td><td>{{ row.supplier_name || '通用' }}</td><td>{{ row.allow_fraction ? '允许小数' : '整包装' }}</td><td>{{ row.active ? '启用' : '停用' }}{{ row.is_default ? ' · 默认' : '' }}</td><td><button :disabled="saving" class="btn btn-secondary" @click="change(row, { active: !row.active })">{{ row.active ? '停用' : '启用' }}</button><button v-if="row.active && row.is_default" :disabled="saving" class="btn btn-secondary" @click="change(row, { is_default: false })">取消默认</button><button v-if="row.active && !row.is_default" :disabled="saving" class="btn btn-secondary" @click="change(row, { is_default: true })">设为默认</button></td></tr></tbody></table></div></section>
-      <form class="panel unit-form" @submit.prevent="create"><h3>新增规格</h3><p>{{ sku ? `${sku.display_name_cn || sku.sku} · 基础单位：${sku.unit}` : '请先选择一个 SKU' }}</p><label>规格名称<input v-model.trim="form.name" placeholder="例如：10 米卷" maxlength="120" required /></label><div class="unit-pair"><label>交易单位<input v-model.trim="form.unit" maxlength="30" required /></label><label>每单位含 {{ sku?.unit || '基础数量' }}<input v-model="form.factor" type="number" min="0.01" step="0.01" required /></label></div><label>供应商（可选）<select v-model="form.supplier"><option value="">通用规格</option><option v-for="s in suppliers" :key="s.id" :value="s.id">{{ s.name }}</option></select></label><label class="check"><input v-model="form.allow_fraction" type="checkbox" />允许非整包装数量</label><label class="check"><input v-model="form.is_default" type="checkbox" />设为默认规格</label><label>备注<textarea v-model="form.notes" /></label><p class="hint">规格保存后，名称、单位及换算关系固定。变更卷长时停用旧规格并新增，历史单据保留原始快照。装箱模板中的容量和单重仍按基础单位填写。</p><button class="btn btn-primary" :disabled="!sku || saving">{{ saving ? '保存中…' : '添加规格' }}</button></form>
+      <section class="panel"><h3>包装规格 <small>{{ rows.length }} 项</small></h3><p v-if="loading">正在加载…</p><p v-else-if="!rows.length">暂无规格。选择 SKU 后添加，例如 10 米/卷、20 米/卷。</p><div class="table-wrap"><table v-if="rows.length" class="data-table"><thead><tr><th>SKU / 规格</th><th>换算关系</th><th>供应商</th><th>数量规则</th><th>状态</th><th>操作</th></tr></thead><tbody><tr v-for="row in rows" :key="row.id"><td>{{ row.name }}<small>{{ row.sku_code }}</small></td><td>1 {{ row.unit }} = {{ row.factor }} {{ row.base_unit }}</td><td>{{ row.supplier_name || '通用' }}</td><td>{{ row.allow_fraction ? '允许小数' : '整包装' }}</td><td>{{ row.active ? '启用' : '停用' }}{{ row.is_default ? ' · 默认' : '' }}</td><td><button v-if="can('trade_units', 'update')" :disabled="saving" class="btn btn-secondary" @click="change(row, { active: !row.active })">{{ row.active ? '停用' : '启用' }}</button><button v-if="can('trade_units', 'update') && row.active && row.is_default" :disabled="saving" class="btn btn-secondary" @click="change(row, { is_default: false })">取消默认</button><button v-if="can('trade_units', 'update') && row.active && !row.is_default" :disabled="saving" class="btn btn-secondary" @click="change(row, { is_default: true })">设为默认</button></td></tr></tbody></table></div></section>
+      <form v-if="can('trade_units', 'create')" class="panel unit-form" @submit.prevent="create"><h3>新增规格</h3><p>{{ sku ? `${sku.display_name_cn || sku.sku} · 基础单位：${sku.unit}` : '请先选择一个 SKU' }}</p><label>规格名称<input v-model.trim="form.name" placeholder="例如：10 米卷" maxlength="120" required /></label><div class="unit-pair"><label>交易单位<input v-model.trim="form.unit" maxlength="30" required /></label><label>每单位含 {{ sku?.unit || '基础数量' }}<input v-model="form.factor" type="number" min="0.01" step="0.01" required /></label></div><label>供应商（可选）<select v-model="form.supplier"><option value="">通用规格</option><option v-for="s in suppliers" :key="s.id" :value="s.id">{{ s.name }}</option></select></label><label class="check"><input v-model="form.allow_fraction" type="checkbox" />允许非整包装数量</label><label class="check"><input v-model="form.is_default" type="checkbox" />设为默认规格</label><label>备注<textarea v-model="form.notes" /></label><p class="hint">规格保存后，名称、单位及换算关系固定。变更卷长时停用旧规格并新增，历史单据保留原始快照。装箱模板中的容量和单重仍按基础单位填写。</p><button class="btn btn-primary" :disabled="!sku || saving">{{ saving ? '保存中…' : '添加规格' }}</button></form>
     </div>
   </div>
 </template>

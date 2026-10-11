@@ -13,6 +13,7 @@ import QuotePreviewModal from './QuotePreviewModal.vue'
 import SkuPickerPanel from './SkuPickerPanel.vue'
 import SegmentedDateInput from './SegmentedDateInput.vue'
 import { addDays, daysBetween } from '../utils/orderDate'
+import { useAccessControl } from '../accessControl'
 
 const props = defineProps({
   quote: { type: Object, default: null },
@@ -21,6 +22,7 @@ const props = defineProps({
   mode: { type: String, required: true, validator: value => ['create', 'revise'].includes(value) },
 })
 const emit = defineEmits(['close', 'saved'])
+const { can } = useAccessControl()
 
 /*
  * Task 4 manual acceptance checklist (verified):
@@ -273,6 +275,7 @@ async function openPreview() {
 }
 async function save(shouldExport = false) {
   if (saving.value) return
+  if (shouldExport && !can('quotes', 'export')) return
   errorMessage.value = validate()
   if (errorMessage.value) return
   saving.value = true; exportError.value = ''
@@ -290,7 +293,7 @@ async function save(shouldExport = false) {
   finally { saving.value = false }
 }
 async function retryExport() {
-  if (!savedQuote.value) return
+  if (!savedQuote.value || !can('quotes', 'export')) return
   saving.value = true
   try { await downloadQuoteExport(savedQuote.value.id, savedQuote.value.quote_no); emit('close') }
   catch (error) { exportError.value = `Excel 导出仍未完成：${error.message}` }
@@ -305,7 +308,7 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) await sel
       <div class="modal-head"><div><h3>{{ mode === 'revise' ? '创建报价修订版' : '新建报价' }}</h3><small>{{ mode === 'revise' ? `基于 ${quote.quote_no} · 将创建新版本，原报价保留。` : '报价草稿' }}</small></div><button type="button" class="mini-btn" aria-label="关闭报价编辑器" @click="requestClose"><X :size="17" /></button></div>
       <div class="modal-body">
         <div v-if="errorMessage" class="quote-message error">{{ errorMessage }}</div>
-        <div v-if="exportError" class="quote-message warning"><span>{{ exportError }}</span><button type="button" class="btn btn-secondary" :disabled="saving" @click="retryExport"><RotateCw :size="15" /> 重新导出 Excel</button></div>
+        <div v-if="exportError" class="quote-message warning"><span>{{ exportError }}</span><button v-if="can('quotes', 'export')" type="button" class="btn btn-secondary" :disabled="saving" @click="retryExport"><RotateCw :size="15" /> 重新导出 Excel</button></div>
         <div v-if="draft.items.some(item => { const sku = skus.find(row => row.id === Number(item.sku)); return item.sku && !(item.sales_model_snapshot || sku?.sales_model) })" class="quote-message warning">有 SKU 尚未设置对外商业型号；报价仍可保存，但客户版 Model 将留空，请先确认是否需要补充。</div>
         <fieldset :disabled="!initialized || Boolean(savedQuote)">
           <div class="form-grid">
@@ -342,7 +345,7 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) await sel
           <div class="form-grid"><div class="field full"><label>贸易条款</label><textarea v-model="draft.trading_terms" /></div><div class="field full"><label>运输信息</label><textarea v-model="draft.shipping_details" /></div><div class="field full"><label>附加备注</label><textarea v-model="draft.notes" /></div></div>
         </fieldset>
       </div>
-      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="requestClose">取消</button><button v-if="!savedQuote" type="button" class="btn btn-secondary" @click="openPreview"><Eye :size="16" /> 预览报价单</button><button v-if="!savedQuote" type="button" class="btn btn-primary" :disabled="saving" @click="save(false)"><Save :size="16" /> {{ saving ? '保存中...' : '保存报价' }}</button><button v-if="!savedQuote" type="button" class="btn btn-secondary" :disabled="saving" @click="save(true)"><Save :size="16" /> {{ saving ? '保存中...' : '保存并导出 Excel' }}</button></div>
+      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="requestClose">取消</button><button v-if="!savedQuote" type="button" class="btn btn-secondary" @click="openPreview"><Eye :size="16" /> 预览报价单</button><button v-if="!savedQuote" type="button" class="btn btn-primary" :disabled="saving" @click="save(false)"><Save :size="16" /> {{ saving ? '保存中...' : '保存报价' }}</button><button v-if="!savedQuote && can('quotes', 'export')" type="button" class="btn btn-secondary" :disabled="saving" @click="save(true)"><Save :size="16" /> {{ saving ? '保存中...' : '保存并导出 Excel' }}</button></div>
     </form>
     <div v-if="packagingSku" class="modal-backdrop packaging-config-backdrop" @mousedown.self="requestPackagingClose"><form class="modal packaging-config-modal" @submit.prevent="savePackaging"><div class="modal-head"><div><h3>补充 SKU 默认包装</h3><small>{{ packagingSku.sku }} · 保存后将作为该 SKU 的默认包装配置</small></div><button type="button" class="mini-btn" @click="requestPackagingClose"><X :size="17" /></button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>包装模板 *</label><select v-model="packagingForm.template" required><option value="">请选择包装模板</option><option v-for="template in packagingTemplates" :key="template.id" :value="template.id">{{ template.name }}<template v-if="template.supplier_name"> · {{ template.supplier_name }}</template></option></select></div><div class="field"><label>装箱数 (pcs) *</label><input v-model="packagingForm.qty_per_carton" type="number" min="0.01" step="0.01" required /></div><div class="field"><label>单件净重 (kg) *</label><input v-model="packagingForm.unit_net_weight" type="number" min="0" step="0.001" required /></div></div></div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="requestPackagingClose">取消</button><button class="btn btn-primary" :disabled="packagingSaving"><PackageCheck :size="15" /> {{ packagingSaving ? '保存中...' : '保存默认包装' }}</button></div></form></div>
     <QuotePreviewModal v-if="previewOpen" :draft="previewDraft" @close="previewOpen = false" />

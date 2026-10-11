@@ -19,14 +19,14 @@ from django.core import signing
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import permissions, serializers, status, viewsets
-from rest_framework.decorators import action, api_view, parser_classes
+from rest_framework.decorators import action, api_view, parser_classes, permission_classes
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, Supplier, SupplierSKU, Transaction
 from .querysets import current_due_follow_ups, prefetch_purchase_related_orders
-from .permissions import HSCodeMaintenancePermission, PermissionAdminOnly, QuoteExportPermission
+from .permissions import HSCodeMaintenancePermission, ModuleActionPermission, PermissionAdminOnly, QuoteExportPermission, _profile_for, effective_permission_matrix, has_all_permissions, is_permission_admin, user_can
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
@@ -77,7 +77,7 @@ def usd_cny_reference_rate(request):
 class OperationLogViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = OperationLogSerializer
     queryset = OperationLog.objects.select_related("operator", "content_type")
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [ModuleActionPermission]
     search_fields = ["entity", "entity_label", "object_id", "object_label", "action_label", "operator__username"]
     ordering_fields = ["created_at", "entity", "action"]
 
@@ -314,7 +314,7 @@ class AccessRoleViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = AccessRoleSerializer
     queryset = AccessRole.objects.prefetch_related("permissions").annotate(employee_count=Count("employees", distinct=True)).order_by("priority", "id")
     search_fields = ["name", "code", "description"]
-    permission_classes = [PermissionAdminOnly]
+    permission_classes = [ModuleActionPermission, PermissionAdminOnly]
 
     @action(detail=True, methods=["post"], url_path="permission-matrix")
     @transaction.atomic
@@ -346,7 +346,7 @@ class AccessRoleViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 class RolePermissionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = RolePermissionSerializer
     queryset = RolePermission.objects.select_related("role")
-    permission_classes = [PermissionAdminOnly]
+    permission_classes = [ModuleActionPermission, PermissionAdminOnly]
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -380,26 +380,41 @@ def organization_overview(request):
 
 
 @api_view(["GET"])
+@permission_classes([permissions.AllowAny])
 def current_operator(request):
     from django.conf import settings
-    from .permissions import development_superadmin_enabled, is_permission_admin
+    from .permissions import development_superadmin_enabled
+
+    matrix = effective_permission_matrix(request.user)
+    complete = has_all_permissions(request.user)
+    can_manage = is_permission_admin(request.user)
+    permission_payload = {
+        module: {action: bool(value) for action, value in actions.items()}
+        for module, actions in matrix.items()
+    }
 
     if development_superadmin_enabled():
-        profile = getattr(request.user, "employee_profile", None)
+        profile = _profile_for(request.user)
         name = (profile.display_name if profile else request.user.get_full_name() or request.user.username) if request.user.is_authenticated else settings.DEFAULT_OPERATOR_NAME
         return Response({"name": name, "role": "超级管理员", "authenticated": request.user.is_authenticated,
-                         "development_superadmin": True, "has_all_permissions": True, "data_scope": "all", "can_manage_hs_codes": True,
+                         "development_superadmin": True, "rbac_enforcement": settings.RBAC_ENFORCEMENT,
+                         "has_all_permissions": True, "can_manage_permissions": True, "permissions": permission_payload,
+                         "data_scope": "all", "can_manage_hs_codes": True,
                          "audit_log_enabled": bool(request.user.is_authenticated and settings.AUDIT_LOG_ENABLED)})
 
     if request.user.is_authenticated:
-        profile = getattr(request.user, "employee_profile", None)
+        profile = _profile_for(request.user)
         name = profile.display_name if profile else request.user.get_full_name() or request.user.username
-        roles = list(profile.roles.values_list("name", flat=True)) if profile else []
+        roles = list(profile.roles.filter(active=True).values_list("name", flat=True)) if profile and profile.active else []
         role = "超级管理员" if request.user.is_superuser else "、".join(roles) or "未分配角色"
         return Response({"name": name, "role": role, "authenticated": True, "development_superadmin": False,
-                         "has_all_permissions": request.user.is_superuser, "can_manage_hs_codes": is_permission_admin(request.user), "audit_log_enabled": settings.AUDIT_LOG_ENABLED})
+                         "rbac_enforcement": settings.RBAC_ENFORCEMENT, "has_all_permissions": complete,
+                         "can_manage_permissions": can_manage, "permissions": permission_payload,
+                         "can_manage_hs_codes": can_manage, "audit_log_enabled": settings.AUDIT_LOG_ENABLED})
     return Response({"name": "未登录", "role": "未登录", "authenticated": False, "development_superadmin": False,
-                     "has_all_permissions": False, "can_manage_hs_codes": False, "audit_log_enabled": False})
+                     "rbac_enforcement": settings.RBAC_ENFORCEMENT, "has_all_permissions": complete,
+                     "can_manage_permissions": False, "permissions": permission_payload,
+                     "can_manage_hs_codes": False, "audit_log_enabled": False})
 
 
 class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
@@ -778,6 +793,19 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             qs = qs.filter(active=True)
         return qs.filter(product_id=self.request.query_params["product"]) if self.request.query_params.get("product") else qs
 
+    @action(detail=False, methods=["get"], url_path="inventory-list")
+    def inventory_list(self, request):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page if page is not None else queryset, many=True)
+        inventory_fields = (
+            "id", "sku", "display_name_cn", "product_name", "product_code", "unit",
+            "stock_quantity", "actual_quantity", "reserved_quantity", "available_quantity",
+            "in_transit_quantity", "to_procure_quantity", "has_anomaly",
+        )
+        rows = [{field: row[field] for field in inventory_fields} for row in serializer.data]
+        return self.get_paginated_response(rows) if page is not None else Response(rows)
+
     def filter_queryset(self, queryset):
         # SearchFilter cannot express historical-version hits without then
         # filtering them away again, so SKU owns this one search contract.
@@ -841,8 +869,11 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         shipments = Shipment.objects.filter(items__sku=sku).select_related("order__customer").prefetch_related("items").distinct()
         orders = Order.objects.filter(items__sku=sku).select_related("customer").prefetch_related("items", "items__shipment_items").distinct()
         movements = InventoryMovement.objects.filter(sku=sku).select_related("order").order_by("-movement_date", "-created_at")
+        can_view_orders = user_can(request.user, "orders", "view")
+        can_view_customers = user_can(request.user, "customers", "view")
+        can_view_purchases = user_can(request.user, "purchases", "view")
         return Response({
-            "sku": SKUSerializer(sku).data,
+            "sku": {"id": sku.id, "sku": sku.sku, "display_name_cn": sku.display_name_cn, "unit": sku.unit},
             "movements": InventoryMovementSerializer(movements, many=True).data,
             "purchases": [{
                 "id": purchase.id, "purchase_no": purchase.purchase_no, "supplier_name": purchase.supplier.name,
@@ -850,10 +881,12 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "status": purchase.status, "status_display": purchase.get_status_display(),
                 "quantity": sum((item.quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
                 "received_quantity": sum((item.received_quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
-            } for purchase in purchases],
+            } for purchase in purchases] if can_view_purchases else [],
             "shipments": [{
                 "id": shipment.id, "shipment_no": shipment.shipment_no, "shipment_date": shipment.shipment_date,
-                "order": shipment.order_id, "order_no": shipment.order.order_no, "customer_name": shipment.order.customer.name,
+                "order": shipment.order_id if can_view_orders else None,
+                "order_no": shipment.order.order_no if can_view_orders else "",
+                "customer_name": shipment.order.customer.name if can_view_customers else "",
                 "status": shipment.status, "status_display": shipment.get_status_display(),
                 "quantity": sum((item.quantity for item in shipment.items.filter(sku=sku)), Decimal("0")),
             } for shipment in shipments],
@@ -865,7 +898,7 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                     shipment_item.quantity for item in order.items.filter(sku=sku)
                     for shipment_item in item.shipment_items.filter(shipment__status="confirmed")
                 ), Decimal("0")),
-            } for order in orders],
+            } for order in orders] if can_view_orders else [],
         })
 
     @action(detail=True, methods=["get"])

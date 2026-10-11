@@ -3,6 +3,9 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   plugins: [vue()],
+  test: {
+    setupFiles: ['./tests/setup.js'],
+  },
   server: {
     port: 5191,
     strictPort: true,

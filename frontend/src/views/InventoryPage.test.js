@@ -7,6 +7,7 @@ const componentUrl = new URL('./InventoryPage.vue', import.meta.url)
 test('inventory page opens a SKU detail panel with linked business records', async () => {
   const source = await readFile(componentUrl, 'utf8')
 
+  assert.match(source, /\/skus\/inventory-list\//)
   assert.match(source, /\/skus\/\$\{row\.id\}\/inventory-detail\//)
   assert.match(source, /selectedSku/)
   assert.match(source, /采购记录/)

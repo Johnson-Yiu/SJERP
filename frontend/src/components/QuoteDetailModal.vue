@@ -9,9 +9,11 @@ import QuotePreviewModal from './QuotePreviewModal.vue'
 import RichTextEditor from './RichTextEditor.vue'
 import OperationLogPanel from './OperationLogPanel.vue'
 import { useDetailTab } from '../utils/useDetailTab'
+import { useAccessControl } from '../accessControl'
 
 const props = defineProps({ id: { type: [Number, String], required: true }, refreshKey: { type: Number, default: 0 } })
 const emit = defineEmits(['close', 'revise', 'status-updated', 'create-order', 'open-order'])
+const { can } = useAccessControl()
 const workbench = ref(null)
 const activeTab = useDetailTab('/quotes', ['overview', 'items', 'lineage', 'orders', 'notes', 'operation_logs'], 'overview', () => props.id)
 const loading = ref(true)
@@ -30,7 +32,7 @@ const operationLogsLoading = ref(false)
 const auditEnabled = ref(false)
 
 const quote = computed(() => workbench.value?.quote)
-const canCreateOrder = computed(() => ['draft', 'sent', 'accepted'].includes(quote.value?.status))
+const canCreateOrder = computed(() => can('orders', 'create') && ['draft', 'sent', 'accepted'].includes(quote.value?.status))
 const tabs = computed(() => [
   ['overview', '概览'], ['items', `报价明细 (${quote.value?.items?.length || 0})`],
   ['lineage', `版本谱系 (${workbench.value?.revisions?.length || 0})`], ['orders', `订单 (${workbench.value?.orders?.length || 0})`],
@@ -81,7 +83,7 @@ async function loadOperationLogs(id = props.id) {
   } finally { operationLogsLoading.value = false }
 }
 async function changeStatus(action) {
-  if (!quote.value || statusSaving.value) return
+  if (!quote.value || statusSaving.value || !can('quotes', 'update')) return
   statusSaving.value = true
   actionError.value = ''
   try {
@@ -107,23 +109,26 @@ async function openPreview(id = quote.value?.id) {
   } catch (err) { actionError.value = err.message }
 }
 async function exportQuote() {
+  if (!can('quotes', 'export')) return
   actionError.value = ''
   try { await downloadQuoteExport(quote.value.id, quote.value.quote_no) } catch (err) { actionError.value = err.message }
 }
 async function createNote() {
-  if (isRichTextEmpty(noteContent.value)) return
+  if (!can('quotes', 'update') || isRichTextEmpty(noteContent.value)) return
   noteSaving.value = true; actionError.value = ''
   try { await api.post(`/quotes/${quote.value.id}/important-notes/`, { content: noteContent.value }); noteContent.value = ''; noteEditorOpen.value = false; await load(quote.value.id) }
   catch (err) { actionError.value = err.message }
   finally { noteSaving.value = false }
 }
 async function deactivateNote(note) {
+  if (!can('quotes', 'update')) return
   if (!await confirmDialog({ title: '确认停用备注', message: '标记后备注不会删除，但会显示为不再生效。确定继续吗？', confirmText: '确认停用', danger: true })) return
   actionError.value = ''
   try { await api.post(`/quotes/${quote.value.id}/important-notes/${note.id}/deactivate/`); await load(quote.value.id) }
   catch (err) { actionError.value = err.message }
 }
 async function restoreNote(note) {
+  if (!can('quotes', 'update')) return
   actionError.value = ''
   try { await api.post(`/quotes/${quote.value.id}/important-notes/${note.id}/restore/`); await load(quote.value.id) }
   catch (err) { actionError.value = err.message }
@@ -142,7 +147,7 @@ function returnToPreviousVersion() {
   const previousId = versionHistory.value.pop()
   if (previousId) openVersion(previousId)
 }
-function createOrder() { emit('create-order', { id: quote.value.id, quote_no: quote.value.quote_no }) }
+function createOrder() { if (can('orders', 'create')) emit('create-order', { id: quote.value.id, quote_no: quote.value.quote_no }) }
 function closeNoteEditor() { noteContent.value = ''; noteEditorOpen.value = false }
 
 onMounted(load)
@@ -159,13 +164,13 @@ watch(() => props.refreshKey, () => load(quote.value?.id || props.id))
         <header class="detail-header">
           <div class="detail-nav"><div class="detail-nav-start"><button class="detail-close" aria-label="关闭报价详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button><button v-if="versionHistory.length" class="detail-back" @click="returnToPreviousVersion"><ArrowLeft :size="18" /> 返回上一版本</button><span v-else>报价工作台 · {{ workbench.root_quote_no }}</span></div></div>
           <div class="detail-identity"><div><p class="detail-subtitle">{{ quote.customer_name }} · {{ revisionLabel(quote) }}</p><h2>{{ quote.quote_no }}</h2><small>原始报价：{{ workbench.root_quote_no }}</small></div><span class="detail-badge">{{ quote.status_display }}</span></div>
-          <div v-if="quote.status === 'draft' || quote.status === 'sent'" class="quote-status-actions" aria-label="报价状态操作">
+          <div v-if="can('quotes', 'update') && (quote.status === 'draft' || quote.status === 'sent')" class="quote-status-actions" aria-label="报价状态操作">
             <button v-if="quote.status === 'draft'" class="btn btn-secondary" :disabled="statusSaving" @click="changeStatus('mark-sent')">标记已发送</button>
             <button class="btn btn-secondary" :disabled="statusSaving" @click="changeStatus('accept')">客户接受</button>
             <button class="btn btn-secondary" :disabled="statusSaving" @click="changeStatus('reject')">客户拒绝</button>
             <button v-if="quote.status === 'sent'" class="btn btn-secondary" :disabled="statusSaving" @click="changeStatus('expire')">标记过期</button>
           </div>
-          <div class="workbench-actions"><button class="btn btn-secondary" @click="emit('revise', quote)"><Pencil :size="14" /> 创建修订版</button><button class="btn btn-secondary" @click="openPreview()"><Eye :size="15" /> 预览 PI</button><button class="btn quote-utility" @click="exportQuote"><Download :size="15" /> 导出 Excel</button><button v-if="canCreateOrder" class="btn btn-primary transfer-order" @click="createOrder"><ShoppingCart :size="15" /> 转为订单</button></div>
+          <div class="workbench-actions"><button v-if="can('quotes', 'update')" class="btn btn-secondary" @click="emit('revise', quote)"><Pencil :size="14" /> 创建修订版</button><button class="btn btn-secondary" @click="openPreview()"><Eye :size="15" /> 预览 PI</button><button v-if="can('quotes', 'export')" class="btn quote-utility" @click="exportQuote"><Download :size="15" /> 导出 Excel</button><button v-if="canCreateOrder" class="btn btn-primary transfer-order" @click="createOrder"><ShoppingCart :size="15" /> 转为订单</button></div>
           <p v-if="!canCreateOrder" class="quote-order-unavailable">报价已拒绝或过期，请先创建修订版。</p>
           <p v-if="actionError" class="workbench-error">{{ actionError }}</p>
         </header>
@@ -185,7 +190,7 @@ watch(() => props.refreshKey, () => load(quote.value?.id || props.id))
 
           <section v-else-if="activeTab === 'orders'" class="workbench-card"><div class="section-heading"><div><h3>订单</h3><p>查看该报价及修订版生成的订单。</p></div></div><p v-if="!canCreateOrder" class="quote-order-unavailable">报价已拒绝或过期，请先创建修订版。</p><div v-if="!workbench.orders.length" class="workbench-empty"><ShoppingCart :size="28" /><strong>尚未转为订单</strong><p>转为订单后可编辑订单草稿。</p></div><div v-else class="order-list"><article v-for="order in workbench.orders" :key="order.id" class="order-card"><div><strong>{{ order.order_no }}</strong><small>来源报价：{{ order.source_quote_no || '—' }} · {{ order.order_date }}</small></div><div><span class="status" :class="order.status">{{ order.status_display }}</span><b>{{ order.currency }} {{ money(order.total_amount) }}</b></div><div class="order-actions"><button class="text-btn" @click="openPreview(order.quote)">预览来源 PI</button><button class="text-btn" @click="emit('open-order', order.id)">查看订单</button></div></article></div></section>
 
-          <section v-else-if="activeTab === 'notes'" class="workbench-card notes-panel"><div class="note-caution"><AlertTriangle :size="18" /><p>备注可能已过时或不适用于最终订单，请核对来源版本和沟通记录。</p></div><div class="section-heading"><div><h3><StickyNote :size="16" /> 重要备注</h3><p>备注关联当前报价版本。</p></div><button v-if="!noteEditorOpen" class="btn btn-primary" @click="noteEditorOpen = true"><Plus :size="15" /> 新增备注</button></div><template v-if="noteEditorOpen"><RichTextEditor v-model="noteContent" /><div class="note-create"><button class="btn btn-secondary" @click="closeNoteEditor">取消</button><button class="btn btn-primary" :disabled="noteSaving || isRichTextEmpty(noteContent)" @click="createNote">{{ noteSaving ? '保存中…' : '保存重要备注' }}</button></div></template><div v-if="!workbench.important_notes.length" class="workbench-empty"><StickyNote :size="28" /><strong>暂无重要备注</strong></div><article v-for="note in workbench.important_notes" :key="note.id" class="important-note" :class="{ inactive: !note.is_active }"><header><div><strong>{{ note.is_active ? '有效备注' : '不再生效' }}</strong><small>备注于：{{ note.source_quote_no }}（{{ revisionLabel({ revision_no: note.source_revision_no }) }}） · {{ note.created_by_name }} · {{ dateTime(note.created_at) }}</small><small v-if="note.deactivated_at" class="note-deactivation">最近失效：{{ dateTime(note.deactivated_at) }} · {{ note.deactivated_by_name || '系统' }}</small><small v-else-if="!note.is_active" class="note-deactivation">最近失效：历史记录未保存操作时间和操作人</small></div><button v-if="note.is_active" class="text-btn danger" @click="deactivateNote(note)">标记不再生效</button><button v-else class="text-btn restore" @click="restoreNote(note)">恢复生效</button></header><div class="important-note-content" v-html="note.content" /></article></section>
+          <section v-else-if="activeTab === 'notes'" class="workbench-card notes-panel"><div class="note-caution"><AlertTriangle :size="18" /><p>备注可能已过时或不适用于最终订单，请核对来源版本和沟通记录。</p></div><div class="section-heading"><div><h3><StickyNote :size="16" /> 重要备注</h3><p>备注关联当前报价版本。</p></div><button v-if="can('quotes', 'update') && !noteEditorOpen" class="btn btn-primary" @click="noteEditorOpen = true"><Plus :size="15" /> 新增备注</button></div><template v-if="noteEditorOpen && can('quotes', 'update')"><RichTextEditor v-model="noteContent" /><div class="note-create"><button class="btn btn-secondary" @click="closeNoteEditor">取消</button><button class="btn btn-primary" :disabled="noteSaving || isRichTextEmpty(noteContent)" @click="createNote">{{ noteSaving ? '保存中…' : '保存重要备注' }}</button></div></template><div v-if="!workbench.important_notes.length" class="workbench-empty"><StickyNote :size="28" /><strong>暂无重要备注</strong></div><article v-for="note in workbench.important_notes" :key="note.id" class="important-note" :class="{ inactive: !note.is_active }"><header><div><strong>{{ note.is_active ? '有效备注' : '不再生效' }}</strong><small>备注于：{{ note.source_quote_no }}（{{ revisionLabel({ revision_no: note.source_revision_no }) }}） · {{ note.created_by_name }} · {{ dateTime(note.created_at) }}</small><small v-if="note.deactivated_at" class="note-deactivation">最近失效：{{ dateTime(note.deactivated_at) }} · {{ note.deactivated_by_name || '系统' }}</small><small v-else-if="!note.is_active" class="note-deactivation">最近失效：历史记录未保存操作时间和操作人</small></div><button v-if="can('quotes', 'update') && note.is_active" class="text-btn danger" @click="deactivateNote(note)">标记不再生效</button><button v-else-if="can('quotes', 'update')" class="text-btn restore" @click="restoreNote(note)">恢复生效</button></header><div class="important-note-content" v-html="note.content" /></article></section>
 
           <OperationLogPanel v-else :logs="operationLogs" :loading="operationLogsLoading" :enabled="auditEnabled" />
         </main>

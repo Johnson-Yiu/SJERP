@@ -2,9 +2,11 @@
 import { computed } from 'vue'
 import { Printer, X } from 'lucide-vue-next'
 import { formatPiAmountWords } from '../utils/piAmountWords'
+import { useAccessControl } from '../accessControl'
 
 const props = defineProps({ draft: { type: Object, required: true }, saved: { type: Boolean, default: false } })
 defineEmits(['close'])
+const { can } = useAccessControl()
 
 const seller = Object.freeze({
   name: 'Guangzhou Sunjack Lighting Co., Ltd.',
@@ -48,7 +50,7 @@ function printPreview() {
       <header class="quote-preview-toolbar">
         <div><strong>报价单预览</strong><small>{{ saved ? '已保存报价预览' : '当前未保存内容 · 关闭后可继续编辑' }}</small></div>
         <div class="quote-preview-actions">
-          <button type="button" class="btn btn-secondary" @click="printPreview"><Printer :size="15" /> 导出预览 PDF</button>
+          <button v-if="can('quotes', 'export')" type="button" class="btn btn-secondary" @click="printPreview"><Printer :size="15" /> 导出预览 PDF</button>
           <button type="button" class="mini-btn" aria-label="关闭预览" @click="$emit('close')"><X :size="17" /></button>
         </div>
       </header>

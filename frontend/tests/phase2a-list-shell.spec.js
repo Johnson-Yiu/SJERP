@@ -40,7 +40,7 @@ async function setup(url) {
   return router
 }
 beforeEach(() => {
-  mocks.listAll.mockImplementation(async url => ({ '/customers/': customers, '/orders/': [order], '/quotes/': [quote, { ...quote, id: 2, quote_no: 'QT-001-R1', parent_quote: 1, parent_quote_no: 'QT-001' }], '/purchase-orders/': [purchase], '/skus/': skus, '/inventory-movements/': [{ id: 1, type: 'adjust_in', movement_no: 'IM-001', signed_quantity: 2, source_type: 'manual' }] }[url] || []))
+  mocks.listAll.mockImplementation(async url => ({ '/customers/': customers, '/orders/': [order], '/quotes/': [quote, { ...quote, id: 2, quote_no: 'QT-001-R1', parent_quote: 1, parent_quote_no: 'QT-001' }], '/purchase-orders/': [purchase], '/skus/inventory-list/': skus, '/inventory-movements/': [{ id: 1, type: 'adjust_in', movement_no: 'IM-001', signed_quantity: 2, source_type: 'manual' }] }[url] || []))
   mocks.api.get.mockImplementation(async url => ({ data: url === '/session/current-operator/' ? { name: 'Dev', development_superadmin: true, can_manage_hs_codes: true } : [] }))
 })
 afterEach(() => { wrapper?.unmount(); vi.clearAllMocks() })

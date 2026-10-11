@@ -124,16 +124,19 @@ class AccessRole(TimestampedModel):
 
 class RolePermission(models.Model):
     MODULE_CHOICES = [
-        ("dashboard", "经营概览"), ("customers", "客户管理"), ("contacts", "联系人"),
-        ("followups", "跟进记录"), ("quotes", "报价管理"), ("orders", "订单管理"),
-        ("products", "产品管理"), ("skus", "SKU 管理"), ("inventory", "库存流水"),
-        ("parameters", "产品参数"), ("certificates", "产品证书"), ("categories", "产品分类"),
-        ("transactions", "财务流水"), ("imports", "数据导入"), ("organization", "组织架构"),
-        ("employees", "成员管理"), ("permissions", "权限配置"),
+        ("dashboard", "经营概览"), ("reports", "报表中心"),
+        ("customers", "客户管理"), ("contacts", "联系人"), ("followups", "跟进记录"),
+        ("quotes", "报价管理"), ("orders", "订单管理"),
+        ("suppliers", "供应商管理"), ("purchases", "采购管理"), ("inventory", "库存"),
+        ("products", "产品管理"), ("skus", "SKU 管理"), ("categories", "产品分类"),
+        ("parameters", "产品参数"), ("packaging", "包装管理"), ("trade_units", "交易单位"),
+        ("certificates", "产品证书"), ("hs_codes", "HS 编码"),
+        ("finance", "财务计划"), ("transactions", "财务流水"), ("imports", "数据导入"),
+        ("organization", "组织架构"), ("employees", "成员管理"), ("permissions", "权限配置"),
     ]
     role = models.ForeignKey(AccessRole, on_delete=models.CASCADE, related_name="permissions")
     module = models.CharField("功能模块", max_length=30, choices=MODULE_CHOICES)
-    can_view = models.BooleanField("查看", default=True)
+    can_view = models.BooleanField("查看", default=False)
     can_create = models.BooleanField("新建", default=False)
     can_update = models.BooleanField("修改", default=False)
     can_delete = models.BooleanField("删除", default=False)

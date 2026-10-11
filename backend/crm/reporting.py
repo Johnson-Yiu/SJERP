@@ -11,6 +11,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from .models import Customer, InventoryMovement, Order, OrderItem, Product, ProductCategory, PurchaseOrder, PurchaseOrderItem, SKU, Supplier, Transaction
+from .permissions import user_can
 from .services.profit import order_profit_summary
 
 DIMENSIONS = dict(time="时间", region="业务区域", country="国家/地区", customer="客户", supplier="供应商", product="产品", sku="SKU", category="产品主分类", owner="负责人", source="客户来源", status="状态", currency="原币币种", direction="收支方向", kind="业务类型", warehouse="仓库", type="出入库类型")
@@ -141,6 +142,8 @@ def filter_summary(source, filters):
 
 @api_view(["GET"])
 def report_data(request):
+    if request.query_params.get("export", "").lower() in {"1", "true", "csv", "xlsx"} and not user_can(request.user, "reports", "export"):
+        return Response({"detail": "你没有报表导出权限。"}, status=403)
     params = request.query_params
     source = params.get("source", "sales")
     if source not in SOURCES: raise ValidationError("不支持的报表模块。")

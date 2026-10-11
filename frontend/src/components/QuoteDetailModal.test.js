@@ -8,7 +8,7 @@ const pageUrl = new URL('../views/DocumentPage.vue', import.meta.url)
 test('quote detail exposes only valid status actions for draft and sent quotes', async () => {
   const source = await readFile(detailUrl, 'utf8')
 
-  assert.match(source, /v-if="quote\.status === 'draft' \|\| quote\.status === 'sent'"/)
+  assert.match(source, /v-if="can\('quotes', 'update'\) && \(quote\.status === 'draft' \|\| quote\.status === 'sent'\)"/)
   assert.match(source, /v-if="quote\.status === 'draft'" class="btn btn-secondary"[^>]*changeStatus\('mark-sent'\)/)
   assert.match(source, /changeStatus\('accept'\)/)
   assert.match(source, /changeStatus\('reject'\)/)
@@ -31,7 +31,7 @@ test('status actions call the API, reload quote workbench, and refresh the quote
 test('terminal quote states render no status transition controls', async () => {
   const source = await readFile(detailUrl, 'utf8')
 
-  assert.match(source, /v-if="quote\.status === 'draft' \|\| quote\.status === 'sent'" class="quote-status-actions"/)
+  assert.match(source, /v-if="can\('quotes', 'update'\) && \(quote\.status === 'draft' \|\| quote\.status === 'sent'\)" class="quote-status-actions"/)
   assert.match(source, /quote\.status === 'draft'/)
   assert.match(source, /quote\.status === 'sent'/)
   assert.match(source, /statusSaving/)
@@ -40,7 +40,7 @@ test('terminal quote states render no status transition controls', async () => {
 test('only non-terminal quotes expose the conversion-to-order actions', async () => {
   const source = await readFile(detailUrl, 'utf8')
 
-  assert.match(source, /const canCreateOrder = computed\(\(\) => \['draft', 'sent', 'accepted'\]\.includes\(quote\.value\?\.status\)\)/)
+  assert.match(source, /const canCreateOrder = computed\(\(\) => can\('orders', 'create'\) && \['draft', 'sent', 'accepted'\]\.includes\(quote\.value\?\.status\)\)/)
   assert.match(source, /v-if="canCreateOrder" class="btn btn-primary transfer-order"/)
   assert.doesNotMatch(source, /v-if="canCreateOrder" class="btn btn-primary" @click="createOrder"/)
   assert.match(source, /v-if="!canCreateOrder" class="quote-order-unavailable"/)

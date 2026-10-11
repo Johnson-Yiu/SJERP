@@ -13,6 +13,7 @@ from .models import Contact, Customer, FollowUp, InventoryMovement, Order, Order
 from .supplier_display import payment_terms_summary
 from .querysets import prefetch_purchase_related_orders
 from .serializers import ContactSerializer, CustomerSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, QuoteSerializer, SKUSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer
+from .permissions import CONTEXT_MODULES, user_can
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -64,8 +65,26 @@ def entity_context(request, entity, pk):
     if not handler:
         return Response({"detail": "未知的数据类型。"}, status=404)
     if entity == "products":
-        return Response(handler(pk, include_inactive=request.query_params.get("include_inactive") == "1"))
-    return Response(handler(pk))
+        payload = handler(pk, include_inactive=request.query_params.get("include_inactive") == "1")
+    else:
+        payload = handler(pk)
+    # A detail context can contain several related modules. Keep the primary
+    # record visible while omitting related sections the operator cannot view.
+    payload["sections"] = [
+        section for section in payload.get("sections", [])
+        if user_can(request.user, CONTEXT_MODULES.get(section.get("entity")), "view")
+    ]
+    metric_modules = {
+        "customers": {"累计销售额": "orders", "订单": "orders", "报价": "quotes", "下次跟进": "followups"},
+        "products": {"SKU": "skus", "供应商": "suppliers", "当前库存": "inventory", "参数": "parameters"},
+        "skus": {"当前库存": "inventory", "订单记录": "orders", "历史版本": "skus"},
+    }
+    required = metric_modules.get(entity, {})
+    payload["metrics"] = [
+        metric for metric in payload.get("metrics", [])
+        if metric[0] not in required or user_can(request.user, required[metric[0]], "view")
+    ]
+    return Response(payload)
 
 
 def _customer_context(pk):

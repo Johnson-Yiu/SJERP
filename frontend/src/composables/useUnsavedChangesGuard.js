@@ -33,9 +33,9 @@ export function unsavedSnapshot(value) {
   })
 }
 
-export function useUnsavedChangesGuard({ data, enabled = () => true, router: suppliedRouter } = {}) {
+export function useUnsavedChangesGuard({ data, enabled = () => true, router: suppliedRouter, routeGuard = true, scope: suppliedScope } = {}) {
   const router = suppliedRouter || inject(routerKey, null)
-  const scope = inject(scopeKey, null)
+  const scope = suppliedScope || inject(scopeKey, null)
   const baseline = ref(null)
   const dirty = computed(() => enabled() && baseline.value !== null && unsavedSnapshot(data()) !== baseline.value)
   const markClean = () => { baseline.value = unsavedSnapshot(data()) }
@@ -54,10 +54,14 @@ export function useUnsavedChangesGuard({ data, enabled = () => true, router: sup
     await close()
     return true
   }
-  const removeRouteGuard = router?.beforeEach(async (to, from) => {
-    if (to.fullPath === from.fullPath || !dirty.value) return true
-    return await confirmLeave()
-  })
+  const removeRouteGuard = routeGuard ? router?.beforeEach(async (to, from) => {
+    if (to.fullPath === from.fullPath) return true
+    if (dirty.value && !await confirmLeave()) return false
+    if (scope) {
+      for (const child of scope.children) if (child !== scopedGuard && !await child.confirmLeave()) return false
+    }
+    return true
+  }) : undefined
   const removeAfterGuard = router?.afterEach((to, from, failure) => {
     if (!failure && to.fullPath !== from.fullPath && dirty.value) markClean()
   })

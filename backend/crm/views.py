@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 34381)
+Total output lines: 2407
+
 from .trade_units import amount_expression, trade_values
 import csv
 import hashlib
@@ -27,6 +30,7 @@ from rest_framework.response import Response
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, Supplier, SupplierSKU, Transaction
 from .querysets import current_due_follow_ups, prefetch_purchase_related_orders
 from .permissions import HSCodeMaintenancePermission, ModuleActionPermission, OrganizationOverviewPermission, PermissionAdminOnly, QuoteExportPermission, _profile_for, effective_permission_matrix, has_all_permissions, is_permission_admin, user_can
+from .sales_scope import allowed_employee_ids, data_scope_display, effective_data_scope, employee_profile_for, scope_customer_queryset, scope_customer_related_queryset
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
@@ -395,12 +399,14 @@ def current_operator(request):
     }
 
     if development_superadmin_enabled():
-        profile = _profile_for(request.user)
+        profile = employee_profile_for(request.user) or _profile_for(request.user)
         name = (profile.display_name if profile else request.user.get_full_name() or request.user.username) if request.user.is_authenticated else settings.DEFAULT_OPERATOR_NAME
         return Response({"name": name, "role": "超级管理员", "authenticated": request.user.is_authenticated,
                          "development_superadmin": True, "rbac_enforcement": settings.RBAC_ENFORCEMENT,
                          "has_all_permissions": True, "can_manage_permissions": True, "permissions": permission_payload,
-                         "data_scope": "all", "can_manage_hs_codes": True,
+                         "data_scope": "all", "data_scope_display": "全部数据",
+                         "employee_profile_id": profile.pk if profile else None, "unit_id": profile.unit_id if profile else None,
+                         "unit_name": profile.unit.name if profile else "", "can_manage_hs_codes": True,
                          "audit_log_enabled": bool(request.user.is_authenticated and settings.AUDIT_LOG_ENABLED)})
 
     if request.user.is_authenticated:
@@ -408,13 +414,20 @@ def current_operator(request):
         name = profile.display_name if profile else request.user.get_full_name() or request.user.username
         roles = list(profile.roles.filter(active=True).values_list("name", flat=True)) if profile and profile.active else []
         role = "超级管理员" if request.user.is_superuser else "、".join(roles) or "未分配角色"
+        scope = effective_data_scope(request.user)
         return Response({"name": name, "role": role, "authenticated": True, "development_superadmin": False,
                          "rbac_enforcement": settings.RBAC_ENFORCEMENT, "has_all_permissions": complete,
                          "can_manage_permissions": can_manage, "permissions": permission_payload,
+                         "data_scope": scope, "data_scope_display": data_scope_display(scope),
+                         "employee_profile_id": profile.pk if profile and profile.active else None,
+                         "unit_id": profile.unit_id if profile and profile.active else None,
+                         "unit_name": profile.unit.name if profile and profile.active else "",
                          "can_manage_hs_codes": can_manage, "audit_log_enabled": settings.AUDIT_LOG_ENABLED})
     return Response({"name": "未登录", "role": "未登录", "authenticated": False, "development_superadmin": False,
                      "rbac_enforcement": settings.RBAC_ENFORCEMENT, "has_all_permissions": complete,
                      "can_manage_permissions": False, "permissions": permission_payload,
+                     "data_scope": "none", "data_scope_display": "未分配数据范围",
+                     "employee_profile_id": None, "unit_id": None, "unit_name": "",
                      "can_manage_hs_codes": False, "audit_log_enabled": False})
 
 
@@ -443,11 +456,17 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         sales = formal_orders.values("customer_id").annotate(total=Sum("sales_rmb")).values("total")
         order_count = Order.objects.filter(customer_id=OuterRef("pk"), status__in=formal_statuses).values("customer_id").annotate(total=Count("id")).values("total")
         contact_count = Contact.objects.filter(customer=OuterRef("pk")).values("customer").annotate(total=Count("id")).values("total")
-        return Customer.objects.annotate(
+        queryset = Customer.objects.annotate(
             contact_count=Coalesce(Subquery(contact_count, output_field=IntegerField()), 0),
             order_count=Coalesce(Subquery(order_count, output_field=IntegerField()), 0),
             sales_amount=Coalesce(Subquery(sales, output_field=MONEY), Decimal("0"), output_field=MONEY),
-        ).order_by("-updated_at")
+        )
+        return scope_customer_queryset(queryset, self.request.user).order_by("-updated_at")
+
+    @action(detail=False, methods=["get"], url_path="owner-options")
+    def owner_options(self, request):
+        employees = EmployeeProfile.objects.filter(pk__in=allowed_employee_ids(request.user), active=True).select_related("unit")
+        return Response([{"id": employee.pk, "display_name": employee.display_name, "unit_name": employee.unit.name, "label": f"{employee.display_name} · {employee.unit.name}"} for employee in employees])
 
     @action(detail=False, methods=["get"], url_path="next-code")
     def next_code(self, request):
@@ -460,7 +479,7 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"])
     def sources(self, request):
-        values = Customer.objects.exclude(source="").values_list("source", flat=True).distinct().order_by("source")
+        values = scope_customer_queryset(Customer.objects.all(), request.user).exclude(source="").values_list("source", flat=True).distinct().order_by("source")
         return Response([{"value": value, "label": value} for value in values])
 
     @action(detail=True, methods=["get"])
@@ -503,7 +522,7 @@ class ContactViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     search_fields = ["name", "email", "phone", "customer__name"]
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = scope_customer_related_queryset(super().get_queryset(), self.request.user)
         return qs.filter(customer_id=self.request.query_params["customer"]) if self.request.query_params.get("customer") else qs
 
     def destroy(self, request, *args, **kwargs):
@@ -527,7 +546,7 @@ class FollowUpViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return Response(builtins + [{"value": value, "label": value} for value in custom if value not in builtin_values])
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = scope_customer_related_queryset(super().get_queryset(), self.request.user)
         if self.request.query_params.get("customer"):
             qs = qs.filter(customer_id=self.request.query_params["customer"])
         if self.request.query_params.get("due") == "true":
@@ -723,885 +742,7 @@ class HSCodeViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = HSCodeSerializer
     permission_classes = [HSCodeMaintenancePermission]
     queryset = HSCode.objects.annotate(product_count=Count("products", distinct=True))
-    search_fields = ["code", "description", "notes"]
-
-    def destroy(self, request, *args, **kwargs):
-        if self.get_object().products.exists():
-            return Response({"detail": "该编码仍有关联产品，请先解除分配，或将编码停用。"}, status=400)
-        return super().destroy(request, *args, **kwargs)
-
-    @action(detail=True, methods=["put"], url_path="assign-products")
-    @transaction.atomic
-    def assign_products(self, request, pk=None):
-        hs_code = self.get_object()
-        product_ids = request.data.get("product_ids")
-        if not isinstance(product_ids, list) or any(not str(value).isdigit() for value in product_ids):
-            return Response({"detail": "product_ids 必须为产品 ID 数组。"}, status=status.HTTP_400_BAD_REQUEST)
-        normalized_ids = {int(value) for value in product_ids}
-        if not hs_code.active and Product.objects.filter(id__in=normalized_ids).exclude(hs_code=hs_code).exists():
-            return Response({"detail": "停用编码不能分配给新产品。"}, status=400)
-        existing_ids = set(Product.objects.filter(id__in=normalized_ids).values_list("id", flat=True))
-        if existing_ids != normalized_ids:
-            return Response({"detail": "包含不存在的产品。"}, status=status.HTTP_400_BAD_REQUEST)
-        before = {"product_ids": list(hs_code.products.order_by("id").values_list("id", flat=True))}
-        Product.objects.filter(hs_code=hs_code).exclude(id__in=normalized_ids).update(hs_code=None)
-        Product.objects.filter(id__in=normalized_ids).update(hs_code=hs_code)
-        record_operation(request=request, instance=hs_code, action="custom", action_label="分配 HS 编码产品", before=before, after={"product_ids": sorted(normalized_ids)})
-        return Response(self.get_serializer(HSCode.objects.annotate(product_count=Count("products", distinct=True)).get(pk=hs_code.pk)).data)
-
-
-class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
-    @transaction.atomic
-    def perform_create(self, serializer):
-        super().perform_create(serializer)
-
-    @transaction.atomic
-    def perform_update(self, serializer):
-        super().perform_update(serializer)
-
-    @action(detail=False, methods=["post"], url_path="batch-create")
-    @transaction.atomic
-    def batch_create(self, request):
-        items = request.data.get("items")
-        if not isinstance(items, list) or not 1 <= len(items) <= 1000:
-            return Response({"detail": "请选择 1–1000 个实际 SKU 组合。"}, status=400)
-        serializers = [self.get_serializer(data=item) for item in items]
-        for serializer in serializers:
-            serializer.is_valid(raise_exception=True)
-        result = []
-        for serializer in serializers:
-            instance = serializer.save()
-            record_operation(request=request, instance=instance, action="create", action_label="按需创建 SKU")
-            result.append(serializer.data)
-        return Response(result, status=201)
-
-    serializer_class = SKUSerializer
-    queryset = SKU.objects.select_related("product").prefetch_related("trade_units__supplier").annotate(
-        stock_quantity=Coalesce(Sum(Case(
-            When(inventory_movements__type__in=["sale_out", "adjust_out", "sample_out", "transfer_out", "production_out", "other_out"], then=-F("inventory_movements__quantity")),
-            default=F("inventory_movements__quantity"), output_field=MONEY,
-        )), Decimal("0"), output_field=MONEY),
-        quote_count=Count("quote_items__quote", distinct=True),
-        order_count=Count("order_items__order", distinct=True),
-    ).order_by("sku")
-    search_fields = ["sku", "display_name_cn", "sales_model", "specification", "description_cn", "description_en", "product__name", "product__name_en", "product__code", "supplier_skus__supplier_model", "supplier_skus__supplier_sku_code", "supplier_skus__supplier_product_name", "supplier_skus__supplier_barcode"]
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        # 列表默认隐藏停用 SKU；但 retrieve / update 必须能读取它们，
-        # 才能支持管理员重新启用软停用的 SKU。
-        if self.action == "list" and self.request.query_params.get("include_inactive") != "1":
-            qs = qs.filter(active=True)
-        return qs.filter(product_id=self.request.query_params["product"]) if self.request.query_params.get("product") else qs
-
-    @action(detail=False, methods=["get"], url_path="inventory-list")
-    def inventory_list(self, request):
-        queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(page if page is not None else queryset, many=True)
-        inventory_fields = (
-            "id", "sku", "display_name_cn", "product_name", "product_code", "unit",
-            "stock_quantity", "actual_quantity", "reserved_quantity", "available_quantity",
-            "in_transit_quantity", "to_procure_quantity", "has_anomaly",
-        )
-        rows = [{field: row[field] for field in inventory_fields} for row in serializer.data]
-        return self.get_paginated_response(rows) if page is not None else Response(rows)
-
-    def filter_queryset(self, queryset):
-        # SearchFilter cannot express historical-version hits without then
-        # filtering them away again, so SKU owns this one search contract.
-        term = str(self.request.query_params.get("search", "")).strip()
-        if not term:
-            return super().filter_queryset(queryset)
-        return queryset.filter(
-            Q(sku__icontains=term) | Q(display_name_cn__icontains=term) |
-            Q(sales_model__icontains=term) | Q(specification__icontains=term) |
-            Q(description_cn__icontains=term) | Q(description_en__icontains=term) |
-            Q(product__name__icontains=term) | Q(product__name_en__icontains=term) | Q(product__code__icontains=term) |
-            Q(supplier_skus__supplier_model__icontains=term) | Q(supplier_skus__supplier_sku_code__icontains=term) |
-            Q(supplier_skus__supplier_product_name__icontains=term) | Q(supplier_skus__supplier_barcode__icontains=term) |
-            Q(versions__sku_code_snapshot__icontains=term) | Q(versions__sales_model_snapshot__icontains=term) |
-            Q(versions__display_name_cn_snapshot__icontains=term) | Q(versions__description_cn_snapshot__icontains=term) |
-            Q(versions__description_en_snapshot__icontains=term)
-        ).distinct()
-
-    def destroy(self, request, *args, **kwargs):
-        return Response({"detail": "SKU 不允许物理删除。请将其停用，以保留库存、报价、订单和历史版本记录。"}, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=True, methods=["get"])
-    def versions(self, request, pk=None):
-        return Response(SKUVersionSerializer(self.get_object().versions.select_related("changed_by"), many=True).data)
-
-    @action(detail=True, methods=["get"], url_path="supplier-skus")
-    def supplier_skus(self, request, pk=None):
-        rows = self.get_object().supplier_skus.select_related("supplier", "sku", "sku__product")
-        return Response(SupplierSKUSerializer(rows, many=True).data)
-
-    @action(detail=False, methods=["get"], url_path="sales-model-abbreviations")
-    def sales_model_abbreviations(self, request):
-        """Return saved parameter abbreviations, scoped strictly to one category."""
-        category_id = request.query_params.get("category")
-        if not category_id:
-            return Response({"detail": "category 为必填参数。"}, status=status.HTTP_400_BAD_REQUEST)
-        category = get_object_or_404(ProductCategory, pk=category_id)
-        prefix = f"{category.id}:"
-        suggestions = {}
-        skus = SKU.objects.filter(
-            Q(product__category=category) | Q(product__additional_categories=category)
-        ).exclude(sales_model_abbreviations={}).order_by("id").distinct()
-        for sku in skus:
-            for stored_key, stored_value in (sku.sales_model_abbreviations or {}).items():
-                key = str(stored_key)
-                abbreviation = str(stored_value or "").strip().upper()
-                if not key.startswith(prefix) or not abbreviation:
-                    continue
-                try:
-                    attribute_key, raw_value = key[len(prefix):].split(":", 1)
-                except ValueError:
-                    continue
-                suggestion_key = normalize_abbreviation_key(f"{category.id}:{attribute_key}:{raw_value}")
-                suggestions.setdefault(suggestion_key, abbreviation)
-        return Response({"abbreviations": suggestions, "defaults": DEFAULT_SALES_MODEL_ABBREVIATIONS})
-
-    @action(detail=True, methods=["get"], url_path="inventory-detail")
-    def inventory_detail(self, request, pk=None):
-        sku = self.get_object()
-        purchases = PurchaseOrder.objects.filter(items__sku=sku).select_related("supplier", "order").prefetch_related("items__receipts").distinct()
-        shipments = Shipment.objects.filter(items__sku=sku).select_related("order__customer").prefetch_related("items").distinct()
-        orders = Order.objects.filter(items__sku=sku).select_related("customer").prefetch_related("items", "items__shipment_items").distinct()
-        movements = InventoryMovement.objects.filter(sku=sku).select_related("order").order_by("-movement_date", "-created_at")
-        can_view_orders = user_can(request.user, "orders", "view")
-        can_view_customers = user_can(request.user, "customers", "view")
-        can_view_purchases = user_can(request.user, "purchases", "view")
-        return Response({
-            "sku": {"id": sku.id, "sku": sku.sku, "display_name_cn": sku.display_name_cn, "unit": sku.unit},
-            "movements": InventoryMovementSerializer(movements, many=True).data,
-            "purchases": [{
-                "id": purchase.id, "purchase_no": purchase.purchase_no, "supplier_name": purchase.supplier.name,
-                "order_no": purchase.order.order_no if purchase.order_id else "", "order_date": purchase.order_date,
-                "status": purchase.status, "status_display": purchase.get_status_display(),
-                "quantity": sum((item.quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
-                "received_quantity": sum((item.received_quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
-            } for purchase in purchases] if can_view_purchases else [],
-            "shipments": [{
-                "id": shipment.id, "shipment_no": shipment.shipment_no, "shipment_date": shipment.shipment_date,
-                "order": shipment.order_id if can_view_orders else None,
-                "order_no": shipment.order.order_no if can_view_orders else "",
-                "customer_name": shipment.order.customer.name if can_view_customers else "",
-                "status": shipment.status, "status_display": shipment.get_status_display(),
-                "quantity": sum((item.quantity for item in shipment.items.filter(sku=sku)), Decimal("0")),
-            } for shipment in shipments],
-            "orders": [{
-                "id": order.id, "order_no": order.order_no, "customer_name": order.customer.name,
-                "order_date": order.order_date, "status": order.status, "status_display": order.get_status_display(),
-                "quantity": sum((item.quantity for item in order.items.filter(sku=sku)), Decimal("0")),
-                "shipped_quantity": sum((
-                    shipment_item.quantity for item in order.items.filter(sku=sku)
-                    for shipment_item in item.shipment_items.filter(shipment__status="confirmed")
-                ), Decimal("0")),
-            } for order in orders] if can_view_orders else [],
-        })
-
-    @action(detail=True, methods=["get"])
-    def thumbnail(self, request, pk=None):
-        from .services.sku_images import thumbnail_response
-        return thumbnail_response(self.get_object().image, request)
-
-    @action(detail=True, methods=["post", "delete"], parser_classes=[MultiPartParser, FormParser])
-    def image(self, request, pk=None):
-        sku = self.get_object()
-        if request.method == "DELETE":
-            before = snapshot(sku)
-            if sku.image:
-                sku.image.delete(save=False)
-            sku.image = ""
-            sku.save(update_fields=["image"])
-            record_operation(request=request, instance=sku, action="custom", action_label="删除 SKU 图片", before=before)
-            return Response(self.get_serializer(sku).data)
-
-        upload = request.FILES.get("image")
-        allowed_mime_types = {"image/gif", "image/jpeg", "image/png", "image/webp"}
-        if upload is None:
-            return Response({"image": "请上传图片文件。"}, status=status.HTTP_400_BAD_REQUEST)
-        if upload.content_type not in allowed_mime_types:
-            return Response({"image": "仅支持 GIF、JPEG、PNG 或 WebP 图片。"}, status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = self.get_serializer(sku, data={"image": upload}, partial=True)
-        serializer.is_valid(raise_exception=True)
-        before = snapshot(sku)
-        serializer.save()
-        record_operation(request=request, instance=sku, action="custom", action_label="上传 SKU 图片", before=before)
-        return Response(serializer.data)
-
-    @action(detail=True, methods=["get", "put"], url_path="packaging")
-    def packaging(self, request, pk=None):
-        sku = self.get_object()
-        if request.method == "GET":
-            try:
-                profile = sku.packaging_profile
-                return Response({"profile": SKUPackagingProfileSerializer(profile).data, "effective": packaging_summary(sku)})
-            except SKUPackagingProfile.DoesNotExist:
-                return Response({"profile": None, "effective": packaging_summary(sku)})
-        with transaction.atomic():
-            profile, created = SKUPackagingProfile.objects.get_or_create(sku=sku)
-            if not created:
-                profile = SKUPackagingProfile.objects.select_for_update().get(pk=profile.pk)
-            before = snapshot(profile)
-            serializer = SKUPackagingProfileSerializer(profile, data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            profile = serializer.save()
-            if request.data.get("verify"):
-                # Verification is deliberately recorded only after the final
-                # effective values have been saved.
-                profile.verified_at = timezone.now()
-                profile.verified_by = request.user if request.user.is_authenticated else None
-                profile.save(update_fields=["verified_at", "verified_by", "updated_at"])
-            record_operation(request=request, instance=profile, action="create" if created else "update", action_label="保存 SKU 包装配置", before=before, metadata={"sku_id": sku.id, "verified": bool(request.data.get("verify"))})
-        return Response({"profile": SKUPackagingProfileSerializer(profile).data, "effective": packaging_summary(sku)})
-
-
-class PackagingTemplateViewSet(AuditTrailMixin, viewsets.ModelViewSet):
-    serializer_class = PackagingTemplateSerializer
-    queryset = PackagingTemplate.objects.select_related("supplier").prefetch_related("sku_profiles")
-    search_fields = ["code", "name", "supplier__name", "description"]
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if instance.sku_profiles.exists():
-            return Response(
-                {"detail": "该包装模板仍被 SKU 使用，不能删除；请先更换关联 SKU 的包装模板，或将模板停用。"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        try:
-            return super().destroy(request, *args, **kwargs)
-        except ProtectedError:
-            return Response({"detail": "该包装模板已被业务记录引用，不能删除；请将模板停用。"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class SKUPackagingProfileViewSet(AuditTrailMixin, viewsets.ModelViewSet):
-    serializer_class = SKUPackagingProfileSerializer
-    queryset = SKUPackagingProfile.objects.select_related("sku__product", "packaging_template")
-    search_fields = ["sku__sku", "sku__product__name", "packaging_template__code"]
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        status_value = self.request.query_params.get("status")
-        if status_value:
-            # Status is resolved, so only use this broad DB filter then resolve in list below.
-            if status_value == "NOT_CONFIGURED": return qs.none()
-        return qs
-
-
-class ShipmentViewSet(AuditTrailMixin, viewsets.ReadOnlyModelViewSet):
-    serializer_class = serializers.Serializer  # read endpoints below use explicit responses
-    queryset = Shipment.objects.select_related("order").prefetch_related("packages__items__sku")
-
-    @action(detail=True, methods=["post"], url_path="reverse")
-    def reverse(self, request, pk=None):
-        shipment = self.get_object()
-        input_serializer = ShipmentReversalInputSerializer(data=request.data)
-        input_serializer.is_valid(raise_exception=True)
-        try:
-            shipment = reverse_shipment_service(shipment, input_serializer.validated_data["reason"])
-        except DjangoValidationError as error:
-            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        reversal_ids = list(shipment.items.values_list("reversal_inventory_movement_id", flat=True))
-        record_operation(
-            request=request,
-            instance=shipment.order,
-            action="custom",
-            action_label="冲销销售发货",
-            metadata={
-                "shipment_id": shipment.id,
-                "reversal_inventory_movement_id": reversal_ids[0] if len(reversal_ids) == 1 else reversal_ids,
-                "reversal_inventory_movement_ids": reversal_ids,
-                "reason": shipment.reversal_reason,
-            },
-        )
-        return Response({
-            "id": shipment.id,
-            "shipment_no": shipment.shipment_no,
-            "status": shipment.status,
-            "reversed_at": shipment.reversed_at,
-            "reversal_reason": shipment.reversal_reason,
-            "reversal_inventory_movement_ids": reversal_ids,
-        })
-
-    @action(detail=True, methods=["get", "post"], url_path="packages")
-    @transaction.atomic
-    def packages(self, request, pk=None):
-        shipment = self.get_object()
-        if request.method == "GET":
-            return Response(ShipmentPackageSerializer(shipment.packages.prefetch_related("items__sku"), many=True).data)
-        shipment = Shipment.objects.select_for_update().get(pk=shipment.pk)
-        serializer = ShipmentPackageSerializer(data=request.data, context={"shipment": shipment})
-        serializer.is_valid(raise_exception=True)
-        package = serializer.save(shipment=shipment)
-        record_operation(request=request, instance=shipment, action="custom", action_label="新增装箱明细", metadata={"package_id": package.id})
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @action(detail=True, methods=["post", "put", "patch", "delete"], url_path=r"packages/(?P<package_id>[^/.]+)")
-    @transaction.atomic
-    def update_package(self, request, pk=None, package_id=None):
-        shipment = self.get_object()
-        shipment = Shipment.objects.select_for_update().get(pk=shipment.pk)
-        if shipment.status != "confirmed":
-            return Response({"detail": "只有已确认的发货单可以修改实际箱单。"}, status=status.HTTP_400_BAD_REQUEST)
-        package = get_object_or_404(ShipmentPackage, pk=package_id, shipment=shipment)
-        before = snapshot(package)
-        if request.method == "DELETE":
-            package.delete()
-            record_operation(request=request, instance=shipment, action="custom", action_label="删除装箱明细", before={"package": before}, metadata={"package_id": package_id})
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        serializer = ShipmentPackageSerializer(package, data=request.data, partial=request.method == "PATCH", context={"shipment": shipment})
-        serializer.is_valid(raise_exception=True); serializer.save()
-        record_operation(request=request, instance=shipment, action="custom", action_label="修改装箱明细", before={"package": before}, metadata={"package_id": package.id})
-        return Response(serializer.data)
-
-    @action(detail=True, methods=["post"], url_path="copy-estimated-packing")
-    @transaction.atomic
-    def copy_estimated_packing(self, request, pk=None):
-        shipment = self.get_object()
-        shipment = Shipment.objects.select_for_update().get(pk=shipment.pk)
-        if shipment.status != "confirmed":
-            return Response({"detail": "只有已确认的发货单可以修改实际箱单。"}, status=status.HTTP_400_BAD_REQUEST)
-        plan = getattr(shipment.order, "packing_plan", None)
-        if not plan: return Response({"detail": "该订单尚未生成预计装箱。"}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            copy_estimated_to_actual(shipment, plan, replace=request.data.get("replace") is True)
-        except DjangoValidationError as error:
-            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        record_operation(request=request, instance=shipment, action="custom", action_label="复制预计装箱方案", metadata={"packing_plan_id": plan.id})
-        return Response(ShipmentPackageSerializer(shipment.packages.prefetch_related("items__sku"), many=True).data)
-
-
-class ProductParameterViewSet(AuditTrailMixin, viewsets.ModelViewSet):
-    serializer_class = ProductParameterSerializer
-    queryset = ProductParameter.objects.select_related("product")
-    search_fields = ["product__name", "product__code", "group", "name", "value"]
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.filter(product_id=self.request.query_params["product"]) if self.request.query_params.get("product") else qs
-
-
-class ProductCertificateViewSet(AuditTrailMixin, viewsets.ModelViewSet):
-    serializer_class = ProductCertificateSerializer
-    queryset = ProductCertificate.objects.select_related("product")
-    search_fields = ["product__name", "name", "certificate_no", "issuer"]
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        if self.request.query_params.get("product"):
-            qs = qs.filter(product_id=self.request.query_params["product"])
-        today = timezone.localdate()
-        expiry = self.request.query_params.get("expiry")
-        filters = {
-            "attention": {"expires_on__lte": today + timedelta(days=90)},
-            "expired": {"expires_on__lt": today},
-            "expiring": {"expires_on__range": (today, today + timedelta(days=90))},
-            "valid": {"expires_on__gt": today + timedelta(days=90)},
-            "no_expiry": {"expires_on__isnull": True},
-        }
-        if expiry in filters:
-            qs = qs.filter(**filters[expiry]).order_by("expires_on", "id")
-        return qs
-
-
-class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
-    serializer_class = QuoteSerializer
-    queryset = Quote.objects.select_related("customer", "root_quote", "parent_quote").prefetch_related("items__sku__product")
-    search_fields = ["quote_no", "customer__name"]
-    ordering_fields = ["quote_date", "valid_until", "created_at", "updated_at"]
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        if self.request.query_params.get("customer"):
-            qs = qs.filter(customer_id=self.request.query_params["customer"])
-        if self.request.query_params.get("status"):
-            qs = qs.filter(status=self.request.query_params["status"])
-        return qs.order_by("-updated_at", "-id")
-
-    @action(detail=False, methods=["post"], url_path="availability-preview")
-    def availability_preview(self, request):
-        serializer = QuoteAvailabilityPreviewInputSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        sku_ids = list(dict.fromkeys(serializer.validated_data["sku_ids"]))
-        found_ids = set(SKU.objects.filter(pk__in=sku_ids).values_list("pk", flat=True))
-        unknown_ids = [sku_id for sku_id in sku_ids if sku_id not in found_ids]
-        if unknown_ids:
-            return Response(
-                {"sku_ids": [f"未知 SKU ID：{', '.join(str(sku_id) for sku_id in unknown_ids)}"]},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        metrics = bulk_sku_metrics(sku_ids)
-        return Response({"items": [
-            {
-                "sku": sku_id,
-                "actual_quantity": f"{metrics[sku_id]['actual_quantity']:.2f}",
-                "reserved_quantity": f"{metrics[sku_id]['reserved_quantity']:.2f}",
-                "available_quantity": f"{metrics[sku_id]['available_quantity']:.2f}",
-                "in_transit_quantity": f"{metrics[sku_id]['in_transit_quantity']:.2f}",
-            }
-            for sku_id in sku_ids
-        ]})
-
-    @action(detail=True, methods=["get"])
-    def availability(self, request, pk=None):
-        quote = self.get_object()
-        items = list(quote.items.select_related("sku").order_by("id"))
-        metrics = bulk_sku_metrics(item.sku_id for item in items)
-        return Response({"quote": quote.id, "items": [
-            {
-                "quote_item": item.id,
-                "sku": item.sku_id,
-                "actual_quantity": f"{metrics[item.sku_id]['actual_quantity']:.2f}",
-                "reserved_quantity": f"{metrics[item.sku_id]['reserved_quantity']:.2f}",
-                "available_quantity": metrics[item.sku_id]["available_quantity"],
-                "in_transit_quantity": f"{metrics[item.sku_id]['in_transit_quantity']:.2f}",
-                "reference_lead_time_days": quote.lead_time_days,
-            }
-            for item in items
-        ]})
-
-    @action(detail=True, methods=["get", "post"], url_path="packing-plan")
-    def packing_plan(self, request, pk=None):
-        quote = self.get_object()
-        if request.method == "POST":
-            plan = generate_packing_plan(quote)
-            record_operation(request=request, instance=quote, action="custom", action_label="生成报价装箱方案", metadata={"packing_plan_id": plan.id})
-            return Response(PackingPlanSerializer(plan).data)
-        plan = getattr(quote, "packing_plan", None)
-        return Response(PackingPlanSerializer(plan).data if plan else {"detail": "尚未生成预计装箱。"}, status=status.HTTP_200_OK if plan else status.HTTP_404_NOT_FOUND)
-
-    def update(self, request, *args, **kwargs):
-        return Response({"detail": "已保存报价请创建迭代版本"}, status=status.HTTP_400_BAD_REQUEST)
-
-    def _change_status(self, request, quote, target, allowed, label):
-        # The action target may have changed after the request was routed.
-        # Re-read it under a row lock so exactly one competing transition wins.
-        quote = Quote.objects.select_for_update().get(pk=quote.pk)
-        if quote.status not in allowed:
-            return Response({"detail": "当前报价状态不能执行此操作，请创建修订版重新报价。"}, status=status.HTTP_400_BAD_REQUEST)
-        before_status = quote.status
-        quote.status = target
-        quote.save(update_fields=["status", "updated_at"])
-        record_operation(
-            request=request,
-            instance=quote,
-            action="custom",
-            action_label=label,
-            before={"status": before_status},
-            after={"status": target},
-        )
-        return Response(self.get_serializer(quote).data)
-
-    @action(detail=True, methods=["post"], url_path="mark-sent")
-    @transaction.atomic
-    def mark_sent(self, request, pk=None):
-        return self._change_status(request, self.get_object(), "sent", {"draft"}, "标记报价已发送")
-
-    @action(detail=True, methods=["post"])
-    @transaction.atomic
-    def accept(self, request, pk=None):
-        return self._change_status(request, self.get_object(), "accepted", {"draft", "sent"}, "客户接受报价")
-
-    @action(detail=True, methods=["post"])
-    @transaction.atomic
-    def reject(self, request, pk=None):
-        return self._change_status(request, self.get_object(), "rejected", {"draft", "sent"}, "客户拒绝报价")
-
-    @action(detail=True, methods=["post"])
-    @transaction.atomic
-    def expire(self, request, pk=None):
-        return self._change_status(request, self.get_object(), "expired", {"sent"}, "报价过期")
-
-    def destroy(self, request, *args, **kwargs):
-        return Response(
-            {"detail": "Saved quotations are permanent records and cannot be deleted."},
-            status=status.HTTP_405_METHOD_NOT_ALLOWED,
-        )
-
-    def _root_quote(self, quote):
-        return quote.root_quote or quote
-
-    @action(detail=True, methods=["get", "post"], url_path="important-notes")
-    def important_notes(self, request, pk=None):
-        quote = self.get_object()
-        root_quote = self._root_quote(quote)
-        notes = QuoteImportantNote.objects.filter(root_quote=root_quote).select_related("source_quote", "created_by", "deactivated_by")
-        if request.method == "GET":
-            return Response(QuoteImportantNoteSerializer(notes, many=True).data)
-
-        serializer = QuoteImportantNoteSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        creator = request.user if request.user.is_authenticated else None
-        note = serializer.save(root_quote=root_quote, source_quote=quote, created_by=creator)
-        record_operation(request=request, instance=quote, action="custom", action_label="新增报价重要备注", metadata={"note_id": note.id})
-        return Response(QuoteImportantNoteSerializer(note).data, status=status.HTTP_201_CREATED)
-
-    @action(detail=True, methods=["post"], url_path=r"important-notes/(?P<note_id>[^/.]+)/deactivate")
-    def deactivate_important_note(self, request, pk=None, note_id=None):
-        root_quote = self._root_quote(self.get_object())
-        note = get_object_or_404(
-            QuoteImportantNote.objects.select_related("source_quote", "created_by", "deactivated_by"),
-            pk=note_id,
-            root_quote=root_quote,
-        )
-        if note.is_active:
-            note.is_active = False
-            note.deactivated_at = timezone.now()
-            note.deactivated_by = request.user if request.user.is_authenticated else None
-            note.save(update_fields=["is_active", "deactivated_at", "deactivated_by", "updated_at"])
-            record_operation(request=request, instance=note.source_quote, action="custom", action_label="停用报价重要备注", metadata={"note_id": note.id})
-        return Response(QuoteImportantNoteSerializer(note).data)
-
-    @action(detail=True, methods=["post"], url_path=r"important-notes/(?P<note_id>[^/.]+)/restore")
-    def restore_important_note(self, request, pk=None, note_id=None):
-        root_quote = self._root_quote(self.get_object())
-        note = get_object_or_404(
-            QuoteImportantNote.objects.select_related("source_quote", "created_by", "deactivated_by"),
-            pk=note_id,
-            root_quote=root_quote,
-        )
-        if not note.is_active:
-            note.is_active = True
-            note.save(update_fields=["is_active", "updated_at"])
-            record_operation(request=request, instance=note.source_quote, action="custom", action_label="恢复报价重要备注", metadata={"note_id": note.id})
-        return Response(QuoteImportantNoteSerializer(note).data)
-
-    @action(detail=True, methods=["get"])
-    def workbench(self, request, pk=None):
-        quote = self.get_object()
-        root_quote = self._root_quote(quote)
-        revisions = Quote.objects.filter(Q(pk=root_quote.pk) | Q(root_quote=root_quote)).order_by("revision_no", "id")
-        orders = Order.objects.filter(quote__in=revisions).select_related("quote", "customer").prefetch_related("items__sku__product", "transactions")
-        notes = QuoteImportantNote.objects.filter(root_quote=root_quote).select_related("source_quote", "created_by", "deactivated_by")
-        return Response({
-            "quote": QuoteSerializer(quote).data,
-            "root_quote_no": root_quote.quote_no,
-            "revisions": QuoteSerializer(revisions, many=True).data,
-            "orders": OrderSerializer(orders, many=True).data,
-            "important_notes": QuoteImportantNoteSerializer(notes, many=True).data,
-            "order_summary": {"count": orders.count()},
-        })
-
-    @action(detail=True, methods=["get"], url_path="order-draft")
-    def order_draft(self, request, pk=None):
-        quote = self.get_object()
-        if quote.status in {"rejected", "expired"}:
-            return Response(
-                {"detail": "该报价已拒绝或过期，请先创建新的修订版后再转为订单。"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        order_date = timezone.localdate()
-        return Response({
-            "customer": quote.customer_id,
-            "quote": quote.id,
-            "order_date": order_date,
-            "expected_ship_date": order_date + timedelta(days=quote.lead_time_days) if quote.lead_time_days is not None else None,
-            "status": "draft",
-            "currency": quote.currency,
-            "exchange_rate": quote.exchange_rate,
-            "shipping_fee": quote.shipping_fee,
-            "discount": quote.discount,
-            "notes": quote.notes,
-            "items": [
-                {
-                    "sku": item.sku_id,
-                    "sku_code": item.sku_code_snapshot,
-                    "sales_model_snapshot": item.sales_model_snapshot,
-                    "model": item.sales_model_snapshot,
-                    "display_name_snapshot": item.product_name_snapshot,
-                    "description_snapshot": item.description,
-                    "description": item.description,
-                    "unit_snapshot": item.unit_snapshot,
-                    **{**trade_values(item), "trade_unit": item.trade_unit_id},
-                    "quantity": item.quantity,
-                    "unit_price": item.unit_price,
-                    "cost_price": item.sku.cost_price,
-                    "notes": item.notes,
-                }
-                for item in quote.items.select_related("sku")
-            ],
-        })
-
-    @action(detail=True, methods=["post"])
-    @transaction.atomic
-    def revise(self, request, pk=None):
-        source = self.get_object()
-        revision_summary = str(request.data.get("revision_summary", "")).strip()
-        if not revision_summary:
-            raise serializers.ValidationError({"revision_summary": "请简要说明本次修改的内容。"})
-        serializer = self.get_serializer(data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        changes = serializer.validated_data.copy()
-        item_data = changes.pop("items", None)
-        if "customer" in changes and changes["customer"].pk != source.customer_id:
-            raise serializers.ValidationError({"customer": "修订版本不能更换客户。"})
-        root_quote = source.root_quote or source
-        try:
-            quote_no, revision_no = allocate_revision_quote_no(source)
-        except DjangoValidationError as exc:
-            raise serializers.ValidationError(getattr(exc, "message_dict", exc.messages)) from exc
-        copied_fields = [
-            "customer", "quote_date", "valid_until", "status", "currency", "exchange_rate",
-            "shipping_fee", "discount", "notes", "recipient_name", "buyer_address",
-            "buyer_email", "buyer_phone", "lead_time_days", "deposit_ratio", "trading_terms",
-            "shipping_details", "buyer_company_name",
-        ]
-        quote_values = {field: getattr(source, field) for field in copied_fields}
-        quote_values.update(changes)
-        quote_values["status"] = "draft"
-        revision = Quote.objects.create(
-            quote_no=quote_no,
-            root_quote=root_quote,
-            parent_quote=source,
-            revision_no=revision_no,
-            revision_summary=revision_summary,
-            **quote_values,
-        )
-        if item_data is None:
-            source_items = list(source.items.select_related("sku__product"))
-            item_data = [
-                {
-                    "sku": item.sku,
-                    "quantity": item.quantity,
-                    "unit_price": item.unit_price,
-                    "description": item.description,
-                    "notes": item.notes,
-                    **trade_values(item),
-                }
-                for item in source_items
-            ]
-            create_quote_items(revision, item_data, source_items=source_items)
-        else:
-            create_quote_items(revision, item_data)
-        record_operation(request=request, instance=revision, action="create", action_label="创建报价迭代版本", metadata={"parent_quote_id": source.id, "revision_summary": revision_summary})
-        record_operation(request=request, instance=source, action="custom", action_label="创建报价迭代版本", metadata={"revision_id": revision.id, "revision_summary": revision_summary})
-        return Response(self.get_serializer(revision).data, status=status.HTTP_201_CREATED)
-
-    @action(detail=True, methods=["get"], url_path="pi-data")
-    def pi_data(self, request, pk=None):
-        quote = self.get_object()
-        products = []
-        subtotal = Decimal("0")
-        for item in quote.items.all():
-            amount = item.amount
-            subtotal += amount
-            products.append({
-                # ``sku`` remains the legacy/internal field for old clients;
-                # customer-facing callers must use ``model``.
-                "sku": item.sku_code_snapshot,
-                "sku_code": item.sku_code_snapshot,
-                "model": item.sales_model_snapshot,
-                "sales_model": item.sales_model_snapshot,
-                "product_name": item.product_name_snapshot,
-                "display_name": item.product_name_snapshot,
-                "description": item.description + (f"\n{item.trade_snapshot['name']}: 1 {item.trade_snapshot['unit']} = {item.trade_snapshot['factor']} {item.trade_snapshot['base_unit']}; Total {item.quantity} {item.trade_snapshot['base_unit']}" if item.trade_unit_id else ""),
-                "quantity": item.trade_quantity if item.trade_unit_id else item.quantity,
-                "base_quantity": item.quantity,
-                "trade_snapshot": item.trade_snapshot,
-                "unit_price": item.trade_unit_price if item.trade_unit_id else item.unit_price,
-                "amount": amount,
-                "unit": item.trade_snapshot.get("unit", item.unit_snapshot),
-                "image_url": request.build_absolute_uri(item.image_snapshot.url) if item.image_snapshot else "",
-            })
-        total_amount = quote.total_amount
-        deposit_amount = (total_amount * quote.deposit_ratio).quantize(Decimal("0.01"))
-        return Response({
-            "invoice_no": quote.quote_no,
-            "buyer": {
-                "company_name": quote.buyer_company_name,
-                "name": quote.recipient_name,
-                "address": quote.buyer_address,
-                "email": quote.buyer_email,
-                "phone": quote.buyer_phone,
-            },
-            "terms": {
-                "quote_date": quote.quote_date,
-                "valid_until": quote.valid_until,
-                "lead_time_days": quote.lead_time_days,
-                "trading_terms": quote.trading_terms,
-                "shipping_details": quote.shipping_details,
-                "notes": quote.notes,
-            },
-            "totals": {
-                "currency": quote.currency,
-                "subtotal": subtotal,
-                "shipping_fee": quote.shipping_fee,
-                "discount": quote.discount,
-                "total_amount": total_amount,
-            },
-            "payment_splits": {
-                "deposit_ratio": quote.deposit_ratio,
-                "deposit_amount": deposit_amount,
-                "balance_ratio": Decimal("1") - quote.deposit_ratio,
-                "balance_amount": total_amount - deposit_amount,
-            },
-            "products": products,
-        })
-
-    @action(detail=True, methods=["get"], permission_classes=[QuoteExportPermission])
-    def export(self, request, pk=None):
-        quote = self.get_object()
-        try:
-            content = build_pi_export_payload(quote)
-        except QuoteExportError:
-            return Response(
-                {"detail": "PI workbook generation failed."},
-                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            )
-        response = HttpResponse(
-            content,
-            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        )
-        response["Content-Disposition"] = f'attachment; filename="{quote.quote_no}.xlsx"'
-        return response
-
-
-class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
-    serializer_class = OrderSerializer
-    queryset = Order.objects.select_related("customer", "quote").prefetch_related("items__sku__product", "items__supplier_sku__supplier", "transactions")
-    search_fields = ["order_no", "customer__name"]
-    ordering_fields = ["order_date", "expected_ship_date", "created_at"]
-
-    def create(self, request, *args, **kwargs):
-        if request.data.get("status") not in (None, "", "draft"):
-            return Response({"detail": "新建订单只能保存为草稿，请使用确认订单动作。"}, status=status.HTTP_400_BAD_REQUEST)
-        return super().create(request, *args, **kwargs)
-
-    def update(self, request, *args, **kwargs):
-        if "status" in request.data:
-            return Response({"detail": "订单状态只能通过确认、开始生产、发货、完成或取消等业务动作变更。"}, status=status.HTTP_400_BAD_REQUEST)
-        return super().update(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        order = self.get_object()
-        if order.status != "draft":
-            return Response({"detail": "正式订单不能删除，请使用取消订单。"}, status=status.HTTP_400_BAD_REQUEST)
-        return super().destroy(request, *args, **kwargs)
-
-    @action(detail=True, methods=["post"])
-    def confirm(self, request, pk=None):
-        try:
-            with transaction.atomic():
-                order = confirm_order(self.get_object())
-                record_operation(
-                    request=request,
-                    instance=order,
-                    action="custom",
-                    action_label="确认销售订单",
-                    metadata={
-                        "quote_id": order.quote_id,
-                        "quote_no": order.quote.quote_no if order.quote_id else "",
-                    },
-                )
-        except DjangoValidationError as error:
-            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(self.get_serializer(order).data)
-
-    @action(detail=True, methods=["post"], url_path="start-production")
-    def start_production(self, request, pk=None):
-        try:
-            with transaction.atomic():
-                order = start_order_production(self.get_object())
-                record_operation(request=request, instance=order, action="custom", action_label="开始订单生产")
-        except DjangoValidationError as error:
-            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(self.get_serializer(order).data)
-
-    @action(detail=True, methods=["post"])
-    def complete(self, request, pk=None):
-        try:
-            with transaction.atomic():
-                order = complete_order(self.get_object())
-                record_operation(request=request, instance=order, action="custom", action_label="完成销售订单")
-        except DjangoValidationError as error:
-            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(self.get_serializer(order).data)
-
-    @action(detail=True, methods=["post"])
-    def cancel(self, request, pk=None):
-        input_serializer = CancellationInputSerializer(data=request.data)
-        input_serializer.is_valid(raise_exception=True)
-        try:
-            with transaction.atomic():
-                order = cancel_order(self.get_object(), input_serializer.validated_data["reason"])
-                record_operation(
-                    request=request,
-                    instance=order,
-                    action="custom",
-                    action_label="取消销售订单",
-                    metadata={"reason": order.cancellation_reason},
-                )
-        except DjangoValidationError as error:
-            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(self.get_serializer(order).data)
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        if self.request.query_params.get("customer"):
-            qs = qs.filter(customer_id=self.request.query_params["customer"])
-        if self.request.query_params.get("quote"):
-            qs = qs.filter(quote_id=self.request.query_params["quote"])
-        if self.request.query_params.get("product"):
-            qs = qs.filter(items__sku__product_id=self.request.query_params["product"]).distinct()
-        if self.request.query_params.get("sku"):
-            qs = qs.filter(items__sku_id=self.request.query_params["sku"]).distinct()
-        if self.request.query_params.get("status"):
-            qs = qs.filter(status=self.request.query_params["status"])
-        todo = self.request.query_params.get("todo")
-        if todo == "unshipped":
-            qs = qs.filter(status__in=["confirmed", "production"])
-        elif todo == "due":
-            qs = qs.filter(
-                status__in=["confirmed", "production"],
-                expected_ship_date__isnull=False,
-                expected_ship_date__lte=timezone.localdate(),
-            )
-        return qs
-
-    @action(detail=True, methods=["get"])
-    def fulfillment(self, request, pk=None):
-        order = self.get_object()
-        draft_quantities = draft_procurement_quantities(order)
-        rows = []
-        for item in order.items.select_related("sku"):
-            metrics = order_item_metrics(item)
-            rows.append({
-                "id": item.id, "sku": item.sku_id, "sku_code": item.sku_code_snapshot or item.sku.sku,
-                "base_unit": item.trade_snapshot.get("base_unit", item.unit_snapshot or item.sku.unit),
-                "sales_model": item.sales_model_snapshot,
-                "display_name": item.display_name_snapshot,
-                "quantity": item.quantity, "allocated_quantity": metrics["allocated_quantity"],
-                "to_procure_quantity": metrics["to_procure_quantity"],
-                "draft_procurement_quantity": draft_quantities[item.id],
-                "draftable_quantity": max(Decimal("0"), metrics["to_procure_quantity"] - draft_quantities[item.id]),
-                "purchased_quantity": metrics["purchased_quantity"],
-                "in_transit_quantity": metrics["in_transit_quantity"],
-                "arrived_quantity": metrics["received_quantity"],
-                "shipped_quantity": metrics["shipped_quantity"],
-                "unshipped_quantity": metrics["unshipped_quantity"],
-                "supplier_sku": item.supplier_sku_id,
-                "supplier_name": item.supplier_name_snapshot,
-                "supplier_model": item.supplier_model_snapshot,
-                "supplier_sku_code": item.supplier_sku_code_snapshot,
-            })
-        purchase_orders = prefetch_purchase_related_orders(
-            PurchaseOrder.objects.filter(
-                items__cost_allocations__target_type="order",
-                items__cost_allocations__order=order,
-            ).distinct().select_related("supplier", "order").prefetch_related(
-                "items__receipts", "transactions"
-            )
-        )
-        shipments = Shipment.objects.filter(order=order).prefetch_related("items__sku", "items__inventory_movement", "items__order_item")
-        return Response({
-            "order": OrderSerializer(order).data,
-            "items": rows,
-            "purchase_orders": PurchaseOrderSerializer(purchase_orders, many=True).data,
+    search_fields = ["code", "de…12381 tokens truncated…rue).data,
             "shipments": [{
                 "id": shipment.id, "shipment_no": shipment.shipment_no,
                 "shipment_date": shipment.shipment_date, "status": shipment.status,
@@ -1998,6 +1139,9 @@ class ContractChangeRequestViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        sales_changes = scope_customer_related_queryset(queryset.filter(order__isnull=False), self.request.user, relation="order__customer")
+        purchase_changes = queryset.filter(purchase_order__isnull=False)
+        queryset = sales_changes | purchase_changes
         if self.request.query_params.get("order"):
             queryset = queryset.filter(order_id=self.request.query_params["order"])
         if self.request.query_params.get("purchase_order"):
@@ -2038,7 +1182,8 @@ def dashboard(request):
     last_year_start = date(today.year - 1, 1, 1)
     last_year_same_day = date(today.year - 1, today.month, min(today.day, 28 if today.month == 2 else today.day))
     formal_statuses = ["confirmed", "production", "shipped", "completed"]
-    valid_orders = Order.objects.filter(status__in=formal_statuses)
+    scoped_customers = scope_customer_queryset(Customer.objects.all(), request.user)
+    valid_orders = scope_customer_related_queryset(Order.objects.filter(status__in=formal_statuses), request.user)
     def sales_between(start, end):
         return sum(
             (order.total_amount * order.exchange_rate for order in valid_orders.filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes")),
@@ -2059,7 +1204,7 @@ def dashboard(request):
             customer["name"], customer["country"] = order.customer.name, order.customer.country
     monthly = [{"month": month, **values} for month, values in sorted(monthly_rows.items())]
     # Product-category sales deliberately remain item-only: contract adjustments have no SKU/category allocation.
-    categories = OrderItem.objects.filter(order__status__in=formal_statuses, order__order_date__gte=year_start).values(
+    categories = OrderItem.objects.filter(order__in=valid_orders, order__order_date__gte=year_start).values(
         "sku__product__category__name"
     ).annotate(sales=Sum(ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)), quantity=Sum("quantity")).order_by("-sales")[:8]
     top_customers = [
@@ -2072,7 +1217,7 @@ def dashboard(request):
     expense = Transaction.objects.filter(direction="expense", status="confirmed", transaction_date__gte=year_start).aggregate(
         v=Coalesce(Sum(ExpressionWrapper(F("amount") * F("exchange_rate"), output_field=MONEY)), Decimal("0"), output_field=MONEY)
     )["v"]
-    due_follow_ups = current_due_follow_ups(today=today).select_related("customer", "contact").prefetch_related("attachments")
+    due_follow_ups = scope_customer_related_queryset(current_due_follow_ups(today=today), request.user).select_related("customer", "contact").prefetch_related("attachments")
     certificates = ProductCertificate.objects.filter(expires_on__lte=today + timedelta(days=90)).select_related("product")
     certificate_alerts = [
         {"id": c.id, "product_id": c.product_id, "product_name": c.product.name,
@@ -2103,7 +1248,7 @@ def dashboard(request):
 
 
 IMPORT_FIELDS = {
-    "customers": ["code", "name", "country", "source", "owner", "website", "address", "notes"],
+    "customers": ["code", "name", "country", "source", "website", "address", "notes"],
     "products": ["code", "name", "sales_model_prefix", "category", "description", "status"],
     "skus": ["sku", "product_code", "specification", "unit", "cost_price", "default_price", "currency"],
     "transactions": ["transaction_no", "transaction_date", "direction", "category", "amount", "currency", "exchange_rate", "customer_code", "order_no", "payment_method", "reference", "notes"],
@@ -2146,7 +1291,7 @@ def _import_csv_preview_request(request):
     except ValueError as exc:
         return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
     preview_state = _import_state(entity, rows)
-    preview = _preview_import(entity, rows)
+    preview = _preview_import(entity, rows, user=request.user)
     if not preview["errors"]:
         preview["preview_token"] = signing.dumps({"entity": entity, "sha256": digest, "state": preview_state}, salt=IMPORT_PREVIEW_SALT)
     return Response(preview)
@@ -2174,14 +1319,14 @@ def import_csv_execute(request):
 
     # Run the exact write path once in a transaction that is rolled back. This
     # detects concurrent changes after preview without leaving any side effects.
-    validation = _preview_import(entity, rows)
+    validation = _preview_import(entity, rows, user=request.user)
     if validation["errors"]:
         return Response({"detail": "数据状态已变化，请重新预览后再导入。", "errors": validation["errors"]}, status=status.HTTP_400_BAD_REQUEST)
     try:
         with transaction.atomic():
             if signed.get("state") != _import_state(entity, rows, lock=True):
                 return Response({"detail": "数据状态已发生变化，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
-            created, updated = _apply_import_rows(entity, rows)
+            created, updated = _apply_import_rows(entity, rows, user=request.user)
     except Exception:
         return Response({"detail": "数据状态已变化，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
     return Response({"total": len(rows), "created": created, "updated": updated})
@@ -2257,7 +1402,7 @@ def _duplicate_key_errors(rows, key):
     return errors
 
 
-def _preview_import(entity, rows):
+def _preview_import(entity, rows, user=None):
     created = updated = 0
     errors = []
     with transaction.atomic():
@@ -2266,7 +1411,7 @@ def _preview_import(entity, rows):
                 if row.get("__import_error__"):
                     raise ValueError(row["__import_error__"])
                 with transaction.atomic():
-                    was_created = _import_row(entity, row)
+                    was_created = _import_row(entity, row, user=user)
                 created += int(was_created)
                 updated += int(not was_created)
             except Exception as exc:
@@ -2275,10 +1420,10 @@ def _preview_import(entity, rows):
     return {"total": len(rows), "created": created, "updated": updated, "errors": errors}
 
 
-def _apply_import_rows(entity, rows):
+def _apply_import_rows(entity, rows, user=None):
     created = updated = 0
     for row in rows:
-        was_created = _import_row(entity, row)
+        was_created = _import_row(entity, row, user=user)
         created += int(was_created)
         updated += int(not was_created)
     return created, updated
@@ -2307,16 +1452,18 @@ def _decimal(value, default="0"):
         raise ValueError(f"无效金额：{value}") from exc
 
 
-def _import_row(entity, row):
+def _import_row(entity, row, user=None):
     if entity == "orders":
         raise ValueError(ORDER_IMPORT_DISABLED_MESSAGE)
     if entity == "customers":
         instance = Customer.objects.filter(code=row["code"]).first()
-        fields = ("name", "country", "source", "owner", "website", "address", "notes")
+        if instance and user is not None and not scope_customer_queryset(Customer.objects.filter(pk=instance.pk), user).exists():
+            raise DjangoValidationError("该客户不在当前账号的数据范围内。")
+        fields = ("name", "country", "source", "website", "address", "notes")
         payload = {field: row.get(field, "") for field in fields}
         serializer = CustomerSerializer(
             instance, data=payload, partial=bool(instance),
-            context={"allow_import_without_contacts": True, "allow_import_code": True},
+            context={"allow_import_without_contacts": True, "allow_import_code": True, "user": user},
         )
         serializer.is_valid(raise_exception=True)
         if instance:
@@ -2373,3 +1520,4 @@ def _import_row(entity, row):
     serializer.is_valid(raise_exception=True)
     record_transaction(serializer.validated_data)
     return True
+

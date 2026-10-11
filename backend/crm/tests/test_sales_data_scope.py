@@ -13,7 +13,7 @@ from rest_framework.test import APIClient
 
 from crm.models import (
     AccessRole, Contact, Customer, EmployeeProfile, FollowUp, Order, OrderItem,
-    OrganizationUnit, Position, Product, Quote, RolePermission, SKU, Shipment,
+    OrganizationUnit, Position, Product, Quote, RolePermission, SKU, Shipment, ShipmentItem,
     Supplier, SupplierSKU,
 )
 from crm.sales_scope import (
@@ -282,6 +282,37 @@ class SalesDataScopeTests(TestCase):
         response = self.client.get(f"/api/products/{product.pk}/customers/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual({row["order__customer__id"] for row in response.data}, {self.customer_a.pk, self.customer_b.pk})
+
+    def test_sku_inventory_detail_limits_order_and_shipment_rows_to_sales_scope(self):
+        product = Product.objects.create(code="SCOPE-P-SKU-DETAIL", name="Scope SKU")
+        sku = SKU.objects.create(product=product, sku="SCOPE-S-SKU-DETAIL")
+        orders = []
+        for customer, suffix in ((self.customer_a, "A"), (self.customer_b, "B")):
+            order = Order.objects.create(
+                order_no=f"SCOPE-O-SKU-DETAIL-{suffix}", customer=customer,
+                order_date=date.today(), status="confirmed", exchange_rate=1,
+            )
+            item = OrderItem.objects.create(order=order, sku=sku, quantity=1, unit_price=100)
+            shipment = Shipment.objects.create(
+                shipment_no=f"SCOPE-SHIP-SKU-DETAIL-{suffix}", order=order,
+                shipment_date=date.today(), status="draft",
+            )
+            ShipmentItem.objects.create(shipment=shipment, order_item=item, sku=sku, quantity=1)
+            orders.append((order, shipment))
+
+        self.login(self.employee_a)
+        response = self.client.get(f"/api/skus/{sku.pk}/inventory-detail/")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual([row["order_no"] for row in response.data["orders"]], [orders[0][0].order_no])
+        self.assertEqual([row["shipment_no"] for row in response.data["shipments"]], [orders[0][1].shipment_no])
+        self.assertNotIn(orders[1][0].order_no, repr(response.data))
+        self.assertNotIn(orders[1][1].shipment_no, repr(response.data))
+
+        self.login(self.manager)
+        response = self.client.get(f"/api/skus/{sku.pk}/inventory-detail/")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual({row["order_no"] for row in response.data["orders"]}, {row[0].order_no for row in orders})
+        self.assertEqual({row["shipment_no"] for row in response.data["shipments"]}, {row[1].shipment_no for row in orders})
 
     def test_dashboard_active_customer_count_respects_sales_data_scope(self):
         Customer.objects.filter(pk__in=[self.customer_a.pk, self.customer_b.pk, self.customer_c.pk]).update(status="customer")

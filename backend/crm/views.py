@@ -888,8 +888,17 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def inventory_detail(self, request, pk=None):
         sku = self.get_object()
         purchases = PurchaseOrder.objects.filter(items__sku=sku).select_related("supplier", "order").prefetch_related("items__receipts").distinct()
-        shipments = Shipment.objects.filter(items__sku=sku).select_related("order__customer").prefetch_related("items").distinct()
-        orders = Order.objects.filter(items__sku=sku).select_related("customer").prefetch_related("items", "items__shipment_items").distinct()
+        scoped_orders = scope_customer_related_queryset(
+            Order.objects.filter(items__sku=sku), request.user,
+        )
+        shipments = (
+            Shipment.objects.filter(items__sku=sku, order__in=scoped_orders)
+            .select_related("order__customer").prefetch_related("items").distinct()
+        )
+        orders = (
+            scoped_orders.select_related("customer")
+            .prefetch_related("items", "items__shipment_items").distinct()
+        )
         movements = InventoryMovement.objects.filter(sku=sku).select_related("order").order_by("-movement_date", "-created_at")
         can_view_orders = user_can(request.user, "orders", "view")
         can_view_customers = user_can(request.user, "customers", "view")

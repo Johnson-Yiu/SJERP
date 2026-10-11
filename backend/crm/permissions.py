@@ -225,6 +225,24 @@ class ModuleActionPermission(BasePermission):
         return user_can(user, module, action_for_request(request, view))
 
 
+class OrganizationOverviewPermission(BasePermission):
+    """Allow permission administrators to read the matrix without organization.view."""
+
+    message = "你没有权限查看组织与权限。"
+
+    def has_permission(self, request, view):
+        if development_superadmin_enabled():
+            return True
+        user = request.user
+        if not user or not user.is_authenticated:
+            return False
+        if not getattr(settings, "RBAC_ENFORCEMENT", False):
+            return True
+        if has_all_permissions(user) or is_permission_admin(user):
+            return True
+        return user_can(user, "organization", "view")
+
+
 class PermissionAdminOnly(BasePermission):
     """Restrict permission changes to administrators while allowing module reads."""
 

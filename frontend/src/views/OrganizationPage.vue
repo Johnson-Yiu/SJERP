@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { Building2, Check, ChevronRight, Crown, Database, KeyRound, ShieldCheck, UsersRound } from 'lucide-vue-next'
 import { api } from '../api'
-import { accessState } from '../accessControl'
+import { accessState, loadAccessControl } from '../accessControl'
 
 const data = ref({ units: [], roles: [], summary: {} })
 const loading = ref(true), saving = ref(false), error = ref(''), selectedRoleId = ref(null)
@@ -48,6 +48,7 @@ async function savePermissions() {
     const response = await api.post(`/access-roles/${selectedRole.value.id}/permission-matrix/`, { permissions })
     const index = data.value.roles.findIndex(role => role.id === response.data.id)
     data.value.roles[index] = response.data
+    await loadAccessControl({ force: true })
     toast.value = `${response.data.name}权限已保存`
     setTimeout(() => { toast.value = '' }, 2500)
   } catch (e) { toast.value = e.message; setTimeout(() => { toast.value = '' }, 3000) } finally { saving.value = false }

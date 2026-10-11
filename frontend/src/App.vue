@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck, Barcode } from 'lucide-vue-next'
 import AppDialogHost from './components/AppDialogHost.vue'
 import { pageIdentityKey } from './utils/routePageState'
-import { accessState, can, loadAccessControl } from './accessControl'
+import { accessState, can, canAccessOrganization, loadAccessControl } from './accessControl'
 
 const route = useRoute()
 const menuOpen = ref(false)
@@ -51,7 +51,7 @@ const visibleNav = computed(() => {
   const flush = () => { if (entries.length) result.push({ section: title }, ...entries); entries = [] }
   for (const item of nav) {
     if (item.section) { flush(); title = item.section }
-    else if (can(item.module, 'view')) entries.push(item)
+    else if (item.path === '/organization' ? canAccessOrganization() : can(item.module, 'view')) entries.push(item)
   }
   flush()
   return result

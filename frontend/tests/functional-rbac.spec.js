@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   api: { get: vi.fn(), post: vi.fn(), put: vi.fn(), patch: vi.fn(), delete: vi.fn() },
   listAll: vi.fn(),
 }))
+vi.mock('../src/api', () => ({ ...mocks, listData: response => response.data?.results || response.data || [], downloadQuoteExport: vi.fn() }))
 vi.mock('../src/api.js', () => ({ ...mocks, listData: response => response.data?.results || response.data || [], downloadQuoteExport: vi.fn() }))
 
 import App from '../src/App.vue'
@@ -13,9 +14,10 @@ import router from '../src/router.js'
 import ResourcePage from '../src/views/ResourcePage.vue'
 import DocumentPage from '../src/views/DocumentPage.vue'
 import ImportPage from '../src/views/ImportPage.vue'
+import OrganizationPage from '../src/views/OrganizationPage.vue'
 import RelatedCreateModal from '../src/components/RelatedCreateModal.vue'
 import { resourceConfigs } from '../src/resourceConfigs.js'
-import { can, setAccessOperator } from '../src/accessControl.js'
+import { can, firstPermittedPath, setAccessOperator } from '../src/accessControl.js'
 
 const modules = ['dashboard', 'reports', 'customers', 'contacts', 'followups', 'quotes', 'orders', 'suppliers', 'purchases', 'inventory', 'products', 'skus', 'categories', 'parameters', 'packaging', 'trade_units', 'certificates', 'hs_codes', 'finance', 'transactions', 'imports', 'organization', 'employees', 'permissions']
 function operator(grants = {}) {
@@ -38,6 +40,7 @@ afterEach(async () => {
   wrapper?.unmount()
   wrapper = null
   vi.clearAllMocks()
+  vi.restoreAllMocks()
   setAccessOperator(operator())
   await router.replace('/')
 })
@@ -60,6 +63,59 @@ it('P: redirects a manually opened forbidden route to the access denied page', a
   wrapper = mount(App, { global: { plugins: [router], stubs: { AppDialogHost: true } } })
   await flush()
   expect(wrapper.text()).toContain('无权访问此功能')
+})
+
+it('permission administrators can enter Organization and see its sidebar link without organization.view', async () => {
+  setAccessOperator({ ...operator(), can_manage_permissions: true })
+  await router.push('/organization')
+  expect(router.currentRoute.value.path).toBe('/organization')
+  wrapper = mount(App, { global: { plugins: [router], stubs: { AppDialogHost: true } } })
+  await flush()
+  expect(wrapper.find('.sidebar nav a[href="/organization"]').text()).toContain('组织与权限')
+})
+
+it('ordinary users without organization.view remain denied and are not offered Organization as a return path', async () => {
+  setAccessOperator(operator())
+  await router.push('/organization')
+  expect(router.currentRoute.value.name).toBe('access-denied')
+  expect(firstPermittedPath()).toBe('')
+})
+
+it('firstPermittedPath offers Organization as the permission administrator landing path', () => {
+  setAccessOperator({ ...operator(), can_manage_permissions: true })
+  expect(firstPermittedPath()).toBe('/organization')
+})
+
+it('refreshes current-operator after saving the permission matrix and updates the sidebar immediately', async () => {
+  const admin = { ...operator(), can_manage_permissions: true }
+  const updatedOperator = operator()
+  let current = admin
+  const role = { id: 7, code: 'admin', name: '管理员', description: '', default_data_scope_display: '全部数据', permissions: [] }
+  const overview = {
+    units: [], roles: [role], summary: { departments: 0, positions: 0, roles: 1, members: 1 },
+    modules: [{ code: 'customers', name: '客户' }, { code: 'organization', name: '组织与权限' }], enforcement: true,
+  }
+  const actualApi = await vi.importActual('../src/api.js')
+  const currentOperatorFetch = vi.spyOn(actualApi.api, 'get').mockResolvedValue({ data: updatedOperator })
+  setAccessOperator(admin)
+  await router.push('/organization')
+  mocks.api.get.mockImplementation(async url => {
+    if (url === '/session/current-operator/') return { data: current }
+    if (url === '/organization/overview/') return { data: overview }
+    return { data: [] }
+  })
+  mocks.api.post.mockImplementation(async () => {
+    current = updatedOperator
+    return { data: role }
+  })
+  wrapper = mount(App, { global: { plugins: [router], stubs: { AppDialogHost: true } } })
+  await flush()
+  expect(wrapper.find('.sidebar nav a[href="/organization"]').exists()).toBe(true)
+  await wrapper.get('.role-header-actions .btn-primary').trigger('click')
+  await flush()
+  expect(mocks.api.post).toHaveBeenCalled()
+  expect(currentOperatorFetch).toHaveBeenCalledWith('/session/current-operator/')
+  expect(wrapper.find('.sidebar nav a[href="/organization"]').exists()).toBe(false)
 })
 
 it('denies access when the current-operator permission contract is incomplete', () => {

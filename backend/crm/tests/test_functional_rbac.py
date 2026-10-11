@@ -158,6 +158,22 @@ class FunctionalRBACApiTests(TestCase):
         self.client.force_authenticate(user=admin)
         self.assertEqual(self.client.post(url, body, format="json").status_code, 200)
 
+    def test_admin_can_read_permission_overview_without_organization_view(self):
+        admin_role = AccessRole.objects.get(code="admin")
+        self.grant(admin_role, "organization", can_view=False)
+        admin = self.make_user(username="rbac-overview-admin", roles=[admin_role])
+        self.auth(admin)
+
+        self.assertEqual(self.client.get("/api/organization/overview/").status_code, 200)
+        # The overview exception is limited to the matrix page and does not grant
+        # organization-unit CRUD endpoints to an administrator without the module grant.
+        self.assertEqual(self.client.get("/api/organization-units/").status_code, 403)
+
+    def test_ordinary_user_without_organization_view_cannot_read_overview(self):
+        self.auth(self.make_user(username="rbac-no-organization-view", roles=[self.role]))
+        self.assertEqual(self.client.get("/api/organization/overview/").status_code, 403)
+        self.assertEqual(APIClient().get("/api/organization/overview/").status_code, 403)
+
     def test_current_operator_returns_complete_matrix_contract(self):
         self.grant(self.role, "customers", can_view=True)
         self.auth(self.make_user(roles=[self.role]))

@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { api } from './api'
+import { api } from './api.js'
 
 export const accessState = reactive({ operator: null, loading: true, loaded: false, error: '' })
 
@@ -40,6 +40,12 @@ export function can(module, action = 'view') {
   return accessState.operator.permissions?.[module]?.[action] === true
 }
 
+export function canAccessOrganization() {
+  return can('organization', 'view') || (
+    accessState.loaded && !accessState.error && accessState.operator?.can_manage_permissions === true
+  )
+}
+
 export const PERMITTED_PAGE_MODULES = [
   ['/', 'dashboard'], ['/reports', 'reports'], ['/customers', 'customers'], ['/contacts', 'contacts'],
   ['/follow-ups', 'followups'], ['/quotes', 'quotes'], ['/orders', 'orders'], ['/suppliers', 'suppliers'],
@@ -52,7 +58,9 @@ export const PERMITTED_PAGE_MODULES = [
 ]
 
 export function firstPermittedPath() {
-  return PERMITTED_PAGE_MODULES.find(([, module]) => can(module, 'view'))?.[0] || ''
+  return PERMITTED_PAGE_MODULES.find(([path, module]) => (
+    path === '/organization' ? canAccessOrganization() : can(module, 'view')
+  ))?.[0] || ''
 }
 
 export function useAccessControl() {

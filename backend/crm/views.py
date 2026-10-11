@@ -26,7 +26,7 @@ from rest_framework.response import Response
 
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, Supplier, SupplierSKU, Transaction
 from .querysets import current_due_follow_ups, prefetch_purchase_related_orders
-from .permissions import HSCodeMaintenancePermission, ModuleActionPermission, PermissionAdminOnly, QuoteExportPermission, _profile_for, effective_permission_matrix, has_all_permissions, is_permission_admin, user_can
+from .permissions import HSCodeMaintenancePermission, ModuleActionPermission, OrganizationOverviewPermission, PermissionAdminOnly, QuoteExportPermission, _profile_for, effective_permission_matrix, has_all_permissions, is_permission_admin, user_can
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
@@ -360,6 +360,7 @@ class EmployeeProfileViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
 
 @api_view(["GET"])
+@permission_classes([OrganizationOverviewPermission])
 def organization_overview(request):
     from django.conf import settings
     units = OrganizationUnit.objects.select_related("parent").prefetch_related("positions").annotate(employee_count=Count("employees"))

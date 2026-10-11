@@ -14,6 +14,7 @@ from .supplier_display import payment_terms_summary
 from .querysets import prefetch_purchase_related_orders
 from .serializers import ContactSerializer, CustomerSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, QuoteSerializer, SKUSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer
 from .permissions import CONTEXT_MODULES, user_can
+from .sales_scope import scope_customer_queryset, scope_customer_related_queryset
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -65,7 +66,9 @@ def entity_context(request, entity, pk):
     if not handler:
         return Response({"detail": "未知的数据类型。"}, status=404)
     if entity == "products":
-        payload = handler(pk, include_inactive=request.query_params.get("include_inactive") == "1")
+        payload = handler(pk, include_inactive=request.query_params.get("include_inactive") == "1", user=request.user)
+    elif entity in {"skus", "supplier-skus", "customers", "contacts", "follow-ups", "quotes", "orders"}:
+        payload = handler(pk, request.user)
     else:
         payload = handler(pk)
     # A detail context can contain several related modules. Keep the primary
@@ -87,8 +90,11 @@ def entity_context(request, entity, pk):
     return Response(payload)
 
 
-def _customer_context(pk):
-    obj = get_object_or_404(Customer, pk=pk)
+def _customer_context(pk, user=None):
+    queryset = Customer.objects.all()
+    if user is not None:
+        queryset = scope_customer_queryset(queryset, user)
+    obj = get_object_or_404(queryset, pk=pk)
     formal_statuses = ["confirmed", "production", "shipped", "completed"]
     formal_orders = list(obj.orders.filter(status__in=formal_statuses).prefetch_related("items", "contract_changes"))
     sales_rmb = sum((order.total_amount * order.exchange_rate for order in formal_orders), Decimal("0"))
@@ -118,8 +124,11 @@ def _customer_context(pk):
     }
 
 
-def _contact_context(pk):
-    obj = get_object_or_404(Contact.objects.select_related("customer"), pk=pk)
+def _contact_context(pk, user=None):
+    queryset = Contact.objects.select_related("customer")
+    if user is not None:
+        queryset = scope_customer_related_queryset(queryset, user)
+    obj = get_object_or_404(queryset, pk=pk)
     company = _target([CustomerSerializer(obj.customer).data], "customers")
     followups = _target(FollowUpSerializer(obj.follow_ups.select_related("customer"), many=True).data, "follow-ups")
     return {"entity": "contacts", "title": obj.name, "subtitle": f"{obj.title or '联系人'} · {obj.customer.name}", "badge": "主联系人" if obj.is_primary else "联系人", "info": [["关联企业", obj.customer.name], ["邮箱", obj.email or "—"], ["电话", obj.phone or "—"], ["WhatsApp", obj.whatsapp or "—"], ["备注", obj.notes or "—"]], "metrics": [["跟进次数", len(followups), "number"]], "sections": [
@@ -128,7 +137,7 @@ def _contact_context(pk):
     ]}
 
 
-def _product_context(pk, include_inactive=False):
+def _product_context(pk, include_inactive=False, user=None):
     obj = get_object_or_404(Product.objects.select_related("category"), pk=pk)
     sku_queryset = obj.skus.all() if include_inactive else obj.skus.filter(active=True)
     skus = _target(SKUSerializer(_stock_skus(sku_queryset), many=True).data, "skus")
@@ -137,7 +146,8 @@ def _product_context(pk, include_inactive=False):
     suppliers = _target(SupplierSerializer(obj.suppliers.all(), many=True).data, "suppliers")
     inventory = _target(InventoryMovementSerializer(InventoryMovement.objects.filter(sku__product=obj).select_related("sku__product", "order"), many=True).data, "inventory-movements")
     formal_statuses = ["confirmed", "production", "shipped", "completed"]
-    sales_items = OrderItem.objects.filter(sku__product=obj, order__status__in=formal_statuses).select_related("order__customer", "sku")
+    sales_orders = scope_customer_related_queryset(Order.objects.filter(status__in=formal_statuses), user) if user is not None else Order.objects.filter(status__in=formal_statuses)
+    sales_items = OrderItem.objects.filter(sku__product=obj, order__in=sales_orders).select_related("order__customer", "sku")
     sales = _target([{"id": item.order_id, "order_no": item.order.order_no, "order_date": item.order.order_date, "customer_name": item.order.customer.name, "sku_code": item.sku.sku, "sales_model": item.sales_model_snapshot or item.sku.sales_model, "unit": item.unit_snapshot or item.sku.unit, "status_label": item.order.get_status_display(), "quantity": item.quantity, "amount": item.amount, "currency": item.order.currency} for item in sales_items.order_by("-order__order_date")], "orders")
     today = timezone.localdate()
     quarter_start_month = ((today.month - 1) // 3) * 3 + 1
@@ -161,11 +171,14 @@ def _product_context(pk, include_inactive=False):
     ]}
 
 
-def _sku_context(pk):
+def _sku_context(pk, user=None):
     obj = get_object_or_404(_stock_skus(SKU.objects.all()), pk=pk)
     product = _target([ProductSerializer(obj.product).data], "products")
     inventory = _target(InventoryMovementSerializer(obj.inventory_movements.select_related("sku__product", "order"), many=True).data, "inventory-movements")
-    orders = _target([{"id": item.order_id, "order_no": item.order.order_no, "order_date": item.order.order_date, "customer_name": item.order.customer.name, "quantity": item.quantity, "unit_price": item.unit_price, "amount": item.amount, "currency": item.order.currency} for item in obj.order_items.select_related("order__customer")], "orders")
+    order_items = obj.order_items.select_related("order__customer")
+    if user is not None:
+        order_items = scope_customer_related_queryset(order_items, user, relation="order__customer")
+    orders = _target([{"id": item.order_id, "order_no": item.order.order_no, "order_date": item.order.order_date, "customer_name": item.order.customer.name, "quantity": item.quantity, "unit_price": item.unit_price, "amount": item.amount, "currency": item.order.currency} for item in order_items], "orders")
     versions = _target([{
         "id": version.pk,
         "version_no": version.version_no,
@@ -208,8 +221,11 @@ def _sku_version_context(pk):
     }
 
 
-def _supplier_sku_context(pk):
+def _supplier_sku_context(pk, user=None):
     obj = get_object_or_404(SupplierSKU.objects.select_related("supplier", "sku", "sku__product"), pk=pk)
+    sales_order_items = obj.sales_order_items.select_related("order__customer")
+    if user is not None:
+        sales_order_items = scope_customer_related_queryset(sales_order_items, user, relation="order__customer")
     orders = _target([{
         "id": item.order_id,
         "order_no": item.order.order_no,
@@ -218,7 +234,7 @@ def _supplier_sku_context(pk):
         "quantity": item.quantity,
         "supplier_name": item.supplier_name_snapshot,
         "supplier_sku_code": item.supplier_sku_code_snapshot,
-    } for item in obj.sales_order_items.select_related("order__customer")], "orders")
+    } for item in sales_order_items], "orders")
     purchases = _target([{
         "id": item.purchase_order_id,
         "purchase_no": item.purchase_order.purchase_no,
@@ -246,8 +262,11 @@ def _supplier_sku_context(pk):
     }
 
 
-def _quote_context(pk):
-    obj = get_object_or_404(Quote.objects.select_related("customer", "root_quote").prefetch_related("items"), pk=pk)
+def _quote_context(pk, user=None):
+    queryset = Quote.objects.select_related("customer", "root_quote").prefetch_related("items")
+    if user is not None:
+        queryset = scope_customer_related_queryset(queryset, user)
+    obj = get_object_or_404(queryset, pk=pk)
     customer = _target([CustomerSerializer(obj.customer).data], "customers")
     items = _target([{"id": item.sku_id, "sku_code": item.sku_code_snapshot, "sales_model": item.sales_model_snapshot, "product_name": item.product_name_snapshot, "quantity": item.quantity, "unit_price": item.unit_price, "amount": item.amount, "notes": item.notes} for item in obj.items.all()], "skus")
     orders = _target(OrderSerializer(obj.orders.prefetch_related("items__sku__product", "transactions"), many=True).data, "orders")
@@ -260,8 +279,11 @@ def _quote_context(pk):
     ]}
 
 
-def _order_context(pk):
-    obj = get_object_or_404(Order.objects.select_related("customer", "quote").prefetch_related("items__sku__product", "items__supplier_sku__supplier", "transactions"), pk=pk)
+def _order_context(pk, user=None):
+    queryset = Order.objects.select_related("customer", "quote").prefetch_related("items__sku__product", "items__supplier_sku__supplier", "transactions")
+    if user is not None:
+        queryset = scope_customer_related_queryset(queryset, user)
+    obj = get_object_or_404(queryset, pk=pk)
     customer = _target([CustomerSerializer(obj.customer).data], "customers")
     quote = _target([QuoteSerializer(obj.quote).data], "quotes") if obj.quote else []
     items = _target([{"id": item.sku_id, "order_item_id": item.pk, "sku_code": item.sku_code_snapshot or item.sku.sku, "sales_model": item.sales_model_snapshot, "product_name": item.display_name_snapshot or item.sku.display_name_cn or item.sku.product.name, "quantity": item.quantity, "unit_price": item.unit_price, "cost_price": item.cost_price, "amount": item.amount, "supplier_name": item.supplier_name_snapshot or "", "supplier_sku_code": item.supplier_sku_code_snapshot or ""} for item in obj.items.all()], "skus")
@@ -313,8 +335,11 @@ def _purchase_order_context(pk):
         ]}
 
 
-def _follow_up_context(pk):
-    obj = get_object_or_404(FollowUp.objects.select_related("customer", "contact"), pk=pk)
+def _follow_up_context(pk, user=None):
+    queryset = FollowUp.objects.select_related("customer", "contact")
+    if user is not None:
+        queryset = scope_customer_related_queryset(queryset, user)
+    obj = get_object_or_404(queryset, pk=pk)
     customer = _target([CustomerSerializer(obj.customer).data], "customers")
     contact = _target([ContactSerializer(obj.contact).data], "contacts") if obj.contact else []
     followed_at = obj.followed_at
@@ -368,3 +393,4 @@ def _certificate_context(pk):
     obj = get_object_or_404(ProductCertificate.objects.select_related("product"), pk=pk)
     product = _target([ProductSerializer(obj.product).data], "products")
     return {"entity": "product-certificates", "title": obj.name, "subtitle": f"{obj.product.name} · {obj.certificate_no or '未填写编号'}", "badge": obj.issuer or "证书", "info": [["签发机构", obj.issuer or "—"], ["签发日期", obj.issued_date or "—"], ["有效期至", obj.expires_on or "—"], ["文件链接", obj.file_url or "—"], ["备注", obj.notes or "—"]], "metrics": [], "sections": [_section("product", "所属产品", "products", [["code", "产品编号"], ["name", "产品名称"], ["status", "状态", "status"]], product)]}
+

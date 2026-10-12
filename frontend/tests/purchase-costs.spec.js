@@ -87,3 +87,16 @@ it('automatically previews fees without saving and ignores stale responses', asy
     expect(wrapper.find('.cost-result').text()).toContain('10,060.00')
   } finally { wrapper.unmount(); vi.useRealTimers() }
 })
+
+
+it('keeps restricted allocations read only and never submits masked order IDs', async () => {
+  api.get.mockResolvedValue({ data: { ...initial, can_edit: false, read_only_reason: '包含无权修改的销售订单', allocations: [{ ...initial.allocations[0], target_type: 'order', order: null, order_no: '', sales_link_restricted: true }] } })
+  const wrapper = mount(PurchaseCostAllocationModal, { props })
+  await flushPromises()
+  expect(wrapper.find('fieldset').attributes('disabled')).toBeDefined()
+  expect(wrapper.text()).toContain('包含无权修改')
+  await wrapper.find('form').trigger('submit')
+  await flushPromises()
+  expect(api.post).not.toHaveBeenCalled()
+  wrapper.unmount()
+})

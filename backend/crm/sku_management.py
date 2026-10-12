@@ -1,3 +1,5 @@
+from .procurement_scope import scoped_supplier_candidates
+from .finance_scope import require_finance_permission
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -52,7 +54,7 @@ class SupplierCapabilityViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 class SupplierCandidatesView(APIView):
     def get(self, request, pk):
         sku = get_object_or_404(SKU, pk=pk)
-        return Response({"candidates": candidates(sku), "overrides": list(sku.candidate_overrides.values("supplier", "is_allowed", "characteristics"))})
+        return Response({"candidates": scoped_supplier_candidates(candidates(sku), request.user), "overrides": list(sku.candidate_overrides.values("supplier", "is_allowed", "characteristics"))})
 
     @transaction.atomic
     def post(self, request, pk):
@@ -132,7 +134,7 @@ class ProductSupplierCandidatePoolView(APIView):
             values = sku.parameter_values or {}
             if parameter_key and str(values.get(parameter_key, "")) != parameter_value_filter:
                 continue
-            pool = candidates(sku)
+            pool = scoped_supplier_candidates(candidates(sku), request.user)
             if supplier_filter:
                 pool = [row for row in pool if str(row["supplier"]) == supplier_filter]
             if source_filter:
@@ -183,6 +185,8 @@ class OrderItemSupplierAllocationView(APIView):
     """Read and update the supplier selected for one sales-order line."""
 
     def _item(self, request, order_id, item_id):
+        require_finance_permission(request.user, "orders", "view")
+        require_finance_permission(request.user, "suppliers", "view")
         scoped_orders = scope_customer_related_queryset(Order.objects.all(), request.user)
         queryset = OrderItem.objects.select_related("order", "sku", "sku__product", "supplier_sku__supplier").filter(
             order__in=scoped_orders,
@@ -205,7 +209,7 @@ class OrderItemSupplierAllocationView(APIView):
                 "unit": item.unit_snapshot or item.sku.unit,
             },
             "allocation": supplier_allocation_payload(item),
-            "candidates": supplier_options(item),
+            "candidates": scoped_supplier_candidates(supplier_options(item), request.user),
         })
 
     @transaction.atomic
@@ -213,6 +217,8 @@ class OrderItemSupplierAllocationView(APIView):
         from .services.supplier_allocation import allocate_order_item_supplier, supplier_allocation_payload
 
         item = self._item(request, order_id, item_id)
+        if request.data.get("scope", "order_only") == "recommended":
+            require_finance_permission(request.user, "suppliers", "update")
         supplier_sku_id = request.data.get("supplier_sku") or request.data.get("supplier_sku_id")
         if not supplier_sku_id:
             raise ValidationError({"supplier_sku": "请选择一个 Supplier SKU 作为本次采购来源。"})

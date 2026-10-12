@@ -161,6 +161,8 @@ def report_data(request):
     if source not in SOURCES: raise ValidationError("不支持的报表模块。")
     if source == "cash":
         require_finance_permission(request.user, "transactions", "view")
+    if source == "purchase":
+        require_finance_permission(request.user, "purchases", "view")
     spec = SOURCES[source]
     group, grain = params.get("group_by", "time"), params.get("grain", "month")
     date_field = params.get("date_field") or next(iter(spec["dates"]))

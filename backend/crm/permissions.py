@@ -144,7 +144,7 @@ def module_for_request(request, view=None):
         return "suppliers"
     if first == "orders" and "supplier-allocation" in parts:
         return "orders"
-    if first == "orders" and "procurement-drafts" in parts:
+    if first == "orders" and ("procurement-drafts" in parts or "generate-purchase-drafts" in parts):
         return "purchases"
     return PATH_MODULES.get(first)
 

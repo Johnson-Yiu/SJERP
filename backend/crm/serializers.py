@@ -196,6 +196,18 @@ class OperationLogSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = fields
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if instance.entity == "crm.purchaseorder":
+            from .sales_scope import effective_data_scope
+            user = serializer_user(self.context)
+            # Raw audit snapshots include sales IDs and payment totals. Retain the
+            # shared action history, never alter the stored historical snapshot.
+            if effective_data_scope(user) != "all" or not all(user_can(user, module, "view") for module in ("orders", "finance", "transactions")):
+                for field in ("before_data", "after_data", "metadata", "changed_fields"):
+                    data[field] = [] if field == "changed_fields" else {}
+        return data
+
     def get_operator_name(self, obj):
         return obj.operator.get_username() if obj.operator else "系统"
 
@@ -394,6 +406,7 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         if instance.order_id not in visible_ids:
             data["order"] = None
             data["order_no"] = ""
+        data["sales_link_restricted"] = bool(instance.order_id and instance.order_id not in visible_ids)
         data["related_orders"] = [row for row in data["related_orders"] if row["id"] in visible_ids]
         if not (user_can(user, "finance", "view") and user_can(user, "transactions", "view")):
             data.pop("paid_amount", None)
@@ -455,6 +468,15 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if "purchase_no" in self.initial_data:
             raise serializers.ValidationError({"purchase_no": "采购单号由系统自动生成，不能手工指定。"})
+        if "order" in attrs and (self.instance is None or attrs["order"] != self.instance.order):
+            from .procurement_scope import require_order_writes
+            require_order_writes(serializer_user(self.context), [getattr(self.instance, "order_id", None), getattr(attrs["order"], "pk", None)])
+        if self.instance is not None and self.instance.status == "draft":
+            cost_changed = any(key in attrs and attrs[key] != getattr(self.instance, key) for key in ("supplier", "currency", "exchange_rate"))
+            cost_changed = cost_changed or ("items" in attrs and not contract_items_match(self.instance, attrs["items"]))
+            if cost_changed:
+                from .procurement_scope import require_order_writes
+                require_order_writes(serializer_user(self.context), self.instance.items.values_list("cost_allocations__order_id", flat=True))
         validate_contract_edit(self.instance, attrs, purchase=True)
         currency = attrs.get("currency", getattr(self.instance, "currency", None))
         rate = attrs.get("exchange_rate", getattr(self.instance, "exchange_rate", None))

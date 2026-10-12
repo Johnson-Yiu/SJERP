@@ -24,6 +24,7 @@ function payload() {
   }
 }
 function changed() {
+  if (form.value?.can_edit === false) return
   dirty.value = true
   previewError.value = ''
   previewing.value = true
@@ -50,7 +51,7 @@ function remaining(item) { return Number(item.quantity) - (form.value?.allocatio
 function add(item) { form.value.allocations.push({ purchase_item: item.id, target_type: 'order', order: null, quantity: Math.max(0, remaining(item)).toFixed(2) }); changed() }
 function remove(row) { form.value.allocations.splice(form.value.allocations.indexOf(row), 1); changed() }
 async function save() {
-  if (busy.value) return
+  if (busy.value || form.value?.can_edit === false) return
   clearTimeout(previewTimer); ++previewSequence; previewing.value = false
   busy.value = true; error.value = ''
   try {
@@ -71,16 +72,17 @@ async function requestClose() {
       <header class="cost-header"><div><span class="eyebrow">采购管理 / 成本核算</span><h3 id="cost-title">采购成本分配 <span>{{ purchase.purchase_no }}</span></h3><p>将商品成本分配给订单与库存，再统一分摊公共费用。</p></div><button class="icon-btn" aria-label="关闭成本分配" :disabled="busy" @click="requestClose"><X :size="19" /></button></header>
       <div class="cost-overview"><article><span>采购商品金额</span><strong>{{ money(goodsTotal) }} <small>{{ purchase.currency }}</small></strong></article><article><span>公共附加费用</span><strong>{{ money(feeTotal) }} <small>{{ purchase.currency }}</small></strong></article><article class="overview-total"><span>本次核算总成本</span><strong>{{ money(goodsTotal + feeTotal) }} <small>{{ purchase.currency }}</small></strong></article></div>
       <p v-if="error" role="alert" class="cost-error">{{ error }}</p>
+      <p v-if="form?.can_edit === false" class="allocation-note">{{ form.read_only_reason }}</p>
       <p v-if="!form && !error">正在加载成本分配…</p>
       <form v-if="form" id="purchase-cost-form" @submit.prevent="save" @input="changed" @change="changed">
-        <fieldset :disabled="busy || purchase.status === 'cancelled'">
+        <fieldset :disabled="busy || form.can_edit === false || purchase.status === 'cancelled'">
           <p class="allocation-note"><Check :size="15" />{{ form.version ? `当前为人工成本分配版本 V${form.version}。` : '采购成本默认归来源订单，无来源订单时归库存。保存调整后保留分配版本。' }}</p>
           <div class="block-heading"><div><h4><Layers3 :size="17" /> 明细成本归属</h4><p>展开商品，填写每份归属的数量；未分配的余量自动归库存。</p></div><span class="count-badge">{{ purchase.items.length }} 项商品</span></div>
           <details v-for="item in purchase.items" :key="item.id" open class="cost-item">
             <summary><div class="item-title"><b>{{ item.display_name || item.sku_code }}</b><small>{{ item.sku_code }} · 采购 {{ item.trade_quantity ?? item.quantity }} {{ item.trade_snapshot?.unit }} × {{ purchase.currency }} {{ money(item.trade_unit_price ?? item.unit_price) }} · 分配基数 {{ item.quantity }} {{ item.trade_snapshot?.base_unit }}</small></div><span class="remaining-badge" :class="{ 'cost-error': remaining(item) < -0.001 }">剩余 {{ remaining(item).toFixed(2) }}</span></summary>
             <div v-for="(row, index) in form.allocations.filter(a => a.purchase_item === item.id)" :key="index" class="cost-row">
               <label>成本归属<select v-model="row.target_type" @change="row.order = null; row.target_name = ''"><option v-for="(label, key) in labels" :key="key" :value="key">{{ label }}</option></select></label>
-              <label v-if="row.target_type === 'order'">销售订单<select v-model="row.order" required><option :value="null">请选择订单</option><option v-for="order in orders.filter(o => o.status !== 'cancelled')" :key="order.id" :value="order.id">{{ order.order_no }} · {{ order.customer_name }}</option></select></label>
+              <label v-if="row.target_type === 'order'">销售订单<span v-if="row.sales_link_restricted">受限销售关联</span><select v-else v-model="row.order" required><option :value="null">请选择订单</option><option v-for="order in orders.filter(o => o.status !== 'cancelled')" :key="order.id" :value="order.id">{{ order.order_no }} · {{ order.customer_name }}</option></select></label>
               <label v-if="row.target_type === 'other'">自定义成本归属<input v-model="row.target_name" maxlength="100" placeholder="请输入成本归属名称" required /></label>
               <label>分配数量<input v-model="row.quantity" type="number" min="0.01" step="0.01" required /></label>
               <button type="button" class="text-btn danger" @click="remove(row)">删除</button>
@@ -102,11 +104,11 @@ async function requestClose() {
       </form>
       <section v-if="result" class="cost-result" aria-live="polite">
         <h4>{{ dirty ? '实时分摊预览' : result.version ? '已保存的成本分摊结果' : '当前成本归属' }} <span v-if="dirty" class="pending-badge">{{ previewing ? '计算中…' : previewError ? '预览未更新' : '未保存' }}</span></h4><p v-if="dirty" class="pending-note">{{ previewing ? '正在更新预览，以下暂为上次计算结果。' : previewError ? '请完善输入后重试，以下暂为上次有效结果：' + previewError : '已按当前输入计算；保存后才会更新订单成本。' }}</p>
-        <div class="table-wrap"><table class="data-table"><thead><tr><th>采购明细</th><th>归属</th><th>数量</th><th>商品成本</th><th>附加费用</th><th>合计</th></tr></thead><tbody><tr v-for="(row, index) in result.allocations" :key="index"><td>{{ row.display_name || purchase.items.find(item => item.id === row.purchase_item)?.display_name || row.sku_code }}</td><td>{{ row.order_no || (row.target_type === 'other' ? row.target_name : labels[row.target_type]) }}</td><td>{{ row.quantity }}</td><td>{{ money(row.base_amount) }}</td><td>{{ money(row.additional_amount) }}</td><td>{{ money(row.total_amount) }}</td></tr></tbody></table></div>
+        <div class="table-wrap"><table class="data-table"><thead><tr><th>采购明细</th><th>归属</th><th>数量</th><th>商品成本</th><th>附加费用</th><th>合计</th></tr></thead><tbody><tr v-for="(row, index) in result.allocations" :key="index"><td>{{ row.display_name || purchase.items.find(item => item.id === row.purchase_item)?.display_name || row.sku_code }}</td><td>{{ (row.sales_link_restricted ? '受限销售关联' : row.order_no) || (row.target_type === 'other' ? row.target_name : labels[row.target_type]) }}</td><td>{{ row.quantity }}</td><td>{{ money(row.base_amount) }}</td><td>{{ money(row.additional_amount) }}</td><td>{{ money(row.total_amount) }}</td></tr></tbody></table></div>
         <p>商品成本 {{ money(result.base_amount) }} ＋ 附加费用 {{ money(result.additional_amount) }} ＝ {{ purchase.currency }} {{ money(result.total_amount) }}</p>
         <p class="muted">草稿及取消采购不计入订单预估毛利；库存成本表示成本归属，不代表已到货库存。</p>
       </section>
-      <footer class="cost-footer"><span>{{ dirty ? '实时预览尚未保存' : '修改数量、归属或费用，自动更新预览' }}</span><div><button class="btn btn-secondary" :disabled="busy" @click="requestClose">取消</button><button v-if="form" class="btn btn-primary" type="submit" form="purchase-cost-form" :disabled="busy || purchase.status === 'cancelled'"><Check :size="16" />{{ busy ? '保存中…' : '保存成本分配' }}</button></div></footer>
+      <footer class="cost-footer"><span>{{ dirty ? '实时预览尚未保存' : '修改数量、归属或费用，自动更新预览' }}</span><div><button class="btn btn-secondary" :disabled="busy" @click="requestClose">取消</button><button v-if="form" class="btn btn-primary" type="submit" form="purchase-cost-form" :disabled="busy || form.can_edit === false || purchase.status === 'cancelled'"><Check :size="16" />{{ busy ? '保存中…' : '保存成本分配' }}</button></div></footer>
     </section>
   </div>
 </template>

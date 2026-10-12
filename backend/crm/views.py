@@ -1,3 +1,4 @@
+from .procurement_scope import validate_cost_writes, scoped_cost_summary, require_order_writes
 from .finance_scope import scope_transaction_queryset, scope_plan_queryset, validate_finance_relations, require_finance_permission, ContractFinancePermission
 from .trade_units import amount_expression, trade_values
 import csv
@@ -165,10 +166,14 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "items__sku", "items__supplier_sku__supplier", "items__receipts", "transactions"
         )
     )
-    search_fields = ["purchase_no", "supplier__name", "order__order_no"]
+    search_fields = ["purchase_no", "supplier__name", "visible_order_search"]
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        from django.db.models import Case, When, Value, CharField, F
+        from .procurement_scope import visible_order_ids
+        ids = visible_order_ids(self.request.user, Order.objects.values_list("pk", flat=True))
+        queryset = queryset.annotate(visible_order_search=Case(When(order_id__in=ids, then=F("order__order_no")), default=Value(""), output_field=CharField()))
         sku_id = self.request.query_params.get("sku")
         if sku_id:
             queryset = queryset.filter(items__sku_id=sku_id).distinct()
@@ -235,24 +240,28 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         purchase = self.get_object()
         input_serializer = CostInput(data=request.data)
         input_serializer.is_valid(raise_exception=True)
-        return Response(preview_costs(purchase, input_serializer.validated_data))
+        validate_cost_writes(purchase, request.user, input_serializer.validated_data["allocations"])
+        return Response(scoped_cost_summary(preview_costs(purchase, input_serializer.validated_data), request.user))
 
     @action(detail=True, methods=["get", "post"], url_path="cost-allocation")
     def cost_allocation(self, request, pk=None):
         from .services.purchase_costs import CostInput, cost_summary, save_costs
         purchase = self.get_object()
         if request.method == "GET":
-            return Response(cost_summary(purchase))
+            return Response(scoped_cost_summary(cost_summary(purchase), request.user))
         input_serializer = CostInput(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         with transaction.atomic():
+            purchase = PurchaseOrder.objects.select_for_update().get(pk=purchase.pk)
+            validate_cost_writes(purchase, request.user, input_serializer.validated_data["allocations"])
             before = cost_summary(purchase)
             result = save_costs(purchase, input_serializer.validated_data)
             record_operation(request=request, instance=purchase, action="custom", action_label="采购成本分配", metadata=json.loads(json.dumps({"before_allocation": before, "after_allocation": result}, default=str)))
-        return Response(result)
+        return Response(scoped_cost_summary(result, request.user))
 
     @action(detail=True, methods=["post"])
     def receive(self, request, pk=None):
+        require_finance_permission(request.user, "inventory", "create")
         purchase = self.get_object()
         before = snapshot(purchase)
         input_serializer = ReceiptInputSerializer(data=request.data)
@@ -276,6 +285,7 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"], url_path=r"receipts/(?P<receipt_id>[^/.]+)/reverse")
     def reverse_receipt(self, request, pk=None, receipt_id=None):
+        require_finance_permission(request.user, "inventory", "update")
         purchase = self.get_object()
         receipt = get_object_or_404(GoodsReceipt, pk=receipt_id, purchase_item__purchase_order=purchase)
         input_serializer = ReceiptReversalInputSerializer(data=request.data)
@@ -1672,6 +1682,8 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"], url_path="generate-purchase-drafts")
     def generate_purchase_drafts(self, request, pk=None):
+        require_finance_permission(request.user, "purchases", "create")
+        require_order_writes(request.user, [self.get_object().pk])
         input_serializer = ProcurementDraftInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         try:

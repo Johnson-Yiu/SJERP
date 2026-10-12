@@ -233,7 +233,7 @@ class FunctionalRBACApiTests(TestCase):
             allowed = self.client.get(url)
             self.assertEqual(allowed.status_code, 200)
             self.assertEqual(b"".join(allowed.streaming_content), b"private bytes")
-            allowed.close()
+            self.addCleanup(allowed.close)
 
             outsider = self.make_user(username="media-outsider", roles=[self.role])
             self.auth(outsider)
@@ -411,4 +411,4 @@ class DevelopmentAccessCompatibilityTests(TestCase):
 
             self.assertEqual(response.status_code, 200)
             self.assertEqual(b"".join(response.streaming_content), b"development bytes")
-            response.close()
+            self.addCleanup(response.close)

@@ -214,7 +214,9 @@ class FunctionalRBACApiTests(TestCase):
         self.assertFalse(Customer.objects.filter(name="Nested contact boundary").exists())
 
     def test_media_url_requires_record_module_and_customer_scope(self):
-        with tempfile.TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
+        media_root = tempfile.TemporaryDirectory()
+        self.addClassCleanup(media_root.cleanup)
+        with override_settings(MEDIA_ROOT=media_root.name):
             owner = self.make_user(username="media-owner", roles=[self.role])
             profile = EmployeeProfile.objects.get(user=owner)
             self.customer.owner_profile = profile
@@ -233,7 +235,7 @@ class FunctionalRBACApiTests(TestCase):
             allowed = self.client.get(url)
             self.assertEqual(allowed.status_code, 200)
             self.assertEqual(b"".join(allowed.streaming_content), b"private bytes")
-            self.addCleanup(allowed.close)
+            self.addClassCleanup(allowed.close)
 
             outsider = self.make_user(username="media-outsider", roles=[self.role])
             self.auth(outsider)
@@ -392,7 +394,9 @@ class DevelopmentAccessCompatibilityTests(TestCase):
         self.assertTrue(response.data["permissions"]["customers"]["delete"])
 
     def test_development_superadmin_can_read_protected_media_without_login(self):
-        with tempfile.TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
+        media_root = tempfile.TemporaryDirectory()
+        self.addClassCleanup(media_root.cleanup)
+        with override_settings(MEDIA_ROOT=media_root.name):
             customer = Customer.objects.create(name="Development media customer", code="DEV-MEDIA")
             follow_up = FollowUp.objects.create(
                 customer=customer,
@@ -411,4 +415,4 @@ class DevelopmentAccessCompatibilityTests(TestCase):
 
             self.assertEqual(response.status_code, 200)
             self.assertEqual(b"".join(response.streaming_content), b"development bytes")
-            self.addCleanup(response.close)
+            self.addClassCleanup(response.close)

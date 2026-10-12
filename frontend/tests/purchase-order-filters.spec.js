@@ -12,6 +12,7 @@ vi.mock('../src/api.js', () => ({ api: mocks.api, listAll: mocks.listAll, listDa
 vi.mock('../src/dialogs.js', () => ({ confirmDialog: vi.fn(), inputDialog: vi.fn() }))
 
 import PurchaseOrderPage from '../src/views/PurchaseOrderPage.vue'
+import { setAccessOperator } from '../src/accessControl.js'
 import { installModalNavigationGuard } from '../src/utils/modalNavigation.js'
 
 const purchaseRows = [
@@ -269,4 +270,13 @@ describe('purchase order list search and filters', () => {
     expect(wrapper.get('.purchase-search input').element.value).toBe('PO-FILTER')
   })
 
+})
+
+
+it('does not request unauthorized optional sales references when viewing shared purchases', async () => {
+  setAccessOperator({ authenticated: true, development_superadmin: false, has_all_permissions: false, rbac_enforcement: true, permissions: { purchases: { view: true }, suppliers: { view: true }, skus: { view: true }, orders: { view: false } } })
+  await mountPage()
+  expect(mocks.listAll.mock.calls.some(([url]) => url === '/orders/')).toBe(false)
+  expect(wrapper.text()).not.toContain('订单资料加载失败')
+  expect(wrapper.findAll('tbody tr')).toHaveLength(purchaseRows.length)
 })

@@ -19,7 +19,7 @@
 
 ## 回归
 
-新增 11 项 Backend API JSON 测试：无 finance.view、无 orders.view、同部门其他销售员、跨部门客户订单、all 缺少 finance.view、完整授权正常查看、供应商无采购权限的汇总隐藏、缺省身份默认拒绝、显式 user 传递、履约混合关联采购和流水模块缺少权限。前端新增两项实际组件回归，验证受限金额不显示为零，以及合法零付款金额正常显示。
+新增 11 项 Backend API JSON 测试：无 finance.view、无 orders.view、同部门其他销售员、跨部门客户订单、all 缺少 finance.view、完整授权正常查看、供应商无采购权限的汇总隐藏、缺省身份默认拒绝、显式 user 传递、履约混合关联采购和流水模块缺少权限。前端新增三项实际组件回归，验证受限金额不显示为零、合法零付款金额正常显示，以及无 orders.view 时不请求可选订单资料，不阻塞共享采购浏览。
 
 完整 Backend / PostgreSQL / Frontend 由最终 GitHub CI 及本地回归核验。供应商 / 采购真实 UI 截图位于 ux-review-evidence 的 ux-review/r0-d4b2a-finance-scope/focused-repair/。
 

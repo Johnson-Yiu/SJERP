@@ -194,7 +194,7 @@ async function loadPurchaseRows() {
 async function loadReferenceOptions() {
   referenceLoading.value = true
   const [supplierResult, orderResult, skuResult] = await Promise.allSettled([
-    listAll('/suppliers/'), listAll('/orders/'), listAll('/skus/'),
+    listAll('/suppliers/'), can('orders', 'view') ? listAll('/orders/') : Promise.resolve([]), listAll('/skus/'),
   ])
   const outcomes = { suppliers: supplierResult, orders: orderResult, skus: skuResult }
   const referenceLabels = { suppliers: '供应商', orders: '订单', skus: 'SKU' }

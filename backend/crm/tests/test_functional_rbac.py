@@ -300,7 +300,7 @@ class FunctionalRBACApiTests(TestCase):
 
     def test_supplier_capability_hides_product_identifier_without_product_permission(self):
         product = Product.objects.create(code="RBAC-CAP-P1", name="Private capability product")
-        supplier = Supplier.objects.create(name="Shared capability supplier", code="RBAC-CAP-S1")
+        supplier = Supplier.objects.create(name="Shared capability supplier", code="SC")
         capability = SupplierCapability.objects.create(product=product, supplier=supplier, name="Capability")
         self.grant(self.role, "suppliers", can_view=True)
         self.auth(self.make_user(roles=[self.role]))

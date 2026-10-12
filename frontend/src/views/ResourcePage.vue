@@ -61,7 +61,6 @@ function setCertificateFilter(expiry) { router.push({ path: route.path, query: c
 const rows = ref([]), loading = ref(true), hasLoaded = ref(false), loadError = ref(''), allRecordsExist = ref(false), saving = ref(false), query = ref('')
 const modalOpen = ref(false), detailId = ref(null), editingId = ref(null)
 const detailRefresh = ref(0), keepDetailOpen = ref(false)
-const originalOwnerProfileId = ref(null)
 const form = reactive({}), options = reactive({})
 const optionErrors = reactive({}), optionLoaded = reactive({})
 const requiredRemoteFields = computed(() => props.config.fields.filter(field => field[3] && ['remote', 'remote_multi', 'combo'].includes(field[2])))
@@ -382,7 +381,6 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
     if (type === 'payment_terms') form[name] = copyPaymentTerms(value)
     if (type === 'followup_schedule') form[name] = value || 'keep'
   })
-  if (props.config.endpoint === 'customers') originalOwnerProfileId.value = row.owner_profile ?? null
   followUpAttachments.value = props.config.endpoint === 'follow-ups' ? (row.attachments || []) : []
   pendingFollowUpFiles.value = []
   syncFollowUpDaysFromDate()
@@ -434,7 +432,6 @@ function payload() {
     if (props.config.endpoint === 'follow-ups' && name === 'next_follow_up' && form.next_follow_up_mode !== 'set') value = null
     data[name] = value
   })
-  if (props.config.endpoint === 'customers' && editingId.value && form.owner_profile === '' && originalOwnerProfileId.value !== null) delete data.owner_profile
   if (isCustomerCreate.value) data.contacts = customerContacts.value
   return data
 }

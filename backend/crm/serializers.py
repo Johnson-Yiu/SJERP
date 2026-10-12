@@ -669,6 +669,10 @@ class CustomerSerializer(serializers.ModelSerializer):
                     raise PermissionDenied("你没有修改客户负责人的权限。")
             if owner_profile:
                 attrs["owner"] = owner_profile.display_name
+            else:
+                # Keep the legacy display name in sync when an all-scope user
+                # explicitly clears the structured owner field.
+                attrs["owner"] = ""
         elif self.instance is None and user is not None:
             profile = employee_profile_for(user)
             if profile and not getattr(user, "is_superuser", False):
@@ -2155,7 +2159,7 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
     display_name = serializers.CharField(source="sku.display_name_cn", read_only=True)
     sales_model = serializers.CharField(source="sku.sales_model", read_only=True)
     product_name = serializers.CharField(source="sku.display_name_cn", read_only=True)
-    order_no = serializers.CharField(source="order.order_no", read_only=True, default="")
+    order_no = serializers.SerializerMethodField()
     type_display = serializers.CharField(source="get_type_display", read_only=True)
     signed_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     overage_quantity = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
@@ -2168,6 +2172,33 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
         if not obj.is_overage or obj.overage_quantity <= 0:
             return ""
         return f"超到 {obj.overage_quantity}（{obj.get_overage_reason_display()}）"
+
+    def _visible_sales_orders(self, obj):
+        if hasattr(obj, "_visible_sales_orders_cache"):
+            return obj._visible_sales_orders_cache
+        from .sales_scope import scope_customer_related_queryset
+
+        user = self.context.get("user")
+        if user is None:
+            request = self.context.get("request")
+            user = getattr(request, "user", None)
+        if user is None:
+            obj._visible_sales_orders_cache = list(obj.related_orders.all()) or ([obj.order] if obj.order_id else [])
+            return obj._visible_sales_orders_cache
+        from .permissions import user_can
+
+        if not user_can(user, "orders", "view"):
+            obj._visible_sales_orders_cache = []
+            return obj._visible_sales_orders_cache
+        associated = obj.related_orders.all()
+        if obj.order_id:
+            associated = Order.objects.filter(Q(pk=obj.order_id) | Q(pk__in=associated.values("pk")))
+        obj._visible_sales_orders_cache = list(scope_customer_related_queryset(associated, user).distinct())
+        return obj._visible_sales_orders_cache
+
+    def get_order_no(self, obj):
+        visible_ids = {order.pk for order in self._visible_sales_orders(obj)}
+        return obj.order.order_no if obj.order_id in visible_ids else ""
 
     def _reversal_movement(self, obj):
         if not hasattr(obj, "_reversal_movement_cache"):
@@ -2233,8 +2264,15 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
         return attrs
 
     def get_related_order_nos(self, instance):
-        order_nos = list(instance.related_orders.values_list("order_no", flat=True))
-        return order_nos or ([instance.order.order_no] if instance.order_id else [])
+        return [order.order_no for order in self._visible_sales_orders(instance)]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        visible_ids = {order.pk for order in self._visible_sales_orders(instance)}
+        if data.get("order") not in visible_ids:
+            data["order"] = None
+        data["related_orders"] = [order_id for order_id in (data.get("related_orders") or []) if order_id in visible_ids]
+        return data
 
     def check_stock(self, sku, delta):
         from .services.fulfillment import sku_metrics

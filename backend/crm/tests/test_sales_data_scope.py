@@ -12,7 +12,7 @@ from django.utils import timezone
 from rest_framework.test import APIClient
 
 from crm.models import (
-    AccessRole, Contact, Customer, EmployeeProfile, FollowUp, Order, OrderItem,
+    AccessRole, Contact, Customer, EmployeeProfile, FollowUp, InventoryMovement, Order, OrderItem, PurchaseOrder,
     OrganizationUnit, Position, Product, Quote, RolePermission, SKU, Shipment, ShipmentItem,
     Supplier, SupplierSKU,
 )
@@ -313,6 +313,121 @@ class SalesDataScopeTests(TestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual({row["order_no"] for row in response.data["orders"]}, {row[0].order_no for row in orders})
         self.assertEqual({row["shipment_no"] for row in response.data["shipments"]}, {row[1].shipment_no for row in orders})
+
+    def test_inventory_surfaces_redact_out_of_scope_sales_references_but_keep_shared_stock(self):
+        product = Product.objects.create(code="SCOPE-P-INV-REDACT", name="共享库存产品")
+        sku = SKU.objects.create(product=product, sku="SCOPE-S-INV-REDACT")
+        order_a = Order.objects.create(order_no="SCOPE-O-INV-A", customer=self.customer_a, order_date=date.today(), status="confirmed", exchange_rate=1)
+        order_b = Order.objects.create(order_no="SCOPE-O-INV-B", customer=self.customer_b, order_date=date.today(), status="confirmed", exchange_rate=1)
+        order_c = Order.objects.create(order_no="SCOPE-O-INV-C", customer=self.customer_c, order_date=date.today(), status="confirmed", exchange_rate=1)
+        for order in (order_a, order_b, order_c):
+            OrderItem.objects.create(order=order, sku=sku, quantity=1, unit_price=100)
+        movement = InventoryMovement.objects.create(
+            movement_no="SCOPE-IM-INV-REDACT", movement_date=date.today(), type="adjust_out",
+            sku=sku, order=order_b, quantity=1, warehouse="共享仓",
+        )
+        movement.related_orders.set([order_a, order_b, order_c])
+        supplier = Supplier.objects.create(name="范围采购供应商", code="SRP")
+        source = self.make_supplier_source(sku, "SCOPE-REDACT")
+        for role in (self.roles["self"], self.roles["department"]):
+            RolePermission.objects.create(
+                role=role, module="purchases", can_view=True, can_create=True,
+                can_update=True, can_delete=True, can_export=True,
+            )
+        purchase = PurchaseOrder.objects.create(
+            purchase_no="SCOPE-PO-INV-REDACT", supplier=supplier, order=order_c,
+            order_date=date.today(), status="ordered",
+        )
+        purchase.items.create(sku=sku, supplier_sku=source, quantity=1, unit_price=3)
+
+        self.login(self.employee_a)
+        inventory_detail = self.client.get(f"/api/skus/{sku.pk}/inventory-detail/")
+        self.assertEqual(inventory_detail.status_code, 200, inventory_detail.data)
+        self.assertEqual(inventory_detail.data["movements"][0]["quantity"], "1.00")
+        self.assertIsNone(inventory_detail.data["movements"][0]["order"])
+        self.assertEqual(inventory_detail.data["movements"][0]["related_orders"], [order_a.pk])
+        self.assertEqual(inventory_detail.data["movements"][0]["related_order_nos"], [order_a.order_no])
+        self.assertEqual(inventory_detail.data["movements"][0]["order_no"], "")
+        self.assertEqual(inventory_detail.data["purchases"][0]["id"], purchase.pk)
+        self.assertEqual(inventory_detail.data["purchases"][0]["order_no"], "")
+        self.assertNotIn(order_b.order_no, repr(inventory_detail.data))
+        self.assertNotIn(order_c.order_no, repr(inventory_detail.data))
+        order_workbench = self.client.get(f"/api/orders/{order_a.pk}/workbench/")
+        self.assertEqual(order_workbench.status_code, 200, order_workbench.data)
+        self.assertIsNone(order_workbench.data["inventory"][0]["order"])
+        self.assertEqual(order_workbench.data["inventory"][0]["related_orders"], [order_a.pk])
+        self.assertNotIn(order_b.order_no, repr(order_workbench.data))
+        self.assertNotIn(order_c.order_no, repr(order_workbench.data))
+
+        sku_context = self.client.get(f"/api/context/skus/{sku.pk}/")
+        product_context = self.client.get(f"/api/context/products/{product.pk}/")
+        source_context = self.client.get(f"/api/context/supplier-skus/{source.pk}/")
+        movement_context = self.client.get(f"/api/context/inventory-movements/{movement.pk}/")
+        for response in (sku_context, product_context, source_context, movement_context):
+            self.assertEqual(response.status_code, 200, response.data)
+            self.assertNotIn(order_b.order_no, repr(response.data))
+            self.assertNotIn(order_c.order_no, repr(response.data))
+
+        self.login(self.manager)
+        manager_detail = self.client.get(f"/api/skus/{sku.pk}/inventory-detail/")
+        self.assertEqual(manager_detail.status_code, 200, manager_detail.data)
+        self.assertEqual(manager_detail.data["movements"][0]["order"], order_b.pk)
+        self.assertEqual(set(manager_detail.data["movements"][0]["related_orders"]), {order_a.pk, order_b.pk})
+        self.assertNotIn(order_c.order_no, repr(manager_detail.data))
+        self.assertEqual(manager_detail.data["purchases"][0]["order_no"], "")
+
+        RolePermission.objects.create(
+            role=self.roles["all"], module="purchases", can_view=True, can_create=True,
+            can_update=True, can_delete=True, can_export=True,
+        )
+        RolePermission.objects.filter(role=self.roles["all"], module="orders").update(can_view=False)
+        self.login(self.all_user)
+        without_sales_access = self.client.get(f"/api/skus/{sku.pk}/inventory-detail/")
+        self.assertEqual(without_sales_access.status_code, 200, without_sales_access.data)
+        self.assertEqual(without_sales_access.data["movements"][0]["related_orders"], [])
+        self.assertIsNone(without_sales_access.data["movements"][0]["order"])
+        self.assertEqual(without_sales_access.data["movements"][0]["order_no"], "")
+        self.assertEqual(without_sales_access.data["purchases"][0]["order_no"], "")
+        self.assertNotIn(order_a.order_no, repr(without_sales_access.data))
+        no_sales_context = self.client.get(f"/api/context/supplier-skus/{source.pk}/")
+        self.assertEqual(no_sales_context.status_code, 200, no_sales_context.data)
+        purchases_section = next(section for section in no_sales_context.data["sections"] if section["key"] == "purchases")
+        self.assertEqual(purchases_section["rows"][0]["order_no"], "")
+        self.assertNotIn(order_c.order_no, repr(no_sales_context.data))
+
+    def test_all_scope_can_clear_owner_and_legacy_name_without_changing_history(self):
+        quote = self.make_quote(self.customer_a, "SCOPE-Q-OWNER-CLEAR")
+        order = Order.objects.create(
+            order_no="SCOPE-O-OWNER-CLEAR", customer=self.customer_a, quote=quote,
+            order_date=date.today(), status="confirmed", exchange_rate=1,
+        )
+        prior_quote_snapshot = quote.buyer_company_name
+
+        self.login(self.all_user)
+        response = self.client.patch(
+            f"/api/customers/{self.customer_a.pk}/", {"owner_profile": None}, format="json",
+        )
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertIsNone(response.data["owner_profile"])
+        self.assertEqual(response.data["owner"], "")
+        self.customer_a.refresh_from_db()
+        quote.refresh_from_db()
+        order.refresh_from_db()
+        self.assertIsNone(self.customer_a.owner_profile_id)
+        self.assertEqual(self.customer_a.owner, "")
+        self.assertEqual(quote.customer_id, self.customer_a.pk)
+        self.assertEqual(quote.buyer_company_name, prior_quote_snapshot)
+        self.assertEqual(order.customer_id, self.customer_a.pk)
+
+    def test_self_and_department_scope_cannot_clear_customer_owner(self):
+        for profile in (self.employee_a, self.manager):
+            self.login(profile)
+            response = self.client.patch(
+                f"/api/customers/{self.customer_a.pk}/", {"owner_profile": None}, format="json",
+            )
+            self.assertEqual(response.status_code, 403)
+            self.customer_a.refresh_from_db()
+            self.assertEqual(self.customer_a.owner_profile_id, self.employee_a.pk)
 
     def test_dashboard_active_customer_count_respects_sales_data_scope(self):
         Customer.objects.filter(pk__in=[self.customer_a.pk, self.customer_b.pk, self.customer_c.pk]).update(status="customer")

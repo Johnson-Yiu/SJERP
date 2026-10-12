@@ -67,7 +67,7 @@ def entity_context(request, entity, pk):
         return Response({"detail": "未知的数据类型。"}, status=404)
     if entity == "products":
         payload = handler(pk, include_inactive=request.query_params.get("include_inactive") == "1", user=request.user)
-    elif entity in {"skus", "supplier-skus", "customers", "contacts", "follow-ups", "quotes", "orders"}:
+    elif entity in {"skus", "supplier-skus", "customers", "contacts", "follow-ups", "quotes", "orders", "inventory-movements"}:
         payload = handler(pk, request.user)
     else:
         payload = handler(pk)
@@ -144,7 +144,7 @@ def _product_context(pk, include_inactive=False, user=None):
     params = _target(ProductParameterSerializer(obj.parameters.all(), many=True).data, "product-parameters")
     certs = _target(ProductCertificateSerializer(obj.certificates.all(), many=True).data, "product-certificates")
     suppliers = _target(SupplierSerializer(obj.suppliers.all(), many=True).data, "suppliers")
-    inventory = _target(InventoryMovementSerializer(InventoryMovement.objects.filter(sku__product=obj).select_related("sku__product", "order"), many=True).data, "inventory-movements")
+    inventory = _target(InventoryMovementSerializer(InventoryMovement.objects.filter(sku__product=obj).select_related("sku__product", "order"), many=True, context={"user": user}).data, "inventory-movements")
     formal_statuses = ["confirmed", "production", "shipped", "completed"]
     sales_orders = scope_customer_related_queryset(Order.objects.filter(status__in=formal_statuses), user) if user is not None else Order.objects.filter(status__in=formal_statuses)
     sales_items = OrderItem.objects.filter(sku__product=obj, order__in=sales_orders).select_related("order__customer", "sku")
@@ -174,7 +174,7 @@ def _product_context(pk, include_inactive=False, user=None):
 def _sku_context(pk, user=None):
     obj = get_object_or_404(_stock_skus(SKU.objects.all()), pk=pk)
     product = _target([ProductSerializer(obj.product).data], "products")
-    inventory = _target(InventoryMovementSerializer(obj.inventory_movements.select_related("sku__product", "order"), many=True).data, "inventory-movements")
+    inventory = _target(InventoryMovementSerializer(obj.inventory_movements.select_related("sku__product", "order"), many=True, context={"user": user}).data, "inventory-movements")
     order_items = obj.order_items.select_related("order__customer")
     if user is not None:
         order_items = scope_customer_related_queryset(order_items, user, relation="order__customer")
@@ -225,7 +225,7 @@ def _supplier_sku_context(pk, user=None):
     obj = get_object_or_404(SupplierSKU.objects.select_related("supplier", "sku", "sku__product"), pk=pk)
     sales_order_items = obj.sales_order_items.select_related("order__customer")
     if user is not None:
-        sales_order_items = scope_customer_related_queryset(sales_order_items, user, relation="order__customer")
+        sales_order_items = scope_customer_related_queryset(sales_order_items, user, relation="order__customer") if user_can(user, "orders", "view") else sales_order_items.none()
     orders = _target([{
         "id": item.order_id,
         "order_no": item.order.order_no,
@@ -235,14 +235,24 @@ def _supplier_sku_context(pk, user=None):
         "supplier_name": item.supplier_name_snapshot,
         "supplier_sku_code": item.supplier_sku_code_snapshot,
     } for item in sales_order_items], "orders")
+    purchase_items = list(obj.purchase_items.select_related("purchase_order__order"))
+    purchase_order_ids = {item.purchase_order.order_id for item in purchase_items if item.purchase_order.order_id}
+    if user is None:
+        visible_purchase_order_ids = purchase_order_ids
+    elif user_can(user, "orders", "view"):
+        visible_purchase_order_ids = set(scope_customer_related_queryset(
+            Order.objects.filter(pk__in=purchase_order_ids), user,
+        ).values_list("pk", flat=True))
+    else:
+        visible_purchase_order_ids = set()
     purchases = _target([{
         "id": item.purchase_order_id,
         "purchase_no": item.purchase_order.purchase_no,
-        "order_no": item.purchase_order.order.order_no if item.purchase_order.order_id else "",
+        "order_no": item.purchase_order.order.order_no if item.purchase_order.order_id in visible_purchase_order_ids else "",
         "order_date": item.purchase_order.order_date,
         "quantity": item.quantity,
         "unit_price": item.unit_price,
-    } for item in obj.purchase_items.select_related("purchase_order__order")], "purchase-orders")
+    } for item in purchase_items], "purchase-orders")
     return {
         "entity": "supplier-skus",
         "title": obj.supplier_sku_code,
@@ -288,7 +298,7 @@ def _order_context(pk, user=None):
     quote = _target([QuoteSerializer(obj.quote).data], "quotes") if obj.quote else []
     items = _target([{"id": item.sku_id, "order_item_id": item.pk, "sku_code": item.sku_code_snapshot or item.sku.sku, "sales_model": item.sales_model_snapshot, "product_name": item.display_name_snapshot or item.sku.display_name_cn or item.sku.product.name, "quantity": item.quantity, "unit_price": item.unit_price, "cost_price": item.cost_price, "amount": item.amount, "supplier_name": item.supplier_name_snapshot or "", "supplier_sku_code": item.supplier_sku_code_snapshot or ""} for item in obj.items.all()], "skus")
     payments = _target(TransactionSerializer(obj.transactions.all(), many=True).data, "transactions")
-    inventory = _target(InventoryMovementSerializer(obj.inventory_movements.select_related("sku__product"), many=True).data, "inventory-movements")
+    inventory = _target(InventoryMovementSerializer(obj.inventory_movements.select_related("sku__product"), many=True, context={"user": user}).data, "inventory-movements")
     return {"entity": "orders", "title": obj.order_no, "subtitle": f"{obj.customer.name} · {obj.order_date}", "badge": obj.get_status_display(), "info": [["订单日期", obj.order_date], ["预计交期", obj.expected_ship_date or "—"], ["币种", obj.currency], ["汇率", obj.exchange_rate], ["来源报价", obj.quote.quote_no if obj.quote else "—"], ["备注", obj.notes or "—"]], "metrics": [["订单金额", obj.total_amount, "money"], ["已收款", obj.paid_amount, "money"], ["当前待收款", obj.outstanding_amount, "money"], ["明细", len(items), "number"]], "sections": [
         _section("items", "订单明细", "skus", [["sales_model", "Model"], ["sku_code", "SKU Code"], ["product_name", "内部名称"], ["supplier_name", "本次供应商"], ["supplier_sku_code", "供应商 SKU"], ["quantity", "数量", "number"], ["unit_price", "售价", "money"], ["cost_price", "成本", "money"], ["amount", "小计", "money"]], items),
         _section("payments", "收付款流水", "transactions", [["transaction_date", "日期", "date"], ["transaction_no", "流水号"], ["direction_display", "方向"], ["category", "分类"], ["amount", "金额", "money"], ["currency", "币种"]], payments),
@@ -371,11 +381,14 @@ def _transaction_context(pk):
     ]}
 
 
-def _inventory_context(pk):
+def _inventory_context(pk, user=None):
     obj = get_object_or_404(InventoryMovement.objects.select_related("sku__product", "order"), pk=pk)
     sku = _target([SKUSerializer(obj.sku).data], "skus")
     product = _target([ProductSerializer(obj.sku.product).data], "products")
-    order = _target([OrderSerializer(obj.order).data], "orders") if obj.order else []
+    order_queryset = Order.objects.filter(pk=obj.order_id) if obj.order_id else Order.objects.none()
+    if user is not None:
+        order_queryset = scope_customer_related_queryset(order_queryset, user)
+    order = _target(OrderSerializer(order_queryset, many=True).data, "orders")
     return {"entity": "inventory-movements", "title": obj.movement_no, "subtitle": f"{obj.movement_date} · {obj.get_type_display()}", "badge": f"{obj.signed_quantity:+}", "info": [["SKU", obj.sku.sku], ["基础数量", f"{obj.quantity} {obj.trade_snapshot.get('base_unit', obj.sku.unit)}"], ["交易规格", obj.trade_snapshot.get("name") or "基础单位登记"], ["交易数量", f"{obj.trade_quantity} {obj.trade_snapshot.get('unit', '')}" if obj.trade_unit_id else "—"], ["仓库", obj.warehouse], ["单位成本", obj.unit_cost], ["参考号", obj.reference or "—"], ["备注", obj.notes or "—"]], "metrics": [], "sections": [
         _section("sku", "关联 SKU", "skus", [["sku", "SKU"], ["product_name", "产品"], ["specification", "规格"], ["unit", "单位"]], sku),
         _section("product", "所属产品", "products", [["code", "产品编号"], ["name", "产品名称"], ["status", "状态", "status"]], product),

@@ -903,12 +903,16 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         can_view_orders = user_can(request.user, "orders", "view")
         can_view_customers = user_can(request.user, "customers", "view")
         can_view_purchases = user_can(request.user, "purchases", "view")
+        purchase_order_ids = purchases.exclude(order_id=None).values_list("order_id", flat=True)
+        visible_purchase_order_ids = set(scope_customer_related_queryset(
+            Order.objects.filter(pk__in=purchase_order_ids), request.user,
+        ).values_list("pk", flat=True)) if can_view_orders else set()
         return Response({
             "sku": {"id": sku.id, "sku": sku.sku, "display_name_cn": sku.display_name_cn, "unit": sku.unit},
-            "movements": InventoryMovementSerializer(movements, many=True).data,
+            "movements": InventoryMovementSerializer(movements, many=True, context={"request": request}).data,
             "purchases": [{
                 "id": purchase.id, "purchase_no": purchase.purchase_no, "supplier_name": purchase.supplier.name,
-                "order_no": purchase.order.order_no if purchase.order_id else "", "order_date": purchase.order_date,
+                "order_no": purchase.order.order_no if purchase.order_id in visible_purchase_order_ids else "", "order_date": purchase.order_date,
                 "status": purchase.status, "status_display": purchase.get_status_display(),
                 "quantity": sum((item.quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
                 "received_quantity": sum((item.received_quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
@@ -1737,7 +1741,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "payments": TransactionSerializer(payments, many=True).data,
             "advance_allocations": advance_allocations,
             "plans": PaymentPlanSerializer(plans, many=True).data,
-            "inventory": InventoryMovementSerializer(inventory, many=True).data,
+            "inventory": InventoryMovementSerializer(inventory, many=True, context={"request": request}).data,
             "payment_summary": {
                 "paid_amount": paid_amount,
                 "balance_amount": order.outstanding_amount,

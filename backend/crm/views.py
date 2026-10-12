@@ -1,3 +1,4 @@
+from .finance_scope import scope_transaction_queryset, scope_plan_queryset, validate_finance_relations, require_finance_permission, ContractFinancePermission
 from .trade_units import amount_expression, trade_values
 import csv
 import hashlib
@@ -298,6 +299,8 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def pay(self, request, pk=None):
+        require_finance_permission(request.user, "transactions", "create")
+        require_finance_permission(request.user, "finance", "update")
         input_serializer = SupplierPaymentInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         purchase = self.get_object()
@@ -1724,8 +1727,8 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "currency": row.plan.currency, "is_active": row.is_active}
             for row in AdvanceAllocation.objects.filter(plan__order=order).select_related("advance", "plan")]
         items = list(order.items.all())
-        payments = list(order.transactions.all())
-        plans = list(order.payment_plans.all())
+        payments = list(scope_transaction_queryset(order.transactions.all(), request.user)) if user_can(request.user, "transactions", "view") else []
+        plans = list(order.payment_plans.all()) if user_can(request.user, "finance", "view") else []
         expenses = [row for row in payments if row.direction == "expense" and row.kind not in {"supplier_payment", "refund", "unallocated_advance", "unallocated_payment"} and row.status == "confirmed"]
         inventory = list(InventoryMovement.objects.filter(Q(order=order) | Q(related_orders=order)).distinct().select_related("sku__product"))
         ordered_quantity = sum((item.quantity for item in items), Decimal("0"))
@@ -1739,7 +1742,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "source_quote": QuoteSerializer(order.quote).data if order.quote else None,
             "items": OrderItemSerializer(items, many=True).data,
             "payments": TransactionSerializer(payments, many=True).data,
-            "advance_allocations": advance_allocations,
+            "advance_allocations": advance_allocations if user_can(request.user, "transactions", "view") else [],
             "plans": PaymentPlanSerializer(plans, many=True).data,
             "inventory": InventoryMovementSerializer(inventory, many=True, context={"request": request}).data,
             "payment_summary": {
@@ -1759,6 +1762,10 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
 @api_view(["GET"])
 def finance_dashboard(request):
+    require_finance_permission(request.user, "transactions", "view")
+    exporting = request.query_params.get("export") == "csv"
+    if exporting:
+        require_finance_permission(request.user, "finance", "export")
     today = timezone.localdate()
     try:
         start = date.fromisoformat(request.query_params.get("date_from") or today.replace(day=1).isoformat())
@@ -1767,18 +1774,18 @@ def finance_dashboard(request):
             raise ValueError
     except ValueError:
         return Response({"detail": "请填写有效日期，开始日期不能晚于结束日期。"}, status=400)
-    plans = PaymentPlan.objects.select_related("order__customer", "purchase_order__supplier").filter(status="open").exclude(order__status__in=["draft", "cancelled"]).exclude(purchase_order__status__in=["draft", "cancelled"])
+    plans = scope_plan_queryset(PaymentPlan.objects.select_related("order__customer", "purchase_order__supplier"), request.user).filter(status="open").exclude(order__status__in=["draft", "cancelled"]).exclude(purchase_order__status__in=["draft", "cancelled"])
     receivables = plans.filter(direction="receivable")
     payables = plans.filter(direction="payable")
     remaining = lambda rows: sum((row.remaining_amount * (row.order.exchange_rate if row.order_id else row.purchase_order.exchange_rate) for row in rows), Decimal("0"))
     from .services.profit import order_profit_summary
-    period_orders = Order.objects.exclude(status__in=["draft", "cancelled"]).filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes", "purchase_cost_allocations", "transactions")
+    period_orders = scope_customer_related_queryset(Order.objects.all(), request.user).exclude(status__in=["draft", "cancelled"]).filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes", "purchase_cost_allocations", "transactions")
     profits = [order_profit_summary(order) for order in period_orders]
     sales_rmb = sum((row["sales_rmb"] for row in profits), Decimal("0"))
     purchase_cost_rmb = sum((row["purchase_cost_rmb"] for row in profits), Decimal("0"))
     order_expense_rmb = sum((row["expense_rmb"] for row in profits), Decimal("0"))
     estimated_profit_rmb = sum((row["estimated_profit_rmb"] for row in profits), Decimal("0"))
-    cash = Transaction.objects.filter(status="confirmed", transaction_date__range=(start, end))
+    cash = scope_transaction_queryset(Transaction.objects.all(), request.user).filter(status="confirmed", transaction_date__range=(start, end))
     income, expense = Decimal("0"), Decimal("0")
     categories, monthly = {}, {}
     for row in cash:
@@ -1792,7 +1799,7 @@ def finance_dashboard(request):
         month = row.transaction_date.strftime("%Y-%m")
         bucket = monthly.setdefault(month, {"month": month, "income": Decimal("0"), "expense": Decimal("0")})
         bucket[row.direction] += value
-    advances = Transaction.objects.filter(status="confirmed", kind__in=["unallocated_advance", "unallocated_payment"])
+    advances = scope_transaction_queryset(Transaction.objects.all(), request.user).filter(status="confirmed", kind__in=["unallocated_advance", "unallocated_payment"])
     unallocated = lambda direction: sum(((row.amount - row.allocated_amount) * row.exchange_rate for row in advances if row.direction == direction), Decimal("0"))
     due_items = [
         {
@@ -1803,7 +1810,7 @@ def finance_dashboard(request):
         }
         for row in plans.filter(due_date__isnull=False, due_date__lte=today).order_by("due_date")[:12]
     ]
-    return Response({"metrics": {
+    payload = {"metrics": {
         "receivable_count": receivables.count(), "receivable_rmb": remaining(receivables),
         "payable_count": payables.count(), "payable_rmb": remaining(payables), "sales_rmb": sales_rmb, "monthly_sales_rmb": sales_rmb,
         "purchase_cost_rmb": purchase_cost_rmb, "order_expense_rmb": order_expense_rmb, "estimated_profit_rmb": estimated_profit_rmb,
@@ -1811,7 +1818,25 @@ def finance_dashboard(request):
         "advance_receipt_rmb": unallocated("income"), "advance_payment_rmb": unallocated("expense"),
     }, "period": {"date_from": start, "date_to": end}, "due_items": due_items,
         "categories": [{"direction": key[0], "category": key[1], "amount": value} for key, value in sorted(categories.items())],
-        "monthly_cash": [{**monthly[key], "net": monthly[key]["income"] - monthly[key]["expense"]} for key in sorted(monthly)]})
+        "monthly_cash": [{**monthly[key], "net": monthly[key]["income"] - monthly[key]["expense"]} for key in sorted(monthly)]}
+
+
+    if exporting:
+        from .reporting import safe_csv
+        response = HttpResponse(content_type="text/csv; charset=utf-8")
+        response["Content-Disposition"] = f'attachment; filename="finance-{start}-{end}.csv"'
+        response.write("\ufeff")
+        writer = csv.writer(response)
+        writer.writerow(["收支报表", start, end])
+        writer.writerow(["月份", "实际收入（人民币）", "实际支出（人民币）", "净现金流（人民币）"])
+        for row in payload["monthly_cash"]:
+            writer.writerow([row["month"], row["income"], row["expense"], row["net"]])
+        writer.writerow([])
+        writer.writerow(["方向", "分类", "人民币金额"])
+        for row in payload["categories"]:
+            writer.writerow(["收入" if row["direction"] == "income" else "支出", safe_csv(row["category"]), row["amount"]])
+        return response
+    return Response(payload)
 
 
 class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
@@ -1821,7 +1846,7 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     ordering_fields = ["transaction_date", "amount", "created_at"]
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = scope_transaction_queryset(super().get_queryset(), self.request.user)
         if self.request.query_params.get("customer"):
             qs = qs.filter(customer_id=self.request.query_params["customer"])
         if self.request.query_params.get("order"):
@@ -1837,6 +1862,8 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        if serializer.validated_data.get("plan") or serializer.validated_data.get("kind") in {"customer_receipt", "supplier_payment", "refund", "supplier_refund"}:
+            require_finance_permission(request.user, "finance", "update")
         try:
             row = record_transaction(serializer.validated_data.copy())
         except DjangoValidationError as error:
@@ -1853,6 +1880,8 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def void(self, request, pk=None):
         source = self.get_object()
+        if source.plan_id or source.allocations.exists() or source.split_rows.exists():
+            require_finance_permission(request.user, "finance", "update")
         input_serializer = TransactionVoidInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         before = snapshot(source)
@@ -1881,7 +1910,8 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         from rest_framework import serializers as drf_serializers
         plan_id = drf_serializers.IntegerField(min_value=1).run_validation(request.data.get("plan"))
         amount = drf_serializers.DecimalField(max_digits=14, decimal_places=4, min_value=Decimal("0.0001")).run_validation(request.data.get("amount"))
-        plan = get_object_or_404(PaymentPlan, pk=plan_id)
+        require_finance_permission(request.user, "finance", "update")
+        plan = get_object_or_404(scope_plan_queryset(PaymentPlan.objects.all(), request.user), pk=plan_id)
         try:
             source = self.get_object()
             plan = allocate_advance(source, plan, amount)
@@ -1997,7 +2027,7 @@ class PaymentPlanViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return parsed
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = scope_plan_queryset(super().get_queryset(), self.request.user)
         for key in ("direction", "order", "purchase_order", "status"):
             if self.request.query_params.get(key):
                 qs = qs.filter(**{f"{key}_id" if key in {"order", "purchase_order"} else key: self.request.query_params[key]})
@@ -2015,6 +2045,7 @@ class PaymentPlanViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def settle(self, request, pk=None):
+        require_finance_permission(request.user, "transactions", "create")
         plan = self.get_object()
         payload = {**request.data, "plan": plan.pk,
             "currency": request.data.get("currency", plan.currency),
@@ -2022,7 +2053,7 @@ class PaymentPlanViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "direction": "income" if plan.order_id else "expense",
             "kind": "customer_receipt" if plan.order_id else "supplier_payment",
             "category": request.data.get("category") or ("客户收款" if plan.order_id else "供应商付款")}
-        input_serializer = TransactionSerializer(data=payload)
+        input_serializer = TransactionSerializer(data=payload, context={"request": request})
         input_serializer.is_valid(raise_exception=True)
         try:
             row = record_transaction(input_serializer.validated_data)
@@ -2036,6 +2067,7 @@ class PaymentPlanViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
 
 class ContractChangeRequestViewSet(AuditTrailMixin, viewsets.ModelViewSet):
+    permission_classes = [ContractFinancePermission]
     serializer_class = ContractChangeRequestSerializer
     queryset = ContractChangeRequest.objects.select_related("order", "purchase_order")
 
@@ -2043,6 +2075,10 @@ class ContractChangeRequestViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         queryset = super().get_queryset()
         sales_changes = scope_customer_related_queryset(queryset.filter(order__isnull=False), self.request.user, relation="order__customer")
         purchase_changes = queryset.filter(purchase_order__isnull=False)
+        if not user_can(self.request.user, "orders", "view"):
+            sales_changes = sales_changes.none()
+        if not user_can(self.request.user, "purchases", "view"):
+            purchase_changes = purchase_changes.none()
         queryset = sales_changes | purchase_changes
         if self.request.query_params.get("order"):
             queryset = queryset.filter(order_id=self.request.query_params["order"])
@@ -2052,6 +2088,7 @@ class ContractChangeRequestViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def approve(self, request, pk=None):
+        require_finance_permission(request.user, "finance", "create")
         try:
             request_item = self.get_object()
             plan = approve_contract_change(request_item)
@@ -2113,12 +2150,11 @@ def dashboard(request):
         {"id": customer_id, **values}
         for customer_id, values in sorted(customer_rows.items(), key=lambda row: row[1]["sales"], reverse=True)[:6]
     ]
-    income = Transaction.objects.filter(direction="income", status="confirmed", transaction_date__gte=year_start).aggregate(
-        v=Coalesce(Sum(ExpressionWrapper(F("amount") * F("exchange_rate"), output_field=MONEY)), Decimal("0"), output_field=MONEY)
-    )["v"]
-    expense = Transaction.objects.filter(direction="expense", status="confirmed", transaction_date__gte=year_start).aggregate(
-        v=Coalesce(Sum(ExpressionWrapper(F("amount") * F("exchange_rate"), output_field=MONEY)), Decimal("0"), output_field=MONEY)
-    )["v"]
+    cash = scope_transaction_queryset(Transaction.objects.filter(status="confirmed", transaction_date__gte=year_start), request.user)
+    if not user_can(request.user, "transactions", "view"):
+        cash = cash.none()
+    income = sum((row.rmb_amount or row.amount * row.exchange_rate for row in cash if row.direction == "income"), Decimal("0"))
+    expense = sum((row.rmb_amount or row.amount * row.exchange_rate for row in cash if row.direction == "expense"), Decimal("0"))
     due_follow_ups = scope_customer_related_queryset(current_due_follow_ups(today=today), request.user).select_related("customer", "contact").prefetch_related("attachments")
     certificates = ProductCertificate.objects.filter(expires_on__lte=today + timedelta(days=90)).select_related("product")
     certificate_alerts = [
@@ -2418,6 +2454,10 @@ def _import_row(entity, row, user=None):
     if order and defaults["direction"] == "income":
         defaults["kind"] = "customer_receipt"
     payload = {**defaults, "transaction_no": row["transaction_no"], "customer": defaults["customer"].pk if defaults["customer"] else None, "order": order.pk if order else None}
+    validate_finance_relations(defaults, user)
+    require_finance_permission(user, "transactions", "create")
+    if defaults.get("kind") == "customer_receipt":
+        require_finance_permission(user, "finance", "update")
     serializer = TransactionSerializer(data=payload)
     serializer.is_valid(raise_exception=True)
     record_transaction(serializer.validated_data)

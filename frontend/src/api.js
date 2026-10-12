@@ -2,7 +2,7 @@ import axios from 'axios'
 import { apiErrorMessage } from './utils/apiErrors.js'
 export { apiErrorMessage, formatApiError } from './utils/apiErrors.js'
 
-export const api = axios.create({ baseURL: '/api', timeout: 15000 })
+export const api = axios.create({ baseURL: '/api', timeout: 15000, xsrfCookieName: 'csrftoken', xsrfHeaderName: 'X-CSRFToken' })
 
 api.interceptors.response.use(
   (response) => response,

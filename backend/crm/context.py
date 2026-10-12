@@ -1,3 +1,4 @@
+from .finance_scope import scope_transaction_queryset
 from .trade_units import amount_expression, trade_values
 from datetime import date, timedelta
 from decimal import Decimal
@@ -67,7 +68,7 @@ def entity_context(request, entity, pk):
         return Response({"detail": "未知的数据类型。"}, status=404)
     if entity == "products":
         payload = handler(pk, include_inactive=request.query_params.get("include_inactive") == "1", user=request.user)
-    elif entity in {"skus", "supplier-skus", "customers", "contacts", "follow-ups", "quotes", "orders", "inventory-movements"}:
+    elif entity in {"skus", "supplier-skus", "customers", "contacts", "follow-ups", "quotes", "orders", "inventory-movements", "transactions", "purchase-orders"}:
         payload = handler(pk, request.user)
     else:
         payload = handler(pk)
@@ -77,6 +78,13 @@ def entity_context(request, entity, pk):
         section for section in payload.get("sections", [])
         if user_can(request.user, CONTEXT_MODULES.get(section.get("entity")), "view")
     ]
+    for section in payload["sections"]:
+        if section.get("entity") == "transactions":
+            rows = section.get("rows", [])
+            visible = set(scope_transaction_queryset(
+                Transaction.objects.filter(pk__in=[row["id"] for row in rows]), request.user
+            ).values_list("pk", flat=True))
+            section["rows"] = [row for row in rows if row["id"] in visible]
     metric_modules = {
         "customers": {"累计销售额": "orders", "订单": "orders", "报价": "quotes", "下次跟进": "followups"},
         "products": {"SKU": "skus", "供应商": "suppliers", "当前库存": "inventory", "参数": "parameters"},
@@ -328,14 +336,15 @@ def _supplier_context(pk):
         ]}
 
 
-def _purchase_order_context(pk):
+def _purchase_order_context(pk, user=None):
     obj = get_object_or_404(PurchaseOrder.objects.select_related("supplier", "order").prefetch_related("items__sku__product", "transactions"), pk=pk)
     supplier = _target([SupplierSerializer(obj.supplier).data], "suppliers")
-    order = _target([OrderSerializer(obj.order).data], "orders") if obj.order_id else []
+    visible_order = scope_customer_related_queryset(Order.objects.filter(pk=obj.order_id), user).first() if obj.order_id else None
+    order = _target([OrderSerializer(visible_order).data], "orders") if visible_order and user_can(user, "orders", "view") else []
     items = _target([{"id": item.sku_id, "sku_code": item.sku.sku, "product_name": item.sku.product.name, "quantity": item.quantity, "unit_price": item.unit_price, "amount": item.amount} for item in obj.items.all()], "skus")
     payments = _target(TransactionSerializer(obj.transactions.all(), many=True).data, "transactions")
     return {"entity": "purchase-orders", "title": obj.purchase_no, "subtitle": f"{obj.supplier.name} · {obj.order_date}", "badge": obj.get_status_display(),
-        "info": [["下单日期", obj.order_date], ["预计到货", obj.expected_arrival_date or "—"], ["币种", obj.currency], ["汇率", obj.exchange_rate], ["关联订单", obj.order.order_no if obj.order_id else "—"], ["备注", obj.notes or "—"]],
+        "info": [["下单日期", obj.order_date], ["预计到货", obj.expected_arrival_date or "—"], ["币种", obj.currency], ["汇率", obj.exchange_rate], ["关联订单", visible_order.order_no if order else "—"], ["备注", obj.notes or "—"]],
         "metrics": [["采购金额", obj.total_amount, "money"], ["已付款", obj.paid_amount, "money"], ["待付款", obj.unpaid_amount, "money"], ["明细", len(items), "number"]],
         "sections": [
             _section("items", "采购明细", "skus", [["sku_code", "SKU"], ["product_name", "产品"], ["quantity", "数量", "number"], ["unit_price", "单价", "money"], ["amount", "小计", "money"]], items),
@@ -367,12 +376,12 @@ def _category_context(pk):
     return {"entity": "categories", "title": obj.name, "subtitle": "产品分类", "badge": f"{len(products)} 个产品", "info": [["说明", obj.description or "—"]], "metrics": [["产品数量", len(products), "number"]], "sections": [_section("products", "分类产品", "products", [["code", "产品编号"], ["name", "产品名称"], ["status", "状态", "status"]], products)]}
 
 
-def _transaction_context(pk):
-    obj = get_object_or_404(Transaction.objects.select_related("customer", "supplier", "order", "purchase_order"), pk=pk)
+def _transaction_context(pk, user=None):
+    obj = get_object_or_404(scope_transaction_queryset(Transaction.objects.select_related("customer", "supplier", "order", "purchase_order"), user), pk=pk)
     customer = _target([CustomerSerializer(obj.customer).data], "customers") if obj.customer else []
     supplier = _target([SupplierSerializer(obj.supplier).data], "suppliers") if obj.supplier else []
     order = _target([OrderSerializer(obj.order).data], "orders") if obj.order else []
-    purchase_order = _target([{"id": obj.purchase_order_id, "purchase_no": obj.purchase_order.purchase_no, "order_no": obj.purchase_order.order.order_no if obj.purchase_order.order_id else "", "supplier_name": obj.purchase_order.supplier.name, "status_display": obj.purchase_order.get_status_display(), "total_amount": obj.purchase_order.total_amount, "currency": obj.purchase_order.currency}], "purchase-orders") if obj.purchase_order else []
+    purchase_order = _target([{"id": obj.purchase_order_id, "purchase_no": obj.purchase_order.purchase_no, "supplier_name": obj.purchase_order.supplier.name, "status_display": obj.purchase_order.get_status_display(), "total_amount": obj.purchase_order.total_amount, "currency": obj.purchase_order.currency}], "purchase-orders") if obj.purchase_order else []
     return {"entity": "transactions", "title": obj.transaction_no, "subtitle": f"{obj.transaction_date} · {obj.category}", "badge": obj.get_direction_display(), "info": [["金额", f"{obj.currency} {obj.amount}"], ["折合人民币", obj.amount * obj.exchange_rate], ["支付方式", obj.payment_method or "—"], ["参考号", obj.reference or "—"], ["状态", obj.get_status_display()], ["备注", obj.notes or "—"]], "metrics": [], "sections": [
         _section("customer", "关联客户", "customers", [["code", "客户编号"], ["name", "客户名称"], ["country", "国家"], ["owner", "负责人"]], customer),
         _section("supplier", "关联供应商", "suppliers", [["name", "供应商"], ["code", "二字代码"], ["store_url", "店铺链接"], ["contact_name", "联系人"], ["phone", "电话"]], supplier),

@@ -1,3 +1,4 @@
+from .finance_scope import scope_transaction_queryset, require_finance_permission
 """Read-only, reusable reporting API. Decimal amounts; no cross-currency sums."""
 import csv
 from datetime import date, datetime, timedelta
@@ -61,9 +62,7 @@ def records(source, date_field, start, end, user=None):
     elif source == "cash":
         qs = qs.filter(status="confirmed").select_related("customer", "supplier")
         if user is not None:
-            scoped_customers = scope_customer_queryset(Customer.objects.all(), user)
-            qs = qs.filter(Q(customer__isnull=True) | Q(customer__in=scoped_customers))
-            qs = qs.filter(Q(order__isnull=True) | Q(order__customer__in=scoped_customers))
+            qs = scope_transaction_queryset(qs, user)
     elif source == "customers" and user is not None:
         qs = scope_customer_queryset(qs, user)
     elif source == "inventory": qs = qs.select_related("sku__product__category")
@@ -160,6 +159,8 @@ def report_data(request):
     params = request.query_params
     source = params.get("source", "sales")
     if source not in SOURCES: raise ValidationError("不支持的报表模块。")
+    if source == "cash":
+        require_finance_permission(request.user, "transactions", "view")
     spec = SOURCES[source]
     group, grain = params.get("group_by", "time"), params.get("grain", "month")
     date_field = params.get("date_field") or next(iter(spec["dates"]))

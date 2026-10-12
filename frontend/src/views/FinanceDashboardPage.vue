@@ -26,15 +26,16 @@ async function load() {
   error.value = ''
   try { data.value = (await api.get('/finance-dashboard/', { params: { date_from: dateFrom.value, date_to: dateTo.value } })).data; hasLoaded.value = true } catch (err) { error.value = err.message || '财务概览加载失败，请稍后重试。' } finally { loading.value = false }
 }
-function exportReport() {
+async function exportReport() {
   if (!can('finance', 'export')) return
-  const rows = [['收支报表', data.value.period?.date_from, data.value.period?.date_to], ['月份', '实际收入（人民币）', '实际支出（人民币）', '净现金流（人民币）'],
-    ...(data.value.monthly_cash || []).map(row => [row.month, row.income, row.expense, row.net]), [], ['方向', '分类', '人民币金额'],
-    ...(data.value.categories || []).map(row => [row.direction === 'income' ? '收入' : '支出', row.category, row.amount])]
-  const cell = value => `"${String(value ?? '').replace(/^[=+@-]/, "'$&").replaceAll('"', '""')}"`
-  const url = URL.createObjectURL(new Blob(['\uFEFF', rows.map(row => row.map(cell).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' }))
-  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `收支报表-${data.value.period?.date_from}-${data.value.period?.date_to}.csv`; anchor.click()
-  setTimeout(() => URL.revokeObjectURL(url), 1000)
+  loading.value = true
+  error.value = ''
+  try {
+    const response = await api.get('/finance-dashboard/', { params: { date_from: data.value.period.date_from, date_to: data.value.period.date_to, export: 'csv' }, responseType: 'blob' })
+    const url = URL.createObjectURL(response.data)
+    const anchor = document.createElement('a'); anchor.href = url; anchor.download = `收支报表-${data.value.period.date_from}-${data.value.period.date_to}.csv`; anchor.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  } catch (err) { error.value = err.message || '导出失败，请稍后重试。' } finally { loading.value = false }
 }
 onMounted(load)
 </script>

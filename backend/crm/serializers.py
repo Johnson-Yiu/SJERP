@@ -1,3 +1,5 @@
+from .permissions import user_can
+from .finance_scope import validate_finance_relations
 from .trade_units import TradeLineSerializerMixin, TRADE_FIELDS, SKUTradeUnitSerializer, trade_values, validate_document_amount
 from decimal import Decimal
 import re
@@ -365,7 +367,23 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     payment_plans = serializers.SerializerMethodField()
 
     def get_payment_plans(self, obj):
-        return PaymentPlanSerializer(obj.payment_plans.all().order_by("id"), many=True).data
+        request = self.context.get("request")
+        if request and not user_can(request.user, "finance", "view"):
+            return []
+        return PaymentPlanSerializer(obj.payment_plans.all().order_by("id"), many=True, context=self.context).data
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get("request")
+        if request:
+            from .sales_scope import scope_customer_related_queryset
+            visible = scope_customer_related_queryset(Order.objects.all(), request.user) if user_can(request.user, "orders", "view") else Order.objects.none()
+            visible_ids = set(visible.values_list("pk", flat=True))
+            if instance.order_id not in visible_ids:
+                data["order"] = None
+                data["order_no"] = ""
+            data["related_orders"] = [row for row in data["related_orders"] if row["id"] in visible_ids]
+        return data
 
     def validate_payment_terms_snapshot(self, value):
         from .payment_terms import validate_payment_terms
@@ -1816,6 +1834,9 @@ class TransactionSerializer(serializers.ModelSerializer):
         return obj.rmb_amount or (obj.amount * obj.exchange_rate).quantize(Decimal("0.0001"))
 
     def validate(self, attrs):
+        request = self.context.get("request")
+        if request:
+            validate_finance_relations(attrs, request.user, self.instance)
         for field in ("amount", "exchange_rate"):
             value = attrs.get(field, getattr(self.instance, field, Decimal("1")))
             if value <= 0:
@@ -1879,6 +1900,9 @@ class PaymentPlanSerializer(serializers.ModelSerializer):
         return super().update(self.instance, validated_data)
 
     def validate(self, attrs):
+        request = self.context.get("request")
+        if request:
+            validate_finance_relations(attrs, request.user, self.instance)
         values = {field: attrs.get(field, getattr(self.instance, field, None)) for field in ("order", "purchase_order", "direction", "currency", "planned_amount")}
         order, purchase = values["order"], values["purchase_order"]
         if bool(order) == bool(purchase):
@@ -1921,10 +1945,16 @@ class ContractChangeRequestSerializer(serializers.ModelSerializer):
         read_only_fields = ["status"]
 
     def validate(self, attrs):
+        request = self.context.get("request")
+        if request:
+            validate_finance_relations(attrs, request.user, self.instance)
         if self.instance and self.instance.status != "pending":
             raise serializers.ValidationError("已处理的合同变更不能修改。")
         order = attrs.get("order", getattr(self.instance, "order", None))
         purchase = attrs.get("purchase_order", getattr(self.instance, "purchase_order", None))
+        if request:
+            from .finance_scope import require_finance_permission
+            require_finance_permission(request.user, "orders" if order else "purchases", "update" if self.instance else "create")
         from .sales_scope import customer_in_scope
         request = self.context.get("request")
         if request and order and not customer_in_scope(order.customer_id, request.user):

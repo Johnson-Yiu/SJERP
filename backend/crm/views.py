@@ -1647,7 +1647,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return Response({
             "order": OrderSerializer(order).data,
             "items": rows,
-            "purchase_orders": PurchaseOrderSerializer(purchase_orders, many=True).data,
+            "purchase_orders": PurchaseOrderSerializer(purchase_orders, many=True, context={"request": request}).data,
             "shipments": [{
                 "id": shipment.id, "shipment_no": shipment.shipment_no,
                 "shipment_date": shipment.shipment_date, "status": shipment.status,
@@ -1694,7 +1694,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         )
         return Response({
             "created_count": len(purchases),
-            "purchase_orders": PurchaseOrderSerializer(serialized_purchases, many=True).data,
+            "purchase_orders": PurchaseOrderSerializer(serialized_purchases, many=True, context={"request": request}).data,
         }, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["get", "post"], url_path="packing-plan")

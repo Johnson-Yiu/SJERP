@@ -118,7 +118,7 @@ class ProductSupplierCandidatePoolView(APIView):
             from .serializers import SupplierSerializer
             matched = set(eligible_suppliers(product).values_list("pk", flat=True))
             queryset = Supplier.objects.all() if request.query_params.get("all") == "1" else Supplier.objects.filter(pk__in=matched)
-            data = SupplierSerializer(queryset.prefetch_related("supply_categories", "purchase_orders").order_by("name"), many=True).data
+            data = SupplierSerializer(queryset.prefetch_related("supply_categories", "purchase_orders").order_by("name"), many=True, context={"request": request}).data
             for row in data:
                 row["category_match"] = row["id"] in matched
             return Response(sorted(data, key=lambda row: not row["category_match"]))

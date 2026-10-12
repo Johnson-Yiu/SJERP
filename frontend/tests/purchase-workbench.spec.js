@@ -107,3 +107,25 @@ describe('purchase workbench Phase A', () => {
     expect(receiptProgress([])).toMatchObject({lines:true,ordered:0,percent:0})
   })
 })
+
+
+describe('purchase financial fields from scoped API responses', () => {
+  it('keeps procurement visible while omitting unavailable payment information', () => {
+    const wrapper = mountDetail({ paid_amount: undefined, unpaid_amount: undefined, related_orders: [] })
+    expect(wrapper.text()).toContain('采购金额')
+    expect(wrapper.text()).toContain('20.00')
+    expect(wrapper.text()).not.toContain('已付金额')
+    expect(wrapper.text()).not.toContain('未付金额')
+    expect(wrapper.text()).not.toContain('付款进度')
+    expect(wrapper.findAll('button').map(button => button.text())).not.toContain('付款')
+    wrapper.unmount()
+  })
+  it('retains legitimate zero payment values and the normal payment tab', async () => {
+    const wrapper = mountDetail({ paid_amount: '0', unpaid_amount: '20' })
+    expect(wrapper.text()).toContain('已付金额')
+    expect(wrapper.text()).toContain('付款进度')
+    await click(wrapper, '付款')
+    expect(wrapper.text()).toContain('供应商付款')
+    wrapper.unmount()
+  })
+})

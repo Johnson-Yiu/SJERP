@@ -99,8 +99,19 @@ class PositionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+def serializer_user(context):
+    request = context.get("request")
+    return request.user if request is not None else context.get("user")
+
+
 class SupplierSerializer(serializers.ModelSerializer):
     payment_terms_summary = serializers.SerializerMethodField()
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not user_can(serializer_user(self.context), "purchases", "view"):
+            data.pop("purchase_count", None)
+        return data
 
     def get_payment_terms_summary(self, obj):
         return payment_terms_summary(obj.payment_terms_config)
@@ -367,22 +378,26 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     payment_plans = serializers.SerializerMethodField()
 
     def get_payment_plans(self, obj):
-        request = self.context.get("request")
-        if request and not user_can(request.user, "finance", "view"):
+        if not user_can(serializer_user(self.context), "finance", "view"):
             return []
         return PaymentPlanSerializer(obj.payment_plans.all().order_by("id"), many=True, context=self.context).data
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        request = self.context.get("request")
-        if request:
-            from .sales_scope import scope_customer_related_queryset
-            visible = scope_customer_related_queryset(Order.objects.all(), request.user) if user_can(request.user, "orders", "view") else Order.objects.none()
-            visible_ids = set(visible.values_list("pk", flat=True))
-            if instance.order_id not in visible_ids:
-                data["order"] = None
-                data["order_no"] = ""
-            data["related_orders"] = [row for row in data["related_orders"] if row["id"] in visible_ids]
+        user = serializer_user(self.context)
+        from .sales_scope import scope_customer_related_queryset
+        associated_ids = {row["id"] for row in data["related_orders"]}
+        if instance.order_id:
+            associated_ids.add(instance.order_id)
+        visible = scope_customer_related_queryset(Order.objects.filter(pk__in=associated_ids), user) if user_can(user, "orders", "view") else Order.objects.none()
+        visible_ids = set(visible.values_list("pk", flat=True))
+        if instance.order_id not in visible_ids:
+            data["order"] = None
+            data["order_no"] = ""
+        data["related_orders"] = [row for row in data["related_orders"] if row["id"] in visible_ids]
+        if not (user_can(user, "finance", "view") and user_can(user, "transactions", "view")):
+            data.pop("paid_amount", None)
+            data.pop("unpaid_amount", None)
         return data
 
     def validate_payment_terms_snapshot(self, value):

@@ -68,7 +68,7 @@ def entity_context(request, entity, pk):
         return Response({"detail": "未知的数据类型。"}, status=404)
     if entity == "products":
         payload = handler(pk, include_inactive=request.query_params.get("include_inactive") == "1", user=request.user)
-    elif entity in {"skus", "supplier-skus", "customers", "contacts", "follow-ups", "quotes", "orders", "inventory-movements", "transactions", "purchase-orders"}:
+    elif entity in {"skus", "supplier-skus", "customers", "contacts", "follow-ups", "quotes", "orders", "inventory-movements", "transactions", "purchase-orders", "suppliers"}:
         payload = handler(pk, request.user)
     else:
         payload = handler(pk)
@@ -87,13 +87,15 @@ def entity_context(request, entity, pk):
             section["rows"] = [row for row in rows if row["id"] in visible]
     metric_modules = {
         "customers": {"累计销售额": "orders", "订单": "orders", "报价": "quotes", "下次跟进": "followups"},
+        "suppliers": {"合作产品": "products", "采购单记录": "purchases", "正式采购金额（人民币）": "purchases", "已付采购款（人民币）": ["purchases", "finance", "transactions"]},
+        "purchase-orders": {"已付款": ["finance", "transactions"], "待付款": ["finance", "transactions"]},
         "products": {"SKU": "skus", "供应商": "suppliers", "当前库存": "inventory", "参数": "parameters"},
         "skus": {"当前库存": "inventory", "订单记录": "orders", "历史版本": "skus"},
     }
     required = metric_modules.get(entity, {})
     payload["metrics"] = [
         metric for metric in payload.get("metrics", [])
-        if metric[0] not in required or user_can(request.user, required[metric[0]], "view")
+        if metric[0] not in required or all(user_can(request.user, module, "view") for module in (required[metric[0]] if isinstance(required[metric[0]], list) else [required[metric[0]]]))
     ]
     return Response(payload)
 
@@ -151,7 +153,7 @@ def _product_context(pk, include_inactive=False, user=None):
     skus = _target(SKUSerializer(_stock_skus(sku_queryset), many=True).data, "skus")
     params = _target(ProductParameterSerializer(obj.parameters.all(), many=True).data, "product-parameters")
     certs = _target(ProductCertificateSerializer(obj.certificates.all(), many=True).data, "product-certificates")
-    suppliers = _target(SupplierSerializer(obj.suppliers.all(), many=True).data, "suppliers")
+    suppliers = _target(SupplierSerializer(obj.suppliers.all(), many=True, context={"user": user}).data, "suppliers")
     inventory = _target(InventoryMovementSerializer(InventoryMovement.objects.filter(sku__product=obj).select_related("sku__product", "order"), many=True, context={"user": user}).data, "inventory-movements")
     formal_statuses = ["confirmed", "production", "shipped", "completed"]
     sales_orders = scope_customer_related_queryset(Order.objects.filter(status__in=formal_statuses), user) if user is not None else Order.objects.filter(status__in=formal_statuses)
@@ -316,15 +318,15 @@ def _order_context(pk, user=None):
     ]}
 
 
-def _supplier_context(pk):
+def _supplier_context(pk, user=None):
     obj = get_object_or_404(Supplier, pk=pk)
     products = _target(ProductSerializer(obj.products.select_related("category"), many=True).data, "products")
     supplier_skus = _target(SupplierSKUSerializer(obj.supplier_skus.select_related("supplier", "sku", "sku__product"), many=True).data, "supplier-skus")
-    purchases = _target(PurchaseOrderSerializer(prefetch_purchase_related_orders(obj.purchase_orders.select_related("supplier", "order").prefetch_related("items__sku", "items__receipts", "transactions")), many=True).data, "purchase-orders")
+    purchases = _target(PurchaseOrderSerializer(prefetch_purchase_related_orders(obj.purchase_orders.select_related("supplier", "order").prefetch_related("items__sku", "items__receipts", "transactions")), many=True, context={"user": user}).data, "purchase-orders")
     payments = _target(TransactionSerializer(obj.transactions.select_related("customer", "order", "purchase_order"), many=True).data, "transactions")
     formal_purchases = [row for row in purchases if row["status"] in {"ordered", "partial", "completed"}]
     total_purchases_rmb = sum((Decimal(row["total_amount"]) * Decimal(row["exchange_rate"]) for row in formal_purchases), Decimal("0"))
-    total_paid_rmb = sum((Decimal(row["paid_amount"]) * Decimal(row["exchange_rate"]) for row in formal_purchases), Decimal("0"))
+    total_paid_rmb = sum((Decimal(row.get("paid_amount", "0")) * Decimal(row["exchange_rate"]) for row in formal_purchases), Decimal("0"))
     return {"entity": "suppliers", "title": obj.name, "subtitle": obj.contact_name or "供应商", "badge": obj.code,
         "info": [["二字代码", obj.code], ["国家/地区", obj.country or "—"], ["主要产品", obj.main_products or "—"], ["店铺链接", obj.store_url or "—"], ["联系人", obj.contact_name or "—"], ["电话", obj.phone or "—"], ["邮箱", obj.email or "—"], ["付款条款说明（备注）", obj.payment_terms or "—"], ["系统执行付款规则", payment_terms_summary(obj.payment_terms_config)], ["备注", obj.notes or "—"]],
         "metrics": [["合作产品", len(products), "number"], ["供货档案", len(supplier_skus), "number"], ["采购单记录", len(formal_purchases), "number"], ["正式采购金额（人民币）", total_purchases_rmb, "rmb"], ["已付采购款（人民币）", total_paid_rmb, "rmb"]],
@@ -338,7 +340,7 @@ def _supplier_context(pk):
 
 def _purchase_order_context(pk, user=None):
     obj = get_object_or_404(PurchaseOrder.objects.select_related("supplier", "order").prefetch_related("items__sku__product", "transactions"), pk=pk)
-    supplier = _target([SupplierSerializer(obj.supplier).data], "suppliers")
+    supplier = _target([SupplierSerializer(obj.supplier, context={"user": user}).data], "suppliers")
     visible_order = scope_customer_related_queryset(Order.objects.filter(pk=obj.order_id), user).first() if obj.order_id else None
     order = _target([OrderSerializer(visible_order).data], "orders") if visible_order and user_can(user, "orders", "view") else []
     items = _target([{"id": item.sku_id, "sku_code": item.sku.sku, "product_name": item.sku.product.name, "quantity": item.quantity, "unit_price": item.unit_price, "amount": item.amount} for item in obj.items.all()], "skus")
@@ -379,7 +381,7 @@ def _category_context(pk):
 def _transaction_context(pk, user=None):
     obj = get_object_or_404(scope_transaction_queryset(Transaction.objects.select_related("customer", "supplier", "order", "purchase_order"), user), pk=pk)
     customer = _target([CustomerSerializer(obj.customer).data], "customers") if obj.customer else []
-    supplier = _target([SupplierSerializer(obj.supplier).data], "suppliers") if obj.supplier else []
+    supplier = _target([SupplierSerializer(obj.supplier, context={"user": user}).data], "suppliers") if obj.supplier else []
     order = _target([OrderSerializer(obj.order).data], "orders") if obj.order else []
     purchase_order = _target([{"id": obj.purchase_order_id, "purchase_no": obj.purchase_order.purchase_no, "supplier_name": obj.purchase_order.supplier.name, "status_display": obj.purchase_order.get_status_display(), "total_amount": obj.purchase_order.total_amount, "currency": obj.purchase_order.currency}], "purchase-orders") if obj.purchase_order else []
     return {"entity": "transactions", "title": obj.transaction_no, "subtitle": f"{obj.transaction_date} · {obj.category}", "badge": obj.get_direction_display(), "info": [["金额", f"{obj.currency} {obj.amount}"], ["折合人民币", obj.amount * obj.exchange_rate], ["支付方式", obj.payment_method or "—"], ["参考号", obj.reference or "—"], ["状态", obj.get_status_display()], ["备注", obj.notes or "—"]], "metrics": [], "sections": [

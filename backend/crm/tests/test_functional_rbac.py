@@ -305,7 +305,7 @@ class FunctionalRBACApiTests(TestCase):
                     response = self.client.get(f"/api/media/{relative_path}")
                     self.assertEqual(response.status_code, 200)
                     self.assertEqual(b"".join(response.streaming_content), image_bytes)
-                    self.addCleanup(response.close)
+                    self.addClassCleanup(response.close)
 
             sku.image.delete(save=True)
             quote_item.refresh_from_db()
@@ -313,7 +313,7 @@ class FunctionalRBACApiTests(TestCase):
             historical = self.client.get(f"/api/media/{snapshot_name}")
             self.assertEqual(historical.status_code, 200)
             self.assertEqual(b"".join(historical.streaming_content), image_bytes)
-            self.addCleanup(historical.close)
+            self.addClassCleanup(historical.close)
 
             sku_only_role = AccessRole.objects.create(name="SKU 图片只读", code="rbac-sku-media-only")
             self.grant(sku_only_role, "skus", can_view=True)

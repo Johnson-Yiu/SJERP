@@ -92,6 +92,10 @@ CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["crm.permissions.ModuleActionPermission"],
+    # The Browsable API builds HTML forms from serializer relation querysets;
+    # those choices can disclose out-of-scope customers on otherwise denied
+    # detail routes. The ERP client uses JSON, so keep API responses JSON-only.
+    "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 50,
     "DEFAULT_FILTER_BACKENDS": [

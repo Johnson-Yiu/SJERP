@@ -11,7 +11,7 @@ from django.test import TestCase, override_settings
 from rest_framework.request import Request
 from rest_framework.test import APIClient, APIRequestFactory, force_authenticate
 
-from crm.models import AccessRole, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, HSCode, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, RolePermission, SKU, Supplier, SupplierCapability
+from crm.models import AccessRole, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, HSCode, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, QuoteItem, RolePermission, SKU, Supplier, SupplierCapability
 from crm.permissions import ModuleActionPermission, action_for_request, effective_permission_matrix
 
 
@@ -244,6 +244,91 @@ class FunctionalRBACApiTests(TestCase):
             self.grant(self.role, "followups", can_view=False)
             self.auth(owner)
             self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_html_api_forms_cannot_disclose_out_of_scope_relation_choices(self):
+        self.grant(self.role, "orders", can_view=True)
+        user = self.make_user(roles=[self.role])
+        profile = EmployeeProfile.objects.get(user=user)
+        self.customer.owner_profile = profile
+        self.customer.save(update_fields=["owner_profile"])
+        foreign_customer = Customer.objects.create(name="Out of scope form choice", code="RBAC-HTML-FOREIGN")
+        foreign_order = Order.objects.create(
+            order_no="RBAC-HTML-FOREIGN-ORDER",
+            customer=foreign_customer,
+            order_date=date.today(),
+        )
+        self.auth(user)
+
+        html_response = self.client.get(f"/api/orders/{foreign_order.pk}/", HTTP_ACCEPT="text/html")
+        self.assertEqual(html_response.status_code, 406)
+        self.assertNotIn(b"Out of scope form choice", html_response.content)
+
+        json_response = self.client.get(f"/api/orders/{foreign_order.pk}/", HTTP_ACCEPT="application/json")
+        self.assertEqual(json_response.status_code, 404)
+        self.assertNotIn("Out of scope form choice", str(json_response.data))
+
+    def test_sku_and_historical_quote_images_use_protected_media_permissions(self):
+        media_root = tempfile.TemporaryDirectory()
+        self.addClassCleanup(media_root.cleanup)
+        with override_settings(MEDIA_ROOT=media_root.name):
+            self.grant(self.role, "customers", can_view=True)
+            self.grant(self.role, "quotes", can_view=True)
+            self.grant(self.role, "skus", can_view=True)
+            owner = self.make_user(username="media-image-owner", roles=[self.role])
+            owner_profile = EmployeeProfile.objects.get(user=owner)
+            self.customer.owner_profile = owner_profile
+            self.customer.save(update_fields=["owner_profile"])
+
+            product = Product.objects.create(code="RBAC-MEDIA-P1", name="Media test product")
+            sku = SKU.objects.create(product=product, sku="RBAC-MEDIA-S1")
+            image_bytes = b"GIF87a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;"
+            sku.image.save("source.gif", SimpleUploadedFile("source.gif", image_bytes, content_type="image/gif"), save=True)
+            sku_image_name = sku.image.name
+
+            quote = Quote.objects.create(
+                quote_no="RBAC-MEDIA-Q1",
+                customer=self.customer,
+                quote_date=date.today(),
+            )
+            quote_item = QuoteItem.objects.create(
+                quote=quote,
+                sku=sku,
+                quantity=1,
+                unit_price=10,
+                image_snapshot=SimpleUploadedFile("snapshot.gif", image_bytes, content_type="image/gif"),
+            )
+            snapshot_name = quote_item.image_snapshot.name
+            self.auth(owner)
+
+            for relative_path in (sku_image_name, snapshot_name):
+                with self.subTest(relative_path=relative_path):
+                    response = self.client.get(f"/api/media/{relative_path}")
+                    self.assertEqual(response.status_code, 200)
+                    self.assertEqual(b"".join(response.streaming_content), image_bytes)
+                    self.addCleanup(response.close)
+
+            sku.image.delete(save=True)
+            quote_item.refresh_from_db()
+            self.assertEqual(quote_item.image_snapshot.name, snapshot_name)
+            historical = self.client.get(f"/api/media/{snapshot_name}")
+            self.assertEqual(historical.status_code, 200)
+            self.assertEqual(b"".join(historical.streaming_content), image_bytes)
+            self.addCleanup(historical.close)
+
+            sku_only_role = AccessRole.objects.create(name="SKU 图片只读", code="rbac-sku-media-only")
+            self.grant(sku_only_role, "skus", can_view=True)
+            sku_only_user = self.make_user(username="media-image-sku-only", roles=[sku_only_role])
+            self.auth(sku_only_user)
+            self.assertEqual(self.client.get(f"/api/media/{snapshot_name}").status_code, 404)
+
+            outsider = self.make_user(username="media-image-outsider", roles=[self.role])
+            self.auth(outsider)
+            self.assertEqual(self.client.get(f"/api/media/{snapshot_name}").status_code, 404)
+
+            self.grant(self.role, "quotes", can_view=False)
+            self.auth(owner)
+            self.assertEqual(self.client.get(f"/api/media/{snapshot_name}").status_code, 404)
+            self.assertEqual(self.client.get(f"/media/{snapshot_name}").status_code, 404)
 
     def test_context_hides_related_sections_without_their_module_view_permission(self):
         self.grant(self.role, "customers", can_view=True)

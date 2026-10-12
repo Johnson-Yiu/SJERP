@@ -442,6 +442,90 @@ class SalesDataScopeTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["summary"]["active_customers"], 2)
 
+    def test_customer_insights_and_inventory_detail_require_order_view(self):
+        order, sku = self.make_order(self.customer_a, "SCOPE-O-MODULE-GATE")
+        shipment = Shipment.objects.create(shipment_no="SCOPE-SHIP-MODULE-GATE", order=order, shipment_date=date.today())
+        item = order.items.first()
+        ShipmentItem.objects.create(shipment=shipment, order_item=item, sku=sku, quantity=1)
+        RolePermission.objects.filter(role=self.roles["self"], module="orders").update(can_view=False)
+        self.login(self.employee_a)
+
+        customer = self.client.get(f"/api/customers/{self.customer_a.pk}/")
+        self.assertEqual(customer.status_code, 200)
+        self.assertIsNone(customer.data["order_count"])
+        self.assertIsNone(customer.data["sales_amount"])
+        insights = self.client.get(f"/api/customers/{self.customer_a.pk}/insights/")
+        self.assertEqual(insights.status_code, 200, insights.data)
+        self.assertEqual(insights.data["yearly"], [])
+        self.assertEqual(insights.data["top_products"], [])
+        self.assertEqual(insights.data["recent_orders"], [])
+
+        inventory = self.client.get(f"/api/skus/{sku.pk}/inventory-detail/")
+        self.assertEqual(inventory.status_code, 200, inventory.data)
+        self.assertEqual(inventory.data["orders"], [])
+        self.assertEqual(inventory.data["shipments"], [])
+
+    def test_sku_context_hides_cost_and_stock_without_source_modules(self):
+        _order, sku = self.make_order(self.customer_a, "SCOPE-O-SKU-METRIC-GATE")
+        sku.cost_price = Decimal("77")
+        sku.save(update_fields=["cost_price"])
+        RolePermission.objects.filter(role=self.roles["self"], module="purchases").update(can_view=False)
+        RolePermission.objects.filter(role=self.roles["self"], module="inventory").update(can_view=False)
+        self.login(self.employee_a)
+
+        response = self.client.get(f"/api/context/skus/{sku.pk}/")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertNotIn("成本价", [row[0] for row in response.data["info"]])
+        self.assertNotIn("当前库存", [row[0] for row in response.data["metrics"]])
+        self.assertNotIn("77", repr(response.data))
+
+    def test_sku_supplier_source_requires_supplier_module_permission(self):
+        order, sku = self.make_order(self.customer_a, "SCOPE-O-SUPPLIER-GATE")
+        source = self.make_supplier_source(sku, "SCOPE-SUPPLIER-GATE")
+        RolePermission.objects.filter(role=self.roles["self"], module="suppliers").update(can_view=False)
+        self.login(self.employee_a)
+
+        self.assertEqual(self.client.get(f"/api/skus/{sku.pk}/").status_code, 200)
+        response = self.client.get(f"/api/skus/{sku.pk}/supplier-skus/")
+        self.assertEqual(response.status_code, 403)
+        self.assertNotIn(source.supplier_sku_code, repr(response.data))
+
+    def test_supplier_candidate_and_source_price_are_hidden_without_purchase_view(self):
+        _order, sku = self.make_order(self.customer_a, "SCOPE-O-SOURCE-PRICE")
+        source = self.make_supplier_source(sku, "SCOPE-SOURCE-PRICE")
+        self.login(self.employee_a)
+        source_response = self.client.get(f"/api/supplier-skus/{source.pk}/")
+        self.assertEqual(source_response.status_code, 200, source_response.data)
+        self.assertIsNone(source_response.data["purchase_price"])
+        candidates = self.client.get(f"/api/skus/{sku.pk}/supplier-candidates/")
+        self.assertEqual(candidates.status_code, 200, candidates.data)
+        self.assertNotIn("purchase_price", repr(candidates.data))
+        self.assertNotIn("3.2000", repr(candidates.data))
+
+    def test_sales_order_cost_snapshot_is_server_owned_without_purchase_write(self):
+        product = Product.objects.create(code="SCOPE-COST-P", name="Cost boundary product")
+        sku = SKU.objects.create(product=product, sku="SCOPE-COST-S", cost_price=Decimal("12.34"))
+        self.login(self.employee_a)
+        response = self.client.post("/api/orders/", {
+            "customer": self.customer_a.pk,
+            "order_date": date.today().isoformat(),
+            "currency": "CNY", "exchange_rate": "1",
+            "items": [{"sku": sku.pk, "quantity": "1", "unit_price": "50", "cost_price": "999"}],
+        }, format="json")
+        self.assertEqual(response.status_code, 201, response.data)
+        line = OrderItem.objects.get(order_id=response.data["id"])
+        self.assertEqual(line.cost_price, Decimal("12.34"))
+
+    def test_sku_cost_update_requires_purchase_write_permission(self):
+        _order, sku = self.make_order(self.customer_a, "SCOPE-O-COST-WRITE")
+        sku.cost_price = Decimal("12.34")
+        sku.save(update_fields=["cost_price"])
+        self.login(self.employee_a)
+        response = self.client.patch(f"/api/skus/{sku.pk}/", {"cost_price": "99"}, format="json")
+        self.assertEqual(response.status_code, 403, response.data)
+        sku.refresh_from_db()
+        self.assertEqual(sku.cost_price, Decimal("12.34"))
+
     def test_owner_options_and_customer_owner_updates_follow_scope(self):
         self.login(self.employee_a)
         owner_options = self.client.get("/api/customers/owner-options/")

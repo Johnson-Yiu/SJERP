@@ -516,7 +516,7 @@ class QuoteApiTests(TestCase):
                 self.assertEqual(response.data["products"][0]["sku"], "SKU-API-001")
                 self.assertEqual(response.data["products"][0]["unit"], "set")
                 self.assertEqual(response.data["products"][0]["product_name"], "API Panel")
-                self.assertIn("/media/quote-item-images/", response.data["products"][0]["image_url"])
+                self.assertIn("/api/media/quote-item-images/", response.data["products"][0]["image_url"])
         self.assertEqual(quote.items.get().image_snapshot.name, snapshot_image_name)
 
     def test_pi_data_returns_snapshots_totals_payment_splits_and_product_image_urls(self):
@@ -562,7 +562,7 @@ class QuoteApiTests(TestCase):
         self.assertEqual(Decimal(response.data["payment_splits"]["deposit_amount"]), Decimal("23.00"))
         self.assertEqual(Decimal(response.data["payment_splits"]["balance_amount"]), Decimal("34.50"))
         self.assertEqual(response.data["products"][0]["description"], "Dimmable panel light")
-        self.assertIn("/media/quote-item-images/", response.data["products"][0]["image_url"])
+        self.assertIn("/api/media/quote-item-images/", response.data["products"][0]["image_url"])
         self.assertEqual(response.data["products"][1]["image_url"], "")
 
     def test_sku_image_upload_rejects_non_image_mime_type(self):

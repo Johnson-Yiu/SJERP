@@ -84,6 +84,29 @@ class FinanceDataScopeTests(TestCase):
         paid = self.client.post(f'/api/payment-plans/{self.purchase_plan.pk}/settle/', {'amount': '10', 'transaction_date': '2026-10-12'}, format='json')
         self.assertEqual(paid.status_code, 201, paid.data)
 
+    def test_void_requires_finance_update_even_without_plan_or_allocations(self):
+        RolePermission.objects.filter(role=self.roles['self'], module='finance').update(can_update=False)
+        response = self.client.post(f'/api/transactions/{self.public.pk}/void/', {'reason': '权限回归'}, format='json')
+        self.assertEqual(response.status_code, 403, response.data)
+        self.public.refresh_from_db()
+        self.assertEqual(self.public.status, 'confirmed')
+
+    def test_finance_allocation_totals_are_hidden_without_finance_view(self):
+        RolePermission.objects.filter(role=self.roles['self'], module='finance').update(can_view=False)
+        response = self.client.get(f'/api/transactions/{self.receipts[0].pk}/')
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertIsNone(response.data['allocated_amount'])
+        self.assertIsNone(response.data['plan'])
+        self.assertEqual(response.data['allocations'], [])
+
+    def test_unallocated_advance_creation_requires_finance_update(self):
+        RolePermission.objects.filter(role=self.roles['self'], module='finance').update(can_update=False)
+        response = self.client.post('/api/transactions/', {
+            **self.payload(customer=self.customer_a.pk), 'kind': 'unallocated_advance',
+        }, format='json')
+        self.assertEqual(response.status_code, 403, response.data)
+        self.assertFalse(Transaction.objects.filter(kind='unallocated_advance', customer=self.customer_a).exists())
+
     def test_advance_allocation_and_split_family_guard(self):
         advance = self.client.post('/api/transactions/', {**self.payload(customer=self.customer_a.pk), 'kind': 'unallocated_advance'}, format='json')
         self.assertEqual(advance.status_code, 201, advance.data)
@@ -152,6 +175,20 @@ class FinanceDataScopeTests(TestCase):
         RolePermission.objects.filter(role=self.roles['self'], module='finance').update(can_export=False)
         self.assertEqual(self.client.get('/api/finance-dashboard/', params).status_code, 403)
         self.assertEqual(self.client.get('/api/finance-dashboard/').status_code, 200)
+
+    def test_finance_dashboard_masks_counterparty_names_without_party_module_access(self):
+        self.plans[0].due_date = date.today()
+        self.plans[0].save(update_fields=['due_date', 'updated_at'])
+        self.purchase_plan.due_date = date.today()
+        self.purchase_plan.save(update_fields=['due_date', 'updated_at'])
+        RolePermission.objects.filter(role=self.roles['self'], module__in=['customers', 'suppliers']).update(can_view=False)
+
+        response = self.client.get('/api/finance-dashboard/')
+        self.assertEqual(response.status_code, 200, response.data)
+        parties = {row['counterparty_name'] for row in response.data['due_items']}
+        self.assertEqual(parties, {'客户', '供应商'})
+        self.assertNotIn(self.customer_a.name, repr(response.data))
+        self.assertNotIn(self.supplier.name, repr(response.data))
 
     def test_module_permissions_are_required_alongside_all_scope(self):
         self.client.force_authenticate(self.all_user.user)

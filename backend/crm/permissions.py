@@ -126,6 +126,8 @@ def module_for_request(request, view=None):
         return CONTEXT_MODULES.get(parts[1]) if len(parts) > 1 else None
     if parts and parts[0] == "operation-logs":
         entity = request.query_params.get("entity") or request.GET.get("entity")
+        if (entity or "").lower() == "crm.contractchangerequest":
+            return "orders" if user_can(request.user, "orders", "view") else ("purchases" if user_can(request.user, "purchases", "view") else None)
         return OPERATION_ENTITY_MODULES.get((entity or "").lower()) or CONTEXT_MODULES.get(entity) or PATH_MODULES.get(entity or "")
     if module:
         return module
@@ -152,16 +154,16 @@ def module_for_request(request, view=None):
 def action_for_request(request, view=None):
     path = request.path_info.lower()
     action = getattr(view, "action", None) if view is not None else None
-    if request.method in SAFE_METHODS:
-        return "view"
-    if "/import/templates/" in f"{path}/":
-        return "view"
-    if "/import/csv/" in f"{path}/" or path.rstrip("/").endswith("/import/csv"):
-        return "import"
     if request.query_params.get("export", "").lower() in {"1", "true", "csv", "xlsx"}:
         return "export"
     if "export" in path or (action and "export" in action):
         return "export"
+    if "/import/templates/" in f"{path}/":
+        return "view"
+    if "/import/csv/" in f"{path}/" or path.rstrip("/").endswith("/import/csv"):
+        return "import"
+    if request.method in SAFE_METHODS:
+        return "view"
     if request.method == "DELETE":
         return "delete"
     if request.method == "POST" and (action == "create" or action in {"batch_create", "create_batch"}):
@@ -212,16 +214,12 @@ class ModuleActionPermission(BasePermission):
         if has_all_permissions(user):
             return True
         module = module_for_request(request, view)
-        path_parts = request.path_info.strip("/").split("/")
-        if path_parts and path_parts[0] == "api":
-            path_parts = path_parts[1:]
-        if path_parts and path_parts[0] in {"operation-logs", "context"} and not module:
-            return False
         if module == "permissions" and is_permission_admin(user):
             return True
         if not module:
-            # Unmapped APIs remain authenticated-only; they never become public.
-            return True
+            # Public routes must opt in explicitly. An authenticated-only
+            # fallback still bypasses the module permission boundary.
+            return False
         return user_can(user, module, action_for_request(request, view))
 
 

@@ -35,11 +35,15 @@ def scoped_cost_summary(summary, user):
 
 
 def scoped_supplier_candidates(rows, user):
-    if user_can(user, "purchases", "view"):
+    can_view_purchases = user_can(user, "purchases", "view")
+    if can_view_purchases:
         return rows
     result = []
     for row in rows:
         row["last_purchase"] = None
+        for source in row.get("supplier_skus", []):
+            for field in ("purchase_price", "currency"):
+                source.pop(field, None)
         row["source_types"] = [value for value in row.get("source_types", []) if value != "historical_purchase"]
         row["sources"] = [value for value in row.get("sources", []) if value != "历史采购"]
         row["source_label"] = "、".join(row["source_types"])

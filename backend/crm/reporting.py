@@ -26,6 +26,23 @@ SOURCES = {
     "inventory": {"label": "库存变动", "dimensions": ["time", "product", "sku", "category", "warehouse", "type"], "dates": {"movement_date": "发生日期", "created_at": "创建时间", "updated_at": "更新时间"}, "note": "期间出入库净变动（入正出负），不是当前库存余额。不同单位数量分别展示；金额不适用。"},
 }
 
+# A report permission authorizes report operations, while each source module
+# still owns access to its underlying business records.
+SOURCE_MODULES = {
+    "sales": ("orders",),
+    "purchase": ("purchases",),
+    "profit": ("orders", "purchases", "transactions"),
+    "customers": ("customers",),
+    "cash": ("transactions",),
+    "inventory": ("inventory",),
+}
+
+DIMENSION_MODULES = {
+    "customer": "customers", "country": "customers", "region": "customers",
+    "owner": "customers", "source": "customers", "supplier": "suppliers",
+    "product": "products", "sku": "skus", "category": "categories",
+}
+
 
 def bucket(day, grain):
     if grain == "day": return day.isoformat()
@@ -159,10 +176,8 @@ def report_data(request):
     params = request.query_params
     source = params.get("source", "sales")
     if source not in SOURCES: raise ValidationError("不支持的报表模块。")
-    if source == "cash":
-        require_finance_permission(request.user, "transactions", "view")
-    if source == "purchase":
-        require_finance_permission(request.user, "purchases", "view")
+    for module in SOURCE_MODULES[source]:
+        require_finance_permission(request.user, module, "view")
     spec = SOURCES[source]
     group, grain = params.get("group_by", "time"), params.get("grain", "month")
     date_field = params.get("date_field") or next(iter(spec["dates"]))
@@ -180,6 +195,10 @@ def report_data(request):
             dimension = key[7:]
             if dimension not in spec["dimensions"] or dimension == "time": raise ValidationError("该模块不支持此筛选维度。")
             filters[dimension] = value
+    for dimension in {group, *filters.keys()}:
+        module = DIMENSION_MODULES.get(dimension)
+        if module:
+            require_finance_permission(request.user, module, "view")
     rows, totals = aggregate(source, date_field, start, end, group, grain, filters, user=request.user)
     comparison = params.get("comparison", "previous")
     if comparison not in ["previous", "year"]: raise ValidationError("无效的比较方式。")

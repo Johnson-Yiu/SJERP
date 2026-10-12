@@ -14,8 +14,9 @@ from urllib.request import urlopen
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models.deletion import ProtectedError
-from django.db.models import Case, Count, DecimalField, ExpressionWrapper, F, IntegerField, OuterRef, Q, Subquery, Sum, Value, When
+from django.db.models import Case, CharField, Count, DecimalField, ExpressionWrapper, F, IntegerField, OuterRef, Q, Subquery, Sum, Value, When
 from django.db.models.functions import Coalesce, TruncMonth
+from django.db.models.functions import Cast
 from django.http import HttpResponse
 from django.core import signing
 from django.shortcuts import get_object_or_404
@@ -33,7 +34,7 @@ from .sales_scope import allowed_employee_ids, data_scope_display, effective_dat
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quote_snapshots import create_quote_items
-from .serializers import certificate_expiry, AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementReversalInputSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteAvailabilityPreviewInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
+from .serializers import protected_media_url, certificate_expiry, AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementReversalInputSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteAvailabilityPreviewInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .serializers import ProcurementDraftInputSerializer
 from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.finance import allocate_advance, approve_contract_change, reject_contract_change, record_contract_payment, record_transaction, void_transaction
@@ -86,10 +87,42 @@ class OperationLogViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        entity = self.request.query_params.get("entity")
+        entity = (self.request.query_params.get("entity") or "").lower()
         object_id = self.request.query_params.get("object_id")
         if entity:
             qs = qs.filter(entity=entity)
+        else:
+            return qs.none()
+        object_ids = None
+        if entity == "crm.customer":
+            object_ids = scope_customer_queryset(Customer.objects.all(), self.request.user)
+        elif entity == "crm.contact":
+            object_ids = scope_customer_related_queryset(Contact.objects.all(), self.request.user)
+        elif entity == "crm.followup":
+            object_ids = scope_customer_related_queryset(FollowUp.objects.all(), self.request.user)
+        elif entity == "crm.quote":
+            object_ids = scope_customer_related_queryset(Quote.objects.all(), self.request.user)
+        elif entity == "crm.order":
+            object_ids = scope_customer_related_queryset(Order.objects.all(), self.request.user)
+        elif entity == "crm.shipment":
+            if not user_can(self.request.user, "orders", "view"):
+                return qs.none()
+            object_ids = scope_customer_related_queryset(Shipment.objects.all(), self.request.user, relation="order__customer")
+        elif entity == "crm.transaction":
+            object_ids = scope_transaction_queryset(Transaction.objects.all(), self.request.user)
+        elif entity == "crm.paymentplan":
+            object_ids = scope_plan_queryset(PaymentPlan.objects.all(), self.request.user)
+        elif entity == "crm.contractchangerequest":
+            changes = ContractChangeRequest.objects.none()
+            if user_can(self.request.user, "orders", "view"):
+                changes = changes | scope_customer_related_queryset(
+                    ContractChangeRequest.objects.filter(order__isnull=False), self.request.user, relation="order__customer",
+                )
+            if user_can(self.request.user, "purchases", "view"):
+                changes = changes | ContractChangeRequest.objects.filter(purchase_order__isnull=False)
+            object_ids = changes
+        if object_ids is not None:
+            qs = qs.filter(object_id__in=object_ids.values_list(Cast("pk", output_field=CharField()), flat=True))
         if object_id:
             qs = qs.filter(object_id=str(object_id))
         return qs
@@ -116,7 +149,7 @@ class SupplierViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def supplier_skus(self, request, pk=None):
         supplier = self.get_object()
         rows = supplier.supplier_skus.select_related("sku", "sku__product").order_by("sku__sku", "id")
-        return Response(SupplierSKUSerializer(rows, many=True).data)
+        return Response(SupplierSKUSerializer(rows, many=True, context={"request": request}).data)
 
 
 class SupplierSKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
@@ -127,9 +160,18 @@ class SupplierSKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         "supplier__name", "sku__sku", "sku__sales_model", "sku__display_name_cn", "sku__product__name",
     ]
 
+    def get_search_fields(self, request):
+        fields = list(self.search_fields)
+        if not user_can(request.user, "skus", "view"):
+            fields = [field for field in fields if not field.startswith("sku__")]
+        if not user_can(request.user, "products", "view"):
+            fields = [field for field in fields if "product__" not in field]
+        return fields
+
     def get_queryset(self):
         qs = super().get_queryset()
         if self.request.query_params.get("sku"):
+            require_finance_permission(self.request.user, "skus", "view")
             qs = qs.filter(sku_id=self.request.query_params["sku"])
         if self.request.query_params.get("supplier"):
             qs = qs.filter(supplier_id=self.request.query_params["supplier"])
@@ -168,6 +210,14 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     )
     search_fields = ["purchase_no", "supplier__name", "visible_order_search"]
 
+    def get_search_fields(self, request):
+        fields = list(self.search_fields)
+        if not user_can(request.user, "suppliers", "view"):
+            fields.remove("supplier__name")
+        if not user_can(request.user, "orders", "view"):
+            fields.remove("visible_order_search")
+        return fields
+
     def get_queryset(self):
         queryset = super().get_queryset()
         from django.db.models import Case, When, Value, CharField, F
@@ -176,6 +226,7 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         queryset = queryset.annotate(visible_order_search=Case(When(order_id__in=ids, then=F("order__order_no")), default=Value(""), output_field=CharField()))
         sku_id = self.request.query_params.get("sku")
         if sku_id:
+            require_finance_permission(self.request.user, "skus", "view")
             queryset = queryset.filter(items__sku_id=sku_id).distinct()
         purchase_status = self.request.query_params.get("status")
         if purchase_status:
@@ -305,7 +356,7 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "reason": receipt.reversal_reason,
             },
         )
-        return Response(GoodsReceiptSerializer(receipt).data)
+        return Response(GoodsReceiptSerializer(receipt, context={"request": request}).data)
 
     @action(detail=True, methods=["post"])
     def pay(self, request, pk=None):
@@ -321,7 +372,7 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         record_operation(request=request, instance=payment, action="create", action_label="登记供应商付款", metadata={"purchase_order_id": purchase.id, "purchase_no": purchase.purchase_no})
         record_operation(request=request, instance=purchase, action="custom", action_label="采购单付款", before=before, metadata={"transaction_id": payment.id})
-        return Response(TransactionSerializer(payment).data, status=status.HTTP_201_CREATED)
+        return Response(TransactionSerializer(payment, context={"request": request}).data, status=status.HTTP_201_CREATED)
 
 
 class AccessRoleViewSet(AuditTrailMixin, viewsets.ModelViewSet):
@@ -495,10 +546,13 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["get"])
     def insights(self, request, pk=None):
         customer = self.get_object()
+        can_view_orders = user_can(request.user, "orders", "view")
+        can_view_followups = user_can(request.user, "followups", "view")
+        can_view_products = user_can(request.user, "products", "view")
         year = timezone.localdate().year
         formal_statuses = ["confirmed", "production", "shipped", "completed"]
         yearly = []
-        for target in [year - 1, year]:
+        for target in ([year - 1, year] if can_view_orders else []):
             orders = list(customer.orders.filter(status__in=formal_statuses, order_date__year=target).prefetch_related("items", "contract_changes"))
             yearly.append({
                 "year": target,
@@ -512,11 +566,11 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             quantity=Sum("quantity"),
         ).order_by("-sales")[:10]
         return Response({
-            "customer": CustomerSerializer(customer).data,
+            "customer": CustomerSerializer(customer, context={"request": request}).data,
             "yearly": yearly,
-            "top_products": list(products),
-            "recent_orders": OrderSerializer(customer.orders.exclude(status="cancelled").order_by("-order_date", "-id").prefetch_related("items__sku__product")[:5], many=True).data,
-            "recent_follow_ups": FollowUpSerializer(customer.follow_ups.select_related("contact")[:5], many=True).data,
+            "top_products": list(products) if can_view_orders and can_view_products else [],
+            "recent_orders": OrderSerializer(customer.orders.exclude(status="cancelled").order_by("-order_date", "-id").prefetch_related("items__sku__product")[:5], many=True, context={"request": request}).data if can_view_orders else [],
+            "recent_follow_ups": FollowUpSerializer(customer.follow_ups.select_related("contact")[:5], many=True, context={"request": request}).data if can_view_followups else [],
         })
 
     def destroy(self, request, *args, **kwargs):
@@ -531,9 +585,15 @@ class ContactViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = ContactSerializer
     search_fields = ["name", "email", "phone", "customer__name"]
 
+    def get_search_fields(self, request):
+        return list(self.search_fields) if user_can(request.user, "customers", "view") else ["name", "email", "phone"]
+
     def get_queryset(self):
         qs = scope_customer_related_queryset(super().get_queryset(), self.request.user)
-        return qs.filter(customer_id=self.request.query_params["customer"]) if self.request.query_params.get("customer") else qs
+        if self.request.query_params.get("customer"):
+            require_finance_permission(self.request.user, "customers", "view")
+            return qs.filter(customer_id=self.request.query_params["customer"])
+        return qs
 
     def destroy(self, request, *args, **kwargs):
         contact = self.get_object()
@@ -546,6 +606,12 @@ class FollowUpViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     queryset = FollowUp.objects.select_related("customer", "contact").prefetch_related("attachments")
     serializer_class = FollowUpSerializer
     search_fields = ["subject", "content", "customer__name", "owner"]
+
+    def get_search_fields(self, request):
+        fields = list(self.search_fields)
+        if not user_can(request.user, "customers", "view"):
+            fields.remove("customer__name")
+        return fields
     ordering_fields = ["followed_at", "next_follow_up", "created_at"]
 
     @action(detail=False, methods=["get"])
@@ -558,6 +624,7 @@ class FollowUpViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         qs = scope_customer_related_queryset(super().get_queryset(), self.request.user)
         if self.request.query_params.get("customer"):
+            require_finance_permission(self.request.user, "customers", "view")
             qs = qs.filter(customer_id=self.request.query_params["customer"])
         if self.request.query_params.get("due") == "true":
             qs = current_due_follow_ups(qs, today=timezone.localdate())
@@ -693,6 +760,14 @@ class ProductViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     )
     search_fields = ["name", "name_en", "code", "hs_code__code", "category__name"]
 
+    def get_search_fields(self, request):
+        fields = list(self.search_fields)
+        if not user_can(request.user, "hs_codes", "view"):
+            fields.remove("hs_code__code")
+        if not user_can(request.user, "categories", "view"):
+            fields.remove("category__name")
+        return fields
+
     def get_queryset(self):
         queryset = super().get_queryset()
         category_id = self.request.query_params.get("category")
@@ -730,6 +805,8 @@ class ProductViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["get"])
     def customers(self, request, pk=None):
+        require_finance_permission(request.user, "orders", "view")
+        require_finance_permission(request.user, "customers", "view")
         product = self.get_object()
         scoped_orders = scope_customer_related_queryset(
             Order.objects.filter(status__in=["confirmed", "production", "shipped", "completed"]),
@@ -826,7 +903,10 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         # 才能支持管理员重新启用软停用的 SKU。
         if self.action == "list" and self.request.query_params.get("include_inactive") != "1":
             qs = qs.filter(active=True)
-        return qs.filter(product_id=self.request.query_params["product"]) if self.request.query_params.get("product") else qs
+        if self.request.query_params.get("product"):
+            require_finance_permission(self.request.user, "products", "view")
+            return qs.filter(product_id=self.request.query_params["product"])
+        return qs
 
     @action(detail=False, methods=["get"], url_path="inventory-list")
     def inventory_list(self, request):
@@ -847,17 +927,25 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         term = str(self.request.query_params.get("search", "")).strip()
         if not term:
             return super().filter_queryset(queryset)
-        return queryset.filter(
-            Q(sku__icontains=term) | Q(display_name_cn__icontains=term) |
-            Q(sales_model__icontains=term) | Q(specification__icontains=term) |
-            Q(description_cn__icontains=term) | Q(description_en__icontains=term) |
-            Q(product__name__icontains=term) | Q(product__name_en__icontains=term) | Q(product__code__icontains=term) |
-            Q(supplier_skus__supplier_model__icontains=term) | Q(supplier_skus__supplier_sku_code__icontains=term) |
-            Q(supplier_skus__supplier_product_name__icontains=term) | Q(supplier_skus__supplier_barcode__icontains=term) |
-            Q(versions__sku_code_snapshot__icontains=term) | Q(versions__sales_model_snapshot__icontains=term) |
-            Q(versions__display_name_cn_snapshot__icontains=term) | Q(versions__description_cn_snapshot__icontains=term) |
-            Q(versions__description_en_snapshot__icontains=term)
-        ).distinct()
+        conditions = [
+            Q(sku__icontains=term), Q(display_name_cn__icontains=term),
+            Q(sales_model__icontains=term), Q(specification__icontains=term),
+            Q(description_cn__icontains=term), Q(description_en__icontains=term),
+            Q(versions__sku_code_snapshot__icontains=term), Q(versions__sales_model_snapshot__icontains=term),
+            Q(versions__display_name_cn_snapshot__icontains=term), Q(versions__description_cn_snapshot__icontains=term),
+            Q(versions__description_en_snapshot__icontains=term),
+        ]
+        if user_can(self.request.user, "products", "view"):
+            conditions.extend([Q(product__name__icontains=term), Q(product__name_en__icontains=term), Q(product__code__icontains=term)])
+        if user_can(self.request.user, "suppliers", "view"):
+            conditions.extend([
+                Q(supplier_skus__supplier_model__icontains=term), Q(supplier_skus__supplier_sku_code__icontains=term),
+                Q(supplier_skus__supplier_product_name__icontains=term), Q(supplier_skus__supplier_barcode__icontains=term),
+            ])
+        search = conditions[0]
+        for condition in conditions[1:]:
+            search |= condition
+        return queryset.filter(search).distinct()
 
     def destroy(self, request, *args, **kwargs):
         return Response({"detail": "SKU 不允许物理删除。请将其停用，以保留库存、报价、订单和历史版本记录。"}, status=status.HTTP_400_BAD_REQUEST)
@@ -868,8 +956,11 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["get"], url_path="supplier-skus")
     def supplier_skus(self, request, pk=None):
+        from rest_framework.exceptions import PermissionDenied
+        if not user_can(request.user, "suppliers", "view"):
+            raise PermissionDenied("查看供应商来源需要供应商模块权限。")
         rows = self.get_object().supplier_skus.select_related("supplier", "sku", "sku__product")
-        return Response(SupplierSKUSerializer(rows, many=True).data)
+        return Response(SupplierSKUSerializer(rows, many=True, context={"request": request}).data)
 
     @action(detail=False, methods=["get"], url_path="sales-model-abbreviations")
     def sales_model_abbreviations(self, request):
@@ -924,7 +1015,7 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "sku": {"id": sku.id, "sku": sku.sku, "display_name_cn": sku.display_name_cn, "unit": sku.unit},
             "movements": InventoryMovementSerializer(movements, many=True, context={"request": request}).data,
             "purchases": [{
-                "id": purchase.id, "purchase_no": purchase.purchase_no, "supplier_name": purchase.supplier.name,
+                "id": purchase.id, "purchase_no": purchase.purchase_no, "supplier_name": purchase.supplier.name if user_can(request.user, "suppliers", "view") else "",
                 "order_no": purchase.order.order_no if purchase.order_id in visible_purchase_order_ids else "", "order_date": purchase.order_date,
                 "status": purchase.status, "status_display": purchase.get_status_display(),
                 "quantity": sum((item.quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
@@ -937,9 +1028,9 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "customer_name": shipment.order.customer.name if can_view_customers else "",
                 "status": shipment.status, "status_display": shipment.get_status_display(),
                 "quantity": sum((item.quantity for item in shipment.items.filter(sku=sku)), Decimal("0")),
-            } for shipment in shipments],
+            } for shipment in shipments] if can_view_orders else [],
             "orders": [{
-                "id": order.id, "order_no": order.order_no, "customer_name": order.customer.name,
+                "id": order.id, "order_no": order.order_no, "customer_name": order.customer.name if can_view_customers else "",
                 "order_date": order.order_date, "status": order.status, "status_display": order.get_status_display(),
                 "quantity": sum((item.quantity for item in order.items.filter(sku=sku)), Decimal("0")),
                 "shipped_quantity": sum((
@@ -986,7 +1077,7 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         if request.method == "GET":
             try:
                 profile = sku.packaging_profile
-                return Response({"profile": SKUPackagingProfileSerializer(profile).data, "effective": packaging_summary(sku)})
+                return Response({"profile": SKUPackagingProfileSerializer(profile, context={"request": request}).data, "effective": packaging_summary(sku)})
             except SKUPackagingProfile.DoesNotExist:
                 return Response({"profile": None, "effective": packaging_summary(sku)})
         with transaction.atomic():
@@ -1004,13 +1095,16 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 profile.verified_by = request.user if request.user.is_authenticated else None
                 profile.save(update_fields=["verified_at", "verified_by", "updated_at"])
             record_operation(request=request, instance=profile, action="create" if created else "update", action_label="保存 SKU 包装配置", before=before, metadata={"sku_id": sku.id, "verified": bool(request.data.get("verify"))})
-        return Response({"profile": SKUPackagingProfileSerializer(profile).data, "effective": packaging_summary(sku)})
+        return Response({"profile": SKUPackagingProfileSerializer(profile, context={"request": request}).data, "effective": packaging_summary(sku)})
 
 
 class PackagingTemplateViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = PackagingTemplateSerializer
     queryset = PackagingTemplate.objects.select_related("supplier").prefetch_related("sku_profiles")
     search_fields = ["code", "name", "supplier__name", "description"]
+
+    def get_search_fields(self, request):
+        return list(self.search_fields) if user_can(request.user, "suppliers", "view") else ["code", "name", "description"]
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -1030,6 +1124,14 @@ class SKUPackagingProfileViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     queryset = SKUPackagingProfile.objects.select_related("sku__product", "packaging_template")
     search_fields = ["sku__sku", "sku__product__name", "packaging_template__code"]
 
+    def get_search_fields(self, request):
+        fields = ["packaging_template__code"]
+        if user_can(request.user, "skus", "view"):
+            fields.append("sku__sku")
+        if user_can(request.user, "products", "view"):
+            fields.append("sku__product__name")
+        return fields
+
     def get_queryset(self):
         qs = super().get_queryset()
         status_value = self.request.query_params.get("status")
@@ -1044,10 +1146,17 @@ class ShipmentViewSet(AuditTrailMixin, viewsets.ReadOnlyModelViewSet):
     queryset = Shipment.objects.select_related("order").prefetch_related("packages__items__sku")
 
     def get_queryset(self):
+        if not user_can(self.request.user, "orders", "view"):
+            return self.queryset.none()
         return scope_customer_related_queryset(super().get_queryset(), self.request.user, relation="order__customer")
+
+    @staticmethod
+    def _require_order_update(user):
+        require_finance_permission(user, "orders", "update")
 
     @action(detail=True, methods=["post"], url_path="reverse")
     def reverse(self, request, pk=None):
+        self._require_order_update(request.user)
         shipment = self.get_object()
         input_serializer = ShipmentReversalInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
@@ -1080,11 +1189,13 @@ class ShipmentViewSet(AuditTrailMixin, viewsets.ReadOnlyModelViewSet):
     @action(detail=True, methods=["get", "post"], url_path="packages")
     @transaction.atomic
     def packages(self, request, pk=None):
+        require_finance_permission(request.user, "skus", "view")
         shipment = self.get_object()
         if request.method == "GET":
-            return Response(ShipmentPackageSerializer(shipment.packages.prefetch_related("items__sku"), many=True).data)
+            return Response(ShipmentPackageSerializer(shipment.packages.prefetch_related("items__sku"), many=True, context={"request": request}).data)
+        self._require_order_update(request.user)
         shipment = Shipment.objects.select_for_update().get(pk=shipment.pk)
-        serializer = ShipmentPackageSerializer(data=request.data, context={"shipment": shipment})
+        serializer = ShipmentPackageSerializer(data=request.data, context={"shipment": shipment, "request": request})
         serializer.is_valid(raise_exception=True)
         package = serializer.save(shipment=shipment)
         record_operation(request=request, instance=shipment, action="custom", action_label="新增装箱明细", metadata={"package_id": package.id})
@@ -1093,6 +1204,8 @@ class ShipmentViewSet(AuditTrailMixin, viewsets.ReadOnlyModelViewSet):
     @action(detail=True, methods=["post", "put", "patch", "delete"], url_path=r"packages/(?P<package_id>[^/.]+)")
     @transaction.atomic
     def update_package(self, request, pk=None, package_id=None):
+        require_finance_permission(request.user, "skus", "view")
+        self._require_order_update(request.user)
         shipment = self.get_object()
         shipment = Shipment.objects.select_for_update().get(pk=shipment.pk)
         if shipment.status != "confirmed":
@@ -1103,7 +1216,7 @@ class ShipmentViewSet(AuditTrailMixin, viewsets.ReadOnlyModelViewSet):
             package.delete()
             record_operation(request=request, instance=shipment, action="custom", action_label="删除装箱明细", before={"package": before}, metadata={"package_id": package_id})
             return Response(status=status.HTTP_204_NO_CONTENT)
-        serializer = ShipmentPackageSerializer(package, data=request.data, partial=request.method == "PATCH", context={"shipment": shipment})
+        serializer = ShipmentPackageSerializer(package, data=request.data, partial=request.method == "PATCH", context={"shipment": shipment, "request": request})
         serializer.is_valid(raise_exception=True); serializer.save()
         record_operation(request=request, instance=shipment, action="custom", action_label="修改装箱明细", before={"package": before}, metadata={"package_id": package.id})
         return Response(serializer.data)
@@ -1111,6 +1224,8 @@ class ShipmentViewSet(AuditTrailMixin, viewsets.ReadOnlyModelViewSet):
     @action(detail=True, methods=["post"], url_path="copy-estimated-packing")
     @transaction.atomic
     def copy_estimated_packing(self, request, pk=None):
+        require_finance_permission(request.user, "skus", "view")
+        self._require_order_update(request.user)
         shipment = self.get_object()
         shipment = Shipment.objects.select_for_update().get(pk=shipment.pk)
         if shipment.status != "confirmed":
@@ -1122,7 +1237,7 @@ class ShipmentViewSet(AuditTrailMixin, viewsets.ReadOnlyModelViewSet):
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         record_operation(request=request, instance=shipment, action="custom", action_label="复制预计装箱方案", metadata={"packing_plan_id": plan.id})
-        return Response(ShipmentPackageSerializer(shipment.packages.prefetch_related("items__sku"), many=True).data)
+        return Response(ShipmentPackageSerializer(shipment.packages.prefetch_related("items__sku"), many=True, context={"request": request}).data)
 
 
 class ProductParameterViewSet(AuditTrailMixin, viewsets.ModelViewSet):
@@ -1130,9 +1245,15 @@ class ProductParameterViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     queryset = ProductParameter.objects.select_related("product")
     search_fields = ["product__name", "product__code", "group", "name", "value"]
 
+    def get_search_fields(self, request):
+        return list(self.search_fields) if user_can(request.user, "products", "view") else ["group", "name", "value"]
+
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(product_id=self.request.query_params["product"]) if self.request.query_params.get("product") else qs
+        if self.request.query_params.get("product"):
+            require_finance_permission(self.request.user, "products", "view")
+            return qs.filter(product_id=self.request.query_params["product"])
+        return qs
 
 
 class ProductCertificateViewSet(AuditTrailMixin, viewsets.ModelViewSet):
@@ -1140,9 +1261,13 @@ class ProductCertificateViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     queryset = ProductCertificate.objects.select_related("product")
     search_fields = ["product__name", "name", "certificate_no", "issuer"]
 
+    def get_search_fields(self, request):
+        return list(self.search_fields) if user_can(request.user, "products", "view") else ["name", "certificate_no", "issuer"]
+
     def get_queryset(self):
         qs = super().get_queryset()
         if self.request.query_params.get("product"):
+            require_finance_permission(self.request.user, "products", "view")
             qs = qs.filter(product_id=self.request.query_params["product"])
         today = timezone.localdate()
         expiry = self.request.query_params.get("expiry")
@@ -1162,6 +1287,9 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = QuoteSerializer
     queryset = Quote.objects.select_related("customer", "root_quote", "parent_quote").prefetch_related("items__sku__product")
     search_fields = ["quote_no", "customer__name"]
+
+    def get_search_fields(self, request):
+        return list(self.search_fields) if user_can(request.user, "customers", "view") else ["quote_no"]
     ordering_fields = ["quote_date", "valid_until", "created_at", "updated_at"]
 
     def get_queryset(self):
@@ -1174,6 +1302,8 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path="availability-preview")
     def availability_preview(self, request):
+        require_finance_permission(request.user, "inventory", "view")
+        require_finance_permission(request.user, "skus", "view")
         serializer = QuoteAvailabilityPreviewInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         sku_ids = list(dict.fromkeys(serializer.validated_data["sku_ids"]))
@@ -1199,6 +1329,8 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["get"])
     def availability(self, request, pk=None):
+        require_finance_permission(request.user, "inventory", "view")
+        require_finance_permission(request.user, "skus", "view")
         quote = self.get_object()
         items = list(quote.items.select_related("sku").order_by("id"))
         metrics = bulk_sku_metrics(item.sku_id for item in items)
@@ -1218,12 +1350,13 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["get", "post"], url_path="packing-plan")
     def packing_plan(self, request, pk=None):
         quote = self.get_object()
+        require_finance_permission(request.user, "skus", "view")
         if request.method == "POST":
             plan = generate_packing_plan(quote)
             record_operation(request=request, instance=quote, action="custom", action_label="生成报价装箱方案", metadata={"packing_plan_id": plan.id})
-            return Response(PackingPlanSerializer(plan).data)
+            return Response(PackingPlanSerializer(plan, context={"request": request}).data)
         plan = getattr(quote, "packing_plan", None)
-        return Response(PackingPlanSerializer(plan).data if plan else {"detail": "尚未生成预计装箱。"}, status=status.HTTP_200_OK if plan else status.HTTP_404_NOT_FOUND)
+        return Response(PackingPlanSerializer(plan, context={"request": request}).data if plan else {"detail": "尚未生成预计装箱。"}, status=status.HTTP_200_OK if plan else status.HTTP_404_NOT_FOUND)
 
     def update(self, request, *args, **kwargs):
         return Response({"detail": "已保存报价请创建迭代版本"}, status=status.HTTP_400_BAD_REQUEST)
@@ -1332,19 +1465,22 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         quote = self.get_object()
         root_quote = self._root_quote(quote)
         revisions = self._scoped_revision_chain(root_quote).order_by("revision_no", "id")
-        orders = scope_customer_related_queryset(Order.objects.filter(quote__in=revisions), request.user).select_related("quote", "customer").prefetch_related("items__sku__product", "transactions")
+        orders = scope_customer_related_queryset(Order.objects.filter(quote__in=revisions), request.user).select_related("quote", "customer").prefetch_related("items__sku__product", "transactions") if user_can(request.user, "orders", "view") else Order.objects.none()
         notes = QuoteImportantNote.objects.filter(root_quote=root_quote, source_quote__in=self._scoped_revision_chain(root_quote)).select_related("source_quote", "created_by", "deactivated_by")
         return Response({
-            "quote": QuoteSerializer(quote).data,
+            "quote": QuoteSerializer(quote, context={"request": request}).data,
             "root_quote_no": root_quote.quote_no,
-            "revisions": QuoteSerializer(revisions, many=True).data,
-            "orders": OrderSerializer(orders, many=True).data,
+            "revisions": QuoteSerializer(revisions, many=True, context={"request": request}).data,
+            "orders": OrderSerializer(orders, many=True, context={"request": request}).data,
             "important_notes": QuoteImportantNoteSerializer(notes, many=True).data,
             "order_summary": {"count": orders.count()},
         })
 
     @action(detail=True, methods=["get"], url_path="order-draft")
     def order_draft(self, request, pk=None):
+        require_finance_permission(request.user, "orders", "create")
+        require_finance_permission(request.user, "customers", "view")
+        require_finance_permission(request.user, "skus", "view")
         quote = self.get_object()
         if quote.status in {"rejected", "expired"}:
             return Response(
@@ -1376,7 +1512,7 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                     **{**trade_values(item), "trade_unit": item.trade_unit_id},
                     "quantity": item.quantity,
                     "unit_price": item.unit_price,
-                    "cost_price": item.sku.cost_price,
+                    "cost_price": item.sku.cost_price if user_can(request.user, "purchases", "view") else None,
                     "notes": item.notes,
                 }
                 for item in quote.items.select_related("sku")
@@ -1440,6 +1576,8 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["get"], url_path="pi-data")
     def pi_data(self, request, pk=None):
+        require_finance_permission(request.user, "customers", "view")
+        require_finance_permission(request.user, "skus", "view")
         quote = self.get_object()
         products = []
         subtotal = Decimal("0")
@@ -1462,7 +1600,7 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "unit_price": item.trade_unit_price if item.trade_unit_id else item.unit_price,
                 "amount": amount,
                 "unit": item.trade_snapshot.get("unit", item.unit_snapshot),
-                "image_url": request.build_absolute_uri(item.image_snapshot.url) if item.image_snapshot else "",
+                "image_url": request.build_absolute_uri(protected_media_url(item.image_snapshot)) if item.image_snapshot else "",
             })
         total_amount = quote.total_amount
         deposit_amount = (total_amount * quote.deposit_ratio).quantize(Decimal("0.01"))
@@ -1501,6 +1639,8 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["get"], permission_classes=[QuoteExportPermission])
     def export(self, request, pk=None):
+        require_finance_permission(request.user, "customers", "view")
+        require_finance_permission(request.user, "skus", "view")
         quote = self.get_object()
         try:
             content = build_pi_export_payload(quote)
@@ -1521,6 +1661,9 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     queryset = Order.objects.select_related("customer", "quote").prefetch_related("items__sku__product", "items__supplier_sku__supplier", "transactions")
     search_fields = ["order_no", "customer__name"]
+
+    def get_search_fields(self, request):
+        return list(self.search_fields) if user_can(request.user, "customers", "view") else ["order_no"]
     ordering_fields = ["order_date", "expected_ship_date", "created_at"]
 
     def create(self, request, *args, **kwargs):
@@ -1541,6 +1684,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def confirm(self, request, pk=None):
+        require_finance_permission(request.user, "inventory", "update")
         try:
             with transaction.atomic():
                 order = confirm_order(self.get_object())
@@ -1570,6 +1714,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def complete(self, request, pk=None):
+        require_finance_permission(request.user, "inventory", "update")
         try:
             with transaction.atomic():
                 order = complete_order(self.get_object())
@@ -1580,6 +1725,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def cancel(self, request, pk=None):
+        require_finance_permission(request.user, "inventory", "update")
         input_serializer = CancellationInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         try:
@@ -1622,28 +1768,33 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["get"])
     def fulfillment(self, request, pk=None):
         order = self.get_object()
-        draft_quantities = draft_procurement_quantities(order)
+        can_view_skus = user_can(request.user, "skus", "view")
+        can_view_purchases = user_can(request.user, "purchases", "view")
+        can_view_suppliers = user_can(request.user, "suppliers", "view")
+        can_view_inventory = user_can(request.user, "inventory", "view")
+        draft_quantities = draft_procurement_quantities(order) if can_view_purchases else {}
         rows = []
         for item in order.items.select_related("sku"):
             metrics = order_item_metrics(item)
             rows.append({
-                "id": item.id, "sku": item.sku_id, "sku_code": item.sku_code_snapshot or item.sku.sku,
-                "base_unit": item.trade_snapshot.get("base_unit", item.unit_snapshot or item.sku.unit),
-                "sales_model": item.sales_model_snapshot,
-                "display_name": item.display_name_snapshot,
-                "quantity": item.quantity, "allocated_quantity": metrics["allocated_quantity"],
-                "to_procure_quantity": metrics["to_procure_quantity"],
-                "draft_procurement_quantity": draft_quantities[item.id],
-                "draftable_quantity": max(Decimal("0"), metrics["to_procure_quantity"] - draft_quantities[item.id]),
-                "purchased_quantity": metrics["purchased_quantity"],
-                "in_transit_quantity": metrics["in_transit_quantity"],
-                "arrived_quantity": metrics["received_quantity"],
-                "shipped_quantity": metrics["shipped_quantity"],
-                "unshipped_quantity": metrics["unshipped_quantity"],
-                "supplier_sku": item.supplier_sku_id,
-                "supplier_name": item.supplier_name_snapshot,
-                "supplier_model": item.supplier_model_snapshot,
-                "supplier_sku_code": item.supplier_sku_code_snapshot,
+                "id": item.id, "sku": item.sku_id if can_view_skus else None,
+                "sku_code": (item.sku_code_snapshot or item.sku.sku) if can_view_skus else "",
+                "base_unit": item.trade_snapshot.get("base_unit", item.unit_snapshot or item.sku.unit) if can_view_skus else "",
+                "sales_model": item.sales_model_snapshot if can_view_skus else "",
+                "display_name": item.display_name_snapshot if can_view_skus else "",
+                "quantity": item.quantity, "allocated_quantity": metrics["allocated_quantity"] if can_view_inventory else None,
+                "to_procure_quantity": metrics["to_procure_quantity"] if can_view_purchases else None,
+                "draft_procurement_quantity": draft_quantities.get(item.id) if can_view_purchases else None,
+                "draftable_quantity": max(Decimal("0"), metrics["to_procure_quantity"] - draft_quantities[item.id]) if can_view_purchases else None,
+                "purchased_quantity": metrics["purchased_quantity"] if can_view_purchases else None,
+                "in_transit_quantity": metrics["in_transit_quantity"] if can_view_purchases else None,
+                "arrived_quantity": metrics["received_quantity"] if can_view_purchases else None,
+                "shipped_quantity": metrics["shipped_quantity"] if can_view_inventory else None,
+                "unshipped_quantity": metrics["unshipped_quantity"] if can_view_inventory else None,
+                "supplier_sku": item.supplier_sku_id if can_view_suppliers else None,
+                "supplier_name": item.supplier_name_snapshot if can_view_suppliers else "",
+                "supplier_model": item.supplier_model_snapshot if can_view_suppliers else "",
+                "supplier_sku_code": item.supplier_sku_code_snapshot if can_view_suppliers else "",
             })
         purchase_orders = prefetch_purchase_related_orders(
             PurchaseOrder.objects.filter(
@@ -1655,34 +1806,39 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         )
         shipments = Shipment.objects.filter(order=order).prefetch_related("items__sku", "items__inventory_movement", "items__order_item")
         return Response({
-            "order": OrderSerializer(order).data,
+            "order": OrderSerializer(order, context={"request": request}).data,
             "items": rows,
-            "purchase_orders": PurchaseOrderSerializer(purchase_orders, many=True, context={"request": request}).data,
+            "purchase_orders": PurchaseOrderSerializer(purchase_orders, many=True, context={"request": request}).data if can_view_purchases else [],
             "shipments": [{
                 "id": shipment.id, "shipment_no": shipment.shipment_no,
                 "shipment_date": shipment.shipment_date, "status": shipment.status,
                 "reversed_at": shipment.reversed_at, "reversal_reason": shipment.reversal_reason,
                 "has_overage": any(line.is_overage for line in shipment.items.all()),
                 "items": [{
-                    "id": line.id, "sku": line.sku_id,
-                    "sku_code": (line.inventory_movement.sku_code_snapshot if line.inventory_movement else "") or line.order_item.sku_code_snapshot or line.sku.sku,
-                    "display_name": (line.inventory_movement.display_name_snapshot if line.inventory_movement else "") or line.order_item.display_name_snapshot or line.sku.display_name_cn,
-                    "base_unit": (line.trade_snapshot or {}).get("base_unit") or line.sku.unit,
+                    "id": line.id, "sku": line.sku_id if can_view_skus else None,
+                    "sku_code": ((line.inventory_movement.sku_code_snapshot if line.inventory_movement else "") or line.order_item.sku_code_snapshot or line.sku.sku) if can_view_skus else "",
+                    "display_name": ((line.inventory_movement.display_name_snapshot if line.inventory_movement else "") or line.order_item.display_name_snapshot or line.sku.display_name_cn) if can_view_skus else "",
+                    "base_unit": ((line.trade_snapshot or {}).get("base_unit") or line.sku.unit) if can_view_skus else "",
                     "quantity": line.quantity,
                     "is_overage": line.is_overage,
                     "inventory_movement": line.inventory_movement_id,
                     "reversal_inventory_movement": line.reversal_inventory_movement_id,
                 } for line in shipment.items.all()],
-            } for shipment in shipments],
+            } for shipment in shipments] if can_view_inventory else [],
         })
 
     @action(detail=True, methods=["get"], url_path="procurement-plan")
     def procurement_plan(self, request, pk=None):
-        return Response(build_procurement_plan(self.get_object()))
+        order = self.get_object()
+        require_finance_permission(request.user, "purchases", "view")
+        require_finance_permission(request.user, "suppliers", "view")
+        require_finance_permission(request.user, "inventory", "view")
+        return Response(build_procurement_plan(order))
 
     @action(detail=True, methods=["post"], url_path="generate-purchase-drafts")
     def generate_purchase_drafts(self, request, pk=None):
         require_finance_permission(request.user, "purchases", "create")
+        require_finance_permission(request.user, "suppliers", "view")
         require_order_writes(request.user, [self.get_object().pk])
         input_serializer = ProcurementDraftInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
@@ -1712,15 +1868,17 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["get", "post"], url_path="packing-plan")
     def packing_plan(self, request, pk=None):
         order = self.get_object()
+        require_finance_permission(request.user, "skus", "view")
         if request.method == "POST":
             plan = generate_packing_plan(order)
             record_operation(request=request, instance=order, action="custom", action_label="生成订单装箱方案", metadata={"packing_plan_id": plan.id})
-            return Response(PackingPlanSerializer(plan).data)
+            return Response(PackingPlanSerializer(plan, context={"request": request}).data)
         plan = getattr(order, "packing_plan", None)
-        return Response(PackingPlanSerializer(plan).data if plan else {"detail": "尚未生成预计装箱。"}, status=status.HTTP_200_OK if plan else status.HTTP_404_NOT_FOUND)
+        return Response(PackingPlanSerializer(plan, context={"request": request}).data if plan else {"detail": "尚未生成预计装箱。"}, status=status.HTTP_200_OK if plan else status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=["post"])
     def ship(self, request, pk=None):
+        require_finance_permission(request.user, "inventory", "create")
         input_serializer = ShipmentInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         try:
@@ -1733,41 +1891,44 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["get"])
     def workbench(self, request, pk=None):
         order = self.get_object()
+        can_view_transactions = user_can(request.user, "transactions", "view")
+        can_view_finance = user_can(request.user, "finance", "view")
+        can_view_profit = can_view_transactions and can_view_finance and user_can(request.user, "purchases", "view")
         from .models import AdvanceAllocation
         advance_allocations = [{"id": row.pk, "transaction_no": row.advance.transaction_no,
             "transaction_date": row.advance.transaction_date, "amount": row.amount,
             "currency": row.plan.currency, "is_active": row.is_active}
             for row in AdvanceAllocation.objects.filter(plan__order=order).select_related("advance", "plan")]
         items = list(order.items.all())
-        payments = list(scope_transaction_queryset(order.transactions.all(), request.user)) if user_can(request.user, "transactions", "view") else []
-        plans = list(order.payment_plans.all()) if user_can(request.user, "finance", "view") else []
+        payments = list(scope_transaction_queryset(order.transactions.all(), request.user)) if can_view_transactions else []
+        plans = list(order.payment_plans.all()) if can_view_finance else []
         expenses = [row for row in payments if row.direction == "expense" and row.kind not in {"supplier_payment", "refund", "unallocated_advance", "unallocated_payment"} and row.status == "confirmed"]
         inventory = list(InventoryMovement.objects.filter(Q(order=order) | Q(related_orders=order)).distinct().select_related("sku__product"))
         ordered_quantity = sum((item.quantity for item in items), Decimal("0"))
         shipped_quantity = sum((order_item_metrics(item)["shipped_quantity"] for item in items), Decimal("0"))
-        paid_amount = order.paid_amount
+        paid_amount = order.paid_amount if can_view_transactions and can_view_finance else None
         planned_receivable = sum((plan.planned_amount for plan in plans if plan.status != "cancelled"), Decimal("0"))
         from .services.profit import order_profit_summary
-        profit_summary = order_profit_summary(order)
+        profit_summary = order_profit_summary(order) if can_view_profit else None
         return Response({
-            "order": OrderSerializer(order).data,
-            "source_quote": QuoteSerializer(order.quote).data if order.quote else None,
-            "items": OrderItemSerializer(items, many=True).data,
-            "payments": TransactionSerializer(payments, many=True).data,
-            "advance_allocations": advance_allocations if user_can(request.user, "transactions", "view") else [],
-            "plans": PaymentPlanSerializer(plans, many=True).data,
+            "order": OrderSerializer(order, context={"request": request}).data,
+            "source_quote": QuoteSerializer(order.quote, context={"request": request}).data if order.quote and user_can(request.user, "quotes", "view") else None,
+            "items": OrderItemSerializer(items, many=True, context={"request": request}).data,
+            "payments": TransactionSerializer(payments, many=True, context={"request": request}).data,
+            "advance_allocations": advance_allocations if can_view_transactions and can_view_finance else [],
+            "plans": PaymentPlanSerializer(plans, many=True, context={"request": request}).data,
             "inventory": InventoryMovementSerializer(inventory, many=True, context={"request": request}).data,
             "payment_summary": {
                 "paid_amount": paid_amount,
-                "balance_amount": order.outstanding_amount,
-                "planned_amount": planned_receivable,
+                "balance_amount": order.outstanding_amount if can_view_transactions and can_view_finance else None,
+                "planned_amount": planned_receivable if can_view_finance else None,
             },
-            "expense_summary": {"expense_rmb": profit_summary["expense_rmb"]},
+            "expense_summary": {"expense_rmb": profit_summary["expense_rmb"] if profit_summary else None},
             "profit_summary": profit_summary,
             "fulfillment_summary": {
                 "ordered_quantity": ordered_quantity,
-                "shipped_quantity": shipped_quantity,
-                "remaining_quantity": ordered_quantity - shipped_quantity,
+                "shipped_quantity": shipped_quantity if user_can(request.user, "inventory", "view") else None,
+                "remaining_quantity": ordered_quantity - shipped_quantity if user_can(request.user, "inventory", "view") else None,
             },
         })
 
@@ -1775,6 +1936,8 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 @api_view(["GET"])
 def finance_dashboard(request):
     require_finance_permission(request.user, "transactions", "view")
+    can_view_orders = user_can(request.user, "orders", "view")
+    can_view_purchases = user_can(request.user, "purchases", "view")
     exporting = request.query_params.get("export") == "csv"
     if exporting:
         require_finance_permission(request.user, "finance", "export")
@@ -1787,13 +1950,13 @@ def finance_dashboard(request):
     except ValueError:
         return Response({"detail": "请填写有效日期，开始日期不能晚于结束日期。"}, status=400)
     plans = scope_plan_queryset(PaymentPlan.objects.select_related("order__customer", "purchase_order__supplier"), request.user).filter(status="open").exclude(order__status__in=["draft", "cancelled"]).exclude(purchase_order__status__in=["draft", "cancelled"])
-    receivables = plans.filter(direction="receivable")
-    payables = plans.filter(direction="payable")
+    receivables = plans.filter(direction="receivable") if can_view_orders else plans.none()
+    payables = plans.filter(direction="payable") if can_view_purchases else plans.none()
     remaining = lambda rows: sum((row.remaining_amount * (row.order.exchange_rate if row.order_id else row.purchase_order.exchange_rate) for row in rows), Decimal("0"))
     from .services.profit import order_profit_summary
-    period_orders = scope_customer_related_queryset(Order.objects.all(), request.user).exclude(status__in=["draft", "cancelled"]).filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes", "purchase_cost_allocations", "transactions")
-    profits = [order_profit_summary(order) for order in period_orders]
-    sales_rmb = sum((row["sales_rmb"] for row in profits), Decimal("0"))
+    period_orders = scope_customer_related_queryset(Order.objects.all(), request.user).exclude(status__in=["draft", "cancelled"]).filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes", "purchase_cost_allocations", "transactions") if can_view_orders else Order.objects.none()
+    sales_rmb = sum((order.total_amount * order.exchange_rate for order in period_orders), Decimal("0"))
+    profits = [order_profit_summary(order) for order in period_orders] if can_view_orders and can_view_purchases else []
     purchase_cost_rmb = sum((row["purchase_cost_rmb"] for row in profits), Decimal("0"))
     order_expense_rmb = sum((row["expense_rmb"] for row in profits), Decimal("0"))
     estimated_profit_rmb = sum((row["estimated_profit_rmb"] for row in profits), Decimal("0"))
@@ -1817,7 +1980,7 @@ def finance_dashboard(request):
         {
             "id": row.id, "direction": row.direction, "contract_no": row.order.order_no if row.order_id else row.purchase_order.purchase_no,
             "order": row.order_id, "purchase_order": row.purchase_order_id,
-            "counterparty_name": row.order.customer.name if row.order_id else row.purchase_order.supplier.name,
+            "counterparty_name": (row.order.customer.name if user_can(request.user, "customers", "view") else "客户") if row.order_id else (row.purchase_order.supplier.name if user_can(request.user, "suppliers", "view") else "供应商"),
             "due_date": row.due_date, "remaining_amount": row.remaining_amount, "currency": row.currency,
         }
         for row in plans.filter(due_date__isnull=False, due_date__lte=today).order_by("due_date")[:12]
@@ -1855,15 +2018,33 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
     queryset = Transaction.objects.select_related("customer", "order", "supplier", "purchase_order").prefetch_related("allocations__plan__order", "allocations__plan__purchase_order")
     search_fields = ["transaction_no", "category", "customer__name", "supplier__name", "order__order_no", "purchase_order__purchase_no", "reference"]
+
+    def get_search_fields(self, request):
+        fields = ["transaction_no", "category", "reference"]
+        if user_can(request.user, "customers", "view"):
+            fields.append("customer__name")
+        if user_can(request.user, "suppliers", "view"):
+            fields.append("supplier__name")
+        if user_can(request.user, "orders", "view"):
+            fields.append("order__order_no")
+        if user_can(request.user, "purchases", "view"):
+            fields.append("purchase_order__purchase_no")
+        return fields
     ordering_fields = ["transaction_date", "amount", "created_at"]
 
     def get_queryset(self):
         qs = scope_transaction_queryset(super().get_queryset(), self.request.user)
         if self.request.query_params.get("customer"):
+            require_finance_permission(self.request.user, "customers", "view")
             qs = qs.filter(customer_id=self.request.query_params["customer"])
         if self.request.query_params.get("order"):
+            require_finance_permission(self.request.user, "orders", "view")
             qs = qs.filter(order_id=self.request.query_params["order"])
-        for key in ("supplier", "purchase_order", "status", "direction", "kind"):
+        for key, module in (("supplier", "suppliers"), ("purchase_order", "purchases")):
+            if self.request.query_params.get(key):
+                require_finance_permission(self.request.user, module, "view")
+                qs = qs.filter(**{key: self.request.query_params[key]})
+        for key in ("status", "direction", "kind"):
             if self.request.query_params.get(key):
                 qs = qs.filter(**{key: self.request.query_params[key]})
         for key, lookup in (("date_from", "transaction_date__gte"), ("date_to", "transaction_date__lte")):
@@ -1874,7 +2055,7 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        if serializer.validated_data.get("plan") or serializer.validated_data.get("kind") in {"customer_receipt", "supplier_payment", "refund", "supplier_refund"}:
+        if serializer.validated_data.get("plan") or serializer.validated_data.get("kind") in {"customer_receipt", "supplier_payment", "refund", "supplier_refund", "unallocated_advance", "unallocated_payment"}:
             require_finance_permission(request.user, "finance", "update")
         try:
             row = record_transaction(serializer.validated_data.copy())
@@ -1892,8 +2073,7 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def void(self, request, pk=None):
         source = self.get_object()
-        if source.plan_id or source.allocations.exists() or source.split_rows.exists():
-            require_finance_permission(request.user, "finance", "update")
+        require_finance_permission(request.user, "finance", "update")
         input_serializer = TransactionVoidInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         before = snapshot(source)
@@ -1930,7 +2110,7 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         record_operation(request=request, instance=plan, action="custom", action_label="核销预收预付", metadata={"transaction_id": source.id, "amount": str(request.data.get("amount") or "")})
-        return Response(PaymentPlanSerializer(plan).data)
+        return Response(PaymentPlanSerializer(plan, context={"request": request}).data)
 
 
 class InventoryMovementViewSet(AuditTrailMixin, viewsets.ModelViewSet):
@@ -1938,15 +2118,28 @@ class InventoryMovementViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = InventoryMovementSerializer
     queryset = InventoryMovement.objects.select_related("sku__product", "order")
     search_fields = ["movement_no", "sku__sku", "sku__product__name", "order__order_no", "warehouse", "reference"]
+
+    def get_search_fields(self, request):
+        fields = ["movement_no", "warehouse", "reference"]
+        if user_can(request.user, "skus", "view"):
+            fields.append("sku__sku")
+        if user_can(request.user, "products", "view"):
+            fields.append("sku__product__name")
+        if user_can(request.user, "orders", "view"):
+            fields.append("order__order_no")
+        return fields
     ordering_fields = ["movement_date", "quantity", "created_at"]
 
     def get_queryset(self):
         qs = super().get_queryset()
         if self.request.query_params.get("sku"):
+            require_finance_permission(self.request.user, "skus", "view")
             qs = qs.filter(sku_id=self.request.query_params["sku"])
         if self.request.query_params.get("product"):
+            require_finance_permission(self.request.user, "products", "view")
             qs = qs.filter(sku__product_id=self.request.query_params["product"])
         if self.request.query_params.get("order"):
+            require_finance_permission(self.request.user, "orders", "view")
             qs = qs.filter(Q(order_id=self.request.query_params["order"]) | Q(related_orders__id=self.request.query_params["order"])).distinct()
         return qs
 
@@ -1996,6 +2189,8 @@ class InventoryMovementViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         input_serializer = InventoryMovementReversalInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         original = self.get_object()
+        from .procurement_scope import require_order_writes
+        require_order_writes(request.user, [original.order_id, *original.related_orders.values_list("pk", flat=True)])
         try:
             reversal = reverse_manual_inventory_movement(original, input_serializer.validated_data["reason"])
         except DjangoValidationError as error:
@@ -2024,6 +2219,18 @@ class PaymentPlanViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         "purchase_order__purchase_no",
         "purchase_order__supplier__name",
     ]
+
+    def get_search_fields(self, request):
+        fields = []
+        if user_can(request.user, "orders", "view"):
+            fields.append("order__order_no")
+        if user_can(request.user, "customers", "view"):
+            fields.append("order__customer__name")
+        if user_can(request.user, "purchases", "view"):
+            fields.append("purchase_order__purchase_no")
+        if user_can(request.user, "suppliers", "view"):
+            fields.append("purchase_order__supplier__name")
+        return fields or ["id"]
     ordering_fields = ["due_date", "planned_amount", "created_at"]
 
     def _date_filter(self, key):
@@ -2072,7 +2279,7 @@ class PaymentPlanViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         record_operation(request=request, instance=row, action="create", action_label="结算付款计划", metadata={"payment_plan_id": plan.id})
-        return Response(TransactionSerializer(row).data, status=status.HTTP_201_CREATED)
+        return Response(TransactionSerializer(row, context={"request": request}).data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
         return Response({"detail": "收付款计划保留合同依据，可修改未核销计划的金额、日期和备注，不支持直接删除。"}, status=status.HTTP_400_BAD_REQUEST)
@@ -2107,7 +2314,7 @@ class ContractChangeRequestViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         record_operation(request=request, instance=request_item, action="custom", action_label="审批合同变更", metadata={"payment_plan_id": plan.id})
-        return Response(PaymentPlanSerializer(plan).data, status=status.HTTP_201_CREATED)
+        return Response(PaymentPlanSerializer(plan, context={"request": request}).data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"])
     def reject(self, request, pk=None):
@@ -2133,8 +2340,13 @@ def dashboard(request):
     last_year_start = date(today.year - 1, 1, 1)
     last_year_same_day = date(today.year - 1, today.month, min(today.day, 28 if today.month == 2 else today.day))
     formal_statuses = ["confirmed", "production", "shipped", "completed"]
-    scoped_customers = scope_customer_queryset(Customer.objects.all(), request.user)
-    valid_orders = scope_customer_related_queryset(Order.objects.filter(status__in=formal_statuses), request.user)
+    can_view_customers = user_can(request.user, "customers", "view")
+    can_view_orders = user_can(request.user, "orders", "view")
+    can_view_products = user_can(request.user, "products", "view")
+    can_view_followups = user_can(request.user, "followups", "view")
+    can_view_certificates = user_can(request.user, "certificates", "view") and can_view_products
+    scoped_customers = scope_customer_queryset(Customer.objects.all(), request.user) if can_view_customers else Customer.objects.none()
+    valid_orders = scope_customer_related_queryset(Order.objects.filter(status__in=formal_statuses), request.user) if can_view_orders else Order.objects.none()
     def sales_between(start, end):
         return sum(
             (order.total_amount * order.exchange_rate for order in valid_orders.filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes")),
@@ -2167,8 +2379,8 @@ def dashboard(request):
         cash = cash.none()
     income = sum((row.rmb_amount or row.amount * row.exchange_rate for row in cash if row.direction == "income"), Decimal("0"))
     expense = sum((row.rmb_amount or row.amount * row.exchange_rate for row in cash if row.direction == "expense"), Decimal("0"))
-    due_follow_ups = scope_customer_related_queryset(current_due_follow_ups(today=today), request.user).select_related("customer", "contact").prefetch_related("attachments")
-    certificates = ProductCertificate.objects.filter(expires_on__lte=today + timedelta(days=90)).select_related("product")
+    due_follow_ups = scope_customer_related_queryset(current_due_follow_ups(today=today), request.user).select_related("customer", "contact").prefetch_related("attachments") if can_view_followups else FollowUp.objects.none()
+    certificates = ProductCertificate.objects.filter(expires_on__lte=today + timedelta(days=90)).select_related("product") if can_view_certificates else ProductCertificate.objects.none()
     certificate_alerts = [
         {"id": c.id, "product_id": c.product_id, "product_name": c.product.name,
          "certificate_name": c.name, "certificate_no": c.certificate_no, "expires_on": c.expires_on,
@@ -2190,10 +2402,10 @@ def dashboard(request):
             "follow_ups_due": due_follow_ups.count(),
         },
         "monthly_sales": monthly,
-        "category_sales": list(categories),
-        "top_customers": list(top_customers),
-        "recent_orders": OrderSerializer(valid_orders.prefetch_related("items__sku__product")[:5], many=True).data,
-        "due_follow_ups": FollowUpSerializer(due_follow_ups[:5], many=True).data,
+        "category_sales": list(categories) if can_view_products and user_can(request.user, "categories", "view") else [],
+        "top_customers": list(top_customers) if can_view_customers else [],
+        "recent_orders": OrderSerializer(valid_orders.prefetch_related("items__sku__product")[:5], many=True, context={"request": request}).data,
+        "due_follow_ups": FollowUpSerializer(due_follow_ups[:5], many=True, context={"request": request}).data,
     })
 
 
@@ -2407,6 +2619,7 @@ def _import_row(entity, row, user=None):
         raise ValueError(ORDER_IMPORT_DISABLED_MESSAGE)
     if entity == "customers":
         instance = Customer.objects.filter(code=row["code"]).first()
+        require_finance_permission(user, "customers", "update" if instance else "create")
         if instance and user is not None and not scope_customer_queryset(Customer.objects.filter(pk=instance.pk), user).exists():
             raise DjangoValidationError("该客户不在当前账号的数据范围内。")
         fields = ("name", "country", "source", "website", "address", "notes")
@@ -2422,8 +2635,10 @@ def _import_row(entity, row, user=None):
         serializer.save(imported_code=row["code"])
         return True
     if entity == "products":
+        require_finance_permission(user, "products", "update" if Product.objects.filter(code=row["code"]).exists() else "create")
         category = None
         if row.get("category"):
+            require_finance_permission(user, "categories", "view")
             category = ProductCategory.objects.filter(name=row["category"]).first()
             if not category:
                 raise ValueError("产品分类不存在，请先建立分类。")
@@ -2442,14 +2657,19 @@ def _import_row(entity, row, user=None):
         serializer.save(imported_code=row["code"])
         return True
     if entity == "skus":
+        require_finance_permission(user, "skus", "update" if SKU.objects.filter(sku=row["sku"]).exists() else "create")
+        require_finance_permission(user, "products", "view")
         product = Product.objects.get(code=row["product_code"])
         instance = SKU.objects.filter(sku=row["sku"]).first()
         payload = {
             "product": product.pk, "specification": row.get("specification", ""),
-            "unit": row.get("unit") or "pcs", "cost_price": _decimal(row.get("cost_price")),
+            "unit": row.get("unit") or "pcs",
             "default_price": _decimal(row.get("default_price")), "currency": row.get("currency") or "USD",
         }
-        serializer = SKUSerializer(instance, data=payload, partial=bool(instance))
+        if str(row.get("cost_price") or "").strip():
+            require_finance_permission(user, "purchases", "update")
+            payload["cost_price"] = _decimal(row.get("cost_price"))
+        serializer = SKUSerializer(instance, data=payload, partial=bool(instance), context={"user": user})
         serializer.is_valid(raise_exception=True)
         if instance:
             serializer.save()
@@ -2465,6 +2685,7 @@ def _import_row(entity, row, user=None):
         raise DjangoValidationError("流水关联的客户或订单不存在。")
     if order and defaults["direction"] == "income":
         defaults["kind"] = "customer_receipt"
+    require_finance_permission(user, "transactions", "create")
     payload = {**defaults, "transaction_no": row["transaction_no"], "customer": defaults["customer"].pk if defaults["customer"] else None, "order": order.pk if order else None}
     validate_finance_relations(defaults, user)
     require_finance_permission(user, "transactions", "create")

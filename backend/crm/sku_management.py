@@ -1,5 +1,6 @@
 from .procurement_scope import scoped_supplier_candidates
 from .finance_scope import require_finance_permission
+from .permissions import user_can
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -27,8 +28,18 @@ class CapabilitySerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["created_at", "updated_at"]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        user = self.context.get("request").user if self.context.get("request") else self.context.get("user")
+        if not user_can(user, "products", "view"):
+            data["product"] = None
+        return data
+
     def validate(self, attrs):
+        user = self.context.get("request").user if self.context.get("request") else self.context.get("user")
         product = attrs.get("product", getattr(self.instance, "product", None))
+        if product and user is not None:
+            require_finance_permission(user, "products", "view")
         validate_filters(product, attrs.get("filters", getattr(self.instance, "filters", {})))
         if not isinstance(attrs.get("characteristics", {}), dict) or any(not isinstance(v, str) for v in attrs.get("characteristics", {}).values()):
             raise ValidationError({"characteristics": "供货特点须为名称和文本值。"})
@@ -41,10 +52,15 @@ class SupplierCapabilityViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(product_id=self.request.query_params["product"]) if self.request.query_params.get("product") else qs
+        if self.request.query_params.get("product"):
+            require_finance_permission(self.request.user, "products", "view")
+            return qs.filter(product_id=self.request.query_params["product"])
+        return qs
 
     @action(detail=False, methods=["post"])
     def preview(self, request):
+        require_finance_permission(request.user, "products", "view")
+        require_finance_permission(request.user, "skus", "view")
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         rule = SupplierCapability(**serializer.validated_data)
@@ -53,11 +69,13 @@ class SupplierCapabilityViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
 class SupplierCandidatesView(APIView):
     def get(self, request, pk):
+        require_finance_permission(request.user, "skus", "view")
         sku = get_object_or_404(SKU, pk=pk)
         return Response({"candidates": scoped_supplier_candidates(candidates(sku), request.user), "overrides": list(sku.candidate_overrides.values("supplier", "is_allowed", "characteristics"))})
 
     @transaction.atomic
     def post(self, request, pk):
+        require_finance_permission(request.user, "skus", "view")
         sku = get_object_or_404(SKU.objects.select_for_update(), pk=pk)
         supplier = get_object_or_404(Supplier, pk=request.data.get("supplier"))
         allowed = request.data.get("is_allowed")
@@ -90,6 +108,8 @@ class ProductSupplierCandidatePoolView(APIView):
             stability = serializers.ChoiceField(choices=["高", "中", "低"], default="中")
             delivery = serializers.ChoiceField(choices=["快", "标准", "慢"], default="标准")
             notes = serializers.CharField(allow_blank=True, max_length=2000, default="")
+        require_finance_permission(request.user, "products", "view")
+        require_finance_permission(request.user, "skus", "view")
         product = get_object_or_404(Product.objects.select_for_update(), pk=pk)
         payload = BindingInput(data=request.data)
         payload.is_valid(raise_exception=True)
@@ -114,6 +134,8 @@ class ProductSupplierCandidatePoolView(APIView):
         return Response({"sku_count": len(skus), "supplier_count": len(supplier_ids)})
 
     def get(self, request, pk):
+        require_finance_permission(request.user, "products", "view")
+        require_finance_permission(request.user, "skus", "view")
         product = get_object_or_404(Product, pk=pk)
         if request.query_params.get("eligible") == "1":
             from .services.supplier_candidates import eligible_suppliers
@@ -187,15 +209,25 @@ class OrderItemSupplierAllocationView(APIView):
     def _item(self, request, order_id, item_id):
         require_finance_permission(request.user, "orders", "view")
         require_finance_permission(request.user, "suppliers", "view")
+        require_finance_permission(request.user, "skus", "view")
         scoped_orders = scope_customer_related_queryset(Order.objects.all(), request.user)
         queryset = OrderItem.objects.select_related("order", "sku", "sku__product", "supplier_sku__supplier").filter(
             order__in=scoped_orders,
         )
         return get_object_or_404(queryset, pk=item_id, order_id=order_id)
 
+    @staticmethod
+    def _allocation_payload(item, user):
+        from .services.supplier_allocation import supplier_allocation_payload
+        payload = supplier_allocation_payload(item)
+        if not user_can(user, "purchases", "view"):
+            for field in ("purchase_price", "currency", "moq", "lead_time_days"):
+                payload[field] = None
+        return payload
+
     def get(self, request, order_id, item_id):
         item = self._item(request, order_id, item_id)
-        from .services.supplier_allocation import supplier_allocation_payload, supplier_options
+        from .services.supplier_allocation import supplier_options
 
         return Response({
             "order": {"id": item.order_id, "order_no": item.order.order_no, "status": item.order.status},
@@ -208,13 +240,13 @@ class OrderItemSupplierAllocationView(APIView):
                 "quantity": item.quantity,
                 "unit": item.unit_snapshot or item.sku.unit,
             },
-            "allocation": supplier_allocation_payload(item),
+            "allocation": self._allocation_payload(item, request.user),
             "candidates": scoped_supplier_candidates(supplier_options(item), request.user),
         })
 
     @transaction.atomic
     def post(self, request, order_id, item_id):
-        from .services.supplier_allocation import allocate_order_item_supplier, supplier_allocation_payload
+        from .services.supplier_allocation import allocate_order_item_supplier
 
         item = self._item(request, order_id, item_id)
         if request.data.get("scope", "order_only") == "recommended":
@@ -245,7 +277,7 @@ class OrderItemSupplierAllocationView(APIView):
                 "scope": updated.supplier_allocation_scope,
             },
         )
-        return Response({"allocation": supplier_allocation_payload(updated)})
+        return Response({"allocation": self._allocation_payload(updated, request.user)})
 
 
 def plan_data(plan):
@@ -254,16 +286,19 @@ def plan_data(plan):
 
 class ProductSKUPlanView(APIView):
     def get(self, request, pk):
+        require_finance_permission(request.user, "products", "view")
         product = get_object_or_404(Product, pk=pk)
         return Response({"definitions": definitions_for(product), "plans": [plan_data(p) for p in product.sku_parameter_plans.order_by("-version")],
                          "skus": list(product.skus.filter(active=True).values("id", "sku", "display_name_cn", "parameter_values")),
                          "relationships": list(product.skus.filter(successors__isnull=False).values("id", "sku", "successors__target_id", "successors__target__sku"))})
 
     def post(self, request, pk):
+        require_finance_permission(request.user, "products", "view")
         return Response(plan_data(draft_plan(get_object_or_404(Product, pk=pk))))
 
     @transaction.atomic
     def patch(self, request, pk):
+        require_finance_permission(request.user, "products", "view")
         Product.objects.select_for_update().get(pk=pk)
         plan = get_object_or_404(SKUParameterPlan.objects.select_for_update(), product_id=pk, status="draft")
         if request.data.get("updated_at") != plan.updated_at.isoformat():
@@ -276,6 +311,7 @@ class ProductSKUPlanView(APIView):
 
     @transaction.atomic
     def delete(self, request, pk):
+        require_finance_permission(request.user, "products", "view")
         Product.objects.select_for_update().get(pk=pk)
         SKUParameterPlan.objects.filter(product_id=pk, status="draft").delete()
         return Response(status=204)
@@ -284,6 +320,7 @@ class ProductSKUPlanView(APIView):
 class ProductSKUPlanActionView(APIView):
     @transaction.atomic
     def post(self, request, pk, operation):
+        require_finance_permission(request.user, "products", "view")
         Product.objects.select_for_update().get(pk=pk)
         plan = get_object_or_404(SKUParameterPlan.objects.select_for_update(), product_id=pk, status="draft")
         if request.data.get("updated_at") != plan.updated_at.isoformat():
@@ -299,10 +336,12 @@ class ProductSKUPlanActionView(APIView):
 
 class ProductCombinationRulesView(APIView):
     def get(self, request, pk):
+        require_finance_permission(request.user, "products", "view")
         return Response({"rules": get_object_or_404(Product, pk=pk).combination_rules})
 
     @transaction.atomic
     def post(self, request, pk):
+        require_finance_permission(request.user, "products", "view")
         from .services.sku_combination_rules import validate_rules
         product = get_object_or_404(Product.objects.select_for_update(), pk=pk)
         if "rules" not in request.data:

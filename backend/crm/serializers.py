@@ -4,6 +4,7 @@ from .trade_units import TradeLineSerializerMixin, TRADE_FIELDS, SKUTradeUnitSer
 from decimal import Decimal
 import re
 from uuid import uuid4
+from urllib.parse import quote as urlquote
 
 import bleach
 
@@ -104,6 +105,31 @@ def serializer_user(context):
     return request.user if request is not None else context.get("user")
 
 
+def protected_media_url(file_field):
+    if not file_field:
+        return ""
+    return f"/api/media/{urlquote(file_field.name, safe='/')}"
+
+
+class ProtectedImageField(serializers.ImageField):
+    """Keep image uploads writable while returning an authorization-aware URL."""
+
+    def to_representation(self, value):
+        return protected_media_url(value) if value else None
+
+
+def redact_snapshot(value, hidden_fields):
+    if isinstance(value, dict):
+        return {
+            key: redact_snapshot(item, hidden_fields)
+            for key, item in value.items()
+            if key not in hidden_fields
+        }
+    if isinstance(value, list):
+        return [redact_snapshot(item, hidden_fields) for item in value]
+    return value
+
+
 class SupplierSerializer(serializers.ModelSerializer):
     payment_terms_summary = serializers.SerializerMethodField()
 
@@ -164,7 +190,26 @@ class SupplierSKUSerializer(serializers.ModelSerializer):
         model = SupplierSKU
         fields = "__all__"
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        user = serializer_user(self.context)
+        if not user_can(user, "skus", "view"):
+            data.update(sku=None, internal_sku_code="", internal_sku_name="", product_name="")
+        elif not user_can(user, "products", "view"):
+            data["product_name"] = ""
+        if not user_can(user, "purchases", "view"):
+            data["purchase_price"] = None
+        return data
+
     def validate(self, attrs):
+        user = serializer_user(self.context)
+        sku = attrs.get("sku", getattr(self.instance, "sku", None))
+        if user is not None and sku and not user_can(user, "skus", "view"):
+            raise PermissionDenied("供应商来源需要 SKU 查看权限。")
+        if user is not None and "purchase_price" in attrs and not user_can(user, "purchases", "update"):
+            current_price = self.instance.purchase_price if self.instance else Decimal("0")
+            if attrs["purchase_price"] != current_price:
+                raise PermissionDenied("修改供应商采购价需要采购修改权限。")
         if self.instance:
             for field in ("sku", "supplier"):
                 if field in attrs and attrs[field].pk != getattr(self.instance, f"{field}_id"):
@@ -198,17 +243,101 @@ class OperationLogSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        user = serializer_user(self.context)
         if instance.entity == "crm.purchaseorder":
             from .sales_scope import effective_data_scope
-            user = serializer_user(self.context)
             # Raw audit snapshots include sales IDs and payment totals. Retain the
             # shared action history, never alter the stored historical snapshot.
-            if effective_data_scope(user) != "all" or not all(user_can(user, module, "view") for module in ("orders", "finance", "transactions")):
+            if effective_data_scope(user) != "all" or not all(user_can(user, module, "view") for module in ("orders", "finance", "transactions", "suppliers", "skus")):
                 for field in ("before_data", "after_data", "metadata", "changed_fields"):
                     data[field] = [] if field == "changed_fields" else {}
+        elif instance.entity == "crm.transaction":
+            hidden_fields = set()
+            if not user_can(user, "customers", "view"):
+                hidden_fields.update({"customer", "customer_id", "customer_name"})
+            if not user_can(user, "orders", "view"):
+                hidden_fields.update({"order", "order_id", "order_no"})
+            if not user_can(user, "purchases", "view"):
+                hidden_fields.update({"purchase_order", "purchase_order_id", "purchase_no"})
+            if not user_can(user, "suppliers", "view"):
+                hidden_fields.update({"supplier", "supplier_id", "supplier_name"})
+            if not user_can(user, "finance", "view"):
+                hidden_fields.update({"plan", "plan_id", "allocations", "advance_allocations", "allocated_amount"})
+            for field in ("before_data", "after_data", "metadata"):
+                if isinstance(data.get(field), dict):
+                    data[field] = redact_snapshot(data[field], hidden_fields)
+            data["changed_fields"] = [key for key in data.get("changed_fields", []) if key not in hidden_fields]
+        elif instance.entity in {"crm.order", "crm.quote"}:
+            hidden_fields = set()
+            if not user_can(user, "customers", "view"):
+                hidden_fields.update({"customer", "customer_id", "customer_name", "buyer_company_name", "recipient_name", "buyer_address", "buyer_email", "buyer_phone"})
+            if not user_can(user, "skus", "view"):
+                hidden_fields.update({"sku", "sku_id", "sku_code", "sku_code_snapshot", "sales_model", "sales_model_snapshot", "product_name", "display_name", "description"})
+            if not user_can(user, "suppliers", "view"):
+                hidden_fields.update({"supplier", "supplier_id", "supplier_name", "supplier_sku", "supplier_sku_id", "supplier_sku_code", "supplier_model", "supplier_barcode", "supplier_allocation"})
+            if not user_can(user, "purchases", "view"):
+                hidden_fields.update({"cost_price", "unit_cost", "purchase_price", "supplier_price_snapshot"})
+            if not user_can(user, "quotes", "view"):
+                hidden_fields.update({"quote", "quote_id", "quote_no"})
+            if not (user_can(user, "finance", "view") and user_can(user, "transactions", "view")):
+                hidden_fields.update({"paid_amount", "outstanding_amount", "balance_amount", "settled_amount", "allocations", "plan_id"})
+            for field in ("before_data", "after_data", "metadata"):
+                data[field] = redact_snapshot(data.get(field), hidden_fields)
+            data["changed_fields"] = [key for key in data.get("changed_fields", []) if key not in hidden_fields]
+        elif instance.entity == "crm.sku":
+            hidden_fields = set()
+            if not user_can(user, "purchases", "view"):
+                hidden_fields.update({"cost_price"})
+            if not user_can(user, "suppliers", "view"):
+                hidden_fields.update({"supplier", "supplier_id", "supplier_name", "supplier_sku", "supplier_sku_id", "supplier_sku_code"})
+            for field in ("before_data", "after_data", "metadata"):
+                data[field] = redact_snapshot(data.get(field), hidden_fields)
+            data["changed_fields"] = [key for key in data.get("changed_fields", []) if key not in hidden_fields]
+        elif instance.entity == "crm.skutradeunit" and not user_can(user, "suppliers", "view"):
+            hidden_fields = {"supplier", "supplier_id", "supplier_name"}
+            for field in ("before_data", "after_data", "metadata"):
+                if isinstance(data.get(field), dict):
+                    data[field] = redact_snapshot(data[field], hidden_fields)
+            data["changed_fields"] = [key for key in data.get("changed_fields", []) if key not in hidden_fields]
+        elif instance.entity == "crm.inventorymovement":
+            hidden_fields = {"order", "order_id", "order_no", "related_orders", "related_order_ids", "related_order_nos"}
+            if not user_can(user, "suppliers", "view"):
+                hidden_fields.update({"supplier_sku", "supplier_sku_id"})
+            if not user_can(user, "purchases", "view"):
+                hidden_fields.add("unit_cost")
+            if user_can(user, "orders", "view"):
+                from .sales_scope import scope_customer_related_queryset
+                visible_order_ids = set(scope_customer_related_queryset(
+                    Order.objects.all(), user,
+                ).values_list("pk", flat=True))
+                for field in ("before_data", "after_data", "metadata"):
+                    payload = data.get(field)
+                    if isinstance(payload, dict):
+                        order_id = payload.get("order") or payload.get("order_id")
+                        if order_id and str(order_id) not in {str(pk) for pk in visible_order_ids}:
+                            payload = redact_snapshot(payload, hidden_fields)
+                        elif isinstance(payload.get("related_orders"), list):
+                            related = payload["related_orders"]
+                            if related and isinstance(related[0], dict):
+                                payload["related_orders"] = [row for row in related if str(row.get("id")) in {str(value) for value in visible_order_ids}]
+                            else:
+                                payload["related_orders"] = [pk for pk in related if str(pk) in {str(value) for value in visible_order_ids}]
+                            payload.pop("related_order_nos", None)
+                        elif isinstance(payload.get("related_order_ids"), list):
+                            payload["related_order_ids"] = [pk for pk in payload["related_order_ids"] if str(pk) in {str(value) for value in visible_order_ids}]
+                            payload.pop("related_order_nos", None)
+                        data[field] = payload
+            else:
+                for field in ("before_data", "after_data", "metadata"):
+                    payload = data.get(field)
+                    if isinstance(payload, dict):
+                        data[field] = redact_snapshot(payload, hidden_fields)
+            data["changed_fields"] = [key for key in data.get("changed_fields", []) if key not in hidden_fields]
         return data
 
     def get_operator_name(self, obj):
+        if not user_can(serializer_user(self.context), "employees", "view"):
+            return ""
         return obj.operator.get_username() if obj.operator else "系统"
 
 
@@ -221,6 +350,13 @@ class GoodsReceiptSerializer(serializers.ModelSerializer):
         if not obj.is_overage or obj.overage_quantity <= 0:
             return ""
         return f"超到 {obj.overage_quantity}（{obj.get_overage_reason_display()}）"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not user_can(serializer_user(self.context), "inventory", "view"):
+            data["inventory_movement"] = None
+            data["reversal_inventory_movement"] = None
+        return data
 
     class Meta:
         model = GoodsReceipt
@@ -273,12 +409,24 @@ class PurchaseOrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSer
     receipts = serializers.SerializerMethodField()
 
     def get_receipts(self, obj):
-        return GoodsReceiptSerializer(obj.receipts.all(), many=True).data
+        return GoodsReceiptSerializer(obj.receipts.all(), many=True, context=self.context).data
 
     class Meta:
         model = PurchaseOrderItem
         fields = ["id", "sku", "supplier_sku", "sku_code", "display_name", "sales_model", "supplier_name", "supplier_model", "supplier_sku_code", "supplier_barcode", "supplier_characteristics_snapshot", "quantity", "unit_price", "received_quantity", "remaining_quantity", "overage_quantity", "amount", "receipts"] + TRADE_FIELDS
         read_only_fields = ["supplier_characteristics_snapshot"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        user = serializer_user(self.context)
+        if not user_can(user, "skus", "view"):
+            data.update(sku=None, sku_code="", display_name="", sales_model="")
+        if not user_can(user, "suppliers", "view"):
+            data.update(
+                supplier_sku=None, supplier_name="", supplier_model="", supplier_sku_code="",
+                supplier_barcode="", supplier_characteristics_snapshot={},
+            )
+        return data
 
 
 def normalized_contract_item_signature(item, *, include_supplier_sku=False):
@@ -403,6 +551,8 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
             associated_ids.add(instance.order_id)
         visible = scope_customer_related_queryset(Order.objects.filter(pk__in=associated_ids), user) if user_can(user, "orders", "view") else Order.objects.none()
         visible_ids = set(visible.values_list("pk", flat=True))
+        if not user_can(user, "suppliers", "view"):
+            data.update(supplier=None, supplier_name="")
         if instance.order_id not in visible_ids:
             data["order"] = None
             data["order_no"] = ""
@@ -485,6 +635,11 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         if currency == "CNY" and rate != Decimal("1"):
             raise serializers.ValidationError({"exchange_rate": "人民币采购单的对人民币汇率必须为 1。"})
         supplier = attrs.get("supplier", getattr(self.instance, "supplier", None))
+        user = serializer_user(self.context)
+        if user is not None and supplier and (self.instance is None or supplier.pk != self.instance.supplier_id) and not user_can(user, "suppliers", "view"):
+            raise PermissionDenied("关联供应商需要供应商查看权限。")
+        if user is not None and attrs.get("items") and not user_can(user, "skus", "view"):
+            raise PermissionDenied("采购明细需要 SKU 查看权限。")
         if "payment_terms_snapshot" not in attrs and (self.instance is None or (
             self.instance.status == "draft" and supplier != self.instance.supplier
         )):
@@ -704,6 +859,13 @@ class CustomerSerializer(serializers.ModelSerializer):
         # formal orders, rather than a manually maintained customer attribute.
         read_only_fields = ["code", "status", "owner"]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not user_can(serializer_user(self.context), "orders", "view"):
+            data["order_count"] = None
+            data["sales_amount"] = None
+        return data
+
     def validate(self, attrs):
         from .sales_scope import allowed_employee_ids, effective_data_scope, employee_profile_for
         from .permissions import user_can
@@ -712,6 +874,8 @@ class CustomerSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"contacts": "新建客户时请至少填写一位联系人。"})
         request = self.context.get("request")
         user = request.user if request else self.context.get("user")
+        if self.instance is None and attrs.get("contacts") and user is not None and not user_can(user, "contacts", "create"):
+            raise PermissionDenied("创建客户联系人需要联系人创建权限。")
         if "owner_profile" in attrs:
             owner_profile = attrs["owner_profile"]
             if owner_profile is None:
@@ -756,11 +920,20 @@ class ContactSerializer(serializers.ModelSerializer):
         model = Contact
         fields = "__all__"
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not user_can(serializer_user(self.context), "customers", "view"):
+            data.update(customer=None, customer_name="")
+        return data
+
 
     def validate_customer(self, customer):
         from .sales_scope import customer_in_scope
         request = self.context.get("request")
-        if request and not customer_in_scope(customer.pk, request.user):
+        user = request.user if request else serializer_user(self.context)
+        if not user_can(user, "customers", "view"):
+            raise PermissionDenied("关联客户需要客户查看权限。")
+        if user and not customer_in_scope(customer.pk, user):
             raise PermissionDenied("所选客户不在当前账号的数据范围内。")
         return customer
 
@@ -782,11 +955,25 @@ class FollowUpSerializer(serializers.ModelSerializer):
     def get_attachments(self, obj):
         return FollowUpAttachmentSerializer(obj.attachments.all(), many=True, context=self.context).data
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        user = serializer_user(self.context)
+        if not user_can(user, "customers", "view"):
+            data.update(customer=None, customer_name="")
+        if not user_can(user, "contacts", "view"):
+            data.update(contact=None, contact_name="")
+        return data
+
     def validate(self, attrs):
         from .sales_scope import customer_in_scope
         request = self.context.get("request")
         customer = attrs.get("customer", getattr(self.instance, "customer", None))
         contact = attrs.get("contact", getattr(self.instance, "contact", None))
+        user = request.user if request else serializer_user(self.context)
+        if customer and not user_can(user, "customers", "view"):
+            raise PermissionDenied("关联客户需要客户查看权限。")
+        if contact and not user_can(user, "contacts", "view"):
+            raise PermissionDenied("关联联系人需要联系人查看权限。")
         if request and customer and not customer_in_scope(customer.pk, request.user):
             raise PermissionDenied("所选客户不在当前账号的数据范围内。")
         if contact and customer and contact.customer_id != customer.id:
@@ -807,6 +994,7 @@ class FollowUpSerializer(serializers.ModelSerializer):
 
 
 class FollowUpAttachmentSerializer(serializers.ModelSerializer):
+    file = serializers.SerializerMethodField()
     url = serializers.SerializerMethodField()
 
     class Meta:
@@ -817,8 +1005,10 @@ class FollowUpAttachmentSerializer(serializers.ModelSerializer):
     def get_url(self, obj):
         if not obj.file:
             return ""
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.file.url) if request else obj.file.url
+        return self.get_file(obj)
+
+    def get_file(self, obj):
+        return protected_media_url(obj.file)
 
 
 class CategoryAttributeSerializer(serializers.ModelSerializer):
@@ -930,6 +1120,24 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["code", "hs_code", "combination_rules"]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        user = serializer_user(self.context)
+        if not user_can(user, "categories", "view"):
+            data.update(category=None, category_name="", additional_categories=[])
+        if not user_can(user, "hs_codes", "view"):
+            data.update(hs_code=None, hs_code_value="")
+        if not user_can(user, "suppliers", "view"):
+            data["suppliers"] = []
+        if not user_can(user, "skus", "view"):
+            data["sku_count"] = None
+        if not user_can(user, "parameters", "view"):
+            data["parameter_count"] = None
+            data["sku_definitions"] = None
+        if not user_can(user, "certificates", "view"):
+            data["certificate_count"] = None
+        return data
+
     def validate_sales_model_prefix(self, value):
         if value is None or not str(value).strip():
             return None
@@ -939,6 +1147,11 @@ class ProductSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
+        user = serializer_user(self.context)
+        if user is not None and any(field in attrs for field in ("category", "additional_categories")) and not user_can(user, "categories", "view"):
+            raise PermissionDenied("产品分类关联需要分类查看权限。")
+        if user is not None and "suppliers" in attrs and not user_can(user, "suppliers", "update"):
+            raise PermissionDenied("修改产品供应商关联需要供应商修改权限。")
         if "hs_code" in self.initial_data:
             raise serializers.ValidationError({"hs_code": "HS 编码请通过“HS 编码维护”页面统一分配。"})
         if not self.instance and not attrs.get("sales_model_prefix"):
@@ -991,6 +1204,7 @@ class HSCodeSerializer(serializers.ModelSerializer):
 class SKUSerializer(serializers.ModelSerializer):
     trade_units = SKUTradeUnitSerializer(many=True, read_only=True)
     image_thumbnail = serializers.SerializerMethodField()
+    image = ProtectedImageField(required=False, allow_null=True)
 
     def get_image_thumbnail(self, obj):
         if not obj.image:
@@ -1026,6 +1240,27 @@ class SKUSerializer(serializers.ModelSerializer):
         model = SKU
         fields = "__all__"
         extra_kwargs = {"sku": {"required": False, "read_only": True}, "identity_signature": {"read_only": True}, "schema_version": {"read_only": True}}
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        user = serializer_user(self.context)
+        if not user_can(user, "products", "view"):
+            data["product"] = None
+        if not user_can(user, "inventory", "view"):
+            for field in ("stock_quantity", "actual_quantity", "reserved_quantity", "available_quantity", "in_transit_quantity", "has_anomaly"):
+                if field in data:
+                    data[field] = None
+        if not (user_can(user, "inventory", "view") and user_can(user, "orders", "view")):
+            data["to_procure_quantity"] = None
+        if not user_can(user, "orders", "view"):
+            data["order_count"] = None
+        if not user_can(user, "quotes", "view"):
+            data["quote_count"] = None
+        if not user_can(user, "packaging", "view"):
+            data["packaging"] = None
+        if not user_can(user, "purchases", "view"):
+            data["cost_price"] = None
+        return data
 
     def _packaging_serializer(self, data, sku=None):
         profile = SKUPackagingProfile.objects.filter(sku=sku).first() if sku else None
@@ -1084,6 +1319,11 @@ class SKUSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
+        user = serializer_user(self.context)
+        if "cost_price" in attrs and user is not None and not user_can(user, "purchases", "update"):
+            current_cost = self.instance.cost_price if self.instance else Decimal("0")
+            if attrs["cost_price"] != current_cost:
+                raise PermissionDenied("修改 SKU 成本需要采购修改权限。")
         if self.instance:
             if attrs.get("active") and self.instance.successors.exists():
                 raise serializers.ValidationError({"active": "已拆分或合并的历史 SKU 不可重新启用。"})
@@ -1372,6 +1612,8 @@ class SKUVersionSerializer(serializers.ModelSerializer):
         read_only_fields = ["sku", "version_no", "sku_code_snapshot", "sales_model_snapshot", "display_name_cn_snapshot", "description_cn_snapshot", "description_en_snapshot", "parameter_values_snapshot", "product_details_snapshot", "specification_snapshot", "changed_fields", "changed_at", "changed_by", "change_reason"]
 
     def get_changed_by_name(self, obj):
+        if not user_can(serializer_user(self.context), "employees", "view"):
+            return ""
         return obj.changed_by.get_username() if obj.changed_by else "系统"
 
 
@@ -1381,6 +1623,12 @@ class ProductParameterSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductParameter
         fields = "__all__"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not user_can(serializer_user(self.context), "products", "view"):
+            data.update(product=None, product_name="")
+        return data
 
 
 def certificate_expiry(expires_on, today=None):
@@ -1418,6 +1666,12 @@ class ProductCertificateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductCertificate
         fields = "__all__"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not user_can(serializer_user(self.context), "products", "view"):
+            data.update(product=None, product_name="")
+        return data
 
 
 class QuoteImportantNoteSerializer(serializers.ModelSerializer):
@@ -1458,13 +1712,16 @@ class QuoteItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer)
     display_name_snapshot = serializers.CharField(source="product_name_snapshot", read_only=True)
     unit = serializers.CharField(source="unit_snapshot", read_only=True)
     description_snapshot = serializers.SerializerMethodField()
-    image = serializers.ImageField(source="image_snapshot", read_only=True)
+    image = serializers.SerializerMethodField()
     amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
 
     class Meta:
         model = QuoteItem
         fields = ["id", "sku", "sku_code", "sales_model_snapshot", "model", "product_name", "display_name_snapshot", "unit", "image", "quantity", "unit_price", "amount", "description", "description_snapshot", "notes", "sales_rules_snapshot"] + TRADE_FIELDS
         read_only_fields = ["sales_rules_snapshot"]
+
+    def get_image(self, obj):
+        return protected_media_url(obj.image_snapshot)
 
     def to_internal_value(self, data):
         data = data.copy()
@@ -1476,6 +1733,13 @@ class QuoteItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer)
 
     def get_description_snapshot(self, obj):
         return obj.description
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not user_can(serializer_user(self.context), "skus", "view"):
+            for field in ("sku", "sku_code", "sales_model_snapshot", "model", "product_name", "display_name_snapshot", "unit", "image"):
+                data[field] = None if field == "sku" else ""
+        return data
 
 
 def validate_sales_exchange_rate(attrs, source=None):
@@ -1507,6 +1771,15 @@ class QuoteSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["quote_no", "root_quote", "parent_quote", "revision_no", "revision_summary", "buyer_company_name"]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not user_can(serializer_user(self.context), "customers", "view"):
+            data.update(
+                customer=None, customer_name="", buyer_company_name="", recipient_name="",
+                buyer_address="", buyer_email="", buyer_phone="",
+            )
+        return data
+
     def validate(self, attrs):
         source = self.instance
         view = self.context.get('view')
@@ -1515,6 +1788,10 @@ class QuoteSerializer(serializers.ModelSerializer):
         from .sales_scope import customer_in_scope
         request = self.context.get("request")
         customer = attrs.get("customer", source.customer if source else None)
+        if request and customer and not user_can(request.user, "customers", "view"):
+            raise PermissionDenied("关联客户需要客户查看权限。")
+        if request and attrs.get("items") and not user_can(request.user, "skus", "view"):
+            raise PermissionDenied("报价明细需要 SKU 查看权限。")
         if request and customer and not customer_in_scope(customer.pk, request.user):
             raise PermissionDenied("所选客户不在当前账号的数据范围内。")
         validate_document_amount(attrs, source)
@@ -1586,6 +1863,21 @@ class OrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer)
         model = OrderItem
         fields = ["id", "sku", "sku_code", "sales_model", "model", "product_name", "display_name", "description", "unit", "quantity", "unit_price", "cost_price", "amount", "notes", "supplier_sku", "supplier_name", "supplier_model", "supplier_sku_code", "supplier_barcode", "supplier_allocation"] + TRADE_FIELDS
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        user = serializer_user(self.context)
+        if not user_can(user, "skus", "view"):
+            for field in ("sku", "sku_code", "sales_model", "model", "product_name", "display_name", "description", "unit"):
+                data[field] = None if field == "sku" else ""
+        if not user_can(user, "purchases", "view"):
+            data["cost_price"] = None
+        if not user_can(user, "suppliers", "view"):
+            for field in ("supplier_sku", "supplier_name", "supplier_model", "supplier_sku_code", "supplier_barcode", "supplier_allocation"):
+                data[field] = None if field in {"supplier_sku", "supplier_allocation"} else ""
+        elif not user_can(user, "purchases", "view"):
+            data["supplier_allocation"] = None
+        return data
+
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
@@ -1604,6 +1896,18 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = "__all__"
         read_only_fields = ["order_no", "status", "cancelled_at", "cancellation_reason"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        user = serializer_user(self.context)
+        if not user_can(user, "customers", "view"):
+            data.update(customer=None, customer_name="", customer_country="")
+        if not user_can(user, "quotes", "view"):
+            data.update(quote=None, quote_no="", source_quote_no="")
+        if not (user_can(user, "finance", "view") and user_can(user, "transactions", "view")):
+            data["paid_amount"] = None
+            data["balance_amount"] = None
+        return data
 
     def get_balance_amount(self, obj):
         return obj.outstanding_amount.quantize(Decimal("0.01"))
@@ -1624,8 +1928,14 @@ class OrderSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if request and customer and not customer_in_scope(customer.pk, request.user):
             raise PermissionDenied("所选客户不在当前账号的数据范围内。")
+        if request and customer and not user_can(request.user, "customers", "view"):
+            raise PermissionDenied("关联客户需要客户查看权限。")
         if request and source_quote and not customer_in_scope(source_quote.customer_id, request.user):
             raise PermissionDenied("来源报价不在当前账号的数据范围内。")
+        if request and source_quote and not user_can(request.user, "quotes", "view"):
+            raise PermissionDenied("关联来源报价需要报价查看权限。")
+        if request and attrs.get("items") and not user_can(request.user, "skus", "view"):
+            raise PermissionDenied("订单明细需要 SKU 查看权限。")
         if source_quote and customer and source_quote.customer_id != customer.id:
             raise serializers.ValidationError({"customer": "从报价创建订单时，客户必须与来源报价一致。"})
         # A terminal quote is historical context only.  It cannot seed a new
@@ -1633,6 +1943,16 @@ class OrderSerializer(serializers.ModelSerializer):
         quote_is_being_bound = self.instance is None or "quote" in attrs
         if quote_is_being_bound and source_quote and source_quote.status in {"rejected", "expired"}:
             raise serializers.ValidationError({"quote": "该报价已拒绝或过期，请先创建新的修订版后再转为订单。"})
+        if request and not user_can(request.user, "purchases", "update"):
+            persisted_costs = {
+                row.sku_id: row.cost_price
+                for row in self.instance.items.all()
+            } if self.instance else {}
+            for item in attrs.get("items", []):
+                # Order cost is a server-owned snapshot unless the caller has
+                # explicit purchasing write access. Preserve historical costs
+                # on edits and use the current SKU cost only for new lines.
+                item["cost_price"] = persisted_costs.get(item["sku"].pk, item["sku"].cost_price)
         return attrs
 
     @staticmethod
@@ -1853,6 +2173,39 @@ class TransactionSerializer(serializers.ModelSerializer):
         extra_kwargs = {"transaction_no": {"required": False}}
         read_only_fields = ["status", "allocated_amount", "split_from", "voided_at", "void_reason"]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        user = serializer_user(self.context)
+        if not user_can(user, "customers", "view"):
+            data.update(customer=None, customer_name="")
+        if not user_can(user, "orders", "view"):
+            data.update(order=None, order_no="")
+        if not user_can(user, "purchases", "view"):
+            data.update(purchase_order=None, purchase_no="")
+        if not user_can(user, "suppliers", "view"):
+            data.update(supplier=None, supplier_name="")
+        if not user_can(user, "finance", "view"):
+            data["plan"] = None
+            data["allocations"] = []
+            data["allocated_amount"] = None
+        else:
+            from .finance_scope import scope_plan_queryset
+            plan_ids = {row["plan"] for row in data.get("allocations", [])}
+            if instance.plan_id:
+                plan_ids.add(instance.plan_id)
+            visible_plan_cache = self.context.setdefault("_visible_finance_plan_ids", {})
+            unresolved_ids = plan_ids - visible_plan_cache.keys()
+            if unresolved_ids:
+                visible_ids = set(scope_plan_queryset(
+                    PaymentPlan.objects.filter(pk__in=unresolved_ids), user,
+                ).values_list("pk", flat=True))
+                visible_plan_cache.update({plan_id: plan_id in visible_ids for plan_id in unresolved_ids})
+            visible_plan_ids = {plan_id for plan_id in plan_ids if visible_plan_cache.get(plan_id, False)}
+            if instance.plan_id not in visible_plan_ids:
+                data["plan"] = None
+            data["allocations"] = [row for row in data.get("allocations", []) if row["plan"] in visible_plan_ids]
+        return data
+
     def get_allocations(self, obj):
         allocations = getattr(obj, "_prefetched_objects_cache", {}).get("allocations")
         if allocations is None:
@@ -1923,6 +2276,23 @@ class PaymentPlanSerializer(serializers.ModelSerializer):
         model = PaymentPlan
         fields = "__all__"
         read_only_fields = ["settled_amount", "status"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        user = serializer_user(self.context)
+        if instance.order_id:
+            if not user_can(user, "customers", "view"):
+                data["customer_id"] = None
+                data["counterparty_name"] = ""
+            if not user_can(user, "orders", "view"):
+                data["contract_no"] = ""
+        else:
+            if not user_can(user, "suppliers", "view"):
+                data["supplier_id"] = None
+                data["counterparty_name"] = ""
+            if not user_can(user, "purchases", "view"):
+                data["contract_no"] = ""
+        return data
 
     def get_exchange_rate(self, obj):
         return (obj.order or obj.purchase_order).exchange_rate
@@ -2012,7 +2382,16 @@ class PackagingTemplateSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["code"]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not user_can(serializer_user(self.context), "suppliers", "view"):
+            data.update(supplier=None, supplier_name="")
+        return data
+
     def validate(self, attrs):
+        supplier = attrs.get("supplier", getattr(self.instance, "supplier", None))
+        if supplier and not user_can(serializer_user(self.context), "suppliers", "view"):
+            raise PermissionDenied("关联供应商需要供应商查看权限。")
         checks = {
             "carton_length": ("箱长必须大于 0。", lambda value: value > 0),
             "carton_width": ("箱宽必须大于 0。", lambda value: value > 0),
@@ -2065,7 +2444,18 @@ class SKUPackagingProfileSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["verified_at", "verified_by"]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not user_can(serializer_user(self.context), "skus", "view"):
+            data.update(sku=None, sku_code="", product_name="", effective_packaging=None)
+        elif not user_can(serializer_user(self.context), "products", "view"):
+            data["product_name"] = ""
+        return data
+
     def validate(self, attrs):
+        user = serializer_user(self.context)
+        if ("sku" in attrs or self.instance is None) and user is not None and not user_can(user, "skus", "view"):
+            raise PermissionDenied("SKU 包装配置需要 SKU 查看权限。")
         if self.instance and "sku" in attrs and attrs["sku"].pk != self.instance.sku_id:
             raise serializers.ValidationError({"sku": "SKU 包装配置创建后不能更换 SKU。"})
 
@@ -2250,7 +2640,9 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
             request = self.context.get("request")
             user = getattr(request, "user", None)
         if user is None:
-            obj._visible_sales_orders_cache = list(obj.related_orders.all()) or ([obj.order] if obj.order_id else [])
+            # Nested serializers are used from several context builders. With
+            # no request identity they must not expose sales links by default.
+            obj._visible_sales_orders_cache = []
             return obj._visible_sales_orders_cache
         from .permissions import user_can
 
@@ -2313,6 +2705,12 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
         if quantity <= 0 or attrs.get("unit_cost", Decimal("0")) < 0:
             raise serializers.ValidationError("数量必须大于零，单位成本不能为负。")
         movement_type = attrs.get("type", getattr(self.instance, "type", ""))
+        user = serializer_user(self.context)
+        unit_cost = attrs.get("unit_cost", getattr(self.instance, "unit_cost", Decimal("0")))
+        if unit_cost and user is not None and not user_can(user, "purchases", "update"):
+            current_cost = self.instance.unit_cost if self.instance else Decimal("0")
+            if unit_cost != current_cost:
+                raise PermissionDenied("修改库存成本需要采购修改权限。")
         if movement_type in {"purchase_in", "sale_out"}:
             raise serializers.ValidationError("采购入库和销售出库请从采购到货、订单发货登记，确保业务同步。")
         if self.instance and any(key in attrs and attrs[key] != getattr(self.instance, key) for key in ("sku", "type")):
@@ -2324,6 +2722,14 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
         orders = list(related_orders) if related_orders is not None else ([order] if order else [])
         if related_orders is not None:
             attrs["order"] = orders[0] if orders else None
+        from .procurement_scope import require_order_writes
+        related_order_ids = [row.pk for row in orders]
+        if self.instance:
+            related_order_ids.extend(self.instance.related_orders.values_list("pk", flat=True))
+            related_order_ids.append(self.instance.order_id)
+        require_order_writes(serializer_user(self.context), related_order_ids)
+        if supplier_sku and not user_can(serializer_user(self.context), "suppliers", "view"):
+            raise PermissionDenied("关联供应商来源需要供应商查看权限。")
         if sku and orders and not any(related_order.items.filter(sku=sku).exists() for related_order in orders):
             raise serializers.ValidationError("选择的 SKU 不在任一关联订单明细中。")
         if supplier_sku and sku and supplier_sku.sku_id != sku.pk:
@@ -2335,6 +2741,11 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        user = serializer_user(self.context)
+        if not user_can(user, "suppliers", "view"):
+            data["supplier_sku"] = None
+        if not user_can(user, "purchases", "view"):
+            data["unit_cost"] = None
         visible_ids = {order.pk for order in self._visible_sales_orders(instance)}
         if data.get("order") not in visible_ids:
             data["order"] = None

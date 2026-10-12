@@ -14,6 +14,10 @@ def require_finance_permission(user, module, action):
 
 
 def scope_plan_queryset(queryset, user):
+    if not user_can(user, "orders", "view"):
+        queryset = queryset.filter(order__isnull=True)
+    if not user_can(user, "purchases", "view"):
+        queryset = queryset.filter(purchase_order__isnull=True)
     if effective_data_scope(user) == "all":
         return queryset
     customers = scope_customer_queryset(Customer.objects.all(), user)
@@ -49,6 +53,24 @@ def validate_finance_relations(attrs, user, instance=None):
         return attrs.get(name, getattr(instance, name, None))
     customers = scope_customer_queryset(Customer.objects.all(), user)
     customer, order, plan = value("customer"), value("order"), value("plan")
+    purchase_order = value("purchase_order")
+    supplier = value("supplier")
+    if customer and not user_can(user, "customers", "view"):
+        raise PermissionDenied("关联客户需要客户查看权限。")
+    if supplier and not user_can(user, "suppliers", "view"):
+        raise PermissionDenied("关联供应商需要供应商查看权限。")
+    if (order or (plan and plan.order_id)) and not user_can(user, "customers", "view"):
+        raise PermissionDenied("销售财务关联需要客户查看权限。")
+    if (purchase_order or (plan and plan.purchase_order_id)) and not user_can(user, "suppliers", "view"):
+        raise PermissionDenied("采购财务关联需要供应商查看权限。")
+    if order and not user_can(user, "orders", "view"):
+        raise PermissionDenied("关联销售订单需要订单查看权限。")
+    if purchase_order and not user_can(user, "purchases", "view"):
+        raise PermissionDenied("关联采购单需要采购查看权限。")
+    if plan and plan.order_id and not user_can(user, "orders", "view"):
+        raise PermissionDenied("关联收款计划需要订单查看权限。")
+    if plan and plan.purchase_order_id and not user_can(user, "purchases", "view"):
+        raise PermissionDenied("关联付款计划需要采购查看权限。")
     ids = [obj.pk for obj in [customer] if obj]
     if order:
         ids.append(order.customer_id)

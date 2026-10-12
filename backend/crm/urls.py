@@ -8,6 +8,7 @@ from .views import AccessRoleViewSet, CategoryAttributeViewSet, ContactViewSet, 
 from .sales_rules import SalesRuleViewSet
 
 from .trade_units import SKUTradeUnitViewSet
+from .file_access import protected_media
 
 router = DefaultRouter()
 router.register("sku-trade-units", SKUTradeUnitViewSet)
@@ -45,6 +46,7 @@ router.register("operation-logs", OperationLogViewSet, basename="operation-log")
 from .reporting import report_catalog, report_data
 
 urlpatterns = [
+    path("media/<path:relative_path>", protected_media, name="crm-protected-media"),
     path("products/<int:pk>/combination-rules/", ProductCombinationRulesView.as_view()),
     path("products/<int:pk>/sku-plan/", ProductSKUPlanView.as_view()),
     path("products/<int:pk>/sku-plan/<str:operation>/", ProductSKUPlanActionView.as_view()),

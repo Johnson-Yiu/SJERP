@@ -165,7 +165,28 @@ class SKUTradeUnitSerializer(serializers.ModelSerializer):
         # explicit validation and all database constraints remain in force.
         validators = []
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        from .permissions import user_can
+        request = self.context.get("request")
+        user = request.user if request is not None else self.context.get("user")
+        if not user_can(user, "suppliers", "view"):
+            data.update(supplier=None, supplier_name="")
+        if not user_can(user, "skus", "view"):
+            data.update(sku=None, sku_code="")
+        return data
+
     def validate(self, attrs):
+        from rest_framework.exceptions import PermissionDenied
+        from .permissions import user_can
+        request = self.context.get("request")
+        user = request.user if request is not None else self.context.get("user")
+        sku = attrs.get("sku", getattr(self.instance, "sku", None))
+        supplier = attrs.get("supplier", getattr(self.instance, "supplier", None))
+        if sku and not user_can(user, "skus", "view"):
+            raise PermissionDenied("交易单位关联需要 SKU 查看权限。")
+        if supplier and not user_can(user, "suppliers", "view"):
+            raise PermissionDenied("关联供应商需要供应商查看权限。")
         if self.instance:
             for field in ('sku', 'supplier', 'name', 'unit', 'factor', 'allow_fraction'):
                 if field in attrs and attrs[field] != getattr(self.instance, field):
@@ -195,6 +216,10 @@ class SKUTradeUnitViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = SKUTradeUnitSerializer
     queryset = SKUTradeUnit.objects.select_related('sku', 'supplier').all()
     search_fields = ['name', 'unit', 'sku__sku', 'sku__display_name_cn']
+
+    def get_search_fields(self, request):
+        from .permissions import user_can
+        return list(self.search_fields) if user_can(request.user, "skus", "view") else ["name", "unit"]
     http_method_names = ['get', 'post', 'patch', 'head', 'options']
 
     def get_queryset(self):

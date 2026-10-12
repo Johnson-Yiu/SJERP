@@ -327,7 +327,7 @@ class SalesDataScopeTests(TestCase):
             sku=sku, order=order_b, quantity=1, warehouse="共享仓",
         )
         movement.related_orders.set([order_a, order_b, order_c])
-        supplier = Supplier.objects.create(name="范围采购供应商", code="SRP")
+        supplier = Supplier.objects.create(name="范围采购供应商", code="SR")
         source = self.make_supplier_source(sku, "SCOPE-REDACT")
         for role in (self.roles["self"], self.roles["department"]):
             RolePermission.objects.create(

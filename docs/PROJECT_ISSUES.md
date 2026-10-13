@@ -1,0 +1,118 @@
+# SUNJACK-ERP 项目问题台账
+
+核对基线：`master` / `cdaa8f0`（2026-10-13）。本台账只登记可追溯的问题、尚未完成的验收、明确延期项和待决事项；本次未修改业务代码。R0-E1 经独立审查为 PARTIAL PASS，不能据此推导未覆盖流程通过。
+
+## 状态和优先级
+
+- `OPEN`：当前证据确认仍有缺陷，或尚未完成的准备任务。
+- `BLOCKED`：依赖业务/用户/运维决策、获准的测试前提或外部部署配置；“延期”事项也用此状态，并在记录中注明延期原因。
+- `NEEDS_VERIFICATION`：历史失败、风险或本轮未覆盖项尚无足够当前证据确认修复或仍然失败。
+- `FIXED_PENDING_REVIEW`：修复和复测证据已记录，仍等待独立 ChatGPT/用户复审；Codex 不得自行关闭。
+- `CLOSED`：只供有验收证据且完成所需独立复审的记录使用。当前表只列未关闭事项；已关闭历史见下文。
+
+优先级以影响而非发现年代决定：P0 为立即重大损害/暴露；P1 为核心业务、安全或内测门槛；P2 为有实质影响但可通过流程/受控范围缓解；P3 为较低紧急度的可用性或效率改进。Enhancement 表示未承诺范围，保留原分类，不强行映射为 P 级。
+
+负责人使用职责角色，不虚构个人分配。每项关闭前须满足记录的关闭条件并更新证据；有“待复审”标记的事项只能由独立复审或用户明确接受后关闭。
+
+## 未关闭事项
+
+### P1：核心业务、安全与内测门槛
+
+| ID | 状态 | 来源 | 影响与当前证据 | 负责人 / 建议处理 | 计划阶段 | 关闭条件 |
+|---|---|---|---|---|---|---|
+| ISS-001 | OPEN | [R0-E1 §问题](R0-E1-综合业务回归与内测准备.md)；[Phase 3 状态机 GAP](Phase3-业务流程与异常UAT计划.md) | E1 UI 已复现：全部发货但欠 USD 160 时仍可完成订单；工作台随即没有待办，应收仍未结。可能让业务人员停止催收。 | 业务负责人决定“完成”是履约完成还是整单结清；产品/开发按决定统一 UI、API 和应收提醒。 | R0-E1 补验；用户确认后排期 | 有明确业务定义；UI/API 对允许与拒绝状态均有回归；欠款订单仍可追踪或无法被关闭；真实 UI 与独立复审通过。 |
+| ISS-002 | NEEDS_VERIFICATION | [R0-E1 npm audit](R0-E1-综合业务回归与内测准备.md) | 2026-10-13 的 `npm audit` 报告 30 项 High、0 Critical，涉及运行依赖和构建工具；未逐项判定可利用性，未升级。数字是该次审计快照，不代表当前仍是同一数量。 | 前端负责人重跑审计，按直接/传递依赖、可达性和兼容修复版本分级；锁文件更新后跑完整 CI。 | 内测开放外部访问前 | 当前 advisory 清单、受影响路径和修复/接受理由逐项记录；无未评估的可达高风险项；精确 HEAD 三项 CI 成功并经复审。 |
+| ISS-003 | BLOCKED | [R0-E1 RBAC 覆盖](R0-E1-综合业务回归与内测准备.md)；[D4-C API 矩阵](r0-d4b2c-api-permission-matrix.md)；[AGENTS 权限约定](../AGENTS.md) | D4-C 对 API 矩阵和若干隔离账号场景有实测证据；E1 真实业务 UI 仅用开发超级管理员，未在该闭环验证受限角色。进入内测前必须完成全站权限验收。开发身份和正式 RBAC 按约定保持不变。 | 内测负责人提出进入内测及真实测试账号授权；获授权后由 QA 按 self/department/department_tree/all、缺模块权限、跨模块关联、导出和文件 URL 执行隔离验收。不得自行关闭开发身份或启用 RBAC。 | 内测准备（须用户明确授权） | 真实隔离账号 UI/API 矩阵、网络状态和业务流程证据完整；拒绝与正常共享业务路径都通过；用户/独立审查确认。 |
+| ISS-004 | NEEDS_VERIFICATION | [真实用户 E2E §P1](真实用户E2E-UAT-20260923.md)；[R0-E1 财务覆盖](R0-E1-综合业务回归与内测准备.md) | 旧 UAT 的“新增记账”美元客户收款曾失败；应收计划登记可绕行。后续服务层和财务测试覆盖 USD，但 E1 未重新执行该直接 UI 入口。 | 财务 QA 用隔离订单，在“新增记账”走 USD 正常创建、校验失败无副作用及计划关联；确认 UI 金额、汇率和服务端流水一致。 | R0-E1 补验 | 直接记账与应收计划两条合法路径均真实 UI 成功；无效金额被清晰拒绝且流水/余额保持不变；自动测试及独立复审通过。 |
+| ISS-005 | NEEDS_VERIFICATION | [R0-E1 采购覆盖](R0-E1-综合业务回归与内测准备.md)；[Round 1 独立采购 SUP05](UAT-Round1-正式业务全流程测试.md) | E1 完成了共享采购链；旧 UI 只证明无来源的独立采购草稿可建，尚未证明独立采购从下单、到货、库存到付款的整条闭环。无销售订单的共享采购人员仍须可工作。 | 采购 QA 在隔离库走无关联订单的采购、部分/全部收货、应付及库存回查，不借 API/脚本替代 UI。 | R0-E1 补验 | 独立采购全闭环真实 UI 成功；库存、成本和付款统计一致；权限边界下仍可访问共享采购；自动化和复审通过。 |
+| ISS-006 | NEEDS_VERIFICATION | [R0-E1 库存覆盖](R0-E1-综合业务回归与内测准备.md)；[Phase 3C](Phase3C-不变量故障注入执行记录.md)；[Round 1 P2 Re-UAT](UAT-Round1-正式业务全流程测试.md) | E1 证实已被销售出库消耗的到货不能冲销；未在本轮验证未消耗到货成功冲销、发货冲销、超到和手工盘点完整 UI 路径。历史部分冲销/冲销后重收有证据，不能覆盖全部当前流程。 | 库存/采购 QA 用隔离记录执行成功及拒绝分支，核对库存、预留、采购状态、流水历史和重复操作原子性。 | R0-E1 补验 | 每种冲销的允许/拒绝路径、重复操作、余额/数量快照和 UI 反馈均通过；历史记录不被覆盖；PostgreSQL 与独立复审通过。 |
+| ISS-007 | NEEDS_VERIFICATION | [R0-E1 文件覆盖](R0-E1-综合业务回归与内测准备.md)；[UX 第二轮附件复测](Product-UX-Second-Review.md)；[D4-C 文件矩阵](r0-d4b2c-api-permission-matrix.md) | UX 记录曾遇到跟进附件详情链接访问失败（旧端口）；D4-C 后续对受控媒体 URL 做过授权 200/越权 404 HTTP 验证。E1 未实际上传/预览/下载或复验跟进附件、SKU 图片、报价图片快照和历史文件。 | QA 在隔离记录用一次性文件完成上传、保存、重开、预览/下载、历史快照和直接 URL 授权/拒绝验证；保留 HTTP 状态与响应内容。 | R0-E1 补验；外部访问前 | 各文件类型用户流程与直接 URL 权限均有实际证据；历史文件可按策略访问；非授权访问无内容泄漏；独立复审通过。 |
+| ISS-008 | FIXED_PENDING_REVIEW | [旧国家报价失败](真实用户E2E-UAT-20260923.md)；[`test_root_number_resolves_standard_iso_country_identifiers`](../backend/crm/tests/test_quotes.py)；[UX2 FR-002](Product-UX-Second-Review.md) | 旧 UAT 曾报 Sweden/Germany/Austria 国家报价编号失败。当前代码测试覆盖 Sweden/大小写和 ISO 国家标识；Chrome 复测修复了空/不支持国家提示，但 E1 未重跑 Sweden 正常 UI 保存。 | 报价 QA 真实 UI 验证 Sweden、Germany、Austria 以及空/无效国家；保持错误时表单输入。 | R0-E1 补验 | 代表性有效国家报价成功、无效值被清晰拒绝；对应自动测试和真实 UI 证据经独立复审。 |
+| ISS-009 | FIXED_PENDING_REVIEW | [UX2 FR-001](Product-UX-Second-Review.md) | 创建跟进后客户详情刷新而客户列表日期陈旧；已记录修复和真实 Chrome AFTER。 | 前端负责人保留修复；独立复审核对同页无刷新时列表/详情同步。 | UX 第二轮复审 | 修复证据、自动回归与独立复审均通过。 |
+| ISS-010 | FIXED_PENDING_REVIEW | [UX2 FR-002](Product-UX-Second-Review.md) | 空/无效国家报价错误曾只显示英文；已改善中文指引并保留表单，当前有效国家映射仍由 ISS-008 追踪。 | 独立复审验证错误文案和输入保留，不重复扩大国家映射范围。 | UX 第二轮复审 | 错误 UI 回归和独立复审通过；ISS-008 单独关闭。 |
+| ISS-011 | FIXED_PENDING_REVIEW | [UX2 FR-003](Product-UX-Second-Review.md) | 同 SKU 多订单行采购/到货进度容易被解释成重复数量；已记录显示修复和 Chrome AFTER。 | 采购/销售 QA 核对聚合口径和行级身份仍准确。 | UX 第二轮复审 | 同 SKU、多订单真实 UI 和自动回归通过，独立复审接受。 |
+| ISS-012 | FIXED_PENDING_REVIEW | [UX2 FR-004](Product-UX-Second-Review.md) | 部分发货后 readiness 提示不准确；已修复并记录部分发货 Chrome AFTER。 | 销售 QA 验证剩余量/预留量边界。 | UX 第二轮复审 | 足量、部分和不足库存场景均正确，独立复审接受。 |
+| ISS-013 | FIXED_PENDING_REVIEW | [UX2 FR-005](Product-UX-Second-Review.md) | 收货冲销后原库存流水状态显示陈旧；已修复显式关联并有 AFTER 证据。 | 库存 QA 复核原始流水及冲销流水的来回导航和状态。 | UX 第二轮复审 | 重开和当前详情均展示同一冲销关系，测试与独立复审通过。 |
+| ISS-014 | FIXED_PENDING_REVIEW | [UX2 FR-006](Product-UX-Second-Review.md) | 库存流水筛选后返回丢失列表上下文；已修复路由筛选保持。 | 库存 QA 验证搜索、排序、SKU 与返回路径。 | UX 第二轮复审 | 浏览器返回与刷新都恢复筛选上下文，独立复审通过。 |
+| ISS-015 | FIXED_PENDING_REVIEW | [UX2 FR-007](Product-UX-Second-Review.md) | 手工流水冲销后仍打开的原详情状态陈旧；已记录修复后 Chrome AFTER，修复前截图缺失。 | 独立复审以现有原始观察记录和 AFTER 证据评估；不补造 BEFORE 图。 | UX 第二轮复审 | 状态同步回归通过且独立复审明确接受证据限制。 |
+| ISS-016 | FIXED_PENDING_REVIEW | [UX2 FR-008](Product-UX-Second-Review.md) | 新建订单可选预计交期留空时曾报日期格式错误；已修复并有真实 UI AFTER 与自动回归。 | 销售 QA 复核空值、有效日期及错误路径。 | UX 第二轮复审 | 空值按约定保存、有效日期不变、独立复审通过。 |
+
+### P1：生产上线前置风险（当前不进入部署）
+
+| ID | 状态 | 来源 | 影响与当前证据 | 负责人 / 建议处理 | 计划阶段 | 关闭条件 |
+|---|---|---|---|---|---|---|
+| ISS-017 | BLOCKED | [D4-C C-08](r0-d4b2c-api-permission-audit.md)；[D4-C 矩阵](r0-d4b2c-api-permission-matrix.md) | 仓库内 API 文件权限已收口，但对象存储/CDN/反向代理 ACL 和外部证书 `file_url` 不在仓库控制范围；无法证明部署直链私有。 | 运维确认存储桶、CDN、反向代理访问策略；业务负责人决定外部证书链接是否公开。 | 部署前安全验收 | 部署环境配置审计、未授权直链实测和证书链接策略有记录；安全复审通过。 |
+| ISS-018 | BLOCKED | [Phase 4A BLOCKER-DR-01](Phase4-生产化加固审计与实施计划.md) | 数据库与媒体文件联合备份/恢复尚无演练证据，灾难恢复完整性未知。 | 运维在隔离环境设计并执行一致性备份、恢复、行数/金额/图片校验和恢复时间记录。 | 部署前运维验收 | 备份可恢复且 DB/媒体关系完整，演练与回滚证据经独立复审。 |
+| ISS-051 | BLOCKED | [Phase4A production blockers](Phase4-生产化加固审计与实施计划.md)；[AGENTS development identity rule](../AGENTS.md) | 生产环境的 secret/DEBUG/APP_STAGE/开发超级管理员默认值及 session/401/route-guard 部署配置未在目标环境验收。D4 应用权限开发已推进，但不能把开发环境默认配置视为生产安全证明。 | 运维/安全负责人按实际目标环境做配置审计；开发超级管理员约定不在本开发任务中更改，生产开关必须在明确部署授权后处理。 | 部署前安全验收（未授权） | 目标环境 secret、DEBUG、APP_STAGE、认证与错误路由配置均满足安全策略，真实部署验收及独立复审通过。 |
+
+### P2：未充分验证、业务待决及体验欠账
+
+| ID | 状态 | 来源 | 影响与当前证据 | 负责人 / 建议处理 | 计划阶段 | 关闭条件 |
+|---|---|---|---|---|---|---|
+| ISS-019 | NEEDS_VERIFICATION | [R0-E1 报表覆盖](R0-E1-综合业务回归与内测准备.md)；[D4-C 矩阵](r0-d4b2c-api-permission-matrix.md) | D4-C 已实测查看有权/无导出权限时 CSV 返回 403；E1 只看页面数字并点击导出按钮，没有取得实际 CSV 文件核对列、金额、筛选期间和编码。 | 报表 QA 对照已应用查询条件检查下载内容、汇总和权限；不把页面数字等同于文件正确。 | R0-E1 补验 | 多种报表来源的文件内容与 UI/API 聚合一致；view-only 导出被拒；正向下载真实 HTTP 与文件均通过。 |
+| ISS-020 | NEEDS_VERIFICATION | [R0-E1 Quote/PI 覆盖](R0-E1-综合业务回归与内测准备.md)；[Round1 PI Re-UAT](UAT-Round1-正式业务全流程测试.md) | Round1 曾核对 PI XLSX 金额大写；E1 未重新下载 PI/XLSX 或检查当前历史报价图片快照、文件可读性和内容一致。 | 报价 QA 导出隔离报价 PI/XLSX，核金额、币种、图片和历史版本快照。 | R0-E1 补验 | 实际文件可打开、内容与保存版本一致；历史图片不随 SKU 现图变化；独立复审通过。 |
+| ISS-052 | NEEDS_VERIFICATION | [R0-E1 import coverage](R0-E1-综合业务回归与内测准备.md)；[R0-C3 Safe CSV Import](R0-C3-Safe-CSV-Import.md) | E1 仅运行导入自动测试，没有通过真实 UI 选择隔离 CSV、检查预览并执行导入；不能证明当前浏览器文件选择、列映射、逐行错误和重复记录行为端到端可用。 | QA 用一次性客户/产品样本走 CSV 预览、确认导入、重开核对及重复/坏行拒绝；仅用隔离库和无敏感内容文件。 | R0-E1 补验 | UI 上传、预览、执行和错误结果与数据库/审计一致；重复数据不覆盖历史；保留真实 HTTP/文件证据。 |
+| ISS-021 | BLOCKED | [R0-E1 ContractChange](R0-E1-综合业务回归与内测准备.md)；[Phase3 UI COVERAGE GAP-01](Phase3-业务流程与异常UAT计划.md) | 有后端审批动作，但无专用正常 UI 批准流程；E1 未审批合同变更。是否属于内测必要流程尚未决定。 | 业务负责人决定纳入内测还是明确排除；如纳入，再实现 UI/审批审计并验金额、计划、快照；不得以 API 冒充完成。 | 内测范围决策后 | 有书面范围决定；若纳入，审批/拒绝/重复操作/UI 与历史计划快照均通过。 |
+| ISS-022 | BLOCKED | [Phase3 POLICY GAP-01](Phase3-业务流程与异常UAT计划.md)；[Task C](TaskC-订单采购草稿闭环.md)；[R0-E1 P2](R0-E1-综合业务回归与内测准备.md) | SupplierSKU MOQ 已有提示/快照行为线索，但“提醒还是硬限制”的业务政策仍未确认；不可擅改采购流程。 | 采购业务负责人明确 MOQ 的单位、提醒/拦截规则、例外授权及历史兼容。 | 业务决策；授权后排期 | 决策写入采购规则与验收用例；正常采购与越界场景均通过。 |
+| ISS-023 | OPEN | [R0-E1 SKU 覆盖](R0-E1-综合业务回归与内测准备.md) | E1 测试 SKU 的 Sales Model 为“—”，只证明样本未配置，不证明真实产品数据完整；报价/订单识别可能受影响。 | 内测数据负责人整理实际 SKU、产品前缀及型号，按业务样本抽查。 | 内测数据准备 | 目标 SKU 的必需 Sales Model 完整，报价和历史快照抽样通过。 |
+| ISS-024 | OPEN | [R0-E1 供应来源覆盖](R0-E1-综合业务回归与内测准备.md)；[E2E 供应来源说明](真实用户E2E-UAT-20260923.md) | Supplier Source 是 SKU 级采购候选前置条件；只建供应商主档不会自动为每个 SKU 生成候选，容易导致采购草稿没有可选来源。 | 采购负责人逐 SKU 建立/核对供应来源；培训材料简明说明配置位置与候选范围。 | 内测数据准备 | 目标 SKU 采购候选清单核验完成，操作人员能按说明找到并选择来源。 |
+| ISS-025 | NEEDS_VERIFICATION | [UX2 客户阶段标识](Product-UX-Second-Review.md)；[R0-E1 P2](R0-E1-综合业务回归与内测准备.md) | 旧样本客户列表“已联系”和详情“联系人”用词不同；客户阶段后来变化，原场景无法复现，记录明确 DEFERRED。不得更改生命周期值来凑一致。 | QA 准备新的隔离样本覆盖该阶段；产品确认两处标签应表达同一业务状态。 | 后续 UX 复核 | 可复现样本确认语义，统一文案且不改状态值；独立复审通过。 |
+| ISS-026 | NEEDS_VERIFICATION | [Round1 SUP04](UAT-Round1-正式业务全流程测试.md) | 旧 UAT 删除有关联供应商时得到“后端服务暂时不可用”，因当时存在采购和财务引用未重复操作；后续未找到明确根因闭环。不是当前确认缺陷。 | 后端 QA 在隔离数据中复验关联删除保护与错误提示；不对开发库或真实供应商执行删除。 | 后续安全回归 | 有关联时明确拒绝并保留关联记录；无关联时正常删除；无 500/模糊提示。 |
+| ISS-027 | NEEDS_VERIFICATION | [真实用户 E2E P2](真实用户E2E-UAT-20260923.md)；[R0-C1](R0-C1-Followup-Safety.md) | 旧 UAT 客户资料中留空下次跟进日期会触发日期格式错误；R0-C1 后续已加入显式清除计划流程，但 E1 未复测该旧编辑入口。 | CRM QA 分别测试 profile 空值保存、保留日期、显式清除；明确可选字段语义。 | 后续 CRM 回归 | 空值/清除规则明确，UI/API一致且无意外删除历史跟进。 |
+| ISS-028 | NEEDS_VERIFICATION | [真实用户 E2E P2](真实用户E2E-UAT-20260923.md)；[业务回归报告](业务流程与修改回归测试报告-20260922.md) | 旧报告指出产品选根分类后的归类结果不稳定；后续产品/分类实现已演进，E1 未专项复测。 | 产品 QA 以根分类和子分类分别建产品、重开并检查分类、属性继承及过滤。 | 后续产品主数据回归 | 两类分类归属/继承符合当前规则，自动回归与真实 UI 通过。 |
+| ISS-029 | NEEDS_VERIFICATION | [真实用户 E2E P2](真实用户E2E-UAT-20260923.md)；[Task H1 快照规则](TaskH1-客户跟进报价链路.md) | 旧 UAT 曾发现报价收件人邮箱不稳定保留；Task H1 写明快照规则，E1 未检查该字段。 | 报价 QA 通过客户预填、手工输入、保存、重开和 PI 导出核对邮箱。 | 后续报价回归 | Quote/API/PI 三处邮箱与买方快照一致，未编辑历史版本不变。 |
+| ISS-030 | FIXED_PENDING_REVIEW | [UX2 Final Polish](Product-UX-Second-Review.md) | 只读汇率/单位成本小数末尾零显示已规范化，不改数值；有自动测试和真实页面证据。 | 独立复审检查可读性和精度不变。 | UX 第二轮复审 | 独立复审确认展示简化且无精度/业务值变化。 |
+| ISS-031 | FIXED_PENDING_REVIEW | [UX2 Final Polish](Product-UX-Second-Review.md) | 订单/采购草稿重复确认入口已收敛；无重复业务提交被观察到。 | 独立复审检查保留主操作和待办信息。 | UX 第二轮复审 | 页面路径及业务动作回归通过，独立复审接受。 |
+| ISS-032 | FIXED_PENDING_REVIEW | [UX2 Final Polish](Product-UX-Second-Review.md) | 订单完成/取消与采购缺口 helper 文案已按状态调整；E1 另确认完成订单欠款催收任务仍缺，见 ISS-001。 | 独立复审区分 helper 文案与待办业务缺口，不以此关闭 ISS-001。 | UX 第二轮复审 | 状态提示准确、ISS-001 独立解决后复审。 |
+| ISS-033 | FIXED_PENDING_REVIEW | [UX2 Final Polish](Product-UX-Second-Review.md) | 报价/订单明细名称、SKU 和交易/基础数量层级及间距已调整；保存值不变。 | 独立复审查看窄宽视口与长编号。 | UX 第二轮复审 | 视觉层级可读、内容无裁切，自动与人工复审通过。 |
+| ISS-034 | FIXED_PENDING_REVIEW | [UX2 Final Polish](Product-UX-Second-Review.md) | 已保存 PI 预览标题区分编辑草稿与历史报价；金额和导出逻辑未改。 | 独立复审核对已保存/未保存两种状态。 | UX 第二轮复审 | 两种预览状态正确，独立复审通过。 |
+| ISS-035 | NEEDS_VERIFICATION | [Phase4 UX ISSUE-01](Phase4-生产化加固审计与实施计划.md) | 旧审计记录 published SKU schema 与分类模板变更提示不一致；后续可能随产品页迭代改变，未找到明确关闭证据。 | 产品 QA 在已发布 schema 和模板变更各做一次真实 UI 操作，检查影响说明和确认语义。 | 后续产品 UX 复核 | 当前两处提示一致准确，避免用户误解已发布 SKU 影响；独立复审通过。 |
+| ISS-036 | NEEDS_VERIFICATION | [Phase4 UX ISSUE-02](Phase4-生产化加固审计与实施计划.md) | 旧审计发现非整包装验证失败 toast 可能显示 `[object Object]`；尚无明确当前复测。 | 前端 QA 在非整包装拒绝分支验证本地化错误提示和输入保留。 | 后续采购/包装 UX 复核 | 用户可读的错误原因显示；无错误对象原样文本；自动/真实 UI 通过。 |
+| ISS-037 | BLOCKED | [Product Completion Review §snapshot](Product-Completion-Review-Phase1.md)；[UX2 snapshot checks](Product-UX-Second-Review.md) | 报价/采购行有历史快照；订单主记录使用当前 Customer 关联名，客户改名后历史合同展示预期尚未由业务确认。旧 UX 复核也把客户/供应商全名地址快照复测列为 pending。 | 业务负责人决定订单合同主体应展示当前主档还是交易时快照；QA 再验证客户/供应商改名对 Quote/Order/PO/PI 历史的影响。 | 业务决策后进行历史快照审查 | 有明确历史展示规则；代表性改名后历史文件与订单展示符合规则并经复审。 |
+| ISS-038 | BLOCKED | [D4-B2-A Finance](r0-d4b2a-finance-scope.md)；[focused repair](r0-d4b2a-focused-repair.md) | 一部分历史销售类型流水缺客户、订单或计划关联，当前数据结构不能安全推断归属。受限用户已按规则隐藏；all+相应模块权限人员可查。 | 财务负责人逐笔核对原始业务凭证，决定补充关联还是确认公共费用；禁止按备注/参考号自动猜测或改历史金额。 | 财务数据治理（获业务授权后） | 每笔记录由业务凭证确认归属并留审计；无法确认者继续保留受限访问策略，不假定为已关闭。 |
+| ISS-039 | BLOCKED | [D4-B2-B Procurement](r0-d4b2b-procurement-scope.md) | 跨权限委托的采购成本重分摊会整单重算公共费用；现有模型没有订单级委托授权。当前安全策略对无权销售关联脱敏并拒绝整单修改。 | 业务负责人决定委托权限或局部调整语义；暂不扩展授权模型、不破坏共享采购。 | 业务决策后 | 有正式委托授权规则；跨订单分摊可只改变获授权订单且保持总量/费用不变量，完整回归通过。 |
+| ISS-043 | BLOCKED | [Phase4 `RISK-AUDIT-01`](Phase4-生产化加固审计与实施计划.md) | OperationLog API/admin 只读，但数据库层无 append-only 约束；有数据库写权限的操作者可改删审计记录。 | 运维/安全负责人决定数据库权限、触发器或不可变存储策略，并评估备份/审计保留。 | 部署前审计加固 | 实际部署数据库权限验证不能更新/删除审计行，或有经批准的等效防篡改控制和演练。 |
+| ISS-044 | NEEDS_VERIFICATION | [Phase4B `DATA-MIGRATION-RISK-01`](Phase4B-PostgreSQL兼容性执行记录.md)；[Phase4A PostgreSQL risk](Phase4-生产化加固审计与实施计划.md) | PostgreSQL 17 CI 及并发测试通过；生产数据迁移演练未做。旧风险特别要求迁移前扫描真实数据 `Supplier.code` 是否超过 2 字符，且禁止静默截断；staging 业务数据、金额/库存和恢复流程仍未核实。 | DBA/运维用只读检查报告异常，再在隔离 staging 演练迁移和序列校准；不可改开发库或擅自迁移。 | 迁移/部署准备（尚未授权） | staging migration、行数、金额、库存、编码映射、序列和回滚校验均通过，独立复审接受。 |
+| ISS-045 | NEEDS_VERIFICATION | [Phase3 `LTD-02/04/06`](Phase3-业务流程与异常UAT计划.md) | 旧 `run_business_flow_checks.py`、`run_edge_business_flow_checks.py` 和 `seed_demo.py` 与当前 API/UI 契约不完全一致；有脚本绕过 serializer、状态机或迁移风险，不可把脚本成功当作正式验收。 | QA/开发确定保留、更新或废弃；在其完成前以当前 UI/API/自动测试为验收源。 | QA 工具维护 | 脚本与当前业务约束同步并通过对照，或明确下线且 CI/文档不再把它当门禁。 |
+| ISS-046 | BLOCKED | [D4-C final evidence](r0-d4b2c-api-permission-matrix.md)；[R0-E1 evidence limitation](R0-E1-综合业务回归与内测准备.md) | R0-D4-C 截图上传在浏览器策略下被拒；E1 截图仅在内置浏览器查看，没有独立文件。禁止绕过浏览器安全策略；这不否认已记录的 HTTP/UI 结果，但限制离线视觉复审。 | 复审人使用应用允许的证据附件方式，或接受文本/HTTP 可验证记录；不得从浏览器原始命令导出。 | 独立复审证据整理 | 在合规方式下形成可访问证据或独立审查明确接受限制；不伪造截图。 |
+| ISS-047 | BLOCKED | [Phase4 `RISK-MEDIA-01`](Phase4-生产化加固审计与实施计划.md)；[D4-C C-08](r0-d4b2c-api-permission-audit.md) | 本地媒体存储未形成多实例/对象存储架构决策；与 ISS-017 的访问 ACL 风险不同，本项关注部署可用性、备份一致性和扩展。 | 运维选择单实例约束或共享持久化对象存储，定义保留、备份和迁移策略。 | 部署架构评审 | 目标拓扑和恢复策略经容量/媒体完整性测试验证。 |
+
+### P3 / 未承诺 Enhancement
+
+| ID | 优先级 / 状态 | 来源 | 影响与当前证据 | 负责人 / 建议处理 | 计划阶段 | 关闭条件 |
+|---|---|---|---|---|---|---|
+| ISS-040 | Enhancement / BLOCKED（延期） | [PCR-007 completion note](Product-Optimization-Phase2G-PCR007.md)；[Phase1 completion review](Product-Completion-Review-Phase1.md) | 实际装箱 UI/API 已按 PCR-007 原范围验收；正式 Packing List PDF/Excel 输出未实现。历史审查要求先确认客户/物流是否需要，不能把该增量称为已承诺缺陷。 | 销售/物流负责人决定是否需要对客或物流输出；如需要，定义格式/快照/权限后单独立项。 | Enhancement-Later（决策后） | 明确不需要并记录排除，或完整实现文件导出并验收。 |
+| ISS-041 | Enhancement / BLOCKED（延期） | [Product Completion Review PCR-009](Product-Completion-Review-Phase1.md)；[UX2 reassessment](Product-UX-Second-Review.md) | ProductWorkspace 已有产品销售汇总；客户年度洞察仍是 Enhancement-Later，不属于已承诺功能。 | 产品负责人基于真实使用需求决定是否立项。 | Enhancement-Later | 决定“不做”并保留记录，或新增范围/数据口径/验收后完成。 |
+| ISS-042 | Enhancement / BLOCKED（延期） | [Product Completion Review PCR-018](Product-Completion-Review-Phase1.md)；[UX2 reassessment](Product-UX-Second-Review.md) | 报表图块目前保存于浏览器 localStorage，跨用户/设备共享视图未实现。 | 报表负责人根据团队重复使用证据决定是否建设共享模板；不提前引入审批模型。 | Enhancement-Later | 明确不需要或完成团队共享模板的权限、同步和多用户验收。 |
+| ISS-048 | P3 / BLOCKED（延期） | [Product Completion PCR-013](Product-Completion-Review-Phase1.md)；[UX2 reassessment](Product-UX-Second-Review.md) | 经营/财务概览部分指标缺下钻或期间口径说明；已有数值和明细路径不能据此判为错误。 | 产品负责人挑选真实有操作价值的指标，定义下钻和口径后再排期。 | P3-Later | 有范围/口径验收，或书面确认维持现状。 |
+| ISS-049 | P3 / BLOCKED（延期） | [Product Completion PCR-016](Product-Completion-Review-Phase1.md) | 客户、跟进、流水等通用列表的负责人/日期/类型筛选建议；不是当前已确认错误。 | 根据实际检索负担选择页面和最少筛选项。 | P3-Later | 有用户场景和范围，或确认不做；开发后真实列表复测。 |
+| ISS-050 | P3 / NEEDS_VERIFICATION（等待样本） | [Product Completion PCR-017](Product-Completion-Review-Phase1.md)；[UX2 reassessment](Product-UX-Second-Review.md) | 50–100 SKU 的参数、HS、包装维护是否需要批量继承尚无代表性工作量数据。 | 产品数据负责人用真实规模样本测维护时间，再决定是否做批量能力。 | P3-Later | 有记录的 50–100 SKU 观察与业务决定。 |
+
+## 本次统计
+
+统计包含以上仍需跟踪的记录，不把“缺少当前场景复验”写成已确认缺陷；P0=0（仅表示截至基线无已确认 P0），P1=19，P2=27，P3=3，另有未分级 Enhancement=3。按状态：OPEN=3，BLOCKED=17，NEEDS_VERIFICATION=18，FIXED_PENDING_REVIEW=14，CLOSED=0。总计 52 条；每个 ID 只计一次。若维护时发现计数与表格不符，先修正计数再提交。
+
+> 注：每条问题均有稳定 `ISS-nnn`。状态数量按每个 ID 只计一次；延期事项仍保留在台账中，不因阶段通过清空。
+
+## 历史已关闭事项（不作为当前缺陷重开）
+
+- Round 1 原始 P1：`UAT-ORD-001`、`UAT-PKG-001`、`UAT-SHIP-001`、`UAT-SKU-001`、`UAT-ORD-004` 均有后续修复/复测记录。发货 500 的历史根因及修复见 [UAT Fix Batch 1](UAT-Fix-Batch1-P1.md) 和 Round 1 的定向 Re-UAT；原始失败记录保留。
+- Round 1 原始 P2：`UAT-QTE-001`、`UAT-ORD-002`、`UAT-DRILL-001`、`UAT-ORD-003`、`UAT-FUP-001`、`UAT-FUP-002`、`UAT-PUR-001`、`UAT-INV-001`，2026-10-04 各有定向 Re-UAT；旧结果未覆盖，当前关闭结论见 [Round 1 P2 Cleanup Final Status](UAT-Round1-正式业务全流程测试.md)。附件下载通道的后续端到端问题单独由 ISS-007 跟踪。
+- PCR-001/002/003/004/005/006/008/010/011/012/014/015/019/020 已在各自 Phase 2 验收记录中完成原定范围；PCR-007 的实际装箱 UI 已验收，未实现的是另列的正式文件导出 Enhancement ISS-040。PCR-009 客户年度洞察与 PCR-018 团队共享图块仍延期。
+- Phase 3C 的 I20/I37/I49/I53 及 Phase 4B-1 PostgreSQL 查询兼容、迁移测试隔离/fixture 故障均有修复测试和成功 CI；不与当前 staging 数据迁移风险 ISS-044 混淆。
+- R0-A、R0-B1、R0-B2、R0-C1、R0-C2、R0-C3、R0-D1、R0-D2 的各自范围记录未发现仍未处理的本轮事项；这不代表未覆盖的系统范围自动通过。
+
+## 主要历史来源清单
+
+本次逐项对照以下 UAT、审查、阶段验收和风险文档；设计草案与旧计划只用于追溯，不替代当前实现或复测证据。
+
+- 综合/历史 UAT：[`R0-E1-综合业务回归与内测准备.md`](R0-E1-综合业务回归与内测准备.md)、[`真实用户E2E-UAT-20260923.md`](真实用户E2E-UAT-20260923.md)、[`UAT-Round1-正式业务全流程测试.md`](UAT-Round1-正式业务全流程测试.md)、[`UAT-Fix-Batch1-P1.md`](UAT-Fix-Batch1-P1.md)、[`业务流程与修改回归测试报告-20260922.md`](业务流程与修改回归测试报告-20260922.md)、[`添加数据测试.md`](添加数据测试.md)。
+- 阶段/风险：[`Phase3-业务流程与异常UAT计划.md`](Phase3-业务流程与异常UAT计划.md)、[`Phase3C-不变量故障注入执行记录.md`](Phase3C-不变量故障注入执行记录.md)、[`Phase4-生产化加固审计与实施计划.md`](Phase4-生产化加固审计与实施计划.md)、[`Phase4B-PostgreSQL兼容性执行记录.md`](Phase4B-PostgreSQL兼容性执行记录.md)。
+- UI/UX 审查：[`Product-Completion-Review-Phase1.md`](Product-Completion-Review-Phase1.md)、[`Product-UX-Second-Review.md`](Product-UX-Second-Review.md)、[`Product-UX-Customer-Module-Review.md`](Product-UX-Customer-Module-Review.md)、[`Product-UX-Quote-Module-Review.md`](Product-UX-Quote-Module-Review.md)、[`Product-UX-Order-Module-Review.md`](Product-UX-Order-Module-Review.md)、[`Product-UX-Purchase-Module-Review.md`](Product-UX-Purchase-Module-Review.md)、[`Product-UX-Inventory-Module-Review.md`](Product-UX-Inventory-Module-Review.md)、[`Dialog-Standardization-Audit.md`](Dialog-Standardization-Audit.md)。
+- 产品优化验收：[`Product-Optimization-Phase2A-PCR001.md`](Product-Optimization-Phase2A-PCR001.md)、[`Product-Optimization-Phase2B1-PCR003.md`](Product-Optimization-Phase2B1-PCR003.md)、[`Product-Optimization-Phase2B2-PCR002.md`](Product-Optimization-Phase2B2-PCR002.md)、[`Product-Optimization-Phase2B3-PCR011.md`](Product-Optimization-Phase2B3-PCR011.md)、[`Product-Optimization-Phase2C1-PCR004.md`](Product-Optimization-Phase2C1-PCR004.md)、[`Product-Optimization-Phase2C2-PCR005.md`](Product-Optimization-Phase2C2-PCR005.md)、[`Product-Optimization-Phase2C3-PCR010.md`](Product-Optimization-Phase2C3-PCR010.md)、[`Product-Optimization-Phase2C4-PCR012.md`](Product-Optimization-Phase2C4-PCR012.md)、[`Product-Optimization-Phase2C5-PCR014.md`](Product-Optimization-Phase2C5-PCR014.md)、[`Product-Optimization-Phase2D-PCR008.md`](Product-Optimization-Phase2D-PCR008.md)、[`Product-Optimization-Phase2E-PCR006.md`](Product-Optimization-Phase2E-PCR006.md)、[`Product-Optimization-Phase2F-PCR020.md`](Product-Optimization-Phase2F-PCR020.md)、[`Product-Optimization-Phase2G-PCR007.md`](Product-Optimization-Phase2G-PCR007.md)、[`Product-Optimization-Phase2H-PCR019.md`](Product-Optimization-Phase2H-PCR019.md)。
+- 安全与权限：[`R0-A-Sales-Safety-Reconciliation.md`](R0-A-Sales-Safety-Reconciliation.md)、[`R0-B1-Purchase-Safety-Reconciliation.md`](R0-B1-Purchase-Safety-Reconciliation.md)、[`R0-B2-Supplier-Payment-Terms.md`](R0-B2-Supplier-Payment-Terms.md)、[`R0-C1-Followup-Safety.md`](R0-C1-Followup-Safety.md)、[`R0-C2-SKU-Save-Integrity.md`](R0-C2-SKU-Save-Integrity.md)、[`R0-C3-Safe-CSV-Import.md`](R0-C3-Safe-CSV-Import.md)、[`R0-D1-Canonical-Workbench-Navigation.md`](R0-D1-Canonical-Workbench-Navigation.md)、[`R0-D2-Unified-Unsaved-Changes-Guard.md`](R0-D2-Unified-Unsaved-Changes-Guard.md)、[`r0-d4b2a-finance-scope.md`](r0-d4b2a-finance-scope.md)、[`r0-d4b2a-focused-repair.md`](r0-d4b2a-focused-repair.md)、[`r0-d4b2b-procurement-scope.md`](r0-d4b2b-procurement-scope.md)、[`r0-d4b2c-api-permission-audit.md`](r0-d4b2c-api-permission-audit.md)、[`r0-d4b2c-api-permission-matrix.md`](r0-d4b2c-api-permission-matrix.md)。
+- 业务规则/实现背景：[`TaskC-订单采购草稿闭环.md`](TaskC-订单采购草稿闭环.md)、[`TaskE-采购成本归属统一.md`](TaskE-采购成本归属统一.md)、[`TaskF1-到货库存预留一致性.md`](TaskF1-到货库存预留一致性.md)、[`TaskF2-超发安全冲销.md`](TaskF2-超发安全冲销.md)、[`TaskG1-基础收付款一致性.md`](TaskG1-基础收付款一致性.md)、[`TaskG2-轻量合同金额调整.md`](TaskG2-轻量合同金额调整.md)、[`TaskG3-基础财务报表与利润口径.md`](TaskG3-基础财务报表与利润口径.md)、[`TaskH1-客户跟进报价链路.md`](TaskH1-客户跟进报价链路.md)、[`TaskI1-产品分类与SKU身份边界.md`](TaskI1-产品分类与SKU身份边界.md)、[`TaskI2-供应来源交易单位包装与销售规则.md`](TaskI2-供应来源交易单位包装与销售规则.md)、[`TaskJ1-系统入口与经营视图收敛.md`](TaskJ1-系统入口与经营视图收敛.md)、[`TaskK1-正式测试前系统完整性收尾.md`](TaskK1-正式测试前系统完整性收尾.md)。
+
+## Git 历史核对
+
+核对 `master` 在基线 `cdaa8f0` 的历史及相关修复链。R0-D4 最近关键提交包含 `2a9d6cd`（财务数据范围）、`11fb307`（供应商 Context）、`7e5e565`（共享采购销售关联）、`af386d7`（跨模块权限审查缺口）；`24dc2b1` 关闭 Browsable API 关联泄漏。历史 P1/UI 修复和阶段记录保留在来源文档中。本次不通过提交日志推断没有测试过的 UI 流程已经通过。

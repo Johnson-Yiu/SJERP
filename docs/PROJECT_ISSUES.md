@@ -80,6 +80,7 @@
 | ISS-053 | NEEDS_VERIFICATION | ChatGPT 历史独立审查（R0-D4B2-A；未入 GitHub 问题记录；发现日期 UNKNOWN）；[财务范围记录](r0-d4b2a-finance-scope.md) | 2026-10-13 / ecdc9bc：只读核对模型、序列化器、前端显示和测试引用，未执行真实 UI 测试。 | 历史审查指出采购状态曾显示英文 ordered。当前 PurchaseOrder.STATUS_CHOICES 将 ordered 标为“已下单”，序列化器公开 get_status_display，页面读取 status_display；但当前 API 到真实 UI 的显示路径未复验，不能确认历史问题已消失。 | 采购 QA 在真实 UI 查看列表、详情和关联采购状态并记录 API JSON；若仍显示英文，修正显示映射并补当前接口与 UI 回归。负责人：采购 QA / 前端。 | R0-E1 补验（纳入下一获授权的采购视觉回归） | ordered 在所有受测采购入口显示“已下单”，筛选/存储值仍为 ordered；API 与 UI 回归和独立复审通过。 |
 | ISS-054 | OPEN | ChatGPT 历史独立审查（R0-D4B2-B；未入 GitHub 问题记录；发现日期 UNKNOWN）；当前代码：frontend/src/views/PurchaseOrderPage.vue | 2026-10-13 / ecdc9bc：只读检查 openReceiptReversal、submitReceiptReversal、反馈模板及现有收货测试；未运行测试。 | 当前成功冲销分支设置新的 notice，但不清除 receiptSuccess；详情反馈模板仍渲染同一采购单的旧收货成功提示，现有测试未覆盖“先收货成功、再冲销”的提示切换。会让用户误以为刚完成的是收货。 | 在打开冲销或冲销成功后清除旧 receiptSuccess，保留冲销成功反馈；新增先成功收货再冲销及冲销失败时提示不误导的回归。负责人：采购前端。 | R0-E1 补验（下一获授权的采购 UI 修复） | 连续完成收货和冲销时只显示与最新动作一致的成功状态；失败不残留虚假成功提示；测试及独立复审通过。 |
 | ISS-055 | OPEN | ChatGPT 历史独立审查（R0-D4B1；未入 GitHub 问题记录；发现日期 UNKNOWN）；当前代码：backend/crm/views.py、frontend/src/utils/apiErrors.js | 2026-10-13 / ecdc9bc：只读检查客户范围 queryset、404 回归及错误格式化；未执行 API 请求或真实 UI。 | 历史审查报告越权客户访问页显示 No Customer matches the given query.。当前 Customer 查询使用范围过滤；作用于范围 queryset 的标准详情查询会产生未命中 404，前端 formatApiError 会原样呈现 detail。现有范围测试断言 404，但不验证错误正文或中文 UI，代码路径仍可显示该英文。 | 保留越权对象的 404 与不泄露策略；将通用未命中错误映射为自然中文，不返回客户是否存在等额外信息；补 API 响应和 UI 文案回归。负责人：客户模块 QA / 前端。 | R0-E1 补验（与下一获授权的错误提示回归一并验收） | 越权详情仍返回 404；API/UI 对用户显示简洁中文通用提示且不含英文模型名、客户存在性线索；自动测试及独立复审通过。 |
+| ISS-056 | OPEN | [CI #267 Backend 失败](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38384214144)；[`test_sku_context_hides_cost_and_stock_without_source_modules`](../backend/crm/tests/test_sales_data_scope.py)；首次发现日期：2026-10-13 | 2026-10-13 / `d673cb5`，CI #267 attempt 1 的 Backend 失败；attempt 2 三项全部 SUCCESS。代码断言仍有非确定性风险，未修改测试。 | 首次失败断言以 `assertNotIn(str(sku.cost_price), repr(response.data))` 搜索子串 `77`；响应中无成本字段，但无关时间戳 `...210776...` 含有 `77`，导致偶发假失败。影响 Backend CI 可靠性，不代表业务数据泄漏。 | 后端测试维护者把断言改为检查受限响应字段/序列化值或精确金额 token，避免任意文本子串匹配；随后运行该测试和精确 HEAD 三项 CI。负责人：Backend QA。 | 后续获授权的 CI 稳定性修复 | 该测试在时间戳变化时稳定通过，且断言仍能在真正泄漏成本值时失败；精确 HEAD Backend、Backend PostgreSQL、Frontend CI 全部 SUCCESS。 |
 
 ### P3 / 未承诺 Enhancement
 
@@ -94,7 +95,7 @@
 
 ## 本次统计
 
-统计包含以上仍需跟踪的记录，不把“缺少当前场景复验”写成已确认缺陷；P0=0（仅表示截至基线无已确认 P0），P1=19，P2=30，P3=3，另有未分级 Enhancement=3。按状态：OPEN=5，BLOCKED=17，NEEDS_VERIFICATION=19，FIXED_PENDING_REVIEW=14，CLOSED=0。总计 55 条；每个 ID 只计一次。新增 ISS-053–ISS-055；如维护时发现计数与表格不符，先修正计数再提交。
+统计包含以上仍需跟踪的记录，不把“缺少当前场景复验”写成已确认缺陷；P0=0（仅表示截至本轮无已确认 P0），P1=19，P2=31，P3=3，另有未分级 Enhancement=3。按状态：OPEN=6，BLOCKED=17，NEEDS_VERIFICATION=19，FIXED_PENDING_REVIEW=14，CLOSED=0。总计 56 条；每个 ID 只计一次。本轮新增 ISS-053–ISS-056；如维护时发现计数与表格不符，先修正计数再提交。
 
 > 注：每条问题均有稳定 `ISS-nnn`。状态数量按每个 ID 只计一次；延期事项仍保留在台账中，不因阶段通过清空。
 
@@ -120,3 +121,4 @@
 ## Git 历史核对
 
 核对 `master` 至基线 `ecdc9bc` 的历史及相关修复链。R0-D4 最近关键提交包含 `2a9d6cd`（财务数据范围）、`11fb307`（供应商 Context）、`7e5e565`（共享采购销售关联）、`af386d7`（跨模块权限审查缺口）；`24dc2b1` 关闭 Browsable API 关联泄漏。历史 P1/UI 修复和阶段记录保留在来源文档中。本轮对 ISS-053–ISS-055 只做源码、测试和历史记录检查，未运行相应回归或真实 UI；不通过提交日志推断没有测试过的 UI 流程已经通过。
+

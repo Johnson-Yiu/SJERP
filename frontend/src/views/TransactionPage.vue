@@ -1,5 +1,6 @@
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { api, listAll } from '../api'
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import SummaryCards from '../components/SummaryCards.vue'
@@ -9,14 +10,18 @@ import { formatMoney } from '../utils/money'
 import { orderDetailLocation, purchaseDetailLocation } from '../utils/detailNavigation'
 import { useAccessControl } from '../accessControl'
 
-const today = new Date().toISOString().slice(0, 10)
+const today = new Date().toLocaleDateString('en-CA')
+const route = useRoute()
+const router = useRouter()
 const { can } = useAccessControl()
-const rows = ref([]), error = ref(''), loadError = ref(''), hasLoaded = ref(false), allTransactionsExist = ref(false), query = ref(''), orderQuery = ref(''), showForm = ref(false), orders = ref([])
+const rows = ref([]), error = ref(''), notice = ref(''), loadError = ref(''), hasLoaded = ref(false), allTransactionsExist = ref(false), query = ref(''), orderQuery = ref(''), showForm = ref(false), orders = ref([])
 const customers = ref([]), suppliers = ref([]), purchases = ref([]), plans = ref([]), saving = ref(false), loading = ref(false)
 const referenceErrors = ref([]), referencesLoaded = ref(false), referencesLoading = ref(true), orderSearchError = ref(''), orderSearchLoading = ref(false)
 const allocation = ref(null), allocationPlan = ref(''), allocationAmount = ref('')
 const voidTarget = ref(null), voidReason = ref(''), voidSaving = ref(false)
 const filters = reactive({ status: 'confirmed', direction: '', date_from: '', date_to: '' })
+const filterRangeError = computed(() => filters.date_from && filters.date_to && filters.date_from > filters.date_to ? '开始日期不能晚于结束日期。' : '')
+const routeFilterKey = computed(() => JSON.stringify(['search', 'status', 'direction', 'date_from', 'date_to'].map(key => route.query[key] ?? null)))
 const contractKinds = ['customer_receipt', 'order_expense', 'freight_expense', 'sample_expense', 'bank_fee', 'refund']
 const eligiblePlans = computed(() => plans.value.filter(plan => plan.status === 'open' && plan.currency === allocation.value?.currency && plan.direction === (allocation.value?.direction === 'income' ? 'receivable' : 'payable') && (plan.order ? plan.customer_id === allocation.value?.customer : plan.supplier_id === allocation.value?.supplier)))
 
@@ -81,11 +86,49 @@ const transactionMetrics = computed(() => {
     { label: '关联订单', value: new Set(rows.value.map(row => row.order || row.order_no).filter(Boolean)).size, hint: '有业务归属的流水' },
   ]
 })
-const filtersActive = computed(() => Boolean(query.value.trim() || filters.status || filters.direction || filters.date_from || filters.date_to))
+const filtersActive = computed(() => Boolean(query.value.trim() || (filters.status && filters.status !== 'confirmed') || filters.direction || filters.date_from || filters.date_to))
 const referenceErrorText = computed(() => referenceErrors.value.join(' '))
 
 function kindLabel(kind) { return kindLookup.get(kind)?.label || legacyKindLabels[kind] || kind || '—' }
 function directionLabel(direction) { return direction === 'income' ? '收入' : direction === 'expense' ? '支出' : '—' }
+function queryValue(value) { return Array.isArray(value) ? String(value[0] ?? '') : String(value ?? '') }
+function syncFiltersFromRoute() {
+  query.value = queryValue(route.query.search)
+  const status = queryValue(route.query.status)
+  filters.status = status === 'all' ? '' : ['confirmed', 'cancelled'].includes(status) ? status : 'confirmed'
+  filters.direction = ['income', 'expense'].includes(queryValue(route.query.direction)) ? queryValue(route.query.direction) : ''
+  filters.date_from = queryValue(route.query.date_from)
+  filters.date_to = queryValue(route.query.date_to)
+}
+function nextFilterQuery() {
+  const next = { ...route.query }
+  for (const key of ['search', 'status', 'direction', 'date_from', 'date_to']) delete next[key]
+  if (query.value.trim()) next.search = query.value.trim()
+  next.status = filters.status || 'all'
+  if (filters.direction) next.direction = filters.direction
+  if (filters.date_from) next.date_from = filters.date_from
+  if (filters.date_to) next.date_to = filters.date_to
+  return next
+}
+async function applyFilters() {
+  if (filterRangeError.value) return
+  const query = nextFilterQuery()
+  const before = routeFilterKey.value
+  const after = JSON.stringify(['search', 'status', 'direction', 'date_from', 'date_to'].map(key => query[key] ?? null))
+  if (before === after) { await load(); return }
+  await router.push({ path: route.path, query, hash: route.hash })
+}
+function resetFilters() {
+  query.value = ''
+  Object.assign(filters, { status: 'confirmed', direction: '', date_from: '', date_to: '' })
+  void applyFilters()
+}
+function clearFilters() {
+  query.value = ''
+  Object.assign(filters, { status: '', direction: '', date_from: '', date_to: '' })
+  void applyFilters()
+}
+function submitFilters() { void applyFilters() }
 function contractLocation(row) {
   if (row.order) return orderDetailLocation(row.order)
   if (row.purchase_order) return purchaseDetailLocation(row.purchase_order)
@@ -115,6 +158,7 @@ function openForm() {
   orderQuery.value = ''
   orders.value = []
   error.value = ''
+  notice.value = ''
   showForm.value = true
 }
 function onCurrencyChange() {
@@ -122,6 +166,7 @@ function onCurrencyChange() {
   else if (form.exchange_rate === '1') form.exchange_rate = ''
 }
 async function load() {
+  if (filterRangeError.value) { loadError.value = filterRangeError.value; loading.value = false; return }
   loading.value = true; loadError.value = ''
   try {
     const result = await listAll('/transactions/', { params: { ...filters, search: query.value } })
@@ -156,12 +201,14 @@ async function save() {
   if (!referencesLoaded.value) { error.value = '客户、供应商或采购单资料尚未加载完成，请重试后再保存。'; return }
   if (form.kind === 'customer_receipt' && (orderSearchLoading.value || orderSearchError.value)) { error.value = '订单选项尚未成功加载，请重试后再保存。'; return }
   saving.value = true
+  error.value = ''
   try {
     const payload = { ...form }
     if (!payload.transaction_no) delete payload.transaction_no
     await api.post('/transactions/', payload)
     showForm.value = false
     await load()
+    notice.value = '财务流水已保存。'
   } catch (err) { error.value = apiErrorMessage(err) || '流水保存失败。' } finally { saving.value = false }
 }
 function openVoid(row) {
@@ -169,6 +216,7 @@ function openVoid(row) {
   voidTarget.value = row
   voidReason.value = ''
   error.value = ''
+  notice.value = ''
 }
 async function submitVoid() {
   if (!can('transactions', 'update')) return
@@ -181,16 +229,19 @@ async function submitVoid() {
     voidTarget.value = null
     voidReason.value = ''
     await load()
-  } catch (err) { error.value = err.response?.data?.detail || err.message } finally { voidSaving.value = false }
+    notice.value = '财务流水已作废，相关计划已恢复。'
+  } catch (err) { error.value = apiErrorMessage(err) || '流水作废失败，请重试。' } finally { voidSaving.value = false }
 }
 async function openAllocate(row) {
   if (!can('transactions', 'update')) return
-  try { plans.value = await listAll('/payment-plans/', { params: { status: 'open' } }); allocation.value = row; allocationPlan.value = ''; allocationAmount.value = String(Number(row.amount) - Number(row.allocated_amount)) } catch (err) { error.value = err.message }
+  notice.value = ''; error.value = ''
+  try { plans.value = await listAll('/payment-plans/', { params: { status: 'open' } }); allocation.value = row; allocationPlan.value = ''; allocationAmount.value = String(Number(row.amount) - Number(row.allocated_amount)) } catch (err) { error.value = apiErrorMessage(err) || '收付款计划加载失败，请重试。' }
 }
 async function allocate() {
   if (saving.value || !can('transactions', 'update')) return
   saving.value = true
-  try { await api.post(`/transactions/${allocation.value.id}/allocate/`, { plan: allocationPlan.value, amount: allocationAmount.value }); allocation.value = null; await load() } catch (err) { error.value = err.message } finally { saving.value = false }
+  error.value = ''
+  try { await api.post(`/transactions/${allocation.value.id}/allocate/`, { plan: allocationPlan.value, amount: allocationAmount.value }); allocation.value = null; await load(); notice.value = '核销已保存。' } catch (err) { error.value = apiErrorMessage(err) || '核销失败，请检查金额和计划后重试。' } finally { saving.value = false }
 }
 async function loadReferenceOptions() {
   referencesLoading.value = true
@@ -203,24 +254,30 @@ async function loadReferenceOptions() {
   referencesLoaded.value = errors.length === 0
   referencesLoading.value = false
 }
-async function clearFilters() {
-  query.value = ''
-  Object.assign(filters, { status: '', direction: '', date_from: '', date_to: '' })
-  await load()
-}
+syncFiltersFromRoute()
+watch(routeFilterKey, () => { syncFiltersFromRoute(); void load() })
 onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
 </script>
 
 <template>
   <section class="txn">
     <header>
-      <div><h2>财务流水</h2><p>统一登记实际收付款、订单费用与期间费用。</p></div>
+      <div><p class="page-lede">统一登记实际收付款、订单费用与期间费用。</p></div>
       <button v-if="can('transactions', 'create')" :disabled="!referencesLoaded" @click="openForm">新增记账</button>
     </header>
+    <p v-if="notice" class="notice" role="status">{{ notice }}</p>
     <div v-if="referenceErrorText" class="option-load-error" role="alert"><span>新增记账所需的关联资料未能全部加载，暂不能新增。{{ referenceErrorText }}</span><button type="button" @click="loadReferenceOptions">重试加载</button></div>
     <p v-else-if="referencesLoading" class="option-loading-note" role="status">正在加载客户、供应商和采购单资料…</p>
     <SummaryCards v-if="hasLoaded" :items="transactionMetrics" />
-    <div class="toolbar"><input v-model="query" placeholder="搜索流水号、往来方、合同" @keyup.enter="load"><select v-model="filters.status" @change="load"><option value="confirmed">已确认</option><option value="cancelled">已作废</option><option value="">全部状态</option></select><select v-model="filters.direction" @change="load"><option value="">全部收支</option><option value="income">收入</option><option value="expense">支出</option></select><input v-model="filters.date_from" type="date" aria-label="开始日期"><input v-model="filters.date_to" type="date" aria-label="结束日期"><button :disabled="loading" @click="load">查询</button></div>
+    <form class="filters" aria-label="财务流水筛选" @submit.prevent="submitFilters">
+      <label class="filter-search"><span>搜索</span><input v-model="query" type="search" placeholder="流水号、往来方或合同号"></label>
+      <label><span>状态</span><select v-model="filters.status"><option value="confirmed">已确认</option><option value="cancelled">已作废</option><option value="">全部状态</option></select></label>
+      <label><span>收支方向</span><select v-model="filters.direction"><option value="">全部</option><option value="income">收入</option><option value="expense">支出</option></select></label>
+      <label><span>发生日期从</span><input v-model="filters.date_from" type="date"></label>
+      <label><span>至</span><input v-model="filters.date_to" type="date"></label>
+      <div class="filter-actions"><button type="submit" :disabled="loading || !!filterRangeError">查询</button><button type="button" class="secondary" @click="resetFilters">重置</button></div>
+      <p v-if="filterRangeError" class="error filter-error" role="alert">{{ filterRangeError }}</p>
+    </form>
     <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
     <p v-if="error && !showForm && !allocation && !voidTarget" class="error" role="alert">{{ error }}</p>
     <template v-if="hasLoaded">
@@ -231,8 +288,9 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
     </template>
 
     <div v-if="showForm && can('transactions', 'create')" class="mask" @click.self="showForm = false">
-      <form class="dialog" @submit.prevent="save">
-        <h3>新增记账</h3>
+      <form class="dialog" role="dialog" aria-modal="true" aria-labelledby="transaction-form-title" @submit.prevent="save">
+        <header class="dialog-head"><div><h3 id="transaction-form-title">新增记账</h3><p>保存后会按现有规则更新收付款计划。</p></div><button type="button" class="close" aria-label="关闭" @click="showForm = false">×</button></header>
+        <fieldset><legend>流水信息</legend>
         <label>类型
           <select v-model="form.kind" required @change="syncKind">
             <optgroup v-for="group in kindGroups" :key="group.direction" :label="group.label"><option v-for="option in group.options" :key="option.value" :value="option.value">{{ option.label }}</option></optgroup>
@@ -244,6 +302,8 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
         <label>原币金额<input v-model="form.amount" v-money-input type="number" min="0.0001" step="any" required></label>
         <label>币种<select v-model="form.currency" required @change="onCurrencyChange"><option v-for="currency in currencies" :key="currency.value" :value="currency.value">{{ currency.label }}</option></select></label>
         <label>结汇汇率 <small>1 外币 ≈ 人民币</small><input v-model="form.exchange_rate" type="number" min="0.000001" step="0.000001" required></label>
+        </fieldset>
+        <fieldset><legend>业务关联</legend>
         <div v-if="contractKinds.includes(form.kind)" class="order-picker">
           <label>关联订单（客户收款必选，费用可选）<input v-model="orderQuery" placeholder="客户或订单号" @input="searchOrders"></label><small v-if="orderSearchLoading">正在加载订单…</small><p v-if="orderSearchError" class="option-load-error-text" role="alert">{{ orderSearchError }} <button type="button" @click="searchOrders">重试</button></p>
           <button v-for="row in orders" :key="row.id" type="button" class="order" @click="chooseOrder(row)">{{ row.customer_name }}｜{{ row.customer_country || '—' }}｜{{ row.order_no }}｜{{ row.currency }} {{ formatMoney(row.total_amount) }}</button>
@@ -252,7 +312,10 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
         <label v-if="['supplier_payment', 'supplier_refund'].includes(form.kind)">采购单<select v-model="form.purchase_order" required @change="choosePurchase"><option :value="null">请选择采购单</option><option v-for="row in purchases.filter(row => !['draft', 'cancelled'].includes(row.status))" :key="row.id" :value="row.id">{{ row.purchase_no }} · {{ row.supplier_name }} · {{ row.currency }}</option></select></label>
         <label v-if="form.kind === 'unallocated_advance'">客户<select v-model="form.customer" required><option :value="null">请选择客户</option><option v-for="row in customers" :key="row.id" :value="row.id">{{ row.name }}</option></select></label>
         <label v-if="form.kind === 'unallocated_payment'">供应商<select v-model="form.supplier" required><option :value="null">请选择供应商</option><option v-for="row in suppliers" :key="row.id" :value="row.id">{{ row.name }}</option></select></label>
+        </fieldset>
+        <fieldset><legend>付款信息</legend>
         <label>支付方式<input v-model="form.payment_method" placeholder="银行转账、现金等"></label><label>银行参考号<input v-model="form.reference"></label><label>备注<input v-model="form.notes"></label>
+        </fieldset>
         <p v-if="['customer_receipt', 'supplier_payment'].includes(form.kind)">款项将按合同计划顺序核销；超出计划的部分转为未分配预收预付。</p>
         <p v-if="form.kind === 'refund'">用于退回已经收到的订单货款；售后赔偿、运费补贴等请登记为订单费用。</p>
         <p v-else-if="form.kind === 'supplier_refund'">用于供应商退回已经支付的采购款。</p>
@@ -260,13 +323,12 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
         <footer><button type="button" @click="showForm = false">取消</button><button :disabled="saving || !referencesLoaded || (form.kind === 'customer_receipt' && (orderSearchLoading || !!orderSearchError))">{{ saving ? '保存中…' : '保存' }}</button></footer>
       </form>
     </div>
-    <div v-if="allocation && can('transactions', 'update')" class="mask" @click.self="allocation = null"><form class="dialog" @submit.prevent="allocate"><h3>核销预收预付款</h3><p>只分配余额，不新增现金流水。{{ allocation.currency }}</p><label>同一往来方的待结计划<select v-model="allocationPlan" required><option value="">请选择</option><option v-for="plan in eligiblePlans" :key="plan.id" :value="plan.id">{{ plan.contract_no }} · {{ plan.notes }} · 待结 {{ formatMoney(plan.remaining_amount) }}</option></select></label><p v-if="!eligiblePlans.length">暂无币种与往来方匹配的待结计划。</p><label>核销金额<input v-model="allocationAmount" type="number" min="0.0001" step="0.0001" required></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" @click="allocation = null">取消</button><button :disabled="saving || !allocationPlan">确认核销</button></footer></form></div>
-    <div v-if="voidTarget && can('transactions', 'update')" class="mask" @click.self="voidTarget = null"><form class="dialog" @submit.prevent="submitVoid"><h3>作废财务流水</h3><dl class="void-summary"><dt>流水号</dt><dd>{{ voidTarget.transaction_no }}</dd><dt>金额</dt><dd>{{ voidTarget.currency }} {{ formatMoney(voidTarget.amount) }}</dd><dt>往来方 / 合同</dt><dd>{{ voidTarget.customer_name || voidTarget.supplier_name || '—' }} / {{ voidTarget.order_no || voidTarget.purchase_no || '未关联合同' }}</dd></dl><p>该操作将同时作废相关拆分流水，并恢复对应收付款计划。</p><label>作废原因<textarea v-model="voidReason" maxlength="500" rows="4" required /></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" @click="voidTarget = null">取消</button><button :disabled="voidSaving || !voidReason.trim()">{{ voidSaving ? '保存中…' : '确认作废' }}</button></footer></form></div>
+    <div v-if="allocation && can('transactions', 'update')" class="mask" @click.self="allocation = null"><form class="dialog" role="dialog" aria-modal="true" aria-labelledby="allocation-title" @submit.prevent="allocate"><header class="dialog-head"><div><h3 id="allocation-title">核销预收预付款</h3><p>仅分配现有余额，不会新增现金流水。</p></div><button type="button" class="close" aria-label="关闭" @click="allocation = null">×</button></header><p class="dialog-context">{{ allocation.customer_name || allocation.supplier_name }} · {{ allocation.currency }} 可分配 {{ formatMoney(Number(allocation.amount) - Number(allocation.allocated_amount)) }}</p><label>待结计划<select v-model="allocationPlan" required><option value="">请选择</option><option v-for="plan in eligiblePlans" :key="plan.id" :value="plan.id">{{ plan.contract_no }} · {{ plan.notes || '无备注' }} · 待结 {{ formatMoney(plan.remaining_amount) }}</option></select></label><p v-if="!eligiblePlans.length" class="empty-note">暂无币种与往来方匹配的待结计划。</p><label>核销金额（{{ allocation.currency }}）<input v-model="allocationAmount" type="number" min="0.0001" step="0.0001" required></label><p v-if="error" class="error" role="alert">{{ error }}</p><footer><button type="button" class="secondary" @click="allocation = null">取消</button><button :disabled="saving || !allocationPlan">{{ saving ? '保存中…' : '确认核销' }}</button></footer></form></div>
+    <div v-if="voidTarget && can('transactions', 'update')" class="mask" @click.self="voidTarget = null"><form class="dialog" role="dialog" aria-modal="true" aria-labelledby="void-title" @submit.prevent="submitVoid"><header class="dialog-head"><div><h3 id="void-title">作废财务流水</h3><p>此操作会同步作废拆分流水，并恢复关联收付款计划。</p></div><button type="button" class="close" aria-label="关闭" @click="voidTarget = null">×</button></header><dl class="void-summary"><dt>流水号</dt><dd>{{ voidTarget.transaction_no }}</dd><dt>金额</dt><dd>{{ voidTarget.currency }} {{ formatMoney(voidTarget.amount) }}</dd><dt>往来方 / 合同</dt><dd>{{ voidTarget.customer_name || voidTarget.supplier_name || '—' }} / {{ voidTarget.order_no || voidTarget.purchase_no || '未关联合同' }}</dd></dl><label>作废原因<textarea v-model="voidReason" maxlength="500" rows="4" required /></label><p v-if="error" class="error" role="alert">{{ error }}</p><footer><button type="button" class="secondary" @click="voidTarget = null">取消</button><button :disabled="voidSaving || !voidReason.trim()">{{ voidSaving ? '保存中…' : '确认作废' }}</button></footer></form></div>
   </section>
 </template>
 
 <style scoped>
 .contract-link{color:#08705f;text-decoration:none}.contract-link:hover{text-decoration:underline}
-.txn td small{display:block;color:#718078;font-size:var(--text-caption);margin-top:4px}.toolbar{flex-wrap:wrap}.toolbar input[type=date]{min-width:140px}.toolbar select{padding:8px;border:1px solid #d8e1dd;border-radius:8px}
-.txn{padding:34px}.txn>header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.txn h2{margin:0}.txn p{color:#718078}.txn button{padding:8px 13px;border:1px solid #d8e1dd;border-radius:8px;background:#fff;cursor:pointer}.txn button:hover{border-color:#8db7a7;background:#f5faf7}.toolbar{display:flex;gap:8px;margin:20px 0}.toolbar input{padding:9px;min-width:280px;border:1px solid #d8e1dd;border-radius:8px}table{background:#fff;width:100%;border-collapse:collapse;border:1px solid #e2e8e4}th,td{padding:12px;text-align:left;border-bottom:1px solid #edf1ee}th{color:#60736b;background:#f6faf8;font-size:var(--text-body)}.mask{position:fixed;inset:0;background:#10261d66;display:grid;place-items:center;z-index:30;padding:16px}.dialog{background:#fff;padding:24px;border-radius:14px;width:min(500px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;box-shadow:0 22px 60px #001a1340}.dialog h3{margin:0 0 18px}.dialog label{display:grid;gap:5px;margin:10px 0;color:#3d5149;font-size:var(--text-body)}.dialog input,.dialog select,.dialog textarea{box-sizing:border-box;width:100%;padding:9px;border:1px solid #d8e1dd;border-radius:7px;background:#fff;color:#253b33;font:inherit}.dialog textarea{resize:vertical}.dialog label>small{font-size:var(--text-caption);color:#71847c;font-weight:400}.void-summary{display:grid;grid-template-columns:100px 1fr;gap:8px;margin:0 0 14px;font-size:var(--text-body)}.void-summary dt{color:#718078}.void-summary dd{margin:0;color:#253b33}.field-hint,.category-hint{display:block;margin:-4px 0 10px;color:#71847c;font-size:var(--text-caption)}.category-hint{padding:8px 10px;border-radius:7px;background:#f3f8f5}.order-picker{margin-top:8px}.order-picker>p{margin:8px 0 0;font-size:var(--text-caption)}.order{display:block;width:100%;margin:5px 0;text-align:left}.dialog footer{display:flex;justify-content:end;gap:8px;margin-top:18px}.dialog footer button:last-child{background:#0d4b40;color:#fff;border-color:#0d4b40}.error{color:#b42318}.txn .summary-cards{margin-top:16px}@media(max-width:620px){.txn{padding:20px 14px}.txn>header{flex-direction:column}.txn>header>button{width:100%}.toolbar{flex-wrap:wrap}.toolbar input{min-width:0;width:100%}table{display:block;overflow:auto;white-space:nowrap}.dialog{padding:20px}}
+.txn{padding:0}.txn>header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.page-lede{margin:0;color:#718078}.txn p{color:#718078}.txn button{padding:8px 13px;border:1px solid #d8e1dd;border-radius:8px;background:#fff;cursor:pointer}.txn button:hover{border-color:#8db7a7;background:#f5faf7}.txn button:disabled{opacity:.55;cursor:not-allowed}.filters{display:grid;grid-template-columns:minmax(220px,1.5fr) repeat(4,minmax(130px,1fr)) auto;gap:10px;align-items:end;margin:20px 0;padding:16px;border:1px solid #e2e8e4;border-radius:12px;background:#fff}.filters label{display:grid;gap:5px;color:#586b63;font-size:var(--text-caption)}.filters input,.filters select{width:100%;height:39px;padding:0 10px;border:1px solid #d8e1dd;border-radius:8px;background:#fff;color:#253b33}.filters .filter-actions{display:flex;gap:8px}.filters .filter-error{grid-column:1/-1;margin:0}.filters button,.dialog footer button{white-space:nowrap}.filters .secondary,.dialog .secondary{background:#fff;color:#344d44}.notice{margin:12px 0;padding:10px 14px;border:1px solid #b8d8ca;border-radius:9px;background:#eff8f3;color:#1d4d40!important}.txn td small{display:block;color:#718078;font-size:var(--text-caption);margin-top:4px}.txn>table{display:block;overflow:auto;background:#fff;width:100%;border-collapse:collapse;border:1px solid #e2e8e4;border-radius:12px;white-space:nowrap}.txn th,.txn td{padding:12px;text-align:left;border-bottom:1px solid #edf1ee}.txn th{color:#60736b;background:#f6faf8;font-size:var(--text-body)}.mask{position:fixed;inset:0;background:#10261d66;display:grid;place-items:center;z-index:60;padding:16px}.dialog{background:#fff;padding:24px;border-radius:14px;width:min(620px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;box-shadow:0 22px 60px #001a1340}.dialog h3{margin:0;font-size:var(--text-dialog)}.dialog-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}.dialog-head p{margin:5px 0 0;font-size:var(--text-caption)}.dialog-head .close{padding:2px 8px;font-size:22px;line-height:1}.dialog label{display:grid;gap:5px;margin:10px 0;color:#3d5149;font-size:var(--text-body)}.dialog input,.dialog select,.dialog textarea{box-sizing:border-box;width:100%;padding:9px;border:1px solid #d8e1dd;border-radius:7px;background:#fff;color:#253b33;font:inherit}.dialog textarea{resize:vertical}.dialog fieldset{min-width:0;margin:0 0 14px;padding:12px 14px;border:1px solid #e2e8e4;border-radius:10px}.dialog legend{padding:0 6px;color:#27584b;font-weight:700}.dialog label>small{font-size:var(--text-caption);color:#71847c;font-weight:400}.void-summary{display:grid;grid-template-columns:110px minmax(0,1fr);gap:8px;margin:0 0 14px;font-size:var(--text-body)}.void-summary dt{color:#718078}.void-summary dd{margin:0;color:#253b33;overflow-wrap:anywhere}.field-hint,.category-hint{display:block;margin:-4px 0 10px;color:#71847c;font-size:var(--text-caption)}.category-hint{padding:8px 10px;border-radius:7px;background:#f3f8f5}.order-picker{margin-top:8px}.order-picker>p{margin:8px 0 0;font-size:var(--text-caption)}.order{display:block;width:100%;margin:5px 0;text-align:left}.dialog footer{display:flex;justify-content:end;gap:8px;margin-top:18px}.dialog footer button:last-child{background:#0d4b40;color:#fff;border-color:#0d4b40}.error{color:#b42318}.empty-note{padding:10px 12px;border-radius:8px;background:#f6f8f6}.txn .summary-cards{margin-top:16px}@media(max-width:1050px){.filters{grid-template-columns:repeat(3,minmax(140px,1fr))}.filters .filter-search{grid-column:span 2}}@media(max-width:620px){.txn>header{align-items:stretch;flex-direction:column}.txn>header>button{width:100%}.filters{grid-template-columns:1fr 1fr}.filters .filter-search{grid-column:1/-1}.filters .filter-actions{grid-column:1/-1}.filters .filter-actions button{flex:1}.txn>table{white-space:nowrap}.dialog{padding:18px}.dialog fieldset{padding:10px}.void-summary{grid-template-columns:80px minmax(0,1fr)}}
 </style>

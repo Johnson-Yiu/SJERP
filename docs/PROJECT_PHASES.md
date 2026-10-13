@@ -1,6 +1,18 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
-核对基线：`master` / `ecdc9bc`（2026-10-13）。本文只建立阶段视图，不授权未获批准的新路线、RBAC 配置、内测或部署。
+核对基线：R0-F1 从 `master` / `bf79ef8` 开始（2026-10-13）。本文记录用户批准的路线与阶段证据；路线不授权 RBAC 配置、内测或部署。
+
+## 用户批准的最新开发路线
+
+用户于 2026-10-13 明确批准以下顺序：
+
+1. **R0-F1：整体前端 UI/UX 收尾**。本轮正在先优化财务流水、应收/应付计划和财务概览；不得提前进入集中历史 Issue 修复阶段。
+2. **集中核实和修复历史 Issue**。须等待当前 Part 的 ChatGPT 独立审查，并在后续 Part 按台账处理；保留所有旧 Issue ID。
+3. **全系统综合审查**。
+4. **修复综合审查发现的问题**。
+5. **正式内测**。只有用户另行明确授权后才进入；不启用 RBAC 或配置正式测试角色，除非该授权明确涵盖。
+
+该路线授权在当前 UI/UX 路线内按 Part 顺序继续，不需要每个模块重复开工确认；用户明确规定的等待独立审查仍是阶段门槛。它不授权生产部署或改变重大业务规则。
 
 ## 当前项目状态
 
@@ -9,7 +21,7 @@
 | R0-A 至 R0-D2 | 各自范围已记录完成 | 对应安全、数据完整性、导入、导航和未保存修改记录；完成只覆盖各文档列出的检查。 |
 | R0-D4 | 有条件完成，等待完整阶段复审/封版决定 | 财务、采购及跨模块 API 权限已增量实施并有矩阵/回归；历史财务归属、跨权限成本委托、部署文件 ACL 仍见 [`PROJECT_ISSUES.md`](PROJECT_ISSUES.md)。不要因三项 CI 成功而关闭这些业务/部署事项。 |
 | R0-E1 | **PARTIAL PASS** | 隔离 SQLite 真实 UI 主链和对应自动测试通过；订单欠款完成后催收待办消失为已复现 P1。文件、导出内容、受限角色和多个边界流程仍未充分验收。精确结果见 [R0-E1 报告](R0-E1-综合业务回归与内测准备.md)。 |
-| 本轮治理补强 | 文档定向补充 | 只更新问题台账、阶段计划、审查协议和 AGENTS 约束；不修改业务代码，不启动新业务阶段。 |
+| R0-F1 UI/UX | **进行中，财务 Part 待独立复审** | 首轮范围为财务流水、应收/应付计划、财务概览；已更新查询状态、财务指标信息结构、交互反馈并添加回归。全站路由矩阵见 [R0-F1 覆盖盘点](R0-F1-前端UX覆盖盘点.md)。不代表全站 UX 已完成。 |
 | 内测 / 生产部署 | 未授权、未开始 | 保留开发超级管理员机制；正式 RBAC、真实员工角色、部署和生产数据迁移均不得从此文档推定已获授权。 |
 
 ## 指定阶段历史记录
@@ -21,10 +33,11 @@
 | R0-D3 | 实现与视觉证据存在；阶段最终状态 UNKNOWN | UNKNOWN（相关实现提交 `8ccdc07`；不是已确认的最终提交） | UNKNOWN | UNKNOWN | UNKNOWN（尚未建立一对一映射） | 仅找到截图证据提交 `b596c7e`、`9cc8ee5`；未找到阶段验收摘要及最终 SHA/CI 记录。 |
 | R0-D4A | 功能实现和 UAT 证据存在；阶段最终状态 UNKNOWN | UNKNOWN（相关实现提交 `6736c67`；不是已确认的最终提交） | UNKNOWN | UNKNOWN | ISS-003（权限角色真实业务 UI 验收仍待补） | 找到功能 RBAC 与截图提交 `f5f82ff`、`fc5aa6e`；未找到可确认的阶段最终 SHA、CI Run 和独立结论。 |
 | R0-D4B1 | 完成并封版（据用户历史陈述） | `3d5d290`（作为后续 B2-A 用户指定基线；未找到单独封版记录） | UNKNOWN | PASS（ChatGPT 独立审查，据用户历史陈述；审查记录未入 Git） | ISS-055 | 未找到可追溯 CI Run；客户越权 404 的英文文案由历史审查提出，当前列为 OPEN。 |
-| R0-D4B2-A | 完成（据用户历史陈述） | UNKNOWN | UNKNOWN（历史任务曾报告三项 SUCCESS；Run ID / 对应 HEAD UNKNOWN） | PASS（ChatGPT 独立审查，据用户历史陈述） | ISS-038、ISS-053 | `2a9d6cd` 是一次 focused-repair 请求的基线，不据此认定为阶段最终 SHA。历史采购状态英文问题的当前 UI 状态待核实。 |
-| R0-D4B2-B | 完成（据用户历史陈述） | UNKNOWN | UNKNOWN | PASS（ChatGPT 独立审查，据用户历史陈述） | ISS-039、ISS-054 | 未找到独立可核对的最终 SHA / CI Run；旧收货成功提示仍由当前代码路径支持。 |
-| R0-D4B2-C | R0-D4 权限开发有条件完成（据用户后续陈述）；C 单项最终状态 UNKNOWN | UNKNOWN（下一阶段用户指定基线 `81273c0`，不单独证明最终 SHA） | Run `#38275193057` 三项 SUCCESS（据用户提供；Run 对应 HEAD UNKNOWN） | R0-D4 整体有条件封版；C 单项独立结论 UNKNOWN | ISS-003、ISS-017、ISS-046、ISS-055 | `efc9ed4` 为最终验收补充请求基线；现有记录未证明 C 的独立复审明确 PASS。 |
-| R0-E1 | PARTIAL PASS（据用户历史陈述及验收报告） | `cdaa8f0`（下一治理任务指定基线） | Run `#264` 三项 SUCCESS，运行于 `06a12ec`；`cdaa8f0` 自身 CI UNKNOWN | PARTIAL PASS（ChatGPT 独立复审，据用户历史陈述） | ISS-001–008、ISS-019–029、ISS-052；继承项见问题台账 | [E1 报告](R0-E1-综合业务回归与内测准备.md)明确列出覆盖边界；不要把其 CI 运行 SHA 扩大为 `cdaa8f0`。 |
+| R0-D4B2-A | 完成（据用户历史陈述） | `073d3a6` | CI #38208167344：SUCCESS（Backend、Backend PostgreSQL、Frontend；对应阶段 SHA 经 GitHub 核对） | PASS（ChatGPT 独立审查，据用户历史陈述） | ISS-038、ISS-053 | CI SUCCESS 不替代完整采购/财务业务验收；ISS-053 仍需当前显示复核。 |
+| R0-D4B2-B | 完成（据用户历史陈述） | `7e5e565` | CI #38232779023：SUCCESS（Backend、Backend PostgreSQL、Frontend；对应阶段 SHA 经 GitHub 核对） | PASS（ChatGPT 独立审查，据用户历史陈述） | ISS-039、ISS-054 | 独立审查 PASS；ISS-054 的收货冲销提示仍按台账待复验。 |
+| R0-D4B2-C | R0-D4 权限开发有条件完成（据用户历史陈述） | `81273c0` | CI #38289225525：SUCCESS（Backend、Backend PostgreSQL、Frontend；对应阶段 SHA 经 GitHub 核对） | R0-D4 整体有条件封版；C 单项独立结论 UNKNOWN | ISS-003、ISS-017、ISS-046、ISS-055 | 权限矩阵及本阶段 CI 不覆盖所有文件部署 ACL 风险；不扩大为无条件封版。 |
+| R0-E1 | PARTIAL PASS（据用户历史陈述及验收报告） | `cdaa8f0` | CI #38356269083：SUCCESS（Backend、Backend PostgreSQL、Frontend；对应阶段 SHA 经 GitHub 核对） | PARTIAL PASS（ChatGPT 独立复审，据用户历史陈述） | ISS-001–008、ISS-019–029、ISS-052；继承项见问题台账 | CI SUCCESS 不替代未覆盖的业务、文件、导出、受限角色及边界流程验收；范围见 [E1 报告](R0-E1-综合业务回归与内测准备.md)。 |
+| R0-F1 UI/UX（本轮） | 财务 Part 本地验收完成，等待 ChatGPT 独立复审 | `bf79ef8` 起始基线；最终 SHA 待提交 | 本地：Node 121/121、Vitest 494/494、Node-only typography 1/1、后端财务/报表关联回归 76/76、Vite build SUCCESS；精确提交 GitHub CI 待运行 | UNKNOWN（待独立审查） | ISS-001 等历史 Issue 全部保留；新增 ISS-057（待复审）、ISS-058（性能待核实） | 财务流水、应收/应付和概览已在隔离 SQLite 与 Codex 内置浏览器跑通。截图归档和多尺寸视口验收 BLOCKED，替代证据与场景明细见 [R0-F1 盘点](R0-F1-前端UX覆盖盘点.md)。 |
 
 ## 依赖次序
 

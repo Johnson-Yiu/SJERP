@@ -1,6 +1,6 @@
 # SUNJACK-ERP 项目问题台账
 
-核对基线：`master` / `ecdc9bc`（2026-10-13）。本台账只登记可追溯的问题、尚未完成的验收、明确延期项和待决事项；本轮只增补管理文档，未修改业务代码。R0-E1 经独立审查为 PARTIAL PASS，不能据此推导未覆盖流程通过。
+核对基线：R0-F1 从 `master` / `bf79ef8` 开始（2026-10-13）。本轮按用户批准的整体 UI/UX 路线仅实施财务前端体验与相关回归；历史 Issue 继续保留，不进入集中历史问题修复阶段。R0-E1 经独立审查为 PARTIAL PASS，不能据此推导未覆盖流程通过。
 
 ## 状态和优先级
 
@@ -82,6 +82,9 @@
 | ISS-055 | OPEN | ChatGPT 历史独立审查（R0-D4B1；未入 GitHub 问题记录；发现日期 UNKNOWN）；当前代码：backend/crm/views.py、frontend/src/utils/apiErrors.js | 2026-10-13 / ecdc9bc：只读检查客户范围 queryset、404 回归及错误格式化；未执行 API 请求或真实 UI。 | 历史审查报告越权客户访问页显示 No Customer matches the given query.。当前 Customer 查询使用范围过滤；作用于范围 queryset 的标准详情查询会产生未命中 404，前端 formatApiError 会原样呈现 detail。现有范围测试断言 404，但不验证错误正文或中文 UI，代码路径仍可显示该英文。 | 保留越权对象的 404 与不泄露策略；将通用未命中错误映射为自然中文，不返回客户是否存在等额外信息；补 API 响应和 UI 文案回归。负责人：客户模块 QA / 前端。 | R0-E1 补验（与下一获授权的错误提示回归一并验收） | 越权详情仍返回 404；API/UI 对用户显示简洁中文通用提示且不含英文模型名、客户存在性线索；自动测试及独立复审通过。 |
 | ISS-056 | OPEN | [CI #267 Backend 失败](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38384214144)；[`test_sku_context_hides_cost_and_stock_without_source_modules`](../backend/crm/tests/test_sales_data_scope.py)；首次发现日期：2026-10-13 | 2026-10-13 / `d673cb5`，CI #267 attempt 1 的 Backend 失败；attempt 2 三项全部 SUCCESS。代码断言仍有非确定性风险，未修改测试。 | 首次失败断言以 `assertNotIn(str(sku.cost_price), repr(response.data))` 搜索子串 `77`；响应中无成本字段，但无关时间戳 `...210776...` 含有 `77`，导致偶发假失败。影响 Backend CI 可靠性，不代表业务数据泄漏。 | 后端测试维护者把断言改为检查受限响应字段/序列化值或精确金额 token，避免任意文本子串匹配；随后运行该测试和精确 HEAD 三项 CI。负责人：Backend QA。 | 后续获授权的 CI 稳定性修复 | 该测试在时间戳变化时稳定通过，且断言仍能在真正泄漏成本值时失败；精确 HEAD Backend、Backend PostgreSQL、Frontend CI 全部 SUCCESS。 |
 
+| ISS-057 | P2 / FIXED_PENDING_REVIEW | [R0-F1 前端 UX 覆盖盘点](R0-F1-前端UX覆盖盘点.md)；首次发现：2026-10-13，本轮财务页基线实测 | 2026-10-13 / R0-F1 工作树，基线 `bf79ef8`；Node 121/121、Vitest 494/494、关联后端 76/76；Codex 内置浏览器完成财务列表、新增、收付款、核销、作废和概览路径 | 财务流水及收付款计划过滤原先缺少统一显式提交/可恢复 URL 状态；财务概览把期间数值与当前余额混排，且部分保存/核销结果反馈不足。本轮已调整页面结构、路由查询状态、字段分组、状态反馈和统计口径说明；财务计算与后端规则未改。截图不能通过当前受支持浏览器接口保存，归档状态 BLOCKED；当前视口也未完成多尺寸核验。 | ChatGPT 检查真实 UI、路由恢复、错误/成功状态、不同视口布局、文案和 R0-F1 代码；有受支持截图通道后补交证据。负责人：前端 QA / 独立审查。 | R0-F1 财务 Part | 精确提交 HEAD 的 Backend、Backend PostgreSQL、Frontend CI 成功；财务页面主要路径及当前桌面、后续窄视口均有验证记录；自动化覆盖筛选 URL、日期错误、正常保存/核销/作废和反馈；截图限制及替代证据经 ChatGPT 接受；独立复审通过。 |
+| ISS-058 | P3 / NEEDS_VERIFICATION | [R0-F1 前端 UX 覆盖盘点](R0-F1-前端UX覆盖盘点.md)；首次发现：2026-10-13，本轮生产构建 | 2026-10-13 / R0-F1 工作树，基线 `bf79ef8`；Vite 构建提示主 JS chunk 1112.28 kB（gzip 401.42 kB） | 构建成功，但主入口包超过 Vite 的 500 kB 默认提醒门槛；可能增加首次传输和解析时间，当前没有代表性设备/网络的加载基准，不能认定已造成用户可感知性能问题。 | 前端 QA 在代表性桌面和移动网络/设备记录首屏下载、解析与交互时间；依据数据决定路由懒加载或接受当前体积。负责人：前端。 | R0-F1 后续 UI/UX Part | 有可重复的加载数据和性能预算；如拆分则路由首屏行为与构建回归通过，或产品负责人记录接受当前影响。 |
+
 ### P3 / 未承诺 Enhancement
 
 | ID | 状态 | 首次发现来源 / 日期 | 最近核实（日期 / HEAD） | 影响与当前证据 | 负责人 / 下一步动作 | 计划阶段 | 关闭验收依据 |
@@ -89,13 +92,13 @@
 | ISS-040 | Enhancement / BLOCKED（延期） | [PCR-007 completion note](Product-Optimization-Phase2G-PCR007.md)；[Phase1 completion review](Product-Completion-Review-Phase1.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测） | 实际装箱 UI/API 已按 PCR-007 原范围验收；正式 Packing List PDF/Excel 输出未实现。历史审查要求先确认客户/物流是否需要，不能把该增量称为已承诺缺陷。 | 销售/物流负责人决定是否需要对客或物流输出；如需要，定义格式/快照/权限后单独立项。 | Enhancement-Later（决策后） | 明确不需要并记录排除，或完整实现文件导出并验收。 |
 | ISS-041 | Enhancement / BLOCKED（延期） | [Product Completion Review PCR-009](Product-Completion-Review-Phase1.md)；[UX2 reassessment](Product-UX-Second-Review.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测） | ProductWorkspace 已有产品销售汇总；客户年度洞察仍是 Enhancement-Later，不属于已承诺功能。 | 产品负责人基于真实使用需求决定是否立项。 | Enhancement-Later | 决定“不做”并保留记录，或新增范围/数据口径/验收后完成。 |
 | ISS-042 | Enhancement / BLOCKED（延期） | [Product Completion Review PCR-018](Product-Completion-Review-Phase1.md)；[UX2 reassessment](Product-UX-Second-Review.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测） | 报表图块目前保存于浏览器 localStorage，跨用户/设备共享视图未实现。 | 报表负责人根据团队重复使用证据决定是否建设共享模板；不提前引入审批模型。 | Enhancement-Later | 明确不需要或完成团队共享模板的权限、同步和多用户验收。 |
-| ISS-048 | P3 / BLOCKED（延期） | [Product Completion PCR-013](Product-Completion-Review-Phase1.md)；[UX2 reassessment](Product-UX-Second-Review.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测） | 经营/财务概览部分指标缺下钻或期间口径说明；已有数值和明细路径不能据此判为错误。 | 产品负责人挑选真实有操作价值的指标，定义下钻和口径后再排期。 | P3-Later | 有范围/口径验收，或书面确认维持现状。 |
+| ISS-048 | P3 / BLOCKED（延期） | [Product Completion PCR-013](Product-Completion-Review-Phase1.md)；[UX2 reassessment](Product-UX-Second-Review.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-13 / R0-F1 工作树，基线 `bf79ef8`；本轮尚未提交 | 财务概览现已分组呈现“所选期间”和“当前余额”，并说明销售按订单日期、现金按发生日期、待收/待付及未核销款为当前余额、预计订单利润是经营估算。指标下钻仍缺业务定义；此处仅完成口径说明，不把原待决范围标记完成。 | ChatGPT 复核新说明准确且可读；产品负责人再决定是否为哪些指标定义下钻。负责人：产品/财务。 | 口径说明：R0-F1；下钻：P3-Later | 独立复审接受口径说明；若需要下钻，另有明确指标范围、跳转目标和权限验收；或业务负责人确认维持当前明细路径。 |
 | ISS-049 | P3 / BLOCKED（延期） | [Product Completion PCR-016](Product-Completion-Review-Phase1.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测） | 客户、跟进、流水等通用列表的负责人/日期/类型筛选建议；不是当前已确认错误。 | 根据实际检索负担选择页面和最少筛选项。 | P3-Later | 有用户场景和范围，或确认不做；开发后真实列表复测。 |
 | ISS-050 | P3 / NEEDS_VERIFICATION（等待样本） | [Product Completion PCR-017](Product-Completion-Review-Phase1.md)；[UX2 reassessment](Product-UX-Second-Review.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测） | 50–100 SKU 的参数、HS、包装维护是否需要批量继承尚无代表性工作量数据。 | 产品数据负责人用真实规模样本测维护时间，再决定是否做批量能力。 | P3-Later | 有记录的 50–100 SKU 观察与业务决定。 |
 
 ## 本次统计
 
-统计包含以上仍需跟踪的记录，不把“缺少当前场景复验”写成已确认缺陷；P0=0（仅表示截至本轮无已确认 P0），P1=19，P2=31，P3=3，另有未分级 Enhancement=3。按状态：OPEN=6，BLOCKED=17，NEEDS_VERIFICATION=19，FIXED_PENDING_REVIEW=14，CLOSED=0。总计 56 条；每个 ID 只计一次。本轮新增 ISS-053–ISS-056；如维护时发现计数与表格不符，先修正计数再提交。
+统计包含以上仍需跟踪的记录，不把“缺少当前场景复验”写成已确认缺陷；P0=0（仅表示截至本轮无已确认 P0），P1=19，P2=32，P3=4，另有未分级 Enhancement=3。按状态：OPEN=6，BLOCKED=17，NEEDS_VERIFICATION=20，FIXED_PENDING_REVIEW=15，CLOSED=0。总计 58 条；每个 ID 只计一次。本轮新增 ISS-057、ISS-058；ISS-001–056 全部保留，未因阶段切换批量关闭。
 
 > 注：每条问题均有稳定 `ISS-nnn`。状态数量按每个 ID 只计一次；延期事项仍保留在台账中，不因阶段通过清空。
 
@@ -121,4 +124,3 @@
 ## Git 历史核对
 
 核对 `master` 至基线 `ecdc9bc` 的历史及相关修复链。R0-D4 最近关键提交包含 `2a9d6cd`（财务数据范围）、`11fb307`（供应商 Context）、`7e5e565`（共享采购销售关联）、`af386d7`（跨模块权限审查缺口）；`24dc2b1` 关闭 Browsable API 关联泄漏。历史 P1/UI 修复和阶段记录保留在来源文档中。本轮对 ISS-053–ISS-055 只做源码、测试和历史记录检查，未运行相应回归或真实 UI；不通过提交日志推断没有测试过的 UI 流程已经通过。
-

@@ -7,9 +7,9 @@ import PurchaseOrderPage from '../src/views/PurchaseOrderPage.vue'
 const mocks = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), patch: vi.fn(), listAll: vi.fn() }))
 vi.mock('../src/api', () => ({ api: mocks, listAll: mocks.listAll, listData: response => response.data.results || response.data }))
 import { createRouter, createMemoryHistory } from 'vue-router'
-async function purchaseRouter() {
-  const router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/purchase-orders', component: { template: '<div />' } }] })
-  await router.push('/purchase-orders')
+async function purchaseRouter(path = '/purchase-orders') {
+  const router = createRouter({ history: createMemoryHistory(), routes: ['/purchase-orders', '/transactions', '/orders'].map(route => ({ path: route, component: { template: '<div />' } })) })
+  await router.push(path)
   return router
 }
 const plan = { id: 1, direction: 'receivable', customer_id: 4, order: 3, contract_no: 'SO-3', counterparty_name: '客户甲', planned_amount: '100', settled_amount: '0', remaining_amount: '100', remaining_rmb: 700, exchange_rate: '7', currency: 'USD', status: 'open' }
@@ -41,7 +41,7 @@ describe('trade finance interactions', () => {
 
   it('retains the selected supplier when saving an unallocated payment', async () => {
     mocks.listAll.mockImplementation(async url => url === '/suppliers/' ? [{ id: 8, name: '供应商乙' }] : [])
-    const wrapper = mount(TransactionPage, options)
+    const wrapper = mount(TransactionPage, { ...options, global: { ...options.global, plugins: [await purchaseRouter('/transactions')] } })
     await flushPromises()
     await wrapper.findAll('button').find(button => button.text() === '新增记账').trigger('click')
     await wrapper.find('.dialog select').setValue('unallocated_payment')
@@ -60,11 +60,11 @@ describe('trade finance interactions', () => {
       { id: 12, transaction_date: '2026-09-01', transaction_no: 'FIN-12', direction: 'income', direction_display: '收入', kind: 'customer_receipt', amount: '20', currency: 'USD', rmb_amount: '140', status: 'confirmed', status_display: '已确认', customer_name: '客户甲', order_no: 'SO-11', split_from: 11, allocations: [], allocated_amount: '0' },
     ]
     mocks.listAll.mockImplementation(async url => url === '/transactions/' ? rows : [])
-    const wrapper = mount(TransactionPage, options)
+    const wrapper = mount(TransactionPage, { ...options, global: { ...options.global, plugins: [await purchaseRouter('/transactions')] } })
     await flushPromises()
     expect(wrapper.findAll('button').filter(button => button.text() === '作废')).toHaveLength(1)
     await wrapper.findAll('button').find(button => button.text() === '作废').trigger('click')
-    expect(wrapper.text()).toContain('该操作将同时作废相关拆分流水，并恢复对应收付款计划。')
+    expect(wrapper.text()).toContain('此操作会同步作废拆分流水，并恢复关联收付款计划。')
     const dialog = wrapper.find('form.dialog')
     await dialog.find('textarea').setValue('收款金额录入错误')
     await dialog.trigger('submit')

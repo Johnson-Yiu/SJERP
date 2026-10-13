@@ -68,28 +68,20 @@ describe('receivable Order context', () => {
   })
 
   it('preserves Order context across status, overdue, date, and search filters', async () => {
-    vi.useFakeTimers()
     const { wrapper, router } = await mountPage('/receivables?order=123&source=order-workspace')
     mocks.listAll.mockClear()
 
     await wrapper.find('select[aria-label="收付款计划状态"]').setValue('settled')
-    await flushPromises()
-    expect(mocks.listAll).toHaveBeenLastCalledWith('/payment-plans/', { params: { direction: 'receivable', order: '123', status: 'settled' } })
     await wrapper.find('input[aria-label="仅看逾期"]').setValue(true)
     await wrapper.find('input[aria-label="到期日从"]').setValue('2026-10-01')
     await wrapper.find('input[aria-label="到期日至"]').setValue('2026-10-31')
-    await flushPromises()
-    expect(mocks.listAll).toHaveBeenLastCalledWith('/payment-plans/', { params: {
-      direction: 'receivable', order: '123', status: 'settled', overdue: 'true', due_from: '2026-10-01', due_to: '2026-10-31',
-    } })
-
     await wrapper.find('input[aria-label="搜索往来方或合同号"]').setValue('UAT Buyer')
-    await vi.advanceTimersByTimeAsync(300)
+    await wrapper.find('form.filters').trigger('submit')
     await flushPromises()
     expect(mocks.listAll).toHaveBeenLastCalledWith('/payment-plans/', { params: {
       direction: 'receivable', order: '123', status: 'settled', overdue: 'true', search: 'UAT Buyer', due_from: '2026-10-01', due_to: '2026-10-31',
     } })
-    expect(router.currentRoute.value.query).toEqual({ order: '123', source: 'order-workspace' })
+    expect(router.currentRoute.value.query).toEqual({ order: '123', source: 'order-workspace', search: 'UAT Buyer', status: 'settled', overdue: 'true', due_from: '2026-10-01', due_to: '2026-10-31' })
     wrapper.unmount()
   })
 

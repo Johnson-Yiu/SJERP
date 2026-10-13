@@ -80,3 +80,8 @@ fixtures/local/
 *.tsv
 *.xlsx
 *.xls
+
+# Browser regression outputs
+frontend/.npm-cache/
+frontend/test-results/
+frontend/playwright-report/

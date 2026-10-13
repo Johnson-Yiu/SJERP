@@ -1,13 +1,13 @@
 import csv
 import io
 from datetime import date
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from importlib import import_module
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, override_settings
+from django.test import SimpleTestCase, TestCase, override_settings
 from django.utils import timezone
 from rest_framework.test import APIClient
 
@@ -477,17 +477,23 @@ class SalesDataScopeTests(TestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.assertNotIn("成本价", [row[0] for row in response.data["info"]])
         self.assertNotIn("当前库存", [row[0] for row in response.data["metrics"]])
-        # Search typed monetary values, not their text representation: timestamps
-        # in the context can coincidentally contain the cost digits (for example
-        # a microsecond value ending in ``...77``).
-        def contains_cost_decimal(value):
-            if isinstance(value, dict):
-                return any(contains_cost_decimal(item) for item in value.values())
-            if isinstance(value, (list, tuple)):
-                return any(contains_cost_decimal(item) for item in value)
-            return isinstance(value, Decimal) and value == sku.cost_price
+        assert_no_sensitive_amount(self, response.data, sku.cost_price)
+        assert_no_sensitive_amount(self, response.json(), sku.cost_price)
 
-        self.assertFalse(contains_cost_decimal(response.data))
+        # Exercise the actual authorized serializer and rendered API response.
+        RolePermission.objects.update_or_create(role=self.roles["self"], module="purchases", defaults={"can_view": True})
+        visible = self.client.get(f"/api/context/skus/{sku.pk}/")
+        self.assertEqual(visible.status_code, 200)
+        serializer_cost = next(row[1] for row in visible.data["info"] if row[0] == "成本价")
+        rendered_cost = next(row[1] for row in visible.json()["info"] if row[0] == "成本价")
+        self.assertIsInstance(serializer_cost, Decimal)
+        self.assertIsInstance(rendered_cost, (int, float))
+        from crm.serializers import SKUSerializer
+        serialized = SKUSerializer(sku, context={"user": self.employee_a.user}).data
+        self.assertIsInstance(serialized["cost_price"], str)
+        for payload in (visible.data, visible.json(), serialized):
+            with self.assertRaises(AssertionError):
+                assert_no_sensitive_amount(self, payload, sku.cost_price)
 
     def test_sku_supplier_source_requires_supplier_module_permission(self):
         order, sku = self.make_order(self.customer_a, "SCOPE-O-SUPPLIER-GATE")
@@ -715,3 +721,29 @@ class LegacyCustomerOwnerMigrationTests(TestCase):
         self.assertFalse(scope_customer_queryset(Customer.objects.all(), self_profile.user).filter(pk=unassigned.pk).exists())
         self.assertTrue(scope_customer_queryset(Customer.objects.all(), all_profile.user).filter(pk=unassigned.pk).exists())
 
+
+
+def assert_no_sensitive_amount(case, value, amount):
+    """Compare whole numeric scalars, never substrings of dates or identifiers."""
+    if isinstance(value, dict):
+        for item in value.values():
+            assert_no_sensitive_amount(case, item, amount)
+    elif isinstance(value, (list, tuple)):
+        for item in value:
+            assert_no_sensitive_amount(case, item, amount)
+    elif isinstance(value, (Decimal, str, int, float)) and not isinstance(value, bool):
+        try:
+            numeric = Decimal(str(value))
+        except InvalidOperation:
+            return
+        case.assertNotEqual(numeric, amount, "Sensitive amount leaked as an API scalar")
+
+
+class SensitiveAmountAssertionTests(SimpleTestCase):
+    def test_ignores_timestamp_and_identifier_substrings(self):
+        assert_no_sensitive_amount(self, {"created_at": "2026-10-13T12:00:00.210776Z", "code": "SKU-77", "value": "177.00"}, Decimal("77"))
+
+    def test_rejects_nested_decimal_string_and_json_number_leaks(self):
+        for value in (Decimal("77"), "77", "77.0000", "7.7E1", 77, 77.0):
+            with self.subTest(value=value), self.assertRaises(AssertionError):
+                assert_no_sensitive_amount(self, {"sections": [{"rows": [["hidden", value]]}]}, Decimal("77"))

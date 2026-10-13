@@ -91,6 +91,12 @@ jobs:
       - name: Frontend Vitest tests
         working-directory: frontend
         run: npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js
+      - name: Install Chromium for layout regression
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+      - name: Computed finance layout regression
+        working-directory: frontend
+        run: npx playwright test
       - name: Frontend build
         working-directory: frontend
         run: npm run build

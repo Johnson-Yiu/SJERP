@@ -15,6 +15,7 @@ const route = useRoute()
 const router = useRouter()
 const { can } = useAccessControl()
 const rows = ref([]), error = ref(''), notice = ref(''), loadError = ref(''), hasLoaded = ref(false), allTransactionsExist = ref(false), query = ref(''), orderQuery = ref(''), showForm = ref(false), orders = ref([])
+const selectedOrder = ref(null)
 const customers = ref([]), suppliers = ref([]), purchases = ref([]), plans = ref([]), saving = ref(false), loading = ref(false)
 const referenceErrors = ref([]), referencesLoaded = ref(false), referencesLoading = ref(true), orderSearchError = ref(''), orderSearchLoading = ref(false)
 const allocation = ref(null), allocationPlan = ref(''), allocationAmount = ref('')
@@ -148,6 +149,7 @@ function syncKind() {
   form.customer = null; form.supplier = null; form.purchase_order = null
   if (!contractKinds.includes(form.kind)) {
     form.order = null
+    selectedOrder.value = null
     orders.value = []
     orderQuery.value = ''
   }
@@ -155,6 +157,7 @@ function syncKind() {
 function openForm() {
   if (!can('transactions', 'create')) return
   Object.assign(form, { transaction_no: '', transaction_date: new Date().toLocaleDateString('en-CA'), kind: 'period_expense', direction: 'expense', category: '其他期间费用', amount: '', currency: 'CNY', exchange_rate: '1', payment_method: '', reference: '', notes: '', order: null, customer: null, supplier: null, purchase_order: null })
+  selectedOrder.value = null
   orderQuery.value = ''
   orders.value = []
   error.value = ''
@@ -180,6 +183,7 @@ async function load() {
 }
 async function searchOrders() {
   form.order = null
+  selectedOrder.value = null
   orderSearchError.value = ''
   orderSearchLoading.value = true
   try { orders.value = (await listAll('/orders/', { params: { search: orderQuery.value } })).filter(row => !['draft', 'cancelled'].includes(row.status)) }
@@ -188,6 +192,7 @@ async function searchOrders() {
 }
 function chooseOrder(row) {
   form.order = row.id
+  selectedOrder.value = { id: row.id, order_no: row.order_no }
   orderQuery.value = row.order_no
   if (['customer_receipt', 'refund'].includes(form.kind)) { form.currency = row.currency; form.exchange_rate = row.exchange_rate }
   orders.value = []
@@ -201,7 +206,7 @@ async function save() {
   if (!referencesLoaded.value) { error.value = '客户、供应商或采购单资料尚未加载完成，请重试后再保存。'; return }
   if (form.kind === 'customer_receipt' && (orderSearchLoading.value || orderSearchError.value)) { error.value = '订单选项尚未成功加载，请重试后再保存。'; return }
   saving.value = true
-  error.value = ''
+  error.value = ''; notice.value = ''
   try {
     const payload = { ...form }
     if (!payload.transaction_no) delete payload.transaction_no
@@ -223,7 +228,7 @@ async function submitVoid() {
   const reason = voidReason.value.trim()
   if (!reason || voidSaving.value) return
   voidSaving.value = true
-  error.value = ''
+  error.value = ''; notice.value = ''
   try {
     await api.post(`/transactions/${voidTarget.value.id}/void/`, { reason })
     voidTarget.value = null
@@ -240,7 +245,7 @@ async function openAllocate(row) {
 async function allocate() {
   if (saving.value || !can('transactions', 'update')) return
   saving.value = true
-  error.value = ''
+  error.value = ''; notice.value = ''
   try { await api.post(`/transactions/${allocation.value.id}/allocate/`, { plan: allocationPlan.value, amount: allocationAmount.value }); allocation.value = null; await load(); notice.value = '核销已保存。' } catch (err) { error.value = apiErrorMessage(err) || '核销失败，请检查金额和计划后重试。' } finally { saving.value = false }
 }
 async function loadReferenceOptions() {
@@ -307,7 +312,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
         <div v-if="contractKinds.includes(form.kind)" class="order-picker">
           <label>关联订单（客户收款必选，费用可选）<input v-model="orderQuery" placeholder="客户或订单号" @input="searchOrders"></label><small v-if="orderSearchLoading">正在加载订单…</small><p v-if="orderSearchError" class="option-load-error-text" role="alert">{{ orderSearchError }} <button type="button" @click="searchOrders">重试</button></p>
           <button v-for="row in orders" :key="row.id" type="button" class="order" @click="chooseOrder(row)">{{ row.customer_name }}｜{{ row.customer_country || '—' }}｜{{ row.order_no }}｜{{ row.currency }} {{ formatMoney(row.total_amount) }}</button>
-          <p v-if="form.order">已选择订单：{{ orders.find(row => row.id === form.order)?.order_no || form.order }}</p>
+          <p v-if="form.order">已选择订单：{{ selectedOrder?.order_no }}</p>
         </div>
         <label v-if="['supplier_payment', 'supplier_refund'].includes(form.kind)">采购单<select v-model="form.purchase_order" required @change="choosePurchase"><option :value="null">请选择采购单</option><option v-for="row in purchases.filter(row => !['draft', 'cancelled'].includes(row.status))" :key="row.id" :value="row.id">{{ row.purchase_no }} · {{ row.supplier_name }} · {{ row.currency }}</option></select></label>
         <label v-if="form.kind === 'unallocated_advance'">客户<select v-model="form.customer" required><option :value="null">请选择客户</option><option v-for="row in customers" :key="row.id" :value="row.id">{{ row.name }}</option></select></label>

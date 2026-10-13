@@ -93,7 +93,7 @@
 
 屏幕截图在 Codex 内置浏览器中成功显示并目视检查，但当前受支持的 CUA 接口没有将截图保存进工作树的路径。遵守截图安全限制，未通过复制浏览器数据或其它未文档化方式导出，因此 `ux-review-evidence/ux-review/r0-f1-finance-ux/` 截图提交为 **BLOCKED**，不能提供仓库截图路径。替代证据为本矩阵记录的页面与操作结果、可访问性树/截图目视核验、自动化测试和隔离数据库成功响应；这些替代材料不等同于可归档的截图，留待 ChatGPT 复审或由用户提供允许的截图导出通道。
 
-本轮详细回归：前端 Node 单测 121/121 PASS；Node-only typography 1/1 PASS；Vitest 49 个文件、494/494 PASS；生产构建成功（Vite 提示主 JS chunk 1112.28 kB，gzip 401.42 kB，已在 ISS-058 记录为待核实 P3）；后端关联财务/报表测试与三项 GitHub CI 结果记于最终验收记录/提交状态。未改财务计算、核销、退款、作废、权限、数据范围和数据库模型。
+本轮详细回归：前端 Node 单测 121/121 PASS；Node-only typography 1/1 PASS；Vitest 49 个文件、494/494 PASS；生产构建成功（Vite 提示主 JS chunk 1112.28 kB，gzip 401.42 kB，已在 ISS-058 记录为待核实 P3）；后端财务/报表关联测试 76/76、销售数据范围测试 28/28 PASS。首次 GitHub CI（#38424190013）Backend 与 Frontend 成功，Backend PostgreSQL 有一项测试断言失败：对 `repr(response.data)` 搜索字符串 `77`，偶然命中时间戳微秒位，并非响应中的成本金额。已将该回归测试改为检查嵌套 Decimal 数值相等，相关本地权限测试 28/28 通过；修正提交的三项 GitHub CI 待完成。未改财务计算、核销、退款、作废、权限、数据范围和数据库模型。
 
 ## 阶段边界与待复审
 

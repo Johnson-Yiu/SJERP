@@ -37,7 +37,7 @@
 | R0-D4B2-B | 完成（据用户历史陈述） | `7e5e565` | CI #38232779023：SUCCESS（Backend、Backend PostgreSQL、Frontend；对应阶段 SHA 经 GitHub 核对） | PASS（ChatGPT 独立审查，据用户历史陈述） | ISS-039、ISS-054 | 独立审查 PASS；ISS-054 的收货冲销提示仍按台账待复验。 |
 | R0-D4B2-C | R0-D4 权限开发有条件完成（据用户历史陈述） | `81273c0` | CI #38289225525：SUCCESS（Backend、Backend PostgreSQL、Frontend；对应阶段 SHA 经 GitHub 核对） | R0-D4 整体有条件封版；C 单项独立结论 UNKNOWN | ISS-003、ISS-017、ISS-046、ISS-055 | 权限矩阵及本阶段 CI 不覆盖所有文件部署 ACL 风险；不扩大为无条件封版。 |
 | R0-E1 | PARTIAL PASS（据用户历史陈述及验收报告） | `cdaa8f0` | CI #38356269083：SUCCESS（Backend、Backend PostgreSQL、Frontend；对应阶段 SHA 经 GitHub 核对） | PARTIAL PASS（ChatGPT 独立复审，据用户历史陈述） | ISS-001–008、ISS-019–029、ISS-052；继承项见问题台账 | CI SUCCESS 不替代未覆盖的业务、文件、导出、受限角色及边界流程验收；范围见 [E1 报告](R0-E1-综合业务回归与内测准备.md)。 |
-| R0-F1 UI/UX（本轮） | 财务 Part 本地验收完成，等待 ChatGPT 独立复审 | `bf79ef8` 起始基线；最终 SHA 待提交 | 本地：Node 121/121、Vitest 494/494、Node-only typography 1/1、后端财务/报表关联回归 76/76、Vite build SUCCESS；精确提交 GitHub CI 待运行 | UNKNOWN（待独立审查） | ISS-001 等历史 Issue 全部保留；新增 ISS-057（待复审）、ISS-058（性能待核实） | 财务流水、应收/应付和概览已在隔离 SQLite 与 Codex 内置浏览器跑通。截图归档和多尺寸视口验收 BLOCKED，替代证据与场景明细见 [R0-F1 盘点](R0-F1-前端UX覆盖盘点.md)。 |
+| R0-F1 UI/UX（本轮） | 财务 Part 实现已推送，等待修正后精确 HEAD 的 CI 与 ChatGPT 独立复审 | `bf79ef8` 基线；实现提交 `1f069f4`；PostgreSQL 测试修正待提交 | 本地：Node 121/121、Vitest 494/494、Node-only typography 1/1、财务/报表后端回归 76/76、销售范围后端回归 28/28、Vite build SUCCESS。实现提交 CI #38424190013：Backend 与 Frontend SUCCESS；PostgreSQL 一项测试断言偶然匹配时间戳 `77` 失败，已改为 Decimal 精确值检查，修正提交三项 CI 待运行 | UNKNOWN（待独立审查） | ISS-001 等历史 Issue 全部保留；新增 ISS-057（待复审）、ISS-058（性能待核实） | 财务流水、应收/应付和概览已在隔离 SQLite 与 Codex 内置浏览器跑通。截图归档和多尺寸视口验收 BLOCKED，替代证据与场景明细见 [R0-F1 盘点](R0-F1-前端UX覆盖盘点.md)。 |
 
 ## 依赖次序
 

@@ -477,7 +477,17 @@ class SalesDataScopeTests(TestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.assertNotIn("成本价", [row[0] for row in response.data["info"]])
         self.assertNotIn("当前库存", [row[0] for row in response.data["metrics"]])
-        self.assertNotIn(str(sku.cost_price), repr(response.data))
+        # Search typed monetary values, not their text representation: timestamps
+        # in the context can coincidentally contain the cost digits (for example
+        # a microsecond value ending in ``...77``).
+        def contains_cost_decimal(value):
+            if isinstance(value, dict):
+                return any(contains_cost_decimal(item) for item in value.values())
+            if isinstance(value, (list, tuple)):
+                return any(contains_cost_decimal(item) for item in value)
+            return isinstance(value, Decimal) and value == sku.cost_price
+
+        self.assertFalse(contains_cost_decimal(response.data))
 
     def test_sku_supplier_source_requires_supplier_module_permission(self):
         order, sku = self.make_order(self.customer_a, "SCOPE-O-SUPPLIER-GATE")

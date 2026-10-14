@@ -2,6 +2,7 @@
 import { provideUnsavedChangesScope } from '../composables/useUnsavedChangesGuard'
 const unsavedScope = provideUnsavedChangesScope()
 const requestClose = () => unsavedScope.requestClose(() => emit('close'))
+import { supplierStoreUrl } from '../utils/supplierPresentation'
 import { compactDecimalInput } from '../utils/decimalInput'
 import { movementSource, sourceLabels, movementStatus, signedMovement } from '../utils/inventoryLedger'
 import CertificateExpiryBadge from './CertificateExpiryBadge.vue'
@@ -23,9 +24,14 @@ const props = defineProps({ entity: String, id: [Number, String], refreshKey: { 
 const emit = defineEmits(['close', 'edit', 'changed'])
 const { can } = useAccessControl()
 const data = ref(null), loading = ref(true), error = ref(''), activeTab = ref(''), stack = ref([])
+const supplierRecord = ref(null)
+const isSupplierDetail = computed(() => currentEntity.value === 'suppliers')
+const supplierNotes = computed(() => data.value?.info?.find(item => item[0] === '备注')?.[1] || '')
+const supplierPaymentInfo = computed(() => (data.value?.info || []).filter(item => ['付款条款说明（备注）','系统执行付款规则'].includes(item[0])))
 const movementRecord = ref(null)
 const isMovementDetail = computed(() => currentEntity.value === 'inventory-movements')
 const detailInfo = computed(() => {
+  if (isSupplierDetail.value) return [...(data.value?.info || []).filter(item => !['付款条款说明（备注）','系统执行付款规则','备注'].includes(item[0])), ['可供产品分类', (supplierRecord.value?.supply_category_names || []).join('、') || '—']]
   if (!isMovementDetail.value || !movementRecord.value) return data.value?.info || []
   const row = movementRecord.value
   const sku = data.value?.sections?.find(section => section.key === 'sku')?.rows?.[0]
@@ -113,13 +119,15 @@ async function refreshSkuManagement() {
 async function load(entity = currentEntity.value, id = currentId.value) {
   loading.value = true; error.value = ''
   try {
-    const [contextResponse, movementResponse] = await Promise.all([
+    const [contextResponse, movementResponse, , supplierResponse] = await Promise.all([
       api.get(`/context/${entity}/${id}/`, { params: entity === 'products' && showInactiveSkus.value ? { include_inactive: '1' } : {} }),
       entity === 'inventory-movements' ? api.get(`/inventory-movements/${id}/`) : Promise.resolve(null),
       loadOperationLogs(entity, id),
+      entity === 'suppliers' ? api.get(`/suppliers/${id}/`) : Promise.resolve(null),
     ])
     data.value = contextResponse.data
     movementRecord.value = movementResponse?.data || null
+    supplierRecord.value = supplierResponse?.data || null
     currentEntity.value = entity; currentId.value = id
     activeTab.value = entity === 'products' ? '__overview' : data.value.sections[0]?.key || ''
     restoreCustomerTab()
@@ -329,8 +337,8 @@ onMounted(async () => {
 
 <template>
   <div class="modal-backdrop detail-backdrop" :class="{ 'follow-up-detail-backdrop': isFollowUpDetail, 'product-detail-backdrop': isProduct }" @mousedown.self="requestClose">
-    <article :role="isMovementDetail ? 'dialog' : undefined" :aria-modal="isMovementDetail ? 'true' : undefined" class="detail-modal" :class="{ 'follow-up-detail-modal': isFollowUpDetail, 'product-detail-modal': isProduct, 'customer-detail-root': isCustomerRoot, 'movement-detail': isMovementDetail }" :aria-label="isFollowUpDetail ? '跟进详情' : isMovementDetail ? '库存流水详情' : isCustomerRoot ? '客户详情' : '关联详情'">
-      <div v-if="loading" role="status" class="detail-loading"><button v-if="isMovementDetail" class="btn btn-secondary" @click="requestClose">关闭库存流水详情</button><div class="spinner" /><span>正在整理关联数据...</span></div>
+    <article :role="isMovementDetail || isSupplierDetail ? 'dialog' : undefined" :aria-modal="isMovementDetail || isSupplierDetail ? 'true' : undefined" class="detail-modal" :class="{ 'follow-up-detail-modal': isFollowUpDetail, 'product-detail-modal': isProduct, 'customer-detail-root': isCustomerRoot, 'movement-detail': isMovementDetail, 'supplier-detail': isSupplierDetail }" :aria-label="isFollowUpDetail ? '跟进详情' : isMovementDetail ? '库存流水详情' : isSupplierDetail ? '供应商详情' : isCustomerRoot ? '客户详情' : '关联详情'">
+      <button v-if="isSupplierDetail && (loading || error)" class="btn btn-secondary supplier-state-close" @click="requestClose">关闭供应商详情</button><div v-if="loading" role="status" class="detail-loading"><button v-if="isMovementDetail" class="btn btn-secondary" @click="requestClose">关闭库存流水详情</button><div class="spinner" /><span>正在整理关联数据...</span></div>
       <div v-else-if="error" role="alert" class="detail-error"><button v-if="isMovementDetail" class="btn btn-secondary" @click="requestClose">关闭库存流水详情</button><strong>详情加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load()">重试</button></div>
       <template v-else-if="data">
         <template v-if="isFollowUpDetail">
@@ -400,12 +408,12 @@ onMounted(async () => {
               <button v-if="!isProduct" class="detail-close" aria-label="关闭详情" @click="requestClose"><X :size="19" /><span>关闭</span></button>
               <button v-if="stack.length" class="detail-back" @click="back"><ArrowLeft :size="17" /> 返回 {{ stack[stack.length - 1].title }}</button>
               <span v-if="currentEntity === 'follow-ups'">跟进详情</span>
-              <span v-else-if="isProduct">产品管理 / 产品详情</span><span v-else-if="isMovementDetail">库存流水详情</span><span v-else-if="isCustomerRoot">客户详情</span><span v-else-if="!stack.length">关联详情</span>
+              <span v-else-if="isProduct">产品管理 / 产品详情</span><span v-else-if="isMovementDetail">库存流水详情</span><span v-else-if="isSupplierDetail">供应商详情</span><span v-else-if="isCustomerRoot">客户详情</span><span v-else-if="!stack.length">关联详情</span>
             </div>
             <div class="detail-actions">
               <button v-if="isRoot && currentEntity === 'customers' && can('followups', 'create')" class="btn btn-secondary" @click="openCustomerFollowUp"><Plus :size="14" /> 新增跟进</button>
               <button v-if="isRoot && currentEntity === 'customers' && hasRelationCustomerId && can('quotes', 'create')" class="btn btn-secondary" @click="openQuoteForCustomer(relationCustomerId)"><Plus :size="14" /> 新建报价</button>
-              <button v-if="isRoot && currentEntity !== 'inventory-movements' && can(currentEntity, 'update')" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> {{ currentEntity === 'customers' ? '编辑客户' : '编辑主档' }}</button>
+              <button v-if="isRoot && currentEntity !== 'inventory-movements' && can(currentEntity, 'update')" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> {{ currentEntity === 'customers' ? '编辑客户' : isSupplierDetail ? '编辑供应商' : '编辑主档' }}</button>
               <RouterLink v-else-if="!isMovementDetail && hasManagement(currentEntity)" class="btn btn-secondary" :to="managementTarget" @click="managementNavigation"><ExternalLink :size="14" /> {{ managementLabel }}</RouterLink>
               <button v-if="isProduct" class="detail-close" aria-label="关闭详情" @click="requestClose"><X :size="19" /><span>关闭</span></button>
             </div>
@@ -415,8 +423,8 @@ onMounted(async () => {
         </header>
 
         <component :is="isProduct ? ProductWorkspace : 'div'" :class="{ 'detail-content': !isProduct }" :data="data" :product-id="currentId" @changed="refreshSkuManagement" :active-tab="activeTab" @update:active-tab="selectSection" @drill="drill" @create-sku="openSkuCreate">
-          <section v-if="!isProduct" class="detail-info"><h3>基础信息</h3><div class="info-grid"><div v-for="item in detailInfo" :key="item[0]"><small>{{ item[0] }}</small><div v-if="item[2] === 'richtext'" class="richtext-view" v-html="richText(item[1])" /><span v-else>{{ item[1] }}</span><small v-if="currentEntity === 'customers' && item[0] === '下次跟进'" class="computed-field-note">随最新跟进自动更新</small></div></div></section>
-          <div :class="{ 'sku-create-workspace': isSkuSection && skuCreateOpen }">
+          <section v-if="!isProduct" class="detail-info"><h3>基础信息</h3><div class="info-grid"><div v-for="item in detailInfo" :key="item[0]"><small>{{ item[0] }}</small><div v-if="item[2] === 'richtext'" class="richtext-view" v-html="richText(item[1])" /><a v-else-if="isSupplierDetail && item[0] === '店铺链接' && supplierStoreUrl(item[1])" :href="supplierStoreUrl(item[1])" target="_blank" rel="noopener noreferrer">{{ item[1] }}</a><span v-else>{{ item[1] }}</span><small v-if="currentEntity === 'customers' && item[0] === '下次跟进'" class="computed-field-note">随最新跟进自动更新</small></div></div></section>
+          <section v-if="isSupplierDetail" class="supplier-payment-info" aria-label="供应商付款条款"><article v-for="item in supplierPaymentInfo" :key="item[0]" :class="{ execution: item[0] === '系统执行付款规则' }"><h3>{{ item[0] }}</h3><p>{{ item[1] }}</p><small>{{ item[0] === '系统执行付款规则' ? '用于新采购的付款计划；已保存采购保留原快照。' : '仅供沟通参考，不生成付款计划。' }}</small></article></section><details v-if="isSupplierDetail && supplierNotes && supplierNotes !== '—'" class="supplier-notes"><summary>其他备注</summary><p>{{ supplierNotes }}</p></details><nav v-if="isSupplierDetail" class="supplier-relations" aria-label="供应商关联入口"><button v-if="can('purchases','view') && data.sections.some(s=>s.key==='purchases')" class="btn btn-secondary" @click="selectSection('purchases')">采购单</button><button v-if="data.sections.some(s=>s.key==='supplier-skus')" class="btn btn-secondary" @click="selectSection('supplier-skus')">供应商 SKU 档案</button><p>具体 SKU 的供应来源在供货档案中维护。</p></nav><div :class="{ 'sku-create-workspace': isSkuSection && skuCreateOpen }">
           <SKUPage v-if="isSkuSection && skuCreateOpen" embedded inline :initial-product="currentId" @close="skuCreateOpen = false" @saved="skuCreated" />
           <section v-if="!isSkuSection" class="relation-area">
             <div class="relation-top"><div><h3>{{ isProduct ? activeSection?.title || '操作日志' : currentEntity === 'customers' ? '业务记录' : isMovementDetail ? '关联记录' : '关联数据' }}</h3><p v-if="currentEntity !== 'customers' && !isMovementDetail">点击记录查看详情</p></div><div class="relation-actions"><button v-if="isSkuSection && canBulkDeleteSku" class="manage-link" :class="{ 'multi-select-active': skuMultiSelect }" @click="toggleSkuMultiSelect"><CheckSquare :size="13" /> {{ skuMultiSelect ? '取消多选' : '多选' }}</button><button v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect && selectedActiveSkuIds.length" class="manage-link danger-link" @click="deactivateSelectedSkus"><Trash2 :size="13" /> 停用 {{ selectedActiveSkuIds.length }} 个 SKU</button><button v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect && selectedInactiveSkuIds.length" class="manage-link restore-link" @click="reactivateSelectedSkus"><CheckSquare :size="13" /> 重新启用 {{ selectedInactiveSkuIds.length }} 个 SKU</button><button v-if="isSkuSection" class="manage-link" :class="{ 'inactive-toggle': showInactiveSkus }" @click="toggleInactiveSkus"><CheckSquare :size="13" /> {{ showInactiveSkus ? '隐藏已停用 SKU' : '显示已停用 SKU' }}</button><button v-if="isSkuSection && can('skus', 'create')" class="manage-link" @click="openSkuCreate"><Plus :size="13" /> 新增 SKU</button><button v-else-if="showRelatedCreate" class="manage-link" @click="openRelatedCreate"><Plus :size="13" /> {{ createLabel(activeSection) }}</button></div></div>
@@ -426,7 +434,7 @@ onMounted(async () => {
             <div v-else-if="activeSection" class="context-table-wrap">
               <div v-if="!visibleSectionRows.length" class="context-empty"><Rows3 :size="27" /><strong>{{ isSkuSection && skuQuery ? '未找到匹配的 SKU' : currentEntity === 'customers' ? ({ followups: '暂无跟进记录', quotes: '暂无报价', orders: '暂无订单', contacts: '暂无联系人', sold_items: '暂无成交商品记录', cash: '暂无财务流水' }[activeSection.key] || `暂无${activeSection.title}`) : `暂无${activeSection.title}` }}</strong><p v-if="currentEntity !== 'customers' && !isMovementDetail && canManage">{{ isSkuSection && skuQuery ? '请调整关键词后重试。' : '点击右上角新增关联记录。' }}</p></div>
               <table v-else class="context-table" :class="{ 'followup-table': activeSection.key === 'followups', 'sku-context-table': isSkuSection, 'multi-select-table': skuMultiSelect }"><thead><tr><th v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect" class="selection-cell"><label class="selection-check"><input type="checkbox" :checked="allSkuSelected" @click.stop @change="toggleAllSkuSelection" /><CheckSquare :size="15" /></label></th><th v-for="column in activeSection.columns" :key="column[0]">{{ column[1] }}</th><th></th></tr></thead><tbody>
-                <tr v-for="(row,index) in visibleSectionRows" :key="row.id || index" :class="{ 'inactive-row': isSkuSection && !row.active }" @click="!skuMultiSelect && drill(row)"><td v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect" class="selection-cell"><label class="selection-check" :class="{ restore: !row.active }" @click.stop><input type="checkbox" :checked="selectedSkuIds.includes(row.id)" @change="toggleSkuSelection(row.id)" /><CheckSquare :size="15" /></label></td><td v-for="(column,colIndex) in activeSection.columns" :key="column[0]" :class="{ primary: colIndex === 0, 'excerpt-cell': column[2] === 'excerpt' }"><CertificateExpiryBadge v-if="column[2] === 'certificate-expiry'" :certificate="row" /><span v-else :class="valueClass(column[2], row[column[0]])" :title="column[2] === 'excerpt' ? String(row[column[0]] || '') : undefined">{{ format(row[column[0]], column[2]) }}</span></td><td class="drill-cell"><button v-if="!skuMultiSelect" class="context-drill" :aria-label="`查看 ${row.sku || '记录'} 详情`" @click.stop="drill(row)"><ChevronRight :size="17" /></button></td></tr>
+                <tr v-for="(row,index) in visibleSectionRows" :key="row.id || index" :class="{ 'inactive-row': isSkuSection && !row.active }" @click="!skuMultiSelect && drill(row)"><td v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect" class="selection-cell"><label class="selection-check" :class="{ restore: !row.active }" @click.stop><input type="checkbox" :checked="selectedSkuIds.includes(row.id)" @change="toggleSkuSelection(row.id)" /><CheckSquare :size="15" /></label></td><td v-for="(column,colIndex) in activeSection.columns" :key="column[0]" :class="{ primary: colIndex === 0, 'excerpt-cell': column[2] === 'excerpt' }"><CertificateExpiryBadge v-if="column[2] === 'certificate-expiry'" :certificate="row" /><span v-else-if="isSupplierDetail && activeSection.entity === 'purchase-orders' && column[0] === 'status'" class="ctx-status">{{ row.status_display || format(row.status, column[2]) }}</span><span v-else :class="valueClass(column[2], row[column[0]])" :title="column[2] === 'excerpt' ? String(row[column[0]] || '') : undefined">{{ format(row[column[0]], column[2]) }}</span></td><td class="drill-cell"><button v-if="!skuMultiSelect" class="context-drill" :aria-label="`查看 ${row.sku || '记录'} 详情`" @click.stop="drill(row)"><ChevronRight :size="17" /></button></td></tr>
               </tbody></table>
             </div>
           </section>
@@ -565,4 +573,8 @@ onMounted(async () => {
 
 <style scoped>
 .customer-detail-root .detail-header,.movement-detail .detail-header{padding:22px 26px}.customer-detail-root .detail-identity h2,.movement-detail .detail-identity h2{font-size:var(--text-page);font-weight:700;overflow-wrap:anywhere}.detail-owner,.movement-identity{display:block;margin-top:8px;font-size:var(--text-caption);color:#b6d3ca}.customer-detail-root .detail-info,.customer-detail-root .relation-area,.movement-detail .detail-info,.movement-detail .relation-area{padding:16px;border-color:#e0e8e4;margin-bottom:16px}.customer-detail-root .detail-tabs,.movement-detail .detail-tabs{margin-left:-16px;margin-right:-16px;padding:0 16px}.customer-detail-root .detail-tabs button,.movement-detail .detail-tabs button{min-height:44px;padding:10px 13px}.customer-detail-root .context-table-wrap,.movement-detail .context-table-wrap{margin-left:-16px;margin-right:-16px;margin-bottom:-16px}.customer-detail-root .detail-nav,.movement-detail .detail-nav{gap:14px;flex-wrap:wrap}.customer-detail-root .detail-actions{flex-wrap:wrap}.customer-detail-root .detail-actions .btn:first-child{background:#f5fcf8;color:#174c41;border-color:#b8dccf;font-weight:700}
+</style>
+
+<style scoped>
+.supplier-detail .detail-identity h2{font-size:var(--text-page);overflow-wrap:anywhere}.supplier-detail .detail-metrics{display:flex;flex-wrap:wrap}.supplier-detail .detail-metrics>div{min-width:150px;flex:1}.supplier-detail .info-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.supplier-detail .info-grid a{overflow-wrap:anywhere;color:#236657}.supplier-payment-info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:18px}.supplier-payment-info article{padding:18px;border:1px solid #dfe8e3;border-radius:12px;background:#fff}.supplier-payment-info article.execution{border-color:#bad8cd;background:#f0f8f4}.supplier-payment-info h3{margin:0;color:#21483d;font-size:var(--text-section)}.supplier-payment-info p{white-space:pre-wrap;overflow-wrap:anywhere;color:#3d5049;line-height:1.6}.supplier-payment-info small{color:#71817b;line-height:1.6}.supplier-relations{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}.supplier-relations p{font-size:var(--text-body);color:#71817b}.supplier-notes{margin-bottom:18px;padding:16px;border:1px solid #dfe8e3;border-radius:12px;background:#fff}.supplier-notes summary{cursor:pointer;color:#21483d;font-size:var(--text-body);font-weight:600}.supplier-notes p{white-space:pre-wrap;overflow-wrap:anywhere;color:#567168;line-height:1.6}.supplier-state-close{margin:20px}@media(max-width:1100px){.supplier-detail .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.supplier-payment-info{grid-template-columns:1fr}.supplier-detail .info-grid{grid-template-columns:1fr}}
 </style>

@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { copyPaymentTerms, paymentTermsError, percentToRatio } from '../utils/paymentTerms'
-const props = defineProps({ modelValue: { type: Array, default: () => [] } })
+const props = defineProps({ modelValue: { type: Array, default: () => [] }, description: { type: String, default: '' } })
 const emit = defineEmits(['update:modelValue'])
 const rows = computed(() => props.modelValue)
 const error = computed(() => paymentTermsError(rows.value))
@@ -11,7 +11,7 @@ function add() { emit('update:modelValue', [...rows.value, { label: '', ratio: '
 function remove(index) { emit('update:modelValue', rows.value.filter((_, i) => i !== index)) }
 </script>
 <template>
-  <div class="terms-editor">
+  <div class="terms-editor"><p v-if="description" class="terms-description">{{ description }}</p>
     <div class="terms-scroll"><div class="terms-head"><span>阶段名称</span><span>比例 %</span><span>到期依据</span><span>延后天数</span><span /></div>
       <div v-for="(row,index) in rows" :key="index" class="terms-row">
         <input :value="row.label" :aria-label="`阶段名称 ${index + 1}`" required @input="change(index, 'label', $event.target.value)" />

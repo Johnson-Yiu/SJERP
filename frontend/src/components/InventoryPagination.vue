@@ -1,11 +1,11 @@
 <script setup>
 import { computed } from 'vue'
-const props = defineProps({ total: Number, page: Number, size: { type: Number, default: 25 } })
+const props = defineProps({ total: Number, page: Number, size: { type: Number, default: 25 }, label: { type: String, default: '库存列表分页' } })
 const emit = defineEmits(['change'])
 const pages = computed(() => Math.max(1, Math.ceil(props.total / props.size)))
 </script>
 <template>
-  <nav v-if="total > size" class="inventory-pagination" aria-label="库存列表分页">
+  <nav v-if="total > size" class="inventory-pagination" :aria-label="label">
     <span>共 {{ total }} 条 · 第 {{ page }} / {{ pages }} 页</span>
     <button class="btn btn-secondary" :disabled="page <= 1" @click="emit('change', page - 1)">上一页</button>
     <button class="btn btn-secondary" :disabled="page >= pages" @click="emit('change', page + 1)">下一页</button>

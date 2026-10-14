@@ -4,6 +4,7 @@ import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import { followUpError } from '../utils/followUpSafety'
 import InventoryPagination from '../components/InventoryPagination.vue'
 import { inventoryPage } from '../utils/inventoryPagination'
+import { supplierStoreUrl, supplierFilters, supplierRows } from '../utils/supplierPresentation'
 import PaymentTermsEditor from '../components/PaymentTermsEditor.vue'
 import { copyPaymentTerms, paymentTermsError } from '../utils/paymentTerms'
 import { movementTypes, movementDirection, movementSource, sourceLabels, movementStatus, ledgerFilters, filteredMovements, movementSummary, movementUnit, signedMovement } from '../utils/inventoryLedger'
@@ -37,30 +38,35 @@ const props = defineProps({ config: Object })
 const { can, accessState } = useAccessControl()
 const route = useRoute()
 const router = useRouter()
+const isSupplierPage = computed(() => props.config.endpoint === 'suppliers')
+const supplierCategories = ref([]), supplierCategoryError = ref(''), supplierSaveError = ref('')
+const supplierFilter = computed(() => supplierFilters(route.query))
+const supplierGroupTitles = ['基本资料', '联系方式', '可供产品分类', '付款条款', '其他备注']
+const listColumns = computed(() => isSupplierPage.value ? [['name','供应商'],['main_products','产品与可供分类'],['contact_name','联系方式'],['payment_terms_summary','系统执行付款规则'],['payment_terms','付款条款说明（备注）']] : props.config.columns)
 const isCustomerPage = computed(() => props.config.endpoint === 'customers')
-const isCoreListPage = computed(() => isCustomerPage.value || isMovementPage.value)
-const primaryAction = computed(() => isCustomerPage.value ? '新建客户' : isMovementPage.value ? '新建库存调整' : '新建记录')
-const listNoun = computed(() => isCustomerPage.value ? '客户' : '库存流水')
-const hasListFilters = computed(() => Boolean(query.value || (isMovementPage.value && [movementFilters.value.type, movementFilters.value.direction, movementFilters.value.source, route.query.sku].some(Boolean))))
+const isCoreListPage = computed(() => isCustomerPage.value || isMovementPage.value || isSupplierPage.value)
+const primaryAction = computed(() => isCustomerPage.value ? '新建客户' : isMovementPage.value ? '新建库存调整' : isSupplierPage.value ? '新建供应商' : '新建记录')
+const listNoun = computed(() => isCustomerPage.value ? '客户' : isSupplierPage.value ? '供应商' : '库存流水')
+const hasListFilters = computed(() => Boolean(query.value || (isSupplierPage.value && (supplierFilter.value.category || supplierFilter.value.terms)) || (isMovementPage.value && [movementFilters.value.type, movementFilters.value.direction, movementFilters.value.source, route.query.sku].some(Boolean))))
 const isMovementPage = computed(() => props.config.endpoint === 'inventory-movements')
 const movementSkus = ref([])
 const movementFilters = computed(() => ledgerFilters(route.query))
-const visibleRows = computed(() => isMovementPage.value ? filteredMovements(rows.value, route.query) : rows.value)
+const visibleRows = computed(() => isMovementPage.value ? filteredMovements(rows.value, route.query) : isSupplierPage.value ? supplierRows(rows.value, route.query, supplierCategories.value) : rows.value)
 const ledgerPage = computed(() => inventoryPage(route.query.page, visibleRows.value.length))
-const displayRows = computed(() => isMovementPage.value ? visibleRows.value.slice((ledgerPage.value - 1) * 25, ledgerPage.value * 25) : visibleRows.value)
+const displayRows = computed(() => isMovementPage.value || isSupplierPage.value ? visibleRows.value.slice((ledgerPage.value - 1) * 25, ledgerPage.value * 25) : visibleRows.value)
 const reversing = ref(false)
 let ledgerUpdates = Promise.resolve(), ledgerRequest = 0
 function updateLedgerQuery(patch, replace = false) {
   ledgerUpdates = ledgerUpdates.catch(() => {}).then(() => {
     const next = { ...route.query, ...patch }
-    if (['search', 'type', 'direction', 'source'].some(key => key in patch)) delete next.page
+    if (['search', 'type', 'direction', 'source', 'supplyCategory', 'termsMode'].some(key => key in patch)) delete next.page
     Object.keys(next).forEach(key => { if (next[key] === undefined || next[key] === '') delete next[key] })
     return router[replace ? 'replace' : 'push']({ path: route.path, query: next, hash: route.hash })
   })
   return ledgerUpdates
 }
 function resetLedgerFilters() { clearTimeout(searchTimer); query.value = ''; return updateLedgerQuery({ search:undefined,type:undefined,direction:undefined,source:undefined }) }
-function ledgerDataQuery() { const { type, direction, source, page, ...params } = routeDataQuery(route.query); return params }
+function ledgerDataQuery() { const { type, direction, source, page, supplyCategory, termsMode, ...params } = routeDataQuery(route.query); return params }
 const isCertificatePage = computed(() => props.config.endpoint === 'product-certificates')
 const certificateFilterLabel = computed(() => isCertificatePage.value ? certificateFilterLabels[route.query.expiry] : '')
 function setCertificateFilter(expiry) { router.push({ path: route.path, query: certificateFilterQuery(route.query, expiry) }) }
@@ -93,12 +99,13 @@ const routeModalOpen = ref(false)
 
 const statusLabels = { lead: '线索', contact: '已建立联系', opportunity: '已进入报价阶段', customer: '已有1张正式订单', company: '已有2张及以上正式订单', development: '开发中', discontinued: '停产', draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
 const editorFields = computed(() => {
+  if (isSupplierPage.value) return [['name','code','country','main_products'],['contact_name','phone','email','store_url'],['supply_categories'],['payment_terms','payment_terms_config'],['notes']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
   if (props.config.endpoint !== 'customers') return props.config.fields
   const order = ['name', 'code', 'country', 'region', 'owner_profile', 'source', 'website', 'address', 'notes']
   return [...props.config.fields].sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]))
 })
-const editorGroups = computed(() => props.config.endpoint === 'customers' ? [editorFields.value.filter(f => !['website', 'address', 'notes'].includes(f[0])), editorFields.value.filter(f => ['website', 'address', 'notes'].includes(f[0]))] : [editorFields.value])
-const saveLabel = computed(() => props.config.endpoint === 'customers' ? '保存客户' : props.config.endpoint === 'follow-ups' ? '保存跟进' : '保存')
+const editorGroups = computed(() => isSupplierPage.value ? editorFields.value : props.config.endpoint === 'customers' ? [editorFields.value.filter(f => !['website', 'address', 'notes'].includes(f[0])), editorFields.value.filter(f => ['website', 'address', 'notes'].includes(f[0]))] : [editorFields.value])
+const saveLabel = computed(() => props.config.endpoint === 'customers' ? '保存客户' : props.config.endpoint === 'follow-ups' ? '保存跟进' : isSupplierPage.value ? '保存供应商' : '保存')
 const fieldOptions = computed(() => Object.fromEntries(props.config.fields.filter(field => field[2] === 'select').map(field => [field[0], field[4]])))
 const title = computed(() => editingId.value ? `编辑${props.config.title.replace('管理', '')}` : `新建${props.config.title.replace('管理', '')}`)
 const isCustomerCreate = computed(() => props.config.endpoint === 'customers' && !editingId.value)
@@ -122,12 +129,13 @@ const supplierCodeConflict = computed(() => {
   const code = String(form.code || '').trim().toUpperCase()
   if (code.length !== 2) return null
   const match = rows.value.find(row => String(row.code || '').toUpperCase() === code && Number(row.id) !== Number(editingId.value))
-  return match ? `${code} 与 ${match.name}-${match.code} 重复` : null
+  return match ? `代码 ${code} 已由“${match.name}”使用。` : null
 })
 const supplierCodeError = computed(() => supplierCodeConflict.value || supplierCodeServerError.value)
 const resourceMetrics = computed(() => {
   const endpoint = props.config.endpoint
   if (isMovementPage.value) return movementSummary(visibleRows.value)
+  if (isSupplierPage.value) return [{label:'供应商',value:visibleRows.value.length,hint:'全部筛选结果'},{label:'可供分类',value:new Set(visibleRows.value.flatMap(row=>row.supply_categories || [])).size,hint:'已选择的分类'},{label:'自定义付款规则',value:visibleRows.value.filter(row=>row.payment_terms_config?.length).length,hint:'按结构化配置统计'},{label:'有店铺链接',value:visibleRows.value.filter(row=>supplierStoreUrl(row.store_url)).length,hint:'可打开的网页链接'}]
   const total = rows.value.length
   const today = new Date().toISOString().slice(0, 10)
   if (endpoint === 'customers') return [
@@ -176,6 +184,15 @@ function notify(message, error = false) { clearTimeout(toastTimer); Object.assig
 async function load() {
   loading.value = true
   loadError.value = ''
+  if (isSupplierPage.value) {
+    const request = ++ledgerRequest
+    try {
+      const nextRows = await listAll('/suppliers/', { params: { ...ledgerDataQuery(), search: typeof route.query.search === 'string' ? route.query.search : '' } })
+      if (request === ledgerRequest) { rows.value = nextRows; hasLoaded.value = true; allRecordsExist.value = nextRows.length > 0 || Boolean(route.query.search) }
+    } catch (e) { if (request === ledgerRequest) loadError.value = apiErrorMessage(e) }
+    finally { if (request === ledgerRequest) loading.value = false }
+    return
+  }
   if (!isMovementPage.value) {
     try {
       const nextRows = await listAll(`/${props.config.endpoint}/`, { params: { ...routeDataQuery(route.query), search: query.value } })
@@ -204,16 +221,21 @@ async function load() {
 }
 function delayedSearch() {
   clearTimeout(searchTimer)
-  searchTimer = setTimeout(() => isCustomerPage.value ? updateLedgerQuery({ search:query.value || undefined }, true) : isMovementPage.value ? updateLedgerQuery({ search:query.value || undefined }) : load(), 300)
+  searchTimer = setTimeout(() => isCustomerPage.value ? updateLedgerQuery({ search:query.value || undefined }, true) : isMovementPage.value || isSupplierPage.value ? updateLedgerQuery({ search:query.value || undefined }) : load(), 300)
 }
 function clearListFilters() {
   query.value = ''
+  if (isSupplierPage.value) { clearTimeout(searchTimer); return updateLedgerQuery({ search:undefined,supplyCategory:undefined,termsMode:undefined }) }
   if (isMovementPage.value) return resetLedgerFilters()
   if (isCustomerPage.value) return updateLedgerQuery({ search: undefined }, true)
   return load()
 }
-watch(() => route.query.search, value => { if (isMovementPage.value || isCustomerPage.value) { clearTimeout(searchTimer); query.value = typeof value === 'string' ? value : '' } }, { immediate:true })
+watch(() => route.query.search, value => { if (isMovementPage.value || isCustomerPage.value || isSupplierPage.value) { clearTimeout(searchTimer); query.value = typeof value === 'string' ? value : '' } }, { immediate:true })
 onBeforeUnmount(() => { clearTimeout(searchTimer); clearTimeout(toastTimer); ledgerRequest++ })
+async function loadSupplierCategories() {
+  supplierCategoryError.value = ''
+  try { supplierCategories.value = await listAll('/categories/tree/') } catch (error) { supplierCategoryError.value = apiErrorMessage(error) }
+}
 async function loadOptions() {
   const remotes = props.config.fields.filter(f => ['remote', 'combo', 'remote_multi'].includes(f[2]))
   await Promise.all(remotes.map(field => loadRemoteOption(field)))
@@ -358,7 +380,8 @@ function isInherited(fieldName) {
 }
 async function openCreate({ isCurrent = () => true } = {}) {
   if (!can(accessModule.value, 'create')) return
-  if (isMovementPage.value) toast.show = false
+  if (isMovementPage.value || isSupplierPage.value) toast.show = false
+  supplierSaveError.value = ''
   keepDetailOpen.value = false
   editingId.value = null; resetForm()
   if (props.config.endpoint === 'follow-ups' && !form.followed_at) form.followed_at = datetimeLocal()
@@ -377,7 +400,8 @@ async function openCreate({ isCurrent = () => true } = {}) {
 }
 async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}) {
   if (!can(accessModule.value, 'update')) return
-  if (isMovementPage.value) toast.show = false
+  if (isMovementPage.value || isSupplierPage.value) toast.show = false
+  supplierSaveError.value = ''
   if (!keepDetail) detailId.value = null
   keepDetailOpen.value = keepDetail
   editingId.value = row.id; resetForm(); await loadOptions()
@@ -395,7 +419,7 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
   guard.markClean()
   modalOpen.value = true
 }
-const closeModal = () => guard.requestClose(discardModal)
+const closeModal = () => { if (isSupplierPage.value && saving.value) return; return guard.requestClose(discardModal) }
 function discardModal() {
   const refreshDetail = keepDetailOpen.value
   modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []
@@ -405,6 +429,7 @@ function discardModal() {
 function openDetail(id) {
   detailId.value = id
   if (isMovementPage.value) { void updateLedgerQuery({ detail:String(id) }); return }
+  if (isSupplierPage.value) { void updateLedgerQuery({ detail:String(id),tab:undefined }); return }
   if (props.config.endpoint === 'customers') void router.push({ path: route.path, query: { ...route.query, detail: String(id), tab: 'followups' } })
 }
 function closeDetail() {
@@ -447,6 +472,11 @@ async function save() {
   if (!can(accessModule.value, editingId.value ? 'update' : 'create')) return
   if (saving.value) return
   if (!optionsReady.value) return notify('关联资料尚未加载完成，请重试后再保存。', true)
+  if (isSupplierPage.value) {
+    supplierSaveError.value = ''; toast.show = false
+    if (!/^[A-Z]{2}$/.test(form.code || '')) { supplierSaveError.value = '二字代码请填写两个英文字母。'; return }
+    if (!form.supply_categories?.length) { supplierSaveError.value = '请选择至少一个可供产品分类。'; return }
+  }
   if (supplierCodeError.value) return notify(supplierCodeError.value, true)
   if (props.config.endpoint === 'suppliers' && paymentTermsError(form.payment_terms_config)) return notify(paymentTermsError(form.payment_terms_config), true)
   if (props.config.endpoint === 'follow-ups') {
@@ -470,11 +500,11 @@ async function save() {
       }
     }
     const refreshDetail = keepDetailOpen.value
-    modalOpen.value = false; notify(attachmentError ? `记录已保存，但${attachmentError}` : (wasEditing ? '更新成功' : '创建成功'), Boolean(attachmentError)); await clearModalRoute(router, route); await load()
+    modalOpen.value = false; notify(attachmentError ? `记录已保存，但${attachmentError}` : (isSupplierPage.value ? (wasEditing ? '供应商修改已保存。' : '供应商创建成功。') : (wasEditing ? '更新成功' : '创建成功')), Boolean(attachmentError)); await clearModalRoute(router, route); await load()
     if (refreshDetail) detailRefresh.value += 1
     keepDetailOpen.value = false
   } catch (e) {
-    if (props.config.endpoint === 'suppliers' && /重复|二字代码/.test(e.message || '')) supplierCodeServerError.value = e.message
+    if (isSupplierPage.value) { supplierSaveError.value = apiErrorMessage(e); if (e.response?.data?.code || /重复|二字代码/.test(e.message || '')) supplierCodeServerError.value = Array.isArray(e.response?.data?.code) ? e.response.data.code.join('；') : e.message }
     notify(e.message, true)
   } finally { saving.value = false }
 }
@@ -540,6 +570,7 @@ async function editFromDetail(target = {}) {
   }
   const row = rows.value.find(item => String(item.id) === String(targetId))
   if (row) await openEdit(row, { keepDetail: true })
+  else if (isSupplierPage.value) { try { await openEdit((await api.get(`/suppliers/${targetId}/`)).data, { keepDetail:true }) } catch (error) { notify(apiErrorMessage(error), true) } }
 }
 async function handleDetailChanged() {
   await load()
@@ -577,18 +608,18 @@ function routeCreatePrefillSignature() {
   return JSON.stringify(fields.map(name => [name, route.query[name] ?? null]))
 }
 
-watch(() => isMovementPage.value ? JSON.stringify(ledgerDataQuery()) : routeDataQuerySignature(route.query), load)
+watch(() => isMovementPage.value || isSupplierPage.value ? JSON.stringify(ledgerDataQuery()) : routeDataQuerySignature(route.query), load)
 watch([() => route.query.create, () => route.query.edit, routeCreatePrefillSignature], (current, previous) => {
   const prefillOnlyChanged = previous && current[0] === previous[0] && current[1] === previous[1]
   if (prefillOnlyChanged && route.query.create !== '1') return
   void syncModalFromRoute()
 }, { immediate: true })
 watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null }, { immediate: true })
-onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus() })
+onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus(); if (isSupplierPage.value && can('categories','view')) void loadSupplierCategories() })
 </script>
 
 <template>
-  <div class="resource-page" :class="{ 'finance-resource-page': isTransactionPage, 'inventory-ledger-page': isMovementPage, 'core-list-page': isCoreListPage }">
+  <div class="resource-page" :class="{ 'finance-resource-page': isTransactionPage, 'inventory-ledger-page': isMovementPage, 'core-list-page': isCoreListPage, 'supplier-page': isSupplierPage }">
     <div class="page-head" :class="{ 'list-intro': isCoreListPage }"><div><h2 v-if="!isCoreListPage">{{ config.title }}</h2><p>{{ config.description }}</p></div><button v-if="can(accessModule, 'create')" class="btn btn-primary" @click="openCreate"><Plus :size="16" /> {{ primaryAction }}</button></div>
     <div v-if="isMovementPage && optionErrors.skus" class="option-load-error" role="alert">{{ optionErrors.skus }} <button type="button" @click="loadMovementSkus">重新加载 SKU 资料</button></div>
     <SummaryCards v-if="hasLoaded" :items="resourceMetrics" />
@@ -604,30 +635,30 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
       <button class="btn btn-secondary" @click="resetLedgerFilters">重置</button>
     </div>
     <p v-if="isMovementPage" class="ledger-help">数量按 SKU 基础单位显示；自动流水不可手工修改。</p>
-    <div v-else class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索当前列表..." @input="delayedSearch" /></div></div>
+    <div v-else-if="isSupplierPage" class="supplier-filter-bar" aria-label="供应商筛选"><label>搜索<input v-model="query" aria-label="搜索供应商" placeholder="名称、代码、联系人、产品…" @input="delayedSearch" /></label><label v-if="can('categories','view')">可供分类<select :value="supplierFilter.category" aria-label="按可供分类筛选" @change="updateLedgerQuery({supplyCategory:$event.target.value || undefined})"><option value="">全部分类</option><option v-for="category in supplierCategories" :key="category.id" :value="String(category.id)">{{ category.name }}</option></select></label><label>付款规则<select :value="supplierFilter.terms" aria-label="按付款规则筛选" @change="updateLedgerQuery({termsMode:$event.target.value || undefined})"><option value="">全部规则</option><option value="default">系统默认</option><option value="custom">自定义规则</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><div v-if="isSupplierPage && supplierCategoryError" role="alert" class="option-load-error">分类加载失败：{{ supplierCategoryError }} <button @click="loadSupplierCategories">重新加载分类</button></div><p v-if="isSupplierPage" class="supplier-rule-note">付款备注仅供沟通参考；采购付款计划使用“系统执行付款规则”。</p><div v-if="!isMovementPage && !isSupplierPage" class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索当前列表..." @input="delayedSearch" /></div></div>
     <div class="panel">
       <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
       <ListEmptyState v-if="hasLoaded && !visibleRows.length" :entity="listNoun || config.title.replace('管理','')" :filtered="filteredListEmpty" @clear="clearListFilters"><template #action><p v-if="can(accessModule, 'create')">点击“{{ primaryAction }}”开始录入。</p></template></ListEmptyState>
-      <div v-else-if="hasLoaded" class="table-wrap"><table class="data-table" :class="{ 'customer-list-table': isCustomerPage }"><thead><tr><th v-for="col in config.columns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
+      <div v-else-if="hasLoaded" class="table-wrap"><table class="data-table" :class="{ 'customer-list-table': isCustomerPage, 'supplier-list-table': isSupplierPage }"><thead><tr><th v-for="col in listColumns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
         <tr v-for="row in displayRows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row.id)" @keydown.enter="openDetail(row.id)">
-          <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><template v-if="isMovementPage && col[0] === 'sku_code'"><strong>{{ row.sku_code || row.sku_code_snapshot || '—' }}</strong><small class="ledger-secondary">{{ row.product_name || row.display_name }}</small><small v-if="movementUnit(row,movementSkus)" class="ledger-secondary">基础单位：{{ movementUnit(row,movementSkus) }}</small></template><span v-else-if="isMovementPage && col[0] === 'source_type'" class="ledger-source" :class="movementSource(row)">{{ sourceLabels[movementSource(row)] || '未标注' }}</span><span v-else-if="isMovementPage && col[0] === 'signed_quantity'" :class="cellClass('signed',row.signed_quantity)">{{ signedMovement(row,movementUnit(row,movementSkus)) }}</span><template v-else-if="isMovementPage && col[0] === 'reference'"><span>{{ row.reference || row.source_no || '—' }}</span><small class="ledger-secondary">{{ (row.related_order_nos || []).join('、') || row.order_no }}</small><small v-if="row.overage_summary" class="ledger-secondary">{{ row.overage_summary }}</small></template><span v-else-if="isMovementPage && col[0] === 'reversal_status'" :title="row.reversal_status">{{ movementStatus(row) }}</span><CertificateExpiryBadge v-else-if="isCertificatePage && col[0] === 'expiry_status'" :certificate="row" /><span v-else-if="isCustomerPage && col[0] === 'name'" class="customer-name" :title="row.name">{{ row.name }}</span><span v-else-if="isCustomerPage && col[0] === 'status'" class="status" :class="row.status" :title="row.status_display || statusLabels[row.status]">{{ customerListStatus(row.status, display(row.status, 'status', 'status')) }}</span><span v-else :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
+          <td v-for="(col,index) in listColumns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><template v-if="isSupplierPage && col[0] === 'name'"><strong>{{ row.name }}</strong><small class="supplier-secondary">{{ row.code }} · {{ row.country || '未填国家/地区' }}</small></template><template v-else-if="isSupplierPage && col[0] === 'main_products'"><span>{{ row.main_products || '—' }}</span><small class="supplier-secondary">{{ (row.supply_category_names || []).join('、') || '未填可供分类' }}</small></template><template v-else-if="isSupplierPage && col[0] === 'contact_name'"><span>{{ row.contact_name || '—' }}</span><small class="supplier-secondary">{{ row.phone }}</small><small class="supplier-secondary">{{ row.email }}</small><a v-if="supplierStoreUrl(row.store_url)" :href="supplierStoreUrl(row.store_url)" target="_blank" rel="noopener noreferrer" @click.stop>打开店铺</a><small v-else-if="row.store_url" class="supplier-secondary">{{ row.store_url }}</small></template><span v-else-if="isSupplierPage && col[0] === 'payment_terms'" class="supplier-excerpt" :title="row.payment_terms">{{ row.payment_terms || '未填备注' }}</span><template v-else-if="isMovementPage && col[0] === 'sku_code'"><strong>{{ row.sku_code || row.sku_code_snapshot || '—' }}</strong><small class="ledger-secondary">{{ row.product_name || row.display_name }}</small><small v-if="movementUnit(row,movementSkus)" class="ledger-secondary">基础单位：{{ movementUnit(row,movementSkus) }}</small></template><span v-else-if="isMovementPage && col[0] === 'source_type'" class="ledger-source" :class="movementSource(row)">{{ sourceLabels[movementSource(row)] || '未标注' }}</span><span v-else-if="isMovementPage && col[0] === 'signed_quantity'" :class="cellClass('signed',row.signed_quantity)">{{ signedMovement(row,movementUnit(row,movementSkus)) }}</span><template v-else-if="isMovementPage && col[0] === 'reference'"><span>{{ row.reference || row.source_no || '—' }}</span><small class="ledger-secondary">{{ (row.related_order_nos || []).join('、') || row.order_no }}</small><small v-if="row.overage_summary" class="ledger-secondary">{{ row.overage_summary }}</small></template><span v-else-if="isMovementPage && col[0] === 'reversal_status'" :title="row.reversal_status">{{ movementStatus(row) }}</span><CertificateExpiryBadge v-else-if="isCertificatePage && col[0] === 'expiry_status'" :certificate="row" /><span v-else-if="isCustomerPage && col[0] === 'name'" class="customer-name" :title="row.name">{{ row.name }}</span><span v-else-if="isCustomerPage && col[0] === 'status'" class="status" :class="row.status" :title="row.status_display || statusLabels[row.status]">{{ customerListStatus(row.status, display(row.status, 'status', 'status')) }}</span><span v-else :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
           <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="openDetail(row.id)"><ChevronRight :size="14" /></button><button v-if="can(accessModule, 'update') && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="can('inventory', 'update') && canReverseInventoryMovement(row)" class="mini-btn danger" title="冲销" :disabled="reversing" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="can(accessModule, 'delete') && config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
         </tr>
       </tbody></table></div>
     </div>
 
     <InventoryMovementCreateModal v-if="modalOpen && config.endpoint === 'inventory-movements' && !editingId" @close="closeModal" @saved="handleInventoryMovementCreated" />
-    <div v-else-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal" :class="{ wide: isWideForm, 'customer-editor': isCustomerPage }" @submit.prevent="save">
-      <div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" @click="closeModal"><X :size="17" /></button></div>
-      <div class="modal-body"><p v-if="config.endpoint === 'follow-ups'" class="field-help">请至少填写跟进记录或客户回复。</p><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group.filter(visibleEditorField)" :key="field[0]" class="field" :class="{ full: ['textarea', 'remote_multi', 'payment_terms'].includes(field[2]) || (config.endpoint === 'follow-ups' && ['subject', 'next_follow_up_mode'].includes(field[0])), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
+    <div v-else-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form :role="isSupplierPage ? 'dialog' : undefined" :aria-modal="isSupplierPage ? 'true' : undefined" :aria-label="isSupplierPage ? title : undefined" class="modal" :class="{ wide: isWideForm, 'customer-editor': isCustomerPage, 'supplier-editor': isSupplierPage }" @submit.prevent="save">
+      <div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" :aria-label="isSupplierPage ? '关闭供应商表单' : undefined" :disabled="isSupplierPage && saving" @click="closeModal"><X :size="17" /></button></div>
+      <div class="modal-body"><p v-if="isSupplierPage && supplierSaveError" role="alert" class="supplier-save-error">{{ supplierSaveError }}</p><p v-if="config.endpoint === 'follow-ups'" class="field-help">请至少填写跟进记录或客户回复。</p><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isSupplierPage" class="supplier-group-title">{{ supplierGroupTitles[groupIndex] }}</h4><p v-if="isSupplierPage && groupIndex === 2" class="field-help">可供分类用于筛选；具体 SKU 的供应来源仍需在供货档案中维护。</p><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group.filter(visibleEditorField)" :key="field[0]" class="field" :class="{ full: ['textarea', 'remote_multi', 'payment_terms'].includes(field[2]) || (isSupplierPage && field[0] === 'payment_terms') || (config.endpoint === 'follow-ups' && ['subject', 'next_follow_up_mode'].includes(field[0])), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
         <label>{{ field[1] }} <em v-if="field[3]">*</em></label><p v-if="optionErrors[field[4]]" class="option-load-error" role="alert">{{ optionErrors[field[4]] }} <button type="button" @click="retryRemoteOption(field)">重新加载</button></p>
         <div v-if="field[2] === 'followup_schedule'" class="follow-up-schedule" role="radiogroup" aria-label="下次跟进安排">
           <label v-for="(label, mode) in { keep: '保留当前计划', set: '设置新的跟进日期', clear: '暂不安排后续跟进' }" :key="mode"><input v-model="form.next_follow_up_mode" type="radio" name="next_follow_up_mode" :value="mode" @change="changeFollowUpMode" /> {{ label }}</label>
           <p v-if="form.next_follow_up_mode === 'keep'" class="field-help">当前计划：{{ currentFollowUpPlan || '暂无跟进日期' }}</p>
           <p v-else-if="form.next_follow_up_mode === 'clear'" class="field-help">这会清除该客户当前的下次跟进日期。</p>
         </div>
-        <PaymentTermsEditor v-else-if="field[2] === 'payment_terms'" v-model="form[field[0]]" />
-        <textarea v-else-if="field[2] === 'textarea'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" />
+        <PaymentTermsEditor v-else-if="field[2] === 'payment_terms'" v-model="form[field[0]]" :description="isSupplierPage ? '用于新采购的付款计划；已保存采购保留原快照。比例合计须为 100%。' : ''" />
+        <textarea :maxlength="isSupplierPage && field[0] === 'payment_terms' ? 200 : undefined" :aria-label="isSupplierPage ? field[1] : undefined" v-else-if="field[2] === 'textarea' || (isSupplierPage && field[0] === 'payment_terms')" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" />
         <SimpleRichTextEditor v-else-if="field[2] === 'richtext'" v-model="form[field[0]]" @paste-files="addFollowUpFiles" />
         <ComboInput v-else-if="field[2] === 'combo'" v-model="form[field[0]]" :options="options[field[4]] || []" :required="field[3]" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]])" />
         <select v-else-if="field[2] === 'select'" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])"><option v-for="(label,key) in field[4]" :key="key" :value="key">{{ label }}</option></select>
@@ -640,8 +671,8 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
           <SegmentedDateInput :model-value="form.next_follow_up" @update:model-value="setFollowUpDate" />
         </div>
         <SegmentedDateInput v-else-if="field[2] === 'date' || field[2] === 'datetime-local'" :model-value="form[field[0]]" :required="field[3]" :with-time="field[2] === 'datetime-local'" @update:model-value="value => onDateFieldChange(field, value)" />
-        <input v-else v-model="form[field[0]]" :type="field[2] === 'readonly' || ['website', 'store_url'].includes(field[0]) ? 'text' : (field[2] || 'text')" :readonly="field[2] === 'readonly'" :placeholder="field[0] === 'store_url' ? 'https://...' : isCustomerPage && field[0] === 'name' ? '输入客户名称' : undefined" :class="{ 'readonly-input': field[2] === 'readonly', 'field-invalid': config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError }" :aria-invalid="config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError ? 'true' : undefined" :step="field[2] === 'number' ? '0.0001' : undefined" :maxlength="config.endpoint === 'suppliers' && field[0] === 'code' ? 2 : undefined" :pattern="config.endpoint === 'suppliers' && field[0] === 'code' ? '[A-Za-z]{2}' : undefined" :required="field[3]" :disabled="isInherited(field[0])" @input="config.endpoint === 'suppliers' && field[0] === 'code' && normalizeSupplierCode()" />
-        <p v-if="config.endpoint === 'suppliers' && field[0] === 'code'" class="field-help" :class="{ error: supplierCodeError }">{{ supplierCodeError || '填写两个英文字母，用于供应商 SKU 编码。' }}</p>
+        <input v-else :aria-label="isSupplierPage ? field[1] : undefined" v-model="form[field[0]]" :type="field[2] === 'readonly' || ['website', 'store_url'].includes(field[0]) ? 'text' : (field[2] || 'text')" :readonly="field[2] === 'readonly'" :placeholder="field[0] === 'store_url' ? 'https://...' : isCustomerPage && field[0] === 'name' ? '输入客户名称' : undefined" :class="{ 'readonly-input': field[2] === 'readonly', 'field-invalid': config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError }" :aria-invalid="config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError ? 'true' : undefined" :step="field[2] === 'number' ? '0.0001' : undefined" :maxlength="isSupplierPage ? { name:200,code:2,country:100,main_products:300,contact_name:100,phone:50,email:254,store_url:500 }[field[0]] : undefined" :pattern="config.endpoint === 'suppliers' && field[0] === 'code' ? '[A-Za-z]{2}' : undefined" :required="field[3]" :disabled="isInherited(field[0])" @input="config.endpoint === 'suppliers' && field[0] === 'code' && normalizeSupplierCode()" />
+        <p v-if="isSupplierPage && field[0] === 'payment_terms'" class="field-help">仅供沟通参考，不生成付款计划。</p><p v-if="config.endpoint === 'suppliers' && field[0] === 'code'" class="field-help" :class="{ error: supplierCodeError }">{{ supplierCodeError || '填写两个英文字母，用于供应商 SKU 编码。' }}</p>
       </div></div>
         <section v-if="isCustomerCreate && groupIndex === 0" class="contact-create-section">
           <div class="contact-create-head">
@@ -693,13 +724,13 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 
 
       </div>
-      <div class="modal-foot"><p v-if="config.endpoint === 'follow-ups' && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (config.endpoint === 'suppliers' && !!paymentTermsError(form.payment_terms_config))">{{ saving ? '保存中…' : saveLabel }}</button></div>
+      <div class="modal-foot"><p v-if="config.endpoint === 'follow-ups' && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><button type="button" class="btn btn-secondary" :disabled="isSupplierPage && saving" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (isSupplierPage && (!!supplierCodeError || !!paymentTermsError(form.payment_terms_config)))">{{ saving ? '保存中…' : saveLabel }}</button></div>
     </form></div>
 
     <Transition name="detail-drawer" appear>
       <EntityDetailModal v-if="detailId" :entity="config.endpoint" :id="detailId" :refresh-key="detailRefresh" @close="closeDetail" @edit="editFromDetail" @changed="handleDetailChanged" />
     </Transition>
-    <InventoryPagination v-if="isMovementPage && hasLoaded" :total="visibleRows.length" :page="ledgerPage" @change="page => updateLedgerQuery({ page: page > 1 ? String(page) : undefined })" />
+    <InventoryPagination v-if="(isMovementPage || isSupplierPage) && hasLoaded" :label="isSupplierPage ? '供应商列表分页' : '库存列表分页'" :total="visibleRows.length" :page="ledgerPage" @change="page => updateLedgerQuery({ page: page > 1 ? String(page) : undefined })" />
     <div v-if="toast.show" :role="toast.error ? 'alert' : 'status'" class="toast" :class="{ error: toast.error }">{{ toast.message }}</div>
   </div>
 </template>
@@ -766,3 +797,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 .inventory-ledger-page .data-table{min-width:1300px}.inventory-ledger-page .data-table th{white-space:nowrap}.inventory-ledger-page .data-table td:nth-child(1),.inventory-ledger-page .data-table td:nth-child(2),.inventory-ledger-page .data-table td:nth-child(4),.inventory-ledger-page .data-table td:nth-child(5){white-space:nowrap}.inventory-ledger-page .data-table td:nth-child(3){min-width:180px}.inventory-ledger-page .data-table td:nth-child(8){min-width:170px}.inventory-ledger-page .data-table th:last-child,.inventory-ledger-page .data-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 8px #143f3308}.inventory-ledger-page .data-table td .tag{white-space:nowrap}
 </style>
 
+
+<style scoped>
+.supplier-filter-bar{display:grid;grid-template-columns:minmax(220px,2fr) minmax(160px,1fr) minmax(150px,1fr) auto auto;gap:12px;align-items:end;margin:18px 0 10px}.supplier-filter-bar label{display:grid;gap:6px;color:#71817b;font-size:var(--text-caption)}.supplier-filter-bar input,.supplier-filter-bar select{width:100%;min-width:0;min-height:42px;padding:10px 12px;border:1px solid #dce6e1;border-radius:8px;background:#fff;color:#294a41;font:inherit;font-size:var(--text-body)}.supplier-filter-bar input:focus,.supplier-filter-bar select:focus{outline:2px solid #b8d8cb;outline-offset:1px}.supplier-rule-note{color:#567168;font-size:var(--text-body);line-height:1.6}.supplier-list-table{min-width:1150px;table-layout:fixed}.supplier-list-table th:nth-child(1){width:230px}.supplier-list-table th:nth-child(2){width:230px}.supplier-list-table th:nth-child(3){width:180px}.supplier-list-table th:nth-child(4){width:240px}.supplier-list-table th:nth-child(5){width:220px}.supplier-list-table th:last-child{width:108px}.supplier-list-table td{white-space:normal;overflow-wrap:anywhere;vertical-align:top}.supplier-list-table th:last-child,.supplier-list-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 10px #173d3210}.supplier-list-table td:last-child{z-index:2}.supplier-list-table th:last-child{z-index:3}.supplier-secondary{display:block;margin-top:6px;color:#7b8b84;font-size:var(--text-caption);font-weight:400}.supplier-excerpt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.supplier-editor{width:min(960px,calc(100vw - 40px))}.supplier-editor .modal-body{display:block}.supplier-editor .form-grid{margin-bottom:22px}.supplier-group-title{margin:12px 0;color:#21483d;font-size:var(--text-section)}.supplier-editor .modal-foot{position:sticky;bottom:0;background:#fff;z-index:1}.supplier-editor .field{min-width:0}.supplier-save-error{color:#a44343;padding:12px;border:1px solid #efc6c2;background:#fff9f8;border-radius:8px;overflow-wrap:anywhere}@media(max-width:1100px){.supplier-filter-bar{grid-template-columns:minmax(220px,2fr) minmax(150px,1fr) minmax(150px,1fr)}.supplier-filter-bar .btn{justify-self:start}}@media(max-width:650px){.supplier-filter-bar{grid-template-columns:1fr 1fr}.supplier-filter-bar label:first-child{grid-column:1/-1}.supplier-editor .form-grid{grid-template-columns:1fr}}
+</style>

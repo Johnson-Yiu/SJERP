@@ -38,3 +38,12 @@ export function datePreset(preset, now = new Date()) {
   if (preset === '30' || preset === '90') start.setDate(start.getDate() - Number(preset) + 1)
   return { date_from: localDate(start), date_to: localDate(end) }
 }
+// Mirror the report API's existing source/dimension requirements for UI visibility.
+// These hints do not grant access; the server continues to enforce every request.
+const sourceModules = { sales: ['orders'], purchase: ['purchases'], profit: ['orders', 'purchases', 'transactions'], customers: ['customers'], cash: ['transactions'], inventory: ['inventory'] }
+const dimensionModules = { customer: 'customers', country: 'customers', region: 'customers', owner: 'customers', source: 'customers', supplier: 'suppliers', product: 'products', sku: 'skus', category: 'categories' }
+export function canViewReportSource(source, can) { return Boolean(sourceModules[source]) && sourceModules[source].every(module => can(module, 'view')) }
+export function canViewReportDimension(dimension, can) { return !dimensionModules[dimension] || can(dimensionModules[dimension], 'view') }
+export function canViewReportConfig(config, can) {
+  return can('reports', 'view') && canViewReportSource(config.source, can) && canViewReportDimension(config.group_by, can) && Object.keys(config.filters || {}).filter(key => key.startsWith('filter_')).every(key => canViewReportDimension(key.slice(7), can))
+}

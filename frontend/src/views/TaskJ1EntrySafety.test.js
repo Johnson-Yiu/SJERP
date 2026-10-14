@@ -7,9 +7,9 @@ const source = async path => readFile(new URL(path, import.meta.url), 'utf8')
 test('dashboard due follow-ups preserve current-due context when opening the list or a record', async () => {
   const view = await source('./Dashboard.vue')
   assert.match(view, /path: '\/customers', query: \{ detail: c\.id \}/)
-  assert.match(view, /RouterLink to="\/follow-ups\?due=true">查看全部/)
+  assert.match(view, /RouterLink to="\/follow-ups\?due=true">全部待跟进/)
   assert.match(view, /path: '\/follow-ups', query: \{ due: 'true', detail: f\.id \}/)
-  assert.match(view, /商品分类销售额（仅商品行）/)
+  assert.match(view, /仅商品行，不含运费、折扣和合同金额调整/)
 })
 
 test('finance due contracts navigate by their returned record IDs', async () => {

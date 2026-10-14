@@ -21,7 +21,7 @@ export const resourceConfigs = {
   },
   contacts: {
     title: '联系人', eyebrow: 'Contacts', endpoint: 'contacts', key: 'name',
-    description: '记录客户关键联系人与决策链信息。',
+    description: '维护客户联系人和联系方式。',
     columns: [['customer_name', '所属客户'], ['name', '姓名'], ['title', '职位'], ['email', '邮箱'], ['phone', '电话'], ['whatsapp', 'WhatsApp'], ['is_primary', '主联系人', 'boolean']],
     fields: [
       ['customer', '所属客户', 'remote', true, 'customers', 'name'], ['name', '姓名', 'text', true], ['title', '职位'], ['email', '邮箱', 'email'],
@@ -31,7 +31,7 @@ export const resourceConfigs = {
   },
   'follow-ups': {
     title: '跟进记录', eyebrow: 'Relationship cadence', endpoint: 'follow-ups', key: 'subject',
-    description: '保存每次沟通、结果与明确的下一步动作。',
+    description: '记录沟通内容、客户回复和下一步安排。',
     columns: [['followed_at', '跟进时间', 'datetime'], ['customer_name', '客户'], ['subject', '主题'], ['type_display', '方式', 'tag'], ['result', '结果'], ['next_follow_up_mode_display', '下次跟进安排'], ['next_follow_up', '下次跟进', 'date'], ['owner', '跟进人']],
     fields: [
       ['customer', '客户', 'remote', true, 'customers', 'name'], ['contact', '联系人', 'remote', false, 'contacts', 'name'], ['followed_at', '跟进时间', 'datetime-local', true],

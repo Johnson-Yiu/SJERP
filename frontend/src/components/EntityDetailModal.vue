@@ -86,6 +86,7 @@ const allSkuSelected = computed(() => Boolean(selectableSkuRows.value.length) &&
 const selectedActiveSkuIds = computed(() => selectableSkuRows.value.filter(row => selectedSkuIds.value.includes(row.id)).map(row => row.id))
 const selectedInactiveSkuIds = computed(() => visibleSectionRows.value.filter(row => !row.active && selectedSkuIds.value.includes(row.id)).map(row => row.id))
 const isFollowUpDetail = computed(() => currentEntity.value === 'follow-ups')
+const isContactDetail = computed(() => currentEntity.value === 'contacts')
 const followUpInfo = computed(() => Object.fromEntries((data.value?.info || []).map(item => [item[0], item[1]])))
 const followUpCustomer = computed(() => data.value?.sections?.find(section => section.key === 'customer')?.rows?.[0] || null)
 const relationCustomerId = computed(() => relationContext().customer)
@@ -337,9 +338,9 @@ onMounted(async () => {
 
 <template>
   <div class="modal-backdrop detail-backdrop" :class="{ 'follow-up-detail-backdrop': isFollowUpDetail, 'product-detail-backdrop': isProduct }" @mousedown.self="requestClose">
-    <article :role="isMovementDetail || isSupplierDetail ? 'dialog' : undefined" :aria-modal="isMovementDetail || isSupplierDetail ? 'true' : undefined" class="detail-modal" :class="{ 'follow-up-detail-modal': isFollowUpDetail, 'product-detail-modal': isProduct, 'customer-detail-root': isCustomerRoot, 'movement-detail': isMovementDetail, 'supplier-detail': isSupplierDetail }" :aria-label="isFollowUpDetail ? '跟进详情' : isMovementDetail ? '库存流水详情' : isSupplierDetail ? '供应商详情' : isCustomerRoot ? '客户详情' : '关联详情'">
-      <button v-if="isSupplierDetail && (loading || error)" class="btn btn-secondary supplier-state-close" @click="requestClose">关闭供应商详情</button><div v-if="loading" role="status" class="detail-loading"><button v-if="isMovementDetail" class="btn btn-secondary" @click="requestClose">关闭库存流水详情</button><div class="spinner" /><span>正在整理关联数据...</span></div>
-      <div v-else-if="error" role="alert" class="detail-error"><button v-if="isMovementDetail" class="btn btn-secondary" @click="requestClose">关闭库存流水详情</button><strong>详情加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load()">重试</button></div>
+    <article :role="isProduct ? undefined : 'dialog'" :aria-modal="isProduct ? undefined : 'true'" class="detail-modal" :class="{ 'follow-up-detail-modal': isFollowUpDetail, 'product-detail-modal': isProduct, 'customer-detail-root': isCustomerRoot, 'movement-detail': isMovementDetail, 'supplier-detail': isSupplierDetail, 'contact-detail': isContactDetail }" :aria-label="isFollowUpDetail ? '跟进详情' : isMovementDetail ? '库存流水详情' : isSupplierDetail ? '供应商详情' : isContactDetail ? '联系人详情' : isCustomerRoot ? '客户详情' : '关联详情'">
+      <button v-if="!isProduct && (loading || error)" class="btn btn-secondary supplier-state-close" @click="requestClose">关闭详情</button><div v-if="loading" role="status" class="detail-loading"><div class="spinner" /><span>正在整理关联数据...</span></div>
+      <div v-else-if="error" role="alert" class="detail-error"><strong>详情加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load()">重试</button></div>
       <template v-else-if="data">
         <template v-if="isFollowUpDetail">
           <header class="follow-up-hero">
@@ -407,13 +408,13 @@ onMounted(async () => {
             <div class="detail-nav-start">
               <button v-if="!isProduct" class="detail-close" aria-label="关闭详情" @click="requestClose"><X :size="19" /><span>关闭</span></button>
               <button v-if="stack.length" class="detail-back" @click="back"><ArrowLeft :size="17" /> 返回 {{ stack[stack.length - 1].title }}</button>
-              <span v-if="currentEntity === 'follow-ups'">跟进详情</span>
+              <span v-if="currentEntity === 'follow-ups'">跟进详情</span><span v-else-if="isContactDetail">联系人详情</span>
               <span v-else-if="isProduct">产品管理 / 产品详情</span><span v-else-if="isMovementDetail">库存流水详情</span><span v-else-if="isSupplierDetail">供应商详情</span><span v-else-if="isCustomerRoot">客户详情</span><span v-else-if="!stack.length">关联详情</span>
             </div>
             <div class="detail-actions">
               <button v-if="isRoot && currentEntity === 'customers' && can('followups', 'create')" class="btn btn-secondary" @click="openCustomerFollowUp"><Plus :size="14" /> 新增跟进</button>
               <button v-if="isRoot && currentEntity === 'customers' && hasRelationCustomerId && can('quotes', 'create')" class="btn btn-secondary" @click="openQuoteForCustomer(relationCustomerId)"><Plus :size="14" /> 新建报价</button>
-              <button v-if="isRoot && currentEntity !== 'inventory-movements' && can(currentEntity, 'update')" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> {{ currentEntity === 'customers' ? '编辑客户' : isSupplierDetail ? '编辑供应商' : '编辑主档' }}</button>
+              <button v-if="isRoot && currentEntity !== 'inventory-movements' && can(currentEntity, 'update')" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> {{ currentEntity === 'customers' ? '编辑客户' : isSupplierDetail ? '编辑供应商' : isContactDetail ? '编辑联系人' : '编辑主档' }}</button>
               <RouterLink v-else-if="!isMovementDetail && hasManagement(currentEntity)" class="btn btn-secondary" :to="managementTarget" @click="managementNavigation"><ExternalLink :size="14" /> {{ managementLabel }}</RouterLink>
               <button v-if="isProduct" class="detail-close" aria-label="关闭详情" @click="requestClose"><X :size="19" /><span>关闭</span></button>
             </div>
@@ -577,4 +578,5 @@ onMounted(async () => {
 
 <style scoped>
 .supplier-detail .detail-identity h2{font-size:var(--text-page);overflow-wrap:anywhere}.supplier-detail .detail-metrics{display:flex;flex-wrap:wrap}.supplier-detail .detail-metrics>div{min-width:150px;flex:1}.supplier-detail .info-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.supplier-detail .info-grid a{overflow-wrap:anywhere;color:#236657}.supplier-payment-info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:18px}.supplier-payment-info article{padding:18px;border:1px solid #dfe8e3;border-radius:12px;background:#fff}.supplier-payment-info article.execution{border-color:#bad8cd;background:#f0f8f4}.supplier-payment-info h3{margin:0;color:#21483d;font-size:var(--text-section)}.supplier-payment-info p{white-space:pre-wrap;overflow-wrap:anywhere;color:#3d5049;line-height:1.6}.supplier-payment-info small{color:#71817b;line-height:1.6}.supplier-relations{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}.supplier-relations p{font-size:var(--text-body);color:#71817b}.supplier-notes{margin-bottom:18px;padding:16px;border:1px solid #dfe8e3;border-radius:12px;background:#fff}.supplier-notes summary{cursor:pointer;color:#21483d;font-size:var(--text-body);font-weight:600}.supplier-notes p{white-space:pre-wrap;overflow-wrap:anywhere;color:#567168;line-height:1.6}.supplier-state-close{margin:20px}@media(max-width:1100px){.supplier-detail .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.supplier-payment-info{grid-template-columns:1fr}.supplier-detail .info-grid{grid-template-columns:1fr}}
+.contact-detail .detail-identity h2{overflow-wrap:anywhere}.contact-detail .detail-subtitle{overflow-wrap:anywhere}.contact-detail .info-grid>div{min-width:0}.contact-detail .info-grid span{overflow-wrap:anywhere}.contact-detail .context-table{min-width:0}
 </style>

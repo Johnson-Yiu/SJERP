@@ -359,7 +359,7 @@ describe('query route lifecycle', () => {
     expect(wrapper.text()).toContain('Beta overdue task')
     expect(wrapper.text()).not.toContain('Historical future plan')
 
-    const search = wrapper.find('input[placeholder="搜索当前列表..."]')
+    const search = wrapper.find('input[aria-label="搜索跟进记录"]')
     await search.setValue('Alpha')
     await vi.advanceTimersByTimeAsync(301)
     await flushPromises()

@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { ChevronDown, Plus } from 'lucide-vue-next'
 
-const props = defineProps({ modelValue: { type: [String, Number], default: '' }, options: { type: Array, default: () => [] }, required: Boolean, disabled: Boolean, placeholder: { type: String, default: '选择或输入' }, multiple: Boolean, allowCustom: { type: Boolean, default: true }, uppercase: Boolean })
+const props = defineProps({ modelValue: { type: [String, Number], default: '' }, options: { type: Array, default: () => [] }, required: Boolean, disabled: Boolean, placeholder: { type: String, default: '选择或输入' }, multiple: Boolean, allowCustom: { type: Boolean, default: true }, uppercase: Boolean, label: { type: String, default: '' } })
 const emit = defineEmits(['update:modelValue'])
 const open = ref(false), text = ref('')
 const selectedLabel = computed(() => props.options.find(option => String(option.value) === String(props.modelValue))?.label || props.modelValue || '')
@@ -55,7 +55,7 @@ function commit() { if (props.multiple) { append(text.value); setTimeout(() => {
 
 <template>
   <div class="combo-input" :class="{ multiple }">
-    <div class="combo-control"><div v-if="multiple && values.length" class="combo-tags"><span v-for="value in values" :key="value">{{ labelFor(value) }}<button type="button" aria-label="移除参数值" @mousedown.prevent @click="remove(value)">×</button></span></div><input :value="text" :required="required" :disabled="disabled" autocomplete="off" :placeholder="placeholder" @focus="focus" @input="input" @keydown="keydown" @blur="commit" /><ChevronDown :size="15" /></div>
+    <div class="combo-control"><div v-if="multiple && values.length" class="combo-tags"><span v-for="value in values" :key="value">{{ labelFor(value) }}<button type="button" aria-label="移除参数值" @mousedown.prevent @click="remove(value)">×</button></span></div><input :value="text" :aria-label="label || undefined" :required="required" :disabled="disabled" autocomplete="off" :placeholder="placeholder" @focus="focus" @input="input" @keydown="keydown" @blur="commit" /><ChevronDown :size="15" /></div>
     <div v-if="open" class="combo-menu">
       <button v-for="option in filtered" :key="option.value" type="button" @mousedown.prevent @click="choose(option)"><span>{{ option.label }}</span><small v-if="option.label !== option.value">{{ option.value }}</small></button>
       <button v-if="isCustom" type="button" class="custom-option" @mousedown.prevent @click="choose({ value: text.trim(), label: text.trim() })"><Plus :size="13" /> 添加“{{ text.trim() }}”</button>

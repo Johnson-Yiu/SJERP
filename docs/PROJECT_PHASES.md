@@ -1,12 +1,12 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
-当前核对基线：R0-F4 从 `master` / `ca486be` 开始（2026-10-14）。路线继续整体 UI/UX；不授权 RBAC 配置、内测或部署。
+当前核对基线：R0-F5 从 `master` / `8cb265e` 开始（2026-10-14）。R0-F4 代码及自动化/已覆盖交互经 ChatGPT 独立审查 PASS，允许有条件封版；截图独立视觉仍 BLOCKED。路线继续整体 UI/UX；不授权 RBAC 配置、内测或部署。
 
 ## 用户批准的最新开发路线
 
 用户于 2026-10-13 明确批准以下顺序：
 
-1. **整体前端 UI/UX 收尾**。按 R0-F1 财务、R0-F2 概览/报表、R0-F3 库存、R0-F4 供应商等 Part 继续；全部前端完成前不得进入集中历史 Issue 修复。
+1. **整体前端 UI/UX 收尾**。按 R0-F1 财务、R0-F2 概览/报表、R0-F3 库存、R0-F4 供应商、R0-F5 联系人与客户跟进等 Part 继续；全部前端完成前不得进入集中历史 Issue 修复。
 2. **集中核实和修复历史 Issue**。须等待当前 Part 的 ChatGPT 独立审查，并在后续 Part 按台账处理；保留所有旧 Issue ID。
 3. **全系统综合审查**。
 4. **修复综合审查发现的问题**。
@@ -24,7 +24,8 @@
 | R0-F1 UI/UX | **财务代码/已覆盖交互有条件封版；截图视觉证据待补** | 首轮范围为财务流水、应收/应付计划、财务概览；已更新查询状态、财务指标信息结构、交互反馈并添加回归。全站路由矩阵见 [R0-F1 覆盖盘点](R0-F1-前端UX覆盖盘点.md)。不代表全站 UX 已完成。 |
 | R0-F2 UI/UX | 独立代码/自动回归 PASS，有条件封版；独立视觉 BLOCKED | 经营概览与报表中心及关联组件；见 [R0-F2 验收](R0-F2-经营概览与报表中心验收.md)。统计范围缺口 ISS-062 保留，视觉续验 ISS-066 保留。 |
 | R0-F3 UI/UX | 独立代码与已覆盖操作回归 PASS，有条件封版；独立视觉 BLOCKED | 最终 `ca486be` / CI #38507649163 三项 SUCCESS；ISS-068、069 记录通过范围，ISS-070 与旧库存业务事项保留。 |
-| R0-F4 UI/UX | 实现、自动回归及隔离真实 UI 已记录，待独立复审 | 供应商专项矩阵见 [R0-F4 验收](R0-F4-供应商管理验收.md)；ISS-071、072 待复审，ISS-073 截图 BLOCKED，ISS-074 待核实。 |
+| R0-F4 UI/UX | 代码及自动化/已覆盖交互 PASS，有条件封版；独立视觉 BLOCKED | 用户转述 ChatGPT 独立复审 PASS；最终 `8cb265e`；CI #38539359761 三项 SUCCESS。ISS-071、072 按限定代码/交互范围关闭；ISS-073 截图 BLOCKED、ISS-074 待核实。 |
+| R0-F5 UI/UX | 实现及自动化/隔离数据库操作验收待独立复审；截图视觉 BLOCKED | 联系人 `/contacts` 与客户跟进 `/follow-ups` 专项报告见 [R0-F5 验收](R0-F5-联系人与客户跟进验收.md)；ISS-077、078 FIXED_PENDING_REVIEW；ISS-076 截图 BLOCKED；ISS-007 附件访问及 ISS-075 规则待核实保留。最终 SHA / 三项 CI 待提交后填写。 |
 | 内测 / 生产部署 | 未授权、未开始 | 保留开发超级管理员机制；正式 RBAC、真实员工角色、部署和生产数据迁移均不得从此文档推定已获授权。 |
 
 ## 指定阶段历史记录
@@ -41,6 +42,8 @@
 | R0-D4B2-C | R0-D4 权限开发有条件完成（据用户历史陈述） | `81273c0` | CI #38289225525：SUCCESS（Backend、Backend PostgreSQL、Frontend；对应阶段 SHA 经 GitHub 核对） | R0-D4 整体有条件封版；C 单项独立结论 UNKNOWN | ISS-003、ISS-017、ISS-046、ISS-055 | 权限矩阵及本阶段 CI 不覆盖所有文件部署 ACL 风险；不扩大为无条件封版。 |
 | R0-E1 | PARTIAL PASS（据用户历史陈述及验收报告） | `cdaa8f0` | CI #38356269083：SUCCESS（Backend、Backend PostgreSQL、Frontend；对应阶段 SHA 经 GitHub 核对） | PARTIAL PASS（ChatGPT 独立复审，据用户历史陈述） | ISS-001–008、ISS-019–029、ISS-052；继承项见问题台账 | CI SUCCESS 不替代未覆盖的业务、文件、导出、受限角色及边界流程验收；范围见 [E1 报告](R0-E1-综合业务回归与内测准备.md)。 |
 | R0-F1 UI/UX（本轮） | 财务 Part 实现及代码验收完成，等待 ChatGPT 独立复审；截图归档和多尺寸视口验收 BLOCKED | `bf79ef8` 基线；实现/测试提交 `439b5b36e458bde63ba15eaa39bbe94ce742616a` | 本地：Node 121/121、Vitest 494/494、Node-only typography 1/1、财务/报表后端回归 76/76、销售范围后端回归 28/28、Vite build SUCCESS。最终实现提交 CI #38426397966：Backend、Backend PostgreSQL、Frontend 全部 SUCCESS。此前 CI #38424190013 的 PostgreSQL 测试假失败由错误的字符串子串断言造成，已改为 Decimal 精确值检查并在本提交通过 | UNKNOWN（待独立审查） | ISS-001 等历史 Issue 全部保留；新增 ISS-057（待复审）、ISS-058（性能待核实） | 财务流水、应收/应付和概览已在隔离 SQLite 与 Codex 内置浏览器跑通。截图归档和多尺寸视口仍 BLOCKED，替代证据与场景明细见 [R0-F1 盘点](R0-F1-前端UX覆盖盘点.md)。 |
+| R0-F4 UI/UX（独立复审记录） | 代码及自动化/已覆盖交互 PASS，有条件封版；截图独立视觉 BLOCKED | `8cb265e` | [CI #38539359761](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38539359761)：Backend、Backend PostgreSQL、Frontend 全部 SUCCESS | PASS（据用户转述 ChatGPT 独立代码/自动回归审查） | ISS-073、ISS-074、ISS-075；旧业务事项保留 | ISS-071、072 按已覆盖代码和交互范围关闭；截图缺口 ISS-073 继续独立跟踪。 |
+| R0-F5 UI/UX（本轮） | 实现、自动回归、隔离 SQLite 与 Codex 内置浏览器操作记录完成；等独立复审；截图归档 BLOCKED | `8cb265e` 基线；最终 SHA 待提交 | 待精确 HEAD CI | UNKNOWN（待 ChatGPT 独立复审） | ISS-007、ISS-073–078 及历史未关闭项 | 联系人/跟进核心操作覆盖；实际附件文件选择器及内容访问未完整验收，独立截图视觉不能由 Playwright/Codex 目视替代。详见 [R0-F5 验收](R0-F5-联系人与客户跟进验收.md)。 |
 
 ## 依赖次序
 

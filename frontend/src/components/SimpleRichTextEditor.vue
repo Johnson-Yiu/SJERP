@@ -2,7 +2,7 @@
 import { nextTick, ref } from 'vue'
 import { Bold, Italic, List, ListOrdered } from 'lucide-vue-next'
 
-const props = defineProps({ modelValue: { type: String, default: '' } })
+const props = defineProps({ modelValue: { type: String, default: '' }, label: { type: String, default: '' } })
 const emit = defineEmits(['update:modelValue'])
 const editor = ref(null)
 
@@ -64,7 +64,7 @@ async function onPaste(event) {
       <button type="button" aria-label="编号列表" title="编号列表" @mousedown.prevent @click="list(true)"><ListOrdered :size="14" /></button>
     <span>支持加粗、斜体、列表，并可粘贴图片和附件</span>
   </div>
-    <textarea ref="editor" :value="props.modelValue" @input="emit('update:modelValue', $event.target.value)" @paste="onPaste" />
+    <textarea ref="editor" :aria-label="label || undefined" :value="props.modelValue" @input="emit('update:modelValue', $event.target.value)" @paste="onPaste" />
   </div>
 </template>
 

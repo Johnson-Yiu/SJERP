@@ -6,6 +6,7 @@ import { createRouter,createMemoryHistory } from 'vue-router'
 const mocks=vi.hoisted(()=>({api:{get:vi.fn(),post:vi.fn(),put:vi.fn(),delete:vi.fn()},listAll:vi.fn(),inputDialog:vi.fn(),confirmDialog:vi.fn()}))
 vi.mock('../src/api',()=>({api:mocks.api,listAll:mocks.listAll,listData:r=>r.data.results||r.data}))
 vi.mock('../src/dialogs',()=>({inputDialog:mocks.inputDialog,confirmDialog:mocks.confirmDialog}))
+import { setAccessOperator } from '../src/accessControl'
 import ResourcePage from '../src/views/ResourcePage.vue'
 import InventoryPage from '../src/views/InventoryPage.vue'
 import EntityDetailModal from '../src/components/EntityDetailModal.vue'
@@ -47,4 +48,58 @@ describe('Manual movement batch UX',()=>{
  it('retains independent multi-SKU controls and exact TradeUnit batch payload, refreshes current SKU list',async()=>{const modal=await open();await select(modal);const root=modal.get('.inventory-movement-modal');const lines=root.findAll('tbody tr');expect(lines).toHaveLength(2);await lines[0].get('[aria-label="交易单位与包装规格"]').setValue('7');for(const [label,value] of [['SKU-12 数量','2'],['SKU-12 单位成本','30'],['SKU-12 仓库','仓A'],['SKU-12 参考号','REF-A'],['SKU-12 备注','note-A'],['SKU-13 数量','3'],['SKU-13 单位成本','4'],['SKU-13 仓库','仓B']])await root.get(`[aria-label="${label}"]`).setValue(value);expect(root.text()).toContain('保存后将生成 2 条独立库存流水。');const before=mocks.listAll.mock.calls.length;await root.trigger('submit');await flushPromises();expect(mocks.api.post).toHaveBeenCalledWith('/inventory-movements/batch/',expect.objectContaining({type:'adjust_in',related_orders:[],items:[expect.objectContaining({sku:12,quantity:'2',trade_unit:7,trade_quantity:'2',trade_unit_price:30,unit_cost:30,warehouse:'仓A',reference:'REF-A',notes:'note-A'}),expect.objectContaining({sku:13,quantity:'3',trade_unit:null,unit_cost:4,warehouse:'仓B'})]}));expect(mocks.api.post.mock.calls[0][1].items[0]).not.toHaveProperty('trade_snapshot');expect(mocks.listAll.mock.calls.length).toBeGreaterThan(before);expect(router.currentRoute.value.query.sku).toBe('12');expect(wrapper.findComponent(InventoryMovementCreateModal).exists()).toBe(false);expect(wrapper.text()).toContain('已创建 1 条库存流水')})
  it('negative quantity fails existing guard and does not submit or invert direction',async()=>{const modal=await open();await select(modal);await modal.get('[aria-label="SKU-12 数量"]').setValue('-1');await modal.get('[aria-label="SKU-13 数量"]').setValue('2');await modal.get('form').trigger('submit');await flushPromises();expect(mocks.api.post).not.toHaveBeenCalled();expect(modal.text()).toContain('大于 0')})
  it('server failure retains manual lines and context for correction',async()=>{const modal=await open();await select(modal);for(const sku of skus)await modal.get(`[aria-label="${sku.sku} 数量"]`).setValue('1');mocks.api.post.mockRejectedValueOnce(new Error('available stock insufficient'));await modal.get('form').trigger('submit');await flushPromises();expect(modal.text()).toContain('available stock insufficient');expect(modal.get('[aria-label="SKU-12 数量"]').element.value).toBe('1');expect(router.currentRoute.value.query.sku).toBe('12')})
+})
+
+
+describe('R0-F3 ledger regression', () => {
+ it('paginates locally, restores URL page and retains full filtered record counts', async () => {
+  const many=Array.from({length:52},(_,i)=>({...manual,id:100+i,movement_no:`IM-PAGE-${i}`}))
+  mocks.listAll.mockImplementation(async url=>url==='/inventory-movements/'?many:skus)
+  await setup('/inventory-movements?page=2&context=keep')
+  expect(wrapper.findAll('.clickable-row')).toHaveLength(25)
+  expect(wrapper.find('.clickable-row').text()).toContain('IM-PAGE-25')
+  expect(wrapper.find('.summary-cards strong').text()).toBe('52')
+  expect(mocks.listAll).toHaveBeenCalledWith('/inventory-movements/',{params:{context:'keep',search:''}})
+  const calls=mocks.listAll.mock.calls.length
+  await click('下一页');expect(wrapper.findAll('.clickable-row')).toHaveLength(2)
+  expect(mocks.listAll.mock.calls.length).toBe(calls)
+  await wrapper.get('[aria-label="按库存方向筛选"]').setValue('in');await flushPromises()
+  expect(router.currentRoute.value.query.page).toBeUndefined()
+ })
+ it('prevents duplicate reversal while waiting and clears prior success before a failed operation',async()=>{
+  await setup();mocks.inputDialog.mockResolvedValue('原因')
+  let resolve; mocks.api.post.mockImplementationOnce(()=>new Promise(r=>{resolve=r}))
+  await row('IM-55').get('[title="冲销"]').trigger('click');await flushPromises()
+  expect(row('IM-55').get('[title="冲销"]').element.disabled).toBe(true)
+  expect(mocks.api.post).toHaveBeenCalledTimes(1)
+  resolve({data:{}});await flushPromises();expect(wrapper.get('[role="status"]').text()).toContain('冲销成功')
+  mocks.api.post.mockRejectedValueOnce(new Error('冲销被拒绝'))
+  await row('IM-55').get('[title="冲销"]').trigger('click');await flushPromises()
+  expect(wrapper.get('.toast').attributes('role')).toBe('alert')
+  expect(wrapper.get('.toast').text()).toBe('冲销被拒绝')
+  expect(row('IM-55').get('[title="冲销"]').element.disabled).toBe(false)
+ })
+ it('failed manual option loading blocks save and can retry without submitting',async()=>{
+  await setup();const original=mocks.listAll.getMockImplementation();mocks.listAll.mockImplementation(url=>url==='/skus/'?Promise.reject(new Error('资料加载失败')):original(url))
+  await click('新建库存调整')
+  const modal=wrapper.getComponent(InventoryMovementCreateModal)
+  expect(modal.get('[role="alert"]').text()).toContain('资料加载失败')
+  expect(modal.find('button.btn-primary').element.disabled).toBe(true)
+  await modal.get('form').trigger('submit');expect(mocks.api.post).not.toHaveBeenCalled()
+  mocks.listAll.mockImplementation(original)
+  await modal.get('[role="alert"] button').trigger('click');await flushPromises()
+  expect(modal.findComponent(SkuPickerPanel).exists()).toBe(true)
+ })
+})
+
+
+describe('R0-F3 optional order access',()=>{
+ it('does not request optional orders or show their selector without order view permission',async()=>{
+  setAccessOperator({authenticated:true,rbac_enforcement:true,permissions:{inventory:{view:true,create:true},skus:{view:true}}})
+  await setup();await click('新建库存调整')
+  const modal=wrapper.getComponent(InventoryMovementCreateModal)
+  expect(modal.text()).not.toContain('关联业务')
+  expect(mocks.listAll.mock.calls.some(([url])=>url==='/orders/')).toBe(false)
+  expect(modal.findComponent(SkuPickerPanel).exists()).toBe(true)
+ })
 })

@@ -2,6 +2,8 @@
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 import { followUpError } from '../utils/followUpSafety'
+import InventoryPagination from '../components/InventoryPagination.vue'
+import { inventoryPage } from '../utils/inventoryPagination'
 import PaymentTermsEditor from '../components/PaymentTermsEditor.vue'
 import { copyPaymentTerms, paymentTermsError } from '../utils/paymentTerms'
 import { movementTypes, movementDirection, movementSource, sourceLabels, movementStatus, ledgerFilters, filteredMovements, movementSummary, movementUnit, signedMovement } from '../utils/inventoryLedger'
@@ -44,17 +46,21 @@ const isMovementPage = computed(() => props.config.endpoint === 'inventory-movem
 const movementSkus = ref([])
 const movementFilters = computed(() => ledgerFilters(route.query))
 const visibleRows = computed(() => isMovementPage.value ? filteredMovements(rows.value, route.query) : rows.value)
+const ledgerPage = computed(() => inventoryPage(route.query.page, visibleRows.value.length))
+const displayRows = computed(() => isMovementPage.value ? visibleRows.value.slice((ledgerPage.value - 1) * 25, ledgerPage.value * 25) : visibleRows.value)
+const reversing = ref(false)
 let ledgerUpdates = Promise.resolve(), ledgerRequest = 0
 function updateLedgerQuery(patch, replace = false) {
   ledgerUpdates = ledgerUpdates.catch(() => {}).then(() => {
     const next = { ...route.query, ...patch }
+    if (['search', 'type', 'direction', 'source'].some(key => key in patch)) delete next.page
     Object.keys(next).forEach(key => { if (next[key] === undefined || next[key] === '') delete next[key] })
     return router[replace ? 'replace' : 'push']({ path: route.path, query: next, hash: route.hash })
   })
   return ledgerUpdates
 }
 function resetLedgerFilters() { clearTimeout(searchTimer); query.value = ''; return updateLedgerQuery({ search:undefined,type:undefined,direction:undefined,source:undefined }) }
-function ledgerDataQuery() { const { type, direction, source, ...params } = routeDataQuery(route.query); return params }
+function ledgerDataQuery() { const { type, direction, source, page, ...params } = routeDataQuery(route.query); return params }
 const isCertificatePage = computed(() => props.config.endpoint === 'product-certificates')
 const certificateFilterLabel = computed(() => isCertificatePage.value ? certificateFilterLabels[route.query.expiry] : '')
 function setCertificateFilter(expiry) { router.push({ path: route.path, query: certificateFilterQuery(route.query, expiry) }) }
@@ -81,7 +87,7 @@ const followUpFileInput = ref(null)
 const currentOperator = ref('')
 const supplierCodeServerError = ref('')
 const toast = reactive({ show: false, message: '', error: false })
-let searchTimer
+let searchTimer, toastTimer
 let routeActionVersion = 0
 const routeModalOpen = ref(false)
 
@@ -166,7 +172,7 @@ function setPrimaryContact(index) {
   customerContacts.value.forEach((contact, contactIndex) => { contact.is_primary = contactIndex === index })
 }
 
-function notify(message, error = false) { Object.assign(toast, { show: true, message, error }); setTimeout(() => { toast.show = false }, 2800) }
+function notify(message, error = false) { clearTimeout(toastTimer); Object.assign(toast, { show: true, message, error }); toastTimer = setTimeout(() => { toast.show = false }, 2800) }
 async function load() {
   loading.value = true
   loadError.value = ''
@@ -207,7 +213,7 @@ function clearListFilters() {
   return load()
 }
 watch(() => route.query.search, value => { if (isMovementPage.value || isCustomerPage.value) { clearTimeout(searchTimer); query.value = typeof value === 'string' ? value : '' } }, { immediate:true })
-onBeforeUnmount(() => { clearTimeout(searchTimer); ledgerRequest++ })
+onBeforeUnmount(() => { clearTimeout(searchTimer); clearTimeout(toastTimer); ledgerRequest++ })
 async function loadOptions() {
   const remotes = props.config.fields.filter(f => ['remote', 'combo', 'remote_multi'].includes(f[2]))
   await Promise.all(remotes.map(field => loadRemoteOption(field)))
@@ -352,11 +358,12 @@ function isInherited(fieldName) {
 }
 async function openCreate({ isCurrent = () => true } = {}) {
   if (!can(accessModule.value, 'create')) return
+  if (isMovementPage.value) toast.show = false
   keepDetailOpen.value = false
   editingId.value = null; resetForm()
   if (props.config.endpoint === 'follow-ups' && !form.followed_at) form.followed_at = datetimeLocal()
   customerContacts.value = props.config.endpoint === 'customers' ? [emptyContact(true)] : []
-  await loadOptions()
+  if (!isMovementPage.value) await loadOptions()
   if (props.config.endpoint === 'customers') {
     try { form.code = (await api.get('/customers/next-code/')).data.code } catch { form.code = '保存时自动生成' }
     form.owner_profile = accessState.operator?.employee_profile_id || ''
@@ -370,6 +377,7 @@ async function openCreate({ isCurrent = () => true } = {}) {
 }
 async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}) {
   if (!can(accessModule.value, 'update')) return
+  if (isMovementPage.value) toast.show = false
   if (!keepDetail) detailId.value = null
   keepDetailOpen.value = keepDetail
   editingId.value = row.id; resetForm(); await loadOptions()
@@ -475,6 +483,7 @@ async function handleInventoryMovementCreated(records) {
   notify(`已创建 ${Array.isArray(records) ? records.length : 1} 条库存流水`)
   await clearModalRoute(router, route)
   await load()
+  if (detailId.value) detailRefresh.value += 1
 }
 async function remove(row) {
   if (!can(accessModule.value, 'delete')) return
@@ -482,19 +491,21 @@ async function remove(row) {
   try { await api.delete(`/${props.config.endpoint}/${row.id}/`); notify('删除成功'); await load() } catch (e) { notify(e.message, true) }
 }
 async function reverseInventoryMovement(row) {
-  if (!canReverseInventoryMovement(row)) return
-  const reason = await inputDialog({
-    title: '冲销库存流水',
-    message: `冲销后原流水保留，并生成一条反向流水。\n流水号：${row.movement_no}\nSKU：${row.sku_code || row.display_name || row.product_name || '—'}\n类型：${row.type_display}\n原数量：${row.quantity} ${movementUnit(row, movementSkus.value)}\n发生日期：${row.movement_date}\n关联订单：${(row.related_order_nos || []).join('、') || row.order_no || '—'}`,
-    label: '冲销原因', placeholder: '请填写冲销原因', required: true, maxLength: 500, confirmText: '确认冲销', danger: true,
-  })
-  if (!reason) return
+  if (reversing.value || !can('inventory', 'update') || !canReverseInventoryMovement(row)) return
+  reversing.value = true
+  toast.show = false
   try {
+    const reason = await inputDialog({
+      title: '冲销库存流水',
+      message: `冲销后原流水保留，并生成一条反向流水。\n流水号：${row.movement_no}\nSKU：${row.sku_code || row.display_name || row.product_name || '—'}\n类型：${row.type_display}\n原数量：${row.quantity} ${movementUnit(row, movementSkus.value)}\n发生日期：${row.movement_date}\n关联订单：${(row.related_order_nos || []).join('、') || row.order_no || '—'}`,
+      label: '冲销原因', placeholder: '请填写冲销原因', required: true, maxLength: 500, confirmText: '确认冲销', danger: true,
+    })
+    if (!reason) return
     await api.post(`/inventory-movements/${row.id}/reverse/`, { reason })
-    notify('已生成冲销流水，库存与预留已同步。')
+    notify('库存流水冲销成功。')
     await load()
     if (detailId.value) detailRefresh.value += 1
-  } catch (e) { notify(e.message, true) }
+  } catch (e) { notify(e.message, true) } finally { reversing.value = false }
 }
 function display(value, type, fieldName = '') {
   if (value === null || value === undefined || value === '') return '—'
@@ -596,11 +607,11 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
     <div v-else class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索当前列表..." @input="delayedSearch" /></div></div>
     <div class="panel">
       <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
-      <ListEmptyState v-if="hasLoaded && !visibleRows.length" :entity="listNoun || config.title.replace('管理','')" :filtered="filteredListEmpty" @clear="clearListFilters"><template #action><p>点击“{{ primaryAction }}”开始录入。</p></template></ListEmptyState>
+      <ListEmptyState v-if="hasLoaded && !visibleRows.length" :entity="listNoun || config.title.replace('管理','')" :filtered="filteredListEmpty" @clear="clearListFilters"><template #action><p v-if="can(accessModule, 'create')">点击“{{ primaryAction }}”开始录入。</p></template></ListEmptyState>
       <div v-else-if="hasLoaded" class="table-wrap"><table class="data-table" :class="{ 'customer-list-table': isCustomerPage }"><thead><tr><th v-for="col in config.columns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
-        <tr v-for="row in visibleRows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row.id)" @keydown.enter="openDetail(row.id)">
+        <tr v-for="row in displayRows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row.id)" @keydown.enter="openDetail(row.id)">
           <td v-for="(col,index) in config.columns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }"><template v-if="isMovementPage && col[0] === 'sku_code'"><strong>{{ row.sku_code || row.sku_code_snapshot || '—' }}</strong><small class="ledger-secondary">{{ row.product_name || row.display_name }}</small><small v-if="movementUnit(row,movementSkus)" class="ledger-secondary">基础单位：{{ movementUnit(row,movementSkus) }}</small></template><span v-else-if="isMovementPage && col[0] === 'source_type'" class="ledger-source" :class="movementSource(row)">{{ sourceLabels[movementSource(row)] || '未标注' }}</span><span v-else-if="isMovementPage && col[0] === 'signed_quantity'" :class="cellClass('signed',row.signed_quantity)">{{ signedMovement(row,movementUnit(row,movementSkus)) }}</span><template v-else-if="isMovementPage && col[0] === 'reference'"><span>{{ row.reference || row.source_no || '—' }}</span><small class="ledger-secondary">{{ (row.related_order_nos || []).join('、') || row.order_no }}</small><small v-if="row.overage_summary" class="ledger-secondary">{{ row.overage_summary }}</small></template><span v-else-if="isMovementPage && col[0] === 'reversal_status'" :title="row.reversal_status">{{ movementStatus(row) }}</span><CertificateExpiryBadge v-else-if="isCertificatePage && col[0] === 'expiry_status'" :certificate="row" /><span v-else-if="isCustomerPage && col[0] === 'name'" class="customer-name" :title="row.name">{{ row.name }}</span><span v-else-if="isCustomerPage && col[0] === 'status'" class="status" :class="row.status" :title="row.status_display || statusLabels[row.status]">{{ customerListStatus(row.status, display(row.status, 'status', 'status')) }}</span><span v-else :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span></td>
-          <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="openDetail(row.id)"><ChevronRight :size="14" /></button><button v-if="can(accessModule, 'update') && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="can('inventory', 'update') && canReverseInventoryMovement(row)" class="mini-btn danger" title="冲销" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="can(accessModule, 'delete') && config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
+          <td><div class="table-actions"><button class="mini-btn" title="查看详情" @click.stop="openDetail(row.id)"><ChevronRight :size="14" /></button><button v-if="can(accessModule, 'update') && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="can('inventory', 'update') && canReverseInventoryMovement(row)" class="mini-btn danger" title="冲销" :disabled="reversing" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="can(accessModule, 'delete') && config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
         </tr>
       </tbody></table></div>
     </div>
@@ -688,7 +699,8 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
     <Transition name="detail-drawer" appear>
       <EntityDetailModal v-if="detailId" :entity="config.endpoint" :id="detailId" :refresh-key="detailRefresh" @close="closeDetail" @edit="editFromDetail" @changed="handleDetailChanged" />
     </Transition>
-    <div v-if="toast.show" class="toast" :class="{ error: toast.error }">{{ toast.message }}</div>
+    <InventoryPagination v-if="isMovementPage && hasLoaded" :total="visibleRows.length" :page="ledgerPage" @change="page => updateLedgerQuery({ page: page > 1 ? String(page) : undefined })" />
+    <div v-if="toast.show" :role="toast.error ? 'alert' : 'status'" class="toast" :class="{ error: toast.error }">{{ toast.message }}</div>
   </div>
 </template>
 

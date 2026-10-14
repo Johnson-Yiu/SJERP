@@ -39,3 +39,8 @@
 本批基线 `0ab4ac7`，审查范围限定 ISS-056、ISS-057、ISS-059–061。财务布局必须核验实际计算样式、控件边界和重叠，并保留真实 Chrome 与内置浏览器视觉记录。金额泄漏测试须同时核验未渲染响应和实际 JSON，使用授权 Context 与真实 SKU Serializer 作反例，覆盖 Decimal、字符串和 JSON number；不得恢复任意文本子串扫描或仅依赖 Decimal 类型。截图归档受限时如实标记限制，不采用其他导出通道绕过。
 
 最终提交 push master 后核对 Backend、Backend PostgreSQL、Frontend 三项 SUCCESS。ISS-057 在独立审查通过前不关闭；本批交付后停止等待 ChatGPT 独立复审，不执行“下一 Part”自动继续条款。
+
+
+## R0-F3 验收边界（2026-10-14）
+
+R0-F2 用户转述的独立代码/自动回归 PASS 仅支持有条件封版，独立视觉仍 BLOCKED；ISS-062、ISS-066 保留。R0-F3 使用隔离数据库验证库存展示与既有业务流程，分别报告 Playwright 自动计算布局、Codex 内置浏览器目视和 ChatGPT 独立视觉。截图无获准归档接口时记 BLOCKED，不提取原始浏览器数据、不借其它通道绕过。提交后三项 CI SUCCESS 才交付；停止等待独立审查，不自行关闭本轮待复审事项或进入下一阶段。

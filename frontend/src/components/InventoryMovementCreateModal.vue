@@ -1,4 +1,5 @@
 <script setup>
+import { useAccessControl } from '../accessControl'
 import TradeUnitPicker from './TradeUnitPicker.vue'
 import { tradePayload } from '../utils/tradeUnits'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
@@ -8,6 +9,9 @@ import ComboInput from './ComboInput.vue'
 import SkuPickerPanel from './SkuPickerPanel.vue'
 import SegmentedDateInput from './SegmentedDateInput.vue'
 
+const { can } = useAccessControl()
+const ready = ref(false)
+function close() { if (!saving.value) emit('close') }
 const emit = defineEmits(['close', 'saved'])
 const loading = ref(true), saving = ref(false), error = ref('')
 const skus = ref([]), orders = ref([]), selectedSkuIds = ref([]), selectedOrderIds = ref('')
@@ -45,17 +49,19 @@ watch(selectedSkuIds, () => {
 })
 
 async function init() {
+  loading.value = true; error.value = ''; ready.value = false
   try {
-    const [skuResponse, orderResponse] = await Promise.all([listAll('/skus/', { params: { include_inactive: 1 } }), listAll('/orders/')])
+    const [skuResponse, orderResponse] = await Promise.all([listAll('/skus/', { params: { include_inactive: 1 } }), can('orders', 'view') ? listAll('/orders/') : Promise.resolve([])])
     skus.value = skuResponse
     orders.value = orderResponse
+    ready.value = true
   } catch (requestError) {
     error.value = requestError.response?.data?.detail || requestError.message || '表单所需数据加载失败。'
   } finally { loading.value = false }
 }
 function lineFor(sku) { return lines[sku.id] }
 async function save() {
-  if (saving.value) return
+  if (saving.value || !ready.value) return
   error.value = ''
   if (!selectedSkus.value.length) { error.value = '请至少选择一个 SKU。'; return }
   if (selectedSkus.value.some(sku => !Number(lineFor(sku)?.quantity) || Number(lineFor(sku).quantity) <= 0)) { error.value = '请为每个 SKU 填写大于 0 的数量。'; return }
@@ -73,19 +79,19 @@ onMounted(init)
 
 <template>
   <Teleport to="body">
-    <div class="modal-backdrop inventory-movement-backdrop" @mousedown.self="emit('close')">
+    <div class="modal-backdrop inventory-movement-backdrop" @mousedown.self="close">
       <form role="dialog" aria-label="新建手工库存流水" class="modal inventory-movement-modal" @submit.prevent="save">
-        <div class="modal-head"><div><h3>库存调整</h3><p>每个 SKU 生成独立库存流水。</p></div><button type="button" class="mini-btn" aria-label="关闭手工库存流水" @click="emit('close')"><X :size="17" /></button></div>
+        <div class="modal-head"><div><h3>库存调整</h3><p>每个 SKU 生成独立库存流水。</p></div><button type="button" class="mini-btn" aria-label="关闭手工库存流水" :disabled="saving" @click="close"><X :size="17" /></button></div>
         <div class="modal-body">
-          <div v-if="error" class="inline-error">{{ error }}</div>
+          <div v-if="error" role="alert" class="inline-error">{{ error }}<button v-if="!ready && !loading" type="button" class="btn btn-secondary" @click="init">重新加载</button></div>
           <div v-if="loading" class="modal-loading">正在加载...</div>
-          <template v-else>
+          <template v-else-if="ready">
             <section class="movement-section"><h4>流水基本信息</h4><div class="movement-grid">
               <div class="field"><label>流水号</label><input aria-label="流水号" :value="movementPreview" class="readonly-input" readonly /></div>
               <div class="field"><label>发生日期 <em>*</em></label><SegmentedDateInput :model-value="form.movement_date" required @update:model-value="value => form.movement_date = value" /></div>
               <div class="field"><label>类型 <em>*</em></label><select aria-label="手工流水类型" v-model="form.type"><optgroup label="入库"><option v-for="item in inboundTypes" :key="item.value" :value="item.value">{{ item.label }}</option></optgroup><optgroup label="出库"><option v-for="item in outboundTypes" :key="item.value" :value="item.value">{{ item.label }}</option></optgroup></select></div>
             </div></section>
-            <section class="movement-section"><h4>关联业务</h4><div class="field"><label>关联订单 <small>可不选、可多选</small></label><ComboInput v-model="selectedOrderIds" :options="orderOptions" multiple :allow-custom="false" placeholder="搜索并选择订单" /><p class="movement-help">可关联多个订单，仅记录调整来源。</p></div></section>
+            <section v-if="can('orders', 'view')" class="movement-section"><h4>关联业务</h4><div class="field"><label>关联订单 <small>可不选、可多选</small></label><ComboInput v-model="selectedOrderIds" :options="orderOptions" multiple :allow-custom="false" placeholder="搜索并选择订单" /><p class="movement-help">可关联多个订单，仅记录调整来源。</p></div></section>
             <section class="movement-section"><h4>SKU 明细</h4><div class="movement-warning">仅用于盘盈、盘亏、样品、退货、调拨、生产等调整。<br />采购入库请使用“验货入库”，销售出库请使用“确认发货”。</div><p class="movement-help">数量填正数，类型决定入库或出库方向。单位成本用于本次调整的成本参考。</p><div class="field full"><label>选择 SKU <em>*</em> <small>支持搜索、分类筛选和多选；每个 SKU 独立登记</small></label><SkuPickerPanel v-model="selectedSkuIds" :skus="skus" :height="250" /></div>
             <section class="movement-lines">
               <div class="movement-lines-head"><div><strong>SKU 明细</strong><span>每一行将生成一条库存流水。</span></div><b>{{ selectedSkus.length }} 项</b></div>
@@ -94,7 +100,7 @@ onMounted(init)
             </section></section>
           </template>
         </div>
-        <div class="modal-foot"><div class="save-explanation"><strong>保存说明</strong><span>保存后将生成 {{ selectedSkus.length }} 条独立库存流水。</span></div><button type="button" class="btn btn-secondary" @click="emit('close')">取消</button><button class="btn btn-primary" :disabled="loading || saving || !selectedSkus.length">{{ saving ? '保存中…' : selectedSkus.length ? `保存 ${selectedSkus.length} 条流水` : '保存库存调整' }}</button></div>
+        <div class="modal-foot"><div class="save-explanation"><strong>保存说明</strong><span>保存后将生成 {{ selectedSkus.length }} 条独立库存流水。</span></div><button type="button" class="btn btn-secondary" :disabled="saving" @click="close">取消</button><button class="btn btn-primary" :disabled="loading || !ready || saving || !selectedSkus.length">{{ saving ? '保存中…' : selectedSkus.length ? `保存 ${selectedSkus.length} 条流水` : '保存库存调整' }}</button></div>
       </form>
     </div>
   </Teleport>

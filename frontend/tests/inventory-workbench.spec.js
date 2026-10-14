@@ -212,3 +212,32 @@ it('retains drawer filter and sort through exact movement navigation, Back and r
   wrapper = mount(defineComponent({ template:'<RouterView />' }), { global:{ plugins:[router],stubs:{OperationLogPanel:true} } }); await flushPromises()
   expect(wrapper.get('.detail-filter input').element.value).toBe('IM-CTX-201')
 })
+
+
+describe('R0-F3 inventory pagination and logs', () => {
+  it('restores page, keeps totals across all matching SKUs and retains page on drawer close', async () => {
+    const many = Array.from({length: 52}, (_, i) => ({...sku, id: i + 100, sku: `SKU-${String(i).padStart(3, '0')}`}))
+    mocks.listAll.mockResolvedValue(many)
+    await wrapper.get('.page-head button').trigger('click'); await flushPromises()
+    await router.push('/inventory?page=2&context=keep'); await flushPromises()
+    expect(wrapper.findAll('.inventory-row')).toHaveLength(25)
+    expect(wrapper.find('.inventory-row').text()).toContain('SKU-025')
+    expect(wrapper.find('.inventory-summary strong').text()).toBe('52')
+    await wrapper.find('.inventory-row').trigger('click'); await flushPromises()
+    expect(wrapper.find('.sku-detail .inventory-pagination').exists()).toBe(false)
+    await wrapper.get('[aria-label="关闭库存详情"]').trigger('click'); await flushPromises()
+    expect(router.currentRoute.value.query).toEqual({page:'2',context:'keep'})
+    await wrapper.findAll('.sort-header')[2].trigger('click'); await flushPromises()
+    expect(router.currentRoute.value.query.page).toBeUndefined()
+  })
+  it('reports log failure rather than an empty audit history and allows retry', async () => {
+    const original = mocks.api.get.getMockImplementation()
+    mocks.api.get.mockImplementation(url => url === '/operation-logs/' ? Promise.reject(new Error('日志服务失败')) : original(url))
+    await openSkuDrawer(); await chooseTab('SKU 操作日志')
+    expect(wrapper.get('[role="alert"]').text()).toContain('日志服务失败')
+    expect(wrapper.text()).not.toContain('暂无 SKU 主档操作记录。')
+    mocks.api.get.mockImplementation(original)
+    await wrapper.get('.sku-log-error button').trigger('click'); await flushPromises()
+    expect(wrapper.find('.sku-log-error').exists()).toBe(false)
+  })
+})

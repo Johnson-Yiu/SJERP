@@ -329,9 +329,9 @@ onMounted(async () => {
 
 <template>
   <div class="modal-backdrop detail-backdrop" :class="{ 'follow-up-detail-backdrop': isFollowUpDetail, 'product-detail-backdrop': isProduct }" @mousedown.self="requestClose">
-    <article class="detail-modal" :class="{ 'follow-up-detail-modal': isFollowUpDetail, 'product-detail-modal': isProduct, 'customer-detail-root': isCustomerRoot, 'movement-detail': isMovementDetail }" :aria-label="isFollowUpDetail ? '跟进详情' : isMovementDetail ? '库存流水详情' : isCustomerRoot ? '客户详情' : '关联详情'">
-      <div v-if="loading" class="detail-loading"><div class="spinner" /><span>正在整理关联数据...</span></div>
-      <div v-else-if="error" class="detail-error"><strong>详情加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load()">重试</button></div>
+    <article :role="isMovementDetail ? 'dialog' : undefined" :aria-modal="isMovementDetail ? 'true' : undefined" class="detail-modal" :class="{ 'follow-up-detail-modal': isFollowUpDetail, 'product-detail-modal': isProduct, 'customer-detail-root': isCustomerRoot, 'movement-detail': isMovementDetail }" :aria-label="isFollowUpDetail ? '跟进详情' : isMovementDetail ? '库存流水详情' : isCustomerRoot ? '客户详情' : '关联详情'">
+      <div v-if="loading" role="status" class="detail-loading"><button v-if="isMovementDetail" class="btn btn-secondary" @click="requestClose">关闭库存流水详情</button><div class="spinner" /><span>正在整理关联数据...</span></div>
+      <div v-else-if="error" role="alert" class="detail-error"><button v-if="isMovementDetail" class="btn btn-secondary" @click="requestClose">关闭库存流水详情</button><strong>详情加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load()">重试</button></div>
       <template v-else-if="data">
         <template v-if="isFollowUpDetail">
           <header class="follow-up-hero">

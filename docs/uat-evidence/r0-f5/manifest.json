@@ -1,0 +1,152 @@
+{
+  "captured_date": "2026-10-15",
+  "browser": "Codex In-app Browser",
+  "source_commit": "0ec186b71f0395d52526b308e385b189a582ead6",
+  "database": "isolated r0f5-ux.sqlite3",
+  "configured_viewports": [
+    {
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "width": 1280,
+      "height": 1000
+    },
+    {
+      "width": 1024,
+      "height": 1000
+    }
+  ],
+  "files": [
+    {
+      "file": "contacts-archive-check.jpg",
+      "image_size": [
+        1304,
+        892
+      ],
+      "format": "JPEG",
+      "bytes": 85798,
+      "sha256": "754fc839af8dd90f1d3a563277bc013f3d9d5835add038f7fa35fe59781941d2"
+    },
+    {
+      "file": "contacts-create-1024.jpg",
+      "image_size": [
+        1024,
+        1000
+      ],
+      "format": "JPEG",
+      "bytes": 36353,
+      "sha256": "f332fa5c7ab195f0c66c4897b2f214e8490bd1aa26a96a1a11e4856c55ec9c3a"
+    },
+    {
+      "file": "contacts-create-1280.jpg",
+      "image_size": [
+        1280,
+        1000
+      ],
+      "format": "JPEG",
+      "bytes": 43664,
+      "sha256": "2585861e3179bd718a7e23f5c4d3fdb6f789e9cf8cfae106f30a525e3e52a925"
+    },
+    {
+      "file": "contacts-create-1440.jpg",
+      "image_size": [
+        1440,
+        1000
+      ],
+      "format": "JPEG",
+      "bytes": 45396,
+      "sha256": "44474f671f49c0bd0efb95a11d3f8c307bcd9854e840ce13efd68526978155c5"
+    },
+    {
+      "file": "contacts-list-1024.jpg",
+      "image_size": [
+        1024,
+        1000
+      ],
+      "format": "JPEG",
+      "bytes": 80685,
+      "sha256": "3f2f6d3b91dbf6581451585750619e4d488cd5ec80b00742aa86b3bf326cbd71"
+    },
+    {
+      "file": "contacts-list-1280.jpg",
+      "image_size": [
+        1280,
+        1000
+      ],
+      "format": "JPEG",
+      "bytes": 88594,
+      "sha256": "077effe9f4a757535871890bd7590ed36e23f3fab2eb9ceef567a04a585505d7"
+    },
+    {
+      "file": "contacts-list-1440.jpg",
+      "image_size": [
+        1440,
+        1000
+      ],
+      "format": "JPEG",
+      "bytes": 90269,
+      "sha256": "77751f95fe4135b04d1c27b7ece30973be5e04127e21fea1c839997c1910d9dd"
+    },
+    {
+      "file": "follow-ups-create-1024.jpg",
+      "image_size": [
+        1009,
+        985
+      ],
+      "format": "JPEG",
+      "bytes": 48286,
+      "sha256": "c62f046dda324dd2b6bbad14da4438e4872471aa6ba84334d372b79d45f6022c"
+    },
+    {
+      "file": "follow-ups-create-1280.jpg",
+      "image_size": [
+        1280,
+        1000
+      ],
+      "format": "JPEG",
+      "bytes": 59007,
+      "sha256": "811303d10611903a561e8b2753e4eff8c2b36c72d6b0065c01a379f18bd758f2"
+    },
+    {
+      "file": "follow-ups-create-1440.jpg",
+      "image_size": [
+        1440,
+        1000
+      ],
+      "format": "JPEG",
+      "bytes": 61643,
+      "sha256": "a25429dcda4b47adbc3eab08b8773fe8ab43ebca8874a091a1998db59e80d3c0"
+    },
+    {
+      "file": "follow-ups-list-1024.jpg",
+      "image_size": [
+        1009,
+        985
+      ],
+      "format": "JPEG",
+      "bytes": 86246,
+      "sha256": "0e299efddfd05f5b7916b7846e60546dcf0acf03822a5ba7e9a623cd68bde94e"
+    },
+    {
+      "file": "follow-ups-list-1280.jpg",
+      "image_size": [
+        1280,
+        1000
+      ],
+      "format": "JPEG",
+      "bytes": 110176,
+      "sha256": "9d841ce55f679fe5ff282aca2da62c6969d9f032bd1223ac8c6b11ef88434286"
+    },
+    {
+      "file": "follow-ups-list-1440.jpg",
+      "image_size": [
+        1440,
+        1000
+      ],
+      "format": "JPEG",
+      "bytes": 118731,
+      "sha256": "b9317dfa2103bfc5665ca59080cfb2ab21e3a6a3fcc9b478dbd43b7ee9b91c65"
+    }
+  ]
+}

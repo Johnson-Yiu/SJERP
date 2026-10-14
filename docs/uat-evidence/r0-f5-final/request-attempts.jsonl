@@ -1,0 +1,8 @@
+{"method": "POST", "path": "/api/contacts/", "time": 1791997387.1574006}
+{"method": "PUT", "path": "/api/contacts/5/", "time": 1791997454.1324003}
+{"method": "PUT", "path": "/api/contacts/5/", "time": 1791997478.1677916}
+{"method": "POST", "path": "/api/follow-ups/", "time": 1791997496.998353}
+{"method": "PUT", "path": "/api/follow-ups/5/", "time": 1791997524.845463}
+{"method": "PUT", "path": "/api/follow-ups/5/", "time": 1791997587.8733087}
+{"method": "PUT", "path": "/api/follow-ups/5/", "time": 1791997693.3028781}
+{"method": "PUT", "path": "/api/contacts/5/", "time": 1791997708.13525}

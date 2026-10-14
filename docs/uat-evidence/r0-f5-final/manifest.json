@@ -1,0 +1,126 @@
+{
+  "date": "2026-10-15",
+  "base_commit": "7774eeb688e369e37051929bb9c8628d48aa4099",
+  "browser": "Codex In-app Browser",
+  "url": "http://127.0.0.1:5198",
+  "database": "isolated r0f5-ux.sqlite3",
+  "configured_viewports": [
+    {
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "width": 1280,
+      "height": 1000
+    },
+    {
+      "width": 1024,
+      "height": 1000
+    }
+  ],
+  "working_source_sha256": {
+    "frontend/src/views/ResourcePage.vue": "64f24600d1397db333c0b621316c5cd42137c118e53b4a30a8e6a3c2da9b950f",
+    "frontend/src/composables/useUnsavedChangesGuard.js": "39ce44e68ba3aacd13f6b90f8b9c281f1bbc9d02b8952ac1db39bfd8923471f4"
+  },
+  "files": [
+    {
+      "file": "contacts-failure-1024.jpg",
+      "size": [
+        1024,
+        1000
+      ],
+      "bytes": 43443,
+      "sha256": "df3cc20b93bb05050a91facc8d10c4ff73a12a549395030ffa3a98eeaaf83a8a"
+    },
+    {
+      "file": "contacts-saving-1024.jpg",
+      "size": [
+        1024,
+        1000
+      ],
+      "bytes": 41381,
+      "sha256": "6c6733feaa4508a0709c350a8fee3ee092319d8425c6b1732c5905288497153d"
+    },
+    {
+      "file": "contacts-saving-1280.jpg",
+      "size": [
+        1280,
+        1000
+      ],
+      "bytes": 48754,
+      "sha256": "cd101464da54e03fb42a5b96c9be27a32319557dc1d0d7ce416063a41f574fd1"
+    },
+    {
+      "file": "contacts-saving-1440.jpg",
+      "size": [
+        1280,
+        720
+      ],
+      "bytes": 37042,
+      "sha256": "e7aa58c4929e0233465934306f015a311e5540b4c6ac3a74e4a493b953527d7f"
+    },
+    {
+      "file": "contacts-success-1024.jpg",
+      "size": [
+        1024,
+        1000
+      ],
+      "bytes": 87645,
+      "sha256": "7f1cca9bf8c31a51a1fe696b0d9927fca92fe3dd8fc6e9a7b1143b4c04a0764b"
+    },
+    {
+      "file": "follow-ups-failure-1024.jpg",
+      "size": [
+        1009,
+        985
+      ],
+      "bytes": 48171,
+      "sha256": "1c57a7b570b821451898287c6d23f678816c932598cdd5ae55f8c36a11fb36ad"
+    },
+    {
+      "file": "follow-ups-retry-success-1024.jpg",
+      "size": [
+        1009,
+        985
+      ],
+      "bytes": 88489,
+      "sha256": "7d4107537e53bbe9905b1cb810d84e807cd77c6921e92c22e53b33180e697dc6"
+    },
+    {
+      "file": "follow-ups-saving-1024.jpg",
+      "size": [
+        1009,
+        788
+      ],
+      "bytes": 36886,
+      "sha256": "9a605e1aee9f7ad29fc5a522d2c9ee7f890b7724995b7e2249c27d50a26747cc"
+    },
+    {
+      "file": "follow-ups-saving-1280.jpg",
+      "size": [
+        1280,
+        889
+      ],
+      "bytes": 46524,
+      "sha256": "f24ed4c2f8a0563d1a33f860b1c41e110222c059f9e3c89e1eb83cf4708004db"
+    },
+    {
+      "file": "follow-ups-saving-1440.jpg",
+      "size": [
+        1440,
+        1000
+      ],
+      "bytes": 59429,
+      "sha256": "baaff801670062a09ef470059f5dc479c2fdf76f772a502d4037826a525f0d72"
+    },
+    {
+      "file": "follow-ups-success-1024.jpg",
+      "size": [
+        1009,
+        985
+      ],
+      "bytes": 88947,
+      "sha256": "9236f63ae9011a1120dec53bfdc05b12d7d7857738db21b736b9e849dd9212ec"
+    }
+  ]
+}

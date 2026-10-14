@@ -120,7 +120,7 @@ const requiredRemoteFields = computed(() => props.config.fields.filter(field => 
 const optionsReady = computed(() => requiredRemoteFields.value.every(field => optionLoaded[field[4]] && !optionErrors[field[4]]))
 const filteredListEmpty = computed(() => hasListFilters.value && allRecordsExist.value)
 const customerContacts = ref([])
-const guard = useUnsavedChangesGuard({ data: () => ({ form, contacts: customerContacts.value, files: pendingFollowUpFiles.value }), enabled: () => modalOpen.value && props.config.endpoint !== 'inventory-movements' })
+const guard = useUnsavedChangesGuard({ data: () => ({ form, contacts: customerContacts.value, files: pendingFollowUpFiles.value }), enabled: () => modalOpen.value && props.config.endpoint !== 'inventory-movements', busy: () => isCrmPage.value && modalOpen.value && saving.value })
 const followUpDays = ref('')
 const followUpSaveAttempted = ref(false)
 const followUpScheduleError = computed(() => followUpError(form))
@@ -504,7 +504,7 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
   guard.markClean()
   modalOpen.value = true
 }
-const closeModal = () => { if (isSupplierPage.value && saving.value) return; return guard.requestClose(discardModal) }
+const closeModal = () => { if ((isSupplierPage.value || isCrmPage.value) && saving.value) return; return guard.requestClose(discardModal) }
 function discardModal() {
   const refreshDetail = keepDetailOpen.value
   modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []

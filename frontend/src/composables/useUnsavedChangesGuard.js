@@ -33,7 +33,7 @@ export function unsavedSnapshot(value) {
   })
 }
 
-export function useUnsavedChangesGuard({ data, enabled = () => true, router: suppliedRouter, routeGuard = true, scope: suppliedScope } = {}) {
+export function useUnsavedChangesGuard({ data, enabled = () => true, busy = () => false, router: suppliedRouter, routeGuard = true, scope: suppliedScope } = {}) {
   const router = suppliedRouter || inject(routerKey, null)
   const scope = suppliedScope || inject(scopeKey, null)
   const baseline = ref(null)
@@ -41,32 +41,35 @@ export function useUnsavedChangesGuard({ data, enabled = () => true, router: sup
   const markClean = () => { baseline.value = unsavedSnapshot(data()) }
   let pending
   async function confirmLeave() {
+    if (busy()) return false
     if (!dirty.value) return true
     if (!pending) pending = confirmDialog({
       title: '未保存修改', message: '当前修改尚未保存，离开后将丢失。是否继续？',
       cancelText: '继续编辑', confirmText: '放弃修改', danger: true,
     }).finally(() => { pending = null })
-    return pending
+    const accepted = await pending
+    return accepted && !busy()
   }
   async function requestClose(close) {
-    if (!await confirmLeave()) return false
+    if (!await confirmLeave() || busy()) return false
     markClean()
     await close()
     return true
   }
   const removeRouteGuard = routeGuard ? router?.beforeEach(async (to, from) => {
     if (to.fullPath === from.fullPath) return true
+    if (busy()) return false
     if (dirty.value && !await confirmLeave()) return false
     if (scope) {
       for (const child of scope.children) if (child !== scopedGuard && !await child.confirmLeave()) return false
     }
-    return true
+    return !busy()
   }) : undefined
   const removeAfterGuard = router?.afterEach((to, from, failure) => {
     if (!failure && to.fullPath !== from.fullPath && dirty.value) markClean()
   })
-  function beforeUnload(event) { if (dirty.value) { event.preventDefault(); event.returnValue = '' } }
-  const stop = watch(dirty, value => {
+  function beforeUnload(event) { if (dirty.value || busy()) { event.preventDefault(); event.returnValue = '' } }
+  const stop = watch(() => dirty.value || busy(), value => {
     if (typeof window === 'undefined') return
     window[value ? 'addEventListener' : 'removeEventListener']('beforeunload', beforeUnload)
   }, { flush: 'sync', immediate: true })

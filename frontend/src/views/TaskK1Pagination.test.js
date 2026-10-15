@@ -28,7 +28,7 @@ test('core management lists and selectors use the tested all-pages loader', asyn
   assert.match(products, /api\.get\('\/categories\/tree\/'\)/)
   assert.match(packaging, /listAll\('\/packaging-templates\/'\)/)
   assert.match(packaging, /listAll\('\/suppliers\/'\)/)
-  assert.match(packaging, /listAll\('\/skus\/'\)/)
+  assert.match(packaging, /listAll\('\/skus\/',\{params:\{include_inactive:1\}\}\)/)
 
   assert.match(sku, /listAll\('\/packaging-templates\/'\)/)
   assert.match(sku, /listAll\('\/suppliers\/'\)/)

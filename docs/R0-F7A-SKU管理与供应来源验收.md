@@ -73,3 +73,7 @@ R0-F6 用户转述独立代码、自动化及已覆盖交互 PASS，允许有条
 本批不重拍全部39张截图，原图及清单未修改；本批没有可见布局或文案变化。自动回归、实际浏览器与独立视觉仍分别记录，未新增独立视觉PASS。ISS-088为P2/FIXED_PENDING_REVIEW；ISS-087等全部保留。总88条：OPEN6、BLOCKED20、NEEDS_VERIFICATION25、FIXED_PENDING_REVIEW30、CLOSED7，没有自行关闭Issue。完整测试结果见本批测试记录及交付；最终精确HEAD三项CI核对后停止等待独立审查，不进入F7B。
 
 本批最终本地回归：Node 121/121、字体检查1/1、Vitest 56文件567/567、Playwright84/84、Build PASS。新增10项Vitest场景及1项浏览器网络门控场景；[本批测试记录](uat-evidence/r0-f7a/test-results-iss088.txt)。完整Backend与PostgreSQL按最终提交的CI执行，不冒充本地已执行完整后端套件。精确提交与CI URL见本批交付及GitHub commit checks。
+
+## R0-F7B 开始前同步独立复审（2026-10-15）
+
+用户明确转述：最终79841e382c882f33444627e65310170a47a444cf / CI #38697043429三项SUCCESS，ISS-088代码及回归PASS，允许有条件封版。ISS-088按此范围CLOSED；ISS-085、086已覆盖代码和操作通过，图片独立视觉仍待审；ISS-087保留NEEDS_VERIFICATION。没有以该结论关闭其他历史业务Issue。

@@ -1,0 +1,866 @@
+[
+  {
+    "file": "packaging-list-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-list-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-list-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-list-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-list-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-list-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-create-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-create-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-create-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-error-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-error-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-error-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-linked-verified-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging?template=1&panel=linked",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-linked-verified-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging?template=1&panel=linked",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-linked-verified-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging?template=1&panel=linked",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-edit-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-edit-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-edit-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-detail-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging?template=1&panel=detail",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-detail-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging?template=1&panel=detail",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-detail-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging?template=1&panel=detail",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-linked-updated-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging?template=1&panel=linked",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-linked-updated-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging?template=1&panel=linked",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "packaging-linked-updated-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-packaging?template=1&panel=linked",
+    "method": "Codex in-app browser tab.screenshot({clip:{x:0,y:0,width,height:1000}})"
+  },
+  {
+    "file": "trade-units-1440.jpg",
+    "requested": {
+      "width": 1440,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-trade-units?sku=1",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "trade-units-1280.jpg",
+    "requested": {
+      "width": 1280,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-trade-units?sku=1",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "trade-units-1024.jpg",
+    "requested": {
+      "width": 1024,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-trade-units?sku=1",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "trade-unit-edit-1440.jpg",
+    "requested": {
+      "width": 1440,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-trade-units?sku=1",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "trade-unit-edit-1280.jpg",
+    "requested": {
+      "width": 1280,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-trade-units?sku=1",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "trade-unit-edit-1024.jpg",
+    "requested": {
+      "width": 1024,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-trade-units?sku=1",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "trade-unit-error-1440.jpg",
+    "requested": {
+      "width": 1440,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-trade-units?sku=1",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "trade-unit-error-1280.jpg",
+    "requested": {
+      "width": 1280,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-trade-units?sku=1",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "trade-unit-error-1024.jpg",
+    "requested": {
+      "width": 1024,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-trade-units?sku=1",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "trade-unit-pcs-1440.jpg",
+    "requested": {
+      "width": 1440,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-trade-units?sku=4",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "trade-unit-pcs-1280.jpg",
+    "requested": {
+      "width": 1280,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-trade-units?sku=4",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "trade-unit-pcs-1024.jpg",
+    "requested": {
+      "width": 1024,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/sku-trade-units?sku=4",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "sku-packaging-1440.jpg",
+    "requested": {
+      "width": 1440,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/skus",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "sku-packaging-1280.jpg",
+    "requested": {
+      "width": 1280,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/skus",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "sku-packaging-1024.jpg",
+    "requested": {
+      "width": 1024,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/skus",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "sku-packaging-fields-1440.jpg",
+    "requested": {
+      "width": 1440,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/skus",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "sku-packaging-fields-1280.jpg",
+    "requested": {
+      "width": 1280,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/skus",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "sku-packaging-fields-1024.jpg",
+    "requested": {
+      "width": 1024,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/skus",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "sku-inline-packaging-error-1440.jpg",
+    "requested": {
+      "width": 1440,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/skus",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "sku-inline-packaging-error-1280.jpg",
+    "requested": {
+      "width": 1280,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/skus",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "sku-inline-packaging-error-1024.jpg",
+    "requested": {
+      "width": 1024,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/skus",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "sku-packaging-batch-1440.jpg",
+    "requested": {
+      "width": 1440,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": {
+      "width": 1440,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/skus",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "sku-packaging-batch-1280.jpg",
+    "requested": {
+      "width": 1280,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": {
+      "width": 1280,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/skus",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  },
+  {
+    "file": "sku-packaging-batch-1024.jpg",
+    "requested": {
+      "width": 1024,
+      "height": 1000
+    },
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": {
+      "width": 1024,
+      "height": 1000
+    },
+    "url": "http://127.0.0.1:5201/skus",
+    "method": "Codex built-in browser original JPEG, supported viewport clip"
+  }
+]

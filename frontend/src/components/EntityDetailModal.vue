@@ -297,6 +297,7 @@ async function toggleInactiveSkus() {
 }
 function format(value, type) {
   if (value === null || value === undefined || value === '') return '—'
+  if (currentEntity.value === 'product-parameters' && type === 'status') return ({ active: '在售', development: '开发中', discontinued: '停产' })[value] || value
   if (type === 'money') return Number(value).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   if (type === 'rmb') return `¥ ${Number(value).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
   if (type === 'number') return Number(value).toLocaleString('zh-CN')

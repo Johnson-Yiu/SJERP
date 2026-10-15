@@ -6,6 +6,8 @@ import { api, listAll, listData } from '../api'
 import { useAccessControl } from '../accessControl'
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import { confirmDialog } from '../dialogs'
+import { internalPagePath } from '../utils/modalNavigation'
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import EntityDetailModal from '../components/EntityDetailModal.vue'
 import SummaryCards from '../components/SummaryCards.vue'
 import PageLoadState from '../components/PageLoadState.vue'
@@ -16,8 +18,9 @@ const router = useRouter()
 const { can } = useAccessControl()
 const products = ref([])
 const suppliers = ref([])
-const query = ref('')
-const categoryFilter = ref('')
+const query = ref(typeof route.query.search === 'string' ? route.query.search : '')
+const categoryFilter = ref(route.query.category || '')
+const sortOrder = ref(route.query.sort || 'code')
 const detailId = ref(null)
 const categories = ref([])
 const loading = ref(true), hasLoaded = ref(false), loadError = ref(''), allProductsExist = ref(false)
@@ -38,6 +41,11 @@ const supplierQuery = ref('')
 const message = reactive({ text: '', error: false })
 const form = reactive({ code: '', name: '', name_en: '', sales_model_prefix: '', category: '', additional_categories: [], suppliers: [], status: 'active', description: '' })
 
+const saveError = ref('')
+const guard = useUnsavedChangesGuard({ data: () => form, enabled: () => modalOpen.value, busy: () => modalOpen.value && saving.value })
+const orderedProducts = computed(() => [...products.value].sort((a, b) => sortOrder.value === 'name' ? a.name.localeCompare(b.name, 'zh-CN') : sortOrder.value === 'sku' ? Number(b.sku_count || 0) - Number(a.sku_count || 0) || a.code.localeCompare(b.code) : a.code.localeCompare(b.code)))
+function applyFilters() { return router.replace({ path: route.path, query: { ...route.query, search: query.value || undefined, category: categoryFilter.value || undefined, sort: sortOrder.value === 'code' ? undefined : sortOrder.value } }) }
+let loadVersion = 0, messageTimer
 const byId = computed(() => new Map(categories.value.map(item => [item.id, { ...item, children: [] }])))
 const roots = computed(() => {
   const map = byId.value
@@ -91,8 +99,9 @@ const filteredSuppliers = computed(() => {
 })
 const selectedSuppliers = computed(() => suppliers.value.filter(supplier => form.suppliers.map(Number).includes(Number(supplier.id))))
 
-function notify(text, error = false) { Object.assign(message, { text, error }); setTimeout(() => { message.text = '' }, 2600) }
+function notify(text, error = false) { clearTimeout(messageTimer); Object.assign(message, { text, error }); messageTimer = setTimeout(() => { message.text = '' }, 2600) }
 async function load() {
+  const request = ++loadVersion
   loading.value = true
   loadError.value = ''
   const [productResult, categoryResult, supplierResult] = await Promise.allSettled([
@@ -100,6 +109,7 @@ async function load() {
     api.get('/categories/tree/'),
     listAll('/suppliers/'),
   ])
+  if (request !== loadVersion) return
   if (productResult.status === 'fulfilled') {
     products.value = productResult.value
     hasLoaded.value = true
@@ -114,7 +124,7 @@ async function load() {
   else referenceErrors.suppliers = `供应商资料加载失败：${apiErrorMessage(supplierResult.reason)}`
   loading.value = false
 }
-function clearProductFilters() { query.value = ''; categoryFilter.value = ''; return load() }
+function clearProductFilters() { query.value = ''; categoryFilter.value = ''; sortOrder.value = 'code'; return applyFilters() }
 async function openCreate() {
   if (!can('products', 'create')) return
   keepDetailOpen.value = false
@@ -124,7 +134,9 @@ async function openCreate() {
   supplierQuery.value = ''
   Object.assign(form, { code: '', name: '', name_en: '', sales_model_prefix: '', category: '', additional_categories: [], suppliers: [], status: 'active', description: '' })
   try { form.code = (await api.get('/products/next-code/')).data.code } catch { form.code = '保存时自动生成' }
+  saveError.value = ''; message.text = ''; pickerOpen.value = false
   modalOpen.value = true
+  guard.markClean()
 }
 function openEdit(product, { keepDetail = false } = {}) {
   if (!can('products', 'update')) return
@@ -133,14 +145,23 @@ function openEdit(product, { keepDetail = false } = {}) {
   editingProduct.value = { ...product, additional_categories: [...(product.additional_categories || [])], suppliers: [...(product.suppliers || [])] }
   supplierQuery.value = ''
   Object.assign(form, { code: product.code, name: product.name, name_en: product.name_en || '', sales_model_prefix: product.sales_model_prefix || '', category: product.category || '', additional_categories: [...(product.additional_categories || [])], suppliers: [...(product.suppliers || [])], status: product.status, description: product.description || '' })
+  saveError.value = ''; message.text = ''; pickerOpen.value = false
   modalOpen.value = true
+  guard.markClean()
 }
-function closeModal() { modalOpen.value = false; keepDetailOpen.value = false; prefixReview.value = null; editingProduct.value = null }
+function closeModal() { return guard.requestClose(() => { modalOpen.value = false; keepDetailOpen.value = false; prefixReview.value = null; editingProduct.value = null; pickerOpen.value = false }) }
 function closeDetail() {
+  const origin = internalPagePath(route.query.returnTo)
+  if (origin) { void router.push(origin); return }
   detailId.value = null
   if (!route.query.detail) return
-  const { detail, ...query } = route.query
+  const { detail, tab, returnTo, ...query } = route.query
   void router.replace({ path: route.path, query, hash: route.hash })
+}
+function openDetail(id) { return router.push({ path: route.path, query: { ...route.query, detail: String(id), tab: undefined } }) }
+async function editDetail() {
+  try { openEdit(products.value.find(product => product.id === detailId.value) || (await api.get(`/products/${detailId.value}/`)).data, { keepDetail: true }) }
+  catch (error) { notify(apiErrorMessage(error), true) }
 }
 function categoryAncestors(id) {
   const path = []
@@ -204,6 +225,8 @@ function hasOtherProductChanges() {
     || form.description !== (original.description || '')
 }
 async function save() {
+  if (saving.value) return
+  saveError.value = ''; message.text = ''
   if (!can('products', editingId.value ? 'update' : 'create')) return
   if (!formOptionsReady.value) return notify('产品分类或供应商资料尚未加载，请重试后再保存。', true)
   saving.value = true
@@ -221,12 +244,14 @@ async function save() {
     if (editingId.value) await api.put(`/products/${editingId.value}/`, productPayload())
     else await api.post('/products/', productPayload())
     const refreshDetail = keepDetailOpen.value
-    modalOpen.value = false; notify(editingId.value ? '产品已更新' : '产品已创建'); await load()
+    guard.markClean(); modalOpen.value = false; notify(editingId.value ? '产品已更新' : '产品已创建'); await load()
     if (refreshDetail) detailRefresh.value += 1
     keepDetailOpen.value = false
-  } catch (error) { notify(error.message, true) } finally { saving.value = false }
+  } catch (error) { saveError.value = apiErrorMessage(error); notify(saveError.value, true) } finally { saving.value = false }
 }
 async function confirmPrefixChange() {
+  if (saving.value) return
+  saveError.value = ''; message.text = ''
   if (!can('products', 'update')) return
   saving.value = true
   try {
@@ -235,13 +260,14 @@ async function confirmPrefixChange() {
       baseline: prefixReview.value.baseline,
     })
     const refreshDetail = keepDetailOpen.value
+    guard.markClean()
     prefixReview.value = null
     modalOpen.value = false
     notify('销售型号前缀及当前 SKU 销售型号已更新')
     await load()
     if (refreshDetail) detailRefresh.value += 1
     keepDetailOpen.value = false
-  } catch (error) { notify(error.message, true) } finally { saving.value = false }
+  } catch (error) { saveError.value = apiErrorMessage(error); notify(saveError.value, true) } finally { saving.value = false }
 }
 async function remove(product) {
   if (!can('products', 'delete')) return
@@ -252,6 +278,7 @@ onMounted(async () => {
   await load()
   if (route.query.detail) detailId.value = Number(route.query.detail)
 })
+watch(() => [route.query.search, route.query.category, route.query.sort], () => { query.value = route.query.search || ''; categoryFilter.value = route.query.category || ''; sortOrder.value = route.query.sort || 'code'; void load() })
 watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null })
 </script>
 
@@ -259,25 +286,25 @@ watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null 
   <div>
     <div class="page-head"><div><h2>产品管理</h2><p>维护产品主档、分类归属与销售状态；SKU 编码在 SKU 管理中维护。</p></div><button v-if="can('products', 'create')" class="btn btn-primary" @click="openCreate"><Plus :size="16" /> 新建产品</button></div>
     <SummaryCards v-if="hasLoaded" :items="productMetrics" />
-    <div class="product-toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索产品编号、中文或英文名称..." @input="load" /></div><div class="filter-select"><ListFilter :size="16" aria-hidden="true" /><select v-model="categoryFilter" aria-label="产品分类筛选" @change="load"><option value="">全部分类</option><option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option></select><ChevronDown :size="16" aria-hidden="true" /></div></div>
+    <div class="product-toolbar" @keydown.enter="applyFilters"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索产品编号、中文或英文名称..." aria-label="搜索产品" /></div><div class="filter-select"><ListFilter :size="16" aria-hidden="true" /><select v-model="categoryFilter" aria-label="产品分类筛选" @change="applyFilters"><option value="">全部分类</option><option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option></select><ChevronDown :size="16" aria-hidden="true" /></div><select v-model="sortOrder" aria-label="产品排序" @change="applyFilters"><option value="code">产品编号顺序</option><option value="name">产品名称顺序</option><option value="sku">SKU 数量最多</option></select><button class="btn btn-primary" @click="applyFilters">查询</button><button class="btn btn-secondary" @click="clearProductFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div>
     <div v-if="Object.keys(referenceErrors).length" class="option-load-error" role="alert"><span>{{ Object.values(referenceErrors).join('；') }}</span><button type="button" @click="load">重新加载关联资料</button></div>
     <section class="panel">
       <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
       <ListEmptyState v-if="hasLoaded && !products.length" entity="产品" :filtered="filteredProductEmpty" @clear="clearProductFilters"><template #action><p>点击“新建产品”开始建立产品主档。</p></template></ListEmptyState>
-      <div v-else-if="hasLoaded && products.length" class="table-wrap"><table class="data-table"><thead><tr><th>产品编号</th><th>产品名称</th><th>销售型号前缀</th><th>主分类</th><th>状态</th><th>SKU</th><th>参数</th><th>证书</th><th /></tr></thead><tbody><tr v-for="product in products" :key="product.id" class="clickable-row" @click="detailId = product.id"><td class="primary-cell">{{ product.code }}</td><td>{{ product.name }}</td><td>{{ product.sales_model_prefix || '—' }}</td><td>{{ product.category_name }}</td><td><span class="tag">{{ product.status === 'active' ? '在售' : product.status === 'development' ? '开发中' : '停产' }}</span></td><td>{{ product.sku_count }}</td><td>{{ product.parameter_count }}</td><td>{{ product.certificate_count }}</td><td><div class="table-actions"><button v-if="can('products', 'update')" class="mini-btn" title="编辑产品" @click.stop="openEdit(product)"><Pencil :size="14" /></button><button v-if="can('products', 'delete')" class="mini-btn danger" title="删除产品" @click.stop="remove(product)"><Trash2 :size="14" /></button></div></td></tr></tbody></table></div>
+      <div v-else-if="hasLoaded && products.length" class="table-wrap"><table class="data-table product-list-table"><thead><tr><th>产品编号</th><th>产品名称</th><th>销售型号前缀</th><th>主分类</th><th>状态</th><th>SKU</th><th>参数</th><th>证书</th><th /></tr></thead><tbody><tr v-for="product in orderedProducts" :key="product.id" class="clickable-row" tabindex="0" @click="openDetail(product.id)" @keydown.enter="openDetail(product.id)"><td class="primary-cell">{{ product.code }}</td><td><strong>{{ product.name }}</strong><small class="product-secondary">{{ product.name_en || '未填写英文名称' }}</small></td><td>{{ product.sales_model_prefix || '—' }}</td><td>{{ product.category_name }}</td><td><span class="tag">{{ product.status === 'active' ? '在售' : product.status === 'development' ? '开发中' : '停产' }}</span></td><td>{{ product.sku_count }}</td><td>{{ product.parameter_count }}</td><td>{{ product.certificate_count }}</td><td><div class="table-actions"><button v-if="can('products', 'update')" class="mini-btn" title="编辑产品" @click.stop="openEdit(product)"><Pencil :size="14" /></button><button v-if="can('products', 'delete')" class="mini-btn danger" title="删除产品" @click.stop="remove(product)"><Trash2 :size="14" /></button></div></td></tr></tbody></table></div>
     </section>
 
-    <div v-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal product-modal" :style="productModalStyle" @submit.prevent="save"><div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" @click="closeModal"><X :size="17" /></button></div><div class="modal-body"><div v-if="Object.keys(referenceErrors).length" class="option-load-error" role="alert"><p v-for="(message,key) in referenceErrors" :key="key">{{ message }} <button type="button" @click="load">重新加载</button></p></div><div class="form-grid"><div class="field"><label>产品编号 <em>*</em></label><input v-model="form.code" class="readonly-input" readonly /></div><div class="field"><label>产品名称 <em>*</em></label><input v-model.trim="form.name" placeholder="如：BTY橱柜电源" required /></div>
-        <div class="field"><label>销售型号前缀 <em v-if="!editingId">*</em></label><input v-model.trim="form.sales_model_prefix" maxlength="30" pattern="[A-Za-z0-9]+" placeholder="如：BTY、COB320、SMD120" :required="!editingId" @input="form.sales_model_prefix = form.sales_model_prefix.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()" /><p class="field-help">仅字母和数字，且产品之间不可重复；将作为 SKU 销售型号的固定前缀。已有 SKU 时，保存会先预览并要求确认受影响的销售型号。</p></div>
+    <div v-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form class="modal product-modal" role="dialog" aria-modal="true" :aria-label="title" :style="productModalStyle" @submit.prevent="save"><div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" :disabled="saving" aria-label="关闭产品表单" @click="closeModal"><X :size="17" /></button></div><div class="modal-body"><p v-if="saveError" class="option-load-error" role="alert">{{ saveError }}</p><h4 class="product-group-title">基本资料</h4><div v-if="Object.keys(referenceErrors).length" class="option-load-error" role="alert"><p v-for="(message,key) in referenceErrors" :key="key">{{ message }} <button type="button" @click="load">重新加载</button></p></div><div class="form-grid" :inert="saving"><div class="field"><label>产品编号 <em>*</em></label><input v-model="form.code" class="readonly-input" readonly /></div><div class="field"><label>产品名称 <em>*</em></label><input v-model.trim="form.name" placeholder="如：BTY橱柜电源" required /></div>
+        <div class="field"><label>销售型号前缀 <em v-if="!editingId">*</em></label><input v-model.trim="form.sales_model_prefix" maxlength="30" pattern="[A-Za-z0-9]+" placeholder="如：BTY、COB320、SMD120" :required="!editingId" @input="form.sales_model_prefix = form.sales_model_prefix.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()" /><p class="field-help">字母或数字，产品间不可重复。已有 SKU 时，单独修改前缀并预览确认。</p></div>
         <div class="field"><label>产品英文名称</label><input v-model.trim="form.name_en" /></div>
-        <div class="field category-field"><label>产品分类</label><button type="button" class="category-select" @click.stop="openPicker('primary')"><span>{{ categoryName(form.category) }}</span><ChevronDown :size="16" /></button><div v-if="pickerOpen && pickerTarget === 'primary'" class="category-picker"><div class="picker-head"><strong>选择分类</strong><span>逐级选择最终分类</span></div><div class="cascade-columns"><div v-for="(column, columnIndex) in cascadeColumns" :key="columnIndex" class="cascade-column" :style="{ width: `${categoryPickerLayout.columnWidths[columnIndex] || 160}px` }"><button v-for="category in column" :key="category.id" type="button" class="cascade-option" :class="{ active: cascadePath[columnIndex] === category.id, selected: Number(form.category) === category.id }" @click.stop="chooseCascadeCategory(category, columnIndex)"><span>{{ category.name }}</span><ChevronRight v-if="categories.some(item => Number(item.parent || 0) === Number(category.id))" :size="15" /></button></div></div></div></div><div class="field"><label>状态 <em>*</em></label><select v-model="form.status"><option value="active">在售</option><option value="development">开发中</option><option value="discontinued">停产</option></select></div>
-        <div class="field full supplier-field"><label>供应商</label><div class="supplier-picker"><div class="supplier-search"><Search :size="16" aria-hidden="true" /><input v-model.trim="supplierQuery" type="search" placeholder="搜索供应商名称、联系人、电话或邮箱" aria-label="搜索供应商" /><span v-if="form.suppliers.length" class="supplier-count">已选 {{ form.suppliers.length }}</span></div><div v-if="selectedSuppliers.length" class="selected-suppliers"><span v-for="supplier in selectedSuppliers" :key="supplier.id" class="supplier-chip">{{ supplier.name }}<button type="button" :aria-label="`移除供应商 ${supplier.name}`" @click="toggleSupplier(supplier.id)"><X :size="13" /></button></span></div><div class="supplier-options" role="listbox" aria-multiselectable="true"><label v-for="supplier in filteredSuppliers" :key="supplier.id" class="supplier-option" :class="{ selected: form.suppliers.map(Number).includes(Number(supplier.id)) }"><input type="checkbox" :checked="form.suppliers.map(Number).includes(Number(supplier.id))" @change="toggleSupplier(supplier.id)" /><span><strong>{{ supplier.name }}</strong><small>{{ [supplier.contact_name, supplier.phone, supplier.email].filter(Boolean).join(' · ') || '未维护联系人信息' }}</small></span></label><p v-if="!filteredSuppliers.length" class="supplier-empty">没有匹配的供应商</p></div></div><p class="field-help">可多选；输入关键词即可筛选供应商。</p></div>
+        <h4 class="product-group-title full">分类与销售状态</h4><div class="field category-field"><label>主分类</label><button type="button" class="category-select" @click.stop="openPicker('primary')"><span>{{ categoryName(form.category) }}</span><ChevronDown :size="16" /></button><div v-if="pickerOpen && pickerTarget === 'primary'" class="category-picker"><div class="picker-head"><strong>选择分类</strong><span>逐级选择最终分类</span></div><div class="cascade-columns"><div v-for="(column, columnIndex) in cascadeColumns" :key="columnIndex" class="cascade-column" :style="{ width: `${categoryPickerLayout.columnWidths[columnIndex] || 160}px` }"><button v-for="category in column" :key="category.id" type="button" class="cascade-option" :class="{ active: cascadePath[columnIndex] === category.id, selected: Number(form.category) === category.id }" @click.stop="chooseCascadeCategory(category, columnIndex)"><span>{{ category.name }}</span><ChevronRight v-if="categories.some(item => Number(item.parent || 0) === Number(category.id))" :size="15" /></button></div></div></div></div><div class="field"><label>状态 <em>*</em></label><select v-model="form.status"><option value="active">在售</option><option value="development">开发中</option><option value="discontinued">停产</option></select></div>
+        <h4 class="product-group-title full">供应来源</h4><div class="field full supplier-field"><label>供应商</label><div class="supplier-picker"><div class="supplier-search"><Search :size="16" aria-hidden="true" /><input v-model.trim="supplierQuery" type="search" placeholder="搜索供应商名称、联系人、电话或邮箱" aria-label="搜索供应商" /><span v-if="form.suppliers.length" class="supplier-count">已选 {{ form.suppliers.length }}</span></div><div v-if="selectedSuppliers.length" class="selected-suppliers"><span v-for="supplier in selectedSuppliers" :key="supplier.id" class="supplier-chip">{{ supplier.name }}<button type="button" :aria-label="`移除供应商 ${supplier.name}`" @click="toggleSupplier(supplier.id)"><X :size="13" /></button></span></div><div class="supplier-options" role="listbox" aria-multiselectable="true"><label v-for="supplier in filteredSuppliers" :key="supplier.id" class="supplier-option" :class="{ selected: form.suppliers.map(Number).includes(Number(supplier.id)) }"><input type="checkbox" :checked="form.suppliers.map(Number).includes(Number(supplier.id))" @change="toggleSupplier(supplier.id)" /><span><strong>{{ supplier.name }}</strong><small>{{ [supplier.contact_name, supplier.phone, supplier.email].filter(Boolean).join(' · ') || '未维护联系人信息' }}</small></span></label><p v-if="!filteredSuppliers.length" class="supplier-empty">没有匹配的供应商</p></div></div><p class="field-help">可多选；输入关键词即可筛选供应商。</p></div>
         <div class="field full"><div class="additional-head"><label>附加分类</label><button type="button" class="text-add" @click.stop="addAdditionalCategory"><Plus :size="14" /> 新增</button></div><div v-if="form.additional_categories.length" class="additional-list"><div v-for="(id, index) in form.additional_categories" :key="index" class="additional-row category-field"><button type="button" class="category-select" @click.stop="openPicker(index)"><span>{{ categoryName(id) }}</span><ChevronDown :size="16" /></button><button type="button" class="mini-btn danger" title="移除附加分类" @click.stop="removeAdditionalCategory(index)"><Trash2 :size="14" /></button><div v-if="pickerOpen && pickerTarget === index" class="category-picker"><div class="picker-head"><strong>选择附加分类</strong><span>逐级选择最终分类</span></div><div class="cascade-columns"><div v-for="(column, columnIndex) in cascadeColumns" :key="columnIndex" class="cascade-column" :style="{ width: `${categoryPickerLayout.columnWidths[columnIndex] || 160}px` }"><button v-for="category in column" :key="category.id" type="button" class="cascade-option" :class="{ active: cascadePath[columnIndex] === category.id, selected: form.additional_categories.map(Number).includes(category.id) }" @click.stop="chooseCascadeCategory(category, columnIndex)"><span>{{ category.name }}</span><ChevronRight v-if="categories.some(item => Number(item.parent || 0) === Number(category.id))" :size="15" /></button></div></div></div></div></div><p v-else class="field-help">可为同一产品添加第二、第三个分类，用于多维筛选与分析。</p></div>
         <div class="field full"><label>产品描述</label><textarea v-model="form.description" /></div></div>
-      </div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="closeModal">取消</button><button v-if="can('products', editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !formOptionsReady">{{ saving ? '保存中…' : '保存' }}</button></div></form></div>
-    <div v-if="prefixReview" class="modal-backdrop prefix-review-backdrop" @mousedown.self="prefixReview = null"><section class="modal prefix-review-modal"><div class="modal-head"><h3>确认销售型号前缀变更</h3><button type="button" class="mini-btn" @click="prefixReview = null"><X :size="17" /></button></div><div class="modal-body"><p>前缀将从 <strong>{{ prefixReview.old_prefix || '未设置' }}</strong> 变更为 <strong>{{ prefixReview.new_prefix }}</strong>。以下当前 SKU 的销售型号将同步更新；SKU 编码与历史报价、订单、采购快照不会改变。</p><div v-if="prefixReview.affected_skus.length" class="prefix-review-list"><div v-for="sku in prefixReview.affected_skus" :key="sku.sku_id"><strong>{{ sku.sku_code }}</strong><span>{{ sku.old_sales_model || '—' }} → {{ sku.new_sales_model || '—' }}</span></div></div><p v-else class="field-help">当前没有需要更新销售型号的有效 SKU。</p></div><div class="modal-foot"><button type="button" class="btn btn-secondary" :disabled="saving" @click="prefixReview = null">取消</button><button type="button" class="btn btn-primary" :disabled="saving" @click="confirmPrefixChange">{{ saving ? '更新中…' : '确认更新' }}</button></div></section></div>
+      </div><div class="modal-foot"><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeModal">取消</button><button v-if="can('products', editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !formOptionsReady">{{ saving ? '保存中…' : '保存' }}</button></div></form></div>
+    <div v-if="prefixReview" class="modal-backdrop prefix-review-backdrop" @mousedown.self="!saving && (prefixReview = null)"><section class="modal prefix-review-modal"><div class="modal-head"><h3>确认销售型号前缀变更</h3><button type="button" class="mini-btn" :disabled="saving" aria-label="关闭前缀预览" @click="prefixReview = null"><X :size="17" /></button></div><div class="modal-body"><p>前缀将从 <strong>{{ prefixReview.old_prefix || '未设置' }}</strong> 变更为 <strong>{{ prefixReview.new_prefix }}</strong>。以下当前 SKU 的销售型号将同步更新；SKU 编码与历史报价、订单、采购快照不会改变。</p><div v-if="prefixReview.affected_skus.length" class="prefix-review-list"><div v-for="sku in prefixReview.affected_skus" :key="sku.sku_id"><strong>{{ sku.sku_code }}</strong><span>{{ sku.old_sales_model || '—' }} → {{ sku.new_sales_model || '—' }}</span></div></div><p v-else class="field-help">当前没有需要更新销售型号的有效 SKU。</p></div><div class="modal-foot"><button type="button" class="btn btn-secondary" :disabled="saving" @click="prefixReview = null">取消</button><button type="button" class="btn btn-primary" :disabled="saving" @click="confirmPrefixChange">{{ saving ? '更新中…' : '确认更新' }}</button></div></section></div>
     <div v-if="message.text" class="toast" :class="{ error: message.error }">{{ message.text }}</div>
-    <Transition name="detail-drawer" appear><EntityDetailModal v-if="detailId" entity="products" :id="detailId" :refresh-key="detailRefresh" @close="closeDetail" @edit="openEdit(products.find(product => product.id === detailId), { keepDetail: true })" /></Transition>
+    <Transition name="detail-drawer" appear><EntityDetailModal v-if="detailId" entity="products" :id="detailId" :refresh-key="detailRefresh" @close="closeDetail" @edit="editDetail" /></Transition>
   </div>
 </template>
 
@@ -286,4 +313,5 @@ watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null 
 .supplier-picker{border:1px solid #d7e2dd;border-radius:9px;background:#fff;overflow:hidden}.supplier-search{display:flex;align-items:center;gap:8px;padding:0 10px;border-bottom:1px solid #e3ece8;color:#668178}.supplier-search:focus-within{box-shadow:inset 0 0 0 1px #74aa99}.supplier-search input{min-width:0;height:40px;padding:0;border:0;outline:0;box-shadow:none}.supplier-count{margin-left:auto;padding:3px 7px;border-radius:999px;background:#e4f2eb;color:#26715b;font-size:var(--text-body);font-weight:700;white-space:nowrap}.selected-suppliers{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;border-bottom:1px solid #e3ece8;background:#f8fbf9}.supplier-chip{display:inline-flex;align-items:center;gap:4px;max-width:100%;padding:4px 6px 4px 8px;border-radius:6px;background:#dff0e9;color:#246954;font-size:var(--text-body);font-weight:700}.supplier-chip button{display:grid;place-items:center;padding:0;border:0;background:transparent;color:#246954;cursor:pointer}.supplier-options{max-height:148px;overflow-y:auto;padding:5px}.supplier-option{display:flex;align-items:center;gap:9px;padding:8px;border-radius:6px;cursor:pointer}.supplier-option:hover,.supplier-option.selected{background:#edf7f2}.supplier-option input{width:15px;height:15px;flex:none;accent-color:#287a64}.supplier-option span{display:grid;gap:2px;min-width:0}.supplier-option strong{font-size:var(--text-body);color:#27473d}.supplier-option small{overflow:hidden;color:#70867e;font-size:var(--text-caption);text-overflow:ellipsis;white-space:nowrap}.supplier-empty{margin:0;padding:18px 10px;color:#70867e;font-size:var(--text-body);text-align:center}
 .product-modal{width:min(var(--product-modal-width,820px),calc(100vw - 64px))}.product-modal .form-grid{grid-template-columns:minmax(360px,1fr) minmax(var(--category-picker-width,360px),1fr)}.category-picker,.additional-row .category-picker{width:var(--category-picker-width,100%);min-width:100%;max-width:none}.cascade-columns{overflow:hidden}.cascade-column{min-width:0;flex:0 0 auto}.cascade-option{white-space:nowrap;overflow:hidden}.cascade-option span{overflow:hidden;text-overflow:ellipsis}@media(max-width:1120px){.product-modal{width:calc(100vw - 32px)}.product-modal .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.category-picker,.additional-row .category-picker{width:min(var(--category-picker-width,100%),calc(100vw - 76px));max-width:calc(100vw - 76px)}.cascade-columns{overflow-x:auto}}@media(max-width:760px){.product-modal .form-grid{grid-template-columns:1fr}}
 .prefix-review-backdrop{z-index:140}.prefix-review-modal{width:min(620px,calc(100vw - 32px))}.prefix-review-list{display:grid;gap:8px;margin-top:14px}.prefix-review-list div{display:flex;justify-content:space-between;gap:16px;padding:9px 11px;border:1px solid #d7e5de;border-radius:7px;background:#f8fbf9}.prefix-review-list span{color:#47675b}
+.product-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.product-toolbar .search-box{flex:1 1 240px}.product-toolbar>select{max-width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:white}.product-list-table{min-width:960px;table-layout:fixed}.product-list-table th:nth-child(1){width:150px}.product-list-table th:nth-child(2){width:250px}.product-list-table th:nth-child(3){width:120px}.product-list-table th:nth-child(4){width:150px}.product-list-table td{white-space:normal;overflow-wrap:anywhere;vertical-align:top}.product-list-table th:last-child,.product-list-table td:last-child{position:sticky;right:0;background:white;width:90px}.product-secondary{display:block;color:#788a82;margin-top:5px;font-size:var(--text-caption)}.product-group-title.full{grid-column:1/-1}.product-group-title{margin:8px 0;color:#285b4b;font-size:var(--text-section)}.product-modal .field{min-width:0}.product-modal .modal-foot{position:sticky;bottom:0;background:white}.supplier-chip{overflow-wrap:anywhere;min-width:0}.product-modal input,.product-modal select,.product-modal textarea{max-width:100%;min-width:0}
 </style>

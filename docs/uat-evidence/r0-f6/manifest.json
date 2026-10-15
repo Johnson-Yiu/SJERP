@@ -1,0 +1,677 @@
+[
+  {
+    "file": "categories-create-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1009,
+      985
+    ],
+    "bytes": 34360,
+    "sha256": "02ee6e7364abccad1a290df7c9b10f39c8cc58256e0d98078ce27ccfebe63411",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "categories-create-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1280,
+      1000
+    ],
+    "bytes": 35065,
+    "sha256": "a72e2e1a5baa05dfcdabef84838f31f89f2f1b1c4219b18989f7ff1cb06c89dd",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "categories-create-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1440,
+      1000
+    ],
+    "bytes": 36985,
+    "sha256": "42580ee24cff69b01533054199a4f191cd078910752c6784a6ef6456795e21e1",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "categories-edit-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1009,
+      985
+    ],
+    "bytes": 36644,
+    "sha256": "067c0591cb81843c7017ab9af9295fc1dbaefbef3197192ac3ac8425c756eeaa",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "categories-edit-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1280,
+      1000
+    ],
+    "bytes": 36115,
+    "sha256": "06ab946dd29e3117895ca45c88747a6d5a98d305e1f947d557000c83773df4a3",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "categories-edit-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1440,
+      1000
+    ],
+    "bytes": 38214,
+    "sha256": "44ea0f0a3fb4881d7a63ca8034e0f002e12a05396f2f7aa1bc005ad149fab6dc",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "categories-list-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1009,
+      985
+    ],
+    "bytes": 85386,
+    "sha256": "6109d957873efe0e93c3589f2598c52d00cec8c3b4f0342b3cd7d51f08353031",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "categories-list-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1280,
+      1000
+    ],
+    "bytes": 104624,
+    "sha256": "2fb161ea3fe5d401bd4f6e5799b518a644b81a6511c289214bc67927a78fd30f",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "categories-list-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1440,
+      1000
+    ],
+    "bytes": 107793,
+    "sha256": "b980fe0d4da4c5c5aaa79c6c6342ab319129d5a55966e170c35bf636b9186ea1",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "categories-rejected-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1009,
+      985
+    ],
+    "bytes": 92173,
+    "sha256": "f43c566a78baf268d266a55dcafd03ac200881ddb689b08c8d4b133dbe288382",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "categories-rejected-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1265,
+      988
+    ],
+    "bytes": 124587,
+    "sha256": "c7e2dae5bdb7e169ba0322b9e574faec77d7e5d8934a59b29a0289ffc9ec97b8",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "categories-rejected-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1425,
+      990
+    ],
+    "bytes": 131790,
+    "sha256": "b0167ce15c1da2035823120c9a90fd6868da03050d806fa23d8891646563103b",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-create-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1024,
+      1000
+    ],
+    "bytes": 36927,
+    "sha256": "2f645c1be4b8237b890359ac7a75570560184aac68c1c5df8816411ce85646bf",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-create-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1280,
+      1000
+    ],
+    "bytes": 38975,
+    "sha256": "da202fc3c7cb02fb08a1680eb2546df4265bb9ff2ae345ec61f268eabe0f3726",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-create-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1024,
+      1000
+    ],
+    "bytes": 32650,
+    "sha256": "1ddaf3109d0cd6f1482bc5c721be6373d787209aa9d2cc535b436ded42599ec9",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-detail-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1024,
+      1000
+    ],
+    "bytes": 55966,
+    "sha256": "1e6c7cb170464ace7df37d6d6630996e2d20ffb32d8938233de6e7c5a1f26db2",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-detail-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1138,
+      889
+    ],
+    "bytes": 46912,
+    "sha256": "fe05b410d7c68f07f10d29c622317353b583ce59fd6e9ca859dd42ab7521307d",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-detail-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1440,
+      1000
+    ],
+    "bytes": 66598,
+    "sha256": "8ae92d01e9e4335df4848a9cfddb2f1e76bca75e104aa526713a0dd726432ccb",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-edit-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1024,
+      1000
+    ],
+    "bytes": 42613,
+    "sha256": "8ad2b367fc979fd5322a815f1f6675cc2d513fe4ba665e68b7666fff2e665165",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-edit-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1280,
+      889
+    ],
+    "bytes": 37457,
+    "sha256": "da74519a0bf712bb23101cbf2df85989e2ff57b179f78b51d0a569b72e18bdc0",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-edit-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1024,
+      1000
+    ],
+    "bytes": 38153,
+    "sha256": "7a9f90a92474994bf5e531bd8a7c4eab899628545bae8a9ae52ee6bff2055ff4",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-empty-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1024,
+      1000
+    ],
+    "bytes": 73546,
+    "sha256": "4b1231c5a315eddc158177796ceadceb05dd1e54c5acf3c7ff948aae388e64ef",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-empty-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1280,
+      1000
+    ],
+    "bytes": 78630,
+    "sha256": "d6b4d9124f16bcae2c7592a9f967e0264ad53609f82b1ea0ab2040132f9a99fd",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-empty-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1440,
+      1000
+    ],
+    "bytes": 80992,
+    "sha256": "ee4946de2bb8ba9f1f3cf8899e4f99fabb8c39a13f9f98244231185eed2007f7",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-error-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1024,
+      1000
+    ],
+    "bytes": 46445,
+    "sha256": "1104a210a08c093087a1c177e1275bbe170e70efbcabfc373aeddaee4aa1cfd3",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-error-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1280,
+      1000
+    ],
+    "bytes": 49044,
+    "sha256": "094a265ffad239c86bb90a0bd5cc72200ce04f6d9320abcf40a1bde04c0a16ca",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-error-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1440,
+      1000
+    ],
+    "bytes": 51810,
+    "sha256": "73b63a36b06d3845f1566b78f3ff58f9cfdcf4528c3446e4253db4c6c1aa03fc",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-list-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1024,
+      1000
+    ],
+    "bytes": 92149,
+    "sha256": "2e223366640d70c4e559a7c2f29acb6274fab123969083eb374b772995b6dc85",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-list-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1280,
+      1000
+    ],
+    "bytes": 94369,
+    "sha256": "b7f460c74337317f9b71b4a099225fdd9490d683f4a576239a109a3a93ef6a12",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "parameters-list-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1440,
+      1000
+    ],
+    "bytes": 97688,
+    "sha256": "cd6cf6be88d1888c74bdde8ccda952ec7bab7c1be01533802024e77ddecbd0b7",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-create-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1024,
+      1000
+    ],
+    "bytes": 56111,
+    "sha256": "9e6bdfd3d13ebc6ced241f4b63dbba118e3535b35699a0e64115154b164cecb2",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-create-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1280,
+      1000
+    ],
+    "bytes": 62072,
+    "sha256": "a93eb49d0140502ec4383b47e33595c13a4ab87bd49bdd4a5398ae18a174af60",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-create-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1440,
+      1000
+    ],
+    "bytes": 64669,
+    "sha256": "49558a86d3b6fd88e254700ad28fa50abf869dc431cb64fa2d57c51de209616a",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-detail-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1024,
+      1000
+    ],
+    "bytes": 111601,
+    "sha256": "5c1ff4ee4dfb35d85000c83dc25557b3e6712cb62119aec6cf48f3fc819b4f92",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-detail-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1280,
+      1000
+    ],
+    "bytes": 122090,
+    "sha256": "0d553f4474ba555109eafc9b7bcfbaf206398f35de032a9c0cf699be33c356c6",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-detail-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1440,
+      1000
+    ],
+    "bytes": 122036,
+    "sha256": "bb44e7259f287229fd8894a8973dfe3db725a520ec94b895553ddec30acbdfaf",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-edit-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1024,
+      1000
+    ],
+    "bytes": 70354,
+    "sha256": "b422d0f325048e308d0c25c2a8e5836959033b74b41da225c2f08be9b78a0161",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-edit-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1280,
+      1000
+    ],
+    "bytes": 74668,
+    "sha256": "4616a297fc783cf27a2538015208634b45e9f318c99de0e6f68ca0f85d4932aa",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-edit-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1440,
+      1000
+    ],
+    "bytes": 77347,
+    "sha256": "47df1c7b6a64e99861f54fe70a2cb422852847822d2115edd41290a6050c60af",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-list-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1024,
+      1000
+    ],
+    "bytes": 77916,
+    "sha256": "ae98f89442e0a41ab1c58d183f5528404768636f76ef93d94c8a03d9b94bd21c",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-list-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1280,
+      1000
+    ],
+    "bytes": 84983,
+    "sha256": "666319b18ddbe9543dda926c1bb253aa4f9a9262a654b19645da925398fcf4bc",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-list-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1440,
+      1000
+    ],
+    "bytes": 85319,
+    "sha256": "8c8767b78737d7b2ac3c5a53f4802b1eb785328c3c4ada9a3635887672b1478c",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-parameters-1024.jpg",
+    "viewport_requested": [
+      1024,
+      1000
+    ],
+    "image_pixels": [
+      1024,
+      1000
+    ],
+    "bytes": 53829,
+    "sha256": "18cb15d1829dc741133e3ffe6256cdc06683181561fdc60488cd288d77ce6a69",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-parameters-1280.jpg",
+    "viewport_requested": [
+      1280,
+      1000
+    ],
+    "image_pixels": [
+      1280,
+      1000
+    ],
+    "bytes": 56664,
+    "sha256": "284a32800696b2777f618ec686245a2f9fb8a64f812a60215a5776f0000c8c33",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  },
+  {
+    "file": "products-parameters-1440.jpg",
+    "viewport_requested": [
+      1440,
+      1000
+    ],
+    "image_pixels": [
+      1440,
+      1000
+    ],
+    "bytes": 59092,
+    "sha256": "27d11cf227ab352dbc4ce08a083f817739fae38d9ddb3e67f8c2e09b48ba1a18",
+    "source": "Codex in-app browser tab.screenshot({fullPage:false})",
+    "captured_on": "2026-10-15"
+  }
+]

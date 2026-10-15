@@ -3,11 +3,14 @@ import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { Check, ChevronRight, FolderPlus, GripVertical, Layers3, Pencil, Plus, Settings2, Tags, Trash2, X } from 'lucide-vue-next'
 import { api, listData } from '../api'
 import { confirmDialog } from '../dialogs'
+import PageLoadState from '../components/PageLoadState.vue'
+import { apiErrorMessage as baseApiErrorMessage } from '../utils/apiErrors.js'
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import { useAccessControl } from '../accessControl'
 
 const categories = ref([])
 const { can } = useAccessControl()
-const loading = ref(true)
+const loading = ref(true), hasLoaded = ref(false), loadError = ref(''), saveError = ref('')
 const selectedId = ref(null)
 const search = ref('')
 const categoryModal = ref(false)
@@ -19,6 +22,7 @@ const draggingAttributeId = ref(null)
 const expandedCategoryIds = ref(new Set())
 const treeExpansionInitialized = ref(false)
 const message = reactive({ text: '', error: false })
+const operationError = ref('')
 const categoryForm = reactive({ id: null, name: '', parent: '', description: '' })
 const addingAttribute = ref(false)
 const attributeSaving = ref(false)
@@ -26,7 +30,19 @@ const newAttribute = reactive({ name: '', include_in_sku: false, include_in_sale
 const editingAttribute = ref(null)
 const editAttributeName = ref('')
 const reorderReview = ref(null), reorderSaving = ref(false), reorderError = ref('')
+function apiErrorMessage(error) {
+  const data = error?.response?.data || error?.data
+  return data?.affected_products?.length && data.detail
+    ? `${data.detail} 受影响产品：${data.affected_products.map(row => `${row.code} · ${row.name}`).join('；')}`
+    : baseApiErrorMessage(error)
+}
 
+const guard = useUnsavedChangesGuard({ data: () => categoryForm, enabled: () => categoryModal.value, busy: () => saving.value || attributeSaving.value || reorderSaving.value })
+const attributeGuard = useUnsavedChangesGuard({ data: () => ({ attribute: addingAttribute.value ? newAttribute : null, name: editingAttribute.value ? editAttributeName.value : null }), enabled: () => addingAttribute.value || Boolean(editingAttribute.value), busy: () => attributeSaving.value || reorderSaving.value })
+async function selectCategory(id) { if (id === selectedId.value) return; if (!await attributeGuard.requestClose(() => { addingAttribute.value = false; editingAttribute.value = null })) return; selectedId.value = id }
+function cancelNewAttribute() { return attributeGuard.requestClose(() => { addingAttribute.value = false }) }
+function closeCategory() { return guard.requestClose(() => { categoryModal.value = false }) }
+function expandAll(expand) { expandedCategoryIds.value = expand ? new Set(categories.value.filter(row => row.child_count).map(row => row.id)) : new Set() }
 const byId = computed(() => new Map(categories.value.map(row => [row.id, { ...row, children: [] }])))
 const roots = computed(() => {
   const map = byId.value
@@ -53,7 +69,7 @@ const selectedPath = computed(() => {
   while (node) { parts.unshift(node.name); node = categories.value.find(row => row.id === node.parent) }
   return parts.join(' / ')
 })
-const maxDepth = computed(() => flatTree.value.reduce((max, row) => Math.max(max, row.depth + 1), 0))
+const maxDepth = computed(() => { const depth = node => node.parent ? 1 + depth(categories.value.find(row => row.id === node.parent) || { parent: null }) : 1; return categories.value.reduce((max, node) => Math.max(max, depth(node)), 0) })
 const attributeCount = computed(() => categories.value.reduce((sum, row) => sum + row.attributes.length, 0))
 const categoryOptions = computed(() => {
   const excluded = new Set()
@@ -70,8 +86,7 @@ const categoryOptions = computed(() => {
   return rows
 })
 
-function notify(text, error = false) { Object.assign(message, { text, error }); setTimeout(() => { message.text = '' }, 2600) }
-const apiErrorMessage = error => error.response?.data?.detail || Object.values(error.response?.data || {}).flat().join(' ') || error.message || '操作失败。'
+function notify(text, error = false) { operationError.value = error ? text : ''; Object.assign(message, { text, error }); setTimeout(() => { message.text = '' }, 2600) }
 function restoreViewport(position) {
   if (!position || (!position.top && !position.left)) return
   let attempts = 0
@@ -85,8 +100,10 @@ function restoreViewport(position) {
 }
 async function load(preserve = selectedId.value, viewport = { left: window.scrollX, top: window.scrollY }) {
   loading.value = true
+  loadError.value = ''
   try {
     categories.value = listData(await api.get('/categories/tree/'))
+    hasLoaded.value = true
     const expandableIds = new Set(categories.value.filter(row => row.child_count).map(row => row.id))
     if (!treeExpansionInitialized.value) {
       expandedCategoryIds.value = expandableIds
@@ -95,7 +112,7 @@ async function load(preserve = selectedId.value, viewport = { left: window.scrol
       expandedCategoryIds.value = new Set([...expandedCategoryIds.value].filter(id => expandableIds.has(id)))
     }
     selectedId.value = categories.value.some(row => row.id === preserve) ? preserve : categories.value[0]?.id || null
-  } catch (e) { notify(e.message, true) } finally {
+  } catch (e) { loadError.value = apiErrorMessage(e) } finally {
     loading.value = false
     await nextTick()
     restoreViewport(viewport)
@@ -104,23 +121,27 @@ async function load(preserve = selectedId.value, viewport = { left: window.scrol
 function openCategory(node = null, parent = '') {
   if (!can('categories', node?.id ? 'update' : 'create')) return
   Object.assign(categoryForm, { id: node?.id || null, name: node?.name || '', parent: node?.parent ?? parent ?? '', description: node?.description || '' })
+  saveError.value = ''; message.text = ''
   categoryModal.value = true
+  guard.markClean()
 }
 async function saveCategory() {
+  if (saving.value) return
+  saveError.value = ''; message.text = ''
   if (!can('categories', categoryForm.id ? 'update' : 'create')) return
   saving.value = true
   try {
     const payload = { name: categoryForm.name, parent: categoryForm.parent ? Number(categoryForm.parent) : null, description: categoryForm.description }
     const response = categoryForm.id ? await api.patch(`/categories/${categoryForm.id}/`, payload) : await api.post('/categories/', payload)
-    categoryModal.value = false; await load(response.data.id); notify('分类已保存')
-  } catch (e) { notify(e.message, true) } finally { saving.value = false }
+    guard.markClean(); categoryModal.value = false; await load(response.data.id); notify('分类已保存')
+  } catch (e) { saveError.value = apiErrorMessage(e); notify(saveError.value, true) } finally { saving.value = false }
 }
 async function removeCategory(node) {
   if (!can('categories', 'delete')) return
   if (!await confirmDialog({ title: '确认删除分类', message: `确定删除分类“${node.name}”吗？存在子分类或关联产品时系统会阻止删除。`, confirmText: '确认删除', danger: true })) return
-  try { await api.delete(`/categories/${node.id}/`); await load(); notify('分类已删除') } catch (e) { notify(e.message, true) }
+  try { await api.delete(`/categories/${node.id}/`); await load(); notify('分类已删除') } catch (e) { notify(apiErrorMessage(e), true) }
 }
-function startAttribute() { if (!can('categories', 'create')) return; Object.assign(newAttribute, { name: '', include_in_sku: false, include_in_sales_model: false, uppercase: false, required: false }); addingAttribute.value = true }
+async function startAttribute() { if (!can('categories', 'create') || !await attributeGuard.requestClose(() => { editingAttribute.value = null })) return; Object.assign(newAttribute, { name: '', include_in_sku: false, include_in_sales_model: false, uppercase: false, required: false }); addingAttribute.value = true; attributeGuard.markClean() }
 const requiredRuleMessage = '开启“必填”需要先开启“生成中文SKU”或“生成销售型号”。'
 const canRequire = attribute => Boolean(attribute.include_in_sku || attribute.include_in_sales_model)
 const attributeKey = attribute => String(attribute?.key || attribute?.name || '').trim().toLocaleLowerCase()
@@ -167,6 +188,7 @@ function toggleNewRequired(event) {
   }
 }
 async function saveNewAttribute() {
+  if (attributeSaving.value) return
   if (!can('categories', 'create')) return
   if (!newAttribute.name.trim()) return notify('请输入属性名称。', true)
   if (newAttribute.required && !canRequire(newAttribute)) return notify(requiredRuleMessage, true)
@@ -174,23 +196,27 @@ async function saveNewAttribute() {
   try {
     const response = await api.post('/category-attributes/', { category: selectedId.value, name: newAttribute.name.trim(), key: newAttribute.name.trim(), include_in_sku: newAttribute.include_in_sku, include_in_sales_model: newAttribute.include_in_sales_model, uppercase: newAttribute.uppercase, required: newAttribute.required, sort_order: selected.value.attributes.length })
     applyCreatedAttribute(response.data)
+    attributeGuard.markClean()
     addingAttribute.value = false
     notify('属性已新增')
-  } catch (e) { notify(e.message, true) } finally { attributeSaving.value = false }
+  } catch (e) { notify(apiErrorMessage(e), true) } finally { attributeSaving.value = false }
 }
-function startEditAttribute(attribute) {
+async function startEditAttribute(attribute) {
   if (!can('categories', 'update')) return
   if (attribute.inherited) return notify('继承属性仅供查看，请到来源分类中修改。', true)
-  editingAttribute.value = attribute; editAttributeName.value = attribute.name
+  if (!await attributeGuard.requestClose(() => { addingAttribute.value = false; editingAttribute.value = null })) return
+  editingAttribute.value = attribute; editAttributeName.value = attribute.name; attributeGuard.markClean()
 }
 async function saveAttributeName(attribute) {
+  if (attributeSaving.value) return
   if (!can('categories', 'update')) return
   if (!editAttributeName.value.trim()) return notify('属性名称不能为空。', true)
+  attributeSaving.value = true
   try {
     const payload = { category: selectedId.value, name: editAttributeName.value.trim(), key: attribute.key, default_value: attribute.default_value, unit: attribute.unit, include_in_sku: attribute.include_in_sku, include_in_sales_model: attribute.include_in_sales_model, uppercase: attribute.uppercase, required: attribute.required, sort_order: attribute.sort_order }
     attribute.inherited ? await api.post('/category-attributes/', payload) : await api.patch(`/category-attributes/${attribute.id}/`, { name: payload.name })
     editingAttribute.value = null; await load(selectedId.value); notify(attribute.inherited ? '已在当前分类创建属性覆盖' : '属性名称已更新')
-  } catch (e) { notify(e.message, true) }
+  } catch (e) { notify(apiErrorMessage(e), true) } finally { attributeSaving.value = false }
 }
 async function toggleRule(attribute, field, event = null) {
   if (!can('categories', 'update')) return
@@ -219,13 +245,13 @@ async function toggleRule(attribute, field, event = null) {
     attribute[field] = persisted
   } catch (e) {
     attribute[field] = previous
-    notify(e.message, true)
+    notify(apiErrorMessage(e), true)
   }
 }
 async function removeAttribute(attribute) {
   if (!can('categories', 'delete')) return
-  if (!await confirmDialog({ title: '确认删除属性', message: `确定删除属性“${attribute.name}”吗？`, confirmText: '确认删除', danger: true })) return
-  try { await api.delete(`/category-attributes/${attribute.id}/`); await load(selectedId.value); notify('属性已删除') } catch (e) { notify(e.message, true) }
+  if (!await confirmDialog({ title: '确认删除属性', message: `确定删除属性“${attribute.name}”吗？未冻结 SKU 引用的身份属性不能删除，系统会检查并拒绝不允许的操作。`, confirmText: '确认删除', danger: true })) return
+  try { await api.delete(`/category-attributes/${attribute.id}/`); await load(selectedId.value); notify('属性已删除') } catch (e) { notify(apiErrorMessage(e), true) }
 }
 function startAttributeDrag(attribute, event) {
   if (attribute.inherited) return
@@ -248,7 +274,7 @@ async function dropAttribute(target) {
     const response = await api.post('/category-attributes/reorder/', { category: selectedId.value, ids: ordered.map(attribute => attribute.id), preview: true })
     reorderReview.value = { category: selectedId.value, ids: ordered.map(attribute => attribute.id), changes: response.data.changes || [] }
     reorderError.value = ''
-  } catch (e) { notify(e.message, true) }
+  } catch (e) { notify(apiErrorMessage(e), true) }
 }
 async function confirmAttributeReorder() {
   if (!can('categories', 'update') || !reorderReview.value || reorderSaving.value) return
@@ -260,7 +286,7 @@ async function confirmAttributeReorder() {
     notify('属性排序已更新，SKU 名称和 Sales Model 已刷新。')
   } catch (e) { reorderError.value = apiErrorMessage(e) } finally { reorderSaving.value = false }
 }
-function cancelAttributeReorder() { reorderReview.value = null; reorderError.value = '' }
+function cancelAttributeReorder() { if (reorderSaving.value) return; reorderReview.value = null; reorderError.value = '' }
 function reorderDiff(oldValue, newValue) {
   const oldText = String(oldValue || ''), newText = String(newValue || '')
   if (oldText === newText) return { old: [{ text: oldText || '—', changed: false }], next: [{ text: newText || '—', changed: false }] }
@@ -320,7 +346,7 @@ function dropOnNode(row, event) {
 async function moveDragged(parent, index) {
   if (!can('categories', 'update') || !draggingId.value) return
   try { await api.post('/categories/reorder/', { id: draggingId.value, parent, index }); await load(draggingId.value); notify('分类层级与顺序已更新') }
-  catch (e) { notify(e.message, true) } finally { dragEnd() }
+  catch (e) { notify(apiErrorMessage(e), true) } finally { dragEnd() }
 }
 function directAttribute(attribute) { return !attribute.inherited }
 function toggleCategoryExpansion(id) {
@@ -341,18 +367,18 @@ onMounted(load)
       <div><Settings2 :size="18" /><span>自定义属性<strong>{{ attributeCount }}</strong></span></div>
     </div>
 
-    <div class="category-layout">
+    <p v-if="operationError" class="sku-save-error" role="alert">{{ operationError }}</p><div class="category-layout">
       <section class="panel tree-panel">
         <div class="panel-heading"><div><h3>分类树</h3><p>拖拽节点行可调整同级顺序；拖到节点上半部/下半部即可插入，放入右侧“放入”区域才会成为子分类。</p></div><button v-if="can('categories', 'create')" class="icon-action" title="新建根分类" @click="openCategory()"><Plus :size="16" /></button></div>
-        <input v-model="search" class="tree-search" placeholder="搜索分类..." />
-        <div v-if="loading" class="tree-empty">正在加载分类树...</div>
-        <div v-else-if="!flatTree.length" class="tree-empty">暂无分类，点击右上角开始创建。</div>
-        <div v-else class="tree-list">
+        <input v-model="search" class="tree-search" placeholder="搜索分类名称" aria-label="搜索分类" />
+        <div class="tree-tools"><button type="button" @click="expandAll(true)">全部展开</button><button type="button" @click="expandAll(false)">全部收起</button><button type="button" :disabled="loading" @click="load()">刷新</button></div><PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load()" />
+        <div v-if="!loading && !loadError && !flatTree.length" class="tree-empty">{{ search ? '没有匹配的分类，请修改搜索条件。' : '暂无分类，可新建根分类。' }}</div>
+        <div v-if="flatTree.length" class="tree-list">
           <template v-for="row in flatTree" :key="row.node.id">
             <div class="drop-line" :style="{ marginLeft: `${row.depth * 22 + 10}px` }" @dragover.prevent="clearNodeDropTarget" @drop.stop="moveDragged(row.parent, row.index)" />
-            <div class="tree-node" :class="{ active: selectedId === row.node.id, dragging: draggingId === row.node.id, 'drop-before': nodeDropTarget.id === row.node.id && !nodeDropTarget.after, 'drop-after': nodeDropTarget.id === row.node.id && nodeDropTarget.after }" :style="{ paddingLeft: `${row.depth * 22 + 8}px` }"  :draggable="can('categories', 'update')" @dragstart="dragStart(row.node.id, $event)" @dragend="dragEnd" @dragover.prevent="dragOverNode(row.node.id, $event)" @drop.stop="dropOnNode(row, $event)" @click="selectedId = row.node.id">
+            <div class="tree-node" :class="{ active: selectedId === row.node.id, dragging: draggingId === row.node.id, 'drop-before': nodeDropTarget.id === row.node.id && !nodeDropTarget.after, 'drop-after': nodeDropTarget.id === row.node.id && nodeDropTarget.after }" :style="{ paddingLeft: `${row.depth * 22 + 8}px` }"  :draggable="can('categories', 'update')" @dragstart="dragStart(row.node.id, $event)" @dragend="dragEnd" @dragover.prevent="dragOverNode(row.node.id, $event)" @drop.stop="dropOnNode(row, $event)" @click="selectCategory(row.node.id)">
               <span class="drag-handle" title="拖拽排序"><GripVertical :size="15" /></span><button v-if="row.node.children.length" type="button" class="branch-toggle" :title="expandedCategoryIds.has(row.node.id) ? '收起子分类' : '展开子分类'" @click.stop="toggleCategoryExpansion(row.node.id)">{{ expandedCategoryIds.has(row.node.id) ? '▾' : '▸' }}</button><span v-else class="branch-mark">·</span>
-              <div class="node-copy"><strong>{{ row.node.name }}</strong></div>
+              <div class="node-copy"><strong :title="row.node.name">{{ row.node.name }}</strong><small v-if="search">{{ categories.find(item => item.id === row.node.parent)?.name || '根分类' }}</small></div>
               <span v-if="draggingId && draggingId !== row.node.id" class="node-child-drop" :class="{ active: childDropTargetId === row.node.id }" title="放入此分类成为子分类" @dragover.prevent.stop="dragOverChild(row.node.id)" @drop.stop="moveDragged(row.node.id, row.node.children.length)">放入</span><span v-if="row.node.children.length" class="child-count">{{ row.node.children.length }}</span>
             </div>
           </template>
@@ -367,18 +393,18 @@ onMounted(load)
             <div><small>{{ selectedPath }}</small><h3>{{ selected.name }}</h3><p>{{ selected.description || '暂无分类说明' }}</p></div>
             <div class="hero-actions"><button v-if="can('categories', 'create')" class="btn btn-secondary" @click="openCategory(null, selected.id)"><Plus :size="14" /> 子分类</button><button v-if="can('categories', 'update')" class="icon-action" title="编辑分类" @click="openCategory(selected)"><Pencil :size="15" /></button><button v-if="can('categories', 'delete')" class="icon-action danger" title="删除分类" @click="removeCategory(selected)"><Trash2 :size="15" /></button></div>
           </div>
-          <div class="sku-preview"><div><small>SKU 编码规则预览</small><strong>{{ selected.sku_name_preview || '尚未选择参与 SKU 编码的属性' }}</strong></div><p>SKU 编码是业务识别代号；将先拼接上级分类属性，再拼接下级分类属性。</p></div>
+          <div class="sku-preview"><div><small>中文 SKU 名称预览</small><strong>{{ selected.sku_name_preview || '尚未选择参与中文 SKU 命名的属性' }}</strong></div><p>按继承的分类属性展示命名顺序；不会重新分配 SKU Code。</p></div>
           <div class="attribute-heading"><div><h4>分类属性</h4><p>“生成中文SKU”和“生成销售型号”决定属性在 SKU 中的用途；可拖拽本级属性调整顺序。</p><p>分类参数是产品的默认参数模板。已有已发布 SKU 参数方案的产品不会自动跟随模板变化；如需应用变化，请在产品 SKU 参数方案中分析并发布。</p></div><button v-if="can('categories', 'create')" class="btn btn-secondary" :disabled="addingAttribute || attributeSaving" @click="startAttribute"><Plus :size="14" /> 新增属性</button></div>
           <div v-if="!selected.effective_attributes.length && !addingAttribute" class="attribute-empty">当前分类及其上级分类尚未配置属性。</div>
           <div v-else class="attribute-table-wrap"><table class="attribute-table"><thead><tr><th>属性名称</th><th>来源</th><th>生成中文SKU</th><th>生成销售型号</th><th>自动大写</th><th>必填</th><th></th></tr></thead><tbody>
-            <tr v-for="attribute in selected.effective_attributes" :key="attribute.key" :class="{ 'attribute-dragging': draggingAttributeId === attribute.id, inherited: attribute.inherited }" @dragover.prevent @drop.prevent="dropAttribute(attribute)"><td><div class="attribute-title"><span v-if="!attribute.inherited" class="attribute-drag-handle" draggable="true" title="拖拽排序" @dragstart.stop="startAttributeDrag(attribute, $event)" @dragend="draggingAttributeId = null"><GripVertical :size="15" /></span><span v-else class="attribute-inherited-mark">↳</span><template v-if="editingAttribute?.key === attribute.key"><div class="attribute-name-editor"><input v-model.trim="editAttributeName" class="attribute-name-input" @keyup.enter="saveAttributeName(attribute)" /><button class="inline-save" title="保存名称" @click.stop="saveAttributeName(attribute)"><Check :size="14" /></button></div></template><strong v-else>{{ attribute.name }}</strong></div></td><td><span :class="['source-badge', { inherited: attribute.inherited }]">{{ attribute.inherited ? `继承：${attribute.source_category}` : '当前分类' }}</span></td><td><label class="rule-switch" :class="{ locked: attribute.inherited }"><input type="checkbox" :checked="attribute.include_in_sku" :disabled="attribute.inherited || !can('categories', 'update')" @change.stop="toggleRule(attribute, 'include_in_sku', $event)" /><span /></label></td><td><label class="rule-switch" :class="{ locked: attribute.inherited }"><input type="checkbox" :checked="attribute.include_in_sales_model" :disabled="attribute.inherited || !can('categories', 'update')" @change.stop="toggleRule(attribute, 'include_in_sales_model', $event)" /><span /></label></td><td><label class="rule-switch" :class="{ locked: attribute.inherited }"><input type="checkbox" :checked="attribute.uppercase" :disabled="attribute.inherited || !can('categories', 'update')" @change.stop="toggleRule(attribute, 'uppercase', $event)" /><span /></label></td><td><label class="rule-switch" :class="{ locked: attribute.inherited }"><input type="checkbox" :checked="attribute.required" :disabled="attribute.inherited || !can('categories', 'update')" @change.stop="toggleRule(attribute, 'required', $event)" /><span /></label></td><td><div class="row-actions"><button v-if="!attribute.inherited && can('categories', 'update')" class="icon-action" title="修改属性名称" @click.stop="startEditAttribute(attribute)"><Pencil :size="14" /></button><span v-else class="read-only-note">只读</span><button v-if="directAttribute(attribute) && can('categories', 'delete')" type="button" class="icon-action danger" title="删除属性" @pointerdown.stop @click.stop.prevent="removeAttribute(attribute)"><Trash2 :size="14" /></button></div></td></tr>
-            <tr v-if="addingAttribute && can('categories', 'create')" class="new-attribute-row"><td><input v-model.trim="newAttribute.name" class="attribute-name-input" :disabled="attributeSaving" autofocus placeholder="输入属性名称，例如：色温" @keyup.enter="saveNewAttribute" /></td><td><span class="source-badge">当前分类</span></td><td><label class="rule-switch"><input v-model="newAttribute.include_in_sku" :disabled="attributeSaving" type="checkbox" /><span /></label></td><td><label class="rule-switch"><input v-model="newAttribute.include_in_sales_model" :disabled="attributeSaving" type="checkbox" /><span /></label></td><td><label class="rule-switch"><input v-model="newAttribute.uppercase" :disabled="attributeSaving" type="checkbox" /><span /></label></td><td><label class="rule-switch"><input v-model="newAttribute.required" :disabled="attributeSaving" type="checkbox" @change="toggleNewRequired" /><span /></label></td><td><div class="row-actions"><button class="inline-save" :disabled="attributeSaving" title="保存属性" @click="saveNewAttribute"><Check :size="14" /></button><button class="icon-action" :disabled="attributeSaving" title="取消" @click="addingAttribute = false"><X :size="14" /></button></div></td></tr>
+            <tr v-for="attribute in selected.effective_attributes" :key="attribute.key" :class="{ 'attribute-dragging': draggingAttributeId === attribute.id, inherited: attribute.inherited }" @dragover.prevent @drop.prevent="dropAttribute(attribute)"><td><div class="attribute-title"><span v-if="!attribute.inherited" class="attribute-drag-handle" draggable="true" title="拖拽排序" @dragstart.stop="startAttributeDrag(attribute, $event)" @dragend="draggingAttributeId = null"><GripVertical :size="15" /></span><span v-else class="attribute-inherited-mark">↳</span><template v-if="editingAttribute?.key === attribute.key"><div class="attribute-name-editor"><input v-model.trim="editAttributeName" :disabled="attributeSaving" class="attribute-name-input" @keyup.enter="saveAttributeName(attribute)" /><button class="inline-save" :disabled="attributeSaving" title="保存名称" @click.stop="saveAttributeName(attribute)"><Check :size="14" /></button></div></template><strong v-else>{{ attribute.name }}</strong></div></td><td><span :class="['source-badge', { inherited: attribute.inherited }]">{{ attribute.inherited ? `继承：${attribute.source_category}` : '当前分类' }}</span></td><td><label class="rule-switch" :class="{ locked: attribute.inherited }"><input type="checkbox" :checked="attribute.include_in_sku" :disabled="attribute.inherited || !can('categories', 'update')" @change.stop="toggleRule(attribute, 'include_in_sku', $event)" /><span /></label></td><td><label class="rule-switch" :class="{ locked: attribute.inherited }"><input type="checkbox" :checked="attribute.include_in_sales_model" :disabled="attribute.inherited || !can('categories', 'update')" @change.stop="toggleRule(attribute, 'include_in_sales_model', $event)" /><span /></label></td><td><label class="rule-switch" :class="{ locked: attribute.inherited }"><input type="checkbox" :checked="attribute.uppercase" :disabled="attribute.inherited || !can('categories', 'update')" @change.stop="toggleRule(attribute, 'uppercase', $event)" /><span /></label></td><td><label class="rule-switch" :class="{ locked: attribute.inherited }"><input type="checkbox" :checked="attribute.required" :disabled="attribute.inherited || !can('categories', 'update')" @change.stop="toggleRule(attribute, 'required', $event)" /><span /></label></td><td><div class="row-actions"><button v-if="!attribute.inherited && can('categories', 'update')" class="icon-action" title="修改属性名称" @click.stop="startEditAttribute(attribute)"><Pencil :size="14" /></button><span v-else class="read-only-note">只读</span><button v-if="directAttribute(attribute) && can('categories', 'delete')" type="button" class="icon-action danger" title="删除属性" @pointerdown.stop @click.stop.prevent="removeAttribute(attribute)"><Trash2 :size="14" /></button></div></td></tr>
+            <tr v-if="addingAttribute && can('categories', 'create')" class="new-attribute-row"><td><input v-model.trim="newAttribute.name" class="attribute-name-input" :disabled="attributeSaving" autofocus placeholder="输入属性名称，例如：色温" @keyup.enter="saveNewAttribute" /></td><td><span class="source-badge">当前分类</span></td><td><label class="rule-switch"><input v-model="newAttribute.include_in_sku" :disabled="attributeSaving" type="checkbox" /><span /></label></td><td><label class="rule-switch"><input v-model="newAttribute.include_in_sales_model" :disabled="attributeSaving" type="checkbox" /><span /></label></td><td><label class="rule-switch"><input v-model="newAttribute.uppercase" :disabled="attributeSaving" type="checkbox" /><span /></label></td><td><label class="rule-switch"><input v-model="newAttribute.required" :disabled="attributeSaving" type="checkbox" @change="toggleNewRequired" /><span /></label></td><td><div class="row-actions"><button class="inline-save" :disabled="attributeSaving" title="保存属性" @click="saveNewAttribute"><Check :size="14" /></button><button class="icon-action" :disabled="attributeSaving" title="取消" @click="cancelNewAttribute"><X :size="14" /></button></div></td></tr>
           </tbody></table></div>
         </template>
       </section>
     </div>
 
-    <div v-if="categoryModal && (categoryForm.id ? can('categories', 'update') : can('categories', 'create'))" class="modal-backdrop" @mousedown.self="categoryModal = false"><form class="modal" @submit.prevent="saveCategory"><div class="modal-head"><h3>{{ categoryForm.id ? '编辑分类' : '新建分类' }}</h3><button type="button" class="mini-btn" @click="categoryModal = false"><X :size="17" /></button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>分类名称 *</label><input v-model.trim="categoryForm.name" required /></div><div class="field"><label>上级分类</label><select v-model="categoryForm.parent"><option value="">无（根分类）</option><option v-for="item in categoryOptions" :key="item.id" :value="item.id">{{ item.label }}</option></select></div><div class="field full"><label>分类说明</label><textarea v-model="categoryForm.description" /></div></div></div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="categoryModal = false">取消</button><button v-if="categoryForm.id ? can('categories', 'update') : can('categories', 'create')" class="btn btn-primary" :disabled="saving">保存</button></div></form></div>
+    <div v-if="categoryModal && (categoryForm.id ? can('categories', 'update') : can('categories', 'create'))" class="modal-backdrop" @mousedown.self="closeCategory"><form class="modal" role="dialog" aria-modal="true" :aria-label="categoryForm.id ? '编辑分类' : '新建分类'" @submit.prevent="saveCategory"><div class="modal-head"><h3>{{ categoryForm.id ? '编辑分类' : '新建分类' }}</h3><button type="button" class="mini-btn" :disabled="saving" @click="closeCategory"><X :size="17" /></button></div><div class="modal-body"><p v-if="saveError" class="sku-save-error" role="alert">{{ saveError }}</p><div class="form-grid" :inert="saving"><div class="field"><label>分类名称 *</label><input v-model.trim="categoryForm.name" aria-label="分类名称" maxlength="100" required /></div><div class="field"><label>上级分类</label><select v-model="categoryForm.parent" aria-label="上级分类"><option value="">无（根分类）</option><option v-for="item in categoryOptions" :key="item.id" :value="item.id">{{ item.label }}</option></select></div><div class="field full"><label>分类说明</label><textarea v-model="categoryForm.description" /></div></div></div><div class="modal-foot"><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeCategory">取消</button><button v-if="categoryForm.id ? can('categories', 'update') : can('categories', 'create')" class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : '保存分类' }}</button></div></form></div>
 
     <div v-if="reorderReview && can('categories', 'update')" class="modal-backdrop reorder-review-backdrop"><section class="modal reorder-review-modal"><div class="modal-head"><div><h3>确认参数排序变更</h3><p>系统将刷新当前 SKU 的中文名称和 Sales Model，并把旧值保存到 SKU 历史记录。历史报价、订单、采购和库存单据不变。</p></div><button type="button" class="mini-btn" @click="cancelAttributeReorder"><X :size="17" /></button></div><div class="modal-body"><p v-if="!reorderReview.changes.length" class="muted">本次排序不会改变现有 SKU 的名称或 Sales Model。</p><div v-else class="reorder-review-list"><div v-for="change in reorderReview.changes" :key="change.sku_id" class="reorder-review-row"><strong>{{ change.sku_code }}</strong><div class="reorder-review-fields"><div><small>内部名称</small><p><span v-for="(part,index) in reorderDiff(change.old_display_name_cn, change.new_display_name_cn).old" :key="`old-name-${change.sku_id}-${index}`" :class="{ 'diff-removed': part.changed }">{{ part.text }}</span></p><p class="next-value"><span v-for="(part,index) in reorderDiff(change.old_display_name_cn, change.new_display_name_cn).next" :key="`new-name-${change.sku_id}-${index}`" :class="{ 'diff-added': part.changed }">{{ part.text }}</span></p></div><div><small>Sales Model</small><p><span v-for="(part,index) in reorderDiff(change.old_sales_model, change.new_sales_model).old" :key="`old-model-${change.sku_id}-${index}`" :class="{ 'diff-removed': part.changed }">{{ part.text }}</span></p><p class="next-value"><span v-for="(part,index) in reorderDiff(change.old_sales_model, change.new_sales_model).next" :key="`new-model-${change.sku_id}-${index}`" :class="{ 'diff-added': part.changed }">{{ part.text }}</span></p></div></div></div></div><p v-if="reorderError" class="sku-save-error" role="alert">{{ reorderError }}</p><p class="identity-review-hint">确认后系统会再次检查是否与其他 SKU 的当前名称、Sales Model 或历史名称重复；发现重复时不会保存。</p></div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="cancelAttributeReorder">取消</button><button v-if="can('categories', 'update')" type="button" class="btn btn-primary" :disabled="reorderSaving" @click="confirmAttributeReorder">{{ reorderSaving ? '检查并保存中…' : '确认并刷新 SKU' }}</button></div></section></div>
 
@@ -392,4 +418,5 @@ onMounted(load)
 .drag-handle{display:inline-grid;place-items:center;width:22px;height:24px;border-radius:5px;color:#a1aca8;cursor:grab;flex:none}.drag-handle:hover{background:#e7f1ed;color:#2b705c}.drag-handle:active{cursor:grabbing}.tree-node.drop-before,.tree-node.drop-after{background:#edf7f3;border-color:#b5d8ca}.tree-node.drop-before{box-shadow:inset 0 3px 0 #2b705c}.tree-node.drop-after{box-shadow:inset 0 -3px 0 #2b705c}.node-child-drop{display:inline-flex;align-items:center;justify-content:center;min-width:36px;padding:4px 6px;border:1px dashed #a9c5ba;border-radius:6px;background:#f3f9f6;color:#4d7b6c;font-size:var(--text-caption);line-height:1;white-space:nowrap}.node-child-drop.active,.node-child-drop:hover{border-color:#26705c;background:#dcefe7;color:#1f6654}
 .attribute-table th:nth-child(1),.attribute-table td:nth-child(1){width:28%}.attribute-table th:nth-child(2),.attribute-table td:nth-child(2){width:18%}.attribute-table th:nth-child(3),.attribute-table td:nth-child(3),.attribute-table th:nth-child(4),.attribute-table td:nth-child(4),.attribute-table th:nth-child(5),.attribute-table td:nth-child(5),.attribute-table th:nth-child(6),.attribute-table td:nth-child(6){width:10%}.attribute-table th:nth-child(7),.attribute-table td:nth-child(7){width:14%}.attribute-title:has(.attribute-name-editor) .attribute-drag-handle{display:none}.attribute-name-editor{display:grid;grid-template-columns:minmax(0,1fr) 30px;flex:1;min-width:0;width:100%;gap:5px}.attribute-name-editor .attribute-name-input{width:100%;min-width:0}.source-badge{white-space:nowrap}
 .reorder-review-backdrop{z-index:140}.reorder-review-modal{width:min(980px,calc(100vw - 28px));max-height:calc(100vh - 48px)}.reorder-review-list{display:grid;gap:10px;max-height:52vh;overflow:auto}.reorder-review-row{padding:12px;border:1px solid #dbe7e1;border-radius:9px;background:#fbfdfc}.reorder-review-row>strong{display:block;margin-bottom:8px;color:#285d4e}.reorder-review-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.reorder-review-fields>div{padding:10px;border-radius:7px;background:#fff;border:1px solid #e6eeea}.reorder-review-fields small{display:block;color:#7a8b83;font-size:var(--text-caption);margin-bottom:4px}.reorder-review-fields p{margin:4px 0;color:#29483e;font-size:var(--text-body);line-height:1.6;word-break:break-word}.reorder-review-fields p.next-value{border-top:1px dashed #dce8e2;padding-top:6px}.diff-removed{background:#ffd9d5;color:#a52f24;text-decoration:line-through;border-radius:3px;padding:1px 2px}.diff-added{background:#ccefdc;color:#176443;border-radius:3px;padding:1px 2px}.identity-review-hint{margin:12px 0 0;color:#687c73;font-size:var(--text-caption);line-height:1.7}.sku-save-error{margin:12px 0 0;padding:10px;border-radius:7px;background:#fff2f0;color:#b42318;font-size:var(--text-body)}@media(max-width:650px){.reorder-review-fields{grid-template-columns:1fr}}
+.tree-tools{display:flex;flex-wrap:wrap;gap:12px;padding:4px 14px 12px}.tree-tools button{border:0;background:transparent;color:#286950;cursor:pointer}.category-hero>div,.attribute-heading>div{min-width:0}.category-hero h3,.category-hero p,.category-hero small{overflow-wrap:anywhere}.hero-actions{flex-wrap:wrap;flex-shrink:0}.category-layout{grid-template-columns:minmax(260px,320px) minmax(0,1fr)}.tree-panel,.config-panel{min-width:0}.category-hero,.attribute-heading{flex-wrap:wrap}.attribute-heading p{line-height:1.6}.tree-list{overflow-x:auto}.tree-node{min-width:240px}@media(max-width:1100px){.category-layout{grid-template-columns:1fr}.tree-panel{min-height:0;max-height:440px;overflow:auto}}
 </style>

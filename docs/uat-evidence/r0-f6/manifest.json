@@ -216,11 +216,11 @@
       1000
     ],
     "image_pixels": [
-      1024,
+      1440,
       1000
     ],
-    "bytes": 32650,
-    "sha256": "1ddaf3109d0cd6f1482bc5c721be6373d787209aa9d2cc535b436ded42599ec9",
+    "bytes": 42000,
+    "sha256": "6969a5ef74af4af98170a9819bd85b425f6f1ba353e0a532edaddcdcea7c448c",
     "source": "Codex in-app browser tab.screenshot({fullPage:false})",
     "captured_on": "2026-10-15"
   },
@@ -306,11 +306,11 @@
       1000
     ],
     "image_pixels": [
-      1024,
+      1440,
       1000
     ],
-    "bytes": 38153,
-    "sha256": "7a9f90a92474994bf5e531bd8a7c4eab899628545bae8a9ae52ee6bff2055ff4",
+    "bytes": 47441,
+    "sha256": "a7f791aca0766f510cc276729832a22e498e3a41aa375e914c80961db6beec0f",
     "source": "Codex in-app browser tab.screenshot({fullPage:false})",
     "captured_on": "2026-10-15"
   },

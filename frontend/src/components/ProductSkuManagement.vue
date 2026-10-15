@@ -81,7 +81,7 @@ async function setSelectedActive(active) {
 watch([poolSearch, poolSource, poolParameterKey, poolParameterValue, showInactive], () => { selectedIds.value = [] })
 watch(poolParameterKey, () => { poolParameterValue.value = '' })
 watch(parameterFilters, () => { selectedIds.value = [] }, { deep: true })
-async function bindingSaved() { bindingOpen.value = false; selectedIds.value = []; await load(); emit('changed'); notice.value = '供应商及供货信息已保存。' }
+async function bindingSaved() { bindingOpen.value = false; selectedIds.value = []; await load(); emit('changed'); notice.value = '候选供应商已保存。' }
 function clearPoolFilters() { parameterFilters.value = {}; poolSearch.value = ''; poolSource.value = ''; poolParameterKey.value = ''; poolParameterValue.value = '' }
 function editRule(row = null) {
   rulesOpen.value = true

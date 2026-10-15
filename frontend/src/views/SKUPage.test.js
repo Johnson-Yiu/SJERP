@@ -8,7 +8,7 @@ const componentUrl = new URL('./SKUPage.vue', import.meta.url)
 test('SKU editor exposes supplier source maintenance through the API', async () => {
   const source = await readFile(componentUrl, 'utf8')
 
-  assert.match(source, /Supplier Sources/)
+  assert.match(source, /<h4>供应来源<\/h4>/)
   assert.match(source, /listAll\('\/supplier-skus\//)
   assert.match(source, /api\.post\('\/supplier-skus\//)
   assert.match(source, /api\.patch\(`\/supplier-skus\//)

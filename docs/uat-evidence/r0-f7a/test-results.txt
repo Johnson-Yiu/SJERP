@@ -1,0 +1,175 @@
+R0-F7A local regression evidence / 2026-10-15
+Baseline: 0b721fcd455b00d35d886f842380a95c38c31b96
+Final commit and exact HEAD CI: see delivery and GitHub commit checks.
+Isolated Django test database created/destroyed automatically; UI uses r0f7a-ux.sqlite3 only.
+
+== Node unit / npm run test:unit ==
+✔ top bar has no fake search or notification controls and uses current operator initials (1.743ms)
+✔ core management lists and selectors use the tested all-pages loader (10.6069ms)
+✔ trade-unit page preserves deactivate and default-source actions (4.6606ms)
+✔ transaction form distinguishes refunds from order expenses (4.6659ms)
+ℹ tests 121
+ℹ suites 0
+ℹ pass 121
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1599.79
+
+== Typography / node --test tests/detail-drawer-typography.spec.js ==
+✔ all shared detail drawers use the system typography scale (6.9273ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 97.1143
+
+== Vitest / npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js --maxWorkers=2 ==
+
+ RUN  v4.1.11 D:/Codex项目/森爵照明管理系统/.r0f1-review/frontend
+
+
+ Test Files  56 passed (56)
+      Tests  557 passed (557)
+   Start at  11:49:22
+   Duration  121.29s (transform 8.52s, setup 21.82s, import 26.88s, tests 47.96s, environment 116.67s)
+
+
+== Playwright / npx playwright test ==
+[WebServer] (node:22952) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 83 tests using 2 workers
+
+(node:6440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21120) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  2 browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1440px (8.4s)
+  ok  1 browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1440px (8.8s)
+  ok  4 browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1280px (5.8s)
+  ok  3 browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1280px (6.6s)
+  ok  5 browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1024px (2.7s)
+  ok  6 browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1024px (3.4s)
+  ok  8 browser-tests\crm-ux.spec.js:167:1 › contact create, duplicate advisory, primary edit and return query stay consistent (4.4s)
+  ok  7 browser-tests\crm-saving.spec.js:86:3 › contacts pending PUT failure preserves fields and quick retry sends one request (7.1s)
+  ok  9 browser-tests\crm-ux.spec.js:193:3 › follow-up filters, detailed groups, and long content fit 1440px (3.5s)
+  ok 10 browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1440px (3.5s)
+  ok 11 browser-tests\crm-ux.spec.js:193:3 › follow-up filters, detailed groups, and long content fit 1280px (3.9s)
+  ok 12 browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1280px (3.5s)
+  ok 13 browser-tests\crm-ux.spec.js:193:3 › follow-up filters, detailed groups, and long content fit 1024px (3.8s)
+  ok 14 browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1024px (3.4s)
+  ok 15 browser-tests\crm-ux.spec.js:220:1 › follow-up search and due filters remain in URL and saved text updates list (9.2s)
+  ok 16 browser-tests\crm-saving.spec.js:86:3 › follow-ups pending PUT failure preserves fields and quick retry sends one request (10.9s)
+  ok 17 browser-tests\crm-ux.spec.js:247:1 › saved attachment delete can be cancelled, confirmed, and remains removed after reopening (2.7s)
+  ok 19 browser-tests\inventory-ux.spec.js:27:2 › inventory overview, reserved quantities and SKU drawer at 1440 (3.8s)
+  ok 20 browser-tests\inventory-ux.spec.js:38:2 › ledger filters, sticky actions and adjustment dialog at 1440 (6.5s)
+  ok 18 browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1440px (11.2s)
+  ok 22 browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1280px (4.5s)
+  ok 21 browser-tests\inventory-ux.spec.js:27:2 › inventory overview, reserved quantities and SKU drawer at 1280 (5.9s)
+  ok 24 browser-tests\inventory-ux.spec.js:38:2 › ledger filters, sticky actions and adjustment dialog at 1280 (6.7s)
+  ok 23 browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1024px (8.2s)
+  ok 26 browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 640px (2.0s)
+  ok 27 browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 390px (2.2s)
+  ok 25 browser-tests\inventory-ux.spec.js:27:2 › inventory overview, reserved quantities and SKU drawer at 1024 (5.8s)
+  ok 29 browser-tests\inventory-ux.spec.js:38:2 › ledger filters, sticky actions and adjustment dialog at 1024 (5.3s)
+  ok 28 browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1440px (6.9s)
+  ok 31 browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1280px (6.7s)
+  ok 30 browser-tests\inventory-ux.spec.js:49:1 › page restoration, detail navigation and browser Back preserve inventory context (8.2s)
+  ok 32 browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1024px (3.7s)
+  ok 34 browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 640px (2.3s)
+  ok 35 browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 390px (2.6s)
+  ok 33 browser-tests\inventory-ux.spec.js:57:1 › empty and failed inventories distinguish errors, retry and no records (9.8s)
+  ok 37 browser-tests\inventory-ux.spec.js:62:1 › restricted UI hides adjustment, reversal and unauthorized cross-module entrances (4.7s)
+  ok 36 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1440 (9.7s)
+  ok 38 browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1440 (9.8s)
+  ok 39 browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1440 (7.1s)
+  ok 40 browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1280 (5.2s)
+  ok 41 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1280 (4.7s)
+  ok 43 browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1280 (2.4s)
+  ok 42 browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1024 (2.6s)
+  ok 45 browser-tests\product-master-ux.spec.js:52:1 › product detail URL survives reload and close preserves list filters (3.9s)
+  ok 44 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1024 (4.8s)
+  ok 46 browser-tests\product-master-ux.spec.js:59:1 › product parameter to product detail closes back to original filtered list (6.0s)
+  ok 47 browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1024 (6.0s)
+  ok 49 browser-tests\overview-reports.spec.js:33:1 › saved local chart configurations survive reload, reorder, remove and undo (5.3s)
+  ok 48 browser-tests\product-master-ux.spec.js:64:1 › view-only fixtures cannot create/edit/delete through these page entries (8.8s)
+  ok 50 browser-tests\overview-reports.spec.js:41:1 › drill and previous-analysis return preserve actual period and browser navigation restores URL (5.2s)
+  ok 51 browser-tests\product-master-ux.spec.js:68:1 › product failure preserves input and retry; unsaved cancel requires confirmation (3.2s)
+  ok 53 browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1440 (5.3s)
+  ok 54 browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1280 (1.6s)
+  ok 52 browser-tests\overview-reports.spec.js:47:1 › empty dashboard and charts have useful neutral states (10.0s)
+  ok 55 browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1024 (3.1s)
+  ok 57 browser-tests\product-master-ux.spec.js:93:1 › category saving blocks backdrop, retains failure and permits retry (4.9s)
+  ok 56 browser-tests\overview-reports.spec.js:50:1 › initial failures recover, refresh failure keeps stale data, and catalog has retry (7.6s)
+  ok 58 browser-tests\product-master-ux.spec.js:101:1 › product parameter context and pending save failure remain recoverable (8.2s)
+  ok 59 browser-tests\overview-reports.spec.js:56:1 › restricted UI hides sources, export and navigation, retaining unavailable local configuration (6.5s)
+  ok 60 browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1440 (5.2s)
+  ok 62 browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1280 (2.7s)
+  ok 61 browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1440 (7.7s)
+  ok 63 browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1024 (2.9s)
+  ok 65 browser-tests\product-master-ux.spec.js:121:1 › category drag preserves selected node and collapsed state after reorder (2.8s)
+  ok 64 browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1280 (6.1s)
+  ok 66 browser-tests\supplier-ux.spec.js:24:37 › supplier long names, notes, filters, editor and detail at 1440 (7.0s)
+  ok 67 browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1024 (8.3s)
+  ok 68 browser-tests\supplier-ux.spec.js:24:37 › supplier long names, notes, filters, editor and detail at 1280 (2.8s)
+  ok 69 browser-tests\sku-ux.spec.js:21:1 › batch failure retains selections and retry succeeds once (5.0s)
+  ok 70 browser-tests\supplier-ux.spec.js:24:37 › supplier long names, notes, filters, editor and detail at 1024 (9.1s)
+  ok 71 browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1440 (5.1s)
+  ok 73 browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1280 (7.2s)
+  ok 72 browser-tests\supplier-ux.spec.js:33:1 › supplier creates, cancels dirty edits, saves and reopens consistent detail and list (9.2s)
+  ok 75 browser-tests\supplier-ux.spec.js:37:1 › duplicate code, invalid ratio and optional category failures keep entered data (5.2s)
+  ok 74 browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1024 (12.5s)
+  ok 76 browser-tests\supplier-ux.spec.js:40:1 › filters and page survive reload, detail close and procurement workbench return (6.6s)
+  ok 77 browser-tests\sku-ux.spec.js:23:1 › SKU read-only detail remains accessible with no write controls (2.7s)
+  ok 79 browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1440 (1.8s)
+  ok 78 browser-tests\supplier-ux.spec.js:43:1 › initial errors retry to empty and refresh errors retain supplier list (3.5s)
+  ok 81 browser-tests\supplier-ux.spec.js:46:1 › restricted view hides supplier write actions and purchase shortcuts (1.8s)
+  ok 80 browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1280 (2.6s)
+  ok 82 browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1024 (5.6s)
+  ok 83 browser-tests\sku-ux.spec.js:26:1 › SKU history load failure remains distinct from empty history and retries (9.7s)
+
+  83 passed (4.1m)
+
+== Build / npm run build ==
+
+> senju-crm-erp@1.0.0 build
+> vite build
+
+vite v8.2.0 building client environment for production...
+
+transforming...✓ 1995 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              0.47 kB │ gzip:   0.32 kB
+dist/assets/TradeUnitsPage-OrxS7b6Z.css      1.37 kB │ gzip:   0.52 kB
+dist/assets/ReportsPage-L7bcwvOi.css        10.92 kB │ gzip:   2.32 kB
+dist/assets/index-DaPSnFCs.css             354.85 kB │ gzip:  58.75 kB
+dist/assets/TradeUnitsPage-CI5SZE5A.js       6.04 kB │ gzip:   2.72 kB
+dist/assets/ReportsPage-BPrMO2jA.js         29.35 kB │ gzip:  10.33 kB
+dist/assets/index-CnJ1rbUo.js            1,156.74 kB │ gzip: 414.20 kB
+
+✓ built in 2.07s
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+== Related backend / manage.py test: test_sku_save_integrity test_sku_commercial_identity test_product_category_sku_identity_safety test_supplier_sku test_sku_plans_candidates ==
+...Bad Request: /api/products/1/sku-plan/publish/
+.Bad Request: /api/products/1/sku-plan/publish/
+.Bad Request: /api/supplier-skus/1/
+.
+----------------------------------------------------------------------
+Ran 80 tests in 6.351s
+
+OK
+Destroying test database for alias 'default'...
+
+Found 80 test(s).
+System check identified no issues (0 silenced).

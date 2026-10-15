@@ -302,7 +302,11 @@ function savedCombinationRules(rules) {
   combinationRulesDirty.value = false
   previewCombinationRules(rules)
 }
-watch(() => [route.query.search,route.query.productFilter,route.query.status], () => { if(props.embedded) return; query.value=route.query.search || '';productFilter.value=route.query.productFilter || '';statusFilter.value=route.query.status || '';void load() })
+watch([() => route.query.search, () => route.query.productFilter, () => route.query.status], ([search, product, status]) => {
+  if (props.embedded) return
+  query.value = search || ''; productFilter.value = product || ''; statusFilter.value = status || ''
+  void load()
+})
 watch(() => route.query.detail, value => {detailId.value=value || null})
 watch(() => form.product, () => { previewRules.value = null; combinationRulesDirty.value = false })
 function newDetail(name = product.value?.name || '', key = '') { return { preview_key: key, product_name: name, unit: form.unit || 'pcs', notes: '', unit_weight: 0, carton_quantity: 0, packaging_template: '', packaging_query: '' } }
@@ -355,15 +359,25 @@ async function uploadImage(skuId, file) {
   return api.post(`/skus/${skuId}/image/`, data)
 }
 async function clearImage(skuId) { return api.delete(`/skus/${skuId}/image/`) }
+let loadVersion = 0
 async function load() {
+  const version = ++loadVersion
+  const search = query.value
   loading.value = true
   loadError.value = ''
   try {
-    const [visible, history] = await Promise.all([listAll('/skus/', { params: { search: query.value, include_inactive: '1' } }), query.value ? listAll('/skus/', {params:{include_inactive:'1'}}) : Promise.resolve(null)])
+    // Search results drive the list; unfiltered history still drives duplicate detection.
+    const [visible, history] = await Promise.all([listAll('/skus/', { params: { search, include_inactive: '1' } }), search ? listAll('/skus/', {params:{include_inactive:'1'}}) : Promise.resolve(null)])
+    // Publish both results together, only for the latest logical load.
+    if (version !== loadVersion) return
     rows.value = visible
     historyRows.value = history || visible
     hasLoaded.value = true
-  } catch (error) { loadError.value = apiErrorMessage(error) } finally { loading.value = false }
+  } catch (error) {
+    if (version === loadVersion) loadError.value = apiErrorMessage(error)
+  } finally {
+    if (version === loadVersion) loading.value = false
+  }
 }
 async function loadSkuReferenceOptions() {
   const tasks = [
@@ -745,8 +759,6 @@ watch(() => form.description_en, value => {
   const translated = translateLightingTerms(value)
   if (translated !== value) form.description_en = translated
 })
-watch(() => [route.query.search,route.query.productFilter,route.query.status], () => { if(props.embedded) return; query.value=route.query.search || '';productFilter.value=route.query.productFilter || '';statusFilter.value=route.query.status || '';void load() })
-watch(() => route.query.detail, value => {detailId.value=value || null})
 watch(() => form.product, () => { void loadAbbreviationSuggestions() })
 watch(parameterValues, applyAbbreviationSuggestions, { deep: true })
 watch(allPreviews, syncDetails, { immediate: true })
@@ -764,7 +776,7 @@ watch([() => route.query.create, () => route.query.product], ([value]) => {
     closeModal()
   }
 })
-onBeforeUnmount(() => { document.removeEventListener('pointerdown', closePackagingPickerOnOutsideClick); revokeImagePreview() })
+onBeforeUnmount(() => { loadVersion++; document.removeEventListener('pointerdown', closePackagingPickerOnOutsideClick); revokeImagePreview() })
 </script>
 
 <template>

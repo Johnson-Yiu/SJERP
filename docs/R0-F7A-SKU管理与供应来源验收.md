@@ -54,3 +54,22 @@ R0-F6 用户转述独立代码、自动化及已覆盖交互 PASS，允许有条
 新增ISS-084–086为修复待独立复审；ISS-087为旧式无缩写样本预览与保存型号不同的P2/NEEDS_VERIFICATION，仅加说明，不改身份算法。ISS-081–083记录R0-F6已通过有限代码/交互范围、保留待视觉审查。ISS-007、022、023、024、026、080及全部历史未关闭事项保留。统计87条：OPEN6、BLOCKED20、NEEDS_VERIFICATION25、FIXED_PENDING_REVIEW29、CLOSED7。本轮没有自行关闭Issue。
 
 交付后停止等待ChatGPT独立审查，不进入F7B、历史集中修复、内测或生产部署。
+
+## 最终定向修复：ISS-088（2026-10-15）
+
+基线`9975bf271b577adfe54ed405e7de5e30ea5ab8c2`，CI #38694457811三项SUCCESS。用户转述ChatGPT独立审查：主要代码/现有自动回归通过，但本轮引入列表重复监听和异步加载竞态。本批仅修复该项，不以此前CI成功掩盖审查发现。
+
+保留一套`watch([search getter, productFilter getter, status getter])`，按实际值比较避免无关detail URL变化触发加载，删除第二套筛选及detail监听。`load()`捕获本次搜索值并递增版本；搜索仍分别请求筛选记录及完整历史，两个结果一起完成后只允许最新版本提交。旧成功/失败/finally均不能覆盖最新rows、historyRows、loadError、loading；卸载时失效未完成版本。没有改后端API、身份、Sales Model、批量保存、库存或供应商规则。
+
+| 定向场景 | 证据 |
+|---|---|
+| 单次search/product/status变化仅一次逻辑加载 | Vitest逐项断言；search严格为两个不同用途请求，非搜索一次；detail变化不额外加载 |
+| 搜索保留完整历史 | 检查两个请求参数，搜索结果不含已有SKU时仍标记重复；正常刷新继续保留历史 |
+| 快速A/B逆序 | 可控Promise让B先完成、A后完成，列表和history均保持B；浏览器网络门控直接断言渲染列表 |
+| 过期请求与loading/error | 旧成功/旧失败先完成时B仍loading；旧失败晚于新成功不报错；新失败不被旧成功抹掉；刷新恢复 |
+| URL、嵌入产品详情 | 恢复search/product/status；嵌入初始产品不变且忽略父列表URL；嵌入刷新仍可用 |
+| 真实Codex内置浏览器 | 原R0F7A隔离库，查询SKU-000001、产品1、停用为空、启用恢复、刷新URL恢复；目视既有界面无布局/文案变化；异步逆序由可控自动回归证明 |
+
+本批不重拍全部39张截图，原图及清单未修改；本批没有可见布局或文案变化。自动回归、实际浏览器与独立视觉仍分别记录，未新增独立视觉PASS。ISS-088为P2/FIXED_PENDING_REVIEW；ISS-087等全部保留。总88条：OPEN6、BLOCKED20、NEEDS_VERIFICATION25、FIXED_PENDING_REVIEW30、CLOSED7，没有自行关闭Issue。完整测试结果见本批测试记录及交付；最终精确HEAD三项CI核对后停止等待独立审查，不进入F7B。
+
+本批最终本地回归：Node 121/121、字体检查1/1、Vitest 56文件567/567、Playwright84/84、Build PASS。新增10项Vitest场景及1项浏览器网络门控场景；[本批测试记录](uat-evidence/r0-f7a/test-results-iss088.txt)。完整Backend与PostgreSQL按最终提交的CI执行，不冒充本地已执行完整后端套件。精确提交与CI URL见本批交付及GitHub commit checks。

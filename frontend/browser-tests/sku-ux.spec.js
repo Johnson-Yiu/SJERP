@@ -24,3 +24,32 @@ test('SKU read-only detail remains accessible with no write controls',async({pag
 
 for(const width of [1440,1280,1024])test(`SKU detail inventory link and Back ${width}`,async({page})=>{await page.setViewportSize({width,height:1000});await setup(page);await page.goto('/skus?productFilter=1&status=active');await page.locator('.sku-data-row').filter({hasText:'SKU-F7'}).click();const detail=page.locator('.sku-detail');await expect(detail).toBeVisible();expect(await detail.evaluate(n=>{const r=n.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&n.scrollWidth<=n.clientWidth+2})).toBeTruthy();await detail.getByRole('link',{name:'打开库存工作台',exact:true}).click();await expect(page).toHaveURL('/inventory?detail=7');await page.goBack();await expect(detail).toBeVisible();await page.getByRole('button',{name:'关闭详情',exact:true}).click();await expect(page.getByLabel('SKU 所属产品')).toHaveValue('1');await expect(page.getByLabel('SKU 状态')).toHaveValue('active')})
 test('SKU history load failure remains distinct from empty history and retries',async({page})=>{await setup(page);let fail=true;await page.route('**/api/skus/7/versions/',route=>fail?route.fulfill({status:500,json:{detail:'历史暂时无法加载'}}):route.fulfill({json:[]}));await page.goto('/skus');await page.locator('.sku-data-row').filter({hasText:'SKU-F7'}).getByRole('button',{name:'历史版本',exact:true}).click();const dialog=page.getByRole('dialog',{name:'SKU 历史版本',exact:true});await expect(dialog.getByRole('alert')).toBeVisible({timeout:15000});await expect(dialog).not.toContainText('暂无关键字段变更记录');fail=false;await dialog.getByRole('button',{name:'重试',exact:true}).click();await expect(dialog).toContainText('暂无关键字段变更记录');await dialog.getByRole('button',{name:'关闭历史版本',exact:true}).click();await expect(dialog).toHaveCount(0)})
+
+test('SKU logical loads keep separate history and ignore late responses in the rendered list',async({page})=>{
+  await setup(page)
+  const requests=[];let controlled=false
+  await page.route('**/api/skus/**',async route=>{
+    const url=new URL(route.request().url())
+    if(url.pathname!=='/api/skus/')return route.fallback()
+    if(!controlled)return route.fulfill({json:[existing]})
+    const pending=gate();requests.push({search:url.searchParams.get('search'),pending})
+    const result=await pending.promise
+    return route.fulfill(result)
+  })
+  await page.goto('/skus');await expect(page.locator('.sku-data-row')).toHaveCount(1);controlled=true
+  await page.getByLabel('搜索 SKU',{exact:true}).fill('A');await page.getByRole('button',{name:'查询',exact:true}).click()
+  await expect.poll(()=>requests.length).toBe(2)
+  expect(requests.map(r=>r.search).sort()).toEqual([null,'A'].sort())
+  await page.getByLabel('搜索 SKU',{exact:true}).fill('B');await page.getByRole('button',{name:'查询',exact:true}).click()
+  await expect.poll(()=>requests.length).toBe(4);await expect(page.getByRole('button',{name:'刷新',exact:true})).toBeDisabled()
+  const b={...existing,id:8,sku:'SKU-B',sku_code:'SKU-B',display_name_cn:'最新 B 结果',parameter_values:{'1:power':'20','1:voltage':'48'}}
+  requests.slice(2).forEach(r=>r.pending.resolve({json:r.search?[b]:[existing,b]}))
+  await expect(page.locator('.sku-data-row')).toContainText('最新 B 结果');await expect(page.getByRole('button',{name:'刷新',exact:true})).toBeEnabled()
+  requests[0].pending.resolve({status:400,json:{detail:'旧 A 请求失败'}});requests[1].pending.resolve({json:[]})
+  await expect(page.locator('.sku-data-row')).toContainText('最新 B 结果');await expect(page.getByRole('alert')).toHaveCount(0)
+  await page.getByLabel('SKU 状态').selectOption('active');await expect.poll(()=>requests.length).toBe(6)
+  requests.slice(4).forEach(r=>r.pending.resolve({json:r.search?[b]:[existing,b]}))
+  await expect(page.getByRole('button',{name:'刷新',exact:true})).toBeEnabled()
+  await page.getByRole('button',{name:'新建 SKU',exact:true}).click();const dialog=page.getByRole('dialog',{name:'新建 SKU',exact:true});await dialog.locator('select').first().selectOption('1');for(const [label,values] of [['功率',['10','20']],['电压',['24','48']]])for(const value of values){await dialog.getByLabel(label,{exact:true}).fill(value);await dialog.getByLabel(label,{exact:true}).press('Enter')}
+  await expect(dialog.locator('.preview-table input:disabled')).toHaveCount(2)
+})

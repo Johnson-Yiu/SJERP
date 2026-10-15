@@ -1,113 +1,62 @@
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
-import { Link2, Pencil, Plus, Search, X } from 'lucide-vue-next'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { api, listAll } from '../api'
 import { useAccessControl } from '../accessControl'
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
+import { apiErrorMessage } from '../utils/apiErrors'
+import PageLoadState from '../components/PageLoadState.vue'
 import SummaryCards from '../components/SummaryCards.vue'
-
-const rows = ref([])
-const products = ref([])
-const query = ref('')
-const loading = ref(true)
-const saving = ref(false)
-const canManage = ref(false)
-const { can } = useAccessControl()
-const mayCreate = computed(() => can('hs_codes', 'create') && canManage.value)
-const mayUpdate = computed(() => can('hs_codes', 'update') && canManage.value)
-const mayDelete = computed(() => can('hs_codes', 'delete') && canManage.value)
-const message = reactive({ text: '', error: false })
-const editingId = ref(null)
-const formOpen = ref(false)
-const assignmentOpen = ref(false)
-const assignmentQuery = ref('')
-const active = ref(null)
-const form = reactive({ code: '', description: '', notes: '', active: true })
-const selectedProductIds = ref([])
-
-const filtered = computed(() => {
-  const value = query.value.trim().toLowerCase()
-  return value ? rows.value.filter(row => `${row.code} ${row.description} ${row.notes}`.toLowerCase().includes(value)) : rows.value
-})
-const assignmentProducts = computed(() => {
-  const value = assignmentQuery.value.trim().toLowerCase()
-  return value ? products.value.filter(product => `${product.code} ${product.name} ${product.name_en}`.toLowerCase().includes(value)) : products.value
-})
-const metrics = computed(() => [
-  { label: 'HS 编码', value: rows.value.length, hint: '受控编码目录' },
-  { label: '启用编码', value: rows.value.filter(row => row.active).length, hint: '可继续分配' },
-  { label: '已分配产品', value: rows.value.reduce((sum, row) => sum + Number(row.product_count || 0), 0), hint: '当前关联记录' },
-])
-
-function notify(text, error = false) { Object.assign(message, { text, error }); setTimeout(() => { message.text = '' }, 3000) }
-function resetForm(row = null) { Object.assign(form, { code: row?.code || '', description: row?.description || '', notes: row?.notes || '', active: row?.active ?? true }) }
-async function load() {
-  loading.value = true
-  try {
-    const [codes, productRows, session] = await Promise.all([listAll('/hs-codes/'), listAll('/products/'), api.get('/session/current-operator/')])
-    rows.value = codes
-    products.value = productRows
-    canManage.value = session.data.can_manage_hs_codes === true
-  }
-  catch (error) { notify(error.message, true) }
-  finally { loading.value = false }
-}
-function create() { if (!mayCreate.value) return; editingId.value = null; resetForm(); formOpen.value = true }
-function edit(row) { if (!mayUpdate.value) return; editingId.value = row.id; resetForm(row); formOpen.value = true }
-async function save() {
-  if (!(editingId.value ? mayUpdate.value : mayCreate.value)) return
-  saving.value = true
-  try {
-    const payload = { ...form, code: form.code.trim().toUpperCase() }
-    if (editingId.value) await api.put(`/hs-codes/${editingId.value}/`, payload)
-    else await api.post('/hs-codes/', payload)
-    formOpen.value = false
-    await load()
-    notify(editingId.value ? 'HS 编码已更新' : 'HS 编码已创建')
-  } catch (error) { notify(error.message, true) }
-  finally { saving.value = false }
-}
-function openAssignment(row) {
-  if (!mayUpdate.value) return
-  active.value = row
-  assignmentQuery.value = ''
-  selectedProductIds.value = products.value.filter(product => Number(product.hs_code) === Number(row.id)).map(product => Number(product.id))
-  assignmentOpen.value = true
-}
-function toggleProduct(id) {
-  if (!mayUpdate.value) return
-  const normalized = Number(id)
-  selectedProductIds.value = selectedProductIds.value.includes(normalized)
-    ? selectedProductIds.value.filter(item => item !== normalized)
-    : [...selectedProductIds.value, normalized]
-}
-async function saveAssignment() {
-  if (!mayUpdate.value) return
-  if (!active.value) return
-  saving.value = true
-  try {
-    await api.put(`/hs-codes/${active.value.id}/assign-products/`, { product_ids: selectedProductIds.value })
-    assignmentOpen.value = false
-    await load()
-    notify(`已为 ${selectedProductIds.value.length} 个产品分配 ${active.value.code}`)
-  } catch (error) { notify(error.message, true) }
-  finally { saving.value = false }
-}
+const route=useRoute(), router=useRouter(), {can}=useAccessControl()
+const rows=ref([]),products=ref([]),loading=ref(true),hasLoaded=ref(false),loadError=ref(''),productError=ref(''),saving=ref(false),saveError=ref(''),canManage=ref(false)
+const query=ref(route.query.search||''),state=ref(route.query.state||''),sort=ref(route.query.sort||'code')
+const mayCreate=computed(()=>can('hs_codes','create')&&canManage.value)
+const mayUpdate=computed(()=>can('hs_codes','update')&&canManage.value)
+const message=ref(''),editingId=ref(null),formOpen=ref(false),assignmentOpen=ref(false),assignmentQuery=ref(''),assignmentView=ref('all'),active=ref(null)
+const form=reactive({code:'',description:'',notes:'',active:true}),selectedProductIds=ref([])
+const guard=useUnsavedChangesGuard({data:()=>({form,selected:[...selectedProductIds.value].sort((a,b)=>a-b)}),enabled:()=>formOpen.value||assignmentOpen.value,busy:()=>saving.value})
+const close=()=>guard.requestClose(()=>{formOpen.value=false;assignmentOpen.value=false})
+const filtered=computed(()=>rows.value.filter(r=>(!query.value||`${r.code} ${r.description} ${r.notes}`.toLowerCase().includes(query.value.trim().toLowerCase()))&&(!state.value||(state.value==='active'?r.active:!r.active))).sort((a,b)=>sort.value==='products'?Number(b.product_count||0)-Number(a.product_count||0):String(a.code).localeCompare(String(b.code))))
+const selectedSet=computed(()=>new Set(selectedProductIds.value))
+const assignmentProducts=computed(()=>products.value.filter(p=>(!assignmentQuery.value||`${p.code} ${p.name} ${p.name_en}`.toLowerCase().includes(assignmentQuery.value.trim().toLowerCase()))&&(assignmentView.value!=='selected'||selectedSet.value.has(Number(p.id)))))
+const movedCount=computed(()=>products.value.filter(p=>selectedSet.value.has(Number(p.id))&&p.hs_code&&Number(p.hs_code)!==Number(active.value?.id)).length)
+const metrics=computed(()=>[{label:'HS 编码',value:rows.value.length,hint:'全部编码目录'},{label:'启用编码',value:rows.value.filter(r=>r.active).length,hint:'可分配给新产品'},{label:'已关联产品',value:rows.value.reduce((n,r)=>n+Number(r.product_count||0),0),hint:'全部编码当前关联'}])
+function errorText(e){const text=apiErrorMessage(e);if(e.response?.data?.code&&/已存在|unique|already exists/i.test(text))return '该 HS 编码已存在，请核对后修改。';return text.replace(/\b(code|description|product_ids)(?=\s*[:：])/g,key=>({code:'HS 编码',description:'商品描述',product_ids:'关联产品'})[key])}
+function filtersChanged(){return router.replace({path:route.path,query:{...route.query,search:query.value||undefined,state:state.value||undefined,sort:sort.value==='code'?undefined:sort.value}})}
+function resetFilters(){query.value='';state.value='';sort.value='code';return filtersChanged()}
+watch([()=>route.query.search,()=>route.query.state,()=>route.query.sort],([q,s,o])=>{query.value=q||'';state.value=s||'';sort.value=o||'code'})
+let version=0
+async function load(){const current=++version;loading.value=true;loadError.value='';productError.value='';try{
+  const [codes,session]=await Promise.all([listAll('/hs-codes/'),api.get('/session/current-operator/')]);if(current!==version)return
+  rows.value=codes;canManage.value=session.data.can_manage_hs_codes===true;hasLoaded.value=true
+  if(can('products','view'))try{const data=await listAll('/products/');if(current===version)products.value=data}catch(e){if(current===version)productError.value=apiErrorMessage(e)}
+}catch(e){if(current===version)loadError.value=apiErrorMessage(e)}finally{if(current===version)loading.value=false}}
+async function create(){if(!mayCreate.value||saving.value)return;editingId.value=null;Object.assign(form,{code:'',description:'',notes:'',active:true});saveError.value='';message.value='';formOpen.value=true;await nextTick();guard.markClean()}
+async function edit(row){if(!mayUpdate.value||saving.value)return;editingId.value=row.id;Object.assign(form,{code:row.code,description:row.description,notes:row.notes,active:row.active});saveError.value='';message.value='';formOpen.value=true;await nextTick();guard.markClean()}
+async function save(){if(saving.value||!(editingId.value?mayUpdate.value:mayCreate.value))return;saving.value=true;saveError.value='';message.value='';try{
+const data={...form,code:form.code.trim().toUpperCase()};editingId.value?await api.put(`/hs-codes/${editingId.value}/`,data):await api.post('/hs-codes/',data);guard.markClean();formOpen.value=false;await load();message.value=editingId.value?'HS 编码已更新':'HS 编码已创建'
+}catch(e){saveError.value=errorText(e)}finally{saving.value=false}}
+async function openAssignment(row){if(!mayUpdate.value||saving.value||loading.value||productError.value||!can('products','view'))return;active.value=row;assignmentQuery.value='';assignmentView.value='all';selectedProductIds.value=products.value.filter(p=>Number(p.hs_code)===Number(row.id)).map(p=>Number(p.id));assignmentOpen.value=true;saveError.value='';message.value='';await nextTick();guard.markClean()}
+function toggleProduct(id){if(saving.value)return;id=Number(id);selectedProductIds.value=selectedSet.value.has(id)?selectedProductIds.value.filter(x=>x!==id):[...selectedProductIds.value,id]}
+function selectVisible(selected){if(saving.value)return;const ids=new Set(assignmentProducts.value.map(p=>Number(p.id)));selectedProductIds.value=selected?[...new Set([...selectedProductIds.value,...ids])]:selectedProductIds.value.filter(id=>!ids.has(id))}
+async function saveAssignment(){if(saving.value||!mayUpdate.value||!active.value||productError.value)return;saving.value=true;saveError.value='';message.value='';try{const count=selectedProductIds.value.length,code=active.value.code;await api.put(`/hs-codes/${active.value.id}/assign-products/`,{product_ids:[...selectedProductIds.value]});guard.markClean();assignmentOpen.value=false;await load();message.value=`${code} 的产品关联已保存（${count} 项）`}catch(e){saveError.value=errorText(e)}finally{saving.value=false}}
 onMounted(load)
 </script>
-
 <template>
-  <section class="hs-code-page">
-    <div class="page-head"><div><h2>HS 编码维护</h2><p>由管理员统一维护编码目录，并在此处分配给产品；产品建档不再填写 HS 编码。</p></div><button v-if="mayCreate" class="btn btn-primary" @click="create"><Plus :size="16" /> 新建 HS 编码</button></div>
-    <SummaryCards :items="metrics" />
-    <section class="panel hs-list"><div class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" placeholder="搜索 HS 编码、商品描述或备注" /></div></div><div v-if="loading" class="loading"><div class="spinner" /></div><div v-else-if="!filtered.length" class="empty"><Search :size="32" /><h3>尚无 HS 编码</h3><p>请先建立受控编码，再为产品统一分配。</p></div><div v-else class="table-wrap"><table class="data-table"><thead><tr><th>HS 编码</th><th>商品描述</th><th>状态</th><th>关联产品</th><th>备注</th><th>操作</th></tr></thead><tbody><tr v-for="row in filtered" :key="row.id"><td class="primary-cell">{{ row.code }}</td><td>{{ row.description || '—' }}</td><td><span class="tag" :class="{ inactive: !row.active }">{{ row.active ? '启用' : '停用' }}</span></td><td>{{ row.product_count || 0 }} 个</td><td class="notes-cell">{{ row.notes || '—' }}</td><td><div v-if="mayUpdate" class="table-actions"><button class="mini-btn" title="分配产品" @click="openAssignment(row)"><Link2 :size="15" /></button><button class="mini-btn" title="编辑 HS 编码" @click="edit(row)"><Pencil :size="15" /></button></div></td></tr></tbody></table></div></section>
-
-    <div v-if="formOpen && (editingId ? mayUpdate : mayCreate)" class="modal-backdrop" @mousedown.self="formOpen=false"><form class="modal hs-modal" @submit.prevent="save"><div class="modal-head"><div><h3>{{ editingId ? '编辑 HS 编码' : '新建 HS 编码' }}</h3><p>编码由管理员维护，产品页面不可直接修改。</p></div><button type="button" class="mini-btn" @click="formOpen=false"><X :size="17" /></button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>HS 编码 <em>*</em></label><input v-model="form.code" required maxlength="30" placeholder="如：8539510000" /></div><div class="field"><label>商品描述</label><input v-model.trim="form.description" maxlength="300" placeholder="如：LED 灯具" /></div><label class="check"><input v-model="form.active" type="checkbox" /> 启用编码</label><div class="field full"><label>备注</label><textarea v-model.trim="form.notes" placeholder="适用范围或归类说明" /></div></div></div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="formOpen=false">取消</button><button v-if="editingId ? mayUpdate : mayCreate" class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : '保存' }}</button></div></form></div>
-
-    <div v-if="assignmentOpen && active && mayUpdate" class="modal-backdrop" @mousedown.self="assignmentOpen=false"><section class="modal wide assignment-modal"><div class="modal-head"><div><h3>分配产品 · {{ active.code }}</h3><p>勾选的产品将绑定此 HS 编码；取消勾选会解除当前编码的绑定。已绑定其他编码的产品将改用此编码。</p></div><button class="mini-btn" @click="assignmentOpen=false"><X :size="17" /></button></div><div class="modal-body"><div class="search-box"><Search :size="17" /><input v-model="assignmentQuery" placeholder="搜索产品编号或名称" /></div><div class="assignment-list"><label v-for="product in assignmentProducts" :key="product.id" :class="{ selected: selectedProductIds.includes(Number(product.id)) }"><input type="checkbox" :checked="selectedProductIds.includes(Number(product.id))" @change="toggleProduct(product.id)" /><span><strong>{{ product.name }}</strong><small>{{ product.code }} · 当前：{{ product.hs_code_value || '未分配' }}</small></span></label><p v-if="!assignmentProducts.length">没有匹配的产品。</p></div></div><div class="modal-foot"><button class="btn btn-secondary" @click="assignmentOpen=false">取消</button><button v-if="mayUpdate" class="btn btn-primary" :disabled="saving" @click="saveAssignment">{{ saving ? '保存中…' : `保存 ${selectedProductIds.length} 项分配` }}</button></div></section></div>
-    <div v-if="message.text" class="toast" :class="{ error: message.error }">{{ message.text }}</div>
-  </section>
+<section class="hs-code-page">
+<header class="page-head"><div><h2>HS 编码维护</h2><p>维护编码目录及产品归类。只有具备管理权限的人员可以修改。</p></div><div class="actions"><button class="btn btn-secondary" :disabled="loading||saving" @click="load">刷新</button><button v-if="mayCreate" class="btn btn-primary" @click="create">新建 HS 编码</button></div></header>
+<SummaryCards v-if="hasLoaded" :items="metrics" />
+<PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
+<p v-if="message" role="status" class="success">{{ message }}</p>
+<p v-if="productError" role="alert" class="error">产品列表加载失败：{{ productError }} <button @click="load">重新加载</button></p>
+<p v-if="hasLoaded&&!mayUpdate" class="hint">当前为只读查看，编码及产品关联由管理员维护。</p>
+<section v-if="hasLoaded" class="panel hs-list"><form class="toolbar" @submit.prevent="filtersChanged"><label>搜索<input v-model="query" aria-label="搜索 HS 编码" placeholder="编码、商品描述或备注" /></label><label>状态<select v-model="state" aria-label="HS 编码状态" @change="filtersChanged"><option value="">全部状态</option><option value="active">启用</option><option value="inactive">停用</option></select></label><label>排序<select v-model="sort" aria-label="HS 编码排序" @change="filtersChanged"><option value="code">编码顺序</option><option value="products">关联产品最多</option></select></label><button class="btn btn-secondary">查询</button><button type="button" class="btn btn-secondary" @click="resetFilters">重置</button></form>
+<div v-if="!filtered.length" class="empty"><h3>{{ rows.length?'没有匹配的 HS 编码':'尚无 HS 编码' }}</h3><p>{{ rows.length?'调整搜索或状态后重试。':'建立编码后即可统一分配产品。' }}</p></div>
+<div v-else class="table-wrap"><table class="data-table"><thead><tr><th>HS 编码</th><th>商品描述</th><th>状态</th><th>关联产品</th><th>备注</th><th>操作</th></tr></thead><tbody><tr v-for="row in filtered" :key="row.id"><td><strong>{{ row.code }}</strong></td><td>{{ row.description||'—' }}</td><td>{{ row.active?'启用':'停用' }}</td><td>{{ row.product_count||0 }} 个</td><td>{{ row.notes||'—' }}</td><td><div v-if="mayUpdate" class="actions"><button class="mini-btn" :disabled="loading||!!productError||!can('products','view')" @click="openAssignment(row)">分配产品</button><button class="mini-btn" @click="edit(row)">编辑</button></div><span v-else>只读</span></td></tr></tbody></table></div></section>
+<div v-if="formOpen" class="modal-backdrop" @mousedown.self="close"><form class="modal hs-modal" role="dialog" aria-modal="true" :aria-label="editingId?'编辑 HS 编码':'新建 HS 编码'" @submit.prevent="save"><header class="modal-head"><div><h3>{{ editingId?'编辑 HS 编码':'新建 HS 编码' }}</h3><p>停用后不能分配给新产品，已有产品关联保留。</p></div><button type="button" class="mini-btn" aria-label="关闭编码表单" :disabled="saving" @click="close">×</button></header><div class="modal-body" :inert="saving"><p v-if="saveError" role="alert" class="error">{{ saveError }}</p><div class="form-grid"><label>HS 编码 <em>*</em><input v-model="form.code" aria-label="HS 编码" maxlength="30" required placeholder="如：8539510000" /></label><label>商品描述<input v-model.trim="form.description" aria-label="商品描述" maxlength="300" /></label><label class="check"><input v-model="form.active" type="checkbox" />启用编码</label><label class="full">备注<textarea v-model.trim="form.notes" aria-label="备注" /></label></div></div><footer class="modal-foot"><button type="button" class="btn btn-secondary" :disabled="saving" @click="close">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving?'保存中…':'保存编码' }}</button></footer></form></div>
+<div v-if="assignmentOpen&&active" class="modal-backdrop" @mousedown.self="close"><section class="modal assignment-modal" role="dialog" aria-modal="true" :aria-label="`分配产品 · ${active.code}`"><header class="modal-head"><div><h3>分配产品 · {{ active.code }}</h3><p>取消勾选会解除此编码的关联；选择其他编码下的产品会改变其当前归类。</p></div><button class="mini-btn" aria-label="关闭产品分配" :disabled="saving" @click="close">×</button></header><div class="modal-body" :inert="saving"><p v-if="saveError" role="alert" class="error">{{ saveError }}</p><p v-if="!active.active" class="hint">此编码已停用，只能保留或解除已有产品关联。</p><div class="selection-summary"><strong>已选 {{ selectedProductIds.length }} 项</strong><span>当前显示 {{ assignmentProducts.length }} 项</span><span v-if="movedCount" class="warning">{{ movedCount }} 项将从其他编码移入</span></div><div class="assignment-toolbar"><input v-model="assignmentQuery" aria-label="搜索关联产品" placeholder="搜索产品编号、中英文名称" /><select v-model="assignmentView" aria-label="产品显示范围"><option value="all">全部产品</option><option value="selected">只看已选</option></select><button @click="selectVisible(true)">选择当前结果</button><button @click="selectVisible(false)">取消当前结果</button></div><p class="hint">搜索不会清除已选产品；批量操作仅影响当前结果。保存将提交全部已选项。</p><div class="assignment-list"><label v-for="product in assignmentProducts" :key="product.id"><input type="checkbox" :aria-label="`${product.code} · ${product.name}`" :checked="selectedSet.has(Number(product.id))" @change="toggleProduct(product.id)" /><span><strong>{{ product.name }}</strong><small>{{ product.code }} · 当前：{{ product.hs_code_value||'未分配' }}</small></span><RouterLink v-if="can('products','view')" :to="{path:'/products',query:{detail:String(product.id),returnTo:route.fullPath}}" @click.stop>查看产品</RouterLink></label><p v-if="!assignmentProducts.length">{{ assignmentView==='selected'?'当前没有匹配的已选产品。':'没有匹配的产品。' }}</p></div></div><footer class="modal-foot"><button class="btn btn-secondary" :disabled="saving" @click="close">取消</button><button class="btn btn-primary" :disabled="saving" @click="saveAssignment">{{ saving?'保存中…':`保存 ${selectedProductIds.length} 项关联` }}</button></footer></section></div>
+</section>
 </template>
-
 <style scoped>
-.hs-list{padding:0}.toolbar{padding:17px 20px;border-bottom:1px solid var(--line)}.toolbar .search-box{max-width:440px}.notes-cell{max-width:330px;color:var(--muted)}.table-actions{display:flex;justify-content:flex-end;gap:6px}.tag.inactive{background:#f2eded;color:#9d5959}.hs-modal{width:min(650px,calc(100vw - 28px))}.assignment-modal{width:min(760px,calc(100vw - 28px))}.modal-head>div p{margin:4px 0 0;color:var(--muted);font-size:var(--text-body)}.check{display:flex;align-items:center;gap:8px;padding-top:25px;color:#40534c;font-size:var(--text-body)}.check input{accent-color:var(--green-2)}.assignment-list{max-height:420px;margin-top:14px;overflow:auto;border:1px solid var(--line);border-radius:9px}.assignment-list label{display:flex;align-items:center;gap:10px;padding:11px 13px;border-bottom:1px solid #e9eeeb;cursor:pointer}.assignment-list label:last-child{border-bottom:0}.assignment-list label:hover,.assignment-list label.selected{background:#eff8f3}.assignment-list input{width:16px;height:16px;accent-color:var(--green-2)}.assignment-list span{display:grid;gap:3px;min-width:0}.assignment-list strong{font-size:var(--text-body);color:#294b40}.assignment-list small{color:#7e9088;font-size:var(--text-caption)}.assignment-list p{margin:0;padding:32px;color:var(--muted);text-align:center}@media(max-width:680px){.page-head{align-items:flex-start;flex-direction:column}.page-head .btn{width:100%}.check{padding-top:0}}
+.hs-code-page>.panel{min-width:0}.hs-code-page{display:grid;gap:18px;min-width:0}.page-head{margin:0;flex-wrap:wrap}.page-head>div:first-child{flex:1 1 400px}.page-head p,.modal-head p{color:var(--muted);line-height:1.65;margin:6px 0 0}.actions{display:flex;gap:8px;flex-wrap:wrap}.toolbar{display:flex;align-items:end;flex-wrap:wrap;gap:12px;padding:18px}.toolbar label{display:grid;gap:5px}.toolbar label:first-child{flex:1 1 300px}.table-wrap{overflow:auto}.data-table{table-layout:fixed;min-width:980px}.data-table th:nth-child(1){width:150px}.data-table th:nth-child(3){width:75px}.data-table th:nth-child(4){width:90px}.data-table th:last-child{width:150px}.data-table th:last-child,.data-table td:last-child{position:sticky;right:0;background:white}.data-table td{overflow-wrap:anywhere}.hs-modal{width:min(720px,calc(100vw - 40px))}.assignment-modal{width:min(980px,calc(100vw - 40px))}.form-grid>label{display:grid;gap:7px;min-width:0}.form-grid>.check{display:flex;align-items:center}.full{grid-column:1/-1}input,select,textarea{font:inherit;padding:10px;border:1px solid var(--line);border-radius:7px;min-width:0;max-width:100%;background:white}.check input,.assignment-list input{width:17px;flex:none}.success,.hint,.error{padding:12px;border-radius:8px;line-height:1.65;margin:0;overflow-wrap:anywhere}.success,.hint{background:#edf6f1;color:#345e50}.error{background:#fff0ed;color:#9e3b32}.selection-summary{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}.warning{color:#9a5a16}.assignment-toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.assignment-toolbar input{flex:1 1 300px}.assignment-list{max-height:390px;overflow:auto;border:1px solid var(--line);border-radius:8px;margin-top:12px}.assignment-list label{display:flex;gap:12px;align-items:center;padding:12px;border-bottom:1px solid var(--line)}.assignment-list span{flex:1;min-width:0;overflow-wrap:anywhere}.assignment-list small{display:block;color:var(--muted);margin-top:4px}.assignment-list a{flex:none}.assignment-list p{padding:20px}.modal-foot{background:white;position:sticky;bottom:0}.modal-head>div{min-width:0}.modal-head h3{overflow-wrap:anywhere}:global(body:has(.hs-modal)),:global(body:has(.assignment-modal)){overflow:hidden}
 </style>

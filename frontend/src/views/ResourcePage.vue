@@ -11,6 +11,7 @@ import { copyPaymentTerms, paymentTermsError } from '../utils/paymentTerms'
 import { movementTypes, movementDirection, movementSource, sourceLabels, movementStatus, ledgerFilters, filteredMovements, movementSummary, movementUnit, signedMovement } from '../utils/inventoryLedger'
 import CategoryMultiPicker from "../components/CategoryMultiPicker.vue"
 import CertificateExpiryBadge from '../components/CertificateExpiryBadge.vue'
+import { certificateFileUrl, certificateError } from '../utils/certificateFile'
 import { certificateFilters, certificateFilterLabels, certificateFilterQuery } from '../utils/certificateExpiry'
 import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -40,7 +41,7 @@ const { can, accessState } = useAccessControl()
 const route = useRoute()
 const router = useRouter()
 const isParameterPage = computed(() => props.config.endpoint === 'product-parameters')
-const parameterProducts = ref([]), parameterOptionError = ref(''), parameterSaveError = ref('')
+const parameterProducts = ref([]), parameterOptionError = ref(''), parameterSaveError = ref(''), certificateSaveError = ref('')
 async function loadParameterProducts() { parameterOptionError.value = ''; try { parameterProducts.value = await listAll('/products/') } catch (error) { parameterOptionError.value = apiErrorMessage(error) } }
 const isSupplierPage = computed(() => props.config.endpoint === 'suppliers')
 const isContactPage = computed(() => props.config.endpoint === 'contacts')
@@ -60,7 +61,7 @@ const crmFilter = computed(() => ({
 const supplierCategories = ref([]), supplierCategoryError = ref(''), supplierSaveError = ref('')
 const supplierFilter = computed(() => supplierFilters(route.query))
 const supplierGroupTitles = ['基本资料', '联系方式', '可供产品分类', '付款条款', '其他备注']
-const listColumns = computed(() => isSupplierPage.value
+const listColumns = computed(() => isCertificatePage.value ? [['name','证书与编号'],['product_name','所属产品'],['issuer','签发机构'],['issued_date','签发日期','date'],['expires_on','有效期至','date'],['expiry_status','有效状态'],['file_url','文件']] : isSupplierPage.value
   ? [['name','供应商'],['main_products','产品与可供分类'],['contact_name','联系方式'],['payment_terms_summary','系统执行付款规则'],['payment_terms','付款条款说明（备注）']]
   : isContactPage.value
     ? [['customer_name','所属客户'],['name','联系人'],['contact_methods','联系方式'],['is_primary','主联系人','boolean']]
@@ -69,16 +70,16 @@ const listColumns = computed(() => isSupplierPage.value
       : props.config.columns)
 const isCustomerPage = computed(() => props.config.endpoint === 'customers')
 const isCoreListPage = computed(() => isCustomerPage.value || isMovementPage.value || isSupplierPage.value)
-const primaryAction = computed(() => isParameterPage.value ? '新建产品参数' : isCustomerPage.value ? '新建客户' : isMovementPage.value ? '新建库存调整' : isSupplierPage.value ? '新建供应商' : isContactPage.value ? '新建联系人' : isFollowUpPage.value ? '新建跟进记录' : '新建记录')
-const listNoun = computed(() => isParameterPage.value ? '产品参数' : isCustomerPage.value ? '客户' : isSupplierPage.value ? '供应商' : isContactPage.value ? '联系人' : isFollowUpPage.value ? '跟进记录' : '库存流水')
-const hasListFilters = computed(() => Boolean(query.value || (isParameterPage.value && route.query.product) || (isSupplierPage.value && (supplierFilter.value.category || supplierFilter.value.terms)) || (isMovementPage.value && [movementFilters.value.type, movementFilters.value.direction, movementFilters.value.source, route.query.sku].some(Boolean)) || (isContactPage.value && [crmFilter.value.customer, crmFilter.value.primary].some(Boolean)) || (isFollowUpPage.value && [crmFilter.value.customer, crmFilter.value.type, crmFilter.value.from, crmFilter.value.to, route.query.due].some(Boolean))))
+const primaryAction = computed(() => isCertificatePage.value ? '新建产品证书' : isParameterPage.value ? '新建产品参数' : isCustomerPage.value ? '新建客户' : isMovementPage.value ? '新建库存调整' : isSupplierPage.value ? '新建供应商' : isContactPage.value ? '新建联系人' : isFollowUpPage.value ? '新建跟进记录' : '新建记录')
+const listNoun = computed(() => isCertificatePage.value ? '产品证书' : isParameterPage.value ? '产品参数' : isCustomerPage.value ? '客户' : isSupplierPage.value ? '供应商' : isContactPage.value ? '联系人' : isFollowUpPage.value ? '跟进记录' : '库存流水')
+const hasListFilters = computed(() => Boolean(query.value || ((isParameterPage.value || isCertificatePage.value) && route.query.product) || (isCertificatePage.value && route.query.expiry) || (isSupplierPage.value && (supplierFilter.value.category || supplierFilter.value.terms)) || (isMovementPage.value && [movementFilters.value.type, movementFilters.value.direction, movementFilters.value.source, route.query.sku].some(Boolean)) || (isContactPage.value && [crmFilter.value.customer, crmFilter.value.primary].some(Boolean)) || (isFollowUpPage.value && [crmFilter.value.customer, crmFilter.value.type, crmFilter.value.from, crmFilter.value.to, route.query.due].some(Boolean))))
 const isMovementPage = computed(() => props.config.endpoint === 'inventory-movements')
 const movementSkus = ref([])
 const movementFilters = computed(() => ledgerFilters(route.query))
-const visibleRows = computed(() => isMovementPage.value ? filteredMovements(rows.value, route.query) : isSupplierPage.value ? supplierRows(rows.value, route.query, supplierCategories.value) : isContactPage.value ? contactRows(rows.value, crmFilter.value) : isFollowUpPage.value ? followUpRows(rows.value, crmFilter.value) : rows.value)
+const visibleRows = computed(() => isMovementPage.value ? filteredMovements(rows.value, route.query) : isSupplierPage.value ? supplierRows(rows.value, route.query, supplierCategories.value) : isContactPage.value ? contactRows(rows.value, crmFilter.value) : isFollowUpPage.value ? followUpRows(rows.value, crmFilter.value) : isCertificatePage.value ? [...rows.value].sort((a,b)=>route.query.sort==='name'?String(a.name).localeCompare(String(b.name),'zh-CN'):String(a.expires_on||'9999').localeCompare(String(b.expires_on||'9999')) || Number(a.id)-Number(b.id)) : rows.value)
 const ledgerPage = computed(() => inventoryPage(route.query.page, visibleRows.value.length))
 const isCrmListPage = computed(() => isCrmPage.value)
-const displayRows = computed(() => isMovementPage.value || isSupplierPage.value || isCrmListPage.value ? visibleRows.value.slice((ledgerPage.value - 1) * 25, ledgerPage.value * 25) : visibleRows.value)
+const displayRows = computed(() => isMovementPage.value || isSupplierPage.value || isCrmListPage.value || isCertificatePage.value ? visibleRows.value.slice((ledgerPage.value - 1) * 25, ledgerPage.value * 25) : visibleRows.value)
 const reversing = ref(false)
 let ledgerUpdates = Promise.resolve(), ledgerRequest = 0
 let crmRequest = 0
@@ -123,7 +124,7 @@ const requiredRemoteFields = computed(() => props.config.fields.filter(field => 
 const optionsReady = computed(() => requiredRemoteFields.value.every(field => optionLoaded[field[4]] && !optionErrors[field[4]]))
 const filteredListEmpty = computed(() => hasListFilters.value && allRecordsExist.value)
 const customerContacts = ref([])
-const guard = useUnsavedChangesGuard({ data: () => ({ form, contacts: customerContacts.value, files: pendingFollowUpFiles.value }), enabled: () => modalOpen.value && props.config.endpoint !== 'inventory-movements', busy: () => (isCrmPage.value || isParameterPage.value) && modalOpen.value && saving.value })
+const guard = useUnsavedChangesGuard({ data: () => ({ form, contacts: customerContacts.value, files: pendingFollowUpFiles.value }), enabled: () => modalOpen.value && props.config.endpoint !== 'inventory-movements', busy: () => (isCrmPage.value || isParameterPage.value || isCertificatePage.value) && modalOpen.value && saving.value })
 const followUpDays = ref('')
 const followUpSaveAttempted = ref(false)
 const followUpScheduleError = computed(() => followUpError(form))
@@ -144,6 +145,7 @@ const routeModalOpen = ref(false)
 
 const statusLabels = { lead: '线索', contact: '已建立联系', opportunity: '已进入报价阶段', customer: '已有1张正式订单', company: '已有2张及以上正式订单', development: '开发中', discontinued: '停产', draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
 const editorFields = computed(() => {
+  if (isCertificatePage.value) return [['product','name','certificate_no','issuer'],['issued_date','expires_on'],['file_url','notes']].map(keys=>keys.map(key=>props.config.fields.find(field=>field[0]===key)))
   if (isParameterPage.value) return [['product','group'],['name','value','unit','sort_order']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
   if (isSupplierPage.value) return [['name','code','country','main_products'],['contact_name','phone','email','store_url'],['supply_categories'],['payment_terms','payment_terms_config'],['notes']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
   if (isContactPage.value) return [['customer','name','title','is_primary'],['phone','whatsapp','email'],['notes']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
@@ -152,9 +154,9 @@ const editorFields = computed(() => {
   const order = ['name', 'code', 'country', 'region', 'owner_profile', 'source', 'website', 'address', 'notes']
   return [...props.config.fields].sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]))
 })
-const editorGroupTitles = computed(() => isParameterPage.value ? ['所属产品与分组', '参数内容'] : isSupplierPage.value ? supplierGroupTitles : isContactPage.value ? ['所属客户与联系人资料', '联系方式', '备注'] : isFollowUpPage.value ? ['客户与沟通方式', '沟通内容', '下一步安排'] : [])
-const editorGroups = computed(() => isSupplierPage.value || isContactPage.value || isFollowUpPage.value || isParameterPage.value ? editorFields.value : props.config.endpoint === 'customers' ? [editorFields.value.filter(f => !['website', 'address', 'notes'].includes(f[0])), editorFields.value.filter(f => ['website', 'address', 'notes'].includes(f[0]))] : [editorFields.value])
-const saveLabel = computed(() => props.config.endpoint === 'customers' ? '保存客户' : isFollowUpPage.value ? '保存跟进' : isContactPage.value ? '保存联系人' : isSupplierPage.value ? '保存供应商' : '保存')
+const editorGroupTitles = computed(() => isCertificatePage.value ? ['证书资料','签发与到期日期','文件与备注'] : isParameterPage.value ? ['所属产品与分组', '参数内容'] : isSupplierPage.value ? supplierGroupTitles : isContactPage.value ? ['所属客户与联系人资料', '联系方式', '备注'] : isFollowUpPage.value ? ['客户与沟通方式', '沟通内容', '下一步安排'] : [])
+const editorGroups = computed(() => isSupplierPage.value || isContactPage.value || isFollowUpPage.value || isParameterPage.value || isCertificatePage.value ? editorFields.value : props.config.endpoint === 'customers' ? [editorFields.value.filter(f => !['website', 'address', 'notes'].includes(f[0])), editorFields.value.filter(f => ['website', 'address', 'notes'].includes(f[0]))] : [editorFields.value])
+const saveLabel = computed(() => isCertificatePage.value ? '保存证书' : props.config.endpoint === 'customers' ? '保存客户' : isFollowUpPage.value ? '保存跟进' : isContactPage.value ? '保存联系人' : isSupplierPage.value ? '保存供应商' : '保存')
 const fieldOptions = computed(() => Object.fromEntries(props.config.fields.filter(field => field[2] === 'select').map(field => [field[0], field[4]])))
 const title = computed(() => editingId.value ? `编辑${props.config.title.replace('管理', '')}` : `新建${props.config.title.replace('管理', '')}`)
 function editorFieldLabel(field) {
@@ -190,6 +192,7 @@ const resourceMetrics = computed(() => {
   if (isMovementPage.value) return movementSummary(visibleRows.value)
   if (isSupplierPage.value) return [{label:'供应商',value:visibleRows.value.length,hint:'全部筛选结果'},{label:'可供分类',value:new Set(visibleRows.value.flatMap(row=>row.supply_categories || [])).size,hint:'已选择的分类'},{label:'自定义付款规则',value:visibleRows.value.filter(row=>row.payment_terms_config?.length).length,hint:'按结构化配置统计'},{label:'有店铺链接',value:visibleRows.value.filter(row=>supplierStoreUrl(row.store_url)).length,hint:'可打开的网页链接'}]
   if (isParameterPage.value) return [{label:'参数记录',value:rows.value.length,hint:'当前筛选结果'},{label:'所属产品',value:new Set(rows.value.map(row=>row.product)).size,hint:'当前记录关联产品'},{label:'参数分组',value:new Set(rows.value.map(row=>row.group || '未分组')).size,hint:'当前筛选范围'},{label:'有单位的参数',value:rows.value.filter(row=>row.unit).length,hint:'参数值的展示单位'}]
+  if (isCertificatePage.value) return [{label:'证书记录',value:rows.value.length,hint:'当前筛选结果'},{label:'已过期',value:rows.value.filter(r=>r.expiry_status==='expired').length,hint:'按服务端日期判断'},{label:'90天内到期',value:rows.value.filter(r=>['expiring_30','expiring_90'].includes(r.expiry_status)).length,hint:'含今日到期'},{label:'未填有效期',value:rows.value.filter(r=>r.expiry_status==='no_expiry').length,hint:'不代表永久有效'}]
   const total = rows.value.length
   const today = new Date().toISOString().slice(0, 10)
   if (endpoint === 'customers') return [
@@ -276,6 +279,12 @@ async function load() {
     }
     return
   }
+  if (isCertificatePage.value) {
+    const request=++ledgerRequest
+    const {search,product,expiry}=route.query
+    try{const result=await listAll('/product-certificates/',{params:{search:search||'',...(product?{product}:{}),...(expiry?{expiry}:{})}});if(request!==ledgerRequest)return;rows.value=result;hasLoaded.value=true;allRecordsExist.value=result.length>0||hasListFilters.value}catch(e){if(request===ledgerRequest)loadError.value=apiErrorMessage(e)}finally{if(request===ledgerRequest)loading.value=false}
+    return
+  }
   if (!isMovementPage.value) {
     try {
       const nextRows = await listAll(`/${props.config.endpoint}/`, { params: { ...routeDataQuery(route.query), search: query.value } })
@@ -304,11 +313,11 @@ async function load() {
 }
 function delayedSearch() {
   clearTimeout(searchTimer)
-  searchTimer = setTimeout(() => isParameterPage.value ? updateLedgerQuery({search:query.value || undefined},true) : isCustomerPage.value ? updateLedgerQuery({ search:query.value || undefined }, true) : isMovementPage.value || isSupplierPage.value ? updateLedgerQuery({ search:query.value || undefined }) : isCrmPage.value ? updateCrmQuery({ search:query.value || undefined }, true) : load(), 300)
+  searchTimer = setTimeout(() => isParameterPage.value || isCertificatePage.value ? updateLedgerQuery({search:query.value || undefined},true) : isCustomerPage.value ? updateLedgerQuery({ search:query.value || undefined }, true) : isMovementPage.value || isSupplierPage.value ? updateLedgerQuery({ search:query.value || undefined }) : isCrmPage.value ? updateCrmQuery({ search:query.value || undefined }, true) : load(), 300)
 }
 function clearListFilters() {
   query.value = ''
-  if (isParameterPage.value) return updateLedgerQuery({product:undefined,search:undefined})
+  if (isParameterPage.value || isCertificatePage.value) return updateLedgerQuery({product:undefined,search:undefined,expiry:undefined,sort:undefined,page:undefined})
   if (isSupplierPage.value) { clearTimeout(searchTimer); return updateLedgerQuery({ search:undefined,supplyCategory:undefined,termsMode:undefined }) }
   if (isMovementPage.value) return resetLedgerFilters()
   if (isCustomerPage.value) return updateLedgerQuery({ search: undefined }, true)
@@ -318,7 +327,7 @@ function clearListFilters() {
   }
   return load()
 }
-watch(() => route.query.search, value => { if (isMovementPage.value || isCustomerPage.value || isSupplierPage.value || isCrmPage.value || isParameterPage.value) { clearTimeout(searchTimer); query.value = typeof value === 'string' ? value : '' } }, { immediate:true })
+watch(() => route.query.search, value => { if (isMovementPage.value || isCustomerPage.value || isSupplierPage.value || isCrmPage.value || isParameterPage.value || isCertificatePage.value) { clearTimeout(searchTimer); query.value = typeof value === 'string' ? value : '' } }, { immediate:true })
 onBeforeUnmount(() => { clearTimeout(searchTimer); clearTimeout(toastTimer); ledgerRequest++; crmRequest++ })
 async function loadSupplierCategories() {
   supplierCategoryError.value = ''
@@ -470,6 +479,7 @@ function isInherited(fieldName) {
 async function openCreate({ isCurrent = () => true } = {}) {
   if (!can(accessModule.value, 'create')) return
   clearToast()
+  certificateSaveError.value=''
   if (isParameterPage.value) { parameterSaveError.value = ''; toast.show = false }
   if (isMovementPage.value || isSupplierPage.value) toast.show = false
   supplierSaveError.value = ''
@@ -492,6 +502,7 @@ async function openCreate({ isCurrent = () => true } = {}) {
 async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}) {
   if (!can(accessModule.value, 'update')) return
   clearToast()
+  certificateSaveError.value=''
   if (isParameterPage.value) { parameterSaveError.value = ''; toast.show = false }
   if (isMovementPage.value || isSupplierPage.value) toast.show = false
   supplierSaveError.value = ''
@@ -512,7 +523,7 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
   guard.markClean()
   modalOpen.value = true
 }
-const closeModal = () => { if ((isSupplierPage.value || isCrmPage.value || isParameterPage.value) && saving.value) return; return guard.requestClose(discardModal) }
+const closeModal = () => { if ((isSupplierPage.value || isCrmPage.value || isParameterPage.value || isCertificatePage.value) && saving.value) return; return guard.requestClose(discardModal) }
 function discardModal() {
   const refreshDetail = keepDetailOpen.value
   modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []
@@ -570,7 +581,7 @@ async function save() {
   if (!can(accessModule.value, editingId.value ? 'update' : 'create')) return
   if (saving.value) return
   clearToast()
-  parameterSaveError.value = ''
+  parameterSaveError.value = ''; certificateSaveError.value=''
   if (!optionsReady.value) return notify('关联资料尚未加载完成，请重试后再保存。', true)
   if (isSupplierPage.value) {
     supplierSaveError.value = ''; toast.show = false
@@ -601,14 +612,15 @@ async function save() {
     }
     const refreshDetail = keepDetailOpen.value
     modalOpen.value = false
-    const successMessage = isContactPage.value ? (wasEditing ? '联系人已更新' : '联系人已创建') : isFollowUpPage.value ? (wasEditing ? '跟进记录已更新' : '跟进记录已保存') : isSupplierPage.value ? (wasEditing ? '供应商修改已保存。' : '供应商创建成功。') : (wasEditing ? '更新成功' : '创建成功')
+    const successMessage = isCertificatePage.value ? (wasEditing?'证书已更新':'证书已创建') : isContactPage.value ? (wasEditing ? '联系人已更新' : '联系人已创建') : isFollowUpPage.value ? (wasEditing ? '跟进记录已更新' : '跟进记录已保存') : isSupplierPage.value ? (wasEditing ? '供应商修改已保存。' : '供应商创建成功。') : (wasEditing ? '更新成功' : '创建成功')
     notify(attachmentError ? `记录已保存，但${attachmentError}` : successMessage, Boolean(attachmentError)); await clearModalRoute(router, route); await load()
     if (refreshDetail) detailRefresh.value += 1
     keepDetailOpen.value = false
   } catch (e) {
+    if (isCertificatePage.value) certificateSaveError.value=certificateError(e)
     if (isParameterPage.value) parameterSaveError.value = /product, group, name/.test(apiErrorMessage(e)) ? '该产品的同一分组下已存在这个参数名称，请修改名称或分组。' : apiErrorMessage(e)
     if (isSupplierPage.value) { supplierSaveError.value = apiErrorMessage(e); if (e.response?.data?.code || /重复|二字代码/.test(e.message || '')) supplierCodeServerError.value = Array.isArray(e.response?.data?.code) ? e.response.data.code.join('；') : e.message }
-    notify(isParameterPage.value ? parameterSaveError.value : e.message, true)
+    notify(isCertificatePage.value ? certificateSaveError.value : isParameterPage.value ? parameterSaveError.value : e.message, true)
   } finally { saving.value = false }
 }
 async function handleInventoryMovementCreated(records) {
@@ -712,14 +724,14 @@ function routeCreatePrefillSignature() {
   return JSON.stringify(fields.map(name => [name, route.query[name] ?? null]))
 }
 
-watch(() => isMovementPage.value || isSupplierPage.value ? JSON.stringify(ledgerDataQuery()) : isCrmPage.value ? JSON.stringify([route.query.customer || '', route.query.due || '', route.query.search || '']) : routeDataQuerySignature(route.query), load)
+watch(() => isCertificatePage.value ? JSON.stringify([route.query.search||'',route.query.product||'',route.query.expiry||'']) : isMovementPage.value || isSupplierPage.value ? JSON.stringify(ledgerDataQuery()) : isCrmPage.value ? JSON.stringify([route.query.customer || '', route.query.due || '', route.query.search || '']) : routeDataQuerySignature(route.query), load)
 watch([() => route.query.create, () => route.query.edit, routeCreatePrefillSignature], (current, previous) => {
   const prefillOnlyChanged = previous && current[0] === previous[0] && current[1] === previous[1]
   if (prefillOnlyChanged && route.query.create !== '1') return
   void syncModalFromRoute()
 }, { immediate: true })
 watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null }, { immediate: true })
-onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus(); if (isSupplierPage.value && can('categories','view')) void loadSupplierCategories(); if (isCrmPage.value) void loadCrmFilterOptions(); if (isParameterPage.value && can('products','view')) void loadParameterProducts() })
+onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus(); if (isSupplierPage.value && can('categories','view')) void loadSupplierCategories(); if (isCrmPage.value) void loadCrmFilterOptions(); if ((isParameterPage.value || isCertificatePage.value) && can('products','view')) void loadParameterProducts() })
 </script>
 
 <template>
@@ -730,7 +742,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
     <div v-if="isCertificatePage" class="certificate-filters" aria-label="证书有效期筛选"><button v-for="[value, label] in certificateFilters" :key="value" type="button" class="btn" :class="{ 'btn-primary': (route.query.expiry || '') === value }" :aria-pressed="(route.query.expiry || '') === value" @click="setCertificateFilter(value)">{{ label }}</button></div>
     <div v-if="certificateFilterLabel" class="follow-up-due-context" aria-label="当前证书筛选"><span>当前筛选：<strong>{{ certificateFilterLabel }}</strong></span><button type="button" @click="setCertificateFilter('')">清除筛选</button></div>
     <div v-if="hasCurrentDueFollowUpContext" class="follow-up-due-context" aria-label="当前跟进筛选"><span>当前筛选：<strong>今日及逾期待跟进</strong></span><button type="button" @click="clearFollowUpDueFilter">清除待跟进筛选</button></div>
-    <div v-if="isParameterPage" class="parameter-filter-bar"><label v-if="can('products','view')">所属产品<select aria-label="按产品筛选参数" :value="route.query.product || ''" @change="updateLedgerQuery({product:$event.target.value || undefined})"><option value="">全部产品</option><option v-for="product in parameterProducts" :key="product.id" :value="String(product.id)">{{ product.code }} · {{ product.name }}</option></select></label><button class="btn btn-secondary" @click="updateLedgerQuery({product:undefined,search:undefined}); query = ''">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button><button v-if="route.query.product && can('products','view')" class="btn btn-secondary" @click="router.push({path:'/products',query:{detail:route.query.product}})">查看所属产品</button></div><p v-if="isParameterPage" class="field-help">产品参数用于记录通用规格。分类属性用于参数模板，SKU 参数用于具体规格与身份；在此保存不会修改 SKU 参数。</p><p v-if="isParameterPage && parameterOptionError" role="alert" class="option-load-error">{{ parameterOptionError }} <button @click="loadParameterProducts">重试</button></p>
+    <div v-if="isCertificatePage" class="certificate-controls"><label v-if="can('products','view')">所属产品<select aria-label="按产品筛选证书" :value="route.query.product || ''" @change="updateLedgerQuery({product:$event.target.value||undefined,page:undefined})"><option value="">全部产品</option><option v-for="p in parameterProducts" :key="p.id" :value="String(p.id)">{{ p.code }} · {{ p.name }}</option></select></label><label>排序<select aria-label="证书排序" :value="route.query.sort || 'expiry'" @change="updateLedgerQuery({sort:$event.target.value,page:undefined})"><option value="expiry">到期日期优先</option><option value="name">证书名称</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><p v-if="isCertificatePage" class="field-help">到期状态按系统日期和有效期判断；未填有效期不代表永久有效。文件由现有链接提供，不在此上传。</p><p v-if="isCertificatePage && parameterOptionError" role="alert" class="option-load-error">产品选项加载失败：{{ parameterOptionError }} <button @click="loadParameterProducts">重试</button></p><div v-if="isParameterPage" class="parameter-filter-bar"><label v-if="can('products','view')">所属产品<select aria-label="按产品筛选参数" :value="route.query.product || ''" @change="updateLedgerQuery({product:$event.target.value || undefined})"><option value="">全部产品</option><option v-for="product in parameterProducts" :key="product.id" :value="String(product.id)">{{ product.code }} · {{ product.name }}</option></select></label><button class="btn btn-secondary" @click="updateLedgerQuery({product:undefined,search:undefined}); query = ''">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button><button v-if="route.query.product && can('products','view')" class="btn btn-secondary" @click="router.push({path:'/products',query:{detail:route.query.product}})">查看所属产品</button></div><p v-if="isParameterPage" class="field-help">产品参数用于记录通用规格。分类属性用于参数模板，SKU 参数用于具体规格与身份；在此保存不会修改 SKU 参数。</p><p v-if="isParameterPage && parameterOptionError" role="alert" class="option-load-error">{{ parameterOptionError }} <button @click="loadParameterProducts">重试</button></p>
     <div v-if="isCrmPage" class="crm-filter-bar" :class="{ 'follow-up-filter-bar': isFollowUpPage }" :aria-label="isContactPage ? '联系人筛选' : '跟进记录筛选'">
       <label class="crm-search search-box">搜索<input v-model="query" :aria-label="isContactPage ? '搜索联系人' : '搜索跟进记录'" :placeholder="isContactPage ? '姓名、客户、职位或联系方式' : '客户、主题、跟进人或内容'" @input="delayedSearch" /></label>
       <label v-if="crmFilterOptions.customers.length">所属客户<select aria-label="按客户筛选" :value="crmFilter.customer" @change="setCrmFilter('customer', $event.target.value)"><option value="">全部客户</option><option v-for="customer in crmFilterOptions.customers" :key="customer.id" :value="String(customer.id)">{{ customer.name }}</option></select></label>
@@ -755,14 +767,14 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
       <button class="btn btn-secondary" @click="resetLedgerFilters">重置</button>
     </div>
     <p v-if="isMovementPage" class="ledger-help">数量按 SKU 基础单位显示；自动流水不可手工修改。</p>
-    <div v-else-if="isSupplierPage" class="supplier-filter-bar" aria-label="供应商筛选"><label>搜索<input v-model="query" aria-label="搜索供应商" placeholder="名称、代码、联系人、产品…" @input="delayedSearch" /></label><label v-if="can('categories','view')">可供分类<select :value="supplierFilter.category" aria-label="按可供分类筛选" @change="updateLedgerQuery({supplyCategory:$event.target.value || undefined})"><option value="">全部分类</option><option v-for="category in supplierCategories" :key="category.id" :value="String(category.id)">{{ category.name }}</option></select></label><label>付款规则<select :value="supplierFilter.terms" aria-label="按付款规则筛选" @change="updateLedgerQuery({termsMode:$event.target.value || undefined})"><option value="">全部规则</option><option value="default">系统默认</option><option value="custom">自定义规则</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><div v-if="isSupplierPage && supplierCategoryError" role="alert" class="option-load-error">分类加载失败：{{ supplierCategoryError }} <button @click="loadSupplierCategories">重新加载分类</button></div><p v-if="isSupplierPage" class="supplier-rule-note">付款备注仅供沟通参考；采购付款计划使用“系统执行付款规则”。</p><div v-if="!isMovementPage && !isSupplierPage && !isCrmPage" class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" :aria-label="isParameterPage ? '搜索产品参数' : undefined" :placeholder="isParameterPage ? '参数名称、值或分组' : '搜索当前列表...'" @input="delayedSearch" /></div></div>
+    <div v-else-if="isSupplierPage" class="supplier-filter-bar" aria-label="供应商筛选"><label>搜索<input v-model="query" aria-label="搜索供应商" placeholder="名称、代码、联系人、产品…" @input="delayedSearch" /></label><label v-if="can('categories','view')">可供分类<select :value="supplierFilter.category" aria-label="按可供分类筛选" @change="updateLedgerQuery({supplyCategory:$event.target.value || undefined})"><option value="">全部分类</option><option v-for="category in supplierCategories" :key="category.id" :value="String(category.id)">{{ category.name }}</option></select></label><label>付款规则<select :value="supplierFilter.terms" aria-label="按付款规则筛选" @change="updateLedgerQuery({termsMode:$event.target.value || undefined})"><option value="">全部规则</option><option value="default">系统默认</option><option value="custom">自定义规则</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><div v-if="isSupplierPage && supplierCategoryError" role="alert" class="option-load-error">分类加载失败：{{ supplierCategoryError }} <button @click="loadSupplierCategories">重新加载分类</button></div><p v-if="isSupplierPage" class="supplier-rule-note">付款备注仅供沟通参考；采购付款计划使用“系统执行付款规则”。</p><div v-if="!isMovementPage && !isSupplierPage && !isCrmPage" class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" :aria-label="isCertificatePage ? '搜索产品证书' : isParameterPage ? '搜索产品参数' : undefined" :placeholder="isParameterPage ? '参数名称、值或分组' : '搜索当前列表...'" @input="delayedSearch" /></div></div>
     <div class="panel">
       <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
       <ListEmptyState v-if="hasLoaded && !visibleRows.length" :entity="listNoun || config.title.replace('管理','')" :filtered="filteredListEmpty" @clear="clearListFilters"><template #action><p v-if="can(accessModule, 'create')">点击“{{ primaryAction }}”开始录入。</p></template></ListEmptyState>
-      <div v-else-if="hasLoaded" class="table-wrap"><table class="data-table" :class="{ 'customer-list-table': isCustomerPage, 'supplier-list-table': isSupplierPage, 'contact-list-table': isContactPage, 'follow-up-list-table': isFollowUpPage, 'parameter-list-table': isParameterPage }"><thead><tr><th v-for="col in listColumns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
+      <div v-else-if="hasLoaded" class="table-wrap"><table class="data-table" :class="{ 'customer-list-table': isCustomerPage, 'supplier-list-table': isSupplierPage, 'contact-list-table': isContactPage, 'follow-up-list-table': isFollowUpPage, 'parameter-list-table': isParameterPage, 'certificate-list-table': isCertificatePage }"><thead><tr><th v-for="col in listColumns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
         <tr v-for="row in displayRows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row.id)" @keydown.enter="openDetail(row.id)">
           <td v-for="(col,index) in listColumns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }">
-            <template v-if="isParameterPage && col[0] === 'product_name'"><button v-if="row.product && can('products','view')" class="crm-customer-link" @click.stop="router.push({path:'/products',query:{detail:String(row.product),returnTo:route.fullPath}})">{{ row.product_name || '查看产品' }}</button><span v-else>{{ row.product_name || '—' }}</span></template>
+            <template v-if="isCertificatePage && col[0] === 'name'"><strong>{{ row.name }}</strong><small class="supplier-secondary">{{ row.certificate_no || '未填编号' }}</small></template><template v-else-if="isCertificatePage && col[0] === 'file_url'"><a v-if="certificateFileUrl(row.file_url)" :href="certificateFileUrl(row.file_url)" target="_blank" rel="noopener noreferrer" @click.stop>查看文件链接</a><span v-else>{{ row.file_url ? '链接格式不可用' : '未提供文件' }}</span></template><template v-else-if="(isParameterPage || isCertificatePage) && col[0] === 'product_name'"><button v-if="row.product && can('products','view')" class="crm-customer-link" @click.stop="router.push({path:'/products',query:{detail:String(row.product),returnTo:route.fullPath}})">{{ row.product_name || '查看产品' }}</button><span v-else>{{ row.product_name || '—' }}</span></template>
             <template v-else-if="isContactPage && col[0] === 'customer_name'"><button v-if="row.customer" class="crm-customer-link" type="button" @click.stop="openContactCustomer(row)">{{ row.customer_name || '查看客户' }}</button><span v-else>{{ row.customer_name || '—' }}</span></template>
             <template v-else-if="isContactPage && col[0] === 'name'"><strong>{{ row.name }}</strong><small class="crm-secondary">{{ row.title || '未填写职位' }}</small></template>
             <template v-else-if="isContactPage && col[0] === 'contact_methods'"><a v-if="row.phone" :href="`tel:${row.phone}`" @click.stop>{{ row.phone }}</a><small v-if="row.whatsapp" class="crm-secondary">WhatsApp：{{ row.whatsapp }}</small><a v-if="row.email" class="crm-secondary" :href="`mailto:${row.email}`" @click.stop>{{ row.email }}</a><span v-if="!row.phone && !row.whatsapp && !row.email">—</span></template>
@@ -779,9 +791,9 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
     </div>
 
     <InventoryMovementCreateModal v-if="modalOpen && config.endpoint === 'inventory-movements' && !editingId" @close="closeModal" @saved="handleInventoryMovementCreated" />
-    <div v-else-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form :role="isSupplierPage || isCrmPage || isParameterPage ? 'dialog' : undefined" :aria-modal="isSupplierPage || isCrmPage || isParameterPage ? 'true' : undefined" :aria-label="isSupplierPage || isCrmPage || isParameterPage ? title : undefined" class="modal" :class="{ wide: isWideForm, 'customer-editor': isCustomerPage, 'supplier-editor': isSupplierPage, 'crm-editor': isCrmPage, 'parameter-editor': isParameterPage }" @submit.prevent="save">
-      <div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" :aria-label="isParameterPage ? '关闭参数表单' : isSupplierPage ? '关闭供应商表单' : isContactPage ? '关闭联系人表单' : isFollowUpPage ? '关闭跟进表单' : undefined" :disabled="saving" @click="closeModal"><X :size="17" /></button></div>
-      <div class="modal-body" :inert="isParameterPage && saving"><p v-if="isParameterPage && parameterSaveError" role="alert" class="supplier-save-error">{{ parameterSaveError }}</p><p v-if="isSupplierPage && supplierSaveError" role="alert" class="supplier-save-error">{{ supplierSaveError }}</p><p v-if="isFollowUpPage" class="field-help">跟进记录或客户回复至少填写一项。</p><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isSupplierPage || isContactPage || isFollowUpPage || isParameterPage" class="supplier-group-title">{{ editorGroupTitles[groupIndex] }}</h4><p v-if="isSupplierPage && groupIndex === 2" class="field-help">可供分类用于筛选；具体 SKU 的供应来源仍需在供货档案中维护。</p><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group.filter(visibleEditorField)" :key="field[0]" class="field" :class="{ full: ['textarea', 'remote_multi', 'payment_terms'].includes(field[2]) || (isSupplierPage && field[0] === 'payment_terms') || (isFollowUpPage && ['subject', 'content', 'result', 'next_follow_up_mode'].includes(field[0])), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
+    <div v-else-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form :role="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? 'dialog' : undefined" :aria-modal="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? 'true' : undefined" :aria-label="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? title : undefined" class="modal" :class="{ wide: isWideForm, 'customer-editor': isCustomerPage, 'supplier-editor': isSupplierPage, 'crm-editor': isCrmPage, 'parameter-editor': isParameterPage || isCertificatePage }" @submit.prevent="save">
+      <div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" :aria-label="isCertificatePage ? '关闭证书表单' : isParameterPage ? '关闭参数表单' : isSupplierPage ? '关闭供应商表单' : isContactPage ? '关闭联系人表单' : isFollowUpPage ? '关闭跟进表单' : undefined" :disabled="saving" @click="closeModal"><X :size="17" /></button></div>
+      <div class="modal-body" :inert="(isParameterPage || isCertificatePage) && saving"><p v-if="isCertificatePage && certificateSaveError" role="alert" class="supplier-save-error">{{ certificateSaveError }}</p><p v-if="isParameterPage && parameterSaveError" role="alert" class="supplier-save-error">{{ parameterSaveError }}</p><p v-if="isSupplierPage && supplierSaveError" role="alert" class="supplier-save-error">{{ supplierSaveError }}</p><p v-if="isCertificatePage" class="field-help">文件链接需使用完整的 http:// 或 https:// 地址。链接可打开不代表已验证文件内容或访问权限。</p><p v-if="isFollowUpPage" class="field-help">跟进记录或客户回复至少填写一项。</p><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isSupplierPage || isContactPage || isFollowUpPage || isParameterPage || isCertificatePage" class="supplier-group-title">{{ editorGroupTitles[groupIndex] }}</h4><p v-if="isSupplierPage && groupIndex === 2" class="field-help">可供分类用于筛选；具体 SKU 的供应来源仍需在供货档案中维护。</p><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group.filter(visibleEditorField)" :key="field[0]" class="field" :role="isCertificatePage ? 'group' : undefined" :aria-label="isCertificatePage ? editorFieldLabel(field) : undefined" :class="{ full: ['textarea', 'remote_multi', 'payment_terms'].includes(field[2]) || (isCertificatePage && field[0] === 'file_url') || (isSupplierPage && field[0] === 'payment_terms') || (isFollowUpPage && ['subject', 'content', 'result', 'next_follow_up_mode'].includes(field[0])), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
         <label>{{ editorFieldLabel(field) }} <em v-if="field[3]">*</em></label><p v-if="optionErrors[field[4]]" class="option-load-error" role="alert">{{ optionErrors[field[4]] }} <button type="button" @click="retryRemoteOption(field)">重新加载</button></p>
         <div v-if="field[2] === 'followup_schedule'" class="follow-up-schedule" role="radiogroup" aria-label="下次跟进安排">
           <label v-for="(label, mode) in { keep: '保留当前计划', set: '设置新的跟进日期', clear: '暂不安排后续跟进' }" :key="mode"><input v-model="form.next_follow_up_mode" type="radio" name="next_follow_up_mode" :value="mode" @change="changeFollowUpMode" /> {{ label }}</label>
@@ -789,12 +801,12 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
           <p v-else-if="form.next_follow_up_mode === 'clear'" class="field-help">这会清除该客户当前的下次跟进日期。</p>
         </div>
         <PaymentTermsEditor v-else-if="field[2] === 'payment_terms'" v-model="form[field[0]]" :description="isSupplierPage ? '用于新采购的付款计划；已保存采购保留原快照。比例合计须为 100%。' : ''" />
-        <textarea :maxlength="isSupplierPage && field[0] === 'payment_terms' ? 200 : undefined" :aria-label="isSupplierPage || isCrmPage || isParameterPage ? editorFieldLabel(field) : undefined" v-else-if="field[2] === 'textarea' || (isSupplierPage && field[0] === 'payment_terms')" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" />
+        <textarea :maxlength="isSupplierPage && field[0] === 'payment_terms' ? 200 : undefined" :aria-label="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? editorFieldLabel(field) : undefined" v-else-if="field[2] === 'textarea' || (isSupplierPage && field[0] === 'payment_terms')" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" />
         <SimpleRichTextEditor v-else-if="field[2] === 'richtext'" v-model="form[field[0]]" :label="isCrmPage ? editorFieldLabel(field) : ''" @paste-files="addFollowUpFiles" />
         <ComboInput v-else-if="field[2] === 'combo'" v-model="form[field[0]]" :options="options[field[4]] || []" :label="isCrmPage ? editorFieldLabel(field) : ''" :required="field[3]" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]])" />
-        <select v-else-if="field[2] === 'select'" v-model="form[field[0]]" :aria-label="isCrmPage || isParameterPage ? editorFieldLabel(field) : undefined" :required="field[3]" :disabled="isInherited(field[0])"><option v-for="(label,key) in field[4]" :key="key" :value="key">{{ label }}</option></select>
+        <select v-else-if="field[2] === 'select'" v-model="form[field[0]]" :aria-label="isCrmPage || isParameterPage || isCertificatePage ? editorFieldLabel(field) : undefined" :required="field[3]" :disabled="isInherited(field[0])"><option v-for="(label,key) in field[4]" :key="key" :value="key">{{ label }}</option></select>
         <CategoryMultiPicker v-else-if="field[2] === 'remote_multi'" v-model="form[field[0]]" :categories="options[field[4]] || []" />
-        <select v-else-if="field[2] === 'remote'" v-model="form[field[0]]" :aria-label="isCrmPage || isParameterPage ? editorFieldLabel(field) : undefined" :required="field[3]" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]]) || (field[0] === 'owner_profile' && ownerProfileReadOnly)" @change="onFieldChange(field)"><option value="">请选择</option><option v-for="option in visibleOptions(field)" :key="option.id" :value="option.id">{{ option[field[5]] }}</option></select>
+        <select v-else-if="field[2] === 'remote'" v-model="form[field[0]]" :aria-label="isCrmPage || isParameterPage || isCertificatePage ? editorFieldLabel(field) : undefined" :required="field[3]" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]]) || (field[0] === 'owner_profile' && ownerProfileReadOnly)" @change="onFieldChange(field)"><option value="">请选择</option><option v-for="option in visibleOptions(field)" :key="option.id" :value="option.id">{{ option[field[5]] }}</option></select>
         <label v-else-if="field[2] === 'checkbox'" class="checkbox-line"><input v-model="form[field[0]]" type="checkbox" :disabled="isInherited(field[0])" /> 是</label>
         <div v-else-if="config.endpoint === 'follow-ups' && field[0] === 'next_follow_up'" class="follow-up-date-control">
           <input v-model="followUpDays" type="number" min="0" step="1" placeholder="天数" aria-label="下次跟进天数" @input="updateFollowUpDate" />
@@ -802,7 +814,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
           <SegmentedDateInput :model-value="form.next_follow_up" @update:model-value="setFollowUpDate" />
         </div>
         <SegmentedDateInput v-else-if="field[2] === 'date' || field[2] === 'datetime-local'" :model-value="form[field[0]]" :required="field[3]" :with-time="field[2] === 'datetime-local'" @update:model-value="value => onDateFieldChange(field, value)" />
-        <input v-else :aria-label="isSupplierPage || isCrmPage || isParameterPage ? editorFieldLabel(field) : undefined" v-model="form[field[0]]" :type="field[2] === 'readonly' || ['website', 'store_url'].includes(field[0]) ? 'text' : (field[2] || 'text')" :readonly="field[2] === 'readonly'" :placeholder="field[0] === 'store_url' ? 'https://...' : isCustomerPage && field[0] === 'name' ? '输入客户名称' : undefined" :class="{ 'readonly-input': field[2] === 'readonly', 'field-invalid': config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError }" :aria-invalid="config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError ? 'true' : undefined" :min="isParameterPage && field[0] === 'sort_order' ? 0 : undefined" :step="field[2] === 'number' ? (isParameterPage ? '1' : '0.0001') : undefined" :maxlength="isSupplierPage ? { name:200,code:2,country:100,main_products:300,contact_name:100,phone:50,email:254,store_url:500 }[field[0]] : undefined" :pattern="config.endpoint === 'suppliers' && field[0] === 'code' ? '[A-Za-z]{2}' : undefined" :required="field[3]" :disabled="isInherited(field[0])" @input="config.endpoint === 'suppliers' && field[0] === 'code' && normalizeSupplierCode()" />
+        <input v-else :aria-label="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? editorFieldLabel(field) : undefined" v-model="form[field[0]]" :type="field[2] === 'readonly' || ['website', 'store_url'].includes(field[0]) ? 'text' : (field[2] || 'text')" :readonly="field[2] === 'readonly'" :placeholder="field[0] === 'store_url' ? 'https://...' : isCustomerPage && field[0] === 'name' ? '输入客户名称' : undefined" :class="{ 'readonly-input': field[2] === 'readonly', 'field-invalid': config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError }" :aria-invalid="config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError ? 'true' : undefined" :min="isParameterPage && field[0] === 'sort_order' ? 0 : undefined" :step="field[2] === 'number' ? (isParameterPage ? '1' : '0.0001') : undefined" :maxlength="isSupplierPage ? { name:200,code:2,country:100,main_products:300,contact_name:100,phone:50,email:254,store_url:500 }[field[0]] : undefined" :pattern="config.endpoint === 'suppliers' && field[0] === 'code' ? '[A-Za-z]{2}' : undefined" :required="field[3]" :disabled="isInherited(field[0])" @input="config.endpoint === 'suppliers' && field[0] === 'code' && normalizeSupplierCode()" />
         <p v-if="isContactPage && field[0] === 'name' && contactDuplicateHint" class="field-help crm-duplicate-hint" role="status">{{ contactDuplicateHint }}</p>
         <p v-if="isSupplierPage && field[0] === 'payment_terms'" class="field-help">仅供沟通参考，不生成付款计划。</p><p v-if="config.endpoint === 'suppliers' && field[0] === 'code'" class="field-help" :class="{ error: supplierCodeError }">{{ supplierCodeError || '填写两个英文字母，用于供应商 SKU 编码。' }}</p>
       </div></div>
@@ -862,7 +874,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
     <Transition name="detail-drawer" appear>
       <EntityDetailModal v-if="detailId" :entity="config.endpoint" :id="detailId" :refresh-key="detailRefresh" @close="closeDetail" @edit="editFromDetail" @changed="handleDetailChanged" />
     </Transition>
-    <InventoryPagination v-if="(isMovementPage || isSupplierPage || isCrmListPage) && hasLoaded" :label="isContactPage ? '联系人列表分页' : isFollowUpPage ? '跟进记录分页' : isSupplierPage ? '供应商列表分页' : '库存列表分页'" :total="visibleRows.length" :page="ledgerPage" @change="page => (isCrmListPage ? updateCrmQuery({ page: page > 1 ? String(page) : undefined }) : updateLedgerQuery({ page: page > 1 ? String(page) : undefined }))" />
+    <InventoryPagination v-if="(isMovementPage || isSupplierPage || isCrmListPage || isCertificatePage) && hasLoaded" :label="isCertificatePage ? '证书列表分页' : isContactPage ? '联系人列表分页' : isFollowUpPage ? '跟进记录分页' : isSupplierPage ? '供应商列表分页' : '库存列表分页'" :total="visibleRows.length" :page="ledgerPage" @change="page => (isCrmListPage ? updateCrmQuery({ page: page > 1 ? String(page) : undefined }) : updateLedgerQuery({ page: page > 1 ? String(page) : undefined }))" />
     <div v-if="toast.show" :role="toast.error ? 'alert' : 'status'" class="toast" :class="{ error: toast.error }">{{ toast.message }}</div>
   </div>
 </template>
@@ -939,4 +951,8 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 <style scoped>
 .supplier-filter-bar{display:grid;grid-template-columns:minmax(220px,2fr) minmax(160px,1fr) minmax(150px,1fr) auto auto;gap:12px;align-items:end;margin:18px 0 10px}.supplier-filter-bar label{display:grid;gap:6px;color:#71817b;font-size:var(--text-caption)}.supplier-filter-bar input,.supplier-filter-bar select{width:100%;min-width:0;min-height:42px;padding:10px 12px;border:1px solid #dce6e1;border-radius:8px;background:#fff;color:#294a41;font:inherit;font-size:var(--text-body)}.supplier-filter-bar input:focus,.supplier-filter-bar select:focus{outline:2px solid #b8d8cb;outline-offset:1px}.supplier-rule-note{color:#567168;font-size:var(--text-body);line-height:1.6}.supplier-list-table{min-width:1150px;table-layout:fixed}.supplier-list-table th:nth-child(1){width:230px}.supplier-list-table th:nth-child(2){width:230px}.supplier-list-table th:nth-child(3){width:180px}.supplier-list-table th:nth-child(4){width:240px}.supplier-list-table th:nth-child(5){width:220px}.supplier-list-table th:last-child{width:108px}.supplier-list-table td{white-space:normal;overflow-wrap:anywhere;vertical-align:top}.supplier-list-table th:last-child,.supplier-list-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 10px #173d3210}.supplier-list-table td:last-child{z-index:2}.supplier-list-table th:last-child{z-index:3}.supplier-secondary{display:block;margin-top:6px;color:#7b8b84;font-size:var(--text-caption);font-weight:400}.supplier-excerpt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.supplier-editor{width:min(960px,calc(100vw - 40px))}.supplier-editor .modal-body{display:block}.supplier-editor .form-grid{margin-bottom:22px}.supplier-group-title{margin:12px 0;color:#21483d;font-size:var(--text-section)}.supplier-editor .modal-foot{position:sticky;bottom:0;background:#fff;z-index:1}.supplier-editor .field{min-width:0}.supplier-save-error{color:#a44343;padding:12px;border:1px solid #efc6c2;background:#fff9f8;border-radius:8px;overflow-wrap:anywhere}@media(max-width:1100px){.supplier-filter-bar{grid-template-columns:minmax(220px,2fr) minmax(150px,1fr) minmax(150px,1fr)}.supplier-filter-bar .btn{justify-self:start}}@media(max-width:650px){.supplier-filter-bar{grid-template-columns:1fr 1fr}.supplier-filter-bar label:first-child{grid-column:1/-1}.supplier-editor .form-grid{grid-template-columns:1fr}}
 .parameter-filter-bar{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin:12px 0}.parameter-filter-bar label{display:grid;gap:6px;min-width:0;flex:1 1 300px}.parameter-filter-bar select{width:100%;min-width:0;padding:10px;border:1px solid var(--line);border-radius:8px;background:white}.parameter-list-table{min-width:760px;table-layout:fixed}.parameter-list-table td{white-space:normal;overflow-wrap:anywhere}.parameter-list-table th:first-child{width:230px}.parameter-list-table th:last-child,.parameter-list-table td:last-child{position:sticky;right:0;background:white;width:100px}.parameter-editor{width:min(820px,calc(100vw - 40px))}.parameter-editor .field{min-width:0}.parameter-editor .modal-foot{position:sticky;bottom:0;background:white}
+</style>
+
+<style scoped>
+.certificate-controls{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin:12px 0}.certificate-controls label{display:grid;gap:6px;min-width:0;flex:1 1 240px}.certificate-controls select{padding:10px;border:1px solid var(--line);border-radius:8px;min-width:0;background:white}.certificate-list-table{min-width:1120px;table-layout:fixed}.certificate-list-table th:first-child{width:240px}.certificate-list-table th:nth-child(2){width:200px}.certificate-list-table th:nth-child(3){width:160px}.certificate-list-table th:last-child,.certificate-list-table td:last-child{position:sticky;right:0;background:white;width:128px}.certificate-list-table td{white-space:normal;overflow-wrap:anywhere}
 </style>

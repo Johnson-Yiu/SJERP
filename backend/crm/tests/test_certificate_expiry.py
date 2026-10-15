@@ -72,3 +72,18 @@ class CertificateExpiryTests(TestCase):
         result = self.client.get("/api/dashboard/").data
         self.assertEqual(result["summary"]["certificate_attention"], 0)
         self.assertEqual(result["certificate_alerts"], [])
+
+    def test_invalid_file_url_rejected_without_changing_certificate_and_expiry(self):
+        record = self.rows[30]
+        url = f'/api/product-certificates/{record.pk}/'
+        response = self.client.patch(url, {'name': '不应保存', 'file_url': 'javascript:alert(1)'}, format='json')
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('file_url', response.data)
+        record.refresh_from_db()
+        self.assertEqual(record.name, 'CE 30')
+        self.assertEqual(record.file_url, '')
+        self.assertEqual(ProductCertificateSerializer(record).data['expiry_status'], 'expiring_30')
+        response = self.client.patch(url, {'file_url': 'https://example.com/synthetic.pdf'}, format='json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['expiry_status'], 'expiring_30')
+        # Storing a URL is not evidence of successful download or file authorization.

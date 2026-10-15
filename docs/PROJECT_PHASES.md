@@ -1,6 +1,6 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
-当前核对基线：R0-F7B 从 `master` / `79841e382c882f33444627e65310170a47a444cf`（2026-10-15）开始。用户明确转述R0-F7A独立复审ISS-088代码/回归PASS；CI #38697043429三项SUCCESS。允许有条件封版；独立图片视觉待审。本轮包装、交易单位及SKU包装关联交付后停止等待独立审查。
+当前核对基线：R0-F8A 从 `master` / `a2cbdecfdb9a827036a51e4d3acb74e45db3d6f2`（2026-10-15）开始。R0-F7B独立代码及自动/已覆盖交互复审通过，有条件封版；CI #38752391875三项SUCCESS。独立图片视觉待复核，ISS-089–091保留相应复核事项。本轮产品证书与HS编码交付后停止等待独立复审。
 
 ## 用户批准的最新开发路线
 
@@ -28,7 +28,8 @@
 | R0-F5 UI/UX | 独立代码与自动回归 PASS，有条件封版；独立视觉另待审 | 最终 `86650adc` / [CI #38605116907](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38605116907) 三项 SUCCESS。按用户本轮明确接受关闭 ISS-079；ISS-080、ISS-007 及其他历史未关闭项保留。 |
 | R0-F6 UI/UX | 独立代码、自动化及已覆盖交互PASS，有条件封版；独立图片视觉待审 | 最终`0b721fcd` / [CI #38669003578](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38669003578)三项SUCCESS。ISS-081–083保留；参数1440截图纠正单独见ISS-084。 |
 | R0-F7A UI/UX | 独立代码/已覆盖回归PASS，有条件封版；独立图片视觉待审 | 最终79841e3 / [CI #38697043429](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38697043429)三项SUCCESS。依据用户明确接受关闭ISS-088代码/回归范围。ISS-085、086已覆盖操作通过但图片待审；ISS-087待核实，历史问题保留。 |
-| R0-F7B UI/UX | 实现及自动/真实操作验证完成，等待独立代码和视觉复审 | 包装、交易单位及SKU包装关联；45张原始三尺寸截图，578项Vitest、94项Playwright，93项相关后端回归。ISS-089–091待复审。精确HEAD CI以交付链接/checks为准。见[R0-F7B验收](R0-F7B-包装模板与交易单位验收.md)。 |
+| R0-F7B UI/UX | 独立代码/自动及已覆盖交互通过，有条件封版；独立图片视觉待审 | 最终a2cbdec / [CI #38752391875](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38752391875)三项SUCCESS；ISS-089–091记录通过范围，视觉复核事项保留；历史业务事项不自动关闭。 |
+| R0-F8A UI/UX | 实现、自动及真实隔离操作验收；待ChatGPT独立复审 | 产品证书与HS编码专项；ISS-092–093待复审。见[R0-F8A验收](R0-F8A-产品证书与HS编码验收.md)及[全站覆盖清单](R0-F8A-全站前端UX覆盖清单.md)。最终SHA/精确CI结果绑定交付消息及对应commit checks。 |
 | 内测 / 生产部署 | 未授权、未开始 | 保留开发超级管理员机制；正式 RBAC、真实员工角色、部署和生产数据迁移均不得从此文档推定已获授权。 |
 
 ## 指定阶段历史记录

@@ -56,6 +56,33 @@ class HSCodeTests(TestCase):
         user.save()
         self.assertEqual(self.client.post('/api/hs-codes/', {'code': '123456'}, format='json').status_code, 201)
 
+    def test_inactive_assignment_keeps_existing_allows_release_and_rejects_new_atomically(self):
+        self.code.active = False
+        self.code.save()
+        self.product.hs_code = self.code
+        self.product.save()
+        other = Product.objects.create(code='HS-P2', name='第二产品', sales_model_prefix='HS2')
+        url = f'/api/hs-codes/{self.code.pk}/assign-products/'
+        self.assertEqual(self.client.put(url, {'product_ids': [other.pk]}, format='json').status_code, 400)
+        self.product.refresh_from_db()
+        other.refresh_from_db()
+        self.assertEqual(self.product.hs_code_id, self.code.pk)
+        self.assertIsNone(other.hs_code_id)
+        self.assertEqual(self.client.put(url, {'product_ids': [self.product.pk]}, format='json').status_code, 200)
+        self.assertEqual(self.client.put(url, {'product_ids': []}, format='json').status_code, 200)
+        self.product.refresh_from_db()
+        self.assertIsNone(self.product.hs_code_id)
+
+    def test_duplicate_code_rejected_without_changing_existing_product_identity(self):
+        self.product.hs_code = self.code
+        self.product.save()
+        response = self.client.post('/api/hs-codes/', {'code': self.code.code, 'description': '重复'}, format='json')
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('code', response.data)
+        self.assertEqual(HSCode.objects.filter(code=self.code.code).count(), 1)
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.hs_code_id, self.code.pk)
+
     def test_development_capability(self):
         self.assertTrue(self.client.get('/api/session/current-operator/').data['can_manage_hs_codes'])
 

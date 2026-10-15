@@ -1,0 +1,830 @@
+[
+  {
+    "file": "certificate-create-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-create-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-create-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-error-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-error-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-error-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-detail-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-detail-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-detail-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-edit-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-edit-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-edit-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-list-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-list-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-list-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-create-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-create-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-create-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-edit-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-edit-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-edit-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-assignment-error-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-assignment-error-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-assignment-error-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-assignment-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-assignment-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-assignment-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-selected-reopened-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-selected-reopened-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-selected-reopened-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-duplicate-error-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-duplicate-error-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "hs-duplicate-error-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/hs-codes",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-expiry-detail-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-expiry-detail-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-expiry-detail-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificate-missing-file-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificates-list-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificates-list-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificates-list-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificates-expired-filter-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates?expiry=expired",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificates-expired-filter-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates?expiry=expired",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificates-expired-filter-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates?expiry=expired",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificates-empty-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "pixels": [
+      1440,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates?expiry=valid&search=R0F8A-NOT-FOUND",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificates-empty-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "pixels": [
+      1280,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates?expiry=valid&search=R0F8A-NOT-FOUND",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  },
+  {
+    "file": "certificates-empty-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "pixels": [
+      1024,
+      1000
+    ],
+    "url": "http://127.0.0.1:5202/product-certificates?expiry=valid&search=R0F8A-NOT-FOUND",
+    "method": "Codex built-in browser original JPEG supported viewport clip; second observation after viewport transition"
+  }
+]

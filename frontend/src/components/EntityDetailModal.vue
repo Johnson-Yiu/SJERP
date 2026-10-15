@@ -1,4 +1,5 @@
 <script setup>
+import { certificateFileUrl } from '../utils/certificateFile'
 import { provideUnsavedChangesScope } from '../composables/useUnsavedChangesGuard'
 const unsavedScope = provideUnsavedChangesScope()
 const requestClose = () => unsavedScope.requestClose(() => emit('close'))
@@ -24,7 +25,7 @@ const props = defineProps({ entity: String, id: [Number, String], refreshKey: { 
 const emit = defineEmits(['close', 'edit', 'changed'])
 const { can } = useAccessControl()
 const data = ref(null), loading = ref(true), error = ref(''), activeTab = ref(''), stack = ref([])
-const supplierRecord = ref(null)
+const supplierRecord = ref(null), certificateRecord = ref(null)
 const isSupplierDetail = computed(() => currentEntity.value === 'suppliers')
 const supplierNotes = computed(() => data.value?.info?.find(item => item[0] === '备注')?.[1] || '')
 const supplierPaymentInfo = computed(() => (data.value?.info || []).filter(item => ['付款条款说明（备注）','系统执行付款规则'].includes(item[0])))
@@ -120,15 +121,17 @@ async function refreshSkuManagement() {
 async function load(entity = currentEntity.value, id = currentId.value) {
   loading.value = true; error.value = ''
   try {
-    const [contextResponse, movementResponse, , supplierResponse] = await Promise.all([
+    const [contextResponse, movementResponse, , supplierResponse, certificateResponse] = await Promise.all([
       api.get(`/context/${entity}/${id}/`, { params: entity === 'products' && showInactiveSkus.value ? { include_inactive: '1' } : {} }),
       entity === 'inventory-movements' ? api.get(`/inventory-movements/${id}/`) : Promise.resolve(null),
       loadOperationLogs(entity, id),
       entity === 'suppliers' ? api.get(`/suppliers/${id}/`) : Promise.resolve(null),
+      entity === 'product-certificates' ? api.get(`/product-certificates/${id}/`) : Promise.resolve(null),
     ])
     data.value = contextResponse.data
     movementRecord.value = movementResponse?.data || null
     supplierRecord.value = supplierResponse?.data || null
+    certificateRecord.value = certificateResponse?.data || null
     currentEntity.value = entity; currentId.value = id
     activeTab.value = entity === 'products' ? '__overview' : data.value.sections[0]?.key || ''
     restoreCustomerTab()
@@ -297,7 +300,7 @@ async function toggleInactiveSkus() {
 }
 function format(value, type) {
   if (value === null || value === undefined || value === '') return '—'
-  if ((currentEntity.value === 'product-parameters' || (currentEntity.value === 'skus' && activeSection.value?.key === 'product')) && type === 'status') return ({ active: '在售', development: '开发中', discontinued: '停产' })[value] || value
+  if ((['product-parameters','product-certificates'].includes(currentEntity.value) || (currentEntity.value === 'skus' && activeSection.value?.key === 'product')) && type === 'status') return ({ active: '在售', development: '开发中', discontinued: '停产' })[value] || value
   if (type === 'money') return Number(value).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   if (type === 'rmb') return `¥ ${Number(value).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
   if (type === 'number') return Number(value).toLocaleString('zh-CN')
@@ -339,7 +342,7 @@ onMounted(async () => {
 
 <template>
   <div class="modal-backdrop detail-backdrop" :class="{ 'follow-up-detail-backdrop': isFollowUpDetail, 'product-detail-backdrop': isProduct }" @mousedown.self="requestClose">
-    <article :role="isProduct ? undefined : 'dialog'" :aria-modal="isProduct ? undefined : 'true'" class="detail-modal" :class="{ 'follow-up-detail-modal': isFollowUpDetail, 'product-detail-modal': isProduct, 'customer-detail-root': isCustomerRoot, 'movement-detail': isMovementDetail, 'supplier-detail': isSupplierDetail, 'contact-detail': isContactDetail, 'sku-detail': currentEntity === 'skus' }" :aria-label="isFollowUpDetail ? '跟进详情' : isMovementDetail ? '库存流水详情' : isSupplierDetail ? '供应商详情' : isContactDetail ? '联系人详情' : isCustomerRoot ? '客户详情' : '关联详情'">
+    <article :role="isProduct ? undefined : 'dialog'" :aria-modal="isProduct ? undefined : 'true'" class="detail-modal" :class="{ 'follow-up-detail-modal': isFollowUpDetail, 'product-detail-modal': isProduct, 'customer-detail-root': isCustomerRoot, 'movement-detail': isMovementDetail, 'supplier-detail': isSupplierDetail, 'contact-detail': isContactDetail, 'sku-detail': currentEntity === 'skus', 'certificate-detail': currentEntity === 'product-certificates' }" :aria-label="isFollowUpDetail ? '跟进详情' : isMovementDetail ? '库存流水详情' : isSupplierDetail ? '供应商详情' : isContactDetail ? '联系人详情' : isCustomerRoot ? '客户详情' : '关联详情'">
       <button v-if="!isProduct && (loading || error)" class="btn btn-secondary supplier-state-close" @click="requestClose">关闭详情</button><div v-if="loading" role="status" class="detail-loading"><div class="spinner" /><span>正在整理关联数据...</span></div>
       <div v-else-if="error" role="alert" class="detail-error"><strong>详情加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load()">重试</button></div>
       <template v-else-if="data">
@@ -429,7 +432,7 @@ onMounted(async () => {
             <RouterLink v-if="can('inventory', 'view')" class="btn btn-secondary" :to="{ path: '/inventory', query: { detail: String(currentId) } }">打开库存工作台</RouterLink>
             <span>在库存工作台查看库存、采购与销售关联记录。</span>
           </nav>
-          <section v-if="!isProduct" class="detail-info"><h3>基础信息</h3><div class="info-grid"><div v-for="item in detailInfo" :key="item[0]"><small>{{ item[0] }}</small><div v-if="item[2] === 'richtext'" class="richtext-view" v-html="richText(item[1])" /><a v-else-if="isSupplierDetail && item[0] === '店铺链接' && supplierStoreUrl(item[1])" :href="supplierStoreUrl(item[1])" target="_blank" rel="noopener noreferrer">{{ item[1] }}</a><span v-else>{{ item[1] }}</span><small v-if="currentEntity === 'customers' && item[0] === '下次跟进'" class="computed-field-note">随最新跟进自动更新</small></div></div></section>
+          <p v-if="currentEntity === 'product-certificates' && certificateRecord" class="certificate-detail-status"><CertificateExpiryBadge :certificate="certificateRecord" /> <span>按系统日期和有效期判断；不代替证书真实性核验。</span></p><section v-if="!isProduct" class="detail-info"><h3>基础信息</h3><div class="info-grid"><div v-for="item in detailInfo" :key="item[0]"><small>{{ item[0] }}</small><div v-if="item[2] === 'richtext'" class="richtext-view" v-html="richText(item[1])" /><a v-else-if="isSupplierDetail && item[0] === '店铺链接' && supplierStoreUrl(item[1])" :href="supplierStoreUrl(item[1])" target="_blank" rel="noopener noreferrer">{{ item[1] }}</a><template v-else-if="currentEntity === 'product-certificates' && item[0] === '文件链接'"><a v-if="certificateFileUrl(item[1])" :href="certificateFileUrl(item[1])" target="_blank" rel="noopener noreferrer">查看文件链接</a><span v-else>{{ item[1] === '—' ? '未提供文件' : '链接格式不可用' }}</span><small>文件内容与访问权限需另行核验</small></template><span v-else>{{ item[1] }}</span><small v-if="currentEntity === 'customers' && item[0] === '下次跟进'" class="computed-field-note">随最新跟进自动更新</small></div></div></section>
           <section v-if="isSupplierDetail" class="supplier-payment-info" aria-label="供应商付款条款"><article v-for="item in supplierPaymentInfo" :key="item[0]" :class="{ execution: item[0] === '系统执行付款规则' }"><h3>{{ item[0] }}</h3><p>{{ item[1] }}</p><small>{{ item[0] === '系统执行付款规则' ? '用于新采购的付款计划；已保存采购保留原快照。' : '仅供沟通参考，不生成付款计划。' }}</small></article></section><details v-if="isSupplierDetail && supplierNotes && supplierNotes !== '—'" class="supplier-notes"><summary>其他备注</summary><p>{{ supplierNotes }}</p></details><nav v-if="isSupplierDetail" class="supplier-relations" aria-label="供应商关联入口"><button v-if="can('purchases','view') && data.sections.some(s=>s.key==='purchases')" class="btn btn-secondary" @click="selectSection('purchases')">采购单</button><button v-if="data.sections.some(s=>s.key==='supplier-skus')" class="btn btn-secondary" @click="selectSection('supplier-skus')">供应商 SKU 档案</button><p>具体 SKU 的供应来源在供货档案中维护。</p></nav><div :class="{ 'sku-create-workspace': isSkuSection && skuCreateOpen }">
           <SKUPage v-if="isSkuSection && skuCreateOpen" embedded inline :initial-product="currentId" @close="skuCreateOpen = false" @saved="skuCreated" />
           <section v-if="!isSkuSection" class="relation-area">
@@ -586,4 +589,12 @@ onMounted(async () => {
 .contact-detail .detail-identity h2{overflow-wrap:anywhere}.contact-detail .detail-subtitle{overflow-wrap:anywhere}.contact-detail .info-grid>div{min-width:0}.contact-detail .info-grid span{overflow-wrap:anywhere}.contact-detail .context-table{min-width:0}
 .sku-related-nav{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px}.sku-related-nav span{font-size:var(--text-caption);color:#64776f}
 :global(body:has(.sku-detail)){overflow:hidden}.sku-detail{min-width:0;max-width:100%}.sku-detail .detail-identity{align-items:start}.sku-detail .detail-identity h2{overflow-wrap:anywhere;min-width:0}.sku-detail .detail-identity>div{min-width:0}
+</style>
+
+<style scoped>
+.certificate-detail-status{display:flex;align-items:center;flex-wrap:wrap;gap:10px;color:var(--muted);font-size:var(--text-secondary);line-height:1.6}
+</style>
+
+<style scoped>
+.certificate-detail .detail-identity h2,.certificate-detail .detail-subtitle,.certificate-detail .info-grid span{overflow-wrap:anywhere}.certificate-detail .detail-identity>div{min-width:0}.certificate-detail .info-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.certificate-detail .detail-badge{flex-shrink:0}@media(max-width:1100px){.certificate-detail .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>

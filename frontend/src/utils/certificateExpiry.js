@@ -1,7 +1,7 @@
 export const certificateFilters = [
-  ['', '全部'], ['attention', '需关注'], ['expired', '已过期'], ['expiring', '90 天内到期'], ['no_expiry', '无有效期'],
+  ['', '全部'], ['attention', '需关注'], ['expired', '已过期'], ['expiring', '90 天内到期'], ['valid', '90 天后到期'], ['no_expiry', '无有效期'],
 ]
-export const certificateFilterLabels = { attention: '需要关注的证书', expired: '已过期证书', expiring: '90 天内到期的证书', valid: '有效证书', no_expiry: '无有效期证书' }
+export const certificateFilterLabels = { attention: '需要关注的证书', expired: '已过期证书', expiring: '90 天内到期的证书', valid: '90 天后到期的证书', no_expiry: '无有效期证书' }
 export function certificateBadge(row) {
   const days = row.days_to_expiry
   if (row.expiry_status === 'expired') return `已过期 · ${Math.abs(days)} 天`

@@ -1,0 +1,2 @@
+﻿transaction_no,transaction_date,direction,category,amount,currency,exchange_rate,notes
+F8B-T01,2026-10-16,income,other,12.50,USD,1,"合成测试, ""非真实收款"""

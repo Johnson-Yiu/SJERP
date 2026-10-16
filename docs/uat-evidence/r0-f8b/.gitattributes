@@ -1,0 +1,2 @@
+# Preserve exact uploaded/downloaded CSV bytes, including BOM and CRLF.
+*.csv -text

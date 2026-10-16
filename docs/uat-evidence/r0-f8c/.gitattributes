@@ -1,0 +1,2 @@
+# Keep original accessibility observation text, including terminal spaces.
+real-*.txt -whitespace

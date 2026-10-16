@@ -130,3 +130,20 @@ test('category drag preserves selected node and collapsed state after reorder',a
   await expect(page.locator('.tree-node')).toHaveCount(1)
   await expect(page.locator('.tree-node.active')).toContainText('照明分类')
 })
+
+for (const width of [1440, 1280, 1024]) test(`R0-F9 products status labels stay on one line ${width}`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 1000 })
+  await fixture(page)
+  await page.goto('/products')
+  await expect(page.locator('.product-list-table .tag').first()).toBeVisible()
+  for (const label of await page.locator('.product-list-table .tag').all()) {
+    const box = await label.evaluate(el => {
+      const range = document.createRange(); range.selectNodeContents(el)
+      const rect = range.getBoundingClientRect(); const cell = el.closest('td').getBoundingClientRect()
+      return { height: rect.height, lineHeight: parseFloat(getComputedStyle(el).lineHeight), left: rect.left, right: rect.right, cellLeft: cell.left, cellRight: cell.right }
+    })
+    expect(box.height).toBeLessThanOrEqual(box.lineHeight + 1)
+    expect(box.left).toBeGreaterThanOrEqual(box.cellLeft)
+    expect(box.right).toBeLessThanOrEqual(box.cellRight)
+  }
+})

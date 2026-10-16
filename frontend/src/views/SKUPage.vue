@@ -899,4 +899,5 @@ onBeforeUnmount(() => { loadVersion++; document.removeEventListener('pointerdown
 .sku-body{grid-template-columns:minmax(0,1fr)}.sku-body>*{min-width:0}:global(body:has(.modal-backdrop:not(.inline-sku-backdrop)>.sku-modal)){overflow:hidden}
 :global(body:has(.version-modal)){overflow:hidden}
 .version-table th{white-space:nowrap}.version-table td{overflow-wrap:anywhere}
+.sku-list-table th:nth-child(4){width:70px}.sku-list-table .status-tag{white-space:nowrap}
 </style>

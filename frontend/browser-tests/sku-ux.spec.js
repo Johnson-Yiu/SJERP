@@ -55,3 +55,20 @@ test('SKU logical loads keep separate history and ignore late responses in the r
 })
 
 test('transaction-unit navigation returns to SKU editor with original list context',async({page})=>{await setup(page);await page.goto('/skus?status=active');await page.locator('.sku-data-row').filter({hasText:'SKU-F7'}).getByRole('button',{name:'编辑',exact:true}).click();await page.getByRole('link',{name:'管理此 SKU 的交易单位',exact:true}).click();await expect(page).toHaveURL(/sku-trade-units\?sku=7&returnTo=/);await page.getByRole('link',{name:'返回 SKU',exact:true}).click();await expect(page.getByRole('dialog',{name:'编辑 SKU',exact:true})).toBeVisible();await expect(page).toHaveURL(/status=active&edit=7/);await page.getByRole('button',{name:'关闭 SKU 窗口',exact:true}).click();await expect(page).toHaveURL('/skus?status=active')})
+
+for (const width of [1440, 1280, 1024]) test(`R0-F9 skus status labels stay on one line ${width}`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 1000 })
+  await setup(page)
+  await page.goto('/skus')
+  await expect(page.locator('.sku-list-table .status-tag').first()).toBeVisible()
+  for (const label of await page.locator('.sku-list-table .status-tag').all()) {
+    const box = await label.evaluate(el => {
+      const range = document.createRange(); range.selectNodeContents(el)
+      const rect = range.getBoundingClientRect(); const cell = el.closest('td').getBoundingClientRect()
+      return { height: rect.height, lineHeight: parseFloat(getComputedStyle(el).lineHeight), left: rect.left, right: rect.right, cellLeft: cell.left, cellRight: cell.right }
+    })
+    expect(box.height).toBeLessThanOrEqual(box.lineHeight + 1)
+    expect(box.left).toBeGreaterThanOrEqual(box.cellLeft)
+    expect(box.right).toBeLessThanOrEqual(box.cellRight)
+  }
+})

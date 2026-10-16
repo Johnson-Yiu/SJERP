@@ -1,0 +1,507 @@
+Browser tab: 9, Title: "森爵业务中台", URL: "http://127.0.0.1:5204/organization".
+0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5204/organization
+	1 container app
+		2 container
+			3 text S 森爵业务中台 CRM · ERP
+			4 text 经营
+			5 link Description: 经营概览, Value: 127.0.0.1:5204/
+			6 link Description: 报表中心, Value: 127.0.0.1:5204/reports
+			7 text 客户
+			8 link Description: 客户管理, Value: 127.0.0.1:5204/customers
+			9 link Description: 联系人, Value: 127.0.0.1:5204/contacts
+			10 link Description: 跟进记录, Value: 127.0.0.1:5204/follow-ups
+			11 text 销售
+			12 link Description: 报价管理, Value: 127.0.0.1:5204/quotes
+			13 link Description: 订单管理, Value: 127.0.0.1:5204/orders
+			14 text 采购与库存
+			15 link Description: 供应商管理, Value: 127.0.0.1:5204/suppliers
+			16 link Description: 采购管理, Value: 127.0.0.1:5204/purchase-orders
+			17 link Description: 库存, Value: 127.0.0.1:5204/inventory
+			18 link Description: 库存流水, Value: 127.0.0.1:5204/inventory-movements
+			19 text 产品资料
+			20 link Description: 产品管理, Value: 127.0.0.1:5204/products
+			21 link Description: SKU 管理, Value: 127.0.0.1:5204/skus
+			22 link Description: 产品分类, Value: 127.0.0.1:5204/categories
+			23 link Description: 产品参数, Value: 127.0.0.1:5204/product-parameters
+			24 link Description: 包装管理, Value: 127.0.0.1:5204/sku-packaging
+			25 link Description: 交易单位, Value: 127.0.0.1:5204/sku-trade-units
+			26 link Description: 产品证书, Value: 127.0.0.1:5204/product-certificates
+			27 link Description: HS 编码维护, Value: 127.0.0.1:5204/hs-codes
+			28 text 财务与工具
+			29 link Description: 财务概览, Value: 127.0.0.1:5204/finance
+			30 link Description: 应收计划, Value: 127.0.0.1:5204/receivables
+			31 link Description: 应付计划, Value: 127.0.0.1:5204/payables
+			32 link Description: 财务流水, Value: 127.0.0.1:5204/transactions
+			33 link Description: 数据导入, Value: 127.0.0.1:5204/import
+			34 text 组织与系统
+			35 link Description: 组织与权限, Value: 127.0.0.1:5204/organization
+			36 text J 开发身份：Johnson 超级管理员 · 全部功能与数据权限
+		37 container
+			38 text ORGANIZATION & ACCESS
+			39 heading 组织与权限, Value: 1
+				40 text 组织与权限
+			41 text 10月16日周五
+			42 text J
+			43 heading 组织与权限, Value: 2
+				44 text 组织与权限
+			45 text 查看组织架构，按角色维护功能权限。
+			46 button 刷新
+			47 text 开发身份：全部功能与数据权限
+			48 text 此页只维护已有角色模板，不改变当前访问模式。正式人员权限与数据范围仍需单独配置和验收。
+			49 text 部门
+			50 text 6
+			51 text 岗位
+			52 text 14
+			53 text 角色模板
+			54 text 17
+			55 text 成员账号
+			56 text 0
+			57 button (collapsed) 组织架构 部门与岗位, Secondary Actions: Expand
+				58 text 组织架构 
+				59 text 部门与岗位
+			60 container
+				61 heading 角色模板, Value: 3
+					62 text 角色模板
+				63 text 共 17 个角色
+				64 text field (settable) 搜索角色
+				65 checkbox 超级管理员 全部数据, Value: 0
+					66 text 超级管理员
+					67 text 全部数据
+				68 checkbox 管理员 全部数据, Value: 0
+					69 text 管理员
+					70 text 全部数据
+				71 checkbox 销售主管 本部门及下级, Value: 0
+					72 text 销售主管
+					73 text 本部门及下级
+				74 checkbox 业务员 仅本人负责, Value: 0
+					75 text 业务员
+					76 text 仅本人负责
+				77 checkbox 跟单 仅本人负责, Value: 0
+					78 text 跟单
+					79 text 仅本人负责
+				80 checkbox 运营主管 本部门及下级, Value: 0
+					81 text 运营主管
+					82 text 本部门及下级
+				83 checkbox 网站运营 仅本人负责, Value: 0
+					84 text 网站运营
+					85 text 仅本人负责
+				86 checkbox 平台运营 仅本人负责, Value: 0
+					87 text 平台运营
+					88 text 仅本人负责
+				89 checkbox 仓库主管 本部门及下级, Value: 0
+					90 text 仓库主管
+					91 text 本部门及下级
+				92 checkbox 仓库员工 本部门, Value: 0
+					93 text 仓库员工
+					94 text 本部门
+				95 checkbox 财务主管 本部门及下级, Value: 0
+					96 text 财务主管
+					97 text 本部门及下级
+				98 checkbox 财务员工 本部门, Value: 0
+					99 text 财务员工
+					100 text 本部门
+				101 checkbox 人事行政主管 本部门及下级, Value: 0
+					102 text 人事行政主管
+					103 text 本部门及下级
+				104 checkbox 人事 本部门, Value: 0
+					105 text 人事
+					106 text 本部门
+				107 checkbox 行政 本部门, Value: 0
+					108 text 行政
+					109 text 本部门
+				110 checkbox R0F8C 合成编辑角色 仅本人负责, Value: 1
+					111 text R0F8C 合成编辑角色
+					112 text 仅本人负责
+				113 checkbox R0F8C 另一合成角色 仅本人负责, Value: 0
+					114 text R0F8C 另一合成角色
+					115 text 仅本人负责
+			116 container
+				507 text R0F8C_EDITOR
+				118 heading R0F8C 合成编辑角色, Value: 3
+					508 text R0F8C 合成编辑角色
+				503 text 仅供本轮隔离UI测试的合成角色，不对应真实员工。长说明：部门、岗位、功能操作与数据范围各自保持现有定义。部门、岗位、功能操作与数据范围各自保持现有定义。部门、岗位、功能操作与数据范围各自保持现有定义。部门、岗位、功能操作与数据范围各自保持现有定义。部门、岗位、功能操作与数据范围各自保持现有定义。 默认数据范围（只读） 仅本人负责 此处不修改数据范围；共享主数据与业务记录继续遵守现有规则。 查找功能模块
+				121 text field (settable) 查找功能模块
+				122 text 24 / 24 个模块 当前没有未保存修改 勾选任一操作会同时勾选“查看”；取消“查看”会清除该模块的其他操作权限。筛选只影响显示，保存仍包含全部模块。
+				123 container 角色权限矩阵，可横向及纵向滚动
+					124 table R0F8C 合成编辑角色 · 功能权限
+						509 text R0F8C 合成编辑角色 · 功能权限
+						126 row
+							127 cell
+								128 text 功能模块
+							129 cell
+								130 text 查看
+							131 cell
+								132 text 新建
+							133 cell
+								134 text 修改
+							135 cell
+								136 text 删除
+							137 cell
+								138 text 导出
+							139 cell
+								140 text 导入
+						141 row
+							142 cell
+								143 text 经营概览
+							144 cell
+								145 checkbox (settable, integer) Description: R0F8C 合成编辑角色 经营概览 查看, Value: 0
+							146 cell
+								147 checkbox (settable, integer) Description: R0F8C 合成编辑角色 经营概览 新建, Value: 0
+							148 cell
+								149 checkbox (settable, integer) Description: R0F8C 合成编辑角色 经营概览 修改, Value: 0
+							150 cell
+								151 checkbox (settable, integer) Description: R0F8C 合成编辑角色 经营概览 删除, Value: 0
+							152 cell
+								153 checkbox (settable, integer) Description: R0F8C 合成编辑角色 经营概览 导出, Value: 0
+							154 cell
+								155 checkbox (settable, integer) Description: R0F8C 合成编辑角色 经营概览 导入, Value: 0
+						156 row
+							157 cell
+								158 text 报表中心
+							159 cell
+								160 checkbox (settable, integer) Description: R0F8C 合成编辑角色 报表中心 查看, Value: 0
+							161 cell
+								162 checkbox (settable, integer) Description: R0F8C 合成编辑角色 报表中心 新建, Value: 0
+							163 cell
+								164 checkbox (settable, integer) Description: R0F8C 合成编辑角色 报表中心 修改, Value: 0
+							165 cell
+								166 checkbox (settable, integer) Description: R0F8C 合成编辑角色 报表中心 删除, Value: 0
+							167 cell
+								168 checkbox (settable, integer) Description: R0F8C 合成编辑角色 报表中心 导出, Value: 0
+							169 cell
+								170 checkbox (settable, integer) Description: R0F8C 合成编辑角色 报表中心 导入, Value: 0
+						171 row
+							172 cell
+								173 text 客户管理
+							174 cell
+								175 checkbox (settable, integer) Description: R0F8C 合成编辑角色 客户管理 查看, Value: 1
+							176 cell
+								177 checkbox (settable, integer) Description: R0F8C 合成编辑角色 客户管理 新建, Value: 1
+							178 cell
+								179 checkbox (settable, integer) Description: R0F8C 合成编辑角色 客户管理 修改, Value: 0
+							180 cell
+								181 checkbox (settable, integer) Description: R0F8C 合成编辑角色 客户管理 删除, Value: 0
+							182 cell
+								183 checkbox (settable, integer) Description: R0F8C 合成编辑角色 客户管理 导出, Value: 0
+							184 cell
+								185 checkbox (settable, integer) Description: R0F8C 合成编辑角色 客户管理 导入, Value: 0
+						186 row
+							187 cell
+								188 text 联系人
+							189 cell
+								190 checkbox (settable, integer) Description: R0F8C 合成编辑角色 联系人 查看, Value: 0
+							191 cell
+								192 checkbox (settable, integer) Description: R0F8C 合成编辑角色 联系人 新建, Value: 0
+							193 cell
+								194 checkbox (settable, integer) Description: R0F8C 合成编辑角色 联系人 修改, Value: 0
+							195 cell
+								196 checkbox (settable, integer) Description: R0F8C 合成编辑角色 联系人 删除, Value: 0
+							197 cell
+								198 checkbox (settable, integer) Description: R0F8C 合成编辑角色 联系人 导出, Value: 0
+							199 cell
+								200 checkbox (settable, integer) Description: R0F8C 合成编辑角色 联系人 导入, Value: 0
+						201 row
+							202 cell
+								203 text 跟进记录
+							204 cell
+								205 checkbox (settable, integer) Description: R0F8C 合成编辑角色 跟进记录 查看, Value: 0
+							206 cell
+								207 checkbox (settable, integer) Description: R0F8C 合成编辑角色 跟进记录 新建, Value: 0
+							208 cell
+								209 checkbox (settable, integer) Description: R0F8C 合成编辑角色 跟进记录 修改, Value: 0
+							210 cell
+								211 checkbox (settable, integer) Description: R0F8C 合成编辑角色 跟进记录 删除, Value: 0
+							212 cell
+								213 checkbox (settable, integer) Description: R0F8C 合成编辑角色 跟进记录 导出, Value: 0
+							214 cell
+								215 checkbox (settable, integer) Description: R0F8C 合成编辑角色 跟进记录 导入, Value: 0
+						216 row
+							217 cell
+								218 text 报价管理
+							219 cell
+								220 checkbox (settable, integer) Description: R0F8C 合成编辑角色 报价管理 查看, Value: 0
+							221 cell
+								222 checkbox (settable, integer) Description: R0F8C 合成编辑角色 报价管理 新建, Value: 0
+							223 cell
+								224 checkbox (settable, integer) Description: R0F8C 合成编辑角色 报价管理 修改, Value: 0
+							225 cell
+								226 checkbox (settable, integer) Description: R0F8C 合成编辑角色 报价管理 删除, Value: 0
+							227 cell
+								228 checkbox (settable, integer) Description: R0F8C 合成编辑角色 报价管理 导出, Value: 0
+							229 cell
+								230 checkbox (settable, integer) Description: R0F8C 合成编辑角色 报价管理 导入, Value: 0
+						231 row
+							232 cell
+								233 text 订单管理
+							234 cell
+								235 checkbox (settable, integer) Description: R0F8C 合成编辑角色 订单管理 查看, Value: 0
+							236 cell
+								237 checkbox (settable, integer) Description: R0F8C 合成编辑角色 订单管理 新建, Value: 0
+							238 cell
+								239 checkbox (settable, integer) Description: R0F8C 合成编辑角色 订单管理 修改, Value: 0
+							240 cell
+								241 checkbox (settable, integer) Description: R0F8C 合成编辑角色 订单管理 删除, Value: 0
+							242 cell
+								243 checkbox (settable, integer) Description: R0F8C 合成编辑角色 订单管理 导出, Value: 0
+							244 cell
+								245 checkbox (settable, integer) Description: R0F8C 合成编辑角色 订单管理 导入, Value: 0
+						246 row
+							247 cell
+								248 text 供应商管理
+							249 cell
+								250 checkbox (settable, integer) Description: R0F8C 合成编辑角色 供应商管理 查看, Value: 0
+							251 cell
+								252 checkbox (settable, integer) Description: R0F8C 合成编辑角色 供应商管理 新建, Value: 0
+							253 cell
+								254 checkbox (settable, integer) Description: R0F8C 合成编辑角色 供应商管理 修改, Value: 0
+							255 cell
+								256 checkbox (settable, integer) Description: R0F8C 合成编辑角色 供应商管理 删除, Value: 0
+							257 cell
+								258 checkbox (settable, integer) Description: R0F8C 合成编辑角色 供应商管理 导出, Value: 0
+							259 cell
+								260 checkbox (settable, integer) Description: R0F8C 合成编辑角色 供应商管理 导入, Value: 0
+						261 row
+							262 cell
+								263 text 采购管理
+							264 cell
+								265 checkbox (settable, integer) Description: R0F8C 合成编辑角色 采购管理 查看, Value: 0
+							266 cell
+								267 checkbox (settable, integer) Description: R0F8C 合成编辑角色 采购管理 新建, Value: 0
+							268 cell
+								269 checkbox (settable, integer) Description: R0F8C 合成编辑角色 采购管理 修改, Value: 0
+							270 cell
+								271 checkbox (settable, integer) Description: R0F8C 合成编辑角色 采购管理 删除, Value: 0
+							272 cell
+								273 checkbox (settable, integer) Description: R0F8C 合成编辑角色 采购管理 导出, Value: 0
+							274 cell
+								275 checkbox (settable, integer) Description: R0F8C 合成编辑角色 采购管理 导入, Value: 0
+						276 row
+							277 cell
+								278 text 库存
+							279 cell
+								280 checkbox (settable, integer) Description: R0F8C 合成编辑角色 库存 查看, Value: 0
+							281 cell
+								282 checkbox (settable, integer) Description: R0F8C 合成编辑角色 库存 新建, Value: 0
+							283 cell
+								284 checkbox (settable, integer) Description: R0F8C 合成编辑角色 库存 修改, Value: 0
+							285 cell
+								286 checkbox (settable, integer) Description: R0F8C 合成编辑角色 库存 删除, Value: 0
+							287 cell
+								288 checkbox (settable, integer) Description: R0F8C 合成编辑角色 库存 导出, Value: 0
+							289 cell
+								290 checkbox (settable, integer) Description: R0F8C 合成编辑角色 库存 导入, Value: 0
+						291 row
+							292 cell
+								293 text 产品管理
+							294 cell
+								295 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品管理 查看, Value: 0
+							296 cell
+								297 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品管理 新建, Value: 0
+							298 cell
+								299 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品管理 修改, Value: 0
+							300 cell
+								301 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品管理 删除, Value: 0
+							302 cell
+								303 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品管理 导出, Value: 0
+							304 cell
+								305 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品管理 导入, Value: 0
+						306 row
+							307 cell
+								308 text SKU 管理
+							309 cell
+								310 checkbox (settable, integer) Description: R0F8C 合成编辑角色 SKU 管理 查看, Value: 0
+							311 cell
+								312 checkbox (settable, integer) Description: R0F8C 合成编辑角色 SKU 管理 新建, Value: 0
+							313 cell
+								314 checkbox (settable, integer) Description: R0F8C 合成编辑角色 SKU 管理 修改, Value: 0
+							315 cell
+								316 checkbox (settable, integer) Description: R0F8C 合成编辑角色 SKU 管理 删除, Value: 0
+							317 cell
+								318 checkbox (settable, integer) Description: R0F8C 合成编辑角色 SKU 管理 导出, Value: 0
+							319 cell
+								320 checkbox (settable, integer) Description: R0F8C 合成编辑角色 SKU 管理 导入, Value: 0
+						321 row
+							322 cell
+								323 text 产品分类
+							324 cell
+								325 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品分类 查看, Value: 0
+							326 cell
+								327 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品分类 新建, Value: 0
+							328 cell
+								329 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品分类 修改, Value: 0
+							330 cell
+								331 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品分类 删除, Value: 0
+							332 cell
+								333 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品分类 导出, Value: 0
+							334 cell
+								335 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品分类 导入, Value: 0
+						336 row
+							337 cell
+								338 text 产品参数
+							339 cell
+								340 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品参数 查看, Value: 0
+							341 cell
+								342 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品参数 新建, Value: 0
+							343 cell
+								344 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品参数 修改, Value: 0
+							345 cell
+								346 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品参数 删除, Value: 0
+							347 cell
+								348 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品参数 导出, Value: 0
+							349 cell
+								350 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品参数 导入, Value: 0
+						351 row
+							352 cell
+								353 text 包装管理
+							354 cell
+								355 checkbox (settable, integer) Description: R0F8C 合成编辑角色 包装管理 查看, Value: 0
+							356 cell
+								357 checkbox (settable, integer) Description: R0F8C 合成编辑角色 包装管理 新建, Value: 0
+							358 cell
+								359 checkbox (settable, integer) Description: R0F8C 合成编辑角色 包装管理 修改, Value: 0
+							360 cell
+								361 checkbox (settable, integer) Description: R0F8C 合成编辑角色 包装管理 删除, Value: 0
+							362 cell
+								363 checkbox (settable, integer) Description: R0F8C 合成编辑角色 包装管理 导出, Value: 0
+							364 cell
+								365 checkbox (settable, integer) Description: R0F8C 合成编辑角色 包装管理 导入, Value: 0
+						366 row
+							367 cell
+								368 text 交易单位
+							369 cell
+								370 checkbox (settable, integer) Description: R0F8C 合成编辑角色 交易单位 查看, Value: 0
+							371 cell
+								372 checkbox (settable, integer) Description: R0F8C 合成编辑角色 交易单位 新建, Value: 0
+							373 cell
+								374 checkbox (settable, integer) Description: R0F8C 合成编辑角色 交易单位 修改, Value: 0
+							375 cell
+								376 checkbox (settable, integer) Description: R0F8C 合成编辑角色 交易单位 删除, Value: 0
+							377 cell
+								378 checkbox (settable, integer) Description: R0F8C 合成编辑角色 交易单位 导出, Value: 0
+							379 cell
+								380 checkbox (settable, integer) Description: R0F8C 合成编辑角色 交易单位 导入, Value: 0
+						381 row
+							382 cell
+								383 text 产品证书
+							384 cell
+								385 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品证书 查看, Value: 0
+							386 cell
+								387 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品证书 新建, Value: 0
+							388 cell
+								389 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品证书 修改, Value: 0
+							390 cell
+								391 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品证书 删除, Value: 0
+							392 cell
+								393 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品证书 导出, Value: 0
+							394 cell
+								395 checkbox (settable, integer) Description: R0F8C 合成编辑角色 产品证书 导入, Value: 0
+						396 row
+							397 cell
+								398 text HS 编码
+							399 cell
+								400 checkbox (settable, integer) Description: R0F8C 合成编辑角色 HS 编码 查看, Value: 0
+							401 cell
+								402 checkbox (settable, integer) Description: R0F8C 合成编辑角色 HS 编码 新建, Value: 0
+							403 cell
+								404 checkbox (settable, integer) Description: R0F8C 合成编辑角色 HS 编码 修改, Value: 0
+							405 cell
+								406 checkbox (settable, integer) Description: R0F8C 合成编辑角色 HS 编码 删除, Value: 0
+							407 cell
+								408 checkbox (settable, integer) Description: R0F8C 合成编辑角色 HS 编码 导出, Value: 0
+							409 cell
+								410 checkbox (settable, integer) Description: R0F8C 合成编辑角色 HS 编码 导入, Value: 0
+						411 row
+							412 cell
+								413 text 财务计划
+							414 cell
+								415 checkbox (settable, integer) Description: R0F8C 合成编辑角色 财务计划 查看, Value: 0
+							416 cell
+								417 checkbox (settable, integer) Description: R0F8C 合成编辑角色 财务计划 新建, Value: 0
+							418 cell
+								419 checkbox (settable, integer) Description: R0F8C 合成编辑角色 财务计划 修改, Value: 0
+							420 cell
+								421 checkbox (settable, integer) Description: R0F8C 合成编辑角色 财务计划 删除, Value: 0
+							422 cell
+								423 checkbox (settable, integer) Description: R0F8C 合成编辑角色 财务计划 导出, Value: 0
+							424 cell
+								425 checkbox (settable, integer) Description: R0F8C 合成编辑角色 财务计划 导入, Value: 0
+						426 row
+							427 cell
+								428 text 财务流水
+							429 cell
+								430 checkbox (settable, integer) Description: R0F8C 合成编辑角色 财务流水 查看, Value: 0
+							431 cell
+								432 checkbox (settable, integer) Description: R0F8C 合成编辑角色 财务流水 新建, Value: 0
+							433 cell
+								434 checkbox (settable, integer) Description: R0F8C 合成编辑角色 财务流水 修改, Value: 0
+							435 cell
+								436 checkbox (settable, integer) Description: R0F8C 合成编辑角色 财务流水 删除, Value: 0
+							437 cell
+								438 checkbox (settable, integer) Description: R0F8C 合成编辑角色 财务流水 导出, Value: 0
+							439 cell
+								440 checkbox (settable, integer) Description: R0F8C 合成编辑角色 财务流水 导入, Value: 0
+						441 row
+							442 cell
+								443 text 数据导入
+							444 cell
+								445 checkbox (settable, integer) Description: R0F8C 合成编辑角色 数据导入 查看, Value: 0
+							446 cell
+								447 checkbox (settable, integer) Description: R0F8C 合成编辑角色 数据导入 新建, Value: 0
+							448 cell
+								449 checkbox (settable, integer) Description: R0F8C 合成编辑角色 数据导入 修改, Value: 0
+							450 cell
+								451 checkbox (settable, integer) Description: R0F8C 合成编辑角色 数据导入 删除, Value: 0
+							452 cell
+								453 checkbox (settable, integer) Description: R0F8C 合成编辑角色 数据导入 导出, Value: 0
+							454 cell
+								455 checkbox (settable, integer) Description: R0F8C 合成编辑角色 数据导入 导入, Value: 0
+						456 row
+							457 cell
+								458 text 组织架构
+							459 cell
+								460 checkbox (settable, integer) Description: R0F8C 合成编辑角色 组织架构 查看, Value: 0
+							461 cell
+								462 checkbox (settable, integer) Description: R0F8C 合成编辑角色 组织架构 新建, Value: 0
+							463 cell
+								464 checkbox (settable, integer) Description: R0F8C 合成编辑角色 组织架构 修改, Value: 0
+							465 cell
+								466 checkbox (settable, integer) Description: R0F8C 合成编辑角色 组织架构 删除, Value: 0
+							467 cell
+								468 checkbox (settable, integer) Description: R0F8C 合成编辑角色 组织架构 导出, Value: 0
+							469 cell
+								470 checkbox (settable, integer) Description: R0F8C 合成编辑角色 组织架构 导入, Value: 0
+						471 row
+							472 cell
+								473 text 成员管理
+							474 cell
+								475 checkbox (settable, integer) Description: R0F8C 合成编辑角色 成员管理 查看, Value: 0
+							476 cell
+								477 checkbox (settable, integer) Description: R0F8C 合成编辑角色 成员管理 新建, Value: 0
+							478 cell
+								479 checkbox (settable, integer) Description: R0F8C 合成编辑角色 成员管理 修改, Value: 0
+							480 cell
+								481 checkbox (settable, integer) Description: R0F8C 合成编辑角色 成员管理 删除, Value: 0
+							482 cell
+								483 checkbox (settable, integer) Description: R0F8C 合成编辑角色 成员管理 导出, Value: 0
+							484 cell
+								485 checkbox (settable, integer) Description: R0F8C 合成编辑角色 成员管理 导入, Value: 0
+						486 row
+							487 cell
+								488 text 权限配置
+							489 cell
+								490 checkbox (settable, integer) Description: R0F8C 合成编辑角色 权限配置 查看, Value: 0
+							491 cell
+								492 checkbox (settable, integer) Description: R0F8C 合成编辑角色 权限配置 新建, Value: 0
+							493 cell
+								494 checkbox (settable, integer) Description: R0F8C 合成编辑角色 权限配置 修改, Value: 0
+							495 cell
+								496 checkbox (settable, integer) Description: R0F8C 合成编辑角色 权限配置 删除, Value: 0
+							497 cell
+								498 checkbox (settable, integer) Description: R0F8C 合成编辑角色 权限配置 导出, Value: 0
+							499 cell
+								500 checkbox (settable, integer) Description: R0F8C 合成编辑角色 权限配置 导入, Value: 0
+				510 text 权限已保存，并已重新读取服务器配置。
+				511 button (disabled) 撤销未保存修改
+				512 button (disabled) 保存权限
+
+The focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5204/organization

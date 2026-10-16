@@ -1,0 +1,107 @@
+Browser tab: 9, Title: "森爵业务中台", URL: "http://127.0.0.1:5204/".
+1 AXWebArea 森爵业务中台, URL: 127.0.0.1:5204/
+	2 container app
+		3 container
+			4 text S 森爵业务中台 CRM · ERP
+			10 text 经营
+			11 link Description: 经营概览, Value: 127.0.0.1:5204/
+			12 link Description: 报表中心, Value: 127.0.0.1:5204/reports
+			13 text 客户
+			14 link Description: 客户管理, Value: 127.0.0.1:5204/customers
+			15 link Description: 联系人, Value: 127.0.0.1:5204/contacts
+			16 link Description: 跟进记录, Value: 127.0.0.1:5204/follow-ups
+			17 text 销售
+			18 link Description: 报价管理, Value: 127.0.0.1:5204/quotes
+			19 link Description: 订单管理, Value: 127.0.0.1:5204/orders
+			20 text 采购与库存
+			21 link Description: 供应商管理, Value: 127.0.0.1:5204/suppliers
+			22 link Description: 采购管理, Value: 127.0.0.1:5204/purchase-orders
+			23 link Description: 库存, Value: 127.0.0.1:5204/inventory
+			24 link Description: 库存流水, Value: 127.0.0.1:5204/inventory-movements
+			25 text 产品资料
+			26 link Description: 产品管理, Value: 127.0.0.1:5204/products
+			27 link Description: SKU 管理, Value: 127.0.0.1:5204/skus
+			28 link Description: 产品分类, Value: 127.0.0.1:5204/categories
+			29 link Description: 产品参数, Value: 127.0.0.1:5204/product-parameters
+			30 link Description: 包装管理, Value: 127.0.0.1:5204/sku-packaging
+			31 link Description: 交易单位, Value: 127.0.0.1:5204/sku-trade-units
+			32 link Description: 产品证书, Value: 127.0.0.1:5204/product-certificates
+			33 link Description: HS 编码维护, Value: 127.0.0.1:5204/hs-codes
+			34 text 财务与工具
+			35 link Description: 财务概览, Value: 127.0.0.1:5204/finance
+			36 link Description: 应收计划, Value: 127.0.0.1:5204/receivables
+			37 link Description: 应付计划, Value: 127.0.0.1:5204/payables
+			38 link Description: 财务流水, Value: 127.0.0.1:5204/transactions
+			39 link Description: 数据导入, Value: 127.0.0.1:5204/import
+			40 text 组织与系统
+			41 link Description: 组织与权限, Value: 127.0.0.1:5204/organization
+			42 text J 开发身份：Johnson 超级管理员 · 全部功能与数据权限
+		5 container
+			43 text BUSINESS OVERVIEW
+			7 heading 经营概览, Value: 1
+				44 text 经营概览
+			9 text 10月16日周五
+			45 text J
+			46 container
+				47 text 销售表现、当前提醒与已确认收支。
+				48 text 上次加载 21:30 · 页面刷新后更新
+				49 button 刷新数据
+				50 container 经营快捷入口
+					51 link Description: 报表中心, Value: 127.0.0.1:5204/reports
+					52 link Description: 订单管理, Value: 127.0.0.1:5204/orders
+					53 link Description: 客户管理, Value: 127.0.0.1:5204/customers
+					54 link Description: 财务概览, Value: 127.0.0.1:5204/finance
+				55 container 销售与客户
+					56 heading 销售与客户, Value: 2, ID: sales-section-title
+						57 text 销售与客户
+					58 text 销售额按订单日期、合同金额及订单汇率折人民币；不代表实收款。
+					59 text 2026-01-01 起
+					60 container
+						61 text 本年截至今日销售额 ¥ 0.00 2026-01-01 — 2026-10-16 去年同期为零，暂不计算变化率
+					62 container
+						63 text 本年起订单数 0 有效订单；含已录入的未来日期订单
+					64 container
+						65 text 合作中客户 0 当前客户档案，不按订单日期筛选
+					66 container
+						67 text 当前待跟进 0 截至今日待跟进，含逾期事项
+				68 container 销售趋势
+					69 heading 销售趋势, Value: 2
+						70 text 销售趋势
+					71 text 返回月份内的订单销售额 · 人民币
+					72 text 暂无月度销售数据。
+					73 text 按接口返回月份展示；包含已录入的未来日期订单，不限定近 12 个月。
+				74 container 品类表现
+					75 heading 品类表现, Value: 2
+						76 text 品类表现
+					77 text 2026-01-01 起 · 商品分类金额前 8 项
+					78 text 暂无品类销售数据。
+					79 text 仅商品行，不含运费、折扣和合同金额调整；含未来日期订单。条形占比按显示项目计算。
+				80 container 重点客户
+					81 heading 重点客户, Value: 2
+						82 text 重点客户
+					83 text 2026-01-01 起 · 按销售额显示前 6 名，含未来日期订单
+					84 link Description: 客户列表, Value: 127.0.0.1:5204/customers
+					85 text 暂无客户销售数据。
+				86 container 待跟进事项
+					87 heading 待跟进事项, Value: 2
+						88 text 待跟进事项
+					89 text 今日及逾期的当前事项，显示前 5 条
+					90 link Description: 全部待跟进, Value: 127.0.0.1:5204/follow-ups?due=true
+					91 text 当前没有待跟进事项。
+				92 container 证书到期提醒
+					93 heading 证书到期提醒, Value: 2
+						94 text 证书到期提醒
+					95 text 暂无已过期或 90 天内到期的证书。
+					96 link Description: 全部需关注证书, Value: 127.0.0.1:5204/product-certificates?expiry=attention
+				97 container 已确认收支
+					98 heading 已确认收支, Value: 2, ID: cash-section-title
+						99 text 已确认收支
+					100 text 按流水发生日期，从 2026-01-01 起汇总，含已录入的未来日期流水。
+					101 text 收入（人民币）
+					102 text ¥ 0.00
+					103 text 支出（人民币）
+					104 text ¥ 0.00
+					105 text 净现金流（收入 − 支出）
+					106 text ¥ 0.00
+
+The focused UI element is 1 AXWebArea 森爵业务中台, URL: 127.0.0.1:5204/

@@ -1,0 +1,14 @@
+21:24:49 [vite] http proxy error: /api/access-roles/16/permission-matrix/
+Error: connect ECONNREFUSED 127.0.0.1:8117
+21:29:44 [vite] http proxy error: /api/session/current-operator/
+Error: connect ECONNREFUSED 127.0.0.1:8117
+21:29:45 [vite] http proxy error: /api/session/current-operator/
+Error: connect ECONNREFUSED 127.0.0.1:8117
+21:29:45 [vite] http proxy error: /api/session/current-operator/
+Error: connect ECONNREFUSED 127.0.0.1:8117
+21:29:46 [vite] http proxy error: /api/session/current-operator/
+Error: connect ECONNREFUSED 127.0.0.1:8117
+21:29:48 [vite] http proxy error: /api/session/current-operator/
+Error: connect ECONNREFUSED 127.0.0.1:8117
+21:29:51 [vite] http proxy error: /api/session/current-operator/
+Error: connect ECONNREFUSED 127.0.0.1:8117

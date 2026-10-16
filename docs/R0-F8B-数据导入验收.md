@@ -71,3 +71,7 @@
 完整结果见[TEST-RESULTS.md](uat-evidence/r0-f8b/TEST-RESULTS.md)。Backend720（10个既有skip）、Node121、独立typography1；完整Vitest与Playwright、Build按最终日志记录。后端/PG/前端最终精确HEAD CI结果由交付消息和对应commit checks核对，不能拿基线CI代替。
 
 ISS-094新增FIXED_PENDING_REVIEW；ISS-052保留并追加真实证据；ISS-092/093同步已接受代码范围；没有关闭历史Issue。全站覆盖清单已更新，组织/权限及其状态页尚未专项，不进入R0-F8C、集中历史修复、正式RBAC、员工UAT或部署。Push master及三项CI成功后停止，等待ChatGPT独立代码和图片复审。
+
+## R0-F8C开始时同步的前置结论（2026-10-16）
+
+用户本轮明确接受R0-F8B代码、自动及已覆盖真实CSV业务验收，允许有条件封版。最终10158f89b50ad477026f4ee2d4d4fd8177d5edcd，[CI #38878347385](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38878347385)三项SUCCESS。ISS-094保留独立图片复核；ISS-052仍NEEDS_VERIFICATION，不扩大为正式身份审计或完整业务UAT。

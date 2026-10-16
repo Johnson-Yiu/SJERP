@@ -62,7 +62,7 @@ it('P: redirects a manually opened forbidden route to the access denied page', a
   expect(router.currentRoute.value.name).toBe('access-denied')
   wrapper = mount(App, { global: { plugins: [router], stubs: { AppDialogHost: true } } })
   await flush()
-  expect(wrapper.text()).toContain('无权访问此功能')
+  expect(wrapper.text()).toContain('没有此页面的访问权限')
 })
 
 it('permission administrators can enter Organization and see its sidebar link without organization.view', async () => {
@@ -102,6 +102,7 @@ it('refreshes current-operator after saving the permission matrix and updates th
   mocks.api.get.mockImplementation(async url => {
     if (url === '/session/current-operator/') return { data: current }
     if (url === '/organization/overview/') return { data: overview }
+    if (url === '/access-roles/7/') return { data: role }
     return { data: [] }
   })
   mocks.api.post.mockImplementation(async () => {
@@ -111,6 +112,7 @@ it('refreshes current-operator after saving the permission matrix and updates th
   wrapper = mount(App, { global: { plugins: [router], stubs: { AppDialogHost: true } } })
   await flush()
   expect(wrapper.find('.sidebar nav a[href="/organization"]').exists()).toBe(true)
+  await wrapper.get('input[aria-label="管理员 客户 查看"]').setValue(true)
   await wrapper.get('.role-header-actions .btn-primary').trigger('click')
   await flush()
   expect(mocks.api.post).toHaveBeenCalled()

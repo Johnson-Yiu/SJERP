@@ -1,0 +1,21 @@
+Browser tab: 9, Title: "森爵业务中台", URL: "http://127.0.0.1:5204/access-status-error".
+1 AXWebArea 森爵业务中台, URL: 127.0.0.1:5204/access-status-error
+	2 container app
+		3 container
+			4 text S 森爵业务中台 CRM · ERP 权 当前账号：权限状态不可用 身份待确认 · 按账号授权 权限状态加载失败：服务器暂时不可用，请稍后重试。
+		5 container
+			6 text ACCESS STATUS
+			7 heading 权限状态, Value: 1
+				8 text 权限状态
+			9 text 10月16日周五
+			17 text 权
+			11 container 权限状态获取失败
+				12 heading 权限状态获取失败, Value: 2, ID: access-state-title
+					13 text 权限状态获取失败
+				14 text 暂时无法确认当前身份的权限。请重新加载权限状态，再继续操作。
+				18 container
+					19 text 错误信息 服务器暂时不可用，请稍后重试。
+				15 button 重新加载权限状态
+				16 text 重新加载只检查当前权限，不会修改角色配置。
+
+The focused UI element is 1 AXWebArea 森爵业务中台, URL: 127.0.0.1:5204/access-status-error

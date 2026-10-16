@@ -1,0 +1,92 @@
+Browser tab: 8, Title: "森爵业务中台", URL: "http://127.0.0.1:5203/import".
+0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import
+	1 container app
+		2 container
+			3 text S 森爵业务中台 CRM · ERP
+			4 text 经营
+			5 link Description: 经营概览, Value: 127.0.0.1:5203/
+			6 link Description: 报表中心, Value: 127.0.0.1:5203/reports
+			7 text 客户
+			8 link Description: 客户管理, Value: 127.0.0.1:5203/customers
+			9 link Description: 联系人, Value: 127.0.0.1:5203/contacts
+			10 link Description: 跟进记录, Value: 127.0.0.1:5203/follow-ups
+			11 text 销售
+			12 link Description: 报价管理, Value: 127.0.0.1:5203/quotes
+			13 link Description: 订单管理, Value: 127.0.0.1:5203/orders
+			14 text 采购与库存
+			15 link Description: 供应商管理, Value: 127.0.0.1:5203/suppliers
+			16 link Description: 采购管理, Value: 127.0.0.1:5203/purchase-orders
+			17 link Description: 库存, Value: 127.0.0.1:5203/inventory
+			18 link Description: 库存流水, Value: 127.0.0.1:5203/inventory-movements
+			19 text 产品资料
+			20 link Description: 产品管理, Value: 127.0.0.1:5203/products
+			21 link Description: SKU 管理, Value: 127.0.0.1:5203/skus
+			22 link Description: 产品分类, Value: 127.0.0.1:5203/categories
+			23 link Description: 产品参数, Value: 127.0.0.1:5203/product-parameters
+			24 link Description: 包装管理, Value: 127.0.0.1:5203/sku-packaging
+			25 link Description: 交易单位, Value: 127.0.0.1:5203/sku-trade-units
+			26 link Description: 产品证书, Value: 127.0.0.1:5203/product-certificates
+			27 link Description: HS 编码维护, Value: 127.0.0.1:5203/hs-codes
+			28 text 财务与工具
+			29 link Description: 财务概览, Value: 127.0.0.1:5203/finance
+			30 link Description: 应收计划, Value: 127.0.0.1:5203/receivables
+			31 link Description: 应付计划, Value: 127.0.0.1:5203/payables
+			32 link Description: 财务流水, Value: 127.0.0.1:5203/transactions
+			33 link Description: 数据导入, Value: 127.0.0.1:5203/import
+			34 text 组织与系统
+			35 link Description: 组织与权限, Value: 127.0.0.1:5203/organization
+			36 text J 开发身份：Johnson 超级管理员 · 全部功能与数据权限
+		37 container
+			38 text DATA ONBOARDING
+			39 heading 数据导入, Value: 1
+				40 text 数据导入
+			41 text 10月16日周五
+			42 text J
+			43 heading 数据导入, Value: 2
+				44 text 数据导入
+			45 text 先校验 CSV，再确认写入；预览不会保存业务数据。
+			46 text 01
+			47 heading 选择数据类型, Value: 3
+				48 text 选择数据类型
+			49 text 客户、产品和 SKU 按编号匹配；更新会经过当前业务规则校验，不会绕过主数据保护。
+			50 container
+				51 radio button (settable, integer) Description: 客户 按客户编号匹配, Value: 1
+				52 text 客户 按客户编号匹配
+			53 container
+				54 radio button (settable, integer) Description: 产品 分类须预先建立, Value: 0
+				55 text 产品 分类须预先建立
+			56 container
+				57 radio button (settable, integer) Description: SKU 按 SKU 与产品编号匹配, Value: 0
+				58 text SKU 按 SKU 与产品编号匹配
+			59 container
+				60 radio button (settable, integer) Description: 财务流水 只新增，不覆盖, Value: 0
+				61 text 财务流水 只新增，不覆盖
+			62 text 02
+			63 heading 准备并上传 CSV, Value: 3
+				64 text 准备并上传 CSV
+			65 text 文件须为 UTF-8（支持 BOM），最多 5,000 条记录。选择文件后仍须预览校验，第一行保留模板字段名。
+			66 button 下载 客户 CSV 模板 code · name · country · source · website · address · notes
+				67 text 下载 客户 CSV 模板
+				68 text code · name · country · source · website · address · notes
+			69 container
+				86 text A-customers-new.csv 0.1 KB
+			71 button 预览并校验
+			87 text 导入完成，已写入数据库
+			88 container
+				89 text 导入成功：共 2 行，新增 0，更新 2
+				90 link Description: 前往客户, Value: 127.0.0.1:5203/customers
+			73 container
+				74 heading 导入规则, Value: 3
+					75 text 导入规则
+				76 content list
+					77 container
+						78 text 1 客户 按客户编号匹配
+					79 container
+						80 text 2 产品 分类须预先建立
+					81 container
+						82 text 3 SKU 按 SKU 与产品编号匹配
+					83 container
+						84 text 4 财务流水 只新增，不覆盖
+				85 text 关联与历史安全 客户、产品和 SKU 按编号匹配。更新时空白字段可能清除原有内容，请先备份并核对。财务流水只新增；重复流水号会报错，绝不覆盖原记录。 正式订单导入暂未开放，请通过订单业务流程创建；避免绕过报价、库存预留和收款计划。
+
+The focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import

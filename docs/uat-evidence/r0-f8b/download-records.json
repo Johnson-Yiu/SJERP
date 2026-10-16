@@ -1,0 +1,27 @@
+[
+  {
+    "name": "customers_template.csv",
+    "path": "C:\\Users\\Johnson\\Downloads\\customers_template.csv",
+    "bytes": 51
+  },
+  {
+    "name": "customers_import_failures.csv",
+    "path": "C:\\Users\\Johnson\\Downloads\\customers_import_failures.csv",
+    "bytes": 112
+  },
+  {
+    "name": "products_template.csv",
+    "path": "C:\\Users\\Johnson\\Downloads\\products_template.csv",
+    "bytes": 61
+  },
+  {
+    "name": "skus_template.csv",
+    "path": "C:\\Users\\Johnson\\Downloads\\skus_template.csv",
+    "bytes": 74
+  },
+  {
+    "name": "transactions_template.csv",
+    "path": "C:\\Users\\Johnson\\Downloads\\transactions_template.csv",
+    "bytes": 139
+  }
+]

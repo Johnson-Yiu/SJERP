@@ -1,0 +1,110 @@
+{
+  "downloaded_files": [
+    {
+      "file": "downloads\\customers_template.csv",
+      "encoding": "UTF-8 BOM",
+      "headers": [
+        "code",
+        "name",
+        "country",
+        "source",
+        "website",
+        "address",
+        "notes"
+      ],
+      "sha256": "0c5c6b9d8153fcce528fce48ebe7f67dde5f3e50bda884cf5c83a9ae3d51f079"
+    },
+    {
+      "file": "downloads\\products_template.csv",
+      "encoding": "UTF-8 BOM",
+      "headers": [
+        "code",
+        "name",
+        "sales_model_prefix",
+        "category",
+        "description",
+        "status"
+      ],
+      "sha256": "7ec73f2b62b43af4ca33c6da6680002d01e89f48e90df6e98e97ce74565debcf"
+    },
+    {
+      "file": "downloads\\skus_template.csv",
+      "encoding": "UTF-8 BOM",
+      "headers": [
+        "sku",
+        "product_code",
+        "specification",
+        "unit",
+        "cost_price",
+        "default_price",
+        "currency"
+      ],
+      "sha256": "720b9946f2feb3b93d55c10cc186222f5d0a88e4ecbf00a99196f25a3cd3bcd7"
+    },
+    {
+      "file": "downloads\\transactions_template.csv",
+      "encoding": "UTF-8 BOM",
+      "headers": [
+        "transaction_no",
+        "transaction_date",
+        "direction",
+        "category",
+        "amount",
+        "currency",
+        "exchange_rate",
+        "customer_code",
+        "order_no",
+        "payment_method",
+        "reference",
+        "notes"
+      ],
+      "sha256": "2dc29be352fe22ad5e1888313635404a61f258d04f88961923b96bcd3e6ad0e2"
+    },
+    {
+      "file": "downloads\\customers_import_failures.csv",
+      "encoding": "UTF-8 BOM",
+      "rows": [
+        {
+          "row": "3",
+          "key": "F8B-DUP",
+          "message": "文件内业务主键 code 重复：F8B-DUP（首次出现在第 2 行）。"
+        }
+      ],
+      "sha256": "9767340d779287ed2bb450ecef7f47b7796dd18e27d2ba516b5c869f70de0280"
+    }
+  ],
+  "unchanged_database_pairs": [
+    [
+      "initial",
+      "customers-preview"
+    ],
+    [
+      "initial",
+      "customers-cancel"
+    ],
+    [
+      "customers-created",
+      "customers-update-preview"
+    ],
+    [
+      "customers-updated",
+      "customers-invalid-files"
+    ],
+    [
+      "customers-updated",
+      "products-preview"
+    ],
+    [
+      "conflict-before-execute",
+      "conflict-rejected-no-write"
+    ]
+  ],
+  "final_counts": {
+    "crm_customer": 2,
+    "crm_product": 1,
+    "crm_sku": 1,
+    "crm_transaction": 1
+  },
+  "result": "PASS",
+  "scope": "Synthetic isolated SQLite; formal-role audit/UAT not covered"
+}

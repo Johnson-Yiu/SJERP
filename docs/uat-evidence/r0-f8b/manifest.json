@@ -1,0 +1,420 @@
+[
+  {
+    "file": "completed-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1024,
+      1000
+    ],
+    "sha256": "601372ffe44e364a02cb8cd2c1a69e577e803a77bc8d01786b3f672a13b9e112",
+    "bytes": 80029
+  },
+  {
+    "file": "completed-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1280,
+      1000
+    ],
+    "sha256": "0a26bbac199c891348dd60dd800c504b39bcc48c4cc4f1e589e4877bc41f6959",
+    "bytes": 99387
+  },
+  {
+    "file": "completed-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1440,
+      1000
+    ],
+    "sha256": "4f3ae8e36dc6a5670f38619211412520e33ae35ac6b1e6d73849fe91738efc18",
+    "bytes": 104515
+  },
+  {
+    "file": "confirmation-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1024,
+      1000
+    ],
+    "sha256": "f90541b66e801a1f4a817ae1504a412543ce99ddfa3b028f7778d7d9304d8c06",
+    "bytes": 30302
+  },
+  {
+    "file": "confirmation-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1280,
+      1000
+    ],
+    "sha256": "f7216fee43581e900da4ec5810352f579458186e621a9455fba2fb0ed932abfe",
+    "bytes": 35198
+  },
+  {
+    "file": "confirmation-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1440,
+      1000
+    ],
+    "sha256": "9e40dec0788eab2dda0d4008f5cc2352c1518ea31aef73feb132c3a238640f0d",
+    "bytes": 37161
+  },
+  {
+    "file": "empty-file-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1024,
+      1000
+    ],
+    "sha256": "cfebbf6b15c2417b2109068ccfee868fc1d157801f67868413a4c04b025ec97c",
+    "bytes": 71552
+  },
+  {
+    "file": "execution-conflict-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1024,
+      1000
+    ],
+    "sha256": "941d8cacc6fc6c4c0ccfe1f1feb16031b9323b1277feac6cbc315d50ecc1120f",
+    "bytes": 82642
+  },
+  {
+    "file": "execution-conflict-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1280,
+      1000
+    ],
+    "sha256": "3fc505db29603ff7a9f7987733b1a6505dfc9c02dd6a9ed0a008bba7c5674958",
+    "bytes": 101594
+  },
+  {
+    "file": "execution-conflict-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1440,
+      1000
+    ],
+    "sha256": "c35bc6dad16cc54c593f75a6672858ef67ed4a7d7bd9a9240723e4c77ef0bc64",
+    "bytes": 105934
+  },
+  {
+    "file": "file-selected-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1440,
+      1000
+    ],
+    "sha256": "1fd932971717f2d909fcfee47e30a2af673c221db236f487ca3486a6dadc2da0",
+    "bytes": 99614
+  },
+  {
+    "file": "imported-customer-detail-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "url": "http://127.0.0.1:5203/customers?detail=1&tab=followups",
+    "pixels": [
+      1440,
+      1000
+    ],
+    "sha256": "77e802eeb83ab416778c1c996bfecf68821b329b67f18a7895e00fb2c6271736",
+    "bytes": 70412
+  },
+  {
+    "file": "initial-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1024,
+      1000
+    ],
+    "sha256": "c152c2acea863f8e52e80e841b9fb22c6bf7204d6dabce4fe0f819aac7a66422",
+    "bytes": 76484
+  },
+  {
+    "file": "initial-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1280,
+      1000
+    ],
+    "sha256": "2337b4caa86584ee97fed32506ea446fd48ff8e4e4ecf1c261f3b33b24d1bfaa",
+    "bytes": 94771
+  },
+  {
+    "file": "initial-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1440,
+      1000
+    ],
+    "sha256": "6c17e4a20d79747a0e225d11ef46f4b0289043e78e6044fe4f3e854c3efeba96",
+    "bytes": 98685
+  },
+  {
+    "file": "validation-errors-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1024,
+      1000
+    ],
+    "sha256": "0d89783c9fed5aaceadedd895351abdce65e5cccd1b097722953ae969a53f135",
+    "bytes": 85800
+  },
+  {
+    "file": "validation-errors-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1280,
+      1000
+    ],
+    "sha256": "7c1de73a1e1370cf7071ff07e8ee42710d66ffd120e8103b1211369c94a2e44e",
+    "bytes": 107635
+  },
+  {
+    "file": "validation-errors-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1440,
+      1000
+    ],
+    "sha256": "16d5b641e348a131c99492fa4af627d4a9bd22aec65ee44e1811e35304488495",
+    "bytes": 112497
+  },
+  {
+    "file": "validation-success-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1024
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1024,
+      1000
+    ],
+    "sha256": "50c40bc4f1c2b91e78cc4b03727385b894095539f2d83468ad23cb413ab6bff7",
+    "bytes": 80809
+  },
+  {
+    "file": "validation-success-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1280
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1280,
+      1000
+    ],
+    "sha256": "08e18e69e1a5e2cdb2365a2a690ca7dd7fbfffdc05de5bdd2aac0539582a5946",
+    "bytes": 100195
+  },
+  {
+    "file": "validation-success-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1440,
+      1000
+    ],
+    "sha256": "8f4df1640cf55ab4eba8d46250f7ea413b3bf4549ab94f8f0865af3214d03204",
+    "bytes": 105529
+  },
+  {
+    "file": "wrong-header-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "dom": {
+      "dpr": 1,
+      "height": 1000,
+      "width": 1440
+    },
+    "url": "http://127.0.0.1:5203/import",
+    "pixels": [
+      1440,
+      1000
+    ],
+    "sha256": "a0de6f984b4b614748800f1e62d12c7a8d457fec8a03d311279531086d74ed47",
+    "bytes": 102146
+  }
+]

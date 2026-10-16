@@ -1,0 +1,5 @@
+[16/Oct/2026 16:58:38] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[16/Oct/2026 16:58:38] "GET /api/import/templates/ HTTP/1.1" 200 427
+[16/Oct/2026 16:59:01] "POST /api/import/csv/preview/ HTTP/1.1" 200 733
+[16/Oct/2026 16:59:14] "POST /api/import/csv/execute/ HTTP/1.1" 200 35
+[16/Oct/2026 17:00:21] "POST /api/import/csv/preview/ HTTP/1.1" 200 161

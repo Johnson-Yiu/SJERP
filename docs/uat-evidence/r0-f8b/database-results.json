@@ -1,0 +1,1389 @@
+[
+  {
+    "step": "initial",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_product": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_sku": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_transaction": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      }
+    }
+  },
+  {
+    "step": "customers-preview",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_product": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_sku": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_transaction": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      }
+    }
+  },
+  {
+    "step": "customers-cancel",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_product": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_sku": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_transaction": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      }
+    }
+  },
+  {
+    "step": "customers-created",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "6f61f0d9f601bdee11c3241bdbe41fc0c8d67450eeeaa61399daba34c61878f7",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 02:35:13.955680",
+            "name": "中文客户 / Alpha & Co",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "含逗号, 引号\"和换行\n第二行",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 02:35:13.961827",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_sku": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_transaction": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      }
+    }
+  },
+  {
+    "step": "customers-update-preview",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "6f61f0d9f601bdee11c3241bdbe41fc0c8d67450eeeaa61399daba34c61878f7",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 02:35:13.955680",
+            "name": "中文客户 / Alpha & Co",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "含逗号, 引号\"和换行\n第二行",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 02:35:13.961827",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_sku": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_transaction": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      }
+    }
+  },
+  {
+    "step": "customers-updated",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "291162b0d8ca7eda6c52a61d47cb6d0bac8664267d41e90e4c11ef3440e7c260",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 02:36:31.503113",
+            "name": "中文客户 Updated",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "更新内容, \"确认\"\n第二行",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 02:35:13.961827",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_sku": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_transaction": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      }
+    }
+  },
+  {
+    "step": "customers-invalid-files",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "291162b0d8ca7eda6c52a61d47cb6d0bac8664267d41e90e4c11ef3440e7c260",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 02:36:31.503113",
+            "name": "中文客户 Updated",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "更新内容, \"确认\"\n第二行",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 02:35:13.961827",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_sku": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_transaction": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      }
+    }
+  },
+  {
+    "step": "products-preview",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "291162b0d8ca7eda6c52a61d47cb6d0bac8664267d41e90e4c11ef3440e7c260",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 02:36:31.503113",
+            "name": "中文客户 Updated",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "更新内容, \"确认\"\n第二行",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 02:35:13.961827",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_sku": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_transaction": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      }
+    }
+  },
+  {
+    "step": "products-created-update-preview",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "291162b0d8ca7eda6c52a61d47cb6d0bac8664267d41e90e4c11ef3440e7c260",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 02:36:31.503113",
+            "name": "中文客户 Updated",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "更新内容, \"确认\"\n第二行",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 02:35:13.961827",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 1,
+        "sha256": "0e299c3f7968e0157bab20ea1201c3f6a35b367883f199d719f3353ee8cca877",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:24.847809",
+            "updated_at": "2026-10-16 04:12:24.847830",
+            "name": "中文产品 \"灯具\", Alpha",
+            "code": "F8B-P01",
+            "description": "多行\n规格说明",
+            "status": "active",
+            "category_id": null,
+            "name_en": "",
+            "sales_model_prefix": "F8BP",
+            "hs_code_id": null,
+            "combination_rules": "[]"
+          }
+        ]
+      },
+      "crm_sku": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_transaction": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      }
+    }
+  },
+  {
+    "step": "products-updated-skus-preview",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "291162b0d8ca7eda6c52a61d47cb6d0bac8664267d41e90e4c11ef3440e7c260",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 02:36:31.503113",
+            "name": "中文客户 Updated",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "更新内容, \"确认\"\n第二行",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 02:35:13.961827",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 1,
+        "sha256": "f1e468e0a4531aeb5b5b4da405a74d710bf147dbcf04ada2d7d6dbe0e06098a8",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:24.847809",
+            "updated_at": "2026-10-16 04:12:35.936116",
+            "name": "中文产品更新",
+            "code": "F8B-P01",
+            "description": "Updated description",
+            "status": "active",
+            "category_id": null,
+            "name_en": "",
+            "sales_model_prefix": "F8BP",
+            "hs_code_id": null,
+            "combination_rules": "[]"
+          }
+        ]
+      },
+      "crm_sku": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      },
+      "crm_transaction": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      }
+    }
+  },
+  {
+    "step": "skus-created-update-preview",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "291162b0d8ca7eda6c52a61d47cb6d0bac8664267d41e90e4c11ef3440e7c260",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 02:36:31.503113",
+            "name": "中文客户 Updated",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "更新内容, \"确认\"\n第二行",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 02:35:13.961827",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 1,
+        "sha256": "f1e468e0a4531aeb5b5b4da405a74d710bf147dbcf04ada2d7d6dbe0e06098a8",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:24.847809",
+            "updated_at": "2026-10-16 04:12:35.936116",
+            "name": "中文产品更新",
+            "code": "F8B-P01",
+            "description": "Updated description",
+            "status": "active",
+            "category_id": null,
+            "name_en": "",
+            "sales_model_prefix": "F8BP",
+            "hs_code_id": null,
+            "combination_rules": "[]"
+          }
+        ]
+      },
+      "crm_sku": {
+        "count": 1,
+        "sha256": "e0d9469b07106b0a1d47e0a77e9343333fd383c3a438956031411b83b549e40c",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:51.588118",
+            "updated_at": "2026-10-16 04:12:51.588136",
+            "sku": "F8B-S01",
+            "specification": "5米/卷, \"暖白\"",
+            "unit": "pcs",
+            "cost_price": 2.5,
+            "default_price": 5,
+            "currency": "USD",
+            "active": 1,
+            "product_id": 1,
+            "parameter_values": "{}",
+            "product_details": "[]",
+            "image": "",
+            "description_cn": "中文产品更新",
+            "description_en": "中文产品更新",
+            "display_name_cn": "中文产品更新-5米/卷, \"暖白\"",
+            "sales_model": null,
+            "sales_model_abbreviations": "{}",
+            "identity_signature": "",
+            "display_name_key": "中文产品更新-5米/卷, \"暖白\"",
+            "schema_version": 1
+          }
+        ]
+      },
+      "crm_transaction": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      }
+    }
+  },
+  {
+    "step": "skus-updated-transactions-preview",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "291162b0d8ca7eda6c52a61d47cb6d0bac8664267d41e90e4c11ef3440e7c260",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 02:36:31.503113",
+            "name": "中文客户 Updated",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "更新内容, \"确认\"\n第二行",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 02:35:13.961827",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 1,
+        "sha256": "f1e468e0a4531aeb5b5b4da405a74d710bf147dbcf04ada2d7d6dbe0e06098a8",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:24.847809",
+            "updated_at": "2026-10-16 04:12:35.936116",
+            "name": "中文产品更新",
+            "code": "F8B-P01",
+            "description": "Updated description",
+            "status": "active",
+            "category_id": null,
+            "name_en": "",
+            "sales_model_prefix": "F8BP",
+            "hs_code_id": null,
+            "combination_rules": "[]"
+          }
+        ]
+      },
+      "crm_sku": {
+        "count": 1,
+        "sha256": "0ae170f2e3d84d13419b65c0a2e2ed59d8e4989835a885af5f875772919b0094",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:51.588118",
+            "updated_at": "2026-10-16 04:13:06.229723",
+            "sku": "F8B-S01",
+            "specification": "5米/卷, \"暖白\"",
+            "unit": "pcs",
+            "cost_price": 3,
+            "default_price": 6,
+            "currency": "USD",
+            "active": 1,
+            "product_id": 1,
+            "parameter_values": "{}",
+            "product_details": "[]",
+            "image": "",
+            "description_cn": "中文产品更新",
+            "description_en": "中文产品更新",
+            "display_name_cn": "中文产品更新-5米/卷, \"暖白\"",
+            "sales_model": null,
+            "sales_model_abbreviations": "{}",
+            "identity_signature": "",
+            "display_name_key": "中文产品更新-5米/卷, \"暖白\"",
+            "schema_version": 1
+          }
+        ]
+      },
+      "crm_transaction": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rows": []
+      }
+    }
+  },
+  {
+    "step": "transactions-created-invalid-rejected",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "291162b0d8ca7eda6c52a61d47cb6d0bac8664267d41e90e4c11ef3440e7c260",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 02:36:31.503113",
+            "name": "中文客户 Updated",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "更新内容, \"确认\"\n第二行",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 02:35:13.961827",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 1,
+        "sha256": "f1e468e0a4531aeb5b5b4da405a74d710bf147dbcf04ada2d7d6dbe0e06098a8",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:24.847809",
+            "updated_at": "2026-10-16 04:12:35.936116",
+            "name": "中文产品更新",
+            "code": "F8B-P01",
+            "description": "Updated description",
+            "status": "active",
+            "category_id": null,
+            "name_en": "",
+            "sales_model_prefix": "F8BP",
+            "hs_code_id": null,
+            "combination_rules": "[]"
+          }
+        ]
+      },
+      "crm_sku": {
+        "count": 1,
+        "sha256": "0ae170f2e3d84d13419b65c0a2e2ed59d8e4989835a885af5f875772919b0094",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:51.588118",
+            "updated_at": "2026-10-16 04:13:06.229723",
+            "sku": "F8B-S01",
+            "specification": "5米/卷, \"暖白\"",
+            "unit": "pcs",
+            "cost_price": 3,
+            "default_price": 6,
+            "currency": "USD",
+            "active": 1,
+            "product_id": 1,
+            "parameter_values": "{}",
+            "product_details": "[]",
+            "image": "",
+            "description_cn": "中文产品更新",
+            "description_en": "中文产品更新",
+            "display_name_cn": "中文产品更新-5米/卷, \"暖白\"",
+            "sales_model": null,
+            "sales_model_abbreviations": "{}",
+            "identity_signature": "",
+            "display_name_key": "中文产品更新-5米/卷, \"暖白\"",
+            "schema_version": 1
+          }
+        ]
+      },
+      "crm_transaction": {
+        "count": 1,
+        "sha256": "6fba46257d4645aa517b6c78d19ecceaa26040bbd0fd54be5873722eeac92aa4",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:13:26.701718",
+            "updated_at": "2026-10-16 04:13:26.701736",
+            "transaction_no": "F8B-T01",
+            "transaction_date": "2026-10-16",
+            "direction": "income",
+            "category": "other",
+            "amount": 12.5,
+            "currency": "USD",
+            "exchange_rate": 1,
+            "status": "confirmed",
+            "payment_method": "",
+            "reference": "",
+            "notes": "合成测试, \"非真实收款\"",
+            "customer_id": null,
+            "order_id": null,
+            "purchase_order_id": null,
+            "kind": "other",
+            "plan_id": null,
+            "rmb_amount": 12.5,
+            "supplier_id": null,
+            "allocated_amount": 0,
+            "voided_at": null,
+            "void_reason": "",
+            "replaces_id": null,
+            "split_from_id": null
+          }
+        ]
+      }
+    }
+  },
+  {
+    "step": "conflict-before-execute",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "c8307c3f19d9d550c8e30f8946096a430adaa1c67d35d63dd37d01026ce9fd90",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 02:36:31.503113",
+            "name": "中文客户 Updated",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "R0F8B controlled concurrent change",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 02:35:13.961827",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 1,
+        "sha256": "f1e468e0a4531aeb5b5b4da405a74d710bf147dbcf04ada2d7d6dbe0e06098a8",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:24.847809",
+            "updated_at": "2026-10-16 04:12:35.936116",
+            "name": "中文产品更新",
+            "code": "F8B-P01",
+            "description": "Updated description",
+            "status": "active",
+            "category_id": null,
+            "name_en": "",
+            "sales_model_prefix": "F8BP",
+            "hs_code_id": null,
+            "combination_rules": "[]"
+          }
+        ]
+      },
+      "crm_sku": {
+        "count": 1,
+        "sha256": "0ae170f2e3d84d13419b65c0a2e2ed59d8e4989835a885af5f875772919b0094",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:51.588118",
+            "updated_at": "2026-10-16 04:13:06.229723",
+            "sku": "F8B-S01",
+            "specification": "5米/卷, \"暖白\"",
+            "unit": "pcs",
+            "cost_price": 3,
+            "default_price": 6,
+            "currency": "USD",
+            "active": 1,
+            "product_id": 1,
+            "parameter_values": "{}",
+            "product_details": "[]",
+            "image": "",
+            "description_cn": "中文产品更新",
+            "description_en": "中文产品更新",
+            "display_name_cn": "中文产品更新-5米/卷, \"暖白\"",
+            "sales_model": null,
+            "sales_model_abbreviations": "{}",
+            "identity_signature": "",
+            "display_name_key": "中文产品更新-5米/卷, \"暖白\"",
+            "schema_version": 1
+          }
+        ]
+      },
+      "crm_transaction": {
+        "count": 1,
+        "sha256": "6fba46257d4645aa517b6c78d19ecceaa26040bbd0fd54be5873722eeac92aa4",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:13:26.701718",
+            "updated_at": "2026-10-16 04:13:26.701736",
+            "transaction_no": "F8B-T01",
+            "transaction_date": "2026-10-16",
+            "direction": "income",
+            "category": "other",
+            "amount": 12.5,
+            "currency": "USD",
+            "exchange_rate": 1,
+            "status": "confirmed",
+            "payment_method": "",
+            "reference": "",
+            "notes": "合成测试, \"非真实收款\"",
+            "customer_id": null,
+            "order_id": null,
+            "purchase_order_id": null,
+            "kind": "other",
+            "plan_id": null,
+            "rmb_amount": 12.5,
+            "supplier_id": null,
+            "allocated_amount": 0,
+            "voided_at": null,
+            "void_reason": "",
+            "replaces_id": null,
+            "split_from_id": null
+          }
+        ]
+      }
+    }
+  },
+  {
+    "step": "conflict-rejected-no-write",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "c8307c3f19d9d550c8e30f8946096a430adaa1c67d35d63dd37d01026ce9fd90",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 02:36:31.503113",
+            "name": "中文客户 Updated",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "R0F8B controlled concurrent change",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 02:35:13.961827",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 1,
+        "sha256": "f1e468e0a4531aeb5b5b4da405a74d710bf147dbcf04ada2d7d6dbe0e06098a8",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:24.847809",
+            "updated_at": "2026-10-16 04:12:35.936116",
+            "name": "中文产品更新",
+            "code": "F8B-P01",
+            "description": "Updated description",
+            "status": "active",
+            "category_id": null,
+            "name_en": "",
+            "sales_model_prefix": "F8BP",
+            "hs_code_id": null,
+            "combination_rules": "[]"
+          }
+        ]
+      },
+      "crm_sku": {
+        "count": 1,
+        "sha256": "0ae170f2e3d84d13419b65c0a2e2ed59d8e4989835a885af5f875772919b0094",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:51.588118",
+            "updated_at": "2026-10-16 04:13:06.229723",
+            "sku": "F8B-S01",
+            "specification": "5米/卷, \"暖白\"",
+            "unit": "pcs",
+            "cost_price": 3,
+            "default_price": 6,
+            "currency": "USD",
+            "active": 1,
+            "product_id": 1,
+            "parameter_values": "{}",
+            "product_details": "[]",
+            "image": "",
+            "description_cn": "中文产品更新",
+            "description_en": "中文产品更新",
+            "display_name_cn": "中文产品更新-5米/卷, \"暖白\"",
+            "sales_model": null,
+            "sales_model_abbreviations": "{}",
+            "identity_signature": "",
+            "display_name_key": "中文产品更新-5米/卷, \"暖白\"",
+            "schema_version": 1
+          }
+        ]
+      },
+      "crm_transaction": {
+        "count": 1,
+        "sha256": "6fba46257d4645aa517b6c78d19ecceaa26040bbd0fd54be5873722eeac92aa4",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:13:26.701718",
+            "updated_at": "2026-10-16 04:13:26.701736",
+            "transaction_no": "F8B-T01",
+            "transaction_date": "2026-10-16",
+            "direction": "income",
+            "category": "other",
+            "amount": 12.5,
+            "currency": "USD",
+            "exchange_rate": 1,
+            "status": "confirmed",
+            "payment_method": "",
+            "reference": "",
+            "notes": "合成测试, \"非真实收款\"",
+            "customer_id": null,
+            "order_id": null,
+            "purchase_order_id": null,
+            "kind": "other",
+            "plan_id": null,
+            "rmb_amount": 12.5,
+            "supplier_id": null,
+            "allocated_amount": 0,
+            "voided_at": null,
+            "void_reason": "",
+            "replaces_id": null,
+            "split_from_id": null
+          }
+        ]
+      }
+    }
+  },
+  {
+    "step": "conflict-repreview-recovered",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "2fe545fb98cf07dfd77a51b427df0a2c07b28649591f2840dacf720c0313a087",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 04:14:39.806189",
+            "name": "中文客户 Updated",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "更新内容, \"确认\"\n第二行",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 02:35:13.961827",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 1,
+        "sha256": "f1e468e0a4531aeb5b5b4da405a74d710bf147dbcf04ada2d7d6dbe0e06098a8",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:24.847809",
+            "updated_at": "2026-10-16 04:12:35.936116",
+            "name": "中文产品更新",
+            "code": "F8B-P01",
+            "description": "Updated description",
+            "status": "active",
+            "category_id": null,
+            "name_en": "",
+            "sales_model_prefix": "F8BP",
+            "hs_code_id": null,
+            "combination_rules": "[]"
+          }
+        ]
+      },
+      "crm_sku": {
+        "count": 1,
+        "sha256": "0ae170f2e3d84d13419b65c0a2e2ed59d8e4989835a885af5f875772919b0094",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:51.588118",
+            "updated_at": "2026-10-16 04:13:06.229723",
+            "sku": "F8B-S01",
+            "specification": "5米/卷, \"暖白\"",
+            "unit": "pcs",
+            "cost_price": 3,
+            "default_price": 6,
+            "currency": "USD",
+            "active": 1,
+            "product_id": 1,
+            "parameter_values": "{}",
+            "product_details": "[]",
+            "image": "",
+            "description_cn": "中文产品更新",
+            "description_en": "中文产品更新",
+            "display_name_cn": "中文产品更新-5米/卷, \"暖白\"",
+            "sales_model": null,
+            "sales_model_abbreviations": "{}",
+            "identity_signature": "",
+            "display_name_key": "中文产品更新-5米/卷, \"暖白\"",
+            "schema_version": 1
+          }
+        ]
+      },
+      "crm_transaction": {
+        "count": 1,
+        "sha256": "6fba46257d4645aa517b6c78d19ecceaa26040bbd0fd54be5873722eeac92aa4",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:13:26.701718",
+            "updated_at": "2026-10-16 04:13:26.701736",
+            "transaction_no": "F8B-T01",
+            "transaction_date": "2026-10-16",
+            "direction": "income",
+            "category": "other",
+            "amount": 12.5,
+            "currency": "USD",
+            "exchange_rate": 1,
+            "status": "confirmed",
+            "payment_method": "",
+            "reference": "",
+            "notes": "合成测试, \"非真实收款\"",
+            "customer_id": null,
+            "order_id": null,
+            "purchase_order_id": null,
+            "kind": "other",
+            "plan_id": null,
+            "rmb_amount": 12.5,
+            "supplier_id": null,
+            "allocated_amount": 0,
+            "voided_at": null,
+            "void_reason": "",
+            "replaces_id": null,
+            "split_from_id": null
+          }
+        ]
+      }
+    }
+  },
+  {
+    "step": "repeated-file-fresh-token-updated-two",
+    "database": "backend/r0f8b-ux.sqlite3",
+    "state": {
+      "crm_customer": {
+        "count": 2,
+        "sha256": "802f40e3efab79e3a9ac905593726ba5cdea483dc49c2257712979f1127bd919",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 02:35:13.955661",
+            "updated_at": "2026-10-16 08:59:14.800363",
+            "name": "中文客户 / Alpha & Co",
+            "code": "F8B-C01",
+            "country": "China",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "含逗号, 引号\"和换行\n第二行",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          },
+          {
+            "id": 2,
+            "created_at": "2026-10-16 02:35:13.961808",
+            "updated_at": "2026-10-16 08:59:14.803898",
+            "name": "Beta测试",
+            "code": "F8B-C02",
+            "country": "Germany",
+            "source": "",
+            "status": "lead",
+            "owner": "",
+            "website": "",
+            "address": "",
+            "notes": "合成记录",
+            "next_follow_up": null,
+            "region": "",
+            "owner_profile_id": null
+          }
+        ]
+      },
+      "crm_product": {
+        "count": 1,
+        "sha256": "f1e468e0a4531aeb5b5b4da405a74d710bf147dbcf04ada2d7d6dbe0e06098a8",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:24.847809",
+            "updated_at": "2026-10-16 04:12:35.936116",
+            "name": "中文产品更新",
+            "code": "F8B-P01",
+            "description": "Updated description",
+            "status": "active",
+            "category_id": null,
+            "name_en": "",
+            "sales_model_prefix": "F8BP",
+            "hs_code_id": null,
+            "combination_rules": "[]"
+          }
+        ]
+      },
+      "crm_sku": {
+        "count": 1,
+        "sha256": "0ae170f2e3d84d13419b65c0a2e2ed59d8e4989835a885af5f875772919b0094",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:12:51.588118",
+            "updated_at": "2026-10-16 04:13:06.229723",
+            "sku": "F8B-S01",
+            "specification": "5米/卷, \"暖白\"",
+            "unit": "pcs",
+            "cost_price": 3,
+            "default_price": 6,
+            "currency": "USD",
+            "active": 1,
+            "product_id": 1,
+            "parameter_values": "{}",
+            "product_details": "[]",
+            "image": "",
+            "description_cn": "中文产品更新",
+            "description_en": "中文产品更新",
+            "display_name_cn": "中文产品更新-5米/卷, \"暖白\"",
+            "sales_model": null,
+            "sales_model_abbreviations": "{}",
+            "identity_signature": "",
+            "display_name_key": "中文产品更新-5米/卷, \"暖白\"",
+            "schema_version": 1
+          }
+        ]
+      },
+      "crm_transaction": {
+        "count": 1,
+        "sha256": "6fba46257d4645aa517b6c78d19ecceaa26040bbd0fd54be5873722eeac92aa4",
+        "rows": [
+          {
+            "id": 1,
+            "created_at": "2026-10-16 04:13:26.701718",
+            "updated_at": "2026-10-16 04:13:26.701736",
+            "transaction_no": "F8B-T01",
+            "transaction_date": "2026-10-16",
+            "direction": "income",
+            "category": "other",
+            "amount": 12.5,
+            "currency": "USD",
+            "exchange_rate": 1,
+            "status": "confirmed",
+            "payment_method": "",
+            "reference": "",
+            "notes": "合成测试, \"非真实收款\"",
+            "customer_id": null,
+            "order_id": null,
+            "purchase_order_id": null,
+            "kind": "other",
+            "plan_id": null,
+            "rmb_amount": 12.5,
+            "supplier_id": null,
+            "allocated_amount": 0,
+            "voided_at": null,
+            "void_reason": "",
+            "replaces_id": null,
+            "split_from_id": null
+          }
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "file": "D-customers-required.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t87 text 校验未通过，尚未写入\n+\t\t\t88 text 共 1 行，将新增 0，将更新 0，错误 1\n+\t\t\t89 text 校验未通过，不会写入任何数据。\n+\t\t\t90 text 记录行号从表头第 1 行开始计数；字段内换行不另计记录。\n+\t\t\t91 table\n+\t\t\t\t92 row\n+\t\t\t\t\t93 cell\n+\t\t\t\t\t\t94 text 记录行号\n+\t\t\t\t\t95 cell\n+\t\t\t\t\t\t96 text 业务编号\n+\t\t\t\t\t97 cell\n+\t\t\t\t\t\t98 text 错误原因\n+\t\t\t\t99 row\n+\t\t\t\t\t100 cell\n+\t\t\t\t\t\t101 text 2\n+\t\t\t\t\t102 cell\n+\t\t\t\t\t\t103 text F8B-BAD\n+\t\t\t\t\t104 cell\n+\t\t\t\t\t\t105 text 该字段不能为空。\n+\t\t\t106 button 下载失败清单 CSV\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "I-empty.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t87 text 预览失败，请检查后重试\n+\t\t\t88 text CSV 文件为空。\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "I-wrong-header.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t87 text 预览失败，请检查后重试\n+\t\t\t88 text CSV 缺少必要字段：code、name。\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "I-invalid-encoding.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t87 text 预览失败，请检查后重试\n+\t\t\t88 text CSV 文件无法读取，请使用 UTF-8 或 UTF-8 BOM 编码。\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "A-products-new.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t89 text 校验通过，尚未写入\n+\t\t\t90 container\n+\t\t\t\t91 text 共 1 行，将新增 1，将更新 0，错误 0\n+\t\t\t\t92 button 确认执行导入\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "B-products-update.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t89 text 校验通过，尚未写入\n+\t\t\t90 container\n+\t\t\t\t91 text 共 1 行，将新增 0，将更新 1，错误 0\n+\t\t\t\t92 button 确认执行导入\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "A-skus-new.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t89 text 校验通过，尚未写入\n+\t\t\t90 container\n+\t\t\t\t91 text 共 1 行，将新增 1，将更新 0，错误 0\n+\t\t\t\t92 button 确认执行导入\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "B-skus-update.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t89 text 校验通过，尚未写入\n+\t\t\t90 container\n+\t\t\t\t91 text 共 1 行，将新增 0，将更新 1，错误 0\n+\t\t\t\t92 button 确认执行导入\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "E-skus-invalid-type.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t89 text 校验未通过，尚未写入\n+\t\t\t90 text 共 1 行，将新增 0，将更新 0，错误 1\n+\t\t\t91 text 校验未通过，不会写入任何数据。\n+\t\t\t92 text 记录行号从表头第 1 行开始计数；字段内换行不另计记录。\n+\t\t\t93 table\n+\t\t\t\t94 row\n+\t\t\t\t\t95 cell\n+\t\t\t\t\t\t96 text 记录行号\n+\t\t\t\t\t97 cell\n+\t\t\t\t\t\t98 text 业务编号\n+\t\t\t\t\t99 cell\n+\t\t\t\t\t\t100 text 错误原因\n+\t\t\t\t101 row\n+\t\t\t\t\t102 cell\n+\t\t\t\t\t\t103 text 2\n+\t\t\t\t\t104 cell\n+\t\t\t\t\t\t105 text F8B-BAD-S\n+\t\t\t\t\t106 cell\n+\t\t\t\t\t\t107 text 无效金额：not-number\n+\t\t\t108 button 下载失败清单 CSV\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "F-skus-missing-product.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t89 text 校验未通过，尚未写入\n+\t\t\t90 text 共 1 行，将新增 0，将更新 0，错误 1\n+\t\t\t91 text 校验未通过，不会写入任何数据。\n+\t\t\t92 text 记录行号从表头第 1 行开始计数；字段内换行不另计记录。\n+\t\t\t93 table\n+\t\t\t\t94 row\n+\t\t\t\t\t95 cell\n+\t\t\t\t\t\t96 text 记录行号\n+\t\t\t\t\t97 cell\n+\t\t\t\t\t\t98 text 业务编号\n+\t\t\t\t\t99 cell\n+\t\t\t\t\t\t100 text 错误原因\n+\t\t\t\t101 row\n+\t\t\t\t\t102 cell\n+\t\t\t\t\t\t103 text 2\n+\t\t\t\t\t104 cell\n+\t\t\t\t\t\t105 text F8B-MISSING\n+\t\t\t\t\t106 cell\n+\t\t\t\t\t\t107 text Product matching query does not exist.\n+\t\t\t108 button 下载失败清单 CSV\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "A-transactions-new.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t89 text 校验通过，尚未写入\n+\t\t\t90 container\n+\t\t\t\t91 text 共 1 行，将新增 1，将更新 0，错误 0\n+\t\t\t\t92 button 确认执行导入\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "J-transactions-duplicate.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t89 text 校验未通过，尚未写入\n+\t\t\t90 text 共 1 行，将新增 0，将更新 0，错误 1\n+\t\t\t91 text 校验未通过，不会写入任何数据。\n+\t\t\t92 text 记录行号从表头第 1 行开始计数；字段内换行不另计记录。\n+\t\t\t93 table\n+\t\t\t\t94 row\n+\t\t\t\t\t95 cell\n+\t\t\t\t\t\t96 text 记录行号\n+\t\t\t\t\t97 cell\n+\t\t\t\t\t\t98 text 业务编号\n+\t\t\t\t\t99 cell\n+\t\t\t\t\t\t100 text 错误原因\n+\t\t\t\t101 row\n+\t\t\t\t\t102 cell\n+\t\t\t\t\t\t103 text 2\n+\t\t\t\t\t104 cell\n+\t\t\t\t\t\t105 text F8B-T01\n+\t\t\t\t\t106 cell\n+\t\t\t\t\t\t107 text 该流水号已存在，不能通过导入覆盖财务记录。\n+\t\t\t108 button 下载失败清单 CSV\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "J-transactions-invalid.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t89 text 校验未通过，尚未写入\n+\t\t\t90 text 共 1 行，将新增 0，将更新 0，错误 1\n+\t\t\t91 text 校验未通过，不会写入任何数据。\n+\t\t\t92 text 记录行号从表头第 1 行开始计数；字段内换行不另计记录。\n+\t\t\t93 table\n+\t\t\t\t94 row\n+\t\t\t\t\t95 cell\n+\t\t\t\t\t\t96 text 记录行号\n+\t\t\t\t\t97 cell\n+\t\t\t\t\t\t98 text 业务编号\n+\t\t\t\t\t99 cell\n+\t\t\t\t\t\t100 text 错误原因\n+\t\t\t\t101 row\n+\t\t\t\t\t102 cell\n+\t\t\t\t\t\t103 text 2\n+\t\t\t\t\t104 cell\n+\t\t\t\t\t\t105 text F8B-TBAD\n+\t\t\t\t\t106 cell\n+\t\t\t\t\t\t107 text 无效金额：oops\n+\t\t\t108 button 下载失败清单 CSV\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "B-customers-update.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t87 text 校验通过，尚未写入\n+\t\t\t88 container\n+\t\t\t\t89 text 共 1 行，将新增 0，将更新 1，错误 0\n+\t\t\t\t90 button 确认执行导入\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  },
+  {
+    "file": "B-customers-update.csv",
+    "state": "Browser tab: 7, Title: \"森爵业务中台\", URL: \"http://127.0.0.1:5203/import\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t87 text 校验通过，尚未写入\n~\t\t\t88 container\n+\t\t\t\t89 text 共 1 行，将新增 0，将更新 1，错误 0\n+\t\t\t\t90 button 确认执行导入\nThe focused UI element is 0 AXWebArea 森爵业务中台, URL: 127.0.0.1:5203/import"
+  }
+]

@@ -137,6 +137,11 @@ class SafeCsvImportTests(TestCase):
         success = self.execute("customers", content, response.data["preview_token"])
         self.assertEqual(success.status_code, 200, success.data)
         self.assertTrue(Customer.objects.filter(code="CSV-1").exists())
+        # The original create token must not become an update on replay.
+        replay = self.execute("customers", content, response.data["preview_token"])
+        self.assertEqual(replay.status_code, 400, replay.data)
+        self.assertEqual(Customer.objects.count(), 1)
+        self.assertEqual(Customer.objects.get(code="CSV-1").name, "Buyer 1")
 
     def test_file_guards_and_duplicate_transaction(self):
         for content, message in ((b"", "CSV 文件为空。"), (b"code,name\n", "CSV 没有数据行。"), (b"name\nBuyer\n", "CSV 缺少必要字段：code。")):

@@ -1,0 +1,82 @@
+[
+  {
+    "file": "A-customers-new.csv",
+    "bytes": 151,
+    "sha256": "bcd33d4898e67985edd3eb14a9ac83b2e49fe6b9381b7ba854b2650f6102a3dd"
+  },
+  {
+    "file": "A-products-new.csv",
+    "bytes": 128,
+    "sha256": "f597f3db7699402fd1090636bee7c3d215fefd4cd3f378cdb5b4006c675fb6a7"
+  },
+  {
+    "file": "A-skus-new.csv",
+    "bytes": 132,
+    "sha256": "b6207680dbfdd620d7be31bebba3199cf8fa07ae929056a90c6123d2d9e188c6"
+  },
+  {
+    "file": "A-transactions-new.csv",
+    "bytes": 172,
+    "sha256": "b30a4c860ce5538700905e7158266cf5e218de1abc59369f43e600875661cc4b"
+  },
+  {
+    "file": "B-customers-update.csv",
+    "bytes": 101,
+    "sha256": "c51f2931722642050d7a7ea333c57479faa0aaa9ac232c1167a4ad43da4b8966"
+  },
+  {
+    "file": "B-products-update.csv",
+    "bytes": 112,
+    "sha256": "77248411617471955d8ad02286ec4e39a490ae57d30379096d6ea02a475a01fa"
+  },
+  {
+    "file": "B-skus-update.csv",
+    "bytes": 132,
+    "sha256": "1575ef38922d5c553e11de6db0b2c47a050fe2f99d0fe174d7861fdf7b7106f6"
+  },
+  {
+    "file": "C-customers-duplicate.csv",
+    "bytes": 52,
+    "sha256": "70d2935117406cea72b59780c8a335558f347ddacb381af333319a9df888ecc0"
+  },
+  {
+    "file": "D-customers-required.csv",
+    "bytes": 24,
+    "sha256": "86eeeddb793a4e5a3f2a5f39682cfcb0960ce663c901bfdfae9f140ecb32bd5d"
+  },
+  {
+    "file": "E-skus-invalid-type.csv",
+    "bytes": 62,
+    "sha256": "f9d9f1f96b165748686033c313676c6831a36727c99e6d3952918bed9a230416"
+  },
+  {
+    "file": "F-skus-missing-product.csv",
+    "bytes": 49,
+    "sha256": "50e6b8456c83378954c42760807f0e4018d1bfbe5b1e4680e2aa2d786bfce27b"
+  },
+  {
+    "file": "I-empty.csv",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "file": "I-invalid-encoding.csv",
+    "bytes": 22,
+    "sha256": "0f4a26f5f6ec9ec2947473e83fc18768e295d5311d9141e4544cfbc48955ba75"
+  },
+  {
+    "file": "I-wrong-header.csv",
+    "bytes": 23,
+    "sha256": "dfac692cbbf6b33896d4ce28546c99777ae40634b6a465e2e2b0f3b828307576"
+  },
+  {
+    "file": "J-transactions-duplicate.csv",
+    "bytes": 98,
+    "sha256": "53f762fae252b2a2ed373aa6679c4b161b65eff23d6d2395202f7697df45f42d"
+  },
+  {
+    "file": "J-transactions-invalid.csv",
+    "bytes": 100,
+    "sha256": "38b3aae87da59a7a6edca09f3512d4abe85cc3c98a37fc37c77f987038f2e184"
+  }
+]

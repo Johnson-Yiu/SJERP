@@ -1,0 +1,154 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Sales orders
+  - heading "订单管理" [level=1]
+  - generic: 10月16日周五
+  - generic "Johnson": J
+  - paragraph: 管理订单、交付和收款进度。
+  - button "新建订单":
+    - text: 新建订单
+  - region "页面小计":
+    - article:
+      - generic: 执行中
+      - strong: "1"
+      - generic: 已确认 / 生产中 / 已发货
+    - article:
+      - generic: 待出库
+      - strong: "1"
+      - generic: 尚未完成发货
+    - article:
+      - generic: 待收款
+      - strong: "1"
+      - generic: 仍有应收余额
+    - article:
+      - generic: 已完成
+      - strong: "0"
+      - generic: 已完成交付
+  - textbox "搜索订单号或客户..."
+  - combobox "按订单状态筛选":
+    - option "全部状态" [selected]
+    - option "草稿"
+    - option "已确认"
+    - option "生产中"
+    - option "已发货"
+    - option "已完成"
+    - option "已取消"
+  - combobox "按订单待办筛选":
+    - option "全部待办" [selected]
+    - option "待出库"
+    - option "交期已到"
+  - button "重置":
+    - text: 重置
+  - table:
+    - rowgroup:
+      - row "订单号 客户 订单日期 预计交期 状态 明细 订单金额 已收 / 待收 操作":
+        - columnheader "订单号"
+        - columnheader "客户"
+        - columnheader "订单日期"
+        - columnheader "预计交期"
+        - columnheader "状态"
+        - columnheader "明细"
+        - columnheader "订单金额"
+        - columnheader "已收 / 待收"
+        - columnheader "操作"
+    - rowgroup:
+      - row "R0F9-O001 R0F9 测试客户·灯具采购有限公司 2026-10-16 未设置 已确认 1 项 USD 500.00 0.00 / 500.00":
+        - cell "R0F9-O001"
+        - cell "R0F9 测试客户·灯具采购有限公司"
+        - cell "2026-10-16"
+        - cell "未设置"
+        - cell "已确认":
+          - generic: 已确认
+        - cell "1 项"
+        - cell "USD 500.00"
+        - cell "0.00 / 500.00"
+        - cell

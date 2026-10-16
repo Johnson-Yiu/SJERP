@@ -1,0 +1,140 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Data onboarding
+  - heading "数据导入" [level=1]
+  - generic: 10月16日周五
+  - generic "Johnson": J
+  - heading "数据导入" [level=2]
+  - paragraph: 先校验 CSV，再确认写入；预览不会保存业务数据。
+  - generic: "01"
+  - heading "选择数据类型" [level=3]
+  - paragraph: 客户、产品和 SKU 按编号匹配；更新会经过当前业务规则校验，不会绕过主数据保护。
+  - radio "客户 按客户编号匹配" [checked]
+  - strong: 客户
+  - generic: 按客户编号匹配
+  - radio "产品 分类须预先建立"
+  - strong: 产品
+  - generic: 分类须预先建立
+  - radio "SKU 按 SKU 与产品编号匹配"
+  - strong: SKU
+  - generic: 按 SKU 与产品编号匹配
+  - radio "财务流水 只新增，不覆盖"
+  - strong: 财务流水
+  - generic: 只新增，不覆盖
+  - generic: "02"
+  - heading "准备并上传 CSV" [level=3]
+  - paragraph: 文件须为 UTF-8（支持 BOM），最多 5,000 条记录。选择文件后仍须预览校验，第一行保留模板字段名。
+  - button "下载 客户 CSV 模板 code · name · country · source · website · address · notes":
+    - strong: 下载 客户 CSV 模板
+    - generic: code · name · country · source · website · address · notes
+  - strong: 点击选择 CSV 文件
+  - generic: 单次建议不超过 5,000 行
+  - button "预览并校验" [disabled]
+  - status: 尚未选择文件
+  - complementary:
+    - heading "导入规则" [level=3]
+    - list:
+      - generic: "1"
+      - strong: 客户
+      - generic: 按客户编号匹配
+      - generic: "2"
+      - strong: 产品
+      - generic: 分类须预先建立
+      - generic: "3"
+      - strong: SKU
+      - generic: 按 SKU 与产品编号匹配
+      - generic: "4"
+      - strong: 财务流水
+      - generic: 只新增，不覆盖
+    - strong: 关联与历史安全
+    - paragraph: 客户、产品和 SKU 按编号匹配。更新时空白字段可能清除原有内容，请先备份并核对。财务流水只新增；重复流水号会报错，绝不覆盖原记录。
+    - paragraph: 正式订单导入暂未开放，请通过订单业务流程创建；避免绕过报价、库存预留和收款计划。

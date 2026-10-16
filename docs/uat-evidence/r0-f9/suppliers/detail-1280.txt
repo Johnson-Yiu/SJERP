@@ -1,0 +1,243 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Supplier directory
+  - heading "供应商管理" [level=1]
+  - generic: 10月16日周五
+  - generic "Johnson": J
+  - paragraph: 维护供应商资料、付款条款备注与系统执行规则。
+  - button "新建供应商":
+    - text: 新建供应商
+  - region "页面小计":
+    - article:
+      - generic: 供应商
+      - strong: "2"
+      - generic: 全部筛选结果
+    - article:
+      - generic: 可供分类
+      - strong: "1"
+      - generic: 已选择的分类
+    - article:
+      - generic: 自定义付款规则
+      - strong: "0"
+      - generic: 按结构化配置统计
+    - article:
+      - generic: 有店铺链接
+      - strong: "0"
+      - generic: 可打开的网页链接
+  - generic "供应商筛选":
+    - text: 搜索
+    - textbox "搜索供应商":
+      - /placeholder: 名称、代码、联系人、产品…
+    - text: 可供分类
+    - combobox "按可供分类筛选":
+      - option "全部分类" [selected]
+      - option "R0F9 线性照明"
+    - text: 付款规则
+    - combobox "按付款规则筛选":
+      - option "全部规则" [selected]
+      - option "系统默认"
+      - option "自定义规则"
+    - button "重置"
+    - button "刷新"
+  - paragraph: 付款备注仅供沟通参考；采购付款计划使用“系统执行付款规则”。
+  - table:
+    - rowgroup:
+      - row "供应商 产品与可供分类 联系方式 系统执行付款规则 付款条款说明（备注） 操作":
+        - columnheader "供应商"
+        - columnheader "产品与可供分类"
+        - columnheader "联系方式"
+        - columnheader "系统执行付款规则"
+        - columnheader "付款条款说明（备注）"
+        - columnheader "操作"
+    - rowgroup:
+      - row "R0F9 第二供应商 GB · 中国 — R0F9 线性照明 — 预付款 30% / 尾款 70%（系统默认） 30%预付款，70%尾款发货前结清 查看详情 编辑 删除":
+        - cell "R0F9 第二供应商 GB · 中国":
+          - strong: R0F9 第二供应商
+          - generic: GB · 中国
+        - cell "— R0F9 线性照明":
+          - text: —
+          - generic: R0F9 线性照明
+        - cell "—": —
+        - cell "预付款 30% / 尾款 70%（系统默认）"
+        - cell "30%预付款，70%尾款发货前结清":
+          - generic "30%预付款，70%尾款发货前结清"
+        - cell "查看详情 编辑 删除":
+          - button "查看详情":
+          - button "编辑":
+          - button "删除":
+      - row "R0F9 长名称供应商·多来源采购测试有限公司 GA · 中国 — R0F9 线性照明 — 预付款 30% / 尾款 70%（系统默认） 30%预付款，70%尾款发货前结清 查看详情 编辑 删除":
+        - cell "R0F9 长名称供应商·多来源采购测试有限公司 GA · 中国":
+          - strong: R0F9 长名称供应商·多来源采购测试有限公司
+          - generic: GA · 中国
+        - cell "— R0F9 线性照明":
+          - text: —
+          - generic: R0F9 线性照明
+        - cell "—": —
+        - cell "预付款 30% / 尾款 70%（系统默认）"
+        - cell "30%预付款，70%尾款发货前结清":
+          - generic "30%预付款，70%尾款发货前结清"
+        - cell "查看详情 编辑 删除":
+          - button "查看详情" [active]:
+          - button "编辑":
+          - button "删除":
+  - dialog "供应商详情":
+    - button "关闭详情":
+      - generic: 关闭
+    - generic: 供应商详情
+    - button "编辑供应商":
+      - text: 编辑供应商
+    - text: 供应商
+    - heading "R0F9 长名称供应商·多来源采购测试有限公司" [level=2]
+    - generic: GA
+    - generic: 合作产品
+    - strong: "1"
+    - generic: 供货档案
+    - strong: "1"
+    - generic: 采购单记录
+    - strong: "1"
+    - generic: 正式采购金额（人民币）
+    - strong: ¥ 250.00
+    - generic: 已付采购款（人民币）
+    - strong: ¥ 0.00
+    - heading "基础信息" [level=3]
+    - generic: 二字代码
+    - generic: GA
+    - generic: 国家/地区
+    - generic: 中国
+    - generic: 主要产品
+    - generic: —
+    - generic: 店铺链接
+    - generic: —
+    - generic: 联系人
+    - generic: —
+    - generic: 电话
+    - generic: —
+    - generic: 邮箱
+    - generic: —
+    - generic: 可供产品分类
+    - generic: R0F9 线性照明
+    - region "供应商付款条款":
+      - article:
+        - heading "付款条款说明（备注）" [level=3]
+        - paragraph: 30%预付款，70%尾款发货前结清
+        - text: 仅供沟通参考，不生成付款计划。
+      - article:
+        - heading "系统执行付款规则" [level=3]
+        - paragraph: 预付款 30% / 尾款 70%（系统默认）
+        - text: 用于新采购的付款计划；已保存采购保留原快照。
+    - navigation "供应商关联入口":
+      - button "采购单"
+      - button "供应商 SKU 档案"
+      - paragraph: 具体 SKU 的供应来源在供货档案中维护。
+    - heading "关联数据" [level=3]
+    - paragraph: 点击记录查看详情
+    - button "合作产品 1"
+    - button "供应商 SKU 档案 1"
+    - button "采购单 1"
+    - button "付款流水 0"
+    - button "操作日志 0"
+    - table:
+      - rowgroup:
+        - row "产品编号 产品名称 分类 状态":
+          - columnheader "产品编号"
+          - columnheader "产品名称"
+          - columnheader "分类"
+          - columnheader "状态"
+          - columnheader
+      - rowgroup:
+        - row "R0F9-P01 R0F9 商用线性灯具长名称多规格测试 R0F9 线性照明 active 查看 记录 详情":
+          - cell "R0F9-P01"
+          - cell "R0F9 商用线性灯具长名称多规格测试"
+          - cell "R0F9 线性照明"
+          - cell "active"
+          - cell "查看 记录 详情":
+            - button "查看 记录 详情":

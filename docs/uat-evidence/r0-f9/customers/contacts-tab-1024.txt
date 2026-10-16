@@ -1,0 +1,233 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Customer portfolio
+  - heading "客户管理" [level=1]
+  - generic: 10月16日周五
+  - generic "Johnson": J
+  - paragraph: 管理客户资料、负责人和跟进计划。客户阶段会根据报价和订单自动更新。
+  - button "新建客户":
+    - text: 新建客户
+  - region "页面小计":
+    - article:
+      - generic: 客户总数
+      - strong: "2"
+      - generic: 全部客户档案
+    - article:
+      - generic: 正式客户
+      - strong: "1"
+      - generic: 已有正式订单
+    - article:
+      - generic: 待开发
+      - strong: "1"
+      - generic: 尚未成交
+    - article:
+      - generic: 累计销售额
+      - strong: ¥ 500.00
+      - generic: 当前列表累计
+  - textbox "搜索当前列表..."
+  - table:
+    - rowgroup:
+      - row "客户名称 客户编号 状态 国家/地区 业务区域 负责人 下次跟进 订单数 累计销售额 操作":
+        - columnheader "客户名称"
+        - columnheader "客户编号"
+        - columnheader "状态"
+        - columnheader "国家/地区"
+        - columnheader "业务区域"
+        - columnheader "负责人"
+        - columnheader "下次跟进"
+        - columnheader "订单数"
+        - columnheader "累计销售额"
+        - columnheader "操作"
+    - rowgroup:
+      - row "R0F9 第二客户 R0F9-002 已联系 德国 — R0F9 UAT 2026-10-15 0 ¥ 0.00 查看详情 编辑 删除":
+        - cell "R0F9 第二客户":
+          - generic "R0F9 第二客户"
+        - cell "R0F9-002"
+        - cell "已联系":
+          - generic "已建立联系": 已联系
+        - cell "德国"
+        - cell "—"
+        - cell "R0F9 UAT"
+        - cell "2026-10-15"
+        - cell "0"
+        - cell "¥ 0.00"
+        - cell "查看详情 编辑 删除":
+          - button "查看详情":
+          - button "编辑":
+          - button "删除":
+      - row "R0F9 测试客户·灯具采购有限公司 R0F9-001 正式客户 中国 — R0F9 UAT 2026-10-16 1 ¥ 500.00 查看详情 编辑 删除":
+        - cell "R0F9 测试客户·灯具采购有限公司":
+          - generic "R0F9 测试客户·灯具采购有限公司"
+        - cell "R0F9-001"
+        - cell "正式客户":
+          - generic "已有1张正式订单": 正式客户
+        - cell "中国"
+        - cell "—"
+        - cell "R0F9 UAT"
+        - cell "2026-10-16"
+        - cell "1"
+        - cell "¥ 500.00"
+        - cell "查看详情 编辑 删除":
+          - button "查看详情":
+          - button "编辑":
+          - button "删除":
+  - dialog "客户详情":
+    - button "关闭详情":
+      - generic: 关闭
+    - generic: 客户详情
+    - button "新增跟进":
+      - text: 新增跟进
+    - button "新建报价":
+      - text: 新建报价
+    - button "编辑客户":
+      - text: 编辑客户
+    - text: R0F9-001 · 中国
+    - heading "R0F9 测试客户·灯具采购有限公司" [level=2]
+    - generic: 负责人：R0F9 UAT
+    - generic: 正式客户
+    - generic: 累计销售额
+    - strong: ¥ 500.00
+    - generic: 订单
+    - strong: "1"
+    - generic: 报价
+    - strong: "1"
+    - generic: 下次跟进
+    - strong: 2026-10-16
+    - heading "基础信息" [level=3]
+    - generic: 负责人
+    - generic: R0F9 UAT
+    - generic: 业务区域
+    - generic: —
+    - generic: 来源
+    - generic: —
+    - generic: 网站
+    - generic: —
+    - generic: 地址
+    - generic: —
+    - generic: 备注
+    - generic: —
+    - heading "业务记录" [level=3]
+    - button "新增联系人":
+      - text: 新增联系人
+    - button "跟进记录 2"
+    - button "报价记录 1"
+    - button "订单记录 1"
+    - button "联系人 2" [active]
+    - button "成交商品记录 1"
+    - button "财务流水 0"
+    - button "操作日志 0"
+    - table:
+      - rowgroup:
+        - row "姓名 职位 邮箱 电话 主联系人":
+          - columnheader "姓名"
+          - columnheader "职位"
+          - columnheader "邮箱"
+          - columnheader "电话"
+          - columnheader "主联系人"
+          - columnheader
+      - rowgroup:
+        - row "王明（采购负责人）超长姓名窄桌面验收 国际采购与供应链高级负责人 / 亚太区 buyer@example.test +86 138 0000 0000 是 查看 记录 详情":
+          - cell "王明（采购负责人）超长姓名窄桌面验收"
+          - cell "国际采购与供应链高级负责人 / 亚太区"
+          - cell "buyer@example.test"
+          - cell "+86 138 0000 0000"
+          - cell "是"
+          - cell "查看 记录 详情":
+            - button "查看 记录 详情":
+        - row "李女士 采购 — 020-12345678 否 查看 记录 详情":
+          - cell "李女士"
+          - cell "采购"
+          - cell "—"
+          - cell "020-12345678"
+          - cell "否"
+          - cell "查看 记录 详情":
+            - button "查看 记录 详情":

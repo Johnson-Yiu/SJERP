@@ -1,0 +1,247 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Procurement desk
+  - heading "采购管理" [level=1]
+  - generic: 10月16日周五
+  - generic "Johnson": J
+  - paragraph: 管理采购、到货和供应商付款。
+  - button "刷新":
+    - text: 刷新
+  - button "新建采购单" [active]:
+    - text: 新建采购单
+  - region "页面小计":
+    - article:
+      - generic: 执行中
+      - strong: "1"
+      - generic: 已下单 / 部分到货
+    - article:
+      - generic: 待到货
+      - strong: "1"
+      - generic: 尚未全部到货
+    - article:
+      - generic: 待付款
+      - strong: "1"
+      - generic: 仍有应付余额
+    - article:
+      - generic: 已完成
+      - strong: "0"
+      - generic: 已完成采购
+  - generic "采购单筛选":
+    - generic: 搜索
+    - searchbox "搜索采购单号、供应商、来源订单"
+    - generic: 状态
+    - combobox "按状态筛选":
+      - option "全部状态" [selected]
+      - option "草稿"
+      - option "已下单"
+      - option "部分到货"
+      - option "已完成"
+      - option "已取消"
+    - checkbox "仅看待到货"
+    - text: 仅看待到货
+    - button "重置" [disabled]
+  - dialog "新建采购单":
+    - heading "新建采购单" [level=3]
+    - paragraph: 草稿保存后可确认下单。
+    - button "关闭":
+    - heading "采购基本信息" [level=4]
+    - text: 采购单号
+    - textbox "采购单号": 保存后由系统自动生成
+    - text: 供应商 *
+    - combobox "供应商":
+      - option "选择供应商" [selected]
+      - option "R0F9 第二供应商"
+      - option "R0F9 长名称供应商·多来源采购测试有限公司"
+    - generic: 整张采购单使用同一供应商。
+    - text: 来源销售订单（可选）
+    - combobox "来源销售订单（可选）":
+      - option "不关联订单" [selected]
+      - option "R0F9-O001 · R0F9 测试客户·灯具采购有限公司"
+    - generic: 主要来源订单；多订单归属在成本分配中处理。
+    - text: 下单日期 *
+    - textbox "下单日期 *": 2026-10-16
+    - text: 预计到货
+    - textbox "预计到货"
+    - text: 币种 *
+    - combobox "采购币种":
+      - option "CNY · 人民币" [selected]
+      - option "USD · 美元"
+      - option "EUR · 欧元"
+      - option "GBP · 英镑"
+      - option "HKD · 港币"
+      - option "JPY · 日元"
+      - option "AUD · 澳元"
+      - option "CAD · 加元"
+      - option "SGD · 新加坡元"
+    - heading "本次付款计划" [level=4]
+    - generic: 仅用于本采购单。
+    - generic: 阶段名称
+    - generic: 比例 %
+    - generic: 到期依据
+    - generic: 延后天数
+    - textbox "阶段名称 1": 预付款
+    - spinbutton "比例 % 1": "30"
+    - combobox "到期依据 1":
+      - option "下单日期" [selected]
+      - option "预计到货"
+      - option "暂不设日期"
+    - spinbutton "延后天数 1": "0"
+    - button "删除付款阶段 1": 删除
+    - textbox "阶段名称 2": 尾款
+    - spinbutton "比例 % 2": "70"
+    - combobox "到期依据 2":
+      - option "下单日期"
+      - option "预计到货" [selected]
+      - option "暂不设日期"
+    - spinbutton "延后天数 2": "0"
+    - button "删除付款阶段 2": 删除
+    - button "新增付款阶段"
+    - strong: 合计：100%
+    - heading "采购商品" [level=4]
+    - paragraph: 选择 SKU 后填写规格、数量和单价。
+    - strong: 选择 SKU
+    - searchbox "搜索 SKU、型号或描述"
+    - button "按产品分类筛选":
+      - generic: 全部分类
+    - 'checkbox "R0F9 商用线性灯具长名称多规格测试-10W-24V SKU: R0F9-EXISTING Sales Model: F7B-1024"'
+    - generic: R0F9 商用线性灯具长名称多规格测试-10W-24V
+    - generic: "SKU: R0F9-EXISTING"
+    - generic: "Sales Model: F7B-1024"
+    - 'checkbox "R0F9 PCS 单位灯具 SKU: R0F9-PCS Sales Model: F7B-PCS"'
+    - generic: R0F9 PCS 单位灯具
+    - generic: "SKU: R0F9-PCS"
+    - generic: "Sales Model: F7B-PCS"
+    - 'checkbox "R0F9 第二规格长名称-10W-48V SKU: R0F9-SECOND Sales Model: F7B-1048"'
+    - generic: R0F9 第二规格长名称-10W-48V
+    - generic: "SKU: R0F9-SECOND"
+    - generic: "Sales Model: F7B-1048"
+    - complementary:
+      - paragraph: 从左侧勾选 SKU 后，可在这里查看详情。
+    - paragraph: 请先从上方选择至少一个 SKU。
+    - heading "采购金额汇总" [level=4]
+    - generic: 商品项数 0
+    - generic: 币种 CNY
+    - text: 商品金额
+    - strong: CNY 0.00
+    - generic: 草稿保存不会生成应付或在途采购；确认下单后才进入正式采购流程。
+    - button "取消"
+    - button "创建采购单":
+      - text: 创建采购单
+  - table:
+    - rowgroup:
+      - row "采购单号 供应商 来源订单 下单日期 预计到货 状态 采购金额 已付 / 未付 操作":
+        - columnheader "采购单号"
+        - columnheader "供应商"
+        - columnheader "来源订单"
+        - columnheader "下单日期"
+        - columnheader "预计到货"
+        - columnheader "状态"
+        - columnheader "采购金额"
+        - columnheader "已付 / 未付"
+        - columnheader "操作"
+    - rowgroup:
+      - row "R0F9-P001 R0F9 长名称供应商·多来源采购测试有限公司 查看来源订单 R0F9-O001 2026-10-16 — 已下单 USD 250.00 0.00 / 250.00 查看采购单 R0F9-P001":
+        - cell "R0F9-P001"
+        - cell "R0F9 长名称供应商·多来源采购测试有限公司"
+        - cell "查看来源订单 R0F9-O001":
+          - link "查看来源订单 R0F9-O001":
+            - /url: /orders?detail=1&tab=overview&returnTo=/purchase-orders
+            - text: R0F9-O001
+        - cell "2026-10-16"
+        - cell "—":
+          - generic: —
+        - cell "已下单":
+          - generic: 已下单
+        - cell "USD 250.00"
+        - cell "0.00 / 250.00"
+        - cell "查看采购单 R0F9-P001":
+          - button "查看采购单 R0F9-P001":

@@ -1,0 +1,8 @@
+{
+  "codeHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+  "gitTrees": {
+    "frontend": "e8ecdf37bd88fdfc4932cd614e88d0f44869b9c1",
+    "backend": "c30db4b25833d3f73905f0deccccd0a6841f9e79"
+  },
+  "note": "Final documentation-only delivery must have the same frontend/backend Git trees."
+}

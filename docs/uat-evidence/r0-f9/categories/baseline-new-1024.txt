@@ -1,0 +1,192 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Catalog structure
+  - heading "产品分类" [level=1]
+  - generic: 10月16日周五
+  - generic "Johnson": J
+  - heading "产品分类" [level=2]
+  - paragraph: 通过树状层级管理产品归属、继承属性与 SKU 命名规则。
+  - button "新建根分类" [active]:
+    - text: 新建根分类
+  - text: 分类总数
+  - strong: "1"
+  - text: 根分类
+  - strong: "1"
+  - text: 最大层级
+  - strong: "1"
+  - text: 自定义属性
+  - strong: "2"
+  - heading "分类树" [level=3]
+  - paragraph: 拖拽节点行可调整同级顺序；拖到节点上半部/下半部即可插入，放入右侧“放入”区域才会成为子分类。
+  - button "新建根分类":
+  - textbox "搜索分类":
+    - /placeholder: 搜索分类名称
+  - button "全部展开"
+  - button "全部收起"
+  - button "刷新"
+  - generic "拖拽排序":
+  - generic: ·
+  - strong: R0F9 线性照明
+  - generic: 拖到这里移动为根分类
+  - text: R0F9 线性照明
+  - heading "R0F9 线性照明" [level=3]
+  - paragraph: 暂无分类说明
+  - button "子分类":
+    - text: 子分类
+  - button "编辑分类":
+  - button "删除分类":
+  - generic: 中文 SKU 名称预览
+  - strong: "[功率]-[电压]"
+  - paragraph: 按继承的分类属性展示命名顺序；不会重新分配 SKU Code。
+  - heading "分类属性" [level=4]
+  - paragraph: “生成中文SKU”和“生成销售型号”决定属性在 SKU 中的用途；可拖拽本级属性调整顺序。
+  - paragraph: 分类参数是产品的默认参数模板。已有已发布 SKU 参数方案的产品不会自动跟随模板变化；如需应用变化，请在产品 SKU 参数方案中分析并发布。
+  - button "新增属性":
+    - text: 新增属性
+  - table:
+    - rowgroup:
+      - row "属性名称 来源 生成中文SKU 生成销售型号 自动大写 必填":
+        - columnheader "属性名称"
+        - columnheader "来源"
+        - columnheader "生成中文SKU"
+        - columnheader "生成销售型号"
+        - columnheader "自动大写"
+        - columnheader "必填"
+        - columnheader
+    - rowgroup:
+      - row "功率 当前分类":
+        - cell "功率":
+          - generic "拖拽排序":
+          - strong: 功率
+        - cell "当前分类":
+          - generic: 当前分类
+        - cell:
+          - checkbox [checked]
+        - cell:
+          - checkbox [checked]
+        - cell:
+          - checkbox
+        - cell:
+          - checkbox [checked]
+        - cell:
+          - button "修改属性名称":
+          - button "删除属性":
+      - row "电压 当前分类":
+        - cell "电压":
+          - generic "拖拽排序":
+          - strong: 电压
+        - cell "当前分类":
+          - generic: 当前分类
+        - cell:
+          - checkbox [checked]
+        - cell:
+          - checkbox [checked]
+        - cell:
+          - checkbox
+        - cell:
+          - checkbox [checked]
+        - cell:
+          - button "修改属性名称":
+          - button "删除属性":
+  - dialog "新建分类":
+    - heading "新建分类" [level=3]
+    - button:
+    - generic: 分类名称 *
+    - textbox "分类名称"
+    - generic: 上级分类
+    - combobox "上级分类":
+      - option "无（根分类）" [selected]
+      - option "R0F9 线性照明"
+    - generic: 分类说明
+    - textbox
+    - button "取消"
+    - button "保存分类"

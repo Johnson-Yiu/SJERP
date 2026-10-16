@@ -1,0 +1,522 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Organization & access
+  - heading "组织与权限" [level=1]
+  - generic: 10月16日周五
+  - generic "Johnson": J
+  - heading "组织与权限" [level=2]
+  - paragraph: 查看组织架构，按角色维护功能权限。
+  - button "刷新"
+  - strong: 开发身份：全部功能与数据权限
+  - paragraph: 此页只维护已有角色模板，不改变当前访问模式。正式人员权限与数据范围仍需单独配置和验收。
+  - generic: 部门
+  - strong: "5"
+  - generic: 岗位
+  - strong: "13"
+  - generic: 角色模板
+  - strong: "15"
+  - generic: 成员账号
+  - strong: "0"
+  - generic "组织架构 部门与岗位"
+  - complementary:
+    - heading "角色模板" [level=3]
+    - paragraph: 共 15 个角色
+    - textbox "搜索角色":
+      - /placeholder: 搜索角色名称或代码
+    - button "超级管理员 全部数据" [pressed]:
+      - strong: 超级管理员
+      - generic: 全部数据
+    - button "管理员 全部数据":
+      - strong: 管理员
+      - generic: 全部数据
+    - button "销售主管 本部门及下级":
+      - strong: 销售主管
+      - generic: 本部门及下级
+    - button "业务员 仅本人负责":
+      - strong: 业务员
+      - generic: 仅本人负责
+    - button "跟单 仅本人负责":
+      - strong: 跟单
+      - generic: 仅本人负责
+    - button "运营主管 本部门及下级":
+      - strong: 运营主管
+      - generic: 本部门及下级
+    - button "网站运营 仅本人负责":
+      - strong: 网站运营
+      - generic: 仅本人负责
+    - button "平台运营 仅本人负责":
+      - strong: 平台运营
+      - generic: 仅本人负责
+    - button "仓库主管 本部门及下级":
+      - strong: 仓库主管
+      - generic: 本部门及下级
+    - button "仓库员工 本部门":
+      - strong: 仓库员工
+      - generic: 本部门
+    - button "财务主管 本部门及下级":
+      - strong: 财务主管
+      - generic: 本部门及下级
+    - button "财务员工 本部门":
+      - strong: 财务员工
+      - generic: 本部门
+    - button "人事行政主管 本部门及下级":
+      - strong: 人事行政主管
+      - generic: 本部门及下级
+    - button "人事 本部门":
+      - strong: 人事
+      - generic: 本部门
+    - button "行政 本部门":
+      - strong: 行政
+      - generic: 本部门
+  - text: superadmin
+  - heading "超级管理员" [level=3]
+  - paragraph: 系统最高权限，可管理所有业务、成员和权限。
+  - generic: 默认数据范围（只读）
+  - strong: 全部数据
+  - paragraph: 数据范围当前首先用于客户/CRM/销售记录。产品、SKU、库存等共享主数据不按客户负责人切分。
+  - text: 查找功能模块
+  - textbox "查找功能模块":
+    - /placeholder: 输入模块名称或代码
+  - generic: 24 / 24 个模块
+  - generic: 当前没有未保存修改
+  - paragraph: 勾选任一操作会同时勾选“查看”；取消“查看”会清除该模块的其他操作权限。筛选只影响显示，保存仍包含全部模块。
+  - paragraph: 超级管理员为系统最高权限，此模板不可修改。表内为已保存的配置，实际最高权限由系统规则确定。
+  - region "角色权限矩阵，可横向及纵向滚动":
+    - table "超级管理员 · 功能权限":
+      - caption: 超级管理员 · 功能权限
+      - rowgroup:
+        - row "功能模块 查看 新建 修改 删除 导出 导入":
+          - columnheader "功能模块"
+          - columnheader "查看"
+          - columnheader "新建"
+          - columnheader "修改"
+          - columnheader "删除"
+          - columnheader "导出"
+          - columnheader "导入"
+      - rowgroup:
+        - row "经营概览 超级管理员 经营概览 查看 超级管理员 经营概览 新建 超级管理员 经营概览 修改 超级管理员 经营概览 删除 超级管理员 经营概览 导出 超级管理员 经营概览 导入":
+          - rowheader "经营概览"
+          - cell "超级管理员 经营概览 查看":
+            - checkbox "超级管理员 经营概览 查看" [checked] [disabled]
+          - cell "超级管理员 经营概览 新建":
+            - checkbox "超级管理员 经营概览 新建" [checked] [disabled]
+          - cell "超级管理员 经营概览 修改":
+            - checkbox "超级管理员 经营概览 修改" [checked] [disabled]
+          - cell "超级管理员 经营概览 删除":
+            - checkbox "超级管理员 经营概览 删除" [checked] [disabled]
+          - cell "超级管理员 经营概览 导出":
+            - checkbox "超级管理员 经营概览 导出" [checked] [disabled]
+          - cell "超级管理员 经营概览 导入":
+            - checkbox "超级管理员 经营概览 导入" [checked] [disabled]
+        - row "报表中心 超级管理员 报表中心 查看 超级管理员 报表中心 新建 超级管理员 报表中心 修改 超级管理员 报表中心 删除 超级管理员 报表中心 导出 超级管理员 报表中心 导入":
+          - rowheader "报表中心"
+          - cell "超级管理员 报表中心 查看":
+            - checkbox "超级管理员 报表中心 查看" [disabled]
+          - cell "超级管理员 报表中心 新建":
+            - checkbox "超级管理员 报表中心 新建" [disabled]
+          - cell "超级管理员 报表中心 修改":
+            - checkbox "超级管理员 报表中心 修改" [disabled]
+          - cell "超级管理员 报表中心 删除":
+            - checkbox "超级管理员 报表中心 删除" [disabled]
+          - cell "超级管理员 报表中心 导出":
+            - checkbox "超级管理员 报表中心 导出" [disabled]
+          - cell "超级管理员 报表中心 导入":
+            - checkbox "超级管理员 报表中心 导入" [disabled]
+        - row "客户管理 超级管理员 客户管理 查看 超级管理员 客户管理 新建 超级管理员 客户管理 修改 超级管理员 客户管理 删除 超级管理员 客户管理 导出 超级管理员 客户管理 导入":
+          - rowheader "客户管理"
+          - cell "超级管理员 客户管理 查看":
+            - checkbox "超级管理员 客户管理 查看" [checked] [disabled]
+          - cell "超级管理员 客户管理 新建":
+            - checkbox "超级管理员 客户管理 新建" [checked] [disabled]
+          - cell "超级管理员 客户管理 修改":
+            - checkbox "超级管理员 客户管理 修改" [checked] [disabled]
+          - cell "超级管理员 客户管理 删除":
+            - checkbox "超级管理员 客户管理 删除" [checked] [disabled]
+          - cell "超级管理员 客户管理 导出":
+            - checkbox "超级管理员 客户管理 导出" [checked] [disabled]
+          - cell "超级管理员 客户管理 导入":
+            - checkbox "超级管理员 客户管理 导入" [checked] [disabled]
+        - row "联系人 超级管理员 联系人 查看 超级管理员 联系人 新建 超级管理员 联系人 修改 超级管理员 联系人 删除 超级管理员 联系人 导出 超级管理员 联系人 导入":
+          - rowheader "联系人"
+          - cell "超级管理员 联系人 查看":
+            - checkbox "超级管理员 联系人 查看" [checked] [disabled]
+          - cell "超级管理员 联系人 新建":
+            - checkbox "超级管理员 联系人 新建" [checked] [disabled]
+          - cell "超级管理员 联系人 修改":
+            - checkbox "超级管理员 联系人 修改" [checked] [disabled]
+          - cell "超级管理员 联系人 删除":
+            - checkbox "超级管理员 联系人 删除" [checked] [disabled]
+          - cell "超级管理员 联系人 导出":
+            - checkbox "超级管理员 联系人 导出" [checked] [disabled]
+          - cell "超级管理员 联系人 导入":
+            - checkbox "超级管理员 联系人 导入" [checked] [disabled]
+        - row "跟进记录 超级管理员 跟进记录 查看 超级管理员 跟进记录 新建 超级管理员 跟进记录 修改 超级管理员 跟进记录 删除 超级管理员 跟进记录 导出 超级管理员 跟进记录 导入":
+          - rowheader "跟进记录"
+          - cell "超级管理员 跟进记录 查看":
+            - checkbox "超级管理员 跟进记录 查看" [checked] [disabled]
+          - cell "超级管理员 跟进记录 新建":
+            - checkbox "超级管理员 跟进记录 新建" [checked] [disabled]
+          - cell "超级管理员 跟进记录 修改":
+            - checkbox "超级管理员 跟进记录 修改" [checked] [disabled]
+          - cell "超级管理员 跟进记录 删除":
+            - checkbox "超级管理员 跟进记录 删除" [checked] [disabled]
+          - cell "超级管理员 跟进记录 导出":
+            - checkbox "超级管理员 跟进记录 导出" [checked] [disabled]
+          - cell "超级管理员 跟进记录 导入":
+            - checkbox "超级管理员 跟进记录 导入" [checked] [disabled]
+        - row "报价管理 超级管理员 报价管理 查看 超级管理员 报价管理 新建 超级管理员 报价管理 修改 超级管理员 报价管理 删除 超级管理员 报价管理 导出 超级管理员 报价管理 导入":
+          - rowheader "报价管理"
+          - cell "超级管理员 报价管理 查看":
+            - checkbox "超级管理员 报价管理 查看" [checked] [disabled]
+          - cell "超级管理员 报价管理 新建":
+            - checkbox "超级管理员 报价管理 新建" [checked] [disabled]
+          - cell "超级管理员 报价管理 修改":
+            - checkbox "超级管理员 报价管理 修改" [checked] [disabled]
+          - cell "超级管理员 报价管理 删除":
+            - checkbox "超级管理员 报价管理 删除" [checked] [disabled]
+          - cell "超级管理员 报价管理 导出":
+            - checkbox "超级管理员 报价管理 导出" [checked] [disabled]
+          - cell "超级管理员 报价管理 导入":
+            - checkbox "超级管理员 报价管理 导入" [checked] [disabled]
+        - row "订单管理 超级管理员 订单管理 查看 超级管理员 订单管理 新建 超级管理员 订单管理 修改 超级管理员 订单管理 删除 超级管理员 订单管理 导出 超级管理员 订单管理 导入":
+          - rowheader "订单管理"
+          - cell "超级管理员 订单管理 查看":
+            - checkbox "超级管理员 订单管理 查看" [checked] [disabled]
+          - cell "超级管理员 订单管理 新建":
+            - checkbox "超级管理员 订单管理 新建" [checked] [disabled]
+          - cell "超级管理员 订单管理 修改":
+            - checkbox "超级管理员 订单管理 修改" [checked] [disabled]
+          - cell "超级管理员 订单管理 删除":
+            - checkbox "超级管理员 订单管理 删除" [checked] [disabled]
+          - cell "超级管理员 订单管理 导出":
+            - checkbox "超级管理员 订单管理 导出" [checked] [disabled]
+          - cell "超级管理员 订单管理 导入":
+            - checkbox "超级管理员 订单管理 导入" [checked] [disabled]
+        - row "供应商管理 超级管理员 供应商管理 查看 超级管理员 供应商管理 新建 超级管理员 供应商管理 修改 超级管理员 供应商管理 删除 超级管理员 供应商管理 导出 超级管理员 供应商管理 导入":
+          - rowheader "供应商管理"
+          - cell "超级管理员 供应商管理 查看":
+            - checkbox "超级管理员 供应商管理 查看" [disabled]
+          - cell "超级管理员 供应商管理 新建":
+            - checkbox "超级管理员 供应商管理 新建" [disabled]
+          - cell "超级管理员 供应商管理 修改":
+            - checkbox "超级管理员 供应商管理 修改" [disabled]
+          - cell "超级管理员 供应商管理 删除":
+            - checkbox "超级管理员 供应商管理 删除" [disabled]
+          - cell "超级管理员 供应商管理 导出":
+            - checkbox "超级管理员 供应商管理 导出" [disabled]
+          - cell "超级管理员 供应商管理 导入":
+            - checkbox "超级管理员 供应商管理 导入" [disabled]
+        - row "采购管理 超级管理员 采购管理 查看 超级管理员 采购管理 新建 超级管理员 采购管理 修改 超级管理员 采购管理 删除 超级管理员 采购管理 导出 超级管理员 采购管理 导入":
+          - rowheader "采购管理"
+          - cell "超级管理员 采购管理 查看":
+            - checkbox "超级管理员 采购管理 查看" [disabled]
+          - cell "超级管理员 采购管理 新建":
+            - checkbox "超级管理员 采购管理 新建" [disabled]
+          - cell "超级管理员 采购管理 修改":
+            - checkbox "超级管理员 采购管理 修改" [disabled]
+          - cell "超级管理员 采购管理 删除":
+            - checkbox "超级管理员 采购管理 删除" [disabled]
+          - cell "超级管理员 采购管理 导出":
+            - checkbox "超级管理员 采购管理 导出" [disabled]
+          - cell "超级管理员 采购管理 导入":
+            - checkbox "超级管理员 采购管理 导入" [disabled]
+        - row "库存 超级管理员 库存 查看 超级管理员 库存 新建 超级管理员 库存 修改 超级管理员 库存 删除 超级管理员 库存 导出 超级管理员 库存 导入":
+          - rowheader "库存"
+          - cell "超级管理员 库存 查看":
+            - checkbox "超级管理员 库存 查看" [checked] [disabled]
+          - cell "超级管理员 库存 新建":
+            - checkbox "超级管理员 库存 新建" [checked] [disabled]
+          - cell "超级管理员 库存 修改":
+            - checkbox "超级管理员 库存 修改" [checked] [disabled]
+          - cell "超级管理员 库存 删除":
+            - checkbox "超级管理员 库存 删除" [checked] [disabled]
+          - cell "超级管理员 库存 导出":
+            - checkbox "超级管理员 库存 导出" [checked] [disabled]
+          - cell "超级管理员 库存 导入":
+            - checkbox "超级管理员 库存 导入" [checked] [disabled]
+        - row "产品管理 超级管理员 产品管理 查看 超级管理员 产品管理 新建 超级管理员 产品管理 修改 超级管理员 产品管理 删除 超级管理员 产品管理 导出 超级管理员 产品管理 导入":
+          - rowheader "产品管理"
+          - cell "超级管理员 产品管理 查看":
+            - checkbox "超级管理员 产品管理 查看" [checked] [disabled]
+          - cell "超级管理员 产品管理 新建":
+            - checkbox "超级管理员 产品管理 新建" [checked] [disabled]
+          - cell "超级管理员 产品管理 修改":
+            - checkbox "超级管理员 产品管理 修改" [checked] [disabled]
+          - cell "超级管理员 产品管理 删除":
+            - checkbox "超级管理员 产品管理 删除" [checked] [disabled]
+          - cell "超级管理员 产品管理 导出":
+            - checkbox "超级管理员 产品管理 导出" [checked] [disabled]
+          - cell "超级管理员 产品管理 导入":
+            - checkbox "超级管理员 产品管理 导入" [checked] [disabled]
+        - row "SKU 管理 超级管理员 SKU 管理 查看 超级管理员 SKU 管理 新建 超级管理员 SKU 管理 修改 超级管理员 SKU 管理 删除 超级管理员 SKU 管理 导出 超级管理员 SKU 管理 导入":
+          - rowheader "SKU 管理"
+          - cell "超级管理员 SKU 管理 查看":
+            - checkbox "超级管理员 SKU 管理 查看" [checked] [disabled]
+          - cell "超级管理员 SKU 管理 新建":
+            - checkbox "超级管理员 SKU 管理 新建" [checked] [disabled]
+          - cell "超级管理员 SKU 管理 修改":
+            - checkbox "超级管理员 SKU 管理 修改" [checked] [disabled]
+          - cell "超级管理员 SKU 管理 删除":
+            - checkbox "超级管理员 SKU 管理 删除" [checked] [disabled]
+          - cell "超级管理员 SKU 管理 导出":
+            - checkbox "超级管理员 SKU 管理 导出" [checked] [disabled]
+          - cell "超级管理员 SKU 管理 导入":
+            - checkbox "超级管理员 SKU 管理 导入" [checked] [disabled]
+        - row "产品分类 超级管理员 产品分类 查看 超级管理员 产品分类 新建 超级管理员 产品分类 修改 超级管理员 产品分类 删除 超级管理员 产品分类 导出 超级管理员 产品分类 导入":
+          - rowheader "产品分类"
+          - cell "超级管理员 产品分类 查看":
+            - checkbox "超级管理员 产品分类 查看" [checked] [disabled]
+          - cell "超级管理员 产品分类 新建":
+            - checkbox "超级管理员 产品分类 新建" [checked] [disabled]
+          - cell "超级管理员 产品分类 修改":
+            - checkbox "超级管理员 产品分类 修改" [checked] [disabled]
+          - cell "超级管理员 产品分类 删除":
+            - checkbox "超级管理员 产品分类 删除" [checked] [disabled]
+          - cell "超级管理员 产品分类 导出":
+            - checkbox "超级管理员 产品分类 导出" [checked] [disabled]
+          - cell "超级管理员 产品分类 导入":
+            - checkbox "超级管理员 产品分类 导入" [checked] [disabled]
+        - row "产品参数 超级管理员 产品参数 查看 超级管理员 产品参数 新建 超级管理员 产品参数 修改 超级管理员 产品参数 删除 超级管理员 产品参数 导出 超级管理员 产品参数 导入":
+          - rowheader "产品参数"
+          - cell "超级管理员 产品参数 查看":
+            - checkbox "超级管理员 产品参数 查看" [checked] [disabled]
+          - cell "超级管理员 产品参数 新建":
+            - checkbox "超级管理员 产品参数 新建" [checked] [disabled]
+          - cell "超级管理员 产品参数 修改":
+            - checkbox "超级管理员 产品参数 修改" [checked] [disabled]
+          - cell "超级管理员 产品参数 删除":
+            - checkbox "超级管理员 产品参数 删除" [checked] [disabled]
+          - cell "超级管理员 产品参数 导出":
+            - checkbox "超级管理员 产品参数 导出" [checked] [disabled]
+          - cell "超级管理员 产品参数 导入":
+            - checkbox "超级管理员 产品参数 导入" [checked] [disabled]
+        - row "包装管理 超级管理员 包装管理 查看 超级管理员 包装管理 新建 超级管理员 包装管理 修改 超级管理员 包装管理 删除 超级管理员 包装管理 导出 超级管理员 包装管理 导入":
+          - rowheader "包装管理"
+          - cell "超级管理员 包装管理 查看":
+            - checkbox "超级管理员 包装管理 查看" [disabled]
+          - cell "超级管理员 包装管理 新建":
+            - checkbox "超级管理员 包装管理 新建" [disabled]
+          - cell "超级管理员 包装管理 修改":
+            - checkbox "超级管理员 包装管理 修改" [disabled]
+          - cell "超级管理员 包装管理 删除":
+            - checkbox "超级管理员 包装管理 删除" [disabled]
+          - cell "超级管理员 包装管理 导出":
+            - checkbox "超级管理员 包装管理 导出" [disabled]
+          - cell "超级管理员 包装管理 导入":
+            - checkbox "超级管理员 包装管理 导入" [disabled]
+        - row "交易单位 超级管理员 交易单位 查看 超级管理员 交易单位 新建 超级管理员 交易单位 修改 超级管理员 交易单位 删除 超级管理员 交易单位 导出 超级管理员 交易单位 导入":
+          - rowheader "交易单位"
+          - cell "超级管理员 交易单位 查看":
+            - checkbox "超级管理员 交易单位 查看" [disabled]
+          - cell "超级管理员 交易单位 新建":
+            - checkbox "超级管理员 交易单位 新建" [disabled]
+          - cell "超级管理员 交易单位 修改":
+            - checkbox "超级管理员 交易单位 修改" [disabled]
+          - cell "超级管理员 交易单位 删除":
+            - checkbox "超级管理员 交易单位 删除" [disabled]
+          - cell "超级管理员 交易单位 导出":
+            - checkbox "超级管理员 交易单位 导出" [disabled]
+          - cell "超级管理员 交易单位 导入":
+            - checkbox "超级管理员 交易单位 导入" [disabled]
+        - row "产品证书 超级管理员 产品证书 查看 超级管理员 产品证书 新建 超级管理员 产品证书 修改 超级管理员 产品证书 删除 超级管理员 产品证书 导出 超级管理员 产品证书 导入":
+          - rowheader "产品证书"
+          - cell "超级管理员 产品证书 查看":
+            - checkbox "超级管理员 产品证书 查看" [checked] [disabled]
+          - cell "超级管理员 产品证书 新建":
+            - checkbox "超级管理员 产品证书 新建" [checked] [disabled]
+          - cell "超级管理员 产品证书 修改":
+            - checkbox "超级管理员 产品证书 修改" [checked] [disabled]
+          - cell "超级管理员 产品证书 删除":
+            - checkbox "超级管理员 产品证书 删除" [checked] [disabled]
+          - cell "超级管理员 产品证书 导出":
+            - checkbox "超级管理员 产品证书 导出" [checked] [disabled]
+          - cell "超级管理员 产品证书 导入":
+            - checkbox "超级管理员 产品证书 导入" [checked] [disabled]
+        - row "HS 编码 超级管理员 HS 编码 查看 超级管理员 HS 编码 新建 超级管理员 HS 编码 修改 超级管理员 HS 编码 删除 超级管理员 HS 编码 导出 超级管理员 HS 编码 导入":
+          - rowheader "HS 编码"
+          - cell "超级管理员 HS 编码 查看":
+            - checkbox "超级管理员 HS 编码 查看" [disabled]
+          - cell "超级管理员 HS 编码 新建":
+            - checkbox "超级管理员 HS 编码 新建" [disabled]
+          - cell "超级管理员 HS 编码 修改":
+            - checkbox "超级管理员 HS 编码 修改" [disabled]
+          - cell "超级管理员 HS 编码 删除":
+            - checkbox "超级管理员 HS 编码 删除" [disabled]
+          - cell "超级管理员 HS 编码 导出":
+            - checkbox "超级管理员 HS 编码 导出" [disabled]
+          - cell "超级管理员 HS 编码 导入":
+            - checkbox "超级管理员 HS 编码 导入" [disabled]
+        - row "财务计划 超级管理员 财务计划 查看 超级管理员 财务计划 新建 超级管理员 财务计划 修改 超级管理员 财务计划 删除 超级管理员 财务计划 导出 超级管理员 财务计划 导入":
+          - rowheader "财务计划"
+          - cell "超级管理员 财务计划 查看":
+            - checkbox "超级管理员 财务计划 查看" [disabled]
+          - cell "超级管理员 财务计划 新建":
+            - checkbox "超级管理员 财务计划 新建" [disabled]
+          - cell "超级管理员 财务计划 修改":
+            - checkbox "超级管理员 财务计划 修改" [disabled]
+          - cell "超级管理员 财务计划 删除":
+            - checkbox "超级管理员 财务计划 删除" [disabled]
+          - cell "超级管理员 财务计划 导出":
+            - checkbox "超级管理员 财务计划 导出" [disabled]
+          - cell "超级管理员 财务计划 导入":
+            - checkbox "超级管理员 财务计划 导入" [disabled]
+        - row "财务流水 超级管理员 财务流水 查看 超级管理员 财务流水 新建 超级管理员 财务流水 修改 超级管理员 财务流水 删除 超级管理员 财务流水 导出 超级管理员 财务流水 导入":
+          - rowheader "财务流水"
+          - cell "超级管理员 财务流水 查看":
+            - checkbox "超级管理员 财务流水 查看" [checked] [disabled]
+          - cell "超级管理员 财务流水 新建":
+            - checkbox "超级管理员 财务流水 新建" [checked] [disabled]
+          - cell "超级管理员 财务流水 修改":
+            - checkbox "超级管理员 财务流水 修改" [checked] [disabled]
+          - cell "超级管理员 财务流水 删除":
+            - checkbox "超级管理员 财务流水 删除" [checked] [disabled]
+          - cell "超级管理员 财务流水 导出":
+            - checkbox "超级管理员 财务流水 导出" [checked] [disabled]
+          - cell "超级管理员 财务流水 导入":
+            - checkbox "超级管理员 财务流水 导入" [checked] [disabled]
+        - row "数据导入 超级管理员 数据导入 查看 超级管理员 数据导入 新建 超级管理员 数据导入 修改 超级管理员 数据导入 删除 超级管理员 数据导入 导出 超级管理员 数据导入 导入":
+          - rowheader "数据导入"
+          - cell "超级管理员 数据导入 查看":
+            - checkbox "超级管理员 数据导入 查看" [checked] [disabled]
+          - cell "超级管理员 数据导入 新建":
+            - checkbox "超级管理员 数据导入 新建" [checked] [disabled]
+          - cell "超级管理员 数据导入 修改":
+            - checkbox "超级管理员 数据导入 修改" [checked] [disabled]
+          - cell "超级管理员 数据导入 删除":
+            - checkbox "超级管理员 数据导入 删除" [checked] [disabled]
+          - cell "超级管理员 数据导入 导出":
+            - checkbox "超级管理员 数据导入 导出" [checked] [disabled]
+          - cell "超级管理员 数据导入 导入":
+            - checkbox "超级管理员 数据导入 导入" [checked] [disabled]
+        - row "组织架构 超级管理员 组织架构 查看 超级管理员 组织架构 新建 超级管理员 组织架构 修改 超级管理员 组织架构 删除 超级管理员 组织架构 导出 超级管理员 组织架构 导入":
+          - rowheader "组织架构"
+          - cell "超级管理员 组织架构 查看":
+            - checkbox "超级管理员 组织架构 查看" [checked] [disabled]
+          - cell "超级管理员 组织架构 新建":
+            - checkbox "超级管理员 组织架构 新建" [checked] [disabled]
+          - cell "超级管理员 组织架构 修改":
+            - checkbox "超级管理员 组织架构 修改" [checked] [disabled]
+          - cell "超级管理员 组织架构 删除":
+            - checkbox "超级管理员 组织架构 删除" [checked] [disabled]
+          - cell "超级管理员 组织架构 导出":
+            - checkbox "超级管理员 组织架构 导出" [checked] [disabled]
+          - cell "超级管理员 组织架构 导入":
+            - checkbox "超级管理员 组织架构 导入" [checked] [disabled]
+        - row "成员管理 超级管理员 成员管理 查看 超级管理员 成员管理 新建 超级管理员 成员管理 修改 超级管理员 成员管理 删除 超级管理员 成员管理 导出 超级管理员 成员管理 导入":
+          - rowheader "成员管理"
+          - cell "超级管理员 成员管理 查看":
+            - checkbox "超级管理员 成员管理 查看" [checked] [disabled]
+          - cell "超级管理员 成员管理 新建":
+            - checkbox "超级管理员 成员管理 新建" [checked] [disabled]
+          - cell "超级管理员 成员管理 修改":
+            - checkbox "超级管理员 成员管理 修改" [checked] [disabled]
+          - cell "超级管理员 成员管理 删除":
+            - checkbox "超级管理员 成员管理 删除" [checked] [disabled]
+          - cell "超级管理员 成员管理 导出":
+            - checkbox "超级管理员 成员管理 导出" [checked] [disabled]
+          - cell "超级管理员 成员管理 导入":
+            - checkbox "超级管理员 成员管理 导入" [checked] [disabled]
+        - row "权限配置 超级管理员 权限配置 查看 超级管理员 权限配置 新建 超级管理员 权限配置 修改 超级管理员 权限配置 删除 超级管理员 权限配置 导出 超级管理员 权限配置 导入":
+          - rowheader "权限配置"
+          - cell "超级管理员 权限配置 查看":
+            - checkbox "超级管理员 权限配置 查看" [checked] [disabled]
+          - cell "超级管理员 权限配置 新建":
+            - checkbox "超级管理员 权限配置 新建" [checked] [disabled]
+          - cell "超级管理员 权限配置 修改":
+            - checkbox "超级管理员 权限配置 修改" [checked] [disabled]
+          - cell "超级管理员 权限配置 删除":
+            - checkbox "超级管理员 权限配置 删除" [checked] [disabled]
+          - cell "超级管理员 权限配置 导出":
+            - checkbox "超级管理员 权限配置 导出" [checked] [disabled]
+          - cell "超级管理员 权限配置 导入":
+            - checkbox "超级管理员 权限配置 导入" [checked] [disabled]
+  - generic: 只读配置

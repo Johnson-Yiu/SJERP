@@ -1,0 +1,19 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation
+  - generic: —
+  - strong: 当前账号：加载中
+  - generic: 身份待确认 · 按账号授权
+- main:
+  - text: Access status
+  - heading "权限状态" [level=1]
+  - generic: 10月16日周五
+  - generic "加载中": —
+  - region "权限状态获取失败":
+    - generic: "!"
+    - heading "权限状态获取失败" [level=2]
+    - paragraph: 暂时无法确认当前身份的权限。请重新加载权限状态，再继续操作。
+    - button "重新加载权限状态" [disabled]
+    - generic: 重新加载只检查当前权限，不会修改角色配置。

@@ -1,0 +1,209 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Relationship cadence
+  - heading "跟进记录" [level=1]
+  - generic: 10月16日周五
+  - generic "Johnson": J
+  - heading "跟进记录" [level=2]
+  - paragraph: 记录沟通内容、客户回复和下一步安排。
+  - button "新建跟进记录":
+    - text: 新建跟进记录
+  - region "页面小计":
+    - article:
+      - generic: 跟进记录
+      - strong: "3"
+      - generic: 当前筛选结果
+    - article:
+      - generic: 已关联客户
+      - strong: "2"
+      - generic: 有沟通记录的客户
+    - article:
+      - generic: 计划日期已到记录
+      - strong: "2"
+      - generic: 历史跟进记录统计；当前待跟进以经营概览为准
+    - article:
+      - generic: 本月记录
+      - strong: "3"
+      - generic: 按跟进时间统计
+  - generic "跟进记录筛选":
+    - text: 搜索
+    - textbox "搜索跟进记录":
+      - /placeholder: 客户、主题、跟进人或内容
+    - text: 所属客户
+    - combobox "按客户筛选":
+      - option "全部客户" [selected]
+      - option "R0F9 第二客户"
+      - option "R0F9 测试客户·灯具采购有限公司"
+    - text: 跟进方式
+    - combobox "按跟进方式筛选":
+      - option "全部方式" [selected]
+      - option "邮件"
+      - option "电话"
+      - option "即时通讯"
+      - option "会议"
+      - option "拜访"
+      - option "其他"
+    - text: 跟进时间从
+    - textbox "跟进开始日期"
+    - text: 至
+    - textbox "跟进结束日期"
+    - text: 排序
+    - combobox "跟进排序":
+      - option "时间从近到远" [selected]
+      - option "时间从远到近"
+    - button "待跟进"
+    - button "重置"
+    - button "刷新"
+  - table:
+    - rowgroup:
+      - row "客户与联系人 跟进时间 主题与方式 沟通与回复 下一步安排 操作":
+        - columnheader "客户与联系人"
+        - columnheader "跟进时间"
+        - columnheader "主题与方式"
+        - columnheader "沟通与回复"
+        - columnheader "下一步安排"
+        - columnheader "操作"
+    - rowgroup:
+      - row "R0F9 第二客户 Morgan Lee 10/15 22:13 跨客户跟进 邮件 已发送产品资料。 客户回复：— 安排产品演示 设置新的跟进日期 · 2026-10-15 查看跟进详情 编辑跟进记录 删除跟进记录":
+        - cell "R0F9 第二客户 Morgan Lee":
+          - strong: R0F9 第二客户
+          - generic: Morgan Lee
+        - cell "10/15 22:13"
+        - cell "跨客户跟进 邮件":
+          - strong: 跨客户跟进
+          - generic: 邮件
+        - cell "已发送产品资料。 客户回复：—":
+          - text: 已发送产品资料。
+          - generic: 客户回复：—
+        - cell "安排产品演示 设置新的跟进日期 · 2026-10-15":
+          - text: 安排产品演示
+          - generic: 设置新的跟进日期 · 2026-10-15
+        - cell "查看跟进详情 编辑跟进记录 删除跟进记录":
+          - button "查看跟进详情":
+          - button "编辑跟进记录":
+          - button "删除跟进记录":
+      - row "R0F9 测试客户·灯具采购有限公司 王明（采购负责人）超长姓名窄桌面验收 10/14 22:13 年度采购计划沟通 会议 隔离测试跟进内容，检查富文本与长记录展示。 客户回复：客户回复：下周确认 SKU 数量。 发送报价并确认交期 设置新的跟进日期 · 2026-10-16 查看跟进详情 编辑跟进记录 删除跟进记录":
+        - cell "R0F9 测试客户·灯具采购有限公司 王明（采购负责人）超长姓名窄桌面验收":
+          - strong: R0F9 测试客户·灯具采购有限公司
+          - generic: 王明（采购负责人）超长姓名窄桌面验收
+        - cell "10/14 22:13"
+        - cell "年度采购计划沟通 会议":
+          - strong: 年度采购计划沟通
+          - generic: 会议
+        - cell "隔离测试跟进内容，检查富文本与长记录展示。 客户回复：客户回复：下周确认 SKU 数量。":
+          - text: 隔离测试跟进内容，检查富文本与长记录展示。
+          - generic: 客户回复：客户回复：下周确认 SKU 数量。
+        - cell "发送报价并确认交期 设置新的跟进日期 · 2026-10-16":
+          - text: 发送报价并确认交期
+          - generic: 设置新的跟进日期 · 2026-10-16
+        - cell "查看跟进详情 编辑跟进记录 删除跟进记录":
+          - button "查看跟进详情":
+          - button "编辑跟进记录":
+          - button "删除跟进记录":
+      - row "R0F9 测试客户·灯具采购有限公司 李女士 10/06 22:13 历史电话沟通 电话 已确认产品规格。 客户回复：待内部评估 等待客户回复 设置新的跟进日期 · 2026-10-23 查看跟进详情 编辑跟进记录 删除跟进记录":
+        - cell "R0F9 测试客户·灯具采购有限公司 李女士":
+          - strong: R0F9 测试客户·灯具采购有限公司
+          - generic: 李女士
+        - cell "10/06 22:13"
+        - cell "历史电话沟通 电话":
+          - strong: 历史电话沟通
+          - generic: 电话
+        - cell "已确认产品规格。 客户回复：待内部评估":
+          - text: 已确认产品规格。
+          - generic: 客户回复：待内部评估
+        - cell "等待客户回复 设置新的跟进日期 · 2026-10-23":
+          - text: 等待客户回复
+          - generic: 设置新的跟进日期 · 2026-10-23
+        - cell "查看跟进详情 编辑跟进记录 删除跟进记录":
+          - button "查看跟进详情":
+          - button "编辑跟进记录":
+          - button "删除跟进记录":

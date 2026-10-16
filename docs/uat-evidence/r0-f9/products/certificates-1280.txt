@@ -1,0 +1,223 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Product catalog
+  - heading "产品管理" [level=1]
+  - generic: 10月16日周五
+  - generic "Johnson": J
+  - heading "产品管理" [level=2]
+  - paragraph: 维护产品主档、分类归属与销售状态；SKU 编码在 SKU 管理中维护。
+  - button "新建产品":
+    - text: 新建产品
+  - region "页面小计":
+    - article:
+      - generic: 产品总数
+      - strong: "2"
+      - generic: 当前筛选范围
+    - article:
+      - generic: 在售产品
+      - strong: "2"
+      - generic: 可继续配置 SKU
+    - article:
+      - generic: 开发中
+      - strong: "0"
+      - generic: 尚未正式销售
+    - article:
+      - generic: SKU 总数
+      - strong: "4"
+      - generic: 产品关联的销售规格
+  - textbox "搜索产品":
+    - /placeholder: 搜索产品编号、中文或英文名称...
+  - combobox "产品分类筛选":
+    - option "全部分类" [selected]
+    - option "R0F9 线性照明"
+  - combobox "产品排序":
+    - option "产品编号顺序" [selected]
+    - option "产品名称顺序"
+    - option "SKU 数量最多"
+  - button "查询"
+  - button "重置"
+  - button "刷新"
+  - table:
+    - rowgroup:
+      - row "产品编号 产品名称 销售型号前缀 主分类 状态 SKU 参数 证书":
+        - columnheader "产品编号"
+        - columnheader "产品名称"
+        - columnheader "销售型号前缀"
+        - columnheader "主分类"
+        - columnheader "状态"
+        - columnheader "SKU"
+        - columnheader "参数"
+        - columnheader "证书"
+        - columnheader
+    - rowgroup:
+      - row "R0F9-P01 R0F9 商用线性灯具长名称多规格测试 R0F9 commercial linear light F7B R0F9 线性照明 在售 2 4 1":
+        - cell "R0F9-P01"
+        - cell "R0F9 商用线性灯具长名称多规格测试 R0F9 commercial linear light":
+          - strong: R0F9 商用线性灯具长名称多规格测试
+          - generic: R0F9 commercial linear light
+        - cell "F7B"
+        - cell "R0F9 线性照明"
+        - cell "在售":
+          - generic: 在售
+        - cell "2"
+        - cell "4"
+        - cell "1"
+        - cell:
+          - button "编辑产品":
+          - button "删除产品":
+      - row "R0F9-P02 R0F9 独立产品 未填写英文名称 F7C R0F9 线性照明 在售 2 0 0":
+        - cell "R0F9-P02"
+        - cell "R0F9 独立产品 未填写英文名称":
+          - strong: R0F9 独立产品
+          - generic: 未填写英文名称
+        - cell "F7C"
+        - cell "R0F9 线性照明"
+        - cell "在售":
+          - generic: 在售
+        - cell "2"
+        - cell "0"
+        - cell "0"
+        - cell:
+          - button "编辑产品":
+          - button "删除产品":
+  - article "关联详情":
+    - generic: 产品管理 / 产品详情
+    - button "编辑主档":
+      - text: 编辑主档
+    - button "关闭详情":
+      - generic: 关闭
+    - text: R0F9-P01 · R0F9 线性照明
+    - heading "R0F9 商用线性灯具长名称多规格测试" [level=2]
+    - generic: 在售
+    - generic: SKU
+    - strong: "2"
+    - generic: 供应商
+    - strong: "2"
+    - generic: 当前库存
+    - strong: "102"
+    - generic: 参数
+    - strong: "4"
+    - navigation "产品详情导航":
+      - button "总览"
+      - button "SKU 管理2"
+      - button "供应能力规则2"
+      - button "订单记录1"
+      - button "销售统计"
+      - button "出入库流水2"
+      - button "产品参数4"
+      - button "证书档案1" [active]
+      - button "销售规则"
+      - button "操作日志"
+    - main:
+      - heading "证书档案" [level=3]
+      - paragraph: 点击记录查看详情
+      - button "新增产品证书":
+        - text: 新增产品证书
+      - table:
+        - rowgroup:
+          - row "证书 编号 签发机构 有效期至 有效状态":
+            - columnheader "证书"
+            - columnheader "编号"
+            - columnheader "签发机构"
+            - columnheader "有效期至"
+            - columnheader "有效状态"
+            - columnheader
+        - rowgroup:
+          - row "R0F9 CE 合成证书 R0F9-CE-001 隔离测试机构 — 无有效期 查看 记录 详情":
+            - cell "R0F9 CE 合成证书"
+            - cell "R0F9-CE-001"
+            - cell "隔离测试机构"
+            - cell "—"
+            - cell "无有效期":
+              - generic: 无有效期
+            - cell "查看 记录 详情":
+              - button "查看 记录 详情":

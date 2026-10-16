@@ -1,0 +1,243 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Supplier directory
+  - heading "供应商管理" [level=1]
+  - generic: 10月16日周五
+  - generic "Johnson": J
+  - paragraph: 维护供应商资料、付款条款备注与系统执行规则。
+  - button "新建供应商" [active]:
+    - text: 新建供应商
+  - region "页面小计":
+    - article:
+      - generic: 供应商
+      - strong: "2"
+      - generic: 全部筛选结果
+    - article:
+      - generic: 可供分类
+      - strong: "1"
+      - generic: 已选择的分类
+    - article:
+      - generic: 自定义付款规则
+      - strong: "0"
+      - generic: 按结构化配置统计
+    - article:
+      - generic: 有店铺链接
+      - strong: "0"
+      - generic: 可打开的网页链接
+  - generic "供应商筛选":
+    - text: 搜索
+    - textbox "搜索供应商":
+      - /placeholder: 名称、代码、联系人、产品…
+    - text: 可供分类
+    - combobox "按可供分类筛选":
+      - option "全部分类" [selected]
+      - option "R0F9 线性照明"
+    - text: 付款规则
+    - combobox "按付款规则筛选":
+      - option "全部规则" [selected]
+      - option "系统默认"
+      - option "自定义规则"
+    - button "重置"
+    - button "刷新"
+  - paragraph: 付款备注仅供沟通参考；采购付款计划使用“系统执行付款规则”。
+  - table:
+    - rowgroup:
+      - row "供应商 产品与可供分类 联系方式 系统执行付款规则 付款条款说明（备注） 操作":
+        - columnheader "供应商"
+        - columnheader "产品与可供分类"
+        - columnheader "联系方式"
+        - columnheader "系统执行付款规则"
+        - columnheader "付款条款说明（备注）"
+        - columnheader "操作"
+    - rowgroup:
+      - row "R0F9 第二供应商 GB · 中国 — R0F9 线性照明 — 预付款 30% / 尾款 70%（系统默认） 30%预付款，70%尾款发货前结清 查看详情 编辑 删除":
+        - cell "R0F9 第二供应商 GB · 中国":
+          - strong: R0F9 第二供应商
+          - generic: GB · 中国
+        - cell "— R0F9 线性照明":
+          - text: —
+          - generic: R0F9 线性照明
+        - cell "—": —
+        - cell "预付款 30% / 尾款 70%（系统默认）"
+        - cell "30%预付款，70%尾款发货前结清":
+          - generic "30%预付款，70%尾款发货前结清"
+        - cell "查看详情 编辑 删除":
+          - button "查看详情":
+          - button "编辑":
+          - button "删除":
+      - row "R0F9 长名称供应商·多来源采购测试有限公司 GA · 中国 — R0F9 线性照明 — 预付款 30% / 尾款 70%（系统默认） 30%预付款，70%尾款发货前结清 查看详情 编辑 删除":
+        - cell "R0F9 长名称供应商·多来源采购测试有限公司 GA · 中国":
+          - strong: R0F9 长名称供应商·多来源采购测试有限公司
+          - generic: GA · 中国
+        - cell "— R0F9 线性照明":
+          - text: —
+          - generic: R0F9 线性照明
+        - cell "—": —
+        - cell "预付款 30% / 尾款 70%（系统默认）"
+        - cell "30%预付款，70%尾款发货前结清":
+          - generic "30%预付款，70%尾款发货前结清"
+        - cell "查看详情 编辑 删除":
+          - button "查看详情":
+          - button "编辑":
+          - button "删除":
+  - dialog "新建供应商":
+    - heading "新建供应商" [level=3]
+    - button "关闭供应商表单":
+    - heading "基本资料" [level=4]
+    - text: 供应商名称
+    - emphasis: "*"
+    - textbox "供应商名称"
+    - text: 二字代码
+    - emphasis: "*"
+    - textbox "二字代码"
+    - paragraph: 填写两个英文字母，用于供应商 SKU 编码。
+    - generic: 国家/地区
+    - textbox "国家/地区": 中国
+    - generic: 主要产品
+    - textbox "主要产品"
+    - heading "联系方式" [level=4]
+    - generic: 联系人
+    - textbox "联系人"
+    - generic: 电话
+    - textbox "电话"
+    - generic: 邮箱
+    - textbox "邮箱"
+    - generic: 店铺链接
+    - textbox "店铺链接":
+      - /placeholder: https://...
+    - heading "可供产品分类" [level=4]
+    - paragraph: 可供分类用于筛选；具体 SKU 的供应来源仍需在供货档案中维护。
+    - text: 可供产品分类
+    - emphasis: "*"
+    - strong: 选择可供分类
+    - generic: 勾选可多选，点击名称展开下级
+    - region "第 1 级分类":
+      - generic: 产品大类
+      - checkbox "选择R0F9 线性照明"
+      - button "R0F9 线性照明":
+        - generic: R0F9 线性照明
+    - generic: 已选 0 项
+    - generic: 请选择大类或子分类
+    - paragraph: 选择大类会覆盖全部下级分类；只供应部分产品时，可展开后单独勾选子分类。
+    - heading "付款条款" [level=4]
+    - generic: 付款条款说明（备注）
+    - textbox "付款条款说明（备注）": 30%预付款，70%尾款发货前结清
+    - paragraph: 仅供沟通参考，不生成付款计划。
+    - generic: 系统执行付款规则
+    - paragraph: 用于新采购的付款计划；已保存采购保留原快照。比例合计须为 100%。
+    - generic: 阶段名称
+    - generic: 比例 %
+    - generic: 到期依据
+    - generic: 延后天数
+    - textbox "阶段名称 1": 预付款
+    - spinbutton "比例 % 1": "30"
+    - combobox "到期依据 1":
+      - option "下单日期" [selected]
+      - option "预计到货"
+      - option "暂不设日期"
+    - spinbutton "延后天数 1": "0"
+    - button "删除付款阶段 1": 删除
+    - textbox "阶段名称 2": 尾款
+    - spinbutton "比例 % 2": "70"
+    - combobox "到期依据 2":
+      - option "下单日期"
+      - option "预计到货" [selected]
+      - option "暂不设日期"
+    - spinbutton "延后天数 2": "0"
+    - button "删除付款阶段 2": 删除
+    - button "新增付款阶段"
+    - strong: 合计：100%
+    - heading "其他备注" [level=4]
+    - generic: 备注
+    - textbox "备注"
+    - button "取消"
+    - button "保存供应商"

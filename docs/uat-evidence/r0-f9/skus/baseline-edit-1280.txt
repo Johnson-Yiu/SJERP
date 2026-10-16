@@ -1,0 +1,408 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Sellable variants
+  - heading "SKU 管理" [level=1]
+  - generic: 10月16日周五
+  - generic "Johnson": J
+  - heading "SKU 管理" [level=2]
+  - paragraph: 按产品分类配置参数，实时生成可报价、可下单的 SKU 组合。
+  - button "新建 SKU":
+    - text: 新建 SKU
+  - region "页面小计":
+    - article:
+      - generic: SKU 总数
+      - strong: "4"
+      - generic: 当前查询结果
+    - article:
+      - generic: 已启用
+      - strong: "3"
+      - generic: 可用于报价与下单
+    - article:
+      - generic: 已设型号
+      - strong: "4"
+      - generic: 对外 Sales Model 已完整
+    - article:
+      - generic: 关联产品
+      - strong: "2"
+      - generic: 已配置销售规格的产品
+  - textbox "搜索 SKU":
+    - /placeholder: SKU Code、Sales Model、名称或规格
+  - combobox "SKU 所属产品":
+    - option "全部产品" [selected]
+    - option "R0F9-P01 · R0F9 商用线性灯具长名称多规格测试"
+    - option "R0F9-P02 · R0F9 独立产品"
+  - combobox "SKU 状态":
+    - option "全部状态" [selected]
+    - option "启用"
+    - option "停用"
+  - button "查询"
+  - button "重置"
+  - button "刷新"
+  - table:
+    - rowgroup:
+      - row "内部识别名称 对外型号 / Sales Model 分类信息 状态 报价次数 订单次数 图片 库存 单位 默认售价":
+        - columnheader "内部识别名称"
+        - columnheader "对外型号 / Sales Model"
+        - columnheader "分类信息"
+        - columnheader "状态"
+        - columnheader "报价次数"
+        - columnheader "订单次数"
+        - columnheader "图片"
+        - columnheader "库存"
+        - columnheader "单位"
+        - columnheader "默认售价"
+        - columnheader
+    - rowgroup:
+      - row "R0F9 商用线性灯具长名称多规格测试-10W-24V SKU Code：R0F9-EXISTING F7B-1024 R0F9 线性照明 启用 1 1 — 102.00 m 0.00 USD":
+        - cell "R0F9 商用线性灯具长名称多规格测试-10W-24V SKU Code：R0F9-EXISTING":
+          - strong: R0F9 商用线性灯具长名称多规格测试-10W-24V
+          - generic: SKU Code：R0F9-EXISTING
+        - cell "F7B-1024"
+        - cell "R0F9 线性照明"
+        - cell "启用":
+          - generic: 启用
+        - cell "1"
+        - cell "1"
+        - cell "—"
+        - cell "102.00"
+        - cell "m"
+        - cell "0.00 USD"
+        - cell:
+          - button "历史版本":
+          - button "编辑" [active]:
+          - button "停用":
+      - row "R0F9 已停用样本 SKU Code：R0F9-INACTIVE F7B-ARCHIVE R0F9 线性照明 停用 0 0 — 0.00 m 0.00 USD":
+        - cell "R0F9 已停用样本 SKU Code：R0F9-INACTIVE":
+          - strong: R0F9 已停用样本
+          - generic: SKU Code：R0F9-INACTIVE
+        - cell "F7B-ARCHIVE"
+        - cell "R0F9 线性照明"
+        - cell "停用":
+          - generic: 停用
+        - cell "0"
+        - cell "0"
+        - cell "—"
+        - cell "0.00"
+        - cell "m"
+        - cell "0.00 USD"
+        - cell:
+          - button "历史版本":
+          - button "编辑":
+      - row "R0F9 PCS 单位灯具 SKU Code：R0F9-PCS F7B-PCS R0F9 线性照明 启用 0 0 — 0.00 pcs 0.00 USD":
+        - cell "R0F9 PCS 单位灯具 SKU Code：R0F9-PCS":
+          - strong: R0F9 PCS 单位灯具
+          - generic: SKU Code：R0F9-PCS
+        - cell "F7B-PCS"
+        - cell "R0F9 线性照明"
+        - cell "启用":
+          - generic: 启用
+        - cell "0"
+        - cell "0"
+        - cell "—"
+        - cell "0.00"
+        - cell "pcs"
+        - cell "0.00 USD"
+        - cell:
+          - button "历史版本":
+          - button "编辑":
+          - button "停用":
+      - row "R0F9 第二规格长名称-10W-48V SKU Code：R0F9-SECOND F7B-1048 R0F9 线性照明 启用 0 0 — 0.00 m 0.00 USD":
+        - cell "R0F9 第二规格长名称-10W-48V SKU Code：R0F9-SECOND":
+          - strong: R0F9 第二规格长名称-10W-48V
+          - generic: SKU Code：R0F9-SECOND
+        - cell "F7B-1048"
+        - cell "R0F9 线性照明"
+        - cell "启用":
+          - generic: 启用
+        - cell "0"
+        - cell "0"
+        - cell "—"
+        - cell "0.00"
+        - cell "m"
+        - cell "0.00 USD"
+        - cell:
+          - button "历史版本":
+          - button "编辑":
+          - button "停用":
+  - dialog "编辑 SKU":
+    - heading "编辑 SKU" [level=3]
+    - paragraph: 参数按产品所属分类自动带入；每个值输入后按回车确认。
+    - button "关闭 SKU 窗口":
+    - generic: SKU Code
+    - textbox: R0F9-EXISTING
+    - text: 所属产品
+    - emphasis: "*"
+    - combobox:
+      - option "请选择产品"
+      - option "R0F9 商用线性灯具长名称多规格测试" [selected]
+      - option "R0F9 独立产品"
+    - generic: 销售型号前缀
+    - textbox "请先在产品中设置": F7B
+    - text: 用于自动生成 Sales Model。
+    - generic: Sales Model
+    - textbox "修改后将保存历史型号": F7B-1024
+    - text: 该 SKU 已有报价或订单引用；保存会保留历史版本，历史单据不变。
+    - generic: 单位
+    - textbox "如：pcs": m
+    - generic: 币种
+    - combobox:
+      - option "USD" [selected]
+      - option "CNY"
+      - option "EUR"
+      - option "GBP"
+    - checkbox "启用" [checked]
+    - text: 启用
+    - generic: 中文描述
+    - textbox "留空则按产品与属性生成": R0F9 商用线性灯具长名称多规格测试，功率：10W，电压：24V
+    - generic: 英文描述
+    - textbox "留空则按产品与属性生成": R0F9 commercial linear light, 10W, 24V
+    - generic: 暂无图片
+    - button "选择图片"
+    - heading "交易单位与包装规格" [level=4]
+    - paragraph: 基础单位：m。交易规格与装箱模板不会自动改变基础单位。
+    - paragraph: 当前已保存包装：R0F9 多SKU共用长名称包装模板·防护运输测试 · 已验证。模板或有效包装参数变化后需重新验证。
+    - link "管理此 SKU 的交易单位":
+      - /url: /sku-trade-units?sku=1&returnTo=/skus?edit=1%26returnTo=/skus
+    - text: 供应商映射
+    - heading "供应来源" [level=4]
+    - button "添加供应商来源":
+      - text: 添加供应商来源
+    - paragraph: 同一 SKU 可配置多个供应来源。候选供应商不等于实际采购供应商，采购时仍需选定具体来源；历史采购行保留快照。
+    - table:
+      - rowgroup:
+        - row "供应商 供应商型号 / Code 采购参考价 MOQ / 交期 状态":
+          - columnheader "供应商"
+          - columnheader "供应商型号 / Code"
+          - columnheader "采购参考价"
+          - columnheader "MOQ / 交期"
+          - columnheader "状态"
+          - columnheader
+      - rowgroup:
+        - row "R0F9 第二供应商 长供应商型号-10W-24V GB-01 12.50 USD 10.00 / 0 天 启用 设为首选 停用":
+          - cell "R0F9 第二供应商":
+            - strong: R0F9 第二供应商
+          - cell "长供应商型号-10W-24V GB-01":
+            - strong: 长供应商型号-10W-24V
+            - generic: GB-01
+          - cell "12.50 USD"
+          - cell "10.00 / 0 天"
+          - cell "启用":
+            - generic: 启用
+          - cell "设为首选 停用":
+            - button "编辑":
+            - button "设为首选"
+            - button "停用"
+        - row "R0F9 长名称供应商·多来源采购测试有限公司 长供应商型号-10W-24V GA-01 12.50 USD 10.00 / 0 天 启用 设为首选 停用":
+          - cell "R0F9 长名称供应商·多来源采购测试有限公司":
+            - strong: R0F9 长名称供应商·多来源采购测试有限公司
+          - cell "长供应商型号-10W-24V GA-01":
+            - strong: 长供应商型号-10W-24V
+            - generic: GA-01
+          - cell "12.50 USD"
+          - cell "10.00 / 0 天"
+          - cell "启用":
+            - generic: 启用
+          - cell "设为首选 停用":
+            - button "编辑":
+            - button "设为首选"
+            - button "停用"
+    - heading "参数配置" [level=4]
+    - generic: SKU Parameters
+    - button "参数配置说明 ⓘ"
+    - paragraph: 展示“生成中文SKU”或“生成销售型号”的属性；自动大写规则将自动应用。
+    - text: 查找参数
+    - textbox "查找 SKU 参数":
+      - /placeholder: 参数名称、分类或编码
+    - generic: 筛选只影响展示，已填写的参数仍保留。
+    - heading "R0F9 线性照明" [level=5]
+    - text: 功率
+    - emphasis: "*"
+    - text: （W）
+    - text: "10"
+    - button "移除参数值": ×
+    - textbox "功率":
+      - /placeholder: 输入功率后按回车确认
+    - generic "历史保存的参数值":
+      - button "10"
+      - button "5"
+    - generic: 型号缩写
+    - button "?"
+    - text: "10"
+    - generic: →
+    - textbox "10 的型号缩写":
+      - /placeholder: 如 BL
+    - button "默认值" [disabled]
+    - paragraph: 按回车添加多个值
+    - text: 电压
+    - emphasis: "*"
+    - text: （V）
+    - text: "24"
+    - button "移除参数值": ×
+    - textbox "电压":
+      - /placeholder: 输入电压后按回车确认
+    - generic "历史保存的参数值":
+      - button "24"
+      - button "12"
+      - button "48"
+    - generic: 型号缩写
+    - button "?"
+    - text: "24"
+    - generic: →
+    - textbox "24 的型号缩写":
+      - /placeholder: 如 BL
+      - text: 24V
+    - button "默认值"
+    - paragraph: 按回车添加多个值
+    - heading "组合预览" [level=4]
+    - generic: SKU Combinations Preview
+    - paragraph: 仅创建勾选的实际组合；不会自动创建所有理论组合。
+    - paragraph: 当前保存型号：F7B-1024。预览基于当前参数缩写；未修改身份参数或型号时，普通保存保留原型号。
+    - generic: 1 个组合 · 已选 0 项 · 已存在 0 项
+    - table:
+      - rowgroup:
+        - row "Sales Model 功率 电压":
+          - columnheader "Sales Model"
+          - columnheader "功率"
+          - columnheader "电压"
+      - rowgroup:
+        - row "F7B-24V 10W 24V":
+          - cell "F7B-24V"
+          - cell "10W"
+          - cell "24V"
+    - heading "包装与发货信息" [level=4]
+    - generic: Packaging & Shipping（选填）
+    - generic: 1 个销售型号
+    - generic: 销售型号 / 中文 SKU 名称筛选
+    - textbox "销售型号 / 中文 SKU 名称筛选":
+      - /placeholder: 模糊搜索型号或中文名称
+    - button "清空筛选" [disabled]
+    - text: 单个重量 KG
+    - spinbutton "单个重量 KG"
+    - text: 整件数量
+    - spinbutton "整件数量"
+    - text: 单位
+    - textbox "单位":
+      - /placeholder: 如：pcs
+    - text: 备注
+    - textbox "备注":
+      - /placeholder: 批量备注
+    - text: 批量包装
+    - textbox "批量包装":
+      - /placeholder: 搜索并选择包装名称
+    - button "批量填充 1 项"
+    - button "撤销上一步" [disabled]
+    - button "清空批量填充" [disabled]
+    - generic "参数筛选":
+      - group "功率":
+        - generic: 功率
+        - button "功率：10W": 10W
+      - group "电压":
+        - generic: 电压
+        - button "电压：24V": 24V
+    - paragraph: 销售型号、中文 SKU 名称和参数标签可单独或组合筛选；已填写的字段直接参与批量填充，留空则保留原值。
+    - generic: "1"
+    - text: 中文 SKU 名称
+    - textbox "中文 SKU 名称": R0F9 商用线性灯具长名称多规格测试-10W-24V
+    - text: 销售型号
+    - textbox "销售型号": F7B-24V
+    - text: 单位
+    - textbox "单位": m
+    - text: 备注
+    - textbox "备注"
+    - text: 单个重量 KG
+    - spinbutton "单个重量 KG": "0.2"
+    - text: 整件数量
+    - spinbutton "整件数量": "20"
+    - generic: 包装信息
+    - textbox "未配置，输入任意文字搜索": R0F9 多SKU共用长名称包装模板·防护运输测试
+    - button "取消"
+    - button "保存 SKU"

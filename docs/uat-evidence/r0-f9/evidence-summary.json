@@ -1,0 +1,11 @@
+{
+  "images": 573,
+  "latestCodeImages": 186,
+  "latestRouteBaseline": 81,
+  "dimensionMismatches": 69,
+  "latestBaselineDimensionMismatches": 17,
+  "originalBytes": 39916206,
+  "codeHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+  "independentVisual": "PENDING",
+  "routes": 27
+}

@@ -1,0 +1,175 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Accounts receivable
+  - heading "应收计划" [level=1]
+  - generic: 10月16日周五
+  - generic "Johnson": J
+  - paragraph: 按合同原币跟踪计划、已核销与待结清金额。
+  - button "刷新"
+  - region "页面小计":
+    - article:
+      - generic: 计划笔数
+      - strong: "1"
+      - generic: 当前筛选范围
+    - article:
+      - generic: 待结清
+      - strong: "1"
+      - generic: 当前筛选结果
+    - article:
+      - generic: 已逾期
+      - strong: "0"
+      - generic: 当前筛选结果
+    - article:
+      - generic: 待结金额
+      - strong: ¥ 490.00
+      - generic: 当前筛选结果，按合同汇率折合人民币
+  - form "收付款计划筛选":
+    - generic: 搜索往来方或合同号
+    - searchbox "搜索往来方或合同号"
+    - generic: 状态
+    - combobox "收付款计划状态":
+      - option "待结清" [selected]
+      - option "已结清"
+      - option "全部状态"
+    - checkbox "仅看逾期"
+    - text: 仅看逾期
+    - generic: 到期日从
+    - textbox "到期日从"
+    - generic: 至
+    - textbox "到期日至"
+    - button "查询"
+    - button "重置"
+  - table:
+    - rowgroup:
+      - row "预计日期 合同 往来方 原币计划 已核销 待结 状态":
+        - columnheader "预计日期"
+        - columnheader "合同"
+        - columnheader "往来方"
+        - columnheader "原币计划"
+        - columnheader "已核销"
+        - columnheader "待结"
+        - columnheader "状态"
+        - columnheader
+    - rowgroup:
+      - row "2026-10-16 R0F9-O001 R0F9 测试客户·灯具采购有限公司 USD 500.00 10.00 490.00 待结清 调整计划 登记收款":
+        - cell "2026-10-16"
+        - cell "R0F9-O001":
+          - link "R0F9-O001":
+            - /url: /orders?detail=1
+        - cell "R0F9 测试客户·灯具采购有限公司"
+        - cell "USD 500.00"
+        - cell "10.00"
+        - cell "490.00":
+          - strong: "490.00"
+        - cell "待结清":
+          - generic: 待结清
+        - cell "调整计划 登记收款":
+          - button "调整计划"
+          - button "登记收款" [active]
+  - dialog "登记收款":
+    - heading "登记收款" [level=3]
+    - paragraph: R0F9-O001 · R0F9 测试客户·灯具采购有限公司 · 待结 USD 490.00
+    - button "关闭": ×
+    - text: 原币金额（USD）
+    - spinbutton "原币金额（USD）": "490.00"
+    - text: 实际日期
+    - textbox "实际日期": 2026-10-16
+    - text: 结汇汇率
+    - spinbutton "结汇汇率": "1"
+    - text: 支付方式
+    - textbox "支付方式"
+    - text: 参考号
+    - textbox "参考号": R0F9-O001
+    - text: 备注
+    - textbox "备注"
+    - button "取消"
+    - button "确认登记收款"

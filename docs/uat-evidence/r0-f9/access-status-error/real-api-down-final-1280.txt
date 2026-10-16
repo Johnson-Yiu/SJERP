@@ -1,0 +1,23 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation
+  - generic: 权
+  - strong: 当前账号：权限状态不可用
+  - generic: 身份待确认 · 按账号授权
+  - alert: 权限状态加载失败：服务器暂时不可用，请稍后重试。
+- main:
+  - text: Access status
+  - heading "权限状态" [level=1]
+  - generic: 10月16日周五
+  - generic "权限状态不可用": 权
+  - region "权限状态获取失败":
+    - generic: "!"
+    - heading "权限状态获取失败" [level=2]
+    - paragraph: 暂时无法确认当前身份的权限。请重新加载权限状态，再继续操作。
+    - alert:
+      - strong: 错误信息
+      - paragraph: 服务器暂时不可用，请稍后重试。
+    - button "重新加载权限状态"
+    - generic: 重新加载只检查当前权限，不会修改角色配置。

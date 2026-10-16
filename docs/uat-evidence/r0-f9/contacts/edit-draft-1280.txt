@@ -1,0 +1,220 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Contacts
+  - heading "联系人" [level=1]
+  - generic: 10月16日周五
+  - generic "Johnson": J
+  - heading "联系人" [level=2]
+  - paragraph: 维护客户联系人和联系方式。
+  - button "新建联系人":
+    - text: 新建联系人
+  - region "页面小计":
+    - article:
+      - generic: 联系人
+      - strong: "3"
+      - generic: 当前筛选结果
+    - article:
+      - generic: 主联系人
+      - strong: "2"
+      - generic: 客户的主要联系人
+    - article:
+      - generic: 所属客户
+      - strong: "2"
+      - generic: 当前筛选结果
+    - article:
+      - generic: 有联系方式
+      - strong: "3"
+      - generic: 电话、WhatsApp 或邮箱
+  - generic "联系人筛选":
+    - text: 搜索
+    - textbox "搜索联系人":
+      - /placeholder: 姓名、客户、职位或联系方式
+    - text: 所属客户
+    - combobox "按客户筛选":
+      - option "全部客户" [selected]
+      - option "R0F9 第二客户"
+      - option "R0F9 测试客户·灯具采购有限公司"
+    - text: 联系人类型
+    - combobox "按联系人类型筛选":
+      - option "全部联系人" [selected]
+      - option "主联系人"
+      - option "其他联系人"
+    - button "重置"
+    - button "刷新"
+  - table:
+    - rowgroup:
+      - row "所属客户 联系人 联系方式 主联系人 操作":
+        - columnheader "所属客户"
+        - columnheader "联系人"
+        - columnheader "联系方式"
+        - columnheader "主联系人"
+        - columnheader "操作"
+    - rowgroup:
+      - row "R0F9 第二客户 Morgan Lee Operations Manager morgan@example.test 主联系人 查看联系人详情 编辑联系人 删除联系人":
+        - cell "R0F9 第二客户":
+          - button "R0F9 第二客户"
+        - cell "Morgan Lee Operations Manager":
+          - strong: Morgan Lee
+          - generic: Operations Manager
+        - cell "morgan@example.test":
+          - link "morgan@example.test":
+            - /url: mailto:morgan@example.test
+        - cell "主联系人":
+          - generic: 主联系人
+        - cell "查看联系人详情 编辑联系人 删除联系人":
+          - button "查看联系人详情":
+          - button "编辑联系人":
+          - button "删除联系人":
+      - row "R0F9 测试客户·灯具采购有限公司 王明（采购负责人）超长姓名窄桌面验收 国际采购与供应链高级负责人 / 亚太区 +86 138 0000 0000 WhatsApp：+86 138 0000 0001 buyer@example.test 主联系人 查看联系人详情 编辑联系人 删除联系人":
+        - cell "R0F9 测试客户·灯具采购有限公司":
+          - button "R0F9 测试客户·灯具采购有限公司"
+        - cell "王明（采购负责人）超长姓名窄桌面验收 国际采购与供应链高级负责人 / 亚太区":
+          - strong: 王明（采购负责人）超长姓名窄桌面验收
+          - generic: 国际采购与供应链高级负责人 / 亚太区
+        - cell "+86 138 0000 0000 WhatsApp：+86 138 0000 0001 buyer@example.test":
+          - link "+86 138 0000 0000":
+            - /url: tel:+86 138 0000 0000
+          - generic: WhatsApp：+86 138 0000 0001
+          - link "buyer@example.test":
+            - /url: mailto:buyer@example.test
+        - cell "主联系人":
+          - generic: 主联系人
+        - cell "查看联系人详情 编辑联系人 删除联系人":
+          - button "查看联系人详情":
+          - button "编辑联系人":
+          - button "删除联系人":
+      - row "R0F9 测试客户·灯具采购有限公司 李女士 采购 020-12345678 WhatsApp：13800000002 普通联系人 查看联系人详情 编辑联系人 删除联系人":
+        - cell "R0F9 测试客户·灯具采购有限公司":
+          - button "R0F9 测试客户·灯具采购有限公司"
+        - cell "李女士 采购":
+          - strong: 李女士
+          - generic: 采购
+        - cell "020-12345678 WhatsApp：13800000002":
+          - link "020-12345678":
+            - /url: tel:020-12345678
+          - generic: WhatsApp：13800000002
+        - cell "普通联系人":
+          - generic: 普通联系人
+        - cell "查看联系人详情 编辑联系人 删除联系人":
+          - button "查看联系人详情":
+          - button "编辑联系人":
+          - button "删除联系人":
+  - dialog "编辑联系人":
+    - heading "编辑联系人" [level=3]
+    - button "关闭联系人表单":
+    - heading "所属客户与联系人资料" [level=4]
+    - text: 所属客户
+    - emphasis: "*"
+    - combobox "所属客户":
+      - option "请选择"
+      - option "R0F9 第二客户" [selected]
+      - option "R0F9 测试客户·灯具采购有限公司"
+    - text: 姓名
+    - emphasis: "*"
+    - textbox "姓名": Morgan Lee
+    - generic: 职位
+    - textbox "职位": Operations Manager
+    - generic: 设为主联系人
+    - checkbox "是" [checked]
+    - text: 是
+    - heading "联系方式" [level=4]
+    - generic: 电话
+    - textbox "电话"
+    - generic: WhatsApp
+    - textbox "WhatsApp"
+    - generic: 邮箱
+    - textbox "邮箱": <redacted>
+    - heading "备注" [level=4]
+    - generic: 备注
+    - textbox "备注" [active]: R0F9 保存失败恢复验收
+    - button "取消"
+    - button "保存联系人"

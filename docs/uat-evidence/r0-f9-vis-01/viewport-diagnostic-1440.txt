@@ -1,0 +1,1 @@
+DIAGNOSTIC NOTE, NOT A DOM SNAPSHOT. Initial viewport metrics: innerWidth=1440 innerHeight=1000 clientWidth=1440 clientHeight=1000 devicePixelRatio=1. DOM snapshot was not archived for this initial probe. Not final evidence.

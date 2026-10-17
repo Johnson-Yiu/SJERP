@@ -1,0 +1,235 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Transaction units
+  - heading "SKU 交易单位" [level=1]
+  - generic: 10月17日周六
+  - generic "Johnson": J
+  - heading "SKU 交易单位" [level=2]
+  - paragraph: 设置卷、箱等交易规格；库存仍按 SKU 基础单位记账。
+  - link "返回 SKU":
+    - /url: /skus
+  - button "刷新"
+  - strong: 选择 SKU
+  - searchbox "搜索 SKU、型号或描述"
+  - button "按产品分类筛选":
+    - generic: 全部分类
+  - 'checkbox "R0F9 商用线性灯具长名称多规格测试-10W-24V SKU: R0F9-EXISTING Sales Model: F7B-1024"'
+  - generic: R0F9 商用线性灯具长名称多规格测试-10W-24V
+  - generic: "SKU: R0F9-EXISTING"
+  - generic: "Sales Model: F7B-1024"
+  - 'checkbox "R0F9 已停用样本 SKU: R0F9-INACTIVE Sales Model: F7B-ARCHIVE"'
+  - generic: R0F9 已停用样本
+  - generic: "SKU: R0F9-INACTIVE"
+  - generic: "Sales Model: F7B-ARCHIVE"
+  - 'checkbox "R0F9 PCS 单位灯具 SKU: R0F9-PCS Sales Model: F7B-PCS"'
+  - generic: R0F9 PCS 单位灯具
+  - generic: "SKU: R0F9-PCS"
+  - generic: "Sales Model: F7B-PCS"
+  - 'checkbox "R0F9 第二规格长名称-10W-48V SKU: R0F9-SECOND Sales Model: F7B-1048"'
+  - generic: R0F9 第二规格长名称-10W-48V
+  - generic: "SKU: R0F9-SECOND"
+  - generic: "Sales Model: F7B-1048"
+  - complementary:
+    - paragraph: 从左侧勾选 SKU 后，可在这里查看详情。
+  - heading "交易规格 6 项" [level=3]
+  - paragraph: 1 卷或 1 箱含多少基础单位，由换算系数决定。供应商专用规格只适用于对应供应商。
+  - table:
+    - rowgroup:
+      - row "SKU / 规格 换算关系 供应商 数量规则 / 状态 操作":
+        - columnheader "SKU / 规格"
+        - columnheader "换算关系"
+        - columnheader "供应商"
+        - columnheader "数量规则 / 状态"
+        - columnheader "操作"
+    - rowgroup:
+      - row "10 米/卷 R0F9-EXISTING 1 卷 = 10.00 m 通用规格 仅整数数量 启用 · 默认 编辑备注 停用 取消默认":
+        - cell "10 米/卷 R0F9-EXISTING":
+          - strong: 10 米/卷
+          - generic: R0F9-EXISTING
+        - cell "1 卷 = 10.00 m"
+        - cell "通用规格"
+        - cell "仅整数数量 启用 · 默认":
+          - text: 仅整数数量
+          - generic: 启用 · 默认
+        - cell "编辑备注 停用 取消默认":
+          - button "编辑备注"
+          - button "停用"
+          - button "取消默认"
+      - row "5 米/卷 R0F9-EXISTING 1 卷 = 5.00 m 通用规格 仅整数数量 启用 编辑备注 停用 设为默认":
+        - cell "5 米/卷 R0F9-EXISTING":
+          - strong: 5 米/卷
+          - generic: R0F9-EXISTING
+        - cell "1 卷 = 5.00 m"
+        - cell "通用规格"
+        - cell "仅整数数量 启用":
+          - text: 仅整数数量
+          - generic: 启用
+        - cell "编辑备注 停用 设为默认":
+          - button "编辑备注"
+          - button "停用"
+          - button "设为默认"
+      - row "50 米/卷 R0F9-EXISTING 1 卷 = 50.00 m 通用规格 仅整数数量 启用 编辑备注 停用 设为默认":
+        - cell "50 米/卷 R0F9-EXISTING":
+          - strong: 50 米/卷
+          - generic: R0F9-EXISTING
+        - cell "1 卷 = 50.00 m"
+        - cell "通用规格"
+        - cell "仅整数数量 启用":
+          - text: 仅整数数量
+          - generic: 启用
+        - cell "编辑备注 停用 设为默认":
+          - button "编辑备注"
+          - button "停用"
+          - button "设为默认"
+      - row "供应商专用10米卷 R0F9-EXISTING 1 卷 = 10.00 m R0F9 长名称供应商·多来源采购测试有限公司 允许小数 启用 编辑备注 停用 设为默认":
+        - cell "供应商专用10米卷 R0F9-EXISTING":
+          - strong: 供应商专用10米卷
+          - generic: R0F9-EXISTING
+        - cell "1 卷 = 10.00 m"
+        - cell "R0F9 长名称供应商·多来源采购测试有限公司"
+        - cell "允许小数 启用":
+          - text: 允许小数
+          - generic: 启用
+        - cell "编辑备注 停用 设为默认":
+          - button "编辑备注"
+          - button "停用"
+          - button "设为默认"
+      - row "供应商专用10米卷 R0F9-EXISTING 1 卷 = 10.00 m R0F9 第二供应商 允许小数 启用 编辑备注 停用 设为默认":
+        - cell "供应商专用10米卷 R0F9-EXISTING":
+          - strong: 供应商专用10米卷
+          - generic: R0F9-EXISTING
+        - cell "1 卷 = 10.00 m"
+        - cell "R0F9 第二供应商"
+        - cell "允许小数 启用":
+          - text: 允许小数
+          - generic: 启用
+        - cell "编辑备注 停用 设为默认":
+          - button "编辑备注"
+          - button "停用"
+          - button "设为默认"
+      - row "100件/箱 R0F9-PCS 1 箱 = 100.00 pcs 通用规格 仅整数数量 启用 编辑备注 停用 设为默认":
+        - cell "100件/箱 R0F9-PCS":
+          - strong: 100件/箱
+          - generic: R0F9-PCS
+        - cell "1 箱 = 100.00 pcs"
+        - cell "通用规格"
+        - cell "仅整数数量 启用":
+          - text: 仅整数数量
+          - generic: 启用
+        - cell "编辑备注 停用 设为默认":
+          - button "编辑备注"
+          - button "停用"
+          - button "设为默认"
+  - heading "新增交易规格" [level=3]
+  - paragraph: 请先选择一个 SKU
+  - text: 规格名称
+  - textbox "规格名称" [disabled]:
+    - /placeholder: 例如：10 米/卷
+  - text: 交易单位
+  - textbox "交易单位" [disabled]: 卷
+  - text: 换算系数
+  - spinbutton "换算系数" [disabled]
+  - strong: 填写系数后显示换算关系
+  - text: 供应商（可选）
+  - combobox "供应商（可选）" [disabled]:
+    - option "通用规格" [disabled] [selected]
+    - option "R0F9 第二供应商" [disabled]
+    - option "R0F9 长名称供应商·多来源采购测试有限公司" [disabled]
+  - checkbox "允许小数交易数量" [disabled]
+  - text: 允许小数交易数量
+  - paragraph: 例如 0.5 卷；未勾选时只能填写整数卷数或箱数。
+  - checkbox "设为该 SKU 默认规格" [disabled]
+  - text: 设为该 SKU 默认规格
+  - text: 备注
+  - textbox "备注" [disabled]
+  - paragraph: 名称、单位、换算系数、供应商和小数规则保存后固定。规格变化时请停用旧项后新建；历史单据保留原快照。装箱数量及产品净重仍按基础单位填写。
+  - button "添加规格" [disabled]

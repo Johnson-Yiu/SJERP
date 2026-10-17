@@ -1,0 +1,204 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Current inventory
+  - heading "库存" [level=1]
+  - generic: 10月17日周六
+  - generic "Johnson": J
+  - paragraph: 查看各 SKU 的实际库存、预留、可用量和采购缺口。
+  - button "刷新数据":
+    - text: 刷新数据
+  - region "库存概览":
+    - article:
+      - generic: SKU 数量
+      - strong: "4"
+      - generic: 全部筛选结果
+    - article:
+      - generic: 实际库存
+      - strong: 102 m / 0 pcs
+      - generic: 已预留：20 m / 0 pcs
+    - article:
+      - generic: 可用库存
+      - strong: 82 m / 0 pcs
+      - generic: 已扣除预留
+    - article:
+      - generic: 在途采购
+      - strong: 18 m / 0 pcs
+      - generic: 已下单未到货
+    - button "待关注 0 采购缺口 / 数据异常":
+      - generic: 待关注
+      - strong: "0"
+      - generic: 采购缺口 / 数据异常
+  - paragraph: 数量按 SKU 基础单位显示。
+  - link "盘点与库存流水":
+    - /url: /inventory-movements
+  - link "采购与验货入库":
+    - /url: /purchase-orders
+  - link "订单发货":
+    - /url: /orders
+  - textbox "搜索库存":
+    - /placeholder: 搜索 SKU、中文 SKU 名称、规格...
+  - table:
+    - rowgroup:
+      - row "SKU：升序 中文 SKU 名称：未排序 实际库存：未排序 已预留：未排序 可用库存：未排序 在途采购：未排序 待采购：未排序 状态：未排序":
+        - columnheader "SKU：升序":
+          - button "SKU：升序":
+            - text: SKU
+        - columnheader "中文 SKU 名称：未排序":
+          - button "中文 SKU 名称：未排序":
+            - text: 中文 SKU 名称
+        - columnheader "实际库存：未排序":
+          - button "实际库存：未排序":
+            - text: 实际库存
+        - columnheader "已预留：未排序":
+          - button "已预留：未排序":
+            - text: 已预留
+        - columnheader "可用库存：未排序":
+          - button "可用库存：未排序":
+            - text: 可用库存
+        - columnheader "在途采购：未排序":
+          - button "在途采购：未排序":
+            - text: 在途采购
+        - columnheader "待采购：未排序":
+          - button "待采购：未排序":
+            - text: 待采购
+        - columnheader "状态：未排序":
+          - button "状态：未排序":
+            - text: 状态
+    - rowgroup:
+      - row "R0F9-EXISTING R0F9 商用线性灯具长名称多规格测试-10W-24V 基础单位：m 102 20 82 18 0 有库存":
+        - cell "R0F9-EXISTING"
+        - cell "R0F9 商用线性灯具长名称多规格测试-10W-24V 基础单位：m":
+          - generic: R0F9 商用线性灯具长名称多规格测试-10W-24V
+          - generic: 基础单位：m
+        - cell "102"
+        - cell "20"
+        - cell "82"
+        - cell "18"
+        - cell "0"
+        - cell "有库存":
+          - generic: 有库存
+      - row "R0F9-INACTIVE R0F9 已停用样本 基础单位：m 0 0 0 0 0 无库存":
+        - cell "R0F9-INACTIVE"
+        - cell "R0F9 已停用样本 基础单位：m":
+          - generic: R0F9 已停用样本
+          - generic: 基础单位：m
+        - cell "0"
+        - cell "0"
+        - cell "0"
+        - cell "0"
+        - cell "0"
+        - cell "无库存":
+          - generic: 无库存
+      - row "R0F9-PCS R0F9 PCS 单位灯具 基础单位：pcs 0 0 0 0 0 无库存":
+        - cell "R0F9-PCS"
+        - cell "R0F9 PCS 单位灯具 基础单位：pcs":
+          - generic: R0F9 PCS 单位灯具
+          - generic: 基础单位：pcs
+        - cell "0"
+        - cell "0"
+        - cell "0"
+        - cell "0"
+        - cell "0"
+        - cell "无库存":
+          - generic: 无库存
+      - row "R0F9-SECOND R0F9 第二规格长名称-10W-48V 基础单位：m 0 0 0 0 0 无库存":
+        - cell "R0F9-SECOND"
+        - cell "R0F9 第二规格长名称-10W-48V 基础单位：m":
+          - generic: R0F9 第二规格长名称-10W-48V
+          - generic: 基础单位：m
+        - cell "0"
+        - cell "0"
+        - cell "0"
+        - cell "0"
+        - cell "0"
+        - cell "无库存":
+          - generic: 无库存

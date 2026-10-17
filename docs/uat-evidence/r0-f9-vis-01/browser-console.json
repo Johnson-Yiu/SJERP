@@ -1,0 +1,50 @@
+[
+  {
+    "level": "warn",
+    "message": "[Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. \n  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > \n  at <BaseTransition appear=true persisted=false mode=undefined  ... > \n  at <Transition name=\"detail-drawer\" appear=\"\" > \n  at <DocumentPage type=\"orders\" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< [object] > > \n  at <RouterView key=\"/orders\" > \n  at <App>",
+    "timestamp": "2026-10-17T15:13:33.535Z",
+    "url": "http://127.0.0.1:5205/@vite/client"
+  },
+  {
+    "level": "warn",
+    "message": "[Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. \n  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > \n  at <BaseTransition appear=true persisted=false mode=undefined  ... > \n  at <Transition name=\"detail-drawer\" appear=\"\" > \n  at <DocumentPage type=\"orders\" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > \n  at <RouterView key=\"/orders\" > \n  at <App>",
+    "timestamp": "2026-10-17T15:13:33.801Z",
+    "url": "http://127.0.0.1:5205/@vite/client"
+  },
+  {
+    "level": "warn",
+    "message": "[Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. \n  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > \n  at <BaseTransition appear=true persisted=false mode=undefined  ... > \n  at <Transition name=\"detail-drawer\" appear=\"\" > \n  at <DocumentPage type=\"orders\" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< [object] > > \n  at <RouterView key=\"/orders\" > \n  at <App>",
+    "timestamp": "2026-10-17T15:13:38.663Z",
+    "url": "http://127.0.0.1:5205/@vite/client"
+  },
+  {
+    "level": "warn",
+    "message": "[Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. \n  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > \n  at <BaseTransition appear=true persisted=false mode=undefined  ... > \n  at <Transition name=\"detail-drawer\" appear=\"\" > \n  at <DocumentPage type=\"orders\" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > \n  at <RouterView key=\"/orders\" > \n  at <App>",
+    "timestamp": "2026-10-17T15:13:39.548Z",
+    "url": "http://127.0.0.1:5205/@vite/client"
+  },
+  {
+    "level": "warn",
+    "message": "[Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. \n  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > \n  at <BaseTransition appear=true persisted=false mode=undefined  ... > \n  at <Transition name=\"detail-drawer\" appear=\"\" > \n  at <DocumentPage type=\"orders\" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< [object] > > \n  at <RouterView key=\"/orders\" > \n  at <App>",
+    "timestamp": "2026-10-17T15:13:42.021Z",
+    "url": "http://127.0.0.1:5205/@vite/client"
+  },
+  {
+    "level": "warn",
+    "message": "[Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. \n  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > \n  at <BaseTransition appear=true persisted=false mode=undefined  ... > \n  at <Transition name=\"detail-drawer\" appear=\"\" > \n  at <DocumentPage type=\"orders\" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > \n  at <RouterView key=\"/orders\" > \n  at <App>",
+    "timestamp": "2026-10-17T15:13:42.438Z",
+    "url": "http://127.0.0.1:5205/@vite/client"
+  },
+  {
+    "level": "warn",
+    "message": "[Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. \n  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > \n  at <BaseTransition appear=true persisted=false mode=undefined  ... > \n  at <Transition name=\"detail-drawer\" appear=\"\" > \n  at <DocumentPage type=\"orders\" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< [object] > > \n  at <RouterView key=\"/orders\" > \n  at <App>",
+    "timestamp": "2026-10-17T15:24:39.814Z",
+    "url": "http://127.0.0.1:5205/@vite/client"
+  },
+  {
+    "level": "warn",
+    "message": "[Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. \n  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > \n  at <BaseTransition appear=true persisted=false mode=undefined  ... > \n  at <Transition name=\"detail-drawer\" appear=\"\" > \n  at <DocumentPage type=\"orders\" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > \n  at <RouterView key=\"/orders\" > \n  at <App>",
+    "timestamp": "2026-10-17T15:24:40.176Z",
+    "url": "http://127.0.0.1:5205/@vite/client"
+  }
+]

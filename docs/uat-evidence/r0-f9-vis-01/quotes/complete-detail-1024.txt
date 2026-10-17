@@ -1,0 +1,219 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Quotation desk
+  - heading "报价管理" [level=1]
+  - generic: 10月17日周六
+  - generic "Johnson": J
+  - paragraph: 管理报价版本、状态和成交转单。
+  - button "新建报价":
+    - text: 新建报价
+  - region "报价汇总":
+    - article:
+      - generic: 报价项目
+      - strong: "1"
+      - generic: 报价主单数
+    - article:
+      - generic: 报价版本
+      - strong: "1"
+      - generic: 含所有修订版
+    - article:
+      - generic: 进行中
+      - strong: "1"
+      - generic: 草稿或已发送
+    - article:
+      - generic: 已接受
+      - strong: "0"
+      - generic: 客户已接受
+  - textbox "搜索报价单号或客户..."
+  - combobox "按报价状态筛选":
+    - option "全部状态" [selected]
+    - option "草稿"
+    - option "已发送"
+    - option "已接受"
+    - option "已拒绝"
+    - option "已过期"
+  - combobox "按客户筛选":
+    - option "全部客户" [selected]
+    - option "R0F9 测试客户·灯具采购有限公司"
+    - option "R0F9 第二客户"
+  - combobox "报价排序":
+    - option "最近更新时间" [selected]
+    - option "最早更新时间"
+    - option "报价日期（新到旧）"
+    - option "报价日期（旧到新）"
+  - button "重置":
+    - text: 重置
+  - table:
+    - rowgroup:
+      - row "报价单 / 层级 客户 更新时间 状态 明细 金额 操作":
+        - columnheader "报价单 / 层级"
+        - columnheader "客户"
+        - columnheader "更新时间"
+        - columnheader "状态"
+        - columnheader "明细"
+        - columnheader "金额"
+        - columnheader "操作"
+    - rowgroup:
+      - row "R0F9-Q001 原始报价 R0F9 测试客户·灯具采购有限公司 2026/10/16 22:13 已发送 1 项 USD 500.00 查看 R0F9-Q001 创建修订版 R0F9-Q001 导出 R0F9-Q001":
+        - cell "R0F9-Q001 原始报价":
+          - strong: R0F9-Q001
+          - generic: 原始报价
+        - cell "R0F9 测试客户·灯具采购有限公司"
+        - cell "2026/10/16 22:13"
+        - cell "已发送":
+          - generic: 已发送
+        - cell "1 项"
+        - cell "USD 500.00"
+        - cell "查看 R0F9-Q001 创建修订版 R0F9-Q001 导出 R0F9-Q001":
+          - button "查看 R0F9-Q001":
+          - button "创建修订版 R0F9-Q001":
+          - button "导出 R0F9-Q001":
+  - dialog "报价工作台":
+    - button "关闭报价详情":
+      - generic: 关闭
+    - generic: 报价工作台 · R0F9-Q001
+    - paragraph: R0F9 测试客户·灯具采购有限公司 · 原始报价
+    - heading "R0F9-Q001" [level=2]
+    - text: 原始报价：R0F9-Q001
+    - generic: 已发送
+    - generic "报价状态操作":
+      - button "客户接受"
+      - button "客户拒绝"
+      - button "标记过期"
+    - button "创建修订版":
+      - text: 创建修订版
+    - button "预览 PI":
+      - text: 预览 PI
+    - button "导出 Excel":
+      - text: 导出 Excel
+    - button "转为订单":
+      - text: 转为订单
+    - main:
+      - navigation "报价详情分页":
+        - button "概览"
+        - button "报价明细 (1)"
+        - button "版本谱系 (1)"
+        - button "订单 (1)"
+        - button "重要备注 (0)"
+        - button "操作日志 (0)"
+      - heading "报价概览" [level=3]
+      - generic: 报价总额
+      - strong: USD 500.00
+      - generic: 有效期至
+      - strong: —
+      - generic: 商品明细
+      - strong: 1 项
+      - heading "基础信息" [level=3]
+      - term: 报价日期
+      - definition: 2026-10-16
+      - term: 币种 / 汇率
+      - definition: USD / 1
+      - term: 收件人
+      - definition: —
+      - term: 条款备注
+      - definition: —
+      - heading "版本摘要" [level=3]:
+        - text: 版本摘要
+      - paragraph: 共 1 个版本，当前为 原始报价。
+      - button "查看版本谱系"
+      - article:
+        - strong: R0F9-Q001
+        - generic: 原始报价
+        - generic: 2026/10/16 22:13
+        - generic: 已发送
+        - text: USD 500.00
+        - button "预览 PI"
+        - button "查看详情" [disabled]
+      - heading "订单摘要" [level=3]:
+        - text: 订单摘要
+      - paragraph: 已生成 1 张订单。
+      - button "查看关联订单"

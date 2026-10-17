@@ -1,0 +1,2179 @@
+{
+  "baseline": "9d05a70c07d1d8eb9d080dd1d75ea608209a799b",
+  "originalCount": 573,
+  "hashesVerified": true,
+  "dimensionExceptions": [
+    {
+      "file": "access-status-error/page-1440.jpg",
+      "module": "access-status-error",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/access-status-error",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1440,
+        "title": "权限状态",
+        "width": 1440
+      },
+      "capturedAt": "2026-10-16T14:15:51.542Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1024,
+        1000
+      ],
+      "bytes": 46953,
+      "sha256": "b93b3ee8f7d27329b4c506528e4b3bfffbbe41e98b04e5f78ad4e66f219bfcdf",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "access-status-error/page-1440.txt",
+      "snapshotSha256": "9579419dec0a2289b93f59d2d0d1bf240dbc2198f9359bf4a5b225c660d99560"
+    },
+    {
+      "file": "access-status-error/recovered-1280.jpg",
+      "module": "access-status-error",
+      "state": "recovered",
+      "url": "http://127.0.0.1:5205/",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "经营概览",
+        "width": 1280
+      },
+      "capturedAt": "2026-10-16T14:25:51.895Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1265,
+        988
+      ],
+      "bytes": 68183,
+      "sha256": "4760e67b8ac2845a9f3af17b671ea3dcbce813433263e33ad2f6a66383b52bd0",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "access-status-error/recovered-1280.txt",
+      "snapshotSha256": "4c3315d14fc94b77ff785151772ac96bd274a521359abb71731ed57312883895"
+    },
+    {
+      "file": "access-status-error/recovered-1024.jpg",
+      "module": "access-status-error",
+      "state": "recovered",
+      "url": "http://127.0.0.1:5205/",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "经营概览",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:25:52.056Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 66377,
+      "sha256": "45b7e9db5efede10df7beb1f5ffc1fa751f5d37ec09af8da53f3757444c8d428",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "access-status-error/recovered-1024.txt",
+      "snapshotSha256": "4c3315d14fc94b77ff785151772ac96bd274a521359abb71731ed57312883895"
+    },
+    {
+      "file": "categories/baseline-new-1024.jpg",
+      "module": "categories",
+      "state": "baseline-new",
+      "url": "http://127.0.0.1:5205/categories",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "产品分类",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:36:58.309Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 34552,
+      "sha256": "640c3a7c9edd4e9b89f030f0ad584a1db85fdc768d17a370882da87b44b020d7",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "categories/baseline-new-1024.txt",
+      "snapshotSha256": "18eb2a4aa54cd9ab6e729c1b6d907bf294e0d9eb9d15992a85882ac9ccc75eb4"
+    },
+    {
+      "file": "categories/baseline-page-1024.jpg",
+      "module": "categories",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/categories",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "产品分类",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:33:45.146Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 83622,
+      "sha256": "fa5c5c73969bd31c291aef8205c950515a013e1e389f218f5c5c7c88c5b688a2",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "categories/baseline-page-1024.txt",
+      "snapshotSha256": "89265942d2b116b7db84187a81c188b349bfee127c8f45c1131ac92dfa811fd3"
+    },
+    {
+      "file": "categories/final-new-1024.jpg",
+      "module": "categories",
+      "state": "final-new",
+      "url": "http://127.0.0.1:5205/categories",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "产品分类",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:27:49.490Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 34552,
+      "sha256": "640c3a7c9edd4e9b89f030f0ad584a1db85fdc768d17a370882da87b44b020d7",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "categories/final-new-1024.txt",
+      "snapshotSha256": "18eb2a4aa54cd9ab6e729c1b6d907bf294e0d9eb9d15992a85882ac9ccc75eb4"
+    },
+    {
+      "file": "categories/final-page-1024.jpg",
+      "module": "categories",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/categories",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "产品分类",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:26:41.396Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 83622,
+      "sha256": "fa5c5c73969bd31c291aef8205c950515a013e1e389f218f5c5c7c88c5b688a2",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "categories/final-page-1024.txt",
+      "snapshotSha256": "89265942d2b116b7db84187a81c188b349bfee127c8f45c1131ac92dfa811fd3"
+    },
+    {
+      "file": "categories/new-1024.jpg",
+      "module": "categories",
+      "state": "new",
+      "url": "http://127.0.0.1:5205/categories",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "产品分类",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:18:17.249Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 34552,
+      "sha256": "640c3a7c9edd4e9b89f030f0ad584a1db85fdc768d17a370882da87b44b020d7",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "categories/new-1024.txt",
+      "snapshotSha256": "18eb2a4aa54cd9ab6e729c1b6d907bf294e0d9eb9d15992a85882ac9ccc75eb4"
+    },
+    {
+      "file": "categories/page-1024.jpg",
+      "module": "categories",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/categories",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "产品分类",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:14:41.391Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 83622,
+      "sha256": "fa5c5c73969bd31c291aef8205c950515a013e1e389f218f5c5c7c88c5b688a2",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "categories/page-1024.txt",
+      "snapshotSha256": "89265942d2b116b7db84187a81c188b349bfee127c8f45c1131ac92dfa811fd3"
+    },
+    {
+      "file": "finance/baseline-page-1440.jpg",
+      "module": "finance",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/finance",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1425,
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "财务概览",
+        "width": 1440
+      },
+      "pixels": [
+        1425,
+        990
+      ],
+      "capturedAt": "2026-10-16T14:34:05.328Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 90192,
+      "sha256": "841e31430006c71ad96915eb463c881c5297cbf79cca9119256bee86333084b3",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "finance/baseline-page-1440.txt",
+      "snapshotSha256": "b291514695820466671ec2a9602b477d49be4fa4b7d0dc11dd8820a1945ce533"
+    },
+    {
+      "file": "finance/baseline-page-1280.jpg",
+      "module": "finance",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/finance",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1265,
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "财务概览",
+        "width": 1280
+      },
+      "pixels": [
+        1265,
+        988
+      ],
+      "capturedAt": "2026-10-16T14:34:05.457Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 86337,
+      "sha256": "611c966c4633db834f357254d5135730fce5a304efa6f1c671354ddd139b0faf",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "finance/baseline-page-1280.txt",
+      "snapshotSha256": "b291514695820466671ec2a9602b477d49be4fa4b7d0dc11dd8820a1945ce533"
+    },
+    {
+      "file": "finance/baseline-page-1024.jpg",
+      "module": "finance",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/finance",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "财务概览",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:34:05.615Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 78852,
+      "sha256": "1376de1f8f0a084d97a4d1d4dc2e912da27a21b7ea1a7fa11c559f383614616e",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "finance/baseline-page-1024.txt",
+      "snapshotSha256": "b291514695820466671ec2a9602b477d49be4fa4b7d0dc11dd8820a1945ce533"
+    },
+    {
+      "file": "finance/final-page-1440.jpg",
+      "module": "finance",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/finance",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1425,
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "财务概览",
+        "width": 1440
+      },
+      "pixels": [
+        1425,
+        990
+      ],
+      "capturedAt": "2026-10-16T14:27:06.441Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 90192,
+      "sha256": "841e31430006c71ad96915eb463c881c5297cbf79cca9119256bee86333084b3",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "finance/final-page-1440.txt",
+      "snapshotSha256": "b291514695820466671ec2a9602b477d49be4fa4b7d0dc11dd8820a1945ce533"
+    },
+    {
+      "file": "finance/final-page-1280.jpg",
+      "module": "finance",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/finance",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1265,
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "财务概览",
+        "width": 1280
+      },
+      "pixels": [
+        1265,
+        988
+      ],
+      "capturedAt": "2026-10-16T14:27:06.557Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 86337,
+      "sha256": "611c966c4633db834f357254d5135730fce5a304efa6f1c671354ddd139b0faf",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "finance/final-page-1280.txt",
+      "snapshotSha256": "b291514695820466671ec2a9602b477d49be4fa4b7d0dc11dd8820a1945ce533"
+    },
+    {
+      "file": "finance/final-page-1024.jpg",
+      "module": "finance",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/finance",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "财务概览",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:27:06.693Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 78852,
+      "sha256": "1376de1f8f0a084d97a4d1d4dc2e912da27a21b7ea1a7fa11c559f383614616e",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "finance/final-page-1024.txt",
+      "snapshotSha256": "b291514695820466671ec2a9602b477d49be4fa4b7d0dc11dd8820a1945ce533"
+    },
+    {
+      "file": "finance/page-1440.jpg",
+      "module": "finance",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/finance",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "财务概览",
+        "width": 1440
+      },
+      "capturedAt": "2026-10-16T14:15:25.943Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1425,
+        990
+      ],
+      "bytes": 90217,
+      "sha256": "7a98fa7d2ba2d5380cf1719eef259a35e2fbd1820fab8192ce59b6de737dcacf",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "finance/page-1440.txt",
+      "snapshotSha256": "f6bc288f505ae43b3856305067458803b170f1c8a071c0954e79552138c93fc7"
+    },
+    {
+      "file": "finance/page-1280.jpg",
+      "module": "finance",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/finance",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "财务概览",
+        "width": 1280
+      },
+      "capturedAt": "2026-10-16T14:15:26.322Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1265,
+        988
+      ],
+      "bytes": 86361,
+      "sha256": "eecddf7422584acefcda2cda16f1a7e5b46dfe350a172043e8995282604d5d62",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "finance/page-1280.txt",
+      "snapshotSha256": "f6bc288f505ae43b3856305067458803b170f1c8a071c0954e79552138c93fc7"
+    },
+    {
+      "file": "finance/page-1024.jpg",
+      "module": "finance",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/finance",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "财务概览",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:15:27.090Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 78793,
+      "sha256": "8a6e617a54e84f6bac6a3374f003aa214789f249f08951b5b3f538d656453a22",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "finance/page-1024.txt",
+      "snapshotSha256": "f6bc288f505ae43b3856305067458803b170f1c8a071c0954e79552138c93fc7"
+    },
+    {
+      "file": "import/baseline-page-1024.jpg",
+      "module": "import",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/import",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "数据导入",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:34:08.959Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 71981,
+      "sha256": "ba223ce414cccffabe75274c7e0277a9a1250045f5153b9fa02861c845fea74b",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "import/baseline-page-1024.txt",
+      "snapshotSha256": "9af61035b34ac15116142760cce7f5e03944d735e8ec60d8a1fe3987d982ffed"
+    },
+    {
+      "file": "import/final-page-1024.jpg",
+      "module": "import",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/import",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "数据导入",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:27:10.435Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 71981,
+      "sha256": "ba223ce414cccffabe75274c7e0277a9a1250045f5153b9fa02861c845fea74b",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "import/final-page-1024.txt",
+      "snapshotSha256": "9af61035b34ac15116142760cce7f5e03944d735e8ec60d8a1fe3987d982ffed"
+    },
+    {
+      "file": "import/page-1024.jpg",
+      "module": "import",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/import",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "数据导入",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:15:39.972Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 71981,
+      "sha256": "ba223ce414cccffabe75274c7e0277a9a1250045f5153b9fa02861c845fea74b",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "import/page-1024.txt",
+      "snapshotSha256": "9af61035b34ac15116142760cce7f5e03944d735e8ec60d8a1fe3987d982ffed"
+    },
+    {
+      "file": "inventory/after-receipt-1024.jpg",
+      "module": "inventory",
+      "state": "after-receipt",
+      "url": "http://127.0.0.1:5205/inventory",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "库存",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:20:22.894Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 76902,
+      "sha256": "217a1483e180db6a724a28eeb018271c79898f00a1d68f238a4320ad116a7d8e",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "inventory/after-receipt-1024.txt",
+      "snapshotSha256": "43bf7c1da2dd2591cd85485a372a6b866eaa8a5c9dcd211a7a7a3dacf19c7dc8"
+    },
+    {
+      "file": "inventory/baseline-page-1024.jpg",
+      "module": "inventory",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/inventory",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "库存",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:33:58.426Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 76902,
+      "sha256": "217a1483e180db6a724a28eeb018271c79898f00a1d68f238a4320ad116a7d8e",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "inventory/baseline-page-1024.txt",
+      "snapshotSha256": "43bf7c1da2dd2591cd85485a372a6b866eaa8a5c9dcd211a7a7a3dacf19c7dc8"
+    },
+    {
+      "file": "inventory/final-page-1024.jpg",
+      "module": "inventory",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/inventory",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "库存",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:26:54.656Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 76902,
+      "sha256": "217a1483e180db6a724a28eeb018271c79898f00a1d68f238a4320ad116a7d8e",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "inventory/final-page-1024.txt",
+      "snapshotSha256": "43bf7c1da2dd2591cd85485a372a6b866eaa8a5c9dcd211a7a7a3dacf19c7dc8"
+    },
+    {
+      "file": "inventory/page-1024.jpg",
+      "module": "inventory",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/inventory",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "库存",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:15:00.261Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 77337,
+      "sha256": "a7b831f58535a8a37b02d943e3c84814fe379074233de61b5448d3f25fb041d7",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "inventory/page-1024.txt",
+      "snapshotSha256": "14fd3093b0eb6843442aa55a17c1c52a644f06bc70397b306f17e3e49e2f7f0d"
+    },
+    {
+      "file": "organization/baseline-page-1440.jpg",
+      "module": "organization",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/organization",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1425,
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "组织与权限",
+        "width": 1440
+      },
+      "pixels": [
+        1425,
+        990
+      ],
+      "capturedAt": "2026-10-16T14:34:10.225Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 98739,
+      "sha256": "552c2327fc28ce10be48b073e1dd63fa166f0de72543f9b2a6c5e39d0ee428b6",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "organization/baseline-page-1440.txt",
+      "snapshotSha256": "ff5645d6781541f8fb2c4d4f7c978ead25a1d1b40b9e52b06e978eb0cdffd77a"
+    },
+    {
+      "file": "organization/baseline-page-1280.jpg",
+      "module": "organization",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/organization",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1265,
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "组织与权限",
+        "width": 1280
+      },
+      "pixels": [
+        1265,
+        988
+      ],
+      "capturedAt": "2026-10-16T14:34:10.716Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 95785,
+      "sha256": "6ce3e173b21767c4be9c1d7225be1c291301047b7cf18d128a26612750a50cb9",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "organization/baseline-page-1280.txt",
+      "snapshotSha256": "6b065e32d730e1e4abd35fbeca126eb4a90bab90f4af81f821ad9da3862e2de5"
+    },
+    {
+      "file": "organization/baseline-page-1024.jpg",
+      "module": "organization",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/organization",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "组织与权限",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:34:11.194Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 73455,
+      "sha256": "4c2abbc39a3b039123cfec8dde2c1789c9f8f028217a9ba0e2132e7d25cc737a",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "organization/baseline-page-1024.txt",
+      "snapshotSha256": "6b065e32d730e1e4abd35fbeca126eb4a90bab90f4af81f821ad9da3862e2de5"
+    },
+    {
+      "file": "organization/final-page-1280.jpg",
+      "module": "organization",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/organization",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1265,
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "组织与权限",
+        "width": 1280
+      },
+      "pixels": [
+        1265,
+        988
+      ],
+      "capturedAt": "2026-10-16T14:27:11.406Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 95785,
+      "sha256": "6ce3e173b21767c4be9c1d7225be1c291301047b7cf18d128a26612750a50cb9",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "organization/final-page-1280.txt",
+      "snapshotSha256": "6b065e32d730e1e4abd35fbeca126eb4a90bab90f4af81f821ad9da3862e2de5"
+    },
+    {
+      "file": "organization/final-page-1024.jpg",
+      "module": "organization",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/organization",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "组织与权限",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:27:11.609Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 73455,
+      "sha256": "4c2abbc39a3b039123cfec8dde2c1789c9f8f028217a9ba0e2132e7d25cc737a",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "organization/final-page-1024.txt",
+      "snapshotSha256": "6b065e32d730e1e4abd35fbeca126eb4a90bab90f4af81f821ad9da3862e2de5"
+    },
+    {
+      "file": "organization/page-1440.jpg",
+      "module": "organization",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/organization",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "组织与权限",
+        "width": 1440
+      },
+      "capturedAt": "2026-10-16T14:15:42.320Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1425,
+        990
+      ],
+      "bytes": 98737,
+      "sha256": "509b9ec09e82f262d6d31b39e2191e9575d69d5f02fd5d3b215603e58684b853",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "organization/page-1440.txt",
+      "snapshotSha256": "6b065e32d730e1e4abd35fbeca126eb4a90bab90f4af81f821ad9da3862e2de5"
+    },
+    {
+      "file": "organization/page-1280.jpg",
+      "module": "organization",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/organization",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "组织与权限",
+        "width": 1280
+      },
+      "capturedAt": "2026-10-16T14:15:43.149Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1265,
+        988
+      ],
+      "bytes": 95785,
+      "sha256": "6ce3e173b21767c4be9c1d7225be1c291301047b7cf18d128a26612750a50cb9",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "organization/page-1280.txt",
+      "snapshotSha256": "6b065e32d730e1e4abd35fbeca126eb4a90bab90f4af81f821ad9da3862e2de5"
+    },
+    {
+      "file": "organization/page-1024.jpg",
+      "module": "organization",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/organization",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "组织与权限",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:15:43.944Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 73455,
+      "sha256": "4c2abbc39a3b039123cfec8dde2c1789c9f8f028217a9ba0e2132e7d25cc737a",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "organization/page-1024.txt",
+      "snapshotSha256": "6b065e32d730e1e4abd35fbeca126eb4a90bab90f4af81f821ad9da3862e2de5"
+    },
+    {
+      "file": "organization/recovered-1440.jpg",
+      "module": "organization",
+      "state": "recovered",
+      "url": "http://127.0.0.1:5205/organization",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "组织与权限",
+        "width": 1440
+      },
+      "capturedAt": "2026-10-16T14:25:53.460Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1425,
+        990
+      ],
+      "bytes": 98739,
+      "sha256": "552c2327fc28ce10be48b073e1dd63fa166f0de72543f9b2a6c5e39d0ee428b6",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "organization/recovered-1440.txt",
+      "snapshotSha256": "ff5645d6781541f8fb2c4d4f7c978ead25a1d1b40b9e52b06e978eb0cdffd77a"
+    },
+    {
+      "file": "organization/recovered-1280.jpg",
+      "module": "organization",
+      "state": "recovered",
+      "url": "http://127.0.0.1:5205/organization",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "组织与权限",
+        "width": 1280
+      },
+      "capturedAt": "2026-10-16T14:25:53.943Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1265,
+        988
+      ],
+      "bytes": 95785,
+      "sha256": "6ce3e173b21767c4be9c1d7225be1c291301047b7cf18d128a26612750a50cb9",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "organization/recovered-1280.txt",
+      "snapshotSha256": "6b065e32d730e1e4abd35fbeca126eb4a90bab90f4af81f821ad9da3862e2de5"
+    },
+    {
+      "file": "organization/recovered-1024.jpg",
+      "module": "organization",
+      "state": "recovered",
+      "url": "http://127.0.0.1:5205/organization",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "组织与权限",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:25:54.236Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 73455,
+      "sha256": "4c2abbc39a3b039123cfec8dde2c1789c9f8f028217a9ba0e2132e7d25cc737a",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "organization/recovered-1024.txt",
+      "snapshotSha256": "6b065e32d730e1e4abd35fbeca126eb4a90bab90f4af81f821ad9da3862e2de5"
+    },
+    {
+      "file": "overview/baseline-page-1440.jpg",
+      "module": "overview",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1425,
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "经营概览",
+        "width": 1440
+      },
+      "pixels": [
+        1425,
+        990
+      ],
+      "capturedAt": "2026-10-16T14:33:32.715Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 89047,
+      "sha256": "69164c7e85e470da85c0212459324d0c7935475c9ad4f5450acbb30843088b7e",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "overview/baseline-page-1440.txt",
+      "snapshotSha256": "893f974b0ba340514b249b523aedfa9e55ebe1dea73e0823009442f40ec2c119"
+    },
+    {
+      "file": "overview/baseline-page-1280.jpg",
+      "module": "overview",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1265,
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "经营概览",
+        "width": 1280
+      },
+      "pixels": [
+        1265,
+        988
+      ],
+      "capturedAt": "2026-10-16T14:33:32.848Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 68170,
+      "sha256": "184f289ee2d5aec639058d3ecf55af9ab41d874882c4a1c2db2e6aee8afa8ccf",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "overview/baseline-page-1280.txt",
+      "snapshotSha256": "893f974b0ba340514b249b523aedfa9e55ebe1dea73e0823009442f40ec2c119"
+    },
+    {
+      "file": "overview/baseline-page-1024.jpg",
+      "module": "overview",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "经营概览",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:33:33.008Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 66393,
+      "sha256": "0909c9720715952ad1c1ab7938014d22f088df91abd7f5eced696fd371eb4e37",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "overview/baseline-page-1024.txt",
+      "snapshotSha256": "893f974b0ba340514b249b523aedfa9e55ebe1dea73e0823009442f40ec2c119"
+    },
+    {
+      "file": "overview/final-page-1440.jpg",
+      "module": "overview",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1425,
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "经营概览",
+        "width": 1440
+      },
+      "pixels": [
+        1425,
+        990
+      ],
+      "capturedAt": "2026-10-16T14:26:31.352Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 88996,
+      "sha256": "6e05438baef8fca5718f1ecd011353cbdd07d572ca048fc6185279f1c4d7b705",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "overview/final-page-1440.txt",
+      "snapshotSha256": "ef5d84f4355e14161b9218c486198aa59c3b8aa2728d9e651ff650ae19127551"
+    },
+    {
+      "file": "overview/final-page-1280.jpg",
+      "module": "overview",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1265,
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "经营概览",
+        "width": 1280
+      },
+      "pixels": [
+        1265,
+        988
+      ],
+      "capturedAt": "2026-10-16T14:26:31.459Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 68166,
+      "sha256": "c5a2af643707665901bc3462df429b5ee412fe1da48a370c10de39b7dba51033",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "overview/final-page-1280.txt",
+      "snapshotSha256": "938572b0675c3637b8c5e328f58610d8912a3513d34a755bf8e85544b75422c6"
+    },
+    {
+      "file": "overview/final-page-1024.jpg",
+      "module": "overview",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "经营概览",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:26:31.590Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 66401,
+      "sha256": "b13c4d9f2d7eb2f21615bc7c14416c17ca620b04e87ea289f267a335875870e9",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "overview/final-page-1024.txt",
+      "snapshotSha256": "938572b0675c3637b8c5e328f58610d8912a3513d34a755bf8e85544b75422c6"
+    },
+    {
+      "file": "overview/page-1440.jpg",
+      "module": "overview",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "经营概览",
+        "width": 1440
+      },
+      "capturedAt": "2026-10-16T14:13:44.671Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1425,
+        1000
+      ],
+      "bytes": 100246,
+      "sha256": "31caa34a95f520e5b982b00fdae8ccbeb962a38a11332f21063c284aa077988f",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "overview/page-1440.txt",
+      "snapshotSha256": "04741d48358568c1e551ca66eadc761f7dc92c8f01fb9741863ad65a0e749d86"
+    },
+    {
+      "file": "overview/page-1280.jpg",
+      "module": "overview",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "经营概览",
+        "width": 1280
+      },
+      "capturedAt": "2026-10-16T14:13:45.781Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1265,
+        988
+      ],
+      "bytes": 68127,
+      "sha256": "5f66c3ccac5309893c25538cb9a279f219f9bb63fe5701c1d15702301f8a9932",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "overview/page-1280.txt",
+      "snapshotSha256": "04741d48358568c1e551ca66eadc761f7dc92c8f01fb9741863ad65a0e749d86"
+    },
+    {
+      "file": "overview/page-1024.jpg",
+      "module": "overview",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "经营概览",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:13:47.265Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 66333,
+      "sha256": "d46732e171605e297a34dfc3f9c35ce347b0294a9e18591570ad3fd7ef50a517",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "overview/page-1024.txt",
+      "snapshotSha256": "04741d48358568c1e551ca66eadc761f7dc92c8f01fb9741863ad65a0e749d86"
+    },
+    {
+      "file": "chrome/products-1440.jpg",
+      "module": "products",
+      "state": "real-chrome-final",
+      "url": "http://127.0.0.1:5205/products",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1440,
+        "title": "产品管理",
+        "width": 1440
+      },
+      "pixels": [
+        1440,
+        689
+      ],
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "browser": "Chrome extension",
+      "capturedAt": "2026-10-16T14:30:44.729Z",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 53741,
+      "sha256": "62c0010939e58f3f5afef24d08440528f938acec459e4010f992964751d60a83",
+      "dimensionMatch": false,
+      "snapshot": "chrome/products-1440.txt",
+      "snapshotSha256": "b49518fa288b90e4dcdd7315a515eae739ff0705e8f569764eafe3dbefbe2ce4"
+    },
+    {
+      "file": "chrome/quotes-baseline-1440.jpg",
+      "module": "quotes",
+      "state": "chrome-baseline",
+      "url": "http://127.0.0.1:5205/quotes",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1440,
+        "title": "报价管理",
+        "width": 1440
+      },
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "browser": "Chrome extension",
+      "capturedAt": "2026-10-16T14:37:46.421Z",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "pixels": [
+        1024,
+        1000
+      ],
+      "bytes": 60941,
+      "sha256": "9069609c9a2fc32fc4ef00f8665ecf440da547335b60a267b80ba433084370fb",
+      "dimensionMatch": false,
+      "snapshot": "chrome/quotes-baseline-1440.txt",
+      "snapshotSha256": "82aa71117517593f747823e887de4cffca9c638e6601e4e36c9facf6f22bbed5"
+    },
+    {
+      "file": "reports/baseline-page-1440.jpg",
+      "module": "reports",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/reports",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1425,
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "报表中心",
+        "width": 1440
+      },
+      "pixels": [
+        1425,
+        990
+      ],
+      "capturedAt": "2026-10-16T14:33:34.102Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 87283,
+      "sha256": "6c2f3efe010169d1620db9418dccac062e3a4f2aa770a2f40701c6744f893d42",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "reports/baseline-page-1440.txt",
+      "snapshotSha256": "6e7555e4769126643cce724e0aeebd29cf075408d676bd5f5a9e2e5a62cfd6da"
+    },
+    {
+      "file": "reports/baseline-page-1280.jpg",
+      "module": "reports",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/reports",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1265,
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "报表中心",
+        "width": 1280
+      },
+      "pixels": [
+        1265,
+        988
+      ],
+      "capturedAt": "2026-10-16T14:33:34.281Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 85438,
+      "sha256": "b1770f838142efd82a680762eb0b3fcb3417466b65a3cc44e5e44e7ef59c39ce",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "reports/baseline-page-1280.txt",
+      "snapshotSha256": "d2011d2d472ac6133fecdd91d2942bd0fdf43b80810a606eeaa73aff6164d300"
+    },
+    {
+      "file": "reports/baseline-page-1024.jpg",
+      "module": "reports",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/reports",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "报表中心",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:33:34.461Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 72990,
+      "sha256": "e2aed21861263e899f0fb73440d7ff1c2735e35dc657d203d189f0f1b1bd5fda",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "reports/baseline-page-1024.txt",
+      "snapshotSha256": "d2011d2d472ac6133fecdd91d2942bd0fdf43b80810a606eeaa73aff6164d300"
+    },
+    {
+      "file": "reports/final-page-1440.jpg",
+      "module": "reports",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/reports",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1425,
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "报表中心",
+        "width": 1440
+      },
+      "pixels": [
+        1425,
+        990
+      ],
+      "capturedAt": "2026-10-16T14:26:32.506Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 87262,
+      "sha256": "480a59ccb33308ff6bb8555536e82b18a0538e307f472b365c8a371b7a5fad08",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "reports/final-page-1440.txt",
+      "snapshotSha256": "6e7555e4769126643cce724e0aeebd29cf075408d676bd5f5a9e2e5a62cfd6da"
+    },
+    {
+      "file": "reports/final-page-1280.jpg",
+      "module": "reports",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/reports",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1265,
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "报表中心",
+        "width": 1280
+      },
+      "pixels": [
+        1265,
+        988
+      ],
+      "capturedAt": "2026-10-16T14:26:32.673Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 85438,
+      "sha256": "b1770f838142efd82a680762eb0b3fcb3417466b65a3cc44e5e44e7ef59c39ce",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "reports/final-page-1280.txt",
+      "snapshotSha256": "d2011d2d472ac6133fecdd91d2942bd0fdf43b80810a606eeaa73aff6164d300"
+    },
+    {
+      "file": "reports/final-page-1024.jpg",
+      "module": "reports",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/reports",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "报表中心",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:26:33.173Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 72990,
+      "sha256": "e2aed21861263e899f0fb73440d7ff1c2735e35dc657d203d189f0f1b1bd5fda",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "reports/final-page-1024.txt",
+      "snapshotSha256": "d2011d2d472ac6133fecdd91d2942bd0fdf43b80810a606eeaa73aff6164d300"
+    },
+    {
+      "file": "reports/page-1440.jpg",
+      "module": "reports",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/reports",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "报表中心",
+        "width": 1440
+      },
+      "capturedAt": "2026-10-16T14:14:02.223Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1425,
+        990
+      ],
+      "bytes": 87283,
+      "sha256": "6c2f3efe010169d1620db9418dccac062e3a4f2aa770a2f40701c6744f893d42",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "reports/page-1440.txt",
+      "snapshotSha256": "d2011d2d472ac6133fecdd91d2942bd0fdf43b80810a606eeaa73aff6164d300"
+    },
+    {
+      "file": "reports/page-1280.jpg",
+      "module": "reports",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/reports",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "报表中心",
+        "width": 1280
+      },
+      "capturedAt": "2026-10-16T14:14:02.462Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1265,
+        988
+      ],
+      "bytes": 85438,
+      "sha256": "b1770f838142efd82a680762eb0b3fcb3417466b65a3cc44e5e44e7ef59c39ce",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "reports/page-1280.txt",
+      "snapshotSha256": "d2011d2d472ac6133fecdd91d2942bd0fdf43b80810a606eeaa73aff6164d300"
+    },
+    {
+      "file": "reports/page-1024.jpg",
+      "module": "reports",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/reports",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "报表中心",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:14:02.939Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 72990,
+      "sha256": "e2aed21861263e899f0fb73440d7ff1c2735e35dc657d203d189f0f1b1bd5fda",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "reports/page-1024.txt",
+      "snapshotSha256": "d2011d2d472ac6133fecdd91d2942bd0fdf43b80810a606eeaa73aff6164d300"
+    },
+    {
+      "file": "sku-trade-units/baseline-page-1280.jpg",
+      "module": "sku-trade-units",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/sku-trade-units",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1265,
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "SKU 交易单位",
+        "width": 1280
+      },
+      "pixels": [
+        1265,
+        988
+      ],
+      "capturedAt": "2026-10-16T14:33:50.721Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 92093,
+      "sha256": "c4d8287bb2367bc19b0c2fba34179efd0491b279297d7b89078775e84682a8bb",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "sku-trade-units/baseline-page-1280.txt",
+      "snapshotSha256": "73113156562d4a303a438fba3da97a2a8913f760d5816c39d99eb19172fd9c6f"
+    },
+    {
+      "file": "sku-trade-units/baseline-page-1024.jpg",
+      "module": "sku-trade-units",
+      "state": "baseline-page",
+      "url": "http://127.0.0.1:5205/sku-trade-units",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "SKU 交易单位",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:33:50.867Z",
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "recordedSourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "metadataCorrection": "Capture closure retained prior sourceHead label; baseline batch executed after final code commit. Raw capture-records.json and JPEG bytes retained.",
+      "bytes": 79112,
+      "sha256": "a29a74a0b5e1723db4b15da64faf4b3b2e2b7f73e6b651b8e237b54b32f3977f",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "sku-trade-units/baseline-page-1024.txt",
+      "snapshotSha256": "73113156562d4a303a438fba3da97a2a8913f760d5816c39d99eb19172fd9c6f"
+    },
+    {
+      "file": "sku-trade-units/final-page-1280.jpg",
+      "module": "sku-trade-units",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/sku-trade-units",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1265,
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "SKU 交易单位",
+        "width": 1280
+      },
+      "pixels": [
+        1265,
+        988
+      ],
+      "capturedAt": "2026-10-16T14:26:51.365Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 92093,
+      "sha256": "c4d8287bb2367bc19b0c2fba34179efd0491b279297d7b89078775e84682a8bb",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "sku-trade-units/final-page-1280.txt",
+      "snapshotSha256": "73113156562d4a303a438fba3da97a2a8913f760d5816c39d99eb19172fd9c6f"
+    },
+    {
+      "file": "sku-trade-units/final-page-1024.jpg",
+      "module": "sku-trade-units",
+      "state": "final-page",
+      "url": "http://127.0.0.1:5205/sku-trade-units",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "clientHeight": 1000,
+        "clientWidth": 1009,
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "SKU 交易单位",
+        "width": 1024
+      },
+      "pixels": [
+        1009,
+        985
+      ],
+      "capturedAt": "2026-10-16T14:26:51.534Z",
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 79112,
+      "sha256": "a29a74a0b5e1723db4b15da64faf4b3b2e2b7f73e6b651b8e237b54b32f3977f",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "sku-trade-units/final-page-1024.txt",
+      "snapshotSha256": "73113156562d4a303a438fba3da97a2a8913f760d5816c39d99eb19172fd9c6f"
+    },
+    {
+      "file": "sku-trade-units/from-sku-1440.jpg",
+      "module": "sku-trade-units",
+      "state": "from-sku",
+      "url": "http://127.0.0.1:5205/sku-trade-units?sku=1&returnTo=/skus?edit=1%26returnTo=/skus",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "SKU 交易单位",
+        "width": 1440
+      },
+      "capturedAt": "2026-10-16T14:21:40.110Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1425,
+        990
+      ],
+      "bytes": 107844,
+      "sha256": "2556f47d96da184a01c64e9445741dda0480354a620c13860413fb34b2053dc5",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "sku-trade-units/from-sku-1440.txt",
+      "snapshotSha256": "1ea1e14ed6ea29d27c2569d0740b0af7c7f740746031a239032d6d854e94284c"
+    },
+    {
+      "file": "sku-trade-units/from-sku-1280.jpg",
+      "module": "sku-trade-units",
+      "state": "from-sku",
+      "url": "http://127.0.0.1:5205/sku-trade-units?sku=1&returnTo=/skus?edit=1%26returnTo=/skus",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "SKU 交易单位",
+        "width": 1280
+      },
+      "capturedAt": "2026-10-16T14:21:40.241Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1265,
+        988
+      ],
+      "bytes": 101076,
+      "sha256": "a3a3e718f390b426cb4d0cd6c069d8c5dd8718ea2eab66f52fd272a35d04e384",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "sku-trade-units/from-sku-1280.txt",
+      "snapshotSha256": "1ea1e14ed6ea29d27c2569d0740b0af7c7f740746031a239032d6d854e94284c"
+    },
+    {
+      "file": "sku-trade-units/from-sku-1024.jpg",
+      "module": "sku-trade-units",
+      "state": "from-sku",
+      "url": "http://127.0.0.1:5205/sku-trade-units?sku=1&returnTo=/skus?edit=1%26returnTo=/skus",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "SKU 交易单位",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:21:40.388Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 86005,
+      "sha256": "8dadeb31543d7494a3bcb7f8f9e5320b1dbacf68615820740eaac71e8dc7c7d8",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "sku-trade-units/from-sku-1024.txt",
+      "snapshotSha256": "1ea1e14ed6ea29d27c2569d0740b0af7c7f740746031a239032d6d854e94284c"
+    },
+    {
+      "file": "sku-trade-units/page-1440.jpg",
+      "module": "sku-trade-units",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/sku-trade-units",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1425,
+        "title": "SKU 交易单位",
+        "width": 1440
+      },
+      "capturedAt": "2026-10-16T14:14:49.298Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1425,
+        990
+      ],
+      "bytes": 98263,
+      "sha256": "cd1aec5b2163e78eb8cc193910c13f4e75abe1396c814beb6321bb98d1ea4cf2",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "sku-trade-units/page-1440.txt",
+      "snapshotSha256": "1311a5a5526a043ed3e36b2df3b81a4a1975144a986569a3107894a4350a2fd7"
+    },
+    {
+      "file": "sku-trade-units/page-1280.jpg",
+      "module": "sku-trade-units",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/sku-trade-units",
+      "requested": [
+        1280,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1265,
+        "title": "SKU 交易单位",
+        "width": 1280
+      },
+      "capturedAt": "2026-10-16T14:14:49.909Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1265,
+        988
+      ],
+      "bytes": 92093,
+      "sha256": "c4d8287bb2367bc19b0c2fba34179efd0491b279297d7b89078775e84682a8bb",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "sku-trade-units/page-1280.txt",
+      "snapshotSha256": "73113156562d4a303a438fba3da97a2a8913f760d5816c39d99eb19172fd9c6f"
+    },
+    {
+      "file": "sku-trade-units/page-1024.jpg",
+      "module": "sku-trade-units",
+      "state": "page",
+      "url": "http://127.0.0.1:5205/sku-trade-units",
+      "requested": [
+        1024,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1009,
+        "title": "SKU 交易单位",
+        "width": 1024
+      },
+      "capturedAt": "2026-10-16T14:14:50.652Z",
+      "sourceHead": "b916fab613806a9fd00636cc87496803557d45a8",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "phase": "initial-review",
+      "pixels": [
+        1009,
+        985
+      ],
+      "bytes": 79112,
+      "sha256": "a29a74a0b5e1723db4b15da64faf4b3b2e2b7f73e6b651b8e237b54b32f3977f",
+      "dimensionMatch": false,
+      "browser": "Codex in-app browser",
+      "snapshot": "sku-trade-units/page-1024.txt",
+      "snapshotSha256": "73113156562d4a303a438fba3da97a2a8913f760d5816c39d99eb19172fd9c6f"
+    },
+    {
+      "file": "chrome/skus-baseline-1440.jpg",
+      "module": "skus",
+      "state": "chrome-baseline",
+      "url": "http://127.0.0.1:5205/skus",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1440,
+        "title": "SKU 管理",
+        "width": 1440
+      },
+      "sourceHead": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "phase": "final-code",
+      "browser": "Chrome extension",
+      "capturedAt": "2026-10-16T14:37:42.747Z",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "pixels": [
+        1024,
+        1000
+      ],
+      "bytes": 48229,
+      "sha256": "c865bb2a06035d3340c7322fac355a7027893947c4199c8aed2420e2f796ea3e",
+      "dimensionMatch": false,
+      "snapshot": "chrome/skus-baseline-1440.txt",
+      "snapshotSha256": "d0354745c701767877208b22d685f440abd4f083b98e6c08014646c924182fc9"
+    },
+    {
+      "file": "chrome/skus-1440.jpg",
+      "module": "skus",
+      "state": "real-chrome-final",
+      "url": "http://127.0.0.1:5205/skus",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1440,
+        "title": "SKU 管理",
+        "width": 1440
+      },
+      "pixels": [
+        1024,
+        1000
+      ],
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "browser": "Chrome extension",
+      "capturedAt": "2026-10-16T14:30:53.199Z",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 47406,
+      "sha256": "9198856e6944d88b3e289277f248baa47819fec126912afcced047d3240a0360",
+      "dimensionMatch": false,
+      "snapshot": "chrome/skus-1440.txt",
+      "snapshotSha256": "422be1d368679d777425bcf8623681defc274f2349a15008e53d53d098afea54"
+    },
+    {
+      "file": "chrome/skus-settled-1440.jpg",
+      "module": "skus",
+      "state": "real-chrome-settled",
+      "url": "http://127.0.0.1:5205/skus",
+      "requested": [
+        1440,
+        1000
+      ],
+      "dom": {
+        "height": 1000,
+        "scrollWidth": 1440,
+        "title": "SKU 管理",
+        "width": 1440
+      },
+      "pixels": [
+        1024,
+        1000
+      ],
+      "sourceHead": "6c01a9af8ea847223a4fb3f43d2cbe95a4195e90",
+      "phase": "final-code",
+      "browser": "Chrome extension",
+      "capturedAt": "2026-10-16T14:31:10.165Z",
+      "status": "CAPTURED_PENDING_INDEPENDENT_VISUAL",
+      "bytes": 85587,
+      "sha256": "5fa7bfc1cfe5772c3fe0695fd12ceb45a6e33874474d684c176d301df322c6e4",
+      "dimensionMatch": false,
+      "snapshot": "chrome/skus-settled-1440.txt",
+      "snapshotSha256": "d0354745c701767877208b22d685f440abd4f083b98e6c08014646c924182fc9"
+    }
+  ]
+}

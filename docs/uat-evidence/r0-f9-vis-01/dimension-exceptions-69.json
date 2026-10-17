@@ -1,0 +1,1175 @@
+[
+  {
+    "old": "access-status-error/page-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1024,
+      1000
+    ],
+    "oldSha256": "b93b3ee8f7d27329b4c506528e4b3bfffbbe41e98b04e5f78ad4e66f219bfcdf",
+    "replacement": [
+      "access-status-error/final-page-1440.jpg"
+    ],
+    "disposition": "RECAPTURED",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "access-status-error/recovered-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "4760e67b8ac2845a9f3af17b671ea3dcbce813433263e33ad2f6a66383b52bd0",
+    "replacement": [
+      "access-status-error/final-page-1280.jpg"
+    ],
+    "disposition": "RECAPTURED",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "access-status-error/recovered-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "45b7e9db5efede10df7beb1f5ffc1fa751f5d37ec09af8da53f3757444c8d428",
+    "replacement": [
+      "access-status-error/final-page-1024.jpg"
+    ],
+    "disposition": "RECAPTURED",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "categories/baseline-new-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "640c3a7c9edd4e9b89f030f0ad584a1db85fdc768d17a370882da87b44b020d7",
+    "replacement": [
+      "categories/complete-form-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "categories/baseline-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "fa5c5c73969bd31c291aef8205c950515a013e1e389f218f5c5c7c88c5b688a2",
+    "replacement": [
+      "categories/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "categories/final-new-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "640c3a7c9edd4e9b89f030f0ad584a1db85fdc768d17a370882da87b44b020d7",
+    "replacement": [
+      "categories/complete-form-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "categories/final-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "fa5c5c73969bd31c291aef8205c950515a013e1e389f218f5c5c7c88c5b688a2",
+    "replacement": [
+      "categories/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "categories/new-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "640c3a7c9edd4e9b89f030f0ad584a1db85fdc768d17a370882da87b44b020d7",
+    "replacement": [
+      "categories/complete-form-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "categories/page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "fa5c5c73969bd31c291aef8205c950515a013e1e389f218f5c5c7c88c5b688a2",
+    "replacement": [
+      "categories/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "finance/baseline-page-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      990
+    ],
+    "oldSha256": "841e31430006c71ad96915eb463c881c5297cbf79cca9119256bee86333084b3",
+    "replacement": [
+      "finance/final-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "finance/baseline-page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "611c966c4633db834f357254d5135730fce5a304efa6f1c671354ddd139b0faf",
+    "replacement": [
+      "finance/final-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "finance/baseline-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "1376de1f8f0a084d97a4d1d4dc2e912da27a21b7ea1a7fa11c559f383614616e",
+    "replacement": [
+      "finance/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "finance/final-page-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      990
+    ],
+    "oldSha256": "841e31430006c71ad96915eb463c881c5297cbf79cca9119256bee86333084b3",
+    "replacement": [
+      "finance/final-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "finance/final-page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "611c966c4633db834f357254d5135730fce5a304efa6f1c671354ddd139b0faf",
+    "replacement": [
+      "finance/final-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "finance/final-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "1376de1f8f0a084d97a4d1d4dc2e912da27a21b7ea1a7fa11c559f383614616e",
+    "replacement": [
+      "finance/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "finance/page-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      990
+    ],
+    "oldSha256": "7a98fa7d2ba2d5380cf1719eef259a35e2fbd1820fab8192ce59b6de737dcacf",
+    "replacement": [
+      "finance/final-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "finance/page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "eecddf7422584acefcda2cda16f1a7e5b46dfe350a172043e8995282604d5d62",
+    "replacement": [
+      "finance/final-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "finance/page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "8a6e617a54e84f6bac6a3374f003aa214789f249f08951b5b3f538d656453a22",
+    "replacement": [
+      "finance/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "import/baseline-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "ba223ce414cccffabe75274c7e0277a9a1250045f5153b9fa02861c845fea74b",
+    "replacement": [
+      "import/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "import/final-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "ba223ce414cccffabe75274c7e0277a9a1250045f5153b9fa02861c845fea74b",
+    "replacement": [
+      "import/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "import/page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "ba223ce414cccffabe75274c7e0277a9a1250045f5153b9fa02861c845fea74b",
+    "replacement": [
+      "import/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "inventory/after-receipt-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "217a1483e180db6a724a28eeb018271c79898f00a1d68f238a4320ad116a7d8e",
+    "replacement": [
+      "inventory/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "inventory/baseline-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "217a1483e180db6a724a28eeb018271c79898f00a1d68f238a4320ad116a7d8e",
+    "replacement": [
+      "inventory/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "inventory/final-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "217a1483e180db6a724a28eeb018271c79898f00a1d68f238a4320ad116a7d8e",
+    "replacement": [
+      "inventory/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "inventory/page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "a7b831f58535a8a37b02d943e3c84814fe379074233de61b5448d3f25fb041d7",
+    "replacement": [
+      "inventory/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "organization/baseline-page-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      990
+    ],
+    "oldSha256": "552c2327fc28ce10be48b073e1dd63fa166f0de72543f9b2a6c5e39d0ee428b6",
+    "replacement": [
+      "organization/final-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "organization/baseline-page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "6ce3e173b21767c4be9c1d7225be1c291301047b7cf18d128a26612750a50cb9",
+    "replacement": [
+      "organization/final-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "organization/baseline-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "4c2abbc39a3b039123cfec8dde2c1789c9f8f028217a9ba0e2132e7d25cc737a",
+    "replacement": [
+      "organization/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "organization/final-page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "6ce3e173b21767c4be9c1d7225be1c291301047b7cf18d128a26612750a50cb9",
+    "replacement": [
+      "organization/final-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "organization/final-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "4c2abbc39a3b039123cfec8dde2c1789c9f8f028217a9ba0e2132e7d25cc737a",
+    "replacement": [
+      "organization/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "organization/page-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      990
+    ],
+    "oldSha256": "509b9ec09e82f262d6d31b39e2191e9575d69d5f02fd5d3b215603e58684b853",
+    "replacement": [
+      "organization/final-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "organization/page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "6ce3e173b21767c4be9c1d7225be1c291301047b7cf18d128a26612750a50cb9",
+    "replacement": [
+      "organization/final-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "organization/page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "4c2abbc39a3b039123cfec8dde2c1789c9f8f028217a9ba0e2132e7d25cc737a",
+    "replacement": [
+      "organization/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "organization/recovered-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      990
+    ],
+    "oldSha256": "552c2327fc28ce10be48b073e1dd63fa166f0de72543f9b2a6c5e39d0ee428b6",
+    "replacement": [
+      "organization/final-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "organization/recovered-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "6ce3e173b21767c4be9c1d7225be1c291301047b7cf18d128a26612750a50cb9",
+    "replacement": [
+      "organization/final-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "organization/recovered-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "4c2abbc39a3b039123cfec8dde2c1789c9f8f028217a9ba0e2132e7d25cc737a",
+    "replacement": [
+      "organization/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "overview/baseline-page-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      990
+    ],
+    "oldSha256": "69164c7e85e470da85c0212459324d0c7935475c9ad4f5450acbb30843088b7e",
+    "replacement": [
+      "overview/final-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "overview/baseline-page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "184f289ee2d5aec639058d3ecf55af9ab41d874882c4a1c2db2e6aee8afa8ccf",
+    "replacement": [
+      "overview/final-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "overview/baseline-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "0909c9720715952ad1c1ab7938014d22f088df91abd7f5eced696fd371eb4e37",
+    "replacement": [
+      "overview/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "overview/final-page-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      990
+    ],
+    "oldSha256": "6e05438baef8fca5718f1ecd011353cbdd07d572ca048fc6185279f1c4d7b705",
+    "replacement": [
+      "overview/final-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "overview/final-page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "c5a2af643707665901bc3462df429b5ee412fe1da48a370c10de39b7dba51033",
+    "replacement": [
+      "overview/final-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "overview/final-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "b13c4d9f2d7eb2f21615bc7c14416c17ca620b04e87ea289f267a335875870e9",
+    "replacement": [
+      "overview/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "overview/page-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      1000
+    ],
+    "oldSha256": "31caa34a95f520e5b982b00fdae8ccbeb962a38a11332f21063c284aa077988f",
+    "replacement": [
+      "overview/final-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "overview/page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "5f66c3ccac5309893c25538cb9a279f219f9bb63fe5701c1d15702301f8a9932",
+    "replacement": [
+      "overview/final-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "overview/page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "d46732e171605e297a34dfc3f9c35ce347b0294a9e18591570ad3fd7ef50a517",
+    "replacement": [
+      "overview/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "chrome/products-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1440,
+      689
+    ],
+    "oldSha256": "62c0010939e58f3f5afef24d08440528f938acec459e4010f992964751d60a83",
+    "replacement": [
+      "products/final-page-1440.jpg"
+    ],
+    "disposition": "RECAPTURED",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "chrome/quotes-baseline-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1024,
+      1000
+    ],
+    "oldSha256": "9069609c9a2fc32fc4ef00f8665ecf440da547335b60a267b80ba433084370fb",
+    "replacement": [
+      "quotes/final-page-1440.jpg"
+    ],
+    "disposition": "RECAPTURED",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "reports/baseline-page-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      990
+    ],
+    "oldSha256": "6c2f3efe010169d1620db9418dccac062e3a4f2aa770a2f40701c6744f893d42",
+    "replacement": [
+      "reports/final-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "reports/baseline-page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "b1770f838142efd82a680762eb0b3fcb3417466b65a3cc44e5e44e7ef59c39ce",
+    "replacement": [
+      "reports/final-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "reports/baseline-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "e2aed21861263e899f0fb73440d7ff1c2735e35dc657d203d189f0f1b1bd5fda",
+    "replacement": [
+      "reports/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "reports/final-page-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      990
+    ],
+    "oldSha256": "480a59ccb33308ff6bb8555536e82b18a0538e307f472b365c8a371b7a5fad08",
+    "replacement": [
+      "reports/final-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "reports/final-page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "b1770f838142efd82a680762eb0b3fcb3417466b65a3cc44e5e44e7ef59c39ce",
+    "replacement": [
+      "reports/final-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "reports/final-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "e2aed21861263e899f0fb73440d7ff1c2735e35dc657d203d189f0f1b1bd5fda",
+    "replacement": [
+      "reports/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "reports/page-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      990
+    ],
+    "oldSha256": "6c2f3efe010169d1620db9418dccac062e3a4f2aa770a2f40701c6744f893d42",
+    "replacement": [
+      "reports/final-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "reports/page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "b1770f838142efd82a680762eb0b3fcb3417466b65a3cc44e5e44e7ef59c39ce",
+    "replacement": [
+      "reports/final-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "reports/page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "e2aed21861263e899f0fb73440d7ff1c2735e35dc657d203d189f0f1b1bd5fda",
+    "replacement": [
+      "reports/final-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "sku-trade-units/baseline-page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "c4d8287bb2367bc19b0c2fba34179efd0491b279297d7b89078775e84682a8bb",
+    "replacement": [
+      "sku-trade-units/final-ready-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "sku-trade-units/baseline-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "a29a74a0b5e1723db4b15da64faf4b3b2e2b7f73e6b651b8e237b54b32f3977f",
+    "replacement": [
+      "sku-trade-units/final-ready-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "sku-trade-units/final-page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "c4d8287bb2367bc19b0c2fba34179efd0491b279297d7b89078775e84682a8bb",
+    "replacement": [
+      "sku-trade-units/final-ready-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "sku-trade-units/final-page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "a29a74a0b5e1723db4b15da64faf4b3b2e2b7f73e6b651b8e237b54b32f3977f",
+    "replacement": [
+      "sku-trade-units/final-ready-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "sku-trade-units/from-sku-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      990
+    ],
+    "oldSha256": "2556f47d96da184a01c64e9445741dda0480354a620c13860413fb34b2053dc5",
+    "replacement": [
+      "sku-trade-units/final-ready-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "sku-trade-units/from-sku-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "a3a3e718f390b426cb4d0cd6c069d8c5dd8718ea2eab66f52fd272a35d04e384",
+    "replacement": [
+      "sku-trade-units/final-ready-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "sku-trade-units/from-sku-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "8dadeb31543d7494a3bcb7f8f9e5320b1dbacf68615820740eaac71e8dc7c7d8",
+    "replacement": [
+      "sku-trade-units/final-ready-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "sku-trade-units/page-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1425,
+      990
+    ],
+    "oldSha256": "cd1aec5b2163e78eb8cc193910c13f4e75abe1396c814beb6321bb98d1ea4cf2",
+    "replacement": [
+      "sku-trade-units/final-ready-page-1440.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "sku-trade-units/page-1280.jpg",
+    "requested": [
+      1280,
+      1000
+    ],
+    "oldPixels": [
+      1265,
+      988
+    ],
+    "oldSha256": "c4d8287bb2367bc19b0c2fba34179efd0491b279297d7b89078775e84682a8bb",
+    "replacement": [
+      "sku-trade-units/final-ready-page-1280.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "sku-trade-units/page-1024.jpg",
+    "requested": [
+      1024,
+      1000
+    ],
+    "oldPixels": [
+      1009,
+      985
+    ],
+    "oldSha256": "a29a74a0b5e1723db4b15da64faf4b3b2e2b7f73e6b651b8e237b54b32f3977f",
+    "replacement": [
+      "sku-trade-units/final-ready-page-1024.jpg"
+    ],
+    "disposition": "BLOCKED_EXACT_DIMENSIONS",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "chrome/skus-baseline-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1024,
+      1000
+    ],
+    "oldSha256": "c865bb2a06035d3340c7322fac355a7027893947c4199c8aed2420e2f796ea3e",
+    "replacement": [
+      "skus/final-page-1440.jpg"
+    ],
+    "disposition": "RECAPTURED",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "chrome/skus-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1024,
+      1000
+    ],
+    "oldSha256": "9198856e6944d88b3e289277f248baa47819fec126912afcced047d3240a0360",
+    "replacement": [
+      "skus/final-page-1440.jpg"
+    ],
+    "disposition": "RECAPTURED",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  },
+  {
+    "old": "chrome/skus-settled-1440.jpg",
+    "requested": [
+      1440,
+      1000
+    ],
+    "oldPixels": [
+      1024,
+      1000
+    ],
+    "oldSha256": "5fa7bfc1cfe5772c3fe0695fd12ceb45a6e33874474d684c176d301df322c6e4",
+    "replacement": [
+      "skus/final-page-1440.jpg"
+    ],
+    "disposition": "RECAPTURED",
+    "scope": "Current equivalent page/form; historical operation is not reasserted"
+  }
+]

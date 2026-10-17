@@ -1,0 +1,45 @@
+{
+  "baseline": "9d05a70c07d1d8eb9d080dd1d75ea608209a799b",
+  "database": "r0f9-vis01.sqlite3 (copied synthetic fixture)",
+  "skuBlankListCancel": {
+    "browser": [
+      "Codex in-app browser",
+      "Chrome"
+    ],
+    "dialogAfterCancel": 0,
+    "unsavedConfirm": 0
+  },
+  "skuBlankProductCancel": {
+    "browser": [
+      "Codex in-app browser",
+      "Chrome"
+    ],
+    "dialogAfterCancel": 0,
+    "unsavedConfirm": 0
+  },
+  "realDirty": {
+    "browser": "Chrome",
+    "confirmedDialogVisible": true,
+    "inputRetained": "VIS01 用户主动修改保留",
+    "persisted": false
+  },
+  "asyncDefaults": "controlled Vitest; form remains hidden until initialization resolves",
+  "saving": "existing deferred tests and complete Playwright; no guard code changed",
+  "fromQuote": {
+    "source": "R0F9-Q001",
+    "order": "R0F9-O001",
+    "id": 1,
+    "states": [
+      "1440",
+      "1280",
+      "1024"
+    ],
+    "saved": false
+  },
+  "permissions": {
+    "roleViewed": "业务员",
+    "changesMade": false,
+    "rbacEnabled": false
+  },
+  "independentVisual": "PENDING"
+}

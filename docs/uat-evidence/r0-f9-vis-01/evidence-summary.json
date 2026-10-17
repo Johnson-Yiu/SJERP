@@ -1,0 +1,32 @@
+{
+  "images": 368,
+  "original573HashesVerified": true,
+  "finalRouteBaseline": 81,
+  "finalDimensionPass": 63,
+  "finalDimensionBlocked": 18,
+  "independentVisual": "PENDING",
+  "runtimeSourceHead": "9d05a70c07d1d8eb9d080dd1d75ea608209a799b",
+  "runtimeCodeChanged": false,
+  "originalImagesModified": false,
+  "issue099": "NEEDS_VERIFICATION_NOT_REPRODUCED",
+  "dimensionsBlocked": [
+    "overview/final-page-1440.jpg",
+    "reports/final-page-1440.jpg",
+    "finance/final-page-1440.jpg",
+    "organization/final-page-1440.jpg",
+    "overview/final-page-1280.jpg",
+    "reports/final-page-1280.jpg",
+    "finance/final-page-1280.jpg",
+    "organization/final-page-1280.jpg",
+    "overview/final-page-1024.jpg",
+    "reports/final-page-1024.jpg",
+    "categories/final-page-1024.jpg",
+    "inventory/final-page-1024.jpg",
+    "finance/final-page-1024.jpg",
+    "import/final-page-1024.jpg",
+    "organization/final-page-1024.jpg",
+    "sku-trade-units/final-ready-page-1440.jpg",
+    "sku-trade-units/final-ready-page-1280.jpg",
+    "sku-trade-units/final-ready-page-1024.jpg"
+  ]
+}

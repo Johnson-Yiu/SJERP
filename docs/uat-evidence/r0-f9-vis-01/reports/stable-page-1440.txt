@@ -1,0 +1,314 @@
+- complementary:
+  - generic: S
+  - strong: 森爵业务中台
+  - text: CRM · ERP
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - text: Reports & analytics
+  - heading "报表中心" [level=1]
+  - generic: 10月17日周六
+  - generic "Johnson": J
+  - paragraph: 选择报表与日期，查询后可继续筛选或保存图表。
+  - link "财务概览 →":
+    - /url: /finance
+  - form "报表查询":
+    - group "1. 选择报表":
+      - generic: 1. 选择报表
+      - text: 报表预设
+      - combobox "报表预设":
+        - option "自定义查询"
+        - option "销售趋势" [selected]
+        - option "区域销售"
+        - option "国家销售"
+        - option "客户销售排行"
+        - option "产品销售排行"
+        - option "SKU 销售排行"
+        - option "产品类别销售"
+        - option "负责人销售"
+        - option "采购趋势"
+        - option "供应商采购排行"
+        - option "SKU 采购排行"
+        - option "客户增长趋势"
+        - option "客户来源分布"
+        - option "净现金流趋势"
+        - option "收支分类"
+        - option "仓库库存变动"
+      - paragraph: 选择预设后可调整条件，再点击“查询报表”。
+      - text: 数据来源
+      - combobox "数据来源":
+        - option "销售报表" [selected]
+        - option "采购 / 供应商报表"
+        - option "订单利润"
+        - option "客户增长"
+        - option "现金收支"
+        - option "库存变动"
+      - text: 统计维度
+      - combobox "统计维度":
+        - option "时间" [selected]
+        - option "业务区域"
+        - option "国家/地区"
+        - option "客户"
+        - option "产品"
+        - option "SKU"
+        - option "产品主分类"
+        - option "负责人"
+        - option "客户来源"
+        - option "状态"
+        - option "原币币种"
+      - text: 图表指标
+      - combobox "图表指标":
+        - option "金额（人民币）" [selected]
+        - option "去重单据 / 档案数"
+        - option "数量（按单位）"
+      - text: 图表类型
+      - combobox "图表类型":
+        - option "折线图" [selected]
+        - option "条形图"
+        - option "环形图"
+        - option "数据表"
+    - group "2. 日期与比较":
+      - generic: 2. 日期与比较
+      - generic "日期快捷选择":
+        - button "近30天"
+        - button "近90天"
+        - button "今天"
+        - button "本周至今"
+        - button "本月至今"
+        - button "本季度至今"
+        - button "本年至今"
+        - button "上月"
+        - button "去年"
+      - text: 日期口径
+      - combobox "日期口径":
+        - option "订单日期" [selected]
+        - option "预计交期"
+        - option "创建时间"
+        - option "更新时间"
+      - text: 开始日期
+      - textbox "开始日期": 2026-01-01
+      - text: 结束日期（含当天）
+      - textbox "结束日期（含当天）": 2026-10-17
+      - text: 比较方式
+      - combobox "比较方式":
+        - option "上一等长期间" [selected]
+        - option "去年同期"
+      - text: 时间粒度
+      - combobox "时间粒度":
+        - option "日"
+        - option "周（周一开始）"
+        - option "月" [selected]
+        - option "季度"
+        - option "年"
+      - paragraph: 有效销售订单的合同金额；商品行之外的运费、折扣和已确认合同变更统一列为订单金额调整，不分摊 SKU。金额按订单汇率折人民币，不代表实收或利润。
+    - group "3. 附加筛选":
+      - generic: 3. 附加筛选
+      - text: 筛选维度
+      - combobox "筛选维度":
+        - option "选择维度" [selected]
+        - option "业务区域"
+        - option "国家/地区"
+        - option "客户"
+        - option "产品"
+        - option "SKU"
+        - option "产品主分类"
+        - option "负责人"
+        - option "客户来源"
+        - option "状态"
+        - option "原币币种"
+      - text: 可用值
+      - combobox "可用值" [disabled]:
+        - option "请选择" [selected]
+      - button "刷新选项" [disabled]
+      - button "添加筛选" [disabled]
+    - text: 图表名称
+    - textbox "图表名称": 销售趋势
+    - button "查询报表"
+    - button "保存为图表块"
+    - generic: 最多 30 块，仅当前浏览器可用。
+  - region "已查询条件":
+    - strong: 当前查询
+    - paragraph: 销售报表 · 时间 · 订单日期 · 2026-01-01 — 2026-10-17
+  - article "销售趋势":
+    - text: 经营统计
+    - heading "销售趋势" [level=2]
+    - combobox "图表显示方式":
+      - option "默认图表" [selected]
+      - option "条形图"
+      - option "折线图"
+      - option "环形图"
+      - option "仅表格"
+    - button "导出 CSV"
+    - generic: 金额合计（人民币）
+    - strong: ¥ 500
+    - generic: 去重单据 / 档案数
+    - strong: "1"
+    - generic: 数量合计（按单位）
+    - strong: 20 m
+    - paragraph: 订单日期 · 2026-01-01 — 2026-10-17 · 上一等长期间 2025-03-17 — 2025-12-31 · 金额（人民币）变化：基期为零或该指标不适用
+    - paragraph: 有效销售订单的合同金额；商品行之外的运费、折扣和已确认合同变更统一列为订单金额调整，不分摊 SKU。金额按订单汇率折人民币，不代表实收或利润。 分组单据数可能交叉，不应相加；空日期不纳入该日期口径。
+    - strong: 金额（人民币）
+    - img "销售趋势，详细数值见下方表格":
+      - generic: "500"
+      - generic: "0"
+      - generic "2026-01：0"
+      - generic "2026-02：0"
+      - generic "2026-03：0"
+      - generic "2026-04：0"
+      - generic "2026-05：0"
+      - generic "2026-06：0"
+      - generic "2026-07：0"
+      - generic "2026-08：0"
+      - generic "2026-09：0"
+      - generic "2026-10：500"
+      - generic: 2026-01
+      - generic: 2026-10
+    - table:
+      - rowgroup:
+        - row "统计分组 金额（人民币） 去重单据 / 档案数 数量（按单位）":
+          - columnheader "统计分组"
+          - columnheader "金额（人民币）"
+          - columnheader "去重单据 / 档案数"
+          - columnheader "数量（按单位）"
+      - rowgroup:
+        - row "2026-01 0 0 —":
+          - cell "2026-01"
+          - cell "0"
+          - cell "0"
+          - cell "—"
+        - row "2026-02 0 0 —":
+          - cell "2026-02"
+          - cell "0"
+          - cell "0"
+          - cell "—"
+        - row "2026-03 0 0 —":
+          - cell "2026-03"
+          - cell "0"
+          - cell "0"
+          - cell "—"
+        - row "2026-04 0 0 —":
+          - cell "2026-04"
+          - cell "0"
+          - cell "0"
+          - cell "—"
+        - row "2026-05 0 0 —":
+          - cell "2026-05"
+          - cell "0"
+          - cell "0"
+          - cell "—"
+        - row "2026-06 0 0 —":
+          - cell "2026-06"
+          - cell "0"
+          - cell "0"
+          - cell "—"
+        - row "2026-07 0 0 —":
+          - cell "2026-07"
+          - cell "0"
+          - cell "0"
+          - cell "—"
+        - row "2026-08 0 0 —":
+          - cell "2026-08"
+          - cell "0"
+          - cell "0"
+          - cell "—"
+        - row "2026-09 0 0 —":
+          - cell "2026-09"
+          - cell "0"
+          - cell "0"
+          - cell "—"
+        - row "2026-10 500 1 20 m":
+          - cell "2026-10"
+          - cell "500"
+          - cell "1"
+          - cell "20 m"
+    - generic: 共 10 项
+    - button "上一页" [disabled]
+    - generic: 1 / 1
+    - button "下一页" [disabled]
+  - heading "我的图表块 0 / 30" [level=2]
+  - paragraph: 保存来源、维度、指标和筛选；日期跟随本页已查询条件。设置仅在当前浏览器保存。
+  - paragraph: 查询后点击“保存为图表块”，下次打开可继续使用。

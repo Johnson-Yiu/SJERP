@@ -1,0 +1,98 @@
+[
+  {
+    "old": "products/baseline-detail-1280.jpg",
+    "replacement": "products/complete-detail-1280.jpg",
+    "frameStable": true,
+    "dimensionMatch": true,
+    "status": "READY_PENDING_INDEPENDENT_VISUAL",
+    "businessLoad": "COMPLETE"
+  },
+  {
+    "old": "products/baseline-detail-1440.jpg",
+    "replacement": "products/complete-detail-1440.jpg",
+    "frameStable": true,
+    "dimensionMatch": true,
+    "status": "READY_PENDING_INDEPENDENT_VISUAL",
+    "businessLoad": "COMPLETE"
+  },
+  {
+    "old": "products/final-status-visible-1280.jpg",
+    "replacement": "products/complete-detail-1280.jpg",
+    "frameStable": true,
+    "dimensionMatch": true,
+    "status": "READY_PENDING_INDEPENDENT_VISUAL",
+    "businessLoad": "COMPLETE"
+  },
+  {
+    "old": "products/final-status-visible-1440.jpg",
+    "replacement": "products/complete-detail-1440.jpg",
+    "frameStable": true,
+    "dimensionMatch": true,
+    "status": "READY_PENDING_INDEPENDENT_VISUAL",
+    "businessLoad": "COMPLETE"
+  },
+  {
+    "old": "orders/baseline-detail-1440.jpg",
+    "replacement": "orders/complete-detail-1440.jpg",
+    "frameStable": true,
+    "dimensionMatch": true,
+    "status": "READY_PENDING_INDEPENDENT_VISUAL",
+    "businessLoad": "COMPLETE"
+  },
+  {
+    "old": "orders/from-quote-detail-1280.jpg",
+    "replacement": "orders/from-quote-complete-1280.jpg",
+    "frameStable": true,
+    "dimensionMatch": true,
+    "status": "READY_PENDING_INDEPENDENT_VISUAL",
+    "businessLoad": "COMPLETE"
+  },
+  {
+    "old": "orders/from-quote-detail-1440.jpg",
+    "replacement": "orders/from-quote-complete-1440.jpg",
+    "frameStable": true,
+    "dimensionMatch": true,
+    "status": "READY_PENDING_INDEPENDENT_VISUAL",
+    "businessLoad": "COMPLETE"
+  },
+  {
+    "old": "inventory/baseline-page-1440.jpg",
+    "replacement": "inventory/final-page-1440.jpg",
+    "frameStable": true,
+    "dimensionMatch": true,
+    "status": "READY_PENDING_INDEPENDENT_VISUAL",
+    "businessLoad": "COMPLETE"
+  },
+  {
+    "old": "inventory/final-page-1440.jpg",
+    "replacement": "inventory/final-page-1440.jpg",
+    "frameStable": true,
+    "dimensionMatch": true,
+    "status": "READY_PENDING_INDEPENDENT_VISUAL",
+    "businessLoad": "COMPLETE"
+  },
+  {
+    "old": "sku-trade-units/baseline-page-1440.jpg",
+    "replacement": "sku-trade-units/final-ready-page-1440.jpg",
+    "frameStable": true,
+    "dimensionMatch": false,
+    "status": "BLOCKED_EXACT_DIMENSIONS",
+    "businessLoad": "COMPLETE"
+  },
+  {
+    "old": "sku-trade-units/final-page-1440.jpg",
+    "replacement": "sku-trade-units/final-ready-page-1440.jpg",
+    "frameStable": true,
+    "dimensionMatch": false,
+    "status": "BLOCKED_EXACT_DIMENSIONS",
+    "businessLoad": "COMPLETE"
+  },
+  {
+    "old": "organization/final-page-1440.jpg",
+    "replacement": "organization/final-page-1440.jpg",
+    "frameStable": true,
+    "dimensionMatch": false,
+    "status": "BLOCKED_EXACT_DIMENSIONS",
+    "businessLoad": "COMPLETE"
+  }
+]

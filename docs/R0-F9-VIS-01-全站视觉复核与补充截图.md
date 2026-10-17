@@ -117,6 +117,6 @@ ISS-099两种实际入口均未复现空白取消误报，仍为NEEDS_VERIFICATI
 - 新原图/DOM、manifest、capture-records、尺寸/加载对照、HTTP/控制台与自动化日志：[r0-f9-vis-01](uat-evidence/r0-f9-vis-01/)。
 - 离线人工审查：[index.html](uat-evidence/r0-f9-vis-01/index.html)，默认最终81张，可按模块、视口、页面状态和证据角色筛选；点击原图。
 - 完整尺寸/哈希：[SCREENSHOTS.md](uat-evidence/r0-f9-vis-01/SCREENSHOTS.md)、[manifest.json](uat-evidence/r0-f9-vis-01/manifest.json)。
-- 运行代码SHA明确为9d05a70c07d1d8eb9d080dd1d75ea608209a799b；交付增加测试与证据，不伪造截图来自尚未存在的提交。最终交付Commit与同SHA的三项CI URL在交付回复及本地final-verification.json中核对，不能用基线CI代替。
+- 测试及完整证据提交：[eda1217327423255327339f70624d485cb34de70](https://github.com/Johnson-Yiu/SUNJACK-ERP/commit/eda1217327423255327339f70624d485cb34de70)。运行代码SHA明确为9d05a70c07d1d8eb9d080dd1d75ea608209a799b；交付增加测试与证据，不伪造截图来自尚未存在的提交。最终交付Commit与同SHA的三项CI URL在交付回复及本地final-verification.json中核对，不能用基线CI代替。新目录的.gitattributes禁止原始证据文本换行转换，保证Windows/Linux检出后的哈希可重验。
 
 完成push master及最终精确HEAD的Backend / Backend PostgreSQL / Frontend三项SUCCESS后停止，等待ChatGPT再次独立代码及证据审查。进入集中修复的条件仍为独立接受、未通过项修复或明确接受限制、用户授权下一阶段。当前18张尺寸BLOCKED、099/103待核实且独立视觉尚待审，不得自行进入历史Issue集中修复、正式RBAC、员工UAT或生产部署。

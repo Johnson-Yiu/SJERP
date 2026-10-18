@@ -1,0 +1,152 @@
+[
+  {
+    "file": "chrome-finance-rejected.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Chrome",
+    "format": "JPEG",
+    "width": 1905,
+    "height": 912,
+    "sha256": "7151cdeef0e27b91303d60e1fede8b30daed84b8e9c7ca29261ec009d918ddec",
+    "bytes": 94102
+  },
+  {
+    "file": "chrome-finance-saved.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Chrome",
+    "format": "JPEG",
+    "width": 1905,
+    "height": 912,
+    "sha256": "750421d9732cb1fb8fb03e79988f7662c44540a1494a9ab7e313bf8d438cc426",
+    "bytes": 116313
+  },
+  {
+    "file": "chrome-reversal-feedback.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Chrome",
+    "format": "JPEG",
+    "width": 1920,
+    "height": 919,
+    "sha256": "4a2b57590522720e606b5cdf6c0dfc72843926dc2020a5b285ae8fcb48163c06",
+    "bytes": 100000
+  },
+  {
+    "file": "chrome-reversal.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Chrome",
+    "format": "JPEG",
+    "width": 1920,
+    "height": 919,
+    "sha256": "8ea4bfb4516a788c05b9894ea3169ee75f0fa9b20da9f61dc2cb3f0cbee1a791",
+    "bytes": 94028
+  },
+  {
+    "file": "iss001-completed-unpaid.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Codex In-app Browser",
+    "format": "JPEG",
+    "width": 1304,
+    "height": 892,
+    "sha256": "8c26090a3c64714f70a5f572b04ee5d57d7db14c704b7d9e9a6666a4a48f7b1c",
+    "bytes": 87081
+  },
+  {
+    "file": "iss001-overdue.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Codex In-app Browser",
+    "format": "JPEG",
+    "width": 1304,
+    "height": 892,
+    "sha256": "4b8a413cded07934b973b941b005ba29eb274e6e743e4038ea4029d7a41126d9",
+    "bytes": 81172
+  },
+  {
+    "file": "iss004-no-plan.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Codex In-app Browser",
+    "format": "JPEG",
+    "width": 1289,
+    "height": 882,
+    "sha256": "153fdb1104d94b80fc25f2a8c26e187b0625609e3ac36f8900358c4972681653",
+    "bytes": 103192
+  },
+  {
+    "file": "iss004-usd340.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Codex In-app Browser",
+    "format": "JPEG",
+    "width": 1289,
+    "height": 882,
+    "sha256": "5e4c2b6c9b1a07d1ae37522ac41d460f5d2a582a685773fd90bc77a03c5847db",
+    "bytes": 99564
+  },
+  {
+    "file": "iss005-paid.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Codex In-app Browser",
+    "format": "JPEG",
+    "width": 1304,
+    "height": 892,
+    "sha256": "6c412727c04bc7f430a8f54985e0690e56feca893ac8bb6a1391ba079f09716e",
+    "bytes": 64383
+  },
+  {
+    "file": "iss006-consumed-rejected.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Codex In-app Browser",
+    "format": "JPEG",
+    "width": 1304,
+    "height": 892,
+    "sha256": "2d440d34a43ea9d4651aea3ba2be6ce08e600a7ee87937a4e3f52f9648267715",
+    "bytes": 70551
+  },
+  {
+    "file": "iss006-manual-reversed.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Codex In-app Browser",
+    "format": "JPEG",
+    "width": 1289,
+    "height": 882,
+    "sha256": "7112ccc3f01edea170712f827dbd8fdfc9acdc9ec731728bca605aa88f7cbb26",
+    "bytes": 87749
+  },
+  {
+    "file": "iss006-overage.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Codex In-app Browser",
+    "format": "JPEG",
+    "width": 1304,
+    "height": 892,
+    "sha256": "65567fc3a6fc4e9fe2e75ad3e484a7b511fde5570c5b6179b31e501420b5a43c",
+    "bytes": 81116
+  },
+  {
+    "file": "iss006-shipment-reversed.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Codex In-app Browser",
+    "format": "JPEG",
+    "width": 1304,
+    "height": 892,
+    "sha256": "bd2db5620b3e72dc744f256e895138b6fc5cde17276345f7ac18f8b2c555d7d1",
+    "bytes": 81931
+  },
+  {
+    "file": "iss054-after.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Codex In-app Browser",
+    "format": "JPEG",
+    "width": 1304,
+    "height": 892,
+    "sha256": "d61582663e139b5fda56cd20f0c30acb5c2768d496678b4e092120d7df7d1da7",
+    "bytes": 78002
+  },
+  {
+    "file": "iss054-before.jpg",
+    "type": "REAL_UI_ACTION",
+    "browser": "Codex In-app Browser",
+    "format": "JPEG",
+    "width": 1304,
+    "height": 892,
+    "sha256": "333a6c326f774be447fd3b71efcb661326672e173f3ca9556442015cf063f7bc",
+    "bytes": 79870
+  }
+]

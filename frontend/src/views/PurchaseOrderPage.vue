@@ -145,6 +145,8 @@ async function submitReceipt() {
 }
 function openReceiptReversal(row, item, receipt) {
   if (!can('purchases', 'update')) return
+  receiptSuccess.value = null
+  notice.value = ''
   reversalTarget.value = { row, item, receipt }
   reversalReason.value = ''
   error.value = ''
@@ -152,6 +154,9 @@ function openReceiptReversal(row, item, receipt) {
 async function submitReceiptReversal() {
   if (reversalSaving.value || !reversalReason.value.trim() || !can('purchases', 'update')) return
   reversalSaving.value = true
+  error.value = ''
+  notice.value = ''
+  receiptSuccess.value = null
   try {
     await api.post(`/purchase-orders/${reversalTarget.value.row.id}/receipts/${reversalTarget.value.receipt.id}/reverse/`, { reason: reversalReason.value.trim() })
     reversalTarget.value = null

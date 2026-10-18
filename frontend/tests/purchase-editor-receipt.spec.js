@@ -128,6 +128,27 @@ describe('Purchase Phase B draft editor',()=>{
  })
 })
 describe('Purchase Phase B receipt workflow',()=>{
+ it.each([false,true])('replaces receipt feedback with reversal result, rejection=%s',async(reject)=>{
+  await receipt()
+  await wrapper.get('.inspection-acknowledgement input').setValue(true)
+  await wrapper.get('.goods-receipt-dialog').trigger('submit');await flushPromises()
+  expect(wrapper.get('.receipt-success').text()).toContain('验货入库已完成')
+  await click('冲销')
+  expect(wrapper.find('.receipt-success').exists()).toBe(false)
+  await wrapper.get('form.receipt-dialog textarea').setValue('R1A 冲销核对')
+  if(reject) mocks.api.post.mockRejectedValueOnce({response:{data:{detail:'库存已消耗，不能冲销'}}})
+  await wrapper.get('form.receipt-dialog').trigger('submit');await flushPromises()
+  expect(wrapper.find('.receipt-success').exists()).toBe(false)
+  expect(wrapper.text()).not.toContain('验货入库已完成')
+  if(reject){
+   expect(wrapper.get('form.receipt-dialog').text()).toContain('库存已消耗，不能冲销')
+   expect(wrapper.text()).not.toContain('采购入库已冲销')
+   await wrapper.get('form.receipt-dialog').trigger('submit');await flushPromises()
+   expect(wrapper.text()).not.toContain('库存已消耗，不能冲销')
+  }
+  expect(wrapper.text()).toContain('采购入库已冲销')
+  expect(wrapper.find('form.receipt-dialog').exists()).toBe(false)
+ })
  it('shows base progress, exact identity and existing packaging defaults',async()=>{
   await receipt()
   const dialog=wrapper.get('.goods-receipt-dialog')

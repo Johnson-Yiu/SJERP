@@ -9,6 +9,7 @@ import ListEmptyState from '../components/ListEmptyState.vue'
 import { formatMoney } from '../utils/money'
 import { orderDetailLocation, purchaseDetailLocation } from '../utils/detailNavigation'
 import { useAccessControl } from '../accessControl'
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 const today = new Date().toLocaleDateString('en-CA')
 const route = useRoute()
@@ -77,6 +78,8 @@ const form = reactive({
   transaction_no: '', transaction_date: today, kind: 'period_expense', direction: 'expense', category: '其他期间费用',
   amount: '', currency: 'CNY', exchange_rate: '1', payment_method: '', reference: '', notes: '', order: null, customer: null, supplier: null, purchase_order: null,
 })
+useUnsavedChangesGuard({ data: () => null, enabled: () => showForm.value, busy: () => saving.value })
+function closeForm() { if (!saving.value) showForm.value = false }
 
 const transactionMetrics = computed(() => {
   const sum = direction => rows.value.filter(row => row.direction === direction && row.status === 'confirmed').reduce((total, row) => total + Number(row.rmb_amount || 0), 0)
@@ -155,7 +158,7 @@ function syncKind() {
   }
 }
 function openForm() {
-  if (!can('transactions', 'create')) return
+  if (saving.value || !can('transactions', 'create')) return
   Object.assign(form, { transaction_no: '', transaction_date: new Date().toLocaleDateString('en-CA'), kind: 'period_expense', direction: 'expense', category: '其他期间费用', amount: '', currency: 'CNY', exchange_rate: '1', payment_method: '', reference: '', notes: '', order: null, customer: null, supplier: null, purchase_order: null })
   selectedOrder.value = null
   orderQuery.value = ''
@@ -208,13 +211,20 @@ async function save() {
   saving.value = true
   error.value = ''; notice.value = ''
   try {
+    // Keep one identity across transport failures. The existing unique constraint
+    // rejects a replay even when the first response was lost after commit.
+    if (!form.transaction_no) form.transaction_no = `FIN-${Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('').toUpperCase()}`
     const payload = { ...form }
     if (!payload.transaction_no) delete payload.transaction_no
     await api.post('/transactions/', payload)
     showForm.value = false
     await load()
     notice.value = '财务流水已保存。'
-  } catch (err) { error.value = apiErrorMessage(err) || '流水保存失败。' } finally { saving.value = false }
+  } catch (err) {
+    error.value = err.response?.data?.transaction_no
+      ? `此记账编号已存在，请先核对流水 ${form.transaction_no}，勿重复登记。`
+      : apiErrorMessage(err) || '流水保存失败。'
+  } finally { saving.value = false }
 }
 function openVoid(row) {
   if (!can('transactions', 'update')) return
@@ -292,10 +302,10 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
     </table>
     </template>
 
-    <div v-if="showForm && can('transactions', 'create')" class="mask" @click.self="showForm = false">
+    <div v-if="showForm && can('transactions', 'create')" class="mask" @click.self="closeForm">
       <form class="dialog" role="dialog" aria-modal="true" aria-labelledby="transaction-form-title" @submit.prevent="save">
-        <header class="dialog-head"><div><h3 id="transaction-form-title">新增记账</h3><p>保存后会按现有规则更新收付款计划。</p></div><button type="button" class="close" aria-label="关闭" @click="showForm = false">×</button></header>
-        <fieldset><legend>流水信息</legend>
+        <header class="dialog-head"><div><h3 id="transaction-form-title">新增记账</h3><p>保存后会按现有规则更新收付款计划。</p></div><button type="button" class="close" aria-label="关闭" @click="closeForm" :disabled="saving">×</button></header>
+        <fieldset :disabled="saving"><legend>流水信息</legend>
         <label>类型
           <select v-model="form.kind" required @change="syncKind">
             <optgroup v-for="group in kindGroups" :key="group.direction" :label="group.label"><option v-for="option in group.options" :key="option.value" :value="option.value">{{ option.label }}</option></optgroup>
@@ -308,7 +318,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
         <label>币种<select v-model="form.currency" required @change="onCurrencyChange"><option v-for="currency in currencies" :key="currency.value" :value="currency.value">{{ currency.label }}</option></select></label>
         <label>结汇汇率 <small>1 外币 ≈ 人民币</small><input v-model="form.exchange_rate" type="number" min="0.000001" step="0.000001" required></label>
         </fieldset>
-        <fieldset><legend>业务关联</legend>
+        <fieldset :disabled="saving"><legend>业务关联</legend>
         <div v-if="contractKinds.includes(form.kind)" class="order-picker">
           <label>关联订单（客户收款必选，费用可选）<input v-model="orderQuery" placeholder="客户或订单号" @input="searchOrders"></label><small v-if="orderSearchLoading">正在加载订单…</small><p v-if="orderSearchError" class="option-load-error-text" role="alert">{{ orderSearchError }} <button type="button" @click="searchOrders">重试</button></p>
           <button v-for="row in orders" :key="row.id" type="button" class="order" @click="chooseOrder(row)">{{ row.customer_name }}｜{{ row.customer_country || '—' }}｜{{ row.order_no }}｜{{ row.currency }} {{ formatMoney(row.total_amount) }}</button>
@@ -318,14 +328,14 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
         <label v-if="form.kind === 'unallocated_advance'">客户<select v-model="form.customer" required><option :value="null">请选择客户</option><option v-for="row in customers" :key="row.id" :value="row.id">{{ row.name }}</option></select></label>
         <label v-if="form.kind === 'unallocated_payment'">供应商<select v-model="form.supplier" required><option :value="null">请选择供应商</option><option v-for="row in suppliers" :key="row.id" :value="row.id">{{ row.name }}</option></select></label>
         </fieldset>
-        <fieldset><legend>付款信息</legend>
+        <fieldset :disabled="saving"><legend>付款信息</legend>
         <label>支付方式<input v-model="form.payment_method" placeholder="银行转账、现金等"></label><label>银行参考号<input v-model="form.reference"></label><label>备注<input v-model="form.notes"></label>
         </fieldset>
         <p v-if="['customer_receipt', 'supplier_payment'].includes(form.kind)">款项将按合同计划顺序核销；超出计划的部分转为未分配预收预付。</p>
         <p v-if="form.kind === 'refund'">用于退回已经收到的订单货款；售后赔偿、运费补贴等请登记为订单费用。</p>
         <p v-else-if="form.kind === 'supplier_refund'">用于供应商退回已经支付的采购款。</p>
         <p v-if="error" class="error">{{ error }}</p>
-        <footer><button type="button" @click="showForm = false">取消</button><button :disabled="saving || !referencesLoaded || (form.kind === 'customer_receipt' && (orderSearchLoading || !!orderSearchError))">{{ saving ? '保存中…' : '保存' }}</button></footer>
+        <footer><button type="button" @click="closeForm" :disabled="saving">取消</button><button :disabled="saving || !referencesLoaded || (form.kind === 'customer_receipt' && (orderSearchLoading || !!orderSearchError))">{{ saving ? '保存中…' : '保存' }}</button></footer>
       </form>
     </div>
     <div v-if="allocation && can('transactions', 'update')" class="mask" @click.self="allocation = null"><form class="dialog" role="dialog" aria-modal="true" aria-labelledby="allocation-title" @submit.prevent="allocate"><header class="dialog-head"><div><h3 id="allocation-title">核销预收预付款</h3><p>仅分配现有余额，不会新增现金流水。</p></div><button type="button" class="close" aria-label="关闭" @click="allocation = null">×</button></header><p class="dialog-context">{{ allocation.customer_name || allocation.supplier_name }} · {{ allocation.currency }} 可分配 {{ formatMoney(Number(allocation.amount) - Number(allocation.allocated_amount)) }}</p><label>待结计划<select v-model="allocationPlan" required><option value="">请选择</option><option v-for="plan in eligiblePlans" :key="plan.id" :value="plan.id">{{ plan.contract_no }} · {{ plan.notes || '无备注' }} · 待结 {{ formatMoney(plan.remaining_amount) }}</option></select></label><p v-if="!eligiblePlans.length" class="empty-note">暂无币种与往来方匹配的待结计划。</p><label>核销金额（{{ allocation.currency }}）<input v-model="allocationAmount" type="number" min="0.0001" step="0.0001" required></label><p v-if="error" class="error" role="alert">{{ error }}</p><footer><button type="button" class="secondary" @click="allocation = null">取消</button><button :disabled="saving || !allocationPlan">{{ saving ? '保存中…' : '确认核销' }}</button></footer></form></div>

@@ -1,0 +1,1952 @@
+[
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/orders/1/",
+    "status": 200,
+    "body": {
+      "id": 1,
+      "items": [
+        {
+          "id": 1,
+          "sku": 4,
+          "sku_code": "R1A-PCS",
+          "sales_model": "F7B-PCS",
+          "model": "F7B-PCS",
+          "product_name": "R1A PCS 单位灯具",
+          "display_name": "R1A PCS 单位灯具",
+          "description": "R1A 独立产品",
+          "unit": "pcs",
+          "quantity": "10.00",
+          "unit_price": "50.0000",
+          "cost_price": "0.0000",
+          "amount": "500.00",
+          "notes": "",
+          "supplier_sku": null,
+          "supplier_name": "",
+          "supplier_model": "",
+          "supplier_sku_code": "",
+          "supplier_barcode": "",
+          "supplier_allocation": null,
+          "trade_unit": null,
+          "trade_quantity": null,
+          "trade_unit_price": null,
+          "trade_snapshot": {
+            "unit": "pcs",
+            "base_unit": "pcs",
+            "factor": "1",
+            "name": ""
+          }
+        }
+      ],
+      "customer_name": "R1A 合成客户",
+      "customer_country": "Germany",
+      "quote_no": "",
+      "source_quote_no": "",
+      "status_display": "已完成",
+      "total_amount": "500.00",
+      "base_amount": "500.00",
+      "approved_change_amount": "0.00",
+      "paid_amount": "340.00",
+      "balance_amount": "160.0",
+      "created_at": "2026-10-18T00:29:07.378730+08:00",
+      "updated_at": "2026-10-18T00:34:48.458694+08:00",
+      "order_no": "R1A-USD500",
+      "order_date": "2026-10-18",
+      "expected_ship_date": "2026-10-18",
+      "tail_goods_policy": "SAME_CARTON",
+      "status": "completed",
+      "currency": "USD",
+      "exchange_rate": "7.100000",
+      "shipping_fee": "0.0000",
+      "discount": "0.0000",
+      "notes": "",
+      "cancelled_at": null,
+      "cancellation_reason": "",
+      "customer": 1,
+      "quote": null
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/orders/1/workbench/",
+    "status": 200,
+    "body": {
+      "order": {
+        "id": 1,
+        "items": [
+          {
+            "id": 1,
+            "sku": 4,
+            "sku_code": "R1A-PCS",
+            "sales_model": "F7B-PCS",
+            "model": "F7B-PCS",
+            "product_name": "R1A PCS 单位灯具",
+            "display_name": "R1A PCS 单位灯具",
+            "description": "R1A 独立产品",
+            "unit": "pcs",
+            "quantity": "10.00",
+            "unit_price": "50.0000",
+            "cost_price": "0.0000",
+            "amount": "500.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "R1A 合成客户",
+        "customer_country": "Germany",
+        "quote_no": "",
+        "source_quote_no": "",
+        "status_display": "已完成",
+        "total_amount": "500.00",
+        "base_amount": "500.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "340.00",
+        "balance_amount": "160.0",
+        "created_at": "2026-10-18T00:29:07.378730+08:00",
+        "updated_at": "2026-10-18T00:34:48.458694+08:00",
+        "order_no": "R1A-USD500",
+        "order_date": "2026-10-18",
+        "expected_ship_date": "2026-10-18",
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "completed",
+        "currency": "USD",
+        "exchange_rate": "7.100000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "customer": 1,
+        "quote": null
+      },
+      "source_quote": null,
+      "items": [
+        {
+          "id": 1,
+          "sku": 4,
+          "sku_code": "R1A-PCS",
+          "sales_model": "F7B-PCS",
+          "model": "F7B-PCS",
+          "product_name": "R1A PCS 单位灯具",
+          "display_name": "R1A PCS 单位灯具",
+          "description": "R1A 独立产品",
+          "unit": "pcs",
+          "quantity": "10.00",
+          "unit_price": "50.0000",
+          "cost_price": "0.0000",
+          "amount": "500.00",
+          "notes": "",
+          "supplier_sku": null,
+          "supplier_name": "",
+          "supplier_model": "",
+          "supplier_sku_code": "",
+          "supplier_barcode": "",
+          "supplier_allocation": null,
+          "trade_unit": null,
+          "trade_quantity": null,
+          "trade_unit_price": null,
+          "trade_snapshot": {
+            "unit": "pcs",
+            "base_unit": "pcs",
+            "factor": "1",
+            "name": ""
+          }
+        }
+      ],
+      "payments": [
+        {
+          "id": 5,
+          "supplier_name": "",
+          "purchase_no": "",
+          "allocations": [],
+          "customer_name": "R1A 合成客户",
+          "order_no": "R1A-USD500",
+          "direction_display": "收入",
+          "status_display": "已确认",
+          "rmb_amount": "1377.5",
+          "created_at": "2026-10-18T00:34:29.342947+08:00",
+          "updated_at": "2026-10-18T00:34:29.342970+08:00",
+          "transaction_no": "FIN-15973F7F15D64501",
+          "transaction_date": "2026-10-18",
+          "direction": "income",
+          "category": "客户收款",
+          "amount": "190.0000",
+          "currency": "USD",
+          "exchange_rate": "7.250000",
+          "allocated_amount": "0.0000",
+          "kind": "customer_receipt",
+          "status": "confirmed",
+          "voided_at": null,
+          "void_reason": "",
+          "payment_method": "",
+          "reference": "",
+          "notes": "",
+          "split_from": 4,
+          "customer": 1,
+          "supplier": null,
+          "order": 1,
+          "purchase_order": null,
+          "plan": 4,
+          "replaces": null
+        },
+        {
+          "id": 4,
+          "supplier_name": "",
+          "purchase_no": "",
+          "allocations": [],
+          "customer_name": "R1A 合成客户",
+          "order_no": "R1A-USD500",
+          "direction_display": "收入",
+          "status_display": "已确认",
+          "rmb_amount": "1087.5",
+          "created_at": "2026-10-18T00:34:29.335782+08:00",
+          "updated_at": "2026-10-18T00:34:29.335810+08:00",
+          "transaction_no": "FIN-870AF38FC8CA4F2A",
+          "transaction_date": "2026-10-18",
+          "direction": "income",
+          "category": "客户收款",
+          "amount": "150.0000",
+          "currency": "USD",
+          "exchange_rate": "7.250000",
+          "allocated_amount": "0.0000",
+          "kind": "customer_receipt",
+          "status": "confirmed",
+          "voided_at": null,
+          "void_reason": "",
+          "payment_method": "",
+          "reference": "",
+          "notes": "",
+          "split_from": null,
+          "customer": 1,
+          "supplier": null,
+          "order": 1,
+          "purchase_order": null,
+          "plan": 3,
+          "replaces": null
+        }
+      ],
+      "advance_allocations": [],
+      "plans": [
+        {
+          "id": 4,
+          "customer_id": 1,
+          "supplier_id": null,
+          "exchange_rate": "7.1",
+          "remaining_rmb": "1136.0",
+          "remaining_amount": "160.0000",
+          "contract_no": "R1A-USD500",
+          "counterparty_name": "R1A 合成客户",
+          "is_overdue": true,
+          "created_at": "2026-10-18T00:33:40.042168+08:00",
+          "updated_at": "2026-10-18T00:46:41.756835+08:00",
+          "direction": "receivable",
+          "due_date": "2026-10-17",
+          "planned_amount": "350.0000",
+          "settled_amount": "190.0000",
+          "currency": "USD",
+          "status": "open",
+          "notes": "默认尾款",
+          "order": 1,
+          "purchase_order": null
+        },
+        {
+          "id": 3,
+          "customer_id": 1,
+          "supplier_id": null,
+          "exchange_rate": "7.1",
+          "remaining_rmb": "0.0",
+          "remaining_amount": "0.0000",
+          "contract_no": "R1A-USD500",
+          "counterparty_name": "R1A 合成客户",
+          "is_overdue": false,
+          "created_at": "2026-10-18T00:33:40.038738+08:00",
+          "updated_at": "2026-10-18T00:34:29.339287+08:00",
+          "direction": "receivable",
+          "due_date": "2026-10-18",
+          "planned_amount": "150.0000",
+          "settled_amount": "150.0000",
+          "currency": "USD",
+          "status": "settled",
+          "notes": "默认预付款/定金",
+          "order": 1,
+          "purchase_order": null
+        }
+      ],
+      "inventory": [
+        {
+          "id": 8,
+          "movement_no": "SH-834C5D39E16D47C9",
+          "related_orders": [],
+          "related_order_nos": [
+            "R1A-USD500"
+          ],
+          "sku_code": "R1A-PCS",
+          "display_name": "R1A PCS 单位灯具",
+          "sales_model": "F7B-PCS",
+          "product_name": "R1A PCS 单位灯具",
+          "order_no": "R1A-USD500",
+          "type_display": "销售出库",
+          "signed_quantity": "-10.00",
+          "overage_quantity": "0.00",
+          "overage_summary": "",
+          "reversal_movement": null,
+          "is_reversed": false,
+          "reversal_status": "",
+          "created_at": "2026-10-18T00:33:51.815745+08:00",
+          "updated_at": "2026-10-18T00:33:51.815844+08:00",
+          "trade_quantity": null,
+          "trade_unit_price": null,
+          "trade_snapshot": {
+            "unit": "pcs",
+            "base_unit": "pcs",
+            "factor": "1",
+            "name": ""
+          },
+          "movement_date": "2026-10-18",
+          "type": "sale_out",
+          "sku_code_snapshot": "R1A-PCS",
+          "sales_model_snapshot": "F7B-PCS",
+          "display_name_snapshot": "R1A PCS 单位灯具",
+          "quantity": "10.00",
+          "warehouse": "默认仓",
+          "unit_cost": "0.0000",
+          "reference": "SH-3C5A4262153C487F",
+          "notes": "",
+          "source_type": "shipment",
+          "source_no": "SH-3C5A4262153C487F",
+          "is_automatic": true,
+          "is_overage": false,
+          "overage_reason": "",
+          "trade_unit": null,
+          "sku": 4,
+          "supplier_sku": null,
+          "order": 1
+        }
+      ],
+      "payment_summary": {
+        "paid_amount": "340.0",
+        "balance_amount": "160.0",
+        "planned_amount": "500.0"
+      },
+      "expense_summary": {
+        "expense_rmb": "0.0"
+      },
+      "profit_summary": {
+        "sales_rmb": "3550.0",
+        "purchase_base_rmb": "0.0",
+        "purchase_additional_rmb": "0.0",
+        "purchase_cost_rmb": "0.0",
+        "order_expense_rmb": "0.0",
+        "expense_rmb": "0.0",
+        "estimated_profit_rmb": "3550.0",
+        "estimated_gross_profit_rmb": "3550.0",
+        "estimated_margin_percent": "100.0"
+      },
+      "fulfillment_summary": {
+        "ordered_quantity": "10.0",
+        "shipped_quantity": "10.0",
+        "remaining_quantity": "0.0"
+      }
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/customers/1/insights/",
+    "status": 200,
+    "body": {
+      "customer": {
+        "id": 1,
+        "contact_count": 0,
+        "order_count": 2,
+        "sales_amount": "7100.00",
+        "created_at": "2026-10-18T00:29:07.377341+08:00",
+        "updated_at": "2026-10-18T00:29:07.377358+08:00",
+        "name": "R1A 合成客户",
+        "code": "R1A-C",
+        "country": "Germany",
+        "region": "",
+        "source": "",
+        "status": "company",
+        "owner": "",
+        "website": "",
+        "address": "",
+        "notes": "",
+        "next_follow_up": null,
+        "owner_profile": null
+      },
+      "yearly": [
+        {
+          "year": 2025,
+          "orders": 0,
+          "sales": "0.0"
+        },
+        {
+          "year": 2026,
+          "orders": 2,
+          "sales": "7100.0"
+        }
+      ],
+      "top_products": [
+        {
+          "sku__product__id": 1,
+          "sku__product__name": "R1A 商用线性灯具长名称多规格测试",
+          "sales": "3550.0",
+          "quantity": "20.0"
+        },
+        {
+          "sku__product__id": 2,
+          "sku__product__name": "R1A 独立产品",
+          "sales": "3550.0",
+          "quantity": "10.0"
+        }
+      ],
+      "recent_orders": [
+        {
+          "id": 2,
+          "items": [
+            {
+              "id": 2,
+              "sku": 1,
+              "sku_code": "R1A-EXISTING",
+              "sales_model": "F7B-1024",
+              "model": "F7B-1024",
+              "product_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+              "display_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+              "description": "R1A commercial linear light, 10W, 24V",
+              "unit": "m",
+              "quantity": "20.00",
+              "unit_price": "25.0000",
+              "cost_price": "0.0000",
+              "amount": "500.00",
+              "notes": "",
+              "supplier_sku": null,
+              "supplier_name": "",
+              "supplier_model": "",
+              "supplier_sku_code": "",
+              "supplier_barcode": "",
+              "supplier_allocation": null,
+              "trade_unit": null,
+              "trade_quantity": null,
+              "trade_unit_price": null,
+              "trade_snapshot": {
+                "unit": "m",
+                "base_unit": "m",
+                "factor": "1",
+                "name": ""
+              }
+            }
+          ],
+          "customer_name": "R1A 合成客户",
+          "customer_country": "Germany",
+          "quote_no": "",
+          "source_quote_no": "",
+          "status_display": "已确认",
+          "total_amount": "500.00",
+          "base_amount": "500.00",
+          "approved_change_amount": "0.00",
+          "paid_amount": "500.00",
+          "balance_amount": "0.0",
+          "created_at": "2026-10-18T00:36:21.338367+08:00",
+          "updated_at": "2026-10-18T00:38:04.884153+08:00",
+          "order_no": "R1A-REVERSAL",
+          "order_date": "2026-10-18",
+          "expected_ship_date": null,
+          "tail_goods_policy": "SAME_CARTON",
+          "status": "confirmed",
+          "currency": "USD",
+          "exchange_rate": "7.100000",
+          "shipping_fee": "0.0000",
+          "discount": "0.0000",
+          "notes": "",
+          "cancelled_at": null,
+          "cancellation_reason": "",
+          "customer": 1,
+          "quote": null
+        },
+        {
+          "id": 1,
+          "items": [
+            {
+              "id": 1,
+              "sku": 4,
+              "sku_code": "R1A-PCS",
+              "sales_model": "F7B-PCS",
+              "model": "F7B-PCS",
+              "product_name": "R1A PCS 单位灯具",
+              "display_name": "R1A PCS 单位灯具",
+              "description": "R1A 独立产品",
+              "unit": "pcs",
+              "quantity": "10.00",
+              "unit_price": "50.0000",
+              "cost_price": "0.0000",
+              "amount": "500.00",
+              "notes": "",
+              "supplier_sku": null,
+              "supplier_name": "",
+              "supplier_model": "",
+              "supplier_sku_code": "",
+              "supplier_barcode": "",
+              "supplier_allocation": null,
+              "trade_unit": null,
+              "trade_quantity": null,
+              "trade_unit_price": null,
+              "trade_snapshot": {
+                "unit": "pcs",
+                "base_unit": "pcs",
+                "factor": "1",
+                "name": ""
+              }
+            }
+          ],
+          "customer_name": "R1A 合成客户",
+          "customer_country": "Germany",
+          "quote_no": "",
+          "source_quote_no": "",
+          "status_display": "已完成",
+          "total_amount": "500.00",
+          "base_amount": "500.00",
+          "approved_change_amount": "0.00",
+          "paid_amount": "340.00",
+          "balance_amount": "160.0",
+          "created_at": "2026-10-18T00:29:07.378730+08:00",
+          "updated_at": "2026-10-18T00:34:48.458694+08:00",
+          "order_no": "R1A-USD500",
+          "order_date": "2026-10-18",
+          "expected_ship_date": "2026-10-18",
+          "tail_goods_policy": "SAME_CARTON",
+          "status": "completed",
+          "currency": "USD",
+          "exchange_rate": "7.100000",
+          "shipping_fee": "0.0000",
+          "discount": "0.0000",
+          "notes": "",
+          "cancelled_at": null,
+          "cancellation_reason": "",
+          "customer": 1,
+          "quote": null
+        }
+      ],
+      "recent_follow_ups": []
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/context/customers/1/",
+    "status": 200,
+    "body": {
+      "entity": "customers",
+      "title": "R1A 合成客户",
+      "subtitle": "R1A-C · Germany",
+      "badge": "公司客户",
+      "info": [
+        [
+          "负责人",
+          "—"
+        ],
+        [
+          "业务区域",
+          "—"
+        ],
+        [
+          "来源",
+          "—"
+        ],
+        [
+          "网站",
+          "—"
+        ],
+        [
+          "地址",
+          "—"
+        ],
+        [
+          "备注",
+          "—"
+        ]
+      ],
+      "metrics": [
+        [
+          "累计销售额",
+          "7100.0",
+          "rmb"
+        ],
+        [
+          "订单",
+          2,
+          "number"
+        ],
+        [
+          "报价",
+          0,
+          "number"
+        ],
+        [
+          "下次跟进",
+          "未安排",
+          "date"
+        ]
+      ],
+      "sections": [
+        {
+          "key": "followups",
+          "title": "跟进记录",
+          "entity": "follow-ups",
+          "columns": [
+            [
+              "followed_at",
+              "时间",
+              "datetime"
+            ],
+            [
+              "subject",
+              "主题"
+            ],
+            [
+              "content",
+              "跟进记录 / 解决方案",
+              "excerpt"
+            ],
+            [
+              "result",
+              "客户回复 / 客户疑问",
+              "excerpt"
+            ],
+            [
+              "type_display",
+              "方式"
+            ],
+            [
+              "next_follow_up",
+              "下次跟进",
+              "date"
+            ]
+          ],
+          "rows": [],
+          "description": ""
+        },
+        {
+          "key": "quotes",
+          "title": "报价记录",
+          "entity": "quotes",
+          "columns": [
+            [
+              "quote_no",
+              "报价单号"
+            ],
+            [
+              "quote_date",
+              "日期",
+              "date"
+            ],
+            [
+              "status_display",
+              "状态",
+              "status"
+            ],
+            [
+              "total_amount",
+              "金额",
+              "money"
+            ],
+            [
+              "currency",
+              "币种"
+            ]
+          ],
+          "rows": [],
+          "description": ""
+        },
+        {
+          "key": "orders",
+          "title": "订单",
+          "entity": "orders",
+          "columns": [
+            [
+              "order_no",
+              "订单号"
+            ],
+            [
+              "order_date",
+              "日期",
+              "date"
+            ],
+            [
+              "status_display",
+              "状态",
+              "status"
+            ],
+            [
+              "total_amount",
+              "金额",
+              "money"
+            ],
+            [
+              "currency",
+              "币种"
+            ]
+          ],
+          "rows": [
+            {
+              "id": 2,
+              "items": [
+                {
+                  "id": 2,
+                  "sku": 1,
+                  "sku_code": "R1A-EXISTING",
+                  "sales_model": "F7B-1024",
+                  "model": "F7B-1024",
+                  "product_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+                  "display_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+                  "description": "R1A commercial linear light, 10W, 24V",
+                  "unit": "m",
+                  "quantity": "20.00",
+                  "unit_price": "25.0000",
+                  "cost_price": "0.0000",
+                  "amount": "500.00",
+                  "notes": "",
+                  "supplier_sku": null,
+                  "supplier_name": "",
+                  "supplier_model": "",
+                  "supplier_sku_code": "",
+                  "supplier_barcode": "",
+                  "supplier_allocation": null,
+                  "trade_unit": null,
+                  "trade_quantity": null,
+                  "trade_unit_price": null,
+                  "trade_snapshot": {
+                    "unit": "m",
+                    "base_unit": "m",
+                    "factor": "1",
+                    "name": ""
+                  }
+                }
+              ],
+              "customer_name": "R1A 合成客户",
+              "customer_country": "Germany",
+              "quote_no": "",
+              "source_quote_no": "",
+              "status_display": "已确认",
+              "total_amount": "500.00",
+              "base_amount": "500.00",
+              "approved_change_amount": "0.00",
+              "paid_amount": "500.00",
+              "balance_amount": "0.0",
+              "created_at": "2026-10-18T00:36:21.338367+08:00",
+              "updated_at": "2026-10-18T00:38:04.884153+08:00",
+              "order_no": "R1A-REVERSAL",
+              "order_date": "2026-10-18",
+              "expected_ship_date": null,
+              "tail_goods_policy": "SAME_CARTON",
+              "status": "confirmed",
+              "currency": "USD",
+              "exchange_rate": "7.100000",
+              "shipping_fee": "0.0000",
+              "discount": "0.0000",
+              "notes": "",
+              "cancelled_at": null,
+              "cancellation_reason": "",
+              "customer": 1,
+              "quote": null,
+              "_target_entity": "orders",
+              "_target_id": 2
+            },
+            {
+              "id": 1,
+              "items": [
+                {
+                  "id": 1,
+                  "sku": 4,
+                  "sku_code": "R1A-PCS",
+                  "sales_model": "F7B-PCS",
+                  "model": "F7B-PCS",
+                  "product_name": "R1A PCS 单位灯具",
+                  "display_name": "R1A PCS 单位灯具",
+                  "description": "R1A 独立产品",
+                  "unit": "pcs",
+                  "quantity": "10.00",
+                  "unit_price": "50.0000",
+                  "cost_price": "0.0000",
+                  "amount": "500.00",
+                  "notes": "",
+                  "supplier_sku": null,
+                  "supplier_name": "",
+                  "supplier_model": "",
+                  "supplier_sku_code": "",
+                  "supplier_barcode": "",
+                  "supplier_allocation": null,
+                  "trade_unit": null,
+                  "trade_quantity": null,
+                  "trade_unit_price": null,
+                  "trade_snapshot": {
+                    "unit": "pcs",
+                    "base_unit": "pcs",
+                    "factor": "1",
+                    "name": ""
+                  }
+                }
+              ],
+              "customer_name": "R1A 合成客户",
+              "customer_country": "Germany",
+              "quote_no": "",
+              "source_quote_no": "",
+              "status_display": "已完成",
+              "total_amount": "500.00",
+              "base_amount": "500.00",
+              "approved_change_amount": "0.00",
+              "paid_amount": "340.00",
+              "balance_amount": "160.0",
+              "created_at": "2026-10-18T00:29:07.378730+08:00",
+              "updated_at": "2026-10-18T00:34:48.458694+08:00",
+              "order_no": "R1A-USD500",
+              "order_date": "2026-10-18",
+              "expected_ship_date": "2026-10-18",
+              "tail_goods_policy": "SAME_CARTON",
+              "status": "completed",
+              "currency": "USD",
+              "exchange_rate": "7.100000",
+              "shipping_fee": "0.0000",
+              "discount": "0.0000",
+              "notes": "",
+              "cancelled_at": null,
+              "cancellation_reason": "",
+              "customer": 1,
+              "quote": null,
+              "_target_entity": "orders",
+              "_target_id": 1
+            }
+          ],
+          "description": ""
+        },
+        {
+          "key": "contacts",
+          "title": "联系人",
+          "entity": "contacts",
+          "columns": [
+            [
+              "name",
+              "姓名"
+            ],
+            [
+              "title",
+              "职位"
+            ],
+            [
+              "email",
+              "邮箱"
+            ],
+            [
+              "phone",
+              "电话"
+            ],
+            [
+              "is_primary",
+              "主联系人",
+              "boolean"
+            ]
+          ],
+          "rows": [],
+          "description": ""
+        },
+        {
+          "key": "purchases",
+          "title": "成交商品记录",
+          "entity": "orders",
+          "columns": [
+            [
+              "order_date",
+              "日期",
+              "date"
+            ],
+            [
+              "order_no",
+              "订单"
+            ],
+            [
+              "sku_code",
+              "SKU"
+            ],
+            [
+              "product_name",
+              "产品"
+            ],
+            [
+              "quantity",
+              "数量",
+              "number"
+            ],
+            [
+              "amount",
+              "金额",
+              "money"
+            ]
+          ],
+          "rows": [
+            {
+              "id": 1,
+              "order_no": "R1A-USD500",
+              "order_date": "2026-10-18",
+              "sku_code": "R1A-PCS",
+              "product_name": "R1A 独立产品",
+              "quantity": "10.0",
+              "unit_price": "50.0",
+              "currency": "USD",
+              "amount": "500.0",
+              "_target_entity": "orders",
+              "_target_id": 1
+            },
+            {
+              "id": 2,
+              "order_no": "R1A-REVERSAL",
+              "order_date": "2026-10-18",
+              "sku_code": "R1A-EXISTING",
+              "product_name": "R1A 商用线性灯具长名称多规格测试",
+              "quantity": "20.0",
+              "unit_price": "25.0",
+              "currency": "USD",
+              "amount": "500.0",
+              "_target_entity": "orders",
+              "_target_id": 2
+            }
+          ],
+          "description": ""
+        },
+        {
+          "key": "cash",
+          "title": "财务流水",
+          "entity": "transactions",
+          "columns": [
+            [
+              "transaction_date",
+              "日期",
+              "date"
+            ],
+            [
+              "transaction_no",
+              "流水号"
+            ],
+            [
+              "direction_display",
+              "方向"
+            ],
+            [
+              "category",
+              "分类"
+            ],
+            [
+              "amount",
+              "金额",
+              "money"
+            ],
+            [
+              "currency",
+              "币种"
+            ]
+          ],
+          "rows": [
+            {
+              "id": 13,
+              "supplier_name": "",
+              "purchase_no": "",
+              "allocations": [],
+              "customer_name": "R1A 合成客户",
+              "order_no": "",
+              "direction_display": "收入",
+              "status_display": "已确认",
+              "rmb_amount": "16.6689",
+              "created_at": "2026-10-18T00:44:39.261529+08:00",
+              "updated_at": "2026-10-18T00:44:39.261556+08:00",
+              "transaction_no": "FIN-391E62CD19A640998AED8E46F7C744F0",
+              "transaction_date": "2026-10-18",
+              "direction": "income",
+              "category": "未分配预收款",
+              "amount": "2.3400",
+              "currency": "USD",
+              "exchange_rate": "7.123456",
+              "allocated_amount": "0.0000",
+              "kind": "unallocated_advance",
+              "status": "confirmed",
+              "voided_at": null,
+              "void_reason": "",
+              "payment_method": "",
+              "reference": "",
+              "notes": "R1A post-fix Chrome",
+              "split_from": null,
+              "customer": 1,
+              "supplier": null,
+              "order": null,
+              "purchase_order": null,
+              "plan": null,
+              "replaces": null,
+              "_target_entity": "transactions",
+              "_target_id": 13
+            },
+            {
+              "id": 12,
+              "supplier_name": "",
+              "purchase_no": "",
+              "allocations": [],
+              "customer_name": "R1A 合成客户",
+              "order_no": "",
+              "direction_display": "收入",
+              "status_display": "已确认",
+              "rmb_amount": "7.1",
+              "created_at": "2026-10-18T00:41:09.653123+08:00",
+              "updated_at": "2026-10-18T00:41:09.653144+08:00",
+              "transaction_no": "R1A-STABLE-RETRY",
+              "transaction_date": "2026-10-18",
+              "direction": "income",
+              "category": "未分配预收款",
+              "amount": "1.0000",
+              "currency": "USD",
+              "exchange_rate": "7.100000",
+              "allocated_amount": "0.0000",
+              "kind": "unallocated_advance",
+              "status": "confirmed",
+              "voided_at": null,
+              "void_reason": "",
+              "payment_method": "",
+              "reference": "",
+              "notes": "R1A replay synthetic only",
+              "split_from": null,
+              "customer": 1,
+              "supplier": null,
+              "order": null,
+              "purchase_order": null,
+              "plan": null,
+              "replaces": null,
+              "_target_entity": "transactions",
+              "_target_id": 12
+            },
+            {
+              "id": 11,
+              "supplier_name": "",
+              "purchase_no": "",
+              "allocations": [],
+              "customer_name": "R1A 合成客户",
+              "order_no": "",
+              "direction_display": "收入",
+              "status_display": "已确认",
+              "rmb_amount": "7.1",
+              "created_at": "2026-10-18T00:41:09.635511+08:00",
+              "updated_at": "2026-10-18T00:41:09.635529+08:00",
+              "transaction_no": "FIN-08105567ED9648AC",
+              "transaction_date": "2026-10-18",
+              "direction": "income",
+              "category": "未分配预收款",
+              "amount": "1.0000",
+              "currency": "USD",
+              "exchange_rate": "7.100000",
+              "allocated_amount": "0.0000",
+              "kind": "unallocated_advance",
+              "status": "confirmed",
+              "voided_at": null,
+              "void_reason": "",
+              "payment_method": "",
+              "reference": "",
+              "notes": "R1A replay synthetic only",
+              "split_from": null,
+              "customer": 1,
+              "supplier": null,
+              "order": null,
+              "purchase_order": null,
+              "plan": null,
+              "replaces": null,
+              "_target_entity": "transactions",
+              "_target_id": 11
+            },
+            {
+              "id": 10,
+              "supplier_name": "",
+              "purchase_no": "",
+              "allocations": [],
+              "customer_name": "R1A 合成客户",
+              "order_no": "",
+              "direction_display": "收入",
+              "status_display": "已确认",
+              "rmb_amount": "7.1",
+              "created_at": "2026-10-18T00:41:09.613511+08:00",
+              "updated_at": "2026-10-18T00:41:09.613537+08:00",
+              "transaction_no": "FIN-6AA71395C8614AFA",
+              "transaction_date": "2026-10-18",
+              "direction": "income",
+              "category": "未分配预收款",
+              "amount": "1.0000",
+              "currency": "USD",
+              "exchange_rate": "7.100000",
+              "allocated_amount": "0.0000",
+              "kind": "unallocated_advance",
+              "status": "confirmed",
+              "voided_at": null,
+              "void_reason": "",
+              "payment_method": "",
+              "reference": "",
+              "notes": "R1A replay synthetic only",
+              "split_from": null,
+              "customer": 1,
+              "supplier": null,
+              "order": null,
+              "purchase_order": null,
+              "plan": null,
+              "replaces": null,
+              "_target_entity": "transactions",
+              "_target_id": 10
+            },
+            {
+              "id": 9,
+              "supplier_name": "",
+              "purchase_no": "",
+              "allocations": [],
+              "customer_name": "R1A 合成客户",
+              "order_no": "",
+              "direction_display": "收入",
+              "status_display": "已确认",
+              "rmb_amount": "146.0",
+              "created_at": "2026-10-18T00:40:07.501915+08:00",
+              "updated_at": "2026-10-18T00:40:07.501932+08:00",
+              "transaction_no": "ADV-2493B0DAF0804A1E",
+              "transaction_date": "2026-10-18",
+              "direction": "income",
+              "category": "未分配预收款",
+              "amount": "20.0000",
+              "currency": "USD",
+              "exchange_rate": "7.300000",
+              "allocated_amount": "0.0000",
+              "kind": "unallocated_advance",
+              "status": "confirmed",
+              "voided_at": null,
+              "void_reason": "",
+              "payment_method": "",
+              "reference": "FIN-6CF550DFEC494116",
+              "notes": "由合同计划超额收付款自动拆分",
+              "split_from": 8,
+              "customer": 1,
+              "supplier": null,
+              "order": null,
+              "purchase_order": null,
+              "plan": null,
+              "replaces": null,
+              "_target_entity": "transactions",
+              "_target_id": 9
+            },
+            {
+              "id": 8,
+              "supplier_name": "",
+              "purchase_no": "",
+              "allocations": [],
+              "customer_name": "R1A 合成客户",
+              "order_no": "R1A-REVERSAL",
+              "direction_display": "收入",
+              "status_display": "已确认",
+              "rmb_amount": "1095.0",
+              "created_at": "2026-10-18T00:40:07.500798+08:00",
+              "updated_at": "2026-10-18T00:40:07.500821+08:00",
+              "transaction_no": "FIN-6CF550DFEC494116",
+              "transaction_date": "2026-10-18",
+              "direction": "income",
+              "category": "客户收款",
+              "amount": "150.0000",
+              "currency": "USD",
+              "exchange_rate": "7.300000",
+              "allocated_amount": "0.0000",
+              "kind": "customer_receipt",
+              "status": "confirmed",
+              "voided_at": null,
+              "void_reason": "",
+              "payment_method": "",
+              "reference": "",
+              "notes": "",
+              "split_from": 7,
+              "customer": 1,
+              "supplier": null,
+              "order": 2,
+              "purchase_order": null,
+              "plan": 5,
+              "replaces": null,
+              "_target_entity": "transactions",
+              "_target_id": 8
+            },
+            {
+              "id": 7,
+              "supplier_name": "",
+              "purchase_no": "",
+              "allocations": [],
+              "customer_name": "R1A 合成客户",
+              "order_no": "R1A-REVERSAL",
+              "direction_display": "收入",
+              "status_display": "已确认",
+              "rmb_amount": "2555.0",
+              "created_at": "2026-10-18T00:40:07.495086+08:00",
+              "updated_at": "2026-10-18T00:40:07.495108+08:00",
+              "transaction_no": "FIN-0B4100F00A554F71",
+              "transaction_date": "2026-10-18",
+              "direction": "income",
+              "category": "客户收款",
+              "amount": "350.0000",
+              "currency": "USD",
+              "exchange_rate": "7.300000",
+              "allocated_amount": "0.0000",
+              "kind": "customer_receipt",
+              "status": "confirmed",
+              "voided_at": null,
+              "void_reason": "",
+              "payment_method": "",
+              "reference": "",
+              "notes": "",
+              "split_from": null,
+              "customer": 1,
+              "supplier": null,
+              "order": 2,
+              "purchase_order": null,
+              "plan": 6,
+              "replaces": null,
+              "_target_entity": "transactions",
+              "_target_id": 7
+            },
+            {
+              "id": 6,
+              "supplier_name": "",
+              "purchase_no": "",
+              "allocations": [],
+              "customer_name": "R1A 合成客户",
+              "order_no": "",
+              "direction_display": "收入",
+              "status_display": "已确认",
+              "rmb_amount": "87.9034",
+              "created_at": "2026-10-18T00:38:58.410507+08:00",
+              "updated_at": "2026-10-18T00:38:58.410533+08:00",
+              "transaction_no": "FIN-886ADBD3D1404FCB",
+              "transaction_date": "2026-10-18",
+              "direction": "income",
+              "category": "未分配预收款",
+              "amount": "12.3400",
+              "currency": "USD",
+              "exchange_rate": "7.123456",
+              "allocated_amount": "0.0000",
+              "kind": "unallocated_advance",
+              "status": "confirmed",
+              "voided_at": null,
+              "void_reason": "",
+              "payment_method": "",
+              "reference": "",
+              "notes": "",
+              "split_from": null,
+              "customer": 1,
+              "supplier": null,
+              "order": null,
+              "purchase_order": null,
+              "plan": null,
+              "replaces": null,
+              "_target_entity": "transactions",
+              "_target_id": 6
+            },
+            {
+              "id": 5,
+              "supplier_name": "",
+              "purchase_no": "",
+              "allocations": [],
+              "customer_name": "R1A 合成客户",
+              "order_no": "R1A-USD500",
+              "direction_display": "收入",
+              "status_display": "已确认",
+              "rmb_amount": "1377.5",
+              "created_at": "2026-10-18T00:34:29.342947+08:00",
+              "updated_at": "2026-10-18T00:34:29.342970+08:00",
+              "transaction_no": "FIN-15973F7F15D64501",
+              "transaction_date": "2026-10-18",
+              "direction": "income",
+              "category": "客户收款",
+              "amount": "190.0000",
+              "currency": "USD",
+              "exchange_rate": "7.250000",
+              "allocated_amount": "0.0000",
+              "kind": "customer_receipt",
+              "status": "confirmed",
+              "voided_at": null,
+              "void_reason": "",
+              "payment_method": "",
+              "reference": "",
+              "notes": "",
+              "split_from": 4,
+              "customer": 1,
+              "supplier": null,
+              "order": 1,
+              "purchase_order": null,
+              "plan": 4,
+              "replaces": null,
+              "_target_entity": "transactions",
+              "_target_id": 5
+            },
+            {
+              "id": 4,
+              "supplier_name": "",
+              "purchase_no": "",
+              "allocations": [],
+              "customer_name": "R1A 合成客户",
+              "order_no": "R1A-USD500",
+              "direction_display": "收入",
+              "status_display": "已确认",
+              "rmb_amount": "1087.5",
+              "created_at": "2026-10-18T00:34:29.335782+08:00",
+              "updated_at": "2026-10-18T00:34:29.335810+08:00",
+              "transaction_no": "FIN-870AF38FC8CA4F2A",
+              "transaction_date": "2026-10-18",
+              "direction": "income",
+              "category": "客户收款",
+              "amount": "150.0000",
+              "currency": "USD",
+              "exchange_rate": "7.250000",
+              "allocated_amount": "0.0000",
+              "kind": "customer_receipt",
+              "status": "confirmed",
+              "voided_at": null,
+              "void_reason": "",
+              "payment_method": "",
+              "reference": "",
+              "notes": "",
+              "split_from": null,
+              "customer": 1,
+              "supplier": null,
+              "order": 1,
+              "purchase_order": null,
+              "plan": 3,
+              "replaces": null,
+              "_target_entity": "transactions",
+              "_target_id": 4
+            }
+          ],
+          "description": ""
+        }
+      ]
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/payment-plans/?direction=receivable&status=open&overdue=1",
+    "status": 200,
+    "body": {
+      "count": 1,
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "id": 4,
+          "customer_id": 1,
+          "supplier_id": null,
+          "exchange_rate": "7.1",
+          "remaining_rmb": "1136.0",
+          "remaining_amount": "160.0000",
+          "contract_no": "R1A-USD500",
+          "counterparty_name": "R1A 合成客户",
+          "is_overdue": true,
+          "created_at": "2026-10-18T00:33:40.042168+08:00",
+          "updated_at": "2026-10-18T00:46:41.756835+08:00",
+          "direction": "receivable",
+          "due_date": "2026-10-17",
+          "planned_amount": "350.0000",
+          "settled_amount": "190.0000",
+          "currency": "USD",
+          "status": "open",
+          "notes": "默认尾款",
+          "order": 1,
+          "purchase_order": null
+        }
+      ]
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/finance-dashboard/",
+    "status": 200,
+    "body": {
+      "metrics": {
+        "receivable_count": 1,
+        "receivable_rmb": "1136.0",
+        "payable_count": 0,
+        "payable_rmb": "0.0",
+        "sales_rmb": "7100.0",
+        "monthly_sales_rmb": "7100.0",
+        "purchase_cost_rmb": "0.0",
+        "order_expense_rmb": "0.0",
+        "estimated_profit_rmb": "7100.0",
+        "income_rmb": "6386.8723",
+        "expense_rmb": "1903.0",
+        "net_cash_rmb": "4483.8723",
+        "advance_receipt_rmb": "271.87233408",
+        "advance_payment_rmb": "0.0"
+      },
+      "period": {
+        "date_from": "2026-10-01",
+        "date_to": "2026-10-18"
+      },
+      "due_items": [
+        {
+          "id": 4,
+          "direction": "receivable",
+          "contract_no": "R1A-USD500",
+          "order": 1,
+          "purchase_order": null,
+          "counterparty_name": "R1A 合成客户",
+          "due_date": "2026-10-17",
+          "remaining_amount": "160.0",
+          "currency": "USD"
+        }
+      ],
+      "categories": [
+        {
+          "direction": "expense",
+          "category": "供应商付款",
+          "amount": "1903.0"
+        },
+        {
+          "direction": "income",
+          "category": "客户收款",
+          "amount": "6115.0"
+        },
+        {
+          "direction": "income",
+          "category": "未分配预收款",
+          "amount": "271.8723"
+        }
+      ],
+      "monthly_cash": [
+        {
+          "month": "2026-10",
+          "income": "6386.8723",
+          "expense": "1903.0",
+          "net": "4483.8723"
+        }
+      ]
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/reports/data/?source=sales&date_from=2026-10-01&date_to=2026-10-31",
+    "status": 200,
+    "body": {
+      "source": "sales",
+      "group_by": "time",
+      "date_field": "order_date",
+      "date_label": "订单日期",
+      "grain": "month",
+      "comparison": "previous",
+      "period": {
+        "date_from": "2026-10-01",
+        "date_to": "2026-10-31"
+      },
+      "comparison_period": {
+        "date_from": "2026-08-31",
+        "date_to": "2026-09-30"
+      },
+      "totals": {
+        "amount": "7100.0",
+        "count": 2,
+        "quantities": {
+          "pcs": "10.0",
+          "m": "20.0"
+        }
+      },
+      "previous": {
+        "amount": "0.0",
+        "count": 0,
+        "quantities": {}
+      },
+      "changes": {
+        "amount": null,
+        "count": null
+      },
+      "rows": [
+        {
+          "key": "2026-10",
+          "label": "2026-10",
+          "amount": "7100.0",
+          "quantities": {
+            "pcs": "10.0",
+            "m": "20.0"
+          },
+          "count": 2
+        }
+      ],
+      "note": "有效销售订单的合同金额；商品行之外的运费、折扣和已确认合同变更统一列为订单金额调整，不分摊 SKU。金额按订单汇率折人民币，不代表实收或利润。",
+      "filters": {},
+      "filter_summary": [],
+      "generated_at": "2026-10-17T16:49:54.171493Z"
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/reports/data/?source=cash&date_from=2026-10-01&date_to=2026-10-31",
+    "status": 200,
+    "body": {
+      "source": "cash",
+      "group_by": "time",
+      "date_field": "transaction_date",
+      "date_label": "发生日期",
+      "grain": "month",
+      "comparison": "previous",
+      "period": {
+        "date_from": "2026-10-01",
+        "date_to": "2026-10-31"
+      },
+      "comparison_period": {
+        "date_from": "2026-08-31",
+        "date_to": "2026-09-30"
+      },
+      "totals": {
+        "amount": "4483.8723",
+        "count": 13,
+        "quantities": {}
+      },
+      "previous": {
+        "amount": "0.0",
+        "count": 0,
+        "quantities": {}
+      },
+      "changes": {
+        "amount": null,
+        "count": null
+      },
+      "rows": [
+        {
+          "key": "2026-10",
+          "label": "2026-10",
+          "amount": "4483.8723",
+          "quantities": {},
+          "count": 13
+        }
+      ],
+      "note": "仅已确认流水；收入为正、支出为负，汇总为净现金流。优先使用实际人民币金额，否则按流水汇率折算。不重复统计预收预付分配。分类为收支分类。",
+      "filters": {},
+      "filter_summary": [],
+      "generated_at": "2026-10-17T16:49:54.219037Z"
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/skus/1/inventory-detail/",
+    "status": 200,
+    "body": {
+      "sku": {
+        "id": 1,
+        "sku": "R1A-EXISTING",
+        "display_name_cn": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+        "unit": "m"
+      },
+      "movements": [
+        {
+          "id": 10,
+          "movement_no": "REV-453054D7B9EA4CBF",
+          "related_orders": [],
+          "related_order_nos": [
+            "R1A-REVERSAL"
+          ],
+          "sku_code": "R1A-EXISTING",
+          "display_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "sales_model": "F7B-1024",
+          "product_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "order_no": "R1A-REVERSAL",
+          "type_display": "盘盈入库",
+          "signed_quantity": "20.00",
+          "overage_quantity": "0.00",
+          "overage_summary": "",
+          "reversal_movement": null,
+          "is_reversed": false,
+          "reversal_status": "冲销流水",
+          "created_at": "2026-10-18T00:38:04.864616+08:00",
+          "updated_at": "2026-10-18T00:38:04.864634+08:00",
+          "trade_quantity": null,
+          "trade_unit_price": null,
+          "trade_snapshot": {
+            "unit": "m",
+            "base_unit": "m",
+            "factor": "1",
+            "name": ""
+          },
+          "movement_date": "2026-10-18",
+          "type": "adjust_in",
+          "sku_code_snapshot": "R1A-EXISTING",
+          "sales_model_snapshot": "F7B-1024",
+          "display_name_snapshot": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "quantity": "20.00",
+          "warehouse": "默认仓",
+          "unit_cost": "0.0000",
+          "reference": "SH-0693B82F51224A4C",
+          "notes": "冲销销售发货 SH-67FF4AC72C304872：R1A 销售出库冲销",
+          "source_type": "reversal",
+          "source_no": "SH-67FF4AC72C304872",
+          "is_automatic": true,
+          "is_overage": false,
+          "overage_reason": "",
+          "trade_unit": null,
+          "sku": 1,
+          "supplier_sku": null,
+          "order": 2
+        },
+        {
+          "id": 9,
+          "movement_no": "SH-0693B82F51224A4C",
+          "related_orders": [],
+          "related_order_nos": [
+            "R1A-REVERSAL"
+          ],
+          "sku_code": "R1A-EXISTING",
+          "display_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "sales_model": "F7B-1024",
+          "product_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "order_no": "R1A-REVERSAL",
+          "type_display": "销售出库",
+          "signed_quantity": "-20.00",
+          "overage_quantity": "0.00",
+          "overage_summary": "",
+          "reversal_movement": {
+            "id": 10,
+            "movement_no": "REV-453054D7B9EA4CBF",
+            "movement_date": "2026-10-18",
+            "reason": "冲销销售发货 SH-67FF4AC72C304872：R1A 销售出库冲销"
+          },
+          "is_reversed": true,
+          "reversal_status": "已冲销 · REV-453054D7B9EA4CBF",
+          "created_at": "2026-10-18T00:36:45.996926+08:00",
+          "updated_at": "2026-10-18T00:36:45.997072+08:00",
+          "trade_quantity": null,
+          "trade_unit_price": null,
+          "trade_snapshot": {
+            "unit": "m",
+            "base_unit": "m",
+            "factor": "1",
+            "name": ""
+          },
+          "movement_date": "2026-10-18",
+          "type": "sale_out",
+          "sku_code_snapshot": "R1A-EXISTING",
+          "sales_model_snapshot": "F7B-1024",
+          "display_name_snapshot": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "quantity": "20.00",
+          "warehouse": "默认仓",
+          "unit_cost": "0.0000",
+          "reference": "SH-67FF4AC72C304872",
+          "notes": "",
+          "source_type": "shipment",
+          "source_no": "SH-67FF4AC72C304872",
+          "is_automatic": true,
+          "is_overage": false,
+          "overage_reason": "",
+          "trade_unit": null,
+          "sku": 1,
+          "supplier_sku": null,
+          "order": 2
+        },
+        {
+          "id": 6,
+          "movement_no": "GR-CC4631CC40FF4B4D",
+          "related_orders": [],
+          "related_order_nos": [],
+          "sku_code": "R1A-EXISTING",
+          "display_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "sales_model": "F7B-1024",
+          "product_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "order_no": "",
+          "type_display": "采购入库",
+          "signed_quantity": "20.00",
+          "overage_quantity": "0.00",
+          "overage_summary": "",
+          "reversal_movement": null,
+          "is_reversed": false,
+          "reversal_status": "",
+          "created_at": "2026-10-18T00:32:17.954367+08:00",
+          "updated_at": "2026-10-18T00:32:17.954387+08:00",
+          "trade_quantity": "2.00",
+          "trade_unit_price": "125.0000",
+          "trade_snapshot": {
+            "name": "10 米/卷",
+            "unit": "卷",
+            "factor": "10.00",
+            "base_unit": "m",
+            "allow_fraction": false
+          },
+          "movement_date": "2026-10-18",
+          "type": "purchase_in",
+          "sku_code_snapshot": "R1A-EXISTING",
+          "sales_model_snapshot": "F7B-1024",
+          "display_name_snapshot": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "quantity": "20.00",
+          "warehouse": "默认仓",
+          "unit_cost": "12.5000",
+          "reference": "PO-2026-00001",
+          "notes": "已核对型号、数量与外观；仅合格数量入库。",
+          "source_type": "receipt",
+          "source_no": "PO-2026-00001",
+          "is_automatic": true,
+          "is_overage": false,
+          "overage_reason": "",
+          "trade_unit": 2,
+          "sku": 1,
+          "supplier_sku": 2,
+          "order": null
+        },
+        {
+          "id": 5,
+          "movement_no": "REV-4C59FC4C65F5463A",
+          "related_orders": [],
+          "related_order_nos": [],
+          "sku_code": "R1A-EXISTING",
+          "display_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "sales_model": "F7B-1024",
+          "product_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "order_no": "",
+          "type_display": "盘亏出库",
+          "signed_quantity": "-10.00",
+          "overage_quantity": "0.00",
+          "overage_summary": "",
+          "reversal_movement": null,
+          "is_reversed": false,
+          "reversal_status": "冲销流水",
+          "created_at": "2026-10-18T00:32:09.856202+08:00",
+          "updated_at": "2026-10-18T00:32:09.856227+08:00",
+          "trade_quantity": "1.00",
+          "trade_unit_price": "125.0000",
+          "trade_snapshot": {
+            "name": "10 米/卷",
+            "unit": "卷",
+            "factor": "10.00",
+            "base_unit": "m",
+            "allow_fraction": false
+          },
+          "movement_date": "2026-10-18",
+          "type": "adjust_out",
+          "sku_code_snapshot": "R1A-EXISTING",
+          "sales_model_snapshot": "F7B-1024",
+          "display_name_snapshot": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "quantity": "10.00",
+          "warehouse": "默认仓",
+          "unit_cost": "12.5000",
+          "reference": "GR-A9DFA64C86284356",
+          "notes": "冲销采购入库 #2：R1A 修复后连续操作",
+          "source_type": "reversal",
+          "source_no": "PO-2026-00001",
+          "is_automatic": true,
+          "is_overage": false,
+          "overage_reason": "",
+          "trade_unit": 2,
+          "sku": 1,
+          "supplier_sku": 2,
+          "order": null
+        },
+        {
+          "id": 4,
+          "movement_no": "GR-A9DFA64C86284356",
+          "related_orders": [],
+          "related_order_nos": [],
+          "sku_code": "R1A-EXISTING",
+          "display_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "sales_model": "F7B-1024",
+          "product_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "order_no": "",
+          "type_display": "采购入库",
+          "signed_quantity": "10.00",
+          "overage_quantity": "0.00",
+          "overage_summary": "",
+          "reversal_movement": {
+            "id": 5,
+            "movement_no": "REV-4C59FC4C65F5463A",
+            "movement_date": "2026-10-18",
+            "reason": "冲销采购入库 #2：R1A 修复后连续操作"
+          },
+          "is_reversed": true,
+          "reversal_status": "已冲销 · REV-4C59FC4C65F5463A",
+          "created_at": "2026-10-18T00:32:01.166270+08:00",
+          "updated_at": "2026-10-18T00:32:01.166293+08:00",
+          "trade_quantity": "1.00",
+          "trade_unit_price": "125.0000",
+          "trade_snapshot": {
+            "name": "10 米/卷",
+            "unit": "卷",
+            "factor": "10.00",
+            "base_unit": "m",
+            "allow_fraction": false
+          },
+          "movement_date": "2026-10-18",
+          "type": "purchase_in",
+          "sku_code_snapshot": "R1A-EXISTING",
+          "sales_model_snapshot": "F7B-1024",
+          "display_name_snapshot": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "quantity": "10.00",
+          "warehouse": "默认仓",
+          "unit_cost": "12.5000",
+          "reference": "PO-2026-00001",
+          "notes": "已核对型号、数量与外观；仅合格数量入库。",
+          "source_type": "receipt",
+          "source_no": "PO-2026-00001",
+          "is_automatic": true,
+          "is_overage": false,
+          "overage_reason": "",
+          "trade_unit": 2,
+          "sku": 1,
+          "supplier_sku": 2,
+          "order": null
+        },
+        {
+          "id": 3,
+          "movement_no": "REV-98F4C29981D342BA",
+          "related_orders": [],
+          "related_order_nos": [],
+          "sku_code": "R1A-EXISTING",
+          "display_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "sales_model": "F7B-1024",
+          "product_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "order_no": "",
+          "type_display": "盘亏出库",
+          "signed_quantity": "-10.00",
+          "overage_quantity": "0.00",
+          "overage_summary": "",
+          "reversal_movement": null,
+          "is_reversed": false,
+          "reversal_status": "冲销流水",
+          "created_at": "2026-10-18T00:31:07.404468+08:00",
+          "updated_at": "2026-10-18T00:31:07.404489+08:00",
+          "trade_quantity": "1.00",
+          "trade_unit_price": "125.0000",
+          "trade_snapshot": {
+            "name": "10 米/卷",
+            "unit": "卷",
+            "factor": "10.00",
+            "base_unit": "m",
+            "allow_fraction": false
+          },
+          "movement_date": "2026-10-18",
+          "type": "adjust_out",
+          "sku_code_snapshot": "R1A-EXISTING",
+          "sales_model_snapshot": "F7B-1024",
+          "display_name_snapshot": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "quantity": "10.00",
+          "warehouse": "默认仓",
+          "unit_cost": "12.5000",
+          "reference": "GR-05FB059777604982",
+          "notes": "冲销采购入库 #1：R1A 未消耗入库冲销验证",
+          "source_type": "reversal",
+          "source_no": "PO-2026-00001",
+          "is_automatic": true,
+          "is_overage": false,
+          "overage_reason": "",
+          "trade_unit": 2,
+          "sku": 1,
+          "supplier_sku": 2,
+          "order": null
+        },
+        {
+          "id": 2,
+          "movement_no": "GR-05FB059777604982",
+          "related_orders": [],
+          "related_order_nos": [],
+          "sku_code": "R1A-EXISTING",
+          "display_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "sales_model": "F7B-1024",
+          "product_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "order_no": "",
+          "type_display": "采购入库",
+          "signed_quantity": "10.00",
+          "overage_quantity": "0.00",
+          "overage_summary": "",
+          "reversal_movement": {
+            "id": 3,
+            "movement_no": "REV-98F4C29981D342BA",
+            "movement_date": "2026-10-18",
+            "reason": "冲销采购入库 #1：R1A 未消耗入库冲销验证"
+          },
+          "is_reversed": true,
+          "reversal_status": "已冲销 · REV-98F4C29981D342BA",
+          "created_at": "2026-10-18T00:30:57.185803+08:00",
+          "updated_at": "2026-10-18T00:30:57.185826+08:00",
+          "trade_quantity": "1.00",
+          "trade_unit_price": "125.0000",
+          "trade_snapshot": {
+            "name": "10 米/卷",
+            "unit": "卷",
+            "factor": "10.00",
+            "base_unit": "m",
+            "allow_fraction": false
+          },
+          "movement_date": "2026-10-18",
+          "type": "purchase_in",
+          "sku_code_snapshot": "R1A-EXISTING",
+          "sales_model_snapshot": "F7B-1024",
+          "display_name_snapshot": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+          "quantity": "10.00",
+          "warehouse": "默认仓",
+          "unit_cost": "12.5000",
+          "reference": "PO-2026-00001",
+          "notes": "已核对型号、数量与外观；仅合格数量入库。",
+          "source_type": "receipt",
+          "source_no": "PO-2026-00001",
+          "is_automatic": true,
+          "is_overage": false,
+          "overage_reason": "",
+          "trade_unit": 2,
+          "sku": 1,
+          "supplier_sku": 2,
+          "order": null
+        }
+      ],
+      "purchases": [
+        {
+          "id": 1,
+          "purchase_no": "PO-2026-00001",
+          "supplier_name": "R1A 第二供应商",
+          "order_no": "",
+          "order_date": "2026-10-17",
+          "status": "completed",
+          "status_display": "已完成",
+          "quantity": "20.0",
+          "received_quantity": "20.0"
+        }
+      ],
+      "shipments": [
+        {
+          "id": 2,
+          "shipment_no": "SH-67FF4AC72C304872",
+          "shipment_date": "2026-10-18",
+          "order": 2,
+          "order_no": "R1A-REVERSAL",
+          "customer_name": "R1A 合成客户",
+          "status": "cancelled",
+          "status_display": "已取消",
+          "quantity": "20.0"
+        }
+      ],
+      "orders": [
+        {
+          "id": 2,
+          "order_no": "R1A-REVERSAL",
+          "customer_name": "R1A 合成客户",
+          "order_date": "2026-10-18",
+          "status": "confirmed",
+          "status_display": "已确认",
+          "quantity": "20.0",
+          "shipped_quantity": "0.0"
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,766 @@
+[
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/orders/1/",
+    "status": 200,
+    "body": {
+      "id": 1,
+      "items": [
+        {
+          "id": 1,
+          "sku": 4,
+          "sku_code": "R1A-PCS",
+          "sales_model": "F7B-PCS",
+          "model": "F7B-PCS",
+          "product_name": "R1A PCS 单位灯具",
+          "display_name": "R1A PCS 单位灯具",
+          "description": "R1A 独立产品",
+          "unit": "pcs",
+          "quantity": "10.00",
+          "unit_price": "50.0000",
+          "cost_price": "0.0000",
+          "amount": "500.00",
+          "notes": "",
+          "supplier_sku": null,
+          "supplier_name": "",
+          "supplier_model": "",
+          "supplier_sku_code": "",
+          "supplier_barcode": "",
+          "supplier_allocation": null,
+          "trade_unit": null,
+          "trade_quantity": null,
+          "trade_unit_price": null,
+          "trade_snapshot": {
+            "unit": "pcs",
+            "base_unit": "pcs",
+            "factor": "1",
+            "name": ""
+          }
+        }
+      ],
+      "customer_name": "R1A 合成客户",
+      "customer_country": "Germany",
+      "quote_no": "",
+      "source_quote_no": "",
+      "status_display": "已完成",
+      "total_amount": "500.00",
+      "base_amount": "500.00",
+      "approved_change_amount": "0.00",
+      "paid_amount": "340.00",
+      "balance_amount": "160.0",
+      "created_at": "2026-10-18T00:29:07.378730+08:00",
+      "updated_at": "2026-10-18T00:34:48.458694+08:00",
+      "order_no": "R1A-USD500",
+      "order_date": "2026-10-18",
+      "expected_ship_date": "2026-10-18",
+      "tail_goods_policy": "SAME_CARTON",
+      "status": "completed",
+      "currency": "USD",
+      "exchange_rate": "7.100000",
+      "shipping_fee": "0.0000",
+      "discount": "0.0000",
+      "notes": "",
+      "cancelled_at": null,
+      "cancellation_reason": "",
+      "customer": 1,
+      "quote": null
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/orders/1/workbench/",
+    "status": 200,
+    "body": {
+      "order": {
+        "id": 1,
+        "items": [
+          {
+            "id": 1,
+            "sku": 4,
+            "sku_code": "R1A-PCS",
+            "sales_model": "F7B-PCS",
+            "model": "F7B-PCS",
+            "product_name": "R1A PCS 单位灯具",
+            "display_name": "R1A PCS 单位灯具",
+            "description": "R1A 独立产品",
+            "unit": "pcs",
+            "quantity": "10.00",
+            "unit_price": "50.0000",
+            "cost_price": "0.0000",
+            "amount": "500.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "R1A 合成客户",
+        "customer_country": "Germany",
+        "quote_no": "",
+        "source_quote_no": "",
+        "status_display": "已完成",
+        "total_amount": "500.00",
+        "base_amount": "500.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "340.00",
+        "balance_amount": "160.0",
+        "created_at": "2026-10-18T00:29:07.378730+08:00",
+        "updated_at": "2026-10-18T00:34:48.458694+08:00",
+        "order_no": "R1A-USD500",
+        "order_date": "2026-10-18",
+        "expected_ship_date": "2026-10-18",
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "completed",
+        "currency": "USD",
+        "exchange_rate": "7.100000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "customer": 1,
+        "quote": null
+      },
+      "source_quote": null,
+      "items": [
+        {
+          "id": 1,
+          "sku": 4,
+          "sku_code": "R1A-PCS",
+          "sales_model": "F7B-PCS",
+          "model": "F7B-PCS",
+          "product_name": "R1A PCS 单位灯具",
+          "display_name": "R1A PCS 单位灯具",
+          "description": "R1A 独立产品",
+          "unit": "pcs",
+          "quantity": "10.00",
+          "unit_price": "50.0000",
+          "cost_price": "0.0000",
+          "amount": "500.00",
+          "notes": "",
+          "supplier_sku": null,
+          "supplier_name": "",
+          "supplier_model": "",
+          "supplier_sku_code": "",
+          "supplier_barcode": "",
+          "supplier_allocation": null,
+          "trade_unit": null,
+          "trade_quantity": null,
+          "trade_unit_price": null,
+          "trade_snapshot": {
+            "unit": "pcs",
+            "base_unit": "pcs",
+            "factor": "1",
+            "name": ""
+          }
+        }
+      ],
+      "payments": [
+        {
+          "id": 5,
+          "supplier_name": "",
+          "purchase_no": "",
+          "allocations": [],
+          "customer_name": "R1A 合成客户",
+          "order_no": "R1A-USD500",
+          "direction_display": "收入",
+          "status_display": "已确认",
+          "rmb_amount": "1377.5",
+          "created_at": "2026-10-18T00:34:29.342947+08:00",
+          "updated_at": "2026-10-18T00:34:29.342970+08:00",
+          "transaction_no": "FIN-15973F7F15D64501",
+          "transaction_date": "2026-10-18",
+          "direction": "income",
+          "category": "客户收款",
+          "amount": "190.0000",
+          "currency": "USD",
+          "exchange_rate": "7.250000",
+          "allocated_amount": "0.0000",
+          "kind": "customer_receipt",
+          "status": "confirmed",
+          "voided_at": null,
+          "void_reason": "",
+          "payment_method": "",
+          "reference": "",
+          "notes": "",
+          "split_from": 4,
+          "customer": 1,
+          "supplier": null,
+          "order": 1,
+          "purchase_order": null,
+          "plan": 4,
+          "replaces": null
+        },
+        {
+          "id": 4,
+          "supplier_name": "",
+          "purchase_no": "",
+          "allocations": [],
+          "customer_name": "R1A 合成客户",
+          "order_no": "R1A-USD500",
+          "direction_display": "收入",
+          "status_display": "已确认",
+          "rmb_amount": "1087.5",
+          "created_at": "2026-10-18T00:34:29.335782+08:00",
+          "updated_at": "2026-10-18T00:34:29.335810+08:00",
+          "transaction_no": "FIN-870AF38FC8CA4F2A",
+          "transaction_date": "2026-10-18",
+          "direction": "income",
+          "category": "客户收款",
+          "amount": "150.0000",
+          "currency": "USD",
+          "exchange_rate": "7.250000",
+          "allocated_amount": "0.0000",
+          "kind": "customer_receipt",
+          "status": "confirmed",
+          "voided_at": null,
+          "void_reason": "",
+          "payment_method": "",
+          "reference": "",
+          "notes": "",
+          "split_from": null,
+          "customer": 1,
+          "supplier": null,
+          "order": 1,
+          "purchase_order": null,
+          "plan": 3,
+          "replaces": null
+        }
+      ],
+      "advance_allocations": [],
+      "plans": [
+        {
+          "id": 4,
+          "customer_id": 1,
+          "supplier_id": null,
+          "exchange_rate": "7.1",
+          "remaining_rmb": "1136.0",
+          "remaining_amount": "160.0000",
+          "contract_no": "R1A-USD500",
+          "counterparty_name": "R1A 合成客户",
+          "is_overdue": true,
+          "created_at": "2026-10-18T00:33:40.042168+08:00",
+          "updated_at": "2026-10-18T00:46:41.756835+08:00",
+          "direction": "receivable",
+          "due_date": "2026-10-17",
+          "planned_amount": "350.0000",
+          "settled_amount": "190.0000",
+          "currency": "USD",
+          "status": "open",
+          "notes": "默认尾款",
+          "order": 1,
+          "purchase_order": null
+        },
+        {
+          "id": 3,
+          "customer_id": 1,
+          "supplier_id": null,
+          "exchange_rate": "7.1",
+          "remaining_rmb": "0.0",
+          "remaining_amount": "0.0000",
+          "contract_no": "R1A-USD500",
+          "counterparty_name": "R1A 合成客户",
+          "is_overdue": false,
+          "created_at": "2026-10-18T00:33:40.038738+08:00",
+          "updated_at": "2026-10-18T00:34:29.339287+08:00",
+          "direction": "receivable",
+          "due_date": "2026-10-18",
+          "planned_amount": "150.0000",
+          "settled_amount": "150.0000",
+          "currency": "USD",
+          "status": "settled",
+          "notes": "默认预付款/定金",
+          "order": 1,
+          "purchase_order": null
+        }
+      ],
+      "inventory": [
+        {
+          "id": 8,
+          "movement_no": "SH-834C5D39E16D47C9",
+          "related_orders": [],
+          "related_order_nos": [
+            "R1A-USD500"
+          ],
+          "sku_code": "R1A-PCS",
+          "display_name": "R1A PCS 单位灯具",
+          "sales_model": "F7B-PCS",
+          "product_name": "R1A PCS 单位灯具",
+          "order_no": "R1A-USD500",
+          "type_display": "销售出库",
+          "signed_quantity": "-10.00",
+          "overage_quantity": "0.00",
+          "overage_summary": "",
+          "reversal_movement": null,
+          "is_reversed": false,
+          "reversal_status": "",
+          "created_at": "2026-10-18T00:33:51.815745+08:00",
+          "updated_at": "2026-10-18T00:33:51.815844+08:00",
+          "trade_quantity": null,
+          "trade_unit_price": null,
+          "trade_snapshot": {
+            "unit": "pcs",
+            "base_unit": "pcs",
+            "factor": "1",
+            "name": ""
+          },
+          "movement_date": "2026-10-18",
+          "type": "sale_out",
+          "sku_code_snapshot": "R1A-PCS",
+          "sales_model_snapshot": "F7B-PCS",
+          "display_name_snapshot": "R1A PCS 单位灯具",
+          "quantity": "10.00",
+          "warehouse": "默认仓",
+          "unit_cost": "0.0000",
+          "reference": "SH-3C5A4262153C487F",
+          "notes": "",
+          "source_type": "shipment",
+          "source_no": "SH-3C5A4262153C487F",
+          "is_automatic": true,
+          "is_overage": false,
+          "overage_reason": "",
+          "trade_unit": null,
+          "sku": 4,
+          "supplier_sku": null,
+          "order": 1
+        }
+      ],
+      "payment_summary": {
+        "paid_amount": "340.0",
+        "balance_amount": "160.0",
+        "planned_amount": "500.0"
+      },
+      "expense_summary": {
+        "expense_rmb": "0.0"
+      },
+      "profit_summary": {
+        "sales_rmb": "3550.0",
+        "purchase_base_rmb": "0.0",
+        "purchase_additional_rmb": "0.0",
+        "purchase_cost_rmb": "0.0",
+        "order_expense_rmb": "0.0",
+        "expense_rmb": "0.0",
+        "estimated_profit_rmb": "3550.0",
+        "estimated_gross_profit_rmb": "3550.0",
+        "estimated_margin_percent": "100.0"
+      },
+      "fulfillment_summary": {
+        "ordered_quantity": "10.0",
+        "shipped_quantity": "10.0",
+        "remaining_quantity": "0.0"
+      }
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/customers/1/insights/",
+    "status": 200,
+    "body": {
+      "customer": {
+        "id": 1,
+        "contact_count": 0,
+        "order_count": 2,
+        "sales_amount": "7100.00",
+        "created_at": "2026-10-18T00:29:07.377341+08:00",
+        "updated_at": "2026-10-18T00:29:07.377358+08:00",
+        "name": "R1A 合成客户",
+        "code": "R1A-C",
+        "country": "Germany",
+        "region": "",
+        "source": "",
+        "status": "company",
+        "owner": "",
+        "website": "",
+        "address": "",
+        "notes": "",
+        "next_follow_up": null,
+        "owner_profile": null
+      },
+      "yearly": [
+        {
+          "year": 2025,
+          "orders": 0,
+          "sales": "0.0"
+        },
+        {
+          "year": 2026,
+          "orders": 2,
+          "sales": "7100.0"
+        }
+      ],
+      "top_products": [
+        {
+          "sku__product__id": 1,
+          "sku__product__name": "R1A 商用线性灯具长名称多规格测试",
+          "sales": "3550.0",
+          "quantity": "20.0"
+        },
+        {
+          "sku__product__id": 2,
+          "sku__product__name": "R1A 独立产品",
+          "sales": "3550.0",
+          "quantity": "10.0"
+        }
+      ],
+      "recent_orders": [
+        {
+          "id": 2,
+          "items": [
+            {
+              "id": 2,
+              "sku": 1,
+              "sku_code": "R1A-EXISTING",
+              "sales_model": "F7B-1024",
+              "model": "F7B-1024",
+              "product_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+              "display_name": "R1A 商用线性灯具长名称多规格测试-10W-24V",
+              "description": "R1A commercial linear light, 10W, 24V",
+              "unit": "m",
+              "quantity": "20.00",
+              "unit_price": "25.0000",
+              "cost_price": "0.0000",
+              "amount": "500.00",
+              "notes": "",
+              "supplier_sku": null,
+              "supplier_name": "",
+              "supplier_model": "",
+              "supplier_sku_code": "",
+              "supplier_barcode": "",
+              "supplier_allocation": null,
+              "trade_unit": null,
+              "trade_quantity": null,
+              "trade_unit_price": null,
+              "trade_snapshot": {
+                "unit": "m",
+                "base_unit": "m",
+                "factor": "1",
+                "name": ""
+              }
+            }
+          ],
+          "customer_name": "R1A 合成客户",
+          "customer_country": "Germany",
+          "quote_no": "",
+          "source_quote_no": "",
+          "status_display": "已确认",
+          "total_amount": "500.00",
+          "base_amount": "500.00",
+          "approved_change_amount": "0.00",
+          "paid_amount": "500.00",
+          "balance_amount": "0.0",
+          "created_at": "2026-10-18T00:36:21.338367+08:00",
+          "updated_at": "2026-10-18T00:38:04.884153+08:00",
+          "order_no": "R1A-REVERSAL",
+          "order_date": "2026-10-18",
+          "expected_ship_date": null,
+          "tail_goods_policy": "SAME_CARTON",
+          "status": "confirmed",
+          "currency": "USD",
+          "exchange_rate": "7.100000",
+          "shipping_fee": "0.0000",
+          "discount": "0.0000",
+          "notes": "",
+          "cancelled_at": null,
+          "cancellation_reason": "",
+          "customer": 1,
+          "quote": null
+        },
+        {
+          "id": 1,
+          "items": [
+            {
+              "id": 1,
+              "sku": 4,
+              "sku_code": "R1A-PCS",
+              "sales_model": "F7B-PCS",
+              "model": "F7B-PCS",
+              "product_name": "R1A PCS 单位灯具",
+              "display_name": "R1A PCS 单位灯具",
+              "description": "R1A 独立产品",
+              "unit": "pcs",
+              "quantity": "10.00",
+              "unit_price": "50.0000",
+              "cost_price": "0.0000",
+              "amount": "500.00",
+              "notes": "",
+              "supplier_sku": null,
+              "supplier_name": "",
+              "supplier_model": "",
+              "supplier_sku_code": "",
+              "supplier_barcode": "",
+              "supplier_allocation": null,
+              "trade_unit": null,
+              "trade_quantity": null,
+              "trade_unit_price": null,
+              "trade_snapshot": {
+                "unit": "pcs",
+                "base_unit": "pcs",
+                "factor": "1",
+                "name": ""
+              }
+            }
+          ],
+          "customer_name": "R1A 合成客户",
+          "customer_country": "Germany",
+          "quote_no": "",
+          "source_quote_no": "",
+          "status_display": "已完成",
+          "total_amount": "500.00",
+          "base_amount": "500.00",
+          "approved_change_amount": "0.00",
+          "paid_amount": "340.00",
+          "balance_amount": "160.0",
+          "created_at": "2026-10-18T00:29:07.378730+08:00",
+          "updated_at": "2026-10-18T00:34:48.458694+08:00",
+          "order_no": "R1A-USD500",
+          "order_date": "2026-10-18",
+          "expected_ship_date": "2026-10-18",
+          "tail_goods_policy": "SAME_CARTON",
+          "status": "completed",
+          "currency": "USD",
+          "exchange_rate": "7.100000",
+          "shipping_fee": "0.0000",
+          "discount": "0.0000",
+          "notes": "",
+          "cancelled_at": null,
+          "cancellation_reason": "",
+          "customer": 1,
+          "quote": null
+        }
+      ],
+      "recent_follow_ups": []
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "path": "/api/context/customer/1/",
+    "status": 404,
+    "body": "{\"detail\":\"未知的数据类型。\"}"
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/payment-plans/?direction=receivable&status=open&overdue=1",
+    "status": 200,
+    "body": {
+      "count": 1,
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "id": 4,
+          "customer_id": 1,
+          "supplier_id": null,
+          "exchange_rate": "7.1",
+          "remaining_rmb": "1136.0",
+          "remaining_amount": "160.0000",
+          "contract_no": "R1A-USD500",
+          "counterparty_name": "R1A 合成客户",
+          "is_overdue": true,
+          "created_at": "2026-10-18T00:33:40.042168+08:00",
+          "updated_at": "2026-10-18T00:46:41.756835+08:00",
+          "direction": "receivable",
+          "due_date": "2026-10-17",
+          "planned_amount": "350.0000",
+          "settled_amount": "190.0000",
+          "currency": "USD",
+          "status": "open",
+          "notes": "默认尾款",
+          "order": 1,
+          "purchase_order": null
+        }
+      ]
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/finance-dashboard/",
+    "status": 200,
+    "body": {
+      "metrics": {
+        "receivable_count": 1,
+        "receivable_rmb": "1136.0",
+        "payable_count": 0,
+        "payable_rmb": "0.0",
+        "sales_rmb": "7100.0",
+        "monthly_sales_rmb": "7100.0",
+        "purchase_cost_rmb": "0.0",
+        "order_expense_rmb": "0.0",
+        "estimated_profit_rmb": "7100.0",
+        "income_rmb": "6386.8723",
+        "expense_rmb": "1903.0",
+        "net_cash_rmb": "4483.8723",
+        "advance_receipt_rmb": "271.87233408",
+        "advance_payment_rmb": "0.0"
+      },
+      "period": {
+        "date_from": "2026-10-01",
+        "date_to": "2026-10-18"
+      },
+      "due_items": [
+        {
+          "id": 4,
+          "direction": "receivable",
+          "contract_no": "R1A-USD500",
+          "order": 1,
+          "purchase_order": null,
+          "counterparty_name": "R1A 合成客户",
+          "due_date": "2026-10-17",
+          "remaining_amount": "160.0",
+          "currency": "USD"
+        }
+      ],
+      "categories": [
+        {
+          "direction": "expense",
+          "category": "供应商付款",
+          "amount": "1903.0"
+        },
+        {
+          "direction": "income",
+          "category": "客户收款",
+          "amount": "6115.0"
+        },
+        {
+          "direction": "income",
+          "category": "未分配预收款",
+          "amount": "271.8723"
+        }
+      ],
+      "monthly_cash": [
+        {
+          "month": "2026-10",
+          "income": "6386.8723",
+          "expense": "1903.0",
+          "net": "4483.8723"
+        }
+      ]
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/reports/data/?source=sales&date_from=2026-10-01&date_to=2026-10-31",
+    "status": 200,
+    "body": {
+      "source": "sales",
+      "group_by": "time",
+      "date_field": "order_date",
+      "date_label": "订单日期",
+      "grain": "month",
+      "comparison": "previous",
+      "period": {
+        "date_from": "2026-10-01",
+        "date_to": "2026-10-31"
+      },
+      "comparison_period": {
+        "date_from": "2026-08-31",
+        "date_to": "2026-09-30"
+      },
+      "totals": {
+        "amount": "7100.0",
+        "count": 2,
+        "quantities": {
+          "pcs": "10.0",
+          "m": "20.0"
+        }
+      },
+      "previous": {
+        "amount": "0.0",
+        "count": 0,
+        "quantities": {}
+      },
+      "changes": {
+        "amount": null,
+        "count": null
+      },
+      "rows": [
+        {
+          "key": "2026-10",
+          "label": "2026-10",
+          "amount": "7100.0",
+          "quantities": {
+            "pcs": "10.0",
+            "m": "20.0"
+          },
+          "count": 2
+        }
+      ],
+      "note": "有效销售订单的合同金额；商品行之外的运费、折扣和已确认合同变更统一列为订单金额调整，不分摊 SKU。金额按订单汇率折人民币，不代表实收或利润。",
+      "filters": {},
+      "filter_summary": [],
+      "generated_at": "2026-10-17T16:48:33.662285Z"
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "method": "GET",
+    "path": "/api/reports/data/?source=cash&date_from=2026-10-01&date_to=2026-10-31",
+    "status": 200,
+    "body": {
+      "source": "cash",
+      "group_by": "time",
+      "date_field": "transaction_date",
+      "date_label": "发生日期",
+      "grain": "month",
+      "comparison": "previous",
+      "period": {
+        "date_from": "2026-10-01",
+        "date_to": "2026-10-31"
+      },
+      "comparison_period": {
+        "date_from": "2026-08-31",
+        "date_to": "2026-09-30"
+      },
+      "totals": {
+        "amount": "4483.8723",
+        "count": 13,
+        "quantities": {}
+      },
+      "previous": {
+        "amount": "0.0",
+        "count": 0,
+        "quantities": {}
+      },
+      "changes": {
+        "amount": null,
+        "count": null
+      },
+      "rows": [
+        {
+          "key": "2026-10",
+          "label": "2026-10",
+          "amount": "4483.8723",
+          "quantities": {},
+          "count": 13
+        }
+      ],
+      "note": "仅已确认流水；收入为正、支出为负，汇总为净现金流。优先使用实际人民币金额，否则按流水汇率折算。不重复统计预收预付分配。分类为收支分类。",
+      "filters": {},
+      "filter_summary": [],
+      "generated_at": "2026-10-17T16:48:33.693922Z"
+    }
+  },
+  {
+    "type": "REAL_API_OBSERVATION",
+    "path": "/api/skus/1/inventory/",
+    "status": 404,
+    "body": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n  <title>Page not found at /api/skus/1/inventory/</title>\n  <meta name=\"robots\" content=\"NONE,NOARCHIVE\">\n  <style>\n    html * { padding:0; margin:0; }\n    body * { padding:10px 20px; }\n    body * * { padding:0; }\n    body { font-family: sans-serif; background:#eee; color:#000; }\n    body > :where(header, main, footer) { border-bottom:1px solid #ddd; }\n    h1 { font-weight:normal; margin-bottom:.4em; }\n    h1 small { font-size:60%; color:#666; font-weight:normal; }\n    table { border:none; border-collapse: collapse; width:100%; }\n    td, th { vertical-align:top; padding:2px 3px; }\n    th { width:12em; text-align:right; color:#666; padding-right:.5em; }\n    #info { background:#f6f6f6; }\n    #info ol { margin: 0.5em 4em; }\n    #info ol li { font-family: monospace; }\n    #summary { background: #ffc; }\n    #explanation { background:#eee; border-bottom: 0px none; }\n    pre.exception_value { font-family: sans-serif; color: #575757; font-size: 1.5em; margin: 10px 0 10px 0; }\n  </style>\n</head>\n<body>\n  <header id=\"summary\">\n    <h1>Page not found <small>(404)</small></h1>\n    \n    <table class=\"meta\">\n      <tr>\n        <th scope=\"row\">Request Method:</th>\n        <td>GET</td>\n      </tr>\n      <tr>\n        <th scope=\"row\">Request URL:</th>\n        <td>http://127.0.0.1:8126/api/skus/1/inventory/</td>\n      </tr>\n      \n    </table>\n  </header>\n\n  <main id=\"info\">\n    \n      <p>\n      Using the URLconf defined in <code>config.urls</code>,\n      Django tried these URL patterns, in this order:\n      </p>\n      <ol>\n        \n          <li>\n            \n              <code>\n                admin/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                media/&lt;path:relative_path&gt;\n                [name='crm-protected-media']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                products/&lt;int:pk&gt;/combination-rules/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                products/&lt;int:pk&gt;/sku-plan/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                products/&lt;int:pk&gt;/sku-plan/&lt;str:operation&gt;/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                products/&lt;int:pk&gt;/supplier-candidate-pool/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                skus/&lt;int:pk&gt;/supplier-candidates/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                orders/&lt;int:order_id&gt;/items/&lt;int:item_id&gt;/supplier-allocation/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                reports/catalog/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                reports/data/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                dashboard/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                finance-dashboard/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                organization/overview/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                session/current-operator/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                exchange-rates/usd-cny/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                context/&lt;str:entity&gt;/&lt;int:pk&gt;/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                import/templates/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                import/csv/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                import/csv/preview/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                import/csv/execute/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sku-trade-units/$\n                [name='skutradeunit-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sku-trade-units\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='skutradeunit-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sku-trade-units/(?P&lt;pk&gt;[^/.]+)/$\n                [name='skutradeunit-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sku-trade-units/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='skutradeunit-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sales-rules/$\n                [name='sales-rule-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sales-rules\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sales-rule-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sales-rules/check-quote/$\n                [name='sales-rule-check-quote']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sales-rules/check-quote\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sales-rule-check-quote']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sales-rules/(?P&lt;pk&gt;[^/.]+)/$\n                [name='sales-rule-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sales-rules/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sales-rule-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^supplier-capabilities/$\n                [name='supplier-capability-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^supplier-capabilities\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='supplier-capability-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^supplier-capabilities/preview/$\n                [name='supplier-capability-preview']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^supplier-capabilities/preview\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='supplier-capability-preview']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^supplier-capabilities/(?P&lt;pk&gt;[^/.]+)/$\n                [name='supplier-capability-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^supplier-capabilities/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='supplier-capability-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^customers/$\n                [name='customer-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^customers\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='customer-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^customers/next-code/$\n                [name='customer-next-code']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^customers/next-code\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='customer-next-code']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^customers/owner-options/$\n                [name='customer-owner-options']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^customers/owner-options\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='customer-owner-options']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^customers/sources/$\n                [name='customer-sources']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^customers/sources\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='customer-sources']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^customers/(?P&lt;pk&gt;[^/.]+)/$\n                [name='customer-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^customers/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='customer-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^customers/(?P&lt;pk&gt;[^/.]+)/insights/$\n                [name='customer-insights']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^customers/(?P&lt;pk&gt;[^/.]+)/insights\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='customer-insights']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^suppliers/$\n                [name='supplier-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^suppliers\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='supplier-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^suppliers/(?P&lt;pk&gt;[^/.]+)/$\n                [name='supplier-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^suppliers/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='supplier-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^suppliers/(?P&lt;pk&gt;[^/.]+)/supplier-skus/$\n                [name='supplier-supplier-skus']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^suppliers/(?P&lt;pk&gt;[^/.]+)/supplier-skus\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='supplier-supplier-skus']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/$\n                [name='purchase-order-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='purchase-order-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/$\n                [name='purchase-order-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='purchase-order-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/cancel/$\n                [name='purchase-order-cancel']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/cancel\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='purchase-order-cancel']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/cost-allocation/$\n                [name='purchase-order-cost-allocation']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/cost-allocation\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='purchase-order-cost-allocation']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/cost-allocation-preview/$\n                [name='purchase-order-cost-allocation-preview']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/cost-allocation-preview\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='purchase-order-cost-allocation-preview']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/pay/$\n                [name='purchase-order-pay']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/pay\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='purchase-order-pay']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/place/$\n                [name='purchase-order-place']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/place\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='purchase-order-place']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/receive/$\n                [name='purchase-order-receive']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/receive\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='purchase-order-receive']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/receipts/(?P&lt;receipt_id&gt;[^/.]+)/reverse/$\n                [name='purchase-order-reverse-receipt']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^purchase-orders/(?P&lt;pk&gt;[^/.]+)/receipts/(?P&lt;receipt_id&gt;[^/.]+)/reverse\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='purchase-order-reverse-receipt']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^contacts/$\n                [name='contact-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^contacts\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='contact-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^contacts/(?P&lt;pk&gt;[^/.]+)/$\n                [name='contact-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^contacts/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='contact-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^follow-ups/$\n                [name='followup-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^follow-ups\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='followup-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^follow-ups/methods/$\n                [name='followup-methods']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^follow-ups/methods\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='followup-methods']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^follow-ups/(?P&lt;pk&gt;[^/.]+)/$\n                [name='followup-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^follow-ups/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='followup-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^follow-ups/(?P&lt;pk&gt;[^/.]+)/attachments/(?P&lt;attachment_id&gt;[^/.]+)/$\n                [name='followup-delete-attachment']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^follow-ups/(?P&lt;pk&gt;[^/.]+)/attachments/(?P&lt;attachment_id&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='followup-delete-attachment']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^follow-ups/(?P&lt;pk&gt;[^/.]+)/attachments/$\n                [name='followup-upload-attachments']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^follow-ups/(?P&lt;pk&gt;[^/.]+)/attachments\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='followup-upload-attachments']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^categories/$\n                [name='productcategory-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^categories\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='productcategory-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^categories/reorder/$\n                [name='productcategory-reorder']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^categories/reorder\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='productcategory-reorder']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^categories/tree/$\n                [name='productcategory-tree']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^categories/tree\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='productcategory-tree']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^categories/(?P&lt;pk&gt;[^/.]+)/$\n                [name='productcategory-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^categories/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='productcategory-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^category-attributes/$\n                [name='categoryattribute-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^category-attributes\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='categoryattribute-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^category-attributes/reorder/$\n                [name='categoryattribute-reorder']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^category-attributes/reorder\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='categoryattribute-reorder']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^category-attributes/(?P&lt;pk&gt;[^/.]+)/$\n                [name='categoryattribute-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^category-attributes/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='categoryattribute-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^products/$\n                [name='product-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^products\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^products/next-code/$\n                [name='product-next-code']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^products/next-code\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-next-code']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^products/(?P&lt;pk&gt;[^/.]+)/$\n                [name='product-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^products/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^products/(?P&lt;pk&gt;[^/.]+)/customers/$\n                [name='product-customers']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^products/(?P&lt;pk&gt;[^/.]+)/customers\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-customers']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^products/(?P&lt;pk&gt;[^/.]+)/sales-model-prefix-apply/$\n                [name='product-sales-model-prefix-apply']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^products/(?P&lt;pk&gt;[^/.]+)/sales-model-prefix-apply\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-sales-model-prefix-apply']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^products/(?P&lt;pk&gt;[^/.]+)/sales-model-prefix-preview/$\n                [name='product-sales-model-prefix-preview']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^products/(?P&lt;pk&gt;[^/.]+)/sales-model-prefix-preview\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-sales-model-prefix-preview']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^hs-codes/$\n                [name='hs-code-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^hs-codes\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='hs-code-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^hs-codes/(?P&lt;pk&gt;[^/.]+)/$\n                [name='hs-code-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^hs-codes/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='hs-code-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^hs-codes/(?P&lt;pk&gt;[^/.]+)/assign-products/$\n                [name='hs-code-assign-products']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^hs-codes/(?P&lt;pk&gt;[^/.]+)/assign-products\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='hs-code-assign-products']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/$\n                [name='sku-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sku-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/batch-create/$\n                [name='sku-batch-create']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/batch-create\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sku-batch-create']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/inventory-list/$\n                [name='sku-inventory-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/inventory-list\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sku-inventory-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/sales-model-abbreviations/$\n                [name='sku-sales-model-abbreviations']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/sales-model-abbreviations\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sku-sales-model-abbreviations']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)/$\n                [name='sku-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sku-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)/image/$\n                [name='sku-image']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)/image\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sku-image']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)/inventory-detail/$\n                [name='sku-inventory-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)/inventory-detail\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sku-inventory-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)/packaging/$\n                [name='sku-packaging']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)/packaging\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sku-packaging']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)/supplier-skus/$\n                [name='sku-supplier-skus']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)/supplier-skus\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sku-supplier-skus']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)/thumbnail/$\n                [name='sku-thumbnail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)/thumbnail\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sku-thumbnail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)/versions/$\n                [name='sku-versions']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^skus/(?P&lt;pk&gt;[^/.]+)/versions\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='sku-versions']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^supplier-skus/$\n                [name='supplier-sku-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^supplier-skus\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='supplier-sku-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^supplier-skus/(?P&lt;pk&gt;[^/.]+)/$\n                [name='supplier-sku-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^supplier-skus/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='supplier-sku-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^supplier-skus/(?P&lt;pk&gt;[^/.]+)/set-preferred/$\n                [name='supplier-sku-set-preferred']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^supplier-skus/(?P&lt;pk&gt;[^/.]+)/set-preferred\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='supplier-sku-set-preferred']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^packaging-templates/$\n                [name='packagingtemplate-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^packaging-templates\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='packagingtemplate-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^packaging-templates/(?P&lt;pk&gt;[^/.]+)/$\n                [name='packagingtemplate-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^packaging-templates/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='packagingtemplate-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sku-packaging-profiles/$\n                [name='skupackagingprofile-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sku-packaging-profiles\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='skupackagingprofile-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sku-packaging-profiles/(?P&lt;pk&gt;[^/.]+)/$\n                [name='skupackagingprofile-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^sku-packaging-profiles/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='skupackagingprofile-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shipments/$\n                [name='shipment-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shipments\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='shipment-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shipments/(?P&lt;pk&gt;[^/.]+)/$\n                [name='shipment-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shipments/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='shipment-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shipments/(?P&lt;pk&gt;[^/.]+)/copy-estimated-packing/$\n                [name='shipment-copy-estimated-packing']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shipments/(?P&lt;pk&gt;[^/.]+)/copy-estimated-packing\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='shipment-copy-estimated-packing']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shipments/(?P&lt;pk&gt;[^/.]+)/packages/$\n                [name='shipment-packages']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shipments/(?P&lt;pk&gt;[^/.]+)/packages\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='shipment-packages']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shipments/(?P&lt;pk&gt;[^/.]+)/reverse/$\n                [name='shipment-reverse']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shipments/(?P&lt;pk&gt;[^/.]+)/reverse\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='shipment-reverse']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shipments/(?P&lt;pk&gt;[^/.]+)/packages/(?P&lt;package_id&gt;[^/.]+)/$\n                [name='shipment-update-package']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shipments/(?P&lt;pk&gt;[^/.]+)/packages/(?P&lt;package_id&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='shipment-update-package']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^product-parameters/$\n                [name='productparameter-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^product-parameters\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='productparameter-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^product-parameters/(?P&lt;pk&gt;[^/.]+)/$\n                [name='productparameter-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^product-parameters/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='productparameter-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^product-certificates/$\n                [name='productcertificate-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^product-certificates\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='productcertificate-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^product-certificates/(?P&lt;pk&gt;[^/.]+)/$\n                [name='productcertificate-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^product-certificates/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='productcertificate-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/$\n                [name='quote-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/availability-preview/$\n                [name='quote-availability-preview']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/availability-preview\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-availability-preview']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/$\n                [name='quote-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/accept/$\n                [name='quote-accept']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/accept\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-accept']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/availability/$\n                [name='quote-availability']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/availability\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-availability']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/important-notes/(?P&lt;note_id&gt;[^/.]+)/deactivate/$\n                [name='quote-deactivate-important-note']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/important-notes/(?P&lt;note_id&gt;[^/.]+)/deactivate\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-deactivate-important-note']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/expire/$\n                [name='quote-expire']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/expire\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-expire']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/export/$\n                [name='quote-export']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/export\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-export']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/important-notes/$\n                [name='quote-important-notes']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/important-notes\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-important-notes']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/mark-sent/$\n                [name='quote-mark-sent']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/mark-sent\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-mark-sent']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/order-draft/$\n                [name='quote-order-draft']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/order-draft\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-order-draft']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/packing-plan/$\n                [name='quote-packing-plan']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/packing-plan\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-packing-plan']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/pi-data/$\n                [name='quote-pi-data']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/pi-data\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-pi-data']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/reject/$\n                [name='quote-reject']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/reject\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-reject']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/important-notes/(?P&lt;note_id&gt;[^/.]+)/restore/$\n                [name='quote-restore-important-note']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/important-notes/(?P&lt;note_id&gt;[^/.]+)/restore\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-restore-important-note']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/revise/$\n                [name='quote-revise']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/revise\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-revise']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/workbench/$\n                [name='quote-workbench']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^quotes/(?P&lt;pk&gt;[^/.]+)/workbench\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='quote-workbench']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/$\n                [name='order-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/$\n                [name='order-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/cancel/$\n                [name='order-cancel']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/cancel\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-cancel']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/complete/$\n                [name='order-complete']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/complete\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-complete']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/confirm/$\n                [name='order-confirm']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/confirm\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-confirm']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/fulfillment/$\n                [name='order-fulfillment']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/fulfillment\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-fulfillment']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/generate-purchase-drafts/$\n                [name='order-generate-purchase-drafts']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/generate-purchase-drafts\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-generate-purchase-drafts']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/packing-plan/$\n                [name='order-packing-plan']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/packing-plan\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-packing-plan']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/procurement-plan/$\n                [name='order-procurement-plan']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/procurement-plan\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-procurement-plan']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/ship/$\n                [name='order-ship']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/ship\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-ship']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/start-production/$\n                [name='order-start-production']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/start-production\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-start-production']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/workbench/$\n                [name='order-workbench']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^orders/(?P&lt;pk&gt;[^/.]+)/workbench\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-workbench']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^transactions/$\n                [name='transaction-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^transactions\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='transaction-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^transactions/(?P&lt;pk&gt;[^/.]+)/$\n                [name='transaction-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^transactions/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='transaction-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^transactions/(?P&lt;pk&gt;[^/.]+)/allocate/$\n                [name='transaction-allocate']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^transactions/(?P&lt;pk&gt;[^/.]+)/allocate\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='transaction-allocate']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^transactions/(?P&lt;pk&gt;[^/.]+)/void/$\n                [name='transaction-void']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^transactions/(?P&lt;pk&gt;[^/.]+)/void\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='transaction-void']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^payment-plans/$\n                [name='payment-plan-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^payment-plans\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='payment-plan-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^payment-plans/(?P&lt;pk&gt;[^/.]+)/$\n                [name='payment-plan-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^payment-plans/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='payment-plan-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^payment-plans/(?P&lt;pk&gt;[^/.]+)/settle/$\n                [name='payment-plan-settle']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^payment-plans/(?P&lt;pk&gt;[^/.]+)/settle\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='payment-plan-settle']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^contract-changes/$\n                [name='contract-change-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^contract-changes\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='contract-change-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^contract-changes/(?P&lt;pk&gt;[^/.]+)/$\n                [name='contract-change-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^contract-changes/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='contract-change-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^contract-changes/(?P&lt;pk&gt;[^/.]+)/approve/$\n                [name='contract-change-approve']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^contract-changes/(?P&lt;pk&gt;[^/.]+)/approve\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='contract-change-approve']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^contract-changes/(?P&lt;pk&gt;[^/.]+)/reject/$\n                [name='contract-change-reject']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^contract-changes/(?P&lt;pk&gt;[^/.]+)/reject\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='contract-change-reject']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^inventory-movements/$\n                [name='inventorymovement-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^inventory-movements\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='inventorymovement-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^inventory-movements/batch/$\n                [name='inventorymovement-batch']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^inventory-movements/batch\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='inventorymovement-batch']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^inventory-movements/(?P&lt;pk&gt;[^/.]+)/$\n                [name='inventorymovement-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^inventory-movements/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='inventorymovement-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^inventory-movements/(?P&lt;pk&gt;[^/.]+)/reverse/$\n                [name='inventorymovement-reverse']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^inventory-movements/(?P&lt;pk&gt;[^/.]+)/reverse\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='inventorymovement-reverse']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^organization-units/$\n                [name='organizationunit-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^organization-units\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='organizationunit-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^organization-units/(?P&lt;pk&gt;[^/.]+)/$\n                [name='organizationunit-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^organization-units/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='organizationunit-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^positions/$\n                [name='position-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^positions\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='position-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^positions/(?P&lt;pk&gt;[^/.]+)/$\n                [name='position-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^positions/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='position-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^access-roles/$\n                [name='accessrole-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^access-roles\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='accessrole-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^access-roles/(?P&lt;pk&gt;[^/.]+)/$\n                [name='accessrole-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^access-roles/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='accessrole-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^access-roles/(?P&lt;pk&gt;[^/.]+)/permission-matrix/$\n                [name='accessrole-permission-matrix']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^access-roles/(?P&lt;pk&gt;[^/.]+)/permission-matrix\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='accessrole-permission-matrix']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^role-permissions/$\n                [name='rolepermission-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^role-permissions\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='rolepermission-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^role-permissions/(?P&lt;pk&gt;[^/.]+)/$\n                [name='rolepermission-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^role-permissions/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='rolepermission-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^employees/$\n                [name='employeeprofile-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^employees\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='employeeprofile-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^employees/(?P&lt;pk&gt;[^/.]+)/$\n                [name='employeeprofile-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^employees/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='employeeprofile-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^operation-logs/$\n                [name='operation-log-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^operation-logs\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='operation-log-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^operation-logs/(?P&lt;pk&gt;[^/.]+)/$\n                [name='operation-log-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^operation-logs/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='operation-log-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                \n                [name='api-root']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                &lt;drf_format_suffix:format&gt;\n                [name='api-root']\n              </code>\n            \n          </li>\n        \n      </ol>\n      <p>\n        \n          The current path, <code>api/skus/1/inventory/</code>,\n        \n        didn’t match any of these.\n      </p>\n    \n  </main>\n\n  <footer id=\"explanation\">\n    <p>\n      You’re seeing this error because you have <code>DEBUG = True</code> in\n      your Django settings file. Change that to <code>False</code>, and Django\n      will display a standard 404 page.\n    </p>\n  </footer>\n</body>\n</html>\n"
+  }
+]

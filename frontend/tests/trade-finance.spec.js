@@ -23,6 +23,35 @@ beforeEach(() => {
 })
 
 describe('trade finance interactions', () => {
+  it('keeps one transaction identity on failure and blocks concurrent submissions', async () => {
+    const wrapper = mount(TransactionPage, { ...options, global: { ...options.global, plugins: [await purchaseRouter('/transactions')] } })
+    await flushPromises()
+    const open = async () => { await wrapper.findAll('button').find(button => button.text() === '新增记账').trigger('click'); await wrapper.find('.dialog input[type="number"]').setValue('12.34') }
+    await open()
+    let reject
+    mocks.post.mockImplementationOnce(() => new Promise((_, no) => { reject = no }))
+    await wrapper.get('form.dialog').trigger('submit')
+    await wrapper.get('form.dialog').trigger('submit')
+    expect(mocks.post).toHaveBeenCalledTimes(1)
+    expect(wrapper.get('form.dialog fieldset').attributes('disabled')).toBeDefined()
+    expect(wrapper.get('form.dialog button[aria-label="关闭"]').attributes('disabled')).toBeDefined()
+    await wrapper.get('.mask').trigger('click')
+    expect(wrapper.find('form.dialog').exists()).toBe(true)
+    await wrapper.findAll('button').find(button => button.text() === '新增记账').trigger('click')
+    expect(mocks.post).toHaveBeenCalledTimes(1)
+    const first = mocks.post.mock.calls[0][1].transaction_no
+    reject(new Error('response lost')); await flushPromises()
+    mocks.post.mockRejectedValueOnce({response:{data:{transaction_no:['already exists']}}})
+    await wrapper.get('form.dialog').trigger('submit'); await flushPromises()
+    expect(mocks.post.mock.calls[1][1].transaction_no).toBe(first)
+    expect(wrapper.text()).toContain(`请先核对流水 ${first}`)
+    expect(wrapper.text()).not.toContain('财务流水已保存')
+    await wrapper.get('form.dialog').trigger('submit'); await flushPromises()
+    expect(mocks.post.mock.calls[2][1].transaction_no).toBe(first)
+    await open(); await wrapper.get('form.dialog').trigger('submit'); await flushPromises()
+    expect(mocks.post.mock.calls[3][1].transaction_no).not.toBe(first)
+    wrapper.unmount()
+  })
   it('settles a populated plan with inherited currency and exchange rate', async () => {
     mocks.listAll.mockResolvedValue([plan])
     const wrapper = mount(PaymentPlanPage, { ...options, global: { ...options.global, plugins: [await purchaseRouter()] }, props: { direction: 'receivable' } })
@@ -50,7 +79,7 @@ describe('trade finance interactions', () => {
     await wrapper.find('form.dialog').trigger('submit')
     await flushPromises()
     expect(mocks.post).toHaveBeenCalledWith('/transactions/', expect.objectContaining({ kind: 'unallocated_payment', supplier: 8, direction: 'expense', amount: 50 }))
-    expect(mocks.post.mock.calls[0][1]).not.toHaveProperty('transaction_no')
+    expect(mocks.post.mock.calls[0][1].transaction_no).toMatch(/^FIN-[A-F0-9]{32}$/)
     wrapper.unmount()
   })
 

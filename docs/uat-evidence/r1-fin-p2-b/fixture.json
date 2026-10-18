@@ -1,0 +1,18 @@
+{
+  "customer": 1,
+  "order": 1,
+  "sources": [
+    1,
+    2
+  ],
+  "voucher_sha256": "c05c986a85c5ebead12a8967abae5e2eddd356efe150826fcc21aafcb88ed754",
+  "voucher": {
+    "type": "SYNTHETIC_BANK_VOUCHER_NOT_REAL",
+    "original_currency": "USD",
+    "original_amount": "100.00",
+    "bank_net_cny": "705.00",
+    "included_fee_cny": "5.00",
+    "date": "2026-10-19",
+    "reference": "P2B-SYNTH-BANK-01"
+  }
+}

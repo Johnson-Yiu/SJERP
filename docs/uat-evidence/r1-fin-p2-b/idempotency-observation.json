@@ -1,0 +1,13 @@
+{
+  "same_request": {
+    "status": 200,
+    "event_id": 2,
+    "event_no": "P2B-EVENT-3c437b05-3c6e-4799-a086-bb1c4dd85042",
+    "status_value": "confirmed"
+  },
+  "conflicting_payload": {
+    "status": 409,
+    "detail": "请求键内容冲突或资金来源已被占用，请按原请求键核查。"
+  },
+  "database_event_count": 2
+}

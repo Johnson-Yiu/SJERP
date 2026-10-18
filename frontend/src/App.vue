@@ -39,6 +39,7 @@ const nav = [
   { label: '应收计划', path: '/receivables', module: 'finance', icon: WalletCards },
   { label: '应付计划', path: '/payables', module: 'finance', icon: WalletCards },
   { label: '财务流水', path: '/transactions', module: 'transactions', icon: WalletCards },
+  { label: '人民币资金', path: '/rmb-cash-events', module: 'transactions', icon: WalletCards },
   { label: '数据导入', path: '/import', module: 'imports', icon: Upload },
   { section: '组织与系统' },
   { label: '组织与权限', path: '/organization', module: 'organization', icon: ShieldCheck },

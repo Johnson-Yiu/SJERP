@@ -1,0 +1,116 @@
+{
+  "database": "r1-fin-p2-b-isolated.sqlite3",
+  "orders": [
+    {
+      "id": 1,
+      "order_no": "P2B-SYNTH-O",
+      "status": "confirmed",
+      "currency": "USD"
+    }
+  ],
+  "payment_plans": [
+    {
+      "id": 1,
+      "direction": "receivable",
+      "currency": "USD",
+      "planned_amount": "30.0000",
+      "settled_amount": "30.0000",
+      "status": "settled"
+    },
+    {
+      "id": 2,
+      "direction": "receivable",
+      "currency": "USD",
+      "planned_amount": "70.0000",
+      "settled_amount": "70.0000",
+      "status": "settled"
+    }
+  ],
+  "transactions": [
+    {
+      "id": 1,
+      "transaction_no": "P2B-SYNTH-T",
+      "amount": "30.0000",
+      "allocated_amount": "0.0000",
+      "rmb_amount": "213.0000",
+      "status": "confirmed",
+      "split_from_id": null
+    }
+  ],
+  "cash_events": [
+    {
+      "id": 1,
+      "event_no": "P2B-EVENT-dd69dce4-e63d-410b-9c54-43134888edfa",
+      "request_key": "P2B-REQUEST-76dbfe02-9360-4942-953d-0b5bbc29fe24",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "amount": "100.0000",
+      "bank_date": "2026-10-19",
+      "bank_net_amount": "705.00",
+      "fee_mode": "none",
+      "fee_amount": "0.00",
+      "source_account": "SYNTH-FX-01",
+      "rmb_account": "SYNTH-CNY-01",
+      "bank_reference": "P2B-SYNTH-BANK-01",
+      "status": "cancelled",
+      "evidence_reference": "P2B-SYNTH-VOUCHER-01",
+      "evidence_sha256": "c05c986a85c5ebead12a8967abae5e2eddd356efe150826fcc21aafcb88ed754",
+      "cancelled_reason": "隔离测试：先验证草稿放弃留痕",
+      "confirmed_at": null
+    },
+    {
+      "id": 2,
+      "event_no": "P2B-EVENT-3c437b05-3c6e-4799-a086-bb1c4dd85042",
+      "request_key": "P2B-REQUEST-d4381052-59b9-4095-8087-1d57bcc49169",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "amount": "100.0000",
+      "bank_date": "2026-10-19",
+      "bank_net_amount": "705.00",
+      "fee_mode": "none",
+      "fee_amount": "0.00",
+      "source_account": "SYNTH-FX-01",
+      "rmb_account": "SYNTH-CNY-01",
+      "bank_reference": "P2B-SYNTH-BANK-02",
+      "status": "confirmed",
+      "evidence_reference": "P2B-SYNTH-VOUCHER-02",
+      "evidence_sha256": "c05c986a85c5ebead12a8967abae5e2eddd356efe150826fcc21aafcb88ed754",
+      "cancelled_reason": "",
+      "confirmed_at": "2026-10-18 18:35:42.406573+00:00"
+    }
+  ],
+  "source_allocations": [
+    {
+      "id": 1,
+      "event_id": 1,
+      "source_id": 1,
+      "amount": "30.0000",
+      "currency": "USD",
+      "source_transaction_no": "P2B-SYNTH-T"
+    },
+    {
+      "id": 2,
+      "event_id": 1,
+      "source_id": 2,
+      "amount": "70.0000",
+      "currency": "USD",
+      "source_transaction_no": "FIN-D24EE9345A6244D7"
+    },
+    {
+      "id": 3,
+      "event_id": 2,
+      "source_id": 1,
+      "amount": "30.0000",
+      "currency": "USD",
+      "source_transaction_no": "P2B-SYNTH-T"
+    },
+    {
+      "id": 4,
+      "event_id": 2,
+      "source_id": 2,
+      "amount": "70.0000",
+      "currency": "USD",
+      "source_transaction_no": "FIN-D24EE9345A6244D7"
+    }
+  ]
+}

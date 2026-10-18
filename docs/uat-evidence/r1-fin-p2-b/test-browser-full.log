@@ -1,0 +1,415 @@
+
+> senju-crm-erp@1.0.0 test:browser
+> playwright test --reporter=line
+
+
+Running 147 tests using 2 workers
+
+
+
+(node:19892) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/147] browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1440px
+[2/147] browser-tests\certificates-hs-ux.spec.js:10:1 › certificate list and grouped form actual bounds 1440
+[3/147] browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1280px
+[4/147] browser-tests\certificates-hs-ux.spec.js:11:1 › HS assignment searchable selection and actual bounds 1440
+[5/147] browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1024px
+[6/147] browser-tests\certificates-hs-ux.spec.js:10:1 › certificate list and grouped form actual bounds 1280
+[7/147] browser-tests\crm-saving.spec.js:86:3 › contacts pending PUT failure preserves fields and quick retry sends one request
+[8/147] browser-tests\certificates-hs-ux.spec.js:11:1 › HS assignment searchable selection and actual bounds 1280
+[9/147] browser-tests\certificates-hs-ux.spec.js:10:1 › certificate list and grouped form actual bounds 1024
+[10/147] browser-tests\certificates-hs-ux.spec.js:11:1 › HS assignment searchable selection and actual bounds 1024
+[11/147] browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1440px
+[12/147] browser-tests\certificates-hs-ux.spec.js:12:57 › hs-codes pending POST blocks backdrop/back/navigation; failure retains input and retries once
+[13/147] browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1280px
+[14/147] browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1024px
+[15/147] browser-tests\certificates-hs-ux.spec.js:12:57 › product-certificates pending POST blocks backdrop/back/navigation; failure retains input and retries once
+[16/147] browser-tests\crm-saving.spec.js:86:3 › follow-ups pending PUT failure preserves fields and quick retry sends one request
+[17/147] browser-tests\certificates-hs-ux.spec.js:13:1 › HS read-only hides maintenance and both pages reload errors recover
+[18/147] browser-tests\certificates-hs-ux.spec.js:15:1 › assignment pending PUT blocks close and navigation, retains selection on rejection and retries
+[19/147] browser-tests\certificates-hs-ux.spec.js:16:1 › certificate first load failure retries to empty, and expiry URL survives reload
+[20/147] browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1440px
+[21/147] browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1280px
+[22/147] browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1024px
+[23/147] browser-tests\crm-ux.spec.js:167:1 › contact create, duplicate advisory, primary edit and return query stay consistent
+[24/147] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 quotes customer column and filters 1440
+[25/147] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 orders customer column and filters 1440
+[26/147] browser-tests\crm-ux.spec.js:193:3 › follow-up filters, detailed groups, and long content fit 1440px
+[27/147] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 quotes customer column and filters 1280
+[28/147] browser-tests\crm-ux.spec.js:193:3 › follow-up filters, detailed groups, and long content fit 1280px
+[29/147] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 orders customer column and filters 1280
+[30/147] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 quotes customer column and filters 1024
+[31/147] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 orders customer column and filters 1024
+[32/147] browser-tests\crm-ux.spec.js:193:3 › follow-up filters, detailed groups, and long content fit 1024px
+[33/147] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1440px
+[34/147] browser-tests\crm-ux.spec.js:220:1 › follow-up search and due filters remain in URL and saved text updates list
+[35/147] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1280px
+[36/147] browser-tests\crm-ux.spec.js:247:1 › saved attachment delete can be cancelled, confirmed, and remains removed after reopening
+[37/147] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1024px
+[38/147] browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1440
+[39/147] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 640px
+[40/147] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 390px
+[41/147] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1440px
+  1) browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1440 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('账面收入（折算参考）', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('账面收入（折算参考）', { exact: true }) with timeout 5000ms
+      - waiting for getByText('账面收入（折算参考）', { exact: true })
+
+
+      12 | for(const width of [1440,1024]) test(`reference basis across finance, transactions and saved cash config ${width}`,async({page})=>{
+      13 |  await page.setViewportSize({width,height:1000});await mock(page)
+    > 14 |  await page.goto('/finance');await expect(page.getByText('账面收入（折算参考）',{exact:true})).toBeVisible();await expect(page.locator('main')).toContainText('原币为CNY');await expect(page.locator('main')).not.toContainText('实际收入')
+         |                                                                                      ^
+      15 |  await page.goto('/transactions');await expect(page.getByRole('columnheader',{name:'人民币折算参考',exact:true})).toBeVisible();await expect(page.locator('main')).toContainText('不代表银行实际到账')
+      16 |  await page.getByRole('button',{name:'新增记账',exact:true}).click();await expect(page.getByRole('spinbutton',{name:/参考折算汇率/})).toBeVisible();await expect(page.getByRole('dialog')).not.toContainText('结汇汇率');await page.getByRole('button',{name:'取消',exact:true}).click()
+      17 |  await page.goto('/reports?source=cash&group_by=direction&date_field=transaction_date&title=旧保存净现金流&view=table&metric=amount&date_from=2026-10-01&date_to=2026-10-18')
+        at C:\Users\Johnson\.codex\worktrees\r1-fin-p2-b\森爵照明管理系统\frontend\browser-tests\finance-reference-basis.spec.js:14:86
+
+    Error Context: test-results\finance-reference-basis-re-9357c--and-saved-cash-config-1440\error-context.md
+
+
+
+(node:31628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[42/147] browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1024
+[43/147] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1280px
+[44/147] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1024px
+[45/147] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 640px
+  2) browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1024 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('账面收入（折算参考）', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('账面收入（折算参考）', { exact: true }) with timeout 5000ms
+      - waiting for getByText('账面收入（折算参考）', { exact: true })
+
+
+      12 | for(const width of [1440,1024]) test(`reference basis across finance, transactions and saved cash config ${width}`,async({page})=>{
+      13 |  await page.setViewportSize({width,height:1000});await mock(page)
+    > 14 |  await page.goto('/finance');await expect(page.getByText('账面收入（折算参考）',{exact:true})).toBeVisible();await expect(page.locator('main')).toContainText('原币为CNY');await expect(page.locator('main')).not.toContainText('实际收入')
+         |                                                                                      ^
+      15 |  await page.goto('/transactions');await expect(page.getByRole('columnheader',{name:'人民币折算参考',exact:true})).toBeVisible();await expect(page.locator('main')).toContainText('不代表银行实际到账')
+      16 |  await page.getByRole('button',{name:'新增记账',exact:true}).click();await expect(page.getByRole('spinbutton',{name:/参考折算汇率/})).toBeVisible();await expect(page.getByRole('dialog')).not.toContainText('结汇汇率');await page.getByRole('button',{name:'取消',exact:true}).click()
+      17 |  await page.goto('/reports?source=cash&group_by=direction&date_field=transaction_date&title=旧保存净现金流&view=table&metric=amount&date_from=2026-10-01&date_to=2026-10-18')
+        at C:\Users\Johnson\.codex\worktrees\r1-fin-p2-b\森爵照明管理系统\frontend\browser-tests\finance-reference-basis.spec.js:14:86
+
+    Error Context: test-results\finance-reference-basis-re-6b67f--and-saved-cash-config-1024\error-context.md
+
+
+(node:30112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[46/147] browser-tests\finance-retry-safety.spec.js:3:1 › finance pending submission and ambiguous retry preserve identity and guard departure
+[47/147] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 390px
+[48/147] browser-tests\fulfillment-receivables.spec.js:21:1 › completed receivable navigation, Back, settlement and refund reloads retain fulfillment
+  3) browser-tests\finance-retry-safety.spec.js:3:1 › finance pending submission and ambiguous retry preserve identity and guard departure 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('dialog', { name: '新增记账', exact: true }).getByRole('alert')
+    Expected substring: "记账结果尚未确认"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" getByRole('dialog', { name: '新增记账', exact: true }).getByRole('alert') with timeout 5000ms
+      - waiting for getByRole('dialog', { name: '新增记账', exact: true }).getByRole('alert')
+
+
+      28 |   expect(writes).toHaveLength(1)
+      29 |   release()
+    > 30 |   await expect(form.getByRole('alert')).toContainText('记账结果尚未确认')
+         |                                         ^
+      31 |   await form.getByRole('button', { name: '保存', exact: true }).click()
+      32 |   await expect(form).toContainText('编号重复不代表本次保存成功')
+      33 |   expect(writes).toHaveLength(2)
+        at C:\Users\Johnson\.codex\worktrees\r1-fin-p2-b\森爵照明管理系统\frontend\browser-tests\finance-retry-safety.spec.js:30:41
+
+    Error Context: test-results\finance-retry-safety-finan-244f7-dentity-and-guard-departure\error-context.md
+
+
+
+(node:22872) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[49/147] browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1440
+[50/147] browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1280
+  4) browser-tests\fulfillment-receivables.spec.js:21:1 › completed receivable navigation, Back, settlement and refund reloads retain fulfillment 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('dialog', { name: '订单工作台' })
+    Expected substring: "履约：已完成"
+    Received string:    " 关闭订单工作台 · 履约与回款合成客户 · 下单于 —FUP02-500预计交期：未设置已完成概览订单明细 (0)采购与发货回款 (0)装箱库存流水 (0)操作日志 (0) 订单摘要订单金额USD 500.00订单总额商品项数0订单数量预计交期未设置当前待办订单已完成当前没有待处理事项。 履约进度按销售出库流水统计。0%订单数量已出库待出库查看采购与发货 回款进度已收含预收核销，并扣除退款。68%应收计划USD 500.00已收金额USD 340.00当前待收USD 160.00查看 / 登记本单应收成本与毛利分配商品成本¥ 0.00分摊附加费用¥ 0.00预估总成本¥ 0.00预估毛利¥ 0.00 来源报价成交时采用的报价版本。该订单未关联来源报价。合同金额调整已确认调整会改变当前合同总额；调减只会减少未结清计划，不会自动退款。USD 500.00基础金额 USD 0.00已确认调整 USD 0.00新增调整暂无金额调整记录。"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" getByRole('dialog', { name: '订单工作台' }) with timeout 5000ms
+      - waiting for getByRole('dialog', { name: '订单工作台' })
+        13 × locator resolved to <article role="dialog" aria-modal="true" data-v-39de5d98="" aria-label="订单工作台" class="detail-modal order-workbench">…</article>
+           - unexpected value " 关闭订单工作台 · 履约与回款合成客户 · 下单于 —FUP02-500预计交期：未设置已完成概览订单明细 (0)采购与发货回款 (0)装箱库存流水 (0)操作日志 (0) 订单摘要订单金额USD 500.00订单总额商品项数0订单数量预计交期未设置当前待办订单已完成当前没有待处理事项。 履约进度按销售出库流水统计。0%订单数量已出库待出库查看采购与发货 回款进度已收含预收核销，并扣除退款。68%应收计划USD 500.00已收金额USD 340.00当前待收USD 160.00查看 / 登记本单应收成本与毛利分配商品成本¥ 0.00分摊附加费用¥ 0.00预估总成本¥ 0.00预估毛利¥ 0.00 来源报价成交时采用的报价版本。该订单未关联来源报价。合同金额调整已确认调整会改变当前合同总额；调减只会减少未结清计划，不会自动退款。USD 500.00基础金额 USD 0.00已确认调整 USD 0.00新增调整暂无金额调整记录。"
+
+
+      21 | test('completed receivable navigation, Back, settlement and refund reloads retain fulfillment',async({page})=>{
+      22 |  const state=await setup(page);const modal=page.getByRole('dialog',{name:'订单工作台'})
+    > 23 |  await expect(modal).toContainText('履约：已完成');await expect(modal.locator('.current-todo-card')).toContainText('待收 USD 160.00')
+         |                      ^
+      24 |  await modal.locator('.current-todo-card a').click();await expect(page).toHaveURL(/receivables\?order=7/)
+      25 |  await expect(page.getByRole('table')).toContainText('160.00');await page.goBack()
+      26 |  await expect(modal.locator('.current-todo-card')).toContainText('160.00')
+        at C:\Users\Johnson\.codex\worktrees\r1-fin-p2-b\森爵照明管理系统\frontend\browser-tests\fulfillment-receivables.spec.js:23:22
+
+    Error Context: test-results\fulfillment-receivables-co-214e9--reloads-retain-fulfillment\error-context.md
+
+
+
+(node:22988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[51/147] browser-tests\fulfillment-receivables.spec.js:32:1 › restricted user cannot read protected debt from malicious unmasked order payload
+[52/147] browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1024
+[53/147] browser-tests\import-ux.spec.js:8:1 › downloads contain actual UTF8 BOM headers and correctly quoted failure rows
+[54/147] browser-tests\import-ux.spec.js:9:1 › pending preview and execute block back/navigation, duplicates and changes; cancel never writes
+[55/147] browser-tests\import-ux.spec.js:10:1 › restricted import entry and template retry
+[56/147] browser-tests\inventory-ux.spec.js:27:2 › inventory overview, reserved quantities and SKU drawer at 1440
+[57/147] browser-tests\inventory-ux.spec.js:38:2 › ledger filters, sticky actions and adjustment dialog at 1440
+[58/147] browser-tests\inventory-ux.spec.js:27:2 › inventory overview, reserved quantities and SKU drawer at 1280
+  5) browser-tests\fulfillment-receivables.spec.js:32:1 › restricted user cannot read protected debt from malicious unmasked order payload 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('dialog', { name: '订单工作台' })
+    Expected substring: "履约：已完成"
+    Received string:    " 关闭订单工作台 · 履约与回款合成客户 · 下单于 —FUP02-500预计交期：未设置已完成概览订单明细 (0)采购与发货回款 (0)装箱库存流水 (0)操作日志 (0) 订单摘要订单金额USD 500.00订单总额商品项数0订单数量预计交期未设置当前待办订单已完成当前没有待处理事项。 履约进度按销售出库流水统计。0%订单数量已出库待出库查看采购与发货 回款进度已收含预收核销，并扣除退款。68%应收计划USD 500.00已收金额USD 340.00当前待收USD 0.00成本与毛利分配商品成本¥ 0.00分摊附加费用¥ 0.00预估总成本¥ 0.00预估毛利¥ 0.00 来源报价成交时采用的报价版本。该订单未关联来源报价。合同金额调整已确认调整会改变当前合同总额；调减只会减少未结清计划，不会自动退款。USD 500.00基础金额 USD 0.00已确认调整 USD 0.00新增调整暂无金额调整记录。"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" getByRole('dialog', { name: '订单工作台' }) with timeout 5000ms
+      - waiting for getByRole('dialog', { name: '订单工作台' })
+        13 × locator resolved to <article role="dialog" aria-modal="true" data-v-39de5d98="" aria-label="订单工作台" class="detail-modal order-workbench">…</article>
+           - unexpected value " 关闭订单工作台 · 履约与回款合成客户 · 下单于 —FUP02-500预计交期：未设置已完成概览订单明细 (0)采购与发货回款 (0)装箱库存流水 (0)操作日志 (0) 订单摘要订单金额USD 500.00订单总额商品项数0订单数量预计交期未设置当前待办订单已完成当前没有待处理事项。 履约进度按销售出库流水统计。0%订单数量已出库待出库查看采购与发货 回款进度已收含预收核销，并扣除退款。68%应收计划USD 500.00已收金额USD 340.00当前待收USD 0.00成本与毛利分配商品成本¥ 0.00分摊附加费用¥ 0.00预估总成本¥ 0.00预估毛利¥ 0.00 来源报价成交时采用的报价版本。该订单未关联来源报价。合同金额调整已确认调整会改变当前合同总额；调减只会减少未结清计划，不会自动退款。USD 500.00基础金额 USD 0.00已确认调整 USD 0.00新增调整暂无金额调整记录。"
+
+
+      32 | test('restricted user cannot read protected debt from malicious unmasked order payload',async({page})=>{
+      33 |  const state=await setup(page,{restricted:true});state.settlement='no_plans';state.balance='0';await page.reload();const modal=page.getByRole('dialog',{name:'订单工作台'})
+    > 34 |  await expect(modal).toContainText('履约：已完成');await expect(modal.locator('.payment-card')).toHaveCount(0)
+         |                      ^
+      35 |  await expect(modal.locator('.current-todo-card')).not.toContainText('160');await expect(page.getByRole('columnheader',{name:'已收 / 待收'})).toHaveCount(0)
+      36 |  await expect(modal.locator('.current-todo-card')).toContainText('当前没有可查看的履约待办。')
+      37 |  if(process.env.R1A_EVIDENCE_DIR) await page.screenshot({path:process.env.R1A_EVIDENCE_DIR+'/08-mocked-permission.png',fullPage:true})
+        at C:\Users\Johnson\.codex\worktrees\r1-fin-p2-b\森爵照明管理系统\frontend\browser-tests\fulfillment-receivables.spec.js:34:22
+
+    Error Context: test-results\fulfillment-receivables-re-71e6c-ious-unmasked-order-payload\error-context.md
+
+
+[59/147] browser-tests\inventory-ux.spec.js:38:2 › ledger filters, sticky actions and adjustment dialog at 1280
+(node:12124) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[60/147] browser-tests\fulfillment-receivables.spec.js:39:1 › completion pending prevents duplicate UI action and failed reload retries without false financial success
+[61/147] browser-tests\inventory-ux.spec.js:27:2 › inventory overview, reserved quantities and SKU drawer at 1024
+[62/147] browser-tests\inventory-ux.spec.js:38:2 › ledger filters, sticky actions and adjustment dialog at 1024
+[63/147] browser-tests\inventory-ux.spec.js:49:1 › page restoration, detail navigation and browser Back preserve inventory context
+[64/147] browser-tests\inventory-ux.spec.js:57:1 › empty and failed inventories distinguish errors, retry and no records
+[65/147] browser-tests\inventory-ux.spec.js:62:1 › restricted UI hides adjustment, reversal and unauthorized cross-module entrances
+[66/147] browser-tests\organization-access-ux.spec.js:12:37 › organization long matrix computed bounds and sticky headers 1440
+[67/147] browser-tests\organization-access-ux.spec.js:12:37 › organization long matrix computed bounds and sticky headers 1280
+[68/147] browser-tests\organization-access-ux.spec.js:12:37 › organization long matrix computed bounds and sticky headers 1024
+[69/147] browser-tests\organization-access-ux.spec.js:13:1 › dirty switching, cancel and delayed save/readback navigation are protected
+  6) browser-tests\fulfillment-receivables.spec.js:39:1 › completion pending prevents duplicate UI action and failed reload retries without false financial success 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('dialog', { name: '订单工作台' }).getByRole('button', { name: '完成履约', exact: true }).first()
+
+
+      40 |  const state=await setup(page,{shipped:true});let release;state.gate=new Promise(resolve=>{release=resolve})
+      41 |  const modal=page.getByRole('dialog',{name:'订单工作台'});const button=modal.getByRole('button',{name:'完成履约',exact:true}).first()
+    > 42 |  await button.click();await expect(button).toBeDisabled();await modal.getByRole('button',{name:'完成履约',exact:true}).last().click({force:true});expect(state.writes).toBe(1)
+         |               ^
+      43 |  release();await expect(modal).toContainText('履约：已完成');await expect(modal).toContainText('履约已完成，未收款项继续保留。')
+      44 |  state.fail=true;await page.reload();await expect(modal).toContainText('加载失败',{timeout:15000});await expect(modal.locator('.payment-card')).toHaveCount(0)
+      45 |  state.fail=false;await modal.getByRole('button',{name:'重试',exact:true}).click();await expect(modal.locator('.current-todo-card')).toContainText('160.00')
+        at C:\Users\Johnson\.codex\worktrees\r1-fin-p2-b\森爵照明管理系统\frontend\browser-tests\fulfillment-receivables.spec.js:42:15
+
+    Error Context: test-results\fulfillment-receivables-co-0c3f0-out-false-financial-success\error-context.md
+
+
+(node:27772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[70/147] browser-tests\fulfillment-receivables.spec.js:49:48 › unknown no_plans has a review task and no confirmed zero
+[71/147] browser-tests\organization-access-ux.spec.js:14:1 › save refusal and readback refusal retain input; readback retry never posts twice
+[72/147] browser-tests\organization-access-ux.spec.js:15:1 › read-only and overview retry do not expose a write action
+[73/147] browser-tests\organization-access-ux.spec.js:16:95 › access-denied layout and permitted return 1440
+[74/147] browser-tests\organization-access-ux.spec.js:16:95 › access-status-error layout and permitted return 1440
+[75/147] browser-tests\organization-access-ux.spec.js:16:95 › access-denied layout and permitted return 1280
+  7) browser-tests\fulfillment-receivables.spec.js:49:48 › unknown no_plans has a review task and no confirmed zero 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('dialog', { name: '订单工作台' }).locator('.current-todo-card')
+    Expected substring: "应收计划待核对"
+    Received string:    "当前待办订单已完成当前没有待处理事项。"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" getByRole('dialog', { name: '订单工作台' }).locator('.current-todo-card') with timeout 5000ms
+      - waiting for getByRole('dialog', { name: '订单工作台' }).locator('.current-todo-card')
+        13 × locator resolved to <article data-v-39de5d98="" class="workbench-card current-todo-card">…</article>
+           - unexpected value "当前待办订单已完成当前没有待处理事项。"
+
+
+      50 |  const state=await setup(page);state.settlement=settlement;state.balance='0';state.label='无有效应收计划';await page.reload()
+      51 |  const modal=page.getByRole('dialog',{name:'订单工作台'})
+    > 52 |  await expect(modal.locator('.current-todo-card')).toContainText('应收计划待核对')
+         |                                                    ^
+      53 |  await expect(modal.locator('.current-todo-card')).not.toContainText('当前没有待处理事项')
+      54 |  await expect(modal.locator('.payment-card dd').last()).toHaveText('待核对')
+      55 |  await expect(modal.locator('.payment-card .progress-track')).toHaveCount(0)
+        at C:\Users\Johnson\.codex\worktrees\r1-fin-p2-b\森爵照明管理系统\frontend\browser-tests\fulfillment-receivables.spec.js:52:52
+
+    Error Context: test-results\fulfillment-receivables-un-f89ea--task-and-no-confirmed-zero\error-context.md
+
+
+(node:30788) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[76/147] browser-tests\fulfillment-receivables.spec.js:49:48 › unknown review has a review task and no confirmed zero
+[77/147] browser-tests\organization-access-ux.spec.js:16:95 › access-status-error layout and permitted return 1280
+[78/147] browser-tests\organization-access-ux.spec.js:16:95 › access-denied layout and permitted return 1024
+[79/147] browser-tests\organization-access-ux.spec.js:16:95 › access-status-error layout and permitted return 1024
+[80/147] browser-tests\organization-access-ux.spec.js:17:45 › permission service 401 failure and recovery avoid redirects
+  8) browser-tests\fulfillment-receivables.spec.js:49:48 › unknown review has a review task and no confirmed zero 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('dialog', { name: '订单工作台' }).locator('.current-todo-card')
+    Expected substring: "应收计划待核对"
+    Received string:    "当前待办订单已完成当前没有待处理事项。"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" getByRole('dialog', { name: '订单工作台' }).locator('.current-todo-card') with timeout 5000ms
+      - waiting for getByRole('dialog', { name: '订单工作台' }).locator('.current-todo-card')
+        14 × locator resolved to <article data-v-39de5d98="" class="workbench-card current-todo-card">…</article>
+           - unexpected value "当前待办订单已完成当前没有待处理事项。"
+
+
+      50 |  const state=await setup(page);state.settlement=settlement;state.balance='0';state.label='无有效应收计划';await page.reload()
+      51 |  const modal=page.getByRole('dialog',{name:'订单工作台'})
+    > 52 |  await expect(modal.locator('.current-todo-card')).toContainText('应收计划待核对')
+         |                                                    ^
+      53 |  await expect(modal.locator('.current-todo-card')).not.toContainText('当前没有待处理事项')
+      54 |  await expect(modal.locator('.payment-card dd').last()).toHaveText('待核对')
+      55 |  await expect(modal.locator('.payment-card .progress-track')).toHaveCount(0)
+        at C:\Users\Johnson\.codex\worktrees\r1-fin-p2-b\森爵照明管理系统\frontend\browser-tests\fulfillment-receivables.spec.js:52:52
+
+    Error Context: test-results\fulfillment-receivables-un-93a18--task-and-no-confirmed-zero\error-context.md
+
+
+(node:30288) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[81/147] browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1440
+[82/147] browser-tests\organization-access-ux.spec.js:17:45 › permission service 403 failure and recovery avoid redirects
+[83/147] browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1440
+[84/147] browser-tests\organization-access-ux.spec.js:17:45 › permission service 500 failure and recovery avoid redirects
+[85/147] browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1280
+[86/147] browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1280
+[87/147] browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1024
+[88/147] browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1024
+[89/147] browser-tests\overview-reports.spec.js:33:1 › saved local chart configurations survive reload, reorder, remove and undo
+[90/147] browser-tests\overview-reports.spec.js:41:1 › drill and previous-analysis return preserve actual period and browser navigation restores URL
+[91/147] browser-tests\overview-reports.spec.js:47:1 › empty dashboard and charts have useful neutral states
+[92/147] browser-tests\organization-access-ux.spec.js:17:45 › permission service network failure and recovery avoid redirects
+[93/147] browser-tests\overview-reports.spec.js:50:1 › initial failures recover, refresh failure keeps stale data, and catalog has retry
+[94/147] browser-tests\overview-reports.spec.js:56:1 › restricted UI hides sources, export and navigation, retaining unavailable local configuration
+[95/147] browser-tests\packaging-ux.spec.js:16:37 › packaging actual layout and linked navigation 1440
+[96/147] browser-tests\packaging-ux.spec.js:16:37 › packaging actual layout and linked navigation 1280
+[97/147] browser-tests\packaging-ux.spec.js:16:37 › packaging actual layout and linked navigation 1024
+[98/147] browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1440
+[99/147] browser-tests\packaging-ux.spec.js:23:37 › trade units conversion and form fit 1440
+[100/147] browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1280
+[101/147] browser-tests\packaging-ux.spec.js:23:37 › trade units conversion and form fit 1280
+[102/147] browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1024
+[103/147] browser-tests\product-master-ux.spec.js:52:1 › product detail URL survives reload and close preserves list filters
+[104/147] browser-tests\packaging-ux.spec.js:23:37 › trade units conversion and form fit 1024
+[105/147] browser-tests\product-master-ux.spec.js:59:1 › product parameter to product detail closes back to original filtered list
+[106/147] browser-tests\packaging-ux.spec.js:28:1 › packaging pending save blocks close/back/navigation; rejected data stays for retry
+[107/147] browser-tests\product-master-ux.spec.js:64:1 › view-only fixtures cannot create/edit/delete through these page entries
+[108/147] browser-tests\packaging-ux.spec.js:31:1 › trade pending and failed save keep SKU/factor; switching warns, and retry succeeds once
+[109/147] browser-tests\product-master-ux.spec.js:68:1 › product failure preserves input and retry; unsaved cancel requires confirmation
+[110/147] browser-tests\packaging-ux.spec.js:34:1 › initial template failure retries and view-only permissions hide all writing entries
+[111/147] browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1440
+[112/147] browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1280
+[113/147] browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1440
+[114/147] browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1024
+[115/147] browser-tests\product-master-ux.spec.js:93:1 › category saving blocks backdrop, retains failure and permits retry
+[116/147] browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1280
+[117/147] browser-tests\product-master-ux.spec.js:101:1 › product parameter context and pending save failure remain recoverable
+[118/147] browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1440
+[119/147] browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1024
+[120/147] browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1280
+[121/147] browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1024
+[122/147] browser-tests\product-master-ux.spec.js:121:1 › category drag preserves selected node and collapsed state after reorder
+[123/147] browser-tests\sku-ux.spec.js:21:1 › batch failure retains selections and retry succeeds once
+[124/147] browser-tests\product-master-ux.spec.js:134:41 › R0-F9 products status labels stay on one line 1440
+[125/147] browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1440
+[126/147] browser-tests\product-master-ux.spec.js:134:41 › R0-F9 products status labels stay on one line 1280
+[127/147] browser-tests\product-master-ux.spec.js:134:41 › R0-F9 products status labels stay on one line 1024
+[128/147] browser-tests\supplier-ux.spec.js:24:37 › supplier long names, notes, filters, editor and detail at 1440
+[129/147] browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1280
+[130/147] browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1024
+[131/147] browser-tests\supplier-ux.spec.js:24:37 › supplier long names, notes, filters, editor and detail at 1280
+[132/147] browser-tests\sku-ux.spec.js:23:1 › SKU read-only detail remains accessible with no write controls
+[133/147] browser-tests\supplier-ux.spec.js:24:37 › supplier long names, notes, filters, editor and detail at 1024
+[134/147] browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1440
+[135/147] browser-tests\supplier-ux.spec.js:33:1 › supplier creates, cancels dirty edits, saves and reopens consistent detail and list
+[136/147] browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1280
+[137/147] browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1024
+[138/147] browser-tests\supplier-ux.spec.js:37:1 › duplicate code, invalid ratio and optional category failures keep entered data
+[139/147] browser-tests\sku-ux.spec.js:26:1 › SKU history load failure remains distinct from empty history and retries
+[140/147] browser-tests\supplier-ux.spec.js:40:1 › filters and page survive reload, detail close and procurement workbench return
+[141/147] browser-tests\supplier-ux.spec.js:43:1 › initial errors retry to empty and refresh errors retain supplier list
+[142/147] browser-tests\supplier-ux.spec.js:46:1 › restricted view hides supplier write actions and purchase shortcuts
+[143/147] browser-tests\sku-ux.spec.js:28:1 › SKU logical loads keep separate history and ignore late responses in the rendered list
+[144/147] browser-tests\sku-ux.spec.js:57:1 › transaction-unit navigation returns to SKU editor with original list context
+[145/147] browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1440
+[146/147] browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1280
+[147/147] browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1024
+  8 failed
+    browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1440 
+    browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1024 
+    browser-tests\finance-retry-safety.spec.js:3:1 › finance pending submission and ambiguous retry preserve identity and guard departure 
+    browser-tests\fulfillment-receivables.spec.js:21:1 › completed receivable navigation, Back, settlement and refund reloads retain fulfillment 
+    browser-tests\fulfillment-receivables.spec.js:32:1 › restricted user cannot read protected debt from malicious unmasked order payload 
+    browser-tests\fulfillment-receivables.spec.js:39:1 › completion pending prevents duplicate UI action and failed reload retries without false financial success 
+    browser-tests\fulfillment-receivables.spec.js:49:48 › unknown no_plans has a review task and no confirmed zero 
+    browser-tests\fulfillment-receivables.spec.js:49:48 › unknown review has a review task and no confirmed zero 
+  139 passed (4.2m)

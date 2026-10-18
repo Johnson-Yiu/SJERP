@@ -12,6 +12,7 @@ import PurchaseOrderPage from './views/PurchaseOrderPage.vue'
 import FinanceDashboardPage from './views/FinanceDashboardPage.vue'
 import PaymentPlanPage from './views/PaymentPlanPage.vue'
 import TransactionPage from './views/TransactionPage.vue'
+import CashEventPage from './views/CashEventPage.vue'
 import PackagingPage from './views/PackagingPage.vue'
 import HSCodePage from './views/HSCodePage.vue'
 import { resourceConfigs } from './resourceConfigs'
@@ -49,6 +50,7 @@ export const routes = [
   { path: '/receivables', component: PaymentPlanPage, props: { direction: 'receivable' }, meta: { title: '应收计划', eyebrow: 'Accounts receivable', module: 'finance' } },
   { path: '/payables', component: PaymentPlanPage, props: { direction: 'payable' }, meta: { title: '应付计划', eyebrow: 'Accounts payable', module: 'finance' } },
   { path: '/transactions', component: TransactionPage, meta: { title: '财务流水', eyebrow: 'Cash ledger', module: 'transactions' } },
+  { path: '/rmb-cash-events', component: CashEventPage, meta: { title: '人民币资金', eyebrow: 'Bank cash facts', module: 'transactions' } },
   { path: '/access-denied', name: 'access-denied', component: AccessDeniedPage, meta: { accessStatus: true, title: '访问受限', eyebrow: 'Access denied' } },
   { path: '/access-status-error', name: 'access-status-error', component: AccessDeniedPage, meta: { accessStatus: true, title: '权限状态', eyebrow: 'Access status' } },
 ]

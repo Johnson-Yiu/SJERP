@@ -1,0 +1,40 @@
+import { test, expect } from '@playwright/test'
+
+// MOCKED_TEST: UI sequencing and stable-key presentation; real database/browser evidence is kept in the P2-B evidence folder.
+test('cash event UI previews, registers, and confirms without changing receipt flows', async ({ page }) => {
+  let status = 'pending'
+  const event = () => ({
+    id: 91, event_no: 'P2B-EVENT-MOCK-01', request_key: 'P2B-REQUEST-MOCK-01', kind: 'fx_settlement', currency: 'USD', amount: '100.0000', direction: 'income', bank_date: '2026-10-19', bank_net_amount: '705.00', fee_mode: 'none', fee_amount: '0.00', source_account: 'SYNTH-FX-01', rmb_account: 'SYNTH-CNY-01', bank_reference: 'P2B-MOCK-BANK-01', evidence_reference: 'P2B-MOCK-VOUCHER-01', evidence_sha256: 'a'.repeat(64), evidence_note: 'mock voucher checked', status, confirmed_at: status === 'confirmed' ? '2026-10-19T02:00:00Z' : null, sources: [{ transaction_id: 1, amount: '30.0000', currency: 'USD', snapshot: { transaction_no: 'P2B-SYNTH-T', exchange_rate: '7.100000' } }, { transaction_id: 2, amount: '70.0000', currency: 'USD', snapshot: { transaction_no: 'P2B-SYNTH-T-SPLIT', exchange_rate: '7.100000' } }], reference_amount: '710.00', net_minus_reference_information_only: '-5.00', note: '仅人工凭证确认事实；含扣费不再次扣减净额。', quoted_rate: '7.100000', fee_for: null,
+  })
+  await page.route('**/api/**', async route => {
+    const path = new URL(route.request().url()).pathname
+    if (path === '/api/session/current-operator/') return route.fulfill({ json: { development_superadmin: true, has_all_permissions: true } })
+    if (path === '/api/rmb-cash-events/' && route.request().method() === 'GET') return route.fulfill({ json: { results: status === 'pending' ? [] : [event()] } })
+    if (path === '/api/rmb-cash-events/sources/') return route.fulfill({ json: { results: [{ id: 1, transaction_no: 'P2B-SYNTH-T', currency: 'USD', direction: 'income', amount: '30.0000', remaining_candidate_amount: '30.0000', blocked_reason: null }, { id: 2, transaction_no: 'P2B-SYNTH-T-SPLIT', currency: 'USD', direction: 'income', amount: '70.0000', remaining_candidate_amount: '70.0000', blocked_reason: null }] } })
+    if (path === '/api/rmb-cash-events/preview/') return route.fulfill({ json: { source_total: '100.00', bank_net_amount: '705.00', confirmed: false, sources: [] } })
+    if (path === '/api/rmb-cash-events/' && route.request().method() === 'POST') return route.fulfill({ status: 201, json: event() })
+    if (path === '/api/rmb-cash-events/91/confirm/') { status = 'confirmed'; return route.fulfill({ json: event() }) }
+    return route.fulfill({ json: [] })
+  })
+  await page.goto('/rmb-cash-events')
+  await expect(page.getByRole('heading', { name: '银行资金记录' })).toBeVisible()
+  await page.getByRole('button', { name: '新建资金事件' }).click()
+  await page.getByLabel('银行净额（CNY）').fill('705.00')
+  await page.getByLabel('参考折算汇率').fill('7.100000')
+  await page.getByLabel('来源银行账户标识').fill('SYNTH-FX-01')
+  await page.getByLabel('人民币账户标识').fill('SYNTH-CNY-01')
+  await page.getByLabel('银行参考号').fill('P2B-MOCK-BANK-01')
+  await page.getByLabel('凭证 SHA256').fill('a'.repeat(64))
+  await page.getByLabel('人工核实说明').fill('mock voucher checked')
+  await page.getByRole('button', { name: '选择', exact: true }).nth(0).click()
+  await page.getByRole('button', { name: '选择', exact: true }).click()
+  await page.locator('.allocation-table input').nth(0).fill('30.00')
+  await page.locator('.allocation-table input').nth(1).fill('70.00')
+  await page.getByRole('button', { name: '后端预览' }).click()
+  await expect(page.locator('.preview-box')).toContainText('来源合计 USD 100.00')
+  await page.getByRole('button', { name: '登记待确认草稿' }).click()
+  await expect(page.getByText('资金事件待确认')).toBeVisible()
+  await page.getByRole('button', { name: '确认银行凭证' }).click()
+  await expect(page.getByText('资金事件已确认')).toBeVisible()
+  await expect(page.locator('.review-banner')).toContainText('已确认')
+})

@@ -1,0 +1,1389 @@
+npm warn Unknown cli config "--reporter". This will stop working in the next major version of npm.
+
+ RUN  v4.1.11 C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend
+
+ ❯ tests/follow-up-richtext-and-attachments.spec.js (12 tests | 2 failed) 23ms
+     × escapes user HTML and rejects executable image URLs 4ms
+     × keeps markdown image display safe and attribute-escaped 1ms
+ ❯ tests/finance-contract-navigation.spec.js (6 tests | 6 failed) 21ms
+     × routes a receivable contract by its order ID and leaves a missing ID as text 13ms
+     × routes a payable contract by its purchase order ID 2ms
+     × routes direct transactions and allocation history by IDs, including inactive history 2ms
+     × keeps Finance Dashboard due links for both contract directions 1ms
+     × separates period performance from current balances and blocks invalid report dates 1ms
+     × stores transaction filters in the URL and keeps the query server driven 1ms
+ ❯ tests/trade-finance.spec.js (5 tests | 5 failed) 19ms
+     × keeps one transaction identity on failure and blocks concurrent submissions 13ms
+     × settles a populated plan with inherited currency and exchange rate 2ms
+     × retains the selected supplier when saving an unallocated payment 1ms
+     × requires a reason for root transaction void and hides child void actions 1ms
+     × requires inspection acknowledgement and submits accepted quantity with notes 1ms
+ ❯ tests/payment-plan-filters.spec.js (4 tests | 4 failed) 28ms
+     × always requests the active direction and reloads when direction changes 22ms
+     × applies counterparty search and combined filters with a refreshable URL 1ms
+     × reset restores default filters for the active direction 2ms
+     × shows server-returned rows as-is and prevents an invalid date range request 1ms
+ ❯ tests/r0f1-directed.spec.js (5 tests | 5 failed) 18ms
+   × uses clear receivable success feedback and clears stale feedback before a failed operation 12ms
+   × uses clear payable success feedback and clears stale feedback before a failed operation 1ms
+   × restores all plan filters on initial URL and subsequent navigation 1ms
+   × retains the complete selected order number after clearing candidates and resets selection on new search 1ms
+   × clears save and allocation success before void failure and retries without conflicting feedback 1ms
+ ❯ tests/sku-management.spec.js (9 tests | 9 failed) 17ms
+   × shows one SKU list and permanent supplier maintenance with archive navigation 9ms
+   × all parameter values keeps the list and filtering clears bulk selection 1ms
+   × opens the batch supplier binding flow for selected active SKUs 1ms
+   × rules workspace avoids duplicating the SKU list and supplier allocation panel 1ms
+   × reloads SKU data after an archive edit without clearing the keyword 1ms
+   × bulk status writes only selected SKU and reports API failure 1ms
+   × saves a rule with filters and traits without creating supplier SKU records 1ms
+   × editing a reviewed draft disables publish until another analysis 1ms
+   × split controls clone reactive values and submit two variants 1ms
+ ❯ tests/purchase-payment.spec.js (8 tests | 8 failed) 18ms
+   × opens payment from the purchase row and submits inherited currency 12ms
+   × rejects overpayment and preserves input on server failure 1ms
+   × defaults new purchases to CNY and asks for a rate for foreign currency 1ms
+   × foreign payment uses the entered actual rate without changing the purchase contract 1ms
+   × CNY actual payment rate is readonly 1 regardless of historical contract input 1ms
+   × rejects an invalid actual payment rate (0) 1ms
+   × rejects an invalid actual payment rate (-1) 0ms
+   × rejects an invalid actual payment rate () 0ms
+ ❯ tests/purchase-costs.spec.js (5 tests | 5 failed) 15ms
+   × edits allocation, saves the revision and renders authoritative calculated totals 9ms
+   × keeps edits and shows server conflict without claiming success 1ms
+   × keeps results on outside clicks and submits a custom target name 1ms
+   × automatically previews fees without saving and ignores stale responses 2ms
+   × keeps restricted allocations read only and never submits masked order IDs 1ms
+ ❯ tests/app-dialogs.spec.js (4 tests | 4 failed) 13ms
+     × returns false from Cancel and true from Confirm 9ms
+     × disables confirmation while it is resolving, preventing double submission 1ms
+     × validates required input, returns its value, and returns null on Cancel 1ms
+     × shows an app-owned alert and a dismissible toast 1ms
+ ❯ tests/reports.spec.js (5 tests | 5 failed) 13ms
+   × independently queries an embedded preset with scoped filters and emits drill context 9ms
+   × a slower superseded request cannot overwrite the latest filter results 1ms
+   × negative values never produce misleading donut proportions 1ms
+   × switches quantity chart units without summing incompatible units 1ms
+   × failed requests show retry and suppress export of stale data 1ms
+ ❯ tests/trade-units.spec.js (4 tests | 4 failed) 12ms
+     × converts the reference price and displays the corresponding base quantity 8ms
+     × preserves the physical quantity when a receipt changes units 1ms
+     × offers an inactive unit only when inherited from this document 1ms
+     × filters supplier-specific units and explains indivisible quantities 1ms
+ ❯ tests/r0f2-overview-reports.spec.js (12 tests | 12 failed) 11ms
+   × dashboard explains dates, zero change, refresh feedback and retains stale data after refresh failure 6ms
+   × dashboard retries initial failure and hides unavailable module links and metrics 0ms
+   × drafts wait for submit, stale save is disabled, and submitted query restores from URL 0ms
+   × invalid dates suppress requests and date shortcuts only stage dates 0ms
+   × catalog retry and filter errors retain existing graph, with explicit filter apply 0ms
+   × local charts restore, reorder, remove and undo while retaining existing storage key and shared dates 0ms
+   × saved chart drill preserves response period and returns to original results and pending draft 0ms
+   × restricted sources are absent and inaccessible local charts send no report request 0ms
+   × storage failure warns instead of claiming persistence 0ms
+   × export failure retains chart and switching configuration resets the display override 0ms
+   × an invalid bookmarked filter is rejected and navigating back to valid conditions recovers 0ms
+   × changing date scope invalidates in-flight options and cannot offer stale selections 0ms
+ ❯ tests/product-workspace.spec.js (2 tests | 2 failed) 10ms
+   × separates currency and units and counts distinct orders 8ms
+   × navigates from overview and emits the selected order 1ms
+✔ formatApiError preserves field and nested item context (1.7605ms)
+✔ apiErrorMessage uses understandable network and server fallbacks (3.0128ms)
+✔ API errors retain status, parsed data and the original response (6.3628ms)
+✔ API parses Blob JSON errors before formatting (2.3404ms)
+✔ aggregated lists include subsequent pages and keep filters (0.7044ms)
+✔ listAll handles non-paginated array actions in one request (0.2309ms)
+✔ failed later pages never return a misleading partial total (0.2547ms)
+ ❯ src/api.test.js (0 test)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 24.273
+ ❯ src/dialogs.test.js (0 test)
+ ❯ tests/detail-drawer-typography.spec.js (0 test)
+✔ all shared detail drawers use the system typography scale (10.2643ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15.3243
+ ❯ src/components/CategoryMultiPicker.test.js (0 test)
+✔ category multiselect supports independent leaves, parent coverage and removal (11.0226ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16.7711
+ ❯ src/components/ContractAmountAdjustments.test.js (0 test)
+✔ contract adjustment history renders the backend status display (8.0292ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14.145
+ ❯ src/components/OrderDetailModal.test.js (0 test)
+✔ order workbench exposes retained contract amount adjustments (7.2524ms)
+✔ order workbench exposes shipment history and reversal flow (2.2823ms)
+✔ batch over-shipment requires a line-specific reason and one explicit batch warning before submitting (0.9836ms)
+✔ order workbench exposes explicit packing plan generation and snapshot display (0.9635ms)
+ ❯ src/components/OrderDraftModal.test.js (0 test)
+✔ lead-time input reserves room for ten digits (7.3268ms)
+✔ order draft contains one order-level tail-goods policy selector (1.7199ms)
+✔ order draft is always a draft and explains that confirmation performs formal actions (0.6769ms)
+✔ order draft does not ask for or submit a backend-generated order number (0.6302ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15.9382
+ ❯ src/components/ProcurementDraftModal.test.js (0 test)
+✔ procurement preview groups by supplier and currency and validates user inputs (7.267ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13.8293
+ ❯ src/components/ProductSkuManagement.test.js (0 test)
+✔ SKU candidate filters combine values with OR and attributes with AND, including legacy keys (9.9578ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15.7334
+ ❯ src/components/QuoteDetailModal.test.js (0 test)
+✔ quote detail exposes only valid status actions for draft and sent quotes (10.0638ms)
+✔ status actions call the API, reload quote workbench, and refresh the quote list (2.2839ms)
+✔ terminal quote states render no status transition controls (0.6835ms)
+✔ only non-terminal quotes expose the conversion-to-order actions (0.7153ms)
+ ❯ src/components/RelatedCreateModal.test.js (0 test)
+✔ related create modal supports inherited relationships (11.0067ms)
+ ❯ src/components/QuoteEditorModal.test.js (0 test)
+✔ SKU picker synchronizes multi-selection into quote line items (19.648ms)
+✔ SKU picker keeps a fixed height while search results scroll (1.9007ms)
+✔ quote editor lets users save without exporting the Excel file (0.8256ms)
+✔ quote editor blocks a validity date earlier than the quote date (0.9118ms)
+✔ quote status is read-only and cannot be selected while creating or revising (1.1045ms)
+ ❯ src/components/SalesRules.test.js (0 test)
+✔ quote save stops on MOQ violation or unavailable validation service (14.8048ms)
+ ❯ src/components/SummaryCards.test.js (0 test)
+✔ summary cards provide a reusable, compact metric layout (7.3453ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13.2296
+ ❯ src/components/SegmentedDateInput.test.js (0 test)
+✔ calendar picker is opened only from its calendar button (15.8233ms)
+✔ date parts remain compact without individual outlines (1.8699ms)
+✔ time parts are grouped into a compact hour-minute control (0.5725ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 23.7866
+ ❯ src/components/SupplierAllocationModal.test.js (0 test)
+✔ supplier allocation metrics follow the selected SupplierSKU rather than the first source (6.9727ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12.6239
+ ❯ src/components/SupplierBatchBindingDrawer.test.js (0 test)
+✔ supplier filtering and select-all retain selections outside current results (8.4046ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13.9318
+✔ date shortcuts handle year and leap-month boundaries in local time (3.1113ms)
+✔ embedded block overrides do not mutate reusable defaults (2.7357ms)
+ ❯ src/reports/registry.test.js (0 test)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14.78
+✔ category cascade merges ancestors and retains same-name leaves under different parents (1.5479ms)
+✔ parent filtering includes descendants without matching similar names or other branches (2.5692ms)
+ ❯ src/utils/categoryPaths.test.js (0 test)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12.9815
+✔ legacy cash block IDs and custom configurations retain their query contract (2.169ms)
+ ❯ src/utils/financeBasis.test.js (0 test)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13.9712
+✔ addDays calculates an expected ship date from the order date (2.5956ms)
+✔ daysBetween derives the lead time from an expected ship date (2.7949ms)
+✔ date helpers leave incomplete dates empty (0.1912ms)
+ ❯ src/utils/orderDate.test.js (0 test)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17.4709
+✔ order tasks draft debt matrix (2.1141ms)
+✔ order tasks cancelled debt matrix (2.6181ms)
+✔ order tasks confirmed debt matrix (0.3403ms)
+✔ order tasks production debt matrix (0.1427ms)
+✔ order tasks shipped debt matrix (0.115ms)
+✔ order tasks completed debt matrix (0.1142ms)
+✔ completed settled has no tasks, refund dynamically restores only receipt (0.2294ms)
+✔ masked, absent and denied financial amounts never fall back to protected order balance (0.2062ms)
+✔ unknown no_plans is review, never confirmed zero (0.2653ms)
+✔ unknown review is review, never confirmed zero (0.2028ms)
+ ❯ src/utils/orderOverview.test.js (0 test)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18.9387
+✔ page identity stays on the same path across transient query changes (1.4339ms)
+✔ list query data excludes modal and detail actions while retaining business context (14.073ms)
+✔ closing a route modal removes action keys and preserves all context query values (0.4468ms)
+✔ SKU labels come from records with a matching numeric foreign key and clearing preserves unrelated route state (0.3407ms)
+ ❯ src/utils/routePageState.test.js (0 test)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 26.4163
+✔ preview filters cartesian combinations by all rules and normalizes units (2.5538ms)
+✔ multi-trigger, allowed values, prohibition and empty rules (2.7954ms)
+ ❯ src/utils/skuCombinationRules.test.js (0 test)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14.2557
+✔ saved base quantity loads as transaction quantity and sends edited trade quantity (1.5483ms)
+✔ switching to base unit clears stale transaction values (2.7116ms)
+✔ receipt cost is interpreted per selected package (0.2126ms)
+✔ SKU selection preserves multiple packaging lines for the same SKU (0.9236ms)
+ ❯ src/utils/tradeUnits.test.js (0 test)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14.4777
+ ❯ src/views/CashEventPage.test.js (0 test)
+✔ cash event page keeps the backend two-step and stable-key flow (11.6404ms)
+✔ cash event page keeps bank facts separate from legacy receipt and settlement data (1.9033ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18.1974
+ ❯ src/views/CategoryPage.test.js (0 test)
+✔ creating a category attribute updates the local category state without reloading the page (20.0267ms)
+✔ category template explains that published SKU plans do not auto-mutate (1.7828ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 26.2836
+ ❯ src/views/DocumentPage.test.js (0 test)
+✔ quote list renders a recursive parent-child tree with classified document icons (9.0537ms)
+✔ quote tree actions preserve detail, edit, and Excel export entry points (2.2508ms)
+✔ quote list provides summary metrics, filters, and newest-first sorting (0.8627ms)
+✔ every quote row opens detail and dedicated expansion stops propagation (0.7978ms)
+ ❯ src/views/InventoryPage.test.js (0 test)
+✔ inventory page opens a SKU detail panel with linked business records (9.2114ms)
+✔ inventory headers toggle sortable columns (1.8106ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15.7591
+ ❯ src/views/PackagingPage.test.js (0 test)
+✔ packaging list labels physical dimensions and tare weight with their units (9.1752ms)
+✔ packaging page presents tail-goods policies and no mixed-pack setting (1.7401ms)
+✔ packaging form keeps dimensions in one row and shows policy help as a floating panel (0.7151ms)
+✔ editing linked template physical data requires verification invalidation confirmation (0.6912ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17.5937
+ ❯ src/views/ProductPage.test.js (0 test)
+✔ SKU-bearing product prefix changes use preview and explicit apply endpoints (13.5152ms)
+✔ ordinary product data retains the normal save path (1.7983ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20.2506
+ ❯ src/views/PurchaseOrderPage.test.js (0 test)
+✔ purchase desk exposes retained contract amount adjustment history (18.6235ms)
+✔ purchase desk connects creation, receipt and supplier payment actions (1.48ms)
+ ❯ src/views/ResourcePage.test.js (0 test)
+✔ resource payload serializes empty optional dates as null (16.3114ms)
+✔ customer projections are visible but not editable customer fields (2.6932ms)
+✔ customer detail shortcuts require the target module action permission (0.8868ms)
+ ❯ src/views/SKUPage.test.js (0 test)
+✔ SKU editor exposes supplier source maintenance through the API (8.6103ms)
+✔ SKU editor canonicalizes abbreviation keys and mirrors backend value formatting (1.7168ms)
+ ❯ src/views/SummaryCardsIntegration.test.js (0 test)
+ ❯ src/views/TaskJ1EntrySafety.test.js (0 test)
+✔ main list pages reuse the shared summary cards (25.2116ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29.7919
+✔ dashboard due follow-ups preserve current-due context when opening the list or a record (11.421ms)
+✔ finance due contracts navigate by their returned record IDs (1.6895ms)
+✔ import page exposes only supported types and explains insert-only finance imports (1.488ms)
+✔ import page uses preview and explicit confirmation before a write (0.7139ms)
+✔ top bar has no fake search or notification controls and uses current operator initials (0.7235ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21.5082
+ ❯ src/views/TaskK1Pagination.test.js (0 test)
+✔ core management lists and selectors use the tested all-pages loader (9.5053ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15.4495
+ ❯ src/views/TransactionPage.test.js (0 test)
+✔ transaction form distinguishes refunds from order expenses (8.2926ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13.8028
+ ❯ src/views/TradeUnitsPage.test.js (0 test)
+✔ trade-unit page preserves deactivate and default-source actions (11.9881ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17.6207
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 39 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api.test.js [ src/api.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/api.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/110]⎯
+
+ FAIL  src/dialogs.test.js [ src/dialogs.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/dialogs.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/110]⎯
+
+ FAIL  tests/detail-drawer-typography.spec.js [ tests/detail-drawer-typography.spec.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/tests/detail-drawer-typography.spec.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/110]⎯
+
+ FAIL  src/components/CategoryMultiPicker.test.js [ src/components/CategoryMultiPicker.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/CategoryMultiPicker.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/110]⎯
+
+ FAIL  src/components/ContractAmountAdjustments.test.js [ src/components/ContractAmountAdjustments.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/ContractAmountAdjustments.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/110]⎯
+
+ FAIL  src/components/OrderDetailModal.test.js [ src/components/OrderDetailModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/OrderDetailModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/110]⎯
+
+ FAIL  src/components/OrderDraftModal.test.js [ src/components/OrderDraftModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/OrderDraftModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/110]⎯
+
+ FAIL  src/components/ProcurementDraftModal.test.js [ src/components/ProcurementDraftModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/ProcurementDraftModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/110]⎯
+
+ FAIL  src/components/ProductSkuManagement.test.js [ src/components/ProductSkuManagement.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/ProductSkuManagement.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/110]⎯
+
+ FAIL  src/components/QuoteDetailModal.test.js [ src/components/QuoteDetailModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/QuoteDetailModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/110]⎯
+
+ FAIL  src/components/QuoteEditorModal.test.js [ src/components/QuoteEditorModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/QuoteEditorModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/110]⎯
+
+ FAIL  src/components/RelatedCreateModal.test.js [ src/components/RelatedCreateModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/RelatedCreateModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/110]⎯
+
+ FAIL  src/components/SalesRules.test.js [ src/components/SalesRules.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/SalesRules.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/110]⎯
+
+ FAIL  src/components/SegmentedDateInput.test.js [ src/components/SegmentedDateInput.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/SegmentedDateInput.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/110]⎯
+
+ FAIL  src/components/SummaryCards.test.js [ src/components/SummaryCards.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/SummaryCards.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/110]⎯
+
+ FAIL  src/components/SupplierAllocationModal.test.js [ src/components/SupplierAllocationModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/SupplierAllocationModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/110]⎯
+
+ FAIL  src/components/SupplierBatchBindingDrawer.test.js [ src/components/SupplierBatchBindingDrawer.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/components/SupplierBatchBindingDrawer.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/110]⎯
+
+ FAIL  src/reports/registry.test.js [ src/reports/registry.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/reports/registry.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/110]⎯
+
+ FAIL  src/utils/categoryPaths.test.js [ src/utils/categoryPaths.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/utils/categoryPaths.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/110]⎯
+
+ FAIL  src/utils/financeBasis.test.js [ src/utils/financeBasis.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/utils/financeBasis.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/110]⎯
+
+ FAIL  src/utils/orderDate.test.js [ src/utils/orderDate.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/utils/orderDate.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/110]⎯
+
+ FAIL  src/utils/orderOverview.test.js [ src/utils/orderOverview.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/utils/orderOverview.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/110]⎯
+
+ FAIL  src/utils/routePageState.test.js [ src/utils/routePageState.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/utils/routePageState.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/110]⎯
+
+ FAIL  src/utils/skuCombinationRules.test.js [ src/utils/skuCombinationRules.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/utils/skuCombinationRules.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/110]⎯
+
+ FAIL  src/utils/tradeUnits.test.js [ src/utils/tradeUnits.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/utils/tradeUnits.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/110]⎯
+
+ FAIL  src/views/CashEventPage.test.js [ src/views/CashEventPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/CashEventPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/110]⎯
+
+ FAIL  src/views/CategoryPage.test.js [ src/views/CategoryPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/CategoryPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/110]⎯
+
+ FAIL  src/views/DocumentPage.test.js [ src/views/DocumentPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/DocumentPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/110]⎯
+
+ FAIL  src/views/InventoryPage.test.js [ src/views/InventoryPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/InventoryPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/110]⎯
+
+ FAIL  src/views/PackagingPage.test.js [ src/views/PackagingPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/PackagingPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/110]⎯
+
+ FAIL  src/views/ProductPage.test.js [ src/views/ProductPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/ProductPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/110]⎯
+
+ FAIL  src/views/PurchaseOrderPage.test.js [ src/views/PurchaseOrderPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/PurchaseOrderPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/110]⎯
+
+ FAIL  src/views/ResourcePage.test.js [ src/views/ResourcePage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/ResourcePage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/110]⎯
+
+ FAIL  src/views/SKUPage.test.js [ src/views/SKUPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/SKUPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/110]⎯
+
+ FAIL  src/views/SummaryCardsIntegration.test.js [ src/views/SummaryCardsIntegration.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/SummaryCardsIntegration.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/110]⎯
+
+ FAIL  src/views/TaskJ1EntrySafety.test.js [ src/views/TaskJ1EntrySafety.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/TaskJ1EntrySafety.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/110]⎯
+
+ FAIL  src/views/TaskK1Pagination.test.js [ src/views/TaskK1Pagination.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/TaskK1Pagination.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/110]⎯
+
+ FAIL  src/views/TradeUnitsPage.test.js [ src/views/TradeUnitsPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/TradeUnitsPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/110]⎯
+
+ FAIL  src/views/TransactionPage.test.js [ src/views/TransactionPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/r1-fin-p2-b/森爵照明管理系统/frontend/src/views/TransactionPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/110]⎯
+
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 71 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/app-dialogs.spec.js > app-owned dialogs > returns false from Cancel and true from Confirm
+ReferenceError: document is not defined
+ ❯ mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountHost tests/app-dialogs.spec.js:10:43
+      8| const element = selector => document.querySelector(selector)
+      9| const mounted = []
+     10| const mountHost = () => { const wrapper = mount(AppDialogHost); mounte…
+       |                                           ^
+     11|
+     12| afterEach(() => {
+ ❯ tests/app-dialogs.spec.js:21:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/110]⎯
+
+ FAIL  tests/app-dialogs.spec.js > app-owned dialogs > disables confirmation while it is resolving, preventing double submission
+ReferenceError: document is not defined
+ ❯ mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountHost tests/app-dialogs.spec.js:10:43
+      8| const element = selector => document.querySelector(selector)
+      9| const mounted = []
+     10| const mountHost = () => { const wrapper = mount(AppDialogHost); mounte…
+       |                                           ^
+     11|
+     12| afterEach(() => {
+ ❯ tests/app-dialogs.spec.js:35:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/110]⎯
+
+ FAIL  tests/app-dialogs.spec.js > app-owned dialogs > validates required input, returns its value, and returns null on Cancel
+ReferenceError: document is not defined
+ ❯ mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountHost tests/app-dialogs.spec.js:10:43
+      8| const element = selector => document.querySelector(selector)
+      9| const mounted = []
+     10| const mountHost = () => { const wrapper = mount(AppDialogHost); mounte…
+       |                                           ^
+     11|
+     12| afterEach(() => {
+ ❯ tests/app-dialogs.spec.js:48:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[42/110]⎯
+
+ FAIL  tests/app-dialogs.spec.js > app-owned dialogs > shows an app-owned alert and a dismissible toast
+ReferenceError: document is not defined
+ ❯ mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountHost tests/app-dialogs.spec.js:10:43
+      8| const element = selector => document.querySelector(selector)
+      9| const mounted = []
+     10| const mountHost = () => { const wrapper = mount(AppDialogHost); mounte…
+       |                                           ^
+     11|
+     12| afterEach(() => {
+ ❯ tests/app-dialogs.spec.js:67:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[43/110]⎯
+
+ FAIL  tests/finance-contract-navigation.spec.js > finance contract navigation > routes a receivable contract by its order ID and leaves a missing ID as text
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountOn tests/finance-contract-navigation.spec.js:26:29
+     24|   const wrapper = mount(page, { props, global: { plugins: [router] } })
+     25|   await flushPromises()
+     26|   return { wrapper, router }
+       |                             ^
+     27| }
+     28|
+ ❯ tests/finance-contract-navigation.spec.js:65:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[44/110]⎯
+
+ FAIL  tests/finance-contract-navigation.spec.js > finance contract navigation > routes a payable contract by its purchase order ID
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountOn tests/finance-contract-navigation.spec.js:26:29
+     24|   const wrapper = mount(page, { props, global: { plugins: [router] } })
+     25|   await flushPromises()
+     26|   return { wrapper, router }
+       |                             ^
+     27| }
+     28|
+ ❯ tests/finance-contract-navigation.spec.js:74:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[45/110]⎯
+
+ FAIL  tests/finance-contract-navigation.spec.js > finance contract navigation > routes direct transactions and allocation history by IDs, including inactive history
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountOn tests/finance-contract-navigation.spec.js:26:29
+     24|   const wrapper = mount(page, { props, global: { plugins: [router] } })
+     25|   await flushPromises()
+     26|   return { wrapper, router }
+       |                             ^
+     27| }
+     28|
+ ❯ tests/finance-contract-navigation.spec.js:79:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[46/110]⎯
+
+ FAIL  tests/finance-contract-navigation.spec.js > finance contract navigation > keeps Finance Dashboard due links for both contract directions
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountOn tests/finance-contract-navigation.spec.js:26:29
+     24|   const wrapper = mount(page, { props, global: { plugins: [router] } })
+     25|   await flushPromises()
+     26|   return { wrapper, router }
+       |                             ^
+     27| }
+     28|
+ ❯ tests/finance-contract-navigation.spec.js:98:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[47/110]⎯
+
+ FAIL  tests/finance-contract-navigation.spec.js > finance contract navigation > separates period performance from current balances and blocks invalid report dates
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountOn tests/finance-contract-navigation.spec.js:26:29
+     24|   const wrapper = mount(page, { props, global: { plugins: [router] } })
+     25|   await flushPromises()
+     26|   return { wrapper, router }
+       |                             ^
+     27| }
+     28|
+ ❯ tests/finance-contract-navigation.spec.js:105:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[48/110]⎯
+
+ FAIL  tests/finance-contract-navigation.spec.js > finance contract navigation > stores transaction filters in the URL and keeps the query server driven
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountOn tests/finance-contract-navigation.spec.js:26:29
+     24|   const wrapper = mount(page, { props, global: { plugins: [router] } })
+     25|   await flushPromises()
+     26|   return { wrapper, router }
+       |                             ^
+     27| }
+     28|
+ ❯ tests/finance-contract-navigation.spec.js:120:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[49/110]⎯
+
+ FAIL  tests/follow-up-richtext-and-attachments.spec.js > FollowUp rich text display protocol > escapes user HTML and rejects executable image URLs
+ReferenceError: document is not defined
+ ❯ tests/follow-up-richtext-and-attachments.spec.js:34:23
+     32|   it('escapes user HTML and rejects executable image URLs', () => {
+     33|     const html = renderRichText('普通：< > &\n<script>window.richTextPwne…
+     34|     const container = document.createElement('div')
+       |                       ^
+     35|     container.innerHTML = html
+     36|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[50/110]⎯
+
+ FAIL  tests/follow-up-richtext-and-attachments.spec.js > FollowUp rich text display protocol > keeps markdown image display safe and attribute-escaped
+ReferenceError: document is not defined
+ ❯ tests/follow-up-richtext-and-attachments.spec.js:45:23
+     43|   it('keeps markdown image display safe and attribute-escaped', () => {
+     44|     const html = renderRichText('![clipboard](/media/follow-up-attachm…
+     45|     const container = document.createElement('div')
+       |                       ^
+     46|     container.innerHTML = html
+     47|     const images = [...container.querySelectorAll('img')]
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[51/110]⎯
+
+ FAIL  tests/payment-plan-filters.spec.js > payment plan list filters > always requests the active direction and reloads when direction changes
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountPage tests/payment-plan-filters.spec.js:25:1
+     23|   return { wrapper: mount(PaymentPlanPage, { ...options, props: { dire…
+     24| }
+     25|
+       | ^
+     26| beforeEach(() => {
+     27|   vi.useRealTimers()
+ ❯ tests/payment-plan-filters.spec.js:39:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[52/110]⎯
+
+ FAIL  tests/payment-plan-filters.spec.js > payment plan list filters > applies counterparty search and combined filters with a refreshable URL
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountPage tests/payment-plan-filters.spec.js:25:1
+     23|   return { wrapper: mount(PaymentPlanPage, { ...options, props: { dire…
+     24| }
+     25|
+       | ^
+     26| beforeEach(() => {
+     27|   vi.useRealTimers()
+ ❯ tests/payment-plan-filters.spec.js:54:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[53/110]⎯
+
+ FAIL  tests/payment-plan-filters.spec.js > payment plan list filters > reset restores default filters for the active direction
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountPage tests/payment-plan-filters.spec.js:25:1
+     23|   return { wrapper: mount(PaymentPlanPage, { ...options, props: { dire…
+     24| }
+     25|
+       | ^
+     26| beforeEach(() => {
+     27|   vi.useRealTimers()
+ ❯ tests/payment-plan-filters.spec.js:76:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[54/110]⎯
+
+ FAIL  tests/payment-plan-filters.spec.js > payment plan list filters > shows server-returned rows as-is and prevents an invalid date range request
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ mountPage tests/payment-plan-filters.spec.js:25:1
+     23|   return { wrapper: mount(PaymentPlanPage, { ...options, props: { dire…
+     24| }
+     25|
+       | ^
+     26| beforeEach(() => {
+     27|   vi.useRealTimers()
+ ❯ tests/payment-plan-filters.spec.js:100:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[55/110]⎯
+
+ FAIL  tests/product-workspace.spec.js > separates currency and units and counts distinct orders
+ReferenceError: document is not defined
+ ❯ mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/product-workspace.spec.js:12:13
+     10| const data = { info: [], sections: [{ key: 'sales', title: '订单记录', row…
+     11| it('separates currency and units and counts distinct orders', async ()…
+     12|   const w = mount(ProductWorkspace, { props: { data, activeTab: 'sales…
+       |             ^
+     13|   const metrics = () => w.findAll('.sales-metrics strong').map(x => x.…
+     14|   expect(metrics()).toEqual(['1', '5', '50'])
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[56/110]⎯
+
+ FAIL  tests/product-workspace.spec.js > navigates from overview and emits the selected order
+ReferenceError: document is not defined
+ ❯ mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/product-workspace.spec.js:22:13
+     20| })
+     21| it('navigates from overview and emits the selected order', async () =>…
+     22|   const w = mount(ProductWorkspace, { props: { data, activeTab: '__ove…
+       |             ^
+     23|   await w.findAll('.preview-grid section')[1].find('button').trigger('…
+     24|   expect(w.emitted('update:activeTab')[0]).toEqual(['skus'])
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[57/110]⎯
+
+ FAIL  tests/purchase-costs.spec.js > edits allocation, saves the revision and renders authoritative calculated totals
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/purchase-costs.spec.js:14:3
+     12|   const wrapper = mount(PurchaseCostAllocationModal, { props })
+     13|   await flushPromises()
+     14|   expect(wrapper.find('.item-title').text()).toContain('CNY 10.00')
+       |   ^
+     15|   expect(wrapper.find('.cost-footer .btn-secondary').text()).toBe('取消')
+     16|   await wrapper.find('.cost-row select').setValue('order')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[58/110]⎯
+
+ FAIL  tests/purchase-costs.spec.js > keeps edits and shows server conflict without claiming success
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/purchase-costs.spec.js:34:32
+     32|   const wrapper = mount(PurchaseCostAllocationModal, { props })
+     33|   await flushPromises()
+     34|   api.post.mockRejectedValue({ response: { data: ['成本分配已被其他人修改'] } })
+       |                                ^
+     35|   await wrapper.find('form').trigger('submit')
+     36|   await flushPromises()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[59/110]⎯
+
+ FAIL  tests/purchase-costs.spec.js > keeps results on outside clicks and submits a custom target name
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/purchase-costs.spec.js:46:29
+     44|   const wrapper = mount(PurchaseCostAllocationModal, { props })
+     45|   await flushPromises()
+     46|   await wrapper.find('.cost-backdrop').trigger('mousedown')
+       |                             ^
+     47|   expect(wrapper.emitted('close')).toBeUndefined()
+     48|   await wrapper.find('.cost-row select').setValue('other')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[60/110]⎯
+
+ FAIL  tests/purchase-costs.spec.js > automatically previews fees without saving and ignores stale responses
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/purchase-costs.spec.js:67:11
+     65|   const wrapper = mount(PurchaseCostAllocationModal, { props })
+     66|   try {
+     67|     await flushPromises()
+       |           ^
+     68|     await wrapper.findAll('button').find(b => b.text() === '添加附加费用').t…
+     69|     await wrapper.findAll('input[type="number"]').at(-1).setValue('50')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[61/110]⎯
+
+ FAIL  tests/purchase-costs.spec.js > keeps restricted allocations read only and never submits masked order IDs
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/purchase-costs.spec.js:96:3
+     94|   const wrapper = mount(PurchaseCostAllocationModal, { props })
+     95|   await flushPromises()
+     96|   expect(wrapper.find('fieldset').attributes('disabled')).toBeDefined()
+       |   ^
+     97|   expect(wrapper.text()).toContain('包含无权修改')
+     98|   await wrapper.find('form').trigger('submit')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[62/110]⎯
+
+ FAIL  tests/purchase-payment.spec.js > opens payment from the purchase row and submits inherited currency
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/purchase-payment.spec.js:18:32
+     16|   const wrapper = mount(PurchaseOrderPage, { global: { plugins: [await…
+     17|   await flushPromises()
+     18|   await wrapper.get('.purchase-list-row').trigger('click')
+       |                                ^
+     19|   await flushPromises()
+     20|   await wrapper.findAll('button').find(b => b.text() === '登记付款').trigg…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[63/110]⎯
+
+ FAIL  tests/purchase-payment.spec.js > rejects overpayment and preserves input on server failure
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/purchase-payment.spec.js:33:30
+     31|   const wrapper = mount(PurchasePaymentModal, { props: { purchase } })
+     32|   await wrapper.find('input[type="number"]').setValue('81')
+     33|   await wrapper.find('form').trigger('submit')
+       |                              ^
+     34|   expect(mocks.post).not.toHaveBeenCalled()
+     35|   expect(wrapper.find('[role="alert"]').text()).toContain('不能超过')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[64/110]⎯
+
+ FAIL  tests/purchase-payment.spec.js > defaults new purchases to CNY and asks for a rate for foreign currency
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/purchase-payment.spec.js:47:35
+     45|   const wrapper = mount(PurchaseOrderPage, { global: { plugins: [await…
+     46|   await flushPromises()
+     47|   await wrapper.findAll('button').find(b => b.text() === '新建采购单').trig…
+       |                                   ^
+     48|   const currency = wrapper.findAll('.form-grid select').at(-1)
+     49|   expect(currency.element.value).toBe('CNY')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[65/110]⎯
+
+ FAIL  tests/purchase-payment.spec.js > foreign payment uses the entered actual rate without changing the purchase contract
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/purchase-payment.spec.js:60:35
+     58|   const wrapper = mount(PurchasePaymentModal, { props: { purchase } })
+     59|   expect(wrapper.get('[aria-label="本次实际汇率"]').element.value).toBe('7')
+     60|   await wrapper.find('input[type="number"]').setValue('10')
+       |                                   ^
+     61|   await wrapper.get('[aria-label="本次实际汇率"]').setValue('7.45')
+     62|   await wrapper.get('form').trigger('submit'); await flushPromises()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[66/110]⎯
+
+ FAIL  tests/purchase-payment.spec.js > CNY actual payment rate is readonly 1 regardless of historical contract input
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/purchase-payment.spec.js:69:3
+     67|   const wrapper = mount(PurchasePaymentModal, { props: { purchase: { .…
+     68|   expect(wrapper.get('[aria-label="本次实际汇率"]').element.value).toBe('1')
+     69|   expect(wrapper.get('[aria-label="本次实际汇率"]').attributes('readonly')).…
+       |   ^
+     70|   await wrapper.find('input[type="number"]').setValue('10'); await wra…
+     71|   expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/pay/', e…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[67/110]⎯
+
+ FAIL  tests/purchase-payment.spec.js > rejects an invalid actual payment rate (0)
+ FAIL  tests/purchase-payment.spec.js > rejects an invalid actual payment rate (-1)
+ FAIL  tests/purchase-payment.spec.js > rejects an invalid actual payment rate ()
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/purchase-payment.spec.js:76:29
+     74|   const wrapper = mount(PurchasePaymentModal, { props: { purchase } })
+     75|   await wrapper.find('input[type="number"]').setValue('10'); await wra…
+     76|   await wrapper.get('form').trigger('submit'); await flushPromises()
+       |                             ^
+     77|   expect(mocks.post).not.toHaveBeenCalled(); expect(wrapper.get('[role…
+     78| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[68/110]⎯
+
+ FAIL  tests/r0f1-directed.spec.js > uses clear receivable success feedback and clears stale feedback before a failed operation
+ FAIL  tests/r0f1-directed.spec.js > uses clear payable success feedback and clears stale feedback before a failed operation
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ page tests/r0f1-directed.spec.js:14:29
+     12|   const wrapper = mount(component, { props, global: { plugins: [router…
+     13|   await flushPromises()
+     14|   return { wrapper, router }
+       |                             ^
+     15| }
+     16| const click = (w, text) => w.findAll('button').find(b => b.text() === …
+ ❯ tests/r0f1-directed.spec.js:21:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[69/110]⎯
+
+ FAIL  tests/r0f1-directed.spec.js > restores all plan filters on initial URL and subsequent navigation
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ page tests/r0f1-directed.spec.js:14:29
+     12|   const wrapper = mount(component, { props, global: { plugins: [router…
+     13|   await flushPromises()
+     14|   return { wrapper, router }
+       |                             ^
+     15| }
+     16| const click = (w, text) => w.findAll('button').find(b => b.text() === …
+ ❯ tests/r0f1-directed.spec.js:31:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[70/110]⎯
+
+ FAIL  tests/r0f1-directed.spec.js > retains the complete selected order number after clearing candidates and resets selection on new search
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ page tests/r0f1-directed.spec.js:14:29
+     12|   const wrapper = mount(component, { props, global: { plugins: [router…
+     13|   await flushPromises()
+     14|   return { wrapper, router }
+       |                             ^
+     15| }
+     16| const click = (w, text) => w.findAll('button').find(b => b.text() === …
+ ❯ tests/r0f1-directed.spec.js:43:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[71/110]⎯
+
+ FAIL  tests/r0f1-directed.spec.js > clears save and allocation success before void failure and retries without conflicting feedback
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ page tests/r0f1-directed.spec.js:14:29
+     12|   const wrapper = mount(component, { props, global: { plugins: [router…
+     13|   await flushPromises()
+     14|   return { wrapper, router }
+       |                             ^
+     15| }
+     16| const click = (w, text) => w.findAll('button').find(b => b.text() === …
+ ❯ tests/r0f1-directed.spec.js:60:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[72/110]⎯
+
+ FAIL  tests/r0f2-overview-reports.spec.js > dashboard explains dates, zero change, refresh feedback and retains stale data after refresh failure
+ FAIL  tests/r0f2-overview-reports.spec.js > dashboard retries initial failure and hides unavailable module links and metrics
+ FAIL  tests/r0f2-overview-reports.spec.js > drafts wait for submit, stale save is disabled, and submitted query restores from URL
+ FAIL  tests/r0f2-overview-reports.spec.js > invalid dates suppress requests and date shortcuts only stage dates
+ FAIL  tests/r0f2-overview-reports.spec.js > catalog retry and filter errors retain existing graph, with explicit filter apply
+ FAIL  tests/r0f2-overview-reports.spec.js > local charts restore, reorder, remove and undo while retaining existing storage key and shared dates
+ FAIL  tests/r0f2-overview-reports.spec.js > saved chart drill preserves response period and returns to original results and pending draft
+ FAIL  tests/r0f2-overview-reports.spec.js > restricted sources are absent and inaccessible local charts send no report request
+ FAIL  tests/r0f2-overview-reports.spec.js > storage failure warns instead of claiming persistence
+ FAIL  tests/r0f2-overview-reports.spec.js > export failure retains chart and switching configuration resets the display override
+ FAIL  tests/r0f2-overview-reports.spec.js > an invalid bookmarked filter is rejected and navigating back to valid conditions recovers
+ FAIL  tests/r0f2-overview-reports.spec.js > changing date scope invalidates in-flight options and cannot offer stale selections
+ReferenceError: localStorage is not defined
+ ❯ tests/r0f2-overview-reports.spec.js:21:46
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[73/110]⎯
+
+ FAIL  tests/reports.spec.js > independently queries an embedded preset with scoped filters and emits drill context
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/reports.spec.js:13:3
+     11|   const wrapper = mount(ReportBlock, { props: { blockId: 'sales-custom…
+     12|   await flushPromises()
+     13|   expect(api.get.mock.calls[0][1].params).toMatchObject({ source: 'sal…
+       |   ^
+     14|   expect(wrapper.text()).toContain('189')
+     15|   await wrapper.find('.report-link').trigger('click')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[74/110]⎯
+
+ FAIL  tests/reports.spec.js > a slower superseded request cannot overwrite the latest filter results
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/reports.spec.js:25:9
+     23|   const wrapper = mount(ReportBlock)
+     24|   await wrapper.setProps({ filters: { date_from: '2026-09-02' } })
+     25|   await flushPromises()
+       |         ^
+     26|   resolveOld({ data: { ...response().data, totals: { amount: 999, coun…
+     27|   await flushPromises()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[75/110]⎯
+
+ FAIL  tests/reports.spec.js > negative values never produce misleading donut proportions
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/reports.spec.js:38:3
+     36|   const wrapper = mount(ReportBlock, { props: { config: { source: 'cas…
+     37|   await flushPromises()
+     38|   expect(wrapper.find('.report-donut').exists()).toBe(false)
+       |   ^
+     39|   expect(wrapper.find('.negative').exists()).toBe(true)
+     40|   wrapper.unmount()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[76/110]⎯
+
+ FAIL  tests/reports.spec.js > switches quantity chart units without summing incompatible units
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/reports.spec.js:46:3
+     44|   const wrapper = mount(ReportBlock, { props: { blockId: 'inventory-wa…
+     45|   await flushPromises()
+     46|   expect(wrapper.find('.report-bar-row').text()).toContain('2')
+       |   ^
+     47|   await wrapper.find('.chart-caption select').setValue('box')
+     48|   expect(wrapper.find('.report-bar-row').text()).toContain('1')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[77/110]⎯
+
+ FAIL  tests/reports.spec.js > failed requests show retry and suppress export of stale data
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/reports.spec.js:57:3
+     55|   const wrapper = mount(ReportBlock)
+     56|   await flushPromises()
+     57|   expect(wrapper.find('[role="alert"]').text()).toContain('请求失败')
+       |   ^
+     58|   expect(wrapper.find('.block-actions button').attributes('disabled'))…
+     59|   await wrapper.find('[role="alert"] button').trigger('click')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[78/110]⎯
+
+ FAIL  tests/sku-management.spec.js > shows one SKU list and permanent supplier maintenance with archive navigation
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/sku-management.spec.js:15:3
+     13|   const w = mount(ProductSkuManagement, { props: { productId: 1 } }); …
+     14|   expect(w.findAll('.candidate-table').length).toBe(1)
+     15|   expect(w.find('.candidate-pool-card').exists()).toBe(true)
+       |   ^
+     16|   expect(w.find('.switcher').exists()).toBe(false)
+     17|   expect(w.findAll('.candidate-table tbody tr').length).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[79/110]⎯
+
+ FAIL  tests/sku-management.spec.js > all parameter values keeps the list and filtering clears bulk selection
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/sku-management.spec.js:29:3
+     27|   const w = mount(ProductSkuManagement, { props: { productId: 1 } }); …
+     28|   await w.find('.candidate-table tbody input').setValue(true)
+     29|   expect(w.text()).toContain('停用 1 项')
+       |   ^
+     30|   await w.find('.pool-parameter-filters input').setValue(true)
+     31|   expect(w.findAll('.candidate-table tbody tr').length).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[80/110]⎯
+
+ FAIL  tests/sku-management.spec.js > opens the batch supplier binding flow for selected active SKUs
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/sku-management.spec.js:38:28
+     36|   const w = mount(ProductSkuManagement, { props: { productId: 1 } }); …
+     37|   await w.find('.candidate-table tbody input').setValue(true)
+     38|   await click(w, '批量绑定供应商')
+       |                            ^
+     39|   expect(w.findComponent({ name: 'SupplierBatchBindingDrawer' }).exist…
+     40|   w.unmount()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[81/110]⎯
+
+ FAIL  tests/sku-management.spec.js > rules workspace avoids duplicating the SKU list and supplier allocation panel
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/sku-management.spec.js:45:3
+     43|   const w = mount(ProductSkuManagement, { props: { productId: 1, initi…
+     44|   expect(w.find('.candidate-table').exists()).toBe(false)
+     45|   expect(w.find('.candidate-pool-card').exists()).toBe(false)
+       |   ^
+     46|   expect(w.find('.rules-panel').attributes('open')).toBeDefined()
+     47|   w.unmount()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[82/110]⎯
+
+ FAIL  tests/sku-management.spec.js > reloads SKU data after an archive edit without clearing the keyword
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/sku-management.spec.js:52:26
+     50|   const w = mount(ProductSkuManagement, { props: { productId: 1, refre…
+     51|   await w.find('.pool-filters input').setValue('灯带')
+     52|   const before = listAll.mock.calls.filter(([url]) => url === '/skus/'…
+       |                          ^
+     53|   await w.setProps({ refreshKey: 1 }); await flushPromises()
+     54|   expect(listAll.mock.calls.filter(([url]) => url === '/skus/').length…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[83/110]⎯
+
+ FAIL  tests/sku-management.spec.js > bulk status writes only selected SKU and reports API failure
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/sku-management.spec.js:61:38
+     59|   const dialogHost = mount(AppDialogHost)
+     60|   const w = mount(ProductSkuManagement, { props: { productId: 1 } }); …
+     61|   api.patch.mockRejectedValueOnce(new Error('该 SKU 不允许停用'))
+       |                                      ^
+     62|   await w.find('.candidate-table tbody input').setValue(true)
+     63|   await click(w, '停用 1 项')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[84/110]⎯
+
+ FAIL  tests/sku-management.spec.js > saves a rule with filters and traits without creating supplier SKU records
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/sku-management.spec.js:82:29
+     80|   const w = mount(ProductSkuManagement, { props: { productId: 1, initi…
+     81|   await click(w, '添加规则')
+     82|   const inputs = w.findAll('form input')
+       |                             ^
+     83|   await inputs[0].setValue('常规灯带'); await w.find('form select').setVal…
+     84|   await inputs[1].setValue('12、24'); await w.find('textarea').setValue…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[85/110]⎯
+
+ FAIL  tests/sku-management.spec.js > editing a reviewed draft disables publish until another analysis
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/sku-management.spec.js:93:29
+     91|   const w = mount(ProductSkuManagement, { props: { productId: 1 } }); …
+     92|   await w.find('.parameter-plan-panel summary').trigger('click'); awai…
+     93|   const publishButton = () => w.findAll('button').find(b => b.text().i…
+       |                             ^
+     94|   expect(publishButton().attributes('disabled')).toBeUndefined()
+     95|   await w.find('input[aria-label="参数名称"]').setValue('工作电压')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[86/110]⎯
+
+ FAIL  tests/sku-management.spec.js > split controls clone reactive values and submit two variants
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/sku-management.spec.js:104:29
+    102|   const w = mount(ProductSkuManagement, { props: { productId: 1 } }); …
+    103|   await w.find('.parameter-plan-panel summary').trigger('click'); awai…
+    104|   const values = w.findAll('.assignment input')
+       |                             ^
+    105|   expect(values.length).toBe(2)
+    106|   await values[1].setValue('12'); await click(w, '保存草稿并分析影响')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[87/110]⎯
+
+ FAIL  tests/trade-finance.spec.js > trade finance interactions > keeps one transaction identity on failure and blocks concurrent submissions
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/trade-finance.spec.js:29:37
+     27|     const wrapper = mount(TransactionPage, { ...options, global: { ...…
+     28|     await flushPromises()
+     29|     const open = async () => { await wrapper.findAll('button').find(bu…
+       |                                     ^
+     30|     await open()
+     31|     let reject
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[88/110]⎯
+
+ FAIL  tests/trade-finance.spec.js > trade finance interactions > settles a populated plan with inherited currency and exchange rate
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/trade-finance.spec.js:59:5
+     57|     const wrapper = mount(PaymentPlanPage, { ...options, global: { ...…
+     58|     await flushPromises()
+     59|     expect(wrapper.text()).toContain('700.00')
+       |     ^
+     60|     await wrapper.findAll('button').find(button => button.text() === '…
+     61|     const dialog = wrapper.find('form.dialog')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[89/110]⎯
+
+ FAIL  tests/trade-finance.spec.js > trade finance interactions > retains the selected supplier when saving an unallocated payment
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/trade-finance.spec.js:75:37
+     73|     const wrapper = mount(TransactionPage, { ...options, global: { ...…
+     74|     await flushPromises()
+     75|     await wrapper.findAll('button').find(button => button.text() === '…
+       |                                     ^
+     76|     await wrapper.find('.dialog select').setValue('unallocated_payment…
+     77|     await wrapper.find('.dialog input[type="number"]').setValue('50')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[90/110]⎯
+
+ FAIL  tests/trade-finance.spec.js > trade finance interactions > requires a reason for root transaction void and hides child void actions
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/trade-finance.spec.js:94:5
+     92|     const wrapper = mount(TransactionPage, { ...options, global: { ...…
+     93|     await flushPromises()
+     94|     expect(wrapper.findAll('button').filter(button => button.text() ==…
+       |     ^
+     95|     await wrapper.findAll('button').find(button => button.text() === '…
+     96|     expect(wrapper.text()).toContain('此操作会同步作废拆分流水，并恢复关联收付款计划。')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[91/110]⎯
+
+ FAIL  tests/trade-finance.spec.js > trade finance interactions > requires inspection acknowledgement and submits accepted quantity with notes
+ReferenceError: document is not defined
+ ❯ Proxy.mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/trade-finance.spec.js:110:34
+    108|     const wrapper = mount(PurchaseOrderPage, { ...options, global: { .…
+    109|     await flushPromises()
+    110|     await wrapper.get('.purchase-list-row').trigger('click')
+       |                                  ^
+    111|     await flushPromises()
+    112|     await wrapper.findAll('.workbench-tabs button').find(button => but…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[92/110]⎯
+
+ FAIL  tests/trade-units.spec.js > transaction unit picker > converts the reference price and displays the corresponding base quantity
+ReferenceError: document is not defined
+ ❯ mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/trade-units.spec.js:16:21
+     14|   it('converts the reference price and displays the corresponding base…
+     15|     const line = reactive({ quantity: 2, unit_price: 3 })
+     16|     const wrapper = mount(TradeUnitPicker, { props: { sku, line } })
+       |                     ^
+     17|     await wrapper.find('select').setValue('1')
+     18|     expect(line.trade_unit).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[93/110]⎯
+
+ FAIL  tests/trade-units.spec.js > transaction unit picker > preserves the physical quantity when a receipt changes units
+ReferenceError: document is not defined
+ ❯ mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/trade-units.spec.js:28:21
+     26|   it('preserves the physical quantity when a receipt changes units', a…
+     27|     const line = reactive({ quantity: 40, unit_cost: 3 })
+     28|     const wrapper = mount(TradeUnitPicker, { props: { sku, line, price…
+       |                     ^
+     29|     await wrapper.find('select').setValue('2')
+     30|     expect(line.quantity).toBe(2)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[94/110]⎯
+
+ FAIL  tests/trade-units.spec.js > transaction unit picker > offers an inactive unit only when inherited from this document
+ReferenceError: document is not defined
+ ❯ mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/trade-units.spec.js:37:19
+     35|   it('offers an inactive unit only when inherited from this document',…
+     36|     const line = reactive({ quantity: 1, unit_price: 3 })
+     37|     const fresh = mount(TradeUnitPicker, { props: { sku, line } })
+       |                   ^
+     38|     expect(fresh.find('option[value="3"]').exists()).toBe(false)
+     39|     const historical = mount(TradeUnitPicker, { props: { sku, line, hi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[95/110]⎯
+
+ FAIL  tests/trade-units.spec.js > transaction unit picker > filters supplier-specific units and explains indivisible quantities
+ReferenceError: document is not defined
+ ❯ mount node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:8278:16
+ ❯ tests/trade-units.spec.js:45:21
+     43|   it('filters supplier-specific units and explains indivisible quantit…
+     44|     const line = reactive({ quantity: 15, unit_cost: 3 })
+     45|     const wrapper = mount(TradeUnitPicker, { props: { sku, line, suppl…
+       |                     ^
+     46|     expect(wrapper.find('option[value="2"]').exists()).toBe(false)
+     47|     await wrapper.find('select').setValue('1')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[96/110]⎯
+
+
+ Test Files  52 failed | 50 passed (102)
+      Tests  71 failed | 562 passed (633)
+   Start at  02:36:24
+   Duration  57.86s (transform 8.80s, setup 27.62s, import 23.59s, tests 29.45s, environment 62.30s)
+

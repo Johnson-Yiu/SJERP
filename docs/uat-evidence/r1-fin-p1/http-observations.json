@@ -1,0 +1,26 @@
+[
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:8136/api/finance-dashboard/?date_from=2026-10-01&date_to=2026-10-18",
+    "status": 200,
+    "content_type": "application/json",
+    "content_disposition": null,
+    "sha256": "2e5165d68c5546a0ffb3b869ab995892f556c1f5a0912e1e469a4a9c384c1bcc"
+  },
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:8136/api/finance-dashboard/?date_from=2026-10-01&date_to=2026-10-18&export=csv",
+    "status": 200,
+    "content_type": "text/csv; charset=utf-8",
+    "content_disposition": "attachment; filename=\"finance-2026-10-01-2026-10-18.csv\"",
+    "sha256": "47f5f0601815eeccddaf2019ca307443d31010979c9fb9971fc1eb2daf07f47b"
+  },
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:8136/api/reports/data/?source=cash&group_by=direction&date_field=transaction_date&date_from=2026-10-01&date_to=2026-10-18&export=csv",
+    "status": 200,
+    "content_type": "text/csv; charset=utf-8",
+    "content_disposition": "attachment; filename=\"report-cash-2026-10-01-2026-10-18.csv\"",
+    "sha256": "27d0ad18deb2c8bbddad18bb9d357444cf682653705d5387a8912c0772e4a7b8"
+  }
+]

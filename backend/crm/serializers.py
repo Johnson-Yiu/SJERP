@@ -2173,7 +2173,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     order_no = serializers.CharField(source="order.order_no", read_only=True, default="")
     direction_display = serializers.CharField(source="get_direction_display", read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
-    rmb_amount = serializers.SerializerMethodField()
+    rmb_amount = serializers.SerializerMethodField(label="账面人民币折算参考", help_text="保留既有折算值，含原币为CNY的流水；不代表银行实际到账或结汇结果。")
 
     class Meta:
         model = Transaction

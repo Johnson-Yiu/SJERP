@@ -1,3 +1,4 @@
+from .finance_basis import BOOK_RMB_BASIS, BOOK_RMB_VERSION, BOOK_RMB_NOTE
 from .finance_scope import scope_transaction_queryset, require_finance_permission
 """Read-only, reusable reporting API. Decimal amounts; no cross-currency sums."""
 import csv
@@ -22,7 +23,7 @@ SOURCES = {
     "purchase": {"label": "采购 / 供应商报表", "dimensions": ["time", "country", "supplier", "product", "sku", "category", "status", "currency"], "dates": {"order_date": "下单日期", "expected_arrival_date": "预计到货日", "created_at": "创建时间", "updated_at": "更新时间"}, "note": "有效采购单的合同金额；已确认合同变更作为采购金额调整独立列示，不含采购附加成本。"},
     "profit": {"label": "订单利润", "dimensions": ["time", "country", "customer", "owner", "currency"], "dates": {"order_date": "订单日期"}, "note": "金额字段表示预计订单利润 = 当前有效销售额 - 已归属采购成本 - 已确认订单费用，不等同于会计净利润。"},
     "customers": {"label": "客户增长", "dimensions": ["time", "region", "country", "customer", "owner", "source", "status"], "dates": {"created_at": "创建时间", "updated_at": "更新时间"}, "note": "按客户档案创建/更新时间统计客户数；状态、负责人、地域使用当前档案，并非历史快照。"},
-    "cash": {"label": "现金收支", "dimensions": ["time", "customer", "supplier", "direction", "kind", "category", "currency"], "dates": {"transaction_date": "发生日期", "created_at": "创建时间", "updated_at": "更新时间"}, "note": "仅已确认流水；收入为正、支出为负，汇总为净现金流。优先使用实际人民币金额，否则按流水汇率折算。不重复统计预收预付分配。分类为收支分类。"},
+    "cash": {"label": "账面收支（人民币折算参考）", "basis": BOOK_RMB_BASIS, "version": BOOK_RMB_VERSION, "dimensions": ["time", "customer", "supplier", "direction", "kind", "category", "currency"], "dates": {"transaction_date": "流水发生日期", "created_at": "创建时间", "updated_at": "更新时间"}, "note": BOOK_RMB_NOTE + " 收入为正、支出为负，合计为账面净收支；不重复统计预收预付分配。"},
     "inventory": {"label": "库存变动", "dimensions": ["time", "product", "sku", "category", "warehouse", "type"], "dates": {"movement_date": "发生日期", "created_at": "创建时间", "updated_at": "更新时间"}, "note": "期间出入库净变动（入正出负），不是当前库存余额。不同单位数量分别展示；金额不适用。"},
 }
 
@@ -220,10 +221,10 @@ def report_data(request):
         writer.writerow([spec["label"], start, end, spec["dates"][date_field], spec["note"]])
         writer.writerow(["筛选条件", safe_csv("；".join(f"{item['name']}：{item['label']}" for item in filter_summary(source, filters, user=request.user)))])
         writer.writerow(["比较期间", previous_start, previous_end])
-        writer.writerow([DIMENSIONS[group], "金额（人民币）" if source not in ["customers", "inventory"] else "金额（不适用）", "去重单据/档案数", "数量（按单位）"])
+        writer.writerow([DIMENSIONS[group], ("金额（人民币折算参考）" if source == "cash" else "金额（人民币）") if source not in ["customers", "inventory"] else "金额（不适用）", "去重单据/档案数", "数量（按单位）"])
         for row in rows:
             writer.writerow([safe_csv(row["label"]), str(row["amount"]) if source not in ["customers", "inventory"] else "", row["count"], safe_csv(" / ".join(f"{qty} {unit}" for unit, qty in row["quantities"].items()))])
         writer.writerow(["合计（单据去重）", str(totals["amount"]) if source not in ["customers", "inventory"] else "", totals["count"], safe_csv(" / ".join(f"{qty} {unit}" for unit, qty in totals["quantities"].items()))])
         return response
-    return Response({"source": source, "group_by": group, "date_field": date_field, "date_label": spec["dates"][date_field], "grain": grain, "comparison": comparison, "period": {"date_from": start, "date_to": end}, "comparison_period": {"date_from": previous_start, "date_to": previous_end}, "totals": totals, "previous": previous, "changes": changes, "rows": rows, "note": spec["note"], "filters": filters, "filter_summary": filter_summary(source, filters, user=request.user), "generated_at": timezone.now()})
+    return Response({**({"basis": BOOK_RMB_BASIS, "version": BOOK_RMB_VERSION} if source == "cash" else {}), "source": source, "group_by": group, "date_field": date_field, "date_label": spec["dates"][date_field], "grain": grain, "comparison": comparison, "period": {"date_from": start, "date_to": end}, "comparison_period": {"date_from": previous_start, "date_to": previous_end}, "totals": totals, "previous": previous, "changes": changes, "rows": rows, "note": spec["note"], "filters": filters, "filter_summary": filter_summary(source, filters, user=request.user), "generated_at": timezone.now()})
 

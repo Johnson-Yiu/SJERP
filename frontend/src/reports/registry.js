@@ -13,8 +13,8 @@ export const reportBlocks = {
   'purchase-sku': { title: 'SKU 采购排行', source: 'purchase', group_by: 'sku', view: 'bar' },
   'customers-growth': { title: '客户增长趋势', source: 'customers', group_by: 'time', metric: 'count', view: 'line' },
   'customers-source': { title: '客户来源分布', source: 'customers', group_by: 'source', metric: 'count', view: 'donut' },
-  'cash-trend': { title: '净现金流趋势', source: 'cash', group_by: 'time', view: 'line' },
-  'cash-category': { title: '收支分类', source: 'cash', group_by: 'category', view: 'bar' },
+  'cash-trend': { title: '账面净收支趋势（折算参考）', source: 'cash', group_by: 'time', view: 'line' },
+  'cash-category': { title: '账面收支分类（折算参考）', source: 'cash', group_by: 'category', view: 'bar' },
   'inventory-warehouse': { title: '仓库库存变动', source: 'inventory', group_by: 'warehouse', metric: 'quantity', view: 'bar' },
 }
 

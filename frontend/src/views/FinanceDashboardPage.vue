@@ -1,4 +1,5 @@
 <script setup>
+import { BOOK_RMB_NOTE } from '../utils/financeBasis.js'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
@@ -17,8 +18,8 @@ const dateFrom = ref(`${today.slice(0, 7)}-01`), dateTo = ref(today)
 const exporting = ref(false), notice = ref('')
 const rangeError = computed(() => dateFrom.value && dateTo.value && dateFrom.value > dateTo.value ? '开始日期不能晚于结束日期。' : '')
 const periodCards = [
-  ['sales_rmb', '销售额'], ['estimated_profit_rmb', '预计订单利润'], ['purchase_cost_rmb', '订单采购归属成本'], ['order_expense_rmb', '订单费用'],
-  ['income_rmb', '实际收入'], ['expense_rmb', '实际支出'], ['net_cash_rmb', '净现金流'],
+  ['sales_rmb', '合同销售额'], ['estimated_profit_rmb', '预计订单利润'], ['purchase_cost_rmb', '订单采购归属成本'], ['order_expense_rmb', '订单费用'],
+  ['income_rmb', '账面收入（折算参考）'], ['expense_rmb', '账面支出（折算参考）'], ['net_cash_rmb', '账面净收支（折算参考）'],
 ]
 const balanceCards = [
   ['receivable_count', '待收笔数', 'count'], ['receivable_rmb', '待收款'], ['payable_count', '待付款笔数', 'count'], ['payable_rmb', '待付款'],
@@ -53,7 +54,7 @@ async function exportReport() {
   try {
     const response = await api.get('/finance-dashboard/', { params: { date_from: data.value.period.date_from, date_to: data.value.period.date_to, export: 'csv' }, responseType: 'blob' })
     const url = URL.createObjectURL(response.data)
-    const anchor = document.createElement('a'); anchor.href = url; anchor.download = `收支报表-${data.value.period.date_from}-${data.value.period.date_to}.csv`; anchor.click()
+    const anchor = document.createElement('a'); anchor.href = url; anchor.download = `账面收支参考-${data.value.period.date_from}-${data.value.period.date_to}.csv`; anchor.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
     notice.value = 'CSV 已开始下载。'
   } catch (err) { error.value = apiErrorMessage(err) || '导出失败，请稍后重试。' } finally { exporting.value = false }
@@ -65,21 +66,22 @@ onMounted(load)
 
 <template>
   <section class="finance-page">
-    <header><div><p class="page-lede">经营资金台账，金额按人民币汇总。</p></div><button class="secondary" :disabled="loading" @click="load">刷新数据</button></header>
+    <header><div><p class="page-lede">合同、应收应付与账面收支分别列示。</p></div><button class="secondary" :disabled="loading" @click="load">刷新数据</button></header>
     <form class="report-filters" aria-label="概览日期范围" @submit.prevent="applyPeriod"><label>开始日期<input v-model="dateFrom" type="date" required></label><label>结束日期<input v-model="dateTo" type="date" required></label><button :disabled="loading || !!rangeError">查询</button><button type="button" class="secondary" @click="resetPeriod">本月至今</button><button v-if="can('finance', 'export')" type="button" class="secondary" :disabled="loading || exporting || !data.period || !!error" @click="exportReport">{{ exporting ? '正在导出…' : '导出 CSV' }}</button></form>
     <p v-if="rangeError" class="error" role="alert">{{ rangeError }}</p>
     <p v-if="notice" class="notice" role="status">{{ notice }}</p>
-    <p class="definition-note">所选期间：销售额按订单日期，现金收支按实际发生日期。预计订单利润 = 期间销售额 − 采购归属成本 − 订单费用，仅作经营估算。待收、待付和未核销预收预付为当前余额，不受日期范围影响。</p>
+    <p class="definition-note">合同销售额按订单日期，账面收支按流水发生日期。待收、待付按合同汇率折算，未核销预收预付按原流水汇率折算，均为当前参考值。预计订单利润 = 合同销售额 − 采购归属成本 − 订单费用，仅作经营估算。</p>
+    <p class="definition-note">{{ data.cash_basis?.note || BOOK_RMB_NOTE }}</p>
     <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="error" @retry="load" />
     <template v-if="hasLoaded">
     <section class="metric-section"><header><div><h3>所选期间</h3><p>{{ data.period?.date_from }} 至 {{ data.period?.date_to }}</p></div></header><div class="cards period-cards">
       <article v-for="[key, label] in periodCards" :key="key"><span>{{ label }}</span><strong>¥{{ money(data.metrics[key]) }}</strong></article>
     </div></section>
-    <section class="metric-section"><header><div><h3>当前余额</h3><p>截至当前的待结与未核销金额</p></div></header><div class="cards balance-cards">
+    <section class="metric-section"><header><div><h3>当前待结与未核销</h3><p>截至当前的待结与未核销金额</p></div></header><div class="cards balance-cards">
       <article v-for="[key, label, kind] in balanceCards" :key="key"><span>{{ label }}</span><strong>{{ kind === 'count' ? `${data.metrics[key] || 0} 笔` : `¥${money(data.metrics[key])}` }}</strong></article>
     </div></section>
-    <div class="report-tables"><div class="panel"><h3>月度现金收支</h3><p v-if="!data.monthly_cash?.length">所选期间暂无已确认收支。</p><table v-else><thead><tr><th>月份</th><th>收入</th><th>支出</th><th>净现金流</th></tr></thead><tbody><tr v-for="row in data.monthly_cash" :key="row.month"><td>{{ row.month }}</td><td>¥{{ money(row.income) }}</td><td>¥{{ money(row.expense) }}</td><td>¥{{ money(row.net) }}</td></tr></tbody></table></div>
-    <div class="panel"><h3>收支分类汇总</h3><p v-if="!data.categories?.length">所选期间暂无分类收支。</p><table v-else><thead><tr><th>方向</th><th>分类</th><th>人民币金额</th></tr></thead><tbody><tr v-for="row in data.categories" :key="`${row.direction}-${row.category}`"><td>{{ row.direction === 'income' ? '收入' : '支出' }}</td><td>{{ row.category }}</td><td>¥{{ money(row.amount) }}</td></tr></tbody></table></div></div>
+    <div class="report-tables"><div class="panel"><h3>月度账面收支（人民币折算参考）</h3><p v-if="!data.monthly_cash?.length">所选期间暂无已确认账面收支记录。</p><table v-else><thead><tr><th>月份</th><th>收入</th><th>支出</th><th>账面净收支</th></tr></thead><tbody><tr v-for="row in data.monthly_cash" :key="row.month"><td>{{ row.month }}</td><td>¥{{ money(row.income) }}</td><td>¥{{ money(row.expense) }}</td><td>¥{{ money(row.net) }}</td></tr></tbody></table></div>
+    <div class="panel"><h3>账面收支分类（人民币折算参考）</h3><p v-if="!data.categories?.length">所选期间暂无账面收支分类记录。</p><table v-else><thead><tr><th>方向</th><th>分类</th><th>人民币折算参考</th></tr></thead><tbody><tr v-for="row in data.categories" :key="`${row.direction}-${row.category}`"><td>{{ row.direction === 'income' ? '收入' : '支出' }}</td><td>{{ row.category }}</td><td>¥{{ money(row.amount) }}</td></tr></tbody></table></div></div>
     <nav class="finance-links" aria-label="财务模块快捷入口"><RouterLink v-if="can('finance', 'view')" to="/receivables">查看应收计划</RouterLink><RouterLink v-if="can('finance', 'view')" to="/payables">查看应付计划</RouterLink><RouterLink v-if="can('transactions', 'view')" to="/transactions">查看财务流水</RouterLink></nav>
     <div class="panel"><h3>到期与逾期计划</h3><p v-if="!data.due_items.length">暂无到期或逾期计划。</p><table v-else><thead><tr><th>类型</th><th>合同</th><th>往来方</th><th>预计日期</th><th>待结金额</th></tr></thead><tbody><tr v-for="row in data.due_items" :key="row.id"><td>{{ row.direction === 'receivable' ? '应收' : '应付' }}</td><td><RouterLink v-if="row.order ? can('orders', 'view') : can('purchases', 'view')" :to="{ path: row.order ? '/orders' : '/purchase-orders', query: { detail: row.order || row.purchase_order } }">{{ row.contract_no }}</RouterLink><span v-else>{{ row.contract_no }}</span></td><td>{{ row.counterparty_name }}</td><td>{{ row.due_date }}</td><td>{{ row.currency }} {{ money(row.remaining_amount) }}</td></tr></tbody></table></div>
     </template>

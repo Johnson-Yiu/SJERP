@@ -1998,18 +1998,21 @@ def finance_dashboard(request):
         "monthly_cash": [{**monthly[key], "net": monthly[key]["income"] - monthly[key]["expense"]} for key in sorted(monthly)]}
 
 
+    from .finance_basis import book_rmb_metadata
+    payload["cash_basis"] = book_rmb_metadata()
+
     if exporting:
         from .reporting import safe_csv
         response = HttpResponse(content_type="text/csv; charset=utf-8")
         response["Content-Disposition"] = f'attachment; filename="finance-{start}-{end}.csv"'
         response.write("\ufeff")
         writer = csv.writer(response)
-        writer.writerow(["收支报表", start, end])
-        writer.writerow(["月份", "实际收入（人民币）", "实际支出（人民币）", "净现金流（人民币）"])
+        writer.writerow(["账面收支报表（人民币折算参考）", start, end, payload["cash_basis"]["note"]])
+        writer.writerow(["月份", "账面收入（人民币折算参考）", "账面支出（人民币折算参考）", "账面净收支（人民币折算参考）"])
         for row in payload["monthly_cash"]:
             writer.writerow([row["month"], row["income"], row["expense"], row["net"]])
         writer.writerow([])
-        writer.writerow(["方向", "分类", "人民币金额"])
+        writer.writerow(["方向", "分类", "人民币折算参考金额"])
         for row in payload["categories"]:
             writer.writerow(["收入" if row["direction"] == "income" else "支出", safe_csv(row["category"]), row["amount"]])
         return response

@@ -1,0 +1,72 @@
+[
+  {
+    "file": "01-iab-finance.jpg",
+    "format": "JPEG",
+    "width": 1265,
+    "height": 1775,
+    "sha256": "e65183a4407428c8a0f0290a1877085b25237cf33feceb3be138e7795b854d8b"
+  },
+  {
+    "file": "02-iab-transactions.jpg",
+    "format": "JPEG",
+    "width": 1265,
+    "height": 1389,
+    "sha256": "53b28eec4215a82fd7b19d401cc1c6bb79193af26ebf8238928f598816b7a9a3"
+  },
+  {
+    "file": "03-iab-reference-rate.jpg",
+    "format": "JPEG",
+    "width": 1265,
+    "height": 1389,
+    "sha256": "0801485c57f6489d9f26f6911840d478f724cbac99f350b18543738cb5346166"
+  },
+  {
+    "file": "04-iab-cash-report.jpg",
+    "format": "JPEG",
+    "width": 1265,
+    "height": 1878,
+    "sha256": "12e1c0440bcbe5d0776bca9699c03291e5e937c93002273637625756210f8e52"
+  },
+  {
+    "file": "05-chrome-finance.jpg",
+    "format": "JPEG",
+    "width": 1920,
+    "height": 863,
+    "sha256": "ca116c45fab9c0b44febf423bc0cd948088ce0c4f5d50baa24f7326b1ba57034"
+  },
+  {
+    "file": "06-chrome-transactions.jpg",
+    "format": "JPEG",
+    "width": 1905,
+    "height": 856,
+    "sha256": "24519acd319ae782cf5e89de269f58b67aa52ccf88acff20a708b8f1819ef2cf"
+  },
+  {
+    "file": "07-chrome-reference-rate.jpg",
+    "format": "JPEG",
+    "width": 1905,
+    "height": 856,
+    "sha256": "d437da75fa32bcdf6d18b04a1aa0ea847ae682e09fc964982931bb123b7b6b76"
+  },
+  {
+    "file": "08-chrome-cash-report.jpg",
+    "format": "JPEG",
+    "width": 1905,
+    "height": 856,
+    "sha256": "f1e413604eac89b18c49c75a13942e8b22cb0232058b7a54449c8f2f9848f7dd"
+  },
+  {
+    "file": "09-chrome-plan-rate.jpg",
+    "format": "JPEG",
+    "width": 1920,
+    "height": 863,
+    "sha256": "ac9ef633bf3a0144cccdec4b5ac28b8b95f4b60a1dacc837d4f8f52d0d3650a5"
+  },
+  {
+    "file": "10-chrome-overview.jpg",
+    "format": "JPEG",
+    "width": 1905,
+    "height": 856,
+    "sha256": "ae384eb3c2f66be59598e64cb023d464c04cbbf96fbf1ec83321dff7719ababb"
+  }
+]

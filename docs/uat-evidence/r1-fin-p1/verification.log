@@ -1,0 +1,2 @@
+PASS: all CRM rows SHA256 unchanged; exact Decimal financial metrics/categories/months/plans/report rows/previous/comparisons/transactions and every CSV numeric cell unchanged
+income=7988.0000 expense=391.9034 net=7596.0966; USD12.34 reference=87.9034 retained; CNY receipts included, void excluded

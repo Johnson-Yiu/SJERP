@@ -1,4 +1,5 @@
 <script setup>
+import { BOOK_RMB_NOTE } from '../utils/financeBasis.js'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api, listAll } from '../api'
@@ -95,8 +96,8 @@ const transactionMetrics = computed(() => {
   const sum = direction => rows.value.filter(row => row.direction === direction && row.status === 'confirmed').reduce((total, row) => total + Number(row.rmb_amount || 0), 0)
   return [
     { label: '流水笔数', value: rows.value.length, hint: '当前查询结果' },
-    { label: '收入合计', value: `¥ ${formatMoney(sum('income'))}`, hint: '折合人民币' },
-    { label: '支出合计', value: `¥ ${formatMoney(sum('expense'))}`, hint: '折合人民币' },
+    { label: '账面收入', value: `¥ ${formatMoney(sum('income'))}`, hint: '人民币折算参考' },
+    { label: '账面支出', value: `¥ ${formatMoney(sum('expense'))}`, hint: '人民币折算参考' },
     { label: '关联订单', value: new Set(rows.value.map(row => row.order || row.order_no).filter(Boolean)).size, hint: '有业务归属的流水' },
   ]
 })
@@ -300,9 +301,10 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
 <template>
   <section class="txn">
     <header>
-      <div><p class="page-lede">统一登记实际收付款、订单费用与期间费用。</p></div>
+      <div><p class="page-lede">登记原币收付款、订单费用与期间费用。</p></div>
       <button v-if="can('transactions', 'create')" :disabled="!referencesLoaded" @click="openForm">新增记账</button>
     </header>
+    <p class="page-lede">{{ BOOK_RMB_NOTE }}</p>
     <p v-if="notice" class="notice" role="status">{{ notice }}</p>
     <div v-if="referenceErrorText" class="option-load-error" role="alert"><span>新增记账所需的关联资料未能全部加载，暂不能新增。{{ referenceErrorText }}</span><button type="button" @click="loadReferenceOptions">重试加载</button></div>
     <p v-else-if="referencesLoading" class="option-loading-note" role="status">正在加载客户、供应商和采购单资料…</p>
@@ -320,7 +322,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
     <p v-if="error && !showForm && !allocation && !voidTarget" class="error" role="alert">{{ error }}</p>
     <template v-if="hasLoaded">
     <table>
-      <thead><tr><th>日期 / 流水号</th><th>收支 / 类型</th><th>往来方 / 合同</th><th>原币金额</th><th>人民币</th><th>状态 / 核销</th><th>操作</th></tr></thead>
+      <thead><tr><th>日期 / 流水号</th><th>收支 / 类型</th><th>往来方 / 合同</th><th>原币金额</th><th>人民币折算参考</th><th>状态 / 核销</th><th>操作</th></tr></thead>
       <tbody><tr v-if="!rows.length"><td colspan="7"><ListEmptyState entity="财务流水" :filtered="filtersActive && allTransactionsExist" @clear="clearFilters"><template #action>当前还没有财务流水。</template></ListEmptyState></td></tr><tr v-for="row in rows" :key="row.id"><td>{{ row.transaction_date }}<small>{{ row.transaction_no }}<span v-if="row.split_from"> · 拆分记录</span></small></td><td>{{ row.direction_display || directionLabel(row.direction) }}<small>{{ kindLabel(row.kind) }}</small></td><td>{{ row.customer_name || row.supplier_name || '—' }}<small><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.order ? row.order_no : row.purchase_no }}</RouterLink><span v-else>未关联合同</span></small></td><td>{{ row.currency }} {{ formatMoney(row.amount) }}</td><td>¥{{ formatMoney(row.rmb_amount) }}</td><td>{{ row.status_display }}<small v-if="['unallocated_advance', 'unallocated_payment'].includes(row.kind)">未核销 {{ row.currency }} {{ formatMoney(Number(row.amount) - Number(row.allocated_amount)) }}</small><small v-for="item in row.allocations" :key="item.id"><RouterLink v-if="allocationLocation(item)" :to="allocationLocation(item)" class="contract-link">{{ item.contract_no }}</RouterLink><span v-else>{{ item.contract_no }}</span>：{{ formatMoney(item.amount) }} {{ item.is_active ? '已核销' : '已撤回' }}</small><small v-if="row.status === 'cancelled' && row.void_reason">作废原因：{{ row.void_reason }}{{ row.voided_at ? ' · ' + row.voided_at : '' }}</small></td><td><button v-if="can('transactions', 'update') && row.status === 'confirmed' && ['unallocated_advance', 'unallocated_payment'].includes(row.kind) && Number(row.amount) > Number(row.allocated_amount)" @click="openAllocate(row)">核销</button><button v-if="can('transactions', 'update') && row.status === 'confirmed' && !row.split_from" @click="openVoid(row)">作废</button><small v-if="row.split_from">由原始流水统一作废</small><small v-else-if="row.status === 'cancelled'">已作废</small></td></tr></tbody>
     </table>
     </template>
@@ -337,11 +339,11 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
           </select>
           <small class="field-hint">已按收入 / 支出分组；选择类型后会自动确定收支方向。</small>
         </label>
-        <label>日期<input v-model="form.transaction_date" type="date" required></label>
+        <label>流水发生日期<input v-model="form.transaction_date" type="date" required></label>
         <p class="category-hint">分类由所选类型自动生成：{{ form.category }}，无需重复填写。</p>
         <label>原币金额<input v-model="form.amount" v-money-input type="number" min="0.0001" step="any" required></label>
         <label>币种<select v-model="form.currency" required @change="onCurrencyChange"><option v-for="currency in currencies" :key="currency.value" :value="currency.value">{{ currency.label }}</option></select></label>
-        <label>结汇汇率 <small>1 外币 ≈ 人民币</small><input v-model="form.exchange_rate" type="number" min="0.000001" step="0.000001" required></label>
+        <label>参考折算汇率 <small>1 原币对应人民币，仅用于账面折算</small><input v-model="form.exchange_rate" type="number" min="0.000001" step="0.000001" required></label>
         </fieldset>
         <fieldset :disabled="saving"><legend>业务关联</legend>
         <div v-if="contractKinds.includes(form.kind)" class="order-picker">

@@ -215,8 +215,8 @@ const resourceMetrics = computed(() => {
   ]
   if (endpoint === 'transactions') return [
     { label: '流水笔数', value: total, hint: '当前查询结果' },
-    { label: '收入合计', value: `¥ ${rows.value.filter(row => row.direction === 'income').reduce((sum, row) => sum + Number(row.rmb_amount || 0), 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, hint: '折合人民币' },
-    { label: '支出合计', value: `¥ ${rows.value.filter(row => row.direction === 'expense').reduce((sum, row) => sum + Number(row.rmb_amount || 0), 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, hint: '折合人民币' },
+    { label: '收入合计', value: `¥ ${rows.value.filter(row => row.direction === 'income').reduce((sum, row) => sum + Number(row.rmb_amount || 0), 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, hint: '账面人民币折算参考（含CNY流水）' },
+    { label: '支出合计', value: `¥ ${rows.value.filter(row => row.direction === 'expense').reduce((sum, row) => sum + Number(row.rmb_amount || 0), 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, hint: '账面人民币折算参考（含CNY流水）' },
     { label: '关联订单', value: new Set(rows.value.map(row => row.order || row.order_no).filter(Boolean)).size, hint: '有业务归属的流水' },
   ]
   const primary = endpoint === 'contacts' ? rows.value.filter(row => row.is_primary).length : rows.value.filter(row => ['active', 'development', 'draft'].includes(row.status)).length

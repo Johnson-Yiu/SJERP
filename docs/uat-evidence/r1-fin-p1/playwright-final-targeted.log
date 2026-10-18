@@ -1,0 +1,9 @@
+
+Running 2 tests using 1 worker
+
+(node:30756) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1440 (2.2s)
+  ok 2 browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1024 (2.1s)
+
+  2 passed (5.5s)

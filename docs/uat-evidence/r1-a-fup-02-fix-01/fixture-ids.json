@@ -1,0 +1,12 @@
+{
+  "legacy_no_plans": 7,
+  "main": 1,
+  "paid_unshipped": 2,
+  "draft": 3,
+  "cancelled": 4,
+  "history": 5,
+  "zero": 6,
+  "main_item": 1,
+  "database": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-a-fup-02-fix-01/backend/r1a-fup02-fix01-isolated.sqlite3",
+  "classification": "FIXTURE_SETUP"
+}

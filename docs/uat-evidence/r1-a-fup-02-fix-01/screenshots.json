@@ -1,0 +1,58 @@
+[
+  {
+    "file": "01-history-no-plans.jpg",
+    "bytes": 63902,
+    "sha256": "8e5d33e56241f02d9c20f1cb622f59be97476541ef94c50749a1c32ea8f2ded8",
+    "classification": "REAL_UI_ACTION",
+    "acceptance_image": true
+  },
+  {
+    "file": "02-complete-loading-only.jpg",
+    "bytes": 25829,
+    "sha256": "f82d26ae9729fecf9eec8f4739b69e5dfea0adffa18c44bb8144af5e348cc37d",
+    "classification": "REAL_UI_ACTION",
+    "acceptance_image": false
+  },
+  {
+    "file": "03-settled.jpg",
+    "bytes": 62339,
+    "sha256": "d8cdb7df43fcfab92fd940020ebe4fa090d73529d42af896a082c1658470d768",
+    "classification": "REAL_UI_ACTION",
+    "acceptance_image": true
+  },
+  {
+    "file": "04-refund-debt40.jpg",
+    "bytes": 64484,
+    "sha256": "ae195983108b490f8cdd9011eff86a452de9ec41dd349e40dad368589fcac908",
+    "classification": "REAL_UI_ACTION",
+    "acceptance_image": true
+  },
+  {
+    "file": "05-chrome-history-review.jpg",
+    "bytes": 106135,
+    "sha256": "773739d36e5ba9c14974985bb674cf63f813fa127b80a91fe7a259b314acd2ed",
+    "classification": "REAL_UI_ACTION",
+    "acceptance_image": true
+  },
+  {
+    "file": "06-chrome-orders-header.jpg",
+    "bytes": 114991,
+    "sha256": "8da7de381b993af0b9399aa2c3aad181967d189315fa8f2d716c7579dc4ad0de",
+    "classification": "REAL_UI_ACTION",
+    "acceptance_image": true
+  },
+  {
+    "file": "07-chrome-quotes-header.jpg",
+    "bytes": 71515,
+    "sha256": "726f7eb21425d654b3809d0ebd0cc8bad9e8c2b676bee8a77c0dc30865004f74",
+    "classification": "REAL_UI_ACTION",
+    "acceptance_image": true
+  },
+  {
+    "file": "08-mocked-permission.png",
+    "bytes": 123760,
+    "sha256": "942a5d4c7c32f7fee755a636206594129f8d052448e41512d076f998aa9d9042",
+    "classification": "MOCKED_TEST",
+    "acceptance_image": true
+  }
+]

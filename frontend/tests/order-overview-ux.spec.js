@@ -92,3 +92,17 @@ it('separates payment/profit and retains fulfillment, quote and receivable navig
   await wrapper.get('.task-list button').trigger('click'); await flushPromises(); expect(wrapper.get('.workbench-tabs button.active').text()).toBe('采购与发货')
   expect(mocks.api.post).not.toHaveBeenCalled()
 })
+
+it('shared document headers remain distinct when switching quote and order',async()=>{
+ mocks.listAll.mockResolvedValue([{id:1,quote_no:'QT-HEADER',status:'draft',status_display:'草稿',currency:'USD',total_amount:'500',items:[]}])
+ await setup(DocumentPage, '/orders');expect(wrapper.findAll('th').map(x=>x.text())).toContain('履约状态')
+ await wrapper.setProps({type:'quotes'});await flushPromises()
+ expect(wrapper.findAll('th').map(x=>x.text())).toContain('状态');expect(wrapper.findAll('th').map(x=>x.text())).not.toContain('履约状态')
+ await wrapper.setProps({type:'orders'});await flushPromises()
+ expect(wrapper.findAll('th').map(x=>x.text())).toContain('履约状态');expect(wrapper.findAll('th').map(x=>x.text())).not.toContain('状态')
+})
+
+it('list unknown debt is a review label rather than confirmed zero',async()=>{
+ mocks.listAll.mockResolvedValue([{...row(),status:'completed',balance_amount:'0',receivable_state:'no_plans'}])
+ await setup(DocumentPage,'/orders');expect(wrapper.get('tbody .owing').text()).toBe('应收计划待核对')
+})

@@ -1891,6 +1891,7 @@ class OrderSerializer(serializers.ModelSerializer):
     approved_change_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     paid_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     balance_amount = serializers.SerializerMethodField()
+    receivable_state = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
@@ -1908,6 +1909,13 @@ class OrderSerializer(serializers.ModelSerializer):
             data["paid_amount"] = None
             data["balance_amount"] = None
         return data
+
+    def get_receivable_state(self, obj):
+        user = serializer_user(self.context)
+        if not (user_can(user, "finance", "view") and user_can(user, "transactions", "view")):
+            return None
+        from .services.finance import order_receivable_state
+        return order_receivable_state(obj, obj.payment_plans.all())["state"]
 
     def get_balance_amount(self, obj):
         return obj.outstanding_amount.quantize(Decimal("0.01"))

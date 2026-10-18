@@ -36,7 +36,7 @@ it('no financial permission hides card and receipt task even with malicious unma
 })
 it('historical completed no plan is not claimed financially settled',async()=>{
  summary={paid_amount:'0',balance_amount:'0',planned_amount:'0',settlement:{state:'no_plans',label:'无有效应收计划',overdue_amount:'0'}}
- await view();expect(w.get('.payment-card').text()).toContain('无有效应收计划');expect(w.get('.payment-card').text()).not.toContain('款项已结清')
+ await view();expect(w.get('.payment-card').text()).toContain('应收计划待核对');expect(w.get('.payment-card').text()).not.toContain('款项已结清')
 })
 it('failed reload does not display stale success or financial conclusion',async()=>{
  await view();mocks.get.mockRejectedValue(new Error('读取失败'));await w.setProps({refreshKey:1});await flushPromises()
@@ -49,4 +49,14 @@ it('completion success feedback clears when the reused detail switches orders',a
  expect(w.text()).toContain('履约已完成，未收款项继续保留。')
  order.id=8;order.order_no='FUP02-NEXT';order.status='draft';await w.setProps({id:8});await flushPromises()
  expect(w.text()).toContain('FUP02-NEXT');expect(w.text()).not.toContain('履约已完成，未收款项继续保留。')
+})
+
+it.each(['no_plans','review'])('unknown %s debt requires verification without confirmed zero',async state=>{
+ summary={paid_amount:'0',balance_amount:'0',planned_amount:'0',settlement:{state,label:'无有效应收计划',overdue_amount:'0'}}
+ await view();expect(w.get('.current-todo-card').text()).toContain('应收计划待核对')
+ expect(w.get('.current-todo-card').text()).not.toContain('当前没有待处理事项')
+ expect(w.get('.payment-card').findAll('dd').at(-1).text()).toBe('待核对')
+ expect(w.find('.payment-card .progress-track').exists()).toBe(false)
+ expect(w.get('.current-todo-card a').attributes('href')).toBe('/receivables?order=7')
+ expect(w.get('.current-todo-card').findAll('button')).toHaveLength(0)
 })

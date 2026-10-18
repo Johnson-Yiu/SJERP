@@ -1,0 +1,83 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/orders/1/ship/",
+    "status": 201,
+    "request": {
+      "shipment_date": "2026-10-18",
+      "items": [
+        {
+          "order_item": 1,
+          "quantity": "10",
+          "trade_unit": null,
+          "overage_reason": ""
+        }
+      ]
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/transactions/",
+    "status": 201,
+    "request": {
+      "transaction_no": "FIN-C3D014740971771B2B1F4554E630B4AA",
+      "transaction_date": "2026-10-18",
+      "kind": "customer_receipt",
+      "direction": "income",
+      "category": "客户收款",
+      "amount": 340,
+      "currency": "USD",
+      "exchange_rate": "7.100000",
+      "payment_method": "",
+      "reference": "",
+      "notes": "",
+      "order": 1,
+      "customer": null,
+      "supplier": null,
+      "purchase_order": null
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/orders/1/complete/",
+    "status": 200,
+    "request": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/payment-plans/4/settle/",
+    "status": 201,
+    "request": {
+      "amount": 160,
+      "transaction_date": "2026-10-18",
+      "exchange_rate": 7.1,
+      "payment_method": "",
+      "reference": "FUP02-500",
+      "notes": "",
+      "currency": "USD",
+      "category": "客户收款"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/transactions/",
+    "status": 201,
+    "request": {
+      "transaction_no": "FIN-64A6423010BCEBCDE04578A3C7371B57",
+      "transaction_date": "2026-10-18",
+      "kind": "refund",
+      "direction": "expense",
+      "category": "客户退款（原收款退回）",
+      "amount": 40,
+      "currency": "USD",
+      "exchange_rate": "7.100000",
+      "payment_method": "",
+      "reference": "",
+      "notes": "",
+      "order": 1,
+      "customer": null,
+      "supplier": null,
+      "purchase_order": null
+    }
+  }
+]

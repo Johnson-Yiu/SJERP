@@ -1,0 +1,32 @@
+
+ RUN  v4.1.11 D:/Codex项目/森爵照明管理系统/.worktrees/r1-a-fup-02-fix-01/frontend
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+TypeError: Cannot read properties of undefined (reading 'customer_name')
+ ❯ Proxy._sfc_render src/components/QuoteDetailModal.vue:166:81
+
+ ❯ renderComponentRoot ../../../.r0-f9-worktree/frontend/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:4629:16
+ ❯ ReactiveEffect.componentUpdateFn [as fn] ../../../.r0-f9-worktree/frontend/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6240:26
+ ❯ ReactiveEffect.run ../../../.r0-f9-worktree/frontend/node_modules/@vue/reactivity/dist/reactivity.cjs.js:268:19
+ ❯ ReactiveEffect.runIfDirty ../../../.r0-f9-worktree/frontend/node_modules/@vue/reactivity/dist/reactivity.cjs.js:306:12
+ ❯ callWithErrorHandling ../../../.r0-f9-worktree/frontend/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:200:33
+ ❯ flushJobs ../../../.r0-f9-worktree/frontend/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:409:9
+
+This error originated in "tests/order-overview-ux.spec.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "shared document headers remain distinct when switching quote and order". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  2 passed (2)
+      Tests  20 passed (20)
+     Errors  1 error
+   Start at  20:37:08
+   Duration  25.87s (transform 1.88s, setup 5.24s, import 2.65s, tests 966ms, environment 40.82s)
+

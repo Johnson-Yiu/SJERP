@@ -7,7 +7,7 @@ async function setup(page,{restricted=false,shipped=false}={}){
   const order={id:7,order_no:'FUP02-500',status:state.status,status_display:state.status==='completed'?'已完成':'已发货',customer_name:'合成客户',currency:'USD',total_amount:'500.00',balance_amount:state.balance,paid_amount:state.paid,items:[]}
   if(path==='/api/session/current-operator/')return route.fulfill({json:restricted?{rbac_enforcement:true,permissions:{orders:{view:true,update:true}}}:{development_superadmin:true,has_all_permissions:true}})
   if(path==='/api/orders/')return route.fulfill({json:[order]})
-  if(path==='/api/orders/7/workbench/')return route.fulfill(state.fail?{status:500,json:{detail:'读取失败'}}:{json:{order,items:[],payments:[],inventory:[],plans:[],fulfillment_summary:{},payment_summary:{paid_amount:state.paid,balance_amount:state.balance,planned_amount:'500',settlement:{state:Number(state.balance)?'partial':'settled',label:state.label,overdue_amount:state.balance}}}})
+  if(path==='/api/orders/7/workbench/')return route.fulfill(state.fail?{status:500,json:{detail:'读取失败'}}:{json:{order,items:[],payments:[],inventory:[],plans:[],fulfillment_summary:{},payment_summary:{paid_amount:state.paid,balance_amount:state.balance,planned_amount:'500',settlement:{state:state.settlement || (Number(state.balance)?'partial':'settled'),label:state.label,overdue_amount:state.balance}}}})
   if(path==='/api/orders/7/fulfillment/')return route.fulfill({json:{items:[],shipments:[]}})
   if(path==='/api/orders/7/')return route.fulfill({json:order})
   if(path==='/api/payment-plans/')return route.fulfill({json:Number(state.balance)?[{id:8,order:7,contract_no:'FUP02-500',counterparty_name:'合成客户',direction:'receivable',currency:'USD',planned_amount:'350',settled_amount:'190',remaining_amount:state.balance,status:'open',is_overdue:true}]:[]})
@@ -30,9 +30,11 @@ test('completed receivable navigation, Back, settlement and refund reloads retai
  await expect(modal.locator('.current-todo-card')).toContainText('待收 USD 40.00');await expect(modal).toContainText('履约：已完成')
 })
 test('restricted user cannot read protected debt from malicious unmasked order payload',async({page})=>{
- await setup(page,{restricted:true});const modal=page.getByRole('dialog',{name:'订单工作台'})
+ const state=await setup(page,{restricted:true});state.settlement='no_plans';state.balance='0';await page.reload();const modal=page.getByRole('dialog',{name:'订单工作台'})
  await expect(modal).toContainText('履约：已完成');await expect(modal.locator('.payment-card')).toHaveCount(0)
  await expect(modal.locator('.current-todo-card')).not.toContainText('160');await expect(page.getByRole('columnheader',{name:'已收 / 待收'})).toHaveCount(0)
+ await expect(modal.locator('.current-todo-card')).toContainText('当前没有可查看的履约待办。')
+ if(process.env.R1A_EVIDENCE_DIR) await page.screenshot({path:process.env.R1A_EVIDENCE_DIR+'/08-mocked-permission.png',fullPage:true})
 })
 test('completion pending prevents duplicate UI action and failed reload retries without false financial success',async({page})=>{
  const state=await setup(page,{shipped:true});let release;state.gate=new Promise(resolve=>{release=resolve})
@@ -43,3 +45,13 @@ test('completion pending prevents duplicate UI action and failed reload retries 
  state.fail=false;await modal.getByRole('button',{name:'重试',exact:true}).click();await expect(modal.locator('.current-todo-card')).toContainText('160.00')
 })
 
+
+for(const settlement of ['no_plans','review']) test(`unknown ${settlement} has a review task and no confirmed zero`,async({page})=>{
+ const state=await setup(page);state.settlement=settlement;state.balance='0';state.label='无有效应收计划';await page.reload()
+ const modal=page.getByRole('dialog',{name:'订单工作台'})
+ await expect(modal.locator('.current-todo-card')).toContainText('应收计划待核对')
+ await expect(modal.locator('.current-todo-card')).not.toContainText('当前没有待处理事项')
+ await expect(modal.locator('.payment-card dd').last()).toHaveText('待核对')
+ await expect(modal.locator('.payment-card .progress-track')).toHaveCount(0)
+ await expect(modal.locator('.current-todo-card a')).toHaveAttribute('href','/receivables?order=7')
+})

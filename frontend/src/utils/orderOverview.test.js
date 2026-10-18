@@ -21,3 +21,12 @@ test('masked, absent and denied financial amounts never fall back to protected o
  }
  assert.deepEqual(orderTasks({status:'completed',balance_amount:'500'},lines,{balance_amount:null}),[])
 })
+
+for(const state of ['no_plans','review']) test(`unknown ${state} is review, never confirmed zero`,()=>{
+ const order={status:'completed',total_amount:'500'},payment={balance_amount:'0',settlement:{state}}
+ const tasks=orderTasks(order,lines,payment);assert.deepEqual(tasks.map(t=>t.key),['receivable_review']);assert.equal(tasks[0].amount,undefined)
+ assert.deepEqual(orderTasks(order,lines,payment,{canViewPayments:false}),[])
+ assert.deepEqual(orderTasks({...order,total_amount:'0'},lines,payment),[])
+ assert.deepEqual(orderTasks({...order,status:'cancelled'},lines,payment),[])
+ assert.deepEqual(orderTasks({...order,status:'draft'},lines,payment).map(t=>t.key),['confirm'])
+})

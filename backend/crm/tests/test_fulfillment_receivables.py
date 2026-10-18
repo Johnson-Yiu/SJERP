@@ -69,3 +69,16 @@ class FulfillmentReceivableTests(TestCase):
         self.assertEqual(order_receivable_state(self.order,plans)['overdue_amount'],D('135.32'))
         self.assertEqual(self.order.outstanding_amount,D('485.32'))
         self.assertEqual(sum((row.rmb_amount for row in Transaction.objects.all()),D('0')),D('106.43'))
+
+    def test_readonly_list_state_and_financial_permission_boundary(self):
+        from crm.serializers import OrderSerializer
+        before=self.rows()
+        self.assertEqual(OrderSerializer(self.order).data['receivable_state'],'no_plans')
+        self.assertEqual(self.rows(),before)
+        for denied in ['finance','transactions']:
+            with patch('crm.serializers.user_can',side_effect=lambda user,module,action:module!=denied):
+                data=OrderSerializer(self.order).data
+                for field in ['receivable_state','paid_amount','balance_amount']:self.assertIsNone(data[field])
+        self.cash('340');self.assertEqual(OrderSerializer(self.order).data['receivable_state'],'partial')
+        self.cash('160');self.assertEqual(OrderSerializer(self.order).data['receivable_state'],'settled')
+        self.cash('40','refund');self.assertEqual(OrderSerializer(self.order).data['receivable_state'],'partial')

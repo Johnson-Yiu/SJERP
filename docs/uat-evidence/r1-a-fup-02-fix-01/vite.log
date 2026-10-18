@@ -1,0 +1,696 @@
+
+> senju-crm-erp@1.0.0 dev
+> vite --port 5204 --host 127.0.0.1
+
+20:39:24 [vite] (client) Re-optimizing dependencies because vite config has changed
+
+  VITE v8.2.0  ready in 1296 ms
+
+  ➜  Local:   http://127.0.0.1:5204/
+20:39:26 [vite] (client) [optimizer] bundling dependencies...
+20:39:54 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:39:57 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:40:38 [vite] (client) hmr update /src/views/DocumentPage.vue, /src/components/OrderDetailModal.vue
+20:40:38 [vite] (client) hmr update /src/views/DocumentPage.vue, /src/views/DocumentPage.vue?vue&type=style&index=0&scoped=dfaf05d4&lang.css, /src/views/DocumentPage.vue?vue&type=style&index=1&scoped=dfaf05d4&lang.css
+20:40:38 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:40:39 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:40:39 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:40:39 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:41:43 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:41:45 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:41:58 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:41:59 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:42:31 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:42:32 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:42:52 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:42:52 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:42:56 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:42:57 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:42:57 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:44:01 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:44:02 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:44:20 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:44:20 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:44:20 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:44:20 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:31 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:31 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:32 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:32 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:33 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:33 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:34 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:34 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:35 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:35 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:36 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:36 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:36 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:37 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:37 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:37 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:37 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:37 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:38 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:45 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:45 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:45 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:46 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:46 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:47 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:47 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:48 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:48 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:49 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+20:45:50 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:05:57 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:05:57 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:06:50 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:06:50 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:07:34 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:07:35 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:08:02 [vite] (client) hmr update /src/views/DocumentPage.vue, /src/components/OrderDetailModal.vue
+21:08:02 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:08:02 [vite] (client) hmr update /src/views/DocumentPage.vue, /src/views/DocumentPage.vue?vue&type=style&index=0&scoped=dfaf05d4&lang.css, /src/views/DocumentPage.vue?vue&type=style&index=1&scoped=dfaf05d4&lang.css
+21:08:02 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:08:02 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:18 [vite] (client) hmr update /src/components/OrderDetailModal.vue, /src/components/OrderDetailModal.vue?vue&type=style&index=0&scoped=39de5d98&lang.css, /src/components/OrderDetailModal.vue?vue&type=style&index=1&scoped=39de5d98&lang.css, /src/components/OrderDetailModal.vue?vue&type=style&index=2&scoped=39de5d98&lang.css, /src/components/OrderDetailModal.vue?vue&type=style&index=3&scoped=39de5d98&lang.css, /src/components/OrderDetailModal.vue?vue&type=style&index=5&scoped=39de5d98&lang.css and 2 more
+21:09:19 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:19 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:40 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:41 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:45 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:45 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:46 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:46 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:47 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:47 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:48 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:48 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:49 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:49 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:50 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:50 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:50 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:50 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:50 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:50 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:51 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:58 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:58 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:58 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:59 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:59 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:09:59 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:10:00 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:10:00 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:10:01 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:10:01 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:10:01 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:12:58 [vite] (client) hmr update /src/components/OrderDetailModal.vue, /src/components/OrderDetailModal.vue?vue&type=style&index=0&scoped=39de5d98&lang.css, /src/components/OrderDetailModal.vue?vue&type=style&index=1&scoped=39de5d98&lang.css, /src/components/OrderDetailModal.vue?vue&type=style&index=2&scoped=39de5d98&lang.css, /src/components/OrderDetailModal.vue?vue&type=style&index=3&scoped=39de5d98&lang.css, /src/components/OrderDetailModal.vue?vue&type=style&index=5&scoped=39de5d98&lang.css and 2 more
+21:12:58 [vite] (client) hmr update /src/views/DocumentPage.vue, /src/components/OrderDetailModal.vue
+21:12:59 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:12:59 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > > 
+  at <RouterView key="/orders" > 
+  at <App>
+21:12:59 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>

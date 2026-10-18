@@ -1,0 +1,18 @@
+✔ order tasks draft debt matrix (3.1526ms)
+✔ order tasks cancelled debt matrix (0.1703ms)
+✔ order tasks confirmed debt matrix (0.3326ms)
+✔ order tasks production debt matrix (1.0325ms)
+✔ order tasks shipped debt matrix (0.153ms)
+✔ order tasks completed debt matrix (0.124ms)
+✔ completed settled has no tasks, refund dynamically restores only receipt (1.5088ms)
+✔ masked, absent and denied financial amounts never fall back to protected order balance (0.502ms)
+✔ unknown no_plans is review, never confirmed zero (0.5006ms)
+✔ unknown review is review, never confirmed zero (0.2259ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 134.3979

@@ -1,0 +1,839 @@
+[
+  {
+    "method": "GET",
+    "path": "finance-dashboard/",
+    "request": null,
+    "status": 200,
+    "response": {
+      "metrics": {
+        "receivable_count": 0,
+        "receivable_rmb": 0.0,
+        "payable_count": 0,
+        "payable_rmb": 0.0,
+        "sales_rmb": 700.0,
+        "monthly_sales_rmb": 700.0,
+        "purchase_cost_rmb": 0.0,
+        "order_expense_rmb": 0.0,
+        "estimated_profit_rmb": 700.0,
+        "income_rmb": 700.0,
+        "expense_rmb": 0.0,
+        "net_cash_rmb": 700.0,
+        "advance_receipt_rmb": 0.0,
+        "advance_payment_rmb": 0.0
+      },
+      "period": {
+        "date_from": "2026-10-01",
+        "date_to": "2026-10-18"
+      },
+      "due_items": [],
+      "categories": [
+        {
+          "direction": "income",
+          "category": "",
+          "amount": 700.0
+        }
+      ],
+      "monthly_cash": [
+        {
+          "month": "2026-10",
+          "income": 700.0,
+          "expense": 0.0,
+          "net": 700.0
+        }
+      ],
+      "cash_basis": {
+        "basis": "book_rmb_reference",
+        "version": 1,
+        "note": "账面人民币折算参考：已确认流水按既有人民币金额及流水汇率汇总，包含原币为CNY的既有流水；不代表银行实际到账、已完成结汇或银行账户余额。流水发生日期不等同于银行到账日。",
+        "date_basis": "transaction_date",
+        "includes_cny": true
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "path": "rmb-cash-events/preview/",
+    "request": {
+      "event_no": "P2A-SYNTH-EVENT-01",
+      "request_key": "P2A-SYNTH-REQUEST-01",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "direction": "income",
+      "bank_date": "2026-10-18",
+      "bank_net_amount": "705.00",
+      "fee_mode": "included",
+      "fee_amount": "5.00",
+      "source_account": "SYNTH_FX",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "P2A-SYNTH-BANK-01",
+      "evidence_reference": "P2A-SYNTH-VOUCHER-01",
+      "evidence_sha256": "7ed2aa0d1a0bbd2541a6bb7e006187199756a4ae4438594ef48142771cd6d87a",
+      "evidence_note": "Synthetic bank voucher manually checked, not production approval",
+      "quoted_rate": "7.100000",
+      "sources": [
+        {
+          "transaction_id": 1,
+          "amount": "30.0000",
+          "verified": true
+        },
+        {
+          "transaction_id": 2,
+          "amount": "70.0000",
+          "verified": true
+        }
+      ]
+    },
+    "status": 200,
+    "response": {
+      "payload": {
+        "event_no": "P2A-SYNTH-EVENT-01",
+        "request_key": "P2A-SYNTH-REQUEST-01",
+        "source_account": "SYNTH_FX",
+        "rmb_account": "SYNTH_CNY",
+        "bank_reference": "P2A-SYNTH-BANK-01",
+        "evidence_reference": "P2A-SYNTH-VOUCHER-01",
+        "evidence_sha256": "7ed2aa0d1a0bbd2541a6bb7e006187199756a4ae4438594ef48142771cd6d87a",
+        "evidence_note": "Synthetic bank voucher manually checked, not production approval",
+        "kind": "fx_settlement",
+        "currency": "USD",
+        "direction": "income",
+        "bank_date": "2026-10-18",
+        "bank_net_amount": "705.00",
+        "fee_mode": "included",
+        "fee_amount": "5.00",
+        "quoted_rate": "7.100000",
+        "fee_for": null,
+        "sources": [
+          {
+            "transaction_id": 1,
+            "amount": "30.00",
+            "verified": true
+          },
+          {
+            "transaction_id": 2,
+            "amount": "70.00",
+            "verified": true
+          }
+        ]
+      },
+      "source_total": "100.00",
+      "bank_net_amount": "705.00",
+      "confirmed": false,
+      "sources": [
+        {
+          "id": 1,
+          "remaining_candidate_amount": "30.0000",
+          "manual_verification_required": true
+        },
+        {
+          "id": 2,
+          "remaining_candidate_amount": "70.0000",
+          "manual_verification_required": true
+        }
+      ],
+      "note": "只读预览不占用额度，不替代银行凭证确认。"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "rmb-cash-events/",
+    "request": {
+      "event_no": "P2A-SYNTH-EVENT-01",
+      "request_key": "P2A-SYNTH-REQUEST-01",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "direction": "income",
+      "bank_date": "2026-10-18",
+      "bank_net_amount": "705.00",
+      "fee_mode": "included",
+      "fee_amount": "5.00",
+      "source_account": "SYNTH_FX",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "P2A-SYNTH-BANK-01",
+      "evidence_reference": "P2A-SYNTH-VOUCHER-01",
+      "evidence_sha256": "7ed2aa0d1a0bbd2541a6bb7e006187199756a4ae4438594ef48142771cd6d87a",
+      "evidence_note": "Synthetic bank voucher manually checked, not production approval",
+      "quoted_rate": "7.100000",
+      "sources": [
+        {
+          "transaction_id": 1,
+          "amount": "30.0000",
+          "verified": true
+        },
+        {
+          "transaction_id": 2,
+          "amount": "70.0000",
+          "verified": true
+        }
+      ]
+    },
+    "status": 201,
+    "response": {
+      "id": 1,
+      "event_no": "P2A-SYNTH-EVENT-01",
+      "request_key": "P2A-SYNTH-REQUEST-01",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "amount": "100.0000",
+      "direction": "income",
+      "bank_date": "2026-10-18",
+      "bank_net_amount": "705.00",
+      "fee_mode": "included",
+      "bank_currency": "CNY",
+      "fee_currency": "CNY",
+      "fee_amount": "5.00",
+      "source_account": "SYNTH_FX",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "P2A-SYNTH-BANK-01",
+      "evidence_reference": "P2A-SYNTH-VOUCHER-01",
+      "evidence_sha256": "7ed2aa0d1a0bbd2541a6bb7e006187199756a4ae4438594ef48142771cd6d87a",
+      "evidence_note": "Synthetic bank voucher manually checked, not production approval",
+      "quoted_rate": "7.100000",
+      "status": "pending",
+      "confirmed_at": null,
+      "created_at": "2026-10-18T15:50:40.101561Z",
+      "created_actor": {
+        "kind": "development_superadmin",
+        "note": "开发身份，非正式员工审批"
+      },
+      "confirmed_actor": {},
+      "cancelled_reason": "",
+      "correction_of": null,
+      "fee_for": null,
+      "sources": [
+        {
+          "transaction_id": 1,
+          "amount": "30.0000",
+          "currency": "USD",
+          "snapshot": {
+            "id": 1,
+            "transaction_no": "P2A-SYNTH-T",
+            "amount": "30.0000",
+            "currency": "USD",
+            "direction": "income",
+            "kind": "customer_receipt",
+            "split_from_id": null,
+            "customer_id": 1,
+            "supplier_id": null,
+            "order_id": 1,
+            "purchase_order_id": null,
+            "plan_id": 1,
+            "exchange_rate": "7.000000",
+            "rmb_amount": "210.0000"
+          }
+        },
+        {
+          "transaction_id": 2,
+          "amount": "70.0000",
+          "currency": "USD",
+          "snapshot": {
+            "id": 2,
+            "transaction_no": "FIN-2A05F791E2CB4AFE",
+            "amount": "70.0000",
+            "currency": "USD",
+            "direction": "income",
+            "kind": "customer_receipt",
+            "split_from_id": 1,
+            "customer_id": 1,
+            "supplier_id": null,
+            "order_id": 1,
+            "purchase_order_id": null,
+            "plan_id": 2,
+            "exchange_rate": "7.000000",
+            "rmb_amount": "490.0000"
+          }
+        }
+      ],
+      "reference_amount": "700.00",
+      "net_minus_reference_information_only": "5.00",
+      "basis": "bank_voucher_manual_v1",
+      "coverage_since": null,
+      "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "rmb-cash-events/1/confirm/",
+    "request": {
+      "voucher_checked": true
+    },
+    "status": 200,
+    "response": {
+      "id": 1,
+      "event_no": "P2A-SYNTH-EVENT-01",
+      "request_key": "P2A-SYNTH-REQUEST-01",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "amount": "100.0000",
+      "direction": "income",
+      "bank_date": "2026-10-18",
+      "bank_net_amount": "705.00",
+      "fee_mode": "included",
+      "bank_currency": "CNY",
+      "fee_currency": "CNY",
+      "fee_amount": "5.00",
+      "source_account": "SYNTH_FX",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "P2A-SYNTH-BANK-01",
+      "evidence_reference": "P2A-SYNTH-VOUCHER-01",
+      "evidence_sha256": "7ed2aa0d1a0bbd2541a6bb7e006187199756a4ae4438594ef48142771cd6d87a",
+      "evidence_note": "Synthetic bank voucher manually checked, not production approval",
+      "quoted_rate": "7.100000",
+      "status": "confirmed",
+      "confirmed_at": "2026-10-18T15:50:40.262563Z",
+      "created_at": "2026-10-18T15:50:40.101561Z",
+      "created_actor": {
+        "kind": "development_superadmin",
+        "note": "开发身份，非正式员工审批"
+      },
+      "confirmed_actor": {
+        "kind": "development_superadmin",
+        "note": "开发身份，非正式员工审批"
+      },
+      "cancelled_reason": "",
+      "correction_of": null,
+      "fee_for": null,
+      "sources": [
+        {
+          "transaction_id": 1,
+          "amount": "30.0000",
+          "currency": "USD",
+          "snapshot": {
+            "id": 1,
+            "transaction_no": "P2A-SYNTH-T",
+            "amount": "30.0000",
+            "currency": "USD",
+            "direction": "income",
+            "kind": "customer_receipt",
+            "split_from_id": null,
+            "customer_id": 1,
+            "supplier_id": null,
+            "order_id": 1,
+            "purchase_order_id": null,
+            "plan_id": 1,
+            "exchange_rate": "7.000000",
+            "rmb_amount": "210.0000"
+          }
+        },
+        {
+          "transaction_id": 2,
+          "amount": "70.0000",
+          "currency": "USD",
+          "snapshot": {
+            "id": 2,
+            "transaction_no": "FIN-2A05F791E2CB4AFE",
+            "amount": "70.0000",
+            "currency": "USD",
+            "direction": "income",
+            "kind": "customer_receipt",
+            "split_from_id": 1,
+            "customer_id": 1,
+            "supplier_id": null,
+            "order_id": 1,
+            "purchase_order_id": null,
+            "plan_id": 2,
+            "exchange_rate": "7.000000",
+            "rmb_amount": "490.0000"
+          }
+        }
+      ],
+      "reference_amount": "700.00",
+      "net_minus_reference_information_only": "5.00",
+      "basis": "bank_voucher_manual_v1",
+      "coverage_since": null,
+      "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "rmb-cash-events/",
+    "request": {
+      "event_no": "P2A-SYNTH-EVENT-01",
+      "request_key": "P2A-SYNTH-REQUEST-01",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "direction": "income",
+      "bank_date": "2026-10-18",
+      "bank_net_amount": "705.00",
+      "fee_mode": "included",
+      "fee_amount": "5.00",
+      "source_account": "SYNTH_FX",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "P2A-SYNTH-BANK-01",
+      "evidence_reference": "P2A-SYNTH-VOUCHER-01",
+      "evidence_sha256": "7ed2aa0d1a0bbd2541a6bb7e006187199756a4ae4438594ef48142771cd6d87a",
+      "evidence_note": "Synthetic bank voucher manually checked, not production approval",
+      "quoted_rate": "7.100000",
+      "sources": [
+        {
+          "transaction_id": 1,
+          "amount": "30.0000",
+          "verified": true
+        },
+        {
+          "transaction_id": 2,
+          "amount": "70.0000",
+          "verified": true
+        }
+      ]
+    },
+    "status": 200,
+    "response": {
+      "id": 1,
+      "event_no": "P2A-SYNTH-EVENT-01",
+      "request_key": "P2A-SYNTH-REQUEST-01",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "amount": "100.0000",
+      "direction": "income",
+      "bank_date": "2026-10-18",
+      "bank_net_amount": "705.00",
+      "fee_mode": "included",
+      "bank_currency": "CNY",
+      "fee_currency": "CNY",
+      "fee_amount": "5.00",
+      "source_account": "SYNTH_FX",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "P2A-SYNTH-BANK-01",
+      "evidence_reference": "P2A-SYNTH-VOUCHER-01",
+      "evidence_sha256": "7ed2aa0d1a0bbd2541a6bb7e006187199756a4ae4438594ef48142771cd6d87a",
+      "evidence_note": "Synthetic bank voucher manually checked, not production approval",
+      "quoted_rate": "7.100000",
+      "status": "confirmed",
+      "confirmed_at": "2026-10-18T15:50:40.262563Z",
+      "created_at": "2026-10-18T15:50:40.101561Z",
+      "created_actor": {
+        "kind": "development_superadmin",
+        "note": "开发身份，非正式员工审批"
+      },
+      "confirmed_actor": {
+        "kind": "development_superadmin",
+        "note": "开发身份，非正式员工审批"
+      },
+      "cancelled_reason": "",
+      "correction_of": null,
+      "fee_for": null,
+      "sources": [
+        {
+          "transaction_id": 1,
+          "amount": "30.0000",
+          "currency": "USD",
+          "snapshot": {
+            "id": 1,
+            "transaction_no": "P2A-SYNTH-T",
+            "amount": "30.0000",
+            "currency": "USD",
+            "direction": "income",
+            "kind": "customer_receipt",
+            "split_from_id": null,
+            "customer_id": 1,
+            "supplier_id": null,
+            "order_id": 1,
+            "purchase_order_id": null,
+            "plan_id": 1,
+            "exchange_rate": "7.000000",
+            "rmb_amount": "210.0000"
+          }
+        },
+        {
+          "transaction_id": 2,
+          "amount": "70.0000",
+          "currency": "USD",
+          "snapshot": {
+            "id": 2,
+            "transaction_no": "FIN-2A05F791E2CB4AFE",
+            "amount": "70.0000",
+            "currency": "USD",
+            "direction": "income",
+            "kind": "customer_receipt",
+            "split_from_id": 1,
+            "customer_id": 1,
+            "supplier_id": null,
+            "order_id": 1,
+            "purchase_order_id": null,
+            "plan_id": 2,
+            "exchange_rate": "7.000000",
+            "rmb_amount": "490.0000"
+          }
+        }
+      ],
+      "reference_amount": "700.00",
+      "net_minus_reference_information_only": "5.00",
+      "basis": "bank_voucher_manual_v1",
+      "coverage_since": null,
+      "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "rmb-cash-events/1/confirm/",
+    "request": {
+      "voucher_checked": true
+    },
+    "status": 200,
+    "response": {
+      "id": 1,
+      "event_no": "P2A-SYNTH-EVENT-01",
+      "request_key": "P2A-SYNTH-REQUEST-01",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "amount": "100.0000",
+      "direction": "income",
+      "bank_date": "2026-10-18",
+      "bank_net_amount": "705.00",
+      "fee_mode": "included",
+      "bank_currency": "CNY",
+      "fee_currency": "CNY",
+      "fee_amount": "5.00",
+      "source_account": "SYNTH_FX",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "P2A-SYNTH-BANK-01",
+      "evidence_reference": "P2A-SYNTH-VOUCHER-01",
+      "evidence_sha256": "7ed2aa0d1a0bbd2541a6bb7e006187199756a4ae4438594ef48142771cd6d87a",
+      "evidence_note": "Synthetic bank voucher manually checked, not production approval",
+      "quoted_rate": "7.100000",
+      "status": "confirmed",
+      "confirmed_at": "2026-10-18T15:50:40.262563Z",
+      "created_at": "2026-10-18T15:50:40.101561Z",
+      "created_actor": {
+        "kind": "development_superadmin",
+        "note": "开发身份，非正式员工审批"
+      },
+      "confirmed_actor": {
+        "kind": "development_superadmin",
+        "note": "开发身份，非正式员工审批"
+      },
+      "cancelled_reason": "",
+      "correction_of": null,
+      "fee_for": null,
+      "sources": [
+        {
+          "transaction_id": 1,
+          "amount": "30.0000",
+          "currency": "USD",
+          "snapshot": {
+            "id": 1,
+            "transaction_no": "P2A-SYNTH-T",
+            "amount": "30.0000",
+            "currency": "USD",
+            "direction": "income",
+            "kind": "customer_receipt",
+            "split_from_id": null,
+            "customer_id": 1,
+            "supplier_id": null,
+            "order_id": 1,
+            "purchase_order_id": null,
+            "plan_id": 1,
+            "exchange_rate": "7.000000",
+            "rmb_amount": "210.0000"
+          }
+        },
+        {
+          "transaction_id": 2,
+          "amount": "70.0000",
+          "currency": "USD",
+          "snapshot": {
+            "id": 2,
+            "transaction_no": "FIN-2A05F791E2CB4AFE",
+            "amount": "70.0000",
+            "currency": "USD",
+            "direction": "income",
+            "kind": "customer_receipt",
+            "split_from_id": 1,
+            "customer_id": 1,
+            "supplier_id": null,
+            "order_id": 1,
+            "purchase_order_id": null,
+            "plan_id": 2,
+            "exchange_rate": "7.000000",
+            "rmb_amount": "490.0000"
+          }
+        }
+      ],
+      "reference_amount": "700.00",
+      "net_minus_reference_information_only": "5.00",
+      "basis": "bank_voucher_manual_v1",
+      "coverage_since": null,
+      "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "rmb-cash-events/by-request-key/?request_key=P2A-SYNTH-REQUEST-01",
+    "request": null,
+    "status": 200,
+    "response": {
+      "id": 1,
+      "event_no": "P2A-SYNTH-EVENT-01",
+      "request_key": "P2A-SYNTH-REQUEST-01",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "amount": "100.0000",
+      "direction": "income",
+      "bank_date": "2026-10-18",
+      "bank_net_amount": "705.00",
+      "fee_mode": "included",
+      "bank_currency": "CNY",
+      "fee_currency": "CNY",
+      "fee_amount": "5.00",
+      "source_account": "SYNTH_FX",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "P2A-SYNTH-BANK-01",
+      "evidence_reference": "P2A-SYNTH-VOUCHER-01",
+      "evidence_sha256": "7ed2aa0d1a0bbd2541a6bb7e006187199756a4ae4438594ef48142771cd6d87a",
+      "evidence_note": "Synthetic bank voucher manually checked, not production approval",
+      "quoted_rate": "7.100000",
+      "status": "confirmed",
+      "confirmed_at": "2026-10-18T15:50:40.262563Z",
+      "created_at": "2026-10-18T15:50:40.101561Z",
+      "created_actor": {
+        "kind": "development_superadmin",
+        "note": "开发身份，非正式员工审批"
+      },
+      "confirmed_actor": {
+        "kind": "development_superadmin",
+        "note": "开发身份，非正式员工审批"
+      },
+      "cancelled_reason": "",
+      "correction_of": null,
+      "fee_for": null,
+      "sources": [
+        {
+          "transaction_id": 1,
+          "amount": "30.0000",
+          "currency": "USD",
+          "snapshot": {
+            "id": 1,
+            "transaction_no": "P2A-SYNTH-T",
+            "amount": "30.0000",
+            "currency": "USD",
+            "direction": "income",
+            "kind": "customer_receipt",
+            "split_from_id": null,
+            "customer_id": 1,
+            "supplier_id": null,
+            "order_id": 1,
+            "purchase_order_id": null,
+            "plan_id": 1,
+            "exchange_rate": "7.000000",
+            "rmb_amount": "210.0000"
+          }
+        },
+        {
+          "transaction_id": 2,
+          "amount": "70.0000",
+          "currency": "USD",
+          "snapshot": {
+            "id": 2,
+            "transaction_no": "FIN-2A05F791E2CB4AFE",
+            "amount": "70.0000",
+            "currency": "USD",
+            "direction": "income",
+            "kind": "customer_receipt",
+            "split_from_id": 1,
+            "customer_id": 1,
+            "supplier_id": null,
+            "order_id": 1,
+            "purchase_order_id": null,
+            "plan_id": 2,
+            "exchange_rate": "7.000000",
+            "rmb_amount": "490.0000"
+          }
+        }
+      ],
+      "reference_amount": "700.00",
+      "net_minus_reference_information_only": "5.00",
+      "basis": "bank_voucher_manual_v1",
+      "coverage_since": null,
+      "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "rmb-cash-events/",
+    "request": {
+      "event_no": "P2A-SYNTH-EVENT-01",
+      "request_key": "P2A-SYNTH-REQUEST-01",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "direction": "income",
+      "bank_date": "2026-10-18",
+      "bank_net_amount": "706.00",
+      "fee_mode": "included",
+      "fee_amount": "5.00",
+      "source_account": "SYNTH_FX",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "P2A-SYNTH-BANK-01",
+      "evidence_reference": "P2A-SYNTH-VOUCHER-01",
+      "evidence_sha256": "7ed2aa0d1a0bbd2541a6bb7e006187199756a4ae4438594ef48142771cd6d87a",
+      "evidence_note": "Synthetic bank voucher manually checked, not production approval",
+      "quoted_rate": "7.100000",
+      "sources": [
+        {
+          "transaction_id": 1,
+          "amount": "30.0000",
+          "verified": true
+        },
+        {
+          "transaction_id": 2,
+          "amount": "70.0000",
+          "verified": true
+        }
+      ]
+    },
+    "status": 409,
+    "response": {
+      "detail": "请求键内容冲突或资金来源已被占用，请按原请求键核查。"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "rmb-cash-events/",
+    "request": {
+      "event_no": "P2A-OVER",
+      "request_key": "P2A-OVER",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "direction": "income",
+      "bank_date": "2026-10-18",
+      "bank_net_amount": "705.00",
+      "fee_mode": "included",
+      "fee_amount": "5.00",
+      "source_account": "SYNTH_FX",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "P2A-SYNTH-BANK-01",
+      "evidence_reference": "P2A-SYNTH-VOUCHER-01",
+      "evidence_sha256": "7ed2aa0d1a0bbd2541a6bb7e006187199756a4ae4438594ef48142771cd6d87a",
+      "evidence_note": "Synthetic bank voucher manually checked, not production approval",
+      "quoted_rate": "7.100000",
+      "sources": [
+        {
+          "transaction_id": 1,
+          "amount": "30.0000",
+          "verified": true
+        },
+        {
+          "transaction_id": 2,
+          "amount": "70.0000",
+          "verified": true
+        }
+      ]
+    },
+    "status": 409,
+    "response": {
+      "detail": "来源额度不足或已确认，不能重复结汇。"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "transactions/1/void/",
+    "request": {
+      "reason": "Synthetic rejection check"
+    },
+    "status": 400,
+    "response": [
+      "来源有关联待确认/已确认银行资金事件，不能直接作废。未确认草稿可留痕放弃；已确认更正规则待明确。"
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "rmb-cash-events/1/cancel/",
+    "request": {
+      "reason": "Cannot cancel confirmed bank fact"
+    },
+    "status": 400,
+    "response": [
+      "仅可有理由地放弃未确认草稿，已确认银行事实不可作废或释放来源。"
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "rmb-cash-events/",
+    "request": {
+      "event_no": "P2A-CORRECTION",
+      "request_key": "P2A-CORRECTION",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "direction": "income",
+      "bank_date": "2026-10-18",
+      "bank_net_amount": "705.00",
+      "fee_mode": "included",
+      "fee_amount": "5.00",
+      "source_account": "SYNTH_FX",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "P2A-SYNTH-BANK-01",
+      "evidence_reference": "P2A-SYNTH-VOUCHER-01",
+      "evidence_sha256": "7ed2aa0d1a0bbd2541a6bb7e006187199756a4ae4438594ef48142771cd6d87a",
+      "evidence_note": "Synthetic bank voucher manually checked, not production approval",
+      "quoted_rate": "7.100000",
+      "sources": [
+        {
+          "transaction_id": 1,
+          "amount": "30.0000",
+          "verified": true
+        },
+        {
+          "transaction_id": 2,
+          "amount": "70.0000",
+          "verified": true
+        }
+      ],
+      "correction_of": 1
+    },
+    "status": 400,
+    "response": [
+      "更正日期、来源解除及反向口径尚未明确，本版拒绝更正，保留原记录。"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "finance-dashboard/",
+    "request": null,
+    "status": 200,
+    "response": {
+      "metrics": {
+        "receivable_count": 0,
+        "receivable_rmb": 0.0,
+        "payable_count": 0,
+        "payable_rmb": 0.0,
+        "sales_rmb": 700.0,
+        "monthly_sales_rmb": 700.0,
+        "purchase_cost_rmb": 0.0,
+        "order_expense_rmb": 0.0,
+        "estimated_profit_rmb": 700.0,
+        "income_rmb": 700.0,
+        "expense_rmb": 0.0,
+        "net_cash_rmb": 700.0,
+        "advance_receipt_rmb": 0.0,
+        "advance_payment_rmb": 0.0
+      },
+      "period": {
+        "date_from": "2026-10-01",
+        "date_to": "2026-10-18"
+      },
+      "due_items": [],
+      "categories": [
+        {
+          "direction": "income",
+          "category": "",
+          "amount": 700.0
+        }
+      ],
+      "monthly_cash": [
+        {
+          "month": "2026-10",
+          "income": 700.0,
+          "expense": 0.0,
+          "net": 700.0
+        }
+      ],
+      "cash_basis": {
+        "basis": "book_rmb_reference",
+        "version": 1,
+        "note": "账面人民币折算参考：已确认流水按既有人民币金额及流水汇率汇总，包含原币为CNY的既有流水；不代表银行实际到账、已完成结汇或银行账户余额。流水发生日期不等同于银行到账日。",
+        "date_basis": "transaction_date",
+        "includes_cny": true
+      }
+    }
+  }
+]

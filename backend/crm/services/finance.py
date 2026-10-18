@@ -80,6 +80,9 @@ def ensure_default_payment_plans(contract, deposit_ratio=None):
 @transaction.atomic
 def record_transaction(payload):
     payload = payload.copy()
+    if payload.get("replaces"):
+        from .cash_events import guard_replacement
+        guard_replacement(payload["replaces"])
     plan = payload.pop("plan", None)
     amount = positive_decimal(payload.get("amount"), "收付款金额")
     # Transaction status is controlled by this service; callers cannot override it.
@@ -200,6 +203,9 @@ def void_transaction(row, reason):
 
     collect(root)
     root = rows[0]
+
+    from .cash_events import guard_void
+    guard_void(rows)
 
     plan_deltas = {}
     active_allocations = []
@@ -324,7 +330,12 @@ def record_contract_payment(contract, payload):
 @transaction.atomic
 def record_contract_refund(contract, payload):
     """Record a real cash refund by reopening the latest settled installments first."""
+    from crm.models import Customer, Supplier
+    from .cash_events import guard_refund
+    party_model, party_id = (Customer, contract.customer_id) if isinstance(contract, Order) else (Supplier, contract.supplier_id)
+    party_model.objects.select_for_update().get(pk=party_id)
     contract = contract.__class__.objects.select_for_update().get(pk=contract.pk)
+    guard_refund(contract)
     is_order = isinstance(contract, Order)
     amount = positive_decimal(payload.get("amount"), "退款金额")
     if payload.get("currency", contract.currency) != contract.currency:

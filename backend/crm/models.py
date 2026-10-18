@@ -1499,6 +1499,82 @@ class Transaction(TimestampedModel):
         ordering = ["-transaction_date", "-id"]
 
 
+class RmbCashEvent(TimestampedModel):
+    """Additive bank facts. Never a second business receipt or a bank balance."""
+    event_no = models.CharField(max_length=64, unique=True)
+    request_key = models.CharField(max_length=128, unique=True)
+    request_hash = models.CharField(max_length=64)
+    request_payload = models.JSONField()
+    kind = models.CharField(max_length=24, choices=[("fx_settlement", "结汇到账"), ("cny_direct", "人民币直接收付"), ("bank_fee", "独立银行扣费")])
+    currency = models.CharField(max_length=3)
+    amount = models.DecimalField(max_digits=18, decimal_places=4)
+    direction = models.CharField(max_length=10, choices=Transaction.DIRECTION_CHOICES)
+    bank_date = models.DateField()
+    bank_net_amount = models.DecimalField(max_digits=18, decimal_places=2)
+    fee_mode = models.CharField(max_length=10, choices=[("none", "无"), ("included", "净额已含扣")], default="none")
+    fee_amount = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+    source_account = models.CharField(max_length=40)
+    rmb_account = models.CharField(max_length=40)
+    bank_reference = models.CharField(max_length=120)
+    evidence_reference = models.CharField(max_length=200, blank=True)
+    evidence_sha256 = models.CharField(max_length=64, blank=True)
+    evidence_note = models.CharField(max_length=500, blank=True)
+    quoted_rate = models.DecimalField(max_digits=18, decimal_places=6, null=True, blank=True)
+    status = models.CharField(max_length=12, choices=[("pending", "待人工确认"), ("confirmed", "已确认银行事实"), ("cancelled", "草稿已放弃")], default="pending")
+    created_actor = models.JSONField()
+    confirmed_actor = models.JSONField(default=dict)
+    confirmed_at = models.DateTimeField(null=True, blank=True)
+    cancelled_reason = models.CharField(max_length=500, blank=True)
+    correction_of = models.ForeignKey("self", null=True, blank=True, on_delete=models.PROTECT, related_name="corrections")
+    fee_for = models.ForeignKey("self", null=True, blank=True, on_delete=models.PROTECT, related_name="separate_fees")
+
+    class Meta:
+        ordering = ["-bank_date", "-pk"]
+        constraints = [
+            models.CheckConstraint(condition=models.Q(amount__gt=0), name="cash_event_source_positive"),
+            models.CheckConstraint(condition=models.Q(bank_net_amount__gt=0), name="cash_event_net_positive"),
+            models.CheckConstraint(condition=models.Q(fee_amount__gte=0), name="cash_event_fee_nonnegative"),
+            models.CheckConstraint(condition=models.Q(status="confirmed", confirmed_at__isnull=False) | models.Q(status__in=["pending", "cancelled"], confirmed_at__isnull=True), name="cash_event_confirmation_state"),
+        ]
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old = type(self).objects.get(pk=self.pk)
+            allowed = {"status", "confirmed_at", "confirmed_actor", "cancelled_reason", "updated_at"}
+            if old.status != "pending" or any(getattr(old, f.attname) != getattr(self, f.attname) for f in self._meta.concrete_fields if f.name not in allowed):
+                from django.core.exceptions import ValidationError
+                raise ValidationError("资金事实及凭证快照不可覆盖；更正政策待明确。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        from django.core.exceptions import ValidationError
+        raise ValidationError("资金事件必须留痕，不可删除。")
+
+
+class CashSourceAllocation(TimestampedModel):
+    event = models.ForeignKey(RmbCashEvent, on_delete=models.PROTECT, related_name="sources")
+    source = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name="cash_source_allocations")
+    amount = models.DecimalField(max_digits=18, decimal_places=4)
+    currency = models.CharField(max_length=3)
+    source_snapshot = models.JSONField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["event", "source"], name="cash_event_source_unique"),
+            models.CheckConstraint(condition=models.Q(amount__gt=0), name="cash_allocation_positive"),
+        ]
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            from django.core.exceptions import ValidationError
+            raise ValidationError("资金来源快照不可覆盖。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        from django.core.exceptions import ValidationError
+        raise ValidationError("资金来源分配必须保留。")
+
+
 class AdvanceAllocation(TimestampedModel):
     """Non-cash allocation: keeps cash totals unchanged and preserves reversal history."""
     advance = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name="allocations")

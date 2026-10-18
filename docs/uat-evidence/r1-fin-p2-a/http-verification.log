@@ -1,0 +1,2 @@
+REAL_API_OBSERVATION PASS: 13 actual HTTP requests; 201/200/409/400 observed
+DATABASE_VERIFICATION PASS: e677ab087f53e434f0f64b6c95ae96bfcc25563f08d9a2d94f9201ac88c2b7d5 identical legacy rows; only 1 event and 2 source rows added, net CNY705.00; fee CNY5.00 informational

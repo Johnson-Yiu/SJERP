@@ -1,0 +1,30 @@
+{
+  "event_no": "P2A-SYNTH-EVENT-01",
+  "request_key": "P2A-SYNTH-REQUEST-01",
+  "kind": "fx_settlement",
+  "currency": "USD",
+  "direction": "income",
+  "bank_date": "2026-10-18",
+  "bank_net_amount": "705.00",
+  "fee_mode": "included",
+  "fee_amount": "5.00",
+  "source_account": "SYNTH_FX",
+  "rmb_account": "SYNTH_CNY",
+  "bank_reference": "P2A-SYNTH-BANK-01",
+  "evidence_reference": "P2A-SYNTH-VOUCHER-01",
+  "evidence_sha256": "7ed2aa0d1a0bbd2541a6bb7e006187199756a4ae4438594ef48142771cd6d87a",
+  "evidence_note": "Synthetic bank voucher manually checked, not production approval",
+  "quoted_rate": "7.100000",
+  "sources": [
+    {
+      "transaction_id": 1,
+      "amount": "30.00",
+      "verified": true
+    },
+    {
+      "transaction_id": 2,
+      "amount": "70.00",
+      "verified": true
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+Migrations for 'crm':
+  crm\migrations\0077_rmb_cash_events.py
+    + Create model RmbCashEvent
+    + Create model CashSourceAllocation
+    + Create constraint cash_event_source_positive on model rmbcashevent
+    + Create constraint cash_event_net_positive on model rmbcashevent
+    + Create constraint cash_event_fee_nonnegative on model rmbcashevent
+    + Create constraint cash_event_confirmation_state on model rmbcashevent
+    + Create constraint cash_event_source_unique on model cashsourceallocation
+    + Create constraint cash_allocation_positive on model cashsourceallocation

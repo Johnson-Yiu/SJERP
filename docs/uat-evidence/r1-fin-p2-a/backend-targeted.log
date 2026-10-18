@@ -1,0 +1,1289 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+Found 19 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+test_a_b_unconverted_then_bank_net_confirmed_without_legacy_writes (crm.tests.test_cash_events.CashEventTests.test_a_b_unconverted_then_bank_net_confirmed_without_legacy_writes) ... Internal Server Error: /api/rmb-cash-events/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+ERROR
+test_advance_allocation_does_not_consume_cash_source (crm.tests.test_cash_events.CashEventTests.test_advance_allocation_does_not_consume_cash_source) ... Internal Server Error: /api/rmb-cash-events/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+ERROR
+test_c_partial_60_40_and_overallocation (crm.tests.test_cash_events.CashEventTests.test_c_partial_60_40_and_overallocation) ... Internal Server Error: /api/rmb-cash-events/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+ERROR
+test_cancel_pending_retains_evidence_and_allows_original_void (crm.tests.test_cash_events.CashEventTests.test_cancel_pending_retains_evidence_and_allows_original_void) ... Internal Server Error: /api/rmb-cash-events/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+ERROR
+test_d_split_family_is_cash_rows_not_root_total (crm.tests.test_cash_events.CashEventTests.test_d_split_family_is_cash_rows_not_root_total) ... Conflict: /api/rmb-cash-events/
+Internal Server Error: /api/rmb-cash-events/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+ERROR
+test_e_separate_fee_uses_independent_cny_source_and_no_double_included_fee (crm.tests.test_cash_events.CashEventTests.test_e_separate_fee_uses_independent_cny_source_and_no_double_included_fee) ... Internal Server Error: /api/rmb-cash-events/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+ERROR
+test_f_cny_direct_identical_amounts_are_distinct_real_events (crm.tests.test_cash_events.CashEventTests.test_f_cny_direct_identical_amounts_are_distinct_real_events) ... Internal Server Error: /api/rmb-cash-events/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+ERROR
+test_failure_after_event_creation_rolls_back_both_tables (crm.tests.test_cash_events.CashEventTests.test_failure_after_event_creation_rolls_back_both_tables) ... ok
+test_g_missing_voucher_account_and_manual_check_fail_without_writes (crm.tests.test_cash_events.CashEventTests.test_g_missing_voucher_account_and_manual_check_fail_without_writes) ... Internal Server Error: /api/rmb-cash-events/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+ERROR
+test_h_refund_void_and_correction_protection_are_atomic (crm.tests.test_cash_events.CashEventTests.test_h_refund_void_and_correction_protection_are_atomic) ... Internal Server Error: /api/rmb-cash-events/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+ERROR
+test_i_idempotency_lookup_conflict_cancel_and_immutable_confirm_payload (crm.tests.test_cash_events.CashEventTests.test_i_idempotency_lookup_conflict_cancel_and_immutable_confirm_payload) ... Internal Server Error: /api/rmb-cash-events/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+ERROR
+test_k_invalid_money_rate_sources_and_unknown_fields (crm.tests.test_cash_events.CashEventTests.test_k_invalid_money_rate_sources_and_unknown_fields) ... Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+ok
+test_l_historical_fraction_jpy_precision_and_reference_round_half_up (crm.tests.test_cash_events.CashEventTests.test_l_historical_fraction_jpy_precision_and_reference_round_half_up) ... Internal Server Error: /api/rmb-cash-events/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+ERROR
+test_unrelated_refunds_remain_legal_and_unknown_refunds_block_preview (crm.tests.test_cash_events.CashEventTests.test_unrelated_refunds_remain_legal_and_unknown_refunds_block_preview) ... Internal Server Error: /api/rmb-cash-events/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+ERROR
+test_k_merged_batch_hidden_entirely_and_all_actions_scoped (crm.tests.test_cash_events.CashPermissionsTests.test_k_merged_batch_hidden_entirely_and_all_actions_scoped) ... ERROR
+test_no_finance_or_transaction_view_no_amounts_and_write_rights (crm.tests.test_cash_events.CashPermissionsTests.test_no_finance_or_transaction_view_no_amounts_and_write_rights) ... ERROR
+test_h_confirm_races_void_and_refund_never_releases_or_changes_legacy (crm.tests.test_cash_events.CashConcurrencyTests.test_h_confirm_races_void_and_refund_never_releases_or_changes_legacy) ... skipped 'Real PostgreSQL locks required'
+test_i_concurrent_same_request_creates_one_event_and_one_allocation (crm.tests.test_cash_events.CashConcurrencyTests.test_i_concurrent_same_request_creates_one_event_and_one_allocation) ... skipped 'Real PostgreSQL locks required'
+test_j_different_keys_compete_for_same_source (crm.tests.test_cash_events.CashConcurrencyTests.test_j_different_keys_compete_for_same_source) ... skipped 'Real PostgreSQL locks required'
+
+======================================================================
+ERROR: test_a_b_unconverted_then_bank_net_confirmed_without_legacy_writes (crm.tests.test_cash_events.CashEventTests.test_a_b_unconverted_then_bank_net_confirmed_without_legacy_writes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 74, in test_a_b_unconverted_then_bank_net_confirmed_without_legacy_writes
+    pk = self.register(p)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 51, in register
+    r = self.client.post(URL, p, format="json")
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+======================================================================
+ERROR: test_advance_allocation_does_not_consume_cash_source (crm.tests.test_cash_events.CashEventTests.test_advance_allocation_does_not_consume_cash_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 116, in test_advance_allocation_does_not_consume_cash_source
+    self.confirm(self.register(payload([source])))
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 51, in register
+    r = self.client.post(URL, p, format="json")
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+======================================================================
+ERROR: test_c_partial_60_40_and_overallocation (crm.tests.test_cash_events.CashEventTests.test_c_partial_60_40_and_overallocation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 88, in test_c_partial_60_40_and_overallocation
+    pk = self.register(payload([self.receipt], [amount], key=f"PART-{n}"))
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 51, in register
+    r = self.client.post(URL, p, format="json")
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+======================================================================
+ERROR: test_cancel_pending_retains_evidence_and_allows_original_void (crm.tests.test_cash_events.CashEventTests.test_cancel_pending_retains_evidence_and_allows_original_void)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 189, in test_cancel_pending_retains_evidence_and_allows_original_void
+    pk = self.register(payload([self.receipt]))
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 51, in register
+    r = self.client.post(URL, p, format="json")
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+======================================================================
+ERROR: test_d_split_family_is_cash_rows_not_root_total (crm.tests.test_cash_events.CashEventTests.test_d_split_family_is_cash_rows_not_root_total)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 103, in test_d_split_family_is_cash_rows_not_root_total
+    pk = self.register(payload([self.receipt, extra]))
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 51, in register
+    r = self.client.post(URL, p, format="json")
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+======================================================================
+ERROR: test_e_separate_fee_uses_independent_cny_source_and_no_double_included_fee (crm.tests.test_cash_events.CashEventTests.test_e_separate_fee_uses_independent_cny_source_and_no_double_included_fee)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 120, in test_e_separate_fee_uses_independent_cny_source_and_no_double_included_fee
+    parent = self.register(payload([self.receipt])); self.confirm(parent)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 51, in register
+    r = self.client.post(URL, p, format="json")
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+======================================================================
+ERROR: test_f_cny_direct_identical_amounts_are_distinct_real_events (crm.tests.test_cash_events.CashEventTests.test_f_cny_direct_identical_amounts_are_distinct_real_events)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 134, in test_f_cny_direct_identical_amounts_are_distinct_real_events
+    self.confirm(self.register(payload([source], ["100"], key=f"CNY-{direction}-{n}", currency="CNY", kind="cny_direct", direction=direction, bank_net_amount="100", fee_mode="none", fee_amount="0", quoted_rate=None)))
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 51, in register
+    r = self.client.post(URL, p, format="json")
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+======================================================================
+ERROR: test_g_missing_voucher_account_and_manual_check_fail_without_writes (crm.tests.test_cash_events.CashEventTests.test_g_missing_voucher_account_and_manual_check_fail_without_writes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 138, in test_g_missing_voucher_account_and_manual_check_fail_without_writes
+    pk = self.register(payload([self.receipt], evidence_reference="", evidence_sha256="", evidence_note=""))
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 51, in register
+    r = self.client.post(URL, p, format="json")
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+======================================================================
+ERROR: test_h_refund_void_and_correction_protection_are_atomic (crm.tests.test_cash_events.CashEventTests.test_h_refund_void_and_correction_protection_are_atomic)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 148, in test_h_refund_void_and_correction_protection_are_atomic
+    pk = self.register(payload([self.receipt])); self.confirm(pk)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 51, in register
+    r = self.client.post(URL, p, format="json")
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+======================================================================
+ERROR: test_i_idempotency_lookup_conflict_cancel_and_immutable_confirm_payload (crm.tests.test_cash_events.CashEventTests.test_i_idempotency_lookup_conflict_cancel_and_immutable_confirm_payload)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 178, in test_i_idempotency_lookup_conflict_cancel_and_immutable_confirm_payload
+    p = payload([self.receipt]); pk = self.register(p)
+                                      ~~~~~~~~~~~~~^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 51, in register
+    r = self.client.post(URL, p, format="json")
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+======================================================================
+ERROR: test_l_historical_fraction_jpy_precision_and_reference_round_half_up (crm.tests.test_cash_events.CashEventTests.test_l_historical_fraction_jpy_precision_and_reference_round_half_up)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 216, in test_l_historical_fraction_jpy_precision_and_reference_round_half_up
+    pk = self.register(payload([source], [accepted], key="PREC-" + currency, currency=currency))
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 51, in register
+    r = self.client.post(URL, p, format="json")
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+======================================================================
+ERROR: test_unrelated_refunds_remain_legal_and_unknown_refunds_block_preview (crm.tests.test_cash_events.CashEventTests.test_unrelated_refunds_remain_legal_and_unknown_refunds_block_preview)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 165, in test_unrelated_refunds_remain_legal_and_unknown_refunds_block_preview
+    self.confirm(self.register(payload([self.receipt])))
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 51, in register
+    r = self.client.post(URL, p, format="json")
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+======================================================================
+ERROR: test_k_merged_batch_hidden_entirely_and_all_actions_scoped (crm.tests.test_cash_events.CashPermissionsTests.test_k_merged_batch_hidden_entirely_and_all_actions_scoped)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 234, in test_k_merged_batch_hidden_entirely_and_all_actions_scoped
+    r = self.client.post(URL, p, format="json"); self.assertEqual(r.status_code, 201, r.data); pk = r.data["id"]
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+======================================================================
+ERROR: test_no_finance_or_transaction_view_no_amounts_and_write_rights (crm.tests.test_cash_events.CashPermissionsTests.test_no_finance_or_transaction_view_no_amounts_and_write_rights)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\tests\test_cash_events.py", line 257, in test_no_finance_or_transaction_view_no_amounts_and_write_rights
+    r = self.client.post(URL, p, format="json"); self.assertEqual(r.status_code, 201, r.data)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 302, in post
+    response = super().post(
+        path, data=data, format=format, content_type=content_type, **extra)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 216, in post
+    return self.generic('POST', path, data, content_type, **extra)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 240, in generic
+    return super().generic(
+           ~~~~~~~~~~~~~~~^
+        method, path, data, content_type, secure, **extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 292, in request
+    return super().request(**kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\test.py", line 244, in request
+    request = super().request(**kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 1090, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\test\client.py", line 805, in check_exception
+    raise exc_value
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 58, in create
+    return Response(event_data(event), status=201 if created else 200)
+                    ~~~~~~~~~~^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-fin-p2-a\backend\crm\cash_api.py", line 38, in event_data
+    "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'decimal.Decimal'
+
+----------------------------------------------------------------------
+Ran 19 tests in 1.748s
+
+FAILED (errors=14, skipped=3)
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

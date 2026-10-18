@@ -11,6 +11,8 @@ from .trade_units import SKUTradeUnitViewSet
 from .file_access import protected_media
 
 router = DefaultRouter()
+from .cash_api import RmbCashEventViewSet
+router.register("rmb-cash-events", RmbCashEventViewSet, basename="rmb-cash-event")
 router.register("sku-trade-units", SKUTradeUnitViewSet)
 router.register("sales-rules", SalesRuleViewSet, basename="sales-rule")
 router.register("supplier-capabilities", SupplierCapabilityViewSet, basename="supplier-capability")

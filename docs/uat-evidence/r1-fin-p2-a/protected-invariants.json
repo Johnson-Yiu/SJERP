@@ -1,0 +1,21 @@
+{
+  "baseline": "1b2ca0eb5b1947dd53f5ab995828dd33f514e0d4",
+  "legacy_model_classes_unchanged": 59,
+  "new_models": [
+    "CashSourceAllocation",
+    "RmbCashEvent"
+  ],
+  "unchanged_frontend_reporting_profit_inventory_files": 227,
+  "migration_operations": [
+    "CreateModel",
+    "CreateModel",
+    "AddConstraint",
+    "AddConstraint",
+    "AddConstraint",
+    "AddConstraint",
+    "AddConstraint",
+    "AddConstraint"
+  ],
+  "old_amount_fields_altered": false,
+  "data_migration": false
+}

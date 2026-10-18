@@ -13,6 +13,8 @@ APP_STAGE = os.getenv("APP_STAGE", "development" if DEBUG else "production")
 DEVELOPMENT_SUPERADMIN = os.getenv("DEVELOPMENT_SUPERADMIN", "true").lower() == "true"
 RBAC_ENFORCEMENT = os.getenv("RBAC_ENFORCEMENT", "false").lower() == "true"
 DEFAULT_OPERATOR_NAME = os.getenv("DEFAULT_OPERATOR_NAME", "Johnson")
+# Controlled aliases only; no account numbers, credentials, cutover date or balance.
+RMB_CASH_ACCOUNT_IDS = tuple(value.strip() for value in os.getenv("RMB_CASH_ACCOUNT_IDS", "").split(",") if value.strip())
 # Audit records stay disabled during local development. Turn this on explicitly
 # in the closed-beta environment after real user authentication is available.
 AUDIT_LOG_ENABLED = os.getenv("AUDIT_LOG_ENABLED", "false").lower() in {"1", "true", "yes", "on"}

@@ -1,0 +1,30 @@
+
+Running 1 test using 1 worker
+
+(node:13124) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 browser-tests\finance-retry-safety.spec.js:3:1 › finance pending submission and ambiguous retry preserve identity and guard departure (30.1s)
+
+
+  1) browser-tests\finance-retry-safety.spec.js:3:1 › finance pending submission and ambiguous retry preserve identity and guard departure 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.modal-backdrop')
+
+
+      23 |   await expect(form.getByRole('button', { name: '取消', exact: true })).toBeDisabled()
+      24 |   await expect(form.getByRole('button', { name: '关闭', exact: true })).toBeDisabled()
+    > 25 |   await page.locator('.modal-backdrop').click({ position: { x: 2, y: 2 } })
+         |                                         ^
+      26 |   await page.getByRole('link', { name: '订单管理', exact: true }).dispatchEvent('click')
+      27 |   await expect(page).toHaveURL(/transactions$/)
+      28 |   expect(writes).toHaveLength(1)
+        at D:\Codex项目\森爵照明管理系统\.worktrees\r1-a-fup-01\frontend\browser-tests\finance-retry-safety.spec.js:25:41
+
+    Error Context: test-results\finance-retry-safety-finan-244f7-dentity-and-guard-departure\error-context.md
+
+  1 failed
+    browser-tests\finance-retry-safety.spec.js:3:1 › finance pending submission and ambiguous retry preserve identity and guard departure 

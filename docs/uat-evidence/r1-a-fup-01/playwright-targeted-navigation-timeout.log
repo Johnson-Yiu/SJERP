@@ -1,0 +1,32 @@
+
+Running 1 test using 1 worker
+
+(node:18644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 browser-tests\finance-retry-safety.spec.js:3:1 › finance pending submission and ambiguous retry preserve identity and guard departure (30.1s)
+
+
+  1) browser-tests\finance-retry-safety.spec.js:3:1 › finance pending submission and ambiguous retry preserve identity and guard departure 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  getByRole('dialog', { name: '新增记账', exact: true })
+    Expected: visible
+    Received: undefined
+
+
+      42 |   await page.reload().catch(() => {})
+      43 |   await dialogSeen
+    > 44 |   await expect(form).toBeVisible()
+         |                      ^
+      45 | })
+      46 |
+      47 |
+        at D:\Codex项目\森爵照明管理系统\.worktrees\r1-a-fup-01\frontend\browser-tests\finance-retry-safety.spec.js:44:22
+
+    Error Context: test-results\finance-retry-safety-finan-244f7-dentity-and-guard-departure\error-context.md
+
+  1 failed
+    browser-tests\finance-retry-safety.spec.js:3:1 › finance pending submission and ambiguous retry preserve identity and guard departure 

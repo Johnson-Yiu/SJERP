@@ -1,0 +1,31 @@
+
+> senju-crm-erp@1.0.0 build
+> vite build
+
+vite v8.2.0 building client environment for production...
+[2K
+transforming...✓ 2000 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              0.47 kB │ gzip:   0.32 kB
+dist/assets/TradeUnitsPage-BagMfA07.css      2.89 kB │ gzip:   0.89 kB
+dist/assets/ReportsPage-L7bcwvOi.css        10.92 kB │ gzip:   2.32 kB
+dist/assets/index-BqffVQ84.css             366.61 kB │ gzip:  60.68 kB
+dist/assets/TradeUnitsPage-B63TQGx_.js      10.57 kB │ gzip:   4.29 kB
+dist/assets/ReportsPage-T4nXMBxp.js         29.35 kB │ gzip:  10.31 kB
+dist/assets/index-PZXTwUWN.js            1,183.85 kB │ gzip: 422.59 kB
+
+✓ built in 6.31s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[PLUGIN_TIMINGS] Your build spent 88% of 6.2s inside plugin hooks (5.5s).
+Measured inside the callback, so queue time is excluded and time the callback itself awaited is not:
+  - vite:vue transform (62%, 3.8s, 142 calls)
+Those rows are 62% of the build; the rest of the 88% is below.
+Not measurable — 1 hook whose calls overlap, so elapsed time covers work other calls were doing. Profile with `node --cpu-prof`:
+  - vite:css transform (85 calls)
+See https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.
+

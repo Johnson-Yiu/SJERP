@@ -1,0 +1,20 @@
+{
+  "access": "SQLite mode=ro; no writes",
+  "rows": [
+    [
+      "FIN-886ADBD3D1404FCB",
+      "12.34",
+      "7.123456",
+      "87.9034",
+      ""
+    ],
+    [
+      "FIN-391E62CD19A640998AED8E46F7C744F0",
+      "2.34",
+      "7.123456",
+      "16.6689",
+      "R1A post-fix Chrome"
+    ]
+  ],
+  "decimal_assertions": "PASS"
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "file": "01-dirty-cancel.jpg",
+    "size": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "sha256": "5061afff6247b9bd279e92d3cd65cf5ac8865cd7a835ac6ed1778fe9036c2f22"
+  },
+  {
+    "file": "02-response-lost.jpg",
+    "size": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "sha256": "b600a91fbbe34c2ba1682d9ec6b54cd44e1226ec93942a025e2def840a67b2a6"
+  },
+  {
+    "file": "03-duplicate-close-risk.jpg",
+    "size": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "sha256": "1f4c4549a918bc2e5ecfe51c11d1a3f1364ff0e26e3b753d5652a5d514c37ad4"
+  },
+  {
+    "file": "04-confirmed-ledger.jpg",
+    "size": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "sha256": "e02b5e1ec59a80f14208a6c7dcbf900936b5d4e911c62a74c878dd9012a8ad4e"
+  },
+  {
+    "file": "05-two-same-amount-payments.jpg",
+    "size": [
+      1265,
+      712
+    ],
+    "format": "JPEG",
+    "sha256": "e59100f1a679f9e69a9b8df54f62b22ee33bef264b14c10e9e532ac5d2c75092"
+  },
+  {
+    "file": "06-chrome-dirty-protection.jpg",
+    "size": [
+      1920,
+      863
+    ],
+    "format": "JPEG",
+    "sha256": "fe759570db7692af707ac4255375cfa1b327681b8e5d95f26adc1fdc50f6db63"
+  },
+  {
+    "file": "07-real-rejection.jpg",
+    "size": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "sha256": "e889f3d1e6a70f96882c26e9863bbd631c74ad0efe2e331faaba05f8c40fbb9a"
+  },
+  {
+    "file": "08-order-retry-success.jpg",
+    "size": [
+      1265,
+      712
+    ],
+    "format": "JPEG",
+    "sha256": "46878526da38ae43ab88e2e429c75c4a6736b437b299a69bff425fbaf8c36934"
+  }
+]

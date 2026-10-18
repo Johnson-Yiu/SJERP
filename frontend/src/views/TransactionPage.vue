@@ -78,8 +78,18 @@ const form = reactive({
   transaction_no: '', transaction_date: today, kind: 'period_expense', direction: 'expense', category: '其他期间费用',
   amount: '', currency: 'CNY', exchange_rate: '1', payment_method: '', reference: '', notes: '', order: null, customer: null, supplier: null, purchase_order: null,
 })
-useUnsavedChangesGuard({ data: () => null, enabled: () => showForm.value, busy: () => saving.value })
-function closeForm() { if (!saving.value) showForm.value = false }
+const saveOutcome = ref('not-submitted')
+const formGuard = useUnsavedChangesGuard({
+  data: () => ({ ...form, orderQuery: orderQuery.value, selectedOrder: selectedOrder.value }),
+  enabled: () => showForm.value,
+  busy: () => saving.value,
+  confirmOptions: () => saveOutcome.value === 'unknown' ? {
+    title: '记账结果尚未确认',
+    message: `流水号：${form.transaction_no}。该请求可能已经记账，请先按此编号核对流水。放弃表单不会撤销已保存记录，重新新建可能重复记账。请记录此编号后再决定是否放弃。`,
+    cancelText: '返回核对', confirmText: '已记录编号，放弃表单',
+  } : {},
+})
+function closeForm() { return formGuard.requestClose(() => { showForm.value = false }) }
 
 const transactionMetrics = computed(() => {
   const sum = direction => rows.value.filter(row => row.direction === direction && row.status === 'confirmed').reduce((total, row) => total + Number(row.rmb_amount || 0), 0)
@@ -158,14 +168,16 @@ function syncKind() {
   }
 }
 function openForm() {
-  if (saving.value || !can('transactions', 'create')) return
+  if (saving.value || showForm.value || !can('transactions', 'create')) return
   Object.assign(form, { transaction_no: '', transaction_date: new Date().toLocaleDateString('en-CA'), kind: 'period_expense', direction: 'expense', category: '其他期间费用', amount: '', currency: 'CNY', exchange_rate: '1', payment_method: '', reference: '', notes: '', order: null, customer: null, supplier: null, purchase_order: null })
   selectedOrder.value = null
   orderQuery.value = ''
   orders.value = []
   error.value = ''
   notice.value = ''
+  saveOutcome.value = 'not-submitted'
   showForm.value = true
+  formGuard.markClean()
 }
 function onCurrencyChange() {
   if (form.currency === 'CNY') form.exchange_rate = '1'
@@ -210,20 +222,31 @@ async function save() {
   if (form.kind === 'customer_receipt' && (orderSearchLoading.value || orderSearchError.value)) { error.value = '订单选项尚未成功加载，请重试后再保存。'; return }
   saving.value = true
   error.value = ''; notice.value = ''
+  let submitted = false
   try {
     // Keep one identity across transport failures. The existing unique constraint
     // rejects a replay even when the first response was lost after commit.
     if (!form.transaction_no) form.transaction_no = `FIN-${Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('').toUpperCase()}`
     const payload = { ...form }
     if (!payload.transaction_no) delete payload.transaction_no
+    submitted = true
     await api.post('/transactions/', payload)
+    saveOutcome.value = 'confirmed'
+    formGuard.markClean()
     showForm.value = false
     await load()
     notice.value = '财务流水已保存。'
   } catch (err) {
-    error.value = err.response?.data?.transaction_no
-      ? `此记账编号已存在，请先核对流水 ${form.transaction_no}，勿重复登记。`
-      : apiErrorMessage(err) || '流水保存失败。'
+    const status = err.response?.status
+    const duplicateNumber = Boolean(err.response?.data?.transaction_no)
+    // A lost response, timeout or server failure does not establish rollback.
+    // A later rejection cannot resolve an earlier ambiguous submission either.
+    const ambiguous = submitted && (!status || status >= 500 || status === 408 || duplicateNumber)
+    if (ambiguous || saveOutcome.value === 'unknown') saveOutcome.value = 'unknown'
+    else saveOutcome.value = 'rejected'
+    error.value = duplicateNumber
+      ? `此记账编号已存在，请先核对流水 ${form.transaction_no}。编号重复不代表本次保存成功，勿另建同笔记账。`
+      : apiErrorMessage(err) || (saveOutcome.value === 'unknown' ? '未收到明确的保存结果。' : '请求未通过，请核对输入后重试。')
   } finally { saving.value = false }
 }
 function openVoid(row) {
@@ -305,6 +328,8 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
     <div v-if="showForm && can('transactions', 'create')" class="mask" @click.self="closeForm">
       <form class="dialog" role="dialog" aria-modal="true" aria-labelledby="transaction-form-title" @submit.prevent="save">
         <header class="dialog-head"><div><h3 id="transaction-form-title">新增记账</h3><p>保存后会按现有规则更新收付款计划。</p></div><button type="button" class="close" aria-label="关闭" @click="closeForm" :disabled="saving">×</button></header>
+        <div v-if="saveOutcome === 'unknown'" class="error" role="alert"><strong>记账结果尚未确认</strong><p>请先按下方流水号核对实际记录，再决定是否重试。重试沿用原编号；不要另建同笔记账。</p></div>
+        <label v-if="form.transaction_no">本次流水号<input :value="form.transaction_no" readonly></label>
         <fieldset :disabled="saving"><legend>流水信息</legend>
         <label>类型
           <select v-model="form.kind" required @change="syncKind">

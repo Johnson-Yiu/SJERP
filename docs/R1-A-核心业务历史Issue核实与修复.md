@@ -39,7 +39,7 @@
 | REAL_UI_ACTION | USD500订单确认→10pcs全部发货→财务“新增记账”输入340 / 7.25→完成 | 已收340、欠160仍可完成；工作台待办消失，回款卡仍160；iss001-completed-unpaid.jpg |
 | REAL_UI_ACTION | 完成后调整尾款到期日为2026-10-17→仅看逾期 | 350计划、190已核销、160待收仍显示“已逾期”；只通过合法日期调整 UI，未改金额；iss001-overdue.jpg |
 | REAL_UI_ACTION | 客户详情及财务概览回查 | 客户详情主要显示销售额/订单/流水，无独立客户应收总卡；不能把累计销售额误称实收；HTTP insights / finance-dashboard 可追溯160余额 |
-| REAL_UI_ACTION | 新增记账→未分配预收款→无订单/计划→USD12.34 / 7.123456 | 成功，币种、客户、未核销额正确；本位币精确87.9023；iss004-no-plan.jpg |
+| REAL_UI_ACTION | 新增记账→未分配预收款→无订单/计划→USD12.34 / 7.123456 | 成功，币种、客户、未核销额正确；本位币精确87.9034；iss004-no-plan.jpg |
 | REAL_UI_ACTION | R1A-REVERSAL 正常订单收520 USD/7.3，合同500 | 合同核销500，额外20转未分配预收，沿用现行政策；财务流水与 database-final.json 对照 |
 | REAL_UI_ACTION | 第二张草稿确认→出库20m→回采购冲销原20m | HTTP400“实际库存不足以冲销”；没有新增反向流水；iss006-consumed-rejected.jpg |
 | REAL_UI_ACTION | 该销售发货单冲销 | HTTP200，已发20→0、库存0→20、预留0→20；历史发货保留；iss006-shipment-reversed.jpg |
@@ -47,7 +47,7 @@
 | REAL_UI_ACTION | 第二SKU已收足后再收2m，明确确认“赠品”超到 | 已到7、剩余0、超到2；合同/应付仍265；iss006-overage.jpg |
 | REAL_UI_ACTION | Chrome 冲销该超到，目视正确反馈 | 回到5m，超到历史仍2m且标已冲销；chrome-reversal-feedback.jpg |
 | REAL_UI_ACTION | Chrome 对已结清订单再记客户收款1 USD | HTTP400；表单保留金额/订单，未显示成功；chrome-finance-rejected.jpg |
-| REAL_UI_ACTION | 失败后取消、重开，合法未分配预收USD2.34 / 7.123456 | 成功；备注R1A post-fix Chrome，对应36字符FIN编号、本位币16.6697；新表单是新业务请求 |
+| REAL_UI_ACTION | 失败后取消、重开，合法未分配预收USD2.34 / 7.123456 | 成功；备注R1A post-fix Chrome，对应36字符FIN编号、本位币16.6689；新表单是新业务请求 |
 | REAL_API_OBSERVATION | 相同预收请求不带流水号重放两次 | 201/201，各生成1笔：确认旧调用方式无法识别重试；replay-http.json，合成流水未删除 |
 | REAL_API_OBSERVATION | 相同流水号重放两次 | 201/400，第二次0新增；唯一性拒绝，数据库状态不变；replay-http.json |
 | DATABASE_VERIFICATION | 检查计划、原币/汇率/本位币、库存/预留/在途、正反流水和快照 | verify_database.py / final_verification.py；所有比较使用Decimal；database-checkpoint.json / database-final.json |
@@ -100,3 +100,8 @@ ISS-004：TransactionPage.save 首次提交生成 `FIN-<32位随机十六进制�
 原始证据目录：[uat-evidence/r1-a](uat-evidence/r1-a/README.md)，截图哈希/像素见manifest.json；HTTP状态见server.log、replay-http.json、http-final.json；数据库前段及最终读回见database-checkpoint.json、database-final.json；重跑脚本保留。
 
 提交、最终精确CI结果在交付消息和GitHub该HEAD检查中记录；本文件不能包含自身提交哈希形成自引用。收到独立审查前停止本轮，不进入其它阶段。未覆盖及剩余风险按上表继续追踪，不能将本轮称为全系统无条件PASS。
+
+
+## R1-A-FUP-01 复审更正（2026-10-18）
+
+原文两处本位币笔误已改为 87.9034 和 16.6689；原始数据库证据正确，未修改历史流水。复审确认旧表单空快照无法识别修改，且结果不明确后关闭可能丢失稳定编号；旧“关闭/离开保护”结论撤回，不能作为验收通过依据。补修与真实提交后响应丢失证据见 [FUP-01](R1-A-FUP-01-财务重试安全验收.md)。原范围外分支仍按本报告保留，不宣称全站 exactly-once。

@@ -1,0 +1,31 @@
+{
+  "backend_sqlite": {
+    "tests": 729,
+    "skipped": 10,
+    "result": "PASS"
+  },
+  "node": {
+    "tests": 121,
+    "result": "PASS"
+  },
+  "typography": {
+    "tests": 1,
+    "result": "PASS"
+  },
+  "vitest": {
+    "tests": 620,
+    "files": 61,
+    "result": "PASS"
+  },
+  "playwright_existing": {
+    "tests": 139,
+    "result": "PASS"
+  },
+  "playwright_added": {
+    "tests": 1,
+    "result": "PASS"
+  },
+  "build": "PASS",
+  "postgresql": "Final HEAD GitHub CI; see delivery CI JSON",
+  "initial_test_failures": "wrong backdrop selector and navigation timeout in new harness; preserved logs; corrected without production change"
+}

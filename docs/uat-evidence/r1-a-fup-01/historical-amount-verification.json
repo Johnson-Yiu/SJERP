@@ -1,0 +1,71 @@
+{
+  "source": "../r1-a/database-final.json",
+  "sha256": "0b470cfe0e453f6ba9caefbe1f9a213a2842773de036045b10a6a67d8fc919c6",
+  "matching_rows": [
+    {
+      "id": 13,
+      "created_at": "2026-10-17 16:44:39.261529+00:00",
+      "updated_at": "2026-10-17 16:44:39.261556+00:00",
+      "split_from_id": null,
+      "transaction_no": "FIN-391E62CD19A640998AED8E46F7C744F0",
+      "transaction_date": "2026-10-18",
+      "direction": "income",
+      "category": "未分配预收款",
+      "amount": "2.3400",
+      "currency": "USD",
+      "exchange_rate": "7.123456",
+      "rmb_amount": "16.6689",
+      "allocated_amount": "0.0000",
+      "kind": "unallocated_advance",
+      "customer_id": 1,
+      "supplier_id": null,
+      "order_id": null,
+      "purchase_order_id": null,
+      "plan_id": null,
+      "replaces_id": null,
+      "status": "confirmed",
+      "voided_at": null,
+      "void_reason": "",
+      "payment_method": "",
+      "reference": "",
+      "notes": "R1A post-fix Chrome"
+    },
+    {
+      "id": 6,
+      "created_at": "2026-10-17 16:38:58.410507+00:00",
+      "updated_at": "2026-10-17 16:38:58.410533+00:00",
+      "split_from_id": null,
+      "transaction_no": "FIN-886ADBD3D1404FCB",
+      "transaction_date": "2026-10-18",
+      "direction": "income",
+      "category": "未分配预收款",
+      "amount": "12.3400",
+      "currency": "USD",
+      "exchange_rate": "7.123456",
+      "rmb_amount": "87.9034",
+      "allocated_amount": "0.0000",
+      "kind": "unallocated_advance",
+      "customer_id": 1,
+      "supplier_id": null,
+      "order_id": null,
+      "purchase_order_id": null,
+      "plan_id": null,
+      "replaces_id": null,
+      "status": "confirmed",
+      "voided_at": null,
+      "void_reason": "",
+      "payment_method": "",
+      "reference": "",
+      "notes": ""
+    }
+  ],
+  "expected": {
+    "12.34": "87.9034",
+    "2.34": "16.6689"
+  },
+  "decimal_products": {
+    "12.34": "87.9034",
+    "2.34": "16.6689"
+  },
+  "decimal_assertions": "PASS"
+}

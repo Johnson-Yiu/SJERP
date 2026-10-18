@@ -33,7 +33,7 @@ export function unsavedSnapshot(value) {
   })
 }
 
-export function useUnsavedChangesGuard({ data, enabled = () => true, busy = () => false, router: suppliedRouter, routeGuard = true, scope: suppliedScope } = {}) {
+export function useUnsavedChangesGuard({ data, enabled = () => true, busy = () => false, confirmOptions = () => ({}), router: suppliedRouter, routeGuard = true, scope: suppliedScope } = {}) {
   const router = suppliedRouter || inject(routerKey, null)
   const scope = suppliedScope || inject(scopeKey, null)
   const baseline = ref(null)
@@ -46,6 +46,7 @@ export function useUnsavedChangesGuard({ data, enabled = () => true, busy = () =
     if (!pending) pending = confirmDialog({
       title: '未保存修改', message: '当前修改尚未保存，离开后将丢失。是否继续？',
       cancelText: '继续编辑', confirmText: '放弃修改', danger: true,
+      ...confirmOptions(),
     }).finally(() => { pending = null })
     const accepted = await pending
     return accepted && !busy()

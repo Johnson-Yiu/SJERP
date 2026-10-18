@@ -1,0 +1,73 @@
+
+ RUN  v4.1.11 D:/Codex项目/森爵照明管理系统/.worktrees/r1-a-fup-02/frontend
+
+stderr | tests/order-overview-ux.spec.js > renders business date hierarchy and operational count cards
+[Vue warn]: Failed to resolve directive: money-input 
+  at <DocumentPage type="orders" ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | tests/order-overview-ux.spec.js > renders business date hierarchy and operational count cards
+[Vue warn]: Failed to resolve directive: money-input 
+  at <DocumentPage type="orders" ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+ ❯ tests/order-overview-ux.spec.js (11 tests | 2 failed) 769ms
+   × renders business date hierarchy and operational count cards 151ms
+   × derives tasks and header actions for completed 28ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/order-overview-ux.spec.js > renders business date hierarchy and operational count cards
+AssertionError: expected [ '订单号', '客户', '订单日期', '预计交期', …(5) ] to deeply equal [ '订单号', '客户', '订单日期', '预计交期', …(5) ]
+
+- Expected
++ Received
+
+  [
+    "订单号",
+    "客户",
+    "订单日期",
+    "预计交期",
+-   "状态",
++   "履约状态",
+    "明细",
+    "订单金额",
+    "已收 / 待收",
+    "操作",
+  ]
+
+ ❯ tests/order-overview-ux.spec.js:30:47
+     28|   expect(wrapper.findAll('th').map(x => x.text())).toEqual(['订单号', '客户…
+     29|   expect(wrapper.find('tbody tr').text()).toContain('2026-10-01')
+     30|   expect(wrapper.find('tbody tr').text()).not.toContain('12:00')
+       |                                               ^
+     31|   expect(wrapper.findComponent({ name: 'SummaryCards' }).props('items'…
+     32| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/order-overview-ux.spec.js > derives tasks and header actions for completed
+AssertionError: expected [ DOMWrapper{ …(3) } ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ tests/order-overview-ux.spec.js:78:101
+     76|   if (['completed','cancelled'].includes(value)) { expect(wrapper.find…
+     77|   expect(wrapper.find('.lifecycle-destructive').exists()).toBe(['draft…
+     78|   expect(wrapper.find('.lifecycle-primary').exists()).toBe(['draft','c…
+       |                                                                                                     ^
+     79| })
+     80| it('separates payment/profit and retains fulfillment, quote and receiv…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 61 passed (62)
+      Tests  2 failed | 623 passed (625)
+   Start at  13:40:56
+   Duration  86.12s (transform 8.87s, setup 22.59s, import 26.36s, tests 47.62s, environment 123.28s)
+

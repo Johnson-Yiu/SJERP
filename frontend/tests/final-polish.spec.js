@@ -58,7 +58,7 @@ it('active order procurement, shipment and receivable actions remain', async () 
   order.status = 'confirmed'; const w = await orderView(); expect(button(w.get('.current-todo-card'),'查看采购与发货')).toHaveLength(2); expect(w.get('.task-row a').text()).toBe('查看 / 登记本单应收')
 })
 it('shipped order completion todo action remains', async () => {
-  order.status = 'shipped'; const w = await orderView(); expect(w.get('.current-todo-card').text()).toContain('完成订单'); expect(w.findAll('.current-todo-card button').some(b => b.text() === '完成订单')).toBe(true)
+  order.status = 'shipped'; const w = await orderView(); expect(w.get('.current-todo-card').text()).toContain('完成履约'); expect(w.findAll('.current-todo-card button').some(b => b.text() === '完成履约')).toBe(true)
 })
 it('purchase receipt and payment todo actions remain', async () => {
   const w = await purchaseView('ordered'); expect(w.get('.current-todo').text()).toContain('查看收货'); expect(w.get('.current-todo').text()).toContain('查看 / 登记付款')

@@ -1,0 +1,40 @@
+
+Running 3 tests using 1 worker
+
+(node:22936) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 browser-tests\fulfillment-receivables.spec.js:21:1 › completed receivable navigation, Back, settlement and refund reloads retain fulfillment (4.9s)
+  ok 2 browser-tests\fulfillment-receivables.spec.js:32:1 › restricted user cannot read protected debt from malicious unmasked order payload (890ms)
+  x  3 browser-tests\fulfillment-receivables.spec.js:37:1 › completion pending prevents duplicate UI action and failed reload retries without false financial success (6.7s)
+
+
+  1) browser-tests\fulfillment-receivables.spec.js:37:1 › completion pending prevents duplicate UI action and failed reload retries without false financial success 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('dialog', { name: '订单工作台' })
+    Expected substring: "加载失败"
+    Received string:    " 正在加载订单工作台…"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" getByRole('dialog', { name: '订单工作台' }) with timeout 5000ms
+      - waiting for getByRole('dialog', { name: '订单工作台' })
+        14 × locator resolved to <article role="dialog" aria-modal="true" data-v-39de5d98="" aria-label="订单工作台" class="detail-modal order-workbench">…</article>
+           - unexpected value " 正在加载订单工作台…"
+
+
+      40 |  await button.click();await expect(button).toBeDisabled();expect(state.writes).toBe(1)
+      41 |  release();await expect(modal).toContainText('履约：已完成');await expect(modal).toContainText('履约已完成，未收款项继续保留。')
+    > 42 |  state.fail=true;await page.reload();await expect(modal).toContainText('加载失败');await expect(modal.locator('.payment-card')).toHaveCount(0)
+         |                                                          ^
+      43 |  state.fail=false;await modal.getByRole('button',{name:'重试',exact:true}).click();await expect(modal.locator('.current-todo-card')).toContainText('160.00')
+      44 | })
+      45 |
+        at D:\Codex项目\森爵照明管理系统\.worktrees\r1-a-fup-02\frontend\browser-tests\fulfillment-receivables.spec.js:42:58
+
+    Error Context: test-results\fulfillment-receivables-co-0c3f0-out-false-financial-success\error-context.md
+
+  1 failed
+    browser-tests\fulfillment-receivables.spec.js:37:1 › completion pending prevents duplicate UI action and failed reload retries without false financial success 
+  2 passed (14.2s)

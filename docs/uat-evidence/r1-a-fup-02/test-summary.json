@@ -1,0 +1,36 @@
+{
+  "backend_sqlite": {
+    "tests": 736,
+    "skipped": 10,
+    "result": "PASS"
+  },
+  "backend_targeted_final": {
+    "tests": 7,
+    "result": "PASS"
+  },
+  "node": {
+    "tests": 129,
+    "result": "PASS"
+  },
+  "typography": {
+    "tests": 1,
+    "result": "PASS"
+  },
+  "vitest": {
+    "files": 62,
+    "tests": 626,
+    "result": "PASS"
+  },
+  "playwright": {
+    "tests": 143,
+    "result": "PASS"
+  },
+  "playwright_targeted_final": {
+    "tests": 3,
+    "result": "PASS"
+  },
+  "build": "PASS",
+  "migrations": "NONE",
+  "postgresql": "Final exact HEAD GitHub CI, attached delivery result/logs",
+  "permission_runtime": "Development superadmin unchanged; restricted cases controlled automated tests"
+}

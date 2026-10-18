@@ -1,0 +1,1 @@
+PASS: exact financial rows unchanged on complete; rejected writes unchanged; historical records unchanged; 160->0->40 balances; USD460 net / CNY3266 reference; final read-only flow unchanged

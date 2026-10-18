@@ -25,7 +25,7 @@ beforeEach(() => {
 afterEach(() => { wrapper?.unmount(); vi.useRealTimers(); vi.clearAllMocks() })
 it('renders business date hierarchy and operational count cards', async () => {
   await setup(DocumentPage)
-  expect(wrapper.findAll('th').map(x => x.text())).toEqual(['订单号', '客户', '订单日期', '预计交期', '状态', '明细', '订单金额', '已收 / 待收', '操作'])
+  expect(wrapper.findAll('th').map(x => x.text())).toEqual(['订单号', '客户', '订单日期', '预计交期', '履约状态', '明细', '订单金额', '已收 / 待收', '操作'])
   expect(wrapper.find('tbody tr').text()).toContain('2026-10-01')
   expect(wrapper.find('tbody tr').text()).not.toContain('12:00')
   expect(wrapper.findComponent({ name: 'SummaryCards' }).props('items').map(x => [x.label, x.value])).toEqual([['执行中',1], ['待出库',1], ['待收款',2], ['已完成',1]])
@@ -73,7 +73,8 @@ it.each(['draft','confirmed','production','shipped','completed','cancelled'])('d
   if (value === 'draft') expect(keys).toEqual(['订单待确认'])
   if (['confirmed','production'].includes(value)) expect(keys).toEqual(['待采购','待发货','待收款'])
   if (value === 'shipped') expect(keys).toContain('货物已全部发出')
-  if (['completed','cancelled'].includes(value)) { expect(wrapper.findAll('.task-row .task-action')).toHaveLength(0); expect(keys).toEqual([value === 'completed' ? '订单已完成' : '订单已取消']) }
+  if (value === 'completed') { expect(keys).toEqual(['待收款']); expect(wrapper.get('.task-row a').attributes('href')).toBe('/receivables?order=123') }
+  if (value === 'cancelled') { expect(wrapper.findAll('.task-row .task-action')).toHaveLength(0); expect(keys).toEqual(['订单已取消']) }
   expect(wrapper.find('.lifecycle-destructive').exists()).toBe(['draft','confirmed','production'].includes(value))
   expect(wrapper.find('.lifecycle-primary').exists()).toBe(['draft','confirmed','shipped'].includes(value))
 })

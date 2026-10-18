@@ -443,3 +443,24 @@ def reject_contract_change(change):
     change.status = "rejected"
     change.save(update_fields=["status", "updated_at"])
     return change
+
+
+def order_receivable_state(order, plans, today=None):
+    """Read-only status from effective original-currency plans; never creates plans."""
+    today = today or timezone.localdate()
+    if order.status in {"draft", "cancelled"}:
+        return {"state": order.status, "label": "尚未生效" if order.status == "draft" else "已取消", "overdue_amount": Decimal("0")}
+    effective = [p for p in plans if p.direction == "receivable" and p.status != "cancelled"]
+    total = sum((p.planned_amount for p in effective), Decimal("0"))
+    settled = sum((p.settled_amount for p in effective), Decimal("0"))
+    balance = sum((p.remaining_amount for p in effective if p.status == "open"), Decimal("0"))
+    overdue = sum((p.remaining_amount for p in effective if p.status == "open" and p.remaining_amount > 0 and p.due_date and p.due_date < today), Decimal("0"))
+    if not effective:
+        state, label = ("zero_contract", "零金额订单，无应收计划") if order.total_amount == 0 else ("no_plans", "无有效应收计划")
+    elif balance == 0 and total > 0 and settled == total:
+        state, label = "settled", "款项已结清"
+    elif balance > 0:
+        state, label = ("partial", "部分收款") if settled > 0 else ("pending", "待收款")
+    else:
+        state, label = "review", "应收计划待核对"
+    return {"state": state, "label": label, "overdue_amount": overdue}

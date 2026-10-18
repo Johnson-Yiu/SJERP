@@ -1,0 +1,13 @@
+{
+  "classification": "DATABASE_VERIFICATION",
+  "complete_finance_inventory_unchanged": true,
+  "rejected_requests_all_rows_unchanged": true,
+  "debt_before_after_complete": "160.0000",
+  "settled_debt": "0",
+  "refund_debt": "40.0000",
+  "net_received_original": "460.0000",
+  "currency": "USD",
+  "net_rmb_reference": "3266.0000",
+  "historical_order_plan_cash_exact_unchanged": true,
+  "actual_banking_claim": false
+}

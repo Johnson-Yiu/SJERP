@@ -1,0 +1,155 @@
+[
+  {
+    "file": "01-shipped-unpaid.jpg",
+    "dimensions": [
+      1265,
+      712
+    ],
+    "format": "JPEG",
+    "sha256": "c11f5dd15768e1dabc1d26421f4a7bde3a1aa648305e093e1c7f68bf356d2ddb"
+  },
+  {
+    "file": "02-shipped-partial-340.jpg",
+    "dimensions": [
+      1265,
+      712
+    ],
+    "format": "JPEG",
+    "sha256": "67decde03139336801fb4a0b71b34aa39fbab7d2e3c9801379cce74ee3c9d30f"
+  },
+  {
+    "file": "03-completed-debt-160.jpg",
+    "dimensions": [
+      1265,
+      712
+    ],
+    "format": "JPEG",
+    "sha256": "3bf958c6965a3e50641cf849fcb49787f422d7fe591f0528a076773dc4638579"
+  },
+  {
+    "file": "04-chrome-completed-340-160.jpg",
+    "dimensions": [
+      1920,
+      919
+    ],
+    "format": "JPEG",
+    "sha256": "815f6c59ca39c2617034665bc0b19a0ddf8b037e317b121945c00bf969d769c0"
+  },
+  {
+    "file": "05-overdue-filter.jpg",
+    "dimensions": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "sha256": "895eb2a245ccfc9da51b3af0efb7dfa0dcfe3ee5dec6d7381e629fcc82b44044"
+  },
+  {
+    "file": "06-completed-settled.jpg",
+    "dimensions": [
+      1265,
+      712
+    ],
+    "format": "JPEG",
+    "sha256": "6031f2e3dfc0aecc7c1fd25d884509426f8ddb194931730dfc3e7de922bcde5f"
+  },
+  {
+    "file": "07-refund-restores-debt-40.jpg",
+    "dimensions": [
+      1265,
+      712
+    ],
+    "format": "JPEG",
+    "sha256": "31f86c7ca37ce57c286b6f12264f55e6b80686162ca8173d2cda25db44b46d3b"
+  },
+  {
+    "file": "08-paid-unshipped.jpg",
+    "dimensions": [
+      1265,
+      712
+    ],
+    "format": "JPEG",
+    "sha256": "f89ff32d9c4aafe4210c22c24564b1930ab950f82cd3864fae7c9faa4edad21d"
+  },
+  {
+    "file": "09-history-completed-debt.jpg",
+    "dimensions": [
+      1265,
+      712
+    ],
+    "format": "JPEG",
+    "sha256": "619c987e0f486c8273eb8e018b48fd86d9aa9ffb6e5051bf0fb56d4d82a267d4"
+  },
+  {
+    "file": "10-draft.jpg",
+    "dimensions": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "sha256": "e5f7f7cf6d084d33115720797cbb9493aedb8f11992f2a55c5f26512d99039ac"
+  },
+  {
+    "file": "11-cancelled.jpg",
+    "dimensions": [
+      1265,
+      712
+    ],
+    "format": "JPEG",
+    "sha256": "9471b95e602504079f0a3fc144e66123945bb6634651f80a7d480b9b4c321b92"
+  },
+  {
+    "file": "12-zero-order.jpg",
+    "dimensions": [
+      1265,
+      712
+    ],
+    "format": "JPEG",
+    "sha256": "f4d9e4358022e55fb12c5887242f95c650695d6f1d9cf6c165958c6ce84beb76"
+  },
+  {
+    "file": "13-customer-order-entry.jpg",
+    "dimensions": [
+      1265,
+      712
+    ],
+    "format": "JPEG",
+    "sha256": "63e50190204f68fbe0daefee979c24e8f58b8dfa2f557974fad578d30e94b70e"
+  },
+  {
+    "file": "14-real-api-unavailable.jpg",
+    "dimensions": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "sha256": "5dd2d54eb2f43454225795d42ee73f8b8082a0645e5f6e8616c3e9a2c8dd59c8"
+  },
+  {
+    "file": "15-real-api-recovered.jpg",
+    "dimensions": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "sha256": "ba6dfbf80163ff9b04c20a1f71423f2e3b4c0362c2a5c50ab3d8a5e1554e03f8"
+  },
+  {
+    "file": "16-finance-current-receivable.jpg",
+    "dimensions": [
+      1265,
+      712
+    ],
+    "format": "JPEG",
+    "sha256": "06930613a4afbbe859eb0be8aec7e7dc1186fdfff99066359678b8aae13bb2a9"
+  },
+  {
+    "file": "17-customer-fulfillment-label.jpg",
+    "dimensions": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "sha256": "cfdb562f6b56aa023075b63dd0739f368039658165d4bdbd40c9c74034c5ae3e"
+  }
+]

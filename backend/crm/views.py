@@ -1906,6 +1906,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         inventory = list(InventoryMovement.objects.filter(Q(order=order) | Q(related_orders=order)).distinct().select_related("sku__product"))
         ordered_quantity = sum((item.quantity for item in items), Decimal("0"))
         shipped_quantity = sum((order_item_metrics(item)["shipped_quantity"] for item in items), Decimal("0"))
+        from .services.finance import order_receivable_state
         paid_amount = order.paid_amount if can_view_transactions and can_view_finance else None
         planned_receivable = sum((plan.planned_amount for plan in plans if plan.status != "cancelled"), Decimal("0"))
         from .services.profit import order_profit_summary
@@ -1922,6 +1923,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "paid_amount": paid_amount,
                 "balance_amount": order.outstanding_amount if can_view_transactions and can_view_finance else None,
                 "planned_amount": planned_receivable if can_view_finance else None,
+                "settlement": order_receivable_state(order, plans) if can_view_transactions and can_view_finance else None,
             },
             "expense_summary": {"expense_rmb": profit_summary["expense_rmb"] if profit_summary else None},
             "profit_summary": profit_summary,

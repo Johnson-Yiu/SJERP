@@ -134,7 +134,7 @@ def _customer_context(pk, user=None):
         "sections": [
             _section("followups", "跟进记录", "follow-ups", [["followed_at", "时间", "datetime"], ["subject", "主题"], ["content", "跟进记录 / 解决方案", "excerpt"], ["result", "客户回复 / 客户疑问", "excerpt"], ["type_display", "方式"], ["next_follow_up", "下次跟进", "date"]], followups),
             _section("quotes", "报价记录", "quotes", [["quote_no", "报价单号"], ["quote_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"], ["currency", "币种"]], quotes),
-            _section("orders", "订单", "orders", [["order_no", "订单号"], ["order_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"], ["currency", "币种"]], orders),
+            _section("orders", "订单", "orders", [["order_no", "订单号"], ["order_date", "日期", "date"], ["status_display", "履约状态", "status"], ["total_amount", "金额", "money"], ["currency", "币种"]], orders),
             _section("contacts", "联系人", "contacts", [["name", "姓名"], ["title", "职位"], ["email", "邮箱"], ["phone", "电话"], ["is_primary", "主联系人", "boolean"]], contacts),
             _section("purchases", "成交商品记录", "orders", [["order_date", "日期", "date"], ["order_no", "订单"], ["sku_code", "SKU"], ["product_name", "产品"], ["quantity", "数量", "number"], ["amount", "金额", "money"]], purchases),
             _section("cash", "财务流水", "transactions", [["transaction_date", "日期", "date"], ["transaction_no", "流水号"], ["direction_display", "方向"], ["category", "分类"], ["amount", "金额", "money"], ["currency", "币种"]], cash),

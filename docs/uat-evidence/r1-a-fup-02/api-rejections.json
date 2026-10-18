@@ -1,0 +1,16 @@
+[
+  {
+    "classification": "REAL_API_OBSERVATION",
+    "order": 1,
+    "operation": "complete",
+    "status": 400,
+    "body": "{\"detail\":\"只有已发货订单可以完成。\"}"
+  },
+  {
+    "classification": "REAL_API_OBSERVATION",
+    "order": 2,
+    "operation": "complete",
+    "status": 400,
+    "body": "{\"detail\":\"只有已发货订单可以完成。\"}"
+  }
+]

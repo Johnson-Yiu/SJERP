@@ -65,8 +65,11 @@ class FulfillmentReceivableTests(TestCase):
                 for field in ['balance_amount','paid_amount','settlement']:self.assertIsNone(summary[field])
     def test_multi_plan_decimal_and_overdue(self):
         self.cash('12.34');self.cash('2.34');plans=list(self.order.payment_plans.order_by('pk'))
-        plans[0].due_date=timezone.localdate()-timedelta(days=1);plans[0].save()
-        self.assertEqual(order_receivable_state(self.order,plans)['overdue_amount'],D('135.32'))
+        today = self.day
+        plans[0].due_date=today-timedelta(days=1);plans[0].save()
+        plans[1].due_date=today+timedelta(days=1);plans[1].save()
+        self.assertEqual(order_receivable_state(self.order,plans,today=today)['overdue_amount'],D('135.32'))
+        self.assertEqual(order_receivable_state(self.order,plans,today=today+timedelta(days=2))['overdue_amount'],D('485.32'))
         self.assertEqual(self.order.outstanding_amount,D('485.32'))
         self.assertEqual(sum((row.rmb_amount for row in Transaction.objects.all()),D('0')),D('106.43'))
 

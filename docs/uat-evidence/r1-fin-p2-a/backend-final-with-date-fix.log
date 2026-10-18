@@ -1,0 +1,253 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+Found 82 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+test_a_b_unconverted_then_bank_net_confirmed_without_legacy_writes (crm.tests.test_cash_events.CashEventTests.test_a_b_unconverted_then_bank_net_confirmed_without_legacy_writes) ... ok
+test_advance_allocation_does_not_consume_cash_source (crm.tests.test_cash_events.CashEventTests.test_advance_allocation_does_not_consume_cash_source) ... ok
+test_c_partial_60_40_and_overallocation (crm.tests.test_cash_events.CashEventTests.test_c_partial_60_40_and_overallocation) ... Conflict: /api/rmb-cash-events/
+ok
+test_cancel_pending_retains_evidence_and_allows_original_void (crm.tests.test_cash_events.CashEventTests.test_cancel_pending_retains_evidence_and_allows_original_void) ... Bad Request: /api/rmb-cash-events/1/confirm/
+ok
+test_confirm_failure_after_status_update_is_rolled_back (crm.tests.test_cash_events.CashEventTests.test_confirm_failure_after_status_update_is_rolled_back) ... ok
+test_d_split_family_is_cash_rows_not_root_total (crm.tests.test_cash_events.CashEventTests.test_d_split_family_is_cash_rows_not_root_total) ... Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+ok
+test_e_separate_fee_uses_independent_cny_source_and_no_double_included_fee (crm.tests.test_cash_events.CashEventTests.test_e_separate_fee_uses_independent_cny_source_and_no_double_included_fee) ... Bad Request: /api/rmb-cash-events/
+ok
+test_f_cny_direct_identical_amounts_are_distinct_real_events (crm.tests.test_cash_events.CashEventTests.test_f_cny_direct_identical_amounts_are_distinct_real_events) ... ok
+test_failure_after_event_creation_rolls_back_both_tables (crm.tests.test_cash_events.CashEventTests.test_failure_after_event_creation_rolls_back_both_tables) ... ok
+test_g_missing_voucher_account_and_manual_check_fail_without_writes (crm.tests.test_cash_events.CashEventTests.test_g_missing_voucher_account_and_manual_check_fail_without_writes) ... Bad Request: /api/rmb-cash-events/1/confirm/
+Bad Request: /api/rmb-cash-events/2/confirm/
+Bad Request: /api/rmb-cash-events/2/confirm/
+ok
+test_h_refund_void_and_correction_protection_are_atomic (crm.tests.test_cash_events.CashEventTests.test_h_refund_void_and_correction_protection_are_atomic) ... Bad Request: /api/rmb-cash-events/1/cancel/
+Bad Request: /api/rmb-cash-events/
+ok
+test_i_idempotency_lookup_conflict_cancel_and_immutable_confirm_payload (crm.tests.test_cash_events.CashEventTests.test_i_idempotency_lookup_conflict_cancel_and_immutable_confirm_payload) ... Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/1/confirm/
+Method Not Allowed: /api/rmb-cash-events/1/
+Method Not Allowed: /api/rmb-cash-events/1/
+Method Not Allowed: /api/rmb-cash-events/1/
+ok
+test_k_invalid_money_rate_sources_and_unknown_fields (crm.tests.test_cash_events.CashEventTests.test_k_invalid_money_rate_sources_and_unknown_fields) ... Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+ok
+test_l_historical_fraction_jpy_precision_and_reference_round_half_up (crm.tests.test_cash_events.CashEventTests.test_l_historical_fraction_jpy_precision_and_reference_round_half_up) ... Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+ok
+test_legacy_contract_only_party_is_protected_and_snapshot_owner_cannot_leak (crm.tests.test_cash_events.CashEventTests.test_legacy_contract_only_party_is_protected_and_snapshot_owner_cannot_leak) ... ok
+test_mixed_currency_stale_snapshot_and_event_number_conflict (crm.tests.test_cash_events.CashEventTests.test_mixed_currency_stale_snapshot_and_event_number_conflict) ... Bad Request: /api/rmb-cash-events/1/confirm/
+Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Not Found: /api/rmb-cash-events/not-an-id/
+ok
+test_unrelated_refunds_remain_legal_and_unknown_refunds_block_preview (crm.tests.test_cash_events.CashEventTests.test_unrelated_refunds_remain_legal_and_unknown_refunds_block_preview) ... Bad Request: /api/rmb-cash-events/preview/
+ok
+test_k_merged_batch_hidden_entirely_and_all_actions_scoped (crm.tests.test_cash_events.CashPermissionsTests.test_k_merged_batch_hidden_entirely_and_all_actions_scoped) ... ok
+test_missing_contract_module_hides_whole_source_family (crm.tests.test_cash_events.CashPermissionsTests.test_missing_contract_module_hides_whole_source_family) ... ok
+test_no_finance_or_transaction_view_no_amounts_and_write_rights (crm.tests.test_cash_events.CashPermissionsTests.test_no_finance_or_transaction_view_no_amounts_and_write_rights) ... ok
+test_advance_allocation_void_deactivates_allocation_and_restores_plan (crm.tests.test_finance.FinanceServiceTests.test_advance_allocation_void_deactivates_allocation_and_restores_plan) ... ok
+test_allocation_mismatch_rejects_void_without_changes (crm.tests.test_finance.FinanceServiceTests.test_allocation_mismatch_rejects_void_without_changes) ... ok
+test_approved_order_change_appends_receivable_plan (crm.tests.test_finance.FinanceServiceTests.test_approved_order_change_appends_receivable_plan) ... ok
+test_dashboard_sales_use_adjusted_contract_total_and_change_status_display (crm.tests.test_finance.FinanceServiceTests.test_dashboard_sales_use_adjusted_contract_total_and_change_status_display) ... ok
+test_default_plan_uses_deposit_and_balance (crm.tests.test_finance.FinanceServiceTests.test_default_plan_uses_deposit_and_balance) ... ok
+test_excess_receipt_creates_unallocated_advance (crm.tests.test_finance.FinanceServiceTests.test_excess_receipt_creates_unallocated_advance) ... ok
+test_finance_dashboard_due_items_include_contract_ids_for_navigation (crm.tests.test_finance.FinanceServiceTests.test_finance_dashboard_due_items_include_contract_ids_for_navigation) ... ok
+test_finance_dashboard_keeps_order_and_cash_dates_separate (crm.tests.test_finance.FinanceServiceTests.test_finance_dashboard_keeps_order_and_cash_dates_separate) ... ok
+test_insufficient_payment_plan_settlement_rejects_void_atomically (crm.tests.test_finance.FinanceServiceTests.test_insufficient_payment_plan_settlement_rejects_void_atomically) ... ok
+test_negative_change_reduces_latest_unsettled_plan_and_keeps_history (crm.tests.test_finance.FinanceServiceTests.test_negative_change_reduces_latest_unsettled_plan_and_keeps_history) ... ok
+test_negative_change_rejects_below_paid_amount_without_side_effects (crm.tests.test_finance.FinanceServiceTests.test_negative_change_rejects_below_paid_amount_without_side_effects) ... ok
+test_negative_change_rejects_when_unsettled_plan_capacity_is_insufficient (crm.tests.test_finance.FinanceServiceTests.test_negative_change_rejects_when_unsettled_plan_capacity_is_insufficient) ... ok
+test_plan_requires_exactly_one_contract (crm.tests.test_finance.FinanceServiceTests.test_plan_requires_exactly_one_contract) ... ok
+test_plan_with_order_is_valid (crm.tests.test_finance.FinanceServiceTests.test_plan_with_order_is_valid) ... ok
+test_profit_summary_refund_only_changes_profit_after_contract_adjustment (crm.tests.test_finance.FinanceServiceTests.test_profit_summary_refund_only_changes_profit_after_contract_adjustment) ... ok
+test_purchase_changes_use_payable_plan_and_negative_change (crm.tests.test_finance.FinanceServiceTests.test_purchase_changes_use_payable_plan_and_negative_change) ... ok
+test_record_transaction_rejects_wrong_currency_without_side_effects (crm.tests.test_finance.FinanceServiceTests.test_record_transaction_rejects_wrong_currency_without_side_effects) ... ok
+test_refund_void_does_not_change_payment_plans (crm.tests.test_finance.FinanceServiceTests.test_refund_void_does_not_change_payment_plans) ... ok
+test_rejected_change_does_not_change_contract_and_cannot_be_approved (crm.tests.test_finance.FinanceServiceTests.test_rejected_change_does_not_change_contract_and_cannot_be_approved) ... ok
+test_root_void_recursively_cancels_split_rows_and_restores_all_plans (crm.tests.test_finance.FinanceServiceTests.test_root_void_recursively_cancels_split_rows_and_restores_all_plans) ... ok
+test_root_void_rejects_second_call_without_changing_void_history (crm.tests.test_finance.FinanceServiceTests.test_root_void_rejects_second_call_without_changing_void_history) ... ok
+test_split_child_cannot_be_voided_directly (crm.tests.test_finance.FinanceServiceTests.test_split_child_cannot_be_voided_directly) ... ok
+test_standalone_unallocated_payment_void_restores_payable_plan (crm.tests.test_finance.FinanceServiceTests.test_standalone_unallocated_payment_void_restores_payable_plan) ... ok
+test_supplier_payment_void_restores_payable_plan (crm.tests.test_finance.FinanceServiceTests.test_supplier_payment_void_restores_payable_plan) ... ok
+test_unallocated_advance_can_be_allocated_to_same_customer_plan (crm.tests.test_finance.FinanceServiceTests.test_unallocated_advance_can_be_allocated_to_same_customer_plan) ... ok
+test_void_records_reason_timestamp_and_restores_payment_plan (crm.tests.test_finance.FinanceServiceTests.test_void_records_reason_timestamp_and_restores_payment_plan) ... ok
+test_void_rollback_underflow_is_atomic_across_root_and_split_child (crm.tests.test_finance.FinanceServiceTests.test_void_rollback_underflow_is_atomic_across_root_and_split_child) ... ok
+test_void_root_restores_cross_order_advance_allocation_and_split_history (crm.tests.test_finance.FinanceServiceTests.test_void_root_restores_cross_order_advance_allocation_and_split_history) ... ok
+test_void_transaction_api_requires_reason_and_records_metadata (crm.tests.test_finance.FinanceServiceTests.test_void_transaction_api_requires_reason_and_records_metadata) ... Bad Request: /api/transactions/1/void/
+Bad Request: /api/transactions/1/void/
+ok
+test_current_receivable_is_payment_plan_based_across_order_lifecycles (crm.tests.test_finance.OrderReceivableProjectionTests.test_current_receivable_is_payment_plan_based_across_order_lifecycles) ... ok
+test_plan_requires_exactly_one_contract (crm.tests.test_finance.PaymentPlanModelTests.test_plan_requires_exactly_one_contract) ... ok
+test_plan_with_order_is_valid (crm.tests.test_finance.PaymentPlanModelTests.test_plan_with_order_is_valid) ... ok
+test_advance_allocation_and_split_family_guard (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_advance_allocation_and_split_family_guard) ... ok
+test_advance_payment_cross_purchase_and_void_restores_balances (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_advance_payment_cross_purchase_and_void_restores_balances) ... ok
+test_allocation_history_cannot_disclose_or_modify_foreign_plan (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_allocation_history_cannot_disclose_or_modify_foreign_plan) ... ok
+test_contract_sales_and_shared_purchase_changes (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_contract_sales_and_shared_purchase_changes) ... ok
+test_creation_cannot_bind_foreign_customer_order_or_plan (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_creation_cannot_bind_foreign_customer_order_or_plan) ... ok
+test_dashboard_report_and_csv_share_cash_scope (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_dashboard_report_and_csv_share_cash_scope) ... ok
+test_finance_allocation_totals_are_hidden_without_finance_view (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_finance_allocation_totals_are_hidden_without_finance_view) ... ok
+test_finance_dashboard_masks_counterparty_names_without_party_module_access (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_finance_dashboard_masks_counterparty_names_without_party_module_access) ... ok
+test_finance_export_is_authorized_on_server (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_finance_export_is_authorized_on_server) ... ok
+test_foreign_actions_and_rebinding_are_denied (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_foreign_actions_and_rebinding_are_denied) ... ok
+test_foreign_reads_and_context_are_hidden (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_foreign_reads_and_context_are_hidden) ... ok
+test_four_scopes_preserve_shared_finance (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_four_scopes_preserve_shared_finance) ... ok
+test_module_permissions_are_required_alongside_all_scope (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_module_permissions_are_required_alongside_all_scope) ... ok
+test_normal_settle_refund_void_and_purchase_payment (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_normal_settle_refund_void_and_purchase_payment) ... ok
+test_shared_purchase_contract_does_not_require_sales_module (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_shared_purchase_contract_does_not_require_sales_module) ... ok
+test_unallocated_advance_creation_requires_finance_update (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_unallocated_advance_creation_requires_finance_update) ... ok
+test_unowned_legacy_sales_cash_requires_all_scope (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_unowned_legacy_sales_cash_requires_all_scope) ... ok
+test_void_requires_finance_update_even_without_plan_or_allocations (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_void_requires_finance_update_even_without_plan_or_allocations) ... ok
+test_complete_with_debt_does_not_write_finance_and_replay_rejected (crm.tests.test_fulfillment_receivables.FulfillmentReceivableTests.test_complete_with_debt_does_not_write_finance_and_replay_rejected) ... Bad Request: /api/orders/1/complete/
+ok
+test_historical_completed_without_plans_is_not_settled_or_mutated (crm.tests.test_fulfillment_receivables.FulfillmentReceivableTests.test_historical_completed_without_plans_is_not_settled_or_mutated) ... ok
+test_metadata_hidden_without_either_financial_permission (crm.tests.test_fulfillment_receivables.FulfillmentReceivableTests.test_metadata_hidden_without_either_financial_permission) ... ok
+test_multi_plan_decimal_and_overdue (crm.tests.test_fulfillment_receivables.FulfillmentReceivableTests.test_multi_plan_decimal_and_overdue) ... ok
+test_paid_unshipped_cannot_complete (crm.tests.test_fulfillment_receivables.FulfillmentReceivableTests.test_paid_unshipped_cannot_complete) ... Bad Request: /api/orders/1/complete/
+ok
+test_payment_and_refund_preserve_completed_fulfillment (crm.tests.test_fulfillment_receivables.FulfillmentReceivableTests.test_payment_and_refund_preserve_completed_fulfillment) ... ok
+test_readonly_list_state_and_financial_permission_boundary (crm.tests.test_fulfillment_receivables.FulfillmentReceivableTests.test_readonly_list_state_and_financial_permission_boundary) ... ok
+test_special_states_and_zero_plan (crm.tests.test_fulfillment_receivables.FulfillmentReceivableTests.test_special_states_and_zero_plan) ... ok
+test_h_confirm_races_void_and_refund_never_releases_or_changes_legacy (crm.tests.test_cash_events.CashConcurrencyTests.test_h_confirm_races_void_and_refund_never_releases_or_changes_legacy) ... skipped 'Real PostgreSQL locks required'
+test_i_concurrent_same_request_creates_one_event_and_one_allocation (crm.tests.test_cash_events.CashConcurrencyTests.test_i_concurrent_same_request_creates_one_event_and_one_allocation) ... skipped 'Real PostgreSQL locks required'
+test_j_different_keys_compete_for_same_source (crm.tests.test_cash_events.CashConcurrencyTests.test_j_different_keys_compete_for_same_source) ... skipped 'Real PostgreSQL locks required'
+test_additive_migration_preserves_historical_rows_and_decimal_fields (crm.tests.test_cash_events.CashMigrationTests.test_additive_migration_preserves_historical_rows_and_decimal_fields) ... ok
+
+----------------------------------------------------------------------
+Ran 82 tests in 8.717s
+
+OK (skipped=3)
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).
+P2A-DATABASE_VERIFICATION {"before": "7a847fb61fd2679c4b0421f1ecd9692f7cf411339d6f092e96a6d5b86b481da6", "after": "7a847fb61fd2679c4b0421f1ecd9692f7cf411339d6f092e96a6d5b86b481da6", "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": true}
+P2A_MIGRATION_VERIFICATION {"vendor": "sqlite", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}

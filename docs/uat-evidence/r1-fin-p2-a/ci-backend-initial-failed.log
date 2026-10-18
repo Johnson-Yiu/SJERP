@@ -1,0 +1,987 @@
+﻿2026-10-18T16:15:25.2414431Z Current runner version: '2.337.0'
+2026-10-18T16:15:25.2450892Z ##[group]Runner Image Provisioner
+2026-10-18T16:15:25.2452544Z Hosted Compute Agent
+2026-10-18T16:15:25.2453693Z Version: 20261012.601
+2026-10-18T16:15:25.2454721Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+2026-10-18T16:15:25.2455932Z Build Date: 2026-10-12T17:48:21Z
+2026-10-18T16:15:25.2457174Z Worker ID: {e79a3bec-4815-454b-814b-16c2af2e1ee0}
+2026-10-18T16:15:25.2458415Z Region: eastus
+2026-10-18T16:15:25.2459350Z Cloud: Azure
+2026-10-18T16:15:25.2460343Z ##[endgroup]
+2026-10-18T16:15:25.2463058Z ##[group]Operating System
+2026-10-18T16:15:25.2464253Z Ubuntu
+2026-10-18T16:15:25.2465059Z 24.04.5
+2026-10-18T16:15:25.2466004Z LTS
+2026-10-18T16:15:25.2466904Z ##[endgroup]
+2026-10-18T16:15:25.2467790Z ##[group]Runner Image
+2026-10-18T16:15:25.2468799Z Image: ubuntu-24.04
+2026-10-18T16:15:25.2469757Z Version: 20261012.334.1
+2026-10-18T16:15:25.2472261Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-18T16:15:25.2474953Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+2026-10-18T16:15:25.2476754Z ##[endgroup]
+2026-10-18T16:15:25.2479317Z ##[group]GITHUB_TOKEN Permissions
+2026-10-18T16:15:25.2482795Z Contents: read
+2026-10-18T16:15:25.2483745Z Metadata: read
+2026-10-18T16:15:25.2484730Z Packages: read
+2026-10-18T16:15:25.2485642Z ##[endgroup]
+2026-10-18T16:15:25.2489156Z Secret source: Actions
+2026-10-18T16:15:25.2490619Z Cache mode: write
+2026-10-18T16:15:25.2492337Z Prepare workflow directory
+2026-10-18T16:15:25.2983553Z Prepare all required actions
+2026-10-18T16:15:25.3057499Z Getting action download info
+2026-10-18T16:15:25.5295904Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-18T16:15:25.6469088Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-18T16:15:25.8545471Z Complete job name: backend
+2026-10-18T16:15:25.9329502Z ##[group]Run actions/checkout@v4
+2026-10-18T16:15:25.9330409Z with:
+2026-10-18T16:15:25.9330863Z   repository: Johnson-Yiu/SUNJACK-ERP
+2026-10-18T16:15:25.9334955Z   token: ***
+2026-10-18T16:15:25.9335390Z   ssh-strict: true
+2026-10-18T16:15:25.9335818Z   ssh-user: git
+2026-10-18T16:15:25.9336262Z   persist-credentials: true
+2026-10-18T16:15:25.9336765Z   clean: true
+2026-10-18T16:15:25.9337210Z   sparse-checkout-cone-mode: true
+2026-10-18T16:15:25.9337726Z   fetch-depth: 1
+2026-10-18T16:15:25.9338148Z   fetch-tags: false
+2026-10-18T16:15:25.9338595Z   show-progress: true
+2026-10-18T16:15:25.9339039Z   lfs: false
+2026-10-18T16:15:25.9339501Z   submodules: false
+2026-10-18T16:15:25.9339951Z   set-safe-directory: true
+2026-10-18T16:15:25.9340457Z   allow-unsafe-pr-checkout: false
+2026-10-18T16:15:25.9341712Z ##[endgroup]
+2026-10-18T16:15:26.0601844Z Syncing repository: Johnson-Yiu/SUNJACK-ERP
+2026-10-18T16:15:26.0605344Z ##[group]Getting Git version info
+2026-10-18T16:15:26.0609805Z Working directory is '/home/runner/work/SUNJACK-ERP/SUNJACK-ERP'
+2026-10-18T16:15:26.0613450Z [command]/usr/bin/git version
+2026-10-18T16:15:26.0857917Z git version 2.55.0
+2026-10-18T16:15:26.0865450Z ##[endgroup]
+2026-10-18T16:15:26.0875306Z Temporarily overriding HOME='/home/runner/work/_temp/5e200591-8fdd-466f-b91a-356ad62342b7' before making global git config changes
+2026-10-18T16:15:26.0877774Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-18T16:15:26.0879908Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/SUNJACK-ERP/SUNJACK-ERP
+2026-10-18T16:15:26.0977034Z Deleting the contents of '/home/runner/work/SUNJACK-ERP/SUNJACK-ERP'
+2026-10-18T16:15:26.0979475Z ##[group]Initializing the repository
+2026-10-18T16:15:26.0981061Z [command]/usr/bin/git init /home/runner/work/SUNJACK-ERP/SUNJACK-ERP
+2026-10-18T16:15:26.1144540Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-18T16:15:26.1171823Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-18T16:15:26.1174556Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-18T16:15:26.1175957Z hint: call:
+2026-10-18T16:15:26.1176733Z hint:
+2026-10-18T16:15:26.1177702Z hint: 	git config --global init.defaultBranch <name>
+2026-10-18T16:15:26.1188253Z hint:
+2026-10-18T16:15:26.1189489Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-18T16:15:26.1191592Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-18T16:15:26.1193076Z hint:
+2026-10-18T16:15:26.1193863Z hint: 	git branch -m <name>
+2026-10-18T16:15:26.1194804Z hint:
+2026-10-18T16:15:26.1195963Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-18T16:15:26.1197811Z Initialized empty Git repository in /home/runner/work/SUNJACK-ERP/SUNJACK-ERP/.git/
+2026-10-18T16:15:26.1205329Z [command]/usr/bin/git remote add origin https://github.com/Johnson-Yiu/SUNJACK-ERP
+2026-10-18T16:15:26.1284662Z ##[endgroup]
+2026-10-18T16:15:26.1286046Z ##[group]Disabling automatic garbage collection
+2026-10-18T16:15:26.1287343Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-18T16:15:26.1347742Z ##[endgroup]
+2026-10-18T16:15:26.1349017Z ##[group]Setting up auth
+2026-10-18T16:15:26.1350284Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-18T16:15:26.1400058Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-18T16:15:26.1986988Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-18T16:15:26.2036013Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-18T16:15:26.3219739Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-18T16:15:26.3223978Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-18T16:15:26.3245937Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-18T16:15:26.3250860Z ##[endgroup]
+2026-10-18T16:15:26.3253246Z ##[group]Fetching the repository
+2026-10-18T16:15:26.3256150Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +8706200632980c7e3a6a5e0b776e81fdac7e1613:refs/remotes/origin/master
+2026-10-18T16:15:28.0199038Z From https://github.com/Johnson-Yiu/SUNJACK-ERP
+2026-10-18T16:15:28.0212414Z  * [new ref]         8706200632980c7e3a6a5e0b776e81fdac7e1613 -> origin/master
+2026-10-18T16:15:28.0219249Z ##[endgroup]
+2026-10-18T16:15:28.0221950Z ##[group]Determining the checkout info
+2026-10-18T16:15:28.0224999Z ##[endgroup]
+2026-10-18T16:15:28.0226804Z [command]/usr/bin/git sparse-checkout disable
+2026-10-18T16:15:28.0287864Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-18T16:15:28.0332588Z ##[group]Checking out the ref
+2026-10-18T16:15:28.0337594Z [command]/usr/bin/git checkout --progress --force -B master refs/remotes/origin/master
+2026-10-18T16:15:28.5583700Z Reset branch 'master'
+2026-10-18T16:15:28.5591986Z branch 'master' set up to track 'origin/master'.
+2026-10-18T16:15:28.5614828Z ##[endgroup]
+2026-10-18T16:15:28.5666058Z [command]/usr/bin/git log -1 --format=%H
+2026-10-18T16:15:28.5696875Z 8706200632980c7e3a6a5e0b776e81fdac7e1613
+2026-10-18T16:15:28.6007009Z ##[group]Run actions/setup-python@v5
+2026-10-18T16:15:28.6007434Z with:
+2026-10-18T16:15:28.6007687Z   python-version: 3.12
+2026-10-18T16:15:28.6007977Z   check-latest: false
+2026-10-18T16:15:28.6010578Z   token: ***
+2026-10-18T16:15:28.6010852Z   update-environment: true
+2026-10-18T16:15:28.6011598Z   allow-prereleases: false
+2026-10-18T16:15:28.6012141Z   freethreaded: false
+2026-10-18T16:15:28.6012403Z ##[endgroup]
+2026-10-18T16:15:28.7492591Z ##[group]Installed versions
+2026-10-18T16:15:28.7633157Z (node:2083) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-18T16:15:28.7634595Z Successfully set up CPython (3.12.15)
+2026-10-18T16:15:28.7635945Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-18T16:15:28.7655563Z ##[endgroup]
+2026-10-18T16:15:28.7878945Z ##[group]Run pip install -r backend/requirements.txt
+2026-10-18T16:15:28.7879803Z [36;1mpip install -r backend/requirements.txt[0m
+2026-10-18T16:15:28.8298265Z shell: /usr/bin/bash -e {0}
+2026-10-18T16:15:28.8298714Z env:
+2026-10-18T16:15:28.8299087Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:28.8299624Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-18T16:15:28.8300142Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:28.8371886Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:28.8372813Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:28.8373711Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-18T16:15:28.8374502Z ##[endgroup]
+2026-10-18T16:15:30.0937135Z Collecting Django<6.1,>=5.2 (from -r backend/requirements.txt (line 1))
+2026-10-18T16:15:30.1602347Z   Downloading django-6.0.9-py3-none-any.whl.metadata (3.9 kB)
+2026-10-18T16:15:30.1842246Z Collecting djangorestframework<4,>=3.16 (from -r backend/requirements.txt (line 2))
+2026-10-18T16:15:30.1943982Z   Downloading djangorestframework-3.18.3-py3-none-any.whl.metadata (7.8 kB)
+2026-10-18T16:15:30.2121851Z Collecting django-cors-headers<5,>=4.7 (from -r backend/requirements.txt (line 3))
+2026-10-18T16:15:30.2230341Z   Downloading django_cors_headers-4.9.0-py3-none-any.whl.metadata (16 kB)
+2026-10-18T16:15:30.2400143Z Collecting dj-database-url<4,>=2.3 (from -r backend/requirements.txt (line 4))
+2026-10-18T16:15:30.2498024Z   Downloading dj_database_url-3.1.2-py3-none-any.whl.metadata (13 kB)
+2026-10-18T16:15:30.2720304Z Collecting psycopg<4,>=3.2 (from psycopg[binary]<4,>=3.2->-r backend/requirements.txt (line 5))
+2026-10-18T16:15:30.2815755Z   Downloading psycopg-3.3.6-py3-none-any.whl.metadata (4.4 kB)
+2026-10-18T16:15:30.5173974Z Collecting Pillow<12,>=11.0 (from -r backend/requirements.txt (line 6))
+2026-10-18T16:15:30.5273146Z   Downloading pillow-11.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.0 kB)
+2026-10-18T16:15:30.5599424Z Collecting bleach<7,>=6.2 (from -r backend/requirements.txt (line 7))
+2026-10-18T16:15:30.5744307Z   Downloading bleach-6.4.0-py3-none-any.whl.metadata (32 kB)
+2026-10-18T16:15:30.6183238Z Collecting openpyxl<4,>=3.1.5 (from -r backend/requirements.txt (line 8))
+2026-10-18T16:15:30.6273856Z   Downloading openpyxl-3.1.5-py2.py3-none-any.whl.metadata (2.5 kB)
+2026-10-18T16:15:30.6422211Z Collecting pycountry==26.2.16 (from -r backend/requirements.txt (line 9))
+2026-10-18T16:15:30.6511962Z   Downloading pycountry-26.2.16-py3-none-any.whl.metadata (12 kB)
+2026-10-18T16:15:30.6718700Z Collecting asgiref>=3.9.1 (from Django<6.1,>=5.2->-r backend/requirements.txt (line 1))
+2026-10-18T16:15:30.6811388Z   Downloading asgiref-3.12.1-py3-none-any.whl.metadata (9.4 kB)
+2026-10-18T16:15:30.6972329Z Collecting sqlparse>=0.5.0 (from Django<6.1,>=5.2->-r backend/requirements.txt (line 1))
+2026-10-18T16:15:30.7065736Z   Downloading sqlparse-0.6.0-py3-none-any.whl.metadata (6.0 kB)
+2026-10-18T16:15:30.7322166Z Collecting typing-extensions>=4.6 (from psycopg<4,>=3.2->psycopg[binary]<4,>=3.2->-r backend/requirements.txt (line 5))
+2026-10-18T16:15:30.7414915Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-10-18T16:15:30.7584189Z Collecting webencodings (from bleach<7,>=6.2->-r backend/requirements.txt (line 7))
+2026-10-18T16:15:30.7680693Z   Downloading webencodings-0.6.1-py3-none-any.whl.metadata (3.4 kB)
+2026-10-18T16:15:30.7807833Z Collecting et-xmlfile (from openpyxl<4,>=3.1.5->-r backend/requirements.txt (line 8))
+2026-10-18T16:15:30.7899925Z   Downloading et_xmlfile-2.0.0-py3-none-any.whl.metadata (2.7 kB)
+2026-10-18T16:15:30.9577874Z Collecting psycopg-binary==3.3.6 (from psycopg[binary]<4,>=3.2->-r backend/requirements.txt (line 5))
+2026-10-18T16:15:30.9687417Z   Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.7 kB)
+2026-10-18T16:15:30.9882631Z Downloading pycountry-26.2.16-py3-none-any.whl (8.0 MB)
+2026-10-18T16:15:31.1366070Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.0/8.0 MB 60.6 MB/s  0:00:00
+2026-10-18T16:15:31.1461921Z Downloading django-6.0.9-py3-none-any.whl (8.4 MB)
+2026-10-18T16:15:31.2184067Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.4/8.4 MB 117.2 MB/s  0:00:00
+2026-10-18T16:15:31.2280288Z Downloading djangorestframework-3.18.3-py3-none-any.whl (903 kB)
+2026-10-18T16:15:31.2356104Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 904.0/904.0 kB 139.9 MB/s  0:00:00
+2026-10-18T16:15:31.2449257Z Downloading django_cors_headers-4.9.0-py3-none-any.whl (12 kB)
+2026-10-18T16:15:31.2568623Z Downloading dj_database_url-3.1.2-py3-none-any.whl (9.0 kB)
+2026-10-18T16:15:31.2695020Z Downloading psycopg-3.3.6-py3-none-any.whl (215 kB)
+2026-10-18T16:15:31.2820948Z Downloading pillow-11.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.6 MB)
+2026-10-18T16:15:31.3264384Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.6/6.6 MB 156.8 MB/s  0:00:00
+2026-10-18T16:15:31.3360335Z Downloading bleach-6.4.0-py3-none-any.whl (165 kB)
+2026-10-18T16:15:31.3487438Z Downloading openpyxl-3.1.5-py2.py3-none-any.whl (250 kB)
+2026-10-18T16:15:31.3607955Z Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.2 MB)
+2026-10-18T16:15:31.3923018Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 175.4 MB/s  0:00:00
+2026-10-18T16:15:31.4019735Z Downloading asgiref-3.12.1-py3-none-any.whl (25 kB)
+2026-10-18T16:15:31.4137585Z Downloading sqlparse-0.6.0-py3-none-any.whl (50 kB)
+2026-10-18T16:15:31.4253684Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-10-18T16:15:31.4381450Z Downloading et_xmlfile-2.0.0-py3-none-any.whl (18 kB)
+2026-10-18T16:15:31.4534339Z Downloading webencodings-0.6.1-py3-none-any.whl (8.7 kB)
+2026-10-18T16:15:31.6256695Z Installing collected packages: webencodings, typing-extensions, sqlparse, pycountry, psycopg-binary, Pillow, et-xmlfile, asgiref, psycopg, openpyxl, Django, bleach, djangorestframework, django-cors-headers, dj-database-url
+2026-10-18T16:15:35.0766550Z 
+2026-10-18T16:15:35.0789521Z Successfully installed Django-6.0.9 Pillow-11.3.0 asgiref-3.12.1 bleach-6.4.0 dj-database-url-3.1.2 django-cors-headers-4.9.0 djangorestframework-3.18.3 et-xmlfile-2.0.0 openpyxl-3.1.5 psycopg-3.3.6 psycopg-binary-3.3.6 pycountry-26.2.16 sqlparse-0.6.0 typing-extensions-4.16.0 webencodings-0.6.1
+2026-10-18T16:15:35.1606723Z ##[group]Run python manage.py check
+2026-10-18T16:15:35.1607074Z [36;1mpython manage.py check[0m
+2026-10-18T16:15:35.1678055Z shell: /usr/bin/bash -e {0}
+2026-10-18T16:15:35.1678320Z env:
+2026-10-18T16:15:35.1678592Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:35.1679048Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-18T16:15:35.1679474Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:35.1679853Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:35.1680237Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:35.1680618Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-18T16:15:35.1681230Z ##[endgroup]
+2026-10-18T16:15:37.4718995Z System check identified no issues (0 silenced).
+2026-10-18T16:15:37.6654271Z ##[group]Run python manage.py makemigrations --check --dry-run
+2026-10-18T16:15:37.6655099Z [36;1mpython manage.py makemigrations --check --dry-run[0m
+2026-10-18T16:15:37.6753403Z shell: /usr/bin/bash -e {0}
+2026-10-18T16:15:37.6754054Z env:
+2026-10-18T16:15:37.6754499Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:37.6755218Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-18T16:15:37.6755965Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:37.6756620Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:37.6757274Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:37.6757943Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-18T16:15:37.6758497Z ##[endgroup]
+2026-10-18T16:15:38.5243211Z No changes detected
+2026-10-18T16:15:38.6793348Z ##[group]Run python manage.py test
+2026-10-18T16:15:38.6793680Z [36;1mpython manage.py test[0m
+2026-10-18T16:15:38.6862079Z shell: /usr/bin/bash -e {0}
+2026-10-18T16:15:38.6862330Z env:
+2026-10-18T16:15:38.6862595Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:38.6863033Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-18T16:15:38.6863493Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:38.6863886Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:38.6864273Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-18T16:15:38.6864660Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-18T16:15:38.6864985Z ##[endgroup]
+2026-10-18T16:15:39.7012418Z Creating test database for alias 'default'...
+2026-10-18T16:15:48.9816769Z Bad Request: /api/access-roles/1/permission-matrix/
+2026-10-18T16:15:49.0180377Z ..Bad Request: /api/categories/reorder/
+2026-10-18T16:15:49.0241697Z Bad Request: /api/categories/1/
+2026-10-18T16:15:49.1214744Z ....Bad Request: /api/customers/
+2026-10-18T16:15:50.0769073Z .................Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:50.0815193Z Bad Request: /api/shipments/1/packages/1/
+2026-10-18T16:15:50.0857948Z Bad Request: /api/shipments/1/packages/1/
+2026-10-18T16:15:50.0901471Z Bad Request: /api/shipments/1/packages/1/
+2026-10-18T16:15:50.0944299Z Bad Request: /api/shipments/1/copy-estimated-packing/
+2026-10-18T16:15:50.1073620Z Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:50.1117533Z Bad Request: /api/shipments/1/packages/1/
+2026-10-18T16:15:50.1162454Z Bad Request: /api/shipments/1/packages/1/
+2026-10-18T16:15:50.1206178Z Bad Request: /api/shipments/1/packages/1/
+2026-10-18T16:15:50.1251355Z Bad Request: /api/shipments/1/copy-estimated-packing/
+2026-10-18T16:15:50.3617489Z ..Internal Server Error: /api/shipments/1/copy-estimated-packing/
+2026-10-18T16:15:50.3619008Z Traceback (most recent call last):
+2026-10-18T16:15:50.3641206Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-10-18T16:15:50.3642600Z     response = get_response(request)
+2026-10-18T16:15:50.3645262Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.3646372Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+2026-10-18T16:15:50.3647605Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+2026-10-18T16:15:50.3648366Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.3649481Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+2026-10-18T16:15:50.3650543Z     return view_func(request, *args, **kwargs)
+2026-10-18T16:15:50.3651279Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.3652333Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+2026-10-18T16:15:50.3653398Z     return self.dispatch(request, *args, **kwargs)
+2026-10-18T16:15:50.3653950Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.3654971Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+2026-10-18T16:15:50.3656388Z     response = self.handle_exception(exc)
+2026-10-18T16:15:50.3656892Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.3657984Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+2026-10-18T16:15:50.3659077Z     self.raise_uncaught_exception(exc)
+2026-10-18T16:15:50.3660233Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+2026-10-18T16:15:50.3661521Z     raise exc
+2026-10-18T16:15:50.3662813Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+2026-10-18T16:15:50.3663957Z     response = handler(request, *args, **kwargs)
+2026-10-18T16:15:50.3664500Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.3665424Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+2026-10-18T16:15:50.3666253Z     return func(*args, **kwds)
+2026-10-18T16:15:50.3666662Z            ^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.3667592Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 1236, in copy_estimated_packing
+2026-10-18T16:15:50.3668842Z     copy_estimated_to_actual(shipment, plan, replace=request.data.get("replace") is True)
+2026-10-18T16:15:50.3670029Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+2026-10-18T16:15:50.3670843Z     return func(*args, **kwds)
+2026-10-18T16:15:50.3671540Z            ^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.3672587Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/services/packaging.py", line 158, in copy_estimated_to_actual
+2026-10-18T16:15:50.3673671Z     serializer.save(shipment=shipment)
+2026-10-18T16:15:50.3674765Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/serializers.py", line 210, in save
+2026-10-18T16:15:50.3675897Z     self.instance = self.create(validated_data)
+2026-10-18T16:15:50.3676441Z                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.3677326Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+2026-10-18T16:15:50.3678165Z     return func(*args, **kwds)
+2026-10-18T16:15:50.3678588Z            ^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.3679438Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/serializers.py", line 2604, in create
+2026-10-18T16:15:50.3680881Z     ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+2026-10-18T16:15:50.3682627Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+2026-10-18T16:15:50.3683556Z     return self._mock_call(*args, **kwargs)
+2026-10-18T16:15:50.3684071Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.3685037Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+2026-10-18T16:15:50.3686046Z     return self._execute_mock_call(*args, **kwargs)
+2026-10-18T16:15:50.3686628Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.3687649Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+2026-10-18T16:15:50.3688639Z     result = effect(*args, **kwargs)
+2026-10-18T16:15:50.3689104Z              ^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.3690301Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/tests/test_actual_packing.py", line 199, in fail_after_first_carton
+2026-10-18T16:15:50.3691801Z     raise RuntimeError("copy failed after first carton")
+2026-10-18T16:15:50.3692454Z RuntimeError: copy failed after first carton
+2026-10-18T16:15:50.4521627Z .Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:50.6586422Z ..Internal Server Error: /api/shipments/1/packages/1/
+2026-10-18T16:15:50.6593927Z Traceback (most recent call last):
+2026-10-18T16:15:50.6595548Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-10-18T16:15:50.6596974Z     response = get_response(request)
+2026-10-18T16:15:50.6597749Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.6599159Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+2026-10-18T16:15:50.6600753Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+2026-10-18T16:15:50.6602313Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.6603733Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+2026-10-18T16:15:50.6604942Z     return view_func(request, *args, **kwargs)
+2026-10-18T16:15:50.6605578Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.6606719Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+2026-10-18T16:15:50.6608000Z     return self.dispatch(request, *args, **kwargs)
+2026-10-18T16:15:50.6608730Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.6609968Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+2026-10-18T16:15:50.6611486Z     response = self.handle_exception(exc)
+2026-10-18T16:15:50.6612229Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.6613473Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+2026-10-18T16:15:50.6614752Z     self.raise_uncaught_exception(exc)
+2026-10-18T16:15:50.6616942Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+2026-10-18T16:15:50.6618631Z     raise exc
+2026-10-18T16:15:50.6619796Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+2026-10-18T16:15:50.6621364Z     response = handler(request, *args, **kwargs)
+2026-10-18T16:15:50.6622167Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.6623269Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+2026-10-18T16:15:50.6624346Z     return func(*args, **kwds)
+2026-10-18T16:15:50.6624986Z            ^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.6626117Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 1217, in update_package
+2026-10-18T16:15:50.6628454Z     record_operation(request=request, instance=shipment, action="custom", action_label="删除装箱明细", before={"package": before}, metadata={"package_id": package_id})
+2026-10-18T16:15:50.6630370Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+2026-10-18T16:15:50.6631844Z     return self._mock_call(*args, **kwargs)
+2026-10-18T16:15:50.6632597Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.6633780Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+2026-10-18T16:15:50.6634963Z     return self._execute_mock_call(*args, **kwargs)
+2026-10-18T16:15:50.6635752Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:50.6637028Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+2026-10-18T16:15:50.6638273Z     raise effect
+2026-10-18T16:15:50.6638950Z RuntimeError: audit save failed
+2026-10-18T16:15:50.7474956Z .Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:50.7683722Z Bad Request: /api/shipments/1/packages/2/
+2026-10-18T16:15:50.8496484Z .Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:51.2316379Z ...Bad Request: /api/shipments/1/copy-estimated-packing/
+2026-10-18T16:15:51.2400420Z Bad Request: /api/shipments/1/copy-estimated-packing/
+2026-10-18T16:15:51.2486769Z Bad Request: /api/shipments/1/copy-estimated-packing/
+2026-10-18T16:15:51.3973248Z .Internal Server Error: /api/shipments/1/packages/
+2026-10-18T16:15:51.3974198Z Traceback (most recent call last):
+2026-10-18T16:15:51.3975788Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-10-18T16:15:51.3977180Z     response = get_response(request)
+2026-10-18T16:15:51.3977922Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.3979861Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+2026-10-18T16:15:51.3981795Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+2026-10-18T16:15:51.4001841Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.4003789Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+2026-10-18T16:15:51.4009121Z     return view_func(request, *args, **kwargs)
+2026-10-18T16:15:51.4009952Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.4011515Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+2026-10-18T16:15:51.4012882Z     return self.dispatch(request, *args, **kwargs)
+2026-10-18T16:15:51.4013675Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.4015124Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+2026-10-18T16:15:51.4016552Z     response = self.handle_exception(exc)
+2026-10-18T16:15:51.4020471Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.4022160Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+2026-10-18T16:15:51.4023590Z     self.raise_uncaught_exception(exc)
+2026-10-18T16:15:51.4025065Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+2026-10-18T16:15:51.4026488Z     raise exc
+2026-10-18T16:15:51.4027725Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+2026-10-18T16:15:51.4029088Z     response = handler(request, *args, **kwargs)
+2026-10-18T16:15:51.4029898Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.4031289Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+2026-10-18T16:15:51.4032460Z     return func(*args, **kwds)
+2026-10-18T16:15:51.4033137Z            ^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.4034212Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 1200, in packages
+2026-10-18T16:15:51.4035429Z     package = serializer.save(shipment=shipment)
+2026-10-18T16:15:51.4036262Z               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.4037615Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/serializers.py", line 210, in save
+2026-10-18T16:15:51.4039035Z     self.instance = self.create(validated_data)
+2026-10-18T16:15:51.4039872Z                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.4041246Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+2026-10-18T16:15:51.4042401Z     return func(*args, **kwds)
+2026-10-18T16:15:51.4043071Z            ^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.4044180Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/serializers.py", line 2604, in create
+2026-10-18T16:15:51.4045842Z     ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+2026-10-18T16:15:51.4047565Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+2026-10-18T16:15:51.4049181Z     return self._mock_call(*args, **kwargs)
+2026-10-18T16:15:51.4049900Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.4051302Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+2026-10-18T16:15:51.4052517Z     return self._execute_mock_call(*args, **kwargs)
+2026-10-18T16:15:51.4053283Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.4054464Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+2026-10-18T16:15:51.4055893Z     raise effect
+2026-10-18T16:15:51.4056557Z RuntimeError: save failed
+2026-10-18T16:15:51.5176982Z .Internal Server Error: /api/shipments/1/packages/1/
+2026-10-18T16:15:51.5178135Z Traceback (most recent call last):
+2026-10-18T16:15:51.5188882Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-10-18T16:15:51.5190409Z     response = get_response(request)
+2026-10-18T16:15:51.5203686Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.5205053Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+2026-10-18T16:15:51.5206566Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+2026-10-18T16:15:51.5207538Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.5208902Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+2026-10-18T16:15:51.5210249Z     return view_func(request, *args, **kwargs)
+2026-10-18T16:15:51.5211245Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.5212514Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+2026-10-18T16:15:51.5213861Z     return self.dispatch(request, *args, **kwargs)
+2026-10-18T16:15:51.5214633Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.5215940Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+2026-10-18T16:15:51.5217297Z     response = self.handle_exception(exc)
+2026-10-18T16:15:51.5218023Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.5219333Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+2026-10-18T16:15:51.5220640Z     self.raise_uncaught_exception(exc)
+2026-10-18T16:15:51.5222484Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+2026-10-18T16:15:51.5223851Z     raise exc
+2026-10-18T16:15:51.5225007Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+2026-10-18T16:15:51.5226304Z     response = handler(request, *args, **kwargs)
+2026-10-18T16:15:51.5227092Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.5228195Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+2026-10-18T16:15:51.5229294Z     return func(*args, **kwds)
+2026-10-18T16:15:51.5229934Z            ^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.5231267Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 1220, in update_package
+2026-10-18T16:15:51.5232590Z     serializer.is_valid(raise_exception=True); serializer.save()
+2026-10-18T16:15:51.5233508Z                                                ^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.5234883Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/serializers.py", line 205, in save
+2026-10-18T16:15:51.5236336Z     self.instance = self.update(self.instance, validated_data)
+2026-10-18T16:15:51.5237755Z                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.5238909Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+2026-10-18T16:15:51.5240027Z     return func(*args, **kwds)
+2026-10-18T16:15:51.5240708Z            ^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.5242101Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/serializers.py", line 2616, in update
+2026-10-18T16:15:51.5243809Z     ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=instance, **item) for item in items])
+2026-10-18T16:15:51.5245943Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+2026-10-18T16:15:51.5247249Z     return self._mock_call(*args, **kwargs)
+2026-10-18T16:15:51.5250674Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.5252200Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+2026-10-18T16:15:51.5253445Z     return self._execute_mock_call(*args, **kwargs)
+2026-10-18T16:15:51.5254267Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:51.5255509Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+2026-10-18T16:15:51.5256734Z     raise effect
+2026-10-18T16:15:51.5257387Z RuntimeError: save failed
+2026-10-18T16:15:51.6080453Z .Bad Request: /api/shipments/1/packages/1/
+2026-10-18T16:15:51.8383929Z ..Bad Request: /api/shipments/1/copy-estimated-packing/
+2026-10-18T16:15:52.0007679Z ..Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:52.0767013Z .Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:52.0833907Z Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:52.1695019Z .Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:52.1789251Z Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:52.1857436Z Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:52.3617531Z ..Bad Request: /api/shipments/1/copy-estimated-packing/
+2026-10-18T16:15:52.6895259Z ...Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:52.6974347Z Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:52.7027639Z Bad Request: /api/shipments/1/packages/
+2026-10-18T16:15:53.8126331Z .....Conflict: /api/rmb-cash-events/
+2026-10-18T16:15:53.8699120Z .Bad Request: /api/rmb-cash-events/1/confirm/
+2026-10-18T16:15:54.0157410Z ..Conflict: /api/rmb-cash-events/
+2026-10-18T16:15:54.1283205Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.1904741Z .Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.5346790Z ...Bad Request: /api/rmb-cash-events/1/confirm/
+2026-10-18T16:15:54.5935961Z Bad Request: /api/rmb-cash-events/2/confirm/
+2026-10-18T16:15:54.6190511Z Bad Request: /api/rmb-cash-events/2/confirm/
+2026-10-18T16:15:54.8286884Z .Bad Request: /api/rmb-cash-events/1/cancel/
+2026-10-18T16:15:54.8300908Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.8711843Z .Conflict: /api/rmb-cash-events/
+2026-10-18T16:15:54.8722578Z Bad Request: /api/rmb-cash-events/1/confirm/
+2026-10-18T16:15:54.9279159Z Method Not Allowed: /api/rmb-cash-events/1/
+2026-10-18T16:15:54.9288713Z Method Not Allowed: /api/rmb-cash-events/1/
+2026-10-18T16:15:54.9298396Z Method Not Allowed: /api/rmb-cash-events/1/
+2026-10-18T16:15:54.9413453Z .Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9426385Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9439006Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9451768Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9466586Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9479176Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9491796Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9504845Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9517442Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9530388Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9544984Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9557767Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9570468Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9583912Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9596364Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9608717Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9622987Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9635329Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9647392Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9659715Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9672548Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9713375Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9721896Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9723001Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9732462Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9745579Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9758229Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:54.9771232Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:55.0769379Z .Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:55.1679744Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:55.2636716Z ..Bad Request: /api/rmb-cash-events/1/confirm/
+2026-10-18T16:15:55.2753441Z Conflict: /api/rmb-cash-events/
+2026-10-18T16:15:55.2817406Z Bad Request: /api/rmb-cash-events/
+2026-10-18T16:15:55.2830747Z Not Found: /api/rmb-cash-events/not-an-id/
+2026-10-18T16:15:55.3559169Z .Bad Request: /api/rmb-cash-events/preview/
+2026-10-18T16:15:56.1790871Z ........Bad Request: /api/product-certificates/6/
+2026-10-18T16:15:56.4377366Z .....Bad Request: /api/purchase-orders/1/
+2026-10-18T16:15:56.4514746Z Bad Request: /api/purchase-orders/1/
+2026-10-18T16:15:56.8216334Z .Bad Request: /api/orders/1/cancel/
+2026-10-18T16:15:56.9601457Z ..Bad Request: /api/orders/1/confirm/
+2026-10-18T16:15:56.9904152Z Bad Request: /api/orders/2/confirm/
+2026-10-18T16:15:57.0182527Z .Bad Request: /api/orders/1/
+2026-10-18T16:15:57.0246965Z Bad Request: /api/orders/1/start-production/
+2026-10-18T16:15:57.1162529Z Bad Request: /api/orders/2/
+2026-10-18T16:15:57.2143773Z .Bad Request: /api/purchase-orders/1/cancel/
+2026-10-18T16:15:57.2538002Z .Bad Request: /api/purchase-orders/1/receive/
+2026-10-18T16:15:57.2898260Z Bad Request: /api/purchase-orders/1/place/
+2026-10-18T16:15:57.2967739Z Bad Request: /api/purchase-orders/1/
+2026-10-18T16:15:57.4859397Z ..Bad Request: /api/contacts/1/
+2026-10-18T16:15:57.5060731Z .Bad Request: /api/customers/1/
+2026-10-18T16:15:57.5145307Z Bad Request: /api/customers/2/
+2026-10-18T16:15:57.5231736Z Bad Request: /api/customers/3/
+2026-10-18T16:15:57.5318469Z Bad Request: /api/customers/4/
+2026-10-18T16:15:57.7499570Z ......Bad Request: /api/follow-ups/
+2026-10-18T16:15:57.7932073Z ...Not Found: /api/follow-ups/2/attachments/1/
+2026-10-18T16:15:57.8075306Z .Bad Request: /api/follow-ups/1/
+2026-10-18T16:15:57.8119940Z Bad Request: /api/follow-ups/1/
+2026-10-18T16:15:58.0819655Z ....Bad Request: /api/quotes/1/mark-sent/
+2026-10-18T16:15:58.0873364Z Bad Request: /api/quotes/1/reject/
+2026-10-18T16:15:58.0924988Z Bad Request: /api/quotes/1/expire/
+2026-10-18T16:15:58.1589711Z .Bad Request: /api/orders/1/confirm/
+2026-10-18T16:15:58.2263058Z Bad Request: /api/orders/2/confirm/
+2026-10-18T16:15:58.3055979Z .Bad Request: /api/orders/1/
+2026-10-18T16:15:58.3520069Z Bad Request: /api/orders/1/
+2026-10-18T16:15:58.7002603Z ..Bad Request: /api/quotes/1/order-draft/
+2026-10-18T16:15:58.7076489Z Bad Request: /api/orders/
+2026-10-18T16:15:58.7465624Z Bad Request: /api/quotes/2/order-draft/
+2026-10-18T16:15:58.7541115Z Bad Request: /api/orders/
+2026-10-18T16:15:59.3185717Z .................Bad Request: /api/orders/
+2026-10-18T16:15:59.3232000Z Bad Request: /api/purchase-orders/
+2026-10-18T16:15:59.3715474Z Bad Request: /api/orders/1/
+2026-10-18T16:15:59.3806914Z Bad Request: /api/purchase-orders/1/
+2026-10-18T16:15:59.3912035Z Bad Request: /api/orders/1/
+2026-10-18T16:15:59.4027042Z Bad Request: /api/purchase-orders/1/
+2026-10-18T16:15:59.7723371Z ...Internal Server Error: /api/orders/
+2026-10-18T16:15:59.7724874Z Traceback (most recent call last):
+2026-10-18T16:15:59.7726328Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-10-18T16:15:59.7730835Z     response = get_response(request)
+2026-10-18T16:15:59.7732123Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.7733293Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+2026-10-18T16:15:59.7734776Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+2026-10-18T16:15:59.7736237Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.7737737Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+2026-10-18T16:15:59.7739061Z     return view_func(request, *args, **kwargs)
+2026-10-18T16:15:59.7739817Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.7741320Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+2026-10-18T16:15:59.7742639Z     return self.dispatch(request, *args, **kwargs)
+2026-10-18T16:15:59.7743396Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.7744575Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+2026-10-18T16:15:59.7745698Z     response = self.handle_exception(exc)
+2026-10-18T16:15:59.7746321Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.7747503Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+2026-10-18T16:15:59.7748701Z     self.raise_uncaught_exception(exc)
+2026-10-18T16:15:59.7749989Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+2026-10-18T16:15:59.7751530Z     raise exc
+2026-10-18T16:15:59.7752652Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+2026-10-18T16:15:59.7753925Z     response = handler(request, *args, **kwargs)
+2026-10-18T16:15:59.7754647Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.7755700Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 1672, in create
+2026-10-18T16:15:59.7756814Z     return super().create(request, *args, **kwargs)
+2026-10-18T16:15:59.7757569Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.7758742Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/mixins.py", line 19, in create
+2026-10-18T16:15:59.7759988Z     self.perform_create(serializer)
+2026-10-18T16:15:59.7761335Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/audit.py", line 70, in perform_create
+2026-10-18T16:15:59.7762495Z     instance = serializer.save()
+2026-10-18T16:15:59.7763190Z                ^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.7764431Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/serializers.py", line 210, in save
+2026-10-18T16:15:59.7765753Z     self.instance = self.create(validated_data)
+2026-10-18T16:15:59.7766549Z                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.7767677Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+2026-10-18T16:15:59.7768760Z     return func(*args, **kwds)
+2026-10-18T16:15:59.7769422Z            ^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.7770461Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/serializers.py", line 2140, in create
+2026-10-18T16:15:59.7771883Z     OrderItem.objects.bulk_create(rows)
+2026-10-18T16:15:59.7773119Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+2026-10-18T16:15:59.7774584Z     return self._mock_call(*args, **kwargs)
+2026-10-18T16:15:59.7775308Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.7776403Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+2026-10-18T16:15:59.7777575Z     return self._execute_mock_call(*args, **kwargs)
+2026-10-18T16:15:59.7778337Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.7779527Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+2026-10-18T16:15:59.7780734Z     raise effect
+2026-10-18T16:15:59.7781580Z RuntimeError: fail
+2026-10-18T16:15:59.8288420Z Internal Server Error: /api/purchase-orders/
+2026-10-18T16:15:59.8289446Z Traceback (most recent call last):
+2026-10-18T16:15:59.8290729Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-10-18T16:15:59.8292557Z     response = get_response(request)
+2026-10-18T16:15:59.8293245Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.8294418Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+2026-10-18T16:15:59.8295822Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+2026-10-18T16:15:59.8296718Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.8297998Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+2026-10-18T16:15:59.8299307Z     return view_func(request, *args, **kwargs)
+2026-10-18T16:15:59.8299957Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.8301330Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+2026-10-18T16:15:59.8302518Z     return self.dispatch(request, *args, **kwargs)
+2026-10-18T16:15:59.8303233Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.8304428Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+2026-10-18T16:15:59.8305636Z     response = self.handle_exception(exc)
+2026-10-18T16:15:59.8306334Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.8307676Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+2026-10-18T16:15:59.8308819Z     self.raise_uncaught_exception(exc)
+2026-10-18T16:15:59.8310074Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+2026-10-18T16:15:59.8311554Z     raise exc
+2026-10-18T16:15:59.8312607Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+2026-10-18T16:15:59.8313779Z     response = handler(request, *args, **kwargs)
+2026-10-18T16:15:59.8314459Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.8315454Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 241, in create
+2026-10-18T16:15:59.8316480Z     return super().create(request, *args, **kwargs)
+2026-10-18T16:15:59.8317152Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.8318281Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/mixins.py", line 19, in create
+2026-10-18T16:15:59.8319463Z     self.perform_create(serializer)
+2026-10-18T16:15:59.8320531Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/audit.py", line 70, in perform_create
+2026-10-18T16:15:59.8321823Z     instance = serializer.save()
+2026-10-18T16:15:59.8322468Z                ^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.8323641Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/serializers.py", line 210, in save
+2026-10-18T16:15:59.8324882Z     self.instance = self.create(validated_data)
+2026-10-18T16:15:59.8325929Z                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.8326941Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+2026-10-18T16:15:59.8327929Z     return func(*args, **kwds)
+2026-10-18T16:15:59.8328489Z            ^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.8329458Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/serializers.py", line 697, in create
+2026-10-18T16:15:59.8330518Z     PurchaseOrderItem.objects.bulk_create([
+2026-10-18T16:15:59.8332118Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+2026-10-18T16:15:59.8333208Z     return self._mock_call(*args, **kwargs)
+2026-10-18T16:15:59.8333866Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.8334888Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+2026-10-18T16:15:59.8335999Z     return self._execute_mock_call(*args, **kwargs)
+2026-10-18T16:15:59.8336707Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:15:59.8337822Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+2026-10-18T16:15:59.8338916Z     raise effect
+2026-10-18T16:15:59.8339436Z RuntimeError: fail
+2026-10-18T16:15:59.9831454Z .....Bad Request: /api/import/csv/
+2026-10-18T16:16:00.4895611Z .............................Bad Request: /api/transactions/1/void/
+2026-10-18T16:16:00.5078301Z Bad Request: /api/transactions/1/void/
+2026-10-18T16:16:03.1538104Z .........................Bad Request: /api/transactions/
+2026-10-18T16:16:03.1728137Z .Bad Request: /api/transactions/
+2026-10-18T16:16:03.5027995Z .........Bad Request: /api/follow-ups/
+2026-10-18T16:16:03.5054752Z Bad Request: /api/follow-ups/
+2026-10-18T16:16:03.5187925Z Bad Request: /api/follow-ups/1/
+2026-10-18T16:16:03.6092342Z ....Bad Request: /api/follow-ups/
+2026-10-18T16:16:03.6119979Z Bad Request: /api/follow-ups/
+2026-10-18T16:16:03.6384372Z .Bad Request: /api/inventory-movements/1/
+2026-10-18T16:16:03.6576403Z .Bad Request: /api/orders/1/ship/
+2026-10-18T16:16:03.6657973Z Bad Request: /api/orders/1/ship/
+2026-10-18T16:16:03.8037098Z ...Bad Request: /api/orders/1/ship/
+2026-10-18T16:16:03.9183559Z ..Bad Request: /api/orders/1/ship/
+2026-10-18T16:16:04.2487919Z .....Bad Request: /api/purchase-orders/1/receive/
+2026-10-18T16:16:04.2697432Z .Bad Request: /api/orders/1/ship/
+2026-10-18T16:16:04.5901394Z ......Bad Request: /api/orders/1/ship/
+2026-10-18T16:16:04.6802534Z ..Bad Request: /api/suppliers/
+2026-10-18T16:16:05.0350839Z ...........Bad Request: /api/inventory-movements/2/
+2026-10-18T16:16:05.4263903Z ......Bad Request: /api/orders/1/complete/
+2026-10-18T16:16:05.6924710Z ...FBad Request: /api/orders/1/complete/
+2026-10-18T16:16:18.2496871Z ......................................Bad Request: /api/hs-codes/1/
+2026-10-18T16:16:18.2519336Z Bad Request: /api/hs-codes/1/assign-products/
+2026-10-18T16:16:18.2687656Z .Bad Request: /api/products/1/
+2026-10-18T16:16:18.2758997Z ..Bad Request: /api/hs-codes/
+2026-10-18T16:16:18.2889755Z ..Bad Request: /api/hs-codes/1/assign-products/
+2026-10-18T16:16:18.3232466Z ..Bad Request: /api/inventory-movements/1/reverse/
+2026-10-18T16:16:18.3286906Z Bad Request: /api/inventory-movements/2/reverse/
+2026-10-18T16:16:18.3541688Z .Bad Request: /api/inventory-movements/1/
+2026-10-18T16:16:18.3840031Z Bad Request: /api/inventory-movements/1/reverse/
+2026-10-18T16:16:18.4805208Z ..Bad Request: /api/inventory-movements/1/reverse/
+2026-10-18T16:16:19.1042910Z ..............Bad Request: /api/sku-packaging-profiles/
+2026-10-18T16:16:19.1156420Z Bad Request: /api/sku-packaging-profiles/1/
+2026-10-18T16:16:19.1232581Z Bad Request: /api/sku-packaging-profiles/1/
+2026-10-18T16:16:19.1264713Z Bad Request: /api/sku-packaging-profiles/1/
+2026-10-18T16:16:19.1298207Z Bad Request: /api/sku-packaging-profiles/1/
+2026-10-18T16:16:19.1330722Z Bad Request: /api/sku-packaging-profiles/1/
+2026-10-18T16:16:19.1365098Z Bad Request: /api/sku-packaging-profiles/1/
+2026-10-18T16:16:19.1396538Z Bad Request: /api/sku-packaging-profiles/1/
+2026-10-18T16:16:19.1432241Z Bad Request: /api/sku-packaging-profiles/1/
+2026-10-18T16:16:19.1613825Z .Bad Request: /api/packaging-templates/1/
+2026-10-18T16:16:19.4191295Z ............Bad Request: /api/payment-plans/
+2026-10-18T16:16:19.4581656Z ..Bad Request: /api/payment-plans/
+2026-10-18T16:16:19.4603043Z Bad Request: /api/payment-plans/
+2026-10-18T16:16:19.4642883Z Bad Request: /api/payment-plans/
+2026-10-18T16:16:19.7346767Z .......Bad Request: /api/orders/1/generate-purchase-drafts/
+2026-10-18T16:16:20.0415018Z ....Bad Request: /api/orders/1/generate-purchase-drafts/
+2026-10-18T16:16:20.0697433Z Bad Request: /api/orders/1/generate-purchase-drafts/
+2026-10-18T16:16:20.2299875Z ...Bad Request: /api/orders/1/generate-purchase-drafts/
+2026-10-18T16:16:20.2460087Z Bad Request: /api/orders/1/generate-purchase-drafts/
+2026-10-18T16:16:20.2616771Z Bad Request: /api/orders/1/generate-purchase-drafts/
+2026-10-18T16:16:20.2784498Z Bad Request: /api/orders/1/generate-purchase-drafts/
+2026-10-18T16:16:20.3163975Z Bad Request: /api/purchase-orders/1/place/
+2026-10-18T16:16:22.0529407Z ....................Bad Request: /api/category-attributes/1/
+2026-10-18T16:16:22.0578260Z Bad Request: /api/category-attributes/1/
+2026-10-18T16:16:22.0605292Z Bad Request: /api/category-attributes/1/
+2026-10-18T16:16:22.0877981Z .Bad Request: /api/categories/3/
+2026-10-18T16:16:22.0939720Z Bad Request: /api/categories/3/
+2026-10-18T16:16:22.1016468Z Bad Request: /api/categories/3/
+2026-10-18T16:16:22.1475476Z ...Bad Request: /api/category-attributes/1/
+2026-10-18T16:16:22.1559020Z Bad Request: /api/category-attributes/
+2026-10-18T16:16:22.1606487Z Bad Request: /api/category-attributes/1/
+2026-10-18T16:16:22.2043525Z ...Bad Request: /api/products/1/sales-model-prefix-preview/
+2026-10-18T16:16:22.2325836Z .Bad Request: /api/products/1/
+2026-10-18T16:16:22.2580723Z .Bad Request: /api/products/1/
+2026-10-18T16:16:22.2655059Z Bad Request: /api/categories/2/
+2026-10-18T16:16:22.3895911Z ..Bad Request: /api/purchase-orders/1/cost-allocation/
+2026-10-18T16:16:22.4103023Z .Bad Request: /api/purchase-orders/1/cost-allocation/
+2026-10-18T16:16:22.5791896Z .Bad Request: /api/purchase-orders/1/cost-allocation/
+2026-10-18T16:16:22.5929434Z Bad Request: /api/purchase-orders/1/cost-allocation/
+2026-10-18T16:16:22.6023630Z Bad Request: /api/purchase-orders/1/cost-allocation/
+2026-10-18T16:16:22.6130856Z Bad Request: /api/purchase-orders/1/cost-allocation/
+2026-10-18T16:16:22.6221707Z Bad Request: /api/purchase-orders/1/cost-allocation/
+2026-10-18T16:16:22.6352195Z Bad Request: /api/purchase-orders/1/cost-allocation/
+2026-10-18T16:16:22.6754550Z Bad Request: /api/purchase-orders/1/cost-allocation/
+2026-10-18T16:16:22.6853467Z Bad Request: /api/purchase-orders/1/
+2026-10-18T16:16:22.7593005Z ..Bad Request: /api/purchase-orders/1/cost-allocation-preview/
+2026-10-18T16:16:22.8385132Z ..Bad Request: /api/purchase-orders/1/cost-allocation/
+2026-10-18T16:16:23.5207736Z .............Bad Request: /api/purchase-orders/1/
+2026-10-18T16:16:23.5294907Z .Bad Request: /api/suppliers/1/
+2026-10-18T16:16:23.5617254Z Bad Request: /api/purchase-orders/1/
+2026-10-18T16:16:23.5652869Z Bad Request: /api/suppliers/1/
+2026-10-18T16:16:23.5983050Z Bad Request: /api/purchase-orders/2/
+2026-10-18T16:16:23.6017139Z Bad Request: /api/suppliers/1/
+2026-10-18T16:16:23.6329616Z Bad Request: /api/purchase-orders/3/
+2026-10-18T16:16:23.6394069Z Bad Request: /api/suppliers/1/
+2026-10-18T16:16:23.6711590Z Bad Request: /api/purchase-orders/4/
+2026-10-18T16:16:23.6746765Z Bad Request: /api/suppliers/1/
+2026-10-18T16:16:23.7068658Z Bad Request: /api/purchase-orders/5/
+2026-10-18T16:16:23.7115979Z Bad Request: /api/suppliers/1/
+2026-10-18T16:16:23.7431628Z Bad Request: /api/purchase-orders/6/
+2026-10-18T16:16:23.7467350Z Bad Request: /api/suppliers/1/
+2026-10-18T16:16:23.7779912Z Bad Request: /api/purchase-orders/7/
+2026-10-18T16:16:23.7816954Z Bad Request: /api/suppliers/1/
+2026-10-18T16:16:23.8158696Z Bad Request: /api/purchase-orders/8/
+2026-10-18T16:16:23.8195825Z Bad Request: /api/suppliers/1/
+2026-10-18T16:16:23.8510209Z Bad Request: /api/purchase-orders/9/
+2026-10-18T16:16:23.8827036Z Bad Request: /api/purchase-orders/10/
+2026-10-18T16:16:24.2017174Z ...Bad Request: /api/purchase-orders/
+2026-10-18T16:16:24.2060745Z Bad Request: /api/purchase-orders/
+2026-10-18T16:16:24.2104046Z Bad Request: /api/purchase-orders/
+2026-10-18T16:16:24.2146731Z Bad Request: /api/purchase-orders/
+2026-10-18T16:16:24.2513685Z Bad Request: /api/purchase-orders/1/
+2026-10-18T16:16:24.4722839Z .......Bad Request: /api/quotes/availability-preview/
+2026-10-18T16:16:24.4738143Z Bad Request: /api/quotes/availability-preview/
+2026-10-18T16:16:24.4751712Z Bad Request: /api/quotes/availability-preview/
+2026-10-18T16:16:24.4766737Z Bad Request: /api/quotes/availability-preview/
+2026-10-18T16:16:24.4790659Z Bad Request: /api/quotes/availability-preview/
+2026-10-18T16:16:24.4809947Z Bad Request: /api/quotes/availability-preview/
+2026-10-18T16:16:24.6876032Z ....Bad Request: /api/orders/1/complete/
+2026-10-18T16:16:24.7636460Z ..Bad Request: /api/orders/1/
+2026-10-18T16:16:24.8102359Z .Bad Request: /api/orders/1/complete/
+2026-10-18T16:16:24.8329088Z .Bad Request: /api/orders/1/complete/
+2026-10-18T16:16:25.1562045Z ........Bad Request: /api/quotes/
+2026-10-18T16:16:25.1789235Z .Method Not Allowed: /api/quotes/1/
+2026-10-18T16:16:25.3285638Z .Bad Request: /api/quotes/4/order-draft/
+2026-10-18T16:16:25.3470535Z Bad Request: /api/quotes/5/order-draft/
+2026-10-18T16:16:25.9235556Z ....Bad Request: /api/quotes/1/important-notes/
+2026-10-18T16:16:26.0065714Z ..Bad Request: /api/orders/
+2026-10-18T16:16:26.4295691Z .....Bad Request: /api/quotes/1/
+2026-10-18T16:16:26.4306027Z Bad Request: /api/quotes/1/
+2026-10-18T16:16:26.4770389Z .Bad Request: /api/quotes/
+2026-10-18T16:16:26.5318877Z ..Bad Request: /api/quotes/1/revise/
+2026-10-18T16:16:26.7071235Z ...Bad Request: /api/quotes/1/revise/
+2026-10-18T16:16:26.7319410Z .Bad Request: /api/quotes/1/revise/
+2026-10-18T16:16:26.7632869Z .Bad Request: /api/quotes/1/revise/
+2026-10-18T16:16:26.9741474Z ....Bad Request: /api/skus/1/image/
+2026-10-18T16:16:28.6879687Z ....Unprocessable Entity: /api/quotes/1/export/
+2026-10-18T16:16:30.5558649Z ...Unprocessable Entity: /api/quotes/1/export/
+2026-10-18T16:16:34.6723140Z .....................Bad Request: /api/transactions/
+2026-10-18T16:16:34.7142957Z .Bad Request: /api/transactions/
+2026-10-18T16:16:34.7239003Z Bad Request: /api/transactions/
+2026-10-18T16:16:34.7329657Z Bad Request: /api/transactions/
+2026-10-18T16:16:34.7415346Z Bad Request: /api/transactions/
+2026-10-18T16:16:35.0097221Z ...........Bad Request: /api/reports/data/
+2026-10-18T16:16:35.0105921Z Bad Request: /api/reports/data/
+2026-10-18T16:16:35.0114967Z Bad Request: /api/reports/data/
+2026-10-18T16:16:35.0124332Z Bad Request: /api/reports/data/
+2026-10-18T16:16:35.0133015Z Bad Request: /api/reports/data/
+2026-10-18T16:16:35.0144735Z Bad Request: /api/reports/data/
+2026-10-18T16:16:35.0153530Z Bad Request: /api/reports/data/
+2026-10-18T16:16:35.0162726Z Bad Request: /api/reports/data/
+2026-10-18T16:16:35.5690248Z ................Bad Request: /api/import/csv/execute/
+2026-10-18T16:16:35.5807622Z .Bad Request: /api/import/csv/execute/
+2026-10-18T16:16:35.5987622Z .Bad Request: /api/import/csv/execute/
+2026-10-18T16:16:35.6021085Z Bad Request: /api/import/csv/execute/
+2026-10-18T16:16:35.6090530Z .Bad Request: /api/import/csv/execute/
+2026-10-18T16:16:35.6107174Z Bad Request: /api/import/csv/execute/
+2026-10-18T16:16:35.6205354Z Bad Request: /api/import/csv/execute/
+2026-10-18T16:16:35.6235364Z .Bad Request: /api/import/csv/preview/
+2026-10-18T16:16:35.6248181Z Bad Request: /api/import/csv/preview/
+2026-10-18T16:16:35.6264087Z Bad Request: /api/import/csv/preview/
+2026-10-18T16:16:35.6417015Z Bad Request: /api/import/csv/preview/
+2026-10-18T16:16:35.6617273Z ..Bad Request: /api/import/csv/
+2026-10-18T16:16:35.6746001Z .Bad Request: /api/import/csv/execute/
+2026-10-18T16:16:35.6986403Z .Bad Request: /api/import/csv/execute/
+2026-10-18T16:16:35.7082252Z .Bad Request: /api/import/csv/execute/
+2026-10-18T16:17:42.4439179Z ...............................Bad Request: /api/skus/
+2026-10-18T16:17:42.5215313Z ..Bad Request: /api/skus/
+2026-10-18T16:17:42.5907450Z ..Bad Request: /api/quotes/
+2026-10-18T16:17:42.6287842Z Bad Request: /api/quotes/1/revise/
+2026-10-18T16:17:42.6980371Z ..Bad Request: /api/quotes/
+2026-10-18T16:17:42.7665872Z ..Bad Request: /api/sales-rules/
+2026-10-18T16:17:42.8018771Z .Bad Request: /api/sales-rules/2/
+2026-10-18T16:17:42.8083428Z Bad Request: /api/sales-rules/2/
+2026-10-18T16:17:42.8139284Z Bad Request: /api/sales-rules/2/
+2026-10-18T16:17:42.8199577Z Bad Request: /api/sales-rules/2/
+2026-10-18T16:17:42.8238441Z Bad Request: /api/sales-rules/2/
+2026-10-18T16:17:43.2451803Z .....Bad Request: /api/quotes/
+2026-10-18T16:17:43.2652807Z Bad Request: /api/quotes/
+2026-10-18T16:17:43.3091643Z Bad Request: /api/orders/
+2026-10-18T16:17:43.3271340Z Bad Request: /api/orders/
+2026-10-18T16:17:43.5240675Z ...Bad Request: /api/quotes/
+2026-10-18T16:17:43.5316762Z Bad Request: /api/quotes/
+2026-10-18T16:17:43.5369350Z Bad Request: /api/quotes/
+2026-10-18T16:17:43.5418013Z Bad Request: /api/orders/
+2026-10-18T16:17:43.5465436Z Bad Request: /api/orders/
+2026-10-18T16:17:43.5513900Z Bad Request: /api/orders/
+2026-10-18T16:17:43.5585795Z .Bad Request: /api/products/1/combination-rules/
+2026-10-18T16:17:43.5624388Z Bad Request: /api/products/1/combination-rules/
+2026-10-18T16:17:43.5662420Z Bad Request: /api/products/1/combination-rules/
+2026-10-18T16:17:43.5700340Z Bad Request: /api/products/1/combination-rules/
+2026-10-18T16:17:43.5803355Z .Bad Request: /api/products/1/combination-rules/
+2026-10-18T16:17:43.5963282Z .Bad Request: /api/skus/
+2026-10-18T16:17:43.6425218Z Bad Request: /api/skus/
+2026-10-18T16:17:43.7312537Z .Bad Request: /api/skus/
+2026-10-18T16:17:43.8192526Z ...Bad Request: /api/products/1/combination-rules/
+2026-10-18T16:17:44.1050076Z ....Bad Request: /api/skus/2/
+2026-10-18T16:17:44.3290913Z ...Bad Request: /api/skus/
+2026-10-18T16:17:44.4165462Z .Bad Request: /api/skus/
+2026-10-18T16:17:44.4674304Z .Bad Request: /api/skus/1/
+2026-10-18T16:17:44.5620046Z ..Bad Request: /api/skus/1/
+2026-10-18T16:17:44.8171797Z ....Bad Request: /api/skus/1/
+2026-10-18T16:17:44.8822296Z .Bad Request: /api/skus/1/
+2026-10-18T16:17:44.9821904Z ..Bad Request: /api/skus/1/
+2026-10-18T16:17:45.0356366Z .Bad Request: /api/skus/1/
+2026-10-18T16:17:45.0774494Z Bad Request: /api/skus/2/
+2026-10-18T16:17:45.2927046Z ...Bad Request: /api/skus/1/
+2026-10-18T16:17:45.3310703Z .Bad Request: /api/skus/
+2026-10-18T16:17:45.3784369Z Bad Request: /api/skus/1/
+2026-10-18T16:17:45.7085006Z ......Bad Request: /api/skus/1/
+2026-10-18T16:17:45.7479895Z .Bad Request: /api/skus/
+2026-10-18T16:17:45.7925164Z .Bad Request: /api/skus/1/
+2026-10-18T16:17:45.8934922Z .Bad Request: /api/skus/2/
+2026-10-18T16:17:46.1842332Z ....Bad Request: /api/skus/batch-create/
+2026-10-18T16:17:46.3883842Z ..Bad Request: /api/skus/
+2026-10-18T16:17:46.5232069Z .Bad Request: /api/skus/1/
+2026-10-18T16:17:46.5870100Z .Bad Request: /api/purchase-orders/
+2026-10-18T16:17:46.6643599Z .Bad Request: /api/products/1/sku-plan/publish/
+2026-10-18T16:17:46.7534645Z ..Bad Request: /api/supplier-capabilities/
+2026-10-18T16:17:47.0032712Z ...Bad Request: /api/products/1/sku-plan/publish/
+2026-10-18T16:17:47.1120040Z .Bad Request: /api/products/1/sku-plan/publish/
+2026-10-18T16:17:47.1577959Z .Bad Request: /api/supplier-skus/1/
+2026-10-18T16:17:47.2127163Z .Internal Server Error: /api/skus/
+2026-10-18T16:17:47.2134277Z Traceback (most recent call last):
+2026-10-18T16:17:47.2147180Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-10-18T16:17:47.2148209Z     response = get_response(request)
+2026-10-18T16:17:47.2148659Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:17:47.2149695Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+2026-10-18T16:17:47.2151686Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+2026-10-18T16:17:47.2152422Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:17:47.2153561Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+2026-10-18T16:17:47.2155086Z     return view_func(request, *args, **kwargs)
+2026-10-18T16:17:47.2155633Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:17:47.2156931Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+2026-10-18T16:17:47.2158036Z     return self.dispatch(request, *args, **kwargs)
+2026-10-18T16:17:47.2158565Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:17:47.2159582Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+2026-10-18T16:17:47.2160572Z     response = self.handle_exception(exc)
+2026-10-18T16:17:47.2161449Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:17:47.2162521Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+2026-10-18T16:17:47.2163591Z     self.raise_uncaught_exception(exc)
+2026-10-18T16:17:47.2164720Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+2026-10-18T16:17:47.2165810Z     raise exc
+2026-10-18T16:17:47.2166683Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+2026-10-18T16:17:47.2167672Z     response = handler(request, *args, **kwargs)
+2026-10-18T16:17:47.2168134Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:17:47.2169019Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/mixins.py", line 19, in create
+2026-10-18T16:17:47.2169929Z     self.perform_create(serializer)
+2026-10-18T16:17:47.2170658Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+2026-10-18T16:17:47.2171709Z     return func(*args, **kwds)
+2026-10-18T16:17:47.2172090Z            ^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:17:47.2172844Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 867, in perform_create
+2026-10-18T16:17:47.2173711Z     super().perform_create(serializer)
+2026-10-18T16:17:47.2174556Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/audit.py", line 71, in perform_create
+2026-10-18T16:17:47.2175609Z     record_operation(request=self.request, instance=instance, action="create")
+2026-10-18T16:17:47.2176705Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+2026-10-18T16:17:47.2177505Z     return self._mock_call(*args, **kwargs)
+2026-10-18T16:17:47.2177970Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:17:47.2178825Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+2026-10-18T16:17:47.2179716Z     return self._execute_mock_call(*args, **kwargs)
+2026-10-18T16:17:47.2180246Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-18T16:17:47.2181424Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+2026-10-18T16:17:47.2182345Z     raise effect
+2026-10-18T16:17:47.2182702Z RuntimeError: audit failed
+2026-10-18T16:17:47.2398760Z .Bad Request: /api/skus/batch-create/
+2026-10-18T16:17:47.3520407Z .Bad Request: /api/skus/
+2026-10-18T16:17:47.3958183Z .Bad Request: /api/skus/
+2026-10-18T16:17:47.4064046Z Bad Request: /api/skus/1/
+2026-10-18T16:17:47.4555057Z .Bad Request: /api/skus/1/
+2026-10-18T16:17:47.5388692Z .Bad Request: /api/skus/1/
+2026-10-18T16:17:47.5458371Z Bad Request: /api/skus/1/
+2026-10-18T16:17:47.5531934Z Bad Request: /api/skus/1/
+2026-10-18T16:17:47.5606502Z Bad Request: /api/skus/1/
+2026-10-18T16:17:47.5678993Z Bad Request: /api/skus/1/
+2026-10-18T16:17:47.5749294Z Bad Request: /api/skus/1/
+2026-10-18T16:17:47.8454211Z ....Bad Request: /api/orders/1/items/1/supplier-allocation/
+2026-10-18T16:17:47.8535978Z Bad Request: /api/orders/1/items/1/supplier-allocation/
+2026-10-18T16:17:47.8623585Z Bad Request: /api/orders/1/items/1/supplier-allocation/
+2026-10-18T16:17:47.8802038Z .Bad Request: /api/orders/1/items/1/supplier-allocation/
+2026-10-18T16:17:47.8874563Z Bad Request: /api/orders/1/items/1/supplier-allocation/
+2026-10-18T16:17:48.2351805Z .........Bad Request: /api/products/1/supplier-candidate-pool/
+2026-10-18T16:17:48.2432571Z Bad Request: /api/products/1/supplier-candidate-pool/
+2026-10-18T16:17:48.2613620Z .Bad Request: /api/products/1/supplier-candidate-pool/
+2026-10-18T16:17:48.2794012Z .Bad Request: /api/products/1/supplier-candidate-pool/
+2026-10-18T16:17:48.3377062Z ..Bad Request: /api/suppliers/
+2026-10-18T16:17:50.6701587Z .............Bad Request: /api/purchase-orders/1/
+2026-10-18T16:17:50.6853536Z Bad Request: /api/purchase-orders/1/
+2026-10-18T16:17:50.7863071Z ..Bad Request: /api/purchase-orders/
+2026-10-18T16:17:50.8401932Z .Bad Request: /api/purchase-orders/
+2026-10-18T16:17:50.9365185Z ..Bad Request: /api/purchase-orders/
+2026-10-18T16:17:51.0159073Z .Bad Request: /api/purchase-orders/
+2026-10-18T16:17:51.0614606Z .Bad Request: /api/purchase-orders/
+2026-10-18T16:17:51.2070961Z ..Bad Request: /api/purchase-orders/
+2026-10-18T16:17:51.3810274Z ...Bad Request: /api/purchase-orders/
+2026-10-18T16:17:51.4025784Z .Bad Request: /api/supplier-skus/1/
+2026-10-18T16:17:51.4179797Z Bad Request: /api/supplier-skus/2/
+2026-10-18T16:17:51.4523239Z .Bad Request: /api/supplier-skus/
+2026-10-18T16:17:51.8149431Z .............Bad Request: /api/inventory-movements/1/
+2026-10-18T16:17:52.2103223Z ...........Bad Request: /api/orders/1/ship/
+2026-10-18T16:17:52.2182727Z Bad Request: /api/orders/1/ship/
+2026-10-18T16:17:52.2533061Z .Bad Request: /api/inventory-movements/batch/
+2026-10-18T16:17:52.2602929Z Bad Request: /api/inventory-movements/batch/
+2026-10-18T16:17:52.6651669Z ........Bad Request: /api/payment-plans/1/
+2026-10-18T16:17:52.7126956Z .Bad Request: /api/purchase-orders/1/
+2026-10-18T16:17:52.8078441Z ...Bad Request: /api/purchase-orders/1/receipts/1/reverse/
+2026-10-18T16:17:53.0722061Z .....Bad Request: /api/finance-dashboard/
+2026-10-18T16:17:53.2857788Z ...Bad Request: /api/payment-plans/1/settle/
+2026-10-18T16:17:53.2904263Z Bad Request: /api/payment-plans/1/settle/
+2026-10-18T16:17:53.2949586Z Bad Request: /api/payment-plans/1/settle/
+2026-10-18T16:17:53.2995960Z Bad Request: /api/payment-plans/1/settle/
+2026-10-18T16:17:53.3045773Z Bad Request: /api/payment-plans/1/settle/
+2026-10-18T16:17:53.4303027Z ...Bad Request: /api/shipments/1/reverse/
+2026-10-18T16:17:54.0617329Z ............Bad Request: /api/transactions/1/
+2026-10-18T16:17:54.0676329Z Bad Request: /api/transactions/1/
+2026-10-18T16:17:54.3774821Z ...Bad Request: /api/orders/1/ship/
+2026-10-18T16:17:54.4455149Z ..Bad Request: /api/sku-trade-units/1/
+2026-10-18T16:17:54.4485511Z Bad Request: /api/sku-trade-units/1/
+2026-10-18T16:17:54.4510745Z Bad Request: /api/sku-trade-units/1/
+2026-10-18T16:17:54.4537676Z Bad Request: /api/sku-trade-units/1/
+2026-10-18T16:17:54.4563024Z Bad Request: /api/sku-trade-units/1/
+2026-10-18T16:17:54.4587672Z Bad Request: /api/sku-trade-units/1/
+2026-10-18T16:17:54.4710993Z Bad Request: /api/purchase-orders/
+2026-10-18T16:17:54.4783932Z Bad Request: /api/skus/1/
+2026-10-18T16:17:54.4866711Z .Bad Request: /api/sku-trade-units/
+2026-10-18T16:17:54.4887801Z Bad Request: /api/sku-trade-units/
+2026-10-18T16:17:54.8552876Z .....Bad Request: /api/quotes/
+2026-10-18T16:17:54.8859131Z .Bad Request: /api/quotes/
+2026-10-18T16:17:54.9801504Z ..Bad Request: /api/inventory-movements/
+2026-10-18T16:17:55.0820606Z ..Bad Request: /api/quotes/
+2026-10-18T16:17:55.0859384Z Bad Request: /api/quotes/
+2026-10-18T16:17:55.0899163Z Bad Request: /api/quotes/
+2026-10-18T16:17:55.0936279Z Bad Request: /api/quotes/
+2026-10-18T16:17:55.1122874Z Bad Request: /api/quotes/
+2026-10-18T16:18:15.7581670Z ..sss............ssssssssss........
+2026-10-18T16:18:15.7582591Z ======================================================================
+2026-10-18T16:18:15.7584166Z FAIL: test_multi_plan_decimal_and_overdue (crm.tests.test_fulfillment_receivables.FulfillmentReceivableTests.test_multi_plan_decimal_and_overdue)
+2026-10-18T16:18:15.7585767Z ----------------------------------------------------------------------
+2026-10-18T16:18:15.7586620Z Traceback (most recent call last):
+2026-10-18T16:18:15.7588295Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/tests/test_fulfillment_receivables.py", line 69, in test_multi_plan_decimal_and_overdue
+2026-10-18T16:18:15.7589813Z     self.assertEqual(order_receivable_state(self.order,plans)['overdue_amount'],D('135.32'))
+2026-10-18T16:18:15.7590890Z AssertionError: Decimal('485.3200') != Decimal('135.32')
+2026-10-18T16:18:15.7591693Z 
+2026-10-18T16:18:15.7592079Z ----------------------------------------------------------------------
+2026-10-18T16:18:15.7592773Z Ran 764 tests in 146.816s
+2026-10-18T16:18:15.7593157Z 
+2026-10-18T16:18:15.7593473Z FAILED (failures=1, skipped=13)
+2026-10-18T16:18:15.7594079Z Destroying test database for alias 'default'...
+2026-10-18T16:18:15.7602618Z Found 764 test(s).
+2026-10-18T16:18:15.7603210Z System check identified no issues (0 silenced).
+2026-10-18T16:18:15.7605115Z P2A-DATABASE_VERIFICATION {"before": "0f53c407a7069537d5a1f98fceb2c45e050e174777e818bc5d6d9660a6893cf6", "after": "0f53c407a7069537d5a1f98fceb2c45e050e174777e818bc5d6d9660a6893cf6", "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": true}
+2026-10-18T16:18:15.7607555Z P2A_MIGRATION_VERIFICATION {"vendor": "sqlite", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}
+2026-10-18T16:18:16.1562151Z ##[error]Process completed with exit code 1.
+2026-10-18T16:18:16.1726185Z Post job cleanup.
+2026-10-18T16:18:16.2939751Z [command]/usr/bin/git version
+2026-10-18T16:18:16.3013505Z git version 2.55.0
+2026-10-18T16:18:16.3083714Z Temporarily overriding HOME='/home/runner/work/_temp/a5e7afca-3c8f-4893-8fd2-819f74a9e1d5' before making global git config changes
+2026-10-18T16:18:16.3095151Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-18T16:18:16.3107874Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/SUNJACK-ERP/SUNJACK-ERP
+2026-10-18T16:18:16.3165443Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-18T16:18:16.3324010Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-18T16:18:16.3635078Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-18T16:18:16.3706893Z http.https://github.com/.extraheader
+2026-10-18T16:18:16.3709682Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-18T16:18:16.3791569Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-18T16:18:16.4272861Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-18T16:18:16.4276107Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-18T16:18:16.4920735Z Cleaning up orphan processes
+2026-10-18T16:18:16.5195475Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

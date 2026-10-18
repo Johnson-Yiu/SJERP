@@ -115,3 +115,10 @@
 ISS-105保持OPEN：本轮仅事实与安全后端，既有参考概览、cash报表、CSV、预计利润与库存成本均未改，新事件不混入任何旧统计。ISS-107及其他历史Issue状态保持；未实现银行余额、自动导入、自动汇兑损益、真实银行对账、正式RBAC或生产部署。
 
 提交代码、0077增量迁移、回归、原始日志及数据前后证据到master。最终完整SHA、精确HEAD三项CI URL/结论及PG原始并发证据绑定最终交付消息与审查包FINAL-DELIVERY.md，避免把父提交CI冒充最终结果。仅当三项CI实际完成且PG并发验证通过后交付。随后停止，等待独立审查，不自动进入P2-B。
+
+
+## 精确CI发现的跨日测试修正
+
+首推`8706200632980c7e3a6a5e0b776e81fdac7e1613`，[Backend失败](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39144166262/job/117724498131)、[PostgreSQL失败](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39144166262/job/117724498049)，均执行764项、仅原有test_multi_plan_decimal_and_overdue失败。固定的第二期到期日18日在跨入19日后也逾期，真实结果485.32，测试错误地继续期待135.32。修正fixture显式today=self.day，第一期today-1、第二期today+1，并分别断言today部分逾期135.32、today+2全部逾期485.32。没有修改逾期业务算法、余额或金额。
+
+登记ISS-109 FIXED_PENDING_REVIEW。原始ci-backend-initial-failed.log和ci-postgres-initial-failed.log保留，不称失败SHA已通过。该PG原始日志已实际输出三项`P2A_REAL_POSTGRES_CONCURRENCY`成功结果和PG迁移数据不变；仍须以补修后精确最终HEAD三项CI全部SUCCESS作为交付门槛。最终代码及新旧业务回归再次执行，结果见backend-final-with-date-fix.log与最终CI。此处为CI可靠性必要修正，不扩大财务业务规则范围。

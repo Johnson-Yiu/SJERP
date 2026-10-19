@@ -53,9 +53,15 @@ ISS-105 仍为 `OPEN`，ISS-108 仍为 `BLOCKED`，ISS-109 仍为 `FIXED_PENDING
 
 完整套件覆盖原147项基础用例及本轮4项银行资金用例。历史139/8日志仍保存在上一轮证据目录；本轮原8项定向复现全部通过，没有删除或跳过失败测试。当前环境没有隔离 PostgreSQL 服务，`DATABASE_URL`/`POSTGRES_URL` 为空且无 docker/psql，因此没有连接任何真实数据库；PostgreSQL 结果必须以精确 HEAD 的 CI 为准。
 
-## 5. 精确 HEAD CI 与交付限制
+## 5. 精确 HEAD CI
 
-本报告提交时基线和本轮提交的 GitHub CI 运行链接尚未能从本环境读取：`gh` 未认证，GitHub API 对运行列表返回 401/404。不能据此伪造三项 SUCCESS 或链接。提交后应在 GitHub Actions 核验同一精确 HEAD 的 Backend、Backend PostgreSQL、Frontend 三项 SUCCESS，再进行独立审查；若任一失败，按 ISS-114 保留待核实状态。
+本轮推送后的精确 HEAD 为 `f4c1f1ede6eb74ada2fc19daa4ea14a28d363d2a`，GitHub Actions 运行 `39208527003` 已完成，三个 job 均为 SUCCESS：
+
+- [Backend](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39208527003/job/117916532420)
+- [Backend PostgreSQL](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39208527003/job/117916532143)
+- [Frontend](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39208527003/job/117916532208)
+
+运行总览：[CI #39208527003](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39208527003)。CI 包含后端 SQLite、PostgreSQL、Node/Vitest、Chromium 布局回归及构建；GitHub 记录的 Node.js 24 强制运行和 Ubuntu 迁移提示属于环境注记，不是失败。
 
 ## 6. 遗留边界
 

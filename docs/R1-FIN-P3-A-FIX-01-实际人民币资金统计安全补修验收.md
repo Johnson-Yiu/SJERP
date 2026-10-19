@@ -67,4 +67,12 @@ ISS-121 的统计启用日期和全公司覆盖政策仍待财务负责人决定
 
 ## 最终交付
 
-最终精确 HEAD、Backend、Backend PostgreSQL、Frontend 三项 CI URL 将在推送后回写本节；完成后停止等待 ChatGPT 独立复审，不进入 P3-B、正式 RBAC、员工 UAT 或部署。
+实现提交：`5c66574bec80301c61d64d4c0cdf4862d8fc8fcf`。
+
+该精确 HEAD 的 GitHub Actions 三项 CI 均为 SUCCESS：
+
+- [Backend](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39247654695/job/118043416984)
+- [Backend PostgreSQL](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39247654695/job/118043417446)
+- [Frontend](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39247654695/job/118043417390)
+
+运行总览：[master CI 39247654695](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39247654695)。本节为验收证据回写，不改变实现代码、财务口径或历史数据；完成后停止等待 ChatGPT 独立复审，不进入 P3-B、正式 RBAC、员工 UAT 或部署。

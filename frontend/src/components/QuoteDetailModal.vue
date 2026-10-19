@@ -6,6 +6,7 @@ import { AlertTriangle, ArrowLeft, ArrowRight, Download, Eye, FileText, GitBranc
 import { api, downloadQuoteExport } from '../api'
 import { confirmDialog } from '../dialogs'
 import QuotePreviewModal from './QuotePreviewModal.vue'
+import QuoteRiskNotice from './QuoteRiskNotice.vue'
 import RichTextEditor from './RichTextEditor.vue'
 import OperationLogPanel from './OperationLogPanel.vue'
 import { useDetailTab } from '../utils/useDetailTab'
@@ -30,6 +31,8 @@ const statusSaving = ref(false)
 const operationLogs = ref([])
 const operationLogsLoading = ref(false)
 const auditEnabled = ref(false)
+const riskNoticeOpen = ref(false)
+const riskRows = ref([])
 
 const quote = computed(() => workbench.value?.quote)
 const canCreateOrder = computed(() => can('orders', 'create') && ['draft', 'sent', 'accepted'].includes(quote.value?.status))
@@ -111,8 +114,25 @@ async function openPreview(id = quote.value?.id) {
 async function exportQuote() {
   if (!can('quotes', 'export')) return
   actionError.value = ''
+  try {
+    const skuIds = [...new Set((quote.value?.items || []).map(item => Number(item.sku)).filter(id => Number.isSafeInteger(id) && id > 0))]
+      if (!skuIds.length) {
+        await downloadQuoteExport(quote.value.id, quote.value.quote_no)
+        return
+      }
+    const response = await api.get('/quotes/risk-preview/', { params: { sku_ids: skuIds.join(',') } })
+    riskRows.value = (response.data?.items || []).filter(item => item.has_risk)
+    if (riskRows.value.length) { riskNoticeOpen.value = true; return }
+    await downloadQuoteExport(quote.value.id, quote.value.quote_no)
+  } catch (err) { actionError.value = err.message }
+}
+async function continueRiskExport() {
+  if (!quote.value) return
+  riskNoticeOpen.value = false
+  actionError.value = ''
   try { await downloadQuoteExport(quote.value.id, quote.value.quote_no) } catch (err) { actionError.value = err.message }
 }
+function cancelRiskExport() { riskNoticeOpen.value = false }
 async function createNote() {
   if (!can('quotes', 'update') || isRichTextEmpty(noteContent.value)) return
   noteSaving.value = true; actionError.value = ''
@@ -197,6 +217,7 @@ watch(() => props.refreshKey, () => load(quote.value?.id || props.id))
       </template>
     </article>
     <QuotePreviewModal v-if="preview" :draft="preview" saved @close="preview = null" />
+    <QuoteRiskNotice v-if="riskNoticeOpen" :risks="riskRows" @cancel="cancelRiskExport" @continue="continueRiskExport" />
   </div>
 </template>
 

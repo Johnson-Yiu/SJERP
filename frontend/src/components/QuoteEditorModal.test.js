@@ -48,3 +48,11 @@ test('quote status is read-only and cannot be selected while creating or revisin
   assert.doesNotMatch(source, /<option[^>]*value="(?:accepted|rejected|expired)"/)
   assert.match(source, /mode === 'revise' \? '创建报价修订版'/)
 })
+
+test('quote export shows one consolidated risk notice after the quote is saved', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /api\.get\('\/quotes\/risk-preview\//)
+  assert.match(source, /riskRows\.value\.length\) \{ riskNoticeOpen\.value = true/)
+  assert.match(source, /<QuoteRiskNotice v-if="riskNoticeOpen"/)
+})

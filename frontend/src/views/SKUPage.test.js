@@ -18,6 +18,17 @@ test('SKU editor exposes supplier source maintenance through the API', async () 
   assert.match(source, /inheritedProduct/)
 })
 
+test('SKU editor keeps sales price currency separate from internal cost verification', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /default_price/)
+  assert.match(source, /cost_currency/)
+  assert.match(source, /verify-cost/)
+  assert.match(source, /verify-price/)
+  assert.match(source, /历史币种未知/)
+  assert.match(source, /采购价已隐藏/)
+})
+
 test('SKU editor canonicalizes abbreviation keys and mirrors backend value formatting', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

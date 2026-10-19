@@ -78,4 +78,13 @@ H 场景为证据采集重试两次，数据库中有 2 条 cancelled 草稿；�
 - ISS-118–120 等待 ChatGPT 独立代码、业务和视觉复审，不自行转为 CLOSED。
 - 正式RBAC、员工UAT、生产部署、完整银行账户余额、自动汇兑损益和P3均未启动。
 
-最终精确 HEAD、三项 CI URL 和结果以本报告提交后的交付记录为准。
+## 8. 最终提交与 CI
+
+本报告首版代码与证据提交：`9d9bb38c26f79685610bfec2e375ad2ab957bb60`。该精确 HEAD 已推送 `master`，三项 CI 均 SUCCESS：
+
+- [Backend job 117954536051](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39220538708/job/117954536051)
+- [Backend PostgreSQL job 117954536262](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39220538708/job/117954536262)
+- [Frontend job 117954535877](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39220538708/job/117954535877)
+- [CI run 39220538708](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39220538708)
+
+本节文档回写提交仅补充上述已完成CI证据，不改变代码、数据库或业务结论；若本节形成新的精确HEAD，以交付消息列出的最终文档提交和对应CI为准。

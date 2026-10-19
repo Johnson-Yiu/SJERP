@@ -2,7 +2,9 @@ from datetime import date
 from decimal import Decimal
 
 from django.test import TestCase, override_settings
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.test import APIClient
+from unittest.mock import patch
 
 from crm.models import RmbCashEvent, Transaction
 from crm.services.finance import record_transaction
@@ -64,3 +66,17 @@ class ActualCashReportingTests(CashFixture, TestCase):
         csv_text = csv_response.content.decode("utf-8-sig")
         self.assertIn("金额（银行实际人民币净额）", csv_text)
         self.assertIn("705.00", csv_text)
+
+    def test_actual_cash_csv_escapes_formula_like_bank_reference(self):
+        self._confirmed(payload([self.receipt], key="ACTUAL-SAFE", bank_reference='=HYPERLINK("https://evil.test")'))
+        response = self.client.get("/api/actual-rmb-cash/", {"date_from": "2026-10-01", "date_to": "2026-10-31", "export": "csv"})
+        self.assertEqual(response.status_code, 200)
+        csv_text = response.content.decode("utf-8-sig")
+        self.assertIn("'=HYPERLINK", csv_text)
+        self.assertNotIn('"=HYPERLINK', csv_text)
+        self.assertIn("ACTUAL-SAFE", csv_text)
+
+    def test_actual_cash_api_and_csv_require_transaction_scope(self):
+        with patch("crm.actual_cash_api.cash.access", side_effect=PermissionDenied("forbidden")):
+            self.assertEqual(self.client.get("/api/actual-rmb-cash/").status_code, 403)
+            self.assertEqual(self.client.get("/api/actual-rmb-cash/", {"export": "csv"}).status_code, 403)

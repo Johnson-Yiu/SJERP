@@ -16,6 +16,7 @@ from rest_framework.response import Response
 
 from .models import RmbCashEvent
 from .permissions import user_can
+from .reporting import safe_csv
 from .services import cash_events as cash
 
 
@@ -120,13 +121,13 @@ def actual_cash_report(request):
         response.write("\ufeff")
         writer = csv.writer(response)
         writer.writerow(["银行实际人民币资金", start, end, "bank_date", BASIS])
-        writer.writerow([NOTE])
-        writer.writerow(["事件编号", "银行日期", "类型", "方向", "银行实际净额（人民币）", "含扣手续费", "手续费金额", "银行参考号"])
+        writer.writerow([safe_csv(NOTE)])
+        writer.writerow([safe_csv(value) for value in ["事件编号", "银行日期", "类型", "方向", "银行实际净额（人民币）", "含扣手续费", "手续费金额", "银行参考号"]])
         for event in events:
-            writer.writerow([event.event_no, event.bank_date, KIND_LABELS.get(event.kind, event.kind), "流入" if event.direction == "income" else "流出", _serialize_decimal(event.bank_net_amount), event.fee_mode == "included", _serialize_decimal(event.fee_amount), event.bank_reference])
-        writer.writerow(["合计", "", "", "流入", _serialize_decimal(totals["inflow"]), "", "", ""])
-        writer.writerow(["合计", "", "", "流出", _serialize_decimal(totals["outflow"]), "", "", ""])
-        writer.writerow(["净流入/净流出", "", "", "", _serialize_decimal(totals["net"]), "", "", ""])
+            writer.writerow([safe_csv(event.event_no), safe_csv(event.bank_date), safe_csv(KIND_LABELS.get(event.kind, event.kind)), safe_csv("流入" if event.direction == "income" else "流出"), _serialize_decimal(event.bank_net_amount), event.fee_mode == "included", _serialize_decimal(event.fee_amount), safe_csv(event.bank_reference)])
+        writer.writerow([safe_csv("合计"), "", "", safe_csv("流入"), _serialize_decimal(totals["inflow"]), "", "", ""])
+        writer.writerow([safe_csv("合计"), "", "", safe_csv("流出"), _serialize_decimal(totals["outflow"]), "", "", ""])
+        writer.writerow([safe_csv("净流入/净流出"), "", "", "", _serialize_decimal(totals["net"]), "", "", ""])
         return response
     def encode(row):
         return {key: (_serialize_decimal(value) if isinstance(value, Decimal) else value) for key, value in row.items()}

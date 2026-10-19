@@ -19,6 +19,8 @@ const route = useRoute(), router = useRouter()
 const today = new Date().toLocaleDateString('en-CA')
 const dateFrom = ref(`${today.slice(0, 7)}-01`), dateTo = ref(today)
 const exporting = ref(false), notice = ref('')
+let loadVersion = 0
+let actualCashVersion = 0
 const rangeError = computed(() => dateFrom.value && dateTo.value && dateFrom.value > dateTo.value ? '开始日期不能晚于结束日期。' : '')
 const periodCards = [
   ['sales_rmb', '合同销售额'], ['estimated_profit_rmb', '预计订单利润'], ['purchase_cost_rmb', '订单采购归属成本'], ['order_expense_rmb', '订单费用'],
@@ -32,30 +34,46 @@ const balanceCards = [
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 async function load() {
   if (rangeError.value) return
+  const version = ++loadVersion
+  const from = dateFrom.value
+  const to = dateTo.value
   loading.value = true
   error.value = ''
-  if (!can('transactions', 'view')) actualCash.value = null
+  const legacyRequest = api.get('/finance-dashboard/', { params: { date_from: from, date_to: to } })
+  if (can('transactions', 'view')) void loadActualCash({ from, to })
+  else {
+    actualCashVersion += 1
+    actualCash.value = null
+    actualCashError.value = ''
+    actualCashLoading.value = false
+  }
   try {
-    const requests = [api.get('/finance-dashboard/', { params: { date_from: dateFrom.value, date_to: dateTo.value } })]
-    if (can('transactions', 'view')) requests.push(api.get('/actual-rmb-cash/', { params: { date_from: dateFrom.value, date_to: dateTo.value } }))
-    const responses = await Promise.all(requests)
-    data.value = responses[0].data; hasLoaded.value = true
-    const actual = responses[1]?.data
-    if (actual?.totals && actual?.basis === 'bank_cash_confirmed_v1') { actualCash.value = actual; actualCashError.value = '' }
-    else if (responses[1]) actualCash.value = null
-  } catch (err) { error.value = apiErrorMessage(err) || '财务概览加载失败，请稍后重试。' } finally { loading.value = false }
+    const response = await legacyRequest
+    if (version !== loadVersion) return
+    data.value = response.data
+    hasLoaded.value = true
+  } catch (err) {
+    if (version === loadVersion) error.value = apiErrorMessage(err) || '财务概览加载失败，请稍后重试。'
+  } finally {
+    if (version === loadVersion) loading.value = false
+  }
 }
-async function loadActualCash() {
+async function loadActualCash({ from = dateFrom.value, to = dateTo.value } = {}) {
   if (!can('transactions', 'view')) return
+  const version = ++actualCashVersion
   actualCashLoading.value = true
   actualCashError.value = ''
+  actualCash.value = null
   try {
-    const response = await api.get('/actual-rmb-cash/', { params: { date_from: dateFrom.value, date_to: dateTo.value } })
+    const response = await api.get('/actual-rmb-cash/', { params: { date_from: from, date_to: to } })
+    if (version !== actualCashVersion) return
     if (response.data?.basis !== 'bank_cash_confirmed_v1') throw new Error('银行实际资金统计口径无效。')
     actualCash.value = response.data
   } catch (err) {
-    actualCashError.value = apiErrorMessage(err) || '银行实际资金加载失败，请稍后重试。'
-  } finally { actualCashLoading.value = false }
+    if (version === actualCashVersion) actualCashError.value = apiErrorMessage(err) || '银行实际资金加载失败，请稍后重试。'
+  } finally {
+    if (version === actualCashVersion) actualCashLoading.value = false
+  }
 }
 async function applyPeriod() {
   if (rangeError.value) return

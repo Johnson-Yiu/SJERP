@@ -1,0 +1,723 @@
+Creating test database for alias 'default'...
+
+Bad Request: /api/access-roles/1/permission-matrix/
+..Bad Request: /api/categories/reorder/
+Bad Request: /api/categories/1/
+....Bad Request: /api/customers/
+.................Forbidden: /api/actual-rmb-cash/
+Forbidden: /api/actual-rmb-cash/
+....Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+..Internal Server Error: /api/shipments/1/copy-estimated-packing/
+Traceback (most recent call last):
+  File "C:\Python314\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Python314\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python314\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Python314\Lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\views.py", line 1236, in copy_estimated_packing
+    copy_estimated_to_actual(shipment, plan, replace=request.data.get("replace") is True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\services\packaging.py", line 158, in copy_estimated_to_actual
+    serializer.save(shipment=shipment)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\serializers.py", line 2604, in create
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1247, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\tests\test_actual_packing.py", line 199, in fail_after_first_carton
+    raise RuntimeError("copy failed after first carton")
+RuntimeError: copy failed after first carton
+.Bad Request: /api/shipments/1/packages/
+..Internal Server Error: /api/shipments/1/packages/1/
+Traceback (most recent call last):
+  File "C:\Python314\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Python314\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python314\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Python314\Lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\views.py", line 1217, in update_package
+    record_operation(request=request, instance=shipment, action="custom", action_label="ɾ��װ����ϸ", before={"package": before}, metadata={"package_id": package_id})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: audit save failed
+.Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/2/
+.Bad Request: /api/shipments/1/packages/
+...Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+.Internal Server Error: /api/shipments/1/packages/
+Traceback (most recent call last):
+  File "C:\Python314\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Python314\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python314\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Python314\Lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\views.py", line 1200, in packages
+    package = serializer.save(shipment=shipment)
+  File "C:\Python314\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\serializers.py", line 2604, in create
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: save failed
+.Internal Server Error: /api/shipments/1/packages/1/
+Traceback (most recent call last):
+  File "C:\Python314\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Python314\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python314\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Python314\Lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\views.py", line 1220, in update_package
+    serializer.is_valid(raise_exception=True); serializer.save()
+                                               ~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\site-packages\rest_framework\serializers.py", line 205, in save
+    self.instance = self.update(self.instance, validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\serializers.py", line 2616, in update
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=instance, **item) for item in items])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: save failed
+.Bad Request: /api/shipments/1/packages/1/
+..Bad Request: /api/shipments/1/copy-estimated-packing/
+..Bad Request: /api/shipments/1/packages/
+.Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+.Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+..Bad Request: /api/shipments/1/copy-estimated-packing/
+...Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+.....Conflict: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/1/confirm/
+..Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/
+...Bad Request: /api/rmb-cash-events/1/confirm/
+Bad Request: /api/rmb-cash-events/2/confirm/
+Bad Request: /api/rmb-cash-events/2/confirm/
+.Bad Request: /api/rmb-cash-events/1/cancel/
+Bad Request: /api/rmb-cash-events/
+.Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/1/confirm/
+Method Not Allowed: /api/rmb-cash-events/1/
+Method Not Allowed: /api/rmb-cash-events/1/
+Method Not Allowed: /api/rmb-cash-events/1/
+.Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+..Bad Request: /api/rmb-cash-events/1/confirm/
+Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Not Found: /api/rmb-cash-events/not-an-id/
+.Bad Request: /api/rmb-cash-events/preview/
+........Bad Request: /api/product-certificates/6/
+.....Bad Request: /api/purchase-orders/1/
+Bad Request: /api/purchase-orders/1/
+.Bad Request: /api/orders/1/cancel/
+..Bad Request: /api/orders/1/confirm/
+Bad Request: /api/orders/2/confirm/
+.Bad Request: /api/orders/1/
+Bad Request: /api/orders/1/start-production/
+Bad Request: /api/orders/2/
+.Bad Request: /api/purchase-orders/1/cancel/
+.Bad Request: /api/purchase-orders/1/receive/
+Bad Request: /api/purchase-orders/1/place/
+Bad Request: /api/purchase-orders/1/
+..Bad Request: /api/contacts/1/
+.Bad Request: /api/customers/1/
+Bad Request: /api/customers/2/
+Bad Request: /api/customers/3/
+Bad Request: /api/customers/4/
+......Bad Request: /api/follow-ups/
+...Not Found: /api/follow-ups/2/attachments/1/
+.Bad Request: /api/follow-ups/1/
+Bad Request: /api/follow-ups/1/
+....Bad Request: /api/quotes/1/mark-sent/
+Bad Request: /api/quotes/1/reject/
+Bad Request: /api/quotes/1/expire/
+.Bad Request: /api/orders/1/confirm/
+Bad Request: /api/orders/2/confirm/
+.Bad Request: /api/orders/1/
+Bad Request: /api/orders/1/
+..Bad Request: /api/quotes/1/order-draft/
+Bad Request: /api/orders/
+Bad Request: /api/quotes/2/order-draft/
+Bad Request: /api/orders/
+.................Bad Request: /api/orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/orders/1/
+Bad Request: /api/purchase-orders/1/
+Bad Request: /api/orders/1/
+Bad Request: /api/purchase-orders/1/
+...Internal Server Error: /api/orders/
+Traceback (most recent call last):
+  File "C:\Python314\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Python314\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python314\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Python314\Lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\views.py", line 1672, in create
+    return super().create(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\audit.py", line 70, in perform_create
+    instance = serializer.save()
+  File "C:\Python314\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\serializers.py", line 2140, in create
+    OrderItem.objects.bulk_create(rows)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: fail
+Internal Server Error: /api/purchase-orders/
+Traceback (most recent call last):
+  File "C:\Python314\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Python314\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python314\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Python314\Lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\views.py", line 241, in create
+    return super().create(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\audit.py", line 70, in perform_create
+    instance = serializer.save()
+  File "C:\Python314\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\serializers.py", line 697, in create
+    PurchaseOrderItem.objects.bulk_create([
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+        PurchaseOrderItem(
+        ^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        ) for item in items
+        ^^^^^^^^^^^^^^^^^^^
+    ])
+    ^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: fail
+.....Bad Request: /api/import/csv/
+.............................Bad Request: /api/transactions/1/void/
+Bad Request: /api/transactions/1/void/
+.........................Bad Request: /api/transactions/
+.Bad Request: /api/transactions/
+.........Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/1/
+....Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/
+.Bad Request: /api/inventory-movements/1/
+.Bad Request: /api/orders/1/ship/
+Bad Request: /api/orders/1/ship/
+...Bad Request: /api/orders/1/ship/
+..Bad Request: /api/orders/1/ship/
+.....Bad Request: /api/purchase-orders/1/receive/
+.Bad Request: /api/orders/1/ship/
+......Bad Request: /api/orders/1/ship/
+..Bad Request: /api/suppliers/
+...........Bad Request: /api/inventory-movements/2/
+......Bad Request: /api/orders/1/complete/
+....Bad Request: /api/orders/1/complete/
+......................................Bad Request: /api/hs-codes/1/
+Bad Request: /api/hs-codes/1/assign-products/
+.Bad Request: /api/products/1/
+..Bad Request: /api/hs-codes/
+..Bad Request: /api/hs-codes/1/assign-products/
+..Bad Request: /api/inventory-movements/1/reverse/
+Bad Request: /api/inventory-movements/2/reverse/
+.Bad Request: /api/inventory-movements/1/
+Bad Request: /api/inventory-movements/1/reverse/
+..Bad Request: /api/inventory-movements/1/reverse/
+..............Bad Request: /api/sku-packaging-profiles/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+.Bad Request: /api/packaging-templates/1/
+............Bad Request: /api/payment-plans/
+..Bad Request: /api/payment-plans/
+Bad Request: /api/payment-plans/
+Bad Request: /api/payment-plans/
+.......Bad Request: /api/orders/1/generate-purchase-drafts/
+....Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+...Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/purchase-orders/1/place/
+....................Bad Request: /api/category-attributes/1/
+Bad Request: /api/category-attributes/1/
+Bad Request: /api/category-attributes/1/
+.Bad Request: /api/categories/3/
+Bad Request: /api/categories/3/
+Bad Request: /api/categories/3/
+...Bad Request: /api/category-attributes/1/
+Bad Request: /api/category-attributes/
+Bad Request: /api/category-attributes/1/
+...Bad Request: /api/products/1/sales-model-prefix-preview/
+.Bad Request: /api/products/1/
+.Bad Request: /api/products/1/
+Bad Request: /api/categories/2/
+..Bad Request: /api/purchase-orders/1/cost-allocation/
+.Bad Request: /api/purchase-orders/1/cost-allocation/
+.Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/
+..Bad Request: /api/purchase-orders/1/cost-allocation-preview/
+..Bad Request: /api/purchase-orders/1/cost-allocation/
+.............Bad Request: /api/purchase-orders/1/
+.Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/1/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/2/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/3/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/4/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/5/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/6/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/7/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/8/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/9/
+Bad Request: /api/purchase-orders/10/
+...Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/1/
+.......Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+....Bad Request: /api/orders/1/complete/
+..Bad Request: /api/orders/1/
+.Bad Request: /api/orders/1/complete/
+.Bad Request: /api/orders/1/complete/
+........Bad Request: /api/quotes/
+.Method Not Allowed: /api/quotes/1/
+.Bad Request: /api/quotes/4/order-draft/
+Bad Request: /api/quotes/5/order-draft/
+....Bad Request: /api/quotes/1/important-notes/
+..Bad Request: /api/orders/
+.....Bad Request: /api/quotes/1/
+Bad Request: /api/quotes/1/
+.Bad Request: /api/quotes/
+..Bad Request: /api/quotes/1/revise/
+...Bad Request: /api/quotes/1/revise/
+.Bad Request: /api/quotes/1/revise/
+.Bad Request: /api/quotes/1/revise/
+....Bad Request: /api/skus/1/image/
+....Unprocessable Content: /api/quotes/1/export/
+...Unprocessable Content: /api/quotes/1/export/
+.....................Bad Request: /api/transactions/
+.Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+...........Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+................Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/preview/
+..Bad Request: /api/import/csv/
+.Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+...............................Bad Request: /api/skus/
+..Bad Request: /api/skus/
+..Bad Request: /api/quotes/
+Bad Request: /api/quotes/1/revise/
+..Bad Request: /api/quotes/
+..Bad Request: /api/sales-rules/
+.Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+.....Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/orders/
+Bad Request: /api/orders/
+...Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/orders/
+Bad Request: /api/orders/
+Bad Request: /api/orders/
+.Bad Request: /api/products/1/combination-rules/
+Bad Request: /api/products/1/combination-rules/
+Bad Request: /api/products/1/combination-rules/
+Bad Request: /api/products/1/combination-rules/
+.Bad Request: /api/products/1/combination-rules/
+.Bad Request: /api/skus/
+Bad Request: /api/skus/
+.Bad Request: /api/skus/
+...Bad Request: /api/products/1/combination-rules/
+....Bad Request: /api/skus/2/
+...Bad Request: /api/skus/
+.Bad Request: /api/skus/
+.Bad Request: /api/skus/1/
+..Bad Request: /api/skus/1/
+....Bad Request: /api/skus/1/
+.Bad Request: /api/skus/1/
+..Bad Request: /api/skus/1/
+.Bad Request: /api/skus/1/
+Bad Request: /api/skus/2/
+...Bad Request: /api/skus/1/
+.Bad Request: /api/skus/
+Bad Request: /api/skus/1/
+......Bad Request: /api/skus/1/
+.Bad Request: /api/skus/
+.Bad Request: /api/skus/1/
+.Bad Request: /api/skus/2/
+....Bad Request: /api/skus/batch-create/
+..Bad Request: /api/skus/
+.Bad Request: /api/skus/1/
+.Bad Request: /api/purchase-orders/
+.Bad Request: /api/products/1/sku-plan/publish/
+..Bad Request: /api/supplier-capabilities/
+...Bad Request: /api/products/1/sku-plan/publish/
+.Bad Request: /api/products/1/sku-plan/publish/
+.Bad Request: /api/supplier-skus/1/
+.Internal Server Error: /api/skus/
+Traceback (most recent call last):
+  File "C:\Python314\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Python314\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python314\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Python314\Lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\views.py", line 867, in perform_create
+    super().perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\Johnson\.codex\worktrees\r1-fin-p3-a\ɭ����������ϵͳ\backend\crm\audit.py", line 71, in perform_create
+    record_operation(request=self.request, instance=instance, action="create")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: audit failed
+.Bad Request: /api/skus/batch-create/
+.Bad Request: /api/skus/
+.Bad Request: /api/skus/
+Bad Request: /api/skus/1/
+.Bad Request: /api/skus/1/
+.Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+....Bad Request: /api/orders/1/items/1/supplier-allocation/
+Bad Request: /api/orders/1/items/1/supplier-allocation/
+Bad Request: /api/orders/1/items/1/supplier-allocation/
+.Bad Request: /api/orders/1/items/1/supplier-allocation/
+Bad Request: /api/orders/1/items/1/supplier-allocation/
+.........Bad Request: /api/products/1/supplier-candidate-pool/
+Bad Request: /api/products/1/supplier-candidate-pool/
+.Bad Request: /api/products/1/supplier-candidate-pool/
+.Bad Request: /api/products/1/supplier-candidate-pool/
+..Bad Request: /api/suppliers/
+.............Bad Request: /api/purchase-orders/1/
+Bad Request: /api/purchase-orders/1/
+..Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+..Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+..Bad Request: /api/purchase-orders/
+...Bad Request: /api/purchase-orders/
+.Bad Request: /api/supplier-skus/1/
+Bad Request: /api/supplier-skus/2/
+.Bad Request: /api/supplier-skus/
+.............Bad Request: /api/inventory-movements/1/
+...........Bad Request: /api/orders/1/ship/
+Bad Request: /api/orders/1/ship/
+.Bad Request: /api/inventory-movements/batch/
+Bad Request: /api/inventory-movements/batch/
+........Bad Request: /api/payment-plans/1/
+.Bad Request: /api/purchase-orders/1/
+...Bad Request: /api/purchase-orders/1/receipts/1/reverse/
+.....Bad Request: /api/finance-dashboard/
+...Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+...Bad Request: /api/shipments/1/reverse/
+............Bad Request: /api/transactions/1/
+Bad Request: /api/transactions/1/
+...Bad Request: /api/orders/1/ship/
+..Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/skus/1/
+.Bad Request: /api/sku-trade-units/
+Bad Request: /api/sku-trade-units/
+.....Bad Request: /api/quotes/
+.Bad Request: /api/quotes/
+..Bad Request: /api/inventory-movements/
+..Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+..sss............ssssssssss........
+----------------------------------------------------------------------
+Ran 768 tests in 278.778s
+
+OK (skipped=13)
+Destroying test database for alias 'default'...
+
+Found 768 test(s).
+System check identified no issues (0 silenced).
+P2A-DATABASE_VERIFICATION {"before": "82e46cbf45acbcf97dc5b6eb3d1e2b49aa548fcf1cc4b03103466d0aa64dc060", "after": "82e46cbf45acbcf97dc5b6eb3d1e2b49aa548fcf1cc4b03103466d0aa64dc060", "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": true}
+P2A_MIGRATION_VERIFICATION {"vendor": "sqlite", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}

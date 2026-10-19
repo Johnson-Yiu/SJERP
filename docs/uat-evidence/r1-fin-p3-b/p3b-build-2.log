@@ -1,0 +1,23 @@
+vite v8.2.0 building client environment for production...
+[2K
+transforming...✓ 2003 modules transformed.
+
+(!) outDir C:\Users\Johnson\.codex\visualizations\2026\10\17\01a14aad-779e-79f2-af16-98c3aaa97519\p3b-dist is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+../../../../visualizations/2026/10/17/01a14aad-779e-79f2-af16-98c3aaa97519/p3b-dist/index.html                              0.47 kB │ gzip:   0.32 kB
+../../../../visualizations/2026/10/17/01a14aad-779e-79f2-af16-98c3aaa97519/p3b-dist/assets/TradeUnitsPage-BagMfA07.css      2.89 kB │ gzip:   0.89 kB
+../../../../visualizations/2026/10/17/01a14aad-779e-79f2-af16-98c3aaa97519/p3b-dist/assets/ReportsPage-BXfdERzl.css        10.92 kB │ gzip:   2.32 kB
+../../../../visualizations/2026/10/17/01a14aad-779e-79f2-af16-98c3aaa97519/p3b-dist/assets/index-B2gC1RXN.css             377.03 kB │ gzip:  62.16 kB
+../../../../visualizations/2026/10/17/01a14aad-779e-79f2-af16-98c3aaa97519/p3b-dist/assets/TradeUnitsPage-BOVzltbM.js      10.57 kB │ gzip:   4.29 kB
+../../../../visualizations/2026/10/17/01a14aad-779e-79f2-af16-98c3aaa97519/p3b-dist/assets/ReportsPage-CtmR10RV.js         29.89 kB │ gzip:  10.42 kB
+../../../../visualizations/2026/10/17/01a14aad-779e-79f2-af16-98c3aaa97519/p3b-dist/assets/index-CD-fj0sg.js            1,223.16 kB │ gzip: 432.60 kB
+
+✓ built in 1.54s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

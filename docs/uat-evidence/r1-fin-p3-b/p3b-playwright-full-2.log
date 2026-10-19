@@ -1,0 +1,169 @@
+
+Running 157 tests using 2 workers
+
+
+
+(node:28756) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4528) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/157] browser-tests\cash-events-p2b.spec.js:4:1 › cash event UI previews, registers, and confirms without changing receipt flows
+[2/157] browser-tests\certificates-hs-ux.spec.js:10:1 › certificate list and grouped form actual bounds 1440
+[3/157] browser-tests\certificates-hs-ux.spec.js:11:1 › HS assignment searchable selection and actual bounds 1440
+[4/157] browser-tests\cash-events-p2b.spec.js:46:1 › source verification is explicit and any fact change invalidates the preview
+[5/157] browser-tests\certificates-hs-ux.spec.js:10:1 › certificate list and grouped form actual bounds 1280
+[6/157] browser-tests\cash-events-p2b.spec.js:75:1 › refresh restores the stable request key and draft inputs without registering
+[7/157] browser-tests\certificates-hs-ux.spec.js:11:1 › HS assignment searchable selection and actual bounds 1280
+[8/157] browser-tests\cash-events-p2b.spec.js:92:1 › restored draft remains protected and explicit abandon clears only after confirmation
+[9/157] browser-tests\certificates-hs-ux.spec.js:10:1 › certificate list and grouped form actual bounds 1024
+[10/157] browser-tests\certificates-hs-ux.spec.js:11:1 › HS assignment searchable selection and actual bounds 1024
+[11/157] browser-tests\cash-events-p2b.spec.js:118:1 › changing a 30 allocation to 50 clears verification and requires a fresh preview
+[12/157] browser-tests\certificates-hs-ux.spec.js:12:57 › hs-codes pending POST blocks backdrop/back/navigation; failure retains input and retries once
+[13/157] browser-tests\cash-events-p2b.spec.js:152:1 › expired local draft is removed during page initialization and sensitive evidence is not persisted
+[14/157] browser-tests\certificates-hs-ux.spec.js:12:57 › product-certificates pending POST blocks backdrop/back/navigation; failure retains input and retries once
+[15/157] browser-tests\cash-events-p2b.spec.js:176:1 › legacy draft is sanitized immediately when restored
+[16/157] browser-tests\certificates-hs-ux.spec.js:13:1 › HS read-only hides maintenance and both pages reload errors recover
+[17/157] browser-tests\cash-events-p2b.spec.js:206:1 › stale source responses cannot overwrite the current currency
+[18/157] browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1440px
+[19/157] browser-tests\certificates-hs-ux.spec.js:15:1 › assignment pending PUT blocks close and navigation, retains selection on rejection and retries
+[20/157] browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1280px
+[21/157] browser-tests\certificates-hs-ux.spec.js:16:1 › certificate first load failure retries to empty, and expiry URL survives reload
+[22/157] browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1024px
+[23/157] browser-tests\crm-saving.spec.js:86:3 › contacts pending PUT failure preserves fields and quick retry sends one request
+[24/157] browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1440px
+[25/157] browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1440px
+[26/157] browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1280px
+[27/157] browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1280px
+[28/157] browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1024px
+[29/157] browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1024px
+[30/157] browser-tests\crm-saving.spec.js:86:3 › follow-ups pending PUT failure preserves fields and quick retry sends one request
+[31/157] browser-tests\crm-ux.spec.js:167:1 › contact create, duplicate advisory, primary edit and return query stay consistent
+[32/157] browser-tests\crm-ux.spec.js:193:3 › follow-up filters, detailed groups, and long content fit 1440px
+[33/157] browser-tests\crm-ux.spec.js:193:3 › follow-up filters, detailed groups, and long content fit 1280px
+[34/157] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 quotes customer column and filters 1440
+[35/157] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 orders customer column and filters 1440
+[36/157] browser-tests\crm-ux.spec.js:193:3 › follow-up filters, detailed groups, and long content fit 1024px
+[37/157] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 quotes customer column and filters 1280
+[38/157] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 orders customer column and filters 1280
+[39/157] browser-tests\crm-ux.spec.js:220:1 › follow-up search and due filters remain in URL and saved text updates list
+[40/157] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 quotes customer column and filters 1024
+[41/157] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 orders customer column and filters 1024
+[42/157] browser-tests\crm-ux.spec.js:247:1 › saved attachment delete can be cancelled, confirmed, and remains removed after reopening
+[43/157] browser-tests\finance-actual-cash-resilience.spec.js:32:1 › actual cash failure leaves the legacy dashboard available and retry is independent
+[44/157] browser-tests\finance-actual-cash-resilience.spec.js:50:1 › rapid date changes discard stale actual cash responses
+[45/157] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1440px
+[46/157] browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1440
+[47/157] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1280px
+[48/157] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1024px
+[49/157] browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1024
+[50/157] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 640px
+[51/157] browser-tests\finance-retry-safety.spec.js:3:1 › finance pending submission and ambiguous retry preserve identity and guard departure
+[52/157] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 390px
+[53/157] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1440px
+[54/157] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1280px
+[55/157] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1024px
+[56/157] browser-tests\fulfillment-receivables.spec.js:21:1 › completed receivable navigation, Back, settlement and refund reloads retain fulfillment
+[57/157] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 640px
+[58/157] browser-tests\fulfillment-receivables.spec.js:32:1 › restricted user cannot read protected debt from malicious unmasked order payload
+[59/157] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 390px
+[60/157] browser-tests\fulfillment-receivables.spec.js:39:1 › completion pending prevents duplicate UI action and failed reload retries without false financial success
+[61/157] browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1440
+[62/157] browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1280
+[63/157] browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1024
+[64/157] browser-tests\import-ux.spec.js:8:1 › downloads contain actual UTF8 BOM headers and correctly quoted failure rows
+[65/157] browser-tests\import-ux.spec.js:9:1 › pending preview and execute block back/navigation, duplicates and changes; cancel never writes
+[66/157] browser-tests\import-ux.spec.js:10:1 › restricted import entry and template retry
+[67/157] browser-tests\fulfillment-receivables.spec.js:49:48 › unknown no_plans has a review task and no confirmed zero
+[68/157] browser-tests\inventory-ux.spec.js:27:2 › inventory overview, reserved quantities and SKU drawer at 1440
+[69/157] browser-tests\fulfillment-receivables.spec.js:49:48 › unknown review has a review task and no confirmed zero
+[70/157] browser-tests\inventory-ux.spec.js:38:2 › ledger filters, sticky actions and adjustment dialog at 1440
+[71/157] browser-tests\inventory-ux.spec.js:27:2 › inventory overview, reserved quantities and SKU drawer at 1280
+[72/157] browser-tests\organization-access-ux.spec.js:12:37 › organization long matrix computed bounds and sticky headers 1440
+[73/157] browser-tests\inventory-ux.spec.js:38:2 › ledger filters, sticky actions and adjustment dialog at 1280
+[74/157] browser-tests\organization-access-ux.spec.js:12:37 › organization long matrix computed bounds and sticky headers 1280
+[75/157] browser-tests\inventory-ux.spec.js:27:2 › inventory overview, reserved quantities and SKU drawer at 1024
+[76/157] browser-tests\organization-access-ux.spec.js:12:37 › organization long matrix computed bounds and sticky headers 1024
+[77/157] browser-tests\inventory-ux.spec.js:38:2 › ledger filters, sticky actions and adjustment dialog at 1024
+[78/157] browser-tests\inventory-ux.spec.js:49:1 › page restoration, detail navigation and browser Back preserve inventory context
+[79/157] browser-tests\organization-access-ux.spec.js:13:1 › dirty switching, cancel and delayed save/readback navigation are protected
+[80/157] browser-tests\inventory-ux.spec.js:57:1 › empty and failed inventories distinguish errors, retry and no records
+[81/157] browser-tests\organization-access-ux.spec.js:14:1 › save refusal and readback refusal retain input; readback retry never posts twice
+[82/157] browser-tests\organization-access-ux.spec.js:15:1 › read-only and overview retry do not expose a write action
+[83/157] browser-tests\organization-access-ux.spec.js:16:95 › access-denied layout and permitted return 1440
+[84/157] browser-tests\organization-access-ux.spec.js:16:95 › access-status-error layout and permitted return 1440
+[85/157] browser-tests\organization-access-ux.spec.js:16:95 › access-denied layout and permitted return 1280
+[86/157] browser-tests\organization-access-ux.spec.js:16:95 › access-status-error layout and permitted return 1280
+[87/157] browser-tests\organization-access-ux.spec.js:16:95 › access-denied layout and permitted return 1024
+[88/157] browser-tests\organization-access-ux.spec.js:16:95 › access-status-error layout and permitted return 1024
+[89/157] browser-tests\inventory-ux.spec.js:62:1 › restricted UI hides adjustment, reversal and unauthorized cross-module entrances
+[90/157] browser-tests\organization-access-ux.spec.js:17:45 › permission service 401 failure and recovery avoid redirects
+[91/157] browser-tests\organization-access-ux.spec.js:17:45 › permission service 403 failure and recovery avoid redirects
+[92/157] browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1440
+[93/157] browser-tests\organization-access-ux.spec.js:17:45 › permission service 500 failure and recovery avoid redirects
+[94/157] browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1440
+[95/157] browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1280
+[96/157] browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1280
+[97/157] browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1024
+[98/157] browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1024
+[99/157] browser-tests\overview-reports.spec.js:33:1 › saved local chart configurations survive reload, reorder, remove and undo
+[100/157] browser-tests\overview-reports.spec.js:41:1 › drill and previous-analysis return preserve actual period and browser navigation restores URL
+[101/157] browser-tests\overview-reports.spec.js:47:1 › empty dashboard and charts have useful neutral states
+[102/157] browser-tests\overview-reports.spec.js:50:1 › initial failures recover, refresh failure keeps stale data, and catalog has retry
+[103/157] browser-tests\overview-reports.spec.js:56:1 › restricted UI hides sources, export and navigation, retaining unavailable local configuration
+[104/157] browser-tests\packaging-ux.spec.js:16:37 › packaging actual layout and linked navigation 1440
+[105/157] browser-tests\organization-access-ux.spec.js:17:45 › permission service network failure and recovery avoid redirects
+[106/157] browser-tests\packaging-ux.spec.js:16:37 › packaging actual layout and linked navigation 1280
+[107/157] browser-tests\packaging-ux.spec.js:16:37 › packaging actual layout and linked navigation 1024
+[108/157] browser-tests\packaging-ux.spec.js:23:37 › trade units conversion and form fit 1440
+[109/157] browser-tests\packaging-ux.spec.js:23:37 › trade units conversion and form fit 1280
+[110/157] browser-tests\packaging-ux.spec.js:23:37 › trade units conversion and form fit 1024
+[111/157] browser-tests\packaging-ux.spec.js:28:1 › packaging pending save blocks close/back/navigation; rejected data stays for retry
+[112/157] browser-tests\packaging-ux.spec.js:31:1 › trade pending and failed save keep SKU/factor; switching warns, and retry succeeds once
+[113/157] browser-tests\packaging-ux.spec.js:34:1 › initial template failure retries and view-only permissions hide all writing entries
+[114/157] browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1440
+[115/157] browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1280
+[116/157] browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1024
+[117/157] browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1440
+[118/157] browser-tests\product-master-ux.spec.js:52:1 › product detail URL survives reload and close preserves list filters
+[119/157] browser-tests\product-master-ux.spec.js:59:1 › product parameter to product detail closes back to original filtered list
+[120/157] browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1280
+[121/157] browser-tests\product-master-ux.spec.js:64:1 › view-only fixtures cannot create/edit/delete through these page entries
+[122/157] browser-tests\product-master-ux.spec.js:68:1 › product failure preserves input and retry; unsaved cancel requires confirmation
+[123/157] browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1024
+[124/157] browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1440
+[125/157] browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1280
+[126/157] browser-tests\sku-ux.spec.js:21:1 › batch failure retains selections and retry succeeds once
+[127/157] browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1024
+[128/157] browser-tests\product-master-ux.spec.js:93:1 › category saving blocks backdrop, retains failure and permits retry
+[129/157] browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1440
+[130/157] browser-tests\product-master-ux.spec.js:101:1 › product parameter context and pending save failure remain recoverable
+[131/157] browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1280
+[132/157] browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1440
+[133/157] browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1280
+[134/157] browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1024
+[135/157] browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1024
+[136/157] browser-tests\product-master-ux.spec.js:121:1 › category drag preserves selected node and collapsed state after reorder
+[137/157] browser-tests\sku-ux.spec.js:23:1 › SKU read-only detail remains accessible with no write controls
+[138/157] browser-tests\product-master-ux.spec.js:134:41 › R0-F9 products status labels stay on one line 1440
+[139/157] browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1440
+[140/157] browser-tests\product-master-ux.spec.js:134:41 › R0-F9 products status labels stay on one line 1280
+[141/157] browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1280
+[142/157] browser-tests\product-master-ux.spec.js:134:41 › R0-F9 products status labels stay on one line 1024
+[143/157] browser-tests\supplier-ux.spec.js:24:37 › supplier long names, notes, filters, editor and detail at 1440
+[144/157] browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1024
+[145/157] browser-tests\sku-ux.spec.js:26:1 › SKU history load failure remains distinct from empty history and retries
+[146/157] browser-tests\supplier-ux.spec.js:24:37 › supplier long names, notes, filters, editor and detail at 1280
+[147/157] browser-tests\supplier-ux.spec.js:24:37 › supplier long names, notes, filters, editor and detail at 1024
+[148/157] browser-tests\supplier-ux.spec.js:33:1 › supplier creates, cancels dirty edits, saves and reopens consistent detail and list
+[149/157] browser-tests\supplier-ux.spec.js:37:1 › duplicate code, invalid ratio and optional category failures keep entered data
+[150/157] browser-tests\supplier-ux.spec.js:40:1 › filters and page survive reload, detail close and procurement workbench return
+[151/157] browser-tests\sku-ux.spec.js:28:1 › SKU logical loads keep separate history and ignore late responses in the rendered list
+[152/157] browser-tests\sku-ux.spec.js:57:1 › transaction-unit navigation returns to SKU editor with original list context
+[153/157] browser-tests\supplier-ux.spec.js:43:1 › initial errors retry to empty and refresh errors retain supplier list
+[154/157] browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1440
+[155/157] browser-tests\supplier-ux.spec.js:46:1 › restricted view hides supplier write actions and purchase shortcuts
+[156/157] browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1280
+[157/157] browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1024
+  157 passed (2.8m)

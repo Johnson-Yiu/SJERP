@@ -173,6 +173,36 @@ test('expired local draft is removed during page initialization and sensitive ev
   expect(draft.form).not.toHaveProperty('evidence_note')
 })
 
+test('legacy draft is sanitized immediately when restored', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('sunjack:r1-fin-p2-b:cash-event-draft:v1', JSON.stringify({
+      version: 1,
+      saved_at: Date.now(),
+      form: {
+        request_key: 'LEGACY-REQUEST', event_no: 'LEGACY-EVENT', bank_net_amount: '705.00',
+        evidence_reference: 'legacy-secret-voucher', evidence_sha256: 'b'.repeat(64), evidence_note: 'legacy private note',
+      },
+      allocations: [],
+    }))
+  })
+  await page.route('**/api/**', async route => {
+    const path = new URL(route.request().url()).pathname
+    if (path === '/api/session/current-operator/') return route.fulfill({ json: { development_superadmin: true, has_all_permissions: true } })
+    if (path === '/api/rmb-cash-events/sources/') return route.fulfill({ json: { results: [] } })
+    return route.fulfill({ json: [] })
+  })
+  await page.goto('/rmb-cash-events')
+  await page.getByRole('button', { name: '新建资金事件' }).click()
+  await expect(page.getByText('已恢复未完成草稿')).toBeVisible()
+  const draft = JSON.parse(await page.evaluate(() => localStorage.getItem('sunjack:r1-fin-p2-b:cash-event-draft:v1')))
+  expect(draft.version).toBe(2)
+  expect(draft.form).not.toHaveProperty('evidence_reference')
+  expect(draft.form).not.toHaveProperty('evidence_sha256')
+  expect(draft.form).not.toHaveProperty('evidence_note')
+  await expect(page.getByLabel('凭证引用')).toHaveValue('')
+  await expect(page.getByText('凭证资料未保存在本地')).toBeVisible()
+})
+
 test('stale source responses cannot overwrite the current currency', async ({ page }) => {
   await page.route('**/api/**', async route => {
     const request = route.request()

@@ -1,6 +1,6 @@
 # SUNJACK-ERP 项目问题台账
 
-最新轮次：R1-FIN-P2-B（2026-10-19），基线b79af36dc7140507ef210ea61437dd579ba8de8b。新增人民币实际资金前端入口、来源选择/后端预览、待确认草稿、稳定请求键回查、人工确认/放弃及只读详情；复用P2-A API，不改变旧统计来源、收付款核销、报表金额或ISS-105状态。真实浏览器和隔离数据库证据见[P2-B验收](R1-FIN-P2-B-人民币资金前端验收.md)。ISS-105保持OPEN，ISS-108保持BLOCKED，ISS-109保持FIXED_PENDING_REVIEW；不进入P2-C、正式RBAC、员工UAT或部署。
+最新轮次：R1-FIN-P2-C（2026-10-19），基线9cd57800ce524d8e0ead90f245215ac4153cf144。完成隔离SQLite与真实Chromium银行资金/结汇闭环验收，保留原有收付款核销、历史金额和参考统计；新增ISS-118至ISS-120，均待独立复审。证据见[R1-FIN-P2-C验收](R1-FIN-P2-C-银行资金记录与结汇完整业务闭环验收.md)。ISS-105保持OPEN，ISS-108保持BLOCKED；不进入P3、正式RBAC、员工UAT或部署。
 
 上一轮：R1-FIN-P2-A（2026-10-18至19），基线1b2ca0eb5b1947dd53f5ab995828dd33f514e0d4。按D01–D08授权新增银行资金事实/来源分配后端、必要API及安全保护；旧金额/核销/报表不改，ISS-105保持OPEN。新增ISS-108 BLOCKED登记尚未明确的更正与来源解除细则；新增ISS-109待复审记录CI跨日测试修正，见[P2-A验收](R1-FIN-P2-A-人民币资金事实与结汇后端验收.md)。不进入P2-B、正式RBAC、员工UAT或部署。
 
@@ -384,3 +384,15 @@ P2-B保留旧财务流水、应收应付核销、报表和统计金额；不创�
 | ISS-117 | P2 / FIXED_PENDING_REVIEW | ChatGPT独立审查R1-FIN-P2-B-FIX-01；2026-10-19 | 本地快照此前按整个表单对象保存，缺少初始化过期清理和敏感字段边界。已改为字段白名单、版本化快照、页面初始化清理过期记录；凭证引用/SHA256/人工核实说明不落本地，恢复后要求重新填写；稳定请求键仍可用于结果不明回查 | QA / 独立复核localStorage内容、24小时期限、放弃/成功登记清理及响应不明回查 | R1-FIN-P2-B-FIX-02 / 不保存凭证敏感字段，过期即清理，成功/明确放弃清理，精确HEAD CI与独立复审通过 |
 
 本轮新增ISS-115至ISS-117，均为 `FIXED_PENDING_REVIEW`；ISS-110至ISS-113仍待复审，ISS-114仍为`NEEDS_VERIFICATION`，ISS-105仍OPEN，ISS-108仍BLOCKED，ISS-109仍FIXED_PENDING_REVIEW；不得自行关闭或进入P2-C、正式RBAC、员工UAT或部署。117个唯一ID：OPEN=5、BLOCKED=23、NEEDS_VERIFICATION=27、FIXED_PENDING_REVIEW=54、CLOSED=8；P0=0。
+
+## R1-FIN-P2-C 银行资金记录与结汇完整业务闭环验收（2026-10-19）
+
+基线为 `9cd57800ce524d8e0ead90f245215ac4153cf144`。使用隔离 SQLite、合成客户/订单/银行凭证和真实 Chromium 完成外币分次结汇、同币种合并、预收核销、CNY直接收付、手续费、确认/放弃、请求键回查、超额/重复/退款/作废拒绝、历史4位与JPY精度等场景。原有Transaction、PaymentPlan、AdvanceAllocation、Order和库存未被结汇改写；既有参考统计未混入新资金事实。完整证据见[R1-FIN-P2-C验收](R1-FIN-P2-C-银行资金记录与结汇完整业务闭环验收.md)。
+
+| ID | 优先级 / 状态 | 首次发现 / 最近核实 | 影响与处理 | 下一步 / 关闭条件 |
+|---|---|---|---|---|
+| ISS-118 | P1 / FIXED_PENDING_REVIEW | P2-C隔离复核；2026-10-19 | 旧版localStorage草稿可能保留凭证引用、SHA256和人工核实说明。恢复后立即用白名单覆盖旧快照；敏感字段不落本地，恢复后重新填写 | ChatGPT独立复核字段、过期清理和恢复边界；不自行关闭 |
+| ISS-119 | P2 / FIXED_PENDING_REVIEW | P2-C真实UI；2026-10-19 | 后端要求独立手续费的`fee_for`关联，但页面无已确认结汇事件选择。增加最小选择器，后端权限、额度和事务校验保持 | 独立复核手续费含扣/另扣、不可见批次保护和回归；不自行关闭 |
+| ISS-120 | P1 / FIXED_PENDING_REVIEW | P2-C真实UI；2026-10-19 | 浏览器数字输入把`87.60`变为JS `87.6`，服务端Decimal精度校验拒绝。请求体改为规范化字符串，后端规则不变 | 独立复核金额序列化、精度拒绝及历史兼容；不自行关闭 |
+
+ISS-105保持OPEN，ISS-108保持BLOCKED，ISS-109至ISS-117及其他历史Issue状态保持不变。当前唯一ID计数：120个；OPEN=5、BLOCKED=23、NEEDS_VERIFICATION=27、FIXED_PENDING_REVIEW=57、CLOSED=8；P0=0。P2-C完成后停止等待独立复审，不进入P3、正式RBAC、员工UAT或部署。

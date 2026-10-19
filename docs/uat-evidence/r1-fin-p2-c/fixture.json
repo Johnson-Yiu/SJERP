@@ -1,0 +1,33 @@
+{
+  "customer": 1,
+  "orders": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "sources": {
+    "split_60_40": [
+      1,
+      2
+    ],
+    "single_100": 3,
+    "merge_30_70": [
+      4,
+      5
+    ],
+    "prepayment": 6,
+    "cny_direct": 7,
+    "historic_4dp": 8,
+    "jpy": 9,
+    "bank_fee": 10
+  },
+  "voucher_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+  "voucher": {
+    "type": "SYNTHETIC_BANK_VOUCHER_NOT_REAL",
+    "date": "2026-10-19",
+    "reference": "P2C-SYNTH-BANK-01",
+    "note": "仅用于隔离验收"
+  }
+}

@@ -1,0 +1,1097 @@
+{
+  "observations": [
+    {
+      "method": "GET",
+      "path": "rmb-cash-events/",
+      "status": 200,
+      "request": null,
+      "response": {
+        "results": [
+          {
+            "id": 9,
+            "event_no": "P2B-EVENT-9b8cd77e-72df-4db5-8ea5-ff5f2e6fe4e4",
+            "request_key": "P2B-REQUEST-42bd8123-f1b1-4640-b840-388fd0d04335",
+            "kind": "fx_settlement",
+            "currency": "USD",
+            "amount": "12.3400",
+            "direction": "income",
+            "bank_date": "2026-10-19",
+            "bank_net_amount": "87.60",
+            "fee_mode": "none",
+            "bank_currency": "CNY",
+            "fee_currency": "CNY",
+            "fee_amount": "0.00",
+            "source_account": "SYNTH-FX-02",
+            "rmb_account": "SYNTH-CNY-02",
+            "bank_reference": "P2C-BANK-H",
+            "evidence_reference": "synthetic-bank-voucher.json",
+            "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+            "evidence_note": "隔离合成凭证，已核对历史四位小数来源，按USD两位本次分配",
+            "quoted_rate": "7.100000",
+            "status": "cancelled",
+            "confirmed_at": null,
+            "created_at": "2026-10-19T07:44:05.373067Z",
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "register",
+              "note": "开发身份，非正式员工审批"
+            },
+            "confirmed_actor": {},
+            "cancelled_actor": {
+              "kind": "development_superadmin",
+              "action": "cancel_pending",
+              "note": "开发身份，非正式员工审批"
+            },
+            "cancelled_reason": "P2-C 隔离验收：保留历史四位小数来源，暂不确认银行事实",
+            "correction_of": null,
+            "fee_for": null,
+            "sources": [
+              {
+                "transaction_id": 8,
+                "amount": "12.3400",
+                "currency": "USD",
+                "snapshot": {
+                  "id": 8,
+                  "transaction_no": "P2C-USD-HIST-4DP",
+                  "amount": "12.3401",
+                  "currency": "USD",
+                  "direction": "income",
+                  "kind": "other",
+                  "split_from_id": null,
+                  "customer_id": 1,
+                  "supplier_id": null,
+                  "order_id": 1,
+                  "purchase_order_id": null,
+                  "plan_id": null,
+                  "exchange_rate": "7.123456",
+                  "rmb_amount": "87.9034"
+                }
+              }
+            ],
+            "reference_amount": "87.90",
+            "net_minus_reference_information_only": "-0.30",
+            "basis": "bank_voucher_manual_v1",
+            "coverage_since": null,
+            "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+          },
+          {
+            "id": 8,
+            "event_no": "P2B-EVENT-a4ce61d2-1c0d-43df-9270-c73e95cfa6ed",
+            "request_key": "P2B-REQUEST-cae0b07b-ba53-401a-b257-9d004b429e1f",
+            "kind": "fx_settlement",
+            "currency": "USD",
+            "amount": "12.3400",
+            "direction": "income",
+            "bank_date": "2026-10-19",
+            "bank_net_amount": "87.60",
+            "fee_mode": "none",
+            "bank_currency": "CNY",
+            "fee_currency": "CNY",
+            "fee_amount": "0.00",
+            "source_account": "SYNTH-FX-02",
+            "rmb_account": "SYNTH-CNY-02",
+            "bank_reference": "P2C-BANK-H",
+            "evidence_reference": "synthetic-bank-voucher.json",
+            "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+            "evidence_note": "隔离合成凭证，已核对历史四位小数来源，按USD两位本次分配",
+            "quoted_rate": "7.100000",
+            "status": "cancelled",
+            "confirmed_at": null,
+            "created_at": "2026-10-19T07:43:46.476972Z",
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "register",
+              "note": "开发身份，非正式员工审批"
+            },
+            "confirmed_actor": {},
+            "cancelled_actor": {
+              "kind": "development_superadmin",
+              "action": "cancel_pending",
+              "note": "开发身份，非正式员工审批"
+            },
+            "cancelled_reason": "P2-C 隔离验收：保留历史四位小数来源，暂不确认银行事实",
+            "correction_of": null,
+            "fee_for": null,
+            "sources": [
+              {
+                "transaction_id": 8,
+                "amount": "12.3400",
+                "currency": "USD",
+                "snapshot": {
+                  "id": 8,
+                  "transaction_no": "P2C-USD-HIST-4DP",
+                  "amount": "12.3401",
+                  "currency": "USD",
+                  "direction": "income",
+                  "kind": "other",
+                  "split_from_id": null,
+                  "customer_id": 1,
+                  "supplier_id": null,
+                  "order_id": 1,
+                  "purchase_order_id": null,
+                  "plan_id": null,
+                  "exchange_rate": "7.123456",
+                  "rmb_amount": "87.9034"
+                }
+              }
+            ],
+            "reference_amount": "87.90",
+            "net_minus_reference_information_only": "-0.30",
+            "basis": "bank_voucher_manual_v1",
+            "coverage_since": null,
+            "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+          },
+          {
+            "id": 7,
+            "event_no": "P2B-EVENT-70412740-b85f-4dba-913c-190c36f0bb18",
+            "request_key": "P2B-REQUEST-e2142a8b-5be2-4095-ab19-b0dc22a58df5",
+            "kind": "cny_direct",
+            "currency": "CNY",
+            "amount": "20.0000",
+            "direction": "income",
+            "bank_date": "2026-10-19",
+            "bank_net_amount": "20.00",
+            "fee_mode": "none",
+            "bank_currency": "CNY",
+            "fee_currency": "CNY",
+            "fee_amount": "0.00",
+            "source_account": "SYNTH-CNY-02",
+            "rmb_account": "SYNTH-CNY-02",
+            "bank_reference": "P2C-BANK-CNY",
+            "evidence_reference": "synthetic-bank-voucher.json",
+            "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+            "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+            "quoted_rate": "1.000000",
+            "status": "confirmed",
+            "confirmed_at": "2026-10-19T07:41:52.644536Z",
+            "created_at": "2026-10-19T07:41:52.379988Z",
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "register",
+              "note": "开发身份，非正式员工审批"
+            },
+            "confirmed_actor": {
+              "kind": "development_superadmin",
+              "action": "confirm_bank_voucher",
+              "note": "开发身份，非正式员工审批"
+            },
+            "cancelled_actor": {},
+            "cancelled_reason": "",
+            "correction_of": null,
+            "fee_for": null,
+            "sources": [
+              {
+                "transaction_id": 7,
+                "amount": "20.0000",
+                "currency": "CNY",
+                "snapshot": {
+                  "id": 7,
+                  "transaction_no": "P2C-CNY-DIRECT",
+                  "amount": "20.0000",
+                  "currency": "CNY",
+                  "direction": "income",
+                  "kind": "customer_receipt",
+                  "split_from_id": null,
+                  "customer_id": 2,
+                  "supplier_id": null,
+                  "order_id": 5,
+                  "purchase_order_id": null,
+                  "plan_id": 6,
+                  "exchange_rate": "1.000000",
+                  "rmb_amount": "20.0000"
+                }
+              }
+            ],
+            "reference_amount": "20.00",
+            "net_minus_reference_information_only": "0.00",
+            "basis": "bank_voucher_manual_v1",
+            "coverage_since": null,
+            "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+          },
+          {
+            "id": 6,
+            "event_no": "P2B-EVENT-b50e387e-cbf2-432b-b776-d608f98bf680",
+            "request_key": "P2B-REQUEST-31a7992d-2cd9-48a8-9503-3fc213dfca86",
+            "kind": "bank_fee",
+            "currency": "CNY",
+            "amount": "5.0000",
+            "direction": "expense",
+            "bank_date": "2026-10-19",
+            "bank_net_amount": "5.00",
+            "fee_mode": "none",
+            "bank_currency": "CNY",
+            "fee_currency": "CNY",
+            "fee_amount": "0.00",
+            "source_account": "SYNTH-CNY-02",
+            "rmb_account": "SYNTH-CNY-02",
+            "bank_reference": "P2C-BANK-FEE",
+            "evidence_reference": "synthetic-bank-voucher.json",
+            "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+            "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+            "quoted_rate": "1.000000",
+            "status": "confirmed",
+            "confirmed_at": "2026-10-19T07:41:21.688365Z",
+            "created_at": "2026-10-19T07:41:21.398025Z",
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "register",
+              "note": "开发身份，非正式员工审批"
+            },
+            "confirmed_actor": {
+              "kind": "development_superadmin",
+              "action": "confirm_bank_voucher",
+              "note": "开发身份，非正式员工审批"
+            },
+            "cancelled_actor": {},
+            "cancelled_reason": "",
+            "correction_of": null,
+            "fee_for": 2,
+            "sources": [
+              {
+                "transaction_id": 10,
+                "amount": "5.0000",
+                "currency": "CNY",
+                "snapshot": {
+                  "id": 10,
+                  "transaction_no": "P2C-CNY-BANK-FEE",
+                  "amount": "5.0000",
+                  "currency": "CNY",
+                  "direction": "expense",
+                  "kind": "bank_fee",
+                  "split_from_id": null,
+                  "customer_id": null,
+                  "supplier_id": null,
+                  "order_id": null,
+                  "purchase_order_id": null,
+                  "plan_id": null,
+                  "exchange_rate": "1.000000",
+                  "rmb_amount": "5.0000"
+                }
+              }
+            ],
+            "reference_amount": "5.00",
+            "net_minus_reference_information_only": "0.00",
+            "basis": "bank_voucher_manual_v1",
+            "coverage_since": null,
+            "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+          },
+          {
+            "id": 5,
+            "event_no": "P2B-EVENT-65479095-3757-4fcb-a000-3885462eb30c",
+            "request_key": "P2B-REQUEST-32c4a193-7025-47e0-9d36-c343fa6209f3",
+            "kind": "fx_settlement",
+            "currency": "USD",
+            "amount": "50.0000",
+            "direction": "income",
+            "bank_date": "2026-10-19",
+            "bank_net_amount": "355.00",
+            "fee_mode": "none",
+            "bank_currency": "CNY",
+            "fee_currency": "CNY",
+            "fee_amount": "0.00",
+            "source_account": "SYNTH-FX-02",
+            "rmb_account": "SYNTH-CNY-02",
+            "bank_reference": "P2C-BANK-D-ADV",
+            "evidence_reference": "synthetic-bank-voucher.json",
+            "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+            "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+            "quoted_rate": "7.100000",
+            "status": "confirmed",
+            "confirmed_at": "2026-10-19T07:40:50.748377Z",
+            "created_at": "2026-10-19T07:40:50.565169Z",
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "register",
+              "note": "开发身份，非正式员工审批"
+            },
+            "confirmed_actor": {
+              "kind": "development_superadmin",
+              "action": "confirm_bank_voucher",
+              "note": "开发身份，非正式员工审批"
+            },
+            "cancelled_actor": {},
+            "cancelled_reason": "",
+            "correction_of": null,
+            "fee_for": null,
+            "sources": [
+              {
+                "transaction_id": 6,
+                "amount": "50.0000",
+                "currency": "USD",
+                "snapshot": {
+                  "id": 6,
+                  "transaction_no": "P2C-USD-ADV",
+                  "amount": "50.0000",
+                  "currency": "USD",
+                  "direction": "income",
+                  "kind": "unallocated_advance",
+                  "split_from_id": null,
+                  "customer_id": 1,
+                  "supplier_id": null,
+                  "order_id": 4,
+                  "purchase_order_id": null,
+                  "plan_id": null,
+                  "exchange_rate": "7.100000",
+                  "rmb_amount": "355.0000"
+                }
+              }
+            ],
+            "reference_amount": "355.00",
+            "net_minus_reference_information_only": "0.00",
+            "basis": "bank_voucher_manual_v1",
+            "coverage_since": null,
+            "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+          },
+          {
+            "id": 4,
+            "event_no": "P2B-EVENT-1235c96e-bd68-4d77-aebc-7cba1e61e7f3",
+            "request_key": "P2B-REQUEST-0712a3c0-321c-49a5-8faa-1e725c0b60e4",
+            "kind": "fx_settlement",
+            "currency": "USD",
+            "amount": "100.0000",
+            "direction": "income",
+            "bank_date": "2026-10-19",
+            "bank_net_amount": "700.00",
+            "fee_mode": "none",
+            "bank_currency": "CNY",
+            "fee_currency": "CNY",
+            "fee_amount": "0.00",
+            "source_account": "SYNTH-FX-02",
+            "rmb_account": "SYNTH-CNY-02",
+            "bank_reference": "P2C-BANK-C-MERGE",
+            "evidence_reference": "synthetic-bank-voucher.json",
+            "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+            "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+            "quoted_rate": "7.000000",
+            "status": "confirmed",
+            "confirmed_at": "2026-10-19T07:40:19.885766Z",
+            "created_at": "2026-10-19T07:40:19.677878Z",
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "register",
+              "note": "开发身份，非正式员工审批"
+            },
+            "confirmed_actor": {
+              "kind": "development_superadmin",
+              "action": "confirm_bank_voucher",
+              "note": "开发身份，非正式员工审批"
+            },
+            "cancelled_actor": {},
+            "cancelled_reason": "",
+            "correction_of": null,
+            "fee_for": null,
+            "sources": [
+              {
+                "transaction_id": 4,
+                "amount": "30.0000",
+                "currency": "USD",
+                "snapshot": {
+                  "id": 4,
+                  "transaction_no": "P2C-USD-C-30",
+                  "amount": "30.0000",
+                  "currency": "USD",
+                  "direction": "income",
+                  "kind": "customer_receipt",
+                  "split_from_id": null,
+                  "customer_id": 1,
+                  "supplier_id": null,
+                  "order_id": 3,
+                  "purchase_order_id": null,
+                  "plan_id": 4,
+                  "exchange_rate": "7.100000",
+                  "rmb_amount": "213.0000"
+                }
+              },
+              {
+                "transaction_id": 5,
+                "amount": "70.0000",
+                "currency": "USD",
+                "snapshot": {
+                  "id": 5,
+                  "transaction_no": "P2C-USD-C-70",
+                  "amount": "70.0000",
+                  "currency": "USD",
+                  "direction": "income",
+                  "kind": "customer_receipt",
+                  "split_from_id": null,
+                  "customer_id": 1,
+                  "supplier_id": null,
+                  "order_id": 3,
+                  "purchase_order_id": null,
+                  "plan_id": 4,
+                  "exchange_rate": "7.100000",
+                  "rmb_amount": "497.0000"
+                }
+              }
+            ],
+            "reference_amount": "710.00",
+            "net_minus_reference_information_only": "-10.00",
+            "basis": "bank_voucher_manual_v1",
+            "coverage_since": null,
+            "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+          },
+          {
+            "id": 3,
+            "event_no": "P2B-EVENT-7e707736-b70d-46d9-8025-047781984616",
+            "request_key": "P2B-REQUEST-9a702e1a-5352-4cf5-856e-c1fe74cbc652",
+            "kind": "fx_settlement",
+            "currency": "USD",
+            "amount": "40.0000",
+            "direction": "income",
+            "bank_date": "2026-10-19",
+            "bank_net_amount": "284.00",
+            "fee_mode": "none",
+            "bank_currency": "CNY",
+            "fee_currency": "CNY",
+            "fee_amount": "0.00",
+            "source_account": "SYNTH-FX-02",
+            "rmb_account": "SYNTH-CNY-02",
+            "bank_reference": "P2C-BANK-B-40",
+            "evidence_reference": "synthetic-bank-voucher.json",
+            "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+            "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+            "quoted_rate": "7.100000",
+            "status": "confirmed",
+            "confirmed_at": "2026-10-19T07:39:48.817237Z",
+            "created_at": "2026-10-19T07:39:48.634622Z",
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "register",
+              "note": "开发身份，非正式员工审批"
+            },
+            "confirmed_actor": {
+              "kind": "development_superadmin",
+              "action": "confirm_bank_voucher",
+              "note": "开发身份，非正式员工审批"
+            },
+            "cancelled_actor": {},
+            "cancelled_reason": "",
+            "correction_of": null,
+            "fee_for": null,
+            "sources": [
+              {
+                "transaction_id": 3,
+                "amount": "40.0000",
+                "currency": "USD",
+                "snapshot": {
+                  "id": 3,
+                  "transaction_no": "P2C-USD-B-100",
+                  "amount": "100.0000",
+                  "currency": "USD",
+                  "direction": "income",
+                  "kind": "customer_receipt",
+                  "split_from_id": null,
+                  "customer_id": 1,
+                  "supplier_id": null,
+                  "order_id": 2,
+                  "purchase_order_id": null,
+                  "plan_id": 3,
+                  "exchange_rate": "7.100000",
+                  "rmb_amount": "710.0000"
+                }
+              }
+            ],
+            "reference_amount": "284.00",
+            "net_minus_reference_information_only": "0.00",
+            "basis": "bank_voucher_manual_v1",
+            "coverage_since": null,
+            "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+          },
+          {
+            "id": 2,
+            "event_no": "P2B-EVENT-5ad7e685-8232-44a5-89a0-71fd12d8a504",
+            "request_key": "P2B-REQUEST-30c42156-a660-44e2-8820-399e11e9c093",
+            "kind": "fx_settlement",
+            "currency": "USD",
+            "amount": "60.0000",
+            "direction": "income",
+            "bank_date": "2026-10-19",
+            "bank_net_amount": "426.00",
+            "fee_mode": "none",
+            "bank_currency": "CNY",
+            "fee_currency": "CNY",
+            "fee_amount": "0.00",
+            "source_account": "SYNTH-FX-02",
+            "rmb_account": "SYNTH-CNY-02",
+            "bank_reference": "P2C-BANK-B-60",
+            "evidence_reference": "synthetic-bank-voucher.json",
+            "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+            "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+            "quoted_rate": "7.100000",
+            "status": "confirmed",
+            "confirmed_at": "2026-10-19T07:39:17.874237Z",
+            "created_at": "2026-10-19T07:39:17.687433Z",
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "register",
+              "note": "开发身份，非正式员工审批"
+            },
+            "confirmed_actor": {
+              "kind": "development_superadmin",
+              "action": "confirm_bank_voucher",
+              "note": "开发身份，非正式员工审批"
+            },
+            "cancelled_actor": {},
+            "cancelled_reason": "",
+            "correction_of": null,
+            "fee_for": null,
+            "sources": [
+              {
+                "transaction_id": 3,
+                "amount": "60.0000",
+                "currency": "USD",
+                "snapshot": {
+                  "id": 3,
+                  "transaction_no": "P2C-USD-B-100",
+                  "amount": "100.0000",
+                  "currency": "USD",
+                  "direction": "income",
+                  "kind": "customer_receipt",
+                  "split_from_id": null,
+                  "customer_id": 1,
+                  "supplier_id": null,
+                  "order_id": 2,
+                  "purchase_order_id": null,
+                  "plan_id": 3,
+                  "exchange_rate": "7.100000",
+                  "rmb_amount": "710.0000"
+                }
+              }
+            ],
+            "reference_amount": "426.00",
+            "net_minus_reference_information_only": "0.00",
+            "basis": "bank_voucher_manual_v1",
+            "coverage_since": null,
+            "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+          },
+          {
+            "id": 1,
+            "event_no": "P2B-EVENT-18b83651-3973-4f94-a4d5-2f5240784250",
+            "request_key": "P2B-REQUEST-52657d88-fe80-48de-9d28-3a6fa0a7f260",
+            "kind": "fx_settlement",
+            "currency": "USD",
+            "amount": "60.0000",
+            "direction": "income",
+            "bank_date": "2026-10-19",
+            "bank_net_amount": "423.00",
+            "fee_mode": "included",
+            "bank_currency": "CNY",
+            "fee_currency": "CNY",
+            "fee_amount": "3.00",
+            "source_account": "SYNTH-FX-02",
+            "rmb_account": "SYNTH-CNY-02",
+            "bank_reference": "P2C-BANK-A-60",
+            "evidence_reference": "synthetic-bank-voucher.json",
+            "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+            "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+            "quoted_rate": "7.100000",
+            "status": "confirmed",
+            "confirmed_at": "2026-10-19T07:38:46.786338Z",
+            "created_at": "2026-10-19T07:38:46.375717Z",
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "register",
+              "note": "开发身份，非正式员工审批"
+            },
+            "confirmed_actor": {
+              "kind": "development_superadmin",
+              "action": "confirm_bank_voucher",
+              "note": "开发身份，非正式员工审批"
+            },
+            "cancelled_actor": {},
+            "cancelled_reason": "",
+            "correction_of": null,
+            "fee_for": null,
+            "sources": [
+              {
+                "transaction_id": 1,
+                "amount": "60.0000",
+                "currency": "USD",
+                "snapshot": {
+                  "id": 1,
+                  "transaction_no": "P2C-USD-A-60",
+                  "amount": "60.0000",
+                  "currency": "USD",
+                  "direction": "income",
+                  "kind": "customer_receipt",
+                  "split_from_id": null,
+                  "customer_id": 1,
+                  "supplier_id": null,
+                  "order_id": 1,
+                  "purchase_order_id": null,
+                  "plan_id": 1,
+                  "exchange_rate": "7.100000",
+                  "rmb_amount": "426.0000"
+                }
+              }
+            ],
+            "reference_amount": "426.00",
+            "net_minus_reference_information_only": "-3.00",
+            "basis": "bank_voucher_manual_v1",
+            "coverage_since": null,
+            "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+          }
+        ],
+        "coverage_since": null,
+        "note": "人工凭证事件列表，不代表全部银行资金。"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "rmb-cash-events/by-request-key/?request_key=P2B-REQUEST-30c42156-a660-44e2-8820-399e11e9c093",
+      "status": 200,
+      "request": null,
+      "response": {
+        "id": 2,
+        "event_no": "P2B-EVENT-5ad7e685-8232-44a5-89a0-71fd12d8a504",
+        "request_key": "P2B-REQUEST-30c42156-a660-44e2-8820-399e11e9c093",
+        "kind": "fx_settlement",
+        "currency": "USD",
+        "amount": "60.0000",
+        "direction": "income",
+        "bank_date": "2026-10-19",
+        "bank_net_amount": "426.00",
+        "fee_mode": "none",
+        "bank_currency": "CNY",
+        "fee_currency": "CNY",
+        "fee_amount": "0.00",
+        "source_account": "SYNTH-FX-02",
+        "rmb_account": "SYNTH-CNY-02",
+        "bank_reference": "P2C-BANK-B-60",
+        "evidence_reference": "synthetic-bank-voucher.json",
+        "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+        "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+        "quoted_rate": "7.100000",
+        "status": "confirmed",
+        "confirmed_at": "2026-10-19T07:39:17.874237Z",
+        "created_at": "2026-10-19T07:39:17.687433Z",
+        "created_actor": {
+          "kind": "development_superadmin",
+          "action": "register",
+          "note": "开发身份，非正式员工审批"
+        },
+        "confirmed_actor": {
+          "kind": "development_superadmin",
+          "action": "confirm_bank_voucher",
+          "note": "开发身份，非正式员工审批"
+        },
+        "cancelled_actor": {},
+        "cancelled_reason": "",
+        "correction_of": null,
+        "fee_for": null,
+        "sources": [
+          {
+            "transaction_id": 3,
+            "amount": "60.0000",
+            "currency": "USD",
+            "snapshot": {
+              "id": 3,
+              "transaction_no": "P2C-USD-B-100",
+              "amount": "100.0000",
+              "currency": "USD",
+              "direction": "income",
+              "kind": "customer_receipt",
+              "split_from_id": null,
+              "customer_id": 1,
+              "supplier_id": null,
+              "order_id": 2,
+              "purchase_order_id": null,
+              "plan_id": 3,
+              "exchange_rate": "7.100000",
+              "rmb_amount": "710.0000"
+            }
+          }
+        ],
+        "reference_amount": "426.00",
+        "net_minus_reference_information_only": "0.00",
+        "basis": "bank_voucher_manual_v1",
+        "coverage_since": null,
+        "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "rmb-cash-events/",
+      "status": 200,
+      "request": {
+        "event_no": "P2B-EVENT-5ad7e685-8232-44a5-89a0-71fd12d8a504",
+        "request_key": "P2B-REQUEST-30c42156-a660-44e2-8820-399e11e9c093",
+        "source_account": "SYNTH-FX-02",
+        "rmb_account": "SYNTH-CNY-02",
+        "bank_reference": "P2C-BANK-B-60",
+        "evidence_reference": "synthetic-bank-voucher.json",
+        "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+        "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+        "kind": "fx_settlement",
+        "currency": "USD",
+        "direction": "income",
+        "bank_date": "2026-10-19",
+        "bank_net_amount": "426.00",
+        "fee_mode": "none",
+        "fee_amount": "0.00",
+        "quoted_rate": "7.100000",
+        "fee_for": null,
+        "sources": [
+          {
+            "transaction_id": 3,
+            "amount": "60.00",
+            "verified": true
+          }
+        ]
+      },
+      "response": {
+        "id": 2,
+        "event_no": "P2B-EVENT-5ad7e685-8232-44a5-89a0-71fd12d8a504",
+        "request_key": "P2B-REQUEST-30c42156-a660-44e2-8820-399e11e9c093",
+        "kind": "fx_settlement",
+        "currency": "USD",
+        "amount": "60.0000",
+        "direction": "income",
+        "bank_date": "2026-10-19",
+        "bank_net_amount": "426.00",
+        "fee_mode": "none",
+        "bank_currency": "CNY",
+        "fee_currency": "CNY",
+        "fee_amount": "0.00",
+        "source_account": "SYNTH-FX-02",
+        "rmb_account": "SYNTH-CNY-02",
+        "bank_reference": "P2C-BANK-B-60",
+        "evidence_reference": "synthetic-bank-voucher.json",
+        "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+        "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+        "quoted_rate": "7.100000",
+        "status": "confirmed",
+        "confirmed_at": "2026-10-19T07:39:17.874237Z",
+        "created_at": "2026-10-19T07:39:17.687433Z",
+        "created_actor": {
+          "kind": "development_superadmin",
+          "action": "register",
+          "note": "开发身份，非正式员工审批"
+        },
+        "confirmed_actor": {
+          "kind": "development_superadmin",
+          "action": "confirm_bank_voucher",
+          "note": "开发身份，非正式员工审批"
+        },
+        "cancelled_actor": {},
+        "cancelled_reason": "",
+        "correction_of": null,
+        "fee_for": null,
+        "sources": [
+          {
+            "transaction_id": 3,
+            "amount": "60.0000",
+            "currency": "USD",
+            "snapshot": {
+              "id": 3,
+              "transaction_no": "P2C-USD-B-100",
+              "amount": "100.0000",
+              "currency": "USD",
+              "direction": "income",
+              "kind": "customer_receipt",
+              "split_from_id": null,
+              "customer_id": 1,
+              "supplier_id": null,
+              "order_id": 2,
+              "purchase_order_id": null,
+              "plan_id": 3,
+              "exchange_rate": "7.100000",
+              "rmb_amount": "710.0000"
+            }
+          }
+        ],
+        "reference_amount": "426.00",
+        "net_minus_reference_information_only": "0.00",
+        "basis": "bank_voucher_manual_v1",
+        "coverage_since": null,
+        "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "rmb-cash-events/",
+      "status": 409,
+      "request": {
+        "event_no": "P2B-EVENT-5ad7e685-8232-44a5-89a0-71fd12d8a504",
+        "request_key": "P2B-REQUEST-30c42156-a660-44e2-8820-399e11e9c093",
+        "source_account": "SYNTH-FX-02",
+        "rmb_account": "SYNTH-CNY-02",
+        "bank_reference": "P2C-BANK-B-60",
+        "evidence_reference": "synthetic-bank-voucher.json",
+        "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+        "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+        "kind": "fx_settlement",
+        "currency": "USD",
+        "direction": "income",
+        "bank_date": "2026-10-19",
+        "bank_net_amount": "427.00",
+        "fee_mode": "none",
+        "fee_amount": "0.00",
+        "quoted_rate": "7.100000",
+        "fee_for": null,
+        "sources": [
+          {
+            "transaction_id": 3,
+            "amount": "60.00",
+            "verified": true
+          }
+        ]
+      },
+      "response": {
+        "detail": "请求键内容冲突或资金来源已被占用，请按原请求键核查。"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "rmb-cash-events/",
+      "status": 409,
+      "request": {
+        "event_no": "P2C-OVER",
+        "request_key": "P2C-OVER",
+        "source_account": "SYNTH-FX-02",
+        "rmb_account": "SYNTH-CNY-02",
+        "bank_reference": "P2C-BANK-B-60",
+        "evidence_reference": "synthetic-bank-voucher.json",
+        "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+        "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+        "kind": "fx_settlement",
+        "currency": "USD",
+        "direction": "income",
+        "bank_date": "2026-10-19",
+        "bank_net_amount": "426.00",
+        "fee_mode": "none",
+        "fee_amount": "0.00",
+        "quoted_rate": "7.100000",
+        "fee_for": null,
+        "sources": [
+          {
+            "transaction_id": 1,
+            "amount": "0.01",
+            "verified": true
+          }
+        ]
+      },
+      "response": {
+        "detail": "来源额度不足或已确认，不能重复结汇。"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "rmb-cash-events/preview/",
+      "status": 400,
+      "request": {
+        "event_no": "P2C-JPY-BAD",
+        "request_key": "P2C-JPY-BAD",
+        "source_account": "SYNTH-FX-02",
+        "rmb_account": "SYNTH-CNY-02",
+        "bank_reference": "P2C-BANK-B-60",
+        "evidence_reference": "synthetic-bank-voucher.json",
+        "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+        "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+        "kind": "fx_settlement",
+        "currency": "JPY",
+        "direction": "income",
+        "bank_date": "2026-10-19",
+        "bank_net_amount": "5.00",
+        "fee_mode": "none",
+        "fee_amount": "0.00",
+        "quoted_rate": "0.050000",
+        "fee_for": null,
+        "sources": [
+          {
+            "transaction_id": 9,
+            "amount": "0.1",
+            "verified": true
+          }
+        ]
+      },
+      "response": [
+        "金额或汇率非有限正数、超限或超过币种允许精度。"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "rmb-cash-events/preview/",
+      "status": 400,
+      "request": {
+        "event_no": "P2C-FLOAT-BAD",
+        "request_key": "P2C-FLOAT-BAD",
+        "source_account": "SYNTH-FX-02",
+        "rmb_account": "SYNTH-CNY-02",
+        "bank_reference": "P2C-BANK-B-60",
+        "evidence_reference": "synthetic-bank-voucher.json",
+        "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+        "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+        "kind": "fx_settlement",
+        "currency": "USD",
+        "direction": "income",
+        "bank_date": "2026-10-19",
+        "bank_net_amount": 87.6,
+        "fee_mode": "none",
+        "fee_amount": "0.00",
+        "quoted_rate": "7.100000",
+        "fee_for": null,
+        "sources": [
+          {
+            "transaction_id": 3,
+            "amount": "60.00",
+            "verified": true
+          }
+        ]
+      },
+      "response": [
+        "币种未配置或金额必须为精确十进制字符串。"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "transactions/1/void/",
+      "status": 400,
+      "request": {
+        "reason": "P2-C 已结汇来源作废拒绝"
+      },
+      "response": [
+        "来源有关联待确认/已确认银行资金事件，不能直接作废。未确认草稿可留痕放弃；已确认更正规则待明确。"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "transactions/",
+      "status": 400,
+      "request": {
+        "transaction_no": "P2C-REFUND-BLOCKED",
+        "transaction_date": "2026-10-19",
+        "direction": "expense",
+        "category": "退款测试",
+        "amount": "10.00",
+        "currency": "USD",
+        "exchange_rate": "7.100000",
+        "kind": "refund",
+        "order": 1
+      },
+      "response": [
+        "该往来方同币种资金已有银行事件，退款来源未明确，不能自动释放或推测使用额度。"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "transactions/",
+      "status": 400,
+      "request": {
+        "transaction_no": "P2C-REPLACE-BLOCKED",
+        "transaction_date": "2026-10-19",
+        "direction": "income",
+        "category": "替代测试",
+        "amount": "1.00",
+        "currency": "USD",
+        "exchange_rate": "7.100000",
+        "kind": "other_income",
+        "replaces": 1
+      },
+      "response": [
+        "来源有关联待确认/已确认银行资金事件，不能直接替代。未确认草稿可留痕放弃；已确认更正规则待明确。"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "rmb-cash-events/preview/",
+      "status": 400,
+      "request": {
+        "event_no": "P2C-UNSUPPORTED",
+        "request_key": "P2C-UNSUPPORTED",
+        "source_account": "SYNTH-FX-02",
+        "rmb_account": "SYNTH-CNY-02",
+        "bank_reference": "P2C-BANK-B-60",
+        "evidence_reference": "synthetic-bank-voucher.json",
+        "evidence_sha256": "89a84663e486a3a14a6ece97bc2ac9038703e60aeaa4189f302f6264a79519fc",
+        "evidence_note": "隔离合成凭证，已核对银行日期、净额、手续费与来源分配",
+        "kind": "fx_settlement",
+        "currency": "KPW",
+        "direction": "income",
+        "bank_date": "2026-10-19",
+        "bank_net_amount": "426.00",
+        "fee_mode": "none",
+        "fee_amount": "0.00",
+        "quoted_rate": "7.100000",
+        "fee_for": null,
+        "sources": [
+          {
+            "transaction_id": 3,
+            "amount": "60.00",
+            "verified": true
+          }
+        ]
+      },
+      "response": [
+        "资金类型、方向或币种无效。"
+      ]
+    }
+  ],
+  "summary": {
+    "DATABASE_VERIFICATION": {
+      "legacy_sha256": "41f898001fcdcb54c39eac2c2a4b4d1db57a3fccce04acbee9c889b5281c0447",
+      "legacy_unchanged": true,
+      "transaction_count": 10,
+      "payment_plan_count": 6,
+      "cash_event_count": 9,
+      "confirmed_event_count": 7,
+      "cancelled_event_count": 2,
+      "allocation_count": 10,
+      "source_remaining": {
+        "P2C-CNY-BANK-FEE": "0.0000",
+        "P2C-CNY-DIRECT": "0.0000",
+        "P2C-USD-C-70": "0.0000",
+        "P2C-USD-C-30": "0.0000",
+        "P2C-USD-B-100": "0.0000",
+        "P2C-USD-A-40": "40.0000",
+        "P2C-USD-A-60": "0.0000",
+        "P2C-USD-HIST-4DP": "12.3401",
+        "P2C-USD-ADV": "0.0000"
+      },
+      "confirmed_bank_net_cny": "2203.00",
+      "reference_difference_only": [
+        {
+          "bank_reference": "P2C-BANK-CNY",
+          "difference": "0.00"
+        },
+        {
+          "bank_reference": "P2C-BANK-FEE",
+          "difference": "0.00"
+        },
+        {
+          "bank_reference": "P2C-BANK-D-ADV",
+          "difference": "0.00"
+        },
+        {
+          "bank_reference": "P2C-BANK-C-MERGE",
+          "difference": "-10.00"
+        },
+        {
+          "bank_reference": "P2C-BANK-B-40",
+          "difference": "0.00"
+        },
+        {
+          "bank_reference": "P2C-BANK-B-60",
+          "difference": "0.00"
+        },
+        {
+          "bank_reference": "P2C-BANK-A-60",
+          "difference": "-3.00"
+        }
+      ]
+    },
+    "REAL_API_OBSERVATION": {
+      "request_count": 11,
+      "rejected_statuses": [
+        409,
+        409,
+        400,
+        400,
+        400,
+        400,
+        400,
+        400
+      ]
+    }
+  }
+}

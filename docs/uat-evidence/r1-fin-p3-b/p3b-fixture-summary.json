@@ -1,0 +1,35 @@
+{
+  "customer_id": 1,
+  "order_id": 1,
+  "order_no": "P3B-SO-500",
+  "plan_id": 1,
+  "receipt340_id": 1,
+  "source_split_id": 2,
+  "merge_ids": [
+    3,
+    4
+  ],
+  "event_ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "pending_id": 10,
+  "cancelled_id": 11,
+  "expected_confirmed_events": 9,
+  "confirmed_total": "3977.90",
+  "legacy_hash": "c70f2adf19a53672d3592433259bc39300b21c933b7ba77a7f8310864819fff2",
+  "legacy_before_events": "20a64c8edc67c8724639e289aa8d5b07aa87aab05287599dafaee257afe8318f",
+  "legacy_after_confirmed": "20a64c8edc67c8724639e289aa8d5b07aa87aab05287599dafaee257afe8318f",
+  "legacy_unchanged_by_confirmed_events": true,
+  "rmb_cash_account_ids": [
+    "SYNTH-FX-01",
+    "SYNTH-CNY-01"
+  ]
+}

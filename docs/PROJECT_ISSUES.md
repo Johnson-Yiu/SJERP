@@ -413,7 +413,13 @@ ISS-105保持OPEN，ISS-108保持BLOCKED，ISS-109至ISS-117及其他历史Issue
 
 | ID | 优先级 / 状态 | 首次来源 / 日期 | 当前核实及影响 | 负责人 / 下一步 | 阶段 / 验收条件 |
 |---|---|---|---|---|---|
-| ISS-122 | P1 / FIXED_PENDING_REVIEW | P3-A独立审查补修；2026-10-19 | `FinanceDashboardPage.vue`原先用`Promise.all`绑定旧财务概览和实际银行资金接口；实际资金失败会让整页失败，日期切换时旧响应也可能覆盖新期间。本轮拆分请求、清空当前期间旧数据并加入两级请求版本保护；实际资金独立错误和重试保留，旧财务概览继续可用。新增Vitest与Playwright覆盖失败、独立重试和快速日期切换。 | 前端QA / ChatGPT独立复核接口失败、重试、日期竞态及三视口真实页面证据；不自行关闭 | R1-FIN-P3-A-FIX-01 / 旧财务概览在实际资金失败时仍可用，旧期间资金不得显示，精确HEAD三项CI及独立复审通过 |
-| ISS-123 | P1 / FIXED_PENDING_REVIEW | P3-A独立审查补修；2026-10-19 | `actual_cash_api.py`原先直接写入银行参考号等文本；以`=`,`+`,`-`,`@`等开头的内容可能被表格软件解释为公式。本轮复用既有`safe_csv`，保护说明、表头、事件文本和汇总标签；API/数据库原文不改，正常参考号仍可读；报表中心既有导出已使用同一保护函数。新增恶意银行参考号与权限403回归。 | 后端/财务QA / ChatGPT独立复核CSV原始字节、正常文本可读性、实际资金与报表中心权限边界；不自行关闭 | R1-FIN-P3-A-FIX-01 / 危险前缀加单引号、原文API不变、无权限不泄露、精确HEAD三项CI及独立复审通过 |
+| ISS-122 | P1 / CLOSED | P3-A独立审查补修；2026-10-19 | `FinanceDashboardPage.vue`原先用`Promise.all`绑定旧财务概览和实际银行资金接口；实际资金失败会让整页失败，日期切换时旧响应也可能覆盖新期间。本轮拆分请求、清空当前期间旧数据并加入两级请求版本保护；实际资金独立错误和重试保留，旧财务概览继续可用。新增Vitest与Playwright覆盖失败、独立重试和快速日期切换。 | 前端QA / ChatGPT独立复核接口失败、重试、日期竞态及三视口真实页面证据；不自行关闭 | R1-FIN-P3-A-FIX-01 / 旧财务概览在实际资金失败时仍可用，旧期间资金不得显示，精确HEAD三项CI及独立复审通过 |
+| ISS-123 | P1 / CLOSED | P3-A独立审查补修；2026-10-19 | `actual_cash_api.py`原先直接写入银行参考号等文本；以`=`,`+`,`-`,`@`等开头的内容可能被表格软件解释为公式。本轮复用既有`safe_csv`，保护说明、表头、事件文本和汇总标签；API/数据库原文不改，正常参考号仍可读；报表中心既有导出已使用同一保护函数。新增恶意银行参考号与权限403回归。 | 后端/财务QA / ChatGPT独立复核CSV原始字节、正常文本可读性、实际资金与报表中心权限边界；不自行关闭 | R1-FIN-P3-A-FIX-01 / 危险前缀加单引号、原文API不变、无权限不泄露、精确HEAD三项CI及独立复审通过 |
 
-本轮新增ISS-122、ISS-123，均保持`FIXED_PENDING_REVIEW`；ISS-105仍OPEN，ISS-108和ISS-121仍BLOCKED，ISS-109至ISS-120及其他历史Issue状态不变。当前唯一ID计数：123个；OPEN=5、BLOCKED=24、NEEDS_VERIFICATION=27、FIXED_PENDING_REVIEW=59、CLOSED=8；P0=0。完成后停止等待ChatGPT独立代码、财务口径和视觉复审，不进入P3-B、正式RBAC、员工UAT或部署。
+本轮新增ISS-122、ISS-123；依据用户提供的独立复审通过结论，二项更新为`CLOSED`。ISS-105仍OPEN，ISS-108和ISS-121仍BLOCKED，ISS-109至ISS-120及其他历史Issue状态不变。当前唯一ID计数：123个；OPEN=5、BLOCKED=24、NEEDS_VERIFICATION=27、FIXED_PENDING_REVIEW=57、CLOSED=10；P0=0。完成后停止等待ChatGPT独立代码、财务口径和视觉复审，不进入P3-B、正式RBAC、员工UAT或部署。
+
+## R1-FIN-P3-B 财务统计最终业务闭环与兼容性验收（2026-10-19）
+
+基于 `c27abcb2e95b833c3a4f4c59161c3fcc7c1d4f64`，在隔离 SQLite、合成外币订单/收款/应收计划/银行凭证和真实 Chromium 中完成 A–O 场景验收。实际资金统计只聚合已确认 `RmbCashEvent.bank_net_amount`，按 `bank_date` 统计；旧 `cash` 来源继续是账面人民币折算参考。分次/合并结汇、CNY直接收付、含扣及独立手续费、pending/cancelled边界、跨月跨年、旧四位和JPY精度、权限和旧报表兼容均有原始 API、CSV、数据库快照和多视口截图。已有关联来源的退款/作废安全拒绝且前后哈希一致；不改Transaction、PaymentPlan、AdvanceAllocation、订单、库存或历史金额。完整矩阵和日志见[R1-FIN-P3-B验收](R1-FIN-P3-B-财务统计最终业务闭环验收.md)。
+
+ISS-122、ISS-123 已依据独立复审通过结论更新为 `CLOSED`。ISS-105 仍 `OPEN`，ISS-108、ISS-121 仍 `BLOCKED`，未自动关闭或修改其他历史Issue。PostgreSQL本地不可用的并发复核和真实网络超时注入保留为报告中的BLOCKED/边界，不伪造通过；最终精确HEAD三项CI作为交付门槛复核。完成后停止等待ChatGPT独立代码、业务和视觉审查，不进入P3-C、正式RBAC、员工UAT或部署。

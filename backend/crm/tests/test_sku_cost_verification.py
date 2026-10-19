@@ -87,6 +87,21 @@ class SkuCostVerificationTests(TestCase):
         self.assertIsNone(sku.cost_verified_at)
         self.assertIsNone(sku.cost_verified_by_id)
 
+    def test_invalid_sku_cost_cannot_be_verified_or_overwrite_previous_verification(self):
+        sku = self.make_sku()
+        self.authenticate()
+        self.assertEqual(self.client.post(f"/api/skus/{sku.pk}/verify-cost/", {}, format="json").status_code, 200)
+        sku.refresh_from_db()
+        verified_at = sku.cost_verified_at
+        SKU.objects.filter(pk=sku.pk).update(cost_price=0, cost_currency=None)
+
+        response = self.client.post(f"/api/skus/{sku.pk}/verify-cost/", {}, format="json")
+
+        self.assertEqual(response.status_code, 400)
+        sku.refresh_from_db()
+        self.assertEqual(sku.cost_verified_at, verified_at)
+        self.assertEqual(sku.cost_verified_by_id, self.user.pk)
+
     def test_supplier_price_verification_is_independent_per_source(self):
         sku = self.make_sku()
         first = self.make_source(sku, self.supplier_a, "SOURCE-A")
@@ -120,6 +135,22 @@ class SkuCostVerificationTests(TestCase):
         second.refresh_from_db()
         self.assertIsNone(first.purchase_price_verified_at)
         self.assertIsNone(second.purchase_price_verified_at)
+
+    def test_invalid_supplier_price_cannot_be_verified_or_overwrite_previous_verification(self):
+        sku = self.make_sku()
+        source = self.make_source(sku, self.supplier_a, "SOURCE-INVALID")
+        self.authenticate()
+        self.assertEqual(self.client.post(f"/api/supplier-skus/{source.pk}/verify-price/", {}, format="json").status_code, 200)
+        source.refresh_from_db()
+        verified_at = source.purchase_price_verified_at
+        SupplierSKU.objects.filter(pk=source.pk).update(purchase_price=0, currency="")
+
+        response = self.client.post(f"/api/supplier-skus/{source.pk}/verify-price/", {}, format="json")
+
+        self.assertEqual(response.status_code, 400)
+        source.refresh_from_db()
+        self.assertEqual(source.purchase_price_verified_at, verified_at)
+        self.assertEqual(source.purchase_price_verified_by_id, self.user.pk)
 
     def test_order_cost_currency_snapshot_is_stable_and_unknown_is_blank(self):
         customer = Customer.objects.create(code="C-COST-R1", name="成本快照客户")

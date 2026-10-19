@@ -44,7 +44,7 @@ from .services.packaging import copy_estimated_to_actual, generate_packing_plan,
 from .services.purchase_lifecycle import cancel_purchase_order, place_purchase_order
 from .services.procurement import build_procurement_plan, create_purchase_drafts, draft_procurement_quantities
 from .services.sku_plans import apply_category_attribute_reorder, preview_category_attribute_reorder
-from .services.sku_costs import quote_risk_rows
+from .services.sku_costs import quote_risk_rows, verification_state
 from .services.sku_schema import (
     UNFROZEN_CATEGORY_HIERARCHY_MESSAGE,
     UNFROZEN_SCHEMA_MESSAGE,
@@ -199,6 +199,8 @@ class SupplierSKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             raise PermissionDenied("核实操作需要已登录员工。")
         require_finance_permission(request.user, "purchases", "update")
         source = SupplierSKU.objects.select_for_update().get(pk=self.get_object().pk)
+        if verification_state(source.purchase_price, source.currency, source.purchase_price_verified_at) == "missing":
+            raise DRFValidationError("采购参考价必须大于 0 且采购币种已维护后才能核实。")
         before = snapshot(source)
         verified_at = timezone.now()
         source.purchase_price_verified_at = verified_at
@@ -992,6 +994,8 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             raise PermissionDenied("核实操作需要已登录员工。")
         require_finance_permission(request.user, "purchases", "update")
         sku = SKU.objects.select_for_update().get(pk=self.get_object().pk)
+        if verification_state(sku.cost_price, sku.cost_currency, sku.cost_verified_at) == "missing":
+            raise DRFValidationError("SKU 内部成本必须大于 0 且成本币种已维护后才能核实。")
         before = snapshot(sku)
         verified_at = timezone.now()
         sku.cost_verified_at = verified_at

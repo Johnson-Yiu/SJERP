@@ -114,6 +114,15 @@ function setCostVerification(row) {
   costVerification.verifiedAt = row?.cost_verified_at || ''
   costVerification.verifiedBy = row?.cost_verified_by_name || ''
 }
+function skuCostNeedsSave() {
+  const row = rows.value.find(item => Number(item.id) === Number(editingId.value))
+  if (!row) return false
+  return normalizeMoneyInput(form.cost_price) !== normalizeMoneyInput(row.cost_price) || String(form.cost_currency || '') !== String(row.cost_currency || '')
+}
+function supplierCostNeedsSave(source) {
+  if (!supplierSourceEditingId.value || Number(supplierSourceEditingId.value) !== Number(source.id)) return false
+  return normalizeMoneyInput(supplierSourceForm.purchase_price) !== normalizeMoneyInput(source.purchase_price) || String(supplierSourceForm.currency || '') !== String(source.currency || '')
+}
 const supplierSourceGuard = useUnsavedChangesGuard({ data: () => ({ form: supplierSourceForm, traits: supplierTraitsText.value }), enabled: () => supplierSourceDialogOpen.value, busy: () => supplierSourceDialogOpen.value && supplierSourceSaving.value, routeGuard: false, scope: editorScope })
 const packagingGuard = useUnsavedChangesGuard({ data: () => packagingForm, enabled: () => packagingDialogOpen.value, busy:()=>packagingSaving.value, routeGuard: false, scope: editorScope })
 const requestSupplierSourceClose = () => supplierSourceGuard.requestClose(() => { supplierSourceDialogOpen.value = false })
@@ -521,6 +530,8 @@ async function toggleSupplierSource(source) {
 }
 async function verifySkuCost() {
   if (!editingId.value || !can('purchases', 'update')) return
+  if (skuCostNeedsSave()) return notify('请先保存当前 SKU 成本价格和成本币种，再进行核实。', true)
+  if (!Number.isFinite(Number(form.cost_price)) || Number(form.cost_price) <= 0 || !String(form.cost_currency || '').trim()) return notify('SKU 内部成本必须大于 0 且成本币种已维护后才能核实。', true)
   try {
     const response = await api.post(`/skus/${editingId.value}/verify-cost/`)
     Object.assign(form, { cost_price: response.data.cost_price == null ? form.cost_price : normalizeMoneyInput(response.data.cost_price), cost_currency: response.data.cost_currency || '' })
@@ -531,6 +542,8 @@ async function verifySkuCost() {
 }
 async function verifySupplierSource(source) {
   if (!can('purchases', 'update')) return
+  if (supplierCostNeedsSave(source)) return notify('请先保存当前供应商参考价和采购币种，再进行核实。', true)
+  if (!Number.isFinite(Number(source.purchase_price)) || Number(source.purchase_price) <= 0 || !String(source.currency || '').trim()) return notify('采购参考价必须大于 0 且采购币种已维护后才能核实。', true)
   try {
     await api.post(`/supplier-skus/${source.id}/verify-price/`)
     await loadSupplierSources(editingId.value)

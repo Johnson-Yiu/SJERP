@@ -34,6 +34,8 @@ test('quote list export uses one consolidated SKU risk notice before downloading
 
   assert.match(source, /api\.get\('\/quotes\/risk-preview\//)
   assert.match(source, /quoteRiskRows\.value = .*filter\(item => item\.has_risk\)/)
+  assert.match(source, /quoteRiskCheckUnavailable\.value = true/)
+  assert.match(source, /:risk-check-unavailable="quoteRiskCheckUnavailable"/)
   assert.match(source, /<QuoteRiskNotice v-if="quoteRiskOpen"/)
 })
 

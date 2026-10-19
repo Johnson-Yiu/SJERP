@@ -58,7 +58,7 @@ const quoteDetailId = ref(null), orderDetailId = ref(null)
 const returnToOrderDetailId = ref(null)
 const orderWorkbenchRefresh = ref(0)
 const quoteEditorOpen = ref(false), quoteEditorQuote = ref(null)
-const quoteRiskOpen = ref(false), quoteRiskRows = ref([]), quoteRiskQuote = ref(null)
+const quoteRiskOpen = ref(false), quoteRiskRows = ref([]), quoteRiskQuote = ref(null), quoteRiskCheckUnavailable = ref(false)
 const orderDraft = ref(null), workbenchRefresh = ref(0)
 const orderLeadTimeDays = ref('')
 const expandedQuoteNodes = ref(new Set())
@@ -271,10 +271,16 @@ async function exportQuote(row) {
   try {
     const skuIds = [...new Set((row.items || []).map(item => Number(item.sku)).filter(id => Number.isSafeInteger(id) && id > 0))]
     if (skuIds.length) {
-      const response = await api.get('/quotes/risk-preview/', { params: { sku_ids: skuIds.join(',') } })
-      quoteRiskRows.value = (response.data?.items || []).filter(item => item.has_risk)
+      quoteRiskRows.value = []
+      quoteRiskCheckUnavailable.value = false
       quoteRiskQuote.value = row
-      if (quoteRiskRows.value.length) { quoteRiskOpen.value = true; return }
+      try {
+        const response = await api.get('/quotes/risk-preview/', { params: { sku_ids: skuIds.join(',') } })
+        quoteRiskRows.value = (response.data?.items || []).filter(item => item.has_risk)
+      } catch {
+        quoteRiskCheckUnavailable.value = true
+      }
+      if (quoteRiskCheckUnavailable.value || quoteRiskRows.value.length) { quoteRiskOpen.value = true; return }
     }
     await downloadQuoteExport(row.id, row.quote_no)
   } catch (e) { notify(`导出 ${row.quote_no} 失败：${e.message}`, true) }
@@ -283,10 +289,11 @@ async function continueRiskExport() {
   if (!quoteRiskQuote.value) return
   const row = quoteRiskQuote.value
   quoteRiskOpen.value = false
+  quoteRiskCheckUnavailable.value = false
   try { await downloadQuoteExport(row.id, row.quote_no) }
   catch (e) { notify(`导出 ${row.quote_no} 失败：${e.message}`, true) }
 }
-function cancelRiskExport() { quoteRiskOpen.value = false; quoteRiskQuote.value = null }
+function cancelRiskExport() { quoteRiskOpen.value = false; quoteRiskRows.value = []; quoteRiskCheckUnavailable.value = false; quoteRiskQuote.value = null }
 async function remove(row) { if (!isOrder.value || !can('orders', 'delete') || !await confirmDialog({ title: '确认删除订单', message: `确定删除 ${row[copy.value.no]} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/${props.type}/${row.id}/`); notify('已删除'); load() } catch (e) { notify(e.message, true) } }
 function delayed() {
   clearTimeout(timer)
@@ -543,7 +550,7 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
     <Transition name="detail-drawer" appear>
       <OrderDetailModal v-if="orderDetailId" :id="orderDetailId" :refresh-key="orderWorkbenchRefresh" @close="closeDocumentDetail" @edit="handleOrderEdit" @open-quote="openSourceQuote" />
     </Transition>
-    <QuoteRiskNotice v-if="quoteRiskOpen" :risks="quoteRiskRows" @cancel="cancelRiskExport" @continue="continueRiskExport" />
+    <QuoteRiskNotice v-if="quoteRiskOpen" :risks="quoteRiskRows" :risk-check-unavailable="quoteRiskCheckUnavailable" @cancel="cancelRiskExport" @continue="continueRiskExport" />
     <div v-if="toast.show" class="toast" :class="{ error: toast.error }">{{ toast.message }}</div>
   </div>
 </template>

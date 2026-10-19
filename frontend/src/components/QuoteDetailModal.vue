@@ -33,6 +33,7 @@ const operationLogsLoading = ref(false)
 const auditEnabled = ref(false)
 const riskNoticeOpen = ref(false)
 const riskRows = ref([])
+const riskCheckUnavailable = ref(false)
 
 const quote = computed(() => workbench.value?.quote)
 const canCreateOrder = computed(() => can('orders', 'create') && ['draft', 'sent', 'accepted'].includes(quote.value?.status))
@@ -120,19 +121,26 @@ async function exportQuote() {
         await downloadQuoteExport(quote.value.id, quote.value.quote_no)
         return
       }
-    const response = await api.get('/quotes/risk-preview/', { params: { sku_ids: skuIds.join(',') } })
-    riskRows.value = (response.data?.items || []).filter(item => item.has_risk)
-    if (riskRows.value.length) { riskNoticeOpen.value = true; return }
+    riskRows.value = []
+    riskCheckUnavailable.value = false
+    try {
+      const response = await api.get('/quotes/risk-preview/', { params: { sku_ids: skuIds.join(',') } })
+      riskRows.value = (response.data?.items || []).filter(item => item.has_risk)
+    } catch {
+      riskCheckUnavailable.value = true
+    }
+    if (riskCheckUnavailable.value || riskRows.value.length) { riskNoticeOpen.value = true; return }
     await downloadQuoteExport(quote.value.id, quote.value.quote_no)
   } catch (err) { actionError.value = err.message }
 }
 async function continueRiskExport() {
   if (!quote.value) return
   riskNoticeOpen.value = false
+  riskCheckUnavailable.value = false
   actionError.value = ''
   try { await downloadQuoteExport(quote.value.id, quote.value.quote_no) } catch (err) { actionError.value = err.message }
 }
-function cancelRiskExport() { riskNoticeOpen.value = false }
+function cancelRiskExport() { riskNoticeOpen.value = false; riskRows.value = []; riskCheckUnavailable.value = false }
 async function createNote() {
   if (!can('quotes', 'update') || isRichTextEmpty(noteContent.value)) return
   noteSaving.value = true; actionError.value = ''
@@ -217,7 +225,7 @@ watch(() => props.refreshKey, () => load(quote.value?.id || props.id))
       </template>
     </article>
     <QuotePreviewModal v-if="preview" :draft="preview" saved @close="preview = null" />
-    <QuoteRiskNotice v-if="riskNoticeOpen" :risks="riskRows" @cancel="cancelRiskExport" @continue="continueRiskExport" />
+    <QuoteRiskNotice v-if="riskNoticeOpen" :risks="riskRows" :risk-check-unavailable="riskCheckUnavailable" @cancel="cancelRiskExport" @continue="continueRiskExport" />
   </div>
 </template>
 

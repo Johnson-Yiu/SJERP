@@ -61,6 +61,8 @@ test('saved quote export uses the same consolidated risk notice', async () => {
   const source = await readFile(detailUrl, 'utf8')
 
   assert.match(source, /api\.get\('\/quotes\/risk-preview\//)
+  assert.match(source, /riskCheckUnavailable\.value = true/)
+  assert.match(source, /:risk-check-unavailable="riskCheckUnavailable"/)
   assert.match(source, /<QuoteRiskNotice v-if="riskNoticeOpen"/)
   assert.match(source, /await downloadQuoteExport\(quote\.value\.id, quote\.value\.quote_no\)/)
 })

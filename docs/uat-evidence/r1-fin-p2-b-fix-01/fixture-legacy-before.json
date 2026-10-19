@@ -1,0 +1,114 @@
+{
+  "Customer": [
+    {
+      "address": "",
+      "code": "P2B-SYNTH-C",
+      "country": "",
+      "created_at": "2026-10-19 05:46:33.103893+00:00",
+      "id": 1,
+      "name": "P2B \u5408\u6210\u5ba2\u6237",
+      "next_follow_up": null,
+      "notes": "",
+      "owner": "",
+      "owner_profile_id": null,
+      "region": "",
+      "source": "",
+      "status": "customer",
+      "updated_at": "2026-10-19 05:46:33.103924+00:00",
+      "website": ""
+    }
+  ],
+  "Order": [
+    {
+      "cancellation_reason": "",
+      "cancelled_at": null,
+      "created_at": "2026-10-19 05:46:33.127224+00:00",
+      "currency": "USD",
+      "customer_id": 1,
+      "discount": "0.0000",
+      "exchange_rate": "7.100000",
+      "expected_ship_date": null,
+      "id": 1,
+      "notes": "",
+      "order_date": "2026-10-19",
+      "order_no": "P2B-SYNTH-O",
+      "quote_id": null,
+      "shipping_fee": "0.0000",
+      "status": "confirmed",
+      "tail_goods_policy": "SAME_CARTON",
+      "updated_at": "2026-10-19 05:46:33.127247+00:00"
+    }
+  ],
+  "PaymentPlan": [
+    {
+      "created_at": "2026-10-19 05:46:33.147255+00:00",
+      "currency": "USD",
+      "direction": "receivable",
+      "due_date": null,
+      "id": 1,
+      "notes": "",
+      "order_id": 1,
+      "planned_amount": "30.0000",
+      "purchase_order_id": null,
+      "settled_amount": "30.0000",
+      "status": "settled",
+      "updated_at": "2026-10-19 05:46:33.190901+00:00"
+    },
+    {
+      "created_at": "2026-10-19 05:46:33.152690+00:00",
+      "currency": "USD",
+      "direction": "receivable",
+      "due_date": null,
+      "id": 2,
+      "notes": "",
+      "order_id": 1,
+      "planned_amount": "70.0000",
+      "purchase_order_id": null,
+      "settled_amount": "70.0000",
+      "status": "settled",
+      "updated_at": "2026-10-19 05:46:33.193334+00:00"
+    }
+  ],
+  "Product": [
+    {
+      "category_id": null,
+      "code": "P2B-SYNTH-P",
+      "combination_rules": [],
+      "created_at": "2026-10-19 05:46:33.108811+00:00",
+      "description": "",
+      "hs_code_id": null,
+      "id": 1,
+      "name": "P2B \u5408\u6210\u4ea7\u54c1",
+      "name_en": "",
+      "sales_model_prefix": null,
+      "status": "active",
+      "updated_at": "2026-10-19 05:46:33.108835+00:00"
+    }
+  ],
+  "SKU": [
+    {
+      "active": true,
+      "cost_price": "0.0000",
+      "created_at": "2026-10-19 05:46:33.122315+00:00",
+      "currency": "USD",
+      "default_price": "0.0000",
+      "description_cn": "P2B \u5408\u6210\u4ea7\u54c1",
+      "description_en": "P2B \u5408\u6210\u4ea7\u54c1",
+      "display_name_cn": "P2B \u5408\u6210\u4ea7\u54c1",
+      "display_name_key": "p2b \u5408\u6210\u4ea7\u54c1",
+      "id": 1,
+      "identity_signature": "",
+      "image": "",
+      "parameter_values": {},
+      "product_details": [],
+      "product_id": 1,
+      "sales_model": null,
+      "sales_model_abbreviations": {},
+      "schema_version": 0,
+      "sku": "P2B-SYNTH-SKU",
+      "specification": "",
+      "unit": "pcs",
+      "updated_at": "2026-10-19 05:46:33.122338+00:00"
+    }
+  ]
+}

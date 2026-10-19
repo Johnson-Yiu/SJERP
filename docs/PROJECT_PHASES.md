@@ -160,3 +160,10 @@ R0-F4 仅优化供应商列表/新建/编辑/详情、付款条款组件、分�
 仅增加4项SKU初始化/关闭保护回归、采集校验及文档，未修改运行组件或共享守卫。完整Backend720（跳过10）、Node121、Vitest607、Playwright139、Build通过；PostgreSQL及最终精确HEAD的三项CI按交付记录核对。实际错误/恢复只覆盖隔离API服务中断，未重新执行全部历史业务写入/全部路由错误组合，不扩大为正式UAT。
 
 完整27路由矩阵、已通过/未通过、原因、前后对照、浏览器与自动化边界见[R0-F9-VIS-01报告](R0-F9-VIS-01-全站视觉复核与补充截图.md)；[新原图索引](uat-evidence/r0-f9-vis-01/index.html)。最终Push master并核验同SHA三项CI成功后停止，等待ChatGPT再次独立代码与证据审查。当前不满足全项视觉封版；历史集中修复、正式RBAC、员工UAT和生产部署仍禁止自行进入。
+## R1-FIN-P2-B-FIX-01 银行资金前端安全流程补修（2026-10-19）
+
+基于P2-B精确基线 `47c9f20ad4e9643c22c62bc93e4ffcb0a38d905f`，仅处理独立审查指出的四类前端安全缺口：预览请求指纹与字段失效、预览不等于保存及刷新恢复、来源逐条人工核实与最终确认摘要、来源异步请求竞态。未修改P2-A资金计算、历史金额、Transaction/PaymentPlan/AdvanceAllocation、报表口径、权限策略或数据库。
+
+新增ISS-110至ISS-113，均为 `FIXED_PENDING_REVIEW`；ISS-114记录此前139/8全量Playwright失败与本轮复现分类，保持`NEEDS_VERIFICATION`。ISS-105仍OPEN，ISS-108仍BLOCKED，ISS-109仍FIXED_PENDING_REVIEW；未关闭其他问题。新增Playwright用例覆盖未核实来源拒绝、金额修改使预览失效、确认勾选、刷新恢复稳定请求键和输入；当前完整套件共150项全部通过（包含本轮3项新增），另保留历史失败日志供独立复核。
+
+本轮完成后停止，等待ChatGPT独立代码、真实Chrome截图、隔离数据库及精确HEAD三项CI复审；不得进入P2-C、P3、正式RBAC、员工UAT或部署。

@@ -1,0 +1,410 @@
+
+> senju-crm-erp@1.0.0 test:browser
+> playwright test --reporter=line
+
+
+[WebServer] (node:25528) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 151 tests using 2 workers
+
+(node:24204) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+(node:30836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/151] browser-tests\certificates-hs-ux.spec.js:10:1 › certificate list and grouped form actual bounds 1440
+[2/151] browser-tests\cash-events-p2b.spec.js:4:1 › cash event UI previews, registers, and confirms without changing receipt flows
+[3/151] browser-tests\certificates-hs-ux.spec.js:11:1 › HS assignment searchable selection and actual bounds 1440
+[4/151] browser-tests\cash-events-p2b.spec.js:46:1 › source verification is explicit and any fact change invalidates the preview
+[5/151] browser-tests\cash-events-p2b.spec.js:75:1 › refresh restores the stable request key and draft inputs without registering
+[6/151] browser-tests\certificates-hs-ux.spec.js:10:1 › certificate list and grouped form actual bounds 1280
+[7/151] browser-tests\cash-events-p2b.spec.js:92:1 › stale source responses cannot overwrite the current currency
+[8/151] browser-tests\certificates-hs-ux.spec.js:11:1 › HS assignment searchable selection and actual bounds 1280
+[9/151] browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1440px
+[10/151] browser-tests\certificates-hs-ux.spec.js:10:1 › certificate list and grouped form actual bounds 1024
+[11/151] browser-tests\certificates-hs-ux.spec.js:11:1 › HS assignment searchable selection and actual bounds 1024
+[12/151] browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1280px
+[13/151] browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1024px
+[14/151] browser-tests\certificates-hs-ux.spec.js:12:57 › hs-codes pending POST blocks backdrop/back/navigation; failure retains input and retries once
+[15/151] browser-tests\crm-saving.spec.js:86:3 › contacts pending PUT failure preserves fields and quick retry sends one request
+[16/151] browser-tests\certificates-hs-ux.spec.js:12:57 › product-certificates pending POST blocks backdrop/back/navigation; failure retains input and retries once
+[17/151] browser-tests\certificates-hs-ux.spec.js:13:1 › HS read-only hides maintenance and both pages reload errors recover
+[18/151] browser-tests\certificates-hs-ux.spec.js:15:1 › assignment pending PUT blocks close and navigation, retains selection on rejection and retries
+[19/151] browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1440px
+[20/151] browser-tests\certificates-hs-ux.spec.js:16:1 › certificate first load failure retries to empty, and expiry URL survives reload
+[21/151] browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1280px
+[22/151] browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1024px
+[23/151] browser-tests\crm-saving.spec.js:86:3 › follow-ups pending PUT failure preserves fields and quick retry sends one request
+[24/151] browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1440px
+[25/151] browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1280px
+[26/151] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 quotes customer column and filters 1440
+[27/151] browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1024px
+[28/151] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 orders customer column and filters 1440
+[29/151] browser-tests\crm-ux.spec.js:167:1 › contact create, duplicate advisory, primary edit and return query stay consistent
+[30/151] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 quotes customer column and filters 1280
+[31/151] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 orders customer column and filters 1280
+[32/151] browser-tests\crm-ux.spec.js:193:3 › follow-up filters, detailed groups, and long content fit 1440px
+[33/151] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 quotes customer column and filters 1024
+[34/151] browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 orders customer column and filters 1024
+[35/151] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1440px
+[36/151] browser-tests\crm-ux.spec.js:193:3 › follow-up filters, detailed groups, and long content fit 1280px
+[37/151] browser-tests\crm-ux.spec.js:193:3 › follow-up filters, detailed groups, and long content fit 1024px
+[38/151] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1280px
+[39/151] browser-tests\crm-ux.spec.js:220:1 › follow-up search and due filters remain in URL and saved text updates list
+[40/151] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1024px
+[41/151] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 640px
+[42/151] browser-tests\crm-ux.spec.js:247:1 › saved attachment delete can be cancelled, confirmed, and remains removed after reopening
+[43/151] browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 390px
+[44/151] browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1440
+[45/151] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1440px
+[46/151] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1280px
+[47/151] browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1024
+[48/151] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1024px
+[49/151] browser-tests\finance-retry-safety.spec.js:3:1 › finance pending submission and ambiguous retry preserve identity and guard departure
+[50/151] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 640px
+[51/151] browser-tests\fulfillment-receivables.spec.js:21:1 › completed receivable navigation, Back, settlement and refund reloads retain fulfillment
+
+[WebServer] 14:07:32 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[WebServer] 14:07:32 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[52/151] browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 390px
+
+[WebServer] 14:07:34 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 14:07:34 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[53/151] browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1440
+
+[WebServer] 14:07:35 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 14:07:35 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[WebServer] 14:07:36 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 14:07:36 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[54/151] browser-tests\fulfillment-receivables.spec.js:32:1 › restricted user cannot read protected debt from malicious unmasked order payload
+[55/151] browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1280
+
+[WebServer] 14:07:37 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 14:07:37 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[WebServer] 14:07:38 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+
+[WebServer] 14:07:38 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[56/151] browser-tests\fulfillment-receivables.spec.js:39:1 › completion pending prevents duplicate UI action and failed reload retries without false financial success
+
+[WebServer] 14:07:39 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[57/151] browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1024
+
+[WebServer] 14:07:39 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[WebServer] 14:07:39 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[WebServer] 14:07:39 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 14:07:39 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[WebServer] 14:07:39 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+
+[WebServer] 14:07:40 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[58/151] browser-tests\import-ux.spec.js:8:1 › downloads contain actual UTF8 BOM headers and correctly quoted failure rows
+[59/151] browser-tests\import-ux.spec.js:9:1 › pending preview and execute block back/navigation, duplicates and changes; cancel never writes
+[60/151] browser-tests\import-ux.spec.js:10:1 › restricted import entry and template retry
+
+[WebServer] 14:07:47 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[WebServer] 14:07:47 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 14:07:47 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[61/151] browser-tests\fulfillment-receivables.spec.js:49:48 › unknown no_plans has a review task and no confirmed zero
+[62/151] browser-tests\inventory-ux.spec.js:27:2 › inventory overview, reserved quantities and SKU drawer at 1440
+
+[WebServer] 14:07:48 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 14:07:49 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[63/151] browser-tests\inventory-ux.spec.js:38:2 › ledger filters, sticky actions and adjustment dialog at 1440
+
+[WebServer] 14:07:50 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 14:07:50 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[64/151] browser-tests\fulfillment-receivables.spec.js:49:48 › unknown review has a review task and no confirmed zero
+
+[WebServer] 14:07:51 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[WebServer] 14:07:51 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[65/151] browser-tests\inventory-ux.spec.js:27:2 › inventory overview, reserved quantities and SKU drawer at 1280
+[WebServer] 14:07:54 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[WebServer] 14:07:54 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+[66/151] browser-tests\inventory-ux.spec.js:38:2 › ledger filters, sticky actions and adjustment dialog at 1280
+[67/151] browser-tests\organization-access-ux.spec.js:12:37 › organization long matrix computed bounds and sticky headers 1440
+[68/151] browser-tests\inventory-ux.spec.js:27:2 › inventory overview, reserved quantities and SKU drawer at 1024
+[69/151] browser-tests\organization-access-ux.spec.js:12:37 › organization long matrix computed bounds and sticky headers 1280
+[70/151] browser-tests\inventory-ux.spec.js:38:2 › ledger filters, sticky actions and adjustment dialog at 1024
+[71/151] browser-tests\inventory-ux.spec.js:49:1 › page restoration, detail navigation and browser Back preserve inventory context
+[72/151] browser-tests\organization-access-ux.spec.js:12:37 › organization long matrix computed bounds and sticky headers 1024
+[73/151] browser-tests\inventory-ux.spec.js:57:1 › empty and failed inventories distinguish errors, retry and no records
+[74/151] browser-tests\organization-access-ux.spec.js:13:1 › dirty switching, cancel and delayed save/readback navigation are protected
+[75/151] browser-tests\organization-access-ux.spec.js:14:1 › save refusal and readback refusal retain input; readback retry never posts twice
+[76/151] browser-tests\organization-access-ux.spec.js:15:1 › read-only and overview retry do not expose a write action
+[77/151] browser-tests\inventory-ux.spec.js:62:1 › restricted UI hides adjustment, reversal and unauthorized cross-module entrances
+[78/151] browser-tests\organization-access-ux.spec.js:16:95 › access-denied layout and permitted return 1440
+[79/151] browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1440
+[80/151] browser-tests\organization-access-ux.spec.js:16:95 › access-status-error layout and permitted return 1440
+[81/151] browser-tests\organization-access-ux.spec.js:16:95 › access-denied layout and permitted return 1280
+[82/151] browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1440
+[83/151] browser-tests\organization-access-ux.spec.js:16:95 › access-status-error layout and permitted return 1280
+[84/151] browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1280
+[85/151] browser-tests\organization-access-ux.spec.js:16:95 › access-denied layout and permitted return 1024
+[86/151] browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1280
+[87/151] browser-tests\organization-access-ux.spec.js:16:95 › access-status-error layout and permitted return 1024
+[88/151] browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1024
+[89/151] browser-tests\organization-access-ux.spec.js:17:45 › permission service 401 failure and recovery avoid redirects
+[90/151] browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1024
+[91/151] browser-tests\organization-access-ux.spec.js:17:45 › permission service 403 failure and recovery avoid redirects
+[92/151] browser-tests\organization-access-ux.spec.js:17:45 › permission service 500 failure and recovery avoid redirects
+[93/151] browser-tests\overview-reports.spec.js:33:1 › saved local chart configurations survive reload, reorder, remove and undo
+[94/151] browser-tests\overview-reports.spec.js:41:1 › drill and previous-analysis return preserve actual period and browser navigation restores URL
+[95/151] browser-tests\overview-reports.spec.js:47:1 › empty dashboard and charts have useful neutral states
+[96/151] browser-tests\overview-reports.spec.js:50:1 › initial failures recover, refresh failure keeps stale data, and catalog has retry
+[97/151] browser-tests\overview-reports.spec.js:56:1 › restricted UI hides sources, export and navigation, retaining unavailable local configuration
+[98/151] browser-tests\organization-access-ux.spec.js:17:45 › permission service network failure and recovery avoid redirects
+[99/151] browser-tests\packaging-ux.spec.js:16:37 › packaging actual layout and linked navigation 1440
+[100/151] browser-tests\packaging-ux.spec.js:16:37 › packaging actual layout and linked navigation 1280
+[101/151] browser-tests\packaging-ux.spec.js:16:37 › packaging actual layout and linked navigation 1024
+[102/151] browser-tests\packaging-ux.spec.js:23:37 › trade units conversion and form fit 1440
+[103/151] browser-tests\packaging-ux.spec.js:23:37 › trade units conversion and form fit 1280
+[104/151] browser-tests\packaging-ux.spec.js:23:37 › trade units conversion and form fit 1024
+[105/151] browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1440
+[106/151] browser-tests\packaging-ux.spec.js:28:1 › packaging pending save blocks close/back/navigation; rejected data stays for retry
+[107/151] browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1280
+[108/151] browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1024
+[109/151] browser-tests\packaging-ux.spec.js:31:1 › trade pending and failed save keep SKU/factor; switching warns, and retry succeeds once
+[110/151] browser-tests\product-master-ux.spec.js:52:1 › product detail URL survives reload and close preserves list filters
+[111/151] browser-tests\packaging-ux.spec.js:34:1 › initial template failure retries and view-only permissions hide all writing entries
+[112/151] browser-tests\product-master-ux.spec.js:59:1 › product parameter to product detail closes back to original filtered list
+[113/151] browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1440
+[114/151] browser-tests\product-master-ux.spec.js:64:1 › view-only fixtures cannot create/edit/delete through these page entries
+[115/151] browser-tests\product-master-ux.spec.js:68:1 › product failure preserves input and retry; unsaved cancel requires confirmation
+[116/151] browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1280
+[117/151] browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1440
+[118/151] browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1280
+[119/151] browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1024
+[120/151] browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1024
+[121/151] browser-tests\product-master-ux.spec.js:93:1 › category saving blocks backdrop, retains failure and permits retry
+[122/151] browser-tests\sku-ux.spec.js:21:1 › batch failure retains selections and retry succeeds once
+[123/151] browser-tests\product-master-ux.spec.js:101:1 › product parameter context and pending save failure remain recoverable
+[124/151] browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1440
+[125/151] browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1440
+[126/151] browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1280
+[127/151] browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1280
+[128/151] browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1024
+[129/151] browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1024
+[130/151] browser-tests\product-master-ux.spec.js:121:1 › category drag preserves selected node and collapsed state after reorder
+[131/151] browser-tests\sku-ux.spec.js:23:1 › SKU read-only detail remains accessible with no write controls
+[132/151] browser-tests\product-master-ux.spec.js:134:41 › R0-F9 products status labels stay on one line 1440
+[133/151] browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1440
+[134/151] browser-tests\product-master-ux.spec.js:134:41 › R0-F9 products status labels stay on one line 1280
+[135/151] browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1280
+[136/151] browser-tests\product-master-ux.spec.js:134:41 › R0-F9 products status labels stay on one line 1024
+[137/151] browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1024
+[138/151] browser-tests\supplier-ux.spec.js:24:37 › supplier long names, notes, filters, editor and detail at 1440
+[139/151] browser-tests\sku-ux.spec.js:26:1 › SKU history load failure remains distinct from empty history and retries
+[140/151] browser-tests\supplier-ux.spec.js:24:37 › supplier long names, notes, filters, editor and detail at 1280
+[141/151] browser-tests\supplier-ux.spec.js:24:37 › supplier long names, notes, filters, editor and detail at 1024
+[142/151] browser-tests\supplier-ux.spec.js:33:1 › supplier creates, cancels dirty edits, saves and reopens consistent detail and list
+[143/151] browser-tests\sku-ux.spec.js:28:1 › SKU logical loads keep separate history and ignore late responses in the rendered list
+[144/151] browser-tests\supplier-ux.spec.js:37:1 › duplicate code, invalid ratio and optional category failures keep entered data
+[145/151] browser-tests\sku-ux.spec.js:57:1 › transaction-unit navigation returns to SKU editor with original list context
+[146/151] browser-tests\supplier-ux.spec.js:40:1 › filters and page survive reload, detail close and procurement workbench return
+[147/151] browser-tests\supplier-ux.spec.js:43:1 › initial errors retry to empty and refresh errors retain supplier list
+[148/151] browser-tests\supplier-ux.spec.js:46:1 › restricted view hides supplier write actions and purchase shortcuts
+[149/151] browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1440
+[150/151] browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1280
+[151/151] browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1024
+  151 passed (3.9m)

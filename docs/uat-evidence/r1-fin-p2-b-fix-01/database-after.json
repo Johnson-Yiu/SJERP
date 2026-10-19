@@ -1,0 +1,169 @@
+{
+  "database": "r1-fin-p2-b-fix-01-isolated.sqlite3",
+  "orders": [
+    {
+      "id": 1,
+      "order_no": "P2B-SYNTH-O",
+      "status": "confirmed",
+      "currency": "USD"
+    },
+    {
+      "id": 2,
+      "order_no": "P2B-FIX-O",
+      "status": "confirmed",
+      "currency": "USD"
+    }
+  ],
+  "payment_plans": [
+    {
+      "id": 1,
+      "order_id": 1,
+      "direction": "receivable",
+      "currency": "USD",
+      "planned_amount": "30.0000",
+      "settled_amount": "30.0000",
+      "status": "settled"
+    },
+    {
+      "id": 2,
+      "order_id": 1,
+      "direction": "receivable",
+      "currency": "USD",
+      "planned_amount": "70.0000",
+      "settled_amount": "70.0000",
+      "status": "settled"
+    },
+    {
+      "id": 3,
+      "order_id": 2,
+      "direction": "receivable",
+      "currency": "USD",
+      "planned_amount": "30.0000",
+      "settled_amount": "30.0000",
+      "status": "settled"
+    },
+    {
+      "id": 4,
+      "order_id": 2,
+      "direction": "receivable",
+      "currency": "USD",
+      "planned_amount": "70.0000",
+      "settled_amount": "70.0000",
+      "status": "settled"
+    }
+  ],
+  "transactions": [
+    {
+      "id": 1,
+      "transaction_no": "P2B-SYNTH-T",
+      "amount": "30.0000",
+      "allocated_amount": "0.0000",
+      "rmb_amount": "213.0000",
+      "status": "confirmed",
+      "split_from_id": null
+    },
+    {
+      "id": 2,
+      "transaction_no": "FIN-48B3D7EBC04D4320",
+      "amount": "70.0000",
+      "allocated_amount": "0.0000",
+      "rmb_amount": "497.0000",
+      "status": "confirmed",
+      "split_from_id": 1
+    },
+    {
+      "id": 3,
+      "transaction_no": "P2B-FIX-T",
+      "amount": "30.0000",
+      "allocated_amount": "0.0000",
+      "rmb_amount": "213.0000",
+      "status": "confirmed",
+      "split_from_id": null
+    },
+    {
+      "id": 4,
+      "transaction_no": "FIN-E0292FAA1BAC421A",
+      "amount": "70.0000",
+      "allocated_amount": "0.0000",
+      "rmb_amount": "497.0000",
+      "status": "confirmed",
+      "split_from_id": 3
+    }
+  ],
+  "cash_events": [
+    {
+      "id": 1,
+      "event_no": "P2B-EVENT-09327db5-21b6-4867-be11-b6a6af6f4bec",
+      "request_key": "P2B-REQUEST-771175e0-4c49-471f-9814-f757384146af",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "amount": "100.0000",
+      "bank_date": "2026-10-19",
+      "bank_net_amount": "705.00",
+      "fee_mode": "none",
+      "fee_amount": "0.00",
+      "source_account": "SYNTH-FX-01",
+      "rmb_account": "SYNTH-CNY-01",
+      "bank_reference": "P2B-FIX-BANK-01",
+      "status": "confirmed",
+      "evidence_reference": "synthetic-bank-voucher.json",
+      "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "cancelled_reason": "",
+      "confirmed_at": "2026-10-19 05:48:06.069844+00:00"
+    },
+    {
+      "id": 2,
+      "event_no": "P2B-EVENT-f3049bee-d2fa-43dc-b3ac-38f6f431ee99",
+      "request_key": "P2B-REQUEST-f2df922b-80e0-4ace-8fb2-4c484540aa4b",
+      "kind": "fx_settlement",
+      "currency": "USD",
+      "amount": "100.0000",
+      "bank_date": "2026-10-19",
+      "bank_net_amount": "705.00",
+      "fee_mode": "none",
+      "fee_amount": "0.00",
+      "source_account": "SYNTH-FX-01",
+      "rmb_account": "SYNTH-CNY-01",
+      "bank_reference": "P2B-FIX-BANK-02",
+      "status": "confirmed",
+      "evidence_reference": "synthetic-bank-voucher.json",
+      "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "cancelled_reason": "",
+      "confirmed_at": "2026-10-19 05:51:23.412445+00:00"
+    }
+  ],
+  "source_allocations": [
+    {
+      "id": 1,
+      "event_id": 1,
+      "source_id": 1,
+      "amount": "30.0000",
+      "currency": "USD",
+      "source_transaction_no": "P2B-SYNTH-T"
+    },
+    {
+      "id": 2,
+      "event_id": 1,
+      "source_id": 2,
+      "amount": "70.0000",
+      "currency": "USD",
+      "source_transaction_no": "FIN-48B3D7EBC04D4320"
+    },
+    {
+      "id": 3,
+      "event_id": 2,
+      "source_id": 3,
+      "amount": "30.0000",
+      "currency": "USD",
+      "source_transaction_no": "P2B-FIX-T"
+    },
+    {
+      "id": 4,
+      "event_id": 2,
+      "source_id": 4,
+      "amount": "70.0000",
+      "currency": "USD",
+      "source_transaction_no": "FIN-E0292FAA1BAC421A"
+    }
+  ]
+}

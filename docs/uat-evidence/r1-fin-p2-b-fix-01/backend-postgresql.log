@@ -1,0 +1,1 @@
+BLOCKED (local environment): no configured isolated PostgreSQL service, DATABASE_URL/POSTGRES_URL empty, and docker/psql commands are unavailable. No PostgreSQL connection was attempted to avoid any real business database. Backend PostgreSQL verification remains dependent on the exact-head GitHub CI run.

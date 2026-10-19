@@ -1,0 +1,14 @@
+[
+  {
+    "viewport": 1280,
+    "method": "GET",
+    "path": "/api/rmb-cash-events/",
+    "status": 200
+  },
+  {
+    "viewport": 1024,
+    "method": "GET",
+    "path": "/api/rmb-cash-events/",
+    "status": 200
+  }
+]

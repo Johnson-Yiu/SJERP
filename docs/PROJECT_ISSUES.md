@@ -358,3 +358,17 @@ ISS-105保持P1/OPEN：事实后端不等于实际资金统计已切换；不改
 基线 `b79af36dc7140507ef210ea61437dd579ba8de8b` 的三项CI在实施前均为SUCCESS。本轮只增加前端页面和Node回归：人民币资金列表/详情、新建事件两步表单、后端预览、来源额度与历史高精度人工输入提示、稳定请求键、待确认/已确认/已放弃状态和只读详情；真实浏览器在隔离合成库完成登记、放弃、重新登记、预览和确认。前端不推断或计算银行事实，确认仍由P2-A服务端校验，来源金额和银行净额均以Decimal后端结果为准。
 
 P2-B保留旧财务流水、应收应付核销、报表和统计金额；不创建第二笔客户收款，不修改旧Transaction、PaymentPlan、AdvanceAllocation或历史4位金额，不把参考折算变成实际到账。合成数据库记录、来源快照、凭证引用和多尺寸截图见[P2-B验收](R1-FIN-P2-B-人民币资金前端验收.md)。ISS-105继续P1/OPEN，ISS-108继续BLOCKED，ISS-109继续FIXED_PENDING_REVIEW；其他Issue状态不变。交付后停止等待ChatGPT独立代码和视觉复审，不自动进入P2-C、正式RBAC、员工UAT或部署。
+
+## R1-FIN-P2-B-FIX-01 银行资金前端安全流程补修（2026-10-19）
+
+独立审查发现预览内容、未保存保护、来源人工核实和异步来源请求存在安全缺口。本轮仅修复前端流程与回归，不改变P2-A资金计算、历史金额、核销或报表来源；新增证据见[R1-FIN-P2-B-FIX-01验收](R1-FIN-P2-B-FIX-01-银行资金前端安全补修验收.md)。ISS-105仍OPEN，ISS-108仍BLOCKED，ISS-109仍FIXED_PENDING_REVIEW；未关闭任何Issue。
+
+| ID | 优先级 / 状态 | 首次来源 / 日期 | 当前核实及影响 | 负责人 / 下一步 | 阶段 / 验收条件 |
+|---|---|---|---|---|---|
+| ISS-110 | P1 / FIXED_PENDING_REVIEW | ChatGPT独立审查R1-FIN-P2-B；2026-10-19 | `CashEventPage.vue`预览成功后修改金额、日期、手续费、来源或凭证仍可沿用旧结果登记，可能造成登记内容未经过对应预览。已增加完整规范化请求指纹、字段变化失效、登记前指纹检查及服务端继续复核；新增Playwright覆盖金额修改和预览失效。 | 前端QA / 独立复核请求指纹覆盖字段、旧预览无法登记及异常网络回归 | R1-FIN-P2-B-FIX-01 / 修改任一资金事实必须重新预览，精确HEAD CI与独立审查通过 |
+| ISS-111 | P1 / FIXED_PENDING_REVIEW | ChatGPT独立审查R1-FIN-P2-B；2026-10-19 | 预览成功调用`formGuard.markClean`，把仍未登记的输入误判为已保存，关闭/导航可能静默丢失。已移除预览清洁标记；登记、确认、放弃成功后才清理基线，并以24小时本地临时快照恢复稳定请求键和必要输入。 | 前端QA / 独立复核关闭、遮罩、路由、刷新及响应不明回查；确认不持久化凭据 | R1-FIN-P2-B-FIX-01 / 未保存内容持续受保护，成功保存后可关闭，精确HEAD CI与独立审查通过 |
+| ISS-112 | P1 / FIXED_PENDING_REVIEW | ChatGPT独立审查R1-FIN-P2-B；2026-10-19 | 原`eventPayload`把所有选中来源自动标记`verified=true`，页面没有逐条人工核实动作。已改为来源选择与核实分离，逐条勾选后才可预览，最终确认增加完整摘要和显式确认。 | 财务QA / 独立复核来源账户、来源金额、凭证、净额和手续费摘要及后端拒绝路径 | R1-FIN-P2-B-FIX-01 / 未逐条核实不能登记，已确认记录只读，权限与P2-A校验保持有效 |
+| ISS-113 | P2 / FIXED_PENDING_REVIEW | ChatGPT独立审查R1-FIN-P2-B；2026-10-19 | 来源币种切换/刷新时旧请求可能覆盖新来源并展示失效额度。已加入请求序号、AbortController、币种一致性检查和失败保留输入。 | 前端QA / 独立复核快速切换币种、重试和网络失败时不显示旧额度 | R1-FIN-P2-B-FIX-01 / 旧响应不能覆盖当前币种，精确HEAD CI与独立审查通过 |
+| ISS-114 | P2 / NEEDS_VERIFICATION | P2-B原始全量Playwright记录；2026-10-19 | 基线记录曾为139 passed/8 failed（finance-reference-basis 2、finance-retry-safety 1、fulfillment-receivables 5）。本轮在同一隔离工作区先单独复现，8项均通过；随后完整150项（含3项新增）通过，未删除或跳过测试。尚需独立复核精确HEAD及CI是否稳定复现。 | QA / 在精确HEAD三项CI和独立复审中复核历史8项失败是否为环境/跨日不稳定；不得以一次本地通过关闭 | R1-FIN-P2-B-FIX-01 / CI与独立复审确认历史失败分类，保留原始日志和当前全量日志 |
+
+本轮新增ISS-110至ISS-114；110–113为修复待复审，114保留NEEDS_VERIFICATION；ISS-105、ISS-108、ISS-109及其他Issue状态不变。114个唯一ID：OPEN=5、BLOCKED=23、NEEDS_VERIFICATION=27、FIXED_PENDING_REVIEW=51、CLOSED=8；P0=0。不得进入P2-C、P3、正式RBAC、员工UAT或部署。

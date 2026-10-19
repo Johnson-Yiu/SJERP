@@ -66,4 +66,11 @@ P2-C精确基线的三项CI均为 SUCCESS（run `39221758795`）：[Backend](htt
 
 ## 最终交付
 
-最终提交SHA和该SHA对应Backend、Backend PostgreSQL、Frontend CI链接在push后补录；独立复审前不得把本报告或ISS-121标为关闭。
+代码与证据提交 SHA：`e951b65f5f5bdde75ce74de0bad9e052ded5810a`。该精确 HEAD 已推送 `master`，三项 CI 均 SUCCESS：
+
+- [Backend job 117985145128](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39229926842/job/117985145128)
+- [Backend PostgreSQL job 117985145243](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39229926842/job/117985145243)
+- [Frontend job 117985145012](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39229926842/job/117985145012)
+- [CI run 39229926842](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39229926842)
+
+后续若仅回写本节文档，属于证据元数据提交，不改变代码、数据库或业务结论；独立复审前不得把本报告或ISS-121标为关闭。

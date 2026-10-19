@@ -15,6 +15,8 @@ export const reportBlocks = {
   'customers-source': { title: '客户来源分布', source: 'customers', group_by: 'source', metric: 'count', view: 'donut' },
   'cash-trend': { title: '账面净收支趋势（折算参考）', source: 'cash', group_by: 'time', view: 'line' },
   'cash-category': { title: '账面收支分类（折算参考）', source: 'cash', group_by: 'category', view: 'bar' },
+  'actual-cash-trend': { title: '银行实际人民币资金趋势', source: 'actual_cash', group_by: 'time', view: 'line' },
+  'actual-cash-kind': { title: '银行实际资金分类', source: 'actual_cash', group_by: 'kind', view: 'bar' },
   'inventory-warehouse': { title: '仓库库存变动', source: 'inventory', group_by: 'warehouse', metric: 'quantity', view: 'bar' },
 }
 
@@ -40,7 +42,7 @@ export function datePreset(preset, now = new Date()) {
 }
 // Mirror the report API's existing source/dimension requirements for UI visibility.
 // These hints do not grant access; the server continues to enforce every request.
-const sourceModules = { sales: ['orders'], purchase: ['purchases'], profit: ['orders', 'purchases', 'transactions'], customers: ['customers'], cash: ['transactions'], inventory: ['inventory'] }
+const sourceModules = { sales: ['orders'], purchase: ['purchases'], profit: ['orders', 'purchases', 'transactions'], customers: ['customers'], cash: ['transactions'], actual_cash: ['transactions'], inventory: ['inventory'] }
 const dimensionModules = { customer: 'customers', country: 'customers', region: 'customers', owner: 'customers', source: 'customers', supplier: 'suppliers', product: 'products', sku: 'skus', category: 'categories' }
 export function canViewReportSource(source, can) { return Boolean(sourceModules[source]) && sourceModules[source].every(module => can(module, 'view')) }
 export function canViewReportDimension(dimension, can) { return !dimensionModules[dimension] || can(dimensionModules[dimension], 'view') }

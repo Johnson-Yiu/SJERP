@@ -15,3 +15,9 @@ test('embedded block overrides do not mutate reusable defaults', () => {
   assert.equal(reportBlocks['sales-country'].view, 'bar')
   assert.equal(resolveBlock('inventory-warehouse').metric, 'quantity')
 })
+
+test('bank cash facts use an independent report source and date basis', () => {
+  assert.deepEqual(resolveBlock('actual-cash-trend').source, 'actual_cash')
+  assert.equal(resolveBlock('actual-cash-trend').group_by, 'time')
+  assert.equal(resolveBlock('actual-cash-kind').group_by, 'kind')
+})

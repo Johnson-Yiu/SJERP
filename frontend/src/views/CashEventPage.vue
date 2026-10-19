@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { api } from '../api'
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import PageLoadState from '../components/PageLoadState.vue'
@@ -8,6 +9,7 @@ import { useAccessControl } from '../accessControl'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 const { can } = useAccessControl()
+const route = useRoute()
 const today = new Date().toLocaleDateString('en-CA')
 const currencies = [
   { value: 'CNY', label: 'CNY · 人民币' },
@@ -188,7 +190,11 @@ function clientError() {
 }
 async function loadEvents() {
   loading.value = true; loadError.value = ''
-  try { events.value = (await api.get('/rmb-cash-events/')).data.results || []; hasLoaded.value = true }
+  try {
+    events.value = (await api.get('/rmb-cash-events/')).data.results || []; hasLoaded.value = true
+    const detailId = Number(route.query.event)
+    if (detailId > 0) { const row = events.value.find(item => item.id === detailId); if (row) openDetail(row) }
+  }
   catch (err) { loadError.value = apiErrorMessage(err) || '人民币资金记录加载失败，请重试。' }
   finally { loading.value = false }
 }

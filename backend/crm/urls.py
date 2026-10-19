@@ -46,6 +46,7 @@ router.register("employees", EmployeeProfileViewSet)
 router.register("operation-logs", OperationLogViewSet, basename="operation-log")
 
 from .reporting import report_catalog, report_data
+from .actual_cash_api import actual_cash_report
 
 urlpatterns = [
     path("media/<path:relative_path>", protected_media, name="crm-protected-media"),
@@ -59,6 +60,7 @@ urlpatterns = [
     path("reports/data/", report_data),
     path("dashboard/", dashboard),
     path("finance-dashboard/", finance_dashboard),
+    path("actual-rmb-cash/", actual_cash_report),
     path("organization/overview/", organization_overview),
     path("session/current-operator/", current_operator),
     path("exchange-rates/usd-cny/", usd_cny_reference_rate),

@@ -1,6 +1,6 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
-最新实施：2026-10-19 R1-FIN-P2-B，基线b79af36dc7140507ef210ea61437dd579ba8de8b，前置Backend、Backend PostgreSQL、Frontend三项CI SUCCESS。完成人民币实际资金前端列表/详情、两步登记、后端预览、来源分配、待确认草稿、稳定请求键回查、人工确认/放弃和只读状态；真实浏览器与隔离数据库操作证据及1440/1280/1024截图见[P2-B验收](R1-FIN-P2-B-人民币资金前端验收.md)。不改旧统计来源、报表金额、收付款核销、历史金额或权限策略；ISS-105保持OPEN，ISS-108保持BLOCKED，ISS-109保持FIXED_PENDING_REVIEW。完成精确HEAD三项CI后停止等待ChatGPT独立代码与视觉复审，不自动进入P2-C、正式RBAC、员工UAT或部署。
+最新实施：2026-10-19 R1-FIN-P3-A，基线c895e1d0d758c1a9c158e940975689dc4b0ae0d6，前置P2-C三项CI SUCCESS。新增只读银行实际人民币资金统计API、actual_cash报表中心来源、财务概览独立区域、CSV与逐笔下钻；仅统计人工确认RmbCashEvent.bank_net_amount，旧账面折算参考、历史金额和核销不变。启用日期未设置，明确显示已登记银行资金汇总且不推测公司全部资金或余额；ISS-121新增BLOCKED待财务负责人确认，ISS-105保持OPEN、ISS-108保持BLOCKED。隔离真实页面、数据库核对和完整回归见[P3-A验收](R1-FIN-P3-A-人民币实际资金统计与独立报表验收.md)。完成精确HEAD三项CI后停止等待ChatGPT独立代码、财务口径与视觉复审，不自动进入P3-B、正式RBAC、员工UAT或部署。
 
 上一轮：2026-10-18至19 R1-FIN-P2-A，基线1b2ca0eb5b1947dd53f5ab995828dd33f514e0d4，前置三项CI SUCCESS。用户已正式批准D01–D08，完成最小人民币银行净额事实/来源分配、增量两表迁移、人工确认/幂等/事务/数据范围及退款、作废、替代保护。真实隔离HTTP与旧数据对比、迁移保护、PG实际并发和全量回归见[P2-A验收](R1-FIN-P2-A-人民币资金事实与结汇后端验收.md)。ISS-105保持OPEN；新增ISS-108 BLOCKED待更正/来源解除等细则，新增ISS-109待复审登记全量CI跨日旧测试修正，其他既有状态不变。无前端产品UI变更，无报表来源/历史金额/精度/核销/履约/利润/库存算法变更；不设启用日、不配置真实账户或启用正式RBAC。精确HEAD三项CI后停止，等待ChatGPT独立复审，不自动进入P2-B、员工UAT或部署。
 
@@ -179,3 +179,7 @@ R0-F4 仅优化供应商列表/新建/编辑/详情、付款条款组件、分�
 基线 `9cd57800ce524d8e0ead90f245215ac4153cf144` 的三项 CI 均为 SUCCESS。本轮在隔离 SQLite、合成业务记录和真实 Chromium 中验收外币分次结汇、同币种合并、预收核销、手续费、CNY直接收付、确认/放弃、请求键回查、重复/超额/退款/作废拒绝、历史4位和JPY精度。结汇只新增合法人民币资金事件及来源分配，不生成第二笔客户收款、不重复核销、不改订单履约、库存、历史金额或既有参考统计。完整矩阵、数据库前后对比、原始截图和日志见[R1-FIN-P2-C验收](R1-FIN-P2-C-银行资金记录与结汇完整业务闭环验收.md)。
 
 本轮新增并登记ISS-118（旧localStorage敏感字段清理）、ISS-119（独立银行手续费关联选择器）、ISS-120（浏览器Decimal字符串序列化），均保持 `FIXED_PENDING_REVIEW`。完整Playwright 155项、Vitest 633项、Node 134项、Backend SQLite 764项通过；本地PostgreSQL无服务，以最终精确HEAD CI核验。ISS-105仍OPEN、ISS-108仍BLOCKED；P2-C完成后停止等待ChatGPT独立代码、业务和视觉复审，不自动进入P3、正式RBAC、员工UAT或部署。
+
+## R1-FIN-P3-A 人民币实际资金统计与独立报表（2026-10-19）
+
+用户授权从P2-C进入本阶段。基线`c895e1d0d758c1a9c158e940975689dc4b0ae0d6`；在隔离SQLite与真实浏览器中新增并核对只读`/api/actual-rmb-cash/`、`actual_cash`报表来源、财务概览实际资金区域、CSV和逐笔下钻。后端只聚合`RmbCashEvent.status=confirmed`的`bank_net_amount`并按`bank_date`统计，含扣手续费不重复扣除，旧`cash`来源仍是账面人民币折算参考。没有设置统计启用日，不显示公司余额，不修改旧财务金额或历史记录。Backend SQLite 766（跳过13）、Node136、Vitest633、Playwright155、Build通过；本机PostgreSQL未运行，精确HEAD的CI需在push后复核。新增ISS-121 BLOCKED，等待财务负责人明确启用日期和全公司覆盖政策；ISS-105/108及其他历史Issue保留。完成后等待ChatGPT独立代码、财务口径和视觉复审，不进入P3-B、RBAC、员工UAT或部署。

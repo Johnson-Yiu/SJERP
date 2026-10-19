@@ -1,0 +1,32 @@
+
+> senju-crm-erp@1.0.0 test:browser
+> playwright test --reporter=line browser-tests/finance-reference-basis.spec.js browser-tests/overview-reports.spec.js
+
+
+[WebServer] (node:30332) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 13 tests using 2 workers
+
+(node:30276) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:27164) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/13] browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1440
+[2/13] browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1440
+[3/13] browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1024
+[4/13] browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1440
+[5/13] browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1280
+[6/13] browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1280
+[7/13] browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 24-month layout at 1024
+[8/13] browser-tests\overview-reports.spec.js:21:2 › reports complex filters, multi charts and computed layout at 1024
+[9/13] browser-tests\overview-reports.spec.js:33:1 › saved local chart configurations survive reload, reorder, remove and undo
+[10/13] browser-tests\overview-reports.spec.js:41:1 › drill and previous-analysis return preserve actual period and browser navigation restores URL
+[11/13] browser-tests\overview-reports.spec.js:47:1 › empty dashboard and charts have useful neutral states
+[12/13] browser-tests\overview-reports.spec.js:50:1 › initial failures recover, refresh failure keeps stale data, and catalog has retry
+[13/13] browser-tests\overview-reports.spec.js:56:1 › restricted UI hides sources, export and navigation, retaining unavailable local configuration
+  13 passed (36.0s)

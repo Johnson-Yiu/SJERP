@@ -12,10 +12,11 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from .models import Customer, InventoryMovement, Order, OrderItem, Product, ProductCategory, PurchaseOrder, PurchaseOrderItem, SKU, Supplier, Transaction
+from .models import Customer, InventoryMovement, Order, OrderItem, Product, ProductCategory, PurchaseOrder, PurchaseOrderItem, RmbCashEvent, SKU, Supplier, Transaction
 from .permissions import user_can
 from .sales_scope import scope_customer_queryset, scope_customer_related_queryset
 from .services.profit import order_profit_summary
+from .services import cash_events as cash
 
 DIMENSIONS = dict(time="时间", region="业务区域", country="国家/地区", customer="客户", supplier="供应商", product="产品", sku="SKU", category="产品主分类", owner="负责人", source="客户来源", status="状态", currency="原币币种", direction="收支方向", kind="业务类型", warehouse="仓库", type="出入库类型")
 SOURCES = {
@@ -24,6 +25,7 @@ SOURCES = {
     "profit": {"label": "订单利润", "dimensions": ["time", "country", "customer", "owner", "currency"], "dates": {"order_date": "订单日期"}, "note": "金额字段表示预计订单利润 = 当前有效销售额 - 已归属采购成本 - 已确认订单费用，不等同于会计净利润。"},
     "customers": {"label": "客户增长", "dimensions": ["time", "region", "country", "customer", "owner", "source", "status"], "dates": {"created_at": "创建时间", "updated_at": "更新时间"}, "note": "按客户档案创建/更新时间统计客户数；状态、负责人、地域使用当前档案，并非历史快照。"},
     "cash": {"label": "账面收支（人民币折算参考）", "basis": BOOK_RMB_BASIS, "version": BOOK_RMB_VERSION, "dimensions": ["time", "customer", "supplier", "direction", "kind", "category", "currency"], "dates": {"transaction_date": "流水发生日期", "created_at": "创建时间", "updated_at": "更新时间"}, "note": BOOK_RMB_NOTE + " 收入为正、支出为负，合计为账面净收支；不重复统计预收预付分配。"},
+    "actual_cash": {"label": "银行实际人民币资金", "basis": "bank_cash_confirmed_v1", "version": 1, "dimensions": ["time", "direction", "kind", "currency"], "dates": {"bank_date": "银行实际日期"}, "note": "仅人工确认的银行资金事件；按银行实际日期和人民币净额统计。已登记银行资金汇总，不代表公司全部实际资金，不是利润、销售收入或银行账户余额。"},
     "inventory": {"label": "库存变动", "dimensions": ["time", "product", "sku", "category", "warehouse", "type"], "dates": {"movement_date": "发生日期", "created_at": "创建时间", "updated_at": "更新时间"}, "note": "期间出入库净变动（入正出负），不是当前库存余额。不同单位数量分别展示；金额不适用。"},
 }
 
@@ -35,6 +37,7 @@ SOURCE_MODULES = {
     "profit": ("orders", "purchases", "transactions"),
     "customers": ("customers",),
     "cash": ("transactions",),
+    "actual_cash": ("transactions",),
     "inventory": ("inventory",),
 }
 
@@ -69,7 +72,7 @@ def product_dims(sku):
 
 def records(source, date_field, start, end, user=None):
     """Yield one item/adjustment/event at a time, keeping document IDs for distinct counts."""
-    model = {"sales": Order, "purchase": PurchaseOrder, "profit": Order, "customers": Customer, "cash": Transaction, "inventory": InventoryMovement}[source]
+    model = {"sales": Order, "purchase": PurchaseOrder, "profit": Order, "customers": Customer, "cash": Transaction, "actual_cash": RmbCashEvent, "inventory": InventoryMovement}[source]
     field = date_field + ("__date" if date_field.endswith("_at") else "")
     qs = model.objects.filter(**{field + "__range": (start, end)}).order_by("pk")
     if source in ["sales", "purchase", "profit"]:
@@ -81,6 +84,9 @@ def records(source, date_field, start, end, user=None):
         qs = qs.filter(status="confirmed").select_related("customer", "supplier")
         if user is not None:
             qs = scope_transaction_queryset(qs, user)
+    elif source == "actual_cash":
+        # This source is intentionally independent from the legacy book cash source.
+        qs = qs.filter(status="confirmed")
     elif source == "customers" and user is not None:
         qs = scope_customer_queryset(qs, user)
     elif source == "inventory": qs = qs.select_related("sku__product__category")
@@ -113,6 +119,18 @@ def records(source, date_field, start, end, user=None):
             dims["category"] = (obj.category, obj.category or "未填写")
             amount = obj.rmb_amount or obj.amount * obj.exchange_rate
             yield day, obj.pk, dims, amount if obj.direction == "income" else -amount, Decimal(0), ""
+        elif source == "actual_cash":
+            # Visibility is checked per event so hidden source batches cannot be
+            # inferred from an aggregate row.
+            if user is not None and not cash.visible(obj, user):
+                continue
+            dims = {
+                "direction": (obj.direction, "流入" if obj.direction == "income" else "流出"),
+                "kind": (obj.kind, obj.get_kind_display() or obj.kind),
+                "currency": (obj.currency, obj.currency),
+            }
+            amount = obj.bank_net_amount if obj.direction == "income" else -obj.bank_net_amount
+            yield day, obj.pk, dims, amount, Decimal(0), ""
         elif source == "inventory":
             yield day, obj.pk, {**dims, **product_dims(obj.sku)}, Decimal(0), obj.signed_quantity, obj.sku.unit
         else:
@@ -179,6 +197,8 @@ def report_data(request):
     if source not in SOURCES: raise ValidationError("不支持的报表模块。")
     for module in SOURCE_MODULES[source]:
         require_finance_permission(request.user, module, "view")
+    if source == "actual_cash":
+        cash.access(request.user)
     spec = SOURCES[source]
     group, grain = params.get("group_by", "time"), params.get("grain", "month")
     date_field = params.get("date_field") or next(iter(spec["dates"]))
@@ -221,10 +241,11 @@ def report_data(request):
         writer.writerow([spec["label"], start, end, spec["dates"][date_field], spec["note"]])
         writer.writerow(["筛选条件", safe_csv("；".join(f"{item['name']}：{item['label']}" for item in filter_summary(source, filters, user=request.user)))])
         writer.writerow(["比较期间", previous_start, previous_end])
-        writer.writerow([DIMENSIONS[group], ("金额（人民币折算参考）" if source == "cash" else "金额（人民币）") if source not in ["customers", "inventory"] else "金额（不适用）", "去重单据/档案数", "数量（按单位）"])
+        amount_label = "金额（银行实际人民币净额）" if source == "actual_cash" else ("金额（人民币折算参考）" if source == "cash" else "金额（人民币）") if source not in ["customers", "inventory"] else "金额（不适用）"
+        writer.writerow([DIMENSIONS[group], amount_label, "去重单据/档案数", "数量（按单位）"])
         for row in rows:
             writer.writerow([safe_csv(row["label"]), str(row["amount"]) if source not in ["customers", "inventory"] else "", row["count"], safe_csv(" / ".join(f"{qty} {unit}" for unit, qty in row["quantities"].items()))])
         writer.writerow(["合计（单据去重）", str(totals["amount"]) if source not in ["customers", "inventory"] else "", totals["count"], safe_csv(" / ".join(f"{qty} {unit}" for unit, qty in totals["quantities"].items()))])
         return response
-    return Response({**({"basis": BOOK_RMB_BASIS, "version": BOOK_RMB_VERSION} if source == "cash" else {}), "source": source, "group_by": group, "date_field": date_field, "date_label": spec["dates"][date_field], "grain": grain, "comparison": comparison, "period": {"date_from": start, "date_to": end}, "comparison_period": {"date_from": previous_start, "date_to": previous_end}, "totals": totals, "previous": previous, "changes": changes, "rows": rows, "note": spec["note"], "filters": filters, "filter_summary": filter_summary(source, filters, user=request.user), "generated_at": timezone.now()})
+    return Response({**({"basis": spec.get("basis"), "version": spec.get("version")} if source in {"cash", "actual_cash"} else {}), "source": source, "group_by": group, "date_field": date_field, "date_label": spec["dates"][date_field], "grain": grain, "comparison": comparison, "period": {"date_from": start, "date_to": end}, "comparison_period": {"date_from": previous_start, "date_to": previous_end}, "totals": totals, "previous": previous, "changes": changes, "rows": rows, "note": spec["note"], "filters": filters, "filter_summary": filter_summary(source, filters, user=request.user), "generated_at": timezone.now()})
 

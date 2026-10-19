@@ -1,0 +1,28 @@
+{
+  "DATABASE_VERIFICATION": "isolated_only",
+  "legacy_before_sha256": "cffe9cb0fa1346afccd16ee8ffee76a101d1279007cd0dbd7daf46955e0d7f6a",
+  "legacy_after_sha256": "cffe9cb0fa1346afccd16ee8ffee76a101d1279007cd0dbd7daf46955e0d7f6a",
+  "legacy_unchanged": true,
+  "transaction_count": 9,
+  "cash_event_count": 1,
+  "cash_event_status_counts": {
+    "confirmed": 1,
+    "pending": 0,
+    "cancelled": 0
+  },
+  "confirmed_bank_net_signed": "705.00",
+  "confirmed_events": [
+    {
+      "id": 1,
+      "event_no": "P3A-FX-705",
+      "status": "confirmed",
+      "direction": "income",
+      "bank_date": "2026-10-19",
+      "bank_net_amount": "705.00",
+      "fee_amount": "5.00",
+      "currency": "USD",
+      "amount": "60.0000"
+    }
+  ],
+  "allocation_count": 1
+}

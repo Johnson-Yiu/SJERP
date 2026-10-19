@@ -8,6 +8,9 @@ import { useAccessControl } from '../accessControl'
 import { apiErrorMessage } from '../utils/apiErrors.js'
 
 const data = ref({ metrics: {}, due_items: [] })
+const actualCash = ref(null)
+const actualCashLoading = ref(false)
+const actualCashError = ref('')
 const loading = ref(true)
 const error = ref('')
 const hasLoaded = ref(false)
@@ -31,7 +34,28 @@ async function load() {
   if (rangeError.value) return
   loading.value = true
   error.value = ''
-  try { data.value = (await api.get('/finance-dashboard/', { params: { date_from: dateFrom.value, date_to: dateTo.value } })).data; hasLoaded.value = true } catch (err) { error.value = apiErrorMessage(err) || '财务概览加载失败，请稍后重试。' } finally { loading.value = false }
+  if (!can('transactions', 'view')) actualCash.value = null
+  try {
+    const requests = [api.get('/finance-dashboard/', { params: { date_from: dateFrom.value, date_to: dateTo.value } })]
+    if (can('transactions', 'view')) requests.push(api.get('/actual-rmb-cash/', { params: { date_from: dateFrom.value, date_to: dateTo.value } }))
+    const responses = await Promise.all(requests)
+    data.value = responses[0].data; hasLoaded.value = true
+    const actual = responses[1]?.data
+    if (actual?.totals && actual?.basis === 'bank_cash_confirmed_v1') { actualCash.value = actual; actualCashError.value = '' }
+    else if (responses[1]) actualCash.value = null
+  } catch (err) { error.value = apiErrorMessage(err) || '财务概览加载失败，请稍后重试。' } finally { loading.value = false }
+}
+async function loadActualCash() {
+  if (!can('transactions', 'view')) return
+  actualCashLoading.value = true
+  actualCashError.value = ''
+  try {
+    const response = await api.get('/actual-rmb-cash/', { params: { date_from: dateFrom.value, date_to: dateTo.value } })
+    if (response.data?.basis !== 'bank_cash_confirmed_v1') throw new Error('银行实际资金统计口径无效。')
+    actualCash.value = response.data
+  } catch (err) {
+    actualCashError.value = apiErrorMessage(err) || '银行实际资金加载失败，请稍后重试。'
+  } finally { actualCashLoading.value = false }
 }
 async function applyPeriod() {
   if (rangeError.value) return
@@ -59,6 +83,15 @@ async function exportReport() {
     notice.value = 'CSV 已开始下载。'
   } catch (err) { error.value = apiErrorMessage(err) || '导出失败，请稍后重试。' } finally { exporting.value = false }
 }
+async function exportActualCash() {
+  if (!can('transactions', 'view') || !can('reports', 'export') || !actualCash.value) return
+  try {
+    const response = await api.get('/actual-rmb-cash/', { params: { date_from: actualCash.value.period.date_from, date_to: actualCash.value.period.date_to, export: 'csv' }, responseType: 'blob' })
+    const url = URL.createObjectURL(response.data), anchor = document.createElement('a')
+    anchor.href = url; anchor.download = `银行实际人民币资金-${actualCash.value.period.date_from}-${actualCash.value.period.date_to}.csv`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
+    notice.value = '银行实际资金 CSV 已开始下载。'
+  } catch (err) { actualCashError.value = apiErrorMessage(err) || '银行实际资金导出失败，请稍后重试。' }
+}
 syncPeriod()
 watch(() => [route.query.date_from, route.query.date_to], () => { syncPeriod(); void load() })
 onMounted(load)
@@ -80,6 +113,17 @@ onMounted(load)
     <section class="metric-section"><header><div><h3>当前待结与未核销</h3><p>截至当前的待结与未核销金额</p></div></header><div class="cards balance-cards">
       <article v-for="[key, label, kind] in balanceCards" :key="key"><span>{{ label }}</span><strong>{{ kind === 'count' ? `${data.metrics[key] || 0} 笔` : `¥${money(data.metrics[key])}` }}</strong></article>
     </div></section>
+    <section v-if="can('transactions', 'view')" class="metric-section actual-cash-section" aria-label="银行实际人民币资金">
+      <header><div><h3>银行实际人民币资金</h3><p>仅统计已登记并人工确认的银行资金事件，按银行实际日期汇总。</p></div><button v-if="can('reports', 'export')" type="button" class="secondary" :disabled="actualCashLoading || !actualCash" @click="exportActualCash">导出实际资金 CSV</button></header>
+      <p v-if="actualCashError" class="error" role="alert">{{ actualCashError }} <button type="button" class="secondary" @click="loadActualCash">重新加载</button></p>
+      <p v-else-if="actualCashLoading" class="definition-note" role="status">正在加载已确认银行资金…</p>
+      <template v-else-if="actualCash">
+        <p class="definition-note">{{ actualCash.note }} 未设置统计启用日期；本区域不推测未登记资金、期初余额或期末余额。</p>
+        <div class="cards actual-cash-cards"><article><span>实际流入</span><strong>¥{{ money(actualCash.totals.inflow) }}</strong></article><article><span>实际流出</span><strong>¥{{ money(actualCash.totals.outflow) }}</strong></article><article><span>净流入 / 净流出</span><strong>¥{{ money(actualCash.totals.net) }}</strong></article><article><span>已确认事件</span><strong>{{ actualCash.totals.count }} 笔</strong></article></div>
+        <div class="report-tables"><div class="panel"><h3>月度银行资金</h3><p v-if="!actualCash.monthly?.length">所选期间暂无已确认银行资金。</p><table v-else><thead><tr><th>月份</th><th>流入</th><th>流出</th><th>净流量</th></tr></thead><tbody><tr v-for="row in actualCash.monthly" :key="row.month"><td>{{ row.month }}</td><td>¥{{ money(row.inflow) }}</td><td>¥{{ money(row.outflow) }}</td><td>¥{{ money(row.net) }}</td></tr></tbody></table></div><div class="panel"><h3>按资金类型</h3><p v-if="!actualCash.by_kind?.length">所选期间暂无已确认银行资金。</p><table v-else><thead><tr><th>类型</th><th>流入</th><th>流出</th><th>净流量</th></tr></thead><tbody><tr v-for="row in actualCash.by_kind" :key="row.kind"><td>{{ row.label }}</td><td>¥{{ money(row.inflow) }}</td><td>¥{{ money(row.outflow) }}</td><td>¥{{ money(row.net) }}</td></tr></tbody></table></div></div>
+        <div class="panel actual-cash-events"><h3>已确认银行资金明细</h3><p v-if="!actualCash.events?.length">所选期间暂无已确认银行资金事件。</p><table v-else><thead><tr><th>银行日期</th><th>事件编号</th><th>类型</th><th>方向</th><th>银行实际净额</th><th>银行参考号</th><th>操作</th></tr></thead><tbody><tr v-for="row in actualCash.events" :key="row.id"><td>{{ row.bank_date }}</td><td>{{ row.event_no }}</td><td>{{ row.kind_label }}</td><td>{{ row.direction_label }}</td><td>¥{{ money(row.bank_net_amount) }}</td><td>{{ row.bank_reference }}</td><td><RouterLink :to="row.detail_url">查看原始事件</RouterLink></td></tr></tbody></table></div>
+      </template>
+    </section>
     <div class="report-tables"><div class="panel"><h3>月度账面收支（人民币折算参考）</h3><p v-if="!data.monthly_cash?.length">所选期间暂无已确认账面收支记录。</p><table v-else><thead><tr><th>月份</th><th>收入</th><th>支出</th><th>账面净收支</th></tr></thead><tbody><tr v-for="row in data.monthly_cash" :key="row.month"><td>{{ row.month }}</td><td>¥{{ money(row.income) }}</td><td>¥{{ money(row.expense) }}</td><td>¥{{ money(row.net) }}</td></tr></tbody></table></div>
     <div class="panel"><h3>账面收支分类（人民币折算参考）</h3><p v-if="!data.categories?.length">所选期间暂无账面收支分类记录。</p><table v-else><thead><tr><th>方向</th><th>分类</th><th>人民币折算参考</th></tr></thead><tbody><tr v-for="row in data.categories" :key="`${row.direction}-${row.category}`"><td>{{ row.direction === 'income' ? '收入' : '支出' }}</td><td>{{ row.category }}</td><td>¥{{ money(row.amount) }}</td></tr></tbody></table></div></div>
     <nav class="finance-links" aria-label="财务模块快捷入口"><RouterLink v-if="can('finance', 'view')" to="/receivables">查看应收计划</RouterLink><RouterLink v-if="can('finance', 'view')" to="/payables">查看应付计划</RouterLink><RouterLink v-if="can('transactions', 'view')" to="/transactions">查看财务流水</RouterLink><RouterLink v-if="can('transactions', 'view')" to="/rmb-cash-events">人民币资金记录</RouterLink></nav>
@@ -89,5 +133,5 @@ onMounted(load)
 </template>
 
 <style scoped>
-.finance-page{padding:0}.finance-page>header,.metric-section>header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.page-lede{margin:0;color:#718078}.finance-page h3{margin:0;font-size:var(--text-section)}.finance-page p{color:#718078}.finance-page button{border:1px solid #d8e1dd;background:#0d4b40;color:#fff;border-radius:9px;padding:9px 14px;font-weight:700;white-space:nowrap}.finance-page button.secondary{background:#fff;color:#344d44}.finance-page button:disabled{opacity:.55;cursor:not-allowed}.report-filters{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin:20px 0;padding:15px 16px;border:1px solid #e2e8e4;border-radius:12px;background:#fff}.report-filters label{display:grid;gap:5px;color:#52655e;font-size:var(--text-caption)}.report-filters input{height:39px;padding:0 10px;border:1px solid #d8e1dd;border-radius:8px;background:#fff}.definition-note{margin:12px 0;padding:12px 14px;border-left:3px solid #8db7a7;border-radius:0 8px 8px 0;background:#f2f7f4;line-height:1.65}.notice{padding:10px 14px;border:1px solid #b8d8ca;border-radius:9px;background:#eff8f3;color:#1d4d40!important}.error{color:#b42318}.metric-section{margin-top:22px}.metric-section>header{align-items:end}.metric-section>header p{margin:4px 0 0;font-size:var(--text-caption)}.cards{display:grid;gap:12px;margin:12px 0 20px}.period-cards{grid-template-columns:repeat(4,minmax(0,1fr))}.balance-cards{grid-template-columns:repeat(3,minmax(0,1fr))}.cards article,.panel{min-width:0;background:#fff;border:1px solid #e2e8e4;border-radius:12px;padding:16px;box-shadow:0 4px 16px #1643340d}.cards span{color:#718078;display:block;font-size:var(--text-body)}.cards strong{display:block;font-size:clamp(20px,2vw,27px);margin-top:9px;color:#073f36;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.report-tables{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}.panel{margin-top:12px;overflow:auto}.panel h3{margin:0 0 12px}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px;border-bottom:1px solid #edf1ee;font-size:var(--text-body);white-space:nowrap}.finance-links{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.finance-links a{display:inline-flex;padding:8px 12px;border:1px solid #cbdcd3;border-radius:8px;color:#0d5c4e;text-decoration:none;background:#fff;font-weight:700}.finance-links a:hover{background:#f1f8f4}@media(max-width:1000px){.period-cards{grid-template-columns:repeat(3,minmax(0,1fr))}.balance-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.report-tables{grid-template-columns:1fr}}@media(max-width:650px){.finance-page>header{align-items:stretch;flex-direction:column}.report-filters{display:grid;grid-template-columns:1fr 1fr}.report-filters label{min-width:0}.report-filters label input{width:100%}.report-filters button{min-height:39px;padding:7px 9px}.definition-note{font-size:var(--text-caption)}.period-cards,.balance-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.cards article,.panel{padding:13px}.cards strong{font-size:20px}}
+.finance-page{padding:0}.finance-page>header,.metric-section>header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.page-lede{margin:0;color:#718078}.finance-page h3{margin:0;font-size:var(--text-section)}.finance-page p{color:#718078}.finance-page button{border:1px solid #d8e1dd;background:#0d4b40;color:#fff;border-radius:9px;padding:9px 14px;font-weight:700;white-space:nowrap}.finance-page button.secondary{background:#fff;color:#344d44}.finance-page button:disabled{opacity:.55;cursor:not-allowed}.report-filters{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin:20px 0;padding:15px 16px;border:1px solid #e2e8e4;border-radius:12px;background:#fff}.report-filters label{display:grid;gap:5px;color:#52655e;font-size:var(--text-caption)}.report-filters input{height:39px;padding:0 10px;border:1px solid #d8e1dd;border-radius:8px;background:#fff}.definition-note{margin:12px 0;padding:12px 14px;border-left:3px solid #8db7a7;border-radius:0 8px 8px 0;background:#f2f7f4;line-height:1.65}.notice{padding:10px 14px;border:1px solid #b8d8ca;border-radius:9px;background:#eff8f3;color:#1d4d40!important}.error{color:#b42318}.metric-section{margin-top:22px}.metric-section>header{align-items:end}.metric-section>header p{margin:4px 0 0;font-size:var(--text-caption)}.cards{display:grid;gap:12px;margin:12px 0 20px}.period-cards{grid-template-columns:repeat(4,minmax(0,1fr))}.balance-cards{grid-template-columns:repeat(3,minmax(0,1fr))}.actual-cash-cards{grid-template-columns:repeat(4,minmax(0,1fr))}.cards article,.panel{min-width:0;background:#fff;border:1px solid #e2e8e4;border-radius:12px;padding:16px;box-shadow:0 4px 16px #1643340d}.cards span{color:#718078;display:block;font-size:var(--text-body)}.cards strong{display:block;font-size:clamp(20px,2vw,27px);margin-top:9px;color:#073f36;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.report-tables{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}.panel{margin-top:12px;overflow:auto}.panel h3{margin:0 0 12px}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px;border-bottom:1px solid #edf1ee;font-size:var(--text-body);white-space:nowrap}.actual-cash-events{margin-top:14px}.actual-cash-events a{color:#0d5c4e;font-weight:700}.finance-links{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.finance-links a{display:inline-flex;padding:8px 12px;border:1px solid #cbdcd3;border-radius:8px;color:#0d5c4e;text-decoration:none;background:#fff;font-weight:700}.finance-links a:hover{background:#f1f8f4}@media(max-width:1000px){.period-cards,.actual-cash-cards{grid-template-columns:repeat(3,minmax(0,1fr))}.balance-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.report-tables{grid-template-columns:1fr}}@media(max-width:650px){.finance-page>header{align-items:stretch;flex-direction:column}.report-filters{display:grid;grid-template-columns:1fr 1fr}.report-filters label{min-width:0}.report-filters label input{width:100%}.report-filters button{min-height:39px;padding:7px 9px}.definition-note{font-size:var(--text-caption)}.period-cards,.balance-cards,.actual-cash-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.cards article,.panel{padding:13px}.cards strong{font-size:20px}}
 </style>

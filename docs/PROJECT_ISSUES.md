@@ -1,6 +1,6 @@
 # SUNJACK-ERP 项目问题台账
 
-最新轮次：R1-FIN-P3-A-FIX-01（2026-10-19），基线470eb34e161d97f68ff8a1151870a6ab687f32ea。修复财务概览实际资金接口独立容错/日期竞态，并保护实际资金CSV中的可控文本；旧账面折算、P2-A资金事实、历史金额和统计口径不变。新增ISS-122、ISS-123，均待独立复审；ISS-105保持OPEN，ISS-121保持BLOCKED，ISS-108保持BLOCKED；不进入P3-B、正式RBAC、员工UAT或部署。证据见[R1-FIN-P3-A-FIX-01验收](R1-FIN-P3-A-FIX-01-实际人民币资金统计安全补修验收.md)。
+最新轮次：R1-READINESS-01（2026-10-19），基线199a21e0f407ba9ad772a5dec86e0b30dbd0c9b5。完成全系统试用准备和业务阻断审查；仅更新本轮报告/台账记录，不修改业务代码或历史Issue状态。当前不具备真实员工内部试用条件；A类门槛为ISS-003、ISS-018、ISS-055。R1-FIN-P3-B按授权记录阶段性验收通过，ISS-105保持OPEN，ISS-108和ISS-121保持BLOCKED。证据见[R1-READINESS-01审查报告](R1-READINESS-01-全系统试用准备与业务阻断问题审查.md)。
 
 上一轮：R1-FIN-P2-A（2026-10-18至19），基线1b2ca0eb5b1947dd53f5ab995828dd33f514e0d4。按D01–D08授权新增银行资金事实/来源分配后端、必要API及安全保护；旧金额/核销/报表不改，ISS-105保持OPEN。新增ISS-108 BLOCKED登记尚未明确的更正与来源解除细则；新增ISS-109待复审记录CI跨日测试修正，见[P2-A验收](R1-FIN-P2-A-人民币资金事实与结汇后端验收.md)。不进入P2-B、正式RBAC、员工UAT或部署。
 
@@ -423,3 +423,11 @@ ISS-105保持OPEN，ISS-108保持BLOCKED，ISS-109至ISS-117及其他历史Issue
 基于 `c27abcb2e95b833c3a4f4c59161c3fcc7c1d4f64`，在隔离 SQLite、合成外币订单/收款/应收计划/银行凭证和真实 Chromium 中完成 A–O 场景验收。实际资金统计只聚合已确认 `RmbCashEvent.bank_net_amount`，按 `bank_date` 统计；旧 `cash` 来源继续是账面人民币折算参考。分次/合并结汇、CNY直接收付、含扣及独立手续费、pending/cancelled边界、跨月跨年、旧四位和JPY精度、权限和旧报表兼容均有原始 API、CSV、数据库快照和多视口截图。已有关联来源的退款/作废安全拒绝且前后哈希一致；不改Transaction、PaymentPlan、AdvanceAllocation、订单、库存或历史金额。完整矩阵和日志见[R1-FIN-P3-B验收](R1-FIN-P3-B-财务统计最终业务闭环验收.md)。
 
 ISS-122、ISS-123 已依据独立复审通过结论更新为 `CLOSED`。ISS-105 仍 `OPEN`，ISS-108、ISS-121 仍 `BLOCKED`，未自动关闭或修改其他历史Issue。PostgreSQL本地不可用的并发复核和真实网络超时注入保留为报告中的BLOCKED/边界，不伪造通过；最终精确HEAD三项CI作为交付门槛复核。完成后停止等待ChatGPT独立代码、业务和视觉审查，不进入P3-C、正式RBAC、员工UAT或部署。
+
+## R1-READINESS-01 全系统试用准备与业务阻断问题审查（2026-10-19）
+
+基于精确 HEAD `199a21e0f407ba9ad772a5dec86e0b30dbd0c9b5` 进行只读审查，重新按每个 Issue 的最后一次记录核对 123 个唯一 ID：OPEN 5、BLOCKED 24、NEEDS_VERIFICATION 27、FIXED_PENDING_REVIEW 57、CLOSED 10。没有改变任何历史 Issue 状态；没有把 FIXED_PENDING_REVIEW、NEEDS_VERIFICATION 或 BLOCKED 自动转为 CLOSED。
+
+R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持 OPEN，ISS-108 和 ISS-121 保持 BLOCKED。审查结论是当前可做开发身份下的隔离合成数据演练，但尚不具备真实员工内部试用条件。A 类门槛为 ISS-003（正式员工身份/数据范围）、ISS-018（数据库与媒体联合备份恢复）、ISS-055（跨客户 API 数据范围）；其余 Issue 按报告中的 A–D 矩阵登记。完整依据见 [R1-READINESS-01 审查报告](R1-READINESS-01-全系统试用准备与业务阻断问题审查.md)。
+
+本轮不启动正式员工 UAT、正式 RBAC、生产部署或财务无关修改。

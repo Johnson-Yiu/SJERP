@@ -1,0 +1,26 @@
+{
+  "storage_key": "sunjack:r1-fin-p2-b:cash-event-draft:v1",
+  "expiry_hours": 24,
+  "persisted_form_fields": [
+    "event_no",
+    "request_key",
+    "kind",
+    "currency",
+    "direction",
+    "bank_date",
+    "bank_net_amount",
+    "fee_mode",
+    "fee_amount",
+    "source_account",
+    "rmb_account",
+    "bank_reference",
+    "quoted_rate",
+    "fee_for"
+  ],
+  "omitted_fields": [
+    "evidence_reference",
+    "evidence_sha256",
+    "evidence_note"
+  ],
+  "sensitive_fields_reentered_after_restore": true
+}

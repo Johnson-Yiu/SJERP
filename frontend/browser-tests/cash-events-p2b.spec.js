@@ -89,6 +89,90 @@ test('refresh restores the stable request key and draft inputs without registeri
   await expect(page.getByLabel('银行净额（CNY）')).toHaveValue('705')
 })
 
+test('restored draft remains protected and explicit abandon clears only after confirmation', async ({ page }) => {
+  await page.route('**/api/**', async route => {
+    const path = new URL(route.request().url()).pathname
+    if (path === '/api/session/current-operator/') return route.fulfill({ json: { development_superadmin: true, has_all_permissions: true } })
+    if (path === '/api/rmb-cash-events/sources/') return route.fulfill({ json: { results: [] } })
+    return route.fulfill({ json: [] })
+  })
+  await page.goto('/rmb-cash-events')
+  await page.getByRole('button', { name: '新建资金事件' }).click()
+  const requestKey = await page.getByLabel('稳定请求键').inputValue()
+  await page.getByLabel('银行净额（CNY）').fill('705.00')
+  await page.reload()
+  await page.getByRole('button', { name: '新建资金事件' }).click()
+  await expect(page.getByText('已恢复未完成草稿')).toBeVisible()
+  await page.getByRole('button', { name: '取消', exact: true }).click()
+  await expect(page.getByRole('heading', { name: '未保存修改', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: '继续编辑', exact: true }).click()
+  await expect(page.getByLabel('稳定请求键')).toHaveValue(requestKey)
+  await expect(page.getByLabel('银行净额（CNY）')).toHaveValue('705')
+  await page.getByRole('button', { name: '取消', exact: true }).click()
+  await page.getByRole('button', { name: '放弃修改', exact: true }).click()
+  await expect(page.getByRole('heading', { name: '新建人民币资金事件', exact: true })).toHaveCount(0)
+  await page.getByRole('button', { name: '新建资金事件' }).click()
+  await expect(page.getByLabel('稳定请求键')).not.toHaveValue(requestKey)
+})
+
+test('changing a 30 allocation to 50 clears verification and requires a fresh preview', async ({ page }) => {
+  let previewCalls = 0
+  await page.route('**/api/**', async route => {
+    const path = new URL(route.request().url()).pathname
+    if (path === '/api/session/current-operator/') return route.fulfill({ json: { development_superadmin: true, has_all_permissions: true } })
+    if (path === '/api/rmb-cash-events/sources/') return route.fulfill({ json: { results: [{ id: 1, transaction_no: 'P2B-30-50-SOURCE', currency: 'USD', direction: 'income', amount: '100.00', remaining_candidate_amount: '100.00', blocked_reason: null }] } })
+    if (path === '/api/rmb-cash-events/preview/') { previewCalls += 1; return route.fulfill({ json: { source_total: '30.00', bank_net_amount: '213.00', confirmed: false, sources: [] } }) }
+    return route.fulfill({ json: [] })
+  })
+  await page.goto('/rmb-cash-events')
+  await page.getByRole('button', { name: '新建资金事件' }).click()
+  await page.getByLabel('银行净额（CNY）').fill('213.00')
+  await page.getByLabel('来源银行账户标识').fill('SYNTH-FX-01')
+  await page.getByLabel('人民币账户标识').fill('SYNTH-CNY-01')
+  await page.getByLabel('银行参考号').fill('P2B-30-50')
+  await page.getByRole('button', { name: '选择', exact: true }).click()
+  await page.locator('.allocation-table input[type="number"]').fill('30')
+  await page.locator('.verification-toggle input').check()
+  await page.getByRole('button', { name: '后端预览' }).click()
+  await expect(page.locator('.preview-box')).toBeVisible()
+  expect(previewCalls).toBe(1)
+  await page.locator('.allocation-table input[type="number"]').fill('50')
+  await expect(page.locator('.verification-toggle input')).not.toBeChecked()
+  await expect(page.locator('.preview-box')).toHaveCount(0)
+  await expect(page.getByText('旧预览已失效')).toBeVisible()
+  await page.getByRole('button', { name: '后端预览' }).click()
+  await expect(page.getByText('逐条核实')).toBeVisible()
+  expect(previewCalls).toBe(1)
+  await page.locator('.verification-toggle input').check()
+  await page.getByRole('button', { name: '后端预览' }).click()
+  await expect(page.locator('.preview-box')).toBeVisible()
+  expect(previewCalls).toBe(2)
+})
+
+test('expired local draft is removed during page initialization and sensitive evidence is not persisted', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('sunjack:r1-fin-p2-b:cash-event-draft:v1', JSON.stringify({
+      saved_at: Date.now() - 25 * 60 * 60 * 1000,
+      form: { request_key: 'EXPIRED-REQUEST', evidence_sha256: 'secret-hash', evidence_note: 'private note' },
+      allocations: [],
+    }))
+  })
+  await page.route('**/api/**', async route => {
+    const path = new URL(route.request().url()).pathname
+    if (path === '/api/session/current-operator/') return route.fulfill({ json: { development_superadmin: true, has_all_permissions: true } })
+    if (path === '/api/rmb-cash-events/sources/') return route.fulfill({ json: { results: [] } })
+    return route.fulfill({ json: [] })
+  })
+  await page.goto('/rmb-cash-events')
+  expect(await page.evaluate(() => localStorage.getItem('sunjack:r1-fin-p2-b:cash-event-draft:v1'))).toBeNull()
+  await page.getByRole('button', { name: '新建资金事件' }).click()
+  await page.getByLabel('银行净额（CNY）').fill('705.00')
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('sunjack:r1-fin-p2-b:cash-event-draft:v1'))).toContain('request_key')
+  const draft = JSON.parse(await page.evaluate(() => localStorage.getItem('sunjack:r1-fin-p2-b:cash-event-draft:v1')))
+  expect(draft.form).not.toHaveProperty('evidence_sha256')
+  expect(draft.form).not.toHaveProperty('evidence_note')
+})
+
 test('stale source responses cannot overwrite the current currency', async ({ page }) => {
   await page.route('**/api/**', async route => {
     const request = route.request()

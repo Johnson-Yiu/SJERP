@@ -1,0 +1,53 @@
+{
+  "database": "r1-fin-p2-b-fix-02-isolated.sqlite3",
+  "orders": [
+    {
+      "id": 1,
+      "order_no": "P2B-FIX-02-O",
+      "status": "confirmed",
+      "currency": "USD"
+    }
+  ],
+  "payment_plans": [
+    {
+      "id": 1,
+      "order_id": 1,
+      "direction": "receivable",
+      "currency": "USD",
+      "planned_amount": "30.0000",
+      "settled_amount": "30.0000",
+      "status": "settled"
+    },
+    {
+      "id": 2,
+      "order_id": 1,
+      "direction": "receivable",
+      "currency": "USD",
+      "planned_amount": "70.0000",
+      "settled_amount": "70.0000",
+      "status": "settled"
+    }
+  ],
+  "transactions": [
+    {
+      "id": 1,
+      "transaction_no": "P2B-FIX-02-T",
+      "amount": "30.0000",
+      "allocated_amount": "0.0000",
+      "rmb_amount": "213.0000",
+      "status": "confirmed",
+      "split_from_id": null
+    },
+    {
+      "id": 2,
+      "transaction_no": "FIN-F778BCE7AB4E4C94",
+      "amount": "70.0000",
+      "allocated_amount": "0.0000",
+      "rmb_amount": "497.0000",
+      "status": "confirmed",
+      "split_from_id": 1
+    }
+  ],
+  "cash_events": [],
+  "source_allocations": []
+}

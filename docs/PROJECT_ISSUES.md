@@ -372,3 +372,15 @@ P2-B保留旧财务流水、应收应付核销、报表和统计金额；不创�
 | ISS-114 | P2 / NEEDS_VERIFICATION | P2-B原始全量Playwright记录；2026-10-19 | 基线记录曾为139 passed/8 failed（finance-reference-basis 2、finance-retry-safety 1、fulfillment-receivables 5）。本轮在同一隔离工作区先单独复现，8项均通过；随后完整150项（含3项新增）通过，未删除或跳过测试。尚需独立复核精确HEAD及CI是否稳定复现。 | QA / 在精确HEAD三项CI和独立复审中复核历史8项失败是否为环境/跨日不稳定；不得以一次本地通过关闭 | R1-FIN-P2-B-FIX-01 / CI与独立复审确认历史失败分类，保留原始日志和当前全量日志 |
 
 本轮新增ISS-110至ISS-114；110–113为修复待复审，114保留NEEDS_VERIFICATION；ISS-105、ISS-108、ISS-109及其他Issue状态不变。114个唯一ID：OPEN=5、BLOCKED=23、NEEDS_VERIFICATION=27、FIXED_PENDING_REVIEW=51、CLOSED=8；P0=0。不得进入P2-C、P3、正式RBAC、员工UAT或部署。
+
+## R1-FIN-P2-B-FIX-02 银行资金前端剩余安全边界补修（2026-10-19）
+
+基于 `aef3425ec97b78c3a312f54010d9de60613e75a4`，仅修复草稿恢复后的未保存保护、来源分配金额与人工核实状态脱节、以及本地草稿快照字段和过期清理边界。未修改P2-A后端资金计算、历史数据、应收应付核销、权限策略或数据库模型；真实截图和日志见[R1-FIN-P2-B-FIX-02验收](R1-FIN-P2-B-FIX-02-银行资金前端剩余安全边界补修验收.md)。
+
+| ID | 优先级 / 状态 | 首次来源 / 日期 | 当前核实及影响 | 负责人 / 下一步 | 阶段 / 验收条件 |
+|---|---|---|---|---|---|
+| ISS-115 | P1 / FIXED_PENDING_REVIEW | ChatGPT独立审查R1-FIN-P2-B-FIX-01；2026-10-19 | 恢复本地草稿后 `useUnsavedChangesGuard` 基线仍为 `null`，直接关闭可能不提示而清除草稿。已在恢复前建立空白新建基线，恢复内容保持dirty；取消关闭保留输入/请求键，确认放弃才清理快照，并新增真实Playwright回归 | 前端QA / 独立复核恢复、关闭取消/确认、刷新和成功保存后的边界 | R1-FIN-P2-B-FIX-02 / 恢复草稿直接关闭必提示，取消不丢数据，确认放弃清理快照，精确HEAD CI与独立复审通过 |
+| ISS-116 | P1 / FIXED_PENDING_REVIEW | ChatGPT独立审查R1-FIN-P2-B-FIX-01；2026-10-19 | 来源分配金额修改后仍可能保留 `verified=true`，导致人工核实状态不再对应当前金额。已加入金额编辑立即撤销核实、金额基线追踪及30→50 Playwright回归；后端额度/状态校验保留 | 财务QA / 独立复核多来源金额编辑、重新核实、重新预览及后端拒绝路径 | R1-FIN-P2-B-FIX-02 / 30→50必须重新核实和预览后才能登记，精确HEAD CI与独立复审通过 |
+| ISS-117 | P2 / FIXED_PENDING_REVIEW | ChatGPT独立审查R1-FIN-P2-B-FIX-01；2026-10-19 | 本地快照此前按整个表单对象保存，缺少初始化过期清理和敏感字段边界。已改为字段白名单、版本化快照、页面初始化清理过期记录；凭证引用/SHA256/人工核实说明不落本地，恢复后要求重新填写；稳定请求键仍可用于结果不明回查 | QA / 独立复核localStorage内容、24小时期限、放弃/成功登记清理及响应不明回查 | R1-FIN-P2-B-FIX-02 / 不保存凭证敏感字段，过期即清理，成功/明确放弃清理，精确HEAD CI与独立复审通过 |
+
+本轮新增ISS-115至ISS-117，均为 `FIXED_PENDING_REVIEW`；ISS-110至ISS-113仍待复审，ISS-114仍为`NEEDS_VERIFICATION`，ISS-105仍OPEN，ISS-108仍BLOCKED，ISS-109仍FIXED_PENDING_REVIEW；不得自行关闭或进入P2-C、正式RBAC、员工UAT或部署。117个唯一ID：OPEN=5、BLOCKED=23、NEEDS_VERIFICATION=27、FIXED_PENDING_REVIEW=54、CLOSED=8；P0=0。

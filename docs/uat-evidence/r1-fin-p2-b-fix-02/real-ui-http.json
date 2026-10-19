@@ -1,0 +1,47 @@
+[
+  {
+    "method": "GET",
+    "path": "/api/rmb-cash-events/",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/rmb-cash-events/sources/",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/api/rmb-cash-events/preview/",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/api/rmb-cash-events/preview/",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/rmb-cash-events/",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/rmb-cash-events/sources/",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/rmb-cash-events/sources/",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/rmb-cash-events/",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/rmb-cash-events/",
+    "status": 200
+  }
+]

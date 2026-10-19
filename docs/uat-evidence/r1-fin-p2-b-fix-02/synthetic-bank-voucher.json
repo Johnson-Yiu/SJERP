@@ -1,0 +1,9 @@
+{
+  "type": "SYNTHETIC_BANK_VOUCHER_NOT_REAL",
+  "original_currency": "USD",
+  "original_amount": "100.00",
+  "bank_net_cny": "705.00",
+  "included_fee_cny": "5.00",
+  "date": "2026-10-19",
+  "reference": "P2B-FIX-02-BANK-01"
+}

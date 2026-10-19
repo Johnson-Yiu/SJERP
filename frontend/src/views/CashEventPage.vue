@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { api } from '../api'
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import PageLoadState from '../components/PageLoadState.vue'
@@ -46,7 +46,13 @@ const sourceSearch = ref('')
 const allocations = ref([])
 const reviewConfirmed = ref(false)
 const draftRestored = ref(false)
+const draftRestoredRequiresEvidence = ref(false)
 const draftStorageKey = 'sunjack:r1-fin-p2-b:cash-event-draft:v1'
+const draftFormFields = [
+  'event_no', 'request_key', 'kind', 'currency', 'direction', 'bank_date', 'bank_net_amount',
+  'fee_mode', 'fee_amount', 'source_account', 'rmb_account', 'bank_reference', 'quoted_rate', 'fee_for',
+]
+const allocationAmountBaseline = new Map()
 let sourceRequestId = 0
 let sourceAbortController = null
 const form = reactive({
@@ -66,6 +72,8 @@ function resetForm() {
   preview.value = null
   previewFingerprint.value = ''
   reviewConfirmed.value = false
+  draftRestoredRequiresEvidence.value = false
+  allocationAmountBaseline.clear()
   formStep.value = 'form'
   saveOutcome.value = 'not-submitted'
   showCancelReason.value = false
@@ -78,16 +86,31 @@ function clearDraftSnapshot() {
   if (typeof window === 'undefined') return
   try { window.localStorage.removeItem(draftStorageKey) } catch { /* Storage may be disabled. */ }
 }
+function persistedDraftForm() {
+  return Object.fromEntries(draftFormFields.map(field => [field, form[field]]))
+}
 function draftSnapshot() {
   return {
+    version: 2,
     saved_at: Date.now(),
-    form: { ...form },
+    form: persistedDraftForm(),
     allocations: allocations.value.map(item => ({ id: item.id, amount: item.amount, verified: item.verified === true })),
   }
 }
 function persistDraftSnapshot() {
   if (typeof window === 'undefined' || !showForm.value || formStep.value !== 'form') return
   try { window.localStorage.setItem(draftStorageKey, JSON.stringify(draftSnapshot())) } catch { /* Keep the form usable when storage is unavailable. */ }
+}
+function clearExpiredDraftSnapshot() {
+  if (typeof window === 'undefined') return
+  try {
+    const raw = window.localStorage.getItem(draftStorageKey)
+    if (!raw) return
+    const saved = JSON.parse(raw)
+    if (!saved?.saved_at || Date.now() - saved.saved_at > 24 * 60 * 60 * 1000 || !saved.form?.request_key) clearDraftSnapshot()
+  } catch {
+    clearDraftSnapshot()
+  }
 }
 function restoreDraftSnapshot() {
   if (typeof window === 'undefined') return false
@@ -98,11 +121,13 @@ function restoreDraftSnapshot() {
     if (!saved?.saved_at || Date.now() - saved.saved_at > 24 * 60 * 60 * 1000 || !saved.form?.request_key) {
       clearDraftSnapshot(); return false
     }
-    Object.assign(form, saved.form)
+    const safeForm = Object.fromEntries(draftFormFields.map(field => [field, saved.form[field] ?? form[field]]))
+    Object.assign(form, safeForm)
     allocations.value = Array.isArray(saved.allocations)
       ? saved.allocations.map(item => ({ id: item.id, amount: item.amount ?? '', verified: item.verified === true }))
       : []
     draftRestored.value = true
+    draftRestoredRequiresEvidence.value = true
     return true
   } catch {
     clearDraftSnapshot(); return false
@@ -146,6 +171,7 @@ function eventPayload() {
 function clientError() {
   if (!form.event_no || !form.request_key) return '请先填写事件编号和稳定请求键。'
   if (!form.bank_date || !form.bank_reference) return '请填写银行日期和银行参考号。'
+  if (draftRestoredRequiresEvidence.value && (!form.evidence_reference || !form.evidence_sha256 || !form.evidence_note)) return '恢复的草稿未保存凭证资料，请重新填写凭证引用、SHA256和人工核实说明。'
   if (!form.source_account || !form.rmb_account) return '请填写受控账户标识；账户未配置时确认仍会被后端阻止。'
   if (!form.bank_net_amount || Number(form.bank_net_amount) <= 0) return '请填写大于0的银行净额。'
   if (!allocations.value.length) return '请至少选择一条来源流水。'
@@ -179,16 +205,19 @@ async function loadSources() {
 }
 function openCreate() {
   if (!can('transactions', 'create')) return
-  resetForm(); draftRestored.value = false; restoreDraftSnapshot(); showForm.value = true; selected.value = null
+  resetForm(); draftRestored.value = false; showForm.value = true; selected.value = null
+  formGuard.markClean()
+  const restored = restoreDraftSnapshot()
+  if (restored) notice.value = '已恢复未完成草稿；凭证资料未保存在本地，请重新填写后再预览。'
   void loadSources()
-  void nextTick(() => { if (!draftRestored.value) formGuard.markClean() })
 }
 function closeForm() { return formGuard.requestClose(() => { clearDraftSnapshot(); showForm.value = false; selected.value = null; preview.value = null; previewFingerprint.value = '' }) }
 function addSource(row) {
   if (row.blocked_reason || row.remaining_candidate_amount === null || allocationFor(row.id)) return
   allocations.value.push({ id: row.id, amount: needsExplicitPrecision(row.remaining_candidate_amount, form.currency) ? '' : row.remaining_candidate_amount, verified: false })
 }
-function removeSource(id) { allocations.value = allocations.value.filter(item => item.id !== id) }
+function removeSource(id) { allocations.value = allocations.value.filter(item => item.id !== id); allocationAmountBaseline.delete(id) }
+function markAllocationEdited(item) { item.verified = false }
 function onKindChange() {
   if (form.kind === 'fx_settlement') { form.currency = form.currency === 'CNY' ? 'USD' : form.currency; form.direction = 'income'; form.fee_for = '' }
   if (form.kind === 'cny_direct' || form.kind === 'bank_fee') { form.currency = 'CNY'; if (form.kind === 'bank_fee') form.direction = 'expense'; form.quoted_rate = '1' }
@@ -265,13 +294,22 @@ const formGuard = useUnsavedChangesGuard({
 watch(() => form.kind, value => { if (value === 'fx_settlement' && form.currency === 'CNY') form.currency = 'USD' })
 watch([form, allocations], () => {
   if (showForm.value && formStep.value === 'form') {
+    const presentIds = new Set()
+    allocations.value.forEach(item => {
+      presentIds.add(item.id)
+      const amount = String(item.amount ?? '').trim()
+      const previousAmount = allocationAmountBaseline.get(item.id)
+      if (previousAmount !== undefined && previousAmount !== amount) item.verified = false
+      allocationAmountBaseline.set(item.id, amount)
+    })
+    for (const id of allocationAmountBaseline.keys()) if (!presentIds.has(id)) allocationAmountBaseline.delete(id)
     persistDraftSnapshot()
     if (preview.value || previewFingerprint.value) {
       previewRequestId.value += 1; preview.value = null; previewFingerprint.value = ''; saveOutcome.value = 'not-submitted'; notice.value = '表单已修改，旧预览已失效，请重新预览。'
     }
   }
 }, { deep: true })
-onMounted(loadEvents)
+onMounted(() => { clearExpiredDraftSnapshot(); loadEvents() })
 </script>
 
 <template>
@@ -301,7 +339,7 @@ onMounted(loadEvents)
       <div v-if="formStep === 'form'">
         <fieldset :disabled="saving"><legend>1. 事件与银行金额</legend><div class="form-grid"><label>事件编号<input v-model="form.event_no" maxlength="64" required></label><label>稳定请求键<input v-model="form.request_key" maxlength="128" required><small>重试必须沿用此编号。</small></label><label>事件类型<select v-model="form.kind" @change="onKindChange"><option value="fx_settlement">外币结汇到账</option><option value="cny_direct">人民币直接收付</option><option value="bank_fee">独立银行扣费</option></select></label><label>来源币种<select v-model="form.currency" @change="onCurrencyChange"><option v-for="item in currencies" :key="item.value" :value="item.value">{{ item.label }}</option></select></label><label>资金方向<select v-model="form.direction" :disabled="form.kind === 'fx_settlement'"><option value="income">流入</option><option value="expense">流出</option></select></label><label>银行实际日期<input v-model="form.bank_date" type="date" required></label><label>银行净额（CNY）<input v-model="form.bank_net_amount" type="number" min="0.01" step="0.01" required><small>以银行凭证净到账/扣款为准。</small></label><label>参考折算汇率<input v-model="form.quoted_rate" type="text" inputmode="decimal" placeholder="可留空"><small>仅作差异对照，不覆盖银行净额；保留原始十进制输入。</small></label><label>手续费方式<select v-model="form.fee_mode"><option value="none">无含扣手续费</option><option value="included">净额已含扣费</option></select></label><label v-if="form.fee_mode === 'included'">含扣手续费（CNY）<input v-model="form.fee_amount" type="number" min="0.01" step="0.01" required></label></div></fieldset>
         <fieldset :disabled="saving"><legend>2. 银行凭证与受控账户</legend><div class="form-grid"><label>来源银行账户标识<input v-model="form.source_account" maxlength="40" placeholder="例如 SYNTH-FX-01" required></label><label>人民币账户标识<input v-model="form.rmb_account" maxlength="40" placeholder="例如 SYNTH-CNY-01" required></label><label>银行参考号<input v-model="form.bank_reference" maxlength="120" required></label><label>凭证引用<input v-model="form.evidence_reference" maxlength="200" placeholder="文件名或内部凭证编号"></label><label class="wide">凭证 SHA256<input v-model="form.evidence_sha256" maxlength="64" placeholder="确认时必填"></label><label class="wide">人工核实说明<textarea v-model="form.evidence_note" maxlength="500" rows="2" placeholder="确认时必填，记录核对人和核对内容"></textarea></label></div><p class="field-hint">账户标识仅用于后端受控校验，不填写银行登录信息。当前环境未配置账户时，确认会被安全阻止。</p></fieldset>
-        <fieldset :disabled="saving"><legend>3. 来源分配</legend><div class="source-toolbar"><input v-model="sourceSearch" type="search" placeholder="搜索流水号"><button type="button" class="secondary" @click="loadSources">刷新来源</button></div><p v-if="sourceError" class="error" role="alert">{{ sourceError }} <button type="button" class="secondary" @click="loadSources">重试</button></p><p v-else-if="sourceLoading" class="field-hint" role="status">正在加载可用来源…</p><div v-else class="source-list"><div v-for="row in filteredSources()" :key="row.id" class="source-option"><div><strong>{{ sourceLabel(row) }}</strong><small>{{ row.direction === 'income' ? '收入' : '支出' }} · 可用 {{ row.remaining_candidate_amount === null ? '待核对' : `${row.currency} ${money(row.remaining_candidate_amount, row.currency)}` }}</small><small v-if="row.blocked_reason" class="blocked">{{ row.blocked_reason }}</small></div><button type="button" :disabled="Boolean(row.blocked_reason) || row.remaining_candidate_amount === null || Boolean(allocationFor(row.id))" @click="addSource(row)">{{ allocationFor(row.id) ? '已选择' : row.remaining_candidate_amount === null ? '待核对' : '选择' }}</button></div><p v-if="!filteredSources().length" class="empty-note">没有可选择的来源流水。</p></div><div v-if="allocations.length" class="allocation-table"><table><thead><tr><th>来源</th><th>可用额度</th><th>本次分配</th><th>人工核实</th><th></th></tr></thead><tbody><tr v-for="item in allocations" :key="item.id"><td>{{ sourceRows.find(row => row.id === item.id)?.transaction_no || `流水 #${item.id}` }}</td><td>{{ sourceRows.find(row => row.id === item.id)?.remaining_candidate_amount === null ? '待核对' : `${form.currency} ${money(sourceRows.find(row => row.id === item.id)?.remaining_candidate_amount, form.currency)}` }}</td><td><input v-model="item.amount" type="number" min="0.01" :step="form.currency === 'JPY' ? '1' : '0.01'" required></td><td><label class="verification-toggle"><input v-model="item.verified" type="checkbox"><span>{{ item.verified ? '已核实' : '待核实' }}</span></label></td><td><button type="button" class="text-button" @click="removeSource(item.id)">移除</button></td></tr></tbody></table><p class="allocation-total">已分配 {{ form.currency }} {{ money(sourceTotal(), form.currency) }} · 银行净额 CNY {{ money(form.bank_net_amount) }}</p></div></fieldset>
+        <fieldset :disabled="saving"><legend>3. 来源分配</legend><div class="source-toolbar"><input v-model="sourceSearch" type="search" placeholder="搜索流水号"><button type="button" class="secondary" @click="loadSources">刷新来源</button></div><p v-if="sourceError" class="error" role="alert">{{ sourceError }} <button type="button" class="secondary" @click="loadSources">重试</button></p><p v-else-if="sourceLoading" class="field-hint" role="status">正在加载可用来源…</p><div v-else class="source-list"><div v-for="row in filteredSources()" :key="row.id" class="source-option"><div><strong>{{ sourceLabel(row) }}</strong><small>{{ row.direction === 'income' ? '收入' : '支出' }} · 可用 {{ row.remaining_candidate_amount === null ? '待核对' : `${row.currency} ${money(row.remaining_candidate_amount, row.currency)}` }}</small><small v-if="row.blocked_reason" class="blocked">{{ row.blocked_reason }}</small></div><button type="button" :disabled="Boolean(row.blocked_reason) || row.remaining_candidate_amount === null || Boolean(allocationFor(row.id))" @click="addSource(row)">{{ allocationFor(row.id) ? '已选择' : row.remaining_candidate_amount === null ? '待核对' : '选择' }}</button></div><p v-if="!filteredSources().length" class="empty-note">没有可选择的来源流水。</p></div><div v-if="allocations.length" class="allocation-table"><table><thead><tr><th>来源</th><th>可用额度</th><th>本次分配</th><th>人工核实</th><th></th></tr></thead><tbody><tr v-for="item in allocations" :key="item.id"><td>{{ sourceRows.find(row => row.id === item.id)?.transaction_no || `流水 #${item.id}` }}</td><td>{{ sourceRows.find(row => row.id === item.id)?.remaining_candidate_amount === null ? '待核对' : `${form.currency} ${money(sourceRows.find(row => row.id === item.id)?.remaining_candidate_amount, form.currency)}` }}</td><td><input v-model="item.amount" @input="markAllocationEdited(item)" type="number" min="0.01" :step="form.currency === 'JPY' ? '1' : '0.01'" required></td><td><label class="verification-toggle"><input v-model="item.verified" type="checkbox"><span>{{ item.verified ? '已核实' : '待核实' }}</span></label></td><td><button type="button" class="text-button" @click="removeSource(item.id)">移除</button></td></tr></tbody></table><p class="allocation-total">已分配 {{ form.currency }} {{ money(sourceTotal(), form.currency) }} · 银行净额 CNY {{ money(form.bank_net_amount) }}</p></div></fieldset>
         <p v-if="allocations.some(item => !item.amount)" class="field-hint">历史来源保留了更高精度，请按币种精度人工填写本次分配；系统不会自动舍入历史金额。</p>
         <p v-if="preview" class="preview-box" role="status"><strong>后端预览通过</strong>：来源合计 {{ form.currency }} {{ money(preview.source_total, form.currency) }}，银行净额 CNY {{ money(preview.bank_net_amount) }}。预览不会占用额度；修改金额、日期、手续费、来源或凭证后必须重新预览。</p>
         <p v-if="error" class="error" role="alert">{{ error }}</p>

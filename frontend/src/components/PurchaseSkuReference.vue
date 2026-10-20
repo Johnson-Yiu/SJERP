@@ -63,7 +63,7 @@ function characteristicsDescription(values) {
 }
 
 function sourceDescription(row) {
-  const parts = [row?.supplier_name, row?.supplier_model || row?.supplier_sku_code].filter(value => String(value || '').trim())
+  const parts = [row?.source_label, row?.supplier_name, row?.supplier_model || row?.supplier_sku_code].filter(value => String(value || '').trim())
   const traits = characteristicsDescription(row?.supplier_characteristics)
   if (traits !== '未记录') parts.push(traits)
   return parts.join(' · ') || '未记录'
@@ -196,7 +196,7 @@ watch(skuId, reset, { immediate: true })
           </article>
         </div>
         <p v-else class="purchase-sku-reference-state">暂无库存流水记录，库存差异信息未记录。</p>
-        <div v-if="purchaseRows.length" class="purchase-sku-records purchase-sku-purchases"><strong>相关采购 / 到货记录</strong><article v-for="purchase in purchaseRows" :key="purchase.id"><header><strong>{{ purchase.purchase_no || '未记录采购单' }}</strong><small>{{ purchase.supplier_name || '供应商未显示' }} · {{ purchase.status_display || purchase.status || '状态未记录' }}</small></header><p>采购 {{ formatQuantity(purchase.quantity) }} {{ sku.unit || '' }} · 到货 {{ formatQuantity(purchase.received_quantity) }} {{ sku.unit || '' }}</p><p v-for="source in purchase.supplier_sources || []" :key="`${purchase.id}-${source.supplier_sku_code || source.supplier_model}`">供应来源特征：{{ [source.supplier_name, source.supplier_model || source.supplier_sku_code, characteristicsDescription(source.characteristics)].filter(Boolean).join(' · ') || '未记录' }}</p></article></div>
+        <div v-if="purchaseRows.length" class="purchase-sku-records purchase-sku-purchases"><strong>相关采购 / 到货记录</strong><article v-for="purchase in purchaseRows" :key="purchase.id"><header><strong>{{ purchase.purchase_no || '未记录采购单' }}</strong><small>{{ purchase.supplier_name || '供应商未显示' }} · {{ purchase.status_display || purchase.status || '状态未记录' }}</small></header><p>采购 {{ formatQuantity(purchase.quantity) }} {{ sku.unit || '' }} · 到货 {{ formatQuantity(purchase.received_quantity) }} {{ sku.unit || '' }}</p><p v-for="source in purchase.supplier_sources || []" :key="`${purchase.id}-${source.supplier_sku_code || source.supplier_model || source.source_label}`">{{ source.source_label || '历史采购来源未记录' }}：{{ [source.supplier_name, source.supplier_model || source.supplier_sku_code, characteristicsDescription(source.characteristics)].filter(Boolean).join(' · ') || '未记录' }}</p></article></div>
       </template>
     </section>
 

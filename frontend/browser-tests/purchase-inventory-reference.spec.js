@@ -46,9 +46,10 @@ async function mockPurchaseApi(page) {
         movements: [{
           id: 11, movement_no: 'IM-FIX-001', movement_date: '2026-10-20', type_display: '采购入库', signed_quantity: '100.00',
           trade_unit: null, warehouse: '北区成品仓', source_no: 'PO-FIX-001', reference: 'PO-FIX-001', notes: '防潮袋；客户 LOGO 待确认',
+          source_label: '当前供应来源档案',
           supplier_name: '库存差异验收供应商', supplier_model: 'IR-24W', supplier_sku_code: 'IR-FIX-001', supplier_characteristics: { 包装: '防潮袋', LOGO: '客户标记待确认' },
         }],
-        purchases: [{ id: 21, purchase_no: 'PO-FIX-001', supplier_name: '库存差异验收供应商', status: 'ordered', status_display: '已下单', quantity: '100.00', received_quantity: '100.00', supplier_sources: [{ supplier_name: '库存差异验收供应商', supplier_model: 'IR-24W', supplier_sku_code: 'IR-FIX-001', characteristics: { 包装: '防潮袋', LOGO: '客户标记待确认' } }] }],
+        purchases: [{ id: 21, purchase_no: 'PO-FIX-001', supplier_name: '库存差异验收供应商', status: 'ordered', status_display: '已下单', quantity: '100.00', received_quantity: '100.00', supplier_sources: [{ source_label: '历史采购来源快照', supplier_name: '库存差异验收供应商', supplier_model: 'IR-24W', supplier_sku_code: 'IR-FIX-001', characteristics: { 包装: '防潮袋', LOGO: '客户标记待确认' } }] }],
         orders: [], shipments: [],
       } })
     }
@@ -94,6 +95,8 @@ for (const width of [1440, 1024, 700]) {
     await dialog.getByRole('button', { name: '查看库存记录与差异' }).click()
     await expect(dialog.locator('.purchase-sku-difference')).toContainText('北区成品仓')
     await expect(dialog.locator('.purchase-sku-difference')).toContainText('PO-FIX-001')
+    await expect(dialog.locator('.purchase-sku-difference')).toContainText('当前供应来源档案')
+    await expect(dialog.locator('.purchase-sku-difference')).toContainText('历史采购来源快照')
     await expect(dialog.locator('.purchase-sku-difference')).toContainText('防潮袋')
     await expect(dialog.locator('.purchase-sku-difference')).toContainText('客户 LOGO 待确认')
   })

@@ -127,6 +127,54 @@ class InventoryReferenceTests(TestCase):
         self.assertEqual(detail.data["purchases"][0]["quantity"], Decimal("7.00"))
         self.assertEqual(detail.data["purchases"][0]["supplier_sources"][0]["characteristics"], {"包装": "防潮袋", "LOGO": "客户标记待确认"})
 
+    def test_inventory_detail_separates_historical_snapshot_from_current_supplier_profile(self):
+        source = SupplierSKU.objects.get(sku=self.sku)
+        supplier = source.supplier
+        supplier.name = "当前供应商B"
+        supplier.save(update_fields=["name"])
+        source.supplier_model = "当前型号B"
+        source.supplier_sku_code = "当前编码B"
+        source.characteristics = {"包装": "当前纸箱", "LOGO": "当前档案B"}
+        source.save(update_fields=["supplier_model", "supplier_sku_code", "characteristics"])
+
+        detail = self.client.get(f"/api/skus/{self.sku.pk}/inventory-detail/")
+
+        self.assertEqual(detail.status_code, 200, detail.data)
+        purchase_source = detail.data["purchases"][0]["supplier_sources"][0]
+        self.assertEqual(purchase_source["source_label"], "历史采购来源快照")
+        self.assertEqual(purchase_source["supplier_name"], "库存参考供应商")
+        self.assertEqual(purchase_source["supplier_model"], "IR-24W")
+        self.assertEqual(purchase_source["supplier_sku_code"], "IR-REF-001")
+        self.assertEqual(purchase_source["characteristics"], {"包装": "防潮袋", "LOGO": "客户标记待确认"})
+        movement = next(row for row in detail.data["movements"] if row["movement_no"] == "IM-INV-REF-IN")
+        self.assertEqual(movement["source_label"], "当前供应来源档案")
+        self.assertEqual(movement["supplier_name"], "当前供应商B")
+        self.assertEqual(movement["supplier_model"], "当前型号B")
+        self.assertEqual(movement["supplier_sku_code"], "当前编码B")
+        self.assertEqual(movement["supplier_characteristics"], {"包装": "当前纸箱", "LOGO": "当前档案B"})
+
+    def test_inventory_detail_does_not_invent_history_when_snapshots_are_empty(self):
+        item = PurchaseOrderItem.objects.get(purchase_order__purchase_no="PO-INV-REF", sku=self.sku)
+        PurchaseOrderItem.objects.filter(pk=item.pk).update(
+            supplier_name_snapshot="",
+            supplier_model_snapshot="",
+            supplier_sku_code_snapshot="",
+            supplier_characteristics_snapshot={},
+        )
+        source = SupplierSKU.objects.get(pk=item.supplier_sku_id)
+        source.characteristics = {"包装": "当前纸箱", "LOGO": "当前档案B"}
+        source.save(update_fields=["characteristics"])
+
+        detail = self.client.get(f"/api/skus/{self.sku.pk}/inventory-detail/")
+
+        self.assertEqual(detail.status_code, 200, detail.data)
+        purchase_source = detail.data["purchases"][0]["supplier_sources"][0]
+        self.assertEqual(purchase_source["source_label"], "历史采购来源未记录")
+        self.assertEqual(purchase_source["supplier_name"], "")
+        self.assertEqual(purchase_source["supplier_model"], "")
+        self.assertEqual(purchase_source["supplier_sku_code"], "")
+        self.assertEqual(purchase_source["characteristics"], {})
+
     def test_sku_detail_does_not_turn_hidden_inventory_into_zero(self):
         RolePermission.objects.filter(role=self.role, module="inventory").update(can_view=False)
 
@@ -141,6 +189,11 @@ class InventoryReferenceTests(TestCase):
 
     def test_inventory_detail_redacts_supplier_traits_without_supplier_permission(self):
         RolePermission.objects.filter(role=self.role, module="suppliers").update(can_view=False)
+        source = SupplierSKU.objects.get(sku=self.sku)
+        source.supplier_model = "当前型号B"
+        source.supplier_sku_code = "当前编码B"
+        source.characteristics = {"包装": "当前纸箱", "LOGO": "当前档案B"}
+        source.save(update_fields=["supplier_model", "supplier_sku_code", "characteristics"])
 
         response = self.client.get(f"/api/skus/{self.sku.pk}/inventory-detail/")
 
@@ -150,3 +203,5 @@ class InventoryReferenceTests(TestCase):
         self.assertEqual(movement["supplier_characteristics"], {})
         self.assertEqual(response.data["purchases"][0]["supplier_name"], "")
         self.assertEqual(response.data["purchases"][0]["supplier_sources"], [])
+        self.assertEqual(movement["supplier_model"], "")
+        self.assertEqual(movement["supplier_sku_code"], "")

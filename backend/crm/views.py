@@ -1016,6 +1016,7 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         for movement, row in zip(movements, movement_rows):
             source = movement.supplier_sku if can_view_suppliers else None
             row.update({
+                "source_label": "当前供应来源档案" if source else "供应来源未记录",
                 "supplier_name": source.supplier.name if source else "",
                 "supplier_model": source.supplier_model if source else "",
                 "supplier_sku_code": source.supplier_sku_code if source else "",
@@ -1027,16 +1028,23 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             source_rows = []
             if can_view_suppliers:
                 for item in item_rows:
-                    source = item.supplier_sku
-                    characteristics = source.characteristics if source else (item.supplier_characteristics_snapshot or {})
+                    characteristics = item.supplier_characteristics_snapshot if isinstance(item.supplier_characteristics_snapshot, dict) else {}
+                    has_snapshot = any((
+                        item.supplier_name_snapshot,
+                        item.supplier_model_snapshot,
+                        item.supplier_sku_code_snapshot,
+                        characteristics,
+                    ))
                     source_rows.append({
-                        "supplier_name": source.supplier.name if source else item.supplier_name_snapshot or "",
-                        "supplier_model": source.supplier_model if source else item.supplier_model_snapshot or "",
-                        "supplier_sku_code": source.supplier_sku_code if source else item.supplier_sku_code_snapshot or "",
+                        "source_label": "历史采购来源快照" if has_snapshot else "历史采购来源未记录",
+                        "supplier_name": item.supplier_name_snapshot or "",
+                        "supplier_model": item.supplier_model_snapshot or "",
+                        "supplier_sku_code": item.supplier_sku_code_snapshot or "",
                         "characteristics": characteristics,
                     })
+            historical_supplier_name = next((item.supplier_name_snapshot for item in item_rows if item.supplier_name_snapshot), "")
             purchase_rows.append({
-                "id": purchase.id, "purchase_no": purchase.purchase_no, "supplier_name": purchase.supplier.name if can_view_suppliers else "",
+                "id": purchase.id, "purchase_no": purchase.purchase_no, "supplier_name": historical_supplier_name if can_view_suppliers else "",
                 "order_no": purchase.order.order_no if purchase.order_id in visible_purchase_order_ids else "", "order_date": purchase.order_date,
                 "status": purchase.status, "status_display": purchase.get_status_display(),
                 "quantity": sum((item.quantity for item in item_rows), Decimal("0")),

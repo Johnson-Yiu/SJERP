@@ -74,7 +74,6 @@ const hasActiveFilters = computed(() => Boolean(searchQuery.value || statusFilte
 const referenceReady = computed(() => referenceLoaded.value.suppliers && referenceLoaded.value.orders && referenceLoaded.value.skus)
 const referenceErrorEntries = computed(() => Object.entries(referenceErrors.value).filter(([, value]) => value))
 const filteredPurchaseEmpty = computed(() => hasActiveFilters.value && allPurchaseRowsExist.value)
-const supplierSourcesReady = computed(() => draft.value.items.every(item => !supplierSkuLoading.value[supplierSourceKey(item)] && !supplierSkuErrors.value[supplierSourceKey(item)]))
 const routeCreateOpen = ref(false)
 let routeCreateSignature = ''
 let searchDebounceTimer
@@ -291,6 +290,44 @@ async function matchedSupplier(selection) {
 }
 function supplierSourceKey(item) { return `${draft.value.supplier || ''}:${item.sku || ''}` }
 function supplierSourcesFor(item) { return supplierSkuOptions.value[supplierSourceKey(item)] || [] }
+const quantity = value => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 6 })
+const moqWarnings = computed(() => {
+  const groups = new Map()
+  draft.value.items.forEach(item => {
+    if (!item.supplier_sku) return
+    const stateKey = supplierSourceKey(item)
+    if (supplierSkuLoading.value[stateKey] || supplierSkuErrors.value[stateKey]) return
+    const source = supplierSourcesFor(item).find(row => Number(row.id) === Number(item.supplier_sku))
+    const moq = Number(source?.moq)
+    const actual = baseQuantity(item)
+    if (!source || !Number.isFinite(moq) || moq <= 0 || !Number.isFinite(actual)) return
+    const key = String(source.id)
+    const group = groups.get(key) || {
+      source_id: source.id,
+      sku_code: itemSku(item)?.sku_code || item.sku || '未命名 SKU',
+      actual_quantity: 0,
+      moq,
+      base_unit: itemBaseUnit(item) || '基础单位',
+    }
+    group.actual_quantity += actual
+    groups.set(key, group)
+  })
+  return [...groups.values()]
+    .filter(item => item.actual_quantity < item.moq)
+    .map(item => ({ ...item, shortage: item.moq - item.actual_quantity }))
+})
+const moqCheckUnavailable = computed(() => {
+  const seen = new Set()
+  return draft.value.items.flatMap(item => {
+    if (!item.supplier_sku) return []
+    const key = supplierSourceKey(item)
+    if (seen.has(key)) return []
+    seen.add(key)
+    if (supplierSkuLoading.value[key]) return [{ key, message: '供应商供货档案正在加载，暂无法判断 MOQ。' }]
+    if (supplierSkuErrors.value[key]) return [{ key, message: '供应商供货档案加载失败，暂无法判断 MOQ；请重试加载。' }]
+    return []
+  })
+})
 async function loadSupplierSkuOptions(item) {
   const key = supplierSourceKey(item)
   supplierSkuErrors.value[key] = ''
@@ -357,7 +394,7 @@ function syncSelectedSkus(ids) {
   })
   if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
 }
-async function createPurchase() { if (saving.value || draftChanging.value || !can('purchases', editingPurchaseId.value ? 'update' : 'create')) return; if (!referenceReady.value) { error.value = '供应商、订单或 SKU 资料尚未加载完成，请重试后再保存。'; return } if (!supplierSourcesReady.value) { error.value = '供应商供货档案仍在加载或加载失败，请重试后再保存。'; return } if (paymentTermsError(draft.value.payment_terms_snapshot)) { error.value = paymentTermsError(draft.value.payment_terms_snapshot); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; if (payload.sales_link_restricted) delete payload.order; delete payload.sales_link_restricted; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); guard.markClean(); await closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
+async function createPurchase() { if (saving.value || draftChanging.value || !can('purchases', editingPurchaseId.value ? 'update' : 'create')) return; if (!referenceReady.value) { error.value = '供应商、订单或 SKU 资料尚未加载完成，请重试后再保存。'; return } if (paymentTermsError(draft.value.payment_terms_snapshot)) { error.value = paymentTermsError(draft.value.payment_terms_snapshot); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; if (payload.sales_link_restricted) delete payload.order; delete payload.sales_link_restricted; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); guard.markClean(); await closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
 async function cancelPurchase(row) { if (!can('purchases', 'update')) return; const reason = await inputDialog({ title: '取消采购', message: `请填写取消采购单 ${row.purchase_no} 的原因。`, label: '取消原因', placeholder: '请输入取消原因', required: true, maxLength: 500, confirmText: '确认取消', danger: true }); if (!reason) return; try { await api.post(`/purchase-orders/${row.id}/cancel/`, { reason }); notice.value = '采购单已取消。'; await load() } catch (err) { error.value = message(err, '取消采购失败。') } }
 async function deleteDraft(row) { if (!can('purchases', 'delete') || !await confirmDialog({ title: '确认删除采购草稿', message: `确定删除草稿 ${row.purchase_no} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/purchase-orders/${row.id}/`); notice.value = '采购草稿已删除。'; if (Number(route.query.detail) === row.id) await closeDetail(); await load() } catch (err) { error.value = message(err, '删除采购草稿失败。') } }
 function moqExceptionMessage(data) {
@@ -473,6 +510,10 @@ watch(() => route.query.detail, id => {
             <div class="draft-section-heading"><h4>采购商品</h4><small v-if="selectedOrder">关联：{{ selectedOrder.order_no }}</small></div>
             <p class="section-help">选择 SKU 后填写规格、数量和单价。</p>
             <SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" :show-price="false" />
+            <div v-if="moqCheckUnavailable.length || moqWarnings.length" class="moq-editor-feedback" aria-live="polite">
+              <p v-for="item in moqCheckUnavailable" :key="item.key" class="moq-check-unavailable" role="status">{{ item.message }}</p>
+              <p v-for="warning in moqWarnings" :key="warning.source_id" class="moq-editor-warning" data-testid="draft-moq-warning" role="alert">{{ warning.sku_code }}：实际 {{ quantity(warning.actual_quantity) }} {{ warning.base_unit }}，MOQ {{ quantity(warning.moq) }} {{ warning.base_unit }}，差额 {{ quantity(warning.shortage) }} {{ warning.base_unit }}。可保存草稿；确认下单时需填写例外原因。</p>
+            </div>
             <article v-for="(item,index) in draft.items" :key="index" class="purchase-line">
               <header class="purchase-line-heading"><div class="purchase-sku"><b>{{ itemSku(item)?.display_name_cn || itemSku(item)?.product_name || '—' }}</b><small>SKU: {{ itemSku(item)?.sku_code || item.sku || '—' }} · Sales Model: {{ itemSku(item)?.sales_model || '—' }}</small></div><button type="button" class="text-btn danger" @click="draft.items.splice(index, 1)">删除</button></header>
               <div class="line-source-grid">
@@ -492,7 +533,7 @@ watch(() => route.query.detail, id => {
           </section>
           <section class="purchase-total-summary"><h4>采购金额汇总</h4><div><span>商品项数 <b>{{ draft.items.length }}</b></span><span>币种 <b>{{ draft.currency }}</b></span><span>商品金额 <strong>{{ draft.currency }} {{ money(draftAmount) }}</strong></span></div></section>
           <p v-if="error" class="form-error" role="alert">{{ error }}</p>
-          <div class="editor-actions"><small>草稿保存不会生成应付或在途采购；确认下单后才进入正式采购流程。</small><div><button type="button" class="btn btn-secondary" @click="closeCreate">取消</button><button v-if="can('purchases', editingPurchaseId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || draftChanging || !referenceReady || !supplierSourcesReady || !!paymentTermsError(draft.payment_terms_snapshot)"><Save :size="16" /> {{ saving ? '保存中…' : (editingPurchaseId ? '保存采购草稿' : '创建采购单') }}</button></div></div>
+          <div class="editor-actions"><small>草稿保存不会生成应付或在途采购；确认下单后才进入正式采购流程。</small><div><button type="button" class="btn btn-secondary" @click="closeCreate">取消</button><button v-if="can('purchases', editingPurchaseId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || draftChanging || !referenceReady || !!paymentTermsError(draft.payment_terms_snapshot)"><Save :size="16" /> {{ saving ? '保存中…' : (editingPurchaseId ? '保存采购草稿' : '创建采购单') }}</button></div></div>
         </form>
       </section>
     </div>
@@ -527,6 +568,9 @@ watch(() => route.query.detail, id => {
 .receipt-mask{position:fixed;inset:0;background:#10261d66;display:grid;place-items:center;z-index:100}.receipt-dialog{width:min(540px,90vw);max-height:90vh;overflow:auto;padding:24px;background:white;border-radius:14px}.receipt-dialog label{display:grid;gap:6px;margin:14px 0}.receipt-dialog input:not([type=checkbox]),.receipt-dialog select,.receipt-dialog textarea{padding:9px;border:1px solid #d8e1dd;border-radius:7px}.receipt-dialog footer{display:flex;justify-content:flex-end;gap:10px}.receipt-dialog button{padding:9px 14px}.receipt-dialog p{font-size:var(--text-body);color:#718078}
 
 .page-actions,.editor-actions{display:flex;gap:9px}.notice{margin:0 0 14px;padding:10px 13px;border:1px solid #b9dfce;border-radius:9px;background:#eff9f3;color:#216348}.form-error{margin:0 0 14px;padding:10px 13px;border:1px solid #efcaca;border-radius:9px;background:#fff5f5;color:#a44343}.editor{margin-bottom:18px}.section-heading{display:flex;justify-content:space-between;gap:12px}.section-heading h3,.line-editor h4{margin:0;color:#1d493d}.section-heading p{margin:5px 0 0;color:#74847d;font-size:var(--text-body)}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}.form-grid label{display:grid;gap:6px;color:#536961;font-size:var(--text-body);font-weight:700}.form-grid input,.form-grid select,.purchase-line input,.purchase-line select{min-height:38px;border:1px solid #d8e3de;border-radius:8px;padding:7px 9px;background:#fff;color:#263d35}.form-grid select:disabled{background:#f1f5f3;color:#5d756b;cursor:not-allowed}.line-editor{margin-top:20px;padding-top:16px;border-top:1px solid #e5ece8}.line-editor small{color:#778881;font-weight:400}.purchase-sku{min-width:0}.purchase-sku b,.purchase-sku small{display:block;overflow-wrap:anywhere}.purchase-sku b{color:#294a41;font-size:var(--text-body)}.purchase-sku small{margin-top:3px;color:#81908a;font-size:var(--text-caption)}.purchase-empty{margin:10px 18px;padding:15px;border:1px dashed #cddbd4;border-radius:8px;color:#82918b;text-align:center;font-size:var(--text-body)}.editor-actions{justify-content:flex-end;margin-top:20px}.text-btn{border:0;background:transparent;padding:6px 8px;border-radius:6px;color:#28624e;font:inherit;font-size:var(--text-body);cursor:pointer}.text-btn:hover{background:#e7f1eb}.text-btn:disabled{opacity:.45;cursor:not-allowed}.danger{color:#a74b4b}@media(max-width:760px){.form-grid{grid-template-columns:1fr}.purchase-line{grid-template-columns:1fr}.page-head{align-items:flex-start}.page-actions{flex-wrap:wrap}}
+</style>
+<style scoped>
+.moq-editor-feedback{display:grid;gap:8px;margin:12px 0}.moq-editor-feedback p{margin:0;padding:9px 11px;border-radius:8px;font-size:12px;line-height:1.6}.moq-editor-warning{border:1px solid #EADBB5;background:#FFF8E8;color:#805C25}.moq-check-unavailable{border:1px solid #D6E1DC;background:#F5F8F6;color:#5F746B}
 </style>
 
 <style scoped>

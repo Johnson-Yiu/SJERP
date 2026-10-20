@@ -356,6 +356,7 @@ class CashMigrationTests(TransactionTestCase):
     def test_additive_migration_preserves_historical_rows_and_decimal_fields(self):
         from django.db.migrations.executor import MigrationExecutor
         executor = MigrationExecutor(connection)
+        latest_targets = sorted(executor.loader.graph.leaf_nodes())
         executor.migrate([("crm", "0076_customer_owner_profile")])
         try:
             state = executor.loader.project_state([("crm", "0076_customer_owner_profile")]).apps
@@ -378,4 +379,4 @@ class CashMigrationTests(TransactionTestCase):
             self.assertEqual(current_models["crm.CashSourceAllocation"].objects.count(), 0)
             print("P2A_MIGRATION_VERIFICATION", json.dumps({"vendor": connection.vendor, "all_legacy_rows_equal": True, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}))
         finally:
-            MigrationExecutor(connection).migrate([("crm", "0077_rmb_cash_events")])
+            MigrationExecutor(connection).migrate(latest_targets)

@@ -27,7 +27,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/purchase-orders/5/place/",
+      "path": "/api/purchase-orders/8/place/",
       "status": 200
     },
     {
@@ -51,23 +51,23 @@
       "status": 200
     },
     {
+      "method": "POST",
+      "path": "/api/purchase-orders/9/place/",
+      "status": 400
+    },
+    {
       "method": "GET",
       "path": "/api/purchase-orders/",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/purchase-orders/6/place/",
+      "path": "/api/purchase-orders/9/place/",
       "status": 400
     },
     {
       "method": "POST",
-      "path": "/api/purchase-orders/6/place/",
-      "status": 400
-    },
-    {
-      "method": "POST",
-      "path": "/api/purchase-orders/6/place/",
+      "path": "/api/purchase-orders/9/place/",
       "status": 200
     },
     {

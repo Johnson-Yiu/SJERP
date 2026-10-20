@@ -97,5 +97,7 @@ test('shared cost allocation loads procurement-scoped order identifiers without 
   assert.match(modal, /order\.order_no/)
   assert.doesNotMatch(modal, /order\.customer_name/)
   assert.match(modal, /销售详情受限/)
+  assert.match(modal, /销售订单（详情受限）/)
+  assert.match(modal, /filter\(row => row\.order && row\.order_no\)/)
   assert.match(modal, /仅显示订单号，不展示客户、售价或利润/)
 })

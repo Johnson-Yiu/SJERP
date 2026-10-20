@@ -1,4 +1,4 @@
-from .procurement_scope import validate_cost_writes, scoped_cost_summary, require_order_writes
+from .procurement_scope import validate_cost_writes, scoped_cost_summary, require_cost_allocation_updates, require_order_writes
 from .finance_scope import scope_transaction_queryset, scope_plan_queryset, validate_finance_relations, require_finance_permission, ContractFinancePermission
 from .trade_units import amount_expression, trade_values
 import csv
@@ -323,6 +323,7 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="cost-allocation-orders")
     def cost_allocation_orders(self, request):
         """Return only the identifiers needed by the purchasing allocator."""
+        require_cost_allocation_updates(request.user)
         search = (request.query_params.get("search") or "").strip()
         orders = Order.objects.exclude(status="cancelled").order_by("order_no")
         if search:

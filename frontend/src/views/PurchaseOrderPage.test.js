@@ -88,3 +88,39 @@ test('purchase price reference only carries across matching currencies and reset
   assert.match(source, /参考价未自动带入，请填写本次实际采购单价/)
   assert.match(source, /source\.purchase_price \}\} \{\{ source\.currency/)
 })
+
+test('purchase placement rechecks MOQ on the server and asks for one exception reason before retrying', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  const detail = await readFile(new URL('../components/PurchaseDetailModal.vue', import.meta.url), 'utf8')
+
+  assert.match(source, /purchase_moq_exception_required/)
+  assert.match(source, /moqExceptionMessage/)
+  assert.match(source, /await inputDialog\(/)
+  assert.match(source, /moq_exception_reason: reason/)
+  assert.match(source, /取消则保留当前采购草稿/)
+  assert.match(detail, /purchase-moq-exception/)
+  assert.match(detail, /例外原因/)
+  assert.match(detail, /item\.shortage/)
+})
+
+test('purchase editor shows a real-time, source-scoped MOQ warning without blocking draft save', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /const moqWarnings = computed\(\(\) =>/)
+  assert.match(source, /const actual = baseQuantity\(item\)/)
+  assert.match(source, /group\.actual_quantity \+= actual/)
+  assert.match(source, /const key = String\(source\.id\)/)
+  assert.match(source, /data-testid="draft-moq-warning"/)
+  assert.match(source, /可保存草稿；确认下单时需填写例外原因。/)
+  assert.match(source, /供应商供货档案加载失败，暂无法判断 MOQ；请重试加载。/)
+  assert.doesNotMatch(source, /!supplierSourcesReady/)
+})
+
+test('purchase MOQ exception history uses the established local date-time format', async () => {
+  const detail = await readFile(new URL('../components/PurchaseDetailModal.vue', import.meta.url), 'utf8')
+
+  assert.match(detail, /function dateTime\(value\)/)
+  assert.match(detail, /toLocaleString\('zh-CN'/)
+  assert.match(detail, /dateTime\(row\.moq_exception\.created_at\)/)
+  assert.doesNotMatch(detail, /\{\{ row\.moq_exception\.created_at \}\}/)
+})

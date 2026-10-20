@@ -1035,6 +1035,30 @@ class PurchaseOrder(TimestampedModel):
         return self.purchase_no
 
 
+class PurchaseMOQException(TimestampedModel):
+    """Immutable business evidence for a purchase placed below supplier MOQ."""
+
+    purchase_order = models.OneToOneField(
+        PurchaseOrder,
+        on_delete=models.PROTECT,
+        related_name="moq_exception",
+        verbose_name="采购单",
+    )
+    reason = models.TextField("例外原因", max_length=500)
+    details = models.JSONField("MOQ 例外明细", default=list)
+    operator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="purchase_moq_exceptions",
+        verbose_name="确认人员",
+    )
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+
+
 class PurchaseCostAllocation(models.Model):
     target_name = models.CharField("自定义成本归属", max_length=100, blank=True, default="")
     purchase_item = models.ForeignKey("PurchaseOrderItem", on_delete=models.CASCADE, related_name="cost_allocations")

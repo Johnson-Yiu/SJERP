@@ -17,7 +17,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
 from .models import ShipmentItem
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseMOQException, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
 from .supplier_display import payment_terms_summary
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .document_numbers import allocate_order_no, allocate_purchase_no
@@ -429,6 +429,20 @@ class PurchaseOrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSer
         return data
 
 
+class PurchaseMOQExceptionSerializer(serializers.ModelSerializer):
+    operator_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PurchaseMOQException
+        fields = ["id", "reason", "details", "operator_name", "created_at"]
+        read_only_fields = fields
+
+    def get_operator_name(self, obj):
+        if not user_can(serializer_user(self.context), "employees", "view"):
+            return ""
+        return obj.operator.get_username() if obj.operator else "系统"
+
+
 def normalized_contract_item_signature(item, *, include_supplier_sku=False):
     def related_id(value):
         return value.pk if hasattr(value, "pk") else value
@@ -536,6 +550,16 @@ def sync_unsettled_contract_plans(instance, changed):
 
 class PurchaseOrderSerializer(serializers.ModelSerializer):
     payment_plans = serializers.SerializerMethodField()
+    moq_exception = serializers.SerializerMethodField()
+
+    def get_moq_exception(self, obj):
+        try:
+            exception = obj.moq_exception
+        except PurchaseMOQException.DoesNotExist:
+            exception = None
+        if exception is None:
+            return None
+        return PurchaseMOQExceptionSerializer(exception, context=self.context).data
 
     def get_payment_plans(self, obj):
         if not user_can(serializer_user(self.context), "finance", "view"):

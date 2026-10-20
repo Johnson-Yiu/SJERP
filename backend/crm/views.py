@@ -1003,24 +1003,50 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             scoped_orders.select_related("customer")
             .prefetch_related("items", "items__shipment_items").distinct()
         )
-        movements = InventoryMovement.objects.filter(sku=sku).select_related("order").order_by("-movement_date", "-created_at")
+        movements = InventoryMovement.objects.filter(sku=sku).select_related("order", "supplier_sku__supplier").order_by("-movement_date", "-created_at")
         can_view_orders = user_can(request.user, "orders", "view")
         can_view_customers = user_can(request.user, "customers", "view")
         can_view_purchases = user_can(request.user, "purchases", "view")
+        can_view_suppliers = user_can(request.user, "suppliers", "view")
         purchase_order_ids = purchases.exclude(order_id=None).values_list("order_id", flat=True)
         visible_purchase_order_ids = set(scope_customer_related_queryset(
             Order.objects.filter(pk__in=purchase_order_ids), request.user,
         ).values_list("pk", flat=True)) if can_view_orders else set()
-        return Response({
-            "sku": {"id": sku.id, "sku": sku.sku, "display_name_cn": sku.display_name_cn, "unit": sku.unit},
-            "movements": InventoryMovementSerializer(movements, many=True, context={"request": request}).data,
-            "purchases": [{
-                "id": purchase.id, "purchase_no": purchase.purchase_no, "supplier_name": purchase.supplier.name if user_can(request.user, "suppliers", "view") else "",
+        movement_rows = InventoryMovementSerializer(movements, many=True, context={"request": request}).data
+        for movement, row in zip(movements, movement_rows):
+            source = movement.supplier_sku if can_view_suppliers else None
+            row.update({
+                "supplier_name": source.supplier.name if source else "",
+                "supplier_model": source.supplier_model if source else "",
+                "supplier_sku_code": source.supplier_sku_code if source else "",
+                "supplier_characteristics": source.characteristics if source else {},
+            })
+        purchase_rows = []
+        for purchase in purchases:
+            item_rows = list(purchase.items.filter(sku=sku).select_related("supplier_sku", "supplier_sku__supplier"))
+            source_rows = []
+            if can_view_suppliers:
+                for item in item_rows:
+                    source = item.supplier_sku
+                    characteristics = source.characteristics if source else (item.supplier_characteristics_snapshot or {})
+                    source_rows.append({
+                        "supplier_name": source.supplier.name if source else item.supplier_name_snapshot or "",
+                        "supplier_model": source.supplier_model if source else item.supplier_model_snapshot or "",
+                        "supplier_sku_code": source.supplier_sku_code if source else item.supplier_sku_code_snapshot or "",
+                        "characteristics": characteristics,
+                    })
+            purchase_rows.append({
+                "id": purchase.id, "purchase_no": purchase.purchase_no, "supplier_name": purchase.supplier.name if can_view_suppliers else "",
                 "order_no": purchase.order.order_no if purchase.order_id in visible_purchase_order_ids else "", "order_date": purchase.order_date,
                 "status": purchase.status, "status_display": purchase.get_status_display(),
-                "quantity": sum((item.quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
-                "received_quantity": sum((item.received_quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
-            } for purchase in purchases] if can_view_purchases else [],
+                "quantity": sum((item.quantity for item in item_rows), Decimal("0")),
+                "received_quantity": sum((item.received_quantity for item in item_rows), Decimal("0")),
+                "supplier_sources": source_rows,
+            })
+        return Response({
+            "sku": {"id": sku.id, "sku": sku.sku, "display_name_cn": sku.display_name_cn, "unit": sku.unit},
+            "movements": movement_rows,
+            "purchases": purchase_rows if can_view_purchases else [],
             "shipments": [{
                 "id": shipment.id, "shipment_no": shipment.shipment_no, "shipment_date": shipment.shipment_date,
                 "order": shipment.order_id if can_view_orders else None,

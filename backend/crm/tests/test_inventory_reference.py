@@ -16,6 +16,7 @@ from crm.models import (
     PurchaseOrderItem,
     RolePermission,
     SKU,
+    SupplierSKU,
     Supplier,
 )
 
@@ -78,6 +79,14 @@ class InventoryReferenceTests(TestCase):
             quantity=Decimal("3"),
         )
         supplier = Supplier.objects.create(code="IR", name="库存参考供应商")
+        source = SupplierSKU.objects.create(
+            supplier=supplier,
+            sku=self.sku,
+            supplier_sku_code="IR-REF-001",
+            supplier_model="IR-24W",
+            purchase_price=Decimal("2"),
+            characteristics={"包装": "防潮袋", "LOGO": "客户标记待确认"},
+        )
         purchase = PurchaseOrder.objects.create(
             purchase_no="PO-INV-REF",
             supplier=supplier,
@@ -85,7 +94,15 @@ class InventoryReferenceTests(TestCase):
             status="ordered",
             currency="CNY",
         )
-        PurchaseOrderItem.objects.create(purchase_order=purchase, sku=self.sku, quantity=Decimal("7"), unit_price=Decimal("2"))
+        PurchaseOrderItem.objects.create(purchase_order=purchase, sku=self.sku, supplier_sku=source, quantity=Decimal("7"), unit_price=Decimal("2"))
+        InventoryMovement.objects.filter(movement_no="IM-INV-REF-IN").update(
+            supplier_sku=source,
+            warehouse="北区成品仓",
+            reference="PO-INV-REF",
+            source_type="receipt",
+            source_no="PO-INV-REF",
+            notes="防潮袋；客户 LOGO 待确认",
+        )
 
     def test_sku_detail_reuses_authoritative_metrics_and_inventory_context(self):
         response = self.client.get(f"/api/skus/{self.sku.pk}/")
@@ -102,7 +119,13 @@ class InventoryReferenceTests(TestCase):
         self.assertEqual(detail.status_code, 200, detail.data)
         self.assertEqual(detail.data["sku"]["unit"], "pcs")
         self.assertEqual([row["movement_no"] for row in detail.data["movements"]], ["IM-INV-REF-OUT", "IM-INV-REF-IN"])
+        movement = detail.data["movements"][1]
+        self.assertEqual(movement["warehouse"], "北区成品仓")
+        self.assertEqual(movement["source_no"], "PO-INV-REF")
+        self.assertEqual(movement["notes"], "防潮袋；客户 LOGO 待确认")
+        self.assertEqual(movement["supplier_characteristics"], {"包装": "防潮袋", "LOGO": "客户标记待确认"})
         self.assertEqual(detail.data["purchases"][0]["quantity"], Decimal("7.00"))
+        self.assertEqual(detail.data["purchases"][0]["supplier_sources"][0]["characteristics"], {"包装": "防潮袋", "LOGO": "客户标记待确认"})
 
     def test_sku_detail_does_not_turn_hidden_inventory_into_zero(self):
         RolePermission.objects.filter(role=self.role, module="inventory").update(can_view=False)
@@ -115,3 +138,15 @@ class InventoryReferenceTests(TestCase):
 
         detail = self.client.get(f"/api/skus/{self.sku.pk}/inventory-detail/")
         self.assertEqual(detail.status_code, 403, detail.data)
+
+    def test_inventory_detail_redacts_supplier_traits_without_supplier_permission(self):
+        RolePermission.objects.filter(role=self.role, module="suppliers").update(can_view=False)
+
+        response = self.client.get(f"/api/skus/{self.sku.pk}/inventory-detail/")
+
+        self.assertEqual(response.status_code, 200, response.data)
+        movement = next(row for row in response.data["movements"] if row["movement_no"] == "IM-INV-REF-IN")
+        self.assertEqual(movement["supplier_name"], "")
+        self.assertEqual(movement["supplier_characteristics"], {})
+        self.assertEqual(response.data["purchases"][0]["supplier_name"], "")
+        self.assertEqual(response.data["purchases"][0]["supplier_sources"], [])

@@ -1,0 +1,38 @@
+[
+  {
+    "width": 1440,
+    "selectedSku": "INV3-FIX-B\n库存差异验收 SKU B\n基础单位：box",
+    "inventoryReference": "实际库存\n20 box\n已预留\n20 box\n可用库存\n0 box\n在途采购\n5 box",
+    "layout": {
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "optionsHeight": 175,
+      "optionsScrollHeight": 696,
+      "panelHeight": 268
+    }
+  },
+  {
+    "width": 1024,
+    "selectedSku": "INV3-FIX-B\n库存差异验收 SKU B\n基础单位：box",
+    "inventoryReference": "实际库存\n20 box\n已预留\n20 box\n可用库存\n0 box\n在途采购\n5 box",
+    "layout": {
+      "viewport": 1024,
+      "pageWidth": 1024,
+      "optionsHeight": 175,
+      "optionsScrollHeight": 696,
+      "panelHeight": 268
+    }
+  },
+  {
+    "width": 700,
+    "selectedSku": "INV3-FIX-B\n库存差异验收 SKU B\n基础单位：box",
+    "inventoryReference": "实际库存\n20 box\n已预留\n20 box\n可用库存\n0 box\n在途采购\n5 box",
+    "layout": {
+      "viewport": 700,
+      "pageWidth": 700,
+      "optionsHeight": 160,
+      "optionsScrollHeight": 696,
+      "panelHeight": 422
+    }
+  }
+]

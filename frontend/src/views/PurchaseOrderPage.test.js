@@ -106,3 +106,22 @@ test('purchase editor exposes a read-only SKU inventory reference without changi
   assert.match(reference, /未显示库存数量，采购仍可继续。/)
   assert.match(reference, /库存详情/)
 })
+
+test('narrow SKU picker keeps a usable scroll area and falls back after canceling the active SKU', async () => {
+  const source = await readFile(new URL('../components/SkuPickerPanel.vue', import.meta.url), 'utf8')
+
+  assert.match(source, /height:auto;min-height:var\(--sku-picker-height\)/)
+  assert.match(source, /min-height:160px;max-height:260px;overflow-y:auto/)
+  assert.match(source, /next\.includes\(id\) \? id : \(next\.at\(-1\) \|\| ''\)/)
+})
+
+test('inventory reference exposes recorded movement and supplier-difference context without inventing batch versions', async () => {
+  const source = await readFile(new URL('../components/PurchaseSkuReference.vue', import.meta.url), 'utf8')
+
+  assert.match(source, /inventory-detail/)
+  assert.match(source, /查看库存记录与差异/)
+  assert.match(source, /存放地点/)
+  assert.match(source, /供应来源特征/)
+  assert.match(source, /仓库是该流水登记地点，不等同当前分仓余额/)
+  assert.match(source, /不代表库存批次版本/)
+})

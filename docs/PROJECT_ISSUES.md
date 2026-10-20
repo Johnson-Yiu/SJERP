@@ -437,3 +437,9 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 基于 `25405e1b25ff8a218b67883acf489ada8a53e146` 的 `origin/master` 创建独立分支 `codex/r1-inv-03`。采购新建/编辑页面新增只读 SKU 库存参考区，复用现有 SKU 详情序列化、`sku_metrics` 和 inventory 权限；展示基础单位下的实际、已预留、可用及在途数量，并提供库存详情、SKU资料、规格/参数/定制说明和 SKU 历史版本入口。没有新增模型或迁移，没有自动扣减、分配、预留、履约、成本或付款改变，也没有把 SKUVersion 当作库存批次。
 
 新增后端权限/指标回归 `crm.tests.test_inventory_reference` 2项，前端采购页回归1项；真实 Chrome 隔离数据库流程和 1440/1024/700 截图见 [`docs/uat-evidence/r1-inv-03/`](uat-evidence/r1-inv-03/)。ISS-022及R1-MOQ-02分支保持原状态，当前改动只在本独立分支，待ChatGPT独立代码和视觉复审。
+
+## R1-INV-03-FIX-01 独立审查补修（2026-10-20）
+
+仅处理窄屏 SKU 选择器和库存差异信息缺口。查明 `SkuPickerPanel` 单列模式仍锁定 268px 导致列表滚动区被预览区压缩；现在窄屏列表有独立最小/最大滚动区域，取消活动 SKU 后回退到剩余选中项。采购数量和选择事件保持原契约，其他共享页面继续复用同一组件。
+
+库存参考继续复用 `/skus/:id/inventory-detail/`，补充展示实际记录的流水登记地点、来源单据、登记规格、备注、供应来源特征和相关采购/到货记录，并按权限脱敏。明确仓库登记地点不等同分仓余额，SKUVersion不等同库存批次；没有可靠关联的数据显示未记录，未新增批次或多仓模型。SQLite 771（跳过13）、前端139、构建和真实 Chrome 4项行为回归通过；证据见 [`docs/uat-evidence/r1-inv-03-fix-01/`](uat-evidence/r1-inv-03-fix-01/)。本轮仍不运行 GitHub Actions，ISS-022及 R1-MOQ-02 保持原状态，等待 ChatGPT 独立复审。

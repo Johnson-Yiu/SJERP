@@ -20,6 +20,7 @@ import PageLoadState from '../components/PageLoadState.vue'
 import ListEmptyState from '../components/ListEmptyState.vue'
 import SkuContextBanner from '../components/SkuContextBanner.vue'
 import SkuPickerPanel from '../components/SkuPickerPanel.vue'
+import PurchaseSkuReference from '../components/PurchaseSkuReference.vue'
 import { clearModalRoute } from '../utils/modalNavigation'
 import { orderDetailLocation, workbenchCloseLocation } from '../utils/detailNavigation'
 import { withoutDocumentDetailQuery } from '../utils/documentDetailRoute'
@@ -341,6 +342,7 @@ function applySupplierSkuPrice(item) {
   if (source.purchase_price !== null && source.purchase_price !== undefined) item.unit_price = Number(source.purchase_price) * Number(item.trade_unit ? item.trade_snapshot?.factor || 1 : 1)
 }
 const activeSkuId = ref('')
+const activeSku = computed(() => skus.value.find(sku => String(sku.id) === String(activeSkuId.value)) || null)
 const selectedSkuIds = computed({
   get: () => [...new Set((draft.value.items || []).map(item => String(item.sku || '')).filter(Boolean))],
   set: syncSelectedSkus,
@@ -434,8 +436,9 @@ watch(() => route.query.detail, id => {
           <section class="draft-section"><div class="draft-section-heading"><h4>本次付款计划</h4><small>仅用于本采购单。</small></div><PaymentTermsEditor v-model="draft.payment_terms_snapshot" /></section>
           <section class="draft-section line-editor">
             <div class="draft-section-heading"><h4>采购商品</h4><small v-if="selectedOrder">关联：{{ selectedOrder.order_no }}</small></div>
-            <p class="section-help">选择 SKU 后填写规格、数量和单价。</p>
+            <p class="section-help">选择 SKU 后填写规格、数量和单价；切换上方 SKU 可查看库存参考。</p>
             <SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" :show-price="false" />
+            <PurchaseSkuReference :sku="activeSku" />
             <article v-for="(item,index) in draft.items" :key="index" class="purchase-line">
               <header class="purchase-line-heading"><div class="purchase-sku"><b>{{ itemSku(item)?.display_name_cn || itemSku(item)?.product_name || '—' }}</b><small>SKU: {{ itemSku(item)?.sku_code || item.sku || '—' }} · Sales Model: {{ itemSku(item)?.sales_model || '—' }}</small></div><button type="button" class="text-btn danger" @click="draft.items.splice(index, 1)">删除</button></header>
               <div class="line-source-grid">

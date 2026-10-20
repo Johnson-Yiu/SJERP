@@ -1,0 +1,117 @@
+from datetime import date
+from decimal import Decimal
+
+from django.contrib.auth import get_user_model
+from django.test import TestCase, override_settings
+from rest_framework.test import APIClient
+
+from crm.models import (
+    AccessRole,
+    EmployeeProfile,
+    InventoryMovement,
+    OrganizationUnit,
+    Position,
+    Product,
+    PurchaseOrder,
+    PurchaseOrderItem,
+    RolePermission,
+    SKU,
+    Supplier,
+)
+
+
+RBAC_SETTINGS = {
+    "APP_STAGE": "production",
+    "DEBUG": False,
+    "DEVELOPMENT_SUPERADMIN": False,
+    "RBAC_ENFORCEMENT": True,
+}
+
+
+@override_settings(**RBAC_SETTINGS)
+class InventoryReferenceTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        company = OrganizationUnit.objects.create(name="库存参考公司", code="INV-REF-ROOT", type="company")
+        position = Position.objects.create(unit=company, name="采购员工", code="INV-REF-POS")
+        role = AccessRole.objects.create(name="库存参考采购角色", code="inv-ref-role", default_data_scope="all")
+        for module in ("purchases", "skus", "products", "suppliers", "orders", "inventory"):
+            RolePermission.objects.create(
+                role=role,
+                module=module,
+                can_view=True,
+                can_create=True,
+                can_update=True,
+                can_delete=True,
+                can_export=True,
+                can_import=True,
+            )
+        user = get_user_model().objects.create_user(username="inventory-reference-user", password="test-password")
+        profile = EmployeeProfile.objects.create(user=user, display_name="库存参考采购员工", unit=company, position=position)
+        profile.roles.add(role)
+        self.role = role
+        self.client.force_authenticate(user=user)
+
+        product = Product.objects.create(code="P-INV-REF", name="库存参考产品")
+        self.sku = SKU.objects.create(
+            product=product,
+            sku="SKU-INV-REF-001",
+            display_name_cn="库存参考 SKU",
+            specification="24W / 白光",
+            description_cn="采购参考描述",
+            parameter_values={"色温": "4000K"},
+            product_details=[{"notes": "可定制线长", "custom": "是"}],
+            unit="pcs",
+        )
+        InventoryMovement.objects.create(
+            movement_no="IM-INV-REF-IN",
+            movement_date=date(2026, 10, 20),
+            type="purchase_in",
+            sku=self.sku,
+            quantity=Decimal("12"),
+        )
+        InventoryMovement.objects.create(
+            movement_no="IM-INV-REF-OUT",
+            movement_date=date(2026, 10, 20),
+            type="sample_out",
+            sku=self.sku,
+            quantity=Decimal("3"),
+        )
+        supplier = Supplier.objects.create(code="IR", name="库存参考供应商")
+        purchase = PurchaseOrder.objects.create(
+            purchase_no="PO-INV-REF",
+            supplier=supplier,
+            order_date=date(2026, 10, 20),
+            status="ordered",
+            currency="CNY",
+        )
+        PurchaseOrderItem.objects.create(purchase_order=purchase, sku=self.sku, quantity=Decimal("7"), unit_price=Decimal("2"))
+
+    def test_sku_detail_reuses_authoritative_metrics_and_inventory_context(self):
+        response = self.client.get(f"/api/skus/{self.sku.pk}/")
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["sku_code"], self.sku.sku)
+        self.assertEqual(response.data["actual_quantity"], Decimal("9"))
+        self.assertEqual(response.data["reserved_quantity"], Decimal("0"))
+        self.assertEqual(response.data["available_quantity"], Decimal("9"))
+        self.assertEqual(response.data["in_transit_quantity"], Decimal("7"))
+        self.assertEqual(response.data["specification"], "24W / 白光")
+
+        detail = self.client.get(f"/api/skus/{self.sku.pk}/inventory-detail/")
+        self.assertEqual(detail.status_code, 200, detail.data)
+        self.assertEqual(detail.data["sku"]["unit"], "pcs")
+        self.assertEqual([row["movement_no"] for row in detail.data["movements"]], ["IM-INV-REF-OUT", "IM-INV-REF-IN"])
+        self.assertEqual(detail.data["purchases"][0]["quantity"], Decimal("7.00"))
+
+    def test_sku_detail_does_not_turn_hidden_inventory_into_zero(self):
+        RolePermission.objects.filter(role=self.role, module="inventory").update(can_view=False)
+
+        response = self.client.get(f"/api/skus/{self.sku.pk}/")
+
+        self.assertEqual(response.status_code, 200, response.data)
+        for field in ("stock_quantity", "actual_quantity", "reserved_quantity", "available_quantity", "in_transit_quantity"):
+            self.assertIsNone(response.data[field])
+
+        detail = self.client.get(f"/api/skus/{self.sku.pk}/inventory-detail/")
+        self.assertEqual(detail.status_code, 403, detail.data)

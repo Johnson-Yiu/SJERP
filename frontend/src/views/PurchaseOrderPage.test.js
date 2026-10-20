@@ -88,3 +88,21 @@ test('purchase price reference only carries across matching currencies and reset
   assert.match(source, /参考价未自动带入，请填写本次实际采购单价/)
   assert.match(source, /source\.purchase_price \}\} \{\{ source\.currency/)
 })
+
+test('purchase editor exposes a read-only SKU inventory reference without changing procurement values', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  const reference = await readFile(new URL('../components/PurchaseSkuReference.vue', import.meta.url), 'utf8')
+
+  assert.match(source, /PurchaseSkuReference/)
+  assert.match(source, /切换上方 SKU 可查看库存参考/)
+  assert.match(reference, /仅供采购判断；不自动分配库存、不改采购数量/)
+  assert.match(reference, /actual_quantity/)
+  assert.match(reference, /reserved_quantity/)
+  assert.match(reference, /available_quantity/)
+  assert.match(reference, /in_transit_quantity/)
+  assert.match(reference, /\/skus\/\$\{id\}\//)
+  assert.match(reference, /\/skus\/\$\{id\}\/versions\//)
+  assert.match(reference, /当前账号无库存查看权限，库存数量不在采购页面显示。/)
+  assert.match(reference, /未显示库存数量，采购仍可继续。/)
+  assert.match(reference, /库存详情/)
+})

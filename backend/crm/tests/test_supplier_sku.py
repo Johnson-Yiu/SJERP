@@ -343,7 +343,7 @@ class SupplierSKUApiTests(TestCase):
             "items": [{"sku": self.sku.id, "supplier_sku": source.id, "quantity": "1", "unit_price": "3"}],
         }, format="json")
         self.assertEqual(created.status_code, status.HTTP_201_CREATED, created.data)
-        self.assertEqual(self.client.post(f"/api/purchase-orders/{created.data['id']}/place/", {}, format="json").status_code, status.HTTP_200_OK)
+        self.assertEqual(self.client.post(f"/api/purchase-orders/{created.data['id']}/place/", {"moq_exception_reason": "历史采购测试：已确认低于 MOQ 的需求量。"}, format="json").status_code, status.HTTP_200_OK)
         source.is_active = False
         source.save(update_fields=["is_active"])
         payload = {"supplier": self.supplier_a.id, "order_date": "2026-08-23", "currency": "USD", "exchange_rate": "1", "items": [{"sku": self.sku.id, "supplier_sku": source.id, "quantity": "1", "unit_price": "3"}]}

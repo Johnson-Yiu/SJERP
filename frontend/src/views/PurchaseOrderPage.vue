@@ -358,9 +358,46 @@ function syncSelectedSkus(ids) {
   if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
 }
 async function createPurchase() { if (saving.value || draftChanging.value || !can('purchases', editingPurchaseId.value ? 'update' : 'create')) return; if (!referenceReady.value) { error.value = '供应商、订单或 SKU 资料尚未加载完成，请重试后再保存。'; return } if (!supplierSourcesReady.value) { error.value = '供应商供货档案仍在加载或加载失败，请重试后再保存。'; return } if (paymentTermsError(draft.value.payment_terms_snapshot)) { error.value = paymentTermsError(draft.value.payment_terms_snapshot); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; if (payload.sales_link_restricted) delete payload.order; delete payload.sales_link_restricted; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); guard.markClean(); await closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
-async function place(row) { if (!can('purchases', 'update')) return; const zeroCount = (row.items || []).filter(item => Number(item.unit_price) === 0).length; if (!await confirmDialog({ title: '确认采购下单', message: `${zeroCount ? `当前采购单存在 ${zeroCount} 条 0 单价商品，请确认这是赠品、样品或其他合理的零价采购。\n` : ''}确认下单后将生成应付计划并进入在途采购。是否继续？`, confirmText: '确认下单', danger: true })) return; try { await api.post(`/purchase-orders/${row.id}/place/`); notice.value = '采购单已确认下单。'; await load() } catch (err) { error.value = message(err, '确认下单失败。') } }
 async function cancelPurchase(row) { if (!can('purchases', 'update')) return; const reason = await inputDialog({ title: '取消采购', message: `请填写取消采购单 ${row.purchase_no} 的原因。`, label: '取消原因', placeholder: '请输入取消原因', required: true, maxLength: 500, confirmText: '确认取消', danger: true }); if (!reason) return; try { await api.post(`/purchase-orders/${row.id}/cancel/`, { reason }); notice.value = '采购单已取消。'; await load() } catch (err) { error.value = message(err, '取消采购失败。') } }
 async function deleteDraft(row) { if (!can('purchases', 'delete') || !await confirmDialog({ title: '确认删除采购草稿', message: `确定删除草稿 ${row.purchase_no} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/purchase-orders/${row.id}/`); notice.value = '采购草稿已删除。'; if (Number(route.query.detail) === row.id) await closeDetail(); await load() } catch (err) { error.value = message(err, '删除采购草稿失败。') } }
+function moqExceptionMessage(data) {
+  const details = (data?.exceptions || []).map(item =>
+    `${item.sku_code || '未命名 SKU'}：实际 ${item.actual_quantity} ${item.base_unit || ''}，MOQ ${item.moq} ${item.base_unit || ''}，差额 ${item.shortage} ${item.base_unit || ''}`.replaceAll('  ', ' ').trim(),
+  )
+  return `本次采购存在低于供应商 MOQ 的明细。\n${details.join('\n')}\n可以填写例外原因后继续下单；取消则保留当前采购草稿。`
+}
+async function place(row) {
+  if (!can('purchases', 'update')) return
+  const zeroCount = (row.items || []).filter(item => Number(item.unit_price) === 0).length
+  if (!await confirmDialog({ title: '确认采购下单', message: `${zeroCount ? `当前采购单存在 ${zeroCount} 条 0 单价商品，请确认这是赠品、样品或其他合理的零价采购。\n` : ''}确认下单后将生成应付计划并进入在途采购。是否继续？`, confirmText: '确认下单', danger: true })) return
+  let reason = ''
+  while (true) {
+    try {
+      const payload = reason ? { moq_exception_reason: reason } : {}
+      await api.post(`/purchase-orders/${row.id}/place/`, payload)
+      notice.value = '采购单已确认下单。'
+      await load()
+      return
+    } catch (err) {
+      const data = err.response?.data
+      if (data?.code !== 'purchase_moq_exception_required') {
+        error.value = message(err, '确认下单失败。')
+        return
+      }
+      const nextReason = await inputDialog({
+        title: '采购 MOQ 例外确认',
+        message: moqExceptionMessage(data),
+        label: '例外原因',
+        placeholder: '例如：客户指定小批量试单，已确认本次需求量。',
+        required: true,
+        maxLength: 500,
+        confirmText: '填写原因并继续下单',
+      })
+      if (!nextReason) return
+      reason = nextReason.trim()
+    }
+  }
+}
 function pay(row) { if (can('purchases', 'update')) paymentTarget.value = row }
 onMounted(() => load({ includeReferenceData: true }))
 watch(searchInput, value => {

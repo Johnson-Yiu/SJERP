@@ -27,7 +27,7 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, Supplier, SupplierSKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseMOQException, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, Supplier, SupplierSKU, Transaction
 from .querysets import current_due_follow_ups, prefetch_purchase_related_orders
 from .permissions import HSCodeMaintenancePermission, ModuleActionPermission, OrganizationOverviewPermission, PermissionAdminOnly, QuoteExportPermission, _profile_for, effective_permission_matrix, has_all_permissions, is_permission_admin, user_can
 from .sales_scope import allowed_employee_ids, data_scope_display, effective_data_scope, employee_profile_for, scope_customer_queryset, scope_customer_related_queryset
@@ -41,7 +41,7 @@ from .services.finance import allocate_advance, approve_contract_change, reject_
 from .services.fulfillment import bulk_sku_metrics, confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_manual_inventory_movement, reverse_receipt as reverse_receipt_service, reverse_shipment as reverse_shipment_service
 from .services.order_lifecycle import cancel_order, complete_order, confirm_order, start_order_production
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
-from .services.purchase_lifecycle import cancel_purchase_order, place_purchase_order
+from .services.purchase_lifecycle import PurchaseMOQExceptionRequired, cancel_purchase_order, place_purchase_order
 from .services.procurement import build_procurement_plan, create_purchase_drafts, draft_procurement_quantities
 from .services.sku_plans import apply_category_attribute_reorder, preview_category_attribute_reorder
 from .services.sku_schema import (
@@ -205,7 +205,7 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = PurchaseOrderSerializer
     queryset = prefetch_purchase_related_orders(
         PurchaseOrder.objects.select_related("supplier", "order").prefetch_related(
-            "items__sku", "items__supplier_sku__supplier", "items__receipts", "transactions"
+            "items__sku", "items__supplier_sku__supplier", "items__receipts", "transactions", "moq_exception"
         )
     )
     search_fields = ["purchase_no", "supplier__name", "visible_order_search"]
@@ -253,16 +253,33 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def place(self, request, pk=None):
+        reason = request.data.get("moq_exception_reason", "")
         try:
             with transaction.atomic():
-                purchase = place_purchase_order(self.get_object())
+                purchase = place_purchase_order(self.get_object(), moq_exception_reason=reason, operator=request.user)
+                try:
+                    exception = purchase.moq_exception
+                except PurchaseMOQException.DoesNotExist:
+                    exception = None
                 record_operation(
                     request=request,
                     instance=purchase,
                     action="custom",
                     action_label="确认采购下单",
-                    metadata={"purchase_order_id": purchase.id, "purchase_no": purchase.purchase_no},
+                    metadata={
+                        "purchase_order_id": purchase.id,
+                        "purchase_no": purchase.purchase_no,
+                        "moq_exception_id": exception.id if exception else None,
+                        "moq_exception_reason": exception.reason if exception else "",
+                        "moq_exception_details": exception.details if exception else [],
+                    },
                 )
+        except PurchaseMOQExceptionRequired as error:
+            return Response({
+                "code": error.code,
+                "detail": error.messages[0],
+                "exceptions": error.exceptions,
+            }, status=status.HTTP_400_BAD_REQUEST)
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         return Response(self.get_serializer(purchase).data)

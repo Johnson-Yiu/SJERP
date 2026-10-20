@@ -359,17 +359,23 @@ class CashMigrationTests(TransactionTestCase):
         executor.migrate([("crm", "0076_customer_owner_profile")])
         try:
             state = executor.loader.project_state([("crm", "0076_customer_owner_profile")]).apps
-            old = state.get_model("crm", "Transaction")
+            old_models = {model._meta.label: model for model in state.get_app_config("crm").get_models()}
+            old = old_models["crm.Transaction"]
             old.objects.create(transaction_no="LEGACY-FOUR", transaction_date=date(2026, 10, 1), direction="income", kind="other_income", category="Synthetic", amount=D("12.3401"), currency="USD", exchange_rate=D("7.123456"), rmb_amount=D("87.9034"), allocated_amount=D("0.0001"))
-            before = {m.__name__: list(m.objects.order_by("pk").values()) for m in state.get_app_config("crm").get_models()}
+            before = {label: list(model.objects.order_by("pk").values()) for label, model in old_models.items()}
             executor = MigrationExecutor(connection)
             executor.migrate([("crm", "0077_rmb_cash_events")])
-            after = {m.__name__: list(m.objects.order_by("pk").values()) for m in apps.get_app_config("crm").get_models() if m not in {RmbCashEvent, CashSourceAllocation}}
+            current_state = executor.loader.project_state([("crm", "0077_rmb_cash_events")]).apps
+            current_models = {model._meta.label: model for model in current_state.get_app_config("crm").get_models()}
+            shared_labels = sorted(set(before) & set(current_models))
+            after = {label: list(current_models[label].objects.order_by("pk").values()) for label in shared_labels}
+            before = {label: before[label] for label in shared_labels}
             self.assertEqual(before, after)
-            self.assertEqual(Transaction._meta.get_field("amount").decimal_places, 4)
-            self.assertEqual(Transaction._meta.get_field("rmb_amount").decimal_places, 4)
-            self.assertEqual(PaymentPlan._meta.get_field("settled_amount").decimal_places, 4)
-            self.assertEqual(RmbCashEvent.objects.count(), 0); self.assertEqual(CashSourceAllocation.objects.count(), 0)
+            self.assertEqual(current_models["crm.Transaction"]._meta.get_field("amount").decimal_places, 4)
+            self.assertEqual(current_models["crm.Transaction"]._meta.get_field("rmb_amount").decimal_places, 4)
+            self.assertEqual(current_models["crm.PaymentPlan"]._meta.get_field("settled_amount").decimal_places, 4)
+            self.assertEqual(current_models["crm.RmbCashEvent"].objects.count(), 0)
+            self.assertEqual(current_models["crm.CashSourceAllocation"].objects.count(), 0)
             print("P2A_MIGRATION_VERIFICATION", json.dumps({"vendor": connection.vendor, "all_legacy_rows_equal": True, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}))
         finally:
             MigrationExecutor(connection).migrate([("crm", "0077_rmb_cash_events")])

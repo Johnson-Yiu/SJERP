@@ -88,3 +88,14 @@ test('purchase price reference only carries across matching currencies and reset
   assert.match(source, /参考价未自动带入，请填写本次实际采购单价/)
   assert.match(source, /source\.purchase_price \}\} \{\{ source\.currency/)
 })
+
+test('shared cost allocation loads procurement-scoped order identifiers without customer data', async () => {
+  const modal = await readFile(new URL('../components/PurchaseCostAllocationModal.vue', import.meta.url), 'utf8')
+
+  assert.match(modal, /\/purchase-orders\/cost-allocation-orders\//)
+  assert.match(modal, /orderOptions/)
+  assert.match(modal, /order\.order_no/)
+  assert.doesNotMatch(modal, /order\.customer_name/)
+  assert.match(modal, /销售详情受限/)
+  assert.match(modal, /仅显示订单号，不展示客户、售价或利润/)
+})

@@ -26,7 +26,7 @@ test('quote editor lets users save without exporting the Excel file', async () =
   const source = await readFile(componentUrl, 'utf8')
 
   assert.match(source, /async function save\(shouldExport = false\)/)
-  assert.match(source, /if \(!shouldExport\) \{ emit\('close'\); return \}/)
+  assert.match(source, /if \(!shouldExport\) \{ finishSavedQuote\(\); return \}/)
   assert.match(source, /@click="save\(false\)"/)
   assert.match(source, /保存报价/)
   assert.match(source, /@click="save\(true\)"/)
@@ -47,4 +47,25 @@ test('quote status is read-only and cannot be selected while creating or revisin
   assert.doesNotMatch(source, /<select[^>]*v-model="draft\.status"/)
   assert.doesNotMatch(source, /<option[^>]*value="(?:accepted|rejected|expired)"/)
   assert.match(source, /mode === 'revise' \? '创建报价修订版'/)
+})
+
+test('quote export shows one consolidated risk notice after the quote is saved', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /api\.get\('\/quotes\/risk-preview\//)
+  assert.match(source, /async function prepareQuoteExport\(quote\)/)
+  assert.match(source, /riskCheckUnavailable\.value \|\| riskRows\.value\.length/)
+  assert.match(source, /<QuoteRiskNotice v-if="riskNoticeOpen"/)
+})
+
+test('save and export keeps the editor mounted until explicit risk decision', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  const save = source.slice(source.indexOf('async function save('), source.indexOf('async function retryExport'))
+
+  assert.match(source, /function finishSavedQuote\(\)/)
+  assert.match(save, /savedQuote\.value = response\.data/)
+  assert.match(save, /await prepareQuoteExport\(response\.data\)/)
+  assert.doesNotMatch(save, /emit\('saved'/)
+  assert.match(source, /function cancelRiskExport\(\)[\s\S]*finishSavedQuote\(\)/)
+  assert.match(source, /async function retryExport\(\)[\s\S]*await prepareQuoteExport\(savedQuote\.value\)/)
 })

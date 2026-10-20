@@ -355,21 +355,30 @@ class CashConcurrencyTests(CashFixture, TransactionTestCase):
 class CashMigrationTests(TransactionTestCase):
     def test_additive_migration_preserves_historical_rows_and_decimal_fields(self):
         from django.db.migrations.executor import MigrationExecutor
+
+        old_target = [("crm", "0076_customer_owner_profile")]
+        new_target = [("crm", "0077_rmb_cash_events")]
         executor = MigrationExecutor(connection)
-        executor.migrate([("crm", "0076_customer_owner_profile")])
+        latest = executor.loader.graph.leaf_nodes()
+        executor.migrate(old_target)
         try:
-            state = executor.loader.project_state([("crm", "0076_customer_owner_profile")]).apps
-            old = state.get_model("crm", "Transaction")
-            old.objects.create(transaction_no="LEGACY-FOUR", transaction_date=date(2026, 10, 1), direction="income", kind="other_income", category="Synthetic", amount=D("12.3401"), currency="USD", exchange_rate=D("7.123456"), rmb_amount=D("87.9034"), allocated_amount=D("0.0001"))
-            before = {m.__name__: list(m.objects.order_by("pk").values()) for m in state.get_app_config("crm").get_models()}
+            old_apps = executor.loader.project_state(old_target).apps
+            old_transaction = old_apps.get_model("crm", "Transaction")
+            old_transaction.objects.create(transaction_no="LEGACY-FOUR", transaction_date=date(2026, 10, 1), direction="income", kind="other_income", category="Synthetic", amount=D("12.3401"), currency="USD", exchange_rate=D("7.123456"), rmb_amount=D("87.9034"), allocated_amount=D("0.0001"))
+            before = {model.__name__: list(model.objects.order_by("pk").values()) for model in old_apps.get_app_config("crm").get_models()}
+
             executor = MigrationExecutor(connection)
-            executor.migrate([("crm", "0077_rmb_cash_events")])
-            after = {m.__name__: list(m.objects.order_by("pk").values()) for m in apps.get_app_config("crm").get_models() if m not in {RmbCashEvent, CashSourceAllocation}}
+            executor.migrate(new_target)
+            new_apps = executor.loader.project_state(new_target).apps
+            after = {model.__name__: list(model.objects.order_by("pk").values()) for model in new_apps.get_app_config("crm").get_models() if model.__name__ not in {"RmbCashEvent", "CashSourceAllocation"}}
             self.assertEqual(before, after)
-            self.assertEqual(Transaction._meta.get_field("amount").decimal_places, 4)
-            self.assertEqual(Transaction._meta.get_field("rmb_amount").decimal_places, 4)
-            self.assertEqual(PaymentPlan._meta.get_field("settled_amount").decimal_places, 4)
-            self.assertEqual(RmbCashEvent.objects.count(), 0); self.assertEqual(CashSourceAllocation.objects.count(), 0)
+            new_transaction = new_apps.get_model("crm", "Transaction")
+            new_payment_plan = new_apps.get_model("crm", "PaymentPlan")
+            self.assertEqual(new_transaction._meta.get_field("amount").decimal_places, 4)
+            self.assertEqual(new_transaction._meta.get_field("rmb_amount").decimal_places, 4)
+            self.assertEqual(new_payment_plan._meta.get_field("settled_amount").decimal_places, 4)
+            self.assertEqual(new_apps.get_model("crm", "RmbCashEvent").objects.count(), 0)
+            self.assertEqual(new_apps.get_model("crm", "CashSourceAllocation").objects.count(), 0)
             print("P2A_MIGRATION_VERIFICATION", json.dumps({"vendor": connection.vendor, "all_legacy_rows_equal": True, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}))
         finally:
-            MigrationExecutor(connection).migrate([("crm", "0077_rmb_cash_events")])
+            MigrationExecutor(connection).migrate(latest)

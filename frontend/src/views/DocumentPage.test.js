@@ -29,6 +29,16 @@ test('quote tree actions preserve detail, edit, and Excel export entry points', 
   assert.match(source, /@click\.stop="exportQuote\(row\)"/)
 })
 
+test('quote list export uses one consolidated SKU risk notice before downloading', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /api\.get\('\/quotes\/risk-preview\//)
+  assert.match(source, /quoteRiskRows\.value = .*filter\(item => item\.has_risk\)/)
+  assert.match(source, /quoteRiskCheckUnavailable\.value = true/)
+  assert.match(source, /:risk-check-unavailable="quoteRiskCheckUnavailable"/)
+  assert.match(source, /<QuoteRiskNotice v-if="quoteRiskOpen"/)
+})
+
 test('quote list provides summary metrics, filters, and newest-first sorting', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

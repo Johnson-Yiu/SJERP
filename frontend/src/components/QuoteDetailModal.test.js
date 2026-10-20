@@ -56,3 +56,13 @@ test('saved and revised PI previews use the currency in the official totals DTO'
   assert.match(editor, /quote_no: draft\.quote_no,[^\n]*currency: draft\.currency/)
   assert.match(preview, /formatPiAmountWords\(props\.draft\.totals\?\.total_amount, props\.draft\.currency\)/)
 })
+
+test('saved quote export uses the same consolidated risk notice', async () => {
+  const source = await readFile(detailUrl, 'utf8')
+
+  assert.match(source, /api\.get\('\/quotes\/risk-preview\//)
+  assert.match(source, /riskCheckUnavailable\.value = true/)
+  assert.match(source, /:risk-check-unavailable="riskCheckUnavailable"/)
+  assert.match(source, /<QuoteRiskNotice v-if="riskNoticeOpen"/)
+  assert.match(source, /await downloadQuoteExport\(quote\.value\.id, quote\.value\.quote_no\)/)
+})

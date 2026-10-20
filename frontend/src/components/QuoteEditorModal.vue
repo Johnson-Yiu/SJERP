@@ -10,6 +10,7 @@ import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { AlertTriangle, Box, Eye, MinusCircle, PackageCheck, RotateCw, Save, Settings2, X } from 'lucide-vue-next'
 import { api, downloadQuoteExport, listAll } from '../api'
 import QuotePreviewModal from './QuotePreviewModal.vue'
+import QuoteRiskNotice from './QuoteRiskNotice.vue'
 import SkuPickerPanel from './SkuPickerPanel.vue'
 import SegmentedDateInput from './SegmentedDateInput.vue'
 import { addDays, daysBetween } from '../utils/orderDate'
@@ -43,6 +44,9 @@ const saving = ref(false)
 const savedQuote = ref(null)
 const errorMessage = ref('')
 const exportError = ref('')
+const riskNoticeOpen = ref(false)
+const riskRows = ref([])
+const riskCheckUnavailable = ref(false)
 const packagingTemplates = ref([])
 const packagingOverrides = reactive({})
 const packingOpen = ref(false), packagingSku = ref(null), packagingSaving = ref(false)
@@ -273,6 +277,55 @@ async function openPreview() {
   if (await checkSalesRules()) previewOpen.value = true
   else errorMessage.value = salesCheckError.value || '请先处理下方销售规则提示。'
 }
+async function previewQuoteRisks(quote) {
+  const skuIds = [...new Set((quote?.items || []).map(item => Number(item.sku)).filter(id => Number.isSafeInteger(id) && id > 0))]
+  if (!skuIds.length) return []
+  const response = await api.get('/quotes/risk-preview/', { params: { sku_ids: skuIds.join(',') } })
+  return (response.data?.items || []).filter(item => item.has_risk)
+}
+async function prepareQuoteExport(quote) {
+  riskRows.value = []
+  riskCheckUnavailable.value = false
+  try {
+    riskRows.value = await previewQuoteRisks(quote)
+  } catch {
+    riskCheckUnavailable.value = true
+  }
+  if (riskCheckUnavailable.value || riskRows.value.length) {
+    riskNoticeOpen.value = true
+    return false
+  }
+  return true
+}
+function finishSavedQuote() {
+  if (!savedQuote.value) return
+  emit('saved', savedQuote.value)
+  emit('close')
+}
+async function exportSavedQuote(quote) {
+  try {
+    await downloadQuoteExport(quote.id, quote.quote_no)
+    finishSavedQuote()
+    return true
+  } catch (error) {
+    exportError.value = `报价 ${quote.quote_no} 已保存，但 Excel 导出失败：${error.message}`
+    return false
+  }
+}
+async function continueRiskExport() {
+  if (!savedQuote.value || saving.value) return
+  riskNoticeOpen.value = false
+  riskCheckUnavailable.value = false
+  saving.value = true
+  try { await exportSavedQuote(savedQuote.value) }
+  finally { saving.value = false }
+}
+function cancelRiskExport() {
+  riskNoticeOpen.value = false
+  exportError.value = '报价已保存，可稍后重新导出 Excel。'
+  riskCheckUnavailable.value = false
+  finishSavedQuote()
+}
 async function save(shouldExport = false) {
   if (saving.value) return
   if (shouldExport && !can('quotes', 'export')) return
@@ -285,18 +338,19 @@ async function save(shouldExport = false) {
     const response = props.mode === 'revise' ? await api.post(`/quotes/${props.quote.id}/revise/`, payload()) : await api.post('/quotes/', payload())
     guard.markClean()
     savedQuote.value = response.data
-    emit('saved', response.data)
-    if (!shouldExport) { emit('close'); return }
-    try { await downloadQuoteExport(response.data.id, response.data.quote_no); emit('close') }
-    catch (error) { exportError.value = `报价 ${response.data.quote_no} 已保存，但 Excel 导出失败：${error.message}` }
+    if (!shouldExport) { finishSavedQuote(); return }
+    await prepareQuoteExport(response.data)
+    if (!riskNoticeOpen.value) await exportSavedQuote(response.data)
   } catch (error) { errorMessage.value = error.message }
   finally { saving.value = false }
 }
 async function retryExport() {
   if (!savedQuote.value || !can('quotes', 'export')) return
   saving.value = true
-  try { await downloadQuoteExport(savedQuote.value.id, savedQuote.value.quote_no); emit('close') }
-  catch (error) { exportError.value = `Excel 导出仍未完成：${error.message}` }
+  try {
+    await prepareQuoteExport(savedQuote.value)
+    if (!riskNoticeOpen.value) await exportSavedQuote(savedQuote.value)
+  }
   finally { saving.value = false }
 }
 onMounted(async () => { if (props.mode === 'create' && draft.customer) await selectCustomer(); guard.markClean(); initialized.value = true; try { packagingTemplates.value = (await listAll('/packaging-templates/')).filter(item => item.active) } catch { packagingTemplates.value = [] } })
@@ -349,6 +403,7 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) await sel
     </form>
     <div v-if="packagingSku" class="modal-backdrop packaging-config-backdrop" @mousedown.self="requestPackagingClose"><form class="modal packaging-config-modal" @submit.prevent="savePackaging"><div class="modal-head"><div><h3>补充 SKU 默认包装</h3><small>{{ packagingSku.sku }} · 保存后将作为该 SKU 的默认包装配置</small></div><button type="button" class="mini-btn" @click="requestPackagingClose"><X :size="17" /></button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>包装模板 *</label><select v-model="packagingForm.template" required><option value="">请选择包装模板</option><option v-for="template in packagingTemplates" :key="template.id" :value="template.id">{{ template.name }}<template v-if="template.supplier_name"> · {{ template.supplier_name }}</template></option></select></div><div class="field"><label>装箱数 (pcs) *</label><input v-model="packagingForm.qty_per_carton" type="number" min="0.01" step="0.01" required /></div><div class="field"><label>单件净重 (kg) *</label><input v-model="packagingForm.unit_net_weight" type="number" min="0" step="0.001" required /></div></div></div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="requestPackagingClose">取消</button><button class="btn btn-primary" :disabled="packagingSaving"><PackageCheck :size="15" /> {{ packagingSaving ? '保存中...' : '保存默认包装' }}</button></div></form></div>
     <QuotePreviewModal v-if="previewOpen" :draft="previewDraft" @close="previewOpen = false" />
+     <QuoteRiskNotice v-if="riskNoticeOpen" :risks="riskRows" :risk-check-unavailable="riskCheckUnavailable" @cancel="cancelRiskExport" @continue="continueRiskExport" />
   </div>
 </template>
 

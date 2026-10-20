@@ -88,7 +88,7 @@ it('currency reseeds only a matching supplier reference and permits empty-price 
 it('zero-price placement warns explicitly and still posts after confirmation', async () => {
   await editor(); await wrapper.vm.place(purchase); await flushPromises()
   expect(mocks.confirmDialog).toHaveBeenCalledWith(expect.objectContaining({ message: expect.stringContaining('1 条 0 单价商品，请确认这是赠品、样品') }))
-  expect(mocks.api.post).toHaveBeenCalledWith('/purchase-orders/41/place/')
+  expect(mocks.api.post).toHaveBeenCalledWith('/purchase-orders/41/place/', {})
   mocks.api.post.mockClear(); mocks.confirmDialog.mockResolvedValueOnce(false)
   await wrapper.vm.place(purchase); expect(mocks.api.post).not.toHaveBeenCalled()
 })

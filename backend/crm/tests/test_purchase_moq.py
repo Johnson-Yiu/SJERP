@@ -18,8 +18,8 @@ class PurchaseMOQTests(TestCase):
         self.client.force_authenticate(user=self.operator)
         # The published historical schema stores country as an ISO-style two-character
         # value even though the current model accepts longer display names.
-        self.supplier = Supplier.objects.create(code="MOQ-S", name="MOQ 供应商", country="CN")
-        self.other_supplier = Supplier.objects.create(code="MOQ-T", name="另一供应商", country="CN")
+        self.supplier = Supplier.objects.create(code="MS", name="MOQ 供应商", country="CN")
+        self.other_supplier = Supplier.objects.create(code="MT", name="另一供应商", country="CN")
         self.product = Product.objects.create(code="MOQ-P", name="MOQ 测试产品")
         self.sku = SKU.objects.create(sku="MOQ-SKU", product=self.product, unit="pcs", display_name_cn="MOQ 测试 SKU")
         self.source = SupplierSKU.objects.create(

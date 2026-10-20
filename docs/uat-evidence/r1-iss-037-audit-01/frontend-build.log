@@ -1,0 +1,7 @@
+
+> senju-crm-erp@1.0.0 build
+> vite build --outDir C:\Users\Johnson\AppData\Local\Temp\iss037-frontend-dist
+
+'vite' is not recognized as an internal or external command,
+operable program or batch file.
+BUILD_EXIT_CODE=1

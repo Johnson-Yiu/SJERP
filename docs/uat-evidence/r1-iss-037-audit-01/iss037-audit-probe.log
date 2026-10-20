@@ -1,0 +1,72 @@
+=== BEFORE MASTER CHANGE ===
+'Quote snapshots (before)'
+  buyer_company_name: '\u5ba1\u67e5\u5ba2\u6237 A\uff08\u539f\u59cb\uff09'
+  recipient_name: '\u539f\u59cb\u8054\u7cfb\u4eba'
+  buyer_address: '\u539f\u59cb\u5ba2\u6237\u5730\u5740'
+  buyer_email: 'old@example.test'
+  buyer_phone: '010-00000000'
+  sku: 'SKU-ISS037'
+  model: 'MODEL-ISS037-OLD'
+  unit: 'pcs'
+'Order item snapshots (before)'
+  customer_live: '\u5ba1\u67e5\u5ba2\u6237 A\uff08\u539f\u59cb\uff09'
+  sku: 'SKU-ISS037'
+  model: 'MODEL-ISS037-OLD'
+  name: '\u5ba1\u67e5 SKU\uff08\u539f\u59cb\uff09'
+  unit: 'pcs'
+  supplier: '\u5ba1\u67e5\u4f9b\u5e94\u5546 A\uff08\u539f\u59cb\uff09'
+  supplier_model: 'SUP-MODEL-OLD'
+  supplier_characteristics: {'\u5305\u88c5': '\u539f\u59cb\u5305\u88c5', 'LOGO': '\u539f\u59cb LOGO'}
+'Purchase item snapshots (before)'
+  supplier_live: '\u5ba1\u67e5\u4f9b\u5e94\u5546 A\uff08\u539f\u59cb\uff09'
+  sku: 'SKU-ISS037'
+  model: 'MODEL-ISS037-OLD'
+  name: '\u5ba1\u67e5 SKU\uff08\u539f\u59cb\uff09'
+  supplier: '\u5ba1\u67e5\u4f9b\u5e94\u5546 A\uff08\u539f\u59cb\uff09'
+  supplier_model: 'SUP-MODEL-OLD'
+  supplier_characteristics: {'\u5305\u88c5': '\u539f\u59cb\u5305\u88c5', 'LOGO': '\u539f\u59cb LOGO'}
+=== AFTER MASTER CHANGE ===
+'Quote (after)'
+  live_customer: '\u5ba1\u67e5\u5ba2\u6237 A\uff08\u5df2\u4fee\u6539\u4e3b\u6863\uff09'
+  buyer_company_name: '\u5ba1\u67e5\u5ba2\u6237 A\uff08\u539f\u59cb\uff09'
+  buyer_address: '\u539f\u59cb\u5ba2\u6237\u5730\u5740'
+  recipient_name: '\u539f\u59cb\u8054\u7cfb\u4eba'
+  sku: 'SKU-ISS037'
+  model: 'MODEL-ISS037-OLD'
+  unit: 'pcs'
+'Order (after)'
+  live_customer: '\u5ba1\u67e5\u5ba2\u6237 A\uff08\u5df2\u4fee\u6539\u4e3b\u6863\uff09'
+  sku: 'SKU-ISS037'
+  model: 'MODEL-ISS037-OLD'
+  name: '\u5ba1\u67e5 SKU\uff08\u539f\u59cb\uff09'
+  unit: 'pcs'
+  supplier: '\u5ba1\u67e5\u4f9b\u5e94\u5546 A\uff08\u539f\u59cb\uff09'
+  supplier_model: 'SUP-MODEL-OLD'
+  supplier_characteristics: {'\u5305\u88c5': '\u539f\u59cb\u5305\u88c5', 'LOGO': '\u539f\u59cb LOGO'}
+'PurchaseOrder (after)'
+  live_supplier: '\u5ba1\u67e5\u4f9b\u5e94\u5546 A\uff08\u5df2\u4fee\u6539\u4e3b\u6863\uff09'
+  sku: 'SKU-ISS037'
+  model: 'MODEL-ISS037-OLD'
+  name: '\u5ba1\u67e5 SKU\uff08\u539f\u59cb\uff09'
+  supplier: '\u5ba1\u67e5\u4f9b\u5e94\u5546 A\uff08\u539f\u59cb\uff09'
+  supplier_model: 'SUP-MODEL-OLD'
+  supplier_characteristics: {'\u5305\u88c5': '\u539f\u59cb\u5305\u88c5', 'LOGO': '\u539f\u59cb LOGO'}
+'PI export'
+  path: 'C:\\Users\\Johnson\\.codex\\worktrees\\r1-iss-037-audit-01\\docs\\uat-evidence\\r1-iss-037-audit-01\\ISS037-PI-after-master-change.xlsx'
+  bytes: 10214
+=== AUDIT CONCLUSIONS ===
+PASS quote buyer/SKU snapshots remain original after master mutation
+PASS PI export generated from saved quote snapshots
+DEFECT order header customer resolves to live master: '\u5ba1\u67e5\u5ba2\u6237 A\uff08\u5df2\u4fee\u6539\u4e3b\u6863\uff09'
+DEFECT purchase header supplier resolves to live master: '\u5ba1\u67e5\u4f9b\u5e94\u5546 A\uff08\u5df2\u4fee\u6539\u4e3b\u6863\uff09'
+PASS order/purchase item SKU and supplier snapshots remain original
+LIMIT Supplier has no address field; supplier address snapshot cannot exist
+LIMIT Contact title/whatsapp/notes are not copied into Quote snapshots
+XLSX CHECK B3='���ͻ� A��ԭʼ��'
+XLSX CHECK C11='MODEL-ISS037-OLD'
+XLSX CHECK K11='pcs'
+XLSX CHECK contains_new_master=False
+XLSX CHECK contains_old_snapshot=True
+XLSX ASCII B3='\u5ba1\u67e5\u5ba2\u6237 A\uff08\u539f\u59cb\uff09'
+XLSX ASCII C11='MODEL-ISS037-OLD'
+XLSX ASCII K11='pcs'

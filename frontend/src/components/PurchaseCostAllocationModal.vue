@@ -72,7 +72,8 @@ function remaining(item) { return Number(item.quantity) - (form.value?.allocatio
 function add(item) { form.value.allocations.push({ purchase_item: item.id, target_type: 'order', order: null, quantity: Math.max(0, remaining(item)).toFixed(2) }); changed() }
 function remove(row) { form.value.allocations.splice(form.value.allocations.indexOf(row), 1); changed() }
 function allocationTargetLabel(row) {
-  if (row.order_no) return row.sales_link_restricted ? `${row.order_no}（销售详情受限）` : row.order_no
+  if (row.sales_link_restricted) return row.order_no ? `${row.order_no}（销售详情受限）` : '销售订单（详情受限）'
+  if (row.order_no) return row.order_no
   return row.target_type === 'other' ? row.target_name : labels[row.target_type]
 }
 async function save() {

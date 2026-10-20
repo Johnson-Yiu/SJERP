@@ -43,21 +43,25 @@ class SharedPurchaseCostPermissionTests(TestCase):
         self.position = Position.objects.create(unit=self.unit, name="测试员工", code="ISS039-STAFF")
         self.procurement_role = self.make_role("iss039-procurement")
         self.view_only_role = self.make_role("iss039-view-only")
+        self.scoped_view_role = self.make_role("iss039-scoped-view")
         self.sales_role = self.make_role("iss039-sales")
         self.grant(self.procurement_role, "purchases", can_view=True, can_update=True)
         self.grant(self.procurement_role, "skus", can_view=True)
         self.grant(self.procurement_role, "suppliers", can_view=True)
         self.grant(self.view_only_role, "purchases", can_view=True)
+        self.grant(self.scoped_view_role, "purchases", can_view=True)
+        self.grant(self.scoped_view_role, "orders", can_view=True)
         self.grant(self.sales_role, "orders", can_view=True, can_update=True)
         self.grant(self.sales_role, "customers", can_view=True)
 
         self.procurement = self.make_user("iss039-procurement", [self.procurement_role], is_staff=True)
         self.viewer = self.make_user("iss039-viewer", [self.view_only_role])
+        self.scoped_viewer = self.make_user("iss039-scoped-viewer", [self.scoped_view_role])
         self.sales_a = self.make_user("iss039-sales-a", [self.sales_role])
         self.sales_b = self.make_user("iss039-sales-b", [self.sales_role])
         self.no_purchase_write = self.make_user("iss039-no-write", [self.view_only_role])
 
-        self.customer_a = Customer.objects.create(code="ISS039-CA", name="ISS039 客户 A", owner_profile=self.sales_a.employee_profile)
+        self.customer_a = Customer.objects.create(code="ISS039-CA", name="ISS039 客户 A", owner_profile=self.scoped_viewer.employee_profile)
         self.customer_b = Customer.objects.create(code="ISS039-CB", name="ISS039 客户 B", owner_profile=self.sales_b.employee_profile)
         product = Product.objects.create(code="ISS039-P", name="ISS039 商品")
         self.sku = SKU.objects.create(product=product, sku="ISS039-SKU", unit="件")
@@ -146,6 +150,66 @@ class SharedPurchaseCostPermissionTests(TestCase):
         self.login(self.no_purchase_write)
         self.assertEqual(self.client.post(self.url, self.payload(), format="json").status_code, 403)
         self.assertEqual(PurchaseCostAllocation.objects.filter(purchase_item=self.item).count(), 1)
+
+    def test_cost_allocation_reads_respect_procurement_and_sales_visibility(self):
+        self.login(self.procurement)
+        seeded = self.client.post(self.url, self.payload(expense=False), format="json")
+        self.assertEqual(seeded.status_code, 200, seeded.data)
+        before = list(self.item.cost_allocations.values_list("target_type", "order_id", "quantity"))
+
+        # A read-only purchasing user may open the summary, but neither the
+        # target lookup nor historical cross-scope order identifiers are
+        # available to them.
+        self.login(self.viewer)
+        candidates = self.client.get("/api/purchase-orders/cost-allocation-orders/")
+        self.assertEqual(candidates.status_code, 403)
+        summary = self.client.get(self.url)
+        self.assertEqual(summary.status_code, 200, summary.data)
+        restricted = [row for row in summary.data["allocations"] if row["target_type"] == "order"]
+        self.assertTrue(restricted)
+        self.assertTrue(all(row["order"] is None and row["order_no"] == "" for row in restricted))
+        self.assertTrue(all(row["sales_link_restricted"] for row in restricted))
+        self.assertIn("销售订单（详情受限）", repr(summary.data))
+        self.assertEqual(list(self.item.cost_allocations.values_list("target_type", "order_id", "quantity")), before)
+
+        # C can see its own sales order, but the other allocation remains an
+        # explicit restricted placeholder.  This does not grant customer or
+        # ordinary sales-order data access.
+        self.login(self.scoped_viewer)
+        orders = self.client.get("/api/orders/")
+        self.assertEqual(orders.status_code, 200, orders.data)
+        self.assertEqual({row["order_no"] for row in orders.data["results"]}, {self.order_a.order_no})
+        self.assertNotIn(self.customer_b.name, repr(orders.data))
+        summary = self.client.get(self.url)
+        self.assertEqual(summary.status_code, 200, summary.data)
+        by_amount = {str(row["base_amount"]): row for row in summary.data["allocations"] if row["target_type"] == "order"}
+        self.assertEqual(by_amount["3000.00"]["order"], self.order_a.pk)
+        self.assertEqual(by_amount["3000.00"]["order_no"], self.order_a.order_no)
+        self.assertIsNone(by_amount["2000.00"]["order"])
+        self.assertEqual(by_amount["2000.00"]["order_no"], "")
+        self.assertTrue(by_amount["2000.00"]["sales_link_restricted"])
+        self.assertNotIn(self.order_b.order_no, repr(summary.data))
+        self.assertNotIn(self.customer_a.name, repr(summary.data))
+        self.assertNotIn(self.customer_b.name, repr(summary.data))
+
+        # D and anonymous callers do not get a read-only summary through the
+        # purchasing endpoint at all.
+        self.login(self.sales_a)
+        self.assertEqual(self.client.get(self.url).status_code, 403)
+        self.client.force_authenticate(user=None)
+        self.assertIn(self.client.get(self.url).status_code, {401, 403})
+        self.assertIn(self.client.get("/api/purchase-orders/cost-allocation-orders/").status_code, {401, 403})
+
+        # Revoking purchasing update permission immediately removes target
+        # lookup access; it never changes the persisted allocation rows.
+        self.login(self.procurement)
+        RolePermission.objects.filter(role=self.procurement_role, module="purchases").update(can_update=False)
+        self.assertEqual(self.client.get("/api/purchase-orders/cost-allocation-orders/").status_code, 403)
+        summary = self.client.get(self.url)
+        self.assertEqual(summary.status_code, 200, summary.data)
+        self.assertFalse(summary.data["can_edit"])
+        self.assertTrue(all(row["order"] is None for row in summary.data["allocations"] if row["target_type"] == "order"))
+        self.assertEqual(list(self.item.cost_allocations.values_list("target_type", "order_id", "quantity")), before)
 
     def test_public_expense_and_attribution_are_atomic_and_do_not_create_other_records(self):
         self.login(self.procurement)

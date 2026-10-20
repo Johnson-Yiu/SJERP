@@ -17,6 +17,12 @@ def require_order_writes(user, ids):
         raise PermissionDenied("没有权限修改采购关联的销售订单。")
 
 
+def require_cost_allocation_updates(user):
+    """Require the purchasing write capability for allocation target lookup."""
+    if not user_can(user, "purchases", "update"):
+        raise PermissionDenied("需要采购修改权限才能选择成本归属订单。")
+
+
 def validate_cost_writes(purchase, user, allocations):
     """Authorize a complete cost-attribution replacement as procurement work.
 
@@ -46,11 +52,16 @@ def scoped_cost_summary(summary, user):
     summary["read_only_reason"] = "需要采购修改权限才能调整成本归属。" if not summary["can_edit"] else ""
     for row in summary["allocations"]:
         if row.get("order") and row["order"] not in visible:
-            # Order number and id are the minimum information procurement
-            # staff need to identify an attribution target.  Never add the
-            # customer or sales amount here; the normal order APIs remain
-            # protected by orders.view and the sales data scope.
             row["sales_link_restricted"] = True
+            if not summary["can_edit"]:
+                # A read-only purchasing user may see that a historical
+                # allocation exists, but must not receive a cross-scope order
+                # identifier.  Keep the row and its amounts intact while
+                # replacing only the restricted sales link with an explicit
+                # placeholder.
+                row["order"] = None
+                row["order_no"] = ""
+                row["target_name"] = "销售订单（详情受限）"
     return summary
 
 

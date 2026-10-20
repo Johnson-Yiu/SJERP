@@ -443,3 +443,11 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 | ISS-039 | P1 / FIXED_PENDING_REVIEW | R1-ISS-039；2026-10-20；提交 SHA 以该分支最终提交为准 | 已解除采购员工必须拥有销售订单常规权限才能完成共享成本归属的问题；未授权销售资料仍受保护。审计数据库层 append-only、真实 PostgreSQL 并发和正式部署权限仍不在本轮范围。 | ChatGPT 独立代码、权限、审计和视觉复审；确认最小订单信息、数量/费用不变量及失败回滚后方可关闭；不得自行标记 CLOSED。 |
 
 本轮 ISS-039 从历史 `BLOCKED` 更新为 `FIXED_PENDING_REVIEW`；不改变 ISS-003、ISS-017、ISS-043、ISS-055 等其他问题状态，不合并 master。
+
+## R1-ISS-039-FIX-01 权限安全补修（2026-10-20）
+
+基于独立审查指出的订单选择接口权限缺口，本轮仅修复采购成本归属相关的后端授权与只读脱敏：`GET /api/purchase-orders/cost-allocation-orders/` 现在明确要求 `purchases.update`；成本分配 GET 对没有对应销售数据范围的只读采购员工隐藏订单 ID/订单号，返回明确的“销售订单（详情受限）”占位，同时保留成本金额、数量和历史归属记录。授权采购员工仍可在没有 `orders.view/update` 的情况下跨销售订单分配成本；普通订单、客户、报价和财务权限未放宽，无新增迁移。
+
+16项ISS-039定向测试、774项SQLite全量（临时可写媒体目录，跳过13）、137项前端单元和前端构建通过。真实 Chrome 已用采购员工 A 和只读员工 E 验证桌面及700px成本分配/采购详情；首次SQLite全量的既有媒体目录权限错误原始结果保留在验收报告中。本机PostgreSQL未监听，GitHub Actions按额度策略保持 `CI PENDING`。完整命令、权限矩阵和截图见 [R1-ISS-039-FIX-01验收](uat-evidence/r1-iss-039-fix-01/README.md)。
+
+ISS-039 继续保持 `FIXED_PENDING_REVIEW`；下一步由 ChatGPT 独立复核服务端最小权限、只读数据脱敏、历史缓存回填和真实视觉证据，不自行标记 CLOSED。

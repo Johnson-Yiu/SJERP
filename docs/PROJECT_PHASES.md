@@ -207,3 +207,9 @@ ISS-122、ISS-123 的独立复审通过结论已同步为 CLOSED；ISS-105 OPEN�
 从 `origin/master` / `25405e1b25ff8a218b67883acf489ada8a53e146` 建立独立分支实施。采购成本归属以 `purchases.update` 为专用核心权限；采购员工可跨销售人员订单完成共享采购分配，但订单常规查看/修改、客户、售价、利润权限保持不变。新增采购专用最小订单选择数据，审计记录补齐成本归属前后内容；没有新增迁移，也没有改变付款、库存、财务统计、历史单据或采购数量。
 
 真实 Chrome 隔离 SQLite 流程、权限正反向、公共费用 300/200/500 分摊、数量守恒、失败事务与审计脱敏已完成；后端全量 773（跳过13）、定向 34、前端 137 和构建均通过。由于本机 PostgreSQL 不可用且 GitHub Actions 免费额度耗尽，本阶段为 `LOCAL PASS / CI PENDING`，不伪造 CI 或 PostgreSQL 通过。证据见 [R1-ISS-039 验收](uat-evidence/r1-iss-039/README.md)。ISS-039 保持 `FIXED_PENDING_REVIEW`，等待 ChatGPT 独立代码、权限、审计和视觉复审；不合并 master，不关闭其他 Issue。
+
+## R1-ISS-039-FIX-01 权限安全补修（2026-10-20）
+
+基于 `35d62b3d3761e53a8d3ccaca18a3c694037a6f92`，本轮只补修采购专用订单选择接口和成本分配只读数据的权限边界：订单选择必须有 `purchases.update`；只读采购用户对不在本人销售数据范围内的历史归属只看到受限占位，不看到订单 ID/订单号；授权采购员工跨销售分配能力、数量守恒、费用分摊、事务和审计保持不变。没有新增迁移、普通订单权限或敏感字段。
+
+定向后端16项、隔离临时媒体目录下SQLite全量774项（跳过13）、前端单元137项和构建均通过；真实Chrome完成授权采购员工、只读员工和700px成本分配视觉核验。PostgreSQL本地不可用，GitHub Actions按免费额度策略保持 `CI PENDING`。证据见 [R1-ISS-039-FIX-01验收](uat-evidence/r1-iss-039-fix-01/README.md)。阶段状态为 `LOCAL PASS / CI PENDING`；ISS-039保持 `FIXED_PENDING_REVIEW`，完成后停止等待 ChatGPT 独立审查，不合并 master。

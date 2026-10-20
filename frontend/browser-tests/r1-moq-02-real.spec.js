@@ -33,6 +33,7 @@ async function createPurchaseDraft(page, quantity) {
 }
 
 test('R1-MOQ-02 real Chrome purchase flow keeps drafts, requires exception reason and records evidence', async ({ page }) => {
+  test.skip(!process.env.R1_MOQ_02_REAL_UAT, 'Requires the isolated backend UAT service; run with R1_MOQ_02_REAL_UAT=1')
   test.setTimeout(60000)
   await mkdir(evidenceDir, { recursive: true })
   const responses = []

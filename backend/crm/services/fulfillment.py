@@ -21,6 +21,7 @@ from crm.models import (
     SupplierSKU,
     Transaction,
 )
+from crm.services.historical import reject_historical
 
 
 QUANTITY_FIELD = DecimalField(max_digits=18, decimal_places=2)
@@ -175,6 +176,7 @@ def bulk_sku_metrics(sku_ids) -> dict[int, dict[str, Decimal]]:
 def allocate_order(order):
     """Retain the order-facing entry point while using the SKU-wide allocator."""
     order = Order.objects.select_for_update().get(pk=order.pk)
+    reject_historical(order, "重建库存预留")
     created = []
     for sku in SKU.objects.filter(pk__in=order.items.values("sku_id")).order_by("pk"):
         created.extend(rebalance_sku_reservations(sku))
@@ -235,6 +237,7 @@ def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsRece
     purchase_item = PurchaseOrderItem.objects.select_for_update(of=("self",)).select_related(
         "purchase_order", "sku"
     ).get(pk=purchase_item.pk)
+    reject_historical(purchase_item.purchase_order, "登记到货或生成库存流水")
     if purchase_item.purchase_order.status not in {"ordered", "partial", "completed"}:
         raise ValidationError("只有已下单的采购单可以登记验货入库。")
     related_order_ids = list(
@@ -375,6 +378,7 @@ def reverse_receipt(receipt: GoodsReceipt, reason: str) -> GoodsReceipt:
     if receipt.reversal_inventory_movement_id:
         raise ValidationError("该入库记录已经冲销，不能重复操作。")
     purchase_item = PurchaseOrderItem.objects.select_for_update().select_related("purchase_order", "sku").get(pk=receipt.purchase_item_id)
+    reject_historical(purchase_item.purchase_order, "冲销到货或库存流水")
     sku = SKU.objects.select_for_update().get(pk=purchase_item.sku_id)
     supplier_sku = SupplierSKU.objects.get(pk=purchase_item.supplier_sku_id) if purchase_item.supplier_sku_id else None
     original_movement = (
@@ -480,6 +484,7 @@ def _shipped_quantity(order_item: OrderItem) -> Decimal:
 @transaction.atomic
 def confirm_shipment(order: Order, payload: dict) -> Shipment:
     order = Order.objects.select_for_update().get(pk=order.pk)
+    reject_historical(order, "确认发货或生成库存流水")
     if order.status not in ACTIVE_ORDER_STATUSES:
         raise ValidationError("只有已确认且未取消或完成的订单可以发货。")
     if not payload.get("items"):
@@ -605,6 +610,7 @@ def reverse_shipment(shipment: Shipment, reason: str) -> Shipment:
         raise ValidationError("只有已确认的发货单可以冲销。")
 
     order = Order.objects.select_for_update().get(pk=shipment.order_id)
+    reject_historical(order, "冲销发货或库存流水")
     if order.status in {"completed", "cancelled"}:
         raise ValidationError("已完成或已取消的订单不能冲销发货。")
 
@@ -711,6 +717,7 @@ def reverse_shipment(shipment: Shipment, reason: str) -> Shipment:
 @transaction.atomic
 def record_supplier_payment(purchase_order, payload: dict) -> Transaction:
     purchase_order = purchase_order.__class__.objects.select_for_update().get(pk=purchase_order.pk)
+    reject_historical(purchase_order, "登记供应商付款")
     amount = Decimal(payload["amount"])
     if amount <= 0:
         raise ValidationError("付款金额必须大于零。")

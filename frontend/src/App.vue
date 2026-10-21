@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck, Barcode } from 'lucide-vue-next'
+import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck, Barcode, History } from 'lucide-vue-next'
 import AppDialogHost from './components/AppDialogHost.vue'
 import { pageIdentityKey } from './utils/routePageState'
 import { accessState, can, canAccessOrganization, loadAccessControl } from './accessControl'
@@ -13,6 +13,7 @@ const nav = [
   { section: '经营' },
   { label: '经营概览', path: '/', module: 'dashboard', icon: LayoutDashboard },
   { label: '报表中心', path: '/reports', module: 'reports', icon: LayoutDashboard },
+  { label: '历史订单分析', path: '/historical-orders', module: 'reports', icon: History },
   { section: '客户' },
   { label: '客户管理', path: '/customers', module: 'customers', icon: Users },
   { label: '联系人', path: '/contacts', module: 'contacts', icon: ContactRound },

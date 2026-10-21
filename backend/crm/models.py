@@ -772,7 +772,7 @@ class QuoteImportantNote(TimestampedModel):
 
 
 class Order(TimestampedModel):
-    STATUS_CHOICES = [("draft", "草稿"), ("confirmed", "已确认"), ("production", "生产中"), ("shipped", "已发货"), ("completed", "已完成"), ("cancelled", "已取消")]
+    STATUS_CHOICES = [("draft", "草稿"), ("confirmed", "已确认"), ("production", "生产中"), ("shipped", "已发货"), ("completed", "已完成"), ("cancelled", "已取消"), ("historical", "历史订单 · 仅用于经营分析")]
     order_no = models.CharField("订单号", max_length=40, unique=True)
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name="orders")
     quote = models.ForeignKey(Quote, on_delete=models.SET_NULL, null=True, blank=True, related_name="orders")
@@ -780,6 +780,7 @@ class Order(TimestampedModel):
     expected_ship_date = models.DateField("预计交期", null=True, blank=True)
     tail_goods_policy = models.CharField("尾货策略", max_length=20, choices=TAIL_GOODS_POLICY_CHOICES, default="SAME_CARTON")
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
+    historical_only = models.BooleanField("仅用于历史分析", default=False, editable=False, db_index=True)
     currency = models.CharField("币种", max_length=10, default="USD")
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
     shipping_fee = models.DecimalField("运费", max_digits=14, decimal_places=4, default=0)
@@ -807,7 +808,7 @@ class Order(TimestampedModel):
     def paid_amount(self):
         # A draft has no formal receivable yet.  Keep it out of payment
         # projections even if historical/imported rows happen to be linked.
-        if self.status == "draft":
+        if self.status in {"draft", "historical"} or self.historical_only:
             return Decimal("0")
         receipts = sum(self.transactions.filter(status="confirmed", kind="customer_receipt").values_list("amount", flat=True), Decimal("0"))
         refunds = sum((t.amount for t in self.transactions.filter(direction="expense", status="confirmed", kind="refund")), Decimal("0"))
@@ -822,7 +823,7 @@ class Order(TimestampedModel):
         cancelled order has no current receivable, while a formal order's
         receivable is the sum of its still-open receivable-plan balances.
         """
-        if self.status in {"draft", "cancelled"}:
+        if self.status in {"draft", "cancelled", "historical"} or self.historical_only:
             return Decimal("0")
         return self.payment_plans.filter(
             direction="receivable", status="open",
@@ -992,6 +993,7 @@ class PurchaseOrder(TimestampedModel):
         ("partial", "部分到货"),
         ("completed", "已完成"),
         ("cancelled", "已取消"),
+        ("historical", "历史订单 · 仅用于经营分析"),
     ]
     purchase_no = models.CharField("采购单号", max_length=40, unique=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT, related_name="purchase_orders")
@@ -999,6 +1001,7 @@ class PurchaseOrder(TimestampedModel):
     order_date = models.DateField("下单日期")
     expected_arrival_date = models.DateField("预计到货日", null=True, blank=True)
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
+    historical_only = models.BooleanField("仅用于历史分析", default=False, editable=False, db_index=True)
     currency = models.CharField("币种", max_length=10, default="USD")
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
     notes = models.TextField("备注", blank=True)
@@ -1022,6 +1025,8 @@ class PurchaseOrder(TimestampedModel):
 
     @property
     def paid_amount(self):
+        if self.status == "historical" or self.historical_only:
+            return Decimal("0")
         paid = sum(self.transactions.filter(status="confirmed", kind="supplier_payment").values_list("amount", flat=True), Decimal("0"))
         allocations = sum(AdvanceAllocation.objects.filter(plan__purchase_order=self, is_active=True, advance__status="confirmed").values_list("amount", flat=True), Decimal("0"))
         refunds = sum(self.transactions.filter(direction="income", status="confirmed", kind="supplier_refund").values_list("amount", flat=True), Decimal("0"))
@@ -1029,6 +1034,8 @@ class PurchaseOrder(TimestampedModel):
 
     @property
     def unpaid_amount(self):
+        if self.status == "historical" or self.historical_only:
+            return Decimal("0")
         return self.total_amount - self.paid_amount
 
     def __str__(self):

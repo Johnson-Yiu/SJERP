@@ -222,6 +222,9 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         queryset = super().get_queryset()
         from django.db.models import Case, When, Value, CharField, F
         from .procurement_scope import visible_order_ids
+        historical_requested = self.request.query_params.get("status") == "historical"
+        if self.action == "list":
+            queryset = queryset.filter(historical_only=True, status="historical") if historical_requested else queryset.filter(historical_only=False)
         ids = visible_order_ids(self.request.user, Order.objects.values_list("pk", flat=True))
         queryset = queryset.annotate(visible_order_search=Case(When(order_id__in=ids, then=F("order__order_no")), default=Value(""), output_field=CharField()))
         sku_id = self.request.query_params.get("sku")
@@ -236,9 +239,20 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return queryset
 
     def create(self, request, *args, **kwargs):
+        if request.data.get("is_historical") or request.data.get("status") == "historical":
+            return Response({"detail": "历史采购订单请使用历史订单录入入口。"}, status=status.HTTP_400_BAD_REQUEST)
         if request.data.get("status") not in (None, "", "draft"):
             return Response({"detail": "新建采购单只能保存为草稿，请使用确认下单动作。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().create(request, *args, **kwargs)
+
+    @action(detail=False, methods=["post"], url_path="historical")
+    def create_historical(self, request, *args, **kwargs):
+        if request.data.get("status") not in (None, "", "historical") or request.data.get("is_historical") not in (None, "", True, "true", "1"):
+            return Response({"detail": "历史采购订单必须通过历史录入模式创建。"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(data=request.data, context={"request": request, "historical_mode": True})
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(self.get_serializer(serializer.instance).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         if "status" in request.data:
@@ -289,6 +303,8 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def cost_allocation_preview(self, request, pk=None):
         from .services.purchase_costs import CostInput, preview_costs
         purchase = self.get_object()
+        if purchase.historical_only or purchase.status == "historical":
+            return Response({"detail": "历史采购订单仅用于经营分析，不能建立正式成本归属。"}, status=status.HTTP_400_BAD_REQUEST)
         input_serializer = CostInput(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         validate_cost_writes(purchase, request.user, input_serializer.validated_data["allocations"])
@@ -298,6 +314,8 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def cost_allocation(self, request, pk=None):
         from .services.purchase_costs import CostInput, cost_summary, save_costs
         purchase = self.get_object()
+        if purchase.historical_only or purchase.status == "historical":
+            return Response({"detail": "历史采购订单仅用于经营分析，不能建立正式成本归属。"}, status=status.HTTP_400_BAD_REQUEST)
         if request.method == "GET":
             return Response(scoped_cost_summary(cost_summary(purchase), request.user))
         input_serializer = CostInput(data=request.data)
@@ -1667,9 +1685,20 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     ordering_fields = ["order_date", "expected_ship_date", "created_at"]
 
     def create(self, request, *args, **kwargs):
+        if request.data.get("is_historical") or request.data.get("status") == "historical":
+            return Response({"detail": "历史销售订单请使用历史订单录入入口。"}, status=status.HTTP_400_BAD_REQUEST)
         if request.data.get("status") not in (None, "", "draft"):
             return Response({"detail": "新建订单只能保存为草稿，请使用确认订单动作。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().create(request, *args, **kwargs)
+
+    @action(detail=False, methods=["post"], url_path="historical")
+    def create_historical(self, request, *args, **kwargs):
+        if request.data.get("status") not in (None, "", "historical") or request.data.get("is_historical") not in (None, "", True, "true", "1"):
+            return Response({"detail": "历史销售订单必须通过历史录入模式创建。"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(data=request.data, context={"request": request, "historical_mode": True})
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(self.get_serializer(serializer.instance).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         if "status" in request.data:
@@ -1744,6 +1773,9 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = scope_customer_related_queryset(super().get_queryset(), self.request.user)
+        historical_requested = self.request.query_params.get("status") == "historical"
+        if self.action == "list":
+            qs = qs.filter(historical_only=True, status="historical") if historical_requested else qs.filter(historical_only=False)
         if self.request.query_params.get("customer"):
             qs = qs.filter(customer_id=self.request.query_params["customer"])
         if self.request.query_params.get("quote"):
@@ -1752,7 +1784,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             qs = qs.filter(items__sku__product_id=self.request.query_params["product"]).distinct()
         if self.request.query_params.get("sku"):
             qs = qs.filter(items__sku_id=self.request.query_params["sku"]).distinct()
-        if self.request.query_params.get("status"):
+        if self.request.query_params.get("status") and not historical_requested:
             qs = qs.filter(status=self.request.query_params["status"])
         todo = self.request.query_params.get("todo")
         if todo == "unshipped":
@@ -1830,6 +1862,8 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["get"], url_path="procurement-plan")
     def procurement_plan(self, request, pk=None):
         order = self.get_object()
+        if order.historical_only or order.status == "historical":
+            return Response({"detail": "历史销售订单仅用于经营分析，不能生成采购计划。"}, status=status.HTTP_400_BAD_REQUEST)
         require_finance_permission(request.user, "purchases", "view")
         require_finance_permission(request.user, "suppliers", "view")
         require_finance_permission(request.user, "inventory", "view")
@@ -1868,6 +1902,8 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["get", "post"], url_path="packing-plan")
     def packing_plan(self, request, pk=None):
         order = self.get_object()
+        if (order.historical_only or order.status == "historical") and request.method == "POST":
+            return Response({"detail": "历史销售订单仅用于经营分析，不能生成装箱或履约记录。"}, status=status.HTTP_400_BAD_REQUEST)
         require_finance_permission(request.user, "skus", "view")
         if request.method == "POST":
             plan = generate_packing_plan(order)
@@ -1891,21 +1927,22 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["get"])
     def workbench(self, request, pk=None):
         order = self.get_object()
+        historical = bool(order.historical_only or order.status == "historical")
         can_view_transactions = user_can(request.user, "transactions", "view")
         can_view_finance = user_can(request.user, "finance", "view")
-        can_view_profit = can_view_transactions and can_view_finance and user_can(request.user, "purchases", "view")
+        can_view_profit = can_view_transactions and can_view_finance and user_can(request.user, "purchases", "view") and not historical
         from .models import AdvanceAllocation
-        advance_allocations = [{"id": row.pk, "transaction_no": row.advance.transaction_no,
+        advance_allocations = [] if historical else [{"id": row.pk, "transaction_no": row.advance.transaction_no,
             "transaction_date": row.advance.transaction_date, "amount": row.amount,
             "currency": row.plan.currency, "is_active": row.is_active}
             for row in AdvanceAllocation.objects.filter(plan__order=order).select_related("advance", "plan")]
         items = list(order.items.all())
-        payments = list(scope_transaction_queryset(order.transactions.all(), request.user)) if can_view_transactions else []
-        plans = list(order.payment_plans.all()) if can_view_finance else []
+        payments = list(scope_transaction_queryset(order.transactions.all(), request.user)) if can_view_transactions and not historical else []
+        plans = list(order.payment_plans.all()) if can_view_finance and not historical else []
         expenses = [row for row in payments if row.direction == "expense" and row.kind not in {"supplier_payment", "refund", "unallocated_advance", "unallocated_payment"} and row.status == "confirmed"]
-        inventory = list(InventoryMovement.objects.filter(Q(order=order) | Q(related_orders=order)).distinct().select_related("sku__product"))
+        inventory = [] if historical else list(InventoryMovement.objects.filter(Q(order=order) | Q(related_orders=order)).distinct().select_related("sku__product"))
         ordered_quantity = sum((item.quantity for item in items), Decimal("0"))
-        shipped_quantity = sum((order_item_metrics(item)["shipped_quantity"] for item in items), Decimal("0"))
+        shipped_quantity = Decimal("0") if historical else sum((order_item_metrics(item)["shipped_quantity"] for item in items), Decimal("0"))
         from .services.finance import order_receivable_state
         paid_amount = order.paid_amount if can_view_transactions and can_view_finance else None
         planned_receivable = sum((plan.planned_amount for plan in plans if plan.status != "cancelled"), Decimal("0"))
@@ -1956,7 +1993,7 @@ def finance_dashboard(request):
     payables = plans.filter(direction="payable") if can_view_purchases else plans.none()
     remaining = lambda rows: sum((row.remaining_amount * (row.order.exchange_rate if row.order_id else row.purchase_order.exchange_rate) for row in rows), Decimal("0"))
     from .services.profit import order_profit_summary
-    period_orders = scope_customer_related_queryset(Order.objects.all(), request.user).exclude(status__in=["draft", "cancelled"]).filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes", "purchase_cost_allocations", "transactions") if can_view_orders else Order.objects.none()
+    period_orders = scope_customer_related_queryset(Order.objects.filter(historical_only=False), request.user).exclude(status__in=["draft", "cancelled"]).filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes", "purchase_cost_allocations", "transactions") if can_view_orders else Order.objects.none()
     sales_rmb = sum((order.total_amount * order.exchange_rate for order in period_orders), Decimal("0"))
     profits = [order_profit_summary(order) for order in period_orders] if can_view_orders and can_view_purchases else []
     purchase_cost_rmb = sum((row["purchase_cost_rmb"] for row in profits), Decimal("0"))

@@ -166,7 +166,7 @@ def action_for_request(request, view=None):
         return "view"
     if request.method == "DELETE":
         return "delete"
-    if request.method == "POST" and (action == "create" or action in {"batch_create", "create_batch"}):
+    if request.method == "POST" and (action == "create" or action in {"batch_create", "create_batch", "historical", "create_historical"}):
         return "create"
     if request.method == "POST" and ("batch-create" in path or path.rstrip("/").endswith("/batch")):
         return "create"

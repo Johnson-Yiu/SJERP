@@ -76,6 +76,8 @@ def records(source, date_field, start, end, user=None):
     field = date_field + ("__date" if date_field.endswith("_at") else "")
     qs = model.objects.filter(**{field + "__range": (start, end)}).order_by("pk")
     if source in ["sales", "purchase", "profit"]:
+        # Formal operating reports must never mix in explicitly historical-only records.
+        qs = qs.filter(historical_only=False)
         if source in ["sales", "profit"] and user is not None:
             qs = scope_customer_related_queryset(qs, user)
         item_model = OrderItem if source in ["sales", "profit"] else PurchaseOrderItem
@@ -165,6 +167,95 @@ def aggregate(source, date_field, start, end, group, grain, filters, user=None):
 @api_view(["GET"])
 def report_catalog(request):
     return Response({"sources": SOURCES, "dimensions": DIMENSIONS, "grains": dict(day="日", week="周（周一开始）", month="月", quarter="季度", year="年")})
+
+
+@api_view(["GET"])
+def historical_analysis(request):
+    """Separate, read-only analysis for explicitly imported historical contracts."""
+    # The analysis groups by the counterparty. Match the normal data-scope
+    # rules instead of exposing current customer/supplier names to an account
+    # that can only see order or purchase records without the related master.
+    can_sales = user_can(request.user, "orders", "view") and user_can(request.user, "customers", "view")
+    can_purchase = user_can(request.user, "purchases", "view") and user_can(request.user, "suppliers", "view")
+    if not can_sales and not can_purchase:
+        return Response({"detail": "你没有历史订单分析权限。"}, status=403)
+    today = timezone.localdate()
+    default_start = date(today.year - 9, 1, 1)
+    default_end = date(today.year, 12, 31)
+    try:
+        start = date.fromisoformat(request.query_params.get("date_from") or default_start.isoformat())
+        end = date.fromisoformat(request.query_params.get("date_to") or default_end.isoformat())
+    except ValueError:
+        raise ValidationError("历史分析日期范围无效。")
+    if start > end or (end - start).days > 3660:
+        raise ValidationError("历史分析日期范围无效，单次查询最多十年。")
+
+    payload = {
+        "scope": "historical_only",
+        "label": "历史订单 · 仅用于经营分析",
+        "period": {"date_from": start, "date_to": end},
+        "sales": None,
+        "purchase": None,
+        "profit": {"available": False, "note": "历史订单未提供可靠成本时，不计算利润。"},
+    }
+    if can_sales:
+        sales_qs = scope_customer_related_queryset(
+            Order.objects.filter(
+                historical_only=True,
+                status="historical",
+                order_date__range=(start, end),
+            ).select_related("customer").prefetch_related("items__sku__product"),
+            request.user,
+        )
+        customer_rows = {}
+        customer_order_ids = {}
+        sku_rows = {}
+        total = Decimal("0")
+        quantity = Decimal("0")
+        for order in sales_qs:
+            order_amount = order.total_amount * order.exchange_rate
+            total += order_amount
+            customer_key = str(order.customer_id)
+            customer_rows.setdefault(customer_key, {"id": order.customer_id, "label": order.customer.name, "amount": Decimal("0"), "count": 0})
+            customer_rows[customer_key]["amount"] += order_amount
+            customer_order_ids.setdefault(customer_key, set()).add(order.pk)
+            for item in order.items.all():
+                quantity += item.quantity
+                sku_key = str(item.sku_id)
+                sku_rows.setdefault(sku_key, {"id": item.sku_id, "label": f"{item.sku.sku} · {item.display_name_snapshot or item.sku.display_name_cn or item.sku.product.name}", "amount": Decimal("0"), "quantity": Decimal("0")})
+                sku_rows[sku_key]["amount"] += item.amount * order.exchange_rate
+                sku_rows[sku_key]["quantity"] += item.quantity
+        for key, row in customer_rows.items():
+            row["count"] = len(customer_order_ids.get(key, set()))
+        payload["sales"] = {"order_count": sales_qs.count(), "amount_rmb": total, "quantity": quantity, "by_customer": list(customer_rows.values()), "by_sku": list(sku_rows.values())}
+    if can_purchase:
+        purchase_qs = PurchaseOrder.objects.filter(
+            historical_only=True,
+            status="historical",
+            order_date__range=(start, end),
+        ).select_related("supplier").prefetch_related("items__sku__product")
+        supplier_rows = {}
+        supplier_order_ids = {}
+        sku_rows = {}
+        total = Decimal("0")
+        quantity = Decimal("0")
+        for purchase in purchase_qs:
+            purchase_amount = purchase.total_amount * purchase.exchange_rate
+            total += purchase_amount
+            supplier_key = str(purchase.supplier_id)
+            supplier_rows.setdefault(supplier_key, {"id": purchase.supplier_id, "label": purchase.supplier.name, "amount": Decimal("0"), "count": 0})
+            supplier_rows[supplier_key]["amount"] += purchase_amount
+            supplier_order_ids.setdefault(supplier_key, set()).add(purchase.pk)
+            for item in purchase.items.all():
+                quantity += item.quantity
+                sku_key = str(item.sku_id)
+                sku_rows.setdefault(sku_key, {"id": item.sku_id, "label": f"{item.sku.sku} · {item.display_name_snapshot or item.sku.display_name_cn or item.sku.product.name}", "amount": Decimal("0"), "quantity": Decimal("0")})
+                sku_rows[sku_key]["amount"] += item.amount * purchase.exchange_rate
+                sku_rows[sku_key]["quantity"] += item.quantity
+        for key, row in supplier_rows.items():
+            row["count"] = len(supplier_order_ids.get(key, set()))
+        payload["purchase"] = {"order_count": purchase_qs.count(), "amount_rmb": total, "quantity": quantity, "by_supplier": list(supplier_rows.values()), "by_sku": list(sku_rows.values())}
+    return Response(payload)
 
 
 def safe_csv(value):

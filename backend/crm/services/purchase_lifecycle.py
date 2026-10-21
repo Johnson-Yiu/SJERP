@@ -8,6 +8,7 @@ from django.utils import timezone
 
 from crm.models import AdvanceAllocation, GoodsReceipt, PaymentPlan, PurchaseOrder
 from crm.services.finance import ensure_default_payment_plans
+from crm.services.historical import reject_historical
 
 
 def _validate_purchase_for_placement(purchase):
@@ -39,6 +40,7 @@ def _validate_purchase_for_placement(purchase):
 @transaction.atomic
 def place_purchase_order(purchase):
     purchase = PurchaseOrder.objects.select_for_update(of=("self",)).select_related("supplier", "order").get(pk=purchase.pk)
+    reject_historical(purchase, "确认下单或生成应付计划")
     if purchase.status != "draft":
         raise ValidationError("只有采购草稿可以确认下单。")
     _validate_purchase_for_placement(purchase)
@@ -54,6 +56,7 @@ def cancel_purchase_order(purchase, reason):
     if not reason:
         raise ValidationError("取消原因不能为空。")
     purchase = PurchaseOrder.objects.select_for_update().get(pk=purchase.pk)
+    reject_historical(purchase, "取消正式采购")
     if purchase.status not in {"draft", "ordered"}:
         raise ValidationError("当前采购单状态不能取消。")
     if GoodsReceipt.objects.filter(purchase_item__purchase_order=purchase, reversal_inventory_movement__isnull=True).exists():

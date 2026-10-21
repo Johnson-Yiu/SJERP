@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Sum
 
 from crm.models import PackingPlan, PackingPlanCarton, PackingPlanCartonItem, Shipment, SKUPackagingProfile
+from crm.services.historical import reject_historical
 
 
 ZERO = Decimal("0")
@@ -80,6 +81,8 @@ def _source_items(source):
 @transaction.atomic
 def generate_packing_plan(source):
     """Replace only when an operator explicitly requests regeneration, preserving snapshots otherwise."""
+    if source.__class__.__name__ == "Order":
+        reject_historical(source, "生成装箱方案或履约记录")
     source_key = {"quote": source} if source.__class__.__name__ == "Quote" else {"order": source}
     PackingPlan.objects.filter(**source_key).delete()
     plan = PackingPlan.objects.create(**source_key)

@@ -10,6 +10,7 @@ from crm.models import AdvanceAllocation, InventoryReservation, Order, PaymentPl
 from crm.services.finance import ensure_default_payment_plans
 from crm.services.fulfillment import allocate_order, order_item_metrics
 from crm.trade_units import trade_values
+from crm.services.historical import reject_historical
 
 
 def _validate_order_for_confirmation(order):
@@ -47,6 +48,7 @@ def confirm_order(order):
     # Lock only the Order row first.  ``quote`` is nullable, so joining it here
     # would create a nullable outer join that PostgreSQL cannot lock.
     order = Order.objects.select_for_update().get(pk=order.pk)
+    reject_historical(order, "确认、预留或生成应收计划")
     if order.status != "draft":
         raise ValidationError("只有草稿订单可以确认。")
 
@@ -85,6 +87,7 @@ def confirm_order(order):
 @transaction.atomic
 def start_order_production(order):
     order = Order.objects.select_for_update().get(pk=order.pk)
+    reject_historical(order, "生产或正式履约")
     if order.status != "confirmed":
         raise ValidationError("只有已确认订单可以开始生产。")
     order.status = "production"
@@ -95,6 +98,7 @@ def start_order_production(order):
 @transaction.atomic
 def complete_order(order):
     order = Order.objects.select_for_update().get(pk=order.pk)
+    reject_historical(order, "完成正式履约")
     if order.status != "shipped":
         raise ValidationError("只有已发货订单可以完成。")
     items = list(order.items.all())
@@ -111,6 +115,7 @@ def cancel_order(order, reason):
     if not reason:
         raise ValidationError("取消原因不能为空。")
     order = Order.objects.select_for_update().get(pk=order.pk)
+    reject_historical(order, "取消正式订单")
     if order.status not in {"draft", "confirmed", "production"}:
         raise ValidationError("当前订单状态不能取消。")
     if Shipment.objects.filter(order=order, status="confirmed").exists():

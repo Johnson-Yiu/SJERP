@@ -618,6 +618,9 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if "purchase_no" in self.initial_data:
             raise serializers.ValidationError({"purchase_no": "采购单号由系统自动生成，不能手工指定。"})
+        historical_mode = bool(self.context.get("historical_mode"))
+        if historical_mode and attrs.get("order"):
+            raise serializers.ValidationError({"order": "历史采购订单不能关联正式销售订单。"})
         if "order" in attrs and (self.instance is None or attrs["order"] != self.instance.order):
             from .procurement_scope import require_order_writes
             require_order_writes(serializer_user(self.context), [getattr(self.instance, "order_id", None), getattr(attrs["order"], "pk", None)])
@@ -663,7 +666,7 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"items": "包装规格的供应商必须与采购单供应商一致。"})
         errors = []
         for index, item in enumerate(attrs.get("items", [])):
-            if self.instance is None and item.get("sku") and item["sku"].candidate_overrides.filter(supplier=supplier, is_allowed=False).exists():
+            if not historical_mode and self.instance is None and item.get("sku") and item["sku"].candidate_overrides.filter(supplier=supplier, is_allowed=False).exists():
                 raise serializers.ValidationError({"supplier": "该 SKU 已排除此供应商，请先恢复候选资格。"})
             source = item.get("supplier_sku")
             if source is None:
@@ -672,7 +675,7 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
                 errors.append({"items": {index: {"supplier_sku": "供应商来源必须属于当前采购单供应商。"}}})
             if item.get("sku") and source.sku_id != item["sku"].pk:
                 errors.append({"items": {index: {"supplier_sku": "供应商来源必须对应当前采购明细 SKU。"}}})
-            if (self.instance is None or self.instance.status == "draft") and not source.is_active:
+            if not historical_mode and (self.instance is None or self.instance.status == "draft") and not source.is_active:
                 errors.append({"items": {index: {"supplier_sku": "新建或编辑采购草稿只能选择启用中的供应商来源。"}}})
         if errors:
             raise serializers.ValidationError(errors[0])
@@ -682,14 +685,20 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         items = validated_data.pop("items")
         validated_data.pop("purchase_no", None)
+        historical_mode = bool(self.context.get("historical_mode"))
         from .services.supplier_candidates import resolve_purchase_item_sources
         for item in items:
-            if not item["sku"].active:
+            if not historical_mode and not item["sku"].active:
                 raise serializers.ValidationError({"sku": "新采购不能选择停用或已归档的 SKU。"})
-        resolve_purchase_item_sources(
-            items, validated_data["supplier"], order=validated_data.get("order"),
-            purchase_currency=validated_data.get("currency"),
-        )
+        if not historical_mode:
+            resolve_purchase_item_sources(
+                items, validated_data["supplier"], order=validated_data.get("order"),
+                purchase_currency=validated_data.get("currency"),
+            )
+        else:
+            validated_data["order"] = None
+            validated_data["status"] = "historical"
+            validated_data["historical_only"] = True
         purchase = PurchaseOrder.objects.create(
             purchase_no=allocate_purchase_no(),
             **validated_data,
@@ -712,8 +721,9 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
                 **item,
             ) for item in items
         ])
-        from .services.purchase_costs import rebuild_default_cost_allocations
-        rebuild_default_cost_allocations(purchase)
+        if not historical_mode:
+            from .services.purchase_costs import rebuild_default_cost_allocations
+            rebuild_default_cost_allocations(purchase)
         return purchase
 
     @transaction.atomic
@@ -1923,13 +1933,16 @@ class OrderSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if "order_no" in self.initial_data:
             raise serializers.ValidationError({"order_no": "订单号由系统自动生成，不能手工指定。"})
+        historical_mode = bool(self.context.get("historical_mode"))
         validate_contract_edit(self.instance, attrs)
         validate_sales_exchange_rate(attrs, self.instance)
         if self.instance is None and not attrs.get("items"):
             raise serializers.ValidationError({"items": "订单至少需要一条商品明细。"})
         for item in attrs.get("items", []):
-            if not item["sku"].active and (self.instance is None or not self.instance.items.filter(sku=item["sku"]).exists()):
+            if not historical_mode and not item["sku"].active and (self.instance is None or not self.instance.items.filter(sku=item["sku"]).exists()):
                 raise serializers.ValidationError({"items": "新订单行不能选择停用或已归档的 SKU。"})
+        if historical_mode and attrs.get("quote"):
+            raise serializers.ValidationError({"quote": "历史销售订单不能关联正式报价单。"})
         source_quote = attrs.get("quote", getattr(self.instance, "quote", None))
         customer = attrs.get("customer", getattr(self.instance, "customer", None))
         from .sales_scope import customer_in_scope
@@ -1951,7 +1964,7 @@ class OrderSerializer(serializers.ModelSerializer):
         quote_is_being_bound = self.instance is None or "quote" in attrs
         if quote_is_being_bound and source_quote and source_quote.status in {"rejected", "expired"}:
             raise serializers.ValidationError({"quote": "该报价已拒绝或过期，请先创建新的修订版后再转为订单。"})
-        if request and not user_can(request.user, "purchases", "update"):
+        if request and not user_can(request.user, "purchases", "update") and not historical_mode:
             persisted_costs = {
                 row.sku_id: row.cost_price
                 for row in self.instance.items.all()
@@ -2124,11 +2137,16 @@ class OrderSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         items = validated_data.pop("items", [])
+        historical_mode = bool(self.context.get("historical_mode"))
         # Draft creation deliberately has no lifecycle side effects.  Quote
         # acceptance/revision, reservations and payment plans occur only in
         # order_lifecycle.confirm_order().
         validated_data.pop("status", None)
         validated_data.pop("order_no", None)
+        if historical_mode:
+            validated_data["quote"] = None
+            validated_data["status"] = "historical"
+            validated_data["historical_only"] = True
         order = Order.objects.create(order_no=allocate_order_no(), **validated_data)
         source_items = list(order.quote.items.order_by("id")) if order.quote_id else []
         rows = []
@@ -2265,6 +2283,9 @@ class TransactionSerializer(serializers.ModelSerializer):
             if not (customer if direction == "income" else supplier):
                 raise serializers.ValidationError("预收款请选择客户，预付款请选择供应商。")
         contract = order or purchase_order
+        if contract and (getattr(contract, "historical_only", False) or getattr(contract, "status", None) == "historical"):
+            if kind in {"customer_receipt", "supplier_payment", "refund", "supplier_refund"} or attrs.get("plan"):
+                raise serializers.ValidationError("历史订单仅用于经营分析，不能登记收付款或核销。")
         if contract and kind in {"customer_receipt", "supplier_payment", "refund", "supplier_refund"} and attrs.get("currency", "USD") != contract.currency:
             raise serializers.ValidationError("合同收付款及退款币种必须与合同一致。")
         return attrs
@@ -2323,6 +2344,8 @@ class PaymentPlanSerializer(serializers.ModelSerializer):
         if bool(order) == bool(purchase):
             raise serializers.ValidationError("计划必须且只能关联一个合同。")
         contract = order or purchase
+        if getattr(contract, "historical_only", False) or getattr(contract, "status", None) == "historical":
+            raise serializers.ValidationError("历史订单仅用于经营分析，不能建立收付款计划。")
         if values["direction"] != ("receivable" if order else "payable") or values["currency"] != contract.currency:
             raise serializers.ValidationError("计划方向和币种必须与合同一致。")
         if not values["planned_amount"] or values["planned_amount"] <= 0:

@@ -28,6 +28,7 @@ const resourceModules = {
 export const routes = [
   { path: '/sku-trade-units', component: () => import('./views/TradeUnitsPage.vue'), meta: { title: 'SKU 交易单位', eyebrow: 'Transaction units', module: 'trade_units' } },
   { path: '/reports', component: () => import('./views/ReportsPage.vue'), meta: { title: '报表中心', eyebrow: 'Reports & analytics', module: 'reports' } },
+  { path: '/historical-orders', component: () => import('./views/HistoryOrdersPage.vue'), meta: { title: '历史订单分析', eyebrow: 'Historical ledger', module: 'reports' } },
   { path: '/', component: Dashboard, meta: { title: '经营概览', eyebrow: 'Business overview', module: 'dashboard' } },
   ...Object.entries(resourceConfigs).filter(([path]) => !['categories', 'products', 'skus', 'transactions'].includes(path)).map(([path, config]) => ({
     path: `/${path}`,

@@ -12,6 +12,7 @@ from django.utils import timezone
 from crm.document_numbers import allocate_purchase_no
 from crm.models import Order, OrderItem, PurchaseOrder, PurchaseOrderItem, SupplierSKU
 from crm.services.fulfillment import order_item_metrics
+from crm.services.historical import reject_historical
 
 
 ZERO = Decimal("0")
@@ -94,6 +95,7 @@ def _source_issue(item):
 
 def build_procurement_plan(order):
     """Build a live, non-persistent procurement plan for one sales order."""
+    reject_historical(order, "生成采购计划")
     items = list(
         order.items.select_related("sku", "supplier_sku", "supplier_sku__supplier").order_by("id")
     )
@@ -180,6 +182,7 @@ def _as_date(value):
 def create_purchase_drafts(order, payload):
     """Create all requested draft purchase orders atomically from a fresh plan."""
     order = Order.objects.select_for_update().get(pk=order.pk)
+    reject_historical(order, "生成采购草稿")
     if order.status not in GENERATABLE_ORDER_STATUSES:
         raise ValidationError("只有已确认或生产中的销售订单可以生成采购草稿。")
     items = list(

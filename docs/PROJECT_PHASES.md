@@ -206,4 +206,4 @@ ISS-122、ISS-123 的独立复审通过结论已同步为 CLOSED；ISS-105 OPEN�
 
 从最新 `origin/master` 建立独立分支 `codex/r1-iss-040-dev`。本轮只增加正式实际装箱单 Excel 导出：复用用户提供的 `Packing List装箱单.xlsx` 模板，按发货与实际装箱数量守恒校验，输出历史快照/箱备注、基础单位数量、箱规、重量、CBM、SKU 识别信息、页码和权限控制；未完成装箱、取消或冲销发货拒绝导出。导出为只读操作，不改变发货、装箱、库存、采购、付款、应收、订单数量或历史金额，不新增迁移。
 
-证据见 [R1-ISS-040-DEV 验收](uat-evidence/r1-iss-040-dev/README.md)。定向后端14项、组合40项、Backend SQLite 782项（跳过13）、Node136项、Vitest定向24项/组合637项、前端构建和真实 Chrome 1440/700px检查通过；本机 PostgreSQL 和原生 Excel 打印预览不可用，GitHub CI 按额度策略保持 `PENDING`。ISS-040 标记为 `FIXED_PENDING_REVIEW`，提交后停止等待 ChatGPT 独立代码、模板、权限和视觉复审。
+证据见 [R1-ISS-040-DEV 验收](uat-evidence/r1-iss-040-dev/README.md)。最终提交为 `d7e55a7bec697f5a50ddf00021232e4afa879969`；定向后端14项、组合40项、Backend SQLite 782项（跳过13）、Node136项、Vitest定向24项/组合637项、前端构建和真实 Chrome 1440/1024/700px检查通过；本机 PostgreSQL 和原生 Excel 打印预览不可用，GitHub CI 按额度策略保持 `PENDING`。ISS-040 标记为 `FIXED_PENDING_REVIEW`，提交后停止等待 ChatGPT 独立代码、模板、权限和视觉复审。

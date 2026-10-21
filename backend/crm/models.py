@@ -1,4 +1,5 @@
 from decimal import Decimal
+import uuid
 from django.utils import timezone
 
 from django.conf import settings
@@ -787,6 +788,7 @@ class Order(TimestampedModel):
     notes = models.TextField("备注", blank=True)
     cancelled_at = models.DateTimeField("取消时间", null=True, blank=True)
     cancellation_reason = models.TextField("取消原因", blank=True)
+    quantity_change_version = models.PositiveIntegerField("数量变更版本", default=0)
 
     class Meta:
         ordering = ["-order_date", "-id"]
@@ -901,6 +903,40 @@ class OrderItem(TradeUnitLine):
     @property
     def amount(self):
         return super().amount
+
+
+class OrderQuantityAdjustment(TimestampedModel):
+    """Immutable business record for a confirmed sales-order quantity change.
+
+    The line and impact snapshots intentionally live on the adjustment record.
+    They preserve the commercial meaning of the operation even if later
+    fulfillment or procurement facts change.  No public generic CRUD endpoint
+    is exposed for this model; the order action below is append-only.
+    """
+
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name="quantity_adjustments")
+    operator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="order_quantity_adjustments",
+    )
+    request_key = models.CharField("请求幂等键", max_length=100, unique=True, default=uuid.uuid4)
+    request_fingerprint = models.CharField("请求指纹", max_length=64)
+    reason = models.TextField("变更原因")
+    before_total_amount = models.DecimalField("变更前订单金额", max_digits=24, decimal_places=12)
+    after_total_amount = models.DecimalField("变更后订单金额", max_digits=24, decimal_places=12)
+    amount_delta = models.DecimalField("金额差额", max_digits=24, decimal_places=12)
+    lines = models.JSONField("数量变更明细", default=list)
+    impact = models.JSONField("影响快照", default=dict)
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+        indexes = [
+            models.Index(fields=["order", "created_at"]),
+            models.Index(fields=["operator", "created_at"]),
+        ]
 
 
 OVERAGE_REASON_CHOICES = [

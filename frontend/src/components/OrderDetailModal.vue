@@ -36,6 +36,14 @@ const allocationItem = ref(null)
 const procurementPlan = ref(null)
 const procurementOpen = ref(false)
 const procurementMessage = ref('')
+const quantityAdjustmentOpen = ref(false)
+const quantityAdjustmentLoading = ref(false)
+const quantityAdjustmentSaving = ref(false)
+const quantityAdjustmentError = ref('')
+const quantityAdjustmentReason = ref('')
+const quantityAdjustmentLines = ref([])
+const quantityAdjustmentPreview = ref(null)
+const quantityAdjustmentRequestKey = ref('')
 
 const order = computed(() => workbench.value?.order)
 const tabs = computed(() => [
@@ -90,7 +98,83 @@ function linePacking(item) {
   return saved?.trade_unit ? `${saved.trade_snapshot?.name} · ${saved.trade_quantity} ${saved.trade_snapshot?.unit}` : `明细 #${item.id} · 基础单位`
 }
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
-function date(value) { return value || '—' }
+function date(value) {
+  if (!value) return '—'
+  const parsed = new Date(value)
+  return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleString('zh-CN', { hour12: false })
+}
+function newRequestKey() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
+  return `qty-${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
+function quantityAdjustmentPayload() {
+  return {
+    version: order.value.quantity_change_version,
+    request_key: quantityAdjustmentRequestKey.value,
+    reason: quantityAdjustmentReason.value.trim(),
+    items: quantityAdjustmentLines.value.map(line => ({
+      order_item: line.id,
+      ...(line.trade_unit ? { new_trade_quantity: line.new_trade_quantity } : { new_quantity: line.new_quantity }),
+    })),
+  }
+}
+function quantityAdjustmentErrorMessage(err) {
+  return err.response?.data?.detail || (err.response?.data && typeof err.response.data === 'object' ? Object.values(err.response.data).flat().join('；') : '') || err.message || '数量变更失败，请重试。'
+}
+function openQuantityAdjustment() {
+  if (!can('orders', 'update') || !['confirmed', 'production', 'shipped'].includes(order.value?.status)) return
+  const fulfillmentByItem = new Map((fulfillment.value?.items || []).map(item => [item.id, item]))
+  quantityAdjustmentLines.value = (workbench.value?.items || []).map(item => ({
+    ...item,
+    shipped_quantity: fulfillmentByItem.get(item.id)?.shipped_quantity ?? null,
+    purchased_quantity: fulfillmentByItem.get(item.id)?.purchased_quantity ?? null,
+    received_quantity: fulfillmentByItem.get(item.id)?.received_quantity ?? null,
+    new_quantity: item.trade_unit ? String(item.trade_quantity) : String(item.quantity),
+    new_trade_quantity: item.trade_unit ? String(item.trade_quantity) : '',
+  }))
+  quantityAdjustmentReason.value = ''
+  quantityAdjustmentPreview.value = null
+  quantityAdjustmentError.value = ''
+  quantityAdjustmentRequestKey.value = newRequestKey()
+  quantityAdjustmentOpen.value = true
+}
+function closeQuantityAdjustment() {
+  if (!quantityAdjustmentSaving.value) quantityAdjustmentOpen.value = false
+}
+async function previewQuantityAdjustment() {
+  if (quantityAdjustmentLoading.value || quantityAdjustmentSaving.value) return
+  if (!quantityAdjustmentReason.value.trim()) { quantityAdjustmentError.value = '请填写变更原因。'; return }
+  quantityAdjustmentLoading.value = true
+  quantityAdjustmentError.value = ''
+  quantityAdjustmentPreview.value = null
+  try {
+    const response = await api.post(`/orders/${props.id}/quantity-adjustments/preview/`, quantityAdjustmentPayload())
+    quantityAdjustmentPreview.value = response.data
+  } catch (err) { quantityAdjustmentError.value = quantityAdjustmentErrorMessage(err) }
+  finally { quantityAdjustmentLoading.value = false }
+}
+async function submitQuantityAdjustment() {
+  if (!quantityAdjustmentPreview.value?.can_submit || quantityAdjustmentSaving.value) return
+  const warnings = quantityAdjustmentPreview.value.warnings || []
+  const financial = quantityAdjustmentPreview.value.financial || {}
+  const summary = [
+    `将调整 ${quantityAdjustmentPreview.value.lines.length} 条订单明细。`,
+    financial.amount_delta != null ? `订单金额变化：${financial.currency} ${money(financial.amount_delta)}` : '',
+    ...warnings,
+    '确认后会保留原订单号和订单行，并按现有服务重新平衡库存预留。',
+  ].filter(Boolean).join('\n')
+  if (!await confirmDialog({ title: '确认调整订单数量', message: summary, confirmText: '确认提交', danger: true })) return
+  quantityAdjustmentSaving.value = true
+  quantityAdjustmentError.value = ''
+  try {
+    await api.post(`/orders/${props.id}/quantity-adjustments/`, quantityAdjustmentPayload())
+    quantityAdjustmentOpen.value = false
+    await load()
+  } catch (err) {
+    quantityAdjustmentPreview.value = null
+    quantityAdjustmentError.value = quantityAdjustmentErrorMessage(err)
+  } finally { quantityAdjustmentSaving.value = false }
+}
 function localDateInputValue(value = new Date()) {
   const localeDate = value.toLocaleDateString('en-CA')
   if (/^\d{4}-\d{2}-\d{2}$/.test(localeDate)) return localeDate
@@ -329,6 +413,33 @@ watch(() => props.refreshKey, load)
 
 <template>
   <Teleport to="body">
+    <div v-if="quantityAdjustmentOpen && can('orders', 'update')" class="trade-shipment-mask">
+      <form class="trade-shipment-dialog quantity-adjustment-dialog" role="dialog" aria-modal="true" aria-labelledby="quantity-adjustment-title" @submit.prevent="quantityAdjustmentPreview ? submitQuantityAdjustment() : previewQuantityAdjustment()">
+        <h3 id="quantity-adjustment-title">调整订单数量</h3>
+        <p class="quantity-adjustment-note">正式订单保留原订单号和订单行。系统不会自动取消采购单、修改共享采购归属或退款。</p>
+        <div class="quantity-adjustment-lines">
+          <section v-for="line in quantityAdjustmentLines" :key="line.id" class="quantity-adjustment-line">
+            <header><div><strong>{{ line.sku_code }}</strong><span>{{ line.sales_model || '未设置型号' }} · {{ line.display_name }}</span></div><small>明细 #{{ line.id }}</small></header>
+            <div class="quantity-adjustment-fields">
+              <div><small>当前数量</small><strong>{{ line.trade_unit ? line.trade_quantity : line.quantity }} {{ line.trade_unit ? line.trade_snapshot?.unit : line.trade_snapshot?.base_unit }}</strong></div>
+              <label>{{ line.trade_unit ? '新的交易数量' : '新的基础数量' }}<input v-if="line.trade_unit" v-model="line.new_trade_quantity" @input="quantityAdjustmentPreview = null" type="number" min="0.01" step="0.01" :aria-label="`新的交易数量 ${line.sku_code}`" required /><input v-else v-model="line.new_quantity" @input="quantityAdjustmentPreview = null" type="number" min="0.01" step="0.01" :aria-label="`新的基础数量 ${line.sku_code}`" required /></label>
+              <div><small>已发货 / 已采购 / 已到货</small><strong>{{ line.shipped_quantity ?? '—' }} / {{ line.purchased_quantity ?? '—' }} / {{ line.received_quantity ?? '—' }} {{ line.trade_snapshot?.base_unit }}</strong></div>
+            </div>
+            <p v-if="line.trade_unit" class="quantity-adjustment-conversion">按保存的交易单位换算，基础数量将由服务端重新计算。</p>
+          </section>
+        </div>
+        <label class="quantity-adjustment-reason">变更原因<textarea v-model="quantityAdjustmentReason" @input="quantityAdjustmentPreview = null" maxlength="500" rows="3" required placeholder="请说明客户或业务调整原因" /></label>
+        <div v-if="quantityAdjustmentPreview" class="quantity-adjustment-preview">
+          <strong>影响预览</strong>
+          <p v-for="line in quantityAdjustmentPreview.lines" :key="line.order_item">{{ line.sku_code }}：{{ line.old_quantity }} → {{ line.new_quantity }} {{ line.base_unit }}，差额 {{ line.quantity_delta }}</p>
+          <p v-if="quantityAdjustmentPreview.financial?.amount_delta != null">订单金额：{{ quantityAdjustmentPreview.financial.currency }} {{ money(quantityAdjustmentPreview.financial.before_total) }} → {{ money(quantityAdjustmentPreview.financial.after_total) }}（{{ Number(quantityAdjustmentPreview.financial.amount_delta) >= 0 ? '+' : '' }}{{ money(quantityAdjustmentPreview.financial.amount_delta) }}）</p>
+          <p v-for="warning in quantityAdjustmentPreview.warnings" :key="warning" class="quantity-adjustment-warning">{{ warning }}</p>
+          <p v-if="!quantityAdjustmentPreview.warnings?.length" class="quantity-adjustment-success">未发现需要额外处理的采购过剩或资金冲突。</p>
+        </div>
+        <p v-if="quantityAdjustmentError" class="quantity-adjustment-error" role="alert">{{ quantityAdjustmentError }}</p>
+        <footer><button type="button" class="btn btn-secondary" :disabled="quantityAdjustmentSaving" @click="closeQuantityAdjustment">取消</button><button v-if="!quantityAdjustmentPreview" type="submit" class="btn btn-primary" :disabled="quantityAdjustmentLoading || !quantityAdjustmentReason.trim()">{{ quantityAdjustmentLoading ? '核算中…' : '预览影响' }}</button><button v-else type="submit" class="btn btn-primary" :disabled="quantityAdjustmentSaving || !quantityAdjustmentPreview.can_submit">{{ quantityAdjustmentSaving ? '提交中…' : '确认调整' }}</button></footer>
+      </form>
+    </div>
     <div v-if="shipmentDialogOpen && can('orders', 'update')" class="trade-shipment-mask">
       <form class="trade-shipment-dialog shipment-batch-dialog" role="dialog" aria-modal="true" aria-labelledby="shipment-dialog-title" @submit.prevent="submitShipment">
         <h3 id="shipment-dialog-title">确认发货</h3>
@@ -377,6 +488,7 @@ watch(() => props.refreshKey, load)
             <article class="workbench-card fulfillment-overview"><div class="section-heading"><div><h3><Truck :size="16" /> 履约进度</h3><p>按销售出库流水统计。</p></div><b>{{ fulfillmentPercent.toFixed(0) }}%</b></div><div class="progress-track fulfillment"><i :style="{ width: `${fulfillmentPercent}%` }" /></div><dl class="data-list compact"><dt>订单数量</dt><dd>{{ workbench.fulfillment_summary.ordered_quantity }}</dd><dt>已出库</dt><dd>{{ workbench.fulfillment_summary.shipped_quantity }}</dd><dt>待出库</dt><dd>{{ workbench.fulfillment_summary.remaining_quantity }}</dd></dl><button class="task-action" @click="activeTab = 'fulfillment'">查看采购与发货</button></article>
             <article v-if="canViewPayments" class="workbench-card payment-card"><div class="section-heading"><div><h3><WalletCards :size="16" /> 回款状态：{{ receivableReview ? '应收计划待核对' : settlement?.label || '待核对' }}</h3><p>已收含预收核销，并扣除退款。</p></div><b v-if="!receivableReview">{{ paymentPercent.toFixed(0) }}%</b></div><p v-if="Number(settlement?.overdue_amount) > 0" class="error" role="alert">应收已逾期：{{ order.currency }} {{ money(settlement.overdue_amount) }}</p><div v-if="!receivableReview" class="progress-track"><i :style="{ width: `${paymentPercent}%` }" /></div><dl class="data-list compact"><dt>应收计划</dt><dd>{{ order.currency }} {{ money(workbench.payment_summary.planned_amount) }}</dd><dt>已收金额</dt><dd>{{ order.currency }} {{ money(workbench.payment_summary.paid_amount) }}</dd><dt>当前待收</dt><dd v-if="receivableReview">待核对</dd><dd v-else-if="!receivableStatus">{{ order.currency }} {{ money(workbench.payment_summary.balance_amount) }}</dd><dd v-else>{{ receivableStatus }}</dd></dl><RouterLink v-if="canViewReceivable" class="receivable-cta" :to="{ path: '/receivables', query: { order: String(order.id) } }">查看 / 登记本单应收</RouterLink></article>
             <article class="workbench-card cost-profit-card"><h3>成本与毛利</h3><dl class="data-list compact"><dt>分配商品成本</dt><dd>¥ {{ money(workbench.profit_summary?.purchase_base_rmb) }}</dd><dt>分摊附加费用</dt><dd>¥ {{ money(workbench.profit_summary?.purchase_additional_rmb) }}</dd><dt>预估总成本</dt><dd>¥ {{ money(totalCost) }}</dd><dt>预估毛利</dt><dd :class="{ 'negative-profit': Number(workbench.profit_summary?.estimated_gross_profit_rmb) < 0 }">¥ {{ money(workbench.profit_summary?.estimated_gross_profit_rmb) }}</dd></dl></article>
+            <article v-if="['confirmed', 'production', 'shipped'].includes(order.status)" class="workbench-card quantity-adjustment-card"><div class="section-heading"><div><h3>调整订单数量</h3><p>保留订单号和订单行；已发货数量、采购单和收款事实不会被覆盖。</p></div><button v-if="can('orders', 'update')" class="btn btn-secondary" @click="openQuantityAdjustment">调整数量</button></div><div v-if="!(workbench.quantity_adjustments || []).length" class="muted">暂无数量变更记录。</div><div v-else class="quantity-adjustment-history"><article v-for="change in workbench.quantity_adjustments" :key="change.id"><div><strong>{{ date(change.created_at) }}</strong><span>{{ change.reason }}</span></div><b v-if="change.amount_delta != null" :class="Number(change.amount_delta) < 0 ? 'negative' : 'positive'">{{ Number(change.amount_delta) > 0 ? '+' : '' }}{{ order.currency }} {{ money(change.amount_delta) }}</b><b v-else class="muted">金额受权限保护</b><small v-for="line in change.lines" :key="line.order_item">{{ line.sku_code }}：{{ line.old_quantity }} → {{ line.new_quantity }} {{ line.base_unit }}</small></article></div></article>
             <article class="workbench-card source-quote-card"><div class="section-heading"><div><h3><FileText :size="16" /> 来源报价</h3><p>成交时采用的报价版本。</p></div></div><template v-if="workbench.source_quote"><strong class="quote-no">{{ workbench.source_quote.quote_no }}</strong><p>{{ workbench.source_quote.status_display }} · {{ workbench.source_quote.currency }} {{ money(workbench.source_quote.total_amount) }}</p><button v-if="can('quotes', 'view')" class="text-btn" @click="emit('open-quote', workbench.source_quote.id)">查看报价工作台</button></template><p v-else class="muted">该订单未关联来源报价。</p></article>
           </section>
           <ContractAmountAdjustments v-if="activeTab === 'overview' && order" contract-type="order" :contract="order" @changed="load" />
@@ -479,4 +591,8 @@ watch(() => props.refreshKey, load)
 
 <style scoped>
 .detail-header{padding:22px 26px}.workbench-tabs button{min-height:44px;padding:10px 13px}.workbench-grid{gap:16px}.workbench-grid>.workbench-card{padding:16px}.current-todo-card{padding:16px!important}.workbench-table-wrap{margin-left:-16px;margin-right:-16px}
+</style>
+
+<style scoped>
+.quantity-adjustment-card{grid-column:1/-1}.quantity-adjustment-card .section-heading{align-items:center}.quantity-adjustment-history{display:grid;gap:8px}.quantity-adjustment-history article{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;padding:10px 0;border-top:1px solid #edf1ef}.quantity-adjustment-history article>div{display:flex;gap:10px;flex-wrap:wrap}.quantity-adjustment-history article span,.quantity-adjustment-history article small{color:#71817b;font-size:var(--text-caption)}.quantity-adjustment-history article small{grid-column:1/-1}.quantity-adjustment-history .positive{color:#216348}.quantity-adjustment-history .negative{color:#a44343}.quantity-adjustment-dialog{width:min(760px,94vw);max-height:90vh;overflow:auto}.quantity-adjustment-note{margin:8px 0 14px;color:#526960!important}.quantity-adjustment-lines{display:grid;gap:10px;max-height:42vh;overflow:auto}.quantity-adjustment-line{padding:13px 14px;border:1px solid #e1e9e5;border-radius:10px;background:#fbfdfc}.quantity-adjustment-line header{display:flex;justify-content:space-between;gap:12px}.quantity-adjustment-line header strong,.quantity-adjustment-line header span{display:block}.quantity-adjustment-line header span{margin-top:4px;color:#71817b;font-size:var(--text-caption)}.quantity-adjustment-line header small{color:#71817b}.quantity-adjustment-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:end;margin-top:12px}.quantity-adjustment-fields>div,.quantity-adjustment-fields>label{display:grid;gap:5px;color:#71817b;font-size:var(--text-caption)}.quantity-adjustment-fields strong{color:#31473f;font-size:var(--text-body)}.quantity-adjustment-fields input,.quantity-adjustment-reason textarea{width:100%;box-sizing:border-box;padding:9px;border:1px solid #d0dfd8;border-radius:7px;background:#fff;font:inherit}.quantity-adjustment-reason{display:grid;gap:7px;margin-top:14px;color:#526960;font-weight:700}.quantity-adjustment-conversion{margin:9px 0 0!important;color:#71817b!important;font-size:var(--text-caption)!important}.quantity-adjustment-preview{display:grid;gap:5px;margin-top:14px;padding:12px 14px;border:1px solid #dbe8e1;border-radius:9px;background:#f7fbf8;color:#526960}.quantity-adjustment-preview strong{color:#245d50}.quantity-adjustment-preview p{margin:0!important;font-size:var(--text-caption)!important}.quantity-adjustment-warning{color:#8b5c1d!important}.quantity-adjustment-success{color:#216348!important}.quantity-adjustment-error{margin-top:12px!important;color:#a44343!important}.quantity-adjustment-dialog footer{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}@media(max-width:700px){.quantity-adjustment-dialog{width:100vw;max-height:94vh;padding:18px}.quantity-adjustment-fields{grid-template-columns:1fr}.quantity-adjustment-lines{max-height:48vh}.quantity-adjustment-card{grid-column:auto}.quantity-adjustment-card .section-heading{align-items:flex-start;flex-direction:column}}
 </style>

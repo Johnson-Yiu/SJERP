@@ -43,6 +43,7 @@ from .services.order_lifecycle import cancel_order, complete_order, confirm_orde
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
 from .services.purchase_lifecycle import cancel_purchase_order, place_purchase_order
 from .services.procurement import build_procurement_plan, create_purchase_drafts, draft_procurement_quantities
+from .services.order_quantity_adjustments import QuantityAdjustmentConflict, apply_quantity_adjustment, preview_quantity_adjustment, serialize_adjustment
 from .services.sku_plans import apply_category_attribute_reorder, preview_category_attribute_reorder
 from .services.sku_schema import (
     UNFROZEN_CATEGORY_HIERARCHY_MESSAGE,
@@ -1911,6 +1912,10 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         planned_receivable = sum((plan.planned_amount for plan in plans if plan.status != "cancelled"), Decimal("0"))
         from .services.profit import order_profit_summary
         profit_summary = order_profit_summary(order) if can_view_profit else None
+        quantity_adjustments = [
+            serialize_adjustment(row, include_financial=can_view_transactions and can_view_finance)
+            for row in order.quantity_adjustments.select_related("operator").all()
+        ]
         return Response({
             "order": OrderSerializer(order, context={"request": request}).data,
             "source_quote": QuoteSerializer(order.quote, context={"request": request}).data if order.quote and user_can(request.user, "quotes", "view") else None,
@@ -1927,12 +1932,89 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             },
             "expense_summary": {"expense_rmb": profit_summary["expense_rmb"] if profit_summary else None},
             "profit_summary": profit_summary,
+            "quantity_adjustments": quantity_adjustments,
             "fulfillment_summary": {
                 "ordered_quantity": ordered_quantity,
                 "shipped_quantity": shipped_quantity if user_can(request.user, "inventory", "view") else None,
                 "remaining_quantity": ordered_quantity - shipped_quantity if user_can(request.user, "inventory", "view") else None,
             },
         })
+
+    @action(detail=True, methods=["post"], url_path="quantity-adjustments/preview")
+    def quantity_adjustment_preview(self, request, pk=None):
+        require_finance_permission(request.user, "orders", "update")
+        order = self.get_object()
+        try:
+            preview = preview_quantity_adjustment(order, request.data)
+        except QuantityAdjustmentConflict as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_409_CONFLICT)
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        if not (user_can(request.user, "finance", "view") and user_can(request.user, "transactions", "view")):
+            preview["financial"] = {
+                "currency": order.currency,
+                "before_total": None,
+                "after_total": None,
+                "amount_delta": None,
+                "paid_amount": None,
+                "planned_amount": None,
+                "settled_amount": None,
+                "outstanding_before": None,
+                "outstanding_after": None,
+            }
+        return Response(preview)
+
+    @action(detail=True, methods=["get", "post"], url_path="quantity-adjustments")
+    def quantity_adjustments(self, request, pk=None):
+        order = self.get_object()
+        if request.method == "GET":
+            include_financial = user_can(request.user, "transactions", "view") and user_can(request.user, "finance", "view")
+            return Response([
+                serialize_adjustment(row, include_financial=include_financial)
+                for row in order.quantity_adjustments.select_related("operator").all()
+            ])
+        require_finance_permission(request.user, "orders", "update")
+        try:
+            with transaction.atomic():
+                adjustment, replayed, preview = apply_quantity_adjustment(
+                    order,
+                    request.data,
+                    operator=request.user,
+                )
+                if not replayed:
+                    lines = adjustment.lines
+                    before = {
+                        "quantity_change_version": max(0, adjustment.order.quantity_change_version - 1),
+                        "total_amount": str(adjustment.before_total_amount),
+                        "items": {str(row["order_item"]): row["old_quantity"] for row in lines},
+                    }
+                    after = {
+                        "quantity_change_version": adjustment.order.quantity_change_version,
+                        "total_amount": str(adjustment.after_total_amount),
+                        "items": {str(row["order_item"]): row["new_quantity"] for row in lines},
+                    }
+                    record_operation(
+                        request=request,
+                        instance=adjustment.order,
+                        action="custom",
+                        action_label="调整销售订单数量",
+                        before=before,
+                        after=after,
+                        metadata={
+                            "quantity_adjustment_id": adjustment.pk,
+                            "reason": adjustment.reason,
+                            "summary": f"调整 {len(lines)} 条订单明细，金额差额 {adjustment.amount_delta}",
+                            "warnings": adjustment.impact.get("warnings", []),
+                        },
+                    )
+        except QuantityAdjustmentConflict as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_409_CONFLICT)
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"adjustment": serialize_adjustment(adjustment), "replayed": replayed, "preview": preview},
+            status=status.HTTP_200_OK if replayed else status.HTTP_201_CREATED,
+        )
 
 
 @api_view(["GET"])

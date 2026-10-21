@@ -1896,7 +1896,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
-        read_only_fields = ["order_no", "status", "cancelled_at", "cancellation_reason"]
+        read_only_fields = ["order_no", "status", "cancelled_at", "cancellation_reason", "quantity_change_version"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

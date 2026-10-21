@@ -1,0 +1,10 @@
+{
+  "normal_shipment_id": 1,
+  "mixed_shipment_id": 2,
+  "multipage_shipment_id": 3,
+  "shipment_numbers": [
+    "SH-NORMAL",
+    "SH-MIXED",
+    "SH-MULTIPAGE"
+  ]
+}

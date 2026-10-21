@@ -201,3 +201,9 @@ ISS-122、ISS-123 的独立复审通过结论已同步为 CLOSED；ISS-105 OPEN�
 基线为 `199a21e0f407ba9ad772a5dec86e0b30dbd0c9b5`。本轮只读复核全系统模块、当前代码/测试、权限、部署配置和 123 个唯一 Issue 的最后一次状态；未修改业务代码、模型、迁移、历史金额或权限执行策略。R1-FIN-P3-B 已按授权记录为财务功能阶段性验收通过，但不等同于生产就绪。ISS-105 保持 OPEN，ISS-108 和 ISS-121 保持 BLOCKED。
 
 当前只具备开发超级管理员身份下的隔离合成数据演练条件，不具备真实员工内部试用条件。A 类门槛为 ISS-003 正式员工身份/数据范围、ISS-018 数据库与媒体联合备份恢复、ISS-055 跨客户 API 范围；其余 Issue 的 A–D 分类、模块边界、最小试用方案和退出条件见 [R1-READINESS-01 审查报告](R1-READINESS-01-全系统试用准备与业务阻断问题审查.md)。本轮没有启动正式员工 UAT、RBAC 或部署，完成文档后停止等待 ChatGPT 独立审查。
+
+## R1-ISS-040-DEV 正式 Packing List Excel 导出（2026-10-21）
+
+从最新 `origin/master` 建立独立分支 `codex/r1-iss-040-dev`。本轮只增加正式实际装箱单 Excel 导出：复用用户提供的 `Packing List装箱单.xlsx` 模板，按发货与实际装箱数量守恒校验，输出历史快照/箱备注、基础单位数量、箱规、重量、CBM、SKU 识别信息、页码和权限控制；未完成装箱、取消或冲销发货拒绝导出。导出为只读操作，不改变发货、装箱、库存、采购、付款、应收、订单数量或历史金额，不新增迁移。
+
+证据见 [R1-ISS-040-DEV 验收](uat-evidence/r1-iss-040-dev/README.md)。定向后端14项、组合40项、Backend SQLite 782项（跳过13）、Node136项、Vitest定向24项/组合637项、前端构建和真实 Chrome 1440/700px检查通过；本机 PostgreSQL 和原生 Excel 打印预览不可用，GitHub CI 按额度策略保持 `PENDING`。ISS-040 标记为 `FIXED_PENDING_REVIEW`，提交后停止等待 ChatGPT 独立代码、模板、权限和视觉复审。

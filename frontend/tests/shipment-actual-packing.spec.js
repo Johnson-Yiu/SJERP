@@ -3,9 +3,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { reactive } from 'vue'
 
-const mocks = vi.hoisted(() => ({ api: { get: vi.fn(), post: vi.fn(), delete: vi.fn() }, confirmDialog: vi.fn() }))
-vi.mock('../src/api', () => ({ api: mocks.api }))
+const mocks = vi.hoisted(() => ({ api: { get: vi.fn(), post: vi.fn(), delete: vi.fn() }, confirmDialog: vi.fn(), downloadPackingListExport: vi.fn() }))
+vi.mock('../src/api', () => ({ api: mocks.api, downloadPackingListExport: mocks.downloadPackingListExport }))
 vi.mock('../src/dialogs', () => ({ confirmDialog: mocks.confirmDialog }))
+vi.mock('../src/accessControl', () => ({ useAccessControl: () => ({ can: () => true }) }))
 import ShipmentActualPacking from '../src/components/ShipmentActualPacking.vue'
 import OrderDetailModal from '../src/components/OrderDetailModal.vue'
 import { packingSummary } from '../src/utils/actualPacking'
@@ -33,7 +34,7 @@ async function input(label, value) {
   await flushPromises()
 }
 async function submit() { form().dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); await flushPromises() }
-beforeEach(() => { vi.clearAllMocks(); mocks.confirmDialog.mockResolvedValue(true); mocks.api.post.mockResolvedValue({ data: [] }); mocks.api.delete.mockResolvedValue({}); wrappers = [] })
+beforeEach(() => { vi.clearAllMocks(); mocks.confirmDialog.mockResolvedValue(true); mocks.api.post.mockResolvedValue({ data: [] }); mocks.api.delete.mockResolvedValue({}); mocks.downloadPackingListExport.mockResolvedValue(undefined); wrappers = [] })
 afterEach(() => { wrappers.forEach(w => w.unmount()); document.body.innerHTML = '' })
 
 describe('Actual packing by Shipment', () => {
@@ -92,6 +93,8 @@ describe('Actual packing by Shipment', () => {
   })
   it('partial progress displays packed shipped and remaining by SKU', async () => { const w = await component({ packages: [carton] }); expect(w.text()).toContain('尚未装箱完成'); expect(w.text()).toContain('已装 6 / 发货 10 pcs'); expect(w.text()).toContain('未装箱 4 pcs') })
   it('fully packed state is clearly shown', async () => { const w = await component({ packages: [{ ...carton, items: [{ sku: 10, quantity: '10' }, { sku: 20, quantity: '8' }] }] }); expect(w.find('.packing-progress').text()).toContain('装箱完成'); expect(w.find('.packing-progress').text()).not.toContain('未装箱') })
+  it('keeps Packing List export disabled until every shipped SKU is packed', async () => { const w = await component({ packages: [carton] }); const button = w.findAll('button').find(b => b.text() === '导出 Packing List'); expect(button.exists()).toBe(true); expect(button.attributes('disabled')).toBeDefined(); expect(mocks.downloadPackingListExport).not.toHaveBeenCalled() })
+  it('exports a fully packed confirmed Shipment through the scoped helper', async () => { const w = await component({ packages: [{ ...carton, items: [{ sku: 10, quantity: '10' }, { sku: 20, quantity: '8' }] }] }); await click(w, '导出 Packing List'); expect(mocks.downloadPackingListExport).toHaveBeenCalledWith(55, 'SH-UAT-55') })
   it('copy requires a plan and confirmed status', async () => { const w = await component({ hasPlan: false }); expect(w.findAll('button').find(b => b.text() === '从预计装箱复制').attributes('disabled')).toBeDefined() })
   it('copy without existing packages sends no replacement flag', async () => { const w = await component(); await click(w, '从预计装箱复制'); expect(mocks.confirmDialog).not.toHaveBeenCalled(); expect(mocks.api.post).toHaveBeenCalledWith('/shipments/55/copy-estimated-packing/', {}) })
   it('partial shipment copy shows server business explanation', async () => { mocks.api.post.mockRejectedValue({ response: { data: { detail: '预计装箱对应整张订单，本次发货数量与预计装箱不一致，请手工录入本次实际箱单。' } } }); const w = await component(); await click(w, '从预计装箱复制'); expect(w.text()).toContain('请手工录入本次实际箱单') })

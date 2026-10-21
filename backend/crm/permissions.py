@@ -223,6 +223,30 @@ class ModuleActionPermission(BasePermission):
         return user_can(user, module, action_for_request(request, view))
 
 
+class HistoricalAnalysisPermission(BasePermission):
+    """Allow the history ledger when either underlying business scope is readable.
+
+    Historical analysis is deliberately not a gateway to the general reports
+    module.  The endpoint applies its own per-dimension redaction, while this
+    permission only establishes that the caller may read sales or purchasing
+    history at all.
+    """
+
+    message = "你没有历史订单分析权限。"
+
+    def has_permission(self, request, view):
+        if development_superadmin_enabled():
+            return True
+        user = request.user
+        if not user or not user.is_authenticated:
+            return False
+        if not getattr(settings, "RBAC_ENFORCEMENT", False):
+            return True
+        if has_all_permissions(user):
+            return True
+        return user_can(user, "orders", "view") or user_can(user, "purchases", "view")
+
+
 class OrganizationOverviewPermission(BasePermission):
     """Allow permission administrators to read the matrix without organization.view."""
 

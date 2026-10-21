@@ -2151,7 +2151,11 @@ class OrderSerializer(serializers.ModelSerializer):
         source_items = list(order.quote.items.order_by("id")) if order.quote_id else []
         rows = []
         for index, item in enumerate(items):
-            if not item.get("cost_price"):
+            # A historical entry has no reliable point-in-time procurement
+            # cost.  Keep the model's neutral default instead of silently
+            # copying today's SKU cost into a past order.  Historical reports
+            # already keep profit unavailable for this scope.
+            if not historical_mode and not item.get("cost_price"):
                 item["cost_price"] = item["sku"].cost_price
             source = source_items[index] if index < len(source_items) and source_items[index].sku_id == item["sku"].pk else None
             rows.append(OrderItem(order=order, **item, **self._item_snapshots(item["sku"], source)))
@@ -2175,7 +2179,7 @@ class OrderSerializer(serializers.ModelSerializer):
             instance.items.all().delete()
             rows = []
             for index, item in enumerate(items):
-                if not item.get("cost_price"):
+                if not (instance.historical_only or instance.status == "historical") and not item.get("cost_price"):
                     item["cost_price"] = item["sku"].cost_price
                 source = previous_items[index] if index < len(previous_items) and previous_items[index].sku_id == item["sku"].pk else None
                 rows.append(OrderItem(order=instance, **item, **self._item_snapshots(item["sku"], source), **self._supplier_snapshots(source)))
@@ -2283,9 +2287,11 @@ class TransactionSerializer(serializers.ModelSerializer):
             if not (customer if direction == "income" else supplier):
                 raise serializers.ValidationError("预收款请选择客户，预付款请选择供应商。")
         contract = order or purchase_order
+        plan = attrs.get("plan", getattr(self.instance, "plan", None))
+        if plan and not contract:
+            contract = plan.order or plan.purchase_order
         if contract and (getattr(contract, "historical_only", False) or getattr(contract, "status", None) == "historical"):
-            if kind in {"customer_receipt", "supplier_payment", "refund", "supplier_refund"} or attrs.get("plan"):
-                raise serializers.ValidationError("历史订单仅用于经营分析，不能登记收付款或核销。")
+            raise serializers.ValidationError("历史订单仅用于经营分析，不能登记任何关联资金流水。")
         if contract and kind in {"customer_receipt", "supplier_payment", "refund", "supplier_refund"} and attrs.get("currency", "USD") != contract.currency:
             raise serializers.ValidationError("合同收付款及退款币种必须与合同一致。")
         return attrs

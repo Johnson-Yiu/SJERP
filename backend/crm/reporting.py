@@ -8,12 +8,12 @@ from decimal import Decimal
 from django.db.models import Prefetch, Q
 from django.http import HttpResponse
 from django.utils import timezone
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from .models import Customer, InventoryMovement, Order, OrderItem, Product, ProductCategory, PurchaseOrder, PurchaseOrderItem, RmbCashEvent, SKU, Supplier, Transaction
-from .permissions import user_can
+from .permissions import HistoricalAnalysisPermission, user_can
 from .sales_scope import scope_customer_queryset, scope_customer_related_queryset
 from .services.profit import order_profit_summary
 from .services import cash_events as cash
@@ -170,13 +170,19 @@ def report_catalog(request):
 
 
 @api_view(["GET"])
+@permission_classes([HistoricalAnalysisPermission])
 def historical_analysis(request):
     """Separate, read-only analysis for explicitly imported historical contracts."""
-    # The analysis groups by the counterparty. Match the normal data-scope
-    # rules instead of exposing current customer/supplier names to an account
-    # that can only see order or purchase records without the related master.
-    can_sales = user_can(request.user, "orders", "view") and user_can(request.user, "customers", "view")
-    can_purchase = user_can(request.user, "purchases", "view") and user_can(request.user, "suppliers", "view")
+    # Module access controls the aggregate, while master-data permissions
+    # control each identity-bearing dimension.  In particular, an employee
+    # may review historical sales totals without receiving SKU or customer
+    # labels as a side effect.
+    can_sales = user_can(request.user, "orders", "view")
+    can_purchase = user_can(request.user, "purchases", "view")
+    can_sales_customer = can_sales and user_can(request.user, "customers", "view")
+    can_purchase_supplier = can_purchase and user_can(request.user, "suppliers", "view")
+    can_sku_dimension = (can_sales or can_purchase) and user_can(request.user, "skus", "view")
+    can_category_dimension = can_sku_dimension and user_can(request.user, "categories", "view")
     if not can_sales and not can_purchase:
         return Response({"detail": "你没有历史订单分析权限。"}, status=403)
     today = timezone.localdate()
@@ -209,25 +215,45 @@ def historical_analysis(request):
         )
         customer_rows = {}
         customer_order_ids = {}
+        country_rows = {}
+        category_rows = {}
         sku_rows = {}
         total = Decimal("0")
         quantity = Decimal("0")
         for order in sales_qs:
             order_amount = order.total_amount * order.exchange_rate
             total += order_amount
-            customer_key = str(order.customer_id)
-            customer_rows.setdefault(customer_key, {"id": order.customer_id, "label": order.customer.name, "amount": Decimal("0"), "count": 0})
-            customer_rows[customer_key]["amount"] += order_amount
-            customer_order_ids.setdefault(customer_key, set()).add(order.pk)
+            if can_sales_customer:
+                customer_key = str(order.customer_id)
+                customer_rows.setdefault(customer_key, {"id": order.customer_id, "label": order.customer.name, "amount": Decimal("0"), "count": 0})
+                customer_rows[customer_key]["amount"] += order_amount
+                customer_order_ids.setdefault(customer_key, set()).add(order.pk)
+                country_key = order.customer.country or ""
+                country_rows.setdefault(country_key, {"id": country_key, "label": country_key or "未填写", "amount": Decimal("0"), "count": 0})
+                country_rows[country_key]["amount"] += order_amount
+                country_rows[country_key]["count"] += 1
             for item in order.items.all():
                 quantity += item.quantity
-                sku_key = str(item.sku_id)
-                sku_rows.setdefault(sku_key, {"id": item.sku_id, "label": f"{item.sku.sku} · {item.display_name_snapshot or item.sku.display_name_cn or item.sku.product.name}", "amount": Decimal("0"), "quantity": Decimal("0")})
-                sku_rows[sku_key]["amount"] += item.amount * order.exchange_rate
-                sku_rows[sku_key]["quantity"] += item.quantity
+                if can_sku_dimension:
+                    sku_key = str(item.sku_id)
+                    sku_rows.setdefault(sku_key, {"id": item.sku_id, "label": f"{item.sku.sku} · {item.display_name_snapshot or item.sku.display_name_cn or item.sku.product.name}", "amount": Decimal("0"), "quantity": Decimal("0")})
+                    sku_rows[sku_key]["amount"] += item.amount * order.exchange_rate
+                    sku_rows[sku_key]["quantity"] += item.quantity
+                if can_category_dimension and item.sku.product.category_id:
+                    category = item.sku.product.category
+                    category_key = str(category.pk)
+                    category_rows.setdefault(category_key, {"id": category.pk, "label": category.name, "amount": Decimal("0"), "quantity": Decimal("0")})
+                    category_rows[category_key]["amount"] += item.amount * order.exchange_rate
+                    category_rows[category_key]["quantity"] += item.quantity
         for key, row in customer_rows.items():
             row["count"] = len(customer_order_ids.get(key, set()))
-        payload["sales"] = {"order_count": sales_qs.count(), "amount_rmb": total, "quantity": quantity, "by_customer": list(customer_rows.values()), "by_sku": list(sku_rows.values())}
+        payload["sales"] = {
+            "order_count": sales_qs.count(), "amount_rmb": total, "quantity": quantity,
+            "by_customer": list(customer_rows.values()) if can_sales_customer else [],
+            "by_country": list(country_rows.values()) if can_sales_customer else [],
+            "by_sku": list(sku_rows.values()) if can_sku_dimension else [],
+            "by_category": list(category_rows.values()) if can_category_dimension else [],
+        }
     if can_purchase:
         purchase_qs = PurchaseOrder.objects.filter(
             historical_only=True,
@@ -236,25 +262,45 @@ def historical_analysis(request):
         ).select_related("supplier").prefetch_related("items__sku__product")
         supplier_rows = {}
         supplier_order_ids = {}
+        country_rows = {}
+        category_rows = {}
         sku_rows = {}
         total = Decimal("0")
         quantity = Decimal("0")
         for purchase in purchase_qs:
             purchase_amount = purchase.total_amount * purchase.exchange_rate
             total += purchase_amount
-            supplier_key = str(purchase.supplier_id)
-            supplier_rows.setdefault(supplier_key, {"id": purchase.supplier_id, "label": purchase.supplier.name, "amount": Decimal("0"), "count": 0})
-            supplier_rows[supplier_key]["amount"] += purchase_amount
-            supplier_order_ids.setdefault(supplier_key, set()).add(purchase.pk)
+            if can_purchase_supplier:
+                supplier_key = str(purchase.supplier_id)
+                supplier_rows.setdefault(supplier_key, {"id": purchase.supplier_id, "label": purchase.supplier.name, "amount": Decimal("0"), "count": 0})
+                supplier_rows[supplier_key]["amount"] += purchase_amount
+                supplier_order_ids.setdefault(supplier_key, set()).add(purchase.pk)
+                country_key = purchase.supplier.country or ""
+                country_rows.setdefault(country_key, {"id": country_key, "label": country_key or "未填写", "amount": Decimal("0"), "count": 0})
+                country_rows[country_key]["amount"] += purchase_amount
+                country_rows[country_key]["count"] += 1
             for item in purchase.items.all():
                 quantity += item.quantity
-                sku_key = str(item.sku_id)
-                sku_rows.setdefault(sku_key, {"id": item.sku_id, "label": f"{item.sku.sku} · {item.display_name_snapshot or item.sku.display_name_cn or item.sku.product.name}", "amount": Decimal("0"), "quantity": Decimal("0")})
-                sku_rows[sku_key]["amount"] += item.amount * purchase.exchange_rate
-                sku_rows[sku_key]["quantity"] += item.quantity
+                if can_sku_dimension:
+                    sku_key = str(item.sku_id)
+                    sku_rows.setdefault(sku_key, {"id": item.sku_id, "label": f"{item.sku.sku} · {item.display_name_snapshot or item.sku.display_name_cn or item.sku.product.name}", "amount": Decimal("0"), "quantity": Decimal("0")})
+                    sku_rows[sku_key]["amount"] += item.amount * purchase.exchange_rate
+                    sku_rows[sku_key]["quantity"] += item.quantity
+                if can_category_dimension and item.sku.product.category_id:
+                    category = item.sku.product.category
+                    category_key = str(category.pk)
+                    category_rows.setdefault(category_key, {"id": category.pk, "label": category.name, "amount": Decimal("0"), "quantity": Decimal("0")})
+                    category_rows[category_key]["amount"] += item.amount * purchase.exchange_rate
+                    category_rows[category_key]["quantity"] += item.quantity
         for key, row in supplier_rows.items():
             row["count"] = len(supplier_order_ids.get(key, set()))
-        payload["purchase"] = {"order_count": purchase_qs.count(), "amount_rmb": total, "quantity": quantity, "by_supplier": list(supplier_rows.values()), "by_sku": list(sku_rows.values())}
+        payload["purchase"] = {
+            "order_count": purchase_qs.count(), "amount_rmb": total, "quantity": quantity,
+            "by_supplier": list(supplier_rows.values()) if can_purchase_supplier else [],
+            "by_country": list(country_rows.values()) if can_purchase_supplier else [],
+            "by_sku": list(sku_rows.values()) if can_sku_dimension else [],
+            "by_category": list(category_rows.values()) if can_category_dimension else [],
+        }
     return Response(payload)
 
 

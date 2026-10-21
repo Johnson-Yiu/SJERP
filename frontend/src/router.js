@@ -18,7 +18,7 @@ import HSCodePage from './views/HSCodePage.vue'
 import { resourceConfigs } from './resourceConfigs'
 import { installModalNavigationGuard } from './utils/modalNavigation'
 import AccessDeniedPage from './views/AccessDeniedPage.vue'
-import { can, canAccessOrganization, loadAccessControl } from './accessControl'
+import { can, canAccessHistoricalOrders, canAccessOrganization, loadAccessControl } from './accessControl'
 
 const resourceModules = {
   suppliers: 'suppliers', customers: 'customers', contacts: 'contacts', 'follow-ups': 'followups',
@@ -64,7 +64,11 @@ router.beforeEach(async to => {
   try { await loadAccessControl() }
   catch { return { name: 'access-status-error', replace: true } }
   const module = to.meta.module
-  const permitted = to.path === '/organization' ? canAccessOrganization() : can(module, 'view')
+  const permitted = to.path === '/organization'
+    ? canAccessOrganization()
+    : to.path === '/historical-orders'
+      ? canAccessHistoricalOrders()
+      : can(module, 'view')
   if (module && !permitted) return { name: 'access-denied', query: { from: to.fullPath }, replace: true }
   return true
 })

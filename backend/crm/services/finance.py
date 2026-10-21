@@ -93,6 +93,13 @@ def record_transaction(payload):
     payload.pop("rmb_amount", None)
     if amount <= 0:
         raise ValidationError("收付款金额必须大于零。")
+    # Keep this guard at the service boundary as well as in the serializer.
+    # Imports, jobs, and direct service callers must not turn a historical
+    # analysis record into any kind of linked cash fact.
+    linked_order = payload.get("order")
+    linked_purchase = payload.get("purchase_order")
+    for contract in (linked_order, linked_purchase):
+        reject_historical(contract, "登记关联资金流水")
     if plan:
         plan = PaymentPlan.objects.select_for_update().get(pk=plan.pk)
         if plan.order_id:
@@ -108,7 +115,7 @@ def record_transaction(payload):
         if payload.get("currency", plan.currency) != plan.currency:
             raise ValidationError("实际收付款币种必须与计划原币一致。")
         contract = plan.order or plan.purchase_order
-        reject_historical(contract, "登记收付款")
+        reject_historical(contract, "登记关联资金流水")
         if contract.status in {"draft", "cancelled"}:
             raise ValidationError("草稿或已取消合同不能登记收付款。")
         expected = {"order": plan.order, "purchase_order": plan.purchase_order,

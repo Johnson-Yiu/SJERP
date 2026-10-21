@@ -3,8 +3,10 @@ from __future__ import annotations
 from copy import copy
 from decimal import Decimal
 from io import BytesIO
+from math import ceil
 from pathlib import Path
 import re
+from unicodedata import east_asian_width
 import zipfile
 import xml.etree.ElementTree as ET
 
@@ -269,6 +271,66 @@ def _set_cell(sheet, address, value, *, number_format=None, wrap=False):
         cell.alignment = alignment
 
 
+def _copy_cell_style(source, target):
+    target._style = copy(source._style)
+    target.number_format = source.number_format
+    target.font = copy(source.font)
+    target.fill = copy(source.fill)
+    target.border = copy(source.border)
+    target.alignment = copy(source.alignment)
+    target.protection = copy(source.protection)
+
+
+def _write_header_fields(sheet, shipment):
+    """Write header values into dedicated cells without inventing invoice data."""
+    for address in ("B1", "B2", "B3", "C3", "D3", "E3", "F3"):
+        _set_cell(sheet, address, None)
+
+    # The template labels occupy column A.  Keep a blank spacer in B and put
+    # the value in C so long identifiers cannot touch the label.
+    _set_cell(sheet, "C1", shipment.shipment_no)
+    _set_cell(sheet, "C2", shipment.shipment_date.isoformat())
+
+    # There is no invoice model/source in the export path.  Keep Invoice Ref
+    # No. empty and expose the order number only under its real meaning.
+    _copy_cell_style(sheet["A3"], sheet["D3"])
+    _copy_cell_style(sheet["B3"], sheet["F3"])
+    _set_cell(sheet, "D3", "Sales Order Ref.:")
+    _set_cell(sheet, "F3", shipment.order.order_no)
+
+
+def _display_width(value):
+    width = 0
+    for character in str(value or ""):
+        width += 2 if east_asian_width(character) in {"W", "F"} else 1
+    return width
+
+
+def _wrapped_line_count(value, column_width):
+    """Estimate Excel's wrapped lines for both CJK and Latin text.
+
+    openpyxl cannot ask Excel to autofit rows.  This conservative estimate
+    keeps the complete cell value inside the existing column width while
+    preserving the template's font and column layout.
+    """
+    capacity = max(8, int((column_width or 13) * 1.1))
+    lines = 0
+    for line in str(value or "").splitlines() or [""]:
+        lines += max(1, ceil(_display_width(line) / capacity))
+    return lines
+
+
+def _required_row_height(sheet, row, item, description):
+    description_text = f"SKU: {item['code']}\n{description}"
+    description_lines = _wrapped_line_count(description_text, sheet.column_dimensions["D"].width)
+    name_lines = _wrapped_line_count(item["name"], sheet.column_dimensions["B"].width)
+    # 48px product images need a little more than their native height when
+    # the row is vertically centred.  No arbitrary upper cap is applied.
+    image_floor = 60 if _image_path(item["sku"]) else 0
+    base_height = sheet.row_dimensions[row].height or 15
+    return max(base_height, (max(description_lines, name_lines) * 15) + 8, image_floor)
+
+
 def _validate_template_structure(sheet):
     if sheet.max_column < TEMPLATE_COLUMN_COUNT:
         raise PackingListExportError("Packing List 模板缺少必要列。")
@@ -309,9 +371,7 @@ def _write_rows(sheet, rows, data_end, *, include_hs_code=True):
         row = DATA_START_ROW + index
         dimensions = item["dimensions"]
         description = _append_carton_reference(item["description"], item["carton_numbers"], item["notes"])
-        description_lines = 1 + len(description.splitlines())
-        base_height = sheet.row_dimensions[row].height or 15
-        sheet.row_dimensions[row].height = max(base_height, min(90, description_lines * 15 + 8))
+        sheet.row_dimensions[row].height = _required_row_height(sheet, row, item, description)
         _set_cell(sheet, f"A{row}", index + 1, number_format="0")
         _set_cell(sheet, f"B{row}", item["name"], wrap=True)
         _set_cell(sheet, f"D{row}", f"SKU: {item['code']}\n{description}", wrap=True)
@@ -334,20 +394,65 @@ def _write_rows(sheet, rows, data_end, *, include_hs_code=True):
         _add_image(sheet, item["sku"], row)
 
 
+def _rename_media_relationships(parts, old_filename, new_filename):
+    """Update generated drawing rels after openpyxl's media rename."""
+    rel_ns = "http://schemas.openxmlformats.org/package/2006/relationships"
+    for part_name in list(parts):
+        if not part_name.endswith(".rels"):
+            continue
+        try:
+            rels = ET.fromstring(parts[part_name])
+        except ET.ParseError:
+            continue
+        changed = False
+        for relationship in rels.findall(f"{{{rel_ns}}}Relationship"):
+            target = relationship.attrib.get("Target", "")
+            if not target.endswith(f"/{old_filename}") and target != old_filename:
+                continue
+            if target.startswith("/xl/media/"):
+                replacement = f"/xl/media/{new_filename}"
+            elif target.startswith("xl/media/"):
+                replacement = f"xl/media/{new_filename}"
+            elif target.startswith("../media/"):
+                replacement = f"../media/{new_filename}"
+            else:
+                replacement = new_filename
+            relationship.set("Target", replacement)
+            changed = True
+        if changed:
+            parts[part_name] = ET.tostring(rels, encoding="utf-8", xml_declaration=True)
+
+
 def _patch_template_artifacts(template_path, workbook_bytes):
-    """Restore the original template's VML header logo lost by openpyxl."""
+    """Restore template header parts without colliding with product images."""
     output = {}
     with zipfile.ZipFile(BytesIO(workbook_bytes), "r") as generated:
         for info in generated.infolist():
             output[info.filename] = generated.read(info.filename)
     with zipfile.ZipFile(template_path, "r") as template:
+        template_names = set(template.namelist())
+        logo_name = "xl/media/image1.png"
+        logo_bytes = template.read(logo_name) if logo_name in template_names else None
+
+        # openpyxl names the first inserted product image image1.png.  Move
+        # that generated part before restoring the template logo and update
+        # only drawing relationships that pointed at the generated part.
+        if logo_bytes is not None and logo_name in output and output[logo_name] != logo_bytes:
+            product_name = "xl/media/packing-product-image-1.png"
+            suffix = 1
+            while product_name in output:
+                suffix += 1
+                product_name = f"xl/media/packing-product-image-{suffix}.png"
+            output[product_name] = output.pop(logo_name)
+            _rename_media_relationships(output, "image1.png", Path(product_name).name)
+
         for name in (
             "xl/media/image1.png",
             "xl/drawings/vmlDrawing1.vml",
             "xl/drawings/_rels/vmlDrawing1.vml.rels",
             "docProps/custom.xml",
         ):
-            if name in template.namelist() and name not in output:
+            if name in template_names:
                 output[name] = template.read(name)
     ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
     rel_ns = "http://schemas.openxmlformats.org/package/2006/relationships"
@@ -389,14 +494,15 @@ def _patch_template_artifacts(template_path, workbook_bytes):
         rels = ET.fromstring(output[rel_path])
     else:
         rels = ET.Element(f"{{{rel_ns}}}Relationships")
-    if not any(node.attrib.get("Id") == "rIdPackingLogo" for node in rels):
-        ET.SubElement(
+    logo_relationship = next((node for node in rels if node.attrib.get("Id") == "rIdPackingLogo"), None)
+    if logo_relationship is None:
+        logo_relationship = ET.SubElement(
             rels,
             f"{{{rel_ns}}}Relationship",
             Id="rIdPackingLogo",
-            Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing",
-            Target="../drawings/vmlDrawing1.vml",
         )
+    logo_relationship.set("Type", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing")
+    logo_relationship.set("Target", "../drawings/vmlDrawing1.vml")
     output[rel_path] = ET.tostring(rels, encoding="utf-8", xml_declaration=True)
 
     rebuilt = BytesIO()
@@ -433,9 +539,7 @@ def render_packing_list_xlsx(shipment, *, include_hs_code=True):
         _copy_row_style(sheet, 6 if row < DATA_START_ROW + len(rows) else 8, row)
     sheet.merge_cells(f"A{total_row}:G{total_row}")
 
-    _set_cell(sheet, "B1", shipment.shipment_no)
-    _set_cell(sheet, "B2", shipment.shipment_date.isoformat())
-    _set_cell(sheet, "B3", shipment.order.order_no)
+    _write_header_fields(sheet, shipment)
     _write_rows(sheet, rows, total_row - 1, include_hs_code=include_hs_code)
     _set_cell(sheet, f"H{total_row}", f"=SUM(H{DATA_START_ROW}:H{total_row - 1})", number_format="0")
     _set_cell(sheet, f"M{total_row}", f"=SUM(M{DATA_START_ROW}:M{total_row - 1})", number_format="0.000")

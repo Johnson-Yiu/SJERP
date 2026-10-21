@@ -1,0 +1,12 @@
+{
+  "normal_shipment_id": 1,
+  "mixed_shipment_id": 2,
+  "multipage_shipment_id": 3,
+  "image_shipment_id": 4,
+  "shipment_numbers": [
+    "SH-FIX-NORMAL",
+    "SH-FIX-MIXED",
+    "SH-FIX-MULTIPAGE",
+    "SH-FIX-IMAGES"
+  ]
+}

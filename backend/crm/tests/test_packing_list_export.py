@@ -1,11 +1,16 @@
 from datetime import date
 from decimal import Decimal
 from io import BytesIO
+from pathlib import Path
+import tempfile
 import zipfile
+import xml.etree.ElementTree as ET
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
+from django.core.files.base import ContentFile
 from openpyxl import load_workbook
+from PIL import Image as PILImage
 from rest_framework.test import APIClient
 
 from crm.models import (
@@ -25,6 +30,7 @@ from crm.models import (
     SKU,
 )
 from crm.services.fulfillment import confirm_shipment
+from crm.services.packing_list import TEMPLATE_PATH
 
 
 class PackingListExportTests(TestCase):
@@ -105,9 +111,15 @@ class PackingListExportTests(TestCase):
         workbook = load_workbook(BytesIO(response.content), data_only=False)
         sheet = workbook.active
         self.assertEqual(sheet.max_column, 16)
-        self.assertEqual(sheet["B1"].value, "SH-PL-01")
-        self.assertEqual(sheet["B2"].value, "2026-10-21")
-        self.assertEqual(sheet["B3"].value, "SO-PL-01")
+        self.assertIsNone(sheet["B1"].value)
+        self.assertEqual(sheet["C1"].value, "SH-PL-01")
+        self.assertIsNone(sheet["B2"].value)
+        self.assertEqual(sheet["C2"].value, "2026-10-21")
+        self.assertEqual(sheet["A3"].value, "Invoice Ref No.:")
+        self.assertIsNone(sheet["B3"].value)
+        self.assertIsNone(sheet["C3"].value)
+        self.assertEqual(sheet["D3"].value, "Sales Order Ref.:")
+        self.assertEqual(sheet["F3"].value, "SO-PL-01")
         self.assertEqual(sheet["A4"].value, "No.")
         self.assertEqual(sheet["A5"].value, "序号")
         self.assertEqual(sheet["F6"].value, "9405420000")
@@ -138,6 +150,76 @@ class PackingListExportTests(TestCase):
             sheet_xml = archive.read("xl/worksheets/sheet1.xml").decode("utf-8")
             self.assertIn("legacyDrawingHF", sheet_xml)
             self.assertIn("Page &amp;P of &amp;N", sheet_xml)
+
+    def test_long_description_and_notes_use_dynamic_height_without_truncation(self):
+        order_item = self.order.items.get(sku=self.sku_a)
+        long_description = (
+            "Professional recessed LED luminaire with a long English model description "
+            "and mixed 中文规格参数，包含安装方式、功率、色温以及包装说明。"
+        )
+        order_item.description_snapshot = long_description
+        order_item.save(update_fields=["description_snapshot"])
+        self.package(1, [(self.sku_a.pk, "5")], net="1.2", gross="1.5")
+        package = self.shipment.packages.get(carton_no=1)
+        package.notes = "请保持每个纸箱标签完整，备注包含较长的装箱说明和客户定制要求。"
+        package.save(update_fields=["notes"])
+        self.package(2, [(self.sku_b.pk, "4")])
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        sheet = load_workbook(BytesIO(response.content), data_only=False).active
+        self.assertIn(long_description, sheet["D6"].value)
+        self.assertIn("请保持每个纸箱标签完整", sheet["D6"].value)
+        self.assertGreater(sheet.row_dimensions[6].height, 90)
+
+    @staticmethod
+    def _image_bytes(color):
+        output = BytesIO()
+        image = PILImage.new("RGB", (16, 16), color)
+        image.save(output, format="PNG")
+        return output.getvalue()
+
+    def test_product_images_keep_template_logo_and_relationships(self):
+        with tempfile.TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
+            self.sku_a.image.save("sku-a.png", ContentFile(self._image_bytes("red")), save=True)
+            self.sku_b.image.save("sku-b.png", ContentFile(self._image_bytes("blue")), save=True)
+            self.full_mixed_packing()
+
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 200)
+
+            with zipfile.ZipFile(BytesIO(response.content)) as archive, zipfile.ZipFile(TEMPLATE_PATH) as template:
+                names = set(archive.namelist())
+                template_logo = template.read("xl/media/image1.png")
+                self.assertEqual(archive.read("xl/media/image1.png"), template_logo)
+                product_media = sorted(
+                    name for name in names if name.startswith("xl/media/") and name != "xl/media/image1.png"
+                )
+                self.assertGreaterEqual(len(product_media), 2)
+
+                rels = ET.fromstring(archive.read("xl/drawings/_rels/drawing1.xml.rels"))
+                rel_map = {node.attrib["Id"]: node.attrib["Target"] for node in rels}
+                self.assertNotIn("../media/image1.png", rel_map.values())
+
+                xdr_ns = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing"
+                a_ns = "http://schemas.openxmlformats.org/drawingml/2006/main"
+                r_ns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+                drawing = ET.fromstring(archive.read("xl/drawings/drawing1.xml"))
+                colors_by_row = {}
+                for anchor in drawing:
+                    row_node = anchor.find(f"{{{xdr_ns}}}from/{{{xdr_ns}}}row")
+                    embed = anchor.find(f".//{{{a_ns}}}blip")
+                    if row_node is None or embed is None:
+                        continue
+                    target = rel_map[embed.attrib[f"{{{r_ns}}}embed"]]
+                    media_name = "xl/media/" + Path(target).name
+                    pixel = PILImage.open(BytesIO(archive.read(media_name))).convert("RGB").getpixel((0, 0))
+                    colors_by_row[int(row_node.text) + 1] = pixel
+                self.assertTrue(any(pixel[0] > 200 and pixel[1] < 80 for pixel in colors_by_row.values()))
+                self.assertTrue(any(pixel[2] > 200 and pixel[0] < 80 for pixel in colors_by_row.values()))
+
+                vml_rels = ET.fromstring(archive.read("xl/drawings/_rels/vmlDrawing1.vml.rels"))
+                self.assertIn("../media/image1.png", {node.attrib.get("Target") for node in vml_rels})
 
     def test_same_sku_same_carton_shape_is_grouped_without_losing_quantity(self):
         self.order.items.filter(sku=self.sku_b).update(quantity="0.01")

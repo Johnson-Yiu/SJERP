@@ -30,7 +30,12 @@ from crm.models import (
     SKU,
 )
 from crm.services.fulfillment import confirm_shipment
-from crm.services.packing_list import TEMPLATE_PATH
+from crm.services.packing_list import (
+    PACKING_TEXT_LINE_HEIGHT,
+    PACKING_TEXT_VERTICAL_PADDING,
+    TEMPLATE_PATH,
+    _wrapped_line_count,
+)
 
 
 class PackingListExportTests(TestCase):
@@ -170,7 +175,29 @@ class PackingListExportTests(TestCase):
         sheet = load_workbook(BytesIO(response.content), data_only=False).active
         self.assertIn(long_description, sheet["D6"].value)
         self.assertIn("请保持每个纸箱标签完整", sheet["D6"].value)
+        estimated_lines = _wrapped_line_count(sheet["D6"].value, sheet.column_dimensions["D"].width)
         self.assertGreater(sheet.row_dimensions[6].height, 90)
+        self.assertGreaterEqual(
+            sheet.row_dimensions[6].height,
+            estimated_lines * PACKING_TEXT_LINE_HEIGHT + PACKING_TEXT_VERTICAL_PADDING,
+        )
+        self.assertTrue(sheet["D6"].alignment.wrap_text)
+
+    def test_mixed_description_rows_have_repeatable_text_capacity_and_spacing(self):
+        self.full_mixed_packing()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        sheet = load_workbook(BytesIO(response.content), data_only=False).active
+
+        for row in (6, 7, 8):
+            text = sheet[f"D{row}"].value
+            estimated_lines = _wrapped_line_count(text, sheet.column_dimensions["D"].width)
+            self.assertGreaterEqual(
+                sheet.row_dimensions[row].height,
+                estimated_lines * PACKING_TEXT_LINE_HEIGHT + PACKING_TEXT_VERTICAL_PADDING,
+            )
+            self.assertTrue(sheet[f"D{row}"].alignment.wrap_text)
+            self.assertIn("Carton No.:", text)
 
     @staticmethod
     def _image_bytes(color):

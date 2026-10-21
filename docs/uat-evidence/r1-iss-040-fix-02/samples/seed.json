@@ -1,0 +1,13 @@
+{
+  "shipment_numbers": [
+    "SH-FIX02-NORMAL",
+    "SH-FIX02-MIXED",
+    "SH-FIX02-MULTIPAGE"
+  ],
+  "files": [
+    "sample-normal-fixed-02.xlsx",
+    "sample-mixed-fixed-02.xlsx",
+    "sample-multipage-fixed-02.xlsx"
+  ],
+  "multipage_rows_expected": 60
+}

@@ -20,6 +20,8 @@ from crm.models import Shipment, ShipmentPackageItem
 
 ZERO = Decimal("0")
 DATA_START_ROW = 6
+PACKING_TEXT_LINE_HEIGHT = 16
+PACKING_TEXT_VERTICAL_PADDING = 20
 TEMPLATE_DATA_ROWS = 9
 TEMPLATE_SUBTOTAL_ROW = 15
 TEMPLATE_COLUMN_COUNT = 16
@@ -313,7 +315,11 @@ def _wrapped_line_count(value, column_width):
     keeps the complete cell value inside the existing column width while
     preserving the template's font and column layout.
     """
-    capacity = max(8, int((column_width or 13) * 1.1))
+    # Excel's column width is based on the default digit glyph, not the
+    # actual Arial 11 glyphs used by the template.  A safety factor keeps
+    # mixed Latin/CJK text and long unbroken words from using the last
+    # visible line right up to the cell border.
+    capacity = max(7, int((column_width or 13) * 1.05))
     lines = 0
     for line in str(value or "").splitlines() or [""]:
         lines += max(1, ceil(_display_width(line) / capacity))
@@ -328,7 +334,9 @@ def _required_row_height(sheet, row, item, description):
     # the row is vertically centred.  No arbitrary upper cap is applied.
     image_floor = 60 if _image_path(item["sku"]) else 0
     base_height = sheet.row_dimensions[row].height or 15
-    return max(base_height, (max(description_lines, name_lines) * 15) + 8, image_floor)
+    content_lines = max(description_lines, name_lines)
+    content_height = (content_lines * PACKING_TEXT_LINE_HEIGHT) + PACKING_TEXT_VERTICAL_PADDING
+    return max(base_height, content_height, image_floor)
 
 
 def _validate_template_structure(sheet):

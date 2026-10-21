@@ -99,3 +99,5 @@ python generate_packing_list_evidence.py                    # exit 0
 - 本机未发现 Excel、LibreOffice 或 soffice，因此没有执行原生打印预览；artifact-tool 预览用于结构与布局检查。
 - GitHub Actions 本轮保持 `CI PENDING`，没有为制造 CI 记录创建无意义提交；推送后由独立审查决定是否在额度恢复后补跑。
 - 正式员工 RBAC、真实下载目录捕获和最终纸张打印效果仍需独立审查/具备相应环境后补验。
+
+推送后自动产生的 [CI run 39597161426](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/39597161426) 中，`backend`、`backend-postgres` 和 `frontend` 三个 job 均在 `startedAt` 后立即失败，GitHub 返回的 `steps` 数组为空，没有进入测试步骤，也没有代码失败日志。本轮未重试该运行，保留为 CI 环境/额度阻断，不将其误报为代码测试通过或失败。

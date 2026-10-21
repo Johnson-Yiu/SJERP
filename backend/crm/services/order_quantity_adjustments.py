@@ -6,6 +6,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models import Sum
 
 from crm.models import Order, OrderItem, OrderQuantityAdjustment, PaymentPlan
 from crm.services.fulfillment import _shipped_quantity, order_item_metrics, rebalance_sku_reservations
@@ -14,26 +15,46 @@ from crm.services.fulfillment import _shipped_quantity, order_item_metrics, reba
 QUANTITY_QUANTUM = Decimal("0.01")
 MONEY_QUANTUM = Decimal("0.0001")
 ADJUSTABLE_STATUSES = {"confirmed", "production", "shipped"}
+FINANCIAL_MASK = "财务影响信息受权限保护。"
+PROCUREMENT_MASK = "采购影响信息受权限保护。"
 
 
 class QuantityAdjustmentConflict(ValidationError):
     """A stale preview or duplicate request must not overwrite newer work."""
 
 
-def _decimal(value, label, *, positive=True, quantum=QUANTITY_QUANTUM):
+def _fits_decimal(value, *, max_digits, decimal_places):
+    sign, digits, exponent = value.as_tuple()
+    integer_digits = max(0, len(digits) + exponent) if exponent < 0 else len(digits) + exponent
+    return integer_digits + decimal_places <= max_digits
+
+
+def _decimal(value, label, *, positive=True, quantum=QUANTITY_QUANTUM, max_digits=14, decimal_places=2):
     try:
         number = Decimal(str(value))
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(f"{label}必须是有效数字。")
     if not number.is_finite() or (positive and number <= 0) or (not positive and number < 0):
         raise ValidationError(f"{label}必须是大于零的有效数字。" if positive else f"{label}不能为负数。")
-    if number != number.quantize(quantum):
+    try:
+        quantized = number.quantize(quantum)
+    except (InvalidOperation, ValueError):
+        raise ValidationError(f"{label}超出系统可保存范围。")
+    if number != quantized:
         raise ValidationError(f"{label}最多保留 {abs(quantum.as_tuple().exponent)} 位小数。")
-    return number.quantize(quantum)
+    if not _fits_decimal(quantized, max_digits=max_digits, decimal_places=decimal_places):
+        raise ValidationError(f"{label}超出系统可保存范围。")
+    return quantized
 
 
 def _money(value):
-    return Decimal(value).quantize(MONEY_QUANTUM)
+    try:
+        result = Decimal(value).quantize(MONEY_QUANTUM)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError("订单金额超出系统可保存范围。")
+    if not _fits_decimal(result, max_digits=14, decimal_places=4):
+        raise ValidationError("订单金额超出系统可保存范围。")
+    return result
 
 
 def _json_decimal(value):
@@ -93,9 +114,13 @@ def _line_value(item, row):
         if not snapshot.get("allow_fraction", False) and trade_quantity != trade_quantity.to_integral_value():
             raise ValidationError(f"{item.sku_code_snapshot or item.sku.sku} 的原交易单位只允许整包装数量。")
         base_quantity = trade_quantity * factor
-        if base_quantity != base_quantity.quantize(QUANTITY_QUANTUM):
+        try:
+            base_quantity = base_quantity.quantize(QUANTITY_QUANTUM)
+        except (InvalidOperation, ValueError):
+            raise ValidationError("交易单位换算后的基础数量超出系统可保存范围。")
+        if not _fits_decimal(base_quantity, max_digits=14, decimal_places=2):
             raise ValidationError("交易单位换算后的基础数量不符合系统精度。")
-        return trade_quantity, base_quantity.quantize(QUANTITY_QUANTUM)
+        return trade_quantity, base_quantity
     if "new_quantity" not in row:
         raise ValidationError(f"{item.sku_code_snapshot or item.sku.sku} 必须填写基础数量。")
     return None, _decimal(row["new_quantity"], "基础数量")
@@ -135,7 +160,10 @@ def _normalized_lines(order, canonical_items):
             "new_amount": new_amount,
             "shipped_quantity": shipped,
         })
-    return normalized
+    changed = [row for row in normalized if row["new_quantity"] != row["old_quantity"]]
+    if not changed:
+        raise ValidationError("数量没有变化。")
+    return changed
 
 
 def _financial_state(order, new_total=None):
@@ -168,22 +196,33 @@ def _financial_state(order, new_total=None):
     }
 
 
-def _metrics_snapshot(item, new_quantity=None):
+def _metrics_snapshot(item, *, quantity_overrides=None):
     metrics = order_item_metrics(item)
-    quantity = item.quantity if new_quantity is None else new_quantity
-    allocated = metrics["allocated_quantity"]
+    overrides = quantity_overrides or {}
+    group_items = list(
+        OrderItem.objects.filter(order_id=item.order_id, sku_id=item.sku_id).order_by("id")
+    )
+    ordered_quantity = sum((overrides.get(row.pk, row.quantity) for row in group_items), Decimal("0"))
+    shipped_quantity = sum((_shipped_quantity(row) for row in group_items), Decimal("0"))
+    allocated = sum(
+        (
+            row.reservations.aggregate(total=Sum("quantity"))["total"] or Decimal("0")
+            for row in group_items
+        ),
+        Decimal("0"),
+    )
     purchased = metrics["purchased_quantity"]
     received = metrics["received_quantity"]
-    shipped = metrics["shipped_quantity"]
     outstanding_purchase = max(Decimal("0"), purchased - received)
-    to_procure = max(Decimal("0"), quantity - shipped - allocated - outstanding_purchase)
-    excess = max(Decimal("0"), purchased - quantity)
+    to_procure = max(Decimal("0"), ordered_quantity - shipped_quantity - allocated - outstanding_purchase)
+    excess = max(Decimal("0"), purchased - ordered_quantity)
     return {
         "order_item": item.pk,
+        "group_key": f"{item.order_id}:{item.sku_id}",
         "sku_code": item.sku_code_snapshot or item.sku.sku,
         "base_unit": (item.trade_snapshot or {}).get("base_unit") or item.unit_snapshot or item.sku.unit,
-        "ordered_quantity": _json_decimal(quantity),
-        "shipped_quantity": _json_decimal(shipped),
+        "ordered_quantity": _json_decimal(ordered_quantity),
+        "shipped_quantity": _json_decimal(shipped_quantity),
         "purchased_quantity": _json_decimal(purchased),
         "received_quantity": _json_decimal(received),
         "in_transit_quantity": _json_decimal(metrics["in_transit_quantity"]),
@@ -198,15 +237,26 @@ def _build_preview(order, normalized, *, financial_strict=False):
     financial = _financial_state(order, after_total)
     lines = []
     warnings = []
+    warning_details = []
+    warned_procurement_groups = set()
+    quantity_overrides = {row["item"].pk: row["new_quantity"] for row in normalized}
+    before_groups = {}
+    after_groups = {}
     for row in normalized:
         item = row["item"]
-        before = _metrics_snapshot(item)
-        after = _metrics_snapshot(item, row["new_quantity"])
+        group_key = f"{item.order_id}:{item.sku_id}"
+        before = before_groups.setdefault(group_key, _metrics_snapshot(item))
+        after = after_groups.setdefault(group_key, _metrics_snapshot(item, quantity_overrides=quantity_overrides))
         excess = Decimal(after["procurement_excess_quantity"])
-        if excess > 0:
-            warnings.append(
+        if excess > 0 and group_key not in warned_procurement_groups:
+            message = (
                 f"{after['sku_code']} 可能产生采购过剩 {excess} {after['base_unit']}，请人工处理，系统不会自动取消采购单。"
             )
+            warnings.append(
+                message
+            )
+            warning_details.append({"kind": "procurement", "group_key": group_key, "message": message})
+            warned_procurement_groups.add(group_key)
         lines.append({
             "order_item": item.pk,
             "sku": item.sku_id,
@@ -230,6 +280,7 @@ def _build_preview(order, normalized, *, financial_strict=False):
         })
     if financial["blocking_reasons"]:
         warnings.extend(financial["blocking_reasons"])
+        warning_details.extend({"kind": "financial", "message": message} for message in financial["blocking_reasons"])
     result = {
         "order": order.pk,
         "order_no": order.order_no,
@@ -249,6 +300,7 @@ def _build_preview(order, normalized, *, financial_strict=False):
             "outstanding_after": _json_decimal(financial["outstanding_after"]),
         },
         "warnings": warnings,
+        "warning_details": warning_details,
         "blocking_reasons": financial["blocking_reasons"],
         "can_submit": not financial["blocking_reasons"],
     }
@@ -357,14 +409,19 @@ def apply_quantity_adjustment(order, payload, *, operator=None):
         rebalance_sku_reservations(SKU.objects.get(pk=sku_id))
     after_lines = []
     warnings = []
+    after_groups = {}
     for row in normalized:
         row["item"].refresh_from_db()
-        after = _metrics_snapshot(row["item"])
-        if Decimal(after["procurement_excess_quantity"]) > 0:
+        group_key = f"{row['item'].order_id}:{row['item'].sku_id}"
+        after = after_groups.setdefault(group_key, _metrics_snapshot(row["item"]))
+        if Decimal(after["procurement_excess_quantity"]) > 0 and not any(
+            warning.startswith(after["sku_code"]) for warning in warnings
+        ):
             warnings.append(
                 f"{after['sku_code']} 可能产生采购过剩 {after['procurement_excess_quantity']} {after['base_unit']}，请人工处理。"
             )
-        after_lines.append(after)
+        if group_key not in {line["group_key"] for line in after_lines}:
+            after_lines.append(after)
     impact = {
         "preview": preview,
         "warnings": warnings,
@@ -377,23 +434,106 @@ def apply_quantity_adjustment(order, payload, *, operator=None):
     return adjustment, False, {**preview, "version": order.quantity_change_version, "after_metrics": after_lines, "warnings": warnings}
 
 
-def serialize_adjustment(row, *, include_financial=True):
-    lines = row.lines
-    impact = row.impact
+def _warning_details(data):
+    details = data.get("warning_details") if isinstance(data, dict) else None
+    if isinstance(details, list):
+        return [entry for entry in details if isinstance(entry, dict) and entry.get("message")]
+    messages = data.get("warnings", []) if isinstance(data, dict) else []
+    details = []
+    for message in messages:
+        text = str(message)
+        if "采购过剩" in text:
+            kind = "procurement"
+        elif any(term in text for term in ("应收", "收款", "订单金额", "资金", "金额")):
+            kind = "financial"
+        else:
+            kind = "restricted"
+        details.append({"kind": kind, "message": text})
+    return details
+
+
+def redact_quantity_adjustment_response(data, *, include_financial, include_procurement):
+    if not isinstance(data, dict):
+        return data
+    response = dict(data)
+    lines = []
+    for line in data.get("lines", []) or []:
+        if not isinstance(line, dict):
+            continue
+        safe_line = dict(line)
+        if not include_financial:
+            for key in ("old_amount", "new_amount", "amount_delta"):
+                safe_line.pop(key, None)
+        if not include_procurement:
+            for key in ("before", "after"):
+                safe_line.pop(key, None)
+        lines.append(safe_line)
+    response["lines"] = lines
+    details = _warning_details(data)
+    visible_warnings = []
+    for entry in details:
+        kind = entry.get("kind")
+        if kind == "financial" and not include_financial:
+            message = FINANCIAL_MASK
+        elif kind == "procurement" and not include_procurement:
+            message = PROCUREMENT_MASK
+        elif kind not in {"financial", "procurement"} and not (include_financial or include_procurement):
+            message = "该影响提示需要相应业务权限查看。"
+        else:
+            message = entry["message"]
+        if message not in visible_warnings:
+            visible_warnings.append(message)
+    response["warnings"] = visible_warnings
+    response.pop("warning_details", None)
+    raw_blocking = data.get("blocking_reasons", []) or []
+    response["blocking_reasons"] = list(raw_blocking) if include_financial else ([FINANCIAL_MASK] if raw_blocking else [])
+    financial = dict(data.get("financial") or {})
     if not include_financial:
-        lines = [
-            {
-                key: value
-                for key, value in line.items()
-                if key not in {"old_amount", "new_amount", "amount_delta", "before", "after"}
-            }
-            for line in row.lines
-        ]
-        impact = {
-            "warnings": row.impact.get("warnings", []),
-            "financial_visible": False,
-        }
-    return {
+        for key in financial:
+            if key != "currency":
+                financial[key] = None
+    response["financial"] = financial
+    response["financial_visible"] = include_financial
+    response["procurement_visible"] = include_procurement
+    return response
+
+
+def serialize_adjustment(row, *, include_financial=True, include_procurement=None):
+    # Keep the historical single-flag call contract safe for internal callers;
+    # API views pass both visibility flags explicitly.
+    if include_procurement is None:
+        include_procurement = include_financial
+    preview = redact_quantity_adjustment_response(
+        row.impact.get("preview", {}),
+        include_financial=include_financial,
+        include_procurement=include_procurement,
+    )
+    lines = []
+    for line in row.lines:
+        safe_line = dict(line)
+        if not include_financial:
+            for key in ("old_amount", "new_amount", "amount_delta"):
+                safe_line.pop(key, None)
+        if not include_procurement:
+            for key in ("before", "after"):
+                safe_line.pop(key, None)
+        lines.append(safe_line)
+    impact = dict(row.impact)
+    impact["preview"] = preview
+    if not include_financial:
+        impact["payment_plan_delta"] = None
+    if not include_procurement:
+        impact.pop("after_metrics", None)
+    impact["warnings"] = redact_quantity_adjustment_response(
+        {"warnings": impact.get("warnings", [])},
+        include_financial=include_financial,
+        include_procurement=include_procurement,
+    )["warnings"]
+    if not include_financial:
+        impact["financial_visible"] = False
+    if not include_procurement:
+        impact["procurement_visible"] = False
+    result = {
         "id": row.pk,
         "order": row.order_id,
         "order_no": row.order.order_no,
@@ -406,6 +546,8 @@ def serialize_adjustment(row, *, include_financial=True):
         "after_total_amount": row.after_total_amount if include_financial else None,
         "amount_delta": row.amount_delta if include_financial else None,
         "financial_visible": include_financial,
+        "procurement_visible": include_procurement,
         "lines": lines,
         "impact": impact,
     }
+    return result

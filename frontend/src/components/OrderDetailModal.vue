@@ -107,12 +107,32 @@ function newRequestKey() {
   if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
   return `qty-${Date.now()}-${Math.random().toString(36).slice(2)}`
 }
+function comparableQuantity(value) {
+  const text = String(value ?? '').trim()
+  if (!/^[+-]?\d+(\.\d+)?$/.test(text)) return text
+  const unsigned = text.replace(/^[+-]/, '')
+  const [integer, fraction = ''] = unsigned.split('.')
+  const normalizedInteger = integer.replace(/^0+(?=\d)/, '')
+  const normalizedFraction = fraction.replace(/0+$/, '')
+  return `${text.startsWith('-') ? '-' : ''}${normalizedInteger}${normalizedFraction ? `.${normalizedFraction}` : ''}`
+}
+function quantityLineChanged(line) {
+  const current = line.trade_unit ? line.trade_quantity : line.quantity
+  const next = line.trade_unit ? line.new_trade_quantity : line.new_quantity
+  return comparableQuantity(current) !== comparableQuantity(next)
+}
+const quantityAdjustmentHasChanges = computed(() => quantityAdjustmentLines.value.some(quantityLineChanged))
+const quantityAdjustmentCanPreview = computed(() => (
+  !quantityAdjustmentLoading.value &&
+  Boolean(quantityAdjustmentReason.value.trim()) &&
+  quantityAdjustmentHasChanges.value
+))
 function quantityAdjustmentPayload() {
   return {
     version: order.value.quantity_change_version,
     request_key: quantityAdjustmentRequestKey.value,
     reason: quantityAdjustmentReason.value.trim(),
-    items: quantityAdjustmentLines.value.map(line => ({
+    items: quantityAdjustmentLines.value.filter(quantityLineChanged).map(line => ({
       order_item: line.id,
       ...(line.trade_unit ? { new_trade_quantity: line.new_trade_quantity } : { new_quantity: line.new_quantity }),
     })),
@@ -143,6 +163,7 @@ function closeQuantityAdjustment() {
 }
 async function previewQuantityAdjustment() {
   if (quantityAdjustmentLoading.value || quantityAdjustmentSaving.value) return
+  if (!quantityAdjustmentHasChanges.value) { quantityAdjustmentError.value = '数量没有变化。'; return }
   if (!quantityAdjustmentReason.value.trim()) { quantityAdjustmentError.value = '请填写变更原因。'; return }
   quantityAdjustmentLoading.value = true
   quantityAdjustmentError.value = ''
@@ -436,8 +457,9 @@ watch(() => props.refreshKey, load)
           <p v-for="warning in quantityAdjustmentPreview.warnings" :key="warning" class="quantity-adjustment-warning">{{ warning }}</p>
           <p v-if="!quantityAdjustmentPreview.warnings?.length" class="quantity-adjustment-success">未发现需要额外处理的采购过剩或资金冲突。</p>
         </div>
+        <p v-if="!quantityAdjustmentPreview && quantityAdjustmentLines.length && !quantityAdjustmentHasChanges" class="quantity-adjustment-error" role="status">数量没有变化。</p>
         <p v-if="quantityAdjustmentError" class="quantity-adjustment-error" role="alert">{{ quantityAdjustmentError }}</p>
-        <footer><button type="button" class="btn btn-secondary" :disabled="quantityAdjustmentSaving" @click="closeQuantityAdjustment">取消</button><button v-if="!quantityAdjustmentPreview" type="submit" class="btn btn-primary" :disabled="quantityAdjustmentLoading || !quantityAdjustmentReason.trim()">{{ quantityAdjustmentLoading ? '核算中…' : '预览影响' }}</button><button v-else type="submit" class="btn btn-primary" :disabled="quantityAdjustmentSaving || !quantityAdjustmentPreview.can_submit">{{ quantityAdjustmentSaving ? '提交中…' : '确认调整' }}</button></footer>
+        <footer><button type="button" class="btn btn-secondary" :disabled="quantityAdjustmentSaving" @click="closeQuantityAdjustment">取消</button><button v-if="!quantityAdjustmentPreview" type="submit" class="btn btn-primary" :disabled="!quantityAdjustmentCanPreview">{{ quantityAdjustmentLoading ? '核算中…' : '预览影响' }}</button><button v-else type="submit" class="btn btn-primary" :disabled="quantityAdjustmentSaving || !quantityAdjustmentPreview.can_submit">{{ quantityAdjustmentSaving ? '提交中…' : '确认调整' }}</button></footer>
       </form>
     </div>
     <div v-if="shipmentDialogOpen && can('orders', 'update')" class="trade-shipment-mask">

@@ -1,0 +1,24 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "filename": "real-chrome-quantity-adjustment-1440.png",
+      "expected": "120.00"
+    },
+    {
+      "width": 1024,
+      "filename": "real-chrome-quantity-adjustment-1024.png",
+      "expected": "120.00"
+    },
+    {
+      "width": 700,
+      "filename": "real-chrome-quantity-adjustment-700.png",
+      "expected": "不能低于已发货数量 70"
+    },
+    {
+      "width": 700,
+      "filename": "real-chrome-quantity-adjustment-noop-700.png",
+      "expected": "数量没有变化"
+    }
+  ]
+}

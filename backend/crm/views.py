@@ -43,7 +43,7 @@ from .services.order_lifecycle import cancel_order, complete_order, confirm_orde
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
 from .services.purchase_lifecycle import cancel_purchase_order, place_purchase_order
 from .services.procurement import build_procurement_plan, create_purchase_drafts, draft_procurement_quantities
-from .services.order_quantity_adjustments import QuantityAdjustmentConflict, apply_quantity_adjustment, preview_quantity_adjustment, serialize_adjustment
+from .services.order_quantity_adjustments import QuantityAdjustmentConflict, apply_quantity_adjustment, preview_quantity_adjustment, redact_quantity_adjustment_response, serialize_adjustment
 from .services.sku_plans import apply_category_attribute_reorder, preview_category_attribute_reorder
 from .services.sku_schema import (
     UNFROZEN_CATEGORY_HIERARCHY_MESSAGE,
@@ -57,6 +57,23 @@ from .sales_model_defaults import DEFAULT_SALES_MODEL_ABBREVIATIONS
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 USD_CNY_REFERENCE_CACHE = {"expires_at": 0, "payload": None}
+
+
+def _quantity_adjustment_visibility(user):
+    return {
+        "include_financial": user_can(user, "finance", "view") and user_can(user, "transactions", "view"),
+        "include_procurement": user_can(user, "purchases", "view"),
+    }
+
+
+def _quantity_adjustment_error_message(error, user):
+    messages = getattr(error, "messages", None) or [str(error)]
+    message = "；".join(str(value) for value in messages)
+    if not _quantity_adjustment_visibility(user)["include_financial"] and any(
+        term in message for term in ("应收", "已收金额", "订单金额", "未结应收", "退款", "资金")
+    ):
+        return "数量变更包含受权限保护的财务校验，当前账号不能继续。"
+    return messages[0]
 
 
 @api_view(["GET"])
@@ -1894,6 +1911,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         order = self.get_object()
         can_view_transactions = user_can(request.user, "transactions", "view")
         can_view_finance = user_can(request.user, "finance", "view")
+        quantity_adjustment_visibility = _quantity_adjustment_visibility(request.user)
         can_view_profit = can_view_transactions and can_view_finance and user_can(request.user, "purchases", "view")
         from .models import AdvanceAllocation
         advance_allocations = [{"id": row.pk, "transaction_no": row.advance.transaction_no,
@@ -1913,13 +1931,17 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         from .services.profit import order_profit_summary
         profit_summary = order_profit_summary(order) if can_view_profit else None
         quantity_adjustments = [
-            serialize_adjustment(row, include_financial=can_view_transactions and can_view_finance)
+            serialize_adjustment(row, **quantity_adjustment_visibility)
             for row in order.quantity_adjustments.select_related("operator").all()
         ]
+        serializer_context = {
+            "request": request,
+            "mask_quantity_adjustment_financial": not quantity_adjustment_visibility["include_financial"],
+        }
         return Response({
-            "order": OrderSerializer(order, context={"request": request}).data,
+            "order": OrderSerializer(order, context=serializer_context).data,
             "source_quote": QuoteSerializer(order.quote, context={"request": request}).data if order.quote and user_can(request.user, "quotes", "view") else None,
-            "items": OrderItemSerializer(items, many=True, context={"request": request}).data,
+            "items": OrderItemSerializer(items, many=True, context=serializer_context).data,
             "payments": TransactionSerializer(payments, many=True, context={"request": request}).data,
             "advance_allocations": advance_allocations if can_view_transactions and can_view_finance else [],
             "plans": PaymentPlanSerializer(plans, many=True, context={"request": request}).data,
@@ -1949,28 +1971,19 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         except QuantityAdjustmentConflict as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_409_CONFLICT)
         except DjangoValidationError as error:
-            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        if not (user_can(request.user, "finance", "view") and user_can(request.user, "transactions", "view")):
-            preview["financial"] = {
-                "currency": order.currency,
-                "before_total": None,
-                "after_total": None,
-                "amount_delta": None,
-                "paid_amount": None,
-                "planned_amount": None,
-                "settled_amount": None,
-                "outstanding_before": None,
-                "outstanding_after": None,
-            }
-        return Response(preview)
+            return Response({"detail": _quantity_adjustment_error_message(error, request.user)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(redact_quantity_adjustment_response(
+            preview,
+            **_quantity_adjustment_visibility(request.user),
+        ))
 
     @action(detail=True, methods=["get", "post"], url_path="quantity-adjustments")
     def quantity_adjustments(self, request, pk=None):
         order = self.get_object()
+        visibility = _quantity_adjustment_visibility(request.user)
         if request.method == "GET":
-            include_financial = user_can(request.user, "transactions", "view") and user_can(request.user, "finance", "view")
             return Response([
-                serialize_adjustment(row, include_financial=include_financial)
+                serialize_adjustment(row, **visibility)
                 for row in order.quantity_adjustments.select_related("operator").all()
             ])
         require_finance_permission(request.user, "orders", "update")
@@ -2010,9 +2023,13 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         except QuantityAdjustmentConflict as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_409_CONFLICT)
         except DjangoValidationError as error:
-            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": _quantity_adjustment_error_message(error, request.user)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(
-            {"adjustment": serialize_adjustment(adjustment), "replayed": replayed, "preview": preview},
+            {
+                "adjustment": serialize_adjustment(adjustment, **visibility),
+                "replayed": replayed,
+                "preview": redact_quantity_adjustment_response(preview, **visibility),
+            },
             status=status.HTTP_200_OK if replayed else status.HTTP_201_CREATED,
         )
 

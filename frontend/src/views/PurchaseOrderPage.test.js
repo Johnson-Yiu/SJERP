@@ -71,6 +71,15 @@ test('formal purchase history prefers the saved supplier snapshot and exposes it
   assert.match(detail, /supplier_address_snapshot/)
 })
 
+test('order fulfillment purchase history prefers formal supplier snapshots', async () => {
+  const detail = await readFile(new URL('../components/OrderDetailModal.vue', import.meta.url), 'utf8')
+
+  assert.match(detail, /function purchasePartyName\(purchase\)/)
+  assert.match(detail, /purchase\.supplier_name_snapshot \|\| '历史主体未记录'/)
+  assert.match(detail, /当前主档参考：\$\{purchase\.supplier_name\}/)
+  assert.doesNotMatch(detail, /<small>\{\{ purchase\.supplier_name \}\}<\/small>/)
+})
+
 test('purchase creation leaves number generation to the backend and never submits a number', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

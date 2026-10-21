@@ -110,6 +110,19 @@ test('formal order history prefers the saved party snapshot and labels the live 
   assert.match(detail, /customer_address_snapshot/)
 })
 
+test('quote history prefers the saved buyer snapshot and never falls back to the live customer name', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  const detail = await readFile(new URL('../components/QuoteDetailModal.vue', import.meta.url), 'utf8')
+
+  assert.match(source, /function quotePartyName\(row\)/)
+  assert.match(source, /row\.buyer_company_name \|\| '历史主体未记录'/)
+  assert.match(source, /当前主档：\$\{row\.customer_name\}/)
+  assert.doesNotMatch(source, /<td>\{\{ row\.customer_name \}\}<\/td>/)
+  assert.match(detail, /quote\.value\?\.buyer_company_name \|\| '历史主体未记录'/)
+  assert.match(detail, /当前主档参考：\$\{quote\.value\.customer_name\}/)
+  assert.doesNotMatch(detail, /\{\{ quote\.customer_name \}\} ·/)
+})
+
 test('editing from the order workbench reloads the current order before opening the editor', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

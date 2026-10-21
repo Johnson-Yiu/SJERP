@@ -89,6 +89,14 @@ function linePacking(item) {
   const saved = (workbench.value?.items || []).find(row => row.id === item.id)
   return saved?.trade_unit ? `${saved.trade_snapshot?.name} · ${saved.trade_quantity} ${saved.trade_snapshot?.unit}` : `明细 #${item.id} · 基础单位`
 }
+function purchasePartyName(purchase) {
+  if (purchase.status === 'draft') return purchase.supplier_name || '—'
+  return purchase.supplier_name_snapshot || '历史主体未记录'
+}
+function purchasePartyReference(purchase) {
+  if (purchase.status === 'draft' || !purchase.supplier_name || !purchase.supplier_name_snapshot || purchase.supplier_name === purchase.supplier_name_snapshot) return ''
+  return `当前主档参考：${purchase.supplier_name}`
+}
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 function date(value) { return value || '—' }
 const formalParty = computed(() => order.value && order.value.status !== 'draft')
@@ -445,7 +453,7 @@ watch(() => props.refreshKey, load)
         </section>
         <section class="purchase-history"><div class="section-heading"><div><h3>关联采购单</h3><p>采购草稿不计入已下单数量。</p></div></div>
           <div v-if="!(fulfillment?.purchase_orders || []).length" class="workbench-empty"><strong>{{ fulfillmentSummaryCards[0].value ? '尚未创建关联采购单' : '当前无需关联采购单' }}</strong><p v-if="fulfillmentSummaryCards[0].value">请先选择采购来源，再生成采购草稿。</p></div>
-          <article v-for="purchase in fulfillment?.purchase_orders || []" :key="purchase.id" class="purchase-history-card"><div><RouterLink class="purchase-navigation-link" :to="purchaseDetailLocation(purchase.id, 'overview', route.fullPath)">{{ purchase.purchase_no }}</RouterLink><small>{{ purchase.supplier_name }}</small></div><div><span class="status" :class="purchase.status">{{ purchase.status_display }}</span><strong class="purchase-amount">{{ purchase.currency }} {{ money(purchase.total_amount) }}</strong></div><div class="purchase-eta"><span>预计到货 {{ date(purchase.expected_arrival_date) }}</span><small v-if="purchaseArrivalState(purchase)" :class="purchaseArrivalState(purchase).kind">{{ purchaseArrivalState(purchase).label }}</small></div><p class="purchase-sku-summary">{{ (purchase.items || []).map(line => `${line.sku_code} × ${line.quantity}`).join(' / ') }}</p></article>
+          <article v-for="purchase in fulfillment?.purchase_orders || []" :key="purchase.id" class="purchase-history-card"><div><RouterLink class="purchase-navigation-link" :to="purchaseDetailLocation(purchase.id, 'overview', route.fullPath)">{{ purchase.purchase_no }}</RouterLink><small>{{ purchasePartyName(purchase) }}</small><small v-if="purchasePartyReference(purchase)" class="party-reference">{{ purchasePartyReference(purchase) }}</small></div><div><span class="status" :class="purchase.status">{{ purchase.status_display }}</span><strong class="purchase-amount">{{ purchase.currency }} {{ money(purchase.total_amount) }}</strong></div><div class="purchase-eta"><span>预计到货 {{ date(purchase.expected_arrival_date) }}</span><small v-if="purchaseArrivalState(purchase)" :class="purchaseArrivalState(purchase).kind">{{ purchaseArrivalState(purchase).label }}</small></div><p class="purchase-sku-summary">{{ (purchase.items || []).map(line => `${line.sku_code} × ${line.quantity}`).join(' / ') }}</p></article>
         </section>
         <section class="shipment-history"><div class="section-heading"><div><h3>发货记录</h3><p>整单冲销会同步撤销关联的超发或增补记录。</p></div><strong>{{ (fulfillment?.shipments || []).length }} 条</strong></div><div v-if="!(fulfillment?.shipments || []).length" class="workbench-empty"><Truck :size="28" /><strong>暂无发货记录</strong><p>有可发库存后，可在明细中确认发货。</p></div><div v-else class="shipment-history-list"><article v-for="shipment in fulfillment.shipments" :key="shipment.id" class="shipment-history-card"><div class="shipment-history-head"><div><strong>{{ shipment.shipment_no }}</strong><small>{{ date(shipment.shipment_date) }}</small></div><span class="status" :class="shipment.status">{{ shipment.status === 'cancelled' ? '已冲销' : shipment.status === 'confirmed' ? '已确认' : shipment.status }}</span></div><div class="shipment-history-items"><span v-for="line in shipment.items" :key="line.id">{{ line.sku_code }} × {{ line.quantity }}</span></div><div class="shipment-history-actions"><button v-if="can('orders', 'update') && shipment.status === 'confirmed'" class="text-btn" @click="openShipmentReversal(shipment)">冲销</button><span v-else-if="shipment.status === 'cancelled'" class="muted">已冲销</span><span v-else class="muted">暂不可操作</span></div></article></div></section>
       </section>

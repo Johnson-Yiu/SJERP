@@ -207,3 +207,7 @@ ISS-122、ISS-123 的独立复审通过结论已同步为 CLOSED；ISS-105 OPEN�
 基于最新 `origin/master` 创建独立分支 `codex/r1-iss-037-p1`，仅修复正式销售订单和采购订单的主体快照缺口。Order 在正式确认时保存客户名称、国家/地区、地址、联系人、电话和邮箱；PurchaseOrder 在正式下单时保存供应商名称、地址、联系人、电话和邮箱；Supplier 增加可选地址字段。没有数据迁移回填，历史缺失值保留未知；正式页面显示真实快照，当前主档仅作为明确标注的参考。Quote/QuoteItem/PI 既有修订链、主体及 SKU 行级快照未重构，真实 Chrome 已核对报价/PI导出文件使用历史主体。
 
 新增 `0078_formal_party_snapshots`，未修改已发布迁移。SQLite 0076→0077→0078→0077→0078 迁移循环、后端 773 项（跳过13）、前端单元 138 项和构建均通过；本机无 PostgreSQL 5432 监听，PostgreSQL 与 GitHub Actions 保持待环境可用后复核。0078 与 R1-SKU-01、R1-MOQ-02 同号迁移均依赖 0077，未来整合应在集成分支以新 merge migration 汇合，不重写任何已发布 0078。ISS-037 保持 `FIXED_PENDING_REVIEW`，不关闭，等待独立代码、数据权限和视觉复审。
+
+## R1-ISS-037-P1-FIX-01 历史商业单据展示遗漏补修（2026-10-21）
+
+在 `codex/r1-iss-037-p1` 上完成定向展示修复，提交 `126be74d5a2269a8f947570ca0803771feab6a1e`。报价列表和详情优先显示保存的 `buyer_company_name`；正式采购关联卡片优先显示 `supplier_name_snapshot`；缺失快照明确显示“历史主体未记录”，实时主档仅以单独标签显示。未新增模型或迁移，未改写历史单据、金额、搜索或权限规则。SQLite 后端、前端 140 项单元测试、构建及真实 Chrome/PI Excel 证据已完成；PostgreSQL 与 GitHub Actions 仍待环境/额度恢复。ISS-037 继续保持 `FIXED_PENDING_REVIEW`。

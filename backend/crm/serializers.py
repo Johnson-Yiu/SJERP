@@ -552,7 +552,15 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         visible = scope_customer_related_queryset(Order.objects.filter(pk__in=associated_ids), user) if user_can(user, "orders", "view") else Order.objects.none()
         visible_ids = set(visible.values_list("pk", flat=True))
         if not user_can(user, "suppliers", "view"):
-            data.update(supplier=None, supplier_name="")
+            data.update(
+                supplier=None,
+                supplier_name="",
+                supplier_name_snapshot="",
+                supplier_address_snapshot="",
+                supplier_contact_name_snapshot="",
+                supplier_phone_snapshot="",
+                supplier_email_snapshot="",
+            )
         if instance.order_id not in visible_ids:
             data["order"] = None
             data["order_no"] = ""
@@ -584,7 +592,12 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseOrder
         fields = "__all__"
-        read_only_fields = ["purchase_no", "status", "cancelled_at", "cancellation_reason"]
+        read_only_fields = [
+            "purchase_no", "status", "cancelled_at", "cancellation_reason",
+            "supplier_name_snapshot", "supplier_address_snapshot",
+            "supplier_contact_name_snapshot", "supplier_phone_snapshot",
+            "supplier_email_snapshot",
+        ]
 
     def get_related_orders(self, obj):
         prefetched_items = getattr(obj, "_prefetched_objects_cache", {}).get("items")
@@ -1896,13 +1909,28 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
-        read_only_fields = ["order_no", "status", "cancelled_at", "cancellation_reason"]
+        read_only_fields = [
+            "order_no", "status", "cancelled_at", "cancellation_reason",
+            "customer_name_snapshot", "customer_country_snapshot",
+            "customer_address_snapshot", "customer_contact_name_snapshot",
+            "customer_phone_snapshot", "customer_email_snapshot",
+        ]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
         user = serializer_user(self.context)
         if not user_can(user, "customers", "view"):
-            data.update(customer=None, customer_name="", customer_country="")
+            data.update(
+                customer=None,
+                customer_name="",
+                customer_country="",
+                customer_name_snapshot="",
+                customer_country_snapshot="",
+                customer_address_snapshot="",
+                customer_contact_name_snapshot="",
+                customer_phone_snapshot="",
+                customer_email_snapshot="",
+            )
         if not user_can(user, "quotes", "view"):
             data.update(quote=None, quote_no="", source_quote_no="")
         if not (user_can(user, "finance", "view") and user_can(user, "transactions", "view")):

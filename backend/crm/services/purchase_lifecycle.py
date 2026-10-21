@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 
-from crm.models import AdvanceAllocation, GoodsReceipt, PaymentPlan, PurchaseOrder
+from crm.models import AdvanceAllocation, GoodsReceipt, PaymentPlan, PurchaseOrder, Supplier
 from crm.services.finance import ensure_default_payment_plans
 
 
@@ -42,8 +42,22 @@ def place_purchase_order(purchase):
     if purchase.status != "draft":
         raise ValidationError("只有采购草稿可以确认下单。")
     _validate_purchase_for_placement(purchase)
+    supplier = Supplier.objects.select_for_update().get(pk=purchase.supplier_id)
+    purchase.supplier_name_snapshot = supplier.name
+    purchase.supplier_address_snapshot = supplier.address or ""
+    purchase.supplier_contact_name_snapshot = supplier.contact_name or ""
+    purchase.supplier_phone_snapshot = supplier.phone or ""
+    purchase.supplier_email_snapshot = supplier.email or ""
     purchase.status = "ordered"
-    purchase.save(update_fields=["status", "updated_at"])
+    purchase.save(update_fields=[
+        "status",
+        "supplier_name_snapshot",
+        "supplier_address_snapshot",
+        "supplier_contact_name_snapshot",
+        "supplier_phone_snapshot",
+        "supplier_email_snapshot",
+        "updated_at",
+    ])
     ensure_default_payment_plans(purchase)
     return PurchaseOrder.objects.get(pk=purchase.pk)
 

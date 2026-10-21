@@ -19,6 +19,21 @@ const items = computed(() => row.value?.items || [])
 const tasks = computed(() => row.value ? purchaseTasks(row.value) : [])
 const progress = computed(() => receiptProgress(items.value))
 const formal = computed(() => row.value && !['draft', 'cancelled'].includes(row.value.status))
+const partyName = computed(() => {
+  if (!row.value) return '—'
+  return formal.value ? (row.value.supplier_name_snapshot || '历史主体未记录') : (row.value.supplier_name || '—')
+})
+const partyMasterReference = computed(() => {
+  if (!formal.value || !row.value?.supplier_name || !row.value.supplier_name_snapshot) return ''
+  return row.value.supplier_name !== row.value.supplier_name_snapshot ? `当前主档参考：${row.value.supplier_name}` : ''
+})
+const partySnapshotRows = computed(() => formal.value ? [
+  ['供应商名称', row.value.supplier_name_snapshot],
+  ['地址', row.value.supplier_address_snapshot],
+  ['联系人', row.value.supplier_contact_name_snapshot],
+  ['电话', row.value.supplier_phone_snapshot],
+  ['邮箱', row.value.supplier_email_snapshot],
+] : [])
 const hasPaymentSummary = computed(() => row.value?.paid_amount != null && row.value?.unpaid_amount != null)
 const canPay = computed(() => can('purchases', 'update') && formal.value && Number(row.value.unpaid_amount) > 0)
 const paymentPercent = computed(() => Number(row.value?.total_amount) > 0 ? Math.min(100, Math.round(Number(row.value.paid_amount || 0) / Number(row.value.total_amount) * 100)) : 0)
@@ -32,7 +47,7 @@ function taskAction(task) { if (task.target === 'confirm') { if (can('purchases'
       <header class="workbench-header">
         <button class="close-action" aria-label="关闭采购详情" @click="emit('close')"><X :size="18" /><span>关闭</span></button>
         <template v-if="row"><div class="workbench-context">采购工作台</div>
-          <p>{{ row.supplier_name }} · 下单日期 {{ row.order_date || '—' }}</p>
+          <p>{{ partyName }} · 下单日期 {{ row.order_date || '—' }}<small v-if="partyMasterReference" class="party-reference">{{ partyMasterReference }}</small></p>
           <h2>{{ row.purchase_no }} <span class="status" :class="row.status">{{ row.status_display }}</span></h2>
           <p>预计到货 {{ row.expected_arrival_date || '—' }} <span v-if="purchaseArrival(row)">{{ purchaseArrival(row).label }}</span></p>
           <div class="header-actions">
@@ -50,6 +65,7 @@ function taskAction(task) { if (task.target === 'confirm') { if (can('purchases'
         <main class="workbench-body">
           <slot name="feedback" />
           <template v-if="activeTab === 'overview'">
+            <article v-if="formal" class="card party-snapshot-card"><h3>交易主体快照</h3><p v-if="partySnapshotRows.some(([, value]) => value)">正式下单时保存的供应商资料；后续供应商主档修改不会覆盖。</p><p v-else class="muted">历史主体未记录，以下不使用当前主档补造历史事实。</p><dl v-if="partySnapshotRows.some(([, value]) => value)"><template v-for="[label, value] in partySnapshotRows" :key="label"><dt>{{ label }}</dt><dd>{{ value || '未记录' }}</dd></template></dl><p v-if="!partySnapshotRows.some(([, value]) => value) && row.supplier_name" class="party-reference">当前主档参考：{{ row.supplier_name }}</p></article>
             <article class="card"><h3>采购摘要</h3><div class="summary-grid"><div><small>采购金额</small><strong>{{ row.currency }} {{ money(row.total_amount) }}</strong></div><div><small>商品项数</small><strong>{{ items.length }}</strong></div><div v-if="hasPaymentSummary"><small>已付金额</small><strong>{{ row.currency }} {{ money(row.paid_amount) }}</strong></div><div v-if="hasPaymentSummary"><small>未付金额</small><strong>{{ row.currency }} {{ money(row.unpaid_amount) }}</strong></div></div></article>
             <article class="card current-todo"><h3>当前待办</h3><div v-for="task in tasks" :key="task.title" class="task-row"><div><b>{{ task.title }}</b><p>{{ task.description }}</p></div><button v-if="can('purchases', 'update') && task.action && task.target !== 'confirm'" @click="taskAction(task)">{{ task.action }}</button></div><p v-if="!tasks.length">当前没有待处理事项。</p></article>
             <div class="overview-grid">
@@ -71,6 +87,8 @@ function taskAction(task) { if (task.target === 'confirm') { if (can('purchases'
   </div>
 </template>
 <style scoped>
+.party-reference{display:block;color:#b6d3ca;font-size:11px;margin-top:4px}
+.party-snapshot-card dl{margin-top:12px}
 .payable-table{min-width:700px}.payable-table th,.payable-table td{white-space:nowrap}
 .purchase-workbench-mask{position:fixed;inset:0;background:#10261d66;z-index:60;display:flex;justify-content:flex-end}.purchase-workbench{width:min(1080px,100%);height:100%;display:flex;flex-direction:column;background:#F6F8F5;box-shadow:-12px 0 40px #10261d22}.workbench-header{flex-shrink:0;position:relative;background:#123C36;padding:20px 28px 22px;color:white}.workbench-header h2{font-size:24px;font-weight:700;margin:8px 36px 10px 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}.workbench-header p{font-size:12px;color:#B6D3CA;margin:0 36px 0 0}.close-action{position:absolute;right:20px;top:20px;background:transparent!important;color:white!important;border:0!important;padding:6px!important}.header-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}.header-actions button{height:36px;border-radius:8px;font-size:14px}.header-actions .primary{padding:0 13px;border:1px solid #B8DCCF;background:#F5FCF8;color:#174C41;font-weight:700}.header-actions .secondary{padding:0 11px;border:1px solid #FFFFFF28;background:#FFFFFF12;color:white}.header-actions .destructive{padding:0 11px;border:1px solid #E7CACA;background:#FFF7F7;color:#A84444;font-weight:600}.workbench-tabs{flex:0 0 auto;display:flex;background:white;border-bottom:1px solid #E0E8E4;padding:0 28px;overflow:auto;flex-shrink:0}.workbench-tabs button{border:0;border-radius:0;background:none;padding:15px 18px;white-space:nowrap;color:#71817B}.workbench-tabs .active{color:#174C41;border-bottom:3px solid #174C41;font-weight:700}.workbench-body{min-height:0;overscroll-behavior:contain;padding:22px 28px;overflow:auto;flex:1}.card{padding:18px;border-radius:13px;border:1px solid #E0E8E4;background:white;margin-bottom:16px}.card h3{margin:0 0 16px;font-size:16px;font-weight:700;color:#1D3F36}.card p{font-size:12px;color:#71817B;line-height:1.7}.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:12px}.summary-grid small{display:block;color:#71817B;font-size:12px}.summary-grid strong{display:block;color:#174C41;font-size:18px;margin-top:8px;overflow-wrap:anywhere}.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.overview-grid .card{margin-bottom:0}.overview-grid{margin-bottom:16px}.task-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:10px 12px;background:#F8FBF9;border-radius:9px;margin-top:8px}.task-row b{font-size:14px;color:#294A41}.task-row p{margin:4px 0 0}.purchase-workbench button{cursor:pointer}.workbench-body button{height:32px;padding:0 10px;border-radius:7px;border:1px solid #CFE1D9;background:white;color:#236657;font-size:13px;font-weight:700;flex-shrink:0}dl{display:grid;grid-template-columns:1fr auto;gap:12px;font-size:13px}dt{color:#71817B}dd{margin:0;color:#294A41;font-weight:600}.data-table{min-width:850px}.data-table small{display:block;font-size:12px;color:#71817B;margin-top:4px}.receipt-heading,.receipt-history-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.receipt-history-row{padding:12px 0;border-top:1px solid #E0E8E4;font-size:13px;color:#294A41}.receipt-history-row small{display:block;color:#71817B;margin-top:4px}.order-card{display:block;border:1px solid #E0E8E4;border-radius:9px;padding:14px;margin-top:10px;color:#236657;text-decoration:none;font-weight:700}.order-card small{display:block;color:#71817B;margin-top:6px;font-weight:400}@media(max-width:980px){.purchase-workbench{width:100%}}@media(max-width:700px){.overview-grid{grid-template-columns:1fr}.summary-grid{grid-template-columns:1fr 1fr}.workbench-body{min-height:0;overscroll-behavior:contain;padding:16px}.workbench-header{padding:20px 20px 22px}.workbench-tabs{padding:0 8px}.task-row,.receipt-heading{flex-wrap:wrap}}
 </style>

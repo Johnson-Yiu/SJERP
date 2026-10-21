@@ -98,6 +98,18 @@ test('order list limits edit and delete operations to drafts', async () => {
   assert.match(source, /v-if="can\('orders', 'delete'\) && row\.status === 'draft'" class="mini-btn" :aria-label="`删除/)
 })
 
+test('formal order history prefers the saved party snapshot and labels the live master reference', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  const detail = await readFile(new URL('../components/OrderDetailModal.vue', import.meta.url), 'utf8')
+
+  assert.match(source, /function orderPartyName\(row\)/)
+  assert.match(source, /row\.customer_name_snapshot \|\| '历史主体未记录'/)
+  assert.match(source, /当前主档：\$\{row\.customer_name\}/)
+  assert.match(detail, /order\.value\.customer_name_snapshot \|\| '历史主体未记录'/)
+  assert.match(detail, /交易主体快照/)
+  assert.match(detail, /customer_address_snapshot/)
+})
+
 test('editing from the order workbench reloads the current order before opening the editor', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

@@ -356,20 +356,24 @@ class CashMigrationTests(TransactionTestCase):
     def test_additive_migration_preserves_historical_rows_and_decimal_fields(self):
         from django.db.migrations.executor import MigrationExecutor
         executor = MigrationExecutor(connection)
+        latest_targets = executor.loader.graph.leaf_nodes("crm")
         executor.migrate([("crm", "0076_customer_owner_profile")])
         try:
-            state = executor.loader.project_state([("crm", "0076_customer_owner_profile")]).apps
-            old = state.get_model("crm", "Transaction")
+            state_0076 = executor.loader.project_state([("crm", "0076_customer_owner_profile")]).apps
+            old = state_0076.get_model("crm", "Transaction")
             old.objects.create(transaction_no="LEGACY-FOUR", transaction_date=date(2026, 10, 1), direction="income", kind="other_income", category="Synthetic", amount=D("12.3401"), currency="USD", exchange_rate=D("7.123456"), rmb_amount=D("87.9034"), allocated_amount=D("0.0001"))
-            before = {m.__name__: list(m.objects.order_by("pk").values()) for m in state.get_app_config("crm").get_models()}
+            before = {m.__name__: list(m.objects.order_by("pk").values()) for m in state_0076.get_app_config("crm").get_models()}
             executor = MigrationExecutor(connection)
             executor.migrate([("crm", "0077_rmb_cash_events")])
-            after = {m.__name__: list(m.objects.order_by("pk").values()) for m in apps.get_app_config("crm").get_models() if m not in {RmbCashEvent, CashSourceAllocation}}
+            state_0077 = MigrationExecutor(connection).loader.project_state([("crm", "0077_rmb_cash_events")]).apps
+            excluded_models = {"RmbCashEvent", "CashSourceAllocation"}
+            after = {m.__name__: list(m.objects.order_by("pk").values()) for m in state_0077.get_app_config("crm").get_models() if m.__name__ not in excluded_models}
             self.assertEqual(before, after)
-            self.assertEqual(Transaction._meta.get_field("amount").decimal_places, 4)
-            self.assertEqual(Transaction._meta.get_field("rmb_amount").decimal_places, 4)
-            self.assertEqual(PaymentPlan._meta.get_field("settled_amount").decimal_places, 4)
-            self.assertEqual(RmbCashEvent.objects.count(), 0); self.assertEqual(CashSourceAllocation.objects.count(), 0)
+            self.assertEqual(state_0077.get_model("crm", "Transaction")._meta.get_field("amount").decimal_places, 4)
+            self.assertEqual(state_0077.get_model("crm", "Transaction")._meta.get_field("rmb_amount").decimal_places, 4)
+            self.assertEqual(state_0077.get_model("crm", "PaymentPlan")._meta.get_field("settled_amount").decimal_places, 4)
+            self.assertEqual(state_0077.get_model("crm", "RmbCashEvent").objects.count(), 0)
+            self.assertEqual(state_0077.get_model("crm", "CashSourceAllocation").objects.count(), 0)
             print("P2A_MIGRATION_VERIFICATION", json.dumps({"vendor": connection.vendor, "all_legacy_rows_equal": True, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}))
         finally:
-            MigrationExecutor(connection).migrate([("crm", "0077_rmb_cash_events")])
+            MigrationExecutor(connection).migrate(latest_targets)

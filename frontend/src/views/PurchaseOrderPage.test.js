@@ -59,6 +59,18 @@ test('purchase desk keeps drafts editable and separates placement from draft sav
   assert.match(source, /const \{ status, purchase_no, \.\.\.draftPayload \} = draft\.value/)
 })
 
+test('formal purchase history prefers the saved supplier snapshot and exposes its party details', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  const detail = await readFile(new URL('../components/PurchaseDetailModal.vue', import.meta.url), 'utf8')
+
+  assert.match(source, /function supplierPartyName\(row\)/)
+  assert.match(source, /row\.supplier_name_snapshot \|\| '历史主体未记录'/)
+  assert.match(source, /当前主档：\$\{row\.supplier_name\}/)
+  assert.match(detail, /row\.value\.supplier_name_snapshot \|\| '历史主体未记录'/)
+  assert.match(detail, /交易主体快照/)
+  assert.match(detail, /supplier_address_snapshot/)
+})
+
 test('purchase creation leaves number generation to the backend and never submits a number', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

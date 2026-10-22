@@ -89,6 +89,93 @@ class DashboardImportTests(TestCase):
         self.assertEqual(Decimal(str(dashboard["summary"]["sales_ytd"])), report.data["totals"]["amount"])
         self.assertEqual(report.data["totals"]["amount"], order.total_amount)
 
+    @patch("crm.views.timezone.localdate", return_value=date(2026, 10, 22))
+    def test_dashboard_uses_one_server_date_window_for_operating_metrics(self, _today):
+        self.create_order("J1-BEFORE-TREND", "confirmed", "2", date(2025, 10, 31))
+        trend_start = self.create_order("J1-TREND-START", "confirmed", "3", date(2025, 11, 1))
+        year_start = self.create_order("J1-YEAR-START", "confirmed", "10", date(2026, 1, 1))
+        today_order = self.create_order("J1-TODAY", "confirmed", "20", date(2026, 10, 22))
+        self.create_order("J1-TOMORROW", "confirmed", "40", date(2026, 10, 23))
+        self.create_order("J1-NEXT-MONTH", "confirmed", "50", date(2026, 11, 1))
+        historical = self.create_order("J1-HISTORICAL", "confirmed", "60", date(2026, 10, 10))
+        historical.historical_only = True
+        historical.save(update_fields=["historical_only"])
+        self.create_order("J1-DRAFT", "draft", "70", date(2026, 10, 22))
+        self.create_order("J1-CANCELLED", "cancelled", "80", date(2026, 10, 22))
+
+        Transaction.objects.create(
+            transaction_no="J1-TODAY-INCOME", transaction_date=date(2026, 10, 22), direction="income",
+            category="客户收款", amount=Decimal("10"), currency="USD", exchange_rate=Decimal("7"),
+            rmb_amount=Decimal("10"), status="confirmed",
+        )
+        Transaction.objects.create(
+            transaction_no="J1-TODAY-EXPENSE", transaction_date=date(2026, 10, 22), direction="expense",
+            category="办公费用", amount=Decimal("3"), currency="USD", exchange_rate=Decimal("7"),
+            rmb_amount=Decimal("3"), status="confirmed",
+        )
+        Transaction.objects.create(
+            transaction_no="J1-FUTURE-INCOME", transaction_date=date(2026, 10, 23), direction="income",
+            category="客户收款", amount=Decimal("20"), currency="USD", exchange_rate=Decimal("7"),
+            rmb_amount=Decimal("20"), status="confirmed",
+        )
+        Transaction.objects.create(
+            transaction_no="J1-FUTURE-PENDING", transaction_date=date(2026, 10, 22), direction="income",
+            category="客户收款", amount=Decimal("100"), currency="USD", exchange_rate=Decimal("7"),
+            rmb_amount=Decimal("100"), status="pending",
+        )
+
+        response = self.client.get("/api/dashboard/")
+
+        self.assertEqual(response.status_code, 200, response.data)
+        data = response.data
+        self.assertEqual(data["date_ranges"], {
+            "as_of": date(2026, 10, 22), "year_start": date(2026, 1, 1), "year_end": date(2026, 10, 22),
+            "trend_start": date(2025, 11, 1), "trend_end": date(2026, 10, 22),
+        })
+        self.assertEqual(Decimal(str(data["summary"]["sales_ytd"])), Decimal("30"))
+        self.assertEqual(data["summary"]["sales_last_ytd"], 0)
+        self.assertEqual(data["summary"]["orders_ytd"], 2)
+        self.assertEqual(data["top_customers"][0]["orders"], 2)
+        self.assertEqual(Decimal(str(data["top_customers"][0]["sales"])), Decimal("30"))
+        self.assertEqual(sum((Decimal(str(row["sales"])) for row in data["category_sales"]), Decimal("0")), Decimal("30"))
+        self.assertEqual(Decimal(str(data["summary"]["receipts_rmb"])), Decimal("10"))
+        self.assertEqual(Decimal(str(data["summary"]["payments_rmb"])), Decimal("3"))
+        self.assertNotIn("J1-HISTORICAL", [row["order_no"] for row in data["recent_orders"]])
+
+        self.assertEqual(len(data["monthly_sales"]), 12)
+        self.assertEqual([row["month"] for row in data["monthly_sales"]], [
+            "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04",
+            "2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10",
+        ])
+        month_by_key = {row["month"]: row for row in data["monthly_sales"]}
+        self.assertEqual(Decimal(str(month_by_key[trend_start.order_date.strftime("%Y-%m")]["sales"])), Decimal("3"))
+        self.assertEqual(Decimal(str(month_by_key[year_start.order_date.strftime("%Y-%m")]["sales"])), Decimal("10"))
+        self.assertEqual(Decimal(str(month_by_key[today_order.order_date.strftime("%Y-%m")]["sales"])), Decimal("20"))
+        self.assertEqual(month_by_key["2025-12"]["sales"], Decimal("0"))
+        self.assertEqual(month_by_key["2025-12"]["orders"], 0)
+        self.assertNotIn("2026-11", month_by_key)
+        self.assertNotIn("2025-10", month_by_key)
+
+    @patch("crm.views.timezone.localdate", return_value=date(2026, 10, 22))
+    def test_dashboard_keeps_empty_trend_empty_when_no_orders_in_window(self, _today):
+        response = self.client.get("/api/dashboard/")
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["monthly_sales"], [])
+        self.assertEqual(response.data["summary"]["orders_ytd"], 0)
+
+    @patch("crm.reporting.timezone.localdate", return_value=date(2026, 10, 22))
+    def test_custom_report_can_still_query_a_future_period(self, _today):
+        self.create_order("J1-FUTURE-REPORT", "confirmed", "45", date(2026, 11, 1))
+
+        response = self.client.get("/api/reports/data/", {
+            "source": "sales", "group_by": "customer", "date_from": "2026-11-01", "date_to": "2026-11-30",
+        })
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["period"], {"date_from": date(2026, 11, 1), "date_to": date(2026, 11, 30)})
+        self.assertEqual(response.data["totals"]["amount"], Decimal("45"))
+
     def test_customer_import_ignores_status_and_follow_up_projection(self):
         customer_fields = self.client.get("/api/import/templates/").data["customers"]
         self.assertNotIn("status", customer_fields)

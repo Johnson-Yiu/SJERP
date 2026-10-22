@@ -2379,6 +2379,13 @@ class ContractChangeRequestViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 def dashboard(request):
     today = timezone.localdate()
     year_start = date(today.year, 1, 1)
+    trend_start = date(today.year, today.month, 1)
+    for _ in range(11):
+        trend_start = (
+            date(trend_start.year - 1, 12, 1)
+            if trend_start.month == 1
+            else date(trend_start.year, trend_start.month - 1, 1)
+        )
     last_year_start = date(today.year - 1, 1, 1)
     last_year_same_day = date(today.year - 1, today.month, min(today.day, 28 if today.month == 2 else today.day))
     formal_statuses = ["confirmed", "production", "shipped", "completed"]
@@ -2388,7 +2395,9 @@ def dashboard(request):
     can_view_followups = user_can(request.user, "followups", "view")
     can_view_certificates = user_can(request.user, "certificates", "view") and can_view_products
     scoped_customers = scope_customer_queryset(Customer.objects.all(), request.user) if can_view_customers else Customer.objects.none()
-    valid_orders = scope_customer_related_queryset(Order.objects.filter(status__in=formal_statuses), request.user) if can_view_orders else Order.objects.none()
+    valid_orders = scope_customer_related_queryset(
+        Order.objects.filter(status__in=formal_statuses, historical_only=False), request.user,
+    ) if can_view_orders else Order.objects.none()
     def sales_between(start, end):
         return sum(
             (order.total_amount * order.exchange_rate for order in valid_orders.filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes")),
@@ -2397,7 +2406,7 @@ def dashboard(request):
 
     monthly_rows = defaultdict(lambda: {"sales": Decimal("0"), "orders": 0})
     customer_rows = defaultdict(lambda: {"sales": Decimal("0"), "orders": 0, "name": "", "country": ""})
-    for order in valid_orders.filter(order_date__gte=last_year_start).select_related("customer").prefetch_related("items", "contract_changes"):
+    for order in valid_orders.filter(order_date__range=(trend_start, today)).select_related("customer").prefetch_related("items", "contract_changes"):
         amount = order.total_amount * order.exchange_rate
         month = order.order_date.strftime("%Y-%m")
         monthly_rows[month]["sales"] += amount
@@ -2407,16 +2416,30 @@ def dashboard(request):
             customer["sales"] += amount
             customer["orders"] += 1
             customer["name"], customer["country"] = order.customer.name, order.customer.country
-    monthly = [{"month": month, **values} for month, values in sorted(monthly_rows.items())]
+    trend_months = []
+    month_cursor = trend_start
+    while month_cursor <= date(today.year, today.month, 1):
+        trend_months.append(month_cursor.strftime("%Y-%m"))
+        month_cursor = (
+            date(month_cursor.year + 1, 1, 1)
+            if month_cursor.month == 12
+            else date(month_cursor.year, month_cursor.month + 1, 1)
+        )
+    monthly = (
+        [{"month": month, **monthly_rows.get(month, {"sales": Decimal("0"), "orders": 0})} for month in trend_months]
+        if monthly_rows else []
+    )
     # Product-category sales deliberately remain item-only: contract adjustments have no SKU/category allocation.
-    categories = OrderItem.objects.filter(order__in=valid_orders, order__order_date__gte=year_start).values(
+    categories = OrderItem.objects.filter(order__in=valid_orders, order__order_date__range=(year_start, today)).values(
         "sku__product__category__name"
     ).annotate(sales=Sum(ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)), quantity=Sum("quantity")).order_by("-sales")[:8]
     top_customers = [
         {"id": customer_id, **values}
         for customer_id, values in sorted(customer_rows.items(), key=lambda row: row[1]["sales"], reverse=True)[:6]
     ]
-    cash = scope_transaction_queryset(Transaction.objects.filter(status="confirmed", transaction_date__gte=year_start), request.user)
+    cash = scope_transaction_queryset(
+        Transaction.objects.filter(status="confirmed", transaction_date__range=(year_start, today)), request.user,
+    )
     if not user_can(request.user, "transactions", "view"):
         cash = cash.none()
     income = sum((row.rmb_amount or row.amount * row.exchange_rate for row in cash if row.direction == "income"), Decimal("0"))
@@ -2430,6 +2453,13 @@ def dashboard(request):
         for c in certificates.order_by("expires_on", "id")[:5]
     ]
     return Response({
+        "date_ranges": {
+            "as_of": today,
+            "year_start": year_start,
+            "year_end": today,
+            "trend_start": trend_start,
+            "trend_end": today,
+        },
         "certificate_alerts": certificate_alerts,
         "summary": {
             "certificate_attention": certificates.count(),
@@ -2437,7 +2467,7 @@ def dashboard(request):
             "certificate_expiring": certificates.filter(expires_on__gte=today).count(),
             "sales_ytd": sales_between(year_start, today),
             "sales_last_ytd": sales_between(last_year_start, last_year_same_day),
-            "orders_ytd": valid_orders.filter(order_date__gte=year_start).count(),
+            "orders_ytd": valid_orders.filter(order_date__range=(year_start, today)).count(),
             "active_customers": scoped_customers.filter(status__in=["customer", "company"]).count(),
             "receipts_rmb": income,
             "payments_rmb": expense,

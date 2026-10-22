@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 C:/Users/Johnson/.codex/worktrees/iss-062-date-window/森爵照明管理系统/frontend
+
+
+ Test Files  2 passed (2)
+      Tests  25 passed (25)
+   Start at  15:32:40
+   Duration  4.72s (transform 2.35s, setup 935ms, import 2.89s, tests 988ms, environment 3.52s)
+

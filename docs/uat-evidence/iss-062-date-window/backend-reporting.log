@@ -1,0 +1,17 @@
+Creating test database for alias 'default'...
+....Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+................
+----------------------------------------------------------------------
+Ran 20 tests in 0.879s
+
+OK
+Destroying test database for alias 'default'...
+Found 20 test(s).
+System check identified no issues (0 silenced).

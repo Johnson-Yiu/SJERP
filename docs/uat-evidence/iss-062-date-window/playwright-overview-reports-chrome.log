@@ -1,0 +1,22 @@
+[WebServer] (node:30200) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 13 tests using 1 worker
+
+(node:16116) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 12-month layout at 1440 (11.1s)
+  ok  2 browser-tests\overview-reports.spec.js:24:2 › reports complex filters, multi charts and computed layout at 1440 (9.5s)
+  ok  3 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 12-month layout at 1280 (4.0s)
+  ok  4 browser-tests\overview-reports.spec.js:24:2 › reports complex filters, multi charts and computed layout at 1280 (11.7s)
+  ok  5 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 12-month layout at 1024 (4.6s)
+  ok  6 browser-tests\overview-reports.spec.js:24:2 › reports complex filters, multi charts and computed layout at 1024 (6.1s)
+  ok  7 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 12-month layout at 700 (5.1s)
+  ok  8 browser-tests\overview-reports.spec.js:24:2 › reports complex filters, multi charts and computed layout at 700 (8.2s)
+  ok  9 browser-tests\overview-reports.spec.js:36:1 › saved local chart configurations survive reload, reorder, remove and undo (6.9s)
+  ok 10 browser-tests\overview-reports.spec.js:44:1 › drill and previous-analysis return preserve actual period and browser navigation restores URL (8.4s)
+  ok 11 browser-tests\overview-reports.spec.js:50:1 › empty dashboard and charts have useful neutral states (12.9s)
+  ok 12 browser-tests\overview-reports.spec.js:53:1 › initial failures recover, refresh failure keeps stale data, and catalog has retry (9.0s)
+  ok 13 browser-tests\overview-reports.spec.js:59:1 › restricted UI hides sources, export and navigation, retaining unavailable local configuration (4.8s)
+
+  13 passed (1.8m)

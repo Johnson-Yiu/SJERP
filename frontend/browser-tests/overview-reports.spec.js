@@ -6,10 +6,13 @@ async function bounds(page,selectors){
  for(const r of result.items){expect(r.x).toBeGreaterThanOrEqual(0);expect(r.right).toBeLessThanOrEqual(result.viewport+1);expect(r.width).toBeGreaterThan(0);expect(r.height).toBeGreaterThan(0)}
  return result
 }
-for(const width of [1440,1280,1024]){
- test(`dashboard long names, large amounts and 24-month layout at ${width}`,async({page})=>{
+for(const width of [1440,1280,1024,700]){
+ test(`dashboard long names, large amounts and 12-month layout at ${width}`,async({page})=>{
   await page.setViewportSize({width,height:1000});await mockApi(page);await page.goto('/')
   await expect(page.getByRole('heading',{name:'销售与客户',exact:true})).toBeVisible()
+  await expect(page.getByText('最近12个自然月（2025-11-01 — 2026-10-22）· 人民币',{exact:true})).toBeVisible()
+  await expect(page.getByText('本年截至今日订单数',{exact:true})).toBeVisible()
+  await expect(page.getByText('含未来日期订单',{exact:true})).toHaveCount(0)
   await expect(page.locator('.metric-card.featured strong')).toHaveText('¥ 123,456,789,012.12')
   await bounds(page,['.metric-card','.dash-grid .panel','.dash-bottom .panel','.certificate-reminders','.cash-strip'])
   const textWidths=await page.locator('.metric-card strong,.category-meta strong,.customer-item .grow strong').evaluateAll(elements=>elements.map(e=>({scroll:e.scrollWidth,client:e.clientWidth})));for(const text of textWidths)expect(text.scroll).toBeLessThanOrEqual(text.client+1)

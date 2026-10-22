@@ -2,7 +2,7 @@
 import { BOOK_RMB_NOTE } from '../../utils/financeBasis.js'
 import { computed, ref, watch, onBeforeUnmount } from 'vue'
 import { api } from '../../api'
-import { resolveBlock, canViewReportConfig } from '../../reports/registry'
+import { resolveBlock, canViewReportConfig, reportDimensionLabels } from '../../reports/registry'
 import { apiErrorMessage } from '../../utils/apiErrors'
 import { useAccessControl } from '../../accessControl'
 
@@ -13,7 +13,7 @@ const definition = computed(() => resolveBlock(props.blockId, props.config))
 const permitted = computed(() => canViewReportConfig({ ...definition.value, filters: { ...props.filters, ...definition.value.filters } }, can))
 const params = computed(() => {
   const d = definition.value
-  return { ...props.filters, source: d.source, group_by: d.group_by, grain: d.grain, comparison: d.comparison || 'previous', ...(d.date_field ? { date_field: d.date_field } : {}), ...(d.filters || {}) }
+  return { ...props.filters, source: d.source, group_by: d.group_by, ...(d.group_by_2 ? { group_by_2: d.group_by_2 } : {}), grain: d.grain, comparison: d.comparison || 'previous', ...(d.date_field ? { date_field: d.date_field } : {}), ...(d.filters || {}) }
 })
 const data = ref(null), error = ref(''), loading = ref(false), exporting = ref(false), page = ref(1), unit = ref(''), viewOverride = ref(''), exportError = ref(''), exportNotice = ref('')
 let sequence = 0, controller
@@ -42,10 +42,11 @@ const metric = computed(() => definition.value.metric)
 const metricLabel = computed(() => metric.value === 'amount' ? (definition.value.source === 'cash' ? '金额（人民币折算参考）' : definition.value.source === 'actual_cash' ? '金额（银行实际人民币净额）' : '金额（人民币）') : metric.value === 'quantity' ? `数量（${unit.value || '无单位数据'}）` : '去重单据 / 档案数')
 const valueOf = row => Number(metric.value === 'quantity' ? row.quantities?.[unit.value] || 0 : row[metric.value] || 0)
 const rows = computed(() => data.value?.rows || [])
-const chartRows = computed(() => definition.value.group_by === 'time' ? rows.value : [...rows.value].sort((a, b) => Math.abs(valueOf(b)) - Math.abs(valueOf(a))).slice(0, 12))
+const multiDimensional = computed(() => Boolean(definition.value.group_by_2))
+const chartRows = computed(() => definition.value.group_by === 'time' && !multiDimensional.value ? rows.value : [...rows.value].sort((a, b) => Math.abs(valueOf(b)) - Math.abs(valueOf(a))).slice(0, 12))
 const chartView = computed(() => viewOverride.value || definition.value.view)
 const hasNegative = computed(() => chartRows.value.some(row => valueOf(row) < 0))
-const effectiveView = computed(() => chartView.value === 'donut' && hasNegative.value ? 'bar' : chartView.value)
+const effectiveView = computed(() => multiDimensional.value && chartView.value === 'line' ? 'bar' : chartView.value === 'donut' && hasNegative.value ? 'bar' : chartView.value)
 const maxValue = computed(() => Math.max(1, ...chartRows.value.map(row => Math.abs(valueOf(row)))))
 const positiveTotal = computed(() => chartRows.value.reduce((sum, row) => sum + Math.max(0, valueOf(row)), 0))
 const colors = ['#237969', '#4e91bd', '#c29143', '#8e79b2', '#d37869', '#7c9d57']
@@ -63,7 +64,15 @@ const comparison = computed(() => {
   const change = data.value?.changes?.[metric.value]
   return change == null ? '基期为零或该指标不适用' : `${change > 0 ? '+' : ''}${numeric(change)}%`
 })
-function drill(row) { if (definition.value.group_by !== 'time') emit('drill', { dimension: definition.value.group_by, value: row.key, label: row.label, source: definition.value.source, date_field: data.value.date_field, filters: data.value.filters, filter_summary: data.value.filter_summary, period: data.value.period, config: { ...definition.value } }) }
+const groupColumns = computed(() => [definition.value.group_by, ...(definition.value.group_by_2 ? [definition.value.group_by_2] : [])])
+const rowGroups = row => row.groups?.length ? row.groups : [{ dimension: definition.value.group_by, key: row.key, label: row.label }]
+const groupLabel = dimension => definition.value.source === 'cash' && dimension === 'category' ? '收支分类' : reportDimensionLabels[dimension] || dimension
+function drill(row, groupIndex = 0) {
+  const group = rowGroups(row)[groupIndex]
+  if (!group || group.dimension === 'time') return
+  const other = multiDimensional.value ? rowGroups(row)[groupIndex === 0 ? 1 : 0] : null
+  emit('drill', { dimension: group.dimension, value: group.key, label: group.label, next_group_by: other?.dimension || null, source: definition.value.source, date_field: data.value.date_field, filters: data.value.filters, filter_summary: data.value.filter_summary, period: data.value.period, config: { ...definition.value } })
+}
 async function exportCsv() {
   if (!can('reports', 'export') || !permitted.value || !data.value || loading.value || exporting.value) return
   const exportSequence = sequence
@@ -83,7 +92,7 @@ async function exportCsv() {
 
 <template>
   <article class="report-block" :aria-busy="loading" :aria-label="definition.title || '自定义报表'">
-    <header class="block-header"><div><small>经营统计</small><h2>{{ definition.title || '自定义报表' }}</h2></div><div v-if="permitted" class="block-actions"><select v-model="viewOverride" aria-label="图表显示方式"><option value="">默认图表</option><option value="bar">条形图</option><option value="line">折线图</option><option value="donut">环形图</option><option value="table">仅表格</option></select><button v-if="can('reports', 'export')" :disabled="loading || !data || exporting" @click="exportCsv">{{ exporting ? '导出中…' : '导出 CSV' }}</button></div></header>
+    <header class="block-header"><div><small>经营统计</small><h2>{{ definition.title || '自定义报表' }}</h2></div><div v-if="permitted" class="block-actions"><select v-model="viewOverride" aria-label="图表显示方式"><option value="">默认图表</option><option value="bar">条形图</option><option v-if="!multiDimensional" value="line">折线图</option><option value="donut">环形图</option><option value="table">仅表格</option></select><button v-if="can('reports', 'export')" :disabled="loading || !data || exporting" @click="exportCsv">{{ exporting ? '导出中…' : '导出 CSV' }}</button></div></header>
     <p v-if="!permitted" class="report-empty" role="status">当前账号没有此图表的数据来源或筛选维度查看权限。</p>
     <p v-else-if="loading" role="status">正在汇总完整数据…</p>
     <div v-else-if="error" role="alert" class="report-error">{{ error }} <button @click="load">重试</button></div>
@@ -94,13 +103,13 @@ async function exportCsv() {
       <p class="report-note">{{ definition.source === 'cash' ? BOOK_RMB_NOTE : data.note }} 分组单据数可能交叉，不应相加；空日期不纳入该日期口径。</p>
       <p v-if="!data.totals.count" class="report-empty" role="status">此筛选条件下暂无数据，可调整日期、日期口径或筛选条件。</p>
       <template v-else>
-        <div class="chart-caption"><strong>{{ metricLabel }}</strong><label v-if="metric === 'quantity'">单位 <select v-model="unit"><option v-for="key in Object.keys(data.totals.quantities)" :key="key">{{ key }}</option></select></label><span v-if="definition.group_by !== 'time'">图表按绝对值显示前 12 项；表格及导出包含全部 {{ rows.length }} 项</span></div>
+        <div class="chart-caption"><strong>{{ metricLabel }}</strong><label v-if="metric === 'quantity'">单位 <select v-model="unit"><option v-for="key in Object.keys(data.totals.quantities)" :key="key">{{ key }}</option></select></label><span v-if="definition.group_by !== 'time' || multiDimensional">图表按绝对值显示前 12 项；表格及导出包含全部 {{ rows.length }} 项</span></div>
         <p v-if="hasNegative && chartView === 'donut'" class="report-caption">含负值，自动使用条形图以保留收支 / 出入库方向。</p>
         <div v-if="effectiveView === 'bar'" class="report-bars" role="img" :aria-label="`${definition.title}，详细数值见下方表格`"><div v-for="row in chartRows" :key="row.key" class="report-bar-row"><button v-if="definition.group_by !== 'time'" class="bar-label" :title="row.label" @click="drill(row)">{{ row.label }}</button><span v-else class="bar-label">{{ row.label }}</span><div class="bar-track"><div :class="{ negative: valueOf(row) < 0 }" :style="{ width: `${Math.abs(valueOf(row)) / maxValue * 100}%` }" /></div><span>{{ numeric(valueOf(row)) }}</span></div></div>
         <div v-else-if="effectiveView === 'line'" class="report-line"><svg viewBox="0 0 720 220" role="img" :aria-label="`${definition.title}，详细数值见下方表格`"><text x="4" y="23">{{ axisNumeric(yRange.max) }}</text><text x="4" y="180">{{ axisNumeric(yRange.min) }}</text><line x1="130" :y1="y(0)" x2="690" :y2="y(0)" stroke="#cad7d2" /><polyline :points="line" fill="none" stroke="#237969" stroke-width="3" /><circle v-for="point in points" :key="point.row.key" :cx="point.x" :cy="point.y" r="3" fill="#237969"><title>{{ point.row.label }}：{{ numeric(valueOf(point.row)) }}</title></circle><text x="130" y="207">{{ chartRows[0]?.label }}</text><text x="690" y="207" text-anchor="end">{{ chartRows.at(-1)?.label }}</text></svg></div>
         <div v-else-if="effectiveView === 'donut'" class="report-donut"><svg viewBox="0 0 42 42" role="img" :aria-label="`${definition.title}，占显示项目合计比例`"><circle cx="21" cy="21" r="15.9155" fill="none" stroke="#edf1ee" stroke-width="6" /><circle v-for="slice in slices" :key="slice.row.key" cx="21" cy="21" r="15.9155" fill="none" :stroke="slice.color" stroke-width="6" :stroke-dasharray="`${slice.percent} ${100 - slice.percent}`" :stroke-dashoffset="25 - slice.offset"><title>{{ slice.row.label }}：{{ numeric(valueOf(slice.row)) }}</title></circle></svg><div><p v-for="slice in slices" :key="slice.row.key"><i :style="{ background: slice.color }" />{{ slice.row.label }} · {{ numeric(slice.percent) }}%</p><small>占图中显示项目的比例；全零时不显示扇区。</small></div></div>
-        <div class="report-table"><table><thead><tr><th>统计分组</th><th v-if="monetary">{{ definition.source === 'cash' ? '金额（人民币折算参考）' : definition.source === 'actual_cash' ? '金额（银行实际人民币净额）' : '金额（人民币）' }}</th><th>去重单据 / 档案数</th><th v-if="['sales', 'purchase', 'inventory'].includes(definition.source)">数量（按单位）</th></tr></thead><tbody><tr v-for="row in visibleRows" :key="row.key"><td><button v-if="definition.group_by !== 'time'" class="report-link" @click="drill(row)">{{ row.label }}</button><span v-else>{{ row.label }}</span></td><td v-if="monetary">{{ numeric(row.amount) }}</td><td>{{ row.count }}</td><td v-if="['sales', 'purchase', 'inventory'].includes(definition.source)">{{ quantityText(row.quantities) }}</td></tr></tbody></table></div>
-        <footer class="report-pagination"><span>共 {{ rows.length }} 项<span v-if="definition.group_by !== 'time'"> · 点击分组继续筛选</span></span><button :disabled="page <= 1" @click="page--">上一页</button><span>{{ page }} / {{ Math.max(1, Math.ceil(rows.length / 15)) }}</span><button :disabled="page * 15 >= rows.length" @click="page++">下一页</button></footer>
+        <div class="report-table"><table><thead><tr><th v-for="dimension in groupColumns" :key="dimension">{{ groupLabel(dimension) }}</th><th v-if="monetary">{{ definition.source === 'cash' ? '金额（人民币折算参考）' : definition.source === 'actual_cash' ? '金额（银行实际人民币净额）' : '金额（人民币）' }}</th><th>去重单据 / 档案数</th><th v-if="['sales', 'purchase', 'inventory'].includes(definition.source)">数量（按单位）</th></tr></thead><tbody><tr v-for="row in visibleRows" :key="row.key"><td v-for="(group,index) in rowGroups(row)" :key="group.dimension"><button v-if="group.dimension !== 'time'" class="report-link" @click="drill(row,index)">{{ group.label }}</button><span v-else>{{ group.label }}</span></td><td v-if="monetary">{{ numeric(row.amount) }}</td><td>{{ row.count }}</td><td v-if="['sales', 'purchase', 'inventory'].includes(definition.source)">{{ quantityText(row.quantities) }}</td></tr></tbody></table></div>
+        <footer class="report-pagination"><span>共 {{ rows.length }} 项<span v-if="definition.group_by !== 'time' || multiDimensional"> · 点击分组继续筛选</span></span><button :disabled="page <= 1" @click="page--">上一页</button><span>{{ page }} / {{ Math.max(1, Math.ceil(rows.length / 15)) }}</span><button :disabled="page * 15 >= rows.length" @click="page++">下一页</button></footer>
       </template>
     </template>
     <p v-if="exportError" class="report-error" role="alert">{{ exportError }}</p>

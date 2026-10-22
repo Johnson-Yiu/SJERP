@@ -2,6 +2,7 @@ from .finance_basis import BOOK_RMB_BASIS, BOOK_RMB_VERSION, BOOK_RMB_NOTE
 from .finance_scope import scope_transaction_queryset, require_finance_permission
 """Read-only, reusable reporting API. Decimal amounts; no cross-currency sums."""
 import csv
+import json
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 
@@ -139,13 +140,33 @@ def records(source, date_field, start, end, user=None):
             yield day, obj.pk, dims, Decimal(0), Decimal(0), ""
 
 
-def aggregate(source, date_field, start, end, group, grain, filters, user=None):
+def dimension_value(day, dims, dimension, grain):
+    return (bucket(day, grain), bucket(day, grain)) if dimension == "time" else dims[dimension]
+
+
+def composite_key(first_key, second_key):
+    """Encode two keys without allowing separator or prefix collisions."""
+    return json.dumps([str(first_key), str(second_key)], ensure_ascii=False, separators=(",", ":"))
+
+
+def aggregate(source, date_field, start, end, group, grain, filters, group_2=None, user=None):
     groups, total_ids, quantities = {}, set(), {}
     amount = Decimal(0)
     for day, document_id, dims, value, qty, unit in records(source, date_field, start, end, user=user):
         if any(str(dims.get(key, ("", ""))[0]) != expected for key, expected in filters.items()): continue
-        key, label = (bucket(day, grain), bucket(day, grain)) if group == "time" else dims[group]
-        row = groups.setdefault(key, {"key": key, "label": label, "amount": Decimal(0), "quantities": {}, "ids": set()})
+        first_key, first_label = dimension_value(day, dims, group, grain)
+        if group_2:
+            second_key, second_label = dimension_value(day, dims, group_2, grain)
+            key = composite_key(first_key, second_key)
+            label = f"{first_label} · {second_label}"
+            group_values = [
+                {"dimension": group, "key": first_key, "label": first_label},
+                {"dimension": group_2, "key": second_key, "label": second_label},
+            ]
+        else:
+            key, label = first_key, first_label
+            group_values = None
+        row = groups.setdefault(key, {"key": key, "label": label, "amount": Decimal(0), "quantities": {}, "ids": set(), **({"groups": group_values} if group_values else {})})
         row["amount"] += value
         row["ids"].add(document_id)
         total_ids.add(document_id)
@@ -153,14 +174,14 @@ def aggregate(source, date_field, start, end, group, grain, filters, user=None):
         if unit:
             row["quantities"][unit] = row["quantities"].get(unit, Decimal(0)) + qty
             quantities[unit] = quantities.get(unit, Decimal(0)) + qty
-    if group == "time":
+    if group == "time" and not group_2:
         day = start
         while day <= end:
             key = bucket(day, grain)
             groups.setdefault(key, {"key": key, "label": key, "amount": Decimal(0), "quantities": {}, "ids": set()})
             day += timedelta(days=1)
     rows = [{**{k: v for k, v in row.items() if k != "ids"}, "count": len(row["ids"])} for row in groups.values()]
-    rows.sort(key=(lambda row: row["key"]) if group == "time" else (lambda row: (-abs(row["amount"]) if source not in ["customers", "inventory"] else -row["count"], row["label"])))
+    rows.sort(key=(lambda row: row["key"]) if group == "time" and not group_2 else (lambda row: (-abs(row["amount"]) if source not in ["customers", "inventory"] else -row["count"], row["label"])))
     return rows, {"amount": amount, "count": len(total_ids), "quantities": quantities}
 
 
@@ -337,9 +358,9 @@ def report_data(request):
     if source == "actual_cash":
         cash.access(request.user)
     spec = SOURCES[source]
-    group, grain = params.get("group_by", "time"), params.get("grain", "month")
+    group, group_2, grain = params.get("group_by", "time"), params.get("group_by_2") or None, params.get("grain", "month")
     date_field = params.get("date_field") or next(iter(spec["dates"]))
-    if group not in spec["dimensions"] or date_field not in spec["dates"] or grain not in ["day", "week", "month", "quarter", "year"]:
+    if group not in spec["dimensions"] or (group_2 and group_2 not in spec["dimensions"]) or group == group_2 or date_field not in spec["dates"] or grain not in ["day", "week", "month", "quarter", "year"]:
         raise ValidationError("无效的统计维度、时间粒度或日期口径。")
     try:
         start = date.fromisoformat(params.get("date_from") or timezone.localdate().replace(day=1).isoformat())
@@ -353,11 +374,11 @@ def report_data(request):
             dimension = key[7:]
             if dimension not in spec["dimensions"] or dimension == "time": raise ValidationError("该模块不支持此筛选维度。")
             filters[dimension] = value
-    for dimension in {group, *filters.keys()}:
+    for dimension in {group, *(dimension for dimension in [group_2] if dimension), *filters.keys()}:
         module = DIMENSION_MODULES.get(dimension)
         if module:
             require_finance_permission(request.user, module, "view")
-    rows, totals = aggregate(source, date_field, start, end, group, grain, filters, user=request.user)
+    rows, totals = aggregate(source, date_field, start, end, group, grain, filters, group_2=group_2, user=request.user)
     comparison = params.get("comparison", "previous")
     if comparison not in ["previous", "year"]: raise ValidationError("无效的比较方式。")
     days = (end - start).days + 1
@@ -368,7 +389,7 @@ def report_data(request):
             try: return day.replace(year=day.year - 1)
             except ValueError: return day.replace(year=day.year - 1, day=28)
         previous_start, previous_end = last_year(start), last_year(end)
-    _, previous = aggregate(source, date_field, previous_start, previous_end, group, grain, filters, user=request.user)
+    _, previous = aggregate(source, date_field, previous_start, previous_end, group, grain, filters, group_2=group_2, user=request.user)
     changes = {key: ((totals[key] - previous[key]) / abs(previous[key]) * 100 if previous[key] else None) for key in ["amount", "count"]}
     if params.get("export") == "csv":
         response = HttpResponse(content_type="text/csv; charset=utf-8")
@@ -379,10 +400,12 @@ def report_data(request):
         writer.writerow(["筛选条件", safe_csv("；".join(f"{item['name']}：{item['label']}" for item in filter_summary(source, filters, user=request.user)))])
         writer.writerow(["比较期间", previous_start, previous_end])
         amount_label = "金额（银行实际人民币净额）" if source == "actual_cash" else ("金额（人民币折算参考）" if source == "cash" else "金额（人民币）") if source not in ["customers", "inventory"] else "金额（不适用）"
-        writer.writerow([DIMENSIONS[group], amount_label, "去重单据/档案数", "数量（按单位）"])
+        group_headers = [DIMENSIONS[group], *( [DIMENSIONS[group_2]] if group_2 else [])]
+        writer.writerow([*group_headers, amount_label, "去重单据/档案数", "数量（按单位）"])
         for row in rows:
-            writer.writerow([safe_csv(row["label"]), str(row["amount"]) if source not in ["customers", "inventory"] else "", row["count"], safe_csv(" / ".join(f"{qty} {unit}" for unit, qty in row["quantities"].items()))])
-        writer.writerow(["合计（单据去重）", str(totals["amount"]) if source not in ["customers", "inventory"] else "", totals["count"], safe_csv(" / ".join(f"{qty} {unit}" for unit, qty in totals["quantities"].items()))])
+            group_values = row.get("groups") or [{"label": row["label"]}]
+            writer.writerow([*(safe_csv(value["label"]) for value in group_values), str(row["amount"]) if source not in ["customers", "inventory"] else "", row["count"], safe_csv(" / ".join(f"{qty} {unit}" for unit, qty in row["quantities"].items()))])
+        writer.writerow(["合计（单据去重）", *( [""] if group_2 else []), str(totals["amount"]) if source not in ["customers", "inventory"] else "", totals["count"], safe_csv(" / ".join(f"{qty} {unit}" for unit, qty in totals["quantities"].items()))])
         return response
-    return Response({**({"basis": spec.get("basis"), "version": spec.get("version")} if source in {"cash", "actual_cash"} else {}), "source": source, "group_by": group, "date_field": date_field, "date_label": spec["dates"][date_field], "grain": grain, "comparison": comparison, "period": {"date_from": start, "date_to": end}, "comparison_period": {"date_from": previous_start, "date_to": previous_end}, "totals": totals, "previous": previous, "changes": changes, "rows": rows, "note": spec["note"], "filters": filters, "filter_summary": filter_summary(source, filters, user=request.user), "generated_at": timezone.now()})
+    return Response({**({"basis": spec.get("basis"), "version": spec.get("version")} if source in {"cash", "actual_cash"} else {}), "source": source, "group_by": group, **({"group_by_2": group_2} if group_2 else {}), "date_field": date_field, "date_label": spec["dates"][date_field], "grain": grain, "comparison": comparison, "period": {"date_from": start, "date_to": end}, "comparison_period": {"date_from": previous_start, "date_to": previous_end}, "totals": totals, "previous": previous, "changes": changes, "rows": rows, "note": spec["note"], "filters": filters, "filter_summary": filter_summary(source, filters, user=request.user), "generated_at": timezone.now()})
 

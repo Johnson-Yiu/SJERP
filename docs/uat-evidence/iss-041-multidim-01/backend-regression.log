@@ -1,0 +1,25 @@
+Creating test database for alias 'default'...
+
+.......Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+..Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+.....................................Forbidden: /api/actual-rmb-cash/
+Forbidden: /api/actual-rmb-cash/
+...
+----------------------------------------------------------------------
+Ran 49 tests in 4.128s
+
+OK
+Destroying test database for alias 'default'...
+
+Found 49 test(s).
+System check identified no issues (0 silenced).

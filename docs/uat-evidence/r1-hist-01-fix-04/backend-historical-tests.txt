@@ -1,0 +1,15 @@
+R1-HIST-01-FIX-04 backend regression
+
+Command:
+python manage.py test crm.tests.test_historical_orders --verbosity 1
+Working directory:
+D:\Codex项目\森爵照明管理系统\.worktrees\r1-hist-01\backend
+Exit code: 0
+
+Result:
+Found 9 test(s).
+Ran 9 tests in 0.576s
+OK
+System check identified no issues (0 silenced).
+
+The Bad Request lines are expected negative-path assertions in the test suite; the command exited 0.

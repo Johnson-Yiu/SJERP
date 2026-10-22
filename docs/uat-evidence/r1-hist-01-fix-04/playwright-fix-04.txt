@@ -1,0 +1,15 @@
+R1-HIST-01-FIX-04 Playwright regression
+
+Command:
+npx playwright test browser-tests/historical-orders-fix-03.spec.js --config=playwright.r1a.config.js --reporter=list
+Working directory:
+D:\Codex项目\森爵照明管理系统\.worktrees\r1-hist-01\frontend
+Exit code: 0
+
+Result:
+Running 2 tests using 1 worker
+1. current historical analysis detail tables match the API at desktop and 700px CSS viewport: passed
+2. current historical analysis hides unauthorized detail dimensions without blanking the page: passed
+2 passed (4.0s)
+
+The test used real Chromium CSS viewports 700x900 and 1440x900. It verified the actual API quantities, visible 17/27 cells, container bounds, and page overflow.

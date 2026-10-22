@@ -48,3 +48,16 @@ test('history navigation accepts either sales or purchasing view permission', as
   assert.match(router, /to\.path === '\/historical-orders'/)
   assert.match(router, /canAccessHistoricalOrders\(\)/)
 })
+
+test('history analysis renders permission-filtered detail tables with local narrow-screen scrolling', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  assert.match(source, /analysisSections/)
+  assert.match(source, /by_customer/)
+  assert.match(source, /by_country/)
+  assert.match(source, /by_sku/)
+  assert.match(source, /by_category/)
+  assert.match(source, /by_supplier/)
+  assert.match(source, /analysis-table-wrap/)
+  assert.match(source, /overflow-x:auto/)
+  assert.match(source, /当前权限下暂无可展示的历史明细/)
+})

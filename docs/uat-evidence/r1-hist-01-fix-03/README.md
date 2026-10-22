@@ -11,7 +11,7 @@
 ## 服务来源核对
 
 - 当前后端从本工作区 `D:\Codex项目\森爵照明管理系统\.worktrees\r1-hist-01\backend` 启动：`python manage.py runserver 127.0.0.1:8103 --noreload`。
-- 当前前端从本工作区启动 Vite：`VITE_API_PROXY_PORT=8103 npm run dev -- --host 127.0.0.1 --port 5196`。
+- 当前前端从本工作区启动 Vite：PowerShell `$env:VITE_API_PROXY_PORT='8103'; npm run dev -- --host 127.0.0.1 --port 5196`。
 - Playwright 使用 `http://127.0.0.1:5196`，由 Vite 代理到 8103；配置文件为 `frontend/playwright.r1a.config.js`。
 - 8102 仍有多个旧 Python 服务监听。Windows 对这些进程的命令行读取返回“拒绝访问”，因此不以进程名推测来源；实际接口响应已足以确认其版本过旧：`api-8102-response.json` 缺少 `by_country`、`by_category`。
 - 当前 8103 响应见 `api-8103-current-response.json`，包含销售和采购两组国家/地区及产品分类维度。

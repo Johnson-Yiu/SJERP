@@ -5,7 +5,7 @@ business-code-baseline: c4dcd79c5eeccf00d1cd08e496be99e1b924f7ef
 backend-worktree: D:\Codex项目\森爵照明管理系统\.worktrees\r1-hist-01\backend
 backend-command: python manage.py runserver 127.0.0.1:8103 --noreload
 frontend-worktree: D:\Codex项目\森爵照明管理系统\.worktrees\r1-hist-01\frontend
-frontend-command: VITE_API_PROXY_PORT=8103 npm run dev -- --host 127.0.0.1 --port 5196
+frontend-command (PowerShell): $env:VITE_API_PROXY_PORT='8103'; npm run dev -- --host 127.0.0.1 --port 5196
 playwright-base-url: http://127.0.0.1:5196
 playwright-config: frontend/playwright.r1a.config.js
 

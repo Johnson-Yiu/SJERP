@@ -15,6 +15,7 @@ export function contactRows(rows = [], filters = {}) {
 
 export function followUpRows(rows = [], filters = {}) {
   const customerId = String(filters.customer || '')
+  const owner = normalized(filters.owner)
   const type = String(filters.type || '')
   const from = String(filters.from || '')
   const to = String(filters.to || '')
@@ -22,6 +23,7 @@ export function followUpRows(rows = [], filters = {}) {
   const direction = filters.sort === 'oldest' ? 1 : -1
   return rows.filter(row => {
     if (customerId && String(row.customer ?? '') !== customerId) return false
+    if (owner && normalized(row.owner) !== owner) return false
     if (type && String(row.type ?? '') !== type) return false
     const date = String(row.followed_at || '').slice(0, 10)
     if (from && date < from) return false

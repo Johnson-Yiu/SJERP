@@ -22,7 +22,9 @@ describe('CRM list presentation helpers', () => {
       { id: 2, customer: 10, type: 'email', followed_at: '2026-10-14T09:00:00+08:00' },
       { id: 3, customer: 20, type: 'phone', followed_at: '2026-10-13T09:00:00+08:00' },
     ]
-    expect(followUpRows(rows, { customer: '10', type: 'phone', from: '2026-10-12', to: '2026-10-13' }).map(row => row.id)).toEqual([1])
+    rows[0].owner = '林晓'
+    rows[1].owner = '陈宁'
+    expect(followUpRows(rows, { customer: '10', owner: '林晓', type: 'phone', from: '2026-10-12', to: '2026-10-13' }).map(row => row.id)).toEqual([1])
     expect(followUpRows(rows, { customer: '10', sort: 'oldest' }).map(row => row.id)).toEqual([1, 2])
     expect(followUpRows(rows, { customer: '10' }).map(row => row.id)).toEqual([2, 1])
     expect(rows.map(row => row.id)).toEqual([1, 2, 3])

@@ -1,0 +1,11 @@
+ISS-039 baseline reproduction
+Baseline: 54925e0a10a48c16ba3b66bbab9e433f48a0e2d7
+Command: python manage.py test crm.tests.test_procurement_data_scope.ProcurementDataScopeTests.test_iss039_procurement_can_reallocate_without_sales_order_permission --keepdb
+
+Expected business result: procurement update can reallocate across sales orders without sales-order view/update.
+Observed baseline result:
+F
+AssertionError: 403 != 200
+response detail: 没有权限修改采购关联的销售订单。
+
+The temporary reproduction assertion was removed after confirmation; it is not part of the final source tree.

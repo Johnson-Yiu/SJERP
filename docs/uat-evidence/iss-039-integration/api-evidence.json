@@ -1,0 +1,73 @@
+{
+  "task": "ISS-039",
+  "baseline": "54925e0a10a48c16ba3b66bbab9e433f48a0e2d7",
+  "branch": "codex/next-iss-039-integration",
+  "evidence_source": "backend/crm/tests/test_iss039_shared_purchase_costs.py",
+  "reproduction_before_fix": {
+    "role": "procurement user with purchases.update but without orders.view/update",
+    "request": "POST /api/purchase-orders/{purchase_id}/cost-allocation/",
+    "status": 403,
+    "response": {"detail": "没有权限修改采购关联的销售订单。"},
+    "meaning": "The old validation required sales-order write scope for a complete cost attribution replacement."
+  },
+  "verified_api_matrix": [
+    {
+      "role": "authorized procurement",
+      "request": "GET /api/purchase-orders/cost-allocation-orders/",
+      "status": 200,
+      "response_shape": ["id", "order_no", "status", "status_display"],
+      "redacted_fields_absent": ["customer", "customer_name", "sales_price", "profit"]
+    },
+    {
+      "role": "authorized procurement",
+      "request": "GET /api/purchase-orders/{purchase_id}/cost-allocation/",
+      "status": 200,
+      "notes": "The response can identify the target order needed for allocation but does not include customer, sales-price or profit fields."
+    },
+    {
+      "role": "authorized procurement",
+      "request": "POST /api/purchase-orders/{purchase_id}/cost-allocation/",
+      "status": 200,
+      "allocation": {
+        "order_a_goods": "3000.00",
+        "order_b_goods": "2000.00",
+        "inventory_goods": "5000.00",
+        "order_a_public_expense": "300.00",
+        "order_b_public_expense": "200.00",
+        "inventory_public_expense": "500.00",
+        "public_expense_total": "1000.00",
+        "total_cost": "11000.00"
+      }
+    },
+    {
+      "role": "read-only procurement",
+      "request": "GET /api/purchase-orders/cost-allocation-orders/",
+      "status": 403,
+      "response": {"detail": "需要采购修改权限才能选择成本归属订单。"}
+    },
+    {
+      "role": "read-only procurement",
+      "request": "POST /api/purchase-orders/{purchase_id}/cost-allocation/",
+      "status": 403,
+      "response": {"detail": "需要采购修改权限才能调整成本归属。"}
+    },
+    {
+      "role": "sales-only or unauthenticated",
+      "request": "GET /api/purchase-orders/{purchase_id}/cost-allocation/",
+      "status": "403 or 401",
+      "notes": "No purchasing read/write permission is granted by sales access."
+    }
+  ],
+  "atomicity_and_audit": {
+    "cancelled_target": "400; allocation version, rows and OperationLog remain unchanged",
+    "stale_version": "400; no partial allocation write",
+    "side_effect_counts": "InventoryMovement, Transaction and PaymentPlan counts unchanged",
+    "operation_log": {
+      "action_label": "采购成本分配",
+      "changed_fields": ["cost_allocation"],
+      "metadata": {"purchase_no": "ISS039-PO"},
+      "operator_and_timestamps": "recorded by the existing OperationLog path",
+      "restricted_read": "before_data, after_data and metadata are redacted for procurement-only log readers"
+    }
+  }
+}

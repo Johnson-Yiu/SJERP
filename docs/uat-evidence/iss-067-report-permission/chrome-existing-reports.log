@@ -1,0 +1,83 @@
+[WebServer] (node:31472) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 16 tests using 2 workers
+
+(node:27640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18692) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  2 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 12-month layout at 1440 (6.5s)
+  ok  3 browser-tests\overview-reports.spec.js:24:2 › reports complex filters, multi charts and computed layout at 1440 (7.8s)
+  ok  1 browser-tests\shared-report-templates.spec.js:4:1 › separate manager and employee sessions share only the published query definition (19.3s)
+  ok  4 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 12-month layout at 1280 (6.0s)
+  ok  5 browser-tests\overview-reports.spec.js:24:2 › reports complex filters, multi charts and computed layout at 1280 (6.5s)
+  ok  6 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 12-month layout at 1024 (3.4s)
+  ok  7 browser-tests\overview-reports.spec.js:24:2 › reports complex filters, multi charts and computed layout at 1024 (5.9s)
+  ok  8 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 12-month layout at 700 (6.0s)
+  ok  9 browser-tests\overview-reports.spec.js:24:2 › reports complex filters, multi charts and computed layout at 700 (6.3s)
+  ok 10 browser-tests\overview-reports.spec.js:36:1 › saved local chart configurations survive reload, reorder, remove and undo (4.2s)
+  ok 11 browser-tests\overview-reports.spec.js:44:1 › drill and previous-analysis return preserve actual period and browser navigation restores URL (2.5s)
+  ok 12 browser-tests\overview-reports.spec.js:50:1 › empty dashboard and charts have useful neutral states (5.7s)
+  ok 13 browser-tests\overview-reports.spec.js:53:1 › initial failures recover, refresh failure keeps stale data, and catalog has retry (8.0s)
+  ok 14 browser-tests\overview-reports.spec.js:59:1 › restricted UI hides sources, export and navigation, retaining unavailable local configuration (7.8s)
+  ok 15 browser-tests\overview-reports.spec.js:65:1 › two-level groups show separate columns, drill either dimension and return the original query (3.9s)
+[WebServer] 22:11:58 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 22:11:58 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+  ok 16 browser-tests\overview-reports.spec.js:69:1 › cross-group result opens paginated raw detail and links to the original order (6.3s)
+[WebServer] 22:12:03 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 22:12:03 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 22:12:05 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 22:12:05 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 22:12:07 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+[WebServer] 22:12:08 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+[WebServer]   at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+[WebServer]   at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+[WebServer]   at <Transition name="detail-drawer" appear="" > 
+[WebServer]   at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+[WebServer]   at <RouterView key="/orders" > 
+[WebServer]   at <App>
+
+  16 passed (1.7m)

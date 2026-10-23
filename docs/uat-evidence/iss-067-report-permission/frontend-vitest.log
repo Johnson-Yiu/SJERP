@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 C:/Users/Johnson/.codex/worktrees/iss-067-report-permission/森爵照明管理系统/frontend
+
+
+ Test Files  3 passed (3)
+      Tests  22 passed (22)
+   Start at  22:08:30
+   Duration  6.54s (transform 1.32s, setup 1.67s, import 1.84s, tests 2.29s, environment 8.32s)
+

@@ -340,3 +340,13 @@ class ReportingDimensionPermissionTests(TestCase):
             "group_by": "sku", "group_value": "1",
         })
         self.assertEqual(response.status_code, 403, response.data)
+
+    def test_old_sales_report_url_is_rejected_when_orders_view_is_revoked(self):
+        RolePermission.objects.filter(role=self.roles["self"], module="orders").update(can_view=False)
+        response = self.client.get('/api/reports/data/', {
+            "source": "sales", "group_by": "customer", "date_field": "order_date",
+            "date_from": "2026-10-01", "date_to": "2026-10-31",
+        })
+        self.assertEqual(response.status_code, 403, response.data)
+        self.assertEqual(response.data["detail"], "你没有权限执行此财务操作。")
+        self.assertNotIn("rows", response.data)

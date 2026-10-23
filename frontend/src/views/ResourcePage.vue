@@ -47,11 +47,12 @@ const isSupplierPage = computed(() => props.config.endpoint === 'suppliers')
 const isContactPage = computed(() => props.config.endpoint === 'contacts')
 const isFollowUpPage = computed(() => props.config.endpoint === 'follow-ups')
 const isCrmPage = computed(() => isContactPage.value || isFollowUpPage.value)
-const crmFilterOptions = reactive({ customers: [], methods: [] })
+const crmFilterOptions = reactive({ customers: [], methods: [], owners: [] })
 const crmFilterError = ref('')
 const crmFilter = computed(() => ({
   search: typeof route.query.search === 'string' ? route.query.search : '',
   customer: typeof route.query.customer === 'string' ? route.query.customer : '',
+  owner: typeof route.query.owner === 'string' ? route.query.owner : '',
   primary: typeof route.query.primary === 'string' ? route.query.primary : '',
   type: typeof route.query.type === 'string' ? route.query.type : '',
   from: typeof route.query.from === 'string' ? route.query.from : '',
@@ -69,24 +70,38 @@ const listColumns = computed(() => isCertificatePage.value ? [['name','证书与
       ? [['follow_up_context','客户与联系人'],['followed_at','跟进时间','datetime'],['subject','主题与方式'],['follow_up_content','沟通与回复'],['follow_up_next','下一步安排']]
       : props.config.columns)
 const isCustomerPage = computed(() => props.config.endpoint === 'customers')
+const customerFilterOptions = reactive({ owners: [], countries: [] })
+const customerFilterError = ref('')
+const customerStatusOptions = [
+  { value: 'lead', label: '线索' },
+  { value: 'contact', label: '已联系' },
+  { value: 'opportunity', label: '商机' },
+  { value: 'customer', label: '正式客户' },
+  { value: 'company', label: '返单客户' },
+]
+const customerFilter = computed(() => ({
+  owner: typeof route.query.owner_profile === 'string' ? route.query.owner_profile : '',
+  country: typeof route.query.country === 'string' ? route.query.country : '',
+  status: typeof route.query.status === 'string' ? route.query.status : '',
+}))
 const isCoreListPage = computed(() => isCustomerPage.value || isMovementPage.value || isSupplierPage.value)
 const primaryAction = computed(() => isCertificatePage.value ? '新建产品证书' : isParameterPage.value ? '新建产品参数' : isCustomerPage.value ? '新建客户' : isMovementPage.value ? '新建库存调整' : isSupplierPage.value ? '新建供应商' : isContactPage.value ? '新建联系人' : isFollowUpPage.value ? '新建跟进记录' : '新建记录')
 const listNoun = computed(() => isCertificatePage.value ? '产品证书' : isParameterPage.value ? '产品参数' : isCustomerPage.value ? '客户' : isSupplierPage.value ? '供应商' : isContactPage.value ? '联系人' : isFollowUpPage.value ? '跟进记录' : '库存流水')
-const hasListFilters = computed(() => Boolean(query.value || ((isParameterPage.value || isCertificatePage.value) && route.query.product) || (isCertificatePage.value && route.query.expiry) || (isSupplierPage.value && (supplierFilter.value.category || supplierFilter.value.terms)) || (isMovementPage.value && [movementFilters.value.type, movementFilters.value.direction, movementFilters.value.source, route.query.sku].some(Boolean)) || (isContactPage.value && [crmFilter.value.customer, crmFilter.value.primary].some(Boolean)) || (isFollowUpPage.value && [crmFilter.value.customer, crmFilter.value.type, crmFilter.value.from, crmFilter.value.to, route.query.due].some(Boolean))))
+const hasListFilters = computed(() => Boolean(query.value || (isCustomerPage.value && [customerFilter.value.owner, customerFilter.value.country, customerFilter.value.status].some(Boolean)) || ((isParameterPage.value || isCertificatePage.value) && route.query.product) || (isCertificatePage.value && route.query.expiry) || (isSupplierPage.value && (supplierFilter.value.category || supplierFilter.value.terms)) || (isMovementPage.value && [movementFilters.value.type, movementFilters.value.direction, movementFilters.value.source, route.query.sku].some(Boolean)) || (isContactPage.value && [crmFilter.value.customer, crmFilter.value.primary].some(Boolean)) || (isFollowUpPage.value && [crmFilter.value.customer, crmFilter.value.owner, crmFilter.value.type, crmFilter.value.from, crmFilter.value.to, route.query.due].some(Boolean))))
 const isMovementPage = computed(() => props.config.endpoint === 'inventory-movements')
 const movementSkus = ref([])
 const movementFilters = computed(() => ledgerFilters(route.query))
 const visibleRows = computed(() => isMovementPage.value ? filteredMovements(rows.value, route.query) : isSupplierPage.value ? supplierRows(rows.value, route.query, supplierCategories.value) : isContactPage.value ? contactRows(rows.value, crmFilter.value) : isFollowUpPage.value ? followUpRows(rows.value, crmFilter.value) : isCertificatePage.value ? [...rows.value].sort((a,b)=>route.query.sort==='name'?String(a.name).localeCompare(String(b.name),'zh-CN'):String(a.expires_on||'9999').localeCompare(String(b.expires_on||'9999')) || Number(a.id)-Number(b.id)) : rows.value)
 const ledgerPage = computed(() => inventoryPage(route.query.page, visibleRows.value.length))
-const isCrmListPage = computed(() => isCrmPage.value)
-const displayRows = computed(() => isMovementPage.value || isSupplierPage.value || isCrmListPage.value || isCertificatePage.value ? visibleRows.value.slice((ledgerPage.value - 1) * 25, ledgerPage.value * 25) : visibleRows.value)
+const isPaginatedListPage = computed(() => isCustomerPage.value || isCrmPage.value)
+const displayRows = computed(() => isMovementPage.value || isSupplierPage.value || isPaginatedListPage.value || isCertificatePage.value ? visibleRows.value.slice((ledgerPage.value - 1) * 25, ledgerPage.value * 25) : visibleRows.value)
 const reversing = ref(false)
 let ledgerUpdates = Promise.resolve(), ledgerRequest = 0
 let crmRequest = 0
 function updateLedgerQuery(patch, replace = false) {
   ledgerUpdates = ledgerUpdates.catch(() => {}).then(() => {
     const next = { ...route.query, ...patch }
-    if (['search', 'type', 'direction', 'source', 'supplyCategory', 'termsMode'].some(key => key in patch)) delete next.page
+    if (['search', 'owner_profile', 'country', 'status', 'type', 'direction', 'source', 'supplyCategory', 'termsMode'].some(key => key in patch)) delete next.page
     Object.keys(next).forEach(key => { if (next[key] === undefined || next[key] === '') delete next[key] })
     return router[replace ? 'replace' : 'push']({ path: route.path, query: next, hash: route.hash })
   })
@@ -95,7 +110,7 @@ function updateLedgerQuery(patch, replace = false) {
 function resetLedgerFilters() { clearTimeout(searchTimer); query.value = ''; return updateLedgerQuery({ search:undefined,type:undefined,direction:undefined,source:undefined }) }
 function updateCrmQuery(patch, replace = false) {
   const next = { ...route.query, ...patch }
-  if (['search', 'customer', 'primary', 'type', 'from', 'to', 'due', 'sort'].some(key => key in patch)) delete next.page
+  if (['search', 'customer', 'owner', 'primary', 'type', 'from', 'to', 'due', 'sort'].some(key => key in patch)) delete next.page
   Object.keys(next).forEach(key => { if (next[key] === undefined || next[key] === '') delete next[key] })
   return router[replace ? 'replace' : 'push']({ path: route.path, query: next, hash: route.hash })
 }
@@ -109,12 +124,26 @@ async function loadCrmFilterOptions() {
   const tasks = []
   if (can('customers', 'view')) tasks.push(listAll('/customers/').then(value => { crmFilterOptions.customers = value }))
   if (isFollowUpPage.value) tasks.push(listAll('/follow-ups/methods/').then(value => { crmFilterOptions.methods = value }))
+  if (isFollowUpPage.value) tasks.push(listAll('/follow-ups/owner-options/').then(value => { crmFilterOptions.owners = value }))
   const results = await Promise.allSettled(tasks)
   const failed = results.find(result => result.status === 'rejected')
   if (failed) crmFilterError.value = `筛选选项加载失败：${apiErrorMessage(failed.reason)}`
 }
 function setCrmFilter(key, value) { void updateCrmQuery({ [key]: value || undefined }) }
 function clearDueFollowUpFilter() { void updateCrmQuery({ due: undefined }) }
+async function loadCustomerFilterOptions() {
+  if (!isCustomerPage.value) return
+  customerFilterError.value = ''
+  const results = await Promise.allSettled([
+    listAll('/customers/owner-options/'),
+    listAll('/customers/country-options/'),
+  ])
+  if (results[0].status === 'fulfilled') customerFilterOptions.owners = results[0].value
+  if (results[1].status === 'fulfilled') customerFilterOptions.countries = results[1].value
+  const failed = results.find(result => result.status === 'rejected')
+  if (failed) customerFilterError.value = `筛选选项加载失败：${apiErrorMessage(failed.reason)}`
+}
+function setCustomerFilter(key, value) { void updateLedgerQuery({ [key]: value || undefined }) }
 const rows = ref([]), loading = ref(true), hasLoaded = ref(false), loadError = ref(''), allRecordsExist = ref(false), saving = ref(false), query = ref('')
 const modalOpen = ref(false), detailId = ref(null), editingId = ref(null)
 const detailRefresh = ref(0), keepDetailOpen = ref(false)
@@ -261,7 +290,15 @@ async function load() {
     const request = ++crmRequest
     const params = isContactPage.value
       ? { ...(route.query.customer ? { customer: route.query.customer } : {}), search: typeof route.query.search === 'string' ? route.query.search : '' }
-      : { ...(route.query.customer ? { customer: route.query.customer } : {}), ...(route.query.due === 'true' ? { due: 'true' } : {}), search: typeof route.query.search === 'string' ? route.query.search : '' }
+      : {
+        ...(route.query.customer ? { customer: route.query.customer } : {}),
+        ...(route.query.owner ? { owner: route.query.owner } : {}),
+        ...(route.query.type ? { type: route.query.type } : {}),
+        ...(route.query.from ? { from: route.query.from } : {}),
+        ...(route.query.to ? { to: route.query.to } : {}),
+        ...(route.query.due === 'true' ? { due: 'true' } : {}),
+        search: typeof route.query.search === 'string' ? route.query.search : '',
+      }
     try {
       const nextRows = await listAll(`/${props.config.endpoint}/`, { params })
       if (request !== crmRequest) return
@@ -320,10 +357,10 @@ function clearListFilters() {
   if (isParameterPage.value || isCertificatePage.value) return updateLedgerQuery({product:undefined,search:undefined,expiry:undefined,sort:undefined,page:undefined})
   if (isSupplierPage.value) { clearTimeout(searchTimer); return updateLedgerQuery({ search:undefined,supplyCategory:undefined,termsMode:undefined }) }
   if (isMovementPage.value) return resetLedgerFilters()
-  if (isCustomerPage.value) return updateLedgerQuery({ search: undefined }, true)
+  if (isCustomerPage.value) return updateLedgerQuery({ search: undefined, owner_profile: undefined, country: undefined, status: undefined, page: undefined }, true)
   if (isCrmPage.value) {
     clearTimeout(searchTimer)
-    return updateCrmQuery({ search:undefined, customer:undefined, primary:undefined, type:undefined, from:undefined, to:undefined, due:undefined, sort:undefined, page:undefined }, true)
+    return updateCrmQuery({ search:undefined, customer:undefined, owner:undefined, primary:undefined, type:undefined, from:undefined, to:undefined, due:undefined, sort:undefined, page:undefined }, true)
   }
   return load()
 }
@@ -724,14 +761,14 @@ function routeCreatePrefillSignature() {
   return JSON.stringify(fields.map(name => [name, route.query[name] ?? null]))
 }
 
-watch(() => isCertificatePage.value ? JSON.stringify([route.query.search||'',route.query.product||'',route.query.expiry||'']) : isMovementPage.value || isSupplierPage.value ? JSON.stringify(ledgerDataQuery()) : isCrmPage.value ? JSON.stringify([route.query.customer || '', route.query.due || '', route.query.search || '']) : routeDataQuerySignature(route.query), load)
+watch(() => isCertificatePage.value ? JSON.stringify([route.query.search||'',route.query.product||'',route.query.expiry||'']) : isMovementPage.value || isSupplierPage.value ? JSON.stringify(ledgerDataQuery()) : isCrmPage.value ? JSON.stringify([route.query.customer || '', route.query.owner || '', route.query.type || '', route.query.from || '', route.query.to || '', route.query.due || '', route.query.search || '']) : routeDataQuerySignature(route.query), load)
 watch([() => route.query.create, () => route.query.edit, routeCreatePrefillSignature], (current, previous) => {
   const prefillOnlyChanged = previous && current[0] === previous[0] && current[1] === previous[1]
   if (prefillOnlyChanged && route.query.create !== '1') return
   void syncModalFromRoute()
 }, { immediate: true })
 watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null }, { immediate: true })
-onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus(); if (isSupplierPage.value && can('categories','view')) void loadSupplierCategories(); if (isCrmPage.value) void loadCrmFilterOptions(); if ((isParameterPage.value || isCertificatePage.value) && can('products','view')) void loadParameterProducts() })
+onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus(); if (isSupplierPage.value && can('categories','view')) void loadSupplierCategories(); if (isCustomerPage.value) void loadCustomerFilterOptions(); if (isCrmPage.value) void loadCrmFilterOptions(); if ((isParameterPage.value || isCertificatePage.value) && can('products','view')) void loadParameterProducts() })
 </script>
 
 <template>
@@ -743,16 +780,19 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
     <div v-if="certificateFilterLabel" class="follow-up-due-context" aria-label="当前证书筛选"><span>当前筛选：<strong>{{ certificateFilterLabel }}</strong></span><button type="button" @click="setCertificateFilter('')">清除筛选</button></div>
     <div v-if="hasCurrentDueFollowUpContext" class="follow-up-due-context" aria-label="当前跟进筛选"><span>当前筛选：<strong>今日及逾期待跟进</strong></span><button type="button" @click="clearFollowUpDueFilter">清除待跟进筛选</button></div>
     <div v-if="isCertificatePage" class="certificate-controls"><label v-if="can('products','view')">所属产品<select aria-label="按产品筛选证书" :value="route.query.product || ''" @change="updateLedgerQuery({product:$event.target.value||undefined,page:undefined})"><option value="">全部产品</option><option v-for="p in parameterProducts" :key="p.id" :value="String(p.id)">{{ p.code }} · {{ p.name }}</option></select></label><label>排序<select aria-label="证书排序" :value="route.query.sort || 'expiry'" @change="updateLedgerQuery({sort:$event.target.value,page:undefined})"><option value="expiry">到期日期优先</option><option value="name">证书名称</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><p v-if="isCertificatePage" class="field-help">到期状态按系统日期和有效期判断；未填有效期不代表永久有效。文件由现有链接提供，不在此上传。</p><p v-if="isCertificatePage && parameterOptionError" role="alert" class="option-load-error">产品选项加载失败：{{ parameterOptionError }} <button @click="loadParameterProducts">重试</button></p><div v-if="isParameterPage" class="parameter-filter-bar"><label v-if="can('products','view')">所属产品<select aria-label="按产品筛选参数" :value="route.query.product || ''" @change="updateLedgerQuery({product:$event.target.value || undefined})"><option value="">全部产品</option><option v-for="product in parameterProducts" :key="product.id" :value="String(product.id)">{{ product.code }} · {{ product.name }}</option></select></label><button class="btn btn-secondary" @click="updateLedgerQuery({product:undefined,search:undefined}); query = ''">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button><button v-if="route.query.product && can('products','view')" class="btn btn-secondary" @click="router.push({path:'/products',query:{detail:route.query.product}})">查看所属产品</button></div><p v-if="isParameterPage" class="field-help">产品参数用于记录通用规格。分类属性用于参数模板，SKU 参数用于具体规格与身份；在此保存不会修改 SKU 参数。</p><p v-if="isParameterPage && parameterOptionError" role="alert" class="option-load-error">{{ parameterOptionError }} <button @click="loadParameterProducts">重试</button></p>
+    <div v-if="isCustomerPage" class="customer-filter-bar" aria-label="客户筛选"><label class="customer-search search-box">搜索<input v-model="query" aria-label="搜索客户" placeholder="名称、编号、国家/地区或负责人" @input="delayedSearch" /></label><label>负责人<select aria-label="按负责人筛选客户" :value="customerFilter.owner" @change="setCustomerFilter('owner_profile', $event.target.value)"><option value="">全部负责人</option><option v-for="owner in customerFilterOptions.owners" :key="owner.id" :value="String(owner.id)">{{ owner.label }}</option></select></label><label>国家/地区<select aria-label="按国家/地区筛选客户" :value="customerFilter.country" @change="setCustomerFilter('country', $event.target.value)"><option value="">全部国家/地区</option><option v-for="country in customerFilterOptions.countries" :key="country.value" :value="country.value">{{ country.label }}</option></select></label><label>状态<select aria-label="按客户状态筛选" :value="customerFilter.status" @change="setCustomerFilter('status', $event.target.value)"><option value="">全部状态</option><option v-for="status in customerStatusOptions" :key="status.value" :value="status.value">{{ status.label }}</option></select></label><button type="button" class="btn btn-secondary" @click="clearListFilters">重置</button><button type="button" class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div>
+    <div v-if="isCustomerPage && customerFilterError" class="option-load-error" role="alert">{{ customerFilterError }} <button type="button" @click="loadCustomerFilterOptions">重新加载筛选选项</button></div>
     <div v-if="isCrmPage" class="crm-filter-bar" :class="{ 'follow-up-filter-bar': isFollowUpPage }" :aria-label="isContactPage ? '联系人筛选' : '跟进记录筛选'">
       <label class="crm-search search-box">搜索<input v-model="query" :aria-label="isContactPage ? '搜索联系人' : '搜索跟进记录'" :placeholder="isContactPage ? '姓名、客户、职位或联系方式' : '客户、主题、跟进人或内容'" @input="delayedSearch" /></label>
       <label v-if="crmFilterOptions.customers.length">所属客户<select aria-label="按客户筛选" :value="crmFilter.customer" @change="setCrmFilter('customer', $event.target.value)"><option value="">全部客户</option><option v-for="customer in crmFilterOptions.customers" :key="customer.id" :value="String(customer.id)">{{ customer.name }}</option></select></label>
       <label v-if="isContactPage">联系人类型<select aria-label="按联系人类型筛选" :value="crmFilter.primary" @change="setCrmFilter('primary', $event.target.value)"><option value="">全部联系人</option><option value="primary">主联系人</option><option value="other">其他联系人</option></select></label>
       <template v-if="isFollowUpPage">
+        <label v-if="crmFilterOptions.owners.length">跟进人<select aria-label="按跟进人筛选" :value="crmFilter.owner" @change="setCrmFilter('owner', $event.target.value)"><option value="">全部跟进人</option><option v-for="owner in crmFilterOptions.owners" :key="owner.value" :value="owner.value">{{ owner.label }}</option></select></label>
         <label>跟进方式<select aria-label="按跟进方式筛选" :value="crmFilter.type" @change="setCrmFilter('type', $event.target.value)"><option value="">全部方式</option><option v-for="method in crmFilterOptions.methods" :key="method.value" :value="method.value">{{ method.label }}</option></select></label>
         <label>跟进时间从<input aria-label="跟进开始日期" type="date" :value="crmFilter.from" @change="setCrmFilter('from', $event.target.value)" /></label>
         <label>至<input aria-label="跟进结束日期" type="date" :value="crmFilter.to" @change="setCrmFilter('to', $event.target.value)" /></label>
         <label>排序<select aria-label="跟进排序" :value="crmFilter.sort" @change="setCrmFilter('sort', $event.target.value)"><option value="newest">时间从近到远</option><option value="oldest">时间从远到近</option></select></label>
-        <button type="button" class="btn" :class="route.query.due === 'true' ? 'btn-primary' : 'btn-secondary'" :aria-pressed="route.query.due === 'true'" @click="setCrmFilter('due', route.query.due === 'true' ? '' : 'true')">{{ route.query.due === 'true' ? '显示全部记录' : '待跟进' }}</button>
+        <button type="button" class="btn" title="按跟进状态筛选" :class="route.query.due === 'true' ? 'btn-primary' : 'btn-secondary'" :aria-pressed="route.query.due === 'true'" @click="setCrmFilter('due', route.query.due === 'true' ? '' : 'true')">{{ route.query.due === 'true' ? '显示全部记录' : '待跟进' }}</button>
       </template>
       <button type="button" class="btn btn-secondary" @click="clearListFilters">重置</button>
       <button type="button" class="btn btn-secondary" :disabled="loading" @click="load">刷新</button>
@@ -767,7 +807,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
       <button class="btn btn-secondary" @click="resetLedgerFilters">重置</button>
     </div>
     <p v-if="isMovementPage" class="ledger-help">数量按 SKU 基础单位显示；自动流水不可手工修改。</p>
-    <div v-else-if="isSupplierPage" class="supplier-filter-bar" aria-label="供应商筛选"><label>搜索<input v-model="query" aria-label="搜索供应商" placeholder="名称、代码、联系人、产品…" @input="delayedSearch" /></label><label v-if="can('categories','view')">可供分类<select :value="supplierFilter.category" aria-label="按可供分类筛选" @change="updateLedgerQuery({supplyCategory:$event.target.value || undefined})"><option value="">全部分类</option><option v-for="category in supplierCategories" :key="category.id" :value="String(category.id)">{{ category.name }}</option></select></label><label>付款规则<select :value="supplierFilter.terms" aria-label="按付款规则筛选" @change="updateLedgerQuery({termsMode:$event.target.value || undefined})"><option value="">全部规则</option><option value="default">系统默认</option><option value="custom">自定义规则</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><div v-if="isSupplierPage && supplierCategoryError" role="alert" class="option-load-error">分类加载失败：{{ supplierCategoryError }} <button @click="loadSupplierCategories">重新加载分类</button></div><p v-if="isSupplierPage" class="supplier-rule-note">付款备注仅供沟通参考；采购付款计划使用“系统执行付款规则”。</p><div v-if="!isMovementPage && !isSupplierPage && !isCrmPage" class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" :aria-label="isCertificatePage ? '搜索产品证书' : isParameterPage ? '搜索产品参数' : undefined" :placeholder="isParameterPage ? '参数名称、值或分组' : '搜索当前列表...'" @input="delayedSearch" /></div></div>
+    <div v-else-if="isSupplierPage" class="supplier-filter-bar" aria-label="供应商筛选"><label>搜索<input v-model="query" aria-label="搜索供应商" placeholder="名称、代码、联系人、产品…" @input="delayedSearch" /></label><label v-if="can('categories','view')">可供分类<select :value="supplierFilter.category" aria-label="按可供分类筛选" @change="updateLedgerQuery({supplyCategory:$event.target.value || undefined})"><option value="">全部分类</option><option v-for="category in supplierCategories" :key="category.id" :value="String(category.id)">{{ category.name }}</option></select></label><label>付款规则<select :value="supplierFilter.terms" aria-label="按付款规则筛选" @change="updateLedgerQuery({termsMode:$event.target.value || undefined})"><option value="">全部规则</option><option value="default">系统默认</option><option value="custom">自定义规则</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><div v-if="isSupplierPage && supplierCategoryError" role="alert" class="option-load-error">分类加载失败：{{ supplierCategoryError }} <button @click="loadSupplierCategories">重新加载分类</button></div><p v-if="isSupplierPage" class="supplier-rule-note">付款备注仅供沟通参考；采购付款计划使用“系统执行付款规则”。</p><div v-if="!isMovementPage && !isSupplierPage && !isCrmPage && !isCustomerPage" class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" :aria-label="isCertificatePage ? '搜索产品证书' : isParameterPage ? '搜索产品参数' : undefined" :placeholder="isParameterPage ? '参数名称、值或分组' : '搜索当前列表...'" @input="delayedSearch" /></div></div>
     <div class="panel">
       <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
       <ListEmptyState v-if="hasLoaded && !visibleRows.length" :entity="listNoun || config.title.replace('管理','')" :filtered="filteredListEmpty" @clear="clearListFilters"><template #action><p v-if="can(accessModule, 'create')">点击“{{ primaryAction }}”开始录入。</p></template></ListEmptyState>
@@ -874,7 +914,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
     <Transition name="detail-drawer" appear>
       <EntityDetailModal v-if="detailId" :entity="config.endpoint" :id="detailId" :refresh-key="detailRefresh" @close="closeDetail" @edit="editFromDetail" @changed="handleDetailChanged" />
     </Transition>
-    <InventoryPagination v-if="(isMovementPage || isSupplierPage || isCrmListPage || isCertificatePage) && hasLoaded" :label="isCertificatePage ? '证书列表分页' : isContactPage ? '联系人列表分页' : isFollowUpPage ? '跟进记录分页' : isSupplierPage ? '供应商列表分页' : '库存列表分页'" :total="visibleRows.length" :page="ledgerPage" @change="page => (isCrmListPage ? updateCrmQuery({ page: page > 1 ? String(page) : undefined }) : updateLedgerQuery({ page: page > 1 ? String(page) : undefined }))" />
+    <InventoryPagination v-if="(isMovementPage || isSupplierPage || isPaginatedListPage || isCertificatePage) && hasLoaded" :label="isCertificatePage ? '证书列表分页' : isContactPage ? '联系人列表分页' : isFollowUpPage ? '跟进记录分页' : isCustomerPage ? '客户列表分页' : isSupplierPage ? '供应商列表分页' : '库存列表分页'" :total="visibleRows.length" :page="ledgerPage" @change="page => (isCrmPage ? updateCrmQuery({ page: page > 1 ? String(page) : undefined }) : updateLedgerQuery({ page: page > 1 ? String(page) : undefined }))" />
     <div v-if="toast.show" :role="toast.error ? 'alert' : 'status'" class="toast" :class="{ error: toast.error }">{{ toast.message }}</div>
   </div>
 </template>
@@ -937,11 +977,11 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 @media(max-width:520px){.contact-create-head,.contact-card-head{align-items:flex-start}.contact-card-head{flex-direction:column}.contact-fields{grid-template-columns:1fr}.contact-card-actions{width:100%;justify-content:space-between}}
 .supply-category-options{display:flex;flex-wrap:wrap;gap:10px;max-height:190px;overflow:auto;padding:12px;border:1px solid #dce7e1;border-radius:8px}.supply-category-options label{display:flex;align-items:center;gap:6px}.supply-category-options small{flex-basis:100%;color:#71857b}
 .follow-up-due-context{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding:9px 12px;border:1px solid #c8d8ed;border-radius:9px;background:#f4f8fd;color:#42546b;font-size:13px}.follow-up-due-context strong{color:#173f70}.follow-up-due-context button{padding:2px 0;border:0;background:transparent;color:#245b91;font:inherit;cursor:pointer}.follow-up-due-context button:hover{text-decoration:underline}
-.crm-filter-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 12px;align-items:end;margin:18px 0 12px}.crm-filter-bar label{display:grid;gap:6px;min-width:0;color:#71817b;font-size:var(--text-caption)}.crm-filter-bar .crm-search{grid-column:span 2}.crm-filter-bar input,.crm-filter-bar select{width:100%;min-width:0;min-height:42px;padding:9px 11px;border:1px solid #d7e3dd;border-radius:8px;background:#fff;color:#31594c;font:inherit;font-size:var(--text-body)}.crm-filter-bar input:focus,.crm-filter-bar select:focus{outline:2px solid #b8d8cb;outline-offset:1px}.crm-filter-bar>.btn{min-height:42px;white-space:nowrap}.follow-up-filter-bar{grid-template-columns:repeat(6,minmax(0,1fr))}.crm-secondary{display:block;margin-top:5px;color:#7b8b84;font-size:var(--text-caption);font-weight:400;line-height:1.45;overflow-wrap:anywhere}.crm-customer-link{padding:0;border:0;background:transparent;color:#28634f;font:inherit;font-weight:600;text-align:left;cursor:pointer}.crm-customer-link:hover{text-decoration:underline}.crm-primary-badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;background:#eaf5ef;color:#28634f;font-size:var(--text-secondary);font-weight:600;white-space:nowrap}.crm-primary-badge.inactive{background:#f1f3f2;color:#6e7a75}.crm-duplicate-hint{color:#8b6428;line-height:1.55}.contact-list-table{min-width:980px;table-layout:fixed}.contact-list-table th:nth-child(1){width:220px}.contact-list-table th:nth-child(2){width:210px}.contact-list-table th:nth-child(3){width:330px}.contact-list-table th:nth-child(4){width:150px}.contact-list-table th:last-child{width:110px}.contact-list-table td{white-space:normal;overflow-wrap:anywhere;vertical-align:top}.contact-list-table td:nth-child(3) a{color:#28634f;text-decoration:none}.contact-list-table td:nth-child(3) a:hover{text-decoration:underline}.follow-up-list-table{min-width:1320px;table-layout:fixed}.follow-up-list-table th:nth-child(1){width:210px}.follow-up-list-table th:nth-child(2){width:155px}.follow-up-list-table th:nth-child(3){width:180px}.follow-up-list-table th:nth-child(4){width:390px}.follow-up-list-table th:nth-child(5){width:290px}.follow-up-list-table th:last-child{width:110px}.follow-up-list-table td{white-space:normal;overflow-wrap:anywhere;vertical-align:top;line-height:1.5}.follow-up-list-table td:nth-child(2){white-space:nowrap}.follow-up-list-table th:last-child,.follow-up-list-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 10px #173d3210}.follow-up-list-table td:last-child{z-index:2}.follow-up-list-table th:last-child{z-index:3}.crm-editor{width:min(1080px,calc(100vw - 40px));max-height:min(92vh,900px)}.crm-editor .form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}.crm-editor .supplier-group-title{margin-top:18px}.crm-editor .modal-body{padding-bottom:22px}.crm-editor .modal-foot{position:sticky;bottom:0;background:#fff;z-index:1}.crm-editor .field{min-width:0}.crm-editor .field input,.crm-editor .field select,.crm-editor textarea{min-width:0;max-width:100%}.crm-editor .contact-list-table td.primary-cell{white-space:normal}
+.customer-filter-bar{display:grid;grid-template-columns:minmax(240px,2fr) repeat(3,minmax(140px,1fr)) auto auto;gap:10px 12px;align-items:end;margin:18px 0 12px}.customer-filter-bar label{display:grid;gap:6px;min-width:0;color:#71817b;font-size:var(--text-caption)}.customer-filter-bar input,.customer-filter-bar select{width:100%;min-width:0;min-height:42px;padding:9px 11px;border:1px solid #d7e3dd;border-radius:8px;background:#fff;color:#31594c;font:inherit;font-size:var(--text-body)}.customer-filter-bar input:focus,.customer-filter-bar select:focus{outline:2px solid #b8d8cb;outline-offset:1px}.customer-filter-bar>.btn{min-height:42px;white-space:nowrap}.crm-filter-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 12px;align-items:end;margin:18px 0 12px}.crm-filter-bar label{display:grid;gap:6px;min-width:0;color:#71817b;font-size:var(--text-caption)}.crm-filter-bar .crm-search{grid-column:span 2}.crm-filter-bar input,.crm-filter-bar select{width:100%;min-width:0;min-height:42px;padding:9px 11px;border:1px solid #d7e3dd;border-radius:8px;background:#fff;color:#31594c;font:inherit;font-size:var(--text-body)}.crm-filter-bar input:focus,.crm-filter-bar select:focus{outline:2px solid #b8d8cb;outline-offset:1px}.crm-filter-bar>.btn{min-height:42px;white-space:nowrap}.follow-up-filter-bar{grid-template-columns:repeat(6,minmax(0,1fr))}.crm-secondary{display:block;margin-top:5px;color:#7b8b84;font-size:var(--text-caption);font-weight:400;line-height:1.45;overflow-wrap:anywhere}.crm-customer-link{padding:0;border:0;background:transparent;color:#28634f;font:inherit;font-weight:600;text-align:left;cursor:pointer}.crm-customer-link:hover{text-decoration:underline}.crm-primary-badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;background:#eaf5ef;color:#28634f;font-size:var(--text-secondary);font-weight:600;white-space:nowrap}.crm-primary-badge.inactive{background:#f1f3f2;color:#6e7a75}.crm-duplicate-hint{color:#8b6428;line-height:1.55}.contact-list-table{min-width:980px;table-layout:fixed}.contact-list-table th:nth-child(1){width:220px}.contact-list-table th:nth-child(2){width:210px}.contact-list-table th:nth-child(3){width:330px}.contact-list-table th:nth-child(4){width:150px}.contact-list-table th:last-child{width:110px}.contact-list-table td{white-space:normal;overflow-wrap:anywhere;vertical-align:top}.contact-list-table td:nth-child(3) a{color:#28634f;text-decoration:none}.contact-list-table td:nth-child(3) a:hover{text-decoration:underline}.follow-up-list-table{min-width:1320px;table-layout:fixed}.follow-up-list-table th:nth-child(1){width:210px}.follow-up-list-table th:nth-child(2){width:155px}.follow-up-list-table th:nth-child(3){width:180px}.follow-up-list-table th:nth-child(4){width:390px}.follow-up-list-table th:nth-child(5){width:290px}.follow-up-list-table th:last-child{width:110px}.follow-up-list-table td{white-space:normal;overflow-wrap:anywhere;vertical-align:top;line-height:1.5}.follow-up-list-table td:nth-child(2){white-space:nowrap}.follow-up-list-table th:last-child,.follow-up-list-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 10px #173d3210}.follow-up-list-table td:last-child{z-index:2}.follow-up-list-table th:last-child{z-index:3}.crm-editor{width:min(1080px,calc(100vw - 40px));max-height:min(92vh,900px)}.crm-editor .form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}.crm-editor .supplier-group-title{margin-top:18px}.crm-editor .modal-body{padding-bottom:22px}.crm-editor .modal-foot{position:sticky;bottom:0;background:#fff;z-index:1}.crm-editor .field{min-width:0}.crm-editor .field input,.crm-editor .field select,.crm-editor textarea{min-width:0;max-width:100%}.crm-editor .contact-list-table td.primary-cell{white-space:normal}
 .contact-list-table th:last-child,.contact-list-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 10px #173d3210}.contact-list-table td:last-child{z-index:2}.contact-list-table th:last-child{z-index:3}
-@media(max-width:1100px){.follow-up-filter-bar{grid-template-columns:repeat(4,minmax(0,1fr))}.follow-up-filter-bar .crm-search{grid-column:span 2}}
-@media(max-width:760px){.crm-filter-bar,.follow-up-filter-bar{grid-template-columns:repeat(2,minmax(0,1fr))}.crm-filter-bar .crm-search,.follow-up-filter-bar .crm-search{grid-column:1/-1}.crm-editor .form-grid{grid-template-columns:1fr}.follow-up-filter-bar>.btn{justify-self:stretch}}
-@media(max-width:520px){.crm-filter-bar,.follow-up-filter-bar{grid-template-columns:1fr}.crm-filter-bar .crm-search,.follow-up-filter-bar .crm-search{grid-column:auto}.crm-filter-bar>.btn{width:100%}.follow-up-due-context{align-items:flex-start;flex-direction:column}}
+@media(max-width:1100px){.customer-filter-bar{grid-template-columns:repeat(3,minmax(0,1fr))}.customer-filter-bar .customer-search{grid-column:span 2}.follow-up-filter-bar{grid-template-columns:repeat(4,minmax(0,1fr))}.follow-up-filter-bar .crm-search{grid-column:span 2}}
+@media(max-width:760px){.customer-filter-bar,.crm-filter-bar,.follow-up-filter-bar{grid-template-columns:repeat(2,minmax(0,1fr))}.customer-filter-bar .customer-search,.crm-filter-bar .crm-search,.follow-up-filter-bar .crm-search{grid-column:1/-1}.crm-editor .form-grid{grid-template-columns:1fr}.customer-filter-bar>.btn,.follow-up-filter-bar>.btn{justify-self:stretch}}
+@media(max-width:520px){.customer-filter-bar,.crm-filter-bar,.follow-up-filter-bar{grid-template-columns:1fr}.customer-filter-bar .customer-search,.crm-filter-bar .crm-search,.follow-up-filter-bar .crm-search{grid-column:auto}.customer-filter-bar>.btn,.crm-filter-bar>.btn{width:100%}.follow-up-due-context{align-items:flex-start;flex-direction:column}}
 .ledger-filter-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:12px}.ledger-filter-bar label{display:grid;gap:6px;color:#71817b;font-size:var(--text-caption)}.ledger-filter-bar label:first-child{flex:1;min-width:260px}.ledger-filter-bar input,.ledger-filter-bar select{padding:9px 11px;border:1px solid #d7e3dd;border-radius:8px;background:#fff;color:#31594c;font:inherit}.ledger-help{color:#71817b;font-size:12px;line-height:1.6}.ledger-secondary{display:block;color:#82928b;margin-top:4px;font-size:var(--text-caption)}.ledger-source{display:inline-block;padding:4px 8px;border-radius:12px;white-space:nowrap}.ledger-source.automatic{background:#eef3f6;color:#55717c}.ledger-source.manual{background:#eef7f2;color:#2d6a56}.ledger-source.reversal{background:#fff2e8;color:#8a5d2e}
 .inventory-ledger-page .data-table{min-width:1300px}.inventory-ledger-page .data-table th{white-space:nowrap}.inventory-ledger-page .data-table td:nth-child(1),.inventory-ledger-page .data-table td:nth-child(2),.inventory-ledger-page .data-table td:nth-child(4),.inventory-ledger-page .data-table td:nth-child(5){white-space:nowrap}.inventory-ledger-page .data-table td:nth-child(3){min-width:180px}.inventory-ledger-page .data-table td:nth-child(8){min-width:170px}.inventory-ledger-page .data-table th:last-child,.inventory-ledger-page .data-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 8px #143f3308}.inventory-ledger-page .data-table td .tag{white-space:nowrap}
 .parameter-filter-bar{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin:12px 0}.parameter-filter-bar label{display:grid;gap:6px;min-width:0;flex:1 1 300px}.parameter-filter-bar select{width:100%;min-width:0;padding:10px;border:1px solid var(--line);border-radius:8px;background:white}.parameter-list-table{min-width:760px;table-layout:fixed}.parameter-list-table td{white-space:normal;overflow-wrap:anywhere}.parameter-list-table th:first-child{width:230px}.parameter-list-table th:last-child,.parameter-list-table td:last-child{position:sticky;right:0;background:white;width:100px}.parameter-editor{width:min(820px,calc(100vw - 40px))}.parameter-editor .field{min-width:0}.parameter-editor .modal-foot{position:sticky;bottom:0;background:white}

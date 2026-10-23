@@ -546,12 +546,28 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             order_count=Coalesce(Subquery(order_count, output_field=IntegerField()), 0),
             sales_amount=Coalesce(Subquery(sales, output_field=MONEY), Decimal("0"), output_field=MONEY),
         )
-        return scope_customer_queryset(queryset, self.request.user).order_by("-updated_at")
+        queryset = scope_customer_queryset(queryset, self.request.user)
+        for key in ("status", "country", "owner_profile"):
+            value = self.request.query_params.get(key)
+            if value:
+                queryset = queryset.filter(**{key: value})
+        return queryset.order_by("-updated_at")
 
     @action(detail=False, methods=["get"], url_path="owner-options")
     def owner_options(self, request):
         employees = EmployeeProfile.objects.filter(pk__in=allowed_employee_ids(request.user), active=True).select_related("unit")
         return Response([{"id": employee.pk, "display_name": employee.display_name, "unit_name": employee.unit.name, "label": f"{employee.display_name} · {employee.unit.name}"} for employee in employees])
+
+    @action(detail=False, methods=["get"], url_path="country-options")
+    def country_options(self, request):
+        countries = (
+            scope_customer_queryset(Customer.objects.all(), request.user)
+            .exclude(country="")
+            .values_list("country", flat=True)
+            .distinct()
+            .order_by("country")
+        )
+        return Response([{"value": country, "label": country} for country in countries])
 
     @action(detail=False, methods=["get"], url_path="next-code")
     def next_code(self, request):
@@ -642,8 +658,20 @@ class FollowUpViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def methods(self, request):
         builtins = [{"value": value, "label": label} for value, label in FollowUp.TYPE_CHOICES]
         builtin_values = {item["value"] for item in builtins}
-        custom = FollowUp.objects.exclude(type="").values_list("type", flat=True).distinct().order_by("type")
+        visible_follow_ups = scope_customer_related_queryset(FollowUp.objects.all(), request.user)
+        custom = visible_follow_ups.exclude(type="").values_list("type", flat=True).distinct().order_by("type")
         return Response(builtins + [{"value": value, "label": value} for value in custom if value not in builtin_values])
+
+    @action(detail=False, methods=["get"], url_path="owner-options")
+    def owner_options(self, request):
+        owners = (
+            scope_customer_related_queryset(FollowUp.objects.all(), request.user)
+            .exclude(owner="")
+            .values_list("owner", flat=True)
+            .distinct()
+            .order_by("owner")
+        )
+        return Response([{"value": owner, "label": owner} for owner in owners])
 
     def get_queryset(self):
         qs = scope_customer_related_queryset(super().get_queryset(), self.request.user)
@@ -652,6 +680,16 @@ class FollowUpViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             qs = qs.filter(customer_id=self.request.query_params["customer"])
         if self.request.query_params.get("due") == "true":
             qs = current_due_follow_ups(qs, today=timezone.localdate())
+        for key in ("type", "owner"):
+            value = self.request.query_params.get(key)
+            if value:
+                qs = qs.filter(**{key: value})
+        date_from = self.request.query_params.get("from")
+        date_to = self.request.query_params.get("to")
+        if date_from:
+            qs = qs.filter(followed_at__date__gte=date_from)
+        if date_to:
+            qs = qs.filter(followed_at__date__lte=date_to)
         return qs
 
     @action(detail=True, methods=["post"], parser_classes=[MultiPartParser, FormParser], url_path="attachments")

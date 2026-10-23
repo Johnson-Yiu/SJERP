@@ -102,3 +102,20 @@ test('customer ownership uses scoped employee options and sends an explicit clea
   assert.match(organization, /数据范围当前首先用于客户\/CRM\/销售记录/)
 })
 
+test('ISS-049 reuses URL-backed quick filters for customer and follow-up lists', async () => {
+  const page = await readFile(new URL('./ResourcePage.vue', import.meta.url), 'utf8')
+  const view = await readFile(new URL('../../../backend/crm/views.py', import.meta.url), 'utf8')
+
+  for (const label of ['按负责人筛选客户', '按国家/地区筛选客户', '按客户状态筛选']) assert.match(page, new RegExp(label))
+  assert.match(page, /owner_profile: undefined, country: undefined, status: undefined/)
+  assert.match(page, /customers\/country-options\//)
+  assert.match(page, /follow-ups\/owner-options\//)
+  assert.match(page, /aria-label="按跟进人筛选"/)
+  assert.match(page, /title="按跟进状态筛选"/)
+  assert.match(page, /route\.query\.owner \? \{ owner: route\.query\.owner \}/)
+  assert.match(view, /url_path="country-options"/)
+  assert.match(view, /url_path="owner-options"/)
+  assert.match(view, /followed_at__date__gte=date_from/)
+  assert.match(view, /followed_at__date__lte=date_to/)
+})
+

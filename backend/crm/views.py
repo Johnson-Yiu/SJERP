@@ -41,6 +41,12 @@ from .services.finance import allocate_advance, approve_contract_change, reject_
 from .services.fulfillment import bulk_sku_metrics, confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_manual_inventory_movement, reverse_receipt as reverse_receipt_service, reverse_shipment as reverse_shipment_service
 from .services.order_lifecycle import cancel_order, complete_order, confirm_order, start_order_production
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
+from .services.packing_list import (
+    PackingListExportError,
+    XLSX_CONTENT_TYPE,
+    render_packing_list_xlsx,
+    safe_packing_list_filename,
+)
 from .services.purchase_lifecycle import cancel_purchase_order, place_purchase_order
 from .services.procurement import build_procurement_plan, create_purchase_drafts, draft_procurement_quantities
 from .services.sku_plans import apply_category_attribute_reorder, preview_category_attribute_reorder
@@ -1243,6 +1249,26 @@ class ShipmentViewSet(AuditTrailMixin, viewsets.ReadOnlyModelViewSet):
     @staticmethod
     def _require_order_update(user):
         require_finance_permission(user, "orders", "update")
+
+    @action(detail=True, methods=["get"], url_path="export-packing-list")
+    def export_packing_list(self, request, pk=None):
+        require_finance_permission(request.user, "inventory", "export")
+        require_finance_permission(request.user, "orders", "view")
+        require_finance_permission(request.user, "skus", "view")
+        shipment = self.get_object()
+        try:
+            content = render_packing_list_xlsx(
+                shipment,
+                include_hs_code=user_can(request.user, "hs_codes", "view"),
+            )
+        except PackingListExportError as error:
+            return Response(
+                {"detail": str(error), "differences": error.differences},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        response = HttpResponse(content, content_type=XLSX_CONTENT_TYPE)
+        response["Content-Disposition"] = f'attachment; filename="{safe_packing_list_filename(shipment.shipment_no)}"'
+        return response
 
     @action(detail=True, methods=["post"], url_path="reverse")
     def reverse(self, request, pk=None):

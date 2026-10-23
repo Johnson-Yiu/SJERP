@@ -810,6 +810,12 @@ class Order(TimestampedModel):
     STATUS_CHOICES = [("draft", "草稿"), ("confirmed", "已确认"), ("production", "生产中"), ("shipped", "已发货"), ("completed", "已完成"), ("cancelled", "已取消"), ("historical", "历史订单 · 仅用于经营分析")]
     order_no = models.CharField("订单号", max_length=40, unique=True)
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name="orders")
+    customer_name_snapshot = models.CharField("客户名称快照", max_length=200, blank=True)
+    customer_country_snapshot = models.CharField("客户国家/地区快照", max_length=100, blank=True)
+    customer_address_snapshot = models.TextField("客户地址快照", blank=True)
+    customer_contact_name_snapshot = models.CharField("交易联系人快照", max_length=200, blank=True)
+    customer_phone_snapshot = models.CharField("联系人电话快照", max_length=100, blank=True)
+    customer_email_snapshot = models.CharField("联系人邮箱快照", max_length=254, blank=True)
     quote = models.ForeignKey(Quote, on_delete=models.SET_NULL, null=True, blank=True, related_name="orders")
     order_date = models.DateField("订单日期")
     expected_ship_date = models.DateField("预计交期", null=True, blank=True)
@@ -952,6 +958,7 @@ OVERAGE_REASON_CHOICES = [
 class Supplier(TimestampedModel):
     supply_categories = models.ManyToManyField("ProductCategory", blank=True, related_name="suppliers", verbose_name="可供产品分类")
     country = models.CharField("国家/地区", max_length=100, blank=True, default="中国")
+    address = models.TextField("地址", blank=True, default="")
     main_products = models.CharField("主要产品", max_length=300, blank=True)
     name = models.CharField("供应商名称", max_length=200, unique=True)
     code = models.CharField("供应商二字代码", max_length=2, unique=True)
@@ -1032,6 +1039,11 @@ class PurchaseOrder(TimestampedModel):
     ]
     purchase_no = models.CharField("采购单号", max_length=40, unique=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT, related_name="purchase_orders")
+    supplier_name_snapshot = models.CharField("供应商名称快照", max_length=200, blank=True)
+    supplier_address_snapshot = models.TextField("供应商地址快照", blank=True)
+    supplier_contact_name_snapshot = models.CharField("供应商联系人快照", max_length=100, blank=True)
+    supplier_phone_snapshot = models.CharField("供应商电话快照", max_length=50, blank=True)
+    supplier_email_snapshot = models.CharField("供应商邮箱快照", max_length=254, blank=True)
     order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name="purchase_orders", null=True, blank=True)
     order_date = models.DateField("下单日期")
     expected_arrival_date = models.DateField("预计到货日", null=True, blank=True)

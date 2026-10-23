@@ -436,3 +436,9 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 ## ISS-048 当前子任务实施记录（2026-10-23）
 
 在 `codex/iss-048-finance-drill` 基于 `fb859b91f68bb62c539d5439c65b52c06f13a58c` 完成可靠财务概览指标的构成明细、分页/排序、权限范围复用、原始订单/流水链接及银行事件表定位；SQLite 全量、财务/RBAC 定向、前端、真实 Chromium mock API 证据归档于 `docs/uat-evidence/iss-048-finance-drill/`。原 ISS-048 仍保持 `P3 / BLOCKED（延期）`，本轮只记录为 `FIXED_PENDING_REVIEW`，不提前关闭；未定义的会计利润、银行账户余额和未确认凭证不伪造下钻。下一步为独立代码/财务口径/权限/视觉复审，以及集成环境的真实 Django 跨账号浏览器验收。
+
+## ISS-048-FIX-01 最小权限一致性补修（2026-10-23）
+
+独立审查发现财务概览 `payable_count`、`payable_rmb` 只依赖采购查看权限，但下钻接口和前端入口额外要求订单查看权限。本轮基于 `codex/iss-048-finance-drill` / `f2a44dafabdd5cc7b4c5b95abed3865867fd9e7b` 进行了最小修补：应付款下钻与概览统一使用 `purchases.view`，采购成本/订单费用/预计利润以及销售/应收等其他指标权限不变；应付款明细固定走采购单关联，继续使用原有计划数据范围，未扩大跨部门或跨供应商访问。
+
+新增并通过有采购无订单权限、无采购权限反向拒绝和范围一致性测试；前端同步修正应付款入口可见性。证据见 `docs/uat-evidence/iss-048-finance-drill/fix-01/`。ISS-048 继续保持 `P3 / BLOCKED（延期）`，本修补记录为 `FIXED_PENDING_REVIEW`，等待独立验收；未关闭 ISS-048，未修改其他 Issue 状态。

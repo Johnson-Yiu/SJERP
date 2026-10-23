@@ -2159,9 +2159,11 @@ def finance_dashboard_details(request):
     can_view_purchases = user_can(request.user, "purchases", "view")
     if metric in {"sales_rmb", "receivable_count", "receivable_rmb"} and not can_view_orders:
         require_finance_permission(request.user, "orders", "view")
-    if metric in {"purchase_cost_rmb", "order_expense_rmb", "estimated_profit_rmb", "payable_count", "payable_rmb"} and not (can_view_orders and can_view_purchases):
+    if metric in {"purchase_cost_rmb", "order_expense_rmb", "estimated_profit_rmb"} and not (can_view_orders and can_view_purchases):
         require_finance_permission(request.user, "purchases", "view")
         require_finance_permission(request.user, "orders", "view")
+    if metric in {"payable_count", "payable_rmb"} and not can_view_purchases:
+        require_finance_permission(request.user, "purchases", "view")
 
     rows = []
     total_amount = Decimal("0")
@@ -2243,7 +2245,7 @@ def finance_dashboard_details(request):
         for row in plans:
             amount = Decimal("1") if metric.endswith("_count") else _finance_plan_rmb(row)
             total_amount += amount
-            if row.order_id:
+            if direction == "receivable":
                 relation = order_relation(row.order)
                 detail_url = f"/orders?detail={row.order_id}"
             else:
@@ -2251,14 +2253,14 @@ def finance_dashboard_details(request):
                 detail_url = f"/purchase-orders?detail={row.purchase_order_id}"
             rows.append({
                 "id": row.id,
-                "record_label": row.order.order_no if row.order_id else row.purchase_order.purchase_no,
+                "record_label": row.order.order_no if direction == "receivable" else row.purchase_order.purchase_no,
                 "date": row.due_date,
                 "relation_label": relation,
                 "status_label": "待结清",
                 "amount": amount,
                 "amount_note": "当前开放计划的未结金额。" if not metric.endswith("_count") else "一笔开放计划。",
                 "detail_url": detail_url,
-                "detail_label": "查看订单" if row.order_id else "查看采购单",
+                "detail_label": "查看订单" if direction == "receivable" else "查看采购单",
             })
     else:
         direction = "income" if metric == "advance_receipt_rmb" else "expense"

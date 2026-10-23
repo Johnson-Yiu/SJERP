@@ -231,3 +231,9 @@ ISS-122、ISS-123 的独立复审通过结论已同步为 CLOSED；ISS-105 OPEN�
 基于 `codex/iss-042-shared-reports` / `fb859b91f68bb62c539d5439c65b52c06f13a58c` 创建独立工作树和 `codex/iss-048-finance-drill` 分支。本轮逐项核对财务概览卡片来源、金额计算、日期依据和权限：对有可靠来源的合同销售额、订单采购归属成本、订单费用、预计订单利润、账面收支、应收应付和未核销预收预付新增服务端分页/排序构成明细；详情复用既有正式订单、已确认流水、计划和数据范围过滤，并链接现有订单/财务流水路由。银行实际人民币资金不复制统计逻辑，卡片入口定位到既有已确认银行事件明细和原始事件链接，继续使用 `bank_date`/`bank_net_amount` 及确认状态规则。无可靠依据的会计利润、银行账户余额和未确认凭证未伪造下钻。
 
 新增财务下钻后端测试、数据范围/权限测试和前端交互测试；SQLite 全量 808 项（跳过 13 项）、财务/RBAC 定向 65 项、Node 143 项、财务 Vitest 12 项、生产构建、ISS-048 真实 Chromium mock API 桌面/窄屏 2 项、既有财务/报表 Chrome 回归 21 项均通过。真实 Django APIClient 权限与口径测试、真实 Chromium 页面截图和原始日志归档至 `docs/uat-evidence/iss-048-finance-drill/`；浏览器测试使用 mock API，跨账号 Django 浏览器集成待集成环境服务账号，PostgreSQL/CI 按约定保持 PENDING。当前仅记录为 `FIXED_PENDING_REVIEW`，ISS-048 仍保持 `P3 / BLOCKED（延期）`，等待独立代码、财务口径、权限和视觉复审，不提前关闭。
+
+## ISS-048-FIX-01 最小权限一致性补修（2026-10-23）
+
+基于 `codex/iss-048-finance-drill` / `f2a44dafabdd5cc7b4c5b95abed3865867fd9e7b`，仅修复应付款财务指标的概览与下钻权限不一致：`payable_count`、`payable_rmb` 改为沿用采购查看权限，不再额外要求订单查看权限；采购成本、订单费用、预计利润、销售、应收和其他财务指标保持原权限矩阵。应付款明细按采购侧展示供应商和采购单链接，并继续复用既有财务计划数据范围过滤。
+
+新增无订单权限但有采购/财务权限、无采购权限反向拒绝、既有范围一致性和前端权限边界测试。后端 67 项财务/RBAC 定向测试、前端 Node 144 项、财务 Vitest 12 项、生产构建及真实 Chromium 6 项回归通过。证据见 `docs/uat-evidence/iss-048-finance-drill/fix-01/`。ISS-048 仍保持原有 `P3 / BLOCKED（延期）` 和 `FIXED_PENDING_REVIEW`，不提前关闭；PostgreSQL、CI 和真实 Django 跨账号浏览器集成仍待外部环境验收。

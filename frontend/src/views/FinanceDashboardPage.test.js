@@ -15,3 +15,9 @@ test('finance dashboard keeps book reference and adds confirmed bank cash facts 
   assert.match(source, /查看构成明细/)
   assert.match(source, /账面收支（人民币折算参考）/)
 })
+
+test('payable drill keeps the dashboard purchase-only permission boundary', async () => {
+  const source = await readFile(pageUrl, 'utf8')
+  assert.match(source, /\['purchase_cost_rmb', 'order_expense_rmb', 'estimated_profit_rmb'\]\.includes\(metric\).*can\('orders', 'view'\) && can\('purchases', 'view'\)/s)
+  assert.match(source, /\['payable_count', 'payable_rmb'\]\.includes\(metric\).*can\('purchases', 'view'\)/s)
+})

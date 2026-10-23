@@ -1,0 +1,17 @@
+[WebServer] (node:32740) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 2 workers
+
+(node:6972) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 browser-tests\finance-actual-cash-resilience.spec.js:32:1 › actual cash failure leaves the legacy dashboard available and retry is independent (2.8s)
+  ok 1 browser-tests\finance-drill.spec.js:42:3 › finance dashboard composition drill desktop and narrow 1440px (4.9s)
+  ok 3 browser-tests\finance-actual-cash-resilience.spec.js:50:1 › rapid date changes discard stale actual cash responses (3.9s)
+  ok 4 browser-tests\finance-drill.spec.js:42:3 › finance dashboard composition drill desktop and narrow 700px (4.4s)
+  ok 5 browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1440 (5.2s)
+  ok 6 browser-tests\finance-reference-basis.spec.js:12:33 › reference basis across finance, transactions and saved cash config 1024 (5.0s)
+
+  6 passed (19.3s)

@@ -4,6 +4,7 @@ import csv
 import io
 
 from django.test import TestCase, override_settings
+from crm.finance_scope import scope_plan_queryset
 from crm.models import AdvanceAllocation, ContractChangeRequest, Order, PaymentPlan, Product, PurchaseOrder, PurchaseOrderItem, RolePermission, SKU, Supplier, Transaction
 from crm.tests import test_sales_data_scope as sales_fixture
 RBAC_SETTINGS = sales_fixture.RBAC_SETTINGS
@@ -161,6 +162,29 @@ class FinanceDataScopeTests(TestCase):
         self.assertEqual(self.client.get('/api/finance-dashboard/details/', {
             'metric': 'sales_rmb', 'date_from': '2026-10-01', 'date_to': '2026-10-31',
         }).status_code, 403)
+
+    def test_payable_detail_matches_dashboard_purchase_permission_and_scope(self):
+        RolePermission.objects.filter(role=self.roles['self'], module='orders').update(can_view=False)
+        response = self.client.get('/api/finance-dashboard/details/', {
+            'metric': 'payable_rmb', 'date_from': '2026-10-01', 'date_to': '2026-10-31',
+        })
+        self.assertEqual(response.status_code, 200, response.data)
+        expected_ids = set(scope_plan_queryset(PaymentPlan.objects.all(), self.employee_a.user).filter(direction='payable').values_list('pk', flat=True))
+        self.assertEqual({row['id'] for row in response.data['rows']}, expected_ids)
+        self.assertEqual(response.data['total_amount'], Decimal('100'))
+        self.assertEqual(response.data['rows'][0]['record_label'], self.purchase.purchase_no)
+        self.assertEqual(response.data['rows'][0]['relation_label'], self.supplier.name)
+        self.assertEqual(response.data['rows'][0]['detail_url'], f'/purchase-orders?detail={self.purchase.pk}')
+        dashboard = self.client.get('/api/finance-dashboard/', {'date_from': '2026-10-01', 'date_to': '2026-10-31'})
+        self.assertEqual(dashboard.status_code, 200, dashboard.data)
+        self.assertEqual(Decimal(str(dashboard.data['metrics']['payable_rmb'])), Decimal('100'))
+
+    def test_payable_detail_denies_without_purchase_permission(self):
+        RolePermission.objects.filter(role=self.roles['self'], module='purchases').update(can_view=False)
+        response = self.client.get('/api/finance-dashboard/details/', {
+            'metric': 'payable_rmb', 'date_from': '2026-10-01', 'date_to': '2026-10-31',
+        })
+        self.assertEqual(response.status_code, 403, response.data)
 
     def test_unowned_legacy_sales_cash_requires_all_scope(self):
         row = Transaction.objects.create(transaction_no='F-ORPHAN', direction='expense', kind='order_expense', amount=1, currency='CNY', exchange_rate=1, transaction_date=date(2026, 10, 12))

@@ -37,7 +37,8 @@ const balanceCards = [
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 function canDrill(metric) {
   if (metric === 'sales_rmb' || metric === 'receivable_count' || metric === 'receivable_rmb') return can('orders', 'view')
-  if (['purchase_cost_rmb', 'order_expense_rmb', 'estimated_profit_rmb', 'payable_count', 'payable_rmb'].includes(metric)) return can('orders', 'view') && can('purchases', 'view')
+  if (['purchase_cost_rmb', 'order_expense_rmb', 'estimated_profit_rmb'].includes(metric)) return can('orders', 'view') && can('purchases', 'view')
+  if (['payable_count', 'payable_rmb'].includes(metric)) return can('purchases', 'view')
   return can('transactions', 'view')
 }
 function drillAmount(row) {

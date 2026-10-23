@@ -237,3 +237,7 @@ ISS-122、ISS-123 的独立复审通过结论已同步为 CLOSED；ISS-105 OPEN�
 基于 `codex/iss-048-finance-drill` / `f2a44dafabdd5cc7b4c5b95abed3865867fd9e7b`，仅修复应付款财务指标的概览与下钻权限不一致：`payable_count`、`payable_rmb` 改为沿用采购查看权限，不再额外要求订单查看权限；采购成本、订单费用、预计利润、销售、应收和其他财务指标保持原权限矩阵。应付款明细按采购侧展示供应商和采购单链接，并继续复用既有财务计划数据范围过滤。
 
 新增无订单权限但有采购/财务权限、无采购权限反向拒绝、既有范围一致性和前端权限边界测试。后端 67 项财务/RBAC 定向测试、前端 Node 144 项、财务 Vitest 12 项、生产构建及真实 Chromium 6 项回归通过。证据见 `docs/uat-evidence/iss-048-finance-drill/fix-01/`。ISS-048 仍保持原有 `P3 / BLOCKED（延期）` 和 `FIXED_PENDING_REVIEW`，不提前关闭；PostgreSQL、CI 和真实 Django 跨账号浏览器集成仍待外部环境验收。
+
+## ISS-053 采购单状态中文显示核实（2026-10-23）
+
+基于统一基线 `c356e57014d28295485d52df23612c2fe6c02444` 建立独立 worktree 和 `codex/iss-053-purchase-status` 分支。本轮仅核实，不修改采购业务代码：`PurchaseOrder` 继续保存英文枚举，序列化器提供 `status_display`，采购列表、详情、草稿编辑工作台、状态筛选、采购实体上下文、销售订单关联采购单均通过 API 和真实 Chrome 验证中文显示；`ordered` 的筛选与存储值仍保持 `ordered`。后端采购相关 39 项、前端定向 Vitest 52 项、Chrome Playwright 11 项和生产构建通过，截图/API/日志见 `docs/uat-evidence/iss-053-purchase-status/`。当前没有确认仍存在的缺陷，也没有本轮业务修复；历史英文显示在当前基线未复现，ISS-053 保持 `NEEDS_VERIFICATION`，等待统一独立审查，不自行关闭。

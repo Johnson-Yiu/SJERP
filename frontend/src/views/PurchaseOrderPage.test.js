@@ -109,3 +109,16 @@ test('purchase price reference only carries across matching currencies and reset
   assert.match(source, /参考价未自动带入，请填写本次实际采购单价/)
   assert.match(source, /source\.purchase_price \}\} \{\{ source\.currency/)
 })
+
+test('cost allocation loads minimal cross-order candidates through procurement permission', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  const modal = await readFile(new URL('../components/PurchaseCostAllocationModal.vue', import.meta.url), 'utf8')
+
+  assert.match(source, /function openCostAllocation\(purchase\)/)
+  assert.match(source, /api\.get\('\/purchase-orders\/cost-allocation-orders\/'\)/)
+  assert.match(source, /:orders="costOrders"/)
+  assert.match(source, /@allocate-cost="openCostAllocation"/)
+  assert.match(modal, /row\.sales_link_restricted && !form\.can_edit/)
+  assert.match(modal, /\{\{ order\.order_no \}\}/)
+  assert.doesNotMatch(modal, /order\.customer_name/)
+})

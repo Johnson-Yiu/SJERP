@@ -100,3 +100,19 @@ it('keeps restricted allocations read only and never submits masked order IDs', 
   expect(api.post).not.toHaveBeenCalled()
   wrapper.unmount()
 })
+
+it('keeps a procurement-only cross-order allocation editable without customer data', async () => {
+  api.get.mockResolvedValue({ data: {
+    ...initial,
+    can_edit: true,
+    allocations: [{ ...initial.allocations[0], target_type: 'order', order: 12, order_no: 'ISS039-SO-B', sales_link_restricted: true }],
+  } })
+  const wrapper = mount(PurchaseCostAllocationModal, {
+    props: { ...props, orders: [{ id: 12, order_no: 'ISS039-SO-B', status: 'confirmed' }] },
+  })
+  await flushPromises()
+  expect(wrapper.find('select').exists()).toBe(true)
+  expect(wrapper.text()).toContain('ISS039-SO-B')
+  expect(wrapper.text()).not.toContain('客户')
+  wrapper.unmount()
+})

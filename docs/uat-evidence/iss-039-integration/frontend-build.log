@@ -1,0 +1,30 @@
+
+> senju-crm-erp@1.0.0 build
+> vite build --outDir ..\iss039-dist
+
+vite v8.2.0 building client environment for production...
+[2K
+transforming...✓ 2009 modules transformed.
+
+(!) outDir C:\Users\Johnson\.codex\worktrees\next-iss-039-integration\森爵照明管理系统\iss039-dist is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+../iss039-dist/index.html                                        0.56 kB │ gzip:   0.36 kB
+../iss039-dist/assets/TradeUnitsPage-BagMfA07.css                2.89 kB │ gzip:   0.89 kB
+../iss039-dist/assets/HistoryOrdersPage-5Xkjdeuh.css             6.55 kB │ gzip:   1.53 kB
+../iss039-dist/assets/ReportsPage-BTHBXwkU.css                  18.04 kB │ gzip:   3.42 kB
+../iss039-dist/assets/index-DAp6afEX.css                       379.44 kB │ gzip:  62.45 kB
+../iss039-dist/assets/TradeUnitsPage-f6dZxDW_.js                10.63 kB │ gzip:   4.33 kB
+../iss039-dist/assets/HistoryOrdersPage-Bn8vK8UC.js             12.77 kB │ gzip:   4.47 kB
+../iss039-dist/assets/ReportsPage-DIDIobJv.js                   51.15 kB │ gzip:  16.40 kB
+../iss039-dist/assets/_plugin-vue_export-helper-T3iFWiUo.js    127.97 kB │ gzip:  49.13 kB
+../iss039-dist/assets/index-CvXBCCBV.js                      1,102.55 kB │ gzip: 386.60 kB
+
+✓ built in 1.82s
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

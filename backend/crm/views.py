@@ -1,4 +1,4 @@
-from .procurement_scope import validate_cost_writes, scoped_cost_summary, require_order_writes
+from .procurement_scope import validate_cost_writes, scoped_cost_summary, require_cost_allocation_updates, require_order_writes
 from .finance_scope import scope_transaction_queryset, scope_plan_queryset, validate_finance_relations, require_finance_permission, ContractFinancePermission
 from .trade_units import amount_expression, trade_values
 import csv
@@ -331,8 +331,36 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             validate_cost_writes(purchase, request.user, input_serializer.validated_data["allocations"])
             before = cost_summary(purchase)
             result = save_costs(purchase, input_serializer.validated_data)
-            record_operation(request=request, instance=purchase, action="custom", action_label="采购成本分配", metadata=json.loads(json.dumps({"before_allocation": before, "after_allocation": result}, default=str)))
+            audit_before = json.loads(json.dumps({"cost_allocation": before}, default=str))
+            audit_after = json.loads(json.dumps({"cost_allocation": result}, default=str))
+            record_operation(
+                request=request,
+                instance=purchase,
+                action="custom",
+                action_label="采购成本分配",
+                before=audit_before,
+                after=audit_after,
+                metadata={"purchase_no": purchase.purchase_no},
+            )
         return Response(scoped_cost_summary(result, request.user))
+
+    @action(detail=False, methods=["get"], url_path="cost-allocation-orders")
+    def cost_allocation_orders(self, request):
+        """Return only the identifiers needed by the purchasing allocator."""
+        require_cost_allocation_updates(request.user)
+        search = (request.query_params.get("search") or "").strip()
+        orders = Order.objects.exclude(status="cancelled").order_by("order_no")
+        if search:
+            orders = orders.filter(order_no__icontains=search)
+        return Response([
+            {
+                "id": order.pk,
+                "order_no": order.order_no,
+                "status": order.status,
+                "status_display": order.get_status_display(),
+            }
+            for order in orders
+        ])
 
     @action(detail=True, methods=["post"])
     def receive(self, request, pk=None):

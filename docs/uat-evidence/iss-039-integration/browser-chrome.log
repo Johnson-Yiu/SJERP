@@ -1,0 +1,12 @@
+ISS-039 real Chrome regression
+Browser: Chrome channel via PLAYWRIGHT_CHANNEL=chrome
+Server: current worktree Vite dev server on isolated port 5197
+Command: npx playwright test browser-tests/iss039-shared-purchase-costs.spec.js --config=playwright.iss039.config.js --reporter=line
+
+Running 3 tests using 1 worker
+[1/3] authorized procurement can restore and edit a cross-order allocation without sales data
+[2/3] read-only procurement is refused by the candidate API and has no edit action
+[3/3] no-permission role cannot restore the purchase URL
+3 passed (21.9s)
+
+Visual review: 1440px and 700px allocation dialogs show order numbers only, preserve the allocation form hierarchy, keep the save action visible, and show no customer or sales-price text. The 700px no-permission page has no horizontal clipping.

@@ -219,3 +219,9 @@ ISS-122、ISS-123 的独立复审通过结论已同步为 CLOSED；ISS-105 OPEN�
 基于 `codex/iss-041-detail-drill` / `0bba34c0e7139b77a88d2e838dbf921eff427373` 创建独立 worktree 和 `codex/iss-042-shared-reports` 分支。本轮在既有报表引擎、ISS-041-A 两级分组和 ISS-041-B 明细能力之上增量实现共享报表模板：新增 `SharedReportTemplate` 模型及迁移 `0079_shared_report_template`，服务端配置白名单/维度、来源和报表权限校验，草稿/发布/取消发布、版本冲突保护、OperationLog 审计和历史读取；前端新增团队模板列表、使用、创建、编辑、发布、取消发布、删除及冲突提示，保留旧 localStorage 图表、旧 URL、日期范围和当前查询的兼容性。共享模板只保存配置，不保存结果快照或日期，实际查询仍由当前用户权限和当前报表逻辑执行。
 
 后端共享模板 7 项、既有报表 32 项、SQLite 全量 799 项（跳过 13 项）、前端定向 Vitest 7 项、旧概览报表 Vitest 15 项、Node 143 项、生产构建、共享模板真实 Chrome 跨会话测试和旧报表中心 Chrome 15 项已通过；1440px、1024px、700px 截图及日志归档至 `docs/uat-evidence/iss-042-shared-reports/`。本轮不新增共享审批/复制/版本回滚治理，不改变实际银行人民币资金统计或 ISS-121 状态。当前标记为 `FIXED_PENDING_REVIEW`，等待独立代码、权限、审计与视觉复审；ISS-042 仍为 `Enhancement / BLOCKED（延期）`，不提前关闭。
+
+## ISS-042-FIX-01 共享模板并发版本与删除审计集中补修（2026-10-23）
+
+基于 `codex/iss-042-shared-reports` / `6d5ce10a2ce8a432b427371542eac7378daca655` 继续修复发布/取消发布未递增配置版本、旧版本并发操作缺少原子冲突保护，以及删除模板后历史接口依赖现存模板的问题。发布、取消发布和编辑均在行锁事务内校验提交版本；重复状态操作返回 409 且不生成虚假审计；管理权限可按原模板 ID 读取删除后的完整模板审计，普通查看权限无法读取删除后的配置历史，通用操作日志也保持实体范围隔离。
+
+本轮新增/补强并发、重复操作、删除后历史、权限和非法 ID 测试；SQLite 全量 800 项（跳过 13 项）、共享模板 8 项、报表回归 32 项、前端定向 7 项、Node 143 项、生产构建、真实 Chrome 共享模板 1 项及报表中心回归 15 项通过，证据归档至 `docs/uat-evidence/iss-042-fix-01/`。Chrome 仍区分 mock API 交互验收与真实 Django APIClient 权限/并发验收；真实 Django 跨账号浏览器集成因当前环境无登录测试服务账号保留待办。当前标记为 `FIXED_PENDING_REVIEW`，ISS-042 仍为 `Enhancement / BLOCKED（延期）`，不提前关闭。

@@ -42,12 +42,15 @@ class SharedReportTemplateTests(TestCase):
             )
         User = get_user_model()
         manager_user = User.objects.create_user("template-manager", password="test-password")
+        manager_b_user = User.objects.create_user("template-manager-b", password="test-password")
         employee_user = User.objects.create_user("template-employee", password="test-password")
         department_user = User.objects.create_user("template-department", password="test-password")
         self.manager = EmployeeProfile.objects.create(user=manager_user, display_name="模板管理员", unit=sales, position=position)
+        self.manager_b = EmployeeProfile.objects.create(user=manager_b_user, display_name="模板管理员B", unit=sales, position=position)
         self.employee = EmployeeProfile.objects.create(user=employee_user, display_name="模板员工", unit=sales, position=position)
         self.department_employee = EmployeeProfile.objects.create(user=department_user, display_name="模板部门员工", unit=sales, position=position)
         self.manager.roles.set([self.manager_role])
+        self.manager_b.roles.set([self.manager_role])
         self.employee.roles.set([self.employee_role])
         self.department_employee.roles.set([self.department_role])
         self.customer = Customer.objects.create(code="TPL-CUSTOMER", name="模板客户", country="中国", owner_profile=self.employee)
@@ -225,19 +228,136 @@ class SharedReportTemplateTests(TestCase):
             {"config_version": current.config_version}, format="json",
         )
         self.assertEqual(publish.status_code, 200, publish.data)
+        self.assertEqual(publish.data["config_version"], 3)
+        self.assertEqual(SharedReportTemplate.objects.get(pk=template["id"]).config_version, 3)
         history = OperationLog.objects.filter(entity="crm.sharedreporttemplate", object_id=str(template["id"]))
         self.assertEqual(history.count(), 3)
         self.assertEqual(set(history.values_list("action_label", flat=True)), {"创建团队共享模板", "修改团队共享模板", "发布团队共享模板"})
+        self.assertEqual(
+            sorted(row.metadata["config_version"] for row in history),
+            [1, 2, 3],
+        )
+
+    def test_publish_and_unpublish_versions_reject_stale_and_duplicate_operations(self):
+        template = self.create_template(published=True)
+        self.assertEqual(template["config_version"], 2)
+
+        self.login(self.manager)
+        unpublished = self.client.post(
+            f"/api/reports/templates/{template['id']}/unpublish/",
+            {"config_version": template["config_version"]}, format="json",
+        )
+        self.assertEqual(unpublished.status_code, 200, unpublished.data)
+        self.assertEqual(unpublished.data["config_version"], 3)
+
+        self.login(self.manager_b)
+        stale_publish = self.client.post(
+            f"/api/reports/templates/{template['id']}/publish/",
+            {"config_version": template["config_version"]}, format="json",
+        )
+        self.assertEqual(stale_publish.status_code, 409, stale_publish.data)
+
+        current = self.client.get(f"/api/reports/templates/{template['id']}/")
+        self.assertEqual(current.status_code, 200, current.data)
+        self.assertEqual(current.data["config_version"], 3)
+        published = self.client.post(
+            f"/api/reports/templates/{template['id']}/publish/",
+            {"config_version": current.data["config_version"]}, format="json",
+        )
+        self.assertEqual(published.status_code, 200, published.data)
+        self.assertEqual(published.data["config_version"], 4)
+
+        stale_unpublish = self.client.post(
+            f"/api/reports/templates/{template['id']}/unpublish/",
+            {"config_version": 3}, format="json",
+        )
+        self.assertEqual(stale_unpublish.status_code, 409, stale_unpublish.data)
+        unpublished_again = self.client.post(
+            f"/api/reports/templates/{template['id']}/unpublish/",
+            {"config_version": 4}, format="json",
+        )
+        self.assertEqual(unpublished_again.status_code, 200, unpublished_again.data)
+        self.assertEqual(unpublished_again.data["config_version"], 5)
+
+        duplicate_unpublish = self.client.post(
+            f"/api/reports/templates/{template['id']}/unpublish/",
+            {"config_version": 5}, format="json",
+        )
+        self.assertEqual(duplicate_unpublish.status_code, 409, duplicate_unpublish.data)
+        republished = self.client.post(
+            f"/api/reports/templates/{template['id']}/publish/",
+            {"config_version": 5}, format="json",
+        )
+        self.assertEqual(republished.status_code, 200, republished.data)
+        self.assertEqual(republished.data["config_version"], 6)
+        duplicate_publish = self.client.post(
+            f"/api/reports/templates/{template['id']}/publish/",
+            {"config_version": 6}, format="json",
+        )
+        self.assertEqual(duplicate_publish.status_code, 409, duplicate_publish.data)
+
+        history = OperationLog.objects.filter(entity="crm.sharedreporttemplate", object_id=str(template["id"]))
+        self.assertEqual(history.count(), 6)
+        self.assertEqual(
+            sorted(row.metadata["config_version"] for row in history),
+            [1, 2, 3, 4, 5, 6],
+        )
 
     def test_delete_keeps_audit_record(self):
         template = self.create_template()
         self.login(self.manager)
+        updated = self.client.patch(
+            f"/api/reports/templates/{template['id']}/",
+            {"name": "删除前模板", "config": self.config, "config_version": template["config_version"]}, format="json",
+        )
+        self.assertEqual(updated.status_code, 200, updated.data)
+        published = self.client.post(
+            f"/api/reports/templates/{template['id']}/publish/",
+            {"config_version": updated.data["config_version"]}, format="json",
+        )
+        self.assertEqual(published.status_code, 200, published.data)
+        unpublished = self.client.post(
+            f"/api/reports/templates/{template['id']}/unpublish/",
+            {"config_version": published.data["config_version"]}, format="json",
+        )
+        self.assertEqual(unpublished.status_code, 200, unpublished.data)
         response = self.client.delete(
             f"/api/reports/templates/{template['id']}/",
-            data={"config_version": template["config_version"]}, format="json",
+            data={"config_version": unpublished.data["config_version"]}, format="json",
         )
         self.assertEqual(response.status_code, 204, response.data)
         self.assertFalse(SharedReportTemplate.objects.filter(pk=template["id"]).exists())
-        row = OperationLog.objects.filter(entity="crm.sharedreporttemplate", object_id=str(template["id"])).first()
-        self.assertIsNotNone(row)
-        self.assertEqual(row.action, "delete")
+
+        history_response = self.client.get(f"/api/reports/templates/{template['id']}/history/")
+        self.assertEqual(history_response.status_code, 200, history_response.data)
+        history_rows = history_response.data
+        self.assertEqual(
+            [row["action_display"] for row in history_rows],
+            ["创建团队共享模板", "修改团队共享模板", "发布团队共享模板", "取消发布团队共享模板", "删除团队共享模板"],
+        )
+        self.assertEqual([row["metadata"]["config_version"] for row in history_rows], [1, 2, 3, 4, 4])
+        self.assertEqual(history_rows[-1]["object_label"], "删除前模板")
+        self.assertEqual(history_rows[-1]["before_data"]["config_version"], 4)
+
+        generic_manager = self.client.get(
+            "/api/operation-logs/",
+            {"entity": "crm.sharedreporttemplate", "object_id": template["id"]},
+        )
+        self.assertEqual(generic_manager.status_code, 200, generic_manager.data)
+        generic_rows = generic_manager.data.get("results", generic_manager.data)
+        self.assertEqual(len(generic_rows), 5)
+        self.assertTrue(all(row["entity"] == "crm.sharedreporttemplate" for row in generic_rows))
+
+        self.login(self.employee)
+        denied = self.client.get(f"/api/reports/templates/{template['id']}/history/")
+        self.assertEqual(denied.status_code, 403, denied.data)
+        generic = self.client.get(
+            "/api/operation-logs/",
+            {"entity": "crm.sharedreporttemplate", "object_id": template["id"]},
+        )
+        self.assertEqual(generic.status_code, 200, generic.data)
+        self.assertEqual(generic.data.get("results", generic.data), [])
+
+        self.login(self.manager)
+        invalid = self.client.get("/api/reports/templates/not-an-id/history/")
+        self.assertEqual(invalid.status_code, 404, invalid.data)

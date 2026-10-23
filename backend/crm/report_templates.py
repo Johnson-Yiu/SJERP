@@ -12,7 +12,7 @@ from django.db.models import Q
 from django.utils import timezone
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import APIException, PermissionDenied, ValidationError
+from rest_framework.exceptions import APIException, NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
 
 from .audit import record_operation, snapshot
@@ -239,13 +239,16 @@ class SharedReportTemplateViewSet(viewsets.ModelViewSet):
         current = self.get_object()
         instance = type(current).objects.select_for_update().get(pk=current.pk)
         self._expected_version(request, instance)
+        if instance.published:
+            raise TemplateConflict("团队模板已经发布，请刷新后查看最新状态。")
         config = validate_template_config(instance.config, request.user)
         before = snapshot(instance)
         instance.config = config
         instance.published = True
         instance.published_at = instance.published_at or timezone.now()
         instance.updated_by = request.user
-        instance.save(update_fields=["config", "published", "published_at", "updated_by", "updated_at"])
+        instance.config_version += 1
+        instance.save(update_fields=["config", "published", "published_at", "updated_by", "config_version", "updated_at"])
         record_operation(
             request=request, instance=instance, action="custom", action_label="发布团队共享模板",
             before=before, metadata={"config_version": instance.config_version, "published": True},
@@ -258,11 +261,14 @@ class SharedReportTemplateViewSet(viewsets.ModelViewSet):
         current = self.get_object()
         instance = type(current).objects.select_for_update().get(pk=current.pk)
         self._expected_version(request, instance)
+        if not instance.published:
+            raise TemplateConflict("团队模板已经取消发布，请刷新后查看最新状态。")
         before = snapshot(instance)
         instance.published = False
         instance.published_at = None
         instance.updated_by = request.user
-        instance.save(update_fields=["published", "published_at", "updated_by", "updated_at"])
+        instance.config_version += 1
+        instance.save(update_fields=["published", "published_at", "updated_by", "config_version", "updated_at"])
         record_operation(
             request=request, instance=instance, action="custom", action_label="取消发布团队共享模板",
             before=before, metadata={"config_version": instance.config_version, "published": False},
@@ -286,7 +292,10 @@ class SharedReportTemplateViewSet(viewsets.ModelViewSet):
     def history(self, request, pk=None):
         if not user_can(request.user, "reports", "update"):
             raise PermissionDenied("只有具备报表管理权限的人员可以查看团队模板操作记录。")
-        instance = self.get_object()
-        logs = OperationLog.objects.filter(entity="crm.sharedreporttemplate", object_id=str(instance.pk)).select_related("operator")
+        logs = OperationLog.objects.filter(
+            entity="crm.sharedreporttemplate", object_id=str(pk),
+        ).select_related("operator").order_by("created_at", "id")
+        if not logs.exists():
+            raise NotFound("未找到该团队模板的操作记录。")
         from .serializers import OperationLogSerializer
         return Response(OperationLogSerializer(logs[:50], many=True, context={"request": request}).data)

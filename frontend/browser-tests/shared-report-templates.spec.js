@@ -41,8 +41,13 @@ test('separate manager and employee sessions share only the published query defi
   await manager.setViewportSize({ width: 1024, height: 1000 })
   await manager.screenshot({ path: '../docs/uat-evidence/iss-042-shared-reports/manager-1024px.png', fullPage: true })
 
+  sharedState.conflictNext = 'unpublish'
   await manager.locator('.template-card').getByRole('button', { name: '取消发布', exact: true }).click()
   await expect(manager.getByRole('alert')).toContainText('确认取消发布')
+  await manager.getByRole('button', { name: '确认', exact: true }).click()
+  await expect(manager.getByRole('status')).toContainText('已被其他操作更新，请刷新列表后重试')
+  await expect(manager.locator('.template-card')).toContainText('已发布')
+  await manager.locator('.template-card').getByRole('button', { name: '取消发布', exact: true }).click()
   await manager.getByRole('button', { name: '确认', exact: true }).click()
   await employee.reload()
   await expect(employee.locator('.template-card')).toHaveCount(0)

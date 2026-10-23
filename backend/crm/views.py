@@ -122,13 +122,11 @@ class OperationLogViewSet(viewsets.ReadOnlyModelViewSet):
                 changes = changes | ContractChangeRequest.objects.filter(purchase_order__isnull=False)
             object_ids = changes
         elif entity == "crm.sharedreporttemplate":
-            from .report_templates import visible_template_ids
-            object_ids = SharedReportTemplate.objects.filter(
-                pk__in=visible_template_ids(
-                    SharedReportTemplate.objects.all(), self.request.user,
-                    include_drafts=user_can(self.request.user, "reports", "update"),
-                ),
-            )
+            if not user_can(self.request.user, "reports", "update"):
+                from .report_templates import visible_template_ids
+                object_ids = SharedReportTemplate.objects.filter(
+                    pk__in=visible_template_ids(SharedReportTemplate.objects.all(), self.request.user),
+                )
         if object_ids is not None:
             qs = qs.filter(object_id__in=object_ids.values_list(Cast("pk", output_field=CharField()), flat=True))
         if object_id:

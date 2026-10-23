@@ -32,6 +32,7 @@ export function sharedTemplateReport(params){
 
 export async function mockSharedTemplateApi(page,state,role='employee'){
  const manager=role==='manager'
+ state.conflictNext = state.conflictNext || null
  const operator=manager?{authenticated:true,development_superadmin:false,has_all_permissions:false,name:'共享模板管理员',rbac_enforcement:true,permissions:{reports:{view:true,create:true,update:true,delete:true,export:true},orders:{view:true},customers:{view:true},products:{view:true},skus:{view:true},categories:{view:true}}}:{authenticated:true,development_superadmin:false,has_all_permissions:false,name:'共享模板员工',rbac_enforcement:true,permissions:{reports:{view:true},orders:{view:true},customers:{view:true},products:{view:true},skus:{view:true},categories:{view:true}}}
  await page.route('**/api/**',async route=>{
   const request=route.request();const url=new URL(request.url());const path=url.pathname
@@ -50,7 +51,7 @@ export async function mockSharedTemplateApi(page,state,role='employee'){
    const row=state.templates.find(item=>String(item.id)===match[1]);const action=match[2].replace(/\/$/,'')
    if(!row) return route.fulfill({status:404,json:{detail:'模板不存在'}})
    if(request.method()==='GET' && action==='history') return route.fulfill({json:[]})
-   if(request.method()==='POST' && ['publish','unpublish'].includes(action)){row.published=action==='publish';row.published_at=row.published?'2026-10-23T09:00:00Z':null;row.can_use=row.published;row.config_version+=1;return route.fulfill({json:row})}
+   if(request.method()==='POST' && ['publish','unpublish'].includes(action)){if(state.conflictNext===action){state.conflictNext=null;return route.fulfill({status:409,json:{detail:'团队模板已被其他操作更新，请刷新后重试。'}})}row.published=action==='publish';row.published_at=row.published?'2026-10-23T09:00:00Z':null;row.can_use=row.published;row.config_version+=1;return route.fulfill({json:row})}
    if(request.method()==='PATCH'){const body=request.postDataJSON();row.name=body.name||row.name;row.description=body.description||'';row.config=body.config||row.config;row.config_version+=1;row.updated_at='2026-10-23T09:05:00Z';return route.fulfill({json:row})}
    if(request.method()==='DELETE'){state.templates=state.templates.filter(item=>item!==row);return route.fulfill({status:204,body:''})}
   }

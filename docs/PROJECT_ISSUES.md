@@ -245,6 +245,7 @@ R0-F8A已按用户转述独立代码/自动回归PASS、有条件封版；ISS-09
 - Round 1 原始 P1：`UAT-ORD-001`、`UAT-PKG-001`、`UAT-SHIP-001`、`UAT-SKU-001`、`UAT-ORD-004` 均有后续修复/复测记录。发货 500 的历史根因及修复见 [UAT Fix Batch 1](UAT-Fix-Batch1-P1.md) 和 Round 1 的定向 Re-UAT；原始失败记录保留。
 - Round 1 原始 P2：`UAT-QTE-001`、`UAT-ORD-002`、`UAT-DRILL-001`、`UAT-ORD-003`、`UAT-FUP-001`、`UAT-FUP-002`、`UAT-PUR-001`、`UAT-INV-001`，2026-10-04 各有定向 Re-UAT；旧结果未覆盖，当前关闭结论见 [Round 1 P2 Cleanup Final Status](UAT-Round1-正式业务全流程测试.md)。附件下载通道的后续端到端问题单独由 ISS-007 跟踪。
 - PCR-001/002/003/004/005/006/008/010/011/012/014/015/019/020 已在各自 Phase 2 验收记录中完成原定范围；PCR-007 的实际装箱 UI 已验收，未实现的是另列的正式文件导出 Enhancement ISS-040。PCR-009 客户年度洞察与 PCR-018 团队共享图块仍延期。
+- 2026-10-23 ISS-042-FIX-01 已在 `codex/iss-042-shared-reports` 基于 `6d5ce10a2ce8a432b427371542eac7378daca655` 完成并记录为 `FIXED_PENDING_REVIEW`：修复共享模板发布/取消发布配置版本并发冲突、重复状态操作虚假审计，以及删除后模板历史安全查询；证据见 `docs/uat-evidence/iss-042-fix-01/`。ISS-042 仍保留 `Enhancement / BLOCKED（延期）`，不得据此关闭。
 - Phase 3C 的 I20/I37/I49/I53 及 Phase 4B-1 PostgreSQL 查询兼容、迁移测试隔离/fixture 故障均有修复测试和成功 CI；不与当前 staging 数据迁移风险 ISS-044 混淆。
 - R0-A、R0-B1、R0-B2、R0-C1、R0-C2、R0-C3、R0-D1、R0-D2 的各自范围记录未发现仍未处理的本轮事项；这不代表未覆盖的系统范围自动通过。
 

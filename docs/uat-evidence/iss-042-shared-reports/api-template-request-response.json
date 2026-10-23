@@ -1,0 +1,72 @@
+{
+  "base": {
+    "branch": "codex/iss-042-shared-reports",
+    "base_commit": "0bba34c0e7139b77a88d2e838dbf921eff427373",
+    "api_prefix": "/api/reports/templates/"
+  },
+  "manager_create_draft": {
+    "method": "POST",
+    "path": "/api/reports/templates/",
+    "request": {
+      "name": "年度销售概览",
+      "description": "团队共用的本年度销售视图",
+      "config": {
+        "source": "sales",
+        "group_by": "country",
+        "group_by_2": "customer",
+        "grain": "month",
+        "date_field": "order_date",
+        "metric": "amount",
+        "view": "bar",
+        "comparison": "previous",
+        "title": "本年度销售概览",
+        "filters": {}
+      }
+    },
+    "response_shape": {
+      "status": 201,
+      "id": 1,
+      "published": false,
+      "config_version": 1,
+      "created_by": 10,
+      "updated_by": 10,
+      "can_use": true,
+      "can_manage": true
+    }
+  },
+  "manager_publish": {
+    "method": "POST",
+    "path": "/api/reports/templates/1/publish/",
+    "request": {
+      "config_version": 1
+    },
+    "response_shape": {
+      "status": 200,
+      "published": true,
+      "published_at": "server-generated",
+      "config_version": 1
+    }
+  },
+  "employee_list_after_publish": {
+    "method": "GET",
+    "path": "/api/reports/templates/",
+    "response_shape": {
+      "status": 200,
+      "results": [
+        {
+          "id": 1,
+          "name": "年度销售概览",
+          "published": true,
+          "can_use": true,
+          "can_manage": false,
+          "config_version": 1
+        }
+      ]
+    }
+  },
+  "report_query_using_template": {
+    "method": "GET",
+    "path": "/api/reports/data/?source=sales&group_by=country&group_by_2=customer&shared_template=1",
+    "expected": "当前用户权限范围内的实时结果；取消发布或权限变化后返回 404/权限拒绝，不使用模板结果快照。"
+  }
+}

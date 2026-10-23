@@ -24,3 +24,36 @@ export async function mockApi(page,{restricted=false,empty=false,failDashboard=f
   return route.fulfill({json:[]})
  });return state
 }
+
+export function sharedTemplateReport(params){
+ const second=params.get('group_by_2')
+ return {source:params.get('source')||'sales',group_by:params.get('group_by')||'time',group_by_2:second||undefined,date_field:params.get('date_field')||'order_date',date_label:'订单日期',grain:params.get('grain')||'month',comparison:params.get('comparison')||'previous',period:{date_from:params.get('date_from')||'2026-01-01',date_to:params.get('date_to')||'2026-10-23'},comparison_period:{date_from:'2025-01-01',date_to:'2025-10-23'},totals:{amount:'100',count:1,quantities:{}},changes:{amount:null,count:null},rows:[{key:second?'["1","2"]':'1',label:'中国',groups:second?[{dimension:params.get('group_by'),key:'1',label:'中国'},{dimension:second,key:'2',label:'模板客户'}]:undefined,amount:'100',count:1,quantities:{}}],filters:{},filter_summary:[],note:'共享模板测试数据。'}
+}
+
+export async function mockSharedTemplateApi(page,state,role='employee'){
+ const manager=role==='manager'
+ const operator=manager?{authenticated:true,development_superadmin:false,has_all_permissions:false,name:'共享模板管理员',rbac_enforcement:true,permissions:{reports:{view:true,create:true,update:true,delete:true,export:true},orders:{view:true},customers:{view:true},products:{view:true},skus:{view:true},categories:{view:true}}}:{authenticated:true,development_superadmin:false,has_all_permissions:false,name:'共享模板员工',rbac_enforcement:true,permissions:{reports:{view:true},orders:{view:true},customers:{view:true},products:{view:true},skus:{view:true},categories:{view:true}}}
+ await page.route('**/api/**',async route=>{
+  const request=route.request();const url=new URL(request.url());const path=url.pathname
+  if(path.includes('current-operator')) return route.fulfill({json:operator})
+  if(path==='/api/reports/catalog/') return route.fulfill({json:catalog})
+  if(path==='/api/reports/data/') return route.fulfill({json:sharedTemplateReport(url.searchParams)})
+  if(path==='/api/reports/templates/' && request.method()==='GET'){
+   const rows=manager?state.templates:state.templates.filter(item=>item.published)
+   return route.fulfill({json:{count:rows.length,next:null,previous:null,results:rows}})
+  }
+  if(path==='/api/reports/templates/' && request.method()==='POST'){
+   const body=request.postDataJSON();const row={id:state.nextId++,name:body.name,description:body.description||'',config:body.config,published:false,published_at:null,config_version:1,created_by:1,creator_name:manager?'共享模板管理员':'共享模板员工',updated_by:1,updater_name:manager?'共享模板管理员':'共享模板员工',created_at:'2026-10-23T09:00:00Z',updated_at:'2026-10-23T09:00:00Z',can_use:false,can_manage:manager};state.templates.push(row);return route.fulfill({status:201,json:row})
+  }
+  const match=path.match(/^\/api\/reports\/templates\/(\d+)\/(.*)$/)
+  if(match){
+   const row=state.templates.find(item=>String(item.id)===match[1]);const action=match[2].replace(/\/$/,'')
+   if(!row) return route.fulfill({status:404,json:{detail:'模板不存在'}})
+   if(request.method()==='GET' && action==='history') return route.fulfill({json:[]})
+   if(request.method()==='POST' && ['publish','unpublish'].includes(action)){row.published=action==='publish';row.published_at=row.published?'2026-10-23T09:00:00Z':null;row.can_use=row.published;row.config_version+=1;return route.fulfill({json:row})}
+   if(request.method()==='PATCH'){const body=request.postDataJSON();row.name=body.name||row.name;row.description=body.description||'';row.config=body.config||row.config;row.config_version+=1;row.updated_at='2026-10-23T09:05:00Z';return route.fulfill({json:row})}
+   if(request.method()==='DELETE'){state.templates=state.templates.filter(item=>item!==row);return route.fulfill({status:204,body:''})}
+  }
+  return route.fulfill({json:[]})
+ });return state
+}

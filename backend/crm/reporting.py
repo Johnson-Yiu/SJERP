@@ -11,10 +11,10 @@ from django.db.models import Prefetch, Q
 from django.http import HttpResponse
 from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
 
-from .models import Customer, InventoryMovement, Order, OrderItem, Product, ProductCategory, PurchaseOrder, PurchaseOrderItem, RmbCashEvent, SKU, Supplier, Transaction
+from .models import Customer, InventoryMovement, Order, OrderItem, Product, ProductCategory, PurchaseOrder, PurchaseOrderItem, RmbCashEvent, SharedReportTemplate, SKU, Supplier, Transaction
 from .permissions import HistoricalAnalysisPermission, user_can
 from .sales_scope import scope_customer_queryset, scope_customer_related_queryset
 from .services.profit import order_profit_summary
@@ -505,6 +505,13 @@ def _detail_sort_key(row, field):
 @api_view(["GET"])
 def report_details(request):
     params = request.query_params
+    shared_template_id = params.get("shared_template")
+    if shared_template_id:
+        from .report_templates import validate_template_config
+        template = SharedReportTemplate.objects.filter(pk=shared_template_id, published=True).first()
+        if not template:
+            raise NotFound("团队共享模板不存在或已取消发布。")
+        validate_template_config(template.config, request.user)
     source = params.get("source", "sales")
     if source not in {"sales", "purchase"}:
         raise ValidationError("当前报表来源不支持原始明细下钻。")
@@ -575,6 +582,13 @@ def report_data(request):
     if request.query_params.get("export", "").lower() in {"1", "true", "csv", "xlsx"} and not user_can(request.user, "reports", "export"):
         return Response({"detail": "你没有报表导出权限。"}, status=403)
     params = request.query_params
+    shared_template_id = params.get("shared_template")
+    if shared_template_id:
+        from .report_templates import validate_template_config
+        template = SharedReportTemplate.objects.filter(pk=shared_template_id, published=True).first()
+        if not template:
+            raise NotFound("团队共享模板不存在或已取消发布。")
+        validate_template_config(template.config, request.user)
     source = params.get("source", "sales")
     if source not in SOURCES: raise ValidationError("不支持的报表模块。")
     for module in SOURCE_MODULES[source]:

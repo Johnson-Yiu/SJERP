@@ -53,7 +53,7 @@ OPERATION_ENTITY_MODULES = {
     "crm.hscode": "hs_codes", "crm.transaction": "transactions", "crm.paymentplan": "finance",
     "crm.contractchangerequest": "orders", "crm.organizationunit": "organization",
     "crm.position": "organization", "crm.employeeprofile": "employees", "crm.accessrole": "permissions",
-    "crm.rolepermission": "permissions",
+    "crm.rolepermission": "permissions", "crm.sharedreporttemplate": "reports",
 }
 
 

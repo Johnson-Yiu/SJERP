@@ -67,6 +67,41 @@ class OperationLog(models.Model):
         ]
 
 
+class SharedReportTemplate(TimestampedModel):
+    """A validated report query definition shared with the reporting team."""
+
+    name = models.CharField("模板名称", max_length=80)
+    description = models.CharField("模板说明", max_length=300, blank=True)
+    config = models.JSONField("报表配置", default=dict)
+    published = models.BooleanField("已发布", default=False, db_index=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_shared_report_templates",
+    )
+    updated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="updated_shared_report_templates",
+    )
+    published_at = models.DateTimeField("发布时间", null=True, blank=True)
+    config_version = models.PositiveIntegerField("配置版本", default=1)
+
+    class Meta:
+        ordering = ["-updated_at", "-id"]
+        indexes = [
+            models.Index(fields=["published", "updated_at"]),
+            models.Index(fields=["created_by", "updated_at"]),
+        ]
+
+    def __str__(self):
+        return self.name
+
+
 class OrganizationUnit(TimestampedModel):
     TYPE_CHOICES = [("company", "公司"), ("department", "部门"), ("team", "小组")]
     name = models.CharField("组织名称", max_length=100)

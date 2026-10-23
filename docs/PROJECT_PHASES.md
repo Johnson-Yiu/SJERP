@@ -213,3 +213,9 @@ ISS-122、ISS-123 的独立复审通过结论已同步为 CLOSED；ISS-105 OPEN�
 基于 `codex/iss-041-multidim-01` / `66338b701afed071bd6482a33a8cca8ebc20bfa2` 创建独立 worktree 和 `codex/iss-041-detail-drill` 分支。本轮在 ISS-041-A 两级分组基础上增量增加销售/采购原始明细 API、服务端页大小限制、排序、空状态、原始订单详情链接、商品行与订单金额调整分离，以及客户、产品、SKU详情弹窗到现有报表中心的安全入口；保留日期、金额、历史订单隔离、数据范围、个人图表、URL恢复、CSV和既有下钻行为，不新增数据库迁移。
 
 后端32项报表测试、前端定向15项 Vitest、Node 143项、前端生产构建、报表中心真实 Chrome 15项和 ISS-041-B 1440/700截图测试均已通过，证据归档至 `docs/uat-evidence/iss-041-detail-drill/`。当前仅将 ISS-041-B 记为 `FIXED_PENDING_REVIEW` 说明，等待独立代码、权限与视觉复审；ISS-041 仍为 `Enhancement / BLOCKED（延期）`，不提前关闭，不进入 ISS-042/ISS-048。
+
+## ISS-042-DEV 团队共享报表模板（2026-10-23）
+
+基于 `codex/iss-041-detail-drill` / `0bba34c0e7139b77a88d2e838dbf921eff427373` 创建独立 worktree 和 `codex/iss-042-shared-reports` 分支。本轮在既有报表引擎、ISS-041-A 两级分组和 ISS-041-B 明细能力之上增量实现共享报表模板：新增 `SharedReportTemplate` 模型及迁移 `0079_shared_report_template`，服务端配置白名单/维度、来源和报表权限校验，草稿/发布/取消发布、版本冲突保护、OperationLog 审计和历史读取；前端新增团队模板列表、使用、创建、编辑、发布、取消发布、删除及冲突提示，保留旧 localStorage 图表、旧 URL、日期范围和当前查询的兼容性。共享模板只保存配置，不保存结果快照或日期，实际查询仍由当前用户权限和当前报表逻辑执行。
+
+后端共享模板 7 项、既有报表 32 项、SQLite 全量 799 项（跳过 13 项）、前端定向 Vitest 7 项、旧概览报表 Vitest 15 项、Node 143 项、生产构建、共享模板真实 Chrome 跨会话测试和旧报表中心 Chrome 15 项已通过；1440px、1024px、700px 截图及日志归档至 `docs/uat-evidence/iss-042-shared-reports/`。本轮不新增共享审批/复制/版本回滚治理，不改变实际银行人民币资金统计或 ISS-121 状态。当前标记为 `FIXED_PENDING_REVIEW`，等待独立代码、权限、审计与视觉复审；ISS-042 仍为 `Enhancement / BLOCKED（延期）`，不提前关闭。

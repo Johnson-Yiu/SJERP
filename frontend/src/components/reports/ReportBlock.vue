@@ -7,14 +7,14 @@ import { apiErrorMessage } from '../../utils/apiErrors'
 import { useAccessControl } from '../../accessControl'
 import ReportDetailPanel from './ReportDetailPanel.vue'
 
-const props = defineProps({ blockId: { type: String, default: 'sales-trend' }, config: { type: Object, default: () => ({}) }, filters: { type: Object, default: () => ({}) }, refreshKey: { type: Number, default: 0 } })
+const props = defineProps({ blockId: { type: String, default: 'sales-trend' }, config: { type: Object, default: () => ({}) }, filters: { type: Object, default: () => ({}) }, sharedTemplateId: { type: [String, Number], default: '' }, refreshKey: { type: Number, default: 0 } })
 const emit = defineEmits(['drill', 'loaded'])
 const { can } = useAccessControl()
 const definition = computed(() => resolveBlock(props.blockId, props.config))
 const permitted = computed(() => canViewReportConfig({ ...definition.value, filters: { ...props.filters, ...definition.value.filters } }, can))
 const params = computed(() => {
   const d = definition.value
-  return { ...props.filters, source: d.source, group_by: d.group_by, ...(d.group_by_2 ? { group_by_2: d.group_by_2 } : {}), grain: d.grain, comparison: d.comparison || 'previous', ...(d.date_field ? { date_field: d.date_field } : {}), ...(d.filters || {}) }
+  return { ...props.filters, ...(props.sharedTemplateId ? { shared_template: props.sharedTemplateId } : {}), source: d.source, group_by: d.group_by, ...(d.group_by_2 ? { group_by_2: d.group_by_2 } : {}), grain: d.grain, comparison: d.comparison || 'previous', ...(d.date_field ? { date_field: d.date_field } : {}), ...(d.filters || {}) }
 })
 const data = ref(null), error = ref(''), loading = ref(false), exporting = ref(false), page = ref(1), unit = ref(''), viewOverride = ref(''), exportError = ref(''), exportNotice = ref('')
 const detailSelection = ref(null)

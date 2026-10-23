@@ -9,6 +9,7 @@ from .sales_rules import SalesRuleViewSet
 
 from .trade_units import SKUTradeUnitViewSet
 from .file_access import protected_media
+from .report_templates import SharedReportTemplateViewSet
 
 router = DefaultRouter()
 from .cash_api import RmbCashEventViewSet
@@ -44,6 +45,7 @@ router.register("access-roles", AccessRoleViewSet)
 router.register("role-permissions", RolePermissionViewSet)
 router.register("employees", EmployeeProfileViewSet)
 router.register("operation-logs", OperationLogViewSet, basename="operation-log")
+router.register("reports/templates", SharedReportTemplateViewSet, basename="shared-report-template")
 
 from .reporting import historical_analysis, report_catalog, report_data, report_details
 from .actual_cash_api import actual_cash_report

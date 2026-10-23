@@ -333,6 +333,11 @@ class OperationLogSerializer(serializers.ModelSerializer):
                     if isinstance(payload, dict):
                         data[field] = redact_snapshot(payload, hidden_fields)
             data["changed_fields"] = [key for key in data.get("changed_fields", []) if key not in hidden_fields]
+        elif instance.entity == "crm.sharedreporttemplate" and not user_can(user, "reports", "update"):
+            data["before_data"] = {}
+            data["after_data"] = {}
+            data["metadata"] = {}
+            data["changed_fields"] = []
         return data
 
     def get_operator_name(self, obj):

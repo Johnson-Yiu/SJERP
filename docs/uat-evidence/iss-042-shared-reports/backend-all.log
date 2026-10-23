@@ -1,0 +1,4 @@
+Found 799 test(s).
+System check identified no issues (0 silenced).
+P2A-DATABASE_VERIFICATION {"before": "c473c9899f34be09ff9776b46a6d24e50c940a7503e223eb6382c2f756143081", "after": "c473c9899f34be09ff9776b46a6d24e50c940a7503e223eb6382c2f756143081", "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": true}
+P2A_MIGRATION_VERIFICATION {"vendor": "sqlite", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}

@@ -207,3 +207,9 @@ ISS-122、ISS-123 的独立复审通过结论已同步为 CLOSED；ISS-105 OPEN�
 基线为 `codex/iss-062-date-window` / `9edbb6488a66a0801ecc1e5bc842df7866c6c7dc`，在独立 worktree 和 `codex/iss-041-multidim-01` 分支实施。依据 2026-10-20 业务整理稿，本轮在现有单维度报表引擎上增量支持可选第二统计维度：后端交叉聚合、独立分组结构、去重单据数、分单位数量、CSV 双分组列、维度权限校验；前端第二维度选择、旧 URL/localStorage 兼容、两级表格/条形图和双向基础下钻。没有新增数据库迁移，没有修改实际银行人民币资金事件口径、账面人民币折算参考、预计利润、自定义报表未来日期查询能力或 ISS-121 状态。
 
 本轮自动化与真实 Chrome 证据已归档到 `docs/uat-evidence/iss-041-multidim-01/`，当前状态为等待独立代码审查；ISS-041 仍保持 `Enhancement / BLOCKED（延期）`，本节不代表关闭 ISS-041。原始销售订单/商品明细独立详情列表及客户、产品、SKU 详情页经营分析入口继续作为后续 ISS-041 子任务。
+
+## ISS-041-B 经营分析原始明细下钻与业务详情页入口（2026-10-22）
+
+基于 `codex/iss-041-multidim-01` / `66338b701afed071bd6482a33a8cca8ebc20bfa2` 创建独立 worktree 和 `codex/iss-041-detail-drill` 分支。本轮在 ISS-041-A 两级分组基础上增量增加销售/采购原始明细 API、服务端页大小限制、排序、空状态、原始订单详情链接、商品行与订单金额调整分离，以及客户、产品、SKU详情弹窗到现有报表中心的安全入口；保留日期、金额、历史订单隔离、数据范围、个人图表、URL恢复、CSV和既有下钻行为，不新增数据库迁移。
+
+后端32项报表测试、前端定向15项 Vitest、Node 143项、前端生产构建、报表中心真实 Chrome 15项和 ISS-041-B 1440/700截图测试均已通过，证据归档至 `docs/uat-evidence/iss-041-detail-drill/`。当前仅将 ISS-041-B 记为 `FIXED_PENDING_REVIEW` 说明，等待独立代码、权限与视觉复审；ISS-041 仍为 `Enhancement / BLOCKED（延期）`，不提前关闭，不进入 ISS-042/ISS-048。

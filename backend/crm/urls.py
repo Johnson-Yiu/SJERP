@@ -45,7 +45,7 @@ router.register("role-permissions", RolePermissionViewSet)
 router.register("employees", EmployeeProfileViewSet)
 router.register("operation-logs", OperationLogViewSet, basename="operation-log")
 
-from .reporting import historical_analysis, report_catalog, report_data
+from .reporting import historical_analysis, report_catalog, report_data, report_details
 from .actual_cash_api import actual_cash_report
 
 urlpatterns = [
@@ -58,6 +58,7 @@ urlpatterns = [
     path("orders/<int:order_id>/items/<int:item_id>/supplier-allocation/", OrderItemSupplierAllocationView.as_view()),
     path("reports/catalog/", report_catalog),
     path("reports/data/", report_data),
+    path("reports/details/", report_details),
     path("reports/historical/", historical_analysis),
     path("dashboard/", dashboard),
     path("finance-dashboard/", finance_dashboard),

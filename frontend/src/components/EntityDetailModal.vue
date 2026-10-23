@@ -61,6 +61,20 @@ const relatedCreateModules = { contacts: 'contacts', 'follow-ups': 'followups', 
 const isRoot = computed(() => currentEntity.value === props.entity && String(currentId.value) === String(props.id))
 const showRelatedCreate = computed(() => canManage.value && can(relatedCreateModules[activeSection.value?.entity], 'create') && !(isRoot.value && currentEntity.value === 'customers' && ['followups', 'quotes'].includes(activeSection.value?.key)))
 const isCustomerRoot = computed(() => isRoot.value && currentEntity.value === 'customers' && route.path === '/customers')
+const analysisDimensions = { customers: 'customer', products: 'product', skus: 'sku' }
+const analysisModules = { customers: 'customers', products: 'products', skus: 'skus' }
+const analysisDimension = computed(() => analysisDimensions[currentEntity.value] || '')
+const canViewBusinessAnalysis = computed(() => Boolean(isRoot.value && analysisDimension.value && can('reports', 'view') && can(analysisModules[currentEntity.value], 'view')))
+const analysisTarget = computed(() => ({
+  path: '/reports',
+  query: {
+    source: 'sales',
+    group_by: analysisDimension.value,
+    [`filter_${analysisDimension.value}`]: String(currentId.value),
+    title: `${currentEntity.value === 'customers' ? '客户' : currentEntity.value === 'products' ? '产品' : 'SKU'}销售分析`,
+    returnTo: detailReturnPath(),
+  },
+}))
 function restoreCustomerTab() {
   if (!isRoot.value || route.path !== `/${props.entity}` || !data.value) return
   const key = route.query.tab
@@ -418,6 +432,7 @@ onMounted(async () => {
             <div class="detail-actions">
               <button v-if="isRoot && currentEntity === 'customers' && can('followups', 'create')" class="btn btn-secondary" @click="openCustomerFollowUp"><Plus :size="14" /> 新增跟进</button>
               <button v-if="isRoot && currentEntity === 'customers' && hasRelationCustomerId && can('quotes', 'create')" class="btn btn-secondary" @click="openQuoteForCustomer(relationCustomerId)"><Plus :size="14" /> 新建报价</button>
+              <RouterLink v-if="canViewBusinessAnalysis" class="btn btn-secondary" :to="analysisTarget"><ExternalLink :size="14" /> 查看经营分析</RouterLink>
               <button v-if="isRoot && currentEntity !== 'inventory-movements' && can(currentEntity, 'update')" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> {{ currentEntity === 'customers' ? '编辑客户' : isSupplierDetail ? '编辑供应商' : isContactDetail ? '编辑联系人' : '编辑主档' }}</button>
               <RouterLink v-else-if="!isMovementDetail && hasManagement(currentEntity)" class="btn btn-secondary" :to="managementTarget" @click="managementNavigation"><ExternalLink :size="14" /> {{ managementLabel }}</RouterLink>
               <button v-if="isProduct" class="detail-close" aria-label="关闭详情" @click="requestClose"><X :size="19" /><span>关闭</span></button>

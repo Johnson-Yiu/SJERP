@@ -6,6 +6,7 @@ import json
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 
+from django.core.paginator import Paginator
 from django.db.models import Prefetch, Q
 from django.http import HttpResponse
 from django.utils import timezone
@@ -47,6 +48,7 @@ DIMENSION_MODULES = {
     "owner": "customers", "source": "customers", "supplier": "suppliers",
     "product": "products", "sku": "skus", "category": "categories",
 }
+DETAIL_MAX_ROWS = 10000
 
 
 def bucket(day, grain):
@@ -344,6 +346,228 @@ def filter_summary(source, filters, user=None):
             label = queryset.filter(pk=value).values_list(field, flat=True).first() or label
         result.append({"dimension": key, "name": "收支分类" if source == "cash" and key == "category" else DIMENSIONS[key], "value": value, "label": label})
     return result
+
+
+def _detail_permissions(request, source, group, group_2, filters):
+    """Require both report permissions and the permissions needed by raw rows.
+
+    A report aggregate can be useful with a restricted identity dimension, but
+    a raw row contains the original document and its business identities.  The
+    stricter checks here prevent a detail query from becoming an information
+    side channel through a group that the caller could otherwise aggregate.
+    """
+    for module in SOURCE_MODULES[source]:
+        require_finance_permission(request.user, module, "view")
+    require_finance_permission(request.user, "reports", "view")
+
+    raw_modules = {
+        "sales": ("orders", "customers", "products", "skus"),
+        "purchase": ("purchases", "suppliers", "products", "skus"),
+    }[source]
+    for module in raw_modules:
+        require_finance_permission(request.user, module, "view")
+    for dimension in {group, *(dimension for dimension in [group_2] if dimension), *filters.keys()}:
+        module = DIMENSION_MODULES.get(dimension)
+        if module:
+            require_finance_permission(request.user, module, "view")
+
+
+def _detail_group_matches(day, dims, group, group_2, group_value, group_2_value, grain):
+    first_key, _ = dimension_value(day, dims, group, grain)
+    if str(first_key) != str(group_value):
+        return False
+    if group_2:
+        second_key, _ = dimension_value(day, dims, group_2, grain)
+        return str(second_key) == str(group_2_value)
+    return True
+
+
+def _detail_queryset(source, date_field, start, end, user):
+    """Return the same formal business-record scope used by ``records``."""
+    model = {"sales": Order, "purchase": PurchaseOrder}[source]
+    field = date_field + ("__date" if date_field.endswith("_at") else "")
+    qs = model.objects.filter(**{field + "__range": (start, end)}).filter(historical_only=False)
+    if source == "sales":
+        qs = scope_customer_related_queryset(qs, user)
+        item_model = OrderItem
+        relation = "customer"
+    else:
+        item_model = PurchaseOrderItem
+        relation = "supplier"
+    return qs.exclude(status__in=["draft", "cancelled"]).select_related(relation).prefetch_related(
+        Prefetch("items", queryset=item_model.objects.select_related("sku__product__category")),
+        "contract_changes",
+    ).order_by("pk")
+
+
+def _detail_rows(source, date_field, start, end, group, group_2, grain, filters, group_value, group_2_value, user):
+    rows = []
+    def add_row(row):
+        if len(rows) >= DETAIL_MAX_ROWS:
+            raise ValidationError("构成明细记录过多，请缩小日期范围或增加筛选后重试。")
+        rows.append(row)
+
+    model_rows = _detail_queryset(source, date_field, start, end, user)
+    for document in model_rows:
+        day = getattr(document, date_field)
+        if isinstance(day, datetime):
+            day = timezone.localtime(day).date()
+        base_dims = {}
+        for key in ["status", "currency"]:
+            value = getattr(document, key, "")
+            display = getattr(document, f"get_{key}_display", lambda: value)()
+            base_dims[key] = (value, display or "未填写")
+        if source == "sales":
+            base_dims.update(customer_dims(document.customer))
+            party_name = document.customer.name if document.customer else "未填写"
+            party_id = document.customer_id
+            document_no = document.order_no
+            document_date = document.order_date
+            status_display = document.get_status_display()
+        else:
+            supplier = document.supplier
+            base_dims["supplier"] = identity(supplier, supplier.name if supplier else "")
+            base_dims["country"] = (getattr(supplier, "country", ""), getattr(supplier, "country", "") or "未填写")
+            party_name = supplier.name if supplier else "未填写"
+            party_id = document.supplier_id
+            document_no = document.purchase_no
+            document_date = document.order_date
+            status_display = document.get_status_display()
+
+        items = list(document.items.all())
+        for item in items:
+            dims = {**base_dims, **product_dims(item.sku)}
+            if any(str(dims.get(key, ("", ""))[0]) != str(expected) for key, expected in filters.items()):
+                continue
+            if not _detail_group_matches(day, dims, group, group_2, group_value, group_2_value, grain):
+                continue
+            snapshot_name = getattr(item, "display_name_snapshot", "") or item.sku.display_name_cn or item.sku.product.name
+            add_row({
+                "id": f"{source}-item-{item.pk}",
+                "source": source,
+                "record_type": "item",
+                "document_id": document.pk,
+                "document_no": document_no,
+                "document_date": document_date,
+                "customer_id": party_id if source == "sales" else None,
+                "customer_name": party_name if source == "sales" else "",
+                "supplier_id": party_id if source == "purchase" else None,
+                "supplier_name": party_name if source == "purchase" else "",
+                "sku_id": item.sku_id,
+                "sku": getattr(item, "sku_code_snapshot", "") or item.sku.sku,
+                "product_id": item.sku.product_id,
+                "product_name": snapshot_name,
+                "quantity": item.quantity,
+                "unit": getattr(item, "unit_snapshot", "") or item.sku.unit,
+                "amount": item.amount * document.exchange_rate,
+                "status": document.status,
+                "status_display": status_display,
+                "is_adjustment": False,
+            })
+
+        contract_changes = sum(document.contract_changes.filter(status="approved").values_list("amount_delta", flat=True), Decimal("0"))
+        adjustment = ((document.shipping_fee - document.discount + contract_changes) if source == "sales" else contract_changes) * document.exchange_rate
+        if adjustment or not items:
+            dims = {**base_dims, **product_dims(None)}
+            if not any(str(dims.get(key, ("", ""))[0]) != str(expected) for key, expected in filters.items()) and _detail_group_matches(day, dims, group, group_2, group_value, group_2_value, grain):
+                add_row({
+                    "id": f"{source}-adjustment-{document.pk}",
+                    "source": source,
+                    "record_type": "adjustment",
+                    "document_id": document.pk,
+                    "document_no": document_no,
+                    "document_date": document_date,
+                    "customer_id": party_id if source == "sales" else None,
+                    "customer_name": party_name if source == "sales" else "",
+                    "supplier_id": party_id if source == "purchase" else None,
+                    "supplier_name": party_name if source == "purchase" else "",
+                    "sku_id": None,
+                    "sku": "",
+                    "product_id": None,
+                    "product_name": "订单金额调整",
+                    "quantity": Decimal("0"),
+                    "unit": "",
+                    "amount": adjustment,
+                    "status": document.status,
+                    "status_display": status_display,
+                    "is_adjustment": True,
+                })
+    return rows
+
+
+def _detail_sort_key(row, field):
+    value = row.get(field)
+    if value is None:
+        return ""
+    return value
+
+
+@api_view(["GET"])
+def report_details(request):
+    params = request.query_params
+    source = params.get("source", "sales")
+    if source not in {"sales", "purchase"}:
+        raise ValidationError("当前报表来源不支持原始明细下钻。")
+    spec = SOURCES[source]
+    group, group_2, grain = params.get("group_by", "time"), params.get("group_by_2") or None, params.get("grain", "month")
+    date_field = params.get("date_field") or next(iter(spec["dates"]))
+    if group not in spec["dimensions"] or (group_2 and group_2 not in spec["dimensions"]) or group == group_2 or date_field not in spec["dates"] or grain not in ["day", "week", "month", "quarter", "year"]:
+        raise ValidationError("无效的明细统计维度、时间粒度或日期口径。")
+    try:
+        start = date.fromisoformat(params.get("date_from") or timezone.localdate().replace(day=1).isoformat())
+        end = date.fromisoformat(params.get("date_to") or timezone.localdate().isoformat())
+        if start > end or (end - start).days > 3660 or start.year < 1900 or end.year > 9990:
+            raise ValueError
+    except ValueError:
+        raise ValidationError("明细日期范围无效；开始日期不得晚于结束日期，单次查询最多十年。")
+    group_value = params.get("group_value")
+    group_2_value = params.get("group_2_value") if group_2 else None
+    if group_value in (None, "") or (group_2 and group_2_value in (None, "")):
+        raise ValidationError("请提供要查看构成明细的分组值。")
+    filters = {}
+    for key, value in params.items():
+        if key.startswith("filter_"):
+            dimension = key[7:]
+            if dimension not in spec["dimensions"] or dimension == "time":
+                raise ValidationError("该模块不支持此筛选维度。")
+            filters[dimension] = value
+    _detail_permissions(request, source, group, group_2, filters)
+
+    rows = _detail_rows(source, date_field, start, end, group, group_2, grain, filters, group_value, group_2_value, request.user)
+    ordering = params.get("ordering", "-document_date")
+    descending = ordering.startswith("-")
+    sort_field = ordering[1:] if descending else ordering
+    sort_fields = {"document_date": "document_date", "document_no": "document_no", "amount": "amount", "quantity": "quantity", "sku": "sku", "party": "customer_name" if source == "sales" else "supplier_name"}
+    if sort_field not in sort_fields:
+        raise ValidationError("不支持的明细排序字段。")
+    field = sort_fields[sort_field]
+    rows.sort(key=lambda row: (_detail_sort_key(row, field), row["id"]), reverse=descending)
+
+    amount = sum((row["amount"] for row in rows), Decimal("0"))
+    document_ids = {row["document_id"] for row in rows}
+    quantities = {}
+    for row in rows:
+        if row["unit"]:
+            quantities[row["unit"]] = quantities.get(row["unit"], Decimal("0")) + row["quantity"]
+    page_size = min(max(int(params.get("page_size", 20)), 1), 50) if str(params.get("page_size", "20")).lstrip("-").isdigit() else 20
+    page_number = max(int(params.get("page", 1)), 1) if str(params.get("page", "1")).lstrip("-").isdigit() else 1
+    page = Paginator(rows, page_size).get_page(page_number)
+    return Response({
+        "source": source,
+        "group_by": group,
+        **({"group_by_2": group_2} if group_2 else {}),
+        "date_field": date_field,
+        "date_label": spec["dates"][date_field],
+        "grain": grain,
+        "period": {"date_from": start, "date_to": end},
+        "selection": {"group_value": group_value, **({"group_2_value": group_2_value} if group_2 else {}), "filters": filters},
+        "count": len(rows),
+        "page": page.number,
+        "page_size": page_size,
+        "page_count": page.paginator.num_pages,
+        "totals": {"amount": amount, "count": len(document_ids), "quantities": quantities},
+        "rows": list(page.object_list),
+    })
 
 
 @api_view(["GET"])

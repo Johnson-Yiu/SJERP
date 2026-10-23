@@ -38,6 +38,17 @@ test('customer detail shortcuts require the target module action permission', as
   assert.match(detail, /can\('followups', 'delete'\).*删除/)
 })
 
+test('customer, product and SKU details expose a permission-gated report-center shortcut with a safe return path', async () => {
+  const detail = await readFile(new URL('../components/EntityDetailModal.vue', import.meta.url), 'utf8')
+
+  assert.match(detail, /analysisDimensions = \{ customers: 'customer', products: 'product', skus: 'sku' \}/)
+  assert.match(detail, /canViewBusinessAnalysis = computed\(\(\) => Boolean\(isRoot.value && analysisDimension.value && can\('reports', 'view'\)/)
+  assert.match(detail, /path: '\/reports'/)
+  assert.match(detail, /\[`filter_\$\{analysisDimension.value\}`\]: String\(currentId.value\)/)
+  assert.match(detail, /returnTo: detailReturnPath\(\)/)
+  assert.match(detail, /查看经营分析/)
+})
+
 test('automatic inventory movements are read-only while manual movements are reversed, not deleted', async () => {
   const source = await readFile(new URL('./ResourcePage.vue', import.meta.url), 'utf8')
   const detail = await readFile(new URL('../components/EntityDetailModal.vue', import.meta.url), 'utf8')

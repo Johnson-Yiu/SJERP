@@ -1,0 +1,75 @@
+{
+  "request": {
+    "source": "sales",
+    "date_from": "2026-09-01",
+    "date_to": "2026-09-30",
+    "group_by": "country",
+    "group_by_2": "customer",
+    "group_value": "China",
+    "group_2_value": "1",
+    "page": "1",
+    "page_size": "50"
+  },
+  "response_excerpt": {
+    "source": "sales",
+    "group_by": "country",
+    "group_by_2": "customer",
+    "date_field": "order_date",
+    "period": {
+      "date_from": "2026-09-01",
+      "date_to": "2026-09-30"
+    },
+    "count": 3,
+    "page": 1,
+    "page_size": 50,
+    "page_count": 1,
+    "totals": {
+      "amount": "189.00",
+      "count": 1,
+      "quantities": {
+        "pcs": "2",
+        "box": "1"
+      }
+    },
+    "rows": [
+      {
+        "record_type": "item",
+        "document_no": "REPORT-O",
+        "document_date": "2026-09-01",
+        "customer_name": "Buyer",
+        "sku": "REPORT-1",
+        "product_name": "Lamp",
+        "quantity": "2",
+        "unit": "pcs",
+        "amount": "140.00",
+        "status_display": "已确认",
+        "is_adjustment": false
+      },
+      {
+        "record_type": "item",
+        "document_no": "REPORT-O",
+        "document_date": "2026-09-01",
+        "customer_name": "Buyer",
+        "sku": "REPORT-2",
+        "product_name": "Lamp",
+        "quantity": "1",
+        "unit": "box",
+        "amount": "35.00",
+        "status_display": "已确认",
+        "is_adjustment": false
+      },
+      {
+        "record_type": "adjustment",
+        "document_no": "REPORT-O",
+        "document_date": "2026-09-01",
+        "customer_name": "Buyer",
+        "product_name": "订单金额调整",
+        "quantity": "0",
+        "unit": "",
+        "amount": "14.00",
+        "status_display": "已确认",
+        "is_adjustment": true
+      }
+    ]
+  }
+}

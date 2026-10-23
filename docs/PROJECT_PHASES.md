@@ -247,3 +247,18 @@ ISS-122、ISS-123 的独立复审通过结论已同步为 CLOSED；ISS-105 OPEN�
 ## ISS-049 / ISS-053 / ISS-067 统一集成验收（2026-10-23）
 
 在统一基线 `c356e57014d28295485d52df23612c2fe6c02444` 上使用独立 worktree 建立 `codex/integration-049-053-067`，按无冲突的 `--no-ff` 顺序合并 ISS-049、ISS-053、ISS-067。三项源码、测试、截图及历史证据均保留；文档台账仅补齐 ISS-049 当前状态，并修正阶段阻塞描述与 ISS-053 当前核实结果的一致性。完整 API 响应、浏览器观察、测试日志和剩余风险见 [`统一集成验收报告`](uat-evidence/integration-049-053-067/README.md)。
+## R1-ISS-037-P1 正式商业单据主体快照修复（2026-10-21）
+
+基于最新 `origin/master` 创建独立分支 `codex/r1-iss-037-p1`，仅修复正式销售订单和采购订单的主体快照缺口。Order 在正式确认时保存客户名称、国家/地区、地址、联系人、电话和邮箱；PurchaseOrder 在正式下单时保存供应商名称、地址、联系人、电话和邮箱；Supplier 增加可选地址字段。没有数据迁移回填，历史缺失值保留未知；正式页面显示真实快照，当前主档仅作为明确标注的参考。Quote/QuoteItem/PI 既有修订链、主体及 SKU 行级快照未重构，真实 Chrome 已核对报价/PI导出文件使用历史主体。
+
+旧开发分支新增未发布的 `0078_formal_party_snapshots`，未修改已发布迁移。SQLite 0076→0077→0078→0077→0078 迁移循环、后端 773 项（跳过13）、前端单元 138 项和构建均通过；本机无 PostgreSQL 5432 监听，PostgreSQL 与 GitHub Actions 保持待环境可用后复核。该 `0078` 与 R1-SKU-01、R1-MOQ-02 同号迁移均依赖 0077，已作为旧分支历史保留；实际整合须重新核对基线迁移图，不复制同号迁移或改写已发布迁移。ISS-037 保持 `FIXED_PENDING_REVIEW`，不关闭，等待独立代码、数据权限和视觉复审。
+
+## R1-ISS-037-P1-FIX-01 历史商业单据展示遗漏补修（2026-10-21）
+
+在 `codex/r1-iss-037-p1` 上完成定向展示修复，提交 `126be74d5a2269a8f947570ca0803771feab6a1e`。报价列表和详情优先显示保存的 `buyer_company_name`；正式采购关联卡片优先显示 `supplier_name_snapshot`；缺失快照明确显示“历史主体未记录”，实时主档仅以单独标签显示。未新增模型或迁移，未改写历史单据、金额、搜索或权限规则。SQLite 后端、前端 140 项单元测试、构建及真实 Chrome/PI Excel 证据已完成；PostgreSQL 与 GitHub Actions 仍待环境/额度恢复。ISS-037 继续保持 `FIXED_PENDING_REVIEW`。
+
+## R1-ISS-037 集成兼容性验收（2026-10-24）
+
+基于统一基线 `54925e0a10a48c16ba3b66bbab9e433f48a0e2d7` 在独立 worktree 创建 `codex/next-iss-037-integration`。审查发现该基线已使用 `0078_historical_contract_scope` 和 `0079_shared_report_template`，因此没有复制旧分支同号迁移；正式主体快照字段以新的 `0080_formal_party_snapshots` 依赖 `0079` 接入，未修改或删除既有迁移。最初尝试用同号迁移汇合时，回退到旧迁移会出现字段重复删除；该真实兼容问题已通过上述迁移重编号修正，前进、回退和旧资金记录保护回归均通过。
+
+集成保留报价/PI既有主体与 SKU 快照，并保留销售订单六项客户主体快照、采购单五项供应商主体快照、缺失历史时“历史主体未记录”及当前主档单独参考的规则。当前隔离数据库中将客户/供应商主档改名后，报价 `QT-2026-001`、订单 `SO-2026-001` 和采购单 `PO-ISS037-001` 的 API、真实 Chrome 列表/详情仍显示原快照；PI Excel 导出保留 `ISS037 Buyer Before Rename`。未修改 ISS-021 数量变更代码、生命周期转换规则或正式 RBAC策略。完整命令结果、API摘要、导出和截图索引见 [`ISS-037 集成验收`](uat-evidence/r1-iss-037-p1/INTEGRATION-README.md)。ISS-037 仍保持 `FIXED_PENDING_REVIEW`，不自行关闭。

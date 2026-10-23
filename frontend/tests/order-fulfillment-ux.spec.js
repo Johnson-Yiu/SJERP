@@ -11,7 +11,7 @@ const base = { sku: 10, sku_code: 'SKU-A', display_name: '灯带', base_unit: 'm
 let wrapper, lines, purchases, status
 beforeEach(() => {
   lines = [{ ...base, id: 701 }, { ...base, id: 702 }, { ...base, id: 703, sku: 20, sku_code: 'SKU-B', draftable_quantity: 0, unshipped_quantity: 0 }]
-  purchases = [{ id: 41, purchase_no: 'PO-41', supplier_name: '供应商', status: 'ordered', status_display: '已下单', currency: 'CNY', total_amount: 300, expected_arrival_date: '2026-10-01', items: [{ sku_code: 'SKU-A', quantity: 20 }] }]
+  purchases = [{ id: 41, purchase_no: 'PO-41', supplier_name: '供应商', supplier_name_snapshot: '供应商', status: 'ordered', status_display: '已下单', currency: 'CNY', total_amount: 300, expected_arrival_date: '2026-10-01', items: [{ sku_code: 'SKU-A', quantity: 20 }] }]
   status = 'confirmed'
   mocks.api.get.mockImplementation(async url => ({ data: url.endsWith('/workbench/') ? { order: { id: 321, status, order_no: 'SO-321', currency: 'USD' }, items: [], payments: [], inventory: [], payment_summary: {}, fulfillment_summary: {}, profit_summary: {} } : url.endsWith('/fulfillment/') ? { items: lines, purchase_orders: purchases, shipments: [] } : url.endsWith('/procurement-plan/') ? { items: lines } : url.startsWith('/skus/') ? { id: 10, unit: 'm', trade_units: [] } : {} }))
   mocks.listAll.mockResolvedValue([])

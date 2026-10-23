@@ -1977,6 +1977,62 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             },
         })
 
+def _finance_period(request):
+    today = timezone.localdate()
+    try:
+        start = date.fromisoformat(request.query_params.get("date_from") or today.replace(day=1).isoformat())
+        end = date.fromisoformat(request.query_params.get("date_to") or today.isoformat())
+        if start > end:
+            raise ValueError
+    except ValueError:
+        raise DRFValidationError("请填写有效日期，开始日期不能晚于结束日期。")
+    return start, end
+
+
+def _finance_plans(user):
+    return (
+        scope_plan_queryset(
+            PaymentPlan.objects.select_related("order__customer", "purchase_order__supplier"), user
+        )
+        .filter(status="open")
+        .exclude(order__status__in=["draft", "cancelled"])
+        .exclude(purchase_order__status__in=["draft", "cancelled"])
+    )
+
+
+def _finance_period_orders(user, start, end, can_view_orders=None):
+    if can_view_orders is None:
+        can_view_orders = user_can(user, "orders", "view")
+    if not can_view_orders:
+        return Order.objects.none()
+    return (
+        scope_customer_related_queryset(Order.objects.filter(historical_only=False), user)
+        .exclude(status__in=["draft", "cancelled"])
+        .filter(order_date__range=(start, end))
+        .prefetch_related("items", "contract_changes", "purchase_cost_allocations", "transactions")
+    )
+
+
+def _finance_cash(user, start, end):
+    return scope_transaction_queryset(Transaction.objects.all(), user).filter(
+        status="confirmed", transaction_date__range=(start, end)
+    )
+
+
+def _finance_advances(user):
+    return scope_transaction_queryset(Transaction.objects.all(), user).filter(
+        status="confirmed", kind__in=["unallocated_advance", "unallocated_payment"]
+    )
+
+
+def _finance_row_rmb(row):
+    return row.rmb_amount or row.amount * row.exchange_rate
+
+
+def _finance_plan_rmb(row):
+    exchange_rate = row.order.exchange_rate if row.order_id else row.purchase_order.exchange_rate
+    return row.remaining_amount * exchange_rate
+
 
 @api_view(["GET"])
 def finance_dashboard(request):
@@ -1986,30 +2042,27 @@ def finance_dashboard(request):
     exporting = request.query_params.get("export") == "csv"
     if exporting:
         require_finance_permission(request.user, "finance", "export")
-    today = timezone.localdate()
     try:
-        start = date.fromisoformat(request.query_params.get("date_from") or today.replace(day=1).isoformat())
-        end = date.fromisoformat(request.query_params.get("date_to") or today.isoformat())
-        if start > end:
-            raise ValueError
-    except ValueError:
-        return Response({"detail": "请填写有效日期，开始日期不能晚于结束日期。"}, status=400)
-    plans = scope_plan_queryset(PaymentPlan.objects.select_related("order__customer", "purchase_order__supplier"), request.user).filter(status="open").exclude(order__status__in=["draft", "cancelled"]).exclude(purchase_order__status__in=["draft", "cancelled"])
+        start, end = _finance_period(request)
+    except DRFValidationError as error:
+        return Response({"detail": str(error.detail)}, status=400)
+    today = timezone.localdate()
+    plans = _finance_plans(request.user)
     receivables = plans.filter(direction="receivable") if can_view_orders else plans.none()
     payables = plans.filter(direction="payable") if can_view_purchases else plans.none()
     remaining = lambda rows: sum((row.remaining_amount * (row.order.exchange_rate if row.order_id else row.purchase_order.exchange_rate) for row in rows), Decimal("0"))
     from .services.profit import order_profit_summary
-    period_orders = scope_customer_related_queryset(Order.objects.filter(historical_only=False), request.user).exclude(status__in=["draft", "cancelled"]).filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes", "purchase_cost_allocations", "transactions") if can_view_orders else Order.objects.none()
+    period_orders = _finance_period_orders(request.user, start, end, can_view_orders)
     sales_rmb = sum((order.total_amount * order.exchange_rate for order in period_orders), Decimal("0"))
     profits = [order_profit_summary(order) for order in period_orders] if can_view_orders and can_view_purchases else []
     purchase_cost_rmb = sum((row["purchase_cost_rmb"] for row in profits), Decimal("0"))
     order_expense_rmb = sum((row["expense_rmb"] for row in profits), Decimal("0"))
     estimated_profit_rmb = sum((row["estimated_profit_rmb"] for row in profits), Decimal("0"))
-    cash = scope_transaction_queryset(Transaction.objects.all(), request.user).filter(status="confirmed", transaction_date__range=(start, end))
+    cash = _finance_cash(request.user, start, end)
     income, expense = Decimal("0"), Decimal("0")
     categories, monthly = {}, {}
     for row in cash:
-        value = row.rmb_amount or row.amount * row.exchange_rate
+        value = _finance_row_rmb(row)
         if row.direction == "income":
             income += value
         else:
@@ -2019,7 +2072,7 @@ def finance_dashboard(request):
         month = row.transaction_date.strftime("%Y-%m")
         bucket = monthly.setdefault(month, {"month": month, "income": Decimal("0"), "expense": Decimal("0")})
         bucket[row.direction] += value
-    advances = scope_transaction_queryset(Transaction.objects.all(), request.user).filter(status="confirmed", kind__in=["unallocated_advance", "unallocated_payment"])
+    advances = _finance_advances(request.user)
     unallocated = lambda direction: sum(((row.amount - row.allocated_amount) * row.exchange_rate for row in advances if row.direction == direction), Decimal("0"))
     due_items = [
         {
@@ -2060,6 +2113,203 @@ def finance_dashboard(request):
             writer.writerow(["收入" if row["direction"] == "income" else "支出", safe_csv(row["category"]), row["amount"]])
         return response
     return Response(payload)
+
+
+@api_view(["GET"])
+def finance_dashboard_details(request):
+    """Return a paged, permission-scoped composition for one finance card.
+
+    The endpoint intentionally exposes only records that feed the selected card.
+    Actual bank cash keeps using the existing confirmed-event endpoint/table so
+    its bank_date and bank voucher rules remain a single source of truth.
+    """
+    require_finance_permission(request.user, "transactions", "view")
+    metric = request.query_params.get("metric")
+    metric_config = {
+        "sales_rmb": ("合同销售额", "order_date", "人民币", "订单日期范围内的正式销售订单；包含已批准合同变更，变更不分配至商品行。"),
+        "purchase_cost_rmb": ("订单采购归属成本", "order_date", "人民币", "沿用现有订单采购归属成本服务，按订单日期统计。"),
+        "order_expense_rmb": ("订单费用", "order_date", "人民币", "沿用现有订单利润服务中的已确认订单费用，按订单日期统计。"),
+        "estimated_profit_rmb": ("预计订单利润", "order_date", "人民币", "经营估算：合同销售额 − 采购归属成本 − 订单费用，不代表会计利润。"),
+        "income_rmb": ("账面收入（折算参考）", "transaction_date", "人民币折算参考", "仅统计已确认财务流水，按流水发生日期和既有人民币折算参考口径。"),
+        "expense_rmb": ("账面支出（折算参考）", "transaction_date", "人民币折算参考", "仅统计已确认财务流水，按流水发生日期和既有人民币折算参考口径。"),
+        "net_cash_rmb": ("账面净收支（折算参考）", "transaction_date", "人民币折算参考", "已确认账面收入减已确认账面支出；不代表银行实际到账或银行账户余额。"),
+        "receivable_count": ("待收笔数", "current_balance", "笔", "当前开放应收计划去重计数，不受所选期间限制。"),
+        "receivable_rmb": ("待收款", "current_balance", "人民币折算参考", "当前开放应收计划按合同汇率折算，不受所选期间限制。"),
+        "payable_count": ("待付款笔数", "current_balance", "笔", "当前开放应付计划去重计数，不受所选期间限制。"),
+        "payable_rmb": ("待付款", "current_balance", "人民币折算参考", "当前开放应付计划按合同汇率折算，不受所选期间限制。"),
+        "advance_receipt_rmb": ("未核销预收款", "current_balance", "人民币折算参考", "当前已确认未核销预收流水按原流水汇率折算，不受所选期间限制。"),
+        "advance_payment_rmb": ("未核销预付款", "current_balance", "人民币折算参考", "当前已确认未核销预付流水按原流水汇率折算，不受所选期间限制。"),
+    }
+    if metric not in metric_config:
+        return Response({"detail": "不支持的财务指标。"}, status=400)
+
+    title, date_basis, amount_unit, basis_note = metric_config[metric]
+    try:
+        start, end = _finance_period(request)
+        page = int(request.query_params.get("page") or 1)
+        page_size = int(request.query_params.get("page_size") or 50)
+        sort_by = request.query_params.get("sort_by") or "date"
+        sort_order = request.query_params.get("sort_order") or "asc"
+        if page < 1 or page_size < 1 or page_size > 100 or sort_by not in {"date", "amount", "record"} or sort_order not in {"asc", "desc"}:
+            raise ValueError
+    except (DRFValidationError, TypeError, ValueError):
+        return Response({"detail": "请填写有效的日期、页码和页大小。"}, status=400)
+
+    can_view_orders = user_can(request.user, "orders", "view")
+    can_view_purchases = user_can(request.user, "purchases", "view")
+    if metric in {"sales_rmb", "receivable_count", "receivable_rmb"} and not can_view_orders:
+        require_finance_permission(request.user, "orders", "view")
+    if metric in {"purchase_cost_rmb", "order_expense_rmb", "estimated_profit_rmb", "payable_count", "payable_rmb"} and not (can_view_orders and can_view_purchases):
+        require_finance_permission(request.user, "purchases", "view")
+        require_finance_permission(request.user, "orders", "view")
+
+    rows = []
+    total_amount = Decimal("0")
+    from .services.profit import order_profit_summary
+
+    def order_relation(order):
+        return order.customer.name if order.customer_id and user_can(request.user, "customers", "view") else "客户"
+
+    def order_row(order, amount, note=""):
+        return {
+            "id": order.id,
+            "record_label": order.order_no,
+            "date": order.order_date,
+            "relation_label": order_relation(order),
+            "status_label": order.get_status_display(),
+            "amount": amount,
+            "amount_note": note,
+            "detail_url": f"/orders?detail={order.id}",
+            "detail_label": "查看订单",
+        }
+
+    if metric in {"sales_rmb", "purchase_cost_rmb", "order_expense_rmb", "estimated_profit_rmb"}:
+        orders = _finance_period_orders(request.user, start, end, can_view_orders)
+        for order in orders:
+            sales = order.total_amount * order.exchange_rate
+            if metric == "sales_rmb":
+                amount = sales
+                note = "含已批准合同变更后的合同金额；合同变更不分配至商品行。"
+            else:
+                profit = order_profit_summary(order)
+                amount = {
+                    "purchase_cost_rmb": profit["purchase_cost_rmb"],
+                    "order_expense_rmb": profit["expense_rmb"],
+                    "estimated_profit_rmb": profit["estimated_profit_rmb"],
+                }[metric]
+                note = (
+                    f"销售额 ¥{sales}；采购归属成本 ¥{profit['purchase_cost_rmb']}；"
+                    f"订单费用 ¥{profit['expense_rmb']}。"
+                )
+            total_amount += amount
+            rows.append(order_row(order, amount, note))
+    elif metric in {"income_rmb", "expense_rmb", "net_cash_rmb"}:
+        cash = _finance_cash(request.user, start, end).select_related("customer", "supplier", "order", "purchase_order")
+        for row in cash:
+            value = _finance_row_rmb(row)
+            if metric == "income_rmb" and row.direction != "income":
+                continue
+            if metric == "expense_rmb" and row.direction != "expense":
+                continue
+            amount = value if row.direction == "income" or metric != "net_cash_rmb" else -value
+            if metric == "net_cash_rmb":
+                total_amount += amount
+            else:
+                total_amount += value
+            if row.customer_id:
+                relation = row.customer.name if user_can(request.user, "customers", "view") else "客户"
+            elif row.supplier_id:
+                relation = row.supplier.name if user_can(request.user, "suppliers", "view") else "供应商"
+            elif row.order_id:
+                relation = row.order.order_no if can_view_orders else "订单"
+            elif row.purchase_order_id:
+                relation = row.purchase_order.purchase_no if can_view_purchases else "采购单"
+            else:
+                relation = "未关联业务单据"
+            rows.append({
+                "id": row.id,
+                "record_label": row.transaction_no,
+                "date": row.transaction_date,
+                "relation_label": relation,
+                "status_label": row.get_status_display(),
+                "amount": amount,
+                "amount_note": f"{row.category or '未分类'}；已确认流水。",
+                "detail_url": f"/transactions?detail={row.id}",
+                "detail_label": "查看财务流水",
+            })
+    elif metric in {"receivable_count", "receivable_rmb", "payable_count", "payable_rmb"}:
+        direction = "receivable" if metric.startswith("receivable") else "payable"
+        plans = _finance_plans(request.user).filter(direction=direction)
+        for row in plans:
+            amount = Decimal("1") if metric.endswith("_count") else _finance_plan_rmb(row)
+            total_amount += amount
+            if row.order_id:
+                relation = order_relation(row.order)
+                detail_url = f"/orders?detail={row.order_id}"
+            else:
+                relation = row.purchase_order.supplier.name if user_can(request.user, "suppliers", "view") else "供应商"
+                detail_url = f"/purchase-orders?detail={row.purchase_order_id}"
+            rows.append({
+                "id": row.id,
+                "record_label": row.order.order_no if row.order_id else row.purchase_order.purchase_no,
+                "date": row.due_date,
+                "relation_label": relation,
+                "status_label": "待结清",
+                "amount": amount,
+                "amount_note": "当前开放计划的未结金额。" if not metric.endswith("_count") else "一笔开放计划。",
+                "detail_url": detail_url,
+                "detail_label": "查看订单" if row.order_id else "查看采购单",
+            })
+    else:
+        direction = "income" if metric == "advance_receipt_rmb" else "expense"
+        advances = _finance_advances(request.user).filter(direction=direction)
+        advances = advances.select_related("customer", "supplier", "order", "purchase_order")
+        for row in advances:
+            amount = (row.amount - row.allocated_amount) * row.exchange_rate
+            total_amount += amount
+            relation = "客户" if row.customer_id and not user_can(request.user, "customers", "view") else (row.customer.name if row.customer_id else "供应商")
+            if row.supplier_id and user_can(request.user, "suppliers", "view"):
+                relation = row.supplier.name
+            rows.append({
+                "id": row.id,
+                "record_label": row.transaction_no,
+                "date": row.transaction_date,
+                "relation_label": relation,
+                "status_label": row.get_status_display(),
+                "amount": amount,
+                "amount_note": "已确认流水的未核销余额。",
+                "detail_url": f"/transactions?detail={row.id}",
+                "detail_label": "查看财务流水",
+            })
+
+    def sort_value(row):
+        if sort_by == "amount":
+            return Decimal(str(row["amount"]))
+        if sort_by == "record":
+            return str(row["record_label"] or "")
+        return row["date"] or date.max
+
+    rows.sort(key=sort_value, reverse=sort_order == "desc")
+    total_count = len(rows)
+    offset = (page - 1) * page_size
+    page_rows = rows[offset:offset + page_size]
+    return Response({
+        "metric": metric,
+        "title": title,
+        "basis_note": basis_note,
+        "date_basis": date_basis,
+        "amount_unit": amount_unit,
+        "current_balance": date_basis == "current_balance",
+        "period": {"date_from": start, "date_to": end},
+        "total_count": total_count,
+        "total_amount": total_amount,
+        "page": page,
+        "page_size": page_size,
+        "sort_by": sort_by,
+        "sort_order": sort_order,
+        "has_more": offset + page_size < total_count,
+        "rows": page_rows,
+    })
 
 
 class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):

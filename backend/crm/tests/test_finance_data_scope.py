@@ -146,6 +146,22 @@ class FinanceDataScopeTests(TestCase):
         self.assertEqual(export.status_code, 200)
         self.assertNotIn(self.customer_b.name, export.content.decode('utf-8-sig'))
 
+    def test_finance_dashboard_details_reuses_order_and_cash_data_scope(self):
+        sales = self.client.get('/api/finance-dashboard/details/', {
+            'metric': 'sales_rmb', 'date_from': '2026-10-01', 'date_to': '2026-10-31',
+        })
+        self.assertEqual(sales.status_code, 200, sales.data)
+        self.assertEqual([row['record_label'] for row in sales.data['rows']], ['F-SO-0'])
+        cash = self.client.get('/api/finance-dashboard/details/', {
+            'metric': 'income_rmb', 'date_from': '2026-10-01', 'date_to': '2026-10-31',
+        })
+        self.assertEqual(cash.status_code, 200, cash.data)
+        self.assertEqual({row['record_label'] for row in cash.data['rows']}, {'F-T-0'})
+        RolePermission.objects.filter(role=self.roles['self'], module='orders').update(can_view=False)
+        self.assertEqual(self.client.get('/api/finance-dashboard/details/', {
+            'metric': 'sales_rmb', 'date_from': '2026-10-01', 'date_to': '2026-10-31',
+        }).status_code, 403)
+
     def test_unowned_legacy_sales_cash_requires_all_scope(self):
         row = Transaction.objects.create(transaction_no='F-ORPHAN', direction='expense', kind='order_expense', amount=1, currency='CNY', exchange_rate=1, transaction_date=date(2026, 10, 12))
         self.assertEqual(self.client.get(f'/api/transactions/{row.pk}/').status_code, 404)

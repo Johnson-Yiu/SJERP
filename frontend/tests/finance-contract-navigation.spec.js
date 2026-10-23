@@ -114,6 +114,23 @@ describe('finance contract navigation', () => {
     expect(get).not.toHaveBeenCalled()
   })
 
+  it('opens a permission-scoped finance composition and preserves the selected period', async () => {
+    get.mockImplementation(async path => {
+      if (path === '/finance-dashboard/') return { data: { metrics: { sales_rmb: '1234.50' }, due_items: [], monthly_cash: [], categories: [], period: { date_from: '2026-10-01', date_to: '2026-10-23' } } }
+      if (path === '/actual-rmb-cash/') return { data: { basis: 'bank_cash_confirmed_v1', period: { date_from: '2026-10-01', date_to: '2026-10-23' }, totals: { inflow: '0', outflow: '0', net: '0', count: 0 }, monthly: [], by_kind: [], events: [], note: '仅确认事件' } }
+      if (path === '/finance-dashboard/details/') return { data: { metric: 'sales_rmb', title: '合同销售额', basis_note: '订单日期范围内的正式销售订单。', date_basis: 'order_date', amount_unit: '人民币', current_balance: false, period: { date_from: '2026-10-01', date_to: '2026-10-23' }, total_count: 1, total_amount: '1234.50', page: 1, page_size: 50, has_more: false, rows: [{ id: 7, record_label: 'SO-FIN-7', date: '2026-10-09', relation_label: '客户', status_label: '已确认', amount: '1234.50', amount_note: '合同金额', detail_url: '/orders?detail=7', detail_label: '查看订单' }] } }
+      return { data: {} }
+    })
+    const { wrapper, router } = await mountOn(FinanceDashboardPage, '/finance')
+    await wrapper.findAll('button').find(button => button.text() === '查看构成明细').trigger('click')
+    await flushPromises()
+    expect(wrapper.find('.finance-drill-panel').text()).toContain('SO-FIN-7')
+    expect(wrapper.find('.finance-drill-panel').text()).toContain('¥1,234.50')
+    expect(wrapper.find('a[href="/orders?detail=7"]').exists()).toBe(true)
+    expect(get).toHaveBeenCalledWith('/finance-dashboard/details/', { params: { metric: 'sales_rmb', date_from: '2026-10-01', date_to: '2026-10-23', page: 1, page_size: 50, sort_by: 'date', sort_order: 'asc' } })
+    expect(router.currentRoute.value.query).toEqual({})
+  })
+
   it('stores transaction filters in the URL and keeps the query server driven', async () => {
     const { wrapper, router } = await mountOn(TransactionPage, '/transactions')
     listAll.mockClear()

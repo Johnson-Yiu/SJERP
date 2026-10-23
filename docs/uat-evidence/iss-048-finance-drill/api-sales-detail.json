@@ -1,0 +1,29 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/api/finance-dashboard/details/",
+    "query": {
+      "metric": "sales_rmb",
+      "date_from": "2026-09-01",
+      "date_to": "2026-09-30",
+      "page": 1,
+      "page_size": 50,
+      "sort_by": "date",
+      "sort_order": "asc"
+    }
+  },
+  "response_excerpt": {
+    "metric": "sales_rmb",
+    "date_basis": "order_date",
+    "total_count": 1,
+    "total_amount": "40",
+    "rows": [
+      {
+        "record_label": "FIN-DRILL-SO",
+        "date": "2026-09-01",
+        "amount": "40",
+        "detail_url": "/orders?detail=1"
+      }
+    ]
+  }
+}

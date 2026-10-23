@@ -1,0 +1,8 @@
+
+ RUN  v4.1.11 C:/Users/Johnson/.codex/worktrees/iss-048-finance-drill/森爵照明管理系统/frontend
+
+
+ Test Files  2 passed (2)
+      Tests  12 passed (12)
+   Start at  18:00:04
+   Duration  23.58s (transform 1.34s, setup 763ms, import 2.09s, tests 592ms, environment 41.71s)

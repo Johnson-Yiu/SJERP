@@ -11,5 +11,7 @@ test('finance dashboard keeps book reference and adds confirmed bank cash facts 
   assert.match(source, /仅统计已登记并人工确认的银行资金事件/)
   assert.match(source, /银行实际净额/)
   assert.match(source, /查看原始事件/)
+  assert.match(source, /finance-dashboard\/details/)
+  assert.match(source, /查看构成明细/)
   assert.match(source, /账面收支（人民币折算参考）/)
 })

@@ -1,0 +1,25 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/api/finance-dashboard/details/",
+    "query": {
+      "metric": "net_cash_rmb",
+      "date_from": "2026-09-01",
+      "date_to": "2026-09-30",
+      "page": 1,
+      "page_size": 50,
+      "sort_by": "amount",
+      "sort_order": "desc"
+    }
+  },
+  "response_excerpt": {
+    "metric": "net_cash_rmb",
+    "date_basis": "transaction_date",
+    "total_count": 2,
+    "total_amount": "26",
+    "rows": [
+      { "record_label": "FIN-DRILL-IN", "amount": "30", "detail_url": "/transactions?detail=1" },
+      { "record_label": "FIN-DRILL-OUT", "amount": "-4", "detail_url": "/transactions?detail=2" }
+    ]
+  }
+}

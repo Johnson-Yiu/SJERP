@@ -1,0 +1,895 @@
+{
+  "generated_from": "actual render_packing_list_xlsx service output",
+  "template": "C:\\Users\\Johnson\\.codex\\worktrees\\iss-040-integration\\森爵照明管理系统\\backend\\crm\\templates\\packing\\Packing List装箱单.xlsx",
+  "template_headers_raw_xml": [
+    [
+      "No.",
+      "Product Name",
+      "Image",
+      "Description",
+      "Quantity(pcs)",
+      "HS Code",
+      "pcs/carton",
+      "Cartons",
+      "Carton L(CM)",
+      "Carton W(CM)",
+      "Carton H(CM)",
+      "N.W.",
+      "Total N.W.",
+      "G.W.",
+      "Total G.W.",
+      "CBM"
+    ],
+    [
+      "序号",
+      "商品名",
+      "图片",
+      "商品描述",
+      "数量",
+      "海关HS编码",
+      "装箱数量",
+      "箱数",
+      "外箱长",
+      "外箱宽",
+      "外箱高",
+      "净重",
+      "总净重",
+      "毛重",
+      "总毛重",
+      "总体积"
+    ]
+  ],
+  "template_zip_media": [
+    "xl/media/image1.png"
+  ],
+  "sample_count": 7,
+  "samples": [
+    {
+      "file": "sample-a-normal.xlsx",
+      "sheet": "Sheet1",
+      "dimensions": "A1:P15",
+      "max_row": 15,
+      "max_column": 16,
+      "english_headers": [
+        "No.",
+        "Product Name",
+        "Image",
+        "Description",
+        "Quantity(pcs)",
+        "HS Code",
+        "pcs/carton",
+        "Cartons",
+        "Carton L(CM)",
+        "Carton W(CM)",
+        "Carton H(CM)",
+        "N.W.",
+        "Total N.W.",
+        "G.W.",
+        "Total G.W.",
+        "CBM"
+      ],
+      "template_16_column_headers_match": true,
+      "english_headers_match": true,
+      "chinese_headers_preserved_as_template_values": true,
+      "company_header": {
+        "A1": "Packing List No.:",
+        "A2": "Date:",
+        "A3": "Invoice Ref No.:"
+      },
+      "title_rows": [
+        "No.",
+        "序号"
+      ],
+      "data_row_count": 2,
+      "subtotal_row": 15,
+      "subtotal_formulas": {
+        "H": "=SUM(H6:H14)",
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": "=SUM(M6:M14)",
+        "N": "/",
+        "O": "=SUM(O6:O14)",
+        "P": "=SUM(P6:P14)"
+      },
+      "subtotal_values": {
+        "H": null,
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": null,
+        "N": "/",
+        "O": null,
+        "P": null
+      },
+      "print_area": "'Sheet1'!$A$1:$P$15",
+      "print_title_rows": "$4:$5",
+      "page_setup": {
+        "orientation": "landscape",
+        "paperSize": 9,
+        "fitToWidth": 1,
+        "fitToHeight": 0
+      },
+      "footer": {
+        "center": "Page &P of &N",
+        "left": null,
+        "right": null
+      },
+      "logo_media": [
+        "xl/media/image1.png"
+      ],
+      "has_vml_or_drawing": true,
+      "merged_ranges": [
+        "A15:G15"
+      ],
+      "data_rows_preview": [
+        {
+          "row": 6,
+          "A": 1,
+          "D": "SKU: ISS040-A\nStandard LED lamp A\nCarton No.: CTN-001",
+          "E": 5,
+          "H": 1,
+          "I": 40,
+          "J": 30,
+          "O": "=IF(OR(N6=\"\",H6=\"\"),\"\",N6*H6)",
+          "P": 0.024
+        },
+        {
+          "row": 7,
+          "A": 2,
+          "D": "SKU: ISS040-B\nStandard LED lamp B\nCarton No.: CTN-002",
+          "E": 4,
+          "H": 1,
+          "I": 40,
+          "J": 30,
+          "O": "=IF(OR(N7=\"\",H7=\"\"),\"\",N7*H7)",
+          "P": 0.024
+        }
+      ],
+      "row_heights": {
+        "6": 100.0,
+        "7": 100.0
+      },
+      "zip_has_template_media_shape": true
+    },
+    {
+      "file": "sample-b-mixed.xlsx",
+      "sheet": "Sheet1",
+      "dimensions": "A1:P15",
+      "max_row": 15,
+      "max_column": 16,
+      "english_headers": [
+        "No.",
+        "Product Name",
+        "Image",
+        "Description",
+        "Quantity(pcs)",
+        "HS Code",
+        "pcs/carton",
+        "Cartons",
+        "Carton L(CM)",
+        "Carton W(CM)",
+        "Carton H(CM)",
+        "N.W.",
+        "Total N.W.",
+        "G.W.",
+        "Total G.W.",
+        "CBM"
+      ],
+      "template_16_column_headers_match": true,
+      "english_headers_match": true,
+      "chinese_headers_preserved_as_template_values": true,
+      "company_header": {
+        "A1": "Packing List No.:",
+        "A2": "Date:",
+        "A3": "Invoice Ref No.:"
+      },
+      "title_rows": [
+        "No.",
+        "序号"
+      ],
+      "data_row_count": 3,
+      "subtotal_row": 15,
+      "subtotal_formulas": {
+        "H": "=SUM(H6:H14)",
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": "=SUM(M6:M14)",
+        "N": "/",
+        "O": "=SUM(O6:O14)",
+        "P": "=SUM(P6:P14)"
+      },
+      "subtotal_values": {
+        "H": null,
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": null,
+        "N": "/",
+        "O": null,
+        "P": null
+      },
+      "print_area": "'Sheet1'!$A$1:$P$15",
+      "print_title_rows": "$4:$5",
+      "page_setup": {
+        "orientation": "landscape",
+        "paperSize": 9,
+        "fitToWidth": 1,
+        "fitToHeight": 0
+      },
+      "footer": {
+        "center": "Page &P of &N",
+        "left": null,
+        "right": null
+      },
+      "logo_media": [
+        "xl/media/image1.png"
+      ],
+      "has_vml_or_drawing": true,
+      "merged_ranges": [
+        "A15:G15"
+      ],
+      "data_rows_preview": [
+        {
+          "row": 6,
+          "A": 1,
+          "D": "SKU: ISS040-A\nStandard LED lamp A\nCarton No.: CTN-001\nNotes: Mixed carton: two SKUs share one carton",
+          "E": 3,
+          "H": 1,
+          "I": 50,
+          "J": 40,
+          "O": "=IF(OR(N6=\"\",H6=\"\"),\"\",N6*H6)",
+          "P": 0.06
+        },
+        {
+          "row": 7,
+          "A": 2,
+          "D": "SKU: ISS040-B\nStandard LED lamp B\nCarton No.: CTN-001\nNotes: Mixed carton: two SKUs share one carton",
+          "E": 4,
+          "H": null,
+          "I": null,
+          "J": null,
+          "O": "=IF(OR(N7=\"\",H7=\"\"),\"\",N7*H7)",
+          "P": null
+        },
+        {
+          "row": 8,
+          "A": 3,
+          "D": "SKU: ISS040-A\nStandard LED lamp A\nCarton No.: CTN-002",
+          "E": 2,
+          "H": 1,
+          "I": 40,
+          "J": 30,
+          "O": "=IF(OR(N8=\"\",H8=\"\"),\"\",N8*H8)",
+          "P": 0.024
+        }
+      ],
+      "row_heights": {
+        "6": 164.0,
+        "7": 164.0,
+        "8": 100.0
+      },
+      "zip_has_template_media_shape": true
+    },
+    {
+      "file": "sample-c-different-carton-specs.xlsx",
+      "sheet": "Sheet1",
+      "dimensions": "A1:P15",
+      "max_row": 15,
+      "max_column": 16,
+      "english_headers": [
+        "No.",
+        "Product Name",
+        "Image",
+        "Description",
+        "Quantity(pcs)",
+        "HS Code",
+        "pcs/carton",
+        "Cartons",
+        "Carton L(CM)",
+        "Carton W(CM)",
+        "Carton H(CM)",
+        "N.W.",
+        "Total N.W.",
+        "G.W.",
+        "Total G.W.",
+        "CBM"
+      ],
+      "template_16_column_headers_match": true,
+      "english_headers_match": true,
+      "chinese_headers_preserved_as_template_values": true,
+      "company_header": {
+        "A1": "Packing List No.:",
+        "A2": "Date:",
+        "A3": "Invoice Ref No.:"
+      },
+      "title_rows": [
+        "No.",
+        "序号"
+      ],
+      "data_row_count": 2,
+      "subtotal_row": 15,
+      "subtotal_formulas": {
+        "H": "=SUM(H6:H14)",
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": "=SUM(M6:M14)",
+        "N": "/",
+        "O": "=SUM(O6:O14)",
+        "P": "=SUM(P6:P14)"
+      },
+      "subtotal_values": {
+        "H": null,
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": null,
+        "N": "/",
+        "O": null,
+        "P": null
+      },
+      "print_area": "'Sheet1'!$A$1:$P$15",
+      "print_title_rows": "$4:$5",
+      "page_setup": {
+        "orientation": "landscape",
+        "paperSize": 9,
+        "fitToWidth": 1,
+        "fitToHeight": 0
+      },
+      "footer": {
+        "center": "Page &P of &N",
+        "left": null,
+        "right": null
+      },
+      "logo_media": [
+        "xl/media/image1.png"
+      ],
+      "has_vml_or_drawing": true,
+      "merged_ranges": [
+        "A15:G15"
+      ],
+      "data_rows_preview": [
+        {
+          "row": 6,
+          "A": 1,
+          "D": "SKU: ISS040-A\nStandard LED lamp A\nCarton No.: CTN-001–CTN-002",
+          "E": 4,
+          "H": 2,
+          "I": 40,
+          "J": 30,
+          "O": "=IF(OR(N6=\"\",H6=\"\"),\"\",N6*H6)",
+          "P": 0.048
+        },
+        {
+          "row": 7,
+          "A": 2,
+          "D": "SKU: ISS040-A\nStandard LED lamp A\nCarton No.: CTN-003",
+          "E": 1,
+          "H": 1,
+          "I": 50,
+          "J": 40,
+          "O": "=IF(OR(N7=\"\",H7=\"\"),\"\",N7*H7)",
+          "P": 0.06
+        }
+      ],
+      "row_heights": {
+        "6": 116.0,
+        "7": 100.0
+      },
+      "zip_has_template_media_shape": true
+    },
+    {
+      "file": "sample-d-split-shipment-01.xlsx",
+      "sheet": "Sheet1",
+      "dimensions": "A1:P15",
+      "max_row": 15,
+      "max_column": 16,
+      "english_headers": [
+        "No.",
+        "Product Name",
+        "Image",
+        "Description",
+        "Quantity(pcs)",
+        "HS Code",
+        "pcs/carton",
+        "Cartons",
+        "Carton L(CM)",
+        "Carton W(CM)",
+        "Carton H(CM)",
+        "N.W.",
+        "Total N.W.",
+        "G.W.",
+        "Total G.W.",
+        "CBM"
+      ],
+      "template_16_column_headers_match": true,
+      "english_headers_match": true,
+      "chinese_headers_preserved_as_template_values": true,
+      "company_header": {
+        "A1": "Packing List No.:",
+        "A2": "Date:",
+        "A3": "Invoice Ref No.:"
+      },
+      "title_rows": [
+        "No.",
+        "序号"
+      ],
+      "data_row_count": 2,
+      "subtotal_row": 15,
+      "subtotal_formulas": {
+        "H": "=SUM(H6:H14)",
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": "=SUM(M6:M14)",
+        "N": "/",
+        "O": "=SUM(O6:O14)",
+        "P": "=SUM(P6:P14)"
+      },
+      "subtotal_values": {
+        "H": null,
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": null,
+        "N": "/",
+        "O": null,
+        "P": null
+      },
+      "print_area": "'Sheet1'!$A$1:$P$15",
+      "print_title_rows": "$4:$5",
+      "page_setup": {
+        "orientation": "landscape",
+        "paperSize": 9,
+        "fitToWidth": 1,
+        "fitToHeight": 0
+      },
+      "footer": {
+        "center": "Page &P of &N",
+        "left": null,
+        "right": null
+      },
+      "logo_media": [
+        "xl/media/image1.png"
+      ],
+      "has_vml_or_drawing": true,
+      "merged_ranges": [
+        "A15:G15"
+      ],
+      "data_rows_preview": [
+        {
+          "row": 6,
+          "A": 1,
+          "D": "SKU: ISS040-A\nStandard LED lamp A\nCarton No.: CTN-001",
+          "E": 2,
+          "H": 1,
+          "I": 40,
+          "J": 30,
+          "O": "=IF(OR(N6=\"\",H6=\"\"),\"\",N6*H6)",
+          "P": 0.024
+        },
+        {
+          "row": 7,
+          "A": 2,
+          "D": "SKU: ISS040-B\nStandard LED lamp B\nCarton No.: CTN-001",
+          "E": 1,
+          "H": null,
+          "I": null,
+          "J": null,
+          "O": "=IF(OR(N7=\"\",H7=\"\"),\"\",N7*H7)",
+          "P": null
+        }
+      ],
+      "row_heights": {
+        "6": 100.0,
+        "7": 100.0
+      },
+      "zip_has_template_media_shape": true
+    },
+    {
+      "file": "sample-d-split-shipment-02.xlsx",
+      "sheet": "Sheet1",
+      "dimensions": "A1:P15",
+      "max_row": 15,
+      "max_column": 16,
+      "english_headers": [
+        "No.",
+        "Product Name",
+        "Image",
+        "Description",
+        "Quantity(pcs)",
+        "HS Code",
+        "pcs/carton",
+        "Cartons",
+        "Carton L(CM)",
+        "Carton W(CM)",
+        "Carton H(CM)",
+        "N.W.",
+        "Total N.W.",
+        "G.W.",
+        "Total G.W.",
+        "CBM"
+      ],
+      "template_16_column_headers_match": true,
+      "english_headers_match": true,
+      "chinese_headers_preserved_as_template_values": true,
+      "company_header": {
+        "A1": "Packing List No.:",
+        "A2": "Date:",
+        "A3": "Invoice Ref No.:"
+      },
+      "title_rows": [
+        "No.",
+        "序号"
+      ],
+      "data_row_count": 2,
+      "subtotal_row": 15,
+      "subtotal_formulas": {
+        "H": "=SUM(H6:H14)",
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": "=SUM(M6:M14)",
+        "N": "/",
+        "O": "=SUM(O6:O14)",
+        "P": "=SUM(P6:P14)"
+      },
+      "subtotal_values": {
+        "H": null,
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": null,
+        "N": "/",
+        "O": null,
+        "P": null
+      },
+      "print_area": "'Sheet1'!$A$1:$P$15",
+      "print_title_rows": "$4:$5",
+      "page_setup": {
+        "orientation": "landscape",
+        "paperSize": 9,
+        "fitToWidth": 1,
+        "fitToHeight": 0
+      },
+      "footer": {
+        "center": "Page &P of &N",
+        "left": null,
+        "right": null
+      },
+      "logo_media": [
+        "xl/media/image1.png"
+      ],
+      "has_vml_or_drawing": true,
+      "merged_ranges": [
+        "A15:G15"
+      ],
+      "data_rows_preview": [
+        {
+          "row": 6,
+          "A": 1,
+          "D": "SKU: ISS040-A\nStandard LED lamp A\nCarton No.: CTN-001",
+          "E": 3,
+          "H": 1,
+          "I": 40,
+          "J": 30,
+          "O": "=IF(OR(N6=\"\",H6=\"\"),\"\",N6*H6)",
+          "P": 0.024
+        },
+        {
+          "row": 7,
+          "A": 2,
+          "D": "SKU: ISS040-B\nStandard LED lamp B\nCarton No.: CTN-002",
+          "E": 3,
+          "H": 1,
+          "I": 40,
+          "J": 30,
+          "O": "=IF(OR(N7=\"\",H7=\"\"),\"\",N7*H7)",
+          "P": 0.024
+        }
+      ],
+      "row_heights": {
+        "6": 100.0,
+        "7": 100.0
+      },
+      "zip_has_template_media_shape": true
+    },
+    {
+      "file": "sample-e-multipage-60-rows.xlsx",
+      "sheet": "Sheet1",
+      "dimensions": "A1:P66",
+      "max_row": 66,
+      "max_column": 16,
+      "english_headers": [
+        "No.",
+        "Product Name",
+        "Image",
+        "Description",
+        "Quantity(pcs)",
+        "HS Code",
+        "pcs/carton",
+        "Cartons",
+        "Carton L(CM)",
+        "Carton W(CM)",
+        "Carton H(CM)",
+        "N.W.",
+        "Total N.W.",
+        "G.W.",
+        "Total G.W.",
+        "CBM"
+      ],
+      "template_16_column_headers_match": true,
+      "english_headers_match": true,
+      "chinese_headers_preserved_as_template_values": true,
+      "company_header": {
+        "A1": "Packing List No.:",
+        "A2": "Date:",
+        "A3": "Invoice Ref No.:"
+      },
+      "title_rows": [
+        "No.",
+        "序号"
+      ],
+      "data_row_count": 60,
+      "subtotal_row": 66,
+      "subtotal_formulas": {
+        "H": "=SUM(H6:H65)",
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": "=SUM(M6:M65)",
+        "N": "/",
+        "O": "=SUM(O6:O65)",
+        "P": "=SUM(P6:P65)"
+      },
+      "subtotal_values": {
+        "H": null,
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": null,
+        "N": "/",
+        "O": null,
+        "P": null
+      },
+      "print_area": "'Sheet1'!$A$1:$P$66",
+      "print_title_rows": "$4:$5",
+      "page_setup": {
+        "orientation": "landscape",
+        "paperSize": 9,
+        "fitToWidth": 1,
+        "fitToHeight": 0
+      },
+      "footer": {
+        "center": "Page &P of &N",
+        "left": null,
+        "right": null
+      },
+      "logo_media": [
+        "xl/media/image1.png"
+      ],
+      "has_vml_or_drawing": true,
+      "merged_ranges": [
+        "A66:G66"
+      ],
+      "data_rows_preview": [
+        {
+          "row": 6,
+          "A": 1,
+          "D": "SKU: ISS040-A\nStandard LED lamp A\nCarton No.: CTN-001",
+          "E": 1,
+          "H": 1,
+          "I": 41,
+          "J": 30,
+          "O": "=IF(OR(N6=\"\",H6=\"\"),\"\",N6*H6)",
+          "P": 0.0246
+        },
+        {
+          "row": 7,
+          "A": 2,
+          "D": "SKU: ISS040-A\nStandard LED lamp A\nCarton No.: CTN-002",
+          "E": 1,
+          "H": 1,
+          "I": 42,
+          "J": 30,
+          "O": "=IF(OR(N7=\"\",H7=\"\"),\"\",N7*H7)",
+          "P": 0.0252
+        },
+        {
+          "row": 8,
+          "A": 3,
+          "D": "SKU: ISS040-A\nStandard LED lamp A\nCarton No.: CTN-003",
+          "E": 1,
+          "H": 1,
+          "I": 43,
+          "J": 30,
+          "O": "=IF(OR(N8=\"\",H8=\"\"),\"\",N8*H8)",
+          "P": 0.0258
+        },
+        {
+          "row": 9,
+          "A": 4,
+          "D": "SKU: ISS040-A\nStandard LED lamp A\nCarton No.: CTN-004",
+          "E": 1,
+          "H": 1,
+          "I": 44,
+          "J": 30,
+          "O": "=IF(OR(N9=\"\",H9=\"\"),\"\",N9*H9)",
+          "P": 0.0264
+        }
+      ],
+      "row_heights": {
+        "6": 100.0,
+        "7": 100.0,
+        "8": 100.0,
+        "9": 100.0,
+        "10": 100.0,
+        "11": 100.0,
+        "12": 100.0,
+        "13": 100.0,
+        "14": 100.0,
+        "15": 100.0,
+        "16": 100.0,
+        "17": 100.0,
+        "18": 100.0,
+        "19": 100.0,
+        "20": 100.0,
+        "21": 100.0,
+        "22": 100.0,
+        "23": 100.0,
+        "24": 100.0,
+        "25": 100.0,
+        "26": 100.0,
+        "27": 100.0,
+        "28": 100.0,
+        "29": 100.0,
+        "30": 100.0,
+        "31": 100.0,
+        "32": 100.0,
+        "33": 100.0,
+        "34": 100.0,
+        "35": 100.0,
+        "36": 100.0,
+        "37": 100.0,
+        "38": 100.0,
+        "39": 100.0,
+        "40": 100.0,
+        "41": 100.0,
+        "42": 100.0,
+        "43": 100.0,
+        "44": 100.0,
+        "45": 100.0,
+        "46": 100.0,
+        "47": 100.0,
+        "48": 100.0,
+        "49": 100.0,
+        "50": 100.0,
+        "51": 100.0,
+        "52": 100.0,
+        "53": 100.0,
+        "54": 100.0,
+        "55": 100.0,
+        "56": 100.0,
+        "57": 100.0,
+        "58": 100.0,
+        "59": 100.0,
+        "60": 100.0,
+        "61": 100.0,
+        "62": 100.0,
+        "63": 100.0,
+        "64": 100.0,
+        "65": 100.0
+      },
+      "zip_has_template_media_shape": true
+    },
+    {
+      "file": "sample-f-long-description.xlsx",
+      "sheet": "Sheet1",
+      "dimensions": "A1:P15",
+      "max_row": 15,
+      "max_column": 16,
+      "english_headers": [
+        "No.",
+        "Product Name",
+        "Image",
+        "Description",
+        "Quantity(pcs)",
+        "HS Code",
+        "pcs/carton",
+        "Cartons",
+        "Carton L(CM)",
+        "Carton W(CM)",
+        "Carton H(CM)",
+        "N.W.",
+        "Total N.W.",
+        "G.W.",
+        "Total G.W.",
+        "CBM"
+      ],
+      "template_16_column_headers_match": true,
+      "english_headers_match": true,
+      "chinese_headers_preserved_as_template_values": true,
+      "company_header": {
+        "A1": "Packing List No.:",
+        "A2": "Date:",
+        "A3": "Invoice Ref No.:"
+      },
+      "title_rows": [
+        "No.",
+        "序号"
+      ],
+      "data_row_count": 1,
+      "subtotal_row": 15,
+      "subtotal_formulas": {
+        "H": "=SUM(H6:H14)",
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": "=SUM(M6:M14)",
+        "N": "/",
+        "O": "=SUM(O6:O14)",
+        "P": "=SUM(P6:P14)"
+      },
+      "subtotal_values": {
+        "H": null,
+        "I": "/",
+        "J": null,
+        "K": null,
+        "M": null,
+        "N": "/",
+        "O": null,
+        "P": null
+      },
+      "print_area": "'Sheet1'!$A$1:$P$15",
+      "print_title_rows": "$4:$5",
+      "page_setup": {
+        "orientation": "landscape",
+        "paperSize": 9,
+        "fitToWidth": 1,
+        "fitToHeight": 0
+      },
+      "footer": {
+        "center": "Page &P of &N",
+        "left": null,
+        "right": null
+      },
+      "logo_media": [
+        "xl/media/image1.png"
+      ],
+      "has_vml_or_drawing": true,
+      "merged_ranges": [
+        "A15:G15"
+      ],
+      "data_rows_preview": [
+        {
+          "row": 6,
+          "A": 1,
+          "D": "SKU: ISS040-A\nProfessional recessed LED luminaire with an extended English model description for customer packaging review, mixed 中文规格参数，包含安装方式、功率、色温、表面处理以及客户定制安装说明。\nCarton No.: CTN-001\nNotes: 请保持每个纸箱标签完整，备注包含较长的装箱说明和客户定制要求。",
+          "E": 5,
+          "H": 1,
+          "I": 40,
+          "J": 30,
+          "O": "=IF(OR(N6=\"\",H6=\"\"),\"\",N6*H6)",
+          "P": 0.024
+        }
+      ],
+      "row_heights": {
+        "6": 404.0
+      },
+      "zip_has_template_media_shape": true
+    }
+  ],
+  "acceptance_checks": {
+    "all_16_column_bilingual_headers": true,
+    "all_preserve_company_logo_and_print_layout": true,
+    "multipage_sample_has_60_data_rows_and_66_rows_total": true,
+    "mixed_sample_physical_fields_once": true,
+    "long_description_wrap_height_present": true,
+    "all_have_page_footer": true,
+    "all_have_repeat_title_rows": true,
+    "all_have_print_area": true,
+    "all_fit_to_width": true
+  }
+}

@@ -1,12 +1,14 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
-import { api } from '../api'
+import { api, downloadPackingListExport } from '../api'
 import { confirmDialog } from '../dialogs'
+import { useAccessControl } from '../accessControl'
 import { decimal, packingSummary, scaled, shippedSkus } from '../utils/actualPacking'
 
 const props = defineProps({ shipments: { type: Array, default: () => [] }, hasPlan: Boolean, cache: { type: Object, required: true } })
+const { can } = useAccessControl()
 const editor = ref(null), editorError = ref(''), saving = ref(false)
-const busy = ref({}), errors = ref({}), loading = ref({})
+const busy = ref({}), errors = ref({}), loading = ref({}), exporting = ref({})
 const target = computed(() => props.shipments.find(row => row.id === editor.value?.shipmentId))
 const skuOptions = computed(() => target.value ? shippedSkus(target.value) : [])
 const mutable = shipment => shipment?.status === 'confirmed'
@@ -98,6 +100,22 @@ async function copy(shipment) {
   } catch (error) { errors.value[shipment.id] = errorMessage(error) }
   finally { busy.value[shipment.id] = false }
 }
+function exportErrorMessage(error) {
+  const data = error.response?.data || error.data
+  if (data?.differences?.length) {
+    const details = data.differences.map(row => `${row.sku}：发货 ${row.shipped_quantity}，已装箱 ${row.packed_quantity}，差额 ${row.difference}`).join('；')
+    return `${data.detail || '实际装箱数量不一致。'} ${details}`
+  }
+  return errorMessage(error)
+}
+async function exportPackingList(shipment) {
+  if (exporting.value[shipment.id] || !can('inventory', 'export') || summary(shipment).complete === false) return
+  exporting.value[shipment.id] = true
+  errors.value[shipment.id] = ''
+  try { await downloadPackingListExport(shipment.id, shipment.shipment_no) }
+  catch (error) { errors.value[shipment.id] = exportErrorMessage(error) }
+  finally { exporting.value[shipment.id] = false }
+}
 const skuLabel = (shipment, id) => shippedSkus(shipment).find(row => String(row.sku) === String(id))?.sku_code || `SKU #${id}`
 </script>
 
@@ -112,7 +130,7 @@ const skuLabel = (shipment, id) => shippedSkus(shipment).find(row => String(row.
       <p v-if="loading[shipment.id]" role="status">实际箱单加载中…</p>
       <div v-if="errors[shipment.id]" class="packing-error" role="alert">{{ errors[shipment.id] }} <button v-if="!Object.hasOwn(cache, shipment.id)" type="button" @click="load(shipment, true)">重试</button></div>
       <template v-if="Object.hasOwn(cache, shipment.id)">
-        <div class="actual-packing-summary"><span>实际装箱：<strong>{{ summary(shipment).count }} 箱</strong></span><span>净重：{{ summary(shipment).net }} kg</span><span>毛重：{{ summary(shipment).gross }} kg</span><span>CBM：{{ summary(shipment).cbm }} m³</span></div>
+        <div class="actual-packing-summary"><span>实际装箱：<strong>{{ summary(shipment).count }} 箱</strong></span><span>净重：{{ summary(shipment).net }} kg</span><span>毛重：{{ summary(shipment).gross }} kg</span><span>CBM：{{ summary(shipment).cbm }} m³</span><button v-if="can('inventory', 'export') && mutable(shipment)" type="button" class="btn btn-secondary" :disabled="!summary(shipment).complete || exporting[shipment.id]" @click="exportPackingList(shipment)">{{ exporting[shipment.id] ? '导出中…' : '导出 Packing List' }}</button></div>
         <div class="packing-progress"><strong>{{ summary(shipment).complete ? '装箱完成' : '尚未装箱完成' }}</strong><p v-for="row in summary(shipment).rows" :key="row.sku">{{ row.sku_code }}：已装 {{ row.packed }} / 发货 {{ row.shipped }} {{ row.base_unit }} <span v-if="!row.complete"> · 未装箱 {{ row.remaining }} {{ row.base_unit }}</span></p></div>
         <div v-if="mutable(shipment)" class="actual-packing-actions"><button type="button" class="btn btn-primary" :disabled="busy[shipment.id]" @click="openEditor(shipment)">新增箱</button><button type="button" class="btn btn-secondary" :disabled="!hasPlan || busy[shipment.id]" @click="copy(shipment)">从预计装箱复制</button><small v-if="!hasPlan">请先生成预计装箱方案</small></div>
         <p v-if="!packages(shipment).length" class="muted">尚无实际箱单。</p>

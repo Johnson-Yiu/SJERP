@@ -56,3 +56,15 @@ export async function downloadQuoteExport(id, quoteNo) {
   setTimeout(() => URL.revokeObjectURL(url), 0)
 }
 
+export async function downloadPackingListExport(id, shipmentNo) {
+  const response = await api.get(`/shipments/${id}/export-packing-list/`, { responseType: 'blob', timeout: 120000 })
+  const url = URL.createObjectURL(response.data)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = `PackingList-${shipmentNo || id}.xlsx`
+  document.body.appendChild(anchor)
+  anchor.click()
+  anchor.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 0)
+}
+

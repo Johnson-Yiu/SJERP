@@ -333,7 +333,7 @@ async function changeSupplier(supplier) {
   const current = draft.value
   draftChanging.value = true
   try {
-    if ((current.items.some(item => item.supplier_sku || hasPrice(item) || item.trade_unit) || termsDirty.value) && !await confirmDialog({ title: '更换供应商', message: `更换供应商将清除当前商品的供应商来源、采购价格和供应商专属交易规格。${termsDirty.value ? '更换供应商还将替换本次采购的付款计划。' : ''}是否继续？`, confirmText: '更换供应商' })) return false
+    if ((current.items.some(item => item.supplier_sku || hasPrice(item) || item.trade_unit) || termsDirty.value) && !await confirmDialog({ title: '更换供应商', message: `更换供应商将清除当前商品的供应商来源、采购价格和供应商专属交易规格，并可能带来包装、LOGO、认证差异。${termsDirty.value ? '更换供应商还将替换本次采购的付款计划。' : ''}是否继续？`, confirmText: '更换供应商' })) return false
     if (draft.value !== current) return false
     current.supplier = supplier
     inheritPaymentTerms()
@@ -500,7 +500,7 @@ watch(() => route.query.detail, id => {
     </div>
     <div v-if="reversalTarget && can('purchases', 'update')" class="receipt-mask" @click.self="reversalTarget = null"><form class="receipt-dialog" role="dialog" aria-modal="true" aria-label="冲销采购入库" @submit.prevent="submitReceiptReversal"><h3>冲销采购入库</h3><p>{{ reversalTarget.row.purchase_no }} · {{ reversalTarget.item.sku_code }} / {{ reversalTarget.item.display_name || '—' }} · 原入库 {{ reversalTarget.receipt.quantity }} {{ itemBaseUnit(reversalTarget.item) }}</p><p class="reversal-effect">冲销后原入库记录保留，库存、预留及到货数量会同步回退。</p><label>冲销原因 *<textarea v-model="reversalReason" maxlength="500" required placeholder="请填写冲销原因"></textarea></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="reversalTarget = null">取消</button><button class="receipt-danger" :disabled="reversalSaving || !reversalReason.trim()">{{ reversalSaving ? '提交中…' : '确认冲销' }}</button></footer></form></div>
   </div>
-<PurchaseSupplierPicker v-if="matchingItem" :sku="skus.find(s => s.id === Number(matchingItem.sku))" :fixed-supplier="inheritedSupplier ? draft.supplier : null" @close="matchingItem = null" @selected="matchedSupplier" />
+<PurchaseSupplierPicker v-if="matchingItem" :sku="skus.find(s => s.id === Number(matchingItem.sku))" :fixed-supplier="inheritedSupplier ? draft.supplier : null" :order-id="draft.order || ''" @close="matchingItem = null" @selected="matchedSupplier" />
 </template>
 
 <style scoped>

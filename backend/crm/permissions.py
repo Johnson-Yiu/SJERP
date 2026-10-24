@@ -54,6 +54,7 @@ OPERATION_ENTITY_MODULES = {
     "crm.contractchangerequest": "orders", "crm.organizationunit": "organization",
     "crm.position": "organization", "crm.employeeprofile": "employees", "crm.accessrole": "permissions",
     "crm.rolepermission": "permissions", "crm.sharedreporttemplate": "reports",
+    "crm.customersupplierpreference": "suppliers",
 }
 
 

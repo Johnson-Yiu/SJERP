@@ -877,13 +877,15 @@ class Order(TimestampedModel):
 class OrderItem(TradeUnitLine):
     SUPPLIER_ALLOCATION_SCOPE_CHOICES = [
         ("order_only", "仅本次订单"),
-        ("recommended", "同时更新为推荐供应商"),
+        ("customer_preferred", "设为该客户此 SKU 今后优先来源"),
+        ("recommended", "历史兼容值"),
     ]
     SUPPLIER_ALLOCATION_SOURCE_CHOICES = [
         ("rule_match", "规则匹配"),
         ("historical_purchase", "历史采购"),
         ("manual", "人工补充"),
         ("supplier_sku", "供货档案"),
+        ("customer_preference", "客户优先来源"),
     ]
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="order_items")
@@ -1027,6 +1029,45 @@ class SupplierSKU(TimestampedModel):
 
     def __str__(self):
         return f"{self.supplier.name} / {self.supplier_sku_code}"
+
+
+class CustomerSupplierPreference(TimestampedModel):
+    """Explicit purchasing preference for one customer and internal SKU.
+
+    This is deliberately separate from SupplierSKU.is_preferred.  The latter
+    remains a weak, global SKU fallback; this row records an intentional
+    customer-specific choice without changing the SKU master.
+    """
+
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name="supplier_preferences")
+    sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="customer_supplier_preferences")
+    supplier_sku = models.ForeignKey(SupplierSKU, on_delete=models.PROTECT, related_name="customer_preferences")
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_customer_supplier_preferences",
+    )
+    updated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="updated_customer_supplier_preferences",
+    )
+
+    class Meta:
+        ordering = ["customer__name", "sku__sku", "id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["customer", "sku"],
+                name="customer_supplier_preference_unique",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.customer.name} / {self.sku.sku} / {self.supplier_sku.supplier.name}"
 
 
 class PurchaseOrder(TimestampedModel):

@@ -221,6 +221,7 @@ it('supplier picker preserves fixed candidates, characteristics and recommended 
  const picker=mount(PurchaseSupplierPicker,{props:{sku,fixedSupplier:9},global:{stubs:{Teleport:true}}})
  await flushPromises()
  expect(picker.text()).toContain('选择其他供应商后，将修改整张采购单的供应商，并重新匹配其他采购明细的供货档案。')
+ expect(picker.text()).toContain('更换供应商前请核对包装、LOGO、认证及供货特点可能存在的差异。')
  expect(picker.text()).toContain('15天');expect(picker.findAll('article')).toHaveLength(1)
  await picker.get('input[type="radio"]').setValue(true)
  expect(picker.get('select').element.value).toBe('20')

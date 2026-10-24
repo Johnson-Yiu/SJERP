@@ -11,9 +11,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import (
-    Order, OrderItem, Product, SKU, SKUParameterPlan, Supplier, SupplierCapability, SupplierCandidateOverride,
+    CustomerSupplierPreference, Order, OrderItem, Product, SKU, SKUParameterPlan, Supplier, SupplierCapability, SupplierCandidateOverride, SupplierSKU,
 )
-from .audit import AuditTrailMixin, record_operation
+from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.sku_plans import draft_plan, analyze, publish, validate_definitions, definitions_for
 from .services.supplier_candidates import validate_filters, matches, candidates
 from .sku_identity import raw_parameter_value
@@ -71,7 +71,28 @@ class SupplierCandidatesView(APIView):
     def get(self, request, pk):
         require_finance_permission(request.user, "skus", "view")
         sku = get_object_or_404(SKU, pk=pk)
-        return Response({"candidates": scoped_supplier_candidates(candidates(sku), request.user), "overrides": list(sku.candidate_overrides.values("supplier", "is_allowed", "characteristics"))})
+        customer = None
+        order_id = request.query_params.get("order")
+        if order_id:
+            require_finance_permission(request.user, "orders", "view")
+            order = get_object_or_404(
+                scope_customer_related_queryset(Order.objects.select_related("customer"), request.user),
+                pk=order_id,
+            )
+            customer = order.customer
+        from .services.supplier_candidates import candidate_payload
+        payload = candidate_payload(sku, customer=customer)
+        return Response({
+            "candidates": scoped_supplier_candidates(payload["candidates"], request.user),
+            "recommendation": {
+                "supplier": payload["recommended_supplier"],
+                "supplier_sku": payload["recommended_supplier_sku_id"],
+                "source": payload["recommended_source"],
+            },
+            "recommendation_warning": payload["recommendation_warning"],
+            "can_set_customer_preference": user_can(request.user, "suppliers", "update"),
+            "overrides": list(sku.candidate_overrides.values("supplier", "is_allowed", "characteristics")),
+        })
 
     @transaction.atomic
     def post(self, request, pk):
@@ -229,7 +250,8 @@ class OrderItemSupplierAllocationView(APIView):
 
     def get(self, request, order_id, item_id):
         item = self._item(request, order_id, item_id)
-        from .services.supplier_allocation import supplier_options
+        from .services.supplier_allocation import supplier_option_payload
+        option_payload = supplier_option_payload(item)
 
         return Response({
             "order": {"id": item.order_id, "order_no": item.order.order_no, "status": item.order.status},
@@ -243,15 +265,23 @@ class OrderItemSupplierAllocationView(APIView):
                 "unit": item.unit_snapshot or item.sku.unit,
             },
             "allocation": self._allocation_payload(item, request.user),
-            "candidates": scoped_supplier_candidates(supplier_options(item), request.user),
+            "candidates": scoped_supplier_candidates(option_payload["candidates"], request.user),
+            "recommendation": {
+                "supplier": option_payload["recommended_supplier"],
+                "supplier_sku": option_payload["recommended_supplier_sku_id"],
+                "source": option_payload["recommended_source"],
+            },
+            "recommendation_warning": option_payload["recommendation_warning"],
+            "can_set_customer_preference": user_can(request.user, "suppliers", "update"),
         })
 
     @transaction.atomic
     def post(self, request, order_id, item_id):
-        from .services.supplier_allocation import allocate_order_item_supplier
+        from .services.supplier_allocation import allocate_order_item_supplier, set_customer_supplier_preference
 
         item = self._item(request, order_id, item_id)
-        if request.data.get("scope", "order_only") == "recommended":
+        requested_scope = request.data.get("scope", "order_only")
+        if requested_scope in {"recommended", "customer_preferred"}:
             require_finance_permission(request.user, "suppliers", "update")
         supplier_sku_id = request.data.get("supplier_sku") or request.data.get("supplier_sku_id")
         if not supplier_sku_id:
@@ -260,12 +290,33 @@ class OrderItemSupplierAllocationView(APIView):
             updated = allocate_order_item_supplier(
                 item.pk,
                 supplier_sku_id,
-                scope=request.data.get("scope", "order_only"),
+                scope=requested_scope,
                 note=request.data.get("note", ""),
             )
         except DjangoValidationError as error:
             detail = getattr(error, "message_dict", None) or getattr(error, "messages", None) or [str(error)]
             raise ValidationError(detail)
+        if updated.supplier_allocation_scope == "customer_preferred":
+            source = SupplierSKU.objects.select_related("supplier", "sku").get(pk=updated.supplier_sku_id)
+            existing_preference = CustomerSupplierPreference.objects.filter(
+                customer=updated.order.customer,
+                sku=updated.sku,
+            ).first()
+            before_preference = snapshot(existing_preference)
+            preference = set_customer_supplier_preference(
+                updated.order.customer,
+                updated.sku,
+                source,
+                user=request.user,
+            )
+            record_operation(
+                request=request,
+                instance=preference,
+                action="custom",
+                action_label="设置客户 SKU 优先采购来源",
+                before=before_preference,
+                metadata={"sku_id": updated.sku_id, "supplier_sku_id": source.pk},
+            )
         record_operation(
             request=request,
             instance=updated,

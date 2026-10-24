@@ -305,3 +305,5 @@ ISS-026 供应商停用/恢复、禁止硬删除、采购候选/历史快照与�
 
 确认的唯一真实缺陷是 `report_data` 的 CSV 请求在 DRF 识别为 `export` 动作时，显式检查了 `reports.export` 但未在函数内再次要求 `reports.view`；已最小补充查看权限检查，并新增 `export=true`、`view=false` 的 403 回归。真实端点生成的 CSV 含 UTF-8 BOM，客户名 `=2+2` 输出为 `'=2+2`；API 与 CSV 金额均为 145、单据数均为 2、数量分别为 `2.00 pcs / 3.00 box`。新增浏览器用例验证未提交客户筛选不进入 CSV 请求，真实 Chrome 16/16 通过。后端 863/863、Node 151/151、有效 Vitest 645/645、生产构建通过；完整索引见 [`ISS-019 CSV 准确性复核`](uat-evidence/iss-019-report-csv/README.md)。ISS-019 更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue、不合并 master，等待独立复审。
 
+GitHub CI run `40073371582` 在 frontend、backend、backend-postgres 三个 job 的可见 steps 前失败，保持为 CI/环境剩余风险，不将本地测试冒充 CI 或 PostgreSQL 通过。
+

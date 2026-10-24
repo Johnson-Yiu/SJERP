@@ -38,3 +38,5 @@
 ## 状态
 
 ISS-019 保持 `FIXED_PENDING_REVIEW`，不关闭 Issue、不合并 master，等待统一独立代码和权限复审。
+
+GitHub Actions CI run [40073371582](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/40073371582) 已触发但在可见步骤前失败；frontend、backend、backend-postgres 三个 job 均无 steps。该环境状态不能否定本地 863 项 Django、151 项 Node、645 项有效 Vitest、生产构建和真实 Chrome 结果，但 PostgreSQL/CI 仍是合并前风险。

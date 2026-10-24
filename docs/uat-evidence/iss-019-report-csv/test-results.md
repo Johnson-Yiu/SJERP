@@ -22,3 +22,7 @@
 ## 权限回归
 
 新增后端用例：报表 `view=false`、`export=true`、销售来源 `view=true` 时，普通 API 和 CSV API 均为 403。既有 `view=true`、`export=false` 的 CSV 403、来源/维度权限拒绝和共享模板当前权限复核仍全部通过。
+
+## GitHub CI
+
+- Run `40073371582`：completed / failure；frontend、backend、backend-postgres 三个 job 均在可见 steps 前失败，未产生可解释的测试步骤日志。不能据此声称 CI 通过，也不能将本地结果冒充 PostgreSQL/CI 验收。

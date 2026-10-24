@@ -10,6 +10,12 @@ test('resource payload serializes empty optional dates as null', async () => {
   assert.match(source, /if \(type === 'date' && value === ''\) value = null/)
 })
 
+test('transaction resource distinguishes book reference from confirmed bank RMB cash', () => {
+  assert.match(resourceConfigs.transactions.description, /账面折算参考/)
+  assert.match(resourceConfigs.transactions.description, /银行实际人民币资金请查看银行资金记录/)
+  assert.equal(resourceConfigs.transactions.columns.find(column => column[0] === 'rmb_amount')[1], '人民币折算参考')
+})
+
 test('customer projections are visible but not editable customer fields', async () => {
   const customer = resourceConfigs.customers
   const page = await readFile(new URL('./ResourcePage.vue', import.meta.url), 'utf8')

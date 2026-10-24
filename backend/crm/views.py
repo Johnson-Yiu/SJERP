@@ -27,7 +27,7 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerSupplierPreference, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
 from .querysets import current_due_follow_ups, prefetch_purchase_related_orders
 from .permissions import HSCodeMaintenancePermission, ModuleActionPermission, OrganizationOverviewPermission, PermissionAdminOnly, QuoteExportPermission, _profile_for, effective_permission_matrix, has_all_permissions, is_permission_admin, user_can
 from .sales_scope import allowed_employee_ids, data_scope_display, effective_data_scope, employee_profile_for, scope_customer_queryset, scope_customer_related_queryset
@@ -133,6 +133,10 @@ class OperationLogViewSet(viewsets.ReadOnlyModelViewSet):
                 object_ids = SharedReportTemplate.objects.filter(
                     pk__in=visible_template_ids(SharedReportTemplate.objects.all(), self.request.user),
                 )
+        elif entity == "crm.customersupplierpreference":
+            object_ids = CustomerSupplierPreference.objects.filter(
+                customer__in=scope_customer_queryset(Customer.objects.all(), self.request.user),
+            )
         if object_ids is not None:
             qs = qs.filter(object_id__in=object_ids.values_list(Cast("pk", output_field=CharField()), flat=True))
         if object_id:

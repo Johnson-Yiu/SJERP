@@ -1,7 +1,18 @@
 """Dynamic supplier candidates; matching never creates purchasing identities."""
+
 from rest_framework.exceptions import ValidationError
-from crm.models import PurchaseOrderItem, SupplierCapability, SupplierCandidateOverride, SupplierSKU
+
+from crm.models import (
+    CustomerSupplierPreference,
+    PurchaseOrderItem,
+    SupplierCapability,
+    SupplierCandidateOverride,
+    SupplierSKU,
+)
 from crm.sku_identity import category_attributes, normalize_parameter_token, raw_parameter_value
+
+
+PURCHASE_HISTORY_STATUSES = ["ordered", "partial", "completed"]
 
 
 def parameter_value(values, key):
@@ -32,6 +43,8 @@ def _candidate_row(supplier):
         "source_types": [],
         "characteristics": {},
         "supplier_skus": [],
+        "_history": None,
+        "_customer_preference_source_id": None,
     }
 
 
@@ -42,8 +55,29 @@ def _add_source(row, label, source_type):
         row["source_types"].append(source_type)
 
 
-def candidates(sku):
+def _history_queryset(sku, customer=None):
+    filters = {
+        "sku": sku,
+        "purchase_order__status__in": PURCHASE_HISTORY_STATUSES,
+    }
+    if customer is not None:
+        filters["purchase_order__order__customer"] = customer
+    return PurchaseOrderItem.objects.filter(**filters).select_related(
+        "purchase_order__supplier", "purchase_order__order", "supplier_sku",
+    ).order_by("-purchase_order__order_date", "-id")
+
+
+def candidate_payload(sku, *, customer=None):
+    """Return scoped candidate rows and recommendation metadata.
+
+    The customer is supplied only by an already-authorized order endpoint.
+    The result never includes customer names, order numbers, or another
+    customer's purchase rows.
+    """
     result = {}
+    history_by_supplier = {}
+    inactive_history_seen = False
+
     for rule in SupplierCapability.objects.filter(product=sku.product, is_active=True).select_related("supplier").order_by("id"):
         if not rule.supplier.is_active:
             continue
@@ -51,6 +85,7 @@ def candidates(sku):
             row = result.setdefault(rule.supplier_id, _candidate_row(rule.supplier))
             _add_source(row, rule.name, "rule_match")
             row["characteristics"].update(rule.characteristics)
+
     for source in sku.supplier_skus.filter(is_active=True).select_related("supplier"):
         if not source.supplier.is_active:
             continue
@@ -67,15 +102,47 @@ def candidates(sku):
             "characteristics": source.characteristics,
         })
         _add_source(row, "已维护供货档案", "supplier_sku")
-    for item in PurchaseOrderItem.objects.filter(
-        sku=sku,
-        purchase_order__status__in=["ordered", "partial", "completed"],
-    ).select_related("purchase_order__supplier", "supplier_sku"):
+
+    for item in _history_queryset(sku, customer=customer):
         supplier = item.purchase_order.supplier
         if not supplier.is_active:
+            if customer is not None:
+                inactive_history_seen = True
             continue
         row = result.setdefault(item.purchase_order.supplier_id, _candidate_row(supplier))
-        _add_source(row, "历史采购", "historical_purchase")
+        _add_source(row, "客户历史采购" if customer is not None else "历史采购", "historical_purchase")
+        if item.purchase_order.supplier_id not in history_by_supplier:
+            source_is_active = bool(
+                item.supplier_sku_id
+                and item.supplier_sku
+                and item.supplier_sku.is_active
+                and item.supplier_sku.supplier.is_active
+            )
+            if customer is not None and item.supplier_sku_id and not source_is_active:
+                inactive_history_seen = True
+            history_by_supplier[item.purchase_order.supplier_id] = {
+                "date": item.purchase_order.order_date,
+                "price": item.unit_price,
+                "currency": item.purchase_order.currency,
+                "supplier_sku_id": item.supplier_sku_id,
+                "supplier_sku_active": source_is_active,
+            }
+            row["_history"] = history_by_supplier[item.purchase_order.supplier_id]
+
+    inactive_preference_seen = False
+    if customer is not None:
+        preference = CustomerSupplierPreference.objects.filter(customer=customer, sku=sku).select_related(
+            "supplier_sku__supplier",
+        ).first()
+        if preference:
+            source = preference.supplier_sku
+            if not source.is_active or not source.supplier.is_active:
+                inactive_preference_seen = True
+            else:
+                row = result.setdefault(source.supplier_id, _candidate_row(source.supplier))
+                _add_source(row, "客户优先来源", "customer_preference")
+                row["_customer_preference_source_id"] = source.pk
+
     for override in sku.candidate_overrides.select_related("supplier"):
         if not override.supplier.is_active:
             continue
@@ -85,30 +152,92 @@ def candidates(sku):
         row = result.setdefault(override.supplier_id, _candidate_row(override.supplier))
         _add_source(row, "人工指定", "manual")
         row["characteristics"].update(override.characteristics)
+
     for row in result.values():
-        last = sku.purchase_order_items.filter(
-            purchase_order__supplier_id=row["supplier"],
-        ).exclude(purchase_order__status__in=["draft", "cancelled"]).select_related("purchase_order").order_by("-purchase_order__order_date", "-id").first()
-        row["last_purchase"] = {
-            "date": last.purchase_order.order_date,
-            "price": last.unit_price,
-            "currency": last.purchase_order.currency,
-            "supplier_sku_id": last.supplier_sku_id,
-        } if last else None
+        if customer is None:
+            last = sku.purchase_order_items.filter(
+                purchase_order__supplier_id=row["supplier"],
+            ).exclude(purchase_order__status__in=["draft", "cancelled"]).select_related("purchase_order").order_by(
+                "-purchase_order__order_date", "-id",
+            ).first()
+            history = {
+                "date": last.purchase_order.order_date,
+                "price": last.unit_price,
+                "currency": last.purchase_order.currency,
+                "supplier_sku_id": last.supplier_sku_id,
+            } if last else None
+        else:
+            history = row["_history"]
+        row["last_purchase"] = history
         row["supplier_sku_count"] = len(row["supplier_skus"])
         preferred = next((source for source in row["supplier_skus"] if source["is_preferred"]), None)
-        selected = preferred or (row["supplier_skus"][0] if row["supplier_skus"] else None)
+        customer_preferred = next(
+            (source for source in row["supplier_skus"] if source["id"] == row["_customer_preference_source_id"]),
+            None,
+        )
+        history_source = None
+        if history and history.get("supplier_sku_id"):
+            history_source = next(
+                (source for source in row["supplier_skus"] if source["id"] == history["supplier_sku_id"]),
+                None,
+            )
+        selected = customer_preferred or history_source or preferred or (row["supplier_skus"][0] if row["supplier_skus"] else None)
+        if customer_preferred:
+            recommendation_source = "customer_preference"
+        elif history_source:
+            recommendation_source = "historical_purchase"
+        elif preferred:
+            recommendation_source = "preferred"
+        elif selected:
+            recommendation_source = "first_active"
+        else:
+            recommendation_source = "historical_purchase" if history else None
         row["can_allocate"] = bool(selected)
         row["recommended_supplier_sku_id"] = selected["id"] if selected else None
-        row["recommended_source"] = "preferred" if preferred else ("first_active" if selected else None)
+        row["recommended_source"] = recommendation_source
+        row["recommendation_reason"] = {
+            "customer_preference": "该客户此 SKU 的优先来源",
+            "historical_purchase": "该客户此 SKU 的历史采购",
+            "preferred": "SKU 全局首选来源",
+            "first_active": "首个启用来源",
+        }.get(recommendation_source, "")
         row["source_label"] = "、".join(row["source_types"])
-    return list(result.values())
+        row["recommendation_rank"] = {
+            "customer_preference": 0,
+            "historical_purchase": 1,
+            "preferred": 2,
+            "first_active": 3,
+        }.get(recommendation_source, 4)
+
+    rows = sorted(result.values(), key=lambda row: (row["recommendation_rank"], row["supplier_name"].casefold(), row["supplier"]))
+    recommended = rows[0] if rows else None
+    warning = ""
+    if customer is not None and (inactive_preference_seen or inactive_history_seen):
+        warning = "该客户历史优先来源已停用，系统不会自动选择；请确认其他启用中的供应商。"
+    elif recommended and recommended["recommended_source"] == "historical_purchase" and not recommended["can_allocate"]:
+        warning = "该客户有历史采购供应商，但尚未维护 SupplierSKU；本次采购可手工填写供应商，不会自动建立永久来源。"
+
+    for row in rows:
+        row.pop("_history", None)
+        row.pop("_customer_preference_source_id", None)
+
+    return {
+        "candidates": rows,
+        "recommended_supplier": recommended["supplier"] if recommended else None,
+        "recommended_supplier_sku_id": recommended["recommended_supplier_sku_id"] if recommended else None,
+        "recommended_source": recommended["recommended_source"] if recommended else None,
+        "recommendation_warning": warning,
+    }
+
+
+def candidates(sku, *, customer=None):
+    return candidate_payload(sku, customer=customer)["candidates"]
 
 
 def ensure_purchase_source(sku, supplier, order=None, currency=None):
     """Resolve a real, maintained source when one is available.
 
-    A candidate is not itself a SupplierSKU.  Manual purchases may therefore
+    A candidate is not itself a SupplierSKU. Manual purchases may therefore
     proceed without a source record rather than creating fictitious AUTO data.
     ``currency`` remains accepted for compatibility with existing callers.
     """

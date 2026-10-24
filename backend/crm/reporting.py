@@ -581,6 +581,12 @@ def report_details(request):
 def report_data(request):
     if request.query_params.get("export", "").lower() in {"1", "true", "csv", "xlsx"} and not user_can(request.user, "reports", "export"):
         return Response({"detail": "你没有报表导出权限。"}, status=403)
+    # Export requests are classified as the special ``export`` action by the
+    # default DRF permission, so that check alone must not replace the normal
+    # report-view boundary.  Keep both checks here as well because this
+    # function also serves the legacy direct API route and shared-template
+    # exports.
+    require_finance_permission(request.user, "reports", "view")
     params = request.query_params
     shared_template_id = params.get("shared_template")
     if shared_template_id:

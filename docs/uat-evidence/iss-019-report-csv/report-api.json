@@ -1,0 +1,57 @@
+{
+  "source": "sales",
+  "group_by": "customer",
+  "date_field": "order_date",
+  "date_label": "订单日期",
+  "grain": "month",
+  "comparison": "previous",
+  "period": {
+    "date_from": "2026-09-01",
+    "date_to": "2026-09-30"
+  },
+  "comparison_period": {
+    "date_from": "2026-08-02",
+    "date_to": "2026-08-31"
+  },
+  "totals": {
+    "amount": "145.00000000000000000000",
+    "count": 2,
+    "quantities": {
+      "pcs": "2.00",
+      "box": "3.00"
+    }
+  },
+  "previous": {
+    "amount": "0",
+    "count": 0,
+    "quantities": {}
+  },
+  "changes": {
+    "amount": null,
+    "count": null
+  },
+  "rows": [
+    {
+      "key": "2",
+      "label": "普通客户",
+      "amount": "105.00000000000000000000",
+      "quantities": {
+        "box": "3.00"
+      },
+      "count": 1
+    },
+    {
+      "key": "1",
+      "label": "=2+2",
+      "amount": "40.00000000000000000000",
+      "quantities": {
+        "pcs": "2.00"
+      },
+      "count": 1
+    }
+  ],
+  "note": "有效销售订单的合同金额；商品行之外的运费、折扣和已确认合同变更统一列为订单金额调整，不分摊 SKU。金额按订单汇率折人民币，不代表实收或利润。",
+  "filters": {},
+  "filter_summary": [],
+  "generated_at": "2026-10-24 06:48:30.926086+00:00"
+}

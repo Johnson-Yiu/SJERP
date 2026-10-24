@@ -299,3 +299,9 @@ ISS-026 供应商停用/恢复、禁止硬删除、采购候选/历史快照与�
 
 三个源任务 GitHub CI 均为失败状态；集成提交 `3571d374adb8e41d515265a5c429639d5b8f4904` 对应 CI 运行 `40067690763` 的 backend、frontend、backend-postgres 也在可见步骤前失败，且本地没有 PostgreSQL/生产代理环境。因此集成分支继续保持 `FIXED_PENDING_REVIEW`，不作为 master 合并条件，不关闭 Issue，等待统一独立代码、数据库、权限和部署安全审查。
 
+## ISS-019 经营报表 CSV 准确性复核（2026-10-24）
+
+基于统一基线 `af018ac63cf71143d223b9f6db4a087707495693` 在独立 worktree 创建 `codex/iss-019-report-csv`。先审查 ISS-041、ISS-042、ISS-048、ISS-062、ISS-107 的报表、下钻、共享模板、财务口径和既有 CSV 证据；确认草稿/已提交查询状态、币种说明、单位分开、账面/银行实际资金分离、公式注入防护和共享模板当前权限复核原本已存在。本轮不重建报表引擎，不修改 ISS-041/042/048/062/107 的业务规则。
+
+确认的唯一真实缺陷是 `report_data` 的 CSV 请求在 DRF 识别为 `export` 动作时，显式检查了 `reports.export` 但未在函数内再次要求 `reports.view`；已最小补充查看权限检查，并新增 `export=true`、`view=false` 的 403 回归。真实端点生成的 CSV 含 UTF-8 BOM，客户名 `=2+2` 输出为 `'=2+2`；API 与 CSV 金额均为 145、单据数均为 2、数量分别为 `2.00 pcs / 3.00 box`。新增浏览器用例验证未提交客户筛选不进入 CSV 请求，真实 Chrome 16/16 通过。后端 863/863、Node 151/151、有效 Vitest 645/645、生产构建通过；完整索引见 [`ISS-019 CSV 准确性复核`](uat-evidence/iss-019-report-csv/README.md)。ISS-019 更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue、不合并 master，等待独立复审。
+

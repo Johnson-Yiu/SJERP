@@ -98,6 +98,13 @@ class FunctionalRBACApiTests(TestCase):
         self.assertEqual(self.client.get("/api/reports/data/?source=sales").status_code, 200)
         self.assertEqual(self.client.get("/api/reports/data/?source=sales&export=csv").status_code, 403)
 
+    def test_report_csv_export_requires_report_view_and_export_permissions(self):
+        self.grant(self.role, "reports", can_view=False, can_export=True)
+        self.grant(self.role, "orders", can_view=True)
+        self.auth(self.make_user(roles=[self.role]))
+        self.assertEqual(self.client.get("/api/reports/data/?source=sales").status_code, 403)
+        self.assertEqual(self.client.get("/api/reports/data/?source=sales&export=csv").status_code, 403)
+
     def test_get_export_query_uses_export_permission_before_safe_method_view(self):
         self.grant(self.role, "reports", can_view=True, can_export=False)
         user = self.make_user(roles=[self.role])

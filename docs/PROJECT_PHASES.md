@@ -70,6 +70,10 @@
 | R0-F4 UI/UX（独立复审记录） | 代码及自动化/已覆盖交互 PASS，有条件封版；截图独立视觉 BLOCKED | `8cb265e` | [CI #38539359761](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38539359761)：Backend、Backend PostgreSQL、Frontend 全部 SUCCESS | PASS（据用户转述 ChatGPT 独立代码/自动回归审查） | ISS-073、ISS-074、ISS-075；旧业务事项保留 | ISS-071、072 按已覆盖代码和交互范围关闭；截图缺口 ISS-073 继续独立跟踪。 |
 | R0-F5 UI/UX（本轮） | 实现、自动回归、隔离 SQLite 与 Codex 内置浏览器操作记录完成；截图已归档，等独立复审 | 实现 `92e8c46d4ce01e18cd164e152d345c58433c9305`；台账 `0ec186b71f0395d52526b308e385b189a582ead6`；2026-10-15 截图补证提交另见 Git 历史 | [CI #38596225877](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38596225877)：Backend、Backend PostgreSQL、Frontend 全部 SUCCESS | UNKNOWN（待 ChatGPT 独立复审） | ISS-007、ISS-073–078 及历史未关闭项 | 13张截图解除R0-F5归档缺口；实际附件文件选择器及内容访问未完整验收，独立视觉仍不能由 Playwright/Codex 目视替代。详见 [R0-F5 验收](R0-F5-联系人与客户跟进验收.md)。 |
 
+## 2026-10-24 ISS-017 私有附件专项
+
+本轮在 `codex/iss-017-private-files` 独立 worktree 基于 `71ec4a4c2d860b9944624a1434d9d7580e9a6d38` 完成应用层私有媒体审查与最小补修：跟进附件、报价图片、SKU 图片/缩略图和产品证书均由认证 API 按模块权限返回；证书新增 ERP 私有文件字段并拒绝外部 URL；银行凭证现有模型仅为权限控制的引用、哈希与说明。Django 定向 API 回归 68 项、定向 Vitest 8 项、Chrome 通道浏览器回归 13 项（含 390px）和 Vite build 通过；Chrome Use 已实际检查证书列表及上传表单。证据见 [ISS-017 私有附件验收](uat-evidence/iss-017-private-files/README.md)。由于没有目标环境对象存储/CDN/Nginx/反向代理配置，ISS-017 仍为 BLOCKED；本轮不宣称生产安全通过，不部署、不合并、不关闭 Issue。
+
 ## 依赖次序
 
 以下仅为问题台账的建议依赖，不是自动开工许可：

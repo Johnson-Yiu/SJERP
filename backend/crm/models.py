@@ -624,6 +624,9 @@ class ProductCertificate(TimestampedModel):
     issuer = models.CharField("签发机构", max_length=150, blank=True)
     issued_date = models.DateField("签发日期", null=True, blank=True)
     expires_on = models.DateField("有效期至", null=True, blank=True)
+    file = models.FileField("私有证书文件", upload_to="product-certificates/%Y/%m/", blank=True)
+    # Kept only as a legacy migration field. New API responses never expose or
+    # accept this external URL because it cannot inherit ERP permissions.
     file_url = models.URLField("文件链接", blank=True)
     notes = models.TextField("备注", blank=True)
 

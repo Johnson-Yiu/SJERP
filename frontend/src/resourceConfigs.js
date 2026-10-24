@@ -100,7 +100,7 @@ export const resourceConfigs = {
     title: '产品证书', eyebrow: 'Compliance documents', endpoint: 'product-certificates', key: 'name',
     description: '管理 CE、RoHS、UL 等证书编号、机构和有效期。',
     columns: [['product_name', '产品'], ['name', '证书名称'], ['certificate_no', '证书编号'], ['issuer', '签发机构'], ['issued_date', '签发日期', 'date'], ['expires_on', '有效期至', 'date'], ['expiry_status', '有效状态']],
-    fields: [['product', '所属产品', 'remote', true, 'products', 'name'], ['name', '证书名称', 'text', true], ['certificate_no', '证书编号'], ['issuer', '签发机构'], ['issued_date', '签发日期', 'date'], ['expires_on', '有效期至', 'date'], ['file_url', '文件链接', 'url'], ['notes', '备注', 'textarea']],
+    fields: [['product', '所属产品', 'remote', true, 'products', 'name'], ['name', '证书名称', 'text', true], ['certificate_no', '证书编号'], ['issuer', '签发机构'], ['issued_date', '签发日期', 'date'], ['expires_on', '有效期至', 'date'], ['file', '证书文件', 'file'], ['notes', '备注', 'textarea']],
     detail: true,
   },
 }

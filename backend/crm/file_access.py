@@ -4,7 +4,7 @@ import mimetypes
 from django.http import FileResponse, Http404
 from rest_framework.decorators import api_view, permission_classes
 
-from .models import FollowUpAttachment, QuoteItem, SKU
+from .models import FollowUpAttachment, ProductCertificate, QuoteItem, SKU
 from .permissions import SecureDefaultPermission, user_can
 from .sales_scope import scope_customer_related_queryset
 
@@ -42,6 +42,13 @@ def protected_media(request, relative_path):
             if not user_can(request.user, "skus", "view"):
                 raise Http404
             file_field = sku.image
+
+    if file_field is None:
+        certificate = ProductCertificate.objects.filter(file=relative_path).first()
+        if certificate:
+            if not user_can(request.user, "certificates", "view"):
+                raise Http404
+            file_field = certificate.file
 
     if file_field is None:
         raise Http404

@@ -6,7 +6,8 @@
 - 任务：ISS-008
 - 基线：`af018ac63cf71143d223b9f6db4a087707495693`
 - 分支：`codex/iss-008-country-select`
-- 最终 Commit：待提交后填写
+- 实现 Commit：`90f30d5`
+- 交付文档 Commit：见本次分支最终 SHA
 - 状态：`FIXED_PENDING_REVIEW`，等待统一独立审查；不合并 master，不关闭 Issue
 
 ## 实施结果
@@ -65,4 +66,4 @@ ISS-008 专项覆盖美国中文/英文/US/America、DE/SE/AT、大小写和空�
 - 客户查询继续走既有 ViewSet 数据范围，国家筛选只改变查询条件，不扩大可见数据；开发环境仍按项目约定使用开发超级管理员身份。
 - 没有修改 ISS-037 历史主体快照或 ISS-039 成本分配。
 - 本地 SQLite 全量已通过；本轮未执行 PostgreSQL/CI，需在统一集成环境继续核验。
-- 最终 SHA、GitHub 推送状态和独立审查结论由交付提交后补齐。
+- 本地实现已提交；最终分支 SHA 以交付消息为准。本轮未执行 GitHub 推送、PostgreSQL/CI，独立审查仍待进行。

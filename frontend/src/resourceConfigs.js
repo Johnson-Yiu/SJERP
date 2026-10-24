@@ -62,7 +62,7 @@ export const resourceConfigs = {
   },
   transactions: {
     title: '财务流水', eyebrow: 'Cash ledger', endpoint: 'transactions', key: 'transaction_no',
-    description: '登记实际收支，并追溯到客户和订单。所有人民币汇总按发生时汇率计算。',
+    description: '登记原币财务流水并追溯到客户和订单；人民币汇总为账面折算参考，银行实际人民币资金请查看银行资金记录。',
     columns: [['transaction_date', '日期', 'date'], ['transaction_no', '流水号'], ['direction_display', '方向', 'direction'], ['category', '分类'], ['customer_name', '客户'], ['order_no', '归属订单'], ['amount', '金额', 'money'], ['currency', '币种', 'tag'], ['rmb_amount', '人民币折算参考', 'rmb']],
     fields: [
       ['transaction_no', '流水号', 'text', true], ['transaction_date', '发生日期', 'date', true], ['direction', '收支方向', 'select', true, { income: '收入', expense: '支出' }],

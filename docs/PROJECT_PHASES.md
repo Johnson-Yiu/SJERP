@@ -307,3 +307,11 @@ ISS-026 供应商停用/恢复、禁止硬删除、采购候选/历史快照与�
 
 GitHub CI run `40073371582` 在 frontend、backend、backend-postgres 三个 job 的可见 steps 前失败，保持为 CI/环境剩余风险，不将本地测试冒充 CI 或 PostgreSQL 通过。
 
+## ISS-008 国家编码及模糊搜索选择框（2026-10-24）
+
+基于统一基线 `af018ac63cf71143d223b9f6db4a087707495693` 创建独立 worktree 和 `codex/iss-008-country-select`。本轮先审查客户 `country/region` 字段、既有 ComboInput、报价编号/修订链和 `pycountry` 使用；没有新增迁移，也没有批量改写历史客户国家资料。
+
+新增本地版本化 249 条 ISO 3166-1 目录、英文/中文/代码/简称搜索别名和歧义保护；客户交互式新建/编辑必须明确选择并保存 alpha-2，未知历史导入文本原样保留。客户列表显示和筛选兼容标准代码、旧文本和待确认历史值；新报价编号使用保存后的国家代码，历史报价编号和修订版不变。
+
+后端 SQLite 全量 871 项（跳过 13）、ISS-008/导入/报价/客户回归 24 项、前端 Node 151 项、有效 Vitest 16 项、生产构建均通过。真实 Chrome 已完成客户桌面与 `390×844` 窄屏候选/保存/刷新回归，并检查报价列表和新建报价表单；截图及命令记录见 [`ISS-008 验收记录`](uat-evidence/iss-008-country-select/README.md)。本轮未执行 PostgreSQL/CI；直接未筛选 Vitest 入口存在仓库既有 node:test/jsdom 配置噪声，不纳入通过项。ISS-008 保持 `FIXED_PENDING_REVIEW`，等待统一独立代码、数据兼容、权限和视觉复审。
+

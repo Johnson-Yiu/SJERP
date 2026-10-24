@@ -18,6 +18,7 @@ from rest_framework.exceptions import PermissionDenied
 
 from .models import ShipmentItem
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
+from .country_registry import AmbiguousCountryError, CountryNotFoundError, display_country, resolve_country_code
 from .supplier_display import payment_terms_summary
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .document_numbers import allocate_order_no, allocate_purchase_no
@@ -882,6 +883,7 @@ class CustomerSerializer(serializers.ModelSerializer):
     contact_count = serializers.IntegerField(read_only=True, default=0)
     order_count = serializers.IntegerField(read_only=True, default=0)
     sales_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True, default=0)
+    country_display = serializers.SerializerMethodField()
     contacts = CustomerContactInputSerializer(many=True, write_only=True, required=False)
 
     class Meta:
@@ -890,6 +892,9 @@ class CustomerSerializer(serializers.ModelSerializer):
         # Customer status is a persisted projection of follow-ups, quotes and
         # formal orders, rather than a manually maintained customer attribute.
         read_only_fields = ["code", "status", "owner"]
+
+    def get_country_display(self, obj):
+        return display_country(obj.country)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -902,6 +907,21 @@ class CustomerSerializer(serializers.ModelSerializer):
         from .sales_scope import allowed_employee_ids, effective_data_scope, employee_profile_for
         from .permissions import user_can
 
+        if "country" in attrs:
+            raw_country = str(attrs.get("country") or "").strip()
+            if raw_country:
+                # Bulk/history imports are deliberately lossless: even a
+                # recognizable legacy label stays as entered so importing an
+                # old customer file cannot rewrite the existing country text.
+                # Interactive create/edit requests must choose a canonical
+                # alpha-2 value from the local picker.
+                if not self.context.get("allow_import_without_contacts"):
+                    try:
+                        attrs["country"] = resolve_country_code(raw_country)
+                    except AmbiguousCountryError:
+                        raise serializers.ValidationError({"country": f"国家/地区“{raw_country}”存在歧义，请从候选中明确选择。"})
+                    except CountryNotFoundError:
+                        raise serializers.ValidationError({"country": f"无法识别国家/地区“{raw_country}”，请从国家选择框中选择标准国家后再保存。"})
         if self.instance is None and not attrs.get("contacts") and not self.context.get("allow_import_without_contacts"):
             raise serializers.ValidationError({"contacts": "新建客户时请至少填写一位联系人。"})
         request = self.context.get("request")

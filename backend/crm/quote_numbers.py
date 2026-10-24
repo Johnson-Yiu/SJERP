@@ -1,72 +1,24 @@
 from datetime import date
 
-import pycountry
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import Max
 
+from .country_registry import AmbiguousCountryError, CountryNotFoundError, resolve_country_code
 from .models import Quote, QuoteChildRevisionCounter, QuoteNumberSequence, QuoteRevisionCounter
 
 
-COUNTRY_ISO_CODES = {
-    "australia": "AU",
-    "austria": "AT",
-    "brazil": "BR",
-    "canada": "CA",
-    "china": "CN",
-    "france": "FR",
-    "germany": "DE",
-    "india": "IN",
-    "italy": "IT",
-    "japan": "JP",
-    "mexico": "MX",
-    "netherlands": "NL",
-    "new zealand": "NZ",
-    "saudi arabia": "SA",
-    "singapore": "SG",
-    "south korea": "KR",
-    "spain": "ES",
-    "united arab emirates": "AE",
-    "united kingdom": "GB",
-    "united states": "US",
-    "united states of america": "US",
-    "usa": "US",
-    "澳大利亚": "AU",
-    "奥地利": "AT",
-    "巴西": "BR",
-    "加拿大": "CA",
-    "中国": "CN",
-    "中华人民共和国": "CN",
-    "美国": "US",
-    "法国": "FR",
-    "德国": "DE",
-    "印度": "IN",
-    "意大利": "IT",
-    "日本": "JP",
-    "墨西哥": "MX",
-    "荷兰": "NL",
-    "新西兰": "NZ",
-    "沙特阿拉伯": "SA",
-    "新加坡": "SG",
-    "韩国": "KR",
-    "西班牙": "ES",
-    "阿联酋": "AE",
-    "英国": "GB",
-}
 MAX_REVISION_NO = 99
 
 
 def _country_iso_code(country: str) -> str:
-    normalized_country = country.strip()
-    if not normalized_country:
+    if not str(country or "").strip():
         raise ValidationError({"country": "客户尚未填写国家/地区，请先在客户资料中补充后再保存报价。"})
-    country_code = COUNTRY_ISO_CODES.get(normalized_country.casefold())
-    if country_code:
-        return country_code
-
     try:
-        return pycountry.countries.lookup(normalized_country).alpha_2
-    except LookupError:
+        return resolve_country_code(country)
+    except AmbiguousCountryError:
+        raise ValidationError({"country": f"国家/地区“{country}”存在歧义，请在客户资料中明确选择标准国家后再保存报价。"})
+    except CountryNotFoundError:
         raise ValidationError({"country": f"无法识别客户国家/地区“{country}”，请在客户资料中填写标准国家名称或国家代码后再保存报价。"})
 
 

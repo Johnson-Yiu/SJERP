@@ -28,6 +28,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
+from .country_registry import CountryResolutionError, country_options as build_country_options, country_stored_values, display_country
 from .querysets import current_due_follow_ups, prefetch_purchase_related_orders
 from .permissions import HSCodeMaintenancePermission, ModuleActionPermission, OrganizationOverviewPermission, PermissionAdminOnly, QuoteExportPermission, _profile_for, effective_permission_matrix, has_all_permissions, is_permission_admin, user_can
 from .sales_scope import allowed_employee_ids, data_scope_display, effective_data_scope, employee_profile_for, scope_customer_queryset, scope_customer_related_queryset
@@ -619,7 +620,18 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         for key in ("status", "country", "owner_profile"):
             value = self.request.query_params.get(key)
             if value:
-                queryset = queryset.filter(**{key: value})
+                if key == "country":
+                    try:
+                        country_values = country_stored_values(value)
+                    except CountryResolutionError:
+                        queryset = queryset.filter(country=value)
+                    else:
+                        country_query = Q()
+                        for stored_value in country_values:
+                            country_query |= Q(country__iexact=stored_value)
+                        queryset = queryset.filter(country_query)
+                else:
+                    queryset = queryset.filter(**{key: value})
         return queryset.order_by("-updated_at")
 
     @action(detail=False, methods=["get"], url_path="owner-options")
@@ -636,7 +648,18 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             .distinct()
             .order_by("country")
         )
-        return Response([{"value": country, "label": country} for country in countries])
+        return Response([{"value": country, "label": display_country(country) or country} for country in countries])
+
+    @action(detail=False, methods=["get"], url_path="country-catalog")
+    def country_catalog(self, request):
+        legacy_countries = (
+            scope_customer_queryset(Customer.objects.all(), request.user)
+            .exclude(country="")
+            .values_list("country", flat=True)
+            .distinct()
+            .order_by("country")
+        )
+        return Response(build_country_options(legacy_countries))
 
     @action(detail=False, methods=["get"], url_path="next-code")
     def next_code(self, request):

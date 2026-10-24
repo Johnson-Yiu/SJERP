@@ -14,7 +14,7 @@ export const resourceConfigs = {
       ['owner', '负责人'], ['next_follow_up', '下次跟进', 'date'], ['order_count', '订单数', 'number'], ['sales_amount', '累计销售额', 'rmb'],
     ],
     fields: [
-      ['code', '客户编号', 'readonly', true], ['name', '客户名称', 'text', true], ['country', '国家/地区'], ['region', '业务区域'], ['source', '客户来源', 'combo', false, 'customers/sources'],
+      ['code', '客户编号', 'readonly', true], ['name', '客户名称', 'text', true], ['country', '国家/地区', 'combo', false, 'customers/country-catalog', 'label'], ['region', '业务区域'], ['source', '客户来源', 'combo', false, 'customers/sources'],
       ['owner_profile', '负责人', 'remote', false, 'customers/owner-options', 'label'], ['website', '网站', 'url'], ['address', '地址', 'textarea'], ['notes', '备注', 'textarea'],
     ],
     detail: true,

@@ -17,6 +17,8 @@ def _validate_purchase_for_placement(purchase):
     items = list(purchase.items.select_related("sku", "supplier_sku", "trade_unit").order_by("id"))
     if not purchase.supplier_id:
         raise ValidationError("采购单必须选择供应商。")
+    if not purchase.supplier.is_active:
+        raise ValidationError("停用供应商不能确认新采购，请先启用供应商或更换供应商。")
     if not items:
         raise ValidationError("采购单至少需要一条商品明细。")
     if purchase.exchange_rate <= 0:

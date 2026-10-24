@@ -969,6 +969,7 @@ class Supplier(TimestampedModel):
     payment_terms = models.CharField("付款条款", max_length=200, blank=True, default="30%预付款，70%尾款发货前结清")
     payment_terms_config = models.JSONField("系统执行付款规则", default=list, blank=True)
     notes = models.TextField("备注", blank=True)
+    is_active = models.BooleanField("启用", default=True, db_index=True)
 
     class Meta:
         ordering = ["name"]

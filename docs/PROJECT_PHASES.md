@@ -273,3 +273,11 @@ ISS-122、ISS-123 的独立复审通过结论已同步为 CLOSED；ISS-105 OPEN�
 
 ISS-039 台账更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue；本轮不合并 master，提交并推送后等待统一独立代码、权限、业务、审计和视觉复审。
 
+## ISS-026 供应商生命周期与禁止业务硬删除（2026-10-24）
+
+基于统一基线 `71ec4a4c2d860b9944624a1434d9d7580e9a6d38` 在独立 worktree 创建 `codex/iss-026-supplier-lifecycle`。本轮先核实供应商主档、`SupplierViewSet`、采购候选来源、采购单主体快照和前端 `ResourcePage`；仓库未发现独立的“2026-10-24 规则包”文件，故以用户本轮明确的 ISS-026 规则为验收依据，不补造缺失规则。
+
+供应商新增 `is_active` 字段及 `0081_supplier_lifecycle` 迁移；普通 `DELETE` 统一返回 405，前端删除入口移除，改为停用/启用动作。停用/启用在行锁事务中写入操作审计；规则、Supplier SKU、历史采购和人工来源候选均排除停用供应商；新采购序列化与确认路径拒绝停用供应商。现有采购单的 `PROTECT` 外键及供应商名称/地址/联系人快照未改动，历史采购、付款和来源保留；未修改 ISS-039 成本分配或 ISS-037 历史快照规则。
+
+验收证据见 [`ISS-026 验收记录`](uat-evidence/iss-026-supplier-lifecycle/README.md)：供应商生命周期专项后端 4 项、相关候选/采购/快照/ISS-039/037/040 回归 33 项、前端 Node 150 项、生产构建、全新数据库顺序迁移检查和真实 Chrome 桌面/390×844 窄屏操作均通过。Playwright 供应商浏览器套件未能启动，原因是隔离 worktree 没有 `@playwright/test`，补依赖时受 Windows 文件锁阻断；不将该套件宣称为通过。ISS-026 仅记录为 `FIXED_PENDING_REVIEW`，不关闭、不合并 master，等待统一独立审查。
+

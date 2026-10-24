@@ -152,6 +152,8 @@ class SupplierSerializer(serializers.ModelSerializer):
     supply_category_names = serializers.SlugRelatedField(source="supply_categories", slug_field="name", many=True, read_only=True)
 
     def validate(self, attrs):
+        if "is_active" in self.initial_data:
+            raise serializers.ValidationError({"is_active": "请使用供应商的停用或启用操作。"})
         if (self.instance is None or "supply_categories" in attrs) and not attrs.get("supply_categories"):
             raise serializers.ValidationError({"supply_categories": "请选择至少一个可供产品大类或子分类。"})
         return attrs
@@ -657,6 +659,8 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"exchange_rate": "人民币采购单的对人民币汇率必须为 1。"})
         supplier = attrs.get("supplier", getattr(self.instance, "supplier", None))
         user = serializer_user(self.context)
+        if not historical_mode and supplier and not supplier.is_active:
+            raise serializers.ValidationError({"supplier": "停用供应商不能用于新采购，请先启用供应商或更换供应商。"})
         if user is not None and supplier and (self.instance is None or supplier.pk != self.instance.supplier_id) and not user_can(user, "suppliers", "view"):
             raise PermissionDenied("关联供应商需要供应商查看权限。")
         if user is not None and attrs.get("items") and not user_can(user, "skus", "view"):

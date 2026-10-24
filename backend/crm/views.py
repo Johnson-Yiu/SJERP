@@ -157,6 +157,41 @@ class SupplierViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     queryset = Supplier.objects.prefetch_related("purchase_orders")
     search_fields = ["name", "code", "country", "main_products", "contact_name", "phone", "email", "store_url", "payment_terms"]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        active_only = str(self.request.query_params.get("active_only", "")).lower() in {"1", "true", "yes"}
+        if active_only:
+            queryset = queryset.filter(is_active=True)
+        return queryset
+
+    def _set_active(self, request, pk, is_active):
+        with transaction.atomic():
+            supplier = get_object_or_404(Supplier.objects.select_for_update(), pk=pk)
+            before = snapshot(supplier)
+            if supplier.is_active != is_active:
+                supplier.is_active = is_active
+                supplier.save(update_fields=["is_active", "updated_at"])
+            record_operation(
+                request=request,
+                instance=supplier,
+                action="custom",
+                action_label="启用供应商" if is_active else "停用供应商",
+                before=before,
+                metadata={"is_active": is_active},
+            )
+        return Response(self.get_serializer(supplier).data)
+
+    @action(detail=True, methods=["post"], url_path="deactivate")
+    def deactivate(self, request, pk=None):
+        return self._set_active(request, pk, False)
+
+    @action(detail=True, methods=["post"], url_path="activate")
+    def activate(self, request, pk=None):
+        return self._set_active(request, pk, True)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response({"detail": "供应商不支持永久删除，请使用停用操作。"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
     @action(detail=True, methods=["get"], url_path="supplier-skus")
     def supplier_skus(self, request, pk=None):
         supplier = self.get_object()

@@ -330,6 +330,63 @@ class FunctionalRBACApiTests(TestCase):
             self.assertEqual(self.client.get(f"/api/media/{snapshot_name}").status_code, 404)
             self.assertEqual(self.client.get(f"/media/{snapshot_name}").status_code, 404)
 
+    def test_product_certificate_files_use_private_media_and_reject_external_urls(self):
+        media_root = tempfile.TemporaryDirectory()
+        self.addClassCleanup(media_root.cleanup)
+        with override_settings(MEDIA_ROOT=media_root.name):
+            self.grant(self.role, "certificates", can_view=True, can_create=True, can_update=True)
+            product = Product.objects.create(code="RBAC-CERT-P1", name="Private certificate product")
+            certificate = ProductCertificate.objects.create(
+                product=product,
+                name="Private CE",
+                file=SimpleUploadedFile("private-certificate.pdf", b"certificate bytes", content_type="application/pdf"),
+                file_url="https://official.example/certificate.pdf",
+            )
+            relative_path = certificate.file.name
+            private_url = f"/api/media/{relative_path}"
+
+            anonymous = APIClient()
+            self.assertEqual(anonymous.get(private_url).status_code, 403)
+            self.assertEqual(anonymous.get(f"/media/{relative_path}").status_code, 404)
+
+            owner = self.make_user(username="certificate-reader", roles=[self.role])
+            self.auth(owner)
+            listing = self.client.get("/api/product-certificates/")
+            self.assertEqual(listing.status_code, 200, listing.data)
+            row = next(item for item in listing.data["results"] if item["id"] == certificate.id)
+            self.assertEqual(row["file_url"], private_url)
+            self.assertNotIn("official.example", repr(row))
+
+            allowed = self.client.get(private_url)
+            self.assertEqual(allowed.status_code, 200)
+            self.assertEqual(b"".join(allowed.streaming_content), b"certificate bytes")
+            self.assertEqual(allowed["Cache-Control"], "private, no-store")
+            self.addClassCleanup(allowed.close)
+
+            no_certificate_role = AccessRole.objects.create(name="无证书文件权限", code="rbac-no-cert-file")
+            self.grant(no_certificate_role, "products", can_view=True)
+            no_certificate_user = self.make_user(username="certificate-denied", roles=[no_certificate_role])
+            self.auth(no_certificate_user)
+            self.assertEqual(self.client.get("/api/product-certificates/").status_code, 403)
+            self.assertEqual(self.client.get(private_url).status_code, 404)
+
+            legacy = ProductCertificate.objects.create(
+                product=product,
+                name="Legacy external link",
+                file_url="https://official.example/legacy.pdf",
+            )
+            self.auth(owner)
+            legacy_row = self.client.get(f"/api/product-certificates/{legacy.id}/")
+            self.assertEqual(legacy_row.status_code, 200)
+            self.assertEqual(legacy_row.data["file_url"], "")
+            rejected = self.client.post(
+                "/api/product-certificates/",
+                {"product": product.id, "name": "Rejected external link", "file_url": "https://official.example/new.pdf"},
+                format="json",
+            )
+            self.assertEqual(rejected.status_code, 400, rejected.data)
+            self.assertIn("file_url", rejected.data)
+
     def test_context_hides_related_sections_without_their_module_view_permission(self):
         self.grant(self.role, "customers", can_view=True)
         user = self.make_user(roles=[self.role])

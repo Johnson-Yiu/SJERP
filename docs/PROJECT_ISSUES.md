@@ -51,7 +51,7 @@
 
 | ID | 状态 | 首次发现来源 / 日期 | 最近核实（日期 / HEAD） | 影响与当前证据 | 负责人 / 下一步动作 | 计划阶段 | 关闭验收依据 |
 |---|---|---|---|---|---|---|
-| ISS-017 | BLOCKED | [D4-C C-08](r0-d4b2c-api-permission-audit.md)；[D4-C 矩阵](r0-d4b2c-api-permission-matrix.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测） | 仓库内 API 文件权限已收口，但对象存储/CDN/反向代理 ACL 和外部证书 `file_url` 不在仓库控制范围；无法证明部署直链私有。 | 运维确认存储桶、CDN、反向代理访问策略；业务负责人决定外部证书链接是否公开。 | 部署前安全验收 | 部署环境配置审计、未授权直链实测和证书链接策略有记录；安全复审通过。 |
+| ISS-017 | BLOCKED | [D4-C C-08](r0-d4b2c-api-permission-audit.md)；[D4-C 矩阵](r0-d4b2c-api-permission-matrix.md)；[本轮私有附件验收](uat-evidence/iss-017-private-files/README.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-24 / 本分支最终 SHA 待交付：独立 worktree 完成认证媒体 API、证书私有上传、旧外部 URL 拒绝、缓存头、Chrome Use 桌面核验、Chrome 通道 13 项含 390px 回归；API 定向 68 tests OK。 | 应用层已收口且本地未授权/静态 `/media/` 场景通过；但仓库没有生产对象存储/CDN/Nginx/反向代理 ACL，生产直链和缓存安全仍无法证明。银行凭证当前是受控 API 中的引用、SHA256 和核实说明，没有可下载文件字段。 | 运维确认存储桶、CDN、反向代理访问策略并完成未授权直链/缓存实测；业务负责人确认历史外部证书链接清理和银行凭证文件化策略。 | 部署前安全验收 | 部署环境配置审计、未授权直链/缓存实测和证书链接策略有记录；安全复审通过。 |
 | ISS-018 | BLOCKED | [Phase 4A BLOCKER-DR-01](Phase4-生产化加固审计与实施计划.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测） | 数据库与媒体文件联合备份/恢复尚无演练证据，灾难恢复完整性未知。 | 运维在隔离环境设计并执行一致性备份、恢复、行数/金额/图片校验和恢复时间记录。 | 部署前运维验收 | 备份可恢复且 DB/媒体关系完整，演练与回滚证据经独立复审。 |
 | ISS-051 | BLOCKED | [Phase4A production blockers](Phase4-生产化加固审计与实施计划.md)；[AGENTS development identity rule](../AGENTS.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测） | 生产环境的 secret/DEBUG/APP_STAGE/开发超级管理员默认值及 session/401/route-guard 部署配置未在目标环境验收。D4 应用权限开发已推进，但不能把开发环境默认配置视为生产安全证明。 | 运维/安全负责人按实际目标环境做配置审计；开发超级管理员约定不在本开发任务中更改，生产开关必须在明确部署授权后处理。 | 部署前安全验收（未授权） | 目标环境 secret、DEBUG、APP_STAGE、认证与错误路由配置均满足安全策略，真实部署验收及独立复审通过。 |
 

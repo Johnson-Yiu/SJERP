@@ -1683,6 +1683,8 @@ class ProductCertificateSerializer(serializers.ModelSerializer):
     expiry_status = serializers.SerializerMethodField()
     expiry_status_display = serializers.SerializerMethodField()
     days_to_expiry = serializers.SerializerMethodField()
+    file = serializers.FileField(write_only=True, required=False, allow_empty_file=False)
+    file_url = serializers.SerializerMethodField()
 
     def get_expiry_status(self, obj):
         return certificate_expiry(obj.expires_on)["expiry_status"]
@@ -1693,11 +1695,27 @@ class ProductCertificateSerializer(serializers.ModelSerializer):
     def get_days_to_expiry(self, obj):
         return certificate_expiry(obj.expires_on)["days_to_expiry"]
 
+    def get_file_url(self, obj):
+        return protected_media_url(obj.file)
+
     product_name = serializers.CharField(source="product.name", read_only=True)
 
     class Meta:
         model = ProductCertificate
-        fields = "__all__"
+        fields = [
+            "id", "created_at", "updated_at", "product", "name", "certificate_no", "issuer",
+            "issued_date", "expires_on", "file", "file_url", "notes",
+            "expiry_status", "expiry_status_display", "days_to_expiry", "product_name",
+        ]
+        read_only_fields = ["file_url", "expiry_status", "expiry_status_display", "days_to_expiry", "product_name"]
+
+    def validate(self, attrs):
+        # Do not silently accept a legacy external URL from old clients. A
+        # certificate file must be uploaded into ERP private storage instead.
+        legacy_url = self.initial_data.get("file_url") if hasattr(self, "initial_data") else None
+        if str(legacy_url or "").strip():
+            raise serializers.ValidationError({"file_url": "证书文件必须上传到 ERP 私有存储，不接受外部链接。"})
+        return attrs
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

@@ -32,7 +32,9 @@ def thumbnail_response(field, request):
                 cache.set(key, content, timeout=86400)
             response = HttpResponse(content, content_type="image/webp")
         response["ETag"] = etag
-        response["Cache-Control"] = "private, max-age=0, must-revalidate"
+        # Thumbnails are authorization-protected media. Do not let a browser
+        # or intermediary retain a usable copy after the permission changes.
+        response["Cache-Control"] = "private, no-store"
         return response
     except (OSError, ValueError, UnidentifiedImageError, Image.DecompressionBombError) as error:
         raise Http404("图片不可用") from error

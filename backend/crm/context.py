@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from .models import Contact, Customer, FollowUp, InventoryMovement, Order, OrderItem, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
 from .supplier_display import payment_terms_summary
 from .querysets import prefetch_purchase_related_orders
-from .serializers import ContactSerializer, CustomerSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, QuoteSerializer, SKUSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer
+from .serializers import ContactSerializer, CustomerSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, QuoteSerializer, SKUSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, protected_media_url
 from .permissions import CONTEXT_MODULES, user_can
 from .sales_scope import scope_customer_queryset, scope_customer_related_queryset
 
@@ -458,5 +458,5 @@ def _certificate_context(pk, user=None):
     obj = get_object_or_404(ProductCertificate.objects.select_related("product"), pk=pk)
     product = _target([ProductSerializer(obj.product, context={"user": user}).data], "products")
     product_name = obj.product.name if user_can(user, "products", "view") else "产品"
-    return {"entity": "product-certificates", "title": obj.name, "subtitle": f"{product_name} · {obj.certificate_no or '未填写编号'}", "badge": obj.issuer or "证书", "info": [["签发机构", obj.issuer or "—"], ["签发日期", obj.issued_date or "—"], ["有效期至", obj.expires_on or "—"], ["文件链接", obj.file_url or "—"], ["备注", obj.notes or "—"]], "metrics": [], "sections": [_section("product", "所属产品", "products", [["code", "产品编号"], ["name", "产品名称"], ["status", "状态", "status"]], product)]}
+    return {"entity": "product-certificates", "title": obj.name, "subtitle": f"{product_name} · {obj.certificate_no or '未填写编号'}", "badge": obj.issuer or "证书", "info": [["签发机构", obj.issuer or "—"], ["签发日期", obj.issued_date or "—"], ["有效期至", obj.expires_on or "—"], ["文件链接", protected_media_url(obj.file) or "—"], ["备注", obj.notes or "—"]], "metrics": [], "sections": [_section("product", "所属产品", "products", [["code", "产品编号"], ["name", "产品名称"], ["status", "状态", "status"]], product)]}
 

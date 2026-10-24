@@ -41,7 +41,7 @@ const { can, accessState } = useAccessControl()
 const route = useRoute()
 const router = useRouter()
 const isParameterPage = computed(() => props.config.endpoint === 'product-parameters')
-const parameterProducts = ref([]), parameterOptionError = ref(''), parameterSaveError = ref(''), certificateSaveError = ref('')
+const parameterProducts = ref([]), parameterOptionError = ref(''), parameterSaveError = ref(''), certificateSaveError = ref(''), currentCertificateFileUrl = ref('')
 async function loadParameterProducts() { parameterOptionError.value = ''; try { parameterProducts.value = await listAll('/products/') } catch (error) { parameterOptionError.value = apiErrorMessage(error) } }
 const isSupplierPage = computed(() => props.config.endpoint === 'suppliers')
 const isContactPage = computed(() => props.config.endpoint === 'contacts')
@@ -175,7 +175,7 @@ const routeModalOpen = ref(false)
 
 const statusLabels = { lead: '线索', contact: '已建立联系', opportunity: '已进入报价阶段', customer: '已有1张正式订单', company: '已有2张及以上正式订单', development: '开发中', discontinued: '停产', draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
 const editorFields = computed(() => {
-  if (isCertificatePage.value) return [['product','name','certificate_no','issuer'],['issued_date','expires_on'],['file_url','notes']].map(keys=>keys.map(key=>props.config.fields.find(field=>field[0]===key)))
+  if (isCertificatePage.value) return [['product','name','certificate_no','issuer'],['issued_date','expires_on'],['file','notes']].map(keys=>keys.map(key=>props.config.fields.find(field=>field[0]===key)))
   if (isParameterPage.value) return [['product','group'],['name','value','unit','sort_order']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
   if (isSupplierPage.value) return [['name','code','country','main_products'],['contact_name','phone','email','store_url'],['supply_categories'],['payment_terms','payment_terms_config'],['notes']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
   if (isContactPage.value) return [['customer','name','title','is_primary'],['phone','whatsapp','email'],['notes']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
@@ -499,7 +499,7 @@ function resetForm() {
     const supplierDefault = props.config.endpoint === 'suppliers' && !editingId.value
       ? { country: '中国', payment_terms: '30%预付款，70%尾款发货前结清' }[name]
       : undefined
-    form[name] = type === 'remote_multi' ? [] : type === 'checkbox' ? name === 'active' : type === 'select' ? Object.keys(extra)[0] : (route.query[name] ?? supplierDefault ?? '')
+    form[name] = type === 'remote_multi' ? [] : type === 'checkbox' ? name === 'active' : type === 'select' ? Object.keys(extra)[0] : type === 'file' ? null : (route.query[name] ?? supplierDefault ?? '')
     if (type === 'payment_terms') form[name] = copyPaymentTerms()
     if (type === 'followup_schedule') form[name] = 'keep'
   })
@@ -514,6 +514,9 @@ function isInherited(fieldName) {
   const value = route.query?.[fieldName]
   return !editingId.value && value !== undefined && value !== null && value !== ''
 }
+function onCertificateFileSelected(event) {
+  form.file = event.target.files?.[0] || null
+}
 async function openCreate({ isCurrent = () => true } = {}) {
   if (!can(accessModule.value, 'create')) return
   clearToast()
@@ -523,6 +526,7 @@ async function openCreate({ isCurrent = () => true } = {}) {
   supplierSaveError.value = ''
   keepDetailOpen.value = false
   editingId.value = null; resetForm()
+  currentCertificateFileUrl.value = ''
   if (props.config.endpoint === 'follow-ups' && !form.followed_at) form.followed_at = datetimeLocal()
   customerContacts.value = props.config.endpoint === 'customers' ? [emptyContact(true)] : []
   if (!isMovementPage.value) await loadOptions()
@@ -549,12 +553,14 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
   editingId.value = row.id; resetForm(); await loadOptions()
   if (!isCurrent()) return
   props.config.fields.forEach(([name, , type]) => {
+    if (type === 'file') return
     let value = row[name]
     if (type === 'datetime-local' && value) value = value.slice(0, 16)
     form[name] = value ?? (type === 'checkbox' ? false : '')
     if (type === 'payment_terms') form[name] = copyPaymentTerms(value)
     if (type === 'followup_schedule') form[name] = value || 'keep'
   })
+  currentCertificateFileUrl.value = isCertificatePage.value ? (row.file_url || '') : ''
   followUpAttachments.value = props.config.endpoint === 'follow-ups' ? (row.attachments || []) : []
   pendingFollowUpFiles.value = []
   syncFollowUpDaysFromDate()
@@ -564,7 +570,7 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
 const closeModal = () => { if ((isSupplierPage.value || isCrmPage.value || isParameterPage.value || isCertificatePage.value) && saving.value) return; return guard.requestClose(discardModal) }
 function discardModal() {
   const refreshDetail = keepDetailOpen.value
-  modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []
+  modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []; currentCertificateFileUrl.value = ''
   if (refreshDetail) detailRefresh.value += 1
   void clearModalRoute(router, route)
 }
@@ -608,11 +614,20 @@ function payload() {
     if (type === 'number') value = value === '' ? 0 : value
     if (type === 'date' && value === '') value = null
     if (type === 'datetime-local' && value && value.length === 16) value += ':00+08:00'
+    if (type === 'file') { if (!value) return; data[name] = value; return }
     if (['website', 'store_url'].includes(name)) value = normalizeWebsite(value)
     if (props.config.endpoint === 'follow-ups' && name === 'next_follow_up' && form.next_follow_up_mode !== 'set') value = null
     data[name] = value
   })
   if (isCustomerCreate.value) data.contacts = customerContacts.value
+  return data
+}
+function certificatePayload() {
+  const data = new FormData()
+  Object.entries(payload()).forEach(([name, value]) => {
+    if (value === null || value === undefined || value === '') return
+    data.append(name, value instanceof File ? value : String(value))
+  })
   return data
 }
 async function save() {
@@ -635,7 +650,8 @@ async function save() {
   saving.value = true
   try {
     const wasEditing = Boolean(editingId.value)
-    const response = wasEditing ? await api.put(`/${props.config.endpoint}/${editingId.value}/`, payload()) : await api.post(`/${props.config.endpoint}/`, payload())
+    const requestPayload = isCertificatePage.value && form.file ? certificatePayload() : payload()
+    const response = wasEditing ? await api.put(`/${props.config.endpoint}/${editingId.value}/`, requestPayload) : await api.post(`/${props.config.endpoint}/`, requestPayload)
     guard.markClean()
     const savedId = response.data?.id || editingId.value
     let attachmentError = ''
@@ -793,7 +809,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
     <div v-if="isCertificatePage" class="certificate-filters" aria-label="证书有效期筛选"><button v-for="[value, label] in certificateFilters" :key="value" type="button" class="btn" :class="{ 'btn-primary': (route.query.expiry || '') === value }" :aria-pressed="(route.query.expiry || '') === value" @click="setCertificateFilter(value)">{{ label }}</button></div>
     <div v-if="certificateFilterLabel" class="follow-up-due-context" aria-label="当前证书筛选"><span>当前筛选：<strong>{{ certificateFilterLabel }}</strong></span><button type="button" @click="setCertificateFilter('')">清除筛选</button></div>
     <div v-if="hasCurrentDueFollowUpContext" class="follow-up-due-context" aria-label="当前跟进筛选"><span>当前筛选：<strong>今日及逾期待跟进</strong></span><button type="button" @click="clearFollowUpDueFilter">清除待跟进筛选</button></div>
-    <div v-if="isCertificatePage" class="certificate-controls"><label v-if="can('products','view')">所属产品<select aria-label="按产品筛选证书" :value="route.query.product || ''" @change="updateLedgerQuery({product:$event.target.value||undefined,page:undefined})"><option value="">全部产品</option><option v-for="p in parameterProducts" :key="p.id" :value="String(p.id)">{{ p.code }} · {{ p.name }}</option></select></label><label>排序<select aria-label="证书排序" :value="route.query.sort || 'expiry'" @change="updateLedgerQuery({sort:$event.target.value,page:undefined})"><option value="expiry">到期日期优先</option><option value="name">证书名称</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><p v-if="isCertificatePage" class="field-help">到期状态按系统日期和有效期判断；未填有效期不代表永久有效。文件由现有链接提供，不在此上传。</p><p v-if="isCertificatePage && parameterOptionError" role="alert" class="option-load-error">产品选项加载失败：{{ parameterOptionError }} <button @click="loadParameterProducts">重试</button></p><div v-if="isParameterPage" class="parameter-filter-bar"><label v-if="can('products','view')">所属产品<select aria-label="按产品筛选参数" :value="route.query.product || ''" @change="updateLedgerQuery({product:$event.target.value || undefined})"><option value="">全部产品</option><option v-for="product in parameterProducts" :key="product.id" :value="String(product.id)">{{ product.code }} · {{ product.name }}</option></select></label><button class="btn btn-secondary" @click="updateLedgerQuery({product:undefined,search:undefined}); query = ''">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button><button v-if="route.query.product && can('products','view')" class="btn btn-secondary" @click="router.push({path:'/products',query:{detail:route.query.product}})">查看所属产品</button></div><p v-if="isParameterPage" class="field-help">产品参数用于记录通用规格。分类属性用于参数模板，SKU 参数用于具体规格与身份；在此保存不会修改 SKU 参数。</p><p v-if="isParameterPage && parameterOptionError" role="alert" class="option-load-error">{{ parameterOptionError }} <button @click="loadParameterProducts">重试</button></p>
+    <div v-if="isCertificatePage" class="certificate-controls"><label v-if="can('products','view')">所属产品<select aria-label="按产品筛选证书" :value="route.query.product || ''" @change="updateLedgerQuery({product:$event.target.value||undefined,page:undefined})"><option value="">全部产品</option><option v-for="p in parameterProducts" :key="p.id" :value="String(p.id)">{{ p.code }} · {{ p.name }}</option></select></label><label>排序<select aria-label="证书排序" :value="route.query.sort || 'expiry'" @change="updateLedgerQuery({sort:$event.target.value,page:undefined})"><option value="expiry">到期日期优先</option><option value="name">证书名称</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><p v-if="isCertificatePage" class="field-help">到期状态按系统日期和有效期判断；证书文件上传后仅通过 ERP 权限访问，不生成公开链接。</p><p v-if="isCertificatePage && parameterOptionError" role="alert" class="option-load-error">产品选项加载失败：{{ parameterOptionError }} <button @click="loadParameterProducts">重试</button></p><div v-if="isParameterPage" class="parameter-filter-bar"><label v-if="can('products','view')">所属产品<select aria-label="按产品筛选参数" :value="route.query.product || ''" @change="updateLedgerQuery({product:$event.target.value || undefined})"><option value="">全部产品</option><option v-for="product in parameterProducts" :key="product.id" :value="String(product.id)">{{ product.code }} · {{ product.name }}</option></select></label><button class="btn btn-secondary" @click="updateLedgerQuery({product:undefined,search:undefined}); query = ''">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button><button v-if="route.query.product && can('products','view')" class="btn btn-secondary" @click="router.push({path:'/products',query:{detail:route.query.product}})">查看所属产品</button></div><p v-if="isParameterPage" class="field-help">产品参数用于记录通用规格。分类属性用于参数模板，SKU 参数用于具体规格与身份；在此保存不会修改 SKU 参数。</p><p v-if="isParameterPage && parameterOptionError" role="alert" class="option-load-error">{{ parameterOptionError }} <button @click="loadParameterProducts">重试</button></p>
     <div v-if="isCustomerPage" class="customer-filter-bar" aria-label="客户筛选"><label class="customer-search search-box">搜索<input v-model="query" aria-label="搜索客户" placeholder="名称、编号、国家/地区或负责人" @input="delayedSearch" /></label><label>负责人<select aria-label="按负责人筛选客户" :value="customerFilter.owner" @change="setCustomerFilter('owner_profile', $event.target.value)"><option value="">全部负责人</option><option v-for="owner in customerFilterOptions.owners" :key="owner.id" :value="String(owner.id)">{{ owner.label }}</option></select></label><label>国家/地区<select aria-label="按国家/地区筛选客户" :value="customerFilter.country" @change="setCustomerFilter('country', $event.target.value)"><option value="">全部国家/地区</option><option v-for="country in customerFilterOptions.countries" :key="country.value" :value="country.value">{{ country.label }}</option></select></label><label>状态<select aria-label="按客户状态筛选" :value="customerFilter.status" @change="setCustomerFilter('status', $event.target.value)"><option value="">全部状态</option><option v-for="status in customerStatusOptions" :key="status.value" :value="status.value">{{ status.label }}</option></select></label><button type="button" class="btn btn-secondary" @click="clearListFilters">重置</button><button type="button" class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div>
     <div v-if="isCustomerPage && customerFilterError" class="option-load-error" role="alert">{{ customerFilterError }} <button type="button" @click="loadCustomerFilterOptions">重新加载筛选选项</button></div>
     <div v-if="isCrmPage" class="crm-filter-bar" :class="{ 'follow-up-filter-bar': isFollowUpPage }" :aria-label="isContactPage ? '联系人筛选' : '跟进记录筛选'">
@@ -848,7 +864,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
     <InventoryMovementCreateModal v-if="modalOpen && config.endpoint === 'inventory-movements' && !editingId" @close="closeModal" @saved="handleInventoryMovementCreated" />
     <div v-else-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form :role="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? 'dialog' : undefined" :aria-modal="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? 'true' : undefined" :aria-label="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? title : undefined" class="modal" :class="{ wide: isWideForm, 'customer-editor': isCustomerPage, 'supplier-editor': isSupplierPage, 'crm-editor': isCrmPage, 'parameter-editor': isParameterPage || isCertificatePage }" @submit.prevent="save">
       <div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" :aria-label="isCertificatePage ? '关闭证书表单' : isParameterPage ? '关闭参数表单' : isSupplierPage ? '关闭供应商表单' : isContactPage ? '关闭联系人表单' : isFollowUpPage ? '关闭跟进表单' : undefined" :disabled="saving" @click="closeModal"><X :size="17" /></button></div>
-      <div class="modal-body" :inert="(isParameterPage || isCertificatePage) && saving"><p v-if="isCertificatePage && certificateSaveError" role="alert" class="supplier-save-error">{{ certificateSaveError }}</p><p v-if="isParameterPage && parameterSaveError" role="alert" class="supplier-save-error">{{ parameterSaveError }}</p><p v-if="isSupplierPage && supplierSaveError" role="alert" class="supplier-save-error">{{ supplierSaveError }}</p><p v-if="isCertificatePage" class="field-help">文件链接需使用完整的 http:// 或 https:// 地址。链接可打开不代表已验证文件内容或访问权限。</p><p v-if="isFollowUpPage" class="field-help">跟进记录或客户回复至少填写一项。</p><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isSupplierPage || isContactPage || isFollowUpPage || isParameterPage || isCertificatePage" class="supplier-group-title">{{ editorGroupTitles[groupIndex] }}</h4><p v-if="isSupplierPage && groupIndex === 2" class="field-help">可供分类用于筛选；具体 SKU 的供应来源仍需在供货档案中维护。</p><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group.filter(visibleEditorField)" :key="field[0]" class="field" :role="isCertificatePage ? 'group' : undefined" :aria-label="isCertificatePage ? editorFieldLabel(field) : undefined" :class="{ full: ['textarea', 'remote_multi', 'payment_terms'].includes(field[2]) || (isCertificatePage && field[0] === 'file_url') || (isSupplierPage && field[0] === 'payment_terms') || (isFollowUpPage && ['subject', 'content', 'result', 'next_follow_up_mode'].includes(field[0])), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
+      <div class="modal-body" :inert="(isParameterPage || isCertificatePage) && saving"><p v-if="isCertificatePage && certificateSaveError" role="alert" class="supplier-save-error">{{ certificateSaveError }}</p><p v-if="isParameterPage && parameterSaveError" role="alert" class="supplier-save-error">{{ parameterSaveError }}</p><p v-if="isSupplierPage && supplierSaveError" role="alert" class="supplier-save-error">{{ supplierSaveError }}</p><p v-if="isCertificatePage" class="field-help">证书文件必须上传到 ERP 私有存储；查看和下载均需当前证书权限。</p><p v-if="isFollowUpPage" class="field-help">跟进记录或客户回复至少填写一项。</p><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isSupplierPage || isContactPage || isFollowUpPage || isParameterPage || isCertificatePage" class="supplier-group-title">{{ editorGroupTitles[groupIndex] }}</h4><p v-if="isSupplierPage && groupIndex === 2" class="field-help">可供分类用于筛选；具体 SKU 的供应来源仍需在供货档案中维护。</p><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group.filter(visibleEditorField)" :key="field[0]" class="field" :role="isCertificatePage ? 'group' : undefined" :aria-label="isCertificatePage ? editorFieldLabel(field) : undefined" :class="{ full: ['textarea', 'remote_multi', 'payment_terms', 'file'].includes(field[2]) || (isCertificatePage && field[0] === 'file_url') || (isSupplierPage && field[0] === 'payment_terms') || (isFollowUpPage && ['subject', 'content', 'result', 'next_follow_up_mode'].includes(field[0])), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
         <label>{{ editorFieldLabel(field) }} <em v-if="field[3]">*</em></label><p v-if="optionErrors[field[4]]" class="option-load-error" role="alert">{{ optionErrors[field[4]] }} <button type="button" @click="retryRemoteOption(field)">重新加载</button></p>
         <div v-if="field[2] === 'followup_schedule'" class="follow-up-schedule" role="radiogroup" aria-label="下次跟进安排">
           <label v-for="(label, mode) in { keep: '保留当前计划', set: '设置新的跟进日期', clear: '暂不安排后续跟进' }" :key="mode"><input v-model="form.next_follow_up_mode" type="radio" name="next_follow_up_mode" :value="mode" @change="changeFollowUpMode" /> {{ label }}</label>
@@ -861,6 +877,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
         <ComboInput v-else-if="field[2] === 'combo'" v-model="form[field[0]]" :options="options[field[4]] || []" :label="isCrmPage ? editorFieldLabel(field) : ''" :required="field[3]" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]])" />
         <select v-else-if="field[2] === 'select'" v-model="form[field[0]]" :aria-label="isCrmPage || isParameterPage || isCertificatePage ? editorFieldLabel(field) : undefined" :required="field[3]" :disabled="isInherited(field[0])"><option v-for="(label,key) in field[4]" :key="key" :value="key">{{ label }}</option></select>
         <CategoryMultiPicker v-else-if="field[2] === 'remote_multi'" v-model="form[field[0]]" :categories="options[field[4]] || []" />
+        <div v-else-if="field[2] === 'file'" class="private-file-input"><input :aria-label="editorFieldLabel(field)" type="file" @change="onCertificateFileSelected" /><small v-if="currentCertificateFileUrl"><a :href="certificateFileUrl(currentCertificateFileUrl)" target="_blank" rel="noopener noreferrer">查看当前私有文件</a></small><small v-else>可选；保存后按权限查看。</small></div>
         <select v-else-if="field[2] === 'remote'" v-model="form[field[0]]" :aria-label="isCrmPage || isParameterPage || isCertificatePage ? editorFieldLabel(field) : undefined" :required="field[3]" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]]) || (field[0] === 'owner_profile' && ownerProfileReadOnly)" @change="onFieldChange(field)"><option value="">请选择</option><option v-for="option in visibleOptions(field)" :key="option.id" :value="option.id">{{ option[field[5]] }}</option></select>
         <label v-else-if="field[2] === 'checkbox'" class="checkbox-line"><input v-model="form[field[0]]" type="checkbox" :disabled="isInherited(field[0])" /> 是</label>
         <div v-else-if="config.endpoint === 'follow-ups' && field[0] === 'next_follow_up'" class="follow-up-date-control">

@@ -442,3 +442,9 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 独立审查发现财务概览 `payable_count`、`payable_rmb` 只依赖采购查看权限，但下钻接口和前端入口额外要求订单查看权限。本轮基于 `codex/iss-048-finance-drill` / `f2a44dafabdd5cc7b4c5b95abed3865867fd9e7b` 进行了最小修补：应付款下钻与概览统一使用 `purchases.view`，采购成本/订单费用/预计利润以及销售/应收等其他指标权限不变；应付款明细固定走采购单关联，继续使用原有计划数据范围，未扩大跨部门或跨供应商访问。
 
 新增并通过有采购无订单权限、无采购权限反向拒绝和范围一致性测试；前端同步修正应付款入口可见性。证据见 `docs/uat-evidence/iss-048-finance-drill/fix-01/`。ISS-048 继续保持 `P3 / BLOCKED（延期）`，本修补记录为 `FIXED_PENDING_REVIEW`，等待独立验收；未关闭 ISS-048，未修改其他 Issue 状态。
+
+## ISS-026 / ISS-107 / ISS-017 统一集成验收（2026-10-24）
+
+基于统一基线 `71ec4a4c2d860b9944624a1434d9d7580e9a6d38` 建立独立 `codex/integration-026-107-017` Worktree，并核实三个成果分支已在 GitHub 可见：ISS-026 `3625f472b028146c062823990322de32a98759a1`、ISS-107 `60df1b045c06c7f2146b44e4a60866b1786024cc`、ISS-017 `c5fc1c11b9728655a363a4f2a5ba0544584a8d07`。集成仅发生一处文档追加冲突，已保留双方记录；三条 `0081` 迁移通过无操作 `0082` 汇合，未删除或重写历史。
+
+集成后 Django 全量为 862/862 通过（13 项跳过），Node 151/151、Vitest 645/645、生产构建、SQLite 新库/升级/回滚和真实 Chrome 关键页面回归通过。ISS-017 旧外部证书 URL 测试断言已按现行 400 安全规则同步，记录和有效期保持不变。ISS-026、ISS-107、ISS-017 均仍为 `FIXED_PENDING_REVIEW`；源任务 GitHub CI 失败、本地无 PostgreSQL 和生产代理/对象存储，故不宣称 master 合并就绪或生产安全验收完成。完整证据见 `docs/uat-evidence/iss-026-supplier-lifecycle/INTEGRATION-026-107-017.md`，等待统一独立审查。

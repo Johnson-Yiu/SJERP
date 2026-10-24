@@ -84,6 +84,9 @@ class CertificateExpiryTests(TestCase):
         self.assertEqual(record.file_url, '')
         self.assertEqual(ProductCertificateSerializer(record).data['expiry_status'], 'expiring_30')
         response = self.client.patch(url, {'file_url': 'https://example.com/synthetic.pdf'}, format='json')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['expiry_status'], 'expiring_30')
-        # Storing a URL is not evidence of successful download or file authorization.
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('file_url', response.data)
+        record.refresh_from_db()
+        self.assertEqual(record.name, 'CE 30')
+        self.assertEqual(record.file_url, '')
+        self.assertEqual(ProductCertificateSerializer(record).data['expiry_status'], 'expiring_30')

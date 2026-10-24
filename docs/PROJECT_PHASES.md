@@ -291,3 +291,11 @@ ISS-039 台账更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue；本轮不合�
 
 最小修复为模型元数据迁移 `0081_transaction_rmb_reference_label` 和资源描述澄清。旧英文 API 键、`source=cash`、旧报表配置和 ISS-048 统计/权限逻辑均保留；未改写任何金额、汇率、流水或银行事实，不把两种金额相加。合成批次为账面 USD 100 × 7.1 + CNY 250 = ¥960.0000，银行已确认人民币净额为 ¥705.00；迁移前后同一批数据库业务金额哈希均为 `2c10f1295ccfb73c4f8c89773b37004f20d5f206732fee5e219ce02062f55fa7`。完整 API/CSV、测试和截图索引见 `docs/uat-evidence/r1-fin-p1/ISS-107-FOLLOWUP.md`。ISS-107 更新为 `FIXED_PENDING_REVIEW`，不关闭、不合并 master，等待独立复审。
 
+## ISS-026 / ISS-107 / ISS-017 统一集成验收（2026-10-24）
+
+基于统一基线 `71ec4a4c2d860b9944624a1434d9d7580e9a6d38` 建立独立 `codex/integration-026-107-017` Worktree，已核实并集成三个源提交：ISS-026 `3625f472b028146c062823990322de32a98759a1`、ISS-107 `60df1b045c06c7f2146b44e4a60866b1786024cc`、ISS-017 `c5fc1c11b9728655a363a4f2a5ba0544584a8d07`。三个 `crm.0081` 并行叶节点均依赖 `0080`，仅新增无操作 `0082` merge migration；全新库、既有库升级以及回滚重放均通过，未改写已发布迁移。
+
+ISS-026 供应商停用/恢复、禁止硬删除、采购候选/历史快照与审计规则；ISS-107 银行实际人民币净额与账面折算参考口径；ISS-017 私有附件入口与证书外链拒绝规则均保留。Django 全量 862 项（13 跳过）通过，前端 Node 151、Vitest 645、生产构建和真实 Chrome 关键页面回归通过。旧证书测试中与 ISS-017 规则冲突的一处外部 URL 200 断言已最小同步为 400 并验证数据不变。完整报告见 `docs/uat-evidence/iss-026-supplier-lifecycle/INTEGRATION-026-107-017.md`。
+
+三个源任务 GitHub CI 均为失败状态，且本地没有 PostgreSQL/生产代理环境；因此集成分支继续保持 `FIXED_PENDING_REVIEW`，不作为 master 合并条件，不关闭 Issue，等待统一独立代码、数据库、权限和部署安全审查。
+

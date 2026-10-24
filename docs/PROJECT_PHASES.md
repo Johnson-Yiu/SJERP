@@ -297,5 +297,5 @@ ISS-039 台账更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue；本轮不合�
 
 ISS-026 供应商停用/恢复、禁止硬删除、采购候选/历史快照与审计规则；ISS-107 银行实际人民币净额与账面折算参考口径；ISS-017 私有附件入口与证书外链拒绝规则均保留。Django 全量 862 项（13 跳过）通过，前端 Node 151、Vitest 645、生产构建和真实 Chrome 关键页面回归通过。旧证书测试中与 ISS-017 规则冲突的一处外部 URL 200 断言已最小同步为 400 并验证数据不变。完整报告见 `docs/uat-evidence/iss-026-supplier-lifecycle/INTEGRATION-026-107-017.md`。
 
-三个源任务 GitHub CI 均为失败状态，且本地没有 PostgreSQL/生产代理环境；因此集成分支继续保持 `FIXED_PENDING_REVIEW`，不作为 master 合并条件，不关闭 Issue，等待统一独立代码、数据库、权限和部署安全审查。
+三个源任务 GitHub CI 均为失败状态；集成提交 `3571d374adb8e41d515265a5c429639d5b8f4904` 对应 CI 运行 `40067690763` 的 backend、frontend、backend-postgres 也在可见步骤前失败，且本地没有 PostgreSQL/生产代理环境。因此集成分支继续保持 `FIXED_PENDING_REVIEW`，不作为 master 合并条件，不关闭 Issue，等待统一独立代码、数据库、权限和部署安全审查。
 

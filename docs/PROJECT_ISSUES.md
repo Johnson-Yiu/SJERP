@@ -447,4 +447,4 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 
 基于统一基线 `71ec4a4c2d860b9944624a1434d9d7580e9a6d38` 建立独立 `codex/integration-026-107-017` Worktree，并核实三个成果分支已在 GitHub 可见：ISS-026 `3625f472b028146c062823990322de32a98759a1`、ISS-107 `60df1b045c06c7f2146b44e4a60866b1786024cc`、ISS-017 `c5fc1c11b9728655a363a4f2a5ba0544584a8d07`。集成仅发生一处文档追加冲突，已保留双方记录；三条 `0081` 迁移通过无操作 `0082` 汇合，未删除或重写历史。
 
-集成后 Django 全量为 862/862 通过（13 项跳过），Node 151/151、Vitest 645/645、生产构建、SQLite 新库/升级/回滚和真实 Chrome 关键页面回归通过。ISS-017 旧外部证书 URL 测试断言已按现行 400 安全规则同步，记录和有效期保持不变。ISS-026、ISS-107、ISS-017 均仍为 `FIXED_PENDING_REVIEW`；源任务 GitHub CI 失败、本地无 PostgreSQL 和生产代理/对象存储，故不宣称 master 合并就绪或生产安全验收完成。完整证据见 `docs/uat-evidence/iss-026-supplier-lifecycle/INTEGRATION-026-107-017.md`，等待统一独立审查。
+集成后 Django 全量为 862/862 通过（13 项跳过），Node 151/151、Vitest 645/645、生产构建、SQLite 新库/升级/回滚和真实 Chrome 关键页面回归通过。ISS-017 旧外部证书 URL 测试断言已按现行 400 安全规则同步，记录和有效期保持不变。ISS-026、ISS-107、ISS-017 均仍为 `FIXED_PENDING_REVIEW`；源任务 CI 及集成提交 `3571d374adb8e41d515265a5c429639d5b8f4904` 对应 GitHub CI 均失败且没有可用步骤日志，本地无 PostgreSQL 和生产代理/对象存储，故不宣称 master 合并就绪或生产安全验收完成。完整证据见 `docs/uat-evidence/iss-026-supplier-lifecycle/INTEGRATION-026-107-017.md`，等待统一独立审查。

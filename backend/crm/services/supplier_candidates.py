@@ -45,11 +45,15 @@ def _add_source(row, label, source_type):
 def candidates(sku):
     result = {}
     for rule in SupplierCapability.objects.filter(product=sku.product, is_active=True).select_related("supplier").order_by("id"):
+        if not rule.supplier.is_active:
+            continue
         if matches(sku, rule):
             row = result.setdefault(rule.supplier_id, _candidate_row(rule.supplier))
             _add_source(row, rule.name, "rule_match")
             row["characteristics"].update(rule.characteristics)
     for source in sku.supplier_skus.filter(is_active=True).select_related("supplier"):
+        if not source.supplier.is_active:
+            continue
         row = result.setdefault(source.supplier_id, _candidate_row(source.supplier))
         row["supplier_skus"].append({
             "id": source.id,
@@ -68,9 +72,13 @@ def candidates(sku):
         purchase_order__status__in=["ordered", "partial", "completed"],
     ).select_related("purchase_order__supplier", "supplier_sku"):
         supplier = item.purchase_order.supplier
+        if not supplier.is_active:
+            continue
         row = result.setdefault(item.purchase_order.supplier_id, _candidate_row(supplier))
         _add_source(row, "历史采购", "historical_purchase")
     for override in sku.candidate_overrides.select_related("supplier"):
+        if not override.supplier.is_active:
+            continue
         if not override.is_allowed:
             result.pop(override.supplier_id, None)
             continue
@@ -145,4 +153,4 @@ def eligible_suppliers(product):
             category_ids.add(category.pk)
             category = category.parent
     from crm.models import Supplier
-    return Supplier.objects.filter(supply_categories__in=category_ids).distinct().order_by("name")
+    return Supplier.objects.filter(is_active=True, supply_categories__in=category_ids).distinct().order_by("name")

@@ -78,6 +78,8 @@ class SupplierCandidatesView(APIView):
         require_finance_permission(request.user, "skus", "view")
         sku = get_object_or_404(SKU.objects.select_for_update(), pk=pk)
         supplier = get_object_or_404(Supplier, pk=request.data.get("supplier"))
+        if not supplier.is_active:
+            raise ValidationError("停用供应商不能加入新采购候选池，请先启用供应商。")
         allowed = request.data.get("is_allowed")
         if allowed is None:
             sku.candidate_overrides.filter(supplier=supplier).delete()
@@ -119,7 +121,7 @@ class ProductSupplierCandidatePoolView(APIView):
             raise ValidationError("包含其他产品或已停用的 SKU，请重新选择。")
         inputs = SupplierInput(data=payload.validated_data["suppliers"], many=True)
         inputs.is_valid(raise_exception=True)
-        existing = set(Supplier.objects.values_list("pk", flat=True))
+        existing = set(Supplier.objects.filter(is_active=True).values_list("pk", flat=True))
         supplier_ids = [item["supplier"] for item in inputs.validated_data]
         if len(set(supplier_ids)) != len(supplier_ids) or not set(supplier_ids) <= existing:
             raise ValidationError("供应商重复或已不存在，请刷新后重新选择。")
@@ -141,7 +143,7 @@ class ProductSupplierCandidatePoolView(APIView):
             from .services.supplier_candidates import eligible_suppliers
             from .serializers import SupplierSerializer
             matched = set(eligible_suppliers(product).values_list("pk", flat=True))
-            queryset = Supplier.objects.all() if request.query_params.get("all") == "1" else Supplier.objects.filter(pk__in=matched)
+            queryset = Supplier.objects.filter(is_active=True) if request.query_params.get("all") == "1" else Supplier.objects.filter(pk__in=matched, is_active=True)
             data = SupplierSerializer(queryset.prefetch_related("supply_categories", "purchase_orders").order_by("name"), many=True, context={"request": request}).data
             for row in data:
                 row["category_match"] = row["id"] in matched

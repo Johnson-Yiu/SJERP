@@ -5,7 +5,7 @@
 - 项目：SUNJACK-ERP
 - 统一基线：`af018ac63cf71143d223b9f6db4a087707495693`
 - 集成分支：`codex/integration-024-019-008`
-- 最终提交：`16277228ffafbf902d54214a0b9f8f17a902e147`
+- 最终提交：`a18d369`
 - 独立 worktree：`C:\Users\Johnson\.codex\worktrees\integration-024-019-008\森爵照明管理系统`
 - 状态：三项功能均已按 ISS-024 → ISS-019 → ISS-008 顺序集成，等待统一独立审查；未合并 master，未关闭 Issue。
 

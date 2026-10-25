@@ -5,6 +5,7 @@
 - 项目：SUNJACK-ERP
 - 统一基线：`af018ac63cf71143d223b9f6db4a087707495693`
 - 集成分支：`codex/integration-024-019-008`
+- 最终提交：`16277228ffafbf902d54214a0b9f8f17a902e147`
 - 独立 worktree：`C:\Users\Johnson\.codex\worktrees\integration-024-019-008\森爵照明管理系统`
 - 状态：三项功能均已按 ISS-024 → ISS-019 → ISS-008 顺序集成，等待统一独立审查；未合并 master，未关闭 Issue。
 
@@ -101,5 +102,5 @@ Vitest 使用仓库中可识别的有效入口和 `jsdom` 环境；未把仓库�
 
 ## 遗留事项
 
-- 本轮未执行 PostgreSQL/CI 结果确认；推送最终集成提交后再核对 GitHub Actions 状态。若 CI 在可见步骤前失败，保留为环境/CI 风险，不用本地通过结果冒充 CI 通过。
+- GitHub Actions [CI run 40203282554](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/40203282554) 已完成但失败；`backend-postgres`、`frontend`、`backend` 三个 job 均在可见 steps 前结束，`steps=[]`，因此记录为 CI/环境失败，不能作为本地测试或 PostgreSQL 通过的替代。PostgreSQL 本地也未执行。
 - 三项功能均已集成，但仍需统一独立审查；不在本任务中合并 master 或关闭 Issue。

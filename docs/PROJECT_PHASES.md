@@ -315,3 +315,9 @@ GitHub CI run `40073371582` 在 frontend、backend、backend-postgres 三个 job
 
 后端 SQLite 全量 871 项（跳过 13）、ISS-008/导入/报价/客户回归 24 项、前端 Node 151 项、有效 Vitest 16 项、生产构建均通过。真实 Chrome 已完成客户桌面与 `390×844` 窄屏候选/保存/刷新回归，并检查报价列表和新建报价表单；截图及命令记录见 [`ISS-008 验收记录`](uat-evidence/iss-008-country-select/README.md)。本轮未执行 PostgreSQL/CI；直接未筛选 Vitest 入口存在仓库既有 node:test/jsdom 配置噪声，不纳入通过项。ISS-008 保持 `FIXED_PENDING_REVIEW`，等待统一独立代码、数据兼容、权限和视觉复审。
 
+## ISS-024 / ISS-019 / ISS-008 统一集成验收（2026-10-25）
+
+基于统一基线 `af018ac63cf71143d223b9f6db4a087707495693` 建立独立 worktree 和 `codex/integration-024-019-008`，按 ISS-024 → ISS-019 → ISS-008 顺序集成。ISS-008 原预期分支首次核验时不在 GitHub，已确认本地成果后推送并用 `git ls-remote` 核实 `a14d3d929e0c64dbb06d375d9a0ffa832526af92` 远端可见；旧 `fix/quote-country-iso-resolution` 未冒充本轮成果。三项实现、测试与历史证据均保留，未改写 0080–0084 迁移链；ISS-008 没有新增迁移。
+
+集成只发生 `backend/crm/views.py` 与本阶段文档冲突，已保留客户级供应商偏好/停用过滤和本地国家目录两套逻辑，以及 ISS-019、ISS-008 两套阶段记录。全新 SQLite 迁移至 0084、已有库从 0082 升级至 0084、Django 全量 877 项（跳过 13）、前端 Node 151 项、有效 Vitest 74 项、生产构建和正确集成服务上的桌面/窄屏 Chrome 回归均通过。ISS-024 的供应商隔离与成本分配、ISS-019 的查看/导出权限和 CSV/API 对账、ISS-008 的国家代码/报价编号/历史快照兼容均由定向测试覆盖。完整命令、文件和证据索引见 [`ISS-024/019/008 统一集成验收`](uat-evidence/integration-024-019-008/README.md)。三项保持 `FIXED_PENDING_REVIEW`，等待统一独立审查；CI/ PostgreSQL 在推送后另行核对，不关闭 Issue、不合并 master。
+

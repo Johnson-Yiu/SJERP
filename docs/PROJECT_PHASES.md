@@ -315,6 +315,12 @@ GitHub CI run `40073371582` 在 frontend、backend、backend-postgres 三个 job
 
 后端 SQLite 全量 871 项（跳过 13）、ISS-008/导入/报价/客户回归 24 项、前端 Node 151 项、有效 Vitest 16 项、生产构建均通过。真实 Chrome 已完成客户桌面与 `390×844` 窄屏候选/保存/刷新回归，并检查报价列表和新建报价表单；截图及命令记录见 [`ISS-008 验收记录`](uat-evidence/iss-008-country-select/README.md)。本轮未执行 PostgreSQL/CI；直接未筛选 Vitest 入口存在仓库既有 node:test/jsdom 配置噪声，不纳入通过项。ISS-008 保持 `FIXED_PENDING_REVIEW`，等待统一独立代码、数据兼容、权限和视觉复审。
 
+## ISS-027 跟进日期可选与旧计划保护（2026-10-26）
+
+基于 `b3559f3bf83b967d06166bd409b00fc92e4e5902` 创建独立 worktree/分支 `codex/iss-027-followup-date`，读取桌面 2026-10-24 规则包原文。复用已存在的 keep/set/clear、日期可空和当前待办查询，仅修复分段日期非法输入仍能提交旧 modelValue，以及 keep 新增/编辑/删除重放历史安排覆盖客户当前计划的问题；无新增迁移、无批量改写数据。后端相关 79 项、前端有效 Vitest 30 项、Node 151 项、生产构建通过。ISS-049 URL筛选与员工数据范围回归保留。
+
+Chrome Use 成功读取客户当前计划及默认 keep，但后续表单输入和截图在多个标签反复超时，桌面/390×844 截图与真实操作验收仍为 PENDING。用户要求仅用 Chrome Use 后未继续原生电脑控制。证据和真实测试日志见 [ISS-027](uat-evidence/iss-027-followup-date/README.md)。ISS-027 保持 NEEDS_VERIFICATION，状态计数不变；代码待独立审查，未关闭 Issue、未合并 master。
+
 ## ISS-024 / ISS-019 / ISS-008 统一集成验收（2026-10-25）
 
 基于统一基线 `af018ac63cf71143d223b9f6db4a087707495693` 建立独立 worktree 和 `codex/integration-024-019-008`，按 ISS-024 → ISS-019 → ISS-008 顺序集成。ISS-008 原预期分支首次核验时不在 GitHub，已确认本地成果后推送并用 `git ls-remote` 核实 `a14d3d929e0c64dbb06d375d9a0ffa832526af92` 远端可见；旧 `fix/quote-country-iso-resolution` 未冒充本轮成果。三项实现、测试与历史证据均保留，未改写 0080–0084 迁移链；ISS-008 没有新增迁移。

@@ -24,6 +24,7 @@
 | 有效 Vitest（jsdom，排除仓库既有 typography 配置噪声入口） | PASS：656 tests / 67 files |
 | `npm run build` | PASS：Vite 生产构建完成；保留既有大 chunk warning |
 | Chrome Use | PASS：桌面及 `390×844` 窄屏只读回归；截图在本轮会话中采集 |
+| GitHub Actions CI `40264628939` | FAIL：backend、backend-postgres、frontend 均在可见 steps 前约 1 秒结束，job steps 为空且 `--log-failed` 无日志；不将本地通过冒充 CI 通过 |
 
 完整后端回归期间测试故意使用临时 `MEDIA_ROOT`，避免托管 Worktree 对默认媒体目录的 ACL 限制；该限制不属于应用失败。测试输出中的 Bad Request/Forbidden/Internal Server Error 是既有测试对拒绝路径、事务回滚和异常审计的预期请求日志，最终测试结果为 `OK`。
 

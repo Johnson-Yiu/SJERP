@@ -346,3 +346,11 @@ Chrome Use 成功读取客户当前计划及默认 keep，但后续表单输入�
 
 集成只发生 `backend/crm/views.py` 与本阶段文档冲突，已保留客户级供应商偏好/停用过滤和本地国家目录两套逻辑，以及 ISS-019、ISS-008 两套阶段记录。全新 SQLite 迁移至 0084、已有库从 0082 升级至 0084、Django 全量 877 项（跳过 13）、前端 Node 151 项、有效 Vitest 74 项、生产构建和正确集成服务上的桌面/窄屏 Chrome 回归均通过。ISS-024 的供应商隔离与成本分配、ISS-019 的查看/导出权限和 CSV/API 对账、ISS-008 的国家代码/报价编号/历史快照兼容均由定向测试覆盖。集成分支最终 SHA 见交付报告；GitHub Actions run `40203282554` 的 backend、frontend、backend-postgres 均在可见 steps 前失败，记录为 CI/环境遗留风险，不将本地通过结果冒充 CI/PostgreSQL 通过。完整命令、文件和证据索引见 [`ISS-024/019/008 统一集成验收`](uat-evidence/integration-024-019-008/README.md)。三项保持 `FIXED_PENDING_REVIEW`，等待统一独立审查，不关闭 Issue、不合并 master。
 
+## ISS-021 / ISS-029 / ISS-027 统一集成验收（2026-10-26）
+
+基于统一基线 `b3559f3bf83b967d06166bd409b00fc92e4e5902` 创建独立 worktree 和 `codex/integration-021-029-027`，按 ISS-021 → ISS-029 → ISS-027 顺序集成已审查成果。`serializers.py` 同时保留数量变更的敏感字段保护和报价收件人快照继承；阶段文档冲突保留三项记录；ISS-021 的 0085 接续当前 0084，未复制旧迁移或改写已发布历史。
+
+ISS-021 的正式 SO 数量、付款限制、采购保留、历史主体快照和资金/库存不变规则由全量及定向后端回归覆盖；ISS-029 的原始报价、修订收件人、空邮箱、PI 与 Excel 导出在真实 Chrome 和 API 中核对；ISS-027 在真实 Chrome 完成保存、改期、清除、非法日期、后端中断后的保存失败重试、客户列表同步以及桌面/390px窄屏截图。全量 Django 911（跳过13）、定向后端104、Node151、有效 Vitest656、生产构建、全新 SQLite 和 0084→0085 升级均通过。完整日志和截图见 [`ISS-021/029/027 统一集成验收`](uat-evidence/integration-021-029-027/README.md)。
+
+本机 PostgreSQL 未执行，标记 `BLOCKED`；本地 GitHub token 当前无效，不能读取精确 HEAD CI，历史可核实 CI 仍为账户付款/Actions spending limit 阻断。本轮不修改账户、工作流或 master。三个任务保持 `FIXED_PENDING_REVIEW`，等待 ChatGPT 独立代码、权限、业务和视觉复审；不关闭 Issue。
+

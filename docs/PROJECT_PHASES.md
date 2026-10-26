@@ -372,3 +372,11 @@ ISS-020 更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue、不合并 master，
 
 完整 Django 916 项（跳过 13）、安全定向 15 项、Node 151 项、有效 Vitest 656 项、生产构建、迁移检查以及 Chrome Use 桌面/`390×844` 窄屏只读回归通过；实现提交为 `d366224`，证据见 [`ISS-051 验收记录`](uat-evidence/iss-051-environment-isolation/README.md)。本分支 GitHub Actions run `40264628939` 的 backend、backend-postgres、frontend 均在可见 steps 前失败且无日志，记录为 CI/环境遗留风险，不把本地结果冒充 CI 通过。托管 Worktree 默认媒体目录存在 ACL 限制，完整测试改用临时 `MEDIA_ROOT` 通过，不属于应用失败。本机真实生产服务器、反向代理 HTTPS、PostgreSQL、Cookie、密钥轮换、实名创始合伙人账号和部署日志仍为 `DEPLOYMENT_VERIFICATION_PENDING`；ISS-051 保持 `BLOCKED`，等待 ChatGPT 独立代码、安全和部署复审。不合并 master，不关闭 Issue。
 
+## ISS-022 采购 MOQ 软提醒与共享 PO 合计验收（2026-10-26）
+
+基于统一基线 `28ba758388429f57c2e3516e12385a88ce6646a3` 创建独立 worktree/分支 `codex/iss-022-procurement-moq`，读取用户 2026-10-24 规则包原文。历史代码的真实缺口是采购计划按销售单明细分别提示，以及正式下单没有按真实 PO 合计后留下可追溯的软提醒；不是 MOQ 字段缺失，也不是采购状态值问题。
+
+本轮新增接续 `0085` 的 `0086_purchase_moq_exception`，不复制、删除或改写既有迁移。草稿和计划按同供应商来源、同 SupplierSKU、基础单位合计；交易单位先换算，不自动补量；没有可靠 MOQ 不提示。低于 MOQ 仍可保存草稿，正式下单要求填写例外原因，采购单保存原因、明细快照、时间、采购单和已认证操作员；价格、内部参考成本、状态转换、ISS-024/ISS-039 采购来源与成本逻辑不变。
+
+专项后端测试、采购回归、前端 Node/Vitest、生产构建和真实 Chrome 均已执行；Django `crm` 全量 918 项（跳过 13）在可写隔离 `MEDIA_ROOT` 下通过。第一次全量运行的 worktree `backend/media` Windows 写权限问题已作为环境限制记录，未修改仓库代码。完整命令、网络响应、隔离夹具及截图见 [`ISS-022 MOQ 验收`](uat-evidence/iss-022-procurement-moq/README.md)。本轮不合并 master、不关闭 Issue，ISS-022 更新为 `FIXED_PENDING_REVIEW`，等待统一独立审查。
+

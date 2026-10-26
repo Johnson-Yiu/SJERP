@@ -17,7 +17,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
 from .models import ShipmentItem
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseMOQException, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
 from .country_registry import AmbiguousCountryError, CountryNotFoundError, display_country, resolve_country_code
 from .supplier_display import payment_terms_summary
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
@@ -577,11 +577,40 @@ def sync_unsettled_contract_plans(instance, changed):
 
 class PurchaseOrderSerializer(serializers.ModelSerializer):
     payment_plans = serializers.SerializerMethodField()
+    moq_exception = serializers.SerializerMethodField()
 
     def get_payment_plans(self, obj):
         if not user_can(serializer_user(self.context), "finance", "view"):
             return []
         return PaymentPlanSerializer(obj.payment_plans.all().order_by("id"), many=True, context=self.context).data
+
+    def get_moq_exception(self, obj):
+        try:
+            exception = obj.moq_exception
+        except PurchaseMOQException.DoesNotExist:
+            return None
+        user = serializer_user(self.context)
+        details = []
+        for detail in exception.details or []:
+            row = dict(detail)
+            if not user_can(user, "skus", "view"):
+                row.update(sku_code="", display_name="")
+            if not user_can(user, "suppliers", "view"):
+                row["supplier_sku_code"] = ""
+            details.append(row)
+        operator = exception.operator
+        operator_name = ""
+        if operator is not None and user_can(user, "employees", "view"):
+            operator_name = operator.get_full_name() or operator.get_username()
+        return {
+            "id": exception.id,
+            "purchase_order": exception.purchase_order_id,
+            "reason": exception.reason,
+            "details": details,
+            "created_at": serializers.DateTimeField().to_representation(exception.created_at),
+            "operator_id": operator.pk if operator is not None and user_can(user, "employees", "view") else None,
+            "operator_name": operator_name,
+        }
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

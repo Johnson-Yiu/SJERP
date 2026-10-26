@@ -6,15 +6,25 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 
-from crm.models import AdvanceAllocation, GoodsReceipt, PaymentPlan, PurchaseOrder, Supplier
+from crm.models import AdvanceAllocation, GoodsReceipt, PaymentPlan, PurchaseMOQException, PurchaseOrder, Supplier
 from crm.services.finance import ensure_default_payment_plans
 from crm.services.historical import reject_historical
 
 
-def _validate_purchase_for_placement(purchase):
+class PurchaseMOQExceptionRequired(ValidationError):
+    """Raised once when a PO needs an operator's explicit MOQ exception reason."""
+
+    code = "purchase_moq_exception_required"
+
+    def __init__(self, exceptions):
+        self.exceptions = exceptions
+        super().__init__("本采购单存在低于供应商 MOQ 的明细，请填写例外原因后继续下单。", code=self.code)
+
+
+def _validate_purchase_for_placement(purchase, items=None):
     if purchase.order_id and purchase.order.status not in {"confirmed", "production"}:
         raise ValidationError("关联销售订单当前状态不允许继续采购，请检查订单状态或改为独立采购。")
-    items = list(purchase.items.select_related("sku", "supplier_sku", "trade_unit").order_by("id"))
+    items = list(items if items is not None else purchase.items.select_related("sku", "supplier_sku", "trade_unit").order_by("id"))
     if not purchase.supplier_id:
         raise ValidationError("采购单必须选择供应商。")
     if not purchase.supplier.is_active:
@@ -39,13 +49,60 @@ def _validate_purchase_for_placement(purchase):
             raise ValidationError("包装规格的供应商必须与采购单供应商一致。")
 
 
+def _purchase_moq_exceptions(items):
+    """Aggregate one PO by the maintained supplier SKU in base units.
+
+    SupplierSKU.moq=0 is the existing sentinel for an unmaintained MOQ, so it
+    must never become an invented threshold. PurchaseOrderItem.quantity is the
+    trusted base-unit value produced by the existing trade-unit normalizer.
+    """
+    grouped = {}
+    for item in items:
+        source = item.supplier_sku
+        if source is None or source.moq is None or source.moq <= 0:
+            continue
+        key = source.pk
+        detail = grouped.setdefault(key, {
+            "purchase_item_ids": [],
+            "sku_code": item.sku_code_snapshot or item.sku.sku,
+            "display_name": item.display_name_snapshot or item.sku.display_name_cn or item.sku.product.name,
+            "supplier_sku_code": item.supplier_sku_code_snapshot or source.supplier_sku_code,
+            "actual_quantity": Decimal("0"),
+            "moq": source.moq,
+            "base_unit": (item.trade_snapshot or {}).get("base_unit") or item.sku.unit,
+        })
+        detail["purchase_item_ids"].append(item.pk)
+        detail["actual_quantity"] += item.quantity
+
+    exceptions = []
+    for detail in grouped.values():
+        if detail["actual_quantity"] >= detail["moq"]:
+            continue
+        actual = detail["actual_quantity"]
+        moq = detail["moq"]
+        exceptions.append({
+            **detail,
+            "actual_quantity": str(actual),
+            "moq": str(moq),
+            "shortage": str(moq - actual),
+        })
+    return exceptions
+
+
 @transaction.atomic
-def place_purchase_order(purchase):
+def place_purchase_order(purchase, *, moq_exception_reason="", operator=None):
     purchase = PurchaseOrder.objects.select_for_update(of=("self",)).select_related("supplier", "order").get(pk=purchase.pk)
     reject_historical(purchase, "确认下单或生成应付计划")
     if purchase.status != "draft":
         raise ValidationError("只有采购草稿可以确认下单。")
-    _validate_purchase_for_placement(purchase)
+    items = list(purchase.items.select_related("sku", "supplier_sku", "trade_unit").order_by("id"))
+    _validate_purchase_for_placement(purchase, items)
+    moq_exceptions = _purchase_moq_exceptions(items)
+    reason = str(moq_exception_reason or "").strip()
+    if len(reason) > 500:
+        raise ValidationError("MOQ 例外原因不能超过500字。")
+    if moq_exceptions and not reason:
+        raise PurchaseMOQExceptionRequired(moq_exceptions)
     supplier = Supplier.objects.select_for_update().get(pk=purchase.supplier_id)
     purchase.supplier_name_snapshot = supplier.name
     purchase.supplier_address_snapshot = supplier.address or ""
@@ -62,6 +119,13 @@ def place_purchase_order(purchase):
         "supplier_email_snapshot",
         "updated_at",
     ])
+    if moq_exceptions:
+        PurchaseMOQException.objects.create(
+            purchase_order=purchase,
+            reason=reason,
+            details=moq_exceptions,
+            operator=operator if getattr(operator, "is_authenticated", False) else None,
+        )
     ensure_default_payment_plans(purchase)
     return PurchaseOrder.objects.get(pk=purchase.pk)
 

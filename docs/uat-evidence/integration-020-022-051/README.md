@@ -45,6 +45,6 @@ ISS-022 本地工作树和原有测试/截图证据均保留。多次 HTTPS 推�
 
 ## 部署边界
 
-ISS-051 的开发环境兼容与生产配置拒绝测试保留；生产真实服务器、代理、Cookie/HTTPS、真实账号、PostgreSQL 仍为 `DEPLOYMENT_VERIFICATION_PENDING`。源分支记录的 GitHub Actions run `40264628939`（ISS-051）和 `40286651906`（ISS-020）均为失败且没有可见 job steps，不能作为 PASS。集成分支本轮尚未获得新的 CI/PostgreSQL 通过证据。
+ISS-051 的开发环境兼容与生产配置拒绝测试保留；生产真实服务器、代理、Cookie/HTTPS、真实账号、PostgreSQL 仍为 `DEPLOYMENT_VERIFICATION_PENDING`。源分支记录的 GitHub Actions run `40264628939`（ISS-051）和 `40286651906`（ISS-020）均为失败且没有可见 job steps。集成 SHA `2297287fe148d2b9416083c744a08bd0226fd5e1` 的 run `40302716729` 同样失败，`frontend`、`backend`、`backend-postgres` 三个 job 均无可见 steps；不能作为 PASS，PostgreSQL 仍未验证。
 
 不合并 master，不正式部署，不自行关闭 Issue，等待独立审查。

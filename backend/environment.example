@@ -8,7 +8,9 @@ DEVELOPMENT_SUPERADMIN=true
 RBAC_ENFORCEMENT=false
 CORS_ALLOWED_ORIGINS=http://localhost:5191,http://127.0.0.1:5191
 CSRF_TRUSTED_ORIGINS=http://localhost:5191,http://127.0.0.1:5191
+# Development-only private media directory. It is not shared with production.
 MEDIA_ROOT=backend/media
+MEDIA_STORAGE_BACKEND=django.core.files.storage.FileSystemStorage
 
 # Production values must be injected by the deployment secret/config store.
 # Keep the following names as a checklist; never commit real values here.
@@ -24,4 +26,7 @@ MEDIA_ROOT=backend/media
 # SECURE_SSL_REDIRECT=true
 # SESSION_COOKIE_SECURE=true
 # CSRF_COOKIE_SECURE=true
-# MEDIA_ROOT=<production-private-media-path>
+# MEDIA_ROOT=/srv/sunjack/private-media  # absolute persistent volume, not release/static
+# MEDIA_STORAGE_BACKEND=django.core.files.storage.FileSystemStorage
+# A future object-storage migration changes the backend through STORAGES while
+# preserving model FileField paths and the manifest/SHA256 verification flow.

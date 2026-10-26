@@ -404,3 +404,11 @@ SQLite 定向审计测试 8 项通过（其中 PostgreSQL 原始 SQL 保护 1 �
 
 本轮不关闭 Issue、不合并 master、不部署。延期台账仅更新原有 ISS-043、ISS-075、ISS-023：ISS-043 真实 PostgreSQL 与最终 CI 为 `DEPLOYMENT_VERIFICATION_PENDING`；ISS-075 真实业务财务数据的无付款阶段跨模块抽查为 `BUSINESS_VERIFICATION_PENDING`；ISS-023 真实 SKU 型号完整性抽查为 `BUSINESS_VERIFICATION_PENDING`。ISS-023 窄屏菜单可用性已通过，不作为遗留事项。三项等待统一独立审查。
 
+## ISS-047 单服务器私有文件存储（2026-10-26）
+
+基于统一基线 `8b2b5c19e517addd9604b239211e199a789b739e` 创建独立 Worktree 和 `codex/iss-047-private-storage`，读取用户 2026-10-24 规则包，并复核 ISS-017 私有附件、ISS-018 联合备份和 ISS-051 环境隔离约束。基线已有的认证媒体 API、记录/客户范围、旧 `/media/` 不可用、私有缓存头和 SKU 缩略图权限均保留，没有公开 `MEDIA_ROOT`。
+
+本轮最小补修要求部署阶段显式注入绝对 `MEDIA_ROOT`；生产缺失、相对路径或与 `STATIC_ROOT` 重叠时 fail-fast。显式配置 `STORAGES["default"]`/`MEDIA_STORAGE_BACKEND` 保留未来对象存储迁移接缝；新增只读 `private_media_manifest` 管理命令，以相对路径、大小和 SHA256 支持 ISS-018 恢复核对，并拒绝媒体根目录外的符号链接。新增 Nginx 拒绝 `/media/` 静态直链的未部署样例和单服务器持久卷交接说明，不引入多服务器集群或真实备份任务。
+
+定向附件权限回归基线 7 项通过；本轮新增私有媒体清单、重启模拟、配置隔离和数据库设置测试将在交付日志中记录，`python manage.py check`、Django 全量和生产构建随后执行。真实生产持久卷、服务重启、磁盘/inode 告警、Nginx/反向代理 ACL、PostgreSQL+媒体联合备份恢复和未来对象存储迁移均为 `DEPLOYMENT_VERIFICATION_PENDING`；证据见 [`ISS-047 验收记录`](uat-evidence/iss-047-private-storage/README.md) 和 [`单服务器私有文件存储交接说明`](deployment/ISS-047-单服务器私有文件存储.md)。本轮不部署、不合并 `master`、不关闭 Issue，等待独立审查。
+

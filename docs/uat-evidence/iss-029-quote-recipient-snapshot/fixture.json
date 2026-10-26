@@ -1,0 +1,7 @@
+{
+  "customer": 1,
+  "contact": 1,
+  "sku": 1,
+  "database": "sqlite:///C:/Users/Johnson/.codex/visualizations/2026/10/23/01a1690a-0a0e-7b72-826e-17ae19ef53e2/iss029-recipient-evidence.sqlite3",
+  "development_identity": true
+}

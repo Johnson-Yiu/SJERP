@@ -1,0 +1,63 @@
+{
+  "versions": {
+    "a": {
+      "id": 1,
+      "quote_no": "SJ20261025DE001",
+      "status": "sent",
+      "recipient_name": "Version A Recipient",
+      "buyer_email": "version-a@example.com",
+      "buyer_phone": "+49 222 A",
+      "buyer_address": "Version A Berlin Address",
+      "revision_summary": ""
+    },
+    "b": {
+      "id": 2,
+      "quote_no": "SJ20261025DE001-1",
+      "status": "draft",
+      "recipient_name": "Version B Recipient",
+      "buyer_email": "",
+      "buyer_phone": "+49 333 B",
+      "buyer_address": "Version B Berlin Address",
+      "revision_summary": "ISS029 收件人改为版本 B，邮箱留空"
+    }
+  },
+  "current_contact": {
+    "name": "Changed Primary",
+    "email": "changed-master@example.com",
+    "phone": "+49 999"
+  },
+  "current_customer_address": "Changed Current Master Address",
+  "downloads": [
+    {
+      "file": "version-a.xlsx",
+      "bytes": 10159,
+      "sha256": "8d4881dbbf8895a77147c5fa68a1a6ccca3c381e4e8f553c3bd17b4dba75bbca",
+      "quote_id": 1,
+      "recipient_cells_match_database": true,
+      "sheets": [
+        "PI"
+      ]
+    },
+    {
+      "file": "version-b-empty-email.xlsx",
+      "bytes": 10141,
+      "sha256": "f832d4bce22e022c64641201d0563b5b3b83badabef708c98cf0a701f79add58",
+      "quote_id": 2,
+      "recipient_cells_match_database": true,
+      "sheets": [
+        "PI"
+      ]
+    },
+    {
+      "file": "version-b-with-unsaved-input.xlsx",
+      "bytes": 10142,
+      "sha256": "213bf7c5c6dca6f0b8e8a8d7356468a700e63abd2cd790be8c32451f4818c0ab",
+      "quote_id": 2,
+      "recipient_cells_match_database": true,
+      "sheets": [
+        "PI"
+      ]
+    }
+  ],
+  "scope": "Synthetic isolated SQLite; actual Chrome downloads from Django API; no production or Microsoft Excel application claim"
+}

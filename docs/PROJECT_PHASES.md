@@ -9,6 +9,13 @@ SQLite 全量 904 项（跳过 13）、定向 38 项、Node 151 项、Vitest 650
 ISS-021 更新为 `FIXED_PENDING_REVIEW`。未改其他任务分支、未部署、未合并 master、未关闭 Issue，交付后等待统一独立代码/业务/迁移/权限/视觉审查。
 
 远端 CI run `40257290673` 三个 job 均在启动步骤前失败，GitHub 注释明确为账户付款/消费限额问题，原始证据已归档。CI/PostgreSQL 验收保留 BLOCKED，需仓库所有者处理后重跑最终 SHA；没有改计费设置或工作流，不以本地通过冒充 CI 成功。
+## ISS-029 报价收件资料版本保存（2026-10-25 测试，2026-10-26 交付）
+
+从统一基线 `b3559f3bf83b967d06166bd409b00fc92e4e5902` 创建独立 worktree 和 `codex/iss-029-quote-recipient-snapshot`。完整读取用户桌面 2026-10-24 规则包的 ISS-029 原文，核对 ISS-037、ISS-020 及既有创建、草稿、正式状态、修订、PI 和 Excel。仅修复已确认的显式空邮箱被预填替代、异步联系人预填覆盖手工输入或较新客户资料两类缺口。继续复用现有 Quote 四字段与修订链，无新模型、迁移、客户主档回写或生命周期更改。
+
+报价/快照定向 72 项、Django 全量 881 项（13 项跳过）、前端 Node 151 项、有效 Vitest 652 项（65 文件）、生产构建及真实 Chrome 连接隔离 Django 的 A/B 完整场景通过。已保存真实 HTTP 响应、1440px/700px 截图、三份实际下载 XLSX 和数据库单元格对账；主联系人/客户地址修改及未保存编辑均未改变旧版资料。模型和已执行迁移检查通过。证据及具体命令见 [ISS-029 验收](uat-evidence/iss-029-quote-recipient-snapshot/README.md)。
+
+ISS-029 从 `NEEDS_VERIFICATION` 更新为 `FIXED_PENDING_REVIEW`；无新增 ID、无关闭事项。按唯一表格 ID 最新状态核对共 123 项：OPEN=5、BLOCKED=22、NEEDS_VERIFICATION=24、FIXED_PENDING_REVIEW=62、CLOSED=10。其他任务状态、原有工作树及分支保持。GitHub CI 需按最终提交核对；本地 SQLite 通过不代表 PostgreSQL/生产验收，等待独立代码、权限和视觉审查，不合并 master。
 
 最新只读审查：R1-READINESS-01（2026-10-19），基线199a21e0f407ba9ad772a5dec86e0b30dbd0c9b5。全系统试用准备审查完成；R1-FIN-P3-B按授权记录阶段性验收通过，但不等同生产就绪。ISS-105 OPEN、ISS-108/121 BLOCKED；真实员工试用门槛为ISS-003、ISS-018、ISS-055。未修改业务代码，不启动正式员工UAT、RBAC或部署。详见[R1-READINESS-01审查报告](R1-READINESS-01-全系统试用准备与业务阻断问题审查.md)。
 

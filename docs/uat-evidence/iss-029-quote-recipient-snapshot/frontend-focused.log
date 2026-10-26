@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 C:/Users/Johnson/.codex/worktrees/iss-029-quote-recipient-snapshot/森爵照明管理系统/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  20 passed (20)
+   Start at  23:13:13
+   Duration  4.59s (transform 1.08s, setup 477ms, import 1.18s, tests 1.03s, environment 1.60s)
+

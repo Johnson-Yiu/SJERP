@@ -215,18 +215,26 @@ function syncSelectedSkus(ids) {
   if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
 }
 function activateSku(id) { activeSkuId.value = String(id) }
+const recipientFields = ['recipient_name', 'buyer_address', 'buyer_email', 'buyer_phone']
+const editedRecipientFields = new Set(recipientFields.filter(field => Object.hasOwn(props.quote || {}, field)))
+let contactRequest = 0
+function editRecipient(field) { editedRecipientFields.add(field) }
 async function selectCustomer() {
+  const request = ++contactRequest
   const customer = props.customers.find(row => row.id === Number(draft.customer))
   if (!customer) return
-  draft.buyer_address = customer.address || ''
-  draft.recipient_name = customer.name || ''
-  draft.buyer_email = ''
-  draft.buyer_phone = ''
+  const prefill = values => {
+    if (request !== contactRequest || Number(draft.customer) !== customer.id) return
+    for (const [field, value] of Object.entries(values)) {
+      if (!editedRecipientFields.has(field)) draft[field] = value
+    }
+  }
+  prefill({ buyer_address: customer.address || '', recipient_name: customer.name || '', buyer_email: '', buyer_phone: '' })
   try {
     const contacts = await listAll('/contacts/', { params: { customer: customer.id } })
     const contact = contacts.find(row => row.is_primary) || contacts[0]
-    if (contact) { draft.recipient_name = contact.name; draft.buyer_email = contact.email || ''; draft.buyer_phone = contact.phone || '' }
-  } catch { /* Backend will still populate snapshots on save. */ }
+    if (contact) prefill({ recipient_name: contact.name, buyer_email: contact.email || '', buyer_phone: contact.phone || '' })
+  } catch { /* Keep the editable recipient values, including explicit blanks. */ }
 }
 function validate() {
   if (salesRateError(draft)) return salesRateError(draft)
@@ -265,7 +273,7 @@ watch(() => JSON.stringify([draft.quote_date, draft.items.map(i => [i.sku, i.qua
   ++salesRequest; salesChecks.value = []; salesCheckError.value = ''; clearTimeout(salesTimer)
   salesTimer = setTimeout(checkSalesRules, 300)
 }, { immediate: true })
-onBeforeUnmount(() => { clearTimeout(salesTimer); ++salesRequest; ++availabilityRequest })
+onBeforeUnmount(() => { clearTimeout(salesTimer); ++salesRequest; ++availabilityRequest; ++contactRequest })
 async function openPreview() {
   errorMessage.value = validate()
   if (errorMessage.value) return
@@ -341,7 +349,7 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) await sel
           <section v-if="draft.items.length" class="packing-estimate"><div class="packing-head"><div><small>预计装箱单</small><h4>按 SKU 默认包装配置估算</h4></div><button type="button" class="btn btn-secondary" @click="packingOpen = !packingOpen"><Box :size="15" /> {{ packingOpen ? '收起预计装箱单' : '生成预计装箱单' }}</button></div><template v-if="packingOpen"><div v-if="packingProjection.missing.length" class="packing-warning"><AlertTriangle :size="18" /><div><strong>以下 SKU 缺少包装配置，请补充。</strong><p>补充后会保存为该 SKU 的默认包装配置，供后续报价、订单和出货使用。</p><div class="packing-missing-list"><button v-for="sku in packingProjection.missing" :key="sku.id" type="button" @click="openPackaging(sku)"><Settings2 :size="14" /> {{ sku.sku }} · 补充默认包装</button></div></div></div><template v-else><div class="packing-summary"><div><span>预计件数</span><strong>{{ packingProjection.cartons.length }} 箱</strong></div><div><span>产品数量</span><strong>{{ packingProjection.totalPieces }}</strong></div><div><span>总净重</span><strong>{{ packingProjection.totalNet.toFixed(3) }} kg</strong></div><div><span>总重量</span><strong>{{ packingProjection.totalGross.toFixed(3) }} kg</strong></div><div><span>总体积</span><strong>{{ packingProjection.totalCbm.toFixed(4) }} m³</strong></div></div><p v-for="warning in packingProjection.warnings" :key="warning" class="packing-note">{{ warning }}</p><div class="packing-table-wrap"><table><thead><tr><th>SKU</th><th>件数</th><th>包装尺寸 (cm)</th><th>包装重量</th><th>单件体积</th><th>总体积</th></tr></thead><tbody><tr v-for="(carton, index) in packingProjection.cartons" :key="`${carton.sku.id}-${index}`"><td>{{ carton.sku.sku }}<small v-if="carton.partial">尾箱</small></td><td>{{ carton.quantity }}</td><td>{{ carton.length }} × {{ carton.width }} × {{ carton.height }}</td><td>{{ carton.gross.toFixed(3) }} kg</td><td>{{ carton.cbm.toFixed(4) }} m³</td><td>{{ carton.cbm.toFixed(4) }} m³</td></tr></tbody></table></div></template></template></section>
           <div class="totals"><label>运费 <input v-model="draft.shipping_fee" v-money-input type="number" step="any" /></label><label>折扣 <input v-model="draft.discount" v-money-input type="number" step="any" /></label><div><small>商品小计 {{ draft.currency }} {{ money(subtotal) }}</small><span>合计</span><strong>{{ draft.currency }} {{ money(total) }}</strong></div></div>
           <div class="items-head"><strong>收件信息 / 条款</strong></div>
-          <div class="form-grid"><div class="field"><label>收件人</label><input v-model="draft.recipient_name" /></div><div class="field full"><label>买方地址</label><textarea v-model="draft.buyer_address" /></div><div class="field"><label>买方邮箱</label><input v-model="draft.buyer_email" type="email" /></div><div class="field"><label>买方电话</label><input v-model="draft.buyer_phone" /></div></div>
+          <div class="form-grid"><div class="field"><label for="quote-recipient">收件人</label><input id="quote-recipient" v-model="draft.recipient_name" @input="editRecipient('recipient_name')" /></div><div class="field full"><label for="quote-buyer-address">买方地址</label><textarea id="quote-buyer-address" v-model="draft.buyer_address" @input="editRecipient('buyer_address')" /></div><div class="field"><label for="quote-buyer-email">买方邮箱</label><input id="quote-buyer-email" v-model="draft.buyer_email" type="email" @input="editRecipient('buyer_email')" /></div><div class="field"><label for="quote-buyer-phone">买方电话</label><input id="quote-buyer-phone" v-model="draft.buyer_phone" @input="editRecipient('buyer_phone')" /></div></div>
           <div class="form-grid"><div class="field full"><label>贸易条款</label><textarea v-model="draft.trading_terms" /></div><div class="field full"><label>运输信息</label><textarea v-model="draft.shipping_details" /></div><div class="field full"><label>附加备注</label><textarea v-model="draft.notes" /></div></div>
         </fieldset>
       </div>

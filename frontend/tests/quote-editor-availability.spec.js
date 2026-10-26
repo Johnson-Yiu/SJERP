@@ -146,6 +146,62 @@ describe('QuoteEditorModal inventory reference', () => {
 
   afterEach(() => wrappers.forEach(wrapper => wrapper.unmount()))
 
+  it('prefills a new customer contact without changing the customer master', async () => {
+    mocks.listAll.mockImplementation(async url => url === '/contacts/' ? [{ name: 'Primary', email: 'primary@example.com', phone: '123', is_primary: true }] : [])
+    const wrapper = await mountEditor({ quote: { customer: customer.id } })
+    wrappers.push(wrapper)
+    expect(wrapper.get('#quote-recipient').element.value).toBe('Primary')
+    expect(wrapper.get('#quote-buyer-email').element.value).toBe('primary@example.com')
+    expect(wrapper.get('#quote-buyer-address').element.value).toBe(customer.address)
+    await wrapper.get('#quote-buyer-email').setValue('manual@example.com')
+    expect(mocks.api.put).not.toHaveBeenCalled()
+    expect(mocks.api.patch).not.toHaveBeenCalled()
+  })
+
+  it('keeps explicit create-prefill values including an intentionally empty email', async () => {
+    mocks.listAll.mockImplementation(async url => url === '/contacts/' ? [{ name: 'Primary', email: 'primary@example.com', phone: '123' }] : [])
+    const wrapper = await mountEditor({ quote: { customer: customer.id, recipient_name: 'Manual', buyer_email: '', buyer_phone: '456', buyer_address: 'Manual Address' } })
+    wrappers.push(wrapper)
+    expect(wrapper.get('#quote-recipient').element.value).toBe('Manual')
+    expect(wrapper.get('#quote-buyer-email').element.value).toBe('')
+    expect(wrapper.get('#quote-buyer-phone').element.value).toBe('456')
+    expect(wrapper.get('#quote-buyer-address').element.value).toBe('Manual Address')
+  })
+
+  it('does not let late contact lookup overwrite manual input or explicit clearing', async () => {
+    const pending = deferred()
+    mocks.listAll.mockImplementation(url => url === '/contacts/' ? pending.promise : Promise.resolve([]))
+    const wrapper = await mountEditor()
+    wrappers.push(wrapper)
+    await wrapper.find('select').setValue(String(customer.id))
+    await wrapper.get('#quote-recipient').setValue('Manual')
+    await wrapper.get('#quote-buyer-email').setValue('temporary@example.com')
+    await wrapper.get('#quote-buyer-email').setValue('')
+    await wrapper.get('#quote-buyer-phone').setValue('Manual Phone')
+    pending.resolve([{ name: 'Late Primary', email: 'late@example.com', phone: '999' }])
+    await settle()
+    expect(wrapper.get('#quote-recipient').element.value).toBe('Manual')
+    expect(wrapper.get('#quote-buyer-email').element.value).toBe('')
+    expect(wrapper.get('#quote-buyer-phone').element.value).toBe('Manual Phone')
+  })
+
+  it('ignores an older customer lookup after switching customer', async () => {
+    const old = deferred(), latest = deferred()
+    mocks.listAll.mockImplementation((url, options) => url !== '/contacts/' ? Promise.resolve([]) : options.params.customer === customer.id ? old.promise : latest.promise)
+    const other = { id: 32, name: 'Other Buyer', address: 'Other Address' }
+    const wrapper = await mountEditor({ customers: [customer, other] })
+    wrappers.push(wrapper)
+    await wrapper.find('select').setValue(String(customer.id))
+    await wrapper.find('select').setValue(String(other.id))
+    latest.resolve([{ name: 'Current Primary', email: 'current@example.com' }])
+    await settle()
+    old.resolve([{ name: 'Stale Primary', email: 'stale@example.com' }])
+    await settle()
+    expect(wrapper.get('#quote-recipient').element.value).toBe('Current Primary')
+    expect(wrapper.get('#quote-buyer-email').element.value).toBe('current@example.com')
+    expect(wrapper.get('#quote-buyer-address').element.value).toBe(other.address)
+  })
+
   it('does not fetch stock before any SKU is selected', async () => {
     const wrapper = await mountEditor()
     wrappers.push(wrapper)

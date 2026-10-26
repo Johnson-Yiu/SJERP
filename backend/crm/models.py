@@ -72,7 +72,9 @@ class OperationLog(models.Model):
     object_label = models.CharField("对象名称", max_length=300, blank=True)
     action = models.CharField("操作类型", max_length=30, choices=ACTION_CHOICES, default="custom")
     action_label = models.CharField("操作说明", max_length=100, blank=True)
-    operator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="operation_logs")
+    # Deleting an operator must not cause the database to rewrite this row
+    # through ON DELETE SET NULL; historical identity is part of the audit.
+    operator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True, related_name="operation_logs")
     changed_fields = models.JSONField("变更字段", default=list, blank=True)
     before_data = models.JSONField("变更前数据", default=dict, blank=True)
     after_data = models.JSONField("变更后数据", default=dict, blank=True)

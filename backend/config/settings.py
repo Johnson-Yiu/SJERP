@@ -6,19 +6,111 @@ from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-change-me")
-DEBUG = os.getenv("DJANGO_DEBUG", "true").lower() == "true"
+_TRUE_VALUES = {"1", "true", "yes", "on"}
+_FALSE_VALUES = {"0", "false", "no", "off"}
+_DEPLOYED_STAGES = {"staging", "production"}
+
+
+def _env_bool(name, default):
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    value = raw.strip().lower()
+    if value in _TRUE_VALUES:
+        return True
+    if value in _FALSE_VALUES:
+        return False
+    raise ImproperlyConfigured(f"{name} must be a boolean value.")
+
+
+def _env_int(name, default):
+    raw = os.getenv(name)
+    if raw is None or not raw.strip():
+        return default
+    try:
+        return int(raw.strip())
+    except ValueError as exc:
+        raise ImproperlyConfigured(f"{name} must be an integer.") from exc
+
+
+def _env_list(name, default=()):
+    raw = os.getenv(name)
+    if raw is None:
+        return list(default)
+    return [item.strip() for item in raw.split(",") if item.strip()]
+
+
+APP_STAGE = os.getenv("APP_STAGE", "development").strip().lower()
+if APP_STAGE not in {"development", "staging", "production"}:
+    raise ImproperlyConfigured("APP_STAGE must be development, staging, or production.")
+
+DEBUG = _env_bool("DJANGO_DEBUG", APP_STAGE == "development")
+if APP_STAGE in _DEPLOYED_STAGES and DEBUG:
+    raise ImproperlyConfigured("DJANGO_DEBUG must be false outside development.")
+
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY",
+    "dev-only-change-me" if APP_STAGE == "development" else "",
+).strip()
+if APP_STAGE in _DEPLOYED_STAGES:
+    if not SECRET_KEY:
+        raise ImproperlyConfigured("DJANGO_SECRET_KEY is required outside development.")
+    if len(SECRET_KEY) < 32 or SECRET_KEY in {"dev-only-change-me", "change-me"}:
+        raise ImproperlyConfigured("DJANGO_SECRET_KEY must be an independently managed value of at least 32 characters.")
+
 # Development operators share full application access. Never infer this from a role label.
-APP_STAGE = os.getenv("APP_STAGE", "development" if DEBUG else "production")
-DEVELOPMENT_SUPERADMIN = os.getenv("DEVELOPMENT_SUPERADMIN", "true").lower() == "true"
-RBAC_ENFORCEMENT = os.getenv("RBAC_ENFORCEMENT", "false").lower() == "true"
-DEFAULT_OPERATOR_NAME = os.getenv("DEFAULT_OPERATOR_NAME", "Johnson")
+DEVELOPMENT_SUPERADMIN = _env_bool("DEVELOPMENT_SUPERADMIN", APP_STAGE == "development")
+if APP_STAGE in _DEPLOYED_STAGES and DEVELOPMENT_SUPERADMIN:
+    raise ImproperlyConfigured("DEVELOPMENT_SUPERADMIN must be false outside development.")
+
+RBAC_ENFORCEMENT = _env_bool("RBAC_ENFORCEMENT", APP_STAGE != "development")
+if APP_STAGE in _DEPLOYED_STAGES and not RBAC_ENFORCEMENT:
+    raise ImproperlyConfigured("RBAC_ENFORCEMENT must be true outside development.")
+
+DEFAULT_OPERATOR_NAME = os.getenv("DEFAULT_OPERATOR_NAME", "Johnson" if APP_STAGE == "development" else "").strip()
 # Controlled aliases only; no account numbers, credentials, cutover date or balance.
 RMB_CASH_ACCOUNT_IDS = tuple(value.strip() for value in os.getenv("RMB_CASH_ACCOUNT_IDS", "").split(",") if value.strip())
 # Audit records stay disabled during local development. Turn this on explicitly
 # in the closed-beta environment after real user authentication is available.
-AUDIT_LOG_ENABLED = os.getenv("AUDIT_LOG_ENABLED", "false").lower() in {"1", "true", "yes", "on"}
-ALLOWED_HOSTS = [host.strip() for host in os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",")]
+AUDIT_LOG_ENABLED = _env_bool("AUDIT_LOG_ENABLED", False)
+ALLOWED_HOSTS = _env_list(
+    "DJANGO_ALLOWED_HOSTS",
+    ("localhost", "127.0.0.1") if APP_STAGE == "development" else (),
+)
+if APP_STAGE in _DEPLOYED_STAGES and (not ALLOWED_HOSTS or "*" in ALLOWED_HOSTS):
+    raise ImproperlyConfigured("DJANGO_ALLOWED_HOSTS must contain explicit hosts outside development.")
+
+CORS_ALLOWED_ORIGINS = _env_list(
+    "CORS_ALLOWED_ORIGINS",
+    ("http://localhost:5191", "http://127.0.0.1:5191") if APP_STAGE == "development" else (),
+)
+CSRF_TRUSTED_ORIGINS = _env_list("CSRF_TRUSTED_ORIGINS")
+if APP_STAGE in _DEPLOYED_STAGES:
+    insecure_origins = [
+        origin for origin in [*CORS_ALLOWED_ORIGINS, *CSRF_TRUSTED_ORIGINS]
+        if not origin.lower().startswith("https://")
+    ]
+    if insecure_origins:
+        raise ImproperlyConfigured("CORS_ALLOWED_ORIGINS and CSRF_TRUSTED_ORIGINS must use HTTPS outside development.")
+
+SECURE_SSL_REDIRECT = _env_bool("SECURE_SSL_REDIRECT", APP_STAGE == "production")
+SESSION_COOKIE_SECURE = _env_bool("SESSION_COOKIE_SECURE", APP_STAGE in _DEPLOYED_STAGES)
+CSRF_COOKIE_SECURE = _env_bool("CSRF_COOKIE_SECURE", APP_STAGE in _DEPLOYED_STAGES)
+if APP_STAGE == "production" and not all((SECURE_SSL_REDIRECT, SESSION_COOKIE_SECURE, CSRF_COOKIE_SECURE)):
+    raise ImproperlyConfigured("Production requires HTTPS redirect and secure session/CSRF cookies.")
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https") if APP_STAGE in _DEPLOYED_STAGES else None
+SECURE_HSTS_SECONDS = _env_int("SECURE_HSTS_SECONDS", 31536000 if APP_STAGE == "production" else 0)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = _env_bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", APP_STAGE == "production")
+SECURE_HSTS_PRELOAD = _env_bool("SECURE_HSTS_PRELOAD", APP_STAGE == "production")
+if APP_STAGE == "production" and SECURE_HSTS_SECONDS <= 0:
+    raise ImproperlyConfigured("Production requires a positive SECURE_HSTS_SECONDS value.")
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "same-origin"
+X_FRAME_OPTIONS = "DENY"
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -74,7 +166,12 @@ def _database_config():
 
 DATABASES = {"default": _database_config()}
 
-AUTH_PASSWORD_VALIDATORS = []
+AUTH_PASSWORD_VALIDATORS = [] if APP_STAGE == "development" else [
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+]
 LANGUAGE_CODE = "zh-hans"
 TIME_ZONE = "Asia/Shanghai"
 USE_I18N = True
@@ -82,14 +179,9 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", str(BASE_DIR / ("media" if APP_STAGE == "development" else "media-production"))))
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CORS_ALLOWED_ORIGINS = [
-    origin.strip() for origin in os.getenv(
-        "CORS_ALLOWED_ORIGINS", "http://localhost:5191,http://127.0.0.1:5191"
-    ).split(",")
-]
 CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
@@ -105,6 +197,15 @@ REST_FRAMEWORK = {
         "rest_framework.filters.OrderingFilter",
     ],
 }
+
+if APP_STAGE in _DEPLOYED_STAGES:
+    # SessionAuthentication normally returns 403 when no authenticator can
+    # provide a challenge.  Production uses a challenge-bearing subclass so
+    # API clients receive an explicit 401 while the normal Django session
+    # cookie remains the only supported ERP login mechanism.
+    REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = [
+        "crm.authentication.SessionAuthenticationWithChallenge",
+    ]
 
 # The legacy business-flow suite models the local unauthenticated development
 # operator. RBAC-specific tests override these values to exercise restricted

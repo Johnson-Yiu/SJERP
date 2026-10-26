@@ -282,6 +282,78 @@ class QuoteApiTests(TestCase):
                 self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
                 self.assertEqual(response.data["quote_no"], f"SJ20260815{expected_iso_code}001")
 
+    def test_explicit_blank_recipient_fields_are_not_replaced_by_contact_defaults(self):
+        fields = {"recipient_name": "", "buyer_email": "", "buyer_phone": "", "buyer_address": ""}
+        quote = self.create_quote(**fields)
+        reopened = self.client.get(f"/api/quotes/{quote.pk}/")
+        for field, expected in fields.items():
+            self.assertEqual(reopened.data[field], expected)
+        self.assertEqual(self.customer.contacts.get().email, "primary@example.com")
+
+    def test_recipient_versions_and_exports_survive_master_contact_changes(self):
+        first = dict(recipient_name="Version A Recipient", buyer_email="a@example.com",
+                     buyer_phone="+49 111", buyer_address="Version A Address")
+        quote = self.create_quote(**first)
+        self.assertEqual(self.client.post(f"/api/quotes/{quote.pk}/mark-sent/").status_code, 200)
+        # Both the first draft and formal transitions retain the saved values.
+        inherited = self.client.post(f"/api/quotes/{quote.pk}/revise/", {"revision_summary": "Inherit A"}, format="json")
+        self.assertEqual(inherited.status_code, 201, inherited.data)
+        for field, expected in first.items():
+            self.assertEqual(inherited.data[field], expected)
+        second = dict(recipient_name="Version B Recipient", buyer_email="",
+                      buyer_phone="+49 222", buyer_address="Version B Address")
+        changed = self.client.post(f"/api/quotes/{quote.pk}/revise/", {"revision_summary": "Use B", **second}, format="json")
+        self.assertEqual(changed.status_code, 201, changed.data)
+        contact = self.customer.contacts.get()
+        self.assertEqual(contact.email, "primary@example.com")
+        contact.name, contact.email, contact.phone = "Current Contact", "current@example.com", "+49 999"
+        contact.save()
+        self.customer.address = "Current Address"
+        self.customer.save()
+        for quote_id, expected in ((quote.pk, first), (changed.data["id"], second)):
+            detail = self.client.get(f"/api/quotes/{quote_id}/")
+            pi = self.client.get(f"/api/quotes/{quote_id}/pi-data/?buyer_email=unsaved@example.com")
+            exported = self.client.get(f"/api/quotes/{quote_id}/export/?buyer_email=unsaved@example.com")
+            self.assertEqual(detail.status_code, 200)
+            self.assertEqual(pi.status_code, 200)
+            self.assertEqual(exported.status_code, 200)
+            for field, value in expected.items():
+                self.assertEqual(detail.data[field], value)
+            self.assertEqual(pi.data["buyer"], {"company_name": quote.buyer_company_name,
+                "name": expected["recipient_name"], "address": expected["buyer_address"],
+                "email": expected["buyer_email"], "phone": expected["buyer_phone"]})
+            sheet = load_workbook(io.BytesIO(exported.content)).active
+            text = "\n".join(str(cell.value or "") for row in sheet for cell in row)
+            self.assertIn(expected["recipient_name"], text)
+            self.assertIn(expected["buyer_address"], text)
+            self.assertIn(expected["buyer_phone"], text)
+            if expected["buyer_email"]:
+                self.assertIn(expected["buyer_email"], text)
+            self.assertNotIn("current@example.com", text)
+            self.assertNotIn("unsaved@example.com", text)
+
+    def test_invalid_recipient_email_is_atomic_on_create_and_revision(self):
+        before = Quote.objects.count()
+        response = self.client.post("/api/quotes/", self.root_quote_payload(buyer_email="invalid-email"), format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("buyer_email", response.data)
+        self.assertEqual(Quote.objects.count(), before)
+        quote = self.create_quote()
+        response = self.client.post(f"/api/quotes/{quote.pk}/revise/", {"revision_summary": "Bad email", "buyer_email": "bad@"}, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Quote.objects.count(), before + 1)
+
+    def test_legacy_blank_recipient_remains_blank_in_pi_and_revision(self):
+        quote = self.create_quote()
+        Quote.objects.filter(pk=quote.pk).update(recipient_name="", buyer_email="", buyer_phone="", buyer_address="")
+        pi = self.client.get(f"/api/quotes/{quote.pk}/pi-data/")
+        self.assertEqual(pi.data["buyer"]["email"], "")
+        self.assertEqual(pi.data["buyer"]["name"], "")
+        revision = self.client.post(f"/api/quotes/{quote.pk}/revise/", {"revision_summary": "Legacy blank"}, format="json")
+        self.assertEqual(revision.status_code, 201)
+        self.assertEqual(revision.data["buyer_email"], "")
+        self.assertEqual(revision.data["recipient_name"], "")
+
     def test_quote_list_uses_live_customer_name_while_pi_snapshot_remains_immutable(self):
         quote = self.create_quote()
         original_name = quote.buyer_company_name

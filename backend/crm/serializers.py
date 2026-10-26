@@ -1895,8 +1895,9 @@ class QuoteSerializer(serializers.ModelSerializer):
             "buyer_phone": primary_contact.phone if primary_contact else "",
         }
         for field, value in snapshots.items():
-            if not validated_data.get(field):
-                validated_data[field] = value
+            # An explicitly blank recipient field is a saved user choice, not
+            # an invitation to replace it with today's customer contact.
+            validated_data.setdefault(field, value)
         try:
             validated_data["quote_no"] = allocate_root_quote_no(validated_data["quote_date"], customer.country)
         except DjangoValidationError as exc:

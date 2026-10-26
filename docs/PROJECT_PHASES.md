@@ -1,5 +1,13 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## ISS-029 报价收件资料版本保存（2026-10-25 测试，2026-10-26 交付）
+
+从统一基线 `b3559f3bf83b967d06166bd409b00fc92e4e5902` 创建独立 worktree 和 `codex/iss-029-quote-recipient-snapshot`。完整读取用户桌面 2026-10-24 规则包的 ISS-029 原文，核对 ISS-037、ISS-020 及既有创建、草稿、正式状态、修订、PI 和 Excel。仅修复已确认的显式空邮箱被预填替代、异步联系人预填覆盖手工输入或较新客户资料两类缺口。继续复用现有 Quote 四字段与修订链，无新模型、迁移、客户主档回写或生命周期更改。
+
+报价/快照定向 72 项、Django 全量 881 项（13 项跳过）、前端 Node 151 项、有效 Vitest 652 项（65 文件）、生产构建及真实 Chrome 连接隔离 Django 的 A/B 完整场景通过。已保存真实 HTTP 响应、1440px/700px 截图、三份实际下载 XLSX 和数据库单元格对账；主联系人/客户地址修改及未保存编辑均未改变旧版资料。模型和已执行迁移检查通过。证据及具体命令见 [ISS-029 验收](uat-evidence/iss-029-quote-recipient-snapshot/README.md)。
+
+ISS-029 从 `NEEDS_VERIFICATION` 更新为 `FIXED_PENDING_REVIEW`；无新增 ID、无关闭事项。按唯一表格 ID 最新状态核对共 123 项：OPEN=5、BLOCKED=22、NEEDS_VERIFICATION=24、FIXED_PENDING_REVIEW=62、CLOSED=10。其他任务状态、原有工作树及分支保持。GitHub CI 需按最终提交核对；本地 SQLite 通过不代表 PostgreSQL/生产验收，等待独立代码、权限和视觉审查，不合并 master。
+
 最新只读审查：R1-READINESS-01（2026-10-19），基线199a21e0f407ba9ad772a5dec86e0b30dbd0c9b5。全系统试用准备审查完成；R1-FIN-P3-B按授权记录阶段性验收通过，但不等同生产就绪。ISS-105 OPEN、ISS-108/121 BLOCKED；真实员工试用门槛为ISS-003、ISS-018、ISS-055。未修改业务代码，不启动正式员工UAT、RBAC或部署。详见[R1-READINESS-01审查报告](R1-READINESS-01-全系统试用准备与业务阻断问题审查.md)。
 
 上一轮：2026-10-18至19 R1-FIN-P2-A，基线1b2ca0eb5b1947dd53f5ab995828dd33f514e0d4，前置三项CI SUCCESS。用户已正式批准D01–D08，完成最小人民币银行净额事实/来源分配、增量两表迁移、人工确认/幂等/事务/数据范围及退款、作废、替代保护。真实隔离HTTP与旧数据对比、迁移保护、PG实际并发和全量回归见[P2-A验收](R1-FIN-P2-A-人民币资金事实与结汇后端验收.md)。ISS-105保持OPEN；新增ISS-108 BLOCKED待更正/来源解除等细则，新增ISS-109待复审登记全量CI跨日旧测试修正，其他既有状态不变。无前端产品UI变更，无报表来源/历史金额/精度/核销/履约/利润/库存算法变更；不设启用日、不配置真实账户或启用正式RBAC。精确HEAD三项CI后停止，等待ChatGPT独立复审，不自动进入P2-B、员工UAT或部署。

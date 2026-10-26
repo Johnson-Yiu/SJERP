@@ -46,15 +46,16 @@ jobs:
       APP_STAGE: staging
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/sunjack_ci
       DJANGO_DEBUG: 'false'
-      DJANGO_SECRET_KEY: ci-only-not-for-production
       DJANGO_ALLOWED_HOSTS: localhost
       DEVELOPMENT_SUPERADMIN: 'false'
-      RBAC_ENFORCEMENT: 'false'
+      RBAC_ENFORCEMENT: 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Generate ephemeral CI secret
+        run: echo "DJANGO_SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(48))')" >> "$GITHUB_ENV"
       - name: Install backend dependencies
         run: pip install -r backend/requirements.txt
       - name: Django system check

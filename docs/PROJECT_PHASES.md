@@ -364,3 +364,11 @@ ISS-021 的正式 SO 数量、付款限制、采购保留、历史主体快照�
 
 ISS-020 更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue、不合并 master，等待统一独立代码、权限、文件和视觉审查。
 
+## ISS-051 开发与生产环境安全分离（2026-10-26）
+
+基于统一基线 `28ba758388429f57c2e3516e12385a88ce6646a3` 创建独立 worktree 和 `codex/iss-051-environment-isolation`。读取 2026-10-24 规则包原文，审查 Django 配置、开发身份、数据库、RBAC、登录、媒体和 CI 配置；没有连接真实生产数据库、创建生产账号或写入真实密钥。
+
+本轮最小修复使 `APP_STAGE`、DEBUG、secret、数据库、主机、来源、RBAC、媒体目录和 Cookie/HTTPS/HSTS 配置按环境隔离；生产启动拒绝不安全默认值，生产业务 API 使用 Session 认证，匿名受保护 API 返回 401，已登录无模块权限返回 403。开发身份仍统一复用 `development_superadmin_enabled()`，不修改开发账号或正式 RBAC 方案；ISS-017 私有附件继续使用既有授权入口。新增配置说明、环境占位样例和自动化测试，未新增迁移。
+
+完整 Django 916 项（跳过 13）、安全定向 15 项、Node 151 项、有效 Vitest 656 项、生产构建、迁移检查以及 Chrome Use 桌面/`390×844` 窄屏只读回归通过；证据见 [`ISS-051 验收记录`](uat-evidence/iss-051-environment-isolation/README.md)。托管 Worktree 默认媒体目录存在 ACL 限制，完整测试改用临时 `MEDIA_ROOT` 通过，不属于应用失败。本机真实生产服务器、反向代理 HTTPS、PostgreSQL、Cookie、密钥轮换、实名创始合伙人账号和部署日志仍为 `DEPLOYMENT_VERIFICATION_PENDING`；ISS-051 保持 `BLOCKED`，等待 ChatGPT 独立代码、安全和部署复审。不合并 master，不关闭 Issue。
+

@@ -2,6 +2,7 @@
 
 基线：`b3559f3bf83b967d06166bd409b00fc92e4e5902`
 分支：`codex/iss-029-quote-recipient-snapshot`
+代码、测试与原始证据提交：`fbdb9c58987d5040c97923784ce2cf622dfe8755`。此后仅补充 CI 交付记录，业务代码不变。
 测试日期：2026-10-25。交付整理：2026-10-26。状态：`FIXED_PENDING_REVIEW`，等待独立审查。
 
 规则来源：已完整读取用户提供路径 `C:\Users\Johnson\Desktop\SUNJACK-ERP_B8E5A1A7E599AEE6B4A7E4A48C%85_2026-10-24\新增议题逐项移交\ISS-029_报价收件人资料按报价版本保存.md`，并核对相邻 ISS-020、`docs/TaskH1-客户跟进报价链路.md`、原始 UAT 的 P2 邮箱记录及 ISS-037 集成验收。
@@ -53,4 +54,4 @@
 
 使用新建的专用目录中的 `iss029-recipient-evidence.sqlite3`，设置 `DATABASE_URL` 后运行 `prepare_evidence.py`，启动隔离后端 8299，再在 frontend 执行 `npx playwright test --config playwright.iss029.config.js --reporter=list`，最后运行 `verify_exports.py`。脚本不会删除已有数据库；再次采集时请使用新的隔离目录，以保留原样本。
 
-GitHub CI 按最终推送提交核对，结果见交付记录。当前报告的本地测试不代表 PostgreSQL 或生产环境验收；独立代码、权限和视觉审查仍待完成。
+GitHub [CI run 40254982268](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/40254982268) 对应上述精确代码提交，backend、frontend、backend-postgres 均失败且 `steps=[]`。后端 check-run 注解明确说明：账号近期付款失败或 spending limit 需要提高，任务没有启动。本轮没有变更账户计费或工作流；本地测试不代表 GitHub CI、PostgreSQL 或生产验收。详见 `ci-status.md`；独立代码、权限和视觉审查仍待完成。

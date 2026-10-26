@@ -48,6 +48,12 @@
 
 本地使用 Python 3.14 / Django 6.0.6、SQLite；本地 PostgreSQL 不可用，未将 SQLite 结果冒充 PostgreSQL 并发验收。最终精确提交的远端 CI 另见交付结果。
 
+### 推送及远端 CI 边界
+
+实现提交为 `07f349f80d5244243867a7841ec0dc1e77f6eb3c`，完整原始日志提交为 `7fb7ff875b312fb277e9b3b06056cbca1a6a8e42`；均已推送目标分支。对应 [CI run 40257290673](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/40257290673) 三个 job（frontend / backend / backend-postgres）均 failure 且 steps 为空。GitHub [原始注释](ci-annotations-40257290673.log)明确报告账户近期付款失败或消费限额需提高，任务未启动；不是已经执行的代码测试失败。详见 [jobs 原始响应](ci-jobs-40257290673.log)。首次读取 run 详情出现 TLS 超时亦保留 [原始日志](ci-40257290673.log)，随后 API 成功核验。没有修改账户、额度或工作流来规避此问题。
+
+因此 CI / PostgreSQL 验收仍 BLOCKED，不能宣称合并就绪。需仓库所有者处理 GitHub Actions 计费/额度后对最终交付 SHA 重跑三项 CI，并完成独立审查。本段之后只补充证据文档，不改实现；最终分支 SHA 以交付消息和远端为准。
+
 透明记录失败的准备命令：`frontend-vitest-wrong-runner.log` 是未限定 tests 目录误收集 Node 测试；`backend-targeted-wrong-labels.log` 是两个模块名写错，其余数量测试正常通过；`migration-probe-wrong-fixture.log` 是探针 SQL 使用错误字段。均已修正命令/夹具并重新执行成功，未为通过而放宽业务断言。全量日志中的故意异常来自失败回滚测试，最终结果为 OK。
 
 ## 真实 API 与数据库

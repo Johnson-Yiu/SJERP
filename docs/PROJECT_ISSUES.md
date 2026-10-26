@@ -1,6 +1,6 @@
 # SUNJACK-ERP 项目问题台账
 
-2026-10-26 统一集成更新：ISS-020、ISS-021、ISS-027、ISS-029 保持 `FIXED_PENDING_REVIEW`；ISS-043、ISS-075、ISS-023 已在 `codex/integration-043-075-023` 完整集成，仍等待独立审查。ISS-043 的真实 PostgreSQL/最终 CI 为 `DEPLOYMENT_VERIFICATION_PENDING`；ISS-075 无付款阶段 PO 的真实业务财务抽查、ISS-023 真实 SKU 型号完整性抽查为 `BUSINESS_VERIFICATION_PENDING`。ISS-023 窄屏菜单收起可用性已通过，不登记为未修复。ISS-020 已补齐保存版本 API/XLSX、历史图片、关键字段 422、金额一致性及真实 Chrome 桌面/390px窄屏证据。ISS-027 的真实 Chrome 保存、改期、清除、非法日期、失败重试、客户列表同步及桌面/390px窄屏证据已补齐。新增 ISS-008-FUP-01 为 `P2 / OPEN`，仅登记不开发。按每个 ID 最后一条表格记录归一化统计，共 124 个：OPEN 6、BLOCKED 21、NEEDS_VERIFICATION 22、FIXED_PENDING_REVIEW 65、CLOSED 10；下方历史轮次统计保留原时点，不作为当前统计。证据见本轮集成报告。
+2026-10-26 统一集成更新：ISS-020、ISS-021、ISS-027、ISS-029 保持 `FIXED_PENDING_REVIEW`；ISS-043、ISS-075、ISS-023 已在 `codex/integration-043-075-023` 完整集成，仍等待独立审查。ISS-043 的真实 PostgreSQL/最终 CI 为 `DEPLOYMENT_VERIFICATION_PENDING`；ISS-075 无付款阶段 PO 的真实业务财务抽查、ISS-023 真实 SKU 型号完整性抽查为 `BUSINESS_VERIFICATION_PENDING`。ISS-023 窄屏菜单收起可用性已通过，不登记为未修复。ISS-020 已补齐保存版本 API/XLSX、历史图片、关键字段 422、金额一致性及真实 Chrome 桌面/390px窄屏证据。ISS-027 的真实 Chrome 保存、改期、清除、非法日期、失败重试、客户列表同步及桌面/390px窄屏证据已补齐。ISS-097 已完成最高角色有效权限显示专项修复，保持 `FIXED_PENDING_REVIEW`，正式员工与部署边界风险仍保留。新增 ISS-008-FUP-01 为 `P2 / OPEN`，仅登记不开发。按每个 ID 最后一条表格记录归一化统计，共 124 个：OPEN 6、BLOCKED 21、NEEDS_VERIFICATION 21、FIXED_PENDING_REVIEW 66、CLOSED 10；下方历史轮次统计保留原时点，不作为当前统计。证据见本轮集成报告及 [ISS-097 验收记录](uat-evidence/iss-097-admin-permissions/README.md)。
 
 最新轮次：R1-READINESS-01（2026-10-19），基线199a21e0f407ba9ad772a5dec86e0b30dbd0c9b5。完成全系统试用准备和业务阻断审查；仅更新本轮报告/台账记录，不修改业务代码或历史Issue状态。当前不具备真实员工内部试用条件；A类门槛为ISS-003、ISS-018、ISS-055。R1-FIN-P3-B按授权记录阶段性验收通过，ISS-105保持OPEN，ISS-108和ISS-121保持BLOCKED。证据见[R1-READINESS-01审查报告](R1-READINESS-01-全系统试用准备与业务阻断问题审查.md)。
 
@@ -217,6 +217,14 @@ R0-F8A已按用户转述独立代码/自动回归PASS、有条件封版；ISS-09
 | ISS-097 | P2 / NEEDS_VERIFICATION | R0-F8C新隔离库最高角色矩阵与当前开发身份对照；2026-10-16 | 预置superadmin的部分新增模块未显式存储勾选；服务端开发身份仍报告全部权限，页面最高模板只读。该观察不证明真实越权或拒绝缺陷；当前仅说明“保存配置与系统最高权限不同”，不补写默认值、不改变有效权限 | 权限设计/QA在后续获授权阶段对照历史模板、现有最高权限规则及正式身份预期，决定是否需要其他显示方式；保留本轮preset-baseline与HTTP证据 | 后续权限专项核实；不得提前正式RBAC/员工UAT | 有明确模板/有效权限定义、代表性历史样本与独立接受；不以缺勾选认定权限失效，不通过修改默认授权关闭 |
 
 本轮未发现经真实正式身份验证的新权限安全漏洞，未修改后端或权限执行策略。ISS-003、007、052及其他历史未关闭事项全部保留；普通P2/P3继续延期。新发现的模板显示疑问只按ISS-097待核实，不自行定性或扩展修复。
+
+## ISS-097 超级管理员权限显示一致性专项（2026-10-26）
+
+| ID | 优先级 / 状态 | 首次发现来源 / 日期 | 当前证据与影响 | 负责人 / 下一步动作 | 计划阶段 | 关闭验收依据 |
+|---|---|---|---|---|---|---|
+| ISS-097 | P2 / FIXED_PENDING_REVIEW | R0-F8C最高角色模板与有效权限对照；2026-10-16；本轮复核 2026-10-26 | 确认显示缺陷：历史 `superadmin` 存储模板的部分新增模块为未勾选，但服务端 `has_all_permissions()` 和有效矩阵始终授予最高业务角色全部 24 个模块/六类动作。API 现明确返回 `has_all_permissions` 与 `effective_permissions`；页面显示“包含全部ERP业务权限，不受普通勾选项限制”，24/24 复选框全选且只读。未回写模板、未改变开发超级管理员或普通角色授权。真实 Chrome、Django 定向/权限回归、前端全量 Vitest 和生产构建见 [ISS-097 验收记录](uat-evidence/iss-097-admin-permissions/README.md)。 | QA / 独立复核最高角色显示、受限角色 API 和正式员工会话边界；不得把隔离夹具代替真实员工 UAT，也不得将应用权限推定为服务器/数据库权限 | R0-F8C 后续权限专项 | 独立复核 API 有效矩阵与 UI 一致；最高角色不可编辑且文案明确；普通员工无新增数据范围；正式部署边界按 ISS-003、ISS-051 单独完成后再考虑关闭 |
+
+本专项确认并修复的是显示一致性问题，不把历史“缺少勾选”误报为授权漏洞。ISS-003、ISS-043、ISS-051 的原有正式身份、审计和部署风险不因本专项自动关闭。
 
 ## R0-F9 全站收尾审查（2026-10-16）
 

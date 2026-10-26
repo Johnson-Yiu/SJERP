@@ -185,6 +185,32 @@ class FunctionalRBACApiTests(TestCase):
         self.assertEqual(len(matrix), len(RolePermission.MODULE_CHOICES))
         self.assertTrue(all(all(actions.values()) for actions in matrix.values()))
 
+    def test_superadmin_overview_exposes_effective_matrix_without_rewriting_template(self):
+        superadmin = AccessRole.objects.get(code="superadmin")
+        # This is the historical shape of the preset: newer modules may be
+        # absent or false in the stored template, while the server contract
+        # still grants the locked highest role all business permissions.
+        RolePermission.objects.filter(role=superadmin, module="reports").delete()
+        user = self.make_user(username="rbac-superadmin-overview", roles=[superadmin])
+        self.auth(user)
+
+        response = self.client.get("/api/organization/overview/")
+        self.assertEqual(response.status_code, 200, response.data)
+        role = next(item for item in response.data["roles"] if item["code"] == "superadmin")
+
+        self.assertTrue(role["has_all_permissions"])
+        self.assertEqual(
+            {item["module"] for item in role["effective_permissions"]},
+            {module for module, _ in RolePermission.MODULE_CHOICES},
+        )
+        self.assertTrue(
+            all(
+                all(item[action] for action in ("can_view", "can_create", "can_update", "can_delete", "can_export", "can_import"))
+                for item in role["effective_permissions"]
+            )
+        )
+        self.assertFalse(RolePermission.objects.filter(role=superadmin, module="reports").exists())
+
     def test_context_endpoint_cannot_bypass_primary_module_view_permission(self):
         self.auth(self.make_user(roles=[self.role]))
         self.assertEqual(self.client.get(f"/api/context/customers/{self.customer.pk}/").status_code, 403)

@@ -908,8 +908,37 @@ class RolePermissionSerializer(serializers.ModelSerializer):
 
 class AccessRoleSerializer(serializers.ModelSerializer):
     permissions = RolePermissionSerializer(many=True, read_only=True)
+    effective_permissions = serializers.SerializerMethodField()
+    has_all_permissions = serializers.SerializerMethodField()
     default_data_scope_display = serializers.CharField(source="get_default_data_scope_display", read_only=True)
     employee_count = serializers.IntegerField(read_only=True, default=0)
+
+    def get_has_all_permissions(self, obj):
+        """Expose the server-defined highest business role contract.
+
+        The stored matrix remains an editable template for ordinary roles.  The
+        built-in superadmin is intentionally locked and is authorized by the
+        server as an effective all-module role, so clients must not infer its
+        access from possibly older/incomplete stored rows.
+        """
+        return obj.code == "superadmin"
+
+    def get_effective_permissions(self, obj):
+        if self.get_has_all_permissions(obj):
+            return [
+                {
+                    "module": module,
+                    "module_display": label,
+                    "can_view": True,
+                    "can_create": True,
+                    "can_update": True,
+                    "can_delete": True,
+                    "can_export": True,
+                    "can_import": True,
+                }
+                for module, label in RolePermission.MODULE_CHOICES
+            ]
+        return RolePermissionSerializer(obj.permissions.all(), many=True).data
 
     class Meta:
         model = AccessRole

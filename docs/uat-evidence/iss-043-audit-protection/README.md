@@ -69,6 +69,8 @@ npm run build                             passed (Vite production build)
 
 staging 配置安全探针：设置 `APP_STAGE=staging`、`AUDIT_LOG_ENABLED=false` 导入 settings 失败并报 `AUDIT_LOG_ENABLED must be true outside development.`；未连接或修改生产数据库。
 
+GitHub Actions 原始状态：最终提交 `fe11fc3042dc1470182f724bdb1fe5813facb5e6` 对应 [run 40317433830](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/40317433830)，整体 `failure`；`backend`、`backend-postgres`、`frontend` 均在约 2 秒后失败且 `steps=[]`。因此本次 CI 没有执行 PostgreSQL 触发器测试，不能把它标记为通过；不修改账户、额度或工作流绕过该状态。
+
 ## 浏览器与视觉证据
 
 本轮没有修改业务页面布局或可见业务文案。Chrome Use 已连接本 Worktree 的隔离 Vite/Django 服务（`28432 → 28431`），打开标记 SKU 的库存详情并切换到“SKU 操作日志”：桌面和 `390×844` 窄屏均只展示日志面板，没有新增、修改、删除控件；开发环境开关关闭时显示明确的开发环境提示。窄屏现有关联记录页签保持横向滚动，这是本轮记录的既有布局观察，没有扩大安全补修范围。

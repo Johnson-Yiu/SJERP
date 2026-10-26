@@ -1,0 +1,2123 @@
+[
+  {
+    "path": "orders/1/quantity-adjustments/preview/",
+    "request": {
+      "version": 0,
+      "request_key": "iss021-http-increase",
+      "reason": "ISS-021 隔离 API 验收",
+      "items": [
+        {
+          "order_item": 1,
+          "new_quantity": "150"
+        }
+      ]
+    },
+    "status": 200,
+    "response": {
+      "order": 1,
+      "order_no": "SO-ISS021-1",
+      "status": "confirmed",
+      "version": 0,
+      "reason_required": true,
+      "lines": [
+        {
+          "order_item": 1,
+          "sku": 1,
+          "sku_code": "ISS021-SKU-1",
+          "sales_model": "",
+          "display_name": "数量变更灯具 1",
+          "base_unit": "pcs",
+          "trade_unit": null,
+          "trade_snapshot": {
+            "unit": "pcs",
+            "base_unit": "pcs",
+            "factor": "1",
+            "name": ""
+          },
+          "old_trade_quantity": null,
+          "new_trade_quantity": null,
+          "old_quantity": "100.00",
+          "new_quantity": "150.00",
+          "quantity_delta": "50.00",
+          "old_amount": "1000.00000000000000",
+          "new_amount": "1500.00000000000000",
+          "amount_delta": "500.00000000000000",
+          "shipped_quantity": "50",
+          "before": {
+            "order_item": 1,
+            "group_key": "1:1",
+            "sku_code": "ISS021-SKU-1",
+            "base_unit": "pcs",
+            "ordered_quantity": "100.00",
+            "shipped_quantity": "50",
+            "purchased_quantity": "100.00",
+            "received_quantity": "100.00",
+            "in_transit_quantity": "0",
+            "to_procure_quantity": "0",
+            "procurement_excess_quantity": "0"
+          },
+          "after": {
+            "order_item": 1,
+            "group_key": "1:1",
+            "sku_code": "ISS021-SKU-1",
+            "base_unit": "pcs",
+            "ordered_quantity": "150.00",
+            "shipped_quantity": "50",
+            "purchased_quantity": "100.00",
+            "received_quantity": "100.00",
+            "in_transit_quantity": "0",
+            "to_procure_quantity": "50.00",
+            "procurement_excess_quantity": "0"
+          }
+        }
+      ],
+      "financial": {
+        "currency": "USD",
+        "before_total": "1000.0000",
+        "after_total": "1500.0000",
+        "amount_delta": "500.0000",
+        "paid_amount": "200.0000",
+        "planned_amount": "1000.0000",
+        "settled_amount": "200.0000",
+        "outstanding_before": "800.0000",
+        "outstanding_after": "1300.0000"
+      },
+      "warnings": [
+        "ISS021-SKU-1 采购需求已变化；已有采购保持原样，请人工核对数量及交期。"
+      ],
+      "blocking_reasons": [],
+      "can_submit": true,
+      "financial_visible": true,
+      "procurement_visible": true
+    }
+  },
+  {
+    "path": "orders/1/quantity-adjustments/",
+    "request": {
+      "version": 0,
+      "request_key": "iss021-http-increase",
+      "reason": "ISS-021 隔离 API 验收",
+      "items": [
+        {
+          "order_item": 1,
+          "new_quantity": "150"
+        }
+      ]
+    },
+    "status": 201,
+    "response": {
+      "adjustment": {
+        "id": 1,
+        "order": 1,
+        "order_no": "SO-ISS021-1",
+        "operator": null,
+        "operator_name": "开发身份（未实名）",
+        "request_key": "iss021-http-increase",
+        "reason": "ISS-021 隔离 API 验收",
+        "created_at": "2026-10-26T01:49:54.420994Z",
+        "before_total_amount": "1000.0000",
+        "after_total_amount": "1500.0000",
+        "amount_delta": "500.0000",
+        "financial_visible": true,
+        "procurement_visible": true,
+        "lines": [
+          {
+            "order_item": 1,
+            "sku": 1,
+            "sku_code": "ISS021-SKU-1",
+            "sales_model": "",
+            "display_name": "数量变更灯具 1",
+            "base_unit": "pcs",
+            "trade_unit": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "old_trade_quantity": null,
+            "new_trade_quantity": null,
+            "old_quantity": "100.00",
+            "new_quantity": "150.00",
+            "quantity_delta": "50.00",
+            "old_amount": "1000.00000000000000",
+            "new_amount": "1500.00000000000000",
+            "amount_delta": "500.00000000000000",
+            "shipped_quantity": "50",
+            "before": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "100.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "0"
+            },
+            "after": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "150.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "50.00",
+              "procurement_excess_quantity": "0"
+            }
+          }
+        ],
+        "impact": {
+          "operator_kind": "development",
+          "preview": {
+            "order": 1,
+            "order_no": "SO-ISS021-1",
+            "status": "confirmed",
+            "version": 0,
+            "reason_required": true,
+            "lines": [
+              {
+                "order_item": 1,
+                "sku": 1,
+                "sku_code": "ISS021-SKU-1",
+                "sales_model": "",
+                "display_name": "数量变更灯具 1",
+                "base_unit": "pcs",
+                "trade_unit": null,
+                "trade_snapshot": {
+                  "unit": "pcs",
+                  "base_unit": "pcs",
+                  "factor": "1",
+                  "name": ""
+                },
+                "old_trade_quantity": null,
+                "new_trade_quantity": null,
+                "old_quantity": "100.00",
+                "new_quantity": "150.00",
+                "quantity_delta": "50.00",
+                "old_amount": "1000.00000000000000",
+                "new_amount": "1500.00000000000000",
+                "amount_delta": "500.00000000000000",
+                "shipped_quantity": "50",
+                "before": {
+                  "order_item": 1,
+                  "group_key": "1:1",
+                  "sku_code": "ISS021-SKU-1",
+                  "base_unit": "pcs",
+                  "ordered_quantity": "100.00",
+                  "shipped_quantity": "50",
+                  "purchased_quantity": "100.00",
+                  "received_quantity": "100.00",
+                  "in_transit_quantity": "0",
+                  "to_procure_quantity": "0",
+                  "procurement_excess_quantity": "0"
+                },
+                "after": {
+                  "order_item": 1,
+                  "group_key": "1:1",
+                  "sku_code": "ISS021-SKU-1",
+                  "base_unit": "pcs",
+                  "ordered_quantity": "150.00",
+                  "shipped_quantity": "50",
+                  "purchased_quantity": "100.00",
+                  "received_quantity": "100.00",
+                  "in_transit_quantity": "0",
+                  "to_procure_quantity": "50.00",
+                  "procurement_excess_quantity": "0"
+                }
+              }
+            ],
+            "financial": {
+              "currency": "USD",
+              "before_total": "1000.0000",
+              "after_total": "1500.0000",
+              "amount_delta": "500.0000",
+              "paid_amount": "200.0000",
+              "planned_amount": "1000.0000",
+              "settled_amount": "200.0000",
+              "outstanding_before": "800.0000",
+              "outstanding_after": "1300.0000"
+            },
+            "warnings": [
+              "ISS021-SKU-1 采购需求已变化；已有采购保持原样，请人工核对数量及交期。"
+            ],
+            "blocking_reasons": [],
+            "can_submit": true,
+            "financial_visible": true,
+            "procurement_visible": true
+          },
+          "warnings": [
+            "ISS021-SKU-1 采购需求已变化；已有采购保持原样，请人工核对数量及交期。"
+          ],
+          "after_metrics": [
+            {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "150.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "50.00",
+              "procurement_excess_quantity": "0"
+            }
+          ],
+          "payment_plan_delta": "500.0000",
+          "order_status": "confirmed"
+        }
+      },
+      "replayed": false,
+      "preview": {
+        "order": 1,
+        "order_no": "SO-ISS021-1",
+        "status": "confirmed",
+        "version": 1,
+        "reason_required": true,
+        "lines": [
+          {
+            "order_item": 1,
+            "sku": 1,
+            "sku_code": "ISS021-SKU-1",
+            "sales_model": "",
+            "display_name": "数量变更灯具 1",
+            "base_unit": "pcs",
+            "trade_unit": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "old_trade_quantity": null,
+            "new_trade_quantity": null,
+            "old_quantity": "100.00",
+            "new_quantity": "150.00",
+            "quantity_delta": "50.00",
+            "old_amount": "1000.00000000000000",
+            "new_amount": "1500.00000000000000",
+            "amount_delta": "500.00000000000000",
+            "shipped_quantity": "50",
+            "before": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "100.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "0"
+            },
+            "after": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "150.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "50.00",
+              "procurement_excess_quantity": "0"
+            }
+          }
+        ],
+        "financial": {
+          "currency": "USD",
+          "before_total": "1000.0000",
+          "after_total": "1500.0000",
+          "amount_delta": "500.0000",
+          "paid_amount": "200.0000",
+          "planned_amount": "1000.0000",
+          "settled_amount": "200.0000",
+          "outstanding_before": "800.0000",
+          "outstanding_after": "1300.0000"
+        },
+        "warnings": [
+          "ISS021-SKU-1 采购需求已变化；已有采购保持原样，请人工核对数量及交期。"
+        ],
+        "blocking_reasons": [],
+        "can_submit": true,
+        "after_metrics": [
+          {
+            "order_item": 1,
+            "group_key": "1:1",
+            "sku_code": "ISS021-SKU-1",
+            "base_unit": "pcs",
+            "ordered_quantity": "150.00",
+            "shipped_quantity": "50",
+            "purchased_quantity": "100.00",
+            "received_quantity": "100.00",
+            "in_transit_quantity": "0",
+            "to_procure_quantity": "50.00",
+            "procurement_excess_quantity": "0"
+          }
+        ],
+        "financial_visible": true,
+        "procurement_visible": true
+      }
+    }
+  },
+  {
+    "path": "orders/1/quantity-adjustments/",
+    "request": {
+      "version": 0,
+      "request_key": "iss021-http-increase",
+      "reason": "ISS-021 隔离 API 验收",
+      "items": [
+        {
+          "order_item": 1,
+          "new_quantity": "150"
+        }
+      ]
+    },
+    "status": 200,
+    "response": {
+      "adjustment": {
+        "id": 1,
+        "order": 1,
+        "order_no": "SO-ISS021-1",
+        "operator": null,
+        "operator_name": "开发身份（未实名）",
+        "request_key": "iss021-http-increase",
+        "reason": "ISS-021 隔离 API 验收",
+        "created_at": "2026-10-26T01:49:54.420994Z",
+        "before_total_amount": 1000.0,
+        "after_total_amount": 1500.0,
+        "amount_delta": 500.0,
+        "financial_visible": true,
+        "procurement_visible": true,
+        "lines": [
+          {
+            "order_item": 1,
+            "sku": 1,
+            "sku_code": "ISS021-SKU-1",
+            "sales_model": "",
+            "display_name": "数量变更灯具 1",
+            "base_unit": "pcs",
+            "trade_unit": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "old_trade_quantity": null,
+            "new_trade_quantity": null,
+            "old_quantity": "100.00",
+            "new_quantity": "150.00",
+            "quantity_delta": "50.00",
+            "old_amount": "1000.00000000000000",
+            "new_amount": "1500.00000000000000",
+            "amount_delta": "500.00000000000000",
+            "shipped_quantity": "50",
+            "before": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "100.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "0"
+            },
+            "after": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "150.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "50.00",
+              "procurement_excess_quantity": "0"
+            }
+          }
+        ],
+        "impact": {
+          "operator_kind": "development",
+          "preview": {
+            "order": 1,
+            "order_no": "SO-ISS021-1",
+            "status": "confirmed",
+            "version": 0,
+            "reason_required": true,
+            "lines": [
+              {
+                "order_item": 1,
+                "sku": 1,
+                "sku_code": "ISS021-SKU-1",
+                "sales_model": "",
+                "display_name": "数量变更灯具 1",
+                "base_unit": "pcs",
+                "trade_unit": null,
+                "trade_snapshot": {
+                  "unit": "pcs",
+                  "base_unit": "pcs",
+                  "factor": "1",
+                  "name": ""
+                },
+                "old_trade_quantity": null,
+                "new_trade_quantity": null,
+                "old_quantity": "100.00",
+                "new_quantity": "150.00",
+                "quantity_delta": "50.00",
+                "old_amount": "1000.00000000000000",
+                "new_amount": "1500.00000000000000",
+                "amount_delta": "500.00000000000000",
+                "shipped_quantity": "50",
+                "before": {
+                  "order_item": 1,
+                  "group_key": "1:1",
+                  "sku_code": "ISS021-SKU-1",
+                  "base_unit": "pcs",
+                  "ordered_quantity": "100.00",
+                  "shipped_quantity": "50",
+                  "purchased_quantity": "100.00",
+                  "received_quantity": "100.00",
+                  "in_transit_quantity": "0",
+                  "to_procure_quantity": "0",
+                  "procurement_excess_quantity": "0"
+                },
+                "after": {
+                  "order_item": 1,
+                  "group_key": "1:1",
+                  "sku_code": "ISS021-SKU-1",
+                  "base_unit": "pcs",
+                  "ordered_quantity": "150.00",
+                  "shipped_quantity": "50",
+                  "purchased_quantity": "100.00",
+                  "received_quantity": "100.00",
+                  "in_transit_quantity": "0",
+                  "to_procure_quantity": "50.00",
+                  "procurement_excess_quantity": "0"
+                }
+              }
+            ],
+            "financial": {
+              "currency": "USD",
+              "before_total": "1000.0000",
+              "after_total": "1500.0000",
+              "amount_delta": "500.0000",
+              "paid_amount": "200.0000",
+              "planned_amount": "1000.0000",
+              "settled_amount": "200.0000",
+              "outstanding_before": "800.0000",
+              "outstanding_after": "1300.0000"
+            },
+            "warnings": [
+              "ISS021-SKU-1 采购需求已变化；已有采购保持原样，请人工核对数量及交期。"
+            ],
+            "blocking_reasons": [],
+            "can_submit": true,
+            "financial_visible": true,
+            "procurement_visible": true
+          },
+          "warnings": [
+            "ISS021-SKU-1 采购需求已变化；已有采购保持原样，请人工核对数量及交期。"
+          ],
+          "after_metrics": [
+            {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "150.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "50.00",
+              "procurement_excess_quantity": "0"
+            }
+          ],
+          "payment_plan_delta": "500.0000",
+          "order_status": "confirmed"
+        }
+      },
+      "replayed": true,
+      "preview": {
+        "order": 1,
+        "order_no": "SO-ISS021-1",
+        "status": "confirmed",
+        "version": 0,
+        "reason_required": true,
+        "lines": [
+          {
+            "order_item": 1,
+            "sku": 1,
+            "sku_code": "ISS021-SKU-1",
+            "sales_model": "",
+            "display_name": "数量变更灯具 1",
+            "base_unit": "pcs",
+            "trade_unit": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "old_trade_quantity": null,
+            "new_trade_quantity": null,
+            "old_quantity": "100.00",
+            "new_quantity": "150.00",
+            "quantity_delta": "50.00",
+            "old_amount": "1000.00000000000000",
+            "new_amount": "1500.00000000000000",
+            "amount_delta": "500.00000000000000",
+            "shipped_quantity": "50",
+            "before": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "100.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "0"
+            },
+            "after": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "150.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "50.00",
+              "procurement_excess_quantity": "0"
+            }
+          }
+        ],
+        "financial": {
+          "currency": "USD",
+          "before_total": "1000.0000",
+          "after_total": "1500.0000",
+          "amount_delta": "500.0000",
+          "paid_amount": "200.0000",
+          "planned_amount": "1000.0000",
+          "settled_amount": "200.0000",
+          "outstanding_before": "800.0000",
+          "outstanding_after": "1300.0000"
+        },
+        "warnings": [
+          "ISS021-SKU-1 采购需求已变化；已有采购保持原样，请人工核对数量及交期。"
+        ],
+        "blocking_reasons": [],
+        "can_submit": true,
+        "financial_visible": true,
+        "procurement_visible": true
+      }
+    }
+  },
+  {
+    "path": "orders/1/quantity-adjustments/",
+    "request": {
+      "version": 0,
+      "request_key": "stale",
+      "reason": "ISS-021 隔离 API 验收",
+      "items": [
+        {
+          "order_item": 1,
+          "new_quantity": "120"
+        }
+      ]
+    },
+    "status": 409,
+    "response": {
+      "detail": "订单数量已被其他操作更新，请刷新后重新提交。"
+    }
+  },
+  {
+    "path": "orders/1/quantity-adjustments/",
+    "request": {
+      "version": 1,
+      "request_key": "iss021-http-decrease",
+      "reason": "ISS-021 隔离 API 验收",
+      "items": [
+        {
+          "order_item": 1,
+          "new_quantity": "60"
+        }
+      ]
+    },
+    "status": 201,
+    "response": {
+      "adjustment": {
+        "id": 2,
+        "order": 1,
+        "order_no": "SO-ISS021-1",
+        "operator": null,
+        "operator_name": "开发身份（未实名）",
+        "request_key": "iss021-http-decrease",
+        "reason": "ISS-021 隔离 API 验收",
+        "created_at": "2026-10-26T01:49:54.674929Z",
+        "before_total_amount": "1500.0000",
+        "after_total_amount": "600.0000",
+        "amount_delta": "-900.0000",
+        "financial_visible": true,
+        "procurement_visible": true,
+        "lines": [
+          {
+            "order_item": 1,
+            "sku": 1,
+            "sku_code": "ISS021-SKU-1",
+            "sales_model": "",
+            "display_name": "数量变更灯具 1",
+            "base_unit": "pcs",
+            "trade_unit": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "old_trade_quantity": null,
+            "new_trade_quantity": null,
+            "old_quantity": "150.00",
+            "new_quantity": "60.00",
+            "quantity_delta": "-90.00",
+            "old_amount": "1500.00000000000000",
+            "new_amount": "600.00000000000000",
+            "amount_delta": "-900.00000000000000",
+            "shipped_quantity": "50",
+            "before": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "150.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "50.00",
+              "procurement_excess_quantity": "0"
+            },
+            "after": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "60.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "40.00"
+            }
+          }
+        ],
+        "impact": {
+          "operator_kind": "development",
+          "preview": {
+            "order": 1,
+            "order_no": "SO-ISS021-1",
+            "status": "confirmed",
+            "version": 1,
+            "reason_required": true,
+            "lines": [
+              {
+                "order_item": 1,
+                "sku": 1,
+                "sku_code": "ISS021-SKU-1",
+                "sales_model": "",
+                "display_name": "数量变更灯具 1",
+                "base_unit": "pcs",
+                "trade_unit": null,
+                "trade_snapshot": {
+                  "unit": "pcs",
+                  "base_unit": "pcs",
+                  "factor": "1",
+                  "name": ""
+                },
+                "old_trade_quantity": null,
+                "new_trade_quantity": null,
+                "old_quantity": "150.00",
+                "new_quantity": "60.00",
+                "quantity_delta": "-90.00",
+                "old_amount": "1500.00000000000000",
+                "new_amount": "600.00000000000000",
+                "amount_delta": "-900.00000000000000",
+                "shipped_quantity": "50",
+                "before": {
+                  "order_item": 1,
+                  "group_key": "1:1",
+                  "sku_code": "ISS021-SKU-1",
+                  "base_unit": "pcs",
+                  "ordered_quantity": "150.00",
+                  "shipped_quantity": "50",
+                  "purchased_quantity": "100.00",
+                  "received_quantity": "100.00",
+                  "in_transit_quantity": "0",
+                  "to_procure_quantity": "50.00",
+                  "procurement_excess_quantity": "0"
+                },
+                "after": {
+                  "order_item": 1,
+                  "group_key": "1:1",
+                  "sku_code": "ISS021-SKU-1",
+                  "base_unit": "pcs",
+                  "ordered_quantity": "60.00",
+                  "shipped_quantity": "50",
+                  "purchased_quantity": "100.00",
+                  "received_quantity": "100.00",
+                  "in_transit_quantity": "0",
+                  "to_procure_quantity": "0",
+                  "procurement_excess_quantity": "40.00"
+                }
+              }
+            ],
+            "financial": {
+              "currency": "USD",
+              "before_total": "1500.0000",
+              "after_total": "600.0000",
+              "amount_delta": "-900.0000",
+              "paid_amount": "200.0000",
+              "planned_amount": "1500.0000",
+              "settled_amount": "200.0000",
+              "outstanding_before": "1300.0000",
+              "outstanding_after": "400.0000"
+            },
+            "warnings": [
+              "ISS021-SKU-1 可能产生采购过剩 40.00 pcs，请人工处理，系统不会自动取消采购单。"
+            ],
+            "blocking_reasons": [],
+            "can_submit": true,
+            "financial_visible": true,
+            "procurement_visible": true
+          },
+          "warnings": [
+            "ISS021-SKU-1 可能产生采购过剩 40.00 pcs，请人工处理，系统不会自动取消采购单。"
+          ],
+          "after_metrics": [
+            {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "60.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "40.00"
+            }
+          ],
+          "payment_plan_delta": "-900.0000",
+          "order_status": "confirmed"
+        }
+      },
+      "replayed": false,
+      "preview": {
+        "order": 1,
+        "order_no": "SO-ISS021-1",
+        "status": "confirmed",
+        "version": 2,
+        "reason_required": true,
+        "lines": [
+          {
+            "order_item": 1,
+            "sku": 1,
+            "sku_code": "ISS021-SKU-1",
+            "sales_model": "",
+            "display_name": "数量变更灯具 1",
+            "base_unit": "pcs",
+            "trade_unit": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "old_trade_quantity": null,
+            "new_trade_quantity": null,
+            "old_quantity": "150.00",
+            "new_quantity": "60.00",
+            "quantity_delta": "-90.00",
+            "old_amount": "1500.00000000000000",
+            "new_amount": "600.00000000000000",
+            "amount_delta": "-900.00000000000000",
+            "shipped_quantity": "50",
+            "before": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "150.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "50.00",
+              "procurement_excess_quantity": "0"
+            },
+            "after": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "60.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "40.00"
+            }
+          }
+        ],
+        "financial": {
+          "currency": "USD",
+          "before_total": "1500.0000",
+          "after_total": "600.0000",
+          "amount_delta": "-900.0000",
+          "paid_amount": "200.0000",
+          "planned_amount": "1500.0000",
+          "settled_amount": "200.0000",
+          "outstanding_before": "1300.0000",
+          "outstanding_after": "400.0000"
+        },
+        "warnings": [
+          "ISS021-SKU-1 可能产生采购过剩 40.00 pcs，请人工处理，系统不会自动取消采购单。"
+        ],
+        "blocking_reasons": [],
+        "can_submit": true,
+        "after_metrics": [
+          {
+            "order_item": 1,
+            "group_key": "1:1",
+            "sku_code": "ISS021-SKU-1",
+            "base_unit": "pcs",
+            "ordered_quantity": "60.00",
+            "shipped_quantity": "50",
+            "purchased_quantity": "100.00",
+            "received_quantity": "100.00",
+            "in_transit_quantity": "0",
+            "to_procure_quantity": "0",
+            "procurement_excess_quantity": "40.00"
+          }
+        ],
+        "financial_visible": true,
+        "procurement_visible": true
+      }
+    }
+  },
+  {
+    "path": "orders/1/quantity-adjustments/",
+    "request": null,
+    "status": 200,
+    "response": [
+      {
+        "id": 2,
+        "order": 1,
+        "order_no": "SO-ISS021-1",
+        "operator": null,
+        "operator_name": "开发身份（未实名）",
+        "request_key": "iss021-http-decrease",
+        "reason": "ISS-021 隔离 API 验收",
+        "created_at": "2026-10-26T01:49:54.674929Z",
+        "before_total_amount": 1500.0,
+        "after_total_amount": 600.0,
+        "amount_delta": -900.0,
+        "financial_visible": true,
+        "procurement_visible": true,
+        "lines": [
+          {
+            "order_item": 1,
+            "sku": 1,
+            "sku_code": "ISS021-SKU-1",
+            "sales_model": "",
+            "display_name": "数量变更灯具 1",
+            "base_unit": "pcs",
+            "trade_unit": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "old_trade_quantity": null,
+            "new_trade_quantity": null,
+            "old_quantity": "150.00",
+            "new_quantity": "60.00",
+            "quantity_delta": "-90.00",
+            "old_amount": "1500.00000000000000",
+            "new_amount": "600.00000000000000",
+            "amount_delta": "-900.00000000000000",
+            "shipped_quantity": "50",
+            "before": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "150.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "50.00",
+              "procurement_excess_quantity": "0"
+            },
+            "after": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "60.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "40.00"
+            }
+          }
+        ],
+        "impact": {
+          "operator_kind": "development",
+          "preview": {
+            "order": 1,
+            "order_no": "SO-ISS021-1",
+            "status": "confirmed",
+            "version": 1,
+            "reason_required": true,
+            "lines": [
+              {
+                "order_item": 1,
+                "sku": 1,
+                "sku_code": "ISS021-SKU-1",
+                "sales_model": "",
+                "display_name": "数量变更灯具 1",
+                "base_unit": "pcs",
+                "trade_unit": null,
+                "trade_snapshot": {
+                  "unit": "pcs",
+                  "base_unit": "pcs",
+                  "factor": "1",
+                  "name": ""
+                },
+                "old_trade_quantity": null,
+                "new_trade_quantity": null,
+                "old_quantity": "150.00",
+                "new_quantity": "60.00",
+                "quantity_delta": "-90.00",
+                "old_amount": "1500.00000000000000",
+                "new_amount": "600.00000000000000",
+                "amount_delta": "-900.00000000000000",
+                "shipped_quantity": "50",
+                "before": {
+                  "order_item": 1,
+                  "group_key": "1:1",
+                  "sku_code": "ISS021-SKU-1",
+                  "base_unit": "pcs",
+                  "ordered_quantity": "150.00",
+                  "shipped_quantity": "50",
+                  "purchased_quantity": "100.00",
+                  "received_quantity": "100.00",
+                  "in_transit_quantity": "0",
+                  "to_procure_quantity": "50.00",
+                  "procurement_excess_quantity": "0"
+                },
+                "after": {
+                  "order_item": 1,
+                  "group_key": "1:1",
+                  "sku_code": "ISS021-SKU-1",
+                  "base_unit": "pcs",
+                  "ordered_quantity": "60.00",
+                  "shipped_quantity": "50",
+                  "purchased_quantity": "100.00",
+                  "received_quantity": "100.00",
+                  "in_transit_quantity": "0",
+                  "to_procure_quantity": "0",
+                  "procurement_excess_quantity": "40.00"
+                }
+              }
+            ],
+            "financial": {
+              "currency": "USD",
+              "before_total": "1500.0000",
+              "after_total": "600.0000",
+              "amount_delta": "-900.0000",
+              "paid_amount": "200.0000",
+              "planned_amount": "1500.0000",
+              "settled_amount": "200.0000",
+              "outstanding_before": "1300.0000",
+              "outstanding_after": "400.0000"
+            },
+            "warnings": [
+              "ISS021-SKU-1 可能产生采购过剩 40.00 pcs，请人工处理，系统不会自动取消采购单。"
+            ],
+            "blocking_reasons": [],
+            "can_submit": true,
+            "financial_visible": true,
+            "procurement_visible": true
+          },
+          "warnings": [
+            "ISS021-SKU-1 可能产生采购过剩 40.00 pcs，请人工处理，系统不会自动取消采购单。"
+          ],
+          "after_metrics": [
+            {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "60.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "40.00"
+            }
+          ],
+          "payment_plan_delta": "-900.0000",
+          "order_status": "confirmed"
+        }
+      },
+      {
+        "id": 1,
+        "order": 1,
+        "order_no": "SO-ISS021-1",
+        "operator": null,
+        "operator_name": "开发身份（未实名）",
+        "request_key": "iss021-http-increase",
+        "reason": "ISS-021 隔离 API 验收",
+        "created_at": "2026-10-26T01:49:54.420994Z",
+        "before_total_amount": 1000.0,
+        "after_total_amount": 1500.0,
+        "amount_delta": 500.0,
+        "financial_visible": true,
+        "procurement_visible": true,
+        "lines": [
+          {
+            "order_item": 1,
+            "sku": 1,
+            "sku_code": "ISS021-SKU-1",
+            "sales_model": "",
+            "display_name": "数量变更灯具 1",
+            "base_unit": "pcs",
+            "trade_unit": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "old_trade_quantity": null,
+            "new_trade_quantity": null,
+            "old_quantity": "100.00",
+            "new_quantity": "150.00",
+            "quantity_delta": "50.00",
+            "old_amount": "1000.00000000000000",
+            "new_amount": "1500.00000000000000",
+            "amount_delta": "500.00000000000000",
+            "shipped_quantity": "50",
+            "before": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "100.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "0"
+            },
+            "after": {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "150.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "50.00",
+              "procurement_excess_quantity": "0"
+            }
+          }
+        ],
+        "impact": {
+          "operator_kind": "development",
+          "preview": {
+            "order": 1,
+            "order_no": "SO-ISS021-1",
+            "status": "confirmed",
+            "version": 0,
+            "reason_required": true,
+            "lines": [
+              {
+                "order_item": 1,
+                "sku": 1,
+                "sku_code": "ISS021-SKU-1",
+                "sales_model": "",
+                "display_name": "数量变更灯具 1",
+                "base_unit": "pcs",
+                "trade_unit": null,
+                "trade_snapshot": {
+                  "unit": "pcs",
+                  "base_unit": "pcs",
+                  "factor": "1",
+                  "name": ""
+                },
+                "old_trade_quantity": null,
+                "new_trade_quantity": null,
+                "old_quantity": "100.00",
+                "new_quantity": "150.00",
+                "quantity_delta": "50.00",
+                "old_amount": "1000.00000000000000",
+                "new_amount": "1500.00000000000000",
+                "amount_delta": "500.00000000000000",
+                "shipped_quantity": "50",
+                "before": {
+                  "order_item": 1,
+                  "group_key": "1:1",
+                  "sku_code": "ISS021-SKU-1",
+                  "base_unit": "pcs",
+                  "ordered_quantity": "100.00",
+                  "shipped_quantity": "50",
+                  "purchased_quantity": "100.00",
+                  "received_quantity": "100.00",
+                  "in_transit_quantity": "0",
+                  "to_procure_quantity": "0",
+                  "procurement_excess_quantity": "0"
+                },
+                "after": {
+                  "order_item": 1,
+                  "group_key": "1:1",
+                  "sku_code": "ISS021-SKU-1",
+                  "base_unit": "pcs",
+                  "ordered_quantity": "150.00",
+                  "shipped_quantity": "50",
+                  "purchased_quantity": "100.00",
+                  "received_quantity": "100.00",
+                  "in_transit_quantity": "0",
+                  "to_procure_quantity": "50.00",
+                  "procurement_excess_quantity": "0"
+                }
+              }
+            ],
+            "financial": {
+              "currency": "USD",
+              "before_total": "1000.0000",
+              "after_total": "1500.0000",
+              "amount_delta": "500.0000",
+              "paid_amount": "200.0000",
+              "planned_amount": "1000.0000",
+              "settled_amount": "200.0000",
+              "outstanding_before": "800.0000",
+              "outstanding_after": "1300.0000"
+            },
+            "warnings": [
+              "ISS021-SKU-1 采购需求已变化；已有采购保持原样，请人工核对数量及交期。"
+            ],
+            "blocking_reasons": [],
+            "can_submit": true,
+            "financial_visible": true,
+            "procurement_visible": true
+          },
+          "warnings": [
+            "ISS021-SKU-1 采购需求已变化；已有采购保持原样，请人工核对数量及交期。"
+          ],
+          "after_metrics": [
+            {
+              "order_item": 1,
+              "group_key": "1:1",
+              "sku_code": "ISS021-SKU-1",
+              "base_unit": "pcs",
+              "ordered_quantity": "150.00",
+              "shipped_quantity": "50",
+              "purchased_quantity": "100.00",
+              "received_quantity": "100.00",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "50.00",
+              "procurement_excess_quantity": "0"
+            }
+          ],
+          "payment_plan_delta": "500.0000",
+          "order_status": "confirmed"
+        }
+      }
+    ]
+  },
+  {
+    "path": "orders/2/quantity-adjustments/preview/",
+    "request": {
+      "version": 0,
+      "request_key": "probe",
+      "reason": "ISS-021 隔离 API 验收",
+      "items": [
+        {
+          "order_item": 2,
+          "new_quantity": "60"
+        }
+      ]
+    },
+    "status": 400,
+    "response": {
+      "detail": "ISS021-SKU-2 的新数量不能低于已发货数量 70。"
+    }
+  },
+  {
+    "path": "orders/2/quantity-adjustments/",
+    "request": {
+      "version": 0,
+      "request_key": "probe",
+      "reason": "ISS-021 隔离 API 验收",
+      "items": [
+        {
+          "order_item": 2,
+          "new_quantity": "60"
+        }
+      ]
+    },
+    "status": 400,
+    "response": {
+      "detail": "ISS021-SKU-2 的新数量不能低于已发货数量 70。"
+    }
+  },
+  {
+    "path": "orders/2/quantity-adjustments/",
+    "request": {
+      "version": 0,
+      "request_key": "probe",
+      "reason": "ISS-021 隔离 API 验收",
+      "items": [
+        {
+          "order_item": 2,
+          "new_quantity": "100"
+        }
+      ]
+    },
+    "status": 400,
+    "response": {
+      "detail": "数量没有变化。"
+    }
+  },
+  {
+    "path": "orders/3/quantity-adjustments/preview/",
+    "request": {
+      "version": 0,
+      "request_key": "probe",
+      "reason": "ISS-021 隔离 API 验收",
+      "items": [
+        {
+          "order_item": 3,
+          "new_quantity": "60"
+        }
+      ]
+    },
+    "status": 200,
+    "response": {
+      "order": 3,
+      "order_no": "SO-ISS021-3",
+      "status": "confirmed",
+      "version": 0,
+      "reason_required": true,
+      "lines": [
+        {
+          "order_item": 3,
+          "sku": 3,
+          "sku_code": "ISS021-SKU-3",
+          "sales_model": "",
+          "display_name": "数量变更灯具 3",
+          "base_unit": "pcs",
+          "trade_unit": null,
+          "trade_snapshot": {
+            "unit": "pcs",
+            "base_unit": "pcs",
+            "factor": "1",
+            "name": ""
+          },
+          "old_trade_quantity": null,
+          "new_trade_quantity": null,
+          "old_quantity": "100.00",
+          "new_quantity": "60.00",
+          "quantity_delta": "-40.00",
+          "old_amount": "1000.00000000000000",
+          "new_amount": "600.00000000000000",
+          "amount_delta": "-400.00000000000000",
+          "shipped_quantity": "0",
+          "before": {
+            "order_item": 3,
+            "group_key": "3:3",
+            "sku_code": "ISS021-SKU-3",
+            "base_unit": "pcs",
+            "ordered_quantity": "100.00",
+            "shipped_quantity": "0",
+            "purchased_quantity": "100.00",
+            "received_quantity": "100.00",
+            "in_transit_quantity": "0",
+            "to_procure_quantity": "0",
+            "procurement_excess_quantity": "0"
+          },
+          "after": {
+            "order_item": 3,
+            "group_key": "3:3",
+            "sku_code": "ISS021-SKU-3",
+            "base_unit": "pcs",
+            "ordered_quantity": "60.00",
+            "shipped_quantity": "0",
+            "purchased_quantity": "100.00",
+            "received_quantity": "100.00",
+            "in_transit_quantity": "0",
+            "to_procure_quantity": "0",
+            "procurement_excess_quantity": "40.00"
+          }
+        }
+      ],
+      "financial": {
+        "currency": "USD",
+        "before_total": "1000.0000",
+        "after_total": "600.0000",
+        "amount_delta": "-400.0000",
+        "paid_amount": "900.0000",
+        "planned_amount": "1000.0000",
+        "settled_amount": "900.0000",
+        "outstanding_before": "100.0000",
+        "outstanding_after": "-300.0000"
+      },
+      "warnings": [
+        "ISS021-SKU-3 可能产生采购过剩 40.00 pcs，请人工处理，系统不会自动取消采购单。",
+        "调整后订单金额 600.0000 低于已收金额 900.0000，需先处理退款或资金差额",
+        "数量减少超过未结应收计划余额"
+      ],
+      "blocking_reasons": [
+        "调整后订单金额 600.0000 低于已收金额 900.0000，需先处理退款或资金差额",
+        "数量减少超过未结应收计划余额"
+      ],
+      "can_submit": false,
+      "financial_visible": true,
+      "procurement_visible": true
+    }
+  },
+  {
+    "path": "orders/3/quantity-adjustments/",
+    "request": {
+      "version": 0,
+      "request_key": "probe",
+      "reason": "ISS-021 隔离 API 验收",
+      "items": [
+        {
+          "order_item": 3,
+          "new_quantity": "60"
+        }
+      ]
+    },
+    "status": 400,
+    "response": {
+      "detail": "调整后订单金额 600.0000 低于已收金额 900.0000，需先处理退款或资金差额；数量减少超过未结应收计划余额"
+    }
+  },
+  {
+    "path": "orders/1/workbench/",
+    "request": null,
+    "status": 200,
+    "response": {
+      "order": {
+        "id": 1,
+        "items": [
+          {
+            "id": 1,
+            "sku": 1,
+            "sku_code": "ISS021-SKU-1",
+            "sales_model": "",
+            "model": "",
+            "product_name": "数量变更灯具 1",
+            "display_name": "数量变更灯具 1",
+            "description": "数量变更验收灯具",
+            "unit": "pcs",
+            "quantity": "60.00",
+            "unit_price": "10.0000",
+            "cost_price": "0.0000",
+            "amount": "600.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "ISS021 主档更名后",
+        "customer_country": "",
+        "quote_no": "",
+        "source_quote_no": "",
+        "status_display": "已确认",
+        "total_amount": "600.00",
+        "base_amount": "600.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "200.00",
+        "balance_amount": 400.0,
+        "receivable_state": "partial",
+        "created_at": "2026-10-26T09:49:10.506803+08:00",
+        "updated_at": "2026-10-26T09:49:54.677837+08:00",
+        "order_no": "SO-ISS021-1",
+        "customer_name_snapshot": "ISS021 原确认客户",
+        "customer_country_snapshot": "",
+        "customer_address_snapshot": "原合同地址",
+        "customer_contact_name_snapshot": "",
+        "customer_phone_snapshot": "",
+        "customer_email_snapshot": "",
+        "order_date": "2026-10-25",
+        "expected_ship_date": null,
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "confirmed",
+        "historical_only": false,
+        "currency": "USD",
+        "exchange_rate": "1.000000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "quantity_change_version": 2,
+        "customer": 1,
+        "quote": null
+      },
+      "source_quote": null,
+      "items": [
+        {
+          "id": 1,
+          "sku": 1,
+          "sku_code": "ISS021-SKU-1",
+          "sales_model": "",
+          "model": "",
+          "product_name": "数量变更灯具 1",
+          "display_name": "数量变更灯具 1",
+          "description": "数量变更验收灯具",
+          "unit": "pcs",
+          "quantity": "60.00",
+          "unit_price": "10.0000",
+          "cost_price": "0.0000",
+          "amount": "600.00",
+          "notes": "",
+          "supplier_sku": null,
+          "supplier_name": "",
+          "supplier_model": "",
+          "supplier_sku_code": "",
+          "supplier_barcode": "",
+          "supplier_allocation": null,
+          "trade_unit": null,
+          "trade_quantity": null,
+          "trade_unit_price": null,
+          "trade_snapshot": {
+            "unit": "pcs",
+            "base_unit": "pcs",
+            "factor": "1",
+            "name": ""
+          }
+        }
+      ],
+      "payments": [
+        {
+          "id": 1,
+          "supplier_name": "",
+          "purchase_no": "",
+          "allocations": [],
+          "customer_name": "ISS021 主档更名后",
+          "order_no": "SO-ISS021-1",
+          "direction_display": "收入",
+          "status_display": "已确认",
+          "rmb_amount": 200.0,
+          "created_at": "2026-10-26T09:49:10.562758+08:00",
+          "updated_at": "2026-10-26T09:49:10.562780+08:00",
+          "transaction_no": "FIN-053D8DCB0B004528",
+          "transaction_date": "2026-10-26",
+          "direction": "income",
+          "category": "客户收款",
+          "amount": "200.0000",
+          "currency": "USD",
+          "exchange_rate": "1.000000",
+          "allocated_amount": "0.0000",
+          "kind": "customer_receipt",
+          "status": "confirmed",
+          "voided_at": null,
+          "void_reason": "",
+          "payment_method": "",
+          "reference": "",
+          "notes": "",
+          "split_from": null,
+          "customer": 1,
+          "supplier": null,
+          "order": 1,
+          "purchase_order": null,
+          "plan": 1,
+          "replaces": null
+        }
+      ],
+      "advance_allocations": [],
+      "plans": [
+        {
+          "id": 2,
+          "customer_id": 1,
+          "supplier_id": null,
+          "exchange_rate": 1.0,
+          "remaining_rmb": 400.0,
+          "remaining_amount": "400.0000",
+          "contract_no": "SO-ISS021-1",
+          "counterparty_name": "ISS021 主档更名后",
+          "is_overdue": false,
+          "created_at": "2026-10-26T09:49:10.542093+08:00",
+          "updated_at": "2026-10-26T09:49:54.681811+08:00",
+          "direction": "receivable",
+          "due_date": null,
+          "planned_amount": "400.0000",
+          "settled_amount": "0.0000",
+          "currency": "USD",
+          "status": "open",
+          "notes": "默认尾款\n数量变更 #2 调减 300.0000",
+          "order": 1,
+          "purchase_order": null
+        },
+        {
+          "id": 7,
+          "customer_id": 1,
+          "supplier_id": null,
+          "exchange_rate": 1.0,
+          "remaining_rmb": 0.0,
+          "remaining_amount": "0.0000",
+          "contract_no": "SO-ISS021-1",
+          "counterparty_name": "ISS021 主档更名后",
+          "is_overdue": false,
+          "created_at": "2026-10-26T09:49:54.426554+08:00",
+          "updated_at": "2026-10-26T09:49:54.681455+08:00",
+          "direction": "receivable",
+          "due_date": null,
+          "planned_amount": "0.0000",
+          "settled_amount": "0.0000",
+          "currency": "USD",
+          "status": "cancelled",
+          "notes": "数量变更 #1 增加应收\n数量变更 #2 调减 500.0000",
+          "order": 1,
+          "purchase_order": null
+        },
+        {
+          "id": 1,
+          "customer_id": 1,
+          "supplier_id": null,
+          "exchange_rate": 1.0,
+          "remaining_rmb": 0.0,
+          "remaining_amount": "0.0000",
+          "contract_no": "SO-ISS021-1",
+          "counterparty_name": "ISS021 主档更名后",
+          "is_overdue": false,
+          "created_at": "2026-10-26T09:49:10.541473+08:00",
+          "updated_at": "2026-10-26T09:49:54.680996+08:00",
+          "direction": "receivable",
+          "due_date": "2026-10-25",
+          "planned_amount": "200.0000",
+          "settled_amount": "200.0000",
+          "currency": "USD",
+          "status": "settled",
+          "notes": "默认预付款/定金\n数量变更 #2 调减 100.0000",
+          "order": 1,
+          "purchase_order": null
+        }
+      ],
+      "inventory": [
+        {
+          "id": 2,
+          "movement_no": "SH-D2C80957385D4607",
+          "related_orders": [],
+          "related_order_nos": [
+            "SO-ISS021-1"
+          ],
+          "sku_code": "ISS021-SKU-1",
+          "display_name": "数量变更灯具 1",
+          "sales_model": null,
+          "product_name": "数量变更灯具 1",
+          "order_no": "SO-ISS021-1",
+          "type_display": "销售出库",
+          "signed_quantity": "-50.00",
+          "overage_quantity": "0.00",
+          "overage_summary": "",
+          "reversal_movement": null,
+          "is_reversed": false,
+          "reversal_status": "",
+          "created_at": "2026-10-26T09:49:10.621139+08:00",
+          "updated_at": "2026-10-26T09:49:10.621158+08:00",
+          "trade_quantity": null,
+          "trade_unit_price": null,
+          "trade_snapshot": {
+            "unit": "pcs",
+            "base_unit": "pcs",
+            "factor": "1",
+            "name": ""
+          },
+          "movement_date": "2026-10-25",
+          "type": "sale_out",
+          "sku_code_snapshot": "ISS021-SKU-1",
+          "sales_model_snapshot": "",
+          "display_name_snapshot": "数量变更灯具 1",
+          "quantity": "50.00",
+          "warehouse": "默认仓",
+          "unit_cost": "0.0000",
+          "reference": "SH-29D3BBAE30D24317",
+          "notes": "",
+          "source_type": "shipment",
+          "source_no": "SH-29D3BBAE30D24317",
+          "is_automatic": true,
+          "is_overage": false,
+          "overage_reason": "",
+          "trade_unit": null,
+          "sku": 1,
+          "supplier_sku": null,
+          "order": 1
+        },
+        {
+          "id": 1,
+          "movement_no": "GR-55A9942B12964FF7",
+          "related_orders": [
+            1
+          ],
+          "related_order_nos": [
+            "SO-ISS021-1"
+          ],
+          "sku_code": "ISS021-SKU-1",
+          "display_name": "数量变更灯具 1",
+          "sales_model": null,
+          "product_name": "数量变更灯具 1",
+          "order_no": "",
+          "type_display": "采购入库",
+          "signed_quantity": "100.00",
+          "overage_quantity": "0.00",
+          "overage_summary": "",
+          "reversal_movement": null,
+          "is_reversed": false,
+          "reversal_status": "",
+          "created_at": "2026-10-26T09:49:10.588768+08:00",
+          "updated_at": "2026-10-26T09:49:10.588786+08:00",
+          "trade_quantity": null,
+          "trade_unit_price": null,
+          "trade_snapshot": {
+            "base_unit": "pcs",
+            "unit": "pcs",
+            "factor": "1",
+            "name": ""
+          },
+          "movement_date": "2026-10-25",
+          "type": "purchase_in",
+          "sku_code_snapshot": "ISS021-SKU-1",
+          "sales_model_snapshot": "",
+          "display_name_snapshot": "数量变更灯具 1",
+          "quantity": "100.00",
+          "warehouse": "默认仓",
+          "unit_cost": "7.0000",
+          "reference": "PO-ISS021-1",
+          "notes": "",
+          "source_type": "receipt",
+          "source_no": "PO-ISS021-1",
+          "is_automatic": true,
+          "is_overage": false,
+          "overage_reason": "",
+          "trade_unit": null,
+          "sku": 1,
+          "supplier_sku": null,
+          "order": null
+        }
+      ],
+      "payment_summary": {
+        "paid_amount": 200.0,
+        "balance_amount": 400.0,
+        "planned_amount": 600.0,
+        "settlement": {
+          "state": "partial",
+          "label": "部分收款",
+          "overdue_amount": 0.0
+        }
+      },
+      "expense_summary": {
+        "expense_rmb": 0.0
+      },
+      "profit_summary": {
+        "sales_rmb": 600.0,
+        "purchase_base_rmb": 700.0,
+        "purchase_additional_rmb": 0.0,
+        "purchase_cost_rmb": 700.0,
+        "order_expense_rmb": 0.0,
+        "expense_rmb": 0.0,
+        "estimated_profit_rmb": -100.0,
+        "estimated_gross_profit_rmb": -100.0,
+        "estimated_margin_percent": -16.666666666666668
+      },
+      "quantity_adjustments": [
+        {
+          "id": 2,
+          "order": 1,
+          "order_no": "SO-ISS021-1",
+          "operator": null,
+          "operator_name": "开发身份（未实名）",
+          "request_key": "iss021-http-decrease",
+          "reason": "ISS-021 隔离 API 验收",
+          "created_at": "2026-10-26T01:49:54.674929Z",
+          "before_total_amount": 1500.0,
+          "after_total_amount": 600.0,
+          "amount_delta": -900.0,
+          "financial_visible": true,
+          "procurement_visible": true,
+          "lines": [
+            {
+              "order_item": 1,
+              "sku": 1,
+              "sku_code": "ISS021-SKU-1",
+              "sales_model": "",
+              "display_name": "数量变更灯具 1",
+              "base_unit": "pcs",
+              "trade_unit": null,
+              "trade_snapshot": {
+                "unit": "pcs",
+                "base_unit": "pcs",
+                "factor": "1",
+                "name": ""
+              },
+              "old_trade_quantity": null,
+              "new_trade_quantity": null,
+              "old_quantity": "150.00",
+              "new_quantity": "60.00",
+              "quantity_delta": "-90.00",
+              "old_amount": "1500.00000000000000",
+              "new_amount": "600.00000000000000",
+              "amount_delta": "-900.00000000000000",
+              "shipped_quantity": "50",
+              "before": {
+                "order_item": 1,
+                "group_key": "1:1",
+                "sku_code": "ISS021-SKU-1",
+                "base_unit": "pcs",
+                "ordered_quantity": "150.00",
+                "shipped_quantity": "50",
+                "purchased_quantity": "100.00",
+                "received_quantity": "100.00",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "50.00",
+                "procurement_excess_quantity": "0"
+              },
+              "after": {
+                "order_item": 1,
+                "group_key": "1:1",
+                "sku_code": "ISS021-SKU-1",
+                "base_unit": "pcs",
+                "ordered_quantity": "60.00",
+                "shipped_quantity": "50",
+                "purchased_quantity": "100.00",
+                "received_quantity": "100.00",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "0",
+                "procurement_excess_quantity": "40.00"
+              }
+            }
+          ],
+          "impact": {
+            "operator_kind": "development",
+            "preview": {
+              "order": 1,
+              "order_no": "SO-ISS021-1",
+              "status": "confirmed",
+              "version": 1,
+              "reason_required": true,
+              "lines": [
+                {
+                  "order_item": 1,
+                  "sku": 1,
+                  "sku_code": "ISS021-SKU-1",
+                  "sales_model": "",
+                  "display_name": "数量变更灯具 1",
+                  "base_unit": "pcs",
+                  "trade_unit": null,
+                  "trade_snapshot": {
+                    "unit": "pcs",
+                    "base_unit": "pcs",
+                    "factor": "1",
+                    "name": ""
+                  },
+                  "old_trade_quantity": null,
+                  "new_trade_quantity": null,
+                  "old_quantity": "150.00",
+                  "new_quantity": "60.00",
+                  "quantity_delta": "-90.00",
+                  "old_amount": "1500.00000000000000",
+                  "new_amount": "600.00000000000000",
+                  "amount_delta": "-900.00000000000000",
+                  "shipped_quantity": "50",
+                  "before": {
+                    "order_item": 1,
+                    "group_key": "1:1",
+                    "sku_code": "ISS021-SKU-1",
+                    "base_unit": "pcs",
+                    "ordered_quantity": "150.00",
+                    "shipped_quantity": "50",
+                    "purchased_quantity": "100.00",
+                    "received_quantity": "100.00",
+                    "in_transit_quantity": "0",
+                    "to_procure_quantity": "50.00",
+                    "procurement_excess_quantity": "0"
+                  },
+                  "after": {
+                    "order_item": 1,
+                    "group_key": "1:1",
+                    "sku_code": "ISS021-SKU-1",
+                    "base_unit": "pcs",
+                    "ordered_quantity": "60.00",
+                    "shipped_quantity": "50",
+                    "purchased_quantity": "100.00",
+                    "received_quantity": "100.00",
+                    "in_transit_quantity": "0",
+                    "to_procure_quantity": "0",
+                    "procurement_excess_quantity": "40.00"
+                  }
+                }
+              ],
+              "financial": {
+                "currency": "USD",
+                "before_total": "1500.0000",
+                "after_total": "600.0000",
+                "amount_delta": "-900.0000",
+                "paid_amount": "200.0000",
+                "planned_amount": "1500.0000",
+                "settled_amount": "200.0000",
+                "outstanding_before": "1300.0000",
+                "outstanding_after": "400.0000"
+              },
+              "warnings": [
+                "ISS021-SKU-1 可能产生采购过剩 40.00 pcs，请人工处理，系统不会自动取消采购单。"
+              ],
+              "blocking_reasons": [],
+              "can_submit": true,
+              "financial_visible": true,
+              "procurement_visible": true
+            },
+            "warnings": [
+              "ISS021-SKU-1 可能产生采购过剩 40.00 pcs，请人工处理，系统不会自动取消采购单。"
+            ],
+            "after_metrics": [
+              {
+                "order_item": 1,
+                "group_key": "1:1",
+                "sku_code": "ISS021-SKU-1",
+                "base_unit": "pcs",
+                "ordered_quantity": "60.00",
+                "shipped_quantity": "50",
+                "purchased_quantity": "100.00",
+                "received_quantity": "100.00",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "0",
+                "procurement_excess_quantity": "40.00"
+              }
+            ],
+            "payment_plan_delta": "-900.0000",
+            "order_status": "confirmed"
+          }
+        },
+        {
+          "id": 1,
+          "order": 1,
+          "order_no": "SO-ISS021-1",
+          "operator": null,
+          "operator_name": "开发身份（未实名）",
+          "request_key": "iss021-http-increase",
+          "reason": "ISS-021 隔离 API 验收",
+          "created_at": "2026-10-26T01:49:54.420994Z",
+          "before_total_amount": 1000.0,
+          "after_total_amount": 1500.0,
+          "amount_delta": 500.0,
+          "financial_visible": true,
+          "procurement_visible": true,
+          "lines": [
+            {
+              "order_item": 1,
+              "sku": 1,
+              "sku_code": "ISS021-SKU-1",
+              "sales_model": "",
+              "display_name": "数量变更灯具 1",
+              "base_unit": "pcs",
+              "trade_unit": null,
+              "trade_snapshot": {
+                "unit": "pcs",
+                "base_unit": "pcs",
+                "factor": "1",
+                "name": ""
+              },
+              "old_trade_quantity": null,
+              "new_trade_quantity": null,
+              "old_quantity": "100.00",
+              "new_quantity": "150.00",
+              "quantity_delta": "50.00",
+              "old_amount": "1000.00000000000000",
+              "new_amount": "1500.00000000000000",
+              "amount_delta": "500.00000000000000",
+              "shipped_quantity": "50",
+              "before": {
+                "order_item": 1,
+                "group_key": "1:1",
+                "sku_code": "ISS021-SKU-1",
+                "base_unit": "pcs",
+                "ordered_quantity": "100.00",
+                "shipped_quantity": "50",
+                "purchased_quantity": "100.00",
+                "received_quantity": "100.00",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "0",
+                "procurement_excess_quantity": "0"
+              },
+              "after": {
+                "order_item": 1,
+                "group_key": "1:1",
+                "sku_code": "ISS021-SKU-1",
+                "base_unit": "pcs",
+                "ordered_quantity": "150.00",
+                "shipped_quantity": "50",
+                "purchased_quantity": "100.00",
+                "received_quantity": "100.00",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "50.00",
+                "procurement_excess_quantity": "0"
+              }
+            }
+          ],
+          "impact": {
+            "operator_kind": "development",
+            "preview": {
+              "order": 1,
+              "order_no": "SO-ISS021-1",
+              "status": "confirmed",
+              "version": 0,
+              "reason_required": true,
+              "lines": [
+                {
+                  "order_item": 1,
+                  "sku": 1,
+                  "sku_code": "ISS021-SKU-1",
+                  "sales_model": "",
+                  "display_name": "数量变更灯具 1",
+                  "base_unit": "pcs",
+                  "trade_unit": null,
+                  "trade_snapshot": {
+                    "unit": "pcs",
+                    "base_unit": "pcs",
+                    "factor": "1",
+                    "name": ""
+                  },
+                  "old_trade_quantity": null,
+                  "new_trade_quantity": null,
+                  "old_quantity": "100.00",
+                  "new_quantity": "150.00",
+                  "quantity_delta": "50.00",
+                  "old_amount": "1000.00000000000000",
+                  "new_amount": "1500.00000000000000",
+                  "amount_delta": "500.00000000000000",
+                  "shipped_quantity": "50",
+                  "before": {
+                    "order_item": 1,
+                    "group_key": "1:1",
+                    "sku_code": "ISS021-SKU-1",
+                    "base_unit": "pcs",
+                    "ordered_quantity": "100.00",
+                    "shipped_quantity": "50",
+                    "purchased_quantity": "100.00",
+                    "received_quantity": "100.00",
+                    "in_transit_quantity": "0",
+                    "to_procure_quantity": "0",
+                    "procurement_excess_quantity": "0"
+                  },
+                  "after": {
+                    "order_item": 1,
+                    "group_key": "1:1",
+                    "sku_code": "ISS021-SKU-1",
+                    "base_unit": "pcs",
+                    "ordered_quantity": "150.00",
+                    "shipped_quantity": "50",
+                    "purchased_quantity": "100.00",
+                    "received_quantity": "100.00",
+                    "in_transit_quantity": "0",
+                    "to_procure_quantity": "50.00",
+                    "procurement_excess_quantity": "0"
+                  }
+                }
+              ],
+              "financial": {
+                "currency": "USD",
+                "before_total": "1000.0000",
+                "after_total": "1500.0000",
+                "amount_delta": "500.0000",
+                "paid_amount": "200.0000",
+                "planned_amount": "1000.0000",
+                "settled_amount": "200.0000",
+                "outstanding_before": "800.0000",
+                "outstanding_after": "1300.0000"
+              },
+              "warnings": [
+                "ISS021-SKU-1 采购需求已变化；已有采购保持原样，请人工核对数量及交期。"
+              ],
+              "blocking_reasons": [],
+              "can_submit": true,
+              "financial_visible": true,
+              "procurement_visible": true
+            },
+            "warnings": [
+              "ISS021-SKU-1 采购需求已变化；已有采购保持原样，请人工核对数量及交期。"
+            ],
+            "after_metrics": [
+              {
+                "order_item": 1,
+                "group_key": "1:1",
+                "sku_code": "ISS021-SKU-1",
+                "base_unit": "pcs",
+                "ordered_quantity": "150.00",
+                "shipped_quantity": "50",
+                "purchased_quantity": "100.00",
+                "received_quantity": "100.00",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "50.00",
+                "procurement_excess_quantity": "0"
+              }
+            ],
+            "payment_plan_delta": "500.0000",
+            "order_status": "confirmed"
+          }
+        }
+      ],
+      "fulfillment_summary": {
+        "ordered_quantity": 60.0,
+        "shipped_quantity": 50.0,
+        "remaining_quantity": 10.0
+      }
+    }
+  }
+]

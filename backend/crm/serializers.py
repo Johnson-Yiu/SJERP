@@ -270,6 +270,39 @@ class OperationLogSerializer(serializers.ModelSerializer):
                 if isinstance(data.get(field), dict):
                     data[field] = redact_snapshot(data[field], hidden_fields)
             data["changed_fields"] = [key for key in data.get("changed_fields", []) if key not in hidden_fields]
+        elif instance.entity == "crm.order" and instance.action_label == "调整销售订单数量":
+            finance_visible = user_can(user, "finance", "view") and user_can(user, "transactions", "view")
+            procurement_visible = user_can(user, "purchases", "view")
+            hidden_financial = {
+                "total_amount", "before_total_amount", "after_total_amount", "amount_delta",
+                "payment_plan_delta", "planned_amount", "settled_amount", "paid_amount",
+                "outstanding_before", "outstanding_after", "outstanding_amount", "balance_amount",
+            }
+            for field in ("before_data", "after_data"):
+                data[field] = redact_snapshot(data.get(field), hidden_financial if not finance_visible else set())
+            metadata = data.get("metadata") if isinstance(data.get("metadata"), dict) else {}
+            metadata = redact_snapshot(metadata, hidden_financial if not finance_visible else set())
+            if not finance_visible:
+                metadata["summary"] = "数量变更金额影响受权限保护。"
+            raw_warnings = metadata.get("warnings") if isinstance(metadata.get("warnings"), list) else []
+            visible_warnings = []
+            for warning in raw_warnings:
+                text = str(warning)
+                if "采购" in text:
+                    if procurement_visible:
+                        visible_warnings.append(text)
+                    else:
+                        visible_warnings.append("采购影响信息受权限保护。")
+                elif finance_visible:
+                    visible_warnings.append(text)
+                else:
+                    visible_warnings.append("财务影响信息受权限保护。")
+            metadata["warnings"] = list(dict.fromkeys(visible_warnings))
+            data["metadata"] = metadata
+            data["changed_fields"] = [
+                key for key in data.get("changed_fields", [])
+                if finance_visible or key not in hidden_financial
+            ]
         elif instance.entity in {"crm.order", "crm.quote"}:
             hidden_fields = set()
             if not user_can(user, "customers", "view"):
@@ -1941,6 +1974,9 @@ class OrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer)
                 data[field] = None if field == "sku" else ""
         if not user_can(user, "purchases", "view"):
             data["cost_price"] = None
+        if self.context.get("mask_quantity_adjustment_financial"):
+            data["unit_price"] = None
+            data["amount"] = None
         if not user_can(user, "suppliers", "view"):
             for field in ("supplier_sku", "supplier_name", "supplier_model", "supplier_sku_code", "supplier_barcode", "supplier_allocation"):
                 data[field] = None if field in {"supplier_sku", "supplier_allocation"} else ""
@@ -1968,6 +2004,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = [
             "order_no", "status", "cancelled_at", "cancellation_reason",
+            "quantity_change_version",
             "customer_name_snapshot", "customer_country_snapshot",
             "customer_address_snapshot", "customer_contact_name_snapshot",
             "customer_phone_snapshot", "customer_email_snapshot",
@@ -1993,6 +2030,10 @@ class OrderSerializer(serializers.ModelSerializer):
         if not (user_can(user, "finance", "view") and user_can(user, "transactions", "view")):
             data["paid_amount"] = None
             data["balance_amount"] = None
+        if self.context.get("mask_quantity_adjustment_financial"):
+            for field in ("total_amount", "base_amount", "approved_change_amount", "paid_amount", "balance_amount", "shipping_fee", "discount", "exchange_rate"):
+                data[field] = None
+            data["receivable_state"] = None
         return data
 
     def get_receivable_state(self, obj):

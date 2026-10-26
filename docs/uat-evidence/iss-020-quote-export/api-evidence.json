@@ -1,0 +1,167 @@
+{
+  "base_url": "http://127.0.0.1:28341",
+  "root_pi_data": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "invoice_no": "ISS020-Q-A",
+      "buyer": {
+        "company_name": "ISS-020 Historical Buyer",
+        "name": "Version A Recipient",
+        "address": "Version A Address",
+        "email": "version-a@example.com",
+        "phone": "+49 111 A"
+      },
+      "terms": {
+        "quote_date": "2026-10-26",
+        "valid_until": "2026-11-25",
+        "lead_time_days": null,
+        "trading_terms": "FOB Shenzhen",
+        "shipping_details": "Sea freight",
+        "notes": "Version A saved terms."
+      },
+      "totals": {
+        "currency": "USD",
+        "subtotal": "246.00",
+        "shipping_fee": "5.00",
+        "discount": "1.00",
+        "total_amount": "250.00"
+      },
+      "payment_splits": {
+        "deposit_ratio": "0.3000",
+        "deposit_amount": "75.00",
+        "balance_ratio": "0.7000",
+        "balance_amount": "175.00"
+      },
+      "products": [
+        {
+          "sku": "ISS020-EVIDENCE-SKU",
+          "sku_code": "ISS020-EVIDENCE-SKU",
+          "model": "ISS020-MODEL-HISTORICAL",
+          "sales_model": "ISS020-MODEL-HISTORICAL",
+          "product_name": "ISS-020 Historical Product",
+          "display_name": "ISS-020 Historical Product",
+          "description": "Historical red-image panel",
+          "quantity": 2.0,
+          "base_quantity": 2.0,
+          "trade_snapshot": {
+            "unit": "pcs",
+            "base_unit": "pcs",
+            "factor": "1",
+            "name": ""
+          },
+          "unit_price": "123.000000000000",
+          "amount": 246.0,
+          "unit": "pcs",
+          "image_url": "http://127.0.0.1:28341/api/media/quote-item-images/2026/10/iss020-historical.png"
+        }
+      ]
+    }
+  },
+  "revision_pi_data": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "invoice_no": "ISS020-Q-A-1",
+      "buyer": {
+        "company_name": "ISS-020 Historical Buyer",
+        "name": "Version B Recipient",
+        "address": "Version B Address",
+        "email": "",
+        "phone": "+49 222 B"
+      },
+      "terms": {
+        "quote_date": "2026-10-26",
+        "valid_until": "2026-11-25",
+        "lead_time_days": null,
+        "trading_terms": "CIF Hamburg",
+        "shipping_details": "DHL air freight",
+        "notes": "Version B saved terms."
+      },
+      "totals": {
+        "currency": "EUR",
+        "subtotal": "247.50",
+        "shipping_fee": "0.00",
+        "discount": "0.00",
+        "total_amount": "247.50"
+      },
+      "payment_splits": {
+        "deposit_ratio": "0.4000",
+        "deposit_amount": "99.00",
+        "balance_ratio": "0.6000",
+        "balance_amount": "148.50"
+      },
+      "products": [
+        {
+          "sku": "ISS020-EVIDENCE-SKU",
+          "sku_code": "ISS020-EVIDENCE-SKU",
+          "model": "ISS020-MODEL-HISTORICAL",
+          "sales_model": "ISS020-MODEL-HISTORICAL",
+          "product_name": "ISS-020 Historical Product",
+          "display_name": "ISS-020 Historical Product",
+          "description": "Historical red-image panel, revision B",
+          "quantity": 3.0,
+          "base_quantity": 3.0,
+          "trade_snapshot": {
+            "unit": "pcs",
+            "base_unit": "pcs",
+            "factor": "1",
+            "name": ""
+          },
+          "unit_price": "82.500000000000",
+          "amount": 247.5,
+          "unit": "pcs",
+          "image_url": "http://127.0.0.1:28341/api/media/quote-item-images/2026/10/iss020-historical.png"
+        }
+      ]
+    }
+  },
+  "root_export": {
+    "status": 200,
+    "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "bytes": 11605,
+    "sha256": "1ef0952b9013def37c9c544ac3ac9516d40abc552ff83a8f58ff8b6e93c9c626",
+    "file": "version-a.xlsx",
+    "quote_no": "ISS020-Q-A",
+    "buyer": "ISS-020 Historical Buyer",
+    "recipient": "Version A Recipient",
+    "email": "version-a@example.com",
+    "currency_header": "Unit Price\nUSD",
+    "amount_words": "SAY TOTAL US DOLLARS TWO HUNDRED FIFTY ONLY",
+    "media": [
+      "xl/media/image1.png"
+    ],
+    "formula_cells": [],
+    "print_area": "'PI'!$A$1:$M$35",
+    "page_orientation": "portrait",
+    "fit_to_width": null,
+    "fit_to_height": 0
+  },
+  "revision_export": {
+    "status": 200,
+    "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "bytes": 11531,
+    "sha256": "c7c82dc1c81af569fc733093cec0cd95e28add1024812d3ec5486dd0550d867f",
+    "file": "version-b-empty-email.xlsx",
+    "quote_no": "ISS020-Q-A-1",
+    "buyer": "ISS-020 Historical Buyer",
+    "recipient": "Version B Recipient",
+    "email": null,
+    "currency_header": "Unit Price\nEUR",
+    "amount_words": "SAY TOTAL EUROS TWO HUNDRED FORTY SEVEN AND CENTS FIFTY ONLY",
+    "media": [
+      "xl/media/image1.png"
+    ],
+    "formula_cells": [],
+    "print_area": "'PI'!$A$1:$M$34",
+    "page_orientation": "portrait",
+    "fit_to_width": null,
+    "fit_to_height": 0
+  },
+  "incomplete_export": {
+    "status": 422,
+    "content_type": "application/json",
+    "bytes": 185,
+    "body": "{\"detail\":\"正式报价缺少关键保存字段，未生成文件。\",\"fields\":{\"buyer_company_name\":\"缺少已保存买方公司名称。\",\"currency\":\"缺少已保存报价币种。\"}}"
+  }
+}

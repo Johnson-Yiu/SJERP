@@ -1,0 +1,11 @@
+{
+  "database": "sqlite:///C:/Users/Johnson/.codex/worktrees/iss-020-quote-export/森爵照明管理系统/docs/uat-evidence/iss-020-quote-export/iss020-quote-export-evidence.sqlite3",
+  "customer": 1,
+  "sku": 1,
+  "root_quote": 1,
+  "revision_quote": 2,
+  "incomplete_quote": 3,
+  "root_quote_no": "ISS020-Q-A",
+  "revision_quote_no": "ISS020-Q-A-1",
+  "development_identity": true
+}

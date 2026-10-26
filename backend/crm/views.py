@@ -34,6 +34,7 @@ from .permissions import HSCodeMaintenancePermission, ModuleActionPermission, Or
 from .sales_scope import allowed_employee_ids, data_scope_display, effective_data_scope, employee_profile_for, scope_customer_queryset, scope_customer_related_queryset
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
+from .quotation_export_dto import QuotationExportValidationError, build_quotation_export_dto
 from .quote_snapshots import create_quote_items
 from .serializers import protected_media_url, certificate_expiry, AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementReversalInputSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteAvailabilityPreviewInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .serializers import ProcurementDraftInputSerializer
@@ -1775,11 +1776,16 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         require_finance_permission(request.user, "customers", "view")
         require_finance_permission(request.user, "skus", "view")
         quote = self.get_object()
+        try:
+            export_dto = build_quotation_export_dto(quote)
+        except QuotationExportValidationError as exc:
+            return Response(
+                {"detail": str(exc), "fields": exc.fields},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
         products = []
-        subtotal = Decimal("0")
-        for item in quote.items.all():
-            amount = item.amount
-            subtotal += amount
+        for item, export_item in zip(quote.items.all(), export_dto.products):
+            amount = Decimal(export_item.amount)
             products.append({
                 # ``sku`` remains the legacy/internal field for old clients;
                 # customer-facing callers must use ``model``.
@@ -1793,15 +1799,15 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "quantity": item.trade_quantity if item.trade_unit_id else item.quantity,
                 "base_quantity": item.quantity,
                 "trade_snapshot": item.trade_snapshot,
-                "unit_price": item.trade_unit_price if item.trade_unit_id else item.unit_price,
+                "unit_price": export_item.unit_price,
                 "amount": amount,
                 "unit": item.trade_snapshot.get("unit", item.unit_snapshot),
                 "image_url": request.build_absolute_uri(protected_media_url(item.image_snapshot)) if item.image_snapshot else "",
             })
-        total_amount = quote.total_amount
-        deposit_amount = (total_amount * quote.deposit_ratio).quantize(Decimal("0.01"))
+        totals = export_dto.totals
+        payment_splits = export_dto.payment_splits
         return Response({
-            "invoice_no": quote.quote_no,
+            "invoice_no": export_dto.invoice_no,
             "buyer": {
                 "company_name": quote.buyer_company_name,
                 "name": quote.recipient_name,
@@ -1818,17 +1824,17 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "notes": quote.notes,
             },
             "totals": {
-                "currency": quote.currency,
-                "subtotal": subtotal,
-                "shipping_fee": quote.shipping_fee,
-                "discount": quote.discount,
-                "total_amount": total_amount,
+                "currency": totals["currency"],
+                "subtotal": totals["subtotal"],
+                "shipping_fee": totals["shipping_fee"],
+                "discount": totals["discount"],
+                "total_amount": totals["total_amount"],
             },
             "payment_splits": {
-                "deposit_ratio": quote.deposit_ratio,
-                "deposit_amount": deposit_amount,
-                "balance_ratio": Decimal("1") - quote.deposit_ratio,
-                "balance_amount": total_amount - deposit_amount,
+                "deposit_ratio": payment_splits["deposit_ratio"],
+                "deposit_amount": payment_splits["deposit_amount"],
+                "balance_ratio": payment_splits["balance_ratio"],
+                "balance_amount": payment_splits["balance_amount"],
             },
             "products": products,
         })
@@ -1840,9 +1846,9 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         quote = self.get_object()
         try:
             content = build_pi_export_payload(quote)
-        except QuoteExportError:
+        except QuoteExportError as exc:
             return Response(
-                {"detail": "PI workbook generation failed."},
+                {"detail": str(exc), "fields": exc.fields} if exc.fields else {"detail": "PI workbook generation failed."},
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
         response = HttpResponse(

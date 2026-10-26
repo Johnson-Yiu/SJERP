@@ -14,6 +14,14 @@ NO_DISCOUNT_TEMPLATE_ID = "standard_en_no_discount"
 WITH_DISCOUNT_TEMPLATE_ID = "standard_en_with_discount"
 
 
+class QuotationExportValidationError(Exception):
+    """Raised when a saved quotation cannot safely become a formal document."""
+
+    def __init__(self, fields):
+        self.fields = fields
+        super().__init__("正式报价缺少关键保存字段，未生成文件。")
+
+
 @dataclass(frozen=True)
 class QuotationExportItemDTO:
     sku: str
@@ -46,12 +54,40 @@ def _money(value):
     return str(Decimal(value).quantize(TWO_PLACES, rounding=ROUND_HALF_UP))
 
 
+def validate_quotation_export_source(quote):
+    """Validate only fields required to produce a truthful saved-version file."""
+    fields = {}
+    if not str(quote.quote_no or "").strip():
+        fields["quote_no"] = "缺少已保存报价单号。"
+    if not str(quote.buyer_company_name or "").strip():
+        fields["buyer_company_name"] = "缺少已保存买方公司名称。"
+    currency = str(quote.currency or "").strip().upper()
+    if not currency or currency in {"UNDEFINED", "NULL", "NAN"}:
+        fields["currency"] = "缺少已保存报价币种。"
+
+    items = list(quote.items.all())
+    if not items:
+        fields["items"] = "缺少已保存商品明细。"
+    else:
+        invalid_rows = []
+        for index, item in enumerate(items, start=1):
+            quantity = item.trade_quantity if item.trade_unit_id else item.quantity
+            unit_price = item.trade_unit_price if item.trade_unit_id else item.unit_price
+            if quantity is None or quantity <= 0 or unit_price is None or unit_price < 0:
+                invalid_rows.append(str(index))
+        if invalid_rows:
+            fields["items"] = f"第 {', '.join(invalid_rows)} 行的数量或单价缺失/无效。"
+    if fields:
+        raise QuotationExportValidationError(fields)
+
+
 def build_quotation_export_dto(quote, *, template_id=None):
     """Build a stable export view from the quotation and its saved snapshots."""
+    validate_quotation_export_source(quote)
     products = []
     subtotal = Decimal("0")
     for item in quote.items.all():
-        amount = item.amount
+        amount = Decimal(_money(item.amount))
         subtotal += amount
         image_path = ""
         if item.image_snapshot:
@@ -73,11 +109,12 @@ def build_quotation_export_dto(quote, *, template_id=None):
             image_path=image_path,
         ))
 
-    discount = Decimal(quote.discount).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
+    shipping_fee = Decimal(_money(quote.shipping_fee))
+    discount = Decimal(_money(quote.discount))
     resolved_template_id = template_id or (
         NO_DISCOUNT_TEMPLATE_ID if discount == Decimal("0.00") else WITH_DISCOUNT_TEMPLATE_ID
     )
-    total_amount = Decimal(quote.total_amount).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
+    total_amount = (subtotal + shipping_fee - discount).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
     deposit_amount = (total_amount * quote.deposit_ratio).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
     validity_days = (quote.valid_until - quote.quote_date).days if quote.valid_until else 30
     return QuotationExportDTO(
@@ -102,7 +139,7 @@ def build_quotation_export_dto(quote, *, template_id=None):
         totals={
             "currency": quote.currency,
             "subtotal": _money(subtotal),
-            "shipping_fee": _money(quote.shipping_fee),
+            "shipping_fee": _money(shipping_fee),
             "discount": _money(discount),
             "total_amount": _money(total_amount),
             "amount_words": "",  # populated by the export service

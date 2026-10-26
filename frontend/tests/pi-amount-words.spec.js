@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { formatPiAmountWords } from '../src/utils/piAmountWords.js'
+import { roundPiMoney } from '../src/utils/piMoney.js'
 
 describe('PI amount in words', () => {
+  it('rounds each displayed line before subtotal reconciliation', () => {
+    expect(roundPiMoney(1.005)).toBe(1.01)
+    expect(roundPiMoney(1.005) + roundPiMoney(1.005)).toBe(2.02)
+    expect(roundPiMoney(1.005 + 1.005)).toBe(2.01)
+  })
+
   it('renders the saved USD 246.00 total exactly', () => {
     expect(formatPiAmountWords(246, 'USD')).toBe('SAY TOTAL US DOLLARS TWO HUNDRED FORTY SIX ONLY')
   })

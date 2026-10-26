@@ -30,3 +30,14 @@ class OperationLogAdmin(admin.ModelAdmin):
     list_filter = ("action", "entity", "operator")
     search_fields = ("entity", "object_id", "object_label", "action_label", "operator__username")
     readonly_fields = tuple(field.name for field in OperationLog._meta.fields)
+
+    def has_add_permission(self, request):
+        # Audit rows are created only by the authenticated business operation
+        # hooks; the admin must never become a second write path.
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False

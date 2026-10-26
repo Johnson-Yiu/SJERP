@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.admin import site
 from django.core.exceptions import ValidationError
 from django.db import DatabaseError, connection, transaction
+from django.db.models.deletion import ProtectedError
 from django.test import RequestFactory, TestCase, override_settings
 from rest_framework.test import APIClient
 
@@ -55,6 +56,15 @@ class AuditTrailTests(TestCase):
         self.assertFalse(admin_instance.has_add_permission(request))
         self.assertFalse(admin_instance.has_change_permission(request))
         self.assertFalse(admin_instance.has_delete_permission(request))
+
+    @override_settings(AUDIT_LOG_ENABLED=True)
+    def test_operator_deletion_cannot_rewrite_historical_identity(self):
+        record_operation(request=self.request, instance=self.customer, action="custom", action_label="操作人保护")
+        row = OperationLog.objects.get()
+        with self.assertRaises(ProtectedError):
+            self.user.delete()
+        row.refresh_from_db()
+        self.assertEqual(row.operator_id, self.user.pk)
 
     @override_settings(AUDIT_LOG_ENABLED=True)
     def test_api_exposes_only_read_methods(self):

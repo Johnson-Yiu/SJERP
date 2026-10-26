@@ -384,7 +384,7 @@ ISS-020 更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue、不合并 master，
 
 基于统一基线 `f12b591cb90d6a5d8ebfedf1c559703377c92d84` 创建独立 worktree 和 `codex/iss-043-audit-protection`，先读取 2026-10-24 规则包原文并复核 Phase4 `RISK-AUDIT-01`。基线的 API 只读和敏感快照脱敏已经存在，但复现确认 Django admin 仍有默认删除权限，OperationLog ORM 可通过实例/QuerySet 改删，且数据库没有 append-only 防护；非开发环境也可静默关闭审计写入。
 
-本轮最小补修新增 OperationLog 实例与 QuerySet 追加写保护、admin 明确禁止新增/修改/删除、PostgreSQL 0088 触发器和非开发环境审计 fail-fast；保留开发超级管理员约定、ISS-021/ISS-026 历史操作、业务事务回滚和现有权限脱敏。新增 PostgreSQL 运行账号最小权限与独立维护 runbook，不执行真实生产授权，不引入外部审计平台。
+本轮最小补修新增 OperationLog 实例与 QuerySet 追加写保护、admin 明确禁止新增/修改/删除、PostgreSQL 0088 触发器、0089 操作人 PROTECT 和非开发环境审计 fail-fast；保留开发超级管理员约定、ISS-021/ISS-026 历史操作、业务事务回滚和现有权限脱敏。新增 PostgreSQL 运行账号最小权限与独立维护 runbook，不执行真实生产授权，不引入外部审计平台。
 
-SQLite 定向审计测试 7 项通过（其中 PostgreSQL 原始 SQL 保护 1 项因本机无 PostgreSQL 跳过），迁移至 0088、系统检查和迁移检查通过。真实生产 PostgreSQL 运行账号权限、角色继承、触发器现场验证、备份恢复及特殊维护演练为 `PENDING`；证据见 [`ISS-043 验收记录`](uat-evidence/iss-043-audit-protection/README.md)。本轮保持 ISS-043 `BLOCKED`，不关闭 Issue、不合并 master，等待部署证据和独立审查。
+SQLite 定向审计测试 8 项通过（其中 PostgreSQL 原始 SQL 保护 1 项因本机无 PostgreSQL 跳过），迁移至 0089、系统检查和迁移检查通过。真实生产 PostgreSQL 运行账号权限、角色继承、触发器现场验证、备份恢复及特殊维护演练为 `PENDING`；证据见 [`ISS-043 验收记录`](uat-evidence/iss-043-audit-protection/README.md)。本轮保持 ISS-043 `BLOCKED`，不关闭 Issue、不合并 master，等待部署证据和独立审查。
 

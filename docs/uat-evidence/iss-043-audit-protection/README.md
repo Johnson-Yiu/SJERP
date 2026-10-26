@@ -22,7 +22,7 @@ Ran 10 tests in 34.941s — OK
 
 - `OperationLog` 的实例 `save/delete`、QuerySet `update/delete/bulk_update` 均拒绝历史行修改；新增记录仍只由业务审计 hook 追加。
 - Django admin 对 OperationLog 明确禁止新增、修改、删除；普通用户和应用超级管理员没有后台写入口。
-- 新增 `crm.0088_operationlog_append_only`：仅 PostgreSQL 创建拒绝 UPDATE/DELETE 的触发器；SQLite 不冒充生产防篡改验证。
+- 新增 `crm.0088_operationlog_append_only`：仅 PostgreSQL 创建拒绝 UPDATE/DELETE 的触发器；新增 `crm.0089_operationlog_operator_protect`，避免删除操作人时通过 `ON DELETE SET NULL` 改写历史审计；SQLite 不冒充生产防篡改验证。
 - 非开发环境 `AUDIT_LOG_ENABLED` 默认开启，显式关闭会 fail fast；开发环境继续按 `AGENTS.md` 保持关闭。
 - 增加 PostgreSQL 运行账号最小权限和独立维护 runbook；不执行真实生产授权、不公开任何数据库或媒体目录。
 
@@ -32,7 +32,7 @@ Ran 10 tests in 34.941s — OK
 
 ```text
 python manage.py test crm.tests.test_audit --verbosity 2
-Ran 7 tests in 7.702s — OK (skipped=1)
+Ran 8 tests in 8.429s — OK (skipped=1)
 ```
 
 覆盖结果：
@@ -42,19 +42,20 @@ Ran 7 tests in 7.702s — OK (skipped=1)
 | 认证业务操作写入操作者、对象、前后快照 | PASS | `test_authenticated_operator_records_operation_with_snapshot` |
 | 业务事务异常时审计随事务回滚 | PASS | `test_audit_row_rolls_back_with_business_transaction` |
 | 普通应用 ORM 实例/API QuerySet 改写和删除 | PASS | `test_application_orm_cannot_mutate_or_delete_historical_rows` |
+| 删除操作人不改写历史身份 | PASS | `test_operator_deletion_cannot_rewrite_historical_identity`；0089 `PROTECT` |
 | Django 后台超级管理员新增/修改/删除 | PASS | `test_admin_is_read_only_even_for_superuser` |
 | REST API 写入路径 | PASS，均 405 | `test_api_exposes_only_read_methods` |
 | PostgreSQL 原始 SQL UPDATE/DELETE 触发器拒绝 | `PENDING` | 本机无 PostgreSQL 客户端/服务；测试在 PostgreSQL job 中执行 |
 
-迁移链在隔离 SQLite 测试库完整应用至 `0088`，系统检查通过；`makemigrations --check --dry-run` 无变化。PostgreSQL 触发器测试会在 `connection.vendor == "postgresql"` 时执行，SQLite 结果不计入生产安全验收。
+迁移链在隔离 SQLite 测试库完整应用至 `0089`，系统检查通过；`makemigrations --check --dry-run` 无变化。PostgreSQL 触发器测试会在 `connection.vendor == "postgresql"` 时执行，SQLite 结果不计入生产安全验收。
 
 全量回归日志：
 
 ```text
 python manage.py test --verbosity 1
-首次运行：937 tests，因 Worktree 的既有 backend/media Windows ACL 在附件上传测试写入时失败（环境问题，未修改该目录）。
+首次运行：938 tests，因 Worktree 的既有 backend/media Windows ACL 在附件上传测试写入时失败（环境问题，未修改该目录）。
 使用临时 MEDIA_ROOT=C:\Users\Johnson\AppData\Local\Temp\sunjack_iss043_media 重跑：
-Ran 937 tests in 410.673s
+Ran 938 tests in 490.124s
 OK (skipped=14)
 System check identified no issues (0 silenced).
 ```

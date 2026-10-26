@@ -32,6 +32,10 @@ class DatabaseSettingsTests(SimpleTestCase):
         })
         env.pop("DATABASE_URL", None)
         env.pop("MEDIA_ROOT", None)
+        if stage != "development":
+            # Deployed stages require an explicit absolute persistent media
+            # path; use an isolated value for settings-only subprocess tests.
+            env["MEDIA_ROOT"] = str(self.backend_dir / "test-media-production")
         if database_url is not None:
             env["DATABASE_URL"] = database_url
         if extra:
@@ -118,9 +122,36 @@ print(json.dumps({
         self.assertIn('"session_secure": true', result.stdout)
         self.assertIn('"csrf_secure": true', result.stdout)
         self.assertIn('"hsts": 31536000', result.stdout)
-        self.assertIn('media-production', result.stdout)
+        self.assertIn('test-media-production', result.stdout)
         self.assertIn('crm.authentication.SessionAuthenticationWithChallenge', result.stdout)
         self.assertNotIn(self.SAFE_TEST_SECRET, result.stdout)
+
+    def test_deployed_stage_requires_explicit_media_root(self):
+        result = self.load_process(
+            "production",
+            "postgresql://user:password@db.internal:5432/sunjack_production",
+            extra={"MEDIA_ROOT": ""},
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("MEDIA_ROOT is required outside development", result.stderr)
+
+    def test_deployed_stage_rejects_relative_media_root(self):
+        result = self.load_process(
+            "production",
+            "postgresql://user:password@db.internal:5432/sunjack_production",
+            extra={"MEDIA_ROOT": "media-production"},
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("MEDIA_ROOT must be an absolute path", result.stderr)
+
+    def test_media_root_cannot_overlap_static_root(self):
+        result = self.load_process(
+            "production",
+            "postgresql://user:password@db.internal:5432/sunjack_production",
+            extra={"MEDIA_ROOT": str(self.backend_dir / "staticfiles")},
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("MEDIA_ROOT and STATIC_ROOT must be separate", result.stderr)
 
     def test_production_rejects_debug_enabled(self):
         result = self.load_process(

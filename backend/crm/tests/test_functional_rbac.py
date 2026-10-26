@@ -243,6 +243,9 @@ class FunctionalRBACApiTests(TestCase):
             self.assertEqual(allowed.status_code, 200)
             self.assertEqual(b"".join(allowed.streaming_content), b"private bytes")
             self.addClassCleanup(allowed.close)
+            self.assertEqual(self.client.get(f"/media/{attachment.file.name}").status_code, 404)
+            self.assertEqual(self.client.get(f"/api/media/../{attachment.file.name}").status_code, 404)
+            self.assertEqual(self.client.get(f"/api/media/%2e%2e/{attachment.file.name}").status_code, 404)
 
             outsider = self.make_user(username="media-outsider", roles=[self.role])
             self.auth(outsider)

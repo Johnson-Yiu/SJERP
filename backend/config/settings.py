@@ -181,7 +181,31 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
-MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", str(BASE_DIR / ("media" if APP_STAGE == "development" else "media-production"))))
+_media_root_value = os.getenv("MEDIA_ROOT", "").strip()
+if APP_STAGE in _DEPLOYED_STAGES and not _media_root_value:
+    raise ImproperlyConfigured("MEDIA_ROOT is required outside development and must point to a persistent private volume.")
+MEDIA_ROOT = Path(_media_root_value or BASE_DIR / "media")
+if APP_STAGE in _DEPLOYED_STAGES and not MEDIA_ROOT.is_absolute():
+    raise ImproperlyConfigured("MEDIA_ROOT must be an absolute path outside development.")
+
+# FileField/ImageField already use Django's storage abstraction. Keep the
+# initial deployment on a local filesystem while leaving one explicit seam for
+# a future object-storage backend. No URL route is added for MEDIA_URL; ERP
+# files are served only by crm.file_access after authorization.
+MEDIA_STORAGE_BACKEND = os.getenv(
+    "MEDIA_STORAGE_BACKEND",
+    "django.core.files.storage.FileSystemStorage",
+).strip()
+if not MEDIA_STORAGE_BACKEND:
+    raise ImproperlyConfigured("MEDIA_STORAGE_BACKEND must not be empty.")
+_resolved_media_root = MEDIA_ROOT.resolve()
+_resolved_static_root = STATIC_ROOT.resolve()
+if _resolved_media_root == _resolved_static_root or _resolved_media_root in _resolved_static_root.parents or _resolved_static_root in _resolved_media_root.parents:
+    raise ImproperlyConfigured("MEDIA_ROOT and STATIC_ROOT must be separate directories.")
+STORAGES = {
+    "default": {"BACKEND": MEDIA_STORAGE_BACKEND},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOW_CREDENTIALS = True

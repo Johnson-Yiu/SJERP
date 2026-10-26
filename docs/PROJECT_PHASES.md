@@ -404,3 +404,13 @@ SQLite 定向审计测试 8 项通过（其中 PostgreSQL 原始 SQL 保护 1 �
 
 本轮不关闭 Issue、不合并 master、不部署。延期台账仅更新原有 ISS-043、ISS-075、ISS-023：ISS-043 真实 PostgreSQL 与最终 CI 为 `DEPLOYMENT_VERIFICATION_PENDING`；ISS-075 真实业务财务数据的无付款阶段跨模块抽查为 `BUSINESS_VERIFICATION_PENDING`；ISS-023 真实 SKU 型号完整性抽查为 `BUSINESS_VERIFICATION_PENDING`。ISS-023 窄屏菜单可用性已通过，不作为遗留事项。三项等待统一独立审查。
 
+## ISS-080 客户联系人疑似重复提醒（2026-10-27）
+
+基于 `8b2b5c19e517addd9604b239211e199a789b739e` 创建独立 Worktree 和分支 `codex/iss-080-contact-duplicates`，读取用户 2026-10-24 规则包原文，并复核联系人新增、编辑、搜索、分页及 ISS-025、ISS-027、ISS-029 相关规则。确认原有实现只对当前已加载的联系人列表计算提示，搜索、客户筛选或分页会遗漏同一客户的其他联系人。
+
+本轮最小修复复用既有 `/contacts/?customer=<id>` 授权查询和 `listAll` 分页机制，在新建/编辑选择客户后获取该客户全部授权联系人；前端按邮箱、保留国际区号的电话、相同或明显相近姓名给出可解释原因，编辑排除自身，提供“查看联系人”入口，且提醒不阻断人工继续创建。不同客户不比较，不合并联系人，不改历史跟进或报价快照，不新增迁移；后端范围测试确认员工不能通过客户过滤泄露无权联系人。
+
+Django `crm` 全量 942 项（跳过14）、定向后端2项、前端有效 Vitest 658 项、前端定向61项、生产构建、迁移检查、Playwright CRM 11/11，以及真实 Chrome Use 桌面和 `390×844` 窄屏验证均通过。Chrome Use 在搜索结果为空时仍显示同一客户全量联系人提示，并验证手动继续保存；完整命令和证据见 [`ISS-080 验收记录`](uat-evidence/iss-080-contact-duplicates/README.md)。托管 Worktree 默认 media 目录 ACL 不可写，完整测试使用临时 `MEDIA_ROOT`，应用无相关失败。实现提交为 `efb2546b69ae4ace60715dcb97803145248d3a1b`。
+
+ISS-080 更新为 `FIXED_PENDING_REVIEW`，真实生产账号/数据库及跨员工真实业务数据抽查属于后续独立复审范围；不关闭 Issue、不合并 master、不修改其他工作树。
+

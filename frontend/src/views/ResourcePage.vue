@@ -6,8 +6,6 @@ import { contactRows, duplicateContactHint, followUpRows, richTextExcerpt } from
 import InventoryPagination from '../components/InventoryPagination.vue'
 import { inventoryPage } from '../utils/inventoryPagination'
 import { supplierStoreUrl, supplierFilters, supplierRows } from '../utils/supplierPresentation'
-import PaymentTermsEditor from '../components/PaymentTermsEditor.vue'
-import { copyPaymentTerms, paymentTermsError } from '../utils/paymentTerms'
 import { movementTypes, movementDirection, movementSource, sourceLabels, movementStatus, ledgerFilters, filteredMovements, movementSummary, movementUnit, signedMovement } from '../utils/inventoryLedger'
 import CategoryMultiPicker from "../components/CategoryMultiPicker.vue"
 import CertificateExpiryBadge from '../components/CertificateExpiryBadge.vue'
@@ -62,9 +60,9 @@ const crmFilter = computed(() => ({
 const supplierCategories = ref([]), supplierCategoryError = ref(''), supplierSaveError = ref('')
 const supplierLifecycleBusyId = ref(null)
 const supplierFilter = computed(() => supplierFilters(route.query))
-const supplierGroupTitles = ['基本资料', '联系方式', '可供产品分类', '付款条款', '其他备注']
+const supplierGroupTitles = ['基本资料', '联系方式', '可供产品分类', '付款备注', '其他备注']
 const listColumns = computed(() => isCertificatePage.value ? [['name','证书与编号'],['product_name','所属产品'],['issuer','签发机构'],['issued_date','签发日期','date'],['expires_on','有效期至','date'],['expiry_status','有效状态'],['file_url','文件']] : isSupplierPage.value
-  ? [['name','供应商'],['is_active','状态','status'],['main_products','产品与可供分类'],['contact_name','联系方式'],['payment_terms_summary','系统执行付款规则'],['payment_terms','付款条款说明（备注）']]
+  ? [['name','供应商'],['is_active','状态','status'],['main_products','产品与可供分类'],['contact_name','联系方式'],['payment_terms','付款条款说明（备注）']]
   : isContactPage.value
     ? [['customer_name','所属客户'],['name','联系人'],['contact_methods','联系方式'],['is_primary','主联系人','boolean']]
     : isFollowUpPage.value
@@ -88,7 +86,7 @@ const customerFilter = computed(() => ({
 const isCoreListPage = computed(() => isCustomerPage.value || isMovementPage.value || isSupplierPage.value)
 const primaryAction = computed(() => isCertificatePage.value ? '新建产品证书' : isParameterPage.value ? '新建产品参数' : isCustomerPage.value ? '新建客户' : isMovementPage.value ? '新建库存调整' : isSupplierPage.value ? '新建供应商' : isContactPage.value ? '新建联系人' : isFollowUpPage.value ? '新建跟进记录' : '新建记录')
 const listNoun = computed(() => isCertificatePage.value ? '产品证书' : isParameterPage.value ? '产品参数' : isCustomerPage.value ? '客户' : isSupplierPage.value ? '供应商' : isContactPage.value ? '联系人' : isFollowUpPage.value ? '跟进记录' : '库存流水')
-const hasListFilters = computed(() => Boolean(query.value || (isCustomerPage.value && [customerFilter.value.owner, customerFilter.value.country, customerFilter.value.status].some(Boolean)) || ((isParameterPage.value || isCertificatePage.value) && route.query.product) || (isCertificatePage.value && route.query.expiry) || (isSupplierPage.value && (supplierFilter.value.category || supplierFilter.value.terms)) || (isMovementPage.value && [movementFilters.value.type, movementFilters.value.direction, movementFilters.value.source, route.query.sku].some(Boolean)) || (isContactPage.value && [crmFilter.value.customer, crmFilter.value.primary].some(Boolean)) || (isFollowUpPage.value && [crmFilter.value.customer, crmFilter.value.owner, crmFilter.value.type, crmFilter.value.from, crmFilter.value.to, route.query.due].some(Boolean))))
+const hasListFilters = computed(() => Boolean(query.value || (isCustomerPage.value && [customerFilter.value.owner, customerFilter.value.country, customerFilter.value.status].some(Boolean)) || ((isParameterPage.value || isCertificatePage.value) && route.query.product) || (isCertificatePage.value && route.query.expiry) || (isSupplierPage.value && supplierFilter.value.category) || (isMovementPage.value && [movementFilters.value.type, movementFilters.value.direction, movementFilters.value.source, route.query.sku].some(Boolean)) || (isContactPage.value && [crmFilter.value.customer, crmFilter.value.primary].some(Boolean)) || (isFollowUpPage.value && [crmFilter.value.customer, crmFilter.value.owner, crmFilter.value.type, crmFilter.value.from, crmFilter.value.to, route.query.due].some(Boolean))))
 const isMovementPage = computed(() => props.config.endpoint === 'inventory-movements')
 const movementSkus = ref([])
 const movementFilters = computed(() => ledgerFilters(route.query))
@@ -102,7 +100,7 @@ let crmRequest = 0
 function updateLedgerQuery(patch, replace = false) {
   ledgerUpdates = ledgerUpdates.catch(() => {}).then(() => {
     const next = { ...route.query, ...patch }
-    if (['search', 'owner_profile', 'country', 'status', 'type', 'direction', 'source', 'supplyCategory', 'termsMode'].some(key => key in patch)) delete next.page
+    if (['search', 'owner_profile', 'country', 'status', 'type', 'direction', 'source', 'supplyCategory'].some(key => key in patch)) delete next.page
     Object.keys(next).forEach(key => { if (next[key] === undefined || next[key] === '') delete next[key] })
     return router[replace ? 'replace' : 'push']({ path: route.path, query: next, hash: route.hash })
   })
@@ -177,7 +175,7 @@ const statusLabels = { lead: '线索', contact: '已建立联系', opportunity: 
 const editorFields = computed(() => {
   if (isCertificatePage.value) return [['product','name','certificate_no','issuer'],['issued_date','expires_on'],['file','notes']].map(keys=>keys.map(key=>props.config.fields.find(field=>field[0]===key)))
   if (isParameterPage.value) return [['product','group'],['name','value','unit','sort_order']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
-  if (isSupplierPage.value) return [['name','code','country','main_products'],['contact_name','phone','email','store_url'],['supply_categories'],['payment_terms','payment_terms_config'],['notes']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
+  if (isSupplierPage.value) return [['name','code','country','main_products'],['contact_name','phone','email','store_url'],['supply_categories'],['payment_terms'],['notes']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
   if (isContactPage.value) return [['customer','name','title','is_primary'],['phone','whatsapp','email'],['notes']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
   if (isFollowUpPage.value) return [['customer','contact','followed_at','type'],['subject','content','result'],['next_action','next_follow_up_mode','next_follow_up','owner']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
   if (props.config.endpoint !== 'customers') return props.config.fields
@@ -220,7 +218,7 @@ const supplierCodeError = computed(() => supplierCodeConflict.value || supplierC
 const resourceMetrics = computed(() => {
   const endpoint = props.config.endpoint
   if (isMovementPage.value) return movementSummary(visibleRows.value)
-  if (isSupplierPage.value) return [{label:'供应商',value:visibleRows.value.length,hint:'全部筛选结果'},{label:'可供分类',value:new Set(visibleRows.value.flatMap(row=>row.supply_categories || [])).size,hint:'已选择的分类'},{label:'自定义付款规则',value:visibleRows.value.filter(row=>row.payment_terms_config?.length).length,hint:'按结构化配置统计'},{label:'有店铺链接',value:visibleRows.value.filter(row=>supplierStoreUrl(row.store_url)).length,hint:'可打开的网页链接'}]
+  if (isSupplierPage.value) return [{label:'供应商',value:visibleRows.value.length,hint:'全部筛选结果'},{label:'可供分类',value:new Set(visibleRows.value.flatMap(row=>row.supply_categories || [])).size,hint:'已选择的分类'},{label:'有店铺链接',value:visibleRows.value.filter(row=>supplierStoreUrl(row.store_url)).length,hint:'可打开的网页链接'}]
   if (isParameterPage.value) return [{label:'参数记录',value:rows.value.length,hint:'当前筛选结果'},{label:'所属产品',value:new Set(rows.value.map(row=>row.product)).size,hint:'当前记录关联产品'},{label:'参数分组',value:new Set(rows.value.map(row=>row.group || '未分组')).size,hint:'当前筛选范围'},{label:'有单位的参数',value:rows.value.filter(row=>row.unit).length,hint:'参数值的展示单位'}]
   if (isCertificatePage.value) return [{label:'证书记录',value:rows.value.length,hint:'当前筛选结果'},{label:'已过期',value:rows.value.filter(r=>r.expiry_status==='expired').length,hint:'按服务端日期判断'},{label:'90天内到期',value:rows.value.filter(r=>['expiring_30','expiring_90'].includes(r.expiry_status)).length,hint:'含今日到期'},{label:'未填有效期',value:rows.value.filter(r=>r.expiry_status==='no_expiry').length,hint:'不代表永久有效'}]
   const total = rows.value.length
@@ -500,7 +498,6 @@ function resetForm() {
       ? { country: '中国', payment_terms: '30%预付款，70%尾款发货前结清' }[name]
       : undefined
     form[name] = type === 'remote_multi' ? [] : type === 'checkbox' ? name === 'active' : type === 'select' ? Object.keys(extra)[0] : type === 'file' ? null : (route.query[name] ?? supplierDefault ?? '')
-    if (type === 'payment_terms') form[name] = copyPaymentTerms()
     if (type === 'followup_schedule') form[name] = 'keep'
   })
   supplierCodeServerError.value = ''
@@ -557,7 +554,6 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
     let value = row[name]
     if (type === 'datetime-local' && value) value = value.slice(0, 16)
     form[name] = value ?? (type === 'checkbox' ? false : '')
-    if (type === 'payment_terms') form[name] = copyPaymentTerms(value)
     if (type === 'followup_schedule') form[name] = value || 'keep'
   })
   currentCertificateFileUrl.value = isCertificatePage.value ? (row.file_url || '') : ''
@@ -642,7 +638,6 @@ async function save() {
     if (!form.supply_categories?.length) { supplierSaveError.value = '请选择至少一个可供产品分类。'; return }
   }
   if (supplierCodeError.value) return notify(supplierCodeError.value, true)
-  if (props.config.endpoint === 'suppliers' && paymentTermsError(form.payment_terms_config)) return notify(paymentTermsError(form.payment_terms_config), true)
   if (props.config.endpoint === 'follow-ups') {
     followUpSaveAttempted.value = true
     if (followUpScheduleError.value) return notify(followUpScheduleError.value, true)
@@ -837,7 +832,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
       <button class="btn btn-secondary" @click="resetLedgerFilters">重置</button>
     </div>
     <p v-if="isMovementPage" class="ledger-help">数量按 SKU 基础单位显示；自动流水不可手工修改。</p>
-    <div v-else-if="isSupplierPage" class="supplier-filter-bar" aria-label="供应商筛选"><label>搜索<input v-model="query" aria-label="搜索供应商" placeholder="名称、代码、联系人、产品…" @input="delayedSearch" /></label><label v-if="can('categories','view')">可供分类<select :value="supplierFilter.category" aria-label="按可供分类筛选" @change="updateLedgerQuery({supplyCategory:$event.target.value || undefined})"><option value="">全部分类</option><option v-for="category in supplierCategories" :key="category.id" :value="String(category.id)">{{ category.name }}</option></select></label><label>付款规则<select :value="supplierFilter.terms" aria-label="按付款规则筛选" @change="updateLedgerQuery({termsMode:$event.target.value || undefined})"><option value="">全部规则</option><option value="default">系统默认</option><option value="custom">自定义规则</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><div v-if="isSupplierPage && supplierCategoryError" role="alert" class="option-load-error">分类加载失败：{{ supplierCategoryError }} <button @click="loadSupplierCategories">重新加载分类</button></div><p v-if="isSupplierPage" class="supplier-rule-note">付款备注仅供沟通参考；采购付款计划使用“系统执行付款规则”。</p><div v-if="!isMovementPage && !isSupplierPage && !isCrmPage && !isCustomerPage" class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" :aria-label="isCertificatePage ? '搜索产品证书' : isParameterPage ? '搜索产品参数' : undefined" :placeholder="isParameterPage ? '参数名称、值或分组' : '搜索当前列表...'" @input="delayedSearch" /></div></div>
+    <div v-else-if="isSupplierPage" class="supplier-filter-bar" aria-label="供应商筛选"><label>搜索<input v-model="query" aria-label="搜索供应商" placeholder="名称、代码、联系人、产品…" @input="delayedSearch" /></label><label v-if="can('categories','view')">可供分类<select :value="supplierFilter.category" aria-label="按可供分类筛选" @change="updateLedgerQuery({supplyCategory:$event.target.value || undefined})"><option value="">全部分类</option><option v-for="category in supplierCategories" :key="category.id" :value="String(category.id)">{{ category.name }}</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><div v-if="isSupplierPage && supplierCategoryError" role="alert" class="option-load-error">分类加载失败：{{ supplierCategoryError }} <button @click="loadSupplierCategories">重新加载分类</button></div><p v-if="isSupplierPage" class="supplier-rule-note">付款备注仅供沟通参考；采购单付款条件需逐单协商。</p><div v-if="!isMovementPage && !isSupplierPage && !isCrmPage && !isCustomerPage" class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" :aria-label="isCertificatePage ? '搜索产品证书' : isParameterPage ? '搜索产品参数' : undefined" :placeholder="isParameterPage ? '参数名称、值或分组' : '搜索当前列表...'" @input="delayedSearch" /></div></div>
     <div class="panel">
       <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
       <ListEmptyState v-if="hasLoaded && !visibleRows.length" :entity="listNoun || config.title.replace('管理','')" :filtered="filteredListEmpty" @clear="clearListFilters"><template #action><p v-if="can(accessModule, 'create')">点击“{{ primaryAction }}”开始录入。</p></template></ListEmptyState>
@@ -871,7 +866,6 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
           <p v-if="form.next_follow_up_mode === 'keep'" class="field-help">当前计划：{{ currentFollowUpPlan || '暂无跟进日期' }}</p>
           <p v-else-if="form.next_follow_up_mode === 'clear'" class="field-help">这会清除该客户当前的下次跟进日期。</p>
         </div>
-        <PaymentTermsEditor v-else-if="field[2] === 'payment_terms'" v-model="form[field[0]]" :description="isSupplierPage ? '用于新采购的付款计划；已保存采购保留原快照。比例合计须为 100%。' : ''" />
         <textarea :maxlength="isSupplierPage && field[0] === 'payment_terms' ? 200 : undefined" :aria-label="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? editorFieldLabel(field) : undefined" v-else-if="field[2] === 'textarea' || (isSupplierPage && field[0] === 'payment_terms')" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" />
         <SimpleRichTextEditor v-else-if="field[2] === 'richtext'" v-model="form[field[0]]" :label="isCrmPage ? editorFieldLabel(field) : ''" @paste-files="addFollowUpFiles" />
         <ComboInput v-else-if="field[2] === 'combo'" v-model="form[field[0]]" :options="options[field[4]] || []" :label="isCrmPage || (isCustomerPage && field[0] === 'country') ? editorFieldLabel(field) : ''" :placeholder="isCustomerPage && field[0] === 'country' ? '搜索名称、中文或代码后选择' : undefined" :required="field[3]" :allow-custom="!(isCustomerPage && field[0] === 'country')" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]])" />
@@ -940,7 +934,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 
 
       </div>
-      <div class="modal-foot"><p v-if="isFollowUpPage && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (isSupplierPage && (!!supplierCodeError || !!paymentTermsError(form.payment_terms_config)))">{{ saving ? '保存中…' : saveLabel }}</button></div>
+      <div class="modal-foot"><p v-if="isFollowUpPage && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (isSupplierPage && !!supplierCodeError)">{{ saving ? '保存中…' : saveLabel }}</button></div>
     </form></div>
 
     <Transition name="detail-drawer" appear>

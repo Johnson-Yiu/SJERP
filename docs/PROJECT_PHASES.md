@@ -364,6 +364,14 @@ ISS-021 的正式 SO 数量、付款限制、采购保留、历史主体快照�
 
 ISS-020 更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue、不合并 master，等待统一独立代码、权限、文件和视觉审查。
 
+## ISS-023 Sales Model 自动生成与人工设置（2026-10-26）
+
+基于统一基线 `f12b591cb90d6a5d8ebfedf1c559703377c92d84` 创建独立 worktree 和分支 `codex/iss-023-sales-model`，读取用户 2026-10-24 规则包原文，并核对 ISS-087、ISS-035、ISS-020、ISS-037 的 SKU 身份、模板、报价快照和 PI/XLSX 现状。确认的唯一实际代码缺口是参数编辑会用新规则预览覆盖已保存的人工型号。
+
+最小修补使后端只在保存值仍等于旧参数自动生成值时刷新型号；人工型号和明确空型号不被覆盖。前端提交保存型号，身份确认和组合预览继续显示保存值与当前规则预览的差异。未新增迁移、未批量重命名旧 SKU、未修改报价编号/修订链、正式单据快照或财务统计。后端 SKU 专项最终 31 项、Node 154 项、相关 Vitest 48 项、Django 全量 933 项（13 跳过，条件修补前全量）和生产构建通过；独立 SQLite 全新迁移及 `makemigrations --check` 通过。真实 Chrome 完成桌面人工型号保存、普通字段编辑保留型号和 `390×844` 窄屏回归，截图及测试日志见 [`ISS-023 验收记录`](uat-evidence/iss-023-sales-model/README.md)。
+
+真实生产 SKU 主数据完整性、正式账号/数据库和部署环境仍需后续业务抽查及独立复审；本轮不关闭 Issue、不合并 `master`。
+
 ## ISS-051 开发与生产环境安全分离（2026-10-26）
 
 基于统一基线 `28ba758388429f57c2e3516e12385a88ce6646a3` 创建独立 worktree 和 `codex/iss-051-environment-isolation`。读取 2026-10-24 规则包原文，审查 Django 配置、开发身份、数据库、RBAC、登录、媒体和 CI 配置；没有连接真实生产数据库、创建生产账号或写入真实密钥。
@@ -379,4 +387,20 @@ ISS-020 更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue、不合并 master，
 新增接续 `0085` 的 `0086_purchase_moq_exception`，不复制、删除或改写既有迁移。草稿和计划按同供应商来源、同 SupplierSKU、基础单位合计；交易单位先换算，不自动补量；没有可靠 MOQ 不提示。低于 MOQ 仍可保存草稿，正式下单要求填写例外原因，采购单保存原因、明细快照、时间、采购单和已认证操作员；价格、内部参考成本、状态转换、ISS-024/ISS-039 采购来源与成本逻辑不变。
 
 统一集成全量 Django `crm` 932 项（跳过 13）、MOQ/报价定向 82 项、Node 153 项、有效 Vitest 657 项、生产构建和真实 Chrome 均已执行；迁移额外验证了新库和 `0085→0087` 升级。完整命令、网络响应、隔离夹具及截图见 [`ISS-020 / ISS-022 / ISS-051 集成验收`](uat-evidence/integration-020-022-051/README.md)。本轮不合并 master、不关闭 Issue，ISS-022 保持 `FIXED_PENDING_REVIEW`，等待统一独立审查。
+
+## ISS-043 重要业务操作日志防篡改（2026-10-26）
+
+基于统一基线 `f12b591cb90d6a5d8ebfedf1c559703377c92d84` 创建独立 worktree 和 `codex/iss-043-audit-protection`，先读取 2026-10-24 规则包原文并复核 Phase4 `RISK-AUDIT-01`。基线的 API 只读和敏感快照脱敏已经存在，但复现确认 Django admin 仍有默认删除权限，OperationLog ORM 可通过实例/QuerySet 改删，且数据库没有 append-only 防护；非开发环境也可静默关闭审计写入。
+
+本轮最小补修新增 OperationLog 实例与 QuerySet 追加写保护、admin 明确禁止新增/修改/删除、PostgreSQL 0088 触发器、0089 操作人 PROTECT 和非开发环境审计 fail-fast；保留开发超级管理员约定、ISS-021/ISS-026 历史操作、业务事务回滚和现有权限脱敏。新增 PostgreSQL 运行账号最小权限与独立维护 runbook，不执行真实生产授权，不引入外部审计平台。
+
+SQLite 定向审计测试 8 项通过（其中 PostgreSQL 原始 SQL 保护 1 项因本机无 PostgreSQL 跳过），迁移至 0089、系统检查和迁移检查通过。真实生产 PostgreSQL 运行账号权限、角色继承、触发器现场验证、备份恢复及特殊维护演练为 `PENDING`；证据见 [`ISS-043 验收记录`](uat-evidence/iss-043-audit-protection/README.md)。本轮保持 ISS-043 `BLOCKED`，不关闭 Issue、不合并 master，等待部署证据和独立审查。
+
+## ISS-043 / ISS-075 / ISS-023 统一集成验收（2026-10-26）
+
+基于统一基线 `f12b591cb90d6a5d8ebfedf1c559703377c92d84` 创建独立 Worktree 和 `codex/integration-043-075-023`，按 ISS-043 → ISS-075 → ISS-023 顺序完整移交已审查提交：ISS-043 `dea057ce0c98fc32da44b72999beb4af78a58176`、ISS-075 `771307b19667256453c7c22ebf60256ffd2a26dd`、ISS-023 `c6a1415437fb2a020ec31d655fe8ce274aa93912`。没有整文件覆盖；`serializers.py` 和两份公共台账自动合并后逐段复核。0088 依赖 0087、0089 依赖 0088，迁移历史完整。
+
+集成后 Django 定向 117（跳过1）及全量 940（跳过14）、Node 154、有效 Vitest 657、生产构建、SQLite 全新迁移、0087→0089 升级、`makemigrations --check` 和真实 Chrome 桌面/390×844 回归通过。Chrome 隔离数据核对了空付款阶段 PO、历史 500/500 付款计划、SKU 页面和窄屏菜单收起；控制台无 error/warning。证据见 [`ISS-043 / ISS-075 / ISS-023 统一集成验收`](uat-evidence/integration-043-075-023/README.md)。
+
+本轮不关闭 Issue、不合并 master、不部署。延期台账仅更新原有 ISS-043、ISS-075、ISS-023：ISS-043 真实 PostgreSQL 与最终 CI 为 `DEPLOYMENT_VERIFICATION_PENDING`；ISS-075 真实业务财务数据的无付款阶段跨模块抽查为 `BUSINESS_VERIFICATION_PENDING`；ISS-023 真实 SKU 型号完整性抽查为 `BUSINESS_VERIFICATION_PENDING`。ISS-023 窄屏菜单可用性已通过，不作为遗留事项。三项等待统一独立审查。
 

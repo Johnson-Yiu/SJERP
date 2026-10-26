@@ -644,7 +644,10 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     def validate_payment_terms_snapshot(self, value):
         from .payment_terms import validate_payment_terms
         try:
-            return validate_payment_terms(value)
+            # A draft may intentionally have no negotiated payment stages yet.
+            # Formal POs keep the saved snapshot, and finance only creates plans
+            # from a non-empty snapshot; never fill one from the supplier rule.
+            return validate_payment_terms(value, allow_default=True)
         except DjangoValidationError as exc:
             raise serializers.ValidationError(exc.messages)
 
@@ -728,14 +731,6 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
             raise PermissionDenied("关联供应商需要供应商查看权限。")
         if user is not None and attrs.get("items") and not user_can(user, "skus", "view"):
             raise PermissionDenied("采购明细需要 SKU 查看权限。")
-        if "payment_terms_snapshot" not in attrs and (self.instance is None or (
-            self.instance.status == "draft" and supplier != self.instance.supplier
-        )):
-            from .payment_terms import default_payment_terms, validate_payment_terms
-            try:
-                attrs["payment_terms_snapshot"] = validate_payment_terms(supplier.payment_terms_config or default_payment_terms())
-            except DjangoValidationError as exc:
-                raise serializers.ValidationError({"payment_terms_snapshot": exc.messages})
         unit_rows = attrs.get("items")
         if (
             self.instance is not None
@@ -1605,7 +1600,24 @@ class SKUSerializer(serializers.ModelSerializer):
                     validated_data[field] = value
         if parameter_changed:
             sales_model_base = self._generated_identity(validated_data).get("sales_model_base", "")
-            if sales_model_base:
+            current_generated_model = self._generated_identity({
+                "product": instance.product,
+                "specification": instance.specification,
+                "parameter_values": instance.parameter_values,
+                "product_details": instance.product_details,
+                "sales_model_abbreviations": instance.sales_model_abbreviations,
+            }).get("sales_model_base", "")
+            supplied_model = validated_data.get("sales_model") if "sales_model" in self.initial_data else instance.sales_model
+            # Regenerate only when the saved value still equals the model the
+            # generator produced for the old identity. A different value is a
+            # deliberate manual model; an explicit blank remains legacy-empty.
+            auto_model_is_still_saved = (
+                supplied_model == instance.sales_model
+                and bool(instance.sales_model)
+                and instance.sales_model == current_generated_model
+            )
+            omitted_model_can_generate = "sales_model" not in self.initial_data and not instance.sales_model
+            if sales_model_base and (auto_model_is_still_saved or omitted_model_can_generate):
                 validated_data["sales_model"] = sales_model_base
             validated_data["display_name_key"] = normalize_display_name(validated_data.get("display_name_cn", "")) or None
             conflicts = identity_conflict_messages(

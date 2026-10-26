@@ -70,9 +70,11 @@ if APP_STAGE in _DEPLOYED_STAGES and not RBAC_ENFORCEMENT:
 DEFAULT_OPERATOR_NAME = os.getenv("DEFAULT_OPERATOR_NAME", "Johnson" if APP_STAGE == "development" else "").strip()
 # Controlled aliases only; no account numbers, credentials, cutover date or balance.
 RMB_CASH_ACCOUNT_IDS = tuple(value.strip() for value in os.getenv("RMB_CASH_ACCOUNT_IDS", "").split(",") if value.strip())
-# Audit records stay disabled during local development. Turn this on explicitly
-# in the closed-beta environment after real user authentication is available.
-AUDIT_LOG_ENABLED = _env_bool("AUDIT_LOG_ENABLED", False)
+# Audit records stay disabled only in local development. Deployed environments
+# must fail closed instead of silently accepting business writes without audit.
+AUDIT_LOG_ENABLED = _env_bool("AUDIT_LOG_ENABLED", APP_STAGE != "development")
+if APP_STAGE in _DEPLOYED_STAGES and not AUDIT_LOG_ENABLED:
+    raise ImproperlyConfigured("AUDIT_LOG_ENABLED must be true outside development.")
 ALLOWED_HOSTS = _env_list(
     "DJANGO_ALLOWED_HOSTS",
     ("localhost", "127.0.0.1") if APP_STAGE == "development" else (),

@@ -49,6 +49,7 @@ jobs:
       DJANGO_ALLOWED_HOSTS: localhost
       DEVELOPMENT_SUPERADMIN: 'false'
       RBAC_ENFORCEMENT: 'true'
+      AUDIT_LOG_ENABLED: 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

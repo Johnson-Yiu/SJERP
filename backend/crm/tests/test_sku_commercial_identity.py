@@ -72,6 +72,32 @@ class SkuCommercialIdentityTests(TestCase):
         self.assertEqual(sku.sales_model, "COB320-6K")
         self.assertEqual(response.data["sales_model"], "COB320-6K")
 
+    def test_parameter_change_refreshes_a_still_generated_sales_model(self):
+        attribute = CategoryAttribute.objects.get(key="voltage")
+        attribute.include_in_sales_model = True
+        attribute.save(update_fields=["include_in_sales_model"])
+        abbreviation_key = f"{self.product.category_id}:voltage:"
+        sku, _ = self.create_sku(
+            sales_model=None,
+            sales_model_abbreviations={f"{abbreviation_key}24": "6K", f"{abbreviation_key}12": "7K"},
+        )
+
+        response = self.client.patch(
+            f"/api/skus/{sku.id}/",
+            {
+                "parameter_values": {"voltage": "12", "width": "8"},
+                "specification": "12V / 8mm",
+                "sales_model": "COB320-6K",
+                "sales_model_abbreviations": {f"{abbreviation_key}12": "7K"},
+                "identity_change_confirmed": True,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        sku.refresh_from_db()
+        self.assertEqual(sku.sales_model, "COB320-7K")
+
     def test_required_category_attribute_is_enforced_for_create_and_update(self):
         attribute = CategoryAttribute.objects.get(key="voltage")
         attribute.required = True
@@ -176,6 +202,27 @@ class SkuCommercialIdentityTests(TestCase):
         self.assertEqual(version.display_name_cn_snapshot, original_name)
         self.assertEqual(version.sales_model_snapshot, "CB8-24-A1")
         self.assertIn("parameter_values", version.changed_fields)
+
+    def test_confirmed_parameter_change_preserves_explicit_sales_model(self):
+        sku, _ = self.create_sku(sales_model="CUSTOM-LEGACY")
+
+        response = self.client.patch(
+            f"/api/skus/{sku.id}/",
+            {
+                "parameter_values": {"voltage": "24", "width": "10"},
+                "specification": "24V / 10mm",
+                "sales_model": "CUSTOM-REVISED",
+                "identity_change_confirmed": True,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        sku.refresh_from_db()
+        self.assertEqual(sku.sales_model, "CUSTOM-REVISED")
+        version = SKUVersion.objects.get(sku=sku)
+        self.assertEqual(version.sales_model_snapshot, "CUSTOM-LEGACY")
+        self.assertIn("sales_model", version.changed_fields)
 
     def test_quote_and_order_history_block_parameter_identity_changes_but_allow_display_renames(self):
         quoted, _ = self.create_sku()

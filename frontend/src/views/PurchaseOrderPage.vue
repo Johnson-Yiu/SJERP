@@ -2,7 +2,7 @@
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 import PaymentTermsEditor from '../components/PaymentTermsEditor.vue'
-import { copyPaymentTerms, paymentTermsError } from '../utils/paymentTerms'
+import { copySavedPaymentTerms, paymentTermsError } from '../utils/paymentTerms'
 import { compactDecimalInput } from '../utils/decimalInput'
 import TradeUnitPicker from '../components/TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
@@ -81,15 +81,9 @@ let searchDebounceTimer
 let purchaseListRequest = 0
 let pageLoadRequest = 0
 const today = new Date().toISOString().slice(0, 10)
-function newDraft() { return { supplier: '', order: '', order_date: today, expected_arrival_date: '', status: 'draft', currency: 'CNY', exchange_rate: '1', notes: '', items: [] } }
+function newDraft() { return { supplier: '', order: '', order_date: today, expected_arrival_date: '', status: 'draft', currency: 'CNY', exchange_rate: '1', notes: '', payment_terms_snapshot: [], items: [] } }
 const draft = ref(newDraft())
 const guard = useUnsavedChangesGuard({ data: () => draft.value, enabled: () => openCreate.value })
-const initialTerms = ref('')
-const termsDirty = computed(() => JSON.stringify(draft.value.payment_terms_snapshot) !== initialTerms.value)
-function inheritPaymentTerms() {
-  draft.value.payment_terms_snapshot = copyPaymentTerms(suppliers.value.find(row => String(row.id) === String(draft.value.supplier))?.payment_terms_config)
-  initialTerms.value = JSON.stringify(draft.value.payment_terms_snapshot)
-}
 const costTarget = ref(null), costOrders = ref([]), paymentTarget = ref(null)
 const draftAmount = computed(() => draft.value.items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unit_price || 0), 0))
 const lineAmount = item => Number(item.quantity || 0) * Number(item.unit_price || 0)
@@ -232,7 +226,6 @@ async function loadReferenceOptions() {
     } else nextErrors[key] = `${referenceLabels[key]}资料加载失败：${apiErrorMessage(result.reason) || '请稍后重试。'}`
   }
   referenceErrors.value = nextErrors
-  if (openCreate.value && !editingPurchaseId.value && !termsDirty.value) inheritPaymentTerms()
   referenceLoading.value = false
 }
 async function load({ includeReferenceData = false } = {}) {
@@ -258,7 +251,6 @@ function startCreate() {
   if (!can('purchases', 'create')) return
   editingPurchaseId.value = null
   draft.value = { ...newDraft(), supplier: route.query.supplier || '', order: route.query.order || '' }
-  inheritPaymentTerms()
   activeSkuId.value = ''
   supplierSkuOptions.value = {}; notice.value = ''; guard.markClean(); openCreate.value = true
 }
@@ -276,7 +268,7 @@ async function editDraft(row) {
     currency: row.currency,
     exchange_rate: compactDecimalInput(row.exchange_rate),
     notes: row.notes || '',
-    payment_terms_snapshot: copyPaymentTerms(row.payment_terms_snapshot),
+    payment_terms_snapshot: copySavedPaymentTerms(row.payment_terms_snapshot),
     items: (row.items || []).map(item => fromTradeLine({
       sku: item.sku,
       supplier_sku: item.supplier_sku || '',
@@ -289,7 +281,6 @@ async function editDraft(row) {
     })),
   }
   activeSkuId.value = String(draft.value.items[0]?.sku || '')
-  initialTerms.value = JSON.stringify(draft.value.payment_terms_snapshot)
   supplierSkuOptions.value = {}; notice.value = ''; error.value = ''; openCreate.value = true
   await Promise.all(draft.value.items.map(loadSupplierSkuOptions))
   guard.markClean()
@@ -370,10 +361,9 @@ async function changeSupplier(supplier) {
   const current = draft.value
   draftChanging.value = true
   try {
-    if ((current.items.some(item => item.supplier_sku || hasPrice(item) || item.trade_unit) || termsDirty.value) && !await confirmDialog({ title: '更换供应商', message: `更换供应商将清除当前商品的供应商来源、采购价格和供应商专属交易规格，并可能带来包装、LOGO、认证差异。${termsDirty.value ? '更换供应商还将替换本次采购的付款计划。' : ''}是否继续？`, confirmText: '更换供应商' })) return false
+    if (current.items.some(item => item.supplier_sku || hasPrice(item) || item.trade_unit) && !await confirmDialog({ title: '更换供应商', message: '更换供应商将清除当前商品的供应商来源、采购价格和供应商专属交易规格，并可能带来包装、LOGO、认证差异。是否继续？', confirmText: '更换供应商' })) return false
     if (draft.value !== current) return false
     current.supplier = supplier
-    inheritPaymentTerms()
     current.items.forEach(resetSupplierLine)
     await Promise.all(current.items.map(loadSupplierSkuOptions))
     return true
@@ -413,7 +403,7 @@ function syncSelectedSkus(ids) {
   })
   if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
 }
-async function createPurchase() { if (saving.value || draftChanging.value || !can('purchases', editingPurchaseId.value ? 'update' : 'create')) return; if (!referenceReady.value) { error.value = '供应商、订单或 SKU 资料尚未加载完成，请重试后再保存。'; return } if (!supplierSourcesReady.value) { error.value = '供应商供货档案仍在加载或加载失败，请重试后再保存。'; return } if (paymentTermsError(draft.value.payment_terms_snapshot)) { error.value = paymentTermsError(draft.value.payment_terms_snapshot); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; if (payload.sales_link_restricted) delete payload.order; delete payload.sales_link_restricted; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); guard.markClean(); await closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
+async function createPurchase() { if (saving.value || draftChanging.value || !can('purchases', editingPurchaseId.value ? 'update' : 'create')) return; if (!referenceReady.value) { error.value = '供应商、订单或 SKU 资料尚未加载完成，请重试后再保存。'; return } if (!supplierSourcesReady.value) { error.value = '供应商供货档案仍在加载或加载失败，请重试后再保存。'; return } if (paymentTermsError(draft.value.payment_terms_snapshot, { allowEmpty: true })) { error.value = paymentTermsError(draft.value.payment_terms_snapshot, { allowEmpty: true }); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; if (payload.sales_link_restricted) delete payload.order; delete payload.sales_link_restricted; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); guard.markClean(); await closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
 function moqExceptionMessage(data) {
   const details = (data?.exceptions || []).map(item => `${item.sku_code || '未命名 SKU'}：实际 ${item.actual_quantity} ${item.base_unit || ''}，MOQ ${item.moq} ${item.base_unit || ''}，差额 ${item.shortage} ${item.base_unit || ''}`.replaceAll('  ', ' ').trim())
   return `本次采购存在低于供应商 MOQ 的明细。\n${details.join('\n')}\n可以填写例外原因后继续下单；取消则保留当前采购草稿。`
@@ -523,7 +513,7 @@ watch(() => route.query.detail, id => {
               <label v-if="draft.currency !== 'CNY'">对人民币汇率 *<input v-model="draft.exchange_rate" type="number" min="0.000001" step="0.000001" placeholder="1 单位外币兑换人民币金额" required /></label>
             </div>
           </section>
-          <section class="draft-section"><div class="draft-section-heading"><h4>本次付款计划</h4><small>仅用于本采购单。</small></div><PaymentTermsEditor v-model="draft.payment_terms_snapshot" /></section>
+          <section class="draft-section"><div class="draft-section-heading"><h4>本次付款计划</h4><small>仅用于本采购单；未协商时可暂不设置。</small></div><PaymentTermsEditor v-model="draft.payment_terms_snapshot" :allow-empty="true" /></section>
           <section class="draft-section line-editor">
             <div class="draft-section-heading"><h4>采购商品</h4><small v-if="selectedOrder">关联：{{ selectedOrder.order_no }}</small></div>
             <p class="section-help">选择 SKU 后填写规格、数量和单价。</p>
@@ -551,7 +541,7 @@ watch(() => route.query.detail, id => {
           </section>
           <section class="purchase-total-summary"><h4>采购金额汇总</h4><div><span>商品项数 <b>{{ draft.items.length }}</b></span><span>币种 <b>{{ draft.currency }}</b></span><span>商品金额 <strong>{{ draft.currency }} {{ money(draftAmount) }}</strong></span></div></section>
           <p v-if="error" class="form-error" role="alert">{{ error }}</p>
-          <div class="editor-actions"><small>草稿保存不会生成应付或在途采购；确认下单后才进入正式采购流程。</small><div><button type="button" class="btn btn-secondary" @click="closeCreate">取消</button><button v-if="can('purchases', editingPurchaseId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || draftChanging || !referenceReady || !supplierSourcesReady || !!paymentTermsError(draft.payment_terms_snapshot)"><Save :size="16" /> {{ saving ? '保存中…' : (editingPurchaseId ? '保存采购草稿' : '创建采购单') }}</button></div></div>
+          <div class="editor-actions"><small>草稿保存不会生成应付或在途采购；确认下单后才进入正式采购流程。</small><div><button type="button" class="btn btn-secondary" @click="closeCreate">取消</button><button v-if="can('purchases', editingPurchaseId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || draftChanging || !referenceReady || !supplierSourcesReady || !!paymentTermsError(draft.payment_terms_snapshot, { allowEmpty: true })"><Save :size="16" /> {{ saving ? '保存中…' : (editingPurchaseId ? '保存采购草稿' : '创建采购单') }}</button></div></div>
         </form>
       </section>
     </div>

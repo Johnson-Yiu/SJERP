@@ -29,7 +29,7 @@ test('SKU editor canonicalizes abbreviation keys and mirrors backend value forma
   assert.match(source, /deactivateRow/)
 })
 
-test('SKU creation relies on generated Sales Model and reviews identity changes before saving', async () => {
+test('SKU creation relies on generated Sales Model and editing preserves the saved model', async () => {
   const source = await readFile(componentUrl, 'utf8')
 
   assert.match(source, /v-if="editingId" class="field sales-model-field"/)
@@ -37,6 +37,8 @@ test('SKU creation relies on generated Sales Model and reviews identity changes 
   assert.match(source, /identityReviewOpen/)
   assert.match(source, /diff-removed/)
   assert.match(source, /确认后系统会再次检查中文名称、Sales Model 和参数组合是否与其他 SKU 重复/)
+  assert.match(source, /const salesModel = form\.sales_model \|\| null/)
+  assert.match(source, /当前保存型号：\{\{ form\.sales_model \|\| '未设置' \}\}/)
 })
 
 test('editing one SKU keeps its packaging detail when the computed preview key changes', () => {
@@ -72,7 +74,7 @@ test('saved parameter suggestions include inherited categories and legacy keys i
   assert.deepEqual(Array.from(context.optionsFor({ id: 2 }, { key: '色温/发光颜色', name: '色温/发光颜色' }, false), item => item.value), ['3000K'])
 })
 
-async function saveContext(editing = false, imageFails = false) {
+async function saveContext(editing = false, imageFails = false, salesModel = '', parameterChanged = false) {
   const { runInNewContext } = await import('node:vm')
   const source = await readFile(componentUrl, 'utf8')
   const calls = [], notices = []
@@ -82,7 +84,7 @@ async function saveContext(editing = false, imageFails = false) {
     api: { put: async (...args) => { calls.push(['put', ...args]) }, post: async (...args) => { calls.push(['post', ...args]); return { data: [{ id: 7 }] } } },
     guard: { markClean: () => calls.push(['clean']) }, nextTick: async () => {},
     saveError: { value: '' }, saving: { value: false }, editingId: { value: editing ? 7 : null },
-    form: { product: 1, unit: 'pcs', currency: 'USD', active: true }, salesModelAbbreviations: {},
+    form: { product: 1, unit: 'pcs', currency: 'USD', active: true, sales_model: salesModel }, salesModelAbbreviations: {},
     allPreviews: { value: [preview] }, chosenPreviews: { value: [preview] }, detailFor: () => detail,
     cleanDetail: () => ({ carton_quantity: 50 }), ordinaryValues: () => ({}), translateLightingTerms: v => v,
     selectedImage: { value: imageFails ? {} : null }, imageClearRequested: { value: false }, pendingImageSkuIds: { value: [] }, pendingImageFailurePrefix: { value: "" },
@@ -94,7 +96,7 @@ async function saveContext(editing = false, imageFails = false) {
   const helper = source.slice(source.indexOf('function packagingInput('), source.indexOf('async function openVersions'))
   const persist = source.slice(source.indexOf('async function persistSave('), source.indexOf('async function confirmIdentitySave'))
   runInNewContext(helper + persist + ';this.persistSave = persistSave', ctx)
-  await ctx.persistSave({ editingRow: { specification: '12W', parameter_values: {} }, parameterChanged: false, productChanged: false, identityChanged: false })
+  await ctx.persistSave({ editingRow: { specification: '12W', parameter_values: {} }, parameterChanged, productChanged: false, identityChanged: false })
   return { ctx, calls, notices }
 }
 
@@ -108,6 +110,12 @@ test('create and edit include packaging in their single SKU database request', a
     assert.equal(input.packaging_profile_input.qty_per_carton_override, 50)
     assert.equal(input.packaging_profile_input.unit_net_weight, 0.15)
   }
+})
+
+test('parameter edits submit the explicitly saved Sales Model instead of the generated preview', async () => {
+  const { calls } = await saveContext(true, false, 'CUSTOM-REVISED', true)
+  const write = calls.find(([method]) => method === 'put')
+  assert.equal(write[2].sales_model, 'CUSTOM-REVISED')
 })
 
 test('image failure retains saved SKU IDs for independent retry and reports database success', async () => {

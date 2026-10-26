@@ -36,12 +36,16 @@ def ensure_default_payment_plans(contract, deposit_ratio=None):
         return []
     is_order = contract.__class__.__name__ == "Order"
     if not is_order:
-        from crm.payment_terms import default_payment_terms, validate_payment_terms
+        from crm.payment_terms import validate_payment_terms
         relation = {"purchase_order": contract}
         existing = PaymentPlan.objects.filter(**relation).order_by("id")
         if existing.exists():
             return list(existing)
-        terms = validate_payment_terms(contract.payment_terms_snapshot or default_payment_terms())
+        # Supplier-level fixed rules are archived configuration only.  A PO
+        # gets payable plans only from its own saved, negotiated snapshot.
+        if isinstance(contract, PurchaseOrder) and not contract.payment_terms_snapshot:
+            return []
+        terms = validate_payment_terms(contract.payment_terms_snapshot)
         total = _contract_amount(contract)
         if total <= 0:
             return []
@@ -86,6 +90,7 @@ def record_transaction(payload):
         from .cash_events import guard_replacement
         guard_replacement(payload["replaces"])
     plan = payload.pop("plan", None)
+    allow_unplanned_contract_payment = payload.pop("_allow_unplanned_contract_payment", False)
     amount = positive_decimal(payload.get("amount"), "收付款金额")
     # Transaction status is controlled by this service; callers cannot override it.
     payload.pop("status", None)
@@ -152,7 +157,16 @@ def record_transaction(payload):
             if not contract:
                 raise ValidationError("客户收款必须关联销售订单，供应商付款必须关联采购单。")
             reject_historical(contract, "登记收付款")
-            return record_contract_payment(contract, payload)
+            if not allow_unplanned_contract_payment:
+                return record_contract_payment(contract, payload)
+            payload.update({
+                "order": contract if kind == "customer_receipt" else None,
+                "purchase_order": contract if kind == "supplier_payment" else None,
+                "customer": contract.customer if kind == "customer_receipt" else None,
+                "supplier": contract.supplier if kind == "supplier_payment" else None,
+                "direction": "income" if kind == "customer_receipt" else "expense",
+                "kind": kind,
+            })
         if kind in {"refund", "supplier_refund"}:
             contract = order if kind == "refund" else purchase
             if not contract:
@@ -321,6 +335,15 @@ def record_contract_payment(contract, payload):
     ensure_default_payment_plans(contract)
     plans = list(contract.payment_plans.select_for_update().filter(status="open").order_by("due_date", "pk"))
     if not plans:
+        if isinstance(contract, PurchaseOrder) and not contract.payment_terms_snapshot:
+            return record_transaction({
+                **payload,
+                "purchase_order": contract,
+                "supplier": contract.supplier,
+                "direction": "expense",
+                "kind": "supplier_payment",
+                "_allow_unplanned_contract_payment": True,
+            })
         raise ValidationError("合同已结清；额外款项请登记为未分配预收预付。")
     first = None
     remaining = amount

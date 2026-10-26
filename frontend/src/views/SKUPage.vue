@@ -257,7 +257,7 @@ const identityReview = computed(() => {
     oldName: pending.editingRow?.display_name_cn || '',
     newName: pending.editingPreview?.display_name_cn || '',
     oldModel: pending.editingRow?.sales_model || '',
-    newModel: pending.parameterChanged ? (pending.editingPreview?.sales_model || '') : (form.sales_model || ''),
+    newModel: form.sales_model || '',
   }
 })
 const formatParameterValue = (attribute, value) => {
@@ -665,7 +665,7 @@ async function persistSave({ editingRow, editingPreview, parameterChanged, produ
       const detail = detailFor(preview)
       const specification = parameterChanged || productChanged ? preview.specification : (editingRow?.specification || preview.specification)
       const parameters = parameterChanged || productChanged ? preview.parameterValuesForSku : { ...(editingRow?.parameter_values || preview.parameterValuesForSku), ...ordinaryValues() }
-      const salesModel = parameterChanged ? (preview.sales_model || null) : (form.sales_model || null)
+      const salesModel = form.sales_model || null
       await api.put(`/skus/${editingId.value}/`, { ...shared, ...packagingInput(detail), sales_model: salesModel, description_cn: form.description_cn || preview.description_cn, description_en: translateLightingTerms(form.description_en || preview.description_en), specification, product_details: [cleanDetail(detail)], parameter_values: parameters, identity_change_confirmed: identityChanged })
       guard.markClean()
       try {

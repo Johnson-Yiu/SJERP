@@ -43,6 +43,19 @@ class TimestampedModel(models.Model):
         abstract = True
 
 
+class OperationLogQuerySet(models.QuerySet):
+    """Prevent application-level updates/deletes of historical audit rows."""
+
+    def update(self, **kwargs):
+        raise ValidationError("操作日志只允许追加，历史审计不可修改。")
+
+    def delete(self):
+        raise ValidationError("操作日志只允许追加，历史审计不可删除。")
+
+    def bulk_update(self, objs, fields, batch_size=None):
+        raise ValidationError("操作日志只允许追加，历史审计不可批量修改。")
+
+
 class OperationLog(models.Model):
     """Generic, append-only audit record for business data changes."""
 
@@ -59,7 +72,9 @@ class OperationLog(models.Model):
     object_label = models.CharField("对象名称", max_length=300, blank=True)
     action = models.CharField("操作类型", max_length=30, choices=ACTION_CHOICES, default="custom")
     action_label = models.CharField("操作说明", max_length=100, blank=True)
-    operator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="operation_logs")
+    # Deleting an operator must not cause the database to rewrite this row
+    # through ON DELETE SET NULL; historical identity is part of the audit.
+    operator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True, related_name="operation_logs")
     changed_fields = models.JSONField("变更字段", default=list, blank=True)
     before_data = models.JSONField("变更前数据", default=dict, blank=True)
     after_data = models.JSONField("变更后数据", default=dict, blank=True)
@@ -67,6 +82,16 @@ class OperationLog(models.Model):
     request_method = models.CharField("请求方法", max_length=10, blank=True)
     request_path = models.CharField("请求路径", max_length=500, blank=True)
     created_at = models.DateTimeField("操作时间", auto_now_add=True)
+
+    objects = OperationLogQuerySet.as_manager()
+
+    def save(self, *args, **kwargs):
+        if self.pk and not self._state.adding:
+            raise ValidationError("操作日志只允许追加，历史审计不可修改。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("操作日志只允许追加，历史审计不可删除。")
 
     class Meta:
         ordering = ["-created_at", "-id"]

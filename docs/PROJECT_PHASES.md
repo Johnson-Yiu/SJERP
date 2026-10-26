@@ -431,3 +431,11 @@ Django `crm` 全量 942 项（跳过14）、定向后端2项、前端有效 Vite
 
 ISS-080 更新为 `FIXED_PENDING_REVIEW`，真实生产账号/数据库及跨员工真实业务数据抽查属于后续独立复审范围；不关闭 Issue、不合并 master、不修改其他工作树。
 
+## ISS-047 / ISS-097 / ISS-080 统一集成验收（2026-10-27）
+
+基于统一基线 `8b2b5c19e517addd9604b239211e199a789b739e` 创建独立 Worktree 和 `codex/integration-047-097-080`，按 ISS-047 → ISS-097 → ISS-080 顺序集成。ISS-080 仅移植功能提交 `efb2546b69ae4ace60715dcb97803145248d3a1b` 与证据/台账提交 `9fe9f479bc47fd7470c80822c89fa59d7d71cbf5`，未覆盖旧分支。冲突仅发生于公共阶段文档，已保留三项记录；0088/0089 迁移完整保留。
+
+集成后 Django 全量 `950` 通过、`15` 跳过，定向三项后端 `59` 通过/`1` 跳过，Node `154`、有效 Vitest `659`、Playwright CRM/RBAC `27`、生产构建、SQLite 空库迁移和 0087→0089 升级均通过，`makemigrations --check` 无差异。真实 Chrome 已补充 ISS-080 桌面/390px 联系人提醒和 ISS-097 桌面/390px 权限矩阵独立图片。Vitest 中既有 `detail-drawer-typography.spec.js` 为 node:test 文件，已明确排除，不将错误 suite 运行结果冒充全量 Vitest 通过。
+
+ISS-047 真实生产卷/Nginx/容量告警/联合备份恢复与 PostgreSQL、ISS-097 正式员工与生产会话、ISS-080 真实员工跨客户数据抽查均保留原记录的部署或业务待验状态。最终 HEAD 的 GitHub Actions 必须另行核对；测试步骤前失败时不标记 CI PASS。完整命令、冲突、截图和遗留事项见 [`ISS-047 / ISS-097 / ISS-080 统一集成验收`](uat-evidence/integration-047-097-080/README.md)。本轮未部署、未合并 master、未关闭 Issue，等待 ChatGPT 独立审查。
+

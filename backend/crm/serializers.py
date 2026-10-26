@@ -1600,7 +1600,24 @@ class SKUSerializer(serializers.ModelSerializer):
                     validated_data[field] = value
         if parameter_changed:
             sales_model_base = self._generated_identity(validated_data).get("sales_model_base", "")
-            if sales_model_base:
+            current_generated_model = self._generated_identity({
+                "product": instance.product,
+                "specification": instance.specification,
+                "parameter_values": instance.parameter_values,
+                "product_details": instance.product_details,
+                "sales_model_abbreviations": instance.sales_model_abbreviations,
+            }).get("sales_model_base", "")
+            supplied_model = validated_data.get("sales_model") if "sales_model" in self.initial_data else instance.sales_model
+            # Regenerate only when the saved value still equals the model the
+            # generator produced for the old identity. A different value is a
+            # deliberate manual model; an explicit blank remains legacy-empty.
+            auto_model_is_still_saved = (
+                supplied_model == instance.sales_model
+                and bool(instance.sales_model)
+                and instance.sales_model == current_generated_model
+            )
+            omitted_model_can_generate = "sales_model" not in self.initial_data and not instance.sales_model
+            if sales_model_base and (auto_model_is_still_saved or omitted_model_can_generate):
                 validated_data["sales_model"] = sales_model_base
             validated_data["display_name_key"] = normalize_display_name(validated_data.get("display_name_cn", "")) or None
             conflicts = identity_conflict_messages(

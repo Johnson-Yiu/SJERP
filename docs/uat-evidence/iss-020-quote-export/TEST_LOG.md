@@ -49,3 +49,7 @@
 开发环境按 `AGENTS.md` 的 `development_superadmin_enabled()` 统一为开发超级管理员，不能冒充生产员工账号。后端已有无导出权限 403 和跨客户范围拒绝回归；生产 PostgreSQL、反向代理、真实账户权限、Excel 桌面打印及 CI 未在本地冒充通过。
 
 未合并 master，未关闭 Issue，状态保持 `FIXED_PENDING_REVIEW`。
+
+## CI
+
+推送提交 `35aad7d6b3576851d496c678d6568c12987cce35` 后，GitHub Actions run `40286651906` 为 `failure`。`frontend`、`backend`、`backend-postgres` 三个 job 均无可见 steps 即结束，`--log-failed` 没有日志；因此 CI 不能作为通过证据，PostgreSQL 仍标记未验证。未修改账户、工作流或额度配置。

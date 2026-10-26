@@ -1,0 +1,644 @@
+
+ RUN  v4.1.11 C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend
+
+✖ quote list renders a recursive parent-child tree with classified document icons (2.0298ms)
+✖ quote tree actions preserve detail, edit, and Excel export entry points (3.2021ms)
+✖ quote list provides summary metrics, filters, and newest-first sorting (0.5352ms)
+✖ every quote row opens detail and dedicated expansion stops propagation (0.3432ms)
+✖ orders reuse the compact summary cards used by the quotation desk (0.4796ms)
+✖ order editor does not expose manual lifecycle status changes (0.3874ms)
+✖ order creation leaves number generation to the backend and keeps saved numbers read-only (0.3555ms)
+✖ order draft edits use PUT, close and refresh on success, and surface failed saves (0.3511ms)
+✖ order editor reports an invalid non-positive line quantity before sending a request (0.5298ms)
+✖ order list limits edit and delete operations to drafts (0.4271ms)
+✖ formal order history prefers the saved party snapshot and labels the live master reference (0.3265ms)
+✖ quote history prefers the saved buyer snapshot and never falls back to the live customer name (0.4265ms)
+✖ editing from the order workbench reloads the current order before opening the editor (0.2547ms)
+✖ document deep links initialize and dynamically synchronize quote and order details (0.3265ms)
+✖ closing a document detail removes only detail and preserves remaining route state (0.2782ms)
+✖ opening list rows pushes their detail id into the current route for refresh and history (0.2202ms)
+✔ invalid document ids cannot break the list route and large not-found ids remain loadable as details (1.0163ms)
+ ❯ src/views/DocumentPage.test.js (0 test)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 1
+ℹ fail 16
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 26.799
+✖ SKU editor exposes supplier source maintenance through the API (2.0213ms)
+✖ SKU editor canonicalizes abbreviation keys and mirrors backend value formatting (2.9933ms)
+✖ SKU creation relies on generated Sales Model and reviews identity changes before saving (0.277ms)
+✔ editing one SKU keeps its packaging detail when the computed preview key changes (0.3671ms)
+✖ saved parameter suggestions include inherited categories and legacy keys independent of search rows (0.6264ms)
+✖ create and edit include packaging in their single SKU database request (0.4832ms)
+✖ image failure retains saved SKU IDs for independent retry and reports database success (0.3898ms)
+✔ nested packaging validation messages remain readable (0.6224ms)
+ ❯ src/views/SKUPage.test.js (0 test)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 2
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20.2415
+✖ resource payload serializes empty optional dates as null (2.2446ms)
+✔ transaction resource distinguishes book reference from confirmed bank RMB cash (3.5002ms)
+✖ customer projections are visible but not editable customer fields (0.3596ms)
+✖ customer detail shortcuts require the target module action permission (0.2734ms)
+✖ customer, product and SKU details expose a permission-gated report-center shortcut with a safe return path (0.2767ms)
+✖ automatic inventory movements are read-only while manual movements are reversed, not deleted (0.3371ms)
+✖ follow-up history summary is distinguished from the current dashboard obligation (0.239ms)
+✖ customer ownership uses scoped employee options and sends an explicit clear as null (0.2851ms)
+✖ ISS-049 reuses URL-backed quick filters for customer and follow-up lists (0.3248ms)
+ ❯ src/views/ResourcePage.test.js (0 test)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 1
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19.9491
+✖ purchase desk exposes retained contract amount adjustment history (2.2997ms)
+✖ purchase desk connects creation, receipt and supplier payment actions (2.494ms)
+✖ purchase desk exposes receipt history and the reversal flow (0.2728ms)
+✖ purchase desk labels ordered, received, remaining and overage quantities separately (0.2926ms)
+✖ purchase desk keeps drafts editable and separates placement from draft save (0.2216ms)
+✖ formal purchase history prefers the saved supplier snapshot and exposes its party details (0.2132ms)
+✖ order fulfillment purchase history prefers formal supplier snapshots (0.2423ms)
+✖ purchase creation leaves number generation to the backend and never submits a number (0.2041ms)
+✖ missing supplier source is described as optional without implying automatic creation (0.2308ms)
+✖ purchase price reference only carries across matching currencies and resets stale prices (0.2999ms)
+✖ cost allocation loads minimal cross-order candidates through procurement permission (0.2112ms)
+ ❯ src/views/PurchaseOrderPage.test.js (0 test)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 0
+ℹ fail 11
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20.8364
+✖ order workbench exposes retained contract amount adjustments (2.628ms)
+✖ order workbench exposes shipment history and reversal flow (2.5403ms)
+✖ batch over-shipment requires a line-specific reason and one explicit batch warning before submitting (0.304ms)
+✖ order workbench exposes explicit packing plan generation and snapshot display (0.2852ms)
+✖ packing plan loading never generates a plan implicitly (0.2667ms)
+✖ order workbench exposes procurement shortage, draft coverage, generation and linked purchases (0.2034ms)
+ ❯ src/components/OrderDetailModal.test.js (0 test)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 0
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20.242
+✔ formatApiError preserves field and nested item context (1.6741ms)
+✔ apiErrorMessage uses understandable network and server fallbacks (2.5119ms)
+✔ API errors retain status, parsed data and the original response (8.2092ms)
+✔ API parses Blob JSON errors before formatting (2.5124ms)
+✔ aggregated lists include subsequent pages and keep filters (0.6775ms)
+✔ listAll handles non-paginated array actions in one request (0.2317ms)
+✔ failed later pages never return a misleading partial total (0.2256ms)
+ ❯ src/api.test.js (0 test)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29.4469
+✖ quote detail exposes only valid status actions for draft and sent quotes (2.1193ms)
+✖ status actions call the API, reload quote workbench, and refresh the quote list (2.6036ms)
+✖ terminal quote states render no status transition controls (0.2462ms)
+✖ only non-terminal quotes expose the conversion-to-order actions (0.2306ms)
+✖ saved and revised PI previews use the currency in the official totals DTO (0.277ms)
+ ❯ src/components/QuoteDetailModal.test.js (0 test)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 0
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29.7046
+✖ history order entry uses isolated endpoints and keeps the analysis-only label visible (2.5539ms)
+✖ history order entry preserves the supplied historical date and does not expose formal actions (2.6732ms)
+✖ history page keeps unauthorized optional requests from blanking authorized data (0.2841ms)
+✖ history page does not offer an entry form without its master-data permissions (0.2746ms)
+✖ history navigation accepts either sales or purchasing view permission (0.2719ms)
+✖ history analysis renders permission-filtered detail tables with local narrow-screen scrolling (0.261ms)
+ ❯ src/views/HistoryOrdersPage.test.js (0 test)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 0
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21.1824
+✖ related create modal supports inherited relationships (2.7384ms)
+✖ related quote creation seeds the customer and keeps it locked in create mode (2.992ms)
+✖ detail relation context carries parent customer and contact (0.3347ms)
+✖ follow-up rows open the shared detailed follow-up view (0.2935ms)
+✖ follow-up creation links days-after input to the next follow-up date (0.2976ms)
+✖ related create payload serializes empty optional dates as null (0.4442ms)
+ ❯ src/components/RelatedCreateModal.test.js (0 test)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 0
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20.1515
+✖ quote save stops on MOQ violation or unavailable validation service (2.0606ms)
+✖ valid MOQ check allows quote creation and ignores stale check responses (2.4952ms)
+✖ sales-rule editor explains that MOQ uses the SKU base quantity (0.326ms)
+ ❯ src/components/SalesRules.test.js (0 test)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 0
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17.4254
+✔ page identity stays on the same path across transient query changes (1.6734ms)
+✔ list query data excludes modal and detail actions while retaining business context (16.2395ms)
+✔ closing a route modal removes action keys and preserves all context query values (0.4351ms)
+✔ SKU labels come from records with a matching numeric foreign key and clearing preserves unrelated route state (0.3688ms)
+ ❯ src/utils/routePageState.test.js (0 test)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 32.1703
+✖ cash event page keeps the backend two-step and stable-key flow (2.7742ms)
+✖ cash event page keeps bank facts separate from legacy receipt and settlement data (2.4897ms)
+ ❯ src/views/CashEventPage.test.js (0 test)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16.8196
+ ❯ src/views/TaskJ1EntrySafety.test.js (0 test)
+✔ dashboard due follow-ups preserve current-due context when opening the list or a record (187.9336ms)
+✖ SKU picker synchronizes multi-selection into quote line items (1.9585ms)
+✖ SKU picker keeps a fixed height while search results scroll (2.3465ms)
+✖ quote editor lets users save without exporting the Excel file (0.2479ms)
+✖ quote editor blocks a validity date earlier than the quote date (0.1995ms)
+✖ quote status is read-only and cannot be selected while creating or revising (0.253ms)
+ ❯ src/components/QuoteEditorModal.test.js (0 test)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 0
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17.4179
+✔ order tasks draft debt matrix (2.4864ms)
+✔ order tasks cancelled debt matrix (2.6932ms)
+✔ order tasks confirmed debt matrix (0.3299ms)
+✔ order tasks production debt matrix (0.1529ms)
+✔ order tasks shipped debt matrix (0.1228ms)
+✔ order tasks completed debt matrix (0.1138ms)
+✔ completed settled has no tasks, refund dynamically restores only receipt (0.2063ms)
+✔ masked, absent and denied financial amounts never fall back to protected order balance (0.2153ms)
+✔ unknown no_plans is review, never confirmed zero (0.3084ms)
+✔ unknown review is review, never confirmed zero (0.2004ms)
+ ❯ src/utils/orderOverview.test.js (0 test)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20.2296
+✖ packaging list labels physical dimensions and tare weight with their units (1.8861ms)
+✖ packaging page presents tail-goods policies and no mixed-pack setting (2.2854ms)
+✖ packaging form keeps dimensions in one row and shows policy help as a floating panel (0.4696ms)
+✖ editing linked template physical data requires verification invalidation confirmation (0.2623ms)
+ ❯ src/views/PackagingPage.test.js (0 test)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16.1668
+✖ SKU candidate filters combine values with OR and attributes with AND, including legacy keys (2.0416ms)
+ ❯ src/components/ProductSkuManagement.test.js (0 test)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15.3202
+ ❯ src/views/TaskK1Pagination.test.js (0 test)
+✔ core management lists and selectors use the tested all-pages loader (944.5361ms)
+✔ saved base quantity loads as transaction quantity and sends edited trade quantity (2.014ms)
+✔ switching to base unit clears stale transaction values (3.1238ms)
+✔ receipt cost is interpreted per selected package (0.2202ms)
+✔ SKU selection preserves multiple packaging lines for the same SKU (1.7627ms)
+ ❯ src/utils/tradeUnits.test.js (0 test)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 22.0318
+✖ category multiselect supports independent leaves, parent coverage and removal (1.9874ms)
+ ❯ src/components/CategoryMultiPicker.test.js (0 test)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15.1961
+ ❯ tests/detail-drawer-typography.spec.js (0 test)
+✖ supplier filtering and select-all retain selections outside current results (2.2144ms)
+ ❯ src/components/SupplierBatchBindingDrawer.test.js (0 test)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16.1432
+✖ lead-time input reserves room for ten digits (2.083ms)
+✖ order draft contains one order-level tail-goods policy selector (2.6282ms)
+✖ order draft is always a draft and explains that confirmation performs formal actions (0.2731ms)
+✖ order draft does not ask for or submit a backend-generated order number (0.21ms)
+ ❯ src/components/OrderDraftModal.test.js (0 test)
+✔ date shortcuts handle year and leap-month boundaries in local time (4.4014ms)
+✔ embedded block overrides do not mutate reusable defaults (2.7625ms)
+✔ bank cash facts use an independent report source and date basis (0.1843ms)
+ ❯ src/reports/registry.test.js (0 test)
+✔ preview filters cartesian combinations by all rules and normalizes units (2.5449ms)
+✔ multi-trigger, allowed values, prohibition and empty rules (2.4884ms)
+ ❯ src/utils/skuCombinationRules.test.js (0 test)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16.7908
+✖ calendar picker is opened only from its calendar button (2.2599ms)
+✖ date parts remain compact without individual outlines (2.4411ms)
+✖ time parts are grouped into a compact hour-minute control (0.2575ms)
+ ❯ src/components/SegmentedDateInput.test.js (0 test)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 0
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16.9486
+✖ business pages use the shared dialog infrastructure instead of browser dialogs (84.4822ms)
+✖ the shared host exposes DOM-accessible controls for automation (0.7961ms)
+ ❯ src/dialogs.test.js (0 test)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 95.9785
+✖ creating a category attribute updates the local category state without reloading the page (1.932ms)
+✖ category template explains that published SKU plans do not auto-mutate (2.5782ms)
+ ❯ src/views/CategoryPage.test.js (0 test)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17.526
+✖ finance dashboard keeps book reference and adds confirmed bank cash facts separately (2.2035ms)
+✖ payable drill keeps the dashboard purchase-only permission boundary (2.4673ms)
+ ❯ src/views/FinanceDashboardPage.test.js (0 test)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16.7208
+✖ supplier allocation metrics follow the selected SupplierSKU rather than the first source (1.8566ms)
+ ❯ src/components/SupplierAllocationModal.test.js (0 test)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14.6927
+✔ category cascade merges ancestors and retains same-name leaves under different parents (2.3666ms)
+✔ parent filtering includes descendants without matching similar names or other branches (2.7231ms)
+ ❯ src/utils/categoryPaths.test.js (0 test)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15.5411
+✖ SKU-bearing product prefix changes use preview and explicit apply endpoints (2.0645ms)
+✖ ordinary product data retains the normal save path (2.6989ms)
+ ❯ src/views/ProductPage.test.js (0 test)
+✔ legacy cash block IDs and custom configurations retain their query contract (2.0674ms)
+ ❯ src/utils/financeBasis.test.js (0 test)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17.2571
+✖ inventory page opens a SKU detail panel with linked business records (1.7659ms)
+✖ inventory headers toggle sortable columns (2.2682ms)
+ ❯ src/views/InventoryPage.test.js (0 test)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15.7771
+✖ transaction form distinguishes refunds from order expenses (3.1935ms)
+ ❯ src/views/TransactionPage.test.js (0 test)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17.0338
+✖ procurement preview groups by supplier and currency and validates user inputs (1.8081ms)
+ ❯ src/components/ProcurementDraftModal.test.js (0 test)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16.3605
+✖ main list pages reuse the shared summary cards (151.8059ms)
+ ❯ src/views/SummaryCardsIntegration.test.js (0 test)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 163.0728
+✖ trade-unit page preserves deactivate and default-source actions (2.0554ms)
+ ❯ src/views/TradeUnitsPage.test.js (0 test)
+✔ addDays calculates an expected ship date from the order date (3.2624ms)
+✔ daysBetween derives the lead time from an expected ship date (3.0313ms)
+✔ date helpers leave incomplete dates empty (0.209ms)
+ ❯ src/utils/orderDate.test.js (0 test)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17.2936
+✖ summary cards provide a reusable, compact metric layout (1.7735ms)
+ ❯ src/components/SummaryCards.test.js (0 test)
+✖ contract adjustment history renders the backend status display (1.921ms)
+ ❯ src/components/ContractAmountAdjustments.test.js (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 41 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api.test.js [ src/api.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/api.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/41]⎯
+
+ FAIL  src/dialogs.test.js [ src/dialogs.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/dialogs.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/41]⎯
+
+ FAIL  tests/detail-drawer-typography.spec.js [ tests/detail-drawer-typography.spec.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/tests/detail-drawer-typography.spec.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/41]⎯
+
+ FAIL  src/components/CategoryMultiPicker.test.js [ src/components/CategoryMultiPicker.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/CategoryMultiPicker.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/41]⎯
+
+ FAIL  src/components/ContractAmountAdjustments.test.js [ src/components/ContractAmountAdjustments.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/ContractAmountAdjustments.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/41]⎯
+
+ FAIL  src/components/OrderDetailModal.test.js [ src/components/OrderDetailModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/OrderDetailModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/41]⎯
+
+ FAIL  src/components/OrderDraftModal.test.js [ src/components/OrderDraftModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/OrderDraftModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/41]⎯
+
+ FAIL  src/components/ProcurementDraftModal.test.js [ src/components/ProcurementDraftModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/ProcurementDraftModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/41]⎯
+
+ FAIL  src/components/ProductSkuManagement.test.js [ src/components/ProductSkuManagement.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/ProductSkuManagement.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/41]⎯
+
+ FAIL  src/components/QuoteDetailModal.test.js [ src/components/QuoteDetailModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/QuoteDetailModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/41]⎯
+
+ FAIL  src/components/QuoteEditorModal.test.js [ src/components/QuoteEditorModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/QuoteEditorModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/41]⎯
+
+ FAIL  src/components/RelatedCreateModal.test.js [ src/components/RelatedCreateModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/RelatedCreateModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/41]⎯
+
+ FAIL  src/components/SalesRules.test.js [ src/components/SalesRules.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/SalesRules.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/41]⎯
+
+ FAIL  src/components/SegmentedDateInput.test.js [ src/components/SegmentedDateInput.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/SegmentedDateInput.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/41]⎯
+
+ FAIL  src/components/SummaryCards.test.js [ src/components/SummaryCards.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/SummaryCards.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/41]⎯
+
+ FAIL  src/components/SupplierAllocationModal.test.js [ src/components/SupplierAllocationModal.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/SupplierAllocationModal.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/41]⎯
+
+ FAIL  src/components/SupplierBatchBindingDrawer.test.js [ src/components/SupplierBatchBindingDrawer.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/SupplierBatchBindingDrawer.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/41]⎯
+
+ FAIL  src/reports/registry.test.js [ src/reports/registry.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/reports/registry.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/41]⎯
+
+ FAIL  src/utils/categoryPaths.test.js [ src/utils/categoryPaths.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/utils/categoryPaths.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/41]⎯
+
+ FAIL  src/utils/financeBasis.test.js [ src/utils/financeBasis.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/utils/financeBasis.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/41]⎯
+
+ FAIL  src/utils/orderDate.test.js [ src/utils/orderDate.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/utils/orderDate.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/41]⎯
+
+ FAIL  src/utils/orderOverview.test.js [ src/utils/orderOverview.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/utils/orderOverview.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/41]⎯
+
+ FAIL  src/utils/routePageState.test.js [ src/utils/routePageState.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/utils/routePageState.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/41]⎯
+
+ FAIL  src/utils/skuCombinationRules.test.js [ src/utils/skuCombinationRules.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/utils/skuCombinationRules.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/41]⎯
+
+ FAIL  src/utils/tradeUnits.test.js [ src/utils/tradeUnits.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/utils/tradeUnits.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/41]⎯
+
+ FAIL  src/views/CashEventPage.test.js [ src/views/CashEventPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/CashEventPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/41]⎯
+
+ FAIL  src/views/CategoryPage.test.js [ src/views/CategoryPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/CategoryPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/41]⎯
+
+ FAIL  src/views/DocumentPage.test.js [ src/views/DocumentPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/DocumentPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/41]⎯
+
+ FAIL  src/views/FinanceDashboardPage.test.js [ src/views/FinanceDashboardPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/FinanceDashboardPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/41]⎯
+
+ FAIL  src/views/HistoryOrdersPage.test.js [ src/views/HistoryOrdersPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/HistoryOrdersPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/41]⎯
+
+ FAIL  src/views/InventoryPage.test.js [ src/views/InventoryPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/InventoryPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/41]⎯
+
+ FAIL  src/views/PackagingPage.test.js [ src/views/PackagingPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/PackagingPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/41]⎯
+
+ FAIL  src/views/ProductPage.test.js [ src/views/ProductPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/ProductPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/41]⎯
+
+ FAIL  src/views/PurchaseOrderPage.test.js [ src/views/PurchaseOrderPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/PurchaseOrderPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/41]⎯
+
+ FAIL  src/views/ResourcePage.test.js [ src/views/ResourcePage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/ResourcePage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/41]⎯
+
+ FAIL  src/views/SKUPage.test.js [ src/views/SKUPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/SKUPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/41]⎯
+
+ FAIL  src/views/SummaryCardsIntegration.test.js [ src/views/SummaryCardsIntegration.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/SummaryCardsIntegration.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/41]⎯
+
+ FAIL  src/views/TaskJ1EntrySafety.test.js [ src/views/TaskJ1EntrySafety.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/TaskJ1EntrySafety.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/41]⎯
+
+ FAIL  src/views/TaskK1Pagination.test.js [ src/views/TaskK1Pagination.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/TaskK1Pagination.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/41]⎯
+
+ FAIL  src/views/TradeUnitsPage.test.js [ src/views/TradeUnitsPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/TradeUnitsPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/41]⎯
+
+ FAIL  src/views/TransactionPage.test.js [ src/views/TransactionPage.test.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/views/TransactionPage.test.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/41]⎯
+
+
+ Test Files  41 failed | 66 passed (107)
+      Tests  650 passed (650)
+   Start at  09:37:12
+   Duration  282.36s (transform 54.51s, setup 61.42s, import 93.67s, tests 85.87s, environment 422.64s)
+
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20.7858
+
+✖ failing tests:
+
+test at src\components\ContractAmountAdjustments.test.js:8:34
+✖ contract adjustment history renders the backend status display (1.921ms)
+  TypeError: The URL must be of scheme file
+      at open (node:internal/fs/promises:637:10)
+      at readFile (node:internal/fs/promises:1287:20)
+      at TestContext.<anonymous> (C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend/src/components/ContractAmountAdjustments.test.js:6:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.start (node:internal/test_runner/test:1177:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17)
+      at processTicksAndRejections (node:internal/process/task_queues:104:5) {
+    code: 'ERR_INVALID_URL_SCHEME'
+  }

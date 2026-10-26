@@ -1,0 +1,19 @@
+74 objects imported automatically (use -v 2 for details).
+
+0084_SENTINEL_CREATED
+Operations to perform:
+  Target specific migration: 0085_order_quantity_adjustment, from crm
+Running migrations:
+  Applying crm.0085_order_quantity_adjustment... OK
+Operations to perform:
+  Target specific migration: 0084_alter_orderitem_supplier_allocation_scope_and_source, from crm
+Running migrations:
+  Rendering model states... DONE
+  Unapplying crm.0085_order_quantity_adjustment... OK
+Operations to perform:
+  Target specific migration: 0085_order_quantity_adjustment, from crm
+Running migrations:
+  Applying crm.0085_order_quantity_adjustment... OK
+74 objects imported automatically (use -v 2 for details).
+
+UPGRADE_ROLLBACK_REPLAY_SENTINEL_PRESERVED

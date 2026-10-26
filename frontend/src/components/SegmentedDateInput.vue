@@ -5,7 +5,7 @@ import { computed, nextTick, ref, watch } from 'vue'
 const props = defineProps({ modelValue: { type: String, default: '' }, required: Boolean, withTime: Boolean })
 const emit = defineEmits(['update:modelValue'])
 const year = ref(''), month = ref(''), day = ref(''), hour = ref(''), minute = ref('')
-const monthInput = ref(null), dayInput = ref(null), hourInput = ref(null), minuteInput = ref(null), picker = ref(null)
+const yearInput = ref(null), monthInput = ref(null), dayInput = ref(null), hourInput = ref(null), minuteInput = ref(null), picker = ref(null)
 
 function setParts(value) {
   const [datePart = '', timePart = ''] = (value || '').split('T')
@@ -34,6 +34,12 @@ const completeValue = computed(() => {
     ? `${date}T${hour.value}:${minute.value}`
     : ''
 })
+
+const dateError = computed(() => {
+  const entered = [year.value, month.value, day.value, hour.value, minute.value].some(Boolean)
+  return entered && !completeValue.value ? (props.withTime ? '请填写有效且完整的日期和时间。' : '请填写有效且完整的日期。') : ''
+})
+watch(dateError, message => yearInput.value?.setCustomValidity(message), { flush: 'post' })
 
 function emitValue() {
   if (completeValue.value) emit('update:modelValue', completeValue.value)
@@ -69,7 +75,7 @@ function applyPickerValue(event) { emit('update:modelValue', event.target.value)
 
 <template>
   <div class="segmented-date">
-    <input v-model="year" class="date-year" inputmode="numeric" maxlength="4" :required="required" aria-label="年份" @input="onYearInput" @focus="$event.target.select()" />
+    <input ref="yearInput" v-model="year" class="date-year" inputmode="numeric" maxlength="4" :required="required" :aria-invalid="Boolean(dateError)" aria-label="年份" @input="onYearInput" @focus="$event.target.select()" />
     <span>/</span>
     <input ref="monthInput" v-model="month" inputmode="numeric" maxlength="2" aria-label="月份" @input="onMonthInput" @focus="$event.target.select()" />
     <span>/</span>
@@ -83,8 +89,10 @@ function applyPickerValue(event) { emit('update:modelValue', event.target.value)
     <button type="button" aria-label="打开日期选择器" @click="openPicker"><CalendarDays :size="16" /></button>
     <input ref="picker" class="native-date-picker" :type="withTime ? 'datetime-local' : 'date'" :value="modelValue" tabindex="-1" @change="applyPickerValue" />
   </div>
+  <small v-if="dateError" role="alert" class="date-error">{{ dateError }}</small>
 </template>
 
 <style scoped>
+.date-error{display:block;color:#a32d27;margin-top:5px;font-size:12px}
 .segmented-date{position:relative;display:flex;align-items:center;height:40px;border:1px solid #d2ddd8;border-radius:7px;background:#fff;padding:0 10px;color:#173e35}.segmented-date:focus-within{border-color:#4f9f8e;box-shadow:0 0 0 3px #4f9f8e1f}.segmented-date input:not(.native-date-picker){flex:0 0 auto;min-width:0;border:0!important;border-radius:0!important;box-shadow:none!important;outline:0;padding:0;background:transparent;font:inherit;line-height:1.25;text-align:left;color:inherit;appearance:none}.segmented-date input.date-year{width:3.6ch!important}.segmented-date input:not(.date-year):not(.native-date-picker){width:2ch!important}.segmented-date span{flex:0 0 auto;color:#405b53}.segmented-date .time-group{display:flex;align-items:center;gap:0;margin-left:8px}.segmented-date .time-group input:not(.native-date-picker){width:1.7ch!important;text-align:center}.segmented-date .time-group b{margin:0 -1px;font-weight:500;color:#405b53}.segmented-date .date-spacer{flex:1 1 auto}.segmented-date button{flex:0 0 auto;margin-left:0;border:0;background:transparent;color:#182f2a;display:grid;place-items:center;padding:5px 0 5px 8px;cursor:pointer}.segmented-date button:hover{color:#0d5d4d}.segmented-date button:focus-visible{outline:2px solid #4f9f8e;outline-offset:2px;border-radius:3px}.native-date-picker{position:absolute;inline-size:1px;block-size:1px;opacity:0;pointer-events:none}.segmented-date input:not(.date-year):not(.native-date-picker){width:2.2ch!important}.segmented-date .time-group{gap:2px;margin-left:10px}.segmented-date .time-group input:not(.native-date-picker){width:2.3ch!important;padding:0 1px!important}.segmented-date .time-group b{margin:0;font-weight:600}
 </style>

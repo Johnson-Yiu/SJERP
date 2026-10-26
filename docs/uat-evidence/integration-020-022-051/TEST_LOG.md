@@ -65,4 +65,4 @@ PLAYWRIGHT_CHANNEL=chrome npx playwright test browser-tests/integration-020-051-
 
 ## CI / PostgreSQL
 
-本地 SQLite、Django 全量和配置拒绝测试通过；本轮没有 PostgreSQL 服务。集成 SHA `2297287fe148d2b9416083c744a08bd0226fd5e1` 的 GitHub Actions run `40302716729` 为 failure，`frontend`、`backend`、`backend-postgres` 三个 job 均在可见步骤前结束且 steps 为空；CI/PostgreSQL 状态为 **未验证，不得标记 PASS**。
+本地 SQLite、Django 全量和配置拒绝测试通过；本轮没有 PostgreSQL 服务。集成提交 `2297287fe148d2b9416083c744a08bd0226fd5e1` 的 run `40302716729`、随后证据提交 `1fdc392bb84234e3f7781f02f4dde4e4dc88b673` 的 run `40302837508` 均为 failure，`frontend`、`backend`、`backend-postgres` 三个 job 均在可见步骤前结束且 steps 为空；CI/PostgreSQL 状态为 **未验证，不得标记 PASS**。

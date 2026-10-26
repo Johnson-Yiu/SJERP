@@ -1,6 +1,6 @@
 const errorFieldLabels = {
   quantity: '数量', unit_price: '单价', currency: '币种', exchange_rate: '汇率',
-  customer: '客户', supplier: '供应商', items: '商品明细',
+  customer: '客户', buyer_company_name: '买方公司', supplier: '供应商', items: '商品明细',
 }
 
 function errorPathLabel(path) {

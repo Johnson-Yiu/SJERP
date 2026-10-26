@@ -1,12 +1,14 @@
 from decimal import Decimal, ROUND_HALF_UP
 
-from .quotation_export_dto import build_quotation_export_dto
+from .quotation_export_dto import QuotationExportValidationError, build_quotation_export_dto
 from .quote_xlsx_renderer import QuoteXlsxRendererError, render_quote_xlsx
 TWO_PLACES = Decimal("0.01")
 
 
 class QuoteExportError(Exception):
-    pass
+    def __init__(self, message, *, fields=None):
+        self.fields = fields or {}
+        super().__init__(message)
 
 
 def _whole_number_words(value):
@@ -62,7 +64,10 @@ def _amount_words(amount, currency):
 
 def build_pi_export_payload(quote, *, template_id=None):
     """Render a saved quotation through the selected workbook template."""
-    dto = build_quotation_export_dto(quote, template_id=template_id)
+    try:
+        dto = build_quotation_export_dto(quote, template_id=template_id)
+    except QuotationExportValidationError as exc:
+        raise QuoteExportError(str(exc), fields=exc.fields) from exc
     total_amount = Decimal(dto.totals["total_amount"])
     if total_amount < 0:
         raise QuoteExportError("PI total amount cannot be negative.")

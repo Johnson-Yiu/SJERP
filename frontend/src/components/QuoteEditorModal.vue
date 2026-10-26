@@ -4,6 +4,7 @@ import { provideUnsavedChangesScope, useUnsavedChangesGuard } from '../composabl
 import { defaultExchangeRate, skuDefaultPrice, currencyHint, salesRateError, changeDocumentCurrency } from '../utils/documentCurrency'
 import { confirmDialog } from '../dialogs'
 import { compactDecimalInput } from '../utils/decimalInput'
+import { roundPiMoney } from '../utils/piMoney'
 import TradeUnitPicker from './TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
 import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
@@ -82,8 +83,8 @@ function setValidityDays() {
   draft.valid_until = addDays(draft.quote_date, validityDays.value)
 }
 
-const subtotal = computed(() => draft.items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unit_price || 0), 0))
-const total = computed(() => subtotal.value + Number(draft.shipping_fee || 0) - Number(draft.discount || 0))
+const subtotal = computed(() => roundPiMoney(draft.items.reduce((sum, item) => sum + roundPiMoney(Number(item.quantity || 0) * Number(item.unit_price || 0)), 0)))
+const total = computed(() => roundPiMoney(subtotal.value + roundPiMoney(draft.shipping_fee || 0) - roundPiMoney(draft.discount || 0)))
 const previewDraft = computed(() => {
   const customer = props.customers.find(row => row.id === Number(draft.customer)) || {}
   const depositRatio = Math.min(100, Math.max(0, Number(draft.deposit_percent || 0))) / 100
@@ -92,9 +93,9 @@ const previewDraft = computed(() => {
     quote_no: draft.quote_no, quote_date: draft.quote_date, valid_until: draft.valid_until, currency: draft.currency,
     buyer: { company_name: customer.name || '', recipient: draft.recipient_name, address: draft.buyer_address, email: draft.buyer_email, phone: draft.buyer_phone },
     terms: { lead_time_days: draft.lead_time_days, trading_terms: draft.trading_terms, shipping_details: draft.shipping_details, notes: draft.notes },
-    totals: { subtotal: subtotal.value, shipping_fee: Number(draft.shipping_fee || 0), discount: Number(draft.discount || 0), total_amount: total.value },
+    totals: { subtotal: subtotal.value, shipping_fee: roundPiMoney(draft.shipping_fee || 0), discount: roundPiMoney(draft.discount || 0), total_amount: total.value },
     payment_splits: { deposit_ratio: depositRatio, deposit_amount: depositAmount, balance_ratio: 1 - depositRatio, balance_amount: total.value - depositAmount },
-    products: draft.items.map((item, index) => { const sku = props.skus.find(row => row.id === Number(item.sku)) || {}; return { key: `${index}-${item.sku}`, sku: sku.sku || '', sku_code: sku.sku_code || sku.sku || '', model: item.sales_model_snapshot || sku.sales_model || '', product_name: sku.display_name_cn || sku.product_name || '', description: item.description + (item.trade_unit ? `\n${item.trade_snapshot?.name}: 1 ${item.trade_snapshot?.unit} = ${item.trade_snapshot?.factor} ${item.trade_snapshot?.base_unit}; Total ${baseQuantity(item)} ${item.trade_snapshot?.base_unit}` : ''), quantity: item.quantity, unit: tradeLabel(item, sku.unit || 'pcs'), unit_price: item.unit_price, amount: Number(item.quantity || 0) * Number(item.unit_price || 0), image_url: sku.image || '' } }),
+    products: draft.items.map((item, index) => { const sku = props.skus.find(row => row.id === Number(item.sku)) || {}; return { key: `${index}-${item.sku}`, sku: sku.sku || '', sku_code: sku.sku_code || sku.sku || '', model: item.sales_model_snapshot || sku.sales_model || '', product_name: sku.display_name_cn || sku.product_name || '', description: item.description + (item.trade_unit ? `\n${item.trade_snapshot?.name}: 1 ${item.trade_snapshot?.unit} = ${item.trade_snapshot?.factor} ${item.trade_snapshot?.base_unit}; Total ${baseQuantity(item)} ${item.trade_snapshot?.base_unit}` : ''), quantity: item.quantity, unit: tradeLabel(item, sku.unit || 'pcs'), unit_price: item.unit_price, amount: roundPiMoney(Number(item.quantity || 0) * Number(item.unit_price || 0)), image_url: sku.image || '' } }),
   }
 })
 async function changeCurrency(event) {

@@ -354,3 +354,13 @@ ISS-021 的正式 SO 数量、付款限制、采购保留、历史主体快照�
 
 本机 PostgreSQL 未执行，标记 `BLOCKED`；本地 GitHub token 当前无效，不能读取精确 HEAD CI，历史可核实 CI 仍为账户付款/Actions spending limit 阻断。本轮不修改账户、工作流或 master。三个任务保持 `FIXED_PENDING_REVIEW`，等待 ChatGPT 独立代码、权限、业务和视觉复审；不关闭 Issue。
 
+## ISS-020 正式报价与 PI 导出一致性（2026-10-26）
+
+基于 `28ba758388429f57c2e3516e12385a88ce6646a3` 创建独立 worktree/分支 `codex/iss-020-quote-export`，先读取 2026-10-24 规则包并审查报价导出 DTO、PI 预览、Excel 模板、ISS-029 收件人快照和 ISS-037 历史主体边界。先行复现确认两个真实问题：关键买方/币种缺失的已保存报价会错误返回 XLSX；逐行分币舍入后的正式文件小计可能与旧预览不一致。
+
+最小修复集中在报价导出 DTO、PI data/export 错误响应和未保存编辑器金额展示：正式预览与 XLSX 共用保存版本校验、逐行金额舍入、运费/折扣/总额与英文金额大写；关键字段缺失返回 422 字段提示，不生成错误文件。未改报价核心查询引擎、金额业务计算、修订链、ISS-029 共享模板或 ISS-037 尚未决策的正式主体规则。
+
+独立 SQLite/API 证据实际生成两个版本 XLSX，核对收件人、型号、数量、价格、币种、图片、金额大写和历史主档改动不覆盖；空邮箱保持空值。Django 全量 915（跳过13）、ISS-020/报价专项25、权限与跨客户定向2、Node151、有效 Vitest12 和生产构建通过。真实 Chrome Use 已完成保存修订版 PI 桌面及 390×844 窄屏预览；浏览器下载事件未在等待窗口返回，以 API 实际文件证据为准。生产 PostgreSQL、代理、真实员工账号和 Excel 桌面打印未验证，证据及原始日志见 [`ISS-020 导出一致性`](uat-evidence/iss-020-quote-export/README.md)。
+
+ISS-020 更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue、不合并 master，等待统一独立代码、权限、文件和视觉审查。
+

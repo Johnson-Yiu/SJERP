@@ -2,7 +2,7 @@
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 import { followUpError } from '../utils/followUpSafety'
-import { contactRows, duplicateContactHint, followUpRows, richTextExcerpt } from '../utils/crmList'
+import { contactRows, duplicateContactHint, duplicateContactMatches as findDuplicateContactMatches, followUpRows, richTextExcerpt } from '../utils/crmList'
 import InventoryPagination from '../components/InventoryPagination.vue'
 import { inventoryPage } from '../utils/inventoryPagination'
 import { supplierStoreUrl, supplierFilters, supplierRows } from '../utils/supplierPresentation'
@@ -165,10 +165,15 @@ const pendingFollowUpFiles = ref([])
 const followUpFileInput = ref(null)
 const currentOperator = ref('')
 const supplierCodeServerError = ref('')
-const contactDuplicateHint = computed(() => isContactPage.value ? duplicateContactHint(rows.value, form, editingId.value) : '')
+const contactDuplicateRows = ref([])
+const contactDuplicateLoading = ref(false)
+const contactDuplicateError = ref('')
+const contactDuplicateHint = computed(() => isContactPage.value ? duplicateContactHint(contactDuplicateRows.value, form, editingId.value) : '')
+const contactDuplicateMatches = computed(() => isContactPage.value ? findDuplicateContactMatches(contactDuplicateRows.value, form, editingId.value) : [])
 const toast = reactive({ show: false, message: '', error: false })
 let searchTimer, toastTimer
 let routeActionVersion = 0
+let contactDuplicateRequest = 0
 const routeModalOpen = ref(false)
 
 const statusLabels = { lead: '线索', contact: '已建立联系', opportunity: '已进入报价阶段', customer: '已有1张正式订单', company: '已有2张及以上正式订单', development: '开发中', discontinued: '停产', draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
@@ -469,6 +474,24 @@ function onDateFieldChange(field, value) {
   form[field[0]] = value
   if (props.config.endpoint === 'follow-ups' && field[0] === 'followed_at') syncFollowUpDaysFromDate()
 }
+async function loadContactDuplicateRows(customerId) {
+  const request = ++contactDuplicateRequest
+  contactDuplicateRows.value = []
+  contactDuplicateError.value = ''
+  if (!customerId || !isContactPage.value) {
+    contactDuplicateLoading.value = false
+    return
+  }
+  contactDuplicateLoading.value = true
+  try {
+    const contacts = await listAll('/contacts/', { params: { customer: customerId } })
+    if (request === contactDuplicateRequest) contactDuplicateRows.value = contacts
+  } catch (error) {
+    if (request === contactDuplicateRequest) contactDuplicateError.value = `重复提醒加载失败：${apiErrorMessage(error)}`
+  } finally {
+    if (request === contactDuplicateRequest) contactDuplicateLoading.value = false
+  }
+}
 function applyDefaultContact() {
   if (props.config.endpoint !== 'follow-ups' || !form.customer) return
   if (form.contact) return
@@ -481,6 +504,7 @@ function onFieldChange(field) {
     form.contact = ''
     applyDefaultContact()
   }
+  if (isContactPage.value && field[0] === 'customer') void loadContactDuplicateRows(form.customer)
 }
 function normalizeSupplierCode() {
   supplierCodeServerError.value = ''
@@ -532,6 +556,7 @@ async function openCreate({ isCurrent = () => true } = {}) {
     form.owner_profile = accessState.operator?.employee_profile_id || ''
   }
   if (['customers', 'follow-ups'].includes(props.config.endpoint) && !form.owner) form.owner = await loadCurrentOperator()
+  if (isContactPage.value) void loadContactDuplicateRows(form.customer)
   followUpAttachments.value = []
   pendingFollowUpFiles.value = []
   applyDefaultContact()
@@ -556,6 +581,8 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
     form[name] = value ?? (type === 'checkbox' ? false : '')
     if (type === 'followup_schedule') form[name] = value || 'keep'
   })
+  if (isContactPage.value) void loadContactDuplicateRows(form.customer)
+  if (!isCurrent()) return
   currentCertificateFileUrl.value = isCertificatePage.value ? (row.file_url || '') : ''
   followUpAttachments.value = props.config.endpoint === 'follow-ups' ? (row.attachments || []) : []
   pendingFollowUpFiles.value = []
@@ -567,6 +594,7 @@ const closeModal = () => { if ((isSupplierPage.value || isCrmPage.value || isPar
 function discardModal() {
   const refreshDetail = keepDetailOpen.value
   modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []; currentCertificateFileUrl.value = ''
+  contactDuplicateRequest += 1; contactDuplicateRows.value = []; contactDuplicateLoading.value = false; contactDuplicateError.value = ''
   if (refreshDetail) detailRefresh.value += 1
   void clearModalRoute(router, route)
 }
@@ -580,6 +608,9 @@ function openDetail(id) {
 function openContactCustomer(row) {
   if (!row.customer) return
   void router.push({ path: '/customers', query: { detail: String(row.customer), tab: 'contacts' } })
+}
+function contactDetailUrl(row) {
+  return router.resolve({ path: '/contacts', query: { detail: String(row.id) } }).href
 }
 function closeDetail() {
   detailId.value = null
@@ -881,7 +912,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
         </div>
         <SegmentedDateInput v-else-if="field[2] === 'date' || field[2] === 'datetime-local'" :model-value="form[field[0]]" :required="field[3]" :with-time="field[2] === 'datetime-local'" @update:model-value="value => onDateFieldChange(field, value)" />
         <input v-else :aria-label="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? editorFieldLabel(field) : undefined" v-model="form[field[0]]" :type="field[2] === 'readonly' || ['website', 'store_url'].includes(field[0]) ? 'text' : (field[2] || 'text')" :readonly="field[2] === 'readonly'" :placeholder="field[0] === 'store_url' ? 'https://...' : isCustomerPage && field[0] === 'name' ? '输入客户名称' : undefined" :class="{ 'readonly-input': field[2] === 'readonly', 'field-invalid': config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError }" :aria-invalid="config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError ? 'true' : undefined" :min="isParameterPage && field[0] === 'sort_order' ? 0 : undefined" :step="field[2] === 'number' ? (isParameterPage ? '1' : '0.0001') : undefined" :maxlength="isSupplierPage ? { name:200,code:2,country:100,main_products:300,contact_name:100,phone:50,email:254,store_url:500 }[field[0]] : undefined" :pattern="config.endpoint === 'suppliers' && field[0] === 'code' ? '[A-Za-z]{2}' : undefined" :required="field[3]" :disabled="isInherited(field[0])" @input="config.endpoint === 'suppliers' && field[0] === 'code' && normalizeSupplierCode()" />
-        <p v-if="isCustomerPage && field[0] === 'country'" class="field-help">请选择标准英文名称 / 两位代码；历史文本需人工确认。</p><p v-if="isContactPage && field[0] === 'name' && contactDuplicateHint" class="field-help crm-duplicate-hint" role="status">{{ contactDuplicateHint }}</p>
+        <p v-if="isCustomerPage && field[0] === 'country'" class="field-help">请选择标准英文名称 / 两位代码；历史文本需人工确认。</p><div v-if="isContactPage && field[0] === 'name' && (contactDuplicateLoading || contactDuplicateError || contactDuplicateHint)" class="field-help crm-duplicate-hint" role="status"><span v-if="contactDuplicateLoading">正在检查该客户的全部联系人…</span><span v-else-if="contactDuplicateError">{{ contactDuplicateError }}可继续保存。</span><template v-else><span>{{ contactDuplicateHint }}</span><ul class="crm-duplicate-list"><li v-for="match in contactDuplicateMatches" :key="match.id"><span>{{ match.name }}（{{ match.matchReasons.join('、') }}）</span><a :href="contactDetailUrl(match)" target="_blank" rel="noopener noreferrer">查看联系人</a></li></ul><small>这是非阻断提醒；确认无误后仍可继续创建。</small></template></div>
         <p v-if="isSupplierPage && field[0] === 'payment_terms'" class="field-help">仅供沟通参考，不生成付款计划。</p><p v-if="config.endpoint === 'suppliers' && field[0] === 'code'" class="field-help" :class="{ error: supplierCodeError }">{{ supplierCodeError || '填写两个英文字母，用于供应商 SKU 编码。' }}</p>
       </div></div>
         <section v-if="isCustomerCreate && groupIndex === 0" class="contact-create-section">
@@ -1014,6 +1045,9 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 .supplier-list-table th:nth-child(2){width:90px}.supplier-list-table th:nth-child(3){width:230px}.supplier-list-table th:nth-child(4){width:180px}.supplier-list-table th:nth-child(5){width:240px}.supplier-list-table th:nth-child(6){width:220px}.supplier-list-table th:last-child{width:128px}.supplier-lifecycle-btn{width:auto!important;min-width:42px;padding:0 7px!important;color:var(--green-2)}
 </style>
 
+<style scoped>
+.crm-duplicate-hint{display:grid;gap:5px;color:#8b6428;line-height:1.55}.crm-duplicate-hint small{color:#8b6428}.crm-duplicate-list{display:grid;gap:4px;margin:0;padding-left:18px}.crm-duplicate-list li{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;min-width:0}.crm-duplicate-list li>span{min-width:0;overflow-wrap:anywhere}.crm-duplicate-list a{flex:none;color:#28634f;text-decoration:underline}
+</style>
 
 <style scoped>
 .supplier-filter-bar{display:grid;grid-template-columns:minmax(220px,2fr) minmax(160px,1fr) minmax(150px,1fr) auto auto;gap:12px;align-items:end;margin:18px 0 10px}.supplier-filter-bar label{display:grid;gap:6px;color:#71817b;font-size:var(--text-caption)}.supplier-filter-bar input,.supplier-filter-bar select{width:100%;min-width:0;min-height:42px;padding:10px 12px;border:1px solid #dce6e1;border-radius:8px;background:#fff;color:#294a41;font:inherit;font-size:var(--text-body)}.supplier-filter-bar input:focus,.supplier-filter-bar select:focus{outline:2px solid #b8d8cb;outline-offset:1px}.supplier-rule-note{color:#567168;font-size:var(--text-body);line-height:1.6}.supplier-list-table{min-width:1150px;table-layout:fixed}.supplier-list-table th:nth-child(1){width:230px}.supplier-list-table th:nth-child(2){width:230px}.supplier-list-table th:nth-child(3){width:180px}.supplier-list-table th:nth-child(4){width:240px}.supplier-list-table th:nth-child(5){width:220px}.supplier-list-table th:last-child{width:108px}.supplier-list-table td{white-space:normal;overflow-wrap:anywhere;vertical-align:top}.supplier-list-table th:last-child,.supplier-list-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 10px #173d3210}.supplier-list-table td:last-child{z-index:2}.supplier-list-table th:last-child{z-index:3}.supplier-secondary{display:block;margin-top:6px;color:#7b8b84;font-size:var(--text-caption);font-weight:400}.supplier-excerpt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.supplier-editor{width:min(960px,calc(100vw - 40px))}.supplier-editor .modal-body{display:block}.supplier-editor .form-grid{margin-bottom:22px}.supplier-group-title{margin:12px 0;color:#21483d;font-size:var(--text-section)}.supplier-editor .modal-foot{position:sticky;bottom:0;background:#fff;z-index:1}.supplier-editor .field{min-width:0}.supplier-save-error{color:#a44343;padding:12px;border:1px solid #efc6c2;background:#fff9f8;border-radius:8px;overflow-wrap:anywhere}@media(max-width:1100px){.supplier-filter-bar{grid-template-columns:minmax(220px,2fr) minmax(150px,1fr) minmax(150px,1fr)}.supplier-filter-bar .btn{justify-self:start}}@media(max-width:650px){.supplier-filter-bar{grid-template-columns:1fr 1fr}.supplier-filter-bar label:first-child{grid-column:1/-1}.supplier-editor .form-grid{grid-template-columns:1fr}}

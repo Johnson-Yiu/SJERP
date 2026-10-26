@@ -310,6 +310,43 @@ async function matchedSupplier(selection) {
 }
 function supplierSourceKey(item) { return `${draft.value.supplier || ''}:${item.sku || ''}` }
 function supplierSourcesFor(item) { return supplierSkuOptions.value[supplierSourceKey(item)] || [] }
+const quantity = value => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 6 })
+const moqWarnings = computed(() => {
+  const groups = new Map()
+  draft.value.items.forEach(item => {
+    if (!item.supplier_sku) return
+    const key = supplierSourceKey(item)
+    if (supplierSkuLoading.value[key] || supplierSkuErrors.value[key]) return
+    const source = supplierSourcesFor(item).find(row => Number(row.id) === Number(item.supplier_sku))
+    const moq = Number(source?.moq)
+    const actual = baseQuantity(item)
+    if (!source || !Number.isFinite(moq) || moq <= 0 || !Number.isFinite(actual)) return
+    const group = groups.get(String(source.id)) || {
+      source_id: source.id,
+      sku_code: itemSku(item)?.sku_code || item.sku || '未命名 SKU',
+      actual_quantity: 0,
+      moq,
+      base_unit: itemBaseUnit(item) || '基础单位',
+    }
+    group.actual_quantity += actual
+    groups.set(String(source.id), group)
+  })
+  return [...groups.values()]
+    .filter(item => item.actual_quantity < item.moq)
+    .map(item => ({ ...item, shortage: item.moq - item.actual_quantity }))
+})
+const moqCheckUnavailable = computed(() => {
+  const seen = new Set()
+  return draft.value.items.flatMap(item => {
+    if (!item.supplier_sku) return []
+    const key = supplierSourceKey(item)
+    if (seen.has(key)) return []
+    seen.add(key)
+    if (supplierSkuLoading.value[key]) return [{ key, message: '供应商供货档案正在加载，暂无法判断 MOQ。' }]
+    if (supplierSkuErrors.value[key]) return [{ key, message: '供应商供货档案加载失败，暂无法判断 MOQ；请重试加载。' }]
+    return []
+  })
+})
 async function loadSupplierSkuOptions(item) {
   const key = supplierSourceKey(item)
   supplierSkuErrors.value[key] = ''
@@ -377,7 +414,43 @@ function syncSelectedSkus(ids) {
   if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
 }
 async function createPurchase() { if (saving.value || draftChanging.value || !can('purchases', editingPurchaseId.value ? 'update' : 'create')) return; if (!referenceReady.value) { error.value = '供应商、订单或 SKU 资料尚未加载完成，请重试后再保存。'; return } if (!supplierSourcesReady.value) { error.value = '供应商供货档案仍在加载或加载失败，请重试后再保存。'; return } if (paymentTermsError(draft.value.payment_terms_snapshot)) { error.value = paymentTermsError(draft.value.payment_terms_snapshot); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; if (payload.sales_link_restricted) delete payload.order; delete payload.sales_link_restricted; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); guard.markClean(); await closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
-async function place(row) { if (!can('purchases', 'update')) return; const zeroCount = (row.items || []).filter(item => Number(item.unit_price) === 0).length; if (!await confirmDialog({ title: '确认采购下单', message: `${zeroCount ? `当前采购单存在 ${zeroCount} 条 0 单价商品，请确认这是赠品、样品或其他合理的零价采购。\n` : ''}确认下单后将生成应付计划并进入在途采购。是否继续？`, confirmText: '确认下单', danger: true })) return; try { await api.post(`/purchase-orders/${row.id}/place/`); notice.value = '采购单已确认下单。'; await load() } catch (err) { error.value = message(err, '确认下单失败。') } }
+function moqExceptionMessage(data) {
+  const details = (data?.exceptions || []).map(item => `${item.sku_code || '未命名 SKU'}：实际 ${item.actual_quantity} ${item.base_unit || ''}，MOQ ${item.moq} ${item.base_unit || ''}，差额 ${item.shortage} ${item.base_unit || ''}`.replaceAll('  ', ' ').trim())
+  return `本次采购存在低于供应商 MOQ 的明细。\n${details.join('\n')}\n可以填写例外原因后继续下单；取消则保留当前采购草稿。`
+}
+async function place(row) {
+  if (!can('purchases', 'update')) return
+  const zeroCount = (row.items || []).filter(item => Number(item.unit_price) === 0).length
+  if (!await confirmDialog({ title: '确认采购下单', message: `${zeroCount ? `当前采购单存在 ${zeroCount} 条 0 单价商品，请确认这是赠品、样品或其他合理的零价采购。\n` : ''}确认下单后将生成应付计划并进入在途采购。是否继续？`, confirmText: '确认下单', danger: true })) return
+  let reason = ''
+  while (true) {
+    try {
+      const placementUrl = `/purchase-orders/${row.id}/place/`
+      if (reason) await api.post(placementUrl, { moq_exception_reason: reason })
+      else await api.post(placementUrl)
+      notice.value = '采购单已确认下单。'
+      await load()
+      return
+    } catch (err) {
+      const data = err.response?.data
+      if (data?.code !== 'purchase_moq_exception_required') {
+        error.value = message(err, '确认下单失败。')
+        return
+      }
+      const nextReason = await inputDialog({
+        title: '采购 MOQ 例外确认',
+        message: moqExceptionMessage(data),
+        label: '例外原因',
+        placeholder: '例如：客户指定小批量试单，已确认本次需求量。',
+        required: true,
+        maxLength: 500,
+        confirmText: '填写原因并继续下单',
+      })
+      if (!nextReason) return
+      reason = nextReason.trim()
+    }
+  }
+}
 async function cancelPurchase(row) { if (!can('purchases', 'update')) return; const reason = await inputDialog({ title: '取消采购', message: `请填写取消采购单 ${row.purchase_no} 的原因。`, label: '取消原因', placeholder: '请输入取消原因', required: true, maxLength: 500, confirmText: '确认取消', danger: true }); if (!reason) return; try { await api.post(`/purchase-orders/${row.id}/cancel/`, { reason }); notice.value = '采购单已取消。'; await load() } catch (err) { error.value = message(err, '取消采购失败。') } }
 async function deleteDraft(row) { if (!can('purchases', 'delete') || !await confirmDialog({ title: '确认删除采购草稿', message: `确定删除草稿 ${row.purchase_no} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/purchase-orders/${row.id}/`); notice.value = '采购草稿已删除。'; if (Number(route.query.detail) === row.id) await closeDetail(); await load() } catch (err) { error.value = message(err, '删除采购草稿失败。') } }
 function pay(row) { if (can('purchases', 'update')) paymentTarget.value = row }
@@ -455,6 +528,10 @@ watch(() => route.query.detail, id => {
             <div class="draft-section-heading"><h4>采购商品</h4><small v-if="selectedOrder">关联：{{ selectedOrder.order_no }}</small></div>
             <p class="section-help">选择 SKU 后填写规格、数量和单价。</p>
             <SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" :show-price="false" />
+            <div v-if="moqCheckUnavailable.length || moqWarnings.length" class="moq-editor-feedback" aria-live="polite">
+              <p v-for="item in moqCheckUnavailable" :key="item.key" class="moq-check-unavailable" role="status">{{ item.message }}</p>
+              <p v-for="warning in moqWarnings" :key="warning.source_id" class="moq-editor-warning" data-testid="draft-moq-warning" role="alert">{{ warning.sku_code }}：实际 {{ quantity(warning.actual_quantity) }} {{ warning.base_unit }}，MOQ {{ quantity(warning.moq) }} {{ warning.base_unit }}，差额 {{ quantity(warning.shortage) }} {{ warning.base_unit }}。可保存草稿；确认下单时需填写例外原因。</p>
+            </div>
             <article v-for="(item,index) in draft.items" :key="index" class="purchase-line">
               <header class="purchase-line-heading"><div class="purchase-sku"><b>{{ itemSku(item)?.display_name_cn || itemSku(item)?.product_name || '—' }}</b><small>SKU: {{ itemSku(item)?.sku_code || item.sku || '—' }} · Sales Model: {{ itemSku(item)?.sales_model || '—' }}</small></div><button type="button" class="text-btn danger" @click="draft.items.splice(index, 1)">删除</button></header>
               <div class="line-source-grid">
@@ -537,6 +614,10 @@ watch(() => route.query.detail, id => {
 <style scoped>
 
 .purchase-list-row{cursor:pointer}.purchase-list-row:hover{background:#F8FBF9}.arrival-helper{display:inline-block;margin-top:4px;font-size:12px;color:#71817B}.arrival-helper.today,.arrival-helper.overdue{font-weight:600;border-radius:6px;padding:2px 6px}.arrival-helper.today{color:#A25F22;background:#FFF0DC}.arrival-helper.overdue{color:#A84444;background:#FBE5E5}
+</style>
+
+<style scoped>
+.moq-editor-feedback{display:grid;gap:8px;margin:12px 0}.moq-editor-feedback p{margin:0;padding:9px 11px;border-radius:8px;font-size:12px;line-height:1.6}.moq-editor-warning{border:1px solid #EADBB5;background:#FFF8E8;color:#805C25}.moq-check-unavailable{border:1px solid #D6E1DC;background:#F5F8F6;color:#5F746B}
 </style>
 
 <style scoped>

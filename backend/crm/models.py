@@ -1255,6 +1255,28 @@ class PurchaseOrderItem(TradeUnitLine):
             )
 
 
+class PurchaseMOQException(TimestampedModel):
+    """Immutable evidence for a formal PO placed below a maintained MOQ."""
+
+    purchase_order = models.OneToOneField(
+        PurchaseOrder,
+        on_delete=models.CASCADE,
+        related_name="moq_exception",
+    )
+    reason = models.TextField("例外原因")
+    details = models.JSONField("MOQ 明细快照", default=list)
+    operator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="purchase_moq_exceptions",
+    )
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+
+
 class PaymentPlan(TimestampedModel):
     DIRECTION_CHOICES = [("receivable", "应收"), ("payable", "应付")]
     STATUS_CHOICES = [("open", "待结清"), ("settled", "已结清"), ("cancelled", "已取消")]

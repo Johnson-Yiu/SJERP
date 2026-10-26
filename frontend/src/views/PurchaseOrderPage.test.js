@@ -122,3 +122,26 @@ test('cost allocation loads minimal cross-order candidates through procurement p
   assert.match(modal, /\{\{ order\.order_no \}\}/)
   assert.doesNotMatch(modal, /order\.customer_name/)
 })
+
+test('purchase editor aggregates maintained MOQ in base units without blocking draft save', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  assert.match(source, /const moqWarnings = computed/)
+  assert.match(source, /group\.actual_quantity \+= actual/)
+  assert.match(source, /baseQuantity\(item\)/)
+  assert.match(source, /moq-editor-warning/)
+  assert.match(source, /可保存草稿；确认下单时需填写例外原因。/)
+  assert.match(source, /供应商供货档案正在加载，暂无法判断 MOQ。/)
+})
+
+test('purchase placement keeps low MOQ as a reasoned soft exception and displays retained evidence', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  const detail = await readFile(new URL('../components/PurchaseDetailModal.vue', import.meta.url), 'utf8')
+
+  assert.match(source, /purchase_moq_exception_required/)
+  assert.match(source, /moq_exception_reason: reason/)
+  assert.match(source, /填写原因并继续下单/)
+  assert.match(detail, /purchase-moq-exception/)
+  assert.match(detail, /确认时间/)
+  assert.match(detail, /确认人员/)
+})

@@ -100,6 +100,16 @@ def build_procurement_plan(order):
         order.items.select_related("sku", "supplier_sku", "supplier_sku__supplier").order_by("id")
     )
     draft_quantities = draft_procurement_quantities(order, items)
+    moq_totals = defaultdict(lambda: ZERO)
+    item_moq = {}
+    for item in items:
+        source = item.supplier_sku
+        moq = item.supplier_moq_snapshot if item.supplier_moq_snapshot is not None else (source.moq if source else None)
+        item_moq[item.id] = moq
+        if source is not None and moq is not None and moq > ZERO:
+            metrics = order_item_metrics(item)
+            draftable = max(ZERO, metrics["to_procure_quantity"] - draft_quantities[item.id])
+            moq_totals[source.id] += draftable
     rows = []
     for item in items:
         metrics = order_item_metrics(item)
@@ -115,12 +125,12 @@ def build_procurement_plan(order):
             warnings.append("订单行缺少供应商价格快照，当前仅以 Supplier SKU 参考价供确认。")
         if not item.supplier_currency_snapshot and source is not None:
             warnings.append("订单行缺少供应商币种快照，当前以 Supplier SKU 币种供确认。")
-        moq = item.supplier_moq_snapshot if item.supplier_moq_snapshot is not None else (source.moq if source else None)
+        moq = item_moq[item.id]
         lead_time_days = item.supplier_lead_time_days_snapshot
         if lead_time_days is None and source is not None:
             lead_time_days = source.lead_time_days
-        if moq and draftable_quantity and draftable_quantity < moq:
-            warnings.append(f"待采购数量低于供应商 MOQ {moq}")
+        if source is not None and moq and moq_totals[source.id] and moq_totals[source.id] < moq:
+            warnings.append(f"同一供应商来源待采购合计低于 MOQ {moq}，确认下单时按整张采购单合计复核")
         if order.status not in GENERATABLE_ORDER_STATUSES:
             blocking_reason = "当前销售订单状态不允许生成采购草稿。"
         elif not blocking_reason and draftable_quantity <= ZERO:

@@ -241,7 +241,7 @@ class ProcurementWorkflowTests(TestCase):
         purchase.items.create(sku=self.sku_a, supplier_sku=self.source_a_usd, quantity=Decimal("30"), unit_price=Decimal("2.15"))
         self.assertEqual(build_procurement_plan(self.order)["items"][0]["draft_procurement_quantity"], Decimal("30"))
 
-        place_purchase_order(purchase)
+        place_purchase_order(purchase, moq_exception_reason="销售订单合并采购，已确认本次数量")
         row = build_procurement_plan(self.order)["items"][0]
         self.assertEqual(row["draft_procurement_quantity"], Decimal("0"))
         self.assertEqual(row["to_procure_quantity"], Decimal("0"))

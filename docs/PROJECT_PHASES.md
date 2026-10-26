@@ -396,3 +396,11 @@ ISS-020 更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue、不合并 master，
 
 SQLite 定向审计测试 8 项通过（其中 PostgreSQL 原始 SQL 保护 1 项因本机无 PostgreSQL 跳过），迁移至 0089、系统检查和迁移检查通过。真实生产 PostgreSQL 运行账号权限、角色继承、触发器现场验证、备份恢复及特殊维护演练为 `PENDING`；证据见 [`ISS-043 验收记录`](uat-evidence/iss-043-audit-protection/README.md)。本轮保持 ISS-043 `BLOCKED`，不关闭 Issue、不合并 master，等待部署证据和独立审查。
 
+## ISS-043 / ISS-075 / ISS-023 统一集成验收（2026-10-26）
+
+基于统一基线 `f12b591cb90d6a5d8ebfedf1c559703377c92d84` 创建独立 Worktree 和 `codex/integration-043-075-023`，按 ISS-043 → ISS-075 → ISS-023 顺序完整移交已审查提交：ISS-043 `dea057ce0c98fc32da44b72999beb4af78a58176`、ISS-075 `771307b19667256453c7c22ebf60256ffd2a26dd`、ISS-023 `c6a1415437fb2a020ec31d655fe8ce274aa93912`。没有整文件覆盖；`serializers.py` 和两份公共台账自动合并后逐段复核。0088 依赖 0087、0089 依赖 0088，迁移历史完整。
+
+集成后 Django 定向 117（跳过1）及全量 940（跳过14）、Node 154、有效 Vitest 657、生产构建、SQLite 全新迁移、0087→0089 升级、`makemigrations --check` 和真实 Chrome 桌面/390×844 回归通过。Chrome 隔离数据核对了空付款阶段 PO、历史 500/500 付款计划、SKU 页面和窄屏菜单收起；控制台无 error/warning。证据见 [`ISS-043 / ISS-075 / ISS-023 统一集成验收`](uat-evidence/integration-043-075-023/README.md)。
+
+本轮不关闭 Issue、不合并 master、不部署。延期台账仅更新原有 ISS-043、ISS-075、ISS-023：ISS-043 真实 PostgreSQL 与最终 CI 为 `DEPLOYMENT_VERIFICATION_PENDING`；ISS-075 真实业务财务数据的无付款阶段跨模块抽查为 `BUSINESS_VERIFICATION_PENDING`；ISS-023 真实 SKU 型号完整性抽查为 `BUSINESS_VERIFICATION_PENDING`。ISS-023 窄屏菜单可用性已通过，不作为遗留事项。三项等待统一独立审查。
+

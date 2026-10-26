@@ -1,8 +1,8 @@
 # ISS-023 Sales Model 自动生成与人工设置验收
 
-日期：2026-10-26  
-基线：`f12b591cb90d6a5d8ebfedf1c559703377c92d84`  
-分支：`codex/iss-023-sales-model`  
+日期：2026-10-26
+基线：`f12b591cb90d6a5d8ebfedf1c559703377c92d84`
+分支：`codex/iss-023-sales-model`
 Worktree：独立托管 Worktree `C:\Users\Johnson\.codex\worktrees\iss-023-sales-model\森爵照明管理系统`
 
 ## 规则与现状审查

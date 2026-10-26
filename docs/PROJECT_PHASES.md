@@ -438,4 +438,5 @@ ISS-080 更新为 `FIXED_PENDING_REVIEW`，真实生产账号/数据库及跨员
 集成后 Django 全量 `950` 通过、`15` 跳过，定向三项后端 `59` 通过/`1` 跳过，Node `154`、有效 Vitest `659`、Playwright CRM/RBAC `27`、生产构建、SQLite 空库迁移和 0087→0089 升级均通过，`makemigrations --check` 无差异。真实 Chrome 已补充 ISS-080 桌面/390px 联系人提醒和 ISS-097 桌面/390px 权限矩阵独立图片。Vitest 中既有 `detail-drawer-typography.spec.js` 为 node:test 文件，已明确排除，不将错误 suite 运行结果冒充全量 Vitest 通过。
 
 ISS-047 真实生产卷/Nginx/容量告警/联合备份恢复与 PostgreSQL、ISS-097 正式员工与生产会话、ISS-080 真实员工跨客户数据抽查均保留原记录的部署或业务待验状态。最终 HEAD 的 GitHub Actions 必须另行核对；测试步骤前失败时不标记 CI PASS。完整命令、冲突、截图和遗留事项见 [`ISS-047 / ISS-097 / ISS-080 统一集成验收`](uat-evidence/integration-047-097-080/README.md)。本轮未部署、未合并 master、未关闭 Issue，等待 ChatGPT 独立审查。
+本轮 `npm install` 重新暴露依赖安全快照（2 moderate、9 high），沿用既有 ISS-002 记录为 `NEEDS_VERIFICATION`；未运行自动修复或无授权升级，不把该数量当作已确认生产漏洞。
 

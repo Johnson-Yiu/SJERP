@@ -1,10 +1,10 @@
 <script setup>
 import { computed } from 'vue'
 import { copyPaymentTerms, paymentTermsError, percentToRatio } from '../utils/paymentTerms'
-const props = defineProps({ modelValue: { type: Array, default: () => [] }, description: { type: String, default: '' } })
+const props = defineProps({ modelValue: { type: Array, default: () => [] }, description: { type: String, default: '' }, allowEmpty: { type: Boolean, default: false }, allowSystemDefault: { type: Boolean, default: false } })
 const emit = defineEmits(['update:modelValue'])
 const rows = computed(() => props.modelValue)
-const error = computed(() => paymentTermsError(rows.value))
+const error = computed(() => paymentTermsError(rows.value, { allowEmpty: props.allowEmpty }))
 const total = computed(() => Number(rows.value.reduce((sum, row) => sum + Number(row.ratio || 0) * 100, 0).toFixed(8)))
 function change(index, key, value) { const next = JSON.parse(JSON.stringify(rows.value)); next[index][key] = value; emit('update:modelValue', next) }
 function add() { emit('update:modelValue', [...rows.value, { label: '', ratio: '', due_basis: 'no_date', offset_days: 0 }]) }
@@ -21,11 +21,12 @@ function remove(index) { emit('update:modelValue', rows.value.filter((_, i) => i
         <button type="button" :aria-label="`删除付款阶段 ${index + 1}`" @click="remove(index)">删除</button>
       </div>
     </div>
-    <div class="terms-footer"><button type="button" :disabled="rows.length >= 5" @click="add">新增付款阶段</button><button v-if="!rows.length" type="button" @click="emit('update:modelValue', copyPaymentTerms())">使用系统默认</button><strong>合计：{{ total }}%</strong></div>
+    <div class="terms-footer"><button type="button" :disabled="rows.length >= 5" @click="add">新增付款阶段</button><button v-if="!rows.length && props.allowSystemDefault" type="button" @click="emit('update:modelValue', copyPaymentTerms())">使用系统默认</button><strong>合计：{{ total }}%</strong></div>
+    <p v-if="!rows.length && props.allowEmpty" class="terms-help">付款阶段可暂不设置；未协商时不会自动生成应付计划。</p>
     <p v-if="error" class="terms-error" role="alert">{{ error }}</p>
   </div>
 </template>
 <style scoped>
 .terms-row input,.terms-row select{height:42px;border:1px solid #dfe5e1;border-radius:8px;padding:9px 11px;background:#fff;color:#294a41;font:inherit;font-size:14px}.terms-row input:focus,.terms-row select:focus{outline:2px solid #b8d8cb;outline-offset:1px}
-.terms-editor{min-width:0}.terms-scroll{overflow-x:auto}.terms-head,.terms-row{display:grid;grid-template-columns:minmax(130px,1fr) 95px minmax(145px,1fr) 95px 50px;gap:10px;min-width:570px;align-items:center}.terms-head{color:#71817b;font-size:12px;margin-bottom:8px}.terms-row{margin-bottom:10px}.terms-row input,.terms-row select{width:100%;min-width:0;box-sizing:border-box}.terms-row button,.terms-footer button{border:1px solid #cfe1d9;border-radius:7px;padding:7px;background:white;color:#236657;cursor:pointer}.terms-footer{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.terms-footer strong{margin-left:auto;color:#174c41}.terms-error{color:#b34848;font-size:13px;margin-bottom:0}
+.terms-editor{min-width:0}.terms-scroll{overflow-x:auto}.terms-head,.terms-row{display:grid;grid-template-columns:minmax(130px,1fr) 95px minmax(145px,1fr) 95px 50px;gap:10px;min-width:570px;align-items:center}.terms-head{color:#71817b;font-size:12px;margin-bottom:8px}.terms-row{margin-bottom:10px}.terms-row input,.terms-row select{width:100%;min-width:0;box-sizing:border-box}.terms-row button,.terms-footer button{border:1px solid #cfe1d9;border-radius:7px;padding:7px;background:white;color:#236657;cursor:pointer}.terms-footer{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.terms-footer strong{margin-left:auto;color:#174c41}.terms-error{color:#b34848;font-size:13px;margin-bottom:0}.terms-help{color:#71817b;font-size:13px;margin:10px 0 0}
 </style>

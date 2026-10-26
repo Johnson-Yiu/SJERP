@@ -7,6 +7,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
 
+from .money import document_total, money
+
 
 # Inventory movement types which reduce available stock.  Keep this list in
 # one place so model properties and reporting code can stay in sync.
@@ -696,7 +698,7 @@ class Quote(TimestampedModel):
 
     @property
     def total_amount(self):
-        return sum((item.amount for item in self.items.all()), Decimal("0")) + self.shipping_fee - self.discount
+        return document_total(self.items.all(), shipping_fee=self.shipping_fee, discount=self.discount)
 
 
 class QuoteRevisionCounter(models.Model):
@@ -840,7 +842,7 @@ class Order(TimestampedModel):
 
     @property
     def base_amount(self):
-        return sum((item.amount for item in self.items.all()), Decimal("0")) + self.shipping_fee - self.discount
+        return document_total(self.items.all(), shipping_fee=self.shipping_fee, discount=self.discount)
 
     @property
     def approved_change_amount(self):
@@ -848,7 +850,7 @@ class Order(TimestampedModel):
 
     @property
     def total_amount(self):
-        return self.base_amount + self.approved_change_amount
+        return money(self.base_amount + self.approved_change_amount)
 
     @property
     def paid_amount(self):

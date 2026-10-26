@@ -8,6 +8,8 @@ data when an old quotation is re-exported.
 from dataclasses import asdict, dataclass
 from decimal import Decimal, ROUND_HALF_UP
 
+from .money import money
+
 
 TWO_PLACES = Decimal("0.01")
 NO_DISCOUNT_TEMPLATE_ID = "standard_en_no_discount"
@@ -51,7 +53,7 @@ class QuotationExportDTO:
 
 
 def _money(value):
-    return str(Decimal(value).quantize(TWO_PLACES, rounding=ROUND_HALF_UP))
+    return str(money(value))
 
 
 def validate_quotation_export_source(quote):
@@ -87,7 +89,7 @@ def build_quotation_export_dto(quote, *, template_id=None):
     products = []
     subtotal = Decimal("0")
     for item in quote.items.all():
-        amount = Decimal(_money(item.amount))
+        amount = money(item.amount)
         subtotal += amount
         image_path = ""
         if item.image_snapshot:
@@ -109,12 +111,12 @@ def build_quotation_export_dto(quote, *, template_id=None):
             image_path=image_path,
         ))
 
-    shipping_fee = Decimal(_money(quote.shipping_fee))
-    discount = Decimal(_money(quote.discount))
+    shipping_fee = money(quote.shipping_fee)
+    discount = money(quote.discount)
     resolved_template_id = template_id or (
         NO_DISCOUNT_TEMPLATE_ID if discount == Decimal("0.00") else WITH_DISCOUNT_TEMPLATE_ID
     )
-    total_amount = (subtotal + shipping_fee - discount).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
+    total_amount = money(subtotal + shipping_fee - discount)
     deposit_amount = (total_amount * quote.deposit_ratio).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
     validity_days = (quote.valid_until - quote.quote_date).days if quote.valid_until else 30
     return QuotationExportDTO(

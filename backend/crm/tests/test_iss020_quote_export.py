@@ -12,7 +12,7 @@ from openpyxl import load_workbook
 from PIL import Image as PILImage
 from rest_framework.test import APIClient
 
-from crm.models import Customer, Product, Quote, SKU
+from crm.models import Customer, Order, Product, Quote, SKU
 from crm.quote_snapshots import create_quote_items
 
 
@@ -92,6 +92,47 @@ class ISS020QuoteExportConsistencyTests(TestCase):
         self.assertEqual(preview.status_code, 200)
         self.assertEqual(Decimal(preview.data["totals"]["subtotal"]), displayed_subtotal)
         self.assertEqual(sum(Decimal(row["amount"]) for row in preview.data["products"]), displayed_subtotal)
+
+    def test_three_decimal_prices_use_one_cent_rule_across_quote_pi_xlsx_and_order(self):
+        quote = self.make_quote(
+            currency="EUR",
+            rows=[
+                {"sku": self.skus[0], "quantity": Decimal("1.00"), "unit_price": Decimal("1.005"), "description": "Line 1"},
+                {"sku": self.skus[1], "quantity": Decimal("1.00"), "unit_price": Decimal("1.005"), "description": "Line 2"},
+            ],
+        )
+        quote.shipping_fee = Decimal("0.025")
+        quote.discount = Decimal("0.005")
+        quote.save(update_fields=["shipping_fee", "discount"])
+
+        expected = Decimal("2.04")  # 1.01 + 1.01 + 0.03 - 0.01
+        quote.refresh_from_db()
+        self.assertEqual(quote.total_amount, expected)
+
+        detail = self.client.get(f"/api/quotes/{quote.pk}/")
+        self.assertEqual(detail.status_code, 200)
+        self.assertEqual(Decimal(detail.data["total_amount"]), expected)
+
+        preview = self.client.get(f"/api/quotes/{quote.pk}/pi-data/")
+        self.assertEqual(preview.status_code, 200)
+        self.assertEqual(Decimal(preview.data["totals"]["subtotal"]), Decimal("2.02"))
+        self.assertEqual(Decimal(preview.data["totals"]["total_amount"]), expected)
+        self.assertEqual(sum(Decimal(row["amount"]) for row in preview.data["products"]), Decimal("2.02"))
+
+        exported = self.client.get(f"/api/quotes/{quote.pk}/export/")
+        self.assertEqual(exported.status_code, 200)
+        sheet = load_workbook(io.BytesIO(exported.content), data_only=False)["PI"]
+        self.assertEqual(Decimal(str(sheet["M13"].value)), Decimal("0.03"))
+        self.assertEqual(Decimal(str(sheet["M14"].value)), Decimal("0.01"))
+        self.assertEqual(Decimal(str(sheet["M15"].value)), expected)
+
+        draft = self.client.get(f"/api/quotes/{quote.pk}/order-draft/")
+        self.assertEqual(draft.status_code, 200)
+        created = self.client.post("/api/orders/", draft.data, format="json")
+        self.assertEqual(created.status_code, 201, created.data)
+        order = Order.objects.get(pk=created.data["id"])
+        self.assertEqual(order.total_amount, expected)
+        self.assertEqual(Decimal(created.data["total_amount"]), expected)
 
     def test_formal_export_embeds_the_saved_image_snapshot(self):
         image_bytes = io.BytesIO()

@@ -21,6 +21,7 @@ class PurchaseOverageProjectionTests(TestCase):
         self.purchase = PurchaseOrder.objects.create(
             purchase_no="PO-OVERAGE", supplier=self.supplier, order=self.order,
             order_date=self.day, status="ordered", currency="USD", exchange_rate=Decimal("1"),
+            payment_terms_snapshot=[{"label": "全款", "ratio": "1", "due_basis": "no_date", "offset_days": 0}],
         )
         self.item = self.purchase.items.create(sku=self.sku, quantity=Decimal("10"), unit_price=Decimal("5"))
 

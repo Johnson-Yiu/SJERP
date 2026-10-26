@@ -58,6 +58,7 @@ class ContractLifecycleApiTests(TestCase):
             "order_date": self.day.isoformat(),
             "currency": "USD",
             "exchange_rate": "1",
+            "payment_terms_snapshot": [{"label": "全款", "ratio": "1", "due_basis": "no_date", "offset_days": 0}],
             "items": [item],
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
@@ -154,7 +155,9 @@ class ContractLifecycleApiTests(TestCase):
         supplier = Supplier.objects.create(code="LC", name="Lifecycle Supplier")
         payload = {
             "supplier": supplier.id, "order_date": self.day.isoformat(),
-            "currency": "USD", "exchange_rate": "1", "items": [{"sku": self.sku.id, "quantity": "2", "unit_price": "4"}],
+            "currency": "USD", "exchange_rate": "1",
+            "payment_terms_snapshot": [{"label": "全款", "ratio": "1", "due_basis": "no_date", "offset_days": 0}],
+            "items": [{"sku": self.sku.id, "quantity": "2", "unit_price": "4"}],
         }
         created = self.client.post("/api/purchase-orders/", payload, format="json")
         self.assertEqual(created.status_code, status.HTTP_201_CREATED, created.data)

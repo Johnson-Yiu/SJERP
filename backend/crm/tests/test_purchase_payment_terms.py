@@ -39,13 +39,15 @@ class PurchasePaymentTermsTests(TestCase):
     def test_default_snapshot_does_not_parse_remarks(self):
         self.supplier.payment_terms = "100% paid later"
         self.supplier.save()
-        self.assertEqual(self.create().payment_terms_snapshot, default_payment_terms())
+        self.supplier.payment_terms_config = self.terms()
+        self.supplier.save()
+        self.assertEqual(self.create().payment_terms_snapshot, [])
 
     def test_inherit_override_and_supplier_change_do_not_rewrite_snapshot_or_plans(self):
         self.supplier.payment_terms_config = self.terms()
         self.supplier.save()
         purchase = self.create()
-        self.assertEqual(purchase.payment_terms_snapshot, self.terms())
+        self.assertEqual(purchase.payment_terms_snapshot, [])
         override = self.terms(("0.2", "0.8"))
         response = self.client.patch(f"/api/purchase-orders/{purchase.pk}/", {"payment_terms_snapshot": override, "exchange_rate": "7"}, format="json")
         self.assertEqual(response.status_code, 200, response.data)
@@ -79,13 +81,13 @@ class PurchasePaymentTermsTests(TestCase):
         plans = self.place(tiny)
         self.assertEqual(sum((p.planned_amount for p in plans), Decimal("0")), tiny.total_amount)
 
-    def test_empty_legacy_snapshot_falls_back_without_duplication(self):
+    def test_empty_snapshot_does_not_synthesize_payment_plans(self):
         purchase = self.create()
         PurchaseOrder.objects.filter(pk=purchase.pk).update(payment_terms_snapshot=[])
         plans = self.place(purchase)
-        self.assertEqual([p.planned_amount for p in plans], [Decimal("300"), Decimal("700")])
+        self.assertEqual(plans, [])
         ensure_default_payment_plans(purchase)
-        self.assertEqual(PaymentPlan.objects.filter(purchase_order=purchase).count(), 2)
+        self.assertEqual(PaymentPlan.objects.filter(purchase_order=purchase).count(), 0)
 
     def test_invalid_rules_rejected_by_supplier_and_purchase(self):
         cases = [self.terms(("0.2", "0.7")), [{}], self.terms() * 3]
@@ -101,5 +103,5 @@ class PurchasePaymentTermsTests(TestCase):
                 response = self.client.patch(f"/api/purchase-orders/{purchase.pk}/", {"payment_terms_snapshot": rules, "exchange_rate": "7"}, format="json")
                 self.assertEqual(response.status_code, 400, response.data)
         purchase = self.create()
-        self.assertEqual(self.client.patch(f"/api/purchase-orders/{purchase.pk}/", {"payment_terms_snapshot": [], "exchange_rate": "7"}, format="json").status_code, 400)
+        self.assertEqual(self.client.patch(f"/api/purchase-orders/{purchase.pk}/", {"payment_terms_snapshot": [], "exchange_rate": "7"}, format="json").status_code, 200)
         self.assertEqual(self.client.patch(f"/api/suppliers/{self.supplier.pk}/", {"payment_terms_config": []}, format="json").status_code, 200)

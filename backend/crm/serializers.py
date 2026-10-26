@@ -1905,6 +1905,7 @@ class QuoteSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        data.pop("amount_calculation_version", None)
         if not user_can(serializer_user(self.context), "customers", "view"):
             data.update(
                 customer=None, customer_name="", buyer_company_name="", recipient_name="",
@@ -2042,6 +2043,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        data.pop("amount_calculation_version", None)
         user = serializer_user(self.context)
         if not user_can(user, "customers", "view"):
             data.update(

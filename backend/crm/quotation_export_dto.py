@@ -8,7 +8,7 @@ data when an old quotation is re-exported.
 from dataclasses import asdict, dataclass
 from decimal import Decimal, ROUND_HALF_UP
 
-from .money import money
+from .money import LEGACY_AMOUNT_CALCULATION_VERSION, money
 
 
 TWO_PLACES = Decimal("0.01")
@@ -87,9 +87,10 @@ def build_quotation_export_dto(quote, *, template_id=None):
     """Build a stable export view from the quotation and its saved snapshots."""
     validate_quotation_export_source(quote)
     products = []
+    legacy_calculation = quote.amount_calculation_version == LEGACY_AMOUNT_CALCULATION_VERSION
     subtotal = Decimal("0")
     for item in quote.items.all():
-        amount = money(item.amount)
+        amount = item.amount if legacy_calculation else money(item.amount)
         subtotal += amount
         image_path = ""
         if item.image_snapshot:
@@ -116,7 +117,7 @@ def build_quotation_export_dto(quote, *, template_id=None):
     resolved_template_id = template_id or (
         NO_DISCOUNT_TEMPLATE_ID if discount == Decimal("0.00") else WITH_DISCOUNT_TEMPLATE_ID
     )
-    total_amount = money(subtotal + shipping_fee - discount)
+    total_amount = quote.total_amount if legacy_calculation else money(subtotal + shipping_fee - discount)
     deposit_amount = (total_amount * quote.deposit_ratio).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
     validity_days = (quote.valid_until - quote.quote_date).days if quote.valid_until else 30
     return QuotationExportDTO(

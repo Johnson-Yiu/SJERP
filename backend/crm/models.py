@@ -7,7 +7,13 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
 
-from .money import document_total, money
+from .money import (
+    CURRENT_AMOUNT_CALCULATION_VERSION,
+    LEGACY_AMOUNT_CALCULATION_VERSION,
+    document_total,
+    legacy_document_total,
+    money,
+)
 
 
 # Inventory movement types which reduce available stock.  Keep this list in
@@ -679,6 +685,7 @@ class Quote(TimestampedModel):
     deposit_ratio = models.DecimalField("定金比例", max_digits=6, decimal_places=4, default=0)
     trading_terms = models.TextField("贸易条款", blank=True)
     shipping_details = models.TextField("运输信息", blank=True)
+    amount_calculation_version = models.PositiveSmallIntegerField(default=CURRENT_AMOUNT_CALCULATION_VERSION, editable=False)
 
     class Meta:
         ordering = ["-quote_date", "-id"]
@@ -698,6 +705,8 @@ class Quote(TimestampedModel):
 
     @property
     def total_amount(self):
+        if self.amount_calculation_version == LEGACY_AMOUNT_CALCULATION_VERSION:
+            return legacy_document_total(self.items.all(), shipping_fee=self.shipping_fee, discount=self.discount)
         return document_total(self.items.all(), shipping_fee=self.shipping_fee, discount=self.discount)
 
 
@@ -836,12 +845,15 @@ class Order(TimestampedModel):
     cancelled_at = models.DateTimeField("取消时间", null=True, blank=True)
     cancellation_reason = models.TextField("取消原因", blank=True)
     quantity_change_version = models.PositiveIntegerField("数量变更版本", default=0)
+    amount_calculation_version = models.PositiveSmallIntegerField(default=CURRENT_AMOUNT_CALCULATION_VERSION, editable=False)
 
     class Meta:
         ordering = ["-order_date", "-id"]
 
     @property
     def base_amount(self):
+        if self.amount_calculation_version == LEGACY_AMOUNT_CALCULATION_VERSION:
+            return legacy_document_total(self.items.all(), shipping_fee=self.shipping_fee, discount=self.discount)
         return document_total(self.items.all(), shipping_fee=self.shipping_fee, discount=self.discount)
 
     @property
@@ -850,7 +862,8 @@ class Order(TimestampedModel):
 
     @property
     def total_amount(self):
-        return money(self.base_amount + self.approved_change_amount)
+        total = self.base_amount + self.approved_change_amount
+        return total if self.amount_calculation_version == LEGACY_AMOUNT_CALCULATION_VERSION else money(total)
 
     @property
     def paid_amount(self):

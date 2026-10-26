@@ -29,6 +29,7 @@ from rest_framework.response import Response
 
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerSupplierPreference, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseMOQException, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
 from .country_registry import CountryResolutionError, country_options as build_country_options, country_stored_values, display_country
+from .money import CURRENT_AMOUNT_CALCULATION_VERSION
 from .querysets import current_due_follow_ups, prefetch_purchase_related_orders
 from .permissions import HSCodeMaintenancePermission, ModuleActionPermission, OrganizationOverviewPermission, PermissionAdminOnly, QuoteExportPermission, _profile_for, effective_permission_matrix, has_all_permissions, is_permission_admin, user_can
 from .sales_scope import allowed_employee_ids, data_scope_display, effective_data_scope, employee_profile_for, scope_customer_queryset, scope_customer_related_queryset
@@ -1579,7 +1580,11 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             return Response({"detail": "当前报价状态不能执行此操作，请创建修订版重新报价。"}, status=status.HTTP_400_BAD_REQUEST)
         before_status = quote.status
         quote.status = target
-        quote.save(update_fields=["status", "updated_at"])
+        update_fields = ["status", "updated_at"]
+        if before_status == "draft" and target in {"sent", "accepted"}:
+            quote.amount_calculation_version = CURRENT_AMOUNT_CALCULATION_VERSION
+            update_fields.append("amount_calculation_version")
+        quote.save(update_fields=update_fields)
         record_operation(
             request=request,
             instance=quote,

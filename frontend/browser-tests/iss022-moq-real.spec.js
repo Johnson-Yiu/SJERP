@@ -43,6 +43,18 @@ async function firstRow(page) {
   return row
 }
 
+async function draftRow(page) {
+  const row = page.locator('.purchase-list-row').filter({ hasText: '草稿' }).first()
+  await expect(row).toBeVisible()
+  return row
+}
+
+async function rowByPurchaseNo(page, purchaseNo) {
+  const row = page.locator('.purchase-list-row').filter({ hasText: purchaseNo }).first()
+  await expect(row).toBeVisible()
+  return row
+}
+
 test.describe('ISS-022 采购 MOQ 真实浏览器回归', () => {
   test('等于 MOQ、低于 MOQ、交易单位换算、取消保留草稿及例外留痕', async ({ page }) => {
     test.setTimeout(120000)
@@ -61,7 +73,8 @@ test.describe('ISS-022 采购 MOQ 真实浏览器回归', () => {
     await equalEditor.getByPlaceholder('采购数量').fill('10')
     await page.screenshot({ path: path.join(evidenceDir, '01-equal-moq-draft.png'), fullPage: true })
     await saveDraft(equalEditor)
-    const equalRow = await firstRow(page)
+    const equalRow = await draftRow(page)
+    const equalPurchaseNo = await equalRow.locator('td').first().innerText()
     await expect(equalRow).toContainText('草稿')
     await equalRow.getByRole('button', { name: /查看采购单/ }).click()
     const equalDetail = page.getByRole('dialog', { name: '采购工作台' })
@@ -71,7 +84,7 @@ test.describe('ISS-022 采购 MOQ 真实浏览器回归', () => {
     await equalDetail.getByRole('button', { name: '确认下单' }).click()
     await page.getByTestId('dialog-confirm').click()
     await expect(page.getByText('采购单已确认下单。')).toBeVisible()
-    await expect(page.locator('.purchase-list-row').first()).toContainText('已下单')
+    await expect(await rowByPurchaseNo(page, equalPurchaseNo)).toContainText('已下单')
     await page.screenshot({ path: path.join(evidenceDir, '03-equal-moq-ordered.png'), fullPage: true })
     await equalDetail.getByRole('button', { name: '关闭采购详情' }).click()
 
@@ -82,7 +95,8 @@ test.describe('ISS-022 采购 MOQ 真实浏览器回归', () => {
     await expect(lowEditor.getByTestId('draft-moq-warning')).toContainText('MOQ 10.00 pcs')
     await page.screenshot({ path: path.join(evidenceDir, '04-low-moq-conversion-warning.png'), fullPage: true })
     await saveDraft(lowEditor)
-    const lowRow = await firstRow(page)
+    const lowRow = await draftRow(page)
+    const lowPurchaseNo = await lowRow.locator('td').first().innerText()
     await lowRow.getByRole('button', { name: /查看采购单/ }).click()
     const lowDetail = page.getByRole('dialog', { name: '采购工作台' })
     await lowDetail.getByRole('button', { name: '确认下单' }).click()
@@ -92,20 +106,20 @@ test.describe('ISS-022 采购 MOQ 真实浏览器回归', () => {
     await expect(exceptionDialog).toContainText('实际 9.00 pcs')
     await page.screenshot({ path: path.join(evidenceDir, '05-low-moq-exception-dialog.png'), fullPage: true })
     await page.getByTestId('dialog-cancel').click()
-    await expect(page.locator('.purchase-list-row').first()).toContainText('草稿')
+    await expect(await rowByPurchaseNo(page, lowPurchaseNo)).toContainText('草稿')
     await page.screenshot({ path: path.join(evidenceDir, '06-cancel-keeps-draft.png'), fullPage: true })
     await lowDetail.getByRole('button', { name: '关闭采购详情' }).click()
 
-    await page.locator('.purchase-list-row').first().getByRole('button', { name: /查看采购单/ }).click()
+    await (await rowByPurchaseNo(page, lowPurchaseNo)).getByRole('button', { name: /查看采购单/ }).click()
     await page.getByRole('dialog', { name: '采购工作台' }).getByRole('button', { name: '确认下单' }).click()
     await page.getByTestId('dialog-confirm').click()
     await expect(page.getByRole('dialog', { name: '采购 MOQ 例外确认' })).toBeVisible()
     await page.getByTestId('dialog-input').fill('客户指定小批量试单，已确认本次需求量。')
     await page.getByTestId('dialog-confirm').click()
     await expect(page.getByText('采购单已确认下单。')).toBeVisible()
-    await expect(page.locator('.purchase-list-row').first()).toContainText('已下单')
+    await expect(await rowByPurchaseNo(page, lowPurchaseNo)).toContainText('已下单')
     await lowDetail.getByRole('button', { name: '关闭采购详情' }).click()
-    await page.locator('.purchase-list-row').first().getByRole('button', { name: /查看采购单/ }).click()
+    await (await rowByPurchaseNo(page, lowPurchaseNo)).getByRole('button', { name: /查看采购单/ }).click()
     const exceptionDetail = page.getByRole('dialog', { name: '采购工作台' })
     await expect(exceptionDetail.getByTestId('purchase-moq-exception')).toContainText('客户指定小批量试单')
     await expect(exceptionDetail.getByTestId('purchase-moq-exception')).toContainText('差额 1.00 pcs')

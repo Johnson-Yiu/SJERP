@@ -7,6 +7,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from crm.models import AdvanceAllocation, Customer, InventoryReservation, Order, PaymentPlan, PurchaseOrder, Quote, Shipment
+from crm.money import CURRENT_AMOUNT_CALCULATION_VERSION
 from crm.services.finance import ensure_default_payment_plans
 from crm.services.fulfillment import allocate_order, order_item_metrics
 from crm.trade_units import trade_values
@@ -111,9 +112,13 @@ def confirm_order(order):
     _capture_order_party_snapshot(order, final_quote)
     order.quote = final_quote
     order.status = "confirmed"
+    # Existing formal orders are migrated as legacy records. A pre-existing
+    # draft becomes current only when it is formally confirmed.
+    order.amount_calculation_version = CURRENT_AMOUNT_CALCULATION_VERSION
     order.save(update_fields=[
         "quote",
         "status",
+        "amount_calculation_version",
         "customer_name_snapshot",
         "customer_country_snapshot",
         "customer_address_snapshot",

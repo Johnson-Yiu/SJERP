@@ -12,7 +12,7 @@ from openpyxl import load_workbook
 from PIL import Image as PILImage
 from rest_framework.test import APIClient
 
-from crm.models import Customer, Order, Product, Quote, SKU
+from crm.models import Customer, Order, PaymentPlan, Product, Quote, SKU
 from crm.quote_snapshots import create_quote_items
 
 
@@ -31,9 +31,9 @@ class ISS020QuoteExportConsistencyTests(TestCase):
             for index in (1, 2)
         ]
 
-    def make_quote(self, *, buyer_company_name="ISS-020 Buyer", currency="USD", rows=None):
+    def make_quote(self, *, buyer_company_name="ISS-020 Buyer", currency="USD", rows=None, quote_no="ISS020-EXPORT"):
         quote = Quote.objects.create(
-            quote_no="ISS020-EXPORT",
+            quote_no=quote_no,
             customer=self.customer,
             buyer_company_name=buyer_company_name,
             recipient_name="ISS-020 Recipient",
@@ -47,6 +47,92 @@ class ISS020QuoteExportConsistencyTests(TestCase):
             {"sku": self.skus[0], "quantity": Decimal("1.00"), "unit_price": Decimal("10.00"), "description": "Line 1"},
         ])
         return quote
+
+    def test_legacy_formal_quote_and_sales_order_keep_pre_iss020_amounts(self):
+        rows = [
+            {"sku": self.skus[0], "quantity": Decimal("1.00"), "unit_price": Decimal("1.005"), "description": "Line 1"},
+            {"sku": self.skus[1], "quantity": Decimal("1.00"), "unit_price": Decimal("1.005"), "description": "Line 2"},
+        ]
+        legacy_quote = self.make_quote(rows=rows, quote_no="ISS020-HISTORY-QUOTE")
+        Quote.objects.filter(pk=legacy_quote.pk).update(status="accepted", amount_calculation_version=1)
+        legacy_quote.refresh_from_db()
+
+        self.assertEqual(legacy_quote.total_amount, Decimal("2.010"))
+        detail = self.client.get(f"/api/quotes/{legacy_quote.pk}/")
+        self.assertEqual(detail.status_code, 200)
+        self.assertEqual(Decimal(detail.data["total_amount"]), Decimal("2.01"))
+        preview = self.client.get(f"/api/quotes/{legacy_quote.pk}/pi-data/")
+        self.assertEqual(preview.status_code, 200)
+        self.assertEqual(Decimal(preview.data["totals"]["subtotal"]), Decimal("2.01"))
+        self.assertEqual(Decimal(preview.data["totals"]["total_amount"]), Decimal("2.01"))
+
+        legacy_order = Order.objects.create(
+            order_no="ISS020-HISTORY-ORDER",
+            customer=self.customer,
+            order_date=date(2026, 10, 26),
+            status="confirmed",
+            currency="USD",
+        )
+        for row in rows:
+            legacy_order.items.create(sku=row["sku"], quantity=row["quantity"], unit_price=row["unit_price"])
+        PaymentPlan.objects.create(
+            order=legacy_order,
+            direction="receivable",
+            currency="USD",
+            planned_amount=Decimal("2.0100"),
+        )
+        Order.objects.filter(pk=legacy_order.pk).update(amount_calculation_version=1)
+        legacy_order.refresh_from_db()
+
+        self.assertEqual(legacy_order.base_amount, Decimal("2.010"))
+        self.assertEqual(legacy_order.total_amount, Decimal("2.010"))
+        self.assertEqual(
+            sum(legacy_order.payment_plans.values_list("planned_amount", flat=True), Decimal("0")),
+            Decimal("2.0100"),
+        )
+
+        current_order = Order.objects.create(
+            order_no="ISS020-CURRENT-ORDER",
+            customer=self.customer,
+            order_date=date(2026, 10, 26),
+            status="draft",
+            currency="USD",
+        )
+        for row in rows:
+            current_order.items.create(sku=row["sku"], quantity=row["quantity"], unit_price=row["unit_price"])
+        self.assertEqual(current_order.amount_calculation_version, 2)
+        self.assertEqual(current_order.total_amount, Decimal("2.02"))
+
+    def test_quantity_change_uses_current_cent_rule_without_mutating_legacy_payment_plan(self):
+        order = Order.objects.create(
+            order_no="ISS020-HISTORY-QTY",
+            customer=self.customer,
+            order_date=date(2026, 10, 26),
+            status="confirmed",
+            currency="USD",
+        )
+        item = order.items.create(sku=self.skus[0], quantity=Decimal("1.00"), unit_price=Decimal("1.005"))
+        plan = PaymentPlan.objects.create(
+            order=order,
+            direction="receivable",
+            currency="USD",
+            planned_amount=Decimal("1.0050"),
+        )
+        Order.objects.filter(pk=order.pk).update(amount_calculation_version=1)
+        order.refresh_from_db()
+
+        from crm.services.order_quantity_adjustments import preview_quantity_adjustment
+
+        preview = preview_quantity_adjustment(order, {
+            "version": order.quantity_change_version,
+            "request_key": "iss020-history-qty",
+            "reason": "兼容性核对",
+            "items": [{"order_item": item.pk, "new_quantity": "2.00"}],
+        })
+        self.assertEqual(preview["financial"]["before_total"], "1.0050")
+        self.assertEqual(preview["financial"]["after_total"], "2.0100")
+        plan.refresh_from_db()
+        self.assertEqual(plan.planned_amount, Decimal("1.0050"))
 
     def test_formal_export_rejects_missing_saved_critical_fields_without_file(self):
         quote = self.make_quote(buyer_company_name="", currency="")

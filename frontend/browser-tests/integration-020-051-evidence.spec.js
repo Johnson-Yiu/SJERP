@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-const evidence = path.resolve('../docs/uat-evidence/integration-020-022-051')
+const evidence = path.resolve(process.env.EVIDENCE_DIR || '../docs/uat-evidence/integration-020-022-051')
+const evidenceTag = process.env.EVIDENCE_TAG || ''
 
 const customer = { id: 1, name: 'Integration Buyer', country: 'Germany' }
 const skus = [
@@ -65,15 +66,15 @@ test('Chrome quote workbench and saved PI show the reconciled 1.005 total', asyn
   await expect(detail).toBeVisible()
   await expect(detail).toContainText('EUR 2.04')
   await expect(detail).toContainText('Integration Buyer')
-  await page.screenshot({ path: path.join(evidence, 'chrome-quote-workbench-1440.png'), fullPage: true })
+  await page.screenshot({ path: path.join(evidence, `chrome-quote-workbench-1440${evidenceTag}.png`), fullPage: true })
 
   await detail.getByRole('button', { name: '预览 PI', exact: true }).first().click()
   const preview = page.getByRole('dialog', { name: '报价单预览' })
   await expect(preview).toBeVisible()
   await expect(preview).toContainText('Grand Total')
   await expect(preview).toContainText('2.04')
-  await page.screenshot({ path: path.join(evidence, 'chrome-quote-pi-1440.png'), fullPage: true })
+  await page.screenshot({ path: path.join(evidence, `chrome-quote-pi-1440${evidenceTag}.png`), fullPage: true })
 
   await page.setViewportSize({ width: 700, height: 1000 })
-  await page.screenshot({ path: path.join(evidence, 'chrome-quote-pi-700.png'), fullPage: true })
+  await page.screenshot({ path: path.join(evidence, `chrome-quote-pi-700${evidenceTag}.png`), fullPage: true })
 })

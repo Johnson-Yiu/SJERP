@@ -412,3 +412,12 @@ SQLite 定向审计测试 8 项通过（其中 PostgreSQL 原始 SQL 保护 1 �
 
 定向附件权限回归基线 7 项通过；本轮新增私有媒体清单、重启模拟、配置隔离和数据库设置测试将在交付日志中记录，`python manage.py check`、Django 全量和生产构建随后执行。真实生产持久卷、服务重启、磁盘/inode 告警、Nginx/反向代理 ACL、PostgreSQL+媒体联合备份恢复和未来对象存储迁移均为 `DEPLOYMENT_VERIFICATION_PENDING`；证据见 [`ISS-047 验收记录`](uat-evidence/iss-047-private-storage/README.md) 和 [`单服务器私有文件存储交接说明`](deployment/ISS-047-单服务器私有文件存储.md)。本轮不部署、不合并 `master`、不关闭 Issue，等待独立审查。
 
+## ISS-097 超级管理员权限显示一致性（2026-10-26）
+
+基于 `8b2b5c19e517addd9604b239211e199a789b739e` 创建独立 Worktree 和 `codex/iss-097-admin-permissions`，读取 2026-10-24 规则包，并复核 ISS-003、ISS-043、ISS-051。确认历史 `superadmin` 保存模板的新增模块勾选不完整，但服务端有效权限规则对最高业务角色返回全部 ERP 模块；问题是页面把存储模板当成有效权限显示，而不是已确认的授权漏洞。
+
+最小修复新增 API 的 `has_all_permissions` / `effective_permissions` 元数据，前端按有效矩阵呈现最高角色全部 24 个模块和六类动作，并明确显示“包含全部ERP业务权限，不受普通勾选项限制”。最高角色保持不可编辑；普通角色继续读取保存模板；没有新增迁移、补写权限行或改变 `development_superadmin_enabled()`、审计保护和正式 RBAC 规则。
+
+隔离 SQLite 全新迁移至 `0089`，Django 权限专项 39 项、最高角色 API 定向 2 项、Node、有效 Vitest 658 项、生产构建和真实 Chrome 桌面核验通过。Chrome 实测页面为 24/24、全选、只读，API 实测有效矩阵 24 个模块；截图、原始命令和边界风险见 [`ISS-097 验收记录`](uat-evidence/iss-097-admin-permissions/README.md)。普通员工/销售员/采购员/财务员使用现有受限 RBAC 夹具核对，未扩大数据范围；真实员工会话、生产 PostgreSQL/基础设施权限仍保持 ISS-003/ISS-051 的原有待验收状态。
+
+本轮不关闭 Issue、不合并 `master`、不部署，等待独立审查。

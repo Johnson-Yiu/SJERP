@@ -446,5 +446,5 @@ ISS-047 真实生产卷/Nginx/容量告警/联合备份恢复与 PostgreSQL、IS
 
 新增 `backup_recovery` 服务及 `create_consistent_backup`、`restore_consistent_backup`、`prune_erp_backups` 管理命令。备份不是把两份独立文件冒充快照：必须显式确认应用写入静默；SQLite 事务快照前后重新核对 ISS-047 媒体清单；数据库、媒体、恢复配置白名单和清单进入同一个 ZIP；恢复先核对归档 CRC、数据库 SHA256/`integrity_check`、媒体逐文件 SHA256 和配置 SHA256，全部通过后才写入新隔离目录。生产 PostgreSQL 未提供同一数据库/文件系统快照适配器时命令 fail-closed。age 加密、公网/异地复制、自动定时器和告警只提供未部署 runbook，不放入密钥或真实凭证。
 
-定向测试 `crm.tests.test_iss018_backup_recovery` 6 项通过；隔离管理命令实际运行并核对订单金额 `5000`、库存 `42`、附件 `followups/invoice.pdf` 及媒体 manifest SHA256；ISS-047 现有私有媒体权限/清单实现未被覆盖。实际生产 PostgreSQL、私有持久卷、独立加密副本、systemd/告警、恢复 RPO/RTO 和 ISS-043 生产审计备份仍为 `DEPLOYMENT_VERIFICATION_PENDING`；证据见 [`ISS-018 隔离演练`](uat-evidence/iss-018-backup-recovery/README.md) 和 [`ISS-018 运行手册`](deployment/ISS-018-数据库与附件一致性备份恢复.md)。本轮不关闭 Issue、不合并 `master`、不部署，等待独立审查。
+定向测试 `crm.tests.test_iss018_backup_recovery` 7 项通过，ISS-018/047/051 交叉回归 27 项通过（1 项既有 symlink 条件跳过）；隔离管理命令实际运行并核对订单金额 `5000`、库存 `42`、附件 `followups/invoice.pdf` 及媒体 manifest SHA256；ISS-047 现有私有媒体权限/清单实现未被覆盖。实际生产 PostgreSQL、私有持久卷、独立加密副本、systemd/告警、恢复 RPO/RTO 和 ISS-043 生产审计备份仍为 `DEPLOYMENT_VERIFICATION_PENDING`；证据见 [`ISS-018 隔离演练`](uat-evidence/iss-018-backup-recovery/README.md) 和 [`ISS-018 运行手册`](deployment/ISS-018-数据库与附件一致性备份恢复.md)。功能提交为 `da2a0af54a69dbaeab5ffd4a44abb87d2d39740f`，本台账绑定提交随后生成；本轮不关闭 Issue、不合并 `master`、不部署，等待独立审查。
 

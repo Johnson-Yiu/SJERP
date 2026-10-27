@@ -1,0 +1,39 @@
+[28/Oct/2026 00:48:13] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 52
+[28/Oct/2026 00:48:28] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[28/Oct/2026 00:48:28] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 52
+[28/Oct/2026 00:48:28] "GET /api/orders/?page=1 HTTP/1.1" 200 52
+[28/Oct/2026 00:48:28] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 528
+[28/Oct/2026 00:48:28] "GET /api/skus/?page=1 HTTP/1.1" 200 1735
+[28/Oct/2026 00:48:30] "GET /api/supplier-skus/?supplier=1&sku=1&is_active=1 HTTP/1.1" 200 658
+[28/Oct/2026 00:48:31] "POST /api/purchase-orders/ HTTP/1.1" 201 1499
+[28/Oct/2026 00:48:31] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 1551
+[28/Oct/2026 00:48:31] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 1551
+[28/Oct/2026 00:48:31] "POST /api/purchase-orders/1/place/ HTTP/1.1" 200 1529
+[28/Oct/2026 00:48:31] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 1581
+C:\Python314\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.ContractChangeRequest'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[28/Oct/2026 00:48:31] "GET /api/contract-changes/?purchase_order=1&page=1 HTTP/1.1" 200 52
+[28/Oct/2026 00:48:32] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 1581
+[28/Oct/2026 00:48:32] "GET /api/supplier-skus/?supplier=1&sku=1&is_active=1 HTTP/1.1" 200 658
+[28/Oct/2026 00:48:32] "POST /api/purchase-orders/ HTTP/1.1" 201 1537
+[28/Oct/2026 00:48:32] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3119
+[28/Oct/2026 00:48:32] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3119
+Bad Request: /api/purchase-orders/2/place/
+[28/Oct/2026 00:48:32] "POST /api/purchase-orders/2/place/ HTTP/1.1" 400 379
+[28/Oct/2026 00:48:33] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3119
+[28/Oct/2026 00:48:33] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3119
+Bad Request: /api/purchase-orders/2/place/
+[28/Oct/2026 00:48:33] "POST /api/purchase-orders/2/place/ HTTP/1.1" 400 379
+[28/Oct/2026 00:48:33] "POST /api/purchase-orders/2/place/ HTTP/1.1" 200 1978
+[28/Oct/2026 00:48:33] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3560
+[28/Oct/2026 00:48:33] "GET /api/contract-changes/?purchase_order=2&page=1 HTTP/1.1" 200 52
+[28/Oct/2026 00:48:34] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3560
+[28/Oct/2026 00:48:34] "GET /api/contract-changes/?purchase_order=2&page=1 HTTP/1.1" 200 52
+[28/Oct/2026 00:48:34] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3560
+[28/Oct/2026 00:48:34] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3560
+[28/Oct/2026 00:48:34] "GET /api/purchase-orders/?status=ordered&page=1 HTTP/1.1" 200 3560
+[28/Oct/2026 00:48:34] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[28/Oct/2026 00:48:35] "GET /api/orders/?page=1 HTTP/1.1" 200 52
+[28/Oct/2026 00:48:35] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 528
+[28/Oct/2026 00:48:35] "GET /api/purchase-orders/?status=ordered&page=1 HTTP/1.1" 200 3560
+[28/Oct/2026 00:48:35] "GET /api/skus/?page=1 HTTP/1.1" 200 1736

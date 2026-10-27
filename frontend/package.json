@@ -12,13 +12,13 @@
     "test:browser": "playwright test"
   },
   "dependencies": {
-    "@vitejs/plugin-vue": "latest",
+    "@vitejs/plugin-vue": "6.0.8",
     "axios": "1.21.0",
-    "lucide-vue-next": "latest",
+    "lucide-vue-next": "1.0.0",
     "pinyin-pro": "^3.29.3",
     "vite": "8.3.5",
     "vue": "3.5.44",
-    "vue-router": "latest"
+    "vue-router": "5.2.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.0",

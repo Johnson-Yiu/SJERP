@@ -23,7 +23,7 @@
 | `pinyin-pro` | dependencies | lockfile 解析版本 | 前端业务代码使用；本轮 audit 未报告 advisory |
 | `vite` | dependencies（构建工具，分类偏宽） | 8.3.5 | `package.json` scripts 和 `vite.config.js` 使用；不进入生产 bundle，但因 manifest 分类会出现在 `--omit=dev` 安装集合 |
 | `vue` | dependencies | 3.5.44 | `src/main.js` 及大量 `.vue` 文件使用，进入生产 bundle |
-| `vue-router` | dependencies | lockfile 解析版本 | `src/router.js` 及页面导航使用；本轮 audit 未报告 advisory |
+| `vue-router` | dependencies | 5.2.0 | `src/router.js` 及页面导航使用；本轮 audit 未报告 advisory |
 
 ### 前端开发依赖
 
@@ -54,7 +54,7 @@
 
 ## 前端 advisory 证据与处理
 
-初始 `npm ci --ignore-scripts --no-fund --no-progress` 后运行 `npm audit --json`：`2 moderate + 9 high = 11` 个漏洞节点；`npm audit --omit=dev` 为 7 high。最终定向升级后，两个命令均为 `0`。
+初始 `npm ci --ignore-scripts --no-audit --no-fund --no-progress` 后运行 `npm audit --json`：`2 moderate + 9 high = 11` 个漏洞节点；`npm audit --omit=dev` 为 7 high。最终定向升级后，两个命令均为 `0`。
 
 | 节点/编号 | 初始范围 → 修复版本 | 类型与实际可达性 | 处理 |
 |---|---|---|---|
@@ -92,10 +92,23 @@ Pillow 被 `crm/services/sku_images.py` 的授权 SKU 图片缩略图和 Excel �
 
 ## 兼容性与可复现性
 
-1. 前端只采用 axios 1.21.0、Vue 3.5.44、Vite 8.3.5、Vitest 4.1.12 及转依赖补丁更新，没有主版本升级；package.json 从 `latest` 改成了本轮审计所验证的具体安全版本，减少下次安装漂移。
+1. 前端将本次审计涉及的所有 direct `latest` 声明固定为已验证的精确版本：`@vitejs/plugin-vue` 6.0.8、axios 1.21.0、`lucide-vue-next` 1.0.0、Vite 8.3.5、Vue 3.5.44、`vue-router` 5.2.0、Vitest 4.1.12；没有主版本升级，也没有迁移图标库，减少下次安装漂移。
 2. 后端只上调 requirements 最低版本，不修改模型、API、权限、财务数据或业务代码；干净环境实际解析 Django 6.0.9、DRF 3.18.3。
 3. Vite 和 `@vitejs/plugin-vue` 仍位于 manifest 的 dependencies，属于现有打包分类问题；本轮未重排依赖区块，避免影响现有部署流程。生产镜像若只发布 `dist`，应在后续部署任务中明确 build stage/runtime stage 边界。
 4. requirements 仍不是 lock 文件；生产环境必须记录实际解析版本并使用受控安装，不能只依赖宽范围约束。
+
+## ISS-002-MANIFEST-PIN-FIX 复验
+
+本次只将 `frontend/package.json` 中剩余的三个 `latest` 固定为当前 lockfile 已验证版本：`@vitejs/plugin-vue` 6.0.8、`lucide-vue-next` 1.0.0、`vue-router` 5.2.0。`package-lock.json` 仅同步根 package metadata，解析后的依赖树未变；未迁移图标库、未升级 Pillow、未修改业务代码。
+
+| 本次命令 | 结果 |
+|---|---|
+| `npm ci --ignore-scripts --no-audit --no-fund` | 通过，added 227 packages；保留既有 deprecated warning |
+| `npm audit` | 通过，0 vulnerabilities |
+| `npm audit --omit=dev` | 通过，0 vulnerabilities |
+| `npm run test:unit` | **156 passed，0 failed** |
+| `npm run test:trade-units` | **1 file / 4 tests passed** |
+| `npm run build` | **通过**；Vite 8.3.5，2018 modules transformed；保留既有 >500 kB chunk warning |
 
 ## 实际检查日志
 

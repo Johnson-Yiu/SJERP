@@ -440,3 +440,13 @@ ISS-080 更新为 `FIXED_PENDING_REVIEW`，真实生产账号/数据库及跨员
 ISS-047 真实生产卷/Nginx/容量告警/联合备份恢复与 PostgreSQL、ISS-097 正式员工与生产会话、ISS-080 真实员工跨客户数据抽查均保留原记录的部署或业务待验状态。最终 HEAD 的 GitHub Actions 必须另行核对；测试步骤前失败时不标记 CI PASS。完整命令、冲突、截图和遗留事项见 [`ISS-047 / ISS-097 / ISS-080 统一集成验收`](uat-evidence/integration-047-097-080/README.md)。本轮未部署、未合并 master、未关闭 Issue，等待 ChatGPT 独立审查。
 本轮 `npm install` 重新暴露依赖安全快照（2 moderate、9 high），沿用既有 ISS-002 记录为 `NEEDS_VERIFICATION`；未运行自动修复或无授权升级，不把该数量当作已确认生产漏洞。
 
+## ISS-036 尾箱、混装箱与最小计量单位（2026-10-27）
+
+基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 Worktree 和分支 `codex/iss-036-carton-units`，读取 2026-10-24 规则包原文，并复核 SKU 交易单位、采购数量、实际装箱、ISS-040 Packing List、ISS-022 MOQ 及 ISS-075 付款规则。确认的真实缺口是：实际装箱接口对已保存的明确不可拆分交易单位接受非法小数；旧的 `[object Object]` 风险在当前前端错误展开逻辑中未复现，但补充了回归测试。
+
+最小修复仅在 `ShipmentPackageSerializer` 对同一 SKU 的一致、明确、不可拆分交易单位快照执行整数倍校验，返回自然中文原因；基础单位尾箱、合法混装、允许分数或缺失/冲突快照不凭空添加限制，不自动取整、不丢失输入，不修改 SO 数量、采购 MOQ、付款规则、Packing List 汇总或状态流转。新增后端专项和前端嵌套错误回归测试，未新增迁移。
+
+Django 全量 `952` 通过、`15` 跳过；装箱/单位/包装/MOQ/集成定向 `92` 通过；有效 Vitest `660` 通过；实际装箱组件 `25` 通过；生产构建、SQLite 迁移至 `0089`、`makemigrations --check` 和真实 Chrome 非法/成功装箱回归通过。实际混装 XLSX 已生成并核对箱数、重量、CBM 只计一次；截图和原始日志见 [`ISS-036 验收记录`](uat-evidence/iss036/README.md)。实现提交为 `31b58cd9ca971ebe4183e378a1a82e517ac7c1fe`。
+
+本轮只使用隔离 SQLite、开发身份和本地 Chrome；生产 PostgreSQL、生产代理、真实物流数据、CI 和窄屏物流实机尚未验证，登记为后续独立复审风险。ISS-036 保持 `FIXED_PENDING_REVIEW`，不合并 `master`、不关闭 Issue。
+

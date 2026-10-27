@@ -1,0 +1,11 @@
+75 objects imported automatically (use -v 2 for details).
+
+ISS022 purchase_count=2
+ISS022 rows=[('PO-2026-00001', 'ordered', '10.00', 'None', False, ''), ('PO-2026-00002', 'ordered', '9.00', '0.90', True, '\\u5ba2\\u6237\\u6307\\u5b9a\\u5c0f\\u6279\\u91cf\\u8bd5\\u5355\\uff0c\\u5df2\\u786e\\u8ba4\\u672c\\u6b21\\u9700\\u6c42\\u91cf\\u3002')]
+ISS022 payment_plan_count=0
+75 objects imported automatically (use -v 2 for details).
+
+ISS075 purchase_count=2
+ISS075 history=('ordered', ['0.50', '0.50'], ['500.0000', '500.0000'])
+ISS075 new=('PO-2026-00001', 'ordered', [], 0)
+ISS075 supplier_legacy_stage_count=2

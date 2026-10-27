@@ -521,3 +521,13 @@ ISS-025 原记录已更新，没有创建重复 Issue。其他状态名称简化
 
 本轮仅执行全新 SQLite 迁移、本地 Django API 和 Vite/真实 Chrome 回归，未触发 GitHub CI、未连接生产数据库、未合并 master、未关闭 Issue、未部署。ISS-025 继续保持 `FIXED_PENDING_REVIEW`，真实生产数据库、真实员工权限、全量业务数据和独立视觉复审仍按原台账等待后续核验。
 
+## INTEGRATION-018-036-025 统一集成验收（2026-10-27）
+
+基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 Worktree 和 `codex/integration-018-036-025`，按 ISS-018 → ISS-036 → ISS-025 顺序集成。三条来源 HEAD 均已核实为集成分支祖先；ISS-018 的备份/恢复报告路径安全、ISS-036 的不可拆分单位与异常快照校验、ISS-025 的状态映射和报表视觉证据均保留。`serializers.py` 自动合并后复核两项逻辑同时存在。
+
+公共 `PROJECT_PHASES.md` 在两次合并中发生冲突，均以保留双方完整历史记录方式解决；`PROJECT_ISSUES.md` 和各任务证据目录未被覆盖。集成提交为 `b58af55`、`47c97d8`、`ef9b457`，均带 `[skip ci]`。没有新增迁移。
+
+本地后端定向 60 项通过、3 项跳过；临时 `MEDIA_ROOT` 下 Django `crm` 全量 984 项通过、18 项跳过；Django check、迁移一致性检查、Node 156 项、有效 Vitest 661 项、前端生产构建均通过。默认 Worktree media ACL 首次全量运行有 1 个附件写入环境错误，已用隔离临时目录重跑通过；首次缺依赖和未指定 jsdom 的失败均已记录，不作为代码回归。截图沿用来源证据路径，未新增浏览器实测。
+
+ISS-018 保持 `BLOCKED` / `DEPLOYMENT_VERIFICATION_PENDING`；ISS-036 的冲突历史快照业务待确认项保留；ISS-025 保持 `FIXED_PENDING_REVIEW` 及真实员工/生产数据待验。完整命令、冲突、截图路径和延期事项见 [`INTEGRATION-018-036-025 验收记录`](uat-evidence/integration-018-036-025/README.md)。本轮不触发 GitHub CI、不合并 `master`、不关闭 Issue、不部署，等待统一独立审查。
+

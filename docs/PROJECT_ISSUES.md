@@ -467,3 +467,9 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 - **ISS-097（P2 / `FIXED_PENDING_REVIEW`）**：来源 `codex/integration-047-097-080`，代码集成 HEAD `512e739ac2beffe90e7153087509b2734c64e853`。真实 Chrome 已核对最高角色 `24 / 24` 有效权限全选且只读，API/UI 矩阵一致；Django 定向权限回归、前端有效 Vitest、组织页桌面/390px截图已归档。正式员工账号、真实会话、生产 RBAC 数据范围和数据库/服务器管理员边界仍需环境验收；这是生产身份待验风险，不是本轮已确认代码缺陷。后续条件是正式测试账号和隔离 staging；验收标准是普通员工权限不扩大、最高角色 UI/API 一致且不可编辑，应用管理员不获得 DB/OS/服务器权限，并保持 ISS-043 审计保护。
 - **ISS-080（P2 / `BUSINESS_VERIFICATION_PENDING`，现有状态保持 FIXED_PENDING_REVIEW）**：来源 `codex/integration-047-097-080`，代码集成 HEAD `512e739ac2beffe90e7153087509b2734c64e853`。同客户全量授权联系人、当前筛选之外/跨分页、邮箱/国际区号电话/近似姓名、编辑排除自身、查看入口和非阻断继续创建均通过自动化与真实 Chrome 桌面/390px证据；真实员工跨客户数据范围和生产业务数据抽查仍未完成。原因是本轮只使用隔离合成库和开发身份，不伪造正式数据结论。后续条件是受限员工账号与脱敏业务样本；验收标准是不同客户隔离、无权联系人不泄露、跨分页结果正确且用户确认后仍可保存，独立代码/权限/视觉复审通过。
 - **统一 CI 环境待验（关联 ISS-047/097/080，不新增 Issue）**：本地自动化已通过，但最终推送 HEAD 必须查询 GitHub Actions；若测试步骤前失败，登记为环境待验，不得标记 CI PASS。真实 PostgreSQL、生产代理/卷和正式账号同样不由本地 SQLite 或开发身份替代。
+
+## INTEGRATION-018-036-025 统一集成记录（2026-10-27）
+
+基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 `codex/integration-018-036-025` Worktree，按 ISS-018 → ISS-036 → ISS-025 集成来源 HEAD `21812b7c1190540a7214d4b77518ede31221180a`、`80a93559852d9d679c86d71250549261c7c2bbd1`、`1480429338d0fc6de20384ea77a43e969a2b7de4`。三项来源及证据提交均已纳入；公共阶段文档两次冲突均保留双方内容，`serializers.py` 的备份无关状态映射与不可拆分单位校验均保留。集成证据见 [`INTEGRATION-018-036-025`](uat-evidence/integration-018-036-025/README.md)。
+
+本地后端定向 60 项通过、3 项跳过；临时 `MEDIA_ROOT` 下 Django `crm` 全量 984 项通过、18 项跳过；Django check、迁移检查、Node 156 项、有效 Vitest 661 项和前端生产构建通过。默认 Worktree media ACL、前端依赖缺失和未指定 jsdom 的首次失败均已区分记录，不冒充代码回归。ISS-018 仍 `BLOCKED`，ISS-036 冲突快照业务待确认项仍保留，ISS-025 仍 `FIXED_PENDING_REVIEW`；三项生产/员工待验状态不因集成本地通过而关闭。本轮不触发 GitHub CI、不合并 master、不关闭 Issue、不部署，等待统一独立审查。

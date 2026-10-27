@@ -5,7 +5,7 @@ from unittest.mock import patch
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-from crm.models import Customer, InventoryMovement, Order, PackagingTemplate, Product, ShipmentPackageItem, SKU, SKUPackagingProfile
+from crm.models import Customer, InventoryMovement, Order, PackagingTemplate, Product, ShipmentPackageItem, SKU, SKUTradeUnit, SKUPackagingProfile
 from crm.services.fulfillment import confirm_shipment, reverse_shipment
 from crm.services.packaging import generate_packing_plan
 
@@ -90,6 +90,43 @@ class ActualPackingTests(TestCase):
 
     def test_partial_packing_allowed(self):
         self.assertEqual(self.create(items=[{"sku": self.a.pk, "quantity": "0.01"}]).status_code, 201)
+
+    def test_base_unit_tail_cartons_remain_allowed(self):
+        order = Order.objects.create(order_no="SO-ACT-TAIL", customer=self.order.customer, order_date=date(2026, 10, 7), status="confirmed")
+        line = order.items.create(sku=self.a, quantity="250", unit_price="1")
+        InventoryMovement.objects.create(movement_no="IN-ACT-TAIL", movement_date=date(2026, 10, 7), type="adjust_in", sku=self.a, quantity="250")
+        shipment = confirm_shipment(order, {"shipment_no": "SH-ACT-TAIL", "shipment_date": date(2026, 10, 7), "items": [{"order_item": line.pk, "quantity": "250"}]})
+        url = f"/api/shipments/{shipment.pk}/packages/"
+        for carton_no, quantity in ((1, "100"), (2, "100"), (3, "50")):
+            response = self.client.post(url, {"carton_no": carton_no, "actual_net_weight": "1", "actual_gross_weight": "1", "items": [{"sku": self.a.pk, "quantity": quantity}]}, format="json")
+            self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(sum(shipment.packages.values_list("items__quantity", flat=True)), Decimal("250"))
+
+    def test_indivisible_trade_unit_rejects_fractional_actual_package_and_allows_mixed_carton(self):
+        unit = SKUTradeUnit.objects.create(sku=self.a, name="5米整卷", unit="卷", factor="5", allow_fraction=False)
+        order = Order.objects.create(order_no="SO-ACT-ROLL", customer=self.order.customer, order_date=date(2026, 10, 7), status="confirmed")
+        roll_line = order.items.create(
+            sku=self.a, quantity="5", unit_price="1", trade_unit=unit, trade_quantity="1", trade_unit_price="5",
+            trade_snapshot={"name": "5米整卷", "unit": "卷", "factor": "5.00", "base_unit": "m", "allow_fraction": False},
+        )
+        mixed_line = order.items.create(sku=self.b, quantity="2", unit_price="1")
+        for sku, suffix in ((self.a, "ROLL"), (self.b, "MIX")):
+            InventoryMovement.objects.create(movement_no=f"IN-ACT-{suffix}", movement_date=date(2026, 10, 7), type="adjust_in", sku=sku, quantity="100")
+        shipment = confirm_shipment(order, {"shipment_no": "SH-ACT-ROLL", "shipment_date": date(2026, 10, 7), "items": [
+            {"order_item": roll_line.pk, "quantity": "5", "trade_unit": unit.pk, "trade_quantity": "1"},
+            {"order_item": mixed_line.pk, "quantity": "2"},
+        ]})
+        url = f"/api/shipments/{shipment.pk}/packages/"
+        rejected = self.client.post(url, {"carton_no": 1, "actual_net_weight": "1", "actual_gross_weight": "1", "items": [
+            {"sku": self.a.pk, "quantity": "2.5"}, {"sku": self.b.pk, "quantity": "1"},
+        ]}, format="json")
+        self.assertEqual(rejected.status_code, 400, rejected.data)
+        self.assertIn("不可拆分", str(rejected.data))
+        self.assertNotIn("[object Object]", str(rejected.data))
+        accepted = self.client.post(url, {"carton_no": 1, "actual_net_weight": "1", "actual_gross_weight": "1", "items": [
+            {"sku": self.a.pk, "quantity": "5"}, {"sku": self.b.pk, "quantity": "1"},
+        ]}, format="json")
+        self.assertEqual(accepted.status_code, 201, accepted.data)
 
     def test_all_dimensions_blank_allowed(self):
         response = self.create(length=None, width=None, height=None)

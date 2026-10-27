@@ -2796,6 +2796,32 @@ class ShipmentPackageSerializer(serializers.ModelSerializer):
         shipped = {}
         for item in shipment.items.all():
             shipped[item.sku_id] = shipped.get(item.sku_id, ZERO) + item.quantity
+        # A package line is entered in the SKU base unit, so only enforce an
+        # indivisible trade unit when every shipment line for that SKU carries
+        # the same explicit, non-fractional trade-unit snapshot.  A base-unit
+        # order line, a fractional trade unit, or conflicting historical
+        # snapshots makes the physical package quantity ambiguous; in those
+        # cases do not invent a carton restriction.
+        indivisible = {}
+        ambiguous_indivisible = set()
+        for shipment_item in shipment.items.all():
+            sku_id = shipment_item.sku_id
+            snapshot = shipment_item.trade_snapshot or {}
+            if not shipment_item.trade_unit_id:
+                ambiguous_indivisible.add(sku_id)
+                continue
+            try:
+                factor = Decimal(str(snapshot.get("factor", "1")))
+            except (TypeError, ValueError, ArithmeticError):
+                continue
+            if factor <= ZERO or factor == Decimal("1") or snapshot.get("allow_fraction") is not False:
+                ambiguous_indivisible.add(sku_id)
+                continue
+            previous = indivisible.get(sku_id)
+            if previous is not None and previous[0] != factor:
+                ambiguous_indivisible.add(sku_id)
+            else:
+                indivisible[sku_id] = (factor, snapshot)
         packed = {}
         for item in ShipmentPackageItem.objects.filter(shipment_package__in=other_packages):
             packed[item.sku_id] = packed.get(item.sku_id, ZERO) + item.quantity
@@ -2809,6 +2835,15 @@ class ShipmentPackageSerializer(serializers.ModelSerializer):
             if sku_id in seen:
                 raise serializers.ValidationError({"items": "同一箱内不能重复填写同一 SKU。"})
             seen.add(sku_id)
+            if sku_id in indivisible and sku_id not in ambiguous_indivisible:
+                factor, snapshot = indivisible[sku_id]
+                if quantity % factor:
+                    base_unit = snapshot.get("base_unit") or item["sku"].unit
+                    factor_text = format(factor.normalize(), "f")
+                    quantity_text = format(quantity.normalize(), "f")
+                    raise serializers.ValidationError({
+                        "items": f"SKU {item['sku'].sku} 按不可拆分的 {factor_text} {base_unit} 交易单位装箱，数量必须是其整数倍；当前为 {quantity_text}。"
+                    })
             if packed.get(sku_id, ZERO) + quantity > shipped[sku_id]:
                 raise serializers.ValidationError({"items": f"SKU {item['sku'].sku} 累计装箱数量不能超过本次发货数量 {shipped[sku_id]}。"})
         return attrs

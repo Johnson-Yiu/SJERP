@@ -105,6 +105,11 @@ describe('Actual packing by Shipment', () => {
     const w = await component({ packages: [carton] }); await click(w, '编辑'); await input('实际装箱数量 1', '11'); await submit()
     expect(form().textContent).toContain('累计装箱数量不能超过'); expect(form().querySelector('[aria-label="实际装箱数量 1"]').value).toBe('11'); expect(w.text()).toContain('第 3 箱'); expect(form().querySelector('button[type="submit"]').disabled).toBe(false)
   })
+  it('renders nested validation errors as Chinese text without object placeholders', async () => {
+    mocks.api.post.mockRejectedValue({ response: { data: { items: { quantity: ['SKU ACT-ROLL 按不可拆分的 5 m 交易单位装箱，数量必须是其整数倍；当前为 2.5。'] } } } })
+    const w = await component({ packages: [carton] }); await click(w, '编辑'); await input('实际装箱数量 1', '2.5'); await submit()
+    expect(form().textContent).toContain('不可拆分的 5 m'); expect(form().textContent).not.toContain('[object Object]'); expect(form().querySelector('[aria-label="实际装箱数量 1"]').value).toBe('2.5')
+  })
   it('failed package load offers retry without mutation controls', async () => { mocks.api.get.mockRejectedValueOnce(new Error('network failure')); const w = await component(); expect(w.text()).toContain('network failure'); expect(w.text()).not.toContain('新增箱'); await click(w, '重试'); expect(w.text()).toContain('新增箱') })
   it('editor rejects duplicate SKU, partial dimensions and invalid weights without sending', async () => {
     const w = await component(); await click(w, '新增箱'); await input('SKU 1', '10'); await input('实际装箱数量 1', '1'); await input('长 cm', '20'); await submit()

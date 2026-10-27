@@ -11,10 +11,17 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--directory", required=True, help="Backup directory.")
         parser.add_argument("--apply", action="store_true", help="Delete archives outside the retention policy.")
+        parser.add_argument(
+            "--tighten-permissions",
+            action="store_true",
+            help="Explicitly change an existing POSIX backup directory to owner-only 0700 after reviewing ownership.",
+        )
 
     def handle(self, *args, **options):
         try:
-            result = prune_backup_archives(options["directory"], apply=options["apply"])
+            result = prune_backup_archives(
+                options["directory"], apply=options["apply"], tighten_permissions=options["tighten_permissions"]
+            )
         except (BackupRecoveryError, OSError, ValueError) as exc:
             raise CommandError(str(exc)) from exc
         self.stdout.write(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))

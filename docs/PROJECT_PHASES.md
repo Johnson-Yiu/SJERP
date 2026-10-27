@@ -421,6 +421,14 @@ SQLite 定向审计测试 8 项通过（其中 PostgreSQL 原始 SQL 保护 1 �
 隔离 SQLite 全新迁移至 `0089`，Django 权限专项 39 项、最高角色 API 定向 2 项、Node、有效 Vitest 658 项、生产构建和真实 Chrome 桌面核验通过。Chrome 实测页面为 24/24、全选、只读，API 实测有效矩阵 24 个模块；截图、原始命令和边界风险见 [`ISS-097 验收记录`](uat-evidence/iss-097-admin-permissions/README.md)。普通员工/销售员/采购员/财务员使用现有受限 RBAC 夹具核对，未扩大数据范围；真实员工会话、生产 PostgreSQL/基础设施权限仍保持 ISS-003/ISS-051 的原有待验收状态。
 
 本轮不关闭 Issue、不合并 `master`、不部署，等待独立审查。
+
+## ISS-018-FIX-01 备份文件访问控制与安全恢复（2026-10-27）
+
+基于 `ad64eed9e00810beb2734e23f4e58cb6b4533bb8` 在独立 Worktree 创建 `codex/fix-iss018-backup-safety`。保留原 ISS-018 一致性契约和 SQLite/PostgreSQL fail-closed 边界，仅补现有安全缺口：POSIX 备份目录新建/显式收紧为 `0700`，备份及恢复文件为 `0600`；已有不安全目录默认拒绝；Windows 不把 `chmod` 当 ACL 证明，生产/预发布必须外部核验 NTFS ACL。
+
+`restore_consistent_backup` 现在要求正式目标不存在，在同一文件系统的临时 staging 中完成解包、路径/CRC、数据库、媒体和配置核验后原子切换；非空或空目标都不删除、不写入。默认失败/成功结构化报告写到目标目录旁，显式 `--result-file` 可指定外部位置。新增回归覆盖非空目标内容和原 `restore-result.json` 不变、外部失败报告、磁盘写入失败无正式目标/残留 staging、篡改归档、路径穿越、权限和重试。目标策略从“新或空目录”收紧为“必须不存在”，已在运行手册和验收记录说明。
+
+FIX-01 定向测试 `crm.tests.test_iss018_backup_recovery` 为 15 项通过、1 项平台条件跳过；最终 Django 全量 `965` 项通过、`16` 项跳过。生产 PostgreSQL、真实媒体卷、生产 POSIX/NTFS ACL、加密异地副本、定时器/告警、RPO/RTO 仍未连接或部署，ISS-018 继续保持 `BLOCKED` 和 `DEPLOYMENT_VERIFICATION_PENDING`。本轮不启用生产任务、不上传备份、不合并 `master`、不关闭 Issue，等待独立审查。
 ## ISS-080 客户联系人疑似重复提醒（2026-10-27）
 
 基于 `8b2b5c19e517addd9604b239211e199a789b739e` 创建独立 Worktree 和分支 `codex/iss-080-contact-duplicates`，读取用户 2026-10-24 规则包原文，并复核联系人新增、编辑、搜索、分页及 ISS-025、ISS-027、ISS-029 相关规则。确认原有实现只对当前已加载的联系人列表计算提示，搜索、客户筛选或分页会遗漏同一客户的其他联系人。

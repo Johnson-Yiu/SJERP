@@ -7,12 +7,12 @@ from crm.services.backup_recovery import BackupRecoveryError, restore_consistent
 
 
 class Command(BaseCommand):
-    help = "Verify and restore a single-archive SQLite and private-media backup into a new isolated directory."
+    help = "Verify and atomically restore a single-archive SQLite and private-media backup into a new target directory."
 
     def add_arguments(self, parser):
         parser.add_argument("--archive", required=True, help="Backup .zip archive.")
-        parser.add_argument("--target-dir", required=True, help="New or empty isolated restore directory.")
-        parser.add_argument("--result-file", help="Optional structured result path for failed restores.")
+        parser.add_argument("--target-dir", required=True, help="New, non-existent isolated restore directory.")
+        parser.add_argument("--result-file", help="Optional structured result path; default is a sibling of the target.")
 
     def handle(self, *args, **options):
         try:

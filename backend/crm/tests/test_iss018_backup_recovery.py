@@ -1,5 +1,8 @@
 import json
+import os
 import sqlite3
+import stat
+import unittest
 import zipfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -12,6 +15,7 @@ from django.test import SimpleTestCase, override_settings
 from crm.services.backup_recovery import (
     BackupRecoveryError,
     create_consistent_backup,
+    ensure_secure_backup_directory,
     prune_backup_archives,
     restore_consistent_backup,
 )
@@ -43,6 +47,18 @@ class ISS018BackupRecoveryTests(SimpleTestCase):
         finally:
             connection.close()
         return database, media
+
+    def _make_archive(self, root, backup_id="test"):
+        database, media = self._make_fixture(root)
+        return Path(
+            create_consistent_backup(
+                database=database,
+                media_root=media,
+                output_dir=Path(root) / "backup",
+                backup_id=backup_id,
+                quiesced=True,
+            )["archive"]
+        )
 
     def test_backup_requires_an_explicit_write_quiescence_confirmation(self):
         with TemporaryDirectory() as root:
@@ -85,7 +101,8 @@ class ISS018BackupRecoveryTests(SimpleTestCase):
             self.assertEqual(path, "followups/invoice.pdf")
             self.assertTrue((restored / "media" / path).is_file())
             self.assertEqual(compare_private_media_manifest(manifest["media"], restored / "media"), [])
-            self.assertEqual(json.loads((restored / "restore-result.json").read_text())["status"], "PASS")
+            result_report = Path(root) / ".restored.restore-result.json"
+            self.assertEqual(json.loads(result_report.read_text())["status"], "PASS")
 
     def test_media_change_during_copy_discards_archive(self):
         with TemporaryDirectory() as root:
@@ -123,8 +140,109 @@ class ISS018BackupRecoveryTests(SimpleTestCase):
             with zipfile.ZipFile(archive) as source, zipfile.ZipFile(tampered, "w", zipfile.ZIP_DEFLATED) as target:
                 for info in source.infolist():
                     target.writestr(info.filename, b"tampered" if info.filename == "media/sku.png" else source.read(info))
+            if os.name != "nt":
+                os.chmod(tampered, 0o600)
             with self.assertRaisesRegex(BackupRecoveryError, "CRC|media manifest mismatch"):
                 restore_consistent_backup(archive=tampered, target_dir=Path(root) / "restored")
+
+    def test_non_empty_target_is_unchanged_and_failure_report_is_a_sibling(self):
+        with TemporaryDirectory() as root:
+            archive = self._make_archive(root, "collision")
+            target = Path(root) / "restored"
+            target.mkdir()
+            keep = target / "keep.txt"
+            keep.write_text("must remain", encoding="utf-8")
+            existing_report = target / "restore-result.json"
+            existing_report.write_text("do not overwrite", encoding="utf-8")
+            with self.assertRaisesRegex(BackupRecoveryError, "already exists"):
+                restore_consistent_backup(archive=archive, target_dir=target)
+            self.assertEqual(keep.read_text(encoding="utf-8"), "must remain")
+            self.assertEqual(existing_report.read_text(encoding="utf-8"), "do not overwrite")
+            sibling_report = target.parent / ".restored.restore-result.json"
+            self.assertEqual(json.loads(sibling_report.read_text(encoding="utf-8"))["status"], "FAILED")
+
+    def test_explicit_failure_report_can_be_outside_target(self):
+        with TemporaryDirectory() as root:
+            archive = self._make_archive(root, "explicit-report")
+            target = Path(root) / "restored"
+            target.mkdir()
+            (target / "keep.txt").write_text("unchanged", encoding="utf-8")
+            report = Path(root) / "reports" / "restore.json"
+            with self.assertRaises(BackupRecoveryError):
+                restore_consistent_backup(archive=archive, target_dir=target, result_file=report)
+            self.assertEqual((target / "keep.txt").read_text(encoding="utf-8"), "unchanged")
+            self.assertEqual(json.loads(report.read_text(encoding="utf-8"))["status"], "FAILED")
+
+    def test_existing_empty_target_is_rejected_without_deletion(self):
+        with TemporaryDirectory() as root:
+            archive = self._make_archive(root, "empty-collision")
+            target = Path(root) / "restored"
+            target.mkdir()
+            with self.assertRaisesRegex(BackupRecoveryError, "already exists"):
+                restore_consistent_backup(archive=archive, target_dir=target)
+            self.assertTrue(target.is_dir())
+            self.assertEqual(list(target.iterdir()), [])
+
+    def test_disk_write_failure_leaves_no_target_or_staging_directory(self):
+        with TemporaryDirectory() as root:
+            archive = self._make_archive(root, "disk-failure")
+            target = Path(root) / "restored"
+            with patch("crm.services.backup_recovery.shutil.copyfileobj", side_effect=OSError("disk full")):
+                with self.assertRaisesRegex(OSError, "disk full"):
+                    restore_consistent_backup(archive=archive, target_dir=target)
+            self.assertFalse(target.exists())
+            self.assertEqual([path for path in Path(root).glob(".restored.restore-*") if path.is_dir()], [])
+            self.assertEqual(json.loads((Path(root) / ".restored.restore-result.json").read_text())["status"], "FAILED")
+
+    def test_archive_path_traversal_is_rejected_before_target_commit(self):
+        with TemporaryDirectory() as root:
+            archive = Path(root) / "traversal.zip"
+            with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as target:
+                target.writestr("../escaped.txt", "must not be extracted")
+            if os.name != "nt":
+                os.chmod(archive, 0o600)
+            restore_target = Path(root) / "restored"
+            with self.assertRaisesRegex(BackupRecoveryError, "Unsafe archive member"):
+                restore_consistent_backup(archive=archive, target_dir=restore_target)
+            self.assertFalse(restore_target.exists())
+            self.assertFalse((Path(root).parent / "escaped.txt").exists())
+
+    def test_backup_permissions_are_strict_on_posix_or_explicitly_pending_on_windows(self):
+        with TemporaryDirectory() as root:
+            backup_dir = Path(root) / "backup"
+            access = ensure_secure_backup_directory(backup_dir)
+            if os.name == "posix":
+                self.assertEqual(stat.S_IMODE(backup_dir.stat().st_mode), 0o700)
+            else:
+                self.assertEqual(access["status"], "WINDOWS_ACL_PENDING")
+            archive = self._make_archive(root, "permissions")
+            if os.name == "posix":
+                self.assertEqual(stat.S_IMODE(archive.stat().st_mode), 0o600)
+            restored = Path(root) / "restored"
+            restore_consistent_backup(archive=archive, target_dir=restored)
+            if os.name == "posix":
+                self.assertEqual(stat.S_IMODE(restored.stat().st_mode), 0o700)
+                self.assertEqual(stat.S_IMODE((restored / "database.sqlite3").stat().st_mode), 0o600)
+                self.assertEqual(stat.S_IMODE((restored / "media").stat().st_mode), 0o700)
+                self.assertEqual(stat.S_IMODE((restored / "media" / "followups" / "invoice.pdf").stat().st_mode), 0o600)
+                self.assertEqual(stat.S_IMODE((Path(root) / ".restored.restore-result.json").stat().st_mode), 0o600)
+
+    @unittest.skipUnless(os.name == "posix", "POSIX mode check only")
+    def test_existing_world_accessible_backup_directory_requires_explicit_tightening(self):
+        with TemporaryDirectory() as root:
+            backup_dir = Path(root) / "backup"
+            backup_dir.mkdir(mode=0o755)
+            with self.assertRaisesRegex(BackupRecoveryError, "group/other"):
+                ensure_secure_backup_directory(backup_dir)
+            ensure_secure_backup_directory(backup_dir, tighten=True)
+            self.assertEqual(stat.S_IMODE(backup_dir.stat().st_mode), 0o700)
+
+    @unittest.skipUnless(os.name == "nt", "Windows ACL check only")
+    @override_settings(APP_STAGE="production")
+    def test_windows_production_requires_external_ntfs_acl_verification(self):
+        with TemporaryDirectory() as root:
+            with self.assertRaisesRegex(BackupRecoveryError, "NTFS ACL"):
+                ensure_secure_backup_directory(Path(root) / "backup")
 
     def test_requested_encryption_failure_is_recorded_as_failed(self):
         with TemporaryDirectory() as root:

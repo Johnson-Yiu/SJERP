@@ -21,6 +21,11 @@ class Command(BaseCommand):
         parser.add_argument("--encrypted-output", help="Optional .age output path for an independent encrypted copy.")
         parser.add_argument("--age-recipient", help="Public age recipient; private keys are never read by this command.")
         parser.add_argument("--status-file", help="Write structured PASS/FAILED status for monitoring.")
+        parser.add_argument(
+            "--tighten-permissions",
+            action="store_true",
+            help="Explicitly change an existing POSIX backup directory to owner-only 0700 after reviewing ownership.",
+        )
 
     def handle(self, *args, **options):
         try:
@@ -33,6 +38,7 @@ class Command(BaseCommand):
                 encrypted_output=options.get("encrypted_output"),
                 age_recipient=options.get("age_recipient"),
                 status_file=options.get("status_file"),
+                tighten_permissions=options["tighten_permissions"],
             )
         except (BackupRecoveryError, OSError, ValueError) as exc:
             raise CommandError(str(exc)) from exc

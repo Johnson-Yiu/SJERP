@@ -450,6 +450,16 @@ Django 全量 `952` 通过、`15` 跳过；装箱/单位/包装/MOQ/集成定向
 
 本轮只使用隔离 SQLite、开发身份和本地 Chrome；生产 PostgreSQL、生产代理、真实物流数据、CI 和窄屏物流实机尚未验证，登记为后续独立复审风险。ISS-036 保持 `FIXED_PENDING_REVIEW`，不合并 `master`、不关闭 Issue。
 
+## ISS-036-FIX-02 不完整交易单位快照安全处理（2026-10-27）
+
+基于 `codex/fix-iss036-factor-one` 的 `6db1ef53e4b78c20156e66071b37b7e6f29a6476` 创建独立 Worktree 和分支 `codex/fix-iss036-invalid-snapshot`。复现确认异常历史快照存在三种风险：有效与无法解析 factor 混合时可能错误执行不可拆分限制；factor 缺失会被默认成 1；非字典快照调用 `.get()` 可触发 HTTP 500。
+
+最小修复要求快照为字典、factor 存在、可解析、有限且大于零；否则将对应 SKU 标记为 `ambiguous_indivisible`，不擅自推断不可拆分规则。保留 FIX-01 的 `factor=1` 修复、factor=5、允许分数、缺失交易单位和冲突快照语义；未修改库存、发货数量、订单金额、财务、采购、付款、尾箱、混装或 Packing List。
+
+新增有效/非法混合、缺失 factor、非字典快照回归；后端相关定向测试 `99` 项通过，前端实际装箱测试 `26` 项通过，生产构建、Django check、`makemigrations --check` 和真实 Chrome factor=1 拒绝/成功回归通过。实现提交为 `f0c41d9e83ed7396686b0ec574eed0cdf1acd2be`，证据见 [`ISS-036-FIX-02 验收记录`](uat-evidence/iss036-fix02/README.md)。
+
+本轮只使用隔离 SQLite、开发身份和本地 Chrome；生产 PostgreSQL、代理、真实物流数据、CI 和窄屏物流实机仍未验证。冲突快照的关闭条件是业务明确同一发货中同 SKU 多个历史交易单位快照的归属/优先级并提供可复核历史规则。ISS-036 保持 `FIXED_PENDING_REVIEW`，不合并 `master`、不关闭 Issue。
+
 ## ISS-036-FIX-01 不可拆分单位系数边界（2026-10-27）
 
 基于源分支 `codex/iss-036-carton-units` 的 `3fe05aa1fe08f859cd6b737150d67b4c1066b248` 创建独立 Worktree 和分支 `codex/fix-iss036-factor-one`。复核确认原实现把明确 `factor=1`、`allow_fraction=false` 的交易单位当作歧义并跳过实际装箱整数倍校验；本轮仅移除该特殊跳过条件。

@@ -84,6 +84,6 @@ Playwright 期间 Vite 还输出 `OrderDetailModal` 在 `<Transition>` 中返回
 
 首次集成提交 `4a83ec1455cbe4e927ae39252477fa095cf329ca` 推送后，GitHub Actions 运行 [CI #40535678568](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/40535678568)，事件为 `push`，head SHA 与该提交一致。`backend`（job `122300149745`）、`backend-postgres`（`122300149687`）和 `frontend`（`122300149370`）均在约 3 秒内 `failure`；三个 GitHub job 对象均为 `runner_id=0`、`steps=[]`，没有可读取的运行日志。三项 check-run 均有同一条 GitHub 原始 failure annotation：`The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings`。这确认是账户近期付款失败或消费限额不足导致启动被拒；原始消息未区分具体是哪一种。三项 CI 均标记 `BLOCKED`，不能以本地测试替代。仓库所有者需手动检查 GitHub `Billing & plans` 后再对精确提交重跑；本轮未修改账单、仓库策略或工作流。
 
-该 CI 运行对应第一次集成提交。此后仅为记录上述远端证据及截图预览核验边界更新本验收文档；最终文档提交的 SHA 和关联 Actions 结果在交付时单独给出，且本轮状态仍为账户账单/额度导致 `BLOCKED`。
+文档更新提交 `7ff7fdb51fba99796a6823817774d1ddfdb2eeaa` 的 [CI #40536898954](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/40536898954) 再次精确匹配 head SHA；`backend`、`backend-postgres`、`frontend` 三个 job 均 `failure`，各在 2–3 秒内结束且 `runner_id=0`、`steps=[]`。三个 check-run 都返回上述同一条账单/消费限额 failure annotation。最终交付提交还会单独核验；CI 仍为账户账单/额度导致 `BLOCKED`。
 
 集成过程中没有新增迁移；两个共享文档历史记录均保留。Playwright 生成并覆盖的其他历史截图已恢复到基线；最终差异仅保留五项任务所需代码、测试、报告、依赖及本轮集成记录。未合并 master、未关闭 Issue、未部署、未连接业务数据库，等待独立审查。

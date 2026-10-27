@@ -1,5 +1,15 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## ISS-003 员工权限与数据范围隔离验收（2026-10-27）
+
+基于统一基线 `46353a5436637832f5adadb7bdef6b45cdeada23` 创建独立 Worktree 和分支 `codex/verify-iss003-employee-permissions`。本轮先核对现有 `permissions.py`、`sales_scope.py`、采购/财务范围服务、API ViewSet/Serializer 及前端路由守卫；没有修改 `DEVELOPMENT_SUPERADMIN`、`RBAC_ENFORCEMENT`、角色模板或任何业务代码。
+
+在隔离 SQLite 与合成账号下，以 `DEBUG=false`、`DEVELOPMENT_SUPERADMIN=false`、`RBAC_ENFORCEMENT=true` 执行 `test_functional_rbac`、`test_sales_data_scope`、`test_procurement_data_scope`、`test_finance_data_scope`、`test_reporting`，共 `131` 项通过。覆盖 `self`、`department`、`department_tree`、`all`，缺模块权限、匿名拒绝、列表、详情、搜索、报价导出、报表 CSV、跨模块关联、财务流水、采购共享成本分配和字段脱敏。Django system check、`makemigrations --check --dry-run` 及全新 SQLite 连续迁移至 `0089` 通过。
+
+本轮没有发现能由当前代码与测试明确证明、且可安全最小修复的权限缺陷；采购共享路径仍只开放必要识别字段，不扩大客户、报价、利润或资金信息。并行 Django 全量测试在克隆 SQLite 数据库阶段因托管 Worktree 路径无法打开数据库而未进入断言，不记为全量 PASS；前端依赖缺失，真实员工 Chrome 桌面/窄屏 UI 也未冒充通过。完整矩阵、拒绝/通过路径、命令和边界见 [`ISS-003 验收报告`](uat-evidence/iss-003-employee-permissions/README.md)。
+
+ISS-003 仍保持 `BLOCKED`：正式员工账号、真实组织树、生产 PostgreSQL、部署层会话/文件 URL 和真实 Chrome UI 尚未验证；不使用开发超级管理员或 SQLite 结果替代这些证据。本轮未主动运行或查询 GitHub CI，最终提交使用 `[skip ci]`；未连接生产、未合并 `master`、未关闭 Issue，交付后等待独立审查。
+
 ## ISS-021 正式销售订单数量变更集成（2026-10-26）
 
 从统一基线 `b3559f3bf83b967d06166bd409b00fc92e4e5902` 创建独立 worktree / `codex/next-iss-021-integration`，比较旧开发与审查分支后只迁移所需差异。新增迁移 0085 接续 0084，不复制旧分支 0078、不改写已发布迁移；保留 ISS-037 主体快照和 ISS-039 共享采购规则。正式 SO 原编号/行保留，支持数量增减、已发货下限、已收款保护、版本冲突、幂等、历史与人工采购处理提示；不新增复杂审批。

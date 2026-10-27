@@ -421,6 +421,23 @@ SQLite 定向审计测试 8 项通过（其中 PostgreSQL 原始 SQL 保护 1 �
 隔离 SQLite 全新迁移至 `0089`，Django 权限专项 39 项、最高角色 API 定向 2 项、Node、有效 Vitest 658 项、生产构建和真实 Chrome 桌面核验通过。Chrome 实测页面为 24/24、全选、只读，API 实测有效矩阵 24 个模块；截图、原始命令和边界风险见 [`ISS-097 验收记录`](uat-evidence/iss-097-admin-permissions/README.md)。普通员工/销售员/采购员/财务员使用现有受限 RBAC 夹具核对，未扩大数据范围；真实员工会话、生产 PostgreSQL/基础设施权限仍保持 ISS-003/ISS-051 的原有待验收状态。
 
 本轮不关闭 Issue、不合并 `master`、不部署，等待独立审查。
+
+## ISS-018-FIX-01 备份文件访问控制与安全恢复（2026-10-27）
+
+基于 `ad64eed9e00810beb2734e23f4e58cb6b4533bb8` 在独立 Worktree 创建 `codex/fix-iss018-backup-safety`。保留原 ISS-018 一致性契约和 SQLite/PostgreSQL fail-closed 边界，仅补现有安全缺口：POSIX 备份目录新建/显式收紧为 `0700`，备份及恢复文件为 `0600`；已有不安全目录默认拒绝；Windows 不把 `chmod` 当 ACL 证明，生产/预发布必须外部核验 NTFS ACL。
+
+`restore_consistent_backup` 现在要求正式目标不存在，在同一文件系统的临时 staging 中完成解包、路径/CRC、数据库、媒体和配置核验后原子切换；非空或空目标都不删除、不写入。默认失败/成功结构化报告写到目标目录旁，显式 `--result-file` 可指定外部位置。新增回归覆盖非空目标内容和原 `restore-result.json` 不变、外部失败报告、磁盘写入失败无正式目标/残留 staging、篡改归档、路径穿越、权限和重试。目标策略从“新或空目录”收紧为“必须不存在”，已在运行手册和验收记录说明。
+
+FIX-01 定向测试 `crm.tests.test_iss018_backup_recovery` 为 15 项通过、1 项平台条件跳过；最终 Django 全量 `965` 项通过、`16` 项跳过。生产 PostgreSQL、真实媒体卷、生产 POSIX/NTFS ACL、加密异地副本、定时器/告警、RPO/RTO 仍未连接或部署，ISS-018 继续保持 `BLOCKED` 和 `DEPLOYMENT_VERIFICATION_PENDING`。本轮不启用生产任务、不上传备份、不合并 `master`、不关闭 Issue，等待独立审查。
+
+## ISS-018-FIX-02 恢复结果路径安全与备份目录检查（2026-10-27）
+
+基于 `a73273f49aa32d8be8040d1c444045ff51a67c65` 在独立 Worktree 创建 `codex/fix-iss018-restore-edge-cases`。本轮按用户指定的已核实实现提交 `35c42fcef672d76e8ad9f27da650ae64ea3a3c02` 校正文档引用；不覆盖已发布迁移和其他 Issue 历史。
+
+FIX-02 在解析前检查用户指定恢复报告路径的原始符号链接，拒绝报告指向恢复目标本身或其内部；默认报告继续位于目标目录外。恢复失败不会创建缺失目标，成功原子提交后将恢复结果和报告写入结果分别表达，报告写入失败不再把已完成的恢复伪装成 FAILED。备份清理对不存在、非目录或符号链接路径明确失败，默认 dry-run 和 7/4/3 保留策略保持不变。
+
+定向回归 `crm.tests.test_iss018_backup_recovery` 22 项通过、3 项平台条件跳过；ISS-018/047/051 交叉回归 28 项通过、4 项平台条件跳过。`python manage.py check` 通过，`python manage.py makemigrations crm --check --dry-run` 无模型差异；本地已有 SQLite 文件访问 RuntimeWarning 不影响退出码。生产 PostgreSQL、私有媒体卷、POSIX/NTFS ACL、独立加密副本、定时器/告警和 RPO/RTO 仍为 `DEPLOYMENT_VERIFICATION_PENDING`，ISS-018 保持 `BLOCKED`。本轮不部署、不合并 `master`、不关闭 Issue，等待独立审查。
+
 ## ISS-080 客户联系人疑似重复提醒（2026-10-27）
 
 基于 `8b2b5c19e517addd9604b239211e199a789b739e` 创建独立 Worktree 和分支 `codex/iss-080-contact-duplicates`，读取用户 2026-10-24 规则包原文，并复核联系人新增、编辑、搜索、分页及 ISS-025、ISS-027、ISS-029 相关规则。确认原有实现只对当前已加载的联系人列表计算提示，搜索、客户筛选或分页会遗漏同一客户的其他联系人。
@@ -439,4 +456,12 @@ ISS-080 更新为 `FIXED_PENDING_REVIEW`，真实生产账号/数据库及跨员
 
 ISS-047 真实生产卷/Nginx/容量告警/联合备份恢复与 PostgreSQL、ISS-097 正式员工与生产会话、ISS-080 真实员工跨客户数据抽查均保留原记录的部署或业务待验状态。最终 HEAD 的 GitHub Actions 必须另行核对；测试步骤前失败时不标记 CI PASS。完整命令、冲突、截图和遗留事项见 [`ISS-047 / ISS-097 / ISS-080 统一集成验收`](uat-evidence/integration-047-097-080/README.md)。本轮未部署、未合并 master、未关闭 Issue，等待 ChatGPT 独立审查。
 本轮 `npm install` 重新暴露依赖安全快照（2 moderate、9 high），沿用既有 ISS-002 记录为 `NEEDS_VERIFICATION`；未运行自动修复或无授权升级，不把该数量当作已确认生产漏洞。
+
+## ISS-018 数据库与附件一致性备份恢复（2026-10-27）
+
+基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 Worktree 和 `codex/iss-018-backup-recovery`，先读取 2026-10-24 规则包，并复核 ISS-047 私有媒体 SHA256 清单、ISS-051 环境隔离和 ISS-043 审计备份边界。当前仓库没有生产 PostgreSQL、快照服务、Nginx 实例、systemd 定时器或独立异地存储，本轮没有连接或修改生产环境。
+
+新增 `backup_recovery` 服务及 `create_consistent_backup`、`restore_consistent_backup`、`prune_erp_backups` 管理命令。备份不是把两份独立文件冒充快照：必须显式确认应用写入静默；SQLite 事务快照前后重新核对 ISS-047 媒体清单；数据库、媒体、恢复配置白名单和清单进入同一个 ZIP；恢复先核对归档 CRC、数据库 SHA256/`integrity_check`、媒体逐文件 SHA256 和配置 SHA256，全部通过后才写入新隔离目录。生产 PostgreSQL 未提供同一数据库/文件系统快照适配器时命令 fail-closed。age 加密、公网/异地复制、自动定时器和告警只提供未部署 runbook，不放入密钥或真实凭证。
+
+定向测试 `crm.tests.test_iss018_backup_recovery` 7 项通过，ISS-018/047/051 交叉回归 27 项通过（1 项既有 symlink 条件跳过）；隔离管理命令实际运行并核对订单金额 `5000`、库存 `42`、附件 `followups/invoice.pdf` 及媒体 manifest SHA256；ISS-047 现有私有媒体权限/清单实现未被覆盖。实际生产 PostgreSQL、私有持久卷、独立加密副本、systemd/告警、恢复 RPO/RTO 和 ISS-043 生产审计备份仍为 `DEPLOYMENT_VERIFICATION_PENDING`；证据见 [`ISS-018 隔离演练`](uat-evidence/iss-018-backup-recovery/README.md) 和 [`ISS-018 运行手册`](deployment/ISS-018-数据库与附件一致性备份恢复.md)。功能提交为 `da2a0af54a69dbaeab5ffd4a44abb87d2d39740f`，本台账绑定提交随后生成；本轮不关闭 Issue、不合并 `master`、不部署，等待独立审查。
 

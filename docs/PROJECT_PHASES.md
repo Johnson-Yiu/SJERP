@@ -440,3 +440,13 @@ ISS-080 更新为 `FIXED_PENDING_REVIEW`，真实生产账号/数据库及跨员
 ISS-047 真实生产卷/Nginx/容量告警/联合备份恢复与 PostgreSQL、ISS-097 正式员工与生产会话、ISS-080 真实员工跨客户数据抽查均保留原记录的部署或业务待验状态。最终 HEAD 的 GitHub Actions 必须另行核对；测试步骤前失败时不标记 CI PASS。完整命令、冲突、截图和遗留事项见 [`ISS-047 / ISS-097 / ISS-080 统一集成验收`](uat-evidence/integration-047-097-080/README.md)。本轮未部署、未合并 master、未关闭 Issue，等待 ChatGPT 独立审查。
 本轮 `npm install` 重新暴露依赖安全快照（2 moderate、9 high），沿用既有 ISS-002 记录为 `NEEDS_VERIFICATION`；未运行自动修复或无授权升级，不把该数量当作已确认生产漏洞。
 
+## ISS-025 客户生命周期中文名称一致性（2026-10-27）
+
+基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 Worktree 和分支 `codex/iss-025-customer-status-labels`，读取 2026-10-24 规则包原文，并核对客户列表、详情、筛选、跟进、报表及关联企业展示。基线问题仍可复现：列表使用“已联系”，详情使用“联系人”；返单客户也存在“公司客户”与“返单客户”的展示差异。
+
+本轮以展示层最小修复统一客户生命周期展示映射，并在客户 API 提供 `status_display`。保留数据库原始状态代码、状态选项、迁移、自动推进规则、联系人数量规则、历史跟进/报价资料和筛选 URL 参数；`联系人` 仍只用于 Contact 业务实体。代码提交为 `a8dd277609d7364d301d1a330f717f00962d8619`，未新增迁移、未批量改写旧客户资料。
+
+最终改动后定向后端 92 项通过，`makemigrations --check --dry-run` 无变化；Django `crm` 全量 952 项通过、15 项跳过；Node 154 项、有效 Vitest 659 项、前端生产构建通过。Chrome Use 已完成客户列表/详情、关联企业、跟进 URL 恢复和报表筛选的桌面与 `390×844` 窄屏检查，隔离 SQLite 样本证据见 [`ISS-025 验收记录`](uat-evidence/iss-025-customer-status-labels/README.md)。
+
+ISS-025 原记录更新为 `FIXED_PENDING_REVIEW`，未创建重复 Issue。真实生产数据库、员工账号和全量业务数据抽查登记为 `BUSINESS_VERIFICATION_PENDING` / `DEPLOYMENT_VERIFICATION_PENDING`；本轮不合并 master、不关闭 Issue、不部署，等待独立代码、业务、权限和视觉复审。
+

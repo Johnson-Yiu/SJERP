@@ -12,6 +12,7 @@ from rest_framework.response import Response
 
 from .models import Contact, Customer, FollowUp, InventoryMovement, Order, OrderItem, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
 from .country_registry import display_country
+from .customer_status import customer_status_display
 from .querysets import prefetch_purchase_related_orders
 from .serializers import ContactSerializer, CustomerSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, QuoteSerializer, SKUSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, protected_media_url
 from .permissions import CONTEXT_MODULES, user_can
@@ -136,7 +137,7 @@ def _customer_context(pk, user=None):
         "unit_price": item.unit_price, "currency": item.order.currency, "amount": item.amount,
     } for item in valid_items.select_related("order", "sku__product").order_by("-order__order_date")], "orders")
     return {
-        "entity": "customers", "title": obj.name, "subtitle": f"{obj.code} · {display_country(obj.country) or '未填写国家/地区'}", "badge": obj.get_status_display(),
+        "entity": "customers", "title": obj.name, "subtitle": f"{obj.code} · {display_country(obj.country) or '未填写国家/地区'}", "badge": customer_status_display(obj.status),
         "info": [["负责人", obj.owner or "—"], ["业务区域", obj.region or "—"], ["来源", obj.source or "—"], ["网站", obj.website or "—"], ["地址", obj.address or "—"], ["备注", obj.notes or "—"]],
         "metrics": [["累计销售额", sales_rmb, "rmb"], ["订单", len(formal_orders), "number"], ["报价", len(quotes), "number"], ["下次跟进", obj.next_follow_up or "未安排", "date"]],
         "sections": [
@@ -162,7 +163,7 @@ def _contact_context(pk, user=None):
     metrics = [["跟进次数", len(followups), "number"]] if user_can(user, "followups", "view") else []
     return {"entity": "contacts", "title": obj.name, "subtitle": f"{obj.title or '联系人'} · {customer_name}" if customer_name else (obj.title or "联系人"), "badge": "主联系人" if obj.is_primary else "联系人", "info": [["关联企业", customer_name or "—"], ["邮箱", obj.email or "—"], ["电话", obj.phone or "—"], ["WhatsApp", obj.whatsapp or "—"], ["备注", obj.notes or "—"]], "metrics": metrics, "sections": [
         _section("followups", "跟进记录", "follow-ups", [["followed_at", "时间", "datetime"], ["subject", "主题"], ["content", "跟进记录 / 解决方案", "excerpt"], ["result", "客户回复 / 客户疑问", "excerpt"], ["type_display", "方式"], ["next_follow_up", "下次跟进", "date"]], followups),
-        _section("company", "关联企业", "customers", [["code", "客户编号"], ["name", "企业名称"], ["country", "国家"], ["status", "状态", "status"], ["owner", "负责人"]], company),
+        _section("company", "关联企业", "customers", [["code", "客户编号"], ["name", "企业名称"], ["country", "国家"], ["status_display", "状态", "status"], ["owner", "负责人"]], company),
     ]}
 
 

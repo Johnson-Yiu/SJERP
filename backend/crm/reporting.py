@@ -15,6 +15,7 @@ from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
 
 from .models import Customer, InventoryMovement, Order, OrderItem, Product, ProductCategory, PurchaseOrder, PurchaseOrderItem, RmbCashEvent, SharedReportTemplate, SKU, Supplier, Transaction
+from .customer_status import customer_status_display
 from .permissions import HistoricalAnalysisPermission, user_can
 from .sales_scope import scope_customer_queryset, scope_customer_related_queryset
 from .services.profit import order_profit_summary
@@ -102,6 +103,8 @@ def records(source, date_field, start, end, user=None):
         for key in ["status", "currency", "direction", "kind", "warehouse", "type"]:
             value = getattr(obj, key, "")
             display = getattr(obj, f"get_{key}_display", lambda: value)()
+            if source == "customers" and key == "status":
+                display = customer_status_display(value)
             dims[key] = (value, display or "未填写")
         if source in ["sales", "profit", "customers", "cash"]:
             dims.update(customer_dims(obj if source == "customers" else obj.customer))

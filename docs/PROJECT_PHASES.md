@@ -450,3 +450,13 @@ Django 全量 `952` 通过、`15` 跳过；装箱/单位/包装/MOQ/集成定向
 
 本轮只使用隔离 SQLite、开发身份和本地 Chrome；生产 PostgreSQL、生产代理、真实物流数据、CI 和窄屏物流实机尚未验证，登记为后续独立复审风险。ISS-036 保持 `FIXED_PENDING_REVIEW`，不合并 `master`、不关闭 Issue。
 
+## ISS-036-FIX-01 不可拆分单位系数边界（2026-10-27）
+
+基于源分支 `codex/iss-036-carton-units` 的 `3fe05aa1fe08f859cd6b737150d67b4c1066b248` 创建独立 Worktree 和分支 `codex/fix-iss036-factor-one`。复核确认原实现把明确 `factor=1`、`allow_fraction=false` 的交易单位当作歧义并跳过实际装箱整数倍校验；本轮仅移除该特殊跳过条件。
+
+新增后端回归覆盖 `factor=1` 的 `0.5/1`、`factor=5` 的 `2.5/5`、允许分数、缺失快照和同 SKU 冲突快照；前端回归确认自然中文错误、无 `[object Object]` 且失败后输入保留。冲突快照仍不增加限制，关闭条件是业务明确同一发货中同 SKU 多个历史交易单位快照的归属/优先级，并提供可复核历史数据规则。未新增迁移，未修改库存、发货数量、财务金额、采购状态、付款规则、尾箱、混装或 Packing List。
+
+相关后端定向测试 `96` 项通过，前端实际装箱组件 `26` 项通过，生产构建、Django system check 和 `makemigrations --check` 通过。真实 Chrome 已完成 `0.5` 拒绝并保留输入、`1` 保存成功的独立截图；实现提交为 `a59573e0396fbb6b324628d8826b5a2234ee065b`，完整证据见 [`ISS-036-FIX-01 验收记录`](uat-evidence/iss036-fix01/README.md)。
+
+本轮只使用隔离 SQLite、开发身份和本地 Chrome；生产 PostgreSQL、代理、真实物流数据、CI 和窄屏物流实机仍未验证。ISS-036 保持 `FIXED_PENDING_REVIEW`，不合并 `master`、不关闭 Issue。
+

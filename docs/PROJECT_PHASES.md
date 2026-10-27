@@ -1,5 +1,13 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-INTEGRATION-036-002-003-052-058 五项任务集成（2026-10-27）
+
+固定基线 `46353a5436637832f5adadb7bdef6b45cdeada23`，创建独立工作树和 `codex/integration-036-002-003-052-058`。集成前核对五个远端来源分支 HEAD 与指定 SHA 一致：ISS-036 `b64c54b07908d4bb462c64f120c351d148e06f6f`、ISS-002 `4e4ca504ee398da85fe23cc53d534c6008807e5c`、ISS-003 `2111d193ef3a69db05c23e27813cfbf26d9034d7`、ISS-052 `93736e0773ca2136d4070a604e62324cf832dc6f`、ISS-058 `742692a6e4887e4b8352736e69a52b1ebe8d066f`。保留五项代码/测试/报告/依赖；PROJECT_ISSUES 的 ISS-002 冲突逐条合并，PROJECT_PHASES 保留各历史记录并追加本轮日志。ISS-052 七个 JPEG 原图仅由 `.png` 重命名 `.jpg`，签名检查确认未重编码。
+
+后端在 Python 3.12.14 干净虚拟环境中安装 `backend/requirements.txt`，隔离 SQLite 下 Django check、`makemigrations --check --dry-run` 和全量 `manage.py test` 通过；测试 989 项、18 项跳过。前端 `npm ci`、两项 audit、Node 156、Vitest 661、交易单位 4 和生产构建通过；detail drawer typography 测试失败 1 项，Playwright 164/184 通过，20 项失败。ISS-058 集成构建主 JS 为 1,126,035 bytes / gzip 393,552 bytes，对原始报告变化为 -183 / +75 bytes；Vite 的 >500 kB 警告仍在，不声称真实用户体验改善。完整测试命令、Playwright 失败明细、性能差异与验收缺口见[本轮集成报告](uat-evidence/integration-036-002-003-052-058/README.md)。
+
+本记录写入时，分支尚未推送，GitHub Actions 三项 job 状态待精确最终 SHA 核对；推送后以 Actions 实际运行和原始 job 状态补充核验。ISS-036 保持 `FIXED_PENDING_REVIEW`，ISS-002 `NEEDS_VERIFICATION`，ISS-003 `BLOCKED`，ISS-052 `NEEDS_VERIFICATION`，ISS-058 `P3 / NEEDS_VERIFICATION`。Pillow `11.3.0` 风险未解决，Python 依赖无完整 lock；ISS-003 的真实员工/生产权限验收、ISS-052 的开发身份审计（`AUDIT_LOG_ENABLED=false`、`OperationLog=0`）仍缺失。无新增迁移；未合并 master、未关闭 Issue、未部署、未启用正式 RBAC，完成核验后等待独立审查。
+
 ## ISS-003 员工权限与数据范围隔离验收（2026-10-27）
 
 基于统一基线 `46353a5436637832f5adadb7bdef6b45cdeada23` 创建独立 Worktree 和分支 `codex/verify-iss003-employee-permissions`。本轮先核对现有 `permissions.py`、`sales_scope.py`、采购/财务范围服务、API ViewSet/Serializer 及前端路由守卫；没有修改 `DEVELOPMENT_SUPERADMIN`、`RBAC_ENFORCEMENT`、角色模板或任何业务代码。

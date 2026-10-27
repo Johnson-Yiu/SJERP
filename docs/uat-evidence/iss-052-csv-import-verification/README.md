@@ -217,12 +217,12 @@ npx vitest run tests/import-preview-state.spec.js --environment jsdom
 
 | 截图 | 场景 | 页面可见结果 |
 |---|---|---|
-| [01-customers-success.png](screenshots/01-customers-success.png) | 客户导入成功，`customers-valid.csv` | `导入完成，已写入数据库`；`导入成功：共 2 行，新增 0，更新 2` |
-| [02-products-success.png](screenshots/02-products-success.png) | 产品导入成功，`products-valid-retry.csv` | `导入完成，已写入数据库`；`导入成功：共 2 行，新增 0，更新 2` |
-| [03-skus-success.png](screenshots/03-skus-success.png) | SKU 导入成功，`skus-valid-retry.csv` | `导入完成，已写入数据库`；`导入成功：共 2 行，新增 0，更新 2` |
-| [04-transactions-success.png](screenshots/04-transactions-success.png) | 财务流水新增成功，`transactions-ui-evidence-final.csv` | `导入完成，已写入数据库`；`导入成功：共 1 行，新增 1，更新 0` |
-| [05-sku-invalid-product-code.png](screenshots/05-sku-invalid-product-code.png) | SKU 引用不存在的 `product_code`，`skus-invalid-reference.csv` | `校验未通过，不会写入任何数据。`；`找不到所引用的产品，请核对 product_code。` |
-| [06-stale-token-rejected.png](screenshots/06-stale-token-rejected.png) | 客户预览后隔离库记录发生变化，旧凭证执行 | `数据状态已发生变化，请重新预览后再导入。`；页面要求重新预览，未标记为完成 |
-| [07-retry-success.png](screenshots/07-retry-success.png) | 重新预览后使用新凭证执行同一客户文件 | `导入完成，已写入数据库`；`导入成功：共 1 行，新增 0，更新 1` |
+| [01-customers-success.jpg](screenshots/01-customers-success.jpg) | 客户导入成功，`customers-valid.csv` | `导入完成，已写入数据库`；`导入成功：共 2 行，新增 0，更新 2` |
+| [02-products-success.jpg](screenshots/02-products-success.jpg) | 产品导入成功，`products-valid-retry.csv` | `导入完成，已写入数据库`；`导入成功：共 2 行，新增 0，更新 2` |
+| [03-skus-success.jpg](screenshots/03-skus-success.jpg) | SKU 导入成功，`skus-valid-retry.csv` | `导入完成，已写入数据库`；`导入成功：共 2 行，新增 0，更新 2` |
+| [04-transactions-success.jpg](screenshots/04-transactions-success.jpg) | 财务流水新增成功，`transactions-ui-evidence-final.csv` | `导入完成，已写入数据库`；`导入成功：共 1 行，新增 1，更新 0` |
+| [05-sku-invalid-product-code.jpg](screenshots/05-sku-invalid-product-code.jpg) | SKU 引用不存在的 `product_code`，`skus-invalid-reference.csv` | `校验未通过，不会写入任何数据。`；`找不到所引用的产品，请核对 product_code。` |
+| [06-stale-token-rejected.jpg](screenshots/06-stale-token-rejected.jpg) | 客户预览后隔离库记录发生变化，旧凭证执行 | `数据状态已发生变化，请重新预览后再导入。`；页面要求重新预览，未标记为完成 |
+| [07-retry-success.jpg](screenshots/07-retry-success.jpg) | 重新预览后使用新凭证执行同一客户文件 | `导入完成，已写入数据库`；`导入成功：共 1 行，新增 0，更新 1` |
 
 本补充证据不改变审计结论：当前开发环境仍为 `AUDIT_LOG_ENABLED=false`，`authenticated=false`，隔离库 `OperationLog=0`。因此审计日志缺口仍是待验收项，不能标记为已通过。

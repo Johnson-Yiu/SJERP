@@ -464,7 +464,7 @@ ISS-025 原记录已更新，没有创建重复 Issue。其他状态名称简化
 
 基于已审查提交 `d5d0d15c03d55a718f11a298e08f29a9b9d0c4b0` 使用独立 Worktree 和分支 `codex/iss025-report-visual-evidence`。本轮不修改报表逻辑、客户状态编码、销售/采购/财务报表状态名称或权限，仅补齐经营分析客户按状态分组的真实浏览器视觉证据。
 
-全新隔离 SQLite 创建 5 条唯一客户样本，覆盖 `lead/contact/opportunity/customer/company`，查询 `2026-10-01` 至 `2026-10-31`，API 返回 5 行且每行数量为 1；五个中文标签与编码一一对应。真实 Chrome 默认桌面视口及 `390×844` 窄屏均核验通过；报表区域无“联系人”“公司客户”旧生命周期标签。窄屏实测页面 `scrollWidth=375`、可用宽度 375，无页面级横向溢出；结果表两列 `scrollWidth=clientWidth=313`，状态标签未被遮挡。补跑 ISS-025/报表 Django 定向测试 36 项、Node 156 项和生产构建均通过；两张本轮直接生成的截图见 [`ISS-025-FIX-02 证据`](uat-evidence/review-iss025-status-consistency/README.md)。
+全新隔离 SQLite 创建 5 条唯一客户样本，覆盖 `lead/contact/opportunity/customer/company`，查询 `2026-10-01` 至 `2026-10-31`，API 返回 5 行且每行数量为 1；五个中文标签与编码一一对应。真实 Chrome 默认桌面视口及 `390×844` 窄屏均核验通过；报表区域无“联系人”“公司客户”旧生命周期标签。窄屏实测页面 `scrollWidth=375`、可用宽度 375，无页面级横向溢出；结果表两列 `scrollWidth=clientWidth=313`，状态标签未被遮挡。补跑 ISS-025/报表 Django 定向测试 36 项、Node 156 项和生产构建均通过；两张本轮直接生成的截图见 [`ISS-025-FIX-02 证据`](uat-evidence/review-iss025-status-consistency/README.md)。证据提交为 `f9e2c7493ba86007fb6969d826d336dc4077edb7`。
 
 本轮仅执行全新 SQLite 迁移、本地 Django API 和 Vite/真实 Chrome 回归，未触发 GitHub CI、未连接生产数据库、未合并 master、未关闭 Issue、未部署。ISS-025 继续保持 `FIXED_PENDING_REVIEW`，真实生产数据库、真实员工权限、全量业务数据和独立视觉复审仍按原台账等待后续核验。
 

@@ -37,6 +37,55 @@ class ActualPackingTests(TestCase):
         self.assertEqual(response.status_code, 201, response.data)
         return self.shipment.packages.get(pk=response.data["id"])
 
+    def semantic_snapshot_shipment(self, suffix, specs):
+        order = Order.objects.create(
+            order_no=f"SO-ACT-SEMANTIC-{suffix}",
+            customer=self.order.customer,
+            order_date=date(2026, 10, 7),
+            status="confirmed",
+        )
+        shipment_items = []
+        for index, spec in enumerate(specs, start=1):
+            factor = Decimal(str(spec["factor"]))
+            unit = SKUTradeUnit.objects.create(
+                sku=self.a,
+                name=spec.get("name", f"历史规格{index}"),
+                unit=spec["unit"],
+                factor=factor,
+                allow_fraction=spec["allow_fraction"],
+            )
+            line = order.items.create(
+                sku=self.a,
+                quantity=factor,
+                unit_price="1",
+                trade_unit=unit,
+                trade_quantity="1",
+                trade_unit_price=factor,
+                trade_snapshot={
+                    "name": spec.get("name", f"历史规格{index}"),
+                    "unit": spec["unit"],
+                    "factor": str(spec["factor"]),
+                    "base_unit": spec["base_unit"],
+                    "allow_fraction": spec["allow_fraction"],
+                },
+            )
+            shipment_items.append({"order_item": line.pk, "quantity": str(factor), "trade_unit": unit.pk, "trade_quantity": "1"})
+        InventoryMovement.objects.create(
+            movement_no=f"IN-ACT-SEMANTIC-{suffix}",
+            movement_date=date(2026, 10, 7),
+            type="adjust_in",
+            sku=self.a,
+            quantity="100",
+        )
+        return confirm_shipment(
+            order,
+            {
+                "shipment_no": f"SH-ACT-SEMANTIC-{suffix}",
+                "shipment_date": date(2026, 10, 7),
+                "items": shipment_items,
+            },
+        )
+
     def plan(self):
         template = PackagingTemplate.objects.create(code="ACT-PACK", name="Actual carton", carton_length="40", carton_width="30", carton_height="20", qty_per_carton="5", carton_tare_weight="1")
         for sku in (self.a, self.b):
@@ -200,6 +249,55 @@ class ActualPackingTests(TestCase):
         ]})
         response = self.client.post(f"/api/shipments/{shipment.pk}/packages/", {"carton_no": 1, "actual_net_weight": "1", "actual_gross_weight": "1", "items": [{"sku": self.a.pk, "quantity": "2.5"}]}, format="json")
         self.assertEqual(response.status_code, 201, response.data)
+
+    def test_same_factor_different_base_units_are_ambiguous(self):
+        shipment = self.semantic_snapshot_shipment("BASE-UNIT-CONFLICT", [
+            {"name": "5米整卷", "unit": "卷", "factor": "5", "base_unit": "m", "allow_fraction": False},
+            {"name": "5厘米整卷", "unit": "卷", "factor": "5", "base_unit": "cm", "allow_fraction": False},
+        ])
+        response = self.client.post(
+            f"/api/shipments/{shipment.pk}/packages/",
+            {"carton_no": 1, "actual_net_weight": "1", "actual_gross_weight": "1", "items": [{"sku": self.a.pk, "quantity": "2.5"}]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+
+    def test_same_factor_different_trade_units_are_ambiguous(self):
+        shipment = self.semantic_snapshot_shipment("TRADE-UNIT-CONFLICT", [
+            {"name": "5米整卷", "unit": "卷", "factor": "5", "base_unit": "m", "allow_fraction": False},
+            {"name": "5米整包", "unit": "包", "factor": "5", "base_unit": "m", "allow_fraction": False},
+        ])
+        response = self.client.post(
+            f"/api/shipments/{shipment.pk}/packages/",
+            {"carton_no": 1, "actual_net_weight": "1", "actual_gross_weight": "1", "items": [{"sku": self.a.pk, "quantity": "2.5"}]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+
+    def test_same_factor_different_fraction_semantics_are_ambiguous(self):
+        shipment = self.semantic_snapshot_shipment("FRACTION-CONFLICT", [
+            {"name": "5米整卷", "unit": "卷", "factor": "5", "base_unit": "m", "allow_fraction": False},
+            {"name": "5米可拆卷", "unit": "卷", "factor": "5", "base_unit": "m", "allow_fraction": True},
+        ])
+        response = self.client.post(
+            f"/api/shipments/{shipment.pk}/packages/",
+            {"carton_no": 1, "actual_net_weight": "1", "actual_gross_weight": "1", "items": [{"sku": self.a.pk, "quantity": "2.5"}]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+
+    def test_identical_trade_semantics_enforce_indivisible_rule(self):
+        shipment = self.semantic_snapshot_shipment("IDENTICAL", [
+            {"name": "5米整卷", "unit": "卷", "factor": "5", "base_unit": "m", "allow_fraction": False},
+            {"name": "历史名称不影响语义", "unit": "卷", "factor": "5.00", "base_unit": "m", "allow_fraction": False},
+        ])
+        response = self.client.post(
+            f"/api/shipments/{shipment.pk}/packages/",
+            {"carton_no": 1, "actual_net_weight": "1", "actual_gross_weight": "1", "items": [{"sku": self.a.pk, "quantity": "2.5"}]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 400, response.data)
+        self.assertIn("不可拆分", str(response.data))
 
     def test_valid_and_unparseable_trade_snapshots_do_not_infer_indivisible_rule(self):
         valid_unit = SKUTradeUnit.objects.create(sku=self.a, name="5米整卷", unit="卷", factor="5", allow_fraction=False)

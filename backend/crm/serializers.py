@@ -2762,6 +2762,40 @@ class ShipmentPackageItemSerializer(serializers.ModelSerializer):
         fields = ["id", "sku", "sku_code", "quantity"]
 
 
+def _trade_snapshot_semantics(snapshot):
+    """Return the immutable unit semantics needed for actual packing.
+
+    ``TradeUnitLine`` snapshots intentionally preserve only the values which
+    describe the conversion and split rule.  The display name is not part of
+    that meaning, while catalog lifecycle/supplier fields are not persisted
+    in this snapshot at all.  Incomplete or malformed historical data must
+    remain ambiguous rather than being reconstructed from the current SKU.
+    """
+    if not isinstance(snapshot, dict):
+        return None
+    raw_factor = snapshot.get("factor")
+    if raw_factor is None or raw_factor == "":
+        return None
+    try:
+        factor = Decimal(str(raw_factor))
+    except (TypeError, ValueError, ArithmeticError):
+        return None
+    if not factor.is_finite() or factor <= Decimal("0"):
+        return None
+    base_unit = snapshot.get("base_unit")
+    unit = snapshot.get("unit")
+    allow_fraction = snapshot.get("allow_fraction")
+    if (
+        not isinstance(base_unit, str)
+        or not base_unit.strip()
+        or not isinstance(unit, str)
+        or not unit.strip()
+        or not isinstance(allow_fraction, bool)
+    ):
+        return None
+    return factor, base_unit, unit, allow_fraction
+
+
 class ShipmentPackageSerializer(serializers.ModelSerializer):
     items = ShipmentPackageItemSerializer(many=True)
     actual_cbm = serializers.DecimalField(max_digits=16, decimal_places=6, read_only=True)
@@ -2803,38 +2837,28 @@ class ShipmentPackageSerializer(serializers.ModelSerializer):
             shipped[item.sku_id] = shipped.get(item.sku_id, ZERO) + item.quantity
         # A package line is entered in the SKU base unit, so only enforce an
         # indivisible trade unit when every shipment line for that SKU carries
-        # the same explicit, non-fractional trade-unit snapshot.  A base-unit
-        # order line, a fractional trade unit, or conflicting historical
-        # snapshots makes the physical package quantity ambiguous; in those
-        # cases do not invent a carton restriction.
-        indivisible = {}
+        # the same explicit trade-unit snapshot.  A base-unit order line,
+        # an incomplete/invalid snapshot, or conflicting historical snapshots
+        # makes the physical package quantity ambiguous; in those cases do
+        # not invent a carton restriction.  A valid fractional snapshot is
+        # still a known semantic and remains unrestricted.
+        snapshot_semantics = {}
         ambiguous_indivisible = set()
         for shipment_item in shipment.items.all():
             sku_id = shipment_item.sku_id
             snapshot = shipment_item.trade_snapshot
-            if not isinstance(snapshot, dict):
-                ambiguous_indivisible.add(sku_id)
-                continue
             if not shipment_item.trade_unit_id:
                 ambiguous_indivisible.add(sku_id)
                 continue
-            raw_factor = snapshot.get("factor")
-            if raw_factor is None or raw_factor == "":
+            semantics = _trade_snapshot_semantics(snapshot)
+            if semantics is None:
                 ambiguous_indivisible.add(sku_id)
                 continue
-            try:
-                factor = Decimal(str(raw_factor))
-            except (TypeError, ValueError, ArithmeticError):
-                ambiguous_indivisible.add(sku_id)
-                continue
-            if not factor.is_finite() or factor <= ZERO or snapshot.get("allow_fraction") is not False:
-                ambiguous_indivisible.add(sku_id)
-                continue
-            previous = indivisible.get(sku_id)
-            if previous is not None and previous[0] != factor:
+            previous = snapshot_semantics.get(sku_id)
+            if previous is not None and previous != semantics:
                 ambiguous_indivisible.add(sku_id)
             else:
-                indivisible[sku_id] = (factor, snapshot)
+                snapshot_semantics[sku_id] = semantics
         packed = {}
         for item in ShipmentPackageItem.objects.filter(shipment_package__in=other_packages):
             packed[item.sku_id] = packed.get(item.sku_id, ZERO) + item.quantity
@@ -2848,10 +2872,9 @@ class ShipmentPackageSerializer(serializers.ModelSerializer):
             if sku_id in seen:
                 raise serializers.ValidationError({"items": "同一箱内不能重复填写同一 SKU。"})
             seen.add(sku_id)
-            if sku_id in indivisible and sku_id not in ambiguous_indivisible:
-                factor, snapshot = indivisible[sku_id]
-                if quantity % factor:
-                    base_unit = snapshot.get("base_unit") or item["sku"].unit
+            if sku_id in snapshot_semantics and sku_id not in ambiguous_indivisible:
+                factor, base_unit, _unit, allow_fraction = snapshot_semantics[sku_id]
+                if not allow_fraction and quantity % factor:
                     factor_text = format(factor.normalize(), "f")
                     quantity_text = format(quantity.normalize(), "f")
                     raise serializers.ValidationError({

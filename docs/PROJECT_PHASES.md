@@ -545,3 +545,13 @@ ISS-025 原记录已更新，没有创建重复 Issue。其他状态名称简化
 
 ISS-018 保持 `BLOCKED` / `DEPLOYMENT_VERIFICATION_PENDING`；ISS-036 的冲突历史快照业务待确认项保留；ISS-025 保持 `FIXED_PENDING_REVIEW` 及真实员工/生产数据待验。完整命令、冲突、截图路径和延期事项见 [`INTEGRATION-018-036-025 验收记录`](uat-evidence/integration-018-036-025/README.md)。本轮不触发 GitHub CI、不合并 `master`、不关闭 Issue、不部署，等待统一独立审查。
 
+## ISS-036-FIX-03 历史交易单位快照语义冲突（2026-10-27）
+
+基于统一集成基线 `46353a5436637832f5adadb7bdef6b45cdeada23` 创建独立 Worktree 和分支 `codex/fix-iss036-snapshot-conflicts`。复核 `TradeUnitLine`、`SKUTradeUnit`、`normalize_trade` 与 `ShipmentPackageSerializer.validate` 后确认，原实现只比较历史快照 `factor`，同 factor 但 `base_unit`、`unit` 或 `allow_fraction` 不同的历史语义会被错误视为一致。
+
+本轮最小修复以 `factor`、`base_unit`、`unit`、`allow_fraction` 组成完整语义键；展示用 `name` 不参与语义比较，供应商/启用/默认/备注字段不在该历史快照中，也不影响单位换算或可拆分判断。缺失、非字典、单位字段无效或 factor 无效的快照继续按歧义处理；语义冲突不选择快照、不推断优先级、不增加不可拆分限制。完全一致的有效快照仍执行限制，`factor=1`、合法尾箱、混装及允许分数保持原规则。未修改库存、发货数量、采购、财务金额、付款规则或历史数据，未新增迁移。
+
+新增相同 factor 的 base unit、交易单位和允许分数语义冲突回归，并验证完全一致快照（仅名称不同）仍拒绝非法分数；既有不同 factor、缺失/非字典/非法 factor、factor=1、factor=5、尾箱、混装和允许分数回归继续保留。后端装箱定向测试 39 项通过，交易单位交叉回归共 55 项通过；Django check、迁移检查、Node 156 项、交易单位 Vitest 4 项、生产构建及 `git diff --check` 均通过。Vite 首次非提升权限运行因 Worktree 临时目录 EPERM 失败，权限重试通过；本轮未运行 GitHub CI，未连接生产 PostgreSQL 或部署。完整命令见 [`ISS-036-FIX-03 验收记录`](uat-evidence/iss036-fix03/README.md)。
+
+ISS-036 保持 `FIXED_PENDING_REVIEW`；冲突历史快照的业务归属/优先级仍待业务明确。ISS-018 最近核实引用修正为集成验证 HEAD `46353a5436637832f5adadb7bdef6b45cdeada23`，其 `BLOCKED` / `DEPLOYMENT_VERIFICATION_PENDING` 状态不变。
+

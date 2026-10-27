@@ -63,3 +63,43 @@
 - 其他状态名称“商机”“正式客户”“返单客户”的简化符合当前实现，但用户尚未逐一确认措辞，登记为 `BUSINESS_VERIFICATION_PENDING`；本轮不扩大文案重构范围。
 - 真实生产数据库、真实员工账号和全量业务数据抽查仍为 `BUSINESS_VERIFICATION_PENDING` / `DEPLOYMENT_VERIFICATION_PENDING`。
 - 本轮未新增迁移、未修改 master、未关闭 Issue、未部署生产。
+
+## ISS-025-FIX-02 本轮真实 Chrome 视觉证据补齐（2026-10-27）
+
+本轮只补充真实浏览器视觉证据，没有修改报表逻辑、状态编码、销售/采购/财务报表文案或权限代码。使用同一已审查提交 `d5d0d15c03d55a718f11a298e08f29a9b9d0c4b0` 的独立 Worktree、全新 SQLite 数据库和本地 Vite/Django 服务；未连接生产数据库，未触发 GitHub CI。
+
+### 本轮隔离测试数据
+
+创建 5 条唯一客户记录，日期口径为 `created_at`，查询范围为 `2026-10-01` 至 `2026-10-31`，每种状态 1 条：
+
+| 客户编号 | 数据库状态编码 | 报表显示 |
+|---|---|---|
+| `ISS025F02-01` | `lead` | 线索 |
+| `ISS025F02-02` | `contact` | 已联系 |
+| `ISS025F02-03` | `opportunity` | 商机 |
+| `ISS025F02-04` | `customer` | 正式客户 |
+| `ISS025F02-05` | `company` | 返单客户 |
+
+独立 API `GET /api/reports/data/?source=customers&group_by=status&date_field=created_at&date_from=2026-10-01&date_to=2026-10-31&metric=count&view=bar&comparison=previous&grain=month` 返回 5 行、总数 5，每行 `count=1`；`key` 保持上述英文编码，`label` 与页面中文一致。报表区域文本实际检查到五个规范标签，未检查到旧生命周期文案“联系人”或“公司客户”。
+
+### 本轮新截图
+
+以下两张是本轮 Chrome 会话直接保存的新文件；旧截图仍保留在原目录/原验收证据中，未复制或改名冒充本轮证据：
+
+- [桌面视口：客户状态报表](screenshots/iss025-fix02-customer-status-report-desktop.png)：默认 Chrome 视口，PNG 捕获面 `1905×912`，结果表和条形图均显示五种规范状态。
+- [窄屏视口：390×844 客户状态报表](screenshots/iss025-fix02-customer-status-report-mobile-390x844.png)：CSS viewport `390×844`；PNG 捕获面 `375×812`（浏览器滚动条/外层区域不计入截图），菜单收起、查询结果和五个状态标签可见，按钮/筛选区按窄屏换行。
+
+窄屏 DOM 实测：`innerWidth=390`、可用内容宽度 `375`；页面 `scrollWidth=375`，没有页面级横向溢出；报表表格 `clientWidth=313`、`scrollWidth=313`，本次两列结果不需要横向滚动，状态值没有被遮挡。报表内不出现“联系人”“公司客户”；左侧导航中的“联系人”仍是联系人实体入口，不属于客户生命周期标签。
+
+### 本轮执行记录
+
+- `python manage.py migrate --noinput`（隔离 SQLite）：全新数据库迁移完成，包含当前仓库全部迁移。
+- 本地 Django API：`127.0.0.1:8176`，返回状态报表 HTTP 200；数据和页面结果一致。
+- 本地 Vite：`127.0.0.1:5376`，真实 Chrome 桌面及 `390×844` 窄屏回归完成。
+- `python manage.py test crm.tests.test_issue_025_status_labels crm.tests.test_reporting --keepdb`（隔离 SQLite）：36 passed，0 failed，OK。
+- `npm run test:unit`：156 passed，0 failed。
+- `npm run build`：通过；保留既有 chunk size warning，无构建错误。
+- `git diff --check`：通过；本轮无应用代码修改。
+- 未触发 GitHub CI，未运行生产数据库或真实员工账号验收；上述部署/真实业务数据风险继续保留原台账状态。
+
+本轮提交只包含截图、证据 README 和台账记录；不合并 `master`、不关闭 Issue、不部署生产，等待独立视觉复审。

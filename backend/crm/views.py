@@ -3199,6 +3199,8 @@ def _apply_import_rows(entity, rows, user=None):
 
 
 def _import_error_message(exc):
+    if isinstance(exc, Product.DoesNotExist):
+        return "找不到所引用的产品，请核对 product_code。"
     if isinstance(exc, DRFValidationError):
         return _flatten_import_validation_error(exc.detail)
     if isinstance(exc, DjangoValidationError):

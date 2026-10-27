@@ -20,7 +20,7 @@
 
 `docs/PROJECT_ISSUES.md` 在 ISS-002 合并时发生内容冲突。已逐条合并 ISS-002 与 ISS-003 的不同核实记录和关闭条件，并保留两个任务的证据与状态；没有选择某一分支文件覆盖另一方。ISS-036、ISS-052、ISS-058 的最新核实项已补上来源 SHA、证据链接及后续动作。`docs/PROJECT_PHASES.md` 保留所有来源历史记录，并追加本轮记录。
 
-ISS-052 的七个截图经文件签名确认以 `FF D8 FF` 开头，均为 JPEG 数据。集成工作树中仅通过 Git 重命名为 `.jpg` 并同步 README 链接，没有重新编码或制作图片。GitHub 页面预览将在分支推送后核验。
+ISS-052 的七个截图经文件签名确认以 `FF D8 FF` 开头，均为 JPEG 数据。集成工作树中仅通过 Git 重命名为 `.jpg` 并同步 README 链接，没有重新编码或制作图片。推送后通过 GitHub 内容 API 核对截图目录恰有七个 `.jpg` 文件，并逐个读取远端内容、验证 JPEG 签名；GitHub 当前浏览器会话打开私有仓库页面返回 `Page not found`，因此本轮无法在网页 UI 中目视确认图片预览。文件在 GitHub API 上存在且内容签名正确，但网页预览检查仍需有仓库访问权的浏览器会话复核。
 
 ## 本地环境与后端结果
 
@@ -82,6 +82,8 @@ Playwright 期间 Vite 还输出 `OrderDetailModal` 在 `<Transition>` 中返回
 
 ## GitHub Actions 与收尾状态
 
-最终报告提交和分支推送前，GitHub Actions 尚未触发；因此 backend、backend-postgres、frontend 均待精确最终 SHA 核验。本报告与 `PROJECT_PHASES.md` 将在完成推送/CI 核查后记录链接和实际 job 状态。任何 CI 启动限制均按 Actions 页面原始状态记录，不用本地测试结果替代。
+首次集成提交 `4a83ec1455cbe4e927ae39252477fa095cf329ca` 推送后，GitHub Actions 运行 [CI #40535678568](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/40535678568)，事件为 `push`，head SHA 与该提交一致。`backend`（job `122300149745`）、`backend-postgres`（`122300149687`）和 `frontend`（`122300149370`）均在约 3 秒内 `failure`；三个 GitHub job 对象均为 `runner_id=0`、`steps=[]`，没有可读取的运行日志。三项 check-run 均有同一条 GitHub 原始 failure annotation：`The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings`。这确认是账户近期付款失败或消费限额不足导致启动被拒；原始消息未区分具体是哪一种。三项 CI 均标记 `BLOCKED`，不能以本地测试替代。仓库所有者需手动检查 GitHub `Billing & plans` 后再对精确提交重跑；本轮未修改账单、仓库策略或工作流。
+
+该 CI 运行对应第一次集成提交。此后仅为记录上述远端证据及截图预览核验边界更新本验收文档；最终文档提交的 SHA 和关联 Actions 结果在交付时单独给出，且本轮状态仍为账户账单/额度导致 `BLOCKED`。
 
 集成过程中没有新增迁移；两个共享文档历史记录均保留。Playwright 生成并覆盖的其他历史截图已恢复到基线；最终差异仅保留五项任务所需代码、测试、报告、依赖及本轮集成记录。未合并 master、未关闭 Issue、未部署、未连接业务数据库，等待独立审查。

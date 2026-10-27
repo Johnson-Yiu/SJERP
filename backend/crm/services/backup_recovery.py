@@ -179,6 +179,26 @@ def _default_restore_result_path(target):
     return target.parent / f".{target.name}.restore-result.json"
 
 
+def _validate_restore_result_path(result_file, target_dir):
+    """Reject report paths that can write into the recovery target.
+
+    Check the user-supplied path for a symlink before resolving it.  The
+    resolved comparison then catches lexical variants and symlinked parent
+    directories that point inside the target.
+    """
+    result_path = Path(result_file).expanduser()
+    target_path = Path(target_dir).expanduser()
+    if result_path.is_symlink():
+        raise BackupRecoveryError(f"Structured result path must not be a symlink: {result_path}")
+    if target_path.is_symlink():
+        raise BackupRecoveryError(f"Restore target must not be a symlink: {target_path}")
+    resolved_target = target_path.resolve()
+    resolved_result = result_path.resolve()
+    if resolved_result == resolved_target or resolved_target in resolved_result.parents:
+        raise BackupRecoveryError("result_file must be outside target_dir")
+    return result_path
+
+
 def _utc_now():
     return datetime.now(timezone.utc)
 
@@ -472,10 +492,23 @@ def restore_consistent_backup(*, archive, target_dir, result_file=None):
     started = time.monotonic()
     raw_target = Path(target_dir).expanduser()
     raw_archive = Path(archive).expanduser()
+    if raw_target.is_symlink():
+        raise BackupRecoveryError(f"Restore target must not be a symlink: {raw_target}")
     target = raw_target.resolve()
     archive_path = raw_archive.resolve()
-    output = Path(result_file).expanduser().resolve() if result_file else _default_restore_result_path(target)
-    result = {"status": "FAILED", "started_at": _isoformat(), "errors": [], "archive": str(archive_path)}
+    output = _validate_restore_result_path(
+        result_file if result_file is not None else _default_restore_result_path(target),
+        raw_target,
+    )
+    result = {
+        "status": "FAILED",
+        "restore_status": "FAILED",
+        "report_status": "PENDING",
+        "report_file": str(output),
+        "started_at": _isoformat(),
+        "errors": [],
+        "archive": str(archive_path),
+    }
     error = None
     staging = None
     require_windows_acl = _windows_acl_required()
@@ -523,6 +556,7 @@ def restore_consistent_backup(*, archive, target_dir, result_file=None):
         result.update(
             {
                 "status": "PASS",
+                "restore_status": "PASS",
                 "backup_id": manifest.get("backup_id"),
                 "target_dir": str(target),
                 "verified_database_sha256": _sha256(target / DATABASE_MEMBER),
@@ -540,15 +574,19 @@ def restore_consistent_backup(*, archive, target_dir, result_file=None):
             shutil.rmtree(staging)
     result["finished_at"] = _isoformat()
     result["duration_seconds"] = round(time.monotonic() - started, 3)
+    result["report_status"] = "PASS"
     try:
         _write_structured_result(output, result, require_windows_acl=require_windows_acl)
     except (BackupRecoveryError, OSError) as report_error:
+        result["report_status"] = "FAILED"
+        result["report_error"] = str(report_error)
         if error is None:
-            error = report_error
-            result["status"] = "FAILED"
-            result["errors"].append(f"Could not write restore result: {report_error}")
-        else:
-            result["report_error"] = str(report_error)
+            # The restore directory may already have been atomically committed.
+            # Keep recovery status authoritative and surface the report failure
+            # separately so callers do not retry over a successful restore.
+            if result["restore_status"] != "PASS":
+                error = report_error
+                result["errors"].append(f"Could not write restore result: {report_error}")
     if error is not None:
         raise error
     return result
@@ -567,6 +605,12 @@ def _archive_metadata(path):
 def prune_backup_archives(directory, *, apply=False, tighten_permissions=False):
     """Plan or apply the 7 daily / 4 weekly / 3 monthly retention policy."""
     root = Path(directory).expanduser()
+    if root.is_symlink():
+        raise BackupRecoveryError(f"Backup directory must not be a symlink: {root}")
+    if not root.exists():
+        raise BackupRecoveryError(f"Backup directory does not exist: {root}")
+    if not root.is_dir():
+        raise BackupRecoveryError(f"Backup path is not a directory: {root}")
     ensure_secure_backup_directory(root, tighten=tighten_permissions)
     root = root.resolve()
     archives = []

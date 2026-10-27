@@ -88,6 +88,32 @@ FIX-01 在独立 Worktree 以受控测试权限重跑全量 Django：`python man
 
 现有 ISS-047 清单定向测试仍保留，未修改其权限和媒体 API；ISS-043 的 PostgreSQL 触发器/运行账号生产验证仍按原台账保持待验。
 
+## ISS-018-FIX-02 恢复结果路径安全与备份目录检查
+
+本轮从 `a73273f49aa32d8be8040d1c444045ff51a67c65` 创建独立 Worktree 和 `codex/fix-iss018-restore-edge-cases`。实现依据用户指定的已核实提交 `35c42fcef672d76e8ad9f27da650ae64ea3a3c02` 记录，不覆盖 FIX-01 的迁移或其他 Issue 历史。
+
+FIX-02 在解析用户指定的 `result_file` 前检查原始符号链接，拒绝符号链接、恢复目标本身和目标目录内部的报告路径；默认报告仍写到目标目录旁。恢复目标只有在 staging 全部校验通过后才原子提交，失败恢复不会创建目标目录。原子提交成功后，`status`/`restore_status` 仍表达恢复结果，`report_status`/`report_error` 单独表达报告写入结果，避免报告失败被误报为恢复失败。`prune_erp_backups` 对不存在、非目录和符号链接目录明确失败，不改变 7/4/3 保留策略或默认 dry-run。
+
+FIX-02 定向日志：
+
+```text
+python manage.py test crm.tests.test_iss018_backup_recovery --verbosity 1
+Ran 22 tests in 1.604s
+OK (skipped=3)
+
+python manage.py test crm.tests.test_iss018_backup_recovery crm.tests.test_iss047_private_storage crm.tests.test_environment_isolation --verbosity 1
+Ran 28 tests in 2.622s
+OK (skipped=4)
+
+python manage.py check
+System check identified no issues (0 silenced).
+
+python manage.py makemigrations crm --check --dry-run
+No changes detected in app 'crm'
+```
+
+迁移检查仍有本地既有 SQLite `unable to open database file` RuntimeWarning，但退出码为 0 且没有生成迁移；没有连接或修改生产 PostgreSQL。生产 POSIX/NTFS ACL、真实媒体卷、独立加密副本、定时器/告警、恢复 RPO/RTO 和真实部署路径仍为 `DEPLOYMENT_VERIFICATION_PENDING`，ISS-018 继续保持 `BLOCKED`。
+
 ## 演练数据核对
 
 测试夹具在 SQLite 中写入：

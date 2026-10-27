@@ -91,6 +91,8 @@ class ISS018BackupRecoveryTests(SimpleTestCase):
             restored = Path(root) / "restored"
             restore = restore_consistent_backup(archive=archive, target_dir=restored)
             self.assertEqual(restore["status"], "PASS")
+            self.assertEqual(restore["restore_status"], "PASS")
+            self.assertEqual(restore["report_status"], "PASS")
             connection = sqlite3.connect(restored / "database.sqlite3")
             try:
                 self.assertEqual(connection.execute("SELECT total_amount FROM orders WHERE id=1").fetchone()[0], 5000)
@@ -172,6 +174,63 @@ class ISS018BackupRecoveryTests(SimpleTestCase):
                 restore_consistent_backup(archive=archive, target_dir=target, result_file=report)
             self.assertEqual((target / "keep.txt").read_text(encoding="utf-8"), "unchanged")
             self.assertEqual(json.loads(report.read_text(encoding="utf-8"))["status"], "FAILED")
+
+    def test_result_file_symlink_is_rejected_without_overwriting_link_target(self):
+        with TemporaryDirectory() as root:
+            archive = self._make_archive(root, "result-symlink")
+            target = Path(root) / "restored"
+            link_target = Path(root) / "protected-report.json"
+            link_target.write_text("keep this report", encoding="utf-8")
+            result_link = Path(root) / "result.json"
+            try:
+                result_link.symlink_to(link_target)
+            except (OSError, NotImplementedError) as exc:
+                self.skipTest(f"symlink creation unavailable: {exc}")
+            with self.assertRaisesRegex(BackupRecoveryError, "symlink"):
+                restore_consistent_backup(archive=archive, target_dir=target, result_file=result_link)
+            self.assertTrue(result_link.is_symlink())
+            self.assertEqual(link_target.read_text(encoding="utf-8"), "keep this report")
+            self.assertFalse(target.exists())
+
+    def test_result_file_inside_existing_target_is_rejected_without_changes(self):
+        with TemporaryDirectory() as root:
+            archive = self._make_archive(root, "result-inside")
+            target = Path(root) / "restored"
+            target.mkdir()
+            keep = target / "keep.txt"
+            keep.write_text("unchanged", encoding="utf-8")
+            with self.assertRaisesRegex(BackupRecoveryError, "outside target_dir"):
+                restore_consistent_backup(archive=archive, target_dir=target, result_file=target / "result.json")
+            self.assertEqual(keep.read_text(encoding="utf-8"), "unchanged")
+            self.assertFalse((target / "result.json").exists())
+
+    def test_failed_restore_to_missing_target_does_not_create_target(self):
+        with TemporaryDirectory() as root:
+            archive = self._make_archive(root, "missing-target-failure")
+            target = Path(root) / "restored"
+            with patch(
+                "crm.services.backup_recovery._extract_archive",
+                side_effect=BackupRecoveryError("forced extraction failure"),
+            ):
+                with self.assertRaisesRegex(BackupRecoveryError, "forced extraction failure"):
+                    restore_consistent_backup(archive=archive, target_dir=target)
+            self.assertFalse(target.exists())
+            self.assertEqual(json.loads((Path(root) / ".restored.restore-result.json").read_text())["status"], "FAILED")
+
+    def test_successful_restore_reports_recovery_and_report_status_separately(self):
+        with TemporaryDirectory() as root:
+            archive = self._make_archive(root, "report-failure")
+            target = Path(root) / "restored"
+            with patch(
+                "crm.services.backup_recovery._write_structured_result",
+                side_effect=OSError("report disk full"),
+            ):
+                result = restore_consistent_backup(archive=archive, target_dir=target)
+            self.assertTrue(target.is_dir())
+            self.assertEqual(result["status"], "PASS")
+            self.assertEqual(result["restore_status"], "PASS")
+            self.assertEqual(result["report_status"], "FAILED")
+            self.assertIn("report disk full", result["report_error"])
 
     def test_existing_empty_target_is_rejected_without_deletion(self):
         with TemporaryDirectory() as root:
@@ -286,3 +345,31 @@ class ISS018BackupRecoveryTests(SimpleTestCase):
             self.assertEqual(len(result["kept"]), 8)
             self.assertEqual(len(result["removed"]), 4)
             self.assertEqual(len(list(root.glob("*.zip"))), 12)
+
+    def test_prune_missing_directory_fails_without_creating_it(self):
+        with TemporaryDirectory() as root:
+            missing = Path(root) / "missing-backups"
+            with self.assertRaisesRegex(BackupRecoveryError, "does not exist"):
+                prune_backup_archives(missing)
+            self.assertFalse(missing.exists())
+
+    def test_prune_non_directory_fails_without_mutating_path(self):
+        with TemporaryDirectory() as root:
+            backup_path = Path(root) / "backup-file"
+            backup_path.write_text("not a directory", encoding="utf-8")
+            with self.assertRaisesRegex(BackupRecoveryError, "not a directory"):
+                prune_backup_archives(backup_path)
+            self.assertEqual(backup_path.read_text(encoding="utf-8"), "not a directory")
+
+    def test_prune_symlink_directory_is_rejected(self):
+        with TemporaryDirectory() as root:
+            root = Path(root)
+            real = root / "real-backups"
+            real.mkdir()
+            link = root / "backup-link"
+            try:
+                link.symlink_to(real, target_is_directory=True)
+            except (OSError, NotImplementedError) as exc:
+                self.skipTest(f"symlink creation unavailable: {exc}")
+            with self.assertRaisesRegex(BackupRecoveryError, "must not be a symlink"):
+                prune_backup_archives(link)

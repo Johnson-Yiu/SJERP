@@ -114,6 +114,8 @@ No changes detected in app 'crm'
 
 迁移检查仍有本地既有 SQLite `unable to open database file` RuntimeWarning，但退出码为 0 且没有生成迁移；没有连接或修改生产 PostgreSQL。生产 POSIX/NTFS ACL、真实媒体卷、独立加密副本、定时器/告警、恢复 RPO/RTO 和真实部署路径仍为 `DEPLOYMENT_VERIFICATION_PENDING`，ISS-018 继续保持 `BLOCKED`。
 
+GitHub Actions 证据：当前分支提交 `ca2cf5871ad09cf43bdb2fdf3746702940b8e8dc` 对应 [run 40465469224](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/40465469224)，状态为 `completed/failure`。`backend-postgres`、`backend` 和 `frontend` 三个 job 均在步骤列表为空时失败，`gh run view --log-failed` 返回 `log not found`；无法据此判定代码、runner 或额度原因，故 CI 标记为未通过/原因待 GitHub 侧核实，不以本地测试替代 CI 结论。
+
 ## 演练数据核对
 
 测试夹具在 SQLite 中写入：

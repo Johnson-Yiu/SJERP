@@ -563,3 +563,9 @@ ISS-018 保持 `BLOCKED` / `DEPLOYMENT_VERIFICATION_PENDING`；ISS-036 的冲突
 
 ISS-036 保持 `FIXED_PENDING_REVIEW`；冲突历史快照的业务归属/优先级仍待业务明确。ISS-018 最近核实引用修正为集成验证 HEAD `46353a5436637832f5adadb7bdef6b45cdeada23`，其 `BLOCKED` / `DEPLOYMENT_VERIFICATION_PENDING` 状态不变。
 
+## final-cross-module-ux 六项失败修复验收（2026-10-28）
+
+基于 `054bd82518039a5bc0e0c14234964a14d7fbbfd8` 创建独立 `codex/repair-final-cross-module-ux` Worktree。六项报价/订单列表失败经隔离网络、DOM 和当前序列化契约核实为过时 mock：报价需要 `buyer_company_name`，确认订单需要 `customer_name_snapshot`；数组响应仍符合 `listAll()` 契约。本轮只修正 mock，不改产品列表、客户列、筛选尺寸/圆角或原有无横向溢出断言。
+
+Playwright 六项 `6 passed`，Node `156` 项，相关列表 Node `24` 项，CRM 列表 Vitest `5` 项，Django check、迁移检查和生产构建通过；真实 Chrome 1440/390px截图见 `uat-evidence/final-cross-module-ux/README.md`。390px 订单的 `scrollWidth=393` 窄屏边界和 `.table-wrap` 内部表格滚动保留为后续独立 UX 复审项，不降低当前验收标准。本轮未触发 GitHub Actions、未部署、未合并 master、未关闭 Issue，等待独立审查。
+

@@ -473,3 +473,11 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 `codex/integration-018-036-025` Worktree，按 ISS-018 → ISS-036 → ISS-025 集成来源 HEAD `21812b7c1190540a7214d4b77518ede31221180a`、`80a93559852d9d679c86d71250549261c7c2bbd1`、`1480429338d0fc6de20384ea77a43e969a2b7de4`。三项来源及证据提交均已纳入；公共阶段文档两次冲突均保留双方内容，`serializers.py` 的备份无关状态映射与不可拆分单位校验均保留。集成证据见 [`INTEGRATION-018-036-025`](uat-evidence/integration-018-036-025/README.md)。
 
 本地后端定向 60 项通过、3 项跳过；临时 `MEDIA_ROOT` 下 Django `crm` 全量 984 项通过、18 项跳过；Django check、迁移检查、Node 156 项、有效 Vitest 661 项和前端生产构建通过。默认 Worktree media ACL、前端依赖缺失和未指定 jsdom 的首次失败均已区分记录，不冒充代码回归。ISS-018 仍 `BLOCKED`，ISS-036 冲突快照业务待确认项仍保留，ISS-025 仍 `FIXED_PENDING_REVIEW`；三项生产/员工待验状态不因集成本地通过而关闭。本轮不触发 GitHub CI、不合并 master、不关闭 Issue、不部署，等待统一独立审查。
+
+## final-cross-module-ux 六项失败修复记录（2026-10-28）
+
+基于固定基线 `054bd82518039a5bc0e0c14234964a14d7fbbfd8` 创建独立 `codex/repair-final-cross-module-ux` Worktree。原始报价/订单客户列测试在 1440、1280、1024 共 6 项失败；隔离网络、响应体、控制台和 DOM 复现确认是 mock 契约落后：当前报价列表使用 `buyer_company_name`，确认订单使用 `customer_name_snapshot`，而 mock 只返回 `customer_name`。`listAll()` 接受数组响应，故不修改分页契约或产品页面。
+
+本轮仅补齐 endpoint-specific mock 字段，保留客户列、筛选控件尺寸/圆角和无页面级横向溢出断言。修复后 Playwright 六项 `6 passed`，Node `156` 项、相关列表 `24` 项、CRM 列表 Vitest `5` 项、Django check、迁移检查和生产构建均通过；真实 Chrome 桌面/390px截图和完整日志见 `docs/uat-evidence/final-cross-module-ux/README.md`。390px 订单记录 `scrollWidth=393` 的窄屏边界，表格仍在 `.table-wrap` 内滚动，本轮不以改断言或无关布局变更掩盖。
+
+本记录不新增 Issue、不改变既有 Issue 状态；不触发 GitHub Actions、不合并 master、不关闭 Issue、不部署，等待独立代码与视觉复审。

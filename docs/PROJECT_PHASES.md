@@ -450,3 +450,13 @@ ISS-047 真实生产卷/Nginx/容量告警/联合备份恢复与 PostgreSQL、IS
 
 ISS-025 原记录更新为 `FIXED_PENDING_REVIEW`，未创建重复 Issue。真实生产数据库、员工账号和全量业务数据抽查登记为 `BUSINESS_VERIFICATION_PENDING` / `DEPLOYMENT_VERIFICATION_PENDING`；本轮不合并 master、不关闭 Issue、不部署，等待独立代码、业务、权限和视觉复审。
 
+## ISS-025-FIX-01 客户状态标签全页面一致性核查（2026-10-27）
+
+基于源分支 `codex/iss-025-customer-status-labels` 的提交 `1fac93f09e3b5c578a030df5c0736e5d0552e4cc` 创建独立 Worktree 和分支 `codex/review-iss025-status-consistency`。本轮逐项核对客户列表、状态筛选、详情、联系人关联企业、跟进筛选、报表/经营分析、API `status/status_display` 以及刷新、分页和 URL 恢复；未重复修改已经正确的页面。
+
+核查发现经营分析按客户生命周期分组仍直接使用模型旧文案，`contact`/`company` 会显示“联系人”/“公司客户”。在 `backend/crm/reporting.py` 中仅对客户来源的状态标签复用现有 `customer_status_display()`，并补充后端报表断言及前端映射测试。修补提交为 `20981f91de0a30a9bc3ba0ccd603233d36457f42`；未新增迁移、未改状态编码、自动推进、联系人数量规则或历史数据。
+
+Django `crm` 全量 953 项通过、15 项跳过；Node 156 项、有效 Vitest 659 项、生产构建、`makemigrations --check --dry-run` 和 `git diff --check` 通过。真实 Chrome Use 已完成桌面及 `390×844` 窄屏检查，隔离 SQLite 样本覆盖五种状态、客户筛选、详情、关联企业、跟进 URL 恢复和报表结果。完整证据见 [`ISS-025-FIX-01 全页面核查`](uat-evidence/review-iss025-status-consistency/README.md)。
+
+ISS-025 原记录已更新，没有创建重复 Issue。其他状态名称简化登记为 `BUSINESS_VERIFICATION_PENDING`；真实生产数据库、真实员工权限和全量业务数据抽查保留 `BUSINESS_VERIFICATION_PENDING` / `DEPLOYMENT_VERIFICATION_PENDING`。本轮不合并 master、不关闭 Issue、不部署，等待独立代码、业务和视觉复审。
+

@@ -1,0 +1,434 @@
+"""Consistent database/private-media backup and isolated restore primitives.
+
+The first deployment target is a single server with a local filesystem media
+volume.  A database dump and an independently copied media directory are not
+an application-consistent backup by themselves.  This module therefore uses a
+strict, explicit contract:
+
+* the caller must quiesce ERP writes before starting the operation;
+* the SQLite snapshot and media tree are written into one archive;
+* the media manifest is checked before and after the copy; and
+* restore verifies the archive, database integrity and every media SHA256
+  before writing a new isolated target directory.
+
+PostgreSQL production backups intentionally are not implemented as a guessed
+``pg_dump + cp`` combination.  The deployment runbook must bind a PostgreSQL
+exported snapshot to a filesystem snapshot or a documented write-quiescence
+window before this operation can be marked production-ready.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import re
+import shutil
+import sqlite3
+import subprocess
+import tempfile
+import time
+import zipfile
+from datetime import datetime, timezone
+from pathlib import Path, PurePosixPath
+
+from django.conf import settings
+
+from .private_media import (
+    PrivateMediaStorageError,
+    build_private_media_manifest,
+    compare_private_media_manifest,
+)
+
+
+ARCHIVE_SCHEMA_VERSION = 1
+DATABASE_MEMBER = "database.sqlite3"
+MEDIA_DIRECTORY = "media"
+CONFIG_MEMBER = "recovery-config.json"
+MANIFEST_MEMBER = "manifest.json"
+BACKUP_FILENAME_PREFIX = "erp-backup-"
+BACKUP_FILENAME_RE = re.compile(r"^erp-backup-[A-Za-z0-9][A-Za-z0-9._-]*\.zip$")
+
+
+class BackupRecoveryError(RuntimeError):
+    """Raised when a backup or restore cannot satisfy the safety contract."""
+
+
+def _utc_now():
+    return datetime.now(timezone.utc)
+
+
+def _isoformat(value=None):
+    return (value or _utc_now()).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def _json_bytes(payload):
+    return (json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8")
+
+
+def _sha256(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _safe_member_path(name):
+    """Return a safe relative POSIX member path, or raise on traversal."""
+    if not isinstance(name, str) or not name or "\\" in name:
+        raise BackupRecoveryError(f"Unsafe archive member: {name!r}")
+    path = PurePosixPath(name)
+    if path.is_absolute() or any(part in {"", ".", ".."} or ":" in part for part in path.parts):
+        raise BackupRecoveryError(f"Unsafe archive member: {name!r}")
+    return path
+
+
+def _safe_backup_id(value):
+    value = str(value or "").strip()
+    if not value or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", value):
+        raise BackupRecoveryError("backup_id must contain only letters, numbers, dot, underscore or hyphen")
+    return value
+
+
+def _database_path(database=None):
+    value = database if database is not None else settings.DATABASES["default"]["NAME"]
+    if value in {None, "", ":memory:"}:
+        raise BackupRecoveryError("A file-backed SQLite database is required for an isolated backup.")
+    path = Path(value).expanduser().resolve()
+    if not path.exists() or not path.is_file():
+        raise BackupRecoveryError(f"SQLite database does not exist: {path}")
+    return path
+
+
+def _assert_sqlite(database=None):
+    engine = settings.DATABASES["default"].get("ENGINE", "")
+    if "sqlite" not in engine.lower():
+        raise BackupRecoveryError(
+            "This command refuses PostgreSQL production backups without a bound database/filesystem snapshot. "
+            "Use the ISS-018 deployment runbook and mark this environment DEPLOYMENT_VERIFICATION_PENDING."
+        )
+    return _database_path(database)
+
+
+def _media_path(media_root=None):
+    root = Path(media_root if media_root is not None else settings.MEDIA_ROOT).expanduser().resolve()
+    if not root.exists() or not root.is_dir():
+        raise BackupRecoveryError(f"Private media root does not exist: {root}")
+    return root
+
+
+def _safe_recovery_config():
+    """Return allow-listed recovery settings; never serialize secrets."""
+    storage_backend = getattr(settings, "MEDIA_STORAGE_BACKEND", "django.core.files.storage.FileSystemStorage")
+    return {
+        "schema_version": 1,
+        "database_engine": "sqlite",
+        "storage_backend": str(storage_backend),
+        "media_url": str(getattr(settings, "MEDIA_URL", "/media/")),
+        "time_zone": str(getattr(settings, "TIME_ZONE", "UTC")),
+        "media_root_placeholder": "MEDIA_ROOT",
+        "secrets_included": False,
+    }
+
+
+def _snapshot_sqlite(source, destination):
+    """Create a transaction-consistent SQLite snapshot using the backup API."""
+    source = Path(source).resolve()
+    destination = Path(destination).resolve()
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    source_connection = sqlite3.connect(str(source), timeout=30)
+    destination_connection = sqlite3.connect(str(destination))
+    try:
+        # The caller has already quiesced ERP writes.  A deferred read
+        # transaction gives sqlite3.Connection.backup() a stable snapshot
+        # without holding a writer lock that can make the backup API wait on
+        # Windows SQLite builds.  The media before/after manifest check below
+        # detects a violated quiescence window and discards the archive.
+        source_connection.execute("BEGIN")
+        source_connection.backup(destination_connection, pages=256, sleep=0.05)
+        destination_connection.commit()
+        source_connection.rollback()
+    except Exception as exc:
+        destination_connection.rollback()
+        raise BackupRecoveryError(f"SQLite snapshot failed: {exc}") from exc
+    finally:
+        destination_connection.close()
+        source_connection.close()
+    check = sqlite3.connect(str(destination))
+    try:
+        result = check.execute("PRAGMA integrity_check").fetchone()[0]
+    finally:
+        check.close()
+    if result != "ok":
+        raise BackupRecoveryError(f"SQLite snapshot integrity check failed: {result}")
+
+
+def _copy_media_snapshot(source_root, destination_root, manifest):
+    source_root = Path(source_root).resolve()
+    destination_root = Path(destination_root).resolve()
+    for entry in manifest["files"]:
+        relative = _safe_member_path(entry["path"])
+        source = (source_root / Path(*relative.parts)).resolve()
+        try:
+            source.relative_to(source_root)
+        except ValueError as exc:
+            raise BackupRecoveryError(f"Media path escapes MEDIA_ROOT: {entry['path']}") from exc
+        destination = destination_root.joinpath(*relative.parts)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            shutil.copy2(source, destination)
+        except OSError as exc:
+            raise BackupRecoveryError(f"Media copy failed for {entry['path']}: {exc}") from exc
+
+
+def _archive_directory(stage, archive_path):
+    archive_path = Path(archive_path)
+    temporary = archive_path.with_name(f".{archive_path.name}.partial")
+    try:
+        with zipfile.ZipFile(temporary, "w", compression=zipfile.ZIP_DEFLATED, strict_timestamps=False) as archive:
+            for path in sorted(Path(stage).rglob("*")):
+                if path.is_file():
+                    archive.write(path, path.relative_to(stage).as_posix())
+        with zipfile.ZipFile(temporary) as archive:
+            if archive.testzip() is not None:
+                raise BackupRecoveryError("Created backup archive failed CRC verification")
+        os.replace(temporary, archive_path)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+
+
+def create_consistent_backup(
+    *,
+    database=None,
+    media_root=None,
+    output_dir,
+    backup_id=None,
+    quiesced=False,
+    encrypted_output=None,
+    age_recipient=None,
+    status_file=None,
+):
+    """Create one archive containing a quiesced SQLite+private-media point."""
+    started = time.monotonic()
+    result = {"status": "FAILED", "started_at": _isoformat(), "errors": []}
+    try:
+        if not quiesced:
+            raise BackupRecoveryError(
+                "Consistency contract not satisfied: pass --quiesced only after ERP DB and media writes are stopped."
+            )
+        database_path = _assert_sqlite(database)
+        media_root_path = _media_path(media_root)
+        destination_dir = Path(output_dir).expanduser().resolve()
+        destination_dir.mkdir(parents=True, exist_ok=True)
+        if encrypted_output and not age_recipient:
+            raise BackupRecoveryError("--age-recipient is required when --encrypted-output is requested")
+        if age_recipient and not encrypted_output:
+            raise BackupRecoveryError("--encrypted-output is required when --age-recipient is requested")
+        backup_id = _safe_backup_id(backup_id or _utc_now().strftime("%Y%m%dT%H%M%SZ"))
+        archive_path = destination_dir / f"{BACKUP_FILENAME_PREFIX}{backup_id}.zip"
+        if archive_path.exists():
+            raise BackupRecoveryError(f"Backup archive already exists: {archive_path}")
+
+        before_media = build_private_media_manifest(media_root_path)
+        with tempfile.TemporaryDirectory(prefix=f"iss018-{backup_id}-", dir=destination_dir) as temporary_dir:
+            stage = Path(temporary_dir)
+            _snapshot_sqlite(database_path, stage / DATABASE_MEMBER)
+            _copy_media_snapshot(media_root_path, stage / MEDIA_DIRECTORY, before_media)
+            after_media = build_private_media_manifest(media_root_path)
+            if before_media != after_media:
+                raise BackupRecoveryError("MEDIA_ROOT changed during backup; archive discarded")
+
+            config_bytes = _json_bytes(_safe_recovery_config())
+            (stage / CONFIG_MEMBER).write_bytes(config_bytes)
+            manifest = {
+                "schema_version": ARCHIVE_SCHEMA_VERSION,
+                "backup_id": backup_id,
+                "created_at": _isoformat(),
+                "consistency": {
+                    "method": "application-quiesced-sqlite-backup-and-media-archive",
+                    "quiesced": True,
+                    "write_window": "caller-stopped-db-and-media-writes",
+                },
+                "source": {
+                    "database_engine": "sqlite",
+                    "database_path": "DATABASE_PATH_REDACTED",
+                    "media_root": "MEDIA_ROOT",
+                },
+                "database": {"member": DATABASE_MEMBER, "sha256": _sha256(stage / DATABASE_MEMBER)},
+                "media": before_media,
+                "recovery_config": {"member": CONFIG_MEMBER, "sha256": hashlib.sha256(config_bytes).hexdigest()},
+            }
+            (stage / MANIFEST_MEMBER).write_bytes(_json_bytes(manifest))
+            _archive_directory(stage, archive_path)
+
+        result.update(
+            {
+                "status": "PASS",
+                "backup_id": backup_id,
+                "archive": str(archive_path),
+                "archive_sha256": _sha256(archive_path),
+                "encrypted_archive": None,
+                "consistency_method": manifest["consistency"]["method"],
+            }
+        )
+        if encrypted_output:
+            encrypted_path = Path(encrypted_output).expanduser().resolve()
+            _encrypt_with_age(archive_path, encrypted_path, age_recipient)
+            result["encrypted_archive"] = str(encrypted_path)
+            result["encrypted_archive_sha256"] = _sha256(encrypted_path)
+    except (BackupRecoveryError, PrivateMediaStorageError, OSError, ValueError) as exc:
+        result["status"] = "FAILED"
+        result["errors"].append(str(exc))
+        raise
+    finally:
+        result["finished_at"] = _isoformat()
+        result["duration_seconds"] = round(time.monotonic() - started, 3)
+        if status_file:
+            status_path = Path(status_file).expanduser().resolve()
+            status_path.parent.mkdir(parents=True, exist_ok=True)
+            status_path.write_bytes(_json_bytes(result))
+    return result
+
+
+def _encrypt_with_age(archive_path, encrypted_path, recipient):
+    executable = shutil.which("age")
+    if not executable:
+        raise BackupRecoveryError("age executable is not installed; encrypted independent copy is pending")
+    encrypted_path.parent.mkdir(parents=True, exist_ok=True)
+    command = [executable, "--encrypt", "--recipient", str(recipient), "--output", str(encrypted_path), str(archive_path)]
+    completed = subprocess.run(command, capture_output=True, text=True, check=False)
+    if completed.returncode != 0:
+        detail = (completed.stderr or completed.stdout or "age returned a non-zero exit status").strip()
+        raise BackupRecoveryError(f"age encryption failed: {detail}")
+
+
+def _extract_archive(archive_path, stage):
+    with zipfile.ZipFile(archive_path) as source:
+        for info in source.infolist():
+            relative = _safe_member_path(info.filename)
+            destination = Path(stage).joinpath(*relative.parts)
+            if info.is_dir():
+                destination.mkdir(parents=True, exist_ok=True)
+                continue
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            with source.open(info, "r") as input_file, destination.open("wb") as output_file:
+                shutil.copyfileobj(input_file, output_file)
+
+
+def restore_consistent_backup(*, archive, target_dir, result_file=None):
+    """Verify and restore an archive into a new isolated directory."""
+    started = time.monotonic()
+    result = {"status": "FAILED", "started_at": _isoformat(), "errors": [], "archive": str(Path(archive).resolve())}
+    target = Path(target_dir).expanduser().resolve()
+    try:
+        archive_path = Path(archive).expanduser().resolve()
+        if not archive_path.is_file():
+            raise BackupRecoveryError(f"Backup archive does not exist: {archive_path}")
+        if target.exists():
+            if any(target.iterdir()):
+                raise BackupRecoveryError(f"Restore target must be a new or empty directory: {target}")
+        else:
+            target.parent.mkdir(parents=True, exist_ok=True)
+
+        with tempfile.TemporaryDirectory(prefix="iss018-restore-", dir=target.parent) as temporary_dir:
+            stage = Path(temporary_dir)
+            _extract_archive(archive_path, stage)
+            manifest = json.loads((stage / MANIFEST_MEMBER).read_text(encoding="utf-8"))
+            if manifest.get("schema_version") != ARCHIVE_SCHEMA_VERSION:
+                raise BackupRecoveryError("Unsupported backup manifest schema")
+            if manifest.get("consistency", {}).get("quiesced") is not True:
+                raise BackupRecoveryError("Backup manifest does not prove a quiesced consistency point")
+            database = stage / DATABASE_MEMBER
+            if _sha256(database) != manifest.get("database", {}).get("sha256"):
+                raise BackupRecoveryError("Restored database SHA256 does not match manifest")
+            check = sqlite3.connect(str(database))
+            try:
+                integrity = check.execute("PRAGMA integrity_check").fetchone()[0]
+            finally:
+                check.close()
+            if integrity != "ok":
+                raise BackupRecoveryError(f"Restored database integrity check failed: {integrity}")
+            media = stage / MEDIA_DIRECTORY
+            differences = compare_private_media_manifest(manifest.get("media", {}), media)
+            if differences:
+                raise BackupRecoveryError("Restored media manifest mismatch: " + "; ".join(differences))
+            config = stage / CONFIG_MEMBER
+            if _sha256(config) != manifest.get("recovery_config", {}).get("sha256"):
+                raise BackupRecoveryError("Recovery configuration SHA256 does not match manifest")
+
+            target.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(database, target / DATABASE_MEMBER)
+            shutil.copytree(media, target / MEDIA_DIRECTORY)
+            shutil.copy2(config, target / CONFIG_MEMBER)
+            shutil.copy2(stage / MANIFEST_MEMBER, target / MANIFEST_MEMBER)
+            result.update(
+                {
+                    "status": "PASS",
+                    "backup_id": manifest.get("backup_id"),
+                    "target_dir": str(target),
+                    "verified_database_sha256": _sha256(target / DATABASE_MEMBER),
+                    "verified_media_manifest_sha256": manifest.get("media", {}).get("manifest_sha256"),
+                }
+            )
+    except zipfile.BadZipFile as exc:
+        result["errors"].append(f"Invalid backup archive: {archive_path}")
+        raise BackupRecoveryError(f"Invalid backup archive: {archive_path}") from exc
+    except (BackupRecoveryError, OSError, ValueError, json.JSONDecodeError) as exc:
+        result["errors"].append(str(exc))
+        raise
+    finally:
+        result["finished_at"] = _isoformat()
+        result["duration_seconds"] = round(time.monotonic() - started, 3)
+        output = Path(result_file).expanduser().resolve() if result_file else (target / "restore-result.json")
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(_json_bytes(result))
+    return result
+
+
+def _archive_metadata(path):
+    try:
+        with zipfile.ZipFile(path) as source:
+            manifest = json.loads(source.read(MANIFEST_MEMBER).decode("utf-8"))
+        created = datetime.fromisoformat(manifest["created_at"].replace("Z", "+00:00"))
+        return manifest, created
+    except (OSError, KeyError, ValueError, zipfile.BadZipFile, json.JSONDecodeError) as exc:
+        raise BackupRecoveryError(f"Cannot read backup metadata: {path}") from exc
+
+
+def prune_backup_archives(directory, *, apply=False):
+    """Plan or apply the 7 daily / 4 weekly / 3 monthly retention policy."""
+    root = Path(directory).expanduser().resolve()
+    if not root.exists() or not root.is_dir():
+        raise BackupRecoveryError(f"Backup directory does not exist: {root}")
+    archives = []
+    for path in sorted(root.glob(f"{BACKUP_FILENAME_PREFIX}*.zip")):
+        if not BACKUP_FILENAME_RE.match(path.name):
+            continue
+        manifest, created = _archive_metadata(path)
+        archives.append({"path": path, "manifest": manifest, "created": created})
+    archives.sort(key=lambda item: item["created"], reverse=True)
+    keep = set()
+    keep.update(item["path"] for item in archives[:7])
+    weekly = {}
+    for item in archives:
+        key = item["created"].isocalendar()[:2]
+        weekly.setdefault(key, item)
+    keep.update(item["path"] for item in list(weekly.values())[:4])
+    monthly = {}
+    for item in archives:
+        key = (item["created"].year, item["created"].month)
+        monthly.setdefault(key, item)
+    keep.update(item["path"] for item in list(monthly.values())[:3])
+    removed = []
+    for item in archives:
+        if item["path"] in keep:
+            continue
+        removed.append(str(item["path"]))
+        if apply:
+            item["path"].unlink()
+            encrypted = item["path"].with_suffix(item["path"].suffix + ".age")
+            if encrypted.exists():
+                encrypted.unlink()
+    return {"status": "PASS", "apply": bool(apply), "kept": sorted(str(path) for path in keep), "removed": removed}

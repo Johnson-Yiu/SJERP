@@ -440,3 +440,11 @@ ISS-080 更新为 `FIXED_PENDING_REVIEW`，真实生产账号/数据库及跨员
 ISS-047 真实生产卷/Nginx/容量告警/联合备份恢复与 PostgreSQL、ISS-097 正式员工与生产会话、ISS-080 真实员工跨客户数据抽查均保留原记录的部署或业务待验状态。最终 HEAD 的 GitHub Actions 必须另行核对；测试步骤前失败时不标记 CI PASS。完整命令、冲突、截图和遗留事项见 [`ISS-047 / ISS-097 / ISS-080 统一集成验收`](uat-evidence/integration-047-097-080/README.md)。本轮未部署、未合并 master、未关闭 Issue，等待 ChatGPT 独立审查。
 本轮 `npm install` 重新暴露依赖安全快照（2 moderate、9 high），沿用既有 ISS-002 记录为 `NEEDS_VERIFICATION`；未运行自动修复或无授权升级，不把该数量当作已确认生产漏洞。
 
+## ISS-018 数据库与附件一致性备份恢复（2026-10-27）
+
+基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 Worktree 和 `codex/iss-018-backup-recovery`，先读取 2026-10-24 规则包，并复核 ISS-047 私有媒体 SHA256 清单、ISS-051 环境隔离和 ISS-043 审计备份边界。当前仓库没有生产 PostgreSQL、快照服务、Nginx 实例、systemd 定时器或独立异地存储，本轮没有连接或修改生产环境。
+
+新增 `backup_recovery` 服务及 `create_consistent_backup`、`restore_consistent_backup`、`prune_erp_backups` 管理命令。备份不是把两份独立文件冒充快照：必须显式确认应用写入静默；SQLite 事务快照前后重新核对 ISS-047 媒体清单；数据库、媒体、恢复配置白名单和清单进入同一个 ZIP；恢复先核对归档 CRC、数据库 SHA256/`integrity_check`、媒体逐文件 SHA256 和配置 SHA256，全部通过后才写入新隔离目录。生产 PostgreSQL 未提供同一数据库/文件系统快照适配器时命令 fail-closed。age 加密、公网/异地复制、自动定时器和告警只提供未部署 runbook，不放入密钥或真实凭证。
+
+定向测试 `crm.tests.test_iss018_backup_recovery` 6 项通过；隔离管理命令实际运行并核对订单金额 `5000`、库存 `42`、附件 `followups/invoice.pdf` 及媒体 manifest SHA256；ISS-047 现有私有媒体权限/清单实现未被覆盖。实际生产 PostgreSQL、私有持久卷、独立加密副本、systemd/告警、恢复 RPO/RTO 和 ISS-043 生产审计备份仍为 `DEPLOYMENT_VERIFICATION_PENDING`；证据见 [`ISS-018 隔离演练`](uat-evidence/iss-018-backup-recovery/README.md) 和 [`ISS-018 运行手册`](deployment/ISS-018-数据库与附件一致性备份恢复.md)。本轮不关闭 Issue、不合并 `master`、不部署，等待独立审查。
+

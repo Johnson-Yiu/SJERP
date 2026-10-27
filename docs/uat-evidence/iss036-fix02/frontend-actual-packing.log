@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 C:/Users/Johnson/.codex/worktrees/fix-iss036-invalid-snapshot/森爵照明管理系统/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  26 passed (26)
+   Start at  15:35:03
+   Duration  4.32s (transform 1.36s, setup 872ms, import 1.04s, tests 447ms, environment 1.66s)
+

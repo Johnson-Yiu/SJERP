@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 C:/Users/Johnson/.codex/worktrees/iss-036-carton-units/森爵照明管理系统/frontend
+
+ ❯ tests/detail-drawer-typography.spec.js (0 test)
+✖ all shared detail drawers use the system typography scale (80.0869ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 88.1461
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/detail-drawer-typography.spec.js [ tests/detail-drawer-typography.spec.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/iss-036-carton-units/森爵照明管理系统/frontend/tests/detail-drawer-typography.spec.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 67 passed (68)
+      Tests  660 passed (660)
+   Start at  10:45:20
+   Duration  136.62s (transform 23.53s, setup 34.89s, import 48.06s, tests 54.11s, environment 196.17s)
+

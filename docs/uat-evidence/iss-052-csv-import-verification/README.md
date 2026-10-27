@@ -208,3 +208,21 @@ npx vitest run tests/import-preview-state.spec.js --environment jsdom
 - 未修改：导入字段、预览 token、状态冲突、原子性、财务流水只新增规则、RBAC、账单/账户设置、master、Issue。
 - 待验证：审计开启环境下的导入批次和行级审计；不属于本地开发身份可确认范围。
 - 当前不需要用户手动操作账户或仓库设置。若后续要求把审计缺口关闭，需要用户另行授权并提供隔离的审计开启环境。
+
+## ISS-052-UI-EVIDENCE 补充截图
+
+本轮继续使用真实 Chrome 页面 `http://127.0.0.1:5192/import`、当前分支代码、隔离 SQLite 和合成数据。截图由实际浏览器视口直接采集，没有使用模拟页面、手工拼图或测试日志替代。截图路径均相对于本 README。
+
+由于隔离库已经包含前一轮的合成记录，本轮财务流水成功场景使用新的合成文件 `transactions-ui-evidence-final.csv`，避免把已存在的 `ISS052-T01`、`ISS052-T02` 和 `ISS052-T03` 重复记录误作成功结果。其他成功场景使用重新上传、预览和执行的现有合成文件。
+
+| 截图 | 场景 | 页面可见结果 |
+|---|---|---|
+| [01-customers-success.png](screenshots/01-customers-success.png) | 客户导入成功，`customers-valid.csv` | `导入完成，已写入数据库`；`导入成功：共 2 行，新增 0，更新 2` |
+| [02-products-success.png](screenshots/02-products-success.png) | 产品导入成功，`products-valid-retry.csv` | `导入完成，已写入数据库`；`导入成功：共 2 行，新增 0，更新 2` |
+| [03-skus-success.png](screenshots/03-skus-success.png) | SKU 导入成功，`skus-valid-retry.csv` | `导入完成，已写入数据库`；`导入成功：共 2 行，新增 0，更新 2` |
+| [04-transactions-success.png](screenshots/04-transactions-success.png) | 财务流水新增成功，`transactions-ui-evidence-final.csv` | `导入完成，已写入数据库`；`导入成功：共 1 行，新增 1，更新 0` |
+| [05-sku-invalid-product-code.png](screenshots/05-sku-invalid-product-code.png) | SKU 引用不存在的 `product_code`，`skus-invalid-reference.csv` | `校验未通过，不会写入任何数据。`；`找不到所引用的产品，请核对 product_code。` |
+| [06-stale-token-rejected.png](screenshots/06-stale-token-rejected.png) | 客户预览后隔离库记录发生变化，旧凭证执行 | `数据状态已发生变化，请重新预览后再导入。`；页面要求重新预览，未标记为完成 |
+| [07-retry-success.png](screenshots/07-retry-success.png) | 重新预览后使用新凭证执行同一客户文件 | `导入完成，已写入数据库`；`导入成功：共 1 行，新增 0，更新 1` |
+
+本补充证据不改变审计结论：当前开发环境仍为 `AUDIT_LOG_ENABLED=false`，`authenticated=false`，隔离库 `OperationLog=0`。因此审计日志缺口仍是待验收项，不能标记为已通过。

@@ -457,6 +457,10 @@ ISS-080 更新为 `FIXED_PENDING_REVIEW`，真实生产账号/数据库及跨员
 ISS-047 真实生产卷/Nginx/容量告警/联合备份恢复与 PostgreSQL、ISS-097 正式员工与生产会话、ISS-080 真实员工跨客户数据抽查均保留原记录的部署或业务待验状态。最终 HEAD 的 GitHub Actions 必须另行核对；测试步骤前失败时不标记 CI PASS。完整命令、冲突、截图和遗留事项见 [`ISS-047 / ISS-097 / ISS-080 统一集成验收`](uat-evidence/integration-047-097-080/README.md)。本轮未部署、未合并 master、未关闭 Issue，等待 ChatGPT 独立审查。
 本轮 `npm install` 重新暴露依赖安全快照（2 moderate、9 high），沿用既有 ISS-002 记录为 `NEEDS_VERIFICATION`；未运行自动修复或无授权升级，不把该数量当作已确认生产漏洞。
 
+## ISS-002 依赖安全审计（2026-10-27）
+
+在独立 Worktree `codex/audit-iss002-dependency-security` 按基线 `46353a5436637832f5adadb7bdef6b45cdeada23` 完成前后端依赖审计。初始 npm 锁树的 11 个 advisory 已按直接/传递、生产/开发和源码实际路径拆分；axios、Vue、Vite、Vitest 及相关转依赖采用同大版本或补丁更新，最终 `npm audit` 和 `npm audit --omit=dev` 均为 0。Django/DRF 最低安全版本更新后，干净环境为 Django 6.0.9、DRF 3.18.3；Django 全量 984 通过、前端 Node 156 通过、有效 jsdom 定向 4 通过、生产构建通过。Pillow 11.3.0 的真实图片解析风险需跨重大版本，保留延期；Python lock、CI/PostgreSQL 和生产外部暴露仍未验证。完整 advisory、命令和关闭条件见 [`ISS-002 依赖安全审计`](uat-evidence/iss-002-dependency-audit/README.md)。本轮未触发 GitHub CI、未部署、未合并 master、未关闭 Issue。
+
 ## ISS-018 数据库与附件一致性备份恢复（2026-10-27）
 
 基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 Worktree 和 `codex/iss-018-backup-recovery`，先读取 2026-10-24 规则包，并复核 ISS-047 私有媒体 SHA256 清单、ISS-051 环境隔离和 ISS-043 审计备份边界。当前仓库没有生产 PostgreSQL、快照服务、Nginx 实例、systemd 定时器或独立异地存储，本轮没有连接或修改生产环境。

@@ -2806,15 +2806,23 @@ class ShipmentPackageSerializer(serializers.ModelSerializer):
         ambiguous_indivisible = set()
         for shipment_item in shipment.items.all():
             sku_id = shipment_item.sku_id
-            snapshot = shipment_item.trade_snapshot or {}
+            snapshot = shipment_item.trade_snapshot
+            if not isinstance(snapshot, dict):
+                ambiguous_indivisible.add(sku_id)
+                continue
             if not shipment_item.trade_unit_id:
                 ambiguous_indivisible.add(sku_id)
                 continue
-            try:
-                factor = Decimal(str(snapshot.get("factor", "1")))
-            except (TypeError, ValueError, ArithmeticError):
+            raw_factor = snapshot.get("factor")
+            if raw_factor is None or raw_factor == "":
+                ambiguous_indivisible.add(sku_id)
                 continue
-            if factor <= ZERO or snapshot.get("allow_fraction") is not False:
+            try:
+                factor = Decimal(str(raw_factor))
+            except (TypeError, ValueError, ArithmeticError):
+                ambiguous_indivisible.add(sku_id)
+                continue
+            if not factor.is_finite() or factor <= ZERO or snapshot.get("allow_fraction") is not False:
                 ambiguous_indivisible.add(sku_id)
                 continue
             previous = indivisible.get(sku_id)

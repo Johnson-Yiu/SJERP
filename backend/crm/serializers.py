@@ -2814,7 +2814,7 @@ class ShipmentPackageSerializer(serializers.ModelSerializer):
                 factor = Decimal(str(snapshot.get("factor", "1")))
             except (TypeError, ValueError, ArithmeticError):
                 continue
-            if factor <= ZERO or factor == Decimal("1") or snapshot.get("allow_fraction") is not False:
+            if factor <= ZERO or snapshot.get("allow_fraction") is not False:
                 ambiguous_indivisible.add(sku_id)
                 continue
             previous = indivisible.get(sku_id)

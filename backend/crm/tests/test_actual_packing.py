@@ -128,6 +128,79 @@ class ActualPackingTests(TestCase):
         ]}, format="json")
         self.assertEqual(accepted.status_code, 201, accepted.data)
 
+    def test_factor_one_nonfractional_trade_unit_rejects_subunit_and_allows_one(self):
+        unit = SKUTradeUnit.objects.create(sku=self.a, name="1件", unit="件", factor="1", allow_fraction=False)
+        order = Order.objects.create(order_no="SO-ACT-FACTOR-ONE", customer=self.order.customer, order_date=date(2026, 10, 7), status="confirmed")
+        line = order.items.create(
+            sku=self.a, quantity="1", unit_price="7", trade_unit=unit, trade_quantity="1", trade_unit_price="7",
+            trade_snapshot={"name": "1件", "unit": "件", "factor": "1.00", "base_unit": "pcs", "allow_fraction": False},
+        )
+        InventoryMovement.objects.create(movement_no="IN-ACT-FACTOR-ONE", movement_date=date(2026, 10, 7), type="adjust_in", sku=self.a, quantity="10")
+        shipment = confirm_shipment(order, {"shipment_no": "SH-ACT-FACTOR-ONE", "shipment_date": date(2026, 10, 7), "items": [
+            {"order_item": line.pk, "quantity": "1", "trade_unit": unit.pk, "trade_quantity": "1"},
+        ]})
+        url = f"/api/shipments/{shipment.pk}/packages/"
+        rejected = self.client.post(url, {"carton_no": 1, "actual_net_weight": "1", "actual_gross_weight": "1", "items": [{"sku": self.a.pk, "quantity": "0.5"}]}, format="json")
+        self.assertEqual(rejected.status_code, 400, rejected.data)
+        self.assertIn("数量必须是其整数倍", str(rejected.data))
+        self.assertIn("当前为 0.5", str(rejected.data))
+        self.assertFalse(shipment.packages.exists())
+        accepted = self.client.post(url, {"carton_no": 1, "actual_net_weight": "1", "actual_gross_weight": "1", "items": [{"sku": self.a.pk, "quantity": "1"}]}, format="json")
+        self.assertEqual(accepted.status_code, 201, accepted.data)
+        shipment.refresh_from_db()
+        self.assertEqual(shipment.items.get().quantity, Decimal("1"))
+        self.assertEqual(order.items.get().quantity, Decimal("1"))
+        self.assertEqual(InventoryMovement.objects.get(movement_no="IN-ACT-FACTOR-ONE").quantity, Decimal("10"))
+
+    def test_fractional_trade_unit_remains_allowed_for_actual_package(self):
+        unit = SKUTradeUnit.objects.create(sku=self.a, name="5米可拆", unit="卷", factor="5", allow_fraction=True)
+        order = Order.objects.create(order_no="SO-ACT-FRACTIONAL", customer=self.order.customer, order_date=date(2026, 10, 7), status="confirmed")
+        line = order.items.create(
+            sku=self.a, quantity="5", unit_price="1", trade_unit=unit, trade_quantity="1", trade_unit_price="5",
+            trade_snapshot={"name": "5米可拆", "unit": "卷", "factor": "5.00", "base_unit": "m", "allow_fraction": True},
+        )
+        InventoryMovement.objects.create(movement_no="IN-ACT-FRACTIONAL", movement_date=date(2026, 10, 7), type="adjust_in", sku=self.a, quantity="10")
+        shipment = confirm_shipment(order, {"shipment_no": "SH-ACT-FRACTIONAL", "shipment_date": date(2026, 10, 7), "items": [{
+            "order_item": line.pk, "quantity": "5", "trade_unit": unit.pk, "trade_quantity": "1",
+        }]})
+        response = self.client.post(f"/api/shipments/{shipment.pk}/packages/", {"carton_no": 1, "actual_net_weight": "1", "actual_gross_weight": "1", "items": [{"sku": self.a.pk, "quantity": "2.5"}]}, format="json")
+        self.assertEqual(response.status_code, 201, response.data)
+
+    def test_missing_trade_snapshot_does_not_infer_indivisible_rule(self):
+        unit = SKUTradeUnit.objects.create(sku=self.a, name="5米整卷", unit="卷", factor="5", allow_fraction=False)
+        order = Order.objects.create(order_no="SO-ACT-MISSING-SNAPSHOT", customer=self.order.customer, order_date=date(2026, 10, 7), status="confirmed")
+        line = order.items.create(
+            sku=self.a, quantity="5", unit_price="1", trade_unit=unit, trade_quantity="1", trade_unit_price="5",
+            trade_snapshot={"name": "5米整卷", "unit": "卷", "factor": "5.00", "base_unit": "m", "allow_fraction": False},
+        )
+        InventoryMovement.objects.create(movement_no="IN-ACT-MISSING-SNAPSHOT", movement_date=date(2026, 10, 7), type="adjust_in", sku=self.a, quantity="10")
+        shipment = confirm_shipment(order, {"shipment_no": "SH-ACT-MISSING-SNAPSHOT", "shipment_date": date(2026, 10, 7), "items": [{
+            "order_item": line.pk, "quantity": "5", "trade_unit": unit.pk, "trade_quantity": "1",
+        }]})
+        shipment.items.update(trade_snapshot={})
+        response = self.client.post(f"/api/shipments/{shipment.pk}/packages/", {"carton_no": 1, "actual_net_weight": "1", "actual_gross_weight": "1", "items": [{"sku": self.a.pk, "quantity": "2.5"}]}, format="json")
+        self.assertEqual(response.status_code, 201, response.data)
+
+    def test_conflicting_trade_snapshots_do_not_add_indivisible_restriction(self):
+        unit_a = SKUTradeUnit.objects.create(sku=self.a, name="5米整卷", unit="卷", factor="5", allow_fraction=False)
+        unit_b = SKUTradeUnit.objects.create(sku=self.a, name="10米整卷", unit="卷", factor="10", allow_fraction=False)
+        order = Order.objects.create(order_no="SO-ACT-CONFLICTING-SNAPSHOTS", customer=self.order.customer, order_date=date(2026, 10, 7), status="confirmed")
+        line_a = order.items.create(
+            sku=self.a, quantity="5", unit_price="1", trade_unit=unit_a, trade_quantity="1", trade_unit_price="5",
+            trade_snapshot={"name": "5米整卷", "unit": "卷", "factor": "5.00", "base_unit": "m", "allow_fraction": False},
+        )
+        line_b = order.items.create(
+            sku=self.a, quantity="10", unit_price="1", trade_unit=unit_b, trade_quantity="1", trade_unit_price="10",
+            trade_snapshot={"name": "10米整卷", "unit": "卷", "factor": "10.00", "base_unit": "m", "allow_fraction": False},
+        )
+        InventoryMovement.objects.create(movement_no="IN-ACT-CONFLICTING-SNAPSHOTS", movement_date=date(2026, 10, 7), type="adjust_in", sku=self.a, quantity="20")
+        shipment = confirm_shipment(order, {"shipment_no": "SH-ACT-CONFLICTING-SNAPSHOTS", "shipment_date": date(2026, 10, 7), "items": [
+            {"order_item": line_a.pk, "quantity": "5", "trade_unit": unit_a.pk, "trade_quantity": "1"},
+            {"order_item": line_b.pk, "quantity": "10", "trade_unit": unit_b.pk, "trade_quantity": "1"},
+        ]})
+        response = self.client.post(f"/api/shipments/{shipment.pk}/packages/", {"carton_no": 1, "actual_net_weight": "1", "actual_gross_weight": "1", "items": [{"sku": self.a.pk, "quantity": "2.5"}]}, format="json")
+        self.assertEqual(response.status_code, 201, response.data)
+
     def test_all_dimensions_blank_allowed(self):
         response = self.create(length=None, width=None, height=None)
         self.assertEqual(response.status_code, 201)

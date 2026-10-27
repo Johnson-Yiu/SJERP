@@ -1,0 +1,161 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "browser-tests/iss022-moq-real.spec.js",
+      "--config=playwright.repair022.config.js"
+    ],
+    "configFile": "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\playwright.repair022.config.js",
+    "rootDir": "C:/Users/Johnson/.codex/worktrees/repair-supplier-purchase-ux-5310/森爵照明管理系统/frontend/browser-tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/Johnson/.codex/worktrees/repair-supplier-purchase-ux-5310/森爵照明管理系统/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/Johnson/.codex/worktrees/repair-supplier-purchase-ux-5310/森爵照明管理系统/frontend/browser-tests",
+        "testIgnore": [],
+        "testMatch": [
+          "iss022-moq-real.spec.js"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\browser-tests",
+        "snapshotDir": "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\browser-tests",
+        "testIgnore": [],
+        "testMatch": "iss022-moq-real.spec.js",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:54228",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:/Users/Johnson/.codex/worktrees/repair-supplier-purchase-ux-5310/森爵照明管理系统/docs/uat-evidence/repair-supplier-purchase-ux/iss022/playwright-repair-report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 2,
+    "webServer": {
+      "command": "npm run dev -- --config vite.repair022.config.js --port 54228 --host 127.0.0.1",
+      "url": "http://127.0.0.1:54228",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "iss022-moq-real.spec.js",
+      "file": "iss022-moq-real.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "ISS-022 采购 MOQ 真实浏览器回归",
+          "file": "iss022-moq-real.spec.js",
+          "line": 58,
+          "column": 6,
+          "specs": [
+            {
+              "title": "等于 MOQ、低于 MOQ、交易单位换算、取消保留草稿及例外留痕",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8743,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-27T16:48:25.988Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a6dfd275e217b33db15e-c37a1cae7eb7e79ff311",
+              "file": "iss022-moq-real.spec.js",
+              "line": 59,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-27T16:48:23.219Z",
+    "duration": 13641.458999999999,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

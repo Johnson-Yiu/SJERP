@@ -27,6 +27,10 @@ test.describe('ISS-075 供应商固定付款规则退出常规前端真实浏览
         apiLog.push({ method: response.request().method(), url: response.url(), status: response.status() })
       }
     })
+    // The local visual run must not wait on an optional external font stylesheet.
+    // The product UI keeps its configured fallback fonts when these requests fail.
+    await page.route('https://fonts.googleapis.com/**', route => route.abort())
+    await page.route('https://fonts.gstatic.com/**', route => route.abort())
 
     await page.setViewportSize({ width: 1440, height: 1000 })
     await page.goto('/suppliers')

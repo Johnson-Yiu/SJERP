@@ -1,0 +1,196 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "browser-tests/iss022-moq-real.spec.js",
+      "--config=playwright.iss022.config.js"
+    ],
+    "configFile": "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\playwright.iss022.config.js",
+    "rootDir": "C:/Users/Johnson/.codex/worktrees/repair-supplier-purchase-ux-5310/森爵照明管理系统/frontend/browser-tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/Johnson/.codex/worktrees/repair-supplier-purchase-ux-5310/森爵照明管理系统/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/Johnson/.codex/worktrees/repair-supplier-purchase-ux-5310/森爵照明管理系统/frontend/browser-tests",
+        "testIgnore": [],
+        "testMatch": [
+          "iss022-moq-real.spec.js"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\browser-tests",
+        "snapshotDir": "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\browser-tests",
+        "testIgnore": [],
+        "testMatch": "iss022-moq-real.spec.js",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:54128",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:/Users/Johnson/.codex/worktrees/repair-supplier-purchase-ux-5310/森爵照明管理系统/docs/uat-evidence/repair-supplier-purchase-ux/iss022/playwright-report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 2,
+    "webServer": {
+      "command": "npm run dev -- --config vite.iss022.config.js --port 54128 --host 127.0.0.1",
+      "url": "http://127.0.0.1:54128",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "iss022-moq-real.spec.js",
+      "file": "iss022-moq-real.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "ISS-022 采购 MOQ 真实浏览器回归",
+          "file": "iss022-moq-real.spec.js",
+          "line": 58,
+          "column": 6,
+          "specs": [
+            {
+              "title": "等于 MOQ、低于 MOQ、交易单位换算、取消保留草稿及例外留痕",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 15858,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.purchase-list-row')\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m4\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.purchase-list-row') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.purchase-list-row')\u001b[22m\n\u001b[2m    14 × locator resolved to 4 elements\u001b[22m\n\u001b[2m       - unexpected value \"4\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.purchase-list-row')\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m4\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.purchase-list-row') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.purchase-list-row')\u001b[22m\n\u001b[2m    14 × locator resolved to 4 elements\u001b[22m\n\u001b[2m       - unexpected value \"4\"\u001b[22m\n\n    at C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\browser-tests\\iss022-moq-real.spec.js:130:54",
+                        "location": {
+                          "file": "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\browser-tests\\iss022-moq-real.spec.js",
+                          "column": 54,
+                          "line": 130
+                        },
+                        "snippet": "  128 |     await exceptionDetail.getByRole('button', { name: '关闭采购详情' }).click()\n  129 |     await page.getByRole('combobox', { name: '按状态筛选' }).selectOption('ordered')\n> 130 |     await expect(page.locator('.purchase-list-row')).toHaveCount(2)\n      |                                                      ^\n  131 |     await page.screenshot({ path: path.join(evidenceDir, '08-ordered-filter.png'), fullPage: true })\n  132 |\n  133 |     await page.setViewportSize({ width: 700, height: 900 })"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\browser-tests\\iss022-moq-real.spec.js",
+                            "column": 54,
+                            "line": 130
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.purchase-list-row')\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m4\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.purchase-list-row') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.purchase-list-row')\u001b[22m\n\u001b[2m    14 × locator resolved to 4 elements\u001b[22m\n\u001b[2m       - unexpected value \"4\"\u001b[22m\n\n\n  128 |     await exceptionDetail.getByRole('button', { name: '关闭采购详情' }).click()\n  129 |     await page.getByRole('combobox', { name: '按状态筛选' }).selectOption('ordered')\n> 130 |     await expect(page.locator('.purchase-list-row')).toHaveCount(2)\n      |                                                      ^\n  131 |     await page.screenshot({ path: path.join(evidenceDir, '08-ordered-filter.png'), fullPage: true })\n  132 |\n  133 |     await page.setViewportSize({ width: 700, height: 900 })\n    at C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\browser-tests\\iss022-moq-real.spec.js:130:54"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-27T16:46:00.772Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\test-results\\iss022-moq-real-ISS-022-采购-43e20-Q、低于-MOQ、交易单位换算、取消保留草稿及例外留痕\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\test-results\\iss022-moq-real-ISS-022-采购-43e20-Q、低于-MOQ、交易单位换算、取消保留草稿及例外留痕\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\Johnson\\.codex\\worktrees\\repair-supplier-purchase-ux-5310\\森爵照明管理系统\\frontend\\browser-tests\\iss022-moq-real.spec.js",
+                        "column": 54,
+                        "line": 130
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a6dfd275e217b33db15e-c37a1cae7eb7e79ff311",
+              "file": "iss022-moq-real.spec.js",
+              "line": 59,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-27T16:45:57.790Z",
+    "duration": 20507.621,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

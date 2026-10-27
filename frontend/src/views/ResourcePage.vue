@@ -176,7 +176,7 @@ let routeActionVersion = 0
 let contactDuplicateRequest = 0
 const routeModalOpen = ref(false)
 
-const statusLabels = { lead: '线索', contact: '已建立联系', opportunity: '已进入报价阶段', customer: '已有1张正式订单', company: '已有2张及以上正式订单', development: '开发中', discontinued: '停产', draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
+const statusLabels = { lead: '线索', contact: '已联系', opportunity: '商机', customer: '正式客户', company: '返单客户', development: '开发中', discontinued: '停产', draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
 const editorFields = computed(() => {
   if (isCertificatePage.value) return [['product','name','certificate_no','issuer'],['issued_date','expires_on'],['file','notes']].map(keys=>keys.map(key=>props.config.fields.find(field=>field[0]===key)))
   if (isParameterPage.value) return [['product','group'],['name','value','unit','sort_order']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))

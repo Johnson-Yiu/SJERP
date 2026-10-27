@@ -19,6 +19,7 @@ from rest_framework.exceptions import PermissionDenied
 from .models import ShipmentItem
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseMOQException, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
 from .country_registry import AmbiguousCountryError, CountryNotFoundError, display_country, resolve_country_code
+from .customer_status import customer_status_display
 from .supplier_display import payment_terms_summary
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .document_numbers import allocate_order_no, allocate_purchase_no
@@ -970,6 +971,7 @@ class CustomerSerializer(serializers.ModelSerializer):
     order_count = serializers.IntegerField(read_only=True, default=0)
     sales_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True, default=0)
     country_display = serializers.SerializerMethodField()
+    status_display = serializers.SerializerMethodField()
     contacts = CustomerContactInputSerializer(many=True, write_only=True, required=False)
 
     class Meta:
@@ -981,6 +983,9 @@ class CustomerSerializer(serializers.ModelSerializer):
 
     def get_country_display(self, obj):
         return display_country(obj.country)
+
+    def get_status_display(self, obj):
+        return customer_status_display(obj.status)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

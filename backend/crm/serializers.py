@@ -2837,10 +2837,11 @@ class ShipmentPackageSerializer(serializers.ModelSerializer):
             shipped[item.sku_id] = shipped.get(item.sku_id, ZERO) + item.quantity
         # A package line is entered in the SKU base unit, so only enforce an
         # indivisible trade unit when every shipment line for that SKU carries
-        # the same explicit, non-fractional trade-unit snapshot.  A base-unit
-        # order line, a fractional trade unit, or conflicting historical
-        # snapshots makes the physical package quantity ambiguous; in those
-        # cases do not invent a carton restriction.
+        # the same explicit trade-unit snapshot.  A base-unit order line,
+        # an incomplete/invalid snapshot, or conflicting historical snapshots
+        # makes the physical package quantity ambiguous; in those cases do
+        # not invent a carton restriction.  A valid fractional snapshot is
+        # still a known semantic and remains unrestricted.
         snapshot_semantics = {}
         ambiguous_indivisible = set()
         for shipment_item in shipment.items.all():

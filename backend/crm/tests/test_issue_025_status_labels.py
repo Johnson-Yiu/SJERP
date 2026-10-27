@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.utils import timezone
 from rest_framework.test import APIClient
 
 from ..models import Contact, Customer
@@ -38,3 +39,33 @@ class Issue025CustomerStatusLabelsTests(TestCase):
         company = next(section for section in contact_context.data["sections"] if section["key"] == "company")
         self.assertIn(["status_display", "状态", "status"], company["columns"])
         self.assertEqual(company["rows"][0]["status_display"], "已联系")
+
+    def test_customer_growth_report_uses_the_same_status_mapping(self):
+        expected = {
+            "lead": "线索",
+            "contact": "已联系",
+            "opportunity": "商机",
+            "customer": "正式客户",
+            "company": "返单客户",
+        }
+        for status, label in expected.items():
+            customer = Customer.objects.create(
+                code=f"ISS025-{status.upper()}",
+                name=f"ISS-025 {label}",
+                country="Germany",
+                status=status,
+            )
+            Customer.objects.filter(pk=customer.pk).update(created_at=timezone.now())
+
+        response = self.client.get(
+            "/api/reports/data/",
+            {
+                "source": "customers",
+                "group_by": "status",
+                "date_from": "2026-01-01",
+                "date_to": "2026-12-31",
+            },
+        )
+        self.assertEqual(response.status_code, 200, response.data)
+        rows = {row["key"]: row["label"] for row in response.data["rows"]}
+        self.assertEqual({key: rows[key] for key in expected}, expected)

@@ -4,7 +4,7 @@
 规则来源：用户 2026-10-24 规则包 `ISS-036_允许合理尾箱、不得破坏最小计量单位.md`  
 统一基线：`46353a5436637832f5adadb7bdef6b45cdeada23`  
 分支：`codex/fix-iss036-snapshot-conflicts`  
-实现提交：待本轮提交后填写
+实现提交：`0189b87b75ff1694d6e368fe2998f68e4d3bface`
 
 ## 复核结论
 

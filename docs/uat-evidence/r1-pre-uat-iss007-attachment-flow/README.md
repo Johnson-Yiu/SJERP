@@ -89,4 +89,4 @@ npx --no-install playwright test browser-tests/iss007-attachment-real.spec.js --
 - 网络中断使用 Playwright route abort 模拟，真实代理/客户端超时链路仍需部署环境验收。
 - 未修改共享 `PROJECT_ISSUES.md` / `PROJECT_PHASES.md`，符合本任务“不得修改共享 Issue 台账”的限制。
 
-最终 GitHub Commit SHA：`7b333fd63301a7456cc90c7c2ddca7cff64ec3c6`。
+最终 GitHub 分支 HEAD 以本次交付报告及远端分支核验为准；本 README 不复制自引用 SHA。

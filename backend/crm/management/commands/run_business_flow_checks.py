@@ -1,8 +1,16 @@
+"""Historical business-flow evidence retained for audit purposes.
+
+This command is no longer a supported QA or UAT entry point.  The original
+implementation remains below so its historical assertions stay reviewable,
+but execution is deliberately blocked; it creates persistent data and no
+longer matches the current UI/API contract.
+"""
+
 from datetime import date, timedelta
 from decimal import Decimal
 from uuid import uuid4
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -18,9 +26,13 @@ from crm.services.fulfillment import record_supplier_payment
 
 
 class Command(BaseCommand):
-    help = "Run 50 persistent end-to-end business-flow checks; created E2E data is retained."
+    help = "Retired historical business-flow checks; execution is blocked."
 
     def handle(self, *args, **options):
+        raise CommandError(
+            "run_business_flow_checks is retired and cannot be used as a QA/UAT gate. "
+            "Use the current isolated API, unit, and browser suites instead."
+        )
         client = APIClient()
         # Expected-error checks must record server failures rather than abort the run.
         client.raise_request_exception = False

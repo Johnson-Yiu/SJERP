@@ -1,16 +1,50 @@
+import os
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 
-from django.core.management.base import BaseCommand
+from django.conf import settings
+from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
 from crm.models import Contact, Customer, FollowUp, InventoryMovement, Order, OrderItem, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, QuoteItem, SKU, Transaction
 
 
 class Command(BaseCommand):
-    help = "创建一组可用于体验和验收的演示数据"
+    help = "创建本地开发环境演示数据（不是 QA/UAT 测试夹具）"
+
+    def _assert_safe_runtime(self):
+        if settings.APP_STAGE != "development":
+            raise CommandError("seed_demo 仅允许在 APP_STAGE=development 的本地环境运行。")
+
+        database = settings.DATABASES.get("default", {})
+        if database.get("ENGINE") != "django.db.backends.sqlite3":
+            raise CommandError("seed_demo 拒绝非 SQLite 数据库；请使用本地开发库或隔离运行器。")
+
+        # An explicit DATABASE_URL may point at a developer's shared or real
+        # business database.  Only the existing fail-closed isolation marker
+        # may authorize such an explicit database selection.
+        if os.getenv("DATABASE_URL", "").strip():
+            required = (
+                "ISOLATED_TEST_ROOT",
+                "ISOLATED_TEST_RUN_ID",
+                "ISOLATED_TEST_TOKEN",
+                "ISOLATED_TEST_DATABASE",
+                "ISOLATED_TEST_MEDIA_ROOT",
+            )
+            if any(not os.getenv(key, "").strip() for key in required):
+                raise CommandError(
+                    "seed_demo 拒绝未标记的 DATABASE_URL；请使用默认本地 SQLite，"
+                    "或通过当前隔离运行器提供完整隔离身份。"
+                )
+            try:
+                from test_support.isolated_runtime import verify_isolated_runtime
+
+                verify_isolated_runtime(settings=settings, database_must_exist=True)
+            except Exception as exc:
+                raise CommandError(f"seed_demo 隔离校验失败：{exc}") from exc
 
     def handle(self, *args, **options):
+        self._assert_safe_runtime()
         lighting, _ = ProductCategory.objects.get_or_create(name="商业照明")
         outdoor, _ = ProductCategory.objects.get_or_create(name="户外照明")
         p1, _ = Product.objects.update_or_create(code="SL-DOWN", defaults={"name": "LED Downlight", "category": lighting})

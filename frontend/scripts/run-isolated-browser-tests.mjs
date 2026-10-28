@@ -252,17 +252,70 @@ export async function waitForIdentity(child, url, expected, label, { timeoutMs =
   throw new Error(`${label} identity check failed: ${lastError}.\n${child.isolationOutput?.() || ''}`)
 }
 
-export function browserArgs(userArgs) {
-  const args = userArgs[0] === '--' ? userArgs.slice(1) : userArgs
-  if (args.some(argument => argument === '--config' || argument.startsWith('--config='))) {
-    throw new Error('A custom Playwright config cannot replace the isolated config.')
+function samePath(actual, expected) {
+  const resolvedActual = path.resolve(actual)
+  const resolvedExpected = path.resolve(expected)
+  return process.platform === 'win32'
+    ? resolvedActual.toLocaleLowerCase('en-US') === resolvedExpected.toLocaleLowerCase('en-US')
+    : resolvedActual === resolvedExpected
+}
+
+export function assertApiIdentity(actual, expected, label) {
+  const mismatches = []
+  for (const field of ['runId', 'token']) {
+    if (actual?.[field] !== expected?.[field]) mismatches.push(field)
   }
+  for (const field of ['database', 'mediaRoot']) {
+    if (typeof actual?.[field] !== 'string' || typeof expected?.[field] !== 'string'
+      || !samePath(actual[field], expected[field])) mismatches.push(field)
+  }
+  if (mismatches.length) {
+    throw new Error(`${label} identity mismatch (${mismatches.join(', ')}); refusing browser tests.`)
+  }
+}
+
+export async function verifyProxiedApiIdentity(viteServer, baseURL, directIdentity, expectedIdentity, options) {
+  const proxyUrl = new URL(`/api/__test__/isolation/${encodeURIComponent(expectedIdentity.token)}/`, baseURL).href
+  const proxiedIdentity = await waitForIdentity(
+    viteServer,
+    proxyUrl,
+    { runId: expectedIdentity.runId, token: expectedIdentity.token },
+    'Vite-proxied Django API',
+    options,
+  )
+  assertApiIdentity(proxiedIdentity, directIdentity, 'Vite-proxied Django API')
+  assertApiIdentity(proxiedIdentity, expectedIdentity, 'Vite-proxied Django API')
+  return proxiedIdentity
+}
+
+export async function resolvePlaywrightSelection(userArgs) {
+  const args = userArgs[0] === '--' ? userArgs.slice(1) : userArgs
+  if (args.length === 0) return { businessTest: null }
+  if (args.length !== 2 || args[0] !== '--business-test') {
+    throw new Error('Only --business-test <name.spec.js> is supported; isolation settings and Playwright options cannot be overridden.')
+  }
+  const requested = args[1]
+  if (!requested || path.basename(requested) !== requested || !requested.endsWith('.spec.js')) {
+    throw new Error('Business test must be a single .spec.js filename inside frontend/browser-tests.')
+  }
+  const testsRoot = path.join(frontendRoot, 'browser-tests')
+  const testPath = path.join(testsRoot, requested)
+  const fileStat = await lstat(testPath).catch(error => {
+    if (error?.code === 'ENOENT') throw new Error(`Business test does not exist: ${requested}`)
+    throw error
+  })
+  if (!fileStat.isFile() || fileStat.isSymbolicLink() || !samePath(await realpath(testPath), testPath)) {
+    throw new Error('Business test must be a regular file inside frontend/browser-tests; refusing selection.')
+  }
+  return { businessTest: requested }
+}
+
+export function browserArgs() {
   return [
     path.join(frontendRoot, 'node_modules', '@playwright', 'test', 'cli.js'),
     'test',
     '--config',
     path.join(frontendRoot, 'playwright.isolated.config.js'),
-    ...args,
   ]
 }
 
@@ -280,7 +333,8 @@ async function main() {
   process.once('SIGTERM', onTerminate)
   try {
     await requireLocalDependencies()
-    const playwrightArguments = browserArgs(process.argv.slice(2))
+    const selection = await resolvePlaywrightSelection(process.argv.slice(2))
+    const playwrightArguments = browserArgs()
     const { apiPort, vitePort } = await choosePorts()
     if (receivedSignal) throw new Error(`Interrupted by ${receivedSignal} before isolated resources were created.`)
     const runId = randomUUID()
@@ -308,6 +362,7 @@ async function main() {
       ISOLATED_API_PORT: String(apiPort),
       ISOLATED_VITE_PORT: String(vitePort),
       ISOLATED_PLAYWRIGHT_BASE_URL: baseURL,
+      ISOLATED_PLAYWRIGHT_TEST_FILE: selection.businessTest || '',
       PYTHONDONTWRITEBYTECODE: '1',
       PYTHONUNBUFFERED: '1',
     }
@@ -320,6 +375,7 @@ async function main() {
       console.log(`Isolation run ${runId}; API 127.0.0.1:${apiPort}; Vite 127.0.0.1:${vitePort}`)
       console.log(`Isolated SQLite: ${databasePath}`)
       console.log(`Isolated MEDIA_ROOT: ${mediaRoot}`)
+      console.log(`Playwright selection: ${selection.businessTest || 'infrastructure smoke tests'}`)
       const python = await pythonExecutable()
       const verificationCode = databaseMustExist => [
         'import django',
@@ -340,8 +396,15 @@ async function main() {
       ], { cwd: backendRoot, env, label: 'isolated Django API', capture: true })
       const apiIdentityUrl = `http://127.0.0.1:${apiPort}/api/__test__/isolation/${token}/`
       const viteIdentityUrl = `${baseURL}/__test__/isolation/`
-      await waitForIdentity(apiServer, apiIdentityUrl, { runId, token }, 'Django API')
-      console.log('[isolation] Django API identity: passed')
+      const expectedApiIdentity = {
+        runId,
+        token,
+        database: databasePath,
+        mediaRoot,
+      }
+      const apiIdentity = await waitForIdentity(apiServer, apiIdentityUrl, { runId, token }, 'Django API')
+      assertApiIdentity(apiIdentity, expectedApiIdentity, 'Direct Django API')
+      console.log('[isolation] Direct Django API identity, SQLite path, and MEDIA_ROOT: passed')
 
       viteServer = createChild(process.execPath, [
         path.join(frontendRoot, 'node_modules', 'vite', 'bin', 'vite.js'),
@@ -351,12 +414,8 @@ async function main() {
       ], { cwd: frontendRoot, env, label: 'isolated Vite', capture: true })
       await waitForIdentity(viteServer, viteIdentityUrl, { runId, token }, 'Vite')
       console.log('[isolation] Vite identity: passed')
-      const proxiedApiIdentity = await waitForIdentity(viteServer, apiIdentityUrl, { runId, token }, 'Vite-proxied Django API')
-      if (path.resolve(proxiedApiIdentity.database) !== path.resolve(databasePath)
-        || path.resolve(proxiedApiIdentity.mediaRoot) !== path.resolve(mediaRoot)) {
-        throw new Error('Vite proxy reached an API with an unexpected database or MEDIA_ROOT; refusing browser tests.')
-      }
-      console.log('[isolation] Proxied API identity, SQLite path, and MEDIA_ROOT: passed')
+      await verifyProxiedApiIdentity(viteServer, baseURL, apiIdentity, expectedApiIdentity)
+      console.log('[isolation] Vite /api proxy identity, SQLite path, and MEDIA_ROOT: passed')
 
       await runStage('Playwright suite', process.execPath, playwrightArguments, {
         cwd: frontendRoot,

@@ -20,7 +20,7 @@
 2. 在操作系统临时目录下创建本轮唯一目录，写入随机 run ID/token 所有权标记，并创建 `db.sqlite3`、`media/`、Vite 优化缓存及 Playwright `outputDir`。Vite 使用 runner 配置加载器避免写入 `node_modules/.vite-temp`；Playwright 报告/状态文件不写共享工作树目录。
 3. 只为子进程设置 `APP_STAGE=development`、`RBAC_ENFORCEMENT=0`、明确的 SQLite `DATABASE_URL`、`MEDIA_ROOT` 和 Django 本地 `FileSystemStorage`。测试专用 settings wrapper 提供随机 token 身份探针；未修改生产 URLConf 或业务路由。
 4. 在 `manage.py check` 和任何迁移前，对标记、实际 SQLite 引擎/路径、MEDIA_ROOT、开发环境及 RBAC 关闭状态进行校验；拒绝预先存在的数据库文件、符号链接和额外数据库连接。确认后才迁移本轮数据库，运行 `migrate --check`，并要求迁移后的 SQLite 文件真实存在。
-5. 使用 `runserver --noreload` 启动 Django，使用 `strictPort` 启动 Vite。Playwright 启动前，分别核验 API、Vite 的随机身份，并经 Vite `/api` 代理再次核验 API 返回的数据库及媒体路径。任一端口冲突或身份不符均拒绝执行 Playwright。
+5. 使用 `runserver --noreload` 启动 Django，使用 `strictPort` 启动 Vite。Playwright 启动前，先直连 Django 校验 run ID、token、SQLite 路径及 `MEDIA_ROOT`，再通过 Vite 端口的 `/api/__test__/isolation/<token>/` 真实代理再次校验相同四项。代理目标或身份字段不符时，在 Playwright 启动前拒绝。
 6. 结束或失败时，只停止该 runner 创建的子进程。清理前再次核对临时路径、专属前缀、marker、run ID 和 token；归属不明即拒绝删除。支持 SIGINT/SIGTERM 清理流程。
 
 数据库校验器在迁移/写入前拒绝非 SQLite 或额外数据库连接、指向临时运行目录之外的数据库或媒体路径、符号链接、外部媒体存储后端、错误 marker，以及非开发/RBAC 已启用的设置。
@@ -34,19 +34,19 @@ npm ci
 npm run test:browser:isolated
 ```
 
-运行基础设施自测（端口占用、错误 API 身份、SQLite 路径、资源归属清理，以及两个独立工作区并行启动）：
+运行基础设施自测（端口占用、错误 API 身份、真实 Vite 错误代理目标、受限测试选择、SQLite 路径、资源归属清理，以及两个独立工作区并行启动）：
 
 ```powershell
 npm run test:browser:isolated:verify
 ```
 
-默认 Playwright config 只执行 `frontend/infrastructure-tests/isolated-runtime.spec.js`。选择已有真实 API 浏览器测试时，可将测试目录交给 Playwright，例如：
+默认配置仍执行 `frontend/infrastructure-tests/` 下的基础设施冒烟测试。业务测试只能通过启动器的文件选择参数指定，不能覆盖服务、配置或 Playwright 参数：
 
 ```powershell
-npm run test:browser:isolated -- --test-dir=./browser-tests --grep "测试名称"
+npm run test:browser:isolated -- --business-test import-ux.spec.js
 ```
 
-所选业务套件须自行通过 UI/API 创建合成 fixture，或另行审查与授权隔离种子流程。本 runner 不提供任意 seed 命令入口；现有测试配置中固定端口或复用服务的启动设置不会被加载，服务生命周期由隔离配置统一管理。
+选择器只接受 `frontend/browser-tests/` 下存在的单个 `.spec.js` 文件名；默认冒烟和业务套件都先完成 API、Vite、代理和数据库隔离核验。本 runner 不提供任意 seed 命令入口；业务套件须自行通过 UI/API 创建合成 fixture，或另行审查与授权隔离种子流程。旧文档中的 `--test-dir` 不是 Playwright CLI 支持的参数，现已替换为受限选择器。
 
 ## 本地验证证据
 
@@ -55,9 +55,9 @@ npm run test:browser:isolated -- --test-dir=./browser-tests --grep "测试名称
 | 命令 | 结果 |
 |---|---|
 | `node --check`（runner、隔离 Vite/Playwright config、验证测试、冒烟 spec） | 通过 |
-| `npm run test:browser:isolated:verify` | 10 项通过：空闲/占用/重复端口、端口占用时启动器不创建临时库且不触碰已有 listener、错误 API 身份拒绝、禁止覆盖隔离配置、SQLite URL、仅清理本轮目录、错误 marker 拒绝清理、两个独立工作区同时启动并各自完成迁移和 Playwright smoke |
+| `npm run test:browser:isolated:verify` | 初次实现时 10 项通过；FIX-01 复测 12 项通过，详见下节 |
 | `python -m unittest test_support.test_isolated_runtime -v` | 10 项通过：合法隔离目标、外部/错误/预先存在的 DB、非 SQLite、额外 DB、正式 RBAC、外部媒体路径/存储、错误 marker 拒绝 |
-| `npm run test:unit` | 166 项通过（包含隔离测试基础设施验证） |
+| `npm run test:unit` | 初次实现时 166 项通过；FIX-01 复测 168 项通过 |
 | `npm run test:browser:isolated` | 单次标准启动通过：Django check、全部迁移至 `crm.0089`、`migrate --check`、API/Vite/代理身份与 DB/MEDIA_ROOT 匹配；Playwright smoke 1/1 通过 |
 | `npm run build` | 构建通过；既有主 JS 1,126.03 kB，大于 500 kB 的 Vite chunk 警告仍存在 |
 | `git diff --check` | 提交前通过 |
@@ -81,3 +81,21 @@ npm run test:browser:isolated -- --test-dir=./browser-tests --grep "测试名称
 - 未编辑其他工作树中的测试；`codex/repair-browser-navigation-timeouts` 保持未触碰。
 - 未触发 GitHub Actions；仅推送本任务分支；未合并、部署或关闭 Issue。
 - 本报告不修改 `PROJECT_ISSUES.md`、`PROJECT_PHASES.md`。默认空库 smoke 不依赖业务数据，也不植入业务数据；所选业务套件必须在本轮隔离库内自行创建/验证所需的合成 fixture，不能假设存在历史业务数据。冒烟不等价于各业务浏览器套件的业务验收。
+
+## R1-REPAIR-06-FIX-01 复核记录
+
+独立审查发现：旧实现把 Vite-proxied API 检查 URL 指向了 Django API 直连端口，因此早期记录中的“代理验证”并未实际经过 Vite。本次修复保留直连检查，另向 Vite 的 `/api/__test__/isolation/<token>/` 发请求，并比较直连响应、代理响应与本轮预期中的 run ID、token、SQLite 文件路径和 `MEDIA_ROOT`。任一不符在启动 Playwright 子进程前拒绝。
+
+| 验证命令 | 结果 |
+|---|---|
+| `npm run test:browser:isolated:verify` | 12/12 通过：含错误身份、错误配置/参数拒绝、四字段比较、真实 Vite `/api` 代理指向错误 SQLite/MEDIA_ROOT 时拒绝、端口冲突、仅清理本轮资源、双工作树并行启动 |
+| `python -m unittest test_support.test_isolated_runtime -v` | 10/10 通过 |
+| `npm run test:browser:isolated` | 通过；Django check、迁移和 migrate --check、直连身份及真实 Vite 代理四字段校验通过；基础设施 Playwright smoke 1/1 |
+| `npm run test:browser:isolated -- --business-test import-ux.spec.js` | 通过；先完成同一套隔离验证，再执行 CSV 导入业务浏览器测试 6/6；测试 fixture 为合成数据 |
+| `npm run test:unit` | 168/168 通过 |
+| `npm run build` | 通过；主 JS 1,126.03 kB（gzip 393.55 kB）；保留既有大于 500 kB 的 chunk 警告。沙箱内首次运行因 `.vite-temp` 写入权限失败，获准仅对该构建命令提升权限后成功 |
+| `node --check`（runner、Playwright config、验证测试）与 `git diff --check` | 通过 |
+
+业务测试实跑 run ID：`131cc53e-3a32-4fe2-8551-d750a5c6756a`；API/Vite 端口 `13888/13889`；数据库及媒体路径均位于本次 `sunjack-r1-repair-06-RlhulM` 临时根目录，运行后已由启动器清理。默认 smoke run ID：`11aa539d-f91e-415b-8cf4-86bc0da9cb5a`；端口 `13832/13833`；其独立临时根目录 `sunjack-r1-repair-06-mAMVD0` 也已清理。负向代理测试另行启动本地 Vite 和错误上游，仅创建并删除自身临时目录，没有连接或改动其他工作树服务/数据库。
+
+业务测试命令现只接受 `--business-test <name.spec.js>`，解析时验证文件位于 `frontend/browser-tests/` 且为常规文件；所有其他 CLI 参数（包括 `--test-dir`、`--config`、grep 和服务覆盖参数）均拒绝。Playwright 配置由启动器固定，默认基础设施 smoke 行为保持不变。

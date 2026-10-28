@@ -11,10 +11,13 @@ import test from 'node:test'
 
 import {
   assertPortsAvailable,
+  assertApiIdentity,
   browserArgs,
   cleanupOwnedTempRoot,
   reservePort,
+  resolvePlaywrightSelection,
   sqliteDatabaseUrl,
+  verifyProxiedApiIdentity,
   waitForIdentity,
 } from '../scripts/run-isolated-browser-tests.mjs'
 
@@ -151,10 +154,90 @@ test('API identity mismatch is rejected before browser tests can proceed', async
   }
 })
 
-test('custom Playwright config cannot bypass isolated server ownership', () => {
-  assert.throws(() => browserArgs(['--config', '../playwright.config.js']), /cannot replace the isolated config/)
-  assert.throws(() => browserArgs(['--config=../playwright.config.js']), /cannot replace the isolated config/)
-  assert.ok(browserArgs(['--grep', 'synthetic-only']).includes('synthetic-only'))
+test('only an existing browser test file can be selected; Playwright service and config overrides are rejected', async () => {
+  assert.equal((await resolvePlaywrightSelection([])).businessTest, null)
+  assert.equal((await resolvePlaywrightSelection(['--business-test', 'import-ux.spec.js'])).businessTest, 'import-ux.spec.js')
+  for (const args of [
+    ['--config', '../playwright.config.js'],
+    ['--config=../playwright.config.js'],
+    ['--test-dir=./browser-tests'],
+    ['--grep', 'synthetic-only'],
+    ['--business-test', '../playwright.config.js'],
+    ['--business-test', 'missing.spec.js'],
+  ]) {
+    await assert.rejects(resolvePlaywrightSelection(args))
+  }
+  assert.ok(browserArgs().includes(path.join(frontendRoot, 'playwright.isolated.config.js')))
+})
+
+test('API identity comparison checks run ID, token, SQLite path, and MEDIA_ROOT', () => {
+  const identity = { runId: 'run', token: 'secret', database: path.join(os.tmpdir(), 'a.sqlite3'), mediaRoot: path.join(os.tmpdir(), 'media') }
+  assert.doesNotThrow(() => assertApiIdentity({ ...identity }, identity, 'API'))
+  for (const field of ['runId', 'token', 'database', 'mediaRoot']) {
+    assert.throws(() => assertApiIdentity({ ...identity, [field]: `wrong-${identity[field]}` }, identity, 'API'), new RegExp(field))
+  }
+})
+
+test('a real Vite /api proxy to the wrong database and MEDIA_ROOT is rejected before Playwright', { timeout: 30000 }, async () => {
+  const tempRoot = await mkdtemp(path.join(os.tmpdir(), 'sunjack-proxy-target-rejection-'))
+  const runId = 'proxy-validation-run'
+  const token = 'proxy-validation-token'
+  const database = path.join(tempRoot, 'db.sqlite3')
+  const mediaRoot = path.join(tempRoot, 'media')
+  const wrongIdentity = {
+    runId,
+    token,
+    database: path.join(tempRoot, 'other-worktree.sqlite3'),
+    mediaRoot: path.join(tempRoot, 'other-media'),
+  }
+  let proxiedPath = null
+  const api = http.createServer((request, response) => {
+    proxiedPath = request.url
+    response.writeHead(200, { 'content-type': 'application/json' })
+    response.end(JSON.stringify(wrongIdentity))
+  })
+  let vite
+  try {
+    api.listen(0, '127.0.0.1')
+    await once(api, 'listening')
+    const apiPort = api.address().port
+    const vitePort = await reservePort()
+    const baseURL = `http://127.0.0.1:${vitePort}`
+    const env = {
+      ...process.env,
+      ISOLATED_TEST_ROOT: tempRoot,
+      ISOLATED_TEST_RUN_ID: runId,
+      ISOLATED_TEST_TOKEN: token,
+      ISOLATED_API_PORT: String(apiPort),
+      ISOLATED_VITE_PORT: String(vitePort),
+    }
+    vite = spawn(process.execPath, [
+      path.join(frontendRoot, 'node_modules', 'vite', 'bin', 'vite.js'),
+      '--configLoader', 'runner', '--config', path.join(frontendRoot, 'vite.isolated.config.js'),
+      '--host', '127.0.0.1', '--port', String(vitePort),
+    ], { cwd: frontendRoot, env, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] })
+    let output = ''
+    vite.stdout.on('data', chunk => { output += chunk.toString() })
+    vite.stderr.on('data', chunk => { output += chunk.toString() })
+    vite.isolationOutput = () => output
+
+    await waitForIdentity(vite, `${baseURL}/__test__/isolation/`, { runId, token }, 'Vite', { timeoutMs: 15000 })
+    await assert.rejects(
+      verifyProxiedApiIdentity(vite, baseURL, { runId, token, database, mediaRoot }, { runId, token, database, mediaRoot }, { timeoutMs: 5000 }),
+      /database, mediaRoot.*refusing browser tests/,
+    )
+    assert.equal(proxiedPath, `/api/__test__/isolation/${token}/`, 'identity must traverse the Vite /api proxy')
+  } finally {
+    if (vite && vite.exitCode === null && vite.signalCode === null) {
+      vite.kill('SIGTERM')
+      await Promise.race([once(vite, 'exit'), new Promise(resolve => setTimeout(resolve, 5000))])
+    }
+    if (api.listening) {
+      api.close()
+      await once(api, 'close')
+    }
+    await rm(tempRoot, { recursive: true, force: false })
+  }
 })
 
 test('SQLite URL preserves an absolute platform path for Django parsing', () => {

@@ -1,6 +1,16 @@
 {
   "label": "inventory-ux-page restoration, detail navigation and browser Back preserve inventory context",
   "blockedOptionalFonts": true,
+  "fontInterceptions": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "host": "fonts.googleapis.com"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "host": "fonts.googleapis.com"
+    }
+  ],
   "console": [
     {
       "type": "error",
@@ -91,11 +101,6 @@
     },
     {
       "url": "http://127.0.0.1:5195/api/skus/?include_inactive=1&page=1",
-      "method": "GET",
-      "status": 200
-    },
-    {
-      "url": "http://127.0.0.1:5195/api/skus/inventory-list/?page=1",
       "method": "GET",
       "status": 200
     }

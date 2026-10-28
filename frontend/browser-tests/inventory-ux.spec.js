@@ -24,7 +24,7 @@ async function bounds(page,selectors){
  expect(result.pageWidth).toBeLessThanOrEqual(result.viewport)
  for(const r of result.items){expect(r.x).toBeGreaterThanOrEqual(0);expect(r.right).toBeLessThanOrEqual(result.viewport+1);expect(r.width).toBeGreaterThan(0);expect(r.height).toBeGreaterThan(0)}
 }
-test.beforeEach(async({page},testInfo)=>{page.repair04Diagnostics=installRepair04Diagnostics(page,`inventory-ux-${testInfo.title}`)})
+test.beforeEach(async({page},testInfo)=>{page.repair04Diagnostics=await installRepair04Diagnostics(page,`inventory-ux-${testInfo.title}`)})
 test.afterEach(async({page})=>{await page.repair04Diagnostics?.save()})
 for(const width of [1440,1280,1024]){
  test(`inventory overview, reserved quantities and SKU drawer at ${width}`,async({page})=>{

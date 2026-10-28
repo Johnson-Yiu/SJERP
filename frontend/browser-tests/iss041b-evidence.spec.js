@@ -8,7 +8,7 @@ const evidenceDir = process.env.R1_REPAIR_04_EVIDENCE_DIR
   : path.resolve(process.cwd(), '../docs/uat-evidence/iss-041-detail-drill')
 
 test.beforeEach(async ({ page }, testInfo) => {
-  page.repair04Diagnostics = installRepair04Diagnostics(page, `iss041b-evidence-${testInfo.title}`)
+  page.repair04Diagnostics = await installRepair04Diagnostics(page, `iss041b-evidence-${testInfo.title}`)
 })
 test.afterEach(async ({ page }) => {
   await page.repair04Diagnostics?.save()

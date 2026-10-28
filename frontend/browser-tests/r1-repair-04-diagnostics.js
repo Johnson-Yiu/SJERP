@@ -15,10 +15,11 @@ export function evidencePath(name) {
   return path.join(evidenceDir, name)
 }
 
-export function installRepair04Diagnostics(page, label) {
+export async function installRepair04Diagnostics(page, label) {
   const events = {
     label,
     blockedOptionalFonts: true,
+    fontInterceptions: [],
     console: [],
     pageErrors: [],
     failedRequests: [],
@@ -44,10 +45,20 @@ export function installRepair04Diagnostics(page, label) {
   // These fonts are optional; the app has local fallback fonts. Blocking them
   // makes page navigation and screenshots deterministic when the test machine
   // cannot reach Google Fonts, without changing product code or assertions.
-  page.route('https://fonts.googleapis.com/**', route => route.abort())
-  page.route('https://fonts.gstatic.com/**', route => route.abort())
+  await page.route('https://fonts.googleapis.com/**', async route => {
+    events.fontInterceptions.push({ url: route.request().url(), host: 'fonts.googleapis.com' })
+    await route.abort()
+  })
+  await page.route('https://fonts.gstatic.com/**', async route => {
+    events.fontInterceptions.push({ url: route.request().url(), host: 'fonts.gstatic.com' })
+    await route.abort()
+  })
 
   return {
+    fontRoutesRegistered: true,
+    get fontInterceptionCount() {
+      return events.fontInterceptions.length
+    },
     async save() {
       const target = evidencePath(`${safeName(label)}-diagnostics.json`)
       if (target) fs.writeFileSync(target, `${JSON.stringify(events, null, 2)}\n`, 'utf8')

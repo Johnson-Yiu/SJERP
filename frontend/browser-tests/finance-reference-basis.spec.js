@@ -10,7 +10,7 @@ async function mock(page){await page.route('**/api/**',async route=>{const path=
  else if(path==='/api/reports/catalog/')json={sources:{cash:{label:'账面收支（人民币折算参考）',dimensions:['time','direction'],dates:{transaction_date:'流水发生日期'},note},sales:{label:'销售报表',dimensions:['time'],dates:{order_date:'订单日期'}}},dimensions:{time:'时间',direction:'收支方向'},grains:{month:'月'}}
  else if(path==='/api/reports/data/')json=saved.cash.body
  await route.fulfill({json})})}
-test.beforeEach(async({page},testInfo)=>{page.repair04Diagnostics=installRepair04Diagnostics(page,`finance-reference-basis-${testInfo.title}`)})
+test.beforeEach(async({page},testInfo)=>{page.repair04Diagnostics=await installRepair04Diagnostics(page,`finance-reference-basis-${testInfo.title}`)})
 test.afterEach(async({page})=>{await page.repair04Diagnostics?.save()})
 for(const width of [1440,1024]) test(`reference basis across finance, transactions and saved cash config ${width}`,async({page})=>{
  await page.setViewportSize({width,height:1000});await mock(page)

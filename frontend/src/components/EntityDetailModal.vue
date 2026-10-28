@@ -11,6 +11,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowLeft, CheckSquare, ChevronRight, ExternalLink, Paperclip, Pencil, Plus, Rows3, Search, Trash2, X } from 'lucide-vue-next'
 import { api, listData } from '../api'
+import { apiErrorMessage } from '../utils/apiErrors.js'
 import { confirmDialog } from '../dialogs'
 import { resourceConfigs } from '../resourceConfigs'
 import { renderRichText as richText } from '../utils/richText'
@@ -149,7 +150,7 @@ async function load(entity = currentEntity.value, id = currentId.value) {
     currentEntity.value = entity; currentId.value = id
     activeTab.value = entity === 'products' ? '__overview' : data.value.sections[0]?.key || ''
     restoreCustomerTab()
-  } catch (e) { error.value = e.message } finally { loading.value = false }
+  } catch (e) { error.value = apiErrorMessage(e) } finally { loading.value = false }
 }
 async function loadOperationLogs(entity = currentEntity.value, id = currentId.value) {
   operationLogsLoading.value = true

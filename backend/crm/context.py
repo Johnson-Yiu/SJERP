@@ -8,11 +8,13 @@ from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from .models import Contact, Customer, FollowUp, InventoryMovement, Order, OrderItem, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
 from .country_registry import display_country
 from .customer_status import customer_status_display
+from .error_messages import CUSTOMER_NOT_FOUND_MESSAGE
 from .querysets import prefetch_purchase_related_orders
 from .serializers import ContactSerializer, CustomerSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, QuoteSerializer, SKUSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, protected_media_url
 from .permissions import CONTEXT_MODULES, user_can
@@ -119,7 +121,9 @@ def _customer_context(pk, user=None):
     queryset = Customer.objects.all()
     if user is not None:
         queryset = scope_customer_queryset(queryset, user)
-    obj = get_object_or_404(queryset, pk=pk)
+    obj = queryset.filter(pk=pk).first()
+    if obj is None:
+        raise NotFound(CUSTOMER_NOT_FOUND_MESSAGE)
     formal_statuses = ["confirmed", "production", "shipped", "completed"]
     formal_orders = list(obj.orders.filter(status__in=formal_statuses).prefetch_related("items", "contract_changes"))
     sales_rmb = sum((order.total_amount * order.exchange_rate for order in formal_orders), Decimal("0"))

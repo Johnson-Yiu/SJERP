@@ -17,18 +17,19 @@ from django.db.models.deletion import ProtectedError
 from django.db.models import Case, CharField, Count, DecimalField, ExpressionWrapper, F, IntegerField, OuterRef, Q, Subquery, Sum, Value, When
 from django.db.models.functions import Coalesce, TruncMonth
 from django.db.models.functions import Cast
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.core import signing
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import permissions, serializers, status, viewsets
 from rest_framework.decorators import action, api_view, parser_classes, permission_classes
-from rest_framework.exceptions import ValidationError as DRFValidationError
+from rest_framework.exceptions import NotFound, ValidationError as DRFValidationError
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerSupplierPreference, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseMOQException, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
 from .country_registry import CountryResolutionError, country_options as build_country_options, country_stored_values, display_country
+from .error_messages import CUSTOMER_NOT_FOUND_MESSAGE
 from .money import CURRENT_AMOUNT_CALCULATION_VERSION
 from .querysets import current_due_follow_ups, prefetch_purchase_related_orders
 from .permissions import HSCodeMaintenancePermission, ModuleActionPermission, OrganizationOverviewPermission, PermissionAdminOnly, QuoteExportPermission, _profile_for, effective_permission_matrix, has_all_permissions, is_permission_admin, user_can
@@ -627,6 +628,14 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
     search_fields = ["name", "code", "country", "owner", "source"]
     ordering_fields = ["name", "created_at", "updated_at", "next_follow_up"]
+
+    def get_object(self):
+        try:
+            return super().get_object()
+        except Http404 as error:
+            # Keep an out-of-scope customer indistinguishable from an unknown
+            # customer while avoiding Django's English model-name detail.
+            raise NotFound(CUSTOMER_NOT_FOUND_MESSAGE) from error
 
     def get_queryset(self):
         formal_statuses = ["confirmed", "production", "shipped", "completed"]

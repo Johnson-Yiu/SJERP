@@ -1,12 +1,78 @@
 import assert from 'node:assert/strict'
+import { spawn } from 'node:child_process'
 import { once } from 'node:events'
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { copyFile, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
+import http from 'node:http'
+import { fileURLToPath } from 'node:url'
 import net from 'node:net'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
 
-import { assertPortsAvailable, cleanupOwnedTempRoot, reservePort, sqliteDatabaseUrl } from '../scripts/run-isolated-browser-tests.mjs'
+import {
+  assertPortsAvailable,
+  browserArgs,
+  cleanupOwnedTempRoot,
+  reservePort,
+  sqliteDatabaseUrl,
+  waitForIdentity,
+} from '../scripts/run-isolated-browser-tests.mjs'
+
+const frontendRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const repositoryRoot = path.resolve(frontendRoot, '..')
+
+function runProcess(command, args, options) {
+  const child = spawn(command, args, {
+    ...options,
+    windowsHide: true,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  })
+  let output = ''
+  child.stdout.on('data', chunk => { output += chunk.toString() })
+  child.stderr.on('data', chunk => { output += chunk.toString() })
+  return new Promise((resolve, reject) => {
+    child.once('error', reject)
+    child.once('close', (code, signal) => resolve({ code, signal, output }))
+  })
+}
+
+async function createShadowWorktree(parent, label) {
+  const root = path.join(parent, label)
+  const shadowFrontend = path.join(root, 'frontend')
+  const files = [
+    'scripts/run-isolated-browser-tests.mjs',
+    'playwright.isolated.config.js',
+    'vite.isolated.config.js',
+    'infrastructure-tests/isolated-runtime.spec.js',
+    'package.json',
+  ]
+  for (const relative of files) {
+    const destination = path.join(shadowFrontend, relative)
+    await mkdir(path.dirname(destination), { recursive: true })
+    await copyFile(path.join(frontendRoot, relative), destination)
+  }
+  const linkType = process.platform === 'win32' ? 'junction' : 'dir'
+  const realModules = path.join(frontendRoot, 'node_modules')
+  const shadowModules = path.join(shadowFrontend, 'node_modules')
+  await mkdir(shadowModules)
+  for (const entry of await readdir(realModules, { withFileTypes: true })) {
+    if (!entry.isDirectory() || entry.name === '.bin' || entry.name === '.vite' || entry.name === '.vite-temp') continue
+    const source = path.join(realModules, entry.name)
+    const destination = path.join(shadowModules, entry.name)
+    if (entry.name.startsWith('@')) {
+      await mkdir(destination)
+      for (const scopedPackage of await readdir(source, { withFileTypes: true })) {
+        if (scopedPackage.isDirectory()) {
+          await symlink(path.join(source, scopedPackage.name), path.join(destination, scopedPackage.name), linkType)
+        }
+      }
+    } else {
+      await symlink(source, destination, linkType)
+    }
+  }
+  await symlink(path.join(repositoryRoot, 'backend'), path.join(root, 'backend'), linkType)
+  return { root, frontend: shadowFrontend }
+}
 
 test('port allocator returns a free explicit loopback port', async () => {
   const port = await reservePort()
@@ -30,12 +96,65 @@ test('port preflight rejects an occupied port instead of reusing another server'
   }
 })
 
+test('actual runner fails before creating isolated resources when its API port is occupied', async () => {
+  const server = net.createServer()
+  server.listen(0, '127.0.0.1')
+  await once(server, 'listening')
+  const apiPort = server.address().port
+  const vitePort = await reservePort()
+  const env = { ...process.env, ISOLATED_API_PORT: String(apiPort), ISOLATED_VITE_PORT: String(vitePort) }
+  const result = await runProcess(process.execPath, [path.join(frontendRoot, 'scripts/run-isolated-browser-tests.mjs')], {
+    cwd: frontendRoot,
+    env,
+  })
+  try {
+    assert.notEqual(result.code, 0)
+    assert.match(result.output, /EADDRINUSE|already in use|unavailable/)
+    assert.doesNotMatch(result.output, /Isolation run /)
+    assert.equal(server.listening, true, 'the pre-existing listener must remain untouched')
+  } finally {
+    server.close()
+    await once(server, 'close')
+  }
+})
+
 test('port preflight rejects duplicate API and Vite assignments', async () => {
   const port = await reservePort()
   await assert.rejects(
     assertPortsAvailable([{ name: 'API', port }, { name: 'Vite', port }]),
     /must use distinct ports/,
   )
+})
+
+test('API identity mismatch is rejected before browser tests can proceed', async () => {
+  const server = http.createServer((_request, response) => {
+    response.writeHead(200, { 'content-type': 'application/json' })
+    response.end(JSON.stringify({ runId: 'another-worktree', token: 'wrong-token' }))
+  })
+  server.listen(0, '127.0.0.1')
+  await once(server, 'listening')
+  const { port } = server.address()
+  try {
+    await assert.rejects(
+      waitForIdentity(
+        { exitCode: null, signalCode: null, isolationOutput: () => '' },
+        `http://127.0.0.1:${port}/api/__test__/isolation/`,
+        { runId: 'expected-run', token: 'expected-token' },
+        'Django API',
+        { timeoutMs: 30, pollIntervalMs: 2 },
+      ),
+      /Django API identity check failed: Django API responded with HTTP 200 or a mismatched run identity/,
+    )
+  } finally {
+    server.close()
+    await once(server, 'close')
+  }
+})
+
+test('custom Playwright config cannot bypass isolated server ownership', () => {
+  assert.throws(() => browserArgs(['--config', '../playwright.config.js']), /cannot replace the isolated config/)
+  assert.throws(() => browserArgs(['--config=../playwright.config.js']), /cannot replace the isolated config/)
+  assert.ok(browserArgs(['--grep', 'synthetic-only']).includes('synthetic-only'))
 })
 
 test('SQLite URL preserves an absolute platform path for Django parsing', () => {
@@ -71,5 +190,49 @@ test('cleanup refuses an ownership marker belonging to another run', async () =>
     await readFile(marker, 'utf8')
   } finally {
     await rm(root, { recursive: true, force: false })
+  }
+})
+
+test('two independent worktree runtimes can start concurrently without sharing ports or data', { timeout: 120000 }, async t => {
+  const parent = await mkdtemp(path.join(os.tmpdir(), 'sunjack-parallel-worktrees-'))
+  try {
+    const worktrees = await Promise.all([
+      createShadowWorktree(parent, 'worktree-a'),
+      createShadowWorktree(parent, 'worktree-b'),
+    ])
+    const env = { ...process.env }
+    delete env.ISOLATED_API_PORT
+    delete env.ISOLATED_VITE_PORT
+    const results = await Promise.all(worktrees.map(worktree => runProcess(
+      process.execPath,
+      [path.join(worktree.frontend, 'scripts/run-isolated-browser-tests.mjs')],
+      { cwd: worktree.frontend, env },
+    )))
+    for (const result of results) {
+      assert.equal(result.code, 0, result.output)
+      assert.match(result.output, /Migration completeness check: passed/)
+      assert.match(result.output, /Playwright suite: passed/)
+      assert.match(result.output, /Removed only this run's marked temporary database and MEDIA_ROOT/)
+    }
+    const identities = results.map(({ output }) => {
+      const match = output.match(/Isolation run ([\w-]+); API 127\.0\.0\.1:(\d+); Vite 127\.0\.0\.1:(\d+)/)
+      assert.ok(match, output)
+      const database = output.match(/Isolated SQLite: (.+)/)?.[1]
+      const media = output.match(/Isolated MEDIA_ROOT: (.+)/)?.[1]
+      assert.ok(database, output)
+      assert.ok(media, output)
+      return { runId: match[1], apiPort: match[2], vitePort: match[3], database, media }
+    })
+    for (const field of ['runId', 'apiPort', 'vitePort', 'database', 'media']) {
+      assert.notEqual(identities[0][field], identities[1][field], `${field} must be unique per worktree run`)
+    }
+    assert.equal(
+      new Set(identities.flatMap(({ apiPort, vitePort }) => [apiPort, vitePort])).size,
+      4,
+      'all concurrent API and Vite listeners must have distinct ports',
+    )
+    t.diagnostic(`parallel isolated runs: ${JSON.stringify(identities)}`)
+  } finally {
+    await rm(parent, { recursive: true, force: false })
   }
 })

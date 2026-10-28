@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import path from 'node:path'
 
 function isolationIdentityPlugin() {
   return {
@@ -27,8 +28,15 @@ function requiredPort(name) {
   return value
 }
 
+function requiredIsolationRoot() {
+  const root = process.env.ISOLATED_TEST_ROOT
+  if (!root) throw new Error('ISOLATED_TEST_ROOT must be assigned by the isolation runner.')
+  return path.resolve(root)
+}
+
 export default defineConfig({
   plugins: [vue(), isolationIdentityPlugin()],
+  cacheDir: path.join(requiredIsolationRoot(), 'vite-cache'),
   server: {
     host: '127.0.0.1',
     port: requiredPort('ISOLATED_VITE_PORT'),

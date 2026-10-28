@@ -159,6 +159,12 @@ async function runCommand(command, args, options) {
   if (code !== 0) throw new Error(`${options.label || command} exited with ${signal || `code ${code}`}.`)
 }
 
+async function runStage(label, command, args, options) {
+  console.log(`[isolation] ${label}`)
+  await runCommand(command, args, options)
+  console.log(`[isolation] ${label}: passed`)
+}
+
 function markerPath(root) {
   return path.join(root, markerName)
 }
@@ -227,8 +233,8 @@ function requestJson(url, timeoutMs = 1200) {
     .finally(() => clearTimeout(timeout))
 }
 
-async function waitForIdentity(child, url, expected, label) {
-  const deadline = Date.now() + 30000
+export async function waitForIdentity(child, url, expected, label, { timeoutMs = 30000, pollIntervalMs = 200 } = {}) {
+  const deadline = Date.now() + timeoutMs
   let lastError = 'server did not return an identity response'
   while (Date.now() < deadline) {
     if (child.exitCode !== null || child.signalCode !== null) {
@@ -241,13 +247,16 @@ async function waitForIdentity(child, url, expected, label) {
     } catch (error) {
       lastError = error.message
     }
-    await new Promise(resolve => setTimeout(resolve, 200))
+    await new Promise(resolve => setTimeout(resolve, pollIntervalMs))
   }
   throw new Error(`${label} identity check failed: ${lastError}.\n${child.isolationOutput?.() || ''}`)
 }
 
-function browserArgs(userArgs) {
+export function browserArgs(userArgs) {
   const args = userArgs[0] === '--' ? userArgs.slice(1) : userArgs
+  if (args.some(argument => argument === '--config' || argument.startsWith('--config='))) {
+    throw new Error('A custom Playwright config cannot replace the isolated config.')
+  }
   return [
     path.join(frontendRoot, 'node_modules', '@playwright', 'test', 'cli.js'),
     'test',
@@ -271,6 +280,7 @@ async function main() {
   process.once('SIGTERM', onTerminate)
   try {
     await requireLocalDependencies()
+    const playwrightArguments = browserArgs(process.argv.slice(2))
     const { apiPort, vitePort } = await choosePorts()
     if (receivedSignal) throw new Error(`Interrupted by ${receivedSignal} before isolated resources were created.`)
     const runId = randomUUID()
@@ -298,6 +308,7 @@ async function main() {
       ISOLATED_API_PORT: String(apiPort),
       ISOLATED_VITE_PORT: String(vitePort),
       ISOLATED_PLAYWRIGHT_BASE_URL: baseURL,
+      PYTHONDONTWRITEBYTECODE: '1',
       PYTHONUNBUFFERED: '1',
     }
 
@@ -318,11 +329,11 @@ async function main() {
         `print(verify_isolated_runtime(settings=settings, database_must_exist=${databaseMustExist ? 'True' : 'False'}))`,
       ].join('; ')
 
-      await runCommand(python, ['-c', verificationCode(false)], { cwd: backendRoot, env, label: 'Pre-migration isolation verification' })
-      await runCommand(python, ['manage.py', 'check'], { cwd: backendRoot, env, label: 'Django system check' })
-      await runCommand(python, ['manage.py', 'migrate', '--noinput'], { cwd: backendRoot, env, label: 'Isolated database migrations' })
-      await runCommand(python, ['manage.py', 'migrate', '--check'], { cwd: backendRoot, env, label: 'Migration completeness check' })
-      await runCommand(python, ['-c', verificationCode(true)], { cwd: backendRoot, env, label: 'Post-migration isolation verification' })
+      await runStage('Pre-migration isolation verification', python, ['-c', verificationCode(false)], { cwd: backendRoot, env, label: 'Pre-migration isolation verification' })
+      await runStage('Django system check', python, ['manage.py', 'check'], { cwd: backendRoot, env, label: 'Django system check' })
+      await runStage('Isolated database migrations', python, ['manage.py', 'migrate', '--noinput'], { cwd: backendRoot, env, label: 'Isolated database migrations' })
+      await runStage('Migration completeness check', python, ['manage.py', 'migrate', '--check'], { cwd: backendRoot, env, label: 'Migration completeness check' })
+      await runStage('Post-migration isolation verification', python, ['-c', verificationCode(true)], { cwd: backendRoot, env, label: 'Post-migration isolation verification' })
 
       apiServer = createChild(python, [
         'manage.py', 'runserver', `127.0.0.1:${apiPort}`, '--noreload',
@@ -330,20 +341,24 @@ async function main() {
       const apiIdentityUrl = `http://127.0.0.1:${apiPort}/api/__test__/isolation/${token}/`
       const viteIdentityUrl = `${baseURL}/__test__/isolation/`
       await waitForIdentity(apiServer, apiIdentityUrl, { runId, token }, 'Django API')
+      console.log('[isolation] Django API identity: passed')
 
       viteServer = createChild(process.execPath, [
         path.join(frontendRoot, 'node_modules', 'vite', 'bin', 'vite.js'),
+        '--configLoader', 'runner',
         '--config', path.join(frontendRoot, 'vite.isolated.config.js'),
         '--host', '127.0.0.1', '--port', String(vitePort),
       ], { cwd: frontendRoot, env, label: 'isolated Vite', capture: true })
       await waitForIdentity(viteServer, viteIdentityUrl, { runId, token }, 'Vite')
+      console.log('[isolation] Vite identity: passed')
       const proxiedApiIdentity = await waitForIdentity(viteServer, apiIdentityUrl, { runId, token }, 'Vite-proxied Django API')
       if (path.resolve(proxiedApiIdentity.database) !== path.resolve(databasePath)
         || path.resolve(proxiedApiIdentity.mediaRoot) !== path.resolve(mediaRoot)) {
         throw new Error('Vite proxy reached an API with an unexpected database or MEDIA_ROOT; refusing browser tests.')
       }
+      console.log('[isolation] Proxied API identity, SQLite path, and MEDIA_ROOT: passed')
 
-      await runCommand(process.execPath, browserArgs(process.argv.slice(2)), {
+      await runStage('Playwright suite', process.execPath, playwrightArguments, {
         cwd: frontendRoot,
         env,
         label: 'Isolated Playwright suite',

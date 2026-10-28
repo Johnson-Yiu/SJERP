@@ -10,7 +10,8 @@
     "test:trade-units": "vitest run tests/trade-units.spec.js --environment jsdom",
     "preview": "vite preview",
     "test:browser": "playwright test",
-    "test:browser:isolated": "node scripts/run-isolated-browser-tests.mjs"
+    "test:browser:isolated": "node scripts/run-isolated-browser-tests.mjs",
+    "test:browser:isolated:verify": "node --test infrastructure-tests/runner-validation.test.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "6.0.8",

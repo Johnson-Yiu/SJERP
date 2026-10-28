@@ -48,6 +48,11 @@ class IsolatedRuntimeTests(unittest.TestCase):
         self.assertEqual(result["runId"], self.run_id)
         self.assertEqual(Path(result["database"]), self.database.resolve())
 
+    def test_refuses_preexisting_database_before_migrations(self):
+        self.database.write_bytes(b"not a database this run created")
+        with self.assertRaisesRegex(IsolationError, "already exists before this run's migrations"):
+            verify_isolated_runtime(self.environ, self.settings())
+
     def test_rejects_database_outside_run_directory(self):
         outside_database = Path(self.temp.name) / "other.sqlite3"
         with self.assertRaisesRegex(IsolationError, "outside this run's isolation root"):

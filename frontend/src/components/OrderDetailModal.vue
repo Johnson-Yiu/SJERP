@@ -247,6 +247,7 @@ const shipmentSkuCache = new Map()
 const shipmentSkuLoading = ref(false)
 const shipmentSkuFailed = ref(false)
 const shipmentSaving = ref(false)
+const shipmentRequestKey = ref('')
 const shipmentError = ref('')
 const selectedShipmentLines = computed(() => shipmentLines.value.filter(line => line.selected))
 const overageShipmentLines = computed(() => selectedShipmentLines.value.filter(line => baseQuantity(line) > Number(line.unshipped_quantity)))
@@ -280,6 +281,7 @@ async function openShipmentDialog(initialOrderItemIds = null) {
   if (!eligible.length) return
   const selectedIds = initialOrderItemIds == null ? null : new Set(initialOrderItemIds.map(Number))
   shipmentDate.value = localDateInputValue()
+  shipmentRequestKey.value = newRequestKey()
   shipmentError.value = ''
   shipmentSkuFailed.value = false
   shipmentLines.value = eligible.map(item => {
@@ -364,7 +366,7 @@ async function submitShipment() {
       trade_snapshot: line.trade_snapshot,
       overage_reason: baseQuantity(line) > Number(line.unshipped_quantity) ? line.overage_reason : '',
     }, null))
-    await api.post(`/orders/${props.id}/ship/`, { shipment_date: shipmentDate.value, items })
+    await api.post(`/orders/${props.id}/ship/`, { request_key: shipmentRequestKey.value, shipment_date: shipmentDate.value, items })
     shipmentDialogOpen.value = false
     await load()
   } catch (err) { shipmentError.value = shipmentErrorMessage(err) }

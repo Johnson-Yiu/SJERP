@@ -839,6 +839,7 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
 
 
 class ReceiptInputSerializer(serializers.Serializer):
+    request_key = serializers.CharField(max_length=100, required=False, allow_blank=False)
     trade_unit = serializers.IntegerField(required=False, allow_null=True)
     trade_quantity = serializers.DecimalField(max_digits=14, decimal_places=2, required=False)
     trade_unit_price = serializers.DecimalField(max_digits=16, decimal_places=4, required=False)
@@ -873,6 +874,7 @@ class ShipmentLineInputSerializer(serializers.Serializer):
 
 
 class ShipmentInputSerializer(serializers.Serializer):
+    request_key = serializers.CharField(max_length=100, required=False, allow_blank=False)
     shipment_no = serializers.CharField(max_length=40, required=False, allow_blank=True)
     shipment_date = serializers.DateField()
     logistics_provider = serializers.CharField(max_length=100, required=False, allow_blank=True)

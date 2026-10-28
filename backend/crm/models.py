@@ -1388,6 +1388,8 @@ class Shipment(TimestampedModel):
     order_status_before_confirm = models.CharField("确认发货前订单状态", max_length=20, blank=True)
     reversed_at = models.DateTimeField(null=True, blank=True)
     reversal_reason = models.TextField(blank=True)
+    request_key = models.CharField("请求幂等键", max_length=100, unique=True, null=True, blank=True)
+    request_fingerprint = models.CharField("请求指纹", max_length=64, blank=True)
 
     class Meta:
         ordering = ["-shipment_date", "-id"]
@@ -1584,6 +1586,8 @@ class GoodsReceipt(TradeUnitLine, TimestampedModel):
     )
     reversed_at = models.DateTimeField(null=True, blank=True)
     reversal_reason = models.TextField(blank=True)
+    request_key = models.CharField("请求幂等键", max_length=100, unique=True, null=True, blank=True)
+    request_fingerprint = models.CharField("请求指纹", max_length=64, blank=True)
 
     class Meta:
         constraints = [

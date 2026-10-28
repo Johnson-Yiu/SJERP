@@ -1,0 +1,104 @@
+{
+  "viewport": 1024,
+  "documentWidth": 1024,
+  "bodyWidth": 1024,
+  "clientWidth": 1024,
+  "toolbar": {
+    "x": 282,
+    "right": 990,
+    "width": 708,
+    "height": 43
+  },
+  "toolbarOverflowX": "visible",
+  "reset": {
+    "x": 912,
+    "right": 985,
+    "width": 73,
+    "height": 39,
+    "whiteSpace": "normal",
+    "scrollWidth": 71,
+    "clientWidth": 71
+  },
+  "tableWrap": {
+    "x": 283,
+    "right": 989,
+    "width": 706,
+    "height": 185.5,
+    "clientWidth": 706,
+    "scrollWidth": 1071,
+    "overflowX": "auto",
+    "scrollLeft": 0
+  },
+  "table": {
+    "x": 283,
+    "right": 1354.09375,
+    "width": 1071.09375,
+    "height": 185.5,
+    "scrollWidth": 1071
+  },
+  "headers": [
+    {
+      "text": "订单号",
+      "x": 283,
+      "right": 425.78125,
+      "width": 142.78125,
+      "height": 42
+    },
+    {
+      "text": "客户",
+      "x": 425.78125,
+      "right": 605.78125,
+      "width": 180,
+      "height": 42
+    },
+    {
+      "text": "订单日期",
+      "x": 605.78125,
+      "right": 717.4375,
+      "width": 111.65625,
+      "height": 42
+    },
+    {
+      "text": "预计交期",
+      "x": 717.4375,
+      "right": 825.625,
+      "width": 108.1875,
+      "height": 42
+    },
+    {
+      "text": "履约状态",
+      "x": 825.625,
+      "right": 913.625,
+      "width": 88,
+      "height": 42
+    },
+    {
+      "text": "明细",
+      "x": 913.625,
+      "right": 973.625,
+      "width": 60,
+      "height": 42
+    },
+    {
+      "text": "订单金额",
+      "x": 973.625,
+      "right": 1110.765625,
+      "width": 137.140625,
+      "height": 42
+    },
+    {
+      "text": "已收 / 待收",
+      "x": 1110.765625,
+      "right": 1274.09375,
+      "width": 163.328125,
+      "height": 42
+    },
+    {
+      "text": "操作",
+      "x": 1274.09375,
+      "right": 1354.09375,
+      "width": 80,
+      "height": 42
+    }
+  ]
+}

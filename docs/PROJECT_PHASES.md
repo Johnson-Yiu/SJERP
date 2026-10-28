@@ -563,3 +563,15 @@ ISS-018 保持 `BLOCKED` / `DEPLOYMENT_VERIFICATION_PENDING`；ISS-036 的冲突
 
 ISS-036 保持 `FIXED_PENDING_REVIEW`；冲突历史快照的业务归属/优先级仍待业务明确。ISS-018 最近核实引用修正为集成验证 HEAD `46353a5436637832f5adadb7bdef6b45cdeada23`，其 `BLOCKED` / `DEPLOYMENT_VERIFICATION_PENDING` 状态不变。
 
+## R1-REPAIR-CONSOLIDATION-01 统一集成验收（2026-10-28）
+
+以固定基线 `054bd82518039a5bc0e0c14234964a14d7fbbfd8` 创建全新独立 worktree 和分支 `codex/integration-r1-repairs-20261028`。集成前核实并按指定精确 SHA 合并：R1-REPAIR-03 `c3739e77562c5dd8995228d5c3e7375a6728d316`、R1-REPAIR-04-FIX-01 `e20f8a7bc506c299644b6c828c9b5574ee688f46`、R1-REPAIR-05 `9c5f1f821cfc1b436f5fffe0b681991fa056b34d`、R1-REPAIR-06-FIX-01 `5ad252c537dfb0b3f95150e76e471c9fe3fd0a99`、R1-REPAIR-07 `58541e94918e2d912c2b75d2371a8d625e1fc9d4`、final-cross-module-ux `45df13b8fd229427229a58d64d0ae2bec30a00cb`、supplier-purchase-ux-r2 `64fb397aa065062e192ceb30040421f59b63a08c`。七个 non-ff 合并均无文本冲突，逐项复核差异和业务断言；来源均无 migration 文件，集成后迁移检查通过。
+
+另审查与 R2 无祖先关系的供应商分支 `codex/repair-supplier-purchase-ux-20261028` / `fe1cc16c3950e256fa564ea4508e08414ae8810b`。只将其 ISS-075 测试中两条外部 Google Fonts 路由拦截保留到 R2 版测试；没有删改规则断言，没有合并其余提交。集成调整仅为在 R1-06 隔离运行器允许列表中安全准备既有合成测试 fixture，以及把证据输出导入本轮目录；未修改产品业务代码、正式财务/采购语义或共享权限设置。
+
+综合回归：Django system check 和 migrations check 通过；Django 全量发现 1,000 项、982 通过、18 按套件标记跳过、0 失败；隔离 runtime 10/10；Node 169/169；Vitest 66 文件/657 项；trade-unit 4/4；Typography Node 1/1；隔离 runner 自测 13/13；Playwright 隔离冒烟 1/1；完整可运行 Playwright 31 个 spec、189 项通过、0 失败。ISS-055 真实员工/RBAC 浏览器 spec 因不得启用正式 RBAC 而未运行，保留后续授权环境补验。构建通过，主 JS 为 1,126.05 kB、gzip 393.59 kB，Vite 大 chunk 警告仍存在；本轮没有声称实际用户性能改善。首次 Vitest 错误扫描范围、Django 继承到 `AUDIT_LOG_ENABLED=0` 的环境失败以及后续正确范围/干净隔离环境重跑均保留原始日志，详见[集成报告](uat-evidence/integration-r1-repairs-20261028/README.md)。
+
+真实 Chrome/Chromium 截图、隔离 API fixture、XLSX/API 核对和原始测试日志已归档；证据总计 79 个截图/诊断文件（51 PNG、25 JSON、3 XLSX）。ISS-022、ISS-029、ISS-055、ISS-075 均保持 `FIXED_PENDING_REVIEW`；ISS-041 仍为 `Enhancement / BLOCKED（延期）`；ISS-002 的 Pillow 11.3.0/依赖锁定风险、ISS-003 的真实员工与 RBAC 验收、ISS-052 的审计身份/行级审计缺口、ISS-058 的真实用户性能测量均未被本轮宣称解决。
+
+没有触发或重试 GitHub Actions；本地结果不代替 CI。11 月 1 日仅对推送后的精确最终 SHA 核对 `backend`、`backend-postgres`、`frontend` 三个既有 job，并保留运行链接/状态和外部启动错误。未合并 master、未部署、未启用正式 RBAC、未操作实际业务数据库、未关闭 Issue。来源验收及本轮日志/截图索引见[验收索引](uat-evidence/INDEX.md)。
+

@@ -2,7 +2,9 @@ import { test, expect } from '@playwright/test'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-const evidence = path.resolve('../docs/uat-evidence/iss-029-quote-recipient-snapshot')
+const evidence = process.env.R1_REPAIR_EVIDENCE_DIR
+  ? path.resolve(process.env.R1_REPAIR_EVIDENCE_DIR)
+  : path.resolve('../docs/uat-evidence/iss-029-quote-recipient-snapshot')
 
 test('real Django: recipient A/B, empty/invalid email, master changes, saved PI and XLSX', async ({ page }) => {
   const fixture = JSON.parse(await fs.readFile(path.join(evidence, 'fixture.json'), 'utf8'))

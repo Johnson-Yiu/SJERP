@@ -1,0 +1,14 @@
+[WebServer] (node:19976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:27844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 browser-tests\historical-orders-fix-02.spec.js:20:1 › history analysis detail tables work at desktop and 700px CSS viewport (4.8s)
+  ok 2 browser-tests\historical-orders-fix-02.spec.js:43:1 › history analysis hides unauthorized detail dimensions without blanking the page (4.9s)
+  ok 3 browser-tests\historical-orders-fix-03.spec.js:51:1 › current historical analysis detail tables match the API at desktop and 700px CSS viewport (3.3s)
+  ok 4 browser-tests\historical-orders-fix-03.spec.js:84:1 › current historical analysis hides unauthorized detail dimensions without blanking the page (2.2s)
+  ok 5 browser-tests\iss029-recipient-snapshot.spec.js:9:1 › real Django: recipient A/B, empty/invalid email, master changes, saved PI and XLSX (9.1s)
+
+  5 passed (28.2s)

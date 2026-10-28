@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 C:/Users/Johnson/.codex/worktrees/repair-history-recipient-typography/森爵照明管理系统/frontend
+
+
+ Test Files  67 passed (67)
+      Tests  661 passed (661)
+   Start at  11:58:59
+   Duration  107.74s (transform 14.03s, setup 23.52s, import 31.66s, tests 39.37s, environment 189.61s)
+

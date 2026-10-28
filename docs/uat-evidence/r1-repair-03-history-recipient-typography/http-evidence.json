@@ -1,0 +1,312 @@
+[
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:8304/api/reports/historical/?date_from=2017-01-01&date_to=2026-12-31",
+    "status": 200,
+    "content_type": "application/json",
+    "body_prefix": "{\"scope\":\"historical_only\",\"label\":\"历史订单 · 仅用于经营分析\",\"period\":{\"date_from\":\"2017-01-01\",\"date_to\":\"2026-12-31\"},\"sales\":{\"order_count\":1,\"amount_rmb\":1360.0,\"quantity\":17.0,\"by_customer\":[{\"id\":2,\"label\":\"Chrome历史客户\",\"amount\":1360.0,\"count\":",
+    "json": {
+      "scope": "historical_only",
+      "label": "历史订单 · 仅用于经营分析",
+      "period": {
+        "date_from": "2017-01-01",
+        "date_to": "2026-12-31"
+      },
+      "sales": {
+        "order_count": 1,
+        "amount_rmb": 1360.0,
+        "quantity": 17.0,
+        "by_customer": [
+          {
+            "id": 2,
+            "label": "Chrome历史客户",
+            "amount": 1360.0,
+            "count": 1
+          }
+        ],
+        "by_country": [
+          {
+            "id": "中国",
+            "label": "中国",
+            "amount": 1360.0,
+            "count": 1
+          }
+        ],
+        "by_sku": [
+          {
+            "id": 2,
+            "label": "CHROME-SKU · Chrome历史灯具",
+            "amount": 1360.0,
+            "quantity": 17.0
+          }
+        ],
+        "by_category": [
+          {
+            "id": 1,
+            "label": "R1历史分类",
+            "amount": 1360.0,
+            "quantity": 17.0
+          }
+        ]
+      },
+      "purchase": {
+        "order_count": 1,
+        "amount_rmb": 810.0,
+        "quantity": 27.0,
+        "by_supplier": [
+          {
+            "id": 1,
+            "label": "Chrome历史供应商",
+            "amount": 810.0,
+            "count": 1
+          }
+        ],
+        "by_country": [
+          {
+            "id": "中国",
+            "label": "中国",
+            "amount": 810.0,
+            "count": 1
+          }
+        ],
+        "by_sku": [
+          {
+            "id": 2,
+            "label": "CHROME-SKU · Chrome历史灯具",
+            "amount": 810.0,
+            "quantity": 27.0
+          }
+        ],
+        "by_category": [
+          {
+            "id": 1,
+            "label": "R1历史分类",
+            "amount": 810.0,
+            "quantity": 27.0
+          }
+        ]
+      },
+      "profit": {
+        "available": false,
+        "note": "历史订单未提供可靠成本时，不计算利润。"
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:8304/api/session/current-operator/",
+    "status": 200,
+    "content_type": "application/json",
+    "body_prefix": "{\"name\":\"Johnson\",\"role\":\"超级管理员\",\"authenticated\":false,\"development_superadmin\":true,\"rbac_enforcement\":false,\"has_all_permissions\":true,\"can_manage_permissions\":true,\"permissions\":{\"dashboard\":{\"view\":true,\"create\":true,\"update\":true,\"dele",
+    "json": {
+      "name": "Johnson",
+      "role": "超级管理员",
+      "authenticated": false,
+      "development_superadmin": true,
+      "rbac_enforcement": false,
+      "has_all_permissions": true,
+      "can_manage_permissions": true,
+      "permissions": {
+        "dashboard": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "reports": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "customers": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "contacts": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "followups": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "quotes": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "orders": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "suppliers": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "purchases": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "inventory": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "products": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "skus": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "categories": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "parameters": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "packaging": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "trade_units": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "certificates": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "hs_codes": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "finance": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "transactions": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "imports": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "organization": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "employees": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        },
+        "permissions": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true,
+          "export": true,
+          "import": true
+        }
+      },
+      "data_scope": "all",
+      "data_scope_display": "全部数据",
+      "employee_profile_id": null,
+      "unit_id": null,
+      "unit_name": "",
+      "can_manage_hs_codes": true,
+      "audit_log_enabled": false
+    }
+  }
+]

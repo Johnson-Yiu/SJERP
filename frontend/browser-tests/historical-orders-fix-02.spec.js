@@ -1,7 +1,9 @@
 import path from 'node:path'
 import { expect, test } from '@playwright/test'
 
-const evidenceDir = path.resolve(process.cwd(), '..', 'docs', 'uat-evidence', 'r1-hist-01-fix-02')
+const evidenceDir = process.env.R1_REPAIR_EVIDENCE_DIR
+  ? path.resolve(process.env.R1_REPAIR_EVIDENCE_DIR)
+  : path.resolve(process.cwd(), '..', 'docs', 'uat-evidence', 'r1-hist-01-fix-02')
 
 async function layoutMetrics(page) {
   return page.evaluate(() => ({

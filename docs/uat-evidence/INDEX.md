@@ -13,5 +13,6 @@
 | supplier-purchase-ux-r2：ISS-022 / ISS-075 | [README、定向日志与截图](supplier-purchase-ux-regression-054bd825/README.md) |
 | R1-REPAIR-CONSOLIDATION-01 集成复核 | [综合验收报告](integration-r1-repairs-20261028/README.md)；[原始日志](integration-r1-repairs-20261028/logs/)；[本轮截图/诊断](integration-r1-repairs-20261028/screenshots/) |
 | R1-STATUS-RECONCILE-01 状态对账 | [124 Issue / 46 业务规则对账报告](r1-status-reconcile-20261028/README.md) |
+| R1-INTEGRATION-PRE-PILOT-01 五项成果集成 | [集成报告、测试日志与遗留阻断](integration-pre-pilot-01/README.md) |
 
 `FIXED_PENDING_REVIEW` 表示仍待独立审查，不等同于 Issue 已关闭；报告中列明的权限、审计、真实业务数据和部署/CI缺口需在获授权环境另行核验。

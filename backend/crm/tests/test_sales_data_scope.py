@@ -678,6 +678,44 @@ class SalesDataScopeTests(TestCase):
         self.assertEqual(response.data["unit_id"], self.sales.pk)
         self.assertEqual(response.data["unit_name"], self.sales.name)
 
+    def test_customer_detail_and_context_share_safe_not_found_semantics(self):
+        expected = {"detail": "客户不存在或当前账号无权访问。"}
+        scoped_cases = [
+            (self.employee_a, self.customer_a, self.customer_c),
+            (self.manager, self.customer_b, self.customer_c),
+            (self.tree_manager, self.customer_team, self.customer_c),
+            (self.all_user, self.customer_c, None),
+        ]
+        for profile, visible_customer, hidden_customer in scoped_cases:
+            with self.subTest(scope=profile.roles.first().default_data_scope):
+                self.login(profile)
+                for path in (
+                    f"/api/customers/{visible_customer.pk}/",
+                    f"/api/context/customers/{visible_customer.pk}/",
+                ):
+                    response = self.client.get(path)
+                    self.assertEqual(response.status_code, 200, response.data)
+                unknown_id = 999999
+                paths = [
+                    f"/api/customers/{unknown_id}/",
+                    f"/api/context/customers/{unknown_id}/",
+                ]
+                if hidden_customer is not None:
+                    paths.extend([
+                        f"/api/customers/{hidden_customer.pk}/",
+                        f"/api/context/customers/{hidden_customer.pk}/",
+                    ])
+                for path in paths:
+                    response = self.client.get(path)
+                    self.assertEqual(response.status_code, 404, response.content)
+                    self.assertEqual(response.data, expected)
+                    self.assertNotIn("Customer", response.content.decode())
+                if hidden_customer is not None:
+                    self.assertEqual(
+                        self.client.get(f"/api/customers/{hidden_customer.pk}/").data,
+                        self.client.get(f"/api/customers/{unknown_id}/").data,
+                    )
+
 
 @override_settings(**RBAC_SETTINGS)
 class LegacyCustomerOwnerMigrationTests(TestCase):

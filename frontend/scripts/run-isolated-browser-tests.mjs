@@ -310,6 +310,27 @@ export async function resolvePlaywrightSelection(userArgs) {
   return { businessTest: requested }
 }
 
+export function isolatedFixtureSeed(businessTest) {
+  const allowed = {
+    'iss022-moq-real.spec.js': { seedFile: 'seed_iss022_browser.py', evidenceEnv: 'ISS022_EVIDENCE_DIR' },
+    'iss075-payment-terms-real.spec.js': { seedFile: 'seed_iss075_browser.py', evidenceEnv: 'ISS075_EVIDENCE_DIR' },
+    'historical-orders-fix-02.spec.js': {
+      seedFile: path.join('..', 'docs', 'uat-evidence', 'r1-repair-03-history-recipient-typography', 'prepare_evidence.py'),
+      evidenceEnv: 'R1_REPAIR_EVIDENCE_DIR',
+    },
+    'historical-orders-fix-03.spec.js': {
+      seedFile: path.join('..', 'docs', 'uat-evidence', 'r1-repair-03-history-recipient-typography', 'prepare_evidence.py'),
+      evidenceEnv: 'R1_REPAIR_EVIDENCE_DIR',
+    },
+    'iss029-recipient-snapshot.spec.js': {
+      seedFile: path.join('..', 'docs', 'uat-evidence', 'r1-repair-03-history-recipient-typography', 'prepare_evidence.py'),
+      evidenceEnv: 'R1_REPAIR_EVIDENCE_DIR',
+    },
+  }
+  const profile = allowed[businessTest]
+  return profile ? { ...profile, scriptPath: path.resolve(backendRoot, profile.seedFile) } : null
+}
+
 export function browserArgs() {
   return [
     path.join(frontendRoot, 'node_modules', '@playwright', 'test', 'cli.js'),
@@ -390,6 +411,19 @@ async function main() {
       await runStage('Isolated database migrations', python, ['manage.py', 'migrate', '--noinput'], { cwd: backendRoot, env, label: 'Isolated database migrations' })
       await runStage('Migration completeness check', python, ['manage.py', 'migrate', '--check'], { cwd: backendRoot, env, label: 'Migration completeness check' })
       await runStage('Post-migration isolation verification', python, ['-c', verificationCode(true)], { cwd: backendRoot, env, label: 'Post-migration isolation verification' })
+
+      const fixtureSeed = isolatedFixtureSeed(selection.businessTest)
+      if (fixtureSeed) {
+        if (!env[fixtureSeed.evidenceEnv]) {
+          env[fixtureSeed.evidenceEnv] = path.join(tempRoot, 'evidence', path.parse(selection.businessTest).name)
+        }
+        await mkdir(env[fixtureSeed.evidenceEnv], { recursive: true })
+        await runStage(`Allowlisted synthetic fixture seed (${selection.businessTest})`, python, [fixtureSeed.scriptPath], {
+          cwd: backendRoot,
+          env,
+          label: `Synthetic fixture seed for ${selection.businessTest}`,
+        })
+      }
 
       apiServer = createChild(python, [
         'manage.py', 'runserver', `127.0.0.1:${apiPort}`, '--noreload',

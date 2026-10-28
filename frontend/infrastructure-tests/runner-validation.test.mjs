@@ -14,6 +14,7 @@ import {
   assertApiIdentity,
   browserArgs,
   cleanupOwnedTempRoot,
+  isolatedFixtureSeed,
   reservePort,
   resolvePlaywrightSelection,
   sqliteDatabaseUrl,
@@ -168,6 +169,24 @@ test('only an existing browser test file can be selected; Playwright service and
     await assert.rejects(resolvePlaywrightSelection(args))
   }
   assert.ok(browserArgs().includes(path.join(frontendRoot, 'playwright.isolated.config.js')))
+})
+
+test('only allowlisted real API suites receive fixed synthetic fixture seeds', () => {
+  assert.equal(path.basename(isolatedFixtureSeed('iss022-moq-real.spec.js').scriptPath), 'seed_iss022_browser.py')
+  assert.equal(isolatedFixtureSeed('iss022-moq-real.spec.js').evidenceEnv, 'ISS022_EVIDENCE_DIR')
+  assert.equal(path.basename(isolatedFixtureSeed('iss075-payment-terms-real.spec.js').scriptPath), 'seed_iss075_browser.py')
+  assert.equal(isolatedFixtureSeed('iss075-payment-terms-real.spec.js').evidenceEnv, 'ISS075_EVIDENCE_DIR')
+  for (const businessTest of [
+    'historical-orders-fix-02.spec.js',
+    'historical-orders-fix-03.spec.js',
+    'iss029-recipient-snapshot.spec.js',
+  ]) {
+    assert.equal(path.basename(isolatedFixtureSeed(businessTest).scriptPath), 'prepare_evidence.py')
+    assert.equal(isolatedFixtureSeed(businessTest).evidenceEnv, 'R1_REPAIR_EVIDENCE_DIR')
+  }
+  for (const businessTest of [null, '', 'import-ux.spec.js', '../seed.py', 'iss055-customer-404-real.spec.js']) {
+    assert.equal(isolatedFixtureSeed(businessTest), null)
+  }
 })
 
 test('API identity comparison checks run ID, token, SQLite path, and MEDIA_ROOT', () => {

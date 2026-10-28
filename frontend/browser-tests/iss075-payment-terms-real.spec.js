@@ -27,6 +27,9 @@ test.describe('ISS-075 供应商固定付款规则退出常规前端真实浏览
         apiLog.push({ method: response.request().method(), url: response.url(), status: response.status() })
       }
     })
+    // Keep external font delivery from blocking this local visual regression; fallback fonts are part of the UI.
+    await page.route('https://fonts.googleapis.com/**', route => route.abort())
+    await page.route('https://fonts.gstatic.com/**', route => route.abort())
 
     await page.setViewportSize({ width: 1440, height: 1000 })
     await page.goto('/suppliers')

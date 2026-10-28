@@ -8,8 +8,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[3]
 database_url = os.environ.get("DATABASE_URL", "").strip()
-if not database_url.startswith("sqlite:///") or not database_url.rsplit("/", 1)[-1].startswith("r1-repair-03-"):
-    raise RuntimeError("R1-REPAIR-03 requires an explicitly selected isolated SQLite database")
+if not database_url.startswith("sqlite:///"):
+    raise RuntimeError("R1-REPAIR-03 requires an isolated SQLite database")
 
 sys.path.insert(0, str(ROOT / "backend"))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
@@ -19,6 +19,14 @@ django.setup()
 
 from django.core.management import call_command
 from crm.models import Contact, Customer, Order, OrderItem, Product, ProductCategory, PurchaseOrder, SKU, Supplier
+
+if os.environ.get("ISOLATED_TEST_RUN_ID"):
+    from django.conf import settings
+    from test_support.isolated_runtime import verify_isolated_runtime
+
+    verify_isolated_runtime(settings=settings, database_must_exist=True)
+elif not database_url.rsplit("/", 1)[-1].startswith("r1-repair-03-"):
+    raise RuntimeError("R1-REPAIR-03 requires an explicitly selected isolated SQLite database")
 
 call_command("migrate", interactive=False, verbosity=0)
 
@@ -64,7 +72,8 @@ purchase = PurchaseOrder.objects.create(
 )
 purchase.items.create(sku=history_sku, quantity=27, unit_price=30, display_name_snapshot="Chrome历史灯具")
 
-out = Path(__file__).resolve().parent
+out = Path(os.environ.get("R1_REPAIR_EVIDENCE_DIR", Path(__file__).resolve().parent)).resolve()
+out.mkdir(parents=True, exist_ok=True)
 (out / "fixture.json").write_text(
     json.dumps(
         {

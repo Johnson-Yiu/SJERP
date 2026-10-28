@@ -2,7 +2,9 @@ import path from 'node:path'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { expect, test } from '@playwright/test'
 
-const evidenceDir = path.resolve(process.cwd(), '..', 'docs', 'uat-evidence', 'r1-repair-07')
+const evidenceDir = process.env.R1_REPAIR_07_EVIDENCE_DIR
+  ? path.resolve(process.env.R1_REPAIR_07_EVIDENCE_DIR)
+  : path.resolve(process.cwd(), '..', 'docs', 'uat-evidence', 'r1-repair-07')
 const phase = process.env.R1_REPAIR_07_PHASE || 'after'
 const widths = [390, 700, 1024, 1440]
 

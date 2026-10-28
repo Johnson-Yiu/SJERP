@@ -162,6 +162,7 @@ function changeFollowUpMode() {
 }
 const followUpAttachments = ref([])
 const pendingFollowUpFiles = ref([])
+const attachmentSaveError = ref('')
 const followUpFileInput = ref(null)
 const currentOperator = ref('')
 const supplierCodeServerError = ref('')
@@ -559,6 +560,7 @@ async function openCreate({ isCurrent = () => true } = {}) {
   if (isContactPage.value) void loadContactDuplicateRows(form.customer)
   followUpAttachments.value = []
   pendingFollowUpFiles.value = []
+  attachmentSaveError.value = ''
   applyDefaultContact()
   syncFollowUpDaysFromDate()
   if (isCurrent()) { guard.markClean(); modalOpen.value = true }
@@ -586,6 +588,7 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
   currentCertificateFileUrl.value = isCertificatePage.value ? (row.file_url || '') : ''
   followUpAttachments.value = props.config.endpoint === 'follow-ups' ? (row.attachments || []) : []
   pendingFollowUpFiles.value = []
+  attachmentSaveError.value = ''
   syncFollowUpDaysFromDate()
   guard.markClean()
   modalOpen.value = true
@@ -593,7 +596,7 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
 const closeModal = () => { if ((isSupplierPage.value || isCrmPage.value || isParameterPage.value || isCertificatePage.value) && saving.value) return; return guard.requestClose(discardModal) }
 function discardModal() {
   const refreshDetail = keepDetailOpen.value
-  modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []; currentCertificateFileUrl.value = ''
+  modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []; attachmentSaveError.value = ''; currentCertificateFileUrl.value = ''
   contactDuplicateRequest += 1; contactDuplicateRows.value = []; contactDuplicateLoading.value = false; contactDuplicateError.value = ''
   if (refreshDetail) detailRefresh.value += 1
   void clearModalRoute(router, route)
@@ -661,6 +664,7 @@ async function save() {
   if (!can(accessModule.value, editingId.value ? 'update' : 'create')) return
   if (saving.value) return
   clearToast()
+  attachmentSaveError.value = ''
   parameterSaveError.value = ''; certificateSaveError.value=''
   if (!optionsReady.value) return notify('关联资料尚未加载完成，请重试后再保存。', true)
   if (isSupplierPage.value) {
@@ -678,7 +682,8 @@ async function save() {
     const wasEditing = Boolean(editingId.value)
     const requestPayload = isCertificatePage.value && form.file ? certificatePayload() : payload()
     const response = wasEditing ? await api.put(`/${props.config.endpoint}/${editingId.value}/`, requestPayload) : await api.post(`/${props.config.endpoint}/`, requestPayload)
-    guard.markClean()
+    const hasPendingAttachments = props.config.endpoint === 'follow-ups' && pendingFollowUpFiles.value.length > 0
+    if (!hasPendingAttachments) guard.markClean()
     const savedId = response.data?.id || editingId.value
     let attachmentError = ''
     if (props.config.endpoint === 'follow-ups' && pendingFollowUpFiles.value.length) {
@@ -686,9 +691,17 @@ async function save() {
         const uploaded = await uploadFollowUpFiles(savedId)
         followUpAttachments.value = [...followUpAttachments.value, ...(uploaded || [])]
         pendingFollowUpFiles.value = []
+        guard.markClean()
       } catch (error) {
         attachmentError = error.message || '附件上传失败'
       }
+    }
+    if (attachmentError) {
+      if (!editingId.value && savedId) editingId.value = savedId
+      attachmentSaveError.value = `附件上传失败：${attachmentError} 请点击“保存跟进”重试上传。`
+      notify(`记录已保存，但${attachmentError}`, true)
+      await load()
+      return
     }
     const refreshDetail = keepDetailOpen.value
     modalOpen.value = false
@@ -965,7 +978,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 
 
       </div>
-      <div class="modal-foot"><p v-if="isFollowUpPage && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (isSupplierPage && !!supplierCodeError)">{{ saving ? '保存中…' : saveLabel }}</button></div>
+      <div class="modal-foot"><p v-if="isFollowUpPage && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><p v-if="isFollowUpPage && attachmentSaveError" class="follow-up-validation" role="alert">{{ attachmentSaveError }}</p><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (isSupplierPage && !!supplierCodeError)">{{ saving ? '保存中…' : saveLabel }}</button></div>
     </form></div>
 
     <Transition name="detail-drawer" appear>

@@ -7,8 +7,8 @@ export const resourceConfigs = {
     detail: true,
   },
   customers: {
-    title: '客户管理', eyebrow: 'Customer portfolio', endpoint: 'customers', key: 'name',
-    description: '管理客户资料、负责人和跟进计划。客户阶段会根据报价和订单自动更新。',
+    title: '客户管理', eyebrow: '客户资料', endpoint: 'customers', key: 'name',
+    description: '维护客户资料和负责人。客户阶段会随报价和订单自动更新。',
     columns: [
       ['name', '客户名称'], ['code', '客户编号'], ['status', '状态', 'status'], ['country', '国家/地区'], ['region', '业务区域'],
       ['owner', '负责人'], ['next_follow_up', '下次跟进', 'date'], ['order_count', '订单数', 'number'], ['sales_amount', '累计销售额', 'rmb'],
@@ -20,8 +20,8 @@ export const resourceConfigs = {
     detail: true,
   },
   contacts: {
-    title: '联系人', eyebrow: 'Contacts', endpoint: 'contacts', key: 'name',
-    description: '维护客户联系人和联系方式。',
+    title: '联系人', eyebrow: '客户联系人', endpoint: 'contacts', key: 'name',
+    description: '记录客户联系人及电话、邮箱等联系方式。',
     columns: [['customer_name', '所属客户'], ['name', '姓名'], ['title', '职位'], ['email', '邮箱'], ['phone', '电话'], ['whatsapp', 'WhatsApp'], ['is_primary', '主联系人', 'boolean']],
     fields: [
       ['customer', '所属客户', 'remote', true, 'customers', 'name'], ['name', '姓名', 'text', true], ['title', '职位'], ['email', '邮箱', 'email'],
@@ -30,7 +30,7 @@ export const resourceConfigs = {
     detail: true,
   },
   'follow-ups': {
-    title: '跟进记录', eyebrow: 'Relationship cadence', endpoint: 'follow-ups', key: 'subject',
+    title: '跟进记录', eyebrow: '客户跟进', endpoint: 'follow-ups', key: 'subject',
     description: '记录沟通内容、客户回复和下一步安排。',
     columns: [['followed_at', '跟进时间', 'datetime'], ['customer_name', '客户'], ['subject', '主题'], ['type_display', '方式', 'tag'], ['result', '结果'], ['next_follow_up_mode_display', '下次跟进安排'], ['next_follow_up', '下次跟进', 'date'], ['owner', '跟进人']],
     fields: [
@@ -41,7 +41,7 @@ export const resourceConfigs = {
     detail: true,
   },
   products: {
-    title: '产品管理', eyebrow: 'Product catalog', endpoint: 'products', key: 'name',
+    title: '产品管理', eyebrow: '产品资料', endpoint: 'products', key: 'name',
     description: '按产品族维护销售目录；具体销售规格在 SKU 中管理。',
     columns: [['code', '产品编号'], ['name', '产品名称'], ['category_name', '分类'], ['status', '状态', 'status'], ['sku_count', 'SKU 数', 'number'], ['parameter_count', '参数', 'number'], ['certificate_count', '证书', 'number']],
     fields: [
@@ -51,7 +51,7 @@ export const resourceConfigs = {
     detail: true,
   },
   skus: {
-    title: 'SKU 管理', eyebrow: 'Sellable variants', endpoint: 'skus', key: 'display_name_cn',
+    title: 'SKU 管理', eyebrow: '销售规格', endpoint: 'skus', key: 'display_name_cn',
     description: '管理实际报价和下单使用的规格、成本、单位与默认售价。',
     columns: [['display_name_cn', '内部名称'], ['sales_model', '对外型号'], ['sku_code', 'SKU Code'], ['specification', '规格'], ['stock_quantity', '库存', 'number'], ['unit', '单位'], ['cost_price', '成本价', 'money'], ['default_price', '默认售价', 'money'], ['currency', '币种', 'tag'], ['active', '启用', 'boolean']],
     fields: [
@@ -72,7 +72,7 @@ export const resourceConfigs = {
     detail: true,
   },
   categories: {
-    title: '产品分类', eyebrow: 'Catalog structure', endpoint: 'categories', key: 'name',
+    title: '产品分类', eyebrow: '分类与属性', endpoint: 'categories', key: 'name',
     description: '用于经营分析的产品大类，保持简洁稳定即可。',
     columns: [['name', '分类名称'], ['product_count', '产品数', 'number'], ['description', '说明']],
     fields: [['name', '分类名称', 'text', true], ['description', '说明', 'textarea']],

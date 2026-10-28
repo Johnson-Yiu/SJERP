@@ -69,7 +69,7 @@ test('drill and previous-analysis return preserve actual period and browser navi
  await page.getByRole('navigation').first().getByRole('link',{name:'经营概览',exact:true}).click();await expect(page).toHaveURL(/\/$/);await page.goBack();await expect(page.getByRole('textbox',{name:'开始日期',exact:true})).toHaveValue('2026-09-01')
 })
 test('empty dashboard and charts have useful neutral states',async({page})=>{
- await mockApi(page,{empty:true});await page.goto('/');await expect(page.getByText('暂无月度销售数据。',{exact:true})).toBeVisible();await expect(page.getByText('暂无品类销售数据。',{exact:true})).toBeVisible();await page.goto('/reports');await expect(page.locator('.report-empty')).toContainText('暂无数据');await expect(page.locator('.report-table')).toHaveCount(0)
+ await mockApi(page,{empty:true});await page.goto('/');await expect(page.getByText('暂无月度销售数据。',{exact:true})).toBeVisible();await expect(page.getByText('暂无分类销售数据。',{exact:true})).toBeVisible();await page.goto('/reports');await expect(page.locator('.report-empty')).toContainText('暂无数据');await expect(page.locator('.report-table')).toHaveCount(0)
 })
 test('initial failures recover, refresh failure keeps stale data, and catalog has retry',async({page})=>{
  const state=await mockApi(page,{failDashboard:true});await page.goto('/');await expect(page.getByRole('alert')).toContainText('经营数据暂不可用');state.failDashboard=false;await page.getByRole('button',{name:'重新加载',exact:true}).click();await expect(page.locator('.metric-card')).toHaveCount(4)

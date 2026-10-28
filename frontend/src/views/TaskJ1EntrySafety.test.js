@@ -9,7 +9,7 @@ test('dashboard due follow-ups preserve current-due context when opening the lis
   assert.match(view, /path: '\/customers', query: \{ detail: c\.id \}/)
   assert.match(view, /RouterLink to="\/follow-ups\?due=true">全部待跟进/)
   assert.match(view, /path: '\/follow-ups', query: \{ due: 'true', detail: f\.id \}/)
-  assert.match(view, /仅商品行，不含运费、折扣和合同金额调整/)
+  assert.match(view, /仅统计产品金额，不含运费、折扣和合同调整/)
 })
 
 test('finance due contracts navigate by their returned record IDs', async () => {

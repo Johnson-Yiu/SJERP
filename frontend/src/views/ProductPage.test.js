@@ -12,7 +12,7 @@ test('SKU-bearing product prefix changes use preview and explicit apply endpoint
   assert.match(source, /sales-model-prefix-apply/)
   assert.match(source, /prefixReview\.value\.baseline/)
   assert.match(source, /确认销售型号前缀变更/)
-  assert.match(source, /SKU 编码与历史报价、订单、采购快照不会改变/)
+  assert.match(source, /SKU 编码及历史报价、订单、采购快照不变/)
 })
 
 test('ordinary product data retains the normal save path', async () => {

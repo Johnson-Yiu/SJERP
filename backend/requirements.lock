@@ -1,0 +1,27 @@
+# SUNJACK-ERP runtime lock
+#
+# Generated from a clean Python 3.14 verification environment on 2026-10-28.
+# The application target remains CPython 3.12+; install this file with:
+#   python -m pip install --requirement backend/requirements.lock
+#
+# Keep this file exact-pinned. To update dependencies, change the direct pins
+# in requirements.txt, resolve in a clean environment, refresh this complete
+# transitive list, run the backend test suite and pip check, then review the
+# resulting diff. Do not use pip install --upgrade or pip audit fix as a lock
+# update mechanism.
+
+asgiref==3.13.0
+bleach==6.4.0
+Django==6.0.9
+django-cors-headers==4.9.0
+dj-database-url==3.1.2
+djangorestframework==3.18.3
+et-xmlfile==2.0.0
+openpyxl==3.1.5
+Pillow==13.0.0
+psycopg==3.3.6
+psycopg-binary==3.3.6
+pycountry==26.2.16
+sqlparse==0.6.0
+tzdata==2026.6
+webencodings==0.6.1

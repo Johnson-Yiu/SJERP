@@ -5,7 +5,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from crm.country_registry import AmbiguousCountryError, CountryNotFoundError, country_options, country_label, resolve_country_code
+from crm.country_registry import COUNTRY_CATALOG, COUNTRY_CHINESE_NAMES, AmbiguousCountryError, CountryNotFoundError, country_options, country_label, resolve_country_code
 from crm.models import Contact, Customer, Quote
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.serializers import CustomerSerializer
@@ -32,6 +32,34 @@ class CountryRegistryTests(TestCase):
         self.assertEqual(united_states["label"], "United States / US")
         self.assertIn("america", united_states["searchText"])
         self.assertEqual(country_label("us"), "United States / US")
+
+    def test_catalog_covers_all_249_iso_records_with_cldr_chinese_names(self):
+        self.assertEqual(len(COUNTRY_CATALOG), 249)
+        self.assertEqual(set(COUNTRY_CATALOG), set(COUNTRY_CHINESE_NAMES))
+        options = {option["value"]: option for option in country_options()}
+        self.assertEqual(len(options), 249)
+        for code, (english_name, alpha3) in COUNTRY_CATALOG.items():
+            with self.subTest(code=code):
+                chinese_name = COUNTRY_CHINESE_NAMES[code]
+                self.assertTrue(chinese_name)
+                self.assertRegex(alpha3, r"^[A-Z]{3}$")
+                self.assertEqual(resolve_country_code(chinese_name), code)
+                self.assertEqual(options[code]["nameZh"], chinese_name)
+                self.assertIn(english_name, options[code]["searchText"])
+                self.assertIn(chinese_name, options[code]["searchText"])
+                self.assertIn(code, options[code]["searchText"])
+                self.assertIn(alpha3, options[code]["searchText"])
+
+    def test_existing_and_cldr_variant_chinese_aliases_remain_compatible(self):
+        expected = {
+            "中国香港": "HK", "香港特别行政区": "HK", "中国澳门": "MO", "澳门特别行政区": "MO",
+            "中国台湾": "TW", "南韩": "KR", "北韩": "KP", "美利坚合众国": "US",
+            "刚果民主共和国": "CD", "刚果共和国": "CG", "象牙海岸": "CI", "捷克共和国": "CZ",
+            "福克兰群岛（马尔维纳斯群岛）": "FK", "巴勒斯坦": "PS",
+        }
+        for value, code in expected.items():
+            with self.subTest(value=value):
+                self.assertEqual(resolve_country_code(value), code)
 
 
 class CustomerCountryApiTests(APITestCase):

@@ -5,8 +5,8 @@ import ComboInput from '../src/components/ComboInput.vue'
 import { resourceConfigs } from '../src/resourceConfigs.js'
 
 const options = [
-  { value: 'US', label: 'United States / US', searchText: 'United States US USA America 美国' },
-  { value: 'DE', label: 'Germany / DE', searchText: 'Germany DE 德国' },
+  { value: 'US', label: 'United States / US', nameZh: '美国', searchText: 'United States 美国 US USA America' },
+  { value: 'DE', label: 'Germany / DE', nameZh: '德国', searchText: 'Germany 德国 DE DEU' },
 ]
 
 describe('ISS-008 country picker', () => {
@@ -23,6 +23,18 @@ describe('ISS-008 country picker', () => {
 
     expect(wrapper.emitted('update:modelValue')).toEqual([['US']])
     expect(wrapper.find('.custom-option').exists()).toBe(false)
+  })
+
+  it('filters the complete option contract by Chinese name and alpha codes', async () => {
+    const wrapper = mount(ComboInput, { props: { modelValue: '', options, allowCustom: false, label: '国家/地区' } })
+    const input = wrapper.get('input')
+
+    await input.setValue('德国')
+    expect(wrapper.text()).toContain('Germany / DE')
+    await input.setValue('DEU')
+    expect(wrapper.text()).toContain('Germany / DE')
+    await input.setValue('DE')
+    expect(wrapper.text()).toContain('Germany / DE')
   })
 
   it('does not save an unknown typed value when custom entries are disabled', async () => {

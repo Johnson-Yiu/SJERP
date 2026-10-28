@@ -1,0 +1,50 @@
+{
+  "versions": {
+    "a": {
+      "id": 1,
+      "quote_no": "SJ20261028DE001",
+      "recipient_name": "Version A Recipient",
+      "buyer_email": "version-a@example.com",
+      "buyer_phone": "+49 222 A",
+      "buyer_address": "Version A Berlin Address"
+    },
+    "b": {
+      "id": 2,
+      "quote_no": "SJ20261028DE001-1",
+      "recipient_name": "Version B Recipient",
+      "buyer_email": "",
+      "buyer_phone": "+49 333 B",
+      "buyer_address": "Version B Berlin Address"
+    }
+  },
+  "current_contact": {
+    "name": "Changed Primary",
+    "email": "changed-master@example.com",
+    "phone": "+49 999"
+  },
+  "current_customer_address": "Changed Current Master Address",
+  "downloads": [
+    {
+      "file": "version-a.xlsx",
+      "bytes": 10170,
+      "sha256": "c6d0f9dd54e5d044cd1f1cde840334aea33ba6cd6bea52e097130b4383d40387",
+      "quote_id": 1,
+      "recipient_cells_match_database": true
+    },
+    {
+      "file": "version-b-empty-email.xlsx",
+      "bytes": 10150,
+      "sha256": "ecd35581aec2542e5780285626f1ada118e3cad0240c3b94007654380968cad6",
+      "quote_id": 2,
+      "recipient_cells_match_database": true
+    },
+    {
+      "file": "version-b-with-unsaved-input.xlsx",
+      "bytes": 10150,
+      "sha256": "59c0c7dea45623e44b46485f688f6ab10742ae90064448ef8c1abcba0d90434b",
+      "quote_id": 2,
+      "recipient_cells_match_database": true
+    }
+  ],
+  "scope": "Synthetic isolated SQLite; actual Chrome downloads from Django API; no production or Microsoft Excel application claim"
+}

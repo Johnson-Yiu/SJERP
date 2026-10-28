@@ -1,7 +1,9 @@
 import path from 'node:path'
 import { expect, test } from '@playwright/test'
 
-const evidenceDir = path.resolve(process.cwd(), '..', 'docs', 'uat-evidence', 'r1-hist-01-fix-04')
+const evidenceDir = process.env.R1_REPAIR_EVIDENCE_DIR
+  ? path.resolve(process.env.R1_REPAIR_EVIDENCE_DIR)
+  : path.resolve(process.cwd(), '..', 'docs', 'uat-evidence', 'r1-hist-01-fix-04')
 
 async function layoutMetrics(page) {
   return page.evaluate(() => ({
@@ -16,7 +18,10 @@ async function layoutMetrics(page) {
 }
 
 async function assertSkuQuantitiesAreVisible(page) {
-  const result = await page.locator('.analysis-table-wrap').evaluateAll(wrappers => wrappers.map(wrapper => {
+  const result = await page.locator('.analysis-detail-card').evaluateAll(cards => cards
+    .filter(card => card.querySelector('h5')?.textContent.trim() === 'SKU')
+    .map(card => {
+    const wrapper = card.querySelector('.analysis-table-wrap')
     const table = wrapper.querySelector('.analysis-table')
     const wrapperRect = wrapper.getBoundingClientRect()
     const tableRect = table.getBoundingClientRect()

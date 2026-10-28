@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { evidencePath, installRepair04Diagnostics } from './r1-repair-04-diagnostics.js'
 const longName = '长名称照明灯带产品及完整规格用于库存办公页面验收'.repeat(3)
 const skus = Array.from({length:52},(_,i)=>({id:i+1,sku:`SKU-${String(i+1).padStart(3,'0')}`,display_name_cn:longName,product_name:longName,unit:i%2?'pcs':'m',actual_quantity:i===0?0:123456789012,reserved_quantity:i===2?123456789012:i===1?12:0,available_quantity:i===0||i===2?0:i===1?123456789000:123456789012,in_transit_quantity:20,to_procure_quantity:0,trade_units:[]}))
 const movement=(i)=>({id:i+1,movement_no:`IM-${i+1}`,sku:1,sku_code:'SKU-001',product_name:longName,movement_date:'2026-10-14',type:i===1?'purchase_in':i===2?'sale_out':'adjust_in',type_display:i===1?'采购入库':i===2?'销售出库':'盘盈入库',quantity:'20',signed_quantity:i===2?'-20':'20',source_type:i===1?'goods_receipt':i===2?'shipment':'manual',is_automatic:i===1||i===2,is_reversed:i===3,warehouse:'默认仓',related_order_nos:['SO-LONG-COMPLETE-20261014-001'],trade_snapshot:{base_unit:'m'},unit_cost:'2'})
@@ -23,6 +24,8 @@ async function bounds(page,selectors){
  expect(result.pageWidth).toBeLessThanOrEqual(result.viewport)
  for(const r of result.items){expect(r.x).toBeGreaterThanOrEqual(0);expect(r.right).toBeLessThanOrEqual(result.viewport+1);expect(r.width).toBeGreaterThan(0);expect(r.height).toBeGreaterThan(0)}
 }
+test.beforeEach(async({page},testInfo)=>{page.repair04Diagnostics=installRepair04Diagnostics(page,`inventory-ux-${testInfo.title}`)})
+test.afterEach(async({page})=>{await page.repair04Diagnostics?.save()})
 for(const width of [1440,1280,1024]){
  test(`inventory overview, reserved quantities and SKU drawer at ${width}`,async({page})=>{
   await page.setViewportSize({width,height:1000});await mock(page);await page.goto('/inventory')
@@ -34,6 +37,7 @@ for(const width of [1440,1280,1024]){
   await bounds(page,['.sku-detail','.detail-metrics button','.detail-filter'])
   expect(await page.locator('.detail-metrics').evaluate(e=>getComputedStyle(e).gridTemplateColumns.split(' ').length)).toBe(width>1300?6:3)
   const values=await page.locator('.detail-metrics strong').evaluateAll(es=>es.map(e=>({scroll:e.scrollWidth,client:e.clientWidth})));for(const value of values)expect(value.scroll).toBeLessThanOrEqual(value.client+1)
+  const screenshot=evidencePath(`inventory-overview-${width}.png`);if(screenshot)await page.screenshot({path:screenshot,fullPage:true})
  })
  test(`ledger filters, sticky actions and adjustment dialog at ${width}`,async({page})=>{
   await page.setViewportSize({width,height:1000});await mock(page);await page.goto('/inventory-movements')
@@ -43,6 +47,7 @@ for(const width of [1440,1280,1024]){
   await expect(page.locator('.clickable-row').nth(3).getByTitle('冲销')).toHaveCount(0)
   await page.getByRole('button',{name:'新建库存调整',exact:true}).click();await expect(page.getByRole('dialog',{name:'新建手工库存流水'})).toBeVisible()
   await bounds(page,['.inventory-movement-modal','.movement-grid input','.movement-grid select','.modal-foot button'])
+  const screenshot=evidencePath(`inventory-ledger-${width}.png`);if(screenshot)await page.screenshot({path:screenshot,fullPage:true})
   await page.getByRole('button',{name:'取消',exact:true}).click();await expect(page.getByRole('dialog',{name:'新建手工库存流水'})).toHaveCount(0)
  })
 }

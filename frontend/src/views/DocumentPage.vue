@@ -548,6 +548,7 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
 .currency-hint{display:block!important;white-space:normal!important;overflow:visible!important;color:#8b602c!important;font-size:var(--text-caption);line-height:1.5;margin-top:5px}
 .quote-table th:nth-child(2),.quote-table td:nth-child(2){min-width:200px}
 .toolbar:not(.quote-toolbar)>select{min-width:120px;min-height:42px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:white;color:inherit}
+.toolbar:not(.quote-toolbar){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,160px) minmax(0,160px) auto;align-items:center}.toolbar:not(.quote-toolbar) .search-box{width:auto;min-width:0}.toolbar:not(.quote-toolbar)>select{width:100%;min-width:0}.toolbar:not(.quote-toolbar) .filter-reset{white-space:nowrap;flex:none}@media(max-width:760px){.toolbar:not(.quote-toolbar){grid-template-columns:repeat(2,minmax(0,1fr))}.toolbar:not(.quote-toolbar) .search-box{grid-column:1/-1}.toolbar:not(.quote-toolbar) .filter-reset{grid-column:1/-1;justify-self:start}}
 </style>
 
 <style scoped>

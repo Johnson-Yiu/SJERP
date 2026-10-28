@@ -1,7 +1,7 @@
 # R1-INTEGRATION-PRE-PILOT-01 集成报告
 
-日期：2026-10-29  
-集成分支：`codex/integration-pre-pilot-01`  
+日期：2026-10-29
+集成分支：`codex/integration-pre-pilot-01`
 固定基线：`bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`
 
 ## 结论

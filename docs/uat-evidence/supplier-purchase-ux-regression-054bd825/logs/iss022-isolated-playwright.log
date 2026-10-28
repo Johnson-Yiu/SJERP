@@ -1,0 +1,10 @@
+[WebServer] (node:32932) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:33588) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 browser-tests\iss022-moq-real.spec.js:59:3 › ISS-022 采购 MOQ 真实浏览器回归 › 等于 MOQ、低于 MOQ、交易单位换算、取消保留草稿及例外留痕 (8.8s)
+
+  1 passed (12.7s)

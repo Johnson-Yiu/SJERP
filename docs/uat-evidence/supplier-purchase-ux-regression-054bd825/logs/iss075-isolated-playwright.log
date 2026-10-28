@@ -1,0 +1,10 @@
+[WebServer] (node:8344) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:9332) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 browser-tests\iss075-payment-terms-real.spec.js:22:3 › ISS-075 供应商固定付款规则退出常规前端真实浏览器回归 › 供应商 UI、空付款条件草稿/正式 PO、历史付款计划与窄屏 (10.0s)
+
+  1 passed (14.3s)

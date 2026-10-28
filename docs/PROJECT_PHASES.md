@@ -575,3 +575,13 @@ ISS-036 保持 `FIXED_PENDING_REVIEW`；冲突历史快照的业务归属/优先
 
 没有触发或重试 GitHub Actions；本地结果不代替 CI。11 月 1 日仅对推送后的精确最终 SHA 核对 `backend`、`backend-postgres`、`frontend` 三个既有 job，并保留运行链接/状态和外部启动错误。未合并 master、未部署、未启用正式 RBAC、未操作实际业务数据库、未关闭 Issue。来源验收及本轮日志/截图索引见[验收索引](uat-evidence/INDEX.md)。
 
+## R1-STATUS-RECONCILE-01 状态对账（2026-10-28）
+
+基于固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb` 创建独立 worktree 和分支 `codex/reconcile-issue-ledger-20261028`。读取用户提供的 Excel 工作簿 `SUNJACK-ERP_Issue修复状态校准与下一轮计划_2026-10-28.xlsx`，并对照当前 `PROJECT_ISSUES.md`、本文件、`REVIEW_PROTOCOL.md`、实际分支 HEAD 和验收报告，逐项核对 124 个 Issue（含 `ISS-008-FUP-01`）及 46 条业务规则。
+
+本轮只修改状态台账、阶段记录和 `AGENTS.md` 协作规则，未修改产品业务代码、模型、迁移、前端或部署配置。规范状态从固定基线归一化的 OPEN 4、BLOCKED 20、NEEDS_VERIFICATION 17、FIXED_PENDING_REVIEW 73、CLOSED 10 校准为 OPEN 2、BLOCKED 18、NEEDS_VERIFICATION 16、FIXED_PENDING_REVIEW 78、CLOSED 10。实际状态变化仅为 ISS-024、ISS-040、ISS-042、ISS-048、ISS-052、ISS-062；旧状态、旧失败和历史验收结论在对账报告中保留。
+
+ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记录为阶段成果可封版并进入 `FIXED_PENDING_REVIEW`，不代表整体 `CLOSED`。ISS-040 的 Packing List 导出保留实现成果，但原生 Excel Print Preview 仍 PENDING。ISS-024 从滞后 OPEN 校准为 `FIXED_PENDING_REVIEW`。ISS-062 的日期窗口实现已有证据，但业务日期口径仍未确认，改为 `P2 / BLOCKED`。ISS-006、ISS-007、ISS-028、ISS-035、ISS-055、ISS-074、ISS-105、ISS-114 等重点项只补足精确 SHA 和证据边界，不因旧报告、未执行项或本地回归自动关闭。
+
+逐项旧状态、新状态、校准依据、SHA、46 条规则摘要及未执行/业务阻断清单见 [R1 状态对账报告](uat-evidence/r1-status-reconcile-20261028/README.md)。本轮未连接生产数据库、未执行 PostgreSQL、未触发 GitHub Actions、未合并 master、未部署、未关闭 Issue。
+

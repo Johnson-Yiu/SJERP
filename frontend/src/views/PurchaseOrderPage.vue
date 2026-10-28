@@ -106,7 +106,7 @@ async function onCurrencyChanged(event) {
     current.items.forEach(item => { item.unit_price = ''; applySupplierSkuPrice(item) })
   } finally { event.target.value = draft.value.currency; draftChanging.value = false }
 }
-async function paymentSaved() { paymentTarget.value = null; notice.value = '供应商付款已记录为支出流水。'; await load() }
+async function paymentSaved() { paymentTarget.value = null; notice.value = '供应商付款已登记为支出流水。'; await load() }
 async function openCostAllocation(purchase) {
   if (!can('purchases', 'update')) return
   error.value = ''
@@ -403,15 +403,15 @@ function syncSelectedSkus(ids) {
   })
   if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
 }
-async function createPurchase() { if (saving.value || draftChanging.value || !can('purchases', editingPurchaseId.value ? 'update' : 'create')) return; if (!referenceReady.value) { error.value = '供应商、订单或 SKU 资料尚未加载完成，请重试后再保存。'; return } if (!supplierSourcesReady.value) { error.value = '供应商供货档案仍在加载或加载失败，请重试后再保存。'; return } if (paymentTermsError(draft.value.payment_terms_snapshot, { allowEmpty: true })) { error.value = paymentTermsError(draft.value.payment_terms_snapshot, { allowEmpty: true }); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; if (payload.sales_link_restricted) delete payload.order; delete payload.sales_link_restricted; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); guard.markClean(); await closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
+async function createPurchase() { if (saving.value || draftChanging.value || !can('purchases', editingPurchaseId.value ? 'update' : 'create')) return; if (!referenceReady.value) { error.value = '供应商、订单或 SKU 资料尚未加载完成，请重试后再保存。'; return } if (!supplierSourcesReady.value) { error.value = '供应商供货档案仍在加载或加载失败，请重试后再保存。'; return } if (paymentTermsError(draft.value.payment_terms_snapshot, { allowEmpty: true })) { error.value = paymentTermsError(draft.value.payment_terms_snapshot, { allowEmpty: true }); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; if (payload.sales_link_restricted) delete payload.order; delete payload.sales_link_restricted; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); guard.markClean(); await closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认采购下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认采购下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
 function moqExceptionMessage(data) {
   const details = (data?.exceptions || []).map(item => `${item.sku_code || '未命名 SKU'}：实际 ${item.actual_quantity} ${item.base_unit || ''}，MOQ ${item.moq} ${item.base_unit || ''}，差额 ${item.shortage} ${item.base_unit || ''}`.replaceAll('  ', ' ').trim())
-  return `本次采购存在低于供应商 MOQ 的明细。\n${details.join('\n')}\n可以填写例外原因后继续下单；取消则保留当前采购草稿。`
+  return `本次采购有明细低于供应商 MOQ。\n${details.join('\n')}\n填写例外原因后仍可下单；取消则保留当前采购草稿。`
 }
 async function place(row) {
   if (!can('purchases', 'update')) return
   const zeroCount = (row.items || []).filter(item => Number(item.unit_price) === 0).length
-  if (!await confirmDialog({ title: '确认采购下单', message: `${zeroCount ? `当前采购单存在 ${zeroCount} 条 0 单价商品，请确认这是赠品、样品或其他合理的零价采购。\n` : ''}确认下单后将生成应付计划并进入在途采购。是否继续？`, confirmText: '确认下单', danger: true })) return
+  if (!await confirmDialog({ title: '确认采购下单', message: `${zeroCount ? `当前采购单存在 ${zeroCount} 条 0 单价商品，请确认这是赠品、样品或其他合理的零价采购。\n` : ''}确认采购下单后将生成应付计划并进入在途采购。是否继续？`, confirmText: '确认采购下单', danger: true })) return
   let reason = ''
   while (true) {
     try {
@@ -424,7 +424,7 @@ async function place(row) {
     } catch (err) {
       const data = err.response?.data
       if (data?.code !== 'purchase_moq_exception_required') {
-        error.value = message(err, '确认下单失败。')
+        error.value = message(err, '确认采购下单失败。')
         return
       }
       const nextReason = await inputDialog({
@@ -441,7 +441,7 @@ async function place(row) {
     }
   }
 }
-async function cancelPurchase(row) { if (!can('purchases', 'update')) return; const reason = await inputDialog({ title: '取消采购', message: `请填写取消采购单 ${row.purchase_no} 的原因。`, label: '取消原因', placeholder: '请输入取消原因', required: true, maxLength: 500, confirmText: '确认取消', danger: true }); if (!reason) return; try { await api.post(`/purchase-orders/${row.id}/cancel/`, { reason }); notice.value = '采购单已取消。'; await load() } catch (err) { error.value = message(err, '取消采购失败。') } }
+async function cancelPurchase(row) { if (!can('purchases', 'update')) return; const reason = await inputDialog({ title: '取消采购单', message: `请填写取消采购单 ${row.purchase_no} 的原因。`, label: '取消原因', placeholder: '请输入取消原因', required: true, maxLength: 500, confirmText: '确认取消', danger: true }); if (!reason) return; try { await api.post(`/purchase-orders/${row.id}/cancel/`, { reason }); notice.value = '采购单已取消。'; await load() } catch (err) { error.value = message(err, '取消采购单失败。') } }
 async function deleteDraft(row) { if (!can('purchases', 'delete') || !await confirmDialog({ title: '确认删除采购草稿', message: `确定删除草稿 ${row.purchase_no} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/purchase-orders/${row.id}/`); notice.value = '采购草稿已删除。'; if (Number(route.query.detail) === row.id) await closeDetail(); await load() } catch (err) { error.value = message(err, '删除采购草稿失败。') } }
 function pay(row) { if (can('purchases', 'update')) paymentTarget.value = row }
 onMounted(() => load({ includeReferenceData: true }))
@@ -482,7 +482,7 @@ watch(() => route.query.detail, id => {
   <div class="core-list-page">
     <PurchasePaymentModal v-if="paymentTarget" :purchase="paymentTarget" @close="paymentTarget = null" @saved="paymentSaved" />
     <PurchaseCostAllocationModal v-if="costTarget" :purchase="costTarget" :orders="costOrders" @close="costTarget = null" @saved="notice = '成本分配已保存，订单预估毛利已更新。'" />
-    <div class="page-head list-intro"><p>管理采购、到货和供应商付款。</p><div class="page-actions"><button class="btn btn-secondary" :disabled="loading" @click="load({ includeReferenceData: true })"><RefreshCw :size="16" /> 刷新</button><button v-if="can('purchases', 'create')" class="btn btn-primary" :disabled="referenceLoading || !referenceReady" @click="startCreate"><Plus :size="16" /> 新建采购单</button></div></div>
+    <div class="page-head list-intro"><p>管理采购下单、到货与供应商应付。</p><div class="page-actions"><button class="btn btn-secondary" :disabled="loading" @click="load({ includeReferenceData: true })"><RefreshCw :size="16" /> 刷新</button><button v-if="can('purchases', 'create')" class="btn btn-primary" :disabled="referenceLoading || !referenceReady" @click="startCreate"><Plus :size="16" /> 新建采购单</button></div></div>
     <div v-if="referenceErrorEntries.length" class="option-load-error" role="alert"><span>创建采购单所需的关联资料未能全部加载，暂不能保存。{{ referenceErrorEntries.map(([, value]) => value).join(' ') }}</span><button type="button" :disabled="loading" @click="load({ includeReferenceData: true })">重试加载</button></div>
     <p v-else-if="referenceLoading" class="option-loading-note" role="status">正在加载采购单所需的供应商、订单和 SKU 资料…</p>
     <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load({ includeReferenceData: true })" />
@@ -498,7 +498,7 @@ watch(() => route.query.detail, id => {
     <div v-if="openCreate && can('purchases', editingPurchaseId ? 'update' : 'create')" class="modal-backdrop purchase-create-backdrop" @mousedown.self="closeCreate">
       <section class="modal wide purchase-create-modal" role="dialog" aria-modal="true" aria-labelledby="purchase-create-title">
         <div class="section-heading modal-head">
-          <div><h3 id="purchase-create-title">{{ editingPurchaseId ? '编辑采购草稿' : '新建采购单' }}</h3><p>草稿保存后可确认下单。</p></div>
+          <div><h3 id="purchase-create-title">{{ editingPurchaseId ? '编辑采购草稿' : '新建采购单' }}</h3><p>保存草稿后可确认采购下单。</p></div>
           <button class="icon-btn" aria-label="关闭" @click="closeCreate"><X :size="17" /></button>
         </div>
         <form @submit.prevent="createPurchase">
@@ -506,28 +506,28 @@ watch(() => route.query.detail, id => {
             <div class="draft-section-heading"><h4>采购基本信息</h4><label class="purchase-identity">采购单号<input :value="draft.purchase_no || '保存后由系统自动生成'" class="readonly-input" readonly /></label></div>
             <div class="form-grid">
               <label>供应商 * <span v-if="inheritedSupplier" class="inherited-badge">{{ inheritedOrder ? '由订单履约带入' : '由关联入口带入' }}</span><select :value="draft.supplier" aria-label="供应商" required :disabled="inheritedSupplier" @change="onSupplierChanged"><option value="">选择供应商</option><option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.id">{{ supplier.name }}</option></select><small>整张采购单使用同一供应商。</small></label>
-              <label>来源销售订单（可选）<select v-model="draft.order" aria-label="来源销售订单（可选）" :disabled="inheritedOrder || draft.sales_link_restricted || !can('orders', 'view') || !can('orders', 'update')"><option value="">不关联订单</option><option v-for="order in orders.filter(row => row.status !== 'cancelled')" :key="order.id" :value="order.id">{{ order.order_no }} · {{ order.customer_name }}</option></select><small>主要来源订单；多订单归属在成本分配中处理。</small></label>
+              <label>来源销售订单（可选）<select v-model="draft.order" aria-label="来源销售订单（可选）" :disabled="inheritedOrder || draft.sales_link_restricted || !can('orders', 'view') || !can('orders', 'update')"><option value="">不关联订单</option><option v-for="order in orders.filter(row => row.status !== 'cancelled')" :key="order.id" :value="order.id">{{ order.order_no }} · {{ order.customer_name }}</option></select><small>一张采购单可关联多个销售订单，具体归属在成本分配中处理。</small></label>
               <label>下单日期 *<input v-model="draft.order_date" type="date" required /></label>
               <label>预计到货<input v-model="draft.expected_arrival_date" type="date" /></label>
               <label>币种 *<select :value="draft.currency" aria-label="采购币种" required @change="onCurrencyChanged"><option v-for="[code, name] in currencies" :key="code" :value="code">{{ code }} · {{ name }}</option></select></label>
               <label v-if="draft.currency !== 'CNY'">对人民币汇率 *<input v-model="draft.exchange_rate" type="number" min="0.000001" step="0.000001" placeholder="1 单位外币兑换人民币金额" required /></label>
             </div>
           </section>
-          <section class="draft-section"><div class="draft-section-heading"><h4>本次付款计划</h4><small>仅用于本采购单；未协商时可暂不设置。</small></div><PaymentTermsEditor v-model="draft.payment_terms_snapshot" :allow-empty="true" /></section>
+          <section class="draft-section"><div class="draft-section-heading"><h4>本单付款计划</h4><small>仅记录本单约定；未协商时可暂不填写。</small></div><PaymentTermsEditor v-model="draft.payment_terms_snapshot" :allow-empty="true" /></section>
           <section class="draft-section line-editor">
             <div class="draft-section-heading"><h4>采购商品</h4><small v-if="selectedOrder">关联：{{ selectedOrder.order_no }}</small></div>
             <p class="section-help">选择 SKU 后填写规格、数量和单价。</p>
             <SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" :show-price="false" />
             <div v-if="moqCheckUnavailable.length || moqWarnings.length" class="moq-editor-feedback" aria-live="polite">
               <p v-for="item in moqCheckUnavailable" :key="item.key" class="moq-check-unavailable" role="status">{{ item.message }}</p>
-              <p v-for="warning in moqWarnings" :key="warning.source_id" class="moq-editor-warning" data-testid="draft-moq-warning" role="alert">{{ warning.sku_code }}：实际 {{ quantity(warning.actual_quantity) }} {{ warning.base_unit }}，MOQ {{ quantity(warning.moq) }} {{ warning.base_unit }}，差额 {{ quantity(warning.shortage) }} {{ warning.base_unit }}。可保存草稿；确认下单时需填写例外原因。</p>
+              <p v-for="warning in moqWarnings" :key="warning.source_id" class="moq-editor-warning" data-testid="draft-moq-warning" role="alert">{{ warning.sku_code }}：实际 {{ quantity(warning.actual_quantity) }} {{ warning.base_unit }}，MOQ {{ quantity(warning.moq) }} {{ warning.base_unit }}，差额 {{ quantity(warning.shortage) }} {{ warning.base_unit }}。可保存草稿；确认采购下单时需填写例外原因。</p>
             </div>
             <article v-for="(item,index) in draft.items" :key="index" class="purchase-line">
               <header class="purchase-line-heading"><div class="purchase-sku"><b>{{ itemSku(item)?.display_name_cn || itemSku(item)?.product_name || '—' }}</b><small>SKU: {{ itemSku(item)?.sku_code || item.sku || '—' }} · Sales Model: {{ itemSku(item)?.sales_model || '—' }}</small></div><button type="button" class="text-btn danger" @click="draft.items.splice(index, 1)">删除</button></header>
               <div class="line-source-grid">
                 <div class="line-field"><span>交易单位 / 包装规格</span><TradeUnitPicker :line="item" :sku="itemSku(item)" :supplier="draft.supplier" /></div>
                 <label class="line-field">供应商供货档案<select v-model="item.supplier_sku" :disabled="!draft.supplier || !item.sku || supplierSkuLoading[supplierSourceKey(item)]" @change="applySupplierSkuPrice(item)"><option v-if="!draft.supplier || !item.sku" value="">供应商供货档案（可选）</option><option v-else-if="!supplierSourcesFor(item).length && !supplierSkuErrors[supplierSourceKey(item)]" value="">暂无供货档案</option><option v-for="source in supplierSourcesFor(item)" :key="source.id" :value="source.id">{{ source.supplier_model || source.supplier_sku_code }} · {{ source.supplier_sku_code }} · {{ source.purchase_price }} {{ source.currency }}</option></select><small v-if="supplierSkuLoading[supplierSourceKey(item)]">正在加载供货档案…</small><small v-else-if="supplierSkuErrors[supplierSourceKey(item)]" class="option-load-error-text" role="alert">{{ supplierSkuErrors[supplierSourceKey(item)] }} <button type="button" @click="loadSupplierSkuOptions(item)">重试</button></small><small v-else-if="draft.supplier && item.sku && !supplierSourcesFor(item).length">未维护供应商供货档案，本次采购仍可继续。</small></label>
-                <button type="button" class="supplier-match-action" @click="matchingItem = item">查找其他供应商</button>
+                <button type="button" class="supplier-match-action" @click="matchingItem = item">更换供应商来源</button>
               </div>
               <p v-if="supplierPriceWarning(item)" class="supplier-price-warning">{{ supplierPriceWarning(item) }}</p>
               <div class="line-business-grid">
@@ -541,7 +541,7 @@ watch(() => route.query.detail, id => {
           </section>
           <section class="purchase-total-summary"><h4>采购金额汇总</h4><div><span>商品项数 <b>{{ draft.items.length }}</b></span><span>币种 <b>{{ draft.currency }}</b></span><span>商品金额 <strong>{{ draft.currency }} {{ money(draftAmount) }}</strong></span></div></section>
           <p v-if="error" class="form-error" role="alert">{{ error }}</p>
-          <div class="editor-actions"><small>草稿保存不会生成应付或在途采购；确认下单后才进入正式采购流程。</small><div><button type="button" class="btn btn-secondary" @click="closeCreate">取消</button><button v-if="can('purchases', editingPurchaseId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || draftChanging || !referenceReady || !supplierSourcesReady || !!paymentTermsError(draft.payment_terms_snapshot, { allowEmpty: true })"><Save :size="16" /> {{ saving ? '保存中…' : (editingPurchaseId ? '保存采购草稿' : '创建采购单') }}</button></div></div>
+          <div class="editor-actions"><small>保存采购草稿不会生成应付或在途采购；确认采购下单后才进入正式采购流程。</small><div><button type="button" class="btn btn-secondary" @click="closeCreate">取消</button><button v-if="can('purchases', editingPurchaseId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || draftChanging || !referenceReady || !supplierSourcesReady || !!paymentTermsError(draft.payment_terms_snapshot, { allowEmpty: true })"><Save :size="16" /> {{ saving ? '保存中…' : '保存采购草稿' }}</button></div></div>
         </form>
       </section>
     </div>

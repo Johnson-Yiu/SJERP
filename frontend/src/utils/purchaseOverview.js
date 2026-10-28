@@ -7,7 +7,7 @@ export function purchaseArrival(purchase, now = new Date()) {
 }
 export function purchaseTasks(purchase) {
   const tasks = []
-  if (purchase.status === 'draft') tasks.push({ title: '采购单待确认', description: '确认后进入正式采购流程。', action: '确认下单', target: 'confirm' })
+  if (purchase.status === 'draft') tasks.push({ title: '采购单待确认', description: '确认采购下单后进入正式采购流程。', action: '确认采购下单', target: 'confirm' })
   const remaining = (purchase.items || []).filter(item => Number(item.remaining_quantity) > 0).length
   if (['ordered', 'partial'].includes(purchase.status) && remaining) tasks.push({ title: '待到货', description: `还有 ${remaining} 条明细未全部到货。`, action: '查看收货', target: 'receipt' })
   if (!['draft', 'cancelled'].includes(purchase.status) && Number(purchase.unpaid_amount) > 0) tasks.push({ title: '待付款', description: `待付 ${purchase.currency} ${Number(purchase.unpaid_amount).toFixed(2)}`, action: '查看 / 登记付款', target: 'payment' })

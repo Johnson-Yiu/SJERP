@@ -52,7 +52,7 @@ it('order draft has one actionable confirmation and retains todo information', a
   expect(w.get('.current-todo-card').text()).toContain('订单待确认'); expect(w.get('.current-todo-card').text()).toContain('确认后生成库存预留和应收计划。')
 })
 it('purchase draft has one header confirmation and retains todo information', async () => {
-  const w = await purchaseView('draft'); expect(button(w,'确认下单')).toHaveLength(1); expect(w.get('header').text()).toContain('确认下单'); expect(w.get('.current-todo').text()).toContain('采购单待确认'); expect(w.get('.current-todo').text()).toContain('确认后进入正式采购流程。')
+  const w = await purchaseView('draft'); expect(button(w,'确认采购下单')).toHaveLength(1); expect(w.get('header').text()).toContain('确认采购下单'); expect(w.get('.current-todo').text()).toContain('采购单待确认'); expect(w.get('.current-todo').text()).toContain('确认采购下单后进入正式采购流程。')
 })
 it('active order procurement, shipment and receivable actions remain', async () => {
   order.status = 'confirmed'; const w = await orderView(); expect(button(w.get('.current-todo-card'),'查看采购与发货')).toHaveLength(2); expect(w.get('.task-row a').text()).toBe('查看 / 登记本单应收')
@@ -76,18 +76,18 @@ it('order name/SKU and trade/base hierarchy preserve values', async () => {
   const w = await orderView('items'); const cells = w.findAll('tbody tr td'); expect(cells[1].get('small').text()).toBe('SKU-000004'); expect(cells[1].element.firstChild.textContent).toBe('面板灯'); expect(cells[4].element.firstChild.textContent).toBe('2.00'); expect(cells[4].get('small').text()).toBe('基础数量：4.00 pcs'); expect(item.quantity).toBe('4.00'); expect(item.trade_quantity).toBe('2.00')
 })
 it('unsaved preview retains editing caption by default', () => {
-  const w = mount(QuotePreviewModal, { props: { draft: { ...pi, quote_no: pi.invoice_no, quote_date: pi.terms.quote_date, currency: 'USD' } } }); wrappers.push(w); expect(w.get('.quote-preview-toolbar').text()).toContain('当前未保存内容 · 关闭后可继续编辑')
+  const w = mount(QuotePreviewModal, { props: { draft: { ...pi, quote_no: pi.invoice_no, quote_date: pi.terms.quote_date, currency: 'USD' } } }); wrappers.push(w); expect(w.get('.quote-preview-toolbar').text()).toContain('当前内容尚未保存 · 关闭后返回编辑')
 })
 it('QuoteEditor opens an unsaved preview and retains inputs after closing', async () => {
   mocks.api.post.mockImplementation(async url => ({ data: url === '/quotes/availability-preview/' ? { items: [] } : [] }))
   const w = await setup(QuoteEditorModal, '/quotes', { mode: 'create', quote: { ...quote, customer: 1 }, customers: [{ id: 1, name: '当前客户' }], skus: [{ id: 4, sku: 'SKU-000004', unit: 'pcs', trade_units: [{ id: 4, name: '两件箱', unit: '箱', base_unit: 'pcs', factor: '2', active: true }] }] })
-  await button(w,'预览报价单')[0].trigger('click'); await flushPromises()
-  const preview = w.getComponent(QuotePreviewModal); expect(preview.props('saved')).toBe(false); expect(preview.text()).toContain('当前未保存内容 · 关闭后可继续编辑'); expect(preview.props('draft').products[0]).toMatchObject({ quantity: '2.00', unit: '箱', amount: 20 })
+  await button(w,'预览 PI')[0].trigger('click'); await flushPromises()
+  const preview = w.getComponent(QuotePreviewModal); expect(preview.props('saved')).toBe(false); expect(preview.text()).toContain('当前内容尚未保存 · 关闭后返回编辑'); expect(preview.props('draft').products[0]).toMatchObject({ quantity: '2.00', unit: '箱', amount: 20 })
   preview.vm.$emit('close'); await flushPromises(); expect(w.findComponent(QuotePreviewModal).exists()).toBe(false); expect(w.findAll('input').some(input => input.element.value === '2.00')).toBe(true); expect(mocks.api.post.mock.calls.some(([url]) => url === '/quotes/' || url.endsWith('/revise/'))).toBe(false)
 })
 it('saved workbench preview uses saved caption and exact historical PI/export behavior', async () => {
   const w = await quoteView(); await button(w,'预览 PI')[0].trigger('click'); await flushPromises(); const preview = w.getComponent(QuotePreviewModal)
-  expect(preview.props('saved')).toBe(true); expect(preview.get('.quote-preview-toolbar').text()).toContain('已保存报价预览'); expect(preview.text()).not.toContain('当前未保存内容'); expect(preview.props('draft')).toMatchObject({ quote_no: 'QT-47', buyer: { company_name: '历史客户', address: '历史地址' }, products: [expect.objectContaining(pi.products[0])], totals: pi.totals, terms: pi.terms, payment_splits: pi.payment_splits })
-  const print = vi.spyOn(window,'print').mockImplementation(() => {}); await button(preview,'导出预览 PDF')[0].trigger('click'); expect(print).toHaveBeenCalledOnce(); print.mockRestore()
+  expect(preview.props('saved')).toBe(true); expect(preview.get('.quote-preview-toolbar').text()).toContain('已保存报价 · PI 预览'); expect(preview.text()).not.toContain('当前内容尚未保存'); expect(preview.props('draft')).toMatchObject({ quote_no: 'QT-47', buyer: { company_name: '历史客户', address: '历史地址' }, products: [expect.objectContaining(pi.products[0])], totals: pi.totals, terms: pi.terms, payment_splits: pi.payment_splits })
+  const print = vi.spyOn(window,'print').mockImplementation(() => {}); await button(preview,'导出 PI PDF')[0].trigger('click'); expect(print).toHaveBeenCalledOnce(); print.mockRestore()
   await button(w,'导出 Excel')[0].trigger('click'); expect(mocks.downloadQuoteExport).toHaveBeenCalledWith(47,'QT-47'); expect(mocks.api.post).not.toHaveBeenCalled(); expect(quote.status).toBe('draft')
 })

@@ -58,7 +58,7 @@ test('order editor does not expose manual lifecycle status changes', async () =>
   const source = await readFile(componentUrl, 'utf8')
 
   assert.match(source, /<input value="草稿" readonly/)
-  assert.match(source, /保存为草稿，确认后开始履约/)
+  assert.match(source, /保存后为草稿；确认订单后进入履约/)
   assert.match(source, /delete data\.status; delete data\.order_no/)
   assert.doesNotMatch(source, /editableOrderStatuses/)
 })

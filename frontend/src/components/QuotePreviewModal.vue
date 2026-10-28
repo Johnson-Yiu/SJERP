@@ -46,11 +46,11 @@ function printPreview() {
 
 <template>
   <div class="modal-backdrop quote-preview-backdrop" @mousedown.self="$emit('close')">
-    <section class="quote-preview-modal" role="dialog" aria-modal="true" aria-label="报价单预览">
+    <section class="quote-preview-modal" role="dialog" aria-modal="true" aria-label="PI 预览">
       <header class="quote-preview-toolbar">
-        <div><strong>报价单预览</strong><small>{{ saved ? '已保存报价预览' : '当前未保存内容 · 关闭后可继续编辑' }}</small></div>
+        <div><strong>PI 预览</strong><small>{{ saved ? '已保存报价 · PI 预览' : '当前内容尚未保存 · 关闭后返回编辑' }}</small></div>
         <div class="quote-preview-actions">
-          <button v-if="can('quotes', 'export')" type="button" class="btn btn-secondary" @click="printPreview"><Printer :size="15" /> 导出预览 PDF</button>
+          <button v-if="can('quotes', 'export')" type="button" class="btn btn-secondary" @click="printPreview"><Printer :size="15" /> 导出 PI PDF</button>
           <button type="button" class="mini-btn" aria-label="关闭预览" @click="$emit('close')"><X :size="17" /></button>
         </div>
       </header>

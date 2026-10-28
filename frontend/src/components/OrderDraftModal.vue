@@ -125,18 +125,18 @@ async function save() {
 
 <template>
   <div class="modal-backdrop order-draft-backdrop" @mousedown.self="requestClose">
-    <form class="modal wide order-draft-modal" role="dialog" aria-modal="true" aria-label="订单草稿" @submit.prevent="save">
+    <form class="modal wide order-draft-modal" role="dialog" aria-modal="true" aria-label="销售订单草稿" @submit.prevent="save">
       <div class="modal-head">
-        <div><h3>新建订单</h3><p>来源报价：{{ draft.source_quote_no || draft.quote_no || '—' }}</p></div>
+        <div><h3>新建销售订单</h3><p>来源报价：{{ draft.source_quote_no || draft.quote_no || '—' }}</p></div>
         <button type="button" class="mini-btn" aria-label="关闭订单草稿" @click="requestClose"><X :size="18" /></button>
       </div>
       <div class="modal-body">
-        <p class="draft-hint">商品已从报价带入。保存为草稿，确认订单后才预留库存并生成应收计划。</p>
+        <p class="draft-hint">商品已从报价带入。保存后为销售订单草稿；确认订单后才会预留库存并生成应收计划。</p>
         <div class="form-grid">
-          <div class="field"><label>订单编号</label><input value="保存后由系统自动生成" readonly aria-label="订单编号保存后自动生成" /></div>
+          <div class="field"><label>销售订单号</label><input value="保存后由系统自动生成" readonly aria-label="销售订单号保存后自动生成" /></div>
           <div class="field"><label>客户 *</label><input :value="customers.find((customer) => customer.id === Number(form.customer))?.name || '—'" readonly aria-label="来源报价客户" /></div>
           <div class="field"><label>订单日期 *</label><SegmentedDateInput :model-value="form.order_date" required @update:model-value="setOrderDate" /></div>
-          <div class="field"><label>预计交期</label><div class="lead-time-input"><input v-model="leadTimeDays" type="number" min="0" step="1" placeholder="天数" aria-label="交期天数" @input="setLeadTimeDays" /><span>天</span><SegmentedDateInput :model-value="form.expected_ship_date" @update:model-value="setExpectedShipDate" /></div></div>
+          <div class="field"><label>预计出货日期</label><div class="lead-time-input"><input v-model="leadTimeDays" type="number" min="0" step="1" placeholder="天数" aria-label="出货日期天数" @input="setLeadTimeDays" /><span>天</span><SegmentedDateInput :model-value="form.expected_ship_date" @update:model-value="setExpectedShipDate" /></div></div>
           <div class="field"><label>状态</label><input value="草稿" readonly /><small class="field-hint">保存后可在订单工作台确认订单。</small></div>
           <div class="field tail-policy-field"><label>尾货策略 <button type="button" class="policy-help-trigger" aria-label="查看尾货策略说明" @click="tailPolicyHelpOpen = !tailPolicyHelpOpen">?</button></label><select v-model="form.tail_goods_policy"><option v-for="(label, key) in tailPolicyLabels" :key="key" :value="key">{{ label }}</option></select><div v-if="tailPolicyHelpOpen" class="policy-help" role="note"><strong>不同策略的区别</strong><ul><li><b>整箱优先：</b>尾货自动使用标准箱尺寸、皮重和 CBM。</li><li><b>尾箱待确认：</b>保留尾货箱数并标记待确认，尺寸和 CBM 等待补充。</li><li><b>人工装箱：</b>不自动生成尾货箱，余数作为警告交由人工处理。</li></ul><small>此选择对整张订单统一生效，优先于 SKU 包装模板。</small></div></div>
           <div class="field"><label>币种</label><select :value="form.currency" aria-label="单据币种" @change="changeCurrency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
@@ -146,10 +146,10 @@ async function save() {
         <SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" />
         <div class="line-items"><div class="line-header"><span>SKU / Model</span><span>数量 *</span><span>单价 *</span><span>成本</span><span>小计</span><span /></div><div v-for="(item, index) in form.items" :key="index" class="line-row"><span class="sku-cell"><b>{{ skus.find(sku => sku.id === Number(item.sku))?.display_name_cn || skus.find(sku => sku.id === Number(item.sku))?.product_name || '—' }}</b><small>SKU: {{ skus.find(sku => sku.id === Number(item.sku))?.sku_code || item.sku || '—' }} · Sales Model: {{ skus.find(sku => sku.id === Number(item.sku))?.sales_model || '—' }}</small><small v-if="currencyHint(skus.find(sku => sku.id === Number(item.sku)), form.currency, item.unit_price)" class="currency-hint">{{ currencyHint(skus.find(sku => sku.id === Number(item.sku)), form.currency, item.unit_price) }}</small><TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="form.items.splice(index + 1, 0, { ...item })">增加规格行</button></span><input v-model="item.quantity" type="number" min="0.01" step="0.01" required /><input v-model="item.unit_price" v-money-input type="number" min="0" step="any" required /><input v-model="item.cost_price" v-money-input type="number" min="0" step="any" /><span class="amount">{{ money(Number(item.quantity) * Number(item.unit_price)) }}</span><button type="button" class="remove-line" @click="form.items.splice(index, 1)"><MinusCircle :size="17" /></button></div><p v-if="!form.items.length" class="quote-items-empty">请先从上方选择至少一个 SKU。</p></div>
         <div class="totals"><label>运费 <input v-model="form.shipping_fee" v-money-input type="number" step="any" /></label><label>折扣 <input v-model="form.discount" v-money-input type="number" step="any" /></label><div><small>商品小计 {{ form.currency }} {{ money(subtotal) }}</small><span>合计</span><strong>{{ form.currency }} {{ money(total) }}</strong></div></div>
-        <div class="field notes"><label>条款 / 备注</label><textarea v-model="form.notes" /></div>
+        <div class="field notes"><label>贸易条款 / 备注</label><textarea v-model="form.notes" /></div>
         <p v-if="error" class="draft-error">{{ error }}</p>
       </div>
-      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="requestClose">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : '保存订单' }}</button></div>
+      <div class="modal-foot"><button type="button" class="btn btn-secondary" @click="requestClose">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : '保存销售订单草稿' }}</button></div>
     </form>
   </div>
 </template>

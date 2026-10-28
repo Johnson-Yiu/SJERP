@@ -134,7 +134,7 @@ onMounted(load)
 <template>
   <div class="history-page">
     <header class="history-intro">
-      <div><p class="eyebrow">Historical ledger</p><h2>历史订单分析</h2><p>录入正式启用前的真实订单，保留原日期；历史订单 · 仅用于经营分析。</p></div>
+      <div><p class="eyebrow">Historical ledger</p><h2>历史订单分析</h2><p>录入系统启用前的真实订单并保留原日期；仅用于经营分析。</p></div>
       <span class="history-badge">不生成应收、应付、采购或库存记录</span>
     </header>
     <p v-if="error" class="history-alert error" role="alert">{{ error }}</p>
@@ -143,7 +143,7 @@ onMounted(load)
     <section v-else class="history-card history-empty">当前账号没有历史订单查看权限。</section>
     <section class="history-card">
       <template v-if="canCurrentEntry">
-        <div class="card-heading"><div><h3>新建{{ tab === 'sales' ? '销售' : '采购' }}历史订单</h3><p>只保存分析所需资料，不进入正式履约流程。</p></div><button class="secondary" @click="resetForm">清空</button></div>
+        <div class="card-heading"><div><h3>录入历史{{ tab === 'sales' ? '销售' : '采购' }}订单</h3><p>仅保存分析资料，不进入正式履约。</p></div><button class="secondary" @click="resetForm">清空</button></div>
         <div class="history-fields">
           <label v-if="tab === 'sales'">客户<select v-model="salesForm.customer"><option value="">请选择客户</option><option v-for="row in customers" :key="row.id" :value="row.id">{{ row.name }} · {{ row.code }}</option></select></label>
           <label v-else>供应商<select v-model="purchaseForm.supplier"><option value="">请选择供应商</option><option v-for="row in suppliers" :key="row.id" :value="row.id">{{ row.name }} · {{ row.code }}</option></select></label>

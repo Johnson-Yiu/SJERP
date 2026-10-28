@@ -25,7 +25,7 @@ beforeEach(() => {
 afterEach(() => { wrapper?.unmount(); vi.useRealTimers(); vi.clearAllMocks() })
 it('renders business date hierarchy and operational count cards', async () => {
   await setup(DocumentPage)
-  expect(wrapper.findAll('th').map(x => x.text())).toEqual(['订单号', '客户', '订单日期', '预计交期', '履约状态', '明细', '订单金额', '已收 / 待收', '操作'])
+  expect(wrapper.findAll('th').map(x => x.text())).toEqual(['订单号', '客户', '订单日期', '预计出货日期', '履约状态', '明细', '订单总额', '已收 / 待收', '操作'])
   expect(wrapper.find('tbody tr').text()).toContain('2026-10-01')
   expect(wrapper.find('tbody tr').text()).not.toContain('12:00')
   expect(wrapper.findComponent({ name: 'SummaryCards' }).props('items').map(x => [x.label, x.value])).toEqual([['执行中',1], ['待出库',1], ['待收款',2], ['已完成',1]])

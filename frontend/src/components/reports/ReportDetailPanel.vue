@@ -57,23 +57,23 @@ watch(() => [props.query, props.selection], () => { page.value = 1; data.value =
 </script>
 
 <template>
-  <section class="report-detail-panel" aria-label="构成明细">
+  <section class="report-detail-panel" aria-label="经营报表下钻明细">
     <header class="detail-panel-head">
       <div>
         <small>原始业务记录</small>
-        <h3>构成明细<span v-if="selectionText"> · {{ selectionText }}</span></h3>
-        <p>{{ sourceLabel }} · {{ data?.date_label || '统计日期' }} · {{ data?.period?.date_from || query.date_from }} — {{ data?.period?.date_to || query.date_to }}</p>
+        <h3>下钻明细<span v-if="selectionText"> · {{ selectionText }}</span></h3>
+        <p>{{ sourceLabel }} · 统计口径：{{ data?.date_label || '统计日期' }} · {{ data?.period?.date_from || query.date_from }} — {{ data?.period?.date_to || query.date_to }}</p>
       </div>
       <button type="button" @click="emit('close')">收起明细</button>
     </header>
-    <div v-if="loading" role="status" class="detail-panel-state">正在加载构成明细…</div>
+    <div v-if="loading" role="status" class="detail-panel-state">正在加载下钻明细…</div>
     <div v-else-if="error" role="alert" class="detail-panel-error">{{ error }} <button type="button" @click="load">重试</button></div>
     <template v-else-if="data">
-      <div class="detail-panel-summary"><span>明细记录 {{ data.count }} 条 · 去重单据 {{ data.totals.count }} 张</span><span>金额合计 ¥ {{ formatAmount(data.totals.amount) }} · 数量 {{ totalText }}</span></div>
-      <div v-if="!rows.length" class="detail-panel-state" role="status">该分组暂无可展示的原始业务记录。</div>
+      <div class="detail-panel-summary"><span>明细记录 {{ data.count }} 条 · 去重单据 {{ data.totals.count }} 张</span><span>合同金额合计 ¥ {{ formatAmount(data.totals.amount) }} · 数量 {{ totalText }}</span></div>
+      <div v-if="!rows.length" class="detail-panel-state" role="status">当前筛选范围内，该分组暂无可展示的原始业务记录。</div>
       <div v-else class="detail-table-wrap">
         <table class="detail-table">
-          <thead><tr><th>{{ isPurchase ? '采购单号' : '销售订单编号' }}</th><th>{{ isPurchase ? '下单日期' : '订单日期' }}</th><th>{{ partyLabel }}</th><th>SKU / 商品名称</th><th>{{ isPurchase ? '采购数量 / 单位' : '商品数量 / 交易单位' }}</th><th>对应金额（人民币）</th><th>状态</th><th>原始单据</th></tr></thead>
+          <thead><tr><th>{{ isPurchase ? '采购单号' : '销售订单编号' }}</th><th>{{ isPurchase ? '下单日期' : '订单日期' }}</th><th>{{ partyLabel }}</th><th>SKU / 商品名称</th><th>{{ isPurchase ? '采购数量 / 单位' : '商品数量 / 交易单位' }}</th><th>合同金额（人民币）</th><th>状态</th><th>原始单据</th></tr></thead>
           <tbody>
             <tr v-for="row in rows" :key="row.id">
               <td><strong>{{ row.document_no }}</strong><small v-if="row.is_adjustment">金额调整行</small></td>
@@ -83,7 +83,7 @@ watch(() => [props.query, props.selection], () => { page.value = 1; data.value =
               <td>{{ row.is_adjustment ? '—' : `${formatNumber(row.quantity)} ${row.unit || ''}` }}</td>
               <td>{{ formatAmount(row.amount) }}</td>
               <td>{{ row.status_display || row.status }}</td>
-              <td><RouterLink class="detail-order-link" :to="orderLink(row)">打开详情</RouterLink></td>
+              <td><RouterLink class="detail-order-link" :to="orderLink(row)">查看原始单据</RouterLink></td>
             </tr>
           </tbody>
         </table>

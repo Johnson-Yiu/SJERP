@@ -30,8 +30,8 @@ const periodCards = [
   ['income_rmb', '账面收入（折算参考）'], ['expense_rmb', '账面支出（折算参考）'], ['net_cash_rmb', '账面净收支（折算参考）'],
 ]
 const balanceCards = [
-  ['receivable_count', '待收笔数', 'count'], ['receivable_rmb', '待收款'], ['payable_count', '待付款笔数', 'count'], ['payable_rmb', '待付款'],
-  ['advance_receipt_rmb', '未核销预收款'], ['advance_payment_rmb', '未核销预付款'],
+  ['receivable_count', '待收笔数', 'count'], ['receivable_rmb', '待收款（人民币折算参考）'], ['payable_count', '待付款笔数', 'count'], ['payable_rmb', '待付款（人民币折算参考）'],
+  ['advance_receipt_rmb', '未核销预收款（人民币折算参考）'], ['advance_payment_rmb', '未核销预付款（人民币折算参考）'],
 ]
 
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
@@ -155,18 +155,18 @@ onMounted(load)
 
 <template>
   <section class="finance-page">
-    <header><div><p class="page-lede">合同、应收应付与账面收支分别列示。</p></div><button class="secondary" :disabled="loading" @click="load">刷新数据</button></header>
+    <header><div><p class="page-lede">合同、应收应付与两种资金口径分开列示。合同按订单日期，账面收支按流水发生日期，银行实际资金按银行实际日期；当前待结与未核销是当前余额。</p></div><button class="secondary" :disabled="loading" @click="load">刷新数据</button></header>
     <form class="report-filters" aria-label="概览日期范围" @submit.prevent="applyPeriod"><label>开始日期<input v-model="dateFrom" type="date" required></label><label>结束日期<input v-model="dateTo" type="date" required></label><button :disabled="loading || !!rangeError">查询</button><button type="button" class="secondary" @click="resetPeriod">本月至今</button><button v-if="can('finance', 'export')" type="button" class="secondary" :disabled="loading || exporting || !data.period || !!error" @click="exportReport">{{ exporting ? '正在导出…' : '导出 CSV' }}</button></form>
     <p v-if="rangeError" class="error" role="alert">{{ rangeError }}</p>
     <p v-if="notice" class="notice" role="status">{{ notice }}</p>
-    <p class="definition-note">合同销售额按订单日期，账面收支按流水发生日期。待收、待付按合同汇率折算，未核销预收预付按原流水汇率折算，均为当前参考值。预计订单利润 = 合同销售额 − 采购归属成本 − 订单费用，仅作经营估算。</p>
+    <p class="definition-note">合同销售额按订单日期，账面收支按流水发生日期。待收、待付按合同汇率折算，未核销预收预付按原流水汇率折算，均为当前参考值。银行实际人民币资金按银行实际日期统计；当前待结与未核销不受所选期间限制。预计订单利润 = 合同销售额 − 采购归属成本 − 订单费用，仅作经营估算。</p>
     <p class="definition-note">{{ data.cash_basis?.note || BOOK_RMB_NOTE }}</p>
     <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="error" @retry="load" />
     <template v-if="hasLoaded">
     <section class="metric-section"><header><div><h3>所选期间</h3><p>{{ data.period?.date_from }} 至 {{ data.period?.date_to }}</p></div></header><div class="cards period-cards">
       <article v-for="[key, label] in periodCards" :key="key"><span>{{ label }}</span><strong>¥{{ money(data.metrics[key]) }}</strong><button v-if="canDrill(key)" type="button" class="metric-drill" :disabled="drillLoading" @click="openDrill(key)">查看构成明细</button></article>
     </div></section>
-    <section class="metric-section"><header><div><h3>当前待结与未核销</h3><p>截至当前的待结与未核销金额</p></div></header><div class="cards balance-cards">
+    <section class="metric-section"><header><div><h3>当前待结与未核销（余额）</h3><p>截至当前的待结与未核销金额，不受所选期间筛选限制</p></div></header><div class="cards balance-cards">
       <article v-for="[key, label, kind] in balanceCards" :key="key"><span>{{ label }}</span><strong>{{ kind === 'count' ? `${data.metrics[key] || 0} 笔` : `¥${money(data.metrics[key])}` }}</strong><button v-if="canDrill(key)" type="button" class="metric-drill" :disabled="drillLoading" @click="openDrill(key)">查看构成明细</button></article>
     </div></section>
     <section v-if="drill || drillLoading || drillError" class="panel finance-drill-panel" aria-label="财务金额构成明细">
@@ -182,14 +182,14 @@ onMounted(load)
       </template>
     </section>
     <section v-if="can('transactions', 'view')" class="metric-section actual-cash-section" aria-label="银行实际人民币资金">
-      <header><div><h3>银行实际人民币资金</h3><p>仅统计已登记并人工确认的银行资金事件，按银行实际日期汇总。</p></div><div class="header-actions"><button v-if="actualCash" type="button" class="secondary" @click="showActualCashEvents">查看构成明细</button><button v-if="can('reports', 'export')" type="button" class="secondary" :disabled="actualCashLoading || !actualCash" @click="exportActualCash">导出实际资金 CSV</button></div></header>
+      <header><div><h3>银行实际人民币资金</h3><p>仅统计系统中已登记并人工确认的银行资金事件，按银行实际日期汇总；不代表公司全部银行余额。</p></div><div class="header-actions"><button v-if="actualCash" type="button" class="secondary" @click="showActualCashEvents">查看构成明细</button><button v-if="can('reports', 'export')" type="button" class="secondary" :disabled="actualCashLoading || !actualCash" @click="exportActualCash">导出实际资金 CSV</button></div></header>
       <p v-if="actualCashError" class="error" role="alert">{{ actualCashError }} <button type="button" class="secondary" @click="loadActualCash">重新加载</button></p>
       <p v-else-if="actualCashLoading" class="definition-note" role="status">正在加载已确认银行资金…</p>
       <template v-else-if="actualCash">
-        <p class="definition-note">{{ actualCash.note }} 未设置统计启用日期；本区域不推测未登记资金、期初余额或期末余额。</p>
-        <div class="cards actual-cash-cards"><article><span>实际流入</span><strong>¥{{ money(actualCash.totals.inflow) }}</strong></article><article><span>实际流出</span><strong>¥{{ money(actualCash.totals.outflow) }}</strong></article><article><span>净流入 / 净流出</span><strong>¥{{ money(actualCash.totals.net) }}</strong></article><article><span>已确认事件</span><strong>{{ actualCash.totals.count }} 笔</strong></article></div>
-        <div class="report-tables"><div class="panel"><h3>月度银行资金</h3><p v-if="!actualCash.monthly?.length">所选期间暂无已确认银行资金。</p><table v-else><thead><tr><th>月份</th><th>流入</th><th>流出</th><th>净流量</th></tr></thead><tbody><tr v-for="row in actualCash.monthly" :key="row.month"><td>{{ row.month }}</td><td>¥{{ money(row.inflow) }}</td><td>¥{{ money(row.outflow) }}</td><td>¥{{ money(row.net) }}</td></tr></tbody></table></div><div class="panel"><h3>按资金类型</h3><p v-if="!actualCash.by_kind?.length">所选期间暂无已确认银行资金。</p><table v-else><thead><tr><th>类型</th><th>流入</th><th>流出</th><th>净流量</th></tr></thead><tbody><tr v-for="row in actualCash.by_kind" :key="row.kind"><td>{{ row.label }}</td><td>¥{{ money(row.inflow) }}</td><td>¥{{ money(row.outflow) }}</td><td>¥{{ money(row.net) }}</td></tr></tbody></table></div></div>
-        <div ref="actualCashEvents" class="panel actual-cash-events"><h3>已确认银行资金明细</h3><p v-if="!actualCash.events?.length">所选期间暂无已确认银行资金事件。</p><table v-else><thead><tr><th>银行日期</th><th>事件编号</th><th>类型</th><th>方向</th><th>银行实际净额</th><th>银行参考号</th><th>操作</th></tr></thead><tbody><tr v-for="row in actualCash.events" :key="row.id"><td>{{ row.bank_date }}</td><td>{{ row.event_no }}</td><td>{{ row.kind_label }}</td><td>{{ row.direction_label }}</td><td>¥{{ money(row.bank_net_amount) }}</td><td>{{ row.bank_reference }}</td><td><RouterLink v-if="row.detail_url" :to="row.detail_url">查看原始事件</RouterLink><span v-else>—</span></td></tr></tbody></table></div>
+        <p class="definition-note">{{ actualCash.note }} 未设置统计启用日期；本区域不推测未登记资金、期初余额、期末余额或公司全部银行余额。</p>
+        <div class="cards actual-cash-cards"><article><span>实际流入</span><strong>¥{{ money(actualCash.totals.inflow) }}</strong></article><article><span>实际流出</span><strong>¥{{ money(actualCash.totals.outflow) }}</strong></article><article><span>净流入 / 净流出</span><strong>¥{{ money(actualCash.totals.net) }}</strong></article><article><span>已确认银行事件</span><strong>{{ actualCash.totals.count }} 笔</strong></article></div>
+        <div class="report-tables"><div class="panel"><h3>按银行实际日期汇总</h3><p v-if="!actualCash.monthly?.length">所选期间暂无已确认银行资金。</p><table v-else><thead><tr><th>月份</th><th>流入</th><th>流出</th><th>净流量</th></tr></thead><tbody><tr v-for="row in actualCash.monthly" :key="row.month"><td>{{ row.month }}</td><td>¥{{ money(row.inflow) }}</td><td>¥{{ money(row.outflow) }}</td><td>¥{{ money(row.net) }}</td></tr></tbody></table></div><div class="panel"><h3>按资金类型</h3><p v-if="!actualCash.by_kind?.length">所选期间暂无已确认银行资金。</p><table v-else><thead><tr><th>类型</th><th>流入</th><th>流出</th><th>净流量</th></tr></thead><tbody><tr v-for="row in actualCash.by_kind" :key="row.kind"><td>{{ row.label }}</td><td>¥{{ money(row.inflow) }}</td><td>¥{{ money(row.outflow) }}</td><td>¥{{ money(row.net) }}</td></tr></tbody></table></div></div>
+        <div ref="actualCashEvents" class="panel actual-cash-events"><h3>已确认银行资金明细</h3><p v-if="!actualCash.events?.length">所选期间暂无已确认银行资金事件。</p><table v-else><thead><tr><th>银行实际日期</th><th>事件编号</th><th>类型</th><th>方向</th><th>银行实际净额（CNY）</th><th>银行参考号</th><th>操作</th></tr></thead><tbody><tr v-for="row in actualCash.events" :key="row.id"><td>{{ row.bank_date }}</td><td>{{ row.event_no }}</td><td>{{ row.kind_label }}</td><td>{{ row.direction_label }}</td><td>¥{{ money(row.bank_net_amount) }}</td><td>{{ row.bank_reference }}</td><td><RouterLink v-if="row.detail_url" :to="row.detail_url">查看原始事件</RouterLink><span v-else>—</span></td></tr></tbody></table></div>
       </template>
     </section>
     <div class="report-tables"><div class="panel"><h3>月度账面收支（人民币折算参考）</h3><p v-if="!data.monthly_cash?.length">所选期间暂无已确认账面收支记录。</p><table v-else><thead><tr><th>月份</th><th>收入</th><th>支出</th><th>账面净收支</th></tr></thead><tbody><tr v-for="row in data.monthly_cash" :key="row.month"><td>{{ row.month }}</td><td>¥{{ money(row.income) }}</td><td>¥{{ money(row.expense) }}</td><td>¥{{ money(row.net) }}</td></tr></tbody></table></div>

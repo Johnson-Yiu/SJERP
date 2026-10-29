@@ -480,6 +480,6 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 
 ## ISS-052 PostgreSQL 追加保护跟进（2026-10-30）
 
-ISS-052 总体状态仍为 `FIXED_PENDING_REVIEW`；本轮只处理数据库追加保护缺口，不关闭 Issue，也不改变其余审计待验范围。复核确认 `0091` 的行级 `UPDATE/DELETE` 触发器不能拦截 PostgreSQL `TRUNCATE`；分支 `codex/r1-iss052-pg-audit-appendonly-20261029` 新增前向迁移 `0093_csv_import_audit_truncate_guard` 和六项 PostgreSQL 原始 SQL 测试，并保留 SQLite ORM 防修改测试。报告：[R1-ISS052 PostgreSQL 追加保护](uat-evidence/r1-iss052-pg-audit-appendonly-20261029/README.md)。
+ISS-052 总体状态仍为 `FIXED_PENDING_REVIEW`；本轮只处理数据库追加保护缺口，不关闭 Issue，也不改变其余审计待验范围。复核确认 `0091` 的行级 `UPDATE/DELETE` 触发器不能拦截 PostgreSQL `TRUNCATE`；分支 `codex/r1-iss052-pg-audit-appendonly-20261029` 提交 `fbbf49e750cb04e85fa55e10d95ebe57ac371d98` 新增前向迁移 `0093_csv_import_audit_truncate_guard` 和六项 PostgreSQL 原始 SQL 测试，并保留 SQLite ORM 防修改测试。报告：[R1-ISS052 PostgreSQL 追加保护](uat-evidence/r1-iss052-pg-audit-appendonly-20261029/README.md)。
 
 本地 SQLite 定向 34 项为 27 通过、7 跳过；其中六项 PostgreSQL 触发器测试按条件跳过。本机无 PostgreSQL 客户端/服务，实际 DDL、SQLSTATE、触发器及 PostgreSQL 测试清理路径均为 `BLOCKED`，等待 CI 恢复后在隔离 PostgreSQL 测试库验收。F1 文件字节上限、F2 解析失败执行审计，以及行审计读取/保留策略等原审查事项不因本轮通过而改变状态。

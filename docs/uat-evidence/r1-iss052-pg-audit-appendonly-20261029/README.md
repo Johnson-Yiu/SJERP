@@ -10,6 +10,7 @@
 
 - 目标分支：`codex/r1-iss052-pg-audit-appendonly-20261029`
 - 起点：`codex/r1-review-iss052-csv-audit-20261029`，SHA `27734334833395196ae9951c5409f87c3574655d`（该审查分支基于集成 SHA `bd324a8c3fb64af245c3afcabbd4301c84f7711c`）。
+- 代码、测试与本报告提交：`fbbf49e750cb04e85fa55e10d95ebe57ac371d98`。
 - 本轮检查：`0091_csv_import_audit.py`、CSV 审计模型及现有 ORM 防修改测试。
 - 未改写 `0091`；未修改批次/行审计模型及历史数据；未触发 GitHub Actions、未合并 master、未部署。
 

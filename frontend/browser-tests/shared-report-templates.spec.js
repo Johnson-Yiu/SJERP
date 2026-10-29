@@ -1,10 +1,16 @@
 import { test, expect } from '@playwright/test'
 import { mockSharedTemplateApi } from './reporting-fixtures.js'
 
+async function blockOptionalGoogleFonts(page) {
+  await page.route('https://fonts.googleapis.com/**', route => route.abort())
+  await page.route('https://fonts.gstatic.com/**', route => route.abort())
+}
+
 test('separate manager and employee sessions share only the published query definition', async ({ browser }) => {
   const sharedState = { templates: [], nextId: 1 }
   const managerContext = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
   const manager = await managerContext.newPage()
+  await blockOptionalGoogleFonts(manager)
   await mockSharedTemplateApi(manager, sharedState, 'manager')
   await manager.goto('/reports')
   await expect(manager.getByRole('button', { name: '根据当前查询创建', exact: true })).toBeEnabled()
@@ -18,6 +24,7 @@ test('separate manager and employee sessions share only the published query defi
 
   const employeeContext = await browser.newContext({ viewport: { width: 700, height: 1000 } })
   const employee = await employeeContext.newPage()
+  await blockOptionalGoogleFonts(employee)
   await mockSharedTemplateApi(employee, sharedState, 'employee')
   await employee.goto('/reports')
   await expect(employee.locator('.template-card')).toHaveCount(1)

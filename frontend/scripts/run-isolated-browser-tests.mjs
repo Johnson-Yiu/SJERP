@@ -326,6 +326,10 @@ export function isolatedFixtureSeed(businessTest) {
       seedFile: path.join('..', 'docs', 'uat-evidence', 'r1-repair-03-history-recipient-typography', 'prepare_evidence.py'),
       evidenceEnv: 'R1_REPAIR_EVIDENCE_DIR',
     },
+    'quote-editor-mobile-actions.spec.js': {
+      seedFile: path.join('..', 'docs', 'uat-evidence', 'r1-ux-quote-actions-20261029', 'prepare_quote_actions.py'),
+      evidenceEnv: 'R1_UX_QUOTE_ACTIONS_EVIDENCE_DIR',
+    },
   }
   const profile = allowed[businessTest]
   return profile ? { ...profile, scriptPath: path.resolve(backendRoot, profile.seedFile) } : null

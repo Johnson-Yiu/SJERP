@@ -1,7 +1,8 @@
 # R1-UX-COPY-02 文案优化验收报告
 
-日期：2026-10-29  
-基线：`bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`  
+日期：2026-10-29
+
+基线：`bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`
 分支：`codex/ux-copy-sales-purchase`
 
 ## 结论

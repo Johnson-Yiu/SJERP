@@ -1,7 +1,8 @@
 # R1-PRE-UAT-ISS007 附件流程验收
 
-日期：2026-10-29  
-基线：`bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`  
+日期：2026-10-29
+
+基线：`bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`
 分支：`codex/pre-uat-iss007-attachment-flow`
 
 ## 验收环境

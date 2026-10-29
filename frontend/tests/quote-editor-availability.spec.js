@@ -305,7 +305,7 @@ describe('QuoteEditorModal inventory reference', () => {
     expect(availabilityCalls()).toHaveLength(1)
     expect(availabilityCalls()[0][1]).toEqual({ sku_ids: [skuA.id, skuB.id] })
     expect(wrapper.findAll('.quote-inventory-row')).toHaveLength(2)
-    expect(wrapper.text()).toContain('当前报价交期')
+    expect(wrapper.text()).toContain('本报价参考交期')
   })
 
   it('updates the preview when a selected SKU is removed', async () => {

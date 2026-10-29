@@ -82,6 +82,10 @@ let purchaseListRequest = 0
 let pageLoadRequest = 0
 const today = new Date().toISOString().slice(0, 10)
 function newDraft() { return { supplier: '', order: '', order_date: today, expected_arrival_date: '', status: 'draft', currency: 'CNY', exchange_rate: '1', notes: '', payment_terms_snapshot: [], items: [] } }
+function newRequestKey() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
+  return `fulfillment-${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
 const draft = ref(newDraft())
 const guard = useUnsavedChangesGuard({ data: () => draft.value, enabled: () => openCreate.value })
 const costTarget = ref(null), costOrders = ref([]), paymentTarget = ref(null)
@@ -127,7 +131,7 @@ function openReceipt(row, item) {
   if (!can('purchases', 'update')) return
   receiptTarget.value = { row, item }
   receiptSuccess.value = null
-  receiptForm.value = { purchase_item: item.id, receipt_date: new Date().toLocaleDateString('en-CA'), quantity: Math.max(0, Number(item.remaining_quantity)), unit_cost: item.unit_price, is_overage: false, overage_reason: '', notes: '', checked: false }
+  receiptForm.value = { request_key: newRequestKey(), purchase_item: item.id, receipt_date: new Date().toLocaleDateString('en-CA'), quantity: Math.max(0, Number(item.remaining_quantity)), unit_cost: item.unit_price, is_overage: false, overage_reason: '', notes: '', checked: false }
   if (item.trade_unit && Number(item.remaining_quantity) % Number(item.trade_snapshot.factor) === 0) Object.assign(receiptForm.value, { trade_unit: item.trade_unit, trade_snapshot: item.trade_snapshot, quantity: Number(item.remaining_quantity) / Number(item.trade_snapshot.factor), unit_cost: item.trade_unit_price })
   receiptForm.value.unit_cost = compactDecimalInput(receiptForm.value.unit_cost)
   error.value = ''

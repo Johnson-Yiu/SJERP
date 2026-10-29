@@ -1,0 +1,73 @@
+{
+  "database": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\pre-uat-iss006-inventory-safety\\iss006-fixed-idempotency.sqlite3",
+  "receipt": {
+    "before": {
+      "receipts": 0,
+      "purchase_movements": 0,
+      "actual": "0"
+    },
+    "first_status": 201,
+    "second_status": 200,
+    "first_body": {
+      "id": 1,
+      "purchase_item": 1,
+      "quantity": "5.00",
+      "trade_unit": null,
+      "trade_quantity": null,
+      "trade_unit_price": null,
+      "trade_snapshot": {
+        "base_unit": "pcs",
+        "unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "is_overage": false,
+      "inventory_movement": 2
+    },
+    "second_body": {
+      "id": 1,
+      "purchase_item": 1,
+      "quantity": "5.00",
+      "trade_unit": null,
+      "trade_quantity": null,
+      "trade_unit_price": null,
+      "trade_snapshot": {
+        "base_unit": "pcs",
+        "unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "is_overage": false,
+      "inventory_movement": 2
+    },
+    "after": {
+      "receipts": 1,
+      "purchase_movements": 1,
+      "actual": "5"
+    }
+  },
+  "shipment": {
+    "before": {
+      "shipments": 0,
+      "sale_movements": 0,
+      "actual": "10"
+    },
+    "first_status": 201,
+    "second_status": 200,
+    "first_body": {
+      "id": 1,
+      "shipment_no": "SH-299870A9ACBB47C9",
+      "status": "confirmed"
+    },
+    "second_body": {
+      "id": 1,
+      "shipment_no": "SH-299870A9ACBB47C9",
+      "status": "confirmed"
+    },
+    "after": {
+      "shipments": 1,
+      "sale_movements": 1,
+      "actual": "5"
+    }
+  }
+}

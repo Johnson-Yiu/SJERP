@@ -12,7 +12,7 @@ from decimal import Decimal, InvalidOperation
 from urllib.request import urlopen
 
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models.deletion import ProtectedError
 from django.db.models import Case, CharField, Count, DecimalField, ExpressionWrapper, F, IntegerField, OuterRef, Q, Subquery, Sum, Value, When
 from django.db.models.functions import Coalesce, TruncMonth
@@ -84,6 +84,28 @@ def _quantity_adjustment_error_message(error, user):
     ):
         return "数量变更包含受权限保护的财务校验，当前账号不能继续。"
     return messages[0]
+
+
+def _fulfillment_request_fingerprint(scope, parent_id, payload):
+    comparable = {
+        "scope": scope,
+        "parent_id": parent_id,
+        "payload": {key: value for key, value in payload.items() if key != "request_key"},
+    }
+    return hashlib.sha256(
+        json.dumps(comparable, ensure_ascii=False, sort_keys=True, default=str).encode("utf-8")
+    ).hexdigest()
+
+
+def _receipt_response_data(receipt):
+    return {
+        "id": receipt.id,
+        "purchase_item": receipt.purchase_item_id,
+        "quantity": receipt.quantity,
+        **{**trade_values(receipt), "trade_unit": receipt.trade_unit_id},
+        "is_overage": receipt.is_overage,
+        "inventory_movement": receipt.inventory_movement_id,
+    }
 
 
 @api_view(["GET"])
@@ -449,22 +471,31 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         before = snapshot(purchase)
         input_serializer = ReceiptInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
-        item = purchase.items.filter(pk=input_serializer.validated_data["purchase_item"]).first()
+        payload = dict(input_serializer.validated_data)
+        item = purchase.items.filter(pk=payload["purchase_item"]).first()
         if item is None:
             return Response({"detail": "到货明细不属于该采购单。"}, status=status.HTTP_400_BAD_REQUEST)
+        request_key = payload.get("request_key")
+        request_fingerprint = _fulfillment_request_fingerprint("purchase-receipt", purchase.pk, payload)
+        if request_key:
+            existing = GoodsReceipt.objects.filter(request_key=request_key).first()
+            if existing:
+                if existing.request_fingerprint != request_fingerprint:
+                    return Response({"detail": "请求幂等键已用于其他入库请求，请重新打开入库表单。"}, status=status.HTTP_409_CONFLICT)
+                return Response(_receipt_response_data(existing), status=status.HTTP_200_OK)
+            payload["_request_fingerprint"] = request_fingerprint
         try:
-            receipt = record_receipt(item, input_serializer.validated_data)
+            receipt = record_receipt(item, payload)
+        except IntegrityError:
+            if request_key:
+                existing = GoodsReceipt.objects.filter(request_key=request_key).first()
+                if existing and existing.request_fingerprint == request_fingerprint:
+                    return Response(_receipt_response_data(existing), status=status.HTTP_200_OK)
+            raise
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
-        return Response({
-            "id": receipt.id,
-            "purchase_item": receipt.purchase_item_id,
-            "quantity": receipt.quantity,
-            **{**trade_values(receipt), "trade_unit": receipt.trade_unit_id},
-            "is_overage": receipt.is_overage,
-            "inventory_movement": receipt.inventory_movement_id,
-        }, status=status.HTTP_201_CREATED)
+        return Response(_receipt_response_data(receipt), status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"], url_path=r"receipts/(?P<receipt_id>[^/.]+)/reverse")
     def reverse_receipt(self, request, pk=None, receipt_id=None):
@@ -2199,11 +2230,28 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         require_finance_permission(request.user, "inventory", "create")
         input_serializer = ShipmentInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
+        order = self.get_object()
+        payload = dict(input_serializer.validated_data)
+        request_key = payload.get("request_key")
+        request_fingerprint = _fulfillment_request_fingerprint("sales-shipment", order.pk, payload)
+        if request_key:
+            existing = Shipment.objects.filter(request_key=request_key).first()
+            if existing:
+                if existing.request_fingerprint != request_fingerprint:
+                    return Response({"detail": "请求幂等键已用于其他发货请求，请重新打开发货表单。"}, status=status.HTTP_409_CONFLICT)
+                return Response({"id": existing.id, "shipment_no": existing.shipment_no, "status": existing.status}, status=status.HTTP_200_OK)
+            payload["_request_fingerprint"] = request_fingerprint
         try:
-            shipment = confirm_shipment(self.get_object(), input_serializer.validated_data)
+            shipment = confirm_shipment(order, payload)
+        except IntegrityError:
+            if request_key:
+                existing = Shipment.objects.filter(request_key=request_key).first()
+                if existing and existing.request_fingerprint == request_fingerprint:
+                    return Response({"id": existing.id, "shipment_no": existing.shipment_no, "status": existing.status}, status=status.HTTP_200_OK)
+            raise
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        record_operation(request=request, instance=self.get_object(), action="custom", action_label="确认订单发货", metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
+        record_operation(request=request, instance=order, action="custom", action_label="确认订单发货", metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
         return Response({"id": shipment.id, "shipment_no": shipment.shipment_no, "status": shipment.status}, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["get"])

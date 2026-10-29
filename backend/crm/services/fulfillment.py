@@ -296,6 +296,8 @@ def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsRece
         overage_reason=reason,
         notes=payload.get("notes", ""),
         inventory_movement=movement,
+        request_key=payload.get("request_key") or None,
+        request_fingerprint=payload.get("_request_fingerprint", ""),
     )
     purchase_order = purchase_item.purchase_order
     purchase_order.status = _receipt_status(purchase_order)
@@ -502,6 +504,8 @@ def confirm_shipment(order: Order, payload: dict) -> Shipment:
         status="confirmed",
         notes=payload.get("notes", ""),
         order_status_before_confirm=order.status,
+        request_key=payload.get("request_key") or None,
+        request_fingerprint=payload.get("_request_fingerprint", ""),
     )
     for line in payload["items"]:
         item = OrderItem.objects.select_for_update().select_related("sku").get(

@@ -1,14 +1,18 @@
 from crm.trade_units import normalize_trade, portion_trade, TRADE_FIELDS
+import hashlib
+import json
 from decimal import Decimal
 from uuid import uuid4
 
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db import IntegrityError, transaction
 from django.db.models import Case, DecimalField, F, OuterRef, Q, Subquery, Sum, Value, When
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 from crm.models import (
+    FulfillmentIdempotency,
     GoodsReceipt,
     InventoryMovement,
     InventoryReservation,
@@ -35,6 +39,84 @@ OUTGOING_MOVEMENT_TYPES = [
 ]
 ACTIVE_ORDER_STATUSES = ["confirmed", "production", "shipped"]
 OPEN_PURCHASE_STATUSES = ["ordered", "partial"]
+
+
+class FulfillmentIdempotencyConflict(ValidationError):
+    """A request key cannot safely be replayed for this request."""
+
+
+def require_fulfillment_idempotency_key(request) -> str:
+    key = str(request.headers.get("Idempotency-Key") or "").strip()
+    if not key:
+        raise ValidationError("收货或发货请求必须提供 Idempotency-Key。")
+    if len(key) > 128 or any(ord(char) < 32 or ord(char) == 127 for char in key):
+        raise ValidationError("Idempotency-Key 无效，长度不能超过 128 个字符。")
+    return key
+
+
+def _canonical_request_value(value):
+    if isinstance(value, dict):
+        return {str(key): _canonical_request_value(value[key]) for key in sorted(value, key=str)}
+    if isinstance(value, (list, tuple)):
+        return [_canonical_request_value(item) for item in value]
+    if isinstance(value, Decimal):
+        return format(value, "f")
+    if hasattr(value, "isoformat"):
+        return value.isoformat()
+    return value
+
+
+def fulfillment_request_hash(operation: str, target_id: int, payload: dict, operator_id=None) -> str:
+    canonical = _canonical_request_value({
+        "operation": operation,
+        "target_id": target_id,
+        "operator_id": operator_id,
+        "payload": payload,
+    })
+    encoded = json.dumps(canonical, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def json_safe_fulfillment_response(value):
+    """Keep first and replayed responses byte-for-byte equivalent at JSON level."""
+    return json.loads(json.dumps(value, cls=DjangoJSONEncoder, ensure_ascii=False))
+
+
+def begin_fulfillment_idempotency(*, key: str, operation: str, target_id: int, payload: dict, operator_id=None):
+    request_hash = fulfillment_request_hash(operation, target_id, payload, operator_id)
+    try:
+        # The nested savepoint lets a concurrent unique-key race recover the
+        # outer business transaction instead of leaving it rollback-only.
+        with transaction.atomic():
+            record = FulfillmentIdempotency.objects.create(
+                key=key,
+                operation=operation,
+                target_id=target_id,
+                request_hash=request_hash,
+                operator_id=operator_id,
+                status="processing",
+            )
+        return record, False
+    except IntegrityError:
+        record = FulfillmentIdempotency.objects.select_for_update().get(key=key)
+
+    if (
+        record.operation != operation
+        or record.target_id != target_id
+        or record.request_hash != request_hash
+        or record.operator_id != operator_id
+    ):
+        raise FulfillmentIdempotencyConflict("该 Idempotency-Key 已用于不同的收货或发货请求，不能复用。")
+    if record.status == "succeeded":
+        return record, True
+    raise FulfillmentIdempotencyConflict("该请求正在处理中，请稍后使用相同的 Idempotency-Key 重试。")
+
+
+def complete_fulfillment_idempotency(record, response_payload: dict, response_status: int = 201):
+    record.status = "succeeded"
+    record.response_status = response_status
+    record.response_payload = json_safe_fulfillment_response(response_payload)
+    record.save(update_fields=["status", "response_status", "response_payload", "updated_at"])
 
 
 def signed_inventory_quantity(sku: SKU) -> Decimal:

@@ -42,7 +42,21 @@ from .serializers import protected_media_url, certificate_expiry, AccessRoleSeri
 from .serializers import ProcurementDraftInputSerializer
 from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.finance import allocate_advance, approve_contract_change, reject_contract_change, record_contract_payment, record_transaction, void_transaction
-from .services.fulfillment import bulk_sku_metrics, confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_manual_inventory_movement, reverse_receipt as reverse_receipt_service, reverse_shipment as reverse_shipment_service
+from .services.fulfillment import (
+    begin_fulfillment_idempotency,
+    bulk_sku_metrics,
+    complete_fulfillment_idempotency,
+    confirm_shipment,
+    FulfillmentIdempotencyConflict,
+    json_safe_fulfillment_response,
+    order_item_metrics,
+    record_receipt,
+    record_supplier_payment,
+    require_fulfillment_idempotency_key,
+    reverse_manual_inventory_movement,
+    reverse_receipt as reverse_receipt_service,
+    reverse_shipment as reverse_shipment_service,
+)
 from .services.order_lifecycle import cancel_order, complete_order, confirm_order, start_order_production
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
 from .services.packing_list import (
@@ -446,6 +460,10 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def receive(self, request, pk=None):
         require_finance_permission(request.user, "inventory", "create")
         purchase = self.get_object()
+        try:
+            idempotency_key = require_fulfillment_idempotency_key(request)
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         before = snapshot(purchase)
         input_serializer = ReceiptInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
@@ -453,18 +471,34 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         if item is None:
             return Response({"detail": "到货明细不属于该采购单。"}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            receipt = record_receipt(item, input_serializer.validated_data)
+            with transaction.atomic():
+                idempotency, replay = begin_fulfillment_idempotency(
+                    key=idempotency_key,
+                    operation="receive",
+                    target_id=purchase.pk,
+                    payload=input_serializer.validated_data,
+                    operator_id=request.user.pk if getattr(request.user, "is_authenticated", False) else None,
+                )
+                if replay:
+                    replay_response = Response(idempotency.response_payload, status=idempotency.response_status)
+                    replay_response["Idempotent-Replay"] = "true"
+                    return replay_response
+                receipt = record_receipt(item, input_serializer.validated_data)
+                response_payload = json_safe_fulfillment_response({
+                    "id": receipt.id,
+                    "purchase_item": receipt.purchase_item_id,
+                    "quantity": receipt.quantity,
+                    **{**trade_values(receipt), "trade_unit": receipt.trade_unit_id},
+                    "is_overage": receipt.is_overage,
+                    "inventory_movement": receipt.inventory_movement_id,
+                })
+                record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
+                complete_fulfillment_idempotency(idempotency, response_payload)
+        except FulfillmentIdempotencyConflict as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_409_CONFLICT)
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
-        return Response({
-            "id": receipt.id,
-            "purchase_item": receipt.purchase_item_id,
-            "quantity": receipt.quantity,
-            **{**trade_values(receipt), "trade_unit": receipt.trade_unit_id},
-            "is_overage": receipt.is_overage,
-            "inventory_movement": receipt.inventory_movement_id,
-        }, status=status.HTTP_201_CREATED)
+        return Response(response_payload, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"], url_path=r"receipts/(?P<receipt_id>[^/.]+)/reverse")
     def reverse_receipt(self, request, pk=None, receipt_id=None):
@@ -2197,14 +2231,35 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def ship(self, request, pk=None):
         require_finance_permission(request.user, "inventory", "create")
+        order = self.get_object()
+        try:
+            idempotency_key = require_fulfillment_idempotency_key(request)
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         input_serializer = ShipmentInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         try:
-            shipment = confirm_shipment(self.get_object(), input_serializer.validated_data)
+            with transaction.atomic():
+                idempotency, replay = begin_fulfillment_idempotency(
+                    key=idempotency_key,
+                    operation="ship",
+                    target_id=order.pk,
+                    payload=input_serializer.validated_data,
+                    operator_id=request.user.pk if getattr(request.user, "is_authenticated", False) else None,
+                )
+                if replay:
+                    replay_response = Response(idempotency.response_payload, status=idempotency.response_status)
+                    replay_response["Idempotent-Replay"] = "true"
+                    return replay_response
+                shipment = confirm_shipment(order, input_serializer.validated_data)
+                response_payload = json_safe_fulfillment_response({"id": shipment.id, "shipment_no": shipment.shipment_no, "status": shipment.status})
+                record_operation(request=request, instance=order, action="custom", action_label="确认订单发货", metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
+                complete_fulfillment_idempotency(idempotency, response_payload)
+        except FulfillmentIdempotencyConflict as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_409_CONFLICT)
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        record_operation(request=request, instance=self.get_object(), action="custom", action_label="确认订单发货", metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
-        return Response({"id": shipment.id, "shipment_no": shipment.shipment_no, "status": shipment.status}, status=status.HTTP_201_CREATED)
+        return Response(response_payload, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["get"])
     def workbench(self, request, pk=None):

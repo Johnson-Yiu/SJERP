@@ -59,7 +59,7 @@ class ProcurementDataScopeTests(TestCase):
         RolePermission.objects.filter(role=self.roles["self"], module="orders").update(can_view=False, can_update=False)
         url = f"/api/purchase-orders/{self.purchase.pk}/receive/"
         data = {"purchase_item": self.purchase.items.get().pk, "quantity": "1", "receipt_date": "2026-10-12"}
-        response = self.client.post(url, data, format="json")
+        response = self.client.post(url, data, format="json", HTTP_IDEMPOTENCY_KEY="iss006-procurement-scope-receipt")
         self.assertEqual(response.status_code, 201, response.data)
         reverse = self.client.post(f"/api/purchase-orders/{self.purchase.pk}/receipts/{response.data['id']}/reverse/", {"reason": "回归冲销"}, format="json")
         self.assertEqual(reverse.status_code, 200, reverse.data)

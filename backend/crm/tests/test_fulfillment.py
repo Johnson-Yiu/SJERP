@@ -342,6 +342,16 @@ class ReservationRebalanceTests(TestCase):
 class FulfillmentApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
+        self._fulfillment_request_number = 0
+        original_post = self.client.post
+
+        def post_with_request_key(path, *args, **kwargs):
+            if str(path).endswith(("/receive/", "/ship/")) and "HTTP_IDEMPOTENCY_KEY" not in kwargs:
+                self._fulfillment_request_number += 1
+                kwargs["HTTP_IDEMPOTENCY_KEY"] = f"legacy-fulfillment-test-{self._fulfillment_request_number}"
+            return original_post(path, *args, **kwargs)
+
+        self.client.post = post_with_request_key
         customer = Customer.objects.create(code="C-API", name="API Buyer")
         product = Product.objects.create(code="P-API", name="API Light")
         self.sku = SKU.objects.create(product=product, sku="SKU-API")

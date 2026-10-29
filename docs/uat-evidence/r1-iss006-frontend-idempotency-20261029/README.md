@@ -34,6 +34,8 @@ The local Django API and Vite UI were run against an isolated temporary SQLite d
 
 Storage failure presentation and POST blocking were verified in the two component suites. A live storage-fault injection was not performed in Chrome; the Chrome run verified the normal path, not the error state.
 
+Chrome console inspection found no errors. It did record five Vue `<Transition>` warnings that `OrderDetailModal` renders a non-element root while the order drawer opens/refreshes. This is outside the idempotency change; no baseline comparison or repair was attempted.
+
 ## Remaining verification
 
 - The independent ISS-006 review identified separate backend audit-snapshot, parent-state concurrency, and reversal-audit transaction concerns. They are outside this frontend-scoped change and remain for separate review/fix.

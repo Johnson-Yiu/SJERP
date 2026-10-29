@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   test: {
     include: [...configDefaults.include, 'tests/crm-list.vitest.js'],
-    exclude: [...configDefaults.exclude, 'browser-tests/**'],
+    exclude: [...configDefaults.exclude, 'browser-tests/**', 'infrastructure-tests/**'],
     setupFiles: ['./tests/setup.js'],
   },
   server: {

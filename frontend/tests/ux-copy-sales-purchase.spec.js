@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
-import test from 'node:test'
+import { test } from 'vitest'
+import path from 'node:path'
 
-const root = new URL('../src/', import.meta.url)
-const source = async (file) => readFile(new URL(file, root), 'utf8')
+const source = async (file) => readFile(path.resolve(process.cwd(), 'src', file), 'utf8')
 
 test('sales copy names the draft, revision, PI and sales-order transitions explicitly', async () => {
   const [documentPage, quoteEditor, quoteDetail, quotePreview, orderDraft] = await Promise.all([

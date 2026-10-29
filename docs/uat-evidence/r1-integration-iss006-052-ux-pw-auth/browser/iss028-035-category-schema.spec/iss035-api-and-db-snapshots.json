@@ -1,0 +1,1229 @@
+{
+  "ids": {
+    "root_id": 3,
+    "child_id": 4,
+    "attribute_id": 3,
+    "product_id": 4,
+    "sku_id": 1,
+    "quote_id": 1,
+    "order_id": 1,
+    "new_product_id": 5,
+    "new_sku_id": 2
+  },
+  "before": {
+    "attributes": [
+      {
+        "category_id": 3,
+        "default_value": "24",
+        "id": 3,
+        "include_in_sales_model": 0,
+        "include_in_sku": 1,
+        "key": "voltage_670ef33c",
+        "name": "电压670EF33C",
+        "required": 0,
+        "unit": "V",
+        "uppercase": 0
+      }
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "验收670EF33C模板根分类",
+        "parent_id": null
+      },
+      {
+        "id": 4,
+        "name": "验收670EF33C模板子分类",
+        "parent_id": 3
+      }
+    ],
+    "database_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-3SOBvt\\db.sqlite3",
+    "order_items": [
+      {
+        "description_snapshot": "Synthetic quote snapshot",
+        "display_name_snapshot": "验收670EF33C已发布 SKU 产品-24V",
+        "id": 1,
+        "sales_model_snapshot": "M670EF33C",
+        "sku_code_snapshot": "SKU-000001",
+        "sku_id": 1,
+        "unit_snapshot": "pcs"
+      }
+    ],
+    "plans": [
+      {
+        "definitions": "[{\"category_id\": 3, \"key\": \"voltage_670ef33c\", \"name\": \"\\u7535\\u538b670EF33C\", \"unit\": \"V\", \"include_in_sku\": true, \"include_in_sales_model\": false, \"uppercase\": false, \"required\": false, \"default_value\": \"24\"}]",
+        "id": 1,
+        "product_id": 4,
+        "status": "published",
+        "version": 1
+      }
+    ],
+    "product": [
+      {
+        "category_id": 4,
+        "code": "SPU261029004",
+        "id": 4,
+        "name": "验收670EF33C已发布 SKU 产品"
+      }
+    ],
+    "quote_items": [
+      {
+        "id": 1,
+        "product_name_snapshot": "验收670EF33C已发布 SKU 产品-24V",
+        "sales_model_snapshot": "M670EF33C",
+        "sku_code_snapshot": "SKU-000001",
+        "sku_id": 1,
+        "unit_snapshot": "pcs"
+      }
+    ],
+    "sku": [
+      {
+        "description_cn": "验收670EF33C原始描述",
+        "display_name_cn": "验收670EF33C已发布 SKU 产品-24V",
+        "id": 1,
+        "identity_signature": "product=4|3:voltage_670ef33c=24v",
+        "parameter_values": "{\"voltage_670ef33c\": \"24\"}",
+        "sales_model": "M670EF33C",
+        "schema_version": 1,
+        "sku": "SKU-000001",
+        "specification": "24V"
+      }
+    ]
+  },
+  "after": {
+    "attributes": [
+      {
+        "category_id": 3,
+        "default_value": "24",
+        "id": 3,
+        "include_in_sales_model": 0,
+        "include_in_sku": 1,
+        "key": "voltage_670ef33c",
+        "name": "电压670EF33C",
+        "required": 0,
+        "unit": "V",
+        "uppercase": 1
+      }
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "验收670EF33C模板根分类",
+        "parent_id": null
+      },
+      {
+        "id": 4,
+        "name": "验收670EF33C模板子分类",
+        "parent_id": 3
+      }
+    ],
+    "database_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-3SOBvt\\db.sqlite3",
+    "new_plans": [
+      {
+        "definitions": "[{\"category_id\": 3, \"key\": \"voltage_670ef33c\", \"name\": \"\\u7535\\u538b670EF33C\", \"unit\": \"V\", \"include_in_sku\": true, \"include_in_sales_model\": false, \"uppercase\": true, \"required\": false, \"default_value\": \"24\"}]",
+        "id": 2,
+        "product_id": 5,
+        "status": "published",
+        "version": 1
+      }
+    ],
+    "new_product": [
+      {
+        "category_id": 4,
+        "code": "SPU261029005",
+        "id": 5,
+        "name": "验收670EF33C模板变更后新产品"
+      }
+    ],
+    "order_items": [
+      {
+        "description_snapshot": "Synthetic quote snapshot",
+        "display_name_snapshot": "验收670EF33C已发布 SKU 产品-24V",
+        "id": 1,
+        "sales_model_snapshot": "M670EF33C",
+        "sku_code_snapshot": "SKU-000001",
+        "sku_id": 1,
+        "unit_snapshot": "pcs"
+      }
+    ],
+    "plans": [
+      {
+        "definitions": "[{\"category_id\": 3, \"key\": \"voltage_670ef33c\", \"name\": \"\\u7535\\u538b670EF33C\", \"unit\": \"V\", \"include_in_sku\": true, \"include_in_sales_model\": false, \"uppercase\": false, \"required\": false, \"default_value\": \"24\"}]",
+        "id": 1,
+        "product_id": 4,
+        "status": "published",
+        "version": 1
+      }
+    ],
+    "product": [
+      {
+        "category_id": 4,
+        "code": "SPU261029004",
+        "id": 4,
+        "name": "验收670EF33C已发布 SKU 产品"
+      }
+    ],
+    "quote_items": [
+      {
+        "id": 1,
+        "product_name_snapshot": "验收670EF33C已发布 SKU 产品-24V",
+        "sales_model_snapshot": "M670EF33C",
+        "sku_code_snapshot": "SKU-000001",
+        "sku_id": 1,
+        "unit_snapshot": "pcs"
+      }
+    ],
+    "sku": [
+      {
+        "description_cn": "验收670EF33C普通保存描述",
+        "display_name_cn": "验收670EF33C已发布 SKU 产品-24V",
+        "id": 1,
+        "identity_signature": "product=4|3:voltage_670ef33c=24v",
+        "parameter_values": "{\"voltage_670ef33c\": \"24\"}",
+        "sales_model": "M670EF33C",
+        "schema_version": 1,
+        "sku": "SKU-000001",
+        "specification": "24V"
+      }
+    ]
+  },
+  "http": [
+    {
+      "method": "POST",
+      "path": "/api/categories/",
+      "status": 201,
+      "result": {
+        "id": 1,
+        "product_count": 0,
+        "child_count": 0,
+        "parent_name": "",
+        "attributes": [],
+        "effective_attributes": [],
+        "sku_name_preview": "",
+        "created_at": "2026-10-29T22:37:21.984155+08:00",
+        "updated_at": "2026-10-29T22:37:21.984310+08:00",
+        "name": "验收2E84DE7A根分类",
+        "description": "合成分类验证",
+        "sort_order": 0,
+        "parent": null
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/categories/",
+      "status": 201,
+      "result": {
+        "id": 2,
+        "product_count": 0,
+        "child_count": 0,
+        "parent_name": "验收2E84DE7A根分类",
+        "attributes": [],
+        "effective_attributes": [],
+        "sku_name_preview": "",
+        "created_at": "2026-10-29T22:37:22.070676+08:00",
+        "updated_at": "2026-10-29T22:37:22.070696+08:00",
+        "name": "验收2E84DE7A子分类",
+        "description": "合成子分类验证",
+        "sort_order": 0,
+        "parent": 1
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/category-attributes/",
+      "status": 201,
+      "result": {
+        "id": 1,
+        "category_name": "验收2E84DE7A根分类",
+        "created_at": "2026-10-29T22:37:22.161786+08:00",
+        "updated_at": "2026-10-29T22:37:22.161810+08:00",
+        "name": "电压2E84DE7A",
+        "key": "voltage_2e84de7a",
+        "default_value": "24V",
+        "unit": "V",
+        "include_in_sku": true,
+        "include_in_sales_model": false,
+        "uppercase": false,
+        "required": false,
+        "sort_order": 0,
+        "category": 1
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/category-attributes/",
+      "status": 201,
+      "result": {
+        "id": 2,
+        "category_name": "验收2E84DE7A子分类",
+        "created_at": "2026-10-29T22:37:22.226745+08:00",
+        "updated_at": "2026-10-29T22:37:22.226766+08:00",
+        "name": "色温2E84DE7A",
+        "key": "cct_2e84de7a",
+        "default_value": "4000K",
+        "unit": "K",
+        "include_in_sku": true,
+        "include_in_sales_model": false,
+        "uppercase": false,
+        "required": false,
+        "sort_order": 0,
+        "category": 2
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/products/",
+      "status": 201,
+      "result": {
+        "id": 1,
+        "sku_definitions": null,
+        "category_name": "验收2E84DE7A子分类",
+        "hs_code_value": "",
+        "sku_count": 0,
+        "parameter_count": 0,
+        "certificate_count": 0,
+        "created_at": "2026-10-29T22:37:22.254900+08:00",
+        "updated_at": "2026-10-29T22:37:22.254920+08:00",
+        "name": "验收2E84DE7A待改分类产品",
+        "name_en": "Synthetic category verification product",
+        "code": "SPU261029001",
+        "combination_rules": [],
+        "sales_model_prefix": "T2E84DE7AE",
+        "description": "Synthetic UAT data only",
+        "status": "active",
+        "hs_code": null,
+        "category": 2,
+        "additional_categories": [],
+        "suppliers": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/products/",
+      "status": 201,
+      "result": {
+        "id": 2,
+        "sku_definitions": null,
+        "category_name": "验收2E84DE7A根分类",
+        "hs_code_value": "",
+        "sku_count": 0,
+        "parameter_count": 0,
+        "certificate_count": 0,
+        "created_at": "2026-10-29T22:37:22.315913+08:00",
+        "updated_at": "2026-10-29T22:37:22.315936+08:00",
+        "name": "验收2E84DE7A根分类产品",
+        "name_en": "Synthetic category verification product",
+        "code": "SPU261029002",
+        "combination_rules": [],
+        "sales_model_prefix": "T2E84DE7AR",
+        "description": "Synthetic UAT data only",
+        "status": "active",
+        "hs_code": null,
+        "category": 1,
+        "additional_categories": [],
+        "suppliers": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/products/",
+      "status": 201,
+      "result": {
+        "id": 3,
+        "sku_definitions": null,
+        "category_name": "验收2E84DE7A子分类",
+        "hs_code_value": "",
+        "sku_count": 0,
+        "parameter_count": 0,
+        "certificate_count": 0,
+        "created_at": "2026-10-29T22:37:22.370783+08:00",
+        "updated_at": "2026-10-29T22:37:22.370804+08:00",
+        "name": "验收2E84DE7A子分类产品",
+        "name_en": "Synthetic category verification product",
+        "code": "SPU261029003",
+        "combination_rules": [],
+        "sales_model_prefix": "T2E84DE7AC",
+        "description": "Synthetic UAT data only",
+        "status": "active",
+        "hs_code": null,
+        "category": 2,
+        "additional_categories": [],
+        "suppliers": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/categories/2/",
+      "status": 200,
+      "result": {
+        "id": 2,
+        "product_count": 2,
+        "child_count": 0,
+        "parent_name": "验收2E84DE7A根分类",
+        "attributes": [
+          {
+            "id": 2,
+            "category_name": "验收2E84DE7A子分类",
+            "created_at": "2026-10-29T22:37:22.226745+08:00",
+            "updated_at": "2026-10-29T22:37:22.226766+08:00",
+            "name": "色温2E84DE7A",
+            "key": "cct_2e84de7a",
+            "default_value": "4000K",
+            "unit": "K",
+            "include_in_sku": true,
+            "include_in_sales_model": false,
+            "uppercase": false,
+            "required": false,
+            "sort_order": 0,
+            "category": 2
+          }
+        ],
+        "effective_attributes": [
+          {
+            "id": 1,
+            "category_name": "验收2E84DE7A根分类",
+            "created_at": "2026-10-29T22:37:22.161786+08:00",
+            "updated_at": "2026-10-29T22:37:22.161810+08:00",
+            "name": "电压2E84DE7A",
+            "key": "voltage_2e84de7a",
+            "default_value": "24V",
+            "unit": "V",
+            "include_in_sku": true,
+            "include_in_sales_model": false,
+            "uppercase": false,
+            "required": false,
+            "sort_order": 0,
+            "category": 1,
+            "inherited": true,
+            "source_category": "验收2E84DE7A根分类"
+          },
+          {
+            "id": 2,
+            "category_name": "验收2E84DE7A子分类",
+            "created_at": "2026-10-29T22:37:22.226745+08:00",
+            "updated_at": "2026-10-29T22:37:22.226766+08:00",
+            "name": "色温2E84DE7A",
+            "key": "cct_2e84de7a",
+            "default_value": "4000K",
+            "unit": "K",
+            "include_in_sku": true,
+            "include_in_sales_model": false,
+            "uppercase": false,
+            "required": false,
+            "sort_order": 0,
+            "category": 2,
+            "inherited": false,
+            "source_category": "验收2E84DE7A子分类"
+          }
+        ],
+        "sku_name_preview": "24V-4000K",
+        "created_at": "2026-10-29T22:37:22.070676+08:00",
+        "updated_at": "2026-10-29T22:37:22.070696+08:00",
+        "name": "验收2E84DE7A子分类",
+        "description": "合成子分类验证",
+        "sort_order": 0,
+        "parent": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/products/1/",
+      "status": 200,
+      "result": {
+        "id": 1,
+        "sku_definitions": null,
+        "category_name": "验收2E84DE7A根分类",
+        "hs_code_value": "",
+        "sku_count": 0,
+        "parameter_count": 0,
+        "certificate_count": 0,
+        "created_at": "2026-10-29T22:37:22.254900+08:00",
+        "updated_at": "2026-10-29T22:37:36.689703+08:00",
+        "name": "验收2E84DE7A待改分类产品",
+        "name_en": "Synthetic category verification product",
+        "code": "SPU261029001",
+        "combination_rules": [],
+        "sales_model_prefix": "T2E84DE7AE",
+        "description": "Synthetic UAT data only",
+        "status": "active",
+        "hs_code": null,
+        "category": 1,
+        "additional_categories": [],
+        "suppliers": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/categories/",
+      "status": 201,
+      "result": {
+        "id": 3,
+        "product_count": 0,
+        "child_count": 0,
+        "parent_name": "",
+        "attributes": [],
+        "effective_attributes": [],
+        "sku_name_preview": "",
+        "created_at": "2026-10-29T22:37:39.221049+08:00",
+        "updated_at": "2026-10-29T22:37:39.221075+08:00",
+        "name": "验收670EF33C模板根分类",
+        "description": "合成模板快照验证",
+        "sort_order": 0,
+        "parent": null
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/categories/",
+      "status": 201,
+      "result": {
+        "id": 4,
+        "product_count": 0,
+        "child_count": 0,
+        "parent_name": "验收670EF33C模板根分类",
+        "attributes": [],
+        "effective_attributes": [],
+        "sku_name_preview": "",
+        "created_at": "2026-10-29T22:37:39.247241+08:00",
+        "updated_at": "2026-10-29T22:37:39.247270+08:00",
+        "name": "验收670EF33C模板子分类",
+        "description": "合成模板快照验证",
+        "sort_order": 0,
+        "parent": 3
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/category-attributes/",
+      "status": 201,
+      "result": {
+        "id": 3,
+        "category_name": "验收670EF33C模板根分类",
+        "created_at": "2026-10-29T22:37:39.277936+08:00",
+        "updated_at": "2026-10-29T22:37:39.277963+08:00",
+        "name": "电压670EF33C",
+        "key": "voltage_670ef33c",
+        "default_value": "24",
+        "unit": "V",
+        "include_in_sku": true,
+        "include_in_sales_model": false,
+        "uppercase": false,
+        "required": false,
+        "sort_order": 0,
+        "category": 3
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/products/",
+      "status": 201,
+      "result": {
+        "id": 4,
+        "sku_definitions": null,
+        "category_name": "验收670EF33C模板子分类",
+        "hs_code_value": "",
+        "sku_count": 0,
+        "parameter_count": 0,
+        "certificate_count": 0,
+        "created_at": "2026-10-29T22:37:39.299394+08:00",
+        "updated_at": "2026-10-29T22:37:39.299418+08:00",
+        "name": "验收670EF33C已发布 SKU 产品",
+        "name_en": "Synthetic published SKU verification product",
+        "code": "SPU261029004",
+        "combination_rules": [],
+        "sales_model_prefix": "P670EF33C",
+        "description": "Synthetic UAT data only",
+        "status": "active",
+        "hs_code": null,
+        "category": 4,
+        "additional_categories": [],
+        "suppliers": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/skus/",
+      "status": 201,
+      "result": {
+        "id": 1,
+        "trade_units": [],
+        "image_thumbnail": "",
+        "image": null,
+        "sku_code": "SKU-000001",
+        "product_name": "验收670EF33C已发布 SKU 产品",
+        "product_code": "SPU261029004",
+        "category_names": [
+          "验收670EF33C模板根分类 / 验收670EF33C模板子分类"
+        ],
+        "status_label": "启用",
+        "quote_count": 0,
+        "order_count": 0,
+        "sales_model_missing": false,
+        "stock_quantity": "0.00",
+        "actual_quantity": 0,
+        "reserved_quantity": 0,
+        "available_quantity": 0,
+        "in_transit_quantity": 0,
+        "to_procure_quantity": 0,
+        "has_anomaly": false,
+        "packaging": {
+          "status": "NOT_CONFIGURED",
+          "template": null,
+          "template_name": "",
+          "effective_qty_per_carton": null,
+          "effective_length": null,
+          "effective_width": null,
+          "effective_height": null,
+          "effective_carton_tare_weight": null,
+          "unit_net_weight": null,
+          "effective_cbm": null,
+          "partial_carton_policy": null
+        },
+        "historical_matches": [],
+        "created_at": "2026-10-29T22:37:39.386022+08:00",
+        "updated_at": "2026-10-29T22:37:39.386046+08:00",
+        "schema_version": 1,
+        "sku": "SKU-000001",
+        "specification": "24V",
+        "display_name_cn": "验收670EF33C已发布 SKU 产品-24V",
+        "display_name_key": "验收670ef33c已发布 sku 产品-24v",
+        "sales_model": "M670EF33C",
+        "sales_model_abbreviations": {},
+        "description_cn": "验收670EF33C原始描述",
+        "description_en": "Synthetic original description",
+        "unit": "pcs",
+        "cost_price": "0.0000",
+        "default_price": "0.0000",
+        "currency": "USD",
+        "active": true,
+        "parameter_values": {
+          "voltage_670ef33c": "24"
+        },
+        "identity_signature": "product=4|3:voltage_670ef33c=24v",
+        "product_details": [],
+        "product": 4
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/customers/",
+      "status": 201,
+      "result": {
+        "id": 1,
+        "contact_count": 0,
+        "order_count": 0,
+        "sales_amount": "0.00",
+        "country_display": "United States / US",
+        "status_display": "线索",
+        "created_at": "2026-10-29T22:37:39.470477+08:00",
+        "updated_at": "2026-10-29T22:37:39.470503+08:00",
+        "name": "验收670EF33C合成客户",
+        "code": "202610290000",
+        "country": "US",
+        "region": "",
+        "source": "",
+        "status": "lead",
+        "owner": "",
+        "website": "",
+        "address": "Synthetic test address",
+        "notes": "",
+        "next_follow_up": null,
+        "owner_profile": null
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/quotes/",
+      "status": 201,
+      "result": {
+        "id": 1,
+        "items": [
+          {
+            "id": 1,
+            "sku": 1,
+            "sku_code": "SKU-000001",
+            "sales_model_snapshot": "M670EF33C",
+            "model": "M670EF33C",
+            "product_name": "验收670EF33C已发布 SKU 产品-24V",
+            "display_name_snapshot": "验收670EF33C已发布 SKU 产品-24V",
+            "unit": "pcs",
+            "image": "",
+            "quantity": "1.00",
+            "unit_price": "10.0000",
+            "amount": "10.00",
+            "description": "Synthetic quote snapshot",
+            "description_snapshot": "Synthetic quote snapshot",
+            "notes": "",
+            "sales_rules_snapshot": [],
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "验收670EF33C合成客户",
+        "status_display": "草稿",
+        "total_amount": "10.00",
+        "root_quote_no": "SJ20261028US001",
+        "revision_label": "Original",
+        "parent_quote_no": "",
+        "created_at": "2026-10-29T22:37:39.502461+08:00",
+        "updated_at": "2026-10-29T22:37:39.502484+08:00",
+        "quote_no": "SJ20261028US001",
+        "revision_no": 0,
+        "revision_summary": "",
+        "buyer_company_name": "验收670EF33C合成客户",
+        "quote_date": "2026-10-28",
+        "valid_until": null,
+        "status": "draft",
+        "currency": "USD",
+        "exchange_rate": "7.200000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "recipient_name": "验收670EF33C合成联系人",
+        "buyer_address": "Synthetic test address",
+        "buyer_email": "uat-670ef33c@example.com",
+        "buyer_phone": "",
+        "lead_time_days": null,
+        "deposit_ratio": "0.3000",
+        "trading_terms": "",
+        "shipping_details": "",
+        "root_quote": null,
+        "parent_quote": null,
+        "customer": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/quotes/1/order-draft/",
+      "status": 200,
+      "result": {
+        "customer": 1,
+        "quote": 1,
+        "order_date": "2026-10-29",
+        "expected_ship_date": null,
+        "status": "draft",
+        "currency": "USD",
+        "exchange_rate": 7.2,
+        "shipping_fee": 0,
+        "discount": 0,
+        "notes": "",
+        "items": [
+          {
+            "sku": 1,
+            "sku_code": "SKU-000001",
+            "sales_model_snapshot": "M670EF33C",
+            "model": "M670EF33C",
+            "display_name_snapshot": "验收670EF33C已发布 SKU 产品-24V",
+            "description_snapshot": "Synthetic quote snapshot",
+            "description": "Synthetic quote snapshot",
+            "unit_snapshot": "pcs",
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "quantity": 1,
+            "unit_price": 10,
+            "cost_price": 0,
+            "notes": ""
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/orders/",
+      "status": 201,
+      "result": {
+        "id": 1,
+        "items": [
+          {
+            "id": 1,
+            "sku": 1,
+            "sku_code": "SKU-000001",
+            "sales_model": "M670EF33C",
+            "model": "M670EF33C",
+            "product_name": "验收670EF33C已发布 SKU 产品-24V",
+            "display_name": "验收670EF33C已发布 SKU 产品-24V",
+            "description": "Synthetic quote snapshot",
+            "unit": "pcs",
+            "quantity": "1.00",
+            "unit_price": "10.0000",
+            "cost_price": "0.0000",
+            "amount": "10.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "验收670EF33C合成客户",
+        "customer_country": "US",
+        "quote_no": "SJ20261028US001",
+        "source_quote_no": "SJ20261028US001",
+        "status_display": "草稿",
+        "total_amount": "10.00",
+        "base_amount": "10.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "0.00",
+        "balance_amount": 0,
+        "receivable_state": "draft",
+        "created_at": "2026-10-29T22:37:39.568330+08:00",
+        "updated_at": "2026-10-29T22:37:39.568349+08:00",
+        "order_no": "SO-2026-00001",
+        "customer_name_snapshot": "",
+        "customer_country_snapshot": "",
+        "customer_address_snapshot": "",
+        "customer_contact_name_snapshot": "",
+        "customer_phone_snapshot": "",
+        "customer_email_snapshot": "",
+        "order_date": "2026-10-29",
+        "expected_ship_date": null,
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "draft",
+        "historical_only": false,
+        "currency": "USD",
+        "exchange_rate": "7.200000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "quantity_change_version": 0,
+        "customer": 1,
+        "quote": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/products/4/",
+      "status": 200,
+      "result": {
+        "id": 4,
+        "sku_definitions": [
+          {
+            "category_id": 3,
+            "key": "voltage_670ef33c",
+            "name": "电压670EF33C",
+            "unit": "V",
+            "include_in_sku": true,
+            "include_in_sales_model": false,
+            "uppercase": false,
+            "required": false,
+            "default_value": "24"
+          }
+        ],
+        "category_name": "验收670EF33C模板子分类",
+        "hs_code_value": "",
+        "sku_count": 1,
+        "parameter_count": 0,
+        "certificate_count": 0,
+        "created_at": "2026-10-29T22:37:39.299394+08:00",
+        "updated_at": "2026-10-29T22:37:39.299418+08:00",
+        "name": "验收670EF33C已发布 SKU 产品",
+        "name_en": "Synthetic published SKU verification product",
+        "code": "SPU261029004",
+        "combination_rules": [],
+        "sales_model_prefix": "P670EF33C",
+        "description": "Synthetic UAT data only",
+        "status": "active",
+        "hs_code": null,
+        "category": 4,
+        "additional_categories": [],
+        "suppliers": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/skus/1/",
+      "status": 200,
+      "result": {
+        "id": 1,
+        "trade_units": [],
+        "image_thumbnail": "",
+        "image": null,
+        "sku_code": "SKU-000001",
+        "product_name": "验收670EF33C已发布 SKU 产品",
+        "product_code": "SPU261029004",
+        "category_names": [
+          "验收670EF33C模板根分类 / 验收670EF33C模板子分类"
+        ],
+        "status_label": "启用",
+        "quote_count": 1,
+        "order_count": 1,
+        "sales_model_missing": false,
+        "stock_quantity": "0.00",
+        "actual_quantity": 0,
+        "reserved_quantity": 0,
+        "available_quantity": 0,
+        "in_transit_quantity": 0,
+        "to_procure_quantity": 0,
+        "has_anomaly": false,
+        "packaging": {
+          "status": "NOT_CONFIGURED",
+          "template": null,
+          "template_name": "",
+          "effective_qty_per_carton": null,
+          "effective_length": null,
+          "effective_width": null,
+          "effective_height": null,
+          "effective_carton_tare_weight": null,
+          "unit_net_weight": null,
+          "effective_cbm": null,
+          "partial_carton_policy": null
+        },
+        "historical_matches": [],
+        "created_at": "2026-10-29T22:37:39.386022+08:00",
+        "updated_at": "2026-10-29T22:37:39.386046+08:00",
+        "schema_version": 1,
+        "sku": "SKU-000001",
+        "specification": "24V",
+        "display_name_cn": "验收670EF33C已发布 SKU 产品-24V",
+        "display_name_key": "验收670ef33c已发布 sku 产品-24v",
+        "sales_model": "M670EF33C",
+        "sales_model_abbreviations": {},
+        "description_cn": "验收670EF33C原始描述",
+        "description_en": "Synthetic original description",
+        "unit": "pcs",
+        "cost_price": "0.0000",
+        "default_price": "0.0000",
+        "currency": "USD",
+        "active": true,
+        "parameter_values": {
+          "voltage_670ef33c": "24"
+        },
+        "identity_signature": "product=4|3:voltage_670ef33c=24v",
+        "product_details": [],
+        "product": 4
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/products/4/",
+      "status": 200,
+      "result": {
+        "id": 4,
+        "sku_definitions": [
+          {
+            "category_id": 3,
+            "key": "voltage_670ef33c",
+            "name": "电压670EF33C",
+            "unit": "V",
+            "include_in_sku": true,
+            "include_in_sales_model": false,
+            "uppercase": false,
+            "required": false,
+            "default_value": "24"
+          }
+        ],
+        "category_name": "验收670EF33C模板子分类",
+        "hs_code_value": "",
+        "sku_count": 1,
+        "parameter_count": 0,
+        "certificate_count": 0,
+        "created_at": "2026-10-29T22:37:39.299394+08:00",
+        "updated_at": "2026-10-29T22:37:39.299418+08:00",
+        "name": "验收670EF33C已发布 SKU 产品",
+        "name_en": "Synthetic published SKU verification product",
+        "code": "SPU261029004",
+        "combination_rules": [],
+        "sales_model_prefix": "P670EF33C",
+        "description": "Synthetic UAT data only",
+        "status": "active",
+        "hs_code": null,
+        "category": 4,
+        "additional_categories": [],
+        "suppliers": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/skus/1/",
+      "status": 200,
+      "result": {
+        "id": 1,
+        "trade_units": [],
+        "image_thumbnail": "",
+        "image": null,
+        "sku_code": "SKU-000001",
+        "product_name": "验收670EF33C已发布 SKU 产品",
+        "product_code": "SPU261029004",
+        "category_names": [
+          "验收670EF33C模板根分类 / 验收670EF33C模板子分类"
+        ],
+        "status_label": "启用",
+        "quote_count": 1,
+        "order_count": 1,
+        "sales_model_missing": false,
+        "stock_quantity": "0.00",
+        "actual_quantity": 0,
+        "reserved_quantity": 0,
+        "available_quantity": 0,
+        "in_transit_quantity": 0,
+        "to_procure_quantity": 0,
+        "has_anomaly": false,
+        "packaging": {
+          "status": "NOT_CONFIGURED",
+          "template": null,
+          "template_name": "",
+          "effective_qty_per_carton": null,
+          "effective_length": null,
+          "effective_width": null,
+          "effective_height": null,
+          "effective_carton_tare_weight": null,
+          "unit_net_weight": null,
+          "effective_cbm": null,
+          "partial_carton_policy": null
+        },
+        "historical_matches": [],
+        "created_at": "2026-10-29T22:37:39.386022+08:00",
+        "updated_at": "2026-10-29T22:37:39.386046+08:00",
+        "schema_version": 1,
+        "sku": "SKU-000001",
+        "specification": "24V",
+        "display_name_cn": "验收670EF33C已发布 SKU 产品-24V",
+        "display_name_key": "验收670ef33c已发布 sku 产品-24v",
+        "sales_model": "M670EF33C",
+        "sales_model_abbreviations": {},
+        "description_cn": "验收670EF33C原始描述",
+        "description_en": "Synthetic original description",
+        "unit": "pcs",
+        "cost_price": "0.0000",
+        "default_price": "0.0000",
+        "currency": "USD",
+        "active": true,
+        "parameter_values": {
+          "voltage_670ef33c": "24"
+        },
+        "identity_signature": "product=4|3:voltage_670ef33c=24v",
+        "product_details": [],
+        "product": 4
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/skus/1/",
+      "status": 200,
+      "result": {
+        "id": 1,
+        "trade_units": [],
+        "image_thumbnail": "",
+        "image": null,
+        "sku_code": "SKU-000001",
+        "product_name": "验收670EF33C已发布 SKU 产品",
+        "product_code": "SPU261029004",
+        "category_names": [
+          "验收670EF33C模板根分类 / 验收670EF33C模板子分类"
+        ],
+        "status_label": "启用",
+        "quote_count": 1,
+        "order_count": 1,
+        "sales_model_missing": false,
+        "stock_quantity": "0.00",
+        "actual_quantity": 0,
+        "reserved_quantity": 0,
+        "available_quantity": 0,
+        "in_transit_quantity": 0,
+        "to_procure_quantity": 0,
+        "has_anomaly": false,
+        "packaging": {
+          "status": "NOT_CONFIGURED",
+          "template": null,
+          "template_name": "",
+          "effective_qty_per_carton": null,
+          "effective_length": null,
+          "effective_width": null,
+          "effective_height": null,
+          "effective_carton_tare_weight": null,
+          "unit_net_weight": null,
+          "effective_cbm": null,
+          "partial_carton_policy": null
+        },
+        "historical_matches": [],
+        "created_at": "2026-10-29T22:37:39.386022+08:00",
+        "updated_at": "2026-10-29T22:37:55.353029+08:00",
+        "schema_version": 1,
+        "sku": "SKU-000001",
+        "specification": "24V",
+        "display_name_cn": "验收670EF33C已发布 SKU 产品-24V",
+        "display_name_key": "验收670ef33c已发布 sku 产品-24v",
+        "sales_model": "M670EF33C",
+        "sales_model_abbreviations": {},
+        "description_cn": "验收670EF33C普通保存描述",
+        "description_en": "Synthetic original description",
+        "unit": "pcs",
+        "cost_price": "0.0000",
+        "default_price": "0.0000",
+        "currency": "USD",
+        "active": true,
+        "parameter_values": {
+          "voltage_670ef33c": "24"
+        },
+        "identity_signature": "product=4|3:voltage_670ef33c=24v",
+        "product_details": [
+          {
+            "product_name": "验收670EF33C已发布 SKU 产品",
+            "unit": "pcs",
+            "notes": "",
+            "unit_weight": 0,
+            "carton_quantity": 0
+          }
+        ],
+        "product": 4
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/products/",
+      "status": 201,
+      "result": {
+        "id": 5,
+        "sku_definitions": null,
+        "category_name": "验收670EF33C模板子分类",
+        "hs_code_value": "",
+        "sku_count": 0,
+        "parameter_count": 0,
+        "certificate_count": 0,
+        "created_at": "2026-10-29T22:37:55.682385+08:00",
+        "updated_at": "2026-10-29T22:37:55.682422+08:00",
+        "name": "验收670EF33C模板变更后新产品",
+        "name_en": "Synthetic new product after template update",
+        "code": "SPU261029005",
+        "combination_rules": [],
+        "sales_model_prefix": "N670EF33C",
+        "description": "Synthetic UAT data only",
+        "status": "active",
+        "hs_code": null,
+        "category": 4,
+        "additional_categories": [],
+        "suppliers": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/skus/",
+      "status": 201,
+      "result": {
+        "id": 2,
+        "trade_units": [],
+        "image_thumbnail": "",
+        "image": null,
+        "sku_code": "SKU-000002",
+        "product_name": "验收670EF33C模板变更后新产品",
+        "product_code": "SPU261029005",
+        "category_names": [
+          "验收670EF33C模板根分类 / 验收670EF33C模板子分类"
+        ],
+        "status_label": "启用",
+        "quote_count": 0,
+        "order_count": 0,
+        "sales_model_missing": false,
+        "stock_quantity": "0.00",
+        "actual_quantity": 0,
+        "reserved_quantity": 0,
+        "available_quantity": 0,
+        "in_transit_quantity": 0,
+        "to_procure_quantity": 0,
+        "has_anomaly": false,
+        "packaging": {
+          "status": "NOT_CONFIGURED",
+          "template": null,
+          "template_name": "",
+          "effective_qty_per_carton": null,
+          "effective_length": null,
+          "effective_width": null,
+          "effective_height": null,
+          "effective_carton_tare_weight": null,
+          "unit_net_weight": null,
+          "effective_cbm": null,
+          "partial_carton_policy": null
+        },
+        "historical_matches": [],
+        "created_at": "2026-10-29T22:37:55.743819+08:00",
+        "updated_at": "2026-10-29T22:37:55.743840+08:00",
+        "schema_version": 1,
+        "sku": "SKU-000002",
+        "specification": "24V",
+        "display_name_cn": "验收670EF33C模板变更后新产品-24V",
+        "display_name_key": "验收670ef33c模板变更后新产品-24v",
+        "sales_model": "N670EF33C-24",
+        "sales_model_abbreviations": {},
+        "description_cn": "验收670EF33C新模板 SKU",
+        "description_en": "Synthetic new schema SKU",
+        "unit": "pcs",
+        "cost_price": "0.0000",
+        "default_price": "0.0000",
+        "currency": "USD",
+        "active": true,
+        "parameter_values": {
+          "voltage_670ef33c": "24"
+        },
+        "identity_signature": "product=5|3:voltage_670ef33c=24v",
+        "product_details": [],
+        "product": 5
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/products/5/",
+      "status": 200,
+      "result": {
+        "id": 5,
+        "sku_definitions": [
+          {
+            "category_id": 3,
+            "key": "voltage_670ef33c",
+            "name": "电压670EF33C",
+            "unit": "V",
+            "include_in_sku": true,
+            "include_in_sales_model": false,
+            "uppercase": true,
+            "required": false,
+            "default_value": "24"
+          }
+        ],
+        "category_name": "验收670EF33C模板子分类",
+        "hs_code_value": "",
+        "sku_count": 1,
+        "parameter_count": 0,
+        "certificate_count": 0,
+        "created_at": "2026-10-29T22:37:55.682385+08:00",
+        "updated_at": "2026-10-29T22:37:55.682422+08:00",
+        "name": "验收670EF33C模板变更后新产品",
+        "name_en": "Synthetic new product after template update",
+        "code": "SPU261029005",
+        "combination_rules": [],
+        "sales_model_prefix": "N670EF33C",
+        "description": "Synthetic UAT data only",
+        "status": "active",
+        "hs_code": null,
+        "category": 4,
+        "additional_categories": [],
+        "suppliers": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+[
+  {
+    "stage": "backend-system-check",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "check"
+    ]
+  },
+  {
+    "stage": "backend-makemigrations-check",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "makemigrations",
+      "--check",
+      "--dry-run"
+    ]
+  },
+  {
+    "stage": "backend-fresh-migrate",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "migrate",
+      "--noinput"
+    ]
+  },
+  {
+    "stage": "backend-migration-leaves",
+    "exitCode": 0,
+    "arguments": [
+      "-c",
+      "import django; django.setup(); from django.db import connection; from django.db.migrations.loader import MigrationLoader; leaves=MigrationLoader(connection).graph.leaf_nodes(\"crm\"); print(\"crm leaf nodes:\", leaves); assert leaves == [(\"crm\", \"0092_merge_fulfillment_and_csv_audit\")]"
+    ]
+  },
+  {
+    "stage": "backend-upgrade-to-0089",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "migrate",
+      "crm",
+      "0089_operationlog_operator_protect",
+      "--noinput"
+    ]
+  },
+  {
+    "stage": "backend-upgrade-seed",
+    "exitCode": 1,
+    "arguments": [
+      "-c",
+      "import django; django.setup(); from django.contrib.auth import get_user_model; get_user_model().objects.create_user(username=\"r1_integration_0089_sentinel\"); print(\"created pre-upgrade sentinel\")"
+    ]
+  },
+  {
+    "stage": "backend-iss006",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "test",
+      "crm.tests.test_iss006_idempotency",
+      "-v",
+      "2"
+    ]
+  },
+  {
+    "stage": "backend-iss052",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "test",
+      "crm.tests.test_safe_csv_import",
+      "-v",
+      "2"
+    ]
+  },
+  {
+    "stage": "backend-full",
+    "exitCode": 1,
+    "arguments": [
+      "manage.py",
+      "test",
+      "-v",
+      "1"
+    ]
+  }
+]

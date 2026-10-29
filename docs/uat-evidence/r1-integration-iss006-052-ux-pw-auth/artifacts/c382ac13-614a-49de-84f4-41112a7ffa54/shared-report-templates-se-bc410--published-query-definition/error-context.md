@@ -1,0 +1,246 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: shared-report-templates.spec.js >> separate manager and employee sessions share only the published query definition
+- Location: browser-tests\shared-report-templates.spec.js:4:1
+
+# Error details
+
+```
+Test timeout of 30000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: S
+      - generic [ref=e7]:
+        - strong [ref=e8]: 森爵业务中台
+        - text: CRM · ERP
+    - navigation [ref=e9]:
+      - generic [ref=e10]: 经营
+      - link "报表中心" [ref=e11] [cursor=pointer]:
+        - /url: /reports
+      - link "历史订单分析" [ref=e18] [cursor=pointer]:
+        - /url: /historical-orders
+      - generic [ref=e24]: 客户
+      - link "客户管理" [ref=e25] [cursor=pointer]:
+        - /url: /customers
+      - generic [ref=e32]: 销售
+      - link "订单管理" [ref=e33] [cursor=pointer]:
+        - /url: /orders
+      - generic [ref=e39]: 产品资料
+      - link "产品管理" [ref=e40] [cursor=pointer]:
+        - /url: /products
+      - link "SKU 管理" [ref=e46] [cursor=pointer]:
+        - /url: /skus
+      - link "产品分类" [ref=e58] [cursor=pointer]:
+        - /url: /categories
+    - generic [ref=e64]:
+      - generic [ref=e65]: 共
+      - generic [ref=e67]:
+        - strong [ref=e68]: 当前账号：共享模板管理员
+        - generic [ref=e69]: · 按账号授权
+  - main [ref=e70]:
+    - generic [ref=e71]:
+      - generic [ref=e72]:
+        - text: Reports & analytics
+        - heading "报表中心" [level=1] [ref=e73]
+      - generic [ref=e74]:
+        - generic [ref=e75]: 10月29日周四
+        - generic "共享模板管理员" [ref=e76]: 共
+    - generic [ref=e78]:
+      - paragraph [ref=e80]: 选择报表与日期，查询后可继续筛选或保存图表。
+      - status [ref=e81]: 团队模板已取消发布。
+      - form "报表查询" [ref=e82]:
+        - group "1. 选择报表" [ref=e83]:
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - text: 报表预设
+              - combobox "报表预设" [ref=e87]:
+                - option "自定义查询" [selected]
+                - option "销售趋势"
+                - option "国家销售"
+                - option "客户销售排行"
+                - option "产品类别销售"
+                - option "客户增长趋势"
+                - option "客户来源分布"
+            - paragraph [ref=e88]: 选择预设后可调整条件，再点击“查询报表”。
+          - generic [ref=e89]:
+            - generic [ref=e90]:
+              - text: 数据来源
+              - combobox "数据来源" [ref=e91]:
+                - option "销售报表" [selected]
+                - option "客户增长"
+            - generic [ref=e92]:
+              - text: 统计维度
+              - combobox "统计维度" [ref=e93]:
+                - option "时间" [selected]
+                - option "客户"
+                - option "国家"
+                - option "产品主分类"
+            - generic [ref=e94]:
+              - text: 第二统计维度（可选）
+              - combobox "第二统计维度（可选）" [ref=e95]:
+                - option "不设置" [selected]
+                - option "客户"
+                - option "国家"
+                - option "产品主分类"
+            - generic [ref=e96]:
+              - text: 图表指标
+              - combobox "图表指标" [ref=e97]:
+                - option "金额（人民币）" [selected]
+                - option "去重单据 / 档案数"
+                - option "数量（按单位）"
+            - generic [ref=e98]:
+              - text: 图表类型
+              - combobox "图表类型" [ref=e99]:
+                - option "折线图" [selected]
+                - option "条形图"
+                - option "环形图"
+                - option "数据表"
+        - group "2. 日期与比较" [ref=e100]:
+          - generic "日期快捷选择" [ref=e102]:
+            - button "近30天" [ref=e103] [cursor=pointer]
+            - button "近90天" [ref=e104] [cursor=pointer]
+            - button "今天" [ref=e105] [cursor=pointer]
+            - button "本周至今" [ref=e106] [cursor=pointer]
+            - button "本月至今" [ref=e107] [cursor=pointer]
+            - button "本季度至今" [ref=e108] [cursor=pointer]
+            - button "本年至今" [ref=e109] [cursor=pointer]
+            - button "上月" [ref=e110] [cursor=pointer]
+            - button "去年" [ref=e111] [cursor=pointer]
+          - generic [ref=e112]:
+            - generic [ref=e113]:
+              - text: 日期口径
+              - combobox "日期口径" [ref=e114]:
+                - option "订单日期" [selected]
+                - option "创建时间"
+            - generic [ref=e115]:
+              - text: 开始日期
+              - textbox "开始日期" [ref=e116]: 2026-01-01
+            - generic [ref=e117]:
+              - text: 结束日期（含当天）
+              - textbox "结束日期（含当天）" [ref=e118]: 2026-10-29
+            - generic [ref=e119]:
+              - text: 比较方式
+              - combobox "比较方式" [ref=e120]:
+                - option "上一等长期间" [selected]
+                - option "去年同期"
+            - generic [ref=e121]:
+              - text: 时间粒度
+              - combobox "时间粒度" [ref=e122]:
+                - option "日"
+                - option "月" [selected]
+                - option "年"
+          - paragraph [ref=e123]: 有效销售合同金额，按订单汇率折人民币，不代表实收。
+        - group "3. 附加筛选" [ref=e124]:
+          - generic [ref=e126]:
+            - generic [ref=e127]:
+              - text: 筛选维度
+              - combobox "筛选维度" [ref=e128]:
+                - option "选择维度" [selected]
+                - option "客户"
+                - option "国家"
+                - option "产品主分类"
+            - generic [ref=e129]:
+              - text: 可用值
+              - combobox "可用值" [disabled] [ref=e130]:
+                - option "请选择" [selected]
+            - button "刷新选项" [disabled] [ref=e131]
+            - button "添加筛选" [disabled] [ref=e132]
+        - generic [ref=e133]:
+          - generic [ref=e134]:
+            - text: 图表名称
+            - textbox "图表名称" [ref=e135]: 销售趋势
+          - button "查询报表" [ref=e136] [cursor=pointer]
+          - button "保存为图表块" [ref=e137] [cursor=pointer]
+          - generic [ref=e138]: 最多 30 块，仅当前浏览器可用。
+      - region "团队共享模板" [ref=e139]:
+        - generic [ref=e140]:
+          - generic [ref=e141]:
+            - heading "团队共享模板" [level=2] [ref=e142]
+            - paragraph [ref=e143]: 模板只保存报表条件；每次使用仍按当前账号的数据权限重新查询。
+          - generic [ref=e144]:
+            - button "刷新" [ref=e145] [cursor=pointer]
+            - button "根据当前查询创建" [ref=e146] [cursor=pointer]
+        - article [ref=e148]:
+          - generic [ref=e149]:
+            - generic [ref=e150]:
+              - strong [ref=e151]: 团队销售模板（已更新）
+              - generic [ref=e152]: 草稿
+            - text: 更新于 2026/10/23 17:05:00 · 共享模板管理员
+          - generic [ref=e153]:
+            - button "使用模板" [disabled] [ref=e154]
+            - button "编辑" [disabled] [ref=e155]
+            - button "发布" [ref=e156] [cursor=pointer]
+            - button "删除" [ref=e157] [cursor=pointer]
+            - button "操作记录" [ref=e158] [cursor=pointer]
+          - paragraph [ref=e159]: 当前账号没有该模板来源或筛选维度的查看权限。
+      - region "已查询条件" [ref=e160]:
+        - generic [ref=e161]:
+          - strong [ref=e162]: 当前查询
+          - paragraph [ref=e163]: 销售报表 · 时间 · 订单日期 · 2026-01-01 — 2026-10-29
+      - article "销售趋势" [ref=e164]:
+        - generic [ref=e165]:
+          - generic [ref=e166]:
+            - text: 经营统计
+            - heading "销售趋势" [level=2] [ref=e167]
+          - generic [ref=e168]:
+            - combobox "图表显示方式" [ref=e169] [cursor=pointer]:
+              - option "默认图表" [selected]
+              - option "条形图"
+              - option "折线图"
+              - option "环形图"
+              - option "仅表格"
+            - button "导出 CSV" [ref=e170] [cursor=pointer]
+        - generic [ref=e171]:
+          - generic [ref=e172]:
+            - generic [ref=e173]: 金额合计（人民币）
+            - strong [ref=e174]: ¥ 100
+          - generic [ref=e175]:
+            - generic [ref=e176]: 去重单据 / 档案数
+            - strong [ref=e177]: "1"
+        - paragraph [ref=e178]: 订单日期 · 2026-01-01 — 2026-10-29 · 上一等长期间 2025-01-01 — 2025-10-23 · 金额（人民币）变化：基期为零或该指标不适用
+        - paragraph [ref=e179]: 共享模板测试数据。 分组单据数可能交叉，不应相加；空日期不纳入该日期口径。
+        - strong [ref=e181]: 金额（人民币）
+        - img "销售趋势，详细数值见下方表格" [ref=e183]:
+          - generic [ref=e184]: "100"
+          - generic [ref=e185]: "0"
+          - generic "中国：100" [ref=e186]
+          - generic [ref=e187]: 中国
+          - generic [ref=e188]: 中国
+        - table [ref=e190]:
+          - rowgroup [ref=e191]:
+            - row [ref=e192]:
+              - columnheader "时间" [ref=e193]
+              - columnheader "金额（人民币）" [ref=e194]
+              - columnheader "去重单据 / 档案数" [ref=e195]
+              - columnheader "数量（按单位）" [ref=e196]
+              - columnheader "操作" [ref=e197]
+          - rowgroup [ref=e198]:
+            - row [ref=e199]:
+              - cell "中国" [ref=e200]
+              - cell "100" [ref=e201]
+              - cell "1" [ref=e202]
+              - cell "—" [ref=e203]
+              - cell [ref=e204]:
+                - button "查看构成明细" [ref=e205] [cursor=pointer]
+        - generic [ref=e206]:
+          - generic [ref=e207]: 共 1 项
+          - button "上一页" [disabled] [ref=e208]
+          - generic [ref=e209]: 1 / 1
+          - button "下一页" [disabled] [ref=e210]
+      - generic [ref=e211]:
+        - heading "我的图表块 0 / 30" [level=2] [ref=e212]
+        - paragraph [ref=e213]: 保存来源、维度、指标和筛选；日期跟随本页已查询条件。设置仅在当前浏览器保存。
+      - paragraph [ref=e214]: 查询后点击“保存为图表块”，下次打开可继续使用。
+```

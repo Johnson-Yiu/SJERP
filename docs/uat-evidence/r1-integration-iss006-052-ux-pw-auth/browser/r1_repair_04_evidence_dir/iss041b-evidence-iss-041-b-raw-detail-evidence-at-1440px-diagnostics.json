@@ -1,0 +1,59 @@
+{
+  "label": "iss041b-evidence-ISS-041-B raw detail evidence at 1440px",
+  "blockedOptionalFonts": true,
+  "fontInterceptions": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "host": "fonts.googleapis.com"
+    }
+  ],
+  "console": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_FAILED"
+    }
+  ],
+  "pageErrors": [],
+  "failedRequests": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "method": "GET",
+      "failure": {
+        "errorText": "net::ERR_FAILED"
+      }
+    }
+  ],
+  "apiResponses": [
+    {
+      "url": "http://127.0.0.1:4923/api/session/current-operator/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4923/api/reports/catalog/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4923/api/reports/templates/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4923/api/reports/data/?date_from=2026-01-01&date_to=2026-10-29&source=sales&group_by=time&grain=month&comparison=previous&date_field=order_date",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4923/api/reports/data/?date_from=2026-01-01&date_to=2026-10-29&source=sales&group_by=country&group_by_2=customer&grain=month&comparison=previous&date_field=order_date",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4923/api/reports/details/?date_from=2026-01-01&date_to=2026-10-29&source=sales&group_by=country&group_by_2=customer&grain=month&comparison=previous&date_field=order_date&group_value=1&group_2_value=11&page=1&page_size=20&ordering=-document_date",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "nonSuccessfulResponses": []
+}

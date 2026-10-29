@@ -1,0 +1,42 @@
+[isolated Django API] [29/Oct/2026 22:36:22] "GET /api/__test__/isolation/98113ba331e4e7f0cde03f97bf1cfce151f31329ea9b0c6d/ HTTP/1.1" 200 326
+[isolated Django API] [29/Oct/2026 22:36:23] "GET /api/__test__/isolation/98113ba331e4e7f0cde03f97bf1cfce151f31329ea9b0c6d/ HTTP/1.1" 200 326
+(node:12412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [29/Oct/2026 22:36:29] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [29/Oct/2026 22:36:29] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [29/Oct/2026 22:36:29] "GET /api/orders/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [29/Oct/2026 22:36:29] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 528
+[isolated Django API] [29/Oct/2026 22:36:29] "GET /api/skus/?page=1 HTTP/1.1" 200 1735
+[isolated Django API] [29/Oct/2026 22:36:42] "GET /api/supplier-skus/?supplier=1&sku=1&is_active=1 HTTP/1.1" 200 658
+[isolated Django API] [29/Oct/2026 22:36:44] "POST /api/purchase-orders/ HTTP/1.1" 201 1499
+[isolated Django API] [29/Oct/2026 22:36:44] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 1551
+[isolated Django API] [29/Oct/2026 22:36:44] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 1551
+[isolated Django API] [29/Oct/2026 22:36:44] "POST /api/purchase-orders/1/place/ HTTP/1.1" 200 1529
+[isolated Django API] [29/Oct/2026 22:36:44] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 1581
+[isolated Django API] D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.ContractChangeRequest'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[isolated Django API] [29/Oct/2026 22:36:44] "GET /api/contract-changes/?purchase_order=1&page=1 HTTP/1.1" 200 52
+[isolated Django API] [29/Oct/2026 22:36:45] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 1581
+[isolated Django API] [29/Oct/2026 22:36:45] "GET /api/supplier-skus/?supplier=1&sku=1&is_active=1 HTTP/1.1" 200 658
+[isolated Django API] [29/Oct/2026 22:36:45] "POST /api/purchase-orders/ HTTP/1.1" 201 1537
+[isolated Django API] [29/Oct/2026 22:36:45] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3119
+[isolated Django API] [29/Oct/2026 22:36:45] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3119
+[isolated Django API] Bad Request: /api/purchase-orders/2/place/
+[isolated Django API] [29/Oct/2026 22:36:45] "POST /api/purchase-orders/2/place/ HTTP/1.1" 400 379
+[isolated Django API] [29/Oct/2026 22:36:46] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3119
+[isolated Django API] [29/Oct/2026 22:36:46] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3119
+[isolated Django API] Bad Request: /api/purchase-orders/2/place/
+[isolated Django API] [29/Oct/2026 22:36:46] "POST /api/purchase-orders/2/place/ HTTP/1.1" 400 379
+[isolated Django API] [29/Oct/2026 22:36:46] "POST /api/purchase-orders/2/place/ HTTP/1.1" 200 1978
+[isolated Django API] [29/Oct/2026 22:36:46] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3560
+[isolated Django API] [29/Oct/2026 22:36:46] "GET /api/contract-changes/?purchase_order=2&page=1 HTTP/1.1" 200 52
+[isolated Django API] [29/Oct/2026 22:36:46] "GET /api/contract-changes/?purchase_order=2&page=1 HTTP/1.1" 200 52
+[isolated Django API] [29/Oct/2026 22:36:46] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3560
+[isolated Django API] [29/Oct/2026 22:36:46] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3560
+[isolated Django API] [29/Oct/2026 22:36:46] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 3560
+[isolated Django API] [29/Oct/2026 22:36:46] "GET /api/purchase-orders/?status=ordered&page=1 HTTP/1.1" 200 3560
+[isolated Django API] [29/Oct/2026 22:36:47] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [29/Oct/2026 22:36:47] "GET /api/orders/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [29/Oct/2026 22:36:47] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 528
+[isolated Django API] [29/Oct/2026 22:36:47] "GET /api/skus/?page=1 HTTP/1.1" 200 1736
+[isolated Django API] [29/Oct/2026 22:36:47] "GET /api/purchase-orders/?status=ordered&page=1 HTTP/1.1" 200 3560

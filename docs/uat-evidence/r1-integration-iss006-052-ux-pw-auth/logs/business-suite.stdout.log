@@ -1,0 +1,369 @@
+Isolation run 531f417b-7c50-4be9-aaa2-7eea2609d50a; API 127.0.0.1:4922; Vite 127.0.0.1:4923
+Isolated SQLite: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-tZVIPh\db.sqlite3
+Isolated MEDIA_ROOT: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-tZVIPh\media
+Playwright selection: all browser tests except iss055-customer-404-real.spec.js, iss022-moq-real.spec.js, iss028-035-category-schema.spec.js, shared-report-templates.spec.js, quote-editor-mobile-actions.spec.js
+Isolated RBAC mode: development superadmin
+[isolation] Pre-migration isolation verification
+{'runId': '531f417b-7c50-4be9-aaa2-7eea2609d50a', 'token': 'cecb98cb4c38f99b7e2c616e89d1f5be9bbddc334f6827a4', 'database': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-tZVIPh\\db.sqlite3', 'mediaRoot': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-tZVIPh\\media', 'rbacEnforcement': False}
+[isolation] Pre-migration isolation verification: passed
+[isolation] Django system check
+System check identified no issues (0 silenced).
+[isolation] Django system check: passed
+[isolation] Isolated database migrations
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+  Applying crm.0078_historical_contract_scope... OK
+  Applying crm.0079_shared_report_template... OK
+  Applying crm.0080_formal_party_snapshots... OK
+  Applying crm.0081_transaction_rmb_reference_label... OK
+  Applying crm.0081_supplier_lifecycle... OK
+  Applying crm.0081_product_certificate_private_file... OK
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+  Applying crm.0083_customer_supplier_preference... OK
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+  Applying crm.0085_order_quantity_adjustment... OK
+  Applying crm.0086_purchase_moq_exception... OK
+  Applying crm.0087_amount_calculation_compatibility... OK
+  Applying crm.0088_operationlog_append_only... OK
+  Applying crm.0089_operationlog_operator_protect... OK
+  Applying crm.0091_csv_import_audit... OK
+  Applying crm.0090_fulfillment_idempotency... OK
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+  Applying sessions.0001_initial... OK
+[isolation] Isolated database migrations: passed
+[isolation] Migration completeness check
+[isolation] Migration completeness check: passed
+[isolation] Post-migration isolation verification
+{'runId': '531f417b-7c50-4be9-aaa2-7eea2609d50a', 'token': 'cecb98cb4c38f99b7e2c616e89d1f5be9bbddc334f6827a4', 'database': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-tZVIPh\\db.sqlite3', 'mediaRoot': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-tZVIPh\\media', 'rbacEnforcement': False}
+[isolation] Post-migration isolation verification: passed
+[isolation] Allowlisted synthetic fixture seed (seed_iss075_browser.py)
+{"supplier_id": 1, "supplier_name": "ISS075 浏览器供应商", "sku_id": 1, "sku_code": "ISS075-BROWSER-SKU", "sku_name": "ISS075 浏览器测试 SKU", "supplier_sku_id": 1, "supplier_sku_code": "ISS075-BROWSER-SOURCE", "history_purchase_id": 1, "history_purchase_no": "ISS075-HISTORY-01", "history_payment_terms": [{"label": "首付款", "ratio": "0.50", "due_basis": "order_date", "offset_days": 0}, {"label": "尾款", "ratio": "0.50", "due_basis": "expected_arrival_date", "offset_days": 0}], "history_plan_amounts": ["500.0000", "500.0000"]}
+[isolation] Allowlisted synthetic fixture seed (seed_iss075_browser.py): passed
+[isolation] Allowlisted synthetic fixture seed (prepare_evidence.py)
+{"customer": 1, "contact": 1, "sku": 2, "historical_order": 1, "historical_purchase": 2}
+[isolation] Allowlisted synthetic fixture seed (prepare_evidence.py): passed
+[isolated Django API] Performing system checks...
+
+[isolated Django API] System check identified no issues (0 silenced).
+[isolated Django API] October 29, 2026 - 22:03:00
+Django version 6.0.8, using settings 'test_support.isolated_settings'
+Starting development server at http://127.0.0.1:4922/
+Quit the server with CTRL-BREAK.
+
+[isolated Django API] WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+[isolation] Direct Django API identity, SQLite path, and MEDIA_ROOT: passed
+[isolated Vite] 
+  VITE v8.3.5  ready in 575 ms
+
+[isolated Vite]   ➜  Local:   http://127.0.0.1:4923/
+[isolation] Vite identity: passed
+[isolated Vite] 22:03:01 [vite] (client) [optimizer] scanning dependencies...
+[isolation] Vite /api proxy identity, SQLite path, and MEDIA_ROOT: passed
+[isolation] Playwright suite
+
+Running 201 tests using 1 worker
+
+  ok   1 browser-tests\cash-events-p2b.spec.js:4:1 › cash event UI previews, registers, and confirms without changing receipt flows (7.1s)
+  ok   2 browser-tests\cash-events-p2b.spec.js:46:1 › source verification is explicit and any fact change invalidates the preview (6.4s)
+  ok   3 browser-tests\cash-events-p2b.spec.js:75:1 › refresh restores the stable request key and draft inputs without registering (11.6s)
+  ok   4 browser-tests\cash-events-p2b.spec.js:92:1 › restored draft remains protected and explicit abandon clears only after confirmation (7.8s)
+  ok   5 browser-tests\cash-events-p2b.spec.js:118:1 › changing a 30 allocation to 50 clears verification and requires a fresh preview (8.5s)
+  ok   6 browser-tests\cash-events-p2b.spec.js:152:1 › expired local draft is removed during page initialization and sensitive evidence is not persisted (5.9s)
+  ok   7 browser-tests\cash-events-p2b.spec.js:176:1 › legacy draft is sanitized immediately when restored (8.3s)
+  ok   8 browser-tests\cash-events-p2b.spec.js:206:1 › stale source responses cannot overwrite the current currency (5.5s)
+  ok   9 browser-tests\certificates-hs-ux.spec.js:11:1 › certificate list and grouped form actual bounds 1440 (12.3s)
+  ok  10 browser-tests\certificates-hs-ux.spec.js:12:1 › HS assignment searchable selection and actual bounds 1440 (9.1s)
+  ok  11 browser-tests\certificates-hs-ux.spec.js:11:1 › certificate list and grouped form actual bounds 1280 (4.5s)
+  ok  12 browser-tests\certificates-hs-ux.spec.js:12:1 › HS assignment searchable selection and actual bounds 1280 (7.0s)
+  ok  13 browser-tests\certificates-hs-ux.spec.js:11:1 › certificate list and grouped form actual bounds 1024 (3.7s)
+  ok  14 browser-tests\certificates-hs-ux.spec.js:12:1 › HS assignment searchable selection and actual bounds 1024 (4.2s)
+  ok  15 browser-tests\certificates-hs-ux.spec.js:11:1 › certificate list and grouped form actual bounds 390 (11.5s)
+  ok  16 browser-tests\certificates-hs-ux.spec.js:12:1 › HS assignment searchable selection and actual bounds 390 (7.2s)
+  ok  17 browser-tests\certificates-hs-ux.spec.js:13:57 › hs-codes pending POST blocks backdrop/back/navigation; failure retains input and retries once (14.0s)
+  ok  18 browser-tests\certificates-hs-ux.spec.js:13:57 › product-certificates pending POST blocks backdrop/back/navigation; failure retains input and retries once (6.7s)
+  ok  19 browser-tests\certificates-hs-ux.spec.js:14:1 › HS read-only hides maintenance and both pages reload errors recover (4.9s)
+  ok  20 browser-tests\certificates-hs-ux.spec.js:16:1 › assignment pending PUT blocks close and navigation, retains selection on rejection and retries (5.2s)
+  ok  21 browser-tests\certificates-hs-ux.spec.js:17:1 › certificate first load failure retries to empty, and expiry URL survives reload (12.8s)
+  ok  22 browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1440px (16.6s)
+  ok  23 browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1280px (8.8s)
+  ok  24 browser-tests\crm-saving.spec.js:69:43 › contacts pending POST resists close and navigation at 1024px (9.2s)
+  ok  25 browser-tests\crm-saving.spec.js:86:3 › contacts pending PUT failure preserves fields and quick retry sends one request (11.2s)
+  ok  26 browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1440px (14.4s)
+  ok  27 browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1280px (14.8s)
+  ok  28 browser-tests\crm-saving.spec.js:69:43 › follow-ups pending POST resists close and navigation at 1024px (8.3s)
+  ok  29 browser-tests\crm-saving.spec.js:86:3 › follow-ups pending PUT failure preserves fields and quick retry sends one request (7.9s)
+  ok  30 browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1440px (4.8s)
+  ok  31 browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1280px (5.3s)
+  ok  32 browser-tests\crm-ux.spec.js:148:3 › contacts filters, grouped columns, and form fit 1024px (3.2s)
+  ok  33 browser-tests\crm-ux.spec.js:167:1 › contact create, duplicate advisory, primary edit and return query stay consistent (10.4s)
+  ok  34 browser-tests\crm-ux.spec.js:192:1 › contact duplicate check uses hidden customer contacts, links to the record, and fits 390px (14.5s)
+  ok  35 browser-tests\crm-ux.spec.js:212:1 › editing a contact does not flag itself as a duplicate (11.6s)
+  ok  36 browser-tests\crm-ux.spec.js:225:3 › follow-up filters, detailed groups, and long content fit 1440px (6.0s)
+  ok  37 browser-tests\crm-ux.spec.js:225:3 › follow-up filters, detailed groups, and long content fit 1280px (9.8s)
+  ok  38 browser-tests\crm-ux.spec.js:225:3 › follow-up filters, detailed groups, and long content fit 1024px (5.6s)
+  ok  39 browser-tests\crm-ux.spec.js:252:1 › follow-up search and due filters remain in URL and saved text updates list (9.7s)
+  ok  40 browser-tests\crm-ux.spec.js:279:1 › saved attachment delete can be cancelled, confirmed, and remains removed after reopening (4.8s)
+  ok  41 browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 quotes customer column and filters 1440 (7.6s)
+  ok  42 browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 orders customer column and filters 1440 (5.5s)
+  ok  43 browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 quotes customer column and filters 1280 (12.5s)
+  ok  44 browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 orders customer column and filters 1280 (3.5s)
+  ok  45 browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 quotes customer column and filters 1024 (9.2s)
+  ok  46 browser-tests\final-cross-module-ux.spec.js:3:3 › R0-F9 orders customer column and filters 1024 (15.2s)
+  ok  47 browser-tests\finance-actual-cash-resilience.spec.js:32:1 › actual cash failure leaves the legacy dashboard available and retry is independent (3.4s)
+  ok  48 browser-tests\finance-actual-cash-resilience.spec.js:50:1 › rapid date changes discard stale actual cash responses (5.8s)
+  ok  49 browser-tests\finance-drill.spec.js:42:3 › finance dashboard composition drill desktop and narrow 1440px (13.2s)
+  ok  50 browser-tests\finance-drill.spec.js:42:3 › finance dashboard composition drill desktop and narrow 700px (15.9s)
+  ok  51 browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1440px (14.7s)
+  ok  52 browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1280px (5.7s)
+  ok  53 browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 1024px (11.7s)
+  ok  54 browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 640px (17.2s)
+  ok  55 browser-tests\finance-layout.spec.js:4:5 › receivables: computed filter layout at 390px (15.1s)
+  ok  56 browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1440px (9.5s)
+  ok  57 browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1280px (4.8s)
+  ok  58 browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 1024px (13.2s)
+  ok  59 browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 640px (12.8s)
+  ok  60 browser-tests\finance-layout.spec.js:4:5 › payables: computed filter layout at 390px (6.2s)
+  ok  61 browser-tests\finance-reference-basis.spec.js:15:33 › reference basis across finance, transactions and saved cash config 1440 (4.5s)
+  ok  62 browser-tests\finance-reference-basis.spec.js:15:33 › reference basis across finance, transactions and saved cash config 1024 (4.1s)
+  ok  63 browser-tests\finance-retry-safety.spec.js:3:1 › finance pending submission and ambiguous retry preserve identity and guard departure (7.6s)
+  ok  64 browser-tests\finance-summary-cards.spec.js:111:5 › 财务流水在1440px完整显示汇总金额 (10.7s)
+  ok  65 browser-tests\finance-summary-cards.spec.js:111:5 › 应收计划在1440px完整显示汇总金额 (13.6s)
+  ok  66 browser-tests\finance-summary-cards.spec.js:111:5 › 应付计划在1440px完整显示汇总金额 (12.0s)
+  ok  67 browser-tests\finance-summary-cards.spec.js:111:5 › 财务流水在1024px完整显示汇总金额 (13.7s)
+  ok  68 browser-tests\finance-summary-cards.spec.js:111:5 › 应收计划在1024px完整显示汇总金额 (12.0s)
+  ok  69 browser-tests\finance-summary-cards.spec.js:111:5 › 应付计划在1024px完整显示汇总金额 (10.0s)
+  ok  70 browser-tests\finance-summary-cards.spec.js:111:5 › 财务流水在390px完整显示汇总金额 (11.1s)
+  ok  71 browser-tests\finance-summary-cards.spec.js:111:5 › 应收计划在390px完整显示汇总金额 (15.0s)
+  ok  72 browser-tests\finance-summary-cards.spec.js:111:5 › 应付计划在390px完整显示汇总金额 (15.3s)
+  ok  73 browser-tests\finance-summary-cards.spec.js:124:3 › 其他汇总卡片页面保持可用：/customers (4.0s)
+  ok  74 browser-tests\finance-summary-cards.spec.js:124:3 › 其他汇总卡片页面保持可用：/suppliers (5.5s)
+  ok  75 browser-tests\finance-summary-cards.spec.js:124:3 › 其他汇总卡片页面保持可用：/purchase-orders (7.6s)
+  ok  76 browser-tests\fulfillment-receivables.spec.js:21:1 › completed receivable navigation, Back, settlement and refund reloads retain fulfillment (16.7s)
+  ok  77 browser-tests\fulfillment-receivables.spec.js:32:1 › restricted user cannot read protected debt from malicious unmasked order payload (12.0s)
+  ok  78 browser-tests\fulfillment-receivables.spec.js:39:1 › completion pending prevents duplicate UI action and failed reload retries without false financial success (15.8s)
+  ok  79 browser-tests\fulfillment-receivables.spec.js:49:48 › unknown no_plans has a review task and no confirmed zero (13.4s)
+  ok  80 browser-tests\fulfillment-receivables.spec.js:49:48 › unknown review has a review task and no confirmed zero (12.4s)
+  ok  81 browser-tests\historical-orders-fix-02.spec.js:20:1 › history analysis detail tables work at desktop and 700px CSS viewport (17.1s)
+  ok  82 browser-tests\historical-orders-fix-02.spec.js:43:1 › history analysis hides unauthorized detail dimensions without blanking the page (16.3s)
+  ok  83 browser-tests\historical-orders-fix-03.spec.js:51:1 › current historical analysis detail tables match the API at desktop and 700px CSS viewport (13.3s)
+  ok  84 browser-tests\historical-orders-fix-03.spec.js:84:1 › current historical analysis hides unauthorized detail dimensions without blanking the page (13.8s)
+  ok  85 browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1440 (5.0s)
+  ok  86 browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1280 (4.3s)
+  ok  87 browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1024 (5.2s)
+  ok  88 browser-tests\import-ux.spec.js:8:1 › downloads contain actual UTF8 BOM headers and correctly quoted failure rows (5.5s)
+  ok  89 browser-tests\import-ux.spec.js:9:1 › pending preview and execute block back/navigation, duplicates and changes; cancel never writes (6.0s)
+  ok  90 browser-tests\import-ux.spec.js:10:1 › restricted import entry and template retry (5.6s)
+  ok  91 browser-tests\integration-020-051-evidence.spec.js:48:1 › Chrome quote workbench and saved PI show the reconciled 1.005 total (11.8s)
+  ok  92 browser-tests\inventory-ux.spec.js:30:2 › inventory overview, reserved quantities and SKU drawer at 1440 (2.2s)
+  ok  93 browser-tests\inventory-ux.spec.js:42:2 › ledger filters, sticky actions and adjustment dialog at 1440 (2.3s)
+  ok  94 browser-tests\inventory-ux.spec.js:30:2 › inventory overview, reserved quantities and SKU drawer at 1280 (2.0s)
+  ok  95 browser-tests\inventory-ux.spec.js:42:2 › ledger filters, sticky actions and adjustment dialog at 1280 (1.9s)
+  ok  96 browser-tests\inventory-ux.spec.js:30:2 › inventory overview, reserved quantities and SKU drawer at 1024 (1.8s)
+  ok  97 browser-tests\inventory-ux.spec.js:42:2 › ledger filters, sticky actions and adjustment dialog at 1024 (2.1s)
+  ok  98 browser-tests\inventory-ux.spec.js:54:1 › page restoration, detail navigation and browser Back preserve inventory context (3.2s)
+  ok  99 browser-tests\inventory-ux.spec.js:62:1 › empty and failed inventories distinguish errors, retry and no records (9.2s)
+  ok 100 browser-tests\inventory-ux.spec.js:67:1 › restricted UI hides adjustment, reversal and unauthorized cross-module entrances (2.4s)
+  ok 101 browser-tests\iss008-chinese-aliases.spec.js:51:3 › customer country aliases and quote customer picker remain usable at 1440px (14.5s)
+  ok 102 browser-tests\iss008-chinese-aliases.spec.js:51:3 › customer country aliases and quote customer picker remain usable at 390px (10.6s)
+  ok 103 browser-tests\iss029-recipient-snapshot.spec.js:9:1 › real Django: recipient A/B, empty/invalid email, master changes, saved PI and XLSX (18.0s)
+  ok 104 browser-tests\iss039-shared-purchase-costs.spec.js:94:1 › ISS-039 authorized procurement can restore and edit a cross-order allocation without sales data (16.6s)
+  ok 105 browser-tests\iss039-shared-purchase-costs.spec.js:127:1 › ISS-039 read-only procurement is refused by the candidate API and has no edit action (8.4s)
+  ok 106 browser-tests\iss039-shared-purchase-costs.spec.js:142:1 › ISS-039 no-permission role cannot restore the purchase URL (8.8s)
+  ok 107 browser-tests\iss041b-evidence.spec.js:18:3 › ISS-041-B raw detail evidence at 1440px (1.9s)
+  ok 108 browser-tests\iss041b-evidence.spec.js:18:3 › ISS-041-B raw detail evidence at 700px (1.8s)
+  ok 109 browser-tests\iss067-report-permission.spec.js:6:1 › employee opening an old unauthorized report URL gets a valid source and keeps the warning (14.5s)
+  ok 110 browser-tests\iss067-report-permission.spec.js:45:1 › shared template path remains available to an employee with the source permission (5.2s)
+  ok 111 browser-tests\iss075-payment-terms-real.spec.js:22:3 › ISS-075 供应商固定付款规则退出常规前端真实浏览器回归 › 供应商 UI、空付款条件草稿/正式 PO、历史付款计划与窄屏 (5.5s)
+  ok 112 browser-tests\orders-390-layout.spec.js:54:3 › R1-REPAIR-07 orders layout after 390px (9.1s)
+  ok 113 browser-tests\orders-390-layout.spec.js:54:3 › R1-REPAIR-07 orders layout after 700px (11.3s)
+  ok 114 browser-tests\orders-390-layout.spec.js:54:3 › R1-REPAIR-07 orders layout after 1024px (10.4s)
+  ok 115 browser-tests\orders-390-layout.spec.js:54:3 › R1-REPAIR-07 orders layout after 1440px (11.3s)
+  ok 116 browser-tests\organization-access-ux.spec.js:12:37 › organization long matrix computed bounds and sticky headers 1440 (9.3s)
+  ok 117 browser-tests\organization-access-ux.spec.js:12:37 › organization long matrix computed bounds and sticky headers 1280 (6.8s)
+  ok 118 browser-tests\organization-access-ux.spec.js:12:37 › organization long matrix computed bounds and sticky headers 1024 (13.4s)
+  ok 119 browser-tests\organization-access-ux.spec.js:13:1 › dirty switching, cancel and delayed save/readback navigation are protected (10.4s)
+  ok 120 browser-tests\organization-access-ux.spec.js:14:1 › save refusal and readback refusal retain input; readback retry never posts twice (13.1s)
+  ok 121 browser-tests\organization-access-ux.spec.js:15:1 › read-only and overview retry do not expose a write action (3.6s)
+  ok 122 browser-tests\organization-access-ux.spec.js:16:95 › access-denied layout and permitted return 1440 (8.0s)
+  ok 123 browser-tests\organization-access-ux.spec.js:16:95 › access-status-error layout and permitted return 1440 (3.9s)
+  ok 124 browser-tests\organization-access-ux.spec.js:16:95 › access-denied layout and permitted return 1280 (6.3s)
+  ok 125 browser-tests\organization-access-ux.spec.js:16:95 › access-status-error layout and permitted return 1280 (5.4s)
+  ok 126 browser-tests\organization-access-ux.spec.js:16:95 › access-denied layout and permitted return 1024 (7.0s)
+  ok 127 browser-tests\organization-access-ux.spec.js:16:95 › access-status-error layout and permitted return 1024 (7.1s)
+  ok 128 browser-tests\organization-access-ux.spec.js:17:45 › permission service 401 failure and recovery avoid redirects (8.4s)
+  ok 129 browser-tests\organization-access-ux.spec.js:17:45 › permission service 403 failure and recovery avoid redirects (7.9s)
+  ok 130 browser-tests\organization-access-ux.spec.js:17:45 › permission service 500 failure and recovery avoid redirects (15.1s)
+  ok 131 browser-tests\organization-access-ux.spec.js:17:45 › permission service network failure and recovery avoid redirects (20.1s)
+  ok 132 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 12-month layout at 1440 (12.8s)
+  ok 133 browser-tests\overview-reports.spec.js:24:2 › reports complex filters, multi charts and computed layout at 1440 (4.4s)
+  ok 134 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 12-month layout at 1280 (6.0s)
+  ok 135 browser-tests\overview-reports.spec.js:24:2 › reports complex filters, multi charts and computed layout at 1280 (4.7s)
+  ok 136 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 12-month layout at 1024 (5.1s)
+  ok 137 browser-tests\overview-reports.spec.js:24:2 › reports complex filters, multi charts and computed layout at 1024 (14.2s)
+  ok 138 browser-tests\overview-reports.spec.js:10:2 › dashboard long names, large amounts and 12-month layout at 700 (6.3s)
+  ok 139 browser-tests\overview-reports.spec.js:24:2 › reports complex filters, multi charts and computed layout at 700 (6.6s)
+  ok 140 browser-tests\overview-reports.spec.js:36:1 › saved local chart configurations survive reload, reorder, remove and undo (11.5s)
+  ok 141 browser-tests\overview-reports.spec.js:44:1 › CSV export keeps the last submitted filters while the form has an unsaved draft (15.7s)
+  ok 142 browser-tests\overview-reports.spec.js:65:1 › drill and previous-analysis return preserve actual period and browser navigation restores URL (12.4s)
+  ok 143 browser-tests\overview-reports.spec.js:71:1 › empty dashboard and charts have useful neutral states (9.1s)
+  ok 144 browser-tests\overview-reports.spec.js:74:1 › initial failures recover, refresh failure keeps stale data, and catalog has retry (6.7s)
+  ok 145 browser-tests\overview-reports.spec.js:80:1 › restricted UI hides sources, export and navigation, retaining unavailable local configuration (5.9s)
+  ok 146 browser-tests\overview-reports.spec.js:86:1 › two-level groups show separate columns, drill either dimension and return the original query (4.6s)
+  ok 147 browser-tests\overview-reports.spec.js:90:1 › cross-group result opens paginated raw detail and links to the original order (11.2s)
+  ok 148 browser-tests\packaging-ux.spec.js:16:37 › packaging actual layout and linked navigation 1440 (10.1s)
+  ok 149 browser-tests\packaging-ux.spec.js:16:37 › packaging actual layout and linked navigation 1280 (13.5s)
+  ok 150 browser-tests\packaging-ux.spec.js:16:37 › packaging actual layout and linked navigation 1024 (7.2s)
+  ok 151 browser-tests\packaging-ux.spec.js:23:37 › trade units conversion and form fit 1440 (8.0s)
+  ok 152 browser-tests\packaging-ux.spec.js:23:37 › trade units conversion and form fit 1280 (6.0s)
+  ok 153 browser-tests\packaging-ux.spec.js:23:37 › trade units conversion and form fit 1024 (6.2s)
+  ok 154 browser-tests\packaging-ux.spec.js:28:1 › packaging pending save blocks close/back/navigation; rejected data stays for retry (8.5s)
+  ok 155 browser-tests\packaging-ux.spec.js:31:1 › trade pending and failed save keep SKU/factor; switching warns, and retry succeeds once (10.7s)
+  ok 156 browser-tests\packaging-ux.spec.js:34:1 › initial template failure retries and view-only permissions hide all writing entries (7.0s)
+  ok 157 browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1440 (4.1s)
+  ok 158 browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1280 (10.8s)
+  ok 159 browser-tests\product-master-ux.spec.js:30:38 › product filters, long content and pending save 1024 (7.1s)
+  ok 160 browser-tests\product-master-ux.spec.js:52:1 › product detail URL survives reload and close preserves list filters (18.4s)
+  ok 161 browser-tests\product-master-ux.spec.js:59:1 › product parameter to product detail closes back to original filtered list (11.9s)
+  ok 162 browser-tests\product-master-ux.spec.js:64:1 › view-only fixtures cannot create/edit/delete through these page entries (22.6s)
+  ok 163 browser-tests\product-master-ux.spec.js:68:1 › product failure preserves input and retry; unsaved cancel requires confirmation (5.0s)
+  ok 164 browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1440 (5.9s)
+  ok 165 browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1280 (5.8s)
+  ok 166 browser-tests\product-master-ux.spec.js:82:37 › category search depth and retry 1024 (15.1s)
+  ok 167 browser-tests\product-master-ux.spec.js:93:1 › category saving blocks backdrop, retains failure and permits retry (6.6s)
+  ok 168 browser-tests\product-master-ux.spec.js:101:1 › product parameter context and pending save failure remain recoverable (4.9s)
+  ok 169 browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1440 (5.5s)
+  ok 170 browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1280 (5.1s)
+  ok 171 browser-tests\product-master-ux.spec.js:112:37 › parameter long layout and empty reset 1024 (4.8s)
+  ok 172 browser-tests\product-master-ux.spec.js:121:1 › category drag preserves selected node and collapsed state after reorder (5.2s)
+  ok 173 browser-tests\product-master-ux.spec.js:134:41 › R0-F9 products status labels stay on one line 1440 (5.2s)
+  ok 174 browser-tests\product-master-ux.spec.js:134:41 › R0-F9 products status labels stay on one line 1280 (5.6s)
+  ok 175 browser-tests\product-master-ux.spec.js:134:41 › R0-F9 products status labels stay on one line 1024 (13.1s)
+  ok 176 browser-tests\r1-repair-04-routing.spec.js:4:1 › R1-REPAIR-04 font interception is registered before navigation (252ms)
+  ok 177 browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1440 (11.9s)
+  ok 178 browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1280 (9.4s)
+  ok 179 browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1024 (12.6s)
+  ok 180 browser-tests\sku-ux.spec.js:21:1 › batch failure retains selections and retry succeeds once (9.6s)
+  ok 181 browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1440 (15.3s)
+  ok 182 browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1280 (5.1s)
+  ok 183 browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1024 (7.4s)
+  ok 184 browser-tests\sku-ux.spec.js:23:1 › SKU read-only detail remains accessible with no write controls (7.7s)
+  ok 185 browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1440 (6.5s)
+  ok 186 browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1280 (7.5s)
+  ok 187 browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1024 (5.1s)
+  ok 188 browser-tests\sku-ux.spec.js:26:1 › SKU history load failure remains distinct from empty history and retries (12.0s)
+  ok 189 browser-tests\sku-ux.spec.js:28:1 › SKU logical loads keep separate history and ignore late responses in the rendered list (7.3s)
+  ok 190 browser-tests\sku-ux.spec.js:57:1 › transaction-unit navigation returns to SKU editor with original list context (7.4s)
+  ok 191 browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1440 (4.3s)
+  ok 192 browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1280 (9.0s)
+  ok 193 browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1024 (9.6s)
+  ok 194 browser-tests\supplier-ux.spec.js:30:37 › supplier long names, notes, filters, editor and detail at 1440 (19.1s)
+  ok 195 browser-tests\supplier-ux.spec.js:30:37 › supplier long names, notes, filters, editor and detail at 1280 (14.9s)
+  ok 196 browser-tests\supplier-ux.spec.js:30:37 › supplier long names, notes, filters, editor and detail at 1024 (16.8s)
+  ok 197 browser-tests\supplier-ux.spec.js:39:1 › supplier creates, cancels dirty edits, saves and reopens consistent detail and list (8.7s)
+  ok 198 browser-tests\supplier-ux.spec.js:43:1 › duplicate code and category retry keep entered data; supplier fixed rules stay hidden (5.3s)
+  ok 199 browser-tests\supplier-ux.spec.js:46:1 › filters and page survive reload, detail close and procurement workbench return (19.9s)
+  ok 200 browser-tests\supplier-ux.spec.js:49:1 › initial errors retry to empty and refresh errors retain supplier list (5.0s)
+  ok 201 browser-tests\supplier-ux.spec.js:52:1 › restricted view hides supplier write actions and purchase shortcuts (4.8s)
+
+  201 passed (30.2m)
+[isolation] Playwright suite: passed
+[isolation] Owned API and Vite process trees stopped; both ports are released.
+Removed only this run's marked temporary database and MEDIA_ROOT.

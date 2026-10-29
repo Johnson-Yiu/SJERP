@@ -110,6 +110,22 @@ async function requireLocalDependencies() {
   }
 }
 
+function isWithin(parent, child) {
+  const relative = path.relative(parent, child)
+  return relative !== '' && relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative)
+}
+
+async function resolveEvidenceRoot(candidate, tempRoot) {
+  if (!candidate) return path.join(tempRoot, 'evidence')
+  const allowedRoot = path.resolve(repositoryRoot, 'docs', 'uat-evidence')
+  const evidenceRoot = path.resolve(candidate)
+  if (!isWithin(allowedRoot, evidenceRoot)) {
+    throw new Error('ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT must be a child of docs/uat-evidence.')
+  }
+  await mkdir(evidenceRoot, { recursive: true })
+  return evidenceRoot
+}
+
 async function pythonExecutable() {
   const explicit = process.env.ISOLATED_TEST_PYTHON || process.env.PYTHON
   if (explicit) return explicit
@@ -134,6 +150,7 @@ function createChild(command, args, { cwd, env, label, capture = false }) {
   const child = spawn(command, args, {
     cwd,
     env,
+    detached: process.platform !== 'win32',
     windowsHide: true,
     stdio: capture ? ['ignore', 'pipe', 'pipe'] : 'inherit',
   })
@@ -163,6 +180,48 @@ async function runStage(label, command, args, options) {
   console.log(`[isolation] ${label}`)
   await runCommand(command, args, options)
   console.log(`[isolation] ${label}: passed`)
+}
+
+function childIsRunning(child) {
+  return Boolean(child && child.exitCode === null && child.signalCode === null)
+}
+
+async function taskkillOwnedTree(pid, force) {
+  const args = ['/PID', String(pid), '/T']
+  if (force) args.push('/F')
+  const killer = spawn('taskkill.exe', args, { windowsHide: true, stdio: 'ignore' })
+  return new Promise(resolve => {
+    killer.once('error', () => resolve(false))
+    killer.once('close', code => resolve(code === 0))
+  })
+}
+
+async function signalOwnedTree(child, force) {
+  if (!child?.pid) return
+  if (process.platform === 'win32') {
+    const stopped = await taskkillOwnedTree(child.pid, force)
+    if (!stopped && childIsRunning(child)) child.kill(force ? 'SIGKILL' : 'SIGTERM')
+    return
+  }
+  try {
+    process.kill(-child.pid, force ? 'SIGKILL' : 'SIGTERM')
+  } catch (error) {
+    if (error?.code !== 'ESRCH' && childIsRunning(child)) child.kill(force ? 'SIGKILL' : 'SIGTERM')
+  }
+}
+
+export async function stopOwnedProcessTree(child, { graceMs = 4000, forceMs = 4000 } = {}) {
+  if (!child) return
+  if (!childIsRunning(child)) return
+  const closed = once(child, 'close').then(() => true)
+  await signalOwnedTree(child, false)
+  const gracefulTimer = new Promise(resolve => setTimeout(() => resolve(false), graceMs))
+  if (await Promise.race([closed, gracefulTimer])) return
+  await signalOwnedTree(child, true)
+  const forcedTimer = new Promise(resolve => setTimeout(() => resolve(false), forceMs))
+  if (!(await Promise.race([closed, forcedTimer]))) {
+    throw new Error(`Owned process tree ${child.pid} did not exit after forced cleanup.`)
+  }
 }
 
 function markerPath(root) {
@@ -269,6 +328,9 @@ export function assertApiIdentity(actual, expected, label) {
     if (typeof actual?.[field] !== 'string' || typeof expected?.[field] !== 'string'
       || !samePath(actual[field], expected[field])) mismatches.push(field)
   }
+  if (expected?.rbacEnforcement !== undefined && actual?.rbacEnforcement !== expected.rbacEnforcement) {
+    mismatches.push('rbacEnforcement')
+  }
   if (mismatches.length) {
     throw new Error(`${label} identity mismatch (${mismatches.join(', ')}); refusing browser tests.`)
   }
@@ -290,9 +352,34 @@ export async function verifyProxiedApiIdentity(viteServer, baseURL, directIdenti
 
 export async function resolvePlaywrightSelection(userArgs) {
   const args = userArgs[0] === '--' ? userArgs.slice(1) : userArgs
-  if (args.length === 0) return { businessTest: null }
+  if (args.length === 0) return { businessTest: null, businessSuite: false }
+  if (args[0] === '--all-business-tests') {
+    if (args.length === 1) return { businessTest: '*', businessSuite: true, excludedBusinessTests: [] }
+    if (args.length % 2 === 0) throw new Error('Suite exclusions must use repeated --exclude-business-test <name.spec.js> pairs.')
+    const excludedBusinessTests = []
+    for (let index = 1; index < args.length; index += 2) {
+      if (args[index] !== '--exclude-business-test') {
+        throw new Error('Only --exclude-business-test <name.spec.js> may follow --all-business-tests.')
+      }
+      const requested = args[index + 1]
+      if (!requested || path.basename(requested) !== requested || !requested.endsWith('.spec.js')) {
+        throw new Error('Excluded business test must be a single .spec.js filename inside frontend/browser-tests.')
+      }
+      const testPath = path.join(frontendRoot, 'browser-tests', requested)
+      const fileStat = await lstat(testPath).catch(error => {
+        if (error?.code === 'ENOENT') throw new Error(`Business test does not exist: ${requested}`)
+        throw error
+      })
+      if (!fileStat.isFile() || fileStat.isSymbolicLink() || !samePath(await realpath(testPath), testPath)) {
+        throw new Error('Excluded business test must be a regular file inside frontend/browser-tests; refusing selection.')
+      }
+      if (excludedBusinessTests.includes(requested)) throw new Error(`Duplicate excluded business test: ${requested}`)
+      excludedBusinessTests.push(requested)
+    }
+    return { businessTest: '*', businessSuite: true, excludedBusinessTests }
+  }
   if (args.length !== 2 || args[0] !== '--business-test') {
-    throw new Error('Only --business-test <name.spec.js> is supported; isolation settings and Playwright options cannot be overridden.')
+    throw new Error('Only --business-test <name.spec.js> or --all-business-tests is supported; isolation settings and Playwright options cannot be overridden.')
   }
   const requested = args[1]
   if (!requested || path.basename(requested) !== requested || !requested.endsWith('.spec.js')) {
@@ -307,7 +394,7 @@ export async function resolvePlaywrightSelection(userArgs) {
   if (!fileStat.isFile() || fileStat.isSymbolicLink() || !samePath(await realpath(testPath), testPath)) {
     throw new Error('Business test must be a regular file inside frontend/browser-tests; refusing selection.')
   }
-  return { businessTest: requested }
+  return { businessTest: requested, businessSuite: false }
 }
 
 export function isolatedFixtureSeed(businessTest) {
@@ -326,9 +413,30 @@ export function isolatedFixtureSeed(businessTest) {
       seedFile: path.join('..', 'docs', 'uat-evidence', 'r1-repair-03-history-recipient-typography', 'prepare_evidence.py'),
       evidenceEnv: 'R1_REPAIR_EVIDENCE_DIR',
     },
+    'iss055-customer-404-real.spec.js': {
+      seedFile: path.join('browser-run', 'iss055', 'seed.py'),
+      evidenceEnv: 'ISS055_EVIDENCE_DIR',
+    },
+    'iss028-035-category-schema.spec.js': { seedFile: null, evidenceEnv: 'ISS028_035_EVIDENCE_DIR' },
   }
   const profile = allowed[businessTest]
-  return profile ? { ...profile, scriptPath: path.resolve(backendRoot, profile.seedFile) } : null
+  return profile ? { ...profile, scriptPath: profile.seedFile ? path.resolve(backendRoot, profile.seedFile) : null } : null
+}
+
+export function isolatedFixtureSeeds(selection) {
+  if (!selection?.businessSuite) {
+    const profile = isolatedFixtureSeed(selection?.businessTest)
+    return profile?.scriptPath ? [profile] : []
+  }
+  const suiteSeedFiles = [
+    'iss022-moq-real.spec.js',
+    'iss075-payment-terms-real.spec.js',
+    'historical-orders-fix-03.spec.js',
+  ]
+  return suiteSeedFiles
+    .filter(testFile => !selection.excludedBusinessTests?.includes(testFile))
+    .map(isolatedFixtureSeed)
+    .filter(Boolean)
 }
 
 export function browserArgs() {
@@ -345,7 +453,9 @@ async function main() {
   const handleSignal = signal => {
     receivedSignal ??= signal
     for (const child of ownedChildren) {
-      if (child.exitCode === null && child.signalCode === null) child.kill('SIGTERM')
+      if (childIsRunning(child)) {
+        void stopOwnedProcessTree(child).catch(error => console.error(error.message))
+      }
     }
   }
   const onInterrupt = () => handleSignal('SIGINT')
@@ -356,6 +466,7 @@ async function main() {
     await requireLocalDependencies()
     const selection = await resolvePlaywrightSelection(process.argv.slice(2))
     const playwrightArguments = browserArgs()
+    const python = await pythonExecutable()
     const { apiPort, vitePort } = await choosePorts()
     if (receivedSignal) throw new Error(`Interrupted by ${receivedSignal} before isolated resources were created.`)
     const runId = randomUUID()
@@ -364,12 +475,21 @@ async function main() {
     const databasePath = path.join(tempRoot, 'db.sqlite3')
     const mediaRoot = path.join(tempRoot, 'media')
     const baseURL = `http://127.0.0.1:${vitePort}`
+    const rbacTestMode = selection.businessTest === 'iss055-customer-404-real.spec.js'
+    let evidenceRoot
+    try {
+      evidenceRoot = await resolveEvidenceRoot(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, tempRoot)
+    } catch (error) {
+      await cleanupOwnedTempRoot(tempRoot, { runId, token })
+      throw error
+    }
     const env = {
       ...process.env,
       APP_STAGE: 'development',
       DJANGO_DEBUG: '1',
-      DEVELOPMENT_SUPERADMIN: '1',
-      RBAC_ENFORCEMENT: '0',
+      DEVELOPMENT_SUPERADMIN: rbacTestMode ? '0' : '1',
+      RBAC_ENFORCEMENT: rbacTestMode ? '1' : '0',
+      ISOLATED_TEST_RBAC_MODE: rbacTestMode ? 'iss055' : '',
       AUDIT_LOG_ENABLED: '0',
       MEDIA_STORAGE_BACKEND: 'django.core.files.storage.FileSystemStorage',
       DJANGO_SETTINGS_MODULE: 'test_support.isolated_settings',
@@ -383,10 +503,48 @@ async function main() {
       ISOLATED_API_PORT: String(apiPort),
       ISOLATED_VITE_PORT: String(vitePort),
       ISOLATED_PLAYWRIGHT_BASE_URL: baseURL,
+      ISOLATED_PLAYWRIGHT_API_BASE_URL: `http://127.0.0.1:${apiPort}`,
       ISOLATED_PLAYWRIGHT_TEST_FILE: selection.businessTest || '',
+      ISOLATED_PLAYWRIGHT_TEST_EXCLUDE: selection.businessSuite
+        ? JSON.stringify([...new Set(['iss055-customer-404-real.spec.js', ...selection.excludedBusinessTests])])
+        : '',
+      ISOLATED_PLAYWRIGHT_OUTPUT_DIR: path.join(evidenceRoot, 'artifacts', runId),
+      ISOLATED_TEST_PYTHON: python,
+      ISS055_UI_USERNAME: rbacTestMode ? `iss055-${runId.slice(0, 8)}` : '',
+      ISS055_UI_PASSWORD: rbacTestMode ? randomBytes(24).toString('base64url') : '',
       PYTHONDONTWRITEBYTECODE: '1',
       PYTHONUNBUFFERED: '1',
+      PYTHONUTF8: '1',
+      PYTHONIOENCODING: 'utf-8',
+      PYTHONPATH: [backendRoot, process.env.PYTHONPATH].filter(Boolean).join(path.delimiter),
     }
+    const evidenceEnvironmentNames = [
+      'EVIDENCE_DIR',
+      'ISS008_FUP_01_EVIDENCE_DIR',
+      'ISS022_EVIDENCE_DIR',
+      'ISS028_035_EVIDENCE_DIR',
+      'ISS055_EVIDENCE_DIR',
+      'ISS075_EVIDENCE_DIR',
+      'R1A_EVIDENCE_DIR',
+      'R1_REPAIR_EVIDENCE_DIR',
+      'R1_REPAIR_04_EVIDENCE_DIR',
+      'R1_REPAIR_07_EVIDENCE_DIR',
+      'SUPPLIER_UX_EVIDENCE_DIR',
+    ]
+    for (const name of evidenceEnvironmentNames) {
+      env[name] = path.join(evidenceRoot, 'browser', name.toLowerCase())
+    }
+    if (selection.businessTest && !selection.businessSuite) {
+      const fixtureProfile = isolatedFixtureSeed(selection.businessTest)
+      if (fixtureProfile) env[fixtureProfile.evidenceEnv] = path.join(evidenceRoot, 'browser', path.parse(selection.businessTest).name)
+    }
+    if (selection.businessSuite) {
+      env.R1_REPAIR_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', 'historical-orders-and-iss029')
+      env.ISS022_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', 'iss022-moq-real')
+      env.ISS075_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', 'iss075-payment-terms-real')
+      env.ISS028_035_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', 'iss028-035-category-schema')
+    }
+    env.ISS055_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', 'iss055-customer-404')
 
     let apiServer
     let viteServer
@@ -396,8 +554,8 @@ async function main() {
       console.log(`Isolation run ${runId}; API 127.0.0.1:${apiPort}; Vite 127.0.0.1:${vitePort}`)
       console.log(`Isolated SQLite: ${databasePath}`)
       console.log(`Isolated MEDIA_ROOT: ${mediaRoot}`)
-      console.log(`Playwright selection: ${selection.businessTest || 'infrastructure smoke tests'}`)
-      const python = await pythonExecutable()
+      console.log(`Playwright selection: ${selection.businessSuite ? `all browser tests except ${JSON.parse(env.ISOLATED_PLAYWRIGHT_TEST_EXCLUDE).join(', ')}` : selection.businessTest || 'infrastructure smoke tests'}`)
+      console.log(`Isolated RBAC mode: ${rbacTestMode ? 'ISS-055 employee session' : 'development superadmin'}`)
       const verificationCode = databaseMustExist => [
         'import django',
         'django.setup()',
@@ -412,17 +570,20 @@ async function main() {
       await runStage('Migration completeness check', python, ['manage.py', 'migrate', '--check'], { cwd: backendRoot, env, label: 'Migration completeness check' })
       await runStage('Post-migration isolation verification', python, ['-c', verificationCode(true)], { cwd: backendRoot, env, label: 'Post-migration isolation verification' })
 
-      const fixtureSeed = isolatedFixtureSeed(selection.businessTest)
-      if (fixtureSeed) {
-        if (!env[fixtureSeed.evidenceEnv]) {
-          env[fixtureSeed.evidenceEnv] = path.join(tempRoot, 'evidence', path.parse(selection.businessTest).name)
-        }
+      const fixtureSeeds = isolatedFixtureSeeds(selection)
+      for (const fixtureSeed of fixtureSeeds) {
         await mkdir(env[fixtureSeed.evidenceEnv], { recursive: true })
-        await runStage(`Allowlisted synthetic fixture seed (${selection.businessTest})`, python, [fixtureSeed.scriptPath], {
+        await runStage(`Allowlisted synthetic fixture seed (${path.basename(fixtureSeed.scriptPath)})`, python, [fixtureSeed.scriptPath], {
           cwd: backendRoot,
           env,
-          label: `Synthetic fixture seed for ${selection.businessTest}`,
+          label: `Synthetic fixture seed for ${path.basename(fixtureSeed.scriptPath)}`,
         })
+      }
+      if (rbacTestMode) {
+        const fixturePath = path.join(env.ISS055_EVIDENCE_DIR, 'fixture.json')
+        const fixture = JSON.parse(await readFile(fixturePath, 'utf8'))
+        env.ISS055_VISIBLE_ID = String(fixture.visible_id)
+        env.ISS055_HIDDEN_ID = String(fixture.hidden_id)
       }
 
       apiServer = createChild(python, [
@@ -435,6 +596,7 @@ async function main() {
         token,
         database: databasePath,
         mediaRoot,
+        rbacEnforcement: rbacTestMode,
       }
       const apiIdentity = await waitForIdentity(apiServer, apiIdentityUrl, { runId, token }, 'Django API')
       assertApiIdentity(apiIdentity, expectedApiIdentity, 'Direct Django API')
@@ -451,20 +613,31 @@ async function main() {
       await verifyProxiedApiIdentity(viteServer, baseURL, apiIdentity, expectedApiIdentity)
       console.log('[isolation] Vite /api proxy identity, SQLite path, and MEDIA_ROOT: passed')
 
+      const testOutputDir = env.ISOLATED_PLAYWRIGHT_OUTPUT_DIR
+      await mkdir(testOutputDir, { recursive: true })
       await runStage('Playwright suite', process.execPath, playwrightArguments, {
         cwd: frontendRoot,
         env,
         label: 'Isolated Playwright suite',
       })
     } finally {
-      await stopChild(viteServer)
-      await stopChild(apiServer)
+      const shutdown = await Promise.allSettled([
+        stopOwnedProcessTree(viteServer),
+        stopOwnedProcessTree(apiServer),
+      ])
+      const shutdownErrors = shutdown.filter(result => result.status === 'rejected').map(result => result.reason)
       try {
+        if (!shutdownErrors.length) {
+          await assertPortsAvailable([{ name: 'API', port: apiPort }, { name: 'Vite', port: vitePort }])
+          console.log('[isolation] Owned API and Vite process trees stopped; both ports are released.')
+        } else {
+          throw new AggregateError(shutdownErrors, 'One or more owned server process trees did not stop.')
+        }
         await cleanupOwnedTempRoot(tempRoot, { runId, token })
         console.log('Removed only this run\'s marked temporary database and MEDIA_ROOT.')
       } catch (error) {
         cleanupError = error
-        console.error(`Temporary cleanup refused or failed; inspect this exact run directory: ${tempRoot}`)
+        console.error(`Temporary resources retained for safety; inspect this exact run directory: ${tempRoot}`)
         console.error(error.message)
       }
       if (cleanupError) throw cleanupError

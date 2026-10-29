@@ -9,9 +9,10 @@
     "test:unit": "node --test",
     "test:trade-units": "vitest run tests/trade-units.spec.js --environment jsdom",
     "preview": "vite preview",
-    "test:browser": "playwright test",
+    "test:browser": "node scripts/run-playwright-suite-stability.mjs",
     "test:browser:isolated": "node scripts/run-isolated-browser-tests.mjs",
-    "test:browser:isolated:verify": "node --test infrastructure-tests/runner-validation.test.mjs"
+    "test:browser:isolated:verify": "node --test infrastructure-tests/runner-validation.test.mjs",
+    "test:browser:isolated:suite": "node scripts/run-playwright-suite-stability.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "6.0.8",

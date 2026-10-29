@@ -26,6 +26,7 @@ test('Vite and proxied Django API belong to this isolated run', async ({ request
   const apiIdentity = await apiResponse.json()
   expect(apiIdentity.runId).toBe(runId)
   expect(apiIdentity.token).toBe(token)
+  expect(apiIdentity.rbacEnforcement).toBe(false)
   expect(path.resolve(apiIdentity.database)).toBe(path.resolve(tempRoot, 'db.sqlite3'))
   expect(path.resolve(apiIdentity.mediaRoot)).toBe(path.resolve(tempRoot, 'media'))
   expect(isWithin(path.resolve(os.tmpdir()), path.resolve(apiIdentity.database))).toBe(true)

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { spawn } from 'node:child_process'
 import { once } from 'node:events'
-import { copyFile, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
+import { access, copyFile, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
 import http from 'node:http'
 import { fileURLToPath } from 'node:url'
 import net from 'node:net'
@@ -15,9 +15,11 @@ import {
   browserArgs,
   cleanupOwnedTempRoot,
   isolatedFixtureSeed,
+  isolatedFixtureSeeds,
   reservePort,
   resolvePlaywrightSelection,
   sqliteDatabaseUrl,
+  stopOwnedProcessTree,
   verifyProxiedApiIdentity,
   waitForIdentity,
 } from '../scripts/run-isolated-browser-tests.mjs'
@@ -157,6 +159,14 @@ test('API identity mismatch is rejected before browser tests can proceed', async
 
 test('only an existing browser test file can be selected; Playwright service and config overrides are rejected', async () => {
   assert.equal((await resolvePlaywrightSelection([])).businessTest, null)
+  assert.deepEqual(await resolvePlaywrightSelection(['--all-business-tests']), {
+    businessTest: '*', businessSuite: true, excludedBusinessTests: [],
+  })
+  assert.deepEqual(await resolvePlaywrightSelection([
+    '--all-business-tests', '--exclude-business-test', 'iss022-moq-real.spec.js',
+  ]), {
+    businessTest: '*', businessSuite: true, excludedBusinessTests: ['iss022-moq-real.spec.js'],
+  })
   assert.equal((await resolvePlaywrightSelection(['--business-test', 'import-ux.spec.js'])).businessTest, 'import-ux.spec.js')
   for (const args of [
     ['--config', '../playwright.config.js'],
@@ -165,6 +175,8 @@ test('only an existing browser test file can be selected; Playwright service and
     ['--grep', 'synthetic-only'],
     ['--business-test', '../playwright.config.js'],
     ['--business-test', 'missing.spec.js'],
+    ['--all-business-tests', '--exclude-business-test', '../playwright.config.js'],
+    ['--all-business-tests', '--exclude-business-test', 'missing.spec.js'],
   ]) {
     await assert.rejects(resolvePlaywrightSelection(args))
   }
@@ -176,6 +188,9 @@ test('only allowlisted real API suites receive fixed synthetic fixture seeds', (
   assert.equal(isolatedFixtureSeed('iss022-moq-real.spec.js').evidenceEnv, 'ISS022_EVIDENCE_DIR')
   assert.equal(path.basename(isolatedFixtureSeed('iss075-payment-terms-real.spec.js').scriptPath), 'seed_iss075_browser.py')
   assert.equal(isolatedFixtureSeed('iss075-payment-terms-real.spec.js').evidenceEnv, 'ISS075_EVIDENCE_DIR')
+  assert.equal(path.basename(isolatedFixtureSeed('iss055-customer-404-real.spec.js').scriptPath), 'seed.py')
+  assert.equal(isolatedFixtureSeed('iss055-customer-404-real.spec.js').evidenceEnv, 'ISS055_EVIDENCE_DIR')
+  assert.equal(isolatedFixtureSeed('iss028-035-category-schema.spec.js').scriptPath, null)
   for (const businessTest of [
     'historical-orders-fix-02.spec.js',
     'historical-orders-fix-03.spec.js',
@@ -184,9 +199,11 @@ test('only allowlisted real API suites receive fixed synthetic fixture seeds', (
     assert.equal(path.basename(isolatedFixtureSeed(businessTest).scriptPath), 'prepare_evidence.py')
     assert.equal(isolatedFixtureSeed(businessTest).evidenceEnv, 'R1_REPAIR_EVIDENCE_DIR')
   }
-  for (const businessTest of [null, '', 'import-ux.spec.js', '../seed.py', 'iss055-customer-404-real.spec.js']) {
+  for (const businessTest of [null, '', 'import-ux.spec.js', '../seed.py']) {
     assert.equal(isolatedFixtureSeed(businessTest), null)
   }
+  assert.equal(isolatedFixtureSeeds({ businessSuite: true }).length, 3)
+  assert.equal(isolatedFixtureSeeds({ businessSuite: true, excludedBusinessTests: ['iss022-moq-real.spec.js'] }).length, 2)
 })
 
 test('API identity comparison checks run ID, token, SQLite path, and MEDIA_ROOT', () => {
@@ -195,6 +212,10 @@ test('API identity comparison checks run ID, token, SQLite path, and MEDIA_ROOT'
   for (const field of ['runId', 'token', 'database', 'mediaRoot']) {
     assert.throws(() => assertApiIdentity({ ...identity, [field]: `wrong-${identity[field]}` }, identity, 'API'), new RegExp(field))
   }
+  assert.throws(
+    () => assertApiIdentity({ ...identity, rbacEnforcement: true }, { ...identity, rbacEnforcement: false }, 'API'),
+    /rbacEnforcement/,
+  )
 })
 
 test('a real Vite /api proxy to the wrong database and MEDIA_ROOT is rejected before Playwright', { timeout: 30000 }, async () => {
@@ -234,7 +255,7 @@ test('a real Vite /api proxy to the wrong database and MEDIA_ROOT is rejected be
       path.join(frontendRoot, 'node_modules', 'vite', 'bin', 'vite.js'),
       '--configLoader', 'runner', '--config', path.join(frontendRoot, 'vite.isolated.config.js'),
       '--host', '127.0.0.1', '--port', String(vitePort),
-    ], { cwd: frontendRoot, env, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] })
+    ], { cwd: frontendRoot, env, detached: process.platform !== 'win32', windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] })
     let output = ''
     vite.stdout.on('data', chunk => { output += chunk.toString() })
     vite.stderr.on('data', chunk => { output += chunk.toString() })
@@ -247,16 +268,25 @@ test('a real Vite /api proxy to the wrong database and MEDIA_ROOT is rejected be
     )
     assert.equal(proxiedPath, `/api/__test__/isolation/${token}/`, 'identity must traverse the Vite /api proxy')
   } finally {
-    if (vite && vite.exitCode === null && vite.signalCode === null) {
-      vite.kill('SIGTERM')
-      await Promise.race([once(vite, 'exit'), new Promise(resolve => setTimeout(resolve, 5000))])
-    }
+    await stopOwnedProcessTree(vite)
     if (api.listening) {
       api.close()
       await once(api, 'close')
     }
     await rm(tempRoot, { recursive: true, force: false })
   }
+})
+
+test('local browser entrypoint delegates server ownership to the isolation runner and preserves CI CLI webServer', async () => {
+  const [config, packageText] = await Promise.all([
+    readFile(path.join(frontendRoot, 'playwright.config.js'), 'utf8'),
+    readFile(path.join(frontendRoot, 'package.json'), 'utf8'),
+  ])
+  const packageJson = JSON.parse(packageText)
+  assert.match(config, /process\.env\.CI/)
+  assert.match(config, /const webServer = usePlaywrightWebServer/)
+  assert.match(config, /\.\.\.\(webServer \? \{ webServer \} : \{\}\)/)
+  assert.match(packageJson.scripts['test:browser'], /run-playwright-suite-stability\.mjs/)
 })
 
 test('SQLite URL preserves an absolute platform path for Django parsing', () => {
@@ -314,6 +344,7 @@ test('two independent worktree runtimes can start concurrently without sharing p
       assert.equal(result.code, 0, result.output)
       assert.match(result.output, /Migration completeness check: passed/)
       assert.match(result.output, /Playwright suite: passed/)
+      assert.match(result.output, /Owned API and Vite process trees stopped; both ports are released\./)
       assert.match(result.output, /Removed only this run's marked temporary database and MEDIA_ROOT/)
     }
     const identities = results.map(({ output }) => {
@@ -327,6 +358,10 @@ test('two independent worktree runtimes can start concurrently without sharing p
     })
     for (const field of ['runId', 'apiPort', 'vitePort', 'database', 'media']) {
       assert.notEqual(identities[0][field], identities[1][field], `${field} must be unique per worktree run`)
+    }
+    for (const identity of identities) {
+      await assert.rejects(access(path.dirname(identity.database)), { code: 'ENOENT' })
+      await assert.rejects(access(identity.media), { code: 'ENOENT' })
     }
     assert.equal(
       new Set(identities.flatMap(({ apiPort, vitePort }) => [apiPort, vitePort])).size,

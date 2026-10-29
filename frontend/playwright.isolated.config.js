@@ -6,19 +6,27 @@ if (!baseURL) throw new Error('ISOLATED_PLAYWRIGHT_BASE_URL must be assigned by 
 const isolationRoot = process.env.ISOLATED_TEST_ROOT
 if (!isolationRoot) throw new Error('ISOLATED_TEST_ROOT must be assigned by the isolation runner.')
 const businessTest = process.env.ISOLATED_PLAYWRIGHT_TEST_FILE || ''
-if (businessTest && (businessTest.includes('/') || businessTest.includes('\\') || !businessTest.endsWith('.spec.js'))) {
+const businessSuite = businessTest === '*'
+const excludedBusinessTests = process.env.ISOLATED_PLAYWRIGHT_TEST_EXCLUDE
+  ? JSON.parse(process.env.ISOLATED_PLAYWRIGHT_TEST_EXCLUDE)
+  : []
+if (!Array.isArray(excludedBusinessTests) || excludedBusinessTests.some(name => typeof name !== 'string' || !name.endsWith('.spec.js'))) {
+  throw new Error('ISOLATED_PLAYWRIGHT_TEST_EXCLUDE must be a JSON array of business test filenames.')
+}
+if (businessTest && !businessSuite && (businessTest.includes('/') || businessTest.includes('\\') || !businessTest.endsWith('.spec.js'))) {
   throw new Error('ISOLATED_PLAYWRIGHT_TEST_FILE must be a validated .spec.js filename from the isolated runner.')
 }
 
 export default defineConfig({
   testDir: businessTest ? './browser-tests' : './infrastructure-tests',
-  testMatch: businessTest || '**/*.spec.js',
+  testMatch: businessSuite ? '**/*.spec.js' : businessTest || '**/*.spec.js',
+  testIgnore: excludedBusinessTests.map(name => `**/${name}`),
   fullyParallel: false,
   forbidOnly: true,
   retries: 0,
   workers: 1,
   reporter: 'list',
-  outputDir: path.join(path.resolve(isolationRoot), 'playwright-results'),
+  outputDir: path.resolve(process.env.ISOLATED_PLAYWRIGHT_OUTPUT_DIR || path.join(path.resolve(isolationRoot), 'playwright-results')),
   use: {
     baseURL,
     browserName: 'chromium',

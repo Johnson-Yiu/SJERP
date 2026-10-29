@@ -1,0 +1,24 @@
+R1-ISS006-IDEMPOTENCY-01 HTTP evidence
+Environment: isolated local Django + Vite, not production
+API: http://127.0.0.1:28491
+Database/media: C:\Users\Johnson\AppData\Local\Temp\sunjack-iss006-browser-20261029-1830
+
+1) Exact replay of the completed Chrome Use request
+POST /api/orders/1/ship/
+Idempotency-Key: 6a40998c-824f-49a9-b2de-b32473bb66e9
+Body: {"shipment_date":"2026-10-29","items":[{"order_item":1,"quantity":2,"trade_unit":null,"overage_reason":""}]}
+Response: status=201
+Header: Idempotent-Replay: true
+Body: {"id":1,"shipment_no":"SH-9F9F8835C3864949","status":"confirmed"}
+
+2) Same key with changed request content
+POST /api/orders/1/ship/
+Idempotency-Key: 6a40998c-824f-49a9-b2de-b32473bb66e9
+Body: same as above, quantity changed to 1
+Response: status=409
+Body: {"detail":"该 Idempotency-Key 已用于不同的收货或发货请求，不能复用。"}
+
+3) Isolated database counts after the browser request and replay
+idempotency=[{"key":"6a40998c-824f-49a9-b2de-b32473bb66e9","operation":"ship","target_id":1,"status":"succeeded","response_payload":{"id":1,"shipment_no":"SH-9F9F8835C3864949","status":"confirmed"}}]
+shipments=1
+shipment_movements=1

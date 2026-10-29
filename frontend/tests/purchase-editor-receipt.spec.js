@@ -181,7 +181,7 @@ describe('Purchase Phase B receipt workflow',()=>{
   expect(panel.findAll('option').map(option=>option.element.value)).toEqual(['','overprocurement','gift','carton_variance'])
   await panel.get('input').setValue(true);await panel.get('select').setValue('gift');await dialog.get('.inspection-acknowledgement input').setValue(true)
   await dialog.trigger('submit');await flushPromises()
-  expect(mocks.api.post).toHaveBeenCalledWith('/purchase-orders/41/receive/',expect.objectContaining({purchase_item:71,trade_unit:1,trade_quantity:5,trade_unit_price:'20',is_overage:true,overage_reason:'gift'}))
+  expect(mocks.api.post).toHaveBeenCalledWith('/purchase-orders/41/receive/',expect.objectContaining({purchase_item:71,trade_unit:1,trade_quantity:5,trade_unit_price:'20',is_overage:true,overage_reason:'gift'}),expect.objectContaining({headers:expect.objectContaining({'Idempotency-Key':expect.any(String)})}))
   expect(wrapper.find('.goods-receipt-dialog').exists()).toBe(false)
  })
  it('retains entered receipt data on rejection and refreshes exact purchase on success',async()=>{
@@ -197,8 +197,11 @@ describe('Purchase Phase B receipt workflow',()=>{
   expect(dialog.get('textarea').element.value).toBe('拒收破损，待补货')
   expect(dialog.get('.inspection-acknowledgement input').element.checked).toBe(true)
   const count=mocks.listAll.mock.calls.filter(([url])=>url==='/purchase-orders/').length
+  const failedRequestId=mocks.api.post.mock.calls.find(([url])=>url==='/purchase-orders/41/receive/')[2].headers['Idempotency-Key']
   await dialog.trigger('submit');await flushPromises()
   expect(wrapper.find('.goods-receipt-dialog').exists()).toBe(false)
+  const retryRequestId=mocks.api.post.mock.calls.filter(([url])=>url==='/purchase-orders/41/receive/')[1][2].headers['Idempotency-Key']
+  expect(retryRequestId).toBe(failedRequestId)
   expect(mocks.listAll.mock.calls.filter(([url])=>url==='/purchase-orders/').length).toBeGreaterThan(count)
   expect(router.currentRoute.value.query.detail).toBe('41')
   expect(wrapper.get('.receipt-success').text()).toContain('验货入库已完成')

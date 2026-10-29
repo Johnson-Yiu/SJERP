@@ -101,6 +101,38 @@ class OperationLog(models.Model):
         ]
 
 
+class FulfillmentIdempotency(TimestampedModel):
+    """Persist the request identity for receiving and shipment commands.
+
+    The row is created in the same transaction as the fulfillment side
+    effects.  A unique key therefore serializes concurrent retries without
+    relying on a browser button state, while the request hash prevents a key
+    from being silently reused for different business content.
+    """
+
+    STATUS_CHOICES = [("processing", "处理中"), ("succeeded", "已完成")]
+    key = models.CharField("请求标识", max_length=128, unique=True)
+    operation = models.CharField("业务操作", max_length=20)
+    target_id = models.PositiveBigIntegerField("目标对象 ID")
+    request_hash = models.CharField("请求内容摘要", max_length=64)
+    operator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="fulfillment_idempotency_records",
+    )
+    status = models.CharField("处理状态", max_length=20, choices=STATUS_CHOICES, default="processing")
+    response_status = models.PositiveSmallIntegerField("响应状态码", default=201)
+    response_payload = models.JSONField("原始业务响应", default=dict)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["operation", "target_id"], name="crm_fi_op_target_idx"),
+            models.Index(fields=["operator", "created_at"], name="crm_fi_operator_created_idx"),
+        ]
+
+
 class SharedReportTemplate(TimestampedModel):
     """A validated report query definition shared with the reporting team."""
 

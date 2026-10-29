@@ -201,6 +201,7 @@ test('only allowlisted real API suites receive fixed synthetic fixture seeds', (
   }
   assert.equal(path.basename(isolatedFixtureSeed('quote-editor-mobile-actions.spec.js').scriptPath), 'prepare_quote_actions.py')
   assert.equal(isolatedFixtureSeed('quote-editor-mobile-actions.spec.js').evidenceEnv, 'R1_UX_QUOTE_ACTIONS_EVIDENCE_DIR')
+  assert.equal(path.basename(isolatedFixtureSeeds({ businessTest: 'quote-editor-mobile-actions.spec.js' })[0].scriptPath), 'prepare_quote_actions.py')
   for (const businessTest of [null, '', 'import-ux.spec.js', '../seed.py']) {
     assert.equal(isolatedFixtureSeed(businessTest), null)
   }

@@ -533,6 +533,8 @@ async function main() {
       'R1_REPAIR_EVIDENCE_DIR',
       'R1_REPAIR_04_EVIDENCE_DIR',
       'R1_REPAIR_07_EVIDENCE_DIR',
+      'R1_UX_FINANCE_SUMMARY_EVIDENCE_DIR',
+      'R1_UX_QUOTE_ACTIONS_EVIDENCE_DIR',
       'SUPPLIER_UX_EVIDENCE_DIR',
     ]
     for (const name of evidenceEnvironmentNames) {

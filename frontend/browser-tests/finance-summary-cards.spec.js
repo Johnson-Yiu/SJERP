@@ -3,7 +3,9 @@ import { mkdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const evidenceRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../docs/uat-evidence/r1-ux-finance-summary-20261029/screenshots')
+const evidenceRoot = process.env.R1_UX_FINANCE_SUMMARY_EVIDENCE_DIR
+  ? resolve(process.env.R1_UX_FINANCE_SUMMARY_EVIDENCE_DIR)
+  : resolve(dirname(fileURLToPath(import.meta.url)), '../../docs/uat-evidence/r1-ux-finance-summary-20261029/screenshots')
 const fullAmount = '¥ 20,000,000,000.00'
 
 const operator = {

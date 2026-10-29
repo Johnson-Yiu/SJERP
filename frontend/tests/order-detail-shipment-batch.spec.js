@@ -99,6 +99,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  vi.restoreAllMocks()
   wrappers.forEach(wrapper => wrapper.unmount())
   document.body.innerHTML = ''
 })
@@ -190,6 +191,22 @@ describe('OrderDetailModal batch shipment', () => {
     await submitDialog()
     const thirdCall = shipmentPostCalls()[2]
     expect(thirdCall[2].headers['Idempotency-Key']).not.toBe(firstCall[2].headers['Idempotency-Key'])
+  })
+
+  it('blocks shipment and explains the safety stop when the request key cannot be saved', async () => {
+    setupApi()
+    const wrapper = await mountOrder()
+    await wrapper.findAll('button').find(button => button.text() === '批量发货').trigger('click')
+    await settle()
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('Storage write is denied', 'QuotaExceededError')
+    })
+
+    await submitDialog()
+
+    expect(shipmentPostCalls()).toHaveLength(0)
+    expect(dialog().querySelector('[role="alert"]').textContent).toContain('已阻止提交')
+    expect(dialog().querySelector('[role="alert"]').textContent).toContain('会话存储权限')
   })
 
   it('row-level shipment opens the same dialog with only the clicked OrderItem selected', async () => {

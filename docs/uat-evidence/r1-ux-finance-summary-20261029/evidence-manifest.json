@@ -1,0 +1,71 @@
+{
+  "generated": "2026-10-29",
+  "baseline": "54e715bdc568b80ba624186fecd866550676cf38",
+  "files": [
+    {
+      "path": "logs/browser-finance-summary.log",
+      "bytes": 1899,
+      "sha256": "80CB3371CE4BA26E14E03FC99C4C33263FFF44B927B1D26C5C89167B976A63B3"
+    },
+    {
+      "path": "logs/frontend-build.log",
+      "bytes": 2095,
+      "sha256": "02C16F15CB145BF429175A4681DE12A42655254B7C7898E9E895E969C8F371A3"
+    },
+    {
+      "path": "logs/frontend-unit.log",
+      "bytes": 15496,
+      "sha256": "161690D67ED25BE318F82EDE3CF4B1E1BD987FB0A6CC1A8BC25B704AF7261D87"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2528,
+      "sha256": "E6BA41EF553AC7E179B3CBE5D6949AFB501C8347906308C24EF560ACDCB82AC0"
+    },
+    {
+      "path": "screenshots/payables-1024.png",
+      "bytes": 116401,
+      "sha256": "A3D3244B1F8DDF212BB13DFD09DCD324A328ECA8DA8A0E89DE8A52F0A4C23DBB"
+    },
+    {
+      "path": "screenshots/payables-1440.png",
+      "bytes": 123572,
+      "sha256": "FBDC81FD7C8C03E16913531DFC90660D6D3746F404C69E5F943D97A9F12B421F"
+    },
+    {
+      "path": "screenshots/payables-390.png",
+      "bytes": 65997,
+      "sha256": "D064837BA0A0A5F2D0353CEFA28B09593F7EAEC24BB6641903B4A20386F62BA2"
+    },
+    {
+      "path": "screenshots/receivables-1024.png",
+      "bytes": 116348,
+      "sha256": "BCBA04F7FF3D946AFA9DE2056CCBC2352EB64E4B5B48CDE8D0939CA481D119D9"
+    },
+    {
+      "path": "screenshots/receivables-1440.png",
+      "bytes": 123443,
+      "sha256": "5F5E26AFF9C81B25FFD6182C9AE0CD80BC7AD473011B1DA981111134EB150B15"
+    },
+    {
+      "path": "screenshots/receivables-390.png",
+      "bytes": 66034,
+      "sha256": "1244F4F473453B6467B8627D59F4697D3435D4B0FF161DD0DC27BE82EDE3C69D"
+    },
+    {
+      "path": "screenshots/transactions-1024.png",
+      "bytes": 141286,
+      "sha256": "7055FE09179FC33FCB456BE11D53732A331ED7F6A22513AC4F862D542C0CB338"
+    },
+    {
+      "path": "screenshots/transactions-1440.png",
+      "bytes": 146064,
+      "sha256": "FB68D893B37CE1A72EE4B104DB54F76CD3CE402FB5B29522A58CB42C8AA7FD27"
+    },
+    {
+      "path": "screenshots/transactions-390.png",
+      "bytes": 91246,
+      "sha256": "234A9583E9AFCB16DEE1B9E4EF53FD220B3713FF7F7A4E5F90E46DF9D6B5E8D2"
+    }
+  ]
+}

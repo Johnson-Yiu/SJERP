@@ -4,6 +4,7 @@ Date: 2026-10-30
 Branch: `codex/r1-iss006-frontend-idempotency-20261029`  
 Source branch: `codex/fix-iss006-request-idempotency-20261029`  
 Starting source SHA: `083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a`
+Implementation SHA: `4c51db20759730f70ba575e2db0f776a224f4d62`
 
 ## Scope and result
 

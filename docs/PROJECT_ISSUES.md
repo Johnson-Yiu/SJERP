@@ -1,5 +1,7 @@
 # SUNJACK-ERP 项目问题台账
 
+2026-10-30 ISS-006 前端幂等存储安全补修：基于 `codex/fix-iss006-request-idempotency-20261029` 起始 SHA `083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a`，实现提交 `4c51db20759730f70ba575e2db0f776a224f4d62`。补上 `window.sessionStorage` 属性读取异常处理；读/写失败不再返回未持久化的新请求键，写失败时在同页保留候选键并阻止请求，成功后清理失败会明确提示操作已成功。定向 Vitest 39/39、前端单元测试169/169、构建通过；真实 Chrome 隔离库正常收货路径通过。ISS-006 状态仍为 `NEEDS_VERIFICATION`，本轮未覆盖独立审查指出的后端审计快照、父级状态并发和冲销审计事务问题，也未执行 PostgreSQL 并发及 Chrome 实时存储故障注入。详见[验收记录](uat-evidence/r1-iss006-frontend-idempotency-20261029/README.md)。
+
 2026-10-28 R1-STATUS-RECONCILE-01：在固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb` 读取 Excel 全仓124项/业务规则46项，并核对当前台账、实际分支 HEAD 与验收报告。仅将 ISS-024、040、042、048、052、062 的规范状态按可核实证据校准；ISS-042/048 的阶段成果不等于整体 CLOSED，其余重点项保留原状态并补足证据边界。当前归一化统计：OPEN 2、BLOCKED 18、NEEDS_VERIFICATION 16、FIXED_PENDING_REVIEW 78、CLOSED 10。详见 [R1 状态对账报告](uat-evidence/r1-status-reconcile-20261028/README.md)。
 
 2026-10-28 最新核实：R1-REPAIR-CONSOLIDATION-01 已集成七个指定来源并完成本地综合回归；ISS-055 从 OPEN 更新为 FIXED_PENDING_REVIEW（仍待独立审查，未关闭），其余 Issue 状态均按各自验收缺口保留。按每个 ID 最后一条记录统计共 124 项：OPEN 5、BLOCKED 21、NEEDS_VERIFICATION 20、FIXED_PENDING_REVIEW 68、CLOSED 10。完整来源 SHA、回归、截图、日志及 11 月 1 日 CI 待办见[集成验收报告](uat-evidence/integration-r1-repairs-20261028/README.md)。

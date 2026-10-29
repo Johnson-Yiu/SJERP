@@ -585,3 +585,11 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 
 逐项旧状态、新状态、校准依据、SHA、46 条规则摘要及未执行/业务阻断清单见 [R1 状态对账报告](uat-evidence/r1-status-reconcile-20261028/README.md)。本轮未连接生产数据库、未执行 PostgreSQL、未触发 GitHub Actions、未合并 master、未部署、未关闭 Issue。
 
+## R1-ISS006 Frontend Idempotency Storage Safety（2026-10-30）
+
+在独立 worktree 的 `codex/r1-iss006-frontend-idempotency-20261029` 分支，从既有幂等源分支提交 `083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a` 开始，修复 `fulfillmentIdempotency.js` 的浏览器存储失败路径。属性访问、`getItem`、`setItem` 与成功后清理均有明确异常语义；未能持久保存请求身份时收货/发货 API 调用被阻止。同一页存储写入恢复后复用同一候选标识；相同已持久化请求重试复用原标识，载荷变化取得不同标识，成功清理后新操作取得新标识。收货和发货调用点既有错误展示路径能显示安全提示，本轮未改动其业务逻辑。
+
+实现提交 `4c51db20759730f70ba575e2db0f776a224f4d62`（`[skip ci]`）。helper 与收货/发货组件定向 Vitest 39/39、`npm run test:unit` 169/169、`npm run build` 通过；构建保留既有大于 500 kB chunk 警告。真实 Chrome Use 在隔离 SQLite / MEDIA_ROOT 下完成普通采购收货，UI 显示 6/6 完成、HTTP POST 201，数据库确认一个 GoodsReceipt 和一个关联 InventoryMovement。失败态 POST 阻断及提示由组件测试覆盖；Chrome 本轮未进行实时存储故障注入，截图已在会话内查看但未归档为仓库文件。首次普通权限测试因 Vite 临时文件 EPERM 未启动，提升本 worktree 临时写权限后相同测试通过。
+
+ISS-006 继续 `NEEDS_VERIFICATION`。独立审查发现的后端审计快照、父级状态并发和冲销审计事务风险未在本前端范围内修改；PostgreSQL 并发、实时 Chrome 存储故障态与完整端到端复审仍未执行。验收命令和证据边界见[本轮记录](uat-evidence/r1-iss006-frontend-idempotency-20261029/README.md)。未触发 CI、未推送、未合并 master、未关闭 Issue、未部署。
+

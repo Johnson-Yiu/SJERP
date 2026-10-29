@@ -1,6 +1,7 @@
 from datetime import date
 from decimal import Decimal
 
+from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from django.utils import timezone
@@ -108,7 +109,12 @@ class BusinessFlowTests(APITestCase):
         self.assertEqual(response.data["additional_categories"], [secondary.id])
         self.assertEqual(ProductCodeSequence.objects.count(), 1)
 
+    @override_settings(AUDIT_LOG_ENABLED=True)
     def test_customer_csv_import_updates_by_code(self):
+        operator = get_user_model().objects.create_superuser(
+            username="business-flow-csv-operator", email="business-flow-csv@example.com", password="secret",
+        )
+        self.client.force_authenticate(operator)
         content = "code,name,country,status\nT-C002,CSV Buyer,France,lead\n".encode("utf-8")
         csv_file = SimpleUploadedFile(
             "customers.csv",

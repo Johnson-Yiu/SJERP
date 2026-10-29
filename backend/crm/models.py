@@ -132,6 +132,108 @@ class FulfillmentIdempotency(TimestampedModel):
             models.Index(fields=["operator", "created_at"], name="crm_fi_operator_created_idx"),
         ]
 
+class CSVImportAuditQuerySet(models.QuerySet):
+    """Keep CSV import history append-only at the application boundary."""
+
+    def update(self, **kwargs):
+        raise ValidationError("CSV 导入审计只允许追加，历史记录不可修改。")
+
+    def delete(self):
+        raise ValidationError("CSV 导入审计只允许追加，历史记录不可删除。")
+
+    def bulk_update(self, objs, fields, batch_size=None):
+        raise ValidationError("CSV 导入审计只允许追加，历史记录不可批量修改。")
+
+
+class CSVImportBatch(models.Model):
+    """One immutable, authenticated CSV import attempt."""
+
+    STATUS_CHOICES = [
+        ("succeeded", "成功"),
+        ("failed", "失败"),
+    ]
+
+    batch_id = models.UUIDField("批次标识", default=uuid.uuid4, unique=True, editable=False)
+    entity = models.CharField("数据类型", max_length=30)
+    file_sha256 = models.CharField("文件 SHA256", max_length=64)
+    operator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="csv_import_batches",
+    )
+    status = models.CharField("批次状态", max_length=20, choices=STATUS_CHOICES)
+    total_rows = models.PositiveIntegerField("总行数", default=0)
+    created_rows = models.PositiveIntegerField("创建行数", default=0)
+    updated_rows = models.PositiveIntegerField("更新行数", default=0)
+    failed_rows = models.PositiveIntegerField("失败行数", default=0)
+    failure_reason = models.TextField("失败原因", blank=True)
+    created_at = models.DateTimeField("操作时间", auto_now_add=True)
+
+    objects = CSVImportAuditQuerySet.as_manager()
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+        indexes = [
+            models.Index(fields=["entity", "created_at"]),
+            models.Index(fields=["operator", "created_at"]),
+            models.Index(fields=["status", "created_at"]),
+        ]
+
+    def save(self, *args, **kwargs):
+        if self.pk and not self._state.adding:
+            raise ValidationError("CSV 导入审计只允许追加，历史记录不可修改。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("CSV 导入审计只允许追加，历史记录不可删除。")
+
+    def __str__(self):
+        return str(self.batch_id)
+
+
+class CSVImportRowAudit(models.Model):
+    """Immutable row-level result linked to its CSVImportBatch."""
+
+    RESULT_CHOICES = [
+        ("created", "创建"),
+        ("updated", "更新"),
+        ("failed", "失败"),
+    ]
+
+    batch = models.ForeignKey(
+        CSVImportBatch,
+        on_delete=models.PROTECT,
+        related_name="rows",
+    )
+    row_number = models.PositiveIntegerField("CSV 行号")
+    business_key = models.CharField("业务主键", max_length=255)
+    object_id = models.CharField("业务对象 ID", max_length=100, blank=True)
+    result = models.CharField("处理结果", max_length=20, choices=RESULT_CHOICES)
+    before_data = models.JSONField("更新前快照", default=dict, blank=True)
+    after_data = models.JSONField("更新后快照", default=dict, blank=True)
+    error_message = models.TextField("错误信息", blank=True)
+    created_at = models.DateTimeField("记录时间", auto_now_add=True)
+
+    objects = CSVImportAuditQuerySet.as_manager()
+
+    class Meta:
+        ordering = ["row_number", "id"]
+        constraints = [
+            models.UniqueConstraint(fields=["batch", "row_number"], name="crm_csv_import_batch_row_unique"),
+        ]
+        indexes = [
+            models.Index(fields=["batch", "result"]),
+            models.Index(fields=["business_key"]),
+        ]
+
+    def save(self, *args, **kwargs):
+        if self.pk and not self._state.adding:
+            raise ValidationError("CSV 导入审计只允许追加，历史记录不可修改。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("CSV 导入审计只允许追加，历史记录不可删除。")
+
 
 class SharedReportTemplate(TimestampedModel):
     """A validated report query definition shared with the reporting team."""

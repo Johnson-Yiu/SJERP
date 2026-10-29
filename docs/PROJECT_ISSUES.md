@@ -477,3 +477,9 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 `codex/integration-018-036-025` Worktree，按 ISS-018 → ISS-036 → ISS-025 集成来源 HEAD `21812b7c1190540a7214d4b77518ede31221180a`、`80a93559852d9d679c86d71250549261c7c2bbd1`、`1480429338d0fc6de20384ea77a43e969a2b7de4`。三项来源及证据提交均已纳入；公共阶段文档两次冲突均保留双方内容，`serializers.py` 的备份无关状态映射与不可拆分单位校验均保留。集成证据见 [`INTEGRATION-018-036-025`](uat-evidence/integration-018-036-025/README.md)。
 
 本地后端定向 60 项通过、3 项跳过；临时 `MEDIA_ROOT` 下 Django `crm` 全量 984 项通过、18 项跳过；Django check、迁移检查、Node 156 项、有效 Vitest 661 项和前端生产构建通过。默认 Worktree media ACL、前端依赖缺失和未指定 jsdom 的首次失败均已区分记录，不冒充代码回归。ISS-018 仍 `BLOCKED`，ISS-036 冲突快照业务待确认项仍保留，ISS-025 仍 `FIXED_PENDING_REVIEW`；三项生产/员工待验状态不因集成本地通过而关闭。本轮不触发 GitHub CI、不合并 master、不关闭 Issue、不部署，等待统一独立审查。
+
+## ISS-052 PostgreSQL 追加保护跟进（2026-10-30）
+
+ISS-052 总体状态仍为 `FIXED_PENDING_REVIEW`；本轮只处理数据库追加保护缺口，不关闭 Issue，也不改变其余审计待验范围。复核确认 `0091` 的行级 `UPDATE/DELETE` 触发器不能拦截 PostgreSQL `TRUNCATE`；分支 `codex/r1-iss052-pg-audit-appendonly-20261029` 新增前向迁移 `0093_csv_import_audit_truncate_guard` 和六项 PostgreSQL 原始 SQL 测试，并保留 SQLite ORM 防修改测试。报告：[R1-ISS052 PostgreSQL 追加保护](uat-evidence/r1-iss052-pg-audit-appendonly-20261029/README.md)。
+
+本地 SQLite 定向 34 项为 27 通过、7 跳过；其中六项 PostgreSQL 触发器测试按条件跳过。本机无 PostgreSQL 客户端/服务，实际 DDL、SQLSTATE、触发器及 PostgreSQL 测试清理路径均为 `BLOCKED`，等待 CI 恢复后在隔离 PostgreSQL 测试库验收。F1 文件字节上限、F2 解析失败执行审计，以及行审计读取/保留策略等原审查事项不因本轮通过而改变状态。

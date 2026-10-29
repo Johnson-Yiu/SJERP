@@ -585,3 +585,9 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 
 逐项旧状态、新状态、校准依据、SHA、46 条规则摘要及未执行/业务阻断清单见 [R1 状态对账报告](uat-evidence/r1-status-reconcile-20261028/README.md)。本轮未连接生产数据库、未执行 PostgreSQL、未触发 GitHub Actions、未合并 master、未部署、未关闭 Issue。
 
+## R1-ISS052-PG-AUDIT-APPENDONLY-01（2026-10-30）
+
+基于 `codex/r1-review-iss052-csv-audit-20261029` / `27734334833395196ae9951c5409f87c3574655d` 建立独立 worktree 和 `codex/r1-iss052-pg-audit-appendonly-20261029`。确认 `0091` 的行级 `UPDATE/DELETE` 触发器不能保护 `TRUNCATE`，新增依赖 `0092` 的可逆 `0093_csv_import_audit_truncate_guard`，只安装/移除 PostgreSQL 语句级触发器，不触碰审计数据或改写历史迁移。新增六项 PostgreSQL 原始 SQL 测试及迁移往返数据保留测试；保留既有 SQLite ORM 防修改断言。测试运行器仅在隔离 PostgreSQL 测试库的事务性 flush 周围临时停用已安装的两个触发器，以免 `TransactionTestCase` 清理被保护规则阻断。
+
+指定隔离 SQLite 环境下定向 34 项：27 通过、7 跳过、0 失败；Django check、迁移一致性检查通过，唯一 CRM 迁移叶节点为 0093。未发现本地 PostgreSQL 客户端或服务，六项真实 PostgreSQL 触发器测试及 PG flush 路径标记 `BLOCKED`，待 CI 恢复后执行；没有连接生产数据库、触发 GitHub Actions、合并 master、部署或关闭 Issue。证据见 [`R1-ISS052 PostgreSQL 追加保护`](uat-evidence/r1-iss052-pg-audit-appendonly-20261029/README.md)。
+

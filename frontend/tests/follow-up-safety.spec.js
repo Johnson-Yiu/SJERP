@@ -80,3 +80,31 @@ it('customer detail quick-create uses the same safety decisions and blocks empty
   await flushPromises()
   expect(mocks.api.post).toHaveBeenCalledWith('/follow-ups/', expect.objectContaining({ next_follow_up_mode: 'clear', next_follow_up: null }))
 })
+
+it('keeps a saved follow-up open when attachment upload fails and retries only the attachment', async () => {
+  await open()
+  await wrapper.findAll('textarea')[0].setValue('附件上传重试验收')
+  wrapper.vm.pendingFollowUpFiles = [new File(['retry'], 'iss007-retry.txt', { type: 'text/plain' })]
+  mocks.api.post.mockImplementation(async url => {
+    if (url.includes('/attachments/')) throw new Error('上传暂时失败')
+    return { data: { id: 123 } }
+  })
+
+  await submit()
+
+  expect(wrapper.find('.modal').exists()).toBe(true)
+  expect(wrapper.get('[role="alert"]').text()).toContain('附件上传失败')
+  expect(wrapper.text()).toContain('iss007-retry.txt')
+  expect(mocks.api.post.mock.calls.filter(([url]) => url.includes('/attachments/'))).toHaveLength(1)
+
+  mocks.api.put.mockResolvedValue({ data: { id: 123 } })
+  mocks.api.post.mockImplementation(async url => {
+    if (url.includes('/attachments/')) return { data: [{ id: 88, name: 'iss007-retry.txt' }] }
+    return { data: { id: 123 } }
+  })
+  await submit()
+
+  expect(mocks.api.put).toHaveBeenCalledWith('/follow-ups/123/', expect.anything())
+  expect(mocks.api.post.mock.calls.filter(([url]) => url.includes('/attachments/'))).toHaveLength(2)
+  expect(wrapper.find('.modal').exists()).toBe(false)
+})

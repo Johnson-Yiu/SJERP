@@ -1,0 +1,24 @@
+R1-PRE-UAT-ISS007 local evidence log
+Date: 2026-10-29
+Baseline: bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb
+
+Backend:
+  python manage.py test crm.tests.test_customer_h1 crm.tests.test_functional_rbac crm.tests.test_sku_images crm.tests.test_quotes --verbosity 1
+  Result: Ran 127 tests in 122.768s - OK
+  System check: no issues
+
+Frontend unit:
+  npx --no-install vitest run tests/follow-up-safety.spec.js tests/follow-up-richtext-and-attachments.spec.js tests/crm-saving.spec.js tests/unsaved-changes.spec.js --environment jsdom --reporter=dot
+  Result: 4 files passed, 47 tests passed
+
+Frontend build:
+  npm run build -- --outDir .tmp/r1-pre-uat-iss007/frontend-dist
+  Result: 2018 modules transformed; build succeeded
+
+Real Chrome:
+  npx --no-install playwright test browser-tests/iss007-attachment-real.spec.js --config=playwright.iss007.config.js
+  Result: 3 passed (23.0s)
+
+Initial defect reproduction before the fix:
+  Aborted follow-up attachment request caused the edit dialog to close and no pending-file retry control to remain.
+  Fixed result: dialogCountAfterFailure=1, retryControlVisible=true; retry saved the attachment and the follow-up was reopened successfully.

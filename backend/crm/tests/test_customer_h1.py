@@ -174,6 +174,39 @@ class FollowUpOwnershipAndAttachmentTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("contact", response.data)
 
+    def test_upload_endpoint_keeps_database_reference_and_file_bytes_in_sync(self):
+        follow_up = FollowUp.objects.create(
+            customer=self.customer_a,
+            contact=self.contact_a,
+            followed_at="2026-09-01T09:00:00Z",
+            type="email",
+            subject="ISS-007 upload verification",
+        )
+        contents = "客户跟进附件验收\nISS-007".encode("utf-8")
+        response = self.client.post(
+            f"/api/follow-ups/{follow_up.id}/attachments/",
+            {"files": SimpleUploadedFile("ISS007-沟通纪要.txt", contents, content_type="text/plain")},
+            format="multipart",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(len(response.data), 1)
+        attachment = FollowUpAttachment.objects.get(follow_up=follow_up)
+        self.assertEqual(attachment.name, "ISS007-沟通纪要.txt")
+        self.assertEqual(attachment.content_type, "text/plain")
+        self.assertEqual(attachment.size, len(contents))
+        self.assertEqual(Path(attachment.file.path).read_bytes(), contents)
+        self.assertEqual(response.data[0]["name"], attachment.name)
+        self.assertTrue(response.data[0]["file"].startswith("/api/media/"))
+
+        missing_file = self.client.post(
+            f"/api/follow-ups/{follow_up.id}/attachments/",
+            {},
+            format="multipart",
+        )
+        self.assertEqual(missing_file.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(FollowUpAttachment.objects.filter(follow_up=follow_up).count(), 1)
+
     def test_invalid_relation_updates_preserve_follow_up_and_its_attachment(self):
         follow_up = FollowUp.objects.create(
             customer=self.customer_a,

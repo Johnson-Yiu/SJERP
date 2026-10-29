@@ -67,7 +67,7 @@ onMounted(() => { loadAccessControl().catch(() => {}) })
     <aside class="sidebar" :class="{ open: menuOpen }">
       <div class="brand">
         <div class="brand-mark">S</div>
-        <div><strong>森爵业务中台</strong><span>CRM · ERP</span></div>
+        <div><strong>森爵照明管理系统</strong><span>客户 · 销售 · 产品</span></div>
       </div>
       <nav>
         <template v-for="(item, index) in visibleNav" :key="index">

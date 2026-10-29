@@ -1,0 +1,22 @@
+Date: 2026-10-29
+Working directory: C:\Users\Johnson\.codex\worktrees\r1-review-iss052\森爵照明管理系统\backend
+Isolation root: C:\Users\Johnson\AppData\Local\Temp\r1-review-iss052-confirm-b67c3590c16d43288b6a6be17cf0893d
+DATABASE_URL: sqlite:///C:/Users/Johnson/AppData/Local/Temp/r1-review-iss052-confirm-b67c3590c16d43288b6a6be17cf0893d/db/review.sqlite3
+MEDIA_ROOT: C:\Users\Johnson\AppData\Local\Temp\r1-review-iss052-confirm-b67c3590c16d43288b6a6be17cf0893d\media
+APP_STAGE=development
+DEVELOPMENT_SUPERADMIN=true
+RBAC_ENFORCEMENT=false
+AUDIT_LOG_ENABLED=false (the test class enables it explicitly; RBAC test overrides production settings)
+
+Command:
+python -B manage.py test crm.tests.test_safe_csv_import crm.tests.test_audit crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_quote_export_and_import_actions_use_special_permissions --verbosity 1
+
+Captured stdout lines:
+Creating test database for alias 'default'...
+Ran 27 tests in 40.891s
+OK (skipped=1)
+Found 27 test(s).
+System check identified no issues (0 silenced).
+TEST_EXIT=0
+
+The Django test runner used an isolated SQLite test database. The skipped test is test_audit.AuditTrailTests.test_postgres_trigger_rejects_raw_update_and_delete; its guard explicitly skips unless connection.vendor is postgresql. It tests OperationLog, not the CSV audit tables.

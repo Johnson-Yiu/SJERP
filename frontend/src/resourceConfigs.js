@@ -62,7 +62,7 @@ export const resourceConfigs = {
   },
   transactions: {
     title: '财务流水', eyebrow: 'Cash ledger', endpoint: 'transactions', key: 'transaction_no',
-    description: '登记原币财务流水并追溯到客户和订单；人民币汇总为账面折算参考，银行实际人民币资金请查看银行资金记录。',
+    description: '登记原币财务流水并追溯到客户和订单；人民币汇总为账面折算参考，银行实际人民币资金请查看银行资金记录。日期为流水发生日期，不是银行入账日期。',
     columns: [['transaction_date', '日期', 'date'], ['transaction_no', '流水号'], ['direction_display', '方向', 'direction'], ['category', '分类'], ['customer_name', '客户'], ['order_no', '归属订单'], ['amount', '金额', 'money'], ['currency', '币种', 'tag'], ['rmb_amount', '人民币折算参考', 'rmb']],
     fields: [
       ['transaction_no', '流水号', 'text', true], ['transaction_date', '发生日期', 'date', true], ['direction', '收支方向', 'select', true, { income: '收入', expense: '支出' }],
@@ -80,7 +80,7 @@ export const resourceConfigs = {
   },
   'inventory-movements': {
     title: '库存流水', eyebrow: 'Inventory ledger', endpoint: 'inventory-movements', key: 'movement_no',
-    description: '查看每次库存增减及其来源。',
+    description: '查看每次库存增减及其来源；库存缺口仅作核对参考，不会自动下采购单。',
     columns: [['movement_date', '日期', 'date'], ['movement_no', '流水号'], ['sku_code', 'SKU / 产品'], ['type_display', '类型', 'tag'], ['signed_quantity', '库存变动', 'signed'], ['source_type', '来源'], ['warehouse', '仓库'], ['reference', '关联单据'], ['reversal_status', '冲销状态']],
     fields: [
       ['movement_no', '流水号', 'readonly'], ['movement_date', '发生日期', 'date', true],

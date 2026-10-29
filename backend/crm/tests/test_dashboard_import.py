@@ -4,8 +4,9 @@ from datetime import date, datetime, timezone as datetime_timezone
 from decimal import Decimal
 from unittest.mock import patch
 
+from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 from rest_framework.test import APIClient
 
@@ -24,6 +25,10 @@ from crm.models import (
 class DashboardImportTests(TestCase):
     def setUp(self):
         self.client = APIClient()
+        self.operator = get_user_model().objects.create_superuser(
+            username="dashboard-csv-operator", email="dashboard-csv@example.com", password="secret",
+        )
+        self.client.force_authenticate(self.operator)
         self.customer = Customer.objects.create(code="J1-CUSTOMER", name="J1 Buyer")
         self.category = ProductCategory.objects.create(name="J1 Lights")
         self.product = Product.objects.create(
@@ -49,10 +54,11 @@ class DashboardImportTests(TestCase):
         }, format="multipart")
         if preview.status_code != 200 or preview.data["errors"]:
             return preview
-        return self.client.post("/api/import/csv/execute/", {
-            "entity": entity, "preview_token": preview.data["preview_token"],
-            "file": SimpleUploadedFile("import.csv", content, content_type="text/csv"),
-        }, format="multipart")
+        with override_settings(AUDIT_LOG_ENABLED=True):
+            return self.client.post("/api/import/csv/execute/", {
+                "entity": entity, "preview_token": preview.data["preview_token"],
+                "file": SimpleUploadedFile("import.csv", content, content_type="text/csv"),
+            }, format="multipart")
 
     def test_dashboard_sales_metrics_exclude_draft_and_cancelled_orders(self):
         self.create_order("J1-DRAFT", "draft", "100")

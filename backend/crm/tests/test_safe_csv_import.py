@@ -1,18 +1,28 @@
 import csv
+import hashlib
 import io
 from unittest.mock import patch
 
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from rest_framework.test import APIClient
 
-from crm.models import Customer, Product, SKU, Transaction
+from crm.models import CSVImportBatch, CSVImportRowAudit, Customer, OperationLog, Product, SKU, Transaction
 from crm.views import _import_row
 
 
+@override_settings(AUDIT_LOG_ENABLED=True)
 class SafeCsvImportTests(TestCase):
     def setUp(self):
         self.client = APIClient()
+        self.operator = get_user_model().objects.create_superuser(
+            username="csv-audit-operator",
+            email="csv-audit@example.com",
+            password="secret",
+        )
+        self.client.force_authenticate(self.operator)
 
     def content(self, headers, rows):
         output = io.StringIO(newline="")
@@ -38,6 +48,11 @@ class SafeCsvImportTests(TestCase):
         response = self.execute(entity, content, token)
         self.assertEqual(response.status_code, 400, response.data)
         self.assertEqual(response.data["detail"], "数据状态已发生变化，请重新预览后再导入。")
+        batch = CSVImportBatch.objects.get(batch_id=response.data["import_batch_id"])
+        self.assertEqual(batch.status, "failed")
+        self.assertEqual(batch.entity, entity)
+        self.assertEqual(batch.rows.count(), batch.total_rows)
+        self.assertTrue(batch.rows.filter(result="failed").exists())
 
     def test_customer_create_becomes_existing_rejects_without_overwriting(self):
         preview, content = self.preview("customers", ["code", "name"], [["STATE-C", "Imported"]])
@@ -128,16 +143,118 @@ class SafeCsvImportTests(TestCase):
         self.assertEqual(Customer.objects.count(), 0)
 
         calls = {"count": 0}
-        def fail_on_tenth(entity, row):
+        def fail_on_sixth(entity, row, user=None):
             calls["count"] += 1
-            if calls["count"] == 10:  # preview + validation consume 9 calls before execute row 5
+            if calls["count"] == 6:  # validation consumes five calls before the real write path
                 raise RuntimeError("unexpected write failure")
-            return _import_row(entity, row)
+            return _import_row(entity, row, user=user)
 
-        with patch("crm.views._import_row", side_effect=fail_on_tenth):
+        with patch("crm.views._import_row", side_effect=fail_on_sixth):
             failed = self.execute("customers", content, response.data["preview_token"])
         self.assertEqual(failed.status_code, 400)
         self.assertEqual(Customer.objects.count(), 0)
+        batch = CSVImportBatch.objects.get(batch_id=failed.data["import_batch_id"])
+        self.assertEqual(batch.status, "failed")
+        self.assertEqual(batch.operator_id, self.operator.pk)
+        self.assertEqual(batch.rows.count(), 5)
+        self.assertTrue(batch.rows.filter(result="failed", error_message__contains="unexpected write failure").exists())
+
+    def test_success_records_batch_row_before_after_hash_and_operation_link(self):
+        customer = Customer.objects.create(code="AUDIT-C", name="Before")
+        headers = ["code", "name"]
+        content = self.content(headers, [["AUDIT-C", "After"]])
+        preview, _ = self.preview("customers", headers, [["AUDIT-C", "After"]])
+        response = self.execute("customers", content, preview.data["preview_token"])
+        self.assertEqual(response.status_code, 200, response.data)
+
+        batch = CSVImportBatch.objects.get(batch_id=response.data["import_batch_id"])
+        self.assertEqual(batch.status, "succeeded")
+        self.assertEqual(batch.entity, "customers")
+        self.assertEqual(batch.file_sha256, hashlib.sha256(content).hexdigest())
+        self.assertEqual(batch.operator_id, self.operator.pk)
+        row = batch.rows.get(row_number=2)
+        self.assertEqual((row.business_key, row.result, row.object_id), ("AUDIT-C", "updated", str(customer.pk)))
+        self.assertEqual(row.before_data["name"], "Before")
+        self.assertEqual(row.after_data["name"], "After")
+        operation = OperationLog.objects.get(
+            entity="crm.customer", object_id=str(customer.pk), action_label="CSV 导入更新",
+        )
+        self.assertEqual(operation.operator_id, self.operator.pk)
+        self.assertEqual(operation.metadata["csv_import_batch_id"], str(batch.batch_id))
+        self.assertEqual(operation.metadata["csv_import_row_audit_id"], row.pk)
+        batch_history = self.client.get("/api/operation-logs/?entity=crm.csvimportbatch")
+        self.assertEqual(batch_history.status_code, 200, batch_history.data)
+        self.assertEqual(batch_history.data["results"][0]["object_id"], str(batch.pk))
+
+    def test_unauthenticated_formal_import_is_rejected_without_fake_operator(self):
+        headers = ["code", "name"]
+        content = self.content(headers, [["AUTH-C", "No operator"]])
+        preview, _ = self.preview("customers", headers, [["AUTH-C", "No operator"]])
+        anonymous = APIClient()
+        response = anonymous.post("/api/import/csv/execute/", {
+            "entity": "customers", "preview_token": preview.data["preview_token"],
+            "file": SimpleUploadedFile("test.csv", content, content_type="text/csv"),
+        }, format="multipart")
+        self.assertEqual(response.status_code, 403, response.data)
+        self.assertIn("不能作为审计操作人", response.data["detail"])
+        self.assertFalse(CSVImportBatch.objects.exists())
+        self.assertFalse(Customer.objects.exists())
+
+    def test_products_skus_and_transactions_have_the_same_audit_contract(self):
+        product_content = self.content(["code", "name", "sales_model_prefix"], [["AUDIT-P", "Imported product", "AP"]])
+        product_preview, _ = self.preview("products", ["code", "name", "sales_model_prefix"], [["AUDIT-P", "Imported product", "AP"]])
+        product_response = self.execute("products", product_content, product_preview.data["preview_token"])
+        self.assertEqual(product_response.status_code, 200, product_response.data)
+
+        sku_content = self.content(
+            ["sku", "product_code", "specification", "unit", "default_price", "currency"],
+            [["AUDIT-S", "AUDIT-P", "Spec", "pcs", "1.25", "USD"]],
+        )
+        sku_preview, _ = self.preview(
+            "skus", ["sku", "product_code", "specification", "unit", "default_price", "currency"],
+            [["AUDIT-S", "AUDIT-P", "Spec", "pcs", "1.25", "USD"]],
+        )
+        sku_response = self.execute("skus", sku_content, sku_preview.data["preview_token"])
+        self.assertEqual(sku_response.status_code, 200, sku_response.data)
+
+        transaction_content = self.content(
+            ["transaction_no", "transaction_date", "direction", "category", "amount", "currency"],
+            [["AUDIT-T", "2026-01-01", "income", "其他收入", "2.50", "CNY"]],
+        )
+        transaction_preview, _ = self.preview(
+            "transactions", ["transaction_no", "transaction_date", "direction", "category", "amount", "currency"],
+            [["AUDIT-T", "2026-01-01", "income", "其他收入", "2.50", "CNY"]],
+        )
+        transaction_response = self.execute("transactions", transaction_content, transaction_preview.data["preview_token"])
+        self.assertEqual(transaction_response.status_code, 200, transaction_response.data)
+
+        self.assertEqual(CSVImportBatch.objects.filter(status="succeeded").count(), 3)
+        self.assertEqual(CSVImportRowAudit.objects.filter(result="created").count(), 3)
+        self.assertEqual(OperationLog.objects.filter(action_label="CSV 导入创建").count(), 3)
+
+    def test_csv_audit_rows_are_append_only(self):
+        content = self.content(["code", "name"], [["APPEND-C", "Append only"]])
+        preview, _ = self.preview("customers", ["code", "name"], [["APPEND-C", "Append only"]])
+        response = self.execute("customers", content, preview.data["preview_token"])
+        batch = CSVImportBatch.objects.get(batch_id=response.data["import_batch_id"])
+        row = batch.rows.get()
+        with self.assertRaises(ValidationError):
+            CSVImportBatch.objects.filter(pk=batch.pk).update(failure_reason="tampered")
+        with self.assertRaises(ValidationError):
+            CSVImportRowAudit.objects.filter(pk=row.pk).delete()
+        batch.refresh_from_db()
+        self.assertEqual(batch.status, "succeeded")
+        self.assertTrue(batch.rows.filter(pk=row.pk).exists())
+
+    @override_settings(AUDIT_LOG_ENABLED=False)
+    def test_audit_disabled_fails_closed_without_business_write(self):
+        content = self.content(["code", "name"], [["NO-AUDIT", "Blocked"]])
+        preview, _ = self.preview("customers", ["code", "name"], [["NO-AUDIT", "Blocked"]])
+        response = self.execute("customers", content, preview.data["preview_token"])
+        self.assertEqual(response.status_code, 503, response.data)
+        self.assertIn("审计记录未启用", response.data["detail"])
+        self.assertFalse(CSVImportBatch.objects.exists())
+        self.assertFalse(Customer.objects.exists())
 
     def test_execute_success_and_token_errors(self):
         response, content = self.preview("customers", ["code", "name"], [["CSV-1", "Buyer 1"]])

@@ -6,11 +6,13 @@ import hashlib
 import io
 import json
 import time
+import uuid
 from collections import defaultdict
 from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation
 from urllib.request import urlopen
 
+from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models.deletion import ProtectedError
@@ -27,7 +29,7 @@ from rest_framework.exceptions import NotFound, ValidationError as DRFValidation
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerSupplierPreference, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseMOQException, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, CSVImportBatch, CSVImportRowAudit, Customer, CustomerSupplierPreference, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseMOQException, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
 from .country_registry import CountryResolutionError, country_options as build_country_options, country_stored_values, display_country
 from .error_messages import CUSTOMER_NOT_FOUND_MESSAGE
 from .money import CURRENT_AMOUNT_CALCULATION_VERSION
@@ -3043,6 +3045,206 @@ IMPORT_PREVIEW_MAX_AGE_SECONDS = 30 * 60
 ORDER_IMPORT_DISABLED_MESSAGE = "正式订单导入暂未开放，请通过订单业务流程创建；避免绕过报价、库存预留和收款计划。"
 
 
+class _ImportStateChanged(Exception):
+    """The signed preview no longer describes the current database state."""
+
+
+class _ImportAuditWriteFailure(Exception):
+    """A row failed while the all-or-nothing import transaction was writing."""
+
+    def __init__(self, row_number, message):
+        self.row_number = row_number
+        self.message = message
+        super().__init__(message)
+
+
+def _import_model_and_key(entity):
+    return {
+        "customers": (Customer, "code"),
+        "products": (Product, "code"),
+        "skus": (SKU, "sku"),
+        "transactions": (Transaction, "transaction_no"),
+    }[entity]
+
+
+def _import_audit_snapshot(entity, instance):
+    """Keep only fields needed to explain the imported business change."""
+    values = snapshot(instance)
+    fields = ["id", *IMPORT_FIELDS[entity]]
+    return {field: values.get(field) for field in fields if field == "id" or field in values}
+
+
+def _import_audit_before_rows(entity, rows):
+    model, key = _import_model_and_key(entity)
+    keys = [row.get(key, "").strip() for row in rows]
+    records = {
+        getattr(record, key): record
+        for record in model.objects.filter(**{f"{key}__in": keys})
+    }
+    before_rows = []
+    for row_number, row in enumerate(rows, start=2):
+        business_key = row.get(key, "").strip()
+        instance = records.get(business_key)
+        before_rows.append({
+            "row_number": row_number,
+            "business_key": business_key,
+            "before_data": _import_audit_snapshot(entity, instance) if instance else {},
+        })
+    return before_rows
+
+
+def _import_audit_gate(request):
+    user = getattr(request, "user", None)
+    if not user or not user.is_authenticated:
+        return Response(
+            {"detail": "正式导入需要已认证的操作人；当前开发身份不能作为审计操作人。"},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+    if not settings.AUDIT_LOG_ENABLED:
+        return Response(
+            {"detail": "审计记录未启用，无法执行正式导入；未写入业务数据。"},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
+    return None
+
+
+def _persist_import_failure(*, request, entity, digest, rows, reason, errors=None, before_rows=None):
+    before_rows = before_rows if before_rows is not None else _import_audit_before_rows(entity, rows)
+    by_row = {item["row_number"]: item for item in before_rows}
+    error_by_row = {item["row"]: item["message"] for item in (errors or [])}
+    batch_uuid = uuid.uuid4()
+    with transaction.atomic():
+        batch = CSVImportBatch.objects.create(
+            batch_id=batch_uuid,
+            entity=entity,
+            file_sha256=digest,
+            operator=request.user,
+            status="failed",
+            total_rows=len(rows),
+            failed_rows=len(rows),
+            failure_reason=reason,
+        )
+        record_operation(
+            request=request,
+            instance=batch,
+            action="custom",
+            action_label="CSV 导入失败",
+            after=snapshot(batch),
+            metadata={"csv_import_batch_id": str(batch_uuid), "entity": entity},
+        )
+        for row_number, row in enumerate(rows, start=2):
+            before = by_row.get(row_number, {}).get("before_data", {})
+            message = error_by_row.get(row_number) or f"批次未执行：{reason}"
+            CSVImportRowAudit.objects.create(
+                batch=batch,
+                row_number=row_number,
+                business_key=row.get(IMPORT_KEY_FIELDS[entity], ""),
+                object_id=str(before.get("id", "")) if before.get("id") is not None else "",
+                result="failed",
+                before_data=before,
+                after_data={},
+                error_message=message,
+            )
+    return batch
+
+
+def _import_failure_response(*, request, entity, digest, rows, detail, errors=None, before_rows=None):
+    try:
+        batch = _persist_import_failure(
+            request=request,
+            entity=entity,
+            digest=digest,
+            rows=rows,
+            reason=detail,
+            errors=errors,
+            before_rows=before_rows,
+        )
+    except Exception:
+        # A business write is never reported as complete when its audit cannot
+        # be persisted. The caller has already kept the business transaction
+        # rolled back.
+        return Response(
+            {"detail": "正式导入失败，审计记录未能保存，未写入业务数据。"},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
+    payload = {"detail": detail, "import_batch_id": str(batch.batch_id)}
+    if errors:
+        payload["errors"] = errors
+    return Response(payload, status=status.HTTP_400_BAD_REQUEST)
+
+
+def _apply_import_rows_with_audit(entity, rows, user, before_rows):
+    model, key = _import_model_and_key(entity)
+    created = updated = 0
+    row_records = []
+    for before_row, row in zip(before_rows, rows):
+        row_number = before_row["row_number"]
+        try:
+            was_created = _import_row(entity, row, user=user)
+            instance = model.objects.get(**{key: row.get(key, "")})
+        except Exception as exc:
+            raise _ImportAuditWriteFailure(row_number, _import_error_message(exc)) from exc
+        result = "created" if was_created else "updated"
+        created += int(was_created)
+        updated += int(not was_created)
+        row_records.append({
+            "row_number": row_number,
+            "business_key": before_row["business_key"],
+            "object_id": str(instance.pk),
+            "result": result,
+            "before_data": before_row["before_data"],
+            "after_data": _import_audit_snapshot(entity, instance),
+            "instance": instance,
+        })
+    return created, updated, row_records
+
+
+def _persist_import_success(*, request, entity, digest, rows, created, updated, row_records):
+    batch_uuid = uuid.uuid4()
+    batch = CSVImportBatch.objects.create(
+        batch_id=batch_uuid,
+        entity=entity,
+        file_sha256=digest,
+        operator=request.user,
+        status="succeeded",
+        total_rows=len(rows),
+        created_rows=created,
+        updated_rows=updated,
+    )
+    record_operation(
+        request=request,
+        instance=batch,
+        action="custom",
+        action_label="CSV 导入完成",
+        after=snapshot(batch),
+        metadata={"csv_import_batch_id": str(batch_uuid), "entity": entity},
+    )
+    for item in row_records:
+        row_audit = CSVImportRowAudit.objects.create(
+            batch=batch,
+            row_number=item["row_number"],
+            business_key=item["business_key"],
+            object_id=item["object_id"],
+            result=item["result"],
+            before_data=item["before_data"],
+            after_data=item["after_data"],
+        )
+        record_operation(
+            request=request,
+            instance=item["instance"],
+            action="create" if item["result"] == "created" else "update",
+            action_label="CSV 导入创建" if item["result"] == "created" else "CSV 导入更新",
+            before=item["before_data"],
+            after=item["after_data"],
+            metadata={
+                "csv_import_batch_id": str(batch_uuid),
+                "csv_import_row_audit_id": row_audit.pk,
+                "row_number": item["row_number"],
+            },
+        )
+    return batch
+
+
 @api_view(["GET"])
 def import_templates(request):
     return Response(IMPORT_FIELDS)
@@ -3078,36 +3280,85 @@ def _import_csv_preview_request(request):
 @api_view(["POST"])
 @parser_classes([MultiPartParser, FormParser])
 def import_csv_execute(request):
+    audit_gate = _import_audit_gate(request)
+    if audit_gate is not None:
+        return audit_gate
     entity = request.data.get("entity")
     upload = request.FILES.get("file")
     token = request.data.get("preview_token")
+    rows = []
+    digest = ""
     try:
         rows, digest = _read_import_csv(entity, upload)
-        signed = signing.loads(token or "", salt=IMPORT_PREVIEW_SALT, max_age=IMPORT_PREVIEW_MAX_AGE_SECONDS)
-    except signing.SignatureExpired:
-        return Response({"detail": "预览已过期，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
-    except signing.BadSignature:
-        return Response({"detail": "预览凭证无效，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
     except ValueError as exc:
         return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        signed = signing.loads(token or "", salt=IMPORT_PREVIEW_SALT, max_age=IMPORT_PREVIEW_MAX_AGE_SECONDS)
+    except signing.SignatureExpired:
+        return _import_failure_response(
+            request=request, entity=entity, digest=digest, rows=rows,
+            detail="预览已过期，请重新预览后再导入。",
+        )
+    except signing.BadSignature:
+        return _import_failure_response(
+            request=request, entity=entity, digest=digest, rows=rows,
+            detail="预览凭证无效，请重新预览后再导入。",
+        )
     if signed.get("entity") != entity or signed.get("sha256") != digest:
-        return Response({"detail": "文件或数据类型已变化，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
+        return _import_failure_response(
+            request=request, entity=entity, digest=digest, rows=rows,
+            detail="文件或数据类型已变化，请重新预览后再导入。",
+        )
     if signed.get("state") != _import_state(entity, rows):
-        return Response({"detail": "数据状态已发生变化，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
+        return _import_failure_response(
+            request=request, entity=entity, digest=digest, rows=rows,
+            detail="数据状态已发生变化，请重新预览后再导入。",
+        )
 
     # Run the exact write path once in a transaction that is rolled back. This
     # detects concurrent changes after preview without leaving any side effects.
     validation = _preview_import(entity, rows, user=request.user)
     if validation["errors"]:
-        return Response({"detail": "数据状态已变化，请重新预览后再导入。", "errors": validation["errors"]}, status=status.HTTP_400_BAD_REQUEST)
+        return _import_failure_response(
+            request=request, entity=entity, digest=digest, rows=rows,
+            detail="数据状态已变化，请重新预览后再导入。", errors=validation["errors"],
+        )
+    before_rows = []
     try:
         with transaction.atomic():
             if signed.get("state") != _import_state(entity, rows, lock=True):
-                return Response({"detail": "数据状态已发生变化，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
-            created, updated = _apply_import_rows(entity, rows, user=request.user)
-    except Exception:
-        return Response({"detail": "数据状态已变化，请重新预览后再导入。"}, status=status.HTTP_400_BAD_REQUEST)
-    return Response({"total": len(rows), "created": created, "updated": updated})
+                raise _ImportStateChanged("数据状态已发生变化，请重新预览后再导入。")
+            before_rows = _import_audit_before_rows(entity, rows)
+            created, updated, row_records = _apply_import_rows_with_audit(entity, rows, request.user, before_rows)
+            batch = _persist_import_success(
+                request=request,
+                entity=entity,
+                digest=digest,
+                rows=rows,
+                created=created,
+                updated=updated,
+                row_records=row_records,
+            )
+    except _ImportStateChanged as exc:
+        return _import_failure_response(
+            request=request, entity=entity, digest=digest, rows=rows,
+            detail=str(exc), before_rows=before_rows,
+        )
+    except _ImportAuditWriteFailure as exc:
+        return _import_failure_response(
+            request=request, entity=entity, digest=digest, rows=rows,
+            detail="数据状态已变化，请重新预览后再导入。",
+            errors=[{"row": exc.row_number, "message": exc.message, "key": rows[exc.row_number - 2].get(IMPORT_KEY_FIELDS[entity], "")}],
+            before_rows=before_rows,
+        )
+    except Exception as exc:
+        return _import_failure_response(
+            request=request, entity=entity, digest=digest, rows=rows,
+            detail="数据状态已变化，请重新预览后再导入。",
+            errors=[{"row": before_rows[0]["row_number"] if before_rows else 2, "message": _import_error_message(exc), "key": rows[0].get(IMPORT_KEY_FIELDS[entity], "") if rows else ""}],
+            before_rows=before_rows,
+        )
+    return Response({"total": len(rows), "created": created, "updated": updated, "import_batch_id": str(batch.batch_id)})
 
 
 def _import_state(entity, rows, lock=False):

@@ -2,14 +2,18 @@ import { test, expect } from '@playwright/test'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-const backendBase = 'http://127.0.0.1:55154'
+const backendBase = process.env.ISOLATED_PLAYWRIGHT_API_BASE_URL
 const visibleId = Number(process.env.ISS055_VISIBLE_ID)
 const hiddenId = Number(process.env.ISS055_HIDDEN_ID)
 const evidenceDir = process.env.ISS055_EVIDENCE_DIR || 'test-results/iss055-evidence'
 const password = process.env.ISS055_UI_PASSWORD
 
-if (!visibleId || !hiddenId || !process.env.ISS055_UI_USERNAME || !password) {
+if (!backendBase || !visibleId || !hiddenId || !process.env.ISS055_UI_USERNAME || !password) {
   throw new Error('ISS-055 browser test requires isolated fixture IDs and local UI credentials.')
+}
+const parsedBackendBase = new URL(backendBase)
+if (parsedBackendBase.protocol !== 'http:' || parsedBackendBase.hostname !== '127.0.0.1' || !parsedBackendBase.port) {
+  throw new Error('ISS-055 browser test must use the isolated loopback API URL.')
 }
 
 async function loginIsolatedAccount(page) {
@@ -30,6 +34,8 @@ async function loginIsolatedAccount(page) {
     maxRedirects: 0,
   })
   expect(response.status()).toBe(302)
+  const session = await page.request.storageState()
+  expect(session.cookies.some(cookie => cookie.name === 'sessionid' && cookie.domain === '127.0.0.1')).toBeTruthy()
   const operator = await page.request.get(`${backendBase}/api/session/current-operator/`)
   expect(operator.status()).toBe(200)
   const payload = await operator.json()
@@ -38,7 +44,11 @@ async function loginIsolatedAccount(page) {
     development_superadmin: false,
     has_all_permissions: false,
     data_scope: 'self',
+    rbac_enforcement: true,
+    name: 'ISS-055 隔离负责人',
   })
+  expect(payload.employee_profile_id).toBeTruthy()
+  expect(payload.permissions.customers).toMatchObject({ view: true, create: false })
 }
 
 async function saveEvidence(page, name, requests) {

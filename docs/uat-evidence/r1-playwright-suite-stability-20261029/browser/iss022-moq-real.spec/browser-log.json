@@ -1,0 +1,105 @@
+{
+  "noHorizontalOverflow": true,
+  "responses": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/1/place/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/2/place/",
+      "status": 400
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/2/place/",
+      "status": 400
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/2/place/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:14174/api/purchase-orders/?status=ordered&page=1",
+      "status": 200
+    }
+  ]
+}

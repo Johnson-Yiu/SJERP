@@ -41,6 +41,9 @@ def verify_isolated_runtime(environ=None, settings=None, *, database_must_exist=
         raise IsolationError(f"Missing isolation identity: {', '.join(missing)}")
     if str(env.get("APP_STAGE", "")).strip().lower() != "development":
         raise IsolationError("Isolated browser tests require APP_STAGE=development.")
+    rbac_test_mode = str(env.get("ISOLATED_TEST_RBAC_MODE", "")).strip()
+    if rbac_test_mode not in {"", "iss055"}:
+        raise IsolationError("Only the allowlisted ISS-055 isolated RBAC test mode is supported.")
 
     temp_root = _resolved(tempfile.gettempdir(), label="system temp")
     declared_root = _absolute(env["ISOLATED_TEST_ROOT"], label="isolation root")
@@ -86,7 +89,14 @@ def verify_isolated_runtime(environ=None, settings=None, *, database_must_exist=
     if settings is not None:
         if getattr(settings, "APP_STAGE", "") != "development":
             raise IsolationError("Isolated browser tests require Django APP_STAGE=development.")
-        if getattr(settings, "RBAC_ENFORCEMENT", False):
+        enforcement = bool(getattr(settings, "RBAC_ENFORCEMENT", False))
+        development_superadmin = str(env.get("DEVELOPMENT_SUPERADMIN", "0")).strip().lower() in {"1", "true", "yes", "on"}
+        if rbac_test_mode == "iss055":
+            if not enforcement:
+                raise IsolationError("ISS-055 test mode requires controlled RBAC enforcement.")
+            if development_superadmin:
+                raise IsolationError("ISS-055 test mode must disable the development superadmin identity.")
+        elif enforcement:
             raise IsolationError("Formal RBAC must remain disabled in this development test runtime.")
         if set(settings.DATABASES) != {"default"}:
             raise IsolationError("Isolated browser tests must not configure additional database connections.")
@@ -124,4 +134,5 @@ def verify_isolated_runtime(environ=None, settings=None, *, database_must_exist=
         "token": env["ISOLATED_TEST_TOKEN"],
         "database": str(expected_database),
         "mediaRoot": str(expected_media),
+        "rbacEnforcement": bool(getattr(settings, "RBAC_ENFORCEMENT", False)) if settings is not None else False,
     }

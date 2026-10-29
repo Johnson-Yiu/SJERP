@@ -1,0 +1,7 @@
+Probe: Node inline module imported frontend/src/utils/fulfillmentIdempotency.js. No browser, network, or database was accessed. window.sessionStorage was replaced with controlled objects.
+
+Case: getItem/setItem throw on every access; call fulfillmentRequestId twice with identical operation/target/payload.
+blocked_storage_retry_reuses_key=false
+
+Case: reading the window.sessionStorage property itself throws SecurityError.
+throwing_storage_getter_blocks_key=true

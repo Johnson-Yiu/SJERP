@@ -1,0 +1,13 @@
+Probe setup: Django APIClient against an isolated temporary SQLite database and isolated MEDIA_ROOT; AUDIT_LOG_ENABLED=True. These were inline one-off probes, not edits to repository test scripts.
+
+Receipt final line:
+{"http_status":201,"database_purchase_status":"completed","audit_before_status":"ordered","audit_after_status":"ordered","audit_changed_fields":[],"audit_rows":1}
+
+Shipment final line and replay:
+{"first_status":201,"replay_status":201,"replay_header":"true","database_order_status":"shipped","audit_after_status":"confirmed","audit_rows":1,"shipments":1,"shipment_movements":1}
+
+Multi-line shipment: first line could create transactional shipment/movement; second line was rejected for insufficient stock. Result after the HTTP 400:
+{"http_status":400,"shipments":0,"shipment_movements":0,"idempotency_rows":0,"audit_rows":0}
+
+Request key boundary helper:
+{"trimmed":"review-key","max128_length":128,"over128":"rejected","control":"rejected","delete":"rejected"}

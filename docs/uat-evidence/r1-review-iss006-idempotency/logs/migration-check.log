@@ -1,0 +1,14 @@
+Commands: python manage.py makemigrations --check --dry-run; then an isolated SQLite migration exercise on a fresh temp DB.
+Environment: separate root C:\Users\Johnson\AppData\Local\Temp\sunjack-iss006-review-migration-44a51ede775341bb834923ba635e2ce0; DATABASE_URL pointed to a SQLite file inside this root; MEDIA_ROOT pointed to this root's media directory.
+
+$ python manage.py makemigrations --check --dry-run
+No changes detected
+
+Migration exercise:
+1. Applied migrations to the isolated fresh SQLite DB.
+2. Migrated crm back to 0089_operationlog_operator_protect.
+3. Inserted sentinel user iss006_review_migration_sentinel.
+4. Migrated forward to all current migrations (leaf 0092_merge_fulfillment_and_csv_audit).
+5. Verified sentinel user count = 1 and crm_fulfillmentidempotency table exists.
+
+Result: PASS on isolated SQLite only. No production/shared DB was opened.

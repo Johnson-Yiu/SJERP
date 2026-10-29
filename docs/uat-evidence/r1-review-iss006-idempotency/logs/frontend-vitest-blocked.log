@@ -1,0 +1,15 @@
+Command attempted: npx vitest run tests/order-detail-shipment-batch.spec.js tests/purchase-editor-receipt.spec.js tests/trade-finance.spec.js --environment jsdom
+Working directory: frontend
+
+Original npm stderr summary (before any test executed):
+npm error code EPERM
+npm error syscall open
+npm error path C:\Users\Johnson\AppData\Local\npm-cache\_cacache\tmp\***
+npm error FetchError: request to https://registry.npmjs.org/vitest failed; cache/temp file open was denied (EPERM).
+npm error Log files were not written because npm could not access its cache directory.
+
+Follow-up read-only checks: frontend/node_modules absent; frontend/node_modules/.bin/vitest.cmd absent; frontend/node_modules/vitest/vitest.mjs absent; no global vitest executable found. Result: BLOCKED before test collection. This preserves the original terminal error details available in the run; npm's private cache log could not be written/read.
+
+Isolated-cache retry:
+Command: npx --yes vitest run tests/order-detail-shipment-batch.spec.js tests/purchase-editor-receipt.spec.js tests/trade-finance.spec.js --environment jsdom
+npm_config_cache was directed to a unique directory under the system temp directory (outside the repository). The process emitted no output and remained in dependency resolution/network wait for approximately 40 seconds; interrupted before test collection (exit code 1). No repository dependency or lockfile was changed.

@@ -1,0 +1,23 @@
+Command: python manage.py test crm.tests.test_iss006_idempotency --verbosity 1
+Working directory: backend
+Environment: APP_STAGE=development; DJANGO_SETTINGS_MODULE=config.settings; DATABASE_URL=sqlite:///C:/Users/Johnson/AppData/Local/Temp/sunjack-iss006-review-tests-132cd69eb3044451832edeadd85a2f92/review.sqlite3; MEDIA_ROOT=C:\Users\Johnson\AppData\Local\Temp\sunjack-iss006-review-tests-132cd69eb3044451832edeadd85a2f92\media; MEDIA_STORAGE_BACKEND=django.core.files.storage.FileSystemStorage
+Note: Django test runner created its own isolated test database from the SQLite test configuration; no business DB was used.
+
+Bad Request: /api/purchase-orders/1/receive/
+Bad Request: /api/purchase-orders/1/receive/
+Conflict: /api/purchase-orders/1/receive/
+Found 8 test(s).
+System check identified no issues (0 silenced).
+Ran 8 tests in 0.814s
+OK (skipped=1)
+Destroying test database for alias 'default'...
+
+Verbose test cases from the same run:
+test_distinct_receipt_keys_allow_two_identical_business_operations ... ok
+test_distinct_shipment_keys_allow_two_partial_shipments ... ok
+test_failed_receipt_does_not_leave_idempotency_or_inventory_side_effects ... ok
+test_missing_key_is_rejected_before_business_side_effects ... ok
+test_receipt_replay_returns_original_result_and_does_not_audit_twice ... ok
+test_same_receipt_key_with_changed_content_is_rejected ... ok
+test_shipment_replay_preserves_inventory_and_supplement_side_effects ... ok
+test_postgresql_concurrent_duplicate_requests_are_serialized ... skipped: 本地 SQLite 不提供 PostgreSQL 并发锁语义；需在 PostgreSQL 环境执行。

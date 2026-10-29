@@ -1,0 +1,15 @@
+
+Running 2 tests using 1 worker
+
+(node:37600) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 browser-tests\iss028-035-category-schema.spec.js:60:3 › ISS-028 / ISS-035 分类模板与 SKU 历史边界 › ISS-028 根/子分类归类、继承属性和筛选 (7.4s)
+ISS-035: created isolated published SKU and synthetic quote/order snapshots; navigating to category template.
+ISS-035: selected the synthetic root category in the browser.
+ISS-035: changed the category template through the browser.
+ISS-035: reopened and refreshed category template in the browser.
+ISS-035: API confirms the published plan and SKU identity are unchanged.
+ISS-035: opened the published SKU editor.
+  ok 2 browser-tests\iss028-035-category-schema.spec.js:143:3 › ISS-028 / ISS-035 分类模板与 SKU 历史边界 › ISS-035 模板变更不改写已发布 SKU、报价和订单快照 (6.5s)
+
+  2 passed (15.3s)

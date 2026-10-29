@@ -1,0 +1,63 @@
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting asgiref==3.13.0 (from -r backend/requirements.lock (line 13))
+  Using cached asgiref-3.13.0-py3-none-any.whl.metadata (12 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting bleach==6.4.0 (from -r backend/requirements.lock (line 14))
+  Using cached bleach-6.4.0-py3-none-any.whl.metadata (32 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting Django==6.0.9 (from -r backend/requirements.lock (line 15))
+  Using cached django-6.0.9-py3-none-any.whl.metadata (3.9 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting django-cors-headers==4.9.0 (from -r backend/requirements.lock (line 16))
+  Using cached django_cors_headers-4.9.0-py3-none-any.whl.metadata (16 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting dj-database-url==3.1.2 (from -r backend/requirements.lock (line 17))
+  Using cached dj_database_url-3.1.2-py3-none-any.whl.metadata (13 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting djangorestframework==3.18.3 (from -r backend/requirements.lock (line 18))
+  Using cached djangorestframework-3.18.3-py3-none-any.whl.metadata (7.8 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting et-xmlfile==2.0.0 (from -r backend/requirements.lock (line 19))
+  Using cached et_xmlfile-2.0.0-py3-none-any.whl.metadata (2.7 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting openpyxl==3.1.5 (from -r backend/requirements.lock (line 20))
+  Using cached openpyxl-3.1.5-py2.py3-none-any.whl.metadata (2.5 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting Pillow==13.0.0 (from -r backend/requirements.lock (line 21))
+  Using cached pillow-13.0.0-cp314-cp314-win_amd64.whl.metadata (9.3 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting psycopg==3.3.6 (from -r backend/requirements.lock (line 22))
+  Using cached psycopg-3.3.6-py3-none-any.whl.metadata (4.4 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting psycopg-binary==3.3.6 (from -r backend/requirements.lock (line 23))
+  Using cached psycopg_binary-3.3.6-cp314-cp314-win_amd64.whl.metadata (2.8 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting pycountry==26.2.16 (from -r backend/requirements.lock (line 24))
+  Using cached pycountry-26.2.16-py3-none-any.whl.metadata (12 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting sqlparse==0.6.0 (from -r backend/requirements.lock (line 25))
+  Using cached sqlparse-0.6.0-py3-none-any.whl.metadata (6.0 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting tzdata==2026.6 (from -r backend/requirements.lock (line 26))
+  Using cached tzdata-2026.6-py2.py3-none-any.whl.metadata (1.4 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting webencodings==0.6.1 (from -r backend/requirements.lock (line 27))
+  Using cached webencodings-0.6.1-py3-none-any.whl.metadata (3.4 kB)
+Using cached asgiref-3.13.0-py3-none-any.whl (27 kB)
+Using cached bleach-6.4.0-py3-none-any.whl (165 kB)
+Using cached django-6.0.9-py3-none-any.whl (8.4 MB)
+Using cached django_cors_headers-4.9.0-py3-none-any.whl (12 kB)
+Using cached dj_database_url-3.1.2-py3-none-any.whl (9.0 kB)
+Using cached djangorestframework-3.18.3-py3-none-any.whl (903 kB)
+Using cached et_xmlfile-2.0.0-py3-none-any.whl (18 kB)
+Using cached openpyxl-3.1.5-py2.py3-none-any.whl (250 kB)
+Using cached pillow-13.0.0-cp314-cp314-win_amd64.whl (7.3 MB)
+Using cached psycopg-3.3.6-py3-none-any.whl (215 kB)
+Using cached psycopg_binary-3.3.6-cp314-cp314-win_amd64.whl (3.8 MB)
+Using cached pycountry-26.2.16-py3-none-any.whl (8.0 MB)
+Using cached sqlparse-0.6.0-py3-none-any.whl (50 kB)
+Using cached tzdata-2026.6-py2.py3-none-any.whl (348 kB)
+Using cached webencodings-0.6.1-py3-none-any.whl (8.7 kB)
+Installing collected packages: webencodings, tzdata, sqlparse, pycountry, psycopg-binary, Pillow, et-xmlfile, asgiref, psycopg, openpyxl, Django, bleach, djangorestframework, django-cors-headers, dj-database-url
+
+Successfully installed Django-6.0.9 Pillow-13.0.0 asgiref-3.13.0 bleach-6.4.0 dj-database-url-3.1.2 django-cors-headers-4.9.0 djangorestframework-3.18.3 et-xmlfile-2.0.0 openpyxl-3.1.5 psycopg-3.3.6 psycopg-binary-3.3.6 pycountry-26.2.16 sqlparse-0.6.0 tzdata-2026.6 webencodings-0.6.1

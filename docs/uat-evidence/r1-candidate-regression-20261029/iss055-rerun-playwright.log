@@ -1,0 +1,204 @@
+
+Running 6 tests using 1 worker
+
+(node:25568) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 browser-tests\iss055-customer-404-real.spec.js:66:5 › authorized customer detail keeps secure Chinese 404 semantics (desktop) (1.4s)
+(node:7252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 browser-tests\iss055-customer-404-real.spec.js:66:5 › authorized customer detail keeps secure Chinese 404 semantics (narrow) (1.3s)
+(node:38416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  3 browser-tests\iss055-customer-404-real.spec.js:66:5 › unauthorized customer detail keeps secure Chinese 404 semantics (desktop) (1.3s)
+(node:2952) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  4 browser-tests\iss055-customer-404-real.spec.js:66:5 › unauthorized customer detail keeps secure Chinese 404 semantics (narrow) (1.4s)
+(node:6360) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  5 browser-tests\iss055-customer-404-real.spec.js:66:5 › unknown customer detail keeps secure Chinese 404 semantics (desktop) (1.3s)
+(node:33380) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  6 browser-tests\iss055-customer-404-real.spec.js:66:5 › unknown customer detail keeps secure Chinese 404 semantics (narrow) (1.3s)
+
+
+  1) browser-tests\iss055-customer-404-real.spec.js:66:5 › authorized customer detail keeps secure Chinese 404 semantics (desktop) 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 3
+    + Received  + 3
+
+      Object {
+        "authenticated": true,
+    -   "data_scope": "self",
+    -   "development_superadmin": false,
+    -   "has_all_permissions": false,
+    +   "data_scope": "all",
+    +   "development_superadmin": true,
+    +   "has_all_permissions": true,
+      }
+
+      34 |   expect(operator.status()).toBe(200)
+      35 |   const payload = await operator.json()
+    > 36 |   expect(payload).toMatchObject({
+         |                   ^
+      37 |     authenticated: true,
+      38 |     development_superadmin: false,
+      39 |     has_all_permissions: false,
+        at loginIsolatedAccount (D:\Codex项目\森爵照明管理系统\.worktrees\candidate-regression-20261029\frontend\browser-tests\iss055-customer-404-real.spec.js:36:19)
+        at D:\Codex项目\森爵照明管理系统\.worktrees\candidate-regression-20261029\frontend\browser-tests\iss055-customer-404-real.spec.js:72:7
+
+    Error Context: test-results\iss055-customer-404-real-a-1247e-nese-404-semantics-desktop-\error-context.md
+
+  2) browser-tests\iss055-customer-404-real.spec.js:66:5 › authorized customer detail keeps secure Chinese 404 semantics (narrow) 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 3
+    + Received  + 3
+
+      Object {
+        "authenticated": true,
+    -   "data_scope": "self",
+    -   "development_superadmin": false,
+    -   "has_all_permissions": false,
+    +   "data_scope": "all",
+    +   "development_superadmin": true,
+    +   "has_all_permissions": true,
+      }
+
+      34 |   expect(operator.status()).toBe(200)
+      35 |   const payload = await operator.json()
+    > 36 |   expect(payload).toMatchObject({
+         |                   ^
+      37 |     authenticated: true,
+      38 |     development_superadmin: false,
+      39 |     has_all_permissions: false,
+        at loginIsolatedAccount (D:\Codex项目\森爵照明管理系统\.worktrees\candidate-regression-20261029\frontend\browser-tests\iss055-customer-404-real.spec.js:36:19)
+        at D:\Codex项目\森爵照明管理系统\.worktrees\candidate-regression-20261029\frontend\browser-tests\iss055-customer-404-real.spec.js:72:7
+
+    Error Context: test-results\iss055-customer-404-real-a-21926-inese-404-semantics-narrow-\error-context.md
+
+  3) browser-tests\iss055-customer-404-real.spec.js:66:5 › unauthorized customer detail keeps secure Chinese 404 semantics (desktop) 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 3
+    + Received  + 3
+
+      Object {
+        "authenticated": true,
+    -   "data_scope": "self",
+    -   "development_superadmin": false,
+    -   "has_all_permissions": false,
+    +   "data_scope": "all",
+    +   "development_superadmin": true,
+    +   "has_all_permissions": true,
+      }
+
+      34 |   expect(operator.status()).toBe(200)
+      35 |   const payload = await operator.json()
+    > 36 |   expect(payload).toMatchObject({
+         |                   ^
+      37 |     authenticated: true,
+      38 |     development_superadmin: false,
+      39 |     has_all_permissions: false,
+        at loginIsolatedAccount (D:\Codex项目\森爵照明管理系统\.worktrees\candidate-regression-20261029\frontend\browser-tests\iss055-customer-404-real.spec.js:36:19)
+        at D:\Codex项目\森爵照明管理系统\.worktrees\candidate-regression-20261029\frontend\browser-tests\iss055-customer-404-real.spec.js:72:7
+
+    Error Context: test-results\iss055-customer-404-real-u-f83ca-nese-404-semantics-desktop-\error-context.md
+
+  4) browser-tests\iss055-customer-404-real.spec.js:66:5 › unauthorized customer detail keeps secure Chinese 404 semantics (narrow) 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 3
+    + Received  + 3
+
+      Object {
+        "authenticated": true,
+    -   "data_scope": "self",
+    -   "development_superadmin": false,
+    -   "has_all_permissions": false,
+    +   "data_scope": "all",
+    +   "development_superadmin": true,
+    +   "has_all_permissions": true,
+      }
+
+      34 |   expect(operator.status()).toBe(200)
+      35 |   const payload = await operator.json()
+    > 36 |   expect(payload).toMatchObject({
+         |                   ^
+      37 |     authenticated: true,
+      38 |     development_superadmin: false,
+      39 |     has_all_permissions: false,
+        at loginIsolatedAccount (D:\Codex项目\森爵照明管理系统\.worktrees\candidate-regression-20261029\frontend\browser-tests\iss055-customer-404-real.spec.js:36:19)
+        at D:\Codex项目\森爵照明管理系统\.worktrees\candidate-regression-20261029\frontend\browser-tests\iss055-customer-404-real.spec.js:72:7
+
+    Error Context: test-results\iss055-customer-404-real-u-51a7b-inese-404-semantics-narrow-\error-context.md
+
+  5) browser-tests\iss055-customer-404-real.spec.js:66:5 › unknown customer detail keeps secure Chinese 404 semantics (desktop) 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 3
+    + Received  + 3
+
+      Object {
+        "authenticated": true,
+    -   "data_scope": "self",
+    -   "development_superadmin": false,
+    -   "has_all_permissions": false,
+    +   "data_scope": "all",
+    +   "development_superadmin": true,
+    +   "has_all_permissions": true,
+      }
+
+      34 |   expect(operator.status()).toBe(200)
+      35 |   const payload = await operator.json()
+    > 36 |   expect(payload).toMatchObject({
+         |                   ^
+      37 |     authenticated: true,
+      38 |     development_superadmin: false,
+      39 |     has_all_permissions: false,
+        at loginIsolatedAccount (D:\Codex项目\森爵照明管理系统\.worktrees\candidate-regression-20261029\frontend\browser-tests\iss055-customer-404-real.spec.js:36:19)
+        at D:\Codex项目\森爵照明管理系统\.worktrees\candidate-regression-20261029\frontend\browser-tests\iss055-customer-404-real.spec.js:72:7
+
+    Error Context: test-results\iss055-customer-404-real-u-a3f09-nese-404-semantics-desktop-\error-context.md
+
+  6) browser-tests\iss055-customer-404-real.spec.js:66:5 › unknown customer detail keeps secure Chinese 404 semantics (narrow) 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 3
+    + Received  + 3
+
+      Object {
+        "authenticated": true,
+    -   "data_scope": "self",
+    -   "development_superadmin": false,
+    -   "has_all_permissions": false,
+    +   "data_scope": "all",
+    +   "development_superadmin": true,
+    +   "has_all_permissions": true,
+      }
+
+      34 |   expect(operator.status()).toBe(200)
+      35 |   const payload = await operator.json()
+    > 36 |   expect(payload).toMatchObject({
+         |                   ^
+      37 |     authenticated: true,
+      38 |     development_superadmin: false,
+      39 |     has_all_permissions: false,
+        at loginIsolatedAccount (D:\Codex项目\森爵照明管理系统\.worktrees\candidate-regression-20261029\frontend\browser-tests\iss055-customer-404-real.spec.js:36:19)
+        at D:\Codex项目\森爵照明管理系统\.worktrees\candidate-regression-20261029\frontend\browser-tests\iss055-customer-404-real.spec.js:72:7
+
+    Error Context: test-results\iss055-customer-404-real-u-8a939-inese-404-semantics-narrow-\error-context.md
+
+  6 failed
+    browser-tests\iss055-customer-404-real.spec.js:66:5 › authorized customer detail keeps secure Chinese 404 semantics (desktop) 
+    browser-tests\iss055-customer-404-real.spec.js:66:5 › authorized customer detail keeps secure Chinese 404 semantics (narrow) 
+    browser-tests\iss055-customer-404-real.spec.js:66:5 › unauthorized customer detail keeps secure Chinese 404 semantics (desktop) 
+    browser-tests\iss055-customer-404-real.spec.js:66:5 › unauthorized customer detail keeps secure Chinese 404 semantics (narrow) 
+    browser-tests\iss055-customer-404-real.spec.js:66:5 › unknown customer detail keeps secure Chinese 404 semantics (desktop) 
+    browser-tests\iss055-customer-404-real.spec.js:66:5 › unknown customer detail keeps secure Chinese 404 semantics (narrow) 

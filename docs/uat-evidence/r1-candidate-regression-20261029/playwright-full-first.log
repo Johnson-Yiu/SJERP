@@ -1,0 +1,20 @@
+
+> senju-crm-erp@1.0.0 test:browser
+> playwright test
+
+[WebServer] (node:24284) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] error when starting dev server:
+[WebServer] Error: listen EACCES: permission denied 127.0.0.1:5195
+[WebServer]     at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+[WebServer]     at listenInCluster (node:net:2065:12)
+[WebServer]     at node:net:2274:7
+[WebServer]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[WebServer]   code: 'EACCES',
+[WebServer]   errno: -4092,
+[WebServer]   syscall: 'listen',
+[WebServer]   address: '127.0.0.1',
+[WebServer]   port: 5195
+[WebServer] }
+Error: Process from config.webServer was not able to start. Exit code: 1
+

@@ -1,0 +1,26 @@
+
+> senju-crm-erp@1.0.0 test:browser:isolated:verify
+> node --test infrastructure-tests/runner-validation.test.mjs
+
+✔ port allocator returns a free explicit loopback port (19.1468ms)
+✔ port preflight rejects an occupied port instead of reusing another server (3.0404ms)
+✔ actual runner fails before creating isolated resources when its API port is occupied (110.716ms)
+✔ port preflight rejects duplicate API and Vite assignments (3.3559ms)
+✔ API identity mismatch is rejected before browser tests can proceed (40.2693ms)
+✔ only an existing browser test file can be selected; Playwright service and config overrides are rejected (5.2399ms)
+✔ only allowlisted real API suites receive fixed synthetic fixture seeds (1.285ms)
+✔ API identity comparison checks run ID, token, SQLite path, and MEDIA_ROOT (1.033ms)
+✔ a real Vite /api proxy to the wrong database and MEDIA_ROOT is rejected before Playwright (762.6039ms)
+✔ SQLite URL preserves an absolute platform path for Django parsing (0.5363ms)
+✔ cleanup removes only a marked run directory under system temp (8.6247ms)
+✔ cleanup refuses an ownership marker belonging to another run (5.1738ms)
+✔ two independent worktree runtimes can start concurrently without sharing ports or data (29602.427ms)
+ℹ parallel isolated runs: [{"runId":"36fcd54e-245e-44b4-bd49-cc27d76ed81e","apiPort":"8663","vitePort":"8665","database":"D:\\Codex项目\\森爵照明管理系统\\.worktrees\\candidate-regression-20261029\\evidence\\isolated-temp\\sunjack-r1-repair-06-ZNQr2q\\db.sqlite3","media":"D:\\Codex项目\\森爵照明管理系统\\.worktrees\\candidate-regression-20261029\\evidence\\isolated-temp\\sunjack-r1-repair-06-ZNQr2q\\media"},{"runId":"c80a9021-bb25-49c2-9a5e-5b6b0621c365","apiPort":"8664","vitePort":"8666","database":"D:\\Codex项目\\森爵照明管理系统\\.worktrees\\candidate-regression-20261029\\evidence\\isolated-temp\\sunjack-r1-repair-06-UpUfRO\\db.sqlite3","media":"D:\\Codex项目\\森爵照明管理系统\\.worktrees\\candidate-regression-20261029\\evidence\\isolated-temp\\sunjack-r1-repair-06-UpUfRO\\media"}]
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30686.3268

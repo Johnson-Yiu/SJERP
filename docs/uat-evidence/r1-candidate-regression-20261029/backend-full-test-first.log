@@ -1,0 +1,1007 @@
+Creating test database for alias 'default'...
+
+Bad Request: /api/access-roles/1/permission-matrix/
+..Bad Request: /api/categories/reorder/
+Bad Request: /api/categories/1/
+....Bad Request: /api/customers/
+.................Forbidden: /api/actual-rmb-cash/
+Forbidden: /api/actual-rmb-cash/
+.....Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+...Internal Server Error: /api/shipments/1/copy-estimated-packing/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\views.py", line 1456, in copy_estimated_packing
+    copy_estimated_to_actual(shipment, plan, replace=request.data.get("replace") is True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\services\packaging.py", line 161, in copy_estimated_to_actual
+    serializer.save(shipment=shipment)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\serializers.py", line 2893, in create
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1247, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_actual_packing.py", line 464, in fail_after_first_carton
+    raise RuntimeError("copy failed after first carton")
+RuntimeError: copy failed after first carton
+.Bad Request: /api/shipments/1/packages/
+..Internal Server Error: /api/shipments/1/packages/1/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\views.py", line 1437, in update_package
+    record_operation(request=request, instance=shipment, action="custom", action_label="ɾ��װ����ϸ", before={"package": before}, metadata={"package_id": package_id})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: audit save failed
+.Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/2/
+.Bad Request: /api/shipments/1/packages/
+...Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+.Bad Request: /api/shipments/2/packages/
+.Internal Server Error: /api/shipments/1/packages/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\views.py", line 1420, in packages
+    package = serializer.save(shipment=shipment)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\serializers.py", line 2893, in create
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: save failed
+.Internal Server Error: /api/shipments/1/packages/1/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\views.py", line 1440, in update_package
+    serializer.is_valid(raise_exception=True); serializer.save()
+                                               ~~~~~~~~~~~~~~~^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\serializers.py", line 205, in save
+    self.instance = self.update(self.instance, validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\serializers.py", line 2905, in update
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=instance, **item) for item in items])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: save failed
+.Bad Request: /api/shipments/1/packages/1/
+...Bad Request: /api/shipments/2/packages/
+.Bad Request: /api/shipments/2/packages/
+.Bad Request: /api/shipments/1/copy-estimated-packing/
+.....Bad Request: /api/shipments/1/packages/
+.Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+.Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+..Bad Request: /api/shipments/1/copy-estimated-packing/
+.......Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+..Method Not Allowed: /api/operation-logs/
+Method Not Allowed: /api/operation-logs/1/
+Method Not Allowed: /api/operation-logs/1/
+......s..Conflict: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/1/confirm/
+..Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/
+...Bad Request: /api/rmb-cash-events/1/confirm/
+Bad Request: /api/rmb-cash-events/2/confirm/
+Bad Request: /api/rmb-cash-events/2/confirm/
+.Bad Request: /api/rmb-cash-events/1/cancel/
+Bad Request: /api/rmb-cash-events/
+.Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/1/confirm/
+Method Not Allowed: /api/rmb-cash-events/1/
+Method Not Allowed: /api/rmb-cash-events/1/
+Method Not Allowed: /api/rmb-cash-events/1/
+.Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+..Bad Request: /api/rmb-cash-events/1/confirm/
+Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Not Found: /api/rmb-cash-events/not-an-id/
+.Bad Request: /api/rmb-cash-events/preview/
+........Bad Request: /api/product-certificates/6/
+Bad Request: /api/product-certificates/6/
+.....Bad Request: /api/purchase-orders/1/
+Bad Request: /api/purchase-orders/1/
+.Bad Request: /api/orders/1/cancel/
+..Bad Request: /api/orders/1/confirm/
+Bad Request: /api/orders/2/confirm/
+.Bad Request: /api/orders/1/
+Bad Request: /api/orders/1/start-production/
+Bad Request: /api/orders/2/
+.Bad Request: /api/purchase-orders/1/cancel/
+.Bad Request: /api/purchase-orders/1/receive/
+Bad Request: /api/purchase-orders/1/place/
+Bad Request: /api/purchase-orders/1/
+..Bad Request: /api/contacts/1/
+.Bad Request: /api/customers/1/
+Bad Request: /api/customers/2/
+Bad Request: /api/customers/3/
+Bad Request: /api/customers/4/
+......Bad Request: /api/follow-ups/
+...Not Found: /api/follow-ups/2/attachments/1/
+.Bad Request: /api/follow-ups/1/
+Bad Request: /api/follow-ups/1/
+....Bad Request: /api/quotes/1/mark-sent/
+Bad Request: /api/quotes/1/reject/
+Bad Request: /api/quotes/1/expire/
+.Bad Request: /api/orders/1/confirm/
+Bad Request: /api/orders/2/confirm/
+.Bad Request: /api/orders/1/
+Bad Request: /api/orders/1/
+..Bad Request: /api/quotes/1/order-draft/
+Bad Request: /api/orders/
+Bad Request: /api/quotes/2/order-draft/
+Bad Request: /api/orders/
+....................Bad Request: /api/orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/orders/1/
+Bad Request: /api/purchase-orders/1/
+Bad Request: /api/orders/1/
+Bad Request: /api/purchase-orders/1/
+...Internal Server Error: /api/orders/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\views.py", line 1903, in create
+    return super().create(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\audit.py", line 70, in perform_create
+    instance = serializer.save()
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\serializers.py", line 2356, in create
+    OrderItem.objects.bulk_create(rows)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: fail
+Internal Server Error: /api/purchase-orders/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\views.py", line 319, in create
+    return super().create(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\audit.py", line 70, in perform_create
+    instance = serializer.save()
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\serializers.py", line 787, in create
+    PurchaseOrderItem.objects.bulk_create([
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+        PurchaseOrderItem(
+        ^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        ) for item in items
+        ^^^^^^^^^^^^^^^^^^^
+    ])
+    ^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: fail
+.....Bad Request: /api/import/csv/
+...............................Bad Request: /api/transactions/1/void/
+Bad Request: /api/transactions/1/void/
+............................Bad Request: /api/finance-dashboard/details/
+Bad Request: /api/finance-dashboard/details/
+........Bad Request: /api/transactions/
+.Bad Request: /api/transactions/
+......Bad Request: /api/follow-ups/
+.....Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/1/
+.....Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/
+......Bad Request: /api/inventory-movements/1/
+.Bad Request: /api/orders/1/ship/
+Bad Request: /api/orders/1/ship/
+...Bad Request: /api/orders/1/ship/
+..Bad Request: /api/orders/1/ship/
+.....Bad Request: /api/purchase-orders/1/receive/
+.Bad Request: /api/orders/1/ship/
+......Bad Request: /api/orders/1/ship/
+..Bad Request: /api/suppliers/
+...........Bad Request: /api/inventory-movements/2/
+......Bad Request: /api/orders/1/complete/
+....Bad Request: /api/orders/1/complete/
+............................................Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+..Bad Request: /api/orders/
+Bad Request: /api/purchase-orders/
+..Bad Request: /api/purchase-orders/1/place/
+Bad Request: /api/purchase-orders/1/pay/
+.Bad Request: /api/orders/1/confirm/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+.Bad Request: /api/hs-codes/1/
+Bad Request: /api/hs-codes/1/assign-products/
+.Bad Request: /api/products/1/
+..Bad Request: /api/hs-codes/
+..Bad Request: /api/hs-codes/1/assign-products/
+...Bad Request: /api/inventory-movements/1/reverse/
+Bad Request: /api/inventory-movements/2/reverse/
+.Bad Request: /api/inventory-movements/1/
+Bad Request: /api/inventory-movements/1/reverse/
+..Bad Request: /api/inventory-movements/1/reverse/
+...........Unprocessable Content: /api/quotes/1/export/
+Unprocessable Content: /api/quotes/1/pi-data/
+.......................Bad Request: /api/customers/
+Bad Request: /api/customers/
+..................Bad Request: /api/orders/1/quantity-adjustments/
+....Internal Server Error: /api/orders/1/quantity-adjustments/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\views.py", line 2100, in quantity_adjustments
+    adjustment, replayed, preview = apply_quantity_adjustment(
+                                    ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        order,
+        ^^^^^^
+        request.data,
+        ^^^^^^^^^^^^^
+        operator=request.user,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\services\order_quantity_adjustments.py", line 421, in apply_quantity_adjustment
+    rebalance_sku_reservations(SKU.objects.get(pk=sku_id))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: reservation failure
+.Bad Request: /api/orders/1/quantity-adjustments/preview/
+Bad Request: /api/orders/1/quantity-adjustments/
+...Bad Request: /api/orders/1/quantity-adjustments/
+Bad Request: /api/orders/1/quantity-adjustments/
+Bad Request: /api/orders/1/quantity-adjustments/
+..Bad Request: /api/orders/1/quantity-adjustments/
+.Bad Request: /api/orders/1/quantity-adjustments/
+.Bad Request: /api/orders/1/quantity-adjustments/
+..Bad Request: /api/orders/1/quantity-adjustments/
+...Conflict: /api/orders/1/quantity-adjustments/
+Bad Request: /api/orders/1/
+.Bad Request: /api/orders/1/quantity-adjustments/
+.........Bad Request: /api/sku-packaging-profiles/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+.Bad Request: /api/packaging-templates/1/
+.........................Bad Request: /api/shipments/1/export-packing-list/
+........Bad Request: /api/shipments/1/export-packing-list/
+...Bad Request: /api/shipments/1/export-packing-list/
+....Bad Request: /api/payment-plans/
+..Bad Request: /api/payment-plans/
+Bad Request: /api/payment-plans/
+Bad Request: /api/payment-plans/
+.......Bad Request: /api/orders/1/generate-purchase-drafts/
+....Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+...Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/purchase-orders/1/place/
+....................Bad Request: /api/category-attributes/1/
+Bad Request: /api/category-attributes/1/
+Bad Request: /api/category-attributes/1/
+.Bad Request: /api/categories/3/
+Bad Request: /api/categories/3/
+Bad Request: /api/categories/3/
+...Bad Request: /api/category-attributes/1/
+Bad Request: /api/category-attributes/
+Bad Request: /api/category-attributes/1/
+...Bad Request: /api/products/1/sales-model-prefix-preview/
+.Bad Request: /api/products/1/
+.Bad Request: /api/products/1/
+Bad Request: /api/categories/2/
+..Bad Request: /api/purchase-orders/1/cost-allocation/
+.Bad Request: /api/purchase-orders/1/cost-allocation/
+.Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/
+..Bad Request: /api/purchase-orders/1/cost-allocation-preview/
+..Bad Request: /api/purchase-orders/1/cost-allocation/
+....Bad Request: /api/purchase-orders/1/place/
+................Bad Request: /api/purchase-orders/1/
+.Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/1/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/2/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/3/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/4/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/5/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/6/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/7/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/8/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/9/
+...Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/1/
+.......Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+....Bad Request: /api/orders/1/complete/
+..Bad Request: /api/orders/1/
+.Bad Request: /api/orders/1/complete/
+.Bad Request: /api/orders/1/complete/
+........Bad Request: /api/quotes/
+.Method Not Allowed: /api/quotes/1/
+.Bad Request: /api/quotes/4/order-draft/
+Bad Request: /api/quotes/5/order-draft/
+.....Bad Request: /api/quotes/1/important-notes/
+..Bad Request: /api/orders/
+.Bad Request: /api/quotes/
+Bad Request: /api/quotes/1/revise/
+......Bad Request: /api/quotes/1/
+Bad Request: /api/quotes/1/
+.Bad Request: /api/quotes/
+..Bad Request: /api/quotes/1/revise/
+....Bad Request: /api/quotes/1/revise/
+.Bad Request: /api/quotes/1/revise/
+.Bad Request: /api/quotes/1/revise/
+....Bad Request: /api/skus/1/image/
+....Unprocessable Content: /api/quotes/1/export/
+...Unprocessable Content: /api/quotes/1/export/
+.....................Bad Request: /api/transactions/
+.Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+................Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+..Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+..Bad Request: /api/reports/details/
+....................Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/preview/
+...Bad Request: /api/import/csv/
+.Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+................................Bad Request: /api/skus/
+..Bad Request: /api/skus/
+..Bad Request: /api/quotes/
+Bad Request: /api/quotes/1/revise/
+..Bad Request: /api/quotes/
+..Bad Request: /api/sales-rules/
+.Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+.....Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/orders/
+Bad Request: /api/orders/
+...Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/orders/
+Bad Request: /api/orders/
+Bad Request: /api/orders/
+.........Bad Request: /api/products/1/combination-rules/
+Bad Request: /api/products/1/combination-rules/
+Bad Request: /api/products/1/combination-rules/
+Bad Request: /api/products/1/combination-rules/
+.Bad Request: /api/products/1/combination-rules/
+.Bad Request: /api/skus/
+Bad Request: /api/skus/
+.Bad Request: /api/skus/
+...Bad Request: /api/products/1/combination-rules/
+....Bad Request: /api/skus/2/
+....Bad Request: /api/skus/
+.Bad Request: /api/skus/
+.Bad Request: /api/skus/1/
+..Bad Request: /api/skus/1/
+.....Bad Request: /api/skus/1/
+.Bad Request: /api/skus/1/
+..Bad Request: /api/skus/1/
+.Bad Request: /api/skus/1/
+Bad Request: /api/skus/2/
+...Bad Request: /api/skus/1/
+.Bad Request: /api/skus/
+Bad Request: /api/skus/1/
+......Bad Request: /api/skus/1/
+.Bad Request: /api/skus/
+.Bad Request: /api/skus/1/
+.Bad Request: /api/skus/2/
+....Bad Request: /api/skus/batch-create/
+..Bad Request: /api/skus/
+.Bad Request: /api/skus/1/
+.Bad Request: /api/purchase-orders/
+.Bad Request: /api/products/1/sku-plan/publish/
+..Bad Request: /api/supplier-capabilities/
+...Bad Request: /api/products/1/sku-plan/publish/
+.Bad Request: /api/products/1/sku-plan/publish/
+.Bad Request: /api/supplier-skus/1/
+.Internal Server Error: /api/skus/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\views.py", line 1067, in perform_create
+    super().perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\audit.py", line 71, in perform_create
+    record_operation(request=self.request, instance=instance, action="create")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: audit failed
+.Bad Request: /api/skus/batch-create/
+.Bad Request: /api/skus/
+.Bad Request: /api/skus/
+Bad Request: /api/skus/1/
+.Bad Request: /api/skus/1/
+.Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+....Bad Request: /api/orders/1/items/1/supplier-allocation/
+Bad Request: /api/orders/1/items/1/supplier-allocation/
+Bad Request: /api/orders/1/items/1/supplier-allocation/
+.Bad Request: /api/orders/1/items/1/supplier-allocation/
+Bad Request: /api/orders/1/items/1/supplier-allocation/
+.........Bad Request: /api/products/1/supplier-candidate-pool/
+Bad Request: /api/products/1/supplier-candidate-pool/
+.Bad Request: /api/products/1/supplier-candidate-pool/
+.Bad Request: /api/products/1/supplier-candidate-pool/
+..Bad Request: /api/suppliers/
+.................Bad Request: /api/purchase-orders/1/
+Bad Request: /api/purchase-orders/1/
+..Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+..Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+..Bad Request: /api/purchase-orders/
+...Bad Request: /api/purchase-orders/
+.Bad Request: /api/supplier-skus/1/
+Bad Request: /api/supplier-skus/2/
+.Bad Request: /api/supplier-skus/
+.............Bad Request: /api/inventory-movements/1/
+...........Bad Request: /api/orders/1/ship/
+Bad Request: /api/orders/1/ship/
+.Bad Request: /api/inventory-movements/batch/
+Bad Request: /api/inventory-movements/batch/
+........Bad Request: /api/payment-plans/1/
+.Bad Request: /api/purchase-orders/1/
+...Bad Request: /api/purchase-orders/1/receipts/1/reverse/
+.....Bad Request: /api/finance-dashboard/
+...Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+...Bad Request: /api/shipments/1/reverse/
+............Bad Request: /api/transactions/1/
+Bad Request: /api/transactions/1/
+...Bad Request: /api/orders/1/ship/
+..Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/skus/1/
+.Bad Request: /api/sku-trade-units/
+Bad Request: /api/sku-trade-units/
+.....Bad Request: /api/quotes/
+.Bad Request: /api/quotes/
+..Bad Request: /api/inventory-movements/
+..Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+..sss.FF..FFF...FFFFFF........s....D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\test\utils.py:455: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with self as context:
+...s...s.......s......ssssssssss..................
+======================================================================
+FAIL: test_deployed_stage_rejects_relative_media_root (crm.tests.test_database_settings.DatabaseSettingsTests.test_deployed_stage_rejects_relative_media_root)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 145, in test_deployed_stage_rejects_relative_media_root
+    self.assertIn("MEDIA_ROOT must be an absolute path", result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MEDIA_ROOT must be an absolute path' not found in 'Traceback (most recent call last):\n  File "<string>", line 5, in <module>\n    print(settings.DATABASES[\'default\'][\'ENGINE\'])\n          ^^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 75, in __getattr__\n    self._setup(name)\n    ~~~~~~~~~~~^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 62, in _setup\n    self._wrapped = Settings(settings_module)\n                    ~~~~~~~~^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 162, in __init__\n    mod = importlib.import_module(self.SETTINGS_MODULE)\n  File "C:\\Python314\\Lib\\importlib\\__init__.py", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import\n  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load\n  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked\n  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked\n  File "<frozen importlib._bootstrap_external>", line 759, in exec_module\n  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\backend\\config\\settings.py", line 77, in <module>\n    raise ImproperlyConfigured("AUDIT_LOG_ENABLED must be true outside development.")\ndjango.core.exceptions.ImproperlyConfigured: AUDIT_LOG_ENABLED must be true outside development.\n'
+
+======================================================================
+FAIL: test_deployed_stage_requires_explicit_media_root (crm.tests.test_database_settings.DatabaseSettingsTests.test_deployed_stage_requires_explicit_media_root)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 136, in test_deployed_stage_requires_explicit_media_root
+    self.assertIn("MEDIA_ROOT is required outside development", result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MEDIA_ROOT is required outside development' not found in 'Traceback (most recent call last):\n  File "<string>", line 5, in <module>\n    print(settings.DATABASES[\'default\'][\'ENGINE\'])\n          ^^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 75, in __getattr__\n    self._setup(name)\n    ~~~~~~~~~~~^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 62, in _setup\n    self._wrapped = Settings(settings_module)\n                    ~~~~~~~~^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 162, in __init__\n    mod = importlib.import_module(self.SETTINGS_MODULE)\n  File "C:\\Python314\\Lib\\importlib\\__init__.py", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import\n  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load\n  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked\n  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked\n  File "<frozen importlib._bootstrap_external>", line 759, in exec_module\n  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\backend\\config\\settings.py", line 77, in <module>\n    raise ImproperlyConfigured("AUDIT_LOG_ENABLED must be true outside development.")\ndjango.core.exceptions.ImproperlyConfigured: AUDIT_LOG_ENABLED must be true outside development.\n'
+
+======================================================================
+FAIL: test_media_root_cannot_overlap_static_root (crm.tests.test_database_settings.DatabaseSettingsTests.test_media_root_cannot_overlap_static_root)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 154, in test_media_root_cannot_overlap_static_root
+    self.assertIn("MEDIA_ROOT and STATIC_ROOT must be separate", result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MEDIA_ROOT and STATIC_ROOT must be separate' not found in 'Traceback (most recent call last):\n  File "<string>", line 5, in <module>\n    print(settings.DATABASES[\'default\'][\'ENGINE\'])\n          ^^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 75, in __getattr__\n    self._setup(name)\n    ~~~~~~~~~~~^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 62, in _setup\n    self._wrapped = Settings(settings_module)\n                    ~~~~~~~~^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 162, in __init__\n    mod = importlib.import_module(self.SETTINGS_MODULE)\n  File "C:\\Python314\\Lib\\importlib\\__init__.py", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import\n  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load\n  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked\n  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked\n  File "<frozen importlib._bootstrap_external>", line 759, in exec_module\n  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\backend\\config\\settings.py", line 77, in <module>\n    raise ImproperlyConfigured("AUDIT_LOG_ENABLED must be true outside development.")\ndjango.core.exceptions.ImproperlyConfigured: AUDIT_LOG_ENABLED must be true outside development.\n'
+
+======================================================================
+FAIL: test_production_defaults_are_secure_and_use_session_challenge (crm.tests.test_database_settings.DatabaseSettingsTests.test_production_defaults_are_secure_and_use_session_challenge)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 117, in test_production_defaults_are_secure_and_use_session_challenge
+    self.assertEqual(result.returncode, 0, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<string>", line 7, in <module>
+    'debug': settings.DEBUG,
+             ^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\conf\__init__.py", line 75, in __getattr__
+    self._setup(name)
+    ~~~~~~~~~~~^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\conf\__init__.py", line 62, in _setup
+    self._wrapped = Settings(settings_module)
+                    ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\conf\__init__.py", line 162, in __init__
+    mod = importlib.import_module(self.SETTINGS_MODULE)
+  File "C:\Python314\Lib\importlib\__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\config\settings.py", line 77, in <module>
+    raise ImproperlyConfigured("AUDIT_LOG_ENABLED must be true outside development.")
+django.core.exceptions.ImproperlyConfigured: AUDIT_LOG_ENABLED must be true outside development.
+
+
+======================================================================
+FAIL: test_production_postgresql_url_is_supported (crm.tests.test_database_settings.DatabaseSettingsTests.test_production_postgresql_url_is_supported)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 81, in test_production_postgresql_url_is_supported
+    self.assert_engine("production", "postgresql://user:password@localhost:5432/app", "django.db.backends.postgresql")
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 63, in assert_engine
+    self.assertEqual(result.returncode, 0, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+    print(settings.DATABASES['default']['ENGINE'])
+          ^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\conf\__init__.py", line 75, in __getattr__
+    self._setup(name)
+    ~~~~~~~~~~~^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\conf\__init__.py", line 62, in _setup
+    self._wrapped = Settings(settings_module)
+                    ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\conf\__init__.py", line 162, in __init__
+    mod = importlib.import_module(self.SETTINGS_MODULE)
+  File "C:\Python314\Lib\importlib\__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\config\settings.py", line 77, in <module>
+    raise ImproperlyConfigured("AUDIT_LOG_ENABLED must be true outside development.")
+django.core.exceptions.ImproperlyConfigured: AUDIT_LOG_ENABLED must be true outside development.
+
+
+======================================================================
+FAIL: test_production_rejects_wildcard_hosts_and_http_origins (crm.tests.test_database_settings.DatabaseSettingsTests.test_production_rejects_wildcard_hosts_and_http_origins)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 190, in test_production_rejects_wildcard_hosts_and_http_origins
+    self.assertIn("DJANGO_ALLOWED_HOSTS must contain explicit hosts outside development.", wildcard.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'DJANGO_ALLOWED_HOSTS must contain explicit hosts outside development.' not found in 'Traceback (most recent call last):\n  File "<string>", line 5, in <module>\n    print(settings.DATABASES[\'default\'][\'ENGINE\'])\n          ^^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 75, in __getattr__\n    self._setup(name)\n    ~~~~~~~~~~~^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 62, in _setup\n    self._wrapped = Settings(settings_module)\n                    ~~~~~~~~^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 162, in __init__\n    mod = importlib.import_module(self.SETTINGS_MODULE)\n  File "C:\\Python314\\Lib\\importlib\\__init__.py", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import\n  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load\n  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked\n  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked\n  File "<frozen importlib._bootstrap_external>", line 759, in exec_module\n  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\backend\\config\\settings.py", line 77, in <module>\n    raise ImproperlyConfigured("AUDIT_LOG_ENABLED must be true outside development.")\ndjango.core.exceptions.ImproperlyConfigured: AUDIT_LOG_ENABLED must be true outside development.\n'
+
+======================================================================
+FAIL: test_production_sqlite_url_is_rejected (crm.tests.test_database_settings.DatabaseSettingsTests.test_production_sqlite_url_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 93, in test_production_sqlite_url_is_rejected
+    self.assert_rejected("production", "sqlite:///production.sqlite3", "DATABASE_URL must use PostgreSQL for staging/production.")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 69, in assert_rejected
+    self.assertIn(message, result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'DATABASE_URL must use PostgreSQL for staging/production.' not found in 'Traceback (most recent call last):\n  File "<string>", line 5, in <module>\n    print(settings.DATABASES[\'default\'][\'ENGINE\'])\n          ^^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 75, in __getattr__\n    self._setup(name)\n    ~~~~~~~~~~~^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 62, in _setup\n    self._wrapped = Settings(settings_module)\n                    ~~~~~~~~^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 162, in __init__\n    mod = importlib.import_module(self.SETTINGS_MODULE)\n  File "C:\\Python314\\Lib\\importlib\\__init__.py", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import\n  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load\n  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked\n  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked\n  File "<frozen importlib._bootstrap_external>", line 759, in exec_module\n  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\backend\\config\\settings.py", line 77, in <module>\n    raise ImproperlyConfigured("AUDIT_LOG_ENABLED must be true outside development.")\ndjango.core.exceptions.ImproperlyConfigured: AUDIT_LOG_ENABLED must be true outside development.\n'
+
+======================================================================
+FAIL: test_production_without_database_url_fails_fast (crm.tests.test_database_settings.DatabaseSettingsTests.test_production_without_database_url_fails_fast)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 87, in test_production_without_database_url_fails_fast
+    self.assert_rejected("production", None, "DATABASE_URL is required for staging/production.")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 69, in assert_rejected
+    self.assertIn(message, result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'DATABASE_URL is required for staging/production.' not found in 'Traceback (most recent call last):\n  File "<string>", line 5, in <module>\n    print(settings.DATABASES[\'default\'][\'ENGINE\'])\n          ^^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 75, in __getattr__\n    self._setup(name)\n    ~~~~~~~~~~~^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 62, in _setup\n    self._wrapped = Settings(settings_module)\n                    ~~~~~~~~^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 162, in __init__\n    mod = importlib.import_module(self.SETTINGS_MODULE)\n  File "C:\\Python314\\Lib\\importlib\\__init__.py", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import\n  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load\n  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked\n  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked\n  File "<frozen importlib._bootstrap_external>", line 759, in exec_module\n  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\backend\\config\\settings.py", line 77, in <module>\n    raise ImproperlyConfigured("AUDIT_LOG_ENABLED must be true outside development.")\ndjango.core.exceptions.ImproperlyConfigured: AUDIT_LOG_ENABLED must be true outside development.\n'
+
+======================================================================
+FAIL: test_staging_postgresql_url_is_supported (crm.tests.test_database_settings.DatabaseSettingsTests.test_staging_postgresql_url_is_supported)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 78, in test_staging_postgresql_url_is_supported
+    self.assert_engine("staging", "postgresql://user:password@localhost:5432/app", "django.db.backends.postgresql")
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 63, in assert_engine
+    self.assertEqual(result.returncode, 0, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+    print(settings.DATABASES['default']['ENGINE'])
+          ^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\conf\__init__.py", line 75, in __getattr__
+    self._setup(name)
+    ~~~~~~~~~~~^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\conf\__init__.py", line 62, in _setup
+    self._wrapped = Settings(settings_module)
+                    ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\.candidate-runtime\venv\Lib\site-packages\django\conf\__init__.py", line 162, in __init__
+    mod = importlib.import_module(self.SETTINGS_MODULE)
+  File "C:\Python314\Lib\importlib\__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\config\settings.py", line 77, in <module>
+    raise ImproperlyConfigured("AUDIT_LOG_ENABLED must be true outside development.")
+django.core.exceptions.ImproperlyConfigured: AUDIT_LOG_ENABLED must be true outside development.
+
+
+======================================================================
+FAIL: test_staging_sqlite_url_is_rejected (crm.tests.test_database_settings.DatabaseSettingsTests.test_staging_sqlite_url_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 90, in test_staging_sqlite_url_is_rejected
+    self.assert_rejected("staging", "sqlite:///staging.sqlite3", "DATABASE_URL must use PostgreSQL for staging/production.")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 69, in assert_rejected
+    self.assertIn(message, result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'DATABASE_URL must use PostgreSQL for staging/production.' not found in 'Traceback (most recent call last):\n  File "<string>", line 5, in <module>\n    print(settings.DATABASES[\'default\'][\'ENGINE\'])\n          ^^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 75, in __getattr__\n    self._setup(name)\n    ~~~~~~~~~~~^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 62, in _setup\n    self._wrapped = Settings(settings_module)\n                    ~~~~~~~~^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 162, in __init__\n    mod = importlib.import_module(self.SETTINGS_MODULE)\n  File "C:\\Python314\\Lib\\importlib\\__init__.py", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import\n  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load\n  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked\n  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked\n  File "<frozen importlib._bootstrap_external>", line 759, in exec_module\n  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\backend\\config\\settings.py", line 77, in <module>\n    raise ImproperlyConfigured("AUDIT_LOG_ENABLED must be true outside development.")\ndjango.core.exceptions.ImproperlyConfigured: AUDIT_LOG_ENABLED must be true outside development.\n'
+
+======================================================================
+FAIL: test_staging_without_database_url_fails_fast (crm.tests.test_database_settings.DatabaseSettingsTests.test_staging_without_database_url_fails_fast)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 84, in test_staging_without_database_url_fails_fast
+    self.assert_rejected("staging", None, "DATABASE_URL is required for staging/production.")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\crm\tests\test_database_settings.py", line 69, in assert_rejected
+    self.assertIn(message, result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'DATABASE_URL is required for staging/production.' not found in 'Traceback (most recent call last):\n  File "<string>", line 5, in <module>\n    print(settings.DATABASES[\'default\'][\'ENGINE\'])\n          ^^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 75, in __getattr__\n    self._setup(name)\n    ~~~~~~~~~~~^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 62, in _setup\n    self._wrapped = Settings(settings_module)\n                    ~~~~~~~~^^^^^^^^^^^^^^^^^\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\.candidate-runtime\\venv\\Lib\\site-packages\\django\\conf\\__init__.py", line 162, in __init__\n    mod = importlib.import_module(self.SETTINGS_MODULE)\n  File "C:\\Python314\\Lib\\importlib\\__init__.py", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import\n  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load\n  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked\n  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked\n  File "<frozen importlib._bootstrap_external>", line 759, in exec_module\n  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed\n  File "D:\\Codex��Ŀ\\ɭ����������ϵͳ\\.worktrees\\candidate-regression-20261029\\backend\\config\\settings.py", line 77, in <module>\n    raise ImproperlyConfigured("AUDIT_LOG_ENABLED must be true outside development.")\ndjango.core.exceptions.ImproperlyConfigured: AUDIT_LOG_ENABLED must be true outside development.\n'
+
+----------------------------------------------------------------------
+Ran 1007 tests in 617.160s
+
+FAILED (failures=11, skipped=18)
+Destroying test database for alias 'default'...
+
+Found 1007 test(s).
+System check identified no issues (0 silenced).
+P2A-DATABASE_VERIFICATION {"before": "f1407521a8ff53c2e43a6146aad5b4fafb7b916e3b99d7595707cf99565db8e8", "after": "f1407521a8ff53c2e43a6146aad5b4fafb7b916e3b99d7595707cf99565db8e8", "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": true}
+P2A_MIGRATION_VERIFICATION {"vendor": "sqlite", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}

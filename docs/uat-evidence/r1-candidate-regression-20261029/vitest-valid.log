@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/candidate-regression-20261029/frontend
+
+
+ Test Files  67 passed (67)
+      Tests  663 passed (663)
+   Start at  16:04:11
+   Duration  91.31s (transform 9.21s, setup 26.07s, import 27.19s, tests 43.51s, environment 138.79s)
+

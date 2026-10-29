@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\candidate-regression-20261029\backend\browser-run\iss055\seed.py", line 5, in <module>
+    from crm.models import AccessRole, Customer, EmployeeProfile, OrganizationUnit, Position, RolePermission
+ModuleNotFoundError: No module named 'crm'

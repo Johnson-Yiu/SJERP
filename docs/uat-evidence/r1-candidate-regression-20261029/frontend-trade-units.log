@@ -1,0 +1,13 @@
+
+> senju-crm-erp@1.0.0 test:trade-units
+> vitest run tests/trade-units.spec.js --environment jsdom
+
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/candidate-regression-20261029/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  16:30:06
+   Duration  2.34s (transform 126ms, setup 291ms, import 121ms, tests 50ms, environment 1.62s)
+

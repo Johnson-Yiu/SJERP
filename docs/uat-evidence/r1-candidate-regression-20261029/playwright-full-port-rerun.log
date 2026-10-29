@@ -1,0 +1,14 @@
+[WebServer] (node:34292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+Error: ISS-055 browser test requires isolated fixture IDs and local UI credentials.
+
+   at iss055-customer-404-real.spec.js:12
+
+  10 |
+  11 | if (!visibleId || !hiddenId || !process.env.ISS055_UI_USERNAME || !password) {
+> 12 |   throw new Error('ISS-055 browser test requires isolated fixture IDs and local UI credentials.')
+     |         ^
+  13 | }
+  14 |
+  15 | async function loginIsolatedAccount(page) {
+    at D:\Codex项目\森爵照明管理系统\.worktrees\candidate-regression-20261029\frontend\browser-tests\iss055-customer-404-real.spec.js:12:9

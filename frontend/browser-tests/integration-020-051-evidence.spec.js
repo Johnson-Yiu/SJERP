@@ -69,7 +69,7 @@ test('Chrome quote workbench and saved PI show the reconciled 1.005 total', asyn
   await page.screenshot({ path: path.join(evidence, `chrome-quote-workbench-1440${evidenceTag}.png`), fullPage: true })
 
   await detail.getByRole('button', { name: '预览 PI', exact: true }).first().click()
-  const preview = page.getByRole('dialog', { name: '报价单预览' })
+  const preview = page.getByRole('dialog', { name: 'PI 预览' })
   await expect(preview).toBeVisible()
   await expect(preview).toContainText('Grand Total')
   await expect(preview).toContainText('2.04')

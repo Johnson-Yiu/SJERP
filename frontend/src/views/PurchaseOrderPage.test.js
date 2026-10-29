@@ -55,7 +55,7 @@ test('purchase desk keeps drafts editable and separates placement from draft sav
   assert.match(source, /api\.put\(`\/purchase-orders\/\$\{editingPurchaseId\.value\}\//)
   const detail = await readFile(new URL('../components/PurchaseDetailModal.vue', import.meta.url), 'utf8')
   assert.match(detail, /编辑草稿/)
-  assert.match(detail, /确认下单/)
+  assert.match(detail, /确认采购下单/)
   assert.match(source, /const \{ status, purchase_no, \.\.\.draftPayload \} = draft\.value/)
 })
 
@@ -130,7 +130,7 @@ test('purchase editor aggregates maintained MOQ in base units without blocking d
   assert.match(source, /group\.actual_quantity \+= actual/)
   assert.match(source, /baseQuantity\(item\)/)
   assert.match(source, /moq-editor-warning/)
-  assert.match(source, /可保存草稿；确认下单时需填写例外原因。/)
+  assert.match(source, /可保存草稿；确认采购下单时需填写例外原因。/)
   assert.match(source, /供应商供货档案正在加载，暂无法判断 MOQ。/)
 })
 

@@ -33,14 +33,14 @@ describe('purchase workbench Phase A', () => {
     const header = wrapper.get('header').text()
     for (const text of ['PO-41','供应商甲','2026-10-01','2026-10-08','部分到货']) expect(header).toContain(text)
     expect(wrapper.findAll('[aria-label="关闭采购详情"]')).toHaveLength(1)
-    expect(wrapper.findAll('.workbench-tabs button').map(button => button.text())).toEqual(['概览','采购明细','收货','付款','关联订单'])
-    for (const text of ['采购摘要','当前待办','到货进度','付款进度','成本分配','待到货','待付款']) expect(wrapper.text()).toContain(text)
+    expect(wrapper.findAll('.workbench-tabs button').map(button => button.text())).toEqual(['概览','采购明细','收货','供应商应付','关联销售订单'])
+    for (const text of ['采购摘要','当前待办','到货进度','付款进度','采购成本分配','待到货','待付款']) expect(wrapper.text()).toContain(text)
     expect(wrapper.getComponent({ name: 'ContractAmountAdjustments' }).props('contract')).toEqual(purchase)
     wrapper.unmount()
   })
   it('preserves lifecycle actions and emits exact purchase objects', async () => {
     const wrapper = mountDetail({ status: 'draft' })
-    for (const [label,event] of [['确认下单','confirm'],['编辑草稿','edit'],['删除草稿','delete'],['取消采购','cancel']]) {
+    for (const [label,event] of [['确认采购下单','confirm'],['编辑草稿','edit'],['删除草稿','delete'],['取消采购单','cancel']]) {
       await wrapper.findAll('header button').find(button => button.text() === label).trigger('click')
       expect(wrapper.emitted(event)[0][0].id).toBe(41)
     }
@@ -51,7 +51,7 @@ describe('purchase workbench Phase A', () => {
       expect(wrapper.findAll('header button')).toHaveLength(1)
     }
     await wrapper.setProps({ purchase: { ...purchase, status: 'ordered' } })
-    expect(wrapper.findAll('header button').map(button => button.text())).toEqual(['关闭','取消采购'])
+    expect(wrapper.findAll('header button').map(button => button.text())).toEqual(['关闭','取消采购单'])
     wrapper.unmount()
   })
   it('switches todo to receipt and preserves exact receipt and reversal targets', async () => {
@@ -82,7 +82,7 @@ describe('purchase workbench Phase A', () => {
     const wrapper = mountDetail()
     await click(wrapper, '采购明细')
     for (const text of ['历史供应商','MODEL-A','3000K','SKU-3','采购单价']) expect(wrapper.text()).toContain(text)
-    await click(wrapper, '关联订单')
+    await click(wrapper, '关联销售订单')
     expect(wrapper.get('a').attributes('href')).toBe('/orders?detail=22')
     expect(wrapper.text()).toContain('客户乙')
     wrapper.unmount()
@@ -124,7 +124,7 @@ describe('purchase financial fields from scoped API responses', () => {
     const wrapper = mountDetail({ paid_amount: '0', unpaid_amount: '20' })
     expect(wrapper.text()).toContain('已付金额')
     expect(wrapper.text()).toContain('付款进度')
-    await click(wrapper, '付款')
+    await click(wrapper, '供应商应付')
     expect(wrapper.text()).toContain('供应商付款')
     wrapper.unmount()
   })

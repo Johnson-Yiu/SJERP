@@ -62,7 +62,7 @@ it.each([false, true])('supplier change protects source/price/trade data until c
 })
 it('other supplier picker uses the same cancel/confirm rule', async () => {
   await editor(); const before = JSON.stringify(wrapper.vm.draft)
-  await wrapper.findAll('button').find(b => b.text() === '查找其他供应商').trigger('click'); await flushPromises()
+  await wrapper.findAll('button').find(b => b.text() === '更换供应商来源').trigger('click'); await flushPromises()
   mocks.confirmDialog.mockResolvedValueOnce(false)
   wrapper.getComponent(PurchaseSupplierPicker).vm.$emit('selected', { supplier: 10, supplier_sku: '' }); await flushPromises()
   expect(JSON.stringify(wrapper.vm.draft)).toBe(before)
@@ -92,7 +92,7 @@ it('zero-price placement warns explicitly and still posts after confirmation', a
   await wrapper.vm.place(purchase); expect(mocks.api.post).not.toHaveBeenCalled()
 })
 it('hides supplier matcher while the custom confirmation is pending and restores it on cancel', async () => {
-  await editor(); await wrapper.findAll('button').find(b => b.text() === '查找其他供应商').trigger('click'); await flushPromises()
+  await editor(); await wrapper.findAll('button').find(b => b.text() === '更换供应商来源').trigger('click'); await flushPromises()
   let resolve
   mocks.confirmDialog.mockImplementationOnce(() => new Promise(done => { resolve = done }))
   wrapper.getComponent(PurchaseSupplierPicker).vm.$emit('selected', { supplier: 10, supplier_sku: '' }); await flushPromises()

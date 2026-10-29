@@ -157,7 +157,7 @@ describe('purchase order navigation and receipt links', () => {
     const row = purchase({ related_orders: [allocatedOrder, secondAllocatedOrder] })
     const { wrapper, router } = await mountPurchasePage(row)
 
-    await wrapper.findAll('.workbench-tabs button').find(button => button.text() === '关联订单').trigger('click'); await flushPromises()
+  await wrapper.findAll('.workbench-tabs button').find(button => button.text() === '关联销售订单').trigger('click'); await flushPromises()
     const sourceLink = wrapper.get('a[aria-label="查看来源订单 SO-UAT-SOURCE"]')
     const relatedLinks = wrapper.findAll('.related-order-panel a.order-navigation-link')
     expect(sourceLink.attributes('href')).toMatch(/^\/orders\?detail=11&tab=overview&returnTo=/)

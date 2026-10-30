@@ -21,7 +21,6 @@ from crm.models import (
     Product,
     PurchaseOrder,
     PurchaseOrderItem,
-    PurchaseCostAllocation,
     Quote,
     QuoteChildRevisionCounter,
     QuoteNumberSequence,
@@ -272,10 +271,11 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
             )
             order_item = order.items.create(sku=sku, quantity=5, unit_price=10)
             purchase_item = purchase.items.create(sku=sku, quantity=5, unit_price=2)
-            PurchaseCostAllocation.objects.create(
-                purchase_item=purchase_item, target_type="order", order=order,
-                quantity=5,
-            )
+            self.assertEqual(purchase_item.cost_allocations.count(), 1)
+            allocation = purchase_item.cost_allocations.get()
+            self.assertEqual(allocation.target_type, "order")
+            self.assertEqual(allocation.order_id, order.pk)
+            self.assertEqual(allocation.quantity, Decimal("5.00"))
             sku_lines.append((sku, order_item, purchase_item))
         barrier = Barrier(2)
 
@@ -327,10 +327,11 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
             order_date=date(2031, 3, 1), status="ordered",
         )
         purchase_item = purchase.items.create(sku=sku, quantity=10, unit_price=2)
-        PurchaseCostAllocation.objects.create(
-            purchase_item=purchase_item, target_type="order", order=order,
-            quantity=10,
-        )
+        self.assertEqual(purchase_item.cost_allocations.count(), 1)
+        allocation = purchase_item.cost_allocations.get()
+        self.assertEqual(allocation.target_type, "order")
+        self.assertEqual(allocation.order_id, order.pk)
+        self.assertEqual(allocation.quantity, Decimal("10.00"))
         original_receipt = record_receipt(purchase_item, {
             "receipt_date": date(2031, 3, 1),
             "quantity": Decimal("5"),

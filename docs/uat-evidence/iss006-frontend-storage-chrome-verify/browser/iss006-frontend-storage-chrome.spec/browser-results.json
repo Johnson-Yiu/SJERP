@@ -1,0 +1,379 @@
+{
+  "run_id": "6c837514-e591-47e1-8202-ca93afb41a31",
+  "cases": [
+    {
+      "case_key": "receive:property-getter",
+      "operation": "receive",
+      "scenario": "property-getter",
+      "endpoint": "/api/purchase-orders/1/receive/",
+      "requests": [],
+      "responses": [],
+      "failed_requests": [],
+      "screenshots": [
+        "screenshots/receive-property-getter-blocked.png"
+      ],
+      "console_errors": [
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "page_errors": [],
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+      "candidate_id": null,
+      "upstream_status": null,
+      "status": "passed",
+      "failure": null,
+      "request_count": 0,
+      "idempotency_keys": []
+    },
+    {
+      "case_key": "receive:get-item",
+      "operation": "receive",
+      "scenario": "get-item",
+      "endpoint": "/api/purchase-orders/2/receive/",
+      "requests": [],
+      "responses": [],
+      "failed_requests": [],
+      "screenshots": [
+        "screenshots/receive-get-item-blocked.png"
+      ],
+      "console_errors": [
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+      ],
+      "page_errors": [],
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+      "candidate_id": null,
+      "upstream_status": null,
+      "status": "passed",
+      "failure": null,
+      "request_count": 0,
+      "idempotency_keys": []
+    },
+    {
+      "case_key": "receive:set-item-recovery",
+      "operation": "receive",
+      "scenario": "set-item-recovery",
+      "endpoint": "/api/purchase-orders/3/receive/",
+      "requests": [
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:12090/api/purchase-orders/3/receive/",
+          "idempotency_key": "ab42ad0c-b712-4a84-a912-adfa405a8229",
+          "post_data": "{\"purchase_item\":3,\"receipt_date\":\"2026-10-30\",\"quantity\":5,\"unit_cost\":\"4\",\"is_overage\":false,\"overage_reason\":\"\",\"notes\":\"已核对型号、数量与外观；仅合格数量入库。\",\"trade_unit\":null}"
+        }
+      ],
+      "responses": [
+        {
+          "status": 201,
+          "url": "http://127.0.0.1:12090/api/purchase-orders/3/receive/"
+        }
+      ],
+      "failed_requests": [],
+      "screenshots": [
+        "screenshots/receive-set-item-blocked.png",
+        "screenshots/receive-set-item-recovered.png"
+      ],
+      "console_errors": [
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+      ],
+      "page_errors": [],
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+      "candidate_id": "ab42ad0c-b712-4a84-a912-adfa405a8229",
+      "upstream_status": null,
+      "status": "passed",
+      "failure": null,
+      "request_count": 1,
+      "idempotency_keys": [
+        "ab42ad0c-b712-4a84-a912-adfa405a8229"
+      ]
+    },
+    {
+      "case_key": "receive:remove-item-recovery",
+      "operation": "receive",
+      "scenario": "remove-item-recovery",
+      "endpoint": "/api/purchase-orders/4/receive/",
+      "requests": [
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:12090/api/purchase-orders/4/receive/",
+          "idempotency_key": "deabb6b5-d79d-4f4d-8790-74be33d72c24",
+          "post_data": "{\"purchase_item\":4,\"receipt_date\":\"2026-10-30\",\"quantity\":5,\"unit_cost\":\"4\",\"is_overage\":false,\"overage_reason\":\"\",\"notes\":\"已核对型号、数量与外观；仅合格数量入库。\",\"trade_unit\":null}"
+        },
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:12090/api/purchase-orders/4/receive/",
+          "idempotency_key": "deabb6b5-d79d-4f4d-8790-74be33d72c24",
+          "post_data": "{\"purchase_item\":4,\"receipt_date\":\"2026-10-30\",\"quantity\":5,\"unit_cost\":\"4\",\"is_overage\":false,\"overage_reason\":\"\",\"notes\":\"已核对型号、数量与外观；仅合格数量入库。\",\"trade_unit\":null}"
+        }
+      ],
+      "responses": [
+        {
+          "status": 201,
+          "url": "http://127.0.0.1:12090/api/purchase-orders/4/receive/"
+        },
+        {
+          "status": 201,
+          "url": "http://127.0.0.1:12090/api/purchase-orders/4/receive/"
+        }
+      ],
+      "failed_requests": [],
+      "screenshots": [
+        "screenshots/receive-remove-item-server-may-have-succeeded.png",
+        "screenshots/receive-remove-item-retry-deduplicated.png"
+      ],
+      "console_errors": [
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+      ],
+      "page_errors": [],
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+      "candidate_id": null,
+      "upstream_status": null,
+      "status": "passed",
+      "failure": null,
+      "request_count": 2,
+      "idempotency_keys": [
+        "deabb6b5-d79d-4f4d-8790-74be33d72c24",
+        "deabb6b5-d79d-4f4d-8790-74be33d72c24"
+      ]
+    },
+    {
+      "case_key": "receive:lost-response",
+      "operation": "receive",
+      "scenario": "lost-response",
+      "endpoint": "/api/purchase-orders/5/receive/",
+      "requests": [
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:12090/api/purchase-orders/5/receive/",
+          "idempotency_key": "a3cc4ca7-1014-48aa-ae11-703ea4c8ee46",
+          "post_data": "{\"purchase_item\":5,\"receipt_date\":\"2026-10-30\",\"quantity\":5,\"unit_cost\":\"4\",\"is_overage\":false,\"overage_reason\":\"\",\"notes\":\"已核对型号、数量与外观；仅合格数量入库。\",\"trade_unit\":null}"
+        },
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:12090/api/purchase-orders/5/receive/",
+          "idempotency_key": "a3cc4ca7-1014-48aa-ae11-703ea4c8ee46",
+          "post_data": "{\"purchase_item\":5,\"receipt_date\":\"2026-10-30\",\"quantity\":5,\"unit_cost\":\"4\",\"is_overage\":false,\"overage_reason\":\"\",\"notes\":\"已核对型号、数量与外观；仅合格数量入库。\",\"trade_unit\":null}"
+        }
+      ],
+      "responses": [
+        {
+          "status": 201,
+          "url": "http://127.0.0.1:12090/api/purchase-orders/5/receive/"
+        }
+      ],
+      "failed_requests": [
+        {
+          "failure": "net::ERR_FAILED"
+        }
+      ],
+      "screenshots": [
+        "screenshots/receive-response-lost-before-retry.png",
+        "screenshots/receive-response-lost-retried.png"
+      ],
+      "console_errors": [
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED",
+        "Failed to load resource: net::ERR_FAILED"
+      ],
+      "page_errors": [],
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+      "candidate_id": null,
+      "upstream_status": 201,
+      "status": "passed",
+      "failure": null,
+      "request_count": 2,
+      "idempotency_keys": [
+        "a3cc4ca7-1014-48aa-ae11-703ea4c8ee46",
+        "a3cc4ca7-1014-48aa-ae11-703ea4c8ee46"
+      ]
+    },
+    {
+      "case_key": "ship:property-getter",
+      "operation": "ship",
+      "scenario": "property-getter",
+      "endpoint": "/api/orders/6/ship/",
+      "requests": [],
+      "responses": [],
+      "failed_requests": [],
+      "screenshots": [
+        "screenshots/ship-property-getter-blocked.png"
+      ],
+      "console_errors": [
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "page_errors": [],
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+      "candidate_id": null,
+      "upstream_status": null,
+      "status": "passed",
+      "failure": null,
+      "request_count": 0,
+      "idempotency_keys": []
+    },
+    {
+      "case_key": "ship:get-item",
+      "operation": "ship",
+      "scenario": "get-item",
+      "endpoint": "/api/orders/7/ship/",
+      "requests": [],
+      "responses": [],
+      "failed_requests": [],
+      "screenshots": [
+        "screenshots/ship-get-item-blocked.png"
+      ],
+      "console_errors": [
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "page_errors": [],
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+      "candidate_id": null,
+      "upstream_status": null,
+      "status": "passed",
+      "failure": null,
+      "request_count": 0,
+      "idempotency_keys": []
+    },
+    {
+      "case_key": "ship:set-item-recovery",
+      "operation": "ship",
+      "scenario": "set-item-recovery",
+      "endpoint": "/api/orders/8/ship/",
+      "requests": [
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:12090/api/orders/8/ship/",
+          "idempotency_key": "a4886693-6934-4687-946a-d0430da93195",
+          "post_data": "{\"shipment_date\":\"2026-10-30\",\"items\":[{\"order_item\":8,\"quantity\":\"5\",\"trade_unit\":null,\"overage_reason\":\"\"}]}"
+        }
+      ],
+      "responses": [
+        {
+          "status": 201,
+          "url": "http://127.0.0.1:12090/api/orders/8/ship/"
+        }
+      ],
+      "failed_requests": [],
+      "screenshots": [
+        "screenshots/ship-set-item-blocked.png",
+        "screenshots/ship-set-item-recovered.png"
+      ],
+      "console_errors": [
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "page_errors": [],
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+      "candidate_id": "a4886693-6934-4687-946a-d0430da93195",
+      "upstream_status": null,
+      "status": "passed",
+      "failure": null,
+      "request_count": 1,
+      "idempotency_keys": [
+        "a4886693-6934-4687-946a-d0430da93195"
+      ]
+    },
+    {
+      "case_key": "ship:remove-item-recovery",
+      "operation": "ship",
+      "scenario": "remove-item-recovery",
+      "endpoint": "/api/orders/9/ship/",
+      "requests": [
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:12090/api/orders/9/ship/",
+          "idempotency_key": "dfeac859-3505-456f-8a14-5794380dba05",
+          "post_data": "{\"shipment_date\":\"2026-10-30\",\"items\":[{\"order_item\":9,\"quantity\":\"5\",\"trade_unit\":null,\"overage_reason\":\"\"}]}"
+        },
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:12090/api/orders/9/ship/",
+          "idempotency_key": "dfeac859-3505-456f-8a14-5794380dba05",
+          "post_data": "{\"shipment_date\":\"2026-10-30\",\"items\":[{\"order_item\":9,\"quantity\":\"5\",\"trade_unit\":null,\"overage_reason\":\"\"}]}"
+        }
+      ],
+      "responses": [
+        {
+          "status": 201,
+          "url": "http://127.0.0.1:12090/api/orders/9/ship/"
+        },
+        {
+          "status": 201,
+          "url": "http://127.0.0.1:12090/api/orders/9/ship/"
+        }
+      ],
+      "failed_requests": [],
+      "screenshots": [
+        "screenshots/ship-remove-item-server-may-have-succeeded.png",
+        "screenshots/ship-remove-item-retry-deduplicated.png"
+      ],
+      "console_errors": [
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "page_errors": [],
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+      "candidate_id": null,
+      "upstream_status": null,
+      "status": "passed",
+      "failure": null,
+      "request_count": 2,
+      "idempotency_keys": [
+        "dfeac859-3505-456f-8a14-5794380dba05",
+        "dfeac859-3505-456f-8a14-5794380dba05"
+      ]
+    },
+    {
+      "case_key": "ship:lost-response",
+      "operation": "ship",
+      "scenario": "lost-response",
+      "endpoint": "/api/orders/10/ship/",
+      "requests": [
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:12090/api/orders/10/ship/",
+          "idempotency_key": "8edfc9c8-5d86-40e5-af64-462b023f199d",
+          "post_data": "{\"shipment_date\":\"2026-10-30\",\"items\":[{\"order_item\":10,\"quantity\":\"5\",\"trade_unit\":null,\"overage_reason\":\"\"}]}"
+        },
+        {
+          "method": "POST",
+          "url": "http://127.0.0.1:12090/api/orders/10/ship/",
+          "idempotency_key": "8edfc9c8-5d86-40e5-af64-462b023f199d",
+          "post_data": "{\"shipment_date\":\"2026-10-30\",\"items\":[{\"order_item\":10,\"quantity\":\"5\",\"trade_unit\":null,\"overage_reason\":\"\"}]}"
+        }
+      ],
+      "responses": [
+        {
+          "status": 201,
+          "url": "http://127.0.0.1:12090/api/orders/10/ship/"
+        }
+      ],
+      "failed_requests": [
+        {
+          "failure": "net::ERR_FAILED"
+        }
+      ],
+      "screenshots": [
+        "screenshots/ship-response-lost-before-retry.png",
+        "screenshots/ship-response-lost-retried.png"
+      ],
+      "console_errors": [
+        "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: net::ERR_FAILED"
+      ],
+      "page_errors": [],
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+      "candidate_id": null,
+      "upstream_status": 201,
+      "status": "passed",
+      "failure": null,
+      "request_count": 2,
+      "idempotency_keys": [
+        "8edfc9c8-5d86-40e5-af64-462b023f199d",
+        "8edfc9c8-5d86-40e5-af64-462b023f199d"
+      ]
+    }
+  ]
+}

@@ -31,5 +31,6 @@ export default defineConfig({
     baseURL,
     browserName: 'chromium',
     channel: process.env.PLAYWRIGHT_CHANNEL || undefined,
+    headless: process.env.PLAYWRIGHT_HEADLESS !== '0',
   },
 })

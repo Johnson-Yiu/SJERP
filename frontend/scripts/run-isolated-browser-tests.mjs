@@ -399,6 +399,11 @@ export async function resolvePlaywrightSelection(userArgs) {
 
 export function isolatedFixtureSeed(businessTest) {
   const allowed = {
+    'iss006-frontend-storage-chrome.spec.js': {
+      seedFile: 'seed_iss006_frontend_storage_browser.py',
+      verifyFile: 'verify_iss006_frontend_storage_browser.py',
+      evidenceEnv: 'ISS006_STORAGE_EVIDENCE_DIR',
+    },
     'iss022-moq-real.spec.js': { seedFile: 'seed_iss022_browser.py', evidenceEnv: 'ISS022_EVIDENCE_DIR' },
     'iss075-payment-terms-real.spec.js': { seedFile: 'seed_iss075_browser.py', evidenceEnv: 'ISS075_EVIDENCE_DIR' },
     'historical-orders-fix-02.spec.js': {
@@ -424,7 +429,11 @@ export function isolatedFixtureSeed(businessTest) {
     'iss028-035-category-schema.spec.js': { seedFile: null, evidenceEnv: 'ISS028_035_EVIDENCE_DIR' },
   }
   const profile = allowed[businessTest]
-  return profile ? { ...profile, scriptPath: profile.seedFile ? path.resolve(backendRoot, profile.seedFile) : null } : null
+  return profile ? {
+    ...profile,
+    scriptPath: profile.seedFile ? path.resolve(backendRoot, profile.seedFile) : null,
+    verifyScriptPath: profile.verifyFile ? path.resolve(backendRoot, profile.verifyFile) : null,
+  } : null
 }
 
 export function isolatedFixtureSeeds(selection) {
@@ -525,6 +534,7 @@ async function main() {
     const evidenceEnvironmentNames = [
       'EVIDENCE_DIR',
       'ISS008_FUP_01_EVIDENCE_DIR',
+      'ISS006_STORAGE_EVIDENCE_DIR',
       'ISS022_EVIDENCE_DIR',
       'ISS028_035_EVIDENCE_DIR',
       'ISS055_EVIDENCE_DIR',
@@ -626,6 +636,14 @@ async function main() {
         env,
         label: 'Isolated Playwright suite',
       })
+      const fixtureProfile = isolatedFixtureSeed(selection.businessTest)
+      if (fixtureProfile?.verifyScriptPath) {
+        await runStage('Isolated business-record verification', python, [fixtureProfile.verifyScriptPath], {
+          cwd: backendRoot,
+          env,
+          label: 'Isolated business-record verification',
+        })
+      }
     } finally {
       const shutdown = await Promise.allSettled([
         stopOwnedProcessTree(viteServer),

@@ -1,0 +1,103 @@
+{
+  "database": "C:/Users/Johnson/AppData/Local/Temp/sunjack-r1-repair-06-GTFUtG/db.sqlite3",
+  "media_root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-GTFUtG\\media",
+  "cases": [
+    {
+      "case_key": "receive:property-getter",
+      "purchase_id": 1,
+      "purchase_item_id": 1,
+      "goods_receipt_count": 0,
+      "automatic_receipt_movement_count": 0,
+      "expected_business_record": false,
+      "pass": true
+    },
+    {
+      "case_key": "receive:get-item",
+      "purchase_id": 2,
+      "purchase_item_id": 2,
+      "goods_receipt_count": 0,
+      "automatic_receipt_movement_count": 0,
+      "expected_business_record": false,
+      "pass": true
+    },
+    {
+      "case_key": "receive:set-item-recovery",
+      "purchase_id": 3,
+      "purchase_item_id": 3,
+      "goods_receipt_count": 1,
+      "automatic_receipt_movement_count": 1,
+      "expected_business_record": true,
+      "pass": true
+    },
+    {
+      "case_key": "receive:remove-item-recovery",
+      "purchase_id": 4,
+      "purchase_item_id": 4,
+      "goods_receipt_count": 1,
+      "automatic_receipt_movement_count": 1,
+      "expected_business_record": true,
+      "pass": true
+    },
+    {
+      "case_key": "receive:lost-response",
+      "purchase_id": 5,
+      "purchase_item_id": 5,
+      "goods_receipt_count": 1,
+      "automatic_receipt_movement_count": 1,
+      "expected_business_record": true,
+      "pass": true
+    },
+    {
+      "case_key": "ship:property-getter",
+      "order_id": 6,
+      "order_item_id": 6,
+      "confirmed_shipment_count": 0,
+      "shipment_item_count": 0,
+      "automatic_shipment_movement_count": 0,
+      "expected_business_record": false,
+      "pass": true
+    },
+    {
+      "case_key": "ship:get-item",
+      "order_id": 7,
+      "order_item_id": 7,
+      "confirmed_shipment_count": 0,
+      "shipment_item_count": 0,
+      "automatic_shipment_movement_count": 0,
+      "expected_business_record": false,
+      "pass": true
+    },
+    {
+      "case_key": "ship:set-item-recovery",
+      "order_id": 8,
+      "order_item_id": 8,
+      "confirmed_shipment_count": 1,
+      "shipment_item_count": 1,
+      "automatic_shipment_movement_count": 1,
+      "expected_business_record": true,
+      "pass": true
+    },
+    {
+      "case_key": "ship:remove-item-recovery",
+      "order_id": 9,
+      "order_item_id": 9,
+      "confirmed_shipment_count": 1,
+      "shipment_item_count": 1,
+      "automatic_shipment_movement_count": 1,
+      "expected_business_record": true,
+      "pass": true
+    },
+    {
+      "case_key": "ship:lost-response",
+      "order_id": 10,
+      "order_item_id": 10,
+      "confirmed_shipment_count": 1,
+      "shipment_item_count": 1,
+      "automatic_shipment_movement_count": 1,
+      "expected_business_record": true,
+      "pass": true
+    }
+  ],
+  "pass": true,
+  "failures": []
+}

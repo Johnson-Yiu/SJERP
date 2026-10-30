@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-31",
+  "baseline": "bd324a8c3fb64af245c3afcabbd4301c84f7711c",
+  "historicalFix": "901b762fba20ed558f554cfba37175b303f83db9",
+  "runId": "495306ca-275f-493d-875c-c69c443dcb66",
+  "browser": {
+    "name": "Google Chrome",
+    "version": "156.0.8078.48",
+    "channel": "chrome",
+    "executable": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "headless": true
+  },
+  "playwright": "@playwright/test 1.64.0",
+  "node": "24.16.0",
+  "python": "3.14.5",
+  "django": "6.0.6",
+  "vite": "8.3.5",
+  "isolatedDatabase": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-qEVljK\\db.sqlite3",
+  "isolatedMediaRoot": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-qEVljK\\media",
+  "apiPort": 6836,
+  "vitePort": 6837,
+  "cleanupVerified": true
+}

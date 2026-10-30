@@ -255,6 +255,7 @@ test.describe('ISS-028 / ISS-035 分类模板与 SKU 历史边界', () => {
     const after = inspectDatabase(finalIds)
     expect(after.sku[0]).toMatchObject({
       sku: before.sku[0].sku, sales_model: before.sku[0].sales_model, display_name_cn: before.sku[0].display_name_cn,
+      identity_signature: before.sku[0].identity_signature,
       specification: before.sku[0].specification, parameter_values: before.sku[0].parameter_values, schema_version: before.sku[0].schema_version,
     })
     expect(after.sku[0].description_cn).toBe(`验收${id}普通保存描述`)

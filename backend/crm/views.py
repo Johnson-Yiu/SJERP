@@ -3113,6 +3113,14 @@ class _ImportAuditWriteFailure(Exception):
         super().__init__(message)
 
 
+class _ImportCsvReadError(ValueError):
+    """A request-level CSV failure with a digest only when the full file is known."""
+
+    def __init__(self, message, *, digest=None):
+        self.digest = digest
+        super().__init__(message)
+
+
 def _import_model_and_key(entity):
     return {
         "customers": (Customer, "code"),
@@ -3346,6 +3354,20 @@ def import_csv_execute(request):
     try:
         rows, digest = _read_import_csv(entity, upload)
     except ValueError as exc:
+        if entity in IMPORT_FIELDS:
+            # Parsing failed before reliable row objects existed. Record only
+            # the attempted batch, never synthetic or partially parsed rows.
+            digest = ""
+            if isinstance(exc, _ImportCsvReadError) and exc.digest is not None:
+                digest = exc.digest
+            return _import_failure_response(
+                request=request,
+                entity=entity,
+                digest=digest,
+                rows=[],
+                detail=str(exc),
+                before_rows=[],
+            )
         return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
     try:
         signed = signing.loads(token or "", salt=IMPORT_PREVIEW_SALT, max_age=IMPORT_PREVIEW_MAX_AGE_SECONDS)
@@ -3440,37 +3462,82 @@ def _import_state(entity, rows, lock=False):
 
 def _read_import_csv(entity, upload):
     if entity == "orders":
-        raise ValueError(ORDER_IMPORT_DISABLED_MESSAGE)
-    if entity not in IMPORT_FIELDS or not upload:
-        raise ValueError("请选择有效的数据类型和 CSV 文件。")
-    raw = upload.read()
+        raise _ImportCsvReadError(ORDER_IMPORT_DISABLED_MESSAGE)
+    if entity not in IMPORT_FIELDS:
+        raise _ImportCsvReadError("请选择有效的数据类型和 CSV 文件。")
+    if upload is None:
+        raise _ImportCsvReadError("请选择有效的数据类型和 CSV 文件。")
+
+    max_bytes = settings.CSV_IMPORT_MAX_BYTES
+    size = getattr(upload, "size", None)
+    if isinstance(size, int) and not isinstance(size, bool) and size > max_bytes:
+        raise _ImportCsvReadError(_csv_import_size_limit_message(max_bytes))
+
+    chunks = []
+    bytes_read = 0
+    chunk_size = min(64 * 1024, max_bytes + 1)
+    while bytes_read <= max_bytes:
+        requested = min(chunk_size, max_bytes + 1 - bytes_read)
+        try:
+            chunk = upload.read(requested)
+        except OSError as exc:
+            raise _ImportCsvReadError("CSV 文件读取失败。") from exc
+        if not chunk:
+            break
+        if not isinstance(chunk, (bytes, bytearray, memoryview)):
+            raise _ImportCsvReadError("CSV 文件无法读取，请上传二进制 CSV 文件。")
+        chunk = bytes(chunk)
+        if len(chunk) > requested:
+            # UploadedFile.read(size) must honor its bound. Do not retain an
+            # unexpectedly oversized chunk or claim a digest for it.
+            raise _ImportCsvReadError(_csv_import_size_limit_message(max_bytes))
+        bytes_read += len(chunk)
+        if bytes_read > max_bytes:
+            raise _ImportCsvReadError(_csv_import_size_limit_message(max_bytes))
+        chunks.append(chunk)
+
+    raw = b"".join(chunks)
+    digest = hashlib.sha256(raw).hexdigest()
     if not raw:
-        raise ValueError("CSV 文件为空。")
+        raise _ImportCsvReadError("CSV 文件为空。", digest=digest)
     try:
         text = raw.decode("utf-8-sig")
         reader = csv.DictReader(io.StringIO(text))
         if not reader.fieldnames:
-            raise ValueError("CSV 缺少表头。")
+            raise _ImportCsvReadError("CSV 缺少表头。", digest=digest)
         headers = {str(field or "").strip() for field in reader.fieldnames}
         missing = IMPORT_REQUIRED_FIELDS[entity] - headers
         if missing:
-            raise ValueError(f"CSV 缺少必要字段：{'、'.join(sorted(missing))}。")
-        rows = [{str(key or "").strip(): (value or "").strip() for key, value in row.items()} for row in reader]
+            raise _ImportCsvReadError(f"CSV 缺少必要字段：{'、'.join(sorted(missing))}。", digest=digest)
+        rows = []
+        for parsed_row in reader:
+            if None in parsed_row or any(value is None for value in parsed_row.values()):
+                raise _ImportCsvReadError("CSV 数据行的字段数与表头不一致。", digest=digest)
+            rows.append({str(key or "").strip(): (value or "").strip() for key, value in parsed_row.items()})
     except UnicodeDecodeError as exc:
-        raise ValueError("CSV 文件无法读取，请使用 UTF-8 或 UTF-8 BOM 编码。") from exc
+        raise _ImportCsvReadError("CSV 文件无法读取，请使用 UTF-8 或 UTF-8 BOM 编码。", digest=digest) from exc
     except csv.Error as exc:
-        raise ValueError("CSV 文件格式无效。") from exc
+        raise _ImportCsvReadError("CSV 文件格式无效。", digest=digest) from exc
     if not rows:
-        raise ValueError("CSV 没有数据行。")
+        raise _ImportCsvReadError("CSV 没有数据行。", digest=digest)
     if len(rows) > 5000:
-        raise ValueError("CSV 最多允许 5000 行数据。")
+        raise _ImportCsvReadError("CSV 最多允许 5000 行数据。", digest=digest)
     key = IMPORT_KEY_FIELDS[entity]
     duplicates = _duplicate_key_errors(rows, key)
     if duplicates:
         # File-level duplicate errors are returned by the preview with row data.
         for row, message in duplicates:
             rows[row - 2]["__import_error__"] = message
-    return rows, hashlib.sha256(raw).hexdigest()
+    return rows, digest
+
+
+def _csv_import_size_limit_message(max_bytes):
+    mebibyte = 1024 * 1024
+    if max_bytes % mebibyte == 0:
+        limit = f"{max_bytes // mebibyte} MiB（{max_bytes:,} 字节）"
+    else:
+        limit = f"{max_bytes:,} 字节"
+    return f"CSV 文件超过大小限制（最大 {limit}）。"
 
 
 def _duplicate_key_errors(rows, key):

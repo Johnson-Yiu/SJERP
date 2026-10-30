@@ -75,6 +75,12 @@ RMB_CASH_ACCOUNT_IDS = tuple(value.strip() for value in os.getenv("RMB_CASH_ACCO
 AUDIT_LOG_ENABLED = _env_bool("AUDIT_LOG_ENABLED", APP_STAGE != "development")
 if APP_STAGE in _DEPLOYED_STAGES and not AUDIT_LOG_ENABLED:
     raise ImproperlyConfigured("AUDIT_LOG_ENABLED must be true outside development.")
+# Bounded CSV import input; configurable in bytes for deployments with a
+# documented request-body budget. 10 MiB allows ~2 KiB per row at the existing
+# 5,000-row ceiling while limiting per-request parser memory.
+CSV_IMPORT_MAX_BYTES = _env_int("CSV_IMPORT_MAX_BYTES", 10 * 1024 * 1024)
+if CSV_IMPORT_MAX_BYTES <= 0:
+    raise ImproperlyConfigured("CSV_IMPORT_MAX_BYTES must be a positive integer.")
 ALLOWED_HOSTS = _env_list(
     "DJANGO_ALLOWED_HOSTS",
     ("localhost", "127.0.0.1") if APP_STAGE == "development" else (),

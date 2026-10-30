@@ -10,7 +10,7 @@ from django.test import TestCase, override_settings
 from rest_framework.test import APIClient
 
 from crm.models import CSVImportBatch, CSVImportRowAudit, Customer, OperationLog, Product, SKU, Transaction
-from crm.views import _import_row
+from crm.views import _import_row, _read_import_csv
 
 
 @override_settings(AUDIT_LOG_ENABLED=True)
@@ -285,6 +285,113 @@ class SafeCsvImportTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["errors"][0]["row"], 2)
         self.assertEqual(Transaction.objects.count(), 1)
+
+    def test_csv_size_limit_accepts_exact_boundary_and_reads_overflow_bounded(self):
+        limit = 32
+        exact_content = b"code,name\nC," + b"x" * 19 + b"\n"
+        self.assertEqual(len(exact_content), limit)
+        with override_settings(CSV_IMPORT_MAX_BYTES=limit):
+            rows, digest = _read_import_csv("customers", SimpleUploadedFile("exact.csv", exact_content))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(digest, hashlib.sha256(exact_content).hexdigest())
+
+        class ReadProbe:
+            def __init__(self, content, reported_size):
+                self.content = io.BytesIO(content)
+                self.size = reported_size
+                self.read_sizes = []
+
+            def read(self, size=-1):
+                self.read_sizes.append(size)
+                return self.content.read(size)
+
+        over_limit_content = exact_content + b"z" * (1024 * 1024)
+        spoofed_size = ReadProbe(over_limit_content, reported_size=0)
+        with override_settings(CSV_IMPORT_MAX_BYTES=limit):
+            with self.assertRaisesRegex(ValueError, "超过大小限制") as captured:
+                _read_import_csv("customers", spoofed_size)
+        self.assertIsNone(captured.exception.digest)
+        self.assertEqual(spoofed_size.read_sizes, [limit + 1])
+        self.assertEqual(spoofed_size.content.tell(), limit + 1)
+
+        declared_over_limit = ReadProbe(exact_content + b"!", reported_size=limit + 1)
+        with override_settings(CSV_IMPORT_MAX_BYTES=limit):
+            with self.assertRaisesRegex(ValueError, "超过大小限制") as captured:
+                _read_import_csv("customers", declared_over_limit)
+        self.assertIsNone(captured.exception.digest)
+        self.assertEqual(declared_over_limit.read_sizes, [])
+
+    def test_execute_parse_failures_create_batch_only_audits_with_exact_hashes(self):
+        failures = [
+            (b"", "CSV 文件为空。"),
+            (b"\xff\xfe", "CSV 文件无法读取，请使用 UTF-8 或 UTF-8 BOM 编码。"),
+            (b"\n", "CSV 缺少表头。"),
+            (b"name\nBuyer\n", "CSV 缺少必要字段：code。"),
+            (b"code,name\n", "CSV 没有数据行。"),
+            (b"code,name\nC\n", "CSV 数据行的字段数与表头不一致。"),
+            (b"code,name\nC,Buyer,extra\n", "CSV 数据行的字段数与表头不一致。"),
+        ]
+        for content, message in failures:
+            with self.subTest(message=message):
+                response = self.execute("customers", content, "no-preview-token")
+                self.assertEqual(response.status_code, 400, response.data)
+                self.assertEqual(response.data["detail"], message)
+                batch = CSVImportBatch.objects.get(batch_id=response.data["import_batch_id"])
+                self.assertEqual(batch.operator_id, self.operator.pk)
+                self.assertEqual(batch.status, "failed")
+                self.assertEqual(batch.failure_reason, message)
+                self.assertEqual(batch.file_sha256, hashlib.sha256(content).hexdigest())
+                self.assertEqual((batch.total_rows, batch.failed_rows), (0, 0))
+                self.assertFalse(batch.rows.exists())
+                self.assertFalse(Customer.objects.exists())
+                self.assertFalse(OperationLog.objects.filter(entity="crm.customer").exists())
+
+        self.assertEqual(CSVImportBatch.objects.filter(status="failed").count(), len(failures))
+        self.assertEqual(OperationLog.objects.filter(entity="crm.csvimportbatch", action_label="CSV 导入失败").count(), len(failures))
+
+    @override_settings(CSV_IMPORT_MAX_BYTES=32)
+    def test_execute_oversized_file_records_batch_without_partial_hash_or_rows(self):
+        content = b"code,name\nC," + b"x" * 20 + b"\n"
+        self.assertGreater(len(content), 32)
+        response = self.execute("customers", content, "no-preview-token")
+        self.assertEqual(response.status_code, 400, response.data)
+        self.assertIn("CSV 文件超过大小限制", response.data["detail"])
+        batch = CSVImportBatch.objects.get(batch_id=response.data["import_batch_id"])
+        self.assertEqual(batch.status, "failed")
+        self.assertEqual(batch.file_sha256, "")
+        self.assertEqual((batch.total_rows, batch.failed_rows), (0, 0))
+        self.assertFalse(batch.rows.exists())
+        self.assertFalse(Customer.objects.exists())
+        self.assertFalse(OperationLog.objects.filter(entity="crm.customer").exists())
+
+    def test_preview_parse_failure_stays_outside_formal_batch_audit(self):
+        response = self.client.post(
+            "/api/import/csv/preview/",
+            {"entity": "customers", "file": SimpleUploadedFile("bad.csv", b"\xff")},
+            format="multipart",
+        )
+        self.assertEqual(response.status_code, 400, response.data)
+        self.assertIn("UTF-8", response.data["detail"])
+        self.assertFalse(CSVImportBatch.objects.exists())
+        self.assertFalse(Customer.objects.exists())
+
+    def test_malformed_execute_still_obeys_authentication_and_audit_gate(self):
+        content = b"\xff"
+        anonymous = APIClient()
+        unauthenticated = anonymous.post(
+            "/api/import/csv/execute/",
+            {"entity": "customers", "preview_token": "", "file": SimpleUploadedFile("bad.csv", content)},
+            format="multipart",
+        )
+        self.assertEqual(unauthenticated.status_code, 403, unauthenticated.data)
+        self.assertFalse(CSVImportBatch.objects.exists())
+
+        with self.settings(AUDIT_LOG_ENABLED=False):
+            disabled = self.execute("customers", content, "")
+        self.assertEqual(disabled.status_code, 503, disabled.data)
+        self.assertIn("审计记录未启用", disabled.data["detail"])
+        self.assertFalse(CSVImportBatch.objects.exists())
+        self.assertFalse(Customer.objects.exists())
 
     def test_orders_and_legacy_endpoint_remain_safe(self):
         orders = self.client.post("/api/import/csv/", {"entity": "orders"}, format="multipart")

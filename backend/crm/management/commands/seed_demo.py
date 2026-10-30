@@ -1,6 +1,7 @@
 import os
 from datetime import date, datetime, timedelta
 from decimal import Decimal
+from pathlib import Path
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
@@ -16,7 +17,11 @@ class Command(BaseCommand):
         if settings.APP_STAGE != "development":
             raise CommandError("seed_demo 仅允许在 APP_STAGE=development 的本地环境运行。")
 
-        database = settings.DATABASES.get("default", {})
+        databases = settings.DATABASES
+        if set(databases) != {"default"}:
+            raise CommandError("seed_demo 拒绝配置了额外数据库连接的环境。")
+
+        database = databases.get("default", {})
         if database.get("ENGINE") != "django.db.backends.sqlite3":
             raise CommandError("seed_demo 拒绝非 SQLite 数据库；请使用本地开发库或隔离运行器。")
 
@@ -42,6 +47,25 @@ class Command(BaseCommand):
                 verify_isolated_runtime(settings=settings, database_must_exist=True)
             except Exception as exc:
                 raise CommandError(f"seed_demo 隔离校验失败：{exc}") from exc
+            return
+
+        # Without an explicit, verified isolation identity, only the regular
+        # SQLite file belonging to this checkout's development settings is
+        # allowed.  APP_STAGE=development and SQLite alone are not sufficient:
+        # custom settings could otherwise point at a shared business database.
+        expected_database = Path(settings.BASE_DIR) / "db.sqlite3"
+        configured_database = Path(str(database.get("NAME", "")))
+        if not configured_database.is_absolute():
+            configured_database = Path(settings.BASE_DIR) / configured_database
+        try:
+            if configured_database.is_symlink():
+                raise CommandError("seed_demo 拒绝符号链接数据库。")
+            if configured_database.resolve(strict=False) != expected_database.resolve(strict=False):
+                raise CommandError("seed_demo 仅允许当前工作树 backend/db.sqlite3 或已验证的隔离数据库。")
+            if not configured_database.is_file():
+                raise CommandError("seed_demo 要求本地开发数据库已由迁移创建。")
+        except (OSError, RuntimeError, ValueError) as exc:
+            raise CommandError("seed_demo 无法安全验证本地开发数据库路径。") from exc
 
     def handle(self, *args, **options):
         self._assert_safe_runtime()

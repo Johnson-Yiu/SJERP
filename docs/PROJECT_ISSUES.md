@@ -477,3 +477,9 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 `codex/integration-018-036-025` Worktree，按 ISS-018 → ISS-036 → ISS-025 集成来源 HEAD `21812b7c1190540a7214d4b77518ede31221180a`、`80a93559852d9d679c86d71250549261c7c2bbd1`、`1480429338d0fc6de20384ea77a43e969a2b7de4`。三项来源及证据提交均已纳入；公共阶段文档两次冲突均保留双方内容，`serializers.py` 的备份无关状态映射与不可拆分单位校验均保留。集成证据见 [`INTEGRATION-018-036-025`](uat-evidence/integration-018-036-025/README.md)。
 
 本地后端定向 60 项通过、3 项跳过；临时 `MEDIA_ROOT` 下 Django `crm` 全量 984 项通过、18 项跳过；Django check、迁移检查、Node 156 项、有效 Vitest 661 项和前端生产构建通过。默认 Worktree media ACL、前端依赖缺失和未指定 jsdom 的首次失败均已区分记录，不冒充代码回归。ISS-018 仍 `BLOCKED`，ISS-036 冲突快照业务待确认项仍保留，ISS-025 仍 `FIXED_PENDING_REVIEW`；三项生产/员工待验状态不因集成本地通过而关闭。本轮不触发 GitHub CI、不合并 master、不关闭 Issue、不部署，等待统一独立审查。
+
+## ISS-006 并发测试夹具补修（2026-10-31）
+
+更新既有 ISS-006 记录，不新增 Issue。来源：用户本轮要求；代码分支 `codex/r1-iss006-po-locking-bd324-20261030`，测试修复提交 `61d857c213d832101a19ca5ed13a16f9d7832107`。在 `test_same_purchase_order_different_sku_receipts_serialize_status_and_reservations` 与 `test_receipt_and_reversal_race_keeps_purchase_stock_and_reservations_consistent` 中删除重复创建的 `PurchaseCostAllocation`；依据是 `PurchaseOrderItem.save()` 在 `cost_allocation_version=0` 时自动创建默认分配。两个夹具现断言每条采购明细恰有一条 allocation，且归属类型、销售订单及数量正确。没有修改生产代码，也没有改变并发场景。
+
+锁定依赖、一次性内存 SQLite 回归共发现 74 项，61 项通过、13 项 PostgreSQL 专项跳过、0 项失败；收货/冲销、库存流水、库存、预留及成本分配相关可运行回归通过，日志见 [`C 并发锁定验收记录`](uat-evidence/r1-five-fixes-migration-20261030/C-po-locking/README.md)。本机无 PostgreSQL 客户端、服务或 Docker，默认 5432 端口未监听；两个目标并发测试及 PostgreSQL 最终一致性验证仍为 `BLOCKED`，SQLite 结果不构成并发证明。ISS-006 保持 `NEEDS_VERIFICATION`；下一步是在 PostgreSQL 恢复后运行两个精确场景并核对采购单状态、实际库存、收货记录、库存流水与预留，不据本轮本地测试改变 Issue 状态。

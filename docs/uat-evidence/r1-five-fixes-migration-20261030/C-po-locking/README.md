@@ -19,4 +19,18 @@
 
 命令输出位于 `logs/`：`locked-dependencies.log`、`system-check.log`、`fulfillment-and-concurrency.log`、`reversal-and-idempotency.log`、`postgres-specific-two-tests.sqlite-skip-corrected.log`、`postgres-tools.txt`。另保留一次测试方法名拼写错误的早期尝试日志 `postgres-specific-two-tests.sqlite-skip.log`；更正后的运行结果以 `...-corrected.log` 为准。
 
+### 2026-10-31 并发测试夹具补修
+
+来源：本分支后续修复提交 `61d857c213d832101a19ca5ed13a16f9d7832107`（本轮起始 HEAD `94402f951e4d4243276f018cc3a6051f0f6f2c57`）。`PurchaseOrderItem.save()` 在 `cost_allocation_version=0` 时已自动创建默认成本分配；两个 PostgreSQL 并发场景不再重复手动插入。每个场景现断言成本分配恰有一条，且 `target_type=order`、销售订单归属正确、数量与采购明细一致。生产代码未修改。
+
+使用 `backend/requirements.lock` 对应的 Python 3.14.5 环境，在一次性内存 SQLite 数据库运行：
+
+```powershell
+python manage.py test crm.tests.test_postgres_concurrency crm.tests.test_fulfillment crm.tests.test_inventory_movement_reversal crm.tests.test_iss006_idempotency crm.tests.test_purchase_costs --verbosity 2
+```
+
+结果：74 项发现，61 项通过，13 项跳过，0 项失败。跳过项包括 `test_same_purchase_order_different_sku_receipts_serialize_status_and_reservations`、`test_receipt_and_reversal_race_keeps_purchase_stock_and_reservations_consistent` 及其余 PostgreSQL 专项；**不得把跳过计为 PostgreSQL 并发通过**。收货/冲销、库存流水、实际库存、预留和成本分配相关 SQLite 回归通过。原始日志：[fixture-repair-20261031.log](logs/fixture-repair-20261031.log)。
+
+本机没有 `psql`、`pg_isready`、`postgres` 或 Docker 命令，也没有 PostgreSQL Windows 服务；`127.0.0.1:5432` 未监听。真实 PostgreSQL 两个并发场景仍为 **BLOCKED**。PostgreSQL 可用后须执行两个目标用例，并核对采购单状态、库存、收货记录、库存流水和预留数据。
+
 未连接生产服务；未运行 GitHub Actions。

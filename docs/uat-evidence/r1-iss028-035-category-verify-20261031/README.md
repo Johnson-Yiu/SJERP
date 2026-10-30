@@ -47,6 +47,8 @@ PASS：最新基线已包含历史根分类直接选择修复。本轮真实 Chr
 - `git diff --check`：通过。
 - 本轮未运行完整前端构建；产品源代码未修改。
 
+原始输出：[`django-focused-tests.log`](django-focused-tests.log)、[`frontend-unit-tests.log`](frontend-unit-tests.log) 和上文的 [`isolated-chrome-run.log`](isolated-chrome-run.log)。
+
 ## 截图及遗留
 
 本轮 9 张截图在 [`browser/iss028-035-category-schema.spec/`](browser/iss028-035-category-schema.spec/)。示例：

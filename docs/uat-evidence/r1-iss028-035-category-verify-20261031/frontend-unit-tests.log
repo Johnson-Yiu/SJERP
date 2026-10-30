@@ -1,0 +1,8 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss028-035-category-verify-20261031/frontend
+
+
+ Test Files  2 passed (2)
+      Tests  28 passed (28)
+   Start at  02:52:56
+   Duration  7.07s (transform 2.51s, setup 950ms, import 3.83s, tests 2.04s, environment 4.43s)

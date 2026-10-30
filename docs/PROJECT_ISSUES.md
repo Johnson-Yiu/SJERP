@@ -477,3 +477,11 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 `codex/integration-018-036-025` Worktree，按 ISS-018 → ISS-036 → ISS-025 集成来源 HEAD `21812b7c1190540a7214d4b77518ede31221180a`、`80a93559852d9d679c86d71250549261c7c2bbd1`、`1480429338d0fc6de20384ea77a43e969a2b7de4`。三项来源及证据提交均已纳入；公共阶段文档两次冲突均保留双方内容，`serializers.py` 的备份无关状态映射与不可拆分单位校验均保留。集成证据见 [`INTEGRATION-018-036-025`](uat-evidence/integration-018-036-025/README.md)。
 
 本地后端定向 60 项通过、3 项跳过；临时 `MEDIA_ROOT` 下 Django `crm` 全量 984 项通过、18 项跳过；Django check、迁移检查、Node 156 项、有效 Vitest 661 项和前端生产构建通过。默认 Worktree media ACL、前端依赖缺失和未指定 jsdom 的首次失败均已区分记录，不冒充代码回归。ISS-018 仍 `BLOCKED`，ISS-036 冲突快照业务待确认项仍保留，ISS-025 仍 `FIXED_PENDING_REVIEW`；三项生产/员工待验状态不因集成本地通过而关闭。本轮不触发 GitHub CI、不合并 master、不关闭 Issue、不部署，等待统一独立审查。
+
+## ISS-006 补充：冲销审计事务原子性（2026-10-30）
+
+来源为用户指定的 2026-10-30 ChatGPT 独立代码审查；仅记录该已确认来源日期，不推断更早的首次发现日期。复核固定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 时确认两个具体缺口：`ShipmentViewSet.reverse` 在 `reverse_shipment` 服务事务提交后才写审计；`InventoryMovementViewSet.reverse` 在 `reverse_manual_inventory_movement` 提交后再写两条审计，可能留下业务冲销但无审计，或第一条审计提交、第二条失败的部分记录。
+
+在独立分支 `codex/r1-iss006-inventory-reversal-audit-atomicity-20261030` 增加两条 API action 外层事务，仅包住原有冲销和审计调用；未改变冲销规则、权限或响应语义。隔离 SQLite 下 Django system check 通过，相关库存/履约回归 106 项全通过。故障注入覆盖发货冲销审计失败、手工冲销第一条及第二条审计失败，并核对业务记录、库存流水、库存/预留和审计行均回滚；正常路径及重复冲销拒绝保持通过。验收报告与原始日志：[`R1-ISS006 冲销审计原子性`](uat-evidence/r1-iss006-reversal-audit-atomicity-20261030/README.md)。
+
+此子范围记为 `FIXED_PENDING_REVIEW`，等待 ChatGPT 独立审查；不新建重复 Issue，不关闭 ISS-006。ISS-006 全局仍为 `NEEDS_VERIFICATION`，因为其他库存异常路径和 PostgreSQL 并发验收尚未完成。后续验收依据：独立复审确认事务边界和故障注入结果，且 ISS-006 其余待核验范围逐项有证据后再按协议变更全局状态。未新增 Issue ID，既有状态统计不变。

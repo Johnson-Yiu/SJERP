@@ -585,3 +585,11 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 
 逐项旧状态、新状态、校准依据、SHA、46 条规则摘要及未执行/业务阻断清单见 [R1 状态对账报告](uat-evidence/r1-status-reconcile-20261028/README.md)。本轮未连接生产数据库、未执行 PostgreSQL、未触发 GitHub Actions、未合并 master、未部署、未关闭 Issue。
 
+## R1-ISS006-INVENTORY-REVERSAL-AUDIT-ATOMICITY（2026-10-30）
+
+基于 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 创建独立工作树和分支 `codex/r1-iss006-inventory-reversal-audit-atomicity-20261030`。来源为用户指定的 2026-10-30 ChatGPT 独立代码审查；未猜测更早的首次发现日期。确认发货冲销服务提交后才写审计、手工库存冲销服务提交后才写两条审计的事务缺口。仅为两个 API action 加外层事务；既有冲销业务规则、接口响应、权限和幂等行为不变。
+
+锁定依赖环境下，隔离内存 SQLite Django system check 通过；相关库存/履约定向 106 项全通过。销售发货正常/重复冲销、发货审计失败回滚、手工库存正常/重复冲销、手工冲销第一条与第二条审计故障注入均已验证。原始日志及报告见 [`R1-ISS006 冲销审计原子性`](uat-evidence/r1-iss006-reversal-audit-atomicity-20261030/README.md)。SQLite 结果不代表 PostgreSQL 并发验收；本轮未运行 CI、未合并 master、未创建 PR、未部署、未关闭 Issue。
+
+本问题属于既有 ISS-006 的库存冲销原子性范围，不新增 Issue ID；ISS-006 全局保持 `NEEDS_VERIFICATION`，本子范围 `FIXED_PENDING_REVIEW`，交付后等待独立审查。
+

@@ -1,0 +1,390 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+Found 106 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+  Applying crm.0078_historical_contract_scope... OK
+  Applying crm.0079_shared_report_template... OK
+  Applying crm.0080_formal_party_snapshots... OK
+  Applying crm.0081_transaction_rmb_reference_label... OK
+  Applying crm.0081_supplier_lifecycle... OK
+  Applying crm.0081_product_certificate_private_file... OK
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+  Applying crm.0083_customer_supplier_preference... OK
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+  Applying crm.0085_order_quantity_adjustment... OK
+  Applying crm.0086_purchase_moq_exception... OK
+  Applying crm.0087_amount_calculation_compatibility... OK
+  Applying crm.0088_operationlog_append_only... OK
+  Applying crm.0089_operationlog_operator_protect... OK
+  Applying crm.0091_csv_import_audit... OK
+  Applying crm.0090_fulfillment_idempotency... OK
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+test_manual_inventory_reversal_rolls_back_both_audits_when_second_fails (crm.tests.test_inventory_reversal_audit_atomicity.InventoryReversalAuditAtomicityTests.test_manual_inventory_reversal_rolls_back_both_audits_when_second_fails) ... Internal Server Error: /api/inventory-movements/1/reverse/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-iss006-reversal-audit\ɭ����������ϵͳ\backend\crm\views.py", line 2850, in reverse
+    record_operation(request=request, instance=reversal, action="create", action_label="���ɿ�������ˮ", metadata={"source_movement_no": original.movement_no})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1247, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\r1-iss006-reversal-audit\ɭ����������ϵͳ\backend\crm\tests\test_inventory_reversal_audit_atomicity.py", line 194, in record_first_then_fail_second
+    raise DatabaseError("second audit failure")
+django.db.utils.DatabaseError: second audit failure
+ok
+test_manual_inventory_reversal_rolls_back_when_first_audit_fails (crm.tests.test_inventory_reversal_audit_atomicity.InventoryReversalAuditAtomicityTests.test_manual_inventory_reversal_rolls_back_when_first_audit_fails) ... Internal Server Error: /api/inventory-movements/1/reverse/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-iss006-reversal-audit\ɭ����������ϵͳ\backend\crm\views.py", line 2843, in reverse
+    record_operation(
+    ~~~~~~~~~~~~~~~~^
+        request=request,
+        ^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        metadata={"reversal_movement_id": reversal.id, "reversal_movement_no": reversal.movement_no, "reason": input_serializer.validated_data["reason"]},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: first audit failure
+ok
+test_manual_inventory_reversal_writes_both_audits_and_duplicate_is_rejected (crm.tests.test_inventory_reversal_audit_atomicity.InventoryReversalAuditAtomicityTests.test_manual_inventory_reversal_writes_both_audits_and_duplicate_is_rejected) ... Bad Request: /api/inventory-movements/1/reverse/
+ok
+test_sales_shipment_reversal_audit_failure_rolls_back_business_and_stock (crm.tests.test_inventory_reversal_audit_atomicity.InventoryReversalAuditAtomicityTests.test_sales_shipment_reversal_audit_failure_rolls_back_business_and_stock) ... Internal Server Error: /api/shipments/1/reverse/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-five-fix-migration-venv-20261030\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\r1-iss006-reversal-audit\ɭ����������ϵͳ\backend\crm\views.py", line 1425, in reverse
+    record_operation(
+    ~~~~~~~~~~~~~~~~^
+        request=request,
+        ^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+        },
+        ^^
+    )
+    ^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit failure
+ok
+test_sales_shipment_reversal_succeeds_and_duplicate_keeps_existing_rule (crm.tests.test_inventory_reversal_audit_atomicity.InventoryReversalAuditAtomicityTests.test_sales_shipment_reversal_succeeds_and_duplicate_keeps_existing_rule) ... Bad Request: /api/shipments/1/reverse/
+ok
+test_automatic_purchase_and_sale_movements_require_their_business_documents (crm.tests.test_inventory_movement_reversal.InventoryMovementReversalApiTests.test_automatic_purchase_and_sale_movements_require_their_business_documents) ... Bad Request: /api/inventory-movements/1/reverse/
+Bad Request: /api/inventory-movements/2/reverse/
+ok
+test_manual_inbound_reversal_preserves_original_and_blocks_delete_and_duplicate (crm.tests.test_inventory_movement_reversal.InventoryMovementReversalApiTests.test_manual_inbound_reversal_preserves_original_and_blocks_delete_and_duplicate) ... Bad Request: /api/inventory-movements/1/
+Bad Request: /api/inventory-movements/1/reverse/
+ok
+test_manual_outbound_reversal_restores_stock (crm.tests.test_inventory_movement_reversal.InventoryMovementReversalApiTests.test_manual_outbound_reversal_restores_stock) ... ok
+test_reversal_cannot_consume_stock_reserved_for_an_active_order (crm.tests.test_inventory_movement_reversal.InventoryMovementReversalApiTests.test_reversal_cannot_consume_stock_reserved_for_an_active_order) ... Bad Request: /api/inventory-movements/1/reverse/
+ok
+test_later_reversal_does_not_rewrite_a_later_receipts_historical_overage (crm.tests.test_inventory_movement_reversal.PurchaseOverageProjectionTests.test_later_reversal_does_not_rewrite_a_later_receipts_historical_overage) ... ok
+test_mixed_overage_is_projected_separately_and_receipt_reversal_restores_contract_progress (crm.tests.test_inventory_movement_reversal.PurchaseOverageProjectionTests.test_mixed_overage_is_projected_separately_and_receipt_reversal_restores_contract_progress) ... ok
+test_overage_after_a_reversed_overage_and_partial_re_receipt_uses_creation_time_active_quantity (crm.tests.test_inventory_movement_reversal.PurchaseOverageProjectionTests.test_overage_after_a_reversed_overage_and_partial_re_receipt_uses_creation_time_active_quantity) ... ok
+test_reversed_receipt_ledger_resolves_explicit_link_without_changing_source (crm.tests.test_inventory_movement_reversal.PurchaseOverageProjectionTests.test_reversed_receipt_ledger_resolves_explicit_link_without_changing_source) ... ok
+test_automatic_inventory_movement_is_read_only (crm.tests.test_fulfillment.FulfillmentApiTests.test_automatic_inventory_movement_is_read_only) ... Bad Request: /api/inventory-movements/1/
+ok
+test_batch_rejects_duplicate_and_foreign_order_item_ids (crm.tests.test_fulfillment.FulfillmentApiTests.test_batch_rejects_duplicate_and_foreign_order_item_ids) ... Bad Request: /api/orders/1/ship/
+Bad Request: /api/orders/1/ship/
+ok
+test_confirmed_order_created_by_api_reserves_available_stock (crm.tests.test_fulfillment.FulfillmentApiTests.test_confirmed_order_created_by_api_reserves_available_stock) ... ok
+test_customer_addon_shipment_creates_a_priced_order_supplement (crm.tests.test_fulfillment.FulfillmentApiTests.test_customer_addon_shipment_creates_a_priced_order_supplement) ... ok
+test_insufficient_inventory_shipment_rolls_back_all_records (crm.tests.test_fulfillment.FulfillmentApiTests.test_insufficient_inventory_shipment_rolls_back_all_records) ... Bad Request: /api/orders/1/ship/
+ok
+test_mixed_normal_and_customer_addon_lines_create_receivable_only_for_overage (crm.tests.test_fulfillment.FulfillmentApiTests.test_mixed_normal_and_customer_addon_lines_create_receivable_only_for_overage) ... ok
+test_multi_line_batch_stock_failure_rolls_back_earlier_line_and_reservation (crm.tests.test_fulfillment.FulfillmentApiTests.test_multi_line_batch_stock_failure_rolls_back_earlier_line_and_reservation) ... Bad Request: /api/orders/1/ship/
+ok
+test_multi_sku_batch_reversal_restores_all_movements_and_reservations (crm.tests.test_fulfillment.FulfillmentApiTests.test_multi_sku_batch_reversal_restores_all_movements_and_reservations) ... ok
+test_one_api_batch_ships_multiple_skus_with_full_and_partial_lines (crm.tests.test_fulfillment.FulfillmentApiTests.test_one_api_batch_ships_multiple_skus_with_full_and_partial_lines) ... ok
+test_order_fulfillment_reports_procurement_need_without_reserving_quote (crm.tests.test_fulfillment.FulfillmentApiTests.test_order_fulfillment_reports_procurement_need_without_reserving_quote) ... ok
+test_order_shipment_creates_automatic_sale_out (crm.tests.test_fulfillment.FulfillmentApiTests.test_order_shipment_creates_automatic_sale_out) ... ok
+test_over_receipt_returns_a_user_facing_validation_error (crm.tests.test_fulfillment.FulfillmentApiTests.test_over_receipt_returns_a_user_facing_validation_error) ... Bad Request: /api/purchase-orders/1/receive/
+ok
+test_over_shipment_returns_a_user_facing_validation_error (crm.tests.test_fulfillment.FulfillmentApiTests.test_over_shipment_returns_a_user_facing_validation_error) ... Bad Request: /api/orders/1/ship/
+ok
+test_product_can_be_created_with_suppliers (crm.tests.test_fulfillment.FulfillmentApiTests.test_product_can_be_created_with_suppliers) ... ok
+test_purchase_order_can_be_created_and_reports_unpaid_amount (crm.tests.test_fulfillment.FulfillmentApiTests.test_purchase_order_can_be_created_and_reports_unpaid_amount) ... ok
+test_purchase_receipt_creates_automatic_inventory_movement (crm.tests.test_fulfillment.FulfillmentApiTests.test_purchase_receipt_creates_automatic_inventory_movement) ... ok
+test_quote_availability_shows_stock_without_creating_reservation (crm.tests.test_fulfillment.FulfillmentApiTests.test_quote_availability_shows_stock_without_creating_reservation) ... ok
+test_reserved_order_with_inventory_exactly_equal_to_reservation_can_ship_all (crm.tests.test_fulfillment.FulfillmentApiTests.test_reserved_order_with_inventory_exactly_equal_to_reservation_can_ship_all) ... ok
+test_reserved_production_order_can_ship_partially_through_api (crm.tests.test_fulfillment.FulfillmentApiTests.test_reserved_production_order_can_ship_partially_through_api) ... Bad Request: /api/orders/1/ship/
+ok
+test_sku_inventory_detail_lists_related_purchase_shipments_and_orders (crm.tests.test_fulfillment.FulfillmentApiTests.test_sku_inventory_detail_lists_related_purchase_shipments_and_orders) ... ok
+test_supplier_code_is_unique_and_reports_the_existing_supplier (crm.tests.test_fulfillment.FulfillmentApiTests.test_supplier_code_is_unique_and_reports_the_existing_supplier) ... Bad Request: /api/suppliers/
+ok
+test_supplier_defaults_are_applied_by_api (crm.tests.test_fulfillment.FulfillmentApiTests.test_supplier_defaults_are_applied_by_api) ... ok
+test_supplier_payment_creates_expense_for_purchase_order (crm.tests.test_fulfillment.FulfillmentApiTests.test_supplier_payment_creates_expense_for_purchase_order) ... ok
+test_suppliers_can_be_created_through_api (crm.tests.test_fulfillment.FulfillmentApiTests.test_suppliers_can_be_created_through_api) ... ok
+test_purchase_and_shipment_lines_reject_zero_quantity (crm.tests.test_fulfillment.FulfillmentModelTests.test_purchase_and_shipment_lines_reject_zero_quantity) ... ok
+test_order_allocation_uses_stock_then_marks_remaining_for_procurement (crm.tests.test_fulfillment.FulfillmentServiceTests.test_order_allocation_uses_stock_then_marks_remaining_for_procurement) ... ok
+test_over_receipt_requires_reason_and_supplier_payment_cannot_exceed_unpaid (crm.tests.test_fulfillment.FulfillmentServiceTests.test_over_receipt_requires_reason_and_supplier_payment_cannot_exceed_unpaid) ... ok
+test_receipt_and_shipment_create_automatic_inventory_movements (crm.tests.test_fulfillment.FulfillmentServiceTests.test_receipt_and_shipment_create_automatic_inventory_movements) ... ok
+test_cost_allocation_change_and_receipt_reversal_rebalance_reservations (crm.tests.test_fulfillment.ReservationRebalanceTests.test_cost_allocation_change_and_receipt_reversal_rebalance_reservations) ... ok
+test_independent_receipt_rebalances_available_stock_to_active_order (crm.tests.test_fulfillment.ReservationRebalanceTests.test_independent_receipt_rebalances_available_stock_to_active_order) ... ok
+test_inventory_remainder_follows_stable_order_after_allocated_priority (crm.tests.test_fulfillment.ReservationRebalanceTests.test_inventory_remainder_follows_stable_order_after_allocated_priority) ... ok
+test_manual_inventory_create_and_reversal_rebalance_reservations (crm.tests.test_fulfillment.ReservationRebalanceTests.test_manual_inventory_create_and_reversal_rebalance_reservations) ... Bad Request: /api/inventory-movements/2/
+ok
+test_priority_and_general_passes_cap_one_order_item_at_remaining_demand (crm.tests.test_fulfillment.ReservationRebalanceTests.test_priority_and_general_passes_cap_one_order_item_at_remaining_demand) ... ok
+test_receipt_uses_cost_allocation_not_purchase_reference (crm.tests.test_fulfillment.ReservationRebalanceTests.test_receipt_uses_cost_allocation_not_purchase_reference) ... ok
+test_repeated_sku_order_lines_never_exceed_each_line_remaining_demand (crm.tests.test_fulfillment.ReservationRebalanceTests.test_repeated_sku_order_lines_never_exceed_each_line_remaining_demand) ... ok
+test_shared_partial_receipt_is_proportionally_reserved_without_duplication (crm.tests.test_fulfillment.ReservationRebalanceTests.test_shared_partial_receipt_is_proportionally_reserved_without_duplication) ... ok
+test_shipped_quantity_reduces_received_allocation_priority (crm.tests.test_fulfillment.ReservationRebalanceTests.test_shipped_quantity_reduces_received_allocation_priority) ... ok
+test_advance_allocation_changes_contract_balance_without_duplicating_cash (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_advance_allocation_changes_contract_balance_without_duplicating_cash) ... ok
+test_advance_allocation_rejects_cross_party_direction_currency_and_closed_plan_atomically (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_advance_allocation_rejects_cross_party_direction_currency_and_closed_plan_atomically) ... ok
+test_advance_rejects_wrong_direction_and_cancelled_plan (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_advance_rejects_wrong_direction_and_cancelled_plan) ... ok
+test_allocate_api_returns_updated_plan_and_trace (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_allocate_api_returns_updated_plan_and_trace) ... ok
+test_cancelled_order_and_purchase_reject_operations (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_cancelled_order_and_purchase_reject_operations) ... ok
+test_cancelled_order_rejects_shipment_reversal_atomically (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_cancelled_order_rejects_shipment_reversal_atomically) ... ok
+test_completed_receipts_do_not_reduce_another_open_purchase_in_transit (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_completed_receipts_do_not_reduce_another_open_purchase_in_transit) ... ok
+test_consumed_manual_inbound_cannot_be_deleted (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_consumed_manual_inbound_cannot_be_deleted) ... Bad Request: /api/inventory-movements/1/
+ok
+test_contract_payment_settles_all_installments_and_void_restores_them (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_contract_payment_settles_all_installments_and_void_restores_them) ... ok
+test_customer_addon_shipment_reversal_removes_supplement_and_cancels_plan (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_customer_addon_shipment_reversal_removes_supplement_and_cancels_plan) ... ok
+test_direct_customer_receipt_without_payment_plan_records_contract_payment (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_direct_customer_receipt_without_payment_plan_records_contract_payment) ... ok
+test_direct_supplier_payment_without_payment_plan_records_contract_payment (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_direct_supplier_payment_without_payment_plan_records_contract_payment) ... ok
+test_draft_contract_does_not_create_financial_obligations (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_draft_contract_does_not_create_financial_obligations) ... ok
+test_excess_split_is_voided_with_original_cash_event (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_excess_split_is_voided_with_original_cash_event) ... ok
+test_gift_overage_reversal_removes_zero_price_supplement (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_gift_overage_reversal_removes_zero_price_supplement) ... ok
+test_historical_customer_addon_without_payment_plan_cannot_be_reversed (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_historical_customer_addon_without_payment_plan_cannot_be_reversed) ... ok
+test_import_cannot_overwrite_existing_cash (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_import_cannot_overwrite_existing_cash) ... ok
+test_inactive_allocation_keeps_contract_navigation_ids (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_inactive_allocation_keeps_contract_navigation_ids) ... ok
+test_malformed_and_foreign_shipment_lines_return_400 (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_malformed_and_foreign_shipment_lines_return_400) ... Bad Request: /api/orders/1/ship/
+Bad Request: /api/orders/1/ship/
+ok
+test_manual_batch_cannot_overdraw_same_sku_or_spoof_automatic_movement (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_manual_batch_cannot_overdraw_same_sku_or_spoof_automatic_movement) ... Bad Request: /api/inventory-movements/batch/
+Bad Request: /api/inventory-movements/batch/
+ok
+test_manual_replenishment_reserves_stock_for_existing_demand (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_manual_replenishment_reserves_stock_for_existing_demand) ... ok
+test_multi_sku_shipment_reversal_rebalances_each_sku (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_multi_sku_shipment_reversal_rebalances_each_sku) ... ok
+test_multiple_transaction_allocations_keep_each_contract_id_and_number (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_multiple_transaction_allocations_keep_each_contract_id_and_number) ... ok
+test_overreceipt_does_not_reduce_other_purchase_in_transit_for_order (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_overreceipt_does_not_reduce_other_purchase_in_transit_for_order) ... ok
+test_paid_customer_addon_cannot_be_reversed (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_paid_customer_addon_cannot_be_reversed) ... ok
+test_partial_receipt_reversal_keeps_remaining_received_quantity_and_status (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_partial_receipt_reversal_keeps_remaining_received_quantity_and_status) ... ok
+test_partial_shipping_releases_only_shipped_reservation (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_partial_shipping_releases_only_shipped_reservation) ... ok
+test_plan_api_exposes_rmb_and_counterparty_and_protects_settled_amount (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_plan_api_exposes_rmb_and_counterparty_and_protects_settled_amount) ... Bad Request: /api/payment-plans/1/
+ok
+test_purchase_cannot_switch_supplier_after_receipt (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_purchase_cannot_switch_supplier_after_receipt) ... Bad Request: /api/purchase-orders/1/
+ok
+test_quote_deposit_and_zero_or_full_deposit_are_respected (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_quote_deposit_and_zero_or_full_deposit_are_respected) ... ok
+test_receipt_cannot_be_reversed_twice (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_receipt_cannot_be_reversed_twice) ... ok
+test_receipt_reversal_api_requires_reason_and_succeeds (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_receipt_reversal_api_requires_reason_and_succeeds) ... Bad Request: /api/purchase-orders/1/receipts/1/reverse/
+ok
+test_receipt_reversal_rebalances_current_sku_reservations (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_receipt_reversal_rebalances_current_sku_reservations) ... ok
+test_receipt_reversal_rejects_insufficient_actual_inventory_without_changes (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_receipt_reversal_rejects_insufficient_actual_inventory_without_changes) ... ok
+test_receipt_reversal_restores_inventory_received_quantity_and_purchase_status (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_receipt_reversal_restores_inventory_received_quantity_and_purchase_status) ... ok
+test_receipt_reversal_second_call_has_no_second_side_effect (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_receipt_reversal_second_call_has_no_second_side_effect) ... ok
+test_report_excludes_void_and_out_of_period_transactions (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_report_excludes_void_and_out_of_period_transactions) ... Bad Request: /api/finance-dashboard/
+ok
+test_reversal_movements_inherit_trade_snapshots (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_reversal_movements_inherit_trade_snapshots) ... ok
+test_reversing_second_split_shipment_keeps_first_shipment_active (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_reversing_second_split_shipment_keeps_first_shipment_active) ... ok
+test_settle_validates_payload_and_does_not_accept_mismatched_contract (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_settle_validates_payload_and_does_not_accept_mismatched_contract) ... Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+ok
+test_shared_sku_purchase_is_not_counted_twice_for_procurement_gap (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_shared_sku_purchase_is_not_counted_twice_for_procurement_gap) ... ok
+test_shipment_cannot_be_reversed_twice (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_shipment_cannot_be_reversed_twice) ... ok
+test_shipment_reversal_api_requires_reason_and_succeeds (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_shipment_reversal_api_requires_reason_and_succeeds) ... Bad Request: /api/shipments/1/reverse/
+ok
+test_shipment_reversal_rejects_missing_original_movement_without_changes (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_shipment_reversal_rejects_missing_original_movement_without_changes) ... ok
+test_shipment_reversal_rejects_order_mismatch_atomically (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_shipment_reversal_rejects_order_mismatch_atomically) ... ok
+test_shipment_reversal_rejects_quantity_mismatch_atomically (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_shipment_reversal_rejects_quantity_mismatch_atomically) ... ok
+test_shipment_reversal_rejects_sku_mismatch_atomically (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_shipment_reversal_rejects_sku_mismatch_atomically) ... ok
+test_shipment_reversal_rejects_source_type_mismatch_atomically (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_shipment_reversal_rejects_source_type_mismatch_atomically) ... ok
+test_shipment_reversal_restores_inventory_order_progress_and_reservation (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_shipment_reversal_restores_inventory_order_progress_and_reservation) ... ok
+test_shipment_reversal_second_call_has_no_second_side_effect (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_shipment_reversal_second_call_has_no_second_side_effect) ... ok
+test_shipping_cannot_consume_other_order_reservations (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_shipping_cannot_consume_other_order_reservations) ... ok
+test_status_change_does_not_reset_custom_installments (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_status_change_does_not_reset_custom_installments) ... ok
+test_transaction_allocation_payload_exposes_order_id_and_keeps_unallocated_shape (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_transaction_allocation_payload_exposes_order_id_and_keeps_unallocated_shape) ... ok
+test_transaction_allocation_payload_exposes_purchase_order_id (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_transaction_allocation_payload_exposes_purchase_order_id) ... ok
+test_transaction_cannot_be_deleted_or_reactivated_by_patch (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_transaction_cannot_be_deleted_or_reactivated_by_patch) ... Bad Request: /api/transactions/1/
+Bad Request: /api/transactions/1/
+ok
+test_transaction_list_allocation_serialization_does_not_add_per_row_queries (crm.tests.test_trade_finance_upgrade.TradeFinanceUpgradeTests.test_transaction_list_allocation_serialization_does_not_add_per_row_queries) ... ok
+
+----------------------------------------------------------------------
+Ran 106 tests in 12.357s
+
+OK
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

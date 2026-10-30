@@ -18,6 +18,7 @@ from crm.models import (
     InventoryReservation,
     Order,
     OrderItem,
+    PurchaseOrder,
     PurchaseOrderItem,
     Shipment,
     ShipmentItem,
@@ -306,7 +307,27 @@ def _movement_no(prefix: str) -> str:
 
 
 def _receipt_status(purchase_order):
-    quantities = [(item.quantity, item.received_quantity) for item in purchase_order.items.all()]
+    """Calculate a PO's receipt status from one fresh aggregate query.
+
+    Callers must already hold the PurchaseOrder row lock before changing
+    receipts. That parent lock serializes receipt and reversal status updates;
+    this helper intentionally does not acquire a late lock after SKU locking.
+    """
+    quantities = list(
+        PurchaseOrderItem.objects.filter(purchase_order_id=purchase_order.pk)
+        .annotate(
+            active_received_quantity=Coalesce(
+                Sum(
+                    "receipts__quantity",
+                    filter=Q(receipts__reversal_inventory_movement__isnull=True),
+                    output_field=QUANTITY_FIELD,
+                ),
+                Value(Decimal("0"), output_field=QUANTITY_FIELD),
+                output_field=QUANTITY_FIELD,
+            )
+        )
+        .values_list("quantity", "active_received_quantity")
+    )
     if quantities and all(received >= ordered for ordered, received in quantities):
         return "completed"
     if any(received > 0 for _, received in quantities):
@@ -316,11 +337,20 @@ def _receipt_status(purchase_order):
 
 @transaction.atomic
 def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsReceipt:
-    purchase_item = PurchaseOrderItem.objects.select_for_update(of=("self",)).select_related(
-        "purchase_order", "sku"
+    # Shared lock order: PurchaseOrder -> purchase item -> linked Orders (pk
+    # order) -> SKU. The initial read only discovers the immutable parent id;
+    # never wait for the parent after taking an item or SKU lock.
+    purchase_order_id = PurchaseOrderItem.objects.values_list(
+        "purchase_order_id", flat=True
     ).get(pk=purchase_item.pk)
-    reject_historical(purchase_item.purchase_order, "登记到货或生成库存流水")
-    if purchase_item.purchase_order.status not in {"ordered", "partial", "completed"}:
+    purchase_order = PurchaseOrder.objects.select_for_update().get(pk=purchase_order_id)
+    purchase_item = PurchaseOrderItem.objects.select_for_update(of=("self",)).select_related(
+        "sku"
+    ).get(pk=purchase_item.pk)
+    if purchase_item.purchase_order_id != purchase_order.pk:
+        raise ValidationError("采购明细所属采购单已变化，请刷新后重试。")
+    reject_historical(purchase_order, "登记到货或生成库存流水")
+    if purchase_order.status not in {"ordered", "partial", "completed"}:
         raise ValidationError("只有已下单的采购单可以登记验货入库。")
     related_order_ids = list(
         purchase_item.cost_allocations.filter(target_type="order", order__isnull=False)
@@ -334,7 +364,7 @@ def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsRece
     SKU.objects.select_for_update().get(pk=purchase_item.sku_id)
     if not payload.get('trade_unit') and 'quantity' not in payload:
         raise ValidationError('请填写基础数量，或选择交易规格并填写交易数量。')
-    converted = normalize_trade(payload, purchase_item.sku, price_field="unit_cost", existing=purchase_item, supplier_id=purchase_item.purchase_order.supplier_id)
+    converted = normalize_trade(payload, purchase_item.sku, price_field="unit_cost", existing=purchase_item, supplier_id=purchase_order.supplier_id)
     payload = {**payload, **converted}
     quantity = payload["quantity"]
     remaining = purchase_item.remaining_quantity
@@ -358,9 +388,9 @@ def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsRece
         quantity=quantity,
         warehouse="默认仓",
         unit_cost=payload.get("unit_cost", Decimal("0")),
-        reference=purchase_item.purchase_order.purchase_no,
+        reference=purchase_order.purchase_no,
         source_type="receipt",
-        source_no=purchase_item.purchase_order.purchase_no,
+        source_no=purchase_order.purchase_no,
         is_automatic=True,
         is_overage=is_overage,
         overage_reason=reason,
@@ -379,7 +409,6 @@ def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsRece
         notes=payload.get("notes", ""),
         inventory_movement=movement,
     )
-    purchase_order = purchase_item.purchase_order
     purchase_order.status = _receipt_status(purchase_order)
     purchase_order.save(update_fields=["status", "updated_at"])
     rebalance_sku_reservations(purchase_item.sku)
@@ -456,11 +485,30 @@ def reverse_receipt(receipt: GoodsReceipt, reason: str) -> GoodsReceipt:
     reason = str(reason or "").strip()
     if not reason:
         raise ValidationError("冲销原因不能为空。")
+    # Discover the parent without locking child rows, then follow the same
+    # parent-first order as record_receipt: PO -> receipt -> PO item -> linked
+    # Orders (pk order) -> SKU -> original inventory movement.
+    receipt_link = GoodsReceipt.objects.filter(pk=receipt.pk).values(
+        "purchase_item_id", "purchase_item__purchase_order_id"
+    ).get()
+    purchase_order = PurchaseOrder.objects.select_for_update().get(
+        pk=receipt_link["purchase_item__purchase_order_id"]
+    )
     receipt = GoodsReceipt.objects.select_for_update().get(pk=receipt.pk)
     if receipt.reversal_inventory_movement_id:
         raise ValidationError("该入库记录已经冲销，不能重复操作。")
-    purchase_item = PurchaseOrderItem.objects.select_for_update().select_related("purchase_order", "sku").get(pk=receipt.purchase_item_id)
-    reject_historical(purchase_item.purchase_order, "冲销到货或库存流水")
+    if receipt.purchase_item_id != receipt_link["purchase_item_id"]:
+        raise ValidationError("到货记录所属采购单已变化，请刷新后重试。")
+    purchase_item = PurchaseOrderItem.objects.select_for_update(of=("self",)).select_related("sku").get(pk=receipt.purchase_item_id)
+    if purchase_item.purchase_order_id != purchase_order.pk:
+        raise ValidationError("采购明细所属采购单已变化，请刷新后重试。")
+    reject_historical(purchase_order, "冲销到货或库存流水")
+    related_order_ids = list(
+        purchase_item.cost_allocations.filter(target_type="order", order__isnull=False)
+        .order_by("order_id").values_list("order_id", flat=True).distinct()
+    )
+    if related_order_ids:
+        list(Order.objects.select_for_update().filter(pk__in=related_order_ids).order_by("pk"))
     sku = SKU.objects.select_for_update().get(pk=purchase_item.sku_id)
     supplier_sku = SupplierSKU.objects.get(pk=purchase_item.supplier_sku_id) if purchase_item.supplier_sku_id else None
     original_movement = (
@@ -483,7 +531,7 @@ def reverse_receipt(receipt: GoodsReceipt, reason: str) -> GoodsReceipt:
         unit_cost=receipt.unit_cost,
         reference=original_movement.movement_no if original_movement else "",
         source_type="reversal",
-        source_no=purchase_item.purchase_order.purchase_no,
+        source_no=purchase_order.purchase_no,
         is_automatic=True,
         notes=f"冲销采购入库 #{receipt.pk}：{reason}",
     )
@@ -493,7 +541,6 @@ def reverse_receipt(receipt: GoodsReceipt, reason: str) -> GoodsReceipt:
     receipt.reversed_at = timezone.now()
     receipt.reversal_reason = reason
     receipt.save(update_fields=["reversal_inventory_movement", "reversed_at", "reversal_reason", "updated_at"])
-    purchase_order = purchase_item.purchase_order
     purchase_order.status = _receipt_status(purchase_order)
     purchase_order.save(update_fields=["status", "updated_at"])
     rebalance_sku_reservations(sku)

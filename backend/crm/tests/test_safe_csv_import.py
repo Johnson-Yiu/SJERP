@@ -354,7 +354,7 @@ class SafeCsvImportTests(TestCase):
         content = b"code,name\nC," + b"x" * 20 + b"\n"
         self.assertGreater(len(content), 32)
         response = self.execute("customers", content, "no-preview-token")
-        self.assertEqual(response.status_code, 400, response.data)
+        self.assertEqual(response.status_code, 413, response.data)
         self.assertIn("CSV 文件超过大小限制", response.data["detail"])
         batch = CSVImportBatch.objects.get(batch_id=response.data["import_batch_id"])
         self.assertEqual(batch.status, "failed")
@@ -363,6 +363,80 @@ class SafeCsvImportTests(TestCase):
         self.assertFalse(batch.rows.exists())
         self.assertFalse(Customer.objects.exists())
         self.assertFalse(OperationLog.objects.filter(entity="crm.customer").exists())
+
+    def test_upload_stream_limit_stops_all_csv_import_routes_before_file_completion(self):
+        content = b"code,name\nC," + b"x" * (1024 * 1024)
+        endpoints = (
+            "/api/import/csv/preview/",
+            "/api/import/csv/execute/",
+            "/api/import/csv/",
+        )
+        for endpoint in endpoints:
+            with self.subTest(endpoint=endpoint):
+                previous_batch_count = CSVImportBatch.objects.count()
+                with self.settings(CSV_IMPORT_MAX_BYTES=64, FILE_UPLOAD_MAX_MEMORY_SIZE=128):
+                    with patch("crm.views._read_import_csv") as read_csv:
+                        response = self.client.post(
+                            endpoint,
+                            {
+                                "entity": "customers",
+                                "preview_token": "not-used-for-oversize-upload",
+                                "file": SimpleUploadedFile("oversized.csv", content),
+                            },
+                            format="multipart",
+                        )
+                self.assertEqual(response.status_code, 413, response.data)
+                self.assertIn("CSV 文件超过大小限制", response.data["detail"])
+                read_csv.assert_not_called()
+                stream_state = response.wsgi_request._csv_import_upload_limit_exceeded
+                self.assertLess(stream_state["bytes_seen"], len(content))
+                self.assertLessEqual(stream_state["bytes_forwarded"], 64)
+                self.assertFalse(response.wsgi_request.upload_handlers[1].activated)
+                self.assertFalse(response.wsgi_request.FILES)
+                self.assertFalse(Customer.objects.exists())
+
+                if endpoint == "/api/import/csv/execute/":
+                    self.assertEqual(CSVImportBatch.objects.count(), previous_batch_count + 1)
+                    batch = CSVImportBatch.objects.latest("created_at")
+                    self.assertEqual(batch.status, "failed")
+                    self.assertEqual(batch.file_sha256, "")
+                    self.assertEqual((batch.total_rows, batch.failed_rows), (0, 0))
+                    self.assertFalse(batch.rows.exists())
+                    self.assertEqual(
+                        OperationLog.objects.filter(
+                            entity="crm.csvimportbatch", action_label="CSV 导入失败"
+                        ).count(),
+                        1,
+                    )
+                else:
+                    self.assertEqual(CSVImportBatch.objects.count(), previous_batch_count)
+
+        batches_before_gate_checks = CSVImportBatch.objects.count()
+        with self.settings(CSV_IMPORT_MAX_BYTES=64, FILE_UPLOAD_MAX_MEMORY_SIZE=128):
+            anonymous = APIClient().post(
+                "/api/import/csv/execute/",
+                {
+                    "entity": "customers",
+                    "preview_token": "not-used-for-oversize-upload",
+                    "file": SimpleUploadedFile("oversized.csv", content),
+                },
+                format="multipart",
+            )
+            self.assertEqual(anonymous.status_code, 403, anonymous.data)
+            self.assertFalse(hasattr(anonymous.wsgi_request, "_csv_import_upload_limit_exceeded"))
+            with self.settings(AUDIT_LOG_ENABLED=False):
+                audit_disabled = self.client.post(
+                    "/api/import/csv/execute/",
+                    {
+                        "entity": "customers",
+                        "preview_token": "not-used-for-oversize-upload",
+                        "file": SimpleUploadedFile("oversized.csv", content),
+                    },
+                    format="multipart",
+                )
+            self.assertEqual(audit_disabled.status_code, 503, audit_disabled.data)
+            self.assertFalse(hasattr(audit_disabled.wsgi_request, "_csv_import_upload_limit_exceeded"))
+        self.assertEqual(CSVImportBatch.objects.count(), batches_before_gate_checks)
 
     def test_preview_parse_failure_stays_outside_formal_batch_audit(self):
         response = self.client.post(

@@ -81,6 +81,11 @@ if APP_STAGE in _DEPLOYED_STAGES and not AUDIT_LOG_ENABLED:
 CSV_IMPORT_MAX_BYTES = _env_int("CSV_IMPORT_MAX_BYTES", 10 * 1024 * 1024)
 if CSV_IMPORT_MAX_BYTES <= 0:
     raise ImproperlyConfigured("CSV_IMPORT_MAX_BYTES must be a positive integer.")
+FILE_UPLOAD_HANDLERS = [
+    "crm.upload_handlers.CsvImportSizeLimitUploadHandler",
+    "django.core.files.uploadhandler.MemoryFileUploadHandler",
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",
+]
 ALLOWED_HOSTS = _env_list(
     "DJANGO_ALLOWED_HOSTS",
     ("localhost", "127.0.0.1") if APP_STAGE == "development" else (),

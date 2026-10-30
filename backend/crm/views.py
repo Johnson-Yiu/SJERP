@@ -3211,7 +3211,10 @@ def _persist_import_failure(*, request, entity, digest, rows, reason, errors=Non
     return batch
 
 
-def _import_failure_response(*, request, entity, digest, rows, detail, errors=None, before_rows=None):
+def _import_failure_response(
+    *, request, entity, digest, rows, detail, errors=None, before_rows=None,
+    response_status=status.HTTP_400_BAD_REQUEST,
+):
     try:
         batch = _persist_import_failure(
             request=request,
@@ -3233,7 +3236,7 @@ def _import_failure_response(*, request, entity, digest, rows, detail, errors=No
     payload = {"detail": detail, "import_batch_id": str(batch.batch_id)}
     if errors:
         payload["errors"] = errors
-    return Response(payload, status=status.HTTP_400_BAD_REQUEST)
+    return Response(payload, status=response_status)
 
 
 def _apply_import_rows_with_audit(entity, rows, user, before_rows):
@@ -3327,7 +3330,13 @@ def import_csv_preview(request):
 
 
 def _import_csv_preview_request(request):
-    entity = request.data.get("entity")
+    data = request.data
+    entity = data.get("entity")
+    if _csv_import_upload_limit_exceeded(request):
+        return Response(
+            {"detail": _csv_import_size_limit_message(settings.CSV_IMPORT_MAX_BYTES)},
+            status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+        )
     upload = request.FILES.get("file")
     try:
         rows, digest = _read_import_csv(entity, upload)
@@ -3346,9 +3355,23 @@ def import_csv_execute(request):
     audit_gate = _import_audit_gate(request)
     if audit_gate is not None:
         return audit_gate
-    entity = request.data.get("entity")
+    data = request.data
+    entity = data.get("entity")
+    if _csv_import_upload_limit_exceeded(request):
+        detail = _csv_import_size_limit_message(settings.CSV_IMPORT_MAX_BYTES)
+        if entity in IMPORT_FIELDS:
+            return _import_failure_response(
+                request=request,
+                entity=entity,
+                digest="",
+                rows=[],
+                detail=detail,
+                before_rows=[],
+                response_status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            )
+        return Response({"detail": detail}, status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
     upload = request.FILES.get("file")
-    token = request.data.get("preview_token")
+    token = data.get("preview_token")
     rows = []
     digest = ""
     try:
@@ -3436,6 +3459,11 @@ def import_csv_execute(request):
             before_rows=before_rows,
         )
     return Response({"total": len(rows), "created": created, "updated": updated, "import_batch_id": str(batch.batch_id)})
+
+
+def _csv_import_upload_limit_exceeded(request):
+    django_request = getattr(request, "_request", request)
+    return bool(getattr(django_request, "_csv_import_upload_limit_exceeded", False))
 
 
 def _import_state(entity, rows, lock=False):

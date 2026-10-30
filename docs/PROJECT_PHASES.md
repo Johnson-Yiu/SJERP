@@ -585,3 +585,11 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 
 逐项旧状态、新状态、校准依据、SHA、46 条规则摘要及未执行/业务阻断清单见 [R1 状态对账报告](uat-evidence/r1-status-reconcile-20261028/README.md)。本轮未连接生产数据库、未执行 PostgreSQL、未触发 GitHub Actions、未合并 master、未部署、未关闭 Issue。
 
+## R1-ISS-008-FUP-01 国家中文名称与别名补齐（2026-10-31）
+
+以指定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 创建独立 worktree 和分支 `codex/r1-iss008-aliases-bd324-20261031`。对照历史成果 `80dc73ae4ae47f9e04969f39b441af206d34306b`，逐文件确认国家注册表、249 项 Django 覆盖测试、国家选择器 Vitest 和既有 Chrome 场景已经存在于新基线且相关差异一致；没有业务代码需要迁移。只扩展 `frontend/browser-tests/iss008-chinese-aliases.spec.js`，增加编辑客户国家、保存 alpha-2 `HK`、刷新后重新打开确认标准显示的回归；测试提交为 `dba4a81c10a464012aa004a539a16378f7517b0e`。
+
+项目锁定依赖下，Django 国家选择专项 11/11 通过（含 249 条逐项子测试），Vitest 4/4 通过，真实 Chrome 桌面 1440×844 与 390×844 回归 2/2 通过。Chrome 覆盖编辑中文选择/保存/刷新回显、客户新建国家选择和报价客户选择；截图及原始日志见[验收记录](uat-evidence/r1-iss008-aliases-bd324-20261031/README.md)。逐张目视检查了编辑、新建和报价页面；窄屏表单可滚动、无横向溢出，保存操作可用。
+
+后端注册表、历史客户数据、alpha-2/alpha-3 对照、报价编号和数据库迁移均未修改；`America` 仍需用户明确选择，未知旧国家文字保留供人工确认。使用隔离内存 SQLite 与合成浏览器 API fixture；未连接生产数据库、未运行 PostgreSQL/全量套件/生产构建或 GitHub CI。ISS-008-FUP-01 更新为 `FIXED_PENDING_REVIEW`，等候独立复核；不关闭 Issue、不合并 master。
+

@@ -466,7 +466,6 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             idempotency_key = require_fulfillment_idempotency_key(request)
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        before = snapshot(purchase)
         input_serializer = ReceiptInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         item = purchase.items.filter(pk=input_serializer.validated_data["purchase_item"]).first()
@@ -485,6 +484,8 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                     replay_response = Response(idempotency.response_payload, status=idempotency.response_status)
                     replay_response["Idempotent-Replay"] = "true"
                     return replay_response
+                purchase = PurchaseOrder.objects.select_for_update().get(pk=purchase.pk)
+                before = snapshot(purchase)
                 receipt = record_receipt(item, input_serializer.validated_data)
                 response_payload = json_safe_fulfillment_response({
                     "id": receipt.id,
@@ -494,7 +495,9 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                     "is_overage": receipt.is_overage,
                     "inventory_movement": receipt.inventory_movement_id,
                 })
-                record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
+                purchase.refresh_from_db()
+                after = snapshot(purchase)
+                record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, after=after, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
                 complete_fulfillment_idempotency(idempotency, response_payload)
         except FulfillmentIdempotencyConflict as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_409_CONFLICT)
@@ -510,20 +513,27 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         input_serializer = ReceiptReversalInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         try:
-            receipt = reverse_receipt_service(receipt, input_serializer.validated_data["reason"])
+            with transaction.atomic():
+                purchase = PurchaseOrder.objects.select_for_update().get(pk=purchase.pk)
+                before = snapshot(purchase)
+                receipt = reverse_receipt_service(receipt, input_serializer.validated_data["reason"])
+                purchase.refresh_from_db()
+                after = snapshot(purchase)
+                record_operation(
+                    request=request,
+                    instance=purchase,
+                    action="custom",
+                    action_label="冲销采购入库",
+                    before=before,
+                    after=after,
+                    metadata={
+                        "receipt_id": receipt.id,
+                        "reversal_inventory_movement_id": receipt.reversal_inventory_movement_id,
+                        "reason": receipt.reversal_reason,
+                    },
+                )
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        record_operation(
-            request=request,
-            instance=purchase,
-            action="custom",
-            action_label="冲销采购入库",
-            metadata={
-                "receipt_id": receipt.id,
-                "reversal_inventory_movement_id": receipt.reversal_inventory_movement_id,
-                "reason": receipt.reversal_reason,
-            },
-        )
         return Response(GoodsReceiptSerializer(receipt, context={"request": request}).data)
 
     @action(detail=True, methods=["post"])
@@ -2253,9 +2263,13 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                     replay_response = Response(idempotency.response_payload, status=idempotency.response_status)
                     replay_response["Idempotent-Replay"] = "true"
                     return replay_response
+                order = Order.objects.select_for_update().get(pk=order.pk)
+                before = snapshot(order)
                 shipment = confirm_shipment(order, input_serializer.validated_data)
                 response_payload = json_safe_fulfillment_response({"id": shipment.id, "shipment_no": shipment.shipment_no, "status": shipment.status})
-                record_operation(request=request, instance=order, action="custom", action_label="确认订单发货", metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
+                order.refresh_from_db()
+                after = snapshot(order)
+                record_operation(request=request, instance=order, action="custom", action_label="确认订单发货", before=before, after=after, metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
                 complete_fulfillment_idempotency(idempotency, response_payload)
         except FulfillmentIdempotencyConflict as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_409_CONFLICT)

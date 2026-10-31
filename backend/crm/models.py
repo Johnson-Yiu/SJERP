@@ -161,6 +161,13 @@ class CSVImportBatch(models.Model):
         on_delete=models.PROTECT,
         related_name="csv_import_batches",
     )
+    preview = models.ForeignKey(
+        "CSVImportPreviewAudit",
+        on_delete=models.PROTECT,
+        related_name="batches",
+        null=True,
+        blank=True,
+    )
     status = models.CharField("批次状态", max_length=20, choices=STATUS_CHOICES)
     total_rows = models.PositiveIntegerField("总行数", default=0)
     created_rows = models.PositiveIntegerField("创建行数", default=0)
@@ -224,6 +231,58 @@ class CSVImportRowAudit(models.Model):
         indexes = [
             models.Index(fields=["batch", "result"]),
             models.Index(fields=["business_key"]),
+        ]
+
+    def save(self, *args, **kwargs):
+        if self.pk and not self._state.adding:
+            raise ValidationError("CSV 导入审计只允许追加，历史记录不可修改。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("CSV 导入审计只允许追加，历史记录不可删除。")
+
+
+class CSVImportPreviewAudit(models.Model):
+    """Immutable preview event; it never represents a formal business import."""
+
+    STATUS_CHOICES = [
+        ("ready", "可执行"),
+        ("invalid", "校验未通过"),
+        ("failed", "解析失败"),
+    ]
+
+    preview_id = models.UUIDField("预览标识", default=uuid.uuid4, unique=True, editable=False)
+    entity = models.CharField("数据类型", max_length=30)
+    file_sha256 = models.CharField("文件 SHA256", max_length=64, blank=True)
+    operator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="csv_import_previews",
+        null=True,
+        blank=True,
+    )
+    retry_of_batch = models.ForeignKey(
+        CSVImportBatch,
+        on_delete=models.PROTECT,
+        related_name="retry_previews",
+        null=True,
+        blank=True,
+    )
+    endpoint = models.CharField("预览入口", max_length=120, blank=True)
+    status = models.CharField("预览结果", max_length=20, choices=STATUS_CHOICES)
+    total_rows = models.PositiveIntegerField("解析行数", default=0)
+    validation_errors = models.JSONField("预览校验错误", default=list, blank=True)
+    failure_reason = models.TextField("失败原因", blank=True)
+    created_at = models.DateTimeField("操作时间", auto_now_add=True)
+
+    objects = CSVImportAuditQuerySet.as_manager()
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+        indexes = [
+            models.Index(fields=["entity", "created_at"], name="crm_csvimpo_entity_37832f_idx"),
+            models.Index(fields=["operator", "created_at"], name="crm_csvimpo_operato_7cba16_idx"),
+            models.Index(fields=["status", "created_at"], name="crm_csvimpo_status_6ee3f2_idx"),
         ]
 
     def save(self, *args, **kwargs):

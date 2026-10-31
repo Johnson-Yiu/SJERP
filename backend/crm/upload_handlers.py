@@ -37,7 +37,10 @@ class CsvImportSizeLimitUploadHandler(FileUploadHandler):
             }
             # Stop the multipart parser immediately. Because this handler is
             # first, the over-limit chunk never reaches memory/disk handlers.
-            raise StopUpload(connection_reset=True)
+            # Keep the HTTP connection alive so the view can return its
+            # explicit 413 response. Django drains the unread request body
+            # without passing it through downstream upload handlers.
+            raise StopUpload(connection_reset=False)
 
         self.bytes_forwarded += len(raw_data)
         return raw_data

@@ -1,0 +1,10 @@
+{
+  "check": "frontend package manifest/lock structural comparison",
+  "lockfileVersion": 3,
+  "manifestRootMatches": true,
+  "mismatches": [],
+  "lockEntries": 253,
+  "resolvedRegistryEntries": 252,
+  "entriesWithIntegrity": 252,
+  "missingIntegrity": []
+}

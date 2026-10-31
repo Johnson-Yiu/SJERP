@@ -1,0 +1,7 @@
+Audit date: 2026-11-01
+Baseline: bd324a8c3fb64af245c3afcabbd4301c84f7711c
+Branch: codex/r1-iss002-security-audit-final-20261101
+Python: Python 3.14.5
+Node: v24.16.0
+npm: 11.13.0
+pip-audit command: not found

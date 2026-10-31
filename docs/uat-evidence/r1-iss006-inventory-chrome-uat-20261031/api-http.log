@@ -1,0 +1,31 @@
+ISS006 inventory Chrome UAT — isolated Django/Vite services
+Date: 2026-10-31 (Asia/Shanghai)
+Database: backend/iss006-chrome-uat.sqlite3 (synthetic-only SQLite)
+
+The lines below distinguish exact Django runserver stdout captured during the session from request outcomes cross-checked against durable idempotency/operation-log records and the browser UI. GET refresh/poll traffic is omitted. No production host was contacted.
+
+[persisted Idempotency + UI]
+POST /api/purchase-orders/1/receive/ — HTTP 201 — receipt id=1, quantity=4.00; persisted FulfillmentIdempotency.response_status=201.
+POST /api/purchase-orders/1/receive/ — HTTP 201 — receipt id=2, quantity=3.00; persisted response_status=201.
+POST /api/purchase-orders/1/receipts/2/reverse/ — HTTP 200 — reversal movement id=3; OperationLog metadata includes receipt_id=2 and reason.
+POST /api/purchase-orders/1/receive/ — HTTP 201 — new receipt id=3, quantity=3.00; persisted response_status=201.
+POST /api/purchase-orders/1/receipts/2/reverse/ — HTTP 400 — duplicate operation; response body and assertion in api-duplicate-reversal.json.
+POST /api/purchase-orders/2/receive/ — HTTP 201 — receipt id=4, quantity=4.00; persisted response_status=201.
+POST /api/orders/1/ship/ — HTTP 201 — shipment id=1; persisted response_status=201.
+
+[exact runserver stdout excerpts]
+[31/Oct/2026 18:51:44] "POST /api/orders/1/ship/ HTTP/1.1" 201 65
+[31/Oct/2026 18:52:48] "POST /api/purchase-orders/2/receipts/4/reverse/ HTTP/1.1" 400 81
+[31/Oct/2026 18:55:33] "POST /api/shipments/1/reverse/ HTTP/1.1" 200 209
+[31/Oct/2026 18:58:18] "POST /api/purchase-orders/3/receive/ HTTP/1.1" 201 222
+[31/Oct/2026 18:59:23] "POST /api/inventory-movements/batch/ HTTP/1.1" 201 1110
+
+[response/persistence assertions]
+PO 2 receipt reversal after shipment: HTTP 400; database-before-consumed-reversal.json == database-after-consumed-reversal-rejected.json except stage; movements 6 -> 6; operation logs 6 -> 6.
+Repeated reversal of receipt id=2: HTTP 400; database-before-duplicate-reversal.json == database-after-duplicate-reversal.json except stage; movements 4 -> 4; operation logs 4 -> 4.
+Shipment reversal: HTTP 200; added reversal movement +4, original shipment status cancelled; actual stock 0 -> 4; reserved quantity 0 -> 4; shipped quantity 4 -> 0.
+Gift receipt: HTTP 201; quantity=3, is_overage=true, overage_quantity=1, overage_reason=gift; PO status completed; PO amount remains USD 25.00.
+Manual adjustment: HTTP 201; one independent adjust_in/盘盈入库 movement of +2, source=manual; final gift SKU actual stock=5.
+
+[test-harness setup note]
+One initial browser receipt attempt returned HTTP 403 because the isolated Vite origin was not in the local CSRF trusted-origin setting. No receipt or movement was created by that request. After correcting only the test-server setting, the same form submission succeeded (HTTP 201); it did not create a duplicate receipt.

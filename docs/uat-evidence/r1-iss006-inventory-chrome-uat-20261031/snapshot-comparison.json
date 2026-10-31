@@ -1,0 +1,52 @@
+{
+  "comparison_method": "PowerShell ConvertFrom-Json / ConvertTo-Json depth 100; remove only the stage field; compare normalized JSON ordinally",
+  "comparisons": [
+    {
+      "before": "database-before-duplicate-reversal.json",
+      "after": "database-after-duplicate-reversal.json",
+      "identical_except_stage": true,
+      "movements_before": 4,
+      "movements_after": 4,
+      "operation_logs_before": 4,
+      "operation_logs_after": 4
+    },
+    {
+      "before": "database-before-consumed-reversal.json",
+      "after": "database-after-consumed-reversal-rejected.json",
+      "identical_except_stage": true,
+      "movements_before": 6,
+      "movements_after": 6,
+      "operation_logs_before": 6,
+      "operation_logs_after": 6
+    }
+  ],
+  "shipment_reversal": {
+    "before_snapshot": "database-before-consumed-reversal.json",
+    "after_snapshot": "database-after-shipment-reversal.json",
+    "sku": "ISS006-UAT-SHIP",
+    "physical_stock": { "before": "0", "after": "4" },
+    "reserved_stock": { "before": "0", "after": "4" },
+    "available_stock": { "before": "0", "after": "0" },
+    "shipped_quantity": { "before": "4.00", "after": "0.00" },
+    "order_status": { "before": "shipped", "after": "confirmed" },
+    "original_shipment_status_after": "cancelled",
+    "reversal_movement_quantity": "+4.00",
+    "movement_count": { "before": 6, "after": 7 },
+    "operation_log_count": { "before": 6, "after": 7 }
+  },
+  "final_snapshot": {
+    "file": "database-after-final-scenarios.json",
+    "inventory_movements": 9,
+    "operation_logs": 9,
+    "sku_quantities": {
+      "ISS006-UAT-REC": { "actual": "7", "reserved": "0", "available": "7", "in_transit": "3.00" },
+      "ISS006-UAT-SHIP": { "actual": "4", "reserved": "4", "available": "0", "in_transit": "0" },
+      "ISS006-UAT-GIFT": { "actual": "5", "reserved": "0", "available": "5", "in_transit": "0" }
+    },
+    "purchases": {
+      "ISS006-UAT-PO-REC": { "status": "partial", "ordered": "10.00", "active_received": "7.00", "active_overage": "0.00" },
+      "ISS006-UAT-PO-SHIP": { "status": "completed", "ordered": "4.00", "active_received": "4.00", "active_overage": "0.00" },
+      "ISS006-UAT-PO-GIFT": { "status": "completed", "ordered": "2.00", "active_received": "3.00", "active_overage": "1.00" }
+    }
+  }
+}

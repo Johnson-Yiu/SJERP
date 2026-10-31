@@ -1,5 +1,9 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-ISS-052 超限 CSV HTTP 413 回归（2026-10-31）
+
+基于 `codex/r1-iss052-csv-limit-bd324-20261030` 的 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b` 创建独立 worktree / `codex/r1-iss052-http-413-bd324-20261031`。将 CSV 超限上传处理器设为不重置连接，使 Django 以有界块耗尽未读请求体后返回明确 HTTP 413。真实 HTTP 覆盖 preview、execute、legacy 三个入口；均返回 413、无导入副作用且临时上传目录为空。真实隔离 Chrome 对页面预览入口上传超限文件收到 413，无 request failure。后端相关回归 117/117、前端单元测试 171/171、Chrome 1/1、构建及 diff check 通过。构建仍有主 JS 包超过 500 kB 警告；生产代理限制/超时、PostgreSQL 和部署环境仍待验证。完整日志及截图见 [R1-ISS-052 HTTP 413 证据](uat-evidence/r1-iss052-http-413-bd324-20261031/README.md)。未修改 Issue 台账、未运行 CI、未合并 master、未部署。
+
 ## R1-INTEGRATION-036-002-003-052-058 五项任务集成（2026-10-27）
 
 固定基线 `46353a5436637832f5adadb7bdef6b45cdeada23`，创建独立工作树和 `codex/integration-036-002-003-052-058`。集成前核对五个远端来源分支 HEAD 与指定 SHA 一致：ISS-036 `b64c54b07908d4bb462c64f120c351d148e06f6f`、ISS-002 `4e4ca504ee398da85fe23cc53d534c6008807e5c`、ISS-003 `2111d193ef3a69db05c23e27813cfbf26d9034d7`、ISS-052 `93736e0773ca2136d4070a604e62324cf832dc6f`、ISS-058 `742692a6e4887e4b8352736e69a52b1ebe8d066f`。保留五项代码/测试/报告/依赖；PROJECT_ISSUES 的 ISS-002 冲突逐条合并，PROJECT_PHASES 保留各历史记录并追加本轮日志。ISS-052 七个 JPEG 原图仅由 `.png` 重命名 `.jpg`，签名检查确认未重编码。

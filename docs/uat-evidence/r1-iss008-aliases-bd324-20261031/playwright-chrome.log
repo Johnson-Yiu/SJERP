@@ -1,0 +1,15 @@
+
+[WebServer] (node:34780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] Port 5195 is in use on a wildcard address, but 127.0.0.1:5195 is available. There may be another server running on a wildcard IP on port 5195.
+
+
+Running 2 tests using 1 worker
+
+
+(node:35952) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/2] browser-tests\iss008-chinese-aliases.spec.js:57:3 › customer edit, country aliases and quote customer picker remain usable at 1440px
+[2/2] browser-tests\iss008-chinese-aliases.spec.js:57:3 › customer edit, country aliases and quote customer picker remain usable at 390px
+  2 passed (36.4s)

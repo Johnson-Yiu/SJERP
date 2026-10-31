@@ -1,0 +1,23 @@
+✔ port allocator returns a free explicit loopback port (27.5902ms)
+✔ port preflight rejects an occupied port instead of reusing another server (2.8482ms)
+✔ actual runner fails before creating isolated resources when its API port is occupied (277.8552ms)
+✔ port preflight rejects duplicate API and Vite assignments (2.8394ms)
+✔ API identity mismatch is rejected before browser tests can proceed (41.3299ms)
+✔ only an existing browser test file can be selected; Playwright service and config overrides are rejected (29.4341ms)
+✔ only allowlisted real API suites receive fixed synthetic fixture seeds (5.5057ms)
+✔ API identity comparison checks run ID, token, SQLite path, and MEDIA_ROOT (1.0557ms)
+✔ a real Vite /api proxy to the wrong database and MEDIA_ROOT is rejected before Playwright (2304.9499ms)
+✔ local browser entrypoint delegates server ownership to the isolation runner and preserves CI CLI webServer (2.0657ms)
+✔ SQLite URL preserves an absolute platform path for Django parsing (0.4437ms)
+✔ cleanup removes only a marked run directory under system temp (16.6246ms)
+✔ cleanup refuses an ownership marker belonging to another run (10.262ms)
+✔ two independent worktree runtimes can start concurrently without sharing ports or data (58885.9193ms)
+ℹ parallel isolated runs: [{"runId":"3d2699d6-52fc-48eb-a894-5ed2d373091e","apiPort":"3949","vitePort":"3951","database":"C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-XuVagQ\\db.sqlite3","media":"C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-XuVagQ\\media"},{"runId":"8cf5787a-2537-4a7b-b38e-61dd77950b15","apiPort":"3947","vitePort":"3948","database":"C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-By6iFq\\db.sqlite3","media":"C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-By6iFq\\media"}]
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 61861.295

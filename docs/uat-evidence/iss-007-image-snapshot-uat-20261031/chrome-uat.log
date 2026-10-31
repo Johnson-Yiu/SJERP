@@ -1,0 +1,273 @@
+
+> senju-crm-erp@1.0.0 test:browser:isolated
+> node scripts/run-isolated-browser-tests.mjs --business-test iss007-image-snapshot-real.spec.js
+
+Isolation run b703e926-b2e0-430b-b684-1c3cb2c9aaff; API 127.0.0.1:1066; Vite 127.0.0.1:1067
+Isolated SQLite: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-VhO1Iw\db.sqlite3
+Isolated MEDIA_ROOT: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-VhO1Iw\media
+Playwright selection: iss007-image-snapshot-real.spec.js
+Isolated RBAC mode: development superadmin
+[isolation] Pre-migration isolation verification
+{'runId': 'b703e926-b2e0-430b-b684-1c3cb2c9aaff', 'token': 'c84fc245ea9b737ed568aeaf400b3b1cb44e51469f7d5bc7', 'database': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-VhO1Iw\\db.sqlite3', 'mediaRoot': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-VhO1Iw\\media', 'rbacEnforcement': False}
+[isolation] Pre-migration isolation verification: passed
+[isolation] Django system check
+System check identified no issues (0 silenced).
+[isolation] Django system check: passed
+[isolation] Isolated database migrations
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+  Applying crm.0078_historical_contract_scope... OK
+  Applying crm.0079_shared_report_template... OK
+  Applying crm.0080_formal_party_snapshots... OK
+  Applying crm.0081_transaction_rmb_reference_label... OK
+  Applying crm.0081_supplier_lifecycle... OK
+  Applying crm.0081_product_certificate_private_file... OK
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+  Applying crm.0083_customer_supplier_preference... OK
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+  Applying crm.0085_order_quantity_adjustment... OK
+  Applying crm.0086_purchase_moq_exception... OK
+  Applying crm.0087_amount_calculation_compatibility... OK
+  Applying crm.0088_operationlog_append_only... OK
+  Applying crm.0089_operationlog_operator_protect... OK
+  Applying crm.0091_csv_import_audit... OK
+  Applying crm.0090_fulfillment_idempotency... OK
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+  Applying sessions.0001_initial... OK
+[isolation] Isolated database migrations: passed
+[isolation] Migration completeness check
+[isolation] Migration completeness check: passed
+[isolation] Post-migration isolation verification
+{'runId': 'b703e926-b2e0-430b-b684-1c3cb2c9aaff', 'token': 'c84fc245ea9b737ed568aeaf400b3b1cb44e51469f7d5bc7', 'database': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-VhO1Iw\\db.sqlite3', 'mediaRoot': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-VhO1Iw\\media', 'rbacEnforcement': False}
+[isolation] Post-migration isolation verification: passed
+[isolation] Allowlisted synthetic fixture seed (seed_iss007_image_browser.py)
+{"synthetic_only": true, "customer_id": 1, "product_id": 1, "sku_id": 1, "sku_code": "ISS007-UAT-SKU", "missing_quote_id": 1, "missing_quote_item_id": 1, "missing_image_path": "quote-item-images/iss007-uat/missing-history-image.png", "original_image_sha256": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2", "replacement_image_sha256": "4991af95c7f5acaed2e13ea94ebf0733dd077d7e0f14cac519c3e97e798f3e1a"}
+[isolation] Allowlisted synthetic fixture seed (seed_iss007_image_browser.py): passed
+[isolated Django API] Performing system checks...
+
+[isolated Django API] System check identified no issues (0 silenced).
+[isolated Django API] October 31, 2026 - 20:55:41
+Django version 6.0.9, using settings 'test_support.isolated_settings'
+Starting development server at http://127.0.0.1:1066/
+Quit the server with CTRL-BREAK.
+
+[isolated Django API] WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+[isolation] Direct Django API identity, SQLite path, and MEDIA_ROOT: passed
+[isolated Django API] [31/Oct/2026 20:55:42] "GET /api/__test__/isolation/c84fc245ea9b737ed568aeaf400b3b1cb44e51469f7d5bc7/ HTTP/1.1" 200 326
+[isolated Vite]
+  VITE v8.3.5  ready in 1025 ms
+
+[isolated Vite]   ➜  Local:   http://127.0.0.1:1067/
+[isolation] Vite identity: passed
+[isolated Django API] [31/Oct/2026 20:55:43] "GET /api/__test__/isolation/c84fc245ea9b737ed568aeaf400b3b1cb44e51469f7d5bc7/ HTTP/1.1" 200 326
+[isolation] Vite /api proxy identity, SQLite path, and MEDIA_ROOT: passed
+[isolation] Playwright suite
+[isolated Vite] 20:55:44 [vite] (client) [optimizer] scanning dependencies...
+
+Running 1 test using 1 worker
+
+[isolated Vite] 20:55:46 [vite] (client) [optimizer] bundling dependencies...
+(node:25864) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [31/Oct/2026 20:55:52] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] C:\Users\Johnson\.codex\worktrees\r1-iss007-image-snapshot-uat-20261031\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.Product'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[isolated Django API] [31/Oct/2026 20:55:53] "GET /api/categories/tree/ HTTP/1.1" 200 2
+[isolated Django API] [31/Oct/2026 20:55:53] "GET /api/skus/?search=&include_inactive=1&page=1 HTTP/1.1" 200 1410
+[isolated Django API] [31/Oct/2026 20:55:53] "GET /api/products/?page=1 HTTP/1.1" 200 516
+[isolated Django API] [31/Oct/2026 20:55:53] "GET /api/product-parameters/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:55:53] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:55:53] "GET /api/suppliers/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:56:02] "GET /api/supplier-skus/?sku=1&page=1 HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:56:02] "PUT /api/skus/1/ HTTP/1.1" 200 1473
+[isolated Django API] [31/Oct/2026 20:56:02] "POST /api/skus/1/image/ HTTP/1.1" 200 1530
+[isolated Django API] [31/Oct/2026 20:56:02] "GET /api/skus/?search=&include_inactive=1&page=1 HTTP/1.1" 200 1638
+[isolated Django API] [31/Oct/2026 20:56:03] "GET /api/skus/1/thumbnail/?v=a7e9bab58ced2bc2 HTTP/1.1" 200 88
+[isolated Django API] [31/Oct/2026 20:56:03] "GET /api/skus/1/ HTTP/1.1" 200 1586
+[isolated Django API] [31/Oct/2026 20:56:03] "GET /api/skus/1/thumbnail/?v=a7e9bab58ced2bc2 HTTP/1.1" 200 88
+[isolated Django API] [31/Oct/2026 20:56:03] "POST /api/quotes/ HTTP/1.1" 201 1514
+[isolated Django API] [31/Oct/2026 20:56:04] "GET /api/quotes/2/ HTTP/1.1" 200 1514
+[isolated Django API] [31/Oct/2026 20:56:04] "POST /api/quotes/2/accept/ HTTP/1.1" 200 1520
+[isolated Django API] [31/Oct/2026 20:56:04] "GET /api/quotes/2/order-draft/ HTTP/1.1" 200 686
+[isolated Django API] [31/Oct/2026 20:56:04] "POST /api/orders/ HTTP/1.1" 201 1588
+[isolated Django API] [31/Oct/2026 20:56:04] "GET /api/orders/1/ HTTP/1.1" 200 1588
+[isolated Django API] [31/Oct/2026 20:56:04] "POST /api/orders/1/confirm/ HTTP/1.1" 200 1702
+[isolated Django API] [31/Oct/2026 20:56:04] "GET /api/quotes/2/pi-data/ HTTP/1.1" 200 1108
+[isolated Django API] [31/Oct/2026 20:56:04] "GET /api/media/quote-item-images/2026/10/iss007-original-red.png HTTP/1.1" 200 136
+[isolated Django API] [31/Oct/2026 20:56:07] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [31/Oct/2026 20:56:07] "GET /api/operation-logs/?entity=crm.quote&object_id=2&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:56:07] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [31/Oct/2026 20:56:07] "GET /api/quotes/2/workbench/ HTTP/1.1" 200 4862
+[isolated Django API] [31/Oct/2026 20:56:07] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 3143
+[isolated Django API] [31/Oct/2026 20:56:07] "GET /api/customers/?page=1 HTTP/1.1" 200 532
+[isolated Django API] [31/Oct/2026 20:56:08] "GET /api/quotes/2/pi-data/ HTTP/1.1" 200 1108
+[isolated Django API] [31/Oct/2026 20:56:08] "GET /api/media/quote-item-images/2026/10/iss007-original-red.png HTTP/1.1" 200 136
+[isolated Django API] [31/Oct/2026 20:56:08] "GET /api/quotes/2/export/ HTTP/1.1" 200 11570
+[isolated Django API] [31/Oct/2026 20:56:09] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] C:\Users\Johnson\.codex\worktrees\r1-iss007-image-snapshot-uat-20261031\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.Product'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[isolated Django API] [31/Oct/2026 20:56:09] "GET /api/products/?page=1 HTTP/1.1" 200 516
+[isolated Django API] [31/Oct/2026 20:56:09] "GET /api/categories/tree/ HTTP/1.1" 200 2
+[isolated Django API] [31/Oct/2026 20:56:09] "GET /api/product-parameters/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:56:09] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:56:09] "GET /api/skus/?search=&include_inactive=1&page=1 HTTP/1.1" 200 1638
+[isolated Django API] [31/Oct/2026 20:56:09] "GET /api/skus/1/thumbnail/?v=a7e9bab58ced2bc2 HTTP/1.1" 200 88
+[isolated Django API] [31/Oct/2026 20:56:09] "GET /api/suppliers/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:56:09] "GET /api/media/sku-images/2026/10/iss007-original-red.png HTTP/1.1" 200 136
+[isolated Django API] [31/Oct/2026 20:56:09] "GET /api/supplier-skus/?sku=1&page=1 HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:56:10] "PUT /api/skus/1/ HTTP/1.1" 200 1586
+[isolated Django API] Bad Request: /api/skus/1/image/
+[isolated Django API] [31/Oct/2026 20:56:10] "POST /api/skus/1/image/ HTTP/1.1" 400 98
+[isolated Django API] [31/Oct/2026 20:56:10] "GET /api/skus/?search=&include_inactive=1&page=1 HTTP/1.1" 200 1638
+[isolated Django API] [31/Oct/2026 20:56:10] "GET /api/skus/1/ HTTP/1.1" 200 1586
+[isolated Django API] [31/Oct/2026 20:56:10] "GET /api/media/sku-images/2026/10/iss007-original-red.png HTTP/1.1" 200 136
+[isolated Django API] [31/Oct/2026 20:56:10] "POST /api/skus/1/image/ HTTP/1.1" 200 1534
+[isolated Django API] [31/Oct/2026 20:56:10] "GET /api/skus/?search=&include_inactive=1&page=1 HTTP/1.1" 200 1642
+[isolated Django API] [31/Oct/2026 20:56:10] "GET /api/skus/1/thumbnail/?v=e919f4abbe04c7df HTTP/1.1" 200 86
+[isolated Django API] [31/Oct/2026 20:56:10] "GET /api/skus/1/ HTTP/1.1" 200 1590
+[isolated Django API] [31/Oct/2026 20:56:10] "GET /api/media/sku-images/2026/10/iss007-replacement-blue.png HTTP/1.1" 200 136
+[isolated Django API] [31/Oct/2026 20:56:10] "GET /api/quotes/2/pi-data/ HTTP/1.1" 200 1108
+[isolated Django API] [31/Oct/2026 20:56:10] "GET /api/media/quote-item-images/2026/10/iss007-original-red.png HTTP/1.1" 200 136
+[isolated Django API] [31/Oct/2026 20:56:10] "GET /api/orders/1/ HTTP/1.1" 200 1702
+[isolated Django API] [31/Oct/2026 20:56:13] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [31/Oct/2026 20:56:13] "GET /api/quotes/2/workbench/ HTTP/1.1" 200 4862
+[isolated Django API] [31/Oct/2026 20:56:13] "GET /api/operation-logs/?entity=crm.quote&object_id=2&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:56:13] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [31/Oct/2026 20:56:13] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 3143
+[isolated Django API] [31/Oct/2026 20:56:13] "GET /api/customers/?page=1 HTTP/1.1" 200 532
+[isolated Django API] [31/Oct/2026 20:56:14] "GET /api/quotes/2/pi-data/ HTTP/1.1" 200 1108
+[isolated Django API] [31/Oct/2026 20:56:14] "GET /api/media/quote-item-images/2026/10/iss007-original-red.png HTTP/1.1" 200 136
+[isolated Django API] [31/Oct/2026 20:56:14] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] C:\Users\Johnson\.codex\worktrees\r1-iss007-image-snapshot-uat-20261031\森爵照明管理系统\.venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.Product'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[isolated Django API] [31/Oct/2026 20:56:15] "GET /api/products/?page=1 HTTP/1.1" 200 516
+[isolated Django API] [31/Oct/2026 20:56:15] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:56:15] "GET /api/product-parameters/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:56:15] "GET /api/categories/tree/ HTTP/1.1" 200 2
+[isolated Django API] [31/Oct/2026 20:56:15] "GET /api/suppliers/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:56:15] "GET /api/skus/?search=&include_inactive=1&page=1 HTTP/1.1" 200 1642
+[isolated Django API] [31/Oct/2026 20:56:15] "GET /api/skus/1/thumbnail/?v=e919f4abbe04c7df HTTP/1.1" 200 86
+[isolated Django API] [31/Oct/2026 20:56:15] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [31/Oct/2026 20:56:15] "GET /api/operation-logs/?entity=crm.quote&object_id=2&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:56:15] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [31/Oct/2026 20:56:16] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 3143
+[isolated Django API] [31/Oct/2026 20:56:16] "GET /api/quotes/2/workbench/ HTTP/1.1" 200 4862
+[isolated Django API] [31/Oct/2026 20:56:16] "GET /api/customers/?page=1 HTTP/1.1" 200 532
+[isolated Django API] [31/Oct/2026 20:56:16] "GET /api/quotes/2/pi-data/ HTTP/1.1" 200 1108
+[isolated Django API] [31/Oct/2026 20:56:16] "GET /api/media/quote-item-images/2026/10/iss007-original-red.png HTTP/1.1" 200 136
+[isolated Django API] [31/Oct/2026 20:56:16] "GET /api/quotes/1/pi-data/ HTTP/1.1" 200 1127
+[isolated Django API] Not Found: /api/media/quote-item-images/iss007-uat/missing-history-image.png
+[isolated Django API] [31/Oct/2026 20:56:16] "GET /api/media/quote-item-images/iss007-uat/missing-history-image.png HTTP/1.1" 404 25
+[isolated Django API] [31/Oct/2026 20:56:17] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [31/Oct/2026 20:56:17] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [31/Oct/2026 20:56:17] "GET /api/operation-logs/?entity=crm.quote&object_id=1&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [31/Oct/2026 20:56:17] "GET /api/quotes/1/workbench/ HTTP/1.1" 200 3269
+[isolated Django API] [31/Oct/2026 20:56:17] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 3143
+[isolated Django API] [31/Oct/2026 20:56:17] "GET /api/customers/?page=1 HTTP/1.1" 200 532
+[isolated Django API] [31/Oct/2026 20:56:17] "GET /api/quotes/1/pi-data/ HTTP/1.1" 200 1127
+[isolated Django API] Not Found: /api/media/quote-item-images/iss007-uat/missing-history-image.png
+[31/Oct/2026 20:56:17] "GET /api/media/quote-item-images/iss007-uat/missing-history-image.png HTTP/1.1" 404 25
+  ok 1 browser-tests\iss007-image-snapshot-real.spec.js:73:1 › ISS-007 SKU image upload, immutable quote/order snapshots, exports, and missing private images (29.9s)
+
+  1 passed (32.6s)
+[isolation] Playwright suite: passed
+[isolation] Owned API and Vite process trees stopped; both ports are released.
+Removed only this run's marked temporary database and MEDIA_ROOT.

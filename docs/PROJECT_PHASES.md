@@ -1,5 +1,63 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-LEDGER-CONSOLIDATION-01 两项台账成果统一整合（2026-10-31）
+
+从基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 创建 `codex/r1-ledger-consolidation-20261031`。整合来源：`codex/r1-status-reconcile-bd324-20261031`（本地来源 HEAD `ae0f7e073d2ef6cb8b98164920697ecd4bac73be`）及 `codex/r1-iss008-aliases-bd324-20261031`（本地来源 HEAD `bca4d5794afacc505d443afc03e151ab7ee5c5a2`）；只迁移并整合 `docs/PROJECT_ISSUES.md` 与 `docs/PROJECT_PHASES.md`。
+
+最终台账保留 124 项 Issue 和 46 项业务规则。ISS-052 保持 `OPEN`；ISS-008-FUP-01 更新为 `FIXED_PENDING_REVIEW`；其余 Issue 状态未改变。重新按主表每个 Issue 的最新状态统计：OPEN 2、BLOCKED 18、NEEDS_VERIFICATION 16、FIXED_PENDING_REVIEW 78、CLOSED 10（合计 124）。历史 reconciliation 记录仍保留其当时的 3/18/16/77/10 统计，不覆盖历史。
+
+修正 ISS-008-FUP-01 记录及验收日志中的浏览器测试提交 SHA：`dba4a81c10a464012aa004a539a16378f7517b0e` → `c2b5be8e6d70b300567eee62ddaf554bfa61ae8b`。
+
+本轮仅修改上述两份台账文档；未改业务代码、迁移、规则或 GitHub Issue 状态，未删除历史记录。该文档整合未运行产品/浏览器测试，也未触发 CI、合并 master 或部署。
+
+## R1-ISS-008-FUP-01 国家中文名称与别名补齐（2026-10-31）
+
+以指定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 创建独立 worktree 和分支 `codex/r1-iss008-aliases-bd324-20261031`。对照历史成果 `80dc73ae4ae47f9e04969f39b441af206d34306b`，逐文件确认国家注册表、249 项 Django 覆盖测试、国家选择器 Vitest 和既有 Chrome 场景已经存在于新基线且相关差异一致；没有业务代码需要迁移。只扩展 `frontend/browser-tests/iss008-chinese-aliases.spec.js`，增加编辑客户国家、保存 alpha-2 `HK`、刷新后重新打开确认标准显示的回归；测试提交为 `c2b5be8e6d70b300567eee62ddaf554bfa61ae8b`。
+
+项目锁定依赖下，Django 国家选择专项 11/11 通过（含 249 条逐项子测试），Vitest 4/4 通过，真实 Chrome 桌面 1440×844 与 390×844 回归 2/2 通过。Chrome 覆盖编辑中文选择/保存/刷新回显、客户新建国家选择和报价客户选择；截图及原始日志见[验收记录](uat-evidence/r1-iss008-aliases-bd324-20261031/README.md)。逐张目视检查了编辑、新建和报价页面；窄屏表单可滚动、无横向溢出，保存操作可用。
+
+后端注册表、历史客户数据、alpha-2/alpha-3 对照、报价编号和数据库迁移均未修改；`America` 仍需用户明确选择，未知旧国家文字保留供人工确认。使用隔离内存 SQLite 与合成浏览器 API fixture；未连接生产数据库、未运行 PostgreSQL/全量套件/生产构建或 GitHub CI。ISS-008-FUP-01 更新为 `FIXED_PENDING_REVIEW`，等候独立复核；不关闭 Issue、不合并 master。
+
+## R1-STATUS-RECONCILE-01 最新基线台账校准（2026-10-31）
+
+基线为 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`；新分支 `codex/r1-status-reconcile-bd324-20261031`。历史校准成果为 `codex/reconcile-issue-ledger-20261028` / `2bb9d1746d13ce7b1c70e13dee1b8d3b48aaed2e`。该历史提交与最新基线的 `docs/PROJECT_ISSUES.md`、`docs/PROJECT_PHASES.md` blob 相同，说明历史 10 月 28 日校准已在基线中；原 124 个 Issue（含 ISS-008-FUP-01）和 46 条业务规则记录及原验收结论均保留。本轮未导入、改写或删减历史规则条目。
+
+### ISS-006 最新候选
+
+GitHub 只读 ref 查询核对了候选分支名及 SHA。分支结果仅代表来源证据，不代表纳入本基线：
+
+- `codex/r1-iss006-audit-atomicity-bd324-20261030` / `a4eea21dc3e21096950b08439dcbee26ce506e86`：收货/发货 before/after 快照及冲销审计原子性，SQLite 定向 52 项通过；报告、依赖、system-check 和测试日志见 `uat-evidence/r1-five-fixes-migration-20261030/B-audit-atomicity/`。
+- `codex/r1-iss006-inventory-reversal-audit-atomicity-20261030` / `7429c9630305bfad61f16475dd5617c13c07959e`：发货及手工库存流水冲销原子性；定向 106 项通过。证据 `uat-evidence/r1-iss006-reversal-audit-atomicity-20261030/`。该结果不是 PostgreSQL 并发证明。
+- `codex/r1-iss006-po-locking-bd324-20261030` / `13e8b4bed06d0c1d099f007696a81260dfb2d3ef`：定向 SQLite 74 项中 61 通过、13 个 PostgreSQL 专项跳过；收货并发锁定的 PostgreSQL 实测仍 **BLOCKED**，来源报告 `uat-evidence/r1-five-fixes-migration-20261030/C-po-locking/`。
+- `codex/r1-iss006-frontend-idempotency-bd324-20261030` / `f83f9b08a5f516f860655bc08b6c7d5f0787c35e`；Chrome 存储恢复证据分支 `codex/r1-iss006-frontend-storage-chrome-verify` / `bf3d4e4fb1d8bf3e5f944071f4336929ff68beae`。后者保存真实 Chrome 截图、浏览器结果和数据库核对文件，分别见各自报告目录。
+
+以上候选均不作为已集成或整体验收。ISS-006 保持 `NEEDS_VERIFICATION`；采购收货 PostgreSQL 并发、失败/超时/历史异常等关闭条件继续按各报告执行，不由 SQLite 或 Chrome 局部结果替代。
+
+### ISS-052 基线与候选补修
+
+指定基线中可见 `0091_csv_import_audit.py`、`0092_merge_fulfillment_and_csv_audit.py`、批次/行级审计模型及相关导入测试；其中 0091 迁移与基础测试文件和来源分支 `codex/fix-iss052-csv-import-audit-20261029` / `dc2bbbb2b29fbc8ffc26c392659e79319c86d592` 的对象内容一致。故不重复迁移或把既有审计功能误报为缺失。
+
+但基线未包含 0093，独立审查 `27734334833395196ae9951c5409f87c3574655d`（`uat-evidence/r1-review-iss052-csv-audit/README.md`）确认文件字节上限、解析失败的执行批次追溯为 FIX REQUIRED，并将审计读取与保留策略列为待确认；PostgreSQL 触发器及数据库角色权限未验证。后续候选如下：
+
+- `codex/r1-iss052-csv-limit-bd324-20261030` / `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b`：流式上传大小限制；报告记录 system check 和迁移检查通过、CSV 相关 43 项通过/1 项 PostgreSQL 专项跳过。该来源报告注明当前全局 Python 版本低于锁文件版本；不得扩大为锁定环境或 PostgreSQL 验收。
+- `codex/r1-iss052-pg-truncate-bd324-20261030` / `bbbb7169e21233fd691af246db722875989d9453`：新增 `0093_csv_import_audit_truncate_guard`，SQLite 定向报告为 34 项、27 通过、7 项按 PostgreSQL 设计跳过；其中六项 CSV 原始 SQL 触发器测试实际 PostgreSQL 运行仍 **BLOCKED**。基线没有该迁移。
+
+上述候选未进入固定基线，不能登记为已修复。当前状态校准为 `OPEN`，后续须集成并审查候选补修，补齐解析失败批次审计及真实认证操作人、PostgreSQL 触发器/角色权限、行审计读取与保留策略验收。不得据本地 SQLite 跳过项宣称 PostgreSQL PASS。
+
+### 既有成果及封版范围核对
+
+- **ISS-024 — FIXED_PENDING_REVIEW：**推荐/来源集成提交 `b3559f3bf83b967d06166bd409b00fc92e4e5902` 是当前基线祖先；原实现 SHA `1d576e961dc021d194e0ec2f9fd7dd6fc629535d` 通过该集成成果保留。供应来源、客户偏好、停用过滤和成本口径范围维持既有记录，等待独立复审。
+- **ISS-040 — FIXED_PENDING_REVIEW：**原 Packing List 集成 SHA `a4fc6d4f01f8c32a4a89f0d46557500a34566e98` 本身不是当前基线祖先；但集成基线 `71ec4a4c2d860b9944624a1434d9d7580e9a6d38` 是祖先，且当前仓库保留 `docs/uat-evidence/iss-040-integration/` 及 XLSX 样本/截图。只记录 Packing List 导出、模板、混装和分批证据；原生 Excel Print Preview 仍 PENDING，不能扩大原封版范围。
+- **ISS-042 — FIXED_PENDING_REVIEW：**`fb859b91f68bb62c539d5439c65b52c06f13a58c` 为基线祖先；共享模板基础版及既有权限、版本冲突、删除审计范围保留。审批、复制、回滚、组织治理仍延期，不等于 Issue CLOSED。
+- **ISS-048 — P3 / FIXED_PENDING_REVIEW：**`c356e57014d28295485d52df23612c2fe6c02444` 为基线祖先；仅可靠财务指标下钻及最小权限修补按阶段成果记录。财务定义、真实跨账号浏览器、PostgreSQL 和独立审查仍待，整体延期状态不变。
+- **ISS-055 — FIXED_PENDING_REVIEW：**`9c5f1f821cfc1b436f5fffe0b681991fa056b34d` 为基线祖先；安全 404 和合成测试证据不替代真实员工会话/RBAC 数据范围验收。
+- **ISS-062 — P2 / BLOCKED：**日期窗口实现 `9edbb6488a66a0801ecc1e5bc842df7866c6c7dc` 为基线祖先；业务日期上界、未来日期和月度窗口口径仍待负责人确认。
+
+### 状态数量与本轮边界
+
+按 ISSUE 台账主表每个 Issue 的唯一记录归一化：基线在本轮前为 OPEN 2、BLOCKED 18、NEEDS_VERIFICATION 16、FIXED_PENDING_REVIEW 78、CLOSED 10；ISS-052 因固定基线中仍存在已确认缺口，校准为 OPEN 后为 OPEN 3、BLOCKED 18、NEEDS_VERIFICATION 16、FIXED_PENDING_REVIEW 77、CLOSED 10，合计 124。历史状态与 10 月 28 日校准报告不改写；本轮没有更改 GitHub Issue 状态、没有关闭 Issue。
+
+本轮为文档核对，没有运行产品测试、浏览器测试或迁移；上述测试数字均引用各来源分支已归档的报告/日志，并明确标注跳过与阻塞。本轮未修改业务代码、模型、数据库迁移或前端；未合并 master、部署或触发 CI。
 ## R1-INTEGRATION-036-002-003-052-058 五项任务集成（2026-10-27）
 
 固定基线 `46353a5436637832f5adadb7bdef6b45cdeada23`，创建独立工作树和 `codex/integration-036-002-003-052-058`。集成前核对五个远端来源分支 HEAD 与指定 SHA 一致：ISS-036 `b64c54b07908d4bb462c64f120c351d148e06f6f`、ISS-002 `4e4ca504ee398da85fe23cc53d534c6008807e5c`、ISS-003 `2111d193ef3a69db05c23e27813cfbf26d9034d7`、ISS-052 `93736e0773ca2136d4070a604e62324cf832dc6f`、ISS-058 `742692a6e4887e4b8352736e69a52b1ebe8d066f`。保留五项代码/测试/报告/依赖；PROJECT_ISSUES 的 ISS-002 冲突逐条合并，PROJECT_PHASES 保留各历史记录并追加本轮日志。ISS-052 七个 JPEG 原图仅由 `.png` 重命名 `.jpg`，签名检查确认未重编码。

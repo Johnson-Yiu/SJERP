@@ -48,6 +48,7 @@ test('real Chrome upload receives HTTP 413 for an oversized CSV without connecti
   const screenshotPath = path.join(evidenceRoot, 'screenshots', 'chrome-csv-upload-413.png')
   await mkdir(path.dirname(screenshotPath), { recursive: true })
   await page.screenshot({ path: screenshotPath, fullPage: true })
+  await mkdir(path.join(evidenceRoot, 'logs'), { recursive: true })
   await writeFile(
     path.join(evidenceRoot, 'logs', 'chrome-csv-upload-413.json'),
     `${JSON.stringify({

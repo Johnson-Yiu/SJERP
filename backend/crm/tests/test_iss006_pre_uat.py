@@ -28,19 +28,20 @@ class Iss006FulfillmentRequestIdempotencyTests(TestCase):
             currency="USD",
         )
         item = purchase.items.create(sku=self.receipt_sku, quantity=Decimal("10"), unit_price=Decimal("2"))
+        request_key = "iss006-receipt-retry-1"
         payload = {
-            "request_key": "iss006-receipt-retry-1",
             "purchase_item": item.pk,
             "receipt_date": str(self.day),
             "quantity": "5",
             "unit_cost": "2",
         }
 
-        first = self.client.post(f"/api/purchase-orders/{purchase.pk}/receive/", payload, format="json", HTTP_IDEMPOTENCY_KEY=payload["request_key"])
-        replay = self.client.post(f"/api/purchase-orders/{purchase.pk}/receive/", payload, format="json", HTTP_IDEMPOTENCY_KEY=payload["request_key"])
+        first = self.client.post(f"/api/purchase-orders/{purchase.pk}/receive/", payload, format="json", HTTP_IDEMPOTENCY_KEY=request_key)
+        replay = self.client.post(f"/api/purchase-orders/{purchase.pk}/receive/", payload, format="json", HTTP_IDEMPOTENCY_KEY=request_key)
 
         self.assertEqual(first.status_code, status.HTTP_201_CREATED, first.data)
-        self.assertEqual(replay.status_code, status.HTTP_200_OK, replay.data)
+        self.assertEqual(replay.status_code, first.status_code, replay.data)
+        self.assertEqual(replay["Idempotent-Replay"], "true")
         self.assertEqual(replay.data["id"], first.data["id"])
         self.assertEqual(item.receipts.count(), 1)
         self.assertEqual(InventoryMovement.objects.filter(source_type="receipt", sku=self.receipt_sku).count(), 1)
@@ -90,17 +91,18 @@ class Iss006FulfillmentRequestIdempotencyTests(TestCase):
             source_type="manual",
         )
         allocate_order(order)
+        request_key = "iss006-shipment-retry-1"
         payload = {
-            "request_key": "iss006-shipment-retry-1",
             "shipment_date": str(self.day),
             "items": [{"order_item": item.pk, "quantity": "5"}],
         }
 
-        first = self.client.post(f"/api/orders/{order.pk}/ship/", payload, format="json", HTTP_IDEMPOTENCY_KEY=payload["request_key"])
-        replay = self.client.post(f"/api/orders/{order.pk}/ship/", payload, format="json", HTTP_IDEMPOTENCY_KEY=payload["request_key"])
+        first = self.client.post(f"/api/orders/{order.pk}/ship/", payload, format="json", HTTP_IDEMPOTENCY_KEY=request_key)
+        replay = self.client.post(f"/api/orders/{order.pk}/ship/", payload, format="json", HTTP_IDEMPOTENCY_KEY=request_key)
 
         self.assertEqual(first.status_code, status.HTTP_201_CREATED, first.data)
-        self.assertEqual(replay.status_code, status.HTTP_200_OK, replay.data)
+        self.assertEqual(replay.status_code, first.status_code, replay.data)
+        self.assertEqual(replay["Idempotent-Replay"], "true")
         self.assertEqual(replay.data["id"], first.data["id"])
         self.assertEqual(Shipment.objects.filter(order=order).count(), 1)
         self.assertEqual(InventoryMovement.objects.filter(source_type="shipment", sku=self.shipment_sku).count(), 1)

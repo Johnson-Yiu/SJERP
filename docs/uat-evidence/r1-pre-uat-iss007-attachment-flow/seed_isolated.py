@@ -3,6 +3,10 @@
 from base64 import b64decode
 from datetime import date, timedelta
 
+import django
+
+django.setup()
+
 from django.core.files.base import ContentFile
 from django.utils import timezone
 

@@ -1,0 +1,531 @@
+{
+  "database": "sqlite:///C:/Users/Johnson/AppData/Local/Temp/sunjack-r1-repair-06-xZkM0C/db.sqlite3",
+  "a": 1,
+  "b": 2,
+  "records": [
+    {
+      "method": "POST",
+      "url": "/quotes/",
+      "status": 201,
+      "body": {
+        "id": 1,
+        "items": [
+          {
+            "id": 1,
+            "sku": 2,
+            "sku_code": "ISS029-SKU",
+            "sales_model_snapshot": "SJ-029",
+            "model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name_snapshot": "R1 Repair Panel",
+            "unit": "pcs",
+            "image": "",
+            "quantity": "1.00",
+            "unit_price": "10.0000",
+            "amount": "10.00",
+            "description": "R1 Repair Panel",
+            "description_snapshot": "R1 Repair Panel",
+            "notes": "",
+            "sales_rules_snapshot": [],
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "ISS029 R1 Snapshot Buyer",
+        "status_display": "草稿",
+        "total_amount": "10.00",
+        "root_quote_no": "SJ20261031DE001",
+        "revision_label": "Original",
+        "parent_quote_no": "",
+        "created_at": "2026-11-01T03:17:51.436600+08:00",
+        "updated_at": "2026-11-01T03:17:51.436623+08:00",
+        "quote_no": "SJ20261031DE001",
+        "revision_no": 0,
+        "revision_summary": "",
+        "buyer_company_name": "ISS029 R1 Snapshot Buyer",
+        "quote_date": "2026-10-31",
+        "valid_until": "2026-11-30",
+        "status": "draft",
+        "currency": "USD",
+        "exchange_rate": "7.200000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "recipient_name": "Version A Recipient",
+        "buyer_address": "Version A Berlin Address",
+        "buyer_email": "version-a@example.com",
+        "buyer_phone": "+49 222 A",
+        "lead_time_days": 10,
+        "deposit_ratio": "0.3000",
+        "trading_terms": "FOB Shenzhen",
+        "shipping_details": "",
+        "root_quote": null,
+        "parent_quote": null,
+        "customer": 1
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/quotes/",
+      "status": 400,
+      "body": {
+        "buyer_email": [
+          "请输入合法的邮件地址。"
+        ]
+      }
+    },
+    {
+      "method": "get",
+      "url": "/contacts/1/",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "customer_name": "ISS029 R1 Snapshot Buyer",
+        "created_at": "2026-11-01T03:14:36.889708+08:00",
+        "updated_at": "2026-11-01T03:14:36.889732+08:00",
+        "name": "Original Primary",
+        "title": "",
+        "email": "primary@example.com",
+        "phone": "+49 111",
+        "whatsapp": "",
+        "is_primary": true,
+        "notes": "",
+        "customer": 1
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/quotes/1/revise/",
+      "status": 201,
+      "body": {
+        "id": 2,
+        "items": [
+          {
+            "id": 2,
+            "sku": 2,
+            "sku_code": "ISS029-SKU",
+            "sales_model_snapshot": "SJ-029",
+            "model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name_snapshot": "R1 Repair Panel",
+            "unit": "pcs",
+            "image": "",
+            "quantity": "1.00",
+            "unit_price": "10.0000",
+            "amount": "10.00",
+            "description": "R1 Repair Panel",
+            "description_snapshot": "R1 Repair Panel",
+            "notes": "",
+            "sales_rules_snapshot": [],
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "ISS029 R1 Snapshot Buyer",
+        "status_display": "草稿",
+        "total_amount": "10.00",
+        "root_quote_no": "SJ20261031DE001",
+        "revision_label": "Revision 1",
+        "parent_quote_no": "SJ20261031DE001",
+        "created_at": "2026-11-01T03:17:53.432136+08:00",
+        "updated_at": "2026-11-01T03:17:53.432157+08:00",
+        "quote_no": "SJ20261031DE001-1",
+        "revision_no": 1,
+        "revision_summary": "ISS029 收件人改为版本 B，邮箱留空",
+        "buyer_company_name": "ISS029 R1 Snapshot Buyer",
+        "quote_date": "2026-10-31",
+        "valid_until": "2026-11-30",
+        "status": "draft",
+        "currency": "USD",
+        "exchange_rate": "7.200000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "recipient_name": "Version B Recipient",
+        "buyer_address": "Version B Berlin Address",
+        "buyer_email": "",
+        "buyer_phone": "+49 333 B",
+        "lead_time_days": 10,
+        "deposit_ratio": "0.3000",
+        "trading_terms": "FOB Shenzhen",
+        "shipping_details": "",
+        "root_quote": 1,
+        "parent_quote": 1,
+        "customer": 1
+      }
+    },
+    {
+      "method": "patch",
+      "url": "/contacts/1/",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "customer_name": "ISS029 R1 Snapshot Buyer",
+        "created_at": "2026-11-01T03:14:36.889708+08:00",
+        "updated_at": "2026-11-01T03:17:53.829702+08:00",
+        "name": "Changed Primary",
+        "title": "",
+        "email": "changed-master@example.com",
+        "phone": "+49 999",
+        "whatsapp": "",
+        "is_primary": true,
+        "notes": "",
+        "customer": 1
+      }
+    },
+    {
+      "method": "patch",
+      "url": "/customers/1/",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "contact_count": 1,
+        "order_count": 0,
+        "sales_amount": "0.00",
+        "country_display": "Germany",
+        "status_display": "商机",
+        "created_at": "2026-11-01T03:14:36.882737+08:00",
+        "updated_at": "2026-11-01T03:17:53.856321+08:00",
+        "name": "ISS029 R1 Snapshot Buyer",
+        "code": "R1-REPAIR-029-C",
+        "country": "Germany",
+        "region": "",
+        "source": "",
+        "status": "opportunity",
+        "owner": "",
+        "website": "",
+        "address": "Changed Current Master Address",
+        "notes": "",
+        "next_follow_up": null,
+        "owner_profile": null
+      }
+    },
+    {
+      "method": "get",
+      "url": "/quotes/1/",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "items": [
+          {
+            "id": 1,
+            "sku": 2,
+            "sku_code": "ISS029-SKU",
+            "sales_model_snapshot": "SJ-029",
+            "model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name_snapshot": "R1 Repair Panel",
+            "unit": "pcs",
+            "image": "",
+            "quantity": "1.00",
+            "unit_price": "10.0000",
+            "amount": "10.00",
+            "description": "R1 Repair Panel",
+            "description_snapshot": "R1 Repair Panel",
+            "notes": "",
+            "sales_rules_snapshot": [],
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "ISS029 R1 Snapshot Buyer",
+        "status_display": "已发送",
+        "total_amount": "10.00",
+        "root_quote_no": "SJ20261031DE001",
+        "revision_label": "Original",
+        "parent_quote_no": "",
+        "created_at": "2026-11-01T03:17:51.436600+08:00",
+        "updated_at": "2026-11-01T03:17:52.475618+08:00",
+        "quote_no": "SJ20261031DE001",
+        "revision_no": 0,
+        "revision_summary": "",
+        "buyer_company_name": "ISS029 R1 Snapshot Buyer",
+        "quote_date": "2026-10-31",
+        "valid_until": "2026-11-30",
+        "status": "sent",
+        "currency": "USD",
+        "exchange_rate": "7.200000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "recipient_name": "Version A Recipient",
+        "buyer_address": "Version A Berlin Address",
+        "buyer_email": "version-a@example.com",
+        "buyer_phone": "+49 222 A",
+        "lead_time_days": 10,
+        "deposit_ratio": "0.3000",
+        "trading_terms": "FOB Shenzhen",
+        "shipping_details": "",
+        "root_quote": null,
+        "parent_quote": null,
+        "customer": 1
+      }
+    },
+    {
+      "method": "get",
+      "url": "/quotes/1/pi-data/?buyer_email=unsaved@example.com",
+      "status": 200,
+      "body": {
+        "invoice_no": "SJ20261031DE001",
+        "buyer": {
+          "company_name": "ISS029 R1 Snapshot Buyer",
+          "name": "Version A Recipient",
+          "address": "Version A Berlin Address",
+          "email": "version-a@example.com",
+          "phone": "+49 222 A"
+        },
+        "terms": {
+          "quote_date": "2026-10-31",
+          "valid_until": "2026-11-30",
+          "lead_time_days": 10,
+          "trading_terms": "FOB Shenzhen",
+          "shipping_details": "",
+          "notes": ""
+        },
+        "totals": {
+          "currency": "USD",
+          "subtotal": "10.00",
+          "shipping_fee": "0.00",
+          "discount": "0.00",
+          "total_amount": "10.00"
+        },
+        "payment_splits": {
+          "deposit_ratio": "0.3000",
+          "deposit_amount": "3.00",
+          "balance_ratio": "0.7000",
+          "balance_amount": "7.00"
+        },
+        "products": [
+          {
+            "sku": "ISS029-SKU",
+            "sku_code": "ISS029-SKU",
+            "model": "SJ-029",
+            "sales_model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name": "R1 Repair Panel",
+            "description": "R1 Repair Panel",
+            "quantity": 1,
+            "base_quantity": 1,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "unit_price": "10.000000000000",
+            "amount": 10,
+            "unit": "pcs",
+            "image_url": ""
+          }
+        ]
+      }
+    },
+    {
+      "method": "get",
+      "url": "/quotes/2/",
+      "status": 200,
+      "body": {
+        "id": 2,
+        "items": [
+          {
+            "id": 2,
+            "sku": 2,
+            "sku_code": "ISS029-SKU",
+            "sales_model_snapshot": "SJ-029",
+            "model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name_snapshot": "R1 Repair Panel",
+            "unit": "pcs",
+            "image": "",
+            "quantity": "1.00",
+            "unit_price": "10.0000",
+            "amount": "10.00",
+            "description": "R1 Repair Panel",
+            "description_snapshot": "R1 Repair Panel",
+            "notes": "",
+            "sales_rules_snapshot": [],
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "ISS029 R1 Snapshot Buyer",
+        "status_display": "草稿",
+        "total_amount": "10.00",
+        "root_quote_no": "SJ20261031DE001",
+        "revision_label": "Revision 1",
+        "parent_quote_no": "SJ20261031DE001",
+        "created_at": "2026-11-01T03:17:53.432136+08:00",
+        "updated_at": "2026-11-01T03:17:53.432157+08:00",
+        "quote_no": "SJ20261031DE001-1",
+        "revision_no": 1,
+        "revision_summary": "ISS029 收件人改为版本 B，邮箱留空",
+        "buyer_company_name": "ISS029 R1 Snapshot Buyer",
+        "quote_date": "2026-10-31",
+        "valid_until": "2026-11-30",
+        "status": "draft",
+        "currency": "USD",
+        "exchange_rate": "7.200000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "recipient_name": "Version B Recipient",
+        "buyer_address": "Version B Berlin Address",
+        "buyer_email": "",
+        "buyer_phone": "+49 333 B",
+        "lead_time_days": 10,
+        "deposit_ratio": "0.3000",
+        "trading_terms": "FOB Shenzhen",
+        "shipping_details": "",
+        "root_quote": 1,
+        "parent_quote": 1,
+        "customer": 1
+      }
+    },
+    {
+      "method": "get",
+      "url": "/quotes/2/pi-data/?buyer_email=unsaved@example.com",
+      "status": 200,
+      "body": {
+        "invoice_no": "SJ20261031DE001-1",
+        "buyer": {
+          "company_name": "ISS029 R1 Snapshot Buyer",
+          "name": "Version B Recipient",
+          "address": "Version B Berlin Address",
+          "email": "",
+          "phone": "+49 333 B"
+        },
+        "terms": {
+          "quote_date": "2026-10-31",
+          "valid_until": "2026-11-30",
+          "lead_time_days": 10,
+          "trading_terms": "FOB Shenzhen",
+          "shipping_details": "",
+          "notes": ""
+        },
+        "totals": {
+          "currency": "USD",
+          "subtotal": "10.00",
+          "shipping_fee": "0.00",
+          "discount": "0.00",
+          "total_amount": "10.00"
+        },
+        "payment_splits": {
+          "deposit_ratio": "0.3000",
+          "deposit_amount": "3.00",
+          "balance_ratio": "0.7000",
+          "balance_amount": "7.00"
+        },
+        "products": [
+          {
+            "sku": "ISS029-SKU",
+            "sku_code": "ISS029-SKU",
+            "model": "SJ-029",
+            "sales_model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name": "R1 Repair Panel",
+            "description": "R1 Repair Panel",
+            "quantity": 1,
+            "base_quantity": 1,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "unit_price": "10.000000000000",
+            "amount": 10,
+            "unit": "pcs",
+            "image_url": ""
+          }
+        ]
+      }
+    },
+    {
+      "method": "get",
+      "url": "/quotes/2/pi-data/",
+      "status": 200,
+      "body": {
+        "invoice_no": "SJ20261031DE001-1",
+        "buyer": {
+          "company_name": "ISS029 R1 Snapshot Buyer",
+          "name": "Version B Recipient",
+          "address": "Version B Berlin Address",
+          "email": "",
+          "phone": "+49 333 B"
+        },
+        "terms": {
+          "quote_date": "2026-10-31",
+          "valid_until": "2026-11-30",
+          "lead_time_days": 10,
+          "trading_terms": "FOB Shenzhen",
+          "shipping_details": "",
+          "notes": ""
+        },
+        "totals": {
+          "currency": "USD",
+          "subtotal": "10.00",
+          "shipping_fee": "0.00",
+          "discount": "0.00",
+          "total_amount": "10.00"
+        },
+        "payment_splits": {
+          "deposit_ratio": "0.3000",
+          "deposit_amount": "3.00",
+          "balance_ratio": "0.7000",
+          "balance_amount": "7.00"
+        },
+        "products": [
+          {
+            "sku": "ISS029-SKU",
+            "sku_code": "ISS029-SKU",
+            "model": "SJ-029",
+            "sales_model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name": "R1 Repair Panel",
+            "description": "R1 Repair Panel",
+            "quantity": 1,
+            "base_quantity": 1,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "unit_price": "10.000000000000",
+            "amount": 10,
+            "unit": "pcs",
+            "image_url": ""
+          }
+        ]
+      }
+    }
+  ]
+}

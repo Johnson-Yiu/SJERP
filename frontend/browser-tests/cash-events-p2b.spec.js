@@ -141,7 +141,7 @@ test('changing a 30 allocation to 50 clears verification and requires a fresh pr
   await expect(page.locator('.preview-box')).toHaveCount(0)
   await expect(page.getByText('旧预览已失效')).toBeVisible()
   await page.getByRole('button', { name: '后端预览' }).click()
-  await expect(page.getByText('逐条核实')).toBeVisible()
+  await expect(page.getByRole('alert')).toHaveText('请逐条核实来源流水后再预览。')
   expect(previewCalls).toBe(1)
   await page.locator('.verification-toggle input').check()
   await page.getByRole('button', { name: '后端预览' }).click()

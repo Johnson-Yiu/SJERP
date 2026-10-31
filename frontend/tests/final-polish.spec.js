@@ -81,7 +81,9 @@ it('unsaved preview retains editing caption by default', () => {
 it('QuoteEditor opens an unsaved preview and retains inputs after closing', async () => {
   mocks.api.post.mockImplementation(async url => ({ data: url === '/quotes/availability-preview/' ? { items: [] } : [] }))
   const w = await setup(QuoteEditorModal, '/quotes', { mode: 'create', quote: { ...quote, customer: 1 }, customers: [{ id: 1, name: '当前客户' }], skus: [{ id: 4, sku: 'SKU-000004', unit: 'pcs', trade_units: [{ id: 4, name: '两件箱', unit: '箱', base_unit: 'pcs', factor: '2', active: true }] }] })
-  await button(w,'预览 PI')[0].trigger('click'); await flushPromises()
+  const previewButton = w.get('.quote-action-preview')
+  expect(previewButton.text()).toContain('预览报价单')
+  await previewButton.trigger('click'); await flushPromises()
   const preview = w.getComponent(QuotePreviewModal); expect(preview.props('saved')).toBe(false); expect(preview.text()).toContain('当前内容尚未保存 · 关闭后返回编辑'); expect(preview.props('draft').products[0]).toMatchObject({ quantity: '2.00', unit: '箱', amount: 20 })
   preview.vm.$emit('close'); await flushPromises(); expect(w.findComponent(QuotePreviewModal).exists()).toBe(false); expect(w.findAll('input').some(input => input.element.value === '2.00')).toBe(true); expect(mocks.api.post.mock.calls.some(([url]) => url === '/quotes/' || url.endsWith('/revise/'))).toBe(false)
 })

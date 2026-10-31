@@ -1,0 +1,96 @@
+{
+  "viewports": [
+    1440,
+    390
+  ],
+  "measurements": [
+    {
+      "scenario": "root-category-assignment-desktop",
+      "viewport": 1440,
+      "page": 1440,
+      "body": 1440
+    },
+    {
+      "scenario": "root-category-assignment-390",
+      "viewport": 390,
+      "page": 390,
+      "body": 390
+    },
+    {
+      "scenario": "category-filters-390",
+      "viewport": 390,
+      "page": 390,
+      "body": 390
+    },
+    {
+      "scenario": "inherited-attributes-1440",
+      "viewport": 1440,
+      "page": 1440,
+      "body": 1440,
+      "tree": {
+        "left": 282,
+        "top": 284,
+        "right": 602,
+        "bottom": 854,
+        "width": 320,
+        "height": 570
+      },
+      "config": {
+        "left": 616,
+        "top": 284,
+        "right": 1406,
+        "bottom": 854,
+        "width": 790,
+        "height": 570
+      },
+      "treeConfigOverlap": false
+    },
+    {
+      "scenario": "inherited-attributes-390",
+      "viewport": 390,
+      "page": 390,
+      "body": 390,
+      "tree": {
+        "left": 12,
+        "top": 417,
+        "right": 378,
+        "bottom": 742.390625,
+        "width": 366,
+        "height": 325.390625
+      },
+      "config": {
+        "left": 12,
+        "top": 756.390625,
+        "right": 378,
+        "bottom": 1556.125,
+        "width": 366,
+        "height": 799.734375
+      },
+      "treeConfigOverlap": false
+    },
+    {
+      "scenario": "template-change-390",
+      "viewport": 390,
+      "page": 390,
+      "body": 390,
+      "tree": {
+        "left": 12,
+        "top": 417,
+        "right": 378,
+        "bottom": 742.390625,
+        "width": 366,
+        "height": 325.390625
+      },
+      "config": {
+        "left": 12,
+        "top": 756.390625,
+        "right": 378,
+        "bottom": 1469.125,
+        "width": 366,
+        "height": 712.734375
+      },
+      "treeConfigOverlap": false
+    }
+  ],
+  "narrowSidebarDisposition": "Observed and retained; no global layout changes in this verification."
+}

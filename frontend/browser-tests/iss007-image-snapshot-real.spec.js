@@ -65,7 +65,7 @@ async function openQuotePreview(page, quoteId) {
   const workbench = page.getByRole('dialog', { name: '报价工作台' })
   await expect(workbench).toBeVisible()
   await workbench.getByRole('button', { name: '预览 PI' }).first().click()
-  const preview = page.getByRole('dialog', { name: '报价单预览' })
+  const preview = page.getByRole('dialog', { name: 'PI 预览' })
   await expect(preview).toBeVisible()
   return preview
 }

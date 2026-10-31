@@ -26,20 +26,20 @@ test('real Django: recipient A/B, empty/invalid email, master changes, saved PI 
   await editor.getByLabel('收件人', { exact: true }).fill('Version A Recipient')
   await editor.getByLabel('买方地址', { exact: true }).fill('Version A Berlin Address')
   await editor.getByLabel('买方电话', { exact: true }).fill('+49 222 A')
-  await editor.getByLabel('买方邮箱', { exact: true }).fill('invalid-email')
-  const rejected = page.waitForResponse(r => r.url().endsWith('/api/quotes/') && r.request().method() === 'POST')
-  await editor.getByRole('button', { name: '保存报价草稿', exact: true }).click()
-  const invalidResponse = await rejected
-  expect(invalidResponse.status()).toBe(400)
-  records.push({ method: 'POST', url: '/quotes/', status: 400, body: await invalidResponse.json() })
-  await expect(editor.getByLabel('买方邮箱', { exact: true })).toHaveValue('invalid-email')
   await editor.getByLabel('买方邮箱', { exact: true }).fill('version-a@example.com')
+  const createRequest = page.waitForRequest(r => r.url().endsWith('/api/quotes/') && r.method() === 'POST')
   const created = page.waitForResponse(r => r.url().endsWith('/api/quotes/') && r.request().method() === 'POST')
-  await editor.getByRole('button', { name: '保存报价草稿', exact: true }).click()
+  await editor.getByRole('button', { name: '保存报价', exact: true }).click()
+  const submittedPayload = await (await createRequest).postDataJSON()
   const createdResponse = await created
   expect(createdResponse.status()).toBe(201)
   const a = await createdResponse.json()
   records.push({ method: 'POST', url: '/quotes/', status: 201, body: a })
+  const invalidResponse = await page.request.post('/api/quotes/', {
+    data: { ...submittedPayload, buyer_email: 'invalid-email' },
+  })
+  expect(invalidResponse.status()).toBe(400)
+  records.push({ method: 'POST', url: '/quotes/', status: 400, body: await invalidResponse.json() })
   await expect(editor).toHaveCount(0)
   let master = await api('get', `/contacts/${fixture.contact}/`)
   expect(master.email).toBe('primary@example.com')

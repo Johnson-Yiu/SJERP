@@ -42,7 +42,7 @@ test('actual cash failure leaves the legacy dashboard available and retry is ind
   await expect(page.getByText('¥340.00', { exact: true }).first()).toBeVisible()
   await page.getByRole('button', { name: '重新加载', exact: true }).click()
   await page.waitForTimeout(250)
-  await expect(page.getByText('银行实际人民币资金')).toBeVisible()
+  await expect(page.getByRole('heading', { name: '银行实际人民币资金', exact: true })).toBeVisible()
   await expect(page.getByText('¥705.00', { exact: true }).first()).toBeVisible()
   expect(actualCalls).toBe(2)
 })

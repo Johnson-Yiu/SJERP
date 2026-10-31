@@ -184,6 +184,10 @@ test('only an existing browser test file can be selected; Playwright service and
 })
 
 test('only allowlisted real API suites receive fixed synthetic fixture seeds', () => {
+  assert.equal(path.basename(isolatedFixtureSeed('iss006-frontend-storage-chrome.spec.js').scriptPath), 'seed_iss006_frontend_storage_browser.py')
+  assert.equal(isolatedFixtureSeed('iss006-frontend-storage-chrome.spec.js').evidenceEnv, 'ISS006_STORAGE_EVIDENCE_DIR')
+  assert.equal(path.basename(isolatedFixtureSeed('iss007-attachment-real.spec.js').scriptPath), 'seed_isolated.py')
+  assert.equal(isolatedFixtureSeed('iss007-attachment-real.spec.js').evidenceEnv, 'ISS007_EVIDENCE_DIR')
   assert.equal(path.basename(isolatedFixtureSeed('iss007-image-snapshot-real.spec.js').scriptPath), 'seed_iss007_image_browser.py')
   assert.equal(isolatedFixtureSeed('iss007-image-snapshot-real.spec.js').evidenceEnv, 'ISS007_EVIDENCE_DIR')
   assert.equal(path.basename(isolatedFixtureSeed('iss022-moq-real.spec.js').scriptPath), 'seed_iss022_browser.py')
@@ -282,16 +286,24 @@ test('a real Vite /api proxy to the wrong database and MEDIA_ROOT is rejected be
   }
 })
 
-test('local browser entrypoint delegates server ownership to the isolation runner and preserves CI CLI webServer', async () => {
-  const [config, packageText] = await Promise.all([
+test('browser CI invokes the isolated suite and keeps run evidence under an isolated root', async () => {
+  const [config, packageText, workflow, suiteRunner] = await Promise.all([
     readFile(path.join(frontendRoot, 'playwright.config.js'), 'utf8'),
     readFile(path.join(frontendRoot, 'package.json'), 'utf8'),
+    readFile(path.join(frontendRoot, '..', '.github', 'workflows', 'ci.yml'), 'utf8'),
+    readFile(path.join(frontendRoot, 'scripts', 'run-playwright-suite-stability.mjs'), 'utf8'),
   ])
   const packageJson = JSON.parse(packageText)
   assert.match(config, /process\.env\.CI/)
   assert.match(config, /const webServer = usePlaywrightWebServer/)
   assert.match(config, /\.\.\.\(webServer \? \{ webServer \} : \{\}\)/)
   assert.match(packageJson.scripts['test:browser'], /run-playwright-suite-stability\.mjs/)
+  assert.ok(workflow.includes('run: npm run test:browser'))
+  assert.ok(workflow.includes('R1_PLAYWRIGHT_EVIDENCE_ROOT: ${{ github.workspace }}/docs/uat-evidence/ci-${{ github.run_id }}-${{ github.run_attempt }}'))
+  assert.equal((workflow.match(/pip install -r backend\/requirements\.lock/g) || []).length, 2)
+  assert.doesNotMatch(workflow, /pip install -r backend\/requirements\.txt/)
+  assert.doesNotMatch(workflow, /run:\s*npx playwright test/)
+  assert.match(suiteRunner, /process\.env\.R1_PLAYWRIGHT_EVIDENCE_ROOT/)
 })
 
 test('SQLite URL preserves an absolute platform path for Django parsing', () => {

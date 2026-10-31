@@ -85,9 +85,9 @@ test('quote editor actions stay readable at desktop and narrow widths and preser
 
   // Preview opens from the current draft and closing it preserves the selected line.
   await editor.getByRole('button', { name: '预览报价单', exact: true }).click()
-  const preview = page.getByRole('dialog', { name: '报价单预览' })
+  const preview = page.getByRole('dialog', { name: 'PI 预览' })
   await expect(preview).toBeVisible()
-  await expect(preview).toContainText('当前未保存内容')
+  await expect(preview).toContainText('当前内容尚未保存')
   await preview.getByRole('button', { name: '关闭预览', exact: true }).click()
   await expect(editor.locator('.quote-line-row')).toHaveCount(1)
 

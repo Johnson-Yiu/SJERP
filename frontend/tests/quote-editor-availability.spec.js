@@ -417,7 +417,9 @@ describe('QuoteEditorModal inventory reference', () => {
     const field=wrapper.findAll('.field').find(f=>f.find('label').text()==='对人民币汇率')
     expect(field.get('input').element.value).toBe('7.2')
     if(mode==='revise')await wrapper.get('.revision-summary textarea').setValue('UAT precision')
-    await wrapper.findAll('button').find(b=>b.text()==='保存报价草稿').trigger('click');await settle()
+    const saveButton=wrapper.get('.quote-action-save')
+    expect(saveButton.text()).toContain('保存报价')
+    await saveButton.trigger('click');await settle()
     const payload=mocks.api.post.mock.calls.find(([url])=>url===(mode==='revise'?'/quotes/44/revise/':'/quotes/'))[1]
     expect(Number(payload.exchange_rate)).toBe(Number(source.exchange_rate))
     expect(JSON.stringify(source)).toBe(raw)

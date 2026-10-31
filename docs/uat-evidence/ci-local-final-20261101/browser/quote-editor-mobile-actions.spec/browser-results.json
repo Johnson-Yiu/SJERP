@@ -1,0 +1,304 @@
+{
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+  "layouts": [
+    {
+      "viewport": 1440,
+      "footer": {
+        "x": 230,
+        "right": 1210,
+        "width": 980,
+        "scrollWidth": 980,
+        "clientWidth": 980
+      },
+      "actions": [
+        {
+          "className": "quote-action-cancel",
+          "text": "取消",
+          "x": 699.09375,
+          "y": 805,
+          "width": 62,
+          "height": 43,
+          "right": 761.09375,
+          "visible": true,
+          "textFits": true
+        },
+        {
+          "className": "quote-action-preview",
+          "text": "预览报价单",
+          "x": 769.09375,
+          "y": 805,
+          "width": 127,
+          "height": 43,
+          "right": 896.09375,
+          "visible": true,
+          "textFits": true
+        },
+        {
+          "className": "quote-action-save",
+          "text": "保存报价",
+          "x": 904.09375,
+          "y": 805,
+          "width": 111,
+          "height": 43,
+          "right": 1015.09375,
+          "visible": true,
+          "textFits": true
+        },
+        {
+          "className": "quote-action-save-export",
+          "text": "保存并导出 Excel",
+          "x": 1023.09375,
+          "y": 805,
+          "width": 164.90625,
+          "height": 43,
+          "right": 1188,
+          "visible": true,
+          "textFits": true
+        }
+      ]
+    },
+    {
+      "viewport": 1024,
+      "footer": {
+        "x": 24,
+        "right": 1000,
+        "width": 976,
+        "scrollWidth": 976,
+        "clientWidth": 976
+      },
+      "actions": [
+        {
+          "className": "quote-action-cancel",
+          "text": "取消",
+          "x": 489.09375,
+          "y": 805,
+          "width": 62,
+          "height": 43,
+          "right": 551.09375,
+          "visible": true,
+          "textFits": true
+        },
+        {
+          "className": "quote-action-preview",
+          "text": "预览报价单",
+          "x": 559.09375,
+          "y": 805,
+          "width": 127,
+          "height": 43,
+          "right": 686.09375,
+          "visible": true,
+          "textFits": true
+        },
+        {
+          "className": "quote-action-save",
+          "text": "保存报价",
+          "x": 694.09375,
+          "y": 805,
+          "width": 111,
+          "height": 43,
+          "right": 805.09375,
+          "visible": true,
+          "textFits": true
+        },
+        {
+          "className": "quote-action-save-export",
+          "text": "保存并导出 Excel",
+          "x": 813.09375,
+          "y": 805,
+          "width": 164.90625,
+          "height": 43,
+          "right": 978,
+          "visible": true,
+          "textFits": true
+        }
+      ]
+    },
+    {
+      "viewport": 390,
+      "footer": {
+        "x": 0,
+        "right": 390,
+        "width": 390,
+        "scrollWidth": 390,
+        "clientWidth": 390
+      },
+      "actions": [
+        {
+          "className": "quote-action-cancel",
+          "text": "取消",
+          "x": 12,
+          "y": 734,
+          "width": 179,
+          "height": 46,
+          "right": 191,
+          "visible": true,
+          "textFits": true
+        },
+        {
+          "className": "quote-action-preview",
+          "text": "预览报价单",
+          "x": 199,
+          "y": 734,
+          "width": 179,
+          "height": 46,
+          "right": 378,
+          "visible": true,
+          "textFits": true
+        },
+        {
+          "className": "quote-action-save",
+          "text": "保存报价",
+          "x": 12,
+          "y": 788,
+          "width": 366,
+          "height": 46,
+          "right": 378,
+          "visible": true,
+          "textFits": true
+        },
+        {
+          "className": "quote-action-save-export",
+          "text": "保存并导出 Excel",
+          "x": 12,
+          "y": 842,
+          "width": 366,
+          "height": 46,
+          "right": 378,
+          "visible": true,
+          "textFits": true
+        }
+      ]
+    },
+    {
+      "viewport": 320,
+      "footer": {
+        "x": 0,
+        "right": 320,
+        "width": 320,
+        "scrollWidth": 320,
+        "clientWidth": 320
+      },
+      "actions": [
+        {
+          "className": "quote-action-cancel",
+          "text": "取消",
+          "x": 12,
+          "y": 734,
+          "width": 144,
+          "height": 46,
+          "right": 156,
+          "visible": true,
+          "textFits": true
+        },
+        {
+          "className": "quote-action-preview",
+          "text": "预览报价单",
+          "x": 164,
+          "y": 734,
+          "width": 144,
+          "height": 46,
+          "right": 308,
+          "visible": true,
+          "textFits": true
+        },
+        {
+          "className": "quote-action-save",
+          "text": "保存报价",
+          "x": 12,
+          "y": 788,
+          "width": 296,
+          "height": 46,
+          "right": 308,
+          "visible": true,
+          "textFits": true
+        },
+        {
+          "className": "quote-action-save-export",
+          "text": "保存并导出 Excel",
+          "x": 12,
+          "y": 842,
+          "width": 296,
+          "height": 46,
+          "right": 308,
+          "visible": true,
+          "textFits": true
+        }
+      ]
+    }
+  ],
+  "preview": "opened and closed; draft line remained",
+  "save": {
+    "status": 201,
+    "id": 1,
+    "quote_no": "SJ20261031DE001"
+  },
+  "saveAndExport": {
+    "status": 201,
+    "id": 2,
+    "quote_no": "SJ20261031DE002",
+    "filename": "SJ20261031DE002.xlsx",
+    "downloadBytes": 10197
+  },
+  "apiResponses": [
+    {
+      "method": "GET",
+      "path": "/api/quotes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/quotes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/quotes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/quotes/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/quotes/availability-preview/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/quotes/",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/quotes/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/quotes/availability-preview/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/quotes/",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/quotes/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/quotes/2/workbench/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/quotes/2/export/",
+      "status": 200
+    }
+  ]
+}

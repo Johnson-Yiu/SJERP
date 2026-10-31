@@ -128,7 +128,7 @@ it('new Quote actual API save enters the returned Workbench', async () => {
   const editor = wrapper.findComponent(QuoteEditorModal)
   editor.findComponent({ name: 'SkuPickerPanel' }).vm.$emit('update:modelValue', ['1'])
   await flushPromises()
-  await editor.findAll('button').find(b => b.text() === '保存报价草稿').trigger('click')
+  await editor.get('.quote-action-save').trigger('click')
   await flushPromises()
   expect(mocks.api.post).toHaveBeenCalledWith('/quotes/', expect.objectContaining({ deposit_ratio: 0.3 }))
   expect(router.currentRoute.value.query).toMatchObject({ detail: '91', tab: 'overview', customer: '13', extra: 'keep' })
@@ -151,7 +151,7 @@ it.each([0, null, undefined])('Quote revision preserves zero lead time and defau
   expect(days.element.value).toBe(lead === 0 ? '0' : '10')
   expect(days.attributes('min')).toBe('0')
   await wrapper.get('[placeholder="例如：调整数量、价格、交期或付款条款"]').setValue('Focused zero day revision')
-  await wrapper.findAll('button').find(b => b.text() === '保存报价草稿').trigger('click'); await flushPromises()
+  await wrapper.get('.quote-action-save').trigger('click'); await flushPromises()
   expect(mocks.api.post).toHaveBeenCalledWith('/quotes/7/revise/', expect.objectContaining({ lead_time_days: lead === 0 ? 0 : 10 }))
 })
 it('fresh Direct Order loads a quote without unnecessary confirmation', async () => {

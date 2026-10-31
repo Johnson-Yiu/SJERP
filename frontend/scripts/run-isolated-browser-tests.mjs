@@ -401,6 +401,14 @@ export function isolatedFixtureSeed(businessTest) {
   const allowed = {
     'iss022-moq-real.spec.js': { seedFile: 'seed_iss022_browser.py', evidenceEnv: 'ISS022_EVIDENCE_DIR' },
     'iss075-payment-terms-real.spec.js': { seedFile: 'seed_iss075_browser.py', evidenceEnv: 'ISS075_EVIDENCE_DIR' },
+    'iss006-frontend-storage-chrome.spec.js': {
+      seedFile: 'seed_iss006_frontend_storage_browser.py',
+      evidenceEnv: 'ISS006_STORAGE_EVIDENCE_DIR',
+    },
+    'iss007-attachment-real.spec.js': {
+      seedFile: path.join('..', 'docs', 'uat-evidence', 'r1-pre-uat-iss007-attachment-flow', 'seed_isolated.py'),
+      evidenceEnv: 'ISS007_EVIDENCE_DIR',
+    },
     'iss007-image-snapshot-real.spec.js': { seedFile: 'seed_iss007_image_browser.py', evidenceEnv: 'ISS007_EVIDENCE_DIR' },
     'historical-orders-fix-02.spec.js': {
       seedFile: path.join('..', 'docs', 'uat-evidence', 'r1-repair-03-history-recipient-typography', 'prepare_evidence.py'),
@@ -509,7 +517,9 @@ async function main() {
       ISOLATED_VITE_PORT: String(vitePort),
       ISOLATED_PLAYWRIGHT_BASE_URL: baseURL,
       ISOLATED_PLAYWRIGHT_API_BASE_URL: `http://127.0.0.1:${apiPort}`,
+      ISS007_BASE_URL: baseURL,
       ISOLATED_PLAYWRIGHT_TEST_FILE: selection.businessTest || '',
+      PLAYWRIGHT_CHANNEL: selection.businessTest === 'iss028-035-category-schema.spec.js' ? 'chrome' : '',
       ISOLATED_PLAYWRIGHT_TEST_EXCLUDE: selection.businessSuite
         ? JSON.stringify([...new Set(['iss055-customer-404-real.spec.js', ...selection.excludedBusinessTests])])
         : '',
@@ -526,11 +536,13 @@ async function main() {
     const evidenceEnvironmentNames = [
       'EVIDENCE_DIR',
       'ISS008_FUP_01_EVIDENCE_DIR',
+      'ISS006_STORAGE_EVIDENCE_DIR',
       'ISS007_EVIDENCE_DIR',
       'ISS022_EVIDENCE_DIR',
       'ISS028_035_EVIDENCE_DIR',
       'ISS055_EVIDENCE_DIR',
       'ISS075_EVIDENCE_DIR',
+      'ISS052_HTTP_413_EVIDENCE_ROOT',
       'R1A_EVIDENCE_DIR',
       'R1_REPAIR_EVIDENCE_DIR',
       'R1_REPAIR_04_EVIDENCE_DIR',
@@ -553,6 +565,7 @@ async function main() {
       env.ISS028_035_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', 'iss028-035-category-schema')
     }
     env.ISS055_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', 'iss055-customer-404')
+    env.ISS052_HTTP_413_EVIDENCE_ROOT = path.join(evidenceRoot, 'browser', 'csv-upload-http-413')
 
     let apiServer
     let viteServer

@@ -19,7 +19,7 @@ test('sales copy names the draft, revision, PI and sales-order transitions expli
   assert.match(documentPage, /保存销售订单草稿/)
   assert.match(quoteEditor, /创建报价修订版/)
   assert.match(quoteEditor, /报价单草稿/)
-  assert.match(quoteEditor, /保存报价草稿/)
+  assert.match(quoteEditor, /保存报价/)
   assert.match(quoteDetail, /标记为客户已接受/)
   assert.match(quoteDetail, /当前报价不能转单，请先创建修订版。/)
   assert.match(quotePreview, /PI 预览/)

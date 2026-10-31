@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install backend dependencies
-        run: pip install -r backend/requirements.txt
+        run: pip install -r backend/requirements.lock
       - name: Django system check
         working-directory: backend
         run: python manage.py check
@@ -58,7 +58,7 @@ jobs:
       - name: Generate ephemeral CI secret
         run: echo "DJANGO_SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(48))')" >> "$GITHUB_ENV"
       - name: Install backend dependencies
-        run: pip install -r backend/requirements.txt
+        run: pip install -r backend/requirements.lock
       - name: Django system check
         working-directory: backend
         run: python manage.py check
@@ -96,9 +96,14 @@ jobs:
       - name: Install Chromium for layout regression
         working-directory: frontend
         run: npx playwright install --with-deps chromium
-      - name: Computed finance layout regression
+      - name: Install Chrome channel for ISS-028/035 regression
         working-directory: frontend
-        run: npx playwright test
+        run: npx playwright install --with-deps chrome
+      - name: Isolated Playwright regression suite
+        working-directory: frontend
+        env:
+          R1_PLAYWRIGHT_EVIDENCE_ROOT: ${{ github.workspace }}/docs/uat-evidence/ci-${{ github.run_id }}-${{ github.run_attempt }}
+        run: npm run test:browser
       - name: Frontend build
         working-directory: frontend
         run: npm run build

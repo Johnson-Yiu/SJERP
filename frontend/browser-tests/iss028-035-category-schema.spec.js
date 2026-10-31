@@ -282,7 +282,7 @@ test.describe('ISS-028 / ISS-035 分类模板与 SKU 历史边界', () => {
     console.log('ISS-035: reopened and refreshed category template in the browser.')
     const reopenedRule = page.locator('.attribute-table tbody tr').filter({ hasText: `电压${id}` }).locator('input[type="checkbox"]').nth(2)
     await expect(reopenedRule).toBeChecked()
-    await expect(page.getByText('已有已发布 SKU 参数方案的产品不会自动跟随模板变化', { exact: false })).toBeVisible()
+    await expect(page.getByText('已发布的方案不会随模板自动变化；如需更新，请到产品页分析后发布。', { exact: false })).toBeVisible()
     await page.setViewportSize({ width: 390, height: 844 })
     await expect(reopenedRule).toBeVisible()
     await expect(reopenedRule).toBeChecked()

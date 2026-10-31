@@ -6,7 +6,10 @@ import { fileURLToPath } from 'node:url'
 const scriptsRoot = path.dirname(fileURLToPath(import.meta.url))
 const frontendRoot = path.resolve(scriptsRoot, '..')
 const repositoryRoot = path.resolve(frontendRoot, '..')
-const reportRoot = path.join(repositoryRoot, 'docs', 'uat-evidence', 'r1-integration-iss006-052-ux-pw-auth')
+const defaultReportRoot = path.join(repositoryRoot, 'docs', 'uat-evidence', 'r1-integration-iss006-052-ux-pw-auth')
+const reportRoot = process.env.R1_PLAYWRIGHT_EVIDENCE_ROOT
+  ? path.resolve(process.env.R1_PLAYWRIGHT_EVIDENCE_ROOT)
+  : defaultReportRoot
 const logsRoot = path.join(reportRoot, 'logs')
 const runnerPath = path.join(scriptsRoot, 'run-isolated-browser-tests.mjs')
 
@@ -18,12 +21,18 @@ const runs = [
       '--exclude-business-test', 'iss022-moq-real.spec.js',
       '--exclude-business-test', 'iss028-035-category-schema.spec.js',
       '--exclude-business-test', 'iss055-customer-404-real.spec.js',
+      '--exclude-business-test', 'iss006-frontend-storage-chrome.spec.js',
+      '--exclude-business-test', 'iss007-attachment-real.spec.js',
+      '--exclude-business-test', 'iss007-image-snapshot-real.spec.js',
       '--exclude-business-test', 'shared-report-templates.spec.js',
       '--exclude-business-test', 'quote-editor-mobile-actions.spec.js',
     ],
   },
   { name: 'shared-report-templates-isolated', args: ['--business-test', 'shared-report-templates.spec.js'] },
   { name: 'quote-editor-isolated', args: ['--business-test', 'quote-editor-mobile-actions.spec.js'] },
+  { name: 'iss006-storage-isolated', args: ['--business-test', 'iss006-frontend-storage-chrome.spec.js'] },
+  { name: 'iss007-attachment-isolated', args: ['--business-test', 'iss007-attachment-real.spec.js'] },
+  { name: 'iss007-image-snapshot-isolated', args: ['--business-test', 'iss007-image-snapshot-real.spec.js'] },
   { name: 'iss022-isolated', args: ['--business-test', 'iss022-moq-real.spec.js'] },
   { name: 'iss028-035-isolated', args: ['--business-test', 'iss028-035-category-schema.spec.js'] },
   { name: 'iss055-rbac', args: ['--business-test', 'iss055-customer-404-real.spec.js'] },

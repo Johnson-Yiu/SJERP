@@ -161,10 +161,11 @@ describe('OrderDetailModal batch shipment', () => {
     await submitDialog()
 
     expect(shipmentPostCalls()).toHaveLength(1)
-    expect(shipmentPostCalls()[0][1]).toEqual({ request_key: expect.any(String), shipment_date: '2026-10-05', items: [
+    expect(shipmentPostCalls()[0][1]).toEqual({ shipment_date: '2026-10-05', items: [
       { order_item: 701, quantity: 2.5, trade_unit: null, overage_reason: '' },
       { order_item: 702, quantity: '4.00', trade_unit: null, overage_reason: '' },
     ] })
+    expect(shipmentPostCalls()[0][2]).toEqual({ headers: { 'Idempotency-Key': expect.any(String) } })
     expect(dialog()).toBeNull()
   })
 

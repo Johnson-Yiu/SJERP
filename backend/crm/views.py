@@ -13,6 +13,7 @@ from decimal import Decimal, InvalidOperation
 from urllib.request import urlopen
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models.deletion import ProtectedError
@@ -29,7 +30,7 @@ from rest_framework.exceptions import NotFound, ValidationError as DRFValidation
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, CSVImportBatch, CSVImportRowAudit, Customer, CustomerSupplierPreference, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseMOQException, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, CSVImportBatch, CSVImportPreviewAudit, CSVImportRowAudit, Customer, CustomerSupplierPreference, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseMOQException, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
 from .country_registry import CountryResolutionError, country_options as build_country_options, country_stored_values, display_country
 from .error_messages import CUSTOMER_NOT_FOUND_MESSAGE
 from .money import CURRENT_AMOUNT_CALCULATION_VERSION
@@ -3104,6 +3105,15 @@ class _ImportStateChanged(Exception):
     """The signed preview no longer describes the current database state."""
 
 
+class _ImportCSVReadFailure(ValueError):
+    """A file-level CSV failure with only a complete digest and reliable rows."""
+
+    def __init__(self, detail, *, file_sha256="", rows=None):
+        self.file_sha256 = file_sha256
+        self.rows = rows or []
+        super().__init__(detail)
+
+
 class _ImportAuditWriteFailure(Exception):
     """A row failed while the all-or-nothing import transaction was writing."""
 
@@ -3149,8 +3159,8 @@ def _import_audit_before_rows(entity, rows):
 
 
 def _import_audit_gate(request):
-    user = getattr(request, "user", None)
-    if not user or not user.is_authenticated:
+    user = _import_audit_operator(request)
+    if user is None:
         return Response(
             {"detail": "正式导入需要已认证的操作人；当前开发身份不能作为审计操作人。"},
             status=status.HTTP_403_FORBIDDEN,
@@ -3163,10 +3173,133 @@ def _import_audit_gate(request):
     return None
 
 
-def _persist_import_failure(*, request, entity, digest, rows, reason, errors=None, before_rows=None):
-    before_rows = before_rows if before_rows is not None else _import_audit_before_rows(entity, rows)
+def _import_audit_operator(request):
+    user = getattr(request, "user", None)
+    if not user or not getattr(user, "is_authenticated", False):
+        return None
+    if not getattr(user, "pk", None) or getattr(getattr(user, "_state", None), "adding", True):
+        return None
+    user_model = get_user_model()
+    if not isinstance(user, user_model):
+        return None
+    try:
+        if not user_model._default_manager.filter(pk=user.pk).exists():
+            return None
+    except Exception:
+        return None
+    return user
+
+
+def _import_retry_batch(request, entity):
+    retry_id = request.data.get("retry_of_batch_id")
+    if not retry_id or not settings.AUDIT_LOG_ENABLED or not isinstance(entity, str):
+        return None, None
+    operator = _import_audit_operator(request)
+    if operator is None:
+        return None, None
+    try:
+        retry_id = int(retry_id)
+    except (TypeError, ValueError):
+        return None, "无法关联失败批次，请重新预览。"
+    batch = CSVImportBatch.objects.filter(
+        pk=retry_id,
+        entity=entity,
+        status="failed",
+        operator=operator,
+    ).first()
+    if batch is None:
+        return None, "无法关联失败批次，请重新预览。"
+    return batch, None
+
+
+def _persist_import_preview(*, request, entity, digest, rows, outcome, errors=None, reason="", retry_of_batch=None):
+    if not settings.AUDIT_LOG_ENABLED:
+        return None
+    operator = _import_audit_operator(request)
+    with transaction.atomic():
+        preview = CSVImportPreviewAudit.objects.create(
+            entity=entity if isinstance(entity, str) else "",
+            file_sha256=digest,
+            operator=operator,
+            retry_of_batch=retry_of_batch,
+            endpoint=getattr(request, "path", "")[:120],
+            status=outcome,
+            total_rows=len(rows),
+            validation_errors=errors or [],
+            failure_reason=reason,
+        )
+        if operator is not None:
+            retry_metadata = {"retry_of_batch_id": retry_of_batch.pk} if retry_of_batch else {}
+            record_operation(
+                request=request,
+                instance=preview,
+                action="custom",
+                action_label="CSV 导入预览" if outcome == "ready" else "CSV 导入预览未通过",
+                after=snapshot(preview),
+                metadata={
+                    "csv_import_preview_id": str(preview.preview_id),
+                    "entity": preview.entity,
+                    "status": preview.status,
+                    **retry_metadata,
+                },
+            )
+    return preview
+
+
+def _import_preview_failure_response(*, request, entity, failure, retry_of_batch=None):
+    preview = None
+    try:
+        preview = _persist_import_preview(
+            request=request,
+            entity=entity,
+            digest=failure.file_sha256,
+            rows=failure.rows,
+            outcome="failed",
+            reason=str(failure),
+            retry_of_batch=retry_of_batch,
+        )
+    except Exception:
+        return Response(
+            {"detail": "CSV 预览失败，审计记录未能保存。"},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
+    payload = {"detail": str(failure)}
+    if preview is not None:
+        payload["preview_audit_id"] = str(preview.preview_id)
+    return Response(payload, status=status.HTTP_400_BAD_REQUEST)
+
+
+def _import_preview_from_token(token, entity):
+    if not token or not isinstance(entity, str):
+        return None
+    try:
+        signed = signing.loads(token, salt=IMPORT_PREVIEW_SALT)
+        preview_id = signed.get("preview_id")
+    except (signing.BadSignature, AttributeError, TypeError):
+        return None
+    if not preview_id:
+        return None
+    try:
+        preview = CSVImportPreviewAudit.objects.get(preview_id=preview_id, entity=entity)
+    except (CSVImportPreviewAudit.DoesNotExist, ValueError, TypeError):
+        return None
+    if signed.get("sha256") != preview.file_sha256:
+        return None
+    return preview
+
+
+def _previous_import_batch(preview):
+    if preview is None:
+        return None
+    return preview.batches.order_by("-created_at", "-pk").first()
+
+
+def _persist_import_failure(*, request, entity, digest, rows, reason, errors=None, before_rows=None, preview=None):
+    if before_rows is None:
+        before_rows = _import_audit_before_rows(entity, rows) if rows and entity in IMPORT_KEY_FIELDS else []
     by_row = {item["row_number"]: item for item in before_rows}
     error_by_row = {item["row"]: item["message"] for item in (errors or [])}
+    previous_attempt = _previous_import_batch(preview)
     batch_uuid = uuid.uuid4()
     with transaction.atomic():
         batch = CSVImportBatch.objects.create(
@@ -3174,6 +3307,7 @@ def _persist_import_failure(*, request, entity, digest, rows, reason, errors=Non
             entity=entity,
             file_sha256=digest,
             operator=request.user,
+            preview=preview,
             status="failed",
             total_rows=len(rows),
             failed_rows=len(rows),
@@ -3185,7 +3319,13 @@ def _persist_import_failure(*, request, entity, digest, rows, reason, errors=Non
             action="custom",
             action_label="CSV 导入失败",
             after=snapshot(batch),
-            metadata={"csv_import_batch_id": str(batch_uuid), "entity": entity},
+            metadata={
+                "csv_import_batch_id": str(batch_uuid),
+                "entity": entity,
+                **({"csv_import_preview_id": str(preview.preview_id)} if preview else {}),
+                **({"previous_attempt_batch_id": previous_attempt.pk} if previous_attempt else {}),
+                **({"retry_of_batch_id": preview.retry_of_batch_id} if preview and preview.retry_of_batch_id else {}),
+            },
         )
         for row_number, row in enumerate(rows, start=2):
             before = by_row.get(row_number, {}).get("before_data", {})
@@ -3203,7 +3343,7 @@ def _persist_import_failure(*, request, entity, digest, rows, reason, errors=Non
     return batch
 
 
-def _import_failure_response(*, request, entity, digest, rows, detail, errors=None, before_rows=None):
+def _import_failure_response(*, request, entity, digest, rows, detail, errors=None, before_rows=None, preview=None):
     try:
         batch = _persist_import_failure(
             request=request,
@@ -3213,6 +3353,7 @@ def _import_failure_response(*, request, entity, digest, rows, detail, errors=No
             reason=detail,
             errors=errors,
             before_rows=before_rows,
+            preview=preview,
         )
     except Exception:
         # A business write is never reported as complete when its audit cannot
@@ -3223,6 +3364,8 @@ def _import_failure_response(*, request, entity, digest, rows, detail, errors=No
             status=status.HTTP_503_SERVICE_UNAVAILABLE,
         )
     payload = {"detail": detail, "import_batch_id": str(batch.batch_id)}
+    if preview is not None:
+        payload["preview_audit_id"] = str(preview.preview_id)
     if errors:
         payload["errors"] = errors
     return Response(payload, status=status.HTTP_400_BAD_REQUEST)
@@ -3254,13 +3397,15 @@ def _apply_import_rows_with_audit(entity, rows, user, before_rows):
     return created, updated, row_records
 
 
-def _persist_import_success(*, request, entity, digest, rows, created, updated, row_records):
+def _persist_import_success(*, request, entity, digest, rows, created, updated, row_records, preview):
+    previous_attempt = _previous_import_batch(preview)
     batch_uuid = uuid.uuid4()
     batch = CSVImportBatch.objects.create(
         batch_id=batch_uuid,
         entity=entity,
         file_sha256=digest,
         operator=request.user,
+        preview=preview,
         status="succeeded",
         total_rows=len(rows),
         created_rows=created,
@@ -3272,7 +3417,13 @@ def _persist_import_success(*, request, entity, digest, rows, created, updated, 
         action="custom",
         action_label="CSV 导入完成",
         after=snapshot(batch),
-        metadata={"csv_import_batch_id": str(batch_uuid), "entity": entity},
+        metadata={
+            "csv_import_batch_id": str(batch_uuid),
+            "entity": entity,
+            "csv_import_preview_id": str(preview.preview_id),
+            **({"previous_attempt_batch_id": previous_attempt.pk} if previous_attempt else {}),
+            **({"retry_of_batch_id": preview.retry_of_batch_id} if preview.retry_of_batch_id else {}),
+        },
     )
     for item in row_records:
         row_audit = CSVImportRowAudit.objects.create(
@@ -3320,16 +3471,51 @@ def import_csv_preview(request):
 
 def _import_csv_preview_request(request):
     entity = request.data.get("entity")
+    retry_of_batch, retry_error = _import_retry_batch(request, entity)
+    if retry_error:
+        return Response({"detail": retry_error}, status=status.HTTP_400_BAD_REQUEST)
     upload = request.FILES.get("file")
     try:
         rows, digest = _read_import_csv(entity, upload)
-    except ValueError as exc:
-        return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+    except _ImportCSVReadFailure as exc:
+        return _import_preview_failure_response(
+            request=request,
+            entity=entity,
+            failure=exc,
+            retry_of_batch=retry_of_batch,
+        )
     preview_state = _import_state(entity, rows)
-    preview = _preview_import(entity, rows, user=request.user)
-    if not preview["errors"]:
-        preview["preview_token"] = signing.dumps({"entity": entity, "sha256": digest, "state": preview_state}, salt=IMPORT_PREVIEW_SALT)
-    return Response(preview)
+    result = _preview_import(entity, rows, user=request.user)
+    outcome = "invalid" if result["errors"] else "ready"
+    try:
+        preview_audit = _persist_import_preview(
+            request=request,
+            entity=entity,
+            digest=digest,
+            rows=rows,
+            outcome=outcome,
+            errors=result["errors"],
+            reason="预览校验未通过。" if result["errors"] else "",
+            retry_of_batch=retry_of_batch,
+        )
+    except Exception:
+        return Response(
+            {"detail": "CSV 预览失败，审计记录未能保存。"},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
+    if not result["errors"]:
+        result["preview_token"] = signing.dumps(
+            {
+                "entity": entity,
+                "sha256": digest,
+                "state": preview_state,
+                "preview_id": str(preview_audit.preview_id) if preview_audit else None,
+            },
+            salt=IMPORT_PREVIEW_SALT,
+        )
+    if preview_audit is not None:
+        result["preview_audit_id"] = str(preview_audit.preview_id)
+    return Response(result)
 
 
 @api_view(["POST"])
@@ -3341,33 +3527,57 @@ def import_csv_execute(request):
     entity = request.data.get("entity")
     upload = request.FILES.get("file")
     token = request.data.get("preview_token")
+    preview_audit = _import_preview_from_token(token, entity)
     rows = []
     digest = ""
     try:
         rows, digest = _read_import_csv(entity, upload)
-    except ValueError as exc:
-        return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+    except _ImportCSVReadFailure as exc:
+        if not isinstance(entity, str) or (entity not in IMPORT_FIELDS and entity != "orders"):
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        return _import_failure_response(
+            request=request,
+            entity=entity,
+            digest=exc.file_sha256,
+            rows=exc.rows,
+            detail=str(exc),
+            preview=preview_audit,
+        )
     try:
         signed = signing.loads(token or "", salt=IMPORT_PREVIEW_SALT, max_age=IMPORT_PREVIEW_MAX_AGE_SECONDS)
     except signing.SignatureExpired:
         return _import_failure_response(
             request=request, entity=entity, digest=digest, rows=rows,
             detail="预览已过期，请重新预览后再导入。",
+            preview=preview_audit,
         )
     except signing.BadSignature:
         return _import_failure_response(
             request=request, entity=entity, digest=digest, rows=rows,
             detail="预览凭证无效，请重新预览后再导入。",
+            preview=preview_audit,
+        )
+    if (
+        preview_audit is None
+        or signed.get("preview_id") != str(preview_audit.preview_id)
+        or preview_audit.status != "ready"
+    ):
+        return _import_failure_response(
+            request=request, entity=entity, digest=digest, rows=rows,
+            detail="预览记录不存在或已失效，请重新预览后再导入。",
+            preview=preview_audit,
         )
     if signed.get("entity") != entity or signed.get("sha256") != digest:
         return _import_failure_response(
             request=request, entity=entity, digest=digest, rows=rows,
             detail="文件或数据类型已变化，请重新预览后再导入。",
+            preview=preview_audit,
         )
     if signed.get("state") != _import_state(entity, rows):
         return _import_failure_response(
             request=request, entity=entity, digest=digest, rows=rows,
             detail="数据状态已发生变化，请重新预览后再导入。",
+            preview=preview_audit,
         )
 
     # Run the exact write path once in a transaction that is rolled back. This
@@ -3377,6 +3587,7 @@ def import_csv_execute(request):
         return _import_failure_response(
             request=request, entity=entity, digest=digest, rows=rows,
             detail="数据状态已变化，请重新预览后再导入。", errors=validation["errors"],
+            preview=preview_audit,
         )
     before_rows = []
     try:
@@ -3393,11 +3604,13 @@ def import_csv_execute(request):
                 created=created,
                 updated=updated,
                 row_records=row_records,
+                preview=preview_audit,
             )
     except _ImportStateChanged as exc:
         return _import_failure_response(
             request=request, entity=entity, digest=digest, rows=rows,
             detail=str(exc), before_rows=before_rows,
+            preview=preview_audit,
         )
     except _ImportAuditWriteFailure as exc:
         return _import_failure_response(
@@ -3405,6 +3618,7 @@ def import_csv_execute(request):
             detail="数据状态已变化，请重新预览后再导入。",
             errors=[{"row": exc.row_number, "message": exc.message, "key": rows[exc.row_number - 2].get(IMPORT_KEY_FIELDS[entity], "")}],
             before_rows=before_rows,
+            preview=preview_audit,
         )
     except Exception as exc:
         return _import_failure_response(
@@ -3412,8 +3626,15 @@ def import_csv_execute(request):
             detail="数据状态已变化，请重新预览后再导入。",
             errors=[{"row": before_rows[0]["row_number"] if before_rows else 2, "message": _import_error_message(exc), "key": rows[0].get(IMPORT_KEY_FIELDS[entity], "") if rows else ""}],
             before_rows=before_rows,
+            preview=preview_audit,
         )
-    return Response({"total": len(rows), "created": created, "updated": updated, "import_batch_id": str(batch.batch_id)})
+    return Response({
+        "total": len(rows),
+        "created": created,
+        "updated": updated,
+        "import_batch_id": str(batch.batch_id),
+        "preview_audit_id": str(preview_audit.preview_id),
+    })
 
 
 def _import_state(entity, rows, lock=False):
@@ -3439,38 +3660,58 @@ def _import_state(entity, rows, lock=False):
 
 
 def _read_import_csv(entity, upload):
+    if not isinstance(entity, str):
+        raise _ImportCSVReadFailure("请选择有效的数据类型和 CSV 文件。")
     if entity == "orders":
-        raise ValueError(ORDER_IMPORT_DISABLED_MESSAGE)
-    if entity not in IMPORT_FIELDS or not upload:
-        raise ValueError("请选择有效的数据类型和 CSV 文件。")
-    raw = upload.read()
+        raise _ImportCSVReadFailure(ORDER_IMPORT_DISABLED_MESSAGE)
+    if entity not in IMPORT_FIELDS:
+        raise _ImportCSVReadFailure("请选择有效的数据类型和 CSV 文件。")
+    if not upload:
+        raise _ImportCSVReadFailure("请选择有效的数据类型和 CSV 文件。")
+    try:
+        raw = upload.read()
+    except Exception as exc:
+        raise _ImportCSVReadFailure("CSV 文件读取失败，请重新选择文件。") from exc
+    digest = hashlib.sha256(raw).hexdigest()
     if not raw:
-        raise ValueError("CSV 文件为空。")
+        raise _ImportCSVReadFailure("CSV 文件为空。", file_sha256=digest)
     try:
         text = raw.decode("utf-8-sig")
         reader = csv.DictReader(io.StringIO(text))
         if not reader.fieldnames:
-            raise ValueError("CSV 缺少表头。")
+            raise _ImportCSVReadFailure("CSV 缺少表头。", file_sha256=digest)
         headers = {str(field or "").strip() for field in reader.fieldnames}
         missing = IMPORT_REQUIRED_FIELDS[entity] - headers
         if missing:
-            raise ValueError(f"CSV 缺少必要字段：{'、'.join(sorted(missing))}。")
+            raise _ImportCSVReadFailure(
+                f"CSV 缺少必要字段：{'、'.join(sorted(missing))}。",
+                file_sha256=digest,
+            )
         rows = [{str(key or "").strip(): (value or "").strip() for key, value in row.items()} for row in reader]
+    except _ImportCSVReadFailure:
+        raise
     except UnicodeDecodeError as exc:
-        raise ValueError("CSV 文件无法读取，请使用 UTF-8 或 UTF-8 BOM 编码。") from exc
+        raise _ImportCSVReadFailure(
+            "CSV 文件无法读取，请使用 UTF-8 或 UTF-8 BOM 编码。",
+            file_sha256=digest,
+        ) from exc
     except csv.Error as exc:
-        raise ValueError("CSV 文件格式无效。") from exc
+        raise _ImportCSVReadFailure("CSV 文件格式无效。", file_sha256=digest) from exc
     if not rows:
-        raise ValueError("CSV 没有数据行。")
+        raise _ImportCSVReadFailure("CSV 没有数据行。", file_sha256=digest)
     if len(rows) > 5000:
-        raise ValueError("CSV 最多允许 5000 行数据。")
+        raise _ImportCSVReadFailure(
+            "CSV 最多允许 5000 行数据。",
+            file_sha256=digest,
+            rows=rows,
+        )
     key = IMPORT_KEY_FIELDS[entity]
     duplicates = _duplicate_key_errors(rows, key)
     if duplicates:
         # File-level duplicate errors are returned by the preview with row data.
         for row, message in duplicates:
             rows[row - 2]["__import_error__"] = message
-    return rows, hashlib.sha256(raw).hexdigest()
+    return rows, digest
 
 
 def _duplicate_key_errors(rows, key):

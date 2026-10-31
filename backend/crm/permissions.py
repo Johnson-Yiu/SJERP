@@ -56,6 +56,7 @@ OPERATION_ENTITY_MODULES = {
     "crm.rolepermission": "permissions", "crm.sharedreporttemplate": "reports",
     "crm.customersupplierpreference": "suppliers",
     "crm.csvimportbatch": "imports",
+    "crm.csvimportpreviewaudit": "imports",
 }
 
 

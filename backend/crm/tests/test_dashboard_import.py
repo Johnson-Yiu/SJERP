@@ -49,12 +49,12 @@ class DashboardImportTests(TestCase):
         writer.writerow(headers)
         writer.writerows(rows)
         content = buffer.getvalue().encode("utf-8")
-        preview = self.client.post("/api/import/csv/preview/", {
-            "entity": entity, "file": SimpleUploadedFile("import.csv", content, content_type="text/csv"),
-        }, format="multipart")
-        if preview.status_code != 200 or preview.data["errors"]:
-            return preview
         with override_settings(AUDIT_LOG_ENABLED=True):
+            preview = self.client.post("/api/import/csv/preview/", {
+                "entity": entity, "file": SimpleUploadedFile("import.csv", content, content_type="text/csv"),
+            }, format="multipart")
+            if preview.status_code != 200 or preview.data["errors"]:
+                return preview
             return self.client.post("/api/import/csv/execute/", {
                 "entity": entity, "preview_token": preview.data["preview_token"],
                 "file": SimpleUploadedFile("import.csv", content, content_type="text/csv"),

@@ -9,7 +9,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from rest_framework.test import APIClient
 
-from crm.models import CSVImportBatch, CSVImportRowAudit, Customer, OperationLog, Product, SKU, Transaction
+from crm.models import CSVImportBatch, CSVImportPreviewAudit, CSVImportRowAudit, Customer, OperationLog, Product, SKU, Transaction
 from crm.views import _import_row
 
 
@@ -31,11 +31,12 @@ class SafeCsvImportTests(TestCase):
         writer.writerows(rows)
         return output.getvalue().encode("utf-8")
 
-    def preview(self, entity, headers, rows):
+    def preview(self, entity, headers, rows, retry_of_batch_id=None):
         content = self.content(headers, rows)
-        response = self.client.post("/api/import/csv/preview/", {
-            "entity": entity, "file": SimpleUploadedFile("test.csv", content, content_type="text/csv"),
-        }, format="multipart")
+        data = {"entity": entity, "file": SimpleUploadedFile("test.csv", content, content_type="text/csv")}
+        if retry_of_batch_id is not None:
+            data["retry_of_batch_id"] = str(retry_of_batch_id)
+        response = self.client.post("/api/import/csv/preview/", data, format="multipart")
         return response, content
 
     def execute(self, entity, content, token):
@@ -123,6 +124,10 @@ class SafeCsvImportTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual([item["row"] for item in response.data["errors"]], [6, 7])
         self.assertEqual(Customer.objects.count(), 0)
+        self.assertFalse(CSVImportBatch.objects.exists())
+        preview = CSVImportPreviewAudit.objects.get(preview_id=response.data["preview_audit_id"])
+        self.assertEqual(preview.status, "invalid")
+        self.assertEqual([item["row"] for item in preview.validation_errors], [6, 7])
 
     def test_missing_sku_product_returns_stable_api_message(self):
         response, _ = self.preview(
@@ -159,6 +164,155 @@ class SafeCsvImportTests(TestCase):
         self.assertEqual(batch.rows.count(), 5)
         self.assertTrue(batch.rows.filter(result="failed", error_message__contains="unexpected write failure").exists())
 
+    def test_parse_failures_are_audited_without_inventing_rows_or_hashes(self):
+        preview, valid_content = self.preview("customers", ["code", "name"], [["PARSE-C", "Valid"]])
+        preview_audit = CSVImportPreviewAudit.objects.get(preview_id=preview.data["preview_audit_id"])
+        self.assertEqual(preview_audit.status, "ready")
+
+        malformed_files = [
+            (b"", "CSV 文件为空。"),
+            (b"\xff\xfe\xff", "CSV 文件无法读取，请使用 UTF-8 或 UTF-8 BOM 编码。"),
+            (b"\n", "CSV 缺少表头。"),
+            (b"name\nBuyer\n", "CSV 缺少必要字段：code。"),
+            (b"code,name\n", "CSV 没有数据行。"),
+        ]
+        for index, (content, expected_reason) in enumerate(malformed_files):
+            with self.subTest(expected_reason=expected_reason):
+                response = self.execute("customers", content, preview.data["preview_token"])
+                self.assertEqual(response.status_code, 400, response.data)
+                batch = CSVImportBatch.objects.get(batch_id=response.data["import_batch_id"])
+                self.assertEqual(batch.operator_id, self.operator.pk)
+                self.assertEqual(batch.preview_id, preview_audit.pk)
+                self.assertEqual(batch.status, "failed")
+                self.assertEqual(batch.failure_reason, expected_reason)
+                self.assertEqual(batch.file_sha256, hashlib.sha256(content).hexdigest())
+                self.assertEqual((batch.total_rows, batch.failed_rows, batch.rows.count()), (0, 0, 0))
+                self.assertFalse(Customer.objects.exists())
+                self.assertTrue(OperationLog.objects.filter(
+                    entity="crm.csvimportbatch",
+                    object_id=str(batch.pk),
+                    action_label="CSV 导入失败",
+                    operator=self.operator,
+                ).exists())
+
+                preview_response = self.client.post("/api/import/csv/preview/", {
+                    "entity": "customers",
+                    "file": SimpleUploadedFile(f"bad-{index}.csv", content, content_type="text/csv"),
+                }, format="multipart")
+                self.assertEqual(preview_response.status_code, 400)
+                self.assertNotIn("import_batch_id", preview_response.data)
+                parse_preview = CSVImportPreviewAudit.objects.get(preview_id=preview_response.data["preview_audit_id"])
+                self.assertEqual(parse_preview.status, "failed")
+                self.assertEqual(parse_preview.failure_reason, expected_reason)
+                self.assertEqual(parse_preview.file_sha256, hashlib.sha256(content).hexdigest())
+                self.assertEqual(parse_preview.total_rows, 0)
+                self.assertEqual(CSVImportBatch.objects.filter(status="failed").count(), index + 1)
+
+    def test_failure_repreview_retry_is_linked_and_history_is_not_overwritten(self):
+        customer = Customer.objects.create(code="RETRY-C", name="Original")
+        first_preview, content = self.preview("customers", ["code", "name"], [["RETRY-C", "Imported"]])
+        first_preview_audit = CSVImportPreviewAudit.objects.get(preview_id=first_preview.data["preview_audit_id"])
+
+        customer.name = "Concurrent update"
+        customer.save()
+        failed_response = self.execute("customers", content, first_preview.data["preview_token"])
+        self.assertEqual(failed_response.status_code, 400)
+        failed_batch = CSVImportBatch.objects.get(batch_id=failed_response.data["import_batch_id"])
+        self.assertEqual(failed_batch.preview_id, first_preview_audit.pk)
+        failed_row = failed_batch.rows.get(row_number=2)
+        self.assertEqual(failed_row.result, "failed")
+        self.assertIn("数据状态已发生变化", failed_row.error_message)
+
+        retry_preview, retry_content = self.preview(
+            "customers", ["code", "name"], [["RETRY-C", "Imported"]], retry_of_batch_id=failed_batch.pk,
+        )
+        retry_preview_audit = CSVImportPreviewAudit.objects.get(preview_id=retry_preview.data["preview_audit_id"])
+        self.assertEqual(retry_preview_audit.retry_of_batch_id, failed_batch.pk)
+        success_response = self.execute("customers", retry_content, retry_preview.data["preview_token"])
+        self.assertEqual(success_response.status_code, 200, success_response.data)
+        success_batch = CSVImportBatch.objects.get(batch_id=success_response.data["import_batch_id"])
+        self.assertEqual(success_batch.preview_id, retry_preview_audit.pk)
+        self.assertNotEqual(success_batch.pk, failed_batch.pk)
+        self.assertEqual(success_batch.status, "succeeded")
+        self.assertEqual(CSVImportBatch.objects.filter(entity="customers").count(), 2)
+        failed_batch.refresh_from_db()
+        self.assertEqual(failed_batch.status, "failed")
+        self.assertTrue(failed_batch.rows.filter(pk=failed_row.pk, result="failed").exists())
+        customer.refresh_from_db()
+        self.assertEqual(customer.name, "Imported")
+        retry_operation = OperationLog.objects.get(
+            entity="crm.csvimportbatch", object_id=str(success_batch.pk), action_label="CSV 导入完成",
+        )
+        self.assertEqual(retry_operation.metadata["csv_import_preview_id"], str(retry_preview_audit.preview_id))
+        self.assertEqual(retry_operation.metadata["retry_of_batch_id"], failed_batch.pk)
+
+    def test_missing_upload_failure_does_not_claim_a_file_digest(self):
+        preview, _ = self.preview("customers", ["code", "name"], [["NO-FILE-C", "No file"]])
+        response = self.client.post("/api/import/csv/execute/", {
+            "entity": "customers",
+            "preview_token": preview.data["preview_token"],
+        }, format="multipart")
+        self.assertEqual(response.status_code, 400, response.data)
+        batch = CSVImportBatch.objects.get(batch_id=response.data["import_batch_id"])
+        self.assertEqual(batch.file_sha256, "")
+        self.assertEqual(batch.failure_reason, "请选择有效的数据类型和 CSV 文件。")
+        self.assertEqual(batch.rows.count(), 0)
+        self.assertEqual(batch.operator_id, self.operator.pk)
+
+    def test_audit_write_failure_rolls_back_business_and_success_audits(self):
+        preview, content = self.preview("customers", ["code", "name"], [["ROLLBACK-C", "Must rollback"]])
+        original_record_operation = __import__("crm.audit", fromlist=["record_operation"]).record_operation
+
+        def fail_row_audit(**kwargs):
+            if kwargs.get("action_label") == "CSV 导入创建":
+                raise RuntimeError("row audit write failed")
+            return original_record_operation(**kwargs)
+
+        with patch("crm.views.record_operation", side_effect=fail_row_audit):
+            response = self.execute("customers", content, preview.data["preview_token"])
+
+        self.assertEqual(response.status_code, 400, response.data)
+        self.assertFalse(Customer.objects.filter(code="ROLLBACK-C").exists())
+        batches = CSVImportBatch.objects.filter(entity="customers")
+        self.assertEqual(batches.count(), 1)
+        failed_batch = batches.get()
+        self.assertEqual(failed_batch.status, "failed")
+        self.assertEqual(failed_batch.rows.count(), 1)
+        self.assertEqual(failed_batch.operator_id, self.operator.pk)
+        self.assertFalse(OperationLog.objects.filter(action_label="CSV 导入创建").exists())
+        self.assertTrue(OperationLog.objects.filter(
+            entity="crm.csvimportbatch", object_id=str(failed_batch.pk), action_label="CSV 导入失败",
+        ).exists())
+
+    def test_preview_audit_and_operation_log_are_atomic(self):
+        content = self.content(["code", "name"], [["PREVIEW-ROLLBACK", "No audit"]])
+        with patch("crm.views.record_operation", side_effect=RuntimeError("preview operation log failed")):
+            response = self.client.post("/api/import/csv/preview/", {
+                "entity": "customers",
+                "file": SimpleUploadedFile("preview.csv", content, content_type="text/csv"),
+            }, format="multipart")
+        self.assertEqual(response.status_code, 503, response.data)
+        self.assertFalse(CSVImportPreviewAudit.objects.exists())
+        self.assertFalse(OperationLog.objects.filter(entity="crm.csvimportpreviewaudit").exists())
+        self.assertFalse(Customer.objects.exists())
+
+    def test_unsaved_authenticated_object_cannot_be_used_as_operator(self):
+        preview, content = self.preview("customers", ["code", "name"], [["NO-FAKE-OP", "Blocked"]])
+        unsaved_operator = get_user_model()(username="unsaved-csv-operator")
+        self.client.force_authenticate(unsaved_operator)
+        response = self.execute("customers", content, preview.data["preview_token"])
+        self.assertEqual(response.status_code, 403, response.data)
+        self.assertFalse(CSVImportBatch.objects.exists())
+        self.assertFalse(Customer.objects.exists())
+
+    def test_retry_reference_must_be_failed_batch_of_same_operator_and_entity(self):
+        preview, content = self.preview("customers", ["code", "name"], [["RETRY-AUTH", "Initial"]])
+        failed = self.execute("customers", content, "invalid-signature")
+        batch = CSVImportBatch.objects.get(batch_id=failed.data["import_batch_id"])
+        wrong_entity, _ = self.preview("products", ["code", "name"], [["RETRY-AUTH", "Product"]], retry_of_batch_id=batch.pk)
+        self.assertEqual(wrong_entity.status_code, 400)
+        self.assertEqual(CSVImportPreviewAudit.objects.filter(retry_of_batch=batch).count(), 0)
+
     def test_success_records_batch_row_before_after_hash_and_operation_link(self):
         customer = Customer.objects.create(code="AUDIT-C", name="Before")
         headers = ["code", "name"]
@@ -168,10 +322,15 @@ class SafeCsvImportTests(TestCase):
         self.assertEqual(response.status_code, 200, response.data)
 
         batch = CSVImportBatch.objects.get(batch_id=response.data["import_batch_id"])
+        preview_audit = CSVImportPreviewAudit.objects.get(preview_id=preview.data["preview_audit_id"])
+        self.assertEqual(preview_audit.status, "ready")
+        self.assertEqual(preview_audit.operator_id, self.operator.pk)
+        self.assertEqual(preview_audit.file_sha256, hashlib.sha256(content).hexdigest())
         self.assertEqual(batch.status, "succeeded")
         self.assertEqual(batch.entity, "customers")
         self.assertEqual(batch.file_sha256, hashlib.sha256(content).hexdigest())
         self.assertEqual(batch.operator_id, self.operator.pk)
+        self.assertEqual(batch.preview_id, preview_audit.pk)
         row = batch.rows.get(row_number=2)
         self.assertEqual((row.business_key, row.result, row.object_id), ("AUDIT-C", "updated", str(customer.pk)))
         self.assertEqual(row.before_data["name"], "Before")
@@ -185,6 +344,9 @@ class SafeCsvImportTests(TestCase):
         batch_history = self.client.get("/api/operation-logs/?entity=crm.csvimportbatch")
         self.assertEqual(batch_history.status_code, 200, batch_history.data)
         self.assertEqual(batch_history.data["results"][0]["object_id"], str(batch.pk))
+        preview_history = self.client.get("/api/operation-logs/?entity=crm.csvimportpreviewaudit")
+        self.assertEqual(preview_history.status_code, 200, preview_history.data)
+        self.assertEqual(preview_history.data["results"][0]["object_id"], str(preview_audit.pk))
 
     def test_unauthenticated_formal_import_is_rejected_without_fake_operator(self):
         headers = ["code", "name"]
@@ -242,6 +404,11 @@ class SafeCsvImportTests(TestCase):
             CSVImportBatch.objects.filter(pk=batch.pk).update(failure_reason="tampered")
         with self.assertRaises(ValidationError):
             CSVImportRowAudit.objects.filter(pk=row.pk).delete()
+        preview = CSVImportPreviewAudit.objects.get(preview_id=response.data["preview_audit_id"])
+        with self.assertRaises(ValidationError):
+            CSVImportPreviewAudit.objects.filter(pk=preview.pk).update(status="failed")
+        with self.assertRaises(ValidationError):
+            preview.delete()
         batch.refresh_from_db()
         self.assertEqual(batch.status, "succeeded")
         self.assertTrue(batch.rows.filter(pk=row.pk).exists())

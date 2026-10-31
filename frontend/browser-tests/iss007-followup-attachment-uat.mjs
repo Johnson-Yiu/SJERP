@@ -13,10 +13,11 @@ const downloadDir = config.downloadDir
 const operator = config.operator || 'iss007-uat-operator'
 const noPermissionUser = config.noPermissionUser || 'iss007-uat-no-permission'
 const password = config.password
-const subject = 'ISS007附件流程核验 2026-10-31'
+const subject = config.subject || 'ISS007附件流程核验 2026-10-31'
 const previewName = 'ISS007-preview.txt'
 const downloadName = 'ISS007-download.bin'
 const deleteName = 'ISS007-delete-target.txt'
+const replacementName = 'ISS007-delete-target-replacement.txt'
 if (!evidenceDir || !downloadDir || !password) {
   throw new Error('ISS007_UAT_CONFIG 必须提供 evidenceDir、downloadDir 和临时测试密码。')
 }
@@ -225,6 +226,13 @@ async function runBeforeDelete() {
 async function runDeletePhase() {
   const page = await context.newPage()
   await login(page, operator)
+  const operatorState = await page.evaluate(async () => {
+    const response = await fetch('/api/session/current-operator/')
+    return response.json()
+  })
+  if (!operatorState.authenticated || operatorState.name !== 'ISS007合成测试操作员' || operatorState.development_superadmin) {
+    throw new Error(`删除阶段未使用预期隔离操作人：${JSON.stringify(operatorState)}`)
+  }
   const editor = await openFollowUpEditor(page)
   const disposable = editor.locator('.follow-up-attachment-editor-item.saved').filter({ hasText: deleteName })
   const deletedPath = mediaPathFromHref(await disposable.getByRole('link', { name: '查看' }).getAttribute('href'))
@@ -249,21 +257,69 @@ async function runDeletePhase() {
   await page.screenshot({ path: path.join(evidenceDir, 'desktop-delete-immediate-state-1440x900.png'), fullPage: false })
 
   await page.reload({ waitUntil: 'domcontentloaded' })
-  const reopenedEditor = await openFollowUpEditor(page)
+  let reopenedEditor = await openFollowUpEditor(page)
   await reopenedEditor.getByText(deleteName, { exact: true }).waitFor({ state: 'hidden' })
   for (const name of ['ISS007-legacy-history.txt', previewName, downloadName]) {
     await reopenedEditor.getByText(name, { exact: true }).waitFor({ state: 'visible' })
   }
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await captureEditor(page, reopenedEditor, 'desktop-delete-refresh-1440x900.png')
+  const remainingBeforeReplacement = ['ISS007-legacy-history.txt', previewName, downloadName]
+  const deletedDirectResponse = await page.goto(`${apiBase}${deletedPath}`, { waitUntil: 'domcontentloaded' })
+  if (![403, 404].includes(deletedDirectResponse.status())) {
+    throw new Error(`删除后的附件直链状态异常：HTTP ${deletedDirectResponse.status()}，预期拒绝或不存在。`)
+  }
+
+  await page.goto(`${frontendBase}/follow-ups`, { waitUntil: 'domcontentloaded' })
+  reopenedEditor = await openFollowUpEditor(page)
+  const replacementInput = reopenedEditor.locator('.follow-up-attachment-picker input[type="file"]')
+  await replacementInput.setInputFiles({
+    name: replacementName,
+    mimeType: 'text/plain',
+    buffer: Buffer.from('ISS007 synthetic replacement body\n', 'utf8'),
+  })
+  await reopenedEditor.getByText(replacementName, { exact: true }).waitFor({ state: 'visible' })
+  const replacementUploadPromise = page.waitForResponse(response =>
+    response.request().method() === 'POST' && response.url().includes('/api/follow-ups/1/attachments/'),
+  )
+  await reopenedEditor.getByRole('button', { name: '保存跟进' }).click()
+  const replacementUpload = await replacementUploadPromise
+  if (replacementUpload.status() !== 201) {
+    throw new Error(`替换附件上传 HTTP ${replacementUpload.status()}，预期 201。`)
+  }
+  await reopenedEditor.waitFor({ state: 'hidden' })
+  await page.reload({ waitUntil: 'domcontentloaded' })
+  reopenedEditor = await openFollowUpEditor(page)
+  await reopenedEditor.getByText(deleteName, { exact: true }).waitFor({ state: 'hidden' })
+  for (const name of [...remainingBeforeReplacement, replacementName]) {
+    await reopenedEditor.getByText(name, { exact: true }).waitFor({ state: 'visible' })
+  }
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await captureEditor(page, reopenedEditor, 'desktop-replacement-refresh-1440x900.png')
   await page.setViewportSize({ width: 390, height: 844 })
-  await captureEditor(page, reopenedEditor, 'mobile-delete-refresh-390x844.png')
-  const deletedResponse = await page.goto(`${apiBase}${deletedPath}`, { waitUntil: 'domcontentloaded' })
+  await captureEditor(page, reopenedEditor, 'mobile-replacement-refresh-390x844.png')
+  const replacementItem = reopenedEditor.locator('.follow-up-attachment-editor-item.saved').filter({ hasText: replacementName })
+  await replacementItem.scrollIntoViewIfNeeded()
+  await page.screenshot({ path: path.join(evidenceDir, 'mobile-replacement-visible-390x844.png'), fullPage: false })
+  const deletedResponseAfterReplacement = await page.goto(`${apiBase}${deletedPath}`, { waitUntil: 'domcontentloaded' })
+  if (![403, 404].includes(deletedResponseAfterReplacement.status())) {
+    throw new Error(`替换后旧附件直链仍可访问：HTTP ${deletedResponseAfterReplacement.status()}。`)
+  }
   const result = {
     phase: 'delete',
     browser: await browser.version(),
+    authenticatedOperator: operatorState.name,
     deleteStatus: deleteResponse.status(),
-    deletedDirectUrlStatus: deletedResponse.status(),
-    refreshedNames: ['ISS007-legacy-history.txt', previewName, downloadName],
-    screenshot: 'mobile-delete-refresh-390x844.png',
+    deletedDirectUrlStatus: deletedDirectResponse.status(),
+    deletedDirectUrlAfterReplacementStatus: deletedResponseAfterReplacement.status(),
+    replacementUploadStatus: replacementUpload.status(),
+    refreshedNames: [...remainingBeforeReplacement, replacementName],
+    screenshots: [
+      'desktop-delete-refresh-1440x900.png',
+      'desktop-replacement-refresh-1440x900.png',
+      'mobile-replacement-refresh-390x844.png',
+      'mobile-replacement-visible-390x844.png',
+    ],
     cancellationKeptAttachment: true,
   }
   console.log(JSON.stringify(result, null, 2))

@@ -1,5 +1,13 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-ISS-052-HTTP-413 真实浏览器超限上传验收（2026-10-31）
+
+基于 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b` 创建独立 worktree。先在隔离 Django 上传处理器测试中复现：64 KiB 上限下，旧处理器越限前已将 65,319 字节转交后续处理器，且临时文件处理器已打开文件。最小修复改为 CSV 专用有界内存缓冲，由 `StopFutureHandlers` 阻止 Django 内建内存/临时处理器初始化；超限立即丢弃已缓冲前缀并停止 multipart 解析，保留真实 HTTP 413 响应。未改变导入业务核心、模型或迁移。
+
+内置 Chromium 浏览器通过真实 Axios multipart 请求访问本地 Vite 代理和隔离 Django HTTP 服务：预览、兼容预览、正式导入均对 10 MiB+35 B 与 20 MiB+1 B 文件返回 JSON 413，浏览器 `network_error=null`；Django 服务访问日志对应记录三路由 413。64 B 正常客户 CSV 的预览及正式导入均返回 200，隔离 DB 新增一条测试客户。超限正式执行只有空 SHA、零行的失败批次；业务表无对应新增。上传临时目录为空；逐入口定向测试验证零字节转发、内建内存 handler 未激活、临时 handler 无文件、解析未执行和业务数据未写。
+
+定向/跨模块 Django 测试 86 项通过；Django check、迁移一致性、Vitest 4 项和生产构建通过。Node 单测 171 项中 169 项通过、2 项因隔离浏览器运行器依赖 `@playwright/test/cli.js` 在共享只读依赖树缺失而失败；共享 Vite 实际为 8.2.0、锁文件为 8.3.5，构建在已安装版本通过。准确浏览器结果、隔离 DB 快照、日志与限制见[ISS-052 HTTP 413 验收报告](uat-evidence/r1-iss052-http-413-20261031/README.md)。ISS-052 保持 `FIXED_PENDING_REVIEW`；真实员工身份与正式审计验收继续待办。本轮未触发 CI、未连接生产、未部署、未关闭 Issue。
+
 ## R1-INTEGRATION-036-002-003-052-058 五项任务集成（2026-10-27）
 
 固定基线 `46353a5436637832f5adadb7bdef6b45cdeada23`，创建独立工作树和 `codex/integration-036-002-003-052-058`。集成前核对五个远端来源分支 HEAD 与指定 SHA 一致：ISS-036 `b64c54b07908d4bb462c64f120c351d148e06f6f`、ISS-002 `4e4ca504ee398da85fe23cc53d534c6008807e5c`、ISS-003 `2111d193ef3a69db05c23e27813cfbf26d9034d7`、ISS-052 `93736e0773ca2136d4070a604e62324cf832dc6f`、ISS-058 `742692a6e4887e4b8352736e69a52b1ebe8d066f`。保留五项代码/测试/报告/依赖；PROJECT_ISSUES 的 ISS-002 冲突逐条合并，PROJECT_PHASES 保留各历史记录并追加本轮日志。ISS-052 七个 JPEG 原图仅由 `.png` 重命名 `.jpg`，签名检查确认未重编码。

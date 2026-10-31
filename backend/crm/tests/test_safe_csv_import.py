@@ -1,6 +1,8 @@
 import csv
 import hashlib
 import io
+import tempfile
+from pathlib import Path
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
@@ -437,6 +439,77 @@ class SafeCsvImportTests(TestCase):
             self.assertEqual(audit_disabled.status_code, 503, audit_disabled.data)
             self.assertFalse(hasattr(audit_disabled.wsgi_request, "_csv_import_upload_limit_exceeded"))
         self.assertEqual(CSVImportBatch.objects.count(), batches_before_gate_checks)
+
+    def test_oversized_csv_never_reaches_builtin_memory_or_temporary_handlers(self):
+        content = b"code,name\nISS052-OVER," + b"x" * (128 * 1024) + b"\n"
+        endpoints = (
+            "/api/import/csv/preview/",
+            "/api/import/csv/execute/",
+            "/api/import/csv/",
+        )
+        with tempfile.TemporaryDirectory() as upload_temp_dir:
+            for endpoint in endpoints:
+                with self.subTest(endpoint=endpoint):
+                    previous_batch_count = CSVImportBatch.objects.count()
+                    with self.settings(
+                        CSV_IMPORT_MAX_BYTES=64 * 1024,
+                        FILE_UPLOAD_MAX_MEMORY_SIZE=128,
+                        FILE_UPLOAD_TEMP_DIR=upload_temp_dir,
+                    ), patch("crm.views._read_import_csv") as read_csv:
+                        response = self.client.post(
+                            endpoint,
+                            {
+                                "entity": "customers",
+                                "preview_token": "oversized-probe",
+                                "file": SimpleUploadedFile("oversized.csv", content),
+                            },
+                            format="multipart",
+                        )
+
+                    self.assertEqual(response.status_code, 413, response.data)
+                    self.assertIn("CSV 文件超过大小限制", response.data["detail"])
+                    read_csv.assert_not_called()
+                    stream_state = response.wsgi_request._csv_import_upload_limit_exceeded
+                    self.assertGreater(stream_state["bytes_seen"], stream_state["limit"])
+                    self.assertLess(stream_state["bytes_seen"], len(content))
+                    self.assertEqual(stream_state["bytes_forwarded"], 0)
+                    self.assertFalse(response.wsgi_request.upload_handlers[1].activated)
+                    self.assertFalse(response.wsgi_request.FILES)
+                    self.assertFalse(getattr(response.wsgi_request.upload_handlers[2], "file", None))
+                    self.assertEqual(list(Path(upload_temp_dir).iterdir()), [])
+                    self.assertFalse(Customer.objects.exists())
+
+                    if endpoint == "/api/import/csv/execute/":
+                        self.assertEqual(CSVImportBatch.objects.count(), previous_batch_count + 1)
+                        batch = CSVImportBatch.objects.latest("created_at")
+                        self.assertEqual((batch.file_sha256, batch.total_rows, batch.failed_rows), ("", 0, 0))
+                        self.assertFalse(batch.rows.exists())
+                    else:
+                        self.assertEqual(CSVImportBatch.objects.count(), previous_batch_count)
+
+    def test_normal_csv_above_memory_threshold_still_previews_without_temp_file(self):
+        rows = [[f"SIZE-{index:03d}", f"Buyer {index:03d} " + "x" * 180] for index in range(25)]
+        content = self.content(["code", "name"], rows)
+        self.assertGreater(len(content), 128)
+        self.assertLess(len(content), 256 * 1024)
+
+        with tempfile.TemporaryDirectory() as upload_temp_dir:
+            with self.settings(
+                CSV_IMPORT_MAX_BYTES=256 * 1024,
+                FILE_UPLOAD_MAX_MEMORY_SIZE=128,
+                FILE_UPLOAD_TEMP_DIR=upload_temp_dir,
+            ):
+                response = self.client.post(
+                    "/api/import/csv/preview/",
+                    {"entity": "customers", "file": SimpleUploadedFile("normal.csv", content)},
+                    format="multipart",
+                )
+
+            self.assertEqual(response.status_code, 200, response.data)
+            self.assertEqual(response.data["created"], len(rows))
+            self.assertEqual(response.data["errors"], [])
+            self.assertFalse(Customer.objects.exists())
+            self.assertEqual(list(Path(upload_temp_dir).iterdir()), [])
 
     def test_preview_parse_failure_stays_outside_formal_batch_audit(self):
         response = self.client.post(

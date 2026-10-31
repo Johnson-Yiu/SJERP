@@ -94,7 +94,7 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
   })
 
   await page.setViewportSize({ width: 1440, height: 1000 })
-  await page.goto('/skus')
+  await page.goto('/skus', { waitUntil: 'domcontentloaded' })
   await expect(page.getByRole('heading', { name: 'SKU 管理', exact: true, level: 2 })).toBeVisible()
   let dialog = await openSkuEditor(page, fixture.sku_code)
   await selectImageAndSave(page, dialog, 'iss007-original-red.png', originalBytes)
@@ -186,6 +186,19 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
   await expect(thumbnail).toBeVisible()
   await expect(thumbnail).toHaveJSProperty('naturalWidth', 48)
   await page.screenshot({ path: path.join(evidenceDir, 'screenshots', 'sku-image-replaced-desktop-1440.png'), fullPage: true })
+  await page.setViewportSize({ width: 390, height: 844 })
+  row = page.locator('.sku-data-row').filter({ hasText: fixture.sku_code })
+  await expect(row.locator('img.sku-table-thumbnail')).toBeVisible()
+  await page.screenshot({ path: path.join(evidenceDir, 'screenshots', 'sku-image-replaced-mobile-390.png'), fullPage: true })
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy()
+  const mobileEditor = await openSkuEditor(page, fixture.sku_code)
+  const mobileSkuPreview = mobileEditor.locator('.sku-image-preview')
+  await expect(mobileSkuPreview).toBeVisible()
+  await expect(mobileSkuPreview).toHaveJSProperty('naturalWidth', 48)
+  await mobileSkuPreview.scrollIntoViewIfNeeded()
+  await page.screenshot({ path: path.join(evidenceDir, 'screenshots', 'sku-image-editor-preview-mobile-390.png'), fullPage: true })
+  await mobileEditor.getByRole('button', { name: '关闭 SKU 窗口' }).click()
+  await page.setViewportSize({ width: 1440, height: 1000 })
 
   const quoteAfterReplacement = await quoteImageFromApi(page, fixture.quote_id)
   expect(quoteAfterReplacement.response.status()).toBe(200)
@@ -206,10 +219,6 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
   await finalQuotePreview.getByRole('button', { name: '关闭预览' }).click()
 
   await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto('/skus')
-  row = page.locator('.sku-data-row').filter({ hasText: fixture.sku_code })
-  await expect(row.locator('img.sku-table-thumbnail')).toBeVisible()
-  await page.screenshot({ path: path.join(evidenceDir, 'screenshots', 'sku-image-replaced-mobile-390.png'), fullPage: true })
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy()
 
   const mobilePreview = await openQuotePreview(page, fixture.quote_id)
@@ -250,7 +259,8 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
     screenshots: [
       'sku-image-upload-desktop-1440.png', 'quote-pi-original-snapshot-desktop-1440.png',
       'sku-image-replaced-desktop-1440.png', 'quote-pi-after-sku-replacement-desktop-1440.png',
-      'sku-image-replaced-mobile-390.png', 'quote-pi-history-mobile-390.png', 'missing-history-image-mobile-390.png',
+      'sku-image-replaced-mobile-390.png', 'sku-image-editor-preview-mobile-390.png',
+      'quote-pi-history-mobile-390.png', 'missing-history-image-mobile-390.png',
     ],
   }
   await writeFile(path.join(evidenceDir, 'browser-results.json'), `${JSON.stringify(browserResults, null, 2)}\n`, 'utf8')

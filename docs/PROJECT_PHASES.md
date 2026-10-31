@@ -585,11 +585,11 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 
 逐项旧状态、新状态、校准依据、SHA、46 条规则摘要及未执行/业务阻断清单见 [R1 状态对账报告](uat-evidence/r1-status-reconcile-20261028/README.md)。本轮未连接生产数据库、未执行 PostgreSQL、未触发 GitHub Actions、未合并 master、未部署、未关闭 Issue。
 
-## R1-ISS007-SKU-QUOTE-IMAGE-UAT（2026-10-31）
+## R1-ISS007-SKU-QUOTE-IMAGE-UAT（2026-10-31 至 2026-11-01）
 
 基于固定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 建立独立 worktree 和 `codex/r1-iss007-image-snapshot-uat-20261031`。使用本机真实 Google Chrome、隔离 SQLite、专属临时 `MEDIA_ROOT` 和合成客户/SKU/报价/订单；没有接触真实历史 SKU、报价或订单，也未改产品业务代码。
 
-1440×1000 与 390×844 浏览器流程验证 SKU 图片上传/缩略图、替换及原图身份，非法图片 HTTP 400 且现有 SKU 图片不变；已接受报价的历史图快照在 SKU 替换后保持 SHA 不变。报价工作台导出的实际 XLSX 可打开，PI 工作表内嵌图片 SHA 与历史快照一致。确认订单仍关联已接受报价，关联报价快照保持不变；`OrderItem` 没有独立图片快照字段，因此没有把此结果表述为订单行另存图片。缺失历史图片 API 返回 404，预览仍可渲染且没有 JS 异常，但可见浏览器默认破图占位。定向 RBAC 测试通过：授权路径可读，SKU-only/客户范围不足的历史图片请求返回 404。Django 9/9、Node 隔离运行器 14/14、锁定依赖 `pip check` 通过；具体测试日志、DB 前后快照、XLSX 和七张桌面/窄屏截图见 [R1-ISS007 UAT 报告](uat-evidence/iss-007-image-snapshot-uat-20261031/README.md)。
+1440×1000 与 390×844 浏览器流程验证 SKU 图片上传/缩略图、替换及原图身份，非法图片 HTTP 400 且现有 SKU 图片不变；已接受报价的历史图快照在 SKU 替换后保持 SHA 不变。报价工作台导出的实际 XLSX 可打开，PI 工作表内嵌图片 SHA 与历史快照一致。确认订单仍关联已接受报价，关联报价快照保持不变；`OrderItem` 没有独立图片快照字段，因此没有把此结果表述为订单行另存图片。缺失历史图片 API 返回 404，预览仍可渲染且没有 JS 异常，但可见浏览器默认破图占位。定向 RBAC 测试通过：授权路径可读，SKU-only/客户范围不足的历史图片请求返回 404。Django 9/9、Node 隔离运行器 14/14、锁定依赖 `pip check` 通过；具体测试日志、DB 前后快照、XLSX 和八张桌面/窄屏截图见 [R1-ISS007 UAT 报告](uat-evidence/iss-007-image-snapshot-uat-20261031/README.md)。
 
 ISS-007 保持 `NEEDS_VERIFICATION` 并等待独立审查；跟进附件等其他文件类型及生产反向代理/持久卷或对象存储 ACL 不在本轮结论内，部署验证沿用 ISS-017 边界。本轮未触发 GitHub Actions、未创建 PR、未合并 master、未部署、未启用正式 RBAC、未关闭 Issue。
 

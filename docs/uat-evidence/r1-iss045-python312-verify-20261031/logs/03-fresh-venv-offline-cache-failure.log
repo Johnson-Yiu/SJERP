@@ -1,0 +1,5 @@
+Using Python 3.12.16 environment at: C:\Users\Johnson\AppData\Local\Temp\sunjack-py312-evidence-20261031-iss045\app-venv
+error: No solution found when resolving dependencies
+  cause: Because asgiref was not found in the cache and you require asgiref==3.13.0, we can conclude that your requirements are unsatisfiable.
+
+hint: Packages were unavailable because the network was disabled. When the network is disabled, registry packages may only be read from the cache.

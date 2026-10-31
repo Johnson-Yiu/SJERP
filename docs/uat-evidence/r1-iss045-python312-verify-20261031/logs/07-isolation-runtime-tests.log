@@ -1,0 +1,18 @@
+test_accepts_only_explicit_iss055_isolated_rbac_mode (test_isolated_runtime.IsolatedRuntimeTests.test_accepts_only_explicit_iss055_isolated_rbac_mode) ... ok
+test_accepts_only_marked_temp_database_and_media (test_isolated_runtime.IsolatedRuntimeTests.test_accepts_only_marked_temp_database_and_media) ... ok
+test_iss055_mode_rejects_development_superadmin (test_isolated_runtime.IsolatedRuntimeTests.test_iss055_mode_rejects_development_superadmin) ... ok
+test_refuses_preexisting_database_before_migrations (test_isolated_runtime.IsolatedRuntimeTests.test_refuses_preexisting_database_before_migrations) ... ok
+test_rejects_additional_database_connections (test_isolated_runtime.IsolatedRuntimeTests.test_rejects_additional_database_connections) ... ok
+test_rejects_database_outside_run_directory (test_isolated_runtime.IsolatedRuntimeTests.test_rejects_database_outside_run_directory) ... ok
+test_rejects_declared_database_outside_run_directory_before_django_checks (test_isolated_runtime.IsolatedRuntimeTests.test_rejects_declared_database_outside_run_directory_before_django_checks) ... ok
+test_rejects_external_media_storage_backend (test_isolated_runtime.IsolatedRuntimeTests.test_rejects_external_media_storage_backend) ... ok
+test_rejects_formal_rbac_in_development_browser_runtime (test_isolated_runtime.IsolatedRuntimeTests.test_rejects_formal_rbac_in_development_browser_runtime) ... ok
+test_rejects_marker_from_another_run (test_isolated_runtime.IsolatedRuntimeTests.test_rejects_marker_from_another_run) ... ok
+test_rejects_media_root_outside_run_directory (test_isolated_runtime.IsolatedRuntimeTests.test_rejects_media_root_outside_run_directory) ... ok
+test_rejects_non_sqlite_engine (test_isolated_runtime.IsolatedRuntimeTests.test_rejects_non_sqlite_engine) ... ok
+test_unknown_isolated_rbac_mode_is_rejected (test_isolated_runtime.IsolatedRuntimeTests.test_unknown_isolated_rbac_mode_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.249s
+
+OK

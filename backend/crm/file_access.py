@@ -53,11 +53,14 @@ def protected_media(request, relative_path):
     if file_field is None:
         raise Http404
     try:
+        resolved_content_type = content_type or mimetypes.guess_type(file_field.name)[0] or "application/octet-stream"
+        if resolved_content_type.lower() == "text/plain":
+            resolved_content_type = "text/plain; charset=utf-8"
         response = FileResponse(
             file_field.open("rb"),
             as_attachment=False,
             filename=file_field.name.rsplit("/", 1)[-1],
-            content_type=content_type or mimetypes.guess_type(file_field.name)[0] or "application/octet-stream",
+            content_type=resolved_content_type,
         )
     except (OSError, ValueError):
         raise Http404

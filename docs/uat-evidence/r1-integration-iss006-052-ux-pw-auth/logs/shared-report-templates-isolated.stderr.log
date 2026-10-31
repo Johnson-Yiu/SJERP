@@ -1,9 +1,0 @@
-[isolated Django API] [29/Oct/2026 22:34:10] "GET /api/__test__/isolation/0844c5309a502da5906317ca1050cb9462c6cb689fcba50d/ HTTP/1.1" 200 326
-[isolated Django API] [29/Oct/2026 22:34:15] "GET /api/__test__/isolation/0844c5309a502da5906317ca1050cb9462c6cb689fcba50d/ HTTP/1.1" 200 326
-(node:29848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-(Use `node --trace-warnings ...` to show where the warning was created)
-Error: Isolated Playwright suite exited with code 1.
-    at runCommand (file:///C:/Users/Johnson/.codex/worktrees/integration-r1-iss006-052-ux-pw-auth/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/frontend/scripts/run-isolated-browser-tests.mjs:176:25)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-    at async runStage (file:///C:/Users/Johnson/.codex/worktrees/integration-r1-iss006-052-ux-pw-auth/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/frontend/scripts/run-isolated-browser-tests.mjs:181:3)
-    at async main (file:///C:/Users/Johnson/.codex/worktrees/integration-r1-iss006-052-ux-pw-auth/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/frontend/scripts/run-isolated-browser-tests.mjs:624:7)

@@ -1,0 +1,322 @@
+{
+  "phase": "before-delete",
+  "browser": "156.0.8078.48",
+  "authenticatedOperator": "ISS007合成测试操作员",
+  "uploadStatus": 201,
+  "reopenedNames": [
+    "ISS007-legacy-history.txt",
+    "ISS007-preview.txt",
+    "ISS007-download.bin",
+    "ISS007-delete-target.txt"
+  ],
+  "authorizedPreview": {
+    "path": "/api/media/follow-up-attachments/2026/11/ISS007-preview.txt",
+    "status": 200,
+    "cacheControl": "private, no-store",
+    "contentType": "text/plain; charset=utf-8",
+    "contentDisposition": "inline; filename=\"ISS007-preview.txt\"",
+    "byteLength": 64,
+    "text": "ISS007 synthetic preview body\n第二行：仅为合成附件。\n",
+    "bodyTextSha256": "ee61d0bbe02c4a7b96f8b8a8057547583c98aab8089e643de00047ca3f976410"
+  },
+  "previewTabText": "ISS007 synthetic preview body\n第二行：仅为合成附件。\n",
+  "browserDownload": {
+    "filename": "ISS007-download.bin",
+    "bytes": 8,
+    "sha256": "5e62a906ba05040729ff6e2b3e3f7d744671a3c64f375cc2159b29483ed29bc1"
+  },
+  "anonymousDirect": {
+    "status": 403,
+    "body": "{\"detail\":\"身份认证信息未提供。\"}"
+  },
+  "authenticatedNoPermissionDirect": {
+    "status": 404,
+    "body": "{\"detail\":\"未找到。\"}"
+  },
+  "legacyStaticMediaStatus": 404,
+  "legacyProtectedMediaNoPermissionStatus": 404,
+  "desktopLayout": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "documentScrollWidth": 1440,
+    "modalLeft": 230,
+    "modalRight": 1210,
+    "attachmentColumns": "456.5px 456.5px"
+  },
+  "mobileLayout": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "documentScrollWidth": 375,
+    "modalLeft": 0,
+    "modalRight": 375,
+    "attachmentColumns": "316px"
+  },
+  "mediaResponses": [
+    {
+      "status": 200,
+      "url": "/api/media/follow-up-attachments/2026/11/ISS007-preview.txt"
+    },
+    {
+      "status": 200,
+      "url": "/api/media/follow-up-attachments/2026/11/ISS007-download.bin"
+    },
+    {
+      "status": 200,
+      "url": "/api/media/follow-up-attachments/2026/11/ISS007-preview.txt"
+    }
+  ],
+  "note": "This phase intentionally stops before deleting the isolated disposable attachment; desktop/mobile screenshots and transfer/access checks are complete."
+}
+{
+  "phase": "before-delete",
+  "runId": "iss007-delete-uat-5997ec4cc688423a9d24b74f0c9dfbf4",
+  "database": "<ISOLATED_TEMP_ROOT>\\db.sqlite3",
+  "mediaRoot": "<ISOLATED_TEMP_ROOT>\\media",
+  "followUpId": 1,
+  "attachments": [
+    {
+      "id": 1,
+      "name": "ISS007-legacy-history.txt",
+      "file": "follow-up-attachments/2026/11/ISS007-legacy-history.txt",
+      "relativePath": "follow-up-attachments/2026/11/ISS007-legacy-history.txt",
+      "sizeInDatabase": 57,
+      "sizeOnDisk": 57,
+      "sha256": "a9a3d887ca46e0a9ecd410a9bba89e6ee04a43916babb39849f6ad9bcc35314f"
+    },
+    {
+      "id": 2,
+      "name": "ISS007-preview.txt",
+      "file": "follow-up-attachments/2026/11/ISS007-preview.txt",
+      "relativePath": "follow-up-attachments/2026/11/ISS007-preview.txt",
+      "sizeInDatabase": 64,
+      "sizeOnDisk": 64,
+      "sha256": "ee61d0bbe02c4a7b96f8b8a8057547583c98aab8089e643de00047ca3f976410"
+    },
+    {
+      "id": 3,
+      "name": "ISS007-download.bin",
+      "file": "follow-up-attachments/2026/11/ISS007-download.bin",
+      "relativePath": "follow-up-attachments/2026/11/ISS007-download.bin",
+      "sizeInDatabase": 8,
+      "sizeOnDisk": 8,
+      "sha256": "5e62a906ba05040729ff6e2b3e3f7d744671a3c64f375cc2159b29483ed29bc1"
+    },
+    {
+      "id": 4,
+      "name": "ISS007-delete-target.txt",
+      "file": "follow-up-attachments/2026/11/ISS007-delete-target.txt",
+      "relativePath": "follow-up-attachments/2026/11/ISS007-delete-target.txt",
+      "sizeInDatabase": 32,
+      "sizeOnDisk": 32,
+      "sha256": "9e1d7b72cf92759290d760a4ebfc58980c819b24f9ea133b0df2d5678cf3e8fc"
+    }
+  ]
+}
+{
+  "phase": "delete",
+  "browser": "156.0.8078.48",
+  "authenticatedOperator": "ISS007合成测试操作员",
+  "deleteStatus": 204,
+  "deletedDirectUrlStatus": 404,
+  "deletedDirectUrlAfterReplacementStatus": 404,
+  "replacementUploadStatus": 201,
+  "refreshedNames": [
+    "ISS007-legacy-history.txt",
+    "ISS007-preview.txt",
+    "ISS007-download.bin",
+    "ISS007-delete-target-replacement.txt"
+  ],
+  "screenshots": [
+    "desktop-delete-refresh-1440x900.png",
+    "desktop-replacement-refresh-1440x900.png",
+    "mobile-replacement-refresh-390x844.png"
+  ],
+  "cancellationKeptAttachment": true
+}
+{
+  "phase": "after-delete-and-replacement",
+  "runId": "iss007-delete-uat-5997ec4cc688423a9d24b74f0c9dfbf4",
+  "database": "<ISOLATED_TEMP_ROOT>\\db.sqlite3",
+  "mediaRoot": "<ISOLATED_TEMP_ROOT>\\media",
+  "deletedTarget": {
+    "id": 4,
+    "name": "ISS007-delete-target.txt",
+    "databaseRowExists": false,
+    "diskFileExists": false,
+    "sha256BeforeDelete": "9e1d7b72cf92759290d760a4ebfc58980c819b24f9ea133b0df2d5678cf3e8fc"
+  },
+  "deleteAudit": {
+    "id": 3,
+    "operatorUsername": "iss007-uat-0c9dfbf4",
+    "operatorDisplayName": "ISS007�ϳɲ��Բ���Ա",
+    "operatorIsSuperuser": false,
+    "actionLabel": "ɾ����������",
+    "requestMethod": "DELETE",
+    "requestPath": "/api/follow-ups/1/attachments/4/",
+    "metadata": {
+      "attachment_id": "4",
+      "file_name": "ISS007-delete-target.txt"
+    }
+  },
+  "remainingAttachments": [
+    {
+      "id": 1,
+      "name": "ISS007-legacy-history.txt",
+      "file": "follow-up-attachments/2026/11/ISS007-legacy-history.txt",
+      "relativePath": "follow-up-attachments/2026/11/ISS007-legacy-history.txt",
+      "sizeInDatabase": 57,
+      "sizeOnDisk": 57,
+      "sha256": "a9a3d887ca46e0a9ecd410a9bba89e6ee04a43916babb39849f6ad9bcc35314f"
+    },
+    {
+      "id": 2,
+      "name": "ISS007-preview.txt",
+      "file": "follow-up-attachments/2026/11/ISS007-preview.txt",
+      "relativePath": "follow-up-attachments/2026/11/ISS007-preview.txt",
+      "sizeInDatabase": 64,
+      "sizeOnDisk": 64,
+      "sha256": "ee61d0bbe02c4a7b96f8b8a8057547583c98aab8089e643de00047ca3f976410"
+    },
+    {
+      "id": 3,
+      "name": "ISS007-download.bin",
+      "file": "follow-up-attachments/2026/11/ISS007-download.bin",
+      "relativePath": "follow-up-attachments/2026/11/ISS007-download.bin",
+      "sizeInDatabase": 8,
+      "sizeOnDisk": 8,
+      "sha256": "5e62a906ba05040729ff6e2b3e3f7d744671a3c64f375cc2159b29483ed29bc1"
+    },
+    {
+      "id": 5,
+      "name": "ISS007-delete-target-replacement.txt",
+      "file": "follow-up-attachments/2026/11/ISS007-delete-target-replacement.txt",
+      "relativePath": "follow-up-attachments/2026/11/ISS007-delete-target-replacement.txt",
+      "sizeInDatabase": 34,
+      "sizeOnDisk": 34,
+      "sha256": "7fd3572e955f74c4a46c0fd58c8e1469b8a78ac5df784ab0e7aea2df8e39f4f8"
+    }
+  ],
+  "unmodifiedExistingAttachments": [
+    "ISS007-download.bin",
+    "ISS007-legacy-history.txt",
+    "ISS007-preview.txt"
+  ],
+  "replacement": {
+    "id": 5,
+    "name": "ISS007-delete-target-replacement.txt",
+    "file": "follow-up-attachments/2026/11/ISS007-delete-target-replacement.txt",
+    "relativePath": "follow-up-attachments/2026/11/ISS007-delete-target-replacement.txt",
+    "sizeInDatabase": 34,
+    "sizeOnDisk": 34,
+    "sha256": "7fd3572e955f74c4a46c0fd58c8e1469b8a78ac5df784ab0e7aea2df8e39f4f8"
+  }
+}
+{
+  "before": {
+    "phase": "before-delete",
+    "browser": "156.0.8078.48",
+    "authenticatedOperator": "ISS007合成测试操作员",
+    "uploadStatus": 201,
+    "reopenedNames": [
+      "ISS007-legacy-history.txt",
+      "ISS007-preview.txt",
+      "ISS007-download.bin",
+      "ISS007-delete-target.txt"
+    ],
+    "authorizedPreview": {
+      "path": "/api/media/follow-up-attachments/2026/11/ISS007-preview.txt",
+      "status": 200,
+      "cacheControl": "private, no-store",
+      "contentType": "text/plain; charset=utf-8",
+      "contentDisposition": "inline; filename=\"ISS007-preview.txt\"",
+      "byteLength": 64,
+      "text": "ISS007 synthetic preview body\n第二行：仅为合成附件。\n",
+      "bodyTextSha256": "ee61d0bbe02c4a7b96f8b8a8057547583c98aab8089e643de00047ca3f976410"
+    },
+    "previewTabText": "ISS007 synthetic preview body\n第二行：仅为合成附件。\n",
+    "browserDownload": {
+      "filename": "ISS007-download.bin",
+      "bytes": 8,
+      "sha256": "5e62a906ba05040729ff6e2b3e3f7d744671a3c64f375cc2159b29483ed29bc1"
+    },
+    "anonymousDirect": {
+      "status": 403,
+      "body": "{\"detail\":\"身份认证信息未提供。\"}"
+    },
+    "authenticatedNoPermissionDirect": {
+      "status": 404,
+      "body": "{\"detail\":\"未找到。\"}"
+    },
+    "legacyStaticMediaStatus": 404,
+    "legacyProtectedMediaNoPermissionStatus": 404,
+    "desktopLayout": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "documentScrollWidth": 1440,
+      "modalLeft": 230,
+      "modalRight": 1210,
+      "attachmentColumns": "456.5px 456.5px"
+    },
+    "mobileLayout": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "documentScrollWidth": 375,
+      "modalLeft": 0,
+      "modalRight": 375,
+      "attachmentColumns": "316px"
+    },
+    "mediaResponses": [
+      {
+        "status": 200,
+        "url": "/api/media/follow-up-attachments/2026/11/ISS007-preview.txt"
+      },
+      {
+        "status": 200,
+        "url": "/api/media/follow-up-attachments/2026/11/ISS007-download.bin"
+      },
+      {
+        "status": 200,
+        "url": "/api/media/follow-up-attachments/2026/11/ISS007-preview.txt"
+      },
+      {
+        "status": 404,
+        "url": "/api/media/follow-up-attachments/2026/11/ISS007-delete-target.txt"
+      },
+      {
+        "status": 404,
+        "url": "/api/media/follow-up-attachments/2026/11/ISS007-delete-target.txt"
+      }
+    ],
+    "note": "This phase intentionally stops before deleting the isolated disposable attachment; desktop/mobile screenshots and transfer/access checks are complete."
+  },
+  "deletion": {
+    "phase": "delete",
+    "browser": "156.0.8078.48",
+    "authenticatedOperator": "ISS007合成测试操作员",
+    "deleteStatus": 204,
+    "deletedDirectUrlStatus": 404,
+    "deletedDirectUrlAfterReplacementStatus": 404,
+    "replacementUploadStatus": 201,
+    "refreshedNames": [
+      "ISS007-legacy-history.txt",
+      "ISS007-preview.txt",
+      "ISS007-download.bin",
+      "ISS007-delete-target-replacement.txt"
+    ],
+    "screenshots": [
+      "desktop-delete-refresh-1440x900.png",
+      "desktop-replacement-refresh-1440x900.png",
+      "mobile-replacement-refresh-390x844.png"
+    ],
+    "cancellationKeptAttachment": true
+  },
+  "databaseVerification": "PASS"
+}

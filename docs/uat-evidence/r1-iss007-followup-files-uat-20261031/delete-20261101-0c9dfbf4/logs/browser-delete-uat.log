@@ -1,0 +1,18 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.waitFor: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('tr').filter({ hasText: 'ISS007附件流程核验 2026-10-31' }) to be visible
+
+    at openFollowUpEditor (D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss007-followup-files-uat-20261031\frontend\browser-tests\iss007-followup-attachment-uat.mjs:56:13)
+    at async Module.runBeforeDelete (D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss007-followup-files-uat-20261031\frontend\browser-tests\iss007-followup-attachment-uat.mjs:85:18)
+    at async file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/r1-iss007-followup-files-uat-20261031/docs/uat-evidence/r1-iss007-followup-files-uat-20261031/run_delete_uat.mjs:45:18 {
+  log: [
+    "  - waiting for locator('tr').filter({ hasText: 'ISS007附件流程核验 2026-10-31' }) to be visible"
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.16.0

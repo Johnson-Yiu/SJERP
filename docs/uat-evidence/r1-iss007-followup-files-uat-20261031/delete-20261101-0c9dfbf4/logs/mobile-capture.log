@@ -1,0 +1,21 @@
+{
+  "screenshot": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-iss007-followup-files-uat-20261031\\docs\\uat-evidence\\r1-iss007-followup-files-uat-20261031\\delete-20261101-0c9dfbf4\\screenshots\\mobile-replacement-visible-390x844.png",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "documentScrollWidth": 375,
+  "replacementVisible": true,
+  "replacementBounds": {
+    "top": 684.671875,
+    "bottom": 745.671875,
+    "left": 22,
+    "right": 338
+  },
+  "listedAttachments": [
+    "ISS007-legacy-history.txt\n已上传 · 57 B\n查看\n删除",
+    "ISS007-preview.txt\n已上传 · 64 B\n查看\n删除",
+    "ISS007-download.bin\n已上传 · 8 B\n查看\n删除",
+    "ISS007-delete-target-replacement.txt\n已上传 · 34 B\n查看\n删除"
+  ]
+}

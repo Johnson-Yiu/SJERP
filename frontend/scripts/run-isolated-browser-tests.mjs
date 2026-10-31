@@ -401,6 +401,7 @@ export function isolatedFixtureSeed(businessTest) {
   const allowed = {
     'iss022-moq-real.spec.js': { seedFile: 'seed_iss022_browser.py', evidenceEnv: 'ISS022_EVIDENCE_DIR' },
     'iss075-payment-terms-real.spec.js': { seedFile: 'seed_iss075_browser.py', evidenceEnv: 'ISS075_EVIDENCE_DIR' },
+    'iss007-image-snapshot-real.spec.js': { seedFile: 'seed_iss007_image_browser.py', evidenceEnv: 'ISS007_EVIDENCE_DIR' },
     'historical-orders-fix-02.spec.js': {
       seedFile: path.join('..', 'docs', 'uat-evidence', 'r1-repair-03-history-recipient-typography', 'prepare_evidence.py'),
       evidenceEnv: 'R1_REPAIR_EVIDENCE_DIR',
@@ -525,6 +526,7 @@ async function main() {
     const evidenceEnvironmentNames = [
       'EVIDENCE_DIR',
       'ISS008_FUP_01_EVIDENCE_DIR',
+      'ISS007_EVIDENCE_DIR',
       'ISS022_EVIDENCE_DIR',
       'ISS028_035_EVIDENCE_DIR',
       'ISS055_EVIDENCE_DIR',

@@ -184,6 +184,8 @@ test('only an existing browser test file can be selected; Playwright service and
 })
 
 test('only allowlisted real API suites receive fixed synthetic fixture seeds', () => {
+  assert.equal(path.basename(isolatedFixtureSeed('iss007-image-snapshot-real.spec.js').scriptPath), 'seed_iss007_image_browser.py')
+  assert.equal(isolatedFixtureSeed('iss007-image-snapshot-real.spec.js').evidenceEnv, 'ISS007_EVIDENCE_DIR')
   assert.equal(path.basename(isolatedFixtureSeed('iss022-moq-real.spec.js').scriptPath), 'seed_iss022_browser.py')
   assert.equal(isolatedFixtureSeed('iss022-moq-real.spec.js').evidenceEnv, 'ISS022_EVIDENCE_DIR')
   assert.equal(path.basename(isolatedFixtureSeed('iss075-payment-terms-real.spec.js').scriptPath), 'seed_iss075_browser.py')

@@ -1,7 +1,10 @@
 """Streaming protections for CSV import uploads."""
 
+from io import BytesIO
+
 from django.conf import settings
-from django.core.files.uploadhandler import FileUploadHandler, StopUpload
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files.uploadhandler import FileUploadHandler, StopFutureHandlers, StopUpload
 
 
 _CSV_IMPORT_PATHS = frozenset({
@@ -23,6 +26,13 @@ class CsvImportSizeLimitUploadHandler(FileUploadHandler):
         self.limit = settings.CSV_IMPORT_MAX_BYTES
         self.bytes_seen = 0
         self.bytes_forwarded = 0
+        self._current_file_buffer = None
+
+    def new_file(self, field_name, file_name, content_type, content_length, charset=None, content_type_extra=None):
+        super().new_file(field_name, file_name, content_type, content_length, charset, content_type_extra)
+        if self.enabled:
+            self._current_file_buffer = BytesIO()
+            raise StopFutureHandlers
 
     def receive_data_chunk(self, raw_data, start):
         if not self.enabled:
@@ -35,15 +45,41 @@ class CsvImportSizeLimitUploadHandler(FileUploadHandler):
                 "bytes_seen": self.bytes_seen,
                 "bytes_forwarded": self.bytes_forwarded,
             }
-            # Stop the multipart parser immediately. Because this handler is
-            # first, the over-limit chunk never reaches memory/disk handlers.
-            # Keep the HTTP connection alive so the view can return its
-            # explicit 413 response. Django drains the unread request body
-            # without passing it through downstream upload handlers.
+            if self._current_file_buffer is not None:
+                self._current_file_buffer.close()
+                self._current_file_buffer = None
+            # Discard the bounded prefix and stop parsing; do not forward any
+            # part of an oversized CSV to Django's memory or temporary-file handlers.
+            # Keep the connection alive so the view can return an explicit 413.
             raise StopUpload(connection_reset=False)
 
-        self.bytes_forwarded += len(raw_data)
-        return raw_data
+        if self._current_file_buffer is None:
+            self._current_file_buffer = BytesIO()
+        self._current_file_buffer.write(raw_data)
+        # A None chunk tells Django not to pass this data to later upload
+        # handlers. On file_complete, only a complete, under-limit file is
+        # exposed as an UploadedFile.
+        return None
 
     def file_complete(self, file_size):
+        if not self.enabled or self._current_file_buffer is None:
+            return None
+
+        file_buffer = self._current_file_buffer
+        self._current_file_buffer = None
+        file_buffer.seek(0)
+        return InMemoryUploadedFile(
+            file=file_buffer,
+            field_name=self.field_name,
+            name=self.file_name,
+            content_type=self.content_type,
+            size=file_size,
+            charset=self.charset,
+            content_type_extra=self.content_type_extra,
+        )
+
+    def upload_complete(self):
+        if self._current_file_buffer is not None:
+            self._current_file_buffer.close()
+            self._current_file_buffer = None
         return None

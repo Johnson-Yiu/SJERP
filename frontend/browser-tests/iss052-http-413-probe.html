@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ISS-052 HTTP 413 probe</title>
+    <style>
+      body { max-width: 900px; margin: 32px auto; padding: 0 20px; font: 16px/1.5 system-ui, sans-serif; color: #1f2937; }
+      h1 { font-size: 24px; }
+      .note { padding: 12px 16px; border-left: 4px solid #387468; background: #eef6f2; }
+      .actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
+      button { padding: 10px 14px; border: 1px solid #8b9994; border-radius: 7px; background: white; cursor: pointer; }
+      button:disabled { opacity: .55; cursor: wait; }
+      pre { min-height: 100px; padding: 14px; overflow: auto; white-space: pre-wrap; background: #101a18; color: #d4f3e6; border-radius: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>ISS-052 超限上传 HTTP 验收</h1>
+    <p class="note">仅用于本地隔离数据库。选择合成 CSV 后，可分别对正式预览、兼容预览和正式导入入口发送真实 multipart HTTP 请求。</p>
+    <label>测试 CSV： <input id="csv-file" type="file" accept=".csv,text/csv" /></label>
+    <div class="actions">
+      <button data-path="/import/csv/preview/">预览入口</button>
+      <button data-path="/import/csv/">兼容预览入口</button>
+      <button data-path="/import/csv/execute/">正式导入入口</button>
+    </div>
+    <pre id="latest" role="status">等待请求</pre>
+    <pre id="results" role="log">尚无结果</pre>
+    <script type="module">
+      import { api } from '/src/api.js'
+
+      const picker = document.querySelector('#csv-file')
+      const latest = document.querySelector('#latest')
+      const output = document.querySelector('#results')
+      const results = []
+      document.querySelectorAll('button[data-path]').forEach((button) => {
+        button.addEventListener('click', async () => {
+          const file = picker.files?.[0]
+          if (!file) {
+            output.textContent = '先选择合成 CSV 文件。'
+            return
+          }
+          button.disabled = true
+          const result = { endpoint: button.dataset.path, state: 'requesting' }
+          results.push(result)
+          latest.textContent = JSON.stringify(result, null, 2)
+          output.textContent = JSON.stringify(results, null, 2)
+          const form = new FormData()
+          form.append('entity', 'customers')
+          form.append('preview_token', 'oversized-request-probe')
+          form.append('file', file)
+          const started = performance.now()
+          try {
+            const response = await api.post(button.dataset.path, form)
+            Object.assign(result, {
+              state: 'complete',
+              http_status: response.status,
+              content_type: response.headers['content-type'],
+              elapsed_ms: Math.round(performance.now() - started),
+              response_body: response.data,
+            })
+          } catch (error) {
+            Object.assign(result, {
+              state: 'complete',
+              http_status: error.response?.status ?? null,
+              content_type: error.response?.headers?.['content-type'] ?? null,
+              network_error: error.response ? null : String(error),
+              response_body: error.response?.data ?? null,
+              elapsed_ms: Math.round(performance.now() - started),
+            })
+          } finally {
+            button.disabled = false
+            latest.textContent = JSON.stringify(result, null, 2)
+            output.textContent = JSON.stringify(results, null, 2)
+          }
+        })
+      })
+    </script>
+  </body>
+</html>

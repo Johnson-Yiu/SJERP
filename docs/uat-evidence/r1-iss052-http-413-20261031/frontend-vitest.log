@@ -1,0 +1,12 @@
+
+> senju-crm-erp@1.0.0 test:trade-units
+> vitest run tests/trade-units.spec.js --environment jsdom
+
+
+ RUN  v4.1.11 D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss052-http-413-20261031/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  11:22:10
+   Duration  9.90s (transform 186ms, setup 503ms, import 169ms, tests 70ms, environment 8.02s)

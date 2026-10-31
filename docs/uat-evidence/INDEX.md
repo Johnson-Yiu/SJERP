@@ -11,6 +11,7 @@
 | R1-REPAIR-07 390px 订单布局 | [README 与多视口证据](r1-repair-07/README.md) |
 | final-cross-module-ux | [README 与截图](final-cross-module-ux/README.md) |
 | supplier-purchase-ux-r2：ISS-022 / ISS-075 | [README、定向日志与截图](supplier-purchase-ux-regression-054bd825/README.md) |
+| R1-ISS-052-HTTP-413 真实浏览器上传验收 | [README 与 HTTP/数据库证据](r1-iss052-http-413-20261031/README.md) |
 | R1-REPAIR-CONSOLIDATION-01 集成复核 | [综合验收报告](integration-r1-repairs-20261028/README.md)；[原始日志](integration-r1-repairs-20261028/logs/)；[本轮截图/诊断](integration-r1-repairs-20261028/screenshots/) |
 | R1-STATUS-RECONCILE-01 状态对账 | [124 Issue / 46 业务规则对账报告](r1-status-reconcile-20261028/README.md) |
 | R1-INTEGRATION-PRE-PILOT-01 五项成果集成 | [集成报告、测试日志与遗留阻断](integration-pre-pilot-01/README.md) |

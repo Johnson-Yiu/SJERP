@@ -623,3 +623,7 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 
 删除/替换步骤未执行，等待用户对一次性合成文件 `ISS007-delete-target.txt` 当次确认；状态因此仍为 `NEEDS_VERIFICATION`，ISS-007 未关闭。生产代理/CDN/对象存储 ACL 不在本地 UAT 可证明范围，继续按 ISS-017 单独部署验收。本轮未连接生产库/媒体、未运行 PostgreSQL/CI、未合并 master、未部署。
 
+## R1-ISS007-ATTACHMENT-DELETE-UAT（2026-11-01）
+
+后续收到用户明确授权后，在全新一次性 SQLite 和隔离 `MEDIA_ROOT` 中重新建立合成客户、跟进及普通非超级用户测试账号；没有复用或删除真实历史附件。只通过真实 Chrome 删除本轮专门创建的 `ISS007-delete-target.txt`，取消确认路径先验证仍保留；确认后 DELETE 204，目标数据库记录与文件均消失，旧私有 URL 返回 404。删除审计保留隔离认证操作人的用户外键、`DELETE` 路径及附件 ID/文件名。随后上传独立替代附件 201，桌面 1440×900 和 390×844 窄屏刷新后均可见；原有三份合成附件的 ID、路径、DB/磁盘大小及 SHA256 完全不变。证据提交 `9a4d70e1425928358be7001ece43327c00557b0c`；Python 锁定环境检查、迁移、Django 定向测试、Node 语法和浏览器 UAT 日志/截图见 [ISS-007 验收报告](uat-evidence/r1-iss007-followup-files-uat-20261031/README.md)。没有发现新的产品缺陷，未触发 CI、未部署、未连接生产数据或清理其他媒体目录。ISS-007 保持 `NEEDS_VERIFICATION`，等待独立复审；真实反向代理/对象存储 ACL 仍按 ISS-017 单独验收，Issue 状态计数不变。
+

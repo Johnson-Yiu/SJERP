@@ -1,0 +1,21 @@
+Python runtime and locked-environment verification
+3.14.5 (tags/v3.14.5:5607950, May 10 2026, 10:43:50) [MSC v.1944 64 bit (AMD64)]
+pip check:
+No broken requirements found.
+Installed packages:
+asgiref==3.13.0
+bleach==6.4.0
+dj-database-url==3.1.2
+Django==6.0.9
+django-cors-headers==4.9.0
+djangorestframework==3.18.3
+et_xmlfile==2.0.0
+openpyxl==3.1.5
+pillow==13.0.0
+pip==26.1.1
+psycopg==3.3.6
+psycopg-binary==3.3.6
+pycountry==26.2.16
+sqlparse==0.6.0
+tzdata==2026.6
+webencodings==0.6.1

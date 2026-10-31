@@ -1,0 +1,485 @@
+{
+  "loggedIn": true,
+  "permissions": {
+    "dashboard": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "reports": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "customers": {
+      "view": true,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "contacts": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "followups": {
+      "view": true,
+      "create": true,
+      "update": true,
+      "delete": true,
+      "export": false,
+      "import": false
+    },
+    "quotes": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "orders": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "suppliers": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "purchases": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "inventory": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "products": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "skus": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "categories": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "parameters": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "packaging": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "trade_units": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "certificates": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "hs_codes": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "finance": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "transactions": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "imports": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "organization": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "employees": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    },
+    "permissions": {
+      "view": false,
+      "create": false,
+      "update": false,
+      "delete": false,
+      "export": false,
+      "import": false
+    }
+  },
+  "responses": {
+    "/api/session/current-operator/": {
+      "status": 200,
+      "data": {
+        "name": "ISS007\u5408\u6210\u6d4b\u8bd5\u64cd\u4f5c\u5458",
+        "role": "ISS-007 \u9694\u79bb\u9644\u4ef6\u9a8c\u6536\u89d2\u8272",
+        "authenticated": true,
+        "development_superadmin": false,
+        "rbac_enforcement": true,
+        "has_all_permissions": false,
+        "can_manage_permissions": false,
+        "permissions": {
+          "dashboard": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "reports": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "customers": {
+            "view": true,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "contacts": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "followups": {
+            "view": true,
+            "create": true,
+            "update": true,
+            "delete": true,
+            "export": false,
+            "import": false
+          },
+          "quotes": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "orders": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "suppliers": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "purchases": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "inventory": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "products": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "skus": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "categories": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "parameters": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "packaging": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "trade_units": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "certificates": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "hs_codes": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "finance": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "transactions": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "imports": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "organization": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "employees": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          },
+          "permissions": {
+            "view": false,
+            "create": false,
+            "update": false,
+            "delete": false,
+            "export": false,
+            "import": false
+          }
+        },
+        "data_scope": "self",
+        "data_scope_display": "\u4ec5\u672c\u4eba\u8d1f\u8d23",
+        "employee_profile_id": 1,
+        "unit_id": 7,
+        "unit_name": "ISS-007 \u4e00\u6b21\u6027\u9694\u79bb\u6d4b\u8bd5\u7ec4",
+        "can_manage_hs_codes": false,
+        "audit_log_enabled": true
+      }
+    },
+    "/api/customers/": {
+      "status": 200,
+      "data": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            "id": 1,
+            "contact_count": 0,
+            "order_count": null,
+            "sales_amount": null,
+            "country_display": "",
+            "status_display": "\u5df2\u8054\u7cfb",
+            "created_at": "2026-11-01T00:37:36.874343+08:00",
+            "updated_at": "2026-11-01T00:37:36.874366+08:00",
+            "name": "ISS007 \u4e00\u6b21\u6027\u5408\u6210\u5ba2\u6237 4f0c9dfbf4",
+            "code": "ISS007-DEL-4f0c9dfbf4",
+            "country": "",
+            "region": "",
+            "source": "",
+            "status": "contact",
+            "owner": "ISS007\u5408\u6210\u6d4b\u8bd5\u64cd\u4f5c\u5458",
+            "website": "",
+            "address": "",
+            "notes": "",
+            "next_follow_up": null,
+            "owner_profile": 1
+          }
+        ]
+      }
+    },
+    "/api/follow-ups/": {
+      "status": 200,
+      "data": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            "id": 1,
+            "next_follow_up_mode_display": "\u4fdd\u7559\u5f53\u524d\u8ba1\u5212",
+            "customer_name": "ISS007 \u4e00\u6b21\u6027\u5408\u6210\u5ba2\u6237 4f0c9dfbf4",
+            "contact_name": "",
+            "type": "email",
+            "type_display": "\u90ae\u4ef6",
+            "attachments": [
+              {
+                "id": 1,
+                "name": "ISS007-legacy-history.txt",
+                "file": "/api/media/follow-up-attachments/2026/11/ISS007-legacy-history.txt",
+                "url": "/api/media/follow-up-attachments/2026/11/ISS007-legacy-history.txt",
+                "content_type": "text/plain",
+                "size": 57,
+                "created_at": "2026-11-01T00:37:36.896368+08:00"
+              }
+            ],
+            "created_at": "2026-11-01T00:37:36.879761+08:00",
+            "updated_at": "2026-11-01T00:37:36.879785+08:00",
+            "followed_at": "2026-10-31T10:00:00+08:00",
+            "subject": "ISS007\u9644\u4ef6\u6d41\u7a0b\u6838\u9a8c 2026-10-31",
+            "content": "\u4ec5\u7528\u4e8e ISS-007 \u9644\u4ef6\u5220\u9664/\u66ff\u6362 UAT \u7684\u5408\u6210\u8ddf\u8fdb\u8bb0\u5f55\u3002",
+            "result": "",
+            "next_action": "",
+            "next_follow_up_mode": "keep",
+            "next_follow_up": null,
+            "owner": "ISS007\u5408\u6210\u6d4b\u8bd5\u64cd\u4f5c\u5458",
+            "customer": 1,
+            "contact": null
+          }
+        ]
+      }
+    }
+  }
+}

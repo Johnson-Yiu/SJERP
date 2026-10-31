@@ -1,0 +1,6 @@
+{
+  "runId": "iss007-delete-uat-5997ec4cc688423a9d24b74f0c9dfbf4",
+  "database": "<ISOLATED_TEMP_ROOT>\\db.sqlite3",
+  "mediaRoot": "<ISOLATED_TEMP_ROOT>\\media",
+  "rbacEnforcement": true
+}

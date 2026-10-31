@@ -1,0 +1,20 @@
+{
+  "runId": "iss007-delete-uat-5997ec4cc688423a9d24b74f0c9dfbf4",
+  "customerId": 1,
+  "followUpId": 1,
+  "operatorUsername": "iss007-uat-0c9dfbf4",
+  "operatorDisplayName": "ISS007�ϳɲ��Բ���Ա",
+  "operatorIsSuperuser": false,
+  "noPermissionUsername": "iss007-uat-no-permission-0c9dfbf4",
+  "subject": "ISS007�������̺��� 2026-10-31",
+  "syntheticLegacyAttachment": {
+    "id": 1,
+    "name": "ISS007-legacy-history.txt",
+    "file": "follow-up-attachments/2026/11/ISS007-legacy-history.txt",
+    "size": 57,
+    "sha256": "a9a3d887ca46e0a9ecd410a9bba89e6ee04a43916babb39849f6ad9bcc35314f"
+  },
+  "database": "<ISOLATED_TEMP_ROOT>\\db.sqlite3",
+  "mediaRoot": "<ISOLATED_TEMP_ROOT>\\media",
+  "recordsCreated": "Synthetic records only; no production database or media path is configured."
+}

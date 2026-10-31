@@ -1,6 +1,5 @@
+=== Captured stdout (decoded from native GBK to UTF-8) ===
 Found 1028 test(s).
-Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
-
 Operations to perform:
   Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
   Apply all migrations: admin, auth, contenttypes, crm, sessions
@@ -123,6 +122,11 @@ Running migrations:
   Applying crm.0092_merge_fulfillment_and_csv_audit... OK
   Applying sessions.0001_initial... OK
 System check identified no issues (0 silenced).
+P2A-DATABASE_VERIFICATION {"before": "a09ab1e69f782ddd5ba745c8b71e0ca4a4339b75a8481331209e07209eb0bc58", "after": "a09ab1e69f782ddd5ba745c8b71e0ca4a4339b75a8481331209e07209eb0bc58", "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": true}
+P2A_MIGRATION_VERIFICATION {"vendor": "sqlite", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}
+
+=== Captured stderr (decoded from native GBK to UTF-8) ===
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
 test_admin_can_save_role_permission_matrix_in_configuration_mode (crm.tests.BusinessFlowTests.test_admin_can_save_role_permission_matrix_in_configuration_mode) ... Bad Request: /api/access-roles/1/permission-matrix/
 ok
 test_category_attribute_reorder_applies_to_sku_preview (crm.tests.BusinessFlowTests.test_category_attribute_reorder_applies_to_sku_preview) ... ok
@@ -197,12 +201,12 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
     return func(*args, **kwds)
            ^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 1492, in copy_estimated_packing
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 1492, in copy_estimated_packing
     copy_estimated_to_actual(shipment, plan, replace=request.data.get("replace") is True)
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
     return func(*args, **kwds)
            ^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\services\packaging.py", line 161, in copy_estimated_to_actual
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\services\packaging.py", line 161, in copy_estimated_to_actual
     serializer.save(shipment=shipment)
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\serializers.py", line 210, in save
     self.instance = self.create(validated_data)
@@ -210,7 +214,7 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
     return func(*args, **kwds)
            ^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\serializers.py", line 2893, in create
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\serializers.py", line 2893, in create
     ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
     return self._mock_call(*args, **kwargs)
@@ -221,7 +225,7 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1204, in _execute_mock_call
     result = effect(*args, **kwargs)
              ^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_actual_packing.py", line 464, in fail_after_first_carton
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_actual_packing.py", line 464, in fail_after_first_carton
     raise RuntimeError("copy failed after first carton")
 RuntimeError: copy failed after first carton
 ok
@@ -255,8 +259,8 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
     return func(*args, **kwds)
            ^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 1473, in update_package
-    record_operation(request=request, instance=shipment, action="custom", action_label="ɾ��װ����ϸ", before={"package": before}, metadata={"package_id": package_id})
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 1473, in update_package
+    record_operation(request=request, instance=shipment, action="custom", action_label="删除装箱明细", before={"package": before}, metadata={"package_id": package_id})
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
     return self._mock_call(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -307,7 +311,7 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
     return func(*args, **kwds)
            ^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 1456, in packages
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 1456, in packages
     package = serializer.save(shipment=shipment)
               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\serializers.py", line 210, in save
@@ -316,7 +320,7 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
     return func(*args, **kwds)
            ^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\serializers.py", line 2893, in create
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\serializers.py", line 2893, in create
     ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
     return self._mock_call(*args, **kwargs)
@@ -355,7 +359,7 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
     return func(*args, **kwds)
            ^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 1476, in update_package
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 1476, in update_package
     serializer.is_valid(raise_exception=True); serializer.save()
                                                ^^^^^^^^^^^^^^^^^
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\serializers.py", line 205, in save
@@ -364,7 +368,7 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
     return func(*args, **kwds)
            ^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\serializers.py", line 2905, in update
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\serializers.py", line 2905, in update
     ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=instance, **item) for item in items])
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
     return self._mock_call(*args, **kwargs)
@@ -423,7 +427,6 @@ test_authenticated_operator_records_operation_with_snapshot (crm.tests.test_audi
 test_development_mode_does_not_record_operations (crm.tests.test_audit.AuditTrailTests.test_development_mode_does_not_record_operations) ... ok
 test_operator_deletion_cannot_rewrite_historical_identity (crm.tests.test_audit.AuditTrailTests.test_operator_deletion_cannot_rewrite_historical_identity) ... ok
 test_postgres_trigger_rejects_raw_update_and_delete (crm.tests.test_audit.AuditTrailTests.test_postgres_trigger_rejects_raw_update_and_delete) ... skipped 'requires a PostgreSQL database; SQLite cannot prove the production DB guard'
-P2A-DATABASE_VERIFICATION {"before": "4fe9d434c5c21fd87b3409ee4f62ad1f9ff406a167f879cd5d144c64e0933f16", "after": "4fe9d434c5c21fd87b3409ee4f62ad1f9ff406a167f879cd5d144c64e0933f16", "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": true}
 test_a_b_unconverted_then_bank_net_confirmed_without_legacy_writes (crm.tests.test_cash_events.CashEventTests.test_a_b_unconverted_then_bank_net_confirmed_without_legacy_writes) ... ok
 test_advance_allocation_does_not_consume_cash_source (crm.tests.test_cash_events.CashEventTests.test_advance_allocation_does_not_consume_cash_source) ... ok
 test_c_partial_60_40_and_overallocation (crm.tests.test_cash_events.CashEventTests.test_c_partial_60_40_and_overallocation) ... Conflict: /api/rmb-cash-events/
@@ -617,12 +620,12 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
     response = handler(request, *args, **kwargs)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 1939, in create
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 1939, in create
     return super().create(request, *args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\mixins.py", line 19, in create
     self.perform_create(serializer)
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\audit.py", line 70, in perform_create
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\audit.py", line 70, in perform_create
     instance = serializer.save()
                ^^^^^^^^^^^^^^^^^
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\serializers.py", line 210, in save
@@ -631,7 +634,7 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
     return func(*args, **kwds)
            ^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\serializers.py", line 2356, in create
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\serializers.py", line 2356, in create
     OrderItem.objects.bulk_create(rows)
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
     return self._mock_call(*args, **kwargs)
@@ -666,12 +669,12 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
     response = handler(request, *args, **kwargs)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 335, in create
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 335, in create
     return super().create(request, *args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\mixins.py", line 19, in create
     self.perform_create(serializer)
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\audit.py", line 70, in perform_create
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\audit.py", line 70, in perform_create
     instance = serializer.save()
                ^^^^^^^^^^^^^^^^^
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\serializers.py", line 210, in save
@@ -680,7 +683,7 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
     return func(*args, **kwds)
            ^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\serializers.py", line 787, in create
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\serializers.py", line 787, in create
     PurchaseOrderItem.objects.bulk_create([
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
     return self._mock_call(*args, **kwargs)
@@ -1029,13 +1032,13 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
     response = handler(request, *args, **kwargs)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 2136, in quantity_adjustments
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 2136, in quantity_adjustments
     adjustment, replayed, preview = apply_quantity_adjustment(
                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
     return func(*args, **kwds)
            ^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\services\order_quantity_adjustments.py", line 421, in apply_quantity_adjustment
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\services\order_quantity_adjustments.py", line 421, in apply_quantity_adjustment
     rebalance_sku_reservations(SKU.objects.get(pk=sku_id))
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
     return self._mock_call(*args, **kwargs)
@@ -1673,9 +1676,9 @@ Traceback (most recent call last):
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
     return func(*args, **kwds)
            ^^^^^^^^^^^^^^^^^^^
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 1103, in perform_create
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\views.py", line 1103, in perform_create
     super().perform_create(serializer)
-  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\audit.py", line 71, in perform_create
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\audit.py", line 71, in perform_create
     record_operation(request=self.request, instance=instance, action="create")
   File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
     return self._mock_call(*args, **kwargs)
@@ -1890,7 +1893,6 @@ test_same_sku_multiple_packaging_lines_fulfill_independently (crm.tests.test_tra
 test_h_confirm_races_void_and_refund_never_releases_or_changes_legacy (crm.tests.test_cash_events.CashConcurrencyTests.test_h_confirm_races_void_and_refund_never_releases_or_changes_legacy) ... skipped 'Real PostgreSQL locks required'
 test_i_concurrent_same_request_creates_one_event_and_one_allocation (crm.tests.test_cash_events.CashConcurrencyTests.test_i_concurrent_same_request_creates_one_event_and_one_allocation) ... skipped 'Real PostgreSQL locks required'
 test_j_different_keys_compete_for_same_source (crm.tests.test_cash_events.CashConcurrencyTests.test_j_different_keys_compete_for_same_source) ... skipped 'Real PostgreSQL locks required'
-P2A_MIGRATION_VERIFICATION {"vendor": "sqlite", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}
 test_additive_migration_preserves_historical_rows_and_decimal_fields (crm.tests.test_cash_events.CashMigrationTests.test_additive_migration_preserves_historical_rows_and_decimal_fields) ... ok
 test_deployed_stage_rejects_relative_media_root (crm.tests.test_database_settings.DatabaseSettingsTests.test_deployed_stage_rejects_relative_media_root) ... ok
 test_deployed_stage_requires_explicit_media_root (crm.tests.test_database_settings.DatabaseSettingsTests.test_deployed_stage_requires_explicit_media_root) ... ok
@@ -1911,7 +1913,7 @@ test_staging_without_database_url_fails_fast (crm.tests.test_database_settings.D
 test_development_has_full_access_without_claiming_login (crm.tests.test_development_access.DevelopmentAccessTests.test_development_has_full_access_without_claiming_login) ... ok
 test_each_environment_guard_disables_development_access (crm.tests.test_development_access.DevelopmentAccessTests.test_each_environment_guard_disables_development_access) ... ok
 test_existing_codes_are_deduplicated_and_reversible (crm.tests.test_hs_codes.HSMigrationTests.test_existing_codes_are_deduplicated_and_reversible) ... ok
-test_postgresql_concurrent_duplicate_requests_are_serialized (crm.tests.test_iss006_idempotency.FulfillmentIdempotencyDatabaseTests.test_postgresql_concurrent_duplicate_requests_are_serialized) ... skipped '���� SQLite ���ṩ PostgreSQL ���������壻���� PostgreSQL ����ִ�С�'
+test_postgresql_concurrent_duplicate_requests_are_serialized (crm.tests.test_iss006_idempotency.FulfillmentIdempotencyDatabaseTests.test_postgresql_concurrent_duplicate_requests_are_serialized) ... skipped '本地 SQLite 不提供 PostgreSQL 并发锁语义；需在 PostgreSQL 环境执行。'
 test_archive_path_traversal_is_rejected_before_target_commit (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_archive_path_traversal_is_rejected_before_target_commit) ... ok
 test_backup_permissions_are_strict_on_posix_or_explicitly_pending_on_windows (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_backup_permissions_are_strict_on_posix_or_explicitly_pending_on_windows) ... ok
 test_backup_requires_an_explicit_write_quiescence_confirmation (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_backup_requires_an_explicit_write_quiescence_confirmation) ... ok
@@ -1927,11 +1929,11 @@ test_postgresql_backup_is_fail_closed_without_bound_snapshot (crm.tests.test_iss
 ok
 test_prune_missing_directory_fails_without_creating_it (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_missing_directory_fails_without_creating_it) ... ok
 test_prune_non_directory_fails_without_mutating_path (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_non_directory_fails_without_mutating_path) ... ok
-test_prune_symlink_directory_is_rejected (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_symlink_directory_is_rejected) ... skipped "symlink creation unavailable: [WinError 5] �ܾ����ʡ�: 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmp8jz016f9\\\\real-backups' -> 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmp8jz016f9\\\\backup-link'"
+test_prune_symlink_directory_is_rejected (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_symlink_directory_is_rejected) ... skipped "symlink creation unavailable: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmp4005v41f\\\\real-backups' -> 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmp4005v41f\\\\backup-link'"
 test_requested_encryption_failure_is_recorded_as_failed (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_requested_encryption_failure_is_recorded_as_failed) ... ok
 test_restore_rejects_tampered_media (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_restore_rejects_tampered_media) ... ok
 test_result_file_inside_existing_target_is_rejected_without_changes (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_result_file_inside_existing_target_is_rejected_without_changes) ... ok
-test_result_file_symlink_is_rejected_without_overwriting_link_target (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_result_file_symlink_is_rejected_without_overwriting_link_target) ... skipped "symlink creation unavailable: [WinError 5] �ܾ����ʡ�: 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmp_031rf55\\\\protected-report.json' -> 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmp_031rf55\\\\result.json'"
+test_result_file_symlink_is_rejected_without_overwriting_link_target (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_result_file_symlink_is_rejected_without_overwriting_link_target) ... skipped "symlink creation unavailable: [WinError 5] 拒绝访问。: 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmp9n0ft1s_\\\\protected-report.json' -> 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmp9n0ft1s_\\\\result.json'"
 test_retention_plan_defaults_to_seven_daily_four_weekly_three_monthly_without_deleting (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_retention_plan_defaults_to_seven_daily_four_weekly_three_monthly_without_deleting) ... ok
 test_single_archive_restore_preserves_rows_amount_inventory_and_media_relation (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_single_archive_restore_preserves_rows_amount_inventory_and_media_relation) ... ok
 test_successful_restore_reports_recovery_and_report_status_separately (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_successful_restore_reports_recovery_and_report_status_separately) ... ok
@@ -1942,22 +1944,22 @@ test_new_filesystem_storage_instance_reopens_file_after_restart_simulation (crm.
 test_symlink_is_rejected_in_private_media_inventory (crm.tests.test_iss047_private_storage.ISS047PrivateMediaStorageTests.test_symlink_is_rejected_in_private_media_inventory) ... skipped 'symlink creation is not available in this environment'
 test_business_flow_command_is_retired (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_business_flow_command_is_retired) ... ok
 test_edge_business_flow_command_is_retired (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_edge_business_flow_command_is_retired) ... ok
-test_seed_demo_accepts_marked_isolated_sqlite (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_accepts_marked_isolated_sqlite) ... D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:139: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+test_seed_demo_accepts_marked_isolated_sqlite (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_accepts_marked_isolated_sqlite) ... D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:139: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
   with override_settings(
 ok
-test_seed_demo_accepts_only_existing_checkout_default_database (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_accepts_only_existing_checkout_default_database) ... D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:68: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+test_seed_demo_accepts_only_existing_checkout_default_database (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_accepts_only_existing_checkout_default_database) ... D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:68: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
   with override_settings(
 ok
-test_seed_demo_rejects_additional_database_alias (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_additional_database_alias) ... D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:92: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+test_seed_demo_rejects_additional_database_alias (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_additional_database_alias) ... D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:92: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
   with override_settings(
 ok
 test_seed_demo_rejects_deployed_stage (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_deployed_stage) ... ok
 test_seed_demo_rejects_explicit_database_without_isolation_identity (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_explicit_database_without_isolation_identity) ... ok
-test_seed_demo_rejects_missing_default_database_file (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_missing_default_database_file) ... D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:107: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+test_seed_demo_rejects_missing_default_database_file (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_missing_default_database_file) ... D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:107: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
   with override_settings(
 ok
 test_seed_demo_rejects_non_sqlite_database (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_non_sqlite_database) ... ok
-test_seed_demo_rejects_unmarked_sqlite_outside_checkout (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_unmarked_sqlite_outside_checkout) ... D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:82: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+test_seed_demo_rejects_unmarked_sqlite_outside_checkout (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_unmarked_sqlite_outside_checkout) ... D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:82: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
   with override_settings(
 ok
 test_preview_works_without_an_outer_test_transaction (crm.tests.test_order_quantity_adjustments.QuantityPreviewTransactionTests.test_preview_works_without_an_outer_test_transaction) ... ok
@@ -1994,8 +1996,7 @@ test_rejects_non_sqlite_engine (test_support.test_isolated_runtime.IsolatedRunti
 test_unknown_isolated_rbac_mode_is_rejected (test_support.test_isolated_runtime.IsolatedRuntimeTests.test_unknown_isolated_rbac_mode_is_rejected) ... ok
 
 ----------------------------------------------------------------------
-Ran 1028 tests in 640.753s
+Ran 1028 tests in 602.253s
 
 OK (skipped=19)
-Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
-
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...

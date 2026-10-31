@@ -1,6 +1,6 @@
 Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
-Found 12 test(s).
 
+Found 12 test(s).
 Operations to perform:
   Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
   Apply all migrations: admin, auth, contenttypes, crm, sessions
@@ -121,36 +121,36 @@ Running migrations:
   Applying crm.0091_csv_import_audit... OK
   Applying crm.0090_fulfillment_idempotency... OK
   Applying crm.0092_merge_fulfillment_and_csv_audit... OK
-  Applying sessions.0001_initial... OK
-System check identified no issues (0 silenced).
 test_anonymous_business_api_returns_401_with_session_challenge (crm.tests.test_environment_isolation.ProductionAuthenticationTests.test_anonymous_business_api_returns_401_with_session_challenge) ... ok
 test_authenticated_user_without_module_permission_returns_403 (crm.tests.test_environment_isolation.ProductionAuthenticationTests.test_authenticated_user_without_module_permission_returns_403) ... ok
 test_business_flow_command_is_retired (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_business_flow_command_is_retired) ... ok
 test_edge_business_flow_command_is_retired (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_edge_business_flow_command_is_retired) ... ok
-test_seed_demo_accepts_marked_isolated_sqlite (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_accepts_marked_isolated_sqlite) ... D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:139: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+test_seed_demo_accepts_marked_isolated_sqlite (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_accepts_marked_isolated_sqlite) ... D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:139: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
   with override_settings(
 ok
-test_seed_demo_accepts_only_existing_checkout_default_database (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_accepts_only_existing_checkout_default_database) ... D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:68: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+test_seed_demo_accepts_only_existing_checkout_default_database (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_accepts_only_existing_checkout_default_database) ... D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:68: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
   with override_settings(
 ok
-test_seed_demo_rejects_additional_database_alias (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_additional_database_alias) ... D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:92: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+test_seed_demo_rejects_additional_database_alias (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_additional_database_alias) ... D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:92: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
   with override_settings(
 ok
 test_seed_demo_rejects_deployed_stage (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_deployed_stage) ... C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\test\utils.py:455: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
   with self as context:
 ok
 test_seed_demo_rejects_explicit_database_without_isolation_identity (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_explicit_database_without_isolation_identity) ... ok
-test_seed_demo_rejects_missing_default_database_file (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_missing_default_database_file) ... D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:107: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+test_seed_demo_rejects_missing_default_database_file (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_missing_default_database_file) ... D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:107: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
   with override_settings(
 ok
 test_seed_demo_rejects_non_sqlite_database (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_non_sqlite_database) ... ok
-test_seed_demo_rejects_unmarked_sqlite_outside_checkout (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_unmarked_sqlite_outside_checkout) ... D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:82: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+test_seed_demo_rejects_unmarked_sqlite_outside_checkout (crm.tests.test_legacy_qa_tools.LegacyQaToolSafetyTests.test_seed_demo_rejects_unmarked_sqlite_outside_checkout) ... D:\Codex项目\森爵照明管理系统\.worktrees\r1-iss045-python312-verify-20261031\backend\crm\tests\test_legacy_qa_tools.py:82: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
   with override_settings(
 ok
 
 ----------------------------------------------------------------------
-Ran 12 tests in 1.698s
+Ran 12 tests in 1.036s
 
 OK
 Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
 
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

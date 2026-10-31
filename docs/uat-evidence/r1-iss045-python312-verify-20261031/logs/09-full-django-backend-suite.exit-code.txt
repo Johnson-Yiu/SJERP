@@ -1,0 +1,7 @@
+exit=0
+python=C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Scripts\python.exe
+database=C:\Users\Johnson\AppData\Local\Temp\sunjack-py312-evidence-20261031-iss045-full-clean-20261031\django\db.sqlite3
+media_root=C:\Users\Johnson\AppData\Local\Temp\sunjack-py312-evidence-20261031-iss045-full-clean-20261031\django\media
+PYTHONIOENCODING=unset
+PYTHONUTF8=unset
+Captured native GBK stdout/stderr and decoded losslessly to UTF-8.

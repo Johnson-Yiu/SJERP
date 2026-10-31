@@ -1,1 +1,1 @@
-CommandError: seed_demo �ܾ�δ��ǵ� DATABASE_URL����ʹ��Ĭ�ϱ��� SQLite����ͨ����ǰ�����������ṩ�����������ݡ�
+CommandError: seed_demo 拒绝未标记的 DATABASE_URL；请使用默认本地 SQLite，或通过当前隔离运行器提供完整隔离身份。

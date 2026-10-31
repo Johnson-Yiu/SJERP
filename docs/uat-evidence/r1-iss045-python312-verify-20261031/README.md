@@ -65,6 +65,14 @@ seed_demo 允许路径在带本轮隔离标记的临时 SQLite 上迁移并成�
 - [Django check](logs/05-django-check.log)、[makemigrations 检查](logs/06-makemigrations-check.log)
 - [隔离运行时测试](logs/07-isolation-runtime-tests.log)
 - [旧流程退役与 seed_demo 单元安全测试](logs/08-legacy-seed-demo-safety-tests.log)
-- [完整 Django 后端测试及逐项 skip 原因](logs/09-full-django-backend-suite.log)
+- [完整 Django 后端测试合并阅读版](logs/09-full-django-backend-suite.log)；最终原始 stdout（UTF-8 解码）见 [stdout](logs/09-full-django-backend-suite.stdout.log)，[stderr](logs/09-full-django-backend-suite.stderr.log)，以及[退出码/运行环境记录](logs/09-full-django-backend-suite.exit-code.txt)
+- [UTF-8 采集环境探针](logs/00-utf8-capture-probe.log)；[带 PYTHONIOENCODING 的诊断性失败运行](logs/09-full-django-backend-suite-pythonioencoding-capture-failure.log)仅用于解释采集干扰，不作为最终回归结果
+- [未设置 PYTHONIOENCODING 时的数据库设置子测试复核](logs/17-database-settings-tests.stdout.log)及[stderr](logs/17-database-settings-tests.stderr.log)
 - [seed_demo 允许路径的目标校验](logs/10-seed-demo-allow-target-verification.log)、[迁移](logs/11-seed-demo-allow-migrate.log)、[执行](logs/12-seed-demo-allow.log)和[合成记录核对](logs/13-seed-demo-allow-record-check.log)
 - [seed_demo 拒绝路径的目标校验](logs/14-seed-demo-deny-target-verification.log)、[原始拒绝输出](logs/15-seed-demo-deny.log)及[无副作用核对](logs/16-seed-demo-deny-side-effect-check.log)
+
+### 最终全量复跑说明
+
+为避免日志编码变量改变测试子进程环境，最终全量运行明确未设置 `PYTHONIOENCODING` 或 `PYTHONUTF8`，使用 CPython 3.12.16 对应共享 venv，并将 `DATABASE_URL`、数据库文件与 `MEDIA_ROOT` 指向新的专用临时目录 `sunjack-py312-evidence-20261031-iss045-full-clean-20261031`。stdout/stderr 先按 Windows 原生 GBK 字节流分别捕获，再按 GBK 解码并无损转为 UTF-8；原始通道内容、分流及转换方式在上述日志中可核对。最终全量套件 **1,028 项运行、19 项跳过、0 项失败，exit 0**；摘要为 `Ran 1028 tests ...`、`OK (skipped=19)`。跳过原因仍为本报告前述 PostgreSQL/POSIX/Windows 符号链接环境限制。
+
+曾有一次仅为排查编码而设置 `PYTHONIOENCODING=utf-8` 的全量采集尝试，出现 11 个 `test_database_settings` 子进程断言错误；这不是最终结果。随后在不设置该变量时单独复测该模块 **16/16 通过**，再完成上述干净环境全量复跑。该诊断日志保留供审查，不能与最终复跑混淆。日志扫描未发现 Unicode 替换字符或常见凭证格式命中。

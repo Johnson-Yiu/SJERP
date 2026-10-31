@@ -1,1 +1,1 @@
-exit_code=1; target_database_exists=False
+exit_code=[15-seed-demo-deny.log] exit=1 1; target_database_exists=False

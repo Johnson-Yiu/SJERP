@@ -25,7 +25,8 @@ const customer = {
 const sku = { id: 1, code: 'SKU-ISS008', name: '国家选择验收灯具', display_name: 'SKU-ISS008 · 国家选择验收灯具', unit: 'pcs', base_unit: 'pcs' }
 
 async function mockApi(page) {
-  const writes = []
+  const writes = { created: [], updated: [] }
+  let customerRecord = { ...customer }
   await page.route('**/api/**', async route => {
     const url = new URL(route.request().url())
     const endpoint = url.pathname
@@ -33,10 +34,15 @@ async function mockApi(page) {
     if (endpoint === '/api/session/current-operator/') return route.fulfill({ json: { authenticated: true, development_superadmin: true, has_all_permissions: true, name: '开发验收' } })
     if (endpoint === '/api/customers/country-catalog/') return route.fulfill({ json: catalog })
     if (endpoint === '/api/customers/owner-options/') return route.fulfill({ json: [] })
-    if (endpoint === '/api/customers/' && method === 'GET') return route.fulfill({ json: [customer] })
+    if (endpoint === '/api/customers/' && method === 'GET') return route.fulfill({ json: [customerRecord] })
     if (endpoint === '/api/customers/' && method === 'POST') {
-      writes.push(route.request().postDataJSON())
-      return route.fulfill({ status: 201, json: { ...customer, ...writes.at(-1), id: 2 } })
+      writes.created.push(route.request().postDataJSON())
+      return route.fulfill({ status: 201, json: { ...customerRecord, ...writes.created.at(-1), id: 2 } })
+    }
+    if (endpoint === '/api/customers/1/' && method === 'PUT') {
+      writes.updated.push(route.request().postDataJSON())
+      customerRecord = { ...customerRecord, ...writes.updated.at(-1), country_display: writes.updated.at(-1).country === 'HK' ? 'Hong Kong / HK' : 'Germany / DE' }
+      return route.fulfill({ json: customerRecord })
     }
     if (endpoint === '/api/quotes/' && method === 'GET') return route.fulfill({ json: [] })
     if (endpoint === '/api/quotes/' && method === 'POST') return route.fulfill({ status: 201, json: { id: 2, quote_no: 'SJ20261028DE001', customer: 1, status: 'draft' } })
@@ -48,12 +54,30 @@ async function mockApi(page) {
 }
 
 for (const width of [1440, 390]) {
-  test(`customer country aliases and quote customer picker remain usable at ${width}px`, async ({ page }) => {
+  test(`customer edit, country aliases and quote customer picker remain usable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 })
-    await mockApi(page)
+    const writes = await mockApi(page)
 
     await page.goto('/customers')
     await expect(page.locator('.data-table tbody')).toContainText('中文国家选择客户')
+
+    await page.getByRole('button', { name: '编辑', exact: true }).click()
+    const editDialog = page.locator('form.customer-editor')
+    const editCountry = editDialog.locator('input[placeholder="搜索名称、中文或代码后选择"]')
+    await expect(editCountry).toHaveValue('Germany / DE')
+    await editCountry.fill('中国香港')
+    await expect(editDialog.getByRole('button', { name: /Hong Kong \/ HK/ })).toBeVisible()
+    await editDialog.getByRole('button', { name: /Hong Kong \/ HK/ }).click()
+    await expect(editCountry).toHaveValue('Hong Kong / HK')
+    if (evidenceDir) await page.screenshot({ path: path.join(evidenceDir, `customer-edit-country-${width}.png`), fullPage: true })
+    await editDialog.getByRole('button', { name: '保存客户', exact: true }).click()
+    await expect.poll(() => writes.updated.at(-1)?.country).toBe('HK')
+    await page.reload()
+    await page.getByRole('button', { name: '编辑', exact: true }).click()
+    const reloadedEditDialog = page.locator('form.customer-editor')
+    await expect(reloadedEditDialog.locator('input[placeholder="搜索名称、中文或代码后选择"]')).toHaveValue('Hong Kong / HK')
+    await reloadedEditDialog.locator('.modal-head button').click()
+
     await page.getByRole('button', { name: '新建客户', exact: true }).click()
     const customerDialog = page.locator('form.customer-editor')
     const country = customerDialog.locator('input[placeholder="搜索名称、中文或代码后选择"]')

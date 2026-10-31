@@ -661,3 +661,9 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 
 逐项旧状态、新状态、校准依据、SHA、46 条规则摘要及未执行/业务阻断清单见 [R1 状态对账报告](uat-evidence/r1-status-reconcile-20261028/README.md)。本轮未连接生产数据库、未执行 PostgreSQL、未触发 GitHub Actions、未合并 master、未部署、未关闭 Issue。
 
+## R1-LEDGER-INDEPENDENT-REVIEW-ACCEPT（2026-10-31）
+
+基于参考分支 `codex/r1-issue-ledger-update-20261031` 的精确 HEAD `dd3b31445ab9dddb42c7ac8d095692df45efde24` 创建新分支 `codex/r1-ledger-review-accept-20261031`。按用户提供的 ChatGPT 独立复审接受结果，仅更新 `docs/PROJECT_ISSUES.md` 与本阶段记录：ISS-028、ISS-035、ISS-045 从 `FIXED_PENDING_REVIEW` 改为 `CLOSED`。其原验收提交 SHA 和证据路径未改写：ISS-028/ISS-035 验收 SHA `5da8d351129e775563aced753fd05efbfc39d893`，报告 `docs/uat-evidence/r1-iss028-035-category-verify-20261031/README.md`；ISS-045 验收 SHA `4ddaa6b7bdd1a9f21443f687e4ff90f46aa02629`，报告 `docs/uat-evidence/r1-iss045-qa-tools-bd324-20261031/README.md`。本轮复审接受依据及参考 HEAD 追加到对应台账行，前轮状态记录作为历史保留。
+
+ISS-006、ISS-007、ISS-002 保持 `NEEDS_VERIFICATION`；ISS-052 保持 `OPEN`；ISS-008 与其他 Issue 状态均不变。总 Issue 124、业务规则 46；当前归一化状态统计为 OPEN 2、BLOCKED 18、NEEDS_VERIFICATION 13、FIXED_PENDING_REVIEW 78、CLOSED 13（合计 124）。本轮仅修改上述两份文档，不关闭 GitHub Issue、不改业务代码、不触发 CI、不合并 master、不创建 PR、不部署。
+

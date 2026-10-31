@@ -1,0 +1,45 @@
+{
+  "phase": "before-delete",
+  "runId": "iss007-delete-uat-5997ec4cc688423a9d24b74f0c9dfbf4",
+  "database": "<ISOLATED_TEMP_ROOT>\\db.sqlite3",
+  "mediaRoot": "<ISOLATED_TEMP_ROOT>\\media",
+  "followUpId": 1,
+  "attachments": [
+    {
+      "id": 1,
+      "name": "ISS007-legacy-history.txt",
+      "file": "follow-up-attachments/2026/11/ISS007-legacy-history.txt",
+      "relativePath": "follow-up-attachments/2026/11/ISS007-legacy-history.txt",
+      "sizeInDatabase": 57,
+      "sizeOnDisk": 57,
+      "sha256": "a9a3d887ca46e0a9ecd410a9bba89e6ee04a43916babb39849f6ad9bcc35314f"
+    },
+    {
+      "id": 2,
+      "name": "ISS007-preview.txt",
+      "file": "follow-up-attachments/2026/11/ISS007-preview.txt",
+      "relativePath": "follow-up-attachments/2026/11/ISS007-preview.txt",
+      "sizeInDatabase": 64,
+      "sizeOnDisk": 64,
+      "sha256": "ee61d0bbe02c4a7b96f8b8a8057547583c98aab8089e643de00047ca3f976410"
+    },
+    {
+      "id": 3,
+      "name": "ISS007-download.bin",
+      "file": "follow-up-attachments/2026/11/ISS007-download.bin",
+      "relativePath": "follow-up-attachments/2026/11/ISS007-download.bin",
+      "sizeInDatabase": 8,
+      "sizeOnDisk": 8,
+      "sha256": "5e62a906ba05040729ff6e2b3e3f7d744671a3c64f375cc2159b29483ed29bc1"
+    },
+    {
+      "id": 4,
+      "name": "ISS007-delete-target.txt",
+      "file": "follow-up-attachments/2026/11/ISS007-delete-target.txt",
+      "relativePath": "follow-up-attachments/2026/11/ISS007-delete-target.txt",
+      "sizeInDatabase": 32,
+      "sizeOnDisk": 32,
+      "sha256": "9e1d7b72cf92759290d760a4ebfc58980c819b24f9ea133b0df2d5678cf3e8fc"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+RUN v4.1.12 — frontend
+
+Test Files  3 passed (3)
+Tests       39 passed (39)
+Start       18:02:32
+Duration    6.04s (transform 4.55s, setup 1.42s, import 4.66s, tests 1.82s, environment 6.03s)

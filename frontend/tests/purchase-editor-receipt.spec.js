@@ -31,7 +31,7 @@ beforeEach(()=>{
  mocks.api.post.mockResolvedValue({data:{id:42,purchase_no:'PO-42'}})
  mocks.api.put.mockResolvedValue({data:{}})
 })
-afterEach(()=>{wrapper?.unmount();wrapper=undefined})
+afterEach(()=>{vi.restoreAllMocks();wrapper?.unmount();wrapper=undefined})
 describe('Purchase Phase B draft editor',()=>{
  it('renders sections, subordinate readonly number and document-level explanations',async()=>{
   await newEditor()
@@ -205,6 +205,15 @@ describe('Purchase Phase B receipt workflow',()=>{
   expect(mocks.listAll.mock.calls.filter(([url])=>url==='/purchase-orders/').length).toBeGreaterThan(count)
   expect(router.currentRoute.value.query.detail).toBe('41')
   expect(wrapper.get('.receipt-success').text()).toContain('验货入库已完成')
+ })
+ it('blocks receipt and explains the safety stop when the request key cannot be saved',async()=>{
+  await receipt();const dialog=wrapper.get('.goods-receipt-dialog')
+  await dialog.get('.inspection-acknowledgement input').setValue(true)
+  vi.spyOn(Storage.prototype,'setItem').mockImplementation(()=>{throw new DOMException('Storage write is denied','QuotaExceededError')})
+  await dialog.trigger('submit');await flushPromises()
+  expect(mocks.api.post.mock.calls.filter(([url])=>url==='/purchase-orders/41/receive/')).toHaveLength(0)
+  expect(wrapper.get('.goods-receipt-dialog [role="alert"]').text()).toContain('已阻止提交')
+  expect(wrapper.get('.goods-receipt-dialog [role="alert"]').text()).toContain('会话存储权限')
  })
  it('keeps original receipt reversal target and required destructive reason',async()=>{
   await mountPage('/purchase-orders?detail=41');await click('收货');await click('冲销')

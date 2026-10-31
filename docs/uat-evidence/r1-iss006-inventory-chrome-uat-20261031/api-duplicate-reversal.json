@@ -1,0 +1,11 @@
+{
+  "method": "POST",
+  "path": "/api/purchase-orders/1/receipts/2/reverse/",
+  "status": 400,
+  "body": {
+    "detail": "该入库记录已经冲销，不能重复操作。"
+  },
+  "expected_status": 400,
+  "assertion": "PASS",
+  "already_reversed_receipt_id": 2
+}

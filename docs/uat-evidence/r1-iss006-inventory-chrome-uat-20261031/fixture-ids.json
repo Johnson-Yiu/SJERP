@@ -1,0 +1,21 @@
+{
+  "sku": {
+    "receipt": 1,
+    "shipment": 2,
+    "gift": 3
+  },
+  "purchase": {
+    "receipt": 1,
+    "shipment": 2,
+    "gift": 3
+  },
+  "item": {
+    "receipt": 1,
+    "shipment": 2,
+    "gift": 3
+  },
+  "order": {
+    "id": 1,
+    "item": 1
+  }
+}

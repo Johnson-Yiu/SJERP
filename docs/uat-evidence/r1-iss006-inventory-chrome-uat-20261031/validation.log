@@ -1,0 +1,19 @@
+R1-ISS006-INVENTORY-CHROME-UAT local checks
+Base: bd324a8c3fb64af245c3afcabbd4301c84f7711c
+Branch: codex/r1-iss006-inventory-chrome-uat-20261031
+Database: isolated SQLite backend/iss006-chrome-uat.sqlite3
+
+Command: python manage.py check
+Output: System check identified no issues (0 silenced).
+Result: PASS
+
+Command: python manage.py makemigrations --check --dry-run
+Output: No changes detected
+Result: PASS
+
+Isolated database setup: migrations applied through repository latest migration 0092 before synthetic fixtures were created.
+Migration verification: python manage.py showmigrations crm reported [X] 0090_fulfillment_idempotency, [X] 0091_csv_import_audit, and [X] 0092_merge_fulfillment_and_csv_audit.
+Business evidence: Chrome interactions at 1440x1000 and 390x844; API HTTP outcomes and before/after SQLite snapshots are recorded in api-http.log and snapshot-comparison.json.
+
+Not run: Django full/targeted test suites. No product code was changed; this task supplements historic acceptance with real Chrome UAT, so existing test suites were not redundantly rerun.
+Browser console observation: repeated non-blocking Vue Transition warning for OrderDetailModal; recorded as follow-up in REPORT.md.

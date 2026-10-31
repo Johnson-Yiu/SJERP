@@ -1,0 +1,93 @@
+{
+  "stage": "before",
+  "database": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-iss006-inventory-chrome-uat-20261031\\backend\\iss006-chrome-uat.sqlite3",
+  "skus": [
+    {
+      "id": 1,
+      "sku": "ISS006-UAT-REC",
+      "name": "ISS006 UAT 收货冲销灯具",
+      "actual_quantity": "0",
+      "reserved_quantity": "0",
+      "available_quantity": "0",
+      "in_transit_quantity": "10.00"
+    },
+    {
+      "id": 2,
+      "sku": "ISS006-UAT-SHIP",
+      "name": "ISS006 UAT 发货恢复灯具",
+      "actual_quantity": "0",
+      "reserved_quantity": "0",
+      "available_quantity": "0",
+      "in_transit_quantity": "4.00"
+    },
+    {
+      "id": 3,
+      "sku": "ISS006-UAT-GIFT",
+      "name": "ISS006 UAT 赠品超收灯具",
+      "actual_quantity": "0",
+      "reserved_quantity": "0",
+      "available_quantity": "0",
+      "in_transit_quantity": "2.00"
+    }
+  ],
+  "purchases": [
+    {
+      "id": 3,
+      "purchase_no": "ISS006-UAT-PO-GIFT",
+      "status": "ordered",
+      "items": [
+        {
+          "id": 3,
+          "sku_id": 3,
+          "ordered_quantity": "2.00",
+          "active_received_quantity": "0.00",
+          "active_overage_quantity": "0.00",
+          "receipts": []
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "purchase_no": "ISS006-UAT-PO-REC",
+      "status": "ordered",
+      "items": [
+        {
+          "id": 1,
+          "sku_id": 1,
+          "ordered_quantity": "10.00",
+          "active_received_quantity": "0.00",
+          "active_overage_quantity": "0.00",
+          "receipts": []
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "purchase_no": "ISS006-UAT-PO-SHIP",
+      "status": "ordered",
+      "items": [
+        {
+          "id": 2,
+          "sku_id": 2,
+          "ordered_quantity": "4.00",
+          "active_received_quantity": "0.00",
+          "active_overage_quantity": "0.00",
+          "receipts": []
+        }
+      ]
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "order_no": "ISS006-UAT-SO-SHIP",
+      "status": "confirmed",
+      "shipped_quantity": "0.00",
+      "shipments": []
+    }
+  ],
+  "reservations": [],
+  "movements": [],
+  "idempotency_records": [],
+  "operation_logs": []
+}

@@ -1,7 +1,7 @@
 # R1-ISS006 PostgreSQL concurrency UAT
 
-Date: 2026-11-01 (Asia/Shanghai)  
-Baseline: `bd324a8c3fb64af245c3afcabbd4301c84f7711c`  
+Date: 2026-11-01 (Asia/Shanghai)
+Baseline: `bd324a8c3fb64af245c3afcabbd4301c84f7711c`
 Branch: `codex/r1-iss006-postgresql-concurrency-uat-20261101`
 
 ## Result: BLOCKED — real PostgreSQL unavailable

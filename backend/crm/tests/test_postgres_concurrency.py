@@ -7,16 +7,20 @@ from unittest.mock import patch
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import close_old_connections, connection, connections
+from django.db.models import Sum
 from django.test import TransactionTestCase
 from rest_framework.exceptions import ValidationError
 
 from crm.models import (
     Customer,
     DocumentNumberSequence,
+    GoodsReceipt,
     InventoryMovement,
+    InventoryReservation,
     Order,
     Product,
     PurchaseOrder,
+    PurchaseOrderItem,
     Quote,
     QuoteChildRevisionCounter,
     QuoteNumberSequence,
@@ -29,7 +33,7 @@ from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.document_numbers import allocate_document_no
 from crm.services.purchase_costs import save_costs
 from crm.services.procurement import create_purchase_drafts
-from crm.services.fulfillment import confirm_shipment, record_receipt, sku_metrics
+from crm.services.fulfillment import confirm_shipment, record_receipt, reverse_receipt, sku_metrics
 from rest_framework.test import APIClient
 
 
@@ -39,6 +43,10 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
         def worker(index):
             close_old_connections()
             try:
+                # Bound lock waits so a regression fails instead of leaving a
+                # PostgreSQL concurrency suite hung indefinitely.
+                with connections["default"].cursor() as cursor:
+                    cursor.execute("SET statement_timeout = '20000ms'")
                 return function(index)
             finally:
                 connections.close_all()
@@ -243,3 +251,143 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
         self.assertLessEqual(metrics["reserved_quantity"], metrics["actual_quantity"])
         self.assertEqual(InventoryMovement.objects.filter(sku=sku, type="purchase_in", source_type="receipt").count(), 1)
         self.assertEqual(InventoryMovement.objects.filter(sku=sku, type="sale_out", source_type="shipment").count(), 1)
+
+    def test_same_purchase_order_different_sku_receipts_serialize_status_and_reservations(self):
+        customer = Customer.objects.create(code="PG-PO-LOCK-C", name="PO Lock Customer")
+        supplier = Supplier.objects.create(code="PL", name="PO Lock Supplier")
+        product = Product.objects.create(code="PG-PO-LOCK-P", name="PO Lock Product")
+        order = Order.objects.create(
+            order_no="SO-PG-PO-LOCK", customer=customer,
+            order_date=date(2031, 2, 1), status="confirmed",
+        )
+        purchase = PurchaseOrder.objects.create(
+            purchase_no="PO-PG-PO-LOCK", supplier=supplier, order=order,
+            order_date=date(2031, 2, 1), status="ordered",
+        )
+        sku_lines = []
+        for suffix in ("A", "B"):
+            sku = SKU.objects.create(
+                sku=f"PG-PO-LOCK-{suffix}", product=product,
+            )
+            order_item = order.items.create(sku=sku, quantity=5, unit_price=10)
+            purchase_item = purchase.items.create(sku=sku, quantity=5, unit_price=2)
+            self.assertEqual(purchase_item.cost_allocations.count(), 1)
+            allocation = purchase_item.cost_allocations.get()
+            self.assertEqual(allocation.target_type, "order")
+            self.assertEqual(allocation.order_id, order.pk)
+            self.assertEqual(allocation.quantity, Decimal("5.00"))
+            sku_lines.append((sku, order_item, purchase_item))
+        barrier = Barrier(2)
+
+        def receive(index):
+            _sku, _order_item, purchase_item = sku_lines[index]
+            barrier.wait(timeout=10)
+            return record_receipt(PurchaseOrderItem.objects.get(pk=purchase_item.pk), {
+                "receipt_date": date(2031, 2, 1),
+                "quantity": Decimal("5"),
+                "unit_cost": Decimal("2"),
+            }).pk
+
+        receipt_ids = self.run_workers(receive, 2)
+
+        purchase.refresh_from_db()
+        self.assertEqual(purchase.status, "completed")
+        self.assertEqual(GoodsReceipt.objects.filter(pk__in=receipt_ids).count(), 2)
+        self.assertEqual(
+            InventoryMovement.objects.filter(
+                source_type="receipt", type="purchase_in", reference=purchase.purchase_no,
+            ).count(),
+            2,
+        )
+        for sku, order_item, purchase_item in sku_lines:
+            purchase_item.refresh_from_db()
+            self.assertEqual(purchase_item.received_quantity, Decimal("5.00"))
+            self.assertEqual(sku_metrics(sku)["actual_quantity"], Decimal("5.00"))
+            self.assertEqual(
+                InventoryReservation.objects.filter(order_item=order_item).aggregate(
+                    total=Sum("quantity")
+                )["total"],
+                Decimal("5.00"),
+            )
+
+    def test_receipt_and_reversal_race_keeps_purchase_stock_and_reservations_consistent(self):
+        customer = Customer.objects.create(code="PG-PO-RACE-C", name="PO Race Customer")
+        supplier = Supplier.objects.create(code="PR", name="PO Race Supplier")
+        sku = SKU.objects.create(
+            sku="PG-PO-RACE-SKU",
+            product=Product.objects.create(code="PG-PO-RACE-P", name="PO Race Product"),
+        )
+        order = Order.objects.create(
+            order_no="SO-PG-PO-RACE", customer=customer,
+            order_date=date(2031, 3, 1), status="confirmed",
+        )
+        order_item = order.items.create(sku=sku, quantity=5, unit_price=10)
+        purchase = PurchaseOrder.objects.create(
+            purchase_no="PO-PG-PO-RACE", supplier=supplier, order=order,
+            order_date=date(2031, 3, 1), status="ordered",
+        )
+        purchase_item = purchase.items.create(sku=sku, quantity=10, unit_price=2)
+        self.assertEqual(purchase_item.cost_allocations.count(), 1)
+        allocation = purchase_item.cost_allocations.get()
+        self.assertEqual(allocation.target_type, "order")
+        self.assertEqual(allocation.order_id, order.pk)
+        self.assertEqual(allocation.quantity, Decimal("10.00"))
+        original_receipt = record_receipt(purchase_item, {
+            "receipt_date": date(2031, 3, 1),
+            "quantity": Decimal("5"),
+            "unit_cost": Decimal("2"),
+        })
+        barrier = Barrier(2)
+
+        def run_racing_operation(index):
+            barrier.wait(timeout=10)
+            if index == 0:
+                new_receipt = record_receipt(PurchaseOrderItem.objects.get(pk=purchase_item.pk), {
+                    "receipt_date": date(2031, 3, 2),
+                    "quantity": Decimal("5"),
+                    "unit_cost": Decimal("2"),
+                })
+                return "receipt", new_receipt.pk
+            reversed_receipt = reverse_receipt(
+                GoodsReceipt.objects.get(pk=original_receipt.pk),
+                "PostgreSQL concurrent receipt/reversal regression",
+            )
+            return "reversal", reversed_receipt.pk
+
+        operations = dict(self.run_workers(run_racing_operation, 2))
+        new_receipt_id = operations["receipt"]
+        reversed_receipt_id = operations["reversal"]
+
+        purchase.refresh_from_db()
+        order_item.refresh_from_db()
+        self.assertEqual(purchase.status, "partial")
+        self.assertEqual(GoodsReceipt.objects.filter(purchase_item=purchase_item).count(), 2)
+        original_receipt.refresh_from_db()
+        self.assertEqual(original_receipt.pk, reversed_receipt_id)
+        self.assertIsNotNone(original_receipt.reversal_inventory_movement_id)
+        self.assertEqual(
+            GoodsReceipt.objects.filter(
+                pk=new_receipt_id, reversal_inventory_movement__isnull=True,
+            ).count(),
+            1,
+        )
+        self.assertEqual(purchase_item.received_quantity, Decimal("5.00"))
+        self.assertEqual(sku_metrics(sku)["actual_quantity"], Decimal("5.00"))
+        self.assertEqual(
+            InventoryMovement.objects.filter(
+                sku=sku, type="purchase_in", source_type="receipt",
+            ).aggregate(total=Sum("quantity"))["total"],
+            Decimal("10.00"),
+        )
+        self.assertEqual(
+            InventoryMovement.objects.filter(
+                sku=sku, type="adjust_out", source_type="reversal",
+            ).aggregate(total=Sum("quantity"))["total"],
+            Decimal("5.00"),
+        )
+        self.assertEqual(
+            InventoryReservation.objects.filter(order_item=order_item).aggregate(
+                total=Sum("quantity")
+            )["total"],
+            Decimal("5.00"),
+        )

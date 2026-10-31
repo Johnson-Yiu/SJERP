@@ -597,3 +597,9 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 
 逐项旧状态、新状态、校准依据、SHA、46 条规则摘要及未执行/业务阻断清单见 [R1 状态对账报告](uat-evidence/r1-status-reconcile-20261028/README.md)。本轮未连接生产数据库、未执行 PostgreSQL、未触发 GitHub Actions、未合并 master、未部署、未关闭 Issue。
 
+## R1-ISS006 并发测试夹具补修（2026-10-31）
+
+在现有独立工作树和分支 `codex/r1-iss006-po-locking-bd324-20261030`（用户指定基线 `94402f951e4d4243276f018cc3a6051f0f6f2c57`）只修正 `backend/crm/tests/test_postgres_concurrency.py`：移除两个采购收货并发场景中重复插入的默认成本分配，并增加一条且归属/数量正确的断言。`backend/crm/services/fulfillment.py` 等生产业务代码未改。
+
+锁定依赖下，一次性 SQLite 定向回归 74 项：61 通过、13 个 PostgreSQL 专项跳过、0 失败；库存预留、采购收货、冲销、库存流水及成本分配相关可执行测试通过。原始日志和夹具修复细节见 [`C-po-locking 验收记录`](uat-evidence/r1-five-fixes-migration-20261030/C-po-locking/README.md)。本机未发现 PostgreSQL 工具/服务或 Docker，`127.0.0.1:5432` 不可连接；因此两个新并发用例的实际执行、锁顺序与最终采购/库存/流水/预留一致性仍为 `BLOCKED`，不可把 SQLite skip 视为 PASS。ISS-006 保持 `NEEDS_VERIFICATION`；解除条件为在 PostgreSQL 环境运行两个目标用例并审查一致性断言。本轮不触发 CI、不合并 master、不关闭 Issue。
+

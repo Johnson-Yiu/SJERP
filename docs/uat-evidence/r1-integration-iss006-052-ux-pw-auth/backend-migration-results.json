@@ -1,0 +1,83 @@
+[
+  {
+    "stage": "backend-system-check",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "check"
+    ]
+  },
+  {
+    "stage": "backend-makemigrations-check",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "makemigrations",
+      "--check",
+      "--dry-run"
+    ]
+  },
+  {
+    "stage": "backend-fresh-migrate",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "migrate",
+      "--noinput"
+    ]
+  },
+  {
+    "stage": "backend-migration-leaves",
+    "exitCode": 0,
+    "arguments": [
+      "-c",
+      "import django; django.setup(); from django.db import connection; from django.db.migrations.loader import MigrationLoader; leaves=MigrationLoader(connection).graph.leaf_nodes(\"crm\"); print(\"crm leaf nodes:\", leaves); assert leaves == [(\"crm\", \"0092_merge_fulfillment_and_csv_audit\")]"
+    ]
+  },
+  {
+    "stage": "backend-upgrade-to-0089",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "migrate",
+      "crm",
+      "0089_operationlog_operator_protect",
+      "--noinput"
+    ]
+  },
+  {
+    "stage": "backend-upgrade-auth",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "migrate",
+      "auth",
+      "--noinput"
+    ]
+  },
+  {
+    "stage": "backend-upgrade-seed",
+    "exitCode": 0,
+    "arguments": [
+      "-c",
+      "import django; django.setup(); from django.contrib.auth import get_user_model; get_user_model().objects.create_user(username=\"r1_integration_0089_sentinel\"); print(\"created pre-upgrade sentinel\")"
+    ]
+  },
+  {
+    "stage": "backend-upgrade-latest",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "migrate",
+      "--noinput"
+    ]
+  },
+  {
+    "stage": "backend-upgrade-verify",
+    "exitCode": 0,
+    "arguments": [
+      "-c",
+      "import django; django.setup(); from django.contrib.auth import get_user_model; from crm.models import FulfillmentIdempotency, CSVImportBatch, CSVImportRowAudit; assert get_user_model().objects.filter(username=\"r1_integration_0089_sentinel\").count() == 1; print(\"pre-upgrade sentinel retained; integrated models:\", FulfillmentIdempotency._meta.db_table, CSVImportBatch._meta.db_table, CSVImportRowAudit._meta.db_table)"
+    ]
+  }
+]

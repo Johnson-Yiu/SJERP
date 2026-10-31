@@ -1,0 +1,45 @@
+[
+  {
+    "stage": "backend-database-settings",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "test",
+      "crm.tests.test_database_settings",
+      "-v",
+      "2"
+    ]
+  },
+  {
+    "stage": "backend-iss006",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "test",
+      "crm.tests.test_iss006_idempotency",
+      "-v",
+      "2"
+    ]
+  },
+  {
+    "stage": "backend-iss052",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "test",
+      "crm.tests.test_safe_csv_import",
+      "-v",
+      "2"
+    ]
+  },
+  {
+    "stage": "backend-full",
+    "exitCode": 0,
+    "arguments": [
+      "manage.py",
+      "test",
+      "-v",
+      "1"
+    ]
+  }
+]

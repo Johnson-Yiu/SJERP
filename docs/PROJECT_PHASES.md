@@ -633,4 +633,11 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 1440×1000 与 390×844 浏览器流程验证 SKU 图片上传/缩略图、替换及原图身份，非法图片 HTTP 400 且现有 SKU 图片不变；已接受报价的历史图快照在 SKU 替换后保持 SHA 不变。报价工作台导出的实际 XLSX 可打开，PI 工作表内嵌图片 SHA 与历史快照一致。确认订单仍关联已接受报价，关联报价快照保持不变；`OrderItem` 没有独立图片快照字段，因此没有把此结果表述为订单行另存图片。缺失历史图片 API 返回 404，预览仍可渲染且没有 JS 异常，但可见浏览器默认破图占位。定向 RBAC 测试通过：授权路径可读，SKU-only/客户范围不足的历史图片请求返回 404。Django 9/9、Node 隔离运行器 14/14、锁定依赖 `pip check` 通过；具体测试日志、DB 前后快照、XLSX 和八张桌面/窄屏截图见 [R1-ISS007 UAT 报告](uat-evidence/iss-007-image-snapshot-uat-20261031/README.md)。
 
 ISS-007 保持 `NEEDS_VERIFICATION` 并等待独立审查；跟进附件等其他文件类型及生产反向代理/持久卷或对象存储 ACL 不在本轮结论内，部署验证沿用 ISS-017 边界。本轮未触发 GitHub Actions、未创建 PR、未合并 master、未部署、未启用正式 RBAC、未关闭 Issue。
+## R1-ISS-008-FUP-01 国家中文名称与别名补齐（2026-10-31）
+
+以指定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 创建独立 worktree 和分支 `codex/r1-iss008-aliases-bd324-20261031`。对照历史成果 `80dc73ae4ae47f9e04969f39b441af206d34306b`，逐文件确认国家注册表、249 项 Django 覆盖测试、国家选择器 Vitest 和既有 Chrome 场景已经存在于新基线且相关差异一致；没有业务代码需要迁移。只扩展 `frontend/browser-tests/iss008-chinese-aliases.spec.js`，增加编辑客户国家、保存 alpha-2 `HK`、刷新后重新打开确认标准显示的回归；测试提交为 `dba4a81c10a464012aa004a539a16378f7517b0e`。
+
+项目锁定依赖下，Django 国家选择专项 11/11 通过（含 249 条逐项子测试），Vitest 4/4 通过，真实 Chrome 桌面 1440×844 与 390×844 回归 2/2 通过。Chrome 覆盖编辑中文选择/保存/刷新回显、客户新建国家选择和报价客户选择；截图及原始日志见[验收记录](uat-evidence/r1-iss008-aliases-bd324-20261031/README.md)。逐张目视检查了编辑、新建和报价页面；窄屏表单可滚动、无横向溢出，保存操作可用。
+
+后端注册表、历史客户数据、alpha-2/alpha-3 对照、报价编号和数据库迁移均未修改；`America` 仍需用户明确选择，未知旧国家文字保留供人工确认。使用隔离内存 SQLite 与合成浏览器 API fixture；未连接生产数据库、未运行 PostgreSQL/全量套件/生产构建或 GitHub CI。ISS-008-FUP-01 更新为 `FIXED_PENDING_REVIEW`，等候独立复核；不关闭 Issue、不合并 master。
 

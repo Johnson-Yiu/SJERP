@@ -1,0 +1,8 @@
+{
+  "check": "Python direct requirements versus exact lock pins",
+  "directPins": 9,
+  "lockPins": 15,
+  "directVersionMismatches": [],
+  "hashPins": 0,
+  "lockFileComment": "Generated from Python 3.14 environment; target CPython 3.12+"
+}

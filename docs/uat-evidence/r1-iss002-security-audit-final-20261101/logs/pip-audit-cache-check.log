@@ -1,0 +1,3 @@
+Command: python -m pip cache list | Select-String -Pattern 'pip.audit|pip_audit'
+Result: no matching cached package was printed.
+Purpose: offline availability check only; no network access was performed.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { contactRows, duplicateContactHint, followUpRows, richTextExcerpt } from '../src/utils/crmList.js'
+import { contactRows, duplicateContactHint, duplicateContactMatches, followUpRows, normalizeContactPhone, richTextExcerpt } from '../src/utils/crmList.js'
 
 const contacts = [
   { id: 1, customer: 10, name: 'Lin Yu', email: 'lin@example.test', phone: '+86 123', is_primary: true },
@@ -22,7 +22,9 @@ describe('CRM list presentation helpers', () => {
       { id: 2, customer: 10, type: 'email', followed_at: '2026-10-14T09:00:00+08:00' },
       { id: 3, customer: 20, type: 'phone', followed_at: '2026-10-13T09:00:00+08:00' },
     ]
-    expect(followUpRows(rows, { customer: '10', type: 'phone', from: '2026-10-12', to: '2026-10-13' }).map(row => row.id)).toEqual([1])
+    rows[0].owner = '林晓'
+    rows[1].owner = '陈宁'
+    expect(followUpRows(rows, { customer: '10', owner: '林晓', type: 'phone', from: '2026-10-12', to: '2026-10-13' }).map(row => row.id)).toEqual([1])
     expect(followUpRows(rows, { customer: '10', sort: 'oldest' }).map(row => row.id)).toEqual([1, 2])
     expect(followUpRows(rows, { customer: '10' }).map(row => row.id)).toEqual([2, 1])
     expect(rows.map(row => row.id)).toEqual([1, 2, 3])
@@ -32,6 +34,20 @@ describe('CRM list presentation helpers', () => {
     expect(duplicateContactHint(contacts, { customer: 10, name: ' lin yu ' }, 99)).toContain('Lin Yu')
     expect(duplicateContactHint(contacts, { customer: 20, name: 'Mei Chen' }, 99)).toBe('')
     expect(duplicateContactHint(contacts, { customer: 10, email: 'MEI@example.test' }, 2)).toBe('')
+  })
+
+  it('matches all duplicate dimensions, excludes the edited contact, and preserves phone country codes', () => {
+    const rows = [
+      { id: 10, customer: 10, name: 'Lin Yu', email: 'lin@example.test', phone: '+86 138-0000-0000' },
+      { id: 11, customer: 10, name: 'Lin YU', email: 'other@example.test', phone: '+1 13800000000' },
+      { id: 12, customer: 20, name: 'Lin Yu', email: 'lin@example.test', phone: '+86 13800000000' },
+    ]
+    expect(normalizeContactPhone('0086 (138) 0000 0000')).toBe('+8613800000000')
+    expect(normalizeContactPhone('+1 13800000000')).toBe('+113800000000')
+    expect(duplicateContactMatches(rows, { customer: 10, name: 'Lin YU', email: 'LIN@example.test', phone: '0086 13800000000' }, 99).map(row => row.id)).toEqual([10, 11])
+    expect(duplicateContactMatches(rows, { customer: 10, name: 'Lin YU', email: 'LIN@example.test', phone: '0086 13800000000' }, 10).map(row => row.id)).toEqual([11])
+    expect(duplicateContactMatches(rows, { customer: 10, name: 'Lin Yu' }, 99).map(row => row.id)).toEqual([10, 11])
+    expect(duplicateContactMatches([{ id: 12, customer: 20, name: '同名联系人' }], { customer: 10, name: '同名联系人' }, 99)).toEqual([])
   })
 
   it('creates plain excerpts from rich-text markup and bounds long content', () => {

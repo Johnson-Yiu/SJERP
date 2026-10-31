@@ -1,13 +1,16 @@
 from datetime import date, datetime
 from decimal import Decimal
+import csv
+import io
 from zoneinfo import ZoneInfo
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from rest_framework.test import APIClient
 
-from crm.models import ContractChangeRequest, Customer, InventoryMovement, Order, Product, ProductCategory, PurchaseOrder, SKU, Supplier, Transaction
+from crm.models import ContractChangeRequest, Customer, InventoryMovement, Order, Product, ProductCategory, PurchaseOrder, RolePermission, SKU, Supplier, Transaction
 from crm.services.finance import void_transaction
 from crm.services.profit import order_profit_summary
+from crm.tests import test_sales_data_scope as scope_fixture
 
 
 class ReportingTests(TestCase):
@@ -162,6 +165,134 @@ class ReportingTests(TestCase):
         for params in [{"source": "invalid"}, {"source": "purchase", "group_by": "customer"}, {"date_from": "bad"}, {"date_from": "2026-10-01", "date_to": "2026-09-01"}, {"date_from": "1900-01-01", "date_to": "2026-09-01"}, {"grain": "hour"}, {"date_field": "customer__created_at"}, {"filter_secret": "x"}]:
             self.assertEqual(self.client.get('/api/reports/data/', params).status_code, 400, params)
 
+    def test_country_and_customer_cross_group_preserves_totals_and_distinct_documents(self):
+        other = Customer.objects.create(code="REPORT-2", name="Second buyer", country="China", region="亚洲")
+        order = Order.objects.create(order_no="REPORT-O-2", customer=other, order_date=date(2026, 9, 2), currency="CNY", exchange_rate=1, status="confirmed")
+        order.items.create(sku=self.sku, quantity=3, unit_price=10)
+        data = self.query(group_by="country", group_by_2="customer")
+        self.assertEqual(data["group_by_2"], "customer")
+        self.assertEqual(data["totals"]["amount"], Decimal("219"))
+        self.assertEqual(data["totals"]["count"], 2)
+        self.assertEqual(data["totals"]["quantities"], {"pcs": Decimal("5"), "box": Decimal("1")})
+        self.assertEqual({tuple(item["dimension"] for item in row["groups"]) for row in data["rows"]}, {("country", "customer")})
+        self.assertEqual(sum(row["amount"] for row in data["rows"]), Decimal("219"))
+        self.assertTrue(all(row["key"] != row["groups"][0]["key"] for row in data["rows"]))
+
+    def test_category_and_sku_cross_group_keeps_units_and_document_count(self):
+        data = self.query(group_by="category", group_by_2="sku")
+        self.assertEqual(data["totals"]["amount"], Decimal("189"))
+        self.assertEqual(data["totals"]["count"], 1)
+        self.assertEqual(data["totals"]["quantities"], {"pcs": Decimal("2"), "box": Decimal("1")})
+        self.assertEqual(len(data["rows"]), 3)
+        self.assertTrue(all(len(row["groups"]) == 2 for row in data["rows"]))
+        self.assertEqual({row["groups"][1]["dimension"] for row in data["rows"]}, {"sku"})
+
+    def test_time_and_customer_cross_group_uses_date_bucket_and_no_future_bucket(self):
+        customer = Customer.objects.create(code="REPORT-PAST", name="August buyer", country="China")
+        order = Order.objects.create(order_no="REPORT-AUG", customer=customer, order_date=date(2026, 8, 2), currency="CNY", exchange_rate=1, status="confirmed")
+        order.items.create(sku=self.sku, quantity=1, unit_price=8)
+        future = Order.objects.create(order_no="REPORT-FUTURE", customer=customer, order_date=date(2026, 10, 1), currency="CNY", exchange_rate=1, status="confirmed")
+        future.items.create(sku=self.sku, quantity=1, unit_price=100)
+        response = self.client.get('/api/reports/data/', {"date_from": "2026-08-01", "date_to": "2026-09-30", "group_by": "time", "group_by_2": "customer", "grain": "month"})
+        self.assertEqual(response.status_code, 200, response.data)
+        data = response.data
+        self.assertEqual(data["totals"]["amount"], Decimal("197"))
+        self.assertEqual({row["groups"][0]["key"] for row in data["rows"]}, {"2026-08", "2026-09"})
+        self.assertNotIn("2026-10", {row["groups"][0]["key"] for row in data["rows"]})
+
+    def test_cross_group_rejects_invalid_duplicate_or_time_filter_dimensions(self):
+        for params in (
+            {"group_by": "customer", "group_by_2": "customer"},
+            {"group_by": "time", "group_by_2": "time"},
+            {"source": "purchase", "group_by": "supplier", "group_by_2": "customer"},
+            {"group_by": "customer", "group_by_2": "time", "filter_time": "2026-09"},
+        ):
+            response = self.client.get('/api/reports/data/', {"date_from": "2026-09-01", "date_to": "2026-09-30", **params})
+            self.assertEqual(response.status_code, 400, params)
+
+    def test_cross_group_filter_and_csv_have_the_same_two_group_columns(self):
+        filtered = self.query(group_by="country", group_by_2="customer", filter_country="China")
+        self.assertEqual(filtered["totals"]["amount"], Decimal("189"))
+        response = self.client.get('/api/reports/data/', {"date_from": "2026-09-01", "date_to": "2026-09-30", "group_by": "country", "group_by_2": "customer", "filter_country": "China", "export": "csv"})
+        self.assertEqual(response.status_code, 200)
+        rows = list(csv.reader(io.StringIO(response.content.decode("utf-8-sig"))))
+        self.assertEqual(rows[3][:2], ["国家/地区", "客户"])
+        self.assertEqual(rows[4][0], "China")
+        self.assertEqual(rows[-1][0], "合计（单据去重）")
+        self.assertEqual(Decimal(rows[-1][2]), Decimal("189"))
+        self.assertEqual(int(rows[-1][3]), 1)
+
+    def test_sales_details_reconcile_country_customer_group_and_keep_adjustment_separate(self):
+        response = self.client.get('/api/reports/details/', {
+            "source": "sales", "date_from": "2026-09-01", "date_to": "2026-09-30",
+            "group_by": "country", "group_by_2": "customer", "group_value": "China",
+            "group_2_value": str(self.customer.pk), "page_size": 50,
+        })
+        self.assertEqual(response.status_code, 200, response.data)
+        data = response.data
+        self.assertEqual(data["totals"]["amount"], Decimal("189"))
+        self.assertEqual(data["totals"]["count"], 1)
+        self.assertEqual(data["totals"]["quantities"], {"pcs": Decimal("2"), "box": Decimal("1")})
+        self.assertEqual(sum(row["amount"] for row in data["rows"]), Decimal("189"))
+        self.assertEqual([row["record_type"] for row in data["rows"]].count("adjustment"), 1)
+        item_rows = [row for row in data["rows"] if not row["is_adjustment"]]
+        self.assertEqual({row["document_no"] for row in item_rows}, {"REPORT-O"})
+        self.assertEqual({row["unit"] for row in item_rows}, {"pcs", "box"})
+        self.assertTrue(all(row["document_id"] == self.order.pk for row in data["rows"]))
+
+    def test_sales_details_follow_sku_group_without_repeating_order_amount(self):
+        response = self.client.get('/api/reports/details/', {
+            "source": "sales", "date_from": "2026-09-01", "date_to": "2026-09-30",
+            "group_by": "sku", "group_value": str(self.sku.pk), "page_size": 50,
+        })
+        self.assertEqual(response.status_code, 200, response.data)
+        data = response.data
+        self.assertEqual(data["totals"]["amount"], Decimal("140"))
+        self.assertEqual(data["totals"]["count"], 1)
+        self.assertEqual(len(data["rows"]), 1)
+        self.assertEqual(data["rows"][0]["amount"], Decimal("140"))
+        self.assertFalse(data["rows"][0]["is_adjustment"])
+
+    def test_purchase_details_are_paginated_and_reconcile_purchase_adjustment(self):
+        purchase = PurchaseOrder.objects.create(purchase_no="REPORT-P-DETAIL", supplier=self.supplier, order_date=date(2026, 9, 2), status="ordered", exchange_rate=7)
+        purchase.items.create(sku=self.sku, quantity=3, unit_price=4)
+        purchase.items.create(sku=self.sku2, quantity=2, unit_price=5)
+        ContractChangeRequest.objects.create(purchase_order=purchase, amount_delta=Decimal("6"), status="approved")
+        response = self.client.get('/api/reports/details/', {
+            "source": "purchase", "date_from": "2026-09-01", "date_to": "2026-09-30",
+            "group_by": "supplier", "group_value": str(self.supplier.pk), "page": 1, "page_size": 2,
+        })
+        self.assertEqual(response.status_code, 200, response.data)
+        data = response.data
+        self.assertEqual(data["totals"]["amount"], Decimal("196"))
+        self.assertEqual(data["totals"]["count"], 1)
+        self.assertEqual(data["count"], 3)
+        self.assertEqual(data["page_size"], 2)
+        self.assertEqual(len(data["rows"]), 2)
+        self.assertEqual(data["totals"]["quantities"], {"pcs": Decimal("3"), "box": Decimal("2")})
+
+    def test_details_reject_invalid_selection_and_keep_historical_order_out(self):
+        historical = Order.objects.create(order_no="REPORT-HISTORY-DETAIL", customer=self.customer, order_date=date(2026, 9, 4), currency="CNY", exchange_rate=1, status="confirmed", historical_only=True)
+        historical.items.create(sku=self.sku, quantity=1, unit_price=999)
+        response = self.client.get('/api/reports/details/', {
+            "source": "sales", "date_from": "2026-09-01", "date_to": "2026-09-30",
+            "group_by": "customer", "group_value": str(self.customer.pk), "filter_time": "2026-09",
+        })
+        self.assertEqual(response.status_code, 400)
+        response = self.client.get('/api/reports/details/', {
+            "source": "sales", "date_from": "2026-09-01", "date_to": "2026-09-30",
+            "group_by": "customer", "group_value": str(self.customer.pk), "page_size": 50,
+        })
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["totals"]["amount"], Decimal("189"))
+
+    def test_historical_only_order_is_not_in_formal_cross_group_report(self):
+        historical = Order.objects.create(order_no="REPORT-HISTORY", customer=self.customer, order_date=date(2026, 9, 4), currency="CNY", exchange_rate=1, status="confirmed", historical_only=True)
+        historical.items.create(sku=self.sku, quantity=1, unit_price=999)
+        data = self.query(group_by="country", group_by_2="customer")
+        self.assertEqual(data["totals"]["amount"], Decimal("189"))
+        self.assertEqual(data["totals"]["count"], 1)
+
     def test_every_catalog_dimension_runs(self):
         catalog = self.client.get('/api/reports/catalog/').data
         for source, spec in catalog['sources'].items():
@@ -176,8 +307,46 @@ class ReportingTests(TestCase):
         content = response.content.decode('utf-8-sig')
         self.assertIn("'=HYPERLINK", content)
         self.assertIn('189', content)
+        self.assertEqual(list(csv.reader(io.StringIO(content)))[3], ["客户", "金额（人民币）", "去重单据/档案数", "数量（按单位）"])
 
     def test_catalog_and_region_edit_api(self):
         self.assertEqual(self.client.patch(f'/api/customers/{self.customer.pk}/', {"region": "华南"}, format='json').status_code, 200)
         self.customer.refresh_from_db()
         self.assertEqual(self.customer.region, '华南')
+
+
+@override_settings(**scope_fixture.RBAC_SETTINGS, PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"])
+class ReportingDimensionPermissionTests(TestCase):
+    make_employee = scope_fixture.SalesDataScopeTests.make_employee
+
+    def setUp(self):
+        scope_fixture.SalesDataScopeTests.setUp(self)
+        self.client.force_authenticate(self.employee_a.user)
+        category = ProductCategory.objects.create(name="权限测试分类")
+        product = Product.objects.create(code="REPORT-SCOPE", name="权限测试产品", category=category)
+        sku = SKU.objects.create(sku="REPORT-SCOPE-1", product=product, unit="pcs")
+        order = Order.objects.create(order_no="REPORT-SCOPE-O", customer=self.customer_a, order_date=date(2026, 10, 1), currency="CNY", exchange_rate=1, status="confirmed")
+        order.items.create(sku=sku, quantity=1, unit_price=10)
+
+    def test_second_dimension_requires_its_own_view_permission(self):
+        RolePermission.objects.filter(role=self.roles["self"], module="customers").update(can_view=False)
+        response = self.client.get('/api/reports/data/', {"date_from": "2026-10-01", "date_to": "2026-10-31", "group_by": "sku", "group_by_2": "customer"})
+        self.assertEqual(response.status_code, 403, response.data)
+
+    def test_raw_details_require_original_record_permission(self):
+        RolePermission.objects.filter(role=self.roles["self"], module="orders").update(can_view=False)
+        response = self.client.get('/api/reports/details/', {
+            "date_from": "2026-10-01", "date_to": "2026-10-31",
+            "group_by": "sku", "group_value": "1",
+        })
+        self.assertEqual(response.status_code, 403, response.data)
+
+    def test_old_sales_report_url_is_rejected_when_orders_view_is_revoked(self):
+        RolePermission.objects.filter(role=self.roles["self"], module="orders").update(can_view=False)
+        response = self.client.get('/api/reports/data/', {
+            "source": "sales", "group_by": "customer", "date_field": "order_date",
+            "date_from": "2026-10-01", "date_to": "2026-10-31",
+        })
+        self.assertEqual(response.status_code, 403, response.data)
+        self.assertEqual(response.data["detail"], "你没有权限执行此财务操作。")
+        self.assertNotIn("rows", response.data)

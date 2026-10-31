@@ -1,0 +1,3 @@
+74 objects imported automatically (use -v 2 for details).
+
+{"protected_hash": "4aee929137be345eaf5fa3a315f9f60496b9758cf6632641bd058cf97394b8be", "seed": [{"item": 1, "order": 1, "paid": 200, "shipped": 50, "sku": 1}, {"item": 2, "order": 2, "paid": 200, "shipped": 70, "sku": 2}, {"item": 3, "order": 3, "paid": 900, "shipped": 0, "sku": 3}]}

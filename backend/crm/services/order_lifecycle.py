@@ -6,10 +6,12 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 
-from crm.models import AdvanceAllocation, InventoryReservation, Order, PaymentPlan, PurchaseOrder, Quote, Shipment
+from crm.models import AdvanceAllocation, Customer, InventoryReservation, Order, PaymentPlan, PurchaseOrder, Quote, Shipment
+from crm.money import CURRENT_AMOUNT_CALCULATION_VERSION
 from crm.services.finance import ensure_default_payment_plans
 from crm.services.fulfillment import allocate_order, order_item_metrics
 from crm.trade_units import trade_values
+from crm.services.historical import reject_historical
 
 
 def _validate_order_for_confirmation(order):
@@ -41,12 +43,47 @@ def _order_item_payload(items):
     ]
 
 
+def _capture_order_party_snapshot(order, quote=None):
+    """Freeze the party data used by this order at formal confirmation.
+
+    A quote is the authoritative source for buyer/contact fields when one is
+    attached to the order.  Empty legacy quote fields stay empty rather than
+    being silently replaced with the current customer master.  Country is not
+    part of the existing quote snapshot schema, so it is captured from the
+    customer selected on this order at confirmation time.
+    """
+    customer = Customer.objects.select_for_update().get(pk=order.customer_id)
+    if quote is not None:
+        values = {
+            "customer_name_snapshot": quote.buyer_company_name,
+            "customer_country_snapshot": customer.country,
+            "customer_address_snapshot": quote.buyer_address,
+            "customer_contact_name_snapshot": quote.recipient_name,
+            "customer_phone_snapshot": quote.buyer_phone,
+            "customer_email_snapshot": quote.buyer_email,
+        }
+    else:
+        contact = customer.contacts.order_by("-is_primary", "name", "id").first()
+        values = {
+            "customer_name_snapshot": customer.name,
+            "customer_country_snapshot": customer.country,
+            "customer_address_snapshot": customer.address,
+            "customer_contact_name_snapshot": contact.name if contact else "",
+            "customer_phone_snapshot": contact.phone if contact else "",
+            "customer_email_snapshot": contact.email if contact else "",
+        }
+    for field, value in values.items():
+        setattr(order, field, value or "")
+    return values
+
+
 @transaction.atomic
 def confirm_order(order):
     """Confirm one draft, creating all formal side effects together."""
     # Lock only the Order row first.  ``quote`` is nullable, so joining it here
     # would create a nullable outer join that PostgreSQL cannot lock.
     order = Order.objects.select_for_update().get(pk=order.pk)
+    reject_historical(order, "确认、预留或生成应收计划")
     if order.status != "draft":
         raise ValidationError("只有草稿订单可以确认。")
 
@@ -72,9 +109,24 @@ def confirm_order(order):
             _order_item_payload(items),
         )
 
+    _capture_order_party_snapshot(order, final_quote)
     order.quote = final_quote
     order.status = "confirmed"
-    order.save(update_fields=["quote", "status", "updated_at"])
+    # Existing formal orders are migrated as legacy records. A pre-existing
+    # draft becomes current only when it is formally confirmed.
+    order.amount_calculation_version = CURRENT_AMOUNT_CALCULATION_VERSION
+    order.save(update_fields=[
+        "quote",
+        "status",
+        "amount_calculation_version",
+        "customer_name_snapshot",
+        "customer_country_snapshot",
+        "customer_address_snapshot",
+        "customer_contact_name_snapshot",
+        "customer_phone_snapshot",
+        "customer_email_snapshot",
+        "updated_at",
+    ])
     allocate_order(order)
     ensure_default_payment_plans(order)
     if final_quote:
@@ -85,6 +137,7 @@ def confirm_order(order):
 @transaction.atomic
 def start_order_production(order):
     order = Order.objects.select_for_update().get(pk=order.pk)
+    reject_historical(order, "生产或正式履约")
     if order.status != "confirmed":
         raise ValidationError("只有已确认订单可以开始生产。")
     order.status = "production"
@@ -95,6 +148,7 @@ def start_order_production(order):
 @transaction.atomic
 def complete_order(order):
     order = Order.objects.select_for_update().get(pk=order.pk)
+    reject_historical(order, "完成正式履约")
     if order.status != "shipped":
         raise ValidationError("只有已发货订单可以完成。")
     items = list(order.items.all())
@@ -111,6 +165,7 @@ def cancel_order(order, reason):
     if not reason:
         raise ValidationError("取消原因不能为空。")
     order = Order.objects.select_for_update().get(pk=order.pk)
+    reject_historical(order, "取消正式订单")
     if order.status not in {"draft", "confirmed", "production"}:
         raise ValidationError("当前订单状态不能取消。")
     if Shipment.objects.filter(order=order, status="confirmed").exists():

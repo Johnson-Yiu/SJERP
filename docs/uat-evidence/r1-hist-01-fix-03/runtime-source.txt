@@ -1,0 +1,20 @@
+R1-HIST-01-FIX-03 runtime/source evidence
+
+branch: codex/r1-hist-01
+business-code-baseline: c4dcd79c5eeccf00d1cd08e496be99e1b924f7ef
+backend-worktree: D:\Codex项目\森爵照明管理系统\.worktrees\r1-hist-01\backend
+backend-command: python manage.py runserver 127.0.0.1:8103 --noreload
+frontend-worktree: D:\Codex项目\森爵照明管理系统\.worktrees\r1-hist-01\frontend
+frontend-command (PowerShell): $env:VITE_API_PROXY_PORT='8103'; npm run dev -- --host 127.0.0.1 --port 5196
+playwright-base-url: http://127.0.0.1:5196
+playwright-config: frontend/playwright.r1a.config.js
+
+Observed listeners during verification (netstat -ano):
+127.0.0.1:8102 LISTENING PIDs 23788, 21116, 19860
+127.0.0.1:8103 LISTENING PID 5584
+127.0.0.1:5196 LISTENING PID 25564
+
+Windows process command-line inspection for the 8102/8103/5196 PIDs returned “拒绝访问”.
+The source association is therefore established by the launch commands and worktree used for the current services, and by comparing the real endpoint payloads:
+- api-8102-response.json is missing by_country and by_category.
+- api-8103-current-response.json contains both fields for sales and purchase.

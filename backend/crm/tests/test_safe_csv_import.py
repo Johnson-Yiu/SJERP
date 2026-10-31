@@ -109,6 +109,16 @@ class SafeCsvImportTests(TestCase):
         self.assertEqual([item["row"] for item in response.data["errors"]], [6, 7])
         self.assertEqual(Customer.objects.count(), 0)
 
+    def test_missing_sku_product_returns_stable_api_message(self):
+        response, _ = self.preview(
+            "skus",
+            ["sku", "product_code", "specification", "unit", "cost_price", "default_price", "currency"],
+            [["BAD-SKU", "MISSING-PRODUCT", "Spec", "pcs", "1", "2", "USD"]],
+        )
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["errors"][0]["message"], "找不到所引用的产品，请核对 product_code。")
+        self.assertFalse(SKU.objects.filter(sku="BAD-SKU").exists())
+
     def test_execute_is_atomic_and_rejects_changed_file(self):
         headers = ["code", "name"]
         response, content = self.preview("customers", headers, [[f"CSV-{index}", f"Buyer {index}"] for index in range(5)])

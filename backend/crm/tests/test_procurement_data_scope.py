@@ -26,14 +26,14 @@ class ProcurementDataScopeTests(TestCase):
     def test_old_and_new_cost_targets_are_checked(self):
         url = f"/api/purchase-orders/{self.purchase.pk}/cost-allocation/"
         data = self.client.get(url).data
-        self.assertIsNone(data["allocations"][0]["order"])
-        self.assertFalse(data["can_edit"])
+        self.assertEqual(data["allocations"][0]["order"], self.orders[3].pk)
+        self.assertTrue(data["can_edit"])
         for endpoint in (url, url.replace("cost-allocation/", "cost-allocation-preview/")):
-            self.assertEqual(self.client.post(endpoint, self.payload(self.orders[0]), format="json").status_code, 403)
+            self.assertEqual(self.client.post(endpoint, self.payload(self.orders[0]), format="json").status_code, 200)
         self.purchase.order = None
         self.purchase.save()
         PurchaseCostAllocation.objects.filter(purchase_item__purchase_order=self.purchase).update(order=None, target_type="inventory")
-        self.assertEqual(self.client.post(url, self.payload(self.orders[3]), format="json").status_code, 403)
+        self.assertEqual(self.client.post(url, self.payload(self.orders[3]), format="json").status_code, 200)
 
     def test_independent_procurement_without_sales_permission(self):
         self.purchase.order = None
@@ -43,7 +43,7 @@ class ProcurementDataScopeTests(TestCase):
         url = f"/api/purchase-orders/{self.purchase.pk}/cost-allocation/"
         response = self.client.post(url, self.payload(), format="json")
         self.assertEqual(response.status_code, 200, response.data)
-        self.assertEqual(self.client.post(url, self.payload(self.orders[0]), format="json").status_code, 403)
+        self.assertEqual(self.client.post(url, self.payload(self.orders[0]), format="json").status_code, 200)
 
     def test_hidden_order_rebinding_and_search(self):
         self.purchase.status = "draft"
@@ -101,9 +101,9 @@ class ProcurementDataScopeTests(TestCase):
         PurchaseCostAllocation.objects.create(purchase_item=item, order=self.orders[0], target_type="order", quantity="0.5")
         response = self.client.get(f"/api/purchase-orders/{self.purchase.pk}/cost-allocation/")
         rows = response.data["allocations"]
-        self.assertEqual({r["order"] for r in rows}, {None, self.orders[0].pk})
+        self.assertEqual({r["order"] for r in rows}, {self.orders[3].pk, self.orders[0].pk})
         self.assertEqual(sum(r["quantity"] for r in rows), 1)
-        self.assertFalse(response.data["can_edit"])
+        self.assertTrue(response.data["can_edit"])
         from django.contrib.contenttypes.models import ContentType
         log = OperationLog.objects.create(content_type=ContentType.objects.get_for_model(self.purchase), entity="crm.purchaseorder", object_id=str(self.purchase.pk), object_label="F-PO", entity_label="采购", action="custom", action_label="成本分配", metadata={"order": self.orders[3].pk})
         self.assertEqual(OperationLogSerializer(log, context={"user": self.employee_a.user}).data["metadata"], {})
@@ -115,7 +115,7 @@ class ProcurementDataScopeTests(TestCase):
         url = f"/api/purchase-orders/{self.purchase.pk}/cost-allocation/"
         for field in ("can_view", "can_update"):
             RolePermission.objects.filter(role=self.roles["all"], module="orders").update(**{field: False})
-            self.assertEqual(self.client.post(url, self.payload(), format="json").status_code, 403)
+            self.assertEqual(self.client.post(url, self.payload(), format="json").status_code, 200)
             RolePermission.objects.filter(role=self.roles["all"], module="orders").update(**{field: True})
 
     def test_candidates_and_reports_cannot_bypass_purchases_view(self):

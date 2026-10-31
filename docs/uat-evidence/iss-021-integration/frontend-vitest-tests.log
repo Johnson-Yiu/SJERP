@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 C:/Users/Johnson/.codex/worktrees/next-iss-021-integration/森爵照明管理系统/frontend
+
+
+ Test Files  66 passed (66)
+      Tests  650 passed (650)
+   Start at  09:42:39
+   Duration  166.40s (transform 24.06s, setup 24.89s, import 43.32s, tests 53.75s, environment 157.96s)
+

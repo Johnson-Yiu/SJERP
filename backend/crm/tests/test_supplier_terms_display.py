@@ -34,17 +34,17 @@ class SupplierTermsDisplayTests(TestCase):
                          "预付款 30% / 尾款 70%（系统默认）")
         self.assertEqual(payment_terms_summary(None), "预付款 30% / 尾款 70%（系统默认）")
 
-    def test_supplier_and_product_context_distinguish_notes_from_rules(self):
+    def test_supplier_and_product_context_hide_fixed_rules_but_keep_notes(self):
         info = dict(_supplier_context(self.supplier.pk)["info"])
         self.assertNotIn("付款条款", info)
         self.assertEqual(info["付款条款说明（备注）"], "旧说明：30/70")
-        self.assertEqual(info["系统执行付款规则"], "预付款 50% / 尾款 50%")
+        self.assertNotIn("系统执行付款规则", info)
         product = Product.objects.create(name="Display product", code="DISPLAY")
         product.suppliers.add(self.supplier)
         section = next(s for s in _product_context(product.pk)["sections"] if s["key"] == "suppliers")
         self.assertIn(["payment_terms", "付款条款说明（备注）"], section["columns"])
-        self.assertIn(["payment_terms_summary", "系统执行付款规则"], section["columns"])
-        self.assertEqual(section["rows"][0]["payment_terms_summary"], "预付款 50% / 尾款 50%")
+        self.assertNotIn(["payment_terms_summary", "系统执行付款规则"], section["columns"])
+        self.assertNotIn("payment_terms_summary", section["rows"][0])
 
     def test_fractional_percent_is_not_rounded(self):
         self.config[0]["ratio"] = "0.12345678901234567890123456789"

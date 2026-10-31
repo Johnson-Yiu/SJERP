@@ -1,0 +1,22 @@
+{
+  "files": [
+    "sample-a-normal.xlsx",
+    "sample-b-mixed.xlsx",
+    "sample-c-different-carton-specs.xlsx",
+    "sample-d-split-shipment-01.xlsx",
+    "sample-d-split-shipment-02.xlsx",
+    "sample-e-multipage-60-rows.xlsx",
+    "sample-f-long-description.xlsx"
+  ],
+  "shipments": {
+    "A": "SH-ISS040-A",
+    "B": "SH-ISS040-B",
+    "C": "SH-ISS040-C",
+    "D": [
+      "SH-ISS040-D-01",
+      "SH-ISS040-D-02"
+    ],
+    "E": "SH-ISS040-E",
+    "F": "SH-ISS040-F"
+  }
+}

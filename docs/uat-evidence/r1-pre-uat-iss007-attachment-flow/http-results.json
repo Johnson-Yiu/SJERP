@@ -1,0 +1,36 @@
+[
+  {
+    "scenario": "follow-up-authorized-view",
+    "status": 200,
+    "contentType": "text/plain",
+    "sha256": "59b310c7b5d102444d8e412ba33c40dee4b3b1bfbec3c04cec968c2cd121d755",
+    "bytes": 38
+  },
+  {
+    "scenario": "sku-current-image-after-replacement",
+    "status": 200,
+    "contentType": "image/gif",
+    "sha256": "ff95b99e6cd933dc1ce0dfc57ce7d4f78577e094ba87381f2edfba2a4690a7c6",
+    "bytes": 43
+  },
+  {
+    "scenario": "sku-thumbnail-authorized-view",
+    "status": 200,
+    "contentType": "image/webp",
+    "sha256": "460f90062e82b17cd8b97bb45454c729554bd90fbc06b75f26ab63d855348d9d",
+    "bytes": 72
+  },
+  {
+    "scenario": "quote-historical-image-after-sku-replacement",
+    "status": 200,
+    "contentType": "image/png",
+    "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460",
+    "bytes": 68
+  },
+  {
+    "scenario": "follow-up-upload-failure",
+    "status": "browser-route-aborted",
+    "dialogCountAfterFailure": 1,
+    "retryControlVisible": true
+  }
+]

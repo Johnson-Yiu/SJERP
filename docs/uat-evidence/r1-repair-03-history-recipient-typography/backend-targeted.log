@@ -1,0 +1,44 @@
+Creating test database for alias 'default'...
+
+...Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+..Bad Request: /api/orders/
+Bad Request: /api/purchase-orders/
+..Bad Request: /api/purchase-orders/1/place/
+Bad Request: /api/purchase-orders/1/pay/
+.Bad Request: /api/orders/1/confirm/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+..Bad Request: /api/orders/1/complete/
+..Bad Request: /api/orders/1/
+.Bad Request: /api/orders/1/complete/
+.Bad Request: /api/orders/1/complete/
+........Bad Request: /api/quotes/
+.Method Not Allowed: /api/quotes/1/
+.Bad Request: /api/quotes/4/order-draft/
+Bad Request: /api/quotes/5/order-draft/
+.....Bad Request: /api/quotes/1/important-notes/
+..Bad Request: /api/orders/
+.Bad Request: /api/quotes/
+Bad Request: /api/quotes/1/revise/
+......Bad Request: /api/quotes/1/
+Bad Request: /api/quotes/1/
+.Bad Request: /api/quotes/
+..Bad Request: /api/quotes/1/revise/
+....Bad Request: /api/quotes/1/revise/
+.Bad Request: /api/quotes/1/revise/
+.Bad Request: /api/quotes/1/revise/
+....Bad Request: /api/skus/1/image/
+....Unprocessable Content: /api/quotes/1/export/
+...Unprocessable Content: /api/quotes/1/export/
+.................
+----------------------------------------------------------------------
+Ran 75 tests in 21.958s
+
+OK
+Destroying test database for alias 'default'...
+
+Found 75 test(s).
+System check identified no issues (0 silenced).

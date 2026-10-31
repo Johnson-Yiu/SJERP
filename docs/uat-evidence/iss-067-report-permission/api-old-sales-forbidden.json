@@ -1,0 +1,23 @@
+{
+  "environment": "Django isolated SQLite test database",
+  "identity": "self-scope employee after orders.view was revoked",
+  "request": {
+    "method": "GET",
+    "path": "/api/reports/data/",
+    "query": {
+      "source": "sales",
+      "group_by": "customer",
+      "date_field": "order_date",
+      "date_from": "2026-10-01",
+      "date_to": "2026-10-31"
+    }
+  },
+  "response": {
+    "status": 403,
+    "body": {
+      "detail": "你没有权限执行此财务操作。"
+    },
+    "business_rows_present": false
+  },
+  "test": "crm.tests.test_reporting.ReportingDimensionPermissionTests.test_old_sales_report_url_is_rejected_when_orders_view_is_revoked"
+}

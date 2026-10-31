@@ -1,27 +1,27 @@
 export const resourceConfigs = {
   suppliers: {
     title: '供应商管理', eyebrow: 'Supplier directory', endpoint: 'suppliers', key: 'name',
-    description: '维护供应商资料、付款条款备注与系统执行规则。',
-    columns: [['name', '供应商'], ['code', '二字代码', 'tag'], ['country', '国家/地区'], ['main_products', '主要产品'], ['supply_category_names', '可供分类', 'labels'], ['contact_name', '联系人'], ['phone', '电话'], ['email', '邮箱'], ['store_url', '店铺链接'], ['payment_terms', '付款条款说明（备注）'], ['payment_terms_summary', '系统执行付款规则']],
-    fields: [['name', '供应商名称', 'text', true], ['code', '二字代码', 'text', true], ['country', '国家/地区'], ['main_products', '主要产品'], ['contact_name', '联系人'], ['phone', '电话'], ['email', '邮箱', 'email'], ['store_url', '店铺链接', 'url'], ['payment_terms', '付款条款说明（备注）'], ['payment_terms_config', '系统执行付款规则', 'payment_terms'], ['supply_categories', '可供产品分类', 'remote_multi', true, 'categories/tree', 'name'], ['notes', '备注', 'textarea']],
+    description: '维护供应商资料与付款条款备注。',
+    columns: [['name', '供应商'], ['code', '二字代码', 'tag'], ['country', '国家/地区'], ['main_products', '主要产品'], ['supply_category_names', '可供分类', 'labels'], ['contact_name', '联系人'], ['phone', '电话'], ['email', '邮箱'], ['store_url', '店铺链接'], ['payment_terms', '付款条款说明（备注）']],
+    fields: [['name', '供应商名称', 'text', true], ['code', '二字代码', 'text', true], ['country', '国家/地区'], ['address', '地址', 'textarea'], ['main_products', '主要产品'], ['contact_name', '联系人'], ['phone', '电话'], ['email', '邮箱', 'email'], ['store_url', '店铺链接', 'url'], ['payment_terms', '付款条款说明（备注）'], ['supply_categories', '可供产品分类', 'remote_multi', true, 'categories/tree', 'name'], ['notes', '备注', 'textarea']],
     detail: true,
   },
   customers: {
-    title: '客户管理', eyebrow: 'Customer portfolio', endpoint: 'customers', key: 'name',
-    description: '管理客户资料、负责人和跟进计划。客户阶段会根据报价和订单自动更新。',
+    title: '客户管理', eyebrow: '客户资料', endpoint: 'customers', key: 'name',
+    description: '维护客户资料和负责人。客户阶段会随报价和订单自动更新。',
     columns: [
       ['name', '客户名称'], ['code', '客户编号'], ['status', '状态', 'status'], ['country', '国家/地区'], ['region', '业务区域'],
       ['owner', '负责人'], ['next_follow_up', '下次跟进', 'date'], ['order_count', '订单数', 'number'], ['sales_amount', '累计销售额', 'rmb'],
     ],
     fields: [
-      ['code', '客户编号', 'readonly', true], ['name', '客户名称', 'text', true], ['country', '国家/地区'], ['region', '业务区域'], ['source', '客户来源', 'combo', false, 'customers/sources'],
+      ['code', '客户编号', 'readonly', true], ['name', '客户名称', 'text', true], ['country', '国家/地区', 'combo', false, 'customers/country-catalog', 'label'], ['region', '业务区域'], ['source', '客户来源', 'combo', false, 'customers/sources'],
       ['owner_profile', '负责人', 'remote', false, 'customers/owner-options', 'label'], ['website', '网站', 'url'], ['address', '地址', 'textarea'], ['notes', '备注', 'textarea'],
     ],
     detail: true,
   },
   contacts: {
-    title: '联系人', eyebrow: 'Contacts', endpoint: 'contacts', key: 'name',
-    description: '维护客户联系人和联系方式。',
+    title: '联系人', eyebrow: '客户联系人', endpoint: 'contacts', key: 'name',
+    description: '记录客户联系人及电话、邮箱等联系方式。',
     columns: [['customer_name', '所属客户'], ['name', '姓名'], ['title', '职位'], ['email', '邮箱'], ['phone', '电话'], ['whatsapp', 'WhatsApp'], ['is_primary', '主联系人', 'boolean']],
     fields: [
       ['customer', '所属客户', 'remote', true, 'customers', 'name'], ['name', '姓名', 'text', true], ['title', '职位'], ['email', '邮箱', 'email'],
@@ -30,7 +30,7 @@ export const resourceConfigs = {
     detail: true,
   },
   'follow-ups': {
-    title: '跟进记录', eyebrow: 'Relationship cadence', endpoint: 'follow-ups', key: 'subject',
+    title: '跟进记录', eyebrow: '客户跟进', endpoint: 'follow-ups', key: 'subject',
     description: '记录沟通内容、客户回复和下一步安排。',
     columns: [['followed_at', '跟进时间', 'datetime'], ['customer_name', '客户'], ['subject', '主题'], ['type_display', '方式', 'tag'], ['result', '结果'], ['next_follow_up_mode_display', '下次跟进安排'], ['next_follow_up', '下次跟进', 'date'], ['owner', '跟进人']],
     fields: [
@@ -41,7 +41,7 @@ export const resourceConfigs = {
     detail: true,
   },
   products: {
-    title: '产品管理', eyebrow: 'Product catalog', endpoint: 'products', key: 'name',
+    title: '产品管理', eyebrow: '产品资料', endpoint: 'products', key: 'name',
     description: '按产品族维护销售目录；具体销售规格在 SKU 中管理。',
     columns: [['code', '产品编号'], ['name', '产品名称'], ['category_name', '分类'], ['status', '状态', 'status'], ['sku_count', 'SKU 数', 'number'], ['parameter_count', '参数', 'number'], ['certificate_count', '证书', 'number']],
     fields: [
@@ -51,7 +51,7 @@ export const resourceConfigs = {
     detail: true,
   },
   skus: {
-    title: 'SKU 管理', eyebrow: 'Sellable variants', endpoint: 'skus', key: 'display_name_cn',
+    title: 'SKU 管理', eyebrow: '销售规格', endpoint: 'skus', key: 'display_name_cn',
     description: '管理实际报价和下单使用的规格、成本、单位与默认售价。',
     columns: [['display_name_cn', '内部名称'], ['sales_model', '对外型号'], ['sku_code', 'SKU Code'], ['specification', '规格'], ['stock_quantity', '库存', 'number'], ['unit', '单位'], ['cost_price', '成本价', 'money'], ['default_price', '默认售价', 'money'], ['currency', '币种', 'tag'], ['active', '启用', 'boolean']],
     fields: [
@@ -62,7 +62,7 @@ export const resourceConfigs = {
   },
   transactions: {
     title: '财务流水', eyebrow: 'Cash ledger', endpoint: 'transactions', key: 'transaction_no',
-    description: '登记实际收支，并追溯到客户和订单。所有人民币汇总按发生时汇率计算。',
+    description: '登记原币财务流水并追溯到客户和订单；人民币汇总为账面折算参考，银行实际人民币资金请查看银行资金记录。日期为流水发生日期，不是银行入账日期。',
     columns: [['transaction_date', '日期', 'date'], ['transaction_no', '流水号'], ['direction_display', '方向', 'direction'], ['category', '分类'], ['customer_name', '客户'], ['order_no', '归属订单'], ['amount', '金额', 'money'], ['currency', '币种', 'tag'], ['rmb_amount', '人民币折算参考', 'rmb']],
     fields: [
       ['transaction_no', '流水号', 'text', true], ['transaction_date', '发生日期', 'date', true], ['direction', '收支方向', 'select', true, { income: '收入', expense: '支出' }],
@@ -72,7 +72,7 @@ export const resourceConfigs = {
     detail: true,
   },
   categories: {
-    title: '产品分类', eyebrow: 'Catalog structure', endpoint: 'categories', key: 'name',
+    title: '产品分类', eyebrow: '分类与属性', endpoint: 'categories', key: 'name',
     description: '用于经营分析的产品大类，保持简洁稳定即可。',
     columns: [['name', '分类名称'], ['product_count', '产品数', 'number'], ['description', '说明']],
     fields: [['name', '分类名称', 'text', true], ['description', '说明', 'textarea']],
@@ -80,7 +80,7 @@ export const resourceConfigs = {
   },
   'inventory-movements': {
     title: '库存流水', eyebrow: 'Inventory ledger', endpoint: 'inventory-movements', key: 'movement_no',
-    description: '查看每次库存增减及其来源。',
+    description: '查看每次库存增减及其来源；库存缺口仅作核对参考，不会自动下采购单。',
     columns: [['movement_date', '日期', 'date'], ['movement_no', '流水号'], ['sku_code', 'SKU / 产品'], ['type_display', '类型', 'tag'], ['signed_quantity', '库存变动', 'signed'], ['source_type', '来源'], ['warehouse', '仓库'], ['reference', '关联单据'], ['reversal_status', '冲销状态']],
     fields: [
       ['movement_no', '流水号', 'readonly'], ['movement_date', '发生日期', 'date', true],
@@ -100,7 +100,7 @@ export const resourceConfigs = {
     title: '产品证书', eyebrow: 'Compliance documents', endpoint: 'product-certificates', key: 'name',
     description: '管理 CE、RoHS、UL 等证书编号、机构和有效期。',
     columns: [['product_name', '产品'], ['name', '证书名称'], ['certificate_no', '证书编号'], ['issuer', '签发机构'], ['issued_date', '签发日期', 'date'], ['expires_on', '有效期至', 'date'], ['expiry_status', '有效状态']],
-    fields: [['product', '所属产品', 'remote', true, 'products', 'name'], ['name', '证书名称', 'text', true], ['certificate_no', '证书编号'], ['issuer', '签发机构'], ['issued_date', '签发日期', 'date'], ['expires_on', '有效期至', 'date'], ['file_url', '文件链接', 'url'], ['notes', '备注', 'textarea']],
+    fields: [['product', '所属产品', 'remote', true, 'products', 'name'], ['name', '证书名称', 'text', true], ['certificate_no', '证书编号'], ['issuer', '签发机构'], ['issued_date', '签发日期', 'date'], ['expires_on', '有效期至', 'date'], ['file', '证书文件', 'file'], ['notes', '备注', 'textarea']],
     detail: true,
   },
 }

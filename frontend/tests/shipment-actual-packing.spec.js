@@ -3,9 +3,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { reactive } from 'vue'
 
-const mocks = vi.hoisted(() => ({ api: { get: vi.fn(), post: vi.fn(), delete: vi.fn() }, confirmDialog: vi.fn() }))
-vi.mock('../src/api', () => ({ api: mocks.api }))
+const mocks = vi.hoisted(() => ({ api: { get: vi.fn(), post: vi.fn(), delete: vi.fn() }, confirmDialog: vi.fn(), downloadPackingListExport: vi.fn() }))
+vi.mock('../src/api', () => ({ api: mocks.api, downloadPackingListExport: mocks.downloadPackingListExport }))
 vi.mock('../src/dialogs', () => ({ confirmDialog: mocks.confirmDialog }))
+vi.mock('../src/accessControl', () => ({ useAccessControl: () => ({ can: () => true }) }))
 import ShipmentActualPacking from '../src/components/ShipmentActualPacking.vue'
 import OrderDetailModal from '../src/components/OrderDetailModal.vue'
 import { packingSummary } from '../src/utils/actualPacking'
@@ -33,7 +34,7 @@ async function input(label, value) {
   await flushPromises()
 }
 async function submit() { form().dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); await flushPromises() }
-beforeEach(() => { vi.clearAllMocks(); mocks.confirmDialog.mockResolvedValue(true); mocks.api.post.mockResolvedValue({ data: [] }); mocks.api.delete.mockResolvedValue({}); wrappers = [] })
+beforeEach(() => { vi.clearAllMocks(); mocks.confirmDialog.mockResolvedValue(true); mocks.api.post.mockResolvedValue({ data: [] }); mocks.api.delete.mockResolvedValue({}); mocks.downloadPackingListExport.mockResolvedValue(undefined); wrappers = [] })
 afterEach(() => { wrappers.forEach(w => w.unmount()); document.body.innerHTML = '' })
 
 describe('Actual packing by Shipment', () => {
@@ -64,7 +65,7 @@ describe('Actual packing by Shipment', () => {
     expect(w.text()).toContain('发货已冲销 · 实际箱单仅供历史查看'); expect(w.text()).toContain('第 3 箱')
     expect(w.findAll('button')).toHaveLength(0)
   })
-  it('new package opens one editor with max carton number plus one', async () => { const w = await component({ packages: [carton] }); await click(w, '新增箱'); expect(form().textContent).toContain('新增实际箱单'); expect(form().querySelector('input').value).toBe('4') })
+  it('new package opens one editor with max carton number plus one', async () => { const w = await component({ packages: [carton] }); await click(w, '新增箱'); expect(form().textContent).toContain('新增实际装箱记录'); expect(form().querySelector('input').value).toBe('4') })
   it('SKU selector contains only unique target Shipment SKUs', async () => { const w = await component(); await click(w, '新增箱'); expect([...form().querySelector('select').options].map(o => o.value)).toEqual(['', '10', '20']) })
   it('submits mixed SKU carton quantities to the scoped API and reloads', async () => {
     const w = await component(); await click(w, '新增箱'); await input('SKU 1', '10'); await input('实际装箱数量 1', '5')
@@ -92,15 +93,27 @@ describe('Actual packing by Shipment', () => {
   })
   it('partial progress displays packed shipped and remaining by SKU', async () => { const w = await component({ packages: [carton] }); expect(w.text()).toContain('尚未装箱完成'); expect(w.text()).toContain('已装 6 / 发货 10 pcs'); expect(w.text()).toContain('未装箱 4 pcs') })
   it('fully packed state is clearly shown', async () => { const w = await component({ packages: [{ ...carton, items: [{ sku: 10, quantity: '10' }, { sku: 20, quantity: '8' }] }] }); expect(w.find('.packing-progress').text()).toContain('装箱完成'); expect(w.find('.packing-progress').text()).not.toContain('未装箱') })
-  it('copy requires a plan and confirmed status', async () => { const w = await component({ hasPlan: false }); expect(w.findAll('button').find(b => b.text() === '从预计装箱复制').attributes('disabled')).toBeDefined() })
-  it('copy without existing packages sends no replacement flag', async () => { const w = await component(); await click(w, '从预计装箱复制'); expect(mocks.confirmDialog).not.toHaveBeenCalled(); expect(mocks.api.post).toHaveBeenCalledWith('/shipments/55/copy-estimated-packing/', {}) })
-  it('partial shipment copy shows server business explanation', async () => { mocks.api.post.mockRejectedValue({ response: { data: { detail: '预计装箱对应整张订单，本次发货数量与预计装箱不一致，请手工录入本次实际箱单。' } } }); const w = await component(); await click(w, '从预计装箱复制'); expect(w.text()).toContain('请手工录入本次实际箱单') })
-  it('existing actual packing replacement confirms once and sends replace true', async () => { const w = await component({ packages: [carton] }); await click(w, '从预计装箱复制'); expect(mocks.confirmDialog).toHaveBeenCalledTimes(1); expect(mocks.api.post).toHaveBeenCalledWith('/shipments/55/copy-estimated-packing/', { replace: true }) })
-  it('cancelled replacement preserves packages and sends no request', async () => { mocks.confirmDialog.mockResolvedValue(false); const w = await component({ packages: [carton] }); await click(w, '从预计装箱复制'); expect(mocks.api.post).not.toHaveBeenCalled(); expect(w.text()).toContain('第 3 箱') })
+  it('keeps Packing List export disabled until every shipped SKU is packed', async () => { const w = await component({ packages: [carton] }); const button = w.findAll('button').find(b => b.text() === '导出 Packing List'); expect(button.exists()).toBe(true); expect(button.attributes('disabled')).toBeDefined(); expect(mocks.downloadPackingListExport).not.toHaveBeenCalled() })
+  it('exports a fully packed confirmed Shipment through the scoped helper', async () => { const w = await component({ packages: [{ ...carton, items: [{ sku: 10, quantity: '10' }, { sku: 20, quantity: '8' }] }] }); await click(w, '导出 Packing List'); expect(mocks.downloadPackingListExport).toHaveBeenCalledWith(55, 'SH-UAT-55') })
+  it('copy requires a plan and confirmed status', async () => { const w = await component({ hasPlan: false }); expect(w.findAll('button').find(b => b.text() === '复制预计装箱方案').attributes('disabled')).toBeDefined() })
+  it('copy without existing packages sends no replacement flag', async () => { const w = await component(); await click(w, '复制预计装箱方案'); expect(mocks.confirmDialog).not.toHaveBeenCalled(); expect(mocks.api.post).toHaveBeenCalledWith('/shipments/55/copy-estimated-packing/', {}) })
+  it('partial shipment copy shows server business explanation', async () => { mocks.api.post.mockRejectedValue({ response: { data: { detail: '预计装箱对应整张订单，本次发货数量与预计装箱不一致，请手工录入本次实际箱单。' } } }); const w = await component(); await click(w, '复制预计装箱方案'); expect(w.text()).toContain('请手工录入本次实际箱单') })
+  it('existing actual packing replacement confirms once and sends replace true', async () => { const w = await component({ packages: [carton] }); await click(w, '复制预计装箱方案'); expect(mocks.confirmDialog).toHaveBeenCalledTimes(1); expect(mocks.api.post).toHaveBeenCalledWith('/shipments/55/copy-estimated-packing/', { replace: true }) })
+  it('cancelled replacement preserves packages and sends no request', async () => { mocks.confirmDialog.mockResolvedValue(false); const w = await component({ packages: [carton] }); await click(w, '复制预计装箱方案'); expect(mocks.api.post).not.toHaveBeenCalled(); expect(w.text()).toContain('第 3 箱') })
   it('failed save retains usable editor and original data', async () => {
     mocks.api.post.mockRejectedValue({ response: { data: { items: ['累计装箱数量不能超过本次发货数量。'] } } })
     const w = await component({ packages: [carton] }); await click(w, '编辑'); await input('实际装箱数量 1', '11'); await submit()
     expect(form().textContent).toContain('累计装箱数量不能超过'); expect(form().querySelector('[aria-label="实际装箱数量 1"]').value).toBe('11'); expect(w.text()).toContain('第 3 箱'); expect(form().querySelector('button[type="submit"]').disabled).toBe(false)
+  })
+  it('renders nested validation errors as Chinese text without object placeholders', async () => {
+    mocks.api.post.mockRejectedValue({ response: { data: { items: { quantity: ['SKU ACT-ROLL 按不可拆分的 5 m 交易单位装箱，数量必须是其整数倍；当前为 2.5。'] } } } })
+    const w = await component({ packages: [carton] }); await click(w, '编辑'); await input('实际装箱数量 1', '2.5'); await submit()
+    expect(form().textContent).toContain('不可拆分的 5 m'); expect(form().textContent).not.toContain('[object Object]'); expect(form().querySelector('[aria-label="实际装箱数量 1"]').value).toBe('2.5')
+  })
+  it('keeps a factor-one indivisible-unit error readable and preserves the subunit input', async () => {
+    mocks.api.post.mockRejectedValue({ response: { data: { items: { quantity: ['SKU ACT-ONE 按不可拆分的 1 pcs 交易单位装箱，数量必须是其整数倍；当前为 0.5。'] } } } })
+    const w = await component({ packages: [carton] }); await click(w, '编辑'); await input('实际装箱数量 1', '0.5'); await submit()
+    expect(form().textContent).toContain('不可拆分的 1 pcs'); expect(form().textContent).toContain('当前为 0.5'); expect(form().textContent).not.toContain('[object Object]'); expect(form().querySelector('[aria-label="实际装箱数量 1"]').value).toBe('0.5')
   })
   it('failed package load offers retry without mutation controls', async () => { mocks.api.get.mockRejectedValueOnce(new Error('network failure')); const w = await component(); expect(w.text()).toContain('network failure'); expect(w.text()).not.toContain('新增箱'); await click(w, '重试'); expect(w.text()).toContain('新增箱') })
   it('editor rejects duplicate SKU, partial dimensions and invalid weights without sending', async () => {

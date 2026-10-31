@@ -1,0 +1,119 @@
+{
+  "label": "finance-reference-basis-reference basis across finance, transactions and saved cash config 1024",
+  "blockedOptionalFonts": true,
+  "fontInterceptions": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "host": "fonts.googleapis.com"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "host": "fonts.googleapis.com"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "host": "fonts.googleapis.com"
+    }
+  ],
+  "console": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_FAILED"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_FAILED"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_FAILED"
+    }
+  ],
+  "pageErrors": [],
+  "failedRequests": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "method": "GET",
+      "failure": {
+        "errorText": "net::ERR_FAILED"
+      }
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "method": "GET",
+      "failure": {
+        "errorText": "net::ERR_FAILED"
+      }
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "method": "GET",
+      "failure": {
+        "errorText": "net::ERR_FAILED"
+      }
+    }
+  ],
+  "apiResponses": [
+    {
+      "url": "http://127.0.0.1:5195/api/session/current-operator/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5195/api/finance-dashboard/?date_from=2026-10-01&date_to=2026-10-28",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5195/api/actual-rmb-cash/?date_from=2026-10-01&date_to=2026-10-28",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5195/api/session/current-operator/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5195/api/transactions/?status=confirmed&direction=&date_from=&date_to=&search=&page=1",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5195/api/customers/?page=1",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5195/api/suppliers/?page=1",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5195/api/purchase-orders/?page=1",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5195/api/session/current-operator/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5195/api/reports/catalog/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5195/api/reports/templates/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5195/api/reports/data/?date_from=2026-10-01&date_to=2026-10-18&source=cash&group_by=direction&grain=month&comparison=previous&date_field=transaction_date",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "nonSuccessfulResponses": []
+}

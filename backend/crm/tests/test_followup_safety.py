@@ -38,6 +38,34 @@ class FollowUpSafetyTests(TestCase):
         self.assertEqual(self.create(result="").status_code, 201)
         self.assertEqual(self.create(content="", result="客户确认规格").status_code, 201)
 
+    def test_keep_does_not_replay_history_over_manually_updated_plan(self):
+        previous = self.create(next_follow_up_mode='set', next_follow_up='2026-10-20')
+        Customer.objects.filter(pk=self.customer.pk).update(next_follow_up=date(2026, 11, 12))
+        kept = self.create()
+        self.assertEqual(kept.status_code, 201)
+        self.assertEqual(self.schedule(), date(2026, 11, 12))
+        self.client.patch(f'/api/follow-ups/{kept.data["id"]}/', {'content': '补充沟通'}, format='json')
+        self.assertEqual(self.schedule(), date(2026, 11, 12))
+        self.client.delete(f'/api/follow-ups/{kept.data["id"]}/')
+        self.assertEqual(self.schedule(), date(2026, 11, 12))
+        historical = FollowUp.objects.get(pk=previous.data['id'])
+        self.assertEqual(historical.next_follow_up, date(2026, 10, 20))
+
+    def test_clear_preserves_history_and_invalid_request_preserves_plan(self):
+        previous = self.create(next_follow_up_mode='set', next_follow_up='2026-10-20')
+        self.assertEqual(self.create(next_follow_up_mode='set', next_follow_up='2026-02-30').status_code, 400)
+        self.assertEqual(self.schedule(), date(2026, 10, 20))
+        self.assertEqual(FollowUp.objects.filter(customer=self.customer).count(), 1)
+        self.assertEqual(self.create(next_follow_up_mode='clear').status_code, 201)
+        self.assertIsNone(self.schedule())
+        self.assertFalse(current_due_follow_ups(today=date(2026, 12, 1)).exists())
+        self.assertEqual(FollowUp.objects.get(pk=previous.data['id']).next_follow_up, date(2026, 10, 20))
+
+    def test_customer_can_be_created_without_next_date(self):
+        response = self.client.post('/api/customers/', {'name': 'No plan', 'country': 'US', 'contacts': [{'name': 'Test contact'}]}, format='json')
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertIsNone(Customer.objects.get(pk=response.data['id']).next_follow_up)
+
     def test_default_keep_preserves_manual_customer_plan(self):
         response = self.create()
         self.assertEqual(response.status_code, 201)

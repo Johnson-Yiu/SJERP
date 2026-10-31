@@ -27,8 +27,13 @@ function permissionFor(module) { return draft.value.find(item => item.module ===
 function changed(module) { const before = savedDraft.value.find(row => row.module === module) || {}; return actions.some(([key]) => Boolean(before[key]) !== Boolean(permissionFor(module)[key])) }
 const changedCount = computed(() => data.value.modules.filter(module => changed(module.code)).length)
 function resetDraft() {
+  const effective = selectedRole.value?.has_all_permissions === true
+    ? null
+    : (selectedRole.value?.permissions || selectedRole.value?.effective_permissions || [])
   draft.value = data.value.modules.map(module => {
-    const source = selectedRole.value?.permissions?.find(row => row.module === module.code) || {}
+    const source = effective === null
+      ? Object.fromEntries(actions.map(([key]) => [key, true]))
+      : effective.find(row => row.module === module.code) || {}
     return { module: module.code, ...Object.fromEntries(actions.map(([key]) => [key, Boolean(source[key])])) }
   })
   savedDraft.value = JSON.parse(JSON.stringify(draft.value)); guard.markClean()
@@ -126,7 +131,7 @@ onBeforeUnmount(() => { alive = false; loadVersion++ })
       <section v-if="selectedRole" class="panel matrix-panel" :aria-busy="busy"><div class="role-header"><div><span class="role-code">{{ selectedRole.code }}</span><h3>{{ selectedRole.name }}</h3><p>{{ selectedRole.description || '暂无角色说明。' }}</p></div><div class="scope-card"><small>默认数据范围（只读）</small><strong>{{ selectedRole.default_data_scope_display || '未提供' }}</strong><p>数据范围当前首先用于客户/CRM/销售记录。产品、SKU、库存等共享主数据不按客户负责人切分。</p></div></div>
         <div class="matrix-tools"><label>查找功能模块<input v-model="moduleSearch" placeholder="输入模块名称或代码" /></label><span>{{ visibleModules.length }} / {{ data.modules.length }} 个模块</span><span v-if="dirty" class="dirty-status" role="status">{{ changedCount }} 个模块有未保存修改</span><span v-else-if="!needsReadback">当前没有未保存修改</span></div>
         <p class="matrix-help">勾选任一操作会同时勾选“查看”；取消“查看”会清除该模块的其他操作权限。筛选只影响显示，保存仍包含全部模块。</p>
-        <p v-if="selectedRole.code==='superadmin'" class="read-only-note">超级管理员为系统最高权限，此模板不可修改。表内为已保存的配置，实际最高权限由系统规则确定。</p><p v-else-if="!canEditSelected" class="read-only-note">当前身份只能查看，不能修改角色权限。</p>
+        <p v-if="selectedRole.has_all_permissions === true" class="read-only-note">包含全部ERP业务权限，不受普通勾选项限制。此最高角色不可修改；下方勾选反映实际生效权限。</p><p v-else-if="!canEditSelected" class="read-only-note">当前身份只能查看，不能修改角色权限。</p>
         <div class="table-wrap matrix-scroll" tabindex="0" role="region" aria-label="角色权限矩阵，可横向及纵向滚动"><table class="permission-table"><caption class="matrix-caption">{{ selectedRole.name }} · 功能权限</caption><thead><tr><th scope="col">功能模块</th><th v-for="action in actions" :key="action[0]" scope="col">{{ action[1] }}</th></tr></thead><tbody><tr v-for="module in visibleModules" :key="module.code" :class="{changed:changed(module.code)}"><th scope="row">{{ module.name }}</th><td v-for="action in actions" :key="action[0]"><label class="permission-check"><input type="checkbox" :checked="permissionFor(module.code)[action[0]]" :disabled="!canEditSelected || busy || switching || needsReadback" :aria-label="`${selectedRole.name} ${module.name} ${action[1]}`" @change="updatePermission(module.code,action[0],$event.target.checked)" /><span><Check :size="12" /></span></label></td></tr></tbody></table></div>
         <p v-if="!visibleModules.length" class="empty-note">没有匹配的功能模块，请调整搜索条件。</p>
         <div class="matrix-feedback"><p v-if="saveError" role="alert" class="save-error">{{ saveError }}</p><p v-if="success" role="status" class="save-success">{{ success }}</p><p v-if="saving" role="status">{{ needsReadback ? '正在重新读取角色和当前身份权限…' : '正在保存，请勿离开页面…' }}</p><p v-if="needsReadback && !saving">权限已提交，尚未完成核对。可重新读取，或离开后重新打开页面。</p><RouterLink v-if="accessState.error" to="/access-status-error" class="btn btn-secondary">检查权限状态</RouterLink></div>

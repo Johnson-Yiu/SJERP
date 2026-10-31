@@ -108,7 +108,7 @@ it('Movement type/direction/source filters preserve their original query keys', 
 it('Sidebar preserves every route, module and Finance order in the requested groups', async () => {
   await setup('/customers')
   const expected = {
-    '经营': ['/', '/reports'], '客户': ['/customers', '/contacts', '/follow-ups'], '销售': ['/quotes', '/orders'],
+    '经营': ['/', '/reports', '/historical-orders'], '客户': ['/customers', '/contacts', '/follow-ups'], '销售': ['/quotes', '/orders'],
     '采购与库存': ['/suppliers', '/purchase-orders', '/inventory', '/inventory-movements'],
     '产品资料': ['/products', '/skus', '/categories', '/product-parameters', '/sku-packaging', '/sku-trade-units', '/product-certificates', '/hs-codes'],
     '财务与工具': ['/finance', '/receivables', '/payables', '/transactions', '/rmb-cash-events', '/import'], '组织与系统': ['/organization'],
@@ -173,7 +173,7 @@ it.each(core.filter(c => c[0] !== '/inventory'))('%s has concise initial and fil
   mocks.listAll.mockResolvedValue([])
   const router = await setup(path)
   expect(wrapper.get('.list-empty-state h3').text()).toMatch(/^暂无/)
-  expect(wrapper.get('.list-empty-state').text()).toContain(action)
+  expect(wrapper.get('.list-empty-state').text()).toContain(path === '/customers' ? '添加客户资料' : action)
   const endpoint = path === '/inventory-movements' ? '/inventory-movements/' : `${path}/`
   const existing = path === '/customers' ? { id: 1, name: 'Existing Customer', code: 'C1', status: 'customer' }
     : path === '/quotes' ? { id: 1, quote_no: 'QT-1', status: 'sent', items: [] }

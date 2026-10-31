@@ -60,6 +60,8 @@ npm run dev
 
 访问 `http://localhost:5191`。后端 API 位于 `http://localhost:8100/api/`。
 
+`seed_demo` 仅用于本地开发环境的演示数据初始化，不是 QA/UAT 测试夹具，也不能替代真实业务流程验收。它只接受默认本地 SQLite，或由当前隔离运行器提供完整隔离身份的 SQLite；生产/暂存环境、非 SQLite 数据库和未标记的显式 `DATABASE_URL` 会被拒绝。历史 `run_business_flow_checks` 与 `run_edge_business_flow_checks` 管理命令已退役，源码和历史证据保留但不再执行。
+
 ## 报价与 PI 工作流
 
 - 在“SKU 管理”的新建或编辑弹窗中上传产品图片；支持 GIF、JPEG、PNG 和 WebP。图片随 SKU 保存，重新打开 SKU 仍可预览，也可在编辑时清除。

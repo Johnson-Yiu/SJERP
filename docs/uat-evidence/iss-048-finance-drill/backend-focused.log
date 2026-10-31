@@ -1,0 +1,17 @@
+Using existing test database for alias 'default'...
+
+...Bad Request: /api/finance-dashboard/details/
+Bad Request: /api/finance-dashboard/details/
+...................................................Bad Request: /api/transactions/1/void/
+Bad Request: /api/transactions/1/void/
+........Forbidden: /api/actual-rmb-cash/
+Forbidden: /api/actual-rmb-cash/
+...
+----------------------------------------------------------------------
+Ran 65 tests in 4.072s
+
+OK
+Preserving test database for alias 'default'...
+
+Found 65 test(s).
+System check identified no issues (0 silenced).

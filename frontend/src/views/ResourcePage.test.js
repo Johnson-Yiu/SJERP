@@ -10,6 +10,12 @@ test('resource payload serializes empty optional dates as null', async () => {
   assert.match(source, /if \(type === 'date' && value === ''\) value = null/)
 })
 
+test('transaction resource distinguishes book reference from confirmed bank RMB cash', () => {
+  assert.match(resourceConfigs.transactions.description, /账面折算参考/)
+  assert.match(resourceConfigs.transactions.description, /银行实际人民币资金请查看银行资金记录/)
+  assert.equal(resourceConfigs.transactions.columns.find(column => column[0] === 'rmb_amount')[1], '人民币折算参考')
+})
+
 test('customer projections are visible but not editable customer fields', async () => {
   const customer = resourceConfigs.customers
   const page = await readFile(new URL('./ResourcePage.vue', import.meta.url), 'utf8')
@@ -19,11 +25,11 @@ test('customer projections are visible but not editable customer fields', async 
   assert.equal(customer.fields.some(field => field[0] === 'next_follow_up'), false)
   assert.equal(customer.columns.some(column => column[0] === 'status'), true)
   assert.equal(customer.fields.some(field => field[0] === 'status'), false)
-  assert.match(customer.description, /客户阶段会根据报价和订单自动更新/)
-  assert.match(page, /contact: '已建立联系'/)
-  assert.match(page, /opportunity: '已进入报价阶段'/)
-  assert.match(page, /customer: '已有1张正式订单'/)
-  assert.match(page, /company: '已有2张及以上正式订单'/)
+  assert.match(customer.description, /客户阶段会随报价和订单自动更新/)
+  assert.match(page, /contact: '已联系'/)
+  assert.match(page, /opportunity: '商机'/)
+  assert.match(page, /customer: '正式客户'/)
+  assert.match(page, /company: '返单客户'/)
   assert.match(detail, /currentEntity === 'customers' && item\[0\] === '下次跟进'/)
   assert.match(detail, /随最新跟进自动更新/)
 })
@@ -36,6 +42,17 @@ test('customer detail shortcuts require the target module action permission', as
   assert.match(detail, /currentEntity !== 'inventory-movements' && can\(currentEntity, 'update'\)/)
   assert.match(detail, /can\('followups', 'update'\).*编辑/)
   assert.match(detail, /can\('followups', 'delete'\).*删除/)
+})
+
+test('customer, product and SKU details expose a permission-gated report-center shortcut with a safe return path', async () => {
+  const detail = await readFile(new URL('../components/EntityDetailModal.vue', import.meta.url), 'utf8')
+
+  assert.match(detail, /analysisDimensions = \{ customers: 'customer', products: 'product', skus: 'sku' \}/)
+  assert.match(detail, /canViewBusinessAnalysis = computed\(\(\) => Boolean\(isRoot.value && analysisDimension.value && can\('reports', 'view'\)/)
+  assert.match(detail, /path: '\/reports'/)
+  assert.match(detail, /\[`filter_\$\{analysisDimension.value\}`\]: String\(currentId.value\)/)
+  assert.match(detail, /returnTo: detailReturnPath\(\)/)
+  assert.match(detail, /查看经营分析/)
 })
 
 test('automatic inventory movements are read-only while manual movements are reversed, not deleted', async () => {
@@ -89,5 +106,22 @@ test('customer ownership uses scoped employee options and sends an explicit clea
   assert.match(page, /data\[name\] = value/)
   assert.doesNotMatch(page, /delete data\.owner_profile/)
   assert.match(organization, /数据范围当前首先用于客户\/CRM\/销售记录/)
+})
+
+test('ISS-049 reuses URL-backed quick filters for customer and follow-up lists', async () => {
+  const page = await readFile(new URL('./ResourcePage.vue', import.meta.url), 'utf8')
+  const view = await readFile(new URL('../../../backend/crm/views.py', import.meta.url), 'utf8')
+
+  for (const label of ['按负责人筛选客户', '按国家/地区筛选客户', '按客户状态筛选']) assert.match(page, new RegExp(label))
+  assert.match(page, /owner_profile: undefined, country: undefined, status: undefined/)
+  assert.match(page, /customers\/country-options\//)
+  assert.match(page, /follow-ups\/owner-options\//)
+  assert.match(page, /aria-label="按跟进人筛选"/)
+  assert.match(page, /title="按跟进状态筛选"/)
+  assert.match(page, /route\.query\.owner \? \{ owner: route\.query\.owner \}/)
+  assert.match(view, /url_path="country-options"/)
+  assert.match(view, /url_path="owner-options"/)
+  assert.match(view, /followed_at__date__gte=date_from/)
+  assert.match(view, /followed_at__date__lte=date_to/)
 })
 

@@ -1,0 +1,34 @@
+{
+  "request": {
+    "source": "purchase",
+    "date_from": "2026-09-01",
+    "date_to": "2026-09-30",
+    "group_by": "supplier",
+    "group_value": "1",
+    "page": "1",
+    "page_size": "2"
+  },
+  "response_excerpt": {
+    "source": "purchase",
+    "group_by": "supplier",
+    "date_field": "order_date",
+    "period": {
+      "date_from": "2026-09-01",
+      "date_to": "2026-09-30"
+    },
+    "count": 3,
+    "page": 1,
+    "page_size": 2,
+    "page_count": 2,
+    "totals": {
+      "amount": "196.00",
+      "count": 1,
+      "quantities": {
+        "pcs": "3",
+        "box": "2"
+      }
+    },
+    "rows_on_page_1": 2,
+    "rows_include": ["REPORT-P-DETAIL / pcs", "REPORT-P-DETAIL / box"]
+  }
+}

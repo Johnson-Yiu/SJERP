@@ -81,7 +81,10 @@ def update_follow_up_customer(sender, instance, signal, **kwargs):
         previous_id == instance.customer_id and previous_mode != "keep" and instance.next_follow_up_mode == "keep"
     )
     refresh_customer_stage(instance.customer_id)
-    refresh_customer_next_follow_up(instance.customer_id, removed_decision=removed_here)
+    # A keep record must preserve the actual current plan, even when a customer
+    # plan was changed directly after an older recorded decision.
+    if instance.next_follow_up_mode != "keep" or removed_here:
+        refresh_customer_next_follow_up(instance.customer_id, removed_decision=removed_here)
     if previous_id and previous_id != instance.customer_id:
         refresh_customer_stage(previous_id)
         refresh_customer_next_follow_up(previous_id, removed_decision=previous_mode != "keep")

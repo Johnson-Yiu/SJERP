@@ -1,0 +1,322 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\Johnson\\.codex\\worktrees\\fix-iss055-chinese-404\\森爵照明管理系统\\frontend\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "browser-tests/iss055-customer-404-real.spec.js",
+      "--config=playwright.iss055.config.js"
+    ],
+    "configFile": "C:\\Users\\Johnson\\.codex\\worktrees\\fix-iss055-chinese-404\\森爵照明管理系统\\frontend\\playwright.iss055.config.js",
+    "rootDir": "C:/Users/Johnson/.codex/worktrees/fix-iss055-chinese-404/森爵照明管理系统/frontend/browser-tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/Johnson/.codex/worktrees/fix-iss055-chinese-404/森爵照明管理系统/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/Johnson/.codex/worktrees/fix-iss055-chinese-404/森爵照明管理系统/frontend/browser-tests",
+        "testIgnore": [],
+        "testMatch": [
+          "iss055-customer-404-real.spec.js"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\Johnson\\.codex\\worktrees\\fix-iss055-chinese-404\\森爵照明管理系统\\frontend\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "C:\\Users\\Johnson\\.codex\\worktrees\\fix-iss055-chinese-404\\森爵照明管理系统\\frontend\\browser-tests",
+        "snapshotDir": "C:\\Users\\Johnson\\.codex\\worktrees\\fix-iss055-chinese-404\\森爵照明管理系统\\frontend\\browser-tests",
+        "testIgnore": [],
+        "testMatch": "iss055-customer-404-real.spec.js",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:55155",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:/Users/Johnson/.codex/worktrees/fix-iss055-chinese-404/森爵照明管理系统/docs/uat-evidence/iss-055-customer-404/playwright-report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 2,
+    "webServer": {
+      "command": "npm run dev -- --port 55155 --host 127.0.0.1",
+      "url": "http://127.0.0.1:55155",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "iss055-customer-404-real.spec.js",
+      "file": "iss055-customer-404-real.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "authorized customer detail keeps secure Chinese 404 semantics (desktop)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9182,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T03:57:02.417Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb0381f294a23d28d9cb-34f75c6919972a625464",
+          "file": "iss055-customer-404-real.spec.js",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "authorized customer detail keeps secure Chinese 404 semantics (narrow)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3285,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T03:57:12.737Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb0381f294a23d28d9cb-d05b1290bd3e8da86420",
+          "file": "iss055-customer-404-real.spec.js",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "unauthorized customer detail keeps secure Chinese 404 semantics (desktop)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5318,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T03:57:16.038Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb0381f294a23d28d9cb-a7649fc8b6748420e5e3",
+          "file": "iss055-customer-404-real.spec.js",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "unauthorized customer detail keeps secure Chinese 404 semantics (narrow)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4154,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T03:57:21.369Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb0381f294a23d28d9cb-00bdad85230914939dd8",
+          "file": "iss055-customer-404-real.spec.js",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "unknown customer detail keeps secure Chinese 404 semantics (desktop)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3245,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T03:57:25.535Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb0381f294a23d28d9cb-c3b555ed60c1be4d6f8f",
+          "file": "iss055-customer-404-real.spec.js",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "unknown customer detail keeps secure Chinese 404 semantics (narrow)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7504,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T03:57:28.791Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb0381f294a23d28d9cb-5248e1035299f0e7ddff",
+          "file": "iss055-customer-404-real.spec.js",
+          "line": 66,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-28T03:56:59.442Z",
+    "duration": 37475.521,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

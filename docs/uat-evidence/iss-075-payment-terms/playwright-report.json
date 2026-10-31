@@ -1,0 +1,160 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\Johnson\\.codex\\worktrees\\iss-075-payment-terms\\森爵照明管理系统\\frontend\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=playwright.iss075.config.js"
+    ],
+    "configFile": "C:\\Users\\Johnson\\.codex\\worktrees\\iss-075-payment-terms\\森爵照明管理系统\\frontend\\playwright.iss075.config.js",
+    "rootDir": "C:/Users/Johnson/.codex/worktrees/iss-075-payment-terms/森爵照明管理系统/frontend/browser-tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/Johnson/.codex/worktrees/iss-075-payment-terms/森爵照明管理系统/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/Johnson/.codex/worktrees/iss-075-payment-terms/森爵照明管理系统/frontend/browser-tests",
+        "testIgnore": [],
+        "testMatch": [
+          "iss075-payment-terms-real.spec.js"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\Johnson\\.codex\\worktrees\\iss-075-payment-terms\\森爵照明管理系统\\frontend\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "C:\\Users\\Johnson\\.codex\\worktrees\\iss-075-payment-terms\\森爵照明管理系统\\frontend\\browser-tests",
+        "snapshotDir": "C:\\Users\\Johnson\\.codex\\worktrees\\iss-075-payment-terms\\森爵照明管理系统\\frontend\\browser-tests",
+        "testIgnore": [],
+        "testMatch": "iss075-payment-terms-real.spec.js",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:54175",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "trace": "retain-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\Users\\Johnson\\.codex\\visualizations\\2026\\10\\23\\01a1690a-0a0e-7b72-826e-17ae19ef53e2\\iss-075-payment-terms/playwright-report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 2,
+    "webServer": {
+      "command": "npm run dev -- --config vite.iss075.config.js --port 54175 --host 127.0.0.1",
+      "url": "http://127.0.0.1:54175",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "iss075-payment-terms-real.spec.js",
+      "file": "iss075-payment-terms-real.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "ISS-075 供应商固定付款规则退出常规前端真实浏览器回归",
+          "file": "iss075-payment-terms-real.spec.js",
+          "line": 21,
+          "column": 6,
+          "specs": [
+            {
+              "title": "供应商 UI、空付款条件草稿/正式 PO、历史付款计划与窄屏",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12088,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-26T11:27:20.401Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "99a643d534b64dc80f16-941363907281679984b3",
+              "file": "iss075-payment-terms-real.spec.js",
+              "line": 22,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-26T11:27:17.670Z",
+    "duration": 15705.182999999999,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -73,8 +73,8 @@ describe('receivable Order context', () => {
 
     await wrapper.find('select[aria-label="收付款计划状态"]').setValue('settled')
     await wrapper.find('input[aria-label="仅看逾期"]').setValue(true)
-    await wrapper.find('input[aria-label="到期日从"]').setValue('2026-10-01')
-    await wrapper.find('input[aria-label="到期日至"]').setValue('2026-10-31')
+    await wrapper.find('input[aria-label="计划到期日从"]').setValue('2026-10-01')
+    await wrapper.find('input[aria-label="计划到期日至"]').setValue('2026-10-31')
     await wrapper.find('input[aria-label="搜索往来方或合同号"]').setValue('UAT Buyer')
     await wrapper.find('form.filters').trigger('submit')
     await flushPromises()

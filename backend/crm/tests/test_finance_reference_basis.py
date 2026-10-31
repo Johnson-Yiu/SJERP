@@ -26,6 +26,11 @@ class FinanceReferenceBasisTests(TestCase):
         self.assertEqual(cash['basis'],'book_rmb_reference');self.assertEqual(cash['version'],1)
         self.assertIn('原币为CNY',cash['note']);self.assertIn('不等同于银行到账日',cash['note'])
         self.assertEqual(before,[list(m.objects.order_by('pk').values()) for m in [Transaction,PaymentPlan]])
+
+    def test_model_metadata_labels_rmb_amount_as_book_reference(self):
+        field = Transaction._meta.get_field('rmb_amount')
+        self.assertEqual(field.name, 'rmb_amount')
+        self.assertEqual(field.verbose_name, '账面人民币折算参考')
     def test_csv_headers_notes_and_exact_numbers_agree(self):
         finance=self.client.get('/api/finance-dashboard/',dict(self.dates,export='csv'))
         rows=list(csv.reader(io.StringIO(finance.content.decode('utf-8-sig'))))

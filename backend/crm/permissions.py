@@ -53,7 +53,8 @@ OPERATION_ENTITY_MODULES = {
     "crm.hscode": "hs_codes", "crm.transaction": "transactions", "crm.paymentplan": "finance",
     "crm.contractchangerequest": "orders", "crm.organizationunit": "organization",
     "crm.position": "organization", "crm.employeeprofile": "employees", "crm.accessrole": "permissions",
-    "crm.rolepermission": "permissions",
+    "crm.rolepermission": "permissions", "crm.sharedreporttemplate": "reports",
+    "crm.customersupplierpreference": "suppliers",
 }
 
 
@@ -166,7 +167,7 @@ def action_for_request(request, view=None):
         return "view"
     if request.method == "DELETE":
         return "delete"
-    if request.method == "POST" and (action == "create" or action in {"batch_create", "create_batch"}):
+    if request.method == "POST" and (action == "create" or action in {"batch_create", "create_batch", "historical", "create_historical"}):
         return "create"
     if request.method == "POST" and ("batch-create" in path or path.rstrip("/").endswith("/batch")):
         return "create"
@@ -221,6 +222,30 @@ class ModuleActionPermission(BasePermission):
             # fallback still bypasses the module permission boundary.
             return False
         return user_can(user, module, action_for_request(request, view))
+
+
+class HistoricalAnalysisPermission(BasePermission):
+    """Allow the history ledger when either underlying business scope is readable.
+
+    Historical analysis is deliberately not a gateway to the general reports
+    module.  The endpoint applies its own per-dimension redaction, while this
+    permission only establishes that the caller may read sales or purchasing
+    history at all.
+    """
+
+    message = "你没有历史订单分析权限。"
+
+    def has_permission(self, request, view):
+        if development_superadmin_enabled():
+            return True
+        user = request.user
+        if not user or not user.is_authenticated:
+            return False
+        if not getattr(settings, "RBAC_ENFORCEMENT", False):
+            return True
+        if has_all_permissions(user):
+            return True
+        return user_can(user, "orders", "view") or user_can(user, "purchases", "view")
 
 
 class OrganizationOverviewPermission(BasePermission):

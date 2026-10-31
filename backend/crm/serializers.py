@@ -17,7 +17,9 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
 from .models import ShipmentItem
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseMOQException, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
+from .country_registry import AmbiguousCountryError, CountryNotFoundError, display_country, resolve_country_code
+from .customer_status import customer_status_display
 from .supplier_display import payment_terms_summary
 from .quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from .document_numbers import allocate_order_no, allocate_purchase_no
@@ -152,6 +154,8 @@ class SupplierSerializer(serializers.ModelSerializer):
     supply_category_names = serializers.SlugRelatedField(source="supply_categories", slug_field="name", many=True, read_only=True)
 
     def validate(self, attrs):
+        if "is_active" in self.initial_data:
+            raise serializers.ValidationError({"is_active": "请使用供应商的停用或启用操作。"})
         if (self.instance is None or "supply_categories" in attrs) and not attrs.get("supply_categories"):
             raise serializers.ValidationError({"supply_categories": "请选择至少一个可供产品大类或子分类。"})
         return attrs
@@ -267,6 +271,39 @@ class OperationLogSerializer(serializers.ModelSerializer):
                 if isinstance(data.get(field), dict):
                     data[field] = redact_snapshot(data[field], hidden_fields)
             data["changed_fields"] = [key for key in data.get("changed_fields", []) if key not in hidden_fields]
+        elif instance.entity == "crm.order" and instance.action_label == "调整销售订单数量":
+            finance_visible = user_can(user, "finance", "view") and user_can(user, "transactions", "view")
+            procurement_visible = user_can(user, "purchases", "view")
+            hidden_financial = {
+                "total_amount", "before_total_amount", "after_total_amount", "amount_delta",
+                "payment_plan_delta", "planned_amount", "settled_amount", "paid_amount",
+                "outstanding_before", "outstanding_after", "outstanding_amount", "balance_amount",
+            }
+            for field in ("before_data", "after_data"):
+                data[field] = redact_snapshot(data.get(field), hidden_financial if not finance_visible else set())
+            metadata = data.get("metadata") if isinstance(data.get("metadata"), dict) else {}
+            metadata = redact_snapshot(metadata, hidden_financial if not finance_visible else set())
+            if not finance_visible:
+                metadata["summary"] = "数量变更金额影响受权限保护。"
+            raw_warnings = metadata.get("warnings") if isinstance(metadata.get("warnings"), list) else []
+            visible_warnings = []
+            for warning in raw_warnings:
+                text = str(warning)
+                if "采购" in text:
+                    if procurement_visible:
+                        visible_warnings.append(text)
+                    else:
+                        visible_warnings.append("采购影响信息受权限保护。")
+                elif finance_visible:
+                    visible_warnings.append(text)
+                else:
+                    visible_warnings.append("财务影响信息受权限保护。")
+            metadata["warnings"] = list(dict.fromkeys(visible_warnings))
+            data["metadata"] = metadata
+            data["changed_fields"] = [
+                key for key in data.get("changed_fields", [])
+                if finance_visible or key not in hidden_financial
+            ]
         elif instance.entity in {"crm.order", "crm.quote"}:
             hidden_fields = set()
             if not user_can(user, "customers", "view"):
@@ -333,6 +370,11 @@ class OperationLogSerializer(serializers.ModelSerializer):
                     if isinstance(payload, dict):
                         data[field] = redact_snapshot(payload, hidden_fields)
             data["changed_fields"] = [key for key in data.get("changed_fields", []) if key not in hidden_fields]
+        elif instance.entity == "crm.sharedreporttemplate" and not user_can(user, "reports", "update"):
+            data["before_data"] = {}
+            data["after_data"] = {}
+            data["metadata"] = {}
+            data["changed_fields"] = []
         return data
 
     def get_operator_name(self, obj):
@@ -536,11 +578,40 @@ def sync_unsettled_contract_plans(instance, changed):
 
 class PurchaseOrderSerializer(serializers.ModelSerializer):
     payment_plans = serializers.SerializerMethodField()
+    moq_exception = serializers.SerializerMethodField()
 
     def get_payment_plans(self, obj):
         if not user_can(serializer_user(self.context), "finance", "view"):
             return []
         return PaymentPlanSerializer(obj.payment_plans.all().order_by("id"), many=True, context=self.context).data
+
+    def get_moq_exception(self, obj):
+        try:
+            exception = obj.moq_exception
+        except PurchaseMOQException.DoesNotExist:
+            return None
+        user = serializer_user(self.context)
+        details = []
+        for detail in exception.details or []:
+            row = dict(detail)
+            if not user_can(user, "skus", "view"):
+                row.update(sku_code="", display_name="")
+            if not user_can(user, "suppliers", "view"):
+                row["supplier_sku_code"] = ""
+            details.append(row)
+        operator = exception.operator
+        operator_name = ""
+        if operator is not None and user_can(user, "employees", "view"):
+            operator_name = operator.get_full_name() or operator.get_username()
+        return {
+            "id": exception.id,
+            "purchase_order": exception.purchase_order_id,
+            "reason": exception.reason,
+            "details": details,
+            "created_at": serializers.DateTimeField().to_representation(exception.created_at),
+            "operator_id": operator.pk if operator is not None and user_can(user, "employees", "view") else None,
+            "operator_name": operator_name,
+        }
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -552,7 +623,15 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         visible = scope_customer_related_queryset(Order.objects.filter(pk__in=associated_ids), user) if user_can(user, "orders", "view") else Order.objects.none()
         visible_ids = set(visible.values_list("pk", flat=True))
         if not user_can(user, "suppliers", "view"):
-            data.update(supplier=None, supplier_name="")
+            data.update(
+                supplier=None,
+                supplier_name="",
+                supplier_name_snapshot="",
+                supplier_address_snapshot="",
+                supplier_contact_name_snapshot="",
+                supplier_phone_snapshot="",
+                supplier_email_snapshot="",
+            )
         if instance.order_id not in visible_ids:
             data["order"] = None
             data["order_no"] = ""
@@ -566,7 +645,10 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     def validate_payment_terms_snapshot(self, value):
         from .payment_terms import validate_payment_terms
         try:
-            return validate_payment_terms(value)
+            # A draft may intentionally have no negotiated payment stages yet.
+            # Formal POs keep the saved snapshot, and finance only creates plans
+            # from a non-empty snapshot; never fill one from the supplier rule.
+            return validate_payment_terms(value, allow_default=True)
         except DjangoValidationError as exc:
             raise serializers.ValidationError(exc.messages)
 
@@ -584,7 +666,12 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseOrder
         fields = "__all__"
-        read_only_fields = ["purchase_no", "status", "cancelled_at", "cancellation_reason"]
+        read_only_fields = [
+            "purchase_no", "status", "cancelled_at", "cancellation_reason",
+            "supplier_name_snapshot", "supplier_address_snapshot",
+            "supplier_contact_name_snapshot", "supplier_phone_snapshot",
+            "supplier_email_snapshot",
+        ]
 
     def get_related_orders(self, obj):
         prefetched_items = getattr(obj, "_prefetched_objects_cache", {}).get("items")
@@ -618,6 +705,9 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if "purchase_no" in self.initial_data:
             raise serializers.ValidationError({"purchase_no": "采购单号由系统自动生成，不能手工指定。"})
+        historical_mode = bool(self.context.get("historical_mode"))
+        if historical_mode and attrs.get("order"):
+            raise serializers.ValidationError({"order": "历史采购订单不能关联正式销售订单。"})
         if "order" in attrs and (self.instance is None or attrs["order"] != self.instance.order):
             from .procurement_scope import require_order_writes
             require_order_writes(serializer_user(self.context), [getattr(self.instance, "order_id", None), getattr(attrs["order"], "pk", None)])
@@ -636,18 +726,12 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"exchange_rate": "人民币采购单的对人民币汇率必须为 1。"})
         supplier = attrs.get("supplier", getattr(self.instance, "supplier", None))
         user = serializer_user(self.context)
+        if not historical_mode and supplier and not supplier.is_active:
+            raise serializers.ValidationError({"supplier": "停用供应商不能用于新采购，请先启用供应商或更换供应商。"})
         if user is not None and supplier and (self.instance is None or supplier.pk != self.instance.supplier_id) and not user_can(user, "suppliers", "view"):
             raise PermissionDenied("关联供应商需要供应商查看权限。")
         if user is not None and attrs.get("items") and not user_can(user, "skus", "view"):
             raise PermissionDenied("采购明细需要 SKU 查看权限。")
-        if "payment_terms_snapshot" not in attrs and (self.instance is None or (
-            self.instance.status == "draft" and supplier != self.instance.supplier
-        )):
-            from .payment_terms import default_payment_terms, validate_payment_terms
-            try:
-                attrs["payment_terms_snapshot"] = validate_payment_terms(supplier.payment_terms_config or default_payment_terms())
-            except DjangoValidationError as exc:
-                raise serializers.ValidationError({"payment_terms_snapshot": exc.messages})
         unit_rows = attrs.get("items")
         if (
             self.instance is not None
@@ -663,7 +747,7 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"items": "包装规格的供应商必须与采购单供应商一致。"})
         errors = []
         for index, item in enumerate(attrs.get("items", [])):
-            if self.instance is None and item.get("sku") and item["sku"].candidate_overrides.filter(supplier=supplier, is_allowed=False).exists():
+            if not historical_mode and self.instance is None and item.get("sku") and item["sku"].candidate_overrides.filter(supplier=supplier, is_allowed=False).exists():
                 raise serializers.ValidationError({"supplier": "该 SKU 已排除此供应商，请先恢复候选资格。"})
             source = item.get("supplier_sku")
             if source is None:
@@ -672,7 +756,7 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
                 errors.append({"items": {index: {"supplier_sku": "供应商来源必须属于当前采购单供应商。"}}})
             if item.get("sku") and source.sku_id != item["sku"].pk:
                 errors.append({"items": {index: {"supplier_sku": "供应商来源必须对应当前采购明细 SKU。"}}})
-            if (self.instance is None or self.instance.status == "draft") and not source.is_active:
+            if not historical_mode and (self.instance is None or self.instance.status == "draft") and not source.is_active:
                 errors.append({"items": {index: {"supplier_sku": "新建或编辑采购草稿只能选择启用中的供应商来源。"}}})
         if errors:
             raise serializers.ValidationError(errors[0])
@@ -682,14 +766,20 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         items = validated_data.pop("items")
         validated_data.pop("purchase_no", None)
+        historical_mode = bool(self.context.get("historical_mode"))
         from .services.supplier_candidates import resolve_purchase_item_sources
         for item in items:
-            if not item["sku"].active:
+            if not historical_mode and not item["sku"].active:
                 raise serializers.ValidationError({"sku": "新采购不能选择停用或已归档的 SKU。"})
-        resolve_purchase_item_sources(
-            items, validated_data["supplier"], order=validated_data.get("order"),
-            purchase_currency=validated_data.get("currency"),
-        )
+        if not historical_mode:
+            resolve_purchase_item_sources(
+                items, validated_data["supplier"], order=validated_data.get("order"),
+                purchase_currency=validated_data.get("currency"),
+            )
+        else:
+            validated_data["order"] = None
+            validated_data["status"] = "historical"
+            validated_data["historical_only"] = True
         purchase = PurchaseOrder.objects.create(
             purchase_no=allocate_purchase_no(),
             **validated_data,
@@ -712,8 +802,9 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
                 **item,
             ) for item in items
         ])
-        from .services.purchase_costs import rebuild_default_cost_allocations
-        rebuild_default_cost_allocations(purchase)
+        if not historical_mode:
+            from .services.purchase_costs import rebuild_default_cost_allocations
+            rebuild_default_cost_allocations(purchase)
         return purchase
 
     @transaction.atomic
@@ -748,6 +839,7 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
 
 
 class ReceiptInputSerializer(serializers.Serializer):
+    request_key = serializers.CharField(max_length=100, required=False, allow_blank=False)
     trade_unit = serializers.IntegerField(required=False, allow_null=True)
     trade_quantity = serializers.DecimalField(max_digits=14, decimal_places=2, required=False)
     trade_unit_price = serializers.DecimalField(max_digits=16, decimal_places=4, required=False)
@@ -782,6 +874,7 @@ class ShipmentLineInputSerializer(serializers.Serializer):
 
 
 class ShipmentInputSerializer(serializers.Serializer):
+    request_key = serializers.CharField(max_length=100, required=False, allow_blank=False)
     shipment_no = serializers.CharField(max_length=40, required=False, allow_blank=True)
     shipment_date = serializers.DateField()
     logistics_provider = serializers.CharField(max_length=100, required=False, allow_blank=True)
@@ -818,8 +911,37 @@ class RolePermissionSerializer(serializers.ModelSerializer):
 
 class AccessRoleSerializer(serializers.ModelSerializer):
     permissions = RolePermissionSerializer(many=True, read_only=True)
+    effective_permissions = serializers.SerializerMethodField()
+    has_all_permissions = serializers.SerializerMethodField()
     default_data_scope_display = serializers.CharField(source="get_default_data_scope_display", read_only=True)
     employee_count = serializers.IntegerField(read_only=True, default=0)
+
+    def get_has_all_permissions(self, obj):
+        """Expose the server-defined highest business role contract.
+
+        The stored matrix remains an editable template for ordinary roles.  The
+        built-in superadmin is intentionally locked and is authorized by the
+        server as an effective all-module role, so clients must not infer its
+        access from possibly older/incomplete stored rows.
+        """
+        return obj.code == "superadmin"
+
+    def get_effective_permissions(self, obj):
+        if self.get_has_all_permissions(obj):
+            return [
+                {
+                    "module": module,
+                    "module_display": label,
+                    "can_view": True,
+                    "can_create": True,
+                    "can_update": True,
+                    "can_delete": True,
+                    "can_export": True,
+                    "can_import": True,
+                }
+                for module, label in RolePermission.MODULE_CHOICES
+            ]
+        return RolePermissionSerializer(obj.permissions.all(), many=True).data
 
     class Meta:
         model = AccessRole
@@ -850,6 +972,8 @@ class CustomerSerializer(serializers.ModelSerializer):
     contact_count = serializers.IntegerField(read_only=True, default=0)
     order_count = serializers.IntegerField(read_only=True, default=0)
     sales_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True, default=0)
+    country_display = serializers.SerializerMethodField()
+    status_display = serializers.SerializerMethodField()
     contacts = CustomerContactInputSerializer(many=True, write_only=True, required=False)
 
     class Meta:
@@ -858,6 +982,12 @@ class CustomerSerializer(serializers.ModelSerializer):
         # Customer status is a persisted projection of follow-ups, quotes and
         # formal orders, rather than a manually maintained customer attribute.
         read_only_fields = ["code", "status", "owner"]
+
+    def get_country_display(self, obj):
+        return display_country(obj.country)
+
+    def get_status_display(self, obj):
+        return customer_status_display(obj.status)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -870,6 +1000,21 @@ class CustomerSerializer(serializers.ModelSerializer):
         from .sales_scope import allowed_employee_ids, effective_data_scope, employee_profile_for
         from .permissions import user_can
 
+        if "country" in attrs:
+            raw_country = str(attrs.get("country") or "").strip()
+            if raw_country:
+                # Bulk/history imports are deliberately lossless: even a
+                # recognizable legacy label stays as entered so importing an
+                # old customer file cannot rewrite the existing country text.
+                # Interactive create/edit requests must choose a canonical
+                # alpha-2 value from the local picker.
+                if not self.context.get("allow_import_without_contacts"):
+                    try:
+                        attrs["country"] = resolve_country_code(raw_country)
+                    except AmbiguousCountryError:
+                        raise serializers.ValidationError({"country": f"国家/地区“{raw_country}”存在歧义，请从候选中明确选择。"})
+                    except CountryNotFoundError:
+                        raise serializers.ValidationError({"country": f"无法识别国家/地区“{raw_country}”，请从国家选择框中选择标准国家后再保存。"})
         if self.instance is None and not attrs.get("contacts") and not self.context.get("allow_import_without_contacts"):
             raise serializers.ValidationError({"contacts": "新建客户时请至少填写一位联系人。"})
         request = self.context.get("request")
@@ -1491,7 +1636,24 @@ class SKUSerializer(serializers.ModelSerializer):
                     validated_data[field] = value
         if parameter_changed:
             sales_model_base = self._generated_identity(validated_data).get("sales_model_base", "")
-            if sales_model_base:
+            current_generated_model = self._generated_identity({
+                "product": instance.product,
+                "specification": instance.specification,
+                "parameter_values": instance.parameter_values,
+                "product_details": instance.product_details,
+                "sales_model_abbreviations": instance.sales_model_abbreviations,
+            }).get("sales_model_base", "")
+            supplied_model = validated_data.get("sales_model") if "sales_model" in self.initial_data else instance.sales_model
+            # Regenerate only when the saved value still equals the model the
+            # generator produced for the old identity. A different value is a
+            # deliberate manual model; an explicit blank remains legacy-empty.
+            auto_model_is_still_saved = (
+                supplied_model == instance.sales_model
+                and bool(instance.sales_model)
+                and instance.sales_model == current_generated_model
+            )
+            omitted_model_can_generate = "sales_model" not in self.initial_data and not instance.sales_model
+            if sales_model_base and (auto_model_is_still_saved or omitted_model_can_generate):
                 validated_data["sales_model"] = sales_model_base
             validated_data["display_name_key"] = normalize_display_name(validated_data.get("display_name_cn", "")) or None
             conflicts = identity_conflict_messages(
@@ -1651,6 +1813,8 @@ class ProductCertificateSerializer(serializers.ModelSerializer):
     expiry_status = serializers.SerializerMethodField()
     expiry_status_display = serializers.SerializerMethodField()
     days_to_expiry = serializers.SerializerMethodField()
+    file = serializers.FileField(write_only=True, required=False, allow_empty_file=False)
+    file_url = serializers.SerializerMethodField()
 
     def get_expiry_status(self, obj):
         return certificate_expiry(obj.expires_on)["expiry_status"]
@@ -1661,11 +1825,27 @@ class ProductCertificateSerializer(serializers.ModelSerializer):
     def get_days_to_expiry(self, obj):
         return certificate_expiry(obj.expires_on)["days_to_expiry"]
 
+    def get_file_url(self, obj):
+        return protected_media_url(obj.file)
+
     product_name = serializers.CharField(source="product.name", read_only=True)
 
     class Meta:
         model = ProductCertificate
-        fields = "__all__"
+        fields = [
+            "id", "created_at", "updated_at", "product", "name", "certificate_no", "issuer",
+            "issued_date", "expires_on", "file", "file_url", "notes",
+            "expiry_status", "expiry_status_display", "days_to_expiry", "product_name",
+        ]
+        read_only_fields = ["file_url", "expiry_status", "expiry_status_display", "days_to_expiry", "product_name"]
+
+    def validate(self, attrs):
+        # Do not silently accept a legacy external URL from old clients. A
+        # certificate file must be uploaded into ERP private storage instead.
+        legacy_url = self.initial_data.get("file_url") if hasattr(self, "initial_data") else None
+        if str(legacy_url or "").strip():
+            raise serializers.ValidationError({"file_url": "证书文件必须上传到 ERP 私有存储，不接受外部链接。"})
+        return attrs
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -1773,6 +1953,7 @@ class QuoteSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        data.pop("amount_calculation_version", None)
         if not user_can(serializer_user(self.context), "customers", "view"):
             data.update(
                 customer=None, customer_name="", buyer_company_name="", recipient_name="",
@@ -1825,8 +2006,9 @@ class QuoteSerializer(serializers.ModelSerializer):
             "buyer_phone": primary_contact.phone if primary_contact else "",
         }
         for field, value in snapshots.items():
-            if not validated_data.get(field):
-                validated_data[field] = value
+            # An explicitly blank recipient field is a saved user choice, not
+            # an invitation to replace it with today's customer contact.
+            validated_data.setdefault(field, value)
         try:
             validated_data["quote_no"] = allocate_root_quote_no(validated_data["quote_date"], customer.country)
         except DjangoValidationError as exc:
@@ -1871,6 +2053,9 @@ class OrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer)
                 data[field] = None if field == "sku" else ""
         if not user_can(user, "purchases", "view"):
             data["cost_price"] = None
+        if self.context.get("mask_quantity_adjustment_financial"):
+            data["unit_price"] = None
+            data["amount"] = None
         if not user_can(user, "suppliers", "view"):
             for field in ("supplier_sku", "supplier_name", "supplier_model", "supplier_sku_code", "supplier_barcode", "supplier_allocation"):
                 data[field] = None if field in {"supplier_sku", "supplier_allocation"} else ""
@@ -1896,18 +2081,39 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
-        read_only_fields = ["order_no", "status", "cancelled_at", "cancellation_reason"]
+        read_only_fields = [
+            "order_no", "status", "cancelled_at", "cancellation_reason",
+            "quantity_change_version",
+            "customer_name_snapshot", "customer_country_snapshot",
+            "customer_address_snapshot", "customer_contact_name_snapshot",
+            "customer_phone_snapshot", "customer_email_snapshot",
+        ]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        data.pop("amount_calculation_version", None)
         user = serializer_user(self.context)
         if not user_can(user, "customers", "view"):
-            data.update(customer=None, customer_name="", customer_country="")
+            data.update(
+                customer=None,
+                customer_name="",
+                customer_country="",
+                customer_name_snapshot="",
+                customer_country_snapshot="",
+                customer_address_snapshot="",
+                customer_contact_name_snapshot="",
+                customer_phone_snapshot="",
+                customer_email_snapshot="",
+            )
         if not user_can(user, "quotes", "view"):
             data.update(quote=None, quote_no="", source_quote_no="")
         if not (user_can(user, "finance", "view") and user_can(user, "transactions", "view")):
             data["paid_amount"] = None
             data["balance_amount"] = None
+        if self.context.get("mask_quantity_adjustment_financial"):
+            for field in ("total_amount", "base_amount", "approved_change_amount", "paid_amount", "balance_amount", "shipping_fee", "discount", "exchange_rate"):
+                data[field] = None
+            data["receivable_state"] = None
         return data
 
     def get_receivable_state(self, obj):
@@ -1923,13 +2129,16 @@ class OrderSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if "order_no" in self.initial_data:
             raise serializers.ValidationError({"order_no": "订单号由系统自动生成，不能手工指定。"})
+        historical_mode = bool(self.context.get("historical_mode"))
         validate_contract_edit(self.instance, attrs)
         validate_sales_exchange_rate(attrs, self.instance)
         if self.instance is None and not attrs.get("items"):
             raise serializers.ValidationError({"items": "订单至少需要一条商品明细。"})
         for item in attrs.get("items", []):
-            if not item["sku"].active and (self.instance is None or not self.instance.items.filter(sku=item["sku"]).exists()):
+            if not historical_mode and not item["sku"].active and (self.instance is None or not self.instance.items.filter(sku=item["sku"]).exists()):
                 raise serializers.ValidationError({"items": "新订单行不能选择停用或已归档的 SKU。"})
+        if historical_mode and attrs.get("quote"):
+            raise serializers.ValidationError({"quote": "历史销售订单不能关联正式报价单。"})
         source_quote = attrs.get("quote", getattr(self.instance, "quote", None))
         customer = attrs.get("customer", getattr(self.instance, "customer", None))
         from .sales_scope import customer_in_scope
@@ -1951,7 +2160,7 @@ class OrderSerializer(serializers.ModelSerializer):
         quote_is_being_bound = self.instance is None or "quote" in attrs
         if quote_is_being_bound and source_quote and source_quote.status in {"rejected", "expired"}:
             raise serializers.ValidationError({"quote": "该报价已拒绝或过期，请先创建新的修订版后再转为订单。"})
-        if request and not user_can(request.user, "purchases", "update"):
+        if request and not user_can(request.user, "purchases", "update") and not historical_mode:
             persisted_costs = {
                 row.sku_id: row.cost_price
                 for row in self.instance.items.all()
@@ -2124,16 +2333,25 @@ class OrderSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         items = validated_data.pop("items", [])
+        historical_mode = bool(self.context.get("historical_mode"))
         # Draft creation deliberately has no lifecycle side effects.  Quote
         # acceptance/revision, reservations and payment plans occur only in
         # order_lifecycle.confirm_order().
         validated_data.pop("status", None)
         validated_data.pop("order_no", None)
+        if historical_mode:
+            validated_data["quote"] = None
+            validated_data["status"] = "historical"
+            validated_data["historical_only"] = True
         order = Order.objects.create(order_no=allocate_order_no(), **validated_data)
         source_items = list(order.quote.items.order_by("id")) if order.quote_id else []
         rows = []
         for index, item in enumerate(items):
-            if not item.get("cost_price"):
+            # A historical entry has no reliable point-in-time procurement
+            # cost.  Keep the model's neutral default instead of silently
+            # copying today's SKU cost into a past order.  Historical reports
+            # already keep profit unavailable for this scope.
+            if not historical_mode and not item.get("cost_price"):
                 item["cost_price"] = item["sku"].cost_price
             source = source_items[index] if index < len(source_items) and source_items[index].sku_id == item["sku"].pk else None
             rows.append(OrderItem(order=order, **item, **self._item_snapshots(item["sku"], source)))
@@ -2157,7 +2375,7 @@ class OrderSerializer(serializers.ModelSerializer):
             instance.items.all().delete()
             rows = []
             for index, item in enumerate(items):
-                if not item.get("cost_price"):
+                if not (instance.historical_only or instance.status == "historical") and not item.get("cost_price"):
                     item["cost_price"] = item["sku"].cost_price
                 source = previous_items[index] if index < len(previous_items) and previous_items[index].sku_id == item["sku"].pk else None
                 rows.append(OrderItem(order=instance, **item, **self._item_snapshots(item["sku"], source), **self._supplier_snapshots(source)))
@@ -2265,6 +2483,11 @@ class TransactionSerializer(serializers.ModelSerializer):
             if not (customer if direction == "income" else supplier):
                 raise serializers.ValidationError("预收款请选择客户，预付款请选择供应商。")
         contract = order or purchase_order
+        plan = attrs.get("plan", getattr(self.instance, "plan", None))
+        if plan and not contract:
+            contract = plan.order or plan.purchase_order
+        if contract and (getattr(contract, "historical_only", False) or getattr(contract, "status", None) == "historical"):
+            raise serializers.ValidationError("历史订单仅用于经营分析，不能登记任何关联资金流水。")
         if contract and kind in {"customer_receipt", "supplier_payment", "refund", "supplier_refund"} and attrs.get("currency", "USD") != contract.currency:
             raise serializers.ValidationError("合同收付款及退款币种必须与合同一致。")
         return attrs
@@ -2323,6 +2546,8 @@ class PaymentPlanSerializer(serializers.ModelSerializer):
         if bool(order) == bool(purchase):
             raise serializers.ValidationError("计划必须且只能关联一个合同。")
         contract = order or purchase
+        if getattr(contract, "historical_only", False) or getattr(contract, "status", None) == "historical":
+            raise serializers.ValidationError("历史订单仅用于经营分析，不能建立收付款计划。")
         if values["direction"] != ("receivable" if order else "payable") or values["currency"] != contract.currency:
             raise serializers.ValidationError("计划方向和币种必须与合同一致。")
         if not values["planned_amount"] or values["planned_amount"] <= 0:
@@ -2539,6 +2764,40 @@ class ShipmentPackageItemSerializer(serializers.ModelSerializer):
         fields = ["id", "sku", "sku_code", "quantity"]
 
 
+def _trade_snapshot_semantics(snapshot):
+    """Return the immutable unit semantics needed for actual packing.
+
+    ``TradeUnitLine`` snapshots intentionally preserve only the values which
+    describe the conversion and split rule.  The display name is not part of
+    that meaning, while catalog lifecycle/supplier fields are not persisted
+    in this snapshot at all.  Incomplete or malformed historical data must
+    remain ambiguous rather than being reconstructed from the current SKU.
+    """
+    if not isinstance(snapshot, dict):
+        return None
+    raw_factor = snapshot.get("factor")
+    if raw_factor is None or raw_factor == "":
+        return None
+    try:
+        factor = Decimal(str(raw_factor))
+    except (TypeError, ValueError, ArithmeticError):
+        return None
+    if not factor.is_finite() or factor <= Decimal("0"):
+        return None
+    base_unit = snapshot.get("base_unit")
+    unit = snapshot.get("unit")
+    allow_fraction = snapshot.get("allow_fraction")
+    if (
+        not isinstance(base_unit, str)
+        or not base_unit.strip()
+        or not isinstance(unit, str)
+        or not unit.strip()
+        or not isinstance(allow_fraction, bool)
+    ):
+        return None
+    return factor, base_unit, unit, allow_fraction
+
+
 class ShipmentPackageSerializer(serializers.ModelSerializer):
     items = ShipmentPackageItemSerializer(many=True)
     actual_cbm = serializers.DecimalField(max_digits=16, decimal_places=6, read_only=True)
@@ -2578,6 +2837,30 @@ class ShipmentPackageSerializer(serializers.ModelSerializer):
         shipped = {}
         for item in shipment.items.all():
             shipped[item.sku_id] = shipped.get(item.sku_id, ZERO) + item.quantity
+        # A package line is entered in the SKU base unit, so only enforce an
+        # indivisible trade unit when every shipment line for that SKU carries
+        # the same explicit trade-unit snapshot.  A base-unit order line,
+        # an incomplete/invalid snapshot, or conflicting historical snapshots
+        # makes the physical package quantity ambiguous; in those cases do
+        # not invent a carton restriction.  A valid fractional snapshot is
+        # still a known semantic and remains unrestricted.
+        snapshot_semantics = {}
+        ambiguous_indivisible = set()
+        for shipment_item in shipment.items.all():
+            sku_id = shipment_item.sku_id
+            snapshot = shipment_item.trade_snapshot
+            if not shipment_item.trade_unit_id:
+                ambiguous_indivisible.add(sku_id)
+                continue
+            semantics = _trade_snapshot_semantics(snapshot)
+            if semantics is None:
+                ambiguous_indivisible.add(sku_id)
+                continue
+            previous = snapshot_semantics.get(sku_id)
+            if previous is not None and previous != semantics:
+                ambiguous_indivisible.add(sku_id)
+            else:
+                snapshot_semantics[sku_id] = semantics
         packed = {}
         for item in ShipmentPackageItem.objects.filter(shipment_package__in=other_packages):
             packed[item.sku_id] = packed.get(item.sku_id, ZERO) + item.quantity
@@ -2591,6 +2874,14 @@ class ShipmentPackageSerializer(serializers.ModelSerializer):
             if sku_id in seen:
                 raise serializers.ValidationError({"items": "同一箱内不能重复填写同一 SKU。"})
             seen.add(sku_id)
+            if sku_id in snapshot_semantics and sku_id not in ambiguous_indivisible:
+                factor, base_unit, _unit, allow_fraction = snapshot_semantics[sku_id]
+                if not allow_fraction and quantity % factor:
+                    factor_text = format(factor.normalize(), "f")
+                    quantity_text = format(quantity.normalize(), "f")
+                    raise serializers.ValidationError({
+                        "items": f"SKU {item['sku'].sku} 按不可拆分的 {factor_text} {base_unit} 交易单位装箱，数量必须是其整数倍；当前为 {quantity_text}。"
+                    })
             if packed.get(sku_id, ZERO) + quantity > shipped[sku_id]:
                 raise serializers.ValidationError({"items": f"SKU {item['sku'].sku} 累计装箱数量不能超过本次发货数量 {shipped[sku_id]}。"})
         return attrs

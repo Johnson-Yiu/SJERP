@@ -18,7 +18,7 @@ import HSCodePage from './views/HSCodePage.vue'
 import { resourceConfigs } from './resourceConfigs'
 import { installModalNavigationGuard } from './utils/modalNavigation'
 import AccessDeniedPage from './views/AccessDeniedPage.vue'
-import { can, canAccessOrganization, loadAccessControl } from './accessControl'
+import { can, canAccessHistoricalOrders, canAccessOrganization, loadAccessControl } from './accessControl'
 
 const resourceModules = {
   suppliers: 'suppliers', customers: 'customers', contacts: 'contacts', 'follow-ups': 'followups',
@@ -28,16 +28,17 @@ const resourceModules = {
 export const routes = [
   { path: '/sku-trade-units', component: () => import('./views/TradeUnitsPage.vue'), meta: { title: 'SKU 交易单位', eyebrow: 'Transaction units', module: 'trade_units' } },
   { path: '/reports', component: () => import('./views/ReportsPage.vue'), meta: { title: '报表中心', eyebrow: 'Reports & analytics', module: 'reports' } },
-  { path: '/', component: Dashboard, meta: { title: '经营概览', eyebrow: 'Business overview', module: 'dashboard' } },
+  { path: '/historical-orders', component: () => import('./views/HistoryOrdersPage.vue'), meta: { title: '历史订单分析', eyebrow: 'Historical ledger', module: 'reports' } },
+  { path: '/', component: Dashboard, meta: { title: '经营概览', eyebrow: '销售与客户', module: 'dashboard' } },
   ...Object.entries(resourceConfigs).filter(([path]) => !['categories', 'products', 'skus', 'transactions'].includes(path)).map(([path, config]) => ({
     path: `/${path}`,
     component: ResourcePage,
     props: { config },
     meta: { title: config.title, eyebrow: config.eyebrow, module: resourceModules[path] || path },
   })),
-  { path: '/categories', component: CategoryPage, meta: { title: '产品分类', eyebrow: 'Catalog structure', module: 'categories' } },
-  { path: '/products', component: ProductPage, meta: { title: '产品管理', eyebrow: 'Product catalog', module: 'products' } },
-  { path: '/skus', component: SKUPage, meta: { title: 'SKU 管理', eyebrow: 'Sellable variants', module: 'skus' } },
+  { path: '/categories', component: CategoryPage, meta: { title: '产品分类', eyebrow: '分类与属性', module: 'categories' } },
+  { path: '/products', component: ProductPage, meta: { title: '产品管理', eyebrow: '产品资料', module: 'products' } },
+  { path: '/skus', component: SKUPage, meta: { title: 'SKU 管理', eyebrow: '销售规格', module: 'skus' } },
   { path: '/sku-packaging', component: PackagingPage, meta: { title: '包装管理', eyebrow: 'Packaging maintenance', module: 'packaging' } },
   { path: '/hs-codes', component: HSCodePage, meta: { title: 'HS 编码维护', eyebrow: 'Customs classification', module: 'hs_codes' } },
   { path: '/quotes', component: DocumentPage, props: { type: 'quotes' }, meta: { title: '报价管理', eyebrow: 'Quotation desk', module: 'quotes' } },
@@ -63,7 +64,11 @@ router.beforeEach(async to => {
   try { await loadAccessControl() }
   catch { return { name: 'access-status-error', replace: true } }
   const module = to.meta.module
-  const permitted = to.path === '/organization' ? canAccessOrganization() : can(module, 'view')
+  const permitted = to.path === '/organization'
+    ? canAccessOrganization()
+    : to.path === '/historical-orders'
+      ? canAccessHistoricalOrders()
+      : can(module, 'view')
   if (module && !permitted) return { name: 'access-denied', query: { from: to.fullPath }, replace: true }
   return true
 })

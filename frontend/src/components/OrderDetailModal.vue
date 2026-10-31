@@ -36,6 +36,15 @@ const allocationItem = ref(null)
 const procurementPlan = ref(null)
 const procurementOpen = ref(false)
 const procurementMessage = ref('')
+const quantityAdjustmentOpen = ref(false)
+const quantityAdjustmentLoading = ref(false)
+const quantityAdjustmentSaving = ref(false)
+const quantityAdjustmentError = ref('')
+const quantityAdjustmentReason = ref('')
+const quantityAdjustmentLines = ref([])
+const quantityAdjustmentPreview = ref(null)
+const quantityAdjustmentRequestKey = ref('')
+const quantityAdjustmentPreviewPayload = ref(null)
 
 const order = computed(() => workbench.value?.order)
 const tabs = computed(() => [
@@ -89,8 +98,142 @@ function linePacking(item) {
   const saved = (workbench.value?.items || []).find(row => row.id === item.id)
   return saved?.trade_unit ? `${saved.trade_snapshot?.name} · ${saved.trade_quantity} ${saved.trade_snapshot?.unit}` : `明细 #${item.id} · 基础单位`
 }
+function purchasePartyName(purchase) {
+  if (purchase.status === 'draft') return purchase.supplier_name || '—'
+  return purchase.supplier_name_snapshot || '历史主体未记录'
+}
+function purchasePartyReference(purchase) {
+  if (purchase.status === 'draft' || !purchase.supplier_name || !purchase.supplier_name_snapshot || purchase.supplier_name === purchase.supplier_name_snapshot) return ''
+  return `当前主档参考：${purchase.supplier_name}`
+}
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 function date(value) { return value || '—' }
+function newRequestKey() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
+  return `qty-${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
+function comparableQuantity(value) {
+  const text = String(value ?? '').trim()
+  if (!/^[+-]?\d+(\.\d+)?$/.test(text)) return text
+  const unsigned = text.replace(/^[+-]/, '')
+  const [integer, fraction = ''] = unsigned.split('.')
+  const normalizedInteger = integer.replace(/^0+(?=\d)/, '')
+  const normalizedFraction = fraction.replace(/0+$/, '')
+  return `${text.startsWith('-') ? '-' : ''}${normalizedInteger}${normalizedFraction ? `.${normalizedFraction}` : ''}`
+}
+function quantityLineChanged(line) {
+  const current = line.trade_unit ? line.trade_quantity : line.quantity
+  const next = line.trade_unit ? line.new_trade_quantity : line.new_quantity
+  return comparableQuantity(current) !== comparableQuantity(next)
+}
+const quantityAdjustmentHasChanges = computed(() => quantityAdjustmentLines.value.some(quantityLineChanged))
+const quantityAdjustmentCanPreview = computed(() => (
+  !quantityAdjustmentLoading.value &&
+  Boolean(quantityAdjustmentReason.value.trim()) &&
+  quantityAdjustmentHasChanges.value
+))
+function quantityAdjustmentPayload() {
+  return {
+    version: order.value.quantity_change_version,
+    request_key: quantityAdjustmentRequestKey.value,
+    reason: quantityAdjustmentReason.value.trim(),
+    items: quantityAdjustmentLines.value.filter(quantityLineChanged).map(line => ({
+      order_item: line.id,
+      ...(line.trade_unit ? { new_trade_quantity: line.new_trade_quantity } : { new_quantity: line.new_quantity }),
+    })),
+  }
+}
+function quantityAdjustmentErrorMessage(err) {
+  return err.response?.data?.detail || (err.response?.data && typeof err.response.data === 'object' ? Object.values(err.response.data).flat().join('；') : '') || err.message || '数量变更失败，请重试。'
+}
+function openQuantityAdjustment() {
+  if (!can('orders', 'update') || !['confirmed', 'production', 'shipped'].includes(order.value?.status)) return
+  const fulfillmentByItem = new Map((fulfillment.value?.items || []).map(item => [item.id, item]))
+  quantityAdjustmentLines.value = (workbench.value?.items || []).map(item => ({
+    ...item,
+    shipped_quantity: fulfillmentByItem.get(item.id)?.shipped_quantity ?? null,
+    purchased_quantity: fulfillmentByItem.get(item.id)?.purchased_quantity ?? null,
+    received_quantity: fulfillmentByItem.get(item.id)?.arrived_quantity ?? null,
+    new_quantity: item.trade_unit ? String(item.trade_quantity) : String(item.quantity),
+    new_trade_quantity: item.trade_unit ? String(item.trade_quantity) : '',
+  }))
+  quantityAdjustmentReason.value = ''
+  quantityAdjustmentPreview.value = null
+  quantityAdjustmentPreviewPayload.value = null
+  quantityAdjustmentError.value = ''
+  quantityAdjustmentRequestKey.value = newRequestKey()
+  quantityAdjustmentOpen.value = true
+}
+function closeQuantityAdjustment() {
+  if (!quantityAdjustmentSaving.value) quantityAdjustmentOpen.value = false
+}
+async function previewQuantityAdjustment() {
+  if (quantityAdjustmentLoading.value || quantityAdjustmentSaving.value) return
+  if (!quantityAdjustmentHasChanges.value) { quantityAdjustmentError.value = '数量没有变化。'; return }
+  if (!quantityAdjustmentReason.value.trim()) { quantityAdjustmentError.value = '请填写变更原因。'; return }
+  quantityAdjustmentLoading.value = true
+  quantityAdjustmentError.value = ''
+  quantityAdjustmentPreview.value = null
+  try {
+    const payload = quantityAdjustmentPayload()
+    const response = await api.post(`/orders/${props.id}/quantity-adjustments/preview/`, payload)
+    if (JSON.stringify(payload) !== JSON.stringify(quantityAdjustmentPayload())) return
+    quantityAdjustmentPreview.value = response.data
+    quantityAdjustmentPreviewPayload.value = payload
+  } catch (err) { quantityAdjustmentError.value = quantityAdjustmentErrorMessage(err) }
+  finally { quantityAdjustmentLoading.value = false }
+}
+async function submitQuantityAdjustment() {
+  if (!quantityAdjustmentPreview.value?.can_submit || quantityAdjustmentSaving.value) return
+  const payload = quantityAdjustmentPreviewPayload.value
+  if (!payload || JSON.stringify(payload) !== JSON.stringify(quantityAdjustmentPayload())) {
+    quantityAdjustmentPreview.value = null
+    return
+  }
+  const warnings = quantityAdjustmentPreview.value.warnings || []
+  const financial = quantityAdjustmentPreview.value.financial || {}
+  const summary = [
+    `将调整 ${quantityAdjustmentPreview.value.lines.length} 条订单明细。`,
+    financial.amount_delta != null ? `订单金额变化：${financial.currency} ${money(financial.amount_delta)}` : '',
+    ...warnings,
+    '确认后会保留原订单号和订单行，并按现有服务重新平衡库存预留。',
+  ].filter(Boolean).join('\n')
+  quantityAdjustmentSaving.value = true
+  if (!await confirmDialog({ title: '确认调整订单数量', message: summary, confirmText: '确认提交', danger: true })) {
+    quantityAdjustmentSaving.value = false
+    return
+  }
+  quantityAdjustmentError.value = ''
+  try {
+    await api.post(`/orders/${props.id}/quantity-adjustments/`, payload)
+    quantityAdjustmentOpen.value = false
+    await load()
+  } catch (err) {
+    quantityAdjustmentPreview.value = null
+    quantityAdjustmentError.value = quantityAdjustmentErrorMessage(err)
+  } finally { quantityAdjustmentSaving.value = false }
+}
+const formalParty = computed(() => order.value && order.value.status !== 'draft')
+const partyName = computed(() => {
+  if (!order.value) return '—'
+  return formalParty.value ? (order.value.customer_name_snapshot || '历史主体未记录') : (order.value.customer_name || '—')
+})
+const partyMasterReference = computed(() => {
+  if (!formalParty.value || !order.value?.customer_name || !order.value.customer_name_snapshot) return ''
+  return order.value.customer_name !== order.value.customer_name_snapshot ? `当前主档参考：${order.value.customer_name}` : ''
+})
+const partySnapshotRows = computed(() => {
+  if (!order.value || !formalParty.value) return []
+  if (!order.value.customer_name_snapshot && !order.value.customer_address_snapshot && !order.value.customer_contact_name_snapshot) return []
+  return [
+    ['客户名称', order.value.customer_name_snapshot],
+    ['国家/地区', order.value.customer_country_snapshot],
+    ['地址', order.value.customer_address_snapshot],
+    ['联系人', order.value.customer_contact_name_snapshot],
+    ['电话', order.value.customer_phone_snapshot],
+    ['邮箱', order.value.customer_email_snapshot],
+  ]
+})
 function localDateInputValue(value = new Date()) {
   const localeDate = value.toLocaleDateString('en-CA')
   if (/^\d{4}-\d{2}-\d{2}$/.test(localeDate)) return localeDate
@@ -104,6 +247,7 @@ const shipmentSkuCache = new Map()
 const shipmentSkuLoading = ref(false)
 const shipmentSkuFailed = ref(false)
 const shipmentSaving = ref(false)
+const shipmentRequestKey = ref('')
 const shipmentError = ref('')
 const selectedShipmentLines = computed(() => shipmentLines.value.filter(line => line.selected))
 const overageShipmentLines = computed(() => selectedShipmentLines.value.filter(line => baseQuantity(line) > Number(line.unshipped_quantity)))
@@ -137,6 +281,7 @@ async function openShipmentDialog(initialOrderItemIds = null) {
   if (!eligible.length) return
   const selectedIds = initialOrderItemIds == null ? null : new Set(initialOrderItemIds.map(Number))
   shipmentDate.value = localDateInputValue()
+  shipmentRequestKey.value = newRequestKey()
   shipmentError.value = ''
   shipmentSkuFailed.value = false
   shipmentLines.value = eligible.map(item => {
@@ -221,7 +366,7 @@ async function submitShipment() {
       trade_snapshot: line.trade_snapshot,
       overage_reason: baseQuantity(line) > Number(line.unshipped_quantity) ? line.overage_reason : '',
     }, null))
-    await api.post(`/orders/${props.id}/ship/`, { shipment_date: shipmentDate.value, items })
+    await api.post(`/orders/${props.id}/ship/`, { request_key: shipmentRequestKey.value, shipment_date: shipmentDate.value, items })
     shipmentDialogOpen.value = false
     await load()
   } catch (err) { shipmentError.value = shipmentErrorMessage(err) }
@@ -329,6 +474,36 @@ watch(() => props.refreshKey, load)
 
 <template>
   <Teleport to="body">
+    <div v-if="quantityAdjustmentOpen && can('orders', 'update')" class="trade-shipment-mask">
+      <form class="trade-shipment-dialog quantity-adjustment-dialog" role="dialog" aria-modal="true" aria-labelledby="quantity-adjustment-title" @submit.prevent="quantityAdjustmentPreview ? submitQuantityAdjustment() : previewQuantityAdjustment()">
+        <h3 id="quantity-adjustment-title">调整订单数量</h3>
+        <p class="quantity-adjustment-note">正式订单保留原订单号和订单行。系统不会自动取消采购单、修改共享采购归属或退款。</p>
+        <fieldset class="quantity-adjustment-inputs" :disabled="quantityAdjustmentLoading || quantityAdjustmentSaving">
+        <div class="quantity-adjustment-lines">
+          <section v-for="line in quantityAdjustmentLines" :key="line.id" class="quantity-adjustment-line">
+            <header><div><strong>{{ line.sku_code }}</strong><span>{{ line.sales_model || '未设置型号' }} · {{ line.display_name }}</span></div><small>明细 #{{ line.id }}</small></header>
+            <div class="quantity-adjustment-fields">
+              <div><small>当前数量</small><strong>{{ line.trade_unit ? line.trade_quantity : line.quantity }} {{ line.trade_unit ? line.trade_snapshot?.unit : line.trade_snapshot?.base_unit }}</strong></div>
+              <label>{{ line.trade_unit ? '新的交易数量' : '新的基础数量' }}<input v-if="line.trade_unit" v-model="line.new_trade_quantity" @input="quantityAdjustmentPreview = null" type="number" min="0.01" step="0.01" :aria-label="`新的交易数量 ${line.sku_code}`" required /><input v-else v-model="line.new_quantity" @input="quantityAdjustmentPreview = null" type="number" min="0.01" step="0.01" :aria-label="`新的基础数量 ${line.sku_code}`" required /></label>
+              <div><small>已发货 / 已采购 / 已到货</small><strong>{{ line.shipped_quantity ?? '—' }} / {{ line.purchased_quantity ?? '—' }} / {{ line.received_quantity ?? '—' }} {{ line.trade_snapshot?.base_unit }}</strong></div>
+            </div>
+            <p v-if="line.trade_unit" class="quantity-adjustment-conversion">按保存的交易单位换算，基础数量将由服务端重新计算。</p>
+          </section>
+        </div>
+        <label class="quantity-adjustment-reason">变更原因<textarea v-model="quantityAdjustmentReason" @input="quantityAdjustmentPreview = null" maxlength="500" rows="3" required placeholder="请说明客户或业务调整原因" /></label>
+        </fieldset>
+        <div v-if="quantityAdjustmentPreview" class="quantity-adjustment-preview">
+          <strong>影响预览</strong>
+          <p v-for="line in quantityAdjustmentPreview.lines" :key="line.order_item">{{ line.sku_code }}：{{ line.old_quantity }} → {{ line.new_quantity }} {{ line.base_unit }}，差额 {{ line.quantity_delta }}</p>
+          <p v-if="quantityAdjustmentPreview.financial?.amount_delta != null">订单金额：{{ quantityAdjustmentPreview.financial.currency }} {{ money(quantityAdjustmentPreview.financial.before_total) }} → {{ money(quantityAdjustmentPreview.financial.after_total) }}（{{ Number(quantityAdjustmentPreview.financial.amount_delta) >= 0 ? '+' : '' }}{{ money(quantityAdjustmentPreview.financial.amount_delta) }}）</p>
+          <p v-for="warning in quantityAdjustmentPreview.warnings" :key="warning" class="quantity-adjustment-warning">{{ warning }}</p>
+          <p v-if="!quantityAdjustmentPreview.warnings?.length" class="quantity-adjustment-success">未发现需要额外处理的采购过剩或资金冲突。</p>
+        </div>
+        <p v-if="!quantityAdjustmentPreview && quantityAdjustmentLines.length && !quantityAdjustmentHasChanges" class="quantity-adjustment-error" role="status">数量没有变化。</p>
+        <p v-if="quantityAdjustmentError" class="quantity-adjustment-error" role="alert">{{ quantityAdjustmentError }}</p>
+        <footer><button type="button" class="btn btn-secondary" :disabled="quantityAdjustmentSaving" @click="closeQuantityAdjustment">取消</button><button v-if="!quantityAdjustmentPreview" type="submit" class="btn btn-primary" :disabled="!quantityAdjustmentCanPreview">{{ quantityAdjustmentLoading ? '核算中…' : '预览影响' }}</button><button v-else type="submit" class="btn btn-primary" :disabled="quantityAdjustmentSaving || !quantityAdjustmentPreview.can_submit">{{ quantityAdjustmentSaving ? '提交中…' : '确认调整' }}</button></footer>
+      </form>
+    </div>
     <div v-if="shipmentDialogOpen && can('orders', 'update')" class="trade-shipment-mask">
       <form class="trade-shipment-dialog shipment-batch-dialog" role="dialog" aria-modal="true" aria-labelledby="shipment-dialog-title" @submit.prevent="submitShipment">
         <h3 id="shipment-dialog-title">确认发货</h3>
@@ -365,18 +540,20 @@ watch(() => props.refreshKey, load)
       <template v-else>
         <header class="detail-header">
           <div class="detail-nav"><div class="detail-nav-start"><button class="detail-close" aria-label="关闭订单详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button><span>订单工作台 · 履约与回款</span></div><div class="detail-actions"><button v-if="can('orders', 'update') && order.status === 'draft'" class="btn btn-secondary" @click="emit('edit')"><Pencil :size="14" /> 编辑草稿</button><button v-if="can('orders', 'update') && order.status === 'draft'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('confirm', '确认后订单将进入正式履约，并生成库存预留和应收计划。是否继续？')">确认订单</button><button v-if="can('orders', 'update') && order.status === 'confirmed'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('start-production')">开始生产</button><button v-if="can('orders', 'update') && order.status === 'shipped'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('complete')">完成履约</button><button v-if="can('orders', 'update') && ['draft', 'confirmed', 'production'].includes(order.status)" class="btn lifecycle-destructive" :disabled="lifecycleSaving" @click="openCancellation">取消订单</button></div></div>
-          <div class="detail-identity"><div><p class="detail-subtitle">{{ order.customer_name }} · 下单于 {{ date(order.order_date) }}</p><h2>{{ order.order_no }}</h2><small>预计交期：{{ order.expected_ship_date || '未设置' }}</small><p v-if="order.status === 'cancelled' && order.cancellation_reason" class="cancelled-context">取消原因：{{ order.cancellation_reason }}<span v-if="order.cancelled_at"> · {{ date(order.cancelled_at) }}</span></p></div><span class="detail-badge">履约：{{ order.status_display }}</span></div>
+          <div class="detail-identity"><div><p class="detail-subtitle">{{ partyName }} · 下单于 {{ date(order.order_date) }}<small v-if="partyMasterReference" class="party-reference">{{ partyMasterReference }}</small></p><h2>{{ order.order_no }}</h2><small>预计交期：{{ order.expected_ship_date || '未设置' }}</small><p v-if="order.status === 'cancelled' && order.cancellation_reason" class="cancelled-context">取消原因：{{ order.cancellation_reason }}<span v-if="order.cancelled_at"> · {{ date(order.cancelled_at) }}</span></p></div><span class="detail-badge">履约：{{ order.status_display }}</span></div>
         </header>
         <main class="detail-content" :class="{ 'fulfillment-content': activeTab === 'fulfillment' }">
           <nav class="workbench-tabs" aria-label="订单工作台分页"><button v-for="tab in tabs" :key="tab[0]" :class="{ active: activeTab === tab[0] }" @click="activeTab = tab[0]">{{ tab[1] }}</button></nav>
 
           <p v-if="lifecycleNotice" class="fulfillment-helper" role="status">{{ lifecycleNotice }}</p>
           <section v-if="activeTab === 'overview'" class="workbench-grid">
+            <article v-if="formalParty" class="workbench-card party-snapshot-card"><h3>交易主体快照</h3><p v-if="partySnapshotRows.length">正式确认时保存的主体资料；后续客户主档修改不会覆盖。</p><p v-else class="muted">历史主体未记录，以下不使用当前主档补造历史事实。</p><dl v-if="partySnapshotRows.length" class="data-list compact"><template v-for="[label, value] in partySnapshotRows" :key="label"><dt>{{ label }}</dt><dd>{{ value || '未记录' }}</dd></template></dl><p v-if="!partySnapshotRows.length && order.customer_name" class="party-reference">当前主档参考：{{ order.customer_name }}</p></article>
             <article class="workbench-card summary-card"><h3><PackageCheck :size="18" /> 订单摘要</h3><div class="summary-metrics"><div><small>订单金额</small><strong>{{ order.currency }} {{ money(order.total_amount) }}</strong><small>{{ contractAmountLabel }}</small></div><div><small>商品项数</small><strong>{{ workbench.items.length }}</strong></div><div><small>订单数量</small><strong>{{ workbench.fulfillment_summary.ordered_quantity }}</strong></div><div><small>预计交期</small><strong>{{ order.expected_ship_date || '未设置' }}</strong></div></div></article>
             <article class="workbench-card current-todo-card"><h3>当前待办</h3><div class="task-list"><div v-for="task in currentTasks" :key="task.key" class="task-row" :class="{ warning: task.warning }"><div><strong>{{ task.title }}</strong><p>{{ task.key === 'receivable' ? `待收 ${order.currency} ${money(task.amount)}` : task.description }}</p></div><RouterLink v-if="['receivable', 'receivable_review'].includes(task.key) && canViewPayments" class="task-action" :to="{ path: '/receivables', query: { order: String(order.id) } }">{{ task.action }}</RouterLink><button v-else-if="!['confirm', 'receivable', 'receivable_review'].includes(task.key) && (task.key === 'procurement' ? can('purchases', 'create') : can('orders', 'update'))" class="task-action" :disabled="lifecycleSaving" @click="performTask(task)">{{ task.action }}</button></div><div v-if="!currentTasks.length" class="task-row"><div><strong>{{ order.status === 'completed' ? '履约已完成' : order.status === 'cancelled' ? '订单已取消' : '当前没有待处理事项' }}</strong><p>{{ order.status === 'cancelled' ? '仅保留历史记录与审计信息。' : !canViewPayments ? '当前没有可查看的履约待办。' : '当前没有待处理事项。' }}</p></div></div></div></article>
             <article class="workbench-card fulfillment-overview"><div class="section-heading"><div><h3><Truck :size="16" /> 履约进度</h3><p>按销售出库流水统计。</p></div><b>{{ fulfillmentPercent.toFixed(0) }}%</b></div><div class="progress-track fulfillment"><i :style="{ width: `${fulfillmentPercent}%` }" /></div><dl class="data-list compact"><dt>订单数量</dt><dd>{{ workbench.fulfillment_summary.ordered_quantity }}</dd><dt>已出库</dt><dd>{{ workbench.fulfillment_summary.shipped_quantity }}</dd><dt>待出库</dt><dd>{{ workbench.fulfillment_summary.remaining_quantity }}</dd></dl><button class="task-action" @click="activeTab = 'fulfillment'">查看采购与发货</button></article>
             <article v-if="canViewPayments" class="workbench-card payment-card"><div class="section-heading"><div><h3><WalletCards :size="16" /> 回款状态：{{ receivableReview ? '应收计划待核对' : settlement?.label || '待核对' }}</h3><p>已收含预收核销，并扣除退款。</p></div><b v-if="!receivableReview">{{ paymentPercent.toFixed(0) }}%</b></div><p v-if="Number(settlement?.overdue_amount) > 0" class="error" role="alert">应收已逾期：{{ order.currency }} {{ money(settlement.overdue_amount) }}</p><div v-if="!receivableReview" class="progress-track"><i :style="{ width: `${paymentPercent}%` }" /></div><dl class="data-list compact"><dt>应收计划</dt><dd>{{ order.currency }} {{ money(workbench.payment_summary.planned_amount) }}</dd><dt>已收金额</dt><dd>{{ order.currency }} {{ money(workbench.payment_summary.paid_amount) }}</dd><dt>当前待收</dt><dd v-if="receivableReview">待核对</dd><dd v-else-if="!receivableStatus">{{ order.currency }} {{ money(workbench.payment_summary.balance_amount) }}</dd><dd v-else>{{ receivableStatus }}</dd></dl><RouterLink v-if="canViewReceivable" class="receivable-cta" :to="{ path: '/receivables', query: { order: String(order.id) } }">查看 / 登记本单应收</RouterLink></article>
             <article class="workbench-card cost-profit-card"><h3>成本与毛利</h3><dl class="data-list compact"><dt>分配商品成本</dt><dd>¥ {{ money(workbench.profit_summary?.purchase_base_rmb) }}</dd><dt>分摊附加费用</dt><dd>¥ {{ money(workbench.profit_summary?.purchase_additional_rmb) }}</dd><dt>预估总成本</dt><dd>¥ {{ money(totalCost) }}</dd><dt>预估毛利</dt><dd :class="{ 'negative-profit': Number(workbench.profit_summary?.estimated_gross_profit_rmb) < 0 }">¥ {{ money(workbench.profit_summary?.estimated_gross_profit_rmb) }}</dd></dl></article>
+            <article v-if="['confirmed', 'production', 'shipped'].includes(order.status)" class="workbench-card quantity-adjustment-card"><div class="section-heading"><div><h3>调整订单数量</h3><p>保留订单号和订单行；已发货数量、采购单和收款事实不会被覆盖。</p></div><button v-if="can('orders', 'update')" class="btn btn-secondary" @click="openQuantityAdjustment">调整数量</button></div><div v-if="!(workbench.quantity_adjustments || []).length" class="muted">暂无数量变更记录。</div><div v-else class="quantity-adjustment-history"><article v-for="change in workbench.quantity_adjustments" :key="change.id"><div><strong>{{ change.created_at ? new Date(change.created_at).toLocaleString('zh-CN', { hour12: false }) : '—' }}</strong><span>{{ change.reason }}</span><span>操作人：{{ change.operator_name || '未记录实名操作人' }}</span></div><b v-if="change.amount_delta != null" :class="Number(change.amount_delta) < 0 ? 'negative' : 'positive'">{{ Number(change.amount_delta) > 0 ? '+' : '' }}{{ order.currency }} {{ money(change.amount_delta) }}</b><b v-else class="muted">金额受权限保护</b><small v-for="line in change.lines" :key="line.order_item">{{ line.sku_code }}：{{ line.old_quantity }} → {{ line.new_quantity }} {{ line.base_unit }}（差额 {{ line.quantity_delta }}）</small></article></div></article>
             <article class="workbench-card source-quote-card"><div class="section-heading"><div><h3><FileText :size="16" /> 来源报价</h3><p>成交时采用的报价版本。</p></div></div><template v-if="workbench.source_quote"><strong class="quote-no">{{ workbench.source_quote.quote_no }}</strong><p>{{ workbench.source_quote.status_display }} · {{ workbench.source_quote.currency }} {{ money(workbench.source_quote.total_amount) }}</p><button v-if="can('quotes', 'view')" class="text-btn" @click="emit('open-quote', workbench.source_quote.id)">查看报价工作台</button></template><p v-else class="muted">该订单未关联来源报价。</p></article>
           </section>
           <ContractAmountAdjustments v-if="activeTab === 'overview' && order" contract-type="order" :contract="order" @changed="load" />
@@ -423,7 +600,7 @@ watch(() => props.refreshKey, load)
         </section>
         <section class="purchase-history"><div class="section-heading"><div><h3>关联采购单</h3><p>采购草稿不计入已下单数量。</p></div></div>
           <div v-if="!(fulfillment?.purchase_orders || []).length" class="workbench-empty"><strong>{{ fulfillmentSummaryCards[0].value ? '尚未创建关联采购单' : '当前无需关联采购单' }}</strong><p v-if="fulfillmentSummaryCards[0].value">请先选择采购来源，再生成采购草稿。</p></div>
-          <article v-for="purchase in fulfillment?.purchase_orders || []" :key="purchase.id" class="purchase-history-card"><div><RouterLink class="purchase-navigation-link" :to="purchaseDetailLocation(purchase.id, 'overview', route.fullPath)">{{ purchase.purchase_no }}</RouterLink><small>{{ purchase.supplier_name }}</small></div><div><span class="status" :class="purchase.status">{{ purchase.status_display }}</span><strong class="purchase-amount">{{ purchase.currency }} {{ money(purchase.total_amount) }}</strong></div><div class="purchase-eta"><span>预计到货 {{ date(purchase.expected_arrival_date) }}</span><small v-if="purchaseArrivalState(purchase)" :class="purchaseArrivalState(purchase).kind">{{ purchaseArrivalState(purchase).label }}</small></div><p class="purchase-sku-summary">{{ (purchase.items || []).map(line => `${line.sku_code} × ${line.quantity}`).join(' / ') }}</p></article>
+          <article v-for="purchase in fulfillment?.purchase_orders || []" :key="purchase.id" class="purchase-history-card"><div><RouterLink class="purchase-navigation-link" :to="purchaseDetailLocation(purchase.id, 'overview', route.fullPath)">{{ purchase.purchase_no }}</RouterLink><small>{{ purchasePartyName(purchase) }}</small><small v-if="purchasePartyReference(purchase)" class="party-reference">{{ purchasePartyReference(purchase) }}</small></div><div><span class="status" :class="purchase.status">{{ purchase.status_display }}</span><strong class="purchase-amount">{{ purchase.currency }} {{ money(purchase.total_amount) }}</strong></div><div class="purchase-eta"><span>预计到货 {{ date(purchase.expected_arrival_date) }}</span><small v-if="purchaseArrivalState(purchase)" :class="purchaseArrivalState(purchase).kind">{{ purchaseArrivalState(purchase).label }}</small></div><p class="purchase-sku-summary">{{ (purchase.items || []).map(line => `${line.sku_code} × ${line.quantity}`).join(' / ') }}</p></article>
         </section>
         <section class="shipment-history"><div class="section-heading"><div><h3>发货记录</h3><p>整单冲销会同步撤销关联的超发或增补记录。</p></div><strong>{{ (fulfillment?.shipments || []).length }} 条</strong></div><div v-if="!(fulfillment?.shipments || []).length" class="workbench-empty"><Truck :size="28" /><strong>暂无发货记录</strong><p>有可发库存后，可在明细中确认发货。</p></div><div v-else class="shipment-history-list"><article v-for="shipment in fulfillment.shipments" :key="shipment.id" class="shipment-history-card"><div class="shipment-history-head"><div><strong>{{ shipment.shipment_no }}</strong><small>{{ date(shipment.shipment_date) }}</small></div><span class="status" :class="shipment.status">{{ shipment.status === 'cancelled' ? '已冲销' : shipment.status === 'confirmed' ? '已确认' : shipment.status }}</span></div><div class="shipment-history-items"><span v-for="line in shipment.items" :key="line.id">{{ line.sku_code }} × {{ line.quantity }}</span></div><div class="shipment-history-actions"><button v-if="can('orders', 'update') && shipment.status === 'confirmed'" class="text-btn" @click="openShipmentReversal(shipment)">冲销</button><span v-else-if="shipment.status === 'cancelled'" class="muted">已冲销</span><span v-else class="muted">暂不可操作</span></div></article></div></section>
       </section>
@@ -434,6 +611,8 @@ watch(() => props.refreshKey, load)
 </template>
 
 <style scoped>
+.party-reference{display:block;color:#74877e;font-size:var(--text-caption);margin-top:4px}
+.party-snapshot-card{grid-column:1 / -1}
 .detail-backdrop{inset:0 0 0 248px;z-index:25;place-items:stretch end;padding:0;background:#0b221d66;backdrop-filter:blur(2px)}.detail-modal{height:100vh;width:min(1080px,100%);background:#f6f8f5;box-shadow:-24px 0 70px #06191452;overflow:auto;overscroll-behavior:contain}.detail-loading,.detail-error{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#71817b}.detail-error strong{color:#9d4444}.detail-error p{font-size:var(--text-body)}.detail-header{position:relative;overflow:hidden;padding:20px 28px 24px;background:#123c36;color:#fff}.detail-header:after{position:absolute;top:-140px;right:-80px;width:300px;height:300px;border:60px solid #ffffff08;border-radius:50%;content:''}.detail-nav,.detail-identity{position:relative;z-index:1}.detail-nav,.detail-nav-start{display:flex;align-items:center}.detail-nav{justify-content:space-between;color:#91b6aa;font-size:var(--text-body);letter-spacing:.12em;text-transform:uppercase}.detail-nav-start{gap:10px}.detail-actions{display:flex;align-items:center;gap:8px}.detail-actions .btn{padding:7px 11px;color:#fff;font-size:var(--text-body);letter-spacing:0;text-transform:none;background:#ffffff12;border-color:#ffffff28}.detail-close{display:flex;align-items:center;gap:7px;min-height:38px;padding:8px 11px;border:1px solid #ffffff45;border-radius:9px;background:#ffffff1a;color:#fff;font-size:var(--text-body);font-weight:700;letter-spacing:0;text-transform:none}.detail-identity{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-top:23px}.detail-subtitle{margin:0;color:#9cc0b5;font-size:var(--text-caption)}.detail-identity h2{margin:5px 0 0;font-size:var(--text-page)}.detail-identity small{color:#b6d3ca;font-size:var(--text-caption)}.detail-badge{padding:6px 10px;border:1px solid #ffffff22;border-radius:20px;background:#ffffff14;font-size:var(--text-secondary)}.detail-content{padding:22px 25px 40px}.order-workbench{font-size:var(--text-body)}.workbench-tabs{display:flex;gap:4px;margin:-22px -25px 18px;padding:0 25px;border-bottom:1px solid #e3eae6;overflow:auto;background:#fff}.workbench-tabs button{border:0;border-bottom:2px solid transparent;background:transparent;padding:13px 12px;color:#70807a;font-size:var(--text-body);white-space:nowrap}.workbench-tabs button.active{border-bottom-color:#1f6657;color:#174c41;font-weight:700}.workbench-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.workbench-card{padding:19px;border:1px solid #e0e8e4;border-radius:13px;background:#fff}.workbench-card h3{display:flex;align-items:center;gap:7px;margin:0;color:#1d3f36;font-size:var(--text-section)}.workbench-card p{margin:7px 0;color:#71817b;font-size:var(--text-body);line-height:1.55}.summary-card{grid-column:span 2;background:linear-gradient(135deg,#f8fcfa,#eef6f1)}.summary-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:16px}.summary-metrics small,.summary-metrics strong{display:block}.summary-metrics small{color:#7c8c85;font-size:var(--text-caption)}.summary-metrics strong{margin-top:5px;color:#164a3e;font-size:var(--text-dialog)}.section-heading{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:16px}.section-heading p{margin-bottom:0}.section-heading>b{color:#1a5e4f}.quote-no{color:#214d41;font-size:var(--text-section)}.text-btn{border:0;background:transparent;padding:5px 0;color:#236657;font-size:var(--text-body);font-weight:700}.muted{color:#81908a!important}.progress-track{height:8px;overflow:hidden;border-radius:99px;background:#e6eee9}.progress-track i{display:block;height:100%;border-radius:inherit;background:#27755f}.progress-track.fulfillment i{background:#2e779c}.data-list{display:grid;grid-template-columns:105px 1fr;gap:10px;margin:16px 0 0;font-size:var(--text-body)}.data-list dt{color:#7c8983}.data-list dd{margin:0;color:#31473f;word-break:break-word}.data-list.compact{margin-top:14px}.workbench-table-wrap{overflow:auto;margin:0 -19px}.workbench-table{width:100%;min-width:720px;border-collapse:collapse}.workbench-table th,.workbench-table td{padding:11px 14px;border-top:1px solid #edf1ef;text-align:left;font-size:var(--text-body)}.workbench-table th{background:#f7faf8;color:#7d8c86;font-size:var(--text-body)}.workbench-table td:last-child{text-align:right;font-variant-numeric:tabular-nums}.order-totals{display:grid;justify-content:end;gap:7px;margin-top:16px;color:#62736c;font-size:var(--text-body);text-align:right}.order-totals span,.order-totals strong{display:flex;justify-content:space-between;gap:28px;min-width:260px}.order-totals strong{margin-top:5px;padding-top:10px;border-top:1px solid #dfe8e3;color:#174b40;font-size:var(--text-body)}.order-totals b{font-variant-numeric:tabular-nums}.workbench-empty{display:grid;justify-items:center;padding:42px 15px;color:#82918b;text-align:center}.workbench-empty strong{margin-top:9px;color:#556961}.workbench-empty p{margin-top:4px}@media(max-width:980px){.detail-backdrop{inset:0;z-index:60}}@media(max-width:700px){.detail-modal{width:100vw}.detail-header{padding:16px 17px 20px}.detail-identity h2{font-size:var(--text-page)}.detail-content{padding:12px}.workbench-grid{grid-template-columns:1fr}.summary-card{grid-column:auto}.summary-metrics{grid-template-columns:1fr}.workbench-tabs{margin-left:-12px;margin-right:-12px;padding:0 12px}.detail-close span{display:none}.detail-close{padding:8px}.order-totals span,.order-totals strong{min-width:230px}}
 .order-items-card { min-width: 0; }
 .order-items-scroll { max-width: 100%; margin: 0; overflow-x: auto; overscroll-behavior-x: contain; }
@@ -452,6 +631,7 @@ watch(() => props.refreshKey, load)
 .items-table td:nth-child(n+5) { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .items-table th:nth-child(n+7), .items-table td:nth-child(n+7) { text-align: right; }
 .items-table td small { display: block; margin-top: 3px; color: var(--muted); line-height: 1.4; }
+.quantity-adjustment-inputs{border:0;padding:0;margin:0;min-width:0}
 </style>
 
 <style scoped>
@@ -479,4 +659,8 @@ watch(() => props.refreshKey, load)
 
 <style scoped>
 .detail-header{padding:22px 26px}.workbench-tabs button{min-height:44px;padding:10px 13px}.workbench-grid{gap:16px}.workbench-grid>.workbench-card{padding:16px}.current-todo-card{padding:16px!important}.workbench-table-wrap{margin-left:-16px;margin-right:-16px}
+</style>
+
+<style scoped>
+.quantity-adjustment-card{grid-column:1/-1}.quantity-adjustment-card .section-heading{align-items:center}.quantity-adjustment-history{display:grid;gap:8px}.quantity-adjustment-history article{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;padding:10px 0;border-top:1px solid #edf1ef}.quantity-adjustment-history article>div{display:flex;gap:10px;flex-wrap:wrap}.quantity-adjustment-history article span,.quantity-adjustment-history article small{color:#71817b;font-size:var(--text-caption)}.quantity-adjustment-history article small{grid-column:1/-1}.quantity-adjustment-history .positive{color:#216348}.quantity-adjustment-history .negative{color:#a44343}.quantity-adjustment-dialog{width:min(760px,94vw);max-height:90vh;overflow:auto}.quantity-adjustment-note{margin:8px 0 14px;color:#526960!important}.quantity-adjustment-lines{display:grid;gap:10px;max-height:42vh;overflow:auto}.quantity-adjustment-line{padding:13px 14px;border:1px solid #e1e9e5;border-radius:10px;background:#fbfdfc}.quantity-adjustment-line header{display:flex;justify-content:space-between;gap:12px}.quantity-adjustment-line header strong,.quantity-adjustment-line header span{display:block}.quantity-adjustment-line header span{margin-top:4px;color:#71817b;font-size:var(--text-caption)}.quantity-adjustment-line header small{color:#71817b}.quantity-adjustment-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:end;margin-top:12px}.quantity-adjustment-fields>div,.quantity-adjustment-fields>label{display:grid;gap:5px;color:#71817b;font-size:var(--text-caption)}.quantity-adjustment-fields strong{color:#31473f;font-size:var(--text-body)}.quantity-adjustment-fields input,.quantity-adjustment-reason textarea{width:100%;box-sizing:border-box;padding:9px;border:1px solid #d0dfd8;border-radius:7px;background:#fff;font:inherit}.quantity-adjustment-reason{display:grid;gap:7px;margin-top:14px;color:#526960;font-weight:700}.quantity-adjustment-conversion{margin:9px 0 0!important;color:#71817b!important;font-size:var(--text-caption)!important}.quantity-adjustment-preview{display:grid;gap:5px;margin-top:14px;padding:12px 14px;border:1px solid #dbe8e1;border-radius:9px;background:#f7fbf8;color:#526960}.quantity-adjustment-preview strong{color:#245d50}.quantity-adjustment-preview p{margin:0!important;font-size:var(--text-caption)!important}.quantity-adjustment-warning{color:#8b5c1d!important}.quantity-adjustment-success{color:#216348!important}.quantity-adjustment-error{margin-top:12px!important;color:#a44343!important}.quantity-adjustment-dialog footer{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}@media(max-width:700px){.quantity-adjustment-dialog{width:100vw;max-height:94vh;padding:18px}.quantity-adjustment-fields{grid-template-columns:1fr}.quantity-adjustment-lines{max-height:48vh}.quantity-adjustment-card{grid-column:auto}.quantity-adjustment-card .section-heading{align-items:flex-start;flex-direction:column}}
 </style>

@@ -1,0 +1,9 @@
+{
+  "customer": 1,
+  "contact": 1,
+  "sku": 1,
+  "database": "sqlite:///C:/Users/Johnson/.codex/visualizations/2026/10/23/01a1690a-38e9-74d2-823f-718cb4f85599/r1-repair-03-final.sqlite3",
+  "development_identity": true,
+  "historical_order": 1,
+  "historical_purchase": 1
+}

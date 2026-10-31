@@ -6,7 +6,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from crm.models import Customer, Order, OrderItem, Product, PurchaseOrder, PurchaseOrderItem, SKU, Supplier, SupplierSKU
+from crm.models import Customer, CustomerSupplierPreference, Order, OrderItem, Product, PurchaseOrder, PurchaseOrderItem, SKU, Supplier, SupplierSKU
 
 
 class SupplierAllocationApiTests(TestCase):
@@ -64,8 +64,9 @@ class SupplierAllocationApiTests(TestCase):
         self.assertEqual(self.item.supplier_name_snapshot, self.supplier_a.name)
         self.assertEqual(self.item.supplier_model_snapshot, "AA-MODEL-1")
         self.assertEqual(self.item.supplier_price_snapshot, Decimal("3.2000"))
-        self.assertEqual(self.item.supplier_allocation_scope, "recommended")
-        self.assertTrue(self.source_a.is_preferred)
+        self.assertEqual(self.item.supplier_allocation_scope, "customer_preferred")
+        self.assertFalse(self.source_a.is_preferred)
+        self.assertEqual(CustomerSupplierPreference.objects.get(customer=self.order.customer, sku=self.sku).supplier_sku_id, self.source_a.pk)
 
         purchase = self.client.post(
             "/api/purchase-orders/",

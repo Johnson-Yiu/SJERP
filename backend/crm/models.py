@@ -1,10 +1,19 @@
 from decimal import Decimal
+import uuid
 from django.utils import timezone
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
+
+from .money import (
+    CURRENT_AMOUNT_CALCULATION_VERSION,
+    LEGACY_AMOUNT_CALCULATION_VERSION,
+    document_total,
+    legacy_document_total,
+    money,
+)
 
 
 # Inventory movement types which reduce available stock.  Keep this list in
@@ -34,6 +43,19 @@ class TimestampedModel(models.Model):
         abstract = True
 
 
+class OperationLogQuerySet(models.QuerySet):
+    """Prevent application-level updates/deletes of historical audit rows."""
+
+    def update(self, **kwargs):
+        raise ValidationError("操作日志只允许追加，历史审计不可修改。")
+
+    def delete(self):
+        raise ValidationError("操作日志只允许追加，历史审计不可删除。")
+
+    def bulk_update(self, objs, fields, batch_size=None):
+        raise ValidationError("操作日志只允许追加，历史审计不可批量修改。")
+
+
 class OperationLog(models.Model):
     """Generic, append-only audit record for business data changes."""
 
@@ -50,7 +72,9 @@ class OperationLog(models.Model):
     object_label = models.CharField("对象名称", max_length=300, blank=True)
     action = models.CharField("操作类型", max_length=30, choices=ACTION_CHOICES, default="custom")
     action_label = models.CharField("操作说明", max_length=100, blank=True)
-    operator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="operation_logs")
+    # Deleting an operator must not cause the database to rewrite this row
+    # through ON DELETE SET NULL; historical identity is part of the audit.
+    operator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True, related_name="operation_logs")
     changed_fields = models.JSONField("变更字段", default=list, blank=True)
     before_data = models.JSONField("变更前数据", default=dict, blank=True)
     after_data = models.JSONField("变更后数据", default=dict, blank=True)
@@ -59,12 +83,57 @@ class OperationLog(models.Model):
     request_path = models.CharField("请求路径", max_length=500, blank=True)
     created_at = models.DateTimeField("操作时间", auto_now_add=True)
 
+    objects = OperationLogQuerySet.as_manager()
+
+    def save(self, *args, **kwargs):
+        if self.pk and not self._state.adding:
+            raise ValidationError("操作日志只允许追加，历史审计不可修改。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("操作日志只允许追加，历史审计不可删除。")
+
     class Meta:
         ordering = ["-created_at", "-id"]
         indexes = [
             models.Index(fields=["entity", "object_id", "created_at"]),
             models.Index(fields=["operator", "created_at"]),
         ]
+
+
+class SharedReportTemplate(TimestampedModel):
+    """A validated report query definition shared with the reporting team."""
+
+    name = models.CharField("模板名称", max_length=80)
+    description = models.CharField("模板说明", max_length=300, blank=True)
+    config = models.JSONField("报表配置", default=dict)
+    published = models.BooleanField("已发布", default=False, db_index=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_shared_report_templates",
+    )
+    updated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="updated_shared_report_templates",
+    )
+    published_at = models.DateTimeField("发布时间", null=True, blank=True)
+    config_version = models.PositiveIntegerField("配置版本", default=1)
+
+    class Meta:
+        ordering = ["-updated_at", "-id"]
+        indexes = [
+            models.Index(fields=["published", "updated_at"]),
+            models.Index(fields=["created_by", "updated_at"]),
+        ]
+
+    def __str__(self):
+        return self.name
 
 
 class OrganizationUnit(TimestampedModel):
@@ -589,6 +658,9 @@ class ProductCertificate(TimestampedModel):
     issuer = models.CharField("签发机构", max_length=150, blank=True)
     issued_date = models.DateField("签发日期", null=True, blank=True)
     expires_on = models.DateField("有效期至", null=True, blank=True)
+    file = models.FileField("私有证书文件", upload_to="product-certificates/%Y/%m/", blank=True)
+    # Kept only as a legacy migration field. New API responses never expose or
+    # accept this external URL because it cannot inherit ERP permissions.
     file_url = models.URLField("文件链接", blank=True)
     notes = models.TextField("备注", blank=True)
 
@@ -638,6 +710,7 @@ class Quote(TimestampedModel):
     deposit_ratio = models.DecimalField("定金比例", max_digits=6, decimal_places=4, default=0)
     trading_terms = models.TextField("贸易条款", blank=True)
     shipping_details = models.TextField("运输信息", blank=True)
+    amount_calculation_version = models.PositiveSmallIntegerField(default=CURRENT_AMOUNT_CALCULATION_VERSION, editable=False)
 
     class Meta:
         ordering = ["-quote_date", "-id"]
@@ -657,7 +730,9 @@ class Quote(TimestampedModel):
 
     @property
     def total_amount(self):
-        return sum((item.amount for item in self.items.all()), Decimal("0")) + self.shipping_fee - self.discount
+        if self.amount_calculation_version == LEGACY_AMOUNT_CALCULATION_VERSION:
+            return legacy_document_total(self.items.all(), shipping_fee=self.shipping_fee, discount=self.discount)
+        return document_total(self.items.all(), shipping_fee=self.shipping_fee, discount=self.discount)
 
 
 class QuoteRevisionCounter(models.Model):
@@ -772,14 +847,21 @@ class QuoteImportantNote(TimestampedModel):
 
 
 class Order(TimestampedModel):
-    STATUS_CHOICES = [("draft", "草稿"), ("confirmed", "已确认"), ("production", "生产中"), ("shipped", "已发货"), ("completed", "已完成"), ("cancelled", "已取消")]
+    STATUS_CHOICES = [("draft", "草稿"), ("confirmed", "已确认"), ("production", "生产中"), ("shipped", "已发货"), ("completed", "已完成"), ("cancelled", "已取消"), ("historical", "历史订单 · 仅用于经营分析")]
     order_no = models.CharField("订单号", max_length=40, unique=True)
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name="orders")
+    customer_name_snapshot = models.CharField("客户名称快照", max_length=200, blank=True)
+    customer_country_snapshot = models.CharField("客户国家/地区快照", max_length=100, blank=True)
+    customer_address_snapshot = models.TextField("客户地址快照", blank=True)
+    customer_contact_name_snapshot = models.CharField("交易联系人快照", max_length=200, blank=True)
+    customer_phone_snapshot = models.CharField("联系人电话快照", max_length=100, blank=True)
+    customer_email_snapshot = models.CharField("联系人邮箱快照", max_length=254, blank=True)
     quote = models.ForeignKey(Quote, on_delete=models.SET_NULL, null=True, blank=True, related_name="orders")
     order_date = models.DateField("订单日期")
     expected_ship_date = models.DateField("预计交期", null=True, blank=True)
     tail_goods_policy = models.CharField("尾货策略", max_length=20, choices=TAIL_GOODS_POLICY_CHOICES, default="SAME_CARTON")
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
+    historical_only = models.BooleanField("仅用于历史分析", default=False, editable=False, db_index=True)
     currency = models.CharField("币种", max_length=10, default="USD")
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
     shipping_fee = models.DecimalField("运费", max_digits=14, decimal_places=4, default=0)
@@ -787,13 +869,17 @@ class Order(TimestampedModel):
     notes = models.TextField("备注", blank=True)
     cancelled_at = models.DateTimeField("取消时间", null=True, blank=True)
     cancellation_reason = models.TextField("取消原因", blank=True)
+    quantity_change_version = models.PositiveIntegerField("数量变更版本", default=0)
+    amount_calculation_version = models.PositiveSmallIntegerField(default=CURRENT_AMOUNT_CALCULATION_VERSION, editable=False)
 
     class Meta:
         ordering = ["-order_date", "-id"]
 
     @property
     def base_amount(self):
-        return sum((item.amount for item in self.items.all()), Decimal("0")) + self.shipping_fee - self.discount
+        if self.amount_calculation_version == LEGACY_AMOUNT_CALCULATION_VERSION:
+            return legacy_document_total(self.items.all(), shipping_fee=self.shipping_fee, discount=self.discount)
+        return document_total(self.items.all(), shipping_fee=self.shipping_fee, discount=self.discount)
 
     @property
     def approved_change_amount(self):
@@ -801,13 +887,14 @@ class Order(TimestampedModel):
 
     @property
     def total_amount(self):
-        return self.base_amount + self.approved_change_amount
+        total = self.base_amount + self.approved_change_amount
+        return total if self.amount_calculation_version == LEGACY_AMOUNT_CALCULATION_VERSION else money(total)
 
     @property
     def paid_amount(self):
         # A draft has no formal receivable yet.  Keep it out of payment
         # projections even if historical/imported rows happen to be linked.
-        if self.status == "draft":
+        if self.status in {"draft", "historical"} or self.historical_only:
             return Decimal("0")
         receipts = sum(self.transactions.filter(status="confirmed", kind="customer_receipt").values_list("amount", flat=True), Decimal("0"))
         refunds = sum((t.amount for t in self.transactions.filter(direction="expense", status="confirmed", kind="refund")), Decimal("0"))
@@ -822,7 +909,7 @@ class Order(TimestampedModel):
         cancelled order has no current receivable, while a formal order's
         receivable is the sum of its still-open receivable-plan balances.
         """
-        if self.status in {"draft", "cancelled"}:
+        if self.status in {"draft", "cancelled", "historical"} or self.historical_only:
             return Decimal("0")
         return self.payment_plans.filter(
             direction="receivable", status="open",
@@ -832,13 +919,15 @@ class Order(TimestampedModel):
 class OrderItem(TradeUnitLine):
     SUPPLIER_ALLOCATION_SCOPE_CHOICES = [
         ("order_only", "仅本次订单"),
-        ("recommended", "同时更新为推荐供应商"),
+        ("customer_preferred", "设为该客户此 SKU 今后优先来源"),
+        ("recommended", "历史兼容值"),
     ]
     SUPPLIER_ALLOCATION_SOURCE_CHOICES = [
         ("rule_match", "规则匹配"),
         ("historical_purchase", "历史采购"),
         ("manual", "人工补充"),
         ("supplier_sku", "供货档案"),
+        ("customer_preference", "客户优先来源"),
     ]
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="order_items")
@@ -903,6 +992,40 @@ class OrderItem(TradeUnitLine):
         return super().amount
 
 
+class OrderQuantityAdjustment(TimestampedModel):
+    """Immutable business record for a confirmed sales-order quantity change.
+
+    The line and impact snapshots intentionally live on the adjustment record.
+    They preserve the commercial meaning of the operation even if later
+    fulfillment or procurement facts change.  No public generic CRUD endpoint
+    is exposed for this model; the order action below is append-only.
+    """
+
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name="quantity_adjustments")
+    operator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="order_quantity_adjustments",
+    )
+    request_key = models.CharField("请求幂等键", max_length=100, unique=True, default=uuid.uuid4)
+    request_fingerprint = models.CharField("请求指纹", max_length=64)
+    reason = models.TextField("变更原因")
+    before_total_amount = models.DecimalField("变更前订单金额", max_digits=24, decimal_places=12)
+    after_total_amount = models.DecimalField("变更后订单金额", max_digits=24, decimal_places=12)
+    amount_delta = models.DecimalField("金额差额", max_digits=24, decimal_places=12)
+    lines = models.JSONField("数量变更明细", default=list)
+    impact = models.JSONField("影响快照", default=dict)
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+        indexes = [
+            models.Index(fields=["order", "created_at"]),
+            models.Index(fields=["operator", "created_at"]),
+        ]
+
+
 OVERAGE_REASON_CHOICES = [
     ("overprocurement", "超采"),
     ("gift", "赠品"),
@@ -916,6 +1039,7 @@ OVERAGE_REASON_CHOICES = [
 class Supplier(TimestampedModel):
     supply_categories = models.ManyToManyField("ProductCategory", blank=True, related_name="suppliers", verbose_name="可供产品分类")
     country = models.CharField("国家/地区", max_length=100, blank=True, default="中国")
+    address = models.TextField("地址", blank=True, default="")
     main_products = models.CharField("主要产品", max_length=300, blank=True)
     name = models.CharField("供应商名称", max_length=200, unique=True)
     code = models.CharField("供应商二字代码", max_length=2, unique=True)
@@ -926,6 +1050,7 @@ class Supplier(TimestampedModel):
     payment_terms = models.CharField("付款条款", max_length=200, blank=True, default="30%预付款，70%尾款发货前结清")
     payment_terms_config = models.JSONField("系统执行付款规则", default=list, blank=True)
     notes = models.TextField("备注", blank=True)
+    is_active = models.BooleanField("启用", default=True, db_index=True)
 
     class Meta:
         ordering = ["name"]
@@ -982,6 +1107,45 @@ class SupplierSKU(TimestampedModel):
         return f"{self.supplier.name} / {self.supplier_sku_code}"
 
 
+class CustomerSupplierPreference(TimestampedModel):
+    """Explicit purchasing preference for one customer and internal SKU.
+
+    This is deliberately separate from SupplierSKU.is_preferred.  The latter
+    remains a weak, global SKU fallback; this row records an intentional
+    customer-specific choice without changing the SKU master.
+    """
+
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name="supplier_preferences")
+    sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="customer_supplier_preferences")
+    supplier_sku = models.ForeignKey(SupplierSKU, on_delete=models.PROTECT, related_name="customer_preferences")
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_customer_supplier_preferences",
+    )
+    updated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="updated_customer_supplier_preferences",
+    )
+
+    class Meta:
+        ordering = ["customer__name", "sku__sku", "id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["customer", "sku"],
+                name="customer_supplier_preference_unique",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.customer.name} / {self.sku.sku} / {self.supplier_sku.supplier.name}"
+
+
 class PurchaseOrder(TimestampedModel):
     payment_terms_snapshot = models.JSONField("本次付款计划", default=list, blank=True)
     cost_allocation_version = models.PositiveIntegerField(default=0, editable=False)
@@ -992,13 +1156,20 @@ class PurchaseOrder(TimestampedModel):
         ("partial", "部分到货"),
         ("completed", "已完成"),
         ("cancelled", "已取消"),
+        ("historical", "历史订单 · 仅用于经营分析"),
     ]
     purchase_no = models.CharField("采购单号", max_length=40, unique=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT, related_name="purchase_orders")
+    supplier_name_snapshot = models.CharField("供应商名称快照", max_length=200, blank=True)
+    supplier_address_snapshot = models.TextField("供应商地址快照", blank=True)
+    supplier_contact_name_snapshot = models.CharField("供应商联系人快照", max_length=100, blank=True)
+    supplier_phone_snapshot = models.CharField("供应商电话快照", max_length=50, blank=True)
+    supplier_email_snapshot = models.CharField("供应商邮箱快照", max_length=254, blank=True)
     order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name="purchase_orders", null=True, blank=True)
     order_date = models.DateField("下单日期")
     expected_arrival_date = models.DateField("预计到货日", null=True, blank=True)
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
+    historical_only = models.BooleanField("仅用于历史分析", default=False, editable=False, db_index=True)
     currency = models.CharField("币种", max_length=10, default="USD")
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
     notes = models.TextField("备注", blank=True)
@@ -1022,6 +1193,8 @@ class PurchaseOrder(TimestampedModel):
 
     @property
     def paid_amount(self):
+        if self.status == "historical" or self.historical_only:
+            return Decimal("0")
         paid = sum(self.transactions.filter(status="confirmed", kind="supplier_payment").values_list("amount", flat=True), Decimal("0"))
         allocations = sum(AdvanceAllocation.objects.filter(plan__purchase_order=self, is_active=True, advance__status="confirmed").values_list("amount", flat=True), Decimal("0"))
         refunds = sum(self.transactions.filter(direction="income", status="confirmed", kind="supplier_refund").values_list("amount", flat=True), Decimal("0"))
@@ -1029,6 +1202,8 @@ class PurchaseOrder(TimestampedModel):
 
     @property
     def unpaid_amount(self):
+        if self.status == "historical" or self.historical_only:
+            return Decimal("0")
         return self.total_amount - self.paid_amount
 
     def __str__(self):
@@ -1120,6 +1295,28 @@ class PurchaseOrderItem(TradeUnitLine):
             )
 
 
+class PurchaseMOQException(TimestampedModel):
+    """Immutable evidence for a formal PO placed below a maintained MOQ."""
+
+    purchase_order = models.OneToOneField(
+        PurchaseOrder,
+        on_delete=models.CASCADE,
+        related_name="moq_exception",
+    )
+    reason = models.TextField("例外原因")
+    details = models.JSONField("MOQ 明细快照", default=list)
+    operator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="purchase_moq_exceptions",
+    )
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+
+
 class PaymentPlan(TimestampedModel):
     DIRECTION_CHOICES = [("receivable", "应收"), ("payable", "应付")]
     STATUS_CHOICES = [("open", "待结清"), ("settled", "已结清"), ("cancelled", "已取消")]
@@ -1191,6 +1388,8 @@ class Shipment(TimestampedModel):
     order_status_before_confirm = models.CharField("确认发货前订单状态", max_length=20, blank=True)
     reversed_at = models.DateTimeField(null=True, blank=True)
     reversal_reason = models.TextField(blank=True)
+    request_key = models.CharField("请求幂等键", max_length=100, unique=True, null=True, blank=True)
+    request_fingerprint = models.CharField("请求指纹", max_length=64, blank=True)
 
     class Meta:
         ordering = ["-shipment_date", "-id"]
@@ -1387,6 +1586,8 @@ class GoodsReceipt(TradeUnitLine, TimestampedModel):
     )
     reversed_at = models.DateTimeField(null=True, blank=True)
     reversal_reason = models.TextField(blank=True)
+    request_key = models.CharField("请求幂等键", max_length=100, unique=True, null=True, blank=True)
+    request_fingerprint = models.CharField("请求指纹", max_length=64, blank=True)
 
     class Meta:
         constraints = [
@@ -1473,7 +1674,7 @@ class Transaction(TimestampedModel):
     amount = models.DecimalField("金额", max_digits=14, decimal_places=4)
     currency = models.CharField("币种", max_length=10, default="USD")
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
-    rmb_amount = models.DecimalField("实际人民币金额", max_digits=14, decimal_places=4, default=0)
+    rmb_amount = models.DecimalField("账面人民币折算参考", max_digits=14, decimal_places=4, default=0)
     allocated_amount = models.DecimalField("已分配原币金额", max_digits=14, decimal_places=4, default=0)
     kind = models.CharField("业务类型", max_length=30, choices=KIND_CHOICES, default="other")
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")

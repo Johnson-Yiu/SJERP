@@ -1,10 +1,47 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-INTEGRATION-036-002-003-052-058 五项任务集成（2026-10-27）
+
+固定基线 `46353a5436637832f5adadb7bdef6b45cdeada23`，创建独立工作树和 `codex/integration-036-002-003-052-058`。集成前核对五个远端来源分支 HEAD 与指定 SHA 一致：ISS-036 `b64c54b07908d4bb462c64f120c351d148e06f6f`、ISS-002 `4e4ca504ee398da85fe23cc53d534c6008807e5c`、ISS-003 `2111d193ef3a69db05c23e27813cfbf26d9034d7`、ISS-052 `93736e0773ca2136d4070a604e62324cf832dc6f`、ISS-058 `742692a6e4887e4b8352736e69a52b1ebe8d066f`。保留五项代码/测试/报告/依赖；PROJECT_ISSUES 的 ISS-002 冲突逐条合并，PROJECT_PHASES 保留各历史记录并追加本轮日志。ISS-052 七个 JPEG 原图仅由 `.png` 重命名 `.jpg`，签名检查确认未重编码。
+
+后端在 Python 3.12.14 干净虚拟环境中安装 `backend/requirements.txt`，隔离 SQLite 下 Django check、`makemigrations --check --dry-run` 和全量 `manage.py test` 通过；测试 989 项、18 项跳过。前端 `npm ci`、两项 audit、Node 156、Vitest 661、交易单位 4 和生产构建通过；detail drawer typography 测试失败 1 项，Playwright 164/184 通过，20 项失败。ISS-058 集成构建主 JS 为 1,126,035 bytes / gzip 393,552 bytes，对原始报告变化为 -183 / +75 bytes；Vite 的 >500 kB 警告仍在，不声称真实用户体验改善。完整测试命令、Playwright 失败明细、性能差异与验收缺口见[本轮集成报告](uat-evidence/integration-036-002-003-052-058/README.md)。
+
+推送提交 `4a83ec1455cbe4e927ae39252477fa095cf329ca` 触发 [GitHub Actions CI #40535678568](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/40535678568)，run 的 head SHA 精确匹配。backend、backend-postgres、frontend 三个 job 全部 failure，约 3 秒结束，GitHub 返回 `runner_id=0`、`steps=[]`，没有运行日志。各 check-run 的原始 failure annotation 均为：`The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings`；故本轮 CI 状态为 `BLOCKED`（GitHub 报告账户近期付款失败或消费限额需增加，具体子原因未区分），需账户所有者手动核查 `Billing & plans` 并重跑。文档更新提交 `7ff7fdb51fba99796a6823817774d1ddfdb2eeaa` 的 [Actions CI #40536898954](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/40536898954) 再次确认三项 job 均在 runner 分配前失败，三个 job 的 check-run 注释相同；后续最终文档/空白清理提交的精确 SHA / run 在交付时核对。ISS-036 保持 `FIXED_PENDING_REVIEW`，ISS-002 `NEEDS_VERIFICATION`，ISS-003 `BLOCKED`，ISS-052 `NEEDS_VERIFICATION`，ISS-058 `P3 / NEEDS_VERIFICATION`。Pillow `11.3.0` 风险未解决，Python 依赖无完整 lock；ISS-003 的真实员工/生产权限验收、ISS-052 的开发身份审计（`AUDIT_LOG_ENABLED=false`、`OperationLog=0`）仍缺失。GitHub API 已核验七张截图均以 `.jpg` 命名且远端字节签名为 JPEG；本机 Chrome 会话打开私有仓库网页返回 404，网页 UI 预览尚未目视复核。无新增迁移；未合并 master、未关闭 Issue、未部署、未启用正式 RBAC，完成核验后等待独立审查。
+
+## ISS-003 员工权限与数据范围隔离验收（2026-10-27）
+
+基于统一基线 `46353a5436637832f5adadb7bdef6b45cdeada23` 创建独立 Worktree 和分支 `codex/verify-iss003-employee-permissions`。本轮先核对现有 `permissions.py`、`sales_scope.py`、采购/财务范围服务、API ViewSet/Serializer 及前端路由守卫；没有修改 `DEVELOPMENT_SUPERADMIN`、`RBAC_ENFORCEMENT`、角色模板或任何业务代码。
+
+在隔离 SQLite 与合成账号下，以 `DEBUG=false`、`DEVELOPMENT_SUPERADMIN=false`、`RBAC_ENFORCEMENT=true` 执行 `test_functional_rbac`、`test_sales_data_scope`、`test_procurement_data_scope`、`test_finance_data_scope`、`test_reporting`，共 `131` 项通过。覆盖 `self`、`department`、`department_tree`、`all`，缺模块权限、匿名拒绝、列表、详情、搜索、报价导出、报表 CSV、跨模块关联、财务流水、采购共享成本分配和字段脱敏。Django system check、`makemigrations --check --dry-run` 及全新 SQLite 连续迁移至 `0089` 通过。
+
+本轮没有发现能由当前代码与测试明确证明、且可安全最小修复的权限缺陷；采购共享路径仍只开放必要识别字段，不扩大客户、报价、利润或资金信息。并行 Django 全量测试在克隆 SQLite 数据库阶段因托管 Worktree 路径无法打开数据库而未进入断言，不记为全量 PASS；前端依赖缺失，真实员工 Chrome 桌面/窄屏 UI 也未冒充通过。完整矩阵、拒绝/通过路径、命令和边界见 [`ISS-003 验收报告`](uat-evidence/iss-003-employee-permissions/README.md)。
+
+ISS-003 仍保持 `BLOCKED`：正式员工账号、真实组织树、生产 PostgreSQL、部署层会话/文件 URL 和真实 Chrome UI 尚未验证；不使用开发超级管理员或 SQLite 结果替代这些证据。本轮未主动运行或查询 GitHub CI，最终提交使用 `[skip ci]`；未连接生产、未合并 `master`、未关闭 Issue，交付后等待独立审查。
+
+## ISS-021 正式销售订单数量变更集成（2026-10-26）
+
+从统一基线 `b3559f3bf83b967d06166bd409b00fc92e4e5902` 创建独立 worktree / `codex/next-iss-021-integration`，比较旧开发与审查分支后只迁移所需差异。新增迁移 0085 接续 0084，不复制旧分支 0078、不改写已发布迁移；保留 ISS-037 主体快照和 ISS-039 共享采购规则。正式 SO 原编号/行保留，支持数量增减、已发货下限、已收款保护、版本冲突、幂等、历史与人工采购处理提示；不新增复杂审批。
+
+SQLite 全量 904 项（跳过 13）、定向 38 项、Node 151 项、Vitest 650 项、最终数量组件 2 项及构建通过。隔离真实 API、桌面/390×844 内置浏览器验证增减、取消、刷新、发货下限和已收款拒绝；Chrome Use 连接与其他对话冲突后，用户明确授权使用内置浏览器。采购/归属/收货/发货/库存流水/资金事实逐字段前后哈希相同，原主体快照不变。新库及 0084→0085 升级/空表回滚重放验证完成；本地 PostgreSQL 与独立视觉审查未完成，不冒充通过。证据和差异说明见 [ISS-021 交付索引](uat-evidence/iss-021-integration/README.md)。
+
+ISS-021 更新为 `FIXED_PENDING_REVIEW`。未改其他任务分支、未部署、未合并 master、未关闭 Issue，交付后等待统一独立代码/业务/迁移/权限/视觉审查。
+
+远端 CI run `40257290673` 三个 job 均在启动步骤前失败，GitHub 注释明确为账户付款/消费限额问题，原始证据已归档。CI/PostgreSQL 验收保留 BLOCKED，需仓库所有者处理后重跑最终 SHA；没有改计费设置或工作流，不以本地通过冒充 CI 成功。
+## ISS-029 报价收件资料版本保存（2026-10-25 测试，2026-10-26 交付）
+
+实现与原始证据 SHA：`fbdb9c58987d5040c97923784ce2cf622dfe8755`。GitHub CI `40254982268` 三任务均未启动；backend check-run 注解明确账号付款/额度问题，不能宣称 CI 或 PostgreSQL 通过。此后仅补充交付文档，等待账号恢复后重跑及独立审查。
+
+从统一基线 `b3559f3bf83b967d06166bd409b00fc92e4e5902` 创建独立 worktree 和 `codex/iss-029-quote-recipient-snapshot`。完整读取用户桌面 2026-10-24 规则包的 ISS-029 原文，核对 ISS-037、ISS-020 及既有创建、草稿、正式状态、修订、PI 和 Excel。仅修复已确认的显式空邮箱被预填替代、异步联系人预填覆盖手工输入或较新客户资料两类缺口。继续复用现有 Quote 四字段与修订链，无新模型、迁移、客户主档回写或生命周期更改。
+
+报价/快照定向 72 项、Django 全量 881 项（13 项跳过）、前端 Node 151 项、有效 Vitest 652 项（65 文件）、生产构建及真实 Chrome 连接隔离 Django 的 A/B 完整场景通过。已保存真实 HTTP 响应、1440px/700px 截图、三份实际下载 XLSX 和数据库单元格对账；主联系人/客户地址修改及未保存编辑均未改变旧版资料。模型和已执行迁移检查通过。证据及具体命令见 [ISS-029 验收](uat-evidence/iss-029-quote-recipient-snapshot/README.md)。
+
+ISS-029 从 `NEEDS_VERIFICATION` 更新为 `FIXED_PENDING_REVIEW`；无新增 ID、无关闭事项。按唯一表格 ID 最新状态核对共 123 项：OPEN=5、BLOCKED=22、NEEDS_VERIFICATION=24、FIXED_PENDING_REVIEW=62、CLOSED=10。其他任务状态、原有工作树及分支保持。GitHub CI 需按最终提交核对；本地 SQLite 通过不代表 PostgreSQL/生产验收，等待独立代码、权限和视觉审查，不合并 master。
+
 最新只读审查：R1-READINESS-01（2026-10-19），基线199a21e0f407ba9ad772a5dec86e0b30dbd0c9b5。全系统试用准备审查完成；R1-FIN-P3-B按授权记录阶段性验收通过，但不等同生产就绪。ISS-105 OPEN、ISS-108/121 BLOCKED；真实员工试用门槛为ISS-003、ISS-018、ISS-055。未修改业务代码，不启动正式员工UAT、RBAC或部署。详见[R1-READINESS-01审查报告](R1-READINESS-01-全系统试用准备与业务阻断问题审查.md)。
 
 上一轮：2026-10-18至19 R1-FIN-P2-A，基线1b2ca0eb5b1947dd53f5ab995828dd33f514e0d4，前置三项CI SUCCESS。用户已正式批准D01–D08，完成最小人民币银行净额事实/来源分配、增量两表迁移、人工确认/幂等/事务/数据范围及退款、作废、替代保护。真实隔离HTTP与旧数据对比、迁移保护、PG实际并发和全量回归见[P2-A验收](R1-FIN-P2-A-人民币资金事实与结汇后端验收.md)。ISS-105保持OPEN；新增ISS-108 BLOCKED待更正/来源解除等细则，新增ISS-109待复审登记全量CI跨日旧测试修正，其他既有状态不变。无前端产品UI变更，无报表来源/历史金额/精度/核销/履约/利润/库存算法变更；不设启用日、不配置真实账户或启用正式RBAC。精确HEAD三项CI后停止，等待ChatGPT独立复审，不自动进入P2-B、员工UAT或部署。
 
-最新实施：2026-10-18 R1-FIN-P1，基线ad3a08ebd47ad4b94ffe8f6ebfed5f083b9ac57e。现有混合币种统计统一澄清为账面人民币折算参考，页面/API/CSV一致，包含原币CNY既有流水；不代表银行实际到账或已结汇。相同隔离合成数据前后金额及CRM记录哈希一致；未改模型、迁移、金额、核销、退款、利润、成本或开发权限。ISS-105保持OPEN，新增ISS-107 BLOCKED登记模型元数据与兼容遗留。见[P1验收](R1-FIN-P1-现有财务统计口径澄清验收.md)。推送并核实精确HEAD三项CI后停止，等待ChatGPT独立代码和视觉复审；不自动进入P2、正式RBAC、员工UAT或部署。
+最新实施：2026-10-18 R1-FIN-P1，基线ad3a08ebd47ad4b94ffe8f6ebfed5f083b9ac57e。现有混合币种统计统一澄清为账面人民币折算参考，页面/API/CSV一致，包含原币CNY既有流水；不代表银行实际到账或已结汇。相同隔离合成数据前后金额及CRM记录哈希一致；未改模型、迁移、金额、核销、退款、利润、成本或开发权限。ISS-105保持OPEN；当时新增ISS-107 BLOCKED登记模型元数据与兼容遗留，2026-10-24跟进已完成最小元数据修复并更新为FIXED_PENDING_REVIEW。见[P1验收](R1-FIN-P1-现有财务统计口径澄清验收.md)。推送并核实精确HEAD三项CI后停止，等待ChatGPT独立代码和视觉复审；不自动进入P2、正式RBAC、员工UAT或部署。
 
 最新准备：2026-10-18 R1-FIN-P0。基线da39ea3aa986df9faa12e79b1da3adece03260b7三项CI经重新核实SUCCESS；已确认原币辅助/人民币实际资金/折算参考边界。仅完成源码审查、两类增量记录方案、精度与历史风险、分阶段任务及D01–D08待决清单，见[准备报告](R1-FIN-P0-财务统计口径确认及实施准备.md)。无核心代码、迁移、数据库或历史金额变更；ISS-105保持OPEN，001/106仍待复审，其他状态不变。提交文档后停止等待ChatGPT独立审查，不自动实施后续P1/P2/P3、正式RBAC、员工UAT或部署。
 
@@ -70,6 +107,10 @@
 | R0-F4 UI/UX（独立复审记录） | 代码及自动化/已覆盖交互 PASS，有条件封版；截图独立视觉 BLOCKED | `8cb265e` | [CI #38539359761](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38539359761)：Backend、Backend PostgreSQL、Frontend 全部 SUCCESS | PASS（据用户转述 ChatGPT 独立代码/自动回归审查） | ISS-073、ISS-074、ISS-075；旧业务事项保留 | ISS-071、072 按已覆盖代码和交互范围关闭；截图缺口 ISS-073 继续独立跟踪。 |
 | R0-F5 UI/UX（本轮） | 实现、自动回归、隔离 SQLite 与 Codex 内置浏览器操作记录完成；截图已归档，等独立复审 | 实现 `92e8c46d4ce01e18cd164e152d345c58433c9305`；台账 `0ec186b71f0395d52526b308e385b189a582ead6`；2026-10-15 截图补证提交另见 Git 历史 | [CI #38596225877](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38596225877)：Backend、Backend PostgreSQL、Frontend 全部 SUCCESS | UNKNOWN（待 ChatGPT 独立复审） | ISS-007、ISS-073–078 及历史未关闭项 | 13张截图解除R0-F5归档缺口；实际附件文件选择器及内容访问未完整验收，独立视觉仍不能由 Playwright/Codex 目视替代。详见 [R0-F5 验收](R0-F5-联系人与客户跟进验收.md)。 |
 
+## 2026-10-24 ISS-017 私有附件专项
+
+本轮在 `codex/iss-017-private-files` 独立 worktree 基于 `71ec4a4c2d860b9944624a1434d9d7580e9a6d38` 完成应用层私有媒体审查与最小补修：跟进附件、报价图片、SKU 图片/缩略图和产品证书均由认证 API 按模块权限返回；证书新增 ERP 私有文件字段并拒绝外部 URL；银行凭证现有模型仅为权限控制的引用、哈希与说明。Django 定向 API 回归 68 项、定向 Vitest 8 项、Chrome 通道浏览器回归 13 项（含 390px）和 Vite build 通过；Chrome Use 已实际检查证书列表及上传表单。证据见 [ISS-017 私有附件验收](uat-evidence/iss-017-private-files/README.md)。由于没有目标环境对象存储/CDN/Nginx/反向代理配置，ISS-017 仍为 BLOCKED；本轮不宣称生产安全通过，不部署、不合并、不关闭 Issue。
+
 ## 依赖次序
 
 以下仅为问题台账的建议依赖，不是自动开工许可：
@@ -93,7 +134,7 @@
 ## 当前阻塞和阶段决策
 
 - 内测角色验收仍是阶段门槛；开发身份照常保留，待用户明确进入内测并授权隔离账号后执行（ISS-003）。
-- 订单完成/收款语义、供应商 MOQ、合同变更审批范围、历史财务归属、跨权限成本委托和订单历史主体展示需要业务决定（ISS-001、021、022、037–039）；采购状态文案、冲销反馈和越权客户错误提示仍需后续复验/修复（ISS-053–055）。
+- 订单完成/收款语义、供应商 MOQ、合同变更审批范围、历史财务归属、跨权限成本委托和订单历史主体展示需要业务决定（ISS-001、021、022、037–039）；冲销反馈和越权客户错误提示仍需后续复验/修复（ISS-054–055）。ISS-053 已完成当前基线核实，仍待统一独立复审。
 - 对象存储 ACL、联合备份恢复、生产安全配置、审计防篡改和 staging 数据迁移属于部署准备，当前不可把它们表述为已验收（ISS-017、018、043、044、047、051）。
 - R0-E1 独立复审为 PARTIAL PASS；本轮治理文件通过独立审查前不宣称 R0-E1 或 R0-D4 阶段封版。
 
@@ -117,6 +158,8 @@ R0-F1 最终独立结论与关闭项见上一节，允许有条件封版，不�
 ## 2026-10-14 R0-F2 独立复审与 R0-F3
 
 用户转述 ChatGPT 对 R0-F2 `04d3526` 独立代码及自动回归 PASS，允许有条件封版；CI #38503175230 三项 SUCCESS。ISS-062、ISS-066 继续保留，独立视觉证据 BLOCKED，ISS-063–065 补记代码结论但保留待视觉复核。旧报表 URL 无权来源可能残留表单的风险登记 ISS-067 / NEEDS_VERIFICATION，未宣称复现。
+
+2026-10-23 在统一基线 `c356e57014d28295485d52df23612c2fe6c02444` 的独立 worktree 中核实 ISS-067：真实 Chrome 下无权员工打开销售旧 URL 时，来源选择器仅保留有权来源并显示不可访问提示，未发出无权来源查询；后端强行请求返回 403 且不含业务 rows。切换有权来源、刷新、返回、保存、重载及 ISS-042 共享模板路径均通过。仅新增回归测试和证据，ISS-067 仍保持 NEEDS_VERIFICATION，等待独立复审；详见 [`ISS-067 核实报告`](uat-evidence/iss-067-report-permission/acceptance-report.md)。
 
 R0-F3 按历史库存 Phase A/B 框架增量优化：概览与流水分页、基础单位与预留展示、窄桌面工作台、日志失败与重试、手工调整加载/保存交互及冲销反馈。计算、收货/发货、预留、冲销业务规则、历史、成本、模型和权限配置不变。新增 ISS-068–069 待复审；ISS-070 为截图归档/独立视觉缺口。旧库存 ISS-006、013–015 等保留。
 
@@ -201,3 +244,344 @@ ISS-122、ISS-123 的独立复审通过结论已同步为 CLOSED；ISS-105 OPEN�
 基线为 `199a21e0f407ba9ad772a5dec86e0b30dbd0c9b5`。本轮只读复核全系统模块、当前代码/测试、权限、部署配置和 123 个唯一 Issue 的最后一次状态；未修改业务代码、模型、迁移、历史金额或权限执行策略。R1-FIN-P3-B 已按授权记录为财务功能阶段性验收通过，但不等同于生产就绪。ISS-105 保持 OPEN，ISS-108 和 ISS-121 保持 BLOCKED。
 
 当前只具备开发超级管理员身份下的隔离合成数据演练条件，不具备真实员工内部试用条件。A 类门槛为 ISS-003 正式员工身份/数据范围、ISS-018 数据库与媒体联合备份恢复、ISS-055 跨客户 API 范围；其余 Issue 的 A–D 分类、模块边界、最小试用方案和退出条件见 [R1-READINESS-01 审查报告](R1-READINESS-01-全系统试用准备与业务阻断问题审查.md)。本轮没有启动正式员工 UAT、RBAC 或部署，完成文档后停止等待 ChatGPT 独立审查。
+
+## ISS-041-A 报表中心两级交叉分组基础能力（2026-10-22）
+
+基线为 `codex/iss-062-date-window` / `9edbb6488a66a0801ecc1e5bc842df7866c6c7dc`，在独立 worktree 和 `codex/iss-041-multidim-01` 分支实施。依据 2026-10-20 业务整理稿，本轮在现有单维度报表引擎上增量支持可选第二统计维度：后端交叉聚合、独立分组结构、去重单据数、分单位数量、CSV 双分组列、维度权限校验；前端第二维度选择、旧 URL/localStorage 兼容、两级表格/条形图和双向基础下钻。没有新增数据库迁移，没有修改实际银行人民币资金事件口径、账面人民币折算参考、预计利润、自定义报表未来日期查询能力或 ISS-121 状态。
+
+本轮自动化与真实 Chrome 证据已归档到 `docs/uat-evidence/iss-041-multidim-01/`，当前状态为等待独立代码审查；ISS-041 仍保持 `Enhancement / BLOCKED（延期）`，本节不代表关闭 ISS-041。原始销售订单/商品明细独立详情列表及客户、产品、SKU 详情页经营分析入口继续作为后续 ISS-041 子任务。
+
+## ISS-041-B 经营分析原始明细下钻与业务详情页入口（2026-10-22）
+
+基于 `codex/iss-041-multidim-01` / `66338b701afed071bd6482a33a8cca8ebc20bfa2` 创建独立 worktree 和 `codex/iss-041-detail-drill` 分支。本轮在 ISS-041-A 两级分组基础上增量增加销售/采购原始明细 API、服务端页大小限制、排序、空状态、原始订单详情链接、商品行与订单金额调整分离，以及客户、产品、SKU详情弹窗到现有报表中心的安全入口；保留日期、金额、历史订单隔离、数据范围、个人图表、URL恢复、CSV和既有下钻行为，不新增数据库迁移。
+
+后端32项报表测试、前端定向15项 Vitest、Node 143项、前端生产构建、报表中心真实 Chrome 15项和 ISS-041-B 1440/700截图测试均已通过，证据归档至 `docs/uat-evidence/iss-041-detail-drill/`。当前仅将 ISS-041-B 记为 `FIXED_PENDING_REVIEW` 说明，等待独立代码、权限与视觉复审；ISS-041 仍为 `Enhancement / BLOCKED（延期）`，不提前关闭，不进入 ISS-042/ISS-048。
+
+## ISS-042-DEV 团队共享报表模板（2026-10-23）
+
+基于 `codex/iss-041-detail-drill` / `0bba34c0e7139b77a88d2e838dbf921eff427373` 创建独立 worktree 和 `codex/iss-042-shared-reports` 分支。本轮在既有报表引擎、ISS-041-A 两级分组和 ISS-041-B 明细能力之上增量实现共享报表模板：新增 `SharedReportTemplate` 模型及迁移 `0079_shared_report_template`，服务端配置白名单/维度、来源和报表权限校验，草稿/发布/取消发布、版本冲突保护、OperationLog 审计和历史读取；前端新增团队模板列表、使用、创建、编辑、发布、取消发布、删除及冲突提示，保留旧 localStorage 图表、旧 URL、日期范围和当前查询的兼容性。共享模板只保存配置，不保存结果快照或日期，实际查询仍由当前用户权限和当前报表逻辑执行。
+
+后端共享模板 7 项、既有报表 32 项、SQLite 全量 799 项（跳过 13 项）、前端定向 Vitest 7 项、旧概览报表 Vitest 15 项、Node 143 项、生产构建、共享模板真实 Chrome 跨会话测试和旧报表中心 Chrome 15 项已通过；1440px、1024px、700px 截图及日志归档至 `docs/uat-evidence/iss-042-shared-reports/`。本轮不新增共享审批/复制/版本回滚治理，不改变实际银行人民币资金统计或 ISS-121 状态。当前标记为 `FIXED_PENDING_REVIEW`，等待独立代码、权限、审计与视觉复审；ISS-042 仍为 `Enhancement / BLOCKED（延期）`，不提前关闭。
+
+## ISS-042-FIX-01 共享模板并发版本与删除审计集中补修（2026-10-23）
+
+基于 `codex/iss-042-shared-reports` / `6d5ce10a2ce8a432b427371542eac7378daca655` 继续修复发布/取消发布未递增配置版本、旧版本并发操作缺少原子冲突保护，以及删除模板后历史接口依赖现存模板的问题。发布、取消发布和编辑均在行锁事务内校验提交版本；重复状态操作返回 409 且不生成虚假审计；管理权限可按原模板 ID 读取删除后的完整模板审计，普通查看权限无法读取删除后的配置历史，通用操作日志也保持实体范围隔离。
+
+本轮新增/补强并发、重复操作、删除后历史、权限和非法 ID 测试；SQLite 全量 800 项（跳过 13 项）、共享模板 8 项、报表回归 32 项、前端定向 7 项、Node 143 项、生产构建、真实 Chrome 共享模板 1 项及报表中心回归 15 项通过，证据归档至 `docs/uat-evidence/iss-042-fix-01/`。Chrome 仍区分 mock API 交互验收与真实 Django APIClient 权限/并发验收；真实 Django 跨账号浏览器集成因当前环境无登录测试服务账号保留待办。当前标记为 `FIXED_PENDING_REVIEW`，ISS-042 仍为 `Enhancement / BLOCKED（延期）`，不提前关闭。
+
+## ISS-048 财务概览指标下钻（2026-10-23）
+
+基于 `codex/iss-042-shared-reports` / `fb859b91f68bb62c539d5439c65b52c06f13a58c` 创建独立工作树和 `codex/iss-048-finance-drill` 分支。本轮逐项核对财务概览卡片来源、金额计算、日期依据和权限：对有可靠来源的合同销售额、订单采购归属成本、订单费用、预计订单利润、账面收支、应收应付和未核销预收预付新增服务端分页/排序构成明细；详情复用既有正式订单、已确认流水、计划和数据范围过滤，并链接现有订单/财务流水路由。银行实际人民币资金不复制统计逻辑，卡片入口定位到既有已确认银行事件明细和原始事件链接，继续使用 `bank_date`/`bank_net_amount` 及确认状态规则。无可靠依据的会计利润、银行账户余额和未确认凭证未伪造下钻。
+
+新增财务下钻后端测试、数据范围/权限测试和前端交互测试；SQLite 全量 808 项（跳过 13 项）、财务/RBAC 定向 65 项、Node 143 项、财务 Vitest 12 项、生产构建、ISS-048 真实 Chromium mock API 桌面/窄屏 2 项、既有财务/报表 Chrome 回归 21 项均通过。真实 Django APIClient 权限与口径测试、真实 Chromium 页面截图和原始日志归档至 `docs/uat-evidence/iss-048-finance-drill/`；浏览器测试使用 mock API，跨账号 Django 浏览器集成待集成环境服务账号，PostgreSQL/CI 按约定保持 PENDING。当前仅记录为 `FIXED_PENDING_REVIEW`，ISS-048 仍保持 `P3 / BLOCKED（延期）`，等待独立代码、财务口径、权限和视觉复审，不提前关闭。
+
+## ISS-048-FIX-01 最小权限一致性补修（2026-10-23）
+
+基于 `codex/iss-048-finance-drill` / `f2a44dafabdd5cc7b4c5b95abed3865867fd9e7b`，仅修复应付款财务指标的概览与下钻权限不一致：`payable_count`、`payable_rmb` 改为沿用采购查看权限，不再额外要求订单查看权限；采购成本、订单费用、预计利润、销售、应收和其他财务指标保持原权限矩阵。应付款明细按采购侧展示供应商和采购单链接，并继续复用既有财务计划数据范围过滤。
+
+新增无订单权限但有采购/财务权限、无采购权限反向拒绝、既有范围一致性和前端权限边界测试。后端 67 项财务/RBAC 定向测试、前端 Node 144 项、财务 Vitest 12 项、生产构建及真实 Chromium 6 项回归通过。证据见 `docs/uat-evidence/iss-048-finance-drill/fix-01/`。ISS-048 仍保持原有 `P3 / BLOCKED（延期）` 和 `FIXED_PENDING_REVIEW`，不提前关闭；PostgreSQL、CI 和真实 Django 跨账号浏览器集成仍待外部环境验收。
+
+## ISS-053 采购单状态中文显示核实（2026-10-23）
+
+基于统一基线 `c356e57014d28295485d52df23612c2fe6c02444` 建立独立 worktree 和 `codex/iss-053-purchase-status` 分支。本轮仅核实，不修改采购业务代码：`PurchaseOrder` 继续保存英文枚举，序列化器提供 `status_display`，采购列表、详情、草稿编辑工作台、状态筛选、采购实体上下文、销售订单关联采购单均通过 API 和真实 Chrome 验证中文显示；`ordered` 的筛选与存储值仍保持 `ordered`。后端采购相关 39 项、前端定向 Vitest 52 项、Chrome Playwright 11 项和生产构建通过，截图/API/日志见 `docs/uat-evidence/iss-053-purchase-status/`。当前没有确认仍存在的缺陷，也没有本轮业务修复；历史英文显示在当前基线未复现，ISS-053 保持 `NEEDS_VERIFICATION`，等待统一独立审查，不自行关闭。
+
+## ISS-049 / ISS-053 / ISS-067 统一集成验收（2026-10-23）
+
+在统一基线 `c356e57014d28295485d52df23612c2fe6c02444` 上使用独立 worktree 建立 `codex/integration-049-053-067`，按无冲突的 `--no-ff` 顺序合并 ISS-049、ISS-053、ISS-067。三项源码、测试、截图及历史证据均保留；文档台账仅补齐 ISS-049 当前状态，并修正阶段阻塞描述与 ISS-053 当前核实结果的一致性。完整 API 响应、浏览器观察、测试日志和剩余风险见 [`统一集成验收报告`](uat-evidence/integration-049-053-067/README.md)。
+## R1-ISS-037-P1 正式商业单据主体快照修复（2026-10-21）
+
+基于最新 `origin/master` 创建独立分支 `codex/r1-iss-037-p1`，仅修复正式销售订单和采购订单的主体快照缺口。Order 在正式确认时保存客户名称、国家/地区、地址、联系人、电话和邮箱；PurchaseOrder 在正式下单时保存供应商名称、地址、联系人、电话和邮箱；Supplier 增加可选地址字段。没有数据迁移回填，历史缺失值保留未知；正式页面显示真实快照，当前主档仅作为明确标注的参考。Quote/QuoteItem/PI 既有修订链、主体及 SKU 行级快照未重构，真实 Chrome 已核对报价/PI导出文件使用历史主体。
+
+旧开发分支新增未发布的 `0078_formal_party_snapshots`，未修改已发布迁移。SQLite 0076→0077→0078→0077→0078 迁移循环、后端 773 项（跳过13）、前端单元 138 项和构建均通过；本机无 PostgreSQL 5432 监听，PostgreSQL 与 GitHub Actions 保持待环境可用后复核。该 `0078` 与 R1-SKU-01、R1-MOQ-02 同号迁移均依赖 0077，已作为旧分支历史保留；实际整合须重新核对基线迁移图，不复制同号迁移或改写已发布迁移。ISS-037 保持 `FIXED_PENDING_REVIEW`，不关闭，等待独立代码、数据权限和视觉复审。
+
+## R1-ISS-037-P1-FIX-01 历史商业单据展示遗漏补修（2026-10-21）
+
+在 `codex/r1-iss-037-p1` 上完成定向展示修复，提交 `126be74d5a2269a8f947570ca0803771feab6a1e`。报价列表和详情优先显示保存的 `buyer_company_name`；正式采购关联卡片优先显示 `supplier_name_snapshot`；缺失快照明确显示“历史主体未记录”，实时主档仅以单独标签显示。未新增模型或迁移，未改写历史单据、金额、搜索或权限规则。SQLite 后端、前端 140 项单元测试、构建及真实 Chrome/PI Excel 证据已完成；PostgreSQL 与 GitHub Actions 仍待环境/额度恢复。ISS-037 继续保持 `FIXED_PENDING_REVIEW`。
+
+## R1-ISS-037 集成兼容性验收（2026-10-24）
+
+基于统一基线 `54925e0a10a48c16ba3b66bbab9e433f48a0e2d7` 在独立 worktree 创建 `codex/next-iss-037-integration`。审查发现该基线已使用 `0078_historical_contract_scope` 和 `0079_shared_report_template`，因此没有复制旧分支同号迁移；正式主体快照字段以新的 `0080_formal_party_snapshots` 依赖 `0079` 接入，未修改或删除既有迁移。最初尝试用同号迁移汇合时，回退到旧迁移会出现字段重复删除；该真实兼容问题已通过上述迁移重编号修正，前进、回退和旧资金记录保护回归均通过。
+
+集成保留报价/PI既有主体与 SKU 快照，并保留销售订单六项客户主体快照、采购单五项供应商主体快照、缺失历史时“历史主体未记录”及当前主档单独参考的规则。当前隔离数据库中将客户/供应商主档改名后，报价 `QT-2026-001`、订单 `SO-2026-001` 和采购单 `PO-ISS037-001` 的 API、真实 Chrome 列表/详情仍显示原快照；PI Excel 导出保留 `ISS037 Buyer Before Rename`。未修改 ISS-021 数量变更代码、生命周期转换规则或正式 RBAC策略。完整命令结果、API摘要、导出和截图索引见 [`ISS-037 集成验收`](uat-evidence/r1-iss-037-p1/INTEGRATION-README.md)。ISS-037 仍保持 `FIXED_PENDING_REVIEW`，不自行关闭。
+
+## ISS-039-INT 共享采购成本分摊与跨订单权限集成（2026-10-24）
+
+本轮从统一基线 `54925e0a10a48c16ba3b66bbab9e433f48a0e2d7` 创建独立 worktree 和 `codex/next-iss-039-integration`，对照旧分支 `codex/r1-iss-039` 的成果逐文件迁移，不覆盖新代码，也未触碰其他任务分支。原问题已先复现：采购修改员没有销售订单查看/修改权限时，旧成本分配保存路径返回 403。
+
+按已明确的 ISS-039 规则完成最小补修：成本归属写入仅要求 `purchases.update`；新增只返回 ID、订单号、状态的候选接口；采购成本 UI 不再显示客户名、销售价格或利润；只读/无权来源继续脱敏或拒绝。商品数量、商品金额、公共费用和总成本守恒；版本冲突、取消目标和保存失败保持原子；审计保留操作人、时间和前后记录；不修改银行付款、库存、销售单据、金额计算或审批层级。
+
+后端 ISS-039/采购成本/数据范围定向测试 25 项、前端 Node 单元 146 项、生产构建和真实 Chrome 3 项通过。Chrome 覆盖授权采购员、只读采购员、无权角色、旧详情 URL、刷新恢复、候选来源、实际 403 和 1440/700 窄屏截图；证据见 `docs/uat-evidence/iss-039-integration/`。浏览器角色使用隔离 mock API，真实 Django 权限/金额/原子性/审计由 APIClient 覆盖，跨账号真实登录浏览器服务账号仍是环境边界，未伪称为已完成。
+
+ISS-039 台账更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue；本轮不合并 master，提交并推送后等待统一独立代码、权限、业务、审计和视觉复审。
+
+## ISS-026 供应商生命周期与禁止业务硬删除（2026-10-24）
+
+基于统一基线 `71ec4a4c2d860b9944624a1434d9d7580e9a6d38` 在独立 worktree 创建 `codex/iss-026-supplier-lifecycle`。本轮先核实供应商主档、`SupplierViewSet`、采购候选来源、采购单主体快照和前端 `ResourcePage`；仓库未发现独立的“2026-10-24 规则包”文件，故以用户本轮明确的 ISS-026 规则为验收依据，不补造缺失规则。
+
+供应商新增 `is_active` 字段及 `0081_supplier_lifecycle` 迁移；普通 `DELETE` 统一返回 405，前端删除入口移除，改为停用/启用动作。停用/启用在行锁事务中写入操作审计；规则、Supplier SKU、历史采购和人工来源候选均排除停用供应商；新采购序列化与确认路径拒绝停用供应商。现有采购单的 `PROTECT` 外键及供应商名称/地址/联系人快照未改动，历史采购、付款和来源保留；未修改 ISS-039 成本分配或 ISS-037 历史快照规则。
+
+验收证据见 [`ISS-026 验收记录`](uat-evidence/iss-026-supplier-lifecycle/README.md)：供应商生命周期专项后端 4 项、相关候选/采购/快照/ISS-039/037/040 回归 33 项、前端 Node 150 项、生产构建、全新数据库顺序迁移检查和真实 Chrome 桌面/390×844 窄屏操作均通过。Playwright 供应商浏览器套件未能启动，原因是隔离 worktree 没有 `@playwright/test`，补依赖时受 Windows 文件锁阻断；不将该套件宣称为通过。ISS-026 仅记录为 `FIXED_PENDING_REVIEW`，不关闭、不合并 master，等待统一独立审查。
+
+## ISS-107 实际银行人民币与账面折算参考金额区分（2026-10-24）
+
+基于 `71ec4a4c2d860b9944624a1434d9d7580e9a6d38` 创建独立 worktree 和 `codex/iss-107-finance-labels`。逐项复核财务概览、财务流水、报表、银行资金、API、CSV、模型元数据和历史共享报表配置后，确认公开数据路径已经使用“人民币折算参考”和“银行实际人民币资金”两套口径；本轮真实缺陷是 `Transaction.rmb_amount` 的模型 verbose_name 仍称“实际人民币金额”，以及资源入口描述不够明确。
+
+最小修复为模型元数据迁移 `0081_transaction_rmb_reference_label` 和资源描述澄清。旧英文 API 键、`source=cash`、旧报表配置和 ISS-048 统计/权限逻辑均保留；未改写任何金额、汇率、流水或银行事实，不把两种金额相加。合成批次为账面 USD 100 × 7.1 + CNY 250 = ¥960.0000，银行已确认人民币净额为 ¥705.00；迁移前后同一批数据库业务金额哈希均为 `2c10f1295ccfb73c4f8c89773b37004f20d5f206732fee5e219ce02062f55fa7`。完整 API/CSV、测试和截图索引见 `docs/uat-evidence/r1-fin-p1/ISS-107-FOLLOWUP.md`。ISS-107 更新为 `FIXED_PENDING_REVIEW`，不关闭、不合并 master，等待独立复审。
+
+## ISS-026 / ISS-107 / ISS-017 统一集成验收（2026-10-24）
+
+基于统一基线 `71ec4a4c2d860b9944624a1434d9d7580e9a6d38` 建立独立 `codex/integration-026-107-017` Worktree，已核实并集成三个源提交：ISS-026 `3625f472b028146c062823990322de32a98759a1`、ISS-107 `60df1b045c06c7f2146b44e4a60866b1786024cc`、ISS-017 `c5fc1c11b9728655a363a4f2a5ba0544584a8d07`。三个 `crm.0081` 并行叶节点均依赖 `0080`，仅新增无操作 `0082` merge migration；全新库、既有库升级以及回滚重放均通过，未改写已发布迁移。
+
+ISS-026 供应商停用/恢复、禁止硬删除、采购候选/历史快照与审计规则；ISS-107 银行实际人民币净额与账面折算参考口径；ISS-017 私有附件入口与证书外链拒绝规则均保留。Django 全量 862 项（13 跳过）通过，前端 Node 151、Vitest 645、生产构建和真实 Chrome 关键页面回归通过。旧证书测试中与 ISS-017 规则冲突的一处外部 URL 200 断言已最小同步为 400 并验证数据不变。完整报告见 `docs/uat-evidence/iss-026-supplier-lifecycle/INTEGRATION-026-107-017.md`。
+
+三个源任务 GitHub CI 均为失败状态；集成提交 `3571d374adb8e41d515265a5c429639d5b8f4904` 对应 CI 运行 `40067690763` 的 backend、frontend、backend-postgres 也在可见步骤前失败，且本地没有 PostgreSQL/生产代理环境。因此集成分支继续保持 `FIXED_PENDING_REVIEW`，不作为 master 合并条件，不关闭 Issue，等待统一独立代码、数据库、权限和部署安全审查。
+
+## ISS-019 经营报表 CSV 准确性复核（2026-10-24）
+
+基于统一基线 `af018ac63cf71143d223b9f6db4a087707495693` 在独立 worktree 创建 `codex/iss-019-report-csv`。先审查 ISS-041、ISS-042、ISS-048、ISS-062、ISS-107 的报表、下钻、共享模板、财务口径和既有 CSV 证据；确认草稿/已提交查询状态、币种说明、单位分开、账面/银行实际资金分离、公式注入防护和共享模板当前权限复核原本已存在。本轮不重建报表引擎，不修改 ISS-041/042/048/062/107 的业务规则。
+
+确认的唯一真实缺陷是 `report_data` 的 CSV 请求在 DRF 识别为 `export` 动作时，显式检查了 `reports.export` 但未在函数内再次要求 `reports.view`；已最小补充查看权限检查，并新增 `export=true`、`view=false` 的 403 回归。真实端点生成的 CSV 含 UTF-8 BOM，客户名 `=2+2` 输出为 `'=2+2`；API 与 CSV 金额均为 145、单据数均为 2、数量分别为 `2.00 pcs / 3.00 box`。新增浏览器用例验证未提交客户筛选不进入 CSV 请求，真实 Chrome 16/16 通过。后端 863/863、Node 151/151、有效 Vitest 645/645、生产构建通过；完整索引见 [`ISS-019 CSV 准确性复核`](uat-evidence/iss-019-report-csv/README.md)。ISS-019 更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue、不合并 master，等待独立复审。
+
+GitHub CI run `40073371582` 在 frontend、backend、backend-postgres 三个 job 的可见 steps 前失败，保持为 CI/环境剩余风险，不将本地测试冒充 CI 或 PostgreSQL 通过。
+
+## ISS-008 国家编码及模糊搜索选择框（2026-10-24）
+
+基于统一基线 `af018ac63cf71143d223b9f6db4a087707495693` 创建独立 worktree 和 `codex/iss-008-country-select`。本轮先审查客户 `country/region` 字段、既有 ComboInput、报价编号/修订链和 `pycountry` 使用；没有新增迁移，也没有批量改写历史客户国家资料。
+
+新增本地版本化 249 条 ISO 3166-1 目录、英文/中文/代码/简称搜索别名和歧义保护；客户交互式新建/编辑必须明确选择并保存 alpha-2，未知历史导入文本原样保留。客户列表显示和筛选兼容标准代码、旧文本和待确认历史值；新报价编号使用保存后的国家代码，历史报价编号和修订版不变。
+
+后端 SQLite 全量 871 项（跳过 13）、ISS-008/导入/报价/客户回归 24 项、前端 Node 151 项、有效 Vitest 16 项、生产构建均通过。真实 Chrome 已完成客户桌面与 `390×844` 窄屏候选/保存/刷新回归，并检查报价列表和新建报价表单；截图及命令记录见 [`ISS-008 验收记录`](uat-evidence/iss-008-country-select/README.md)。本轮未执行 PostgreSQL/CI；直接未筛选 Vitest 入口存在仓库既有 node:test/jsdom 配置噪声，不纳入通过项。ISS-008 保持 `FIXED_PENDING_REVIEW`，等待统一独立代码、数据兼容、权限和视觉复审。
+
+## ISS-027 跟进日期可选与旧计划保护（2026-10-26）
+
+基于 `b3559f3bf83b967d06166bd409b00fc92e4e5902` 创建独立 worktree/分支 `codex/iss-027-followup-date`，读取桌面 2026-10-24 规则包原文。复用已存在的 keep/set/clear、日期可空和当前待办查询，仅修复分段日期非法输入仍能提交旧 modelValue，以及 keep 新增/编辑/删除重放历史安排覆盖客户当前计划的问题；无新增迁移、无批量改写数据。后端相关 79 项、前端有效 Vitest 30 项、Node 151 项、生产构建通过。ISS-049 URL筛选与员工数据范围回归保留。
+
+Chrome Use 成功读取客户当前计划及默认 keep，但后续表单输入和截图在多个标签反复超时，桌面/390×844 截图与真实操作验收仍为 PENDING。用户要求仅用 Chrome Use 后未继续原生电脑控制。证据和真实测试日志见 [ISS-027](uat-evidence/iss-027-followup-date/README.md)。ISS-027 保持 NEEDS_VERIFICATION，状态计数不变；代码待独立审查，未关闭 Issue、未合并 master。
+
+## ISS-024 / ISS-019 / ISS-008 统一集成验收（2026-10-25）
+
+基于统一基线 `af018ac63cf71143d223b9f6db4a087707495693` 建立独立 worktree 和 `codex/integration-024-019-008`，按 ISS-024 → ISS-019 → ISS-008 顺序集成。ISS-008 原预期分支首次核验时不在 GitHub，已确认本地成果后推送并用 `git ls-remote` 核实 `a14d3d929e0c64dbb06d375d9a0ffa832526af92` 远端可见；旧 `fix/quote-country-iso-resolution` 未冒充本轮成果。三项实现、测试与历史证据均保留，未改写 0080–0084 迁移链；ISS-008 没有新增迁移。
+
+集成只发生 `backend/crm/views.py` 与本阶段文档冲突，已保留客户级供应商偏好/停用过滤和本地国家目录两套逻辑，以及 ISS-019、ISS-008 两套阶段记录。全新 SQLite 迁移至 0084、已有库从 0082 升级至 0084、Django 全量 877 项（跳过 13）、前端 Node 151 项、有效 Vitest 74 项、生产构建和正确集成服务上的桌面/窄屏 Chrome 回归均通过。ISS-024 的供应商隔离与成本分配、ISS-019 的查看/导出权限和 CSV/API 对账、ISS-008 的国家代码/报价编号/历史快照兼容均由定向测试覆盖。集成分支最终 SHA 见交付报告；GitHub Actions run `40203282554` 的 backend、frontend、backend-postgres 均在可见 steps 前失败，记录为 CI/环境遗留风险，不将本地通过结果冒充 CI/PostgreSQL 通过。完整命令、文件和证据索引见 [`ISS-024/019/008 统一集成验收`](uat-evidence/integration-024-019-008/README.md)。三项保持 `FIXED_PENDING_REVIEW`，等待统一独立审查，不关闭 Issue、不合并 master。
+
+## ISS-021 / ISS-029 / ISS-027 统一集成验收（2026-10-26）
+
+基于统一基线 `b3559f3bf83b967d06166bd409b00fc92e4e5902` 创建独立 worktree 和 `codex/integration-021-029-027`，按 ISS-021 → ISS-029 → ISS-027 顺序集成已审查成果。`serializers.py` 同时保留数量变更的敏感字段保护和报价收件人快照继承；阶段文档冲突保留三项记录；ISS-021 的 0085 接续当前 0084，未复制旧迁移或改写已发布历史。
+
+ISS-021 的正式 SO 数量、付款限制、采购保留、历史主体快照和资金/库存不变规则由全量及定向后端回归覆盖；ISS-029 的原始报价、修订收件人、空邮箱、PI 与 Excel 导出在真实 Chrome 和 API 中核对；ISS-027 在真实 Chrome 完成保存、改期、清除、非法日期、后端中断后的保存失败重试、客户列表同步以及桌面/390px窄屏截图。全量 Django 911（跳过13）、定向后端104、Node151、有效 Vitest656、生产构建、全新 SQLite 和 0084→0085 升级均通过。完整日志和截图见 [`ISS-021/029/027 统一集成验收`](uat-evidence/integration-021-029-027/README.md)。
+
+本机 PostgreSQL 未执行，标记 `BLOCKED`；本地 GitHub token 当前无效，不能读取精确 HEAD CI，历史可核实 CI 仍为账户付款/Actions spending limit 阻断。本轮不修改账户、工作流或 master。三个任务保持 `FIXED_PENDING_REVIEW`，等待 ChatGPT 独立代码、权限、业务和视觉复审；不关闭 Issue。
+
+## ISS-020 正式报价与 PI 导出一致性（2026-10-26）
+
+基于 `28ba758388429f57c2e3516e12385a88ce6646a3` 创建独立 worktree/分支 `codex/iss-020-quote-export`，先读取 2026-10-24 规则包并审查报价导出 DTO、PI 预览、Excel 模板、ISS-029 收件人快照和 ISS-037 历史主体边界。先行复现确认两个真实问题：关键买方/币种缺失的已保存报价会错误返回 XLSX；逐行分币舍入后的正式文件小计可能与旧预览不一致。
+
+最小修复集中在报价导出 DTO、PI data/export 错误响应和未保存编辑器金额展示：正式预览与 XLSX 共用保存版本校验、逐行金额舍入、运费/折扣/总额与英文金额大写；关键字段缺失返回 422 字段提示，不生成错误文件。未改报价核心查询引擎、金额业务计算、修订链、ISS-029 共享模板或 ISS-037 尚未决策的正式主体规则。
+
+独立 SQLite/API 证据实际生成两个版本 XLSX，核对收件人、型号、数量、价格、币种、图片、金额大写和历史主档改动不覆盖；空邮箱保持空值。Django 全量 915（跳过13）、ISS-020/报价专项25、权限与跨客户定向2、Node151、有效 Vitest12 和生产构建通过。真实 Chrome Use 已完成保存修订版 PI 桌面及 390×844 窄屏预览；浏览器下载事件未在等待窗口返回，以 API 实际文件证据为准。推送后 CI run `40286651906` 的 frontend/backend/backend-postgres 均在可见 steps 前失败，未提供日志，不能视为通过。生产 PostgreSQL、代理、真实员工账号和 Excel 桌面打印未验证，证据及原始日志见 [`ISS-020 导出一致性`](uat-evidence/iss-020-quote-export/README.md)。
+
+ISS-020 更新为 `FIXED_PENDING_REVIEW`，不关闭 Issue、不合并 master，等待统一独立代码、权限、文件和视觉审查。
+
+## ISS-023 Sales Model 自动生成与人工设置（2026-10-26）
+
+基于统一基线 `f12b591cb90d6a5d8ebfedf1c559703377c92d84` 创建独立 worktree 和分支 `codex/iss-023-sales-model`，读取用户 2026-10-24 规则包原文，并核对 ISS-087、ISS-035、ISS-020、ISS-037 的 SKU 身份、模板、报价快照和 PI/XLSX 现状。确认的唯一实际代码缺口是参数编辑会用新规则预览覆盖已保存的人工型号。
+
+最小修补使后端只在保存值仍等于旧参数自动生成值时刷新型号；人工型号和明确空型号不被覆盖。前端提交保存型号，身份确认和组合预览继续显示保存值与当前规则预览的差异。未新增迁移、未批量重命名旧 SKU、未修改报价编号/修订链、正式单据快照或财务统计。后端 SKU 专项最终 31 项、Node 154 项、相关 Vitest 48 项、Django 全量 933 项（13 跳过，条件修补前全量）和生产构建通过；独立 SQLite 全新迁移及 `makemigrations --check` 通过。真实 Chrome 完成桌面人工型号保存、普通字段编辑保留型号和 `390×844` 窄屏回归，截图及测试日志见 [`ISS-023 验收记录`](uat-evidence/iss-023-sales-model/README.md)。
+
+真实生产 SKU 主数据完整性、正式账号/数据库和部署环境仍需后续业务抽查及独立复审；本轮不关闭 Issue、不合并 `master`。
+
+## ISS-051 开发与生产环境安全分离（2026-10-26）
+
+基于统一基线 `28ba758388429f57c2e3516e12385a88ce6646a3` 创建独立 worktree 和 `codex/iss-051-environment-isolation`。读取 2026-10-24 规则包原文，审查 Django 配置、开发身份、数据库、RBAC、登录、媒体和 CI 配置；没有连接真实生产数据库、创建生产账号或写入真实密钥。
+
+本轮最小修复使 `APP_STAGE`、DEBUG、secret、数据库、主机、来源、RBAC、媒体目录和 Cookie/HTTPS/HSTS 配置按环境隔离；生产启动拒绝不安全默认值，生产业务 API 使用 Session 认证，匿名受保护 API 返回 401，已登录无模块权限返回 403。开发身份仍统一复用 `development_superadmin_enabled()`，不修改开发账号或正式 RBAC 方案；ISS-017 私有附件继续使用既有授权入口。新增配置说明、环境占位样例和自动化测试，未新增迁移。
+
+完整 Django 916 项（跳过 13）、安全定向 15 项、Node 151 项、有效 Vitest 656 项、生产构建、迁移检查以及 Chrome Use 桌面/`390×844` 窄屏只读回归通过；实现提交为 `d366224`，证据见 [`ISS-051 验收记录`](uat-evidence/iss-051-environment-isolation/README.md)。本分支 GitHub Actions run `40264628939` 的 backend、backend-postgres、frontend 均在可见 steps 前失败且无日志，记录为 CI/环境遗留风险，不把本地结果冒充 CI 通过。托管 Worktree 默认媒体目录存在 ACL 限制，完整测试改用临时 `MEDIA_ROOT` 通过，不属于应用失败。本机真实生产服务器、反向代理 HTTPS、PostgreSQL、Cookie、密钥轮换、实名创始合伙人账号和部署日志仍为 `DEPLOYMENT_VERIFICATION_PENDING`；ISS-051 保持 `BLOCKED`，等待 ChatGPT 独立代码、安全和部署复审。不合并 master，不关闭 Issue。
+
+## ISS-022 采购 MOQ 软提醒与共享 PO 合计验收（2026-10-26）
+
+基于统一基线 `28ba758388429f57c2e3516e12385a88ce6646a3` 创建独立 worktree/分支 `codex/iss-022-procurement-moq`，读取用户 2026-10-24 规则包原文。核实后直接将本地已验证提交 `6e7aaedd2cccef3150a5c7ee3135fd5f37dcee47` 集成到 `codex/integration-020-022-051`，没有使用落后的 `codex/r1-moq-02` 或重新开发 MOQ。独立分支的 GitHub 推送受 TLS/HTTP 传输故障阻断，未声称独立远端分支已交付。
+
+新增接续 `0085` 的 `0086_purchase_moq_exception`，不复制、删除或改写既有迁移。草稿和计划按同供应商来源、同 SupplierSKU、基础单位合计；交易单位先换算，不自动补量；没有可靠 MOQ 不提示。低于 MOQ 仍可保存草稿，正式下单要求填写例外原因，采购单保存原因、明细快照、时间、采购单和已认证操作员；价格、内部参考成本、状态转换、ISS-024/ISS-039 采购来源与成本逻辑不变。
+
+统一集成全量 Django `crm` 932 项（跳过 13）、MOQ/报价定向 82 项、Node 153 项、有效 Vitest 657 项、生产构建和真实 Chrome 均已执行；迁移额外验证了新库和 `0085→0087` 升级。完整命令、网络响应、隔离夹具及截图见 [`ISS-020 / ISS-022 / ISS-051 集成验收`](uat-evidence/integration-020-022-051/README.md)。本轮不合并 master、不关闭 Issue，ISS-022 保持 `FIXED_PENDING_REVIEW`，等待统一独立审查。
+
+## ISS-043 重要业务操作日志防篡改（2026-10-26）
+
+基于统一基线 `f12b591cb90d6a5d8ebfedf1c559703377c92d84` 创建独立 worktree 和 `codex/iss-043-audit-protection`，先读取 2026-10-24 规则包原文并复核 Phase4 `RISK-AUDIT-01`。基线的 API 只读和敏感快照脱敏已经存在，但复现确认 Django admin 仍有默认删除权限，OperationLog ORM 可通过实例/QuerySet 改删，且数据库没有 append-only 防护；非开发环境也可静默关闭审计写入。
+
+本轮最小补修新增 OperationLog 实例与 QuerySet 追加写保护、admin 明确禁止新增/修改/删除、PostgreSQL 0088 触发器、0089 操作人 PROTECT 和非开发环境审计 fail-fast；保留开发超级管理员约定、ISS-021/ISS-026 历史操作、业务事务回滚和现有权限脱敏。新增 PostgreSQL 运行账号最小权限与独立维护 runbook，不执行真实生产授权，不引入外部审计平台。
+
+SQLite 定向审计测试 8 项通过（其中 PostgreSQL 原始 SQL 保护 1 项因本机无 PostgreSQL 跳过），迁移至 0089、系统检查和迁移检查通过。真实生产 PostgreSQL 运行账号权限、角色继承、触发器现场验证、备份恢复及特殊维护演练为 `PENDING`；证据见 [`ISS-043 验收记录`](uat-evidence/iss-043-audit-protection/README.md)。本轮保持 ISS-043 `BLOCKED`，不关闭 Issue、不合并 master，等待部署证据和独立审查。
+
+## ISS-043 / ISS-075 / ISS-023 统一集成验收（2026-10-26）
+
+基于统一基线 `f12b591cb90d6a5d8ebfedf1c559703377c92d84` 创建独立 Worktree 和 `codex/integration-043-075-023`，按 ISS-043 → ISS-075 → ISS-023 顺序完整移交已审查提交：ISS-043 `dea057ce0c98fc32da44b72999beb4af78a58176`、ISS-075 `771307b19667256453c7c22ebf60256ffd2a26dd`、ISS-023 `c6a1415437fb2a020ec31d655fe8ce274aa93912`。没有整文件覆盖；`serializers.py` 和两份公共台账自动合并后逐段复核。0088 依赖 0087、0089 依赖 0088，迁移历史完整。
+
+集成后 Django 定向 117（跳过1）及全量 940（跳过14）、Node 154、有效 Vitest 657、生产构建、SQLite 全新迁移、0087→0089 升级、`makemigrations --check` 和真实 Chrome 桌面/390×844 回归通过。Chrome 隔离数据核对了空付款阶段 PO、历史 500/500 付款计划、SKU 页面和窄屏菜单收起；控制台无 error/warning。证据见 [`ISS-043 / ISS-075 / ISS-023 统一集成验收`](uat-evidence/integration-043-075-023/README.md)。
+
+本轮不关闭 Issue、不合并 master、不部署。延期台账仅更新原有 ISS-043、ISS-075、ISS-023：ISS-043 真实 PostgreSQL 与最终 CI 为 `DEPLOYMENT_VERIFICATION_PENDING`；ISS-075 真实业务财务数据的无付款阶段跨模块抽查为 `BUSINESS_VERIFICATION_PENDING`；ISS-023 真实 SKU 型号完整性抽查为 `BUSINESS_VERIFICATION_PENDING`。ISS-023 窄屏菜单可用性已通过，不作为遗留事项。三项等待统一独立审查。
+
+## ISS-047 单服务器私有文件存储（2026-10-26）
+
+基于统一基线 `8b2b5c19e517addd9604b239211e199a789b739e` 创建独立 Worktree 和 `codex/iss-047-private-storage`，读取用户 2026-10-24 规则包，并复核 ISS-017 私有附件、ISS-018 联合备份和 ISS-051 环境隔离约束。基线已有的认证媒体 API、记录/客户范围、旧 `/media/` 不可用、私有缓存头和 SKU 缩略图权限均保留，没有公开 `MEDIA_ROOT`。
+
+本轮最小补修要求部署阶段显式注入绝对 `MEDIA_ROOT`；生产缺失、相对路径或与 `STATIC_ROOT` 重叠时 fail-fast。显式配置 `STORAGES["default"]`/`MEDIA_STORAGE_BACKEND` 保留未来对象存储迁移接缝；新增只读 `private_media_manifest` 管理命令，以相对路径、大小和 SHA256 支持 ISS-018 恢复核对，并拒绝媒体根目录外的符号链接。新增 Nginx 拒绝 `/media/` 静态直链的未部署样例和单服务器持久卷交接说明，不引入多服务器集群或真实备份任务。
+
+定向附件权限回归基线 7 项通过；本轮新增私有媒体清单、重启模拟、配置隔离和数据库设置测试将在交付日志中记录，`python manage.py check`、Django 全量和生产构建随后执行。真实生产持久卷、服务重启、磁盘/inode 告警、Nginx/反向代理 ACL、PostgreSQL+媒体联合备份恢复和未来对象存储迁移均为 `DEPLOYMENT_VERIFICATION_PENDING`；证据见 [`ISS-047 验收记录`](uat-evidence/iss-047-private-storage/README.md) 和 [`单服务器私有文件存储交接说明`](deployment/ISS-047-单服务器私有文件存储.md)。本轮不部署、不合并 `master`、不关闭 Issue，等待独立审查。
+
+## ISS-097 超级管理员权限显示一致性（2026-10-26）
+
+基于 `8b2b5c19e517addd9604b239211e199a789b739e` 创建独立 Worktree 和 `codex/iss-097-admin-permissions`，读取 2026-10-24 规则包，并复核 ISS-003、ISS-043、ISS-051。确认历史 `superadmin` 保存模板的新增模块勾选不完整，但服务端有效权限规则对最高业务角色返回全部 ERP 模块；问题是页面把存储模板当成有效权限显示，而不是已确认的授权漏洞。
+
+最小修复新增 API 的 `has_all_permissions` / `effective_permissions` 元数据，前端按有效矩阵呈现最高角色全部 24 个模块和六类动作，并明确显示“包含全部ERP业务权限，不受普通勾选项限制”。最高角色保持不可编辑；普通角色继续读取保存模板；没有新增迁移、补写权限行或改变 `development_superadmin_enabled()`、审计保护和正式 RBAC 规则。
+
+隔离 SQLite 全新迁移至 `0089`，Django 权限专项 39 项、最高角色 API 定向 2 项、Node、有效 Vitest 658 项、生产构建和真实 Chrome 桌面核验通过。Chrome 实测页面为 24/24、全选、只读，API 实测有效矩阵 24 个模块；截图、原始命令和边界风险见 [`ISS-097 验收记录`](uat-evidence/iss-097-admin-permissions/README.md)。普通员工/销售员/采购员/财务员使用现有受限 RBAC 夹具核对，未扩大数据范围；真实员工会话、生产 PostgreSQL/基础设施权限仍保持 ISS-003/ISS-051 的原有待验收状态。
+
+本轮不关闭 Issue、不合并 `master`、不部署，等待独立审查。
+
+## ISS-018-FIX-01 备份文件访问控制与安全恢复（2026-10-27）
+
+基于 `ad64eed9e00810beb2734e23f4e58cb6b4533bb8` 在独立 Worktree 创建 `codex/fix-iss018-backup-safety`。保留原 ISS-018 一致性契约和 SQLite/PostgreSQL fail-closed 边界，仅补现有安全缺口：POSIX 备份目录新建/显式收紧为 `0700`，备份及恢复文件为 `0600`；已有不安全目录默认拒绝；Windows 不把 `chmod` 当 ACL 证明，生产/预发布必须外部核验 NTFS ACL。
+
+`restore_consistent_backup` 现在要求正式目标不存在，在同一文件系统的临时 staging 中完成解包、路径/CRC、数据库、媒体和配置核验后原子切换；非空或空目标都不删除、不写入。默认失败/成功结构化报告写到目标目录旁，显式 `--result-file` 可指定外部位置。新增回归覆盖非空目标内容和原 `restore-result.json` 不变、外部失败报告、磁盘写入失败无正式目标/残留 staging、篡改归档、路径穿越、权限和重试。目标策略从“新或空目录”收紧为“必须不存在”，已在运行手册和验收记录说明。
+
+FIX-01 定向测试 `crm.tests.test_iss018_backup_recovery` 为 15 项通过、1 项平台条件跳过；最终 Django 全量 `965` 项通过、`16` 项跳过。生产 PostgreSQL、真实媒体卷、生产 POSIX/NTFS ACL、加密异地副本、定时器/告警、RPO/RTO 仍未连接或部署，ISS-018 继续保持 `BLOCKED` 和 `DEPLOYMENT_VERIFICATION_PENDING`。本轮不启用生产任务、不上传备份、不合并 `master`、不关闭 Issue，等待独立审查。
+
+## ISS-018-FIX-02 恢复结果路径安全与备份目录检查（2026-10-27）
+
+基于 `a73273f49aa32d8be8040d1c444045ff51a67c65` 在独立 Worktree 创建 `codex/fix-iss018-restore-edge-cases`。本轮按用户指定的已核实实现提交 `35c42fcef672d76e8ad9f27da650ae64ea3a3c02` 校正文档引用；不覆盖已发布迁移和其他 Issue 历史。
+
+FIX-02 在解析前检查用户指定恢复报告路径的原始符号链接，拒绝报告指向恢复目标本身或其内部；默认报告继续位于目标目录外。恢复失败不会创建缺失目标，成功原子提交后将恢复结果和报告写入结果分别表达，报告写入失败不再把已完成的恢复伪装成 FAILED。备份清理对不存在、非目录或符号链接路径明确失败，默认 dry-run 和 7/4/3 保留策略保持不变。
+
+定向回归 `crm.tests.test_iss018_backup_recovery` 22 项通过、3 项平台条件跳过；ISS-018/047/051 交叉回归 28 项通过、4 项平台条件跳过。`python manage.py check` 通过，`python manage.py makemigrations crm --check --dry-run` 无模型差异；本地已有 SQLite 文件访问 RuntimeWarning 不影响退出码。生产 PostgreSQL、私有媒体卷、POSIX/NTFS ACL、独立加密副本、定时器/告警和 RPO/RTO 仍为 `DEPLOYMENT_VERIFICATION_PENDING`，ISS-018 保持 `BLOCKED`。本轮不部署、不合并 `master`、不关闭 Issue，等待独立审查。
+
+## ISS-080 客户联系人疑似重复提醒（2026-10-27）
+
+基于 `8b2b5c19e517addd9604b239211e199a789b739e` 创建独立 Worktree 和分支 `codex/iss-080-contact-duplicates`，读取用户 2026-10-24 规则包原文，并复核联系人新增、编辑、搜索、分页及 ISS-025、ISS-027、ISS-029 相关规则。确认原有实现只对当前已加载的联系人列表计算提示，搜索、客户筛选或分页会遗漏同一客户的其他联系人。
+
+本轮最小修复复用既有 `/contacts/?customer=<id>` 授权查询和 `listAll` 分页机制，在新建/编辑选择客户后获取该客户全部授权联系人；前端按邮箱、保留国际区号的电话、相同或明显相近姓名给出可解释原因，编辑排除自身，提供“查看联系人”入口，且提醒不阻断人工继续创建。不同客户不比较，不合并联系人，不改历史跟进或报价快照，不新增迁移；后端范围测试确认员工不能通过客户过滤泄露无权联系人。
+
+Django `crm` 全量 942 项（跳过14）、定向后端2项、前端有效 Vitest 658 项、前端定向61项、生产构建、迁移检查、Playwright CRM 11/11，以及真实 Chrome Use 桌面和 `390×844` 窄屏验证均通过。Chrome Use 在搜索结果为空时仍显示同一客户全量联系人提示，并验证手动继续保存；完整命令和证据见 [`ISS-080 验收记录`](uat-evidence/iss-080-contact-duplicates/README.md)。托管 Worktree 默认 media 目录 ACL 不可写，完整测试使用临时 `MEDIA_ROOT`，应用无相关失败。实现提交为 `efb2546b69ae4ace60715dcb97803145248d3a1b`。
+
+ISS-080 更新为 `FIXED_PENDING_REVIEW`，真实生产账号/数据库及跨员工真实业务数据抽查属于后续独立复审范围；不关闭 Issue、不合并 master、不修改其他工作树。
+
+## ISS-047 / ISS-097 / ISS-080 统一集成验收（2026-10-27）
+
+基于统一基线 `8b2b5c19e517addd9604b239211e199a789b739e` 创建独立 Worktree 和 `codex/integration-047-097-080`，按 ISS-047 → ISS-097 → ISS-080 顺序集成。ISS-080 仅移植功能提交 `efb2546b69ae4ace60715dcb97803145248d3a1b` 与证据/台账提交 `9fe9f479bc47fd7470c80822c89fa59d7d71cbf5`，未覆盖旧分支。冲突仅发生于公共阶段文档，已保留三项记录；0088/0089 迁移完整保留。
+
+集成后 Django 全量 `950` 通过、`15` 跳过，定向三项后端 `59` 通过/`1` 跳过，Node `154`、有效 Vitest `659`、Playwright CRM/RBAC `27`、生产构建、SQLite 空库迁移和 0087→0089 升级均通过，`makemigrations --check` 无差异。真实 Chrome 已补充 ISS-080 桌面/390px 联系人提醒和 ISS-097 桌面/390px 权限矩阵独立图片。Vitest 中既有 `detail-drawer-typography.spec.js` 为 node:test 文件，已明确排除，不将错误 suite 运行结果冒充全量 Vitest 通过。
+
+ISS-047 真实生产卷/Nginx/容量告警/联合备份恢复与 PostgreSQL、ISS-097 正式员工与生产会话、ISS-080 真实员工跨客户数据抽查均保留原记录的部署或业务待验状态。最终 HEAD 的 GitHub Actions 必须另行核对；测试步骤前失败时不标记 CI PASS。完整命令、冲突、截图和遗留事项见 [`ISS-047 / ISS-097 / ISS-080 统一集成验收`](uat-evidence/integration-047-097-080/README.md)。本轮未部署、未合并 master、未关闭 Issue，等待 ChatGPT 独立审查。
+本轮 `npm install` 重新暴露依赖安全快照（2 moderate、9 high），沿用既有 ISS-002 记录为 `NEEDS_VERIFICATION`；未运行自动修复或无授权升级，不把该数量当作已确认生产漏洞。
+
+## ISS-002 依赖安全审计（2026-10-27）
+
+在独立 Worktree `codex/audit-iss002-dependency-security` 按基线 `46353a5436637832f5adadb7bdef6b45cdeada23` 完成前后端依赖审计。初始 npm 锁树的 11 个 advisory 已按直接/传递、生产/开发和源码实际路径拆分；axios、Vue、Vite、Vitest 及相关转依赖采用同大版本或补丁更新，最终 `npm audit` 和 `npm audit --omit=dev` 均为 0。Django/DRF 最低安全版本更新后，干净环境为 Django 6.0.9、DRF 3.18.3；Django 全量 984 通过、前端 Node 156 通过、有效 jsdom 定向 4 通过、生产构建通过。Pillow 11.3.0 的真实图片解析风险需跨重大版本，保留延期；Python lock、CI/PostgreSQL 和生产外部暴露仍未验证。完整 advisory、命令和关闭条件见 [`ISS-002 依赖安全审计`](uat-evidence/iss-002-dependency-audit/README.md)。本轮未触发 GitHub CI、未部署、未合并 master、未关闭 Issue。
+
+## ISS-018 数据库与附件一致性备份恢复（2026-10-27）
+
+基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 Worktree 和 `codex/iss-018-backup-recovery`，先读取 2026-10-24 规则包，并复核 ISS-047 私有媒体 SHA256 清单、ISS-051 环境隔离和 ISS-043 审计备份边界。当前仓库没有生产 PostgreSQL、快照服务、Nginx 实例、systemd 定时器或独立异地存储，本轮没有连接或修改生产环境。
+
+新增 `backup_recovery` 服务及 `create_consistent_backup`、`restore_consistent_backup`、`prune_erp_backups` 管理命令。备份不是把两份独立文件冒充快照：必须显式确认应用写入静默；SQLite 事务快照前后重新核对 ISS-047 媒体清单；数据库、媒体、恢复配置白名单和清单进入同一个 ZIP；恢复先核对归档 CRC、数据库 SHA256/`integrity_check`、媒体逐文件 SHA256 和配置 SHA256，全部通过后才写入新隔离目录。生产 PostgreSQL 未提供同一数据库/文件系统快照适配器时命令 fail-closed。age 加密、公网/异地复制、自动定时器和告警只提供未部署 runbook，不放入密钥或真实凭证。
+
+定向测试 `crm.tests.test_iss018_backup_recovery` 7 项通过，ISS-018/047/051 交叉回归 27 项通过（1 项既有 symlink 条件跳过）；隔离管理命令实际运行并核对订单金额 `5000`、库存 `42`、附件 `followups/invoice.pdf` 及媒体 manifest SHA256；ISS-047 现有私有媒体权限/清单实现未被覆盖。实际生产 PostgreSQL、私有持久卷、独立加密副本、systemd/告警、恢复 RPO/RTO 和 ISS-043 生产审计备份仍为 `DEPLOYMENT_VERIFICATION_PENDING`；证据见 [`ISS-018 隔离演练`](uat-evidence/iss-018-backup-recovery/README.md) 和 [`ISS-018 运行手册`](deployment/ISS-018-数据库与附件一致性备份恢复.md)。功能提交为 `da2a0af54a69dbaeab5ffd4a44abb87d2d39740f`，本台账绑定提交随后生成；本轮不关闭 Issue、不合并 `master`、不部署，等待独立审查。
+## ISS-036 尾箱、混装箱与最小计量单位（2026-10-27）
+
+基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 Worktree 和分支 `codex/iss-036-carton-units`，读取 2026-10-24 规则包原文，并复核 SKU 交易单位、采购数量、实际装箱、ISS-040 Packing List、ISS-022 MOQ 及 ISS-075 付款规则。确认的真实缺口是：实际装箱接口对已保存的明确不可拆分交易单位接受非法小数；旧的 `[object Object]` 风险在当前前端错误展开逻辑中未复现，但补充了回归测试。
+
+最小修复仅在 `ShipmentPackageSerializer` 对同一 SKU 的一致、明确、不可拆分交易单位快照执行整数倍校验，返回自然中文原因；基础单位尾箱、合法混装、允许分数或缺失/冲突快照不凭空添加限制，不自动取整、不丢失输入，不修改 SO 数量、采购 MOQ、付款规则、Packing List 汇总或状态流转。新增后端专项和前端嵌套错误回归测试，未新增迁移。
+
+Django 全量 `952` 通过、`15` 跳过；装箱/单位/包装/MOQ/集成定向 `92` 通过；有效 Vitest `660` 通过；实际装箱组件 `25` 通过；生产构建、SQLite 迁移至 `0089`、`makemigrations --check` 和真实 Chrome 非法/成功装箱回归通过。实际混装 XLSX 已生成并核对箱数、重量、CBM 只计一次；截图和原始日志见 [`ISS-036 验收记录`](uat-evidence/iss036/README.md)。实现提交为 `31b58cd9ca971ebe4183e378a1a82e517ac7c1fe`。
+
+本轮只使用隔离 SQLite、开发身份和本地 Chrome；生产 PostgreSQL、生产代理、真实物流数据、CI 和窄屏物流实机尚未验证，登记为后续独立复审风险。ISS-036 保持 `FIXED_PENDING_REVIEW`，不合并 `master`、不关闭 Issue。
+
+## ISS-036-FIX-02 不完整交易单位快照安全处理（2026-10-27）
+
+基于 `codex/fix-iss036-factor-one` 的 `6db1ef53e4b78c20156e66071b37b7e6f29a6476` 创建独立 Worktree 和分支 `codex/fix-iss036-invalid-snapshot`。复现确认异常历史快照存在三种风险：有效与无法解析 factor 混合时可能错误执行不可拆分限制；factor 缺失会被默认成 1；非字典快照调用 `.get()` 可触发 HTTP 500。
+
+最小修复要求快照为字典、factor 存在、可解析、有限且大于零；否则将对应 SKU 标记为 `ambiguous_indivisible`，不擅自推断不可拆分规则。保留 FIX-01 的 `factor=1` 修复、factor=5、允许分数、缺失交易单位和冲突快照语义；未修改库存、发货数量、订单金额、财务、采购、付款、尾箱、混装或 Packing List。
+
+新增有效/非法混合、缺失 factor、非字典快照回归；后端相关定向测试 `99` 项通过，前端实际装箱测试 `26` 项通过，生产构建、Django check、`makemigrations --check` 和真实 Chrome factor=1 拒绝/成功回归通过。实现提交为 `f0c41d9e83ed7396686b0ec574eed0cdf1acd2be`，证据见 [`ISS-036-FIX-02 验收记录`](uat-evidence/iss036-fix02/README.md)。
+
+本轮只使用隔离 SQLite、开发身份和本地 Chrome；生产 PostgreSQL、代理、真实物流数据、CI 和窄屏物流实机仍未验证。冲突快照的关闭条件是业务明确同一发货中同 SKU 多个历史交易单位快照的归属/优先级并提供可复核历史规则。ISS-036 保持 `FIXED_PENDING_REVIEW`，不合并 `master`、不关闭 Issue。
+
+## ISS-036-FIX-01 不可拆分单位系数边界（2026-10-27）
+
+基于源分支 `codex/iss-036-carton-units` 的 `3fe05aa1fe08f859cd6b737150d67b4c1066b248` 创建独立 Worktree 和分支 `codex/fix-iss036-factor-one`。复核确认原实现把明确 `factor=1`、`allow_fraction=false` 的交易单位当作歧义并跳过实际装箱整数倍校验；本轮仅移除该特殊跳过条件。
+
+新增后端回归覆盖 `factor=1` 的 `0.5/1`、`factor=5` 的 `2.5/5`、允许分数、缺失快照和同 SKU 冲突快照；前端回归确认自然中文错误、无 `[object Object]` 且失败后输入保留。冲突快照仍不增加限制，关闭条件是业务明确同一发货中同 SKU 多个历史交易单位快照的归属/优先级，并提供可复核历史数据规则。未新增迁移，未修改库存、发货数量、财务金额、采购状态、付款规则、尾箱、混装或 Packing List。
+
+相关后端定向测试 `96` 项通过，前端实际装箱组件 `26` 项通过，生产构建、Django system check 和 `makemigrations --check` 通过。真实 Chrome 已完成 `0.5` 拒绝并保留输入、`1` 保存成功的独立截图；实现提交为 `a59573e0396fbb6b324628d8826b5a2234ee065b`，完整证据见 [`ISS-036-FIX-01 验收记录`](uat-evidence/iss036-fix01/README.md)。
+
+本轮只使用隔离 SQLite、开发身份和本地 Chrome；生产 PostgreSQL、代理、真实物流数据、CI 和窄屏物流实机仍未验证。ISS-036 保持 `FIXED_PENDING_REVIEW`，不合并 `master`、不关闭 Issue。
+## ISS-025 客户生命周期中文名称一致性（2026-10-27）
+
+基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 Worktree 和分支 `codex/iss-025-customer-status-labels`，读取 2026-10-24 规则包原文，并核对客户列表、详情、筛选、跟进、报表及关联企业展示。基线问题仍可复现：列表使用“已联系”，详情使用“联系人”；返单客户也存在“公司客户”与“返单客户”的展示差异。
+
+本轮以展示层最小修复统一客户生命周期展示映射，并在客户 API 提供 `status_display`。保留数据库原始状态代码、状态选项、迁移、自动推进规则、联系人数量规则、历史跟进/报价资料和筛选 URL 参数；`联系人` 仍只用于 Contact 业务实体。代码提交为 `a8dd277609d7364d301d1a330f717f00962d8619`，未新增迁移、未批量改写旧客户资料。
+
+最终改动后定向后端 92 项通过，`makemigrations --check --dry-run` 无变化；Django `crm` 全量 952 项通过、15 项跳过；Node 154 项、有效 Vitest 659 项、前端生产构建通过。Chrome Use 已完成客户列表/详情、关联企业、跟进 URL 恢复和报表筛选的桌面与 `390×844` 窄屏检查，隔离 SQLite 样本证据见 [`ISS-025 验收记录`](uat-evidence/iss-025-customer-status-labels/README.md)。
+
+ISS-025 原记录更新为 `FIXED_PENDING_REVIEW`，未创建重复 Issue。真实生产数据库、员工账号和全量业务数据抽查登记为 `BUSINESS_VERIFICATION_PENDING` / `DEPLOYMENT_VERIFICATION_PENDING`；本轮不合并 master、不关闭 Issue、不部署，等待独立代码、业务、权限和视觉复审。
+
+## ISS-025-FIX-01 客户状态标签全页面一致性核查（2026-10-27）
+
+基于源分支 `codex/iss-025-customer-status-labels` 的提交 `1fac93f09e3b5c578a030df5c0736e5d0552e4cc` 创建独立 Worktree 和分支 `codex/review-iss025-status-consistency`。本轮逐项核对客户列表、状态筛选、详情、联系人关联企业、跟进筛选、报表/经营分析、API `status/status_display` 以及刷新、分页和 URL 恢复；未重复修改已经正确的页面。
+
+核查发现经营分析按客户生命周期分组仍直接使用模型旧文案，`contact`/`company` 会显示“联系人”/“公司客户”。在 `backend/crm/reporting.py` 中仅对客户来源的状态标签复用现有 `customer_status_display()`，并补充后端报表断言及前端映射测试。修补提交为 `20981f91de0a30a9bc3ba0ccd603233d36457f42`；未新增迁移、未改状态编码、自动推进、联系人数量规则或历史数据。
+
+Django `crm` 全量 953 项通过、15 项跳过；Node 156 项、有效 Vitest 659 项、生产构建、`makemigrations --check --dry-run` 和 `git diff --check` 通过。真实 Chrome Use 已完成桌面及 `390×844` 窄屏检查，隔离 SQLite 样本覆盖五种状态、客户筛选、详情、关联企业、跟进 URL 恢复和报表结果。完整证据见 [`ISS-025-FIX-01 全页面核查`](uat-evidence/review-iss025-status-consistency/README.md)。
+
+ISS-025 原记录已更新，没有创建重复 Issue。其他状态名称简化登记为 `BUSINESS_VERIFICATION_PENDING`；真实生产数据库、真实员工权限和全量业务数据抽查保留 `BUSINESS_VERIFICATION_PENDING` / `DEPLOYMENT_VERIFICATION_PENDING`。本轮不合并 master、不关闭 Issue、不部署，等待独立代码、业务和视觉复审。
+
+## ISS-025-FIX-02 客户状态报表视觉证据补齐（2026-10-27）
+
+基于已审查提交 `d5d0d15c03d55a718f11a298e08f29a9b9d0c4b0` 使用独立 Worktree 和分支 `codex/iss025-report-visual-evidence`。本轮不修改报表逻辑、客户状态编码、销售/采购/财务报表状态名称或权限，仅补齐经营分析客户按状态分组的真实浏览器视觉证据。
+
+全新隔离 SQLite 创建 5 条唯一客户样本，覆盖 `lead/contact/opportunity/customer/company`，查询 `2026-10-01` 至 `2026-10-31`，API 返回 5 行且每行数量为 1；五个中文标签与编码一一对应。真实 Chrome 默认桌面视口及 `390×844` 窄屏均核验通过；报表区域无“联系人”“公司客户”旧生命周期标签。窄屏实测页面 `scrollWidth=375`、可用宽度 375，无页面级横向溢出；结果表两列 `scrollWidth=clientWidth=313`，状态标签未被遮挡。补跑 ISS-025/报表 Django 定向测试 36 项、Node 156 项和生产构建均通过；两张本轮直接生成的截图见 [`ISS-025-FIX-02 证据`](uat-evidence/review-iss025-status-consistency/README.md)。证据提交为 `f9e2c7493ba86007fb6969d826d336dc4077edb7`。
+
+本轮仅执行全新 SQLite 迁移、本地 Django API 和 Vite/真实 Chrome 回归，未触发 GitHub CI、未连接生产数据库、未合并 master、未关闭 Issue、未部署。ISS-025 继续保持 `FIXED_PENDING_REVIEW`，真实生产数据库、真实员工权限、全量业务数据和独立视觉复审仍按原台账等待后续核验。
+
+## INTEGRATION-018-036-025 统一集成验收（2026-10-27）
+
+基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 Worktree 和 `codex/integration-018-036-025`，按 ISS-018 → ISS-036 → ISS-025 顺序集成。三条来源 HEAD 均已核实为集成分支祖先；ISS-018 的备份/恢复报告路径安全、ISS-036 的不可拆分单位与异常快照校验、ISS-025 的状态映射和报表视觉证据均保留。`serializers.py` 自动合并后复核两项逻辑同时存在。
+
+公共 `PROJECT_PHASES.md` 在两次合并中发生冲突，均以保留双方完整历史记录方式解决；`PROJECT_ISSUES.md` 和各任务证据目录未被覆盖。集成提交为 `b58af55`、`47c97d8`、`ef9b457`，均带 `[skip ci]`。没有新增迁移。
+
+本地后端定向 60 项通过、3 项跳过；临时 `MEDIA_ROOT` 下 Django `crm` 全量 984 项通过、18 项跳过；Django check、迁移一致性检查、Node 156 项、有效 Vitest 661 项、前端生产构建均通过。默认 Worktree media ACL 首次全量运行有 1 个附件写入环境错误，已用隔离临时目录重跑通过；首次缺依赖和未指定 jsdom 的失败均已记录，不作为代码回归。截图沿用来源证据路径，未新增浏览器实测。
+
+ISS-018 保持 `BLOCKED` / `DEPLOYMENT_VERIFICATION_PENDING`；ISS-036 的冲突历史快照业务待确认项保留；ISS-025 保持 `FIXED_PENDING_REVIEW` 及真实员工/生产数据待验。完整命令、冲突、截图路径和延期事项见 [`INTEGRATION-018-036-025 验收记录`](uat-evidence/integration-018-036-025/README.md)。本轮不触发 GitHub CI、不合并 `master`、不关闭 Issue、不部署，等待统一独立审查。
+
+## ISS-036-FIX-03 历史交易单位快照语义冲突（2026-10-27）
+
+基于统一集成基线 `46353a5436637832f5adadb7bdef6b45cdeada23` 创建独立 Worktree 和分支 `codex/fix-iss036-snapshot-conflicts`。复核 `TradeUnitLine`、`SKUTradeUnit`、`normalize_trade` 与 `ShipmentPackageSerializer.validate` 后确认，原实现只比较历史快照 `factor`，同 factor 但 `base_unit`、`unit` 或 `allow_fraction` 不同的历史语义会被错误视为一致。
+
+本轮最小修复以 `factor`、`base_unit`、`unit`、`allow_fraction` 组成完整语义键；展示用 `name` 不参与语义比较，供应商/启用/默认/备注字段不在该历史快照中，也不影响单位换算或可拆分判断。缺失、非字典、单位字段无效或 factor 无效的快照继续按歧义处理；语义冲突不选择快照、不推断优先级、不增加不可拆分限制。完全一致的有效快照仍执行限制，`factor=1`、合法尾箱、混装及允许分数保持原规则。未修改库存、发货数量、采购、财务金额、付款规则或历史数据，未新增迁移。
+
+新增相同 factor 的 base unit、交易单位和允许分数语义冲突回归，并验证完全一致快照（仅名称不同）仍拒绝非法分数；既有不同 factor、缺失/非字典/非法 factor、factor=1、factor=5、尾箱、混装和允许分数回归继续保留。后端装箱定向测试 39 项通过，交易单位交叉回归共 55 项通过；Django check、迁移检查、Node 156 项、交易单位 Vitest 4 项、生产构建及 `git diff --check` 均通过。Vite 首次非提升权限运行因 Worktree 临时目录 EPERM 失败，权限重试通过；本轮未运行 GitHub CI，未连接生产 PostgreSQL 或部署。完整命令见 [`ISS-036-FIX-03 验收记录`](uat-evidence/iss036-fix03/README.md)。
+
+ISS-036 保持 `FIXED_PENDING_REVIEW`；冲突历史快照的业务归属/优先级仍待业务明确。ISS-018 最近核实引用修正为集成验证 HEAD `46353a5436637832f5adadb7bdef6b45cdeada23`，其 `BLOCKED` / `DEPLOYMENT_VERIFICATION_PENDING` 状态不变。
+
+## R1-REPAIR-CONSOLIDATION-01 统一集成验收（2026-10-28）
+
+以固定基线 `054bd82518039a5bc0e0c14234964a14d7fbbfd8` 创建全新独立 worktree 和分支 `codex/integration-r1-repairs-20261028`。集成前核实并按指定精确 SHA 合并：R1-REPAIR-03 `c3739e77562c5dd8995228d5c3e7375a6728d316`、R1-REPAIR-04-FIX-01 `e20f8a7bc506c299644b6c828c9b5574ee688f46`、R1-REPAIR-05 `9c5f1f821cfc1b436f5fffe0b681991fa056b34d`、R1-REPAIR-06-FIX-01 `5ad252c537dfb0b3f95150e76e471c9fe3fd0a99`、R1-REPAIR-07 `58541e94918e2d912c2b75d2371a8d625e1fc9d4`、final-cross-module-ux `45df13b8fd229427229a58d64d0ae2bec30a00cb`、supplier-purchase-ux-r2 `64fb397aa065062e192ceb30040421f59b63a08c`。七个 non-ff 合并均无文本冲突，逐项复核差异和业务断言；来源均无 migration 文件，集成后迁移检查通过。
+
+另审查与 R2 无祖先关系的供应商分支 `codex/repair-supplier-purchase-ux-20261028` / `fe1cc16c3950e256fa564ea4508e08414ae8810b`。只将其 ISS-075 测试中两条外部 Google Fonts 路由拦截保留到 R2 版测试；没有删改规则断言，没有合并其余提交。集成调整仅为在 R1-06 隔离运行器允许列表中安全准备既有合成测试 fixture，以及把证据输出导入本轮目录；未修改产品业务代码、正式财务/采购语义或共享权限设置。
+
+综合回归：Django system check 和 migrations check 通过；Django 全量发现 1,000 项、982 通过、18 按套件标记跳过、0 失败；隔离 runtime 10/10；Node 169/169；Vitest 66 文件/657 项；trade-unit 4/4；Typography Node 1/1；隔离 runner 自测 13/13；Playwright 隔离冒烟 1/1；完整可运行 Playwright 31 个 spec、189 项通过、0 失败。ISS-055 真实员工/RBAC 浏览器 spec 因不得启用正式 RBAC 而未运行，保留后续授权环境补验。构建通过，主 JS 为 1,126.05 kB、gzip 393.59 kB，Vite 大 chunk 警告仍存在；本轮没有声称实际用户性能改善。首次 Vitest 错误扫描范围、Django 继承到 `AUDIT_LOG_ENABLED=0` 的环境失败以及后续正确范围/干净隔离环境重跑均保留原始日志，详见[集成报告](uat-evidence/integration-r1-repairs-20261028/README.md)。
+
+真实 Chrome/Chromium 截图、隔离 API fixture、XLSX/API 核对和原始测试日志已归档；证据总计 79 个截图/诊断文件（51 PNG、25 JSON、3 XLSX）。ISS-022、ISS-029、ISS-055、ISS-075 均保持 `FIXED_PENDING_REVIEW`；ISS-041 仍为 `Enhancement / BLOCKED（延期）`；ISS-002 的 Pillow 11.3.0/依赖锁定风险、ISS-003 的真实员工与 RBAC 验收、ISS-052 的审计身份/行级审计缺口、ISS-058 的真实用户性能测量均未被本轮宣称解决。
+
+没有触发或重试 GitHub Actions；本地结果不代替 CI。11 月 1 日仅对推送后的精确最终 SHA 核对 `backend`、`backend-postgres`、`frontend` 三个既有 job，并保留运行链接/状态和外部启动错误。未合并 master、未部署、未启用正式 RBAC、未操作实际业务数据库、未关闭 Issue。来源验收及本轮日志/截图索引见[验收索引](uat-evidence/INDEX.md)。
+
+## R1-STATUS-RECONCILE-01 状态对账（2026-10-28）
+
+基于固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb` 创建独立 worktree 和分支 `codex/reconcile-issue-ledger-20261028`。读取用户提供的 Excel 工作簿 `SUNJACK-ERP_Issue修复状态校准与下一轮计划_2026-10-28.xlsx`，并对照当前 `PROJECT_ISSUES.md`、本文件、`REVIEW_PROTOCOL.md`、实际分支 HEAD 和验收报告，逐项核对 124 个 Issue（含 `ISS-008-FUP-01`）及 46 条业务规则。
+
+本轮只修改状态台账、阶段记录和 `AGENTS.md` 协作规则，未修改产品业务代码、模型、迁移、前端或部署配置。规范状态从固定基线归一化的 OPEN 4、BLOCKED 20、NEEDS_VERIFICATION 17、FIXED_PENDING_REVIEW 73、CLOSED 10 校准为 OPEN 2、BLOCKED 18、NEEDS_VERIFICATION 16、FIXED_PENDING_REVIEW 78、CLOSED 10。实际状态变化仅为 ISS-024、ISS-040、ISS-042、ISS-048、ISS-052、ISS-062；旧状态、旧失败和历史验收结论在对账报告中保留。
+
+ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记录为阶段成果可封版并进入 `FIXED_PENDING_REVIEW`，不代表整体 `CLOSED`。ISS-040 的 Packing List 导出保留实现成果，但原生 Excel Print Preview 仍 PENDING。ISS-024 从滞后 OPEN 校准为 `FIXED_PENDING_REVIEW`。ISS-062 的日期窗口实现已有证据，但业务日期口径仍未确认，改为 `P2 / BLOCKED`。ISS-006、ISS-007、ISS-028、ISS-035、ISS-055、ISS-074、ISS-105、ISS-114 等重点项只补足精确 SHA 和证据边界，不因旧报告、未执行项或本地回归自动关闭。
+
+逐项旧状态、新状态、校准依据、SHA、46 条规则摘要及未执行/业务阻断清单见 [R1 状态对账报告](uat-evidence/r1-status-reconcile-20261028/README.md)。本轮未连接生产数据库、未执行 PostgreSQL、未触发 GitHub Actions、未合并 master、未部署、未关闭 Issue。
+

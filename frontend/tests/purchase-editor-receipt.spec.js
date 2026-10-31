@@ -12,7 +12,7 @@ const units = [{id:1,name:'10 米卷',unit:'卷',base_unit:'m',factor:'10',activ
 const sku = { id:3, sku_code:'SKU-3', display_name_cn:'测试灯带', sales_model:'LIGHT-3', unit:'m', trade_units:units }
 const sources = [{id:20,supplier_model:'M1',supplier_sku_code:'SUP-1',purchase_price:'2',currency:'USD'},{id:21,supplier_model:'M2',supplier_sku_code:'SUP-2',purchase_price:'3',currency:'USD'}]
 const line = {id:71,sku:3,sku_code:'SKU-3',display_name:'测试灯带',supplier_sku:20,quantity:'100',trade_unit:1,trade_quantity:'10',trade_unit_price:'20',trade_snapshot:{...units[0]},unit_price:'2',received_quantity:'60',remaining_quantity:'40',receipts:[{id:91,receipt_date:'2026-10-01',quantity:'60',unit_cost:'2'}]}
-const purchase = {id:41,purchase_no:'PO-41',supplier:9,supplier_name:'测试供应商',order:11,order_no:'SO-11',order_date:'2026-10-01',expected_arrival_date:'2026-10-12',status:'ordered',status_display:'已下单',currency:'USD',exchange_rate:'7',total_amount:'200',paid_amount:'0',unpaid_amount:'200',items:[line],related_orders:[]}
+const purchase = {id:41,purchase_no:'PO-41',supplier:9,supplier_name:'测试供应商',supplier_name_snapshot:'测试供应商',order:11,order_no:'SO-11',order_date:'2026-10-01',expected_arrival_date:'2026-10-12',status:'ordered',status_display:'已下单',currency:'USD',exchange_rate:'7',total_amount:'200',paid_amount:'0',unpaid_amount:'200',items:[line],related_orders:[]}
 let wrapper, router
 const click = async label => { await wrapper.findAll('button').find(button => button.text() === label).trigger('click'); await flushPromises() }
 async function mountPage(path='/purchase-orders') {
@@ -36,7 +36,7 @@ describe('Purchase Phase B draft editor',()=>{
  it('renders sections, subordinate readonly number and document-level explanations',async()=>{
   await newEditor()
   const editor=wrapper.get('.purchase-create-modal')
-  for(const label of ['采购基本信息','采购商品','采购金额汇总','整张采购单使用同一供应商。','多订单归属在成本分配中处理。','草稿保存不会生成应付或在途采购']) expect(editor.text()).toContain(label)
+  for(const label of ['采购基本信息','采购商品','采购金额汇总','整张采购单使用同一供应商。','一张采购单可关联多个销售订单，具体归属在成本分配中处理。','保存采购草稿不会生成应付或在途采购']) expect(editor.text()).toContain(label)
   expect(editor.get('.purchase-identity input').attributes('readonly')).toBeDefined()
   expect(editor.get('.purchase-identity input').element.value).toContain('保存后')
   expect(editor.findAll('.form-grid input[readonly]')).toHaveLength(0)
@@ -55,7 +55,7 @@ describe('Purchase Phase B draft editor',()=>{
   expect(wrapper.get('[aria-label="供应商"]').attributes('disabled')).toBeDefined()
   expect(wrapper.get('[aria-label="来源销售订单（可选）"]').attributes('disabled')).toBeDefined()
   expect(wrapper.get('.inherited-badge').text()).toBe('由订单履约带入')
-  await selectSku();await click('查找其他供应商')
+  await selectSku();await click('更换供应商来源')
   expect(wrapper.getComponent(PurchaseSupplierPicker).props('fixedSupplier')).toBe('9')
  })
  it('keeps same-SKU line cards independent and uses entered trade values for currency totals',async()=>{
@@ -89,7 +89,7 @@ describe('Purchase Phase B draft editor',()=>{
   await newEditor();await wrapper.get('[aria-label="供应商"]').setValue('9');await selectSku()
   expect(wrapper.get('.supplier-price-warning').text()).toContain('参考价未自动带入')
   expect(wrapper.get('.purchase-line input[placeholder="采购单价"]').element.value).toBe('')
-  await click('查找其他供应商')
+  await click('更换供应商来源')
   expect(wrapper.getComponent(PurchaseSupplierPicker).props('sku')).toEqual(sku)
   wrapper.getComponent(PurchaseSupplierPicker).vm.$emit('selected',{supplier:10,supplier_sku:''});await flushPromises()
   expect(dialogState.current.message).toContain('更换供应商将清除')
@@ -220,7 +220,8 @@ it('supplier picker preserves fixed candidates, characteristics and recommended 
  mocks.api.get.mockResolvedValue({data:{candidates:[{supplier:9,supplier_name:'测试供应商',characteristics:{交期:'15天'},recommended_supplier_sku_id:20,supplier_skus:[{id:20,model:'M1',code:'SUP-1'}]},{supplier:10,supplier_name:'其他供应商',characteristics:{},supplier_skus:[]}]}})
  const picker=mount(PurchaseSupplierPicker,{props:{sku,fixedSupplier:9},global:{stubs:{Teleport:true}}})
  await flushPromises()
- expect(picker.text()).toContain('选择其他供应商后，将修改整张采购单的供应商，并重新匹配其他采购明细的供货档案。')
+ expect(picker.text()).toContain('选择其他供应商会修改整张采购单的供应商，并重新匹配其他明细的供货档案。')
+ expect(picker.text()).toContain('更换供应商前请核对包装、LOGO、认证及供货特点可能存在的差异。')
  expect(picker.text()).toContain('15天');expect(picker.findAll('article')).toHaveLength(1)
  await picker.get('input[type="radio"]').setValue(true)
  expect(picker.get('select').element.value).toBe('20')

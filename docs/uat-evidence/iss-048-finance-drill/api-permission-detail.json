@@ -1,0 +1,24 @@
+{
+  "checks": [
+    {
+      "case": "销售数据范围",
+      "request": "GET /api/finance-dashboard/details/?metric=sales_rmb&date_from=2026-10-01&date_to=2026-10-31",
+      "result": "200；scope-a 只返回 F-SO-0"
+    },
+    {
+      "case": "没有 orders.view",
+      "request": "同上",
+      "result": "403；服务端拒绝，不依赖前端隐藏按钮"
+    },
+    {
+      "case": "非法指标/页大小",
+      "request": "metric=actual_cash 或 page_size=101",
+      "result": "400；不返回财务记录"
+    },
+    {
+      "case": "银行事实",
+      "request": "GET /api/actual-rmb-cash/?date_from=...&date_to=...",
+      "result": "既有测试验证仅 confirmed RmbCashEvent，pending/cancelled 不进入，事件详情继续走既有权限"
+    }
+  ]
+}

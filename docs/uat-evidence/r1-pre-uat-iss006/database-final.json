@@ -1,0 +1,55 @@
+{
+  "database": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\pre-uat-iss006-inventory-safety\\iss006-fixed-idempotency.sqlite3",
+  "purchase": {
+    "status": "partial",
+    "received_quantity": "5.00",
+    "remaining_quantity": "5.00",
+    "receipt_count": 1
+  },
+  "order": {
+    "status": "confirmed",
+    "shipped_quantity": "5",
+    "reservation_quantity": "5.00",
+    "shipment_count": 1
+  },
+  "inventory": {
+    "receipt_sku": {
+      "actual_quantity": "5",
+      "reserved_quantity": "0",
+      "available_quantity": "5",
+      "in_transit_quantity": "5.00"
+    },
+    "shipment_sku": {
+      "actual_quantity": "5",
+      "reserved_quantity": "5",
+      "available_quantity": "0",
+      "in_transit_quantity": "0"
+    }
+  },
+  "movements": [
+    {
+      "movement_no": "IM-ISS006-BASELINE",
+      "type": "adjust_in",
+      "source_type": "manual",
+      "source_no": "",
+      "quantity": "10.00",
+      "sku_id": 2
+    },
+    {
+      "movement_no": "GR-874ADC6FB3404804",
+      "type": "purchase_in",
+      "source_type": "receipt",
+      "source_no": "PO-ISS006-BASELINE",
+      "quantity": "5.00",
+      "sku_id": 1
+    },
+    {
+      "movement_no": "SH-5B359F7461AC469E",
+      "type": "sale_out",
+      "source_type": "shipment",
+      "source_no": "SH-299870A9ACBB47C9",
+      "quantity": "5.00",
+      "sku_id": 2
+    }
+  ]
+}

@@ -1,12 +1,14 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
-import { api } from '../api'
+import { api, downloadPackingListExport } from '../api'
 import { confirmDialog } from '../dialogs'
+import { useAccessControl } from '../accessControl'
 import { decimal, packingSummary, scaled, shippedSkus } from '../utils/actualPacking'
 
 const props = defineProps({ shipments: { type: Array, default: () => [] }, hasPlan: Boolean, cache: { type: Object, required: true } })
+const { can } = useAccessControl()
 const editor = ref(null), editorError = ref(''), saving = ref(false)
-const busy = ref({}), errors = ref({}), loading = ref({})
+const busy = ref({}), errors = ref({}), loading = ref({}), exporting = ref({})
 const target = computed(() => props.shipments.find(row => row.id === editor.value?.shipmentId))
 const skuOptions = computed(() => target.value ? shippedSkus(target.value) : [])
 const mutable = shipment => shipment?.status === 'confirmed'
@@ -98,12 +100,28 @@ async function copy(shipment) {
   } catch (error) { errors.value[shipment.id] = errorMessage(error) }
   finally { busy.value[shipment.id] = false }
 }
+function exportErrorMessage(error) {
+  const data = error.response?.data || error.data
+  if (data?.differences?.length) {
+    const details = data.differences.map(row => `${row.sku}：发货 ${row.shipped_quantity}，已装箱 ${row.packed_quantity}，差额 ${row.difference}`).join('；')
+    return `${data.detail || '实际装箱数量不一致。'} ${details}`
+  }
+  return errorMessage(error)
+}
+async function exportPackingList(shipment) {
+  if (exporting.value[shipment.id] || !can('inventory', 'export') || summary(shipment).complete === false) return
+  exporting.value[shipment.id] = true
+  errors.value[shipment.id] = ''
+  try { await downloadPackingListExport(shipment.id, shipment.shipment_no) }
+  catch (error) { errors.value[shipment.id] = exportErrorMessage(error) }
+  finally { exporting.value[shipment.id] = false }
+}
 const skuLabel = (shipment, id) => shippedSkus(shipment).find(row => String(row.sku) === String(id))?.sku_code || `SKU #${id}`
 </script>
 
 <template>
   <section class="actual-packing-panel">
-    <div class="section-heading"><div><h3>实际装箱</h3><p>按本次发货记录实际箱单；不会改变预计装箱、发货、库存或订单数量。</p></div></div>
+    <div class="section-heading"><div><h3>实际装箱（Packing List）</h3><p>记录本次发货的实际箱单；不会改变预计装箱、发货、库存或订单数量。</p></div></div>
     <p v-if="!shipments.length" class="muted">暂无发货记录，确认发货后可登记实际箱单。</p>
     <article v-for="shipment in shipments" :key="shipment.id" class="actual-shipment-card">
       <header><div><h4>{{ shipment.shipment_no }}</h4><small>{{ shipment.shipment_date }}</small></div><span class="status" :class="shipment.status">{{ shipment.status === 'confirmed' ? '已确认' : shipment.status === 'cancelled' ? '已冲销' : shipment.status }}</span></header>
@@ -112,20 +130,20 @@ const skuLabel = (shipment, id) => shippedSkus(shipment).find(row => String(row.
       <p v-if="loading[shipment.id]" role="status">实际箱单加载中…</p>
       <div v-if="errors[shipment.id]" class="packing-error" role="alert">{{ errors[shipment.id] }} <button v-if="!Object.hasOwn(cache, shipment.id)" type="button" @click="load(shipment, true)">重试</button></div>
       <template v-if="Object.hasOwn(cache, shipment.id)">
-        <div class="actual-packing-summary"><span>实际装箱：<strong>{{ summary(shipment).count }} 箱</strong></span><span>净重：{{ summary(shipment).net }} kg</span><span>毛重：{{ summary(shipment).gross }} kg</span><span>CBM：{{ summary(shipment).cbm }} m³</span></div>
+        <div class="actual-packing-summary"><span>实际装箱：<strong>{{ summary(shipment).count }} 箱</strong></span><span>净重：{{ summary(shipment).net }} kg</span><span>毛重：{{ summary(shipment).gross }} kg</span><span>CBM：{{ summary(shipment).cbm }} m³</span><button v-if="can('inventory', 'export') && mutable(shipment)" type="button" class="btn btn-secondary" :disabled="!summary(shipment).complete || exporting[shipment.id]" @click="exportPackingList(shipment)">{{ exporting[shipment.id] ? '导出中…' : '导出 Packing List' }}</button></div>
         <div class="packing-progress"><strong>{{ summary(shipment).complete ? '装箱完成' : '尚未装箱完成' }}</strong><p v-for="row in summary(shipment).rows" :key="row.sku">{{ row.sku_code }}：已装 {{ row.packed }} / 发货 {{ row.shipped }} {{ row.base_unit }} <span v-if="!row.complete"> · 未装箱 {{ row.remaining }} {{ row.base_unit }}</span></p></div>
-        <div v-if="mutable(shipment)" class="actual-packing-actions"><button type="button" class="btn btn-primary" :disabled="busy[shipment.id]" @click="openEditor(shipment)">新增箱</button><button type="button" class="btn btn-secondary" :disabled="!hasPlan || busy[shipment.id]" @click="copy(shipment)">从预计装箱复制</button><small v-if="!hasPlan">请先生成预计装箱方案</small></div>
-        <p v-if="!packages(shipment).length" class="muted">尚无实际箱单。</p>
+        <div v-if="mutable(shipment)" class="actual-packing-actions"><button type="button" class="btn btn-primary" :disabled="busy[shipment.id]" @click="openEditor(shipment)">新增箱</button><button type="button" class="btn btn-secondary" :disabled="!hasPlan || busy[shipment.id]" @click="copy(shipment)">复制预计装箱方案</button><small v-if="!hasPlan">请先生成预计装箱方案</small></div>
+        <p v-if="!packages(shipment).length" class="muted">尚无实际装箱记录。</p>
         <div class="actual-carton-list"><article v-for="row in packages(shipment)" :key="row.id" class="actual-carton-card"><header><strong>第 {{ row.carton_no }} 箱</strong><div v-if="mutable(shipment)"><button type="button" class="text-btn" :disabled="busy[shipment.id]" @click="openEditor(shipment, row)">编辑</button><button type="button" class="text-btn danger" :disabled="busy[shipment.id]" @click="remove(shipment, row)">删除</button></div></header><p>尺寸：{{ row.length ?? '—' }} × {{ row.width ?? '—' }} × {{ row.height ?? '—' }} cm</p><p>净重：{{ row.actual_net_weight }} kg · 毛重：{{ row.actual_gross_weight }} kg · CBM：{{ row.actual_cbm }} m³</p><p v-for="item in row.items" :key="item.id || item.sku">{{ skuLabel(shipment, item.sku) }} × {{ item.quantity }}</p><p v-if="row.notes">备注：{{ row.notes }}</p></article></div>
       </template>
     </article>
     <Teleport to="body"><div v-if="editor" class="actual-packing-mask"><form class="actual-packing-editor" role="dialog" aria-modal="true" aria-labelledby="actual-packing-title" @submit.prevent="save">
-      <h3 id="actual-packing-title">{{ editor.id ? '编辑实际箱单' : '新增实际箱单' }} · {{ target?.shipment_no }}</h3><p>数量采用本次发货的基础单位；CBM 由箱长、宽、高自动计算。</p>
+      <h3 id="actual-packing-title">{{ editor.id ? '编辑实际装箱记录' : '新增实际装箱记录' }} · {{ target?.shipment_no }}</h3><p>数量采用本次发货的基础单位；CBM 由箱长、宽、高自动计算。</p>
       <div class="packing-editor-fields"><label>箱号<input v-model="editor.carton_no" type="number" min="1" step="1" required /></label><label>长 cm<input :value="editor.length" @input="editor.length = $event.target.value" type="number" min="0.01" step="0.01" /></label><label>宽 cm<input :value="editor.width" @input="editor.width = $event.target.value" type="number" min="0.01" step="0.01" /></label><label>高 cm<input :value="editor.height" @input="editor.height = $event.target.value" type="number" min="0.01" step="0.01" /></label><label>实际净重 kg<input :value="editor.actual_net_weight" @input="editor.actual_net_weight = $event.target.value" type="number" min="0" step="0.001" required /></label><label>实际毛重 kg<input :value="editor.actual_gross_weight" @input="editor.actual_gross_weight = $event.target.value" type="number" min="0" step="0.001" required /></label></div>
       <label>备注<textarea v-model="editor.notes" /></label><h4>箱内 SKU 明细</h4>
       <div v-for="(item, index) in editor.items" :key="index" class="packing-editor-item"><label>SKU<select v-model="item.sku" :aria-label="`SKU ${index + 1}`" required><option value="">请选择本次发货 SKU</option><option v-for="sku in skuOptions" :key="sku.sku" :value="sku.sku">{{ sku.sku_code }} · {{ sku.display_name }} ({{ sku.base_unit }})</option></select></label><label>实际装箱数量<input :value="item.quantity" @input="item.quantity = $event.target.value" :aria-label="`实际装箱数量 ${index + 1}`" type="number" min="0.01" step="0.01" required /></label><button type="button" class="text-btn" :disabled="saving" @click="editor.items.splice(index, 1)">移除</button></div>
       <button type="button" class="text-btn" :disabled="saving" @click="editor.items.push({ sku: '', quantity: '' })">添加 SKU 明细</button><p v-if="editorError" class="packing-error" role="alert">{{ editorError }}</p>
-      <footer><button type="button" class="btn btn-secondary" :disabled="saving" @click="editor = null">取消</button><button type="submit" class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : '保存实际箱单' }}</button></footer>
+       <footer><button type="button" class="btn btn-secondary" :disabled="saving" @click="editor = null">取消</button><button type="submit" class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : '保存实际装箱' }}</button></footer>
     </form></div></Teleport>
   </section>
 </template>

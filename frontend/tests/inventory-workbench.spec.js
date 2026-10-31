@@ -106,7 +106,7 @@ it('filters exactly anomaly or procurement gap, excludes zero-only SKU, toggles 
 })
 it('keeps mixed-unit sums separate and makes base quantity labels explicit', async () => {
   expect(wrapper.find('.inventory-summary').text()).toContain('8 pcs / 340 m')
-  expect(wrapper.find('.inventory-helper').text()).toBe('数量按 SKU 基础单位显示。')
+  expect(wrapper.find('.inventory-helper').text()).toBe('数量按 SKU 基础单位显示。可用库存 = 实际库存 - 已预留；待采购仅是参考缺口，不是系统自动决策。')
   const nameCell = wrapper.findAll('.inventory-name-cell').find(cell => cell.text().includes('中文灯具'))
   expect(nameCell.get('span').text()).toBe('中文灯具')
   expect(nameCell.get('small').text()).toBe('基础单位：pcs')
@@ -143,7 +143,7 @@ it('shows exact identity, unchanged six metrics, semantic help and correct tab o
   expect(wrapper.findAll('[aria-label="关闭库存详情"]')).toHaveLength(1)
   expect(wrapper.find('.sku-detail header').text()).toContain('中文灯具 · 基础单位：pcs · 有库存')
   expect(wrapper.findAll('.detail-metrics strong').map(x => x.text())).toEqual(['4','0','4','0','0','有库存'])
-  expect(wrapper.find('.inventory-semantics').text()).toBe('库存均按 SKU 基础单位计算。可用库存 = 实际库存 - 已预留。')
+  expect(wrapper.find('.inventory-semantics').text()).toBe('库存均按 SKU 基础单位计算。可用库存 = 实际库存 - 已预留。待采购为参考缺口，需人工核对后决定是否采购。')
   expect(wrapper.findAll('.detail-tabs button').map(x => x.text().replace(/ \d+$/, ''))).toEqual(['库存流水','关联订单','采购记录','出库记录','SKU 操作日志'])
 })
 it('maps all five contextual metrics to tabs preserving context and clearing tab search', async () => {

@@ -1,4 +1,4 @@
-from .procurement_scope import validate_cost_writes, scoped_cost_summary, require_order_writes
+from .procurement_scope import validate_cost_writes, scoped_cost_summary, require_cost_allocation_updates, require_order_writes
 from .finance_scope import scope_transaction_queryset, scope_plan_queryset, validate_finance_relations, require_finance_permission, ContractFinancePermission
 from .trade_units import amount_expression, trade_values
 import csv
@@ -12,27 +12,31 @@ from decimal import Decimal, InvalidOperation
 from urllib.request import urlopen
 
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models.deletion import ProtectedError
 from django.db.models import Case, CharField, Count, DecimalField, ExpressionWrapper, F, IntegerField, OuterRef, Q, Subquery, Sum, Value, When
 from django.db.models.functions import Coalesce, TruncMonth
 from django.db.models.functions import Cast
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.core import signing
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import permissions, serializers, status, viewsets
 from rest_framework.decorators import action, api_view, parser_classes, permission_classes
-from rest_framework.exceptions import ValidationError as DRFValidationError
+from rest_framework.exceptions import NotFound, ValidationError as DRFValidationError
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, Supplier, SupplierSKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerSupplierPreference, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseMOQException, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
+from .country_registry import CountryResolutionError, country_options as build_country_options, country_stored_values, display_country
+from .error_messages import CUSTOMER_NOT_FOUND_MESSAGE
+from .money import CURRENT_AMOUNT_CALCULATION_VERSION
 from .querysets import current_due_follow_ups, prefetch_purchase_related_orders
 from .permissions import HSCodeMaintenancePermission, ModuleActionPermission, OrganizationOverviewPermission, PermissionAdminOnly, QuoteExportPermission, _profile_for, effective_permission_matrix, has_all_permissions, is_permission_admin, user_can
 from .sales_scope import allowed_employee_ids, data_scope_display, effective_data_scope, employee_profile_for, scope_customer_queryset, scope_customer_related_queryset
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
+from .quotation_export_dto import QuotationExportValidationError, build_quotation_export_dto
 from .quote_snapshots import create_quote_items
 from .serializers import protected_media_url, certificate_expiry, AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementReversalInputSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteAvailabilityPreviewInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .serializers import ProcurementDraftInputSerializer
@@ -41,8 +45,15 @@ from .services.finance import allocate_advance, approve_contract_change, reject_
 from .services.fulfillment import bulk_sku_metrics, confirm_shipment, order_item_metrics, record_receipt, record_supplier_payment, reverse_manual_inventory_movement, reverse_receipt as reverse_receipt_service, reverse_shipment as reverse_shipment_service
 from .services.order_lifecycle import cancel_order, complete_order, confirm_order, start_order_production
 from .services.packaging import copy_estimated_to_actual, generate_packing_plan, packaging_summary
-from .services.purchase_lifecycle import cancel_purchase_order, place_purchase_order
+from .services.packing_list import (
+    PackingListExportError,
+    XLSX_CONTENT_TYPE,
+    render_packing_list_xlsx,
+    safe_packing_list_filename,
+)
+from .services.purchase_lifecycle import PurchaseMOQExceptionRequired, cancel_purchase_order, place_purchase_order
 from .services.procurement import build_procurement_plan, create_purchase_drafts, draft_procurement_quantities
+from .services.order_quantity_adjustments import QuantityAdjustmentConflict, apply_quantity_adjustment, preview_quantity_adjustment, redact_quantity_adjustment_response, serialize_adjustment
 from .services.sku_plans import apply_category_attribute_reorder, preview_category_attribute_reorder
 from .services.sku_schema import (
     UNFROZEN_CATEGORY_HIERARCHY_MESSAGE,
@@ -56,6 +67,45 @@ from .sales_model_defaults import DEFAULT_SALES_MODEL_ABBREVIATIONS
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 USD_CNY_REFERENCE_CACHE = {"expires_at": 0, "payload": None}
+
+
+def _quantity_adjustment_visibility(user):
+    return {
+        "include_financial": user_can(user, "finance", "view") and user_can(user, "transactions", "view"),
+        "include_procurement": user_can(user, "purchases", "view"),
+    }
+
+
+def _quantity_adjustment_error_message(error, user):
+    messages = getattr(error, "messages", None) or [str(error)]
+    message = "；".join(str(value) for value in messages)
+    if not _quantity_adjustment_visibility(user)["include_financial"] and any(
+        term in message for term in ("应收", "已收金额", "订单金额", "未结应收", "退款", "资金")
+    ):
+        return "数量变更包含受权限保护的财务校验，当前账号不能继续。"
+    return messages[0]
+
+
+def _fulfillment_request_fingerprint(scope, parent_id, payload):
+    comparable = {
+        "scope": scope,
+        "parent_id": parent_id,
+        "payload": {key: value for key, value in payload.items() if key != "request_key"},
+    }
+    return hashlib.sha256(
+        json.dumps(comparable, ensure_ascii=False, sort_keys=True, default=str).encode("utf-8")
+    ).hexdigest()
+
+
+def _receipt_response_data(receipt):
+    return {
+        "id": receipt.id,
+        "purchase_item": receipt.purchase_item_id,
+        "quantity": receipt.quantity,
+        **{**trade_values(receipt), "trade_unit": receipt.trade_unit_id},
+        "is_overage": receipt.is_overage,
+        "inventory_movement": receipt.inventory_movement_id,
+    }
 
 
 @api_view(["GET"])
@@ -121,6 +171,16 @@ class OperationLogViewSet(viewsets.ReadOnlyModelViewSet):
             if user_can(self.request.user, "purchases", "view"):
                 changes = changes | ContractChangeRequest.objects.filter(purchase_order__isnull=False)
             object_ids = changes
+        elif entity == "crm.sharedreporttemplate":
+            if not user_can(self.request.user, "reports", "update"):
+                from .report_templates import visible_template_ids
+                object_ids = SharedReportTemplate.objects.filter(
+                    pk__in=visible_template_ids(SharedReportTemplate.objects.all(), self.request.user),
+                )
+        elif entity == "crm.customersupplierpreference":
+            object_ids = CustomerSupplierPreference.objects.filter(
+                customer__in=scope_customer_queryset(Customer.objects.all(), self.request.user),
+            )
         if object_ids is not None:
             qs = qs.filter(object_id__in=object_ids.values_list(Cast("pk", output_field=CharField()), flat=True))
         if object_id:
@@ -144,6 +204,41 @@ class SupplierViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = SupplierSerializer
     queryset = Supplier.objects.prefetch_related("purchase_orders")
     search_fields = ["name", "code", "country", "main_products", "contact_name", "phone", "email", "store_url", "payment_terms"]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        active_only = str(self.request.query_params.get("active_only", "")).lower() in {"1", "true", "yes"}
+        if active_only:
+            queryset = queryset.filter(is_active=True)
+        return queryset
+
+    def _set_active(self, request, pk, is_active):
+        with transaction.atomic():
+            supplier = get_object_or_404(Supplier.objects.select_for_update(), pk=pk)
+            before = snapshot(supplier)
+            if supplier.is_active != is_active:
+                supplier.is_active = is_active
+                supplier.save(update_fields=["is_active", "updated_at"])
+            record_operation(
+                request=request,
+                instance=supplier,
+                action="custom",
+                action_label="启用供应商" if is_active else "停用供应商",
+                before=before,
+                metadata={"is_active": is_active},
+            )
+        return Response(self.get_serializer(supplier).data)
+
+    @action(detail=True, methods=["post"], url_path="deactivate")
+    def deactivate(self, request, pk=None):
+        return self._set_active(request, pk, False)
+
+    @action(detail=True, methods=["post"], url_path="activate")
+    def activate(self, request, pk=None):
+        return self._set_active(request, pk, True)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response({"detail": "供应商不支持永久删除，请使用停用操作。"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @action(detail=True, methods=["get"], url_path="supplier-skus")
     def supplier_skus(self, request, pk=None):
@@ -205,7 +300,7 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = PurchaseOrderSerializer
     queryset = prefetch_purchase_related_orders(
         PurchaseOrder.objects.select_related("supplier", "order").prefetch_related(
-            "items__sku", "items__supplier_sku__supplier", "items__receipts", "transactions"
+            "items__sku", "items__supplier_sku__supplier", "items__receipts", "transactions", "moq_exception__operator"
         )
     )
     search_fields = ["purchase_no", "supplier__name", "visible_order_search"]
@@ -222,6 +317,9 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         queryset = super().get_queryset()
         from django.db.models import Case, When, Value, CharField, F
         from .procurement_scope import visible_order_ids
+        historical_requested = self.request.query_params.get("status") == "historical"
+        if self.action == "list":
+            queryset = queryset.filter(historical_only=True, status="historical") if historical_requested else queryset.filter(historical_only=False)
         ids = visible_order_ids(self.request.user, Order.objects.values_list("pk", flat=True))
         queryset = queryset.annotate(visible_order_search=Case(When(order_id__in=ids, then=F("order__order_no")), default=Value(""), output_field=CharField()))
         sku_id = self.request.query_params.get("sku")
@@ -236,9 +334,20 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return queryset
 
     def create(self, request, *args, **kwargs):
+        if request.data.get("is_historical") or request.data.get("status") == "historical":
+            return Response({"detail": "历史采购订单请使用历史订单录入入口。"}, status=status.HTTP_400_BAD_REQUEST)
         if request.data.get("status") not in (None, "", "draft"):
             return Response({"detail": "新建采购单只能保存为草稿，请使用确认下单动作。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().create(request, *args, **kwargs)
+
+    @action(detail=False, methods=["post"], url_path="historical")
+    def create_historical(self, request, *args, **kwargs):
+        if request.data.get("status") not in (None, "", "historical") or request.data.get("is_historical") not in (None, "", True, "true", "1"):
+            return Response({"detail": "历史采购订单必须通过历史录入模式创建。"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(data=request.data, context={"request": request, "historical_mode": True})
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(self.get_serializer(serializer.instance).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         if "status" in request.data:
@@ -253,16 +362,29 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def place(self, request, pk=None):
+        reason = request.data.get("moq_exception_reason", "")
         try:
             with transaction.atomic():
-                purchase = place_purchase_order(self.get_object())
+                purchase = place_purchase_order(self.get_object(), moq_exception_reason=reason, operator=request.user)
+                try:
+                    exception = purchase.moq_exception
+                except PurchaseMOQException.DoesNotExist:
+                    exception = None
                 record_operation(
                     request=request,
                     instance=purchase,
                     action="custom",
                     action_label="确认采购下单",
-                    metadata={"purchase_order_id": purchase.id, "purchase_no": purchase.purchase_no},
+                    metadata={
+                        "purchase_order_id": purchase.id,
+                        "purchase_no": purchase.purchase_no,
+                        "moq_exception_id": exception.id if exception else None,
+                        "moq_exception_reason": exception.reason if exception else "",
+                        "moq_exception_details": exception.details if exception else [],
+                    },
                 )
+        except PurchaseMOQExceptionRequired as error:
+            return Response({"code": error.code, "detail": error.messages[0], "exceptions": error.exceptions}, status=status.HTTP_400_BAD_REQUEST)
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         return Response(self.get_serializer(purchase).data)
@@ -289,6 +411,8 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def cost_allocation_preview(self, request, pk=None):
         from .services.purchase_costs import CostInput, preview_costs
         purchase = self.get_object()
+        if purchase.historical_only or purchase.status == "historical":
+            return Response({"detail": "历史采购订单仅用于经营分析，不能建立正式成本归属。"}, status=status.HTTP_400_BAD_REQUEST)
         input_serializer = CostInput(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         validate_cost_writes(purchase, request.user, input_serializer.validated_data["allocations"])
@@ -298,6 +422,8 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def cost_allocation(self, request, pk=None):
         from .services.purchase_costs import CostInput, cost_summary, save_costs
         purchase = self.get_object()
+        if purchase.historical_only or purchase.status == "historical":
+            return Response({"detail": "历史采购订单仅用于经营分析，不能建立正式成本归属。"}, status=status.HTTP_400_BAD_REQUEST)
         if request.method == "GET":
             return Response(scoped_cost_summary(cost_summary(purchase), request.user))
         input_serializer = CostInput(data=request.data)
@@ -307,8 +433,36 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             validate_cost_writes(purchase, request.user, input_serializer.validated_data["allocations"])
             before = cost_summary(purchase)
             result = save_costs(purchase, input_serializer.validated_data)
-            record_operation(request=request, instance=purchase, action="custom", action_label="采购成本分配", metadata=json.loads(json.dumps({"before_allocation": before, "after_allocation": result}, default=str)))
+            audit_before = json.loads(json.dumps({"cost_allocation": before}, default=str))
+            audit_after = json.loads(json.dumps({"cost_allocation": result}, default=str))
+            record_operation(
+                request=request,
+                instance=purchase,
+                action="custom",
+                action_label="采购成本分配",
+                before=audit_before,
+                after=audit_after,
+                metadata={"purchase_no": purchase.purchase_no},
+            )
         return Response(scoped_cost_summary(result, request.user))
+
+    @action(detail=False, methods=["get"], url_path="cost-allocation-orders")
+    def cost_allocation_orders(self, request):
+        """Return only the identifiers needed by the purchasing allocator."""
+        require_cost_allocation_updates(request.user)
+        search = (request.query_params.get("search") or "").strip()
+        orders = Order.objects.exclude(status="cancelled").order_by("order_no")
+        if search:
+            orders = orders.filter(order_no__icontains=search)
+        return Response([
+            {
+                "id": order.pk,
+                "order_no": order.order_no,
+                "status": order.status,
+                "status_display": order.get_status_display(),
+            }
+            for order in orders
+        ])
 
     @action(detail=True, methods=["post"])
     def receive(self, request, pk=None):
@@ -317,22 +471,31 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         before = snapshot(purchase)
         input_serializer = ReceiptInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
-        item = purchase.items.filter(pk=input_serializer.validated_data["purchase_item"]).first()
+        payload = dict(input_serializer.validated_data)
+        item = purchase.items.filter(pk=payload["purchase_item"]).first()
         if item is None:
             return Response({"detail": "到货明细不属于该采购单。"}, status=status.HTTP_400_BAD_REQUEST)
+        request_key = payload.get("request_key")
+        request_fingerprint = _fulfillment_request_fingerprint("purchase-receipt", purchase.pk, payload)
+        if request_key:
+            existing = GoodsReceipt.objects.filter(request_key=request_key).first()
+            if existing:
+                if existing.request_fingerprint != request_fingerprint:
+                    return Response({"detail": "请求幂等键已用于其他入库请求，请重新打开入库表单。"}, status=status.HTTP_409_CONFLICT)
+                return Response(_receipt_response_data(existing), status=status.HTTP_200_OK)
+            payload["_request_fingerprint"] = request_fingerprint
         try:
-            receipt = record_receipt(item, input_serializer.validated_data)
+            receipt = record_receipt(item, payload)
+        except IntegrityError:
+            if request_key:
+                existing = GoodsReceipt.objects.filter(request_key=request_key).first()
+                if existing and existing.request_fingerprint == request_fingerprint:
+                    return Response(_receipt_response_data(existing), status=status.HTTP_200_OK)
+            raise
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
-        return Response({
-            "id": receipt.id,
-            "purchase_item": receipt.purchase_item_id,
-            "quantity": receipt.quantity,
-            **{**trade_values(receipt), "trade_unit": receipt.trade_unit_id},
-            "is_overage": receipt.is_overage,
-            "inventory_movement": receipt.inventory_movement_id,
-        }, status=status.HTTP_201_CREATED)
+        return Response(_receipt_response_data(receipt), status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"], url_path=r"receipts/(?P<receipt_id>[^/.]+)/reverse")
     def reverse_receipt(self, request, pk=None, receipt_id=None):
@@ -497,6 +660,14 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     search_fields = ["name", "code", "country", "owner", "source"]
     ordering_fields = ["name", "created_at", "updated_at", "next_follow_up"]
 
+    def get_object(self):
+        try:
+            return super().get_object()
+        except Http404 as error:
+            # Keep an out-of-scope customer indistinguishable from an unknown
+            # customer while avoiding Django's English model-name detail.
+            raise NotFound(CUSTOMER_NOT_FOUND_MESSAGE) from error
+
     def get_queryset(self):
         formal_statuses = ["confirmed", "production", "shipped", "completed"]
         item_amount = OrderItem.objects.filter(order_id=OuterRef("pk")).values("order_id").annotate(
@@ -522,12 +693,50 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             order_count=Coalesce(Subquery(order_count, output_field=IntegerField()), 0),
             sales_amount=Coalesce(Subquery(sales, output_field=MONEY), Decimal("0"), output_field=MONEY),
         )
-        return scope_customer_queryset(queryset, self.request.user).order_by("-updated_at")
+        queryset = scope_customer_queryset(queryset, self.request.user)
+        for key in ("status", "country", "owner_profile"):
+            value = self.request.query_params.get(key)
+            if value:
+                if key == "country":
+                    try:
+                        country_values = country_stored_values(value)
+                    except CountryResolutionError:
+                        queryset = queryset.filter(country=value)
+                    else:
+                        country_query = Q()
+                        for stored_value in country_values:
+                            country_query |= Q(country__iexact=stored_value)
+                        queryset = queryset.filter(country_query)
+                else:
+                    queryset = queryset.filter(**{key: value})
+        return queryset.order_by("-updated_at")
 
     @action(detail=False, methods=["get"], url_path="owner-options")
     def owner_options(self, request):
         employees = EmployeeProfile.objects.filter(pk__in=allowed_employee_ids(request.user), active=True).select_related("unit")
         return Response([{"id": employee.pk, "display_name": employee.display_name, "unit_name": employee.unit.name, "label": f"{employee.display_name} · {employee.unit.name}"} for employee in employees])
+
+    @action(detail=False, methods=["get"], url_path="country-options")
+    def country_options(self, request):
+        countries = (
+            scope_customer_queryset(Customer.objects.all(), request.user)
+            .exclude(country="")
+            .values_list("country", flat=True)
+            .distinct()
+            .order_by("country")
+        )
+        return Response([{"value": country, "label": display_country(country) or country} for country in countries])
+
+    @action(detail=False, methods=["get"], url_path="country-catalog")
+    def country_catalog(self, request):
+        legacy_countries = (
+            scope_customer_queryset(Customer.objects.all(), request.user)
+            .exclude(country="")
+            .values_list("country", flat=True)
+            .distinct()
+            .order_by("country")
+        )
+        return Response(build_country_options(legacy_countries))
 
     @action(detail=False, methods=["get"], url_path="next-code")
     def next_code(self, request):
@@ -618,8 +827,20 @@ class FollowUpViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def methods(self, request):
         builtins = [{"value": value, "label": label} for value, label in FollowUp.TYPE_CHOICES]
         builtin_values = {item["value"] for item in builtins}
-        custom = FollowUp.objects.exclude(type="").values_list("type", flat=True).distinct().order_by("type")
+        visible_follow_ups = scope_customer_related_queryset(FollowUp.objects.all(), request.user)
+        custom = visible_follow_ups.exclude(type="").values_list("type", flat=True).distinct().order_by("type")
         return Response(builtins + [{"value": value, "label": value} for value in custom if value not in builtin_values])
+
+    @action(detail=False, methods=["get"], url_path="owner-options")
+    def owner_options(self, request):
+        owners = (
+            scope_customer_related_queryset(FollowUp.objects.all(), request.user)
+            .exclude(owner="")
+            .values_list("owner", flat=True)
+            .distinct()
+            .order_by("owner")
+        )
+        return Response([{"value": owner, "label": owner} for owner in owners])
 
     def get_queryset(self):
         qs = scope_customer_related_queryset(super().get_queryset(), self.request.user)
@@ -628,6 +849,16 @@ class FollowUpViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             qs = qs.filter(customer_id=self.request.query_params["customer"])
         if self.request.query_params.get("due") == "true":
             qs = current_due_follow_ups(qs, today=timezone.localdate())
+        for key in ("type", "owner"):
+            value = self.request.query_params.get(key)
+            if value:
+                qs = qs.filter(**{key: value})
+        date_from = self.request.query_params.get("from")
+        date_to = self.request.query_params.get("to")
+        if date_from:
+            qs = qs.filter(followed_at__date__gte=date_from)
+        if date_to:
+            qs = qs.filter(followed_at__date__lte=date_to)
         return qs
 
     @action(detail=True, methods=["post"], parser_classes=[MultiPartParser, FormParser], url_path="attachments")
@@ -1154,6 +1385,26 @@ class ShipmentViewSet(AuditTrailMixin, viewsets.ReadOnlyModelViewSet):
     def _require_order_update(user):
         require_finance_permission(user, "orders", "update")
 
+    @action(detail=True, methods=["get"], url_path="export-packing-list")
+    def export_packing_list(self, request, pk=None):
+        require_finance_permission(request.user, "inventory", "export")
+        require_finance_permission(request.user, "orders", "view")
+        require_finance_permission(request.user, "skus", "view")
+        shipment = self.get_object()
+        try:
+            content = render_packing_list_xlsx(
+                shipment,
+                include_hs_code=user_can(request.user, "hs_codes", "view"),
+            )
+        except PackingListExportError as error:
+            return Response(
+                {"detail": str(error), "differences": error.differences},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        response = HttpResponse(content, content_type=XLSX_CONTENT_TYPE)
+        response["Content-Disposition"] = f'attachment; filename="{safe_packing_list_filename(shipment.shipment_no)}"'
+        return response
+
     @action(detail=True, methods=["post"], url_path="reverse")
     def reverse(self, request, pk=None):
         self._require_order_update(request.user)
@@ -1369,7 +1620,11 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             return Response({"detail": "当前报价状态不能执行此操作，请创建修订版重新报价。"}, status=status.HTTP_400_BAD_REQUEST)
         before_status = quote.status
         quote.status = target
-        quote.save(update_fields=["status", "updated_at"])
+        update_fields = ["status", "updated_at"]
+        if before_status == "draft" and target in {"sent", "accepted"}:
+            quote.amount_calculation_version = CURRENT_AMOUNT_CALCULATION_VERSION
+            update_fields.append("amount_calculation_version")
+        quote.save(update_fields=update_fields)
         record_operation(
             request=request,
             instance=quote,
@@ -1579,11 +1834,16 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         require_finance_permission(request.user, "customers", "view")
         require_finance_permission(request.user, "skus", "view")
         quote = self.get_object()
+        try:
+            export_dto = build_quotation_export_dto(quote)
+        except QuotationExportValidationError as exc:
+            return Response(
+                {"detail": str(exc), "fields": exc.fields},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
         products = []
-        subtotal = Decimal("0")
-        for item in quote.items.all():
-            amount = item.amount
-            subtotal += amount
+        for item, export_item in zip(quote.items.all(), export_dto.products):
+            amount = Decimal(export_item.amount)
             products.append({
                 # ``sku`` remains the legacy/internal field for old clients;
                 # customer-facing callers must use ``model``.
@@ -1597,15 +1857,15 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "quantity": item.trade_quantity if item.trade_unit_id else item.quantity,
                 "base_quantity": item.quantity,
                 "trade_snapshot": item.trade_snapshot,
-                "unit_price": item.trade_unit_price if item.trade_unit_id else item.unit_price,
+                "unit_price": export_item.unit_price,
                 "amount": amount,
                 "unit": item.trade_snapshot.get("unit", item.unit_snapshot),
                 "image_url": request.build_absolute_uri(protected_media_url(item.image_snapshot)) if item.image_snapshot else "",
             })
-        total_amount = quote.total_amount
-        deposit_amount = (total_amount * quote.deposit_ratio).quantize(Decimal("0.01"))
+        totals = export_dto.totals
+        payment_splits = export_dto.payment_splits
         return Response({
-            "invoice_no": quote.quote_no,
+            "invoice_no": export_dto.invoice_no,
             "buyer": {
                 "company_name": quote.buyer_company_name,
                 "name": quote.recipient_name,
@@ -1622,17 +1882,17 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "notes": quote.notes,
             },
             "totals": {
-                "currency": quote.currency,
-                "subtotal": subtotal,
-                "shipping_fee": quote.shipping_fee,
-                "discount": quote.discount,
-                "total_amount": total_amount,
+                "currency": totals["currency"],
+                "subtotal": totals["subtotal"],
+                "shipping_fee": totals["shipping_fee"],
+                "discount": totals["discount"],
+                "total_amount": totals["total_amount"],
             },
             "payment_splits": {
-                "deposit_ratio": quote.deposit_ratio,
-                "deposit_amount": deposit_amount,
-                "balance_ratio": Decimal("1") - quote.deposit_ratio,
-                "balance_amount": total_amount - deposit_amount,
+                "deposit_ratio": payment_splits["deposit_ratio"],
+                "deposit_amount": payment_splits["deposit_amount"],
+                "balance_ratio": payment_splits["balance_ratio"],
+                "balance_amount": payment_splits["balance_amount"],
             },
             "products": products,
         })
@@ -1644,9 +1904,9 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         quote = self.get_object()
         try:
             content = build_pi_export_payload(quote)
-        except QuoteExportError:
+        except QuoteExportError as exc:
             return Response(
-                {"detail": "PI workbook generation failed."},
+                {"detail": str(exc), "fields": exc.fields} if exc.fields else {"detail": "PI workbook generation failed."},
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
         response = HttpResponse(
@@ -1667,9 +1927,20 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     ordering_fields = ["order_date", "expected_ship_date", "created_at"]
 
     def create(self, request, *args, **kwargs):
+        if request.data.get("is_historical") or request.data.get("status") == "historical":
+            return Response({"detail": "历史销售订单请使用历史订单录入入口。"}, status=status.HTTP_400_BAD_REQUEST)
         if request.data.get("status") not in (None, "", "draft"):
             return Response({"detail": "新建订单只能保存为草稿，请使用确认订单动作。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().create(request, *args, **kwargs)
+
+    @action(detail=False, methods=["post"], url_path="historical")
+    def create_historical(self, request, *args, **kwargs):
+        if request.data.get("status") not in (None, "", "historical") or request.data.get("is_historical") not in (None, "", True, "true", "1"):
+            return Response({"detail": "历史销售订单必须通过历史录入模式创建。"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(data=request.data, context={"request": request, "historical_mode": True})
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(self.get_serializer(serializer.instance).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         if "status" in request.data:
@@ -1744,6 +2015,9 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = scope_customer_related_queryset(super().get_queryset(), self.request.user)
+        historical_requested = self.request.query_params.get("status") == "historical"
+        if self.action == "list":
+            qs = qs.filter(historical_only=True, status="historical") if historical_requested else qs.filter(historical_only=False)
         if self.request.query_params.get("customer"):
             qs = qs.filter(customer_id=self.request.query_params["customer"])
         if self.request.query_params.get("quote"):
@@ -1752,7 +2026,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             qs = qs.filter(items__sku__product_id=self.request.query_params["product"]).distinct()
         if self.request.query_params.get("sku"):
             qs = qs.filter(items__sku_id=self.request.query_params["sku"]).distinct()
-        if self.request.query_params.get("status"):
+        if self.request.query_params.get("status") and not historical_requested:
             qs = qs.filter(status=self.request.query_params["status"])
         todo = self.request.query_params.get("todo")
         if todo == "unshipped":
@@ -1827,9 +2101,82 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             } for shipment in shipments] if can_view_inventory else [],
         })
 
+    @action(detail=True, methods=["post"], url_path="quantity-adjustments/preview")
+    def quantity_adjustment_preview(self, request, pk=None):
+        require_finance_permission(request.user, "orders", "update")
+        order = self.get_object()
+        try:
+            preview = preview_quantity_adjustment(order, request.data)
+        except QuantityAdjustmentConflict as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_409_CONFLICT)
+        except DjangoValidationError as error:
+            return Response({"detail": _quantity_adjustment_error_message(error, request.user)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(redact_quantity_adjustment_response(
+            preview,
+            **_quantity_adjustment_visibility(request.user),
+        ))
+
+    @action(detail=True, methods=["get", "post"], url_path="quantity-adjustments")
+    def quantity_adjustments(self, request, pk=None):
+        order = self.get_object()
+        visibility = _quantity_adjustment_visibility(request.user)
+        if request.method == "GET":
+            return Response([
+                serialize_adjustment(row, **visibility)
+                for row in order.quantity_adjustments.select_related("operator").all()
+            ])
+        require_finance_permission(request.user, "orders", "update")
+        try:
+            with transaction.atomic():
+                adjustment, replayed, preview = apply_quantity_adjustment(
+                    order,
+                    request.data,
+                    operator=request.user,
+                )
+                if not replayed:
+                    lines = adjustment.lines
+                    before = {
+                        "quantity_change_version": max(0, adjustment.order.quantity_change_version - 1),
+                        "total_amount": str(adjustment.before_total_amount),
+                        "items": {str(row["order_item"]): row["old_quantity"] for row in lines},
+                    }
+                    after = {
+                        "quantity_change_version": adjustment.order.quantity_change_version,
+                        "total_amount": str(adjustment.after_total_amount),
+                        "items": {str(row["order_item"]): row["new_quantity"] for row in lines},
+                    }
+                    record_operation(
+                        request=request,
+                        instance=adjustment.order,
+                        action="custom",
+                        action_label="调整销售订单数量",
+                        before=before,
+                        after=after,
+                        metadata={
+                            "quantity_adjustment_id": adjustment.pk,
+                            "reason": adjustment.reason,
+                            "summary": f"调整 {len(lines)} 条订单明细，金额差额 {adjustment.amount_delta}",
+                            "warnings": adjustment.impact.get("warnings", []),
+                        },
+                    )
+        except QuantityAdjustmentConflict as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_409_CONFLICT)
+        except DjangoValidationError as error:
+            return Response({"detail": _quantity_adjustment_error_message(error, request.user)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "adjustment": serialize_adjustment(adjustment, **visibility),
+                "replayed": replayed,
+                "preview": redact_quantity_adjustment_response(preview, **visibility),
+            },
+            status=status.HTTP_200_OK if replayed else status.HTTP_201_CREATED,
+        )
+
     @action(detail=True, methods=["get"], url_path="procurement-plan")
     def procurement_plan(self, request, pk=None):
         order = self.get_object()
+        if order.historical_only or order.status == "historical":
+            return Response({"detail": "历史销售订单仅用于经营分析，不能生成采购计划。"}, status=status.HTTP_400_BAD_REQUEST)
         require_finance_permission(request.user, "purchases", "view")
         require_finance_permission(request.user, "suppliers", "view")
         require_finance_permission(request.user, "inventory", "view")
@@ -1868,6 +2215,8 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["get", "post"], url_path="packing-plan")
     def packing_plan(self, request, pk=None):
         order = self.get_object()
+        if (order.historical_only or order.status == "historical") and request.method == "POST":
+            return Response({"detail": "历史销售订单仅用于经营分析，不能生成装箱或履约记录。"}, status=status.HTTP_400_BAD_REQUEST)
         require_finance_permission(request.user, "skus", "view")
         if request.method == "POST":
             plan = generate_packing_plan(order)
@@ -1881,40 +2230,67 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         require_finance_permission(request.user, "inventory", "create")
         input_serializer = ShipmentInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
+        order = self.get_object()
+        payload = dict(input_serializer.validated_data)
+        request_key = payload.get("request_key")
+        request_fingerprint = _fulfillment_request_fingerprint("sales-shipment", order.pk, payload)
+        if request_key:
+            existing = Shipment.objects.filter(request_key=request_key).first()
+            if existing:
+                if existing.request_fingerprint != request_fingerprint:
+                    return Response({"detail": "请求幂等键已用于其他发货请求，请重新打开发货表单。"}, status=status.HTTP_409_CONFLICT)
+                return Response({"id": existing.id, "shipment_no": existing.shipment_no, "status": existing.status}, status=status.HTTP_200_OK)
+            payload["_request_fingerprint"] = request_fingerprint
         try:
-            shipment = confirm_shipment(self.get_object(), input_serializer.validated_data)
+            shipment = confirm_shipment(order, payload)
+        except IntegrityError:
+            if request_key:
+                existing = Shipment.objects.filter(request_key=request_key).first()
+                if existing and existing.request_fingerprint == request_fingerprint:
+                    return Response({"id": existing.id, "shipment_no": existing.shipment_no, "status": existing.status}, status=status.HTTP_200_OK)
+            raise
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        record_operation(request=request, instance=self.get_object(), action="custom", action_label="确认订单发货", metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
+        record_operation(request=request, instance=order, action="custom", action_label="确认订单发货", metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
         return Response({"id": shipment.id, "shipment_no": shipment.shipment_no, "status": shipment.status}, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["get"])
     def workbench(self, request, pk=None):
         order = self.get_object()
+        historical = bool(order.historical_only or order.status == "historical")
         can_view_transactions = user_can(request.user, "transactions", "view")
         can_view_finance = user_can(request.user, "finance", "view")
-        can_view_profit = can_view_transactions and can_view_finance and user_can(request.user, "purchases", "view")
+        quantity_adjustment_visibility = _quantity_adjustment_visibility(request.user)
+        can_view_profit = can_view_transactions and can_view_finance and user_can(request.user, "purchases", "view") and not historical
         from .models import AdvanceAllocation
-        advance_allocations = [{"id": row.pk, "transaction_no": row.advance.transaction_no,
+        advance_allocations = [] if historical else [{"id": row.pk, "transaction_no": row.advance.transaction_no,
             "transaction_date": row.advance.transaction_date, "amount": row.amount,
             "currency": row.plan.currency, "is_active": row.is_active}
             for row in AdvanceAllocation.objects.filter(plan__order=order).select_related("advance", "plan")]
         items = list(order.items.all())
-        payments = list(scope_transaction_queryset(order.transactions.all(), request.user)) if can_view_transactions else []
-        plans = list(order.payment_plans.all()) if can_view_finance else []
+        payments = list(scope_transaction_queryset(order.transactions.all(), request.user)) if can_view_transactions and not historical else []
+        plans = list(order.payment_plans.all()) if can_view_finance and not historical else []
         expenses = [row for row in payments if row.direction == "expense" and row.kind not in {"supplier_payment", "refund", "unallocated_advance", "unallocated_payment"} and row.status == "confirmed"]
-        inventory = list(InventoryMovement.objects.filter(Q(order=order) | Q(related_orders=order)).distinct().select_related("sku__product"))
+        inventory = [] if historical else list(InventoryMovement.objects.filter(Q(order=order) | Q(related_orders=order)).distinct().select_related("sku__product"))
         ordered_quantity = sum((item.quantity for item in items), Decimal("0"))
-        shipped_quantity = sum((order_item_metrics(item)["shipped_quantity"] for item in items), Decimal("0"))
+        shipped_quantity = Decimal("0") if historical else sum((order_item_metrics(item)["shipped_quantity"] for item in items), Decimal("0"))
         from .services.finance import order_receivable_state
         paid_amount = order.paid_amount if can_view_transactions and can_view_finance else None
         planned_receivable = sum((plan.planned_amount for plan in plans if plan.status != "cancelled"), Decimal("0"))
         from .services.profit import order_profit_summary
         profit_summary = order_profit_summary(order) if can_view_profit else None
+        quantity_adjustments = [
+            serialize_adjustment(row, **quantity_adjustment_visibility)
+            for row in order.quantity_adjustments.select_related("operator").all()
+        ]
+        serializer_context = {
+            "request": request,
+            "mask_quantity_adjustment_financial": not quantity_adjustment_visibility["include_financial"],
+        }
         return Response({
-            "order": OrderSerializer(order, context={"request": request}).data,
+            "order": OrderSerializer(order, context=serializer_context).data,
             "source_quote": QuoteSerializer(order.quote, context={"request": request}).data if order.quote and user_can(request.user, "quotes", "view") else None,
-            "items": OrderItemSerializer(items, many=True, context={"request": request}).data,
+            "items": OrderItemSerializer(items, many=True, context=serializer_context).data,
             "payments": TransactionSerializer(payments, many=True, context={"request": request}).data,
             "advance_allocations": advance_allocations if can_view_transactions and can_view_finance else [],
             "plans": PaymentPlanSerializer(plans, many=True, context={"request": request}).data,
@@ -1927,12 +2303,69 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             },
             "expense_summary": {"expense_rmb": profit_summary["expense_rmb"] if profit_summary else None},
             "profit_summary": profit_summary,
+            "quantity_adjustments": quantity_adjustments,
             "fulfillment_summary": {
                 "ordered_quantity": ordered_quantity,
                 "shipped_quantity": shipped_quantity if user_can(request.user, "inventory", "view") else None,
                 "remaining_quantity": ordered_quantity - shipped_quantity if user_can(request.user, "inventory", "view") else None,
             },
         })
+
+def _finance_period(request):
+    today = timezone.localdate()
+    try:
+        start = date.fromisoformat(request.query_params.get("date_from") or today.replace(day=1).isoformat())
+        end = date.fromisoformat(request.query_params.get("date_to") or today.isoformat())
+        if start > end:
+            raise ValueError
+    except ValueError:
+        raise DRFValidationError("请填写有效日期，开始日期不能晚于结束日期。")
+    return start, end
+
+
+def _finance_plans(user):
+    return (
+        scope_plan_queryset(
+            PaymentPlan.objects.select_related("order__customer", "purchase_order__supplier"), user
+        )
+        .filter(status="open")
+        .exclude(order__status__in=["draft", "cancelled"])
+        .exclude(purchase_order__status__in=["draft", "cancelled"])
+    )
+
+
+def _finance_period_orders(user, start, end, can_view_orders=None):
+    if can_view_orders is None:
+        can_view_orders = user_can(user, "orders", "view")
+    if not can_view_orders:
+        return Order.objects.none()
+    return (
+        scope_customer_related_queryset(Order.objects.filter(historical_only=False), user)
+        .exclude(status__in=["draft", "cancelled"])
+        .filter(order_date__range=(start, end))
+        .prefetch_related("items", "contract_changes", "purchase_cost_allocations", "transactions")
+    )
+
+
+def _finance_cash(user, start, end):
+    return scope_transaction_queryset(Transaction.objects.all(), user).filter(
+        status="confirmed", transaction_date__range=(start, end)
+    )
+
+
+def _finance_advances(user):
+    return scope_transaction_queryset(Transaction.objects.all(), user).filter(
+        status="confirmed", kind__in=["unallocated_advance", "unallocated_payment"]
+    )
+
+
+def _finance_row_rmb(row):
+    return row.rmb_amount or row.amount * row.exchange_rate
+
+
+def _finance_plan_rmb(row):
+    exchange_rate = row.order.exchange_rate if row.order_id else row.purchase_order.exchange_rate
+    return row.remaining_amount * exchange_rate
 
 
 @api_view(["GET"])
@@ -1943,30 +2376,27 @@ def finance_dashboard(request):
     exporting = request.query_params.get("export") == "csv"
     if exporting:
         require_finance_permission(request.user, "finance", "export")
-    today = timezone.localdate()
     try:
-        start = date.fromisoformat(request.query_params.get("date_from") or today.replace(day=1).isoformat())
-        end = date.fromisoformat(request.query_params.get("date_to") or today.isoformat())
-        if start > end:
-            raise ValueError
-    except ValueError:
-        return Response({"detail": "请填写有效日期，开始日期不能晚于结束日期。"}, status=400)
-    plans = scope_plan_queryset(PaymentPlan.objects.select_related("order__customer", "purchase_order__supplier"), request.user).filter(status="open").exclude(order__status__in=["draft", "cancelled"]).exclude(purchase_order__status__in=["draft", "cancelled"])
+        start, end = _finance_period(request)
+    except DRFValidationError as error:
+        return Response({"detail": str(error.detail)}, status=400)
+    today = timezone.localdate()
+    plans = _finance_plans(request.user)
     receivables = plans.filter(direction="receivable") if can_view_orders else plans.none()
     payables = plans.filter(direction="payable") if can_view_purchases else plans.none()
     remaining = lambda rows: sum((row.remaining_amount * (row.order.exchange_rate if row.order_id else row.purchase_order.exchange_rate) for row in rows), Decimal("0"))
     from .services.profit import order_profit_summary
-    period_orders = scope_customer_related_queryset(Order.objects.all(), request.user).exclude(status__in=["draft", "cancelled"]).filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes", "purchase_cost_allocations", "transactions") if can_view_orders else Order.objects.none()
+    period_orders = _finance_period_orders(request.user, start, end, can_view_orders)
     sales_rmb = sum((order.total_amount * order.exchange_rate for order in period_orders), Decimal("0"))
     profits = [order_profit_summary(order) for order in period_orders] if can_view_orders and can_view_purchases else []
     purchase_cost_rmb = sum((row["purchase_cost_rmb"] for row in profits), Decimal("0"))
     order_expense_rmb = sum((row["expense_rmb"] for row in profits), Decimal("0"))
     estimated_profit_rmb = sum((row["estimated_profit_rmb"] for row in profits), Decimal("0"))
-    cash = scope_transaction_queryset(Transaction.objects.all(), request.user).filter(status="confirmed", transaction_date__range=(start, end))
+    cash = _finance_cash(request.user, start, end)
     income, expense = Decimal("0"), Decimal("0")
     categories, monthly = {}, {}
     for row in cash:
-        value = row.rmb_amount or row.amount * row.exchange_rate
+        value = _finance_row_rmb(row)
         if row.direction == "income":
             income += value
         else:
@@ -1976,7 +2406,7 @@ def finance_dashboard(request):
         month = row.transaction_date.strftime("%Y-%m")
         bucket = monthly.setdefault(month, {"month": month, "income": Decimal("0"), "expense": Decimal("0")})
         bucket[row.direction] += value
-    advances = scope_transaction_queryset(Transaction.objects.all(), request.user).filter(status="confirmed", kind__in=["unallocated_advance", "unallocated_payment"])
+    advances = _finance_advances(request.user)
     unallocated = lambda direction: sum(((row.amount - row.allocated_amount) * row.exchange_rate for row in advances if row.direction == direction), Decimal("0"))
     due_items = [
         {
@@ -2017,6 +2447,205 @@ def finance_dashboard(request):
             writer.writerow(["收入" if row["direction"] == "income" else "支出", safe_csv(row["category"]), row["amount"]])
         return response
     return Response(payload)
+
+
+@api_view(["GET"])
+def finance_dashboard_details(request):
+    """Return a paged, permission-scoped composition for one finance card.
+
+    The endpoint intentionally exposes only records that feed the selected card.
+    Actual bank cash keeps using the existing confirmed-event endpoint/table so
+    its bank_date and bank voucher rules remain a single source of truth.
+    """
+    require_finance_permission(request.user, "transactions", "view")
+    metric = request.query_params.get("metric")
+    metric_config = {
+        "sales_rmb": ("合同销售额", "order_date", "人民币", "订单日期范围内的正式销售订单；包含已批准合同变更，变更不分配至商品行。"),
+        "purchase_cost_rmb": ("订单采购归属成本", "order_date", "人民币", "沿用现有订单采购归属成本服务，按订单日期统计。"),
+        "order_expense_rmb": ("订单费用", "order_date", "人民币", "沿用现有订单利润服务中的已确认订单费用，按订单日期统计。"),
+        "estimated_profit_rmb": ("预计订单利润", "order_date", "人民币", "经营估算：合同销售额 − 采购归属成本 − 订单费用，不代表会计利润。"),
+        "income_rmb": ("账面收入（折算参考）", "transaction_date", "人民币折算参考", "仅统计已确认财务流水，按流水发生日期和既有人民币折算参考口径。"),
+        "expense_rmb": ("账面支出（折算参考）", "transaction_date", "人民币折算参考", "仅统计已确认财务流水，按流水发生日期和既有人民币折算参考口径。"),
+        "net_cash_rmb": ("账面净收支（折算参考）", "transaction_date", "人民币折算参考", "已确认账面收入减已确认账面支出；不代表银行实际到账或银行账户余额。"),
+        "receivable_count": ("待收笔数", "current_balance", "笔", "当前开放应收计划去重计数，不受所选期间限制。"),
+        "receivable_rmb": ("待收款", "current_balance", "人民币折算参考", "当前开放应收计划按合同汇率折算，不受所选期间限制。"),
+        "payable_count": ("待付款笔数", "current_balance", "笔", "当前开放应付计划去重计数，不受所选期间限制。"),
+        "payable_rmb": ("待付款", "current_balance", "人民币折算参考", "当前开放应付计划按合同汇率折算，不受所选期间限制。"),
+        "advance_receipt_rmb": ("未核销预收款", "current_balance", "人民币折算参考", "当前已确认未核销预收流水按原流水汇率折算，不受所选期间限制。"),
+        "advance_payment_rmb": ("未核销预付款", "current_balance", "人民币折算参考", "当前已确认未核销预付流水按原流水汇率折算，不受所选期间限制。"),
+    }
+    if metric not in metric_config:
+        return Response({"detail": "不支持的财务指标。"}, status=400)
+
+    title, date_basis, amount_unit, basis_note = metric_config[metric]
+    try:
+        start, end = _finance_period(request)
+        page = int(request.query_params.get("page") or 1)
+        page_size = int(request.query_params.get("page_size") or 50)
+        sort_by = request.query_params.get("sort_by") or "date"
+        sort_order = request.query_params.get("sort_order") or "asc"
+        if page < 1 or page_size < 1 or page_size > 100 or sort_by not in {"date", "amount", "record"} or sort_order not in {"asc", "desc"}:
+            raise ValueError
+    except (DRFValidationError, TypeError, ValueError):
+        return Response({"detail": "请填写有效的日期、页码和页大小。"}, status=400)
+
+    can_view_orders = user_can(request.user, "orders", "view")
+    can_view_purchases = user_can(request.user, "purchases", "view")
+    if metric in {"sales_rmb", "receivable_count", "receivable_rmb"} and not can_view_orders:
+        require_finance_permission(request.user, "orders", "view")
+    if metric in {"purchase_cost_rmb", "order_expense_rmb", "estimated_profit_rmb"} and not (can_view_orders and can_view_purchases):
+        require_finance_permission(request.user, "purchases", "view")
+        require_finance_permission(request.user, "orders", "view")
+    if metric in {"payable_count", "payable_rmb"} and not can_view_purchases:
+        require_finance_permission(request.user, "purchases", "view")
+
+    rows = []
+    total_amount = Decimal("0")
+    from .services.profit import order_profit_summary
+
+    def order_relation(order):
+        return order.customer.name if order.customer_id and user_can(request.user, "customers", "view") else "客户"
+
+    def order_row(order, amount, note=""):
+        return {
+            "id": order.id,
+            "record_label": order.order_no,
+            "date": order.order_date,
+            "relation_label": order_relation(order),
+            "status_label": order.get_status_display(),
+            "amount": amount,
+            "amount_note": note,
+            "detail_url": f"/orders?detail={order.id}",
+            "detail_label": "查看订单",
+        }
+
+    if metric in {"sales_rmb", "purchase_cost_rmb", "order_expense_rmb", "estimated_profit_rmb"}:
+        orders = _finance_period_orders(request.user, start, end, can_view_orders)
+        for order in orders:
+            sales = order.total_amount * order.exchange_rate
+            if metric == "sales_rmb":
+                amount = sales
+                note = "含已批准合同变更后的合同金额；合同变更不分配至商品行。"
+            else:
+                profit = order_profit_summary(order)
+                amount = {
+                    "purchase_cost_rmb": profit["purchase_cost_rmb"],
+                    "order_expense_rmb": profit["expense_rmb"],
+                    "estimated_profit_rmb": profit["estimated_profit_rmb"],
+                }[metric]
+                note = (
+                    f"销售额 ¥{sales}；采购归属成本 ¥{profit['purchase_cost_rmb']}；"
+                    f"订单费用 ¥{profit['expense_rmb']}。"
+                )
+            total_amount += amount
+            rows.append(order_row(order, amount, note))
+    elif metric in {"income_rmb", "expense_rmb", "net_cash_rmb"}:
+        cash = _finance_cash(request.user, start, end).select_related("customer", "supplier", "order", "purchase_order")
+        for row in cash:
+            value = _finance_row_rmb(row)
+            if metric == "income_rmb" and row.direction != "income":
+                continue
+            if metric == "expense_rmb" and row.direction != "expense":
+                continue
+            amount = value if row.direction == "income" or metric != "net_cash_rmb" else -value
+            if metric == "net_cash_rmb":
+                total_amount += amount
+            else:
+                total_amount += value
+            if row.customer_id:
+                relation = row.customer.name if user_can(request.user, "customers", "view") else "客户"
+            elif row.supplier_id:
+                relation = row.supplier.name if user_can(request.user, "suppliers", "view") else "供应商"
+            elif row.order_id:
+                relation = row.order.order_no if can_view_orders else "订单"
+            elif row.purchase_order_id:
+                relation = row.purchase_order.purchase_no if can_view_purchases else "采购单"
+            else:
+                relation = "未关联业务单据"
+            rows.append({
+                "id": row.id,
+                "record_label": row.transaction_no,
+                "date": row.transaction_date,
+                "relation_label": relation,
+                "status_label": row.get_status_display(),
+                "amount": amount,
+                "amount_note": f"{row.category or '未分类'}；已确认流水。",
+                "detail_url": f"/transactions?detail={row.id}",
+                "detail_label": "查看财务流水",
+            })
+    elif metric in {"receivable_count", "receivable_rmb", "payable_count", "payable_rmb"}:
+        direction = "receivable" if metric.startswith("receivable") else "payable"
+        plans = _finance_plans(request.user).filter(direction=direction)
+        for row in plans:
+            amount = Decimal("1") if metric.endswith("_count") else _finance_plan_rmb(row)
+            total_amount += amount
+            if direction == "receivable":
+                relation = order_relation(row.order)
+                detail_url = f"/orders?detail={row.order_id}"
+            else:
+                relation = row.purchase_order.supplier.name if user_can(request.user, "suppliers", "view") else "供应商"
+                detail_url = f"/purchase-orders?detail={row.purchase_order_id}"
+            rows.append({
+                "id": row.id,
+                "record_label": row.order.order_no if direction == "receivable" else row.purchase_order.purchase_no,
+                "date": row.due_date,
+                "relation_label": relation,
+                "status_label": "待结清",
+                "amount": amount,
+                "amount_note": "当前开放计划的未结金额。" if not metric.endswith("_count") else "一笔开放计划。",
+                "detail_url": detail_url,
+                "detail_label": "查看订单" if direction == "receivable" else "查看采购单",
+            })
+    else:
+        direction = "income" if metric == "advance_receipt_rmb" else "expense"
+        advances = _finance_advances(request.user).filter(direction=direction)
+        advances = advances.select_related("customer", "supplier", "order", "purchase_order")
+        for row in advances:
+            amount = (row.amount - row.allocated_amount) * row.exchange_rate
+            total_amount += amount
+            relation = "客户" if row.customer_id and not user_can(request.user, "customers", "view") else (row.customer.name if row.customer_id else "供应商")
+            if row.supplier_id and user_can(request.user, "suppliers", "view"):
+                relation = row.supplier.name
+            rows.append({
+                "id": row.id,
+                "record_label": row.transaction_no,
+                "date": row.transaction_date,
+                "relation_label": relation,
+                "status_label": row.get_status_display(),
+                "amount": amount,
+                "amount_note": "已确认流水的未核销余额。",
+                "detail_url": f"/transactions?detail={row.id}",
+                "detail_label": "查看财务流水",
+            })
+
+    def sort_value(row):
+        if sort_by == "amount":
+            return Decimal(str(row["amount"]))
+        if sort_by == "record":
+            return str(row["record_label"] or "")
+        return row["date"] or date.max
+
+    rows.sort(key=sort_value, reverse=sort_order == "desc")
+    total_count = len(rows)
+    offset = (page - 1) * page_size
+    page_rows = rows[offset:offset + page_size]
+    return Response({
+        "metric": metric,
+        "title": title,
+        "basis_note": basis_note,
+        "date_basis": date_basis,
+        "amount_unit": amount_unit,
+        "current_balance": date_basis == "current_balance",
+        "period": {"date_from": start, "date_to": end},
+        "total_count": total_count,
+        "total_amount": total_amount,
+        "page": page,
+        "page_size": page_size,
+        "sort_by": sort_by,
+        "sort_order": sort_order,
+        "has_more": offset + page_size < total_count,
+        "rows": page_rows,
+    })
 
 
 class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
@@ -2342,6 +2971,13 @@ class ContractChangeRequestViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 def dashboard(request):
     today = timezone.localdate()
     year_start = date(today.year, 1, 1)
+    trend_start = date(today.year, today.month, 1)
+    for _ in range(11):
+        trend_start = (
+            date(trend_start.year - 1, 12, 1)
+            if trend_start.month == 1
+            else date(trend_start.year, trend_start.month - 1, 1)
+        )
     last_year_start = date(today.year - 1, 1, 1)
     last_year_same_day = date(today.year - 1, today.month, min(today.day, 28 if today.month == 2 else today.day))
     formal_statuses = ["confirmed", "production", "shipped", "completed"]
@@ -2351,7 +2987,9 @@ def dashboard(request):
     can_view_followups = user_can(request.user, "followups", "view")
     can_view_certificates = user_can(request.user, "certificates", "view") and can_view_products
     scoped_customers = scope_customer_queryset(Customer.objects.all(), request.user) if can_view_customers else Customer.objects.none()
-    valid_orders = scope_customer_related_queryset(Order.objects.filter(status__in=formal_statuses), request.user) if can_view_orders else Order.objects.none()
+    valid_orders = scope_customer_related_queryset(
+        Order.objects.filter(status__in=formal_statuses, historical_only=False), request.user,
+    ) if can_view_orders else Order.objects.none()
     def sales_between(start, end):
         return sum(
             (order.total_amount * order.exchange_rate for order in valid_orders.filter(order_date__range=(start, end)).prefetch_related("items", "contract_changes")),
@@ -2360,7 +2998,7 @@ def dashboard(request):
 
     monthly_rows = defaultdict(lambda: {"sales": Decimal("0"), "orders": 0})
     customer_rows = defaultdict(lambda: {"sales": Decimal("0"), "orders": 0, "name": "", "country": ""})
-    for order in valid_orders.filter(order_date__gte=last_year_start).select_related("customer").prefetch_related("items", "contract_changes"):
+    for order in valid_orders.filter(order_date__range=(trend_start, today)).select_related("customer").prefetch_related("items", "contract_changes"):
         amount = order.total_amount * order.exchange_rate
         month = order.order_date.strftime("%Y-%m")
         monthly_rows[month]["sales"] += amount
@@ -2370,16 +3008,30 @@ def dashboard(request):
             customer["sales"] += amount
             customer["orders"] += 1
             customer["name"], customer["country"] = order.customer.name, order.customer.country
-    monthly = [{"month": month, **values} for month, values in sorted(monthly_rows.items())]
+    trend_months = []
+    month_cursor = trend_start
+    while month_cursor <= date(today.year, today.month, 1):
+        trend_months.append(month_cursor.strftime("%Y-%m"))
+        month_cursor = (
+            date(month_cursor.year + 1, 1, 1)
+            if month_cursor.month == 12
+            else date(month_cursor.year, month_cursor.month + 1, 1)
+        )
+    monthly = (
+        [{"month": month, **monthly_rows.get(month, {"sales": Decimal("0"), "orders": 0})} for month in trend_months]
+        if monthly_rows else []
+    )
     # Product-category sales deliberately remain item-only: contract adjustments have no SKU/category allocation.
-    categories = OrderItem.objects.filter(order__in=valid_orders, order__order_date__gte=year_start).values(
+    categories = OrderItem.objects.filter(order__in=valid_orders, order__order_date__range=(year_start, today)).values(
         "sku__product__category__name"
     ).annotate(sales=Sum(ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)), quantity=Sum("quantity")).order_by("-sales")[:8]
     top_customers = [
         {"id": customer_id, **values}
         for customer_id, values in sorted(customer_rows.items(), key=lambda row: row[1]["sales"], reverse=True)[:6]
     ]
-    cash = scope_transaction_queryset(Transaction.objects.filter(status="confirmed", transaction_date__gte=year_start), request.user)
+    cash = scope_transaction_queryset(
+        Transaction.objects.filter(status="confirmed", transaction_date__range=(year_start, today)), request.user,
+    )
     if not user_can(request.user, "transactions", "view"):
         cash = cash.none()
     income = sum((row.rmb_amount or row.amount * row.exchange_rate for row in cash if row.direction == "income"), Decimal("0"))
@@ -2393,6 +3045,13 @@ def dashboard(request):
         for c in certificates.order_by("expires_on", "id")[:5]
     ]
     return Response({
+        "date_ranges": {
+            "as_of": today,
+            "year_start": year_start,
+            "year_end": today,
+            "trend_start": trend_start,
+            "trend_end": today,
+        },
         "certificate_alerts": certificate_alerts,
         "summary": {
             "certificate_attention": certificates.count(),
@@ -2400,7 +3059,7 @@ def dashboard(request):
             "certificate_expiring": certificates.filter(expires_on__gte=today).count(),
             "sales_ytd": sales_between(year_start, today),
             "sales_last_ytd": sales_between(last_year_start, last_year_same_day),
-            "orders_ytd": valid_orders.filter(order_date__gte=year_start).count(),
+            "orders_ytd": valid_orders.filter(order_date__range=(year_start, today)).count(),
             "active_customers": scoped_customers.filter(status__in=["customer", "company"]).count(),
             "receipts_rmb": income,
             "payments_rmb": expense,
@@ -2597,6 +3256,8 @@ def _apply_import_rows(entity, rows, user=None):
 
 
 def _import_error_message(exc):
+    if isinstance(exc, Product.DoesNotExist):
+        return "找不到所引用的产品，请核对 product_code。"
     if isinstance(exc, DRFValidationError):
         return _flatten_import_validation_error(exc.detail)
     if isinstance(exc, DjangoValidationError):

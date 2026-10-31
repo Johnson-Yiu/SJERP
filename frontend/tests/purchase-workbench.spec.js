@@ -4,7 +4,7 @@ import { mount } from '@vue/test-utils'
 import PurchaseDetailModal from '../src/components/PurchaseDetailModal.vue'
 import { purchaseArrival, purchaseTasks, receiptProgress } from '../src/utils/purchaseOverview.js'
 const item = { id: 71, sku: 3, sku_code: 'SKU-3', display_name: '测试灯', quantity: '10', received_quantity: '4', remaining_quantity: '6', unit_price: '2', supplier_name: '历史供应商', supplier_model: 'MODEL-A', supplier_sku_code: 'SOURCE-A', supplier_characteristics_snapshot: { 色温: '3000K' }, trade_snapshot: { base_unit: 'pcs' }, receipts: [{ id: 91, receipt_date: '2026-10-01', quantity: '4', unit_cost: '2', overage_summary: '赠品 1 件' }, { id: 92, receipt_date: '2026-10-02', quantity: '1', unit_cost: '2', reversed_at: '2026-10-03' }] }
-const purchase = { id: 41, purchase_no: 'PO-41', supplier_name: '供应商甲', order_date: '2026-10-01', expected_arrival_date: '2026-10-08', status: 'partial', status_display: '部分到货', currency: 'USD', total_amount: '20', paid_amount: '4', unpaid_amount: '16', items: [item], related_orders: [{ id: 22, order_no: 'SO-22', customer_name: '客户乙' }] }
+const purchase = { id: 41, purchase_no: 'PO-41', supplier_name: '供应商甲', supplier_name_snapshot: '供应商甲', order_date: '2026-10-01', expected_arrival_date: '2026-10-08', status: 'partial', status_display: '部分到货', currency: 'USD', total_amount: '20', paid_amount: '4', unpaid_amount: '16', items: [item], related_orders: [{ id: 22, order_no: 'SO-22', customer_name: '客户乙' }] }
 const mountDetail = overrides => mount(PurchaseDetailModal, { props: { purchase: { ...purchase, ...overrides } }, global: { stubs: { ContractAmountAdjustments: true, RouterLink: { props: ['to'], template: '<a :href="`/orders?detail=${to.query.detail}`"><slot /></a>' } } } })
 const click = async (wrapper, label) => wrapper.findAll('button').find(button => button.text() === label).trigger('click')
 
@@ -33,14 +33,14 @@ describe('purchase workbench Phase A', () => {
     const header = wrapper.get('header').text()
     for (const text of ['PO-41','供应商甲','2026-10-01','2026-10-08','部分到货']) expect(header).toContain(text)
     expect(wrapper.findAll('[aria-label="关闭采购详情"]')).toHaveLength(1)
-    expect(wrapper.findAll('.workbench-tabs button').map(button => button.text())).toEqual(['概览','采购明细','收货','付款','关联订单'])
-    for (const text of ['采购摘要','当前待办','到货进度','付款进度','成本分配','待到货','待付款']) expect(wrapper.text()).toContain(text)
+    expect(wrapper.findAll('.workbench-tabs button').map(button => button.text())).toEqual(['概览','采购明细','收货','供应商应付','关联销售订单'])
+    for (const text of ['采购摘要','当前待办','到货进度','付款进度','采购成本分配','待到货','待付款']) expect(wrapper.text()).toContain(text)
     expect(wrapper.getComponent({ name: 'ContractAmountAdjustments' }).props('contract')).toEqual(purchase)
     wrapper.unmount()
   })
   it('preserves lifecycle actions and emits exact purchase objects', async () => {
     const wrapper = mountDetail({ status: 'draft' })
-    for (const [label,event] of [['确认下单','confirm'],['编辑草稿','edit'],['删除草稿','delete'],['取消采购','cancel']]) {
+    for (const [label,event] of [['确认采购下单','confirm'],['编辑草稿','edit'],['删除草稿','delete'],['取消采购单','cancel']]) {
       await wrapper.findAll('header button').find(button => button.text() === label).trigger('click')
       expect(wrapper.emitted(event)[0][0].id).toBe(41)
     }
@@ -51,7 +51,7 @@ describe('purchase workbench Phase A', () => {
       expect(wrapper.findAll('header button')).toHaveLength(1)
     }
     await wrapper.setProps({ purchase: { ...purchase, status: 'ordered' } })
-    expect(wrapper.findAll('header button').map(button => button.text())).toEqual(['关闭','取消采购'])
+    expect(wrapper.findAll('header button').map(button => button.text())).toEqual(['关闭','取消采购单'])
     wrapper.unmount()
   })
   it('switches todo to receipt and preserves exact receipt and reversal targets', async () => {
@@ -82,7 +82,7 @@ describe('purchase workbench Phase A', () => {
     const wrapper = mountDetail()
     await click(wrapper, '采购明细')
     for (const text of ['历史供应商','MODEL-A','3000K','SKU-3','采购单价']) expect(wrapper.text()).toContain(text)
-    await click(wrapper, '关联订单')
+    await click(wrapper, '关联销售订单')
     expect(wrapper.get('a').attributes('href')).toBe('/orders?detail=22')
     expect(wrapper.text()).toContain('客户乙')
     wrapper.unmount()
@@ -124,7 +124,7 @@ describe('purchase financial fields from scoped API responses', () => {
     const wrapper = mountDetail({ paid_amount: '0', unpaid_amount: '20' })
     expect(wrapper.text()).toContain('已付金额')
     expect(wrapper.text()).toContain('付款进度')
-    await click(wrapper, '付款')
+    await click(wrapper, '供应商应付')
     expect(wrapper.text()).toContain('供应商付款')
     wrapper.unmount()
   })

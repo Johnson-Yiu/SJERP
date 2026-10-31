@@ -1,0 +1,23 @@
+{
+  "path": "report-sales-customer.csv",
+  "bytes": 549,
+  "sha256": "5662c73205f9a25956d93273e6bfe89d9539533f2e442da637ca8717c2d7db9e",
+  "http_download": {
+    "status": 200,
+    "path": "http-report-sales-customer.csv",
+    "bytes": 549,
+    "sha256": "5662c73205f9a25956d93273e6bfe89d9539533f2e442da637ca8717c2d7db9e"
+  },
+  "prefix_hex": "efbbbf",
+  "encoding": "UTF-8 with BOM (utf-8-sig)",
+  "formula_protection": "'=2+2",
+  "api_total_amount": "145.00000000000000000000",
+  "csv_total_amount": "145.00000000000000000000",
+  "api_total_count": 2,
+  "csv_total_count": 2,
+  "api_total_quantities": {
+    "pcs": "2.00",
+    "box": "3.00"
+  },
+  "csv_total_quantities": "2.00 pcs / 3.00 box"
+}

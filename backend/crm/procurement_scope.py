@@ -1,6 +1,6 @@
 """Shared procurement with separately authorized sales links."""
 from rest_framework.exceptions import PermissionDenied
-from .models import Order, PurchaseCostAllocation
+from .models import Order
 from .permissions import user_can
 from .sales_scope import scope_customer_related_queryset
 
@@ -17,20 +17,39 @@ def require_order_writes(user, ids):
         raise PermissionDenied("没有权限修改采购关联的销售订单。")
 
 
+def require_cost_allocation_updates(user):
+    """Require purchasing write access before exposing allocation targets."""
+    if not user_can(user, "purchases", "update"):
+        raise PermissionDenied("需要采购修改权限才能选择成本归属订单。")
+
+
 def validate_cost_writes(purchase, user, allocations):
-    # A save replaces every attribution and recomputes all expense shares.
-    old = PurchaseCostAllocation.objects.filter(purchase_item__purchase_order=purchase).values_list("order_id", flat=True)
-    require_order_writes(user, [*old, *(row.get("order").pk for row in allocations if row.get("order"))])
+    """Authorize a complete cost-attribution replacement as procurement work.
+
+    Cost attribution is a purchasing responsibility even when the target sales
+    order belongs to another salesperson. Keep only the order existence and
+    lifecycle checks in the cost service; this endpoint does not grant normal
+    sales-order, customer, price, or profit visibility.
+    """
+    if not user_can(user, "purchases", "update"):
+        raise PermissionDenied("需要采购修改权限才能调整成本归属。")
+
+    target_ids = {row.get("order").pk for row in allocations if row.get("order")}
+    existing_ids = set(Order.objects.filter(pk__in=target_ids).values_list("pk", flat=True))
+    if target_ids - existing_ids:
+        raise PermissionDenied("成本归属目标销售订单不存在。")
 
 
 def scoped_cost_summary(summary, user):
     ids = {row["order"] for row in summary["allocations"] if row.get("order")}
     visible = visible_order_ids(user, ids)
-    summary["can_edit"] = user_can(user, "purchases", "update") and not (ids - visible_order_ids(user, ids, write=True))
-    summary["read_only_reason"] = "包含无权修改的销售订单，请由具备全部关联订单权限的人员调整。" if not summary["can_edit"] else ""
+    summary["can_edit"] = user_can(user, "purchases", "update")
+    summary["read_only_reason"] = "需要采购修改权限才能调整成本归属。" if not summary["can_edit"] else ""
     for row in summary["allocations"]:
         if row.get("order") and row["order"] not in visible:
-            row.update(order=None, order_no="", target_name="", sales_link_restricted=True)
+            row["sales_link_restricted"] = True
+            if not summary["can_edit"]:
+                row.update(order=None, order_no="", target_name="销售订单（详情受限）")
     return summary
 
 

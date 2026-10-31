@@ -3,12 +3,13 @@ from rest_framework.routers import DefaultRouter
 
 from .context import entity_context
 from .sku_management import ProductCombinationRulesView, SupplierCapabilityViewSet, SupplierCandidatesView, ProductSKUPlanView, ProductSKUPlanActionView, ProductSupplierCandidatePoolView, OrderItemSupplierAllocationView
-from .views import AccessRoleViewSet, CategoryAttributeViewSet, ContactViewSet, ContractChangeRequestViewSet, CustomerViewSet, EmployeeProfileViewSet, FollowUpViewSet, HSCodeViewSet, InventoryMovementViewSet, OperationLogViewSet, OrderViewSet, OrganizationUnitViewSet, PackagingTemplateViewSet, PaymentPlanViewSet, PositionViewSet, ProductCategoryViewSet, ProductCertificateViewSet, ProductParameterViewSet, ProductViewSet, PurchaseOrderViewSet, QuoteViewSet, RolePermissionViewSet, ShipmentViewSet, SKUPackagingProfileViewSet, SKUViewSet, SupplierSKUViewSet, SupplierViewSet, TransactionViewSet, current_operator, dashboard, finance_dashboard, import_csv, import_csv_execute, import_csv_preview, import_templates, organization_overview, usd_cny_reference_rate
+from .views import AccessRoleViewSet, CategoryAttributeViewSet, ContactViewSet, ContractChangeRequestViewSet, CustomerViewSet, EmployeeProfileViewSet, FollowUpViewSet, HSCodeViewSet, InventoryMovementViewSet, OperationLogViewSet, OrderViewSet, OrganizationUnitViewSet, PackagingTemplateViewSet, PaymentPlanViewSet, PositionViewSet, ProductCategoryViewSet, ProductCertificateViewSet, ProductParameterViewSet, ProductViewSet, PurchaseOrderViewSet, QuoteViewSet, RolePermissionViewSet, ShipmentViewSet, SKUPackagingProfileViewSet, SKUViewSet, SupplierSKUViewSet, SupplierViewSet, TransactionViewSet, current_operator, dashboard, finance_dashboard, finance_dashboard_details, import_csv, import_csv_execute, import_csv_preview, import_templates, organization_overview, usd_cny_reference_rate
 
 from .sales_rules import SalesRuleViewSet
 
 from .trade_units import SKUTradeUnitViewSet
 from .file_access import protected_media
+from .report_templates import SharedReportTemplateViewSet
 
 router = DefaultRouter()
 from .cash_api import RmbCashEventViewSet
@@ -44,8 +45,9 @@ router.register("access-roles", AccessRoleViewSet)
 router.register("role-permissions", RolePermissionViewSet)
 router.register("employees", EmployeeProfileViewSet)
 router.register("operation-logs", OperationLogViewSet, basename="operation-log")
+router.register("reports/templates", SharedReportTemplateViewSet, basename="shared-report-template")
 
-from .reporting import report_catalog, report_data
+from .reporting import historical_analysis, report_catalog, report_data, report_details
 from .actual_cash_api import actual_cash_report
 
 urlpatterns = [
@@ -58,8 +60,11 @@ urlpatterns = [
     path("orders/<int:order_id>/items/<int:item_id>/supplier-allocation/", OrderItemSupplierAllocationView.as_view()),
     path("reports/catalog/", report_catalog),
     path("reports/data/", report_data),
+    path("reports/details/", report_details),
+    path("reports/historical/", historical_analysis),
     path("dashboard/", dashboard),
     path("finance-dashboard/", finance_dashboard),
+    path("finance-dashboard/details/", finance_dashboard_details),
     path("actual-rmb-cash/", actual_cash_report),
     path("organization/overview/", organization_overview),
     path("session/current-operator/", current_operator),

@@ -19,28 +19,27 @@ beforeEach(() => {
   mocks.api.post.mockResolvedValue({ data: {} })
 })
 afterEach(() => wrapper?.unmount())
-it('inherits supplier terms, isolates an override and protects it on supplier cancellation', async () => {
+it('does not inherit supplier fixed terms and preserves per-purchase terms on supplier change', async () => {
   const fifty = [{ label: '预付款', ratio: '0.5', due_basis: 'order_date', offset_days: 0 }, { label: '尾款', ratio: '0.5', due_basis: 'no_date', offset_days: 0 }]
   mocks.listAll.mockImplementation(async url => url === '/suppliers/' ? [{ id: 9, name: 'Old', payment_terms_config: fifty }, { id: 10, name: 'New' }] : [])
   await editor()
   wrapper.vm.draft.items = []
   await wrapper.vm.changeSupplier(10)
   await wrapper.vm.changeSupplier(9)
-  expect(wrapper.vm.draft.payment_terms_snapshot).toEqual(fifty)
+  expect(wrapper.vm.draft.payment_terms_snapshot).toEqual([])
+  expect(mocks.confirmDialog).not.toHaveBeenCalled()
+  wrapper.vm.draft.payment_terms_snapshot = structuredClone(fifty)
   wrapper.vm.draft.payment_terms_snapshot[0].ratio = '0.2'
   wrapper.vm.draft.payment_terms_snapshot[1].ratio = '0.8'
   expect(fifty[0].ratio).toBe('0.5')
   const before = JSON.stringify(wrapper.vm.draft)
-  mocks.confirmDialog.mockResolvedValueOnce(false)
   await wrapper.vm.changeSupplier(10)
-  expect(mocks.confirmDialog).toHaveBeenLastCalledWith(expect.objectContaining({ message: expect.stringContaining('更换供应商还将替换本次采购的付款计划。') }))
-  expect(JSON.stringify(wrapper.vm.draft)).toBe(before)
-  await wrapper.vm.changeSupplier(10)
-  expect(wrapper.vm.draft.payment_terms_snapshot.map(row => row.ratio)).toEqual(['0.30', '0.70'])
+  expect(JSON.stringify(wrapper.vm.draft)).not.toBe(before)
+  expect(wrapper.vm.draft.payment_terms_snapshot.map(row => row.ratio)).toEqual(['0.2', '0.8'])
 })
 it('rejects an invalid purchase plan before posting', async () => {
   await editor()
-  wrapper.vm.draft.payment_terms_snapshot[0].ratio = '0.2'
+  wrapper.vm.draft.payment_terms_snapshot = [{ label: '预付款', ratio: '0.2', due_basis: 'order_date', offset_days: 0 }, { label: '尾款', ratio: '0.2', due_basis: 'no_date', offset_days: 0 }]
   await wrapper.vm.createPurchase()
   expect(mocks.api.post).not.toHaveBeenCalled()
   expect(wrapper.vm.error).toContain('100%')
@@ -63,7 +62,7 @@ it.each([false, true])('supplier change protects source/price/trade data until c
 })
 it('other supplier picker uses the same cancel/confirm rule', async () => {
   await editor(); const before = JSON.stringify(wrapper.vm.draft)
-  await wrapper.findAll('button').find(b => b.text() === '查找其他供应商').trigger('click'); await flushPromises()
+  await wrapper.findAll('button').find(b => b.text() === '更换供应商来源').trigger('click'); await flushPromises()
   mocks.confirmDialog.mockResolvedValueOnce(false)
   wrapper.getComponent(PurchaseSupplierPicker).vm.$emit('selected', { supplier: 10, supplier_sku: '' }); await flushPromises()
   expect(JSON.stringify(wrapper.vm.draft)).toBe(before)
@@ -93,7 +92,7 @@ it('zero-price placement warns explicitly and still posts after confirmation', a
   await wrapper.vm.place(purchase); expect(mocks.api.post).not.toHaveBeenCalled()
 })
 it('hides supplier matcher while the custom confirmation is pending and restores it on cancel', async () => {
-  await editor(); await wrapper.findAll('button').find(b => b.text() === '查找其他供应商').trigger('click'); await flushPromises()
+  await editor(); await wrapper.findAll('button').find(b => b.text() === '更换供应商来源').trigger('click'); await flushPromises()
   let resolve
   mocks.confirmDialog.mockImplementationOnce(() => new Promise(done => { resolve = done }))
   wrapper.getComponent(PurchaseSupplierPicker).vm.$emit('selected', { supplier: 10, supplier_sku: '' }); await flushPromises()

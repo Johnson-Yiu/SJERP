@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 C:/Users/Johnson/.codex/worktrees/iss-036-carton-units/森爵照明管理系统/frontend
+
+
+ Test Files  67 passed (67)
+      Tests  660 passed (660)
+   Start at  10:49:48
+   Duration  101.20s (transform 10.01s, setup 25.26s, import 26.84s, tests 44.16s, environment 153.98s)
+

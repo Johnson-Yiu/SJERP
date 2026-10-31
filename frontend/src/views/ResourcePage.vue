@@ -2,12 +2,10 @@
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 import { followUpError } from '../utils/followUpSafety'
-import { contactRows, duplicateContactHint, followUpRows, richTextExcerpt } from '../utils/crmList'
+import { contactRows, duplicateContactHint, duplicateContactMatches as findDuplicateContactMatches, followUpRows, richTextExcerpt } from '../utils/crmList'
 import InventoryPagination from '../components/InventoryPagination.vue'
 import { inventoryPage } from '../utils/inventoryPagination'
 import { supplierStoreUrl, supplierFilters, supplierRows } from '../utils/supplierPresentation'
-import PaymentTermsEditor from '../components/PaymentTermsEditor.vue'
-import { copyPaymentTerms, paymentTermsError } from '../utils/paymentTerms'
 import { movementTypes, movementDirection, movementSource, sourceLabels, movementStatus, ledgerFilters, filteredMovements, movementSummary, movementUnit, signedMovement } from '../utils/inventoryLedger'
 import CategoryMultiPicker from "../components/CategoryMultiPicker.vue"
 import CertificateExpiryBadge from '../components/CertificateExpiryBadge.vue'
@@ -41,17 +39,18 @@ const { can, accessState } = useAccessControl()
 const route = useRoute()
 const router = useRouter()
 const isParameterPage = computed(() => props.config.endpoint === 'product-parameters')
-const parameterProducts = ref([]), parameterOptionError = ref(''), parameterSaveError = ref(''), certificateSaveError = ref('')
+const parameterProducts = ref([]), parameterOptionError = ref(''), parameterSaveError = ref(''), certificateSaveError = ref(''), currentCertificateFileUrl = ref('')
 async function loadParameterProducts() { parameterOptionError.value = ''; try { parameterProducts.value = await listAll('/products/') } catch (error) { parameterOptionError.value = apiErrorMessage(error) } }
 const isSupplierPage = computed(() => props.config.endpoint === 'suppliers')
 const isContactPage = computed(() => props.config.endpoint === 'contacts')
 const isFollowUpPage = computed(() => props.config.endpoint === 'follow-ups')
 const isCrmPage = computed(() => isContactPage.value || isFollowUpPage.value)
-const crmFilterOptions = reactive({ customers: [], methods: [] })
+const crmFilterOptions = reactive({ customers: [], methods: [], owners: [] })
 const crmFilterError = ref('')
 const crmFilter = computed(() => ({
   search: typeof route.query.search === 'string' ? route.query.search : '',
   customer: typeof route.query.customer === 'string' ? route.query.customer : '',
+  owner: typeof route.query.owner === 'string' ? route.query.owner : '',
   primary: typeof route.query.primary === 'string' ? route.query.primary : '',
   type: typeof route.query.type === 'string' ? route.query.type : '',
   from: typeof route.query.from === 'string' ? route.query.from : '',
@@ -59,34 +58,49 @@ const crmFilter = computed(() => ({
   sort: route.query.sort === 'oldest' ? 'oldest' : 'newest',
 }))
 const supplierCategories = ref([]), supplierCategoryError = ref(''), supplierSaveError = ref('')
+const supplierLifecycleBusyId = ref(null)
 const supplierFilter = computed(() => supplierFilters(route.query))
-const supplierGroupTitles = ['基本资料', '联系方式', '可供产品分类', '付款条款', '其他备注']
+const supplierGroupTitles = ['基本资料', '联系方式', '可供产品分类', '付款备注', '其他备注']
 const listColumns = computed(() => isCertificatePage.value ? [['name','证书与编号'],['product_name','所属产品'],['issuer','签发机构'],['issued_date','签发日期','date'],['expires_on','有效期至','date'],['expiry_status','有效状态'],['file_url','文件']] : isSupplierPage.value
-  ? [['name','供应商'],['main_products','产品与可供分类'],['contact_name','联系方式'],['payment_terms_summary','系统执行付款规则'],['payment_terms','付款条款说明（备注）']]
+  ? [['name','供应商'],['is_active','状态','status'],['main_products','产品与可供分类'],['contact_name','联系方式'],['payment_terms','付款条款说明（备注）']]
   : isContactPage.value
     ? [['customer_name','所属客户'],['name','联系人'],['contact_methods','联系方式'],['is_primary','主联系人','boolean']]
     : isFollowUpPage.value
       ? [['follow_up_context','客户与联系人'],['followed_at','跟进时间','datetime'],['subject','主题与方式'],['follow_up_content','沟通与回复'],['follow_up_next','下一步安排']]
       : props.config.columns)
 const isCustomerPage = computed(() => props.config.endpoint === 'customers')
+const customerFilterOptions = reactive({ owners: [], countries: [] })
+const customerFilterError = ref('')
+const customerStatusOptions = [
+  { value: 'lead', label: '线索' },
+  { value: 'contact', label: '已联系' },
+  { value: 'opportunity', label: '商机' },
+  { value: 'customer', label: '正式客户' },
+  { value: 'company', label: '返单客户' },
+]
+const customerFilter = computed(() => ({
+  owner: typeof route.query.owner_profile === 'string' ? route.query.owner_profile : '',
+  country: typeof route.query.country === 'string' ? route.query.country : '',
+  status: typeof route.query.status === 'string' ? route.query.status : '',
+}))
 const isCoreListPage = computed(() => isCustomerPage.value || isMovementPage.value || isSupplierPage.value)
 const primaryAction = computed(() => isCertificatePage.value ? '新建产品证书' : isParameterPage.value ? '新建产品参数' : isCustomerPage.value ? '新建客户' : isMovementPage.value ? '新建库存调整' : isSupplierPage.value ? '新建供应商' : isContactPage.value ? '新建联系人' : isFollowUpPage.value ? '新建跟进记录' : '新建记录')
 const listNoun = computed(() => isCertificatePage.value ? '产品证书' : isParameterPage.value ? '产品参数' : isCustomerPage.value ? '客户' : isSupplierPage.value ? '供应商' : isContactPage.value ? '联系人' : isFollowUpPage.value ? '跟进记录' : '库存流水')
-const hasListFilters = computed(() => Boolean(query.value || ((isParameterPage.value || isCertificatePage.value) && route.query.product) || (isCertificatePage.value && route.query.expiry) || (isSupplierPage.value && (supplierFilter.value.category || supplierFilter.value.terms)) || (isMovementPage.value && [movementFilters.value.type, movementFilters.value.direction, movementFilters.value.source, route.query.sku].some(Boolean)) || (isContactPage.value && [crmFilter.value.customer, crmFilter.value.primary].some(Boolean)) || (isFollowUpPage.value && [crmFilter.value.customer, crmFilter.value.type, crmFilter.value.from, crmFilter.value.to, route.query.due].some(Boolean))))
+const hasListFilters = computed(() => Boolean(query.value || (isCustomerPage.value && [customerFilter.value.owner, customerFilter.value.country, customerFilter.value.status].some(Boolean)) || ((isParameterPage.value || isCertificatePage.value) && route.query.product) || (isCertificatePage.value && route.query.expiry) || (isSupplierPage.value && supplierFilter.value.category) || (isMovementPage.value && [movementFilters.value.type, movementFilters.value.direction, movementFilters.value.source, route.query.sku].some(Boolean)) || (isContactPage.value && [crmFilter.value.customer, crmFilter.value.primary].some(Boolean)) || (isFollowUpPage.value && [crmFilter.value.customer, crmFilter.value.owner, crmFilter.value.type, crmFilter.value.from, crmFilter.value.to, route.query.due].some(Boolean))))
 const isMovementPage = computed(() => props.config.endpoint === 'inventory-movements')
 const movementSkus = ref([])
 const movementFilters = computed(() => ledgerFilters(route.query))
 const visibleRows = computed(() => isMovementPage.value ? filteredMovements(rows.value, route.query) : isSupplierPage.value ? supplierRows(rows.value, route.query, supplierCategories.value) : isContactPage.value ? contactRows(rows.value, crmFilter.value) : isFollowUpPage.value ? followUpRows(rows.value, crmFilter.value) : isCertificatePage.value ? [...rows.value].sort((a,b)=>route.query.sort==='name'?String(a.name).localeCompare(String(b.name),'zh-CN'):String(a.expires_on||'9999').localeCompare(String(b.expires_on||'9999')) || Number(a.id)-Number(b.id)) : rows.value)
 const ledgerPage = computed(() => inventoryPage(route.query.page, visibleRows.value.length))
-const isCrmListPage = computed(() => isCrmPage.value)
-const displayRows = computed(() => isMovementPage.value || isSupplierPage.value || isCrmListPage.value || isCertificatePage.value ? visibleRows.value.slice((ledgerPage.value - 1) * 25, ledgerPage.value * 25) : visibleRows.value)
+const isPaginatedListPage = computed(() => isCustomerPage.value || isCrmPage.value)
+const displayRows = computed(() => isMovementPage.value || isSupplierPage.value || isPaginatedListPage.value || isCertificatePage.value ? visibleRows.value.slice((ledgerPage.value - 1) * 25, ledgerPage.value * 25) : visibleRows.value)
 const reversing = ref(false)
 let ledgerUpdates = Promise.resolve(), ledgerRequest = 0
 let crmRequest = 0
 function updateLedgerQuery(patch, replace = false) {
   ledgerUpdates = ledgerUpdates.catch(() => {}).then(() => {
     const next = { ...route.query, ...patch }
-    if (['search', 'type', 'direction', 'source', 'supplyCategory', 'termsMode'].some(key => key in patch)) delete next.page
+    if (['search', 'owner_profile', 'country', 'status', 'type', 'direction', 'source', 'supplyCategory'].some(key => key in patch)) delete next.page
     Object.keys(next).forEach(key => { if (next[key] === undefined || next[key] === '') delete next[key] })
     return router[replace ? 'replace' : 'push']({ path: route.path, query: next, hash: route.hash })
   })
@@ -95,7 +109,7 @@ function updateLedgerQuery(patch, replace = false) {
 function resetLedgerFilters() { clearTimeout(searchTimer); query.value = ''; return updateLedgerQuery({ search:undefined,type:undefined,direction:undefined,source:undefined }) }
 function updateCrmQuery(patch, replace = false) {
   const next = { ...route.query, ...patch }
-  if (['search', 'customer', 'primary', 'type', 'from', 'to', 'due', 'sort'].some(key => key in patch)) delete next.page
+  if (['search', 'customer', 'owner', 'primary', 'type', 'from', 'to', 'due', 'sort'].some(key => key in patch)) delete next.page
   Object.keys(next).forEach(key => { if (next[key] === undefined || next[key] === '') delete next[key] })
   return router[replace ? 'replace' : 'push']({ path: route.path, query: next, hash: route.hash })
 }
@@ -109,12 +123,26 @@ async function loadCrmFilterOptions() {
   const tasks = []
   if (can('customers', 'view')) tasks.push(listAll('/customers/').then(value => { crmFilterOptions.customers = value }))
   if (isFollowUpPage.value) tasks.push(listAll('/follow-ups/methods/').then(value => { crmFilterOptions.methods = value }))
+  if (isFollowUpPage.value) tasks.push(listAll('/follow-ups/owner-options/').then(value => { crmFilterOptions.owners = value }))
   const results = await Promise.allSettled(tasks)
   const failed = results.find(result => result.status === 'rejected')
   if (failed) crmFilterError.value = `筛选选项加载失败：${apiErrorMessage(failed.reason)}`
 }
 function setCrmFilter(key, value) { void updateCrmQuery({ [key]: value || undefined }) }
 function clearDueFollowUpFilter() { void updateCrmQuery({ due: undefined }) }
+async function loadCustomerFilterOptions() {
+  if (!isCustomerPage.value) return
+  customerFilterError.value = ''
+  const results = await Promise.allSettled([
+    listAll('/customers/owner-options/'),
+    listAll('/customers/country-options/'),
+  ])
+  if (results[0].status === 'fulfilled') customerFilterOptions.owners = results[0].value
+  if (results[1].status === 'fulfilled') customerFilterOptions.countries = results[1].value
+  const failed = results.find(result => result.status === 'rejected')
+  if (failed) customerFilterError.value = `筛选选项加载失败：${apiErrorMessage(failed.reason)}`
+}
+function setCustomerFilter(key, value) { void updateLedgerQuery({ [key]: value || undefined }) }
 const rows = ref([]), loading = ref(true), hasLoaded = ref(false), loadError = ref(''), allRecordsExist = ref(false), saving = ref(false), query = ref('')
 const modalOpen = ref(false), detailId = ref(null), editingId = ref(null)
 const detailRefresh = ref(0), keepDetailOpen = ref(false)
@@ -134,20 +162,26 @@ function changeFollowUpMode() {
 }
 const followUpAttachments = ref([])
 const pendingFollowUpFiles = ref([])
+const attachmentSaveError = ref('')
 const followUpFileInput = ref(null)
 const currentOperator = ref('')
 const supplierCodeServerError = ref('')
-const contactDuplicateHint = computed(() => isContactPage.value ? duplicateContactHint(rows.value, form, editingId.value) : '')
+const contactDuplicateRows = ref([])
+const contactDuplicateLoading = ref(false)
+const contactDuplicateError = ref('')
+const contactDuplicateHint = computed(() => isContactPage.value ? duplicateContactHint(contactDuplicateRows.value, form, editingId.value) : '')
+const contactDuplicateMatches = computed(() => isContactPage.value ? findDuplicateContactMatches(contactDuplicateRows.value, form, editingId.value) : [])
 const toast = reactive({ show: false, message: '', error: false })
 let searchTimer, toastTimer
 let routeActionVersion = 0
+let contactDuplicateRequest = 0
 const routeModalOpen = ref(false)
 
-const statusLabels = { lead: '线索', contact: '已建立联系', opportunity: '已进入报价阶段', customer: '已有1张正式订单', company: '已有2张及以上正式订单', development: '开发中', discontinued: '停产', draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
+const statusLabels = { lead: '线索', contact: '已联系', opportunity: '商机', customer: '正式客户', company: '返单客户', development: '开发中', discontinued: '停产', draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }
 const editorFields = computed(() => {
-  if (isCertificatePage.value) return [['product','name','certificate_no','issuer'],['issued_date','expires_on'],['file_url','notes']].map(keys=>keys.map(key=>props.config.fields.find(field=>field[0]===key)))
+  if (isCertificatePage.value) return [['product','name','certificate_no','issuer'],['issued_date','expires_on'],['file','notes']].map(keys=>keys.map(key=>props.config.fields.find(field=>field[0]===key)))
   if (isParameterPage.value) return [['product','group'],['name','value','unit','sort_order']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
-  if (isSupplierPage.value) return [['name','code','country','main_products'],['contact_name','phone','email','store_url'],['supply_categories'],['payment_terms','payment_terms_config'],['notes']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
+  if (isSupplierPage.value) return [['name','code','country','main_products'],['contact_name','phone','email','store_url'],['supply_categories'],['payment_terms'],['notes']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
   if (isContactPage.value) return [['customer','name','title','is_primary'],['phone','whatsapp','email'],['notes']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
   if (isFollowUpPage.value) return [['customer','contact','followed_at','type'],['subject','content','result'],['next_action','next_follow_up_mode','next_follow_up','owner']].map(keys => keys.map(key => props.config.fields.find(field => field[0] === key)))
   if (props.config.endpoint !== 'customers') return props.config.fields
@@ -190,7 +224,7 @@ const supplierCodeError = computed(() => supplierCodeConflict.value || supplierC
 const resourceMetrics = computed(() => {
   const endpoint = props.config.endpoint
   if (isMovementPage.value) return movementSummary(visibleRows.value)
-  if (isSupplierPage.value) return [{label:'供应商',value:visibleRows.value.length,hint:'全部筛选结果'},{label:'可供分类',value:new Set(visibleRows.value.flatMap(row=>row.supply_categories || [])).size,hint:'已选择的分类'},{label:'自定义付款规则',value:visibleRows.value.filter(row=>row.payment_terms_config?.length).length,hint:'按结构化配置统计'},{label:'有店铺链接',value:visibleRows.value.filter(row=>supplierStoreUrl(row.store_url)).length,hint:'可打开的网页链接'}]
+  if (isSupplierPage.value) return [{label:'供应商',value:visibleRows.value.length,hint:'全部筛选结果'},{label:'可供分类',value:new Set(visibleRows.value.flatMap(row=>row.supply_categories || [])).size,hint:'已选择的分类'},{label:'有店铺链接',value:visibleRows.value.filter(row=>supplierStoreUrl(row.store_url)).length,hint:'可打开的网页链接'}]
   if (isParameterPage.value) return [{label:'参数记录',value:rows.value.length,hint:'当前筛选结果'},{label:'所属产品',value:new Set(rows.value.map(row=>row.product)).size,hint:'当前记录关联产品'},{label:'参数分组',value:new Set(rows.value.map(row=>row.group || '未分组')).size,hint:'当前筛选范围'},{label:'有单位的参数',value:rows.value.filter(row=>row.unit).length,hint:'参数值的展示单位'}]
   if (isCertificatePage.value) return [{label:'证书记录',value:rows.value.length,hint:'当前筛选结果'},{label:'已过期',value:rows.value.filter(r=>r.expiry_status==='expired').length,hint:'按服务端日期判断'},{label:'90天内到期',value:rows.value.filter(r=>['expiring_30','expiring_90'].includes(r.expiry_status)).length,hint:'含今日到期'},{label:'未填有效期',value:rows.value.filter(r=>r.expiry_status==='no_expiry').length,hint:'不代表永久有效'}]
   const total = rows.value.length
@@ -261,7 +295,15 @@ async function load() {
     const request = ++crmRequest
     const params = isContactPage.value
       ? { ...(route.query.customer ? { customer: route.query.customer } : {}), search: typeof route.query.search === 'string' ? route.query.search : '' }
-      : { ...(route.query.customer ? { customer: route.query.customer } : {}), ...(route.query.due === 'true' ? { due: 'true' } : {}), search: typeof route.query.search === 'string' ? route.query.search : '' }
+      : {
+        ...(route.query.customer ? { customer: route.query.customer } : {}),
+        ...(route.query.owner ? { owner: route.query.owner } : {}),
+        ...(route.query.type ? { type: route.query.type } : {}),
+        ...(route.query.from ? { from: route.query.from } : {}),
+        ...(route.query.to ? { to: route.query.to } : {}),
+        ...(route.query.due === 'true' ? { due: 'true' } : {}),
+        search: typeof route.query.search === 'string' ? route.query.search : '',
+      }
     try {
       const nextRows = await listAll(`/${props.config.endpoint}/`, { params })
       if (request !== crmRequest) return
@@ -320,10 +362,10 @@ function clearListFilters() {
   if (isParameterPage.value || isCertificatePage.value) return updateLedgerQuery({product:undefined,search:undefined,expiry:undefined,sort:undefined,page:undefined})
   if (isSupplierPage.value) { clearTimeout(searchTimer); return updateLedgerQuery({ search:undefined,supplyCategory:undefined,termsMode:undefined }) }
   if (isMovementPage.value) return resetLedgerFilters()
-  if (isCustomerPage.value) return updateLedgerQuery({ search: undefined }, true)
+  if (isCustomerPage.value) return updateLedgerQuery({ search: undefined, owner_profile: undefined, country: undefined, status: undefined, page: undefined }, true)
   if (isCrmPage.value) {
     clearTimeout(searchTimer)
-    return updateCrmQuery({ search:undefined, customer:undefined, primary:undefined, type:undefined, from:undefined, to:undefined, due:undefined, sort:undefined, page:undefined }, true)
+    return updateCrmQuery({ search:undefined, customer:undefined, owner:undefined, primary:undefined, type:undefined, from:undefined, to:undefined, due:undefined, sort:undefined, page:undefined }, true)
   }
   return load()
 }
@@ -433,6 +475,24 @@ function onDateFieldChange(field, value) {
   form[field[0]] = value
   if (props.config.endpoint === 'follow-ups' && field[0] === 'followed_at') syncFollowUpDaysFromDate()
 }
+async function loadContactDuplicateRows(customerId) {
+  const request = ++contactDuplicateRequest
+  contactDuplicateRows.value = []
+  contactDuplicateError.value = ''
+  if (!customerId || !isContactPage.value) {
+    contactDuplicateLoading.value = false
+    return
+  }
+  contactDuplicateLoading.value = true
+  try {
+    const contacts = await listAll('/contacts/', { params: { customer: customerId } })
+    if (request === contactDuplicateRequest) contactDuplicateRows.value = contacts
+  } catch (error) {
+    if (request === contactDuplicateRequest) contactDuplicateError.value = `重复提醒加载失败：${apiErrorMessage(error)}`
+  } finally {
+    if (request === contactDuplicateRequest) contactDuplicateLoading.value = false
+  }
+}
 function applyDefaultContact() {
   if (props.config.endpoint !== 'follow-ups' || !form.customer) return
   if (form.contact) return
@@ -445,6 +505,7 @@ function onFieldChange(field) {
     form.contact = ''
     applyDefaultContact()
   }
+  if (isContactPage.value && field[0] === 'customer') void loadContactDuplicateRows(form.customer)
 }
 function normalizeSupplierCode() {
   supplierCodeServerError.value = ''
@@ -461,8 +522,7 @@ function resetForm() {
     const supplierDefault = props.config.endpoint === 'suppliers' && !editingId.value
       ? { country: '中国', payment_terms: '30%预付款，70%尾款发货前结清' }[name]
       : undefined
-    form[name] = type === 'remote_multi' ? [] : type === 'checkbox' ? name === 'active' : type === 'select' ? Object.keys(extra)[0] : (route.query[name] ?? supplierDefault ?? '')
-    if (type === 'payment_terms') form[name] = copyPaymentTerms()
+    form[name] = type === 'remote_multi' ? [] : type === 'checkbox' ? name === 'active' : type === 'select' ? Object.keys(extra)[0] : type === 'file' ? null : (route.query[name] ?? supplierDefault ?? '')
     if (type === 'followup_schedule') form[name] = 'keep'
   })
   supplierCodeServerError.value = ''
@@ -476,6 +536,9 @@ function isInherited(fieldName) {
   const value = route.query?.[fieldName]
   return !editingId.value && value !== undefined && value !== null && value !== ''
 }
+function onCertificateFileSelected(event) {
+  form.file = event.target.files?.[0] || null
+}
 async function openCreate({ isCurrent = () => true } = {}) {
   if (!can(accessModule.value, 'create')) return
   clearToast()
@@ -485,6 +548,7 @@ async function openCreate({ isCurrent = () => true } = {}) {
   supplierSaveError.value = ''
   keepDetailOpen.value = false
   editingId.value = null; resetForm()
+  currentCertificateFileUrl.value = ''
   if (props.config.endpoint === 'follow-ups' && !form.followed_at) form.followed_at = datetimeLocal()
   customerContacts.value = props.config.endpoint === 'customers' ? [emptyContact(true)] : []
   if (!isMovementPage.value) await loadOptions()
@@ -493,8 +557,10 @@ async function openCreate({ isCurrent = () => true } = {}) {
     form.owner_profile = accessState.operator?.employee_profile_id || ''
   }
   if (['customers', 'follow-ups'].includes(props.config.endpoint) && !form.owner) form.owner = await loadCurrentOperator()
+  if (isContactPage.value) void loadContactDuplicateRows(form.customer)
   followUpAttachments.value = []
   pendingFollowUpFiles.value = []
+  attachmentSaveError.value = ''
   applyDefaultContact()
   syncFollowUpDaysFromDate()
   if (isCurrent()) { guard.markClean(); modalOpen.value = true }
@@ -511,14 +577,18 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
   editingId.value = row.id; resetForm(); await loadOptions()
   if (!isCurrent()) return
   props.config.fields.forEach(([name, , type]) => {
+    if (type === 'file') return
     let value = row[name]
     if (type === 'datetime-local' && value) value = value.slice(0, 16)
     form[name] = value ?? (type === 'checkbox' ? false : '')
-    if (type === 'payment_terms') form[name] = copyPaymentTerms(value)
     if (type === 'followup_schedule') form[name] = value || 'keep'
   })
+  if (isContactPage.value) void loadContactDuplicateRows(form.customer)
+  if (!isCurrent()) return
+  currentCertificateFileUrl.value = isCertificatePage.value ? (row.file_url || '') : ''
   followUpAttachments.value = props.config.endpoint === 'follow-ups' ? (row.attachments || []) : []
   pendingFollowUpFiles.value = []
+  attachmentSaveError.value = ''
   syncFollowUpDaysFromDate()
   guard.markClean()
   modalOpen.value = true
@@ -526,7 +596,8 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
 const closeModal = () => { if ((isSupplierPage.value || isCrmPage.value || isParameterPage.value || isCertificatePage.value) && saving.value) return; return guard.requestClose(discardModal) }
 function discardModal() {
   const refreshDetail = keepDetailOpen.value
-  modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []
+  modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []; attachmentSaveError.value = ''; currentCertificateFileUrl.value = ''
+  contactDuplicateRequest += 1; contactDuplicateRows.value = []; contactDuplicateLoading.value = false; contactDuplicateError.value = ''
   if (refreshDetail) detailRefresh.value += 1
   void clearModalRoute(router, route)
 }
@@ -540,6 +611,9 @@ function openDetail(id) {
 function openContactCustomer(row) {
   if (!row.customer) return
   void router.push({ path: '/customers', query: { detail: String(row.customer), tab: 'contacts' } })
+}
+function contactDetailUrl(row) {
+  return router.resolve({ path: '/contacts', query: { detail: String(row.id) } }).href
 }
 function closeDetail() {
   detailId.value = null
@@ -570,6 +644,7 @@ function payload() {
     if (type === 'number') value = value === '' ? 0 : value
     if (type === 'date' && value === '') value = null
     if (type === 'datetime-local' && value && value.length === 16) value += ':00+08:00'
+    if (type === 'file') { if (!value) return; data[name] = value; return }
     if (['website', 'store_url'].includes(name)) value = normalizeWebsite(value)
     if (props.config.endpoint === 'follow-ups' && name === 'next_follow_up' && form.next_follow_up_mode !== 'set') value = null
     data[name] = value
@@ -577,10 +652,19 @@ function payload() {
   if (isCustomerCreate.value) data.contacts = customerContacts.value
   return data
 }
+function certificatePayload() {
+  const data = new FormData()
+  Object.entries(payload()).forEach(([name, value]) => {
+    if (value === null || value === undefined || value === '') return
+    data.append(name, value instanceof File ? value : String(value))
+  })
+  return data
+}
 async function save() {
   if (!can(accessModule.value, editingId.value ? 'update' : 'create')) return
   if (saving.value) return
   clearToast()
+  attachmentSaveError.value = ''
   parameterSaveError.value = ''; certificateSaveError.value=''
   if (!optionsReady.value) return notify('关联资料尚未加载完成，请重试后再保存。', true)
   if (isSupplierPage.value) {
@@ -589,7 +673,6 @@ async function save() {
     if (!form.supply_categories?.length) { supplierSaveError.value = '请选择至少一个可供产品分类。'; return }
   }
   if (supplierCodeError.value) return notify(supplierCodeError.value, true)
-  if (props.config.endpoint === 'suppliers' && paymentTermsError(form.payment_terms_config)) return notify(paymentTermsError(form.payment_terms_config), true)
   if (props.config.endpoint === 'follow-ups') {
     followUpSaveAttempted.value = true
     if (followUpScheduleError.value) return notify(followUpScheduleError.value, true)
@@ -597,8 +680,10 @@ async function save() {
   saving.value = true
   try {
     const wasEditing = Boolean(editingId.value)
-    const response = wasEditing ? await api.put(`/${props.config.endpoint}/${editingId.value}/`, payload()) : await api.post(`/${props.config.endpoint}/`, payload())
-    guard.markClean()
+    const requestPayload = isCertificatePage.value && form.file ? certificatePayload() : payload()
+    const response = wasEditing ? await api.put(`/${props.config.endpoint}/${editingId.value}/`, requestPayload) : await api.post(`/${props.config.endpoint}/`, requestPayload)
+    const hasPendingAttachments = props.config.endpoint === 'follow-ups' && pendingFollowUpFiles.value.length > 0
+    if (!hasPendingAttachments) guard.markClean()
     const savedId = response.data?.id || editingId.value
     let attachmentError = ''
     if (props.config.endpoint === 'follow-ups' && pendingFollowUpFiles.value.length) {
@@ -606,9 +691,17 @@ async function save() {
         const uploaded = await uploadFollowUpFiles(savedId)
         followUpAttachments.value = [...followUpAttachments.value, ...(uploaded || [])]
         pendingFollowUpFiles.value = []
+        guard.markClean()
       } catch (error) {
         attachmentError = error.message || '附件上传失败'
       }
+    }
+    if (attachmentError) {
+      if (!editingId.value && savedId) editingId.value = savedId
+      attachmentSaveError.value = `附件上传失败：${attachmentError} 请点击“保存跟进”重试上传。`
+      notify(`记录已保存，但${attachmentError}`, true)
+      await load()
+      return
     }
     const refreshDetail = keepDetailOpen.value
     modalOpen.value = false
@@ -635,6 +728,19 @@ async function remove(row) {
   clearToast()
   if (!await confirmDialog({ title: '确认删除', message: `确定删除“${row[props.config.key]}”吗？此操作无法撤销。`, confirmText: '确认删除', danger: true })) return
   try { await api.delete(`/${props.config.endpoint}/${row.id}/`); notify(isContactPage.value ? '联系人已删除' : isFollowUpPage.value ? '跟进记录已删除' : '删除成功'); await load() } catch (e) { notify(apiErrorMessage(e), true) }
+}
+async function toggleSupplierLifecycle(row) {
+  if (!isSupplierPage.value || !can('suppliers', 'update') || supplierLifecycleBusyId.value === row.id) return
+  const isActive = Boolean(row.is_active)
+  const action = isActive ? 'deactivate' : 'activate'
+  if (!await confirmDialog({ title: isActive ? '停用供应商' : '启用供应商', message: isActive ? `停用“${row.name}”后，它不会再作为新采购候选；历史采购、付款和来源仍会保留。` : `确认重新启用“${row.name}”吗？`, confirmText: `确认${isActive ? '停用' : '启用'}`, danger: isActive })) return
+  supplierLifecycleBusyId.value = row.id
+  try {
+    const response = await api.post(`/suppliers/${row.id}/${action}/`)
+    rows.value = rows.value.map(item => item.id === row.id ? { ...item, ...response.data } : item)
+    notify(isActive ? '供应商已停用。' : '供应商已启用。')
+    if (detailId.value === row.id) detailRefresh.value += 1
+  } catch (error) { notify(apiErrorMessage(error), true) } finally { supplierLifecycleBusyId.value = null }
 }
 async function reverseInventoryMovement(row) {
   if (reversing.value || !can('inventory', 'update') || !canReverseInventoryMovement(row)) return
@@ -724,14 +830,14 @@ function routeCreatePrefillSignature() {
   return JSON.stringify(fields.map(name => [name, route.query[name] ?? null]))
 }
 
-watch(() => isCertificatePage.value ? JSON.stringify([route.query.search||'',route.query.product||'',route.query.expiry||'']) : isMovementPage.value || isSupplierPage.value ? JSON.stringify(ledgerDataQuery()) : isCrmPage.value ? JSON.stringify([route.query.customer || '', route.query.due || '', route.query.search || '']) : routeDataQuerySignature(route.query), load)
+watch(() => isCertificatePage.value ? JSON.stringify([route.query.search||'',route.query.product||'',route.query.expiry||'']) : isMovementPage.value || isSupplierPage.value ? JSON.stringify(ledgerDataQuery()) : isCrmPage.value ? JSON.stringify([route.query.customer || '', route.query.owner || '', route.query.type || '', route.query.from || '', route.query.to || '', route.query.due || '', route.query.search || '']) : routeDataQuerySignature(route.query), load)
 watch([() => route.query.create, () => route.query.edit, routeCreatePrefillSignature], (current, previous) => {
   const prefillOnlyChanged = previous && current[0] === previous[0] && current[1] === previous[1]
   if (prefillOnlyChanged && route.query.create !== '1') return
   void syncModalFromRoute()
 }, { immediate: true })
 watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null }, { immediate: true })
-onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus(); if (isSupplierPage.value && can('categories','view')) void loadSupplierCategories(); if (isCrmPage.value) void loadCrmFilterOptions(); if ((isParameterPage.value || isCertificatePage.value) && can('products','view')) void loadParameterProducts() })
+onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus(); if (isSupplierPage.value && can('categories','view')) void loadSupplierCategories(); if (isCustomerPage.value) void loadCustomerFilterOptions(); if (isCrmPage.value) void loadCrmFilterOptions(); if ((isParameterPage.value || isCertificatePage.value) && can('products','view')) void loadParameterProducts() })
 </script>
 
 <template>
@@ -742,17 +848,20 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
     <div v-if="isCertificatePage" class="certificate-filters" aria-label="证书有效期筛选"><button v-for="[value, label] in certificateFilters" :key="value" type="button" class="btn" :class="{ 'btn-primary': (route.query.expiry || '') === value }" :aria-pressed="(route.query.expiry || '') === value" @click="setCertificateFilter(value)">{{ label }}</button></div>
     <div v-if="certificateFilterLabel" class="follow-up-due-context" aria-label="当前证书筛选"><span>当前筛选：<strong>{{ certificateFilterLabel }}</strong></span><button type="button" @click="setCertificateFilter('')">清除筛选</button></div>
     <div v-if="hasCurrentDueFollowUpContext" class="follow-up-due-context" aria-label="当前跟进筛选"><span>当前筛选：<strong>今日及逾期待跟进</strong></span><button type="button" @click="clearFollowUpDueFilter">清除待跟进筛选</button></div>
-    <div v-if="isCertificatePage" class="certificate-controls"><label v-if="can('products','view')">所属产品<select aria-label="按产品筛选证书" :value="route.query.product || ''" @change="updateLedgerQuery({product:$event.target.value||undefined,page:undefined})"><option value="">全部产品</option><option v-for="p in parameterProducts" :key="p.id" :value="String(p.id)">{{ p.code }} · {{ p.name }}</option></select></label><label>排序<select aria-label="证书排序" :value="route.query.sort || 'expiry'" @change="updateLedgerQuery({sort:$event.target.value,page:undefined})"><option value="expiry">到期日期优先</option><option value="name">证书名称</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><p v-if="isCertificatePage" class="field-help">到期状态按系统日期和有效期判断；未填有效期不代表永久有效。文件由现有链接提供，不在此上传。</p><p v-if="isCertificatePage && parameterOptionError" role="alert" class="option-load-error">产品选项加载失败：{{ parameterOptionError }} <button @click="loadParameterProducts">重试</button></p><div v-if="isParameterPage" class="parameter-filter-bar"><label v-if="can('products','view')">所属产品<select aria-label="按产品筛选参数" :value="route.query.product || ''" @change="updateLedgerQuery({product:$event.target.value || undefined})"><option value="">全部产品</option><option v-for="product in parameterProducts" :key="product.id" :value="String(product.id)">{{ product.code }} · {{ product.name }}</option></select></label><button class="btn btn-secondary" @click="updateLedgerQuery({product:undefined,search:undefined}); query = ''">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button><button v-if="route.query.product && can('products','view')" class="btn btn-secondary" @click="router.push({path:'/products',query:{detail:route.query.product}})">查看所属产品</button></div><p v-if="isParameterPage" class="field-help">产品参数用于记录通用规格。分类属性用于参数模板，SKU 参数用于具体规格与身份；在此保存不会修改 SKU 参数。</p><p v-if="isParameterPage && parameterOptionError" role="alert" class="option-load-error">{{ parameterOptionError }} <button @click="loadParameterProducts">重试</button></p>
+    <div v-if="isCertificatePage" class="certificate-controls"><label v-if="can('products','view')">所属产品<select aria-label="按产品筛选证书" :value="route.query.product || ''" @change="updateLedgerQuery({product:$event.target.value||undefined,page:undefined})"><option value="">全部产品</option><option v-for="p in parameterProducts" :key="p.id" :value="String(p.id)">{{ p.code }} · {{ p.name }}</option></select></label><label>排序<select aria-label="证书排序" :value="route.query.sort || 'expiry'" @change="updateLedgerQuery({sort:$event.target.value,page:undefined})"><option value="expiry">到期日期优先</option><option value="name">证书名称</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><p v-if="isCertificatePage" class="field-help">到期状态按系统日期和有效期判断；证书文件上传后仅通过 ERP 权限访问，不生成公开链接。</p><p v-if="isCertificatePage && parameterOptionError" role="alert" class="option-load-error">产品选项加载失败：{{ parameterOptionError }} <button @click="loadParameterProducts">重试</button></p><div v-if="isParameterPage" class="parameter-filter-bar"><label v-if="can('products','view')">所属产品<select aria-label="按产品筛选参数" :value="route.query.product || ''" @change="updateLedgerQuery({product:$event.target.value || undefined})"><option value="">全部产品</option><option v-for="product in parameterProducts" :key="product.id" :value="String(product.id)">{{ product.code }} · {{ product.name }}</option></select></label><button class="btn btn-secondary" @click="updateLedgerQuery({product:undefined,search:undefined}); query = ''">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button><button v-if="route.query.product && can('products','view')" class="btn btn-secondary" @click="router.push({path:'/products',query:{detail:route.query.product}})">查看所属产品</button></div><p v-if="isParameterPage" class="field-help">产品参数用于记录通用规格。分类属性用于参数模板，SKU 参数用于具体规格与身份；在此保存不会修改 SKU 参数。</p><p v-if="isParameterPage && parameterOptionError" role="alert" class="option-load-error">{{ parameterOptionError }} <button @click="loadParameterProducts">重试</button></p>
+    <div v-if="isCustomerPage" class="customer-filter-bar" aria-label="客户筛选"><label class="customer-search search-box">搜索<input v-model="query" aria-label="搜索客户" placeholder="名称、编号、国家/地区或负责人" @input="delayedSearch" /></label><label>负责人<select aria-label="按负责人筛选客户" :value="customerFilter.owner" @change="setCustomerFilter('owner_profile', $event.target.value)"><option value="">全部负责人</option><option v-for="owner in customerFilterOptions.owners" :key="owner.id" :value="String(owner.id)">{{ owner.label }}</option></select></label><label>国家/地区<select aria-label="按国家/地区筛选客户" :value="customerFilter.country" @change="setCustomerFilter('country', $event.target.value)"><option value="">全部国家/地区</option><option v-for="country in customerFilterOptions.countries" :key="country.value" :value="country.value">{{ country.label }}</option></select></label><label>状态<select aria-label="按客户状态筛选" :value="customerFilter.status" @change="setCustomerFilter('status', $event.target.value)"><option value="">全部状态</option><option v-for="status in customerStatusOptions" :key="status.value" :value="status.value">{{ status.label }}</option></select></label><button type="button" class="btn btn-secondary" @click="clearListFilters">重置</button><button type="button" class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div>
+    <div v-if="isCustomerPage && customerFilterError" class="option-load-error" role="alert">{{ customerFilterError }} <button type="button" @click="loadCustomerFilterOptions">重新加载筛选选项</button></div>
     <div v-if="isCrmPage" class="crm-filter-bar" :class="{ 'follow-up-filter-bar': isFollowUpPage }" :aria-label="isContactPage ? '联系人筛选' : '跟进记录筛选'">
       <label class="crm-search search-box">搜索<input v-model="query" :aria-label="isContactPage ? '搜索联系人' : '搜索跟进记录'" :placeholder="isContactPage ? '姓名、客户、职位或联系方式' : '客户、主题、跟进人或内容'" @input="delayedSearch" /></label>
       <label v-if="crmFilterOptions.customers.length">所属客户<select aria-label="按客户筛选" :value="crmFilter.customer" @change="setCrmFilter('customer', $event.target.value)"><option value="">全部客户</option><option v-for="customer in crmFilterOptions.customers" :key="customer.id" :value="String(customer.id)">{{ customer.name }}</option></select></label>
       <label v-if="isContactPage">联系人类型<select aria-label="按联系人类型筛选" :value="crmFilter.primary" @change="setCrmFilter('primary', $event.target.value)"><option value="">全部联系人</option><option value="primary">主联系人</option><option value="other">其他联系人</option></select></label>
       <template v-if="isFollowUpPage">
+        <label v-if="crmFilterOptions.owners.length">跟进人<select aria-label="按跟进人筛选" :value="crmFilter.owner" @change="setCrmFilter('owner', $event.target.value)"><option value="">全部跟进人</option><option v-for="owner in crmFilterOptions.owners" :key="owner.value" :value="owner.value">{{ owner.label }}</option></select></label>
         <label>跟进方式<select aria-label="按跟进方式筛选" :value="crmFilter.type" @change="setCrmFilter('type', $event.target.value)"><option value="">全部方式</option><option v-for="method in crmFilterOptions.methods" :key="method.value" :value="method.value">{{ method.label }}</option></select></label>
         <label>跟进时间从<input aria-label="跟进开始日期" type="date" :value="crmFilter.from" @change="setCrmFilter('from', $event.target.value)" /></label>
         <label>至<input aria-label="跟进结束日期" type="date" :value="crmFilter.to" @change="setCrmFilter('to', $event.target.value)" /></label>
         <label>排序<select aria-label="跟进排序" :value="crmFilter.sort" @change="setCrmFilter('sort', $event.target.value)"><option value="newest">时间从近到远</option><option value="oldest">时间从远到近</option></select></label>
-        <button type="button" class="btn" :class="route.query.due === 'true' ? 'btn-primary' : 'btn-secondary'" :aria-pressed="route.query.due === 'true'" @click="setCrmFilter('due', route.query.due === 'true' ? '' : 'true')">{{ route.query.due === 'true' ? '显示全部记录' : '待跟进' }}</button>
+        <button type="button" class="btn" title="按跟进状态筛选" :class="route.query.due === 'true' ? 'btn-primary' : 'btn-secondary'" :aria-pressed="route.query.due === 'true'" @click="setCrmFilter('due', route.query.due === 'true' ? '' : 'true')">{{ route.query.due === 'true' ? '显示全部记录' : '待跟进' }}</button>
       </template>
       <button type="button" class="btn btn-secondary" @click="clearListFilters">重置</button>
       <button type="button" class="btn btn-secondary" :disabled="loading" @click="load">刷新</button>
@@ -767,10 +876,10 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
       <button class="btn btn-secondary" @click="resetLedgerFilters">重置</button>
     </div>
     <p v-if="isMovementPage" class="ledger-help">数量按 SKU 基础单位显示；自动流水不可手工修改。</p>
-    <div v-else-if="isSupplierPage" class="supplier-filter-bar" aria-label="供应商筛选"><label>搜索<input v-model="query" aria-label="搜索供应商" placeholder="名称、代码、联系人、产品…" @input="delayedSearch" /></label><label v-if="can('categories','view')">可供分类<select :value="supplierFilter.category" aria-label="按可供分类筛选" @change="updateLedgerQuery({supplyCategory:$event.target.value || undefined})"><option value="">全部分类</option><option v-for="category in supplierCategories" :key="category.id" :value="String(category.id)">{{ category.name }}</option></select></label><label>付款规则<select :value="supplierFilter.terms" aria-label="按付款规则筛选" @change="updateLedgerQuery({termsMode:$event.target.value || undefined})"><option value="">全部规则</option><option value="default">系统默认</option><option value="custom">自定义规则</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><div v-if="isSupplierPage && supplierCategoryError" role="alert" class="option-load-error">分类加载失败：{{ supplierCategoryError }} <button @click="loadSupplierCategories">重新加载分类</button></div><p v-if="isSupplierPage" class="supplier-rule-note">付款备注仅供沟通参考；采购付款计划使用“系统执行付款规则”。</p><div v-if="!isMovementPage && !isSupplierPage && !isCrmPage" class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" :aria-label="isCertificatePage ? '搜索产品证书' : isParameterPage ? '搜索产品参数' : undefined" :placeholder="isParameterPage ? '参数名称、值或分组' : '搜索当前列表...'" @input="delayedSearch" /></div></div>
+    <div v-else-if="isSupplierPage" class="supplier-filter-bar" aria-label="供应商筛选"><label>搜索<input v-model="query" aria-label="搜索供应商" placeholder="名称、代码、联系人、产品…" @input="delayedSearch" /></label><label v-if="can('categories','view')">可供分类<select :value="supplierFilter.category" aria-label="按可供分类筛选" @change="updateLedgerQuery({supplyCategory:$event.target.value || undefined})"><option value="">全部分类</option><option v-for="category in supplierCategories" :key="category.id" :value="String(category.id)">{{ category.name }}</option></select></label><button class="btn btn-secondary" @click="clearListFilters">重置</button><button class="btn btn-secondary" :disabled="loading" @click="load">刷新</button></div><div v-if="isSupplierPage && supplierCategoryError" role="alert" class="option-load-error">分类加载失败：{{ supplierCategoryError }} <button @click="loadSupplierCategories">重新加载分类</button></div><p v-if="isSupplierPage" class="supplier-rule-note">付款备注仅供沟通参考；采购单付款条件需逐单协商。</p><div v-if="!isMovementPage && !isSupplierPage && !isCrmPage && !isCustomerPage" class="toolbar"><div class="search-box"><Search :size="17" /><input v-model="query" :aria-label="isCertificatePage ? '搜索产品证书' : isParameterPage ? '搜索产品参数' : undefined" :placeholder="isParameterPage ? '参数名称、值或分组' : '搜索当前列表...'" @input="delayedSearch" /></div></div>
     <div class="panel">
       <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
-      <ListEmptyState v-if="hasLoaded && !visibleRows.length" :entity="listNoun || config.title.replace('管理','')" :filtered="filteredListEmpty" @clear="clearListFilters"><template #action><p v-if="can(accessModule, 'create')">点击“{{ primaryAction }}”开始录入。</p></template></ListEmptyState>
+      <ListEmptyState v-if="hasLoaded && !visibleRows.length" :entity="listNoun || config.title.replace('管理','')" :filtered="filteredListEmpty" @clear="clearListFilters"><template #action><p v-if="can(accessModule, 'create')">{{ isCustomerPage ? '添加客户资料，记录负责人和跟进计划。' : isContactPage ? '先选择所属客户，再添加联系人。' : isFollowUpPage ? '记录客户沟通和下一步安排。' : `点击“${primaryAction}”开始录入。` }}</p></template></ListEmptyState>
       <div v-else-if="hasLoaded" class="table-wrap"><table class="data-table" :class="{ 'customer-list-table': isCustomerPage, 'supplier-list-table': isSupplierPage, 'contact-list-table': isContactPage, 'follow-up-list-table': isFollowUpPage, 'parameter-list-table': isParameterPage, 'certificate-list-table': isCertificatePage }"><thead><tr><th v-for="col in listColumns" :key="col[0]">{{ col[1] }}</th><th style="text-align:right">操作</th></tr></thead><tbody>
         <tr v-for="row in displayRows" :key="row.id" class="clickable-row" tabindex="0" @click="openDetail(row.id)" @keydown.enter="openDetail(row.id)">
           <td v-for="(col,index) in listColumns" :key="col[0]" :class="{ 'primary-cell': index === 0, 'numeric-cell': ['money', 'rmb'].includes(col[2]) }">
@@ -783,9 +892,10 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
             <template v-else-if="isFollowUpPage && col[0] === 'subject'"><strong>{{ row.subject || '跟进记录' }}</strong><small class="crm-secondary">{{ row.type_display || '未标注方式' }}</small></template>
             <template v-else-if="isFollowUpPage && col[0] === 'follow_up_content'"><span>{{ richTextExcerpt(row.content) || '未填写跟进记录' }}</span><small class="crm-secondary">客户回复：{{ richTextExcerpt(row.result, 90) || '—' }}</small></template>
             <template v-else-if="isFollowUpPage && col[0] === 'follow_up_next'"><span>{{ row.next_action || '未填写下一步' }}</span><small class="crm-secondary">{{ row.next_follow_up_mode_display || '保留当前计划' }} · {{ row.next_follow_up || '未安排日期' }}</small></template>
-            <template v-else-if="isSupplierPage && col[0] === 'name'"><strong>{{ row.name }}</strong><small class="supplier-secondary">{{ row.code }} · {{ row.country || '未填国家/地区' }}</small></template><template v-else-if="isSupplierPage && col[0] === 'main_products'"><span>{{ row.main_products || '—' }}</span><small class="supplier-secondary">{{ (row.supply_category_names || []).join('、') || '未填可供分类' }}</small></template><template v-else-if="isSupplierPage && col[0] === 'contact_name'"><span>{{ row.contact_name || '—' }}</span><small class="supplier-secondary">{{ row.phone }}</small><small class="supplier-secondary">{{ row.email }}</small><a v-if="supplierStoreUrl(row.store_url)" :href="supplierStoreUrl(row.store_url)" target="_blank" rel="noopener noreferrer" @click.stop>打开店铺</a><small v-else-if="row.store_url" class="supplier-secondary">{{ row.store_url }}</small></template><span v-else-if="isSupplierPage && col[0] === 'payment_terms'" class="supplier-excerpt" :title="row.payment_terms">{{ row.payment_terms || '未填备注' }}</span><template v-else-if="isMovementPage && col[0] === 'sku_code'"><strong>{{ row.sku_code || row.sku_code_snapshot || '—' }}</strong><small class="ledger-secondary">{{ row.product_name || row.display_name }}</small><small v-if="movementUnit(row,movementSkus)" class="ledger-secondary">基础单位：{{ movementUnit(row,movementSkus) }}</small></template><span v-else-if="isMovementPage && col[0] === 'source_type'" class="ledger-source" :class="movementSource(row)">{{ sourceLabels[movementSource(row)] || '未标注' }}</span><span v-else-if="isMovementPage && col[0] === 'signed_quantity'" :class="cellClass('signed',row.signed_quantity)">{{ signedMovement(row,movementUnit(row,movementSkus)) }}</span><template v-else-if="isMovementPage && col[0] === 'reference'"><span>{{ row.reference || row.source_no || '—' }}</span><small class="ledger-secondary">{{ (row.related_order_nos || []).join('、') || row.order_no }}</small><small v-if="row.overage_summary" class="ledger-secondary">{{ row.overage_summary }}</small></template><span v-else-if="isMovementPage && col[0] === 'reversal_status'" :title="row.reversal_status">{{ movementStatus(row) }}</span><CertificateExpiryBadge v-else-if="isCertificatePage && col[0] === 'expiry_status'" :certificate="row" /><span v-else-if="isCustomerPage && col[0] === 'name'" class="customer-name" :title="row.name">{{ row.name }}</span><span v-else-if="isCustomerPage && col[0] === 'status'" class="status" :class="row.status" :title="row.status_display || statusLabels[row.status]">{{ customerListStatus(row.status, display(row.status, 'status', 'status')) }}</span><span v-else :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span>
+             <template v-else-if="isSupplierPage && col[0] === 'is_active'"><span class="status" :class="row.is_active ? 'active' : 'inactive'">{{ row.is_active ? '启用' : '停用' }}</span></template>
+            <template v-else-if="isSupplierPage && col[0] === 'name'"><strong>{{ row.name }}</strong><small class="supplier-secondary">{{ row.code }} · {{ row.country || '未填国家/地区' }}</small></template><template v-else-if="isSupplierPage && col[0] === 'main_products'"><span>{{ row.main_products || '—' }}</span><small class="supplier-secondary">{{ (row.supply_category_names || []).join('、') || '未填可供分类' }}</small></template><template v-else-if="isSupplierPage && col[0] === 'contact_name'"><span>{{ row.contact_name || '—' }}</span><small class="supplier-secondary">{{ row.phone }}</small><small class="supplier-secondary">{{ row.email }}</small><a v-if="supplierStoreUrl(row.store_url)" :href="supplierStoreUrl(row.store_url)" target="_blank" rel="noopener noreferrer" @click.stop>打开店铺</a><small v-else-if="row.store_url" class="supplier-secondary">{{ row.store_url }}</small></template><span v-else-if="isSupplierPage && col[0] === 'payment_terms'" class="supplier-excerpt" :title="row.payment_terms">{{ row.payment_terms || '未填备注' }}</span><template v-else-if="isMovementPage && col[0] === 'sku_code'"><strong>{{ row.sku_code || row.sku_code_snapshot || '—' }}</strong><small class="ledger-secondary">{{ row.product_name || row.display_name }}</small><small v-if="movementUnit(row,movementSkus)" class="ledger-secondary">基础单位：{{ movementUnit(row,movementSkus) }}</small></template><span v-else-if="isMovementPage && col[0] === 'source_type'" class="ledger-source" :class="movementSource(row)">{{ sourceLabels[movementSource(row)] || '未标注' }}</span><span v-else-if="isMovementPage && col[0] === 'signed_quantity'" :class="cellClass('signed',row.signed_quantity)">{{ signedMovement(row,movementUnit(row,movementSkus)) }}</span><template v-else-if="isMovementPage && col[0] === 'reference'"><span>{{ row.reference || row.source_no || '—' }}</span><small class="ledger-secondary">{{ (row.related_order_nos || []).join('、') || row.order_no }}</small><small v-if="row.overage_summary" class="ledger-secondary">{{ row.overage_summary }}</small></template><span v-else-if="isMovementPage && col[0] === 'reversal_status'" :title="row.reversal_status">{{ movementStatus(row) }}</span><CertificateExpiryBadge v-else-if="isCertificatePage && col[0] === 'expiry_status'" :certificate="row" /><span v-else-if="isCustomerPage && col[0] === 'name'" class="customer-name" :title="row.name">{{ row.name }}</span><span v-else-if="isCustomerPage && col[0] === 'country'" :title="row.country_display || row.country">{{ row.country_display || row.country || '—' }}</span><span v-else-if="isCustomerPage && col[0] === 'status'" class="status" :class="row.status" :title="row.status_display || statusLabels[row.status]">{{ customerListStatus(row.status, display(row.status, 'status', 'status')) }}</span><span v-else :class="cellClass(col[2], row[col[0]])">{{ display(row[col[0]], col[2], col[0]) }}</span>
           </td>
-          <td><div class="table-actions"><button class="mini-btn" title="查看详情" :aria-label="isContactPage ? '查看联系人详情' : isFollowUpPage ? '查看跟进详情' : '查看详情'" @click.stop="openDetail(row.id)"><ChevronRight :size="14" /></button><button v-if="can(accessModule, 'update') && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" :aria-label="isContactPage ? '编辑联系人' : isFollowUpPage ? '编辑跟进记录' : '编辑'" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="can('inventory', 'update') && canReverseInventoryMovement(row)" class="mini-btn danger" title="冲销" :disabled="reversing" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="can(accessModule, 'delete') && config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="删除" :aria-label="isContactPage ? '删除联系人' : isFollowUpPage ? '删除跟进记录' : '删除'" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
+           <td><div class="table-actions"><button class="mini-btn" title="查看详情" :aria-label="isContactPage ? '查看联系人详情' : isFollowUpPage ? '查看跟进详情' : '查看详情'" @click.stop="openDetail(row.id)"><ChevronRight :size="14" /></button><button v-if="can(accessModule, 'update') && !isReadOnlyAutomaticMovement(row)" class="mini-btn" title="编辑" :aria-label="isContactPage ? '编辑联系人' : isFollowUpPage ? '编辑跟进记录' : '编辑'" @click.stop="openEdit(row)"><Pencil :size="14" /></button><button v-if="isSupplierPage && can('suppliers', 'update')" class="mini-btn supplier-lifecycle-btn" :class="{ danger: row.is_active }" :disabled="supplierLifecycleBusyId === row.id" :title="row.is_active ? '停用供应商' : '启用供应商'" :aria-label="row.is_active ? '停用供应商' : '启用供应商'" @click.stop="toggleSupplierLifecycle(row)">{{ row.is_active ? '停用' : '启用' }}</button><button v-if="can('inventory', 'update') && canReverseInventoryMovement(row)" class="mini-btn danger" title="冲销" :disabled="reversing" @click.stop="reverseInventoryMovement(row)"><RotateCcw :size="14" /></button><button v-else-if="can(accessModule, 'delete') && config.endpoint !== 'inventory-movements' && !isReadOnlyAutomaticMovement(row) && !isSupplierPage" class="mini-btn" title="删除" :aria-label="isContactPage ? '删除联系人' : isFollowUpPage ? '删除跟进记录' : '删除'" @click.stop="remove(row)"><Trash2 :size="14" /></button></div></td>
         </tr>
       </tbody></table></div>
     </div>
@@ -793,19 +903,19 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
     <InventoryMovementCreateModal v-if="modalOpen && config.endpoint === 'inventory-movements' && !editingId" @close="closeModal" @saved="handleInventoryMovementCreated" />
     <div v-else-if="modalOpen" class="modal-backdrop" @mousedown.self="closeModal"><form :role="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? 'dialog' : undefined" :aria-modal="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? 'true' : undefined" :aria-label="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? title : undefined" class="modal" :class="{ wide: isWideForm, 'customer-editor': isCustomerPage, 'supplier-editor': isSupplierPage, 'crm-editor': isCrmPage, 'parameter-editor': isParameterPage || isCertificatePage }" @submit.prevent="save">
       <div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" :aria-label="isCertificatePage ? '关闭证书表单' : isParameterPage ? '关闭参数表单' : isSupplierPage ? '关闭供应商表单' : isContactPage ? '关闭联系人表单' : isFollowUpPage ? '关闭跟进表单' : undefined" :disabled="saving" @click="closeModal"><X :size="17" /></button></div>
-      <div class="modal-body" :inert="(isParameterPage || isCertificatePage) && saving"><p v-if="isCertificatePage && certificateSaveError" role="alert" class="supplier-save-error">{{ certificateSaveError }}</p><p v-if="isParameterPage && parameterSaveError" role="alert" class="supplier-save-error">{{ parameterSaveError }}</p><p v-if="isSupplierPage && supplierSaveError" role="alert" class="supplier-save-error">{{ supplierSaveError }}</p><p v-if="isCertificatePage" class="field-help">文件链接需使用完整的 http:// 或 https:// 地址。链接可打开不代表已验证文件内容或访问权限。</p><p v-if="isFollowUpPage" class="field-help">跟进记录或客户回复至少填写一项。</p><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isSupplierPage || isContactPage || isFollowUpPage || isParameterPage || isCertificatePage" class="supplier-group-title">{{ editorGroupTitles[groupIndex] }}</h4><p v-if="isSupplierPage && groupIndex === 2" class="field-help">可供分类用于筛选；具体 SKU 的供应来源仍需在供货档案中维护。</p><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group.filter(visibleEditorField)" :key="field[0]" class="field" :role="isCertificatePage ? 'group' : undefined" :aria-label="isCertificatePage ? editorFieldLabel(field) : undefined" :class="{ full: ['textarea', 'remote_multi', 'payment_terms'].includes(field[2]) || (isCertificatePage && field[0] === 'file_url') || (isSupplierPage && field[0] === 'payment_terms') || (isFollowUpPage && ['subject', 'content', 'result', 'next_follow_up_mode'].includes(field[0])), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
+      <div class="modal-body" :inert="(isParameterPage || isCertificatePage) && saving"><p v-if="isCertificatePage && certificateSaveError" role="alert" class="supplier-save-error">{{ certificateSaveError }}</p><p v-if="isParameterPage && parameterSaveError" role="alert" class="supplier-save-error">{{ parameterSaveError }}</p><p v-if="isSupplierPage && supplierSaveError" role="alert" class="supplier-save-error">{{ supplierSaveError }}</p><p v-if="isCertificatePage" class="field-help">证书文件必须上传到 ERP 私有存储；查看和下载均需当前证书权限。</p><p v-if="isFollowUpPage" class="field-help">跟进记录或客户回复至少填写一项。</p><template v-for="(group, groupIndex) in editorGroups" :key="groupIndex"><h4 v-if="isSupplierPage || isContactPage || isFollowUpPage || isParameterPage || isCertificatePage" class="supplier-group-title">{{ editorGroupTitles[groupIndex] }}</h4><p v-if="isSupplierPage && groupIndex === 2" class="field-help">可供分类用于筛选；具体 SKU 的供应来源仍需在供货档案中维护。</p><h4 v-if="isCustomerPage && groupIndex === 1" class="optional-heading">补充信息</h4><div class="form-grid"><div v-for="field in group.filter(visibleEditorField)" :key="field[0]" class="field" :role="isCertificatePage ? 'group' : undefined" :aria-label="isCertificatePage ? editorFieldLabel(field) : undefined" :class="{ full: ['textarea', 'remote_multi', 'payment_terms', 'file'].includes(field[2]) || (isCertificatePage && field[0] === 'file_url') || (isSupplierPage && field[0] === 'payment_terms') || (isFollowUpPage && ['subject', 'content', 'result', 'next_follow_up_mode'].includes(field[0])), 'finance-amount-field': isTransactionPage && ['amount', 'exchange_rate'].includes(field[0]) }">
         <label>{{ editorFieldLabel(field) }} <em v-if="field[3]">*</em></label><p v-if="optionErrors[field[4]]" class="option-load-error" role="alert">{{ optionErrors[field[4]] }} <button type="button" @click="retryRemoteOption(field)">重新加载</button></p>
         <div v-if="field[2] === 'followup_schedule'" class="follow-up-schedule" role="radiogroup" aria-label="下次跟进安排">
           <label v-for="(label, mode) in { keep: '保留当前计划', set: '设置新的跟进日期', clear: '暂不安排后续跟进' }" :key="mode"><input v-model="form.next_follow_up_mode" type="radio" name="next_follow_up_mode" :value="mode" @change="changeFollowUpMode" /> {{ label }}</label>
           <p v-if="form.next_follow_up_mode === 'keep'" class="field-help">当前计划：{{ currentFollowUpPlan || '暂无跟进日期' }}</p>
           <p v-else-if="form.next_follow_up_mode === 'clear'" class="field-help">这会清除该客户当前的下次跟进日期。</p>
         </div>
-        <PaymentTermsEditor v-else-if="field[2] === 'payment_terms'" v-model="form[field[0]]" :description="isSupplierPage ? '用于新采购的付款计划；已保存采购保留原快照。比例合计须为 100%。' : ''" />
         <textarea :maxlength="isSupplierPage && field[0] === 'payment_terms' ? 200 : undefined" :aria-label="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? editorFieldLabel(field) : undefined" v-else-if="field[2] === 'textarea' || (isSupplierPage && field[0] === 'payment_terms')" v-model="form[field[0]]" :required="field[3]" :disabled="isInherited(field[0])" />
         <SimpleRichTextEditor v-else-if="field[2] === 'richtext'" v-model="form[field[0]]" :label="isCrmPage ? editorFieldLabel(field) : ''" @paste-files="addFollowUpFiles" />
-        <ComboInput v-else-if="field[2] === 'combo'" v-model="form[field[0]]" :options="options[field[4]] || []" :label="isCrmPage ? editorFieldLabel(field) : ''" :required="field[3]" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]])" />
+        <ComboInput v-else-if="field[2] === 'combo'" v-model="form[field[0]]" :options="options[field[4]] || []" :label="isCrmPage || (isCustomerPage && field[0] === 'country') ? editorFieldLabel(field) : ''" :placeholder="isCustomerPage && field[0] === 'country' ? '搜索名称、中文或代码后选择' : undefined" :required="field[3]" :allow-custom="!(isCustomerPage && field[0] === 'country')" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]])" />
         <select v-else-if="field[2] === 'select'" v-model="form[field[0]]" :aria-label="isCrmPage || isParameterPage || isCertificatePage ? editorFieldLabel(field) : undefined" :required="field[3]" :disabled="isInherited(field[0])"><option v-for="(label,key) in field[4]" :key="key" :value="key">{{ label }}</option></select>
         <CategoryMultiPicker v-else-if="field[2] === 'remote_multi'" v-model="form[field[0]]" :categories="options[field[4]] || []" />
+        <div v-else-if="field[2] === 'file'" class="private-file-input"><input :aria-label="editorFieldLabel(field)" type="file" @change="onCertificateFileSelected" /><small v-if="currentCertificateFileUrl"><a :href="certificateFileUrl(currentCertificateFileUrl)" target="_blank" rel="noopener noreferrer">查看当前私有文件</a></small><small v-else>可选；保存后按权限查看。</small></div>
         <select v-else-if="field[2] === 'remote'" v-model="form[field[0]]" :aria-label="isCrmPage || isParameterPage || isCertificatePage ? editorFieldLabel(field) : undefined" :required="field[3]" :disabled="isInherited(field[0]) || Boolean(optionErrors[field[4]]) || (field[0] === 'owner_profile' && ownerProfileReadOnly)" @change="onFieldChange(field)"><option value="">请选择</option><option v-for="option in visibleOptions(field)" :key="option.id" :value="option.id">{{ option[field[5]] }}</option></select>
         <label v-else-if="field[2] === 'checkbox'" class="checkbox-line"><input v-model="form[field[0]]" type="checkbox" :disabled="isInherited(field[0])" /> 是</label>
         <div v-else-if="config.endpoint === 'follow-ups' && field[0] === 'next_follow_up'" class="follow-up-date-control">
@@ -815,7 +925,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
         </div>
         <SegmentedDateInput v-else-if="field[2] === 'date' || field[2] === 'datetime-local'" :model-value="form[field[0]]" :required="field[3]" :with-time="field[2] === 'datetime-local'" @update:model-value="value => onDateFieldChange(field, value)" />
         <input v-else :aria-label="isSupplierPage || isCrmPage || isParameterPage || isCertificatePage ? editorFieldLabel(field) : undefined" v-model="form[field[0]]" :type="field[2] === 'readonly' || ['website', 'store_url'].includes(field[0]) ? 'text' : (field[2] || 'text')" :readonly="field[2] === 'readonly'" :placeholder="field[0] === 'store_url' ? 'https://...' : isCustomerPage && field[0] === 'name' ? '输入客户名称' : undefined" :class="{ 'readonly-input': field[2] === 'readonly', 'field-invalid': config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError }" :aria-invalid="config.endpoint === 'suppliers' && field[0] === 'code' && supplierCodeError ? 'true' : undefined" :min="isParameterPage && field[0] === 'sort_order' ? 0 : undefined" :step="field[2] === 'number' ? (isParameterPage ? '1' : '0.0001') : undefined" :maxlength="isSupplierPage ? { name:200,code:2,country:100,main_products:300,contact_name:100,phone:50,email:254,store_url:500 }[field[0]] : undefined" :pattern="config.endpoint === 'suppliers' && field[0] === 'code' ? '[A-Za-z]{2}' : undefined" :required="field[3]" :disabled="isInherited(field[0])" @input="config.endpoint === 'suppliers' && field[0] === 'code' && normalizeSupplierCode()" />
-        <p v-if="isContactPage && field[0] === 'name' && contactDuplicateHint" class="field-help crm-duplicate-hint" role="status">{{ contactDuplicateHint }}</p>
+        <p v-if="isCustomerPage && field[0] === 'country'" class="field-help">请选择标准英文名称 / 两位代码；历史文本需人工确认。</p><div v-if="isContactPage && field[0] === 'name' && (contactDuplicateLoading || contactDuplicateError || contactDuplicateHint)" class="field-help crm-duplicate-hint" role="status"><span v-if="contactDuplicateLoading">正在检查该客户的全部联系人…</span><span v-else-if="contactDuplicateError">{{ contactDuplicateError }}可继续保存。</span><template v-else><span>{{ contactDuplicateHint }}</span><ul class="crm-duplicate-list"><li v-for="match in contactDuplicateMatches" :key="match.id"><span>{{ match.name }}（{{ match.matchReasons.join('、') }}）</span><a :href="contactDetailUrl(match)" target="_blank" rel="noopener noreferrer">查看联系人</a></li></ul><small>这是非阻断提醒；确认无误后仍可继续创建。</small></template></div>
         <p v-if="isSupplierPage && field[0] === 'payment_terms'" class="field-help">仅供沟通参考，不生成付款计划。</p><p v-if="config.endpoint === 'suppliers' && field[0] === 'code'" class="field-help" :class="{ error: supplierCodeError }">{{ supplierCodeError || '填写两个英文字母，用于供应商 SKU 编码。' }}</p>
       </div></div>
         <section v-if="isCustomerCreate && groupIndex === 0" class="contact-create-section">
@@ -868,13 +978,13 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 
 
       </div>
-      <div class="modal-foot"><p v-if="isFollowUpPage && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (isSupplierPage && (!!supplierCodeError || !!paymentTermsError(form.payment_terms_config)))">{{ saving ? '保存中…' : saveLabel }}</button></div>
+      <div class="modal-foot"><p v-if="isFollowUpPage && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><p v-if="isFollowUpPage && attachmentSaveError" class="follow-up-validation" role="alert">{{ attachmentSaveError }}</p><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (isSupplierPage && !!supplierCodeError)">{{ saving ? '保存中…' : saveLabel }}</button></div>
     </form></div>
 
     <Transition name="detail-drawer" appear>
       <EntityDetailModal v-if="detailId" :entity="config.endpoint" :id="detailId" :refresh-key="detailRefresh" @close="closeDetail" @edit="editFromDetail" @changed="handleDetailChanged" />
     </Transition>
-    <InventoryPagination v-if="(isMovementPage || isSupplierPage || isCrmListPage || isCertificatePage) && hasLoaded" :label="isCertificatePage ? '证书列表分页' : isContactPage ? '联系人列表分页' : isFollowUpPage ? '跟进记录分页' : isSupplierPage ? '供应商列表分页' : '库存列表分页'" :total="visibleRows.length" :page="ledgerPage" @change="page => (isCrmListPage ? updateCrmQuery({ page: page > 1 ? String(page) : undefined }) : updateLedgerQuery({ page: page > 1 ? String(page) : undefined }))" />
+    <InventoryPagination v-if="(isMovementPage || isSupplierPage || isPaginatedListPage || isCertificatePage) && hasLoaded" :label="isCertificatePage ? '证书列表分页' : isContactPage ? '联系人列表分页' : isFollowUpPage ? '跟进记录分页' : isCustomerPage ? '客户列表分页' : isSupplierPage ? '供应商列表分页' : '库存列表分页'" :total="visibleRows.length" :page="ledgerPage" @change="page => (isCrmPage ? updateCrmQuery({ page: page > 1 ? String(page) : undefined }) : updateLedgerQuery({ page: page > 1 ? String(page) : undefined }))" />
     <div v-if="toast.show" :role="toast.error ? 'alert' : 'status'" class="toast" :class="{ error: toast.error }">{{ toast.message }}</div>
   </div>
 </template>
@@ -937,16 +1047,20 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 @media(max-width:520px){.contact-create-head,.contact-card-head{align-items:flex-start}.contact-card-head{flex-direction:column}.contact-fields{grid-template-columns:1fr}.contact-card-actions{width:100%;justify-content:space-between}}
 .supply-category-options{display:flex;flex-wrap:wrap;gap:10px;max-height:190px;overflow:auto;padding:12px;border:1px solid #dce7e1;border-radius:8px}.supply-category-options label{display:flex;align-items:center;gap:6px}.supply-category-options small{flex-basis:100%;color:#71857b}
 .follow-up-due-context{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding:9px 12px;border:1px solid #c8d8ed;border-radius:9px;background:#f4f8fd;color:#42546b;font-size:13px}.follow-up-due-context strong{color:#173f70}.follow-up-due-context button{padding:2px 0;border:0;background:transparent;color:#245b91;font:inherit;cursor:pointer}.follow-up-due-context button:hover{text-decoration:underline}
-.crm-filter-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 12px;align-items:end;margin:18px 0 12px}.crm-filter-bar label{display:grid;gap:6px;min-width:0;color:#71817b;font-size:var(--text-caption)}.crm-filter-bar .crm-search{grid-column:span 2}.crm-filter-bar input,.crm-filter-bar select{width:100%;min-width:0;min-height:42px;padding:9px 11px;border:1px solid #d7e3dd;border-radius:8px;background:#fff;color:#31594c;font:inherit;font-size:var(--text-body)}.crm-filter-bar input:focus,.crm-filter-bar select:focus{outline:2px solid #b8d8cb;outline-offset:1px}.crm-filter-bar>.btn{min-height:42px;white-space:nowrap}.follow-up-filter-bar{grid-template-columns:repeat(6,minmax(0,1fr))}.crm-secondary{display:block;margin-top:5px;color:#7b8b84;font-size:var(--text-caption);font-weight:400;line-height:1.45;overflow-wrap:anywhere}.crm-customer-link{padding:0;border:0;background:transparent;color:#28634f;font:inherit;font-weight:600;text-align:left;cursor:pointer}.crm-customer-link:hover{text-decoration:underline}.crm-primary-badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;background:#eaf5ef;color:#28634f;font-size:var(--text-secondary);font-weight:600;white-space:nowrap}.crm-primary-badge.inactive{background:#f1f3f2;color:#6e7a75}.crm-duplicate-hint{color:#8b6428;line-height:1.55}.contact-list-table{min-width:980px;table-layout:fixed}.contact-list-table th:nth-child(1){width:220px}.contact-list-table th:nth-child(2){width:210px}.contact-list-table th:nth-child(3){width:330px}.contact-list-table th:nth-child(4){width:150px}.contact-list-table th:last-child{width:110px}.contact-list-table td{white-space:normal;overflow-wrap:anywhere;vertical-align:top}.contact-list-table td:nth-child(3) a{color:#28634f;text-decoration:none}.contact-list-table td:nth-child(3) a:hover{text-decoration:underline}.follow-up-list-table{min-width:1320px;table-layout:fixed}.follow-up-list-table th:nth-child(1){width:210px}.follow-up-list-table th:nth-child(2){width:155px}.follow-up-list-table th:nth-child(3){width:180px}.follow-up-list-table th:nth-child(4){width:390px}.follow-up-list-table th:nth-child(5){width:290px}.follow-up-list-table th:last-child{width:110px}.follow-up-list-table td{white-space:normal;overflow-wrap:anywhere;vertical-align:top;line-height:1.5}.follow-up-list-table td:nth-child(2){white-space:nowrap}.follow-up-list-table th:last-child,.follow-up-list-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 10px #173d3210}.follow-up-list-table td:last-child{z-index:2}.follow-up-list-table th:last-child{z-index:3}.crm-editor{width:min(1080px,calc(100vw - 40px));max-height:min(92vh,900px)}.crm-editor .form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}.crm-editor .supplier-group-title{margin-top:18px}.crm-editor .modal-body{padding-bottom:22px}.crm-editor .modal-foot{position:sticky;bottom:0;background:#fff;z-index:1}.crm-editor .field{min-width:0}.crm-editor .field input,.crm-editor .field select,.crm-editor textarea{min-width:0;max-width:100%}.crm-editor .contact-list-table td.primary-cell{white-space:normal}
+.customer-filter-bar{display:grid;grid-template-columns:minmax(240px,2fr) repeat(3,minmax(140px,1fr)) auto auto;gap:10px 12px;align-items:end;margin:18px 0 12px}.customer-filter-bar label{display:grid;gap:6px;min-width:0;color:#71817b;font-size:var(--text-caption)}.customer-filter-bar input,.customer-filter-bar select{width:100%;min-width:0;min-height:42px;padding:9px 11px;border:1px solid #d7e3dd;border-radius:8px;background:#fff;color:#31594c;font:inherit;font-size:var(--text-body)}.customer-filter-bar input:focus,.customer-filter-bar select:focus{outline:2px solid #b8d8cb;outline-offset:1px}.customer-filter-bar>.btn{min-height:42px;white-space:nowrap}.crm-filter-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 12px;align-items:end;margin:18px 0 12px}.crm-filter-bar label{display:grid;gap:6px;min-width:0;color:#71817b;font-size:var(--text-caption)}.crm-filter-bar .crm-search{grid-column:span 2}.crm-filter-bar input,.crm-filter-bar select{width:100%;min-width:0;min-height:42px;padding:9px 11px;border:1px solid #d7e3dd;border-radius:8px;background:#fff;color:#31594c;font:inherit;font-size:var(--text-body)}.crm-filter-bar input:focus,.crm-filter-bar select:focus{outline:2px solid #b8d8cb;outline-offset:1px}.crm-filter-bar>.btn{min-height:42px;white-space:nowrap}.follow-up-filter-bar{grid-template-columns:repeat(6,minmax(0,1fr))}.crm-secondary{display:block;margin-top:5px;color:#7b8b84;font-size:var(--text-caption);font-weight:400;line-height:1.45;overflow-wrap:anywhere}.crm-customer-link{padding:0;border:0;background:transparent;color:#28634f;font:inherit;font-weight:600;text-align:left;cursor:pointer}.crm-customer-link:hover{text-decoration:underline}.crm-primary-badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;background:#eaf5ef;color:#28634f;font-size:var(--text-secondary);font-weight:600;white-space:nowrap}.crm-primary-badge.inactive{background:#f1f3f2;color:#6e7a75}.crm-duplicate-hint{color:#8b6428;line-height:1.55}.contact-list-table{min-width:980px;table-layout:fixed}.contact-list-table th:nth-child(1){width:220px}.contact-list-table th:nth-child(2){width:210px}.contact-list-table th:nth-child(3){width:330px}.contact-list-table th:nth-child(4){width:150px}.contact-list-table th:last-child{width:110px}.contact-list-table td{white-space:normal;overflow-wrap:anywhere;vertical-align:top}.contact-list-table td:nth-child(3) a{color:#28634f;text-decoration:none}.contact-list-table td:nth-child(3) a:hover{text-decoration:underline}.follow-up-list-table{min-width:1320px;table-layout:fixed}.follow-up-list-table th:nth-child(1){width:210px}.follow-up-list-table th:nth-child(2){width:155px}.follow-up-list-table th:nth-child(3){width:180px}.follow-up-list-table th:nth-child(4){width:390px}.follow-up-list-table th:nth-child(5){width:290px}.follow-up-list-table th:last-child{width:110px}.follow-up-list-table td{white-space:normal;overflow-wrap:anywhere;vertical-align:top;line-height:1.5}.follow-up-list-table td:nth-child(2){white-space:nowrap}.follow-up-list-table th:last-child,.follow-up-list-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 10px #173d3210}.follow-up-list-table td:last-child{z-index:2}.follow-up-list-table th:last-child{z-index:3}.crm-editor{width:min(1080px,calc(100vw - 40px));max-height:min(92vh,900px)}.crm-editor .form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}.crm-editor .supplier-group-title{margin-top:18px}.crm-editor .modal-body{padding-bottom:22px}.crm-editor .modal-foot{position:sticky;bottom:0;background:#fff;z-index:1}.crm-editor .field{min-width:0}.crm-editor .field input,.crm-editor .field select,.crm-editor textarea{min-width:0;max-width:100%}.crm-editor .contact-list-table td.primary-cell{white-space:normal}
 .contact-list-table th:last-child,.contact-list-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 10px #173d3210}.contact-list-table td:last-child{z-index:2}.contact-list-table th:last-child{z-index:3}
-@media(max-width:1100px){.follow-up-filter-bar{grid-template-columns:repeat(4,minmax(0,1fr))}.follow-up-filter-bar .crm-search{grid-column:span 2}}
-@media(max-width:760px){.crm-filter-bar,.follow-up-filter-bar{grid-template-columns:repeat(2,minmax(0,1fr))}.crm-filter-bar .crm-search,.follow-up-filter-bar .crm-search{grid-column:1/-1}.crm-editor .form-grid{grid-template-columns:1fr}.follow-up-filter-bar>.btn{justify-self:stretch}}
-@media(max-width:520px){.crm-filter-bar,.follow-up-filter-bar{grid-template-columns:1fr}.crm-filter-bar .crm-search,.follow-up-filter-bar .crm-search{grid-column:auto}.crm-filter-bar>.btn{width:100%}.follow-up-due-context{align-items:flex-start;flex-direction:column}}
+@media(max-width:1100px){.customer-filter-bar{grid-template-columns:repeat(3,minmax(0,1fr))}.customer-filter-bar .customer-search{grid-column:span 2}.follow-up-filter-bar{grid-template-columns:repeat(4,minmax(0,1fr))}.follow-up-filter-bar .crm-search{grid-column:span 2}}
+@media(max-width:760px){.customer-filter-bar,.crm-filter-bar,.follow-up-filter-bar{grid-template-columns:repeat(2,minmax(0,1fr))}.customer-filter-bar .customer-search,.crm-filter-bar .crm-search,.follow-up-filter-bar .crm-search{grid-column:1/-1}.crm-editor .form-grid{grid-template-columns:1fr}.customer-filter-bar>.btn,.follow-up-filter-bar>.btn{justify-self:stretch}}
+@media(max-width:520px){.customer-filter-bar,.crm-filter-bar,.follow-up-filter-bar{grid-template-columns:1fr}.customer-filter-bar .customer-search,.crm-filter-bar .crm-search,.follow-up-filter-bar .crm-search{grid-column:auto}.customer-filter-bar>.btn,.crm-filter-bar>.btn{width:100%}.follow-up-due-context{align-items:flex-start;flex-direction:column}}
 .ledger-filter-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:12px}.ledger-filter-bar label{display:grid;gap:6px;color:#71817b;font-size:var(--text-caption)}.ledger-filter-bar label:first-child{flex:1;min-width:260px}.ledger-filter-bar input,.ledger-filter-bar select{padding:9px 11px;border:1px solid #d7e3dd;border-radius:8px;background:#fff;color:#31594c;font:inherit}.ledger-help{color:#71817b;font-size:12px;line-height:1.6}.ledger-secondary{display:block;color:#82928b;margin-top:4px;font-size:var(--text-caption)}.ledger-source{display:inline-block;padding:4px 8px;border-radius:12px;white-space:nowrap}.ledger-source.automatic{background:#eef3f6;color:#55717c}.ledger-source.manual{background:#eef7f2;color:#2d6a56}.ledger-source.reversal{background:#fff2e8;color:#8a5d2e}
 .inventory-ledger-page .data-table{min-width:1300px}.inventory-ledger-page .data-table th{white-space:nowrap}.inventory-ledger-page .data-table td:nth-child(1),.inventory-ledger-page .data-table td:nth-child(2),.inventory-ledger-page .data-table td:nth-child(4),.inventory-ledger-page .data-table td:nth-child(5){white-space:nowrap}.inventory-ledger-page .data-table td:nth-child(3){min-width:180px}.inventory-ledger-page .data-table td:nth-child(8){min-width:170px}.inventory-ledger-page .data-table th:last-child,.inventory-ledger-page .data-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 8px #143f3308}.inventory-ledger-page .data-table td .tag{white-space:nowrap}
 .parameter-filter-bar{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin:12px 0}.parameter-filter-bar label{display:grid;gap:6px;min-width:0;flex:1 1 300px}.parameter-filter-bar select{width:100%;min-width:0;padding:10px;border:1px solid var(--line);border-radius:8px;background:white}.parameter-list-table{min-width:760px;table-layout:fixed}.parameter-list-table td{white-space:normal;overflow-wrap:anywhere}.parameter-list-table th:first-child{width:230px}.parameter-list-table th:last-child,.parameter-list-table td:last-child{position:sticky;right:0;background:white;width:100px}.parameter-editor{width:min(820px,calc(100vw - 40px))}.parameter-editor .field{min-width:0}.parameter-editor .modal-foot{position:sticky;bottom:0;background:white}
+.supplier-list-table th:nth-child(2){width:90px}.supplier-list-table th:nth-child(3){width:230px}.supplier-list-table th:nth-child(4){width:180px}.supplier-list-table th:nth-child(5){width:240px}.supplier-list-table th:nth-child(6){width:220px}.supplier-list-table th:last-child{width:128px}.supplier-lifecycle-btn{width:auto!important;min-width:42px;padding:0 7px!important;color:var(--green-2)}
 </style>
 
+<style scoped>
+.crm-duplicate-hint{display:grid;gap:5px;color:#8b6428;line-height:1.55}.crm-duplicate-hint small{color:#8b6428}.crm-duplicate-list{display:grid;gap:4px;margin:0;padding-left:18px}.crm-duplicate-list li{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;min-width:0}.crm-duplicate-list li>span{min-width:0;overflow-wrap:anywhere}.crm-duplicate-list a{flex:none;color:#28634f;text-decoration:underline}
+</style>
 
 <style scoped>
 .supplier-filter-bar{display:grid;grid-template-columns:minmax(220px,2fr) minmax(160px,1fr) minmax(150px,1fr) auto auto;gap:12px;align-items:end;margin:18px 0 10px}.supplier-filter-bar label{display:grid;gap:6px;color:#71817b;font-size:var(--text-caption)}.supplier-filter-bar input,.supplier-filter-bar select{width:100%;min-width:0;min-height:42px;padding:10px 12px;border:1px solid #dce6e1;border-radius:8px;background:#fff;color:#294a41;font:inherit;font-size:var(--text-body)}.supplier-filter-bar input:focus,.supplier-filter-bar select:focus{outline:2px solid #b8d8cb;outline-offset:1px}.supplier-rule-note{color:#567168;font-size:var(--text-body);line-height:1.6}.supplier-list-table{min-width:1150px;table-layout:fixed}.supplier-list-table th:nth-child(1){width:230px}.supplier-list-table th:nth-child(2){width:230px}.supplier-list-table th:nth-child(3){width:180px}.supplier-list-table th:nth-child(4){width:240px}.supplier-list-table th:nth-child(5){width:220px}.supplier-list-table th:last-child{width:108px}.supplier-list-table td{white-space:normal;overflow-wrap:anywhere;vertical-align:top}.supplier-list-table th:last-child,.supplier-list-table td:last-child{position:sticky;right:0;background:#fff;box-shadow:-4px 0 10px #173d3210}.supplier-list-table td:last-child{z-index:2}.supplier-list-table th:last-child{z-index:3}.supplier-secondary{display:block;margin-top:6px;color:#7b8b84;font-size:var(--text-caption);font-weight:400}.supplier-excerpt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.supplier-editor{width:min(960px,calc(100vw - 40px))}.supplier-editor .modal-body{display:block}.supplier-editor .form-grid{margin-bottom:22px}.supplier-group-title{margin:12px 0;color:#21483d;font-size:var(--text-section)}.supplier-editor .modal-foot{position:sticky;bottom:0;background:#fff;z-index:1}.supplier-editor .field{min-width:0}.supplier-save-error{color:#a44343;padding:12px;border:1px solid #efc6c2;background:#fff9f8;border-radius:8px;overflow-wrap:anywhere}@media(max-width:1100px){.supplier-filter-bar{grid-template-columns:minmax(220px,2fr) minmax(150px,1fr) minmax(150px,1fr)}.supplier-filter-bar .btn{justify-self:start}}@media(max-width:650px){.supplier-filter-bar{grid-template-columns:1fr 1fr}.supplier-filter-bar label:first-child{grid-column:1/-1}.supplier-editor .form-grid{grid-template-columns:1fr}}

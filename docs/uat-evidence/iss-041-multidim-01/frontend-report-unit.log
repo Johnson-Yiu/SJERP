@@ -1,0 +1,8 @@
+
+ RUN  v4.1.11 C:/Users/Johnson/.codex/worktrees/iss-041-multidim-01/森爵照明管理系统/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  14 passed (14)
+   Start at  16:38:31
+   Duration  3.00s (transform 384ms, setup 263ms, import 490ms, tests 589ms, environment 1.39s)

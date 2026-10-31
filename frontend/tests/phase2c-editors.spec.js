@@ -63,7 +63,7 @@ it('Followup edit keeps customer contact filtering, rich text, dates, attachment
 it('Quote-generated Order draft retains source, snapshots, totals and trade-unit save payload', async () => {
  const draft = { quote:39, source_quote_no:'QT-39', customer:12, order_date:'2026-10-09', currency:'USD', exchange_rate:'7.2', shipping_fee:'2', discount:'1', status:'draft', items:[{sku:3,quantity:'10',unit_price:'2',trade_unit:7,trade_quantity:'2',trade_unit_price:'10',trade_snapshot:{base_unit:'pcs',factor:'5',trade_unit:'box'},sales_model_snapshot:'Historical Model'}] }
  wrapper=mount(OrderDraftModal,{props:{draft,customers:[customer],skus:[{id:3,unit:'pcs',trade_units:[]}]},global:{directives:{'money-input':{}},stubs:{SkuPickerPanel:true}}})
- expect(wrapper.get('h3').text()).toBe('新建订单')
+ expect(wrapper.get('h3').text()).toBe('新建销售订单')
  expect(wrapper.get('.modal-head').text()).toContain('来源报价：QT-39')
  expect(wrapper.get('.totals').text()).toContain('商品小计 USD 20.00')
  expect(wrapper.get('.totals strong').text()).toBe('USD 21.00')

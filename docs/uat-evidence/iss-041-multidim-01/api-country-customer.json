@@ -1,0 +1,104 @@
+{
+  "source": "sales",
+  "group_by": "country",
+  "group_by_2": "customer",
+  "date_field": "order_date",
+  "date_label": "订单日期",
+  "grain": "month",
+  "comparison": "previous",
+  "period": {
+    "date_from": "2026-01-01",
+    "date_to": "2026-10-22"
+  },
+  "comparison_period": {
+    "date_from": "2025-03-12",
+    "date_to": "2025-12-31"
+  },
+  "totals": {
+    "amount": 33200.0,
+    "count": 3,
+    "quantities": {
+      "pcs": 200.0,
+      "box": 10.0
+    }
+  },
+  "previous": {
+    "amount": 0.0,
+    "count": 0,
+    "quantities": {}
+  },
+  "changes": {
+    "amount": null,
+    "count": null
+  },
+  "rows": [
+    {
+      "key": "[\"中国\",\"1\"]",
+      "label": "中国 · 华东照明客户（长名称视觉验收）",
+      "amount": 18550.0,
+      "quantities": {
+        "pcs": 120.0,
+        "box": 4.0
+      },
+      "groups": [
+        {
+          "dimension": "country",
+          "key": "中国",
+          "label": "中国"
+        },
+        {
+          "dimension": "customer",
+          "key": "1",
+          "label": "华东照明客户（长名称视觉验收）"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "key": "[\"德国\",\"2\"]",
+      "label": "德国 · Deutschland Lighting GmbH",
+      "amount": 14080.0,
+      "quantities": {
+        "pcs": 80.0
+      },
+      "groups": [
+        {
+          "dimension": "country",
+          "key": "德国",
+          "label": "德国"
+        },
+        {
+          "dimension": "customer",
+          "key": "2",
+          "label": "Deutschland Lighting GmbH"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "key": "[\"美国\",\"3\"]",
+      "label": "美国 · North America Lighting Group",
+      "amount": 570.0,
+      "quantities": {
+        "box": 6.0
+      },
+      "groups": [
+        {
+          "dimension": "country",
+          "key": "美国",
+          "label": "美国"
+        },
+        {
+          "dimension": "customer",
+          "key": "3",
+          "label": "North America Lighting Group"
+        }
+      ],
+      "count": 1
+    }
+  ],
+  "note": "有效销售订单的合同金额；商品行之外的运费、折扣和已确认合同变更统一列为订单金额调整，不分摊 SKU。金额按订单汇率折人民币，不代表实收或利润。",
+  "filters": {},
+  "filter_summary": [],
+  "generated_at": "2026-10-22T08:34:56.268781Z"
+}

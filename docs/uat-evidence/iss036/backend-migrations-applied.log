@@ -1,0 +1,12 @@
+ [X] 0080_formal_party_snapshots
+ [X] 0081_transaction_rmb_reference_label
+ [X] 0081_supplier_lifecycle
+ [X] 0081_product_certificate_private_file
+ [X] 0082_merge_iss026_iss107_iss017
+ [X] 0083_customer_supplier_preference
+ [X] 0084_alter_orderitem_supplier_allocation_scope_and_source
+ [X] 0085_order_quantity_adjustment
+ [X] 0086_purchase_moq_exception
+ [X] 0087_amount_calculation_compatibility
+ [X] 0088_operationlog_append_only
+ [X] 0089_operationlog_operator_protect

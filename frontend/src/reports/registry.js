@@ -44,8 +44,9 @@ export function datePreset(preset, now = new Date()) {
 // These hints do not grant access; the server continues to enforce every request.
 const sourceModules = { sales: ['orders'], purchase: ['purchases'], profit: ['orders', 'purchases', 'transactions'], customers: ['customers'], cash: ['transactions'], actual_cash: ['transactions'], inventory: ['inventory'] }
 const dimensionModules = { customer: 'customers', country: 'customers', region: 'customers', owner: 'customers', source: 'customers', supplier: 'suppliers', product: 'products', sku: 'skus', category: 'categories' }
+export const reportDimensionLabels = { time: '时间', region: '业务区域', country: '国家/地区', customer: '客户', supplier: '供应商', product: '产品', sku: 'SKU', category: '产品主分类', owner: '负责人', source: '客户来源', status: '状态', currency: '原币币种', direction: '收支方向', kind: '业务类型', warehouse: '仓库', type: '出入库类型' }
 export function canViewReportSource(source, can) { return Boolean(sourceModules[source]) && sourceModules[source].every(module => can(module, 'view')) }
 export function canViewReportDimension(dimension, can) { return !dimensionModules[dimension] || can(dimensionModules[dimension], 'view') }
 export function canViewReportConfig(config, can) {
-  return can('reports', 'view') && canViewReportSource(config.source, can) && canViewReportDimension(config.group_by, can) && Object.keys(config.filters || {}).filter(key => key.startsWith('filter_')).every(key => canViewReportDimension(key.slice(7), can))
+  return can('reports', 'view') && canViewReportSource(config.source, can) && canViewReportDimension(config.group_by, can) && (!config.group_by_2 || (config.group_by_2 !== config.group_by && canViewReportDimension(config.group_by_2, can))) && Object.keys(config.filters || {}).filter(key => key.startsWith('filter_')).every(key => canViewReportDimension(key.slice(7), can))
 }

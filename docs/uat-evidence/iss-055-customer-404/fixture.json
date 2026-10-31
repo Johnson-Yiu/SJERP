@@ -1,0 +1,13 @@
+{
+  "database": "isolated-local-sqlite",
+  "scope": "self",
+  "authorized_customer_id": 1,
+  "out_of_scope_customer_id": 2,
+  "unknown_customer_id": 999999,
+  "viewports": [
+    "1440x900",
+    "390x844"
+  ],
+  "production_database_used": false,
+  "formal_rbac_enabled": false
+}

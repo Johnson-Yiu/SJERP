@@ -1,0 +1,32 @@
+# Development defaults intentionally remain local-only. Do not copy this file
+# to production and do not commit a populated .env file.
+APP_STAGE=development
+DJANGO_DEBUG=true
+DJANGO_SECRET_KEY=dev-only-change-me
+DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+DEVELOPMENT_SUPERADMIN=true
+RBAC_ENFORCEMENT=false
+CORS_ALLOWED_ORIGINS=http://localhost:5191,http://127.0.0.1:5191
+CSRF_TRUSTED_ORIGINS=http://localhost:5191,http://127.0.0.1:5191
+# Development-only private media directory. It is not shared with production.
+MEDIA_ROOT=backend/media
+MEDIA_STORAGE_BACKEND=django.core.files.storage.FileSystemStorage
+
+# Production values must be injected by the deployment secret/config store.
+# Keep the following names as a checklist; never commit real values here.
+# APP_STAGE=production
+# DJANGO_DEBUG=false
+# DJANGO_SECRET_KEY=<external-secret-at-least-32-characters>
+# DATABASE_URL=postgresql://<external-user>:<external-password>@<external-host>:5432/<production-db>
+# DJANGO_ALLOWED_HOSTS=<erp-hostname>
+# CORS_ALLOWED_ORIGINS=https://<erp-hostname>
+# CSRF_TRUSTED_ORIGINS=https://<erp-hostname>
+# DEVELOPMENT_SUPERADMIN=false
+# RBAC_ENFORCEMENT=true
+# SECURE_SSL_REDIRECT=true
+# SESSION_COOKIE_SECURE=true
+# CSRF_COOKIE_SECURE=true
+# MEDIA_ROOT=/srv/sunjack/private-media  # absolute persistent volume, not release/static
+# MEDIA_STORAGE_BACKEND=django.core.files.storage.FileSystemStorage
+# A future object-storage migration changes the backend through STORAGES while
+# preserving model FileField paths and the manifest/SHA256 verification flow.

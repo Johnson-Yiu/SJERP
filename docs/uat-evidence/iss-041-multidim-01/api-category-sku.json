@@ -1,0 +1,101 @@
+{
+  "source": "sales",
+  "group_by": "category",
+  "group_by_2": "sku",
+  "date_field": "order_date",
+  "date_label": "订单日期",
+  "grain": "month",
+  "comparison": "previous",
+  "period": {
+    "date_from": "2026-01-01",
+    "date_to": "2026-10-22"
+  },
+  "comparison_period": {
+    "date_from": "2025-03-12",
+    "date_to": "2025-12-31"
+  },
+  "totals": {
+    "amount": 33200.0,
+    "count": 3,
+    "quantities": {
+      "pcs": 200.0,
+      "box": 10.0
+    }
+  },
+  "previous": {
+    "amount": 0.0,
+    "count": 0,
+    "quantities": {}
+  },
+  "changes": {
+    "amount": null,
+    "count": null
+  },
+  "rows": [
+    {
+      "key": "[\"1\",\"1\"]",
+      "label": "室内灯具 · VIS-SKU-PANEL · 超长名称室内面板灯系列-400x400",
+      "amount": 29200.0,
+      "quantities": {
+        "pcs": 200.0
+      },
+      "groups": [
+        {
+          "dimension": "category",
+          "key": "1",
+          "label": "室内灯具"
+        },
+        {
+          "dimension": "sku",
+          "key": "1",
+          "label": "VIS-SKU-PANEL · 超长名称室内面板灯系列-400x400"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "key": "[\"2\",\"2\"]",
+      "label": "智能控制 · VIS-SKU-CONTROL · 智能照明控制器系列-10pcs",
+      "amount": 3930.0,
+      "quantities": {
+        "box": 10.0
+      },
+      "groups": [
+        {
+          "dimension": "category",
+          "key": "2",
+          "label": "智能控制"
+        },
+        {
+          "dimension": "sku",
+          "key": "2",
+          "label": "VIS-SKU-CONTROL · 智能照明控制器系列-10pcs"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "key": "[\"__adjustment__\",\"__adjustment__\"]",
+      "label": "订单金额调整 · 订单金额调整",
+      "amount": 70.0,
+      "quantities": {},
+      "groups": [
+        {
+          "dimension": "category",
+          "key": "__adjustment__",
+          "label": "订单金额调整"
+        },
+        {
+          "dimension": "sku",
+          "key": "__adjustment__",
+          "label": "订单金额调整"
+        }
+      ],
+      "count": 1
+    }
+  ],
+  "note": "有效销售订单的合同金额；商品行之外的运费、折扣和已确认合同变更统一列为订单金额调整，不分摊 SKU。金额按订单汇率折人民币，不代表实收或利润。",
+  "filters": {},
+  "filter_summary": [],
+  "generated_at": "2026-10-22T08:34:56.415237Z"
+}

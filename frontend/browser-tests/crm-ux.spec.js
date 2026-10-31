@@ -189,6 +189,38 @@ test('contact create, duplicate advisory, primary edit and return query stay con
   await expect(new URL(page.url()).searchParams.get('search')).toBe('Lin Yu 1')
 })
 
+test('contact duplicate check uses hidden customer contacts, links to the record, and fits 390px', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 })
+  const state = await mockApi(page)
+  await page.goto('/contacts?search=当前筛选不会命中')
+  await expect(page.getByRole('button', { name: '新建联系人' })).toBeVisible()
+  await page.getByRole('button', { name: '新建联系人' }).click()
+  const dialog = page.getByRole('dialog', { name: '新建联系人' })
+  await dialog.getByLabel('所属客户').selectOption('1')
+  await dialog.getByLabel('姓名').fill('Lin Yu 31')
+  await expect(dialog.getByText(/该客户已有相同姓名或联系方式/)).toBeVisible()
+  const hiddenMatchLink = dialog.locator('a[href="/contacts?detail=31"]')
+  await expect(hiddenMatchLink).toBeVisible()
+  await expect(hiddenMatchLink).toHaveAttribute('target', '_blank')
+  await assertVisibleBounds(page, ['.crm-editor', '.crm-duplicate-hint', '.crm-editor .modal-foot .btn'])
+  await dialog.getByLabel('姓名').fill('新联系人 390')
+  await dialog.getByRole('button', { name: '保存联系人' }).click()
+  await expect(page.getByRole('status').filter({ hasText: '联系人已创建' })).toBeVisible()
+  expect(state.posts.at(-1).name).toBe('新联系人 390')
+})
+
+test('editing a contact does not flag itself as a duplicate', async ({ page }) => {
+  const state = await mockApi(page)
+  await page.goto('/contacts?search=Lin%20Yu%201')
+  const row = page.locator('.contact-list-table tbody tr').first()
+  await row.getByRole('button', { name: '编辑联系人' }).click()
+  const dialog = page.getByRole('dialog', { name: '编辑联系人' })
+  await expect(dialog.getByLabel('姓名')).toHaveValue('Lin Yu 1')
+  await expect(dialog.locator('a[href="/contacts?detail=1"]')).toHaveCount(0)
+  await dialog.getByRole('button', { name: '取消' }).click()
+  expect(state.posts).toHaveLength(0)
+})
+
 for (const width of [1440, 1280, 1024]) {
   test(`follow-up filters, detailed groups, and long content fit ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 950 })

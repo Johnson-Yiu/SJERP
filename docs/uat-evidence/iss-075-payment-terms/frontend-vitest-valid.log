@@ -1,0 +1,13 @@
+
+ RUN  v5.0.5 C:/Users/Johnson/.codex/worktrees/iss-075-payment-terms/森爵照明管理系统/frontend
+
+
+ Test Files  67 passed (67)
+      Tests  657 passed (657)
+   Start at  19:56:44
+   Duration  59.95s (environment 56%, tests 21%, setup 11%, import 10%, transform 2%)
+
+Environment  jsdom was created 67 times · 91.17s total, 56% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+

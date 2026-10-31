@@ -3,8 +3,10 @@ export const defaultPaymentTerms = () => [
   { label: '尾款', ratio: '0.70', due_basis: 'expected_arrival_date', offset_days: 0 },
 ]
 export const copyPaymentTerms = value => structuredClone(value?.length ? JSON.parse(JSON.stringify(value)) : defaultPaymentTerms())
-export function paymentTermsError(rows) {
-  if (!Array.isArray(rows) || !rows.length || rows.length > 5) return '请填写 1 至 5 个付款阶段。'
+export const copySavedPaymentTerms = value => structuredClone(Array.isArray(value) ? JSON.parse(JSON.stringify(value)) : [])
+export function paymentTermsError(rows, { allowEmpty = false } = {}) {
+  if (!Array.isArray(rows) || rows.length > 5 || (!rows.length && !allowEmpty)) return '请填写 1 至 5 个付款阶段。'
+  if (!rows.length) return ''
   let sum = 0n
   const scale = Math.max(...rows.map(row => String(row.ratio).split('.')[1]?.length || 0))
   for (const row of rows) {

@@ -46,6 +46,10 @@ export function canAccessOrganization() {
   )
 }
 
+export function canAccessHistoricalOrders() {
+  return can('orders', 'view') || can('purchases', 'view')
+}
+
 export const PERMITTED_PAGE_MODULES = [
   ['/', 'dashboard'], ['/reports', 'reports'], ['/customers', 'customers'], ['/contacts', 'contacts'],
   ['/follow-ups', 'followups'], ['/quotes', 'quotes'], ['/orders', 'orders'], ['/suppliers', 'suppliers'],
@@ -54,12 +58,12 @@ export const PERMITTED_PAGE_MODULES = [
   ['/product-parameters', 'parameters'], ['/sku-packaging', 'packaging'], ['/sku-trade-units', 'trade_units'],
   ['/product-certificates', 'certificates'], ['/hs-codes', 'hs_codes'], ['/finance', 'finance'],
   ['/receivables', 'finance'], ['/payables', 'finance'], ['/transactions', 'transactions'], ['/rmb-cash-events', 'transactions'],
-  ['/import', 'imports'], ['/organization', 'organization'],
+  ['/import', 'imports'], ['/organization', 'organization'], ['/historical-orders', 'historical-orders'],
 ]
 
 export function firstPermittedPath() {
   return PERMITTED_PAGE_MODULES.find(([path, module]) => (
-    path === '/organization' ? canAccessOrganization() : can(module, 'view')
+    path === '/organization' ? canAccessOrganization() : path === '/historical-orders' ? canAccessHistoricalOrders() : can(module, 'view')
   ))?.[0] || ''
 }
 

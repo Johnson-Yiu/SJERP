@@ -7,7 +7,6 @@ import { RefreshCw, ChevronRight } from 'lucide-vue-next'
 import { api } from '../api'
 import { apiErrorMessage } from '../utils/apiErrors'
 import { useAccessControl } from '../accessControl'
-import { localDate } from '../reports/registry'
 
 const { can } = useAccessControl()
 const data = ref(null), loading = ref(false), error = ref(''), notice = ref(''), loadedAt = ref(null)
@@ -22,17 +21,19 @@ async function load() {
     const refreshed = Boolean(data.value)
     data.value = result; loadedAt.value = new Date()
     if (refreshed) notice.value = '经营数据已刷新。'
-  } catch (err) { if (current === sequence) error.value = apiErrorMessage(err) || '经营数据加载失败，请重试。' }
+  } catch (err) { if (current === sequence) error.value = apiErrorMessage(err) || '经营数据暂时无法加载，请点“刷新数据”重试。' }
   finally { if (current === sequence) loading.value = false }
 }
-const yearStart = computed(() => `${(loadedAt.value || new Date()).getFullYear()}-01-01`)
-const asOf = computed(() => localDate(loadedAt.value || new Date()))
+const dateRanges = computed(() => data.value?.date_ranges || {})
+const yearStart = computed(() => dateRanges.value.year_start || '—')
+const asOf = computed(() => dateRanges.value.as_of || '—')
+const trendStart = computed(() => dateRanges.value.trend_start || '—')
+const trendEnd = computed(() => dateRanges.value.trend_end || asOf.value)
 const refreshTime = computed(() => loadedAt.value?.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) || '')
 const trend = computed(() => { const a = Number(data.value?.summary.sales_ytd || 0), b = Number(data.value?.summary.sales_last_ytd || 0); return b ? ((a / b - 1) * 100).toFixed(1) : null })
 const monthly = computed(() => data.value?.monthly_sales || [])
 const chartMax = computed(() => Math.max(...monthly.value.map(i => Number(i.sales)), 1))
 const categoryTotal = computed(() => (data.value?.category_sales || []).reduce((s, i) => s + Number(i.sales), 0) || 1)
-const monthlyRange = computed(() => monthly.value.length ? `${monthly.value[0].month} — ${monthly.value.at(-1).month}` : '返回月份内的订单销售额')
 const navigation = computed(() => [
   { label: '报表中心', path: '/reports', module: 'reports' },
   { label: '订单管理', path: '/orders', module: 'orders' },
@@ -48,7 +49,7 @@ onMounted(load)
 <template>
   <div class="dashboard" :aria-busy="loading">
     <header class="dashboard-toolbar">
-      <div><p class="page-lede">销售表现、当前提醒与已确认收支。</p><small v-if="loadedAt">上次加载 {{ refreshTime }} · 页面刷新后更新</small></div>
+      <div><p class="page-lede">查看销售额、待跟进事项和收支。</p><small v-if="loadedAt">更新于 {{ refreshTime }}</small></div>
       <button type="button" :disabled="loading" @click="load"><RefreshCw :size="15" />{{ loading ? '刷新中…' : '刷新数据' }}</button>
     </header>
     <PageLoadState :loading="loading" :has-loaded="!!data" :error="error" @retry="load" />
@@ -56,31 +57,31 @@ onMounted(load)
     <nav v-if="navigation.length" class="dashboard-shortcuts" aria-label="经营快捷入口"><RouterLink v-for="item in navigation" :key="item.path" :to="item.path">{{ item.label }}<ChevronRight :size="14" /></RouterLink></nav>
     <template v-if="data">
       <section class="dashboard-section" aria-labelledby="sales-section-title">
-        <div class="section-heading"><div><h2 id="sales-section-title">销售与客户</h2><p>销售额按订单日期、合同金额及订单汇率折人民币；不代表实收款。</p></div><span>{{ yearStart }} 起</span></div>
+        <div class="section-heading"><div><h2 id="sales-section-title">销售与客户</h2><p>按订单日期和合同金额统计，按订单汇率折算成人民币；不等于实际收款。</p></div><span>{{ yearStart }} — {{ asOf }}</span></div>
         <div class="metric-grid">
           <article v-if="can('orders', 'view')" class="metric-card featured"><span>本年截至今日销售额</span><strong>{{ money(data.summary.sales_ytd) }}</strong><small>{{ yearStart }} — {{ asOf }}</small><small v-if="trend !== null" :class="Number(trend) >= 0 ? 'up' : 'down'">{{ Number(trend) > 0 ? '+' : '' }}{{ trend }}% 较去年同期</small><small v-else>去年同期为零，暂不计算变化率</small></article>
-          <article v-if="can('orders', 'view')" class="metric-card"><span>本年起订单数</span><strong>{{ data.summary.orders_ytd }}</strong><small>有效订单；含已录入的未来日期订单</small></article>
-          <article v-if="can('customers', 'view')" class="metric-card"><span>合作中客户</span><strong>{{ data.summary.active_customers }}</strong><small>当前客户档案，不按订单日期筛选</small></article>
-          <article v-if="can('followups', 'view')" class="metric-card"><span>当前待跟进</span><strong>{{ data.summary.follow_ups_due }}</strong><small>截至今日待跟进，含逾期事项</small></article>
+          <article v-if="can('orders', 'view')" class="metric-card"><span>本年截至今日订单数</span><strong>{{ data.summary.orders_ytd }}</strong><small>{{ yearStart }} — {{ asOf }} · 正式订单</small></article>
+          <article v-if="can('customers', 'view')" class="metric-card"><span>合作中客户</span><strong>{{ data.summary.active_customers }}</strong><small>按当前客户档案统计</small></article>
+          <article v-if="can('followups', 'view')" class="metric-card"><span>当前待跟进</span><strong>{{ data.summary.follow_ups_due }}</strong><small>含今天到期和已逾期的跟进</small></article>
         </div>
         <p v-if="!can('orders', 'view')" class="access-note">当前账号没有订单查看权限。</p>
       </section>
       <div class="dash-grid" v-if="can('orders', 'view')">
-        <section class="panel chart-panel" aria-label="销售趋势"><div class="panel-title"><div><h2>销售趋势</h2><p>{{ monthlyRange }} · 人民币</p></div></div>
+        <section class="panel chart-panel" aria-label="销售趋势"><div class="panel-title"><div><h2>销售趋势</h2><p>最近12个自然月（{{ trendStart }} — {{ trendEnd }}）· 人民币</p></div></div>
           <div v-if="monthly.length" class="bar-scroll"><div class="bar-chart" role="img" aria-label="各月份销售额与订单数" :style="{ minWidth: `${Math.max(420, monthly.length * 58)}px` }"><div v-for="item in monthly" :key="item.month" class="bar-slot" :title="`${item.month}：${money(item.sales)}，${item.orders} 单`"><span class="bar-value">{{ short(item.sales) }}</span><div class="bar" :style="{ height: `${Math.max(Number(item.sales) / chartMax * 145, 2)}px` }" /><span class="month-label">{{ item.month }}</span><small>{{ item.orders }} 单</small></div></div></div><p v-else class="empty compact">暂无月度销售数据。</p>
-          <p class="scope-note">按接口返回月份展示；包含已录入的未来日期订单，不限定近 12 个月。</p>
+          <p class="scope-note">按订单日期统计，含本月和前 11 个月；无订单的月份按 0 显示。</p>
         </section>
-        <section v-if="can('products', 'view') && can('categories', 'view')" class="panel category-panel" aria-label="品类表现"><div class="panel-title"><div><h2>品类表现</h2><p>{{ yearStart }} 起 · 商品分类金额前 8 项</p></div></div>
-          <div v-if="data.category_sales.length" class="category-list"><div v-for="(item,index) in data.category_sales" :key="index" class="category-row"><div class="category-meta"><span><i :style="{ background: colors[index%5] }" />{{ item.sku__product__category__name || '未分类' }}</span><strong>{{ money(item.sales) }}</strong></div><div class="progress"><i :style="{ width: `${Number(item.sales)/categoryTotal*100}%`, background: colors[index%5] }" /></div></div></div><p v-else class="empty compact">暂无品类销售数据。</p>
-          <p class="scope-note">仅商品行，不含运费、折扣和合同金额调整；含未来日期订单。条形占比按显示项目计算。</p>
+        <section v-if="can('products', 'view') && can('categories', 'view')" class="panel category-panel" aria-label="分类销售额"><div class="panel-title"><div><h2>分类销售额</h2><p>{{ yearStart }} — {{ asOf }} · 销售额最高的 8 个分类</p></div></div>
+          <div v-if="data.category_sales.length" class="category-list"><div v-for="(item,index) in data.category_sales" :key="index" class="category-row"><div class="category-meta"><span><i :style="{ background: colors[index%5] }" />{{ item.sku__product__category__name || '未分类' }}</span><strong>{{ money(item.sales) }}</strong></div><div class="progress"><i :style="{ width: `${Number(item.sales)/categoryTotal*100}%`, background: colors[index%5] }" /></div></div></div><p v-else class="empty compact">暂无分类销售数据。</p>
+          <p class="scope-note">仅统计产品金额，不含运费、折扣和合同调整；占比按当前显示的分类计算。</p>
         </section>
       </div>
       <div class="dash-bottom">
-        <section v-if="can('customers', 'view') && can('orders', 'view')" class="panel list-panel" aria-label="重点客户"><div class="panel-title"><div><h2>重点客户</h2><p>{{ yearStart }} 起 · 按销售额显示前 6 名，含未来日期订单</p></div><RouterLink to="/customers">客户列表 <ChevronRight :size="14" /></RouterLink></div><div class="customer-list"><RouterLink v-for="(c,index) in data.top_customers" :key="c.id" :to="{ path: '/customers', query: { detail: c.id } }" class="customer-item"><span class="rank">{{ index+1 }}</span><div class="grow"><strong :title="c.name">{{ c.name }}</strong><small>{{ c.country || '未填写国家' }} · {{ c.orders }} 个订单</small></div><strong class="amount">{{ money(c.sales) }}</strong></RouterLink><p v-if="!data.top_customers.length" class="empty compact">暂无客户销售数据。</p></div></section>
-        <section v-if="can('followups', 'view')" class="panel list-panel" aria-label="待跟进事项"><div class="panel-title"><div><h2>待跟进事项</h2><p>今日及逾期的当前事项，显示前 5 条</p></div><RouterLink to="/follow-ups?due=true">全部待跟进 <ChevronRight :size="14" /></RouterLink></div><RouterLink v-for="f in data.due_follow_ups" :key="f.id" :to="{ path: '/follow-ups', query: { due: 'true', detail: f.id } }" class="follow-item"><div class="date-box"><strong>{{ f.next_follow_up?.slice(8,10) }}</strong><span>{{ f.next_follow_up?.slice(5,7) }}月</span></div><div class="grow"><strong :title="f.customer_name">{{ f.customer_name }}</strong><small :title="f.subject">{{ f.subject }}</small></div><span class="owner" :title="f.owner">{{ f.owner || '未分配' }}</span></RouterLink><p v-if="!data.due_follow_ups.length" class="empty compact">当前没有待跟进事项。</p></section>
+        <section v-if="can('customers', 'view') && can('orders', 'view')" class="panel list-panel" aria-label="重点客户"><div class="panel-title"><div><h2>重点客户</h2><p>{{ yearStart }} — {{ asOf }} · 销售额前 6 名</p></div><RouterLink to="/customers">客户列表 <ChevronRight :size="14" /></RouterLink></div><div class="customer-list"><RouterLink v-for="(c,index) in data.top_customers" :key="c.id" :to="{ path: '/customers', query: { detail: c.id } }" class="customer-item"><span class="rank">{{ index+1 }}</span><div class="grow"><strong :title="c.name">{{ c.name }}</strong><small>{{ c.country || '未填写国家' }} · {{ c.orders }} 个订单</small></div><strong class="amount">{{ money(c.sales) }}</strong></RouterLink><p v-if="!data.top_customers.length" class="empty compact">暂无客户销售记录。</p></div></section>
+        <section v-if="can('followups', 'view')" class="panel list-panel" aria-label="待跟进事项"><div class="panel-title"><div><h2>待跟进事项</h2><p>今天到期和已逾期的跟进，显示前 5 条</p></div><RouterLink to="/follow-ups?due=true">全部待跟进 <ChevronRight :size="14" /></RouterLink></div><RouterLink v-for="f in data.due_follow_ups" :key="f.id" :to="{ path: '/follow-ups', query: { due: 'true', detail: f.id } }" class="follow-item"><div class="date-box"><strong>{{ f.next_follow_up?.slice(8,10) }}</strong><span>{{ f.next_follow_up?.slice(5,7) }}月</span></div><div class="grow"><strong :title="f.customer_name">{{ f.customer_name }}</strong><small :title="f.subject">{{ f.subject }}</small></div><span class="owner" :title="f.owner">{{ f.owner || '未分配' }}</span></RouterLink><p v-if="!data.due_follow_ups.length" class="empty compact">没有待跟进事项。</p></section>
       </div>
       <section v-if="can('certificates', 'view') && can('products', 'view')" class="panel list-panel certificate-reminders" aria-label="证书到期提醒"><div class="panel-title"><div><h2>证书到期提醒</h2><p v-if="data.summary.certificate_attention">需关注 {{ data.summary.certificate_attention }} 个 · 已过期 {{ data.summary.certificate_expired }} 个 · 90 天内到期 {{ data.summary.certificate_expiring }} 个</p><p v-else>暂无已过期或 90 天内到期的证书。</p></div><RouterLink to="/product-certificates?expiry=attention">全部需关注证书 <ChevronRight :size="14" /></RouterLink></div><RouterLink v-for="c in data.certificate_alerts || []" :key="c.id" :to="{ path: '/product-certificates', query: { expiry: 'attention', detail: c.id } }" class="follow-item certificate-item"><div class="grow"><strong :title="c.product_name">{{ c.product_name }}</strong><small :title="c.certificate_name">{{ c.certificate_name }} · {{ c.certificate_no || '无编号' }}</small></div><span>{{ c.expires_on }}</span><CertificateExpiryBadge :certificate="c" /></RouterLink></section>
-      <section v-if="can('transactions', 'view')" class="dashboard-section" aria-labelledby="cash-section-title"><div class="section-heading"><div><h2 id="cash-section-title">账面收支（人民币折算参考）</h2><p>按流水发生日期，从 {{ yearStart }} 起汇总，含已录入的未来日期流水。{{ BOOK_RMB_NOTE }}</p></div></div><div class="cash-strip"><div><span>账面收入（折算参考）</span><strong>{{ money(data.summary.receipts_rmb) }}</strong></div><div><span>账面支出（折算参考）</span><strong>{{ money(data.summary.payments_rmb) }}</strong></div><div><span>账面净收支（收入 − 支出）</span><strong :class="Number(data.summary.receipts_rmb)-Number(data.summary.payments_rmb)>=0?'positive':'negative'">{{ money(Number(data.summary.receipts_rmb)-Number(data.summary.payments_rmb)) }}</strong></div></div></section>
+      <section v-if="can('transactions', 'view')" class="dashboard-section" aria-labelledby="cash-section-title"><div class="section-heading"><div><h2 id="cash-section-title">账面收支（人民币折算参考）</h2><p>按流水发生日期，{{ yearStart }} — {{ asOf }} 汇总；仅已确认流水。{{ BOOK_RMB_NOTE }}</p></div></div><div class="cash-strip"><div><span>账面收入（折算参考）</span><strong>{{ money(data.summary.receipts_rmb) }}</strong></div><div><span>账面支出（折算参考）</span><strong>{{ money(data.summary.payments_rmb) }}</strong></div><div><span>账面净收支（收入 − 支出）</span><strong :class="Number(data.summary.receipts_rmb)-Number(data.summary.payments_rmb)>=0?'positive':'negative'">{{ money(Number(data.summary.receipts_rmb)-Number(data.summary.payments_rmb)) }}</strong></div></div></section>
     </template>
   </div>
 </template>

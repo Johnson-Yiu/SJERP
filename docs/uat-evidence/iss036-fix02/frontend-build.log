@@ -1,0 +1,21 @@
+
+> senju-crm-erp@1.0.0 build
+> vite build
+
+vite v8.2.0 building client environment for production...
+[2K
+transforming...✓ 2013 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                        0.56 kB │ gzip:   0.37 kB
+dist/assets/TradeUnitsPage-BagMfA07.css                2.89 kB │ gzip:   0.89 kB
+dist/assets/HistoryOrdersPage-5Xkjdeuh.css             6.55 kB │ gzip:   1.53 kB
+dist/assets/ReportsPage-BTHBXwkU.css                  18.04 kB │ gzip:   3.42 kB
+dist/assets/index-BueCSCmW.css                       386.21 kB │ gzip:  63.43 kB
+dist/assets/TradeUnitsPage-BCqC29C5.js                10.63 kB │ gzip:   4.32 kB
+dist/assets/HistoryOrdersPage-DgJFNhf3.js             12.76 kB │ gzip:   4.47 kB
+dist/assets/ReportsPage-DEIpYg2Q.js                   51.15 kB │ gzip:  16.43 kB
+dist/assets/_plugin-vue_export-helper-BExYQ_OI.js    128.33 kB │ gzip:  49.21 kB
+dist/assets/index-8EoWZaYT.js                      1,126.26 kB │ gzip: 393.53 kB
+
+✓ built in 2.16s

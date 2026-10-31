@@ -2,7 +2,7 @@
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 import PaymentTermsEditor from '../components/PaymentTermsEditor.vue'
-import { copyPaymentTerms, paymentTermsError } from '../utils/paymentTerms'
+import { copySavedPaymentTerms, paymentTermsError } from '../utils/paymentTerms'
 import { compactDecimalInput } from '../utils/decimalInput'
 import TradeUnitPicker from '../components/TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
@@ -81,16 +81,14 @@ let searchDebounceTimer
 let purchaseListRequest = 0
 let pageLoadRequest = 0
 const today = new Date().toISOString().slice(0, 10)
-function newDraft() { return { supplier: '', order: '', order_date: today, expected_arrival_date: '', status: 'draft', currency: 'CNY', exchange_rate: '1', notes: '', items: [] } }
+function newDraft() { return { supplier: '', order: '', order_date: today, expected_arrival_date: '', status: 'draft', currency: 'CNY', exchange_rate: '1', notes: '', payment_terms_snapshot: [], items: [] } }
+function newRequestKey() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
+  return `fulfillment-${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
 const draft = ref(newDraft())
 const guard = useUnsavedChangesGuard({ data: () => draft.value, enabled: () => openCreate.value })
-const initialTerms = ref('')
-const termsDirty = computed(() => JSON.stringify(draft.value.payment_terms_snapshot) !== initialTerms.value)
-function inheritPaymentTerms() {
-  draft.value.payment_terms_snapshot = copyPaymentTerms(suppliers.value.find(row => String(row.id) === String(draft.value.supplier))?.payment_terms_config)
-  initialTerms.value = JSON.stringify(draft.value.payment_terms_snapshot)
-}
-const costTarget = ref(null), paymentTarget = ref(null)
+const costTarget = ref(null), costOrders = ref([]), paymentTarget = ref(null)
 const draftAmount = computed(() => draft.value.items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unit_price || 0), 0))
 const lineAmount = item => Number(item.quantity || 0) * Number(item.unit_price || 0)
 const itemSku = item => skus.value.find(sku => Number(sku.id) === Number(item.sku))
@@ -112,7 +110,18 @@ async function onCurrencyChanged(event) {
     current.items.forEach(item => { item.unit_price = ''; applySupplierSkuPrice(item) })
   } finally { event.target.value = draft.value.currency; draftChanging.value = false }
 }
-async function paymentSaved() { paymentTarget.value = null; notice.value = '供应商付款已记录为支出流水。'; await load() }
+async function paymentSaved() { paymentTarget.value = null; notice.value = '供应商付款已登记为支出流水。'; await load() }
+async function openCostAllocation(purchase) {
+  if (!can('purchases', 'update')) return
+  error.value = ''
+  try {
+    const { data } = await api.get('/purchase-orders/cost-allocation-orders/')
+    costOrders.value = Array.isArray(data) ? data : []
+    costTarget.value = purchase
+  } catch (err) {
+    error.value = message(err, '成本归属订单加载失败，请重试。')
+  }
+}
 const receiptTarget = ref(null), receiptSaving = ref(false)
 const receiptForm = ref({})
 const receiptRemaining = computed(() => Number(receiptTarget.value?.item.remaining_quantity || 0) - baseQuantity(receiptForm.value))
@@ -122,7 +131,7 @@ function openReceipt(row, item) {
   if (!can('purchases', 'update')) return
   receiptTarget.value = { row, item }
   receiptSuccess.value = null
-  receiptForm.value = { purchase_item: item.id, receipt_date: new Date().toLocaleDateString('en-CA'), quantity: Math.max(0, Number(item.remaining_quantity)), unit_cost: item.unit_price, is_overage: false, overage_reason: '', notes: '', checked: false }
+  receiptForm.value = { request_key: newRequestKey(), purchase_item: item.id, receipt_date: new Date().toLocaleDateString('en-CA'), quantity: Math.max(0, Number(item.remaining_quantity)), unit_cost: item.unit_price, is_overage: false, overage_reason: '', notes: '', checked: false }
   if (item.trade_unit && Number(item.remaining_quantity) % Number(item.trade_snapshot.factor) === 0) Object.assign(receiptForm.value, { trade_unit: item.trade_unit, trade_snapshot: item.trade_snapshot, quantity: Number(item.remaining_quantity) / Number(item.trade_snapshot.factor), unit_cost: item.trade_unit_price })
   receiptForm.value.unit_cost = compactDecimalInput(receiptForm.value.unit_cost)
   error.value = ''
@@ -168,6 +177,14 @@ const selectedOrder = computed(() => orders.value.find(row => Number(row.id) ===
 const inheritedSupplier = computed(() => Boolean(route.query.supplier))
 const inheritedOrder = computed(() => Boolean(route.query.order))
 const money = value => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+function supplierPartyName(row) {
+  if (row.status === 'draft') return row.supplier_name || '—'
+  return row.supplier_name_snapshot || '历史主体未记录'
+}
+function supplierPartyReference(row) {
+  if (row.status === 'draft' || !row.supplier_name || !row.supplier_name_snapshot || row.supplier_name === row.supplier_name_snapshot) return ''
+  return `当前主档：${row.supplier_name}`
+}
 const purchaseMetrics = computed(() => [
   { label: '执行中', value: rows.value.filter(row => ['ordered', 'partial'].includes(row.status)).length, hint: '已下单 / 部分到货' },
   { label: '待到货', value: rows.value.filter(row => ['ordered', 'partial'].includes(row.status) && (row.items || []).some(item => Number(item.remaining_quantity || 0) > 0)).length, hint: '尚未全部到货' },
@@ -199,7 +216,7 @@ async function loadPurchaseRows() {
 async function loadReferenceOptions() {
   referenceLoading.value = true
   const [supplierResult, orderResult, skuResult] = await Promise.allSettled([
-    listAll('/suppliers/'), can('orders', 'view') ? listAll('/orders/') : Promise.resolve([]), listAll('/skus/'),
+    listAll('/suppliers/', { params: { active_only: '1' } }), can('orders', 'view') ? listAll('/orders/') : Promise.resolve([]), listAll('/skus/'),
   ])
   const outcomes = { suppliers: supplierResult, orders: orderResult, skus: skuResult }
   const referenceLabels = { suppliers: '供应商', orders: '订单', skus: 'SKU' }
@@ -213,7 +230,6 @@ async function loadReferenceOptions() {
     } else nextErrors[key] = `${referenceLabels[key]}资料加载失败：${apiErrorMessage(result.reason) || '请稍后重试。'}`
   }
   referenceErrors.value = nextErrors
-  if (openCreate.value && !editingPurchaseId.value && !termsDirty.value) inheritPaymentTerms()
   referenceLoading.value = false
 }
 async function load({ includeReferenceData = false } = {}) {
@@ -239,7 +255,6 @@ function startCreate() {
   if (!can('purchases', 'create')) return
   editingPurchaseId.value = null
   draft.value = { ...newDraft(), supplier: route.query.supplier || '', order: route.query.order || '' }
-  inheritPaymentTerms()
   activeSkuId.value = ''
   supplierSkuOptions.value = {}; notice.value = ''; guard.markClean(); openCreate.value = true
 }
@@ -257,7 +272,7 @@ async function editDraft(row) {
     currency: row.currency,
     exchange_rate: compactDecimalInput(row.exchange_rate),
     notes: row.notes || '',
-    payment_terms_snapshot: copyPaymentTerms(row.payment_terms_snapshot),
+    payment_terms_snapshot: copySavedPaymentTerms(row.payment_terms_snapshot),
     items: (row.items || []).map(item => fromTradeLine({
       sku: item.sku,
       supplier_sku: item.supplier_sku || '',
@@ -270,7 +285,6 @@ async function editDraft(row) {
     })),
   }
   activeSkuId.value = String(draft.value.items[0]?.sku || '')
-  initialTerms.value = JSON.stringify(draft.value.payment_terms_snapshot)
   supplierSkuOptions.value = {}; notice.value = ''; error.value = ''; openCreate.value = true
   await Promise.all(draft.value.items.map(loadSupplierSkuOptions))
   guard.markClean()
@@ -291,6 +305,43 @@ async function matchedSupplier(selection) {
 }
 function supplierSourceKey(item) { return `${draft.value.supplier || ''}:${item.sku || ''}` }
 function supplierSourcesFor(item) { return supplierSkuOptions.value[supplierSourceKey(item)] || [] }
+const quantity = value => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 6 })
+const moqWarnings = computed(() => {
+  const groups = new Map()
+  draft.value.items.forEach(item => {
+    if (!item.supplier_sku) return
+    const key = supplierSourceKey(item)
+    if (supplierSkuLoading.value[key] || supplierSkuErrors.value[key]) return
+    const source = supplierSourcesFor(item).find(row => Number(row.id) === Number(item.supplier_sku))
+    const moq = Number(source?.moq)
+    const actual = baseQuantity(item)
+    if (!source || !Number.isFinite(moq) || moq <= 0 || !Number.isFinite(actual)) return
+    const group = groups.get(String(source.id)) || {
+      source_id: source.id,
+      sku_code: itemSku(item)?.sku_code || item.sku || '未命名 SKU',
+      actual_quantity: 0,
+      moq,
+      base_unit: itemBaseUnit(item) || '基础单位',
+    }
+    group.actual_quantity += actual
+    groups.set(String(source.id), group)
+  })
+  return [...groups.values()]
+    .filter(item => item.actual_quantity < item.moq)
+    .map(item => ({ ...item, shortage: item.moq - item.actual_quantity }))
+})
+const moqCheckUnavailable = computed(() => {
+  const seen = new Set()
+  return draft.value.items.flatMap(item => {
+    if (!item.supplier_sku) return []
+    const key = supplierSourceKey(item)
+    if (seen.has(key)) return []
+    seen.add(key)
+    if (supplierSkuLoading.value[key]) return [{ key, message: '供应商供货档案正在加载，暂无法判断 MOQ。' }]
+    if (supplierSkuErrors.value[key]) return [{ key, message: '供应商供货档案加载失败，暂无法判断 MOQ；请重试加载。' }]
+    return []
+  })
+})
 async function loadSupplierSkuOptions(item) {
   const key = supplierSourceKey(item)
   supplierSkuErrors.value[key] = ''
@@ -314,10 +365,9 @@ async function changeSupplier(supplier) {
   const current = draft.value
   draftChanging.value = true
   try {
-    if ((current.items.some(item => item.supplier_sku || hasPrice(item) || item.trade_unit) || termsDirty.value) && !await confirmDialog({ title: '更换供应商', message: `更换供应商将清除当前商品的供应商来源、采购价格和供应商专属交易规格。${termsDirty.value ? '更换供应商还将替换本次采购的付款计划。' : ''}是否继续？`, confirmText: '更换供应商' })) return false
+    if (current.items.some(item => item.supplier_sku || hasPrice(item) || item.trade_unit) && !await confirmDialog({ title: '更换供应商', message: '更换供应商将清除当前商品的供应商来源、采购价格和供应商专属交易规格，并可能带来包装、LOGO、认证差异。是否继续？', confirmText: '更换供应商' })) return false
     if (draft.value !== current) return false
     current.supplier = supplier
-    inheritPaymentTerms()
     current.items.forEach(resetSupplierLine)
     await Promise.all(current.items.map(loadSupplierSkuOptions))
     return true
@@ -357,9 +407,45 @@ function syncSelectedSkus(ids) {
   })
   if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
 }
-async function createPurchase() { if (saving.value || draftChanging.value || !can('purchases', editingPurchaseId.value ? 'update' : 'create')) return; if (!referenceReady.value) { error.value = '供应商、订单或 SKU 资料尚未加载完成，请重试后再保存。'; return } if (!supplierSourcesReady.value) { error.value = '供应商供货档案仍在加载或加载失败，请重试后再保存。'; return } if (paymentTermsError(draft.value.payment_terms_snapshot)) { error.value = paymentTermsError(draft.value.payment_terms_snapshot); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; if (payload.sales_link_restricted) delete payload.order; delete payload.sales_link_restricted; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); guard.markClean(); await closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
-async function place(row) { if (!can('purchases', 'update')) return; const zeroCount = (row.items || []).filter(item => Number(item.unit_price) === 0).length; if (!await confirmDialog({ title: '确认采购下单', message: `${zeroCount ? `当前采购单存在 ${zeroCount} 条 0 单价商品，请确认这是赠品、样品或其他合理的零价采购。\n` : ''}确认下单后将生成应付计划并进入在途采购。是否继续？`, confirmText: '确认下单', danger: true })) return; try { await api.post(`/purchase-orders/${row.id}/place/`); notice.value = '采购单已确认下单。'; await load() } catch (err) { error.value = message(err, '确认下单失败。') } }
-async function cancelPurchase(row) { if (!can('purchases', 'update')) return; const reason = await inputDialog({ title: '取消采购', message: `请填写取消采购单 ${row.purchase_no} 的原因。`, label: '取消原因', placeholder: '请输入取消原因', required: true, maxLength: 500, confirmText: '确认取消', danger: true }); if (!reason) return; try { await api.post(`/purchase-orders/${row.id}/cancel/`, { reason }); notice.value = '采购单已取消。'; await load() } catch (err) { error.value = message(err, '取消采购失败。') } }
+async function createPurchase() { if (saving.value || draftChanging.value || !can('purchases', editingPurchaseId.value ? 'update' : 'create')) return; if (!referenceReady.value) { error.value = '供应商、订单或 SKU 资料尚未加载完成，请重试后再保存。'; return } if (!supplierSourcesReady.value) { error.value = '供应商供货档案仍在加载或加载失败，请重试后再保存。'; return } if (paymentTermsError(draft.value.payment_terms_snapshot, { allowEmpty: true })) { error.value = paymentTermsError(draft.value.payment_terms_snapshot, { allowEmpty: true }); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; if (payload.sales_link_restricted) delete payload.order; delete payload.sales_link_restricted; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); guard.markClean(); await closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认采购下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认采购下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
+function moqExceptionMessage(data) {
+  const details = (data?.exceptions || []).map(item => `${item.sku_code || '未命名 SKU'}：实际 ${item.actual_quantity} ${item.base_unit || ''}，MOQ ${item.moq} ${item.base_unit || ''}，差额 ${item.shortage} ${item.base_unit || ''}`.replaceAll('  ', ' ').trim())
+  return `本次采购有明细低于供应商 MOQ。\n${details.join('\n')}\n填写例外原因后仍可下单；取消则保留当前采购草稿。`
+}
+async function place(row) {
+  if (!can('purchases', 'update')) return
+  const zeroCount = (row.items || []).filter(item => Number(item.unit_price) === 0).length
+  if (!await confirmDialog({ title: '确认采购下单', message: `${zeroCount ? `当前采购单存在 ${zeroCount} 条 0 单价商品，请确认这是赠品、样品或其他合理的零价采购。\n` : ''}确认采购下单后将生成应付计划并进入在途采购。是否继续？`, confirmText: '确认采购下单', danger: true })) return
+  let reason = ''
+  while (true) {
+    try {
+      const placementUrl = `/purchase-orders/${row.id}/place/`
+      if (reason) await api.post(placementUrl, { moq_exception_reason: reason })
+      else await api.post(placementUrl)
+      notice.value = '采购单已确认下单。'
+      await load()
+      return
+    } catch (err) {
+      const data = err.response?.data
+      if (data?.code !== 'purchase_moq_exception_required') {
+        error.value = message(err, '确认采购下单失败。')
+        return
+      }
+      const nextReason = await inputDialog({
+        title: '采购 MOQ 例外确认',
+        message: moqExceptionMessage(data),
+        label: '例外原因',
+        placeholder: '例如：客户指定小批量试单，已确认本次需求量。',
+        required: true,
+        maxLength: 500,
+        confirmText: '填写原因并继续下单',
+      })
+      if (!nextReason) return
+      reason = nextReason.trim()
+    }
+  }
+}
+async function cancelPurchase(row) { if (!can('purchases', 'update')) return; const reason = await inputDialog({ title: '取消采购单', message: `请填写取消采购单 ${row.purchase_no} 的原因。`, label: '取消原因', placeholder: '请输入取消原因', required: true, maxLength: 500, confirmText: '确认取消', danger: true }); if (!reason) return; try { await api.post(`/purchase-orders/${row.id}/cancel/`, { reason }); notice.value = '采购单已取消。'; await load() } catch (err) { error.value = message(err, '取消采购单失败。') } }
 async function deleteDraft(row) { if (!can('purchases', 'delete') || !await confirmDialog({ title: '确认删除采购草稿', message: `确定删除草稿 ${row.purchase_no} 吗？`, confirmText: '确认删除', danger: true })) return; try { await api.delete(`/purchase-orders/${row.id}/`); notice.value = '采购草稿已删除。'; if (Number(route.query.detail) === row.id) await closeDetail(); await load() } catch (err) { error.value = message(err, '删除采购草稿失败。') } }
 function pay(row) { if (can('purchases', 'update')) paymentTarget.value = row }
 onMounted(() => load({ includeReferenceData: true }))
@@ -399,8 +485,8 @@ watch(() => route.query.detail, id => {
 <template>
   <div class="core-list-page">
     <PurchasePaymentModal v-if="paymentTarget" :purchase="paymentTarget" @close="paymentTarget = null" @saved="paymentSaved" />
-    <PurchaseCostAllocationModal v-if="costTarget" :purchase="costTarget" :orders="orders" @close="costTarget = null" @saved="notice = '成本分配已保存，订单预估毛利已更新。'" />
-    <div class="page-head list-intro"><p>管理采购、到货和供应商付款。</p><div class="page-actions"><button class="btn btn-secondary" :disabled="loading" @click="load({ includeReferenceData: true })"><RefreshCw :size="16" /> 刷新</button><button v-if="can('purchases', 'create')" class="btn btn-primary" :disabled="referenceLoading || !referenceReady" @click="startCreate"><Plus :size="16" /> 新建采购单</button></div></div>
+    <PurchaseCostAllocationModal v-if="costTarget" :purchase="costTarget" :orders="costOrders" @close="costTarget = null" @saved="notice = '成本分配已保存，订单预估毛利已更新。'" />
+    <div class="page-head list-intro"><p>管理采购下单、到货与供应商应付。</p><div class="page-actions"><button class="btn btn-secondary" :disabled="loading" @click="load({ includeReferenceData: true })"><RefreshCw :size="16" /> 刷新</button><button v-if="can('purchases', 'create')" class="btn btn-primary" :disabled="referenceLoading || !referenceReady" @click="startCreate"><Plus :size="16" /> 新建采购单</button></div></div>
     <div v-if="referenceErrorEntries.length" class="option-load-error" role="alert"><span>创建采购单所需的关联资料未能全部加载，暂不能保存。{{ referenceErrorEntries.map(([, value]) => value).join(' ') }}</span><button type="button" :disabled="loading" @click="load({ includeReferenceData: true })">重试加载</button></div>
     <p v-else-if="referenceLoading" class="option-loading-note" role="status">正在加载采购单所需的供应商、订单和 SKU 资料…</p>
     <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load({ includeReferenceData: true })" />
@@ -416,7 +502,7 @@ watch(() => route.query.detail, id => {
     <div v-if="openCreate && can('purchases', editingPurchaseId ? 'update' : 'create')" class="modal-backdrop purchase-create-backdrop" @mousedown.self="closeCreate">
       <section class="modal wide purchase-create-modal" role="dialog" aria-modal="true" aria-labelledby="purchase-create-title">
         <div class="section-heading modal-head">
-          <div><h3 id="purchase-create-title">{{ editingPurchaseId ? '编辑采购草稿' : '新建采购单' }}</h3><p>草稿保存后可确认下单。</p></div>
+          <div><h3 id="purchase-create-title">{{ editingPurchaseId ? '编辑采购草稿' : '新建采购单' }}</h3><p>保存草稿后可确认采购下单。</p></div>
           <button class="icon-btn" aria-label="关闭" @click="closeCreate"><X :size="17" /></button>
         </div>
         <form @submit.prevent="createPurchase">
@@ -424,24 +510,28 @@ watch(() => route.query.detail, id => {
             <div class="draft-section-heading"><h4>采购基本信息</h4><label class="purchase-identity">采购单号<input :value="draft.purchase_no || '保存后由系统自动生成'" class="readonly-input" readonly /></label></div>
             <div class="form-grid">
               <label>供应商 * <span v-if="inheritedSupplier" class="inherited-badge">{{ inheritedOrder ? '由订单履约带入' : '由关联入口带入' }}</span><select :value="draft.supplier" aria-label="供应商" required :disabled="inheritedSupplier" @change="onSupplierChanged"><option value="">选择供应商</option><option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.id">{{ supplier.name }}</option></select><small>整张采购单使用同一供应商。</small></label>
-              <label>来源销售订单（可选）<select v-model="draft.order" aria-label="来源销售订单（可选）" :disabled="inheritedOrder || draft.sales_link_restricted || !can('orders', 'view') || !can('orders', 'update')"><option value="">不关联订单</option><option v-for="order in orders.filter(row => row.status !== 'cancelled')" :key="order.id" :value="order.id">{{ order.order_no }} · {{ order.customer_name }}</option></select><small>主要来源订单；多订单归属在成本分配中处理。</small></label>
+              <label>来源销售订单（可选）<select v-model="draft.order" aria-label="来源销售订单（可选）" :disabled="inheritedOrder || draft.sales_link_restricted || !can('orders', 'view') || !can('orders', 'update')"><option value="">不关联订单</option><option v-for="order in orders.filter(row => row.status !== 'cancelled')" :key="order.id" :value="order.id">{{ order.order_no }} · {{ order.customer_name }}</option></select><small>一张采购单可关联多个销售订单，具体归属在成本分配中处理。</small></label>
               <label>下单日期 *<input v-model="draft.order_date" type="date" required /></label>
               <label>预计到货<input v-model="draft.expected_arrival_date" type="date" /></label>
               <label>币种 *<select :value="draft.currency" aria-label="采购币种" required @change="onCurrencyChanged"><option v-for="[code, name] in currencies" :key="code" :value="code">{{ code }} · {{ name }}</option></select></label>
               <label v-if="draft.currency !== 'CNY'">对人民币汇率 *<input v-model="draft.exchange_rate" type="number" min="0.000001" step="0.000001" placeholder="1 单位外币兑换人民币金额" required /></label>
             </div>
           </section>
-          <section class="draft-section"><div class="draft-section-heading"><h4>本次付款计划</h4><small>仅用于本采购单。</small></div><PaymentTermsEditor v-model="draft.payment_terms_snapshot" /></section>
+          <section class="draft-section"><div class="draft-section-heading"><h4>本单付款计划</h4><small>仅记录本单约定；未协商时可暂不填写。</small></div><PaymentTermsEditor v-model="draft.payment_terms_snapshot" :allow-empty="true" /></section>
           <section class="draft-section line-editor">
             <div class="draft-section-heading"><h4>采购商品</h4><small v-if="selectedOrder">关联：{{ selectedOrder.order_no }}</small></div>
             <p class="section-help">选择 SKU 后填写规格、数量和单价。</p>
             <SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" :show-price="false" />
+            <div v-if="moqCheckUnavailable.length || moqWarnings.length" class="moq-editor-feedback" aria-live="polite">
+              <p v-for="item in moqCheckUnavailable" :key="item.key" class="moq-check-unavailable" role="status">{{ item.message }}</p>
+              <p v-for="warning in moqWarnings" :key="warning.source_id" class="moq-editor-warning" data-testid="draft-moq-warning" role="alert">{{ warning.sku_code }}：实际 {{ quantity(warning.actual_quantity) }} {{ warning.base_unit }}，MOQ {{ quantity(warning.moq) }} {{ warning.base_unit }}，差额 {{ quantity(warning.shortage) }} {{ warning.base_unit }}。可保存草稿；确认采购下单时需填写例外原因。</p>
+            </div>
             <article v-for="(item,index) in draft.items" :key="index" class="purchase-line">
               <header class="purchase-line-heading"><div class="purchase-sku"><b>{{ itemSku(item)?.display_name_cn || itemSku(item)?.product_name || '—' }}</b><small>SKU: {{ itemSku(item)?.sku_code || item.sku || '—' }} · Sales Model: {{ itemSku(item)?.sales_model || '—' }}</small></div><button type="button" class="text-btn danger" @click="draft.items.splice(index, 1)">删除</button></header>
               <div class="line-source-grid">
                 <div class="line-field"><span>交易单位 / 包装规格</span><TradeUnitPicker :line="item" :sku="itemSku(item)" :supplier="draft.supplier" /></div>
                 <label class="line-field">供应商供货档案<select v-model="item.supplier_sku" :disabled="!draft.supplier || !item.sku || supplierSkuLoading[supplierSourceKey(item)]" @change="applySupplierSkuPrice(item)"><option v-if="!draft.supplier || !item.sku" value="">供应商供货档案（可选）</option><option v-else-if="!supplierSourcesFor(item).length && !supplierSkuErrors[supplierSourceKey(item)]" value="">暂无供货档案</option><option v-for="source in supplierSourcesFor(item)" :key="source.id" :value="source.id">{{ source.supplier_model || source.supplier_sku_code }} · {{ source.supplier_sku_code }} · {{ source.purchase_price }} {{ source.currency }}</option></select><small v-if="supplierSkuLoading[supplierSourceKey(item)]">正在加载供货档案…</small><small v-else-if="supplierSkuErrors[supplierSourceKey(item)]" class="option-load-error-text" role="alert">{{ supplierSkuErrors[supplierSourceKey(item)] }} <button type="button" @click="loadSupplierSkuOptions(item)">重试</button></small><small v-else-if="draft.supplier && item.sku && !supplierSourcesFor(item).length">未维护供应商供货档案，本次采购仍可继续。</small></label>
-                <button type="button" class="supplier-match-action" @click="matchingItem = item">查找其他供应商</button>
+                <button type="button" class="supplier-match-action" @click="matchingItem = item">更换供应商来源</button>
               </div>
               <p v-if="supplierPriceWarning(item)" class="supplier-price-warning">{{ supplierPriceWarning(item) }}</p>
               <div class="line-business-grid">
@@ -455,16 +545,16 @@ watch(() => route.query.detail, id => {
           </section>
           <section class="purchase-total-summary"><h4>采购金额汇总</h4><div><span>商品项数 <b>{{ draft.items.length }}</b></span><span>币种 <b>{{ draft.currency }}</b></span><span>商品金额 <strong>{{ draft.currency }} {{ money(draftAmount) }}</strong></span></div></section>
           <p v-if="error" class="form-error" role="alert">{{ error }}</p>
-          <div class="editor-actions"><small>草稿保存不会生成应付或在途采购；确认下单后才进入正式采购流程。</small><div><button type="button" class="btn btn-secondary" @click="closeCreate">取消</button><button v-if="can('purchases', editingPurchaseId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || draftChanging || !referenceReady || !supplierSourcesReady || !!paymentTermsError(draft.payment_terms_snapshot)"><Save :size="16" /> {{ saving ? '保存中…' : (editingPurchaseId ? '保存采购草稿' : '创建采购单') }}</button></div></div>
+          <div class="editor-actions"><small>保存采购草稿不会生成应付或在途采购；确认采购下单后才进入正式采购流程。</small><div><button type="button" class="btn btn-secondary" @click="closeCreate">取消</button><button v-if="can('purchases', editingPurchaseId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || draftChanging || !referenceReady || !supplierSourcesReady || !!paymentTermsError(draft.payment_terms_snapshot, { allowEmpty: true })"><Save :size="16" /> {{ saving ? '保存中…' : '保存采购草稿' }}</button></div></div>
         </form>
       </section>
     </div>
-    <section v-if="hasLoaded" class="panel"><ListEmptyState v-if="!rows.length" entity="采购单" :filtered="filteredPurchaseEmpty" @clear="resetFilters"><template #action>点击“新建采购单”开始录入。</template></ListEmptyState><div v-else class="table-wrap"><table class="data-table purchase-list-table"><thead><tr><th>采购单号</th><th>供应商</th><th>来源订单</th><th>下单日期</th><th>预计到货</th><th>状态</th><th>采购金额</th><th>已付 / 未付</th><th>操作</th></tr></thead><tbody><tr v-for="row in rows" :key="row.id" class="purchase-list-row" tabindex="0" @click="togglePurchaseDetail(row)" @keydown.enter.self="togglePurchaseDetail(row)"><td class="primary-cell">{{ row.purchase_no }}</td><td>{{ row.supplier_name }}</td><td><RouterLink v-if="row.order && row.order_no" @click.stop class="order-navigation-link" :aria-label="`查看来源订单 ${row.order_no}`" :to="orderDetailLocation(row.order, 'overview', route.fullPath)">{{ row.order_no }}</RouterLink><span v-else>—</span></td><td>{{ row.order_date || '—' }}</td><td><div>{{ row.expected_arrival_date || '—' }}</div><small v-if="purchaseArrival(row)" class="arrival-helper" :class="purchaseArrival(row).kind">{{ purchaseArrival(row).label }}</small></td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.currency }} {{ money(row.total_amount) }}</td><td>{{ row.paid_amount == null ? '—' : money(row.paid_amount) }} / {{ row.unpaid_amount == null ? '—' : money(row.unpaid_amount) }}</td><td><button class="text-btn" @click.stop="togglePurchaseDetail(row)" :aria-label="`查看采购单 ${row.purchase_no}`"><Eye :size="16" /></button></td></tr></tbody></table></div></section>
+    <section v-if="hasLoaded" class="panel"><ListEmptyState v-if="!rows.length" entity="采购单" :filtered="filteredPurchaseEmpty" @clear="resetFilters"><template #action>点击“新建采购单”开始录入。</template></ListEmptyState><div v-else class="table-wrap"><table class="data-table purchase-list-table"><thead><tr><th>采购单号</th><th>供应商</th><th>来源订单</th><th>下单日期</th><th>预计到货</th><th>状态</th><th>采购金额</th><th>已付 / 未付</th><th>操作</th></tr></thead><tbody><tr v-for="row in rows" :key="row.id" class="purchase-list-row" tabindex="0" @click="togglePurchaseDetail(row)" @keydown.enter.self="togglePurchaseDetail(row)"><td class="primary-cell">{{ row.purchase_no }}</td><td>{{ supplierPartyName(row) }}<small v-if="supplierPartyReference(row)" class="party-reference">{{ supplierPartyReference(row) }}</small></td><td><RouterLink v-if="row.order && row.order_no" @click.stop class="order-navigation-link" :aria-label="`查看来源订单 ${row.order_no}`" :to="orderDetailLocation(row.order, 'overview', route.fullPath)">{{ row.order_no }}</RouterLink><span v-else>—</span></td><td>{{ row.order_date || '—' }}</td><td><div>{{ row.expected_arrival_date || '—' }}</div><small v-if="purchaseArrival(row)" class="arrival-helper" :class="purchaseArrival(row).kind">{{ purchaseArrival(row).label }}</small></td><td><span class="status" :class="row.status">{{ row.status_display }}</span></td><td>{{ row.currency }} {{ money(row.total_amount) }}</td><td>{{ row.paid_amount == null ? '—' : money(row.paid_amount) }} / {{ row.unpaid_amount == null ? '—' : money(row.unpaid_amount) }}</td><td><button class="text-btn" @click.stop="togglePurchaseDetail(row)" :aria-label="`查看采购单 ${row.purchase_no}`"><Eye :size="16" /></button></td></tr></tbody></table></div></section>
 
-    <PurchaseDetailModal v-if="expandedId" :key="expandedId" :purchase="detailPurchase" :loading="detailLoading" :error="detailError" :skus="skus" @close="closeDetail" @retry="loadDetail" @confirm="place" @edit="editDraft" @delete="deleteDraft" @cancel="cancelPurchase" @pay="pay" @allocate-cost="costTarget = $event" @receive="openReceipt" @reverse-receipt="openReceiptReversal" @changed="load"><template #feedback><p v-if="notice" class="notice">{{ notice }}</p><p v-if="error" class="form-error">{{ error }}</p><div v-if="receiptSuccess && expandedId === receiptSuccess.purchaseId" class="notice receipt-success" role="status"><span>{{ receiptSuccess.message }}</span><RouterLink v-if="receiptSuccess.relatedOrders.length === 1" class="order-navigation-link" :to="orderDetailLocation(receiptSuccess.relatedOrders[0].id, 'overview', route.fullPath)">查看关联订单 {{ receiptSuccess.relatedOrders[0].order_no }}</RouterLink><div v-else-if="receiptSuccess.relatedOrders.length > 1" class="receipt-success-orders"><span>关联订单：</span><RouterLink v-for="order in receiptSuccess.relatedOrders" :key="order.id" class="order-navigation-link" :to="orderDetailLocation(order.id, 'overview', route.fullPath)">{{ order.order_no }}</RouterLink></div></div></template></PurchaseDetailModal>
+    <PurchaseDetailModal v-if="expandedId" :key="expandedId" :purchase="detailPurchase" :loading="detailLoading" :error="detailError" :skus="skus" @close="closeDetail" @retry="loadDetail" @confirm="place" @edit="editDraft" @delete="deleteDraft" @cancel="cancelPurchase" @pay="pay" @allocate-cost="openCostAllocation" @receive="openReceipt" @reverse-receipt="openReceiptReversal" @changed="load"><template #feedback><p v-if="notice" class="notice">{{ notice }}</p><p v-if="error" class="form-error">{{ error }}</p><div v-if="receiptSuccess && expandedId === receiptSuccess.purchaseId" class="notice receipt-success" role="status"><span>{{ receiptSuccess.message }}</span><RouterLink v-if="receiptSuccess.relatedOrders.length === 1" class="order-navigation-link" :to="orderDetailLocation(receiptSuccess.relatedOrders[0].id, 'overview', route.fullPath)">查看关联订单 {{ receiptSuccess.relatedOrders[0].order_no }}</RouterLink><div v-else-if="receiptSuccess.relatedOrders.length > 1" class="receipt-success-orders"><span>关联订单：</span><RouterLink v-for="order in receiptSuccess.relatedOrders" :key="order.id" class="order-navigation-link" :to="orderDetailLocation(order.id, 'overview', route.fullPath)">{{ order.order_no }}</RouterLink></div></div></template></PurchaseDetailModal>
     <div v-if="receiptTarget && can('purchases', 'update')" class="receipt-mask" @click.self="receiptTarget = null">
       <form class="receipt-dialog goods-receipt-dialog" role="dialog" aria-modal="true" aria-labelledby="receipt-title" @submit.prevent="submitReceipt">
-        <header><h3 id="receipt-title">验货合格入库</h3><p>{{ receiptTarget.row.purchase_no }} · {{ receiptTarget.item.sku_code }} / {{ receiptTarget.item.display_name || itemSku(receiptTarget.item)?.display_name_cn || '—' }}</p><p>供应商：{{ receiptTarget.row.supplier_name || '—' }}</p></header>
+        <header><h3 id="receipt-title">验货合格入库</h3><p>{{ receiptTarget.row.purchase_no }} · {{ receiptTarget.item.sku_code }} / {{ receiptTarget.item.display_name || itemSku(receiptTarget.item)?.display_name_cn || '—' }}</p><p>供应商：{{ supplierPartyName(receiptTarget.row) }}</p></header>
         <div class="receipt-progress"><div><small>下单数量</small><strong>{{ receiptTarget.item.quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div><div><small>已到货</small><strong>{{ receiptTarget.item.received_quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div><div><small>当前待到</small><strong>{{ receiptTarget.item.remaining_quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div></div>
         <p>不合格或拒收数量请写入备注，等待补货后再登记入库。</p>
         <label>实际入库日期 *<input v-model="receiptForm.receipt_date" type="date" required></label>
@@ -481,7 +571,7 @@ watch(() => route.query.detail, id => {
     </div>
     <div v-if="reversalTarget && can('purchases', 'update')" class="receipt-mask" @click.self="reversalTarget = null"><form class="receipt-dialog" role="dialog" aria-modal="true" aria-label="冲销采购入库" @submit.prevent="submitReceiptReversal"><h3>冲销采购入库</h3><p>{{ reversalTarget.row.purchase_no }} · {{ reversalTarget.item.sku_code }} / {{ reversalTarget.item.display_name || '—' }} · 原入库 {{ reversalTarget.receipt.quantity }} {{ itemBaseUnit(reversalTarget.item) }}</p><p class="reversal-effect">冲销后原入库记录保留，库存、预留及到货数量会同步回退。</p><label>冲销原因 *<textarea v-model="reversalReason" maxlength="500" required placeholder="请填写冲销原因"></textarea></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="reversalTarget = null">取消</button><button class="receipt-danger" :disabled="reversalSaving || !reversalReason.trim()">{{ reversalSaving ? '提交中…' : '确认冲销' }}</button></footer></form></div>
   </div>
-<PurchaseSupplierPicker v-if="matchingItem" :sku="skus.find(s => s.id === Number(matchingItem.sku))" :fixed-supplier="inheritedSupplier ? draft.supplier : null" @close="matchingItem = null" @selected="matchedSupplier" />
+<PurchaseSupplierPicker v-if="matchingItem" :sku="skus.find(s => s.id === Number(matchingItem.sku))" :fixed-supplier="inheritedSupplier ? draft.supplier : null" :order-id="draft.order || ''" @close="matchingItem = null" @selected="matchedSupplier" />
 </template>
 
 <style scoped>
@@ -521,12 +611,17 @@ watch(() => route.query.detail, id => {
 </style>
 
 <style scoped>
+.moq-editor-feedback{display:grid;gap:8px;margin:12px 0}.moq-editor-feedback p{margin:0;padding:9px 11px;border-radius:8px;font-size:12px;line-height:1.6}.moq-editor-warning{border:1px solid #EADBB5;background:#FFF8E8;color:#805C25}.moq-check-unavailable{border:1px solid #D6E1DC;background:#F5F8F6;color:#5F746B}
+</style>
+
+<style scoped>
 
 .purchase-create-modal>form{background:#F6F8F5;padding-top:18px}.draft-section{background:#fff;border:1px solid #E0E8E4;border-radius:13px;padding:18px;margin-bottom:16px}.draft-section-heading{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}.draft-section h4,.purchase-total-summary h4{margin:0;font-size:16px;font-weight:700;color:#1D3F36}.purchase-identity{display:flex;align-items:center;gap:8px;font-size:12px;color:#81908A}.purchase-identity .readonly-input{width:180px;height:28px;min-height:0;border:0;background:transparent;color:#61756D;font-size:12px;padding:0;box-shadow:none}.purchase-create-modal .form-grid{margin-top:18px;gap:14px;align-items:start}.form-grid label,.line-field{font-size:12px;font-weight:600;color:#61756D}.form-grid small,.line-field small,.section-help,.purchase-line-footer small{font-size:12px;font-weight:400;color:#81908A;line-height:1.6}.form-grid input,.form-grid select,.line-field input,.line-field select{box-sizing:border-box;min-width:0;width:100%;height:38px;border:1px solid #D8E3DE;border-radius:8px;padding:0 10px;font:inherit;color:#263D35;background:#fff}.form-grid select:disabled{background:#F1F5F3}.inherited-badge{justify-self:start;border-radius:5px;background:#EFF7F3;padding:2px 6px;color:#3B665A;font-size:11px}.line-editor{margin-top:0;padding-top:18px;border-top:1px solid #E0E8E4}.section-help{margin:8px 0 14px}.purchase-line{display:grid;gap:12px;background:#fff;border:1px solid #E1E9E5;border-radius:10px;padding:15px;margin-top:10px}.purchase-line-heading{display:flex;justify-content:space-between;align-items:start;gap:12px}.purchase-sku b{font-size:14px;font-weight:700;color:#294A41}.purchase-sku small{font-size:12px;color:#81908A}.line-source-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) auto;gap:12px;align-items:start}.line-business-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:start}.line-field{display:grid;gap:6px;min-width:0}.line-field :deep(.trade-unit-picker){margin-top:0}.line-field :deep(.trade-unit-picker select){box-sizing:border-box;height:38px;border:1px solid #D8E3DE;border-radius:8px;padding:0 10px}.supplier-match-action{height:30px;margin-top:24px;padding:0 9px;border:1px solid #D3E1DB;border-radius:7px;background:#F8FBF9;color:#3B665A;font-size:12px;font-weight:600;cursor:pointer}.line-total strong{display:flex;align-items:center;min-height:38px;font-size:16px;color:#174C41;font-weight:700;overflow-wrap:anywhere}.purchase-line-footer{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid #EDF2EF;padding-top:8px}.supplier-price-warning{margin:0;background:#FFF8E8;border:1px solid #EADBB5;border-radius:7px;padding:8px 10px;color:#805C25;font-size:12px;line-height:1.6}.purchase-total-summary{background:#F4F9F6;border:1px solid #D9E8E0;border-radius:10px;padding:14px 16px}.purchase-total-summary>div{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:12px;color:#61756D;font-size:12px}.purchase-total-summary b{margin-left:8px;color:#294A41}.purchase-total-summary strong{margin-left:10px;font-size:20px;font-weight:700;color:#174C41}.purchase-create-modal .editor-actions{bottom:0;align-items:center;justify-content:space-between;gap:16px}.editor-actions>small{font-size:12px;color:#71817B;line-height:1.6;max-width:440px}.editor-actions>div{display:flex;gap:9px;flex-shrink:0}.goods-receipt-dialog{width:min(620px,calc(100vw - 32px));box-sizing:border-box}.goods-receipt-dialog h3{margin:0;color:#1D3F36;font-size:20px}.goods-receipt-dialog header p{margin:6px 0;overflow-wrap:anywhere}.receipt-progress{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:18px}.receipt-progress>div{background:#F7FAF8;border:1px solid #E3EBE7;border-radius:8px;padding:10px 12px}.receipt-progress small{display:block;color:#71817B;font-size:11px}.receipt-progress strong{display:block;margin-top:5px;color:#294A41;font-size:15px;font-weight:700;overflow-wrap:anywhere}.goods-receipt-dialog label,.receipt-unit-field{font-size:12px;color:#61756D;font-weight:600}.receipt-unit-field{margin:14px 0}.receipt-quantity-preview{display:grid;gap:5px;background:#EFF7F3;border-radius:7px;padding:8px 10px;color:#315C4E;font-size:12px}.receipt-quantity-preview strong{font-weight:600}.receipt-overage-panel{background:#FFF7E8;border:1px solid #EDD6AA;border-radius:9px;padding:12px;margin:14px 0}.receipt-overage-panel h4{margin:0;color:#875B1D;font-size:13px;font-weight:700}.receipt-overage-panel p{color:#875B1D}.goods-receipt-dialog .receipt-check{display:flex;align-items:center;gap:8px}.inspection-acknowledgement{background:#F5F9F7;border:1px solid #DCE8E2;border-radius:8px;padding:10px 12px}.goods-receipt-dialog .error{background:#FFF5F5;border:1px solid #EFCACA;border-radius:8px;padding:10px;color:#A44343}.goods-receipt-dialog footer{display:grid;gap:12px;padding-top:14px;border-top:1px solid #E0E8E4}.goods-receipt-dialog footer small{font-size:12px;color:#71817B;line-height:1.6}.goods-receipt-dialog footer>div{display:flex;justify-content:flex-end;gap:10px}.goods-receipt-dialog footer button{height:38px;padding:0 14px;border-radius:8px}.receipt-dialog .receipt-danger{background:#FFF7F7;color:#A84444;border:1px solid #E7CACA;border-radius:8px}.receipt-dialog .receipt-danger:disabled{opacity:.5}@media(max-width:760px){.line-source-grid{grid-template-columns:1fr 1fr}.supplier-match-action{margin-top:0;justify-self:start}.line-business-grid{grid-template-columns:1fr 1fr}.line-total{grid-column:1/-1}.purchase-create-modal .editor-actions{align-items:flex-start;flex-wrap:wrap}.editor-actions>div{margin-left:auto}}@media(max-width:560px){.line-source-grid,.line-business-grid{grid-template-columns:1fr}.purchase-total-summary>div{align-items:flex-start;flex-direction:column}.purchase-identity{flex-wrap:wrap}.goods-receipt-dialog{padding:18px}.receipt-progress>div{padding:8px}.receipt-progress strong{font-size:13px}}
 </style>
 
 <style scoped>
 .goods-receipt-dialog footer{position:sticky;bottom:-24px;background:#fff;border-top:1px solid #d8e1dd;padding:14px 0;margin-top:16px;z-index:2}
+.party-reference{display:block;margin-top:3px;font-size:11px;color:#71817B}
 .goods-receipt-dialog{scroll-padding-bottom:105px}
 .receipt-danger{font:inherit;border-radius:7px;padding:10px 16px;cursor:pointer}
 .reversal-effect{background:#fff7e8;padding:12px;border-radius:8px;line-height:1.6}

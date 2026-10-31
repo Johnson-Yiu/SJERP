@@ -1,10 +1,10 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck, Barcode } from 'lucide-vue-next'
+import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck, Barcode, History } from 'lucide-vue-next'
 import AppDialogHost from './components/AppDialogHost.vue'
 import { pageIdentityKey } from './utils/routePageState'
-import { accessState, can, canAccessOrganization, loadAccessControl } from './accessControl'
+import { accessState, can, canAccessHistoricalOrders, canAccessOrganization, loadAccessControl } from './accessControl'
 
 const route = useRoute()
 const menuOpen = ref(false)
@@ -13,6 +13,7 @@ const nav = [
   { section: '经营' },
   { label: '经营概览', path: '/', module: 'dashboard', icon: LayoutDashboard },
   { label: '报表中心', path: '/reports', module: 'reports', icon: LayoutDashboard },
+  { label: '历史订单分析', path: '/historical-orders', module: 'reports', icon: History },
   { section: '客户' },
   { label: '客户管理', path: '/customers', module: 'customers', icon: Users },
   { label: '联系人', path: '/contacts', module: 'contacts', icon: ContactRound },
@@ -52,7 +53,7 @@ const visibleNav = computed(() => {
   const flush = () => { if (entries.length) result.push({ section: title }, ...entries); entries = [] }
   for (const item of nav) {
     if (item.section) { flush(); title = item.section }
-    else if (item.path === '/organization' ? canAccessOrganization() : can(item.module, 'view')) entries.push(item)
+    else if (item.path === '/organization' ? canAccessOrganization() : item.path === '/historical-orders' ? canAccessHistoricalOrders() : can(item.module, 'view')) entries.push(item)
   }
   flush()
   return result
@@ -66,7 +67,7 @@ onMounted(() => { loadAccessControl().catch(() => {}) })
     <aside class="sidebar" :class="{ open: menuOpen }">
       <div class="brand">
         <div class="brand-mark">S</div>
-        <div><strong>森爵业务中台</strong><span>CRM · ERP</span></div>
+        <div><strong>森爵照明管理系统</strong><span>客户 · 销售 · 产品</span></div>
       </div>
       <nav>
         <template v-for="(item, index) in visibleNav" :key="index">

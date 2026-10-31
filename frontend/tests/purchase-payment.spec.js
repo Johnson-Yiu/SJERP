@@ -24,7 +24,7 @@ it('opens payment from the purchase row and submits inherited currency', async (
   await flushPromises()
   expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/pay/', expect.objectContaining({ amount: 30, currency: 'USD', exchange_rate: '7' }))
   expect(wrapper.find('.payment-modal').exists()).toBe(false)
-  expect(wrapper.text()).toContain('供应商付款已记录为支出流水')
+  expect(wrapper.text()).toContain('供应商付款已登记为支出流水')
   wrapper.unmount()
 })
 it('rejects overpayment and preserves input on server failure', async () => {

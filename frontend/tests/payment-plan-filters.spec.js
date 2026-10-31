@@ -53,8 +53,8 @@ describe('payment plan list filters', () => {
     await flushPromises()
     await wrapper.find('select[aria-label="收付款计划状态"]').setValue('settled')
     await wrapper.find('input[aria-label="仅看逾期"]').setValue(true)
-    await wrapper.find('input[aria-label="到期日从"]').setValue('2026-10-01')
-    await wrapper.find('input[aria-label="到期日至"]').setValue('2026-10-31')
+    await wrapper.find('input[aria-label="计划到期日从"]').setValue('2026-10-01')
+    await wrapper.find('input[aria-label="计划到期日至"]').setValue('2026-10-31')
     await flushPromises()
 
     await wrapper.find('input[aria-label="搜索往来方或合同号"]').setValue('Supplier North')
@@ -76,8 +76,8 @@ describe('payment plan list filters', () => {
     await wrapper.find('input[aria-label="搜索往来方或合同号"]').setValue('SO-2026-00032')
     await wrapper.find('select[aria-label="收付款计划状态"]').setValue('settled')
     await wrapper.find('input[aria-label="仅看逾期"]').setValue(true)
-    await wrapper.find('input[aria-label="到期日从"]').setValue('2026-10-01')
-    await wrapper.find('input[aria-label="到期日至"]').setValue('2026-10-31')
+    await wrapper.find('input[aria-label="计划到期日从"]').setValue('2026-10-01')
+    await wrapper.find('input[aria-label="计划到期日至"]').setValue('2026-10-31')
     await wrapper.find('form.filters').trigger('submit')
     await flushPromises()
     const callsBeforeReset = mocks.listAll.mock.calls.length
@@ -87,8 +87,8 @@ describe('payment plan list filters', () => {
     expect(wrapper.find('input[aria-label="搜索往来方或合同号"]').element.value).toBe('')
     expect(wrapper.find('select[aria-label="收付款计划状态"]').element.value).toBe('open')
     expect(wrapper.find('input[aria-label="仅看逾期"]').element.checked).toBe(false)
-    expect(wrapper.find('input[aria-label="到期日从"]').element.value).toBe('')
-    expect(wrapper.find('input[aria-label="到期日至"]').element.value).toBe('')
+    expect(wrapper.find('input[aria-label="计划到期日从"]').element.value).toBe('')
+    expect(wrapper.find('input[aria-label="计划到期日至"]').element.value).toBe('')
     expect(mocks.listAll.mock.calls.slice(callsBeforeReset).some(([url, config]) => url === '/payment-plans/' && config.params.direction === 'receivable' && config.params.status === 'open')).toBe(true)
     wrapper.unmount()
   })
@@ -100,10 +100,10 @@ describe('payment plan list filters', () => {
     expect(wrapper.text()).toContain('SO-2026-00032')
     expect(wrapper.text()).toContain('SO-2026-00033')
 
-    await wrapper.find('input[aria-label="到期日至"]').setValue('2026-10-01')
+    await wrapper.find('input[aria-label="计划到期日至"]').setValue('2026-10-01')
     await flushPromises()
     const requestCount = mocks.listAll.mock.calls.length
-    await wrapper.find('input[aria-label="到期日从"]').setValue('2026-10-31')
+    await wrapper.find('input[aria-label="计划到期日从"]').setValue('2026-10-31')
     await flushPromises()
 
     expect(wrapper.text()).toContain('到期日开始日期不能晚于结束日期。')

@@ -1,0 +1,19 @@
+✔ creating a category attribute updates the local category state without reloading the page (30.9957ms)
+✔ category template explains that published SKU plans do not auto-mutate (1.412ms)
+✔ SKU editor exposes supplier source maintenance through the API (31.7631ms)
+✔ SKU editor canonicalizes abbreviation keys and mirrors backend value formatting (3.0546ms)
+✔ SKU creation relies on generated Sales Model and editing preserves the saved model (18.2659ms)
+✔ editing one SKU keeps its packaging detail when the computed preview key changes (0.7079ms)
+✔ saved parameter suggestions include inherited categories and legacy keys independent of search rows (3.9825ms)
+✔ create and edit include packaging in their single SKU database request (5.3117ms)
+✔ parameter edits submit the explicitly saved Sales Model instead of the generated preview (3.9856ms)
+✔ image failure retains saved SKU IDs for independent retry and reports database success (6.2544ms)
+✔ nested packaging validation messages remain readable (2.1991ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 368.0017

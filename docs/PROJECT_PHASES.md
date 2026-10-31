@@ -1,5 +1,23 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-ISSUE-LEDGER-UPDATE-02 台账验收证据更新（2026-10-31）
+
+基线为 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`。参考分支 `codex/r1-ledger-consolidation-20261031` 的 HEAD 为 `4e762070f825f4545f454a542365ea085f06f2e0`，其父提交与固定基线一致；据此创建独立分支 `codex/r1-issue-ledger-update-20261031`。仅更新 `docs/PROJECT_ISSUES.md` 与本文件，未改业务代码、迁移、CI、GitHub Issue 状态或历史记录。
+
+| Issue | 本轮状态处理 | 精确来源 SHA 与证据路径 | 核实摘要及未覆盖项 |
+|---|---|---|---|
+| ISS-002 | 保持 `NEEDS_VERIFICATION` | `codex/r1-iss002-python312-verify-20261031` / `8c5840651ab4d40132a1470972ff966340ff1461`；`docs/uat-evidence/r1-iss002-python312-verify-20261031/README.md`、`docs/uat-evidence/r1-iss002-python312-verify-20261031/logs/10-image-excel-104-tests.log`，pip-audit 日志见报告索引。 | CPython 3.12.16 x64 下图片/Excel 定向测试 104/104 通过，0 失败、0 跳过；Django check、迁移检查及迁移通过。本次 pip-audit 因 `api.osv.dev:443`、`pypi.org:443` 不可达而 BLOCKED、未产生审计结果；报告中较早的 audit PASS 保留为历史，不替代本次阻断。锁文件无 wheel hashes，Linux 生产制品与 PostgreSQL 未验。 |
+| ISS-006 | 保持 `NEEDS_VERIFICATION` | 收发审计原子性：`a4eea21dc3e21096950b08439dcbee26ce506e86`，`docs/uat-evidence/r1-five-fixes-migration-20261030/B-audit-atomicity/README.md`；冲销原子性：`7429c9630305bfad61f16475dd5617c13c07959e`，`docs/uat-evidence/r1-iss006-reversal-audit-atomicity-20261030/README.md`；采购收货锁定：`13e8b4bed06d0c1d099f007696a81260dfb2d3ef`，`docs/uat-evidence/r1-five-fixes-migration-20261030/C-po-locking/README.md`。 | 隔离 SQLite 收发审计原子性 52 项、库存冲销回归 106 项通过；采购并发相关 SQLite 回归 74 项中 61 通过、13 项跳过、0 失败。真实 PostgreSQL 并发场景不可用/未执行，状态为 BLOCKED；本轮保持 NEEDS_VERIFICATION，等待 PostgreSQL 验收，不把跳过计为通过。 |
+| ISS-028 | 更新为 `FIXED_PENDING_REVIEW` | `codex/r1-iss028-035-category-verify-20261031` / `5da8d351129e775563aced753fd05efbfc39d893`；`docs/uat-evidence/r1-iss028-035-category-verify-20261031/README.md` 及其 browser 日志、截图和数据库快照。 | 真实 Chrome 2/2、Django 定向 56/56、产品/SKU Vitest 28/28 通过；根分类归属、筛选和属性继承通过。等待独立复审；全局窄屏侧栏遮挡仍是单独遗留，不归为本次已修复。 |
+| ISS-035 | 更新为 `FIXED_PENDING_REVIEW` | `codex/r1-iss028-035-category-verify-20261031` / `5da8d351129e775563aced753fd05efbfc39d893`；`docs/uat-evidence/r1-iss028-035-category-verify-20261031/README.md` 及其截图、前后数据库快照。 | 已发布 SKU 身份/参数、模板变化后的新旧 SKU 边界、普通 SKU 保存重开与报价/订单历史快照均复验；同一轮 Chrome 2/2、Django 56/56、Vitest 28/28 通过。等待独立代码、业务和视觉复审。 |
+| ISS-045 | 更新为 `FIXED_PENDING_REVIEW` | `codex/r1-iss045-qa-tools-bd324-20261031` / `4ddaa6b7bdd1a9f21443f687e4ff90f46aa02629`；`docs/uat-evidence/r1-iss045-qa-tools-bd324-20261031/README.md`。 | 旧业务流程命令 fail-closed 退役，历史源码/50/50 记录保留，CI 未调用旧脚本；`seed_demo` 限制为默认开发 SQLite 或具备隔离标记的 DB。后端 1009 通过、19 跳过、0 失败；安全定向 10/10、隔离运行时 13/13，迁移检查及隔离 seed 通过。Python 3.12 与 PostgreSQL 尚未验证，等待独立复审。 |
+| ISS-052 | 保持 `OPEN` | `codex/r1-iss052-http-413-bd324-20261031` / `8cff96af9f1f2e09dcbc0a29f361017ee23ffb75`；`docs/uat-evidence/r1-iss052-http-413-bd324-20261031/README.md`、`logs.zip`、`screenshots/chrome-csv-upload-413.png`。 | 本地 HTTP 三个 CSV 上传入口均返回 413，临时文件为 0，未导入客户/行记录；执行入口留下的失败批次 processed/failed rows 为 0，且无文件摘要。Chrome 1/1 收到 413；相关后端回归 117/117、前端单元 171/171、构建通过。但解析失败批次审计、真实认证操作人、PostgreSQL TRUNCATE/角色保护及部署代理层验收仍未完成，故保持 OPEN。 |
+| ISS-008 / ISS-008-FUP-01 | 保持参考分支既有状态和 SHA，不作状态改动 | ISS-008 原实现 SHA `90f30d54a116305ebc1b2997bc2c3497a527002d`；别名分支当前远端 HEAD `cffee7e1031f495031f2a4f5040261a398344021`；FUP-01 浏览器验收提交 SHA `c2b5be8e6d70b300567eee62ddaf554bfa61ae8b`；`docs/uat-evidence/r1-iss008-aliases-bd324-20261031/README.md`。 | 原台账记录完整保留；ISS-008 与 FUP-01 状态不变，FUP-01 仍为 `FIXED_PENDING_REVIEW`，不因本轮其他状态更改而关闭或改写。 |
+
+重新按当前问题主表唯一 Issue ID 统计：124 项；`OPEN=2`、`BLOCKED=18`、`NEEDS_VERIFICATION=13`、`FIXED_PENDING_REVIEW=81`、`CLOSED=10`，合计 124。46 项业务规则记录及所有历史统计均保留。状态变化只有 ISS-028、ISS-035、ISS-045 从 `NEEDS_VERIFICATION` 更新为 `FIXED_PENDING_REVIEW`；本轮未新增或关闭 Issue。
+
+本轮是证据驱动的文档更新，不重跑来源分支中的产品测试，也不把来源结果说成当前新分支的测试结果；本轮仅对文档执行 `git diff --check`。未连接生产或实际业务数据库，未触发 GitHub Actions，未合并 master、部署或关闭 GitHub Issue。
+
 ## R1-LEDGER-CONSOLIDATION-01 两项台账成果统一整合（2026-10-31）
 
 从基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 创建 `codex/r1-ledger-consolidation-20261031`。整合来源：`codex/r1-status-reconcile-bd324-20261031`（本地来源 HEAD `ae0f7e073d2ef6cb8b98164920697ecd4bac73be`）及 `codex/r1-iss008-aliases-bd324-20261031`（本地来源 HEAD `bca4d5794afacc505d443afc03e151ab7ee5c5a2`）；只迁移并整合 `docs/PROJECT_ISSUES.md` 与 `docs/PROJECT_PHASES.md`。

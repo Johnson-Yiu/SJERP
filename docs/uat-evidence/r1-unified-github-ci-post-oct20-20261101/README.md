@@ -112,11 +112,15 @@ ISS-007 附件/图片、ISS-008 国家别名及 ISS-028/035 的后续测试范�
 
 本地没有 PostgreSQL 服务；本地 PostgreSQL 测试未执行，明确由本次 GitHub `Backend-PostgreSQL` job 验证。完整 CI 结果以推送后精确 SHA 的 Actions run 为准。当前工作流要求的三个 job 为 `backend`、`backend-postgres`、`frontend`；不能用本地测试代替任何失败、跳过或未完成的 CI job。
 
-## 待最终填入
+## GitHub CI 结果与最终状态
 
-- 最终集成 SHA：推送前由 `git rev-parse HEAD` 记录。
-- GitHub Actions run URL / run ID：推送后记录。
-- `backend`、`backend-postgres`、`frontend` 的最终结论与失败日志：等待该 SHA 的唯一相关 CI run 完成。
-- 若 CI 失败，记录完整失败原因、最小修复提交，并对修复后的新最终 SHA 重新运行完整 CI。
+- 推送并触发 CI 的集成代码 SHA：`069928829f5648be540bef469f3abcf8d4449753`。
+- GitHub Actions：[#41235716203](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41235716203)，run number 425，事件 `push`。
+- 精确 SHA 匹配：run 的 `head_sha` 为 `069928829f5648be540bef469f3abcf8d4449753`。
+- 三个必要 Job：`backend`、`backend-postgres`、`frontend` 均为 `failure`，约 2 秒内结束，step 列表为空、没有分配 runner；不是测试失败，也没有必要测试被跳过后冒充通过。
+- GitHub check annotation 的原始阻断信息：`The job was not started because recent account payments have failed or your spending limit needs to be increased.` 三个 Job 的 annotation 相同。`gh run view --log-failed` 与 `gh run view --log` 均返回 `log not found`，因为 runner 未启动、没有 job 日志；已核验 check-run annotations 作为可获取的完整失败证据。
+- 分类：GitHub Actions 账户付款/支出额度启动阻断，非产品代码、测试断言或依赖失败。没有修改账户、额度或工作流绕过，也未重试相同失败运行。
+- 统一 CI 验收结论：**未通过（BLOCKED：GitHub runner 未启动）**。待账户管理员解决 GitHub Actions 付款/额度后，须对集成分支当前最终代码 SHA 重新触发完整 CI，并分别核实三项 Job；在三项均通过前不得报告验收通过。
+- 本报告更新仅记录此次 CI 证据，不含产品代码变化；最终分支 HEAD 以报告提交后的 `git rev-parse HEAD` 为准，CI 验收对象仍是上述 `0699288…` 代码 SHA。
 
 约束：本轮不合并 master、不创建发布、不部署、不关闭 Issue，也不删除历史分支。

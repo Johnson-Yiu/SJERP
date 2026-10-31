@@ -602,4 +602,11 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 在现有独立工作树和分支 `codex/r1-iss006-po-locking-bd324-20261030`（用户指定基线 `94402f951e4d4243276f018cc3a6051f0f6f2c57`）只修正 `backend/crm/tests/test_postgres_concurrency.py`：移除两个采购收货并发场景中重复插入的默认成本分配，并增加一条且归属/数量正确的断言。`backend/crm/services/fulfillment.py` 等生产业务代码未改。
 
 锁定依赖下，一次性 SQLite 定向回归 74 项：61 通过、13 个 PostgreSQL 专项跳过、0 失败；库存预留、采购收货、冲销、库存流水及成本分配相关可执行测试通过。原始日志和夹具修复细节见 [`C-po-locking 验收记录`](uat-evidence/r1-five-fixes-migration-20261030/C-po-locking/README.md)。本机未发现 PostgreSQL 工具/服务或 Docker，`127.0.0.1:5432` 不可连接；因此两个新并发用例的实际执行、锁顺序与最终采购/库存/流水/预留一致性仍为 `BLOCKED`，不可把 SQLite skip 视为 PASS。ISS-006 保持 `NEEDS_VERIFICATION`；解除条件为在 PostgreSQL 环境运行两个目标用例并审查一致性断言。本轮不触发 CI、不合并 master、不关闭 Issue。
+## R1-ISS006-INVENTORY-REVERSAL-AUDIT-ATOMICITY（2026-10-30）
+
+基于 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 创建独立工作树和分支 `codex/r1-iss006-inventory-reversal-audit-atomicity-20261030`。来源为用户指定的 2026-10-30 ChatGPT 独立代码审查；未猜测更早的首次发现日期。确认发货冲销服务提交后才写审计、手工库存冲销服务提交后才写两条审计的事务缺口。仅为两个 API action 加外层事务；既有冲销业务规则、接口响应、权限和幂等行为不变。
+
+锁定依赖环境下，隔离内存 SQLite Django system check 通过；相关库存/履约定向 106 项全通过。销售发货正常/重复冲销、发货审计失败回滚、手工库存正常/重复冲销、手工冲销第一条与第二条审计故障注入均已验证。原始日志及报告见 [`R1-ISS006 冲销审计原子性`](uat-evidence/r1-iss006-reversal-audit-atomicity-20261030/README.md)。SQLite 结果不代表 PostgreSQL 并发验收；本轮未运行 CI、未合并 master、未创建 PR、未部署、未关闭 Issue。
+
+本问题属于既有 ISS-006 的库存冲销原子性范围，不新增 Issue ID；ISS-006 全局保持 `NEEDS_VERIFICATION`，本子范围 `FIXED_PENDING_REVIEW`，交付后等待独立审查。
 

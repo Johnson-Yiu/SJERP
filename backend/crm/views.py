@@ -1422,6 +1422,7 @@ class ShipmentViewSet(AuditTrailMixin, viewsets.ReadOnlyModelViewSet):
         return response
 
     @action(detail=True, methods=["post"], url_path="reverse")
+    @transaction.atomic
     def reverse(self, request, pk=None):
         self._require_order_update(request.user)
         shipment = self.get_object()
@@ -2843,6 +2844,7 @@ class InventoryMovementViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return super().update(request, *args, **kwargs)
 
     @action(detail=True, methods=["post"])
+    @transaction.atomic
     def reverse(self, request, pk=None):
         input_serializer = InventoryMovementReversalInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)

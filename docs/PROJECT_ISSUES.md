@@ -485,3 +485,10 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 更新既有 ISS-006 记录，不新增 Issue。来源：用户本轮要求；代码分支 `codex/r1-iss006-po-locking-bd324-20261030`，测试修复提交 `61d857c213d832101a19ca5ed13a16f9d7832107`。在 `test_same_purchase_order_different_sku_receipts_serialize_status_and_reservations` 与 `test_receipt_and_reversal_race_keeps_purchase_stock_and_reservations_consistent` 中删除重复创建的 `PurchaseCostAllocation`；依据是 `PurchaseOrderItem.save()` 在 `cost_allocation_version=0` 时自动创建默认分配。两个夹具现断言每条采购明细恰有一条 allocation，且归属类型、销售订单及数量正确。没有修改生产代码，也没有改变并发场景。
 
 锁定依赖、一次性内存 SQLite 回归共发现 74 项，61 项通过、13 项 PostgreSQL 专项跳过、0 项失败；收货/冲销、库存流水、库存、预留及成本分配相关可运行回归通过，日志见 [`C 并发锁定验收记录`](uat-evidence/r1-five-fixes-migration-20261030/C-po-locking/README.md)。本机无 PostgreSQL 客户端、服务或 Docker，默认 5432 端口未监听；两个目标并发测试及 PostgreSQL 最终一致性验证仍为 `BLOCKED`，SQLite 结果不构成并发证明。ISS-006 保持 `NEEDS_VERIFICATION`；下一步是在 PostgreSQL 恢复后运行两个精确场景并核对采购单状态、实际库存、收货记录、库存流水与预留，不据本轮本地测试改变 Issue 状态。
+## ISS-006 补充：冲销审计事务原子性（2026-10-30）
+
+来源为用户指定的 2026-10-30 ChatGPT 独立代码审查；仅记录该已确认来源日期，不推断更早的首次发现日期。复核固定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 时确认两个具体缺口：`ShipmentViewSet.reverse` 在 `reverse_shipment` 服务事务提交后才写审计；`InventoryMovementViewSet.reverse` 在 `reverse_manual_inventory_movement` 提交后再写两条审计，可能留下业务冲销但无审计，或第一条审计提交、第二条失败的部分记录。
+
+在独立分支 `codex/r1-iss006-inventory-reversal-audit-atomicity-20261030` 增加两条 API action 外层事务，仅包住原有冲销和审计调用；未改变冲销规则、权限或响应语义。隔离 SQLite 下 Django system check 通过，相关库存/履约回归 106 项全通过。故障注入覆盖发货冲销审计失败、手工冲销第一条及第二条审计失败，并核对业务记录、库存流水、库存/预留和审计行均回滚；正常路径及重复冲销拒绝保持通过。验收报告与原始日志：[`R1-ISS006 冲销审计原子性`](uat-evidence/r1-iss006-reversal-audit-atomicity-20261030/README.md)。
+
+此子范围记为 `FIXED_PENDING_REVIEW`，等待 ChatGPT 独立审查；不新建重复 Issue，不关闭 ISS-006。ISS-006 全局仍为 `NEEDS_VERIFICATION`，因为其他库存异常路径和 PostgreSQL 并发验收尚未完成。后续验收依据：独立复审确认事务边界和故障注入结果，且 ISS-006 其余待核验范围逐项有证据后再按协议变更全局状态。未新增 Issue ID，既有状态统计不变。

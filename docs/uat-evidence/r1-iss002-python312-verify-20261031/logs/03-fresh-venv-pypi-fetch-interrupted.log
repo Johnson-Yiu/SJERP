@@ -1,0 +1,8 @@
+Using Python 3.12.16 environment at: C:\Users\Johnson\AppData\Local\Temp\sunjack-py312-evidence-20261031-iss002\app-venv
+WARN Fixing invalid version specifier by removing trailing comma (before: `>=3.6,`; after: `>=3.6`)
+Resolved 16 packages in 6.15s
+Downloading django (8.0MiB)
+Downloading psycopg-binary (3.5MiB)
+Downloading pycountry (7.7MiB)
+Downloading pillow (6.9MiB)
+ Downloaded psycopg-binary

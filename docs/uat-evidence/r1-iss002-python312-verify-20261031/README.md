@@ -38,3 +38,25 @@
 - 锁文件目前是精确版本锁定但未含制品 hashes；生产供应链完整性仍应在可信 CI/构建流程中验证。
 - 本轮为 Windows CPython 3.12 wheel 验证，不替代 Linux 生产构建或 PostgreSQL 回归。
 - 不修改 Pillow 版本、图片业务逻辑、数据库结构、共享 Issue 台账；未触发 CI、未合并 master、未部署。
+
+## 2026-10-31 原始日志补充复验
+
+本次复验使用真实 **CPython 3.12.16 x64**，解释器及共享临时 venv 路径见 logs/01-python-runtime.log。工作区 Python 3.14 未参与本次命令。Django 的数据库和媒体目标均经 logs/06-isolated-target-verification.log 验证，位于本次临时目录 C:\Users\Johnson\AppData\Local\Temp\sunjack-py312-evidence-20261031-iss002\django；迁移写入仅发生在该 SQLite 文件中，测试使用 Django 的独立内存测试库。
+
+锁文件安装命令在这个既有、独立的 CPython 3.12.16 venv 中重新执行，16 个精确锁定包均已满足；pip check 通过。另试建全新 venv：离线缓存缺少 asgiref==3.13.0，在线 PyPI 获取未完成，相关尝试日志一并保留。故本次记录是既有锁定环境核验，不把未完成的全新下载说成成功安装。
+
+本轮 check、迁移检查、全量迁移均通过；图片及 Excel 定向回归 **104/104 通过，0 跳过**。本轮 pip-audit **BLOCKED**：受控尝试 20 秒未完成且没有产生审计输出；连通性诊断显示 api.osv.dev:443 与 pypi.org:443 均不可达。此前 README 所记的 pip-audit 通过结果属于历史运行，不代表本次重新复验通过；网络恢复后仍需重跑。
+
+### 日志索引
+
+- [Python 版本与解释器路径](logs/01-python-runtime.log)
+- [requirements.lock 安装/版本满足情况](logs/02-requirements-lock-install.log)
+- [全新 venv 离线缓存失败](logs/03-fresh-venv-offline-cache-failure.log)
+- [全新 venv 在线下载未完成记录](logs/03-fresh-venv-pypi-fetch-interrupted.log)
+- [pip check](logs/03-pip-check.log)
+- [pip-audit 工具运行时](logs/04-pip-audit-tool-runtime.log)及[工具版本](logs/04-pip-audit-tool-version.log)
+- [pip-audit 锁文件 stdout](logs/04-pip-audit-lock.stdout.log)、[stderr](logs/04-pip-audit-lock.stderr.log)与[受控尝试状态](logs/04-pip-audit-lock-status.log)
+- [pip-audit 网络诊断](logs/04-pip-audit-network-diagnostic.log)
+- [隔离数据库与媒体路径核验](logs/06-isolated-target-verification.log)
+- [Django check](logs/07-django-check.log)、[makemigrations 检查](logs/08-makemigrations-check.log)、[全量迁移](logs/09-full-migrate.log)
+- [104 项图片及 Excel 定向测试](logs/10-image-excel-104-tests.log)

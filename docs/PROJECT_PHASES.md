@@ -585,3 +585,9 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 
 逐项旧状态、新状态、校准依据、SHA、46 条规则摘要及未执行/业务阻断清单见 [R1 状态对账报告](uat-evidence/r1-status-reconcile-20261028/README.md)。本轮未连接生产数据库、未执行 PostgreSQL、未触发 GitHub Actions、未合并 master、未部署、未关闭 Issue。
 
+## R1-ISS006-POSTGRES-CONCURRENCY-UAT（2026-10-31）
+
+基于固定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 创建独立 worktree 和分支 `codex/r1-iss006-postgres-concurrency-20261031`。本机未发现 PostgreSQL 服务、客户端、Docker 或 loopback 5432 监听；未安装软件、未连接共享数据库。PostgreSQL 专项测试在隔离 SQLite 上按预期跳过 10 项；定向履约/幂等/冲销回归 100 项通过、1 项 PostgreSQL 并发测试跳过。已有同 SKU 收货/发货及幂等重复发货并发用例未能在 PostgreSQL 执行；未发现同一采购单并发收货、同一收货记录并发冲销的现有 PostgreSQL 测试。未确认代码缺陷，未修改业务代码。完整测试日志、场景矩阵及解除条件见[验收报告](uat-evidence/r1-iss006-postgres-concurrency-20261031/README.md)。
+
+ISS-006 保持 `NEEDS_VERIFICATION`；本次 PostgreSQL 并发 UAT 明确 `BLOCKED`，需在获准的本机隔离 PostgreSQL 环境创建临时数据库后补验。测试使用全新隔离 SQLite 和独立临时媒体目录。本轮未触发 CI、未创建 PR、未连接共享数据库、未合并 master、未部署、未关闭 Issue。
+

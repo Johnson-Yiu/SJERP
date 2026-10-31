@@ -1,0 +1,10 @@
+R1-ISS006-POSTGRES-CONCURRENCY-UAT local PostgreSQL availability probe
+Date: 2026-10-31 (Asia/Shanghai)
+Scope: local-only read-only availability checks; no database connection attempted.
+
+PowerShell Get-Service -Name 'postgresql*': no matching service
+PowerShell Get-Command psql, pg_ctl, createdb, docker: none found
+TCP connect probe 127.0.0.1:5432: False
+PostgreSQL environment variable names configured (PGHOST, PGPORT, PGDATABASE, DATABASE_URL, POSTGRES_URL): none
+
+Decision: no local PostgreSQL test service is available. No software was installed and no shared/remote database was accessed.

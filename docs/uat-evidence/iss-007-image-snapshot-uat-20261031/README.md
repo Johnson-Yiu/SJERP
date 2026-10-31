@@ -8,7 +8,7 @@
 - 使用隔离浏览器运行器、真实安装的 Google Chrome、临时 SQLite 和同一临时根目录下的独立 `MEDIA_ROOT`。运行器在测试前核实数据库/媒体路径和运行身份，迁移全新数据库，结束后停止服务并清理本轮有标记的临时根目录。
 - 浏览器运行期间仅创建合成客户、产品、SKU、报价、订单和图片；运行器记录的数据库前后快照均标记 `synthetic_records_only: true`。开发环境继续遵循现有开发超级管理员规则，没有开启正式 RBAC。
 - 真实 Chrome 视口：桌面 `1440×1000`，窄屏 `390×844`。
-- 最终浏览器回归：1 项通过；前期 9 次运行失败均为测试夹具/选择器/断言迭代，不计为通过；最终通过日志为 [`chrome-uat.log`](chrome-uat.log)。失败尝试日志仅用于本地调试，没有纳入验收材料。
+- 最终浏览器回归：1 项通过；开发迭代中出现过夹具/选择器断言不匹配，以及将窄屏截图步骤追加到长流程末尾后的测试超时；这些运行均不计为通过。将移动端截图提前并避免额外整页导航后，最终流程通过，日志见 [`chrome-uat.log`](chrome-uat.log)。失败迭代日志没有纳入验收材料。
 - Django 定向回归：9 项通过；Node 运行器回归：14 项通过；锁定环境 `pip check` 通过。命令及完整输出分别见 [`backend-tests.log`](backend-tests.log)、[`frontend-tests.log`](frontend-tests.log)、[`pip-check.log`](pip-check.log)。
 
 ## 验收结果
@@ -20,7 +20,7 @@
 | 无效图片 | 伪造 PNG 上传 HTTP 400；UI 显示上传失败；SKU 仍保留原图 SHA，随后可成功重试有效图片。 |
 | 正式报价历史快照 | SKU 图片替换后，已接受正式报价的 `QuoteItem.image_snapshot` 路径和 SHA 未变化；PI 预览仍显示原始红图。 |
 | 确认订单 | 订单状态仍为 `confirmed`，继续关联已接受报价；关联报价图片快照 SHA 仍为原始图。当前 `OrderItem` 没有独立图片快照字段，因此本轮证明的是订单沿用所关联正式报价的历史快照，不声称订单行另存了图片副本。 |
-| 报价/PI Excel 导出 | 实际下载 XLSX（11,570 bytes），工作表为 `PI`；检查 ZIP 内嵌图片 SHA 与原始报价快照一致。文件见 [`iss007-formal-quote-pi.xlsx`](browser/iss007-image-snapshot-real.spec/exports/iss007-formal-quote-pi.xlsx)。 |
+| 报价/PI Excel 导出 | 实际下载 XLSX（11,569 bytes），工作表为 `PI`；检查 ZIP 内嵌图片 SHA 与原始报价快照一致。文件见 [`iss007-formal-quote-pi.xlsx`](browser/iss007-image-snapshot-real.spec/exports/iss007-formal-quote-pi.xlsx)。 |
 | 私有图片访问与权限 | 真实 Chrome 通过受保护媒体 API 读取授权图片。定向 RBAC API 测试覆盖有权访问、SKU-only 角色读取历史报价图片拒绝（404）、无客户范围员工拒绝（404）；测试方法见 `test_functional_rbac.FunctionalRBACApiTests.test_sku_and_historical_quote_images_use_protected_media_permissions`。未将开发超级管理员会话误报为匿名拒绝。 |
 | 历史图片文件缺失 | 合成历史引用对应文件确实不存在；媒体请求 HTTP 404，PI 页面仍渲染且没有 JavaScript `pageerror`。当前预览显示浏览器默认破图占位，本轮仅验收“不崩溃”，没有扩大为 UI 修补。 |
 | 数据库一致性 | 前后记录数一致：Customer 1、Product 1、SKU 1、Quote 2、QuoteItem 2、Order 1、OrderItem 1。只有 SKU 当前图路径/SHA 改变；正式报价快照和确认订单所关联的报价快照均保持原始 SHA。 |
@@ -34,16 +34,19 @@
 - 桌面 SKU 替换后：[sku-image-replaced-desktop-1440.png](browser/iss007-image-snapshot-real.spec/screenshots/sku-image-replaced-desktop-1440.png)
 - 桌面替换后仍显示历史报价图：[quote-pi-after-sku-replacement-desktop-1440.png](browser/iss007-image-snapshot-real.spec/screenshots/quote-pi-after-sku-replacement-desktop-1440.png)
 - 390px SKU：[sku-image-replaced-mobile-390.png](browser/iss007-image-snapshot-real.spec/screenshots/sku-image-replaced-mobile-390.png)
+- 390px SKU 编辑图像预览：[sku-image-editor-preview-mobile-390.png](browser/iss007-image-snapshot-real.spec/screenshots/sku-image-editor-preview-mobile-390.png)
 - 390px 历史 PI：[quote-pi-history-mobile-390.png](browser/iss007-image-snapshot-real.spec/screenshots/quote-pi-history-mobile-390.png)
 - 390px 缺失历史图：[missing-history-image-mobile-390.png](browser/iss007-image-snapshot-real.spec/screenshots/missing-history-image-mobile-390.png)
 
-窄屏运行断言 `document.documentElement.scrollWidth <= window.innerWidth` 通过。缺失图片截图中的原生破图图标是实际观察到的占位表现，页面及脚本均未崩溃。
+窄屏运行断言 `document.documentElement.scrollWidth <= window.innerWidth` 通过。SKU 列表在 390px 截图中图片列未处于当前表格可视区；另有 SKU 编辑器内滚动到图片控件的截图，直接证明窄屏图片预览可见。缺失图片截图中的原生破图图标是实际观察到的占位表现，页面及脚本均未崩溃。
 
 ## 测试命令
 
 ```powershell
 # 独立真实 Chrome + 临时 SQLite / MEDIA_ROOT
+Set-Location frontend
 $env:PLAYWRIGHT_CHANNEL = 'chrome'
+$env:ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT = (Resolve-Path '..\docs\uat-evidence\iss-007-image-snapshot-uat-20261031').Path
 npm run test:browser:isolated -- --business-test iss007-image-snapshot-real.spec.js
 
 # 后端：requirements.lock 安装的隔离虚拟环境；测试数据库由 Django 在测试运行时创建

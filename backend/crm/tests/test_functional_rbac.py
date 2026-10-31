@@ -257,8 +257,8 @@ class FunctionalRBACApiTests(TestCase):
             follow_up = FollowUp.objects.create(customer=self.customer, followed_at="2026-10-12T09:00:00Z", content="private attachment")
             attachment = FollowUpAttachment.objects.create(
                 follow_up=follow_up,
-                file=SimpleUploadedFile("private.txt", b"private bytes", content_type="text/plain"),
-                name="private.txt", content_type="text/plain", size=13,
+                file=SimpleUploadedFile("private.txt", "私有附件内容".encode("utf-8"), content_type="text/plain"),
+                name="private.txt", content_type="text/plain", size=len("私有附件内容".encode("utf-8")),
             )
             url = f"/api/media/{attachment.file.name}"
             self.grant(self.role, "followups", can_view=True)
@@ -267,7 +267,8 @@ class FunctionalRBACApiTests(TestCase):
             self.auth(owner)
             allowed = self.client.get(url)
             self.assertEqual(allowed.status_code, 200)
-            self.assertEqual(b"".join(allowed.streaming_content), b"private bytes")
+            self.assertEqual(allowed["Content-Type"], "text/plain; charset=utf-8")
+            self.assertEqual(b"".join(allowed.streaming_content), "私有附件内容".encode("utf-8"))
             self.addClassCleanup(allowed.close)
             self.assertEqual(self.client.get(f"/media/{attachment.file.name}").status_code, 404)
             self.assertEqual(self.client.get(f"/api/media/../{attachment.file.name}").status_code, 404)

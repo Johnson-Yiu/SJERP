@@ -585,3 +585,11 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 
 逐项旧状态、新状态、校准依据、SHA、46 条规则摘要及未执行/业务阻断清单见 [R1 状态对账报告](uat-evidence/r1-status-reconcile-20261028/README.md)。本轮未连接生产数据库、未执行 PostgreSQL、未触发 GitHub Actions、未合并 master、未部署、未关闭 Issue。
 
+## R1-ISS007-FOLLOWUP-ATTACHMENT-UAT（2026-10-31）
+
+从固定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 创建独立 Worktree/分支 `codex/r1-iss007-followup-files-uat-20261031`。使用全新 SQLite、独立临时媒体目录、合成客户/历史附件及普通非超级用户测试身份；只在测试服务器启用 RBAC 和审计，不改开发人员权限或生产配置。
+
+真实 Chrome 156 桌面 1440×900 和窄屏 390×844 完成上传、保存、刷新重开、文本预览、二进制下载、有效历史附件、直链授权/拒绝及路径/DB/操作日志核对。发现 UTF-8 纯文本响应没有 charset，导致真实中文预览乱码；已最小修复受保护文件响应头，并增加中文内容、字节和响应头回归。Django 相关 6 项、附件 Vitest 12 项、生产构建及新库迁移检查通过。HTTP：上传 201；授权文件 200；匿名 403；认证无权限 404；旧 `/media/` 404。证据、截图、命令、SHA256 和首次失败分类见 [R1-ISS007 附件 UAT](uat-evidence/r1-iss007-followup-files-uat-20261031/README.md)。
+
+删除/替换步骤未执行，等待用户对一次性合成文件 `ISS007-delete-target.txt` 当次确认；状态因此仍为 `NEEDS_VERIFICATION`，ISS-007 未关闭。生产代理/CDN/对象存储 ACL 不在本地 UAT 可证明范围，继续按 ISS-017 单独部署验收。本轮未连接生产库/媒体、未运行 PostgreSQL/CI、未合并 master、未部署。
+

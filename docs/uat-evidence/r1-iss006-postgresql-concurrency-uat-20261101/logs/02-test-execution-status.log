@@ -1,0 +1,14 @@
+Status: BLOCKED / NOT RUN
+
+Reason: no isolated PostgreSQL server, local listener, server/client binaries,
+container runtime, or verified WSL PostgreSQL environment was available.
+
+The Django concurrency test commands were intentionally not launched. In
+particular, no SQLite fallback or simulated connection.vendor result was used.
+No production/business DATABASE_URL was inspected or contacted.
+
+Consequences:
+- No PostgreSQL test output exists for the requested scenarios.
+- No test database was created, so no pre/post database snapshots exist.
+- No business rows, inventory movements, or audit rows were written.
+- No product/test code changes were made; no runtime defect was established.

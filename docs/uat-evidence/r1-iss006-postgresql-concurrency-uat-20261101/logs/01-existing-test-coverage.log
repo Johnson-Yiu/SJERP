@@ -1,0 +1,73 @@
+backend/crm/tests/test_fulfillment.py:30:    confirm_shipment,
+backend/crm/tests/test_fulfillment.py:33:    record_receipt,
+backend/crm/tests/test_fulfillment.py:35:    reverse_receipt,
+backend/crm/tests/test_fulfillment.py:57:    def test_purchase_and_shipment_lines_reject_zero_quantity(self):
+backend/crm/tests/test_fulfillment.py:112:    def test_receipt_and_shipment_create_automatic_inventory_movements(self):
+backend/crm/tests/test_fulfillment.py:127:        receipt = record_receipt(purchase_item, {
+backend/crm/tests/test_fulfillment.py:132:        shipment = confirm_shipment(self.order, {
+backend/crm/tests/test_fulfillment.py:146:    def test_over_receipt_requires_reason_and_supplier_payment_cannot_exceed_unpaid(self):
+backend/crm/tests/test_fulfillment.py:162:            record_receipt(item, {
+backend/crm/tests/test_fulfillment.py:167:        receipt = record_receipt(item, {
+backend/crm/tests/test_fulfillment.py:222:    def test_independent_receipt_rebalances_available_stock_to_active_order(self):
+backend/crm/tests/test_fulfillment.py:224:        record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 10, "unit_cost": 2})
+backend/crm/tests/test_fulfillment.py:228:    def test_receipt_uses_cost_allocation_not_purchase_reference(self):
+backend/crm/tests/test_fulfillment.py:231:        receipt = record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 10, "unit_cost": 2})
+backend/crm/tests/test_fulfillment.py:238:    def test_shared_partial_receipt_is_proportionally_reserved_without_duplication(self):
+backend/crm/tests/test_fulfillment.py:243:        record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 50, "unit_cost": 2})
+backend/crm/tests/test_fulfillment.py:253:        record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 100, "unit_cost": 2})
+backend/crm/tests/test_fulfillment.py:264:        record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 4, "unit_cost": 2})
+backend/crm/tests/test_fulfillment.py:277:        record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 60, "unit_cost": 2})
+backend/crm/tests/test_fulfillment.py:278:        confirm_shipment(self.a, {
+backend/crm/tests/test_fulfillment.py:298:        record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 10, "unit_cost": 2})
+backend/crm/tests/test_fulfillment.py:307:    def test_cost_allocation_change_and_receipt_reversal_rebalance_reservations(self):
+backend/crm/tests/test_fulfillment.py:311:        receipt = record_receipt(item, {"receipt_date": date(2026, 1, 3), "quantity": 10, "unit_cost": 2})
+backend/crm/tests/test_fulfillment.py:317:        reverse_receipt(receipt, "test reversal")
+backend/crm/tests/test_fulfillment.py:321:    def test_manual_inventory_create_and_reversal_rebalance_reservations(self):
+backend/crm/tests/test_fulfillment.py:423:    def test_purchase_order_can_be_created_and_reports_unpaid_amount(self):
+backend/crm/tests/test_fulfillment.py:440:    def test_purchase_receipt_creates_automatic_inventory_movement(self):
+backend/crm/tests/test_fulfillment.py:451:    def test_over_receipt_returns_a_user_facing_validation_error(self):
+backend/crm/tests/test_fulfillment.py:460:    def test_supplier_payment_creates_expense_for_purchase_order(self):
+backend/crm/tests/test_fulfillment.py:579:    def test_batch_rejects_duplicate_and_foreign_order_item_ids(self):
+backend/crm/tests/test_fulfillment.py:627:    def test_multi_sku_batch_reversal_restores_all_movements_and_reservations(self):
+backend/crm/tests/test_fulfillment.py:667:        record_receipt(purchase_item, {
+backend/crm/tests/test_fulfillment.py:760:    def test_sku_inventory_detail_lists_related_purchase_shipments_and_orders(self):
+backend/crm/tests/test_fulfillment.py:767:        record_receipt(purchase_item, {"receipt_date": date(2026, 8, 21), "quantity": "4", "unit_cost": "3"})
+backend/crm/tests/test_fulfillment.py:768:        confirm_shipment(order, {"shipment_no": "SH-SKU-DETAIL", "shipment_date": date(2026, 8, 21), "items": [{"order_item": order_item.id, "quantity": "2"}]})
+backend/crm/tests/test_inventory_movement_reversal.py:11:from crm.services.fulfillment import record_receipt, reverse_receipt, sku_metrics
+backend/crm/tests/test_inventory_movement_reversal.py:28:    def test_mixed_overage_is_projected_separately_and_receipt_reversal_restores_contract_progress(self):
+backend/crm/tests/test_inventory_movement_reversal.py:31:        receipt = record_receipt(self.item, {
+backend/crm/tests/test_inventory_movement_reversal.py:47:        reverse_receipt(receipt, "验收时发现赠品数量录错")
+backend/crm/tests/test_inventory_movement_reversal.py:59:    def test_reversed_receipt_ledger_resolves_explicit_link_without_changing_source(self):
+backend/crm/tests/test_inventory_movement_reversal.py:61:        receipt = record_receipt(self.item, {"receipt_date": self.day, "quantity": Decimal("2"), "unit_cost": Decimal("5")})
+backend/crm/tests/test_inventory_movement_reversal.py:63:        reverse_receipt(receipt, "核对原流水冲销标识")
+backend/crm/tests/test_inventory_movement_reversal.py:72:    def test_overage_after_a_reversed_overage_and_partial_re_receipt_uses_creation_time_active_quantity(self):
+backend/crm/tests/test_inventory_movement_reversal.py:73:        receipt_a = record_receipt(self.item, {
+backend/crm/tests/test_inventory_movement_reversal.py:77:        reverse_receipt(receipt_a, "超到历史冲销")
+backend/crm/tests/test_inventory_movement_reversal.py:78:        receipt_b = record_receipt(self.item, {
+backend/crm/tests/test_inventory_movement_reversal.py:81:        receipt_c = record_receipt(self.item, {
+backend/crm/tests/test_inventory_movement_reversal.py:102:    def test_later_reversal_does_not_rewrite_a_later_receipts_historical_overage(self):
+backend/crm/tests/test_inventory_movement_reversal.py:103:        receipt_a = record_receipt(self.item, {
+backend/crm/tests/test_inventory_movement_reversal.py:106:        receipt_b = record_receipt(self.item, {
+backend/crm/tests/test_inventory_movement_reversal.py:110:        reverse_receipt(receipt_a, "后续发现数量有误")
+backend/crm/tests/test_inventory_movement_reversal.py:134:    def test_manual_inbound_reversal_preserves_original_and_blocks_delete_and_duplicate(self):
+backend/crm/tests/test_inventory_movement_reversal.py:155:    def test_manual_outbound_reversal_restores_stock(self):
+backend/crm/tests/test_inventory_movement_reversal.py:163:    def test_reversal_cannot_consume_stock_reserved_for_an_active_order(self):
+backend/crm/tests/test_inventory_movement_reversal.py:175:    def test_automatic_purchase_and_sale_movements_require_their_business_documents(self):
+backend/crm/tests/test_iss006_idempotency.py:74:    def test_receipt_replay_returns_original_result_and_does_not_audit_twice(self):
+backend/crm/tests/test_iss006_idempotency.py:90:    def test_same_receipt_key_with_changed_content_is_rejected(self):
+backend/crm/tests/test_iss006_idempotency.py:108:    def test_distinct_receipt_keys_allow_two_identical_business_operations(self):
+backend/crm/tests/test_iss006_idempotency.py:120:    def test_failed_receipt_does_not_leave_idempotency_or_inventory_side_effects(self):
+backend/crm/tests/test_iss006_idempotency.py:177:class FulfillmentIdempotencyDatabaseTests(TransactionTestCase):
+backend/crm/tests/test_iss006_idempotency.py:180:    def test_postgresql_concurrent_duplicate_requests_are_serialized(self):
+backend/crm/tests/test_postgres_concurrency.py:32:from crm.services.fulfillment import confirm_shipment, record_receipt, sku_metrics
+backend/crm/tests/test_postgres_concurrency.py:36:@unittest.skipUnless(connection.vendor == "postgresql", "PostgreSQL row-lock tests require PostgreSQL")
+backend/crm/tests/test_postgres_concurrency.py:37:class PostgreSQLConcurrencyTests(TransactionTestCase):
+backend/crm/tests/test_postgres_concurrency.py:78:    def test_concurrent_accept_and_reject_only_allow_one_quote_transition(self):
+backend/crm/tests/test_postgres_concurrency.py:95:    def test_root_quote_number_is_unique_and_contiguous_under_concurrency(self):
+backend/crm/tests/test_postgres_concurrency.py:102:    def test_order_and_purchase_numbers_are_unique_and_contiguous_under_concurrency(self):
+backend/crm/tests/test_postgres_concurrency.py:123:    def test_purchase_draft_generation_does_not_duplicate_under_concurrency(self):
+backend/crm/tests/test_postgres_concurrency.py:151:    def test_quote_revision_counters_are_unique_and_contiguous_under_concurrency(self):
+backend/crm/tests/test_postgres_concurrency.py:167:    def test_purchase_cost_save_allows_one_writer_and_rejects_stale_writer(self):
+backend/crm/tests/test_postgres_concurrency.py:201:    def test_receipt_and_shipment_concurrently_rebalance_one_sku_without_deadlock(self):
+backend/crm/tests/test_postgres_concurrency.py:217:                return record_receipt(PurchaseOrder.objects.get(pk=purchase.pk).items.get(pk=purchase_item.pk), {
+backend/crm/tests/test_postgres_concurrency.py:227:                return confirm_shipment(Order.objects.get(pk=order.pk), {

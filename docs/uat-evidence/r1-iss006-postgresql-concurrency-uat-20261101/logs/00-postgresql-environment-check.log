@@ -1,0 +1,29 @@
+R1-ISS006-POSTGRESQL-CONCURRENCY-UAT
+Date: 2026-11-01 (Asia/Shanghai)
+Baseline: bd324a8c3fb64af245c3afcabbd4301c84f7711c
+Branch: codex/r1-iss006-postgresql-concurrency-uat-20261101
+
+Probe 1
+Command: Test-NetConnection -ComputerName 127.0.0.1 -Port 5432 -InformationLevel Quiet
+Output: False
+Meaning: no PostgreSQL listener was reachable at the local default port.
+
+Probe 2
+Command: Get-Service -Name '*postgres*'
+Output: no matching PostgreSQL service.
+
+Probe 3
+Command discovery: postgres, pg_ctl, initdb, psql, pg_isready, docker, podman, wsl
+Output: only wsl.exe was found; PostgreSQL server/client and container commands were not found.
+
+Probe 4
+Command: Get-ChildItem 'C:\Program Files\PostgreSQL'
+Output: no PostgreSQL installation directory was returned.
+
+Probe 5
+Command: wsl.exe --list --quiet
+Exit code: 1; output was WSL usage text, not a usable distro listing. A PostgreSQL
+server through WSL could not be verified. No WSL install or distro setup was attempted.
+
+No DATABASE_URL or other preconfigured application database was read or used.
+No application database connection was attempted.

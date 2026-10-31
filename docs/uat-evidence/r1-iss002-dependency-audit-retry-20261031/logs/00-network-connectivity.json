@@ -1,0 +1,20 @@
+{
+  "checkedAt": "2026-10-31T10:36:17.538Z",
+  "checks": [
+    {
+      "service": "PyPI",
+      "reachable": false,
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "service": "OSV",
+      "reachable": false,
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "service": "npm registry",
+      "reachable": false,
+      "error": "TypeError: fetch failed"
+    }
+  ]
+}

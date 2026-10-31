@@ -1,0 +1,82 @@
+{
+  "python": {
+    "requirementsCount": 9,
+    "lockEntryCount": 16,
+    "direct": [
+      {
+        "name": "django",
+        "version": "6.0.9",
+        "source": "Django==6.0.9",
+        "lockVersion": "6.0.9",
+        "consistent": true
+      },
+      {
+        "name": "djangorestframework",
+        "version": "3.18.3",
+        "source": "djangorestframework==3.18.3",
+        "lockVersion": "3.18.3",
+        "consistent": true
+      },
+      {
+        "name": "djangocorsheaders",
+        "version": "4.9.0",
+        "source": "django-cors-headers==4.9.0",
+        "lockVersion": "4.9.0",
+        "consistent": true
+      },
+      {
+        "name": "djdatabaseurl",
+        "version": "3.1.2",
+        "source": "dj-database-url==3.1.2",
+        "lockVersion": "3.1.2",
+        "consistent": true
+      },
+      {
+        "name": "psycopg",
+        "version": "3.3.6",
+        "source": "psycopg[binary]==3.3.6",
+        "lockVersion": "3.3.6",
+        "consistent": true
+      },
+      {
+        "name": "pillow",
+        "version": "13.0.0",
+        "source": "Pillow==13.0.0",
+        "lockVersion": "13.0.0",
+        "consistent": true
+      },
+      {
+        "name": "bleach",
+        "version": "6.4.0",
+        "source": "bleach==6.4.0",
+        "lockVersion": "6.4.0",
+        "consistent": true
+      },
+      {
+        "name": "openpyxl",
+        "version": "3.1.5",
+        "source": "openpyxl==3.1.5",
+        "lockVersion": "3.1.5",
+        "consistent": true
+      },
+      {
+        "name": "pycountry",
+        "version": "26.2.16",
+        "source": "pycountry==26.2.16",
+        "lockVersion": "26.2.16",
+        "consistent": true
+      }
+    ],
+    "directAllMatch": true,
+    "psycopgBinary": "3.3.6",
+    "psycopgBinaryMatches": true
+  },
+  "frontend": {
+    "dependenciesMatch": true,
+    "devDependenciesMatch": true,
+    "manifestDependencies": 7,
+    "lockedDependencies": 7,
+    "manifestDevDependencies": 4,
+    "lockedDevDependencies": 4
+  }
+}

@@ -1,0 +1,15 @@
+Task: R1-ISS002-DEPENDENCY-AUDIT-RETRY
+Date: 2026-10-31
+Branch: codex/r1-iss002-dependency-audit-retry-20261031
+Base ancestry: bd324a8c3fb64af245c3afcabbd4301c84f7711c
+
+One-shot connectivity probe result: PyPI, OSV, and npm registry all failed with
+Node fetch error "TypeError: fetch failed". See 00-network-connectivity.json.
+
+pip-audit: NOT RUN. The required package/advisory services were unreachable;
+the task explicitly requires stopping retries when network is unavailable.
+npm audit: NOT RUN for the same reason; no npm audit fix was run.
+
+No vulnerability count, severity, dependency path, or advisory impact is
+asserted by this task run. Previous audit documents are historical evidence,
+not a substitute for a current registry-backed audit.

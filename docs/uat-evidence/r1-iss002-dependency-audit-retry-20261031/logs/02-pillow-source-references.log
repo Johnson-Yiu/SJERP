@@ -1,0 +1,13 @@
+backend/crm/quote_xlsx_renderer.py:218:        image = Image(image_file)
+backend/crm/serializers.py:116:class ProtectedImageField(serializers.ImageField):
+backend/crm/serializers.py:1350:    image = ProtectedImageField(required=False, allow_null=True)
+backend/crm/serializers.py:1358:        url = reverse("sku-thumbnail", args=[obj.pk]) + f"?v={version}"
+backend/crm/services/packing_list.py:366:        image = Image(str(path))
+backend/crm/services/sku_images.py:7:from PIL import Image, ImageOps, UnidentifiedImageError
+backend/crm/services/sku_images.py:10:def thumbnail_response(field, request):
+backend/crm/services/sku_images.py:24:                with storage.open(field.name, "rb") as source, Image.open(source) as original:
+backend/crm/services/sku_images.py:27:                    original.thumbnail((84, 84), Image.Resampling.LANCZOS)
+backend/crm/services/sku_images.py:28:                    thumbnail = ImageOps.exif_transpose(original).convert("RGBA")
+backend/crm/services/sku_images.py:39:    except (OSError, ValueError, UnidentifiedImageError, Image.DecompressionBombError) as error:
+backend/crm/views.py:1281:        from .services.sku_images import thumbnail_response
+backend/crm/views.py:1282:        return thumbnail_response(self.get_object().image, request)

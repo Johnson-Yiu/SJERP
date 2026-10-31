@@ -1,8 +1,8 @@
 # R1-ISS002 Dependency Audit Retry
 
-Date: 2026-10-31  
-Fixed baseline: `bd324a8c3fb64af245c3afcabbd4301c84f7711c`  
-Worktree reused: `codex/r1-iss002-python312-verify-20261031`  
+Date: 2026-10-31
+Fixed baseline: `bd324a8c3fb64af245c3afcabbd4301c84f7711c`
+Worktree reused: `codex/r1-iss002-python312-verify-20261031`
 Delivery branch: `codex/r1-iss002-dependency-audit-retry-20261031`
 
 ## Result
@@ -29,7 +29,7 @@ The one-shot probe was recorded at `2026-10-31T10:36:17Z`:
 | OSV | POST `https://api.osv.dev/v1/query` for Pillow 13.0.0 | BLOCKED — fetch failed |
 | npm registry | `https://registry.npmjs.org/-/ping` | BLOCKED — fetch failed |
 
-Raw response: [logs/00-network-connectivity.json](logs/00-network-connectivity.json).  
+Raw response: [logs/00-network-connectivity.json](logs/00-network-connectivity.json).
 Audit execution decision: [logs/03-audit-execution-status.log](logs/03-audit-execution-status.log).
 
 ## Dependency-file consistency (offline check)

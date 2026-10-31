@@ -531,6 +531,31 @@ class SafeCsvImportTests(TestCase):
         self.assertFalse(Customer.objects.exists())
         self.assertFalse(OperationLog.objects.filter(entity="crm.customer").exists())
 
+    @override_settings(CSV_IMPORT_MAX_BYTES=32)
+    def test_oversized_execution_batch_keeps_valid_preview_and_operator_links(self):
+        valid_content = b"code,name\nC,Buyer\n"
+        preview_response = self.client.post(
+            "/api/import/csv/preview/",
+            {
+                "entity": "customers",
+                "file": SimpleUploadedFile("valid.csv", valid_content, content_type="text/csv"),
+            },
+            format="multipart",
+        )
+        self.assertEqual(preview_response.status_code, 200, preview_response.data)
+        preview = CSVImportPreviewAudit.objects.get(preview_id=preview_response.data["preview_audit_id"])
+
+        oversized = b"code,name\nC," + b"x" * 40 + b"\n"
+        response = self.execute("customers", oversized, preview_response.data["preview_token"])
+        self.assertEqual(response.status_code, 413, response.data)
+        batch = CSVImportBatch.objects.get(batch_id=response.data["import_batch_id"])
+        self.assertEqual(batch.preview_id, preview.pk)
+        self.assertEqual(batch.operator_id, self.operator.pk)
+        self.assertEqual(batch.status, "failed")
+        self.assertEqual(batch.file_sha256, "")
+        self.assertFalse(batch.rows.exists())
+        self.assertFalse(Customer.objects.exists())
+
     def test_upload_stream_limit_stops_all_csv_import_routes_before_file_completion(self):
         content = b"code,name\nC," + b"x" * (1024 * 1024)
         endpoints = (

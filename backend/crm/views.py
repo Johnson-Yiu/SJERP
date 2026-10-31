@@ -3110,7 +3110,7 @@ class _ImportCSVReadFailure(ValueError):
 
     def __init__(self, detail, *, file_sha256="", digest=None, rows=None, too_large=False):
         self.file_sha256 = file_sha256 or digest or ""
-        self.digest = self.file_sha256
+        self.digest = digest if digest is not None else (file_sha256 or None)
         self.rows = rows or []
         self.too_large = too_large
         super().__init__(detail)
@@ -3554,6 +3554,8 @@ def import_csv_execute(request):
         return audit_gate
     data = request.data
     entity = data.get("entity")
+    token = data.get("preview_token")
+    preview_audit = _import_preview_from_token(token, entity)
     if _csv_import_upload_limit_exceeded(request):
         detail = _csv_import_size_limit_message(settings.CSV_IMPORT_MAX_BYTES)
         if entity in IMPORT_FIELDS:
@@ -3564,12 +3566,11 @@ def import_csv_execute(request):
                 rows=[],
                 detail=detail,
                 before_rows=[],
+                preview=preview_audit,
                 response_status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
             )
         return Response({"detail": detail}, status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
     upload = request.FILES.get("file")
-    token = data.get("preview_token")
-    preview_audit = _import_preview_from_token(token, entity)
     rows = []
     digest = ""
     try:

@@ -1,5 +1,17 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-ISS052-AUDIT-HARDENING-02 审计防篡改集成（2026-10-31）
+
+基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`，新分支 `codex/r1-iss052-audit-hardening-20261031`。按来源历史集成 `a6c5b56a00326234681399a3405efa2117198f76`（d08 的父依赖）、用户指定 d08 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b`、HTTP 413 `8cff96af9f1f2e09dcbc0a29f361017ee23ffb75`、审计 `f2b7fd6487459be69be687ccfeab09e7947df995`。实现提交 `ab9ce886094a065766a24b35d9b82c7a7c0fd067`：冲突处理保留有界流式读取、超限 413、正式导入审计和前端重试上下文；新增迁移 0094，在 Batch/RowAudit/PreviewAudit 三张表增加 PostgreSQL TRUNCATE 防护，并在存在任一审计行时拒绝回退审计保护迁移。既有 0091 的 Batch/RowAudit UPDATE/DELETE 与 0093 的 PreviewAudit UPDATE/DELETE 触发器均保留。
+
+验证使用 `DATABASE_URL=sqlite:///:memory:` 的 Django 隔离测试数据库；全量 1041 项、1021 通过、20 跳过、0 失败；CSV/413/审计迁移定向 36 项、35 通过、1 项 PostgreSQL 专项跳过；Django check、`makemigrations --check --dry-run crm`、前端 Vitest 1/1、Node 171/171、生产构建及 `git diff --check` 通过。0094 空数据回退/前向恢复成功；存在预览、批次、行数据时回退被拒且三类记录保留。前端包仍有 >500 kB 警告。
+
+PostgreSQL 原始 SQL UPDATE/DELETE/TRUNCATE 测试已新增，但本机本轮仅配置 SQLite，故数据库触发器运行时验收明确为 `POSTGRESQL_VERIFICATION_PENDING`；不得将 SQLite 结果作为 PostgreSQL 通过证据。真实 Chrome 413 截图及原始浏览器/HTTP日志沿用 8cff 来源证据（本轮未重新生成）；集成后的三入口 HTTP 413、临时文件为空和无业务写入由本地 LiveServer 回归核验。ISS-052 保持 `FIXED_PENDING_REVIEW`，真实 PostgreSQL、真实业务库、正式 RBAC 和生产验收仍未执行。完整提交谱系、冲突说明、测试命令和日志见[本轮报告](uat-evidence/r1-iss052-audit-hardening-20261031/README.md)与[测试日志](uat-evidence/r1-iss052-audit-hardening-20261031/logs/test-results.md)。未连接真实业务数据库、未启用正式 RBAC、未触发 CI、未创建 PR、未合并 master、未部署、未关闭 Issue；交付后等待独立审查。
+
+## R1-ISS-052 超限 CSV HTTP 413 回归（2026-10-31）
+
+基于 `codex/r1-iss052-csv-limit-bd324-20261030` 的 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b` 创建独立 worktree / `codex/r1-iss052-http-413-bd324-20261031`。将 CSV 超限上传处理器设为不重置连接，使 Django 以有界块耗尽未读请求体后返回明确 HTTP 413。真实 HTTP 覆盖 preview、execute、legacy 三个入口；均返回 413、无导入副作用且临时上传目录为空。真实隔离 Chrome 对页面预览入口上传超限文件收到 413，无 request failure。后端相关回归 117/117、前端单元测试 171/171、Chrome 1/1、构建及 diff check 通过。构建仍有主 JS 包超过 500 kB 警告；生产代理限制/超时、PostgreSQL 和部署环境仍待验证。完整日志及截图见 [R1-ISS-052 HTTP 413 证据](uat-evidence/r1-iss052-http-413-bd324-20261031/README.md)。未修改 Issue 台账、未运行 CI、未合并 master、未部署。
+
 ## R1-INTEGRATION-036-002-003-052-058 五项任务集成（2026-10-27）
 
 固定基线 `46353a5436637832f5adadb7bdef6b45cdeada23`，创建独立工作树和 `codex/integration-036-002-003-052-058`。集成前核对五个远端来源分支 HEAD 与指定 SHA 一致：ISS-036 `b64c54b07908d4bb462c64f120c351d148e06f6f`、ISS-002 `4e4ca504ee398da85fe23cc53d534c6008807e5c`、ISS-003 `2111d193ef3a69db05c23e27813cfbf26d9034d7`、ISS-052 `93736e0773ca2136d4070a604e62324cf832dc6f`、ISS-058 `742692a6e4887e4b8352736e69a52b1ebe8d066f`。保留五项代码/测试/报告/依赖；PROJECT_ISSUES 的 ISS-002 冲突逐条合并，PROJECT_PHASES 保留各历史记录并追加本轮日志。ISS-052 七个 JPEG 原图仅由 `.png` 重命名 `.jpg`，签名检查确认未重编码。

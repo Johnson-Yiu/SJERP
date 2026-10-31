@@ -55,6 +55,8 @@ OPERATION_ENTITY_MODULES = {
     "crm.position": "organization", "crm.employeeprofile": "employees", "crm.accessrole": "permissions",
     "crm.rolepermission": "permissions", "crm.sharedreporttemplate": "reports",
     "crm.customersupplierpreference": "suppliers",
+    "crm.csvimportbatch": "imports",
+    "crm.csvimportpreviewaudit": "imports",
 }
 
 

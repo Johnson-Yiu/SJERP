@@ -8,7 +8,7 @@ import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 const entity = ref('customers'), file = ref(null), fileInput = ref(null), templates = ref({}), previewing = ref(false), confirming = ref(false), executing = ref(false), result = ref(null), error = ref('')
 const templateLoading = ref(false), templateError = ref(''), phase = ref('idle'), errorPage = ref(1)
-let version = 0, alive = true
+let version = 0, alive = true, retryOfBatchId = null
 const { can } = useAccessControl()
 const mayImport = computed(() => can('imports', 'import'))
 const busy = computed(() => previewing.value || confirming.value || executing.value)
@@ -31,8 +31,8 @@ async function loadTemplates() {
   finally { if (alive) templateLoading.value = false }
 }
 function invalidatePreview() { version++; result.value = null; error.value = ''; errorPage.value = 1; phase.value = file.value ? 'selected' : 'idle' }
-function choose(e) { if (busy.value) return; file.value = e.target.files[0] || null; invalidatePreview() }
-watch(entity, () => { file.value = null; if (fileInput.value) fileInput.value.value = ''; invalidatePreview() }, { flush: 'sync' })
+function choose(e) { if (busy.value) return; retryOfBatchId = null; file.value = e.target.files[0] || null; invalidatePreview() }
+watch(entity, () => { retryOfBatchId = null; file.value = null; if (fileInput.value) fileInput.value.value = ''; invalidatePreview() }, { flush: 'sync' })
 function downloadCsv(text, filename) {
   const url = URL.createObjectURL(new Blob(['\ufeff' + text], { type: 'text/csv;charset=utf-8' }))
   const link = document.createElement('a'); link.href = url; link.download = filename; link.click()
@@ -49,6 +49,7 @@ async function preview() {
   const request = ++version, selectedEntity = entity.value, selectedFile = file.value
   previewing.value = true; error.value = ''; result.value = null; errorPage.value = 1; phase.value = 'previewing'
   const data = new FormData(); data.append('entity', selectedEntity); data.append('file', selectedFile)
+  if (retryOfBatchId) data.append('retry_of_batch_id', retryOfBatchId)
   try {
     const response = (await api.post('/import/csv/preview/', data)).data
     if (!alive || request !== version) return
@@ -76,9 +77,13 @@ async function execute() {
     const response = (await api.post('/import/csv/execute/', data)).data
     if (!alive || request !== version) return
     if (![response.total, response.created, response.updated].every(n => Number.isInteger(n) && n >= 0) || response.total !== previewResult.total || response.created + response.updated !== response.total || response.errors?.length) throw new Error('返回结果不完整，请核对业务记录后重新预览。')
-    result.value = { ...response, errors: [], completed: true }; phase.value = 'completed'
+    result.value = { ...response, errors: [], completed: true }; phase.value = 'completed'; retryOfBatchId = null
   } catch (e) {
-    if (alive && request === version) { error.value = `${e.message} 未确认导入完成，请核对业务记录后重新预览，不要直接重复执行。`; result.value = null; phase.value = 'execute-error' }
+    if (alive && request === version) {
+      const batchId = e.data?.import_batch_id || e.response?.data?.import_batch_id
+      if (batchId) retryOfBatchId = String(batchId)
+      error.value = `${e.message} 未确认导入完成，请核对业务记录后重新预览，不要直接重复执行。`; result.value = null; phase.value = 'execute-error'
+    }
   } finally { if (alive) { confirming.value = false; executing.value = false } }
 }
 </script>

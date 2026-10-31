@@ -637,6 +637,7 @@ class SalesDataScopeTests(TestCase):
         orders = next(section for section in sku_context.data["sections"] if section["key"] == "orders")
         self.assertEqual(orders["rows"], [])
 
+    @override_settings(AUDIT_LOG_ENABLED=True)
     def test_customer_import_rejects_out_of_scope_code_and_defaults_new_owner(self):
         self.login(self.employee_a)
         output = io.StringIO(newline="")

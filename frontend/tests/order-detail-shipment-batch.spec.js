@@ -93,6 +93,7 @@ async function submitDialog() {
 beforeEach(() => {
   wrappers = []
   vi.clearAllMocks()
+  window.sessionStorage.clear()
   mocks.listAll.mockResolvedValue([])
   mocks.confirmDialog.mockResolvedValue(true)
 })
@@ -164,6 +165,31 @@ describe('OrderDetailModal batch shipment', () => {
       { order_item: 702, quantity: '4.00', trade_unit: null, overage_reason: '' },
     ] })
     expect(dialog()).toBeNull()
+  })
+
+  it('reuses the same idempotency key after a network failure and clears it after success', async () => {
+    setupApi()
+    const wrapper = await mountOrder()
+    await wrapper.findAll('button').find(button => button.text() === '批量发货').trigger('click')
+    await settle()
+    mocks.api.post.mockImplementationOnce(async () => { throw new Error('连接中断') })
+      .mockResolvedValueOnce({ data: {} })
+
+    await submitDialog()
+    expect(dialog()).not.toBeNull()
+    const firstCall = shipmentPostCalls()[0]
+    expect(firstCall[2]).toEqual({ headers: { 'Idempotency-Key': expect.any(String) } })
+
+    await submitDialog()
+    const secondCall = shipmentPostCalls()[1]
+    expect(secondCall[2]).toEqual({ headers: { 'Idempotency-Key': firstCall[2].headers['Idempotency-Key'] } })
+    expect(dialog()).toBeNull()
+
+    await wrapper.findAll('button').find(button => button.text() === '批量发货').trigger('click')
+    await settle()
+    await submitDialog()
+    const thirdCall = shipmentPostCalls()[2]
+    expect(thirdCall[2].headers['Idempotency-Key']).not.toBe(firstCall[2].headers['Idempotency-Key'])
   })
 
   it('row-level shipment opens the same dialog with only the clicked OrderItem selected', async () => {

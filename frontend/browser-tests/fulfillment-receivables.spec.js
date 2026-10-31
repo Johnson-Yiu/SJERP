@@ -12,7 +12,7 @@ async function setup(page,{restricted=false,shipped=false}={}){
   if(path==='/api/orders/7/')return route.fulfill({json:order})
   if(path==='/api/payment-plans/')return route.fulfill({json:Number(state.balance)?[{id:8,order:7,contract_no:'FUP02-500',counterparty_name:'合成客户',direction:'receivable',currency:'USD',planned_amount:'350',settled_amount:'190',remaining_amount:state.balance,status:'open',is_overdue:true}]:[]})
   if(path==='/api/orders/7/complete/'){
-   state.writes++;await state.gate;state.status='completed';return route.fulfill({json:{...order,status:'completed'}})
+   state.writes++;state.onCompletionRequest?.();await state.gate;state.status='completed';return route.fulfill({json:{...order,status:'completed'}})
   }
   return route.fulfill({json:[]})
  })
@@ -37,9 +37,9 @@ test('restricted user cannot read protected debt from malicious unmasked order p
  if(process.env.R1A_EVIDENCE_DIR) await page.screenshot({path:process.env.R1A_EVIDENCE_DIR+'/08-mocked-permission.png',fullPage:true})
 })
 test('completion pending prevents duplicate UI action and failed reload retries without false financial success',async({page})=>{
- const state=await setup(page,{shipped:true});let release;state.gate=new Promise(resolve=>{release=resolve})
+ const state=await setup(page,{shipped:true});let release,requestStarted;state.gate=new Promise(resolve=>{release=resolve});const completionRequestStarted=new Promise(resolve=>{requestStarted=resolve});state.onCompletionRequest=()=>requestStarted()
  const modal=page.getByRole('dialog',{name:'订单工作台'});const button=modal.getByRole('button',{name:'完成履约',exact:true}).first()
- await button.click();await expect(button).toBeDisabled();await modal.getByRole('button',{name:'完成履约',exact:true}).last().click({force:true});expect(state.writes).toBe(1)
+ await button.click();await completionRequestStarted;await expect(button).toBeDisabled();await modal.getByRole('button',{name:'完成履约',exact:true}).last().click({force:true});expect(state.writes).toBe(1)
  release();await expect(modal).toContainText('履约：已完成');await expect(modal).toContainText('履约已完成，未收款项继续保留。')
  state.fail=true;await page.reload();await expect(modal).toContainText('加载失败',{timeout:15000});await expect(modal.locator('.payment-card')).toHaveCount(0)
  state.fail=false;await modal.getByRole('button',{name:'重试',exact:true}).click();await expect(modal.locator('.current-todo-card')).toContainText('160.00')

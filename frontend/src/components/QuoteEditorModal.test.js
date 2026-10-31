@@ -33,6 +33,19 @@ test('quote editor lets users save without exporting the Excel file', async () =
   assert.match(source, /保存并导出 Excel/)
 })
 
+test('quote editor keeps every footer action and gives save actions full rows on narrow screens', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+
+  for (const action of ['cancel', 'preview', 'save', 'save-export']) {
+    assert.match(source, new RegExp(`quote-action-${action}`))
+  }
+  assert.match(source, /class="modal-foot quote-editor-actions"/)
+  assert.match(source, /@media\(max-width:480px\)\{\.quote-editor-modal \.quote-editor-actions\{display:grid;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/)
+  assert.match(source, /\.quote-editor-actions \.quote-action-save,\.quote-editor-actions \.quote-action-save-export\{grid-column:1\/-1;width:100%\}/)
+  assert.match(source, /\.quote-editor-actions \.btn\{[^}]*white-space:normal/)
+  assert.doesNotMatch(source, /quote-action-(?:cancel|preview|save|save-export)[^}]*display:none/)
+})
+
 test('quote editor blocks a validity date earlier than the quote date', async () => {
   const source = await readFile(componentUrl, 'utf8')
 

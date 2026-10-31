@@ -36,8 +36,8 @@ class Iss006FulfillmentRequestIdempotencyTests(TestCase):
             "unit_cost": "2",
         }
 
-        first = self.client.post(f"/api/purchase-orders/{purchase.pk}/receive/", payload, format="json")
-        replay = self.client.post(f"/api/purchase-orders/{purchase.pk}/receive/", payload, format="json")
+        first = self.client.post(f"/api/purchase-orders/{purchase.pk}/receive/", payload, format="json", HTTP_IDEMPOTENCY_KEY=payload["request_key"])
+        replay = self.client.post(f"/api/purchase-orders/{purchase.pk}/receive/", payload, format="json", HTTP_IDEMPOTENCY_KEY=payload["request_key"])
 
         self.assertEqual(first.status_code, status.HTTP_201_CREATED, first.data)
         self.assertEqual(replay.status_code, status.HTTP_200_OK, replay.data)
@@ -62,13 +62,13 @@ class Iss006FulfillmentRequestIdempotencyTests(TestCase):
             "quantity": "5",
             "unit_cost": "2",
         }
-        self.assertEqual(self.client.post(f"/api/purchase-orders/{purchase.pk}/receive/", payload, format="json").status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.client.post(f"/api/purchase-orders/{purchase.pk}/receive/", payload, format="json", HTTP_IDEMPOTENCY_KEY=payload["request_key"]).status_code, status.HTTP_201_CREATED)
         changed = {**payload, "quantity": "4"}
 
-        response = self.client.post(f"/api/purchase-orders/{purchase.pk}/receive/", changed, format="json")
+        response = self.client.post(f"/api/purchase-orders/{purchase.pk}/receive/", changed, format="json", HTTP_IDEMPOTENCY_KEY=payload["request_key"])
 
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT, response.data)
-        self.assertIn("幂等键", response.data["detail"])
+        self.assertIn("Idempotency-Key", response.data["detail"])
         self.assertEqual(item.receipts.count(), 1)
         self.assertEqual(sku_metrics(self.receipt_sku)["actual_quantity"], Decimal("5.00"))
 
@@ -96,8 +96,8 @@ class Iss006FulfillmentRequestIdempotencyTests(TestCase):
             "items": [{"order_item": item.pk, "quantity": "5"}],
         }
 
-        first = self.client.post(f"/api/orders/{order.pk}/ship/", payload, format="json")
-        replay = self.client.post(f"/api/orders/{order.pk}/ship/", payload, format="json")
+        first = self.client.post(f"/api/orders/{order.pk}/ship/", payload, format="json", HTTP_IDEMPOTENCY_KEY=payload["request_key"])
+        replay = self.client.post(f"/api/orders/{order.pk}/ship/", payload, format="json", HTTP_IDEMPOTENCY_KEY=payload["request_key"])
 
         self.assertEqual(first.status_code, status.HTTP_201_CREATED, first.data)
         self.assertEqual(replay.status_code, status.HTTP_200_OK, replay.data)

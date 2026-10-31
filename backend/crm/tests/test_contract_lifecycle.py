@@ -14,6 +14,16 @@ from crm.services.purchase_costs import order_purchase_cost
 class ContractLifecycleApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
+        self._fulfillment_request_number = 0
+        original_post = self.client.post
+
+        def post_with_request_key(path, *args, **kwargs):
+            if str(path).endswith(("/receive/", "/ship/")) and "HTTP_IDEMPOTENCY_KEY" not in kwargs:
+                self._fulfillment_request_number += 1
+                kwargs["HTTP_IDEMPOTENCY_KEY"] = f"lifecycle-fulfillment-test-{self._fulfillment_request_number}"
+            return original_post(path, *args, **kwargs)
+
+        self.client.post = post_with_request_key
         self.day = date(2026, 9, 28)
         self.customer = Customer.objects.create(code="C-LIFECYCLE", name="Lifecycle Buyer", country="Germany")
         product = Product.objects.create(code="P-LIFECYCLE", name="Lifecycle Product")

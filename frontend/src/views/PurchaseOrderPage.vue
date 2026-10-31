@@ -28,6 +28,7 @@ import PurchaseDetailModal from '../components/PurchaseDetailModal.vue'
 import { purchaseArrival } from '../utils/purchaseOverview.js'
 import { parseDocumentDetailId, withDocumentDetailQuery } from '../utils/documentDetailRoute'
 import { useAccessControl } from '../accessControl'
+import { clearFulfillmentRequest, fulfillmentRequestId } from '../utils/fulfillmentIdempotency'
 
 const rows = ref([]), suppliers = ref([]), orders = ref([]), skus = ref([]), supplierSkuOptions = ref({}), supplierSkuErrors = ref({}), supplierSkuLoading = ref({})
 const loading = ref(true), saving = ref(false), error = ref(''), notice = ref(''), openCreate = ref(false), expandedId = ref(null), editingPurchaseId = ref(null)
@@ -82,10 +83,6 @@ let purchaseListRequest = 0
 let pageLoadRequest = 0
 const today = new Date().toISOString().slice(0, 10)
 function newDraft() { return { supplier: '', order: '', order_date: today, expected_arrival_date: '', status: 'draft', currency: 'CNY', exchange_rate: '1', notes: '', payment_terms_snapshot: [], items: [] } }
-function newRequestKey() {
-  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
-  return `fulfillment-${Date.now()}-${Math.random().toString(36).slice(2)}`
-}
 const draft = ref(newDraft())
 const guard = useUnsavedChangesGuard({ data: () => draft.value, enabled: () => openCreate.value })
 const costTarget = ref(null), costOrders = ref([]), paymentTarget = ref(null)
@@ -131,7 +128,7 @@ function openReceipt(row, item) {
   if (!can('purchases', 'update')) return
   receiptTarget.value = { row, item }
   receiptSuccess.value = null
-  receiptForm.value = { request_key: newRequestKey(), purchase_item: item.id, receipt_date: new Date().toLocaleDateString('en-CA'), quantity: Math.max(0, Number(item.remaining_quantity)), unit_cost: item.unit_price, is_overage: false, overage_reason: '', notes: '', checked: false }
+  receiptForm.value = { purchase_item: item.id, receipt_date: new Date().toLocaleDateString('en-CA'), quantity: Math.max(0, Number(item.remaining_quantity)), unit_cost: item.unit_price, is_overage: false, overage_reason: '', notes: '', checked: false }
   if (item.trade_unit && Number(item.remaining_quantity) % Number(item.trade_snapshot.factor) === 0) Object.assign(receiptForm.value, { trade_unit: item.trade_unit, trade_snapshot: item.trade_snapshot, quantity: Number(item.remaining_quantity) / Number(item.trade_snapshot.factor), unit_cost: item.trade_unit_price })
   receiptForm.value.unit_cost = compactDecimalInput(receiptForm.value.unit_cost)
   error.value = ''
@@ -145,7 +142,9 @@ async function submitReceipt() {
     payload.notes = `已核对型号、数量与外观；仅合格数量入库。${payload.notes}`
     const relatedOrders = receiptTarget.value.row.related_orders || []
     const purchaseId = receiptTarget.value.row.id
-    await api.post(`/purchase-orders/${purchaseId}/receive/`, payload)
+    const requestId = fulfillmentRequestId('receive', purchaseId, payload)
+    await api.post(`/purchase-orders/${purchaseId}/receive/`, payload, { headers: { 'Idempotency-Key': requestId } })
+    clearFulfillmentRequest('receive', purchaseId)
     receiptTarget.value = null
     notice.value = ''
     receiptSuccess.value = { purchaseId, message: '验货入库已完成，库存、预留及在途数量已同步。', relatedOrders }

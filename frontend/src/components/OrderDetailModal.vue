@@ -16,6 +16,7 @@ import ContractAmountAdjustments from './ContractAmountAdjustments.vue'
 import ShipmentActualPacking from './ShipmentActualPacking.vue'
 import { useDetailTab } from '../utils/useDetailTab'
 import { useAccessControl } from '../accessControl'
+import { clearFulfillmentRequest, fulfillmentRequestId } from '../utils/fulfillmentIdempotency'
 
 const props = defineProps({ id: { type: [Number, String], required: true }, refreshKey: { type: Number, default: 0 } })
 const emit = defineEmits(['close', 'edit', 'open-quote'])
@@ -247,7 +248,6 @@ const shipmentSkuCache = new Map()
 const shipmentSkuLoading = ref(false)
 const shipmentSkuFailed = ref(false)
 const shipmentSaving = ref(false)
-const shipmentRequestKey = ref('')
 const shipmentError = ref('')
 const selectedShipmentLines = computed(() => shipmentLines.value.filter(line => line.selected))
 const overageShipmentLines = computed(() => selectedShipmentLines.value.filter(line => baseQuantity(line) > Number(line.unshipped_quantity)))
@@ -281,7 +281,6 @@ async function openShipmentDialog(initialOrderItemIds = null) {
   if (!eligible.length) return
   const selectedIds = initialOrderItemIds == null ? null : new Set(initialOrderItemIds.map(Number))
   shipmentDate.value = localDateInputValue()
-  shipmentRequestKey.value = newRequestKey()
   shipmentError.value = ''
   shipmentSkuFailed.value = false
   shipmentLines.value = eligible.map(item => {
@@ -366,7 +365,10 @@ async function submitShipment() {
       trade_snapshot: line.trade_snapshot,
       overage_reason: baseQuantity(line) > Number(line.unshipped_quantity) ? line.overage_reason : '',
     }, null))
-    await api.post(`/orders/${props.id}/ship/`, { request_key: shipmentRequestKey.value, shipment_date: shipmentDate.value, items })
+    const payload = { shipment_date: shipmentDate.value, items }
+    const requestId = fulfillmentRequestId('ship', props.id, payload)
+    await api.post(`/orders/${props.id}/ship/`, payload, { headers: { 'Idempotency-Key': requestId } })
+    clearFulfillmentRequest('ship', props.id)
     shipmentDialogOpen.value = false
     await load()
   } catch (err) { shipmentError.value = shipmentErrorMessage(err) }

@@ -1,0 +1,77 @@
+{
+  "allPassed": true,
+  "runs": [
+    {
+      "name": "business-suite",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\Johnson\\.codex\\worktrees\\playwright-suite-stability\\森爵照明管理系统\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--all-business-tests",
+        "--exclude-business-test",
+        "iss022-moq-real.spec.js",
+        "--exclude-business-test",
+        "iss028-035-category-schema.spec.js",
+        "--exclude-business-test",
+        "iss055-customer-404-real.spec.js",
+        "--exclude-business-test",
+        "shared-report-templates.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/r1-playwright-suite-stability-20261029/logs/business-suite.stdout.log",
+      "stderr": "docs/uat-evidence/r1-playwright-suite-stability-20261029/logs/business-suite.stderr.log"
+    },
+    {
+      "name": "shared-report-templates-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\Johnson\\.codex\\worktrees\\playwright-suite-stability\\森爵照明管理系统\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "shared-report-templates.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/r1-playwright-suite-stability-20261029/logs/shared-report-templates-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/r1-playwright-suite-stability-20261029/logs/shared-report-templates-isolated.stderr.log"
+    },
+    {
+      "name": "iss022-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\Johnson\\.codex\\worktrees\\playwright-suite-stability\\森爵照明管理系统\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss022-moq-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/r1-playwright-suite-stability-20261029/logs/iss022-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/r1-playwright-suite-stability-20261029/logs/iss022-isolated.stderr.log"
+    },
+    {
+      "name": "iss028-035-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\Johnson\\.codex\\worktrees\\playwright-suite-stability\\森爵照明管理系统\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss028-035-category-schema.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/r1-playwright-suite-stability-20261029/logs/iss028-035-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/r1-playwright-suite-stability-20261029/logs/iss028-035-isolated.stderr.log"
+    },
+    {
+      "name": "iss055-rbac",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\Johnson\\.codex\\worktrees\\playwright-suite-stability\\森爵照明管理系统\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss055-customer-404-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/r1-playwright-suite-stability-20261029/logs/iss055-rbac.stdout.log",
+      "stderr": "docs/uat-evidence/r1-playwright-suite-stability-20261029/logs/iss055-rbac.stderr.log"
+    }
+  ]
+}

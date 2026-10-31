@@ -73,6 +73,25 @@ class IsolatedRuntimeTests(unittest.TestCase):
         with self.assertRaisesRegex(IsolationError, "Formal RBAC must remain disabled"):
             verify_isolated_runtime(self.environ, settings)
 
+    def test_accepts_only_explicit_iss055_isolated_rbac_mode(self):
+        environ = {**self.environ, "ISOLATED_TEST_RBAC_MODE": "iss055", "DEVELOPMENT_SUPERADMIN": "0"}
+        settings = self.settings()
+        settings.RBAC_ENFORCEMENT = True
+        result = verify_isolated_runtime(environ, settings)
+        self.assertTrue(result["rbacEnforcement"])
+
+    def test_iss055_mode_rejects_development_superadmin(self):
+        environ = {**self.environ, "ISOLATED_TEST_RBAC_MODE": "iss055", "DEVELOPMENT_SUPERADMIN": "1"}
+        settings = self.settings()
+        settings.RBAC_ENFORCEMENT = True
+        with self.assertRaisesRegex(IsolationError, "disable the development superadmin"):
+            verify_isolated_runtime(environ, settings)
+
+    def test_unknown_isolated_rbac_mode_is_rejected(self):
+        environ = {**self.environ, "ISOLATED_TEST_RBAC_MODE": "unrestricted"}
+        with self.assertRaisesRegex(IsolationError, "allowlisted ISS-055"):
+            verify_isolated_runtime(environ, self.settings())
+
     def test_rejects_media_root_outside_run_directory(self):
         outside_media = Path(self.temp.name) / "other-media"
         with self.assertRaisesRegex(IsolationError, "MEDIA_ROOT outside this run's isolation root"):

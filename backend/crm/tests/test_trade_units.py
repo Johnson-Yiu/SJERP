@@ -15,6 +15,7 @@ from crm.tests.test_quotes import xlsx_cell_text
 class TradeUnitsTests(TestCase):
     def setUp(self):
         self.client = APIClient()
+        self._fulfillment_request_number = 0
         self.customer = Customer.objects.create(code='TU-C', name='Trade Buyer', country='Germany')
         self.product = Product.objects.create(code='TU-P', name='Strip')
         self.sku = SKU.objects.create(product=self.product, sku='TU-S', unit='m')
@@ -23,7 +24,11 @@ class TradeUnitsTests(TestCase):
         self.today = date.today().isoformat()
 
     def post(self, url, data, code=201):
-        response = self.client.post('/api/' + url, data, format='json')
+        kwargs = {}
+        if url.endswith(('/receive/', '/ship/')):
+            self._fulfillment_request_number += 1
+            kwargs['HTTP_IDEMPOTENCY_KEY'] = f'trade-units-fulfillment-{self._fulfillment_request_number}'
+        response = self.client.post('/api/' + url, data, format='json', **kwargs)
         self.assertEqual(response.status_code, code, response.data)
         return response.data
 

@@ -118,7 +118,7 @@ describe('trade finance interactions', () => {
     await dialog.find('input[type="checkbox"]').setValue(true)
     await dialog.trigger('submit')
     await flushPromises()
-    expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/receive/', expect.objectContaining({ purchase_item: 7, quantity: 8, notes: expect.stringContaining('拒收破损 2 件') }))
+    expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/receive/', expect.objectContaining({ purchase_item: 7, quantity: 8, notes: expect.stringContaining('拒收破损 2 件') }), expect.objectContaining({ headers: expect.objectContaining({ 'Idempotency-Key': expect.any(String) }) }))
     wrapper.unmount()
   })
 })

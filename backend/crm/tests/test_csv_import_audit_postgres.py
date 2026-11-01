@@ -1,6 +1,7 @@
 from unittest import skipUnless
 
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
 from django.db import DatabaseError, connection, transaction
 from django.test import TransactionTestCase
 
@@ -12,6 +13,9 @@ class CsvImportAuditPostgresAppendOnlyTests(TransactionTestCase):
     reset_sequences = True
 
     def setUp(self):
+        self._create_audit_rows()
+
+    def _create_audit_rows(self):
         self.operator = get_user_model().objects.create_user(
             username="csv-audit-postgres-test-operator",
             password="isolated-test-only",
@@ -43,6 +47,35 @@ class CsvImportAuditPostgresAppendOnlyTests(TransactionTestCase):
                 with connection.cursor() as cursor:
                     cursor.execute(sql, params)
         self.assertIn("append-only", str(raised.exception).lower())
+
+    def test_django_flush_cleans_test_rows_and_restores_truncate_guards(self):
+        for _ in range(2):
+            call_command(
+                "flush",
+                verbosity=0,
+                interactive=False,
+                database=connection.alias,
+                reset_sequences=False,
+                inhibit_post_migrate=True,
+            )
+
+            self.assertEqual(CSVImportBatch.objects.count(), 0)
+            self.assertEqual(CSVImportRowAudit.objects.count(), 0)
+            self.assertEqual(CSVImportPreviewAudit.objects.count(), 0)
+            self._assert_raw_statement_is_blocked(
+                f"TRUNCATE TABLE {connection.ops.quote_name(CSVImportBatch._meta.db_table)}"
+            )
+
+            # Reusing the same synthetic identity after cleanup must not leave
+            # duplicates or a temporarily disabled guard behind.
+            self._create_audit_rows()
+            self.assertEqual(CSVImportBatch.objects.filter(status="failed").count(), 1)
+            self.assertEqual(
+                CSVImportRowAudit.objects.filter(business_key="PG-APPEND-ONLY").count(), 1
+            )
+            self.assertEqual(
+                CSVImportPreviewAudit.objects.filter(file_sha256="a" * 64).count(), 1
+            )
 
     def test_raw_update_delete_and_truncate_are_rejected_for_all_audit_tables(self):
         records = (

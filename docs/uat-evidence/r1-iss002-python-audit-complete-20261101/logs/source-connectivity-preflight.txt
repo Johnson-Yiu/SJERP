@@ -1,0 +1,7 @@
+2026-11-01 read-only connectivity preflight (before package audit):
+- PyPI metadata GET https://pypi.org/pypi/pip-audit/json: HTTP 200; version metadata returned.
+- OSV querybatch endpoint: valid JSON response returned.
+
+Subsequent actual pip-audit PyPI vulnerability-service request failed with
+SSLEOFError while requesting /pypi/asgiref/3.13.0/json. This file records only
+the preflight result; it is not evidence that the vulnerability query passed.

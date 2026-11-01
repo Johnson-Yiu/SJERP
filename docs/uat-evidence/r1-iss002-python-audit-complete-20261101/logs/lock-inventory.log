@@ -1,0 +1,29 @@
+requirements.lock SHA256=A106C2369FBB65E9592DF022D65F34F80FB432E9B7A5A3E2F9B20ECDC1D15E67
+requirements.txt SHA256=D715164E45ED3FD8816EF6D42612515A7581BF074A920771897F5EDE700D25DC
+direct pins=9; full lock pins=15; --hash entries=0
+direct:
+Django==6.0.9
+djangorestframework==3.18.3
+django-cors-headers==4.9.0
+dj-database-url==3.1.2
+psycopg[binary]==3.3.6
+Pillow==13.0.0
+bleach==6.4.0
+openpyxl==3.1.5
+pycountry==26.2.16
+full lock:
+asgiref==3.13.0
+bleach==6.4.0
+Django==6.0.9
+django-cors-headers==4.9.0
+dj-database-url==3.1.2
+djangorestframework==3.18.3
+et-xmlfile==2.0.0
+openpyxl==3.1.5
+Pillow==13.0.0
+psycopg==3.3.6
+psycopg-binary==3.3.6
+pycountry==26.2.16
+sqlparse==0.6.0
+tzdata==2026.6
+webencodings==0.6.1

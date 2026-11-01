@@ -1,5 +1,18 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-ISS007-LEDGER-EVIDENCE-UPDATE 跟进附件证据更新（2026-11-01）
+
+以基线分支 `codex/r1-ledger-sync-20261101` 为依据，新建独立文档分支 `codex/r1-iss007-ledger-evidence-update-20261101`。本轮核对 GitHub 远端 `codex/r1-iss007-followup-files-uat-20261031`，其 HEAD 为 `e3b1eeb6cff69b7b77bc35c83661df052e028b41`；报告 `docs/uat-evidence/r1-iss007-followup-files-uat-20261031/README.md`、原始浏览器日志、前后数据库快照和截图均在该提交树中存在。这里只记录来源验收证据，不复制截图或声称在本轮重新执行浏览器测试。
+
+ISS-007 保留两条独立验收链：
+
+- **SKU 图片/正式报价快照**：来源 `codex/r1-iss007-image-snapshot-uat-20261031` / `d48df222271059721bfa6b9f5f61f395e57db45b`，报告 `docs/uat-evidence/iss-007-image-snapshot-uat-20261031/README.md`。隔离数据和真实 Chrome 核实 SKU 图片变更后已确认报价快照及 PI XLSX 图片不变；缺失历史图片在 PI 的破图显示仍待处理。此链不包含跟进附件操作。
+- **跟进附件上传、预览、下载、删除和替换**：上述最新远端报告记录合成目标附件删除请求 HTTP 204；删除后数据库记录和磁盘文件均不存在，原 URL 在删除后及替换上传后均返回 HTTP 404；替代附件上传 HTTP 201，刷新后显示替代件。其他既有合成附件 ID/路径/大小/SHA256 均不变：`ISS007-legacy-history.txt` `a9a3d887ca46e0a9ecd410a9bba89e6ee04a43916babb39849f6ad9bcc35314f`、`ISS007-preview.txt` `ee61d0bbe02c4a7b96f8b8a8057547583c98aab8089e643de00047ca3f976410`、`ISS007-download.bin` `5e62a906ba05040729ff6e2b3e3f7d744671a3c64f375cc2159b29483ed29bc1`。删除由隔离认证普通用户 `iss007-uat-0c9dfbf4` 执行；操作日志中的操作人、删除动作、HTTP 方法/路径及附件元数据完整。原始日志：`docs/uat-evidence/r1-iss007-followup-files-uat-20261031/delete-20261101-0c9dfbf4/logs/browser-delete-uat-retry.log`；数据库快照：`docs/uat-evidence/r1-iss007-followup-files-uat-20261031/delete-20261101-0c9dfbf4/before-delete-snapshot.json`、`docs/uat-evidence/r1-iss007-followup-files-uat-20261031/delete-20261101-0c9dfbf4/after-delete-verification.json`。真实 Chrome 截图：桌面删除后刷新 `docs/uat-evidence/r1-iss007-followup-files-uat-20261031/delete-20261101-0c9dfbf4/screenshots/desktop-delete-refresh-1440x900.png`、桌面替换件刷新 `docs/uat-evidence/r1-iss007-followup-files-uat-20261031/delete-20261101-0c9dfbf4/screenshots/desktop-replacement-refresh-1440x900.png`、390×844 替换件 `docs/uat-evidence/r1-iss007-followup-files-uat-20261031/delete-20261101-0c9dfbf4/screenshots/mobile-replacement-visible-390x844.png`。
+
+跟进附件链也记录此前已完成的上传、保存重开、中文预览、下载字节校验、认证/匿名/无权限直链结果。隔离本地应用验收不代替生产代理/CDN/对象存储 ACL 或 ISS-017 部署安全验证。ISS-007 继续为 `NEEDS_VERIFICATION`；下一步是独立复核两条证据链、处理历史图片缺失表现，并在获准部署环境核验文件访问边界，不关闭 Issue。
+
+重新核对台账主表：124 个唯一 Issue，`OPEN=1`、`BLOCKED=19`、`NEEDS_VERIFICATION=12`、`FIXED_PENDING_REVIEW=82`、`CLOSED=10`（合计 124）；46 项业务规则及历史记录保留，本轮没有改变任何 Issue 状态。本轮仅修改 `PROJECT_ISSUES.md` 和 `PROJECT_PHASES.md`，无业务代码、迁移、测试或 CI 变更；不合并 master、不关闭 Issue。
+
 ## R1-LEDGER-SYNC-20261101 最新远端交付对账
 
 固定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`；参考台账分支 `codex/r1-issue-ledger-update-20261031` 的远端 HEAD 为 `dd3b31445ab9dddb42c7ac8d095692df45efde24`。本轮从指定基线创建独立分支，保留参考分支的两份文档整理成果后，按 GitHub 当前 `origin` refs 重新查询相关 Issue 分支真实 HEAD。下列 SHA 均来自本轮 `git ls-remote --heads origin`，不是仅凭本地分支推断；关键报告路径以 `git cat-file -e <SHA>:<path>` 在对应提交树中核实。来源分支仅作为证据，不表示其代码/迁移已合并进本轮文档分支或固定基线。

@@ -300,7 +300,7 @@ test('browser CI invokes the isolated suite and keeps run evidence under an isol
   assert.match(packageJson.scripts['test:browser'], /run-playwright-suite-stability\.mjs/)
   assert.ok(workflow.includes('run: npm run test:browser'))
   assert.ok(workflow.includes('R1_PLAYWRIGHT_EVIDENCE_ROOT: ${{ github.workspace }}/docs/uat-evidence/ci-${{ github.run_id }}-${{ github.run_attempt }}'))
-  assert.equal((workflow.match(/pip install -r backend\/requirements\.lock/g) || []).length, 2)
+  assert.equal((workflow.match(/pip install -r backend\/requirements\.lock/g) || []).length, 3)
   assert.doesNotMatch(workflow, /pip install -r backend\/requirements\.txt/)
   assert.doesNotMatch(workflow, /run:\s*npx playwright test/)
   assert.match(suiteRunner, /process\.env\.R1_PLAYWRIGHT_EVIDENCE_ROOT/)

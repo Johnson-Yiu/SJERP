@@ -1,0 +1,8 @@
+{
+  "task": "R1-POSTGRES-TEST-ISOLATION-01",
+  "date": "2026-11-02",
+  "base": "2e25b743884123d7ae5599c89586988a12791bf4",
+  "command_powershell": "foreach ($tool in 'psql','pg_isready','postgres','docker') { Write-Output \"$tool=$([bool](Get-Command $tool -ErrorAction SilentlyContinue))\" }; Write-Output \"postgres_services=$(@(Get-Service | Where-Object { $_.Name -match 'postgres|docker' }).Count)\"; Test-NetConnection -ComputerName 127.0.0.1 -Port 5432 -WarningAction SilentlyContinue -InformationLevel Quiet",
+  "exit_code": 0,
+  "output": "psql=False\npg_isready=False\npostgres=False\ndocker=False\npostgres_services=0\nFalse\r\n"
+}

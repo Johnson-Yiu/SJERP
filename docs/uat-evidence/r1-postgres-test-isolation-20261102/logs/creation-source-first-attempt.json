@@ -1,0 +1,8 @@
+{
+  "task": "R1-POSTGRES-TEST-ISOLATION-01",
+  "date": "2026-11-02",
+  "base": "2e25b743884123d7ae5599c89586988a12791bf4",
+  "command_powershell": "$env:DJANGO_SETTINGS_MODULE='config.settings'; $env:APP_STAGE='development'; $env:PYTHONPATH='backend'; $env:DATABASE_URL='postgresql://isolation_static@127.0.0.1:5432/isolation_static'; $env:PYTHONDONTWRITEBYTECODE='1'; & 'D:\\Codex项目\\森爵照明管理系统\\.tmp\\r1-postgres-isolation-venv-20261102\\Scripts\\python.exe' -c @'\nimport django, inspect\nfrom unittest.mock import patch\nfrom django.db.backends.base.base import BaseDatabaseWrapper\nwith patch.object(BaseDatabaseWrapper, 'ensure_connection', side_effect=AssertionError('no database')):\n    django.setup()\n    from django.db import connection\n    for obj in [connection.get_connection_params, type(connection)._nodb_cursor, connection.creation._create_test_db, connection.creation.create_test_db, connection.creation.destroy_test_db]:\n        print(inspect.getsource(obj))\n'@",
+  "exit_code": 1,
+  "output": "Traceback (most recent call last):\r\n  File \"<string>\", line 7, in <module>\r\n    for obj in [connection.get_connection_params, type(connection)._nodb_cursor, connection.creation._create_test_db, connection.creation.create_test_db, connection.creation.destroy_test_db]:\r\n                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nAttributeError: type object 'ConnectionProxy' has no attribute '_nodb_cursor'\r\n"
+}

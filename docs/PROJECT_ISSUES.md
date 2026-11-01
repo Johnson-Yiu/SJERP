@@ -504,3 +504,9 @@ R1-ISS006-POSTGRES-CONCURRENCY-GAPS 从 `7402ad38cf40d1eea0adb076e67021c31be8ac1
 ### ISS-006 并发断言独立审查补修（2026-11-02）
 
 R1-ISS006-POSTGRES-CONCURRENCY-REVIEW-FIX-01 从 `657a65c10e0234345a2c648998f6d283c500d1b4` 在原独立分支补齐四处采购明细 `refresh_from_db()`，保留超额竞争原有刷新；加强失败键、库存及审计无残留检查。仅修改测试和验收/开发记录，无业务、模型、迁移或审计保护变更。SQLite 81 项发现、64 通过、17 个 PostgreSQL 专项跳过，0 失败；语法、system check、静态发现及 diff 检查通过。完整日志见[更新验收报告](uat-evidence/r1-iss006-postgres-concurrency-gaps-20261101/README.md)。本次补修待独立复审；ISS-006 仍 `NEEDS_VERIFICATION`，真实 PostgreSQL 执行为 `BLOCKED`。下一步由 `R1-POSTGRES-TEST-ISOLATION-01` 处理测试清理隔离，再做真实 PostgreSQL 复测；未关闭/新增 Issue，集合和状态统计不变，未触发 CI、合并或部署。
+
+### ISS-006 / ISS-052 PostgreSQL 测试隔离候选方案（2026-11-02）
+
+R1-POSTGRES-TEST-ISOLATION-01 从 `2e25b743884123d7ae5599c89586988a12791bf4` 新建独立分支 `codex/r1-postgres-test-isolation-20261102`。仅对 runner 本次确认创建的随机本地 PostgreSQL 临时库，在 TransactionTestCase teardown 内以独占锁和单事务完成指定 TRUNCATE 触发器的临时启停/恢复；正文及普通 flush 保持原保护。建库/销毁使用严格维护连接及创建归属快照，拒绝连接覆盖、来源库回退、已有库覆盖和不支持的别名/镜像/并行组合；失败恢复两份配置，回收失败明确报告。未改业务代码、模型、任何迁移或 ISS-052 保护。
+
+锁定依赖 Django 6.0.9 下相关 SQLite 回归最终 137 项发现、113 通过、24 个 PostgreSQL 专项跳过，0 失败；其中本轮控制流程 21 项通过、6 项真实 PostgreSQL 用例未执行。依赖精确核对、语法、Django check、迁移检查及静态发现通过。报告见[测试隔离验收与完整日志](uat-evidence/r1-postgres-test-isolation-20261102/README.md)。**真实 PostgreSQL 清理冲突尚未验收解决，继续 BLOCKED**；下一步在专用 PostgreSQL 17 环境核实六个生命周期/恢复/独立连接场景、ISS-006 并发及 ISS-052 原始 SQL/迁移回归，再运行完整 PostgreSQL 套件。ISS-006 仍 `NEEDS_VERIFICATION`，ISS-052 既有状态不变；无新增/关闭 Issue，集合与状态统计不变。未触发 CI、创建 PR、合并 master 或部署。

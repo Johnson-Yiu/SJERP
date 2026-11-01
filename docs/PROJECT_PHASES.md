@@ -653,3 +653,9 @@ ISS-007 保持 `NEEDS_VERIFICATION` 并等待独立审查；跟进附件等其�
 
 隔离 SQLite 相关回归 64 通过、17 个 PostgreSQL 专项跳过，0 失败；语法、Django system check、静态导入/发现及 diff 检查通过，详见[原验收报告补修节及完整日志](uat-evidence/r1-iss006-postgres-concurrency-gaps-20261101/README.md)。PostgreSQL 实际执行仍 `BLOCKED`；数据库清理问题留待集成 `R1-POSTGRES-TEST-ISOLATION-01`。本轮断言补修待独立审查，ISS-006 状态仍 `NEEDS_VERIFICATION`。提交含 `[skip ci]`，不触发 CI、不创建 PR、不合并 master、不部署。
 
+## R1-POSTGRES-TEST-ISOLATION-01（2026-11-02）
+
+从指定 `2e25b743884123d7ae5599c89586988a12791bf4` 创建独立 worktree/分支 `codex/r1-postgres-test-isolation-20261102`。完成锁定版 Django 6.0.9 flush/建库/销毁机制审查，新增仅供 runner 新建随机临时 PostgreSQL 库使用的 teardown 清理机制；独占锁覆盖指定触发器临时启停和恢复，事务失败回滚，普通 flush 和测试正文不启用。追加建库/销毁归属、连接覆盖拒绝、失败配置恢复及剩余库显式报告；多别名/镜像/并行/已有库复用等未验证组合明确拒绝。未修改生产逻辑、模型、迁移、配置或工作流，0094 审计保护保持原样。
+
+锁定依赖 16 项精确匹配；相关 SQLite 综合回归 113 通过、24 个 PostgreSQL 专项跳过（总 137），0 失败；语法、Django system check、迁移检查及禁止数据库连接的静态导入发现通过。完整报告和原始日志见[本轮验收](uat-evidence/r1-postgres-test-isolation-20261102/README.md)。本机无 PostgreSQL，真实 SQL/DDL 回滚/锁和清理后的保护均未实测，仍为 `BLOCKED`，不能声称彻底解决冲突；下一步在专用本地 PostgreSQL 验证本轮六项生命周期回归及原 ISS-006/052 专项，再作全量 PostgreSQL 回归与独立审查。ISS-006/052 状态和历史保留，不关闭 Issue；提交含 `[skip ci]`，未触发 CI、创建 PR、合并或部署。
+

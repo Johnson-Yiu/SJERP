@@ -1,0 +1,8 @@
+{
+  "task": "R1-POSTGRES-TEST-ISOLATION-01",
+  "date": "2026-11-02",
+  "base": "2e25b743884123d7ae5599c89586988a12791bf4",
+  "command_powershell": "$env:APP_STAGE='development'; $env:DATABASE_URL='sqlite:///:memory:'; $env:PYTHONUTF8='1'; $env:PYTHONDONTWRITEBYTECODE='1'; $env:PYTHONPYCACHEPREFIX=Join-Path ([IO.Path]::GetTempPath()) 'sunjack-pg-isolation-pycache'; $taskPython='D:\\Codex项目\\森爵照明管理系统\\.tmp\\r1-postgres-isolation-venv-20261102\\Scripts\\python.exe'; & $taskPython -m pip check; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & $taskPython -m py_compile backend/crm/postgres_test_cleanup.py backend/crm/test_runner.py backend/crm/tests/test_postgres_test_isolation.py; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & $taskPython backend/manage.py check; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & $taskPython backend/manage.py makemigrations --check --dry-run; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; git diff --check; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; Write-Output 'Syntax and diff checks: PASS'; git diff --exit-code 2e25b743884123d7ae5599c89586988a12791bf4 -- backend/crm/migrations backend/crm/models.py backend/crm/services backend/crm/views.py backend/config/settings.py .github; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; Write-Output 'Production models, migrations, services, views, settings and workflows unchanged.'",
+  "exit_code": 0,
+  "output": "No broken requirements found.\r\nSystem check identified no issues (0 silenced).\r\nNo changes detected\r\nSyntax and diff checks: PASS\r\nProduction models, migrations, services, views, settings and workflows unchanged.\r\n"
+}

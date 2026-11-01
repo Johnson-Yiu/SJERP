@@ -4,7 +4,7 @@
 
 基于 `codex/fix-unified-ci-env-20261101` / `cd479ea5ad7cd923f5b1798c0f296f960ae46dae` 创建独立工作树 `codex/r1-postgres-supplier-fixtures-20261101`。测试代码提交 `e8e5d1199067a339d9cf6719310c9b32294b44f1` 仅将六个目标测试文件中 9 个不符合 `Supplier.code(max_length=2, unique=True)` 的夹具值改为两字符代码；所有十个目标供应商夹具的代码长度均为 2 且彼此唯一。未改模型、迁移、生产逻辑、业务断言或四个明确排除的 ISS-006 测试文件。
 
-锁定依赖临时环境中，隔离内存 SQLite 定向测试 57/57 通过，完整迁移和 `git diff --check` 通过。本机 PostgreSQL 17 不可用：`127.0.0.1:5432` 未开放，定向测试在测试库创建前连接超时，记录为 `BLOCKED`，不得以 SQLite 结果代替。推送后的 GitHub PostgreSQL 17 job 需另行核对；详细映射及原始日志见[验收报告](uat-evidence/r1-postgres-supplier-fixtures-20261101/README.md)。Issue/业务规则状态未改，计数不变；未触碰 ISS-006 任务工作树。
+锁定依赖临时环境中，隔离内存 SQLite 定向测试 57/57 通过，完整迁移和 `git diff --check` 通过。本机 PostgreSQL 17 不可用：`127.0.0.1:5432` 未开放，定向测试在测试库创建前连接超时，记录为本地 `BLOCKED`，未把 SQLite 冒充为 PostgreSQL。推送后 GitHub PostgreSQL 17 job [#41316120587](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41316120587/job/124876424265) 对代码 SHA `ddc0ef0ac19aa273d16af68d6dbbdbfc209a9db2` 执行真实隔离 PG 全量测试：迁移通过；1066 项中 15 failures、62 errors、1 skipped。六个目标模块没有由本轮修正的九个代码导致的长度错误；四个模块无失败，历史分析和数量调整各有 401/403 断言差异，数量调整另有 ISS-052 TRUNCATE 保护导致的测试错误。全套剩余错误还包括明确排除的 ISS-006 测试文件中的超长代码，未越界修改。普通 backend 全量通过；frontend isolated Playwright 在记录时仍运行。详细映射与原始本地日志见[验收报告](uat-evidence/r1-postgres-supplier-fixtures-20261101/README.md)。Issue/业务规则状态未改，计数不变；未触碰 ISS-006 任务工作树。
 
 ## R1-FIX-UNIFIED-CI-ENVIRONMENT（2026-11-01）
 

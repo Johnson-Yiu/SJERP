@@ -38,7 +38,11 @@ python manage.py test crm.tests.test_finance_drill crm.tests.test_historical_ord
 
 PostgreSQL 定向命令以 `postgresql://...@127.0.0.1:5432/sunjack_test?connect_timeout=3` 指向本地隔离测试库执行，但本机 5432 端口未开放，连接在创建测试数据库前超时。因此本地 PostgreSQL 结果为 **BLOCKED**，不是通过或跳过。原始失败日志：[postgres-targeted-local.log](logs/postgres-targeted-local.log)。
 
-远端 GitHub Actions 的 PostgreSQL 17 job：推送后状态待核实；如完成，将在此补记精确 SHA、运行链接及结果。SQLite 结果不替代 PostgreSQL 验收。
+GitHub Actions 的 [PostgreSQL 17 job](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41316120587/job/124876424265) 使用隔离服务数据库，测试代码 SHA 为 `ddc0ef0ac19aa273d16af68d6dbbdbfc209a9db2`。PostgreSQL 初始化、system check、迁移检查及迁移通过；全量 Django 测试 1066 项，15 failures、62 errors、1 skipped，因此该 job 为失败，不能报告全量 PostgreSQL 通过。
+
+六个目标模块中没有因本轮九个修正值产生 `varchar(2)` 插入错误；`test_finance_drill.py`、`test_integration_039_037_040.py`、`test_iss039_shared_purchase_costs.py`、`test_purchase_moq.py` 无失败/错误。另三条非夹具失败为：`test_historical_orders.py` 一条权限断言收到 401、预期 403；`test_order_quantity_adjustments.py` 一条权限断言同为 401/403 差异，以及一条测试清理受到 ISS-052 PostgreSQL 审计表 TRUNCATE 保护拒绝。完整 job 日志见上述 GitHub 链接。全套日志还显示明确排除的 ISS-006 测试文件仍包含超长 Supplier 夹具并报字段长度错误；本轮按用户边界未修改这些文件。其他 PostgreSQL errors/failures 不属于本轮夹具修改范围。
+
+同一 CI run 的普通 `backend` job 全量测试通过。`frontend` job 在本报告更新时仍处于 isolated Playwright 阶段；它与本轮后端夹具验收无关。SQLite 结果不替代 PostgreSQL 验收。
 
 ## 边界结论
 

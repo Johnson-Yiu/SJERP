@@ -1,5 +1,9 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-POSTGRES-TEST-ISOLATION-01（2026-11-01）
+
+基于 `codex/fix-unified-ci-env-20261101` @ `cd479ea5ad7cd923f5b1798c0f296f960ae46dae` 创建独立分支 `codex/r1-postgres-test-isolation-20261101`。修复 Django `TransactionTestCase` teardown 通过 `flush` 触发 PostgreSQL `TRUNCATE ... CASCADE`、与 CSV 审计 append-only guard 冲突的问题。自定义测试 runner 仅对默认生成的隔离 PostgreSQL 测试库，在同一事务内暂时关闭/恢复三张审计表 TRUNCATE guard；迁移0094、生产保护、原始 SQL 安全测试均保留。没有修改 ISS-006 业务文件/专属测试。代码提交 `34985cc8db0837e6257352ae39553c48e529091b` 对应 [GitHub Actions #41316871320](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41316871320)：Backend 1068项通过、20项跳过；PostgreSQL 17 检查与迁移通过，完整测试1068项中10 failures、50 errors、1 skipped；目标清理/审计回归未列在失败清单中，但不能据此称全量 PostgreSQL 通过。Frontend Node单测、Node-only、Vitest通过；截至记录时隔离 Playwright 仍运行、生产构建未开始，不能标记通过。当前报告：[R1-POSTGRES-TEST-ISOLATION-01](uat-evidence/r1-postgres-test-isolation-20261101/README.md)。未合并 master、未创建 PR、未部署。
+
 ## R1-FIX-UNIFIED-CI-ENVIRONMENT（2026-11-01）
 
 从 `codex/unified-github-ci-post-oct20-20261101` 的 `3093c22c6e0a623499a98d5a602f7b1cb5758e8e` 创建独立 worktree/分支 `codex/fix-unified-ci-env-20261101`。提交 `880385b50e48fb6e9493df97f5f74de48aaffcc5` 为 PostgreSQL 17 Job 在 Django 检查前建立 `$RUNNER_TEMP/sunjack-ci-private-media`、设置私有权限并经 `GITHUB_ENV` 提供绝对 `MEDIA_ROOT`；Frontend Job 加入 Python 3.12、按 `backend/requirements.lock` 安装依赖，并设 `ISOLATED_TEST_PYTHON=python`。该配置保持 settings.py 的已部署环境安全检查不变。首轮发现工作流静态测试仍将锁文件安装次数写死为2；将其改为当前三个 Job 的实际次数后，定向测试通过，提交 `c5152a46b2ac723073e8e2977ae6ff2f6c1277de` 推送并触发最终 CI。

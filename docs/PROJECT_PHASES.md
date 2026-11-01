@@ -646,7 +646,9 @@ ISS-007 保持 `NEEDS_VERIFICATION` 并等待独立审查；跟进附件等其�
 
 基于 `codex/fix-unified-ci-env-20261101` 的精确 SHA `cd479ea5ad7cd923f5b1798c0f296f960ae46dae` 创建独立 worktree 与 `codex/r1-iss018-postgres-ci-boundary-20261101`。测试代码提交为 `0ea0115d56a73bade82dd4575e44027ec733ace9`。根因是 ISS-018 备份测试类直接构造 SQLite 文件并断言 SQLite 归档内容，和 PostgreSQL fail-closed 用例共处一个类；PostgreSQL CI 将执行不适用的 SQLite 测试。现将整个 SQLite 文件备份/恢复类按 `connection.vendor == "sqlite"` 条件明确跳过，并将 fail-closed 测试拆为独立类，使用不存在的数据库与媒体路径验证拒绝优先于访问/创建备份目录。没有修改 workflow、`backup_recovery.py`、业务代码或迁移。
 
-本机 CPython 3.14.5 / Django 6.0.6 的隔离 SQLite 定向测试：22 项运行、19 通过、3 项因 Windows/POSIX/符号链接平台能力跳过、0 失败；PostgreSQL staging 配置下的无连接分类验证：22 项运行、21 项 SQLite 专属测试明确跳过、1 项 fail-closed 边界测试通过、0 失败。证据见 [R1-ISS018 PostgreSQL/SQLite 边界报告](uat-evidence/r1-iss018-postgres-ci-boundary-20261101/README.md) 及原始日志。本机没有 PostgreSQL 服务或 Docker；该 staging 配置测试没有连接数据库，真实 PostgreSQL 17 结论只以推送后 CI job 为准，尚待补记。
+本机 CPython 3.14.5 / Django 6.0.6 的隔离 SQLite 定向测试：22 项运行、19 通过、3 项因 Windows/POSIX/符号链接平台能力跳过、0 失败；PostgreSQL staging 配置下的无连接分类验证：22 项运行、21 项 SQLite 专属测试明确跳过、1 项 fail-closed 边界测试通过、0 失败。证据见 [R1-ISS018 PostgreSQL/SQLite 边界报告](uat-evidence/r1-iss018-postgres-ci-boundary-20261101/README.md) 及原始日志。本机没有 PostgreSQL 服务或 Docker；该 staging 配置测试没有连接数据库。
+
+推送 SHA `1d7a533728ca9b1f036289963d473042e37ec047` 触发 [GitHub Actions #41315952301](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41315952301)：SQLite backend 全量 1066 项 `OK (skipped=19)`；backend-postgres 使用真实 PostgreSQL 17，system check、迁移检查和迁移应用成功，但全量 1066 项测试为 12 failures、73 errors、21 skipped，job 整体失败。21 个跳过与 SQLite 专属类数量一致，独立 PostgreSQL fail-closed 用例未出现在失败/错误列表；详情见 [PostgreSQL job 日志](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41315952301/job/124875916867)。因此本任务的 SQLite/PostgreSQL 测试分类和拒绝不安全 PostgreSQL 备份边界均有 CI 证据，但不将 PostgreSQL 全量套件标为通过；其余全套失败留待独立排查。
 
 ISS-018 仍为 `BLOCKED`；生产 PostgreSQL+媒体同一恢复点、私有持久卷、独立加密副本、ACL、调度告警及 RPO/RTO 仍待部署演练。本轮不关闭 Issue、不合并 master、不部署。
 ## R1-ISS-008-FUP-01 国家中文名称与别名补齐（2026-10-31）

@@ -39,7 +39,9 @@ python manage.py test crm.tests.test_iss018_backup_recovery --verbosity 2
 
 ### GitHub Actions
 
-本分支最终证据提交推送后，将由仓库现有工作流执行 `backend`、`backend-postgres`、`frontend`。在报告初次提交时结果待运行；稍后以精确 SHA 和 run/job 状态补记。SQLite 配置下的本地测试不冒充 PostgreSQL CI 通过。
+推送后 GitHub Actions [run #41315952301](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41315952301) 检出精确 SHA `1d7a533728ca9b1f036289963d473042e37ec047`。`backend` job 使用默认 SQLite 配置并成功：全量 1066 项，`OK (skipped=19)`，Django 检查和迁移检查也通过。真实 PostgreSQL 17 `backend-postgres` job 的服务容器、Django 检查、迁移检查及迁移应用均成功；全量测试命令运行 1066 项，结果为 12 failures、73 errors、21 skipped，因此该 job 整体失败，不能称 PostgreSQL 全量 CI 通过。相关 job 的[完整日志](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41315952301/job/124875916867)显示 21 项跳过，数量与本文件 SQLite 专属测试类中的 21 项一致；独立 PostgreSQL fail-closed 测试不在失败/错误列表，判定通过。CI 默认使用点号输出，不逐项打印成功用例名称；本地 PostgreSQL 配置隔离运行也复核了 21 项跳过、1 项边界测试通过。全套 PostgreSQL 失败还包含本任务范围外的测试问题，本轮未扩大排查范围。SQLite `backend` CI 与此 PostgreSQL job 的失败结论分别记录，绝不以本地模拟配置代替真实服务结果。
+
+本次 CI 的 `frontend` job 在核对后端验收时仍处于运行中；其状态不纳入本任务的数据库边界验收结论。
 
 ## 变更和限制
 

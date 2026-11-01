@@ -641,6 +641,14 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 1440×1000 与 390×844 浏览器流程验证 SKU 图片上传/缩略图、替换及原图身份，非法图片 HTTP 400 且现有 SKU 图片不变；已接受报价的历史图快照在 SKU 替换后保持 SHA 不变。报价工作台导出的实际 XLSX 可打开，PI 工作表内嵌图片 SHA 与历史快照一致。确认订单仍关联已接受报价，关联报价快照保持不变；`OrderItem` 没有独立图片快照字段，因此没有把此结果表述为订单行另存图片。缺失历史图片 API 返回 404，预览仍可渲染且没有 JS 异常，但可见浏览器默认破图占位。定向 RBAC 测试通过：授权路径可读，SKU-only/客户范围不足的历史图片请求返回 404。Django 9/9、Node 隔离运行器 14/14、锁定依赖 `pip check` 通过；具体测试日志、DB 前后快照、XLSX 和八张桌面/窄屏截图见 [R1-ISS007 UAT 报告](uat-evidence/iss-007-image-snapshot-uat-20261031/README.md)。
 
 ISS-007 保持 `NEEDS_VERIFICATION` 并等待独立审查；跟进附件等其他文件类型及生产反向代理/持久卷或对象存储 ACL 不在本轮结论内，部署验证沿用 ISS-017 边界。本轮未触发 GitHub Actions、未创建 PR、未合并 master、未部署、未启用正式 RBAC、未关闭 Issue。
+
+## R1-ISS018-POSTGRES-CI-BOUNDARY（2026-11-01）
+
+基于 `codex/fix-unified-ci-env-20261101` 的精确 SHA `cd479ea5ad7cd923f5b1798c0f296f960ae46dae` 创建独立 worktree 与 `codex/r1-iss018-postgres-ci-boundary-20261101`。测试代码提交为 `0ea0115d56a73bade82dd4575e44027ec733ace9`。根因是 ISS-018 备份测试类直接构造 SQLite 文件并断言 SQLite 归档内容，和 PostgreSQL fail-closed 用例共处一个类；PostgreSQL CI 将执行不适用的 SQLite 测试。现将整个 SQLite 文件备份/恢复类按 `connection.vendor == "sqlite"` 条件明确跳过，并将 fail-closed 测试拆为独立类，使用不存在的数据库与媒体路径验证拒绝优先于访问/创建备份目录。没有修改 workflow、`backup_recovery.py`、业务代码或迁移。
+
+本机 CPython 3.14.5 / Django 6.0.6 的隔离 SQLite 定向测试：22 项运行、19 通过、3 项因 Windows/POSIX/符号链接平台能力跳过、0 失败；PostgreSQL staging 配置下的无连接分类验证：22 项运行、21 项 SQLite 专属测试明确跳过、1 项 fail-closed 边界测试通过、0 失败。证据见 [R1-ISS018 PostgreSQL/SQLite 边界报告](uat-evidence/r1-iss018-postgres-ci-boundary-20261101/README.md) 及原始日志。本机没有 PostgreSQL 服务或 Docker；该 staging 配置测试没有连接数据库，真实 PostgreSQL 17 结论只以推送后 CI job 为准，尚待补记。
+
+ISS-018 仍为 `BLOCKED`；生产 PostgreSQL+媒体同一恢复点、私有持久卷、独立加密副本、ACL、调度告警及 RPO/RTO 仍待部署演练。本轮不关闭 Issue、不合并 master、不部署。
 ## R1-ISS-008-FUP-01 国家中文名称与别名补齐（2026-10-31）
 
 以指定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 创建独立 worktree 和分支 `codex/r1-iss008-aliases-bd324-20261031`。对照历史成果 `80dc73ae4ae47f9e04969f39b441af206d34306b`，逐文件确认国家注册表、249 项 Django 覆盖测试、国家选择器 Vitest 和既有 Chrome 场景已经存在于新基线且相关差异一致；没有业务代码需要迁移。只扩展 `frontend/browser-tests/iss008-chinese-aliases.spec.js`，增加编辑客户国家、保存 alpha-2 `HK`、刷新后重新打开确认标准显示的回归；测试提交为 `dba4a81c10a464012aa004a539a16378f7517b0e`。

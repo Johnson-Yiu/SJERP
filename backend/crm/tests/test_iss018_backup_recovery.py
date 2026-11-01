@@ -7,9 +7,9 @@ import zipfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest import TestCase
 from unittest.mock import patch
 
+from django.db import connection
 from django.test import SimpleTestCase, override_settings
 
 from crm.services.backup_recovery import (
@@ -22,6 +22,10 @@ from crm.services.backup_recovery import (
 from crm.services.private_media import build_private_media_manifest, compare_private_media_manifest
 
 
+@unittest.skipUnless(
+    connection.vendor == "sqlite",
+    "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+)
 class ISS018BackupRecoveryTests(SimpleTestCase):
     def _make_fixture(self, root):
         root = Path(root)
@@ -321,13 +325,6 @@ class ISS018BackupRecoveryTests(SimpleTestCase):
                     )
             self.assertEqual(json.loads(status.read_text())["status"], "FAILED")
 
-    @override_settings(DATABASES={"default": {"ENGINE": "django.db.backends.postgresql", "NAME": "not-connected"}})
-    def test_postgresql_backup_is_fail_closed_without_bound_snapshot(self):
-        with TemporaryDirectory() as root:
-            database, media = self._make_fixture(root)
-            with self.assertRaisesRegex(BackupRecoveryError, "refuses PostgreSQL"):
-                create_consistent_backup(database=database, media_root=media, output_dir=Path(root) / "backup", quiesced=True)
-
     def test_retention_plan_defaults_to_seven_daily_four_weekly_three_monthly_without_deleting(self):
         with TemporaryDirectory() as root:
             root = Path(root)
@@ -373,3 +370,21 @@ class ISS018BackupRecoveryTests(SimpleTestCase):
                 self.skipTest(f"symlink creation unavailable: {exc}")
             with self.assertRaisesRegex(BackupRecoveryError, "must not be a symlink"):
                 prune_backup_archives(link)
+
+
+class ISS018PostgreSQLBackupBoundaryTests(SimpleTestCase):
+    @override_settings(DATABASES={"default": {"ENGINE": "django.db.backends.postgresql", "NAME": "not-connected"}})
+    def test_postgresql_backup_is_fail_closed_without_bound_snapshot(self):
+        with TemporaryDirectory() as root:
+            root = Path(root)
+            database = root / "must-not-be-read.sqlite3"
+            media = root / "must-not-be-read-media"
+            output = root / "backup"
+            with self.assertRaisesRegex(BackupRecoveryError, "refuses PostgreSQL"):
+                create_consistent_backup(
+                    database=database,
+                    media_root=media,
+                    output_dir=output,
+                    quiesced=True,
+                )
+            self.assertFalse(output.exists())

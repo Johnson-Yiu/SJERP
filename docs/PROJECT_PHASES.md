@@ -10,7 +10,7 @@
 - 锁文件没有 wheel `--hash`，版本 pin 不提供制品字节完整性校验。该风险仍待处理/评估。
 - 继续保留 npm 审计结果：`codex/r1-iss002-security-audit-final-20261101` / `427d2a2c38516a52d460f50e60e0fb635f23a4c2` 的全量审计为 5 项中危、均属开发依赖树；`npm audit --omit=dev` 为 0 项。
 
-ISS-002 保持 `BLOCKED`：解除阻塞需在正常 TLS 可用的隔离环境对同一精确锁文件完成 PyPI provider 审计，评估 Pillow 与所有 pins 的公告/实际路径，并处理或明确接受 wheel hash 风险及 Linux/生产制品边界。ISS-002 的状态未变，其他 Issue 状态也未变。重新核对全台账 124 个唯一 Issue，状态汇总 OPEN 1、BLOCKED 19、NEEDS_VERIFICATION 12、FIXED_PENDING_REVIEW 82、CLOSED 10（合计 124）；46 项业务规则与历史记录保留。本轮只更新两份文档，不修改业务代码或依赖文件，不运行项目测试、不触发 CI、不合并 master、不关闭 Issue。
+ISS-002 保持 `BLOCKED`：解除阻塞需在正常 TLS 可用的隔离环境对同一精确锁文件完成 PyPI provider 审计，评估 Pillow 与所有 pins 的公告/实际路径，并处理或明确接受 wheel hash 风险及 Linux/生产制品边界。ISS-002 的状态未变，其他 Issue 状态也未变。重新核对全台账 124 个唯一 Issue，状态汇总 OPEN 1、BLOCKED 19、NEEDS_VERIFICATION 12、FIXED_PENDING_REVIEW 82、CLOSED 10（合计 124）；46 项业务规则与历史记录保留。本台账任务只更新两份文档，不修改业务代码或依赖文件，不运行项目测试；本分支提交使用 `[skip ci]`，不合并 master、不关闭 Issue。
 
 ## R1-ISS007-LEDGER-EVIDENCE-UPDATE 跟进附件证据更新（2026-11-01）
 

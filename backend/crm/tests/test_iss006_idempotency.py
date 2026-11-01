@@ -121,6 +121,7 @@ class FulfillmentIdempotencyApiTests(TestCase):
         self.assertNotEqual(first.data["id"], second.data["id"])
         self.assertEqual(GoodsReceipt.objects.filter(purchase_item=item).count(), 2)
 
+    @override_settings(AUDIT_LOG_ENABLED=True)
     def test_failed_receipt_does_not_leave_idempotency_or_inventory_side_effects(self):
         purchase, item = self.purchase(quantity="1")
         failed_payload = {"purchase_item": item.pk, "receipt_date": "2026-10-29", "quantity": "2", "unit_cost": "3"}
@@ -131,12 +132,17 @@ class FulfillmentIdempotencyApiTests(TestCase):
         self.assertEqual(GoodsReceipt.objects.count(), 0)
         self.assertEqual(InventoryMovement.objects.filter(source_type="receipt").count(), 0)
 
+        self.assertEqual(InventoryMovement.objects.count(), 0)
+        self.assertEqual(InventoryReservation.objects.count(), 0)
+        self.assertEqual(OperationLog.objects.count(), 0)
+
         recovered = self.post(
             f"/api/purchase-orders/{purchase.pk}/receive/",
             {**failed_payload, "quantity": "1"},
             "iss006-receipt-failed",
         )
         self.assertEqual(recovered.status_code, status.HTTP_201_CREATED, recovered.data)
+        self.assertEqual(OperationLog.objects.filter(action_label="登记采购到货").count(), 1)
 
     def test_shipment_replay_preserves_inventory_and_supplement_side_effects(self):
         order, item = self.order_with_stock(quantity="2")
@@ -244,6 +250,7 @@ class FulfillmentIdempotencyDatabaseTests(TransactionTestCase):
         self.assertEqual(record.operator_id, user.pk)
         self.assertEqual(record.response_payload, results[0][2])
         purchase.refresh_from_db()
+        item.refresh_from_db()
         self.assertEqual(purchase.status, "partial")
         self.assertEqual(item.received_quantity, Decimal("2"))
         self.assertEqual(item.remaining_quantity, Decimal("2"))

@@ -1,0 +1,8 @@
+{
+  "task": "R1-ISS006-POSTGRES-CONCURRENCY-REVIEW-FIX-01",
+  "date": "2026-11-02",
+  "base": "657a65c10e0234345a2c648998f6d283c500d1b4",
+  "command_powershell": "$env:APP_STAGE='development'; $env:DATABASE_URL='postgresql://iss006_static_only@127.0.0.1:5432/iss006_static_only?connect_timeout=2'; $env:DJANGO_SETTINGS_MODULE='config.settings'; $env:PYTHONPATH='backend'; $env:PYTHONDONTWRITEBYTECODE='1'; python -c @'\nimport django\nimport unittest\nfrom unittest.mock import patch\nfrom django.db.backends.base.base import BaseDatabaseWrapper\nwith patch.object(BaseDatabaseWrapper, 'ensure_connection', side_effect=AssertionError('Static discovery must not connect to a database')):\n    django.setup()\n    loader = unittest.TestLoader()\n    suite = loader.loadTestsFromNames(['crm.tests.test_postgres_concurrency', 'crm.tests.test_iss006_idempotency'])\n    if loader.errors:\n        raise AssertionError(loader.errors)\n    print(f'{suite.countTestCases()} tests discovered; 0 executed; database connections forbidden.')\n'@",
+  "exit_code": 0,
+  "output": "24 tests discovered; 0 executed; database connections forbidden.\r\n"
+}

@@ -1,0 +1,8 @@
+{
+  "task": "R1-ISS006-POSTGRES-CONCURRENCY-REVIEW-FIX-01",
+  "date": "2026-11-02",
+  "base": "657a65c10e0234345a2c648998f6d283c500d1b4",
+  "command_powershell": "$env:PYTHONPYCACHEPREFIX=Join-Path ([IO.Path]::GetTempPath()) 'sunjack-iss006-review-fix01-pycache'; $env:APP_STAGE='development'; $env:DATABASE_URL='sqlite:///:memory:'; python --version; python -m pip show Django; python -m py_compile backend/crm/tests/test_postgres_concurrency.py backend/crm/tests/test_iss006_idempotency.py; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; python backend/manage.py check",
+  "exit_code": 0,
+  "output": "Python 3.14.5\r\nName: Django\r\nVersion: 6.0.6\r\nSummary: A high-level Python web framework that encourages rapid development and clean, pragmatic design.\r\nHome-page: https://www.djangoproject.com/\r\nAuthor: \r\nAuthor-email: Django Software Foundation <foundation@djangoproject.com>\r\nLicense-Expression: BSD-3-Clause\r\nLocation: C:\\Python314\\Lib\\site-packages\r\nRequires: asgiref, sqlparse, tzdata\r\nRequired-by: dj-database-url, django-cors-headers, django-simpleui, djangorestframework\r\nSystem check identified no issues (0 silenced).\r\n"
+}

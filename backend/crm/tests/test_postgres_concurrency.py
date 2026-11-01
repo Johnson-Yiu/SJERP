@@ -413,6 +413,11 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
             Decimal("6.00"),
         )
         self.assertEqual(FulfillmentIdempotency.objects.filter(operation="receive", status="succeeded").count(), 1)
+        self.assertEqual(FulfillmentIdempotency.objects.count(), 1)
+        failed_index = next(index for index, result in enumerate(results) if result[0] == 400)
+        self.assertFalse(FulfillmentIdempotency.objects.filter(key=f"pg-partial-receipt-{failed_index}").exists())
+        self.assertEqual(InventoryMovement.objects.filter(sku=sku).count(), 1)
+        self.assertEqual(OperationLog.objects.count(), 1)
         audit = OperationLog.objects.filter(action_label="登记采购到货").get()
         self.assertEqual(audit.operator_id, user.pk)
         self.assertEqual(audit.metadata["receipt_id"], receipts.get().pk)
@@ -479,6 +484,7 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
         reversed_receipt_id = reverse_data["id"]
 
         purchase.refresh_from_db()
+        purchase_item.refresh_from_db()
         order_item.refresh_from_db()
         self.assertEqual(purchase.status, "partial")
         self.assertEqual(GoodsReceipt.objects.filter(purchase_item=purchase_item).count(), 2)
@@ -554,6 +560,7 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
         self.assertIn("已经冲销", rejected["detail"])
         receipt.refresh_from_db()
         purchase.refresh_from_db()
+        purchase_item.refresh_from_db()
         self.assertEqual(purchase.status, "ordered")
         self.assertEqual(purchase_item.received_quantity, Decimal("0"))
         self.assertEqual(GoodsReceipt.objects.filter(purchase_item=purchase_item).count(), 1)
@@ -565,6 +572,8 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
         original = InventoryMovement.objects.get(sku=sku, type="purchase_in", source_type="receipt")
         self.assertEqual(original.pk, receipt.inventory_movement_id)
         self.assertEqual(original.quantity, Decimal("5"))
+        self.assertEqual(InventoryMovement.objects.filter(sku=sku).count(), 2)
+        self.assertEqual(OperationLog.objects.count(), 1)
         self.assertEqual(sku_metrics(sku)["actual_quantity"], Decimal("0"))
         self.assertEqual(sku_metrics(sku)["reserved_quantity"], Decimal("0"))
         self.assertFalse(InventoryReservation.objects.filter(order_item=order_item).exists())
@@ -596,6 +605,7 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
         receipt_ids = {result[1]["id"] for result in results}
         self.assertEqual(len(receipt_ids), 2)
         purchase.refresh_from_db()
+        purchase_item.refresh_from_db()
         self.assertEqual(purchase.status, "partial")
         self.assertEqual(purchase_item.received_quantity, Decimal("6"))
         self.assertEqual(purchase_item.remaining_quantity, Decimal("4"))

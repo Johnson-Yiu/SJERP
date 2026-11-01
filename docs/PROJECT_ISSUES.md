@@ -500,3 +500,7 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 R1-ISS006-POSTGRES-CONCURRENCY-GAPS 从 `7402ad38cf40d1eea0adb076e67021c31be8ac1e` 创建独立 worktree/分支 `codex/r1-iss006-postgres-concurrency-gaps-20261101`。新增同笔收货并发冲销、相同请求键并发收货、同 PO/SKU/明细的合法部分收货及超额竞争测试；既有收货/冲销竞争增加 API 审计及状态快照一致性断言。只改测试和验收记录，没有改生产业务或迁移。旧幂等测试供应商代码夹具同步满足两字符模型约束。
 
 本机无 PostgreSQL/Docker 工具或服务，5432 不可连接。语法编译、Django 静态检查、禁止数据库连接的导入/发现及 diff 检查通过；发现 24 项，执行 0 项，没有用 SQLite 替代。真实并发仍 `BLOCKED`。另静态识别基线 0094 的 CSV 审计 TRUNCATE 防护与 TransactionTestCase flush 可能冲突，须在专用 PostgreSQL 测试库确认并处理测试清理方案；本轮未削弱审计保护。详见[验收报告与原始日志](uat-evidence/r1-iss006-postgres-concurrency-gaps-20261101/README.md)。ISS-006 保持 `NEEDS_VERIFICATION`，Issue 集合/状态统计不变；下一步为 PostgreSQL 前置清理验证、五个场景及履约审计交叉回归，再交独立审查。未触发 CI、未合并 master、未部署。
+
+### ISS-006 并发断言独立审查补修（2026-11-02）
+
+R1-ISS006-POSTGRES-CONCURRENCY-REVIEW-FIX-01 从 `657a65c10e0234345a2c648998f6d283c500d1b4` 在原独立分支补齐四处采购明细 `refresh_from_db()`，保留超额竞争原有刷新；加强失败键、库存及审计无残留检查。仅修改测试和验收/开发记录，无业务、模型、迁移或审计保护变更。SQLite 81 项发现、64 通过、17 个 PostgreSQL 专项跳过，0 失败；语法、system check、静态发现及 diff 检查通过。完整日志见[更新验收报告](uat-evidence/r1-iss006-postgres-concurrency-gaps-20261101/README.md)。本次补修待独立复审；ISS-006 仍 `NEEDS_VERIFICATION`，真实 PostgreSQL 执行为 `BLOCKED`。下一步由 `R1-POSTGRES-TEST-ISOLATION-01` 处理测试清理隔离，再做真实 PostgreSQL 复测；未关闭/新增 Issue，集合和状态统计不变，未触发 CI、合并或部署。

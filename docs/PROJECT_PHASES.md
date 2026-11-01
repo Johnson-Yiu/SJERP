@@ -647,3 +647,9 @@ ISS-007 保持 `NEEDS_VERIFICATION` 并等待独立审查；跟进附件等其�
 
 静态语法、Django check 和禁止连接数据库的测试发现通过（24 项发现、0 项执行）。本机 PostgreSQL/Docker 缺失，真实锁、最终库存/预留/流水/操作日志及事务清理验证保留 `BLOCKED`。静态发现基线 0094 的审计 TRUNCATE 触发器与 TransactionTestCase flush 的潜在冲突，后续须在专用 PostgreSQL 测试库核实；本轮未绕过保护。完整命令和限制见[本轮报告](uat-evidence/r1-iss006-postgres-concurrency-gaps-20261101/README.md)。ISS-006 仍 `NEEDS_VERIFICATION`，未关闭，未触发 CI、未合并 master、未部署。
 
+## R1-ISS006-POSTGRES-CONCURRENCY-REVIEW-FIX-01（2026-11-02）
+
+沿用原独立分支，从 `657a65c10e0234345a2c648998f6d283c500d1b4` 修正四个并发用例的最终采购明细读取：工作线程完成后刷新对象再断言数量。加强失败请求幂等、库存流水和审计无残留检查；独立 PostgreSQL 连接/PID、Barrier、Future 传播机制保留。未改生产代码、模型、迁移或 ISS-052 审计保护。
+
+隔离 SQLite 相关回归 64 通过、17 个 PostgreSQL 专项跳过，0 失败；语法、Django system check、静态导入/发现及 diff 检查通过，详见[原验收报告补修节及完整日志](uat-evidence/r1-iss006-postgres-concurrency-gaps-20261101/README.md)。PostgreSQL 实际执行仍 `BLOCKED`；数据库清理问题留待集成 `R1-POSTGRES-TEST-ISOLATION-01`。本轮断言补修待独立审查，ISS-006 状态仍 `NEEDS_VERIFICATION`。提交含 `[skip ci]`，不触发 CI、不创建 PR、不合并 master、不部署。
+

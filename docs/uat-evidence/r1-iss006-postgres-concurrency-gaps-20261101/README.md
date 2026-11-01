@@ -1,5 +1,7 @@
 # R1-ISS006-POSTGRES-CONCURRENCY-GAPS
 
+2026-11-02 最新补修：R1-ISS006-POSTGRES-CONCURRENCY-REVIEW-FIX-01 已按独立审查增加四处数据库刷新及失败副作用断言；SQLite 64 通过、17 个 PostgreSQL 专项跳过。PostgreSQL 仍 BLOCKED，详见本文末节。以下 2026-11-01 记录保持原验收范围。
+
 - 日期：2026-11-01。
 - 固定基线：`7402ad38cf40d1eea0adb076e67021c31be8ac1e`，来源 `codex/unified-github-ci-post-oct20-20261101`。
 - 分支：`codex/r1-iss006-postgres-concurrency-gaps-20261101`。
@@ -54,3 +56,23 @@ python backend/manage.py test crm.tests.test_postgres_concurrency crm.tests.test
 随后运行履约、冲销、预留和审计交叉回归；核对本报告五个场景未跳过、没有 worker 异常/死锁/teardown 错误，并保留数据库前后快照。当前没有这些实际运行证据。
 
 ISS-006 继续为 `NEEDS_VERIFICATION`，本轮并发执行状态为 `BLOCKED`，等待真实 PostgreSQL 和独立审查。未触发 GitHub Actions、未创建 PR、未合并 master、未部署。提交使用 `[skip ci]`；最终 SHA 以本分支交付记录为准。
+
+## R1-ISS006-POSTGRES-CONCURRENCY-REVIEW-FIX-01（2026-11-02）
+
+固定起点为当前分支 `657a65c10e0234345a2c648998f6d283c500d1b4`，沿用当前独立 worktree。根据用户转述的 ChatGPT 独立审查，在同键并发收货、合法并发部分收货、收货/冲销竞争、同笔收货并发冲销四个用例中，等待 Future 全部结束后显式调用 `PurchaseOrderItem.refresh_from_db()`，再检查 `received_quantity` 和适用的 `remaining_quantity`。超额竞争用例原本已刷新，保持该刷新。
+
+补充核查结论：最终 PO/收货对象已刷新或在并发后重新查询；SKU 库存指标、预留、库存流水、幂等和审计记录均从数据库查询，未使用线程前模型字段/关联缓存判断最终状态。新增并发场景保留独立线程连接、不同 `pg_backend_pid()` 断言、Barrier、statement timeout、连接清理和 Future 异常传播。
+
+超额竞争进一步检查失败键完全不存在、幂等表总数为一（包含 processing 状态），库存流水和审计总数均只包含成功操作；重复冲销检查总计仅两条库存流水（原入库及一次冲销）、一条审计。可在 SQLite 执行的失败收货回归现显式开启审计，断言库存、预留及审计没有残留，随后同键合法重试仅写一条业务审计。
+
+| 本轮验证 | 实际结果 | 原始日志 |
+|---|---|---|
+| 六组履约/幂等/冲销/审计相关测试，独立内存 SQLite、临时 MEDIA_ROOT | 81 项发现，64 通过，17 个 PostgreSQL 专项跳过，0 失败 | [完整 SQLite 日志](logs/review-fix01-sqlite.json) |
+| Python 语法与 Django system check | 通过，system check 为 0 issues | [语法和系统检查](logs/review-fix01-syntax-and-system-check.json) |
+| 指定测试模块静态导入/发现，禁止数据库连接 | 24 项发现、0 项执行；导入没有请求数据库连接 | [静态发现](logs/review-fix01-static-discovery.json) |
+| 最终语法及 git diff --check | 通过 | [最终检查](logs/review-fix01-final-check.json) |
+| 真实 PostgreSQL 并发 | **BLOCKED，未执行** | 本机没有 PostgreSQL，不以 SQLite 跳过项计为通过 |
+
+完整命令保存在各 JSON 日志的 `command_powershell`；`output` 保存未经裁剪的实际输出。SQLite 命令只使用一次性内存数据库和临时媒体目录，没有访问原业务库。故障注入的预期 DatabaseError traceback 后测试为 `ok`；个别 Windows 控制台中文输出乱码按原样保留。运行环境为 Python 3.14.5 / Django 6.0.6，未重新安装 requirements.lock，不宣称锁定依赖验收。
+
+生产业务代码、模型、迁移和 ISS-052 审计保护均未改动。PostgreSQL 测试数据库清理问题明确留待集成 `R1-POSTGRES-TEST-ISOLATION-01` 处理；本轮没有删除/禁用触发器。ISS-006 全局仍为 `NEEDS_VERIFICATION`，真实 PostgreSQL 并发仍 `BLOCKED`；本次断言补修等待独立复审。没有前端/UI 改动，未运行浏览器测试。未触发 CI、创建 PR、合并 master 或部署；提交信息包含 `[skip ci]`。

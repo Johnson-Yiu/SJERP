@@ -1,5 +1,13 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-FIX-UNIFIED-CI-ENVIRONMENT（2026-11-01）
+
+从 `codex/unified-github-ci-post-oct20-20261101` 的 `3093c22c6e0a623499a98d5a602f7b1cb5758e8e` 创建独立 worktree/分支 `codex/fix-unified-ci-env-20261101`。提交 `880385b50e48fb6e9493df97f5f74de48aaffcc5` 为 PostgreSQL 17 Job 在 Django 检查前建立 `$RUNNER_TEMP/sunjack-ci-private-media`、设置私有权限并经 `GITHUB_ENV` 提供绝对 `MEDIA_ROOT`；Frontend Job 加入 Python 3.12、按 `backend/requirements.lock` 安装依赖，并设 `ISOLATED_TEST_PYTHON=python`。该配置保持 settings.py 的已部署环境安全检查不变。首轮发现工作流静态测试仍将锁文件安装次数写死为2；将其改为当前三个 Job 的实际次数后，定向测试通过，提交 `c5152a46b2ac723073e8e2977ae6ff2f6c1277de` 推送并触发最终 CI。
+
+最终 [GitHub Actions #41301959722](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41301959722) 对应 SHA 精确为 `c5152a46b2ac723073e8e2977ae6ff2f6c1277de`：Backend 1066项通过、19项跳过；Backend-PostgreSQL 的真实 PostgreSQL 17 服务、Django system check、迁移检查和迁移通过，但全量1066项结果为14 failures、84 errors、1 skipped；Frontend 171/171 Node测试、Node-only 1/1、Vitest 69文件/677项、完整隔离 Playwright 及生产构建均通过。PostgreSQL 全量失败见该 Job [完整日志](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41301959722/job/124834582078)，主要包括测试库 flush 与 CSV 审计 append-only TRUNCATE 保护冲突、varchar(2) 测试数据错误、staging 下匿名响应码与旧断言不符、ISS-018 PostgreSQL 备份需要绑定快照，以及报价修订并发唯一键错误。本轮仅修 CI 启动环境，不更改业务、安全或测试断言来隐藏这些问题；需独立分析后重新验收。Frontend/Backend 日志分别见 [Frontend](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41301959722/job/124834581887)、[Backend](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41301959722/job/124834582180)。首次 SHA `880385b...` 的一次 CI 仅用于发现上述安装计数断言过时，最终验收以 `c5152a4...` 的运行记录为准。
+
+本轮未改 Issue 状态、业务规则、迁移、依赖或 ISS-006 worktree；Issue及规则统计沿用台账，不因局部 CI 成功关闭任何 Issue。工作流/基础设施测试提交完成后等待独立审查。未合并 master、未创建 PR、未部署。
+
 ## R1-ISS052-AUDIT-HARDENING-02 审计防篡改集成（2026-10-31）
 
 基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`，新分支 `codex/r1-iss052-audit-hardening-20261031`。按来源历史集成 `a6c5b56a00326234681399a3405efa2117198f76`（d08 的父依赖）、用户指定 d08 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b`、HTTP 413 `8cff96af9f1f2e09dcbc0a29f361017ee23ffb75`、审计 `f2b7fd6487459be69be687ccfeab09e7947df995`。实现提交 `ab9ce886094a065766a24b35d9b82c7a7c0fd067`：冲突处理保留有界流式读取、超限 413、正式导入审计和前端重试上下文；新增迁移 0094，在 Batch/RowAudit/PreviewAudit 三张表增加 PostgreSQL TRUNCATE 防护，并在存在任一审计行时拒绝回退审计保护迁移。既有 0091 的 Batch/RowAudit UPDATE/DELETE 与 0093 的 PreviewAudit UPDATE/DELETE 触发器均保留。

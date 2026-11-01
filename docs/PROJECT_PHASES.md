@@ -641,3 +641,9 @@ ISS-007 保持 `NEEDS_VERIFICATION` 并等待独立审查；跟进附件等其�
 
 后端注册表、历史客户数据、alpha-2/alpha-3 对照、报价编号和数据库迁移均未修改；`America` 仍需用户明确选择，未知旧国家文字保留供人工确认。使用隔离内存 SQLite 与合成浏览器 API fixture；未连接生产数据库、未运行 PostgreSQL/全量套件/生产构建或 GitHub CI。ISS-008-FUP-01 更新为 `FIXED_PENDING_REVIEW`，等候独立复核；不关闭 Issue、不合并 master。
 
+## R1-ISS006-POSTGRES-CONCURRENCY-GAPS（2026-11-01）
+
+基于 `7402ad38cf40d1eea0adb076e67021c31be8ac1e`，在独立 worktree/分支 `codex/r1-iss006-postgres-concurrency-gaps-20261101` 补齐 PostgreSQL TransactionTestCase：同收货重复冲销、同幂等键收货、同明细合法部分收货和超额竞争；既有收货/冲销竞争增强 API 审计、认证操作人及状态快照校验。工作线程独立连接/Barrier/超时，新增场景验证 PostgreSQL backend PID 不同。未改业务代码或迁移。
+
+静态语法、Django check 和禁止连接数据库的测试发现通过（24 项发现、0 项执行）。本机 PostgreSQL/Docker 缺失，真实锁、最终库存/预留/流水/操作日志及事务清理验证保留 `BLOCKED`。静态发现基线 0094 的审计 TRUNCATE 触发器与 TransactionTestCase flush 的潜在冲突，后续须在专用 PostgreSQL 测试库核实；本轮未绕过保护。完整命令和限制见[本轮报告](uat-evidence/r1-iss006-postgres-concurrency-gaps-20261101/README.md)。ISS-006 仍 `NEEDS_VERIFICATION`，未关闭，未触发 CI、未合并 master、未部署。
+

@@ -494,3 +494,9 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 在独立分支 `codex/r1-iss006-inventory-reversal-audit-atomicity-20261030` 增加两条 API action 外层事务，仅包住原有冲销和审计调用；未改变冲销规则、权限或响应语义。隔离 SQLite 下 Django system check 通过，相关库存/履约回归 106 项全通过。故障注入覆盖发货冲销审计失败、手工冲销第一条及第二条审计失败，并核对业务记录、库存流水、库存/预留和审计行均回滚；正常路径及重复冲销拒绝保持通过。验收报告与原始日志：[`R1-ISS006 冲销审计原子性`](uat-evidence/r1-iss006-reversal-audit-atomicity-20261030/README.md)。
 
 此子范围记为 `FIXED_PENDING_REVIEW`，等待 ChatGPT 独立审查；不新建重复 Issue，不关闭 ISS-006。ISS-006 全局仍为 `NEEDS_VERIFICATION`，因为其他库存异常路径和 PostgreSQL 并发验收尚未完成。后续验收依据：独立复审确认事务边界和故障注入结果，且 ISS-006 其余待核验范围逐项有证据后再按协议变更全局状态。未新增 Issue ID，既有状态统计不变。
+
+## ISS-006 PostgreSQL 并发覆盖补齐（2026-11-01）
+
+R1-ISS006-POSTGRES-CONCURRENCY-GAPS 从 `7402ad38cf40d1eea0adb076e67021c31be8ac1e` 创建独立 worktree/分支 `codex/r1-iss006-postgres-concurrency-gaps-20261101`。新增同笔收货并发冲销、相同请求键并发收货、同 PO/SKU/明细的合法部分收货及超额竞争测试；既有收货/冲销竞争增加 API 审计及状态快照一致性断言。只改测试和验收记录，没有改生产业务或迁移。旧幂等测试供应商代码夹具同步满足两字符模型约束。
+
+本机无 PostgreSQL/Docker 工具或服务，5432 不可连接。语法编译、Django 静态检查、禁止数据库连接的导入/发现及 diff 检查通过；发现 24 项，执行 0 项，没有用 SQLite 替代。真实并发仍 `BLOCKED`。另静态识别基线 0094 的 CSV 审计 TRUNCATE 防护与 TransactionTestCase flush 可能冲突，须在专用 PostgreSQL 测试库确认并处理测试清理方案；本轮未削弱审计保护。详见[验收报告与原始日志](uat-evidence/r1-iss006-postgres-concurrency-gaps-20261101/README.md)。ISS-006 保持 `NEEDS_VERIFICATION`，Issue 集合/状态统计不变；下一步为 PostgreSQL 前置清理验证、五个场景及履约审计交叉回归，再交独立审查。未触发 CI、未合并 master、未部署。

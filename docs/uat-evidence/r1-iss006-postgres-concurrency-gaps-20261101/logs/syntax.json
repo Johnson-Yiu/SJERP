@@ -1,0 +1,9 @@
+{
+  "task": "R1-ISS006-POSTGRES-CONCURRENCY-GAPS",
+  "date": "2026-11-01",
+  "base": "7402ad38cf40d1eea0adb076e67021c31be8ac1e",
+  "check": "syntax",
+  "command_powershell": "$env:PYTHONPYCACHEPREFIX = Join-Path ([IO.Path]::GetTempPath()) 'sunjack-iss006-pg-gap-pycache-20261101'; python -m py_compile backend/crm/tests/test_postgres_concurrency.py backend/crm/tests/test_iss006_idempotency.py; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; Write-Output 'Syntax compilation: PASS; no test or database connection executed.'",
+  "exit_code": 0,
+  "output": "Syntax compilation: PASS; no test or database connection executed.\r\n"
+}

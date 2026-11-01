@@ -6,17 +6,20 @@ from threading import Barrier
 from unittest.mock import patch
 
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.contrib.auth import get_user_model
 from django.db import close_old_connections, connection, connections
 from django.db.models import Sum
-from django.test import TransactionTestCase
+from django.test import TransactionTestCase, override_settings
 from rest_framework.exceptions import ValidationError
 
 from crm.models import (
     Customer,
     DocumentNumberSequence,
+    FulfillmentIdempotency,
     GoodsReceipt,
     InventoryMovement,
     InventoryReservation,
+    OperationLog,
     Order,
     Product,
     PurchaseOrder,
@@ -33,7 +36,7 @@ from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.document_numbers import allocate_document_no
 from crm.services.purchase_costs import save_costs
 from crm.services.procurement import create_purchase_drafts
-from crm.services.fulfillment import confirm_shipment, record_receipt, reverse_receipt, sku_metrics
+from crm.services.fulfillment import confirm_shipment, record_receipt, sku_metrics
 from rest_framework.test import APIClient
 
 
@@ -53,6 +56,50 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
 
         with ThreadPoolExecutor(max_workers=count) as executor:
             return list(executor.map(worker, range(count)))
+
+    def post_as_user(self, user_id, path, payload, idempotency_key=None):
+        user = get_user_model().objects.get(pk=user_id)
+        client = APIClient()
+        client.force_authenticate(user)
+        headers = {"HTTP_IDEMPOTENCY_KEY": idempotency_key} if idempotency_key else {}
+        response = client.post(path, payload, format="json", **headers)
+        return response.status_code, response.data, response.headers.get("Idempotent-Replay")
+
+    def run_receipt_workers(self, function):
+        def run_in_session(index):
+            with connections["default"].cursor() as cursor:
+                cursor.execute("SELECT pg_backend_pid()")
+                backend_pid = cursor.fetchone()[0]
+            return backend_pid, function(index)
+
+        results = self.run_workers(run_in_session, 2)
+        self.assertEqual(len({pid for pid, _result in results}), 2,
+                         "Receipt workers must use independent PostgreSQL sessions")
+        return [result for _pid, result in results]
+
+    def receipt_fixture(self, prefix, quantity=10):
+        user = get_user_model().objects.create_user(username=f"{prefix}-user")
+        customer = Customer.objects.create(code=f"{prefix}-C", name=f"{prefix} Customer")
+        supplier = Supplier.objects.create(code="GX", name=f"{prefix} Supplier")
+        sku = SKU.objects.create(
+            sku=f"{prefix}-SKU",
+            product=Product.objects.create(code=f"{prefix}-P", name=f"{prefix} Product"),
+        )
+        order = Order.objects.create(
+            order_no=f"SO-{prefix}", customer=customer,
+            order_date=date(2031, 3, 10), status="confirmed",
+        )
+        order_item = order.items.create(sku=sku, quantity=quantity, unit_price=10)
+        purchase = PurchaseOrder.objects.create(
+            purchase_no=f"PO-{prefix}", supplier=supplier, order=order,
+            order_date=date(2031, 3, 10), status="ordered",
+        )
+        purchase_item = purchase.items.create(sku=sku, quantity=quantity, unit_price=2)
+        self.assertEqual(purchase_item.cost_allocations.count(), 1)
+        allocation = purchase_item.cost_allocations.get()
+        self.assertEqual((allocation.target_type, allocation.order_id, allocation.quantity),
+                         ("order", order.pk, Decimal(quantity)))
+        return user, sku, order_item, purchase, purchase_item
 
     def test_supplier_category_through_table_exists(self):
         through = Supplier._meta.get_field("supply_categories").remote_field.through
@@ -310,7 +357,69 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
                 Decimal("5.00"),
             )
 
+    @override_settings(AUDIT_LOG_ENABLED=True)
+    def test_concurrent_partial_receipts_for_same_purchase_item_cannot_overreceive(self):
+        user = get_user_model().objects.create_user(username="pg-partial-receipt-user")
+        customer = Customer.objects.create(code="PG-PARTIAL-C", name="PG Partial Receipt Customer")
+        supplier = Supplier.objects.create(code="GP", name="PG Partial Receipt Supplier")
+        sku = SKU.objects.create(
+            sku="PG-PARTIAL-SKU",
+            product=Product.objects.create(code="PG-PARTIAL-P", name="PG Partial Receipt Product"),
+        )
+        order = Order.objects.create(
+            order_no="SO-PG-PARTIAL", customer=customer,
+            order_date=date(2031, 2, 15), status="confirmed",
+        )
+        order_item = order.items.create(sku=sku, quantity=10, unit_price=10)
+        purchase = PurchaseOrder.objects.create(
+            purchase_no="PO-PG-PARTIAL", supplier=supplier, order=order,
+            order_date=date(2031, 2, 15), status="ordered",
+        )
+        purchase_item = purchase.items.create(sku=sku, quantity=10, unit_price=2)
+        barrier = Barrier(2)
+        path = f"/api/purchase-orders/{purchase.pk}/receive/"
+        payload = {
+            "purchase_item": purchase_item.pk,
+            "receipt_date": "2031-02-15",
+            "quantity": "6",
+            "unit_cost": "2",
+        }
+
+        def submit(index):
+            barrier.wait(timeout=10)
+            return self.post_as_user(user.pk, path, payload, f"pg-partial-receipt-{index}")
+
+        results = self.run_receipt_workers(submit)
+
+        self.assertEqual(sorted(result[0] for result in results), [201, 400], results)
+        rejected = next(result[1] for result in results if result[0] == 400)
+        self.assertIn("超到", rejected["detail"])
+        purchase.refresh_from_db()
+        purchase_item.refresh_from_db()
+        self.assertEqual(purchase.status, "partial")
+        self.assertEqual(purchase_item.received_quantity, Decimal("6.00"))
+        self.assertEqual(purchase_item.remaining_quantity, Decimal("4.00"))
+        receipts = GoodsReceipt.objects.filter(purchase_item=purchase_item, reversal_inventory_movement__isnull=True)
+        self.assertEqual(receipts.count(), 1)
+        self.assertEqual(receipts.get().quantity, Decimal("6.00"))
+        self.assertEqual(
+            InventoryMovement.objects.filter(sku=sku, source_type="receipt", type="purchase_in").count(),
+            1,
+        )
+        self.assertEqual(sku_metrics(sku)["actual_quantity"], Decimal("6.00"))
+        self.assertEqual(sku_metrics(sku)["reserved_quantity"], Decimal("6.00"))
+        self.assertEqual(
+            InventoryReservation.objects.filter(order_item=order_item).aggregate(total=Sum("quantity"))["total"],
+            Decimal("6.00"),
+        )
+        self.assertEqual(FulfillmentIdempotency.objects.filter(operation="receive", status="succeeded").count(), 1)
+        audit = OperationLog.objects.filter(action_label="登记采购到货").get()
+        self.assertEqual(audit.operator_id, user.pk)
+        self.assertEqual(audit.metadata["receipt_id"], receipts.get().pk)
+
+    @override_settings(AUDIT_LOG_ENABLED=True)
     def test_receipt_and_reversal_race_keeps_purchase_stock_and_reservations_consistent(self):
+        user = get_user_model().objects.create_user(username="pg-receipt-reversal-race-user")
         customer = Customer.objects.create(code="PG-PO-RACE-C", name="PO Race Customer")
         supplier = Supplier.objects.create(code="PR", name="PO Race Supplier")
         sku = SKU.objects.create(
@@ -342,21 +451,32 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
         def run_racing_operation(index):
             barrier.wait(timeout=10)
             if index == 0:
-                new_receipt = record_receipt(PurchaseOrderItem.objects.get(pk=purchase_item.pk), {
-                    "receipt_date": date(2031, 3, 2),
-                    "quantity": Decimal("5"),
-                    "unit_cost": Decimal("2"),
-                })
-                return "receipt", new_receipt.pk
-            reversed_receipt = reverse_receipt(
-                GoodsReceipt.objects.get(pk=original_receipt.pk),
-                "PostgreSQL concurrent receipt/reversal regression",
+                response = self.post_as_user(
+                    user.pk,
+                    f"/api/purchase-orders/{purchase.pk}/receive/",
+                    {
+                        "purchase_item": purchase_item.pk,
+                        "receipt_date": "2031-03-02",
+                        "quantity": "5",
+                        "unit_cost": "2",
+                    },
+                    "pg-receipt-reversal-race-receive",
+                )
+                return "receipt", response
+            response = self.post_as_user(
+                user.pk,
+                f"/api/purchase-orders/{purchase.pk}/receipts/{original_receipt.pk}/reverse/",
+                {"reason": "PostgreSQL concurrent receipt/reversal regression"},
             )
-            return "reversal", reversed_receipt.pk
+            return "reversal", response
 
-        operations = dict(self.run_workers(run_racing_operation, 2))
-        new_receipt_id = operations["receipt"]
-        reversed_receipt_id = operations["reversal"]
+        operations = dict(self.run_receipt_workers(run_racing_operation))
+        receive_status, receive_data, _ = operations["receipt"]
+        reverse_status, reverse_data, _ = operations["reversal"]
+        self.assertEqual(receive_status, 201, operations)
+        self.assertEqual(reverse_status, 200, operations)
+        new_receipt_id = receive_data["id"]
+        reversed_receipt_id = reverse_data["id"]
 
         purchase.refresh_from_db()
         order_item.refresh_from_db()
@@ -391,3 +511,106 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
             )["total"],
             Decimal("5.00"),
         )
+        self.assertEqual(OperationLog.objects.filter(action_label="登记采购到货").count(), 1)
+        self.assertEqual(OperationLog.objects.filter(action_label="冲销采购入库").count(), 1)
+        receipt_audit = OperationLog.objects.get(action_label="登记采购到货")
+        reversal_audit = OperationLog.objects.get(action_label="冲销采购入库")
+        self.assertEqual(receipt_audit.operator_id, user.pk)
+        self.assertEqual(reversal_audit.operator_id, user.pk)
+        self.assertEqual(receipt_audit.metadata["receipt_id"], new_receipt_id)
+        self.assertEqual(reversal_audit.metadata["receipt_id"], original_receipt.pk)
+        self.assertEqual(
+            InventoryMovement.objects.filter(sku=sku, type="purchase_in", source_type="receipt").count(), 2,
+        )
+        self.assertEqual(
+            InventoryMovement.objects.filter(sku=sku, type="adjust_out", source_type="reversal").count(), 1,
+        )
+        self.assertEqual(sku_metrics(sku)["reserved_quantity"], Decimal("5"))
+        self.assertIn(
+            (receipt_audit.before_data["status"], receipt_audit.after_data["status"],
+             reversal_audit.before_data["status"], reversal_audit.after_data["status"]),
+            {("partial", "completed", "completed", "partial"),
+             ("ordered", "partial", "partial", "ordered")},
+        )
+
+    @override_settings(AUDIT_LOG_ENABLED=True)
+    def test_two_concurrent_requests_cannot_reverse_the_same_goods_receipt_twice(self):
+        user, sku, order_item, purchase, purchase_item = self.receipt_fixture("PG-DOUBLE-REV", quantity=5)
+        receipt = record_receipt(purchase_item, {
+            "receipt_date": date(2031, 3, 10), "quantity": Decimal("5"), "unit_cost": Decimal("2"),
+        })
+        self.assertEqual(sku_metrics(sku)["reserved_quantity"], Decimal("5"))
+        barrier = Barrier(2)
+        path = f"/api/purchase-orders/{purchase.pk}/receipts/{receipt.pk}/reverse/"
+
+        def reverse_once(_index):
+            barrier.wait(timeout=10)
+            return self.post_as_user(user.pk, path, {"reason": "Concurrent duplicate reversal"})
+
+        results = self.run_receipt_workers(reverse_once)
+
+        self.assertEqual(sorted(result[0] for result in results), [200, 400], results)
+        rejected = next(result[1] for result in results if result[0] == 400)
+        self.assertIn("已经冲销", rejected["detail"])
+        receipt.refresh_from_db()
+        purchase.refresh_from_db()
+        self.assertEqual(purchase.status, "ordered")
+        self.assertEqual(purchase_item.received_quantity, Decimal("0"))
+        self.assertEqual(GoodsReceipt.objects.filter(purchase_item=purchase_item).count(), 1)
+        self.assertEqual(receipt.quantity, Decimal("5"))
+        self.assertIsNotNone(receipt.reversed_at)
+        reversal = InventoryMovement.objects.get(sku=sku, type="adjust_out", source_type="reversal")
+        self.assertEqual(receipt.reversal_inventory_movement_id, reversal.pk)
+        self.assertEqual(reversal.quantity, Decimal("5"))
+        original = InventoryMovement.objects.get(sku=sku, type="purchase_in", source_type="receipt")
+        self.assertEqual(original.pk, receipt.inventory_movement_id)
+        self.assertEqual(original.quantity, Decimal("5"))
+        self.assertEqual(sku_metrics(sku)["actual_quantity"], Decimal("0"))
+        self.assertEqual(sku_metrics(sku)["reserved_quantity"], Decimal("0"))
+        self.assertFalse(InventoryReservation.objects.filter(order_item=order_item).exists())
+        audit = OperationLog.objects.get(action_label="冲销采购入库")
+        self.assertEqual(audit.operator_id, user.pk)
+        self.assertEqual(audit.metadata["receipt_id"], receipt.pk)
+        self.assertEqual(audit.metadata["reversal_inventory_movement_id"], reversal.pk)
+        self.assertEqual((audit.before_data["status"], audit.after_data["status"]), ("completed", "ordered"))
+
+    @override_settings(AUDIT_LOG_ENABLED=True)
+    def test_concurrent_valid_partial_receipts_for_same_item_both_commit(self):
+        user, sku, order_item, purchase, purchase_item = self.receipt_fixture("PG-PARTIAL-OK")
+        barrier = Barrier(2)
+        payload = {
+            "purchase_item": purchase_item.pk, "receipt_date": "2031-03-10",
+            "quantity": "3", "unit_cost": "2",
+        }
+
+        def receive_once(index):
+            barrier.wait(timeout=10)
+            return self.post_as_user(
+                user.pk, f"/api/purchase-orders/{purchase.pk}/receive/", payload,
+                f"pg-valid-partial-{index}",
+            )
+
+        results = self.run_receipt_workers(receive_once)
+
+        self.assertEqual([result[0] for result in results], [201, 201], results)
+        receipt_ids = {result[1]["id"] for result in results}
+        self.assertEqual(len(receipt_ids), 2)
+        purchase.refresh_from_db()
+        self.assertEqual(purchase.status, "partial")
+        self.assertEqual(purchase_item.received_quantity, Decimal("6"))
+        self.assertEqual(purchase_item.remaining_quantity, Decimal("4"))
+        self.assertEqual(GoodsReceipt.objects.filter(purchase_item=purchase_item).count(), 2)
+        self.assertEqual(
+            InventoryMovement.objects.filter(sku=sku, source_type="receipt", type="purchase_in").count(), 2,
+        )
+        self.assertEqual(sku_metrics(sku)["actual_quantity"], Decimal("6"))
+        self.assertEqual(sku_metrics(sku)["reserved_quantity"], Decimal("6"))
+        self.assertEqual(
+            InventoryReservation.objects.filter(order_item=order_item).aggregate(total=Sum("quantity"))["total"],
+            Decimal("6"),
+        )
+        self.assertEqual(FulfillmentIdempotency.objects.filter(operation="receive", status="succeeded").count(), 2)
+        audits = OperationLog.objects.filter(action_label="登记采购到货")
+        self.assertEqual(audits.count(), 2)
+        self.assertEqual({audit.metadata["receipt_id"] for audit in audits}, receipt_ids)
+        self.assertEqual({audit.operator_id for audit in audits}, {user.pk})

@@ -1,0 +1,9 @@
+{
+  "task": "R1-ISS006-POSTGRES-CONCURRENCY-GAPS",
+  "date": "2026-11-01",
+  "base": "7402ad38cf40d1eea0adb076e67021c31be8ac1e",
+  "check": "diff-check",
+  "command_powershell": "git diff --check; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; Write-Output 'git diff --check: PASS'; git diff --stat",
+  "exit_code": 0,
+  "output": "git diff --check: PASS\r\n backend/crm/tests/test_iss006_idempotency.py   |  85 ++++++++-\n backend/crm/tests/test_postgres_concurrency.py | 251 +++++++++++++++++++++++--\n 2 files changed, 319 insertions(+), 17 deletions(-)\n"
+}

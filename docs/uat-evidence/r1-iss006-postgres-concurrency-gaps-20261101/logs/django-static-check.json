@@ -1,0 +1,9 @@
+{
+  "task": "R1-ISS006-POSTGRES-CONCURRENCY-GAPS",
+  "date": "2026-11-01",
+  "base": "7402ad38cf40d1eea0adb076e67021c31be8ac1e",
+  "check": "django-static-check",
+  "command_powershell": "$env:DATABASE_URL = 'postgresql://iss006_static_only@127.0.0.1:5432/iss006_static_only?connect_timeout=2'; $env:APP_STAGE = 'development'; python backend/manage.py check",
+  "exit_code": 0,
+  "output": "System check identified no issues (0 silenced).\r\n"
+}

@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+from unittest import TestCase as PlainTestCase
 from unittest import skipUnless
 
 from django.contrib.auth import get_user_model
@@ -5,7 +7,32 @@ from django.core.management import call_command
 from django.db import DatabaseError, connection, transaction
 from django.test import TransactionTestCase
 
+from crm.test_runner import DevelopmentAccessTestRunner
 from crm.models import CSVImportBatch, CSVImportPreviewAudit, CSVImportRowAudit
+
+
+class CsvAuditTestRunnerScopeTests(PlainTestCase):
+    def test_cleanup_exception_is_limited_to_generated_postgres_test_database(self):
+        runner = DevelopmentAccessTestRunner()
+        runner._configured_database_names = {"default": "sunjack_ci"}
+        runner._test_database_names = {"default": "test_sunjack_ci"}
+        runner._generated_test_databases = {"default": True}
+        database = SimpleNamespace(
+            alias="default",
+            vendor="postgresql",
+            settings_dict={"NAME": "test_sunjack_ci"},
+        )
+
+        self.assertTrue(runner._is_generated_postgres_test_database(database))
+
+        database.settings_dict["NAME"] = "sunjack_ci"
+        self.assertFalse(runner._is_generated_postgres_test_database(database))
+        database.settings_dict["NAME"] = "test_sunjack_ci"
+        database.vendor = "sqlite"
+        self.assertFalse(runner._is_generated_postgres_test_database(database))
+        database.vendor = "postgresql"
+        runner._generated_test_databases["default"] = False
+        self.assertFalse(runner._is_generated_postgres_test_database(database))
 
 
 @skipUnless(connection.vendor == "postgresql", "requires an isolated PostgreSQL test database")

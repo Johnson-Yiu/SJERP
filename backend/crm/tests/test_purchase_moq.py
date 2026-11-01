@@ -19,7 +19,7 @@ class PurchaseMOQTests(TestCase):
             first_name="ISS-022 操作员",
         )
         self.client.force_authenticate(self.user)
-        self.supplier = Supplier.objects.create(code="ISS022-S", name="ISS-022 供应商")
+        self.supplier = Supplier.objects.create(code="M2", name="ISS-022 供应商")
         self.product = Product.objects.create(code="ISS022-P", name="ISS-022 产品")
         self.sku = SKU.objects.create(product=self.product, sku="ISS022-SKU", unit="pcs")
         self.source = SupplierSKU.objects.create(

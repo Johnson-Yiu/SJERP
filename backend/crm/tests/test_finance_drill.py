@@ -127,7 +127,7 @@ class FinanceDashboardDrillTests(TestCase):
         self.assertEqual(detail["rows"][0]["amount"], Decimal("37"))
 
     def test_payable_drill_links_to_the_existing_purchase_order(self):
-        supplier = Supplier.objects.create(code="FIN-DRILL-S", name="明细供应商")
+        supplier = Supplier.objects.create(code="FD", name="明细供应商")
         purchase = PurchaseOrder.objects.create(
             purchase_no="FIN-DRILL-PO", supplier=supplier, order_date=date(2026, 9, 4),
             currency="USD", exchange_rate=Decimal("3"), status="ordered",

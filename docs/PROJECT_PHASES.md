@@ -1,5 +1,11 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-POSTGRES-SUPPLIER-FIXTURES-01（2026-11-01）
+
+基于 `codex/fix-unified-ci-env-20261101` / `cd479ea5ad7cd923f5b1798c0f296f960ae46dae` 创建独立工作树 `codex/r1-postgres-supplier-fixtures-20261101`。测试代码提交 `e8e5d1199067a339d9cf6719310c9b32294b44f1` 仅将六个目标测试文件中 9 个不符合 `Supplier.code(max_length=2, unique=True)` 的夹具值改为两字符代码；所有十个目标供应商夹具的代码长度均为 2 且彼此唯一。未改模型、迁移、生产逻辑、业务断言或四个明确排除的 ISS-006 测试文件。
+
+锁定依赖临时环境中，隔离内存 SQLite 定向测试 57/57 通过，完整迁移和 `git diff --check` 通过。本机 PostgreSQL 17 不可用：`127.0.0.1:5432` 未开放，定向测试在测试库创建前连接超时，记录为 `BLOCKED`，不得以 SQLite 结果代替。推送后的 GitHub PostgreSQL 17 job 需另行核对；详细映射及原始日志见[验收报告](uat-evidence/r1-postgres-supplier-fixtures-20261101/README.md)。Issue/业务规则状态未改，计数不变；未触碰 ISS-006 任务工作树。
+
 ## R1-FIX-UNIFIED-CI-ENVIRONMENT（2026-11-01）
 
 从 `codex/unified-github-ci-post-oct20-20261101` 的 `3093c22c6e0a623499a98d5a602f7b1cb5758e8e` 创建独立 worktree/分支 `codex/fix-unified-ci-env-20261101`。提交 `880385b50e48fb6e9493df97f5f74de48aaffcc5` 为 PostgreSQL 17 Job 在 Django 检查前建立 `$RUNNER_TEMP/sunjack-ci-private-media`、设置私有权限并经 `GITHUB_ENV` 提供绝对 `MEDIA_ROOT`；Frontend Job 加入 Python 3.12、按 `backend/requirements.lock` 安装依赖，并设 `ISOLATED_TEST_PYTHON=python`。该配置保持 settings.py 的已部署环境安全检查不变。首轮发现工作流静态测试仍将锁文件安装次数写死为2；将其改为当前三个 Job 的实际次数后，定向测试通过，提交 `c5152a46b2ac723073e8e2977ae6ff2f6c1277de` 推送并触发最终 CI。

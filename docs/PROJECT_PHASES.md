@@ -1,5 +1,17 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-ISS002-LEDGER-REFRESH 最新依赖审计证据同步（2026-11-01）
+
+基于 `codex/r1-iss007-ledger-evidence-update-20261101` / `8d80fc0c082a3792a27d60677f9c55c86288c2fe` 创建独立分支 `codex/r1-iss002-ledger-refresh-20261101`。已通过远端 ref 查询核对审计证据分支 `codex/r1-iss002-python-audit-complete-20261101` HEAD 为 `709b8d4c6fa0769173498693586b8dc286b54122`；报告及原始日志位于 `docs/uat-evidence/r1-iss002-python-audit-complete-20261101/`。
+
+- 在独立临时环境安装 `pip-audit 2.10.1`，审计对象为 `backend/requirements.lock` 中 15 个精确 pin（9 项直接依赖、其余为锁定传递依赖）。未安装或升级项目依赖；审计前后锁文件及直接依赖清单哈希一致。
+- OSV provider 成功返回 15 项，全部 `vulns: []`。这只说明本次 OSV 未返回公告，不代表所有数据源或整体漏洞为零。
+- PyPI provider 对首项 `asgiref==3.13.0` 请求失败，原始错误为 `SSLEOFError: UNEXPECTED_EOF_WHILE_READING`，退出码 1、JSON 为空。PyPI 查询未完成；包括 Pillow 13.0.0 在内的 15 项 PyPI 状态未知。未关闭 TLS 校验、未重试以制造结果。
+- 锁文件没有 wheel `--hash`，版本 pin 不提供制品字节完整性校验。该风险仍待处理/评估。
+- 继续保留 npm 审计结果：`codex/r1-iss002-security-audit-final-20261101` / `427d2a2c38516a52d460f50e60e0fb635f23a4c2` 的全量审计为 5 项中危、均属开发依赖树；`npm audit --omit=dev` 为 0 项。
+
+ISS-002 保持 `BLOCKED`：解除阻塞需在正常 TLS 可用的隔离环境对同一精确锁文件完成 PyPI provider 审计，评估 Pillow 与所有 pins 的公告/实际路径，并处理或明确接受 wheel hash 风险及 Linux/生产制品边界。ISS-002 的状态未变，其他 Issue 状态也未变。重新核对全台账 124 个唯一 Issue，状态汇总 OPEN 1、BLOCKED 19、NEEDS_VERIFICATION 12、FIXED_PENDING_REVIEW 82、CLOSED 10（合计 124）；46 项业务规则与历史记录保留。本轮只更新两份文档，不修改业务代码或依赖文件，不运行项目测试、不触发 CI、不合并 master、不关闭 Issue。
+
 ## R1-ISS007-LEDGER-EVIDENCE-UPDATE 跟进附件证据更新（2026-11-01）
 
 以基线分支 `codex/r1-ledger-sync-20261101` 为依据，新建独立文档分支 `codex/r1-iss007-ledger-evidence-update-20261101`。本轮核对 GitHub 远端 `codex/r1-iss007-followup-files-uat-20261031`，其 HEAD 为 `e3b1eeb6cff69b7b77bc35c83661df052e028b41`；报告 `docs/uat-evidence/r1-iss007-followup-files-uat-20261031/README.md`、原始浏览器日志、前后数据库快照和截图均在该提交树中存在。这里只记录来源验收证据，不复制截图或声称在本轮重新执行浏览器测试。

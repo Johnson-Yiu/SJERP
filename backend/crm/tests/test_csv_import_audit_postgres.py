@@ -63,7 +63,7 @@ class CsvImportAuditPostgresAppendOnlyTests(TransactionTestCase):
             self.assertEqual(CSVImportRowAudit.objects.count(), 0)
             self.assertEqual(CSVImportPreviewAudit.objects.count(), 0)
             self._assert_raw_statement_is_blocked(
-                f"TRUNCATE TABLE {connection.ops.quote_name(CSVImportBatch._meta.db_table)}"
+                f"TRUNCATE TABLE {connection.ops.quote_name(CSVImportBatch._meta.db_table)} CASCADE"
             )
 
             # Reusing the same synthetic identity after cleanup must not leave
@@ -94,5 +94,5 @@ class CsvImportAuditPostgresAppendOnlyTests(TransactionTestCase):
                     f"DELETE FROM {table} WHERE id = %s", [record_id]
                 )
             with self.subTest(table=model._meta.db_table, operation="TRUNCATE"):
-                self._assert_raw_statement_is_blocked(f"TRUNCATE TABLE {table}")
+                self._assert_raw_statement_is_blocked(f"TRUNCATE TABLE {table} CASCADE")
             self.assertEqual(model.objects.filter(pk=record_id).count(), 1)

@@ -1,5 +1,11 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-ISS018-POSTGRES-BOUNDARY-01（2026-11-02）
+
+基于 `codex/r1-postgres-test-isolation-20261101` @ `e280e5d140b5255bd51f5d0be428f36e87336139` 创建独立 worktree/分支 `codex/r1-iss018-postgres-boundary-20261102`。从已核实的 ISS-018 来源分支移植测试隔离提交 `0ea0115d56a73bade82dd4575e44027ec733ace9`（`ac0d5a22ebecead70cf479fdee09d2f40335600d` 是其后续报告提交）。只改 `test_iss018_backup_recovery.py`：SQLite 文件备份/恢复类按数据库 backend skip；PostgreSQL fail-closed 检查独立运行并验证缺少绑定快照时拒绝、没有创建输出目录。生产 `backup_recovery.py`、迁移及安全保护未修改。
+
+本地隔离 SQLite 定向测试 22 项：19 通过、3 项 Windows/POSIX 条件跳过；PostgreSQL 配置模拟 22 项：21 项明确跳过、1 项边界测试通过（未连接数据库）。Django check、迁移差异检查通过。测试文件 blob `a186710b670adfe54fc6e3dfb70362c62634f1a3` 与此前真实 PostgreSQL 17 CI #41315952301 执行版本一致；该旧 CI 的目标边界测试通过，但 PostgreSQL 全量 1066 项仍有12 failures、73 errors、21 skipped，不能记为整套通过。提交代码SHA `0c326ba7e7bfb3c4022f57e9f5680ce1cffbfc93`；新分支提交均使用 `[skip ci]`，没有启动新CI。ISS-018 保持 `BLOCKED` / `DEPLOYMENT_VERIFICATION_PENDING`。报告：[R1-ISS018-POSTGRES-BOUNDARY-01](uat-evidence/r1-iss018-postgres-boundary-20261102/README.md)。未创建 PR、未合并、未部署、未关闭 Issue。
+
 ## R1-POSTGRES-TEST-ISOLATION-01（2026-11-01）
 
 基于 `codex/fix-unified-ci-env-20261101` @ `cd479ea5ad7cd923f5b1798c0f296f960ae46dae` 创建独立分支 `codex/r1-postgres-test-isolation-20261101`。修复 Django `TransactionTestCase` teardown 通过 `flush` 触发 PostgreSQL `TRUNCATE ... CASCADE`、与 CSV 审计 append-only guard 冲突的问题。自定义测试 runner 仅对默认生成的隔离 PostgreSQL 测试库，在同一事务内暂时关闭/恢复三张审计表 TRUNCATE guard；迁移0094、生产保护、原始 SQL 安全测试均保留。没有修改 ISS-006 业务文件/专属测试。代码提交 `34985cc8db0837e6257352ae39553c48e529091b` 对应 [GitHub Actions #41316871320](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41316871320)：Backend 1068项通过、20项跳过；PostgreSQL 17 检查与迁移通过，完整测试1068项中10 failures、50 errors、1 skipped；目标清理/审计回归未列在失败清单中，但不能据此称全量 PostgreSQL 通过。Frontend Node单测、Node-only、Vitest通过；截至记录时隔离 Playwright 仍运行、生产构建未开始，不能标记通过。当前报告：[R1-POSTGRES-TEST-ISOLATION-01](uat-evidence/r1-postgres-test-isolation-20261101/README.md)。未合并 master、未创建 PR、未部署。

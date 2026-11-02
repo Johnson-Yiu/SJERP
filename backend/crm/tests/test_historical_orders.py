@@ -1,5 +1,6 @@
 from datetime import date
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -7,7 +8,9 @@ from django.test import TestCase, override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from crm.authentication import SessionAuthenticationWithChallenge
 from crm.models import AccessRole, Customer, EmployeeProfile, GoodsReceipt, InventoryMovement, InventoryReservation, Order, OrderItem, OrganizationUnit, PaymentPlan, Position, Product, ProductCategory, PurchaseCostAllocation, PurchaseOrder, Shipment, SKU, Supplier, Transaction, RolePermission
+from crm.reporting import historical_analysis
 from crm.services.finance import record_transaction
 
 
@@ -202,10 +205,11 @@ class HistoricalAnalysisPermissionTests(TestCase):
         self.assertEqual(response.data["purchase"]["by_supplier"], [])
 
     def test_anonymous_and_unprivileged_history_analysis_are_denied(self):
-        self.assertEqual(APIClient().get("/api/reports/historical/").status_code, status.HTTP_403_FORBIDDEN)
-        self.client.force_authenticate(self.user)
-        RolePermission.objects.filter(role=self.role, module__in=("orders", "purchases")).update(can_view=False)
-        self.assertEqual(self.client.get("/api/reports/historical/").status_code, status.HTTP_403_FORBIDDEN)
+        with patch.object(historical_analysis.cls, "authentication_classes", [SessionAuthenticationWithChallenge]):
+            self.assertEqual(APIClient().get("/api/reports/historical/").status_code, status.HTTP_401_UNAUTHORIZED)
+            self.client.force_authenticate(self.user)
+            RolePermission.objects.filter(role=self.role, module__in=("orders", "purchases")).update(can_view=False)
+            self.assertEqual(self.client.get("/api/reports/historical/").status_code, status.HTTP_403_FORBIDDEN)
 
     def test_history_analysis_does_not_require_general_reports_permission(self):
         self.client.force_authenticate(self.user)

@@ -15,7 +15,9 @@ from django.test.utils import override_settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APIClient
+from rest_framework.views import APIView
 
+from crm.authentication import SessionAuthenticationWithChallenge
 from crm.models import Contact, Customer, InventoryMovement, InventoryReservation, Order, OrderItem, PaymentPlan, Product, Quote, QuoteItem, QuoteRevisionCounter, Shipment, ShipmentItem, SKU, Supplier, SupplierSKU, Transaction
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.quote_snapshots import create_quote_items
@@ -1312,6 +1314,7 @@ class QuoteExportTests(TestCase):
                 self.assertTrue(response.content.startswith(b"PK"))
                 self.assertEqual(xlsx_cell_text(response.content, "L9"), revision.quote_no)
 
+    @patch.object(APIView, "authentication_classes", [SessionAuthenticationWithChallenge])
     @override_settings(DEBUG=False)
     def test_export_requires_authentication_and_allows_authenticated_operator_in_production(self):
         anonymous = APIClient()
@@ -1319,7 +1322,7 @@ class QuoteExportTests(TestCase):
         denied = anonymous.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
         allowed = self.client.get(f"/api/quotes/{self.multi_item_quote.id}/export/")
 
-        self.assertEqual(denied.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(denied.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(allowed.status_code, status.HTTP_200_OK)
 
     @override_settings(APP_STAGE="development", DEBUG=True, DEVELOPMENT_SUPERADMIN=True, RBAC_ENFORCEMENT=False)

@@ -449,7 +449,7 @@ class BusinessFlowTests(APITestCase):
         response = self.client.post(f"/api/access-roles/{superadmin.id}/permission-matrix/", {"permissions": []}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @override_settings(APP_STAGE="development", DEBUG=True, DEVELOPMENT_SUPERADMIN=True, RBAC_ENFORCEMENT=False)
+    @override_settings(APP_STAGE="development", DEBUG=True, DEVELOPMENT_SUPERADMIN=True, RBAC_ENFORCEMENT=False, DEFAULT_OPERATOR_NAME="Johnson")
     def test_follow_up_subject_optional_and_current_operator_available(self):
         operator = self.client.get("/api/session/current-operator/")
         self.assertEqual(operator.status_code, status.HTTP_200_OK)

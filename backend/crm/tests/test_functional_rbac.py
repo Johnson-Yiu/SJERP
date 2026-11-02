@@ -4,15 +4,20 @@ import csv
 import io
 import tempfile
 from types import SimpleNamespace
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from rest_framework.request import Request
 from rest_framework.test import APIClient, APIRequestFactory, force_authenticate
+from rest_framework.views import APIView
 
+from crm.authentication import SessionAuthenticationWithChallenge
+from crm.file_access import protected_media
 from crm.models import AccessRole, Customer, EmployeeProfile, FollowUp, FollowUpAttachment, HSCode, Order, OrderItem, OrganizationUnit, Position, Product, ProductCategory, ProductCertificate, ProductParameter, Quote, QuoteItem, RolePermission, SKU, Supplier, SupplierCapability
 from crm.permissions import ModuleActionPermission, action_for_request, effective_permission_matrix
+from crm.views import organization_overview
 
 
 RBAC_SETTINGS = {
@@ -49,13 +54,15 @@ class FunctionalRBACApiTests(TestCase):
     def auth(self, user):
         self.client.force_authenticate(user=user)
 
+    @patch.object(APIView, "authentication_classes", [SessionAuthenticationWithChallenge])
     def test_anonymous_business_api_is_denied(self):
-        self.assertEqual(self.client.get("/api/customers/").status_code, 403)
+        self.assertEqual(self.client.get("/api/customers/").status_code, 401)
 
+    @patch.object(APIView, "authentication_classes", [SessionAuthenticationWithChallenge])
     @override_settings(APP_STAGE="production", DEBUG=False, DEVELOPMENT_SUPERADMIN=False, RBAC_ENFORCEMENT=False)
     def test_unconfigured_non_development_environment_does_not_trust_anonymous(self):
         anonymous = APIClient()
-        self.assertEqual(anonymous.get("/api/customers/").status_code, 403)
+        self.assertEqual(anonymous.get("/api/customers/").status_code, 401)
         operator = anonymous.get("/api/session/current-operator/")
         self.assertFalse(operator.data["has_all_permissions"])
         self.assertFalse(operator.data["permissions"]["customers"]["view"])
@@ -246,6 +253,7 @@ class FunctionalRBACApiTests(TestCase):
         self.assertEqual(response.status_code, 403, response.data)
         self.assertFalse(Customer.objects.filter(name="Nested contact boundary").exists())
 
+    @patch.object(protected_media.cls, "authentication_classes", [SessionAuthenticationWithChallenge])
     def test_media_url_requires_record_module_and_customer_scope(self):
         media_root = tempfile.TemporaryDirectory()
         self.addClassCleanup(media_root.cleanup)
@@ -263,7 +271,7 @@ class FunctionalRBACApiTests(TestCase):
             url = f"/api/media/{attachment.file.name}"
             self.grant(self.role, "followups", can_view=True)
 
-            self.assertEqual(self.client.get(url).status_code, 403)
+            self.assertEqual(self.client.get(url).status_code, 401)
             self.auth(owner)
             allowed = self.client.get(url)
             self.assertEqual(allowed.status_code, 200)
@@ -367,6 +375,7 @@ class FunctionalRBACApiTests(TestCase):
             self.assertEqual(self.client.get(f"/api/media/{snapshot_name}").status_code, 404)
             self.assertEqual(self.client.get(f"/media/{snapshot_name}").status_code, 404)
 
+    @patch.object(protected_media.cls, "authentication_classes", [SessionAuthenticationWithChallenge])
     def test_product_certificate_files_use_private_media_and_reject_external_urls(self):
         media_root = tempfile.TemporaryDirectory()
         self.addClassCleanup(media_root.cleanup)
@@ -383,7 +392,7 @@ class FunctionalRBACApiTests(TestCase):
             private_url = f"/api/media/{relative_path}"
 
             anonymous = APIClient()
-            self.assertEqual(anonymous.get(private_url).status_code, 403)
+            self.assertEqual(anonymous.get(private_url).status_code, 401)
             self.assertEqual(anonymous.get(f"/media/{relative_path}").status_code, 404)
 
             owner = self.make_user(username="certificate-reader", roles=[self.role])
@@ -547,10 +556,11 @@ class FunctionalRBACApiTests(TestCase):
         # organization-unit CRUD endpoints to an administrator without the module grant.
         self.assertEqual(self.client.get("/api/organization-units/").status_code, 403)
 
+    @patch.object(organization_overview.cls, "authentication_classes", [SessionAuthenticationWithChallenge])
     def test_ordinary_user_without_organization_view_cannot_read_overview(self):
         self.auth(self.make_user(username="rbac-no-organization-view", roles=[self.role]))
         self.assertEqual(self.client.get("/api/organization/overview/").status_code, 403)
-        self.assertEqual(APIClient().get("/api/organization/overview/").status_code, 403)
+        self.assertEqual(APIClient().get("/api/organization/overview/").status_code, 401)
 
     def test_current_operator_returns_complete_matrix_contract(self):
         self.grant(self.role, "customers", can_view=True)

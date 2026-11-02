@@ -1,11 +1,14 @@
 from datetime import date
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
+from rest_framework.views import APIView
 
+from crm.authentication import SessionAuthenticationWithChallenge
 from crm.models import (
     AccessRole,
     Customer,
@@ -705,6 +708,7 @@ class QuantityAdjustmentRBACApiTests(TestCase):
         self.assertIn("before", history.data[0]["lines"][0])
         self.assertIn("after_metrics", history.data[0]["impact"])
 
+    @patch.object(APIView, "authentication_classes", [SessionAuthenticationWithChallenge])
     def test_view_only_and_out_of_scope_users_cannot_submit_or_read_foreign_order(self):
         self.auth(self.user_c)
         own = self.client.get(f"/api/orders/{self.c_order.id}/quantity-adjustments/")
@@ -719,7 +723,7 @@ class QuantityAdjustmentRBACApiTests(TestCase):
         self.assertEqual(self.client.get(f"/api/orders/{self.order.id}/workbench/").status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(f"/api/orders/{self.order.id}/quantity-adjustments/preview/", {}).status_code, status.HTTP_404_NOT_FOUND)
         self.client.logout()
-        self.assertEqual(self.client.get(f"/api/orders/{self.order.id}/quantity-adjustments/").status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(self.client.get(f"/api/orders/{self.order.id}/quantity-adjustments/").status_code, status.HTTP_401_UNAUTHORIZED)
 
     @override_settings(AUDIT_LOG_ENABLED=True)
     def test_redacted_quantity_adjustment_audit_does_not_leak_financial_snapshot(self):

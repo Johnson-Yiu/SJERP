@@ -1,5 +1,11 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-POSTGRES-AUTH-CONTRACT-FIX-02（2026-11-02）
+
+在 `codex/r1-postgres-integration-validation-20261102` 上修复唯一 PostgreSQL CI 回归断言，代码 SHA `7ab9913e03f1bde341158237e51aeebf77a86abc`。测试只对 `historical_analysis.cls` 设置 `SessionAuthenticationWithChallenge`；匿名请求要求 401，认证用户无订单分析权限继续要求 403。生产认证、业务逻辑、迁移与数据均未改。
+
+本地 CPython 3.14.5 + 隔离 SQLite：历史订单 9/9，全量 Backend 1098 项、33 跳过、0 失败；Django check、迁移检查、diff check 通过。本机无 PostgreSQL 服务。GitHub run [#41432846693](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41432846693) 精确绑定代码 SHA：Backend SUCCESS（1098、30 跳过）、Backend PostgreSQL 17 SUCCESS（1098、21 跳过，目标认证测试 ok）、Frontend SUCCESS（unit/Node/Vitest/隔离 Playwright/build 全通过）。完整 job 日志 ZIP 与 SQLite 原始日志见[FIX-02 验收记录](uat-evidence/r1-postgres-integration-validation-20261102/README.md)。前一 run #41424016735 的旧 SHA 失败不被抹除，作为已修复前的历史证据保留。无 Issue 状态改变；ISS-006、ISS-018、ISS-052 等既有验收缺口保持。未创建 PR、未合并 master、未部署、未启用正式 RBAC、未连接业务数据库。
+
 ## R1-POSTGRES-INTEGRATION-VALIDATION-01（2026-11-02）
 
 从固定基线 `9f0e59ea4e31778e0944bdac8cff858d0cfd9fa2` 建立独立分支 `codex/r1-postgres-integration-validation-20261102`，按来源 SHA 精确整合四项已审查测试变更：Supplier 夹具 `644f6a908a755f9d2293dba74c609471f86fcd5d`、ISS-018 边界 `0c326ba7e7bfb3c4022f57e9f5680ce1cffbfc93`、CSV 审计 TRUNCATE `1aba37600cadbdf88aebe787d742310bac1a333f`、RBAC 认证契约 `3a79e1a68988aa2099159d9f393f22766280f68f`。B/C 仅应用指定提交补丁，未合并其父分支历史；A/D 修改全部保留。对重叠的 `test_order_quantity_adjustments.py` 逐项确认 Supplier 两字符编码与匿名 401 / 已认证未授权 403 断言同时存在。

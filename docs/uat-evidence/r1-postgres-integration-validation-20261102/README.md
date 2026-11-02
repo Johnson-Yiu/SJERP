@@ -5,6 +5,24 @@
 基线：`9f0e59ea4e31778e0944bdac8cff858d0cfd9fa2`
 集成代码提交：`e6b40cadb04c54ef3376307daba19f78276a913d`
 
+## 后续修复：R1-POSTGRES-AUTH-CONTRACT-FIX-02（2026-11-02）
+
+在上述集成分支继续修复唯一 PostgreSQL CI 失败。代码提交 `7ab9913e03f1bde341158237e51aeebf77a86abc` 只改 `backend/crm/tests/test_historical_orders.py`：为 `historical_analysis` 函数视图实际包装类 `historical_analysis.cls` 临时设置 `SessionAuthenticationWithChallenge`；匿名请求断言 401，已认证但没有订单/采购查看权限仍断言 403。未改生产认证/权限逻辑、业务代码、迁移或数据库。
+
+本地 CPython 3.14.5，Django 使用隔离内存 SQLite 与每次新建并在结束后清理的临时 `MEDIA_ROOT`。历史订单专项 `python manage.py test crm.tests.test_historical_orders --verbosity 2 --noinput`：9/9 通过；Backend 全量 `python manage.py test --verbosity 1 --noinput`：1098 项、33 跳过、0 失败（612.031 秒）。`manage.py check`、`makemigrations --check --dry-run` 和 `git diff --check` 均通过。本机没有 PostgreSQL/Docker，故未声称本地 PostgreSQL 测试。
+
+GitHub Actions run [#41432846693](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41432846693) 的 `head_sha` 精确为代码提交 `7ab9913e03f1bde341158237e51aeebf77a86abc`，三项全部 SUCCESS：
+
+| Job | 结果 |
+|---|---|
+| [Backend](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41432846693/job/125235426965) | SUCCESS；1098 项、30 跳过、0 失败；Django check 与迁移检查通过 |
+| [Backend PostgreSQL 17](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41432846693/job/125235426604) | SUCCESS；1098 项、21 跳过、0 失败；目标 `test_anonymous_and_unprivileged_history_analysis_are_denied ... ok`，证明 401/403 两段均通过；PostgreSQL 专属测试正常执行 |
+| [Frontend](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41432846693/job/125235427160) | SUCCESS；unit、Node-only、Vitest、隔离 Playwright 和生产构建全部通过；job 用时 17分54秒 |
+
+原始日志索引：[FIX-02 五份本地/CI 日志原样归档](logs/r1-postgres-auth-contract-fix-02-logs.zip)，SHA-256：`5F2D1459D3269A815A09CFC0B9D407930FB821628EE9FDC9C0D3775E4B7FF311`。归档内含 `historical-orders-sqlite-auth-contract02.log`、`backend-sqlite-full-auth-contract02.log`、`backend-auth-contract02.log`、`backend-postgres-auth-contract02.log`、`frontend-auth-contract02.log`；文本文件按 GitHub/本地命令原始输出保留，避免为通过空白检查而改写日志。
+
+上一次 run `#41424016735` 对旧代码提交 `e6b40cadb04c54ef3376307daba19f78276a913d` 的 PostgreSQL 失败仍作为历史事实保留；本次新 SHA 的三个 job 已全部通过。无 Issue 状态变更；ISS-006、ISS-018、ISS-052 等既有验收缺口不因该测试修复而改变。未创建 PR、未合并 master、未部署、未启用正式 RBAC、未连接实际业务数据库。
+
 ## 范围与来源
 
 | 项目 | 指定来源 SHA | 集成方式 |

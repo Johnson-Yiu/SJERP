@@ -1,5 +1,11 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-CSV-AUDIT-TRUNCATE-TEST-FIX-01（2026-11-02）
+
+基线 `e2e7e017a5a2675af44b47fc93650b3837971755`，独立分支 `codex/r1-csv-audit-truncate-test-20261102`。提交 `1aba37600cadbdf88aebe787d742310bac1a333f` 仅调整 `backend/crm/tests/test_csv_import_audit_postgres.py`：各审计表的 TRUNCATE 用例改为 `TRUNCATE ... CASCADE`，先断言 0094 对应触发器准确安装在该表，再验证错误语义为 append-only，且每次失败后三张表的原记录均存在。迁移 0094、生产逻辑和 Issue 状态均未改。
+
+锁定 Python 依赖临时环境下，SQLite 内存库创建并成功应用全部迁移至 0095；目标模块发现 2 项，但两项按 PostgreSQL vendor 条件跳过，不能作为触发器运行通过。当前机器无 PostgreSQL 客户端/服务、容器运行时、WSL 发行版，`127.0.0.1:5432` 不可连接。因此 PostgreSQL 专项验收明确为 `BLOCKED`，仍需在隔离 PostgreSQL 上运行并核实三张表，详见[验收报告](uat-evidence/r1-csv-audit-truncate-test-20261102/README.md)及[测试日志](uat-evidence/r1-csv-audit-truncate-test-20261102/logs/test-results.md)。ISS-052 保持 `FIXED_PENDING_REVIEW`，不关闭；未修改 0094、未连接真实业务数据库、未触发 CI、未创建 PR、未合并 master。
+
 ## R1-POSTGRES-SUPPLIER-FIXTURES-01（2026-11-01）
 
 基于 `codex/fix-unified-ci-env-20261101` / `cd479ea5ad7cd923f5b1798c0f296f960ae46dae` 创建独立工作树 `codex/r1-postgres-supplier-fixtures-20261101`。测试代码提交 `e8e5d1199067a339d9cf6719310c9b32294b44f1` 仅将六个目标测试文件中 9 个不符合 `Supplier.code(max_length=2, unique=True)` 的夹具值改为两字符代码；所有十个目标供应商夹具的代码长度均为 2 且彼此唯一。未改模型、迁移、生产逻辑、业务断言或四个明确排除的 ISS-006 测试文件。

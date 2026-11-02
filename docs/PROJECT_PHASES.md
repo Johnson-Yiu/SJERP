@@ -659,3 +659,9 @@ ISS-007 保持 `NEEDS_VERIFICATION` 并等待独立审查；跟进附件等其�
 
 锁定依赖 16 项精确匹配；相关 SQLite 综合回归 113 通过、24 个 PostgreSQL 专项跳过（总 137），0 失败；语法、Django system check、迁移检查及禁止数据库连接的静态导入发现通过。完整报告和原始日志见[本轮验收](uat-evidence/r1-postgres-test-isolation-20261102/README.md)。本机无 PostgreSQL，真实 SQL/DDL 回滚/锁和清理后的保护均未实测，仍为 `BLOCKED`，不能声称彻底解决冲突；下一步在专用本地 PostgreSQL 验证本轮六项生命周期回归及原 ISS-006/052 专项，再作全量 PostgreSQL 回归与独立审查。ISS-006/052 状态和历史保留，不关闭 Issue；提交含 `[skip ci]`，未触发 CI、创建 PR、合并或部署。
 
+## R1-POSTGRES-AUTH-CONTRACT-FIX-01（2026-11-02）
+
+从 `codex/r1-postgres-test-isolation-20261102` / 基线 `9f0e59ea4e31778e0944bdac8cff858d0cfd9fa2` 建立独立分支 `codex/r1-postgres-auth-contract-20261102`。测试提交 `3a79e1a68988aa2099159d9f393f22766280f68f` 只修正认证契约测试：五个 `test_functional_rbac.py` 匿名访问断言、一个订单数量调整匿名请求和一个报价导出匿名请求由 403 改为 401；已认证无业务权限断言仍为 403。因 DRF 导入时缓存视图认证类，相关 SQLite 测试方法仅在测试期间将 viewset/函数包装视图指向 `SessionAuthenticationWithChallenge`，不修改生产认证、权限逻辑。跟进操作员用例显式 override `DEFAULT_OPERATOR_NAME="Johnson"`，生产默认值不变。
+
+隔离内存 SQLite 下四组相关后端测试 131/131 通过；`manage.py check` 通过，`makemigrations --check --dry-run` 显示无迁移变化。另以 staging 配置导入检查确认数据库后端设置为 PostgreSQL、认证类为 `SessionAuthenticationWithChallenge`，没有连接数据库。本机无 PostgreSQL/Docker 客户端或本地服务，实际 PostgreSQL 测试仍 `BLOCKED`；配置检查和 SQLite 测试不替代 PostgreSQL 验收。报告见[认证契约验收记录](uat-evidence/r1-postgres-auth-contract-fix-20261102/README.md)。ISS-051 保持 `BLOCKED`；未修改 Issue 状态、未触发 CI、未创建 PR、未合并 master、未部署。
+

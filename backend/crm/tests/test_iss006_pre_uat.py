@@ -14,7 +14,7 @@ class Iss006FulfillmentRequestIdempotencyTests(TestCase):
         self.client = APIClient()
         self.day = date(2026, 10, 28)
         self.customer = Customer.objects.create(code="ISS006-TEST-CUSTOMER", name="ISS-006 测试客户")
-        self.supplier = Supplier.objects.create(code="ISS006-TEST-SUPPLIER", name="ISS-006 测试供应商")
+        self.supplier = Supplier.objects.create(code="I6", name="ISS-006 测试供应商")
         product = Product.objects.create(code="ISS006-TEST-PRODUCT", name="ISS-006 测试产品")
         self.receipt_sku = SKU.objects.create(product=product, sku="ISS006-TEST-RECEIPT", unit="pcs")
         self.shipment_sku = SKU.objects.create(product=product, sku="ISS006-TEST-SHIPMENT", unit="pcs")

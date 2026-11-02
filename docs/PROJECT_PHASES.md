@@ -659,3 +659,9 @@ ISS-007 保持 `NEEDS_VERIFICATION` 并等待独立审查；跟进附件等其�
 
 锁定依赖 16 项精确匹配；相关 SQLite 综合回归 113 通过、24 个 PostgreSQL 专项跳过（总 137），0 失败；语法、Django system check、迁移检查及禁止数据库连接的静态导入发现通过。完整报告和原始日志见[本轮验收](uat-evidence/r1-postgres-test-isolation-20261102/README.md)。本机无 PostgreSQL，真实 SQL/DDL 回滚/锁和清理后的保护均未实测，仍为 `BLOCKED`，不能声称彻底解决冲突；下一步在专用本地 PostgreSQL 验证本轮六项生命周期回归及原 ISS-006/052 专项，再作全量 PostgreSQL 回归与独立审查。ISS-006/052 状态和历史保留，不关闭 Issue；提交含 `[skip ci]`，未触发 CI、创建 PR、合并或部署。
 
+## R1-POSTGRES-SUPPLIER-FIXTURES-FULL-01（2026-11-02）
+
+基于 `codex/r1-postgres-test-isolation-20261102` 的 `9f0e59ea4e31778e0944bdac8cff858d0cfd9fa2` 创建独立分支 `codex/r1-postgres-supplier-fixtures-full-20261102`。移植此前已审查的六文件测试夹具修复（代码变更来源 `e8e5d1199067a339d9cf6719310c9b32294b44f1`；用户提供的 `e2e7e017` 为后续文档提交），并将 `test_fulfillment_audit_atomicity.py`、`test_iss006_pre_uat.py` 中的供应商编码缩至两字符。全面搜索另发现 ISS-006 浏览器 seeder 生成超长编码，已改为散列起点加数据库查重的两字符未占用编码选择，不截断、不复用。生产 `Supplier.code(max_length=2, unique=True)`、业务逻辑和数据库迁移均未修改。
+
+AST 审计 backend 测试文件及浏览器 seeder 共 92 个 Supplier 创建/获取调用点，另检查一个前端 Supplier API mock：0 个超长静态编码，3 个动态表达式逐一核验为两字符且符合场景唯一性。隔离 SQLite 定向回归 67/67 通过；`sku-management.spec.js` Vitest 9/9 通过；Django system check、AST 语法检查及 `git diff --check` 通过。Vitest 本机现存版本 4.1.11，仓库锁定 4.1.12，本轮未重装依赖。完整范围、命令和验收结果见[独立报告](uat-evidence/r1-postgres-supplier-fixtures-full-20261102/README.md)。未运行 PostgreSQL/CI；不将 SQLite 结果表述为 PostgreSQL 验收。Issue 全局状态不变，未创建 PR、未合并 master、未部署。
+

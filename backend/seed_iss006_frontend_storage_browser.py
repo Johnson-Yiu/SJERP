@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 from datetime import date
@@ -19,7 +20,23 @@ evidence_dir.mkdir(parents=True, exist_ok=True)
 run_suffix = os.environ["ISOLATED_TEST_RUN_ID"].replace("-", "")[:8].upper()
 today = date.today()
 customer = Customer.objects.create(code=f"I6C{run_suffix}", name=f"ISS-006 Chrome Buyer {run_suffix}")
-supplier = Supplier.objects.create(code=f"I6S{run_suffix}", name=f"ISS-006 Chrome Supplier {run_suffix}")
+supplier_code_alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+supplier_code_space = len(supplier_code_alphabet) ** 2
+supplier_code_start = (
+    int.from_bytes(hashlib.sha256(run_suffix.encode("ascii")).digest()[:4], "big")
+    % supplier_code_space
+)
+for supplier_code_offset in range(supplier_code_space):
+    supplier_code_value = (supplier_code_start + supplier_code_offset) % supplier_code_space
+    supplier_code = (
+        supplier_code_alphabet[supplier_code_value // len(supplier_code_alphabet)]
+        + supplier_code_alphabet[supplier_code_value % len(supplier_code_alphabet)]
+    )
+    if not Supplier.objects.filter(code=supplier_code).exists():
+        break
+else:
+    raise RuntimeError("No unused two-character Supplier.code remains for isolated ISS-006 browser fixtures")
+supplier = Supplier.objects.create(code=supplier_code, name=f"ISS-006 Chrome Supplier {run_suffix}")
 
 case_names = ["property-getter", "get-item", "set-item-recovery", "remove-item-recovery", "lost-response"]
 fixture = {"run_id": os.environ["ISOLATED_TEST_RUN_ID"], "database": str(settings.DATABASES["default"]["NAME"]), "receive": {}, "ship": {}}

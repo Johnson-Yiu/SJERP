@@ -69,7 +69,7 @@ class SharedPurchaseCostPermissionTests(TestCase):
         self.order_b = Order.objects.create(order_no="ISS039-SO-B", customer=self.customer_b, order_date=date(2026, 10, 20), status="confirmed", currency="CNY", exchange_rate=1)
         self.order_a.items.create(sku=self.sku, quantity=3, unit_price=4000)
         self.order_b.items.create(sku=self.sku, quantity=2, unit_price=5000)
-        self.supplier = Supplier.objects.create(code="ISS039-S", name="ISS039 供应商")
+        self.supplier = Supplier.objects.create(code="C9", name="ISS039 供应商")
         self.purchase = PurchaseOrder.objects.create(purchase_no="ISS039-PO", supplier=self.supplier, order=None, order_date=date(2026, 10, 20), status="ordered", currency="CNY", exchange_rate=1)
         self.item = self.purchase.items.create(sku=self.sku, quantity=10, unit_price=1000)
         self.url = f"/api/purchase-orders/{self.purchase.pk}/cost-allocation/"

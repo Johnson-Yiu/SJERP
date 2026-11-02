@@ -172,7 +172,7 @@ class HistoricalAnalysisPermissionTests(TestCase):
         for module in ("orders", "purchases"):
             RolePermission.objects.create(role=self.role, module=module, can_view=True)
         self.customer = Customer.objects.create(code="HIST-P-C", name="受限历史客户", country="中国")
-        self.supplier = Supplier.objects.create(code="HIST-P-S", name="受限历史供应商", country="德国")
+        self.supplier = Supplier.objects.create(code="HP", name="受限历史供应商", country="德国")
         category = ProductCategory.objects.create(name="历史分类")
         product = Product.objects.create(code="HIST-P-P", name="历史产品", category=category)
         self.sku = SKU.objects.create(sku="HIST-P-SKU", product=product, display_name_cn="历史产品 SKU")

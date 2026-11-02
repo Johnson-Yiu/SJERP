@@ -50,7 +50,6 @@ jobs:
       DEVELOPMENT_SUPERADMIN: 'false'
       RBAC_ENFORCEMENT: 'true'
       AUDIT_LOG_ENABLED: 'true'
-      MEDIA_ROOT: ${{ runner.temp }}/sunjack-postgres-media
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -61,7 +60,11 @@ jobs:
       - name: Install backend dependencies
         run: pip install -r backend/requirements.lock
       - name: Create isolated private media directory
-        run: install -d -m 700 "$MEDIA_ROOT"
+        env:
+          MEDIA_ROOT: ${{ runner.temp }}/sunjack-postgres-media
+        run: |
+          install -d -m 700 "$MEDIA_ROOT"
+          echo "MEDIA_ROOT=$MEDIA_ROOT" >> "$GITHUB_ENV"
       - name: Django system check
         working-directory: backend
         run: python manage.py check

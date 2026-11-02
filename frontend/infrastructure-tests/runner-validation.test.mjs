@@ -318,9 +318,13 @@ test('browser CI invokes the isolated suite and keeps run evidence under an isol
   assert.match(postgres, /APP_STAGE: staging/)
   assert.match(postgres, /DEVELOPMENT_SUPERADMIN: 'false'/)
   assert.match(postgres, /RBAC_ENFORCEMENT: 'true'/)
+  assert.doesNotMatch(postgres.slice(0, postgres.indexOf('    steps:')), /\$\{\{ runner\./, 'runner context belongs in a step, not job-level env')
   assert.match(postgres, /MEDIA_ROOT: \$\{\{ runner\.temp \}\}\/sunjack-postgres-media/)
-  assert.ok(postgres.includes('run: install -d -m 700 "$MEDIA_ROOT"'))
-  assert.ok(postgres.indexOf('run: install -d -m 700 "$MEDIA_ROOT"') < postgres.indexOf('run: python manage.py check'))
+  const mediaPreparation = postgres.slice(postgres.indexOf('- name: Create isolated private media directory'), postgres.indexOf('- name: Django system check'))
+  assert.match(mediaPreparation, /env:\s+MEDIA_ROOT: \$\{\{ runner\.temp \}\}\/sunjack-postgres-media/)
+  assert.ok(mediaPreparation.includes('install -d -m 700 "$MEDIA_ROOT"'))
+  assert.ok(mediaPreparation.includes('echo "MEDIA_ROOT=$MEDIA_ROOT" >> "$GITHUB_ENV"'))
+  assert.ok(postgres.indexOf('install -d -m 700 "$MEDIA_ROOT"') < postgres.indexOf('run: python manage.py check'))
   for (const name of ['backend', 'backend-postgres']) {
     const testCommand = name === 'backend-postgres' ? 'python manage.py test --verbosity 2' : 'python manage.py test'
     assert.ok(jobs[name].split(/\r?\n/).some(line => line.trim() === `run: ${testCommand}`), `${name} runs the unfiltered full test suite`)

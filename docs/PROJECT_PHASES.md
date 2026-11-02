@@ -8,6 +8,8 @@
 
 集成前后确认 `backend/crm/test_runner.py`、`backend/crm/postgres_test_cleanup.py` 和 `.github/workflows/ci.yml` 与基线一致；未修改生产业务逻辑、数据库迁移、认证/审计保护。GitHub CI 结果以本节后续补充的精确集成 SHA 运行链接和原始日志为准。ISS-006、ISS-018、ISS-052 等现有未关闭状态与部署/独立复审缺口保留；未创建 PR、未合并 master、未部署、未启用正式 RBAC、未连接实际业务数据库。
 
+GitHub Actions run [#41424016735](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41424016735) 已对集成代码提交 `e6b40cadb04c54ef3376307daba19f78276a913d` 完成验收：Backend SUCCESS（全量1098项），Frontend SUCCESS（Node 171/171、Node-only 1/1、Vitest 69文件、Playwright主套件216项与隔离套件25项、build成功），Backend PostgreSQL 17 FAILURE（1098项、21跳过、1失败）。唯一失败为未合入本次认证来源文件清单的 `test_historical_orders.py:205` 仍对匿名请求断言403，实际401；该差异属于历史测试预期未随认证契约更新，不是数据库/runner故障或生产业务缺陷。已认证无权限403断言位于同一失败用例后半段，因首断言失败未执行；其他专用401/403权限契约测试通过。没有在失败后继续修改或重跑，暂停进一步集成等待独立审查。完整日志和建议的最小补修见[报告](uat-evidence/r1-postgres-integration-validation-20261102/README.md)。ISS-006/018/052 状态及部署验收缺口保持不变。
+
 ## R1-ISS052-AUDIT-HARDENING-02 审计防篡改集成（2026-10-31）
 
 基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`，新分支 `codex/r1-iss052-audit-hardening-20261031`。按来源历史集成 `a6c5b56a00326234681399a3405efa2117198f76`（d08 的父依赖）、用户指定 d08 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b`、HTTP 413 `8cff96af9f1f2e09dcbc0a29f361017ee23ffb75`、审计 `f2b7fd6487459be69be687ccfeab09e7947df995`。实现提交 `ab9ce886094a065766a24b35d9b82c7a7c0fd067`：冲突处理保留有界流式读取、超限 413、正式导入审计和前端重试上下文；新增迁移 0094，在 Batch/RowAudit/PreviewAudit 三张表增加 PostgreSQL TRUNCATE 防护，并在存在任一审计行时拒绝回退审计保护迁移。既有 0091 的 Batch/RowAudit UPDATE/DELETE 与 0093 的 PreviewAudit UPDATE/DELETE 触发器均保留。

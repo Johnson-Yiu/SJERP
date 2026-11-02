@@ -206,10 +206,13 @@ class HistoricalAnalysisPermissionTests(TestCase):
 
     def test_anonymous_and_unprivileged_history_analysis_are_denied(self):
         with patch.object(historical_analysis.cls, "authentication_classes", [SessionAuthenticationWithChallenge]):
-            self.assertEqual(APIClient().get("/api/reports/historical/").status_code, status.HTTP_401_UNAUTHORIZED)
+            anonymous_response = APIClient().get("/api/reports/historical/")
+            self.assertEqual(anonymous_response.status_code, status.HTTP_401_UNAUTHORIZED, anonymous_response.data)
+            self.assertEqual(anonymous_response["WWW-Authenticate"], "Session")
             self.client.force_authenticate(self.user)
             RolePermission.objects.filter(role=self.role, module__in=("orders", "purchases")).update(can_view=False)
-            self.assertEqual(self.client.get("/api/reports/historical/").status_code, status.HTTP_403_FORBIDDEN)
+            unprivileged_response = self.client.get("/api/reports/historical/")
+            self.assertEqual(unprivileged_response.status_code, status.HTTP_403_FORBIDDEN, unprivileged_response.data)
 
     def test_history_analysis_does_not_require_general_reports_permission(self):
         self.client.force_authenticate(self.user)

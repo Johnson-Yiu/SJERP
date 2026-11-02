@@ -1,5 +1,13 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-POSTGRES-INTEGRATION-VALIDATION-01（2026-11-02）
+
+从固定基线 `9f0e59ea4e31778e0944bdac8cff858d0cfd9fa2` 建立独立分支 `codex/r1-postgres-integration-validation-20261102`，按来源 SHA 精确整合四项已审查测试变更：Supplier 夹具 `644f6a908a755f9d2293dba74c609471f86fcd5d`、ISS-018 边界 `0c326ba7e7bfb3c4022f57e9f5680ce1cffbfc93`、CSV 审计 TRUNCATE `1aba37600cadbdf88aebe787d742310bac1a333f`、RBAC 认证契约 `3a79e1a68988aa2099159d9f393f22766280f68f`。B/C 仅应用指定提交补丁，未合并其父分支历史；A/D 修改全部保留。对重叠的 `test_order_quantity_adjustments.py` 逐项确认 Supplier 两字符编码与匿名 401 / 已认证未授权 403 断言同时存在。
+
+本地检查使用隔离内存 SQLite、临时 MEDIA_ROOT、CPython 3.14.5（本机无 Python 3.12 与 PostgreSQL 服务）：Django check、迁移检查、后端全量 1098 项（33 跳过）、Supplier 67 项、ISS-018 22 项（3 个 Windows 平台条件跳过）、RBAC/认证组 130 项均通过；CSV PostgreSQL 专项 2 项在 SQLite 下正确跳过。前端依赖按锁文件 `npm ci` 安装，Node 171 项、Supplier SKU Vitest 9 项和生产构建通过。测试统计、命令和环境边界见[集成验收报告](uat-evidence/r1-postgres-integration-validation-20261102/README.md)。
+
+集成前后确认 `backend/crm/test_runner.py`、`backend/crm/postgres_test_cleanup.py` 和 `.github/workflows/ci.yml` 与基线一致；未修改生产业务逻辑、数据库迁移、认证/审计保护。GitHub CI 结果以本节后续补充的精确集成 SHA 运行链接和原始日志为准。ISS-006、ISS-018、ISS-052 等现有未关闭状态与部署/独立复审缺口保留；未创建 PR、未合并 master、未部署、未启用正式 RBAC、未连接实际业务数据库。
+
 ## R1-ISS052-AUDIT-HARDENING-02 审计防篡改集成（2026-10-31）
 
 基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`，新分支 `codex/r1-iss052-audit-hardening-20261031`。按来源历史集成 `a6c5b56a00326234681399a3405efa2117198f76`（d08 的父依赖）、用户指定 d08 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b`、HTTP 413 `8cff96af9f1f2e09dcbc0a29f361017ee23ffb75`、审计 `f2b7fd6487459be69be687ccfeab09e7947df995`。实现提交 `ab9ce886094a065766a24b35d9b82c7a7c0fd067`：冲突处理保留有界流式读取、超限 413、正式导入审计和前端重试上下文；新增迁移 0094，在 Batch/RowAudit/PreviewAudit 三张表增加 PostgreSQL TRUNCATE 防护，并在存在任一审计行时拒绝回退审计保护迁移。既有 0091 的 Batch/RowAudit UPDATE/DELETE 与 0093 的 PreviewAudit UPDATE/DELETE 触发器均保留。
@@ -658,4 +666,10 @@ ISS-007 保持 `NEEDS_VERIFICATION` 并等待独立审查；跟进附件等其�
 从指定 `2e25b743884123d7ae5599c89586988a12791bf4` 创建独立 worktree/分支 `codex/r1-postgres-test-isolation-20261102`。完成锁定版 Django 6.0.9 flush/建库/销毁机制审查，新增仅供 runner 新建随机临时 PostgreSQL 库使用的 teardown 清理机制；独占锁覆盖指定触发器临时启停和恢复，事务失败回滚，普通 flush 和测试正文不启用。追加建库/销毁归属、连接覆盖拒绝、失败配置恢复及剩余库显式报告；多别名/镜像/并行/已有库复用等未验证组合明确拒绝。未修改生产逻辑、模型、迁移、配置或工作流，0094 审计保护保持原样。
 
 锁定依赖 16 项精确匹配；相关 SQLite 综合回归 113 通过、24 个 PostgreSQL 专项跳过（总 137），0 失败；语法、Django system check、迁移检查及禁止数据库连接的静态导入发现通过。完整报告和原始日志见[本轮验收](uat-evidence/r1-postgres-test-isolation-20261102/README.md)。本机无 PostgreSQL，真实 SQL/DDL 回滚/锁和清理后的保护均未实测，仍为 `BLOCKED`，不能声称彻底解决冲突；下一步在专用本地 PostgreSQL 验证本轮六项生命周期回归及原 ISS-006/052 专项，再作全量 PostgreSQL 回归与独立审查。ISS-006/052 状态和历史保留，不关闭 Issue；提交含 `[skip ci]`，未触发 CI、创建 PR、合并或部署。
+
+## R1-POSTGRES-SUPPLIER-FIXTURES-FULL-01（2026-11-02）
+
+基于 `codex/r1-postgres-test-isolation-20261102` 的 `9f0e59ea4e31778e0944bdac8cff858d0cfd9fa2` 创建独立分支 `codex/r1-postgres-supplier-fixtures-full-20261102`。移植此前已审查的六文件测试夹具修复（代码变更来源 `e8e5d1199067a339d9cf6719310c9b32294b44f1`；用户提供的 `e2e7e017` 为后续文档提交），并将 `test_fulfillment_audit_atomicity.py`、`test_iss006_pre_uat.py` 中的供应商编码缩至两字符。全面搜索另发现 ISS-006 浏览器 seeder 生成超长编码，已改为散列起点加数据库查重的两字符未占用编码选择，不截断、不复用。生产 `Supplier.code(max_length=2, unique=True)`、业务逻辑和数据库迁移均未修改。
+
+AST 审计 backend 测试文件及浏览器 seeder 共 92 个 Supplier 创建/获取调用点，另检查一个前端 Supplier API mock：0 个超长静态编码，3 个动态表达式逐一核验为两字符且符合场景唯一性。隔离 SQLite 定向回归 67/67 通过；`sku-management.spec.js` Vitest 9/9 通过；Django system check、AST 语法检查及 `git diff --check` 通过。Vitest 本机现存版本 4.1.11，仓库锁定 4.1.12，本轮未重装依赖。完整范围、命令和验收结果见[独立报告](uat-evidence/r1-postgres-supplier-fixtures-full-20261102/README.md)。未运行 PostgreSQL/CI；不将 SQLite 结果表述为 PostgreSQL 验收。Issue 全局状态不变，未创建 PR、未合并 master、未部署。
 

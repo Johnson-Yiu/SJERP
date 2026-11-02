@@ -71,7 +71,7 @@ it('bulk status writes only selected SKU and reports API failure', async () => {
 })
 beforeEach(() => {
   vi.clearAllMocks()
-  api.get.mockImplementation((url, config) => Promise.resolve({ data: config?.params?.eligible ? [{ id: 2, name: '供应商甲', code: 'SUP-1', category_match: true, supply_category_names: [] }] : url.includes('supplier-candidate-pool') ? { rows: [], parameter_options: [{ key: '1:voltage', name: '电压', values: ['24'] }], sku_total: 1, with_candidates: 0, coverage_rate: 0 } : url.includes('supplier-candidates') ? { candidates: [], overrides: [] } : structuredClone(state) }))
+  api.get.mockImplementation((url, config) => Promise.resolve({ data: config?.params?.eligible ? [{ id: 2, name: '供应商甲', code: 'SM', category_match: true, supply_category_names: [] }] : url.includes('supplier-candidate-pool') ? { rows: [], parameter_options: [{ key: '1:voltage', name: '电压', values: ['24'] }], sku_total: 1, with_candidates: 0, coverage_rate: 0 } : url.includes('supplier-candidates') ? { candidates: [], overrides: [] } : structuredClone(state) }))
   listAll.mockImplementation(url => Promise.resolve(url === '/skus/' ? [{ ...structuredClone(state.skus[0]), active: true, unit: 'm', stock_quantity: 12, cost_price: '2', default_price: '4', currency: 'USD' }, { id: 3, sku: 'OLD', display_name_cn: '旧灯带', active: false }] : url.includes('capabilities') ? [] : [{ id: 2, name: '供应商甲' }]))
   api.post.mockImplementation(url => Promise.resolve({ data: url.endsWith('analyze/') ? { stale: false, missing: [], groups: [], current_count: 1, result_count: 1, new_count: 0 } : structuredClone(draft) }))
   api.patch.mockImplementation((url, data) => Promise.resolve({ data: { ...data, updated_at: 'saved' } }))

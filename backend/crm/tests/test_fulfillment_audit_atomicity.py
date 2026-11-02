@@ -37,7 +37,7 @@ class FulfillmentAuditAtomicityTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(self.operator)
         self.customer = Customer.objects.create(code="ISS006-AUDIT-C", name="ISS-006 Audit Customer")
-        self.supplier = Supplier.objects.create(code="ISS006-AUDIT-S", name="ISS-006 Audit Supplier")
+        self.supplier = Supplier.objects.create(code="FA", name="ISS-006 Audit Supplier")
         product = Product.objects.create(code="ISS006-AUDIT-P", name="ISS-006 Audit Product")
         self.sku = SKU.objects.create(product=product, sku="ISS006-AUDIT-SKU")
         self.event_date = date(2026, 10, 30)

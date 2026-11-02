@@ -48,7 +48,7 @@ class Unified039037040IntegrationTests(TestCase):
             unit="pcs",
         )
         self.supplier = Supplier.objects.create(
-            code="INT-039-037-040-S",
+            code="I4",
             name="集成验收供应商（原始名称）",
             address="供应商历史地址",
         )

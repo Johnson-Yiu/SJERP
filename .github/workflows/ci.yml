@@ -50,6 +50,7 @@ jobs:
       DEVELOPMENT_SUPERADMIN: 'false'
       RBAC_ENFORCEMENT: 'true'
       AUDIT_LOG_ENABLED: 'true'
+      MEDIA_ROOT: ${{ runner.temp }}/sunjack-postgres-media
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -59,6 +60,8 @@ jobs:
         run: echo "DJANGO_SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(48))')" >> "$GITHUB_ENV"
       - name: Install backend dependencies
         run: pip install -r backend/requirements.lock
+      - name: Create isolated private media directory
+        run: install -d -m 700 "$MEDIA_ROOT"
       - name: Django system check
         working-directory: backend
         run: python manage.py check
@@ -70,12 +73,17 @@ jobs:
         run: python manage.py migrate --noinput
       - name: PostgreSQL backend tests
         working-directory: backend
-        run: python manage.py test
+        run: python manage.py test --verbosity 2
 
   frontend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies for isolated runner
+        run: pip install -r backend/requirements.lock
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -84,6 +92,9 @@ jobs:
       - name: Install frontend dependencies
         working-directory: frontend
         run: npm ci
+      - name: Install Chromium for layout regression
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
       - name: Frontend unit tests
         working-directory: frontend
         run: npm run test:unit
@@ -93,9 +104,6 @@ jobs:
       - name: Frontend Vitest tests
         working-directory: frontend
         run: npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js
-      - name: Install Chromium for layout regression
-        working-directory: frontend
-        run: npx playwright install --with-deps chromium
       - name: Install Chrome channel for ISS-028/035 regression
         working-directory: frontend
         run: npx playwright install --with-deps chrome

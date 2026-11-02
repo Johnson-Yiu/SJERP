@@ -300,7 +300,47 @@ test('browser CI invokes the isolated suite and keeps run evidence under an isol
   assert.match(packageJson.scripts['test:browser'], /run-playwright-suite-stability\.mjs/)
   assert.ok(workflow.includes('run: npm run test:browser'))
   assert.ok(workflow.includes('R1_PLAYWRIGHT_EVIDENCE_ROOT: ${{ github.workspace }}/docs/uat-evidence/ci-${{ github.run_id }}-${{ github.run_attempt }}'))
-  assert.equal((workflow.match(/pip install -r backend\/requirements\.lock/g) || []).length, 2)
+  const jobsText = workflow.slice(workflow.indexOf('\njobs:'))
+  const jobHeaders = [...jobsText.matchAll(/^  ([\w-]+):\r?\n/gm)]
+  const jobs = Object.fromEntries(jobHeaders.map((header, index) => [
+    header[1], jobsText.slice(header.index, jobHeaders[index + 1]?.index),
+  ]))
+  assert.deepEqual(Object.keys(jobs), ['backend', 'backend-postgres', 'frontend'])
+  assert.equal((workflow.match(/pip install -r backend\/requirements\.lock/g) || []).length, 3)
+  for (const [name, job] of Object.entries(jobs)) {
+    assert.match(job, /uses: actions\/setup-python@v5\s+with:\s+python-version: '3\.12'/, `${name} requires Python 3.12`)
+    assert.equal((job.match(/run: pip install -r backend\/requirements\.lock/g) || []).length, 1, `${name} installs all locked Python dependencies`)
+    assert.ok(job.indexOf('actions/setup-python@v5') < job.indexOf('run: pip install -r backend/requirements.lock'))
+    assert.doesNotMatch(job, /^\s+(?:if|continue-on-error):/m, `${name} must not skip or ignore required validation`)
+  }
+  const postgres = jobs['backend-postgres']
+  assert.match(postgres, /image: postgres:17/)
+  assert.match(postgres, /APP_STAGE: staging/)
+  assert.match(postgres, /DEVELOPMENT_SUPERADMIN: 'false'/)
+  assert.match(postgres, /RBAC_ENFORCEMENT: 'true'/)
+  assert.match(postgres, /MEDIA_ROOT: \$\{\{ runner\.temp \}\}\/sunjack-postgres-media/)
+  assert.ok(postgres.includes('run: install -d -m 700 "$MEDIA_ROOT"'))
+  assert.ok(postgres.indexOf('run: install -d -m 700 "$MEDIA_ROOT"') < postgres.indexOf('run: python manage.py check'))
+  for (const name of ['backend', 'backend-postgres']) {
+    const testCommand = name === 'backend-postgres' ? 'python manage.py test --verbosity 2' : 'python manage.py test'
+    assert.ok(jobs[name].split(/\r?\n/).some(line => line.trim() === `run: ${testCommand}`), `${name} runs the unfiltered full test suite`)
+    assert.ok(jobs[name].indexOf('run: pip install -r backend/requirements.lock') < jobs[name].indexOf('run: python manage.py check'))
+  }
+  const frontend = jobs.frontend
+  const chromiumInstall = frontend.indexOf('run: npx playwright install --with-deps chromium')
+  assert.ok(chromiumInstall >= 0)
+  assert.ok(frontend.indexOf('run: npm ci') < chromiumInstall)
+  for (const command of [
+    'npm run test:unit',
+    'node --test tests/detail-drawer-typography.spec.js',
+    'npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js',
+    'npm run test:browser',
+    'npm run build',
+  ]) {
+    const position = frontend.indexOf(`run: ${command}`)
+    assert.ok(position > chromiumInstall, `${command} must execute after Chromium installation`)
+    assert.ok(position > frontend.indexOf('run: pip install -r backend/requirements.lock'))
+  }
   assert.doesNotMatch(workflow, /pip install -r backend\/requirements\.txt/)
   assert.doesNotMatch(workflow, /run:\s*npx playwright test/)
   assert.match(suiteRunner, /process\.env\.R1_PLAYWRIGHT_EVIDENCE_ROOT/)

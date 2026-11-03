@@ -62,7 +62,34 @@ class PurchaseCostTests(TestCase):
         self.purchase.refresh_from_db()
         self.assertEqual(self.purchase.cost_allocation_version, 0)
         data["expenses"][0]["method"] = "quantity"
+        self.assertEqual(self.client.post(self.url, data, format="json").status_code, 400)
+        data["expenses"] = []
         self.assertEqual(self.client.post(self.url, data, format="json").status_code, 200)
+
+    def test_legacy_quantity_summary_is_unchanged_until_explicit_amount_save(self):
+        second = self.purchase.items.create(sku=self.item.sku, quantity=1000, unit_price=1)
+        self.purchase.additional_costs = [{"name": "历史运费", "amount": "1000", "method": "quantity"}]
+        self.purchase.save(update_fields=["additional_costs"])
+        before = list(self.item.cost_allocations.values())
+        for _ in range(2):
+            summary = self.client.get(self.url)
+            self.assertEqual(summary.status_code, 200)
+            self.assertEqual([r["additional_amount"] for r in summary.data["allocations"]], [500, 500])
+            self.assertEqual(summary.data["expenses"][0]["method"], "quantity")
+        self.purchase.refresh_from_db()
+        self.assertEqual(self.purchase.cost_allocation_version, 0)
+        self.assertEqual(self.purchase.additional_costs[0]["method"], "quantity")
+        self.assertEqual(list(self.item.cost_allocations.values()), before)
+        data = {"version": 0, "allocations": [], "expenses": [{"name": "历史运费", "amount": "1000", "method": "amount"}]}
+        preview = self.client.post(self.url.replace("cost-allocation/", "cost-allocation-preview/"), data, format="json")
+        self.assertEqual(preview.status_code, 200, preview.data)
+        self.assertEqual([r["additional_amount"] for r in preview.data["allocations"]], [Decimal("909.09"), Decimal("90.91")])
+        self.purchase.refresh_from_db()
+        self.assertEqual(self.purchase.additional_costs[0]["method"], "quantity")
+        saved = self.client.post(self.url, data, format="json")
+        self.assertEqual(saved.status_code, 200, saved.data)
+        self.assertEqual(saved.data["allocations"], preview.data["allocations"])
+        self.assertEqual(saved.data["total_amount"], 12000)
 
     def test_cancelled_and_reallocation(self):
         self.assertEqual(self.client.post(self.url, self.payload(), format="json").status_code, 200)

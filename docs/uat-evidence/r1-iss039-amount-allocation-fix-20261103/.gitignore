@@ -1,0 +1,5 @@
+# Local runner output is archived, not committed as loose whitespace-heavy logs.
+*.log
+artifacts/
+.archive-staging/
+__pycache__/

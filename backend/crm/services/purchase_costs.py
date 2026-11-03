@@ -60,7 +60,9 @@ class AllocationInput(serializers.Serializer):
 class ExpenseInput(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     amount = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=CENT)
-    method = serializers.ChoiceField(choices=["amount", "quantity"])
+    method = serializers.ChoiceField(choices=["amount"], error_messages={
+        "invalid_choice": "新增或修改公共费用只支持按采购金额比例分摊。",
+    })
 
 
 class CostInput(serializers.Serializer):
@@ -75,7 +77,7 @@ def split_amount(amount, weights):
     amount = amount.quantize(CENT, rounding=ROUND_HALF_UP)
     if not total:
         if amount:
-            raise serializers.ValidationError("采购金额为零，附加费用请改用按数量分摊。")
+            raise serializers.ValidationError("采购金额为零，不能分摊正公共费用；请核对采购金额或移除公共费用。")
         return [Decimal(0)] * len(weights)
     exact = [amount * weight / total for weight in weights]
     shares = [value.quantize(CENT, rounding=ROUND_DOWN) for value in exact]
@@ -114,6 +116,9 @@ def cost_summary(purchase, records=None, expenses=None):
 
 
 def prepare_costs(purchase, payload):
+    # Keep legacy quantity interpretation in read-only cost_summary only.
+    if any(expense.get("method") != "amount" for expense in payload["expenses"]):
+        raise serializers.ValidationError("新增或修改公共费用只支持按采购金额比例分摊。")
     if purchase.status == "cancelled":
         raise serializers.ValidationError("已取消的采购单不能分配成本。")
     if payload["version"] != purchase.cost_allocation_version:

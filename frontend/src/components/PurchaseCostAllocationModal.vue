@@ -6,12 +6,15 @@ import { confirmDialog } from '../dialogs'
 const props = defineProps({ purchase: Object, orders: Array })
 const emit = defineEmits(['close', 'saved'])
 const form = ref(null), result = ref(null), error = ref(''), busy = ref(false), dirty = ref(false)
+const legacyQuantity = ref(false), conversionAccepted = ref(false), previewPayload = ref('')
+const conversionRequired = computed(() => legacyQuantity.value && !conversionAccepted.value)
+const conversionReady = computed(() => !legacyQuantity.value || (conversionAccepted.value && !previewing.value && !previewError.value && previewPayload.value === JSON.stringify(payload())))
 const goodsTotal = computed(() => props.purchase.items.reduce((total, item) => total + Number(item.amount ?? Number(item.quantity) * Number(item.unit_price)), 0))
 const feeTotal = computed(() => (form.value?.expenses || []).reduce((total, fee) => total + Number(fee.amount || 0), 0))
 const labels = { order: '销售订单', inventory: '库存', sample: '样品', loss: '损耗', gift: '赠品', after_sales: '售后补发', research: '研发试制', internal: '内部领用', marketing: '展会推广', other: '其他' }
 const money = v => Number(v || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 onMounted(async () => {
-  try { const { data } = await api.get(`/purchase-orders/${props.purchase.id}/cost-allocation/`); form.value = structuredClone(data); result.value = data }
+  try { const { data } = await api.get(`/purchase-orders/${props.purchase.id}/cost-allocation/`); form.value = structuredClone(data); result.value = data; legacyQuantity.value = data.expenses.some(expense => expense.method === 'quantity') }
   catch (e) { error.value = e.message }
 })
 const previewing = ref(false), previewError = ref('')
@@ -24,8 +27,9 @@ function payload() {
   }
 }
 function changed() {
-  if (form.value?.can_edit === false) return
+  if (form.value?.can_edit === false || conversionRequired.value) return
   dirty.value = true
+  previewPayload.value = ''
   previewError.value = ''
   previewing.value = true
   clearTimeout(previewTimer)
@@ -38,8 +42,9 @@ function errorText(e) {
 }
 async function updatePreview(sequence) {
   try {
-    const { data } = await api.post(`/purchase-orders/${props.purchase.id}/cost-allocation-preview/`, payload())
-    if (sequence === previewSequence) result.value = data
+    const request = payload(), fingerprint = JSON.stringify(request)
+    const { data } = await api.post(`/purchase-orders/${props.purchase.id}/cost-allocation-preview/`, request)
+    if (sequence === previewSequence) { result.value = data; previewPayload.value = fingerprint }
   } catch (e) {
     if (sequence === previewSequence) previewError.value = errorText(e)
   } finally {
@@ -47,6 +52,13 @@ async function updatePreview(sequence) {
   }
 }
 onBeforeUnmount(() => { clearTimeout(previewTimer); ++previewSequence })
+async function convertLegacy() {
+  if (busy.value || form.value?.can_edit === false || !conversionRequired.value) return
+  if (!await confirmDialog({ title: '改按采购金额分摊', message: '历史记录按数量分摊。本次保存将按金额比例重新计算；确认后先预览，保存前不会改变原记录。', confirmText: '确认并预览' })) return
+  conversionAccepted.value = true
+  form.value.expenses = form.value.expenses.map(expense => ({ ...expense, method: 'amount' }))
+  changed()
+}
 function remaining(item) { return Number(item.quantity) - (form.value?.allocations || []).filter(a => a.purchase_item === item.id).reduce((sum, a) => sum + Number(a.quantity || 0), 0) }
 function add(item) { form.value.allocations.push({ purchase_item: item.id, target_type: 'order', order: null, quantity: Math.max(0, remaining(item)).toFixed(2) }); changed() }
 function remove(row) { form.value.allocations.splice(form.value.allocations.indexOf(row), 1); changed() }
@@ -56,13 +68,13 @@ function allocationTargetLabel(row) {
   return row.target_type === 'other' ? row.target_name : labels[row.target_type]
 }
 async function save() {
-  if (busy.value || form.value?.can_edit === false) return
+  if (busy.value || form.value?.can_edit === false || !conversionReady.value) return
   clearTimeout(previewTimer); ++previewSequence; previewing.value = false
   busy.value = true; error.value = ''
   try {
     const { data } = await api.post(`/purchase-orders/${props.purchase.id}/cost-allocation/`, payload())
     previewError.value = ''
-    form.value = structuredClone(data); result.value = data; dirty.value = false; emit('saved')
+    form.value = structuredClone(data); result.value = data; dirty.value = false; legacyQuantity.value = false; conversionAccepted.value = false; emit('saved')
   } catch (e) { const data = e.response?.data; error.value = typeof data === 'string' ? data : data ? JSON.stringify(data) : e.message }
   finally { busy.value = false }
 }
@@ -78,9 +90,10 @@ async function requestClose() {
       <div class="cost-overview"><article><span>采购商品金额</span><strong>{{ money(goodsTotal) }} <small>{{ purchase.currency }}</small></strong></article><article><span>公共附加费用</span><strong>{{ money(feeTotal) }} <small>{{ purchase.currency }}</small></strong></article><article class="overview-total"><span>本次核算总成本</span><strong>{{ money(goodsTotal + feeTotal) }} <small>{{ purchase.currency }}</small></strong></article></div>
       <p v-if="error" role="alert" class="cost-error">{{ error }}</p>
       <p v-if="form?.can_edit === false" class="allocation-note">{{ form.read_only_reason }}</p>
+      <div v-if="legacyQuantity" class="allocation-note legacy-conversion" role="status"><p>{{ conversionRequired ? '历史记录按数量分摊，当前结果保持原算法。本次保存将按金额比例重新计算，须先确认并预览。' : '已选择按采购金额比例重新计算。请核对预览，保存前原记录不变。' }}</p><button v-if="conversionRequired && form?.can_edit !== false && purchase.status !== 'cancelled'" type="button" class="btn btn-secondary" @click="convertLegacy">改按金额分摊并预览</button><button v-else-if="conversionAccepted && !previewing" type="button" class="btn btn-secondary" @click="changed">重新预览</button></div>
       <p v-if="!form && !error">正在加载成本分配…</p>
       <form v-if="form" id="purchase-cost-form" @submit.prevent="save" @input="changed" @change="changed">
-        <fieldset :disabled="busy || form.can_edit === false || purchase.status === 'cancelled'">
+        <fieldset :disabled="busy || form.can_edit === false || purchase.status === 'cancelled' || conversionRequired">
           <p class="allocation-note"><Check :size="15" />{{ form.version ? `当前为人工成本分配版本 V${form.version}。` : '采购成本默认归来源订单，无来源订单时归库存。保存调整后保留分配版本。' }}</p>
           <div class="block-heading"><div><h4><Layers3 :size="17" /> 明细成本归属</h4><p>展开商品，填写每份归属的数量；未分配的余量自动归库存。</p></div><span class="count-badge">{{ purchase.items.length }} 项商品</span></div>
           <details v-for="item in purchase.items" :key="item.id" open class="cost-item">
@@ -94,13 +107,13 @@ async function requestClose() {
             </div>
             <button type="button" class="text-btn" @click="add(item)"><Plus :size="14" /> 添加成本归属</button>
           </details>
-          <div class="block-heading expense-heading"><div><h4><Truck :size="17" /> 公共附加费用</h4><p>将运费、关税或其他费用按统一规则分摊。</p></div></div>
+          <div class="block-heading expense-heading"><div><h4><Truck :size="17" /> 公共附加费用</h4><p>运费、关税等公共费用按采购金额比例分摊。</p></div></div>
           <div v-if="!form.expenses.length" class="fee-empty">暂无附加费用，可添加运费、关税或杂费。</div>
-          <p class="muted">所有成本归属均按所选规则分担。此处记录成本，不生成付款或入库；已在此分摊的费用请勿再次作为订单费用录入。</p>
+          <p class="muted">公共费用按采购金额比例分担，历史记录保留原算法。此处不生成付款或入库；已分摊的费用请勿再次作为订单费用录入。</p>
           <div v-for="(expense, index) in form.expenses" :key="index" class="cost-row">
             <label>费用名称<input v-model="expense.name" required maxlength="100" placeholder="运费 / 关税 / 杂费" /></label>
             <label>金额（{{ purchase.currency }}）<input v-model="expense.amount" type="number" min="0.01" step="0.01" required /></label>
-            <label>分摊依据<select v-model="expense.method"><option value="amount">按采购金额比例</option><option value="quantity">按数量比例</option></select></label>
+            <label>分摊依据<span>{{ expense.method === 'quantity' ? '按数量比例（历史记录）' : '按采购金额比例' }}</span></label>
             <button type="button" class="text-btn danger" @click="form.expenses.splice(index, 1); changed()">删除</button>
           </div>
           <button type="button" class="text-btn" @click="form.expenses.push({ name: '运费', amount: '', method: 'amount' }); changed()"><Plus :size="14" /> 添加附加费用</button>
@@ -113,12 +126,13 @@ async function requestClose() {
         <p>商品成本 {{ money(result.base_amount) }} ＋ 附加费用 {{ money(result.additional_amount) }} ＝ {{ purchase.currency }} {{ money(result.total_amount) }}</p>
         <p class="muted">草稿及取消采购不计入订单预估毛利；库存成本表示成本归属，不代表已到货库存。</p>
       </section>
-      <footer class="cost-footer"><span>{{ dirty ? '实时预览尚未保存' : '修改数量、归属或费用，自动更新预览' }}</span><div><button class="btn btn-secondary" :disabled="busy" @click="requestClose">取消</button><button v-if="form" class="btn btn-primary" type="submit" form="purchase-cost-form" :disabled="busy || form.can_edit === false || purchase.status === 'cancelled'"><Check :size="16" />{{ busy ? '保存中…' : '保存成本分配' }}</button></div></footer>
+      <footer class="cost-footer"><span>{{ dirty ? '实时预览尚未保存' : '修改数量、归属或费用，自动更新预览' }}</span><div><button class="btn btn-secondary" :disabled="busy" @click="requestClose">取消</button><button v-if="form" class="btn btn-primary" type="submit" form="purchase-cost-form" :disabled="busy || form.can_edit === false || purchase.status === 'cancelled' || !conversionReady"><Check :size="16" />{{ busy ? '保存中…' : '保存成本分配' }}</button></div></footer>
     </section>
   </div>
 </template>
 
 <style scoped>
+.legacy-conversion{margin:16px 28px;flex-wrap:wrap}.legacy-conversion p{flex:1 1 260px;margin:0}.legacy-conversion button{white-space:normal}
 .pending-badge{display:inline-block;margin-left:10px;padding:4px 8px;background:#fff3d8;color:#94621b;border-radius:5px;font-size:var(--text-secondary);font-weight:500}.pending-note{color:#94621b;line-height:1.7}
 .cost-backdrop{z-index:105;padding:24px;background:#12362c70;backdrop-filter:blur(4px)}
 .cost-modal{box-sizing:border-box;width:min(1080px,calc(100vw - 48px));max-height:92vh;overflow:auto;padding:0;border:1px solid #dce7e1;border-radius:18px;background:#fff;color:#28453a;box-shadow:0 28px 90px #052e2438;font-size:var(--text-body)}

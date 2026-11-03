@@ -3,10 +3,79 @@ import { mount, flushPromises } from '@vue/test-utils'
 import PurchaseCostAllocationModal from '../src/components/PurchaseCostAllocationModal.vue'
 
 const api = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn() }))
+const confirm = vi.hoisted(() => vi.fn())
 vi.mock('../src/api', () => ({ api }))
+vi.mock('../src/dialogs', () => ({ confirmDialog: confirm }))
 const initial = { version: 0, expenses: [], allocations: [{ purchase_item: 7, target_type: 'inventory', order: null, quantity: '1000', sku_code: 'WIRE', base_amount: '10000', additional_amount: '0', total_amount: '10000' }], base_amount: '10000', additional_amount: '0', total_amount: '10000' }
 const props = { purchase: { id: 2, purchase_no: 'PO-2', status: 'ordered', currency: 'CNY', items: [{ id: 7, sku_code: 'WIRE', quantity: '1000', unit_price: '10' }] }, orders: [{ id: 3, order_no: 'SO-A', customer_name: 'A' }] }
 beforeEach(() => { vi.clearAllMocks(); api.get.mockResolvedValue({ data: initial }) })
+
+const legacy = { ...initial, version: 2, expenses: [{ name: '历史运费', amount: '1000', method: 'quantity' }], additional_amount: '1000', total_amount: '11000' }
+
+it('shows legacy quantity read-only without recalculating or submitting it', async () => {
+  api.get.mockResolvedValue({ data: legacy })
+  const wrapper = mount(PurchaseCostAllocationModal, { props })
+  await flushPromises()
+  expect(wrapper.text()).toContain('按数量比例（历史记录）')
+  expect(wrapper.find('fieldset').attributes('disabled')).toBeDefined()
+  expect(wrapper.find('.btn-primary').attributes('disabled')).toBeDefined()
+  expect(wrapper.find('option[value="quantity"]').exists()).toBe(false)
+  await wrapper.find('form').trigger('submit')
+  expect(api.post).not.toHaveBeenCalled()
+  await wrapper.find('.cost-footer .btn-secondary').trigger('click')
+  expect(wrapper.emitted('close')).toHaveLength(1)
+  wrapper.unmount()
+})
+
+it('cancels conversion without editing the historical input or requesting a preview', async () => {
+  api.get.mockResolvedValue({ data: legacy }); confirm.mockResolvedValue(false)
+  const wrapper = mount(PurchaseCostAllocationModal, { props })
+  await flushPromises()
+  await wrapper.find('.legacy-conversion button').trigger('click'); await flushPromises()
+  expect(confirm).toHaveBeenCalledWith(expect.objectContaining({ message: expect.stringContaining('本次保存将按金额比例重新计算') }))
+  expect(wrapper.text()).toContain('按数量比例（历史记录）')
+  expect(api.post).not.toHaveBeenCalled()
+  wrapper.unmount()
+})
+
+it('requires explicit conversion and a successful current preview before saving amount', async () => {
+  vi.useFakeTimers()
+  api.get.mockResolvedValue({ data: legacy }); confirm.mockResolvedValue(true)
+  const wrapper = mount(PurchaseCostAllocationModal, { props })
+  try {
+    await flushPromises()
+    await wrapper.find('.legacy-conversion button').trigger('click'); await flushPromises()
+    expect(wrapper.find('.btn-primary').attributes('disabled')).toBeDefined()
+    api.post.mockRejectedValueOnce({ response: { data: ['预览失败'] } })
+    await vi.advanceTimersByTimeAsync(250); await flushPromises()
+    expect(wrapper.text()).toContain('预览失败')
+    await wrapper.find('form').trigger('submit')
+    expect(api.post).toHaveBeenCalledTimes(1)
+    api.post.mockResolvedValue({ data: { ...legacy, expenses: [{ ...legacy.expenses[0], method: 'amount' }] } })
+    await wrapper.find('.legacy-conversion button').trigger('click')
+    await vi.advanceTimersByTimeAsync(250); await flushPromises()
+    expect(wrapper.find('.btn-primary').attributes('disabled')).toBeUndefined()
+    await wrapper.find('input[type="number"]').setValue('900')
+    expect(wrapper.find('.btn-primary').attributes('disabled')).toBeDefined()
+    await wrapper.find('form').trigger('submit')
+    expect(api.post).toHaveBeenCalledTimes(2)
+    await vi.advanceTimersByTimeAsync(250); await flushPromises()
+    await wrapper.find('form').trigger('submit'); await flushPromises()
+    expect(api.post.mock.calls.at(-1)[0]).toBe('/purchase-orders/2/cost-allocation/')
+    expect(api.post.mock.calls.every(([, data]) => data.expenses.every(e => e.method === 'amount'))).toBe(true)
+    expect(wrapper.emitted('saved')).toHaveLength(1)
+  } finally { wrapper.unmount(); vi.useRealTimers() }
+})
+
+it('does not offer conversion to read-only users', async () => {
+  api.get.mockResolvedValue({ data: { ...legacy, can_edit: false } })
+  const wrapper = mount(PurchaseCostAllocationModal, { props })
+  await flushPromises()
+  expect(wrapper.find('.legacy-conversion button').exists()).toBe(false)
+  await wrapper.find('form').trigger('submit')
+  expect(api.post).not.toHaveBeenCalled()
+  wrapper.unmount()
+})
 
 it('edits allocation, saves the revision and renders authoritative calculated totals', async () => {
   const wrapper = mount(PurchaseCostAllocationModal, { props })

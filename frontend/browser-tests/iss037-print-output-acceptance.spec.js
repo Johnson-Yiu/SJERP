@@ -38,7 +38,7 @@ test('saved PI blocks printing when a document image fails', async ({ page }) =>
   await page.getByRole('dialog', { name: 'PI 预览' }).getByRole('button', { name: '导出 PI PDF' }).click()
   await expect(page.getByRole('dialog', { name: 'PI 预览' })).toContainText('图片加载失败')
   await expect(frame).not.toHaveAttribute('data-print-called', 'yes')
-  await page.screenshot({ path: path.join(evidence, 'image-failure-1440.png') })
+  await page.screenshot({ path: path.join(evidence, 'rerun-image-failure-1440.png') })
 })
 
 test('saved PI permits printing after resources load on narrow screen', async ({ page }) => {
@@ -50,14 +50,14 @@ test('saved PI permits printing after resources load on narrow screen', async ({
   const frame = page.locator('iframe[title="已保存 PI"]')
   await expect(frame).toBeVisible()
   await frame.evaluate(el => { el.contentWindow.print = () => { el.dataset.printCalled = 'yes' } })
-  await page.screenshot({ path: path.join(evidence, 'saved-preview-390.png') })
+  await page.screenshot({ path: path.join(evidence, 'rerun-saved-preview-390.png') })
   await page.getByRole('dialog', { name: 'PI 预览' }).getByRole('button', { name: '导出 PI PDF' }).click()
   await expect(frame).toHaveAttribute('data-print-called', 'yes')
   // Independent Chrome PDF rendering, not the UI print-dialog output.
   const html = await frame.evaluate(el => el.contentDocument.documentElement.outerHTML)
   const rendered = await page.context().newPage()
   await rendered.setContent(html, { waitUntil: 'load' })
-  await rendered.pdf({ path: path.join(evidence, 'independent-chrome-render.pdf'), format: 'A4', printBackground: true })
+  await rendered.pdf({ path: path.join(evidence, 'rerun-independent-chrome-render.pdf'), format: 'A4', printBackground: true })
   await rendered.close()
 })
 
@@ -83,7 +83,13 @@ test('Chrome UI print to PDF', async ({ baseURL }, testInfo) => {
     await expect(detail).toBeVisible()
     await detail.getByRole('button', { name: '预览 PI' }).first().click()
     await expect(page.locator('iframe[title="已保存 PI"]')).toBeVisible()
-    await page.getByRole('dialog', { name: 'PI 预览' }).getByRole('button', { name: '导出 PI PDF' }).click()
+    // The native print dialog may block the renderer, so schedule a real DOM
+    // click after this evaluation returns and poll the output from Node.
+    await page.evaluate(() => {
+      const button = Array.from(document.querySelectorAll('button')).find(el => el.textContent.includes('导出 PI PDF'))
+      if (!button) throw new Error('PI print button not found')
+      setTimeout(() => button.click(), 100)
+    })
     await expect.poll(() => fs.readdirSync(output).filter(name => name.endsWith('.pdf')), { timeout: 20000 }).not.toHaveLength(0)
     const file = fs.readdirSync(output).find(name => name.endsWith('.pdf'))
     fs.copyFileSync(path.join(output, file), path.join(evidence, 'chrome-ui-print.pdf'))

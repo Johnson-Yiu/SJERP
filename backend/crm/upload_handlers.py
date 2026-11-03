@@ -11,11 +11,12 @@ _CSV_IMPORT_PATHS = frozenset({
     "/api/import/csv",
     "/api/import/csv/preview",
     "/api/import/csv/execute",
+    "/api/import/history-preflight",
 })
 
 
 class CsvImportSizeLimitUploadHandler(FileUploadHandler):
-    """Reject oversized CSV endpoint file streams before downstream storage."""
+    """Reject oversized import/preflight uploads before downstream storage."""
 
     chunk_size = 64 * 1024
 

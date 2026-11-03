@@ -10,12 +10,13 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured
 from django.db import DatabaseError, close_old_connections, connection, connections, transaction
 from django.db.backends.base.base import BaseDatabaseWrapper
+from django.db.migrations.executor import MigrationExecutor
 from django.test import SimpleTestCase, TransactionTestCase
 from django.test.runner import DiscoverRunner
 
 from crm.models import CSVImportBatch, CSVImportPreviewAudit, CSVImportRowAudit
 from crm.postgres_test_cleanup import (
-    GUARD_FUNCTION, TRUNCATE_GUARDS, assert_truncate_guards_enabled,
+    GUARD_FUNCTION, TRUNCATE_GUARDS, REVIEW_TABLE, REVIEW_TRIGGER, active_truncate_guards, assert_truncate_guards_enabled,
     bind_created_test_database, execute_test_flush, test_teardown_patch as teardown_patch,
 )
 from crm.test_runner import DevelopmentAccessTestRunner
@@ -44,6 +45,16 @@ class CleanupControlFlowTests(SimpleTestCase):
         ]
         self.binding = bind_created_test_database(self.conn, "source_db", self.name)
 
+    def set_guard_state(self, exists, applied):
+        def result():
+            statement = self.cursor.execute.call_args.args[0]
+            return (exists, applied) if "to_regclass" in statement else (self.name, "public")
+        self.cursor.fetchone.side_effect = result
+        guards = dict(TRUNCATE_GUARDS)
+        if exists and applied:
+            guards[REVIEW_TABLE] = REVIEW_TRIGGER
+        self.cursor.fetchall.return_value = [(table, trigger, "O", 34, GUARD_FUNCTION, "public") for table, trigger in guards.items()]
+
     def test_ordinary_database_or_nonrandom_name_is_not_enrolled(self):
         for name in ("source_db", "test_source_db", "test_sunjack_not_random"):
             with self.subTest(name=name), self.assertRaises(ImproperlyConfigured):
@@ -69,6 +80,7 @@ class CleanupControlFlowTests(SimpleTestCase):
             execute_test_flush(self.conn, self.binding, Mock(), [])
 
     def test_missing_or_disabled_guard_fails_before_disabling_anything(self):
+        self.set_guard_state(False, False)
         native = Mock()
         disabled = list(self.cursor.fetchall.return_value)
         disabled[0] = (*disabled[0][:2], "D", *disabled[0][3:])
@@ -81,7 +93,8 @@ class CleanupControlFlowTests(SimpleTestCase):
         native.assert_not_called()
         self.assertFalse(any("DISABLE" in str(call) for call in self.cursor.execute.call_args_list))
 
-    def test_success_locks_before_disabling_and_reenables_all_three(self):
+    def test_success_locks_before_disabling_and_reenables_all_guards(self):
+        self.set_guard_state(True, True)
         events = []
         self.cursor.execute.side_effect = lambda sql, *args: events.append(sql)
         native = Mock(side_effect=lambda sql: events.append("native flush"))
@@ -90,12 +103,31 @@ class CleanupControlFlowTests(SimpleTestCase):
         lock = next(i for i, sql in enumerate(events) if sql.startswith("LOCK TABLE"))
         disabled = [i for i, sql in enumerate(events) if "DISABLE TRIGGER" in sql]
         enabled = [i for i, sql in enumerate(events) if "ENABLE TRIGGER" in sql]
-        self.assertEqual((len(disabled), len(enabled)), (3, 3))
+        self.assertEqual((len(disabled), len(enabled)), (4, 4))
+        self.assertIn(REVIEW_TABLE, active_truncate_guards(self.conn))
         self.assertLess(lock, min(disabled))
         self.assertLess(max(disabled), events.index("native flush"))
         self.assertLess(events.index("native flush"), min(enabled))
 
+    def test_pre_0096_cleanup_checks_three_original_guards(self):
+        self.set_guard_state(False, False)
+        events = []
+        self.cursor.execute.side_effect = lambda sql, *args: events.append(sql)
+        with patch("crm.postgres_test_cleanup.transaction.atomic", return_value=nullcontext()):
+            execute_test_flush(self.conn, self.binding, Mock(), [])
+        self.assertEqual(sum("DISABLE TRIGGER" in sql for sql in events), 3)
+        self.assertEqual(sum("ENABLE TRIGGER" in sql for sql in events), 3)
+
+    def test_migration_table_mismatch_fails_before_guard_changes(self):
+        for exists, applied in ((True, False), (False, True)):
+            self.set_guard_state(exists, applied)
+            with self.subTest(exists=exists, applied=applied), patch("crm.postgres_test_cleanup.transaction.atomic", return_value=nullcontext()):
+                with self.assertRaises(ImproperlyConfigured):
+                    execute_test_flush(self.conn, self.binding, Mock(), [])
+        self.assertFalse(any("DISABLE TRIGGER" in str(call) for call in self.cursor.execute.call_args_list))
+
     def test_native_failure_leaves_atomic_context_with_exception(self):
+        self.set_guard_state(False, False)
         atomic = MagicMock()
         atomic.__exit__.return_value = False
         native = Mock(side_effect=RuntimeError("injected SQL cleanup failure"))
@@ -333,7 +365,7 @@ class PostgreSQLTestCleanupLifecycleTests(TransactionTestCase):
 
     def assert_truncate_rejected(self):
         assert_truncate_guards_enabled(connection)
-        for table in TRUNCATE_GUARDS:
+        for table in active_truncate_guards(connection):
             with self.subTest(table=table), self.assertRaises(DatabaseError) as error:
                 with transaction.atomic():
                     with connection.cursor() as cursor:
@@ -365,6 +397,21 @@ class PostgreSQLTestCleanupLifecycleTests(TransactionTestCase):
     def test_regular_backend_flush_outside_teardown_remains_protected(self):
         with self.assertRaises(DatabaseError):
             connection.ops.execute_sql_flush(['TRUNCATE TABLE "public"."crm_csvimportpreviewaudit" CASCADE'])
+        self.assert_truncate_rejected()
+
+    def test_pre_0096_migration_cleanup_and_restore_preserve_guard_contract(self):
+        executor = MigrationExecutor(connection)
+        latest = executor.loader.graph.leaf_nodes()
+        try:
+            executor.migrate([("crm", "0095_merge_fulfillment_idempotency")])
+            self.assertEqual(active_truncate_guards(connection), TRUNCATE_GUARDS)
+            self.assert_truncate_rejected()
+            result = self.run_probe(lambda: None)
+            self.assertTrue(result.wasSuccessful(), result.errors + result.failures)
+            self.assert_truncate_rejected()
+        finally:
+            MigrationExecutor(connection).migrate(latest)
+        self.assertIn(REVIEW_TABLE, active_truncate_guards(connection))
         self.assert_truncate_rejected()
 
     def test_failure_after_truncate_rolls_back_data_and_guard_changes(self):

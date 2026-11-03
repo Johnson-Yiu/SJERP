@@ -1,0 +1,175 @@
+{
+  "database": "C:/Users/Johnson/AppData/Local/Temp/sunjack-r1-repair-06-3Tuk0e/db.sqlite3",
+  "seed_events": [
+    {
+      "id": 1,
+      "created_at": "2026-11-03T09:24:05.320Z",
+      "updated_at": "2026-11-03T09:24:05.443Z",
+      "event_no": "SYNTH-DUP-A-1440",
+      "request_key": "SYNTH-DUP-A-1440",
+      "request_hash": "ac9c23912dfba93b7b6a78de12983ed437f39801b7fe0d289f8ec7536f9eac2c",
+      "request_payload": {
+        "event_no": "SYNTH-DUP-A-1440",
+        "request_key": "SYNTH-DUP-A-1440",
+        "source_account": "SYNTH_CNY",
+        "rmb_account": "SYNTH_CNY",
+        "bank_reference": "SYNTH-REF-1440",
+        "evidence_reference": "SYNTH-VOUCHER",
+        "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence_note": "合成银行凭证",
+        "bank_counterparty": "合成对手甲",
+        "bank_summary": "合成银行摘要甲",
+        "bank_transaction_id": "SYNTH-ID-1440",
+        "kind": "bank_fee",
+        "currency": "CNY",
+        "direction": "expense",
+        "bank_date": "2026-10-18",
+        "bank_net_amount": "5.00",
+        "fee_mode": "none",
+        "fee_amount": "0.00",
+        "quoted_rate": "1.000000",
+        "fee_for": null,
+        "sources": [
+          {
+            "transaction_id": 1,
+            "amount": "5.00",
+            "verified": true
+          }
+        ]
+      },
+      "kind": "bank_fee",
+      "currency": "CNY",
+      "amount": "5.0000",
+      "direction": "expense",
+      "bank_date": "2026-10-18",
+      "bank_net_amount": "5.00",
+      "fee_mode": "none",
+      "fee_amount": "0.00",
+      "source_account": "SYNTH_CNY",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "SYNTH-REF-1440",
+      "bank_counterparty": "合成对手甲",
+      "bank_summary": "合成银行摘要甲",
+      "bank_transaction_id": "SYNTH-ID-1440",
+      "evidence_reference": "SYNTH-VOUCHER",
+      "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidence_note": "合成银行凭证",
+      "quoted_rate": "1.000000",
+      "status": "confirmed",
+      "created_actor": {
+        "kind": "development_superadmin",
+        "action": "register",
+        "note": "开发身份，非正式员工审批"
+      },
+      "confirmed_actor": {
+        "kind": "development_superadmin",
+        "action": "confirm_bank_voucher",
+        "note": "开发身份，非正式员工审批"
+      },
+      "confirmed_at": "2026-11-03T09:24:05.442Z",
+      "cancelled_reason": "",
+      "correction_of_id": null,
+      "fee_for_id": null
+    },
+    {
+      "id": 3,
+      "created_at": "2026-11-03T09:24:15.180Z",
+      "updated_at": "2026-11-03T09:24:15.260Z",
+      "event_no": "SYNTH-DUP-A-390",
+      "request_key": "SYNTH-DUP-A-390",
+      "request_hash": "9f286285959e005ef717db454eed51bee386e3578c5d9e3e8fce4410410198f7",
+      "request_payload": {
+        "event_no": "SYNTH-DUP-A-390",
+        "request_key": "SYNTH-DUP-A-390",
+        "source_account": "SYNTH_CNY",
+        "rmb_account": "SYNTH_CNY",
+        "bank_reference": "SYNTH-REF-390",
+        "evidence_reference": "SYNTH-VOUCHER",
+        "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence_note": "合成银行凭证",
+        "bank_counterparty": "合成对手甲",
+        "bank_summary": "合成银行摘要甲",
+        "bank_transaction_id": "SYNTH-ID-390",
+        "kind": "bank_fee",
+        "currency": "CNY",
+        "direction": "expense",
+        "bank_date": "2026-10-19",
+        "bank_net_amount": "5.00",
+        "fee_mode": "none",
+        "fee_amount": "0.00",
+        "quoted_rate": "1.000000",
+        "fee_for": null,
+        "sources": [
+          {
+            "transaction_id": 3,
+            "amount": "5.00",
+            "verified": true
+          }
+        ]
+      },
+      "kind": "bank_fee",
+      "currency": "CNY",
+      "amount": "5.0000",
+      "direction": "expense",
+      "bank_date": "2026-10-19",
+      "bank_net_amount": "5.00",
+      "fee_mode": "none",
+      "fee_amount": "0.00",
+      "source_account": "SYNTH_CNY",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "SYNTH-REF-390",
+      "bank_counterparty": "合成对手甲",
+      "bank_summary": "合成银行摘要甲",
+      "bank_transaction_id": "SYNTH-ID-390",
+      "evidence_reference": "SYNTH-VOUCHER",
+      "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidence_note": "合成银行凭证",
+      "quoted_rate": "1.000000",
+      "status": "confirmed",
+      "created_actor": {
+        "kind": "development_superadmin",
+        "action": "register",
+        "note": "开发身份，非正式员工审批"
+      },
+      "confirmed_actor": {
+        "kind": "development_superadmin",
+        "action": "confirm_bank_voucher",
+        "note": "开发身份，非正式员工审批"
+      },
+      "confirmed_at": "2026-11-03T09:24:15.260Z",
+      "cancelled_reason": "",
+      "correction_of_id": null,
+      "fee_for_id": null
+    }
+  ],
+  "reviews": [
+    {
+      "id": 1,
+      "event_id": 2,
+      "candidate_ids": [
+        1
+      ],
+      "reason": "已逐项核对银行凭证，确认是另一笔交易",
+      "actor": {
+        "kind": "development_superadmin",
+        "action": "release_duplicate_candidate",
+        "note": "开发身份，非正式员工审批"
+      },
+      "created_at": "2026-11-03T09:24:14.593Z"
+    },
+    {
+      "id": 2,
+      "event_id": 4,
+      "candidate_ids": [
+        3
+      ],
+      "reason": "已逐项核对银行凭证，确认是另一笔交易",
+      "actor": {
+        "kind": "development_superadmin",
+        "action": "release_duplicate_candidate",
+        "note": "开发身份，非正式员工审批"
+      },
+      "created_at": "2026-11-03T09:24:21.801Z"
+    }
+  ]
+}

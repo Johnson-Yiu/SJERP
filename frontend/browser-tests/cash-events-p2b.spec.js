@@ -12,6 +12,7 @@ test('cash event UI previews, registers, and confirms without changing receipt f
     if (path === '/api/rmb-cash-events/' && route.request().method() === 'GET') return route.fulfill({ json: { results: status === 'pending' ? [] : [event()] } })
     if (path === '/api/rmb-cash-events/sources/') return route.fulfill({ json: { results: [{ id: 1, transaction_no: 'P2B-SYNTH-T', currency: 'USD', direction: 'income', amount: '30.0000', remaining_candidate_amount: '30.0000', blocked_reason: null }, { id: 2, transaction_no: 'P2B-SYNTH-T-SPLIT', currency: 'USD', direction: 'income', amount: '70.0000', remaining_candidate_amount: '70.0000', blocked_reason: null }] } })
     if (path === '/api/rmb-cash-events/preview/') return route.fulfill({ json: { source_total: '100.00', bank_net_amount: '705.00', confirmed: false, sources: [] } })
+    if (path === '/api/rmb-cash-events/91/duplicate-candidates/') return route.fulfill({ json: { count: 0, items: [], restricted: false, token: 'empty' } })
     if (path === '/api/rmb-cash-events/' && route.request().method() === 'POST') return route.fulfill({ status: 201, json: event() })
     if (path === '/api/rmb-cash-events/91/confirm/') { status = 'confirmed'; return route.fulfill({ json: event() }) }
     return route.fulfill({ json: [] })

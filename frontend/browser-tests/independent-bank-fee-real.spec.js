@@ -54,7 +54,7 @@ for (const [index, width] of [1440, 390].entries()) {
     await expect(parent).toHaveValue('')
     await expect(parent).not.toHaveAttribute('required', '')
     await page.getByLabel('银行净额（CNY）').fill('5.00')
-    await page.getByLabel('银行实际日期').fill('2026-10-18')
+    await page.getByLabel('银行实际日期').fill(index ? '2026-10-19' : '2026-10-18')
     await page.getByLabel('来源银行账户标识').fill('SYNTH_CNY')
     await page.getByLabel('人民币账户标识').fill('SYNTH_CNY')
     await page.getByLabel('银行参考号').fill(`SYNTH-INDEPENDENT-${width}`)
@@ -133,6 +133,7 @@ test('real API preserves optional-parent rejection, source quota and idempotency
   }
   const parent = await call('', base, 201)
   const fee = { ...base, kind: 'bank_fee', currency: 'CNY', direction: 'expense', bank_net_amount: '5.00', quoted_rate: '1',
+    bank_date: '2026-10-20',
     source_account: 'SYNTH_CNY', request_key: fixtures.prefix + '-LINKED', event_no: fixtures.prefix + '-LINKED',
     fee_for: parent.id, sources: [{ transaction_id: fixtures.fee_ids[2], amount: '5.00', verified: true }] }
   await call('preview/', fee, 400) // Parent pending.

@@ -1929,6 +1929,9 @@ class RmbCashEvent(TimestampedModel):
     source_account = models.CharField(max_length=40)
     rmb_account = models.CharField(max_length=40)
     bank_reference = models.CharField(max_length=120)
+    bank_counterparty = models.CharField(max_length=200, blank=True)
+    bank_summary = models.CharField(max_length=500, blank=True)
+    bank_transaction_id = models.CharField(max_length=120, blank=True)
     evidence_reference = models.CharField(max_length=200, blank=True)
     evidence_sha256 = models.CharField(max_length=64, blank=True)
     evidence_note = models.CharField(max_length=500, blank=True)
@@ -1962,6 +1965,24 @@ class RmbCashEvent(TimestampedModel):
     def delete(self, *args, **kwargs):
         from django.core.exceptions import ValidationError
         raise ValidationError("资金事件必须留痕，不可删除。")
+
+
+class CashDuplicateReview(models.Model):
+    """Immutable evidence of a reviewed possible duplicate."""
+    event = models.OneToOneField(RmbCashEvent, on_delete=models.PROTECT, related_name="duplicate_review")
+    candidate_ids = models.JSONField()
+    reason = models.CharField(max_length=500)
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects = OperationLogQuerySet.as_manager()
+
+    def save(self, *args, **kwargs):
+        if self.pk and not self._state.adding:
+            raise ValidationError("核实记录只允许追加。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("核实记录不可删除。")
 
 
 class CashSourceAllocation(TimestampedModel):

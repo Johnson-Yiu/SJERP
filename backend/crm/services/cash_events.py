@@ -6,13 +6,13 @@ from datetime import date
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 from django.conf import settings
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, connection, transaction
 from django.db.models import Sum, Q
 from django.utils import timezone
 from rest_framework.exceptions import APIException, NotFound, ValidationError
 
 from crm.finance_scope import require_finance_permission, scope_transaction_queryset, validate_finance_relations
-from crm.models import CashSourceAllocation, Customer, RmbCashEvent, Supplier, Transaction
+from crm.models import CashDuplicateReview, CashSourceAllocation, Customer, RmbCashEvent, Supplier, Transaction
 from crm.permissions import development_superadmin_enabled
 
 
@@ -50,9 +50,11 @@ def access(user, action="view"):
 
 
 def actor(user, operation):
+    if user and user.is_authenticated:
+        return {"kind": "authenticated_user", "action": operation, "user_id": user.pk}
     if development_superadmin_enabled():
         return {"kind": "development_superadmin", "action": operation, "note": "开发身份，非正式员工审批"}
-    return {"kind": "authenticated_user", "action": operation, "user_id": user.pk}
+    raise ValidationError("无法识别操作身份。")
 
 
 def source_visible(row, user):
@@ -157,7 +159,7 @@ def available(row):
 def normalize(payload):
     if not isinstance(payload, dict):
         raise ValidationError("需要资金事件对象。")
-    fields = {"event_no", "request_key", "kind", "currency", "direction", "bank_date", "bank_net_amount", "fee_mode", "fee_amount", "source_account", "rmb_account", "bank_reference", "evidence_reference", "evidence_sha256", "evidence_note", "quoted_rate", "sources", "fee_for", "correction_of"}
+    fields = {"event_no", "request_key", "kind", "currency", "direction", "bank_date", "bank_net_amount", "fee_mode", "fee_amount", "source_account", "rmb_account", "bank_reference", "bank_counterparty", "bank_summary", "bank_transaction_id", "evidence_reference", "evidence_sha256", "evidence_note", "quoted_rate", "sources", "fee_for", "correction_of"}
     if set(payload) - fields:
         raise ValidationError("存在未支持的字段，不接受银行登录凭据或推测的资金更正。")
     if payload.get("correction_of") is not None:
@@ -169,6 +171,15 @@ def normalize(payload):
         if not isinstance(value, str) or len(value.strip()) > maximum:
             raise ValidationError(f"{k}格式或长度无效。")
         p[k] = value.strip()
+    # Preserve the original hash for retries of requests made before these
+    # optional fields existed; absence is different from a newly supplied value.
+    for k, maximum in (("bank_counterparty", 200), ("bank_summary", 500), ("bank_transaction_id", 120)):
+        if k in payload:
+            value = payload[k]
+            if not isinstance(value, str) or len(value.strip()) > maximum:
+                raise ValidationError(f"{k}格式或长度无效。")
+            if value.strip():
+                p[k] = value.strip()
     for k in ("event_no", "request_key", "source_account", "rmb_account"):
         if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]*", p[k]):
             raise ValidationError(f"{k}必须为受控编号。")
@@ -258,6 +269,44 @@ def validate_sources(p, user, *, confirmation=False):
     return rows
 
 
+def duplicate_candidates(p, user, *, exclude_id=None):
+    """Conservative bank-side core; blank optional evidence never proves difference."""
+    core = Q(rmb_account=p["rmb_account"], bank_date=p["bank_date"], direction=p["direction"],
+             bank_net_amount=p["bank_net_amount"])
+    bank_id = p.get("bank_transaction_id", "")
+    if bank_id:
+        core |= Q(rmb_account=p["rmb_account"], bank_transaction_id=bank_id)
+    qs = RmbCashEvent.objects.filter(core, status="confirmed")
+    if exclude_id:
+        qs = qs.exclude(pk=exclude_id)
+    events = list(qs.order_by("pk"))
+    hidden = any(not visible(event, user) for event in events)
+    ids = [event.pk for event in events]
+    token = hashlib.sha256(json.dumps(ids, separators=(",", ":")).encode()).hexdigest()
+    return {"token": token, "restricted": hidden, "count": len(events),
+            "items": [] if hidden else [{"id": event.pk, "event_no": event.event_no,
+                "bank_reference": event.bank_reference, "bank_counterparty": event.bank_counterparty,
+                "bank_summary": event.bank_summary, "bank_transaction_id": event.bank_transaction_id}
+                for event in events]}
+
+
+def lock_bank_fact(p):
+    # The lock domain is deliberately broader than optional bank evidence, so
+    # missing/different text cannot let concurrent candidates pass each other.
+    if connection.vendor == "postgresql":
+        core = json.dumps([p["rmb_account"], str(p["bank_date"]), p["direction"],
+                           str(Decimal(p["bank_net_amount"]).quantize(Decimal("0.01")))], separators=(",", ":"))
+        key = int.from_bytes(hashlib.sha256(core.encode()).digest()[:8], "big", signed=True)
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT pg_advisory_xact_lock(%s)", [key])
+            if p.get("bank_transaction_id"):
+                identifier = json.dumps(["bank-id", p["rmb_account"], p["bank_transaction_id"]], separators=(",", ":"))
+                identifier_key = int.from_bytes(hashlib.sha256(identifier.encode()).digest()[:8], "big", signed=True)
+                cursor.execute("SELECT pg_advisory_xact_lock(%s)", [identifier_key])
+    elif connection.vendor != "sqlite":
+        raise ValidationError("当前数据库不支持银行事实并发锁，不能确认。")
+
+
 @transaction.atomic
 def register_event(payload, user):
     access(user, "create")
@@ -288,10 +337,11 @@ def register_event(payload, user):
 
 
 @transaction.atomic
-def confirm_event(event_id, user, *, voucher_checked=False):
+def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None, duplicate_reason=None):
     access(user, "update")
     event = get_event(user, pk=event_id)
     p = event.request_payload
+    lock_bank_fact(p)
     rows = [a.source for a in event.sources.select_related("source").order_by("source_id")]
     # Shared lock domain with refunds. No guesses about which customer's cash a
     # refund consumed; unrelated parties/currencies retain their normal paths.
@@ -311,6 +361,14 @@ def confirm_event(event_id, user, *, voucher_checked=False):
     if event.status != "pending" or voucher_checked is not True:
         raise ValidationError("只有待确认事件可由人工核实银行凭证后确认。")
     validate_sources(p, user, confirmation=True)
+    candidates = duplicate_candidates(p, user, exclude_id=event.pk)
+    if candidates["restricted"]:
+        raise CashConflict("存在无权查看的疑似重复资金记录，请联系有权人员核对。")
+    if candidates["count"]:
+        if duplicate_token != candidates["token"] or not isinstance(duplicate_reason, str) or not 1 <= len(duplicate_reason.strip()) <= 500:
+            raise CashConflict("存在疑似重复资金记录，请重新核对并填写放行说明。")
+        CashDuplicateReview.objects.create(event=event, candidate_ids=[c["id"] for c in candidates["items"]],
+                                           reason=duplicate_reason.strip(), actor=actor(user, "release_duplicate_candidate"))
     for a in event.sources.select_related("source"):
         if a.source_snapshot != source_snapshot(a.source):
             raise ValidationError("来源快照已变化，请核查原流水；不能覆盖旧证据。")

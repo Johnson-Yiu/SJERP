@@ -9,6 +9,7 @@ from dataclasses import asdict, dataclass
 from decimal import Decimal, ROUND_HALF_UP
 
 from .money import LEGACY_AMOUNT_CALCULATION_VERSION, money
+from .quote_template_snapshot import QuoteTemplateSnapshotError, resolve_quote_template
 
 
 TWO_PLACES = Decimal("0.01")
@@ -40,6 +41,7 @@ class QuotationExportItemDTO:
 @dataclass(frozen=True)
 class QuotationExportDTO:
     template_id: str
+    template_snapshot: dict
     invoice_no: str
     buyer: dict
     terms: dict
@@ -117,11 +119,16 @@ def build_quotation_export_dto(quote, *, template_id=None):
     resolved_template_id = template_id or (
         NO_DISCOUNT_TEMPLATE_ID if discount == Decimal("0.00") else WITH_DISCOUNT_TEMPLATE_ID
     )
+    try:
+        snapshot = resolve_quote_template(quote, resolved_template_id)
+    except QuoteTemplateSnapshotError as exc:
+        raise QuotationExportValidationError({"template": str(exc)}) from exc
     total_amount = quote.total_amount if legacy_calculation else money(subtotal + shipping_fee - discount)
     deposit_amount = (total_amount * quote.deposit_ratio).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
     validity_days = (quote.valid_until - quote.quote_date).days if quote.valid_until else 30
     return QuotationExportDTO(
         template_id=resolved_template_id,
+        template_snapshot=snapshot,
         invoice_no=quote.quote_no,
         buyer={
             "company_name": quote.buyer_company_name,

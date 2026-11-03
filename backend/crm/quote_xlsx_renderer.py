@@ -14,7 +14,8 @@ from openpyxl.drawing.spreadsheet_drawing import AnchorMarker, OneCellAnchor
 from openpyxl.drawing.xdr import XDRPositiveSize2D
 from openpyxl.utils.units import pixels_to_EMU
 
-from .quotation_template_config import QuotationTemplate, quotation_templates
+from .quotation_template_config import QuotationTemplate, ItemArea, LowerBlock
+from .quote_template_snapshot import QuoteTemplateSnapshotError, validated_template_bytes
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -292,16 +293,18 @@ def _raise_for_cell_errors(sheet):
 
 def render_quote_xlsx(payload):
     try:
-        config = quotation_templates[payload["template_id"]]
-    except KeyError as exc:
-        raise QuoteTemplateConfigurationError("Unknown quotation template.") from exc
-
-    template_path = PROJECT_ROOT / config.file
-    if not template_path.is_file():
-        raise QuoteTemplateNotFoundError("Quote template file was not found.")
+        snapshot = payload["template_snapshot"]
+        if snapshot["template_id"] != payload["template_id"]:
+            raise ValueError("template mismatch")
+        content = validated_template_bytes(snapshot)
+        values = snapshot["config"]
+        config = QuotationTemplate(file=values["file"], sheet=values["sheet"], fields=values["fields"],
+                                   item=ItemArea(**values["item"]), lower_block=LowerBlock(**values["lower_block"]))
+    except (KeyError, TypeError, ValueError, QuoteTemplateSnapshotError) as exc:
+        raise QuoteTemplateConfigurationError("保存的报价模板缺失或损坏。") from exc
 
     try:
-        workbook = load_workbook(template_path)
+        workbook = load_workbook(BytesIO(content))
         sheet = workbook[config.sheet]
         _validate_template_structure(sheet, config)
         additional_rows = max(0, len(payload.get("products", [])) - config.item.template_rows)

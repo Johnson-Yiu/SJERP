@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Printer, X } from 'lucide-vue-next'
 import { formatPiAmountWords } from '../utils/piAmountWords'
 import { useAccessControl } from '../accessControl'
@@ -8,25 +8,9 @@ const props = defineProps({ draft: { type: Object, required: true }, saved: { ty
 defineEmits(['close'])
 const { can } = useAccessControl()
 
-const seller = Object.freeze({
-  name: 'Guangzhou Sunjack Lighting Co., Ltd.',
-  saler: 'Johnson',
-  address: 'C0615, Room 201, 1411 Huaguan Road, Guangzhou City, China',
-  email: 'johnsonyao@sunjack.cn',
-  phone: '+86-18103040544',
-})
-
-const bankRows = Object.freeze([
-  ['Beneficiary Name', 'Guangzhou Sunjack Lighting Co., Ltd.'],
-  ['Beneficiary Account Number', '63001208199'],
-  ['Swift Code', 'CHASHKHHXXX'],
-  ['Country/Region', 'HongKong'],
-  ['Beneficiary Address', 'Units 1260, 12/F, Emperor Group Centre, 288 Hennessy Road, Wan Chai, Hong Kong'],
-  ['Beneficiary Bank', 'JPMorgan Chase Bank N.A., Hong Kong Branch'],
-  ['Beneficiary Bank Address', 'CHARTER HOUSE, 8 CONNAUGHT ROAD, CENTRAL, HONG KONG'],
-  ['Bank Code', '7'],
-  ['Branch Code', '863'],
-])
+const seller = computed(() => props.draft.seller || {})
+const bankRows = computed(() => props.draft.bank || [])
+const printFrame = ref(null)
 
 function money(value) {
   return Number(value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -40,7 +24,8 @@ const validityDays = computed(() => {
 })
 
 function printPreview() {
-  window.print()
+  if (props.saved) printFrame.value?.contentWindow?.print()
+  else window.print()
 }
 </script>
 
@@ -55,7 +40,8 @@ function printPreview() {
         </div>
       </header>
       <div class="quote-preview-scroll">
-        <article class="pi-sheet">
+        <iframe v-if="saved" ref="printFrame" title="已保存 PI" :srcdoc="draft.print_html" sandbox="allow-same-origin allow-modals" style="width:100%;height:80vh;border:0;background:white" />
+        <article v-else class="pi-sheet">
           <h1>Proforma Invoice</h1>
           <div class="pi-parties">
             <section>
@@ -79,7 +65,7 @@ function printPreview() {
           <div class="pi-totals"><div><span>Sub Total</span><strong>{{ money(draft.totals.subtotal) }}</strong></div><div><span>Shipping Cost</span><strong>{{ money(draft.totals.shipping_fee) }}</strong></div><div v-if="Number(draft.totals.discount)"><span>Discount</span><strong>-{{ money(draft.totals.discount) }}</strong></div><div class="pi-grand-total"><span>Grand Total</span><strong>{{ money(draft.totals.total_amount) }}</strong></div></div>
           <div class="pi-amount-words">{{ amountWords }}</div>
           <div class="pi-notes"><strong>NOTES:</strong><br />1. Lead time: {{ draft.terms.lead_time_days || 10 }} Days<br />2. Price Valid Date: {{ validityDays }} Days.<br />3. Payment terms:<br />{{ Math.round(draft.payment_splits.deposit_ratio * 100) }}% ({{ draft.currency }} {{ money(draft.payment_splits.deposit_amount) }}) payment in advance, {{ Math.round(draft.payment_splits.balance_ratio * 100) }}% ({{ draft.currency }} {{ money(draft.payment_splits.balance_amount) }}) balance payment should be paid before shipping<br />4. Trading terms: {{ draft.terms.trading_terms || '—' }}<br />5. Shipping details: {{ draft.terms.shipping_details || '—' }}<br />6. The price is EXCLUDE customs duties and VAT. If the goods generate the customs taxes and VAT taxes in buyer's local, the buyer should pay by themselves.<br />7. Additional notes: {{ draft.terms.notes || '—' }}</div>
-          <section class="pi-bank"><h2>BANK INFORMATION</h2><dl><template v-for="row in bankRows" :key="row[0]"><dt>{{ row[0] }}</dt><dd>{{ row[1] }}</dd></template></dl><p><strong>IMPORTANT NOTICE</strong><br />We will not change the bank account information frequently! If the "Beneficiary Name" on the Proforma Invoice is not GUANGZHOU SUNJACK LIGHTING CO., LTD., please confirm with us, DO NOT PAY WITHOUT CONFIRMATION, and prevent being scammed!</p><footer>---&nbsp; END &nbsp;---</footer></section>
+          <section class="pi-bank"><h2>BANK INFORMATION</h2><dl><template v-for="row in bankRows" :key="row[0]"><dt>{{ row[0] }}</dt><dd>{{ row[1] }}</dd></template></dl><p>{{ draft.bank_notice }}</p><footer>---&nbsp; END &nbsp;---</footer></section>
         </article>
       </div>
     </section>

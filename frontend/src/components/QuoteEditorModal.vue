@@ -40,6 +40,7 @@ const editorScope = provideUnsavedChangesScope()
 const guard = useUnsavedChangesGuard({ data: () => draft, scope: editorScope })
 const requestClose = () => editorScope.requestClose(() => emit('close'))
 const previewOpen = ref(false)
+const previewTemplate = ref(null)
 const saving = ref(false)
 const savedQuote = ref(null)
 const errorMessage = ref('')
@@ -91,7 +92,8 @@ const previewDraft = computed(() => {
   const depositAmount = Math.round(total.value * depositRatio * 100) / 100
   return {
     quote_no: draft.quote_no, quote_date: draft.quote_date, valid_until: draft.valid_until, currency: draft.currency,
-    buyer: { company_name: customer.name || '', recipient: draft.recipient_name, address: draft.buyer_address, email: draft.buyer_email, phone: draft.buyer_phone },
+    ...(previewTemplate.value || {}),
+    buyer: { company_name: props.mode === 'revise' ? (props.quote?.buyer_company_name ?? '') : (customer.name || ''), recipient: draft.recipient_name, address: draft.buyer_address, email: draft.buyer_email, phone: draft.buyer_phone },
     terms: { lead_time_days: draft.lead_time_days, trading_terms: draft.trading_terms, shipping_details: draft.shipping_details, notes: draft.notes },
     totals: { subtotal: subtotal.value, shipping_fee: roundPiMoney(draft.shipping_fee || 0), discount: roundPiMoney(draft.discount || 0), total_amount: total.value },
     payment_splits: { deposit_ratio: depositRatio, deposit_amount: depositAmount, balance_ratio: 1 - depositRatio, balance_amount: total.value - depositAmount },
@@ -279,8 +281,13 @@ async function openPreview() {
   errorMessage.value = validate()
   if (errorMessage.value) return
   clearTimeout(salesTimer)
-  if (await checkSalesRules()) previewOpen.value = true
-  else errorMessage.value = salesCheckError.value || '请先处理下方销售规则提示。'
+  if (!await checkSalesRules()) { errorMessage.value = salesCheckError.value || '请先处理下方销售规则提示。'; return }
+  try {
+    const params = { discount: Number(draft.discount || 0) ? '1' : '0' }
+    if (props.mode === 'revise') params.quote_id = props.quote.id
+    previewTemplate.value = (await api.get('/quotes/preview-template/', { params })).data
+    previewOpen.value = true
+  } catch (e) { errorMessage.value = e.response?.data?.detail || '卖方或模板来源不可用，请核实后重试。' }
 }
 async function save(shouldExport = false) {
   if (saving.value) return

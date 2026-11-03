@@ -10,9 +10,18 @@ import socket
 import subprocess
 import sys
 import tempfile
+import time
 import zipfile
 from pathlib import Path
 
+if os.environ.get("APP_STAGE", "development").strip().lower() != "development":
+    print(json.dumps({"status": "FAILED", "error": "isolated drill requires development stage", "cleanup": "not-started"}), file=sys.stderr)
+    sys.exit(1)
+database_url = os.environ.get("DATABASE_URL", "")
+if database_url and not database_url.startswith("sqlite://"):
+    print(json.dumps({"status": "FAILED", "error": "parent process requires isolated SQLite settings", "cleanup": "not-started"}), file=sys.stderr)
+    sys.exit(1)
+os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 import django
 django.setup()
@@ -20,6 +29,7 @@ django.setup()
 from psycopg import sql
 from crm.services.backup_recovery import _sha256
 from crm.services.postgres_drill_backup import IsolatedPostgresDrill
+from crm.services.private_media import build_private_media_manifest
 
 
 def tool(bin_dir, name):
@@ -29,10 +39,12 @@ def tool(bin_dir, name):
 def run_tool(args, *, env=None):
     # A Windows server child can inherit pipes from pg_ctl and keep them open
     # after pg_ctl exits.  Discard output instead of waiting for pipe EOF.
-    result = subprocess.run(args, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=180)
+    with tempfile.TemporaryFile() as diagnostic:
+        result = subprocess.run(args, env=env, stdout=subprocess.DEVNULL, stderr=diagnostic, timeout=180)
+        diagnostic.seek(0)
+        detail = diagnostic.read().decode("utf-8", errors="replace").strip()
     if result.returncode:
-        # Never forward tool output: it can contain credentials or connection strings.
-        raise RuntimeError(f"{Path(args[0]).name} failed (exit {result.returncode})")
+        raise RuntimeError(f"{Path(args[0]).name} failed (exit {result.returncode}): {detail}")
 
 
 def snapshot(drill, database):
@@ -76,6 +88,7 @@ def main():
     start_attempted = False
     source_unchanged = None
     password = None
+    secret_file = root / "secret"
     error = None
     result = None
     cleanup_error = None
@@ -83,10 +96,9 @@ def main():
         source_bin = Path(args.postgres_bin).resolve(strict=True)
         shutil.copytree(source_bin.parent, pg_bin.parent)
         password = secrets.token_urlsafe(32)
-        secret_file = root / "secret"
-        secret_file.write_text(password, encoding="ascii")
-        if os.name != "nt":
-            os.chmod(secret_file, 0o600)
+        fd = os.open(secret_file, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w", encoding="ascii") as secret:
+            secret.write(password)
         with socket.socket() as sock:
             sock.bind(("127.0.0.1", 0))
             port = sock.getsockname()[1]
@@ -103,6 +115,7 @@ def main():
         drill._manage("migrate", "--noinput", "--verbosity", "0")
         fixture = json.loads(drill._manage("shell", "--no-imports", "-c", "from crm.tests.iss018_drill_fixture import seed; seed()"))
         before = snapshot(drill, drill.source)
+        media_before = build_private_media_manifest(drill.media)
         backup = drill.backup()
         archive = Path(backup["archive"])
         expected = backup["sha256"]
@@ -125,16 +138,22 @@ def main():
                 raise RuntimeError("Injected fault unexpectedly succeeded")
             if snapshot(drill, restored["database"]) != before:
                 raise RuntimeError("Restored business rows differ from source")
+            if build_private_media_manifest(drill.media) != media_before:
+                raise RuntimeError("Source media changed during exercise")
             for key in ("attachment", "image"):
                 if not (Path(restored["media"]) / fixture[key]).is_file():
                     raise RuntimeError("Restored fixture media association is missing")
             result = {"status": "PASS", "versions": backup["manifest"]["versions"],
                       "source": drill.source, "target": restored["database"], "sha256": expected,
                       "table_count": len(before), "row_count": sum(map(len, before.values())),
-                      "migrations": len(backup["manifest"]["migrations"]), "media": backup["manifest"]["media"]}
+                      "migrations": len(backup["manifest"]["migrations"]), "media": backup["manifest"]["media"],
+                      "source_media_unchanged": True}
         except Exception as original:
-            if snapshot(drill, drill.source) != before:
-                raise RuntimeError(f"{original}; failure changed source data") from original
+            try:
+                if snapshot(drill, drill.source) != before or build_private_media_manifest(drill.media) != media_before:
+                    raise RuntimeError("failure changed source data or media")
+            except Exception as verification_error:
+                raise RuntimeError(f"{original}; source verification failed: {verification_error}") from original
             source_unchanged = True
             with drill._connect("postgres") as conn:
                 targets_after = set(conn.execute("SELECT datname FROM pg_database WHERE datname LIKE 'iss018_dst_%'").fetchall())
@@ -143,6 +162,9 @@ def main():
             if list(root.glob("media-restored-*")):
                 raise RuntimeError(f"{original}; failure left restored media") from original
             raise
+    except subprocess.TimeoutExpired as exc:
+        error = f"Tool timeout: {Path(exc.cmd[0]).name}"
+        cleanup_error = "Timed-out tool may have surviving children; retained the owned root for inspection"
     except Exception as exc:
         error = f"{type(exc).__name__}: {exc}"
         if password:
@@ -157,12 +179,25 @@ def main():
                 elif status != 3 or (cluster / "postmaster.pid").exists():
                     raise RuntimeError(f"Cannot prove cluster is stopped (status {status})")
             except Exception as exc:
-                cleanup_error = str(exc)
+                cleanup_error = str(exc).replace(password or "\0", "[REDACTED]")
+        try:
+            if secret_file.is_symlink():
+                raise RuntimeError("Secret file was replaced by a symlink")
+            secret_file.unlink(missing_ok=True)
+        except Exception as exc:
+            cleanup_error = (cleanup_error + "; " if cleanup_error else "") + f"Secret cleanup failed: {exc}"
         if not cleanup_error:
             try:
                 if root.parent.resolve() != Path(tempfile.gettempdir()).resolve() or not root.name.startswith("sunjack-iss018-pg17-") or root.is_symlink():
                     raise RuntimeError("Owned root validation failed")
-                shutil.rmtree(root)
+                for attempt in range(5):
+                    try:
+                        shutil.rmtree(root)
+                        break
+                    except PermissionError:
+                        if attempt == 4:
+                            raise
+                        time.sleep(1)
             except Exception as exc:
                 cleanup_error = str(exc)
     if cleanup_error:

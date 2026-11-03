@@ -27,7 +27,9 @@ def tool(bin_dir, name):
 
 
 def run_tool(args, *, env=None):
-    result = subprocess.run(args, env=env, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    # A Windows server child can inherit pipes from pg_ctl and keep them open
+    # after pg_ctl exits.  Discard output instead of waiting for pipe EOF.
+    result = subprocess.run(args, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=180)
     if result.returncode:
         # Never forward tool output: it can contain credentials or connection strings.
         raise RuntimeError(f"{Path(args[0]).name} failed (exit {result.returncode})")

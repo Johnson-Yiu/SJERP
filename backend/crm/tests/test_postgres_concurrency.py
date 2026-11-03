@@ -2,7 +2,8 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from decimal import Decimal
 import unittest
-from threading import Barrier
+from threading import Barrier, Event
+from time import monotonic, sleep
 from unittest.mock import patch
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -24,6 +25,7 @@ from crm.models import (
     Product,
     PurchaseOrder,
     PurchaseOrderItem,
+    PaymentPlan,
     Quote,
     QuoteChildRevisionCounter,
     QuoteNumberSequence,
@@ -31,10 +33,11 @@ from crm.models import (
     SKU,
     Supplier,
     SupplierSKU,
+    Transaction,
 )
 from crm.quote_numbers import allocate_revision_quote_no, allocate_root_quote_no
 from crm.document_numbers import allocate_document_no
-from crm.services.purchase_costs import save_costs
+from crm.services.purchase_costs import cost_summary, save_costs
 from crm.services.procurement import create_purchase_drafts
 from crm.services.fulfillment import confirm_shipment, record_receipt, sku_metrics
 from rest_framework.test import APIClient
@@ -252,6 +255,199 @@ class PostgreSQLConcurrencyTests(TransactionTestCase):
         purchase.refresh_from_db()
         self.assertEqual(purchase.cost_allocation_version, 1)
         self.assertEqual(purchase.items.get().cost_allocations.count(), 1)
+
+    def cost_reservation_fixture(self, prefix):
+        user, sku, item_a, purchase, purchase_item = self.receipt_fixture(prefix)
+        second_user = get_user_model().objects.create_user(username=f"{prefix}-second")
+        second_order = Order.objects.create(
+            order_no=f"SO-{prefix}-B", customer=purchase.order.customer,
+            order_date=date(2031, 3, 11), status="confirmed",
+        )
+        item_b = second_order.items.create(sku=sku, quantity=10, unit_price=10)
+        payload = {
+            "version": 0,
+            "allocations": [
+                {"purchase_item": purchase_item.pk, "target_type": "order", "order": item_a.order_id, "quantity": "5"},
+                {"purchase_item": purchase_item.pk, "target_type": "order", "order": item_b.order_id, "quantity": "5"},
+            ],
+            "expenses": [{"name": "Synthetic freight", "amount": "10", "method": "amount"}],
+        }
+        return user, second_user, sku, item_a, item_b, purchase, purchase_item, payload
+
+    def run_cost_lock_competition(self, save_call, competing_call, *, sku_lock=False):
+        """Hold a real row lock until PostgreSQL confirms the other session waits."""
+        from crm.services.fulfillment import signed_inventory_quantity
+
+        locked, release, other_ready = Event(), Event(), Event()
+        pids = {}
+
+        def hold_lock(*args, **kwargs):
+            locked.set()  # PO is locked in the view; SKU is locked in rebalance.
+            if not release.wait(timeout=15):
+                raise AssertionError("Test did not release the row lock")
+            return (signed_inventory_quantity if sku_lock else save_costs)(*args, **kwargs)
+
+        def worker(name, call):
+            close_old_connections()
+            try:
+                with connections["default"].cursor() as cursor:
+                    cursor.execute("SET statement_timeout = '20000ms'")
+                    cursor.execute("SELECT pg_backend_pid()")
+                    pids[name] = cursor.fetchone()[0]
+                if name == "other":
+                    other_ready.set()
+                return call()
+            finally:
+                connections.close_all()
+
+        target = "crm.services.fulfillment.signed_inventory_quantity" if sku_lock else "crm.services.purchase_costs.save_costs"
+        with patch(target, side_effect=hold_lock):
+            with ThreadPoolExecutor(max_workers=2) as executor:
+                first = executor.submit(worker, "save", save_call)
+                try:
+                    self.assertTrue(locked.wait(timeout=10), "Cost save never reached the locked section")
+                    second = executor.submit(worker, "other", competing_call)
+                    self.assertTrue(other_ready.wait(timeout=10), "Second database session did not start")
+                    self.assertNotEqual(pids["save"], pids["other"])
+                    deadline = monotonic() + 10
+                    blockers = []
+                    while monotonic() < deadline:
+                        with connection.cursor() as cursor:
+                            cursor.execute("SELECT pg_blocking_pids(%s)", [pids["other"]])
+                            blockers = cursor.fetchone()[0]
+                        if pids["save"] in blockers:
+                            break
+                        if second.done():
+                            break
+                        sleep(0.05)
+                    self.assertIn(pids["save"], blockers, "Second operation never waited for the cost-save transaction")
+                finally:
+                    release.set()
+                return first.result(timeout=20), second.result(timeout=20)
+
+    def assert_cost_reservation_state(self, sku, purchase, item, stock, reserved):
+        purchase.refresh_from_db()
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, Decimal("10"))
+        self.assertEqual(item.received_quantity, Decimal(stock))
+        self.assertEqual(sku_metrics(sku)["actual_quantity"], Decimal(stock))
+        self.assertEqual(sku_metrics(sku)["reserved_quantity"], Decimal(reserved))
+        self.assertEqual(sum(item.cost_allocations.values_list("quantity", flat=True)), Decimal("10"))
+        self.assertEqual(purchase.cost_allocation_version, 1)
+        self.assertEqual(Decimal(purchase.additional_costs[0]["amount"]), Decimal("10"))
+        summary = cost_summary(purchase)
+        self.assertEqual(summary["base_amount"], Decimal("20"))
+        self.assertEqual(summary["additional_amount"], Decimal("10"))
+        self.assertEqual(summary["total_amount"], Decimal("30"))
+        self.assertEqual(Transaction.objects.count(), 0)
+        self.assertEqual(PaymentPlan.objects.count(), 0)
+
+    @override_settings(AUDIT_LOG_ENABLED=True)
+    def test_cost_two_buyers_compete_with_real_shared_reservations(self):
+        user, other, sku, item_a, item_b, purchase, item, payload = self.cost_reservation_fixture("PG-COST-RACE")
+        record_receipt(item, {"receipt_date": date(2031, 3, 10), "quantity": Decimal("5"), "unit_cost": Decimal("2")})
+        self.assertEqual(sku_metrics(sku)["reserved_quantity"], Decimal("5"))
+        path = f"/api/purchase-orders/{purchase.pk}/cost-allocation/"
+        results = self.run_cost_lock_competition(
+            lambda: self.post_as_user(user.pk, path, payload),
+            lambda: self.post_as_user(other.pk, path, payload),
+        )
+        self.assertEqual(sorted(result[0] for result in results), [200, 400], results)
+        self.assert_cost_reservation_state(sku, purchase, item, 5, 5)
+        self.assertEqual(set(InventoryReservation.objects.filter(sku=sku).values_list("order_item_id", flat=True)), {item_a.pk, item_b.pk})
+        audit = OperationLog.objects.get(action_label="采购成本分配")
+        self.assertIn(audit.operator_id, {user.pk, other.pk})
+        self.assertEqual(audit.before_data["cost_allocation"]["version"], 0)
+        self.assertEqual(audit.after_data["cost_allocation"]["version"], 1)
+        self.assertEqual(InventoryMovement.objects.filter(sku=sku).count(), 1)
+
+    @override_settings(AUDIT_LOG_ENABLED=True)
+    def test_distinct_purchases_contend_for_same_sku_reservation_lock(self):
+        user, other, sku, item_a, item_b, purchase, item, payload = self.cost_reservation_fixture("PG-SKU-LOCK")
+        record_receipt(item, {"receipt_date": date(2031, 3, 10), "quantity": Decimal("5"), "unit_cost": Decimal("2")})
+        second = PurchaseOrder.objects.create(
+            purchase_no="PO-PG-SKU-LOCK-B", supplier=purchase.supplier,
+            order_date=date(2031, 3, 11), status="ordered",
+        )
+        second_item = second.items.create(sku=sku, quantity=10, unit_price=2)
+        second_payload = {
+            "version": 0,
+            "allocations": [{"purchase_item": second_item.pk, "target_type": "order", "order": item_b.order_id, "quantity": "10"}],
+            "expenses": [],
+        }
+        results = self.run_cost_lock_competition(
+            lambda: self.post_as_user(user.pk, f"/api/purchase-orders/{purchase.pk}/cost-allocation/", payload),
+            lambda: self.post_as_user(other.pk, f"/api/purchase-orders/{second.pk}/cost-allocation/", second_payload),
+            sku_lock=True,
+        )
+        self.assertEqual([result[0] for result in results], [200, 200], results)
+        self.assert_cost_reservation_state(sku, purchase, item, 5, 5)
+        second.refresh_from_db()
+        self.assertEqual(second.cost_allocation_version, 1)
+        self.assertEqual(sum(second_item.cost_allocations.values_list("quantity", flat=True)), Decimal("10"))
+        self.assertEqual(set(InventoryReservation.objects.filter(sku=sku).values_list("order_item_id", flat=True)), {item_a.pk, item_b.pk})
+        self.assertEqual(InventoryMovement.objects.filter(sku=sku).count(), 1)
+        self.assertEqual(OperationLog.objects.filter(action_label="采购成本分配").count(), 2)
+
+    @override_settings(AUDIT_LOG_ENABLED=True)
+    def test_cost_save_races_receipt_with_shared_sku(self):
+        user, other, sku, item_a, item_b, purchase, item, payload = self.cost_reservation_fixture("PG-COST-RECV")
+        results = self.run_cost_lock_competition(
+            lambda: self.post_as_user(user.pk, f"/api/purchase-orders/{purchase.pk}/cost-allocation/", payload),
+            lambda: self.post_as_user(other.pk, f"/api/purchase-orders/{purchase.pk}/receive/", {
+                "purchase_item": item.pk, "receipt_date": "2031-03-10", "quantity": "5", "unit_cost": "2",
+            }, "pg-cost-receipt"),
+        )
+        self.assertEqual(sorted(result[0] for result in results), [200, 201], results)
+        self.assert_cost_reservation_state(sku, purchase, item, 5, 5)
+        self.assertEqual(GoodsReceipt.objects.filter(purchase_item=item).count(), 1)
+        self.assertEqual(InventoryMovement.objects.filter(sku=sku).count(), 1)
+        self.assertEqual(OperationLog.objects.filter(action_label="采购成本分配").count(), 1)
+        self.assertEqual(OperationLog.objects.filter(action_label="登记采购到货").count(), 1)
+
+    @override_settings(AUDIT_LOG_ENABLED=True)
+    def test_cost_save_races_receipt_reversal_with_shared_sku(self):
+        user, other, sku, item_a, item_b, purchase, item, payload = self.cost_reservation_fixture("PG-COST-REV")
+        receipt = record_receipt(item, {"receipt_date": date(2031, 3, 10), "quantity": Decimal("5"), "unit_cost": Decimal("2")})
+        results = self.run_cost_lock_competition(
+            lambda: self.post_as_user(user.pk, f"/api/purchase-orders/{purchase.pk}/cost-allocation/", payload),
+            lambda: self.post_as_user(other.pk, f"/api/purchase-orders/{purchase.pk}/receipts/{receipt.pk}/reverse/", {"reason": "Synthetic concurrency test"}),
+        )
+        self.assertEqual([result[0] for result in results], [200, 200], results)
+        self.assert_cost_reservation_state(sku, purchase, item, 0, 0)
+        receipt.refresh_from_db()
+        self.assertIsNotNone(receipt.reversal_inventory_movement_id)
+        self.assertEqual(InventoryMovement.objects.filter(sku=sku).count(), 2)
+        self.assertEqual(OperationLog.objects.filter(action_label="采购成本分配").count(), 1)
+        self.assertEqual(OperationLog.objects.filter(action_label="冲销采购入库").count(), 1)
+
+    @override_settings(AUDIT_LOG_ENABLED=True)
+    def test_cost_audit_failure_rolls_back_allocation_and_real_reservations(self):
+        from django.apps import apps
+
+        user, other, sku, item_a, item_b, purchase, item, payload = self.cost_reservation_fixture("PG-COST-AUDIT")
+        record_receipt(item, {"receipt_date": date(2031, 3, 10), "quantity": Decimal("5"), "unit_cost": Decimal("2")})
+        def crm_state():
+            return {model._meta.label: list(model.objects.order_by("pk").values())
+                    for model in apps.get_app_config("crm").get_models()}
+
+        before_all = crm_state()
+        before_allocations = list(item.cost_allocations.order_by("pk").values())
+        before_reservations = list(InventoryReservation.objects.filter(sku=sku).order_by("pk").values())
+        self.assertTrue(before_reservations)
+        with patch("crm.views.record_operation", side_effect=RuntimeError("synthetic audit failure")):
+            with self.assertRaisesRegex(RuntimeError, "synthetic audit failure"):
+                self.post_as_user(user.pk, f"/api/purchase-orders/{purchase.pk}/cost-allocation/", payload)
+        purchase.refresh_from_db()
+        self.assertEqual(purchase.cost_allocation_version, 0)
+        self.assertEqual(purchase.additional_costs, [])
+        self.assertEqual(list(item.cost_allocations.order_by("pk").values()), before_allocations)
+        self.assertEqual(list(InventoryReservation.objects.filter(sku=sku).order_by("pk").values()), before_reservations)
+        self.assertEqual(InventoryMovement.objects.filter(sku=sku).count(), 1)
+        self.assertEqual(OperationLog.objects.filter(action_label="采购成本分配").count(), 0)
+        self.assertEqual(Transaction.objects.count(), 0)
+        self.assertEqual(PaymentPlan.objects.count(), 0)
+        self.assertEqual(crm_state(), before_all)
 
     def test_receipt_and_shipment_concurrently_rebalance_one_sku_without_deadlock(self):
         customer = Customer.objects.create(code="PG-F1-C", name="PostgreSQL F1 Customer")

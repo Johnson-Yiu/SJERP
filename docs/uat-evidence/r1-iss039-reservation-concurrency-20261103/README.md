@@ -30,6 +30,6 @@ python manage.py test crm.tests.test_postgres_concurrency crm.tests.test_iss039_
 
 后续显式仅在本地进程解除类的 PostgreSQL 跳过，并将三个竞争场景及新增 SKU 场景的竞争辅助函数临时替换为顺序执行，验证夹具和结果断言：**4 项通过**，见 [三个场景](sqlite-sequential.raw.log) 和 [SKU 场景](sqlite-sku-sequential.raw.log)。另以 SQLite 运行未经顺序替换的审计失败回滚测试 **1 项通过**，见 [回滚日志](sqlite-rollback.raw.log)，其中异常堆栈是测试主动注入。该临时进程级覆盖未修改测试源码的 PostgreSQL 保护；这些结果不验证 PostgreSQL 锁或并发。
 
-本机未发现 `postgres`、`pg_ctl`、`docker` 命令，localhost:5432 未监听；本次没有访问其他服务器。**真实 PostgreSQL 并发结果 BLOCKED，测试和预期未经 PostgreSQL 实测，不得视为已通过或无缺陷。** 请协调线程在受保护的 PostgreSQL 17 CI 测试库运行完整套件，保留测试名、结果及精确 SHA；若失败，先检查真实日志，不降低断言或绕过清理/审计触发器。前端与真实 Chrome 非本次测试代码改动范围，未运行。
+本机未发现 `postgres`、`pg_ctl`、`docker` 命令，localhost:5432 未监听；本次没有访问其他服务器。改用仓库原有 GitHub Actions 的隔离 PostgreSQL 17 服务，测试代码提交 `a065a49da0d6af7102acaf8a30fc6500e89c84bb`：[PostgreSQL 原始日志](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41609103366/job/125826214644)。全量 **1119 项通过，21 项按既有条件跳过**。日志证实上述五项新增专项均已执行，而非跳过；审计失败与版本冲突出现的错误响应是测试主动注入或预期结果。测试使用不同 PostgreSQL 连接并检查实际锁等待。前端与真实 Chrome 非本次测试代码改动范围，未在本地运行；完整集成后的浏览器回归另行核验。
 
 当前尚未发现经复现的业务缺陷，因此没有修改业务实现。ISS-006 和 ISS-039 的全量验收及独立复审仍待完成。

@@ -5,7 +5,9 @@ from pathlib import Path
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.db import connection, transaction
 from django.test import TestCase, override_settings
+from django.test.utils import CaptureQueriesContext
 from openpyxl import Workbook, load_workbook
 from rest_framework.test import APIClient
 
@@ -611,3 +613,155 @@ class HistoryImportPreflightTests(TestCase):
             denied = self.upload(b"not-an-xlsx")
         self.assertEqual(denied.status_code, 403)
         self.assertEqual(denied.data["detail"], HistoryPreflightPermission.message)
+
+    def multi_line_partial_rows(self, kind, quantities, *, uncertain_second=False, reversal=False, coverage="complete"):
+        customer, supplier, first_sku = self.create_masters()
+        product = Product.objects.create(code="ISS121-KG-P", name="合成重量产品", sales_model_prefix="I124")
+        second_sku = SKU.objects.create(sku="ISS121-KG", product=product, display_name_cn="合成重量 SKU", unit="kg")
+        skus = (first_sku, second_sku)
+        is_sales = kind == "sales"
+        parent_id = "SO-SRC-1" if is_sales else "PO-SRC-1"
+        if is_sales:
+            parent = self.sales_order_row(customer, state="partial")
+            lines = [self.sales_line_row(sku, line_id=str(i), unit_snapshot=sku.unit, base_unit_snapshot=sku.unit) for i, sku in enumerate(skus, 1)]
+            parent_sheet, line_sheet = "销售订单", "销售明细"
+            event_type, reversal_type = "shipment", "shipment_reversal"
+        else:
+            parent = {
+                "group_id": "G-1", "source_record_id": parent_id, "purchase_no": "OLD-PO-1",
+                "order_date": date(2024, 7, 1), "lifecycle_state": "partial", "supplier_code": supplier.code,
+                "supplier_name_snapshot": supplier.name, "supplier_address_snapshot": "Old address",
+                "supplier_contact_name_snapshot": "Old contact", "supplier_phone_snapshot": "555-0111",
+                "supplier_email_snapshot": "supplier@example.test", "currency": "USD", "exchange_rate": "1.000000",
+                "truth_status": "真实", "voucher_reference": "synthetic://purchase",
+            }
+            lines = [{
+                "group_id": "G-1", "source_purchase_id": parent_id, "source_line_id": str(i),
+                "sku_code": sku.sku, "sku_name_snapshot": sku.display_name_cn, "unit_snapshot": sku.unit,
+                "base_unit_snapshot": sku.unit, "quantity_base": "10.00", "unit_price": "3.000000000000",
+                "supplier_name_snapshot": supplier.name, "truth_status": "真实", "voucher_reference": "synthetic://line",
+            } for i, sku in enumerate(skus, 1)]
+            parent_sheet, line_sheet = "采购订单", "采购明细"
+            event_type, reversal_type = "goods_receipt", "receipt_reversal"
+        events = []
+        for i, (sku, quantity) in enumerate(zip(skus, quantities), 1):
+            if not quantity:
+                continue
+            events.append({
+                "group_id": "G-1", "source_event_id": f"EV-{i}", "event_type": event_type,
+                "parent_source_id": parent_id, "source_line_id": str(i), "event_date": date(2024, 8, 2),
+                "sku_code": sku.sku, "sku_name_snapshot": sku.display_name_cn, "unit_snapshot": sku.unit,
+                "base_unit_snapshot": sku.unit, "quantity_base": str(quantity), "lifecycle_state": "effective",
+                "truth_status": "待核实" if uncertain_second and i == 2 else "真实", "voucher_reference": "synthetic://event",
+            })
+        if reversal:
+            events.append({**events[0], "source_event_id": "EV-REV", "event_type": reversal_type,
+                           "quantity_base": "4", "reversal_of_source_event_id": "EV-1"})
+        return {"分组": [self.group_row(coverage_status=coverage)], parent_sheet: [parent], line_sheet: lines, "履约记录": events}, parent_sheet, line_sheet
+
+    def test_partial_multiline_mixed_progress_is_consistent_for_sales_and_purchase(self):
+        for kind in ("sales", "purchase"):
+            with self.subTest(kind=kind):
+                with transaction.atomic():
+                    rows, parent_sheet, line_sheet = self.multi_line_partial_rows(kind, (10, 0))
+                    before = self.business_snapshot()
+                    with CaptureQueriesContext(connection) as queries:
+                        response = self.upload(self.workbook_bytes(rows))
+                    self.assertEqual(response.status_code, 200, response.data)
+                    writes = [query["sql"] for query in queries if query["sql"].lstrip().upper().startswith(
+                        ("INSERT ", "UPDATE ", "DELETE ", "REPLACE ", "CREATE ", "ALTER ", "DROP ")
+                    )]
+                    self.assertEqual(writes, [])
+                    line_results = [item for item in response.data["results"] if item["sheet"] == line_sheet]
+                    self.assertEqual(len(line_results), 2)
+                    for item in line_results:
+                        self.assertFalse(any("行项目数量不呈现部分履约状态" in reason["message"] for reason in item["reasons"]), item)
+                    self.assertEqual(self.business_snapshot(), before)
+                    self.assertEqual(list(Path(self.media.name).iterdir()), [])
+                    transaction.set_rollback(True)
+
+    def test_partial_order_uses_all_lines_and_only_verified_fulfillment(self):
+        cases = (
+            ("each_partial", (4, 5), {}, False, False),
+            ("all_complete", (10, 10), {}, True, False),
+            ("none_started", (0, 0), {}, True, False),
+            ("part_reversed", (10, 0), {"reversal": True}, False, False),
+            ("unverified_event", (10, 10), {"uncertain_second": True}, False, True),
+            ("incomplete_coverage", (0, 0), {"coverage": "partial"}, False, True),
+        )
+        for kind in ("sales", "purchase"):
+            for name, quantities, options, mismatch, uncertain in cases:
+                with self.subTest(kind=kind, case=name), transaction.atomic():
+                    rows, parent_sheet, line_sheet = self.multi_line_partial_rows(kind, quantities, **options)
+                    before = self.business_snapshot()
+                    response = self.upload(self.workbook_bytes(rows))
+                    self.assertEqual(response.status_code, 200, response.data)
+                    parent = next(item for item in response.data["results"] if item["sheet"] == parent_sheet)
+                    lines = [item for item in response.data["results"] if item["sheet"] == line_sheet]
+                    messages = [reason["message"] for reason in parent["reasons"]]
+                    self.assertEqual(any("部分履约状态与已核实履约记录不一致" in message for message in messages), mismatch, parent)
+                    self.assertEqual(any("无法确定整单履约状态" in message for message in messages), uncertain, parent)
+                    self.assertFalse(any("行项目数量不呈现部分履约状态" in reason["message"] for item in lines for reason in item["reasons"]))
+                    if uncertain:
+                        group = next(item for item in response.data["results"] if item["sheet"] == "分组")
+                        self.assertEqual(group["status"], "待人工核实")
+                    self.assertEqual(self.business_snapshot(), before)
+                    self.assertEqual(list(Path(self.media.name).iterdir()), [])
+                    transaction.set_rollback(True)
+
+    def test_fulfillment_lifecycle_is_independent_of_financial_settlement(self):
+        cases = (("open", (0, 0), "settled"), ("completed", (10, 10), "open"),
+                 ("cancelled", (0, 0), "settled"), ("partial", (10, 0), "settled"))
+        for kind in ("sales", "purchase"):
+            for order_state, quantities, plan_state in cases:
+                with self.subTest(kind=kind, order_state=order_state, plan_state=plan_state), transaction.atomic():
+                    rows, parent_sheet, line_sheet = self.multi_line_partial_rows(kind, quantities)
+                    rows[parent_sheet][0]["lifecycle_state"] = order_state
+                    parent_key = "source_order_id" if kind == "sales" else "source_purchase_id"
+                    parent_id = "SO-SRC-1" if kind == "sales" else "PO-SRC-1"
+                    rows["收付款计划"] = [{
+                        "group_id": "G-1", "source_plan_id": "PLAN-1", parent_key: parent_id,
+                        "direction": "receivable" if kind == "sales" else "payable",
+                        "planned_amount": "100", "settled_amount": "100" if plan_state == "settled" else "0",
+                        "currency": "USD", "lifecycle_state": plan_state,
+                        "settlement_detail_complete": "no", "truth_status": "真实", "voucher_reference": "synthetic://plan",
+                    }]
+                    before = self.business_snapshot()
+                    response = self.upload(self.workbook_bytes(rows))
+                    self.assertEqual(response.status_code, 200, response.data)
+                    parent = next(item for item in response.data["results"] if item["sheet"] == parent_sheet)
+                    lines = [item for item in response.data["results"] if item["sheet"] == line_sheet]
+                    self.assertFalse(any("部分履约状态与已核实履约记录不一致" in reason["message"] for reason in parent["reasons"]))
+                    self.assertFalse(any("已完成但可核实履约数量不足" in reason["message"] or "已取消订单仍有关联有效履约" in reason["message"] for item in lines for reason in item["reasons"]))
+                    self.assertEqual(self.business_snapshot(), before)
+                    self.assertEqual(list(Path(self.media.name).iterdir()), [])
+                    transaction.set_rollback(True)
+
+    def test_line_overfulfillment_and_excess_reversal_remain_independent_checks(self):
+        for kind in ("sales", "purchase"):
+            for case in ("overfulfilled", "excess_reversal"):
+                with self.subTest(kind=kind, case=case), transaction.atomic():
+                    rows, parent_sheet, line_sheet = self.multi_line_partial_rows(
+                        kind, (11, 0) if case == "overfulfilled" else (5, 0),
+                        reversal=case == "excess_reversal",
+                    )
+                    if case == "excess_reversal":
+                        rows["履约记录"][-1]["quantity_base"] = "6"
+                    before = self.business_snapshot()
+                    response = self.upload(self.workbook_bytes(rows))
+                    self.assertEqual(response.status_code, 200, response.data)
+                    line = next(item for item in response.data["results"] if item["sheet"] == line_sheet and item["source_record_id"] == "1")
+                    messages = [reason["message"] for reason in line["reasons"]]
+                    if case == "overfulfilled":
+                        self.assertTrue(any("履约数量超过订单行数量" in message for message in messages), line)
+                    else:
+                        self.assertTrue(any("有效履约数量为负数" in message for message in messages), line)
+                        original = next(item for item in response.data["results"] if item["sheet"] == "履约记录" and item["source_record_id"] == "EV-1")
+                        self.assertTrue(any("累计冲销数量超过原履约数量" in reason["message"] for reason in original["reasons"]), original)
+                        group = next(item for item in response.data["results"] if item["sheet"] == "分组")
+                        self.assertEqual(group["status"], "阻断")
+                    parent = next(item for item in response.data["results"] if item["sheet"] == parent_sheet)
+                    self.assertTrue(any("无法确定整单履约状态" in reason["message"] for reason in parent["reasons"]))
+                    self.assertEqual(self.business_snapshot(), before)
+                    self.assertEqual(list(Path(self.media.name).iterdir()), [])
+                    transaction.set_rollback(True)

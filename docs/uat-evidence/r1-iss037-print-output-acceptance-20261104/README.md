@@ -1,0 +1,20 @@
+# ISS-037 打印成品验收：进行中
+
+基线 `d5abc64750d00c89d685bf12c0f8f67d4ba10a97`。本记录只覆盖合成数据的局部检查，**不构成实际 UI 打印成品验收通过**，不关闭 ISS-037。
+
+## 本轮已核实
+
+- 现有已保存 PI 的 iframe 打印入口直接调用 `print()`，没有等待图片或字体。隔离数据库、真实 Chrome 的图片失败回归先失败：图片已损坏，点击打印后没有出现“图片加载失败”提示。此前专项报告只证明 `beforeprint`，没有成品 PDF。
+- 最小前端补修：已保存 PI 打印前检查 iframe、等待图片和字体，失败或超时显示中文提示并阻止打印；未保存草稿路径不变。没有修改模型、迁移或保存版本的模板。
+- `npm run test:browser:isolated -- --business-test iss037-print-output-acceptance.spec.js`：独立运行中的前两项通过，覆盖图片失败提示及阻止打印、390×844 正常资源时调用打印。`image-failure-1440.png` 与 `saved-preview-390.png` 是该轮真实浏览器截图。资源正常测试替换了 `window.print` 为测试探针，不能证明实际输出。
+- `npx vitest run tests/final-polish.spec.js --environment jsdom`：19 项通过；`npm run build` 通过，存在既有大包警告。隔离运行器完成 Django check 和全新 SQLite 迁移；真实 `/api/quotes/1/pi-data/` 返回 200。测试使用合成客户、卖方、银行、商品和隔离媒体，无业务数据库。
+- 隔离内存 SQLite 执行 `python manage.py test crm.tests.test_quote_template_snapshot crm.tests.test_quote_template_migration --verbosity 1`：12 项通过；包含既有保存模板变更与 XLSX 检查，但并非本轮实际 UI 打印成品交叉验收。
+- `independent-chrome-render.pdf` 是从保存报价 iframe 内容复制到独立页面后，由 Playwright Chrome `page.pdf()` 生成的单页 A4 **独立渲染样本**，不是用户界面打印成品。`independent-page-1.png` 为该 PDF 的人工目视页面：可见合成买卖方、银行与 10.00 USD；该夹具没有商品图片、收件人或长描述，不能据此认定相应验收通过。窄屏截图展示的是响应式屏幕预览，不代表纸张输出。
+
+## 未完成及失败证据
+
+真实 UI 打印尝试使用独立 Chrome profile、`--kiosk-printing` 与 Save as PDF 配置，点击界面按钮；该测试 30 秒超时，未产生 PDF，随后 worker teardown 超时。测试汇总为 **2 passed、1 failed、1 teardown error**，不得写成全通过。隔离 API/Vite 已停止；仅定位并停止了命令行含本次临时目录的两个 Chrome 进程。临时目录 `C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-sggleQ` 因 Chrome profile lock 保留，未清除用户数据。后续应先核实该路径及残留状态，再使用可控的真实 Chrome 打印对话或其他获准路径生成并人工检查 UI 成品。
+
+尚未完成：实际 UI PDF/纸张；修改当前模板及卖方配置后同一报价的预览、XLSX、打印交叉对账；商品图片和收件人；长描述、多行多页、空字段、历史模板缺失、图片与字体资源失败的完整矩阵；窄屏触发的实际纸张布局；字体失败的独立自动测试及原始 HTTP/测试日志归档。图片加载失败提示已验证，但不能扩展为所有资源异常全部通过。
+
+下一步保留现有修复、隔离数据和首次失败事实；修复打印成品测试环境后重跑全部验收，检查 PDF 每页并与保存快照/XLSX 对账。不得因本记录或局部测试通过宣布任务完成。

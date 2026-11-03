@@ -1556,6 +1556,24 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     queryset = Quote.objects.select_related("customer", "root_quote", "parent_quote").prefetch_related("items__sku__product")
     search_fields = ["quote_no", "customer__name"]
 
+    @action(detail=False, methods=["get"], url_path="preview-template")
+    def preview_template(self, request):
+        """Draft-only display data; a revision must use its parent's saved source."""
+        from .quote_template_snapshot import QuoteTemplateSnapshotError, capture_template, resolve_quote_template
+        template_id = "standard_en_with_discount" if request.query_params.get("discount") == "1" else "standard_en_no_discount"
+        try:
+            quote_id = request.query_params.get("quote_id")
+            if quote_id:
+                quote = self.get_queryset().filter(pk=quote_id).first()
+                if quote is None:
+                    return Response({"detail": "报价不存在或无权查看。"}, status=status.HTTP_404_NOT_FOUND)
+                snapshot = resolve_quote_template(quote, template_id)
+            else:
+                snapshot = capture_template(template_id)
+        except (QuoteTemplateSnapshotError, ValueError):
+            return Response({"detail": "卖方或模板来源缺失，请核实后再预览。"}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        return Response({"seller": snapshot["seller"], "bank": snapshot["bank"], "bank_notice": snapshot["notice"]})
+
     def get_search_fields(self, request):
         return list(self.search_fields) if user_can(request.user, "customers", "view") else ["quote_no"]
     ordering_fields = ["quote_date", "valid_until", "created_at", "updated_at"]
@@ -1635,6 +1653,13 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         quote = Quote.objects.select_for_update().get(pk=quote.pk)
         if quote.status not in allowed:
             return Response({"detail": "当前报价状态不能执行此操作，请创建修订版重新报价。"}, status=status.HTTP_400_BAD_REQUEST)
+        if target in {"sent", "accepted"}:
+            from .quote_template_snapshot import QuoteTemplateSnapshotError, resolve_quote_template
+            template_id = "standard_en_with_discount" if quote.discount else "standard_en_no_discount"
+            try:
+                resolve_quote_template(quote, template_id)
+            except QuoteTemplateSnapshotError as exc:
+                return Response({"detail": str(exc)}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         before_status = quote.status
         quote.status = target
         update_fields = ["status", "updated_at"]
@@ -1824,6 +1849,7 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             parent_quote=source,
             revision_no=revision_no,
             revision_summary=revision_summary,
+            pi_template_snapshots=source.pi_template_snapshots,
             **quote_values,
         )
         if item_data is None:
@@ -1881,8 +1907,12 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             })
         totals = export_dto.totals
         payment_splits = export_dto.payment_splits
-        return Response({
+        result = {
             "invoice_no": export_dto.invoice_no,
+            "seller": export_dto.template_snapshot["seller"],
+            "bank": export_dto.template_snapshot["bank"],
+            "bank_notice": export_dto.template_snapshot["notice"],
+            "template_sha256": export_dto.template_snapshot["sha256"],
             "buyer": {
                 "company_name": quote.buyer_company_name,
                 "name": quote.recipient_name,
@@ -1893,6 +1923,7 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "terms": {
                 "quote_date": quote.quote_date,
                 "valid_until": quote.valid_until,
+                "validity_days": export_dto.terms["validity_days"],
                 "lead_time_days": quote.lead_time_days,
                 "trading_terms": quote.trading_terms,
                 "shipping_details": quote.shipping_details,
@@ -1912,7 +1943,17 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "balance_amount": payment_splits["balance_amount"],
             },
             "products": products,
-        })
+        }
+        from django.template import Context, Engine, TemplateSyntaxError
+        from .quote_export import _amount_words
+        result["amount_words"] = _amount_words(Decimal(totals["total_amount"]), quote.currency)
+        result["print_sha256"] = export_dto.template_snapshot["print_sha256"]
+        try:
+            template = Engine(autoescape=True).from_string(export_dto.template_snapshot["print_template"])
+            result["print_html"] = template.render(Context(result, autoescape=True))
+        except TemplateSyntaxError:
+            return Response({"detail": "保存的打印模板损坏，需核实原件。"}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        return Response(result)
 
     @action(detail=True, methods=["get"], permission_classes=[QuoteExportPermission])
     def export(self, request, pk=None):

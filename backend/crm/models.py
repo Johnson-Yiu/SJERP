@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
-from django.db import models
+from django.db import models, transaction
 
 from .money import (
     CURRENT_AMOUNT_CALCULATION_VERSION,
@@ -864,6 +864,28 @@ class ProductCertificate(TimestampedModel):
         return f"{self.product.code} · {self.name}"
 
 
+class QuoteTemplateAssetQuerySet(models.QuerySet):
+    def update(self, **kwargs):
+        raise ValidationError("已保存的报价模板资源不可修改。")
+
+    def delete(self):
+        raise ValidationError("已保存的报价模板资源不可删除。")
+
+
+class QuoteTemplateAsset(models.Model):
+    digest = models.CharField(max_length=64, primary_key=True)
+    snapshot = models.JSONField()
+    objects = QuoteTemplateAssetQuerySet.as_manager()
+
+    def save(self, *args, **kwargs):
+        if not self._state.adding:
+            raise ValidationError("已保存的报价模板资源不可修改。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("已保存的报价模板资源不可删除。")
+
+
 class Quote(TimestampedModel):
     STATUS_CHOICES = [("draft", "草稿"), ("sent", "已发送"), ("accepted", "已接受"), ("rejected", "已拒绝"), ("expired", "已过期")]
     quote_no = models.CharField("报价单号", max_length=120, unique=True)
@@ -887,6 +909,7 @@ class Quote(TimestampedModel):
     revision_summary = models.CharField("修订说明", max_length=500, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name="quotes")
     buyer_company_name = models.CharField("买方公司快照", max_length=200, blank=True)
+    pi_template_snapshots = models.JSONField(default=dict, editable=False)
     quote_date = models.DateField("报价日期")
     valid_until = models.DateField("有效期至", null=True, blank=True)
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
@@ -918,9 +941,36 @@ class Quote(TimestampedModel):
         self._buyer_company_name_supplied = (
             "buyer_company_name" in kwargs or len(args) > buyer_index
         )
+        template_index = next(
+            index for index, field in enumerate(self._meta.concrete_fields)
+            if field.attname == "pi_template_snapshots"
+        )
+        self._pi_template_supplied = "pi_template_snapshots" in kwargs or len(args) > template_index
         super().__init__(*args, **kwargs)
 
+    @transaction.atomic
     def save(self, *args, **kwargs):
+        if self._state.adding and not self._pi_template_supplied:
+            if self.parent_quote_id:
+                self.pi_template_snapshots = self.parent_quote.pi_template_snapshots
+            else:
+                from .quote_template_snapshot import capture_template
+                snapshots = {key: capture_template(key) for key in (
+                    "standard_en_no_discount", "standard_en_with_discount"
+                )}
+                self.pi_template_snapshots = {}
+                for key, snapshot in snapshots.items():
+                    digest = snapshot["metadata_sha256"]
+                    asset, _ = QuoteTemplateAsset.objects.get_or_create(digest=digest, defaults={"snapshot": snapshot})
+                    if asset.snapshot != snapshot:
+                        raise ValidationError("报价模板资源摘要冲突。")
+                    self.pi_template_snapshots[key] = digest
+        elif not self._state.adding:
+            update_fields = kwargs.get("update_fields")
+            if update_fields is None or "pi_template_snapshots" in update_fields:
+                saved = type(self).objects.filter(pk=self.pk).values_list("pi_template_snapshots", flat=True).first()
+                if saved != self.pi_template_snapshots:
+                    raise ValidationError({"pi_template_snapshots": "保存的报价模板不能修改。"})
         if (
             self._state.adding
             and not self.parent_quote_id

@@ -1954,6 +1954,7 @@ class QuoteSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data.pop("amount_calculation_version", None)
+        data.pop("pi_template_snapshots", None)
         if not user_can(serializer_user(self.context), "customers", "view"):
             data.update(
                 customer=None, customer_name="", buyer_company_name="", recipient_name="",
@@ -2297,6 +2298,7 @@ class OrderSerializer(serializers.ModelSerializer):
             revision_no=revision_no,
             revision_summary=f"订单确认时调整：{'、'.join(changed_parts)}",
             status="accepted",
+            pi_template_snapshots=source_quote.pi_template_snapshots,
             **revision_values,
         )
         create_quote_items(

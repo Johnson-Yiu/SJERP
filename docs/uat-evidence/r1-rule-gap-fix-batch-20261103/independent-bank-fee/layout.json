@@ -1,0 +1,26 @@
+[
+  {
+    "width": 1440,
+    "chrome": "156.0.8078.48",
+    "parentSelect": {
+      "x": 727,
+      "y": 458.578125,
+      "width": 392,
+      "height": 42
+    },
+    "selection": "",
+    "required": null
+  },
+  {
+    "width": 390,
+    "chrome": "156.0.8078.48",
+    "parentSelect": {
+      "x": 47,
+      "y": 458.96875,
+      "width": 308,
+      "height": 42
+    },
+    "selection": "",
+    "required": null
+  }
+]

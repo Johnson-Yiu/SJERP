@@ -1,5 +1,15 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-FIRST-BATCH-BUSINESS-AUDIT-01 / R1-RULE-GAP-FIX-BATCH-01（2026-11-03）
+
+从固定源码 `8d3ca5faa16fb74de95dbc716f5556a5d51bbe79` 建立三个独立补修工作树及集成分支 `codex/r1-rule-gap-fix-integration-20261103`，不使用或清理master。上一轮三份已推送审查的精确远端SHA已重新fetch核对，并完整纳入集成历史：ISS-105 `1cad93d0cb0297c33f764f6cb68d5c610512d9e4`、ISS-037 `c88a121298465fcb04e11f9b65ef9ad251eadf3f`、ISS-039 `2d5164287672d9a57a6496761c3ea0d026088072`。各报告与原始日志索引见[本轮集成验收](uat-evidence/r1-rule-gap-fix-batch-20261103/README.md)。旧审查的Python3.14/Django6.0.6结果仅作历史，本轮使用真实CPython3.12.16及逐项匹配全部16个pin的锁定运行环境；前端由npm ci恢复锁定依赖，没有依赖升级。
+
+本轮实施范围严格为：独立CNY银行手续费的结汇关联改为可选，保留来源/凭证/父事件验证和一次统计；历史未知买方在普通保存、普通修订及订单触发修订时保留未知，首次新报价明确预填与快照只读/正式导出关键字段校验不变；公共费用新提交只接受amount，历史quantity按原法读取，主动确认并预览转换、取消不写、零基数正费用拒绝，保留采购修改权限跨销售归属与审计/库存预留事务保护。不新增迁移，不自动重写历史，不生成额外资金/库存单据。
+
+当前已核实的原有实现不再列为旧业务阻断：ISS-037已有客户六项/供应商五项快照；ISS-039专用成本分配不要求逐SO授权。三个议题均不整体关闭。ISS-105的内部转账、银行重复识别、待分类、现金银行边界、启用基准/账户核对、凭证绑定审计仍待后续实施；ISS-037卖方及模板冻结、完整双方信息、历史来源可信度、正式主体版本/审批分离仍保留。ISS-108/121的原D01–D08与本轮确认原则不重新列作待决；具体启用日、真实余额和更正凭证尚需外部真实证据，不推测、不配置。本轮不进入标签页开发、正式RBAC、部署或master合并。
+
+每项先在独立分支定向验收并以 `[skip ci]` 推送，来源为A `321cb77d0179888a4788408d32c77d789504fbdd`、B `1a9666010c370dda08e2719e2c70caf6ee6c1b11`、C `aadd2ff3a7a15bc2a6601238ac6cea58d921c741`。逐项cherry-pick无冲突；模型/序列化/共享测试没有覆盖式丢失。集成本地Backend1114项（33跳过）、Node177项、Vitest69文件681项、单独typography1项、生产构建和两组真实Chrome5项通过；Django/迁移/diff检查通过，原有大chunk警告保留。取证脚本Unicode及错误证据根目录传播造成的先行失败、修正与成功复跑均保留，不改业务断言。最终集成提交不带跳过标记，按同一精确SHA核实Backend、Backend PostgreSQL、Frontend；本报告写入时CI待推送，不预写SUCCESS。Chrome桌面/390px、真实HTTP、原始日志与最终CI结果由集成验收报告和最终交付提供。台账124项：OPEN1、BLOCKED16、NEEDS_VERIFICATION17、FIXED_PENDING_REVIEW80、CLOSED10，新增0/关闭0。历史阶段记录原样保留，完成后停止等待独立复审。
+
 ## R1-POSTGRES-AUTH-CONTRACT-FIX-02（2026-11-02）
 
 在 `codex/r1-postgres-integration-validation-20261102` 上修复唯一 PostgreSQL CI 回归断言，代码 SHA `7ab9913e03f1bde341158237e51aeebf77a86abc`。测试只对 `historical_analysis.cls` 设置 `SessionAuthenticationWithChallenge`；匿名请求要求 401，认证用户无订单分析权限继续要求 403。生产认证、业务逻辑、迁移与数据均未改。

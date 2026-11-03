@@ -266,14 +266,14 @@ Call log:
   2  | import { spawnSync } from 'node:child_process'
   3  | import fs from 'node:fs'
   4  | import path from 'node:path'
-  5  | 
+  5  |
   6  | test.use({ channel: 'chrome' })
   7  | const report = path.resolve('../docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103')
   8  | const seed = path.resolve('../docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/seed_browser.py')
   9  | const screenshots = path.join(report, 'screenshots')
   10 | const results = []
   11 | let fixture
-  12 | 
+  12 |
   13 | test.beforeAll(() => {
   14 |   expect(process.env.ISOLATED_TEST_RUN_ID).toBeTruthy()
   15 |   const result = spawnSync(process.env.ISOLATED_TEST_PYTHON, [seed], { cwd: path.resolve('../backend'), env: process.env, encoding: 'utf8' })
@@ -282,7 +282,7 @@ Call log:
   18 |   fs.mkdirSync(screenshots, { recursive: true })
   19 | })
   20 | test.afterAll(() => fs.writeFileSync(path.join(report, 'browser-http.json'), JSON.stringify(results, null, 2)))
-  21 | 
+  21 |
   22 | for (const [index, width] of [1440, 390].entries()) {
   23 |   test(`核对同账户同额候选并有说明放行 ${width}px`, async ({ page }) => {
   24 |     await page.setViewportSize({ width, height: 900 })
@@ -330,5 +330,5 @@ Call log:
   65 |     await expect(page.locator('.review-banner')).toContainText('已确认')
   66 |   })
   67 | }
-  68 | 
+  68 |
 ```

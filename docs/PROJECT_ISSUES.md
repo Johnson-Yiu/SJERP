@@ -1,5 +1,9 @@
 # SUNJACK-ERP 项目问题台账
 
+## 2026-11-03 R1-RULE-GAP-BATCH-02 补充记录
+
+基线 `a55469c1b07e4f13037c6644c69d8a35ef0496a0`。本轮在独立工作树补充 [ISS-037 卖方/模板版本](uat-evidence/r1-iss037-seller-template-freeze-20261103/README.md)、[ISS-105 银行疑似重复核实](uat-evidence/r1-iss105-bank-duplicate-detection-20261103/README.md) 和 [ISS-039 真实 PostgreSQL 预留竞争](uat-evidence/r1-iss039-reservation-concurrency-20261103/README.md)。ISS-037 仍 NEEDS_VERIFICATION：历史原件归档、打印实际文件及完整主体/审批仍须核验；ISS-105 仍 OPEN：内部转账、退款更正、启用余额、分类、账户核对和凭证绑定等未被本次去重覆盖。ISS-039 成本金额比例和采购修改权限规则不变，定向并发证据待独立复审；不关闭任何议题。ISS-108/121 已确认原则继续有效，实际余额和启用日不作猜测。三项合并迁移及精确最终 SHA 的完整 CI 尚待核实，不以专项 CI 替代集成结论。
+
 ## 2026-11-03 R1-RULE-GAP-FIX-BATCH-01 最新核实
 
 统一源码基线 `8d3ca5faa16fb74de95dbc716f5556a5d51bbe79`。上一轮三份独立审查已推送并在本集成分支完整保留：[ISS-105](uat-evidence/r1-iss105-actual-cash-audit-20261103/README.md)（远端 `1cad93d0cb0297c33f764f6cb68d5c610512d9e4`）、[ISS-037](uat-evidence/r1-iss037-snapshot-audit-20261103/README.md)（`c88a121298465fcb04e11f9b65ef9ad251eadf3f`）、[ISS-039](uat-evidence/r1-iss039-shared-cost-audit-20261103/README.md)（`2d5164287672d9a57a6496761c3ea0d026088072`）。旧审查使用Python3.14/Django6.0.6；本轮用真实CPython3.12.16，全部16项Python锁定版本逐项一致、pip check通过，不能互相替代环境证据。

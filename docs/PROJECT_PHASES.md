@@ -1,5 +1,9 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-RULE-GAP-BATCH-02 集成核验（2026-11-03）
+
+以 `a55469c1b07e4f13037c6644c69d8a35ef0496a0` 为基线，独立集成卖方/模板冻结、银行疑似重复核实和采购预留 PostgreSQL 竞争证据，未覆盖旧阶段记录。两项独立 0096 迁移通过新合并迁移汇合，迁移测试恢复全部叶节点；有审计历史时仍拒绝逆向删除。隔离 SQLite 全量 1148 项、42 跳过，Node 177 项及前端构建通过；跳过的 PostgreSQL 场景不以 SQLite 替代。专项 PostgreSQL 17 及 Chrome 证据分别见三个报告。相同精确集成 SHA 的 Backend、PostgreSQL、Frontend CI 须待推送后核实，不预写成功。ISS-037/105 不整体关闭，打印最终文件、历史原件归属、部署权限及独立审查仍待完成；不部署、不启用正式 RBAC。
+
 ## R1-FIRST-BATCH-BUSINESS-AUDIT-01 / R1-RULE-GAP-FIX-BATCH-01（2026-11-03）
 
 从固定源码 `8d3ca5faa16fb74de95dbc716f5556a5d51bbe79` 建立三个独立补修工作树及集成分支 `codex/r1-rule-gap-fix-integration-20261103`，不使用或清理master。上一轮三份已推送审查的精确远端SHA已重新fetch核对，并完整纳入集成历史：ISS-105 `1cad93d0cb0297c33f764f6cb68d5c610512d9e4`、ISS-037 `c88a121298465fcb04e11f9b65ef9ad251eadf3f`、ISS-039 `2d5164287672d9a57a6496761c3ea0d026088072`。各报告与原始日志索引见[本轮集成验收](uat-evidence/r1-rule-gap-fix-batch-20261103/README.md)。旧审查的Python3.14/Django6.0.6结果仅作历史，本轮使用真实CPython3.12.16及逐项匹配全部16个pin的锁定运行环境；前端由npm ci恢复锁定依赖，没有依赖升级。

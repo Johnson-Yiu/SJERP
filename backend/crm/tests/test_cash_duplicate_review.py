@@ -118,8 +118,12 @@ class DuplicateMigrationTests(CashFixture, TransactionTestCase):
         pk = self.register(payload([self.receipt], key="MIGRATION-REVIEW"))
         review = CashDuplicateReview.objects.create(event_id=pk, candidate_ids=[123], reason="合成核实", actor={"kind": "development_superadmin"})
         executor = MigrationExecutor(connection)
-        with self.assertRaisesRegex(RuntimeError, "Refusing to remove duplicate review audit history"):
-            executor.migrate([("crm", "0095_merge_fulfillment_idempotency")])
+        try:
+            with self.assertRaisesRegex(RuntimeError, "Refusing to remove duplicate review audit history"):
+                executor.migrate([("crm", "0095_merge_fulfillment_idempotency")])
+        finally:
+            executor = MigrationExecutor(connection)
+            executor.migrate(executor.loader.graph.leaf_nodes())
         self.assertEqual(CashDuplicateReview.objects.get(pk=review.pk).reason, "合成核实")
 
 

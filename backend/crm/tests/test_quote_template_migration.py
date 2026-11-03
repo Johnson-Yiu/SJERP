@@ -30,4 +30,5 @@ class QuoteTemplateMigrationTests(TransactionTestCase):
             restored = executor.loader.project_state(old).apps.get_model("crm", "Quote").objects.get(pk=quote.pk)
             self.assertEqual(restored.buyer_company_name, "Historical buyer")
         finally:
-            MigrationExecutor(connection).migrate(new)
+            executor = MigrationExecutor(connection)
+            executor.migrate(executor.loader.graph.leaf_nodes())

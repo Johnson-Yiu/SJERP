@@ -13,11 +13,13 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import threading
 import uuid
 import zipfile
 from pathlib import Path
+from urllib.parse import quote
 
 import psycopg
 from django import get_version as django_version
@@ -121,6 +123,33 @@ class IsolatedPostgresDrill:
                 raise BackupRecoveryError(f"{name} version does not match PostgreSQL server major version")
         return {"server_version_num": server, "django": django_version(), **versions}
 
+    def _environment(self, database, media):
+        if database != self.source and database not in self._owned_targets:
+            raise BackupRecoveryError("Django may only use a database created by this drill")
+        media = Path(media).resolve(strict=True)
+        if media.parent != self.root:
+            raise BackupRecoveryError("Django media root must belong to this drill")
+        env = os.environ.copy()
+        env.update(APP_STAGE="development", DJANGO_DEBUG="false", DJANGO_ALLOWED_HOSTS="localhost,127.0.0.1,testserver", DEVELOPMENT_SUPERADMIN="false",
+                   RBAC_ENFORCEMENT="true", AUDIT_LOG_ENABLED="true", MEDIA_ROOT=str(media),
+                   DATABASE_URL=f"postgresql://{quote(self.user, safe='')}:{quote(self._password, safe='')}@127.0.0.1:{self.port}/{database}")
+        return env
+
+    def _manage_database(self, database, media, *arguments):
+        """Run a Django command against an owned database, credentials in env only."""
+        backend = Path(__file__).resolve().parents[2]
+        env = self._environment(database, media)
+        result = subprocess.run([sys.executable, str(backend / "manage.py"), *arguments], cwd=backend,
+                                env=env, capture_output=True, text=True, encoding="utf-8", errors="replace")
+        if result.returncode:
+            detail = (result.stderr or result.stdout).replace(self._password, "[REDACTED]")
+            detail = detail.replace(quote(self._password, safe=""), "[REDACTED]")
+            raise BackupRecoveryError(f"Django {' '.join(arguments)} failed ({result.returncode}): {detail.strip()}")
+        return result.stdout
+
+    def _manage(self, *arguments):
+        return self._manage_database(self.source, self.media, *arguments)
+
     def media_write(self, relative, content):
         """The only media writer used by this isolated drill's fixture."""
         relative = _safe_member_path(relative)
@@ -144,6 +173,7 @@ class IsolatedPostgresDrill:
         """
         self._assert_cluster()
         versions = self._versions()
+        self._manage("migrate", "--check")
         started = _isoformat()
         destination = self.root / ("iss018-pg-" + uuid.uuid4().hex + ".zip")
         with self._media_gate, self._connect(self.source, autocommit=True) as connection:

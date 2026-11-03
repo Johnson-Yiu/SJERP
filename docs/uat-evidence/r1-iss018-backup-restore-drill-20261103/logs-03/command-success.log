@@ -1,0 +1,10 @@
+test_success (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_success) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 82.363s
+
+OK
+Found 1 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).
+COMMAND_CASE {"case": "success", "exit": 0, "result": {"cleanup": "complete", "media": {"algorithm": "sha256", "file_count": 2, "files": [{"path": "follow-up-attachments/2026/11/synthetic.txt", "sha256": "64e20fdf0f55d33193d299a7109e6e6b45ad1b31622bea93341c60330b2a0200", "size": 23}, {"path": "quote-item-images/2026/11/history.gif", "sha256": "ff95b99e6cd933dc1ce0dfc57ce7d4f78577e094ba87381f2edfba2a4690a7c6", "size": 43}], "manifest_sha256": "077c5778d4aa45d910d8c822dc2aa11adeecffd4445aea6f483f2dc832fa39d7", "root": "MEDIA_ROOT", "schema_version": 1, "storage_backend": "filesystem", "total_bytes": 66}, "migrations": 118, "row_count": 908, "sha256": "ac67c8e0375189b0877fdec310e5389a509b4484e0f81dfc4e99537adb363904", "source": "iss018_src_255a542bb7444e31", "status": "PASS", "table_count": 82, "target": "iss018_dst_8f95b70bdf8845ab", "versions": {"django": "6.0.9", "pg_dump": "pg_dump (PostgreSQL) 17.11", "pg_restore": "pg_restore (PostgreSQL) 17.11", "server_version_num": 170011}}}

@@ -1,0 +1,33 @@
+test_checksum (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_checksum) ... ok
+test_corrupt_archive (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_corrupt_archive) ... ok
+test_failed_restore_tool (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_failed_restore_tool) ... ok
+test_incompatible_version (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_incompatible_version) ... ERROR
+test_missing_media (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_missing_media) ... ok
+test_success (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_success) ... ok
+test_wrong_environment (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_wrong_environment) ... ok
+
+======================================================================
+ERROR: test_incompatible_version (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_incompatible_version)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Johnson\.codex\worktrees\r1-iss018-backup-restore-drill-20261103\森爵照明管理系统\backend\crm\tests\test_iss018_drill_command.py", line 50, in test_incompatible_version
+    self.assertIn("version mismatch", self.invoke("version")["error"])
+                                      ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Johnson\.codex\worktrees\r1-iss018-backup-restore-drill-20261103\森爵照明管理系统\backend\crm\tests\test_iss018_drill_command.py", line 24, in invoke
+    self.assertEqual(result["cleanup"], "complete")
+                     ~~~~~~^^^^^^^^^^^
+KeyError: 'cleanup'
+
+----------------------------------------------------------------------
+Ran 7 tests in 558.615s
+
+FAILED (errors=1)
+Found 7 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).
+COMMAND_CASE {"case": "checksum", "exit": 1, "result": {"cleanup": "complete", "error": "BackupRecoveryError: Archive SHA256 mismatch", "source_unchanged": true, "status": "FAILED"}}
+COMMAND_CASE {"case": "corrupt", "exit": 1, "result": {"cleanup": "complete", "error": "BadZipFile: File is not a zip file", "source_unchanged": true, "status": "FAILED"}}
+COMMAND_CASE {"case": "tool", "exit": 1, "result": {"cleanup": "complete", "error": "BackupRecoveryError: pg_restore failed (1): pg_restore: error: input file does not appear to be a valid archive (too short?)", "source_unchanged": true, "status": "FAILED"}}
+COMMAND_CASE {"case": "missing-media", "exit": 1, "result": {"cleanup": "complete", "error": "BackupRecoveryError: Media manifest mismatch: missing: follow-up-attachments/2026/11/synthetic.txt; file_count differs; total_bytes differs", "source_unchanged": true, "status": "FAILED"}}
+COMMAND_CASE {"case": "success", "exit": 0, "result": {"cleanup": "complete", "media": {"algorithm": "sha256", "file_count": 2, "files": [{"path": "follow-up-attachments/2026/11/synthetic.txt", "sha256": "64e20fdf0f55d33193d299a7109e6e6b45ad1b31622bea93341c60330b2a0200", "size": 23}, {"path": "quote-item-images/2026/11/history.gif", "sha256": "ff95b99e6cd933dc1ce0dfc57ce7d4f78577e094ba87381f2edfba2a4690a7c6", "size": 43}], "manifest_sha256": "077c5778d4aa45d910d8c822dc2aa11adeecffd4445aea6f483f2dc832fa39d7", "root": "MEDIA_ROOT", "schema_version": 1, "storage_backend": "filesystem", "total_bytes": 66}, "migrations": 118, "row_count": 908, "sha256": "2eb1cce6758ca639a5fc7827079201e653cbe25d22a914fd7afc9f6aee8bf4bb", "source": "iss018_src_5fa50ed8372646f2", "status": "PASS", "table_count": 82, "target": "iss018_dst_524eb732116c4c4e", "versions": {"django": "6.0.9", "pg_dump": "pg_dump (PostgreSQL) 17.11", "pg_restore": "pg_restore (PostgreSQL) 17.11", "server_version_num": 170011}}}
+COMMAND_CASE {"case": "environment", "exit": 1, "result": {"cleanup": "complete", "error": "BackupRecoveryError: Django may only use a database created by this drill", "source_unchanged": true, "status": "FAILED"}}

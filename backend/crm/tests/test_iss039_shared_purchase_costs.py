@@ -1,5 +1,6 @@
 from datetime import date
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
@@ -10,6 +11,7 @@ from crm.models import (
     Customer,
     EmployeeProfile,
     InventoryMovement,
+    InventoryReservation,
     OperationLog,
     Order,
     OrganizationUnit,
@@ -37,6 +39,55 @@ RBAC_SETTINGS = {
 
 @override_settings(**RBAC_SETTINGS, PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"])
 class SharedPurchaseCostPermissionTests(TestCase):
+    def state(self):
+        from django.apps import apps
+        return {model._meta.label: list(model.objects.order_by("pk").values())
+                for model in apps.get_app_config("crm").get_models()}
+
+    def test_amount_rule_rejects_other_methods_without_any_writes(self):
+        self.login(self.procurement)
+        before = self.state()
+        for method in ("quantity", "average", "", None, 0):
+            for url in (self.url, self.url.replace("cost-allocation/", "cost-allocation-preview/")):
+                data = self.payload()
+                data["expenses"][0]["method"] = method
+                response = self.client.post(url, data, format="json")
+                self.assertEqual(response.status_code, 400, response.data)
+                self.assertEqual(self.state(), before)
+
+    def test_legacy_conversion_audit_rollback_and_reservation_rebalance(self):
+        from crm.services.fulfillment import rebalance_sku_reservations
+        self.login(self.procurement)
+        self.purchase.additional_costs = [{"name": "历史公共运费", "amount": "1000.00", "method": "quantity"}]
+        self.purchase.save(update_fields=["additional_costs"])
+        InventoryMovement.objects.create(movement_no="ISS039-SYNTHETIC-STOCK", movement_date=date(2026, 11, 3),
+                                         type="adjust_in", sku=self.sku, quantity=5, unit_cost=1000)
+        rebalance_sku_reservations(self.sku)
+        self.assertEqual(InventoryReservation.objects.count(), 2)
+        before = self.state()
+        with patch("crm.views.record_operation", side_effect=RuntimeError("audit unavailable")):
+            with self.assertRaisesRegex(RuntimeError, "audit unavailable"):
+                self.client.post(self.url, self.payload(), format="json")
+        self.assertEqual(self.state(), before)
+        with patch("crm.services.fulfillment.rebalance_sku_reservations", wraps=rebalance_sku_reservations) as rebalance:
+            saved = self.client.post(self.url, self.payload(), format="json")
+        self.assertEqual(saved.status_code, 200, saved.data)
+        rebalance.assert_called_once_with(self.sku)
+        self.assertEqual(sum(InventoryReservation.objects.values_list("quantity", flat=True)), Decimal("5"))
+        self.assertEqual(dict(InventoryReservation.objects.values_list("order_item__order_id", "quantity")),
+                         {self.order_a.pk: Decimal("3"), self.order_b.pk: Decimal("2")})
+        log = OperationLog.objects.get(action_label="采购成本分配")
+        self.assertEqual(log.operator_id, self.procurement.pk)
+        self.assertIsNotNone(log.created_at)
+        self.assertEqual(log.before_data["cost_allocation"]["expenses"][0]["method"], "quantity")
+        self.assertEqual(log.after_data["cost_allocation"]["expenses"][0]["method"], "amount")
+        allowed = {"crm.PurchaseOrder", "crm.PurchaseCostAllocation", "crm.OperationLog", "crm.InventoryReservation"}
+        after = self.state()
+        self.assertEqual({k: v for k, v in before.items() if k not in allowed}, {k: v for k, v in after.items() if k not in allowed})
+        committed = self.state()
+        self.assertEqual(self.client.post(self.url, self.payload(version=0), format="json").status_code, 400)
+        self.assertEqual(self.state(), committed)
+
     def setUp(self):
         self.client = APIClient()
         self.unit = OrganizationUnit.objects.create(name="ISS-039 测试部", code="ISS039")

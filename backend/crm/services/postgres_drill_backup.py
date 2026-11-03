@@ -86,7 +86,7 @@ class IsolatedPostgresDrill:
     def _assert_cluster(self):
         with self._connect("postgres", autocommit=True) as connection:
             row = connection.execute(
-                "SELECT current_setting('data_directory'), inet_server_addr()::text, "
+                "SELECT current_setting('data_directory'), host(inet_server_addr()), "
                 "inet_server_port(), current_setting('server_version_num')::integer"
             ).fetchone()
         if Path(row[0]).resolve() != self.root / "cluster-host" or row[1] != "127.0.0.1" or row[2] != self.port:

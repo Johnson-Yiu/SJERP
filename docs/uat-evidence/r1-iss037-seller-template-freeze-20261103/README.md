@@ -15,7 +15,8 @@ CPython 3.12.16、Django 6.0.9；16 项锁定版本相符，`pip check` 通过�
 - `crm.tests.test_quote_template_snapshot crm.tests.test_quote_template_migration`：12 项通过；包含新建与修订预览来源、历史未知拒绝、模板变更后 API 和实际 XLSX 单元格比对、失败回滚及迁移正反向。
 - `crm.tests.test_quotes crm.tests.test_quote_unknown_buyer crm.tests.test_iss020_quote_export crm.tests.test_quote_revision_tree`：84 项通过。首次误指定不存在的 `test_quote_xlsx` 模块导致导入错误；更正为实际模块后重跑通过。
 - `npm run test:unit`：177 项通过；`npm run build` 通过，保留现有大包警告。
-- 真实 Chrome：已保存 PI 在 [1440px](screenshots/saved-pi-1440.png)、[390px](screenshots/saved-pi-390.png) 使用隔离 API 预览并点击打印入口；点击不等同于核实最终打印机或 PDF 文件。新增[修订草稿场景](screenshots/revision-draft-preview-1440.png)首次因合成夹具未填写修订说明而超时，填写说明后重跑三项全部通过。
+- 真实 Chrome：已保存 PI 在 [1440px](screenshots/saved-pi-1440.png)、[390px](screenshots/saved-pi-390.png) 使用隔离 API 预览、点击打印入口并观察到 iframe 的 `beforeprint` 事件；这不等同于核实最终打印机或 PDF 文件。新增[修订草稿场景](screenshots/revision-draft-preview-1440.png)首次因合成夹具未填写修订说明而超时，填写说明后重跑三项全部通过。
+- 初次 [CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41621677414) 的 Backend 与 PostgreSQL 通过，Frontend 的 Vitest 1 项失败：旧测试监听主窗口 `print`，实现改为打印保存版本的 iframe。测试已改为验证 iframe 的打印调用并保留历史内容和导出断言，针对 `tests/final-polish.spec.js` 重跑 19 项通过；新提交完整 CI 尚需执行。
 
 ## 待办
 

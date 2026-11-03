@@ -22,6 +22,7 @@ beforeEach(() => {
   mocks.api.get.mockImplementation(async url => ({ data:
     url === '/quotes/47/workbench/' ? { quote, revisions: [], orders: [] } :
     url === '/quotes/47/pi-data/' ? structuredClone(pi) :
+    url === '/quotes/preview-template/' ? { seller: { name: 'Synthetic Seller' }, bank: [], bank_notice: '' } :
     url === '/orders/37/workbench/' ? { order, items: [structuredClone(item)], payments: [], inventory: [], payment_summary: { balance_amount: 10 }, fulfillment_summary: {}, profit_summary: {} } :
     url === '/orders/37/fulfillment/' ? fulfillment :
     url === '/orders/37/procurement-plan/' ? { items: [] } :
@@ -84,12 +85,12 @@ it('QuoteEditor opens an unsaved preview and retains inputs after closing', asyn
   const previewButton = w.get('.quote-action-preview')
   expect(previewButton.text()).toContain('预览报价单')
   await previewButton.trigger('click'); await flushPromises()
-  const preview = w.getComponent(QuotePreviewModal); expect(preview.props('saved')).toBe(false); expect(preview.text()).toContain('当前内容尚未保存 · 关闭后返回编辑'); expect(preview.props('draft').products[0]).toMatchObject({ quantity: '2.00', unit: '箱', amount: 20 })
+  const preview = w.getComponent(QuotePreviewModal); expect(preview.props('saved')).toBe(false); expect(preview.text()).toContain('当前内容尚未保存 · 关闭后返回编辑'); expect(preview.props('draft').seller.name).toBe('Synthetic Seller'); expect(preview.props('draft').products[0]).toMatchObject({ quantity: '2.00', unit: '箱', amount: 20 })
   preview.vm.$emit('close'); await flushPromises(); expect(w.findComponent(QuotePreviewModal).exists()).toBe(false); expect(w.findAll('input').some(input => input.element.value === '2.00')).toBe(true); expect(mocks.api.post.mock.calls.some(([url]) => url === '/quotes/' || url.endsWith('/revise/'))).toBe(false)
 })
 it('saved workbench preview uses saved caption and exact historical PI/export behavior', async () => {
-  const w = await quoteView(); await button(w,'预览 PI')[0].trigger('click'); await flushPromises(); const preview = w.getComponent(QuotePreviewModal)
+  const w = await quoteView(); document.body.appendChild(w.element); await button(w,'预览 PI')[0].trigger('click'); await flushPromises(); const preview = w.getComponent(QuotePreviewModal)
   expect(preview.props('saved')).toBe(true); expect(preview.get('.quote-preview-toolbar').text()).toContain('已保存报价 · PI 预览'); expect(preview.text()).not.toContain('当前内容尚未保存'); expect(preview.props('draft')).toMatchObject({ quote_no: 'QT-47', buyer: { company_name: '历史客户', address: '历史地址' }, products: [expect.objectContaining(pi.products[0])], totals: pi.totals, terms: pi.terms, payment_splits: pi.payment_splits })
-  const print = vi.spyOn(window,'print').mockImplementation(() => {}); await button(preview,'导出 PI PDF')[0].trigger('click'); expect(print).toHaveBeenCalledOnce(); print.mockRestore()
+  const print = vi.spyOn(preview.get('iframe').element.contentWindow,'print').mockImplementation(() => {}); await button(preview,'导出 PI PDF')[0].trigger('click'); expect(print).toHaveBeenCalledOnce(); print.mockRestore()
   await button(w,'导出 Excel')[0].trigger('click'); expect(mocks.downloadQuoteExport).toHaveBeenCalledWith(47,'QT-47'); expect(mocks.api.post).not.toHaveBeenCalled(); expect(quote.status).toBe('draft')
 })

@@ -31,9 +31,13 @@ for (const width of [1440, 390]) {
     const data = await pi.json()
     const preview = page.getByRole('dialog', { name: 'PI 预览' })
     await expect(page.frameLocator('iframe[title="已保存 PI"]').locator('body')).toContainText(data.seller.name)
+    await page.locator('iframe[title="已保存 PI"]').evaluate(frame => {
+      frame.contentWindow.addEventListener('beforeprint', () => { frame.dataset.printObserved = 'yes' })
+    })
     await preview.getByRole('button', { name: '导出 PI PDF' }).scrollIntoViewIfNeeded()
     await page.screenshot({ path: path.join(evidence, `saved-pi-${width}.png`) })
     await preview.getByRole('button', { name: '导出 PI PDF' }).click()
+    await expect(page.locator('iframe[title="已保存 PI"]')).toHaveAttribute('data-print-observed', 'yes')
     fs.writeFileSync(path.join(report, `browser-http-${width}.json`), JSON.stringify({ status: pi.status(), seller: data.seller, sha256: data.template_sha256, synthetic_quote: fixture.quote_no }, null, 2))
   })
 }

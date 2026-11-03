@@ -908,8 +908,27 @@ class Quote(TimestampedModel):
     class Meta:
         ordering = ["-quote_date", "-id"]
 
+    def __init__(self, *args, **kwargs):
+        # Keep an explicitly unknown buyer distinct from an omitted new-quote
+        # default. Positional fields are supplied too (including ORM loading).
+        buyer_index = next(
+            index for index, field in enumerate(self._meta.concrete_fields)
+            if field.attname == "buyer_company_name"
+        )
+        self._buyer_company_name_supplied = (
+            "buyer_company_name" in kwargs or len(args) > buyer_index
+        )
+        super().__init__(*args, **kwargs)
+
     def save(self, *args, **kwargs):
-        if not self.buyer_company_name and self.customer_id:
+        if (
+            self._state.adding
+            and not self.parent_quote_id
+            and not self.root_quote_id
+            and not self._buyer_company_name_supplied
+            and not self.buyer_company_name
+            and self.customer_id
+        ):
             self.buyer_company_name = self.customer.name
         super().save(*args, **kwargs)
 

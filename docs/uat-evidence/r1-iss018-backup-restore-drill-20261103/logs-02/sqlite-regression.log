@@ -1,0 +1,32 @@
+test_archive_path_traversal_is_rejected_before_target_commit (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_archive_path_traversal_is_rejected_before_target_commit) ... ok
+test_backup_permissions_are_strict_on_posix_or_explicitly_pending_on_windows (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_backup_permissions_are_strict_on_posix_or_explicitly_pending_on_windows) ... ok
+test_backup_requires_an_explicit_write_quiescence_confirmation (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_backup_requires_an_explicit_write_quiescence_confirmation) ... ok
+test_disk_write_failure_leaves_no_target_or_staging_directory (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_disk_write_failure_leaves_no_target_or_staging_directory) ... ok
+test_existing_empty_target_is_rejected_without_deletion (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_existing_empty_target_is_rejected_without_deletion) ... ok
+test_existing_world_accessible_backup_directory_requires_explicit_tightening (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_existing_world_accessible_backup_directory_requires_explicit_tightening) ... skipped 'POSIX mode check only'
+test_explicit_failure_report_can_be_outside_target (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_explicit_failure_report_can_be_outside_target) ... ok
+test_failed_restore_to_missing_target_does_not_create_target (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_failed_restore_to_missing_target_does_not_create_target) ... ok
+test_media_change_during_copy_discards_archive (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_media_change_during_copy_discards_archive) ... ok
+test_non_empty_target_is_unchanged_and_failure_report_is_a_sibling (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_non_empty_target_is_unchanged_and_failure_report_is_a_sibling) ... ok
+test_prune_missing_directory_fails_without_creating_it (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_missing_directory_fails_without_creating_it) ... ok
+test_prune_non_directory_fails_without_mutating_path (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_non_directory_fails_without_mutating_path) ... ok
+test_prune_symlink_directory_is_rejected (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_symlink_directory_is_rejected) ... skipped "symlink creation unavailable: [WinError 1314] �ͻ���û���������Ȩ��: 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmp7sz5_pl0\\\\real-backups' -> 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmp7sz5_pl0\\\\backup-link'"
+test_requested_encryption_failure_is_recorded_as_failed (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_requested_encryption_failure_is_recorded_as_failed) ... ok
+test_restore_rejects_tampered_media (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_restore_rejects_tampered_media) ... ok
+test_result_file_inside_existing_target_is_rejected_without_changes (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_result_file_inside_existing_target_is_rejected_without_changes) ... ok
+test_result_file_symlink_is_rejected_without_overwriting_link_target (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_result_file_symlink_is_rejected_without_overwriting_link_target) ... skipped "symlink creation unavailable: [WinError 1314] �ͻ���û���������Ȩ��: 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmpw2wrk9hm\\\\protected-report.json' -> 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmpw2wrk9hm\\\\result.json'"
+test_retention_plan_defaults_to_seven_daily_four_weekly_three_monthly_without_deleting (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_retention_plan_defaults_to_seven_daily_four_weekly_three_monthly_without_deleting) ... ok
+test_single_archive_restore_preserves_rows_amount_inventory_and_media_relation (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_single_archive_restore_preserves_rows_amount_inventory_and_media_relation) ... ok
+test_successful_restore_reports_recovery_and_report_status_separately (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_successful_restore_reports_recovery_and_report_status_separately) ... ok
+test_windows_production_requires_external_ntfs_acl_verification (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_windows_production_requires_external_ntfs_acl_verification) ... ok
+test_postgresql_backup_is_fail_closed_without_bound_snapshot (crm.tests.test_iss018_backup_recovery.ISS018PostgreSQLBackupBoundaryTests.test_postgresql_backup_is_fail_closed_without_bound_snapshot) ... C:\Python314\Lib\site-packages\django\test\utils.py:455: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with self as context:
+ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 2.151s
+
+OK (skipped=3)
+Found 22 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

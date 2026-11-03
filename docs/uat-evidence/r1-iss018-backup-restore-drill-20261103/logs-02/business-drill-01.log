@@ -1,0 +1,10 @@
+Found 1 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).
+ISS018_PG_DRILL {"app_sha": "8f6f09990b37d9ad1b278e4945182551af212d0d", "backup_seconds": 4.408, "counts": {"auth_user": 2, "crm_csvimportbatch": 1, "crm_csvimportpreviewaudit": 1, "crm_csvimportrowaudit": 1, "crm_customer": 2, "crm_followup": 1, "crm_followupattachment": 1, "crm_goodsreceipt": 1, "crm_inventorymovement": 1, "crm_inventoryreservation": 1, "crm_operationlog": 4, "crm_order": 1, "crm_orderitem": 1, "crm_paymentplan": 1, "crm_product": 1, "crm_purchasecostallocation": 1, "crm_purchaseorder": 1, "crm_purchaseorderitem": 1, "crm_quote": 1, "crm_quoteitem": 1, "crm_sku": 1, "crm_supplier": 1, "crm_transaction": 1}, "http": {"anonymous": 403, "authorized_attachment": 200, "historical_image": 200, "old_public": 404, "unauthorized": 404}, "media": {"algorithm": "sha256", "file_count": 3, "files": [{"path": "follow-up-attachments/2026/11/synthetic.txt", "sha256": "64e20fdf0f55d33193d299a7109e6e6b45ad1b31622bea93341c60330b2a0200", "size": 23}, {"path": "followups/synthetic.txt", "sha256": "9f53dcacc97c9bbec2a96c44b7a32f5b642c516ea83ef68957f5f8be3f68cfb9", "size": 29}, {"path": "quote-item-images/2026/11/history.gif", "sha256": "ff95b99e6cd933dc1ce0dfc57ce7d4f78577e094ba87381f2edfba2a4690a7c6", "size": 43}], "manifest_sha256": "368b406b403b813afb9ef8fa8b0d2493092ebdecd4d09417dd198740e7dc6fdb", "root": "MEDIA_ROOT", "schema_version": 1, "storage_backend": "filesystem", "total_bytes": 95}, "migrations": 118, "restore_seconds": 2.839, "sha256": "825f098b901c5510410a091702ea02273ff081f4660954e10a4c168823a4f4e3", "source": "iss018_src_9369d0ba7e6a4039", "target": "iss018_dst_008c7271cda849be", "versions": {"django": "6.0.6", "pg_dump": "pg_dump (PostgreSQL) 17.11", "pg_restore": "pg_restore (PostgreSQL) 17.11", "server_version_num": 170011}}
+test_backup_restore_consistency_and_failure_boundaries (crm.tests.test_postgres_drill_backup.PostgresDrillBackupTests.test_backup_restore_consistency_and_failure_boundaries) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 49.670s
+
+OK

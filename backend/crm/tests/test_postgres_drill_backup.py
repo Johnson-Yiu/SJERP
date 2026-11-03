@@ -178,6 +178,24 @@ class PostgresDrillBackupTests(SimpleTestCase):
             self.drill.restore(archive=backup["archive"], expected_sha256=backup["sha256"],
                                current_app_sha="0" * 40)
 
+        with self.assertRaises(BackupRecoveryError):
+            self.drill._environment("postgres", self.drill.media)
+        tampered = self.drill.root / "tampered-manifest-test.zip"
+        with zipfile.ZipFile(backup["archive"]) as source, zipfile.ZipFile(tampered, "w") as target:
+            for info in source.infolist():
+                content = source.read(info)
+                if info.filename == "manifest.json":
+                    manifest = json.loads(content)
+                    manifest["app_sha"] = "0" * 40
+                    content = json.dumps(manifest).encode("utf-8")
+                target.writestr(info.filename, content)
+        if os.name != "nt":
+            os.chmod(tampered, 0o600)
+        with self.assertRaisesRegex(BackupRecoveryError, "SHA256"):
+            self.drill.restore(archive=tampered, expected_sha256=backup["sha256"], current_app_sha=self.drill.app_sha)
+        with self.assertRaisesRegex(BackupRecoveryError, "version mismatch"):
+            self.drill.restore(archive=tampered, expected_sha256=_sha256(tampered), current_app_sha=self.drill.app_sha)
+
         missing = self.drill.root / "missing-media-test.zip"
         with zipfile.ZipFile(backup["archive"]) as source, zipfile.ZipFile(missing, "w") as target:
             for info in source.infolist():

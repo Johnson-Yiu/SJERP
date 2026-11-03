@@ -55,12 +55,6 @@ class IsolatedPostgresDrill:
             raise BackupRecoveryError("Drill root must be a task-specific direct child of the temporary directory")
         if not isinstance(app_sha, str) or not re.fullmatch(r"[0-9a-f]{40}", app_sha):
             raise BackupRecoveryError("A full application commit SHA is required")
-        repo = Path(__file__).resolve().parents[3]
-        actual = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True).stdout.strip()
-        dirty = subprocess.run(["git", "status", "--porcelain", "--untracked-files=all", "--", "backend"],
-                               cwd=repo, capture_output=True, text=True, check=True).stdout
-        if actual != app_sha or dirty:
-            raise BackupRecoveryError("Application SHA must match a clean backend checkout")
         self.root = root
         self.pg_bin = Path(pg_bin).resolve(strict=True)
         if self.pg_bin != root / "pgsql" / "bin":
@@ -71,6 +65,7 @@ class IsolatedPostgresDrill:
         self.user = user
         self._password = password
         self.app_sha = app_sha
+        self._assert_application()
         self._media_gate = threading.Lock()
         self._owned_targets = set()
         self.source = "iss018_src_" + uuid.uuid4().hex[:16]
@@ -80,6 +75,14 @@ class IsolatedPostgresDrill:
         self._versions()
         with self._connect("postgres", autocommit=True) as connection:
             connection.execute(sql.SQL("CREATE DATABASE {} TEMPLATE template0").format(sql.Identifier(self.source)))
+
+    def _assert_application(self):
+        repo = Path(__file__).resolve().parents[3]
+        actual = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True).stdout.strip()
+        dirty = subprocess.run(["git", "status", "--porcelain", "--untracked-files=all", "--", "backend"],
+                               cwd=repo, capture_output=True, text=True, check=True).stdout
+        if actual != self.app_sha or dirty:
+            raise BackupRecoveryError("Application SHA must match a clean backend checkout")
 
     def _connect(self, database, **kwargs):
         return psycopg.connect(host="127.0.0.1", port=self.port, user=self.user,
@@ -172,6 +175,7 @@ class IsolatedPostgresDrill:
         is never accepted as evidence of the consistency window.
         """
         self._assert_cluster()
+        self._assert_application()
         versions = self._versions()
         self._manage("migrate", "--check")
         started = _isoformat()
@@ -221,6 +225,7 @@ class IsolatedPostgresDrill:
     def restore(self, *, archive, expected_sha256, current_app_sha):
         """Restore only to a newly created database and new owned media path."""
         self._assert_cluster()
+        self._assert_application()
         versions = self._versions()
         archive = Path(archive)
         if archive.is_symlink() or not archive.is_file() or archive.resolve().parent != self.root:

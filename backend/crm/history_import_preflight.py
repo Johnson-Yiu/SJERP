@@ -1040,6 +1040,19 @@ def _check_dependencies(rows, results, groups):
         original_quantity = data.get("quantity_base")
         if original_quantity is not None and reversed_quantity > original_quantity:
             _issue(results[("履约记录", record["row"])], "阻断", "累计冲销数量超过原履约数量。", "核对分次冲销与原事件数量，不得将其他事件数量用于抵销。", [_row_relation("履约记录", reversal) for reversal in reversal_rows[key]])
+    uncertain_orders = set()
+    for record in rows["履约记录"]:
+        data = record["data"]
+        result = results[("履约记录", record["row"])]
+        if (data.get("truth_status") != "真实" or data.get("lifecycle_state") not in {"effective", "cancelled"}
+                or result["status"] in {"待人工核实", "阻断"}):
+            event_type = data.get("event_type")
+            parent_sheets = (("销售订单",) if event_type in {"shipment", "shipment_reversal"} else
+                             ("采购订单",) if event_type in {"goods_receipt", "receipt_reversal"} else
+                             ("销售订单", "采购订单"))
+            for parent_sheet in parent_sheets:
+                uncertain_orders.add((parent_sheet, str(data.get("group_id") or ""), str(data.get("parent_source_id") or "")))
+    order_progress = defaultdict(list)
     for sheet, records in (("销售明细", rows["销售明细"]), ("采购明细", rows["采购明细"])):
         parent_sheet = "销售订单" if sheet == "销售明细" else "采购订单"
         parent_key = "source_order_id" if sheet == "销售明细" else "source_purchase_id"
@@ -1054,6 +1067,8 @@ def _check_dependencies(rows, results, groups):
                 _issue(result, "阻断", "有效履约数量为负数，冲销超过原事件。", "核对原履约及部分冲销数量。")
             if qty is not None and delivered > qty:
                 _issue(result, "待人工核实", "已核实履约数量超过订单行数量。", "核对超发/超收、增补单及冲销记录；预检不调整库存或订单数量。")
+            order_key = (parent_sheet, str(data.get("group_id") or ""), str(data.get(parent_key) or ""))
+            order_progress[order_key].append((record, qty, delivered, result["status"]))
             parents = parent_index.get((str(data.get("group_id") or ""), str(data.get(parent_key) or "")), [])
             if len(parents) == 1:
                 state = parents[0]["data"].get("lifecycle_state")
@@ -1061,8 +1076,36 @@ def _check_dependencies(rows, results, groups):
                     _issue(result, "待人工核实", "订单标记已完成但可核实履约数量不足。", "核对缺失履约行或来源状态；不得把未记录部分推断为已履约。", [_row_relation(parent_sheet, parents[0])])
                 if state == "cancelled" and delivered > 0:
                     _issue(result, "待人工核实", "已取消订单仍有关联有效履约记录。", "核对取消前履约及退款/冲销事实，保留原始顺序。", [_row_relation(parent_sheet, parents[0])])
-                if state == "partial" and qty is not None and not (Decimal("0") < delivered < qty):
-                    _issue(result, "待人工核实", "订单标记部分完成，但行项目数量不呈现部分履约状态。", "核对缺失/重复履约记录及订单状态，不按当前主档推断剩余数量。", [_row_relation(parent_sheet, parents[0])])
+
+    for parent_sheet, parent_index in (("销售订单", sales_orders), ("采购订单", purchase_orders)):
+        for (group_id, parent_id), parent_records in parent_index.items():
+            if len(parent_records) != 1:
+                continue
+            parent = parent_records[0]
+            if parent["data"].get("lifecycle_state") != "partial":
+                continue
+            order_key = (parent_sheet, group_id, parent_id)
+            lines = order_progress.get(order_key, [])
+            group_records = groups.get(group_id, [])
+            uncertain = (
+                len(group_records) != 1 or group_records[0]["data"].get("coverage_status") != "complete"
+                or group_records[0]["data"].get("truth_status") != "真实"
+                or parent["data"].get("truth_status") != "真实" or order_key in uncertain_orders
+                or not lines or any(qty is None or qty <= 0 or delivered < 0 or delivered > qty
+                                    or status in {"待人工核实", "阻断"}
+                                    for _record, qty, delivered, status in lines)
+            )
+            parent_result = results[(parent_sheet, parent["row"])]
+            if uncertain:
+                _issue(parent_result, "待人工核实", "资料不完整或履约记录待核实，无法确定整单履约状态。",
+                       "补齐来源覆盖及有效履约/冲销证据，不将缺失记录推断为已发生或未发生。")
+                continue
+            # Compare each line only with its own quantity; SKU units need not match.
+            if all(delivered == 0 for _record, _qty, delivered, _status in lines) or all(
+                    delivered == qty for _record, qty, delivered, _status in lines):
+                _issue(parent_result, "待人工核实", "订单标记部分完成，但部分履约状态与已核实履约记录不一致。",
+                       "核对原订单状态、各行履约和冲销证据；履约状态不等同于资金结清状态。",
+                       [_row_relation("销售明细" if parent_sheet == "销售订单" else "采购明细", line[0]) for line in lines])
 
     inventory_keys = defaultdict(list)
     for record in rows["库存盘点"]:

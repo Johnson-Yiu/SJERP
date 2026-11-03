@@ -30,7 +30,9 @@ test.afterAll(() => {
 for (const [index, width] of [1440, 390].entries()) {
   test(`核对同账户同额候选并有说明放行 ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
-    const date = index ? '2026-10-19' : '2026-10-18'
+    // Keep this deliberately duplicated pair distinct from the independent
+    // bank-fee suite when both share the same isolated full-suite database.
+    const date = index ? '2026-10-24' : '2026-10-23'
     const data = { event_no: `SYNTH-DUP-A-${width}`, request_key: `SYNTH-DUP-A-${width}`, kind: 'bank_fee', currency: 'CNY', direction: 'expense', bank_date: date, bank_net_amount: '5.00', fee_mode: 'none', fee_amount: '0', source_account: 'SYNTH_CNY', rmb_account: 'SYNTH_CNY', bank_reference: `SYNTH-REF-${width}`, bank_counterparty: '合成对手甲', bank_summary: '合成银行摘要甲', bank_transaction_id: `SYNTH-ID-${width}`, evidence_reference: 'SYNTH-VOUCHER', evidence_sha256: 'a'.repeat(64), evidence_note: '合成银行凭证', quoted_rate: '1', fee_for: null, correction_of: null, sources: [{ transaction_id: fixture.fee_ids[index * 2], amount: '5.00', verified: true }] }
     const first = await page.request.post('/api/rmb-cash-events/', { data })
     expect(first.status()).toBe(201)

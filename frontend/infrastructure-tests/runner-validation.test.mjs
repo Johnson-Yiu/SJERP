@@ -14,6 +14,7 @@ import {
   assertApiIdentity,
   browserArgs,
   cleanupOwnedTempRoot,
+  isolatedCashAccountEnvironment,
   isolatedFixtureSeed,
   isolatedFixtureSeeds,
   reservePort,
@@ -26,6 +27,26 @@ import {
 
 const frontendRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const repositoryRoot = path.resolve(frontendRoot, '..')
+
+test('bank-fee selection receives fixed synthetic accounts without external configuration', async () => {
+  const selection = await resolvePlaywrightSelection(['--business-test', 'independent-bank-fee-real.spec.js'])
+  assert.deepEqual(isolatedCashAccountEnvironment(selection), { RMB_CASH_ACCOUNT_IDS: 'SYNTH_FX,SYNTH_CNY' })
+  assert.equal(({ RMB_CASH_ACCOUNT_IDS: 'OUTER_ALIAS', ...isolatedCashAccountEnvironment(selection) }).RMB_CASH_ACCOUNT_IDS, 'SYNTH_FX,SYNTH_CNY')
+})
+
+test('full business suite receives bank-fee synthetic accounts at the standard CI entry', async () => {
+  const selection = await resolvePlaywrightSelection(['--all-business-tests'])
+  assert.deepEqual(isolatedCashAccountEnvironment(selection), { RMB_CASH_ACCOUNT_IDS: 'SYNTH_FX,SYNTH_CNY' })
+})
+
+test('other business selections and infrastructure smoke preserve existing account configuration', async () => {
+  for (const selection of [await resolvePlaywrightSelection([]), await resolvePlaywrightSelection(['--business-test', 'cash-events-p2b.spec.js']), undefined]) {
+    const delta = isolatedCashAccountEnvironment(selection)
+    assert.deepEqual(delta, {})
+    assert.equal(({ RMB_CASH_ACCOUNT_IDS: 'EXISTING_ALIAS', ...delta }).RMB_CASH_ACCOUNT_IDS, 'EXISTING_ALIAS')
+    assert.equal(Object.hasOwn({ ...delta }, 'RMB_CASH_ACCOUNT_IDS'), false)
+  }
+})
 
 function runProcess(command, args, options) {
   const child = spawn(command, args, {

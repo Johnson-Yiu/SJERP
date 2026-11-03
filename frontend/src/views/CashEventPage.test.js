@@ -50,3 +50,12 @@ test('cash event page keeps bank facts separate from legacy receipt and settleme
   assert.match(source, /selected\?\.status === 'pending'/)
   assert.doesNotMatch(source, /\/transactions\/.*\/allocate/)
 })
+
+test('independent fees offer an optional settlement and serialize no selection as null', async () => {
+  const source = await readFile(pageUrl, 'utf8')
+  assert.match(source, /关联结汇事件（可选）/)
+  assert.match(source, /<select v-model="form.fee_for"><option value="">不关联结汇<\/option>/)
+  assert.match(source, /fee_for: optionalSettlementId\(form.fee_for\)/)
+  assert.doesNotMatch(source, /if \(form.kind === 'bank_fee' && !form.fee_for\)/)
+  assert.match(source, /独立银行扣费使用单独的人民币手续费来源/)
+})

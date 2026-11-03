@@ -14,7 +14,7 @@
 
 ## 本地结果
 
-CPython 3.12.16、Django 6.0.9，全部 16 个 Python 锁定版本相符，`pip check` 通过；前端 `npm ci` 使用锁文件。隔离 SQLite / 合成数据：Django check、`makemigrations --check --dry-run` 通过；专项 79 项通过（30 项 PostgreSQL 条件跳过），全量 1148 项通过（42 项按条件跳过）；Node 177 项、前端构建通过，构建仍有超过 500 kB 的现有警告。真实 PostgreSQL 不可用时，专项 CI 而非 SQLite 用于验证：ISS-039 [PostgreSQL 17](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41609103366/job/125826214644) 1119 项通过、21 跳过；ISS-105 [PostgreSQL 17](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41615047577/job/125846286292) 1131 项通过、21 跳过，具体并发和审计保护用例实际执行。专项截图、HTTP 响应、错误与修正见各报告。
+CPython 3.12.16、Django 6.0.9，全部 16 个 Python 锁定版本相符，`pip check` 通过；前端 `npm ci` 使用锁文件。隔离 SQLite / 合成数据：Django check、`makemigrations --check --dry-run` 通过；专项 79 项通过（30 项 PostgreSQL 条件跳过），全量 1148 项通过（42 项按条件跳过）；Node 177 项、前端构建通过，构建仍有超过 500 kB 的现有警告。集成代码上的真实 Chrome 和隔离 API：报价 3 项、银行核实 2 项通过，截图和 HTTP 记录见各专项报告；两个运行器均核对端口、数据库和代理身份后仅清理本次资源。真实 PostgreSQL 不可用时，专项 CI 而非 SQLite 用于验证：ISS-039 [PostgreSQL 17](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41609103366/job/125826214644) 1119 项通过、21 跳过；ISS-105 [PostgreSQL 17](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41615047577/job/125846286292) 1131 项通过、21 跳过，具体并发和审计保护用例实际执行。专项截图、HTTP 响应、错误与修正见各报告。
 
 ## 尚需完成
 

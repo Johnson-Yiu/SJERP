@@ -1,13 +1,13 @@
 {
-  "database": "C:/Users/Johnson/AppData/Local/Temp/sunjack-r1-repair-06-3Tuk0e/db.sqlite3",
+  "database": "C:/Users/Johnson/AppData/Local/Temp/sunjack-r1-repair-06-pijlOx/db.sqlite3",
   "seed_events": [
     {
       "id": 1,
-      "created_at": "2026-11-03T09:24:05.320Z",
-      "updated_at": "2026-11-03T09:24:05.443Z",
+      "created_at": "2026-11-03T16:04:02.837Z",
+      "updated_at": "2026-11-03T16:04:03.008Z",
       "event_no": "SYNTH-DUP-A-1440",
       "request_key": "SYNTH-DUP-A-1440",
-      "request_hash": "ac9c23912dfba93b7b6a78de12983ed437f39801b7fe0d289f8ec7536f9eac2c",
+      "request_hash": "43a8914bebe2e98178488bacb155bb84ab31e9e50b7def51920e3956a27cb3a3",
       "request_payload": {
         "event_no": "SYNTH-DUP-A-1440",
         "request_key": "SYNTH-DUP-A-1440",
@@ -23,7 +23,7 @@
         "kind": "bank_fee",
         "currency": "CNY",
         "direction": "expense",
-        "bank_date": "2026-10-18",
+        "bank_date": "2026-10-23",
         "bank_net_amount": "5.00",
         "fee_mode": "none",
         "fee_amount": "0.00",
@@ -41,7 +41,7 @@
       "currency": "CNY",
       "amount": "5.0000",
       "direction": "expense",
-      "bank_date": "2026-10-18",
+      "bank_date": "2026-10-23",
       "bank_net_amount": "5.00",
       "fee_mode": "none",
       "fee_amount": "0.00",
@@ -66,18 +66,18 @@
         "action": "confirm_bank_voucher",
         "note": "开发身份，非正式员工审批"
       },
-      "confirmed_at": "2026-11-03T09:24:05.442Z",
+      "confirmed_at": "2026-11-03T16:04:03.007Z",
       "cancelled_reason": "",
       "correction_of_id": null,
       "fee_for_id": null
     },
     {
       "id": 3,
-      "created_at": "2026-11-03T09:24:15.180Z",
-      "updated_at": "2026-11-03T09:24:15.260Z",
+      "created_at": "2026-11-03T16:04:15.767Z",
+      "updated_at": "2026-11-03T16:04:15.857Z",
       "event_no": "SYNTH-DUP-A-390",
       "request_key": "SYNTH-DUP-A-390",
-      "request_hash": "9f286285959e005ef717db454eed51bee386e3578c5d9e3e8fce4410410198f7",
+      "request_hash": "2ef7158388b45f968f46bec3d2805b4aeae741b1edb8ca5cb3d529f0c8711375",
       "request_payload": {
         "event_no": "SYNTH-DUP-A-390",
         "request_key": "SYNTH-DUP-A-390",
@@ -93,7 +93,7 @@
         "kind": "bank_fee",
         "currency": "CNY",
         "direction": "expense",
-        "bank_date": "2026-10-19",
+        "bank_date": "2026-10-24",
         "bank_net_amount": "5.00",
         "fee_mode": "none",
         "fee_amount": "0.00",
@@ -111,7 +111,7 @@
       "currency": "CNY",
       "amount": "5.0000",
       "direction": "expense",
-      "bank_date": "2026-10-19",
+      "bank_date": "2026-10-24",
       "bank_net_amount": "5.00",
       "fee_mode": "none",
       "fee_amount": "0.00",
@@ -136,7 +136,7 @@
         "action": "confirm_bank_voucher",
         "note": "开发身份，非正式员工审批"
       },
-      "confirmed_at": "2026-11-03T09:24:15.260Z",
+      "confirmed_at": "2026-11-03T16:04:15.856Z",
       "cancelled_reason": "",
       "correction_of_id": null,
       "fee_for_id": null
@@ -155,7 +155,7 @@
         "action": "release_duplicate_candidate",
         "note": "开发身份，非正式员工审批"
       },
-      "created_at": "2026-11-03T09:24:14.593Z"
+      "created_at": "2026-11-03T16:04:15.350Z"
     },
     {
       "id": 2,
@@ -169,7 +169,7 @@
         "action": "release_duplicate_candidate",
         "note": "开发身份，非正式员工审批"
       },
-      "created_at": "2026-11-03T09:24:21.801Z"
+      "created_at": "2026-11-03T16:04:21.660Z"
     }
   ]
 }

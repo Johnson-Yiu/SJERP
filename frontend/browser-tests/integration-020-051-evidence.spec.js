@@ -38,6 +38,7 @@ const quote = {
 const workbench = { quote, root_quote_no: quote.quote_no, revisions: [quote], orders: [], important_notes: [], order_summary: { count: 0 } }
 const pi = {
   invoice_no: quote.quote_no,
+  print_html: '<!doctype html><html><body><h1>Proforma Invoice</h1><p>Grand Total EUR 2.04</p></body></html>',
   buyer: { company_name: quote.buyer_company_name, name: quote.recipient_name, address: quote.buyer_address, email: quote.buyer_email, phone: quote.buyer_phone },
   terms: { quote_date: quote.quote_date, valid_until: quote.valid_until, lead_time_days: null, trading_terms: '', shipping_details: '', notes: quote.notes },
   totals: { currency: 'EUR', subtotal: '2.02', shipping_fee: '0.03', discount: '0.01', total_amount: '2.04' },
@@ -71,8 +72,9 @@ test('Chrome quote workbench and saved PI show the reconciled 1.005 total', asyn
   await detail.getByRole('button', { name: '预览 PI', exact: true }).first().click()
   const preview = page.getByRole('dialog', { name: 'PI 预览' })
   await expect(preview).toBeVisible()
-  await expect(preview).toContainText('Grand Total')
-  await expect(preview).toContainText('2.04')
+  const savedPi = page.frameLocator('iframe[title="已保存 PI"]').locator('body')
+  await expect(savedPi).toContainText('Grand Total')
+  await expect(savedPi).toContainText('2.04')
   await page.screenshot({ path: path.join(evidence, `chrome-quote-pi-1440${evidenceTag}.png`), fullPage: true })
 
   await page.setViewportSize({ width: 700, height: 1000 })

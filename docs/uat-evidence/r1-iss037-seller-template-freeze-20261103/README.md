@@ -17,6 +17,7 @@ CPython 3.12.16、Django 6.0.9；16 项锁定版本相符，`pip check` 通过�
 - `npm run test:unit`：177 项通过；`npm run build` 通过，保留现有大包警告。
 - 真实 Chrome：已保存 PI 在 [1440px](screenshots/saved-pi-1440.png)、[390px](screenshots/saved-pi-390.png) 使用隔离 API 预览、点击打印入口并观察到 iframe 的 `beforeprint` 事件；这不等同于核实最终打印机或 PDF 文件。新增[修订草稿场景](screenshots/revision-draft-preview-1440.png)首次因合成夹具未填写修订说明而超时，填写说明后重跑三项全部通过。
 - 初次 [CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41621677414) 的 Backend 与 PostgreSQL 通过，Frontend 的 Vitest 1 项失败：旧测试监听主窗口 `print`，实现改为打印保存版本的 iframe。测试已改为验证 iframe 的打印调用并保留历史内容和导出断言，针对 `tests/final-polish.spec.js` 重跑 19 项通过；新提交完整 CI 尚需执行。
+- 第二次 [CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41624923109) 的两个 Backend 均通过，Frontend 有三项浏览器失败，原测试在外层文档查找已移入 iframe 的金额、收件人或图片。保留原有内容及图片断言并改为定位 iframe 后，收件人快照与 ISS-007 图片的真实隔离浏览器专项分别通过；金额显示测试是原有 API mock 场景，补充新接口的合成 `print_html` 后通过，不作为真实后端证据。
 
 ## 待办
 

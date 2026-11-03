@@ -29,6 +29,8 @@ def event_data(event):
         "bank_currency": "CNY", "fee_currency": "CNY",
         "fee_amount": str(event.fee_amount), "source_account": event.source_account,
         "rmb_account": event.rmb_account, "bank_reference": event.bank_reference,
+        "bank_counterparty": event.bank_counterparty, "bank_summary": event.bank_summary,
+        "bank_transaction_id": event.bank_transaction_id,
         "evidence_reference": event.evidence_reference, "evidence_sha256": event.evidence_sha256,
         "evidence_note": event.evidence_note, "quoted_rate": str(event.quoted_rate) if event.quoted_rate is not None else None,
         "status": event.status, "confirmed_at": event.confirmed_at, "created_at": event.created_at,
@@ -71,6 +73,7 @@ class RmbCashEventViewSet(viewsets.ViewSet):
         rows = cash.validate_sources(p, request.user)
         return Response({"payload": p, "source_total": str(sum((Decimal(s["amount"]) for s in p["sources"]), Decimal("0"))),
                          "bank_net_amount": p["bank_net_amount"], "confirmed": False,
+                         "duplicate_candidates": cash.duplicate_candidates(p, request.user),
                          "sources": [{"id": r.pk, "remaining_candidate_amount": str(cash.available(r)), "manual_verification_required": True} for r in rows],
                          "note": "只读预览不占用额度，不替代银行凭证确认。"})
 
@@ -99,9 +102,15 @@ class RmbCashEventViewSet(viewsets.ViewSet):
 
     @action(detail=True, methods=["post"])
     def confirm(self, request, pk=None):
-        if not isinstance(request.data, dict) or set(request.data) != {"voucher_checked"}:
-            raise ValidationError("确认只接受voucher_checked，不可覆盖草稿金额或凭证。")
-        return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"))))
+        if not isinstance(request.data, dict) or set(request.data) - {"voucher_checked", "duplicate_token", "duplicate_reason"} or "voucher_checked" not in request.data:
+            raise ValidationError("确认不可覆盖草稿金额或凭证。")
+        return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"),
+            duplicate_token=request.data.get("duplicate_token"), duplicate_reason=request.data.get("duplicate_reason"))))
+
+    @action(detail=True, methods=["get"], url_path="duplicate-candidates")
+    def duplicate_candidates(self, request, pk=None):
+        event = cash.get_event(request.user, pk=pk)
+        return Response(cash.duplicate_candidates(event.request_payload, request.user, exclude_id=event.pk))
 
     @action(detail=True, methods=["post"])
     def cancel(self, request, pk=None):

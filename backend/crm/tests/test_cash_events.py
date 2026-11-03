@@ -85,7 +85,7 @@ class CashEventTests(CashFixture, TestCase):
 
     def test_c_partial_60_40_and_overallocation(self):
         for n, amount in enumerate(["60", "40"]):
-            pk = self.register(payload([self.receipt], [amount], key=f"PART-{n}"))
+            pk = self.register(payload([self.receipt], [amount], key=f"PART-{n}", bank_net_amount=["426", "284"][n]))
             self.confirm(pk)
         count = RmbCashEvent.objects.count()
         r = self.client.post(URL, payload([self.receipt], ["0.01"], key="OVER"), format="json")
@@ -133,7 +133,14 @@ class CashEventTests(CashFixture, TestCase):
         for direction in ("income", "expense"):
             source = record_transaction(dict(transaction_no="CNY-" + direction, kind="other", direction=direction, category="合成", amount="200", currency="CNY", exchange_rate="1"))
             for n in range(2):
-                self.confirm(self.register(payload([source], ["100"], key=f"CNY-{direction}-{n}", currency="CNY", kind="cny_direct", direction=direction, bank_net_amount="100", fee_mode="none", fee_amount="0", quoted_rate=None)))
+                event_id = self.register(payload([source], ["100"], key=f"CNY-{direction}-{n}", currency="CNY", kind="cny_direct", direction=direction, bank_net_amount="100", fee_mode="none", fee_amount="0", quoted_rate=None))
+                if n:
+                    self.confirm(event_id, 409)
+                    candidates = self.client.get(f"{URL}{event_id}/duplicate-candidates/").data
+                    self.assertEqual(candidates["count"], 1)
+                    self.confirm(event_id, voucher_checked=True, duplicate_token=candidates["token"], duplicate_reason="核实为另一笔银行交易")
+                else:
+                    self.confirm(event_id)
         self.assertEqual(RmbCashEvent.objects.filter(status="confirmed").count(), 4)
 
     def test_g_missing_voucher_account_and_manual_check_fail_without_writes(self):
@@ -248,7 +255,7 @@ class CashEventTests(CashFixture, TestCase):
         for currency, amount, accepted, rejected in [("USD", "100.0001", "100.00", "0.0001"), ("JPY", "100.1234", "100", "0.1")]:
             source = Transaction.objects.create(transaction_no="OLD-" + currency, amount=D(amount), currency=currency, direction="income", kind="other_income", exchange_rate=D("0.010050"), transaction_date=date(2026, 10, 18))
             before = legacy_hash()
-            pk = self.register(payload([source], [accepted], key="PREC-" + currency, currency=currency))
+            pk = self.register(payload([source], [accepted], key="PREC-" + currency, currency=currency, bank_net_amount="705" if currency == "USD" else "706"))
             self.confirm(pk)
             self.assertEqual(before, legacy_hash())
             self.assertEqual(cash.available(source), D(amount) - D(accepted))

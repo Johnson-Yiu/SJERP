@@ -397,6 +397,14 @@ export async function resolvePlaywrightSelection(userArgs) {
   return { businessTest: requested, businessSuite: false }
 }
 
+export function isolatedCashAccountEnvironment(selection) {
+  // Synthetic aliases for the bank-fee fixture, only in owned test runtimes.
+  // Other selections inherit their original configuration, including unset.
+  return selection?.businessSuite || selection?.businessTest === 'independent-bank-fee-real.spec.js'
+    ? { RMB_CASH_ACCOUNT_IDS: 'SYNTH_FX,SYNTH_CNY' }
+    : {}
+}
+
 export function isolatedFixtureSeed(businessTest) {
   const allowed = {
     'iss022-moq-real.spec.js': { seedFile: 'seed_iss022_browser.py', evidenceEnv: 'ISS022_EVIDENCE_DIR' },
@@ -498,6 +506,7 @@ async function main() {
     }
     const env = {
       ...process.env,
+      ...isolatedCashAccountEnvironment(selection),
       APP_STAGE: 'development',
       DJANGO_DEBUG: '1',
       DEVELOPMENT_SUPERADMIN: rbacTestMode ? '0' : '1',

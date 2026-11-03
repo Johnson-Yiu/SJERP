@@ -10,6 +10,7 @@ from .sales_rules import SalesRuleViewSet
 from .trade_units import SKUTradeUnitViewSet
 from .file_access import protected_media
 from .report_templates import SharedReportTemplateViewSet
+from .history_import_preflight import HistoryImportPreflightView
 
 router = DefaultRouter()
 from .cash_api import RmbCashEventViewSet
@@ -74,5 +75,6 @@ urlpatterns = [
     path("import/csv/", import_csv),
     path("import/csv/preview/", import_csv_preview),
     path("import/csv/execute/", import_csv_execute),
+    path("import/history-preflight/", HistoryImportPreflightView.as_view(), name="history-import-preflight"),
     path("", include(router.urls)),
 ]

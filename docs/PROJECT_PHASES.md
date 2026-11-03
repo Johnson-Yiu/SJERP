@@ -1,5 +1,11 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## R1-PRELAUNCH-CONSOLIDATION-01 第一部分（2026-11-04）
+
+独立集成起点 `d5abc64750d00c89d685bf12c0f8f67d4ba10a97`；完整移植历史只读预检初版与 FIX-01 至 `951adda34b5c60b303725702514cdacac17cc58d`，以及隔离备份演练六项提交至 `9250b066cbd28fd09bd2b1cc1f057604de1f76d9`。保留 BATCH-02 两条 0096 和 0097；新库 SQLite 迁移至 0097 成功。锁定 CPython 3.12.16 环境定向 90 项、4 项跳过，system check、迁移一致性检查通过。备份 PG17 既有成功记录仅限独立合成演练；本次未重新运行真实 PG 备份命令。预检 partial 误报定向修复按用户提供的 ChatGPT 复审结论通过，不等于 ISS-121 整体关闭。
+
+第二部分须等待已完成并推送的 `R1-ISS018-RESTORE-COMMAND-ACCEPTANCE-03` 和 `R1-ISS037-PRINT-OUTPUT-ACCEPTANCE-01`，不猜测其 SHA；其后再完成最终综合回归和同一最终 SHA 的三项 CI。[门槛及第一部分核验](uat-evidence/r1-prelaunch-consolidation-20261104/README.md)。本部分未部署、未启用正式 RBAC、未导入真实历史数据或关闭议题。
+
 ## R1-RULE-GAP-BATCH-02 集成核验（2026-11-03）
 
 以 `a55469c1b07e4f13037c6644c69d8a35ef0496a0` 为基线，独立集成卖方/模板冻结、银行疑似重复核实和采购预留 PostgreSQL 竞争证据，未覆盖旧阶段记录。两项独立 0096 迁移通过新合并迁移汇合，迁移测试恢复全部叶节点；有审计历史时仍拒绝逆向删除。隔离 SQLite 全量 1148 项、42 跳过，Node 177 项及前端构建通过；跳过的 PostgreSQL 场景不以 SQLite 替代。专项 PostgreSQL 17 及 Chrome 证据分别见三个报告。相同精确集成 SHA 的 Backend、PostgreSQL、Frontend CI 须待推送后核实，不预写成功。ISS-037/105 不整体关闭，打印最终文件、历史原件归属、部署权限及独立审查仍待完成；不部署、不启用正式 RBAC。

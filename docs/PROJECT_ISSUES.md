@@ -1,5 +1,11 @@
 # SUNJACK-ERP 项目问题台账
 
+## 2026-11-04 启用前整合：第一部分
+
+固定起点 `d5abc64750d00c89d685bf12c0f8f67d4ba10a97` 的 [BATCH-02 CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41671231926) 在同一 SHA 上 Backend、PostgreSQL 17、Frontend 均成功。按用户转述的 ChatGPT 复审结论，历史预检 `partial` 整单误报的定向修复通过；完整初版及 FIX-01 的代码、路由、流式上传限额、模板和测试取自 `951adda34b5c60b303725702514cdacac17cc58d`，详见[预检及修复证据](uat-evidence/r1-iss121-history-import-preflight-20261103/FIX-01-REPORT.md)。预检是只读检查，不等于真实历史导入或启用完成，ISS-121 整体仍 BLOCKED。
+
+备份 `9250b066cbd28fd09bd2b1cc1f057604de1f76d9` 的 [PostgreSQL 17 隔离联合演练](uat-evidence/r1-iss018-backup-restore-drill-20261103/POSTGRES-02.md)为受控合成数据、专用临时集群成果，不能当作生产备份命令或全写入者静默证明；ISS-018 仍 BLOCKED。ISS-037 仍 NEEDS_VERIFICATION：真实打印最终成品和历史原件仍须验收；ISS-105 仍 OPEN：内部转账、退款更正、期初及账户核对等仍待实施和验收。下一步及已确认规则见[启用前剩余门槛](uat-evidence/r1-prelaunch-consolidation-20261104/READINESS-GATES.md)。不关闭 ISS-018/037/105/121，不重新将已确认业务原则列为待决。
+
 ## 2026-11-03 R1-RULE-GAP-BATCH-02 补充记录
 
 基线 `a55469c1b07e4f13037c6644c69d8a35ef0496a0`。本轮在独立工作树补充 [ISS-037 卖方/模板版本](uat-evidence/r1-iss037-seller-template-freeze-20261103/README.md)、[ISS-105 银行疑似重复核实](uat-evidence/r1-iss105-bank-duplicate-detection-20261103/README.md) 和 [ISS-039 真实 PostgreSQL 预留竞争](uat-evidence/r1-iss039-reservation-concurrency-20261103/README.md)。ISS-037 仍 NEEDS_VERIFICATION：历史原件归档、打印实际文件及完整主体/审批仍须核验；ISS-105 仍 OPEN：内部转账、退款更正、启用余额、分类、账户核对和凭证绑定等未被本次去重覆盖。ISS-039 成本金额比例和采购修改权限规则不变，定向并发证据待独立复审；不关闭任何议题。ISS-108/121 已确认原则继续有效，实际余额和启用日不作猜测。三项合并迁移及精确最终 SHA 的完整 CI 尚待核实，不以专项 CI 替代集成结论。

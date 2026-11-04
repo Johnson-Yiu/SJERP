@@ -73,3 +73,35 @@ class MaintenanceSafetyTests(TestCase):
                     stream.write(b"new archive")
             self.assertEqual(destination.read_bytes(), b"preserve")
             self.assertEqual(list(Path(folder).iterdir()), [destination])
+
+    def test_replaced_staging_file_is_detected_and_not_deleted(self):
+        with tempfile.TemporaryDirectory(prefix="sunjack-publication-") as folder:
+            root = Path(folder)
+            destination = root / "backup.zip"
+            real_link = __import__("os").link
+            def replace_during_link(source, target, **kwargs):
+                partial = Path(source)
+                partial.rename(root / "owned-moved")
+                partial.write_bytes(b"replacement must survive")
+                return real_link(source, target, **kwargs)
+            with mock.patch("crm.services.operations_postgres.os.link", side_effect=replace_during_link):
+                with self.assertRaisesRegex(RuntimeError, "Published backup identity changed"):
+                    with publish_archive(destination) as stream:
+                        stream.write(b"owned synthetic data")
+            partial = next(root.glob("*.partial"))
+            self.assertEqual(partial.read_bytes(), b"replacement must survive")
+            self.assertEqual(destination.read_bytes(), b"replacement must survive")
+
+    def test_cleanup_failure_after_publication_is_reported_as_warning(self):
+        with tempfile.TemporaryDirectory(prefix="sunjack-publication-") as folder:
+            destination = Path(folder) / "backup.zip"
+            original = Path.unlink
+            def fail_only_partial(path, *args, **kwargs):
+                if path.suffix == ".partial":
+                    raise PermissionError("synthetic cleanup failure")
+                return original(path, *args, **kwargs)
+            with mock.patch.object(Path, "unlink", fail_only_partial):
+                with publish_archive(destination) as stream:
+                    stream.write(b"verified synthetic archive")
+            self.assertEqual(destination.read_bytes(), b"verified synthetic archive")
+            self.assertEqual(stream.staging_cleanup_warning, "PermissionError")

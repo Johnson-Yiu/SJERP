@@ -67,3 +67,78 @@ jobs:
           else:
               raise SystemExit('Removed protection was incorrectly accepted')
           PY
+  postgres-role-receipts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: postgres
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install locked dependencies
+        run: python -m pip install -r backend/requirements.lock
+      - name: Check signed receipt rejection paths
+        env:
+          DATABASE_URL: 'sqlite:///:memory:'
+          PYTHONPATH: ${{ github.workspace }}/backend
+        run: python backend/manage.py test crm.tests.test_operations_retention crm.tests.test_operations_receipt --verbosity 2
+      - name: Exercise real PostgreSQL roles, media fence and signed recovery receipts
+        shell: bash
+        env:
+          SUNJACK_CI_POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+          SUNJACK_CI_POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
+        run: |
+          set -Eeuo pipefail
+          owned="$(mktemp -d "${RUNNER_TEMP}/sunjack-linux-pg-XXXXXXXX")"
+          image="$owned/media.img"
+          mountpoint="$owned/media"
+          cleanup() {
+            if mountpoint -q "$owned/full-volume"; then sudo umount "$owned/full-volume"; fi
+            if mountpoint -q "$mountpoint"; then sudo umount "$mountpoint"; fi
+            case "$owned" in "$RUNNER_TEMP"/sunjack-linux-pg-*) rm -rf -- "$owned";; *) exit 1;; esac
+          }
+          trap cleanup EXIT
+          truncate -s 128M "$image"
+          mkfs.ext4 -q -F "$image"
+          mkdir "$mountpoint"
+          sudo mount -o loop "$image" "$mountpoint"
+          sudo chmod 777 "$mountpoint"
+          mkdir "$owned/runtime-temp"
+          export TMPDIR="$owned/runtime-temp"
+          export PYTHONPATH="$GITHUB_WORKSPACE/backend" SUNJACK_CI_ROOT="$owned"
+          python backend/crm/tests/linux_operations_pg_acceptance.py
+  nginx-private-media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install locked application dependencies
+        run: python -m pip install -r backend/requirements.lock
+      - name: Install Nginx if necessary
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          if ! command -v nginx >/dev/null; then
+            sudo apt-get update -qq
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nginx
+          fi
+      - name: Verify real TLS proxy, private media and process restart
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+        run: python backend/crm/tests/linux_nginx_acceptance.py

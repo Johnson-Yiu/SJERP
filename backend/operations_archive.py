@@ -17,7 +17,7 @@ def main():
     try:
         config = json.loads(Path(args.config).read_text(encoding="utf-8"))
         if args.operation == "prune":
-            if set(config) - {"root", "owner_id", "receipts", "keep", "minimum_age_seconds"}:
+            if set(config) - {"root", "owner_id", "receipts", "keep", "minimum_age_seconds", "receipt_verification"}:
                 raise ValueError("Unsupported retention configuration")
             result = prune_verified(**config, execute=args.execute_prune)
         else:

@@ -567,6 +567,7 @@ class HistoryTakeoverWorkflowTests(HistoryTakeoverFixtureMixin, TestCase):
 class HistoryTakeoverPostgresConcurrencyTests(HistoryTakeoverFixtureMixin, TransactionTestCase):
     reset_sequences = True
 
+    @override_settings(FILE_UPLOAD_MAX_MEMORY_SIZE=1024 * 1024, FILE_UPLOAD_TEMP_DIR=None)
     def test_postgres_concurrent_execute_is_serialized_by_group_lock(self):
         if connection.vendor != "postgresql":
             self.skipTest("Requires PostgreSQL row locks; SQLite is not evidence of concurrent execution safety.")

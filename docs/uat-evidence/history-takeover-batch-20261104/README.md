@@ -47,7 +47,7 @@
 | 有效 Vitest | 70 files / 684 tests passed | [frontend-vitest-valid-suite-final.log](logs/frontend-vitest-valid-suite-final.log) |
 | 前端生产构建 | 成功；Vite 报告主 JS chunk 超过 500 kB 的体积警告 | [frontend-build.log](logs/frontend-build.log) |
 
-完整 CRM 测试有 52 项跳过；专项并发用例使用 `TransactionTestCase`，显式要求 PostgreSQL 行锁。当前机器没有可用 PostgreSQL 17 服务，因此本地并发验收不能用 SQLite 替代。首个 GitHub PostgreSQL 17 job 确实执行了该测试，但发现测试类未继承创建申请的 helper（`AttributeError: application_and_group`）；helper 已移入共享夹具，修复后的分支将重新执行 PostgreSQL 17 job。首轮原始日志以无损 ZIP 保存，见 [github-postgres17-initial-failure.zip](logs/github-postgres17-initial-failure.zip)。Vitest 最终执行有效测试目录并排除了使用 `node:test` 的 `detail-drawer-typography.spec.js`；初次广域自动发现日志保留供追溯，不计为有效 Vitest 结果。
+完整 CRM 测试有 52 项跳过；专项并发用例使用 `TransactionTestCase`，显式要求 PostgreSQL 行锁。当前机器没有可用 PostgreSQL 17 服务，因此本地并发验收不能用 SQLite 替代。首个 GitHub PostgreSQL 17 job 发现测试类缺少创建申请 helper（`AttributeError: application_and_group`）；helper 已移入共享夹具。第二轮随后暴露前序 ISS-052 413 用例留下的临时上传目录设置污染；并发用例现显式恢复内存上传配置。两次 CI 原始日志均以无损 ZIP 保存：[helper 初次失败](logs/github-postgres17-initial-failure.zip)、[上传目录隔离失败](logs/github-postgres17-upload-isolation-failure.zip)。最新分支提交会再次运行 PostgreSQL 17 job。Vitest 最终执行有效测试目录并排除了使用 `node:test` 的 `detail-drawer-typography.spec.js`；初次广域自动发现日志保留供追溯，不计为有效 Vitest 结果。
 
 ## Chrome 与模板证据
 

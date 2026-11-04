@@ -13,6 +13,8 @@ from .report_templates import SharedReportTemplateViewSet
 from .history_import_preflight import HistoryImportPreflightView
 
 router = DefaultRouter()
+from .finance_closeout_api import FinanceCloseoutViewSet
+router.register("finance-ledger", FinanceCloseoutViewSet, basename="finance-ledger")
 from .cash_api import RmbCashEventViewSet
 router.register("rmb-cash-events", RmbCashEventViewSet, basename="rmb-cash-event")
 router.register("sku-trade-units", SKUTradeUnitViewSet)

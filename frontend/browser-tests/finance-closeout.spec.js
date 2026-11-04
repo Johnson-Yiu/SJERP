@@ -1,0 +1,83 @@
+import { test, expect } from '@playwright/test'
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import { syntheticVoucherPdf } from './helpers/bank-voucher.js'
+
+test.use({ channel: 'chrome' })
+const root = process.env.FINANCE_CLOSEOUT_EVIDENCE || '../docs/uat-evidence/finance-closeout-batch-20261104/browser'
+
+for (const width of [1440, 390]) test(`real account ledger at ${width}px`, async ({ page }) => {
+  await fs.mkdir(root, { recursive: true })
+  const records = [], errors = []
+  page.on('pageerror', error => errors.push(error.message))
+  page.on('response', async response => {
+    if (!response.url().includes('/api/finance-ledger/')) return
+    try { records.push({ url: new URL(response.url()).pathname, method: response.request().method(), status: response.status(), body: await response.json() }) } catch { /* Actual file downloads are saved separately. */ }
+  })
+  const suffix = `${width}-${Date.now()}`
+  await page.setViewportSize({ width, height: 1050 })
+  await page.goto('/finance-ledger')
+  await expect(page.locator('.ledger-page').getByRole('heading', { name: '账户资金', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: '账户与映射', exact: true }).click()
+  await page.getByLabel('受控标识', { exact: true }).fill(`SYNTH-${suffix}`)
+  await page.getByLabel('显示名称', { exact: true }).fill(`合成验收银行-${suffix}`)
+  await page.getByLabel('归属', { exact: true }).selectOption('own')
+  await page.getByLabel('归属核实依据', { exact: true }).fill('合成银行开户核实，非真实账户')
+  const accountResponse = page.waitForResponse(r => r.url().endsWith('/api/finance-ledger/accounts/') && r.request().method() === 'POST')
+  await page.getByRole('button', { name: '保存账户', exact: true }).click()
+  const accountHttp = await accountResponse
+  expect(accountHttp.status()).toBe(201)
+  const account = await accountHttp.json()
+  await expect(page.getByRole('status')).toHaveText('账户已建立。')
+  await page.getByRole('button', { name: '登记与复核', exact: true }).click()
+  await page.getByLabel('凭证文件（PDF / PNG / JPEG，最多10MB）').setInputFiles({ name: `synthetic-${suffix}.pdf`, mimeType: 'application/pdf', buffer: syntheticVoucherPdf() })
+  const uploadResponse = page.waitForResponse(r => r.url().endsWith('/api/finance-ledger/vouchers/'))
+  await page.getByRole('button', { name: '上传凭证', exact: true }).click()
+  expect((await uploadResponse).status()).toBe(201)
+  await expect(page.getByRole('status')).toContainText('摘要由系统读取文件计算')
+  await page.getByLabel('自有账户', { exact: true }).selectOption(String(account.id))
+  await page.getByLabel('实际日期', { exact: true }).fill('2026-01-02')
+  await page.getByLabel('人民币金额', { exact: true }).fill('123.45')
+  await page.getByLabel('真实性', { exact: true }).selectOption('verified')
+  await page.getByLabel('来源系统', { exact: true }).fill('SYNTH-CHROME')
+  await page.getByLabel('来源编号', { exact: true }).fill(`SYNTH-ROW-${suffix}`)
+  await page.getByLabel('原因及凭证依据', { exact: true }).fill('合成银行凭证已核实，性质暂未分类')
+  await page.getByRole('button', { name: '只读预检', exact: true }).click()
+  await expect(page.getByRole('status')).toContainText('尚未写入')
+  const requestKey = await page.getByLabel('请求标识', { exact: true }).inputValue()
+  const submitResponse = page.waitForResponse(r => r.url().endsWith('/api/finance-ledger/instructions/'))
+  await page.getByRole('button', { name: '保存指令', exact: true }).click()
+  const submitted = await submitResponse
+  expect(submitted.status()).toBe(201)
+  const instruction = await submitted.json()
+  expect(instruction.payload.request_key).toBe(requestKey)
+  await page.reload()
+  await page.getByRole('button', { name: '登记与复核', exact: true }).click()
+  await expect(page.getByLabel('请求标识', { exact: true })).toHaveValue(requestKey)
+  await expect(page.getByText(`已恢复待核查请求 ${requestKey}`, { exact: false })).toBeVisible()
+  const card = page.locator('article').filter({ hasText: `指令 #${instruction.id} ·` })
+  await card.getByRole('button', { name: '另一人复核', exact: true }).click()
+  await expect(page.getByRole('alert')).toContainText('两名真实认证人员')
+  await page.getByLabel('已核对实际日期、人民币金额及文件凭证', { exact: true }).check()
+  await card.getByRole('button', { name: '确认实际记账', exact: true }).click()
+  await expect(card).toContainText('已记账')
+  await page.getByRole('button', { name: '资金事实', exact: true }).click()
+  await page.getByLabel('开始日期', { exact: true }).fill('2026-01-01')
+  await page.getByLabel('结束日期', { exact: true }).fill('2026-01-31')
+  await page.getByRole('button', { name: '查询', exact: true }).click()
+  const fact = page.locator('article').filter({ hasText: `SYNTH-ROW-${suffix}` })
+  await expect(fact).toContainText('性质待分类')
+  await expect(fact).toContainText('123.45')
+  const downloaded = page.waitForEvent('download')
+  await page.getByRole('button', { name: '导出 CSV', exact: true }).click()
+  await (await downloaded).saveAs(path.join(root, `facts-${width}.csv`))
+  const csv = await fs.readFile(path.join(root, `facts-${width}.csv`), 'utf8')
+  expect(csv).toContain(`SYNTH-ROW-${suffix}`)
+  expect(csv).toContain('123.45')
+  const dimensions = await page.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth }))
+  expect(dimensions.document).toBeLessThanOrEqual(width)
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await page.screenshot({ path: path.join(root, `account-facts-${width}.png`), fullPage: true })
+  expect(errors).toEqual([])
+  await fs.writeFile(path.join(root, `http-${width}.json`), JSON.stringify({ records, dimensions, errors }, null, 2))
+})

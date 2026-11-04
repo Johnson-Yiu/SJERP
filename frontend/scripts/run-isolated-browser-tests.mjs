@@ -407,6 +407,7 @@ export function isolatedCashAccountEnvironment(selection) {
 
 export function isolatedFixtureSeed(businessTest) {
   const allowed = {
+    'finance-closeout-approval.spec.js': { seedFile: path.join('..', 'docs', 'uat-evidence', 'finance-closeout-batch-20261104', 'seed_finance_browser.py'), evidenceEnv: 'FINANCE_AUTH_EVIDENCE_DIR' },
     'iss022-moq-real.spec.js': { seedFile: 'seed_iss022_browser.py', evidenceEnv: 'ISS022_EVIDENCE_DIR' },
     'iss075-payment-terms-real.spec.js': { seedFile: 'seed_iss075_browser.py', evidenceEnv: 'ISS075_EVIDENCE_DIR' },
     'iss006-frontend-storage-chrome.spec.js': {
@@ -525,6 +526,7 @@ async function main() {
       ISOLATED_API_PORT: String(apiPort),
       ISOLATED_VITE_PORT: String(vitePort),
       ISOLATED_PLAYWRIGHT_BASE_URL: baseURL,
+      CSRF_TRUSTED_ORIGINS: baseURL,
       ISOLATED_PLAYWRIGHT_API_BASE_URL: `http://127.0.0.1:${apiPort}`,
       ISS007_BASE_URL: baseURL,
       ISOLATED_PLAYWRIGHT_TEST_FILE: selection.businessTest || '',

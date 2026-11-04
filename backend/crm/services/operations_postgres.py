@@ -52,7 +52,8 @@ def publish_archive(destination):
 
 
 def verify_media_references(connection, media):
-    paths = {entry["path"] for entry in media["files"]}
+    files = {entry["path"]: entry for entry in media["files"]}
+    paths = set(files)
     checked = 0
     for table, column in (("crm_followupattachment", "file"), ("crm_sku", "image"),
                           ("crm_productcertificate", "file"), ("crm_quoteitem", "image_snapshot")):
@@ -62,6 +63,16 @@ def verify_media_references(connection, media):
             if relative not in paths:
                 raise RuntimeError("Database references a missing private media file")
             checked += 1
+    # New account and bank proofs are private media too. A file existing under
+    # the same path is insufficient when its registered bytes have changed.
+    for relative, size, sha256 in connection.execute(
+            "SELECT file, size, sha256 FROM crm_financevoucher"):
+        entry = files.get(relative)
+        if entry is None:
+            raise RuntimeError("Database references a missing private finance voucher")
+        if entry["size"] != size or entry["sha256"] != sha256:
+            raise RuntimeError("Private finance voucher metadata differs from media bytes")
+        checked += 1
     return checked
 
 

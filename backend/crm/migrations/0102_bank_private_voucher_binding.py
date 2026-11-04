@@ -6,7 +6,10 @@ from django.db import migrations, models
 
 def preserve_bank_proofs(apps, schema_editor):
     alias = schema_editor.connection.alias
-    if apps.get_model("crm", "FinanceBankVoucherBinding").objects.using(alias).exists() or apps.get_model("crm", "FinanceVoucher").objects.using(alias).filter(scope="bank").exists():
+    vouchers = apps.get_model("crm", "FinanceVoucher").objects.using(alias)
+    if (apps.get_model("crm", "FinanceBankVoucherBinding").objects.using(alias).exists()
+            or vouchers.filter(scope="bank").exists()
+            or vouchers.exclude(bank_sources=[]).exists()):
         raise RuntimeError("已有银行私有凭证历史，禁止回退丢失绑定和来源范围。")
 
 

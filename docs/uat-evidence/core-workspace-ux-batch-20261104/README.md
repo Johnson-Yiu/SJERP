@@ -42,6 +42,8 @@
 
 锁定补验B51443F5：本包.venv Python3.14.5 / Django6.0.9、全部16项实际版本与requirements.lock逐项相同（locked-python-versions.json），隔离端口7101。IAB实际客户保存、390px联系人唯一创建/取消、2件收货/冲销、库存及SKU手机表单已补做，截图screenshots/locked-IAB/；真实HTTP400拒绝及数据库前后完全一致再次通过，结果real-api-after-B51443F5.json和logs/locked-api-readback.log。日期设置/清除的完整人工操作仍以首轮CEF48C3E证据为准，不把新夹具初始空日期冒充重新清除操作。锁定运行完成后运行器自行清理专属数据库/媒体与端口。
 
+归档自查补充：浏览器截图辅助函数保留早先目录闭包，因此锁定补验原件实际先写入final-IAB；其viewports.json按URL7101清楚标出该批来源。现将这六张原始字节副本及筛选出的实际视口清单另存locked-IAB，未重拍或修改像素。客户保存图实际为恢复默认视口后的1304×892，副本据实命名customer-saved-1304.jpg，不把原误名1440作为尺寸证据；1440桌面客户证据仍使用首轮实际1440×1000原图。
+
 截图本地视觉结论以真实IAB的JPG为准。1440×1000及390×844入口已操作客户、联系人、跟进、产品/SKU、订单、采购和库存，表格/页签按现有横向滚动浏览。初次视口切换瞬间截图的误名/尺寸不作为通过证据，原文件保留；桌面库存、桌面SKU、窄屏产品及SKU修复后另存 `screenshots/final-IAB/`，每张抓取时的innerWidth/height、clientWidth和pageWidth见viewports.json。390视口存在15px滚动条时clientWidth375，不误称375为390。另有代理早先中止的mock Chrome PNG，明确不用于本轮真实后端IAB结论，启动事实和限制见products-skus.md。
 
 图片/SKU历史版本、第三方仓批次的全部业务组合、真实员工鉴权及真实业务数据均未在本轮穷尽；组件权限测试只证明界面边界，不扩大为服务端正式RBAC验收。快速切对象/迟到响应/网络失败/重复提交由可控Promise组件回归覆盖，与真实后端操作分开。

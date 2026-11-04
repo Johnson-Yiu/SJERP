@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "product_sha": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "frozen_checkout": ".tmp/final-integrated-447d",
+  "run_id": "dc96bfe9-2268-4884-99a3-08b1349b4f4a",
+  "chrome_channel_explicit_in_source_scripts": "chrome",
+  "runtime": {
+    "node": "v24.16.0",
+    "python": "Python 3.12.16",
+    "chrome_version": null
+  },
+  "isolation": {
+    "root_basename": "sunjack-r1-repair-06-AupGvy",
+    "api_port": 53621,
+    "vite_port": 53622,
+    "database": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-AupGvy\\db.sqlite3",
+    "media_root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-AupGvy\\media",
+    "session_dir_basename": "sunjack-history-operational-closeout-447d-dc96bfe9-2268-4884-99a3-08b1349b4f4a",
+    "development_superadmin": true,
+    "rbac_enforcement": false,
+    "audit_log_enabled": true,
+    "filesystem_media": true,
+    "pg_environment_variables_removed": true
+  },
+  "identities": {
+    "direct_api": {
+      "verified": true,
+      "database_path_matches": true,
+      "media_root_matches": true,
+      "rbac_enforcement": false
+    },
+    "vite": {
+      "verified": true
+    },
+    "vite_api_proxy": {
+      "verified": true,
+      "database_path_matches": true,
+      "media_root_matches": true
+    }
+  },
+  "seed": null,
+  "inventory_acceptance_copy": null,
+  "stages": [
+    {
+      "label": "python-version",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 54,
+      "raw_log_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-AupGvy\\logs\\python-version.raw.log"
+    },
+    {
+      "label": "isolated-migration",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 31650,
+      "raw_log_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-AupGvy\\logs\\isolated-migration.raw.log"
+    },
+    {
+      "label": "synthetic-api-seed",
+      "exit_code": 1,
+      "signal": null,
+      "duration_ms": 4635,
+      "raw_log_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-AupGvy\\logs\\synthetic-api-seed.raw.log"
+    },
+    {
+      "label": "sanitized-database-copy",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 956,
+      "raw_log_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-AupGvy\\logs\\sanitized-database-copy.raw.log"
+    }
+  ],
+  "screenshots": [],
+  "logs": [
+    {
+      "name": "python-version.log",
+      "raw_sha256": "fd14d8d0c62801ac1c9e6d7081306d877f44791307d9f7ab823ec21da1cbc833",
+      "published_sha256": "fd14d8d0c62801ac1c9e6d7081306d877f44791307d9f7ab823ec21da1cbc833",
+      "raw_bytes": 16,
+      "published_bytes": 16,
+      "token_redactions": 0
+    },
+    {
+      "name": "isolated-migration.log",
+      "raw_sha256": "e34406c9c5e6d5a749c7fcc69f4cc5c69dc6315d5e6f1122d484cec81dfe27d2",
+      "published_sha256": "e34406c9c5e6d5a749c7fcc69f4cc5c69dc6315d5e6f1122d484cec81dfe27d2",
+      "raw_bytes": 179,
+      "published_bytes": 179,
+      "token_redactions": 0
+    },
+    {
+      "name": "synthetic-api-seed.log",
+      "raw_sha256": "9a932832054ce1eddae52aaf074e1f04f9f7fc01ece28448ab70e5a3fcd1d793",
+      "published_sha256": "9a932832054ce1eddae52aaf074e1f04f9f7fc01ece28448ab70e5a3fcd1d793",
+      "raw_bytes": 2147,
+      "published_bytes": 2147,
+      "token_redactions": 0
+    },
+    {
+      "name": "sanitized-database-copy.log",
+      "raw_sha256": "46f06d3c6826aeda1e23ce645c86ee9477de208b91f51a9dd176784bb954d610",
+      "published_sha256": "46f06d3c6826aeda1e23ce645c86ee9477de208b91f51a9dd176784bb954d610",
+      "raw_bytes": 833,
+      "published_bytes": 833,
+      "token_redactions": 0
+    },
+    {
+      "name": "api-server.log",
+      "raw_sha256": "301bc464b2c84f0a0ef0bdb855e99f05f661d906cd925dd41d3428adc0559ef8",
+      "published_sha256": "acd396ae9a3294648fcfdd97290cf4ac3c67ddf11494ccdcd700b61174d2e75e",
+      "raw_bytes": 745,
+      "published_bytes": 701,
+      "token_redactions": 2
+    },
+    {
+      "name": "vite-server.log",
+      "raw_sha256": "c1f6642d90aadd45ca18003b4985c281e832183a165769bad2a3f0ca22a1fc77",
+      "published_sha256": "c1f6642d90aadd45ca18003b4985c281e832183a165769bad2a3f0ca22a1fc77",
+      "raw_bytes": 73,
+      "published_bytes": 73,
+      "token_redactions": 0
+    }
+  ],
+  "database_copy": {
+    "business_and_audit_manifest_sha256": "177d038e2f5ae496b36e8153c602e738af0ae8057522e7cc6b7cf1f8ac91d06e",
+    "business_and_audit_rows": 995,
+    "business_and_audit_tables_unchanged": true,
+    "django_session_rows_removed_from_published_copy": 2,
+    "published_database": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\final-447d-history-chrome\\artifacts\\isolated-sanitized.sqlite3",
+    "published_sha256": "9a75d9638905bc7c290c821767ff7c4c1c1ce66a8d3c2539837a7ad371988156",
+    "published_table_count": 102,
+    "source_database": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-AupGvy\\db.sqlite3",
+    "source_sha256": "0cc3c78cca7de29ce499385b8595789bef56fbba6352abcf1f07c57ccb6cc499",
+    "source_table_count": 102
+  },
+  "media_copy": {
+    "path": "artifacts/media",
+    "file_count": 0,
+    "files": []
+  },
+  "teardown": {
+    "api_stopped": true,
+    "vite_stopped": true,
+    "ports_released": true,
+    "owned_temp_cleanup": true,
+    "temp_root_removed": "sunjack-r1-repair-06-AupGvy"
+  },
+  "errors": [
+    "synthetic-api-seed: exited code 1",
+    "Error: Synthetic API seed exited code 1.\n    at requiredStage (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/r1-prelaunch-consolidation-20261104/docs/uat-evidence/integration-closeout-02/run-integrated-history-uat.mjs:185:37)\n    at file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/r1-prelaunch-consolidation-20261104/docs/uat-evidence/integration-closeout-02/run-integrated-history-uat.mjs:331:3"
+  ],
+  "blocked_stages": [],
+  "final_status": "INCOMPLETE_OR_FAILED"
+}

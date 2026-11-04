@@ -1,0 +1,534 @@
+{
+  "schema_version": 1,
+  "status": "FAIL",
+  "source_candidate_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "source_directory": ".tmp/final-integrated-02140bf/docs/uat-evidence/integration-closeout-02/final-02140bf-frontend",
+  "closed_run": true,
+  "results": {
+    "node_unit": {
+      "status": "PASS",
+      "passed": 179,
+      "failed": 0,
+      "evidence": "logs/npm-test-unit.log"
+    },
+    "font_typography": {
+      "status": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "evidence": "logs/node-font-typography.log"
+    },
+    "vitest": {
+      "status": "PASS",
+      "files_passed": 78,
+      "tests_passed": 725,
+      "duration_seconds": 159.1,
+      "failed": 0,
+      "evidence": "logs/vitest.log"
+    },
+    "npm_ci": {
+      "status": "PASS",
+      "exit_code": 0,
+      "evidence": "logs/npm-ci.log",
+      "packages_added": 227,
+      "packages_audited": 228,
+      "warnings": [
+        "2 deprecated package warnings",
+        "4 moderate npm audit findings"
+      ]
+    },
+    "production_build": {
+      "status": "PASS",
+      "exit_code": 0,
+      "evidence": "logs/npm-build.log",
+      "completion": "built in 2.22s",
+      "warnings": [
+        "one bundle chunk exceeds 500 kB after minification"
+      ]
+    },
+    "playwright": {
+      "status": "FAIL",
+      "candidate_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+      "profiles": 9,
+      "passed": 262,
+      "failed": 1,
+      "skipped": 0,
+      "allPassed": false,
+      "profile_results": [
+        {
+          "name": "business-suite",
+          "exit_code": 0,
+          "passed": 238,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "shared-report-templates-isolated",
+          "exit_code": 0,
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "quote-editor-isolated",
+          "exit_code": 1,
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0
+        },
+        {
+          "name": "iss006-storage-isolated",
+          "exit_code": 0,
+          "passed": 10,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "iss007-attachment-isolated",
+          "exit_code": 0,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "iss007-image-snapshot-isolated",
+          "exit_code": 0,
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "iss022-isolated",
+          "exit_code": 0,
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "iss028-035-isolated",
+          "exit_code": 0,
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "iss055-rbac",
+          "exit_code": 0,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "failure": {
+        "profile": "quote-editor-isolated",
+        "test_id": "854db0be8c3252fde029-7f26666a6152537d1886",
+        "reason": "download.saveAs: canceled",
+        "stdout": "logs/playwright-profiles/quote-editor-isolated.stdout.log",
+        "stderr": "logs/playwright-profiles/quote-editor-isolated.stderr.log",
+        "last_run": "artifacts/6dad47d0-8210-4d79-a641-242a2d8e7282/.last-run.json",
+        "reported_error_context_path": "artifacts/6dad47d0-8210-4d79-a641-242a2d8e7282/quote-editor-mobile-action-261fe-reserve-preview-save-export/error-context.md",
+        "error_context_status": "RECOVERED_VIA_EXTENDED_PATH",
+        "error_context_size": 19523,
+        "error_context_source_sha256": "00b2d69ce2f10fb094533b95a043bd84012fa528b09a5967cad7a245e653185a"
+      },
+      "deferred_print_cases": 7,
+      "deferred_print_status": "NOT_RUN"
+    }
+  },
+  "log_archive": {
+    "path": "logs/final-02140bf-frontend-closed-logs.zip",
+    "member_count": 24,
+    "members": [
+      {
+        "member": "logs/node-font-typography.log",
+        "size": 194,
+        "crc32": "c70ecc74",
+        "sha256": "6f92575a932df97e118762239dbed0e0fc1079e7915d44947daf8ddc73c14740"
+      },
+      {
+        "member": "logs/npm-build.log",
+        "size": 1762,
+        "crc32": "ebc71b25",
+        "sha256": "63a76b242b644292a49e84a0cad350029c5488a777e257506436f2f41488ac95"
+      },
+      {
+        "member": "logs/npm-ci.log",
+        "size": 617,
+        "crc32": "8b3cd2a1",
+        "sha256": "5a4c4a498abf34ad5e03e2a9d2ca98464e3f7725683960b7bb1df8625d00381e"
+      },
+      {
+        "member": "logs/npm-test-unit.log",
+        "size": 47398,
+        "crc32": "d8e988fd",
+        "sha256": "88fbebe70e0b1810ec186664f3cd21212e9b38a81c2febb1bfae34cb23672e5d"
+      },
+      {
+        "member": "logs/playwright-coordinator.log",
+        "size": 1026,
+        "crc32": "73760a12",
+        "sha256": "4448ba999ceb3f9931c1fe5e5f7a9e63c1d44dd8e77f3b6d837834bf97bb7cc1"
+      },
+      {
+        "member": "logs/playwright-profiles/business-suite.stderr.log",
+        "size": 68196,
+        "crc32": "636ac995",
+        "sha256": "4ce86ac6b724a1a9d964bb7407d7d72ecb6674e80ae9b6f993a4788ad28a2321"
+      },
+      {
+        "member": "logs/playwright-profiles/business-suite.stdout.log",
+        "size": 43107,
+        "crc32": "4b2d176c",
+        "sha256": "7903d8bae0a27e6795ad51c97bbc3a9bfc88cacda1298becaebb0e7e62092ef3"
+      },
+      {
+        "member": "logs/playwright-profiles/iss006-storage-isolated.stderr.log",
+        "size": 32176,
+        "crc32": "7eb10a69",
+        "sha256": "168ce0837bfd86727596bd527f562e628a681e233bdaf40bf21284400de9047f"
+      },
+      {
+        "member": "logs/playwright-profiles/iss006-storage-isolated.stdout.log",
+        "size": 12470,
+        "crc32": "3f9e34ae",
+        "sha256": "15d9e375a068713c0e4d064b2d35cb5fb8df6df18029ddde0ad1d4bb85007124"
+      },
+      {
+        "member": "logs/playwright-profiles/iss007-attachment-isolated.stderr.log",
+        "size": 5999,
+        "crc32": "d7db5df2",
+        "sha256": "a259c1a65a55104a4985f48f4e2a8d4e3ed2e5e2f1d5e7e31089e67b37d06ce3"
+      },
+      {
+        "member": "logs/playwright-profiles/iss007-attachment-isolated.stdout.log",
+        "size": 11445,
+        "crc32": "abdc6b1e",
+        "sha256": "ef7648ab4056a777b657f6c30d8ac18fb17ee271f25e22186157a07a8101bb69"
+      },
+      {
+        "member": "logs/playwright-profiles/iss007-image-snapshot-isolated.stderr.log",
+        "size": 10160,
+        "crc32": "14370c01",
+        "sha256": "fcbd35b69c7e3b9a0fc976f2f18f4cb06f219079569c5a58311b9166c6a4dac6"
+      },
+      {
+        "member": "logs/playwright-profiles/iss007-image-snapshot-isolated.stdout.log",
+        "size": 11079,
+        "crc32": "3dfa79a5",
+        "sha256": "3aef9a282361095ed1d761711de8d092d388388589aa3b652c86126e72433473"
+      },
+      {
+        "member": "logs/playwright-profiles/iss022-isolated.stderr.log",
+        "size": 4133,
+        "crc32": "6f230729",
+        "sha256": "d5861e2bdbb585e49a65afcd4799d757cb5d7c8d28129cdafc30c7b63d45d2ec"
+      },
+      {
+        "member": "logs/playwright-profiles/iss022-isolated.stdout.log",
+        "size": 11087,
+        "crc32": "df192e4c",
+        "sha256": "8880095b59520b0a7d3b05b8682e9dca8a618fce1db930d0a9c4c4a9e65e529b"
+      },
+      {
+        "member": "logs/playwright-profiles/iss028-035-isolated.stderr.log",
+        "size": 9917,
+        "crc32": "b17fa53c",
+        "sha256": "88673f0a6f1fe9215fa93cd57ce0d48b218311ebebb8b045b1da66d287abc976"
+      },
+      {
+        "member": "logs/playwright-profiles/iss028-035-isolated.stdout.log",
+        "size": 11292,
+        "crc32": "3063be41",
+        "sha256": "38bc1e4d45aa60aa1655c6229141320b87eef31ed381536a00ae6eb70160679c"
+      },
+      {
+        "member": "logs/playwright-profiles/iss055-rbac.stderr.log",
+        "size": 6872,
+        "crc32": "f07e13da",
+        "sha256": "1db5658c729b02362c3cb43ee68408331de41d6f394386cbbb24d60b55854f41"
+      },
+      {
+        "member": "logs/playwright-profiles/iss055-rbac.stdout.log",
+        "size": 11361,
+        "crc32": "9312af15",
+        "sha256": "e17b98a0e20c49d5d85463bc317bafeecb2ceb670252b4d6b4655131605edcba"
+      },
+      {
+        "member": "logs/playwright-profiles/quote-editor-isolated.stderr.log",
+        "size": 4989,
+        "crc32": "308e391c",
+        "sha256": "bfef7fba293a0a5a6d5eb99e0f1d9c553a614bd10c7932ca68ed49a472d43bbc"
+      },
+      {
+        "member": "logs/playwright-profiles/quote-editor-isolated.stdout.log",
+        "size": 11910,
+        "crc32": "2a696a28",
+        "sha256": "0d3d797b6a617d331c84759a629ae9f7cb2b99753e4af0e2350376b02796b9f4"
+      },
+      {
+        "member": "logs/playwright-profiles/shared-report-templates-isolated.stderr.log",
+        "size": 450,
+        "crc32": "74d659eb",
+        "sha256": "79f6a30372defe9915c969342aff9f7bda10127f83771f940593166b874f1ea4"
+      },
+      {
+        "member": "logs/playwright-profiles/shared-report-templates-isolated.stdout.log",
+        "size": 10547,
+        "crc32": "5d35f7a7",
+        "sha256": "cc7c08af4ed84dabc3d00343cd1b0b1570a60f99c97273cf1cc3b4c915171135"
+      },
+      {
+        "member": "logs/vitest.log",
+        "size": 336,
+        "crc32": "4983309e",
+        "sha256": "d036326ac8c65baa721dd1ed82e4e194565aef81197cfd6582afebf91e32870a"
+      }
+    ]
+  },
+  "source_capture": {
+    "files_read_and_hashed": 326,
+    "paths_unavailable_or_changed": [],
+    "symlinks_not_followed": [],
+    "excluded_subtree": "quote-download-sandbox-compare-20261105",
+    "source_retention_after_task": "UNKNOWN",
+    "runner_referenced_missing_artifacts": [
+      {
+        "path": "artifacts/6dad47d0-8210-4d79-a641-242a2d8e7282/quote-editor-mobile-action-261fe-reserve-preview-save-export/error-context.md",
+        "status": "RECOVERED_VIA_EXTENDED_PATH",
+        "sha256": "00b2d69ce2f10fb094533b95a043bd84012fa528b09a5967cad7a245e653185a",
+        "size": 19523,
+        "evidence": "extended-path source read and published-byte verification"
+      }
+    ],
+    "recovered_via_extended_path": [
+      {
+        "relative_path": "browser/iss006-frontend-storage-chrome.spec/screenshots/receive-remove-item-retry-deduplicated.png",
+        "source_path_chars": 260,
+        "published_path_chars": 230,
+        "bytes": 146507,
+        "source_sha256": "176cbdab2de536779fba37660c0955152591bbadb35ef824cfc1f9a9ba5a85fa",
+        "published_sha256": "176cbdab2de536779fba37660c0955152591bbadb35ef824cfc1f9a9ba5a85fa",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/iss006-frontend-storage-chrome.spec/screenshots/receive-remove-item-server-may-have-succeeded.png",
+        "source_path_chars": 267,
+        "published_path_chars": 237,
+        "bytes": 151373,
+        "source_sha256": "710cc2b95ddbb13005ef267f24fe87779d74bdf016d251257a1045d62891a137",
+        "published_sha256": "710cc2b95ddbb13005ef267f24fe87779d74bdf016d251257a1045d62891a137",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/iss006-frontend-storage-chrome.spec/screenshots/ship-remove-item-server-may-have-succeeded.png",
+        "source_path_chars": 264,
+        "published_path_chars": 234,
+        "bytes": 222486,
+        "source_sha256": "1afb2f8194c050fa1e94c9eead314c09d0247971765f1f05644a957eccf21750",
+        "published_sha256": "1afb2f8194c050fa1e94c9eead314c09d0247971765f1f05644a957eccf21750",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/iss007-image-snapshot-real.spec/screenshots/quote-pi-after-sku-replacement-desktop-1440.png",
+        "source_path_chars": 261,
+        "published_path_chars": 231,
+        "bytes": 136498,
+        "source_sha256": "58d3a085a4172cda4ce219f723274689a358d5a807bbf7d4f9938a7c17a80239",
+        "published_sha256": "58d3a085a4172cda4ce219f723274689a358d5a807bbf7d4f9938a7c17a80239",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/r1_repair_04_evidence_dir/finance-reference-basis-reference-basis-across-finance-transactions-and-saved-cash-config-1024-diagnostics.json",
+        "source_path_chars": 307,
+        "published_path_chars": 277,
+        "bytes": 3570,
+        "source_sha256": "6ec0c8cd225b48f5ce84f5dc788a2d159046f7ffee5bb3cbba6448a19aa9036a",
+        "published_sha256": "6ec0c8cd225b48f5ce84f5dc788a2d159046f7ffee5bb3cbba6448a19aa9036a",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/r1_repair_04_evidence_dir/finance-reference-basis-reference-basis-across-finance-transactions-and-saved-cash-config-1440-diagnostics.json",
+        "source_path_chars": 307,
+        "published_path_chars": 277,
+        "bytes": 3570,
+        "source_sha256": "2ba08d6d367b99ab87ed065fb9ea6e9a63eace3d8e7ee8e6ca989641f2dd9d00",
+        "published_sha256": "2ba08d6d367b99ab87ed065fb9ea6e9a63eace3d8e7ee8e6ca989641f2dd9d00",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-empty-and-failed-inventories-distinguish-errors-retry-and-no-records-diagnostics.json",
+        "source_path_chars": 294,
+        "published_path_chars": 264,
+        "bytes": 4093,
+        "source_sha256": "267d76382006f45fc3aa88ca6aaf77130cae569ab2ff905c11497bf3bf3fb5a2",
+        "published_sha256": "267d76382006f45fc3aa88ca6aaf77130cae569ab2ff905c11497bf3bf3fb5a2",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-inventory-overview-reserved-quantities-and-sku-drawer-at-1024-diagnostics.json",
+        "source_path_chars": 287,
+        "published_path_chars": 257,
+        "bytes": 1464,
+        "source_sha256": "8fa31e2e70e7f7d916762c82ff70b179f23e84c0b671a1e1fdaad7764569847d",
+        "published_sha256": "8fa31e2e70e7f7d916762c82ff70b179f23e84c0b671a1e1fdaad7764569847d",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-inventory-overview-reserved-quantities-and-sku-drawer-at-1280-diagnostics.json",
+        "source_path_chars": 287,
+        "published_path_chars": 257,
+        "bytes": 1464,
+        "source_sha256": "4d3d272f8756c0b2cde2830b88c0afbe0e7c77b783b40badb3d6b4b5ce65639f",
+        "published_sha256": "4d3d272f8756c0b2cde2830b88c0afbe0e7c77b783b40badb3d6b4b5ce65639f",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-inventory-overview-reserved-quantities-and-sku-drawer-at-1440-diagnostics.json",
+        "source_path_chars": 287,
+        "published_path_chars": 257,
+        "bytes": 1464,
+        "source_sha256": "b9ed6fd7cb40a58ffbfbb7e675f7ff55676e7f74532eb315c4dca568d632034e",
+        "published_sha256": "b9ed6fd7cb40a58ffbfbb7e675f7ff55676e7f74532eb315c4dca568d632034e",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-ledger-filters-sticky-actions-and-adjustment-dialog-at-1024-diagnostics.json",
+        "source_path_chars": 285,
+        "published_path_chars": 255,
+        "bytes": 1434,
+        "source_sha256": "c898a40d71cd3f928913601b763e344f11f908030fc27b6293eefb089c00e764",
+        "published_sha256": "c898a40d71cd3f928913601b763e344f11f908030fc27b6293eefb089c00e764",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-ledger-filters-sticky-actions-and-adjustment-dialog-at-1280-diagnostics.json",
+        "source_path_chars": 285,
+        "published_path_chars": 255,
+        "bytes": 1434,
+        "source_sha256": "07c7c0e48a52831f025f05f13305f0419e440a60c83514be66c5bb1e4091df70",
+        "published_sha256": "07c7c0e48a52831f025f05f13305f0419e440a60c83514be66c5bb1e4091df70",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-ledger-filters-sticky-actions-and-adjustment-dialog-at-1440-diagnostics.json",
+        "source_path_chars": 285,
+        "published_path_chars": 255,
+        "bytes": 1434,
+        "source_sha256": "7782fb1df680bf03cab6fe78a38f6fd72ef85cd431c3d51f6ae498fcf1268044",
+        "published_sha256": "7782fb1df680bf03cab6fe78a38f6fd72ef85cd431c3d51f6ae498fcf1268044",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-page-restoration-detail-navigation-and-browser-back-preserve-inventory-context-diagnostics.json",
+        "source_path_chars": 304,
+        "published_path_chars": 274,
+        "bytes": 3084,
+        "source_sha256": "63d89982ba03c5d4b6fa79eac22c26d80648090868658308cf5a373c5607a666",
+        "published_sha256": "63d89982ba03c5d4b6fa79eac22c26d80648090868658308cf5a373c5607a666",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-restricted-ui-hides-adjustment-reversal-and-unauthorized-cross-module-entrances-diagnostics.json",
+        "source_path_chars": 305,
+        "published_path_chars": 275,
+        "bytes": 1986,
+        "source_sha256": "b58d50d78285e7b677d23fa2afb8d57e276ca08a6aae75d96e1997512347db4e",
+        "published_sha256": "b58d50d78285e7b677d23fa2afb8d57e276ca08a6aae75d96e1997512347db4e",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/r1_repair_04_evidence_dir/iss041b-evidence-iss-041-b-raw-detail-evidence-at-1440px-diagnostics.json",
+        "source_path_chars": 269,
+        "published_path_chars": 239,
+        "bytes": 1966,
+        "source_sha256": "87d8af328b72b16a7cfa632dc6dddd5b6b265a735bd5f79bba843082baac033e",
+        "published_sha256": "87d8af328b72b16a7cfa632dc6dddd5b6b265a735bd5f79bba843082baac033e",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "browser/r1_repair_04_evidence_dir/iss041b-evidence-iss-041-b-raw-detail-evidence-at-700px-diagnostics.json",
+        "source_path_chars": 268,
+        "published_path_chars": 238,
+        "bytes": 1965,
+        "source_sha256": "f31d326e37ff8941ab86cb536cff7f7a281f6cb6904365f48ef53c6b2bb0ade7",
+        "published_sha256": "f31d326e37ff8941ab86cb536cff7f7a281f6cb6904365f48ef53c6b2bb0ade7",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      },
+      {
+        "relative_path": "artifacts/6dad47d0-8210-4d79-a641-242a2d8e7282/quote-editor-mobile-action-261fe-reserve-preview-save-export/error-context.md",
+        "source_path_chars": 286,
+        "published_path_chars": 256,
+        "bytes": 19523,
+        "source_sha256": "00b2d69ce2f10fb094533b95a043bd84012fa528b09a5967cad7a245e653185a",
+        "published_sha256": "00b2d69ce2f10fb094533b95a043bd84012fa528b09a5967cad7a245e653185a",
+        "byte_exact": true,
+        "action": "COPIED_WITH_EXTENDED_PATH",
+        "credential_candidates": 0
+      }
+    ]
+  },
+  "credential_scan": {
+    "candidate_count": 33,
+    "redacted_files": 14,
+    "seed_or_secret_log_occurrences": 22,
+    "closed_isolation_token_fields": 11,
+    "cookie_or_session_values_detected": 0,
+    "audit": "PUBLISHED-REDACTION-AUDIT.json",
+    "source_retention_after_task": "UNKNOWN"
+  },
+  "immutable_assets": {
+    "png_pdf_xlsx_csv_bytes_preserved": true
+  },
+  "limitations": [
+    "Some source paths were unavailable or changed during capture; they are listed with UNKNOWN hashes and are not represented as byte-exact published files.",
+    "Independent quote-download root-cause copy excluded by scope.",
+    "The separate quote-download root-cause diagnosis subtree was removed from this package after an initial staging copy; source was not modified.",
+    "The original v1 FAIL report is immutable; v2 resolves evidence path availability and retains the original Playwright failure."
+  ],
+  "v1_snapshot": {
+    "path": "FAIL-RESULT.json",
+    "sha256": "2f0bea6e24fb40279957517bb2bff501910f438a027b45018813ef5b55888a5b"
+  },
+  "extended_path_recovery": {
+    "audit": "../RECOVERY-AUDIT-EXTENDED-PATH-20261105.json",
+    "audit_sha256": "34b5ed034f41c75b726ede2cf7eb146db9a6abb56a0ed2f296fcb2ba3d121050",
+    "recovered_count": 18,
+    "remaining_unknown_count": 0,
+    "credential_candidates_in_recovered_files": 0,
+    "tests_rerun": false,
+    "ci_touched": false
+  }
+}

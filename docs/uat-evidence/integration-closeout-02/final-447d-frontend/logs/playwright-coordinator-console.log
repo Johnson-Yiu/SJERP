@@ -1,0 +1,29 @@
+
+[final-447d] START business-suite: node D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\final-integrated-447d\frontend\scripts\run-isolated-browser-tests.mjs --all-business-tests --exclude-business-test iss022-moq-real.spec.js --exclude-business-test iss028-035-category-schema.spec.js --exclude-business-test iss055-customer-404-real.spec.js --exclude-business-test iss006-frontend-storage-chrome.spec.js --exclude-business-test iss007-attachment-real.spec.js --exclude-business-test iss007-image-snapshot-real.spec.js --exclude-business-test shared-report-templates.spec.js --exclude-business-test quote-editor-mobile-actions.spec.js --exclude-business-test iss037-print-output-acceptance.spec.js
+[final-447d] END business-suite: exit=1 signal=none summary={"failed":1,"passed":237}
+
+[final-447d] START shared-report-templates-isolated: node D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\final-integrated-447d\frontend\scripts\run-isolated-browser-tests.mjs --business-test shared-report-templates.spec.js
+[final-447d] END shared-report-templates-isolated: exit=0 signal=none summary={"passed":1}
+
+[final-447d] START quote-editor-isolated: node D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\final-integrated-447d\frontend\scripts\run-isolated-browser-tests.mjs --business-test quote-editor-mobile-actions.spec.js
+[final-447d] END quote-editor-isolated: exit=1 signal=none summary={"failed":1}
+
+[final-447d] START iss006-storage-isolated: node D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\final-integrated-447d\frontend\scripts\run-isolated-browser-tests.mjs --business-test iss006-frontend-storage-chrome.spec.js
+[final-447d] END iss006-storage-isolated: exit=0 signal=none summary={"passed":10}
+
+[final-447d] START iss007-attachment-isolated: node D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\final-integrated-447d\frontend\scripts\run-isolated-browser-tests.mjs --business-test iss007-attachment-real.spec.js
+[final-447d] END iss007-attachment-isolated: exit=0 signal=none summary={"passed":3}
+
+[final-447d] START iss007-image-snapshot-isolated: node D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\final-integrated-447d\frontend\scripts\run-isolated-browser-tests.mjs --business-test iss007-image-snapshot-real.spec.js
+[final-447d] END iss007-image-snapshot-isolated: exit=0 signal=none summary={"passed":1}
+
+[final-447d] START iss022-isolated: node D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\final-integrated-447d\frontend\scripts\run-isolated-browser-tests.mjs --business-test iss022-moq-real.spec.js
+[final-447d] END iss022-isolated: exit=0 signal=none summary={"passed":1}
+
+[final-447d] START iss028-035-isolated: node D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\final-integrated-447d\frontend\scripts\run-isolated-browser-tests.mjs --business-test iss028-035-category-schema.spec.js
+[final-447d] END iss028-035-isolated: exit=0 signal=none summary={"passed":2}
+
+[final-447d] START iss055-rbac: node D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\final-integrated-447d\frontend\scripts\run-isolated-browser-tests.mjs --business-test iss055-customer-404-real.spec.js
+[final-447d] END iss055-rbac: exit=0 signal=none summary={"passed":6}
+[final-447d] All nine profiles have failures; summary saved.
+COORDINATOR_EXIT_CODE=1

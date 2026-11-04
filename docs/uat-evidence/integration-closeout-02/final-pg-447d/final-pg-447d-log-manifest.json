@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "source_product_sha": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "frozen_pg_artifact_source": ".tmp/final-integrated-447d/docs/uat-evidence/integration-closeout-02/final-pg-447d",
+  "frozen_pg_artifacts_byte_exact": true,
+  "frozen_pg_artifacts": [
+    {
+      "path": "artifacts/postgres-backups/447d7816ead2-40c0895c.json",
+      "bytes": 13058,
+      "sha256": "df5ce1afe5cca731777d93dd03a4c3239f0511d16be9e6221ed8acb3f8d73f3f"
+    },
+    {
+      "path": "artifacts/postgres-backups/447d7816ead2-40c0895c.zip",
+      "bytes": 415806,
+      "sha256": "9a68c0a8c2a6fb8844e7faaf3748482db564f27256b4c503c5060bb6db0bbe80"
+    },
+    {
+      "path": "artifacts/postgres-backups/finance-restored-447d7816ead2.json",
+      "bytes": 12237,
+      "sha256": "cd76fc2599c6cb257fd07a4e260311fbd0405f573add6651b881257b68c482de"
+    },
+    {
+      "path": "artifacts/postgres-backups/history-operational-restored-447d7816ead2.json",
+      "bytes": 27820,
+      "sha256": "5d6fd185324958585ef4ca0c74981c56d93587213c86997e05d6adbcadd752d4"
+    },
+    {
+      "path": "logs/restored-private-http-447d7816ead2.log",
+      "bytes": 462,
+      "sha256": "aa06a7ee344d21d4d429b97203c1ef92bcd4ffda212dd72345f1478ad901b682"
+    }
+  ],
+  "rawlogs_zip": "logs/final-pg-447d-rawlogs.zip",
+  "rawlogs_zip_sha256": "24fd7d25de42ace6029f039163e11a5657efdc73b3ea4af107e78ac47b46aa75",
+  "members": [
+    {
+      "source_path": "docs/uat-evidence/integration-closeout-02/postgres-final-447d-opseed-first.log",
+      "published_path": "docs/uat-evidence/integration-closeout-02/final-pg-447d/logs/postgres-final-447d-opseed-first.log",
+      "archive_member": "rawlogs/postgres-final-447d-opseed-first.log",
+      "bytes": 8141,
+      "raw_sha256": "de54068382944162e4796b37e4717cb68f068ec00e381a909564ab471644056e",
+      "published_sha256": "de54068382944162e4796b37e4717cb68f068ec00e381a909564ab471644056e",
+      "redaction_applied": false,
+      "credential_scan_match_counts": {
+        "capability_marker": 0,
+        "credential_assignment": 0,
+        "url_credentials": 0,
+        "bearer_value": 0
+      }
+    },
+    {
+      "source_path": "docs/uat-evidence/integration-closeout-02/postgres-final-447d-opseed-contacts.log",
+      "published_path": "docs/uat-evidence/integration-closeout-02/final-pg-447d/logs/postgres-final-447d-opseed-contacts.log",
+      "archive_member": "rawlogs/postgres-final-447d-opseed-contacts.log",
+      "bytes": 11557,
+      "raw_sha256": "d1cefa2cf82051dfe1e71541b9d84688bc06ce35778f84d2fa5ca0c85125818d",
+      "published_sha256": "d1cefa2cf82051dfe1e71541b9d84688bc06ce35778f84d2fa5ca0c85125818d",
+      "redaction_applied": false,
+      "credential_scan_match_counts": {
+        "capability_marker": 0,
+        "credential_assignment": 0,
+        "url_credentials": 0,
+        "bearer_value": 0
+      }
+    },
+    {
+      "source_path": "docs/uat-evidence/integration-closeout-02/postgres-final-447d-opseed-receipt-relation.log",
+      "published_path": "docs/uat-evidence/integration-closeout-02/final-pg-447d/logs/postgres-final-447d-opseed-receipt-relation.log",
+      "archive_member": "rawlogs/postgres-final-447d-opseed-receipt-relation.log",
+      "bytes": 485246,
+      "raw_sha256": "8a13f655274a55629186efa54fd2965ef6ef3540b18e95759ba52a223c251b6e",
+      "published_sha256": "8a13f655274a55629186efa54fd2965ef6ef3540b18e95759ba52a223c251b6e",
+      "redaction_applied": false,
+      "credential_scan_match_counts": {
+        "capability_marker": 0,
+        "credential_assignment": 0,
+        "url_credentials": 0,
+        "bearer_value": 0
+      }
+    },
+    {
+      "source_path": "docs/uat-evidence/integration-closeout-02/postgres-final-447d-opseed-receipt-relation.launcher.json",
+      "published_path": "docs/uat-evidence/integration-closeout-02/final-pg-447d/logs/postgres-final-447d-opseed-receipt-relation.launcher.json",
+      "archive_member": "rawlogs/postgres-final-447d-opseed-receipt-relation.launcher.json",
+      "bytes": 816,
+      "raw_sha256": "10804b2d357e944ff7fb557fc90effe764d2244105209532839cbc1e7077a8d0",
+      "published_sha256": "10804b2d357e944ff7fb557fc90effe764d2244105209532839cbc1e7077a8d0",
+      "redaction_applied": false,
+      "credential_scan_match_counts": {
+        "capability_marker": 0,
+        "credential_assignment": 0,
+        "url_credentials": 0,
+        "bearer_value": 0
+      }
+    }
+  ],
+  "redaction": {
+    "applied": false,
+    "reason": "No capability/credential marker patterns were found in the four included logs; each published file is byte-identical to its source.",
+    "raw_sha256_preserved": true,
+    "published_sha256_preserved": true
+  }
+}

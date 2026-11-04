@@ -1,0 +1,70 @@
+{
+  "source_sha": "f92824b814012783a8c992bf50f95f2e4e1ceae9",
+  "runtime": {
+    "node": "24.16.0",
+    "npm": "11.13.0",
+    "os": "Windows",
+    "ci_node22_equivalence": false
+  },
+  "npm_ci": {
+    "exit": 0,
+    "packages_added": 227,
+    "packages_audited": 228,
+    "warnings": [
+      "4 moderate vulnerabilities",
+      "lucide-vue-next deprecated"
+    ]
+  },
+  "node": {
+    "passed": 179,
+    "failed": 0,
+    "skipped": 0
+  },
+  "font": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "vitest": {
+    "files": 78,
+    "passed": 721,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 167.11
+  },
+  "build": {
+    "exit": 0,
+    "seconds": 2.25,
+    "warnings": [
+      "minified chunk exceeds500kB"
+    ]
+  },
+  "scope": "Checkpoint finance/Linux/attachment integration; history candidate not merged. Not final integration or CI. No assertions/configuration weakened.",
+  "logs": [
+    {
+      "path": "npm-ci-f928.log",
+      "bytes": 617,
+      "sha256": "d4c1707a0134552345f847f227940cbb8893ec1500d30659ce743a1014deade2"
+    },
+    {
+      "path": "frontend-node-f928.log",
+      "bytes": 46929,
+      "sha256": "5e3090dbcf7d2e415dd2e5ae60afe0cf148896d9ccd9c7b44d4a3061593e50ee"
+    },
+    {
+      "path": "frontend-font-f928.log",
+      "bytes": 196,
+      "sha256": "dfe16fb1188c887f46cf761470934c25cafbce0ad99f04ece98cf9ae563e06a5"
+    },
+    {
+      "path": "frontend-vitest-f928.log",
+      "bytes": 306,
+      "sha256": "0216d11006fe9570f1ef4b4d8cbcfe567f1a2986eec778c169793a550305f3b3"
+    },
+    {
+      "path": "frontend-build-f928.log",
+      "bytes": 1762,
+      "sha256": "a859ccbeb1f286ecd9e0e2e6ed2535913c50e1bdfcaa37ff4de62c39e1a08b18"
+    }
+  ]
+}

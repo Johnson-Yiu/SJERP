@@ -1,23 +1,29 @@
 {
-  "checked_worktree_head": "536789f6dbafb2874b1abfd33ade2b30faa123a4",
+  "checked_worktree_head": "02140bf46df27ba1abf5b9018507c07aae825769",
   "baseline_ci_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750",
   "status": "PASS",
   "checks": [
-    "unique current IDs; original 86 pending and 10 closed sets unchanged",
+    "unique current IDs; original 86 pending and 10 closed sets unchanged; ISS-121 separately added pending review with implementation/evidence supplement",
     "8 historical reports match source Git text and original byte hashes",
+    "5 later working-document checkpoints retain original bytes",
+    "closed frontend/attachment logs retain declared published hashes and ZIP CRC",
     "baseline CI receipt binds exact SHA and all three successful jobs",
     "published baseline log and real-file archives pass byte hashes and ZIP CRC",
     "all six original complete source SHAs remain ancestors of baseline",
-    "86 exact pending IDs; 361 code entries exist in a8400fb8deb1 Git tree; all cited local artifacts resolve",
-    "187 actual images decoded/dimensions/byte hashes; 58 operation files byte hashes verified"
+    "86 exact pending IDs; 365 code entries exist in 02140bf46df2 Git tree; all cited local artifacts resolve",
+    "215 actual images decoded/dimensions/byte hashes; 62 operation files byte hashes verified",
+    "final447d SQLite/PG/backup-command closed logs and restored artifacts retain hashes/ZIP CRC; failures preserved",
+    "02140 final backend/PG/history and supplemental invariant/control archives retain actual hashes/CRC; original failures are not overwritten",
+    "both frontend v2 inventories retain v1 manifests and recovered long-path byte hashes; original failed suite results unchanged",
+    "12 historical operation artifacts published with explicit original/public hashes and session-only copy sanitation; bounded diagnostic artifacts retain hashes without overriding full-suite failure",
+    "151 supplemental integrated page images retain source/dimensions/hashes; not independent acceptance"
   ],
   "unique_ids": 124,
   "counts": {
-    "FIXED_PENDING_REVIEW": 86,
+    "FIXED_PENDING_REVIEW": 87,
     "NEEDS_VERIFICATION": 14,
     "BLOCKED": 13,
-    "CLOSED": 10,
-    "OPEN": 1
+    "CLOSED": 10
   },
   "rows": [
     {
@@ -98,7 +104,7 @@
       "cells": [
         "[R0-E1 文件覆盖](R0-E1-综合业务回归与内测准备.md)；[UX 第二轮附件复测](Product-UX-Second-Review.md)；[D4-C 文件矩阵](r0-d4b2c-api-permission-matrix.md)；[R1-ISS007 附件 UAT](uat-evidence/r1-iss007-followup-files-uat-20261031/README.md)；首次日期：UNKNOWN（未从一手记录确认）",
         "2026-11-01 / `codex/r1-iss007-followup-files-uat-20261031`，基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`；删除/替换证据提交 `9a4d70e1425928358be7001ece43327c00557b0c`。旧上传、预览、下载和权限验收保持；在独立 SQLite/MEDIA_ROOT 中对新建合成目标完成真实 Chrome 删除、刷新、替代上传及直链核验。",
-        "仅删除本轮合成 `ISS007-delete-target.txt`：DELETE 204，目标 DB 行/磁盘文件均不存在，旧 URL 404；隔离普通认证用户的“删除跟进附件”审计保留 operator 外键、DELETE 路径和文件名元数据。替代上传 201；删除前已有三份合成附件的 ID、路径、大小、SHA 均不变。桌面 1440×900、窄屏 390×844 截图及原始日志见验收报告。无新增产品缺陷；生产 Nginx/CDN/对象存储 ACL 仍未验证，按 ISS-017 单独跟踪。",
+        "仅删除本轮合成 `ISS007-delete-target.txt`：DELETE 204，目标 DB 行/磁盘文件均不存在，旧 URL 404；隔离普通认证用户的“删除跟进附件”审计保留 operator 外键、DELETE 路径和文件名元数据。替代上传 201；删除前已有三份合成附件的 ID、路径、大小、SHA 均不变。桌面 1440×900、窄屏 390×844 截图及原始日志见验收报告。无新增产品缺陷；生产 Nginx/CDN/对象存储 ACL 仍未验证，按 ISS-017 单独跟踪。 后续历史来源438bc5b8526bb43b48445b4646e82ead0b2caaa6的CI41868099905出现既有iss007-attachment-real.spec.js保存成功后立即重开编辑弹窗，原spec第49行5秒未找到已上传文件名且表单内容为空，后两场景未运行；来源未改附件代码，根因UNKNOWN，不能凭后续账单导致0步骤失败称已修。此新增回归失败归本ID，最终集成须保留原断言并真实复核，主审已独立读取GitHub frontend job126707482414原日志确认失败定位，确定性竞态复现继续；来源完整日志待稳定交付归档。",
         "等待 ChatGPT 独立复审；生产代理/对象存储访问策略仅由 ISS-017 部署验收。未操作真实历史附件、业务数据库或其他媒体目录。",
         "R1-ISS007 附件删除/替换 UAT；独立复审前",
         "隔离合成目标 DB/文件删除一致、审计操作者正确、旧 URL 拒绝、刷新与替代上传可见、其他合成附件不变；独立复审通过。生产代理/对象存储 ACL 另按 ISS-017 验收。"
@@ -278,7 +284,7 @@
       "cells": [
         "[R0-E1 Quote/PI 覆盖](R0-E1-综合业务回归与内测准备.md)；[Round1 PI Re-UAT](UAT-Round1-正式业务全流程测试.md)；本轮证据：[ISS-020 导出一致性](uat-evidence/iss-020-quote-export/README.md)；首次日期：UNKNOWN（未从一手记录确认）",
         "2026-10-26 / `codex/iss-020-quote-export`，基线 `28ba758388429f57c2e3516e12385a88ce6646a3`",
-        "先行复现确认关键买方/币种缺失仍能 200 导出、逐行金额舍入会让预览与 XLSX 小计不一致；已最小修复为保存版本 DTO 校验、422 字段提示、预览/XLSX 共用金额和图片快照。两个历史版本实际 XLSX/API、历史主档改动后图片/型号/收件人、空邮箱、无权 403 和跨客户拒绝已核对；Chrome Use 桌面及 390px 窄屏截图已完成，浏览器下载事件另标注未返回。",
+        "先行复现确认关键买方/币种缺失仍能 200 导出、逐行金额舍入会让预览与 XLSX 小计不一致；已最小修复为保存版本 DTO 校验、422 字段提示、预览/XLSX 共用金额和图片快照。两个历史版本实际 XLSX/API、历史主档改动后图片/型号/收件人、空邮箱、无权 403 和跨客户拒绝已核对；Chrome Use 桌面及 390px 窄屏截图已完成，浏览器下载事件另标注未返回。  INTEGRATION-CLOSEOUT-02确认原浏览器saveAs canceled为下载生命周期时序缺口；02140bf46df27ba1abf5b9018507c07aae825769仅将报价anchor/Blob URL共同延后清理，原场景1/1及额外实际Google Chrome1/1通过，保存XLSX由openpyxl核对合成编号/型号/数量/单价；最终同SHA全量仍执行，独立复审未完成。证据：integration-closeout-02/download-investigation-20261105/DOWNLOAD-CANCELLATION-INVESTIGATION.md。  最终02140适用Playwright实际262通过1失败：本报价场景仍saveAs canceled，前述单次定向通过不能证明彻底修复；该浏览器交付子项FIX REQUIRED，由统一集成继续调查，不关闭Issue。",
         "等待独立代码、权限、实际文件和视觉复审；不关闭 Issue。",
         "R0-E1 补验",
         "实际文件可打开、内容与保存版本一致；历史图片不随 SKU 现图变化；独立复审通过。"
@@ -289,7 +295,7 @@
       "status": "FIXED_PENDING_REVIEW",
       "cells": [
         "[R0-E1 import coverage](R0-E1-综合业务回归与内测准备.md)；[R0-C3 Safe CSV Import](R0-C3-Safe-CSV-Import.md)；首次日期：UNKNOWN（未从一手记录确认）",
-        "2026-10-31 / 分支 `codex/r1-iss052-audit-hardening-20261031`；实现提交 `ab9ce886094a065766a24b35d9b82c7a7c0fd067`，基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`。合入来源 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b`、`8cff96af9f1f2e09dcbc0a29f361017ee23ffb75`、`f2b7fd6487459be69be687ccfeab09e7947df995` 及前置父提交 `a6c5b56a00326234681399a3405efa2117198f76`。CSV 限额/HTTP 413 与导入预览、批次、行级审计链均保留；SQLite 全量回归 1041 项（1021 通过、20 跳过、0 失败），定向 36 项（35 通过、1 项 PostgreSQL 专项跳过）。此句所述历史时点已被后续8087f2c / CI41839476121更新：0091–0094迁移与PG raw SQL审计/回退用例纳入真实PG17全量1282通过/30跳过，0失败；集成Chrome270/270。原历史SQLite结果不冒称新PG结果。",
+        "2026-10-31 / 分支 `codex/r1-iss052-audit-hardening-20261031`；实现提交 `ab9ce886094a065766a24b35d9b82c7a7c0fd067`，基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`。合入来源 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b`、`8cff96af9f1f2e09dcbc0a29f361017ee23ffb75`、`f2b7fd6487459be69be687ccfeab09e7947df995` 及前置父提交 `a6c5b56a00326234681399a3405efa2117198f76`。CSV 限额/HTTP 413 与导入预览、批次、行级审计链均保留；SQLite 全量回归 1041 项（1021 通过、20 跳过、0 失败），定向 36 项（35 通过、1 项 PostgreSQL 专项跳过）。此句所述历史时点已被后续8087f2c / CI41839476121更新：0091–0094迁移与PG raw SQL审计/回退用例纳入真实PG17全量1282通过/30跳过，0失败；集成Playwright270（混合通道）/270。原历史SQLite结果不冒称新PG结果。",
         "历史台账结论保留：2026-10-27 / `codex/verify-iss052-csv-import` / 精确来源 SHA `93736e0773ca2136d4070a604e62324cf832dc6f`：隔离 SQLite、合成数据下四类导入真实 UI 上传/预览/确认执行和 HTTP/数据库核对均有验收记录；七张真实 Chrome JPEG 原图已在集成分支更名为 `.jpg`，未重编码。历史状态对账时曾记录开发身份 `authenticated=false`、`AUDIT_LOG_ENABLED=false`、`OperationLog=0`；本轮之后已补充认证执行人审计及批次/行级审计。证据：[历史 CSV 导入报告](uat-evidence/iss-052-csv-import-verification/README.md)、[集成复核报告](uat-evidence/integration-036-002-003-052-058/README.md)及[本轮报告](uat-evidence/r1-iss052-audit-hardening-20261031/README.md)。",
         "当前实现保留失败解析、失败执行、重试和成功批次之间的预览/批次/行审计外键与操作人；审计写失败回滚业务写入。PostgreSQL `CSVImportBatch`、`CSVImportRowAudit`、`CSVImportPreviewAudit` 的原始 SQL UPDATE/DELETE/TRUNCATE 测试已纳入套件，但本轮 SQLite 测试不能证明 PostgreSQL 触发器运行行为。历史四类导入 UI 验收、SKU/客户敏感资料范围与已记录的导入数据映射结论不作扩展。",
         "等待独立复审；具备专用隔离 PostgreSQL 时运行新增原始 SQL 测试及 0091/0093/0094 正反向迁移核对，并记录触发器拒绝证据。不得连接真实业务数据库、启用正式 RBAC 或自行关闭 Issue。",
@@ -1261,9 +1267,9 @@
       "id": "ISS-105",
       "status": "FIXED_PENDING_REVIEW",
       "cells": [
-        "2026-10-18用户财务统计审查；本轮完整稳定财务来源3a07e7ef1a9e63c98077d45492ba23b798c7fcdd",
+        "2026-10-18用户财务统计审查；原基线财务来源3a07e7ef1a9e63c98077d45492ba23b798c7fcdd；本轮完整反例来源e301a86044ffe56b72172a94dc3b00ae09401b05",
         "当前已包含参考折算/实际资金区分、显式账户、独立启用基准、有效完整更正、转账本金及独立手续费、退回/退款审批、账户核对、私有银行凭证。集成c1937da后端1249项1189通过/60跳过；Chrome认证和开发资金页面各2/2。319941c新增回退与凭证备份保护；真实PG17专项13/13，新财务表与文件恢复一致。来源与完整日志见[综合报告](uat-evidence/review-integration-batch-20261104/README.md)、TEST-RESULTS.md及REVIEW-FINANCE-SOURCE.md。  本轮定向反例补充（2026-11-04）：API可将已追加分类为expense的事实匹配内部本金，且新增本金匹配后完成核对不失效；统一集成已在8087产品代码独立复现3/3失败（含新旧混合匹配），原日志finance-counterexamples-before-fixture-corrected.log保留。最小修复90683506f5d9447974302d83c89ba27351d5dfd4：按有效追加分类校验并在共享锁内重验，将新/旧本金匹配纳入核对指纹；未匹配账户指纹保持旧格式，有匹配的旧核对保守要求重核，不改资金/余额。修后SQLite32/32通过（含5项新回归）；同代码9068350的真实PG17.11专项12/12通过（新回归5/真实性2/真实并发5），99表1081行128迁移4文件恢复及私有HTTP4/4；最终SHA CI按本轮最终报告记录，不提前记通过。 第三项本轮确认缺陷ADV-03：finance-ledger未声明模块，普通认证的全局财务授权角色被通用权限层403拒绝；超管成功不能证明角色可用。候选报告2e20bfdccb711bdd5f9028cb60e287ee742c77c5仅只读检查尚未接收；主审在906产品代码独立6项角色回归为1通过/5失败（finance-role-before.log）。最小补修9af2a32fa81df3aa975424b70a887057e40b6b22已覆盖只读预览、create/update分离及既有finance或reports导出契约，相关SQLite91/91、干净9af检出的真实PG17专项64/64通过；恢复99表1081行128迁移4文件、HTTP4/4、源未变且清理完成。主树未提交测试触发的保护拒绝日志保留，未放宽干净源码保护。不启用运行环境正式RBAC，不改开发超级管理员判定。侧审另列非规范export值的既有解析/格式差异：当前受支持契约为小写csv，未证明越权，不在本轮擅自增加格式或别名，按105兼容边界待独立核查。 后续a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f已提交有序锁/截止日7测试，原clean guard下真实PG专项25/25通过，包含三个独立backend PID/实际阻塞/锁前预读/审计与余额原子断言；不采信已中止的未提交草稿例外。全量本地/最终SHA三CI单独记录。旧合法匹配的核对摘要兼容/一次重核已验；未扫描目标存量中旧缺陷已造成的错误匹配，也不自动改写不可变历史关系，启用前须只读核查并按受控审查处理，不把新写入口修复宣称为存量自动修复。",
-        "已有实现待ChatGPT独立复审；8087f2c / CI41839476121三CI已实际核实SUCCESS，PG17全量1282通过/30跳过、Chrome270通过；财务反例及独立复审仍待完成，真实账户/日期/余额/来源资料由负责人提供；不重新询问已确认资金原则。",
+        "已有实现待ChatGPT独立复审；8087f2c / CI41839476121三CI已实际核实SUCCESS，PG17全量1282通过/30跳过、Playwright270（混合通道）通过；财务反例已统一补修，独立复审仍待完成，真实账户/日期/余额/来源资料由负责人提供；不重新询问已确认资金原则。  事实CSV浏览器下载生命周期补修02140bf46df27ba1abf5b9018507c07aae825769：link附DOM再点击、延后释放；原Google Chrome1440/390两场景2/2，原CSV源编号和123.45断言保留；与API200区分实际文件下载，不改金额/权限/日期。最终新冻结全量另验。",
         "实际资金、账面参考和账户余额范围准确；正常/拒绝/并发/审计/历史保护与独立复审通过，不以开发session代替正式身份验收。"
       ]
     },
@@ -1416,13 +1422,13 @@
     },
     {
       "id": "ISS-121",
-      "status": "OPEN",
+      "status": "FIXED_PENDING_REVIEW",
       "cells": [
         "R1-FIN-P3-A规则及历史启用要求；2026-10-19；INTEGRATION-CLOSEOUT-02用户定向复审2026-11-04",
-        "8087f2c68b19a302a25e814ec8ce6113d91d4750已包含财务账户基准/核对、历史申请/审批/归档；当前history_takeover.execute_group仍创建资金/库存/履约三个not_connected。显式测试调用财务服务不等于执行器已接通。",
+        "完整历史来源ba4274742727a6794608dc8581a49b3692d865a6已合入447d7816ead2e971e249cb2e762b1a6f7009b9c0；资金/未结/库存基准/履约均有正式接续入口，不再是三个not_connected未实施。0108补齐三张新表TRUNCATE保护；0104–0108来源blob与集成一致。集成PG1410项1378通过32跳过，三新表实际填充2/1/2行后102表1218行133迁移5文件恢复一致、源未变、隔离集群清理完成。同一02140集成Chrome五阶段及live/副本只读核验已通过，独立复审仍待完成，源编号边界/凭证人工对应/已记账更正及目标启用须逐项独立接受，暂不自行关闭。见integration-closeout-02/INTEGRATED-SOURCE-REVIEW-447D.md及最终PG证据。",
         "已授权历史包开发和合成验收资金、未结、库存基准、剩余履约及组原子性；统一集成接收完整稳定SHA并核对正式服务/财务双人审批/幂等/并发/拒绝路径，不再因缺真实资料停止实施。真实日期、账户余额/凭证和真实导入另受外部资料及单独授权边界约束。",
         "已授权实施与合成验收；正式启用另行授权",
-        "同组合成资料完成归档→批准→接续→后续收付/履约→核对，逐表无重复资金/库存，真实PG17竞争/迁移/故障原子性及Chrome1440/390证据齐全，独立复审后改变状态；不以真实资料缺失代替代码完成。"
+        "同组合成资料完成归档→批准→接续→后续收付/履约→核对，逐表无重复资金/库存，真实PG17竞争/迁移/故障原子性及Chrome1440/390证据齐全，开发侧实现及隔离证据齐备，现转待独立复审；只有ChatGPT独立接受或用户接受后才可CLOSED，不以真实资料缺失代替代码完成。"
       ]
     },
     {

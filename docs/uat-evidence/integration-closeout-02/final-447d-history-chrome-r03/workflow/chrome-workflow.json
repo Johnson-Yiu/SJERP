@@ -1,0 +1,10 @@
+{
+  "chrome": "156.0.8078.80",
+  "database": "isolated synthetic SQLite",
+  "workflow": "archive, two source cash facts with separate reviewer, inventory baseline, itemized balances and confirmed continuation drafts",
+  "screenshots": [
+    "history-operational-workflow-1440.png",
+    "history-operational-workflow-390.png"
+  ],
+  "errors": []
+}

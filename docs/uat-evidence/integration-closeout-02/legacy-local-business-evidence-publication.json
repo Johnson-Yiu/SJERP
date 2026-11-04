@@ -1,0 +1,118 @@
+{
+  "scope": "Existing controlled synthetic local evidence; originals unchanged and retained locally. Public database copies remove Django sessions only; not production data or new ERP acceptance.",
+  "prior_visual_index_sha256": "c429b14fe6bbb3019e76b9068142f187466cdd0f9cefbf768712d62f1c3412b4",
+  "files": [
+    {
+      "source_path": "docs/uat-evidence/review-integration-batch-20261104/finance-browser-integrated/actual-files/authenticated-facts-1440.csv",
+      "source_sha256": "1f772fa916013e68aaf6d9e33a0f64428899f9e738add2677b1dcffbfc6b2a25",
+      "source_bytes": 1862,
+      "archive_member": "finance-browser-integrated/actual-files/authenticated-facts-1440.csv",
+      "session_rows_removed": 0,
+      "published_sha256": "1f772fa916013e68aaf6d9e33a0f64428899f9e738add2677b1dcffbfc6b2a25",
+      "published_bytes": 1862
+    },
+    {
+      "source_path": "docs/uat-evidence/review-integration-batch-20261104/finance-browser-integrated/actual-files/authenticated-facts-390.csv",
+      "source_sha256": "69495d622a220ec45d0991a4e80f21b456b1dd40fbfcbe8bd15bf6da005532c4",
+      "source_bytes": 3539,
+      "archive_member": "finance-browser-integrated/actual-files/authenticated-facts-390.csv",
+      "session_rows_removed": 0,
+      "published_sha256": "69495d622a220ec45d0991a4e80f21b456b1dd40fbfcbe8bd15bf6da005532c4",
+      "published_bytes": 3539
+    },
+    {
+      "source_path": "docs/uat-evidence/review-integration-batch-20261104/finance-browser-anonymous/actual-files/facts-1440.csv",
+      "source_sha256": "202088e1b36c6767a27a8d545cdae5c5f4bae20f29f94b8c2506d2e6de3a6b31",
+      "source_bytes": 387,
+      "archive_member": "finance-browser-anonymous/actual-files/facts-1440.csv",
+      "session_rows_removed": 0,
+      "published_sha256": "202088e1b36c6767a27a8d545cdae5c5f4bae20f29f94b8c2506d2e6de3a6b31",
+      "published_bytes": 387
+    },
+    {
+      "source_path": "docs/uat-evidence/review-integration-batch-20261104/finance-browser-anonymous/actual-files/facts-390.csv",
+      "source_sha256": "eb5fae94e3726de72a4d9143e5f231a3280f42c85c28ed0d855dc67f66ff4f73",
+      "source_bytes": 596,
+      "archive_member": "finance-browser-anonymous/actual-files/facts-390.csv",
+      "session_rows_removed": 0,
+      "published_sha256": "eb5fae94e3726de72a4d9143e5f231a3280f42c85c28ed0d855dc67f66ff4f73",
+      "published_bytes": 596
+    },
+    {
+      "source_path": "docs/uat-evidence/review-integration-batch-20261104/history-browser-integrated/history-takeover-template-v1.xlsx",
+      "source_sha256": "d9f397a5b440c5b7fd35773b790a7a1cfdf2f37aeafa4070f84e76e3b908176f",
+      "source_bytes": 14133,
+      "archive_member": "history-browser-integrated/history-takeover-template-v1.xlsx",
+      "session_rows_removed": 0,
+      "published_sha256": "d9f397a5b440c5b7fd35773b790a7a1cfdf2f37aeafa4070f84e76e3b908176f",
+      "published_bytes": 14133
+    },
+    {
+      "source_path": "docs/uat-evidence/review-integration-batch-20261104/history-browser-reopened-approved/history-takeover-template-v1.xlsx",
+      "source_sha256": "cdbb20e2fdaf07c05d481464950914d38333cb84d3d807fe0f5610bfff7570b0",
+      "source_bytes": 14134,
+      "archive_member": "history-browser-reopened-approved/history-takeover-template-v1.xlsx",
+      "session_rows_removed": 0,
+      "published_sha256": "cdbb20e2fdaf07c05d481464950914d38333cb84d3d807fe0f5610bfff7570b0",
+      "published_bytes": 14134
+    },
+    {
+      "source_path": "docs/uat-evidence/review-integration-batch-20261104/artifacts/http-with-database-snapshots/denials-database.sqlite3",
+      "source_sha256": "13afa06ccd6e97d364256b4bb0f4e88940a1b48d4f40d9b7ab8aa2a45f490f03",
+      "source_bytes": 1511424,
+      "archive_member": "artifacts/http-with-database-snapshots/denials-database.sqlite3",
+      "session_rows_removed": 2,
+      "all_non_session_tables_unchanged": true,
+      "published_sha256": "263439cbbf2eb5013d4348d4fc25996c897b275982eda62b1b9815a5c5196f1e",
+      "published_bytes": 1511424
+    },
+    {
+      "source_path": "docs/uat-evidence/review-integration-batch-20261104/artifacts/http-with-database-snapshots/procurement-database.sqlite3",
+      "source_sha256": "fe28e180e6430c89476bf52585446fa51ee06cc273eefa71d9d743ed79aaa17c",
+      "source_bytes": 2039808,
+      "archive_member": "artifacts/http-with-database-snapshots/procurement-database.sqlite3",
+      "session_rows_removed": 1,
+      "all_non_session_tables_unchanged": true,
+      "published_sha256": "5ee289555d01127d39cde3e0f320e289eaf2135885d95a2abe1013d43e520bef",
+      "published_bytes": 2039808
+    },
+    {
+      "source_path": "docs/uat-evidence/review-integration-batch-20261104/artifacts/http-with-database-snapshots/sales-database.sqlite3",
+      "source_sha256": "3f1b728c19db1a8942fdd583a9388ca867ade3b0736e31477fc073755436f32e",
+      "source_bytes": 2039808,
+      "archive_member": "artifacts/http-with-database-snapshots/sales-database.sqlite3",
+      "session_rows_removed": 1,
+      "all_non_session_tables_unchanged": true,
+      "published_sha256": "3eef2717b02a05e77b66b06ec78ed0a06c6c8fb7c9793db574474dff505107f4",
+      "published_bytes": 2039808
+    },
+    {
+      "source_path": "docs/uat-evidence/review-integration-batch-20261104/artifacts/http-with-database-snapshots/sales-quote-pi.xlsx",
+      "source_sha256": "c5a947245991dc04fda5297782e3e5b55e4e621b0e1f6d47fa8998115aee1be7",
+      "source_bytes": 10157,
+      "archive_member": "artifacts/http-with-database-snapshots/sales-quote-pi.xlsx",
+      "session_rows_removed": 0,
+      "published_sha256": "c5a947245991dc04fda5297782e3e5b55e4e621b0e1f6d47fa8998115aee1be7",
+      "published_bytes": 10157
+    },
+    {
+      "source_path": "docs/uat-evidence/review-integration-batch-20261104/artifacts/http-with-database-snapshots/sales-sales-report.csv",
+      "source_sha256": "e465c2d7ab64f610cec1ec3bb481e70a3234c21d21281b73c8dd4f001f11bfd4",
+      "source_bytes": 529,
+      "archive_member": "artifacts/http-with-database-snapshots/sales-sales-report.csv",
+      "session_rows_removed": 0,
+      "published_sha256": "e465c2d7ab64f610cec1ec3bb481e70a3234c21d21281b73c8dd4f001f11bfd4",
+      "published_bytes": 529
+    },
+    {
+      "source_path": "docs/uat-evidence/review-integration-batch-20261104/artifacts/core-http-f088954aae194ae3abdc932438ac41f2/test_quote_export_order_and_receivable_are_saved_and_reconciled_over_http-quote-pi.xlsx",
+      "source_sha256": "3cb3e1bcdf1c83db8217ba4eb61289e45f9f82b7e337ba494847cd4f5a2fcf44",
+      "source_bytes": 10158,
+      "archive_member": "artifacts/core-http-f088954aae194ae3abdc932438ac41f2/test_quote_export_order_and_receivable_are_saved_and_reconciled_over_http-quote-pi.xlsx",
+      "session_rows_removed": 0,
+      "published_sha256": "3cb3e1bcdf1c83db8217ba4eb61289e45f9f82b7e337ba494847cd4f5a2fcf44",
+      "published_bytes": 10158
+    }
+  ],
+  "archive_sha256": "afb404c1d275fb0eea6fc735d162bf190a88bf264244243c252d3eb5520ec68b"
+}

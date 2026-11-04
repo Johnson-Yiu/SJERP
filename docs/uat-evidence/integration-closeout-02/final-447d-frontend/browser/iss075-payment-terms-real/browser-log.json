@@ -1,0 +1,110 @@
+{
+  "noHorizontalOverflow": true,
+  "apiLog": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/session/current-operator/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/categories/tree/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/suppliers/?search=&page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/categories/tree/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/session/current-operator/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/suppliers/?active_only=1&page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/skus/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/supplier-skus/?supplier=1&sku=1&is_active=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1774/api/purchase-orders/",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:1774/api/purchase-orders/10/place/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/contract-changes/?purchase_order=10&page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/contract-changes/?purchase_order=1&page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/session/current-operator/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/categories/tree/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:1774/api/suppliers/?search=&page=1",
+      "status": 200
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "published-redaction-audit-v1",
+  "purpose": "Redact only closed synthetic isolation capability values from the published targeted repro console log",
+  "source_raw_local_path": ".tmp/download-investigation-20261105/finance-original-spec-debug-browser-unredacted.log",
+  "source_sha256": "60b4b084c1f1ef89856734b30e1e7d93a3f67c368270e6f73c8af2393644c790",
+  "source_bytes": 26727,
+  "published_path": "finance-1440-390/logs/finance-original-spec-debug-browser.log",
+  "published_sha256": "77c55c28ffab7309270690c5eaa917e4a3d94ec9b707d691f7243228bfa4dc06",
+  "published_bytes": 26667,
+  "redactions": {
+    "isolation_route": 2,
+    "token_field": 2,
+    "total": 4
+  },
+  "replacement": "<CLOSED_ISOLATION_TOKEN_REDACTED>",
+  "png_or_xlsx_modified": false,
+  "unredacted_source_modified": false
+}

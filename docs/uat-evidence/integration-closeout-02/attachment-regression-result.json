@@ -1,0 +1,172 @@
+{
+  "source_sha": "f92824b814012783a8c992bf50f95f2e4e1ceae9",
+  "browser": "Default Chromium: isolated runner overwrote the outer PLAYWRIGHT_CHANNEL at f928",
+  "installed_version": "156.0.8078.80",
+  "python": "3.12.16",
+  "total": 3,
+  "passed": 3,
+  "failed": 0,
+  "skipped": 0,
+  "seconds": 19.5,
+  "cleanup": "owned process trees stopped, ports released, temporary SQLite and MEDIA_ROOT removed",
+  "screenshots": [
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-real-chrome-f928/browser/iss007-attachment-real.spec/screenshots/follow-up-pending-desktop.png",
+      "source_sha": "f92824b814012783a8c992bf50f95f2e4e1ceae9",
+      "actual_dimensions": [
+        1440,
+        950
+      ],
+      "sha256": "99eb15f39baade71b5692e52b6d0dbc6ad6556c3817aa11a30566985057585d8",
+      "bytes": 140803
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-real-chrome-f928/browser/iss007-attachment-real.spec/screenshots/follow-up-saved-390.png",
+      "source_sha": "f92824b814012783a8c992bf50f95f2e4e1ceae9",
+      "actual_dimensions": [
+        390,
+        1645
+      ],
+      "sha256": "0074a98374a74510541a6a41abfb093a88ed2886de59138ade0a4bd4b2df45ed",
+      "bytes": 94493
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-real-chrome-f928/browser/iss007-attachment-real.spec/screenshots/follow-up-saved-attachment-390-viewport.png",
+      "source_sha": "f92824b814012783a8c992bf50f95f2e4e1ceae9",
+      "actual_dimensions": [
+        390,
+        844
+      ],
+      "sha256": "af483a0c29145bc849064aa0a41f7202db46e6e631bd608f8ca14aa180f916b9",
+      "bytes": 51551
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-real-chrome-f928/browser/iss007-attachment-real.spec/screenshots/follow-up-saved-attachment-desktop-viewport.png",
+      "source_sha": "f92824b814012783a8c992bf50f95f2e4e1ceae9",
+      "actual_dimensions": [
+        1440,
+        950
+      ],
+      "sha256": "e71bcc91f9b74d916a8637df404d402f20f2e570f4e5c21c6a16ef9803a5ad90",
+      "bytes": 141731
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-real-chrome-f928/browser/iss007-attachment-real.spec/screenshots/follow-up-saved-desktop.png",
+      "source_sha": "f92824b814012783a8c992bf50f95f2e4e1ceae9",
+      "actual_dimensions": [
+        1440,
+        950
+      ],
+      "sha256": "99eb15f39baade71b5692e52b6d0dbc6ad6556c3817aa11a30566985057585d8",
+      "bytes": 140803
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-real-chrome-f928/browser/iss007-attachment-real.spec/screenshots/follow-up-upload-failure.png",
+      "source_sha": "f92824b814012783a8c992bf50f95f2e4e1ceae9",
+      "actual_dimensions": [
+        1280,
+        816
+      ],
+      "sha256": "f72260e835f1a151c5caee300a368c371fa5e086b532b114fd9d3adbb587c3f0",
+      "bytes": 140366
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-real-chrome-f928/browser/iss007-attachment-real.spec/screenshots/follow-up-upload-retry-success.png",
+      "source_sha": "f92824b814012783a8c992bf50f95f2e4e1ceae9",
+      "actual_dimensions": [
+        1280,
+        816
+      ],
+      "sha256": "d17bc163f441d8d121e230280e54aa06162f57f03798efb3f4a0591073e19ae4",
+      "bytes": 126230
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-real-chrome-f928/browser/iss007-attachment-real.spec/screenshots/quote-image-snapshot-390.png",
+      "source_sha": "f92824b814012783a8c992bf50f95f2e4e1ceae9",
+      "actual_dimensions": [
+        390,
+        1007
+      ],
+      "sha256": "6174c4654acb2698791152fd20dc43bf625e12d18a49e902430035ab3ca93eac",
+      "bytes": 63978
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-real-chrome-f928/browser/iss007-attachment-real.spec/screenshots/quote-image-snapshot-desktop.png",
+      "source_sha": "f92824b814012783a8c992bf50f95f2e4e1ceae9",
+      "actual_dimensions": [
+        1440,
+        950
+      ],
+      "sha256": "e594677089fbea48f63793e7001883c5b3fe2a0dd0f6a1e0352f60fc962bb4e5",
+      "bytes": 113786
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-real-chrome-f928/browser/iss007-attachment-real.spec/screenshots/sku-image-preview-desktop.png",
+      "source_sha": "f92824b814012783a8c992bf50f95f2e4e1ceae9",
+      "actual_dimensions": [
+        1440,
+        950
+      ],
+      "sha256": "fb5edf5b5ed665c723b180b677dd1439f21d6162a4f3932eea933b252d8d2103",
+      "bytes": 108986
+    }
+  ],
+  "logs": [
+    {
+      "path": "logs/iss007-save-reopen-pre-fix.log",
+      "raw_sha256": "9e94575e46d90e061bdb1861603700b4849e44461b6a8bf8d3be6c59547297b6",
+      "published_sha256": "9e94575e46d90e061bdb1861603700b4849e44461b6a8bf8d3be6c59547297b6",
+      "redacted_occurrences": 0
+    },
+    {
+      "path": "logs/iss007-save-reopen-post-fix.log",
+      "raw_sha256": "28e1efe7fcc6418be77a6af86a83e0c025f81e2798bbb14611920876cd5006c0",
+      "published_sha256": "28e1efe7fcc6418be77a6af86a83e0c025f81e2798bbb14611920876cd5006c0",
+      "redacted_occurrences": 0
+    },
+    {
+      "path": "logs/iss007-related-vue-regression-final.log",
+      "raw_sha256": "8ceb57d3dbb00fb171409d3d094c8edac294ddb5f40b159cb3fbea1c059d57ec",
+      "published_sha256": "8ceb57d3dbb00fb171409d3d094c8edac294ddb5f40b159cb3fbea1c059d57ec",
+      "redacted_occurrences": 0
+    },
+    {
+      "path": "logs/iss007-resourcepage-unit.log",
+      "raw_sha256": "916364a17b486b192ed3c2763ed06d5bbba13b757a1576ec6dee8ca35ef46c3b",
+      "published_sha256": "916364a17b486b192ed3c2763ed06d5bbba13b757a1576ec6dee8ca35ef46c3b",
+      "redacted_occurrences": 0
+    },
+    {
+      "path": "logs/iss007-related-vue-regression.log",
+      "raw_sha256": "d6fe11afd0e24a3a2c478d8598d39ee390c188d75a165fb5261c12ee101ef299",
+      "published_sha256": "d6fe11afd0e24a3a2c478d8598d39ee390c188d75a165fb5261c12ee101ef299",
+      "redacted_occurrences": 0
+    },
+    {
+      "path": "attachment-chrome-78b.log",
+      "raw_sha256": "65d2ed5a0581713702557a36e311ef510fb67a55f3f16e34b7192240c6baef12",
+      "published_sha256": "526af4671fc264296bfb2773801d4211e89da892940225a7aaf8558e3c88201f",
+      "redacted_occurrences": 4
+    },
+    {
+      "path": "attachment-chrome-78b-py312-retained.log",
+      "raw_sha256": "f8f1a943d9ab1dac62f4810dfde9420741383b70b5a4ae2473c3f01d23d49292",
+      "published_sha256": "3dc969170d29151a78032a31194999575c24ae468be41eb494f0aff4e4e6be60",
+      "redacted_occurrences": 4
+    },
+    {
+      "path": "attachment-real-chrome-f928.log",
+      "raw_sha256": "2fc7400a609d69807a93e48588defbfdec40094554b10d5ee27f853f833a8051",
+      "published_sha256": "7caacf551db0865512712784dfca4e32b581b59bbc7a2ebe3afd2188efec5bd0",
+      "redacted_occurrences": 4
+    }
+  ],
+  "scope": "Actual integrated finance/Linux code plus attachment fix; history source not yet integrated. Developer visual inspection, not independent ChatGPT review. Prior two 78b runs used default Chromium, not Chrome.",
+  "visible_attachment_images": [
+    "follow-up-saved-attachment-desktop-viewport.png",
+    "follow-up-saved-attachment-390-viewport.png"
+  ],
+  "metadata_maintenance_error": "Initial helper mixed relative/absolute paths and failed after closing ZIP; corrected here. No test or database changed.",
+  "historical_browser_label": "Google Chrome; PLAYWRIGHT_CHANNEL=chrome explicitly set",
+  "browser_label_correction": "Corrected after reading the exact runner and spec: f928 had no test.use chrome. Counts/screenshots unchanged; these are not Google Chrome acceptance."
+}

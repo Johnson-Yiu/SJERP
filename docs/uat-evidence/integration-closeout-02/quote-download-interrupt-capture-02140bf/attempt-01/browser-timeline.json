@@ -1,0 +1,970 @@
+{
+  "schemaVersion": 1,
+  "candidateSha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "runId": "76b20145-8ac5-462f-aa52-df3d17e1b6b0",
+  "browserChannel": "chrome",
+  "browserVersion": "156.0.8078.80",
+  "title": "quote editor actions stay readable at desktop and narrow widths and preserve preview/save/export",
+  "status": "passed",
+  "errors": [],
+  "nodeEvents": [
+    {
+      "wallTime": "2026-11-04T22:07:54.007Z",
+      "epochMs": 1793830074007,
+      "type": "playwright-download-paths",
+      "runId": "76b20145-8ac5-462f-aa52-df3d17e1b6b0",
+      "evidenceRoot": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-interrupt-capture-02140bf\\attempt-01\\isolated-evidence",
+      "outputDirEnv": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-interrupt-capture-02140bf\\attempt-01\\isolated-evidence\\artifacts\\76b20145-8ac5-462f-aa52-df3d17e1b6b0",
+      "projectOutputDir": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-interrupt-capture-02140bf\\attempt-01\\isolated-evidence\\artifacts\\76b20145-8ac5-462f-aa52-df3d17e1b6b0",
+      "workerIndex": 0,
+      "artifactsDir": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-interrupt-capture-02140bf\\attempt-01\\isolated-evidence\\artifacts\\76b20145-8ac5-462f-aa52-df3d17e1b6b0\\.playwright-artifacts-0",
+      "artifactsDirChars": 249,
+      "downloadsPath": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-interrupt-capture-02140bf\\attempt-01\\isolated-evidence\\artifacts\\76b20145-8ac5-462f-aa52-df3d17e1b6b0\\.playwright-artifacts-0",
+      "downloadsPathChars": 249,
+      "downloadsPathSource": "Playwright 1.64 BrowserType uses options.downloadsPath || artifactsDir; isolated config does not set downloadsPath."
+    },
+    {
+      "wallTime": "2026-11-04T22:07:54.007Z",
+      "epochMs": 1793830074007,
+      "type": "test-start",
+      "runId": "76b20145-8ac5-462f-aa52-df3d17e1b6b0",
+      "url": "about:blank"
+    },
+    {
+      "wallTime": "2026-11-04T22:07:54.112Z",
+      "epochMs": 1793830074112,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+    },
+    {
+      "wallTime": "2026-11-04T22:07:56.613Z",
+      "epochMs": 1793830076613,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+    },
+    {
+      "wallTime": "2026-11-04T22:07:56.746Z",
+      "epochMs": 1793830076746,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+    },
+    {
+      "wallTime": "2026-11-04T22:07:56.789Z",
+      "epochMs": 1793830076789,
+      "type": "request",
+      "method": "GET",
+      "path": "/api/quotes/",
+      "time": {
+        "startTime": 1793830076775.6492,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.178,
+        "responseStart": 113.577,
+        "responseEnd": 115.627
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:07:56.908Z",
+      "epochMs": 1793830076908,
+      "type": "response",
+      "method": "GET",
+      "path": "/api/quotes/",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "wallTime": "2026-11-04T22:07:56.931Z",
+      "epochMs": 1793830076931,
+      "type": "request",
+      "method": "GET",
+      "path": "/api/quotes/",
+      "time": {
+        "startTime": 1793830076927.24,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.183,
+        "responseStart": 13.241,
+        "responseEnd": 13.907
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:07:56.998Z",
+      "epochMs": 1793830076998,
+      "type": "response",
+      "method": "GET",
+      "path": "/api/quotes/",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "wallTime": "2026-11-04T22:07:59.711Z",
+      "epochMs": 1793830079711,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?customer=1"
+    },
+    {
+      "wallTime": "2026-11-04T22:07:59.742Z",
+      "epochMs": 1793830079742,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+    },
+    {
+      "wallTime": "2026-11-04T22:08:00.013Z",
+      "epochMs": 1793830080013,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+    },
+    {
+      "wallTime": "2026-11-04T22:08:00.080Z",
+      "epochMs": 1793830080080,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+    },
+    {
+      "wallTime": "2026-11-04T22:08:00.099Z",
+      "epochMs": 1793830080099,
+      "type": "request",
+      "method": "GET",
+      "path": "/api/quotes/",
+      "time": {
+        "startTime": 1793830080097.951,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.127,
+        "responseStart": 28.421,
+        "responseEnd": 29.709
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:08:00.174Z",
+      "epochMs": 1793830080174,
+      "type": "response",
+      "method": "GET",
+      "path": "/api/quotes/",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "wallTime": "2026-11-04T22:08:00.191Z",
+      "epochMs": 1793830080191,
+      "type": "request",
+      "method": "GET",
+      "path": "/api/quotes/",
+      "time": {
+        "startTime": 1793830080190.0498,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.206,
+        "responseStart": 28.893,
+        "responseEnd": 29.585
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:08:00.283Z",
+      "epochMs": 1793830080283,
+      "type": "response",
+      "method": "GET",
+      "path": "/api/quotes/",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "wallTime": "2026-11-04T22:08:00.366Z",
+      "epochMs": 1793830080366,
+      "type": "request",
+      "method": "POST",
+      "path": "/api/quotes/availability-preview/",
+      "time": {
+        "startTime": 1793830080364.078,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.157,
+        "responseStart": 29.772,
+        "responseEnd": 30.477
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:08:00.397Z",
+      "epochMs": 1793830080397,
+      "type": "response",
+      "method": "POST",
+      "path": "/api/quotes/availability-preview/",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "wallTime": "2026-11-04T22:08:00.927Z",
+      "epochMs": 1793830080927,
+      "type": "request",
+      "method": "GET",
+      "path": "/api/quotes/preview-template/",
+      "time": {
+        "startTime": 1793830080927.679,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.164,
+        "responseStart": 67.393,
+        "responseEnd": 68.024
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:08:01.000Z",
+      "epochMs": 1793830081000,
+      "type": "response",
+      "method": "GET",
+      "path": "/api/quotes/preview-template/",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "wallTime": "2026-11-04T22:08:01.153Z",
+      "epochMs": 1793830081153,
+      "type": "request",
+      "method": "POST",
+      "path": "/api/quotes/",
+      "time": {
+        "startTime": 1793830081152.7942,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.169,
+        "responseStart": 145.12,
+        "responseEnd": 145.701
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:08:01.306Z",
+      "epochMs": 1793830081306,
+      "type": "response",
+      "method": "POST",
+      "path": "/api/quotes/",
+      "status": 201,
+      "fromServiceWorker": false
+    },
+    {
+      "wallTime": "2026-11-04T22:08:01.310Z",
+      "epochMs": 1793830081310,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?customer=1"
+    },
+    {
+      "wallTime": "2026-11-04T22:08:01.310Z",
+      "epochMs": 1793830081310,
+      "type": "request",
+      "method": "GET",
+      "path": "/api/quotes/",
+      "time": {
+        "startTime": 0,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": -1,
+        "responseStart": -1,
+        "responseEnd": -1
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:08:01.341Z",
+      "epochMs": 1793830081341,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+    },
+    {
+      "wallTime": "2026-11-04T22:08:01.556Z",
+      "epochMs": 1793830081556,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+    },
+    {
+      "wallTime": "2026-11-04T22:08:01.610Z",
+      "epochMs": 1793830081610,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+    },
+    {
+      "wallTime": "2026-11-04T22:08:01.629Z",
+      "epochMs": 1793830081629,
+      "type": "request",
+      "method": "GET",
+      "path": "/api/quotes/",
+      "time": {
+        "startTime": 1793830081628.063,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.129,
+        "responseStart": 50.816,
+        "responseEnd": 51.659
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:08:01.711Z",
+      "epochMs": 1793830081711,
+      "type": "response",
+      "method": "GET",
+      "path": "/api/quotes/",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "wallTime": "2026-11-04T22:08:01.892Z",
+      "epochMs": 1793830081892,
+      "type": "request",
+      "method": "POST",
+      "path": "/api/quotes/availability-preview/",
+      "time": {
+        "startTime": 1793830081888.0598,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.159,
+        "responseStart": 22.24,
+        "responseEnd": 22.817
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:08:01.912Z",
+      "epochMs": 1793830081912,
+      "type": "response",
+      "method": "POST",
+      "path": "/api/quotes/availability-preview/",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "wallTime": "2026-11-04T22:08:01.950Z",
+      "epochMs": 1793830081950,
+      "type": "request",
+      "method": "POST",
+      "path": "/api/quotes/",
+      "time": {
+        "startTime": 1793830081950.4248,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.147,
+        "responseStart": 180.56,
+        "responseEnd": 181.126
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:08:02.146Z",
+      "epochMs": 1793830082146,
+      "type": "response",
+      "method": "POST",
+      "path": "/api/quotes/",
+      "status": 201,
+      "fromServiceWorker": false
+    },
+    {
+      "wallTime": "2026-11-04T22:08:02.147Z",
+      "epochMs": 1793830082147,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?customer=1"
+    },
+    {
+      "wallTime": "2026-11-04T22:08:02.152Z",
+      "epochMs": 1793830082152,
+      "type": "request",
+      "method": "GET",
+      "path": "/api/quotes/2/export/",
+      "time": {
+        "startTime": 1793830082143.9739,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.162,
+        "responseStart": 189.548,
+        "responseEnd": 191.578
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:08:02.152Z",
+      "epochMs": 1793830082152,
+      "type": "request",
+      "method": "GET",
+      "path": "/api/quotes/",
+      "time": {
+        "startTime": 1793830082145.282,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.18,
+        "responseStart": 34.821,
+        "responseEnd": 37.875
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:08:02.188Z",
+      "epochMs": 1793830082188,
+      "type": "response",
+      "method": "GET",
+      "path": "/api/quotes/",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "wallTime": "2026-11-04T22:08:02.189Z",
+      "epochMs": 1793830082189,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?customer=1"
+    },
+    {
+      "wallTime": "2026-11-04T22:08:02.200Z",
+      "epochMs": 1793830082200,
+      "type": "main-frame-navigation",
+      "url": "http://127.0.0.1:10379/quotes?customer=1&detail=2&tab=overview"
+    },
+    {
+      "wallTime": "2026-11-04T22:08:02.201Z",
+      "epochMs": 1793830082201,
+      "type": "request",
+      "method": "GET",
+      "path": "/api/quotes/2/workbench/",
+      "time": {
+        "startTime": 1793830082194.557,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.152,
+        "responseStart": 125.321,
+        "responseEnd": 127.621
+      }
+    },
+    {
+      "wallTime": "2026-11-04T22:08:02.322Z",
+      "epochMs": 1793830082323,
+      "type": "response",
+      "method": "GET",
+      "path": "/api/quotes/2/workbench/",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "wallTime": "2026-11-04T22:08:02.345Z",
+      "epochMs": 1793830082345,
+      "type": "response",
+      "method": "GET",
+      "path": "/api/quotes/2/export/",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "wallTime": "2026-11-04T22:08:02.381Z",
+      "epochMs": 1793830082381,
+      "type": "download-start",
+      "filename": "SJ20261104DE002.xlsx",
+      "pageUrl": "http://127.0.0.1:10379/quotes?customer=1&detail=2&tab=overview"
+    },
+    {
+      "wallTime": "2026-11-04T22:08:02.460Z",
+      "epochMs": 1793830082460,
+      "type": "download-finished-inspection",
+      "filename": "SJ20261104DE002.xlsx",
+      "failure": null,
+      "downloadTempPath": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-interrupt-capture-02140bf\\attempt-01\\isolated-evidence\\artifacts\\76b20145-8ac5-462f-aa52-df3d17e1b6b0\\.playwright-artifacts-0\\7ee3cb33-8ff3-4003-8a8e-072f449da6a6",
+      "downloadTempPathChars": 286
+    }
+  ],
+  "browserState": {
+    "events": [
+      {
+        "wallTime": "2026-11-04T22:07:54.099Z",
+        "epochMs": 1793830074100,
+        "perfMs": 44.899999998509884,
+        "type": "document-init",
+        "url": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "userActivation": {
+          "isActive": false,
+          "hasBeenActive": false
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:07:56.581Z",
+        "epochMs": 1793830076581,
+        "perfMs": 2525.8000000044703,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:56.732Z",
+        "epochMs": 1793830076732,
+        "perfMs": 2676.89999999851,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.705Z",
+        "epochMs": 1793830079705,
+        "perfMs": 5649.80000000447,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.722Z",
+        "epochMs": 1793830079722,
+        "perfMs": 5667.30000000447,
+        "type": "beforeunload-capture",
+        "defaultPrevented": false,
+        "returnValue": "",
+        "returnValueType": "string",
+        "url": "http://127.0.0.1:10379/quotes?customer=1",
+        "userActivation": {
+          "isActive": true,
+          "hasBeenActive": true
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.722Z",
+        "epochMs": 1793830079722,
+        "perfMs": 5667.5,
+        "type": "beforeunload-after-app-listeners",
+        "defaultPrevented": false,
+        "returnValue": "",
+        "returnValueType": "string",
+        "url": "http://127.0.0.1:10379/quotes?customer=1",
+        "userActivation": {
+          "isActive": true,
+          "hasBeenActive": true
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.733Z",
+        "epochMs": 1793830079733,
+        "perfMs": 5678.30000000447,
+        "type": "pagehide",
+        "persisted": false,
+        "url": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.735Z",
+        "epochMs": 1793830079736,
+        "perfMs": 5680.60000000149,
+        "type": "visibilitychange",
+        "state": "hidden",
+        "url": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.736Z",
+        "epochMs": 1793830079736,
+        "perfMs": 5680.70000000298,
+        "type": "history.replaceState",
+        "requestedUrl": null,
+        "currentUrl": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.736Z",
+        "epochMs": 1793830079736,
+        "perfMs": 5681,
+        "type": "unload",
+        "url": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.742Z",
+        "epochMs": 1793830079742,
+        "perfMs": 20.099999994039536,
+        "type": "document-init",
+        "url": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "userActivation": {
+          "isActive": false,
+          "hasBeenActive": false
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:08:00.007Z",
+        "epochMs": 1793830080007,
+        "perfMs": 284.3999999985099,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:00.078Z",
+        "epochMs": 1793830080078,
+        "perfMs": 355.69999999552965,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.302Z",
+        "epochMs": 1793830081302,
+        "perfMs": 1579.7999999970198,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.320Z",
+        "epochMs": 1793830081320,
+        "perfMs": 1597.8999999985099,
+        "type": "beforeunload-capture",
+        "defaultPrevented": false,
+        "returnValue": "",
+        "returnValueType": "string",
+        "url": "http://127.0.0.1:10379/quotes?customer=1",
+        "userActivation": {
+          "isActive": true,
+          "hasBeenActive": true
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.320Z",
+        "epochMs": 1793830081320,
+        "perfMs": 1598,
+        "type": "beforeunload-after-app-listeners",
+        "defaultPrevented": false,
+        "returnValue": "",
+        "returnValueType": "string",
+        "url": "http://127.0.0.1:10379/quotes?customer=1",
+        "userActivation": {
+          "isActive": true,
+          "hasBeenActive": true
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.328Z",
+        "epochMs": 1793830081328,
+        "perfMs": 1605.3999999985099,
+        "type": "pagehide",
+        "persisted": false,
+        "url": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.330Z",
+        "epochMs": 1793830081330,
+        "perfMs": 1608.1999999955297,
+        "type": "visibilitychange",
+        "state": "hidden",
+        "url": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.330Z",
+        "epochMs": 1793830081330,
+        "perfMs": 1608.2999999970198,
+        "type": "history.replaceState",
+        "requestedUrl": null,
+        "currentUrl": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.331Z",
+        "epochMs": 1793830081331,
+        "perfMs": 1608.5,
+        "type": "unload",
+        "url": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.338Z",
+        "epochMs": 1793830081338,
+        "perfMs": 17.399999998509884,
+        "type": "document-init",
+        "url": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "userActivation": {
+          "isActive": false,
+          "hasBeenActive": false
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.552Z",
+        "epochMs": 1793830081552,
+        "perfMs": 231.59999999403954,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.607Z",
+        "epochMs": 1793830081607,
+        "perfMs": 286.69999999552965,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:02.136Z",
+        "epochMs": 1793830082136,
+        "perfMs": 815.5,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:02.184Z",
+        "epochMs": 1793830082184,
+        "perfMs": 864,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:02.184Z",
+        "epochMs": 1793830082184,
+        "perfMs": 864.1999999955297,
+        "type": "history.pushState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?customer=1&detail=2&tab=overview",
+        "currentUrl": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:02.375Z",
+        "epochMs": 1793830082375,
+        "perfMs": 1054.8999999985099,
+        "type": "URL.createObjectURL",
+        "url": "blob:http://127.0.0.1:10379/cb5b70dd-a9cd-4157-8bc7-1adedb514709",
+        "blobSize": 10217,
+        "blobType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "userActivation": {
+          "isActive": true,
+          "hasBeenActive": true
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:08:02.375Z",
+        "epochMs": 1793830082375,
+        "perfMs": 1055,
+        "type": "anchor.click",
+        "isConnected": true,
+        "href": "blob:http://127.0.0.1:10379/cb5b70dd-a9cd-4157-8bc7-1adedb514709",
+        "download": "SJ20261104DE002.xlsx",
+        "userActivation": {
+          "isActive": true,
+          "hasBeenActive": true
+        }
+      }
+    ],
+    "storedEvents": [
+      {
+        "wallTime": "2026-11-04T22:07:54.099Z",
+        "epochMs": 1793830074100,
+        "perfMs": 44.899999998509884,
+        "type": "document-init",
+        "url": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "userActivation": {
+          "isActive": false,
+          "hasBeenActive": false
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:07:56.581Z",
+        "epochMs": 1793830076581,
+        "perfMs": 2525.8000000044703,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:56.732Z",
+        "epochMs": 1793830076732,
+        "perfMs": 2676.89999999851,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.705Z",
+        "epochMs": 1793830079705,
+        "perfMs": 5649.80000000447,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.722Z",
+        "epochMs": 1793830079722,
+        "perfMs": 5667.30000000447,
+        "type": "beforeunload-capture",
+        "defaultPrevented": false,
+        "returnValue": "",
+        "returnValueType": "string",
+        "url": "http://127.0.0.1:10379/quotes?customer=1",
+        "userActivation": {
+          "isActive": true,
+          "hasBeenActive": true
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.722Z",
+        "epochMs": 1793830079722,
+        "perfMs": 5667.5,
+        "type": "beforeunload-after-app-listeners",
+        "defaultPrevented": false,
+        "returnValue": "",
+        "returnValueType": "string",
+        "url": "http://127.0.0.1:10379/quotes?customer=1",
+        "userActivation": {
+          "isActive": true,
+          "hasBeenActive": true
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.733Z",
+        "epochMs": 1793830079733,
+        "perfMs": 5678.30000000447,
+        "type": "pagehide",
+        "persisted": false,
+        "url": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.735Z",
+        "epochMs": 1793830079736,
+        "perfMs": 5680.60000000149,
+        "type": "visibilitychange",
+        "state": "hidden",
+        "url": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.736Z",
+        "epochMs": 1793830079736,
+        "perfMs": 5680.70000000298,
+        "type": "history.replaceState",
+        "requestedUrl": null,
+        "currentUrl": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.736Z",
+        "epochMs": 1793830079736,
+        "perfMs": 5681,
+        "type": "unload",
+        "url": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:07:59.742Z",
+        "epochMs": 1793830079742,
+        "perfMs": 20.099999994039536,
+        "type": "document-init",
+        "url": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "userActivation": {
+          "isActive": false,
+          "hasBeenActive": false
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:08:00.007Z",
+        "epochMs": 1793830080007,
+        "perfMs": 284.3999999985099,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:00.078Z",
+        "epochMs": 1793830080078,
+        "perfMs": 355.69999999552965,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.302Z",
+        "epochMs": 1793830081302,
+        "perfMs": 1579.7999999970198,
+        "type": "history.replaceState",
+        "requestedUrl": "http://127.0.0.1:10379/quotes?customer=1",
+        "currentUrl": "http://127.0.0.1:10379/quotes?create=1&customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.320Z",
+        "epochMs": 1793830081320,
+        "perfMs": 1597.8999999985099,
+        "type": "beforeunload-capture",
+        "defaultPrevented": false,
+        "returnValue": "",
+        "returnValueType": "string",
+        "url": "http://127.0.0.1:10379/quotes?customer=1",
+        "userActivation": {
+          "isActive": true,
+          "hasBeenActive": true
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.320Z",
+        "epochMs": 1793830081320,
+        "perfMs": 1598,
+        "type": "beforeunload-after-app-listeners",
+        "defaultPrevented": false,
+        "returnValue": "",
+        "returnValueType": "string",
+        "url": "http://127.0.0.1:10379/quotes?customer=1",
+        "userActivation": {
+          "isActive": true,
+          "hasBeenActive": true
+        }
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.328Z",
+        "epochMs": 1793830081328,
+        "perfMs": 1605.3999999985099,
+        "type": "pagehide",
+        "persisted": false,
+        "url": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.330Z",
+        "epochMs": 1793830081330,
+        "perfMs": 1608.1999999955297,
+        "type": "visibilitychange",
+        "state": "hidden",
+        "url": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.330Z",
+        "epochMs": 1793830081330,
+        "perfMs": 1608.2999999970198,
+        "type": "history.replaceState",
+        "requestedUrl": null,
+        "currentUrl": "http://127.0.0.1:10379/quotes?customer=1"
+      },
+      {
+        "wallTime": "2026-11-04T22:08:01.331Z",
+        "epochMs": 1793830081331,
+        "perfMs": 1608.5,
+        "type": "unload",
+        "url": "http://127.0.0.1:10379/quotes?customer=1"
+      }
+    ],
+    "url": "http://127.0.0.1:10379/quotes?customer=1&detail=2&tab=overview",
+    "userActivation": {
+      "isActive": true,
+      "hasBeenActive": true
+    }
+  },
+  "chromeDownloads": null,
+  "chromeDownloadHistograms": null,
+  "dialogPolicy": "CDP Page.javascriptDialogOpening/Closed are observed only; no Page.handleJavaScriptDialog call and no page.on(dialog) listener."
+}

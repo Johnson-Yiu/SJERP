@@ -1,0 +1,27 @@
+{
+  "source_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "runtime": "Python3.12.16 Windows; explicit in-memory SQLite system/model/graph checks",
+  "checks": [
+    {
+      "path": "system-check.log",
+      "exit_code": 0,
+      "bytes": 57,
+      "sha256": "24d788661d8e06e7306aef4658deb9381f2b30e20d2b56701442568ffd8e83bf"
+    },
+    {
+      "path": "makemigrations-check.log",
+      "exit_code": 0,
+      "bytes": 29,
+      "sha256": "272d5838210db18f09465496c56716a1483c7ac74d08f78c400f2c3c752c67c6"
+    },
+    {
+      "path": "migration-graph.log",
+      "exit_code": 0,
+      "bytes": 263,
+      "sha256": "f63273028678d645ec6ba017790832a5b6514d739dde153c86821a551440a13d"
+    }
+  ],
+  "status": "PASS",
+  "archive_sha256": "d44cab95025bbaf29c64bcd217d1cac32716542547a3af5602fba2dedef1c1bd",
+  "scope": "Three real commands, not a unit suite or PostgreSQL upgrade proof."
+}

@@ -1,0 +1,617 @@
+{
+  "audit": {
+    "history_event_count": 16,
+    "operation_log_count": 21
+  },
+  "continuation": {
+    "contract_count": 2,
+    "contracts": [
+      {
+        "balance_mode": "itemized",
+        "continuation_order_id": 2,
+        "continuation_purchase_id": null,
+        "id": 1,
+        "settlement_order_id": 1,
+        "settlement_purchase_id": null
+      },
+      {
+        "balance_mode": "itemized",
+        "continuation_order_id": null,
+        "continuation_purchase_id": 2,
+        "id": 2,
+        "settlement_order_id": null,
+        "settlement_purchase_id": 1
+      }
+    ],
+    "payment_plan_count": 2
+  },
+  "database_tables": {
+    "auth_group": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "auth_group_permissions": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "auth_permission": {
+      "rows": 372,
+      "sha256": "dc69190c33d9d221f669accee53410781dd9e7732e0ee352fd006a73c3a71113"
+    },
+    "auth_user": {
+      "rows": 2,
+      "sha256": "b0bc550f7118892c134e81a0b06927a3295d9e96c48ab3c196e47e728cb9e48b"
+    },
+    "auth_user_groups": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "auth_user_user_permissions": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_accessrole": {
+      "rows": 15,
+      "sha256": "9ea8efb06ae8c105ef3a3663366fa1b01d7ac3c970edaa4c99bcb36b5c550ca5"
+    },
+    "crm_advanceallocation": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_cashduplicatereview": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_cashsourceallocation": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_categoryattribute": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_contact": {
+      "rows": 1,
+      "sha256": "fd25a81b7c2ecfb46a15f2e0ed06c587308cc6bab5a2de790ad2da24f29c7003"
+    },
+    "crm_contractchangerequest": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_csvimportbatch": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_csvimportpreviewaudit": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_csvimportrowaudit": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_customer": {
+      "rows": 1,
+      "sha256": "e651dba738a5b7ada5dbba48ce12824f63e898e6eb712fbbb0ac4950b9d9221b"
+    },
+    "crm_customercodesequence": {
+      "rows": 1,
+      "sha256": "0ee180ae6a69c648d4af232711b77df109b88887117f355b068c32142baff59c"
+    },
+    "crm_customersupplierpreference": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_documentnumbersequence": {
+      "rows": 2,
+      "sha256": "84b0b4ac75d6f6b78a07613141babda514cb5e06274459bb77711854ae034c01"
+    },
+    "crm_employeeprofile": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_employeeprofile_roles": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_financeaccount": {
+      "rows": 1,
+      "sha256": "23a590a6003aee65e58594950a666868deb71590919257163abc16d958886c2f"
+    },
+    "crm_financeaccountmapping": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_financebankvoucherbinding": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_financeclassification": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_financefact": {
+      "rows": 2,
+      "sha256": "c6466bb5a8d73559a2d75ba476b22999d8f438060b0410e24965420948075f29"
+    },
+    "crm_financehistoricaltransfer": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_financeinstruction": {
+      "rows": 2,
+      "sha256": "8ab4a88b7634ddb73027f912899ea7f94fedd770059038e87b2b23a24ec7f409"
+    },
+    "crm_financereview": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_financetransfermatch": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_financevoucher": {
+      "rows": 1,
+      "sha256": "bfd56acfb8ee05cc8a9402525c1127da42aa3bfc4c8fde03360a70341ca76a1a"
+    },
+    "crm_followup": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_followupattachment": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_fulfillmentidempotency": {
+      "rows": 2,
+      "sha256": "225d62675f091f38cebc4f5bc8309c113867b860d08772f984e9ee464f688bad"
+    },
+    "crm_goodsreceipt": {
+      "rows": 1,
+      "sha256": "c83f5ff5c6755ead74091a07e43742a6cc7d996f4dd75c400a6e15afc2fb1836"
+    },
+    "crm_historyinventorybaseline": {
+      "rows": 1,
+      "sha256": "ae11e66c04bc550096508c77734cc00ab1628435dc0106710b819d7557b247bb"
+    },
+    "crm_historyinventorybaselinereversal": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_historyoperationalcontract": {
+      "rows": 2,
+      "sha256": "b61d5474cf347dcb37391507bb0318e76c01246ace07a8d9367a37da8495727a"
+    },
+    "crm_historytakeoverapplication": {
+      "rows": 1,
+      "sha256": "d229fb598373aa87800f44cacb22ecbb91c750766f7377ef1f48e32aac4193b8"
+    },
+    "crm_historytakeoverevent": {
+      "rows": 16,
+      "sha256": "432e440e09add3cf3e53932e30fae03ae600074387881dd7df3a4130e7c30e34"
+    },
+    "crm_historytakeovergroup": {
+      "rows": 1,
+      "sha256": "dc2788a30a33b8abc9e1c6a144e6212c89fd632c662286dd62247ca55b527d05"
+    },
+    "crm_historytakeoverhandoff": {
+      "rows": 3,
+      "sha256": "bcb718bb156353844b4d642a0c73c4eff4003d888d28c25629f8a89b05f45736"
+    },
+    "crm_historytakeoversourcerecord": {
+      "rows": 12,
+      "sha256": "742bf2619c8557755e7afc0edc3e8de1bede73f6190e5393e546542c713428e7"
+    },
+    "crm_hscode": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_inventorymovement": {
+      "rows": 2,
+      "sha256": "6995c76d3d0281f94ef2cc78538d1f0dfed28948ce7db0f9c9a8a82b2f1c7c82"
+    },
+    "crm_inventorymovement_related_orders": {
+      "rows": 1,
+      "sha256": "a236ab292ebe281971439255bfb5301c4e8691663e72bc1c7267bf0cd540b44d"
+    },
+    "crm_inventoryreservation": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_operationlog": {
+      "rows": 21,
+      "sha256": "14551f82cd9925579bcd4d0ec5da815ca22cde2b4ebbd64bad98cfd743bb1877"
+    },
+    "crm_order": {
+      "rows": 2,
+      "sha256": "148dafa20a80808e934447e50da6d696ce77133e17ea0b6bc82f807b8fada288"
+    },
+    "crm_orderitem": {
+      "rows": 2,
+      "sha256": "8682cf27feed3a2f1423cfb8a89c96ccb143f76571a509c0fcdd972b52f704ee"
+    },
+    "crm_orderquantityadjustment": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_organizationunit": {
+      "rows": 6,
+      "sha256": "7b9ef0d731fc63bb19cba5923f25cfce7cd3e0c292e0a02a0bcc65955c420c75"
+    },
+    "crm_packagingtemplate": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_packingplan": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_packingplancarton": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_packingplancartonitem": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_paymentplan": {
+      "rows": 2,
+      "sha256": "869313218556a77086e40a83862b74f232f0cdb2bc201f89d37fedc6b13d20c0"
+    },
+    "crm_position": {
+      "rows": 13,
+      "sha256": "6fc720608eeb211204c7eceee3a5adf284c932d5655a4f139809c01c8166f2fe"
+    },
+    "crm_product": {
+      "rows": 1,
+      "sha256": "3c42fc5a0ab5f3419b7d1dbe664419db87cc2d20b168c52ffe4a0c404a700089"
+    },
+    "crm_product_additional_categories": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_product_suppliers": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_productcategory": {
+      "rows": 1,
+      "sha256": "4138611d3343979a88face5fbf2f0e77ae3304a63c05a81a00a3429546a946f8"
+    },
+    "crm_productcertificate": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_productcodesequence": {
+      "rows": 1,
+      "sha256": "fea9499b328cfb91d6b08eeb464dc2a116dec93ad1326381c85d10007ebd3aaf"
+    },
+    "crm_productparameter": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_purchasecostallocation": {
+      "rows": 1,
+      "sha256": "bb4d082e36a7be5e1a77fc3730e0f8e61ee22162b1bb38240b1dd569132160ac"
+    },
+    "crm_purchasemoqexception": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_purchaseorder": {
+      "rows": 2,
+      "sha256": "c0fae0b3265b3fd7a30afc1b5103b186f551d9b1b49bc37b2c896b20f89e534d"
+    },
+    "crm_purchaseorderitem": {
+      "rows": 2,
+      "sha256": "d2d27f3331d8af70a0c2dbd7a4d3cacd561c435ee3a359cfc757978238cec1f1"
+    },
+    "crm_quote": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_quotechildrevisioncounter": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_quoteimportantnote": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_quoteitem": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_quotenumbersequence": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_quoterevisioncounter": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_quotetemplateasset": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_rmbcashevent": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_rolepermission": {
+      "rows": 360,
+      "sha256": "4d50279dc6ca527f9b0046e36d1937d12d38f12eae63725ea6683cc519042875"
+    },
+    "crm_salesrule": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_sharedreporttemplate": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_shipment": {
+      "rows": 1,
+      "sha256": "79fb96a498439e90692444817c6c592f8e8c3148cf9ee526fd22202b5c442c4f"
+    },
+    "crm_shipmentitem": {
+      "rows": 1,
+      "sha256": "5b530ee4aec009c8449aedb3fc27552513542c3ec5790bf921f8ff303516865a"
+    },
+    "crm_shipmentpackage": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_shipmentpackageitem": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_sku": {
+      "rows": 1,
+      "sha256": "2ea5bce966347084efc484edbf0ae2c255a92e2b07c4a04f992e3fb7d8b3ff00"
+    },
+    "crm_skucodesequence": {
+      "rows": 1,
+      "sha256": "680fa65e7c61bd4b6c2caf61b66ccd392e7a313f3e54241d6150c57f4dc90c2b"
+    },
+    "crm_skupackagingprofile": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_skuparameterplan": {
+      "rows": 1,
+      "sha256": "c68d2780ccd4f55266d2eeb1490b5b4840e57f0768d8ececc8ad9a6235df0566"
+    },
+    "crm_skurelationship": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_skutradeunit": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_skuversion": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_supplier": {
+      "rows": 1,
+      "sha256": "6b6bc4e75f00d86d4a4ae527c6661fe9149ee7e958c71671ffaa079d0d82d60f"
+    },
+    "crm_supplier_supply_categories": {
+      "rows": 1,
+      "sha256": "327bb078e44963caeb8ded262028cb2d0cad2f6195bec7218c46bb6d01a3180a"
+    },
+    "crm_suppliercandidateoverride": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_suppliercapability": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_suppliersku": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crm_transaction": {
+      "rows": 2,
+      "sha256": "0eb712cb4fc43f6f8cbcaf41d6ed7ffcf0bb23e4fb5188dab32b805ea76653e7"
+    },
+    "django_admin_log": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "django_content_type": {
+      "rows": 93,
+      "sha256": "27506cef46b0270912e8eb8b8eaa38c93b96b76911d7ee5e2b1856d4e3f03341"
+    },
+    "django_migrations": {
+      "rows": 133,
+      "sha256": "95ecec7554a9f532ee3cd55e0ebc57691a17d67a9a7fe02081fcc38f173dd0d6"
+    },
+    "django_session": {
+      "rows": 2,
+      "sha256": "b17227b6185391adc41b7c37b0d6e2972ce203669f1b88a2bf11fe3293e37daa"
+    }
+  },
+  "finance": {
+    "account_code": "UAT-HISTORY-CNY",
+    "account_ownership": "own",
+    "facts": [
+      {
+        "amount": "287.43",
+        "direction": "income",
+        "id": 1,
+        "instruction_status": "posted",
+        "kind": "cash",
+        "source_key": "e9ebbf7577713c103b47cd70fbc1fbeb22873fc5411e61b4452e53c3880b67ef",
+        "source_system": "HISTORY_TAKEOVER_V1"
+      },
+      {
+        "amount": "35.00",
+        "direction": "expense",
+        "id": 2,
+        "instruction_status": "posted",
+        "kind": "cash",
+        "source_key": "d141b85cdf1d4ffa8783d8c532aab0554e146ea2fb3d2e061764d21dca76dd47",
+        "source_system": "HISTORY_TAKEOVER_V1"
+      }
+    ],
+    "finance_instructions": 2,
+    "voucher_file_relative_path": "finance-vouchers/2026/11/9c8de84e55e84fda801a520583259574.pdf",
+    "voucher_name": "synthetic-uat.pdf",
+    "voucher_sha256": "94f673e3511b44ae4cce4189c7bf246b5106f5c0d9ed50767c58265d53c19fb9",
+    "voucher_size": 55
+  },
+  "fulfillment": {
+    "idempotency": [
+      {
+        "key": "synthetic-history-receipt-uat-1",
+        "operation": "receive",
+        "response_status": 201,
+        "status": "succeeded"
+      },
+      {
+        "key": "synthetic-history-shipment-uat-1",
+        "operation": "ship",
+        "response_status": 201,
+        "status": "succeeded"
+      }
+    ],
+    "receipt_id": 1,
+    "receipt_quantity": "3.00",
+    "shipment_id": 1,
+    "shipment_quantity": "6.00"
+  },
+  "history": {
+    "application_id": 1,
+    "application_status": "executed",
+    "archived_order": {
+      "id": 1,
+      "order_no": "HIST-SO-HT-1",
+      "status": "historical"
+    },
+    "archived_purchase": {
+      "id": 1,
+      "purchase_no": "HIST-PO-HT-1",
+      "status": "historical"
+    },
+    "created_actor_kind": "development",
+    "created_by_label": "开发身份（非实名）",
+    "event_rows": [
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "group_submitted"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "application_submitted"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "group_approved"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "group_executed"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "finance_instruction_submitted"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "finance_instruction_approve"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "finance_instruction_post"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "finance_instruction_submitted"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "finance_instruction_approve"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "finance_instruction_post"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "inventory_baseline_proposed"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "inventory_baseline_approved"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "inventory_baseline_posted"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "operational_contract_proposed"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "operational_contract_approved"
+      },
+      {
+        "actor_kind": "development",
+        "actor_label": "开发身份（非实名）",
+        "event_type": "operational_contracts_created"
+      }
+    ],
+    "group_status": "executed",
+    "reviewed_actor_kind": "development",
+    "reviewed_by_label": "开发身份（非实名）",
+    "source_file_name": "synthetic-history-uAT.xlsx",
+    "source_group_id": "HT-UAT-447D-1",
+    "source_record_rows": 12,
+    "source_system": "Synthetic browser UAT"
+  },
+  "inventory": {
+    "baseline_count": 1,
+    "baselines": [
+      {
+        "cost_currency": "USD",
+        "id": 1,
+        "lot_reference": "LOT-HT-01",
+        "quantity": "18.00",
+        "sku": "SKU-000001",
+        "warehouse": "SYN-WH-01",
+        "warehouse_type": "自有仓"
+      }
+    ],
+    "inventory_movements": 2
+  },
+  "isolation": {
+    "audit_log_enabled": true,
+    "database_engine": "django.db.backends.sqlite3",
+    "database_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-SwTnbu\\db.sqlite3",
+    "development_name_is_not_real_employee_identity": true,
+    "development_superadmin_enabled": true,
+    "media_root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-SwTnbu\\media",
+    "rbac_enforcement": false,
+    "synthetic_dual_session_is_not_real_employee_acceptance": true
+  }
+}

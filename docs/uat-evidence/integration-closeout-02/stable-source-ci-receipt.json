@@ -90,5 +90,22 @@
         }
       ]
     }
-  ]
+  ],
+  "current_ci_policy": "User quota pause: no subsequent triggers, polling or reruns; historical source CI only.",
+  "history_complete_stable_delivery": {
+    "branch": "codex/history-operational-closeout-20261104",
+    "sha": "ba4274742727a6794608dc8581a49b3692d865a6",
+    "integration_commit": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+    "remote_ref_matches_delivered_sha": true,
+    "verification_basis": "Coordinator git ls-remote at source reception; complete stable source included, migration blobs verified. No final source CI claim because user quota pause.",
+    "ci_status": "NOT_RUN_USER_QUOTA_PAUSED",
+    "source_local_pg_full": {
+      "total": 1342,
+      "passed": 1311,
+      "skipped": 31,
+      "failed": 0,
+      "errors": 0
+    },
+    "source_results_are_not_integrated_results": true
+  }
 }

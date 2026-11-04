@@ -1,0 +1,171 @@
+{
+  "checkout_sha": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "checkout_path": ".tmp/final-integrated-447d",
+  "overall_status": "FIX_REQUIRED",
+  "ci_triggered": false,
+  "git_operations": false,
+  "product_or_test_source_modified": false,
+  "runtime": {
+    "node": "v24.16.0",
+    "ci_node_configured": "22",
+    "npm": "11.13.0",
+    "python": "3.12.16",
+    "python_path": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/closeout-python312/Scripts/python.exe",
+    "python_utf8": "1",
+    "ops_test_openssl": "D:/Program Files/Git/usr/bin/openssl.exe",
+    "system_google_chrome": {
+      "product_version": "156.0.8078.80",
+      "evidence": "logs/playwright-profiles/iss028-035-isolated.stdout.log"
+    }
+  },
+  "commands": {
+    "npm_ci": {
+      "command": "npm ci --cache D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/review-npm-cache",
+      "exit_code": 0,
+      "packages_added": 227,
+      "packages_audited": 228,
+      "moderate_audit_findings": 4,
+      "warnings": [
+        "deprecated glob@10.5.0",
+        "deprecated lucide-vue-next@1.0.0"
+      ],
+      "log": "logs/npm-ci.log"
+    },
+    "node_unit": {
+      "command": "npm run test:unit",
+      "exit_code": 0,
+      "passed": 179,
+      "failed": 0,
+      "skipped": 0,
+      "log": "logs/frontend-node-unit.log"
+    },
+    "font_node_test": {
+      "command": "node --test tests/detail-drawer-typography.spec.js",
+      "exit_code": 0,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "log": "logs/frontend-font-node-test.log"
+    },
+    "vitest": {
+      "command": "npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js",
+      "exit_code": 0,
+      "test_files_passed": 78,
+      "passed": 725,
+      "failed": 0,
+      "skipped": 0,
+      "log": "logs/frontend-vitest.log"
+    },
+    "playwright": {
+      "driver": "run-final-447d-playwright.mjs",
+      "unchanged_runner": "frontend/scripts/run-playwright-suite-stability.mjs via frontend/scripts/run-isolated-browser-tests.mjs",
+      "profiles_expected": 9,
+      "profiles_completed": 9,
+      "exit_code": 1,
+      "passed": 261,
+      "failed": 2,
+      "skipped": 0,
+      "executed": 263,
+      "browser_mode": "Mixed: default isolated Chromium, individual test.use Chrome selections, and the runner-selected ISS-028/035 Chrome profile; not all tests used Google Chrome.",
+      "business_suite_test_use_chrome_files": [
+        "cash-duplicate-real.spec.js",
+        "finance-closeout.spec.js",
+        "finance-closeout-approval.spec.js",
+        "independent-bank-fee-real.spec.js",
+        "iss037-print-font-failure.spec.js",
+        "iss037-seller-freeze-real.spec.js",
+        "iss039-amount-allocation-real.spec.js",
+        "iss029-recipient-snapshot.spec.js"
+      ],
+      "profiles": [
+        { "name": "business-suite", "passed": 237, "failed": 1, "skipped": 0, "exit_code": 1, "log": "logs/playwright-profiles/business-suite.stdout.log" },
+        { "name": "shared-report-templates-isolated", "passed": 1, "failed": 0, "skipped": 0, "exit_code": 0, "log": "logs/playwright-profiles/shared-report-templates-isolated.stdout.log" },
+        { "name": "quote-editor-isolated", "passed": 0, "failed": 1, "skipped": 0, "exit_code": 1, "log": "logs/playwright-profiles/quote-editor-isolated.stdout.log" },
+        { "name": "iss006-storage-isolated", "passed": 10, "failed": 0, "skipped": 0, "exit_code": 0, "log": "logs/playwright-profiles/iss006-storage-isolated.stdout.log" },
+        { "name": "iss007-attachment-isolated", "passed": 3, "failed": 0, "skipped": 0, "exit_code": 0, "log": "logs/playwright-profiles/iss007-attachment-isolated.stdout.log" },
+        { "name": "iss007-image-snapshot-isolated", "passed": 1, "failed": 0, "skipped": 0, "exit_code": 0, "log": "logs/playwright-profiles/iss007-image-snapshot-isolated.stdout.log" },
+        { "name": "iss022-isolated", "passed": 1, "failed": 0, "skipped": 0, "exit_code": 0, "log": "logs/playwright-profiles/iss022-isolated.stdout.log" },
+        { "name": "iss028-035-isolated", "passed": 2, "failed": 0, "skipped": 0, "exit_code": 0, "real_browser": "Google Chrome 156.0.8078.80 (chrome)", "log": "logs/playwright-profiles/iss028-035-isolated.stdout.log" },
+        { "name": "iss055-rbac", "passed": 6, "failed": 0, "skipped": 0, "exit_code": 0, "log": "logs/playwright-profiles/iss055-rbac.stdout.log" }
+      ],
+      "business_suite_exclusions": {
+        "original_eight_preserved": [
+          "iss022-moq-real.spec.js",
+          "iss028-035-category-schema.spec.js",
+          "iss055-customer-404-real.spec.js",
+          "iss006-frontend-storage-chrome.spec.js",
+          "iss007-attachment-real.spec.js",
+          "iss007-image-snapshot-real.spec.js",
+          "shared-report-templates.spec.js",
+          "quote-editor-mobile-actions.spec.js"
+        ],
+        "additional_only": "iss037-print-output-acceptance.spec.js"
+      },
+      "iss037_other_cases": {
+        "iss037-print-font-failure.spec.js": "included in business-suite and passed 1 case",
+        "iss037-seller-freeze-real.spec.js": "included in business-suite and passed 3 cases"
+      },
+      "iss007_chrome_cdp_replay": {
+        "frozen_checkout_result": "iss007-attachment-real.spec.js passed 3 cases under unchanged runner default Chromium",
+        "separate_main_reviewer_chrome_cdp_run": "not copied into or executed in this frozen checkout; remains a separate review item"
+      },
+      "deferred": {
+        "spec": "iss037-print-output-acceptance.spec.js",
+        "status": "NOT_RUN_USER_DEFERRED",
+        "user_stated_scenarios": 6,
+        "static_source_declares": 7,
+        "static_case_names": [
+          "saved PI blocks printing when a document image fails",
+          "saved PI permits printing after resources load on narrow screen",
+          "Chrome UI print to PDF complete 1440px headers=false",
+          "Chrome UI print to PDF complete 1440px headers=true",
+          "Chrome UI print to PDF complete 390px headers=false",
+          "Chrome UI print to PDF multipage 1440px headers=false",
+          "Chrome UI print to PDF optional-empty 1440px headers=false"
+        ],
+        "note": "Entire spec excluded. No scenario executed. The source count differs from the instruction's stated six."
+      },
+      "failures": [
+        {
+          "test": "finance-closeout.spec.js:11 real account ledger at 1440px",
+          "source_line": 75,
+          "browser": "Google Chrome selected by test.use",
+          "error": "download.saveAs: canceled",
+          "same_spec_390px": "passed",
+          "error_context": "artifacts/c8a5564c-acc2-4a98-af28-0c8084aeb4a0/finance-closeout-real-account-ledger-at-1440px/error-context.md",
+          "root_cause": "UNKNOWN; application download versus browser download lifecycle not distinguished by current evidence"
+        },
+        {
+          "test": "quote-editor-mobile-actions.spec.js:10 quote editor actions",
+          "source_line": 116,
+          "browser": "default isolated Chromium",
+          "error": "download.saveAs: canceled",
+          "api_evidence": "GET /api/quotes/2/export/ returned HTTP 200",
+          "error_context": "artifacts/fad2da1c-a261-4d7c-8073-96190d7cd2e3/quote-editor-mobile-action-261fe-reserve-preview-save-export/error-context.md",
+          "root_cause": "UNKNOWN; export response succeeded but Playwright download was canceled"
+        }
+      ],
+      "retries": 0,
+      "failure_reruns": 0,
+      "profile_summary": "playwright-suite-summary.json"
+    },
+    "production_build": {
+      "command": "npm run build",
+      "exit_code": 0,
+      "modules_transformed": 2024,
+      "large_chunk_warning": "index-DRW_I2GA.js 1,146.13 kB exceeds 500 kB warning limit",
+      "log": "logs/frontend-build.log"
+    }
+  },
+  "aborted_invalid_attempt": {
+    "status": "ABORTED_NOT_COUNTED",
+    "reason": "Initial Chrome channel injection contradicted the user's correction; interrupted before a profile completed.",
+    "profile": "business-suite",
+    "test_counts": "UNKNOWN",
+    "preserved_evidence": "logs/aborted-channel-override-20261105/",
+    "owned_temp_cleanup": "Completed through the original runner's matching runId/token cleanup function"
+  },
+  "evidence_root": "docs/uat-evidence/integration-closeout-02/final-447d-frontend",
+  "report": "FINAL-FRONTEND-447D.md",
+  "manifest": "SEALED-EVIDENCE-MANIFEST.json"
+}

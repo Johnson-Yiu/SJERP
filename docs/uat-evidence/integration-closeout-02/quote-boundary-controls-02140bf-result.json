@@ -1,0 +1,80 @@
+{
+  "source_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "cases": [
+    {
+      "mode": "sandbox",
+      "source_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+      "worktree": ".tmp/quote-boundary-sandbox-02140bf",
+      "test": "quote-editor-mobile-actions.spec.js original unchanged",
+      "test_sha256": "06d30d0b0a0c14997471f88b67e89d94620e0d51ac5b65de24a27d5ee4811949",
+      "npm_ci_exit": 0,
+      "runner_exit": 0,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "owned_cleanup": true,
+      "fresh_checkout_and_npm_ci": true,
+      "previous_vite_run_in_checkout": false,
+      "browser": "Original default Playwright Chromium; not claimed Google Chrome",
+      "result_json": "quote-boundary-controls-02140bf/sandbox/browser-results.json",
+      "result_json_sha256": "ba1883597be538baddaa1ae52c3f1da2e7e888162eaf45a3cc6059042422ab70",
+      "download_bytes": 10217
+    },
+    {
+      "mode": "native",
+      "source_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+      "worktree": ".tmp/quote-boundary-native-02140bf",
+      "test": "quote-editor-mobile-actions.spec.js original unchanged",
+      "test_sha256": "06d30d0b0a0c14997471f88b67e89d94620e0d51ac5b65de24a27d5ee4811949",
+      "npm_ci_exit": 0,
+      "runner_exit": 0,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "owned_cleanup": true,
+      "fresh_checkout_and_npm_ci": true,
+      "previous_vite_run_in_checkout": false,
+      "browser": "Original default Playwright Chromium; not claimed Google Chrome",
+      "result_json": "quote-boundary-controls-02140bf/native/browser-results.json",
+      "result_json_sha256": "c7c7d3029aebe8e2d61bdbc862aa2b3c1ed76b3da87ecaa71cf6d27120dce8bb",
+      "download_bytes": 10217
+    }
+  ],
+  "logs": [
+    {
+      "path": "sandbox/runner.log",
+      "raw_source": ".tmp/quote-boundary-sandbox-02140bf/docs/uat-evidence/integration-closeout-02/quote-boundary-sandbox-02140bf/runner.log",
+      "raw_sha256": "cad8b56b7f75897cb4120de93281e0b4e4821183c1efa62eecd96acaf142a90b",
+      "published_sha256": "cad8b56b7f75897cb4120de93281e0b4e4821183c1efa62eecd96acaf142a90b",
+      "redactions": 0,
+      "bytes": 14777
+    },
+    {
+      "path": "sandbox/npm-ci.log",
+      "raw_source": ".tmp/quote-boundary-sandbox-02140bf/docs/uat-evidence/integration-closeout-02/quote-boundary-sandbox-02140bf/npm-ci.log",
+      "raw_sha256": "3ce951c71dce8bf1a07afe141c5d7b01e4bd3804992b39eab0a7c475b905cc42",
+      "published_sha256": "3ce951c71dce8bf1a07afe141c5d7b01e4bd3804992b39eab0a7c475b905cc42",
+      "redactions": 0,
+      "bytes": 617
+    },
+    {
+      "path": "native/runner.log",
+      "raw_source": ".tmp/quote-boundary-native-02140bf/docs/uat-evidence/integration-closeout-02/quote-boundary-native-02140bf/runner.log",
+      "raw_sha256": "75b8affbe95f00f0bf446b3abc962a4a74dbb321b1a0a3400623befe503e887f",
+      "published_sha256": "75b8affbe95f00f0bf446b3abc962a4a74dbb321b1a0a3400623befe503e887f",
+      "redactions": 0,
+      "bytes": 14856
+    },
+    {
+      "path": "native/npm-ci.log",
+      "raw_source": ".tmp/quote-boundary-native-02140bf/docs/uat-evidence/integration-closeout-02/quote-boundary-native-02140bf/npm-ci.log",
+      "raw_sha256": "3b406bb5c67a4e4f3cc6a84d3d8079b24f1624bf7c348f8b24490576c51366e1",
+      "published_sha256": "3b406bb5c67a4e4f3cc6a84d3d8079b24f1624bf7c348f8b24490576c51366e1",
+      "redactions": 0,
+      "bytes": 617
+    }
+  ],
+  "zip_sha256": "714f268f404a98987a2ba282698b0013f9cf221dfdb10e551967d466fe5b38c6",
+  "conclusion": "Both one-shot controls passed, one in sandbox and one approved native. This does not establish sandbox as cause or overwrite the earlier full-suite quote cancellation. Quiet timing investigation remains open.",
+  "scope": "Two diagnostic runs, not retries within the263-test full suite. Original assertions and isolation/cleanup guards unchanged; no Chrome security policy bypass. Fixture credential files were not copied."
+}

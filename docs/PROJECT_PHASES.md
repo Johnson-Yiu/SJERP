@@ -1,5 +1,27 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## INTEGRATION-CLOSEOUT-02 当前核实（2026-11-05）
+
+统一分支`codex/r1-prelaunch-consolidation-20261104`。完整稳定财务来源e301a86044ffe56b72172a94dc3b00ae09401b05、Linux来源4a4f338b09e9a464f1e66c24a905c35c970729bf、历史来源ba4274742727a6794608dc8581a49b3692d865a6均已合入。当前已冻结并完成本轮全量的候选为02140bf46df27ba1abf5b9018507c07aae825769；仅两处前端下载生命周期补修，无数据库、金额、日期、权限逻辑变化。
+
+最终候选实际结果：Python3.12 SQLite1410项1338通过72跳过（含8项原生PG备份命令）；真实PG17.11全量1410项1378通过32跳过，均0失败/错误。102表1218行133迁移5文件恢复一致，三类恢复及9项不可变保护通过并清理；追加独立源状态专项6/6，在操作末尾实际重读102表1218行100序列与5文件，前后相同，不追认此前1410运行曾做该末尾重读。Node179、字体1、Vitest725/78文件及构建通过。适用Playwright9profiles实际262通过1失败0跳过，报价仍saveAs canceled，当前继续诊断；不能把之前单次定向PASS当彻底修复。整份打印7项NOT_RUN_USER_DEFERRED，原断言未删。
+
+同一02140历史Chrome5/5脚本、98个本地HTTP请求、live及脱敏副本只读核验通过，8图、实际XLSX、数据库/媒体及日志已封存，进程/端口/私有任务目录清理完成。SQLite发布副本102表1091条业务/审计行，删除2个session行但业务表未改；不与PG1218行混为同一数据集。不把开发身份、合成双session或Django admin当作真实员工ERP登录。
+
+当前124唯一ID：FIXED_PENDING_REVIEW87、NEEDS_VERIFICATION14、BLOCKED13、OPEN0、CLOSED10。原86项仍待独立复审，ISS-121完整实现及集成验收证据已补，校准为FIXED_PENDING_REVIEW；新增待复审1项，与原86项队列分开记录；没有关闭Issue。报价浏览器交付子项归ISS-020，财务CSV归ISS-105，附件重开归ISS-007、回执跨UID归ISS-018，不创建重复ID。原86入口365条与当前代码存在性核对不等于业务接受。
+
+用户明确GitHub额度不足：后续提交[skip ci]，不触发、等待或重跑Actions，不改workflow规避；CI暂停不记PASS。历史906/41855319673成功只对应旧源码。旧运行中/未交付描述位于后面的明确历史章节，不覆盖当前事实。
+
+真实Linux补修后跨UID尚未执行：只读检查未找到docker命令，沙箱外wsl列表退出1只返回安装帮助，没有已验证Linux环境。正式认证/RBAC、真实启用资料、生产配置及真实迁移执行分别需目标环境或单独授权；历史代码未完成不能归为缺凭证，退款/已记账反向映射只按已支持范围，不宣称全部支持。打印完整成品与分页继续用户延期，不合master、不部署、不导入真实资料、不宣布上线就绪。
+
+[当前报告](uat-evidence/integration-closeout-02/README.md)、[原86复审包](uat-evidence/integration-closeout-02/REVIEW-BACKLOG.md)、[ISS121补充](uat-evidence/integration-closeout-02/ISS121-REVIEW-SUPPLEMENT.md)、[实际日志](uat-evidence/integration-closeout-02/TEST-RESULTS.md)。
+
+## 历史章节：此前阶段摘要（非当前状态）
+
+### 本轮首页此前阶段说明（原文保留，非当前状态）
+
+用户最新CI约定（2026-11-05）：GitHub额度不足，当前后续提交使用[skip ci]，不再触发、等待或重跑Actions，不改workflow配置。旧运行保留实际结果；最终CI标记额度暂停/未执行，不能记为通过。继续本地全量、隔离PG17、真实Chrome和专项；无法本地执行的真实Linux跨UID/目标环境验收另列NEEDS VERIFICATION。独立复审及上线授权边界不变。
+
 当前接收与回归更新（2026-11-05）：财务完整稳定来源e301a86044ffe56b72172a94dc3b00ae09401b05、Linux完整稳定来源4a4f338b09e9a464f1e66c24a905c35c970729bf均已合入（当前接收锚点536789f6dbafb2874b1abfd33ade2b30faa123a4），来源各自CI均成功，不能替代集成CI。a840冻结版本SQLite1330项1266通过/64跳过、PG1330项1300通过/30跳过，均0失败；合入财务来源后d4e8586的三条原反例SQLite3/3及财务PG30/30通过。Linux预审新发现0600签名回执跨UID交接缺口，归ISS-018，集成内最小修复及真实Linux回归中。历史接续仍在开发验收，未交付完整稳定SHA；当前不能称最终集成完成。最后已核实的统一分支三CI仍为906/41855319673，后文该CI只覆盖其精确SHA。
 
 ## INTEGRATION-CLOSEOUT-02 当前核实（2026-11-04—05）
@@ -14,10 +36,9 @@ ISS-121校准：历史资金、未结、库存基准与剩余履约接通是**�
 
 仅完整打印成品与分页按用户决定延期；不重试或催办，不扩大延期范围。不合并master、不部署、不启用正式RBAC、不导入真实资料、不宣布上线就绪。[当前报告](uat-evidence/integration-closeout-02/README.md)。
 
-## 历史章节：此前阶段摘要（非当前状态）
+### 更早阶段摘要
 
 以下保留原文及原时点结论，历史“运行中/待提交/尚未实施”不覆盖上述当前摘要。原始报告逐字节副本及摘要见[历史清单](uat-evidence/integration-closeout-02/history-manifest.json)。
-
 
 ### REVIEW-INTEGRATION-BATCH-01（2026-11-04，综合回归进行中）
 
@@ -40,7 +61,6 @@ ISS-105/108改为FIXED_PENDING_REVIEW，其余议题不自行关闭。当前124�
 独立集成起点 `d5abc64750d00c89d685bf12c0f8f67d4ba10a97`；完整移植历史只读预检初版与 FIX-01 至 `951adda34b5c60b303725702514cdacac17cc58d`，以及隔离备份演练六项提交至 `9250b066cbd28fd09bd2b1cc1f057604de1f76d9`。保留 BATCH-02 两条 0096 和 0097；新库 SQLite 迁移至 0097 成功。锁定 CPython 3.12.16 环境定向 90 项、4 项跳过，system check、迁移一致性检查通过。备份 PG17 既有成功记录仅限独立合成演练；本次未重新运行真实 PG 备份命令。预检 partial 误报定向修复按用户提供的 ChatGPT 复审结论通过，不等于 ISS-121 整体关闭。
 
 第二部分须等待已完成并推送的 `R1-ISS018-RESTORE-COMMAND-ACCEPTANCE-03` 和 `R1-ISS037-PRINT-OUTPUT-ACCEPTANCE-01`，不猜测其 SHA；其后再完成最终综合回归和同一最终 SHA 的三项 CI。[门槛及第一部分核验](uat-evidence/r1-prelaunch-consolidation-20261104/README.md)。本部分未部署、未启用正式 RBAC、未导入真实历史数据或关闭议题。
-
 
 ## R1-RULE-GAP-BATCH-02 集成核验（2026-11-03）
 
@@ -83,6 +103,7 @@ PostgreSQL 原始 SQL UPDATE/DELETE/TRUNCATE 测试已新增，但本机本轮�
 ## R1-ISS-052 超限 CSV HTTP 413 回归（2026-10-31）
 
 基于 `codex/r1-iss052-csv-limit-bd324-20261030` 的 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b` 创建独立 worktree / `codex/r1-iss052-http-413-bd324-20261031`。将 CSV 超限上传处理器设为不重置连接，使 Django 以有界块耗尽未读请求体后返回明确 HTTP 413。真实 HTTP 覆盖 preview、execute、legacy 三个入口；均返回 413、无导入副作用且临时上传目录为空。真实隔离 Chrome 对页面预览入口上传超限文件收到 413，无 request failure。后端相关回归 117/117、前端单元测试 171/171、Chrome 1/1、构建及 diff check 通过。构建仍有主 JS 包超过 500 kB 警告；生产代理限制/超时、PostgreSQL 和部署环境仍待验证。完整日志及截图见 [R1-ISS-052 HTTP 413 证据](uat-evidence/r1-iss052-http-413-bd324-20261031/README.md)。未修改 Issue 台账、未运行 CI、未合并 master、未部署。
+
 ## R1-ISS-052-HTTP-413 真实浏览器超限上传验收（2026-10-31）
 
 基于 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b` 创建独立 worktree。先在隔离 Django 上传处理器测试中复现：64 KiB 上限下，旧处理器越限前已将 65,319 字节转交后续处理器，且临时文件处理器已打开文件。最小修复改为 CSV 专用有界内存缓冲，由 `StopFutureHandlers` 阻止 Django 内建内存/临时处理器初始化；超限立即丢弃已缓冲前缀并停止 multipart 解析，保留真实 HTTP 413 响应。未改变导入业务核心、模型或迁移。
@@ -90,6 +111,7 @@ PostgreSQL 原始 SQL UPDATE/DELETE/TRUNCATE 测试已新增，但本机本轮�
 内置 Chromium 浏览器通过真实 Axios multipart 请求访问本地 Vite 代理和隔离 Django HTTP 服务：预览、兼容预览、正式导入均对 10 MiB+35 B 与 20 MiB+1 B 文件返回 JSON 413，浏览器 `network_error=null`；Django 服务访问日志对应记录三路由 413。64 B 正常客户 CSV 的预览及正式导入均返回 200，隔离 DB 新增一条测试客户。超限正式执行只有空 SHA、零行的失败批次；业务表无对应新增。上传临时目录为空；逐入口定向测试验证零字节转发、内建内存 handler 未激活、临时 handler 无文件、解析未执行和业务数据未写。
 
 定向/跨模块 Django 测试 86 项通过；Django check、迁移一致性、Vitest 4 项和生产构建通过。Node 单测 171 项中 169 项通过、2 项因隔离浏览器运行器依赖 `@playwright/test/cli.js` 在共享只读依赖树缺失而失败；共享 Vite 实际为 8.2.0、锁文件为 8.3.5，构建在已安装版本通过。准确浏览器结果、隔离 DB 快照、日志与限制见[ISS-052 HTTP 413 验收报告](uat-evidence/r1-iss052-http-413-20261031/README.md)。ISS-052 保持 `FIXED_PENDING_REVIEW`；真实员工身份与正式审计验收继续待办。本轮未触发 CI、未连接生产、未部署、未关闭 Issue。
+
 ## R1-INTEGRATION-036-002-003-052-058 五项任务集成（2026-10-27）
 
 固定基线 `46353a5436637832f5adadb7bdef6b45cdeada23`，创建独立工作树和 `codex/integration-036-002-003-052-058`。集成前核对五个远端来源分支 HEAD 与指定 SHA 一致：ISS-036 `b64c54b07908d4bb462c64f120c351d148e06f6f`、ISS-002 `4e4ca504ee398da85fe23cc53d534c6008807e5c`、ISS-003 `2111d193ef3a69db05c23e27813cfbf26d9034d7`、ISS-052 `93736e0773ca2136d4070a604e62324cf832dc6f`、ISS-058 `742692a6e4887e4b8352736e69a52b1ebe8d066f`。保留五项代码/测试/报告/依赖；PROJECT_ISSUES 的 ISS-002 冲突逐条合并，PROJECT_PHASES 保留各历史记录并追加本轮日志。ISS-052 七个 JPEG 原图仅由 `.png` 重命名 `.jpg`，签名检查确认未重编码。
@@ -117,6 +139,7 @@ SQLite 全量 904 项（跳过 13）、定向 38 项、Node 151 项、Vitest 650
 ISS-021 更新为 `FIXED_PENDING_REVIEW`。未改其他任务分支、未部署、未合并 master、未关闭 Issue，交付后等待统一独立代码/业务/迁移/权限/视觉审查。
 
 远端 CI run `40257290673` 三个 job 均在启动步骤前失败，GitHub 注释明确为账户付款/消费限额问题，原始证据已归档。CI/PostgreSQL 验收保留 BLOCKED，需仓库所有者处理后重跑最终 SHA；没有改计费设置或工作流，不以本地通过冒充 CI 成功。
+
 ## ISS-029 报价收件资料版本保存（2026-10-25 测试，2026-10-26 交付）
 
 实现与原始证据 SHA：`fbdb9c58987d5040c97923784ce2cf622dfe8755`。GitHub CI `40254982268` 三任务均未启动；backend check-run 注解明确账号付款/额度问题，不能宣称 CI 或 PostgreSQL 通过。此后仅补充交付文档，等待账号恢复后重跑及独立审查。
@@ -152,9 +175,13 @@ ISS-029 从 `NEEDS_VERIFICATION` 更新为 `FIXED_PENDING_REVIEW`；无新增 ID
 用户于 2026-10-13 明确批准以下顺序：
 
 1. **整体前端 UI/UX 收尾**。按 R0-F1 财务、R0-F2 概览/报表、R0-F3 库存、R0-F4 供应商、R0-F5 联系人与客户跟进等 Part 继续；全部前端完成前不得进入集中历史 Issue 修复。
+
 2. **集中核实和修复历史 Issue**。须等待当前 Part 的 ChatGPT 独立审查，并在后续 Part 按台账处理；保留所有旧 Issue ID。
+
 3. **全系统综合审查**。
+
 4. **修复综合审查发现的问题**。
+
 5. **正式内测**。只有用户另行明确授权后才进入；不启用 RBAC 或配置正式测试角色，除非该授权明确涵盖。
 
 该路线授权在当前 UI/UX 路线内按 Part 顺序继续，不需要每个模块重复开工确认；用户明确规定的等待独立审查仍是阶段门槛。它不授权生产部署或改变重大业务规则。
@@ -206,26 +233,39 @@ ISS-029 从 `NEEDS_VERIFICATION` 更新为 `FIXED_PENDING_REVIEW`；无新增 ID
 以下仅为问题台账的建议依赖，不是自动开工许可：
 
 1. **R0-E1 补验准备**：由业务负责人先决定订单“完成”语义（ISS-001）。补跑美元直接记账、独立采购闭环、库存冲销边界、媒体文件、CSV 导入/导出和 PI 实际文件验收（ISS-004–007、ISS-019–020、ISS-052）；核实采购状态中文显示并修复收货冲销旧提示、越权客户英文错误（ISS-053–055）。仅在用户明确授权的路线内按 Part 验收结果自动推进，不以本依赖建议作为新阶段授权。
+
 2. **安全/角色验收**：重跑 npm advisory 审查并评估当前依赖（ISS-002）。只有用户明确进入内测并授权测试账号后，才执行受限角色真实 UI/API 全流程验收（ISS-003）；不改当前开发人员权限。
+
 3. **业务待决**：合同变更审批范围、SupplierSKU MOQ、历史销售流水归属、跨权限成本重分摊、历史合同主体快照由业务负责人决策（ISS-021、022、037–039）。决策前保持安全现状，不推导新模型或流程。
+
 4. **部署准备**：只有另行明确进入部署阶段后，运维处理外部媒体 ACL、备份恢复、生产安全配置、审计日志防篡改、媒体拓扑和 PostgreSQL staging/数据迁移（ISS-017–018、043–047、051）。本阶段不执行生产部署或真实数据迁移。
+
 5. **低优先级体验/增强**：P2 和 P3 事项按实际使用影响排期；Enhancement-Later 先作业务决定，不进入当前必做范围。
 
 ## 阶段准入与退出规则
 
 - 新路线/阶段必须由用户明确提出；若用户已明确授权一条包含多个 Part 的路线，可在完成当前 Part 验收后自动进入该路线下一 Part。不得超出路线或进入用户明确排除的 Part；阶段计划、前序 CI 或 `PASS` 本身不构成授权。
+
 - 进入内测、生产部署或改变重大业务规则必须获得用户明确授权；不能由路线图或 Part 自动授权。
+
 - 开始实施前先读 `AGENTS.md`、`PROJECT_ISSUES.md` 和本文件，确认基线、未关闭阻塞、业务决定与允许范围。
+
 - 进入内测需先满足项目权限约定：全站服务端鉴权与数据范围真实验收；用户明确授权创建真实测试角色后再配置。开发超级管理员身份不继承给新账号。
+
 - 阶段验收只对声明的流程、对象、权限和数据环境负责。自动测试、PostgreSQL CI、真实 UI、文件内容和部署环境是不同证据，不得相互替代。
+
 - 退出阶段时必须列出新增、已修复待复审、未关闭、BLOCKED、延期和未测试事项。历史事项必须逐 ID 更新，不能因阶段 PASS 批量清空。
+
 - `FIXED_PENDING_REVIEW` 只有独立复审或用户明确接受后才可转 `CLOSED`。问题若被新证据重现，恢复活动状态并保留历史。
 
 ## 当前阻塞和阶段决策
 
 - 内测角色验收仍是阶段门槛；开发身份照常保留，待用户明确进入内测并授权隔离账号后执行（ISS-003）。
+
 - 订单完成/收款语义、供应商 MOQ、合同变更审批范围、历史财务归属、跨权限成本委托和订单历史主体展示需要业务决定（ISS-001、021、022、037–039）；冲销反馈和越权客户错误提示仍需后续复验/修复（ISS-054–055）。ISS-053 已完成当前基线核实，仍待统一独立复审。
+
 - 对象存储 ACL、联合备份恢复、生产安全配置、审计防篡改和 staging 数据迁移属于部署准备，当前不可把它们表述为已验收（ISS-017、018、043、044、047、051）。
+
 - R0-E1 独立复审为 PARTIAL PASS；本轮治理文件通过独立审查前不宣称 R0-E1 或 R0-D4 阶段封版。
 
 ## 2026-10-14 R0-F1 财务定向复修
@@ -244,7 +284,6 @@ R0-F2 基线 `master` / `4298c31`，范围为经营概览 Dashboard、报表中�
 
 R0-F1 最终独立结论与关闭项见上一节，允许有条件封版，不宣称完整独立视觉验收。本轮完整矩阵、测试和截图限制见 [R0-F2 验收](R0-F2-经营概览与报表中心验收.md)。最终提交及三项 GitHub CI 在交付中给出；交付后停止等待 ChatGPT 独立复审。
 
-
 ## 2026-10-14 R0-F2 独立复审与 R0-F3
 
 用户转述 ChatGPT 对 R0-F2 `04d3526` 独立代码及自动回归 PASS，允许有条件封版；CI #38503175230 三项 SUCCESS。ISS-062、ISS-066 继续保留，独立视觉证据 BLOCKED，ISS-063–065 补记代码结论但保留待视觉复核。旧报表 URL 无权来源可能残留表单的风险登记 ISS-067 / NEEDS_VERIFICATION，未宣称复现。
@@ -254,7 +293,6 @@ R0-F1 最终独立结论与关闭项见上一节，允许有条件封版，不�
 R0-F3 按历史库存 Phase A/B 框架增量优化：概览与流水分页、基础单位与预留展示、窄桌面工作台、日志失败与重试、手工调整加载/保存交互及冲销反馈。计算、收货/发货、预留、冲销业务规则、历史、成本、模型和权限配置不变。新增 ISS-068–069 待复审；ISS-070 为截图归档/独立视觉缺口。旧库存 ISS-006、013–015 等保留。
 
 验收详见 [R0-F3 库存验收](R0-F3-库存概览与库存流水验收.md)。自动布局、Codex 内置浏览器实际目视、ChatGPT 独立视觉分别记录。交付 push master 并核对三项 CI 后停止，等待独立审查，不进入历史 Issue 集中修复、内测或生产部署。
-
 
 ## 2026-10-14 R0-F3 独立复审与 R0-F4
 
@@ -293,6 +331,7 @@ R0-F4 仅优化供应商列表/新建/编辑/详情、付款条款组件、分�
 仅增加4项SKU初始化/关闭保护回归、采集校验及文档，未修改运行组件或共享守卫。完整Backend720（跳过10）、Node121、Vitest607、Playwright139、Build通过；PostgreSQL及最终精确HEAD的三项CI按交付记录核对。实际错误/恢复只覆盖隔离API服务中断，未重新执行全部历史业务写入/全部路由错误组合，不扩大为正式UAT。
 
 完整27路由矩阵、已通过/未通过、原因、前后对照、浏览器与自动化边界见[R0-F9-VIS-01报告](R0-F9-VIS-01-全站视觉复核与补充截图.md)；[新原图索引](uat-evidence/r0-f9-vis-01/index.html)。最终Push master并核验同SHA三项CI成功后停止，等待ChatGPT再次独立代码与证据审查。当前不满足全项视觉封版；历史集中修复、正式RBAC、员工UAT和生产部署仍禁止自行进入。
+
 ## R1-FIN-P2-B-FIX-01 银行资金前端安全流程补修（2026-10-19）
 
 基于P2-B精确基线 `47c9f20ad4e9643c22c62bc93e4ffcb0a38d905f`，仅处理独立审查指出的四类前端安全缺口：预览请求指纹与字段失效、预览不等于保存及刷新恢复、来源逐条人工核实与最终确认摘要、来源异步请求竞态。未修改P2-A资金计算、历史金额、Transaction/PaymentPlan/AdvanceAllocation、报表口径、权限策略或数据库。
@@ -378,6 +417,7 @@ ISS-122、ISS-123 的独立复审通过结论已同步为 CLOSED；ISS-105 OPEN�
 ## ISS-049 / ISS-053 / ISS-067 统一集成验收（2026-10-23）
 
 在统一基线 `c356e57014d28295485d52df23612c2fe6c02444` 上使用独立 worktree 建立 `codex/integration-049-053-067`，按无冲突的 `--no-ff` 顺序合并 ISS-049、ISS-053、ISS-067。三项源码、测试、截图及历史证据均保留；文档台账仅补齐 ISS-049 当前状态，并修正阶段阻塞描述与 ISS-053 当前核实结果的一致性。完整 API 响应、浏览器观察、测试日志和剩余风险见 [`统一集成验收报告`](uat-evidence/integration-049-053-067/README.md)。
+
 ## R1-ISS-037-P1 正式商业单据主体快照修复（2026-10-21）
 
 基于最新 `origin/master` 创建独立分支 `codex/r1-iss-037-p1`，仅修复正式销售订单和采购订单的主体快照缺口。Order 在正式确认时保存客户名称、国家/地区、地址、联系人、电话和邮箱；PurchaseOrder 在正式下单时保存供应商名称、地址、联系人、电话和邮箱；Supplier 增加可选地址字段。没有数据迁移回填，历史缺失值保留未知；正式页面显示真实快照，当前主档仅作为明确标注的参考。Quote/QuoteItem/PI 既有修订链、主体及 SKU 行级快照未重构，真实 Chrome 已核对报价/PI导出文件使用历史主体。
@@ -563,6 +603,7 @@ ISS-080 更新为 `FIXED_PENDING_REVIEW`，真实生产账号/数据库及跨员
 集成后 Django 全量 `950` 通过、`15` 跳过，定向三项后端 `59` 通过/`1` 跳过，Node `154`、有效 Vitest `659`、Playwright CRM/RBAC `27`、生产构建、SQLite 空库迁移和 0087→0089 升级均通过，`makemigrations --check` 无差异。真实 Chrome 已补充 ISS-080 桌面/390px 联系人提醒和 ISS-097 桌面/390px 权限矩阵独立图片。Vitest 中既有 `detail-drawer-typography.spec.js` 为 node:test 文件，已明确排除，不将错误 suite 运行结果冒充全量 Vitest 通过。
 
 ISS-047 真实生产卷/Nginx/容量告警/联合备份恢复与 PostgreSQL、ISS-097 正式员工与生产会话、ISS-080 真实员工跨客户数据抽查均保留原记录的部署或业务待验状态。最终 HEAD 的 GitHub Actions 必须另行核对；测试步骤前失败时不标记 CI PASS。完整命令、冲突、截图和遗留事项见 [`ISS-047 / ISS-097 / ISS-080 统一集成验收`](uat-evidence/integration-047-097-080/README.md)。本轮未部署、未合并 master、未关闭 Issue，等待 ChatGPT 独立审查。
+
 本轮 `npm install` 重新暴露依赖安全快照（2 moderate、9 high），沿用既有 ISS-002 记录为 `NEEDS_VERIFICATION`；未运行自动修复或无授权升级，不把该数量当作已确认生产漏洞。
 
 ## ISS-002 依赖安全审计（2026-10-27）
@@ -576,6 +617,7 @@ ISS-047 真实生产卷/Nginx/容量告警/联合备份恢复与 PostgreSQL、IS
 新增 `backup_recovery` 服务及 `create_consistent_backup`、`restore_consistent_backup`、`prune_erp_backups` 管理命令。备份不是把两份独立文件冒充快照：必须显式确认应用写入静默；SQLite 事务快照前后重新核对 ISS-047 媒体清单；数据库、媒体、恢复配置白名单和清单进入同一个 ZIP；恢复先核对归档 CRC、数据库 SHA256/`integrity_check`、媒体逐文件 SHA256 和配置 SHA256，全部通过后才写入新隔离目录。生产 PostgreSQL 未提供同一数据库/文件系统快照适配器时命令 fail-closed。age 加密、公网/异地复制、自动定时器和告警只提供未部署 runbook，不放入密钥或真实凭证。
 
 定向测试 `crm.tests.test_iss018_backup_recovery` 7 项通过，ISS-018/047/051 交叉回归 27 项通过（1 项既有 symlink 条件跳过）；隔离管理命令实际运行并核对订单金额 `5000`、库存 `42`、附件 `followups/invoice.pdf` 及媒体 manifest SHA256；ISS-047 现有私有媒体权限/清单实现未被覆盖。实际生产 PostgreSQL、私有持久卷、独立加密副本、systemd/告警、恢复 RPO/RTO 和 ISS-043 生产审计备份仍为 `DEPLOYMENT_VERIFICATION_PENDING`；证据见 [`ISS-018 隔离演练`](uat-evidence/iss-018-backup-recovery/README.md) 和 [`ISS-018 运行手册`](deployment/ISS-018-数据库与附件一致性备份恢复.md)。功能提交为 `da2a0af54a69dbaeab5ffd4a44abb87d2d39740f`，本台账绑定提交随后生成；本轮不关闭 Issue、不合并 `master`、不部署，等待独立审查。
+
 ## ISS-036 尾箱、混装箱与最小计量单位（2026-10-27）
 
 基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 Worktree 和分支 `codex/iss-036-carton-units`，读取 2026-10-24 规则包原文，并复核 SKU 交易单位、采购数量、实际装箱、ISS-040 Packing List、ISS-022 MOQ 及 ISS-075 付款规则。确认的真实缺口是：实际装箱接口对已保存的明确不可拆分交易单位接受非法小数；旧的 `[object Object]` 风险在当前前端错误展开逻辑中未复现，但补充了回归测试。
@@ -605,6 +647,7 @@ Django 全量 `952` 通过、`15` 跳过；装箱/单位/包装/MOQ/集成定向
 相关后端定向测试 `96` 项通过，前端实际装箱组件 `26` 项通过，生产构建、Django system check 和 `makemigrations --check` 通过。真实 Chrome 已完成 `0.5` 拒绝并保留输入、`1` 保存成功的独立截图；实现提交为 `a59573e0396fbb6b324628d8826b5a2234ee065b`，完整证据见 [`ISS-036-FIX-01 验收记录`](uat-evidence/iss036-fix01/README.md)。
 
 本轮只使用隔离 SQLite、开发身份和本地 Chrome；生产 PostgreSQL、代理、真实物流数据、CI 和窄屏物流实机仍未验证。ISS-036 保持 `FIXED_PENDING_REVIEW`，不合并 `master`、不关闭 Issue。
+
 ## ISS-025 客户生命周期中文名称一致性（2026-10-27）
 
 基于统一基线 `7951ecb8c6196f773128ad5978bfcd0a5b30c6b5` 创建独立 Worktree 和分支 `codex/iss-025-customer-status-labels`，读取 2026-10-24 规则包原文，并核对客户列表、详情、筛选、跟进、报表及关联企业展示。基线问题仍可复现：列表使用“已联系”，详情使用“联系人”；返单客户也存在“公司客户”与“返单客户”的展示差异。
@@ -680,6 +723,7 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 在现有独立工作树和分支 `codex/r1-iss006-po-locking-bd324-20261030`（用户指定基线 `94402f951e4d4243276f018cc3a6051f0f6f2c57`）只修正 `backend/crm/tests/test_postgres_concurrency.py`：移除两个采购收货并发场景中重复插入的默认成本分配，并增加一条且归属/数量正确的断言。`backend/crm/services/fulfillment.py` 等生产业务代码未改。
 
 锁定依赖下，一次性 SQLite 定向回归 74 项：61 通过、13 个 PostgreSQL 专项跳过、0 失败；库存预留、采购收货、冲销、库存流水及成本分配相关可执行测试通过。原始日志和夹具修复细节见 [`C-po-locking 验收记录`](uat-evidence/r1-five-fixes-migration-20261030/C-po-locking/README.md)。本机未发现 PostgreSQL 工具/服务或 Docker，`127.0.0.1:5432` 不可连接；因此两个新并发用例的实际执行、锁顺序与最终采购/库存/流水/预留一致性仍为 `BLOCKED`，不可把 SQLite skip 视为 PASS。ISS-006 保持 `NEEDS_VERIFICATION`；解除条件为在 PostgreSQL 环境运行两个目标用例并审查一致性断言。本轮不触发 CI、不合并 master、不关闭 Issue。
+
 ## R1-ISS006-INVENTORY-REVERSAL-AUDIT-ATOMICITY（2026-10-30）
 
 基于 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 创建独立工作树和分支 `codex/r1-iss006-inventory-reversal-audit-atomicity-20261030`。来源为用户指定的 2026-10-30 ChatGPT 独立代码审查；未猜测更早的首次发现日期。确认发货冲销服务提交后才写审计、手工库存冲销服务提交后才写两条审计的事务缺口。仅为两个 API action 加外层事务；既有冲销业务规则、接口响应、权限和幂等行为不变。
@@ -687,6 +731,7 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 锁定依赖环境下，隔离内存 SQLite Django system check 通过；相关库存/履约定向 106 项全通过。销售发货正常/重复冲销、发货审计失败回滚、手工库存正常/重复冲销、手工冲销第一条与第二条审计故障注入均已验证。原始日志及报告见 [`R1-ISS006 冲销审计原子性`](uat-evidence/r1-iss006-reversal-audit-atomicity-20261030/README.md)。SQLite 结果不代表 PostgreSQL 并发验收；本轮未运行 CI、未合并 master、未创建 PR、未部署、未关闭 Issue。
 
 本问题属于既有 ISS-006 的库存冲销原子性范围，不新增 Issue ID；ISS-006 全局保持 `NEEDS_VERIFICATION`，本子范围 `FIXED_PENDING_REVIEW`，交付后等待独立审查。
+
 ## R1-ISS007-FOLLOWUP-ATTACHMENT-UAT（2026-10-31）
 
 从固定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 创建独立 Worktree/分支 `codex/r1-iss007-followup-files-uat-20261031`。使用全新 SQLite、独立临时媒体目录、合成客户/历史附件及普通非超级用户测试身份；只在测试服务器启用 RBAC 和审计，不改开发人员权限或生产配置。
@@ -698,6 +743,7 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 ## R1-ISS007-ATTACHMENT-DELETE-UAT（2026-11-01）
 
 后续收到用户明确授权后，在全新一次性 SQLite 和隔离 `MEDIA_ROOT` 中重新建立合成客户、跟进及普通非超级用户测试账号；没有复用或删除真实历史附件。只通过真实 Chrome 删除本轮专门创建的 `ISS007-delete-target.txt`，取消确认路径先验证仍保留；确认后 DELETE 204，目标数据库记录与文件均消失，旧私有 URL 返回 404。删除审计保留隔离认证操作人的用户外键、`DELETE` 路径及附件 ID/文件名。随后上传独立替代附件 201，桌面 1440×900 和 390×844 窄屏刷新后均可见；原有三份合成附件的 ID、路径、DB/磁盘大小及 SHA256 完全不变。证据提交 `9a4d70e1425928358be7001ece43327c00557b0c`；Python 锁定环境检查、迁移、Django 定向测试、Node 语法和浏览器 UAT 日志/截图见 [ISS-007 验收报告](uat-evidence/r1-iss007-followup-files-uat-20261031/README.md)。没有发现新的产品缺陷，未触发 CI、未部署、未连接生产数据或清理其他媒体目录。ISS-007 保持 `NEEDS_VERIFICATION`，等待独立复审；真实反向代理/对象存储 ACL 仍按 ISS-017 单独验收，Issue 状态计数不变。
+
 ## R1-ISS007-SKU-QUOTE-IMAGE-UAT（2026-10-31 至 2026-11-01）
 
 基于固定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 建立独立 worktree 和 `codex/r1-iss007-image-snapshot-uat-20261031`。使用本机真实 Google Chrome、隔离 SQLite、专属临时 `MEDIA_ROOT` 和合成客户/SKU/报价/订单；没有接触真实历史 SKU、报价或订单，也未改产品业务代码。
@@ -705,6 +751,7 @@ ISS-042 团队共享模板基础版和 ISS-048 财务可靠指标下钻分别记
 1440×1000 与 390×844 浏览器流程验证 SKU 图片上传/缩略图、替换及原图身份，非法图片 HTTP 400 且现有 SKU 图片不变；已接受报价的历史图快照在 SKU 替换后保持 SHA 不变。报价工作台导出的实际 XLSX 可打开，PI 工作表内嵌图片 SHA 与历史快照一致。确认订单仍关联已接受报价，关联报价快照保持不变；`OrderItem` 没有独立图片快照字段，因此没有把此结果表述为订单行另存图片。缺失历史图片 API 返回 404，预览仍可渲染且没有 JS 异常，但可见浏览器默认破图占位。定向 RBAC 测试通过：授权路径可读，SKU-only/客户范围不足的历史图片请求返回 404。Django 9/9、Node 隔离运行器 14/14、锁定依赖 `pip check` 通过；具体测试日志、DB 前后快照、XLSX 和八张桌面/窄屏截图见 [R1-ISS007 UAT 报告](uat-evidence/iss-007-image-snapshot-uat-20261031/README.md)。
 
 ISS-007 保持 `NEEDS_VERIFICATION` 并等待独立审查；跟进附件等其他文件类型及生产反向代理/持久卷或对象存储 ACL 不在本轮结论内，部署验证沿用 ISS-017 边界。本轮未触发 GitHub Actions、未创建 PR、未合并 master、未部署、未启用正式 RBAC、未关闭 Issue。
+
 ## R1-ISS-008-FUP-01 国家中文名称与别名补齐（2026-10-31）
 
 以指定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 创建独立 worktree 和分支 `codex/r1-iss008-aliases-bd324-20261031`。对照历史成果 `80dc73ae4ae47f9e04969f39b441af206d34306b`，逐文件确认国家注册表、249 项 Django 覆盖测试、国家选择器 Vitest 和既有 Chrome 场景已经存在于新基线且相关差异一致；没有业务代码需要迁移。只扩展 `frontend/browser-tests/iss008-chinese-aliases.spec.js`，增加编辑客户国家、保存 alpha-2 `HK`、刷新后重新打开确认标准显示的回归；测试提交为 `dba4a81c10a464012aa004a539a16378f7517b0e`。
@@ -737,11 +784,14 @@ ISS-007 保持 `NEEDS_VERIFICATION` 并等待独立审查；跟进附件等其�
 
 AST 审计 backend 测试文件及浏览器 seeder 共 92 个 Supplier 创建/获取调用点，另检查一个前端 Supplier API mock：0 个超长静态编码，3 个动态表达式逐一核验为两字符且符合场景唯一性。隔离 SQLite 定向回归 67/67 通过；`sku-management.spec.js` Vitest 9/9 通过；Django system check、AST 语法检查及 `git diff --check` 通过。Vitest 本机现存版本 4.1.11，仓库锁定 4.1.12，本轮未重装依赖。完整范围、命令和验收结果见[独立报告](uat-evidence/r1-postgres-supplier-fixtures-full-20261102/README.md)。未运行 PostgreSQL/CI；不将 SQLite 结果表述为 PostgreSQL 验收。Issue 全局状态不变，未创建 PR、未合并 master、未部署。
 
-
 ### REVIEW-INTEGRATION-BATCH-01 早期阶段原文留档
 
 > ## REVIEW-INTEGRATION-BATCH-01（2026-11-04，进行中）
+
 >
+
 > 沿用远端已核实 `4388947d70d26bca66ca0bfc76b2383a2fc0d404`，其CI 41782956426三项成功；保留预检、备份及0096/0097汇合迁移。本轮推进全量Issue证据归一化、集中独立复审包、合成核心闭环和失败原子性测试，见[专属报告](uat-evidence/review-integration-batch-20261104/README.md)。新增附件故障注入已复现ISS-007失败一致性缺口，修前结果保留；修复/新测试不以基线CI冒充通过。
+
 >
+
 > 财务、历史、运维来源尚未交付完整稳定SHA时不按移动HEAD合并。运维5d13f33明确为阶段性成果，不作为完整交付。打印完整验收和分页改进按来源对话中用户明确指令延期，ISS-037其余范围不延期；有效成果保留等待稳定交接。新增核心工作区UX包负责相关前端页面，本包不同时修改其页面。最终集成需对同一最终SHA重新核实三项CI及实际执行的专项，仍待ChatGPT集中独立复审。

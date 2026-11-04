@@ -1,0 +1,9 @@
+{
+  "chrome": "156.0.8078.80",
+  "scenario": "synthetic manual movement input only; no save",
+  "widths": [
+    1440,
+    390
+  ],
+  "errors": []
+}

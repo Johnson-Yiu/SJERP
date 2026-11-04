@@ -29,17 +29,21 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 import django
 django.setup()
 from crm.services.postgres_drill_backup import IsolatedPostgresDrill
-from crm.services.operations_postgres import verify_media_references
+from crm.services.operations_postgres import database_state, verify_media_references
 from crm.services.private_media import build_private_media_manifest
-from psycopg import sql
+from psycopg import Error as PsycopgError, sql
 
 original_backup = IsolatedPostgresDrill.backup
 original_manage = IsolatedPostgresDrill._manage
 original_restore = IsolatedPostgresDrill.restore
 finance_seed_enabled = os.environ.get("REVIEW_FINANCE_SEED") == "1"
 history_seed_enabled = os.environ.get("REVIEW_HISTORY_SEED") == "1"
+operational_seed_enabled = os.environ.get("REVIEW_HISTORY_OPERATIONAL_SEED") == "1"
+if operational_seed_enabled and not (history_seed_enabled and finance_seed_enabled):
+    raise SystemExit("Operational history requires both owned archive and finance seeds")
 finance_helper = Path(__file__).resolve().parent / "finance-backup-seed" / "seed_finance_backup.py"
 history_helper = Path(__file__).resolve().parent / "seed_history_backup.py"
+operational_helper = repository / "docs/uat-evidence/integration-closeout-02/seed_history_operational_backup.py"
 
 
 def sequences(drill, database):
@@ -127,7 +131,56 @@ def manage_with_finance_seed(drill, *arguments):
         with drill._connect(drill.source) as connection:
             drill.review_references = verify_media_references(connection, build_private_media_manifest(drill.media))
         print("FINANCE_BACKUP_SEED=" + json.dumps(seeded, ensure_ascii=False), flush=True)
+        if operational_seed_enabled:
+            drill.review_operational_snapshot = json.loads(original_manage(
+                drill, *finance_command("seed", operational_helper)).strip().splitlines()[-1])
+            # The operational workflow adds archive, finance, inventory and
+            # private-file records. Compare the final complete snapshots.
+            drill.review_history_snapshot = json.loads(original_manage(
+                drill, *finance_command("verify", history_helper)).strip().splitlines()[-1])
+            drill.review_finance_snapshot = json.loads(original_manage(
+                drill, *finance_command("verify")).strip().splitlines()[-1])
+            drill.review_sequences = sequences(drill, drill.source)
+            with drill._connect(drill.source) as connection:
+                drill.review_references = verify_media_references(
+                    connection, build_private_media_manifest(drill.media))
+            print("HISTORY_OPERATIONAL_BACKUP_SEED=" + json.dumps(
+                drill.review_operational_snapshot, ensure_ascii=False), flush=True)
     return output
+
+
+def restored_history_guard_probes(drill, database):
+    """Prove restored statement/row guards without committing any mutation."""
+    results = []
+    with drill._connect(database) as connection:
+        before = database_state(connection)
+        for table in ("crm_historyinventorybaseline", "crm_historyinventorybaselinereversal",
+                      "crm_historyoperationalcontract"):
+            row = connection.execute(sql.SQL("SELECT id FROM {} LIMIT 1").format(sql.Identifier(table))).fetchone()
+            if row is None:
+                raise RuntimeError("A restored history table is empty; guard evidence refused")
+            for action, statement, parameters in (
+                ("UPDATE", sql.SQL("UPDATE {} SET id=id WHERE id=%s"), (row[0],)),
+                ("DELETE", sql.SQL("DELETE FROM {} WHERE id=%s"), (row[0],)),
+                ("TRUNCATE", sql.SQL("TRUNCATE TABLE {} CASCADE"), None),
+            ):
+                connection.execute("SAVEPOINT restored_history_probe")
+                try:
+                    connection.execute(statement.format(sql.Identifier(table)), parameters)
+                except PsycopgError as error:
+                    message = str(error).lower()
+                    if error.sqlstate != "55000" or "historical" not in message or not (
+                            "append only" in message or "append-only" in message):
+                        raise RuntimeError("Restored history rejection was not its immutable guard") from None
+                    results.append({"table": table, "action": action, "sqlstate": error.sqlstate,
+                                    "rejected_by_history_guard": True})
+                else:
+                    raise RuntimeError("Restored history mutation unexpectedly succeeded")
+                finally:
+                    connection.execute("ROLLBACK TO SAVEPOINT restored_history_probe")
+        if database_state(connection) != before:
+            raise RuntimeError("Restored history guard probes changed rows or sequences")
+    return results
 
 
 def restore_with_finance_verification(drill, **kwargs):
@@ -157,6 +210,19 @@ def restore_with_finance_verification(drill, **kwargs):
         target = evidence_root / "artifacts" / "postgres-backups" / f"finance-restored-{drill.app_sha[:12]}.json"
         target.write_text(json.dumps(proof, ensure_ascii=False, indent=2), encoding="utf-8")
         print("FINANCE_RESTORE_VERIFICATION=PASS", flush=True)
+    if operational_seed_enabled:
+        actual = json.loads(drill._manage_database(
+            restored["database"], Path(restored["media"]),
+            *finance_command("verify", operational_helper)).strip().splitlines()[-1])
+        if actual != drill.review_operational_snapshot:
+            raise RuntimeError("Restored operational history rows, sequences, links or private bytes differ")
+        probes = restored_history_guard_probes(drill, restored["database"])
+        target = evidence_root / "artifacts" / "postgres-backups" / f"history-operational-restored-{drill.app_sha[:12]}.json"
+        target.write_text(json.dumps({"source_sha": drill.app_sha, "status": "PASS", "snapshot": actual,
+            "restored_guard_probes": probes, "guard_probe_data_unchanged": True,
+            "scope": "Actual populated synthetic PostgreSQL restore; not production roles or real history"},
+            ensure_ascii=False, indent=2), encoding="utf-8")
+        print("HISTORY_OPERATIONAL_RESTORE_VERIFICATION=PASS", flush=True)
     return restored
 
 

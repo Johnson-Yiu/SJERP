@@ -1,3 +1,11 @@
+# 集中独立复审入口（当前导航）
+
+当前报告为[INTEGRATION-CLOSEOUT-02](../integration-closeout-02/README.md)，原86项逐ID入口与关闭缺项见[REVIEW-BACKLOG](../integration-closeout-02/REVIEW-BACKLOG.md)。三个完整稳定来源e301/4a4/ba已合入447d；该版PG1410项1378通过32跳过，102表1218行133迁移5文件恢复通过。前端261通过2下载失败、历史Chrome正向闭环未完成，均继续调查，不视为已验收。
+
+用户因额度要求跳过后续CI，提交[skip ci]，不新触发/等待Actions。下面的“正在运行/待交付/尚未接通”仅代表原时点，不是当前状态；原来源、证据、失败和范围保留。本包整理和Codex自查不能代替ChatGPT独立复审。
+
+## 历史章节：早期复审包原文
+
 # 集中独立复审入口
 
 当前完整来源代码为1f189c3f74fda2908620dd3860230d860f1cbb43（已推送，综合CI41829100528及全量SQLite/PG正在运行）。下表优先入口保留，修后证据以下列最新补充和TEST-RESULTS.md为准；本包自查不构成ChatGPT独立复审。

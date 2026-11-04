@@ -1,0 +1,16 @@
+{
+  "attempt": 1,
+  "candidate_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "runner_exit_code": 0,
+  "published_log": "runner.redacted.log",
+  "published_bytes": 14612,
+  "published_sha256": "3a0d59fa4bdbb1a95fb1460e72d1f15c99a9ddaa73532245b5b68aa2b07eae7b",
+  "redaction_count": 4,
+  "token_field_matches_remaining": 0,
+  "raw_log_private_path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\quote-download-diagnostic-02140bf-8sdgb0mo\\.tmp\\private-raw-logs\\interrupt-01.raw.log",
+  "raw_bytes": 14698,
+  "raw_sha256": "1c7c1776f052042a2fdd44c6582170e4382435edcb586e608e59c325dac86075",
+  "raw_retained_under_ignored_tmp": true,
+  "evidence_root": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-interrupt-capture-02140bf\\attempt-01\\isolated-evidence",
+  "fixture_dir": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-interrupt-capture-02140bf\\attempt-01\\isolated-evidence\\browser\\quote-download-actions"
+}

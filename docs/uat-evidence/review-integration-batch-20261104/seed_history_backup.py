@@ -24,7 +24,7 @@ def verify():
             cursor.execute(sql.SQL("SELECT row_to_json(t)::text FROM {} t ORDER BY id").format(sql.Identifier(table)))
             rows = [row[0] for row in cursor.fetchall()]
             tables[table] = {"rows": len(rows), "sha256": hashlib.sha256(json.dumps(rows, ensure_ascii=False).encode()).hexdigest()}
-    return {"tables": tables, "scope": "Synthetic archived history; formal finance/inventory/fulfillment remain unconnected"}
+    return {"tables": tables, "scope": "Synthetic archive-table snapshot; operational finance/inventory/fulfillment, when enabled, are verified separately"}
 
 
 def seed():

@@ -1,0 +1,38 @@
+{
+  "captured_at": "2026-11-05",
+  "product_anchor": "f92824b814012783a8c992bf50f95f2e4e1ceae9",
+  "policy_commit": "ea140fd",
+  "document_state": "Working document bytes before this rewrite; not claimed to be committed at product anchor. Original eight 8087 historical reports remain separately byte-preserved.",
+  "files": [
+    {
+      "original_path": "docs/uat-evidence/integration-closeout-02/README.md",
+      "snapshot": "docs/uat-evidence/integration-closeout-02/checkpoint-history/closeout-readme-before-current-rewrite.md",
+      "bytes": 10631,
+      "sha256": "c27d17bc83195a6da11a16c4781341059b7be801630f7c4e89a06cac2e9fb677"
+    },
+    {
+      "original_path": "docs/uat-evidence/review-integration-batch-20261104/README.md",
+      "snapshot": "docs/uat-evidence/integration-closeout-02/checkpoint-history/review-readme-before-current-rewrite.md",
+      "bytes": 8447,
+      "sha256": "6ce9662ca412d608a67cfae46f1364f3317ff32389ed5c391c643b7d8fef72ea"
+    },
+    {
+      "original_path": "docs/uat-evidence/review-integration-batch-20261104/DELIVERY-STATUS.md",
+      "snapshot": "docs/uat-evidence/integration-closeout-02/checkpoint-history/delivery-status-before-current-rewrite.md",
+      "bytes": 6429,
+      "sha256": "b8c1e2a574fd0c5823e6b8e6d9654185de496265c57f136123c8365932d71059"
+    },
+    {
+      "original_path": "docs/PROJECT_ISSUES.md",
+      "snapshot": "docs/uat-evidence/integration-closeout-02/checkpoint-history/project-issues-before-current-rewrite.md",
+      "bytes": 204348,
+      "sha256": "fa322b069d40e203db778e059fe5d1548b81c0930a3452ec85a2e1bb80b7165b"
+    },
+    {
+      "original_path": "docs/PROJECT_PHASES.md",
+      "snapshot": "docs/uat-evidence/integration-closeout-02/checkpoint-history/project-phases-before-current-rewrite.md",
+      "bytes": 152927,
+      "sha256": "9bc9231287b472c186023806735a0c3eb95d30a304504847b5d5f6299450e463"
+    }
+  ]
+}

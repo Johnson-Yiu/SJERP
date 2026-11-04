@@ -1,5 +1,27 @@
 # SUNJACK-ERP 项目问题台账
 
+## INTEGRATION-CLOSEOUT-02 当前核实（2026-11-05）
+
+统一分支`codex/r1-prelaunch-consolidation-20261104`。完整稳定财务来源e301a86044ffe56b72172a94dc3b00ae09401b05、Linux来源4a4f338b09e9a464f1e66c24a905c35c970729bf、历史来源ba4274742727a6794608dc8581a49b3692d865a6均已合入。当前已冻结并完成本轮全量的候选为02140bf46df27ba1abf5b9018507c07aae825769；仅两处前端下载生命周期补修，无数据库、金额、日期、权限逻辑变化。
+
+最终候选实际结果：Python3.12 SQLite1410项1338通过72跳过（含8项原生PG备份命令）；真实PG17.11全量1410项1378通过32跳过，均0失败/错误。102表1218行133迁移5文件恢复一致，三类恢复及9项不可变保护通过并清理；追加独立源状态专项6/6，在操作末尾实际重读102表1218行100序列与5文件，前后相同，不追认此前1410运行曾做该末尾重读。Node179、字体1、Vitest725/78文件及构建通过。适用Playwright9profiles实际262通过1失败0跳过，报价仍saveAs canceled，当前继续诊断；不能把之前单次定向PASS当彻底修复。整份打印7项NOT_RUN_USER_DEFERRED，原断言未删。
+
+同一02140历史Chrome5/5脚本、98个本地HTTP请求、live及脱敏副本只读核验通过，8图、实际XLSX、数据库/媒体及日志已封存，进程/端口/私有任务目录清理完成。SQLite发布副本102表1091条业务/审计行，删除2个session行但业务表未改；不与PG1218行混为同一数据集。不把开发身份、合成双session或Django admin当作真实员工ERP登录。
+
+当前124唯一ID：FIXED_PENDING_REVIEW87、NEEDS_VERIFICATION14、BLOCKED13、OPEN0、CLOSED10。原86项仍待独立复审，ISS-121完整实现及集成验收证据已补，校准为FIXED_PENDING_REVIEW；新增待复审1项，与原86项队列分开记录；没有关闭Issue。报价浏览器交付子项归ISS-020，财务CSV归ISS-105，附件重开归ISS-007、回执跨UID归ISS-018，不创建重复ID。原86入口365条与当前代码存在性核对不等于业务接受。
+
+用户明确GitHub额度不足：后续提交[skip ci]，不触发、等待或重跑Actions，不改workflow规避；CI暂停不记PASS。历史906/41855319673成功只对应旧源码。旧运行中/未交付描述位于后面的明确历史章节，不覆盖当前事实。
+
+真实Linux补修后跨UID尚未执行：只读检查未找到docker命令，沙箱外wsl列表退出1只返回安装帮助，没有已验证Linux环境。正式认证/RBAC、真实启用资料、生产配置及真实迁移执行分别需目标环境或单独授权；历史代码未完成不能归为缺凭证，退款/已记账反向映射只按已支持范围，不宣称全部支持。打印完整成品与分页继续用户延期，不合master、不部署、不导入真实资料、不宣布上线就绪。
+
+[当前报告](uat-evidence/integration-closeout-02/README.md)、[原86复审包](uat-evidence/integration-closeout-02/REVIEW-BACKLOG.md)、[ISS121补充](uat-evidence/integration-closeout-02/ISS121-REVIEW-SUPPLEMENT.md)、[实际日志](uat-evidence/integration-closeout-02/TEST-RESULTS.md)。
+
+## 历史章节：此前阶段摘要（非当前状态）
+
+### 本轮首页此前阶段说明（原文保留，非当前状态）
+
+用户最新CI约定（2026-11-05）：GitHub额度不足，当前后续提交使用[skip ci]，不再触发、等待或重跑Actions，不改workflow配置。旧运行保留实际结果；最终CI标记额度暂停/未执行，不能记为通过。继续本地全量、隔离PG17、真实Chrome和专项；无法本地执行的真实Linux跨UID/目标环境验收另列NEEDS VERIFICATION。独立复审及上线授权边界不变。
+
 当前接收与回归更新（2026-11-05）：财务完整稳定来源e301a86044ffe56b72172a94dc3b00ae09401b05、Linux完整稳定来源4a4f338b09e9a464f1e66c24a905c35c970729bf均已合入（当前接收锚点536789f6dbafb2874b1abfd33ade2b30faa123a4），来源各自CI均成功，不能替代集成CI。a840冻结版本SQLite1330项1266通过/64跳过、PG1330项1300通过/30跳过，均0失败；合入财务来源后d4e8586的三条原反例SQLite3/3及财务PG30/30通过。Linux预审新发现0600签名回执跨UID交接缺口，归ISS-018，集成内最小修复及真实Linux回归中。历史接续仍在开发验收，未交付完整稳定SHA；当前不能称最终集成完成。最后已核实的统一分支三CI仍为906/41855319673，后文该CI只覆盖其精确SHA。
 
 ## INTEGRATION-CLOSEOUT-02 当前核实（2026-11-04—05）
@@ -14,10 +36,9 @@ ISS-121校准：历史资金、未结、库存基准与剩余履约接通是**�
 
 仅完整打印成品与分页按用户决定延期；不重试或催办，不扩大延期范围。不合并master、不部署、不启用正式RBAC、不导入真实资料、不宣布上线就绪。[当前报告](uat-evidence/integration-closeout-02/README.md)。
 
-## 历史章节：此前阶段摘要（非当前状态）
+### 更早阶段摘要
 
 以下保留原文及原时点结论，历史“运行中/待提交/尚未实施”不覆盖上述当前摘要。原始报告逐字节副本及摘要见[历史清单](uat-evidence/integration-closeout-02/history-manifest.json)。
-
 
 ### 2026-11-04 REVIEW-INTEGRATION-BATCH-01 复核记录（综合回归进行中）
 
@@ -83,13 +104,16 @@ ISS-108/121的已确认原则不是重新待决事项：按原D01–D08及本轮
 
 当前轮次：R0-F9-VIS-01（2026-10-17），基线9d05a70c07d1d8eb9d080dd1d75ea608209a799b。仅测试和证据采集修正，27路由完成态已补；18张精确尺寸BLOCKED，ISS-099未复现仍待核实。旧573原图哈希保持不变，独立再次审查待完成。
 
-
 ## 状态和优先级
 
 - `OPEN`：当前证据确认仍有缺陷，或尚未完成的准备任务。
+
 - `BLOCKED`：依赖业务/用户/运维决策、获准的测试前提或外部部署配置；“延期”事项也用此状态，并在记录中注明延期原因。
+
 - `NEEDS_VERIFICATION`：历史失败、风险或本轮未覆盖项尚无足够当前证据确认修复或仍然失败。
+
 - `FIXED_PENDING_REVIEW`：修复和复测证据已记录，仍等待独立 ChatGPT/用户复审；Codex 不得自行关闭。
+
 - `CLOSED`：只供有验收证据且完成所需独立复审的记录使用。当前表只列未关闭事项；已关闭历史见下文。
 
 优先级以影响而非发现年代决定：P0 为立即重大损害/暴露；P1 为核心业务、安全或内测门槛；P2 为有实质影响但可通过流程/受控范围缓解；P3 为较低紧急度的可用性或效率改进。Enhancement 表示未承诺范围，保留原分类，不强行映射为 P 级。
@@ -108,7 +132,7 @@ ISS-108/121的已确认原则不是重新待决事项：按原D01–D08及本轮
 | ISS-004 | FIXED_PENDING_REVIEW | [真实用户 E2E §P1](真实用户E2E-UAT-20260923.md)；[R0-E1 财务覆盖](R0-E1-综合业务回归与内测准备.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）；2026-10-18 R1-A：USD直接记账、计划拆分、合法无计划预收及超额已真实成功；新增稳定流水号/保存中保护；同表单重试复用编号。跨刷新、全站并发幂等与真实提交后断网仍未完整覆盖。 证据：[R1-A报告](R1-A-核心业务历史Issue核实与修复.md)。 | 旧 UAT 的“新增记账”美元客户收款曾失败；应收计划登记可绕行。后续服务层和财务测试覆盖 USD，但 E1 未重新执行该直接 UI 入口。 | 财务 QA 用隔离订单，在“新增记账”走 USD 正常创建、校验失败无副作用及计划关联；确认 UI 金额、汇率和服务端流水一致。；R1-A下一步：按报告未覆盖分支补验，并交ChatGPT独立审查；不得自行关闭。 | R0-E1 补验 | 直接记账与应收计划两条合法路径均真实 UI 成功；无效金额被清晰拒绝且流水/余额保持不变；自动测试及独立复审通过。 |
 | ISS-005 | FIXED_PENDING_REVIEW | [R0-E1 采购覆盖](R0-E1-综合业务回归与内测准备.md)；[Round 1 独立采购 SUP05](UAT-Round1-正式业务全流程测试.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）；2026-10-18 R1-A：隔离真实UI完成无Sales Order的双SKU采购（含无来源明细）、交易单位、部分收货/冲销/重收及分批付款；265USD全结清。保存断网与全部来源组合仍需补验。 证据：[R1-A报告](R1-A-核心业务历史Issue核实与修复.md)。 | E1 完成了共享采购链；旧 UI 只证明无来源的独立采购草稿可建，尚未证明独立采购从下单、到货、库存到付款的整条闭环。无销售订单的共享采购人员仍须可工作。 | 采购 QA 在隔离库走无关联订单的采购、部分/全部收货、应付及库存回查，不借 API/脚本替代 UI。；R1-A下一步：按报告未覆盖分支补验，并交ChatGPT独立审查；不得自行关闭。 | R0-E1 补验 | 独立采购全闭环真实 UI 成功；库存、成本和付款统计一致；权限边界下仍可访问共享采购；自动化和复审通过。 |
 | ISS-006 | NEEDS_VERIFICATION | [R0-E1 库存覆盖](R0-E1-综合业务回归与内测准备.md)；[Phase 3C](Phase3C-不变量故障注入执行记录.md)；[Round 1 P2 Re-UAT](UAT-Round1-正式业务全流程测试.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-28 / 固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；关联 R1-A 精确 SHA `d82643907f2886ecc412fdfa8839d2b8cc165751`。既有冲销/重收证据仍为部分覆盖，并发、网络和全部历史异常未执行；保持 NEEDS_VERIFICATION。 历史台账结论保留：UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）；2026-10-18 R1-A：已补未消耗入库冲销、销售消耗后拒绝、部分收货冲销重收、销售冲销、赠品超到及手工盘盈冲销UI和Decimal数据库证据；网络/并发及全部历史异常仍未覆盖。 证据：[R1-A报告](R1-A-核心业务历史Issue核实与修复.md)。 | E1 证实已被销售出库消耗的到货不能冲销；未在本轮验证未消耗到货成功冲销、发货冲销、超到和手工盘点完整 UI 路径。历史部分冲销/冲销后重收有证据，不能覆盖全部当前流程。 本轮仅做状态对账，不扩大为生产/正式员工验收。 | 库存/采购 QA 用隔离记录执行成功及拒绝分支，核对库存、预留、采购状态、流水历史和重复操作原子性。；R1-A下一步：按报告未覆盖分支补验，并交ChatGPT独立审查；不得自行关闭。 本轮后续动作：以本轮报告和精确 SHA 为准，不重复派工。 | R0-E1 补验 | 每种冲销的允许/拒绝路径、重复操作、余额/数量快照和 UI 反馈均通过；历史记录不被覆盖；PostgreSQL 与独立复审通过。 |
-| ISS-007 | NEEDS_VERIFICATION | [R0-E1 文件覆盖](R0-E1-综合业务回归与内测准备.md)；[UX 第二轮附件复测](Product-UX-Second-Review.md)；[D4-C 文件矩阵](r0-d4b2c-api-permission-matrix.md)；[R1-ISS007 附件 UAT](uat-evidence/r1-iss007-followup-files-uat-20261031/README.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-11-01 / `codex/r1-iss007-followup-files-uat-20261031`，基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`；删除/替换证据提交 `9a4d70e1425928358be7001ece43327c00557b0c`。旧上传、预览、下载和权限验收保持；在独立 SQLite/MEDIA_ROOT 中对新建合成目标完成真实 Chrome 删除、刷新、替代上传及直链核验。 | 仅删除本轮合成 `ISS007-delete-target.txt`：DELETE 204，目标 DB 行/磁盘文件均不存在，旧 URL 404；隔离普通认证用户的“删除跟进附件”审计保留 operator 外键、DELETE 路径和文件名元数据。替代上传 201；删除前已有三份合成附件的 ID、路径、大小、SHA 均不变。桌面 1440×900、窄屏 390×844 截图及原始日志见验收报告。无新增产品缺陷；生产 Nginx/CDN/对象存储 ACL 仍未验证，按 ISS-017 单独跟踪。 | 等待 ChatGPT 独立复审；生产代理/对象存储访问策略仅由 ISS-017 部署验收。未操作真实历史附件、业务数据库或其他媒体目录。 | R1-ISS007 附件删除/替换 UAT；独立复审前 | 隔离合成目标 DB/文件删除一致、审计操作者正确、旧 URL 拒绝、刷新与替代上传可见、其他合成附件不变；独立复审通过。生产代理/对象存储 ACL 另按 ISS-017 验收。 |
+| ISS-007 | NEEDS_VERIFICATION | [R0-E1 文件覆盖](R0-E1-综合业务回归与内测准备.md)；[UX 第二轮附件复测](Product-UX-Second-Review.md)；[D4-C 文件矩阵](r0-d4b2c-api-permission-matrix.md)；[R1-ISS007 附件 UAT](uat-evidence/r1-iss007-followup-files-uat-20261031/README.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-11-01 / `codex/r1-iss007-followup-files-uat-20261031`，基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`；删除/替换证据提交 `9a4d70e1425928358be7001ece43327c00557b0c`。旧上传、预览、下载和权限验收保持；在独立 SQLite/MEDIA_ROOT 中对新建合成目标完成真实 Chrome 删除、刷新、替代上传及直链核验。 | 仅删除本轮合成 `ISS007-delete-target.txt`：DELETE 204，目标 DB 行/磁盘文件均不存在，旧 URL 404；隔离普通认证用户的“删除跟进附件”审计保留 operator 外键、DELETE 路径和文件名元数据。替代上传 201；删除前已有三份合成附件的 ID、路径、大小、SHA 均不变。桌面 1440×900、窄屏 390×844 截图及原始日志见验收报告。无新增产品缺陷；生产 Nginx/CDN/对象存储 ACL 仍未验证，按 ISS-017 单独跟踪。 后续历史来源438bc5b8526bb43b48445b4646e82ead0b2caaa6的CI41868099905出现既有iss007-attachment-real.spec.js保存成功后立即重开编辑弹窗，原spec第49行5秒未找到已上传文件名且表单内容为空，后两场景未运行；来源未改附件代码，根因UNKNOWN，不能凭后续账单导致0步骤失败称已修。此新增回归失败归本ID，最终集成须保留原断言并真实复核，主审已独立读取GitHub frontend job126707482414原日志确认失败定位，确定性竞态复现继续；来源完整日志待稳定交付归档。 | 等待 ChatGPT 独立复审；生产代理/对象存储访问策略仅由 ISS-017 部署验收。未操作真实历史附件、业务数据库或其他媒体目录。 | R1-ISS007 附件删除/替换 UAT；独立复审前 | 隔离合成目标 DB/文件删除一致、审计操作者正确、旧 URL 拒绝、刷新与替代上传可见、其他合成附件不变；独立复审通过。生产代理/对象存储 ACL 另按 ISS-017 验收。 |
 | ISS-008 | FIXED_PENDING_REVIEW | [旧国家报价失败](真实用户E2E-UAT-20260923.md)；[`ISS-008 验收记录`](uat-evidence/iss-008-country-select/README.md)；[`test_issue_008_country_select.py`](../backend/crm/tests/test_issue_008_country_select.py)；[UX2 FR-002](Product-UX-Second-Review.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-24 / `codex/iss-008-country-select` / 实现提交 `90f30d5` | 本轮从 `af018ac63cf71143d223b9f6db4a087707495693` 增量实现本地 249 条 ISO 目录、别名模糊候选、明确选择保存 alpha-2；America 保持歧义不自动保存；历史客户国家文本与导入原值保留。报价新编号使用保存后的代码，历史报价/修订编号不改。后端 871 项全量（跳过13）、ISS-008/报价/客户回归及前端定向测试通过；真实 Chrome 桌面和 390×844 窄屏已核验。 | 独立复审检查国家目录来源、歧义/未知输入、旧数据兼容、报价编号唯一性、权限范围及截图证据；无需批量改写客户资料。 | R1-ISS-008 增量修复 | 本轮完成代码与验收证据后保持 `FIXED_PENDING_REVIEW`；不合并 master、不关闭 Issue，等待统一独立复审。 |
 | ISS-008-FUP-01 | P2 / FIXED_PENDING_REVIEW | 本轮统一集成业务复核；来源：用户 2026-10-26 明确要求检查 ISS-008 国家中文别名覆盖；首次发现日期：2026-10-26 | 2026-10-31 / `codex/r1-iss008-aliases-bd324-20261031` / 浏览器测试提交 `dba4a81c10a464012aa004a539a16378f7517b0e`；基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` | 指定基线已包含历史提交中的 249 项 ISO/地区中文名与别名实现；本轮未重复移植生产业务代码。后端 11/11（包含逐项 249 覆盖）、选择器 Vitest 4/4、真实 Chrome 桌面及 390×844 回归 2/2 通过。America 仍要求明确选择，未知旧国家文本保留；历史客户数据、alpha-2/alpha-3 映射、数据库迁移及历史/修订报价编号未改。证据：[FUP-01验收记录](uat-evidence/r1-iss008-aliases-bd324-20261031/README.md)。 | 等待独立代码、目录来源、歧义处理、旧数据兼容及真实截图复审；不关闭记录。 | R1-ISS-008 后续补验 | 独立复核确认 249 项中文搜索覆盖及截图/日志；America 不自动猜测；未知旧值保留；历史客户国家、报价编号及迁移不变；接受后再决定关闭。 |
 | ISS-009 | FIXED_PENDING_REVIEW | [UX2 FR-001](Product-UX-Second-Review.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测） | 创建跟进后客户详情刷新而客户列表日期陈旧；已记录修复和真实 Chrome AFTER。 | 前端负责人保留修复；独立复审核对同页无刷新时列表/详情同步。 | UX 第二轮复审 | 修复证据、自动回归与独立复审均通过。 |
@@ -133,8 +157,8 @@ ISS-108/121的已确认原则不是重新待决事项：按原D01–D08及本轮
 | ID | 状态 | 首次发现来源 / 日期 | 最近核实（日期 / HEAD） | 影响与当前证据 | 负责人 / 下一步动作 | 计划阶段 | 关闭验收依据 |
 |---|---|---|---|---|---|---|
 | ISS-019 | FIXED_PENDING_REVIEW | [R0-E1 报表覆盖](R0-E1-综合业务回归与内测准备.md)；[D4-C 矩阵](r0-d4b2c-api-permission-matrix.md)；本轮证据：[ISS-019 CSV 准确性复核](uat-evidence/iss-019-report-csv/README.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-24 / `cb2a90d36dbbecc062becbf13d879703b6856456` | 已取得真实 CSV 字节并与同条件 API 对账：金额 145、去重单据 2、数量按 `pcs`/`box` 分开；UTF-8 BOM 和公式注入防护通过；Chrome 验证未提交筛选不影响导出。确认的缺陷是 RBAC `export=true`、`reports.view=false` 时直接 CSV API 未在函数内复核查看权限；已新增 `reports.view` 检查和回归。ISS-041/042/048/062/107 既有口径保持。 | 等待独立代码与权限复审；不关闭 Issue。 | R0-E1 补验 | 多种报表来源的文件内容与 UI/API 聚合一致；view-only 和无 report view 的导出均被拒；正向下载真实 HTTP 与文件通过。 |
-| ISS-020 | FIXED_PENDING_REVIEW | [R0-E1 Quote/PI 覆盖](R0-E1-综合业务回归与内测准备.md)；[Round1 PI Re-UAT](UAT-Round1-正式业务全流程测试.md)；本轮证据：[ISS-020 导出一致性](uat-evidence/iss-020-quote-export/README.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-26 / `codex/iss-020-quote-export`，基线 `28ba758388429f57c2e3516e12385a88ce6646a3` | 先行复现确认关键买方/币种缺失仍能 200 导出、逐行金额舍入会让预览与 XLSX 小计不一致；已最小修复为保存版本 DTO 校验、422 字段提示、预览/XLSX 共用金额和图片快照。两个历史版本实际 XLSX/API、历史主档改动后图片/型号/收件人、空邮箱、无权 403 和跨客户拒绝已核对；Chrome Use 桌面及 390px 窄屏截图已完成，浏览器下载事件另标注未返回。 | 等待独立代码、权限、实际文件和视觉复审；不关闭 Issue。 | R0-E1 补验 | 实际文件可打开、内容与保存版本一致；历史图片不随 SKU 现图变化；独立复审通过。 |
-| ISS-052 | FIXED_PENDING_REVIEW | [R0-E1 import coverage](R0-E1-综合业务回归与内测准备.md)；[R0-C3 Safe CSV Import](R0-C3-Safe-CSV-Import.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-31 / 分支 `codex/r1-iss052-audit-hardening-20261031`；实现提交 `ab9ce886094a065766a24b35d9b82c7a7c0fd067`，基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`。合入来源 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b`、`8cff96af9f1f2e09dcbc0a29f361017ee23ffb75`、`f2b7fd6487459be69be687ccfeab09e7947df995` 及前置父提交 `a6c5b56a00326234681399a3405efa2117198f76`。CSV 限额/HTTP 413 与导入预览、批次、行级审计链均保留；SQLite 全量回归 1041 项（1021 通过、20 跳过、0 失败），定向 36 项（35 通过、1 项 PostgreSQL 专项跳过）。此句所述历史时点已被后续8087f2c / CI41839476121更新：0091–0094迁移与PG raw SQL审计/回退用例纳入真实PG17全量1282通过/30跳过，0失败；集成Chrome270/270。原历史SQLite结果不冒称新PG结果。 | 历史台账结论保留：2026-10-27 / `codex/verify-iss052-csv-import` / 精确来源 SHA `93736e0773ca2136d4070a604e62324cf832dc6f`：隔离 SQLite、合成数据下四类导入真实 UI 上传/预览/确认执行和 HTTP/数据库核对均有验收记录；七张真实 Chrome JPEG 原图已在集成分支更名为 `.jpg`，未重编码。历史状态对账时曾记录开发身份 `authenticated=false`、`AUDIT_LOG_ENABLED=false`、`OperationLog=0`；本轮之后已补充认证执行人审计及批次/行级审计。证据：[历史 CSV 导入报告](uat-evidence/iss-052-csv-import-verification/README.md)、[集成复核报告](uat-evidence/integration-036-002-003-052-058/README.md)及[本轮报告](uat-evidence/r1-iss052-audit-hardening-20261031/README.md)。 | 当前实现保留失败解析、失败执行、重试和成功批次之间的预览/批次/行审计外键与操作人；审计写失败回滚业务写入。PostgreSQL `CSVImportBatch`、`CSVImportRowAudit`、`CSVImportPreviewAudit` 的原始 SQL UPDATE/DELETE/TRUNCATE 测试已纳入套件，但本轮 SQLite 测试不能证明 PostgreSQL 触发器运行行为。历史四类导入 UI 验收、SKU/客户敏感资料范围与已记录的导入数据映射结论不作扩展。 | 等待独立复审；具备专用隔离 PostgreSQL 时运行新增原始 SQL 测试及 0091/0093/0094 正反向迁移核对，并记录触发器拒绝证据。不得连接真实业务数据库、启用正式 RBAC 或自行关闭 Issue。 | R1 ISS-052 审计加固 / PostgreSQL 与独立复审待验 | 四类导入 UI/API 与 CSV 历史行为保持；解析、执行失败、重试、成功、真实认证操作人、事务回滚及三张表数据库追加保护通过；迁移回退不静默删除审计历史；独立审查后再决定关闭。 |
+| ISS-020 | FIXED_PENDING_REVIEW | [R0-E1 Quote/PI 覆盖](R0-E1-综合业务回归与内测准备.md)；[Round1 PI Re-UAT](UAT-Round1-正式业务全流程测试.md)；本轮证据：[ISS-020 导出一致性](uat-evidence/iss-020-quote-export/README.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-26 / `codex/iss-020-quote-export`，基线 `28ba758388429f57c2e3516e12385a88ce6646a3` | 先行复现确认关键买方/币种缺失仍能 200 导出、逐行金额舍入会让预览与 XLSX 小计不一致；已最小修复为保存版本 DTO 校验、422 字段提示、预览/XLSX 共用金额和图片快照。两个历史版本实际 XLSX/API、历史主档改动后图片/型号/收件人、空邮箱、无权 403 和跨客户拒绝已核对；Chrome Use 桌面及 390px 窄屏截图已完成，浏览器下载事件另标注未返回。  INTEGRATION-CLOSEOUT-02确认原浏览器saveAs canceled为下载生命周期时序缺口；02140bf46df27ba1abf5b9018507c07aae825769仅将报价anchor/Blob URL共同延后清理，原场景1/1及额外实际Google Chrome1/1通过，保存XLSX由openpyxl核对合成编号/型号/数量/单价；最终同SHA全量仍执行，独立复审未完成。证据：integration-closeout-02/download-investigation-20261105/DOWNLOAD-CANCELLATION-INVESTIGATION.md。  最终02140适用Playwright实际262通过1失败：本报价场景仍saveAs canceled，前述单次定向通过不能证明彻底修复；该浏览器交付子项FIX REQUIRED，由统一集成继续调查，不关闭Issue。 | 等待独立代码、权限、实际文件和视觉复审；不关闭 Issue。 | R0-E1 补验 | 实际文件可打开、内容与保存版本一致；历史图片不随 SKU 现图变化；独立复审通过。 |
+| ISS-052 | FIXED_PENDING_REVIEW | [R0-E1 import coverage](R0-E1-综合业务回归与内测准备.md)；[R0-C3 Safe CSV Import](R0-C3-Safe-CSV-Import.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-31 / 分支 `codex/r1-iss052-audit-hardening-20261031`；实现提交 `ab9ce886094a065766a24b35d9b82c7a7c0fd067`，基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`。合入来源 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b`、`8cff96af9f1f2e09dcbc0a29f361017ee23ffb75`、`f2b7fd6487459be69be687ccfeab09e7947df995` 及前置父提交 `a6c5b56a00326234681399a3405efa2117198f76`。CSV 限额/HTTP 413 与导入预览、批次、行级审计链均保留；SQLite 全量回归 1041 项（1021 通过、20 跳过、0 失败），定向 36 项（35 通过、1 项 PostgreSQL 专项跳过）。此句所述历史时点已被后续8087f2c / CI41839476121更新：0091–0094迁移与PG raw SQL审计/回退用例纳入真实PG17全量1282通过/30跳过，0失败；集成Playwright270（混合通道）/270。原历史SQLite结果不冒称新PG结果。 | 历史台账结论保留：2026-10-27 / `codex/verify-iss052-csv-import` / 精确来源 SHA `93736e0773ca2136d4070a604e62324cf832dc6f`：隔离 SQLite、合成数据下四类导入真实 UI 上传/预览/确认执行和 HTTP/数据库核对均有验收记录；七张真实 Chrome JPEG 原图已在集成分支更名为 `.jpg`，未重编码。历史状态对账时曾记录开发身份 `authenticated=false`、`AUDIT_LOG_ENABLED=false`、`OperationLog=0`；本轮之后已补充认证执行人审计及批次/行级审计。证据：[历史 CSV 导入报告](uat-evidence/iss-052-csv-import-verification/README.md)、[集成复核报告](uat-evidence/integration-036-002-003-052-058/README.md)及[本轮报告](uat-evidence/r1-iss052-audit-hardening-20261031/README.md)。 | 当前实现保留失败解析、失败执行、重试和成功批次之间的预览/批次/行审计外键与操作人；审计写失败回滚业务写入。PostgreSQL `CSVImportBatch`、`CSVImportRowAudit`、`CSVImportPreviewAudit` 的原始 SQL UPDATE/DELETE/TRUNCATE 测试已纳入套件，但本轮 SQLite 测试不能证明 PostgreSQL 触发器运行行为。历史四类导入 UI 验收、SKU/客户敏感资料范围与已记录的导入数据映射结论不作扩展。 | 等待独立复审；具备专用隔离 PostgreSQL 时运行新增原始 SQL 测试及 0091/0093/0094 正反向迁移核对，并记录触发器拒绝证据。不得连接真实业务数据库、启用正式 RBAC 或自行关闭 Issue。 | R1 ISS-052 审计加固 / PostgreSQL 与独立复审待验 | 四类导入 UI/API 与 CSV 历史行为保持；解析、执行失败、重试、成功、真实认证操作人、事务回滚及三张表数据库追加保护通过；迁移回退不静默删除审计历史；独立审查后再决定关闭。 |
 | ISS-021 | FIXED_PENDING_REVIEW | [R0-E1 ContractChange](R0-E1-综合业务回归与内测准备.md)；[Phase3 UI COVERAGE GAP-01](Phase3-业务流程与异常UAT计划.md)；首次日期：UNKNOWN；本轮依据用户 2026-10-24 规则包 ISS-021 原文及明确任务，不引入复杂审批 | 2026-10-26 / `codex/next-iss-021-integration`，基线 `b3559f3bf83b967d06166bd409b00fc92e4e5902` | 已按差异迁移正式 SO 数量变更、版本/幂等、历史与专用 UI；新增 0085 接续 0084，既有迁移及 ISS-037 快照保留。全量 904、定向 38、Node 151、Vitest 650 通过；真实 API/内置浏览器和数据库事实哈希见[验收证据](uat-evidence/iss-021-integration/README.md)。Chrome 连接冲突后经用户授权改用内置浏览器；本地 PostgreSQL 未验证 | 独立审查人员核对业务、迁移、权限、截图与最终提交 CI；不得自动关闭 | 本轮独立集成，等待统一独立审查 | 增减、已发货下限、付款保护、采购人工处理、回滚、冲突、审计和主体快照复核接受；不改已有资金/库存事实；由用户或独立审查决定关闭 |
 | ISS-022 | FIXED_PENDING_REVIEW | [Phase3 POLICY GAP-01](Phase3-业务流程与异常UAT计划.md)；[Task C](TaskC-订单采购草稿闭环.md)；[R0-E1 P2](R0-E1-综合业务回归与内测准备.md)；用户 2026-10-24 规则包 ISS-022；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-28 / `codex/repair-supplier-purchase-ux-r2` 精确来源 SHA `64fb397aa065062e192ceb30040421f59b63a08c`，集成真实隔离 API/Chrome MOQ 场景 1/1 通过；全量浏览器套件中的对应 spec 亦通过。截图和日志见 [本轮集成报告](uat-evidence/integration-r1-repairs-20261028/README.md)。 | 用户已明确 MOQ 按同供应商、同真实 PO、同适用 SKU/采购单位合计，低于 MOQ 为可填写原因的软提醒。等于 MOQ 可正常继续；低于 MOQ 显示软提醒，正式下单时须提供例外原因；取消例外仍保留草稿。价格、内部参考成本、采购状态值和生命周期规则不变。 | 保持 FIXED_PENDING_REVIEW，等待独立代码、业务、权限和视觉复审；不关闭 Issue。 | 历史业务待决转专项复核 | 低于/等于/高于、共享 PO 合计、单位换算、无 MOQ、越过原因/时间/操作员/采购单、权限和成本不变均经独立审查接受后再决定关闭。 |
 | ISS-023 | FIXED_PENDING_REVIEW | [R0-E1 SKU 覆盖](R0-E1-综合业务回归与内测准备.md)；用户 2026-10-24 规则包；本轮证据：[ISS-023 Sales Model 验收](uat-evidence/iss-023-sales-model/README.md)、[统一集成验收](uat-evidence/integration-043-075-023/README.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-26 / `codex/integration-043-075-023`，源提交 `c6a1415437fb2a020ec31d655fe8ce274aa93912`，基线 `f12b591cb90d6a5d8ebfedf1c559703377c92d84` | 已修复参数变更时自动预览覆盖人工保存型号的缺口；自动型号仍仅在保存值与旧生成值一致时刷新，人工型号和明确空型号保留。SKU 身份、报价/订单/采购商品快照、PI/XLSX 导出和权限入口不变；Chrome 窄屏菜单收起可用性已通过。真实生产 SKU 型号完整性仍为 `BUSINESS_VERIFICATION_PENDING`，未批量改写旧数据。 | 等待独立代码、业务、权限、数据与视觉复审；业务负责人另行抽查真实产品前缀和型号完整性，不关闭 Issue。 | SKU 主数据与身份安全复核 | 自动/人工/历史空型号及参数变化均符合规则；报价、订单、采购商品和 PI 历史快照不变；真实代表性 SKU 抽查与独立复审通过。 |
@@ -159,11 +183,9 @@ ISS-108/121的已确认原则不是重新待决事项：按原D01–D08及本轮
 | ISS-045 | FIXED_PENDING_REVIEW | [Phase3 `LTD-02/04/06`](Phase3-业务流程与异常UAT计划.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-11-04 核对已验8087f2c68b19a302a25e814ec8ce6113d91d4750：72a6b27f3f855424f16cd9657996055c68b5ca95退役旧流程命令并保留历史源码；6ec1a50ee14fd17a64de4f68cd63e2b2c426b47b限制seed_demo开发SQLite/已验证隔离目标、额外alias和非默认路径；test_legacy_qa_tools纳入当前全量。证据uat-evidence/r1-iss045-qa-tools-bd324-20261031/README.md。待独立复审，不将历史脚本成功作为业务闭环。历史时点记录：UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）；最终集成CI41839476121三项SUCCESS，独立复审未完成。 | 历史两套业务脚本已经安全退役并保留源码/证据；seed_demo已有开发隔离限制，CI不将旧脚本作为正式门禁。72a6b27f3f855424f16cd9657996055c68b5ca95及6ec1a50ee14fd17a64de4f68cd63e2b2c426b47b已包含，待独立接受安全边界，不重新实现旧业务脚本。 | 等待ChatGPT独立复核当前代码、已有正常/拒绝路径及实际证据；不重复开发。原计划记录：QA/开发确定保留、更新或废弃；在其完成前以当前 UI/API/自动测试为验收源。 | QA 工具维护 | 脚本与当前业务约束同步并通过对照，或明确下线且 CI/文档不再把它当门禁。 |
 | ISS-046 | BLOCKED | [D4-C final evidence](r0-d4b2c-api-permission-matrix.md)；[R0-E1 evidence limitation](R0-E1-综合业务回归与内测准备.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测） | R0-D4-C 截图上传在浏览器策略下被拒；E1 截图仅在内置浏览器查看，没有独立文件。禁止绕过浏览器安全策略；这不否认已记录的 HTTP/UI 结果，但限制离线视觉复审。 | 复审人使用应用允许的证据附件方式，或接受文本/HTTP 可验证记录；不得从浏览器原始命令导出。 | 独立复审证据整理 | 在合规方式下形成可访问证据或独立审查明确接受限制；不伪造截图。 |
 | ISS-047 | BLOCKED | [Phase4 `RISK-MEDIA-01`](Phase4-生产化加固审计与实施计划.md)；[D4-C C-08](r0-d4b2c-api-permission-audit.md)；[ISS-047 验收记录](uat-evidence/iss-047-private-storage/README.md)；[单服务器私有文件存储交接说明](deployment/ISS-047-单服务器私有文件存储.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-26 / 基于 `8b2b5c19e517addd9604b239211e199a789b739e` 的 `codex/iss-047-private-storage`：应用层私有媒体回归、路径穿越/静态直链拒绝、生产 `MEDIA_ROOT` fail-fast、媒体根与静态根隔离、服务重启模拟、SHA256 清单及恢复核对接口已实现并定向验证；最终 SHA 见交付消息 | 当前确定单服务器独立持久化私有媒体卷，Django storage 抽象和 `private_media_manifest` 为 ISS-018 联合备份及未来对象存储迁移预留接口；没有添加 `/media/` 静态路由。真实生产卷、Nginx/反向代理 ACL、容量告警和 PostgreSQL+媒体联合恢复仍未验证。 | 运维在隔离目标环境配置绝对持久 `MEDIA_ROOT`，完成服务重启、磁盘/inode 告警、Nginx 直链拒绝及 DB+media 联合备份恢复；确认备份副本独立故障域。 | 部署架构评审 | 目标拓扑、恢复策略、媒体权限和容量/完整性测试经独立复审接受后再改变状态。 |
-
 | ISS-053 | NEEDS_VERIFICATION | ChatGPT 历史独立审查（R0-D4B2-A；未入 GitHub 问题记录；发现日期 UNKNOWN）；[财务范围记录](r0-d4b2a-finance-scope.md)；本轮证据：[ISS-053 采购状态核实](uat-evidence/iss-053-purchase-status/README.md) | 2026-10-23 / c356e57014d28295485d52df23612c2fe6c02444：独立 worktree 完成 API 状态矩阵、采购列表/详情/编辑/筛选、销售订单关联采购单真实 Chrome 验证；后端 39 项、前端 Vitest 52 项、Chrome Playwright 11 项及生产构建通过。 | 当前未确认显示缺陷：`ordered` API/存储值保持英文，采购列表、详情、编辑工作台、状态筛选、采购实体上下文和销售订单关联采购单均显示“已下单”；其他状态也均返回并显示对应中文。历史英文 `ordered` 在当前基线未复现，因无法重建历史现场，暂记为当前未复现的历史报告，不自行判定关闭。 | 等待统一独立代码、权限、API 与视觉复审；若复审发现历史入口仍有英文，再按证据最小修复。负责人：采购 QA / 前端。 | R0-E1 补验（本轮证据已归档） | ordered 在所有受测采购入口显示“已下单”，筛选/存储值仍为 ordered；API 与 UI 回归和独立复审通过。 |
 | ISS-054 | FIXED_PENDING_REVIEW | ChatGPT 历史独立审查（R0-D4B2-B；未入 GitHub 问题记录；发现日期 UNKNOWN）；当前代码：frontend/src/views/PurchaseOrderPage.vue | 2026-10-13 / ecdc9bc：只读检查 openReceiptReversal、submitReceiptReversal、反馈模板及现有收货测试；未运行测试。；2026-10-18 R1-A：真实复现旧收货成功残留；已清冲销打开/提交前旧反馈与错误，成功/失败/重试回归及内置浏览器、Chrome原图完成；后端计算不改。 证据：[R1-A报告](R1-A-核心业务历史Issue核实与修复.md)。 | 旧收货成功提示残留已修复：当前openReceiptReversal和submitReceiptReversal均清除receiptSuccess及旧notice/error；打开、成功、失败和重试的既有回归/原图可复核，不把旧只读缺陷描述为当前代码。 | 独立复核先成功收货再打开/提交冲销、失败重试反馈，仅最新动作呈现；复用R1-A与当前PurchaseOrderPage.vue及purchase-editor-receipt测试，不重做已修前端功能。 | 既有采购反馈修复待独立复审 | 连续完成收货和冲销时只显示与最新动作一致的成功状态；失败不残留虚假成功提示；测试及独立复审通过。 |
 | ISS-055 | FIXED_PENDING_REVIEW | ChatGPT 历史独立审查（R0-D4B1；未入 GitHub 问题记录；发现日期 UNKNOWN）；当前代码：backend/crm/views.py、frontend/src/utils/apiErrors.js | 2026-10-28 / 集成基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb` 继续包含 `9c5f1f821cfc1b436f5fffe0b681991fa056b34d`。中文安全 404 和合成隔离 API/Chrome 证据保持有效；正式 RBAC、真实员工会话和独立复审未执行，保持 FIXED_PENDING_REVIEW。 历史台账结论保留：2026-10-28 / R1-REPAIR-05 `codex/fix-iss055-chinese-404` 精确 SHA `9c5f1f821cfc1b436f5fffe0b681991fa056b34d`。真实 Chrome 桌面/窄屏证据及合成隔离 API 回归见 [ISS-055 验收记录](uat-evidence/iss-055-customer-404/README.md)；本轮 Django 全量、Node 单测通过。 | 越权对象继续返回 404，不泄露客户是否存在；未命中和无权访问映射为简洁通用中文提示，不显示模型英文名。真实员工/RBAC 浏览器 spec 因本轮禁止启用正式 RBAC 未运行，不能将开发身份浏览器或合成 API 证据扩大为真实员工权限验收。 本轮仅做状态对账，不扩大为生产/正式员工验收。 | 保持 FIXED_PENDING_REVIEW，等待独立代码、隐私/权限及视觉复审；在获授权的隔离 RBAC 环境补充真实员工会话 UI/API 验收后再决定是否关闭。 本轮后续动作：以本轮报告和精确 SHA 为准，不重复派工。 | R1 集成 / RBAC 授权环境补验 | 越权详情仍为 404；授权/未授权/未知对象提示均为自然中文且不泄露对象存在性；真实员工数据范围和独立审查通过。 |
-
 | ISS-057 | P2 / FIXED_PENDING_REVIEW | [R0-F1 前端 UX 覆盖盘点](R0-F1-前端UX覆盖盘点.md)；首次发现：2026-10-13，本轮财务页基线实测 | 2026-10-14 / 实现提交 `439b5b3`、CI #38426397966 三项 SUCCESS；Node 121/121、Vitest 494/494、财务/报表后端 76/76、销售范围后端 28/28；Codex 内置浏览器完成财务列表、新增、收付款、核销、作废和概览路径  R0-F9新增当前27路由基线与原图索引，归档已实际完成；仍有ISS-100尺寸限制及历史特定状态/独立图片待审，不能据新图自行关闭。| 财务流水及收付款计划过滤原先缺少统一显式提交/可恢复 URL 状态；财务概览把期间数值与当前余额混排，且部分保存/核销结果反馈不足。本轮已调整页面结构、路由查询状态、字段分组、状态反馈和统计口径说明；财务计算与后端规则未改。截图不能通过当前受支持浏览器接口保存，归档状态 BLOCKED；原轮未完成多尺寸核验；2026-10-14 定向复修现已完成应收/应付 1440、1280、1024、640、390px Chrome 计算布局回归与内置浏览器视觉检查，见 [定向复修记录](R0-F1-定向复修验收.md)。2026-10-14 用户确认代码及已覆盖交互独立复审 PASS，允许有条件封版；截图独立视觉证据缺口仍保留，ISS-057 不关闭。  R0-F9下一步：独立审图明确接受覆盖范围；对未接受的状态/尺寸使用受支持接口重拍。| 代码及已覆盖交互已独立复审 PASS；仅待补独立截图视觉证据或审查人明确接受限制，保持 FIXED_PENDING_REVIEW。负责人：前端 QA / 独立审查。 | R0-F1 财务 Part | 精确提交 HEAD 的 Backend、Backend PostgreSQL、Frontend CI 成功；财务页面主要路径及当前桌面、后续窄视口均有验证记录；自动化覆盖筛选 URL、日期错误、正常保存/核销/作废和反馈；截图限制及替代证据经 ChatGPT 接受；独立复审通过。 |
 | ISS-058 | P3 / NEEDS_VERIFICATION | [R0-F1 前端 UX 覆盖盘点](R0-F1-前端UX覆盖盘点.md)；[ISS-058 性能基线报告](uat-evidence/iss-058-frontend-performance/README.md)；首次发现：2026-10-13，本轮生产构建 | 2026-10-27 / `codex/measure-iss058-frontend-performance` / 精确来源 SHA `742692a6e4887e4b8352736e69a52b1ebe8d066f`；集成依赖 `vite 8.3.5` 构建复测：主 JS `1,126,035` bytes，gzip `393,552` bytes，仍触发 Vite >500 kB chunk 警告。 | 对照原基线 `1,126,218` / `393,477` bytes，原始体积减少 `183` bytes，gzip 增加 `75` bytes；变化约 `-0.016%` / `+0.019%`，可视为包体基本持平。没有真实公网、低端设备或可重复用户性能指标，不能据构建体积宣称体验改善。 | 保持 P3 / NEEDS_VERIFICATION；如需优化，先在代表性网络和设备采集可重复首屏及交互指标，再决定是否做最小路由分包。集成 Playwright 的 20 项失败及构建警告见[本轮集成报告](uat-evidence/integration-036-002-003-052-058/README.md)。 | R1 集成复测 / 后续性能测量 | 有代表性环境的可复现性能数据和预算；性能方案通过关键路由、权限和交互回归及独立审查。 |
 | ISS-062 | P2 / FIXED_PENDING_REVIEW | 2026-10-14 R0-F2 源码审查，backend/crm/views.py dashboard 的 orders_ytd、monthly_rows、category_sales、customer_rows 与 cash 查询 | 2026-11-04复核：当前4388947d70d26bca66ca0bfc76b2383a2fc0d404已包含9edbb6488a66a0801ecc1e5bc842df7866c6c7dc的统一日期实现；test_dashboard_uses_one_server_date_window_for_operating_metrics覆盖截至今日、排除未来/历史订单及12个月零月补齐，未来自定义报表保留。uat-evidence/iss-062-date-window/acceptance-report.md及API/Chrome图完整，原报告结论为待独立代码审查；本地1182全量及当前基线CI通过，保持待独立复审。历史对账记录（不再作为现行规则待决）：2026-10-28 / 日期窗口成果 `9edbb6488a66a0801ecc1e5bc842df7866c6c7dc` 已并入现行基线；隔离 API、真实 Chrome 和文案证据存在。但各经营指标日期上界仍需业务负责人统一确认，故从 P2 / OPEN 校准为 P2 / BLOCKED；不重复开发、不猜定规则。 历史台账结论保留：基线 `4298c31`：sales_ytd 有年初至今日上界；订单数、品类、客户排行和流水仅年初下界；月度数据从去年年初起，并非固定近 12 个月。本轮未改后端 | 原 UI 的“本年”“近12个月”等说明不准确；未来日期订单/流水可进入部分指标，与截至今日销售额范围不同。本轮按真实返回范围修正文案，未改变计算 本轮仅做状态对账，不扩大为生产/正式员工验收。 | ChatGPT独立复核当前日期边界、真实API及既有截图，不重复开发或要求确认已实施规则。原后续计划（历史）：业务/报表负责人明确是否允许未来日期及月度范围；获明确后端修复授权后补边界回归，再统一 API 名称/口径。负责人：业务产品 / Backend 本轮后续动作：以本轮报告和精确 SHA 为准，不重复派工。 | 后续统计口径确认；R0-F2 仅说明 | 日期与未来订单边界有明确业务定义、后端回归和独立复审；不能以本轮文案修正关闭计算缺口。 |
@@ -218,7 +240,6 @@ R0-F4 的独立代码和自动化/已覆盖交互范围通过，允许有条件�
 
 历史供应商事项保留：ISS-022 MOQ 业务待决不改；ISS-024 供货来源准备不关闭（本轮增加配置位置说明不代替全部 SKU 核验）；ISS-026 关联删除未在真实 UI 执行，不认定修复；ISS-037 历史主体快照不改变。
 
-
 ## R0-F5 最终定向复修（2026-10-15）
 
 用户转述独立复审：R0-F5主要代码与自动化通过，基线 `7774eeb` / [CI #38598901704](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38598901704) 三项 SUCCESS；仅处理保存关闭竞态。本轮不关闭此前待独立复审项，不开始R0-F6。
@@ -237,7 +258,6 @@ R0-F5 复审依据由用户提供，ISS-079 按明确接受关闭；ISS-080 / IS
 | ISS-081 | P2 / FIXED_PENDING_REVIEW | 2026-10-15 R0-F6 ProductPage.vue 操作路径审查 | 2026-10-15 用户转述 R0-F6 独立代码/自动化/已覆盖交互 PASS，最终 `0b721fcd` / CI #38669003578 三项 SUCCESS；独立图片视觉待审。基线 `86650adc`：筛选不可从 URL 恢复、详情不写记录 ID、产品表单缺未保存/保存中保护。本轮补显式查询、排序和 URL、可刷新详情、返回、表单分组、长文布局、失败恢复及统一保存锁；Vitest/Playwright 与隔离库实际操作见验收报告 | 筛选/记录位置丢失，保存中可误关闭，长资料扫描困难 | ChatGPT 独立复审代码、矩阵和真实截图；前端 QA | R0-F6 | 三项精确 HEAD CI、关键交互与三尺寸布局，独立审查接受后再关闭 |
 | ISS-082 | P2 / FIXED_PENDING_REVIEW | 2026-10-15 R0-F6 CategoryPage.vue 审查 | 2026-10-15 用户转述 `0b721fcd` / CI #38669003578 独立代码/自动化/已覆盖交互 PASS，独立图片视觉待审。分类首载失败只有短暂提示，层级统计随收起/搜索变化，分类保存中可关闭。本轮补持久加载错误与重试、全树最大层级、展开/收起、来源定位、保存/未保存保护、窄桌面、中文名称与 SKU Code 区分；继承只读、冻结拒绝、属性排序预览/确认仍由原规则执行 | 分类层级理解、失败恢复及安全操作上下文不足 | 独立复审树/属性正常与拒绝路径及截图；前端 QA | R0-F6 | 可恢复加载、拖拽状态回归、后端冻结/身份安全回归和独立接受，不改业务限制 |
 | ISS-083 | P2 / FIXED_PENDING_REVIEW | 2026-10-15 R0-F6 ResourcePage.vue 产品参数及详情审查 | 2026-10-15 用户转述 `0b721fcd` / CI #38669003578 独立代码/自动化/已覆盖交互 PASS，独立图片视觉待审。原通用摘要含不适用的“启用/进行中”，缺产品筛选、参数用途说明与自然重复提示。本轮补参数专用摘要、产品与搜索 URL、产品关联返回、表单分组、保存保护/重试、重复中文提示和关联产品状态中文显示 | 参数层级混淆、所属产品定位和失败修正成本高 | 独立复审参数列表/新建/编辑/详情/返回/错误与真实截图；前端 QA | R0-F6 | 真实创建/修改/重开/重复拒绝重试、自动回归及三项 CI 通过，独立接受后关闭 |
-
 
 ### R0-F7A 定向 UI/UX 与证据核验（2026-10-15）
 
@@ -323,10 +343,15 @@ R0-F8A已按用户转述独立代码/自动回归PASS、有条件封版；ISS-09
 | ISS-061 | P2 / CLOSED | 2026-10-14 本轮按用户审查要求检查操作反馈；PaymentPlanPage.vue | 2026-10-14 / 用户本轮明确转述 ChatGPT 独立代码与已覆盖交互回归 PASS；最终提交 `4298c31ec043b2f3fc2d690768455d7df417de08`；[CI #38433549045](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38433549045) Backend、Backend PostgreSQL、Frontend 全部 SUCCESS。 | 上次成功提示与新操作或失败状态并存，可能误导用户 | 已按用户本轮明确接受及 REVIEW_PROTOCOL 关闭该代码/回归问题；截图归档缺口仍由 ISS-057 / ISS-046 保留，不扩展为完整视觉验收。 | R0-F1 财务定向复修 | 旧成功提示不与新失败状态并存；业务规则不变；独立复审通过。  用户于 2026-10-14 明确允许关闭；依据上述最终提交与 CI。 |
 
 - Round 1 原始 P1：`UAT-ORD-001`、`UAT-PKG-001`、`UAT-SHIP-001`、`UAT-SKU-001`、`UAT-ORD-004` 均有后续修复/复测记录。发货 500 的历史根因及修复见 [UAT Fix Batch 1](UAT-Fix-Batch1-P1.md) 和 Round 1 的定向 Re-UAT；原始失败记录保留。
+
 - Round 1 原始 P2：`UAT-QTE-001`、`UAT-ORD-002`、`UAT-DRILL-001`、`UAT-ORD-003`、`UAT-FUP-001`、`UAT-FUP-002`、`UAT-PUR-001`、`UAT-INV-001`，2026-10-04 各有定向 Re-UAT；旧结果未覆盖，当前关闭结论见 [Round 1 P2 Cleanup Final Status](UAT-Round1-正式业务全流程测试.md)。附件下载通道的后续端到端问题单独由 ISS-007 跟踪。
+
 - PCR-001/002/003/004/005/006/008/010/011/012/014/015/019/020 已在各自 Phase 2 验收记录中完成原定范围；PCR-007 的实际装箱 UI 已验收，未实现的是另列的正式文件导出 Enhancement ISS-040。PCR-009 客户年度洞察与 PCR-018 团队共享图块仍延期。
+
 - 2026-10-23 ISS-042-FIX-01 已在 `codex/iss-042-shared-reports` 基于 `6d5ce10a2ce8a432b427371542eac7378daca655` 完成并记录为 `FIXED_PENDING_REVIEW`：修复共享模板发布/取消发布配置版本并发冲突、重复状态操作虚假审计，以及删除后模板历史安全查询；证据见 `docs/uat-evidence/iss-042-fix-01/`。ISS-042 仍保留 `Enhancement / BLOCKED（延期）`，不得据此关闭。
+
 - Phase 3C 的 I20/I37/I49/I53 及 Phase 4B-1 PostgreSQL 查询兼容、迁移测试隔离/fixture 故障均有修复测试和成功 CI；不与当前 staging 数据迁移风险 ISS-044 混淆。
+
 - R0-A、R0-B1、R0-B2、R0-C1、R0-C2、R0-C3、R0-D1、R0-D2 的各自范围记录未发现仍未处理的本轮事项；这不代表未覆盖的系统范围自动通过。
 
 ## 主要历史来源清单
@@ -334,10 +359,15 @@ R0-F8A已按用户转述独立代码/自动回归PASS、有条件封版；ISS-09
 本次逐项对照以下 UAT、审查、阶段验收和风险文档；设计草案与旧计划只用于追溯，不替代当前实现或复测证据。
 
 - 综合/历史 UAT：[`R0-E1-综合业务回归与内测准备.md`](R0-E1-综合业务回归与内测准备.md)、[`真实用户E2E-UAT-20260923.md`](真实用户E2E-UAT-20260923.md)、[`UAT-Round1-正式业务全流程测试.md`](UAT-Round1-正式业务全流程测试.md)、[`UAT-Fix-Batch1-P1.md`](UAT-Fix-Batch1-P1.md)、[`业务流程与修改回归测试报告-20260922.md`](业务流程与修改回归测试报告-20260922.md)、[`添加数据测试.md`](添加数据测试.md)。
+
 - 阶段/风险：[`Phase3-业务流程与异常UAT计划.md`](Phase3-业务流程与异常UAT计划.md)、[`Phase3C-不变量故障注入执行记录.md`](Phase3C-不变量故障注入执行记录.md)、[`Phase4-生产化加固审计与实施计划.md`](Phase4-生产化加固审计与实施计划.md)、[`Phase4B-PostgreSQL兼容性执行记录.md`](Phase4B-PostgreSQL兼容性执行记录.md)。
+
 - UI/UX 审查：[`Product-Completion-Review-Phase1.md`](Product-Completion-Review-Phase1.md)、[`Product-UX-Second-Review.md`](Product-UX-Second-Review.md)、[`Product-UX-Customer-Module-Review.md`](Product-UX-Customer-Module-Review.md)、[`Product-UX-Quote-Module-Review.md`](Product-UX-Quote-Module-Review.md)、[`Product-UX-Order-Module-Review.md`](Product-UX-Order-Module-Review.md)、[`Product-UX-Purchase-Module-Review.md`](Product-UX-Purchase-Module-Review.md)、[`Product-UX-Inventory-Module-Review.md`](Product-UX-Inventory-Module-Review.md)、[`Dialog-Standardization-Audit.md`](Dialog-Standardization-Audit.md)。
+
 - 产品优化验收：[`Product-Optimization-Phase2A-PCR001.md`](Product-Optimization-Phase2A-PCR001.md)、[`Product-Optimization-Phase2B1-PCR003.md`](Product-Optimization-Phase2B1-PCR003.md)、[`Product-Optimization-Phase2B2-PCR002.md`](Product-Optimization-Phase2B2-PCR002.md)、[`Product-Optimization-Phase2B3-PCR011.md`](Product-Optimization-Phase2B3-PCR011.md)、[`Product-Optimization-Phase2C1-PCR004.md`](Product-Optimization-Phase2C1-PCR004.md)、[`Product-Optimization-Phase2C2-PCR005.md`](Product-Optimization-Phase2C2-PCR005.md)、[`Product-Optimization-Phase2C3-PCR010.md`](Product-Optimization-Phase2C3-PCR010.md)、[`Product-Optimization-Phase2C4-PCR012.md`](Product-Optimization-Phase2C4-PCR012.md)、[`Product-Optimization-Phase2C5-PCR014.md`](Product-Optimization-Phase2C5-PCR014.md)、[`Product-Optimization-Phase2D-PCR008.md`](Product-Optimization-Phase2D-PCR008.md)、[`Product-Optimization-Phase2E-PCR006.md`](Product-Optimization-Phase2E-PCR006.md)、[`Product-Optimization-Phase2F-PCR020.md`](Product-Optimization-Phase2F-PCR020.md)、[`Product-Optimization-Phase2G-PCR007.md`](Product-Optimization-Phase2G-PCR007.md)、[`Product-Optimization-Phase2H-PCR019.md`](Product-Optimization-Phase2H-PCR019.md)。
+
 - 安全与权限：[`R0-A-Sales-Safety-Reconciliation.md`](R0-A-Sales-Safety-Reconciliation.md)、[`R0-B1-Purchase-Safety-Reconciliation.md`](R0-B1-Purchase-Safety-Reconciliation.md)、[`R0-B2-Supplier-Payment-Terms.md`](R0-B2-Supplier-Payment-Terms.md)、[`R0-C1-Followup-Safety.md`](R0-C1-Followup-Safety.md)、[`R0-C2-SKU-Save-Integrity.md`](R0-C2-SKU-Save-Integrity.md)、[`R0-C3-Safe-CSV-Import.md`](R0-C3-Safe-CSV-Import.md)、[`R0-D1-Canonical-Workbench-Navigation.md`](R0-D1-Canonical-Workbench-Navigation.md)、[`R0-D2-Unified-Unsaved-Changes-Guard.md`](R0-D2-Unified-Unsaved-Changes-Guard.md)、[`r0-d4b2a-finance-scope.md`](r0-d4b2a-finance-scope.md)、[`r0-d4b2a-focused-repair.md`](r0-d4b2a-focused-repair.md)、[`r0-d4b2b-procurement-scope.md`](r0-d4b2b-procurement-scope.md)、[`r0-d4b2c-api-permission-audit.md`](r0-d4b2c-api-permission-audit.md)、[`r0-d4b2c-api-permission-matrix.md`](r0-d4b2c-api-permission-matrix.md)。
+
 - 业务规则/实现背景：[`TaskC-订单采购草稿闭环.md`](TaskC-订单采购草稿闭环.md)、[`TaskE-采购成本归属统一.md`](TaskE-采购成本归属统一.md)、[`TaskF1-到货库存预留一致性.md`](TaskF1-到货库存预留一致性.md)、[`TaskF2-超发安全冲销.md`](TaskF2-超发安全冲销.md)、[`TaskG1-基础收付款一致性.md`](TaskG1-基础收付款一致性.md)、[`TaskG2-轻量合同金额调整.md`](TaskG2-轻量合同金额调整.md)、[`TaskG3-基础财务报表与利润口径.md`](TaskG3-基础财务报表与利润口径.md)、[`TaskH1-客户跟进报价链路.md`](TaskH1-客户跟进报价链路.md)、[`TaskI1-产品分类与SKU身份边界.md`](TaskI1-产品分类与SKU身份边界.md)、[`TaskI2-供应来源交易单位包装与销售规则.md`](TaskI2-供应来源交易单位包装与销售规则.md)、[`TaskJ1-系统入口与经营视图收敛.md`](TaskJ1-系统入口与经营视图收敛.md)、[`TaskK1-正式测试前系统完整性收尾.md`](TaskK1-正式测试前系统完整性收尾.md)。
 
 ## Git 历史核对
@@ -358,7 +388,6 @@ R0-F8A已按用户转述独立代码/自动回归PASS、有条件封版；ISS-09
 
 103个唯一ID：OPEN=4、BLOCKED=22、NEEDS_VERIFICATION=26、FIXED_PENDING_REVIEW=43、CLOSED=8。仅001由OPEN转业务BLOCKED，004/005由待核实转待复审，054由OPEN转待复审；006保持待核实。历史统计是各轮快照，未覆盖或旧独立图片事项不自动关闭。详见[R1-A](R1-A-核心业务历史Issue核实与修复.md)。
 
-
 ## R1-A-FUP-01 复审补修（2026-10-18）
 
 | Issue | 优先级 / 状态 | 首次问题与来源 | 当前结果 / 根因 / 修复 | 下一步与最终验收条件 |
@@ -367,19 +396,17 @@ R0-F8A已按用户转述独立代码/自动回归PASS、有条件封版；ISS-09
 
 ISS-004继续FIXED_PENDING_REVIEW：补充本轮原编号重试与表单保护证据，旧空快照通过结论撤回。ISS-001继续BLOCKED，等待业务决定；ISS-005/006/054状态及既有验收范围不变。104个唯一ID：OPEN=4、BLOCKED=22、NEEDS_VERIFICATION=26、FIXED_PENDING_REVIEW=44、CLOSED=8；P1=20，其余优先级计数不变。
 
-
 ## R1-FIN-AUDIT-01 只读审查（2026-10-18）
 
 | Issue | 优先级 / 状态 | 首次来源 / 最近核实 | 影响与根因 | 负责人 / 下一步 / 阶段 | 最终验收依据 |
 |---|---|---|---|---|---|
-| ISS-105 | P1 / FIXED_PENDING_REVIEW | 2026-10-18用户财务统计审查；本轮完整稳定财务来源3a07e7ef1a9e63c98077d45492ba23b798c7fcdd | 当前已包含参考折算/实际资金区分、显式账户、独立启用基准、有效完整更正、转账本金及独立手续费、退回/退款审批、账户核对、私有银行凭证。集成c1937da后端1249项1189通过/60跳过；Chrome认证和开发资金页面各2/2。319941c新增回退与凭证备份保护；真实PG17专项13/13，新财务表与文件恢复一致。来源与完整日志见[综合报告](uat-evidence/review-integration-batch-20261104/README.md)、TEST-RESULTS.md及REVIEW-FINANCE-SOURCE.md。  本轮定向反例补充（2026-11-04）：API可将已追加分类为expense的事实匹配内部本金，且新增本金匹配后完成核对不失效；统一集成已在8087产品代码独立复现3/3失败（含新旧混合匹配），原日志finance-counterexamples-before-fixture-corrected.log保留。最小修复90683506f5d9447974302d83c89ba27351d5dfd4：按有效追加分类校验并在共享锁内重验，将新/旧本金匹配纳入核对指纹；未匹配账户指纹保持旧格式，有匹配的旧核对保守要求重核，不改资金/余额。修后SQLite32/32通过（含5项新回归）；同代码9068350的真实PG17.11专项12/12通过（新回归5/真实性2/真实并发5），99表1081行128迁移4文件恢复及私有HTTP4/4；最终SHA CI按本轮最终报告记录，不提前记通过。 第三项本轮确认缺陷ADV-03：finance-ledger未声明模块，普通认证的全局财务授权角色被通用权限层403拒绝；超管成功不能证明角色可用。候选报告2e20bfdccb711bdd5f9028cb60e287ee742c77c5仅只读检查尚未接收；主审在906产品代码独立6项角色回归为1通过/5失败（finance-role-before.log）。最小补修9af2a32fa81df3aa975424b70a887057e40b6b22已覆盖只读预览、create/update分离及既有finance或reports导出契约，相关SQLite91/91、干净9af检出的真实PG17专项64/64通过；恢复99表1081行128迁移4文件、HTTP4/4、源未变且清理完成。主树未提交测试触发的保护拒绝日志保留，未放宽干净源码保护。不启用运行环境正式RBAC，不改开发超级管理员判定。侧审另列非规范export值的既有解析/格式差异：当前受支持契约为小写csv，未证明越权，不在本轮擅自增加格式或别名，按105兼容边界待独立核查。 后续a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f已提交有序锁/截止日7测试，原clean guard下真实PG专项25/25通过，包含三个独立backend PID/实际阻塞/锁前预读/审计与余额原子断言；不采信已中止的未提交草稿例外。全量本地/最终SHA三CI单独记录。旧合法匹配的核对摘要兼容/一次重核已验；未扫描目标存量中旧缺陷已造成的错误匹配，也不自动改写不可变历史关系，启用前须只读核查并按受控审查处理，不把新写入口修复宣称为存量自动修复。| 已有实现待ChatGPT独立复审；8087f2c / CI41839476121三CI已实际核实SUCCESS，PG17全量1282通过/30跳过、Chrome270通过；财务反例及独立复审仍待完成，真实账户/日期/余额/来源资料由负责人提供；不重新询问已确认资金原则。 | 实际资金、账面参考和账户余额范围准确；正常/拒绝/并发/审计/历史保护与独立复审通过，不以开发session代替正式身份验收。 |
+| ISS-105 | P1 / FIXED_PENDING_REVIEW | 2026-10-18用户财务统计审查；原基线财务来源3a07e7ef1a9e63c98077d45492ba23b798c7fcdd；本轮完整反例来源e301a86044ffe56b72172a94dc3b00ae09401b05 | 当前已包含参考折算/实际资金区分、显式账户、独立启用基准、有效完整更正、转账本金及独立手续费、退回/退款审批、账户核对、私有银行凭证。集成c1937da后端1249项1189通过/60跳过；Chrome认证和开发资金页面各2/2。319941c新增回退与凭证备份保护；真实PG17专项13/13，新财务表与文件恢复一致。来源与完整日志见[综合报告](uat-evidence/review-integration-batch-20261104/README.md)、TEST-RESULTS.md及REVIEW-FINANCE-SOURCE.md。  本轮定向反例补充（2026-11-04）：API可将已追加分类为expense的事实匹配内部本金，且新增本金匹配后完成核对不失效；统一集成已在8087产品代码独立复现3/3失败（含新旧混合匹配），原日志finance-counterexamples-before-fixture-corrected.log保留。最小修复90683506f5d9447974302d83c89ba27351d5dfd4：按有效追加分类校验并在共享锁内重验，将新/旧本金匹配纳入核对指纹；未匹配账户指纹保持旧格式，有匹配的旧核对保守要求重核，不改资金/余额。修后SQLite32/32通过（含5项新回归）；同代码9068350的真实PG17.11专项12/12通过（新回归5/真实性2/真实并发5），99表1081行128迁移4文件恢复及私有HTTP4/4；最终SHA CI按本轮最终报告记录，不提前记通过。 第三项本轮确认缺陷ADV-03：finance-ledger未声明模块，普通认证的全局财务授权角色被通用权限层403拒绝；超管成功不能证明角色可用。候选报告2e20bfdccb711bdd5f9028cb60e287ee742c77c5仅只读检查尚未接收；主审在906产品代码独立6项角色回归为1通过/5失败（finance-role-before.log）。最小补修9af2a32fa81df3aa975424b70a887057e40b6b22已覆盖只读预览、create/update分离及既有finance或reports导出契约，相关SQLite91/91、干净9af检出的真实PG17专项64/64通过；恢复99表1081行128迁移4文件、HTTP4/4、源未变且清理完成。主树未提交测试触发的保护拒绝日志保留，未放宽干净源码保护。不启用运行环境正式RBAC，不改开发超级管理员判定。侧审另列非规范export值的既有解析/格式差异：当前受支持契约为小写csv，未证明越权，不在本轮擅自增加格式或别名，按105兼容边界待独立核查。 后续a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f已提交有序锁/截止日7测试，原clean guard下真实PG专项25/25通过，包含三个独立backend PID/实际阻塞/锁前预读/审计与余额原子断言；不采信已中止的未提交草稿例外。全量本地/最终SHA三CI单独记录。旧合法匹配的核对摘要兼容/一次重核已验；未扫描目标存量中旧缺陷已造成的错误匹配，也不自动改写不可变历史关系，启用前须只读核查并按受控审查处理，不把新写入口修复宣称为存量自动修复。| 已有实现待ChatGPT独立复审；8087f2c / CI41839476121三CI已实际核实SUCCESS，PG17全量1282通过/30跳过、Playwright270（混合通道）通过；财务反例已统一补修，独立复审仍待完成，真实账户/日期/余额/来源资料由负责人提供；不重新询问已确认资金原则。  事实CSV浏览器下载生命周期补修02140bf46df27ba1abf5b9018507c07aae825769：link附DOM再点击、延后释放；原Google Chrome1440/390两场景2/2，原CSV源编号和123.45断言保留；与API200区分实际文件下载，不改金额/权限/日期。最终新冻结全量另验。 | 实际资金、账面参考和账户余额范围准确；正常/拒绝/并发/审计/历史保护与独立复审通过，不以开发session代替正式身份验收。 |
 
 105个唯一ID：OPEN=5、BLOCKED=22、NEEDS_VERIFICATION=26、FIXED_PENDING_REVIEW=44、CLOSED=8；P1=21，其余优先级计数不变。既有Issue状态保持，本轮未修复/关闭Issue；精度收敛为拟议新政策，旧4位记录不据此认定错误。
 
 ## R1-A-FUP-02 当前核实（2026-10-18）
 
 用户正式确认履约与财务结清独立，并明确FUP-01已通过ChatGPT独立复审（仅记录本轮前置依据，不改变ISS-004/104状态）。仅ISS-001由BLOCKED转FIXED_PENDING_REVIEW；105个唯一ID：OPEN=5、BLOCKED=21、NEEDS_VERIFICATION=26、FIXED_PENDING_REVIEW=45、CLOSED=8。优先级计数不变，其他Issue状态及既有验收范围保持。完成后等待独立审查，不进入R1-B、正式RBAC、员工UAT或部署。
-
 
 ## R1-A-FUP-02-FIX-01 独立审查补修（2026-10-18）
 
@@ -399,7 +426,6 @@ ISS-105仍P1/OPEN，确认方向不等于代码已修复。当前源码仍由原
 
 本轮未新增缺陷ID、未修复待关闭或关闭Issue；001/106及全部既有状态保持。按106个唯一ID重新核对状态：OPEN=5、BLOCKED=21、NEEDS_VERIFICATION=26、FIXED_PENDING_REVIEW=46、CLOSED=8。历史BLOCKED/延期和未覆盖范围继续保留；本轮不读取业务库、不执行迁移、不实施结汇、正式RBAC、员工UAT或部署。优先级治理附注：上一轮汇总P3=6，但当前显式P3记录有7项（058/048/049/050/074/099/103），本轮不重定历史优先级，旧汇总作为历史快照保留并待治理复核；不据该统计差异扩大财务开发范围。
 
-
 ## R1-FIN-P1 口径澄清（2026-10-18）
 
 ISS-105保持P1/OPEN。已澄清财务概览、月度/分类、cash来源、流水/计划表单、API口径说明及CSV，统一“账面人民币折算参考”，明确包含原币CNY既有流水，不代表银行实际到账、结汇或账户余额。相同合成数据库前后API/CSV数值和全部CRM记录哈希一致；详见[P1验收](R1-FIN-P1-现有财务统计口径澄清验收.md)。本轮没有银行资金事实或结汇记录，故不满足ISS-105完整关闭条件。其他既有Issue状态及验收范围不变。
@@ -409,7 +435,6 @@ ISS-105保持P1/OPEN。已澄清财务概览、月度/分类、cash来源、流�
 | ISS-107 | P2 / FIXED_PENDING_REVIEW | R1-FIN-P1源码核对，2026-10-18 | 已确认缺陷仅为Transaction.rmb_amount模型元数据仍标为“实际人民币金额”，以及资源入口描述未区分银行事实；公开流水序列化标签、财务概览、报表、CSV、旧保存配置已先行澄清且本轮复核通过。稳定API键income_rmb/expense_rmb/net_cash_rmb/rmb_amount及source=cash保留；本轮新增0081仅调整模型显示元数据，不改历史迁移、金额或配置 | 证据见 `docs/uat-evidence/r1-fin-p1/ISS-107-FOLLOWUP.md`；等待独立代码、财务口径和视觉复审，不自行关闭 | 模型元数据及自动生成界面无误导旧称；银行实际净额与账面参考分离；历史金额、API键、CSV和保存报表均不变，独立复审通过 |
 
 107个唯一ID：OPEN=5、BLOCKED=22、NEEDS_VERIFICATION=26、FIXED_PENDING_REVIEW=46、CLOSED=8。新增仅107，不修改其他Issue状态，不因本轮文案澄清宣称实际资金统计已实现。停止等待ChatGPT独立代码与视觉复审。
-
 
 ## R1-FIN-P2-A 后端资金事实与安全闭环（2026-10-18至19）
 
@@ -422,7 +447,6 @@ ISS-105保持P1/OPEN：事实后端不等于实际资金统计已切换；不改
 | ISS-108 | P1 / FIXED_PENDING_REVIEW | 用户R1-FIN-P2-A规则D04/D06；已确认原则沿用；完整财务来源3a07e7ef1a9e63c98077d45492ba23b798c7fcdd | 可追溯完整更正、银行退回、敏感退款申请/批准/实际扣款区分、真实双人审批和来源限制已经实现，不再描述为尚未实施。原事实与凭证不可直接覆盖，批准不等于实际扣款，不自动释放未知来源额度；集成Chrome两尺寸及负路径已实跑，精确结果和源码见[财务预审](uat-evidence/review-integration-batch-20261104/REVIEW-FINANCE-SOURCE.md)。 | 8087f2c / CI41839476121三CI已实际核实SUCCESS，PG17全量1282通过/30跳过及同SHA隔离15/15；待财务反例专项及ChatGPT逐项独立复审；真实每笔撤回退款凭证、金额与期间仍需实际资料，不由代码猜测。 | 原始事实不改写、来源及实际期间可核实、不重复核销或释放额度；正常/拒绝/事务原子性/并发与独立复审通过。 |
 
 108个唯一ID：OPEN=5、BLOCKED=23、NEEDS_VERIFICATION=26、FIXED_PENDING_REVIEW=46、CLOSED=8。新增仅108，不关闭或改变其他Issue状态。本轮不设正式启用日，不配置真实账户，不启用RBAC或部署；完成后等待ChatGPT独立复审。
-
 
 ## R1-FIN-P2-A 精确CI跨日回归补修（2026-10-19）
 
@@ -484,7 +508,7 @@ ISS-105保持OPEN，ISS-108保持BLOCKED，ISS-109至ISS-117及其他历史Issue
 
 | ID | 优先级 / 状态 | 首次来源 / 日期 | 当前核实及影响 | 负责人 / 下一步 | 阶段 / 验收条件 |
 |---|---|---|---|---|---|
-| ISS-121 | P1 / OPEN | R1-FIN-P3-A规则及历史启用要求；2026-10-19；INTEGRATION-CLOSEOUT-02用户定向复审2026-11-04 | 8087f2c68b19a302a25e814ec8ce6113d91d4750已包含财务账户基准/核对、历史申请/审批/归档；当前history_takeover.execute_group仍创建资金/库存/履约三个not_connected。显式测试调用财务服务不等于执行器已接通。 | 已授权历史包开发和合成验收资金、未结、库存基准、剩余履约及组原子性；统一集成接收完整稳定SHA并核对正式服务/财务双人审批/幂等/并发/拒绝路径，不再因缺真实资料停止实施。真实日期、账户余额/凭证和真实导入另受外部资料及单独授权边界约束。 | 已授权实施与合成验收；正式启用另行授权 | 同组合成资料完成归档→批准→接续→后续收付/履约→核对，逐表无重复资金/库存，真实PG17竞争/迁移/故障原子性及Chrome1440/390证据齐全，独立复审后改变状态；不以真实资料缺失代替代码完成。 |
+| ISS-121 | P1 / FIXED_PENDING_REVIEW | R1-FIN-P3-A规则及历史启用要求；2026-10-19；INTEGRATION-CLOSEOUT-02用户定向复审2026-11-04 | 完整历史来源ba4274742727a6794608dc8581a49b3692d865a6已合入447d7816ead2e971e249cb2e762b1a6f7009b9c0；资金/未结/库存基准/履约均有正式接续入口，不再是三个not_connected未实施。0108补齐三张新表TRUNCATE保护；0104–0108来源blob与集成一致。集成PG1410项1378通过32跳过，三新表实际填充2/1/2行后102表1218行133迁移5文件恢复一致、源未变、隔离集群清理完成。同一02140集成Chrome五阶段及live/副本只读核验已通过，独立复审仍待完成，源编号边界/凭证人工对应/已记账更正及目标启用须逐项独立接受，暂不自行关闭。见integration-closeout-02/INTEGRATED-SOURCE-REVIEW-447D.md及最终PG证据。 | 已授权历史包开发和合成验收资金、未结、库存基准、剩余履约及组原子性；统一集成接收完整稳定SHA并核对正式服务/财务双人审批/幂等/并发/拒绝路径，不再因缺真实资料停止实施。真实日期、账户余额/凭证和真实导入另受外部资料及单独授权边界约束。 | 已授权实施与合成验收；正式启用另行授权 | 同组合成资料完成归档→批准→接续→后续收付/履约→核对，逐表无重复资金/库存，真实PG17竞争/迁移/故障原子性及Chrome1440/390证据齐全，开发侧实现及隔离证据齐备，现转待独立复审；只有ChatGPT独立接受或用户接受后才可CLOSED，不以真实资料缺失代替代码完成。 |
 
 本轮新增ISS-121，保持`BLOCKED`；ISS-105仍OPEN、ISS-108仍BLOCKED，其他Issue状态不变。当前唯一ID计数：121个；OPEN=5、BLOCKED=24、NEEDS_VERIFICATION=27、FIXED_PENDING_REVIEW=57、CLOSED=8；P0=0。P3-A完成后停止等待ChatGPT独立代码、财务口径和视觉复审，不进入P3-B、正式RBAC、员工UAT或部署。
 
@@ -534,8 +558,11 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 以下均为更新既有 Issue 记录，不新增重复 Issue：
 
 - **ISS-047（P1 / `DEPLOYMENT_VERIFICATION_PENDING`，现有状态保持 BLOCKED）**：来源 `codex/integration-047-097-080`，代码集成 HEAD `512e739ac2beffe90e7153087509b2734c64e853`。应用层私有上传、授权下载/拒绝、路径穿越、SHA256 清单、媒体/静态根隔离和重启模拟已由定向测试及 Django 全量覆盖；实际生产 Nginx/反向代理 ACL、持久卷、容量/inode 告警、PostgreSQL 与 DB+媒体联合恢复尚未具备环境证据。原因是本轮明确不部署、不连接生产；影响为生产文件安全和恢复能力仍不能宣称完成。后续条件是运维提供隔离 staging/生产、真实持久卷、代理和数据库权限；验收标准是直链拒绝、备份恢复、服务重启、容量告警、完整性哈希和 PostgreSQL 权限均有可复核记录，独立复审后再改变状态。
+
 - **ISS-097（P2 / `FIXED_PENDING_REVIEW`）**：来源 `codex/integration-047-097-080`，代码集成 HEAD `512e739ac2beffe90e7153087509b2734c64e853`。真实 Chrome 已核对最高角色 `24 / 24` 有效权限全选且只读，API/UI 矩阵一致；Django 定向权限回归、前端有效 Vitest、组织页桌面/390px截图已归档。正式员工账号、真实会话、生产 RBAC 数据范围和数据库/服务器管理员边界仍需环境验收；这是生产身份待验风险，不是本轮已确认代码缺陷。后续条件是正式测试账号和隔离 staging；验收标准是普通员工权限不扩大、最高角色 UI/API 一致且不可编辑，应用管理员不获得 DB/OS/服务器权限，并保持 ISS-043 审计保护。
+
 - **ISS-080（P2 / `BUSINESS_VERIFICATION_PENDING`，现有状态保持 FIXED_PENDING_REVIEW）**：来源 `codex/integration-047-097-080`，代码集成 HEAD `512e739ac2beffe90e7153087509b2734c64e853`。同客户全量授权联系人、当前筛选之外/跨分页、邮箱/国际区号电话/近似姓名、编辑排除自身、查看入口和非阻断继续创建均通过自动化与真实 Chrome 桌面/390px证据；真实员工跨客户数据范围和生产业务数据抽查仍未完成。原因是本轮只使用隔离合成库和开发身份，不伪造正式数据结论。后续条件是受限员工账号与脱敏业务样本；验收标准是不同客户隔离、无权联系人不泄露、跨分页结果正确且用户确认后仍可保存，独立代码/权限/视觉复审通过。
+
 - **统一 CI 环境待验（关联 ISS-047/097/080，不新增 Issue）**：本地自动化已通过，但最终推送 HEAD 必须查询 GitHub Actions；若测试步骤前失败，登记为环境待验，不得标记 CI PASS。真实 PostgreSQL、生产代理/卷和正式账号同样不由本地 SQLite 或开发身份替代。
 
 ## INTEGRATION-018-036-025 统一集成记录（2026-10-27）
@@ -549,6 +576,7 @@ R1-FIN-P3-B 的授权财务功能记录为阶段性验收通过；ISS-105 保持
 更新既有 ISS-006 记录，不新增 Issue。来源：用户本轮要求；代码分支 `codex/r1-iss006-po-locking-bd324-20261030`，测试修复提交 `61d857c213d832101a19ca5ed13a16f9d7832107`。在 `test_same_purchase_order_different_sku_receipts_serialize_status_and_reservations` 与 `test_receipt_and_reversal_race_keeps_purchase_stock_and_reservations_consistent` 中删除重复创建的 `PurchaseCostAllocation`；依据是 `PurchaseOrderItem.save()` 在 `cost_allocation_version=0` 时自动创建默认分配。两个夹具现断言每条采购明细恰有一条 allocation，且归属类型、销售订单及数量正确。没有修改生产代码，也没有改变并发场景。
 
 锁定依赖、一次性内存 SQLite 回归共发现 74 项，61 项通过、13 项 PostgreSQL 专项跳过、0 项失败；收货/冲销、库存流水、库存、预留及成本分配相关可运行回归通过，日志见 [`C 并发锁定验收记录`](uat-evidence/r1-five-fixes-migration-20261030/C-po-locking/README.md)。本机无 PostgreSQL 客户端、服务或 Docker，默认 5432 端口未监听；两个目标并发测试及 PostgreSQL 最终一致性验证仍为 `BLOCKED`，SQLite 结果不构成并发证明。ISS-006 保持 `NEEDS_VERIFICATION`；下一步是在 PostgreSQL 恢复后运行两个精确场景并核对采购单状态、实际库存、收货记录、库存流水与预留，不据本轮本地测试改变 Issue 状态。
+
 ## ISS-006 补充：冲销审计事务原子性（2026-10-30）
 
 来源为用户指定的 2026-10-30 ChatGPT 独立代码审查；仅记录该已确认来源日期，不推断更早的首次发现日期。复核固定基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c` 时确认两个具体缺口：`ShipmentViewSet.reverse` 在 `reverse_shipment` 服务事务提交后才写审计；`InventoryMovementViewSet.reverse` 在 `reverse_manual_inventory_movement` 提交后再写两条审计，可能留下业务冲销但无审计，或第一条审计提交、第二条失败的部分记录。
@@ -578,16 +606,23 @@ R1-POSTGRES-TEST-ISOLATION-01 从 `2e25b743884123d7ae5599c89586988a12791bf4` 新
 以下为更新前原行，仅保留历史，不作为当前状态重复计数。
 
 > | ISS-105 | P1 / OPEN | 2026-10-18 用户本轮财务统计审查；基线f779ed858da3bc4dd468645f5405b0fed2556a8d源码核对，未读取真实业务库 | 2026-10-28 / 当前基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；财务 P3-B 阶段记录提交 `0fb9bb8`。核心人民币事实已有阶段成果，但启用政策、历史 cutover、统计覆盖和银行例外业务闭环未完成；保持 P1 / OPEN。 历史台账结论保留：rmb_amount主路径按原币×汇率生成，概览及CSV却称实际人民币收入；无银行结汇事实，无法区分未结汇与实际到账。0值fallback、历史来源及拆分尾差分支待进一步隔离测试，不推断真实损失 | 财务负责人确认统计口径/费用/历史cutover；产品及后端按独立复审后的最小方案另行实施；本轮仅分析，不修业务代码 本轮仅做状态对账，不扩大为生产/正式员工验收。 | 实际CNY与参考折算分开；A–G真实隔离UI/HTTP/Decimal一致；结汇不二次核销、不重复现金；权限/冲销/历史保护及独立复审通过。详见[R1-FIN-AUDIT-01](R1-FIN-AUDIT-01-财务统计与结汇兼容性审查.md) 本轮后续动作：以本轮报告和精确 SHA 为准，不重复派工。 |
+
 > | ISS-108 | P1 / BLOCKED | 用户R1-FIN-P2-A规则D04/D06；2026-10-19；2026-11-03核对既有原则 | 保留原银行事实/凭证、明确银行实际日期、退款/更正不伪造新回款、不自动释放未知来源额度的原则已确认，不再重复列作业务待决。现有代码对未知退款、直接作废/替代活动来源、覆盖/删除/取消已确认事件及零净额安全拒绝；可凭证化更正的增量流程尚未实施。 | 后端/财务QA在后续授权中按已确认原则设计可追溯反向事实和来源映射；财务提供每笔实际撤回/退款凭证及期间，不由代码猜测。保留现有fail-closed，不因本轮可选手续费改为可取消确认事实。 | 原始记录不改写、银行撤回证据/来源分配与记入期间可核实、不重复核销或自动释放额度；正常/拒绝/原子性/真实PG并发及独立复审通过 |
 
 ### REVIEW-INTEGRATION-BATCH-01 早期阶段原文留档
 
 > ## 2026-11-04 REVIEW-INTEGRATION-BATCH-01 复核记录（进行中）
+
 >
+
 > 本轮起点 `4388947d70d26bca66ca0bfc76b2383a2fc0d404` 与远端一致，[CI 41782956426](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41782956426) 三项成功。原始日志已归档至[本包证据](uat-evidence/review-integration-batch-20261104/README.md)。PostgreSQL17后端1182项、1152通过、30跳过；0091–0094、三表UPDATE/DELETE/TRUNCATE和回退保护实际执行。ISS-006/043/052 的历史“PG未执行”仅保留为当时记录，不再作为当前重复派工依据；目标部署角色、完整业务范围及独立复审仍分别保留。
+
 >
+
 > ISS-007 新故障注入确认：批量第二文件存储失败残留一条记录和文件；上传审计失败残留两条记录和文件；删除审计失败已删除记录和文件，三项安全一致性断言均失败。修前日志见本包 `logs/attachment-atomicity-20261104-transactiontest.log`。该问题沿用ISS-007，不重复编号；修复与回归进行中，不标为完成。
+
 >
+
 > ISS-037 仅“打印完整验收与分页改进”子范围由用户明确决定延期、后续自行处理，记为 **BLOCKED（用户延期）**；来源为 `ISSUE FIX A02` 对话的用户消息 `01a1a590-5068-7740-a54f-0b7fc821fefe`。其余主体快照要求不延期，现有有效修复、实际PDF及证据保留，仍等待来源稳定交接。未追加催办指令，未关闭ISS-037。各项当前归一化与关闭缺项将集中记录在本包矩阵中；Codex自查不构成ChatGPT独立复审。
 
 ### REVIEW-INTEGRATION-BATCH-01 ISS-002原行留档

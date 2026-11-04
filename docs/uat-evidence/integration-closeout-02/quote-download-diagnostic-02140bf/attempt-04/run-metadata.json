@@ -1,0 +1,16 @@
+{
+  "attempt": "04",
+  "candidate_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "runner_exit_code": 0,
+  "published_log": "runner.redacted.log",
+  "published_bytes": 14585,
+  "published_sha256": "f0c73d6649c6ba3efa0d194e8e4886accd83bd201c0b1b70e0122984cea26a94",
+  "redaction_count": 4,
+  "token_field_matches_remaining": 0,
+  "raw_log_private_path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\quote-download-diagnostic-02140bf-8sdgb0mo\\.tmp\\private-raw-logs\\attempt-04.raw.log",
+  "raw_bytes": 14671,
+  "raw_sha256": "3e1b01cb282d0920c0a26b691c178a6ebdde33b0399ac8a29963a5d16c40cb73",
+  "raw_retained_under_diagnostic_checkout_tmp": true,
+  "evidence_root": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\final-integrated-02140bf\\docs\\uat-evidence\\integration-closeout-02\\final-02140bf-frontend",
+  "fixture_dir": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\final-integrated-02140bf\\docs\\uat-evidence\\integration-closeout-02\\final-02140bf-frontend\\browser\\quote-download-diagnostic-attempt-04"
+}

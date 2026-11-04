@@ -1,0 +1,309 @@
+{
+  "source_sha": "e768c69193d2d9241bdddc6cbce717f9d9701469",
+  "application_code_anchor": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "actual_browser_identity": {
+    "channel": "chrome",
+    "version": "156.0.8078.80",
+    "product": "Chrome/156.0.8078.80",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "launch_path_evidence": "Playwright pw:browser launch log",
+    "synthetic_data_only": true
+  },
+  "actual_executable_from_same_process_log": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "passed": 3,
+  "failed": 0,
+  "skipped": 0,
+  "seconds": 23.7,
+  "screenshots": [
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/screenshots/follow-up-pending-desktop.png",
+      "evidence_group": "ISS007 integrated actual Chrome e768",
+      "capture_class": "runtime-proved-Google-Chrome",
+      "browser": "Google Chrome156.0.8078.80; spec channel and same-process CDP/launch log",
+      "actual_image": {
+        "width": 1440,
+        "height": 950,
+        "format": "PNG",
+        "mode": "RGB",
+        "exif_entry_count": 0,
+        "embedded_metadata_keys": []
+      },
+      "bytes": 141469,
+      "sha256": "122cf529e8be64ab8d78680bc2444d10910ad66b602de0346ad0c0ef6dccf7a6",
+      "generated_source_sha": "e768c69193d2d9241bdddc6cbce717f9d9701469",
+      "operation_evidence": "Actual upload/save/reopen, private bytes, old SKU quote image snapshot, upload failure and retry; 3/3 passed23.7s. Saved-attachment viewport images show file and action controls.",
+      "synthetic_data_and_provenance": "Owned isolated SQLite/media and test identities. Application backend/frontend-src/templates/package trees identical to447d; only browser test telemetry differs.",
+      "provenance_refs": [
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/browser-identity.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/http-results.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768-result.json"
+      ],
+      "coverage_boundary": "Developer visual check, not ChatGPT independent review; does not prove real employee login, target storage or full print output."
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/screenshots/follow-up-saved-390.png",
+      "evidence_group": "ISS007 integrated actual Chrome e768",
+      "capture_class": "runtime-proved-Google-Chrome",
+      "browser": "Google Chrome156.0.8078.80; spec channel and same-process CDP/launch log",
+      "actual_image": {
+        "width": 390,
+        "height": 1645,
+        "format": "PNG",
+        "mode": "RGB",
+        "exif_entry_count": 0,
+        "embedded_metadata_keys": []
+      },
+      "bytes": 93736,
+      "sha256": "3d6d97f33954c1dc340fd61259fe29d1876490e8f30b2133456173b640ebd3b7",
+      "generated_source_sha": "e768c69193d2d9241bdddc6cbce717f9d9701469",
+      "operation_evidence": "Actual upload/save/reopen, private bytes, old SKU quote image snapshot, upload failure and retry; 3/3 passed23.7s. Saved-attachment viewport images show file and action controls.",
+      "synthetic_data_and_provenance": "Owned isolated SQLite/media and test identities. Application backend/frontend-src/templates/package trees identical to447d; only browser test telemetry differs.",
+      "provenance_refs": [
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/browser-identity.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/http-results.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768-result.json"
+      ],
+      "coverage_boundary": "Developer visual check, not ChatGPT independent review; does not prove real employee login, target storage or full print output."
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/screenshots/follow-up-saved-attachment-390-viewport.png",
+      "evidence_group": "ISS007 integrated actual Chrome e768",
+      "capture_class": "runtime-proved-Google-Chrome",
+      "browser": "Google Chrome156.0.8078.80; spec channel and same-process CDP/launch log",
+      "actual_image": {
+        "width": 390,
+        "height": 844,
+        "format": "PNG",
+        "mode": "RGB",
+        "exif_entry_count": 0,
+        "embedded_metadata_keys": []
+      },
+      "bytes": 51375,
+      "sha256": "c51e173255189fd82c69df9d453bf706f94ced1c6e9b9602430bee63f250b3e5",
+      "generated_source_sha": "e768c69193d2d9241bdddc6cbce717f9d9701469",
+      "operation_evidence": "Actual upload/save/reopen, private bytes, old SKU quote image snapshot, upload failure and retry; 3/3 passed23.7s. Saved-attachment viewport images show file and action controls.",
+      "synthetic_data_and_provenance": "Owned isolated SQLite/media and test identities. Application backend/frontend-src/templates/package trees identical to447d; only browser test telemetry differs.",
+      "provenance_refs": [
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/browser-identity.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/http-results.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768-result.json"
+      ],
+      "coverage_boundary": "Developer visual check, not ChatGPT independent review; does not prove real employee login, target storage or full print output."
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/screenshots/follow-up-saved-attachment-desktop-viewport.png",
+      "evidence_group": "ISS007 integrated actual Chrome e768",
+      "capture_class": "runtime-proved-Google-Chrome",
+      "browser": "Google Chrome156.0.8078.80; spec channel and same-process CDP/launch log",
+      "actual_image": {
+        "width": 1440,
+        "height": 950,
+        "format": "PNG",
+        "mode": "RGB",
+        "exif_entry_count": 0,
+        "embedded_metadata_keys": []
+      },
+      "bytes": 141640,
+      "sha256": "82babfbea05041d796b808dc15bd0025f58818817f84fab76a4783fab9ab4b28",
+      "generated_source_sha": "e768c69193d2d9241bdddc6cbce717f9d9701469",
+      "operation_evidence": "Actual upload/save/reopen, private bytes, old SKU quote image snapshot, upload failure and retry; 3/3 passed23.7s. Saved-attachment viewport images show file and action controls.",
+      "synthetic_data_and_provenance": "Owned isolated SQLite/media and test identities. Application backend/frontend-src/templates/package trees identical to447d; only browser test telemetry differs.",
+      "provenance_refs": [
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/browser-identity.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/http-results.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768-result.json"
+      ],
+      "coverage_boundary": "Developer visual check, not ChatGPT independent review; does not prove real employee login, target storage or full print output."
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/screenshots/follow-up-saved-desktop.png",
+      "evidence_group": "ISS007 integrated actual Chrome e768",
+      "capture_class": "runtime-proved-Google-Chrome",
+      "browser": "Google Chrome156.0.8078.80; spec channel and same-process CDP/launch log",
+      "actual_image": {
+        "width": 1440,
+        "height": 950,
+        "format": "PNG",
+        "mode": "RGB",
+        "exif_entry_count": 0,
+        "embedded_metadata_keys": []
+      },
+      "bytes": 141469,
+      "sha256": "122cf529e8be64ab8d78680bc2444d10910ad66b602de0346ad0c0ef6dccf7a6",
+      "generated_source_sha": "e768c69193d2d9241bdddc6cbce717f9d9701469",
+      "operation_evidence": "Actual upload/save/reopen, private bytes, old SKU quote image snapshot, upload failure and retry; 3/3 passed23.7s. Saved-attachment viewport images show file and action controls.",
+      "synthetic_data_and_provenance": "Owned isolated SQLite/media and test identities. Application backend/frontend-src/templates/package trees identical to447d; only browser test telemetry differs.",
+      "provenance_refs": [
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/browser-identity.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/http-results.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768-result.json"
+      ],
+      "coverage_boundary": "Developer visual check, not ChatGPT independent review; does not prove real employee login, target storage or full print output."
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/screenshots/follow-up-upload-failure.png",
+      "evidence_group": "ISS007 integrated actual Chrome e768",
+      "capture_class": "runtime-proved-Google-Chrome",
+      "browser": "Google Chrome156.0.8078.80; spec channel and same-process CDP/launch log",
+      "actual_image": {
+        "width": 1280,
+        "height": 816,
+        "format": "PNG",
+        "mode": "RGB",
+        "exif_entry_count": 0,
+        "embedded_metadata_keys": []
+      },
+      "bytes": 142441,
+      "sha256": "15796dd7a581fda495c1b538f80da8e682d1bcd78f6d02f7c5ca160aa8d8be1d",
+      "generated_source_sha": "e768c69193d2d9241bdddc6cbce717f9d9701469",
+      "operation_evidence": "Actual upload/save/reopen, private bytes, old SKU quote image snapshot, upload failure and retry; 3/3 passed23.7s. Saved-attachment viewport images show file and action controls.",
+      "synthetic_data_and_provenance": "Owned isolated SQLite/media and test identities. Application backend/frontend-src/templates/package trees identical to447d; only browser test telemetry differs.",
+      "provenance_refs": [
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/browser-identity.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/http-results.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768-result.json"
+      ],
+      "coverage_boundary": "Developer visual check, not ChatGPT independent review; does not prove real employee login, target storage or full print output."
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/screenshots/follow-up-upload-retry-success.png",
+      "evidence_group": "ISS007 integrated actual Chrome e768",
+      "capture_class": "runtime-proved-Google-Chrome",
+      "browser": "Google Chrome156.0.8078.80; spec channel and same-process CDP/launch log",
+      "actual_image": {
+        "width": 1280,
+        "height": 816,
+        "format": "PNG",
+        "mode": "RGB",
+        "exif_entry_count": 0,
+        "embedded_metadata_keys": []
+      },
+      "bytes": 127975,
+      "sha256": "3871ce51d2e237576e2a4cfab849f262bd550f6221e0c5ab718087f1988621e9",
+      "generated_source_sha": "e768c69193d2d9241bdddc6cbce717f9d9701469",
+      "operation_evidence": "Actual upload/save/reopen, private bytes, old SKU quote image snapshot, upload failure and retry; 3/3 passed23.7s. Saved-attachment viewport images show file and action controls.",
+      "synthetic_data_and_provenance": "Owned isolated SQLite/media and test identities. Application backend/frontend-src/templates/package trees identical to447d; only browser test telemetry differs.",
+      "provenance_refs": [
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/browser-identity.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/http-results.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768-result.json"
+      ],
+      "coverage_boundary": "Developer visual check, not ChatGPT independent review; does not prove real employee login, target storage or full print output."
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/screenshots/quote-image-snapshot-390.png",
+      "evidence_group": "ISS007 integrated actual Chrome e768",
+      "capture_class": "runtime-proved-Google-Chrome",
+      "browser": "Google Chrome156.0.8078.80; spec channel and same-process CDP/launch log",
+      "actual_image": {
+        "width": 390,
+        "height": 1007,
+        "format": "PNG",
+        "mode": "RGB",
+        "exif_entry_count": 0,
+        "embedded_metadata_keys": []
+      },
+      "bytes": 63072,
+      "sha256": "1d9eecdcf3c65054d23804eb167441ac88197816c3e3d3b9a5cd1d3bd4fadffc",
+      "generated_source_sha": "e768c69193d2d9241bdddc6cbce717f9d9701469",
+      "operation_evidence": "Actual upload/save/reopen, private bytes, old SKU quote image snapshot, upload failure and retry; 3/3 passed23.7s. Saved-attachment viewport images show file and action controls.",
+      "synthetic_data_and_provenance": "Owned isolated SQLite/media and test identities. Application backend/frontend-src/templates/package trees identical to447d; only browser test telemetry differs.",
+      "provenance_refs": [
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/browser-identity.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/http-results.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768-result.json"
+      ],
+      "coverage_boundary": "Developer visual check, not ChatGPT independent review; does not prove real employee login, target storage or full print output."
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/screenshots/quote-image-snapshot-desktop.png",
+      "evidence_group": "ISS007 integrated actual Chrome e768",
+      "capture_class": "runtime-proved-Google-Chrome",
+      "browser": "Google Chrome156.0.8078.80; spec channel and same-process CDP/launch log",
+      "actual_image": {
+        "width": 1440,
+        "height": 950,
+        "format": "PNG",
+        "mode": "RGB",
+        "exif_entry_count": 0,
+        "embedded_metadata_keys": []
+      },
+      "bytes": 113754,
+      "sha256": "64a93354398e886e8cc2fe7be44551c630c85dbee09b969db001b78534a793a7",
+      "generated_source_sha": "e768c69193d2d9241bdddc6cbce717f9d9701469",
+      "operation_evidence": "Actual upload/save/reopen, private bytes, old SKU quote image snapshot, upload failure and retry; 3/3 passed23.7s. Saved-attachment viewport images show file and action controls.",
+      "synthetic_data_and_provenance": "Owned isolated SQLite/media and test identities. Application backend/frontend-src/templates/package trees identical to447d; only browser test telemetry differs.",
+      "provenance_refs": [
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/browser-identity.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/http-results.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768-result.json"
+      ],
+      "coverage_boundary": "Developer visual check, not ChatGPT independent review; does not prove real employee login, target storage or full print output."
+    },
+    {
+      "path": "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/screenshots/sku-image-preview-desktop.png",
+      "evidence_group": "ISS007 integrated actual Chrome e768",
+      "capture_class": "runtime-proved-Google-Chrome",
+      "browser": "Google Chrome156.0.8078.80; spec channel and same-process CDP/launch log",
+      "actual_image": {
+        "width": 1440,
+        "height": 950,
+        "format": "PNG",
+        "mode": "RGB",
+        "exif_entry_count": 0,
+        "embedded_metadata_keys": []
+      },
+      "bytes": 108917,
+      "sha256": "77b383770e4e23a67dbf37c39476fd8db7dbcc4073576c338f1527b8a25b9507",
+      "generated_source_sha": "e768c69193d2d9241bdddc6cbce717f9d9701469",
+      "operation_evidence": "Actual upload/save/reopen, private bytes, old SKU quote image snapshot, upload failure and retry; 3/3 passed23.7s. Saved-attachment viewport images show file and action controls.",
+      "synthetic_data_and_provenance": "Owned isolated SQLite/media and test identities. Application backend/frontend-src/templates/package trees identical to447d; only browser test telemetry differs.",
+      "provenance_refs": [
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/browser-identity.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768/browser/iss007-attachment-real.spec/http-results.json",
+        "docs/uat-evidence/integration-closeout-02/attachment-google-chrome-e768-result.json"
+      ],
+      "coverage_boundary": "Developer visual check, not ChatGPT independent review; does not prove real employee login, target storage or full print output."
+    }
+  ],
+  "log_manifest": [
+    {
+      "path": "attachment-google-chrome-f3e.log",
+      "raw_sha256": "b98248797340a0f4462984ad0e24501d3320f97d0beedbab0b85958cfc242acb",
+      "published_sha256": "19a42d960ee057cf9f153b20cbe248be34d10a94243ac87369dcce5cc1ec0c07",
+      "redactions": 3
+    },
+    {
+      "path": "chrome-f3e-bad-port-probe.log",
+      "raw_sha256": "8ec579aac16bf7a92294b7fed1587a4d69e2aa0775ca98459eea677f937eac3b",
+      "published_sha256": "8ec579aac16bf7a92294b7fed1587a4d69e2aa0775ca98459eea677f937eac3b",
+      "redactions": 0
+    },
+    {
+      "path": "attachment-google-chrome-f3e-safeports.log",
+      "raw_sha256": "7daab971ba1e5cec10e75b9870b0fa5385ad5bc9360718af57337c90b237b550",
+      "published_sha256": "5a6ae522f9d35e6150642c4b0224544b3064fa1865fdd3e3c6c6fd4bc84713f3",
+      "redactions": 4
+    },
+    {
+      "path": "attachment-google-chrome-e768.log",
+      "raw_sha256": "d2062a19650d1e33d65307c95654521f7de5ff9c9c3cda3e42a3e3f8355b05dc",
+      "published_sha256": "8f547c6aaa1ff26bd0f83f09cfe981c7200d26f9faf65398c2cce4d57820a08b",
+      "redactions": 4
+    }
+  ],
+  "earlier_attempts": [
+    {
+      "reason": "Vite1719 rejected as bad port by Node fetch; own probe0 requests",
+      "tests_started": 0,
+      "cleanup": "complete"
+    },
+    {
+      "reason": "new evidence hook Browser.getBrowserCommandLine unavailable without enable-automation; replaced with supported version+launch log, no flags or business assertions changed",
+      "failed": 1,
+      "did_not_run": 2,
+      "cleanup": "complete"
+    }
+  ],
+  "scope": "Actual Google Chrome and integrated application, synthetic data only. Earlier three successful runs were default Chromium, not Chrome."
+}

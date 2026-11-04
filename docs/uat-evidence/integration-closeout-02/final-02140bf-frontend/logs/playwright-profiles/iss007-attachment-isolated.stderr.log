@@ -1,0 +1,57 @@
+[isolated Django API] [05/Nov/2026 04:27:14] "GET /api/__test__/isolation/c60d0d491dbaeacf2e239b0564750d9b0834f143400431e6/ HTTP/1.1" 200 326
+[isolated Django API] [05/Nov/2026 04:27:15] "GET /api/__test__/isolation/c60d0d491dbaeacf2e239b0564750d9b0834f143400431e6/ HTTP/1.1" 200 326
+(node:28824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [05/Nov/2026 04:27:20] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 04:27:21] "GET /api/follow-ups/?search=&page=1 HTTP/1.1" 200 657
+[isolated Django API] [05/Nov/2026 04:27:21] "GET /api/customers/?page=1 HTTP/1.1" 200 489
+[isolated Django API] [05/Nov/2026 04:27:21] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [05/Nov/2026 04:27:21] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 45
+[isolated Django API] [05/Nov/2026 04:27:24] "GET /api/contacts/?page=1 HTTP/1.1" 200 361
+[isolated Django API] [05/Nov/2026 04:27:24] "GET /api/customers/?page=1 HTTP/1.1" 200 489
+[isolated Django API] [05/Nov/2026 04:27:24] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [05/Nov/2026 04:27:24] "PUT /api/follow-ups/1/ HTTP/1.1" 200 598
+[isolated Django API] [05/Nov/2026 04:27:24] "POST /api/follow-ups/1/attachments/ HTTP/1.1" 201 360
+[isolated Django API] [05/Nov/2026 04:27:24] "GET /api/follow-ups/?search=&page=1 HTTP/1.1" 200 1008
+[isolated Django API] [05/Nov/2026 04:27:24] "GET /api/customers/?page=1 HTTP/1.1" 200 489
+[isolated Django API] [05/Nov/2026 04:27:24] "GET /api/media/follow-up-attachments/2026/11/4800ae16d7dc406c8d6a2302ef9f0457/e796ffdaaecf4f769aa811a69b86cd36 HTTP/1.1" 200 38
+[isolated Django API] [05/Nov/2026 04:27:25] "GET /api/quotes/1/ HTTP/1.1" 200 1440
+[isolated Django API] [05/Nov/2026 04:27:25] "GET /api/media/quote-item-images/2026/11/iss007-initial.png HTTP/1.1" 200 68
+[isolated Django API] [05/Nov/2026 04:27:25] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.Product'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[isolated Django API] [05/Nov/2026 04:27:26] "GET /api/product-parameters/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 04:27:26] "GET /api/categories/tree/ HTTP/1.1" 200 2
+[isolated Django API] [05/Nov/2026 04:27:26] "GET /api/suppliers/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 04:27:26] "GET /api/products/?page=1 HTTP/1.1" 200 528
+[isolated Django API] [05/Nov/2026 04:27:26] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 04:27:26] "GET /api/skus/?search=&include_inactive=1&page=1 HTTP/1.1" 200 1473
+[isolated Django API] [05/Nov/2026 04:27:26] "GET /api/skus/1/thumbnail/?v=354c3ca6f0416739 HTTP/1.1" 200 44
+[isolated Django API] [05/Nov/2026 04:27:29] "GET /api/media/sku-images/2026/11/iss007-initial.png HTTP/1.1" 200 68
+[isolated Django API] [05/Nov/2026 04:27:29] "GET /api/supplier-skus/?sku=1&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 04:27:29] "PUT /api/skus/1/ HTTP/1.1" 200 1505
+[isolated Django API] [05/Nov/2026 04:27:29] "POST /api/skus/1/image/ HTTP/1.1" 200 1453
+[isolated Django API] [05/Nov/2026 04:27:29] "GET /api/skus/?search=&include_inactive=1&page=1 HTTP/1.1" 200 1561
+[isolated Django API] [05/Nov/2026 04:27:29] "GET /api/skus/1/thumbnail/?v=e1c30eced73246a2 HTTP/1.1" 200 72
+[isolated Django API] [05/Nov/2026 04:27:29] "GET /api/skus/1/ HTTP/1.1" 200 1509
+[isolated Django API] [05/Nov/2026 04:27:29] "GET /api/media/sku-images/2026/11/iss007-replacement.gif HTTP/1.1" 200 43
+[isolated Django API] [05/Nov/2026 04:27:29] "GET /api/skus/1/thumbnail/ HTTP/1.1" 200 72
+[isolated Django API] [05/Nov/2026 04:27:29] "GET /api/quotes/1/ HTTP/1.1" 200 1440
+[isolated Django API] [05/Nov/2026 04:27:29] "GET /api/media/quote-item-images/2026/11/iss007-initial.png HTTP/1.1" 200 68
+[isolated Django API] [05/Nov/2026 04:27:30] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 04:27:30] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 1492
+[isolated Django API] [05/Nov/2026 04:27:30] "GET /api/customers/?page=1 HTTP/1.1" 200 489
+[isolated Django API] [05/Nov/2026 04:27:31] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 04:27:31] "GET /api/follow-ups/?search=&page=1 HTTP/1.1" 200 1008
+[isolated Django API] [05/Nov/2026 04:27:31] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [05/Nov/2026 04:27:31] "GET /api/customers/?page=1 HTTP/1.1" 200 489
+[isolated Django API] [05/Nov/2026 04:27:31] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 45
+[isolated Django API] [05/Nov/2026 04:27:34] "GET /api/contacts/?page=1 HTTP/1.1" 200 361
+[isolated Django API] [05/Nov/2026 04:27:34] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [05/Nov/2026 04:27:34] "GET /api/customers/?page=1 HTTP/1.1" 200 489
+[isolated Django API] [05/Nov/2026 04:27:34] "PUT /api/follow-ups/1/ HTTP/1.1" 200 956
+[isolated Django API] [05/Nov/2026 04:27:34] "GET /api/follow-ups/?search=&page=1 HTTP/1.1" 200 1008
+[isolated Django API] [05/Nov/2026 04:27:37] "PUT /api/follow-ups/1/ HTTP/1.1" 200 956
+[isolated Django API] [05/Nov/2026 04:27:37] "POST /api/follow-ups/1/attachments/ HTTP/1.1" 201 360
+[isolated Django API] [05/Nov/2026 04:27:37] "GET /api/follow-ups/?search=&page=1 HTTP/1.1" 200 1367
+[isolated Django API] [05/Nov/2026 04:27:37] "GET /api/customers/?page=1 HTTP/1.1" 200 489

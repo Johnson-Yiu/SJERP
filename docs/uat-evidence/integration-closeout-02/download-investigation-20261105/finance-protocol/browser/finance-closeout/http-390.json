@@ -1,0 +1,1454 @@
+{
+  "records": [
+    {
+      "url": "/api/finance-ledger/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "accounts": [
+          {
+            "id": 1,
+            "code": "SYNTH-1440-1793820748417",
+            "name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          }
+        ],
+        "instructions": [
+          {
+            "id": 1,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "request_key": "93cc54f0-15ae-470c-9aea-401492187ecc",
+              "kind": "cash",
+              "account": 1,
+              "voucher": 1,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-1440-1793820748417",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:35.606941Z",
+            "approved_at": null,
+            "replaces": null
+          }
+        ],
+        "vouchers": [
+          {
+            "id": 1,
+            "name": "synthetic-1440-1793820748417.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          }
+        ],
+        "reviews": [],
+        "mappings": [],
+        "transfers": [],
+        "historical_transfers": []
+      }
+    },
+    {
+      "url": "/api/finance-ledger/facts/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "basis": "verified_account_cash_v1",
+        "facts": [
+          {
+            "id": 1,
+            "account": 1,
+            "account_name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "instruction": 1,
+            "actual_date": "2026-01-02",
+            "amount": "123.45",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 1,
+            "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "source_system": "SYNTH-CHROME",
+            "source_key": "SYNTH-ROW-1440-1793820748417",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "development_superadmin",
+              "action": "post",
+              "note": "开发身份，非正式员工审批"
+            },
+            "created_at": "2026-11-04T19:32:37.075569Z",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          }
+        ],
+        "totals": {
+          "inflow": "123.45",
+          "outflow": "0",
+          "net": "123.45"
+        },
+        "note": "仅已核实自有账户事实；基准不计流入，已核实内部本金不计公司毛流量，账户明细保留实际变动。"
+      }
+    },
+    {
+      "url": "/api/finance-ledger/accounts/",
+      "method": "POST",
+      "status": 201,
+      "body": {
+        "id": 2
+      }
+    },
+    {
+      "url": "/api/finance-ledger/facts/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "basis": "verified_account_cash_v1",
+        "facts": [
+          {
+            "id": 1,
+            "account": 1,
+            "account_name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "instruction": 1,
+            "actual_date": "2026-01-02",
+            "amount": "123.45",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 1,
+            "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "source_system": "SYNTH-CHROME",
+            "source_key": "SYNTH-ROW-1440-1793820748417",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "development_superadmin",
+              "action": "post",
+              "note": "开发身份，非正式员工审批"
+            },
+            "created_at": "2026-11-04T19:32:37.075569Z",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          }
+        ],
+        "totals": {
+          "inflow": "123.45",
+          "outflow": "0",
+          "net": "123.45"
+        },
+        "note": "仅已核实自有账户事实；基准不计流入，已核实内部本金不计公司毛流量，账户明细保留实际变动。"
+      }
+    },
+    {
+      "url": "/api/finance-ledger/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "accounts": [
+          {
+            "id": 1,
+            "code": "SYNTH-1440-1793820748417",
+            "name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 2,
+            "code": "SYNTH-390-1793820759122",
+            "name": "合成验收银行-390-1793820759122",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          }
+        ],
+        "instructions": [
+          {
+            "id": 1,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "request_key": "93cc54f0-15ae-470c-9aea-401492187ecc",
+              "kind": "cash",
+              "account": 1,
+              "voucher": 1,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-1440-1793820748417",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:35.606941Z",
+            "approved_at": null,
+            "replaces": null
+          }
+        ],
+        "vouchers": [
+          {
+            "id": 1,
+            "name": "synthetic-1440-1793820748417.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          }
+        ],
+        "reviews": [],
+        "mappings": [],
+        "transfers": [],
+        "historical_transfers": []
+      }
+    },
+    {
+      "url": "/api/finance-ledger/vouchers/",
+      "method": "POST",
+      "status": 201,
+      "body": {
+        "id": 2,
+        "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+        "size": 617
+      }
+    },
+    {
+      "url": "/api/finance-ledger/facts/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "basis": "verified_account_cash_v1",
+        "facts": [
+          {
+            "id": 1,
+            "account": 1,
+            "account_name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "instruction": 1,
+            "actual_date": "2026-01-02",
+            "amount": "123.45",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 1,
+            "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "source_system": "SYNTH-CHROME",
+            "source_key": "SYNTH-ROW-1440-1793820748417",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "development_superadmin",
+              "action": "post",
+              "note": "开发身份，非正式员工审批"
+            },
+            "created_at": "2026-11-04T19:32:37.075569Z",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          }
+        ],
+        "totals": {
+          "inflow": "123.45",
+          "outflow": "0",
+          "net": "123.45"
+        },
+        "note": "仅已核实自有账户事实；基准不计流入，已核实内部本金不计公司毛流量，账户明细保留实际变动。"
+      }
+    },
+    {
+      "url": "/api/finance-ledger/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "accounts": [
+          {
+            "id": 1,
+            "code": "SYNTH-1440-1793820748417",
+            "name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 2,
+            "code": "SYNTH-390-1793820759122",
+            "name": "合成验收银行-390-1793820759122",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          }
+        ],
+        "instructions": [
+          {
+            "id": 1,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "request_key": "93cc54f0-15ae-470c-9aea-401492187ecc",
+              "kind": "cash",
+              "account": 1,
+              "voucher": 1,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-1440-1793820748417",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:35.606941Z",
+            "approved_at": null,
+            "replaces": null
+          }
+        ],
+        "vouchers": [
+          {
+            "id": 2,
+            "name": "synthetic-390-1793820759122.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          },
+          {
+            "id": 1,
+            "name": "synthetic-1440-1793820748417.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          }
+        ],
+        "reviews": [],
+        "mappings": [],
+        "transfers": [],
+        "historical_transfers": []
+      }
+    },
+    {
+      "url": "/api/finance-ledger/preview/",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "payload": {
+          "request_key": "710d892e-167d-4730-b23c-723eb48d1dcf",
+          "kind": "cash",
+          "account": 2,
+          "voucher": 2,
+          "actual_date": "2026-01-02",
+          "amount": "123.45",
+          "direction": "income",
+          "nature": "unclassified",
+          "truth": "verified",
+          "source_system": "SYNTH-CHROME",
+          "source_key": "SYNTH-ROW-390-1793820759122",
+          "reason": "合成银行凭证已核实，性质暂未分类",
+          "allocations": []
+        },
+        "duplicate_candidates": {
+          "ids": [],
+          "token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "restricted": false
+        },
+        "written": false
+      }
+    },
+    {
+      "url": "/api/finance-ledger/facts/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "basis": "verified_account_cash_v1",
+        "facts": [
+          {
+            "id": 1,
+            "account": 1,
+            "account_name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "instruction": 1,
+            "actual_date": "2026-01-02",
+            "amount": "123.45",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 1,
+            "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "source_system": "SYNTH-CHROME",
+            "source_key": "SYNTH-ROW-1440-1793820748417",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "development_superadmin",
+              "action": "post",
+              "note": "开发身份，非正式员工审批"
+            },
+            "created_at": "2026-11-04T19:32:37.075569Z",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          }
+        ],
+        "totals": {
+          "inflow": "123.45",
+          "outflow": "0",
+          "net": "123.45"
+        },
+        "note": "仅已核实自有账户事实；基准不计流入，已核实内部本金不计公司毛流量，账户明细保留实际变动。"
+      }
+    },
+    {
+      "url": "/api/finance-ledger/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "accounts": [
+          {
+            "id": 1,
+            "code": "SYNTH-1440-1793820748417",
+            "name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 2,
+            "code": "SYNTH-390-1793820759122",
+            "name": "合成验收银行-390-1793820759122",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          }
+        ],
+        "instructions": [
+          {
+            "id": 1,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "request_key": "93cc54f0-15ae-470c-9aea-401492187ecc",
+              "kind": "cash",
+              "account": 1,
+              "voucher": 1,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-1440-1793820748417",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:35.606941Z",
+            "approved_at": null,
+            "replaces": null
+          }
+        ],
+        "vouchers": [
+          {
+            "id": 2,
+            "name": "synthetic-390-1793820759122.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          },
+          {
+            "id": 1,
+            "name": "synthetic-1440-1793820748417.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          }
+        ],
+        "reviews": [],
+        "mappings": [],
+        "transfers": [],
+        "historical_transfers": []
+      }
+    },
+    {
+      "url": "/api/finance-ledger/instructions/",
+      "method": "POST",
+      "status": 201,
+      "body": {
+        "id": 2,
+        "kind": "cash",
+        "status": "pending",
+        "payload": {
+          "request_key": "710d892e-167d-4730-b23c-723eb48d1dcf",
+          "kind": "cash",
+          "account": 2,
+          "voucher": 2,
+          "actual_date": "2026-01-02",
+          "amount": "123.45",
+          "direction": "income",
+          "nature": "unclassified",
+          "truth": "verified",
+          "source_system": "SYNTH-CHROME",
+          "source_key": "SYNTH-ROW-390-1793820759122",
+          "reason": "合成银行凭证已核实，性质暂未分类",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "development_superadmin",
+          "action": "submit",
+          "note": "开发身份，非正式员工审批"
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04T19:32:43.782035Z",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "url": "/api/finance-ledger/facts/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "basis": "verified_account_cash_v1",
+        "facts": [
+          {
+            "id": 1,
+            "account": 1,
+            "account_name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "instruction": 1,
+            "actual_date": "2026-01-02",
+            "amount": "123.45",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 1,
+            "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "source_system": "SYNTH-CHROME",
+            "source_key": "SYNTH-ROW-1440-1793820748417",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "development_superadmin",
+              "action": "post",
+              "note": "开发身份，非正式员工审批"
+            },
+            "created_at": "2026-11-04T19:32:37.075569Z",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          }
+        ],
+        "totals": {
+          "inflow": "123.45",
+          "outflow": "0",
+          "net": "123.45"
+        },
+        "note": "仅已核实自有账户事实；基准不计流入，已核实内部本金不计公司毛流量，账户明细保留实际变动。"
+      }
+    },
+    {
+      "url": "/api/finance-ledger/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "accounts": [
+          {
+            "id": 1,
+            "code": "SYNTH-1440-1793820748417",
+            "name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 2,
+            "code": "SYNTH-390-1793820759122",
+            "name": "合成验收银行-390-1793820759122",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          }
+        ],
+        "instructions": [
+          {
+            "id": 2,
+            "kind": "cash",
+            "status": "pending",
+            "payload": {
+              "request_key": "710d892e-167d-4730-b23c-723eb48d1dcf",
+              "kind": "cash",
+              "account": 2,
+              "voucher": 2,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-390-1793820759122",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:43.782035Z",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 1,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "request_key": "93cc54f0-15ae-470c-9aea-401492187ecc",
+              "kind": "cash",
+              "account": 1,
+              "voucher": 1,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-1440-1793820748417",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:35.606941Z",
+            "approved_at": null,
+            "replaces": null
+          }
+        ],
+        "vouchers": [
+          {
+            "id": 2,
+            "name": "synthetic-390-1793820759122.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          },
+          {
+            "id": 1,
+            "name": "synthetic-1440-1793820748417.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          }
+        ],
+        "reviews": [],
+        "mappings": [],
+        "transfers": [],
+        "historical_transfers": []
+      }
+    },
+    {
+      "url": "/api/finance-ledger/approve/",
+      "method": "POST",
+      "status": 400,
+      "body": [
+        "审批需要两名真实认证人员；开发身份不能代替。"
+      ]
+    },
+    {
+      "url": "/api/finance-ledger/post/",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "id": 2,
+        "account": 2,
+        "account_name": "合成验收银行-390-1793820759122",
+        "account_type": "bank",
+        "instruction": 2,
+        "actual_date": "2026-01-02",
+        "amount": "123.45",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "cash",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 2,
+        "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+        "source_system": "SYNTH-CHROME",
+        "source_key": "SYNTH-ROW-390-1793820759122",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "development_superadmin",
+          "action": "post",
+          "note": "开发身份，非正式员工审批"
+        },
+        "created_at": "2026-11-04T19:32:44.866295Z",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    },
+    {
+      "url": "/api/finance-ledger/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "accounts": [
+          {
+            "id": 1,
+            "code": "SYNTH-1440-1793820748417",
+            "name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 2,
+            "code": "SYNTH-390-1793820759122",
+            "name": "合成验收银行-390-1793820759122",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          }
+        ],
+        "instructions": [
+          {
+            "id": 2,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "request_key": "710d892e-167d-4730-b23c-723eb48d1dcf",
+              "kind": "cash",
+              "account": 2,
+              "voucher": 2,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-390-1793820759122",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:43.782035Z",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 1,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "request_key": "93cc54f0-15ae-470c-9aea-401492187ecc",
+              "kind": "cash",
+              "account": 1,
+              "voucher": 1,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-1440-1793820748417",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:35.606941Z",
+            "approved_at": null,
+            "replaces": null
+          }
+        ],
+        "vouchers": [
+          {
+            "id": 2,
+            "name": "synthetic-390-1793820759122.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          },
+          {
+            "id": 1,
+            "name": "synthetic-1440-1793820748417.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          }
+        ],
+        "reviews": [],
+        "mappings": [],
+        "transfers": [],
+        "historical_transfers": []
+      }
+    },
+    {
+      "url": "/api/finance-ledger/facts/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "basis": "verified_account_cash_v1",
+        "facts": [
+          {
+            "id": 1,
+            "account": 1,
+            "account_name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "instruction": 1,
+            "actual_date": "2026-01-02",
+            "amount": "123.45",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 1,
+            "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "source_system": "SYNTH-CHROME",
+            "source_key": "SYNTH-ROW-1440-1793820748417",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "development_superadmin",
+              "action": "post",
+              "note": "开发身份，非正式员工审批"
+            },
+            "created_at": "2026-11-04T19:32:37.075569Z",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          },
+          {
+            "id": 2,
+            "account": 2,
+            "account_name": "合成验收银行-390-1793820759122",
+            "account_type": "bank",
+            "instruction": 2,
+            "actual_date": "2026-01-02",
+            "amount": "123.45",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 2,
+            "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "source_system": "SYNTH-CHROME",
+            "source_key": "SYNTH-ROW-390-1793820759122",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "development_superadmin",
+              "action": "post",
+              "note": "开发身份，非正式员工审批"
+            },
+            "created_at": "2026-11-04T19:32:44.866295Z",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          }
+        ],
+        "totals": {
+          "inflow": "246.90",
+          "outflow": "0",
+          "net": "246.90"
+        },
+        "note": "仅已核实自有账户事实；基准不计流入，已核实内部本金不计公司毛流量，账户明细保留实际变动。"
+      }
+    },
+    {
+      "url": "/api/finance-ledger/facts/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "basis": "verified_account_cash_v1",
+        "facts": [
+          {
+            "id": 1,
+            "account": 1,
+            "account_name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "instruction": 1,
+            "actual_date": "2026-01-02",
+            "amount": "123.45",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 1,
+            "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "source_system": "SYNTH-CHROME",
+            "source_key": "SYNTH-ROW-1440-1793820748417",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "development_superadmin",
+              "action": "post",
+              "note": "开发身份，非正式员工审批"
+            },
+            "created_at": "2026-11-04T19:32:37.075569Z",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          },
+          {
+            "id": 2,
+            "account": 2,
+            "account_name": "合成验收银行-390-1793820759122",
+            "account_type": "bank",
+            "instruction": 2,
+            "actual_date": "2026-01-02",
+            "amount": "123.45",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 2,
+            "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "source_system": "SYNTH-CHROME",
+            "source_key": "SYNTH-ROW-390-1793820759122",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "development_superadmin",
+              "action": "post",
+              "note": "开发身份，非正式员工审批"
+            },
+            "created_at": "2026-11-04T19:32:44.866295Z",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          }
+        ],
+        "totals": {
+          "inflow": "246.90",
+          "outflow": "0",
+          "net": "246.90"
+        },
+        "note": "仅已核实自有账户事实；基准不计流入，已核实内部本金不计公司毛流量，账户明细保留实际变动。"
+      }
+    },
+    {
+      "url": "/api/finance-ledger/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "accounts": [
+          {
+            "id": 1,
+            "code": "SYNTH-1440-1793820748417",
+            "name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 2,
+            "code": "SYNTH-390-1793820759122",
+            "name": "合成验收银行-390-1793820759122",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          }
+        ],
+        "instructions": [
+          {
+            "id": 2,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "request_key": "710d892e-167d-4730-b23c-723eb48d1dcf",
+              "kind": "cash",
+              "account": 2,
+              "voucher": 2,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-390-1793820759122",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:43.782035Z",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 1,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "request_key": "93cc54f0-15ae-470c-9aea-401492187ecc",
+              "kind": "cash",
+              "account": 1,
+              "voucher": 1,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-1440-1793820748417",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:35.606941Z",
+            "approved_at": null,
+            "replaces": null
+          }
+        ],
+        "vouchers": [
+          {
+            "id": 2,
+            "name": "synthetic-390-1793820759122.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          },
+          {
+            "id": 1,
+            "name": "synthetic-1440-1793820748417.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          }
+        ],
+        "reviews": [],
+        "mappings": [],
+        "transfers": [],
+        "historical_transfers": []
+      }
+    },
+    {
+      "url": "/api/finance-ledger/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "accounts": [
+          {
+            "id": 1,
+            "code": "SYNTH-1440-1793820748417",
+            "name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 2,
+            "code": "SYNTH-390-1793820759122",
+            "name": "合成验收银行-390-1793820759122",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          }
+        ],
+        "instructions": [
+          {
+            "id": 2,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "request_key": "710d892e-167d-4730-b23c-723eb48d1dcf",
+              "kind": "cash",
+              "account": 2,
+              "voucher": 2,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-390-1793820759122",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:43.782035Z",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 1,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "request_key": "93cc54f0-15ae-470c-9aea-401492187ecc",
+              "kind": "cash",
+              "account": 1,
+              "voucher": 1,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-1440-1793820748417",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:35.606941Z",
+            "approved_at": null,
+            "replaces": null
+          }
+        ],
+        "vouchers": [
+          {
+            "id": 2,
+            "name": "synthetic-390-1793820759122.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          },
+          {
+            "id": 1,
+            "name": "synthetic-1440-1793820748417.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          }
+        ],
+        "reviews": [],
+        "mappings": [],
+        "transfers": [],
+        "historical_transfers": []
+      }
+    },
+    {
+      "url": "/api/finance-ledger/facts/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "basis": "verified_account_cash_v1",
+        "facts": [
+          {
+            "id": 1,
+            "account": 1,
+            "account_name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "instruction": 1,
+            "actual_date": "2026-01-02",
+            "amount": "123.45",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 1,
+            "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "source_system": "SYNTH-CHROME",
+            "source_key": "SYNTH-ROW-1440-1793820748417",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "development_superadmin",
+              "action": "post",
+              "note": "开发身份，非正式员工审批"
+            },
+            "created_at": "2026-11-04T19:32:37.075569Z",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          },
+          {
+            "id": 2,
+            "account": 2,
+            "account_name": "合成验收银行-390-1793820759122",
+            "account_type": "bank",
+            "instruction": 2,
+            "actual_date": "2026-01-02",
+            "amount": "123.45",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 2,
+            "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "source_system": "SYNTH-CHROME",
+            "source_key": "SYNTH-ROW-390-1793820759122",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "development_superadmin",
+              "action": "post",
+              "note": "开发身份，非正式员工审批"
+            },
+            "created_at": "2026-11-04T19:32:44.866295Z",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          }
+        ],
+        "totals": {
+          "inflow": "246.90",
+          "outflow": "0",
+          "net": "246.90"
+        },
+        "note": "仅已核实自有账户事实；基准不计流入，已核实内部本金不计公司毛流量，账户明细保留实际变动。"
+      }
+    },
+    {
+      "url": "/api/finance-ledger/fact_detail/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "id": 2,
+        "account": 2,
+        "account_name": "合成验收银行-390-1793820759122",
+        "account_type": "bank",
+        "instruction": 2,
+        "actual_date": "2026-01-02",
+        "amount": "123.45",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "cash",
+        "refund_excess_amount": "0.00",
+        "unallocated_amount": "0.00",
+        "voucher": 2,
+        "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+        "source_system": "SYNTH-CHROME",
+        "source_key": "SYNTH-ROW-390-1793820759122",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "development_superadmin",
+          "action": "post",
+          "note": "开发身份，非正式员工审批"
+        },
+        "created_at": "2026-11-04T19:32:44.866295Z",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    },
+    {
+      "url": "/api/finance-ledger/",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "accounts": [
+          {
+            "id": 1,
+            "code": "SYNTH-1440-1793820748417",
+            "name": "合成验收银行-1440-1793820748417",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 2,
+            "code": "SYNTH-390-1793820759122",
+            "name": "合成验收银行-390-1793820759122",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成银行开户核实，非真实账户",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          }
+        ],
+        "instructions": [
+          {
+            "id": 2,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "request_key": "710d892e-167d-4730-b23c-723eb48d1dcf",
+              "kind": "cash",
+              "account": 2,
+              "voucher": 2,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-390-1793820759122",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:43.782035Z",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 1,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "request_key": "93cc54f0-15ae-470c-9aea-401492187ecc",
+              "kind": "cash",
+              "account": 1,
+              "voucher": 1,
+              "actual_date": "2026-01-02",
+              "amount": "123.45",
+              "direction": "income",
+              "nature": "unclassified",
+              "truth": "verified",
+              "source_system": "SYNTH-CHROME",
+              "source_key": "SYNTH-ROW-1440-1793820748417",
+              "reason": "合成银行凭证已核实，性质暂未分类",
+              "allocations": []
+            },
+            "created_actor": {
+              "kind": "development_superadmin",
+              "action": "submit",
+              "note": "开发身份，非正式员工审批"
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04T19:32:35.606941Z",
+            "approved_at": null,
+            "replaces": null
+          }
+        ],
+        "vouchers": [
+          {
+            "id": 2,
+            "name": "synthetic-390-1793820759122.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          },
+          {
+            "id": 1,
+            "name": "synthetic-1440-1793820748417.pdf",
+            "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+            "size": 617
+          }
+        ],
+        "reviews": [],
+        "mappings": [],
+        "transfers": [],
+        "historical_transfers": []
+      }
+    }
+  ],
+  "dimensions": {
+    "viewport": 390,
+    "document": 390
+  },
+  "errors": []
+}

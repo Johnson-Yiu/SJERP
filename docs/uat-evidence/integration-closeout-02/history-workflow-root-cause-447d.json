@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "scope": "History workflow root-cause and acceptance-harness correction; no product or Git changes",
+  "product_sha_tested": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "frozen_checkout": ".tmp/final-integrated-447d",
+  "status": "FINAL_INTEGRATED_HISTORY_RUN_PASS",
+  "final_rerun_required": false,
+  "final_rerun_reason": "The parent-frozen 02140bf checkout received the single final Chrome run after frontend npm ci completed successfully.",
+  "original_runs_preserved": true,
+  "runs": [
+    {
+      "id": "r01",
+      "directory": "final-447d-history-chrome",
+      "product_sha": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+      "result_status": "INCOMPLETE_OR_FAILED",
+      "stages": {"passed": 3, "failed": 1, "blocked": 0},
+      "failed_stage": "synthetic-api-seed",
+      "root_cause": "Django APIClient sent HTTP_HOST=testserver, which the isolated runtime rejected under ALLOWED_HOSTS while creating the synthetic category.",
+      "corrected_in_docs_seed": "API requests now use HTTP_HOST=127.0.0.1; r02 and r03 seed stages passed.",
+      "failure_log": "final-447d-history-chrome/logs/synthetic-api-seed.log",
+      "failure_log_sha256": "9a932832054ce1eddae52aaf074e1f04f9f7fc01ece28448ab70e5a3fcd1d793"
+    },
+    {
+      "id": "r02",
+      "directory": "final-447d-history-chrome-r02",
+      "product_sha": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+      "result_status": "INCOMPLETE_OR_FAILED",
+      "stages": {"passed": 7, "failed": 2, "blocked": 1},
+      "failed_stage": "history-operational-workflow",
+      "root_cause": "The synthetic account name already contained UAT-HISTORY-CNY while the UI at .tmp/final-integrated-447d/frontend/src/views/HistoryTakeoverPage.vue:418 appends the account code to item.name. The real option label duplicated the code, so the unchanged browser script's expected label did not match.",
+      "fixture_evidence": {
+        "r02_account_name": "合成验收账户 (UAT-HISTORY-CNY)",
+        "r02_account_code": "UAT-HISTORY-CNY",
+        "r02_expected_label": "合成验收账户 (UAT-HISTORY-CNY)",
+        "actual_rendered_label": "合成验收账户 (UAT-HISTORY-CNY) (UAT-HISTORY-CNY)",
+        "corrected_docs_seed_name": "合成验收账户",
+        "account_existed_active_owned_cny": true,
+        "finance_ledger_api_http_status": 200,
+        "api_log": "final-447d-history-chrome-r02/logs/api-server.log"
+      },
+      "workflow_failure_log": "final-447d-history-chrome-r02/logs/history-operational-workflow.log",
+      "workflow_failure_log_sha256": "5a185adbdbb6d4663d736a56e82f2fe0116bb204713681f5562b4f4955a113c9",
+      "downstream_effect": "Fulfillment was correctly not attempted after the workflow prerequisite failed. The verifier then reported missing receipt/shipment idempotency records; this was a consequence of the blocked scenario, not an independent product failure.",
+      "verifier_failure_log": "final-447d-history-chrome-r02/logs/read-only-business-verification.log",
+      "verifier_failure_log_sha256": "5cde9e5cf1fa00bef8f7023e8673453d697ac6e3b6c041f9b23423a0a0fcbf90"
+    },
+    {
+      "id": "r03",
+      "directory": "final-447d-history-chrome-r03",
+      "product_sha": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+      "result_status": "INCOMPLETE_OR_FAILED",
+      "stage_counts": {"passed": 9, "failed": 1, "blocked": 0},
+      "browser_scenarios": {"passed": 5, "failed": 0, "chrome_version": "156.0.8078.80"},
+      "screenshots": {"count": 8, "viewports": [1440, 390]},
+      "failed_stage": "read-only-business-verification",
+      "root_cause": "The original verifier queried optional GoodsReceipt.request_key and Shipment.request_key fields. The service path stores request keys in FulfillmentIdempotency and carries each linked record id in response_payload.",
+      "original_failure_log": "final-447d-history-chrome-r03/logs/read-only-business-verification.log",
+      "original_failure_log_sha256": "ab1fd0e80da8dbfd247221b9ea2888fe006295957ee501f63d1002fd4aaa0f72",
+      "corrected_verifier": {
+        "result": "PASS",
+        "exit_code": 0,
+        "scope": "Read-only verification against a fresh isolated copy of the sanitized r03 database and media; original application DB unchanged.",
+        "result_json": "final-447d-history-chrome-r03/corrected-verification-final.json",
+        "log": "final-447d-history-chrome-r03/logs/read-only-business-verification-corrected-final.log",
+        "log_sha256": "c1415b46240ea6f77e187d96d5dc73ac894fe2569caf21e9893b5ba90332768f",
+        "assertions": ["two idempotency keys present", "operation/status/target relationship", "receipt quantity 3", "shipment quantity 6", "voucher file bytes match stored size and digest", "history executed and audit records present"],
+        "summary": {"tables": 102, "business_and_audit_rows": 1091, "history_events": 16, "operation_log_rows": 21, "finance_facts": 2, "inventory_baselines": 1, "inventory_movements": 2, "continuation_contracts": 2, "receipt_quantity": "3.00", "shipment_quantity": "6.00"}
+      },
+      "sanitized_database": {
+        "source_sha256": "e59d7d1751d8ef4252674d5899d29c57d2f8bb92bd4ddc211f8f63fa62580282",
+        "published_sha256": "78b0a50077f99573ad9f980524a65d94e15f3461e06afcf4b4fb796039a71813",
+        "removed_only_from_published_copy": {"table": "django_session", "rows": 2},
+        "non_session_business_and_audit_tables_unchanged": true,
+        "non_session_manifest_sha256": "218a77ad143664b8752bcb8d7ebf1ec21a86dacf1196d528923d11fc6e18d393"
+      },
+      "template_download": {"path": "final-447d-history-chrome-r03/template/history-takeover-template.xlsx", "size": 14078, "sha256": "03bdb638588388c7d214fc955045539de1dc2ecf897e5876196ecbdbd62b9057"}
+    }
+  ],
+  "helper_attempt_failure": {
+    "cause": "Node fs.promises.copyFile received an options object where it expects an int32/null mode.",
+    "preserved_log": "final-447d-history-chrome-r03/logs/verify-published-helper-failure.log",
+    "sha256": "32ae93a3aed07064fa7dafb93c6393f9f39bd9f5c7b2276a7310852453880b3d",
+    "corrected": true
+  },
+  "acceptance_harness_files": [
+    {"path": "docs/uat-evidence/integration-closeout-02/run-integrated-history-uat.mjs", "sha256": "4535242926e7dbc6559a832550c6d54c903fd8bba4e6c04cc93a91858c4b547c"},
+    {"path": "docs/uat-evidence/integration-closeout-02/seed_integrated_history_uat.py", "sha256": "a9a17b957a278aff31ffdc8a11c406a9f8a831009a4331fa415bba8dc6a7f357"},
+    {"path": "docs/uat-evidence/integration-closeout-02/verify_integrated_history_uat.py", "sha256": "11f963d248782a3e05c3d8427008f576bc6770602688cea79c57984fbbd68999"},
+    {"path": "docs/uat-evidence/integration-closeout-02/verify_published_history_uat.mjs", "sha256": "f275dff67e97715a4202e686e0dcf6625ab949cbdef25325492b38a7fc6ba88d"},
+    {"path": "docs/uat-evidence/integration-closeout-02/history-inventory-location-chrome-uat-447d-r03.mjs", "sha256": "1670e7388f1a55c1647772a29a871317a272250ffdde4f59e91cf03008055553"}
+  ],
+  "inventory_acceptance_copy": {
+    "source_script": ".tmp/final-integrated-447d/frontend/scripts/history-inventory-location-chrome-uat.mjs",
+    "changes_only": ["Playwright import points to frozen frontend/node_modules", "API-generated SKU UAT-HT-S1 fixture substituted with actual SKU SKU-000001"],
+    "original_actions_and_assertions_retained": true,
+    "original_source_changed": false
+  },
+  "identity_boundary": {
+    "development_superadmin_enabled": true,
+    "rbac_enforcement": false,
+    "all_run_actors_synthetic_development_identity": true,
+    "default_development_name_is_real_employee": false,
+    "synthetic_two_session_flow_is_real_employee_auth_acceptance": false
+  },
+  "final_integrated_run": {
+    "product_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+    "frozen_checkout": ".tmp/final-integrated-02140bf",
+    "evidence_directory": "final-02140bf-history-chrome",
+    "result_json": "final-02140bf-history-chrome/result.json",
+    "human_report": "final-02140bf-history-chrome/FINAL-HISTORY-CHROME-02140BF.md",
+    "overall_result": "PASS",
+    "runner_exit_code": 0,
+    "chrome_stages": {"passed": 5, "failed": 0, "missing": 0, "chrome_version": "156.0.8078.80"},
+    "live_verification_exit_code": 0,
+    "corrected_copy_verification_exit_code": 0,
+    "screenshots": 8,
+    "workbook": {"path": "template/history-takeover-template.xlsx", "size": 14077, "sha256": "791723d6644a697d8d8657018c5807a8c7de3e59a6f2fe813d41b31c50454720"},
+    "database": {"path": "artifacts/isolated-sanitized.sqlite3", "sha256": "5a563ed3cd6c1d8c7e596d145338f56abaf1b21719ddb04334d3459509d4847b", "tables": 102, "business_and_audit_rows": 1091, "session_rows_removed_from_published_copy": 2, "read_only_integrity_check": "ok"},
+    "media_files": 1,
+    "http_requests": {"count": 98, "status_200": 90, "status_201": 8},
+    "published_logs": 13,
+    "api_vite_identity_checks": "PASS",
+    "post_run_application_dirs_clean": true,
+    "ports_released": true,
+    "owned_temp_cleanup": true,
+    "prior_r01_r03_evidence_unchanged": true
+  },
+  "changes_outside_docs_evidence": [],
+  "git_or_ci_actions": [],
+  "postgresql_used_by_this_investigation": false,
+  "report": "docs/uat-evidence/integration-closeout-02/HISTORY-WORKFLOW-ROOT-CAUSE-447D.md"
+}

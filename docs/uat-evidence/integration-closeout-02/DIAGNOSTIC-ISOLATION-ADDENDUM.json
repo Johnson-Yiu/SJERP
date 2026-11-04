@@ -1,0 +1,11 @@
+{
+  "candidate_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "original_full_run_result": "262pass1fail0skip",
+  "original_v2_source_entries": 326,
+  "attempt04_added_to_frozen_evidence_root": true,
+  "attempt04_run_uuid": "d2b7026b-edea-4d2f-9176-b97889b47224",
+  "attempt04_excluded_from_original_v2_source_reconciliation": true,
+  "published_separately_under": "quote-download-diagnostic-02140bf/attempt-04",
+  "source_product_modified": false,
+  "scope": "Diagnostics added evidence only; original full-run source payloads and original v1/v2 manifests are retained unchanged"
+}

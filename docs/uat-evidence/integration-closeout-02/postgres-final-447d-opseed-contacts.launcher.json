@@ -1,0 +1,12 @@
+{
+  "product_sha": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "helper_sha256": {
+    "docs/uat-evidence/review-integration-batch-20261104/run-postgres-regression.py": "24226278a2524c86bebfc3e15ba39367af7e1b1fea16a8b342931f0f6e8fc975",
+    "docs/uat-evidence/review-integration-batch-20261104/seed_history_backup.py": "fcb1b037df284cc8246e2ba8266b808996e85f3124d9df9a1a4a64598e302512",
+    "docs/uat-evidence/integration-closeout-02/seed_history_operational_backup.py": "3ea1fb852c2e0cff2382bcb21530354b38d5f9e0e06e10da9e83b0287f8373df"
+  },
+  "exit_code": 1,
+  "raw_log": "postgres-final-447d-opseed-contacts.log",
+  "raw_log_sha256": "d1cefa2cf82051dfe1e71541b9d84688bc06ce35778f84d2fa5ca0c85125818d",
+  "scope": "Actual owned-cluster attempt; exit code alone does not assert tests passed"
+}

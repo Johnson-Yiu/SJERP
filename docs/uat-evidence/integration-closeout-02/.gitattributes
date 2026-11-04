@@ -1,14 +1,43 @@
 # Keep original reports, downloaded evidence, and recovery proofs byte-exact.
 history/** -text
+checkpoint-history/** -text
 ci-8087-browser/** -text
 postgres-9068350/** -text
 role-pg-9af/** -text
 lock-order-pg/** -text
 lock-order-pg-committed-a840/** -text
 full-pg-a840/** -text
+finance-delivered-pg/** -text
+attachment-chrome-78b/** -text
+attachment-real-chrome-f928/** -text
 *.zip binary
 **/*.png binary
 **/*.jpg binary
 **/*.pdf binary
 **/*.csv -text
 **/*.log -text
+
+attachment-google-chrome-e768/** -text
+final-pg-447d/** -text
+final-447d-frontend/** -text
+final-history-chrome-447d/** -text
+final-447d-history-chrome*/** -text
+download-investigation-20261105/** -text
+*.raw binary
+final-02140bf-frontend/** -text
+final-pg-02140bf/** -text
+final-02140bf-history-chrome/** -text
+source-invariance-02140bf/** -text
+quote-boundary-controls-02140bf/** -text
+# Frozen machine-produced evidence retains original whitespace and CRLF bytes.
+# Active code, tests and current reports retain normal whitespace checks.
+**/error-context.md binary
+final-447d-frontend/FINAL-FRONTEND-447D.md binary
+local-linux-wsl-native-decoded.txt binary
+RECOVERY-AUDIT-EXTENDED-PATH-20261105.json -text
+quote-download-diagnostic-02140bf/** -text
+attachment-google-chrome-f3e-safe/** -text
+**/*.log binary
+**/*.sqlite3 binary
+visual-evidence-before-publication-reconciliation.json -text
+quote-download-interrupt-capture-02140bf/** -text

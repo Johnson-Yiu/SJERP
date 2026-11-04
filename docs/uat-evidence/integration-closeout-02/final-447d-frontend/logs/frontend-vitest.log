@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/final-integrated-447d/frontend
+
+
+ Test Files  78 passed (78)
+      Tests  725 passed (725)
+   Start at  02:37:05
+   Duration  105.36s (transform 6.40s, setup 28.21s, import 24.48s, tests 35.07s, environment 197.60s)
+

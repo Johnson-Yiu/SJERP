@@ -1,0 +1,86 @@
+{
+  "source_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "status": "PASS",
+  "supplementary_test_label": "crm.tests.test_finance_integration_permissions",
+  "passed": 6,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 0.683,
+  "process_exit": 0,
+  "source_final_proof": {
+    "source_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+    "status": "PASS",
+    "source_rows_and_sequences_unchanged": true,
+    "source_media_unchanged": true,
+    "before_state_sha256": "d7bb56707ffddd6580be01aa0f4613ca59327d2c81df0905543f1f48cea65919",
+    "after_state_sha256": "d7bb56707ffddd6580be01aa0f4613ca59327d2c81df0905543f1f48cea65919",
+    "source_table_count": 102,
+    "source_row_count": 1218,
+    "source_sequence_count": 100,
+    "source_media_files": 5,
+    "scope": "Explicit source reread after six tests, backup/restore, private HTTP and nine restored-history guard probes; before intentional owned-cluster cleanup. Not the previous1410 run."
+  },
+  "backup_restore_three_verifications": "PASS",
+  "source_guard": "Original owned-cluster and application-clean guards unchanged; no production connection",
+  "cleanup": "complete",
+  "files": [
+    {
+      "path": "artifacts/postgres-backups/02140bf46df2-9c7b4078.json",
+      "bytes": 13058,
+      "sha256": "665efbf4d89d5758999386db5d07ad497fdba89dca735e3406e7206e8dc22511"
+    },
+    {
+      "path": "artifacts/postgres-backups/02140bf46df2-9c7b4078.zip",
+      "bytes": 415844,
+      "sha256": "7b44f9c289b49f3cf529205a8e6954d89dba4e10536cffce75227874e1f5df40"
+    },
+    {
+      "path": "artifacts/postgres-backups/finance-restored-02140bf46df2.json",
+      "bytes": 12237,
+      "sha256": "b197b510ef30f23858afc798c7d73bc75a13ca0b5473fc9b004a87cd60b3925c"
+    },
+    {
+      "path": "artifacts/postgres-backups/history-operational-restored-02140bf46df2.json",
+      "bytes": 27820,
+      "sha256": "6bbecede25c517a55678c9e39adc7532074af38de451c26ba9a1d4d83dfa8f45"
+    },
+    {
+      "path": "artifacts/postgres-backups/source-invariance-02140bf46df2.json",
+      "bytes": 667,
+      "sha256": "76b00b476482a0061828b3cbe65b1363e04a1ca871e2b440d47d0e29094440fb"
+    },
+    {
+      "path": "helper-source-snapshots/run-postgres-source-invariance.py",
+      "bytes": 19300,
+      "sha256": "39c6bc64da8b606d290494d393692956db092947c23a18fe91a0a8c4483f5bb6"
+    },
+    {
+      "path": "helper-source-snapshots/seed_finance_backup.py",
+      "bytes": 22526,
+      "sha256": "54e6ae0c7a074280d5f760dd99f51d7c639109b82fa512233a3417a4f0ed5562"
+    },
+    {
+      "path": "helper-source-snapshots/seed_history_backup.py",
+      "bytes": 2452,
+      "sha256": "fcb1b037df284cc8246e2ba8266b808996e85f3124d9df9a1a4a64598e302512"
+    },
+    {
+      "path": "helper-source-snapshots/seed_history_operational_backup.py",
+      "bytes": 35503,
+      "sha256": "be797a9c96753d22d321e17264d14736ddce2d20b0c9a81e7d41a808aefea374"
+    },
+    {
+      "path": "logs/postgres-source-invariance-02140bf.log",
+      "bytes": 33170,
+      "sha256": "a2d0d29ad91fef59c53c8c2009be13829724d9831ffb9a551e50d91d01709ad4"
+    },
+    {
+      "path": "logs/restored-private-http-02140bf46df2.log",
+      "bytes": 949,
+      "sha256": "0a3ed532aac523ec75c739c4081853960fa4868e002e4dd865ffec9e7e628470"
+    }
+  ],
+  "archive_sha256": "525ffd149265cc5c7ee182c2658daf7a64f90b7fe77d390390f9d84149d088d6",
+  "scope": "Additional independent populated drill with final whole-source rows/sequences/media reread, before intentional cleanup. Does not retroactively claim that reread happened in earlier1410 runs; six tests not added as unique to1410."
+}

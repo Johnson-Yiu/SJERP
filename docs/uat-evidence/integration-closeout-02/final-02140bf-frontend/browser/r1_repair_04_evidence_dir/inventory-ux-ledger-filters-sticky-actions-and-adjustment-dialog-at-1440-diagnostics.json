@@ -1,0 +1,54 @@
+{
+  "label": "inventory-ux-ledger filters, sticky actions and adjustment dialog at 1440",
+  "blockedOptionalFonts": true,
+  "fontInterceptions": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "host": "fonts.googleapis.com"
+    }
+  ],
+  "console": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_FAILED"
+    }
+  ],
+  "pageErrors": [],
+  "failedRequests": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "method": "GET",
+      "failure": {
+        "errorText": "net::ERR_FAILED"
+      }
+    }
+  ],
+  "apiResponses": [
+    {
+      "url": "http://127.0.0.1:13189/api/session/current-operator/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:13189/api/inventory-movements/?search=&page=1",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:13189/api/skus/?include_inactive=1&page=1",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:13189/api/skus/?include_inactive=1&page=1",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:13189/api/orders/?page=1",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "nonSuccessfulResponses": []
+}

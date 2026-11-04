@@ -1,0 +1,52 @@
+{
+  "stage": "before",
+  "isolated_database": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-JitlMl\\db.sqlite3",
+  "isolated_media_root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-JitlMl\\media",
+  "synthetic_records_only": true,
+  "row_counts": {
+    "customers": 1,
+    "products": 1,
+    "skus": 1,
+    "quotes": 2,
+    "quote_items": 2,
+    "orders": 1,
+    "order_items": 1
+  },
+  "customer_id": 1,
+  "product_id": 1,
+  "sku": {
+    "id": 1,
+    "code": "ISS007-UAT-SKU",
+    "image_path": "sku-images/2026/11/iss007-original-red.png",
+    "sha256": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2"
+  },
+  "formal_quote": {
+    "id": 2,
+    "number": "SJ20261031DE001",
+    "status": "accepted",
+    "item_id": 2,
+    "image_snapshot_path": "quote-item-images/2026/11/iss007-original-red.png",
+    "image_snapshot_sha256": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2"
+  },
+  "confirmed_order": {
+    "id": 1,
+    "number": "SO-2026-00001",
+    "status": "confirmed",
+    "quote_id": 2,
+    "item_id": 1,
+    "item_sku_code_snapshot": "ISS007-UAT-SKU",
+    "order_item_has_own_image_snapshot_field": false,
+    "linked_quote_image_snapshot_path": "quote-item-images/2026/11/iss007-original-red.png",
+    "linked_quote_image_snapshot_sha256": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2"
+  },
+  "missing_history": {
+    "quote_item_id": 1,
+    "referenced_path": "quote-item-images/iss007-uat/missing-history-image.png",
+    "file_exists": false
+  },
+  "hash_checks": {
+    "sku_matches_expected_stage": true,
+    "formal_quote_matches_original": true,
+    "confirmed_order_quote_matches_original": true
+  }
+}

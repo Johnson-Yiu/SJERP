@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "package": "final-pg-02140bf",
+  "status": "SEALED_PUBLISHED_EVIDENCE",
+  "source_product_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "source_artifact_directory": ".tmp/final-integrated-02140bf/docs/uat-evidence/integration-closeout-02/final-pg-02140bf",
+  "published_at_utc": "2026-11-04T20:48:18.703706+00:00",
+  "payload_file_count_excluding_manifest": 9,
+  "payload_files": [
+    {
+      "path": "artifacts/postgres-backups/02140bf46df2-994ff7ed.json",
+      "size": 13058,
+      "sha256": "c6fe3094e37fa36161cf511286dc53977f5255e69ba694b3485b246601dadf18"
+    },
+    {
+      "path": "artifacts/postgres-backups/02140bf46df2-994ff7ed.zip",
+      "size": 415890,
+      "sha256": "7343ab609e85f21e01cc1ccb747c73fb45963a5482d7951811aa80a28155b37e"
+    },
+    {
+      "path": "artifacts/postgres-backups/finance-restored-02140bf46df2.json",
+      "size": 12237,
+      "sha256": "fc1b10d3263fe8740afb62d17fb01ec1b2d8f2b0e4f15b2c62bfa5ae8ff0ee02"
+    },
+    {
+      "path": "artifacts/postgres-backups/history-operational-restored-02140bf46df2.json",
+      "size": 27820,
+      "sha256": "da83c66a27d4b805708cce9cb929d833bf06484c41eb26dac34cfd82f2d5915f"
+    },
+    {
+      "path": "final-pg-02140bf-result.json",
+      "size": 15461,
+      "sha256": "ef605e4946720dacae781e5ec1ff67f53c40dc18245bc1e16d9e2f53cb5a99cb"
+    },
+    {
+      "path": "logs/final-pg-02140bf-closed-raw-logs.zip",
+      "size": 66277,
+      "sha256": "73dac01a41a96f37224e9bbc778a238a560cc2384f9fea5952311cf6ca6436ad"
+    },
+    {
+      "path": "logs/postgres-final-02140bf-full.launcher.json",
+      "size": 800,
+      "sha256": "73de28d0434aec90681f076160faf82d50ef2edcd75e877aee85ab141c560fa0"
+    },
+    {
+      "path": "logs/postgres-final-02140bf-full.log",
+      "size": 485393,
+      "sha256": "be368574b5398504b08f964dfffe5186f42749cc6f63e3c884f65d9aec0d4c2c"
+    },
+    {
+      "path": "logs/restored-private-http-02140bf46df2.log",
+      "size": 462,
+      "sha256": "80c245539cca5016f01ff1683ca698cb4f1c46cd727570638fa8988d653997f1"
+    }
+  ],
+  "source_copy_reconciliation": [
+    {
+      "source_relative_path": "artifacts/postgres-backups/02140bf46df2-994ff7ed.json",
+      "published_relative_path": "artifacts/postgres-backups/02140bf46df2-994ff7ed.json",
+      "size": 13058,
+      "source_sha256": "c6fe3094e37fa36161cf511286dc53977f5255e69ba694b3485b246601dadf18",
+      "published_sha256": "c6fe3094e37fa36161cf511286dc53977f5255e69ba694b3485b246601dadf18",
+      "byte_exact": true
+    },
+    {
+      "source_relative_path": "artifacts/postgres-backups/02140bf46df2-994ff7ed.zip",
+      "published_relative_path": "artifacts/postgres-backups/02140bf46df2-994ff7ed.zip",
+      "size": 415890,
+      "source_sha256": "7343ab609e85f21e01cc1ccb747c73fb45963a5482d7951811aa80a28155b37e",
+      "published_sha256": "7343ab609e85f21e01cc1ccb747c73fb45963a5482d7951811aa80a28155b37e",
+      "byte_exact": true
+    },
+    {
+      "source_relative_path": "artifacts/postgres-backups/finance-restored-02140bf46df2.json",
+      "published_relative_path": "artifacts/postgres-backups/finance-restored-02140bf46df2.json",
+      "size": 12237,
+      "source_sha256": "fc1b10d3263fe8740afb62d17fb01ec1b2d8f2b0e4f15b2c62bfa5ae8ff0ee02",
+      "published_sha256": "fc1b10d3263fe8740afb62d17fb01ec1b2d8f2b0e4f15b2c62bfa5ae8ff0ee02",
+      "byte_exact": true
+    },
+    {
+      "source_relative_path": "artifacts/postgres-backups/history-operational-restored-02140bf46df2.json",
+      "published_relative_path": "artifacts/postgres-backups/history-operational-restored-02140bf46df2.json",
+      "size": 27820,
+      "source_sha256": "da83c66a27d4b805708cce9cb929d833bf06484c41eb26dac34cfd82f2d5915f",
+      "published_sha256": "da83c66a27d4b805708cce9cb929d833bf06484c41eb26dac34cfd82f2d5915f",
+      "byte_exact": true
+    },
+    {
+      "source_relative_path": "logs/restored-private-http-02140bf46df2.log",
+      "published_relative_path": "logs/restored-private-http-02140bf46df2.log",
+      "size": 462,
+      "source_sha256": "80c245539cca5016f01ff1683ca698cb4f1c46cd727570638fa8988d653997f1",
+      "published_sha256": "80c245539cca5016f01ff1683ca698cb4f1c46cd727570638fa8988d653997f1",
+      "byte_exact": true
+    },
+    {
+      "source_relative_path": "postgres-final-02140bf-full.log",
+      "published_relative_path": "logs/postgres-final-02140bf-full.log",
+      "size": 485393,
+      "source_sha256": "be368574b5398504b08f964dfffe5186f42749cc6f63e3c884f65d9aec0d4c2c",
+      "published_sha256": "be368574b5398504b08f964dfffe5186f42749cc6f63e3c884f65d9aec0d4c2c",
+      "byte_exact": true
+    },
+    {
+      "source_relative_path": "postgres-final-02140bf-full.launcher.json",
+      "published_relative_path": "logs/postgres-final-02140bf-full.launcher.json",
+      "size": 800,
+      "source_sha256": "73de28d0434aec90681f076160faf82d50ef2edcd75e877aee85ab141c560fa0",
+      "published_sha256": "73de28d0434aec90681f076160faf82d50ef2edcd75e877aee85ab141c560fa0",
+      "byte_exact": true
+    }
+  ],
+  "source_full_log_sha256": "be368574b5398504b08f964dfffe5186f42749cc6f63e3c884f65d9aec0d4c2c",
+  "raw_log_archive": {
+    "path": "logs/final-pg-02140bf-closed-raw-logs.zip",
+    "size": 66277,
+    "sha256": "73dac01a41a96f37224e9bbc778a238a560cc2384f9fea5952311cf6ca6436ad",
+    "member_count": 3,
+    "members": [
+      {
+        "member": "postgres-final-02140bf-full.log",
+        "size": 485393,
+        "crc32": "dcf94cb2",
+        "sha256": "be368574b5398504b08f964dfffe5186f42749cc6f63e3c884f65d9aec0d4c2c"
+      },
+      {
+        "member": "postgres-final-02140bf-full.launcher.json",
+        "size": 800,
+        "crc32": "61833c3a",
+        "sha256": "73de28d0434aec90681f076160faf82d50ef2edcd75e877aee85ab141c560fa0"
+      },
+      {
+        "member": "restored-private-http-02140bf46df2.log",
+        "size": 462,
+        "crc32": "4fb21584",
+        "sha256": "80c245539cca5016f01ff1683ca698cb4f1c46cd727570638fa8988d653997f1"
+      }
+    ],
+    "crc_validation": "zipfile.testzip returned no corrupt member; each member compared byte-exact to published inputs"
+  },
+  "excluded_self_hash": "Manifest does not hash itself; all other published files are inventoried above."
+}

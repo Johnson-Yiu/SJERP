@@ -1,0 +1,398 @@
+{
+  "schema_version": 1,
+  "status": "FAIL",
+  "source_candidate_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "source_directory": ".tmp/final-integrated-02140bf/docs/uat-evidence/integration-closeout-02/final-02140bf-frontend",
+  "closed_run": true,
+  "results": {
+    "node_unit": {
+      "status": "PASS",
+      "passed": 179,
+      "failed": 0,
+      "evidence": "logs/npm-test-unit.log"
+    },
+    "font_typography": {
+      "status": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "evidence": "logs/node-font-typography.log"
+    },
+    "vitest": {
+      "status": "PASS",
+      "files_passed": 78,
+      "tests_passed": 725,
+      "duration_seconds": 159.1,
+      "failed": 0,
+      "evidence": "logs/vitest.log"
+    },
+    "npm_ci": {
+      "status": "PASS",
+      "exit_code": 0,
+      "evidence": "logs/npm-ci.log",
+      "packages_added": 227,
+      "packages_audited": 228,
+      "warnings": [
+        "2 deprecated package warnings",
+        "4 moderate npm audit findings"
+      ]
+    },
+    "production_build": {
+      "status": "PASS",
+      "exit_code": 0,
+      "evidence": "logs/npm-build.log",
+      "completion": "built in 2.22s",
+      "warnings": [
+        "one bundle chunk exceeds 500 kB after minification"
+      ]
+    },
+    "playwright": {
+      "status": "FAIL",
+      "candidate_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+      "profiles": 9,
+      "passed": 262,
+      "failed": 1,
+      "skipped": 0,
+      "allPassed": false,
+      "profile_results": [
+        {
+          "name": "business-suite",
+          "exit_code": 0,
+          "passed": 238,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "shared-report-templates-isolated",
+          "exit_code": 0,
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "quote-editor-isolated",
+          "exit_code": 1,
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0
+        },
+        {
+          "name": "iss006-storage-isolated",
+          "exit_code": 0,
+          "passed": 10,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "iss007-attachment-isolated",
+          "exit_code": 0,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "iss007-image-snapshot-isolated",
+          "exit_code": 0,
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "iss022-isolated",
+          "exit_code": 0,
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "iss028-035-isolated",
+          "exit_code": 0,
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "name": "iss055-rbac",
+          "exit_code": 0,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "failure": {
+        "profile": "quote-editor-isolated",
+        "test_id": "854db0be8c3252fde029-7f26666a6152537d1886",
+        "reason": "download.saveAs: canceled",
+        "stdout": "logs/playwright-profiles/quote-editor-isolated.stdout.log",
+        "stderr": "logs/playwright-profiles/quote-editor-isolated.stderr.log",
+        "last_run": "artifacts/6dad47d0-8210-4d79-a641-242a2d8e7282/.last-run.json",
+        "reported_error_context_path": "artifacts/6dad47d0-8210-4d79-a641-242a2d8e7282/quote-editor-mobile-action-261fe-reserve-preview-save-export/error-context.md",
+        "error_context_status": "MISSING_AT_CAPTURE"
+      },
+      "deferred_print_cases": 7,
+      "deferred_print_status": "NOT_RUN"
+    }
+  },
+  "log_archive": {
+    "path": "logs/final-02140bf-frontend-closed-logs.zip",
+    "member_count": 24,
+    "members": [
+      {
+        "member": "logs/node-font-typography.log",
+        "size": 194,
+        "crc32": "c70ecc74",
+        "sha256": "6f92575a932df97e118762239dbed0e0fc1079e7915d44947daf8ddc73c14740"
+      },
+      {
+        "member": "logs/npm-build.log",
+        "size": 1762,
+        "crc32": "ebc71b25",
+        "sha256": "63a76b242b644292a49e84a0cad350029c5488a777e257506436f2f41488ac95"
+      },
+      {
+        "member": "logs/npm-ci.log",
+        "size": 617,
+        "crc32": "8b3cd2a1",
+        "sha256": "5a4c4a498abf34ad5e03e2a9d2ca98464e3f7725683960b7bb1df8625d00381e"
+      },
+      {
+        "member": "logs/npm-test-unit.log",
+        "size": 47398,
+        "crc32": "d8e988fd",
+        "sha256": "88fbebe70e0b1810ec186664f3cd21212e9b38a81c2febb1bfae34cb23672e5d"
+      },
+      {
+        "member": "logs/playwright-coordinator.log",
+        "size": 1026,
+        "crc32": "73760a12",
+        "sha256": "4448ba999ceb3f9931c1fe5e5f7a9e63c1d44dd8e77f3b6d837834bf97bb7cc1"
+      },
+      {
+        "member": "logs/playwright-profiles/business-suite.stderr.log",
+        "size": 68196,
+        "crc32": "636ac995",
+        "sha256": "4ce86ac6b724a1a9d964bb7407d7d72ecb6674e80ae9b6f993a4788ad28a2321"
+      },
+      {
+        "member": "logs/playwright-profiles/business-suite.stdout.log",
+        "size": 43107,
+        "crc32": "4b2d176c",
+        "sha256": "7903d8bae0a27e6795ad51c97bbc3a9bfc88cacda1298becaebb0e7e62092ef3"
+      },
+      {
+        "member": "logs/playwright-profiles/iss006-storage-isolated.stderr.log",
+        "size": 32176,
+        "crc32": "7eb10a69",
+        "sha256": "168ce0837bfd86727596bd527f562e628a681e233bdaf40bf21284400de9047f"
+      },
+      {
+        "member": "logs/playwright-profiles/iss006-storage-isolated.stdout.log",
+        "size": 12470,
+        "crc32": "3f9e34ae",
+        "sha256": "15d9e375a068713c0e4d064b2d35cb5fb8df6df18029ddde0ad1d4bb85007124"
+      },
+      {
+        "member": "logs/playwright-profiles/iss007-attachment-isolated.stderr.log",
+        "size": 5999,
+        "crc32": "d7db5df2",
+        "sha256": "a259c1a65a55104a4985f48f4e2a8d4e3ed2e5e2f1d5e7e31089e67b37d06ce3"
+      },
+      {
+        "member": "logs/playwright-profiles/iss007-attachment-isolated.stdout.log",
+        "size": 11445,
+        "crc32": "abdc6b1e",
+        "sha256": "ef7648ab4056a777b657f6c30d8ac18fb17ee271f25e22186157a07a8101bb69"
+      },
+      {
+        "member": "logs/playwright-profiles/iss007-image-snapshot-isolated.stderr.log",
+        "size": 10160,
+        "crc32": "14370c01",
+        "sha256": "fcbd35b69c7e3b9a0fc976f2f18f4cb06f219079569c5a58311b9166c6a4dac6"
+      },
+      {
+        "member": "logs/playwright-profiles/iss007-image-snapshot-isolated.stdout.log",
+        "size": 11079,
+        "crc32": "3dfa79a5",
+        "sha256": "3aef9a282361095ed1d761711de8d092d388388589aa3b652c86126e72433473"
+      },
+      {
+        "member": "logs/playwright-profiles/iss022-isolated.stderr.log",
+        "size": 4133,
+        "crc32": "6f230729",
+        "sha256": "d5861e2bdbb585e49a65afcd4799d757cb5d7c8d28129cdafc30c7b63d45d2ec"
+      },
+      {
+        "member": "logs/playwright-profiles/iss022-isolated.stdout.log",
+        "size": 11087,
+        "crc32": "df192e4c",
+        "sha256": "8880095b59520b0a7d3b05b8682e9dca8a618fce1db930d0a9c4c4a9e65e529b"
+      },
+      {
+        "member": "logs/playwright-profiles/iss028-035-isolated.stderr.log",
+        "size": 9917,
+        "crc32": "b17fa53c",
+        "sha256": "88673f0a6f1fe9215fa93cd57ce0d48b218311ebebb8b045b1da66d287abc976"
+      },
+      {
+        "member": "logs/playwright-profiles/iss028-035-isolated.stdout.log",
+        "size": 11292,
+        "crc32": "3063be41",
+        "sha256": "38bc1e4d45aa60aa1655c6229141320b87eef31ed381536a00ae6eb70160679c"
+      },
+      {
+        "member": "logs/playwright-profiles/iss055-rbac.stderr.log",
+        "size": 6872,
+        "crc32": "f07e13da",
+        "sha256": "1db5658c729b02362c3cb43ee68408331de41d6f394386cbbb24d60b55854f41"
+      },
+      {
+        "member": "logs/playwright-profiles/iss055-rbac.stdout.log",
+        "size": 11361,
+        "crc32": "9312af15",
+        "sha256": "e17b98a0e20c49d5d85463bc317bafeecb2ceb670252b4d6b4655131605edcba"
+      },
+      {
+        "member": "logs/playwright-profiles/quote-editor-isolated.stderr.log",
+        "size": 4989,
+        "crc32": "308e391c",
+        "sha256": "bfef7fba293a0a5a6d5eb99e0f1d9c553a614bd10c7932ca68ed49a472d43bbc"
+      },
+      {
+        "member": "logs/playwright-profiles/quote-editor-isolated.stdout.log",
+        "size": 11910,
+        "crc32": "2a696a28",
+        "sha256": "0d3d797b6a617d331c84759a629ae9f7cb2b99753e4af0e2350376b02796b9f4"
+      },
+      {
+        "member": "logs/playwright-profiles/shared-report-templates-isolated.stderr.log",
+        "size": 450,
+        "crc32": "74d659eb",
+        "sha256": "79f6a30372defe9915c969342aff9f7bda10127f83771f940593166b874f1ea4"
+      },
+      {
+        "member": "logs/playwright-profiles/shared-report-templates-isolated.stdout.log",
+        "size": 10547,
+        "crc32": "5d35f7a7",
+        "sha256": "cc7c08af4ed84dabc3d00343cd1b0b1570a60f99c97273cf1cc3b4c915171135"
+      },
+      {
+        "member": "logs/vitest.log",
+        "size": 336,
+        "crc32": "4983309e",
+        "sha256": "d036326ac8c65baa721dd1ed82e4e194565aef81197cfd6582afebf91e32870a"
+      }
+    ]
+  },
+  "source_capture": {
+    "files_read_and_hashed": 308,
+    "paths_unavailable_or_changed": [
+      {
+        "path": "browser/iss006-frontend-storage-chrome.spec/screenshots/receive-remove-item-retry-deduplicated.png",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/iss006-frontend-storage-chrome.spec/screenshots/receive-remove-item-server-may-have-succeeded.png",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/iss006-frontend-storage-chrome.spec/screenshots/ship-remove-item-server-may-have-succeeded.png",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/iss007-image-snapshot-real.spec/screenshots/quote-pi-after-sku-replacement-desktop-1440.png",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/r1_repair_04_evidence_dir/finance-reference-basis-reference-basis-across-finance-transactions-and-saved-cash-config-1024-diagnostics.json",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/r1_repair_04_evidence_dir/finance-reference-basis-reference-basis-across-finance-transactions-and-saved-cash-config-1440-diagnostics.json",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/r1_repair_04_evidence_dir/inventory-ux-empty-and-failed-inventories-distinguish-errors-retry-and-no-records-diagnostics.json",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/r1_repair_04_evidence_dir/inventory-ux-inventory-overview-reserved-quantities-and-sku-drawer-at-1024-diagnostics.json",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/r1_repair_04_evidence_dir/inventory-ux-inventory-overview-reserved-quantities-and-sku-drawer-at-1280-diagnostics.json",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/r1_repair_04_evidence_dir/inventory-ux-inventory-overview-reserved-quantities-and-sku-drawer-at-1440-diagnostics.json",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/r1_repair_04_evidence_dir/inventory-ux-ledger-filters-sticky-actions-and-adjustment-dialog-at-1024-diagnostics.json",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/r1_repair_04_evidence_dir/inventory-ux-ledger-filters-sticky-actions-and-adjustment-dialog-at-1280-diagnostics.json",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/r1_repair_04_evidence_dir/inventory-ux-ledger-filters-sticky-actions-and-adjustment-dialog-at-1440-diagnostics.json",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/r1_repair_04_evidence_dir/inventory-ux-page-restoration-detail-navigation-and-browser-back-preserve-inventory-context-diagnostics.json",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/r1_repair_04_evidence_dir/inventory-ux-restricted-ui-hides-adjustment-reversal-and-unauthorized-cross-module-entrances-diagnostics.json",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/r1_repair_04_evidence_dir/iss041b-evidence-iss-041-b-raw-detail-evidence-at-1440px-diagnostics.json",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      },
+      {
+        "path": "browser/r1_repair_04_evidence_dir/iss041b-evidence-iss-041-b-raw-detail-evidence-at-700px-diagnostics.json",
+        "status": "UNAVAILABLE_AT_CAPTURE",
+        "source_sha256": "UNKNOWN"
+      }
+    ],
+    "symlinks_not_followed": [],
+    "excluded_subtree": "quote-download-sandbox-compare-20261105",
+    "source_retention_after_task": "UNKNOWN"
+  },
+  "credential_scan": {
+    "candidate_count": 33,
+    "redacted_files": 14,
+    "seed_or_secret_log_occurrences": 22,
+    "closed_isolation_token_fields": 11,
+    "cookie_or_session_values_detected": 0,
+    "audit": "PUBLISHED-REDACTION-AUDIT.json",
+    "source_retention_after_task": "UNKNOWN"
+  },
+  "immutable_assets": {
+    "png_pdf_xlsx_csv_bytes_preserved": true
+  },
+  "limitations": [
+    "Playwright-referenced error-context.md was not present at capture; failure stdout/stderr and .last-run.json were preserved.",
+    "Some source paths were unavailable or changed during capture; they are listed with UNKNOWN hashes and are not represented as byte-exact published files.",
+    "Independent quote-download root-cause copy excluded by scope.",
+    "The Playwright-referenced error-context.md was not present at capture; profile stdout/stderr and last-run metadata are retained.",
+    "17 source paths were unavailable during capture; their hashes remain UNKNOWN and they are not counted as published byte-exact files.",
+    "The separate quote-download root-cause diagnosis subtree was removed from this package after an initial staging copy; source was not modified."
+  ]
+}

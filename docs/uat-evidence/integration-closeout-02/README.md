@@ -1,91 +1,98 @@
-# INTEGRATION-CLOSEOUT-02
+# INTEGRATION-CLOSEOUT-02 当前状态
 
-统一分支：`codex/r1-prelaunch-consolidation-20261104`。本轮起点与已验证代码为 **8087f2c68b19a302a25e814ec8ce6113d91d4750**；[CI 41839476121](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41839476121) 三项SUCCESS，用户已转述ChatGPT实际核实。本次定向代码/证据复审不等于86项待复审Issue全部通过。
+统一分支：`codex/r1-prelaunch-consolidation-20261104`。固定起点`8087f2c68b19a302a25e814ec8ce6113d91d4750`，其CI41839476121三项成功已由用户转述ChatGPT实际核实；本轮定向审查不等于86项待复审全部接受。
 
-本轮统一协调补修已正常推送：`90683506f5d9447974302d83c89ba27351d5dfd4`，对应[CI41855319673](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41855319673)。三项均已完成SUCCESS，实际日志已读取；它与上述已验起点分开记录，当前不是三个后续来源的最终集成验收。
+当前冻结候选 **02140bf46df27ba1abf5b9018507c07aae825769**：在完整集成447d之上最小修复报价/财务浏览器下载生命周期。原测试不改，定向财务2/2、报价1/1，另真实Google Chrome报价1/1及实际XLSX解析通过。同一SHA SQLite1410项1338通过72跳过、PG1410项1378通过32跳过，均0失败；历史Chrome5阶段与实时/副本只读核验通过。但适用前端9profiles为262通过1失败0跳过：报价仍saveAs canceled，不能称下载缺陷已彻底修复；继续调查。
 
-## 当前来源接收（2026-11-05）
+上一完整集成锚点 **447d7816ead2e971e249cb2e762b1a6f7009b9c0** 的1410项SQLite/PG结果与两项浏览器下载失败均保留。e768仅测试遥测、应用树与447d相同；02140随后实际改变两处前端源码，不能再将02140整体应用树称与447d相同。原财务、Linux、历史完整稳定来源全部保留。
 
-财务固定来源`e301a86044ffe56b72172a94dc3b00ae09401b05`已完整合入，来源CI41862778457三项SUCCESS；三条原缺陷断言接入默认发现，SQLite3/3通过。Linux固定来源`4a4f338b09e9a464f1e66c24a905c35c970729bf`已完整合入（536789f6dbafb2874b1abfd33ade2b30faa123a4），来源CI41866028447及Linux专项41866028480各三项SUCCESS。代码预审发现正式CLI的0600回执跨UID不可读，归ISS-018并最小修复中；见[预审](REVIEW-LINUX-STABLE-SOURCE.md)。历史包按已授权跟进继续回归，未交付完整SHA前不接收。见[来源回执](stable-source-ci-receipt.json)。这不是最终集成结果，未自行关闭Issue。
+用户2026-11-05明确GitHub额度不足：后续提交使用`[skip ci]`，不再触发、等待或重跑Actions，不修改workflow配置来停用。**CI：额度暂停/未执行，不记PASS。** 本地全量、专项、实际文件及真实Chrome继续；不能本机执行的真实Linux/目标环境范围单独保留。
 
-## 最新补修代码及实际CI
+发布完整性补记：使用Windows扩展路径恢复原17项及错误上下文共18项新证据，并核实447d原5项误报缺失；[恢复审计](RECOVERY-AUDIT-EXTENDED-PATH-20261105.json)和两份frontend `PUBLISHED-EVIDENCE-MANIFEST-v2.json`保留v1原件，不改原套件失败。已核对692个相关Git暂存blob哈希。诊断04误将独立输出写入冻结证据根目录，现按[隔离补记](DIAGNOSTIC-ISOLATION-ADDENDUM.json)单列并确认不在原326项来源对账中；不混入全量262/1。诊断01的一份早期发布日志字节曾被脱敏覆盖，原字节不可恢复，仅旧指纹保留；此限制见独立诊断报告，原全量失败日志及ZIP未受影响。
 
-已正常推送代码 **90683506f5d9447974302d83c89ba27351d5dfd4**；[CI41855319673](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41855319673)三项均SUCCESS，主审已读取实际job日志与artifact元数据绑定同一SHA。这是开发侧实证，不是ChatGPT对86项Issue的独立接受。
+源码与交付提交区分：本页测试实际运行于02140候选；[应用对象回执](DELIVERY-SOURCE-IDENTITY.json)记录backend/frontend/templates/workflow对象。后续证据/台账提交不冒称重新执行应用测试；最终推送提交SHA在交付回复和远端分支中核实。
 
-| 906精确CI | 通过 | 失败 | 跳过 |
-|---|---:|---:|---:|
-| Backend（1317项） | 1259 | 0 | 58 |
-| PostgreSQL17（1317项） | 1287 | 0 | 30 |
-| Node | 179 | 0 | 0 |
-| 字体规范 | 1 | 0 | 0 |
-| Vitest | 720 | 0 | 0 |
-| Chrome / Playwright | 270 | 0 | 0 |
+旧本地操作证据发布补齐：12份曾被ignore排除的文件现有[公开ZIP及逐项对账](legacy-local-business-evidence-publication.json)，9份原XLSX/CSV逐字节、3份公开SQLite仅移除Django session而其他表逐行不变；原始文件保留本地未修改，原索引快照和原SHA仍存。最后一组[报价中断采集](quote-download-interrupt-capture-02140bf/INTERRUPT-CAPTURE-REPORT.md)3/3通过，但没有失败当次中断原因，仍不能消除原262/1的失败，不改安全策略或降低原断言。
 
-生产构建通过3.21秒。完整日志已发布并只脱敏6个测试凭据字段：[ci-9068350-receipt.json](ci-9068350-receipt.json)、[ci-9068350-logs.zip](ci-9068350-logs.zip)。同代码本机PG专项12/12及恢复/HTTP另列；之后交付的历史接续、Linux和财务反例完整来源不被该CI提前覆盖。后续文档/测试及来源提交的最终精确SHA CI仍须单独核对。
+## 当前状态表
 
-## 当前已提交的新代码（与旧CI分开）
-
-本地完整代码锚点：`a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f`，包含906两个金融反例修复、9af普通角色路由/动作补修及7项有序锁/截止日回归。角色补修SQLite91/91、干净9af检出PG64/64；已提交a840 PG专项25/25（含三个实际阻塞PID的有序锁场景）通过。冻结a840检出的完整本地回归已结束：SQLite1330项1266通过/64跳过/0失败（1253.084秒）；真实PG17共1330项1300通过/30跳过/0失败（1496.750秒），99表1081行128迁移4私有文件恢复一致、源未变且cleanup complete。运行环境为Windows/Python3.14.5，不替代最终集成版Python3.12 CI。
-
-最新已完成三CI仍为906 / 41855319673；它不能提前覆盖9af/a840新增代码。最终普通推送后，按最终精确SHA另核实三项CI。当前已确认的3项财务反例均有公共ISS-105归属，独立复审未完成。
-
-## 当前工作与边界
-
-| 工作 | 当前结果 | 证据 / 后续动作 |
+| 范围 | 状态 | 已完成 / 仍缺 |
 |---|---|---|
-| 当前首页和状态表 | 已按已验版本更新 | [前包首页](../review-integration-batch-20261104/README.md)、[当前状态](../review-integration-batch-20261104/DELIVERY-STATUS.md)；旧原文仅放在明确历史章节。 |
-| 门槛分类 | 已纠正 | [READINESS-GATES](../r1-prelaunch-consolidation-20261104/READINESS-GATES.md)：历史接通为已授权待实施，真实资料/生产配置/真实执行分开。 |
-| 86项待复审清单 | 已按R1 35、R2 43、R3 8及12模块逐项核实索引 | [REVIEW-BACKLOG.md](REVIEW-BACKLOG.md)、[机器清单](review-backlog.json)；不自行关闭Issue。 |
-| 当前关键页视觉 | 187图/58操作文件已校验，独立视觉待验 | [VISUAL-EVIDENCE.md](VISUAL-EVIDENCE.md)、[机器清单](visual-evidence.json)；记录实际尺寸、操作/数据、源码来源与边界，空页不证明正向流程。 |
-| 已知缺陷公共登记 | 按归属去重核对 | [DEFECT-LEDGER-AUDIT.md](DEFECT-LEDGER-AUDIT.md)；不只留在专属DEFECTS报告，不复用ID。 |
-| 后续三个来源 | 财务已接收；Linux审查中；历史回归中 | 财务完整e301a860已合入，原三断言默认发现接线后SQLite3/3；Linux完整4a4f338已合入且来源三CI与三专项成功；新增跨UID回执交接缺口归ISS-018补修中；历史未完整交付前不合入移动HEAD。 |
+| 当前报告、台账、历史保留 | PASS（文档一致性） | 124唯一ID，87 FPR、14 NEEDS、13 BLOCKED、0 OPEN、10 CLOSED；原86队列保持，ISS-121凭完整实现与隔离证据单独增加待复审1项；未自行关闭Issue。 |
+| 集中复审包 | 待独立复审 | 原86项按R1 35/R2 43/R3 8及12模块整理，365条代码入口在02140树存在；ISS-121单独补充。不以存在或CI成功替代逐项接受。 |
+| 财务反例与普通角色补修 | 已修复，待独立复审 | 原三反例默认发现；SQLite3/3、完整财务PG30/30；旧错误匹配存量未扫描或自动改写。 |
+| Linux完整来源 | 已合入，补修后专项待验 | 来源真实Linux三专项已成功；新增正式CLI回执跨UID交接补修0037b8c，本机27通过/2 POSIX跳过，真实Linux补修路径未执行。 |
+| 附件保存后重开 | 已修复，待独立复审 | 确定性修前0/1失败，修后相关Vue27/27；实际Chrome156原三场景3/3及可见附件截图完成。 |
+| 历史实际接续 | FIXED_PENDING_REVIEW | 稳定ba427474完整合入447d；02140 PG全量、实际非空历史表恢复/拒绝保护、真实Chrome五阶段接续及live/发布副本核验通过；ISS-121单独补充复审，不是独立接受或上线批准。 |
+| 视觉 | 开发侧证据已补，独立待验 | 215份既有/定向图及62操作文件，另151份447d实际页面补充索引；逐图源码/尺寸/数据/边界明确，失败场景不冒充正向完成，历史通道标签另有勘误。 |
+| 447d阶段后端全量/备份 | PASS（本地隔离） | 447d SQLite1410项1330通过/80跳过/0失败；PG1410项1378通过/32跳过/0失败，102表1218行133迁移5文件恢复一致，历史/财务/实际接续恢复PASS，源未变、cleanup complete。 |
+| 最终02140候选 | FIX REQUIRED | 后端全量及历史Chrome通过；适用Playwright262通过/1报价下载失败/0跳过。9profiles实际结果不覆盖为通过，原print7延期，继续修复报价。 |
+| 打印完整成品与分页 | 用户明确延期 | 不追加尝试或催办，既有源断言不删除，不扩大到其他业务。 |
 
-## 统一协调的财务最小补修
+## 完整来源与代码修复
 
-代码提交：`90683506f5d9447974302d83c89ba27351d5dfd4`，归属公共台账ISS-105两个明确子项，未新建重复ID或关闭Issue。
+| 来源/修复 | 精确SHA | 接收/验收边界 |
+|---|---|---|
+| 本轮固定起点 | 8087f2c68b19a302a25e814ec8ce6113d91d4750 | 已验基线；原五来源及迁移汇合成果保留。 |
+| 历史实际接续完整来源 | ba4274742727a6794608dc8581a49b3692d865a6 | 完整合入447d7816；从远端重读核实，不取移动HEAD或最后单补丁。 |
+| 财务反例完整来源 | e301a86044ffe56b72172a94dc3b00ae09401b05 | 完整合入087fe34d；来源CI41862778457三成功，来源失败证据不改。 |
+| Linux运维完整来源 | 4a4f338b09e9a464f1e66c24a905c35c970729bf | 完整合入536789f6；来源CI41866028447、Linux41866028480各三成功，不是集成补修通过。 |
+| 有效分类匹配/核对指纹 | 90683506f5d9447974302d83c89ba27351d5dfd4 | 新/旧本金匹配锁内重验、核对失效，金额/日期/原事实不改；ISS-105。 |
+| 普通财务角色路由/动作 | 9af2a32fa81df3aa975424b70a887057e40b6b22 | 只读preview、create/update隔离、原finance或reports导出契约；未启用正式RBAC。 |
+| 有序锁/截止日/旧摘要测试 | a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f | 原保护检查下PG25/25，三个真实独立阻塞PID；旧失败草稿另列。 |
+| 原三财务反例默认发现 | d4e858675b907fe881186d4e45c6676df8c003cb | 原defect_repros.py不改，三断言进入默认测试。 |
+| 受控回执只读属组 | 0037b8c5899554819943944a9cf9e4ea952d2bae | 默认0600、显式现存POSIX组0640，权限/发布失败不签发正式文件；ISS-018。 |
+| 跟进摘要重开取完整详情 | 78b1eb0cbf05bec5865d98803fb9cebf62cb0202 | 避免把摘要缺失字段/附件作为空表单；ISS-007。 |
+| 浏览器实际下载生命周期 | 02140bf46df27ba1abf5b9018507c07aae825769 | 仅报价anchor/Blob URL延后清理、财务CSV附DOM后清理；原断言保留，ISS-020/105。全量262通过/1报价失败，财务CSV两视口通过；不称报价已彻底解决。 |
+| 附件可见性强断言与视口截图 | f92824b814012783a8c992bf50f95f2e4e1ceae9 | 原三场景不删不弱化；新增实际附件区桌面/窄屏截图。 |
 
-- 在8087产品代码上新增API回归，修正测试夹具媒体根目录后3/3实际失败：新本金、旧/新混合本金均错误接受已分类为对外支出的事实；完成核对未因新匹配失效。最初2失败/1夹具错误也保留，不能写成3个产品失败。
-- 匹配校验改为当前追加分类，新旧混合入口在共享账户/事实锁内再次校验，避免等锁期间的分类或更正绕过。
-- 核对指纹纳入涉及本账户/截止日事实的普通及历史本金匹配；金额、日期、实际余额和原事实不变。没有匹配的旧核对保持原指纹格式；有既有匹配的旧核对会保守显示待重核，这一兼容行为明确保留。
-- 修后本机Python3.14.5 SQLite32/32通过、0失败/跳过，包含5项新API/兼容回归及既有财务/真实性负路径。同代码9068350真实PG17.11专项12/12通过、0失败/跳过（新5、真实性2、真实并发5），99表1081行128迁移4文件恢复一致且HTTP4/4、源未变/清理完成；见[PG结果](coordinator-finance-postgres-result.json)和[完整日志](coordinator-finance-postgres-logs.zip)。最终精确SHA全量/CI另列，不提前通过。
+来源完整链、文件审查及范围见[来源回执](stable-source-ci-receipt.json)、[财务审查](REVIEW-FINANCE-ADVERSARIAL-SOURCE.md)、[Linux审查](REVIEW-LINUX-STABLE-SOURCE.md)、[历史候选预审](REVIEW-HISTORY-CANDIDATE.md)。候选预审为历史时点；最终接收后的[447d集成来源审查](INTEGRATED-SOURCE-REVIEW-447D.md)与[source-equivalence](source-equivalence-447d.json)另列，候选不是接收凭据。
 
-## 已验版本结果（不冒称本轮重跑）
+## 实际本地结果（各自源码，不混计）
 
-| 8087f2c精确CI | 通过 | 失败 | 跳过 |
-|---|---:|---:|---:|
-| Backend | 1254 | 0 | 58 |
-| PostgreSQL 17 | 1282 | 0 | 30 |
-| Node | 179 | 0 | 0 |
-| 字体规范 | 1 | 0 | 0 |
-| Vitest | 720 | 0 | 0 |
-| Chrome / Playwright | 270 | 0 | 0 |
+| 源码 / 套件 | 通过 | 失败/错误 | 跳过 | 证据 |
+|---|---:|---:|---:|---|
+| 447d冻结检出 SQLite全量1410 | 1330 | 0 | 80 | backend-full-447d-python312-result.json；900.061秒，独立Python3.12/UTF8 |
+| 447d冻结检出 PG17.11全量1410 | 1378 | 0 | 32 | [final-pg-447d结果](final-pg-447d/final-pg-447d-result.json)及原日志ZIP；1309.665秒，102表1218行133迁移5文件恢复一致 |
+| 447d Node / 字体 / Vitest | 179 / 1 / 725 | 0 | 0 | final-447d-frontend/FINAL-FRONTEND-447D.json；构建成功，725项属78文件 |
+| 447d 适用Playwright | 261 | 2 | 0 | 同上；两项导出saveAs canceled调查中，延期打印spec7项未运行另列 |
+| a840冻结检出 SQLite全量1330 | 1266 | 0 | 64 | full-a840-result.json；1253.084秒 |
+| a840冻结检出 PG17.11全量1330 | 1300 | 0 | 30 | 同上；1496.750秒，99表1081行128迁移4文件恢复一致，cleanup complete |
+| d4完整财务来源+原三断言 PG专项 | 30 | 0 | 0 | full-pg-a840/finance-source-d4e858；70.872秒，含七组并发及真实HTTP |
+| 0037回执/签名/保留/信任根 | 27 | 0 | 2 | receipt-handoff-python312-result.json；7.123秒，Windows/Python3.12，不替代Linux跨UID |
+| f928 Node | 179 | 0 | 0 | frontend-f928-result.json |
+| f928 字体 | 1 | 0 | 0 | 同上 |
+| f928 Vitest（78文件） | 721 | 0 | 0 | 同上；167.11秒 |
+| e768 Google Chrome156（应用代码与447d一致） | 3 | 0 | 0 | attachment-google-chrome-e768-result.json；23.7秒，CDP版本及同进程实际Google exe启动记录，进程/端口/数据清理完成 |
 
-生产构建通过，`git diff --check`通过。同SHA本机PG17专项15/15、0失败/跳过，备份恢复99表1081行128迁移4文件，真实恢复HTTP为403/403/200/404。见[精确版本回执](baseline-8087-ci-receipt.json)、[最终CI原日志归档](baseline-ci-41839476121-logs.zip)及[日志摘要/脱敏说明](baseline-ci-log-manifest.json)。实际财务PNG/PDF/CSV与完整数据库快照的[紧凑CI归档](final-ci-41839476121-evidence.zip)也随本轮提交，来源artifact摘要保留。原先1f候选的前端268通过/2失败仍是失败；03b524d完整快照缓冲、7a896d0财务证据路径补修后，8087全套270通过。新提交的实际运行与专项将按各自精确SHA另外记录。
+f928 `npm ci`成功、生产构建2.25秒通过。Node24.16.0/npm11.13.0不是Node22 CI镜像；保留4项moderate开发依赖、lucide弃用及大chunk警告。a840运行于Windows/Python3.14.5，不能称Python3.12/Linux全量。独立Python3.12锁定依赖安装、pip check、system check和迁移差异检查已通过，最终历史整合后另验。
 
-## 稳定来源接收条件
+所有失败、修前/修后和环境限制见[TEST-RESULTS](TEST-RESULTS.md)。原有序锁草稿五轮各4通过/3失败，带未提交测试例外，绝不当作原guard通过；[原日志与来源说明](LOCK-DRAFT-PROVENANCE.md)保留。首次缺PG参数退出2/0测试、未定位OpenSSL的环境错误及浏览器路径/默认Chromium标签更正也明确记录。
 
-1. 明确完整交付SHA、相对8087的完整提交范围、来源报告、正常/拒绝路径和原始失败日志；不只取最后补修提交。
-2. 核查迁移叶节点/合并迁移/新库与既有库升级/危险回退；不删除迁移，不降低既有断言。
-3. 历史必须经正式财务服务保留真实性、金额/实际日期/账户/凭证、来源唯一性、双人审批；历史归档不是新现金流。未结、库存基准和剩余履约按组验证不重复、失败原子性及并发重试。
-4. 核对新表/文件/序列及私有恢复副本备份、恢复后权限审计、旧数据兼容。一次性Linux结果与目标服务器/外部存储验收分开。
-5. 财务反例发现的明确产品缺陷由统一集成协调最小修复及回归；历史包和财务包不同时修改公共财务服务。
-6. 集成后按同一精确SHA执行适用全量/专项，核实Backend、PostgreSQL、Frontend三项CI；专项独立列出，不由CI替代。
+## 视觉与复审入口
 
-## GitHub运行外部阻断
+[REVIEW-BACKLOG](REVIEW-BACKLOG.md)及[机器清单](review-backlog.json)逐项列原86项入口、最新证据和具体关闭缺项。ISS-007、ISS-018及ISS-121的新增发现按原ID在公共台账登记，不仅留在专属缺陷报告。
 
-已独立读取历史来源run41874838749：三job均steps=0，原注释明确近期付款失败或需要提高支出限额。见[原注释记录](github-billing-blocker.json)。继续所有本地验收与正常推送，最终集成自己的运行必须另核对；不能把未启动算通过。不修改账单、不修改现有ci.yml、不绕过/跳过断言。
+[VISUAL-EVIDENCE](VISUAL-EVIDENCE.md)及[机器索引](visual-evidence.json)逐图记录实际尺寸、操作、合成数据、源码SHA与覆盖边界。空态、旧失败CI、未知来源、默认Chromium与实际Chrome分开；没有把旧图改成新集成图。真实Chrome的[桌面附件区](attachment-google-chrome-e768/browser/iss007-attachment-real.spec/screenshots/follow-up-saved-attachment-desktop-viewport.png)和[390视口](attachment-google-chrome-e768/browser/iss007-attachment-real.spec/screenshots/follow-up-saved-attachment-390-viewport.png)已开发侧目视确认，仍待ChatGPT独立接受。
 
-## 剩余上线门槛
+本轮447d另外保留[151张实际页面补充索引](integrated-page-evidence-447d.json)，逐张实际尺寸、原图SHA、场景及源码；排除fixture媒体、终止尝试、失败截屏和延期完整打印。它不把混合通道统一称Google Chrome，不把261/2的套件结果写成全通过。
 
-- 历史实际资金/未结/库存/履约接通仍是已授权开发验收范围，当前代码尚不能视为已完成。
-- 正式鉴权/RBAC/实名审计、真实启用资料、生产配置及真实迁移执行按各自授权边界处理；不以缺资料掩盖开发缺项。
-- Linux真实隔离验收来源4a4f338已交付，完整来源审查与集成版专项仍待完成；目标服务器的HTTPS、运行角色、全写入者保护、异地副本/独立密钥、告警及RPO/RTO仍另行验收。
-- 内部财务真实性持久层边界按反例可达性证据核查，不以DB管理员直写能力单独认定API漏洞。合法旧匹配的核对摘要已验；目标存量中旧缺陷可能造成的错误匹配未扫描或自动改写，存量修复不被新入口修复提前覆盖。
-- 完整打印成品及分页按用户决定延期，不追加尝试或催办，不扩大到其他主体快照。
-- npm4项moderate开发依赖、生产构建大chunk及已有弃用告警仍保留。
+## 剩余门槛
 
-## 历史、原始证据与权限
+- 历史完整稳定SHA已接收；集成迁移、隔离PG全量、新表非空恢复/不可变性、Chrome接续、独立源状态复核已有上述运行证据，交ChatGPT逐项复审正式财务契约、源编号/幂等、组原子性、权限审计和未覆盖边界。来源结果不替代本轮结果，隔离验收不代表真实启用批准。
+- 回执跨UID真实Linux补修验收未执行；本机没有已验证可用的Linux执行环境，GitHub CI按用户最新决定暂停。不得用Windows模拟计作通过。
+- 正式认证/员工身份/RBAC、真实启用资料、生产配置、真实迁移执行、目标服务器HTTPS/角色/媒体权限、独立故障域副本/密钥、外部告警及RPO/RTO仍分别待验/需单独授权。历史代码未完成不能归因缺真实凭证。
+- 既有错误本金匹配的目标存量未扫描或自动改写；合法旧摘要兼容与新入口拒绝不等于历史错误自动修复。
+- 打印完整成品及分页按用户决定延期。未合master、未部署、未导入真实资料、未启用正式RBAC、未关闭Issue、未宣布上线就绪。
 
-[history-manifest.json](history-manifest.json)记录改写前报告的逐字节副本、原路径和摘要。原始失败日志、数据库、截图及实际文件不改写。以旧证据复用支持有限结论，不将旧分支结果充作新集成通过。
+## 历史与原始证据
 
-未合并master、未部署、未启用正式RBAC、未导入真实资料、未自行关闭Issue；代码/证据整理和Codex自查均不冒称ChatGPT独立复审，也不宣布上线就绪。
+[8份8087原报告历史清单](history-manifest.json)保持逐字节；[改写前阶段首页/状态快照](checkpoint-history/manifest.json)保留本轮各阶段旧描述及原始摘要。旧运行中/未提交描述只作历史，不覆盖当前表。原始失败日志、截图、实际文件与数据库不追改。最后统一分支成功CI为906/41855319673；0037 CI41880236996及Linux41880236963的零步骤账单失败另列[记录](github-billing-blocker.json)，不视为测试通过。用户暂停后不再等待这些运行。
+
+### 浏览器标签勘误
+
+78b两轮和f928一轮均实际使用默认Chromium，外层PLAYWRIGHT_CHANNEL被原隔离runner覆盖。目录旧命名不证明Google Chrome，位图/通过数量不改，元数据已纠正并保留旧标签。f3e首次随机Vite1719被本机Node fetch拒绝（自有探针0请求、bad port），第二次新增命令行遥测因缺enable-automation未运行业务；均保留失败和清理记录。e768改为文件级test.use chrome，使用支持的版本遥测与pw:browser启动日志，在原隔离保护和安全独占端口下3/3通过。旧CI截图标签另按精确producer配置审计，不能因CI装有Chrome就认定每张都是Chrome。
+
+恢复后不可变性实证：三张实际非空历史表各UPDATE/DELETE/TRUNCATE，共9/9次被原历史guard拒绝，SQLSTATE均55000；逐次SAVEPOINT回滚，完整数据库状态/序列比较未变。证据为final-pg-447d中的history-operational-restored-447d7816ead2.json，不并入1410单元测试数量，不声称已验证生产受限角色。
+
+最终447d备份命令补充专项：8/8通过、0失败/错误/跳过，326.359秒，Python3.12/真实PG17.11。原始校验和、损坏归档、缺媒体、版本、工具失败、错误环境、production-stage拒绝及正常恢复断言均保留；各任务目录清理完成。原全量32跳过不改写，这8项单独列出。首轮沙箱1通过7失败（pg_ctl restricted token87，尚未seed，source_unchanged=null），获工具审批在沙箱外按原断言复跑通过；两个原始日志及逐case结果封存于final-backup-command-447d-result.json和ZIP。

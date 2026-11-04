@@ -1,0 +1,8 @@
+{
+  "runner_exit_code": 1,
+  "published_log": "runner.log",
+  "published_bytes": 16729,
+  "published_sha256": "7d7cc18590f66be18726eaa7c00d0568fa2379cfae40efd111d874f1f8fb7cc3",
+  "isolation_token_redactions": 2,
+  "raw_log_path": "UNKNOWN (raw unredacted source log was not retained)"
+}

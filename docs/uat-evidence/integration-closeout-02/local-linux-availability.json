@@ -1,0 +1,27 @@
+{
+  "command": "wsl --list --verbose",
+  "exit_code": 1,
+  "raw_sha256": "806376fa56f41b9d2ff2116f2b584039e4ff3650312432708c75849d93f59552",
+  "usable_linux_distribution_verified": false,
+  "docker_command_found": false,
+  "scope": "Read-only local inventory; no distro installation/start, Windows feature changes or remote Docker connection. Raw native output kept; no Linux test PASS inferred.",
+  "actual_output": "Native WSL returned installation/help usage, not a usable distribution list. No usable Linux runtime verified; this is not proof all possible runtimes are absent.",
+  "logs": [
+    {
+      "path": "local-linux-availability.log",
+      "bytes": 2679,
+      "sha256": "b6befc2ef3c8671464e89fc1781693ef95ae74561a08a556a37222dc5ceab466"
+    },
+    {
+      "path": "local-linux-wsl-native.raw",
+      "bytes": 2304,
+      "sha256": "806376fa56f41b9d2ff2116f2b584039e4ff3650312432708c75849d93f59552"
+    },
+    {
+      "path": "local-linux-wsl-native-decoded.txt",
+      "bytes": 1535,
+      "sha256": "eea687c66fc2b0ee6c476c8998744f40b7d7e4d64ef37861b616abc040fc81e1"
+    }
+  ],
+  "archive_sha256": "07b8eff7f1c310e3b644739552d8997765b9203df49433145c1f69f85c626a79"
+}

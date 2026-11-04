@@ -1,4 +1,4 @@
-# Linux 稳定来源独立预审
+# Linux 稳定来源开发侧预审
 
 ## 结论
 
@@ -66,9 +66,38 @@ README 所述“同轮本地 27 项”在固定来源提交的原始证据中没
 ## 整合门槛与剩余风险
 
 1. 可以合入固定代码 SHA；将上述 0600 回执跨账号读取问题作为明确的运维接通项。确定受控权限交接，并用真实分离 UID 对 CLI 产生的回执文件完成 monitor/prune 读写拒绝回归。
-2. 最终集成 SHA 单独执行三项 CI 和 Linux 六 job；不要把来源 SHA 通过记作集成 SHA 通过。
+2. 最终集成 SHA 单独执行三项 CI 和 Linux 三项专项（合计六个 job）；不要把来源 SHA 通过记作集成 SHA 通过。
 3. 目标环境提供独立 root/恢复签发身份、root 管理的 pin/公钥/OpenSSL 路径、受限保留身份及不可由该身份直接改写/删除的存储保护；核验 UID/sudoers/systemd 权限。
 4. 在隔离预生产 PG17 上以实际角色演练备份、恢复、签名回执、过期监控、保留与故障告警；验证真实 Nginx 证书/代理、外部通知接收、异地或独立故障域副本及恢复抽查。
 5. 当前 Linux 定时器/OnFailure 证据只证明任务临时 unit 到同机 loopback receiver 的传递；不能视为外部值班通知或生产调度通过。同 runner 副本不能视为异地灾备。
 
 审查只写入本报告；未修改产品文件、workflow、公共台账或 Git 状态。
+
+
+## 2026-11-05 ISS-018 回执跨账号交接补修（已提交0037b8c）
+
+上一节记录的 0600 回执交接缺口已在当前工作树作最小补修，已提交0037b8c5899554819943944a9cf9e4ea952d2bae，真实 Linux 专项仍待验：
+
+- `backend/operations_backup.py` 的 `restore-encrypted-verify` 增加可选 `receipt_read_group` 配置。省略时回执保持 `0600`；配置时先在恢复前解析必须已存在的 POSIX 组名，非 POSIX/不存在/无效组失败关闭。该配置不适用于其他操作。
+- `backend/crm/services/operations_receipt.py` 新增回执专用独占发布 helper。内容先写入同目录、默认 `0600` 的暂存文件并 fsync；按配置对打开的暂存 FD 执行 `fchown(fd, -1, gid)`，再 `fchmod(fd, 0640)`，再次 fsync、核对 inode/模式/属组后用不覆盖的 hard link 发布。权限或 link 发布失败时清除本次暂存/本次链接，不产生正式回执；保留目标数据库并由 CLI 错误附注要求人工检查。未设置时仍以 `0600` 发布。没有 world-read；备份归档和私钥权限路径未改变。
+- `test_operations_receipt_cli.py` 新增默认私有模式、存在组的 `0640`、无效/不支持组在恢复前拒绝、权限设置失败不发布、link 失败清除暂存且不发布等测试。POSIX 的真实 `fchown/fchmod` 单元在 Windows 上标为 skip，由 Linux 专项执行。
+- `linux_receipt_signer.py` 现在以 root 调用正式 `backend/operations_backup.py restore-encrypted-verify` CLI；加密密钥仅经 stdin 传给受限 wrapper，再写入 root 私有临时目录，stdout 只返回 CLI 结果和回执路径，不输出或重写回执 JSON。
+- `linux_operations_pg_acceptance.py` 继续以普通 runner 身份运行。它通过正式 CLI 实际生成默认 root-owned `0600` 回执并断言普通账号读被拒；再以该账号主组生成 root-owned `0640` 回执，断言普通账号能读原文件、不能写，monitor 直接读取同一原文件，prune 使用从该文件读取的签名数据；仍断言普通账号不能读 root 私钥。该真实 Linux 代码路径尚未执行。用户现因额度暂停CI；本机只读核实未找到docker命令，沙箱外wsl --list --verbose退出1，仅返回安装/帮助，未确认可用发行版（local-linux-availability.json及原始日志ZIP）。未安装/启动WSL或改系统功能，不能将Windows用例等同真实Linux。
+
+### 本地回归结果
+
+运行环境：主审提供的 `.tmp/closeout-python312/Scripts/python.exe`，确认 CPython `3.12.16`；`DATABASE_URL=sqlite:///:memory:`。
+
+- 命令：`python manage.py test crm.tests.test_operations_receipt_cli crm.tests.test_operations_backup --verbosity 2`
+- 结果：12 项运行，10 通过、2 跳过、0 失败；跳过项是 POSIX 专属属组发布及权限故障注入测试。本机为 Windows，未以模拟结果替代 Linux 权限证据。Django system check 无问题。
+- `linux_operations_pg_acceptance.py`、`linux_receipt_signer.py`、`operations_backup.py`、`operations_receipt.py` 和 `test_operations_receipt_cli.py` 的 Python 3.12 AST 解析均通过。
+- 另一次尝试同时运行 `test_operations_receipt` 时，相关 CLI/备份用例通过，但 `ReceiptIssuanceTests.setUpClass` 因当前 Windows 环境找不到 `openssl` 可执行文件而报环境错误；该次命令不能记为全通过。聚焦命令不含该依赖套件并通过。密码签名、正式 PG17 与权限交接仍由真实 Linux 专项验证。
+- 主审已核实的历史付款/限额阻断 run `41874838749` 三个 job 均未进入 step；这是外部 CI 条件。本轮没有复用或伪造该结果，也未触发新的 workflow。
+
+本补修仅涉及 `operations_backup.py`、`operations_receipt.py`、`test_operations_receipt_cli.py`、`linux_operations_pg_acceptance.py` 和 `linux_receipt_signer.py`，以及本报告。未修改公共 Issue 台账、workflow 或 Git 历史；Issue 状态由主审统一登记。真实 Linux 结果与最终集成 SHA CI 仍为待验。
+
+## 主审扩展回归补充（2026-11-05）
+
+本机已有Git OpenSSL位于`D:/Program Files/Git/usr/bin/openssl.exe`。通过原测试支持的`OPS_TEST_OPENSSL`显式指定，不修改测试或系统PATH后，Python3.12.16实际执行receipt_cli、operations_backup、receipt、retention、trust共29项：**27通过、2个POSIX专属skip、0失败，7.123秒**。首次未定位可执行文件的环境错误仍保留，不以此成功追改原失败。该扩展实际执行签名、篡改/错包/过期拒绝及保留测试，但不能代替真实Linux的跨UID权限验收。
+
+封闭日志与实际数量：[receipt-handoff-python312-result.json](receipt-handoff-python312-result.json)、[日志ZIP](receipt-handoff-python312-logs.zip)。早期12项聚焦/环境错误原始文件未落盘，仅有子代理工具输出；此证据限制明确保留，未重新制造失败日志。

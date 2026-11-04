@@ -1,0 +1,25 @@
+{
+  "source_sha": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "runtime": "Python3.12.16 Windows; SQLite in-memory only for system/model/graph checks",
+  "status": "PASS",
+  "tests_count": "Not a unit-test suite; three actual commands exit0",
+  "checks": [
+    {
+      "path": "django-system-check-447d.log",
+      "bytes": 146,
+      "sha256": "0508413f55f8c3d3447e6169ef56afac4173efb3520003161c2744a6083f640e"
+    },
+    {
+      "path": "makemigrations-check-447d.log",
+      "bytes": 145,
+      "sha256": "26949062f35351a9485711070b7e368f6de6d88529246c5e77d17c32141f05c7"
+    },
+    {
+      "path": "migration-graph-447d.log",
+      "bytes": 1548,
+      "sha256": "763b5f245fbe72b9e5828fe5dac3dc3ee341e58dafcae532923dfe3ca53ba642"
+    }
+  ],
+  "archive_sha256": "c25fcb8a2b9f148f44356bb702212edd0c2408926afabbc43e4ee97186713872",
+  "scope": "No migration changes, conflicts absent, unique CRM leaf0108. Real PostgreSQL applies/restores are separately recorded; not inferred from SQLite."
+}

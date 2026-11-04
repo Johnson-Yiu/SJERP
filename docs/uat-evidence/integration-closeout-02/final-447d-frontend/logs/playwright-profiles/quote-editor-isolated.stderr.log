@@ -1,0 +1,43 @@
+[isolated Django API] [05/Nov/2026 03:00:49] "GET /api/__test__/isolation/<CLOSED_ISOLATION_TOKEN_REDACTED>/ HTTP/1.1" 200 326
+[isolated Django API] [05/Nov/2026 03:00:50] "GET /api/__test__/isolation/<CLOSED_ISOLATION_TOKEN_REDACTED>/ HTTP/1.1" 200 326
+(node:17148) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [05/Nov/2026 03:00:54] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 03:00:54] "GET /api/quotes/?customer=1&search=&status=&ordering=-updated_at&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 03:00:55] "GET /api/quotes/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 03:00:55] "GET /api/customers/?page=1 HTTP/1.1" 200 500
+[isolated Django API] [05/Nov/2026 03:00:55] "GET /api/skus/?page=1 HTTP/1.1" 200 1359
+[isolated Django API] [05/Nov/2026 03:00:55] "GET /api/contacts/?customer=1&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 03:00:55] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 03:00:55] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 03:00:55] "GET /api/customers/?page=1 HTTP/1.1" 200 500
+[isolated Django API] [05/Nov/2026 03:00:55] "GET /api/quotes/?customer=1&search=&status=&ordering=-updated_at&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 03:00:55] "GET /api/skus/?page=1 HTTP/1.1" 200 1359
+[isolated Django API] [05/Nov/2026 03:00:55] "GET /api/quotes/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 03:00:55] "GET /api/contacts/?customer=1&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 03:00:55] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 03:00:56] "POST /api/quotes/availability-preview/ HTTP/1.1" 200 130
+[isolated Django API] [05/Nov/2026 03:00:56] "POST /api/sales-rules/check-quote/ HTTP/1.1" 200 43
+[isolated Django API] [05/Nov/2026 03:00:56] "POST /api/sales-rules/check-quote/ HTTP/1.1" 200 43
+[isolated Django API] [05/Nov/2026 03:00:56] "GET /api/quotes/preview-template/?discount=0 HTTP/1.1" 200 952
+[isolated Django API] [05/Nov/2026 03:00:57] "POST /api/sales-rules/check-quote/ HTTP/1.1" 200 43
+[isolated Django API] [05/Nov/2026 03:00:57] "POST /api/quotes/ HTTP/1.1" 201 1383
+[isolated Django API] [05/Nov/2026 03:00:57] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 03:00:57] "GET /api/customers/?page=1 HTTP/1.1" 200 500
+[isolated Django API] [05/Nov/2026 03:00:57] "GET /api/quotes/?customer=1&search=&status=&ordering=-updated_at&page=1 HTTP/1.1" 200 1435
+[isolated Django API] [05/Nov/2026 03:00:57] "GET /api/skus/?page=1 HTTP/1.1" 200 1359
+[isolated Django API] [05/Nov/2026 03:00:57] "GET /api/contacts/?customer=1&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 03:00:57] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 03:00:57] "POST /api/quotes/availability-preview/ HTTP/1.1" 200 130
+[isolated Django API] [05/Nov/2026 03:00:57] "POST /api/sales-rules/check-quote/ HTTP/1.1" 200 43
+[isolated Django API] [05/Nov/2026 03:00:57] "POST /api/quotes/ HTTP/1.1" 201 1383
+[isolated Django API] [05/Nov/2026 03:00:58] "GET /api/quotes/?customer=1&search=&status=&ordering=-updated_at&page=1 HTTP/1.1" 200 2819
+[isolated Django API] [05/Nov/2026 03:00:58] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 03:00:58] "GET /api/operation-logs/?entity=crm.quote&object_id=2&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 03:00:58] "GET /api/quotes/2/workbench/ HTTP/1.1" 200 2886
+[isolated Django API] [05/Nov/2026 03:00:58] "GET /api/quotes/2/export/ HTTP/1.1" 200 10217
+Error: Isolated Playwright suite exited with code 1.
+    at runCommand (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/final-integrated-447d/frontend/scripts/run-isolated-browser-tests.mjs:176:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async runStage (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/final-integrated-447d/frontend/scripts/run-isolated-browser-tests.mjs:181:3)
+    at async main (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/final-integrated-447d/frontend/scripts/run-isolated-browser-tests.mjs:652:7)

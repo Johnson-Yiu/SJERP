@@ -1,0 +1,720 @@
+[isolated Django API] [05/Nov/2026 02:50:20] "GET /api/__test__/isolation/<CLOSED_ISOLATION_TOKEN_REDACTED>/ HTTP/1.1" 200 326
+[isolated Django API] [05/Nov/2026 02:50:22] "GET /api/__test__/isolation/<CLOSED_ISOLATION_TOKEN_REDACTED>/ HTTP/1.1" 200 326
+(node:30532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [05/Nov/2026 02:50:27] "POST /api/rmb-cash-events/voucher-upload/ HTTP/1.1" 201 95
+[isolated Django API] [05/Nov/2026 02:50:27] "POST /api/rmb-cash-events/ HTTP/1.1" 201 1759
+[isolated Django API] [05/Nov/2026 02:50:27] "POST /api/rmb-cash-events/1/confirm/ HTTP/1.1" 200 1895
+[isolated Django API] [05/Nov/2026 02:50:29] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:50:30] "GET /api/rmb-cash-events/ HTTP/1.1" 200 1998
+[isolated Django API] [05/Nov/2026 02:50:33] "GET /api/rmb-cash-events/sources/?currency=CNY HTTP/1.1" 200 1015
+[isolated Django API] [05/Nov/2026 02:50:33] "POST /api/rmb-cash-events/voucher-upload/ HTTP/1.1" 201 95
+[isolated Django API] [05/Nov/2026 02:50:33] "POST /api/rmb-cash-events/preview/ HTTP/1.1" 200 1334
+[isolated Django API] [05/Nov/2026 02:50:34] "POST /api/rmb-cash-events/ HTTP/1.1" 201 1827
+[isolated Django API] [05/Nov/2026 02:50:34] "GET /api/rmb-cash-events/ HTTP/1.1" 200 3826
+[isolated Django API] [05/Nov/2026 02:50:35] "GET /api/rmb-cash-events/2/duplicate-candidates/ HTTP/1.1" 200 303
+[isolated Django API] [05/Nov/2026 02:50:35] "POST /api/rmb-cash-events/2/confirm/ HTTP/1.1" 200 1963
+[isolated Django API] [05/Nov/2026 02:50:35] "GET /api/rmb-cash-events/ HTTP/1.1" 200 3962
+[isolated Django API] [05/Nov/2026 02:50:36] "POST /api/rmb-cash-events/voucher-upload/ HTTP/1.1" 201 95
+[isolated Django API] [05/Nov/2026 02:50:36] "POST /api/rmb-cash-events/ HTTP/1.1" 201 1755
+[isolated Django API] [05/Nov/2026 02:50:37] "POST /api/rmb-cash-events/3/confirm/ HTTP/1.1" 200 1891
+[isolated Django API] [05/Nov/2026 02:50:37] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:50:38] "GET /api/rmb-cash-events/ HTTP/1.1" 200 5854
+[isolated Django API] [05/Nov/2026 02:50:41] "GET /api/rmb-cash-events/sources/?currency=CNY HTTP/1.1" 200 1015
+[isolated Django API] [05/Nov/2026 02:50:41] "POST /api/rmb-cash-events/voucher-upload/ HTTP/1.1" 201 95
+[isolated Django API] [05/Nov/2026 02:50:41] "POST /api/rmb-cash-events/preview/ HTTP/1.1" 200 1329
+[isolated Django API] [05/Nov/2026 02:50:42] "POST /api/rmb-cash-events/ HTTP/1.1" 201 1825
+[isolated Django API] [05/Nov/2026 02:50:42] "GET /api/rmb-cash-events/ HTTP/1.1" 200 7680
+[isolated Django API] [05/Nov/2026 02:50:42] "GET /api/rmb-cash-events/4/duplicate-candidates/ HTTP/1.1" 200 300
+[isolated Django API] [05/Nov/2026 02:50:42] "POST /api/rmb-cash-events/4/confirm/ HTTP/1.1" 200 1961
+[isolated Django API] [05/Nov/2026 02:50:45] "POST /api/finance-ledger/accounts/ HTTP/1.1" 201 8
+[isolated Django API] [05/Nov/2026 02:50:45] "POST /api/finance-ledger/accounts/ HTTP/1.1" 201 8
+[isolated Django API] [05/Nov/2026 02:50:45] "POST /api/finance-ledger/vouchers/ HTTP/1.1" 201 95
+[isolated Django API] [05/Nov/2026 02:50:45] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 565
+[isolated Django API] Bad Request: /api/finance-ledger/approve/
+[isolated Django API] [05/Nov/2026 02:50:45] "POST /api/finance-ledger/approve/ HTTP/1.1" 400 43
+[isolated Django API] Bad Request: /api/finance-ledger/post/
+[isolated Django API] [05/Nov/2026 02:50:45] "POST /api/finance-ledger/post/ HTTP/1.1" 400 49
+[isolated Django API] [05/Nov/2026 02:50:46] "GET /api/session/current-operator/ HTTP/1.1" 200 2686
+[isolated Django API] [05/Nov/2026 02:50:46] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 237
+[isolated Django API] [05/Nov/2026 02:50:46] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 1237
+[isolated Django API] [05/Nov/2026 02:50:49] "POST /api/finance-ledger/approve/ HTTP/1.1" 200 649
+[isolated Django API] [05/Nov/2026 02:50:49] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 237
+[isolated Django API] [05/Nov/2026 02:50:49] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 1321
+[isolated Django API] [05/Nov/2026 02:50:49] "POST /api/finance-ledger/post/ HTTP/1.1" 200 670
+[isolated Django API] [05/Nov/2026 02:50:49] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 558
+[isolated Django API] [05/Nov/2026 02:50:50] "POST /api/finance-ledger/post/ HTTP/1.1" 200 658
+[isolated Django API] [05/Nov/2026 02:50:50] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 578
+[isolated Django API] [05/Nov/2026 02:50:50] "POST /api/finance-ledger/approve/ HTTP/1.1" 200 662
+[isolated Django API] [05/Nov/2026 02:50:50] "POST /api/finance-ledger/post/ HTTP/1.1" 200 658
+[isolated Django API] [05/Nov/2026 02:50:50] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 659
+[isolated Django API] [05/Nov/2026 02:50:50] "POST /api/finance-ledger/approve/ HTTP/1.1" 200 743
+[isolated Django API] Bad Request: /api/finance-ledger/post/
+[isolated Django API] [05/Nov/2026 02:50:50] "POST /api/finance-ledger/post/ HTTP/1.1" 400 64
+[isolated Django API] [05/Nov/2026 02:50:51] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 599
+[isolated Django API] [05/Nov/2026 02:50:51] "POST /api/finance-ledger/approve/ HTTP/1.1" 200 683
+[isolated Django API] [05/Nov/2026 02:50:51] "POST /api/finance-ledger/post/ HTTP/1.1" 200 681
+[isolated Django API] [05/Nov/2026 02:50:51] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 588
+[isolated Django API] [05/Nov/2026 02:50:51] "POST /api/finance-ledger/post/ HTTP/1.1" 200 664
+[isolated Django API] [05/Nov/2026 02:50:51] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 566
+[isolated Django API] [05/Nov/2026 02:50:51] "POST /api/finance-ledger/post/ HTTP/1.1" 200 665
+[isolated Django API] [05/Nov/2026 02:50:52] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 565
+[isolated Django API] [05/Nov/2026 02:50:52] "POST /api/finance-ledger/post/ HTTP/1.1" 200 664
+[isolated Django API] [05/Nov/2026 02:50:52] "POST /api/finance-ledger/transfers/ HTTP/1.1" 201 8
+[isolated Django API] [05/Nov/2026 02:50:52] "POST /api/finance-ledger/classifications/ HTTP/1.1" 201 8
+[isolated Django API] [05/Nov/2026 02:50:52] "POST /api/finance-ledger/reviews/ HTTP/1.1" 201 28
+[isolated Django API] [05/Nov/2026 02:50:53] "GET /api/session/current-operator/ HTTP/1.1" 200 2683
+[isolated Django API] [05/Nov/2026 02:50:53] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 5147
+[isolated Django API] [05/Nov/2026 02:50:53] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 6181
+[isolated Django API] [05/Nov/2026 02:50:53] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 554
+[isolated Django API] [05/Nov/2026 02:50:53] "POST /api/finance-ledger/post/ HTTP/1.1" 200 653
+[isolated Django API] [05/Nov/2026 02:50:53] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 6738
+[isolated Django API] [05/Nov/2026 02:50:53] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 5803
+[isolated Django API] [05/Nov/2026 02:50:54] "GET /api/finance-ledger/facts/?date_from=2026-02-01&date_to=2026-02-28&export=csv HTTP/1.1" 200 1862
+[isolated Django API] [05/Nov/2026 02:50:54] "GET /api/actual-rmb-cash/?date_from=2026-02-01&date_to=2026-02-28 HTTP/1.1" 200 2809
+[isolated Django API] [05/Nov/2026 02:50:54] "GET /api/finance-ledger/voucher-download/?id=5 HTTP/1.1" 200 617
+[isolated Django API] [05/Nov/2026 02:50:56] "POST /api/finance-ledger/accounts/ HTTP/1.1" 201 8
+[isolated Django API] [05/Nov/2026 02:50:56] "POST /api/finance-ledger/accounts/ HTTP/1.1" 201 8
+[isolated Django API] [05/Nov/2026 02:50:56] "POST /api/finance-ledger/vouchers/ HTTP/1.1" 201 95
+[isolated Django API] [05/Nov/2026 02:50:56] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 564
+[isolated Django API] Bad Request: /api/finance-ledger/approve/
+[isolated Django API] [05/Nov/2026 02:50:56] "POST /api/finance-ledger/approve/ HTTP/1.1" 400 43
+[isolated Django API] Bad Request: /api/finance-ledger/post/
+[isolated Django API] [05/Nov/2026 02:50:56] "POST /api/finance-ledger/post/ HTTP/1.1" 400 49
+[isolated Django API] [05/Nov/2026 02:50:57] "GET /api/session/current-operator/ HTTP/1.1" 200 2686
+[isolated Django API] [05/Nov/2026 02:50:57] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 7857
+[isolated Django API] [05/Nov/2026 02:50:57] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 5803
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/approve/ HTTP/1.1" 200 648
+[isolated Django API] [05/Nov/2026 02:51:00] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 7941
+[isolated Django API] [05/Nov/2026 02:51:00] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 5803
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/post/ HTTP/1.1" 200 669
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 557
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/post/ HTTP/1.1" 200 658
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 578
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/approve/ HTTP/1.1" 200 662
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/post/ HTTP/1.1" 200 659
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 659
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/approve/ HTTP/1.1" 200 743
+[isolated Django API] Bad Request: /api/finance-ledger/post/
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/post/ HTTP/1.1" 400 64
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 599
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/approve/ HTTP/1.1" 200 683
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/post/ HTTP/1.1" 200 681
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 588
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/post/ HTTP/1.1" 200 665
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 565
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/post/ HTTP/1.1" 200 665
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 564
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/post/ HTTP/1.1" 200 664
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/transfers/ HTTP/1.1" 201 8
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/classifications/ HTTP/1.1" 201 8
+[isolated Django API] [05/Nov/2026 02:51:00] "POST /api/finance-ledger/reviews/ HTTP/1.1" 201 28
+[isolated Django API] [05/Nov/2026 02:51:01] "GET /api/session/current-operator/ HTTP/1.1" 200 2683
+[isolated Django API] [05/Nov/2026 02:51:01] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 12802
+[isolated Django API] [05/Nov/2026 02:51:01] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 10701
+[isolated Django API] [05/Nov/2026 02:51:01] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 553
+[isolated Django API] [05/Nov/2026 02:51:01] "POST /api/finance-ledger/post/ HTTP/1.1" 200 653
+[isolated Django API] [05/Nov/2026 02:51:01] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 13358
+[isolated Django API] [05/Nov/2026 02:51:01] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 11358
+[isolated Django API] [05/Nov/2026 02:51:02] "GET /api/finance-ledger/facts/?date_from=2026-02-01&date_to=2026-02-28&export=csv HTTP/1.1" 200 3539
+[isolated Django API] [05/Nov/2026 02:51:02] "GET /api/actual-rmb-cash/?date_from=2026-02-01&date_to=2026-02-28 HTTP/1.1" 200 4497
+[isolated Django API] [05/Nov/2026 02:51:02] "GET /api/finance-ledger/voucher-download/?id=6 HTTP/1.1" 200 617
+[isolated Django API] [05/Nov/2026 02:51:03] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:03] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 13358
+[isolated Django API] [05/Nov/2026 02:51:03] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 11358
+[isolated Django API] [05/Nov/2026 02:51:04] "POST /api/finance-ledger/accounts/ HTTP/1.1" 201 8
+[isolated Django API] [05/Nov/2026 02:51:04] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 13601
+[isolated Django API] [05/Nov/2026 02:51:04] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 11358
+[isolated Django API] [05/Nov/2026 02:51:04] "POST /api/finance-ledger/vouchers/ HTTP/1.1" 201 95
+[isolated Django API] [05/Nov/2026 02:51:04] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 13739
+[isolated Django API] [05/Nov/2026 02:51:04] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 11358
+[isolated Django API] [05/Nov/2026 02:51:05] "POST /api/finance-ledger/preview/ HTTP/1.1" 200 509
+[isolated Django API] [05/Nov/2026 02:51:05] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 11358
+[isolated Django API] [05/Nov/2026 02:51:05] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 13739
+[isolated Django API] [05/Nov/2026 02:51:05] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 618
+[isolated Django API] [05/Nov/2026 02:51:05] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:06] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 14358
+[isolated Django API] [05/Nov/2026 02:51:06] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 11358
+[isolated Django API] Bad Request: /api/finance-ledger/approve/
+[isolated Django API] [05/Nov/2026 02:51:06] "POST /api/finance-ledger/approve/ HTTP/1.1" 400 70
+[isolated Django API] [05/Nov/2026 02:51:06] "POST /api/finance-ledger/post/ HTTP/1.1" 200 704
+[isolated Django API] [05/Nov/2026 02:51:06] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 14357
+[isolated Django API] [05/Nov/2026 02:51:06] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 12066
+[isolated Django API] [05/Nov/2026 02:51:06] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-01-31 HTTP/1.1" 200 954
+[isolated Django API] [05/Nov/2026 02:51:06] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-01-31 HTTP/1.1" 200 14349
+[isolated Django API] [05/Nov/2026 02:51:06] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-01-31&export=csv HTTP/1.1" 200 388
+[isolated Django API] [05/Nov/2026 02:51:06] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-01-31 HTTP/1.1" 200 954
+[isolated Django API] [05/Nov/2026 02:51:06] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-01-31 HTTP/1.1" 200 14349
+(node:8460) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [05/Nov/2026 02:51:12] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:12] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 14357
+[isolated Django API] [05/Nov/2026 02:51:12] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 12066
+[isolated Django API] [05/Nov/2026 02:51:15] "POST /api/finance-ledger/accounts/ HTTP/1.1" 201 8
+[isolated Django API] [05/Nov/2026 02:51:15] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 14598
+[isolated Django API] [05/Nov/2026 02:51:15] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 12066
+[isolated Django API] [05/Nov/2026 02:51:15] "POST /api/finance-ledger/vouchers/ HTTP/1.1" 201 95
+[isolated Django API] [05/Nov/2026 02:51:15] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 14735
+[isolated Django API] [05/Nov/2026 02:51:15] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 12066
+[isolated Django API] [05/Nov/2026 02:51:15] "POST /api/finance-ledger/preview/ HTTP/1.1" 200 508
+[isolated Django API] [05/Nov/2026 02:51:16] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 14735
+[isolated Django API] [05/Nov/2026 02:51:16] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 12066
+[isolated Django API] [05/Nov/2026 02:51:16] "POST /api/finance-ledger/instructions/ HTTP/1.1" 201 617
+[isolated Django API] [05/Nov/2026 02:51:16] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:17] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 15353
+[isolated Django API] [05/Nov/2026 02:51:17] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 12066
+[isolated Django API] Bad Request: /api/finance-ledger/approve/
+[isolated Django API] [05/Nov/2026 02:51:17] "POST /api/finance-ledger/approve/ HTTP/1.1" 400 70
+[isolated Django API] [05/Nov/2026 02:51:17] "POST /api/finance-ledger/post/ HTTP/1.1" 200 702
+[isolated Django API] [05/Nov/2026 02:51:17] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 15352
+[isolated Django API] [05/Nov/2026 02:51:17] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-11-05 HTTP/1.1" 200 12772
+[isolated Django API] [05/Nov/2026 02:51:18] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-01-31 HTTP/1.1" 200 1660
+[isolated Django API] [05/Nov/2026 02:51:18] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-01-31 HTTP/1.1" 200 15344
+[isolated Django API] [05/Nov/2026 02:51:18] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-01-31&export=csv HTTP/1.1" 200 598
+[isolated Django API] [05/Nov/2026 02:51:18] "GET /api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-01-31 HTTP/1.1" 200 1660
+[isolated Django API] [05/Nov/2026 02:51:18] "GET /api/finance-ledger/?date_from=2026-01-01&date_to=2026-01-31 HTTP/1.1" 200 15344
+[isolated Django API] [05/Nov/2026 02:51:18] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:18] "GET /api/finance-ledger/fact_detail/?id=18 HTTP/1.1" 200 705
+[isolated Django API] [05/Nov/2026 02:51:18] "GET /api/finance-ledger/facts/?date_from=2026-01-02&date_to=2026-01-02 HTTP/1.1" 200 1660
+[isolated Django API] [05/Nov/2026 02:51:18] "GET /api/finance-ledger/?date_from=2026-01-02&date_to=2026-01-02 HTTP/1.1" 200 15344
+[isolated Django API] [05/Nov/2026 02:51:20] "GET /api/actual-rmb-cash/?date_from=2026-10-01&date_to=2026-10-31 HTTP/1.1" 200 2636
+[isolated Django API] [05/Nov/2026 02:51:21] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:21] "GET /api/rmb-cash-events/ HTTP/1.1" 200 7816
+[isolated Django API] [05/Nov/2026 02:51:24] "GET /api/rmb-cash-events/sources/?currency=USD HTTP/1.1" 200 589
+[isolated Django API] [05/Nov/2026 02:51:24] "GET /api/rmb-cash-events/sources/?currency=CNY HTTP/1.1" 200 1887
+[isolated Django API] [05/Nov/2026 02:51:25] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:25] "GET /api/rmb-cash-events/ HTTP/1.1" 200 7816
+[isolated Django API] [05/Nov/2026 02:51:25] "GET /api/rmb-cash-events/sources/?currency=CNY HTTP/1.1" 200 1887
+[isolated Django API] Bad Request: /api/rmb-cash-events/preview/
+[isolated Django API] [05/Nov/2026 02:51:26] "POST /api/rmb-cash-events/preview/ HTTP/1.1" 400 64
+[isolated Django API] [05/Nov/2026 02:51:26] "POST /api/rmb-cash-events/voucher-upload/ HTTP/1.1" 201 95
+[isolated Django API] [05/Nov/2026 02:51:26] "POST /api/rmb-cash-events/preview/ HTTP/1.1" 200 1078
+[isolated Django API] [05/Nov/2026 02:51:26] "POST /api/rmb-cash-events/ HTTP/1.1" 201 1824
+[isolated Django API] [05/Nov/2026 02:51:26] "GET /api/rmb-cash-events/ HTTP/1.1" 200 9641
+[isolated Django API] [05/Nov/2026 02:51:26] "GET /api/rmb-cash-events/5/duplicate-candidates/ HTTP/1.1" 200 116
+[isolated Django API] [05/Nov/2026 02:51:27] "POST /api/rmb-cash-events/5/confirm/ HTTP/1.1" 200 1960
+[isolated Django API] [05/Nov/2026 02:51:27] "GET /api/rmb-cash-events/ HTTP/1.1" 200 9777
+[isolated Django API] [05/Nov/2026 02:51:27] "POST /api/rmb-cash-events/5/confirm/ HTTP/1.1" 200 1960
+[isolated Django API] [05/Nov/2026 02:51:27] "GET /api/actual-rmb-cash/?date_from=2026-10-01&date_to=2026-10-31 HTTP/1.1" 200 3088
+[isolated Django API] [05/Nov/2026 02:51:27] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:27] "GET /api/rmb-cash-events/ HTTP/1.1" 200 9777
+[isolated Django API] [05/Nov/2026 02:51:28] "GET /api/actual-rmb-cash/?date_from=2026-10-01&date_to=2026-10-31 HTTP/1.1" 200 3088
+[isolated Django API] [05/Nov/2026 02:51:28] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:28] "GET /api/rmb-cash-events/ HTTP/1.1" 200 9777
+[isolated Django API] [05/Nov/2026 02:51:32] "GET /api/rmb-cash-events/sources/?currency=CNY HTTP/1.1" 200 1887
+[isolated Django API] [05/Nov/2026 02:51:32] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:32] "GET /api/rmb-cash-events/ HTTP/1.1" 200 9777
+[isolated Django API] [05/Nov/2026 02:51:32] "GET /api/rmb-cash-events/sources/?currency=CNY HTTP/1.1" 200 1887
+[isolated Django API] Bad Request: /api/rmb-cash-events/preview/
+[isolated Django API] [05/Nov/2026 02:51:33] "POST /api/rmb-cash-events/preview/ HTTP/1.1" 400 64
+[isolated Django API] [05/Nov/2026 02:51:33] "POST /api/rmb-cash-events/voucher-upload/ HTTP/1.1" 201 96
+[isolated Django API] [05/Nov/2026 02:51:33] "POST /api/rmb-cash-events/preview/ HTTP/1.1" 200 1077
+[isolated Django API] [05/Nov/2026 02:51:33] "POST /api/rmb-cash-events/ HTTP/1.1" 201 1823
+[isolated Django API] [05/Nov/2026 02:51:33] "GET /api/rmb-cash-events/ HTTP/1.1" 200 11601
+[isolated Django API] [05/Nov/2026 02:51:33] "GET /api/rmb-cash-events/6/duplicate-candidates/ HTTP/1.1" 200 116
+[isolated Django API] [05/Nov/2026 02:51:34] "POST /api/rmb-cash-events/6/confirm/ HTTP/1.1" 200 1959
+[isolated Django API] [05/Nov/2026 02:51:34] "GET /api/rmb-cash-events/ HTTP/1.1" 200 11737
+[isolated Django API] [05/Nov/2026 02:51:34] "POST /api/rmb-cash-events/6/confirm/ HTTP/1.1" 200 1959
+[isolated Django API] [05/Nov/2026 02:51:34] "GET /api/actual-rmb-cash/?date_from=2026-10-01&date_to=2026-10-31 HTTP/1.1" 200 3539
+[isolated Django API] [05/Nov/2026 02:51:34] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:34] "GET /api/rmb-cash-events/ HTTP/1.1" 200 11737
+[isolated Django API] [05/Nov/2026 02:51:35] "POST /api/rmb-cash-events/voucher-upload/ HTTP/1.1" 201 96
+[isolated Django API] [05/Nov/2026 02:51:35] "POST /api/rmb-cash-events/ HTTP/1.1" 201 1777
+[isolated Django API] Bad Request: /api/rmb-cash-events/preview/
+[isolated Django API] [05/Nov/2026 02:51:35] "POST /api/rmb-cash-events/preview/ HTTP/1.1" 400 76
+[isolated Django API] [05/Nov/2026 02:51:35] "POST /api/rmb-cash-events/7/confirm/ HTTP/1.1" 200 1913
+[isolated Django API] Not Found: /api/rmb-cash-events/preview/
+[isolated Django API] [05/Nov/2026 02:51:35] "POST /api/rmb-cash-events/preview/ HTTP/1.1" 404 52
+[isolated Django API] Bad Request: /api/rmb-cash-events/preview/
+[isolated Django API] [05/Nov/2026 02:51:35] "POST /api/rmb-cash-events/preview/ HTTP/1.1" 400 76
+[isolated Django API] [05/Nov/2026 02:51:35] "GET /api/rmb-cash-events/ HTTP/1.1" 200 13651
+[isolated Django API] Bad Request: /api/rmb-cash-events/
+[isolated Django API] [05/Nov/2026 02:51:35] "POST /api/rmb-cash-events/ HTTP/1.1" 400 46
+[isolated Django API] [05/Nov/2026 02:51:35] "GET /api/rmb-cash-events/ HTTP/1.1" 200 13651
+[isolated Django API] [05/Nov/2026 02:51:35] "POST /api/rmb-cash-events/preview/ HTTP/1.1" 200 985
+[isolated Django API] [05/Nov/2026 02:51:35] "POST /api/rmb-cash-events/voucher-upload/ HTTP/1.1" 201 96
+[isolated Django API] [05/Nov/2026 02:51:35] "POST /api/rmb-cash-events/ HTTP/1.1" 201 1752
+[isolated Django API] [05/Nov/2026 02:51:36] "POST /api/rmb-cash-events/8/confirm/ HTTP/1.1" 200 1888
+[isolated Django API] [05/Nov/2026 02:51:36] "POST /api/rmb-cash-events/8/confirm/ HTTP/1.1" 200 1888
+[isolated Django API] [05/Nov/2026 02:51:36] "POST /api/rmb-cash-events/ HTTP/1.1" 200 1888
+[isolated Django API] Conflict: /api/rmb-cash-events/
+[isolated Django API] [05/Nov/2026 02:51:36] "POST /api/rmb-cash-events/ HTTP/1.1" 409 67
+[isolated Django API] Bad Request: /api/rmb-cash-events/preview/
+[isolated Django API] [05/Nov/2026 02:51:36] "POST /api/rmb-cash-events/preview/ HTTP/1.1" 400 76
+[isolated Django API] [05/Nov/2026 02:51:36] "POST /api/rmb-cash-events/ HTTP/1.1" 201 1786
+[isolated Django API] [05/Nov/2026 02:51:36] "POST /api/rmb-cash-events/9/confirm/ HTTP/1.1" 200 1922
+[isolated Django API] Bad Request: /api/rmb-cash-events/preview/
+[isolated Django API] [05/Nov/2026 02:51:36] "POST /api/rmb-cash-events/preview/ HTTP/1.1" 400 76
+[isolated Django API] [05/Nov/2026 02:51:37] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:38] "GET /api/quotes/?customer=1&search=&status=&ordering=-updated_at&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:38] "GET /api/customers/?page=1 HTTP/1.1" 200 913
+[isolated Django API] [05/Nov/2026 02:51:38] "GET /api/skus/?page=1 HTTP/1.1" 200 3924
+[isolated Django API] [05/Nov/2026 02:51:38] "GET /api/quotes/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:38] "GET /api/contacts/?customer=1&page=1 HTTP/1.1" 200 340
+[isolated Django API] [05/Nov/2026 02:51:38] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:41] "POST /api/quotes/availability-preview/ HTTP/1.1" 200 130
+[isolated Django API] [05/Nov/2026 02:51:41] "POST /api/sales-rules/check-quote/ HTTP/1.1" 200 43
+[isolated Django API] [05/Nov/2026 02:51:41] "POST /api/quotes/ HTTP/1.1" 201 1362
+[isolated Django API] Bad Request: /api/quotes/
+[isolated Django API] [05/Nov/2026 02:51:41] "GET /api/quotes/?customer=1&search=&status=&ordering=-updated_at&page=1 HTTP/1.1" 200 1414
+[isolated Django API] [05/Nov/2026 02:51:41] "POST /api/quotes/ HTTP/1.1" 400 53
+[isolated Django API] [05/Nov/2026 02:51:41] "GET /api/quotes/1/workbench/ HTTP/1.1" 200 2844
+[isolated Django API] [05/Nov/2026 02:51:41] "GET /api/operation-logs/?entity=crm.quote&object_id=1&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:41] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:41] "GET /api/contacts/1/ HTTP/1.1" 200 288
+[isolated Django API] [05/Nov/2026 02:51:42] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:42] "GET /api/quotes/1/workbench/ HTTP/1.1" 200 2844
+[isolated Django API] [05/Nov/2026 02:51:42] "GET /api/operation-logs/?entity=crm.quote&object_id=1&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:42] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:42] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 1414
+[isolated Django API] [05/Nov/2026 02:51:42] "GET /api/customers/?page=1 HTTP/1.1" 200 913
+[isolated Django API] [05/Nov/2026 02:51:42] "POST /api/quotes/1/mark-sent/ HTTP/1.1" 200 1364
+[isolated Django API] [05/Nov/2026 02:51:42] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:42] "GET /api/operation-logs/?entity=crm.quote&object_id=1&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:42] "GET /api/quotes/1/workbench/ HTTP/1.1" 200 2848
+[isolated Django API] [05/Nov/2026 02:51:42] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 1416
+[isolated Django API] [05/Nov/2026 02:51:43] "GET /api/skus/?page=1 HTTP/1.1" 200 3924
+[isolated Django API] [05/Nov/2026 02:51:43] "POST /api/quotes/availability-preview/ HTTP/1.1" 200 130
+[isolated Django API] [05/Nov/2026 02:51:43] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:43] "POST /api/sales-rules/check-quote/ HTTP/1.1" 200 43
+[isolated Django API] [05/Nov/2026 02:51:43] "POST /api/sales-rules/check-quote/ HTTP/1.1" 200 43
+[isolated Django API] [05/Nov/2026 02:51:44] "POST /api/quotes/1/revise/ HTTP/1.1" 201 1399
+[isolated Django API] [05/Nov/2026 02:51:44] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 2816
+[isolated Django API] [05/Nov/2026 02:51:44] "GET /api/operation-logs/?entity=crm.quote&object_id=1&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:44] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:44] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:44] "GET /api/quotes/2/export/ HTTP/1.1" 200 10174
+[isolated Django API] [05/Nov/2026 02:51:44] "GET /api/quotes/1/workbench/ HTTP/1.1" 200 4248
+[isolated Django API] [05/Nov/2026 02:51:44] "GET /api/operation-logs/?entity=crm.quote&object_id=2&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:44] "GET /api/quotes/2/workbench/ HTTP/1.1" 200 4283
+[isolated Django API] [05/Nov/2026 02:51:44] "PATCH /api/contacts/1/ HTTP/1.1" 200 294
+[isolated Django API] [05/Nov/2026 02:51:44] "PATCH /api/customers/1/ HTTP/1.1" 200 461
+[isolated Django API] [05/Nov/2026 02:51:44] "GET /api/quotes/1/ HTTP/1.1" 200 1364
+[isolated Django API] [05/Nov/2026 02:51:44] "GET /api/quotes/1/pi-data/?buyer_email=unsaved@example.com HTTP/1.1" 200 5897
+[isolated Django API] [05/Nov/2026 02:51:45] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:45] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:45] "GET /api/operation-logs/?entity=crm.quote&object_id=1&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:45] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 2816
+[isolated Django API] [05/Nov/2026 02:51:45] "GET /api/quotes/1/workbench/ HTTP/1.1" 200 4248
+[isolated Django API] [05/Nov/2026 02:51:45] "GET /api/customers/?page=1 HTTP/1.1" 200 927
+[isolated Django API] [05/Nov/2026 02:51:45] "GET /api/quotes/1/pi-data/ HTTP/1.1" 200 5897
+[isolated Django API] [05/Nov/2026 02:51:46] "GET /api/quotes/1/export/ HTTP/1.1" 200 10192
+[isolated Django API] [05/Nov/2026 02:51:46] "GET /api/quotes/2/ HTTP/1.1" 200 1399
+[isolated Django API] [05/Nov/2026 02:51:46] "GET /api/quotes/2/pi-data/?buyer_email=unsaved@example.com HTTP/1.1" 200 5861
+[isolated Django API] [05/Nov/2026 02:51:46] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:46] "GET /api/quotes/2/workbench/ HTTP/1.1" 200 4283
+[isolated Django API] [05/Nov/2026 02:51:46] "GET /api/operation-logs/?entity=crm.quote&object_id=2&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:46] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:46] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 2816
+[isolated Django API] [05/Nov/2026 02:51:46] "GET /api/customers/?page=1 HTTP/1.1" 200 927
+[isolated Django API] [05/Nov/2026 02:51:47] "GET /api/quotes/2/pi-data/ HTTP/1.1" 200 5861
+[isolated Django API] [05/Nov/2026 02:51:47] "GET /api/quotes/2/export/ HTTP/1.1" 200 10175
+[isolated Django API] [05/Nov/2026 02:51:48] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:48] "GET /api/quotes/2/ HTTP/1.1" 200 1399
+[isolated Django API] [05/Nov/2026 02:51:48] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 2816
+[isolated Django API] [05/Nov/2026 02:51:48] "GET /api/customers/?page=1 HTTP/1.1" 200 927
+[isolated Django API] [05/Nov/2026 02:51:48] "GET /api/skus/?page=1 HTTP/1.1" 200 3924
+[isolated Django API] [05/Nov/2026 02:51:48] "POST /api/quotes/availability-preview/ HTTP/1.1" 200 130
+[isolated Django API] [05/Nov/2026 02:51:48] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:48] "GET /api/quotes/2/pi-data/ HTTP/1.1" 200 5861
+[isolated Django API] [05/Nov/2026 02:51:48] "GET /api/quotes/2/export/?buyer_email=unsaved@example.com HTTP/1.1" 200 10175
+[isolated Django API] [05/Nov/2026 02:51:51] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:51] "GET /api/quotes/3/workbench/ HTTP/1.1" 200 2877
+[isolated Django API] [05/Nov/2026 02:51:51] "GET /api/operation-logs/?entity=crm.quote&object_id=3&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:51] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 4196
+[isolated Django API] [05/Nov/2026 02:51:51] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:51] "GET /api/customers/?page=1 HTTP/1.1" 200 1358
+[isolated Django API] [05/Nov/2026 02:51:52] "GET /api/quotes/3/pi-data/ HTTP/1.1" 200 4972
+[isolated Django API] [05/Nov/2026 02:51:55] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:55] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:55] "GET /api/operation-logs/?entity=crm.quote&object_id=4&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:55] "GET /api/quotes/4/workbench/ HTTP/1.1" 200 2877
+[isolated Django API] [05/Nov/2026 02:51:55] "GET /api/customers/?page=1 HTTP/1.1" 200 1789
+[isolated Django API] [05/Nov/2026 02:51:55] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 5576
+[isolated Django API] [05/Nov/2026 02:51:56] "GET /api/quotes/4/pi-data/ HTTP/1.1" 200 4972
+[isolated Django API] [05/Nov/2026 02:51:57] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:57] "GET /api/quotes/4/workbench/ HTTP/1.1" 200 2877
+[isolated Django API] [05/Nov/2026 02:51:57] "GET /api/operation-logs/?entity=crm.quote&object_id=4&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:57] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:57] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 5576
+[isolated Django API] [05/Nov/2026 02:51:57] "GET /api/customers/?page=1 HTTP/1.1" 200 1789
+[isolated Django API] [05/Nov/2026 02:51:57] "GET /api/quotes/4/pi-data/ HTTP/1.1" 200 4972
+[isolated Django API] [05/Nov/2026 02:51:58] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:58] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:51:58] "GET /api/operation-logs/?entity=crm.quote&object_id=4&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:58] "GET /api/customers/?page=1 HTTP/1.1" 200 1789
+[isolated Django API] [05/Nov/2026 02:51:58] "GET /api/quotes/4/workbench/ HTTP/1.1" 200 2877
+[isolated Django API] [05/Nov/2026 02:51:58] "GET /api/quotes/?search=&status=&customer=&ordering=-updated_at&page=1 HTTP/1.1" 200 5576
+[isolated Django API] [05/Nov/2026 02:51:59] "GET /api/skus/?page=1 HTTP/1.1" 200 6642
+[isolated Django API] [05/Nov/2026 02:51:59] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:51:59] "POST /api/quotes/availability-preview/ HTTP/1.1" 200 130
+[isolated Django API] [05/Nov/2026 02:51:59] "POST /api/sales-rules/check-quote/ HTTP/1.1" 200 43
+[isolated Django API] [05/Nov/2026 02:51:59] "GET /api/quotes/preview-template/?discount=0&quote_id=4 HTTP/1.1" 200 520
+[isolated Django API] [05/Nov/2026 02:52:03] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:52:04] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 2251
+[isolated Django API] [05/Nov/2026 02:52:04] "GET /api/orders/?page=1 HTTP/1.1" 200 3827
+[isolated Django API] [05/Nov/2026 02:52:04] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15479
+[isolated Django API] [05/Nov/2026 02:52:04] "GET /api/skus/?page=1 HTTP/1.1" 200 9256
+[isolated Django API] D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.ContractChangeRequest'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[isolated Django API] [05/Nov/2026 02:52:04] "GET /api/contract-changes/?purchase_order=4&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:52:04] "GET /api/purchase-orders/cost-allocation-orders/ HTTP/1.1" 200 480
+[isolated Django API] [05/Nov/2026 02:52:04] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15479
+[isolated Django API] [05/Nov/2026 02:52:04] "GET /api/purchase-orders/4/cost-allocation/ HTTP/1.1" 200 829
+[isolated Django API] [05/Nov/2026 02:52:06] "POST /api/purchase-orders/4/cost-allocation-preview/ HTTP/1.1" 200 829
+[isolated Django API] [05/Nov/2026 02:52:09] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:52:09] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 2251
+[isolated Django API] [05/Nov/2026 02:52:09] "GET /api/orders/?page=1 HTTP/1.1" 200 3827
+[isolated Django API] [05/Nov/2026 02:52:09] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15479
+[isolated Django API] [05/Nov/2026 02:52:09] "GET /api/contract-changes/?purchase_order=4&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:52:09] "GET /api/purchase-orders/cost-allocation-orders/ HTTP/1.1" 200 480
+[isolated Django API] [05/Nov/2026 02:52:10] "GET /api/skus/?page=1 HTTP/1.1" 200 9256
+[isolated Django API] [05/Nov/2026 02:52:10] "GET /api/purchase-orders/4/cost-allocation/ HTTP/1.1" 200 829
+[isolated Django API] [05/Nov/2026 02:52:10] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15479
+[isolated Django API] [05/Nov/2026 02:52:10] "POST /api/purchase-orders/4/cost-allocation-preview/ HTTP/1.1" 200 829
+[isolated Django API] [05/Nov/2026 02:52:10] "POST /api/purchase-orders/4/cost-allocation/ HTTP/1.1" 200 829
+[isolated Django API] [05/Nov/2026 02:52:11] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:52:11] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:52:11] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 2251
+[isolated Django API] [05/Nov/2026 02:52:11] "GET /api/orders/?page=1 HTTP/1.1" 200 3827
+[isolated Django API] [05/Nov/2026 02:52:12] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15477
+[isolated Django API] [05/Nov/2026 02:52:12] "GET /api/skus/?page=1 HTTP/1.1" 200 9256
+[isolated Django API] [05/Nov/2026 02:52:12] "GET /api/contract-changes/?purchase_order=4&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:52:12] "GET /api/purchase-orders/cost-allocation-orders/ HTTP/1.1" 200 480
+[isolated Django API] [05/Nov/2026 02:52:12] "GET /api/purchase-orders/4/cost-allocation/ HTTP/1.1" 200 829
+[isolated Django API] [05/Nov/2026 02:52:12] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15477
+[isolated Django API] [05/Nov/2026 02:52:12] "GET /api/purchase-orders/4/cost-allocation/ HTTP/1.1" 200 829
+[isolated Django API] Bad Request: /api/purchase-orders/4/cost-allocation/
+[isolated Django API] [05/Nov/2026 02:52:14] "POST /api/purchase-orders/4/cost-allocation/ HTTP/1.1" 400 100
+[isolated Django API] Bad Request: /api/purchase-orders/4/cost-allocation-preview/
+[isolated Django API] [05/Nov/2026 02:52:14] "POST /api/purchase-orders/4/cost-allocation-preview/ HTTP/1.1" 400 100
+[isolated Django API] Bad Request: /api/purchase-orders/5/cost-allocation/
+[isolated Django API] [05/Nov/2026 02:52:15] "POST /api/purchase-orders/5/cost-allocation/ HTTP/1.1" 400 100
+[isolated Django API] [05/Nov/2026 02:52:16] "POST /api/purchase-orders/5/cost-allocation/ HTTP/1.1" 200 641
+[isolated Django API] [05/Nov/2026 02:52:16] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:52:17] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 2251
+[isolated Django API] [05/Nov/2026 02:52:17] "GET /api/orders/?page=1 HTTP/1.1" 200 3827
+[isolated Django API] [05/Nov/2026 02:52:17] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15477
+[isolated Django API] [05/Nov/2026 02:52:17] "GET /api/contract-changes/?purchase_order=3&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:52:17] "GET /api/purchase-orders/cost-allocation-orders/ HTTP/1.1" 200 480
+[isolated Django API] [05/Nov/2026 02:52:17] "GET /api/skus/?page=1 HTTP/1.1" 200 9256
+[isolated Django API] [05/Nov/2026 02:52:17] "GET /api/purchase-orders/3/cost-allocation/ HTTP/1.1" 200 663
+[isolated Django API] [05/Nov/2026 02:52:17] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15477
+[isolated Django API] [05/Nov/2026 02:52:18] "POST /api/purchase-orders/3/cost-allocation-preview/ HTTP/1.1" 200 827
+[isolated Django API] [05/Nov/2026 02:52:18] "POST /api/purchase-orders/3/cost-allocation/ HTTP/1.1" 200 827
+[isolated Django API] [05/Nov/2026 02:52:19] "GET /api/purchase-orders/3/cost-allocation/ HTTP/1.1" 200 827
+[isolated Django API] [05/Nov/2026 02:52:21] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:52:21] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 2251
+[isolated Django API] [05/Nov/2026 02:52:21] "GET /api/orders/?page=1 HTTP/1.1" 200 3827
+[isolated Django API] [05/Nov/2026 02:52:21] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15612
+[isolated Django API] [05/Nov/2026 02:52:22] "GET /api/contract-changes/?purchase_order=7&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:52:22] "GET /api/purchase-orders/cost-allocation-orders/ HTTP/1.1" 200 480
+[isolated Django API] [05/Nov/2026 02:52:22] "GET /api/purchase-orders/7/cost-allocation/ HTTP/1.1" 200 831
+[isolated Django API] [05/Nov/2026 02:52:22] "GET /api/skus/?page=1 HTTP/1.1" 200 9256
+[isolated Django API] [05/Nov/2026 02:52:22] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15612
+[isolated Django API] [05/Nov/2026 02:52:24] "POST /api/purchase-orders/7/cost-allocation-preview/ HTTP/1.1" 200 831
+[isolated Django API] [05/Nov/2026 02:52:26] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:52:26] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 2251
+[isolated Django API] [05/Nov/2026 02:52:27] "GET /api/orders/?page=1 HTTP/1.1" 200 3827
+[isolated Django API] [05/Nov/2026 02:52:27] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15612
+[isolated Django API] [05/Nov/2026 02:52:27] "GET /api/contract-changes/?purchase_order=7&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:52:27] "GET /api/purchase-orders/cost-allocation-orders/ HTTP/1.1" 200 480
+[isolated Django API] [05/Nov/2026 02:52:27] "GET /api/purchase-orders/7/cost-allocation/ HTTP/1.1" 200 831
+[isolated Django API] [05/Nov/2026 02:52:27] "GET /api/skus/?page=1 HTTP/1.1" 200 9256
+[isolated Django API] [05/Nov/2026 02:52:27] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15612
+[isolated Django API] [05/Nov/2026 02:52:27] "POST /api/purchase-orders/7/cost-allocation-preview/ HTTP/1.1" 200 831
+[isolated Django API] [05/Nov/2026 02:52:28] "POST /api/purchase-orders/7/cost-allocation/ HTTP/1.1" 200 831
+[isolated Django API] [05/Nov/2026 02:52:29] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:52:29] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 2251
+[isolated Django API] [05/Nov/2026 02:52:29] "GET /api/orders/?page=1 HTTP/1.1" 200 3827
+[isolated Django API] [05/Nov/2026 02:52:29] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15610
+[isolated Django API] [05/Nov/2026 02:52:29] "GET /api/contract-changes/?purchase_order=7&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:52:29] "GET /api/skus/?page=1 HTTP/1.1" 200 9256
+[isolated Django API] [05/Nov/2026 02:52:29] "GET /api/purchase-orders/cost-allocation-orders/ HTTP/1.1" 200 480
+[isolated Django API] [05/Nov/2026 02:52:29] "GET /api/purchase-orders/7/cost-allocation/ HTTP/1.1" 200 831
+[isolated Django API] [05/Nov/2026 02:52:29] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15610
+[isolated Django API] [05/Nov/2026 02:52:29] "GET /api/purchase-orders/7/cost-allocation/ HTTP/1.1" 200 831
+[isolated Django API] Bad Request: /api/purchase-orders/7/cost-allocation/
+[isolated Django API] [05/Nov/2026 02:52:30] "POST /api/purchase-orders/7/cost-allocation/ HTTP/1.1" 400 100
+[isolated Django API] Bad Request: /api/purchase-orders/7/cost-allocation-preview/
+[isolated Django API] [05/Nov/2026 02:52:30] "POST /api/purchase-orders/7/cost-allocation-preview/ HTTP/1.1" 400 100
+[isolated Django API] Bad Request: /api/purchase-orders/8/cost-allocation/
+[isolated Django API] [05/Nov/2026 02:52:31] "POST /api/purchase-orders/8/cost-allocation/ HTTP/1.1" 400 100
+[isolated Django API] [05/Nov/2026 02:52:32] "POST /api/purchase-orders/8/cost-allocation/ HTTP/1.1" 200 643
+[isolated Django API] [05/Nov/2026 02:52:33] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:52:33] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 2251
+[isolated Django API] [05/Nov/2026 02:52:33] "GET /api/orders/?page=1 HTTP/1.1" 200 3827
+[isolated Django API] [05/Nov/2026 02:52:33] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15610
+[isolated Django API] [05/Nov/2026 02:52:33] "GET /api/contract-changes/?purchase_order=6&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:52:33] "GET /api/purchase-orders/cost-allocation-orders/ HTTP/1.1" 200 480
+[isolated Django API] [05/Nov/2026 02:52:33] "GET /api/skus/?page=1 HTTP/1.1" 200 9256
+[isolated Django API] [05/Nov/2026 02:52:33] "GET /api/purchase-orders/6/cost-allocation/ HTTP/1.1" 200 664
+[isolated Django API] [05/Nov/2026 02:52:33] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 15610
+[isolated Django API] [05/Nov/2026 02:52:34] "POST /api/purchase-orders/6/cost-allocation-preview/ HTTP/1.1" 200 828
+[isolated Django API] [05/Nov/2026 02:52:34] "POST /api/purchase-orders/6/cost-allocation/ HTTP/1.1" 200 828
+[isolated Django API] [05/Nov/2026 02:52:35] "GET /api/purchase-orders/6/cost-allocation/ HTTP/1.1" 200 828
+(node:32536) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [05/Nov/2026 02:53:25] "GET /api/customers/ HTTP/1.1" 200 3064
+[isolated Django API] [05/Nov/2026 02:53:25] "GET /api/contacts/ HTTP/1.1" 200 633
+[isolated Django API] [05/Nov/2026 02:53:25] "GET /api/follow-ups/ HTTP/1.1" 200 581
+[isolated Django API] D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.Product'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[isolated Django API] [05/Nov/2026 02:53:25] "GET /api/products/ HTTP/1.1" 200 3893
+[isolated Django API] [05/Nov/2026 02:53:25] "GET /api/skus/inventory-list/ HTTP/1.1" 200 3013
+[isolated Django API] [05/Nov/2026 02:53:25] "GET /api/orders/6/ HTTP/1.1" 200 2175
+[isolated Django API] [05/Nov/2026 02:53:25] "GET /api/purchase-orders/9/ HTTP/1.1" 200 2398
+[isolated Django API] [05/Nov/2026 02:54:08] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:54:08] "GET /api/import/templates/ HTTP/1.1" 200 427
+[isolated Django API] Request Entity Too Large: /api/import/csv/preview/
+[isolated Django API] [05/Nov/2026 02:54:09] "POST /api/import/csv/preview/ HTTP/1.1" 413 86
+[isolated Vite] 02:54:59 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:54:59 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:00 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:00 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:00 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:00 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:01 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:01 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:02 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:02 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:02 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:03 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:03 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:03 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:03 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:03 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:03 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:04 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:11 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:11 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:11 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:12 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:12 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:13 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:13 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:14 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:14 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Vite] 02:55:14 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>
+[isolated Django API] [05/Nov/2026 02:55:15] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:55:15] "GET /api/customers/?page=1 HTTP/1.1" 200 3064
+[isolated Django API] [05/Nov/2026 02:55:15] "GET /api/orders/?status=historical&page=1 HTTP/1.1" 200 1567
+[isolated Django API] [05/Nov/2026 02:55:15] "GET /api/suppliers/?page=1 HTTP/1.1" 200 2766
+[isolated Django API] [05/Nov/2026 02:55:15] "GET /api/purchase-orders/?status=historical&page=1 HTTP/1.1" 200 1559
+[isolated Django API] [05/Nov/2026 02:55:15] "GET /api/reports/historical/?date_from=2017-01-01&date_to=2026-12-31 HTTP/1.1" 200 1017
+[isolated Django API] [05/Nov/2026 02:55:15] "GET /api/skus/?page=1 HTTP/1.1" 200 11428
+[isolated Django API] [05/Nov/2026 02:55:16] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:55:16] "GET /api/customers/?page=1 HTTP/1.1" 200 3064
+[isolated Django API] [05/Nov/2026 02:55:16] "GET /api/orders/?status=historical&page=1 HTTP/1.1" 200 1567
+[isolated Django API] [05/Nov/2026 02:55:16] "GET /api/suppliers/?page=1 HTTP/1.1" 200 2766
+[isolated Django API] [05/Nov/2026 02:55:16] "GET /api/purchase-orders/?status=historical&page=1 HTTP/1.1" 200 1559
+[isolated Django API] [05/Nov/2026 02:55:16] "GET /api/reports/historical/?date_from=2017-01-01&date_to=2026-12-31 HTTP/1.1" 200 1017
+[isolated Django API] [05/Nov/2026 02:55:16] "GET /api/skus/?page=1 HTTP/1.1" 200 11428
+[isolated Django API] [05/Nov/2026 02:55:18] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:55:18] "GET /api/customers/?page=1 HTTP/1.1" 200 3064
+[isolated Django API] [05/Nov/2026 02:55:18] "GET /api/orders/?status=historical&page=1 HTTP/1.1" 200 1567
+[isolated Django API] [05/Nov/2026 02:55:18] "GET /api/suppliers/?page=1 HTTP/1.1" 200 2766
+[isolated Django API] [05/Nov/2026 02:55:18] "GET /api/reports/historical/?date_from=2017-01-01&date_to=2026-12-31 HTTP/1.1" 200 1017
+[isolated Django API] [05/Nov/2026 02:55:18] "GET /api/purchase-orders/?status=historical&page=1 HTTP/1.1" 200 1559
+[isolated Django API] [05/Nov/2026 02:55:18] "GET /api/skus/?page=1 HTTP/1.1" 200 11428
+[isolated Django API] [05/Nov/2026 02:55:19] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:55:19] "GET /api/customers/?page=1 HTTP/1.1" 200 3064
+[isolated Django API] [05/Nov/2026 02:55:19] "GET /api/suppliers/?page=1 HTTP/1.1" 200 2766
+[isolated Django API] [05/Nov/2026 02:55:19] "GET /api/reports/historical/?date_from=2017-01-01&date_to=2026-12-31 HTTP/1.1" 200 1017
+[isolated Django API] [05/Nov/2026 02:55:19] "GET /api/purchase-orders/?status=historical&page=1 HTTP/1.1" 200 1559
+[isolated Django API] [05/Nov/2026 02:55:19] "GET /api/orders/?status=historical&page=1 HTTP/1.1" 200 1567
+[isolated Django API] [05/Nov/2026 02:55:19] "GET /api/skus/?page=1 HTTP/1.1" 200 11428
+[isolated Django API] [05/Nov/2026 02:56:15] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:56:15] "GET /api/categories/tree/?page=1 HTTP/1.1" 200 594
+[isolated Django API] [05/Nov/2026 02:56:15] "GET /api/suppliers/?search=&page=1 HTTP/1.1" 200 2766
+[isolated Django API] [05/Nov/2026 02:56:15] "GET /api/categories/tree/?page=1 HTTP/1.1" 200 594
+[isolated Django API] [05/Nov/2026 02:56:16] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:56:16] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 2766
+[isolated Django API] [05/Nov/2026 02:56:16] "GET /api/orders/?page=1 HTTP/1.1" 200 6003
+[isolated Django API] [05/Nov/2026 02:56:16] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 18144
+[isolated Django API] [05/Nov/2026 02:56:16] "GET /api/skus/?page=1 HTTP/1.1" 200 12894
+[isolated Django API] [05/Nov/2026 02:56:17] "GET /api/supplier-skus/?supplier=1&sku=1&is_active=1 HTTP/1.1" 200 629
+[isolated Django API] [05/Nov/2026 02:56:17] "POST /api/purchase-orders/ HTTP/1.1" 201 1529
+[isolated Django API] [05/Nov/2026 02:56:17] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 19674
+[isolated Django API] [05/Nov/2026 02:56:18] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 19674
+[isolated Django API] [05/Nov/2026 02:56:18] "POST /api/purchase-orders/10/place/ HTTP/1.1" 200 1559
+[isolated Django API] [05/Nov/2026 02:56:18] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 19704
+[isolated Django API] [05/Nov/2026 02:56:18] "GET /api/contract-changes/?purchase_order=10&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:56:18] "GET /api/contract-changes/?purchase_order=1&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 02:56:18] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 19704
+[isolated Django API] [05/Nov/2026 02:56:19] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 02:56:19] "GET /api/categories/tree/?page=1 HTTP/1.1" 200 594
+[isolated Django API] [05/Nov/2026 02:56:19] "GET /api/suppliers/?search=&page=1 HTTP/1.1" 200 2766
+Error: Isolated Playwright suite exited with code 1.
+    at runCommand (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/final-integrated-447d/frontend/scripts/run-isolated-browser-tests.mjs:176:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async runStage (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/final-integrated-447d/frontend/scripts/run-isolated-browser-tests.mjs:181:3)
+    at async main (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/final-integrated-447d/frontend/scripts/run-isolated-browser-tests.mjs:652:7)

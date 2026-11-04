@@ -1,0 +1,19 @@
+{
+  "tested_application_anchor": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "checked_head": "e768c69193d2d9241bdddc6cbce717f9d9701469",
+  "scope_paths": [
+    "backend",
+    "frontend/src",
+    "frontend/package.json",
+    "frontend/package-lock.json",
+    "templates"
+  ],
+  "changed_application_paths": [],
+  "stable_sources_all_ancestors": [
+    "e301a86044ffe56b72172a94dc3b00ae09401b05",
+    "4a4f338b09e9a464f1e66c24a905c35c970729bf",
+    "ba4274742727a6794608dc8581a49b3692d865a6"
+  ],
+  "runtime_tests_not_claimed_at_later_docs_sha": true,
+  "scope": "Git committed application equivalence; test/telemetry and documentation may differ; not independent acceptance"
+}

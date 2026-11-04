@@ -1,0 +1,13 @@
+{
+  "source_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "status": "PASS",
+  "source_rows_and_sequences_unchanged": true,
+  "source_media_unchanged": true,
+  "before_state_sha256": "d7bb56707ffddd6580be01aa0f4613ca59327d2c81df0905543f1f48cea65919",
+  "after_state_sha256": "d7bb56707ffddd6580be01aa0f4613ca59327d2c81df0905543f1f48cea65919",
+  "source_table_count": 102,
+  "source_row_count": 1218,
+  "source_sequence_count": 100,
+  "source_media_files": 5,
+  "scope": "Explicit source reread after six tests, backup/restore, private HTTP and nine restored-history guard probes; before intentional owned-cluster cleanup. Not the previous1410 run."
+}

@@ -1,0 +1,10 @@
+{
+  "status": "ABORTED_NOT_COUNTED",
+  "reason": "User corrected browser-channel interpretation while first business-suite profile was running; the temporary channel hook forced Chrome contrary to the required unchanged runner behavior.",
+  "profile": "business-suite",
+  "completedProfileCount": 0,
+  "testCounts": "UNKNOWN",
+  "coordinatorLog": "logs/aborted-channel-override-20261105/logs_playwright-coordinator-console.log",
+  "artifacts": "logs/aborted-channel-override-20261105",
+  "ownedTemporaryRootCleanup": "runner cleanupOwnedTempRoot accepted its matching runId/token marker and removed only this run directory."
+}

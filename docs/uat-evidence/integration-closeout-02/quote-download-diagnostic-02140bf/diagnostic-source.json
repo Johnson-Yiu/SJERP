@@ -1,0 +1,37 @@
+{
+  "candidate_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "source_checkout": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\final-integrated-02140bf",
+  "diagnostic_checkout": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\quote-download-diagnostic-02140bf-8sdgb0mo",
+  "excluded_existing_untracked": "frontend/docs (present in source, not copied or modified)",
+  "node_modules": "Junction to frozen 02140 dependency tree; no install/write performed. Vite isolated config sets cacheDir under each unique marked ISOLATED_TEST_ROOT.",
+  "copy_checks": {
+    "backend": {
+      "file_count": 747,
+      "matches_source": true
+    },
+    "templates": {
+      "file_count": 2,
+      "matches_source": true
+    },
+    "frontend": {
+      "file_count": 340,
+      "matches_source_except": [
+        "node_modules/",
+        "docs/"
+      ],
+      "matches": true
+    },
+    "quote_fixture_seed": {
+      "file_count": 8,
+      "matches_source": true
+    }
+  },
+  "diagnostic_test_copy": "frontend/browser-tests/quote-editor-mobile-actions.spec.js",
+  "original_assertions_preserved": true,
+  "spec_diagnostic_hooks_sha256": "02ffa6c435ac49391238bdeb9812a7a09907bdf295ce64f0f9ac3e8ec6620723",
+  "canonical_spec_sha256": "b062609bb8e38e664cc79dc02d1cca9e473c4c78a09d2c7ce124bed1bb6d22a8",
+  "runner_copy_only_change": "Allow this isolated quote diagnostic selection to request channel=chrome when QUOTE_DOWNLOAD_DIAGNOSTIC_CHROME=1.",
+  "canonical_runner_sha256": "9d4a95182174a2602124b42a5b72f687fc5ae7f83e9af1e75d94c7ad27068318",
+  "diagnostic_runner_sha256": "71b8b7e1f7159829964d2f3c235a6f6b196661c7b950cd1938efe5f12d6cb5b4",
+  "browser_cache": "Each harness invocation creates a new marked system-temp root and isolated Vite cacheDir; no browser profile or Vite cache reused."
+}

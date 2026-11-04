@@ -1,0 +1,26 @@
+{
+  "source_sha": "0037b8c5899554819943944a9cf9e4ea952d2bae",
+  "runtime": "Windows Python3.12.16; OPS_TEST_OPENSSL explicit existing Git OpenSSL",
+  "total": 29,
+  "passed": 27,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 2,
+  "seconds": 7.123,
+  "skip_reason": "actual POSIX group FD ownership/mode checks require POSIX; real Linux cross-UID suite not executed here",
+  "log": {
+    "path": "receipt-handoff-python312-with-openssl.log",
+    "bytes": 5511,
+    "sha256": "e2ca521e7633bed7108d9d89e563e1c55d39b2faf0e5986a63eae4ebf477aba5"
+  },
+  "prior_environment_error": {
+    "raw_file": "UNKNOWN; only subagent tool output retained",
+    "executed": 12,
+    "passed": 10,
+    "skipped": 2,
+    "setUpClass_errors": 1,
+    "reason": "OpenSSL executable not located in PATH; receipt issuance class never ran",
+    "later_resolution": "existing D:/Program Files/Git/usr/bin/openssl.exe explicitly configured, no test or environment assertions weakened"
+  },
+  "scope": "Local directed regression, not final integrated full suite or actual Linux acceptance"
+}

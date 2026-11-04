@@ -1,0 +1,237 @@
+{
+  "source_sha": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "runtime": "Windows Python3.12.16 / PostgreSQL17.11; native approved invocation",
+  "final_status": "PASS",
+  "total": 8,
+  "passed": 8,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 326.359,
+  "attempts": [
+    {
+      "log": "final-backup-command-447d.log",
+      "total": 8,
+      "passed": 1,
+      "failed": 7,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 123.99,
+      "outer_manage_exit_code": 1,
+      "command_cases": [
+        {
+          "case": "checksum",
+          "exit": 1,
+          "result": {
+            "cleanup": "complete",
+            "error": "RuntimeError: pg_ctl.exe failed (exit 1): pg_ctl: could not create restricted token: error code 87\r\npg_ctl: could not start server: error code 3",
+            "source_unchanged": null,
+            "status": "FAILED"
+          }
+        },
+        {
+          "case": "corrupt",
+          "exit": 1,
+          "result": {
+            "cleanup": "complete",
+            "error": "RuntimeError: pg_ctl.exe failed (exit 1): pg_ctl: could not create restricted token: error code 87\r\npg_ctl: could not start server: error code 3",
+            "source_unchanged": null,
+            "status": "FAILED"
+          }
+        },
+        {
+          "case": "tool",
+          "exit": 1,
+          "result": {
+            "cleanup": "complete",
+            "error": "RuntimeError: pg_ctl.exe failed (exit 1): pg_ctl: could not create restricted token: error code 87\r\npg_ctl: could not start server: error code 3",
+            "source_unchanged": null,
+            "status": "FAILED"
+          }
+        },
+        {
+          "case": "version",
+          "exit": 1,
+          "result": {
+            "cleanup": "complete",
+            "error": "RuntimeError: pg_ctl.exe failed (exit 1): pg_ctl: could not create restricted token: error code 87\r\npg_ctl: could not start server: error code 3",
+            "source_unchanged": null,
+            "status": "FAILED"
+          }
+        },
+        {
+          "case": "missing-media",
+          "exit": 1,
+          "result": {
+            "cleanup": "complete",
+            "error": "RuntimeError: pg_ctl.exe failed (exit 1): pg_ctl: could not create restricted token: error code 87\r\npg_ctl: could not start server: error code 3",
+            "source_unchanged": null,
+            "status": "FAILED"
+          }
+        },
+        {
+          "case": "production-stage",
+          "exit": 1,
+          "result": {
+            "cleanup": "not-started",
+            "error": "isolated drill requires development stage",
+            "status": "FAILED"
+          }
+        },
+        {
+          "case": "environment",
+          "exit": 1,
+          "result": {
+            "cleanup": "complete",
+            "error": "RuntimeError: pg_ctl.exe failed (exit 1): pg_ctl: could not create restricted token: error code 87\r\npg_ctl: could not start server: error code 3",
+            "source_unchanged": null,
+            "status": "FAILED"
+          }
+        }
+      ],
+      "environment": "sandbox restricted token failure"
+    },
+    {
+      "log": "final-backup-command-447d-native.log",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 326.359,
+      "outer_manage_exit_code": 0,
+      "command_cases": [
+        {
+          "case": "checksum",
+          "exit": 1,
+          "result": {
+            "cleanup": "complete",
+            "error": "BackupRecoveryError: Archive SHA256 mismatch",
+            "source_unchanged": true,
+            "status": "FAILED"
+          }
+        },
+        {
+          "case": "corrupt",
+          "exit": 1,
+          "result": {
+            "cleanup": "complete",
+            "error": "BadZipFile: File is not a zip file",
+            "source_unchanged": true,
+            "status": "FAILED"
+          }
+        },
+        {
+          "case": "tool",
+          "exit": 1,
+          "result": {
+            "cleanup": "complete",
+            "error": "BackupRecoveryError: pg_restore failed (1): pg_restore: error: input file does not appear to be a valid archive (too short?)",
+            "source_unchanged": true,
+            "status": "FAILED"
+          }
+        },
+        {
+          "case": "version",
+          "exit": 1,
+          "result": {
+            "cleanup": "complete",
+            "error": "BackupRecoveryError: Archive source, application or PostgreSQL version mismatch",
+            "source_unchanged": true,
+            "status": "FAILED"
+          }
+        },
+        {
+          "case": "missing-media",
+          "exit": 1,
+          "result": {
+            "cleanup": "complete",
+            "error": "BackupRecoveryError: Media manifest mismatch: missing: follow-up-attachments/2026/11/synthetic.txt; file_count differs; total_bytes differs",
+            "source_unchanged": true,
+            "status": "FAILED"
+          }
+        },
+        {
+          "case": "production-stage",
+          "exit": 1,
+          "result": {
+            "cleanup": "not-started",
+            "error": "isolated drill requires development stage",
+            "status": "FAILED"
+          }
+        },
+        {
+          "case": "success",
+          "exit": 0,
+          "result": {
+            "cleanup": "complete",
+            "media": {
+              "algorithm": "sha256",
+              "file_count": 2,
+              "files": [
+                {
+                  "path": "follow-up-attachments/2026/11/synthetic.txt",
+                  "sha256": "64e20fdf0f55d33193d299a7109e6e6b45ad1b31622bea93341c60330b2a0200",
+                  "size": 23
+                },
+                {
+                  "path": "quote-item-images/2026/11/history.gif",
+                  "sha256": "ff95b99e6cd933dc1ce0dfc57ce7d4f78577e094ba87381f2edfba2a4690a7c6",
+                  "size": 43
+                }
+              ],
+              "manifest_sha256": "077c5778d4aa45d910d8c822dc2aa11adeecffd4445aea6f483f2dc832fa39d7",
+              "root": "MEDIA_ROOT",
+              "schema_version": 1,
+              "storage_backend": "filesystem",
+              "total_bytes": 66
+            },
+            "migrations": 133,
+            "row_count": 1025,
+            "sha256": "ce96e9617c1198c1d55045d5a229d82810fa54f1e20314835a22ca49ba20629d",
+            "source": "iss018_src_ccab9d51b99b4354",
+            "source_media_unchanged": true,
+            "status": "PASS",
+            "table_count": 102,
+            "target": "iss018_dst_c7736f105d7d4b29",
+            "versions": {
+              "django": "6.0.9",
+              "pg_dump": "pg_dump (PostgreSQL) 17.11",
+              "pg_restore": "pg_restore (PostgreSQL) 17.11",
+              "server_version_num": 170011
+            }
+          }
+        },
+        {
+          "case": "environment",
+          "exit": 1,
+          "result": {
+            "cleanup": "complete",
+            "error": "BackupRecoveryError: Django may only use a database created by this drill",
+            "source_unchanged": true,
+            "status": "FAILED"
+          }
+        }
+      ],
+      "environment": "approved outside sandbox; original assertions unchanged"
+    }
+  ],
+  "logs": [
+    {
+      "path": "final-backup-command-447d.log",
+      "bytes": 9713,
+      "raw_sha256": "2bda39fcd12cc6d9427dd1f7310bc9522293c00175b8e0154e6afef44f82aff4",
+      "published_sha256": "2bda39fcd12cc6d9427dd1f7310bc9522293c00175b8e0154e6afef44f82aff4",
+      "redactions": 0
+    },
+    {
+      "path": "final-backup-command-447d-native.log",
+      "bytes": 3744,
+      "raw_sha256": "039dd36ecf0a0e9320c730dc36e940ad6863ba35353f4e57590ce520a90a7530",
+      "published_sha256": "039dd36ecf0a0e9320c730dc36e940ad6863ba35353f4e57590ce520a90a7530",
+      "redactions": 0
+    }
+  ],
+  "archive_sha256": "74d118a3007b5ffcb851c03d094362d0392617da8dc09ac9a2e150dc57fa64f3",
+  "scope": "Separate supplemental 8 original command acceptance tests, previously skipped in full1410. Do not rewrite full skip32 or add this as unique tests to1410. Seven child rejection statuses FAILED are expected negative paths, not failed final assertions. First sandbox attempt1pass7fail preserved, seven pre-seed pg_ctl restricted token errors, cleanup complete, source_unchanged null. Native success source102tables1025rows133migrations2files; full operational populated backup102/1218/5 is separately proved."
+}

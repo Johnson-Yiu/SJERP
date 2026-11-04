@@ -1,0 +1,217 @@
+{
+  "allPassed": false,
+  "checkoutHeadProvided": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "coordinator": "docs/uat-evidence/integration-closeout-02/final-447d-frontend/run-final-447d-playwright.mjs",
+  "originalRunner": "frontend/scripts/run-isolated-browser-tests.mjs",
+  "profiles": [
+    {
+      "name": "business-suite",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\final-integrated-447d\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--all-business-tests",
+        "--exclude-business-test",
+        "iss022-moq-real.spec.js",
+        "--exclude-business-test",
+        "iss028-035-category-schema.spec.js",
+        "--exclude-business-test",
+        "iss055-customer-404-real.spec.js",
+        "--exclude-business-test",
+        "iss006-frontend-storage-chrome.spec.js",
+        "--exclude-business-test",
+        "iss007-attachment-real.spec.js",
+        "--exclude-business-test",
+        "iss007-image-snapshot-real.spec.js",
+        "--exclude-business-test",
+        "shared-report-templates.spec.js",
+        "--exclude-business-test",
+        "quote-editor-mobile-actions.spec.js",
+        "--exclude-business-test",
+        "iss037-print-output-acceptance.spec.js"
+      ],
+      "exitCode": 1,
+      "signal": null,
+      "spawnError": null,
+      "parsedPlaywrightSummary": {
+        "failed": 1,
+        "passed": 237
+      },
+      "stdout": "logs/playwright-profiles/business-suite.stdout.log",
+      "stderr": "logs/playwright-profiles/business-suite.stderr.log"
+    },
+    {
+      "name": "shared-report-templates-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\final-integrated-447d\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "shared-report-templates.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "parsedPlaywrightSummary": {
+        "passed": 1
+      },
+      "stdout": "logs/playwright-profiles/shared-report-templates-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/shared-report-templates-isolated.stderr.log"
+    },
+    {
+      "name": "quote-editor-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\final-integrated-447d\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "quote-editor-mobile-actions.spec.js"
+      ],
+      "exitCode": 1,
+      "signal": null,
+      "spawnError": null,
+      "parsedPlaywrightSummary": {
+        "failed": 1
+      },
+      "stdout": "logs/playwright-profiles/quote-editor-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/quote-editor-isolated.stderr.log"
+    },
+    {
+      "name": "iss006-storage-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\final-integrated-447d\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss006-frontend-storage-chrome.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "parsedPlaywrightSummary": {
+        "passed": 10
+      },
+      "stdout": "logs/playwright-profiles/iss006-storage-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss006-storage-isolated.stderr.log"
+    },
+    {
+      "name": "iss007-attachment-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\final-integrated-447d\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss007-attachment-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "parsedPlaywrightSummary": {
+        "passed": 3
+      },
+      "stdout": "logs/playwright-profiles/iss007-attachment-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss007-attachment-isolated.stderr.log"
+    },
+    {
+      "name": "iss007-image-snapshot-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\final-integrated-447d\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss007-image-snapshot-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "parsedPlaywrightSummary": {
+        "passed": 1
+      },
+      "stdout": "logs/playwright-profiles/iss007-image-snapshot-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss007-image-snapshot-isolated.stderr.log"
+    },
+    {
+      "name": "iss022-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\final-integrated-447d\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss022-moq-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "parsedPlaywrightSummary": {
+        "passed": 1
+      },
+      "stdout": "logs/playwright-profiles/iss022-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss022-isolated.stderr.log"
+    },
+    {
+      "name": "iss028-035-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\final-integrated-447d\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss028-035-category-schema.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "parsedPlaywrightSummary": {
+        "passed": 2
+      },
+      "stdout": "logs/playwright-profiles/iss028-035-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss028-035-isolated.stderr.log"
+    },
+    {
+      "name": "iss055-rbac",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\final-integrated-447d\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss055-customer-404-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "parsedPlaywrightSummary": {
+        "passed": 6
+      },
+      "stdout": "logs/playwright-profiles/iss055-rbac.stdout.log",
+      "stderr": "logs/playwright-profiles/iss055-rbac.stderr.log"
+    }
+  ],
+  "businessSuiteExclusions": {
+    "originalEightPreserved": [
+      "iss022-moq-real.spec.js",
+      "iss028-035-category-schema.spec.js",
+      "iss055-customer-404-real.spec.js",
+      "iss006-frontend-storage-chrome.spec.js",
+      "iss007-attachment-real.spec.js",
+      "iss007-image-snapshot-real.spec.js",
+      "shared-report-templates.spec.js",
+      "quote-editor-mobile-actions.spec.js"
+    ],
+    "additionalUserDeferredSpec": "iss037-print-output-acceptance.spec.js",
+    "noOtherCoordinatorExclusionsAdded": true
+  },
+  "deferredAcceptance": {
+    "spec": "iss037-print-output-acceptance.spec.js",
+    "state": "NOT_RUN_USER_DEFERRED",
+    "userStatedScenarioCount": 6,
+    "sourceDeclaredTestCaseCount": 7,
+    "sourceScenarioNames": [
+      "saved PI blocks printing when a document image fails",
+      "saved PI permits printing after resources load on narrow screen",
+      "Chrome UI print to PDF complete 1440px headers=false",
+      "Chrome UI print to PDF complete 1440px headers=true",
+      "Chrome UI print to PDF complete 390px headers=false",
+      "Chrome UI print to PDF multipage 1440px headers=false",
+      "Chrome UI print to PDF optional-empty 1440px headers=false"
+    ],
+    "scenarioCountMismatch": "The instruction says six; static inspection of the frozen spec finds two direct tests plus five parameterized cases. The entire spec remains excluded.",
+    "note": "The entire spec is excluded from the business suite; no isolated profile invokes it."
+  },
+  "runtime": {
+    "python": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/closeout-python312/Scripts/python.exe",
+    "pythonUtf8": "1",
+    "openssl": "D:/Program Files/Git/usr/bin/openssl.exe",
+    "playwrightChannel": "unchanged isolated-runner behavior; Chromium default except runner/test-level Chrome selections",
+    "coordinatorOverridesPlaywrightChannel": false
+  }
+}

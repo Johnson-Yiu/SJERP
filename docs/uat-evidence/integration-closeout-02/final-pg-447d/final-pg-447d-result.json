@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "source_product_sha": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "full_postgres_suite": {
+    "launcher_exit_code": 0,
+    "runner_exit_marker": 0,
+    "total": 1410,
+    "passed": 1378,
+    "skipped": 32,
+    "failed": 0,
+    "duration_seconds": 1309.665,
+    "raw_log": "logs/postgres-final-447d-opseed-receipt-relation.log",
+    "raw_log_sha256": "8a13f655274a55629186efa54fd2965ef6ef3540b18e95759ba52a223c251b6e",
+    "scope_note": "The recorded 32 skips are from this full run. The separate parent-owned ISS018 command-test rerun is excluded and not reported as passed."
+  },
+  "backup_restore": {
+    "status": "PASS",
+    "postgresql_version": "17.11",
+    "table_count": 102,
+    "row_count": 1218,
+    "migrations": 133,
+    "media_files": 5,
+    "cleanup": "complete",
+    "archive": "artifacts/postgres-backups/447d7816ead2-40c0895c.zip",
+    "archive_sha256": "9a68c0a8c2a6fb8844e7faaf3748482db564f27256b4c503c5060bb6db0bbe80",
+    "archive_manifest_migration_count": 133,
+    "archive_manifest_media_file_count": 5,
+    "verification_markers": {
+      "history": "PASS",
+      "finance": "PASS",
+      "history_operational": "PASS"
+    },
+    "postgresql_version_num": 170011
+  },
+  "history_operational_restore": {
+    "status": "PASS",
+    "scoped_table_count": 36,
+    "scoped_row_count": 198,
+    "new_history_tables": {
+      "crm_historyinventorybaseline": 2,
+      "crm_historyinventorybaselinereversal": 1,
+      "crm_historyoperationalcontract": 2
+    },
+    "guard_probes_total": 9,
+    "guard_probes_rejected": 9,
+    "guard_probe_sqlstates": [
+      "55000"
+    ],
+    "guard_probe_data_unchanged": true,
+    "guard_probes": [
+      {
+        "table": "crm_historyinventorybaseline",
+        "action": "UPDATE",
+        "rejected": true,
+        "sqlstate": "55000"
+      },
+      {
+        "table": "crm_historyinventorybaseline",
+        "action": "DELETE",
+        "rejected": true,
+        "sqlstate": "55000"
+      },
+      {
+        "table": "crm_historyinventorybaseline",
+        "action": "TRUNCATE",
+        "rejected": true,
+        "sqlstate": "55000"
+      },
+      {
+        "table": "crm_historyinventorybaselinereversal",
+        "action": "UPDATE",
+        "rejected": true,
+        "sqlstate": "55000"
+      },
+      {
+        "table": "crm_historyinventorybaselinereversal",
+        "action": "DELETE",
+        "rejected": true,
+        "sqlstate": "55000"
+      },
+      {
+        "table": "crm_historyinventorybaselinereversal",
+        "action": "TRUNCATE",
+        "rejected": true,
+        "sqlstate": "55000"
+      },
+      {
+        "table": "crm_historyoperationalcontract",
+        "action": "UPDATE",
+        "rejected": true,
+        "sqlstate": "55000"
+      },
+      {
+        "table": "crm_historyoperationalcontract",
+        "action": "DELETE",
+        "rejected": true,
+        "sqlstate": "55000"
+      },
+      {
+        "table": "crm_historyoperationalcontract",
+        "action": "TRUNCATE",
+        "rejected": true,
+        "sqlstate": "55000"
+      }
+    ],
+    "evidence": "artifacts/postgres-backups/history-operational-restored-447d7816ead2.json"
+  },
+  "finance_restore": {
+    "status": "PASS",
+    "scoped_table_count": 13,
+    "scoped_row_count": 26,
+    "restored_real_http_check_count": 4,
+    "restored_real_http_statuses": [
+      403,
+      403,
+      200,
+      404
+    ],
+    "private_media_references": 5,
+    "evidence": "artifacts/postgres-backups/finance-restored-447d7816ead2.json"
+  },
+  "failed_seed_attempts": [
+    {
+      "log": "logs/postgres-final-447d-opseed-first.log",
+      "status": "FAILED",
+      "stage": "seed/setup",
+      "tests_executed": 0,
+      "exception_type": "RuntimeError",
+      "cause": "synthetic customer serializer rejected missing contacts with HTTP 400",
+      "cleanup": "complete",
+      "raw_sha256": "de54068382944162e4796b37e4717cb68f068ec00e381a909564ab471644056e",
+      "source_unchanged": null,
+      "source_unchanged_note": "Not reported as verified in this failed seed/setup record."
+    },
+    {
+      "log": "logs/postgres-final-447d-opseed-contacts.log",
+      "status": "FAILED",
+      "stage": "seed/setup",
+      "tests_executed": 0,
+      "exception_type": "django.core.exceptions.FieldError",
+      "cause": "operational seed relation lookup used unavailable purchase_order_id field",
+      "cleanup": "complete",
+      "raw_sha256": "d1cefa2cf82051dfe1e71541b9d84688bc06ce35778f84d2fa5ca0c85125818d",
+      "source_unchanged": null,
+      "source_unchanged_note": "Not reported as verified in this failed seed/setup record."
+    }
+  ],
+  "separate_parent_owned_iss018_backup_command_run": "Excluded from this package; parent-owned result is not assessed here.",
+  "logs_manifest": "final-pg-447d-log-manifest.json",
+  "rawlogs_zip": "logs/final-pg-447d-rawlogs.zip",
+  "status_scope": "PASS applies to the final successful full PostgreSQL regression and restore; the two earlier seed/setup failures remain separately recorded below.",
+  "logs_manifest_sha256": "fa458b6bbd39e36c1673c0936b53caa25fda2ff8a89f3c19a36f36fb24ce0098",
+  "rawlogs_zip_sha256": "24fd7d25de42ace6029f039163e11a5657efdc73b3ea4af107e78ac47b46aa75"
+}

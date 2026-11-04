@@ -1,0 +1,68 @@
+[isolated Django API] [05/Nov/2026 04:30:33] "GET /api/__test__/isolation/818387abd7fb7aefad66cce3f3f96ebebb9760b108153ca6/ HTTP/1.1" 200 325
+[isolated Django API] [05/Nov/2026 04:30:33] "GET /api/__test__/isolation/818387abd7fb7aefad66cce3f3f96ebebb9760b108153ca6/ HTTP/1.1" 200 325
+(node:26412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [05/Nov/2026 04:30:35] "GET /admin/login/?next=/ HTTP/1.1" 200 4082
+[isolated Django API] [05/Nov/2026 04:30:36] "POST /admin/login/ HTTP/1.1" 302 0
+[isolated Django API] [05/Nov/2026 04:30:36] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:38] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:38] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:38] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 150
+[isolated Django API] [05/Nov/2026 04:30:38] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 37
+[isolated Django API] [05/Nov/2026 04:30:38] "GET /api/operation-logs/?entity=crm.customer&object_id=1&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 04:30:38] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 490
+[isolated Django API] [05/Nov/2026 04:30:38] "GET /api/context/customers/1/ HTTP/1.1" 200 275
+[isolated Django API] [05/Nov/2026 04:30:39] "GET /admin/login/?next=/ HTTP/1.1" 200 4082
+[isolated Django API] [05/Nov/2026 04:30:40] "POST /admin/login/ HTTP/1.1" 302 0
+[isolated Django API] [05/Nov/2026 04:30:40] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:40] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:40] "GET /api/operation-logs/?entity=crm.customer&object_id=1&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 04:30:40] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 150
+[isolated Django API] [05/Nov/2026 04:30:40] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:40] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 37
+[isolated Django API] [05/Nov/2026 04:30:40] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 490
+[isolated Django API] [05/Nov/2026 04:30:41] "GET /api/context/customers/1/ HTTP/1.1" 200 275
+[isolated Django API] [05/Nov/2026 04:30:41] "GET /admin/login/?next=/ HTTP/1.1" 200 4082
+[isolated Django API] [05/Nov/2026 04:30:42] "POST /admin/login/ HTTP/1.1" 302 0
+[isolated Django API] [05/Nov/2026 04:30:42] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:42] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] Not Found: /api/context/customers/2/
+[isolated Django API] [05/Nov/2026 04:30:42] "GET /api/context/customers/2/ HTTP/1.1" 404 58
+[isolated Django API] [05/Nov/2026 04:30:42] "GET /api/operation-logs/?entity=crm.customer&object_id=2&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 04:30:42] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 37
+[isolated Django API] [05/Nov/2026 04:30:42] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 150
+[isolated Django API] [05/Nov/2026 04:30:42] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 490
+[isolated Django API] [05/Nov/2026 04:30:42] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:43] "GET /admin/login/?next=/ HTTP/1.1" 200 4082
+[isolated Django API] [05/Nov/2026 04:30:44] "POST /admin/login/ HTTP/1.1" 302 0
+[isolated Django API] [05/Nov/2026 04:30:44] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:44] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:44] "GET /api/operation-logs/?entity=crm.customer&object_id=2&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] Not Found: /api/context/customers/2/
+[isolated Django API] [05/Nov/2026 04:30:44] "GET /api/context/customers/2/ HTTP/1.1" 404 58
+[isolated Django API] [05/Nov/2026 04:30:44] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 150
+[isolated Django API] [05/Nov/2026 04:30:44] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 37
+[isolated Django API] [05/Nov/2026 04:30:44] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:44] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 490
+[isolated Django API] [05/Nov/2026 04:30:44] "GET /admin/login/?next=/ HTTP/1.1" 200 4082
+[isolated Django API] [05/Nov/2026 04:30:45] "POST /admin/login/ HTTP/1.1" 302 0
+[isolated Django API] [05/Nov/2026 04:30:45] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:46] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:46] "GET /api/operation-logs/?entity=crm.customer&object_id=999999&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] Not Found: /api/context/customers/999999/
+[isolated Django API] [05/Nov/2026 04:30:46] "GET /api/context/customers/999999/ HTTP/1.1" 404 58
+[isolated Django API] [05/Nov/2026 04:30:46] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 150
+[isolated Django API] [05/Nov/2026 04:30:46] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 37
+[isolated Django API] [05/Nov/2026 04:30:46] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 490
+[isolated Django API] [05/Nov/2026 04:30:46] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:46] "GET /admin/login/?next=/ HTTP/1.1" 200 4082
+[isolated Django API] [05/Nov/2026 04:30:47] "POST /admin/login/ HTTP/1.1" 302 0
+[isolated Django API] [05/Nov/2026 04:30:47] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:48] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] Not Found: /api/context/customers/999999/
+[isolated Django API] [05/Nov/2026 04:30:48] "GET /api/context/customers/999999/ HTTP/1.1" 404 58
+[isolated Django API] [05/Nov/2026 04:30:48] "GET /api/operation-logs/?entity=crm.customer&object_id=999999&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 04:30:48] "GET /api/session/current-operator/ HTTP/1.1" 200 2853
+[isolated Django API] [05/Nov/2026 04:30:48] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 150
+[isolated Django API] [05/Nov/2026 04:30:48] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 37
+[isolated Django API] [05/Nov/2026 04:30:48] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 490

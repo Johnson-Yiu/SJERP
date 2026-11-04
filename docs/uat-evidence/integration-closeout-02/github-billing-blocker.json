@@ -4,10 +4,38 @@
   "observed_run_id": 41874838749,
   "observed_source_sha": "e8fcc5f7a9b4afdda762810a83134657b9589e93",
   "scope": "Historical source run, independently read via GitHub API; not a final integration result",
-  "jobs": ["frontend", "backend", "backend-postgres"],
+  "jobs": [
+    "frontend",
+    "backend",
+    "backend-postgres"
+  ],
   "each_job_steps": 0,
   "each_job_conclusion": "failure",
   "annotation": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
   "classification": "BLOCKED: GitHub account billing/spending condition, tests never started",
-  "action": "Continue all independent local validation and push the completed stable integration; inspect its own exact-SHA run. Account owner must resolve billing before CI and real Linux runner checks can execute. No billing, workflow evasion, cancellation or blind retries performed."
+  "action": "User requested skipping all subsequent CI because quota is exhausted. Continue applicable local validation; push only [skip ci] commits. Do not inspect/wait/rerun new jobs. Historical zero-step failures remain not tests.",
+  "integration_checkpoint": {
+    "sha": "0037b8c5899554819943944a9cf9e4ea952d2bae",
+    "ci_run": 41880236996,
+    "linux_run": 41880236963,
+    "checked_failed_jobs": [
+      {
+        "name": "frontend",
+        "job_id": 126750471811,
+        "steps": 0
+      },
+      {
+        "name": "postgres-role-receipts",
+        "job_id": 126750472151,
+        "steps": 0
+      }
+    ],
+    "annotation": "Same independently read billing/spending annotation; other jobs were still queued at this snapshot, not presumed executed",
+    "classification": "BLOCKED; no test steps in these failed jobs; not final delivery SHA"
+  },
+  "user_override_2026_11_05": {
+    "instruction": "CI额度已不足，后续任务跳过GitHub CI",
+    "effect": "No further CI triggers/waits/reruns; subsequent commits use [skip ci]. Continue local checks. Keep actual old results, mark future CI quota-paused, not PASS."
+  },
+  "historical_action_before_user_pause": "Continue all independent local validation and push the completed stable integration; inspect its own exact-SHA run. Account owner must resolve billing before CI and real Linux runner checks can execute. No billing, workflow evasion, cancellation or blind retries performed."
 }

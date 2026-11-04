@@ -1,0 +1,243 @@
+{
+  "schema_version": 1,
+  "candidate_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "scope": "Supplemental diagnostic only; not part of the original 262/1 full-suite result.",
+  "artifacts": [
+    {
+      "attempt": 1,
+      "path": "attempt-01\\browser-timeline.json",
+      "bytes": 31669,
+      "sha256": "4cddd8b12dcba6f60f80c14ccc70642483e10a36394b8cdce198167b85260ebd",
+      "public_artifact": true
+    },
+    {
+      "attempt": 1,
+      "path": "attempt-01\\run-metadata.json",
+      "bytes": 1202,
+      "sha256": "3a82a46ce4560ccf993179eafd3a6dc95e3289ee55309840df55ce75f6ad353b",
+      "public_artifact": true
+    },
+    {
+      "attempt": 1,
+      "path": "attempt-01\\runner.redacted.log",
+      "bytes": 14612,
+      "sha256": "3a0d59fa4bdbb1a95fb1460e72d1f15c99a9ddaa73532245b5b68aa2b07eae7b",
+      "public_artifact": true
+    },
+    {
+      "attempt": 1,
+      "path": "attempt-01\\isolated-evidence\\artifacts\\76b20145-8ac5-462f-aa52-df3d17e1b6b0\\.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "public_artifact": true
+    },
+    {
+      "attempt": 1,
+      "path": "attempt-01\\isolated-evidence\\browser\\quote-download-actions\\browser-results.json",
+      "bytes": 6907,
+      "sha256": "942e8d8df8413822eb1b6a8380226b99d6ba6dee5f934ca5a9438e092fe0a6de",
+      "public_artifact": true
+    },
+    {
+      "attempt": 1,
+      "path": "attempt-01\\isolated-evidence\\browser\\quote-download-actions\\chrome-quote-actions-1024.png",
+      "bytes": 106203,
+      "sha256": "e7a10a12a55c4f894cdb97e967973ebb849e2a06f79b30e00edddfe472a6d4c3",
+      "public_artifact": true
+    },
+    {
+      "attempt": 1,
+      "path": "attempt-01\\isolated-evidence\\browser\\quote-download-actions\\chrome-quote-actions-1440.png",
+      "bytes": 161745,
+      "sha256": "905e301cfe20ae57d97e59c3f2a25f8b609cb52861bc68763ea76d73ec231247",
+      "public_artifact": true
+    },
+    {
+      "attempt": 1,
+      "path": "attempt-01\\isolated-evidence\\browser\\quote-download-actions\\chrome-quote-actions-320.png",
+      "bytes": 40493,
+      "sha256": "b13507062872f2573f527aefde72d8ed70a131d08f5774c33c03c5e3817d27f1",
+      "public_artifact": true
+    },
+    {
+      "attempt": 1,
+      "path": "attempt-01\\isolated-evidence\\browser\\quote-download-actions\\chrome-quote-actions-390.png",
+      "bytes": 41156,
+      "sha256": "d6e26c55806a6a4fe86c9ec1e050907d81367fef9de4a6f6eaea221ccb2e13d2",
+      "public_artifact": true
+    },
+    {
+      "attempt": 1,
+      "path": "attempt-01\\isolated-evidence\\browser\\quote-download-actions\\fixture.json",
+      "bytes": 304,
+      "sha256": "90d939bbc4d6327cd0b1767a0cae6726d7c1267cd9e799cb7968b8d64501c974",
+      "public_artifact": true
+    },
+    {
+      "attempt": 2,
+      "path": "attempt-02\\browser-timeline.json",
+      "bytes": 31591,
+      "sha256": "7b99ae771ed952c8177bb2bbf98f175c79bfbe912a52d0b7b6d9e2a90d56ed89",
+      "public_artifact": true
+    },
+    {
+      "attempt": 2,
+      "path": "attempt-02\\run-metadata.json",
+      "bytes": 1202,
+      "sha256": "d15971f69ebceb21381adece5fb1427af821b6568afeecdd364a97a921930ed3",
+      "public_artifact": true
+    },
+    {
+      "attempt": 2,
+      "path": "attempt-02\\runner.redacted.log",
+      "bytes": 14611,
+      "sha256": "00a78b8e11be7a9f3af6544556c270c44b1ae50e874d794148023d8e2aa1e889",
+      "public_artifact": true
+    },
+    {
+      "attempt": 2,
+      "path": "attempt-02\\isolated-evidence\\artifacts\\08cc11e9-d694-4e39-8f77-db7d21cff496\\.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "public_artifact": true
+    },
+    {
+      "attempt": 2,
+      "path": "attempt-02\\isolated-evidence\\browser\\quote-download-actions\\browser-results.json",
+      "bytes": 6907,
+      "sha256": "942e8d8df8413822eb1b6a8380226b99d6ba6dee5f934ca5a9438e092fe0a6de",
+      "public_artifact": true
+    },
+    {
+      "attempt": 2,
+      "path": "attempt-02\\isolated-evidence\\browser\\quote-download-actions\\chrome-quote-actions-1024.png",
+      "bytes": 106203,
+      "sha256": "e7a10a12a55c4f894cdb97e967973ebb849e2a06f79b30e00edddfe472a6d4c3",
+      "public_artifact": true
+    },
+    {
+      "attempt": 2,
+      "path": "attempt-02\\isolated-evidence\\browser\\quote-download-actions\\chrome-quote-actions-1440.png",
+      "bytes": 161745,
+      "sha256": "905e301cfe20ae57d97e59c3f2a25f8b609cb52861bc68763ea76d73ec231247",
+      "public_artifact": true
+    },
+    {
+      "attempt": 2,
+      "path": "attempt-02\\isolated-evidence\\browser\\quote-download-actions\\chrome-quote-actions-320.png",
+      "bytes": 40493,
+      "sha256": "b13507062872f2573f527aefde72d8ed70a131d08f5774c33c03c5e3817d27f1",
+      "public_artifact": true
+    },
+    {
+      "attempt": 2,
+      "path": "attempt-02\\isolated-evidence\\browser\\quote-download-actions\\chrome-quote-actions-390.png",
+      "bytes": 41156,
+      "sha256": "d6e26c55806a6a4fe86c9ec1e050907d81367fef9de4a6f6eaea221ccb2e13d2",
+      "public_artifact": true
+    },
+    {
+      "attempt": 2,
+      "path": "attempt-02\\isolated-evidence\\browser\\quote-download-actions\\fixture.json",
+      "bytes": 304,
+      "sha256": "6fc0d0713dd7a213a532a4d52e460fe7ceeedcbff56cb856d4edeee16adcdb1c",
+      "public_artifact": true
+    },
+    {
+      "attempt": 3,
+      "path": "attempt-03\\browser-timeline.json",
+      "bytes": 31707,
+      "sha256": "b0a3d2b27dd64d8556dbafa08bc3f8c1dd90cf58ff1832d42cd092de83883348",
+      "public_artifact": true
+    },
+    {
+      "attempt": 3,
+      "path": "attempt-03\\run-metadata.json",
+      "bytes": 1202,
+      "sha256": "f60bff4d8893cfceebe7f59197e078d146aee00a8734d1dee496c73e955a095b",
+      "public_artifact": true
+    },
+    {
+      "attempt": 3,
+      "path": "attempt-03\\runner.redacted.log",
+      "bytes": 14613,
+      "sha256": "78778ad5fc96db7e0a38b325f55990eae47d1cb6545b63c5ac8b0822e9412d2f",
+      "public_artifact": true
+    },
+    {
+      "attempt": 3,
+      "path": "attempt-03\\isolated-evidence\\artifacts\\0f6f358c-9f86-47fd-aa95-1762ebd5fd0c\\.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "public_artifact": true
+    },
+    {
+      "attempt": 3,
+      "path": "attempt-03\\isolated-evidence\\browser\\quote-download-actions\\browser-results.json",
+      "bytes": 6907,
+      "sha256": "7ec0412bd46ffb1a86a86236d3aa59f2a9c4c9e278cec8d368ee1216358a47ea",
+      "public_artifact": true
+    },
+    {
+      "attempt": 3,
+      "path": "attempt-03\\isolated-evidence\\browser\\quote-download-actions\\chrome-quote-actions-1024.png",
+      "bytes": 106203,
+      "sha256": "e7a10a12a55c4f894cdb97e967973ebb849e2a06f79b30e00edddfe472a6d4c3",
+      "public_artifact": true
+    },
+    {
+      "attempt": 3,
+      "path": "attempt-03\\isolated-evidence\\browser\\quote-download-actions\\chrome-quote-actions-1440.png",
+      "bytes": 161745,
+      "sha256": "905e301cfe20ae57d97e59c3f2a25f8b609cb52861bc68763ea76d73ec231247",
+      "public_artifact": true
+    },
+    {
+      "attempt": 3,
+      "path": "attempt-03\\isolated-evidence\\browser\\quote-download-actions\\chrome-quote-actions-320.png",
+      "bytes": 40493,
+      "sha256": "b13507062872f2573f527aefde72d8ed70a131d08f5774c33c03c5e3817d27f1",
+      "public_artifact": true
+    },
+    {
+      "attempt": 3,
+      "path": "attempt-03\\isolated-evidence\\browser\\quote-download-actions\\chrome-quote-actions-390.png",
+      "bytes": 41156,
+      "sha256": "d6e26c55806a6a4fe86c9ec1e050907d81367fef9de4a6f6eaea221ccb2e13d2",
+      "public_artifact": true
+    },
+    {
+      "attempt": 3,
+      "path": "attempt-03\\isolated-evidence\\browser\\quote-download-actions\\fixture.json",
+      "bytes": 304,
+      "sha256": "73d35604541a3df3573c9c6deb88ef7e762cf84d0b616f7238e4eb44c8dee08f",
+      "public_artifact": true
+    }
+  ],
+  "private_raw_logs": [
+    {
+      "attempt": 1,
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\quote-download-diagnostic-02140bf-8sdgb0mo\\.tmp\\private-raw-logs\\interrupt-01.raw.log",
+      "bytes": 14698,
+      "sha256": "1c7c1776f052042a2fdd44c6582170e4382435edcb586e608e59c325dac86075",
+      "retained_under_ignored_tmp": true,
+      "published": false
+    },
+    {
+      "attempt": 2,
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\quote-download-diagnostic-02140bf-8sdgb0mo\\.tmp\\private-raw-logs\\interrupt-02.raw.log",
+      "bytes": 14697,
+      "sha256": "b8057eca647757a39efe7d94a76e73ac505044daff8249b245fe05820c0053c6",
+      "retained_under_ignored_tmp": true,
+      "published": false
+    },
+    {
+      "attempt": 3,
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\quote-download-diagnostic-02140bf-8sdgb0mo\\.tmp\\private-raw-logs\\interrupt-03.raw.log",
+      "bytes": 14699,
+      "sha256": "6cb6ca014738f86732886582ca3eee6cec2f8c5726808b13f42dea7e8dd3ddec",
+      "retained_under_ignored_tmp": true,
+      "published": false
+    }
+  ]
+}

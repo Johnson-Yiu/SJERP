@@ -1,0 +1,329 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "source_product_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "source_code_worktree": ".tmp/final-integrated-02140bf",
+  "postgres_attempts_included": 1,
+  "test_run": {
+    "command_result": "POSTGRES_REGRESSION_EXIT=0",
+    "tests_run": 1410,
+    "passed": 1378,
+    "skipped": 32,
+    "failed": 0,
+    "errors": 0,
+    "elapsed_seconds": 1521.535,
+    "skip_details": [
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_archive_path_traversal_is_rejected_before_target_commit",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_backup_permissions_are_strict_on_posix_or_explicitly_pending_on_windows",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_backup_requires_an_explicit_write_quiescence_confirmation",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_disk_write_failure_leaves_no_target_or_staging_directory",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_existing_empty_target_is_rejected_without_deletion",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_existing_world_accessible_backup_directory_requires_explicit_tightening",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_explicit_failure_report_can_be_outside_target",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_failed_restore_to_missing_target_does_not_create_target",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_media_change_during_copy_discards_archive",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_non_empty_target_is_unchanged_and_failure_report_is_a_sibling",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_missing_directory_fails_without_creating_it",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_non_directory_fails_without_mutating_path",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_symlink_directory_is_rejected",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_requested_encryption_failure_is_recorded_as_failed",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_restore_rejects_tampered_media",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_result_file_inside_existing_target_is_rejected_without_changes",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_result_file_symlink_is_rejected_without_overwriting_link_target",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_retention_plan_defaults_to_seven_daily_four_weekly_three_monthly_without_deleting",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_single_archive_restore_preserves_rows_amount_inventory_and_media_relation",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_successful_restore_reports_recovery_and_report_status_separately",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_windows_production_requires_external_ntfs_acl_verification",
+        "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately."
+      },
+      {
+        "test": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_checksum",
+        "reason": "requires local PostgreSQL 17 binaries"
+      },
+      {
+        "test": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_corrupt_archive",
+        "reason": "requires local PostgreSQL 17 binaries"
+      },
+      {
+        "test": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_failed_restore_tool",
+        "reason": "requires local PostgreSQL 17 binaries"
+      },
+      {
+        "test": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_incompatible_version",
+        "reason": "requires local PostgreSQL 17 binaries"
+      },
+      {
+        "test": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_missing_media",
+        "reason": "requires local PostgreSQL 17 binaries"
+      },
+      {
+        "test": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_production_stage_rejected_before_cluster_creation",
+        "reason": "requires local PostgreSQL 17 binaries"
+      },
+      {
+        "test": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_success",
+        "reason": "requires local PostgreSQL 17 binaries"
+      },
+      {
+        "test": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_wrong_environment",
+        "reason": "requires local PostgreSQL 17 binaries"
+      },
+      {
+        "test": "crm.tests.test_iss047_private_storage.ISS047PrivateMediaStorageTests.test_symlink_is_rejected_in_private_media_inventory",
+        "reason": "symlink creation is not available in this environment"
+      },
+      {
+        "test": "crm.tests.test_operations_receipt_cli.ReceiptCliTests.test_configured_group_receipt_is_0640_and_uses_the_current_group",
+        "reason": "POSIX group publication requires Linux/POSIX"
+      },
+      {
+        "test": "crm.tests.test_operations_receipt_cli.ReceiptCliTests.test_group_permission_failure_never_publishes_receipt",
+        "reason": "POSIX descriptor permission failure requires Linux/POSIX"
+      }
+    ],
+    "raw_log": "logs/postgres-final-02140bf-full.log",
+    "raw_log_sha256": "be368574b5398504b08f964dfffe5186f42749cc6f63e3c884f65d9aec0d4c2c",
+    "launcher": "logs/postgres-final-02140bf-full.launcher.json",
+    "launcher_sha256": "73de28d0434aec90681f076160faf82d50ef2edcd75e877aee85ab141c560fa0"
+  },
+  "postgres_backup_restore": {
+    "status": "PASS",
+    "postgres_server_version_num": 170011,
+    "postgres_version": "pg_dump (PostgreSQL) 17.11",
+    "django_version": "6.0.9",
+    "migration_count": 133,
+    "source_database_sha256": "5a9cacf79dd52c9872eb6173b055d9b475e81238efb9794064ec333b6f883fb5",
+    "source_snapshot_consistency": "exported-postgresql-snapshot-table-locks-and-owned-media-gate",
+    "restored_table_count": 102,
+    "restored_row_count": 1218,
+    "archive": {
+      "path": "artifacts/postgres-backups/02140bf46df2-994ff7ed.zip",
+      "size": 415890,
+      "sha256": "7343ab609e85f21e01cc1ccb747c73fb45963a5482d7951811aa80a28155b37e"
+    },
+    "media": {
+      "file_count": 5,
+      "total_bytes": 254,
+      "manifest_sha256": "c9f79b5115534d654986a22bb777589fb377542e7838ef36a72867e0ff05530b",
+      "source_media_unchanged": true
+    },
+    "verification_scope": {
+      "base_drill": "Captured row_to_json rows for every public table before backup; restored rows matched this snapshot (102 tables, 1218 rows). Source media manifest remained unchanged. The primary drill did not separately reread source rows/sequences after restore.",
+      "finance": "Source/restored finance row manifests, sequence states and private-media references compared exactly.",
+      "history_operational": "Source/restored operational manifests compared exactly, including scoped rows, sequences, links and private-file bytes."
+    }
+  },
+  "finance_restore": {
+    "status": "PASS",
+    "tables": 13,
+    "rows": 26,
+    "sequence_entries": 100,
+    "sequence_state_sha256": "8c16512534d9d96e24c14c40624d72ab7ee4eee3de822f8a1bc44f97264ba190",
+    "private_media_references": 5,
+    "vouchers": [
+      {
+        "name": "finance-vouchers/2026/11/526c461118fb4384bdd68081c1ef38c6.pdf",
+        "size": 67,
+        "sha256": "18de971f1d8423c8f651c74d2a465d078d0b362e0219cfb73581bf1d96caeffd"
+      },
+      {
+        "name": "finance-vouchers/2026/11/503b6ccb03524d949aa322d48b24819a.pdf",
+        "size": 64,
+        "sha256": "02f70466fba3b52092541330f0bb6e408180d1499d722a74ff1abd40843571b1"
+      },
+      {
+        "name": "finance-vouchers/2026/11/3af4d3ff3bb64e47a8ddf1c78388dd99.pdf",
+        "size": 57,
+        "sha256": "63926805804127719703295edb502decc05670a515f971038d4333715767961f"
+      }
+    ],
+    "restored_real_http": [
+      {
+        "identity": "anonymous",
+        "path": "/api/finance-ledger/voucher-download/?id=1",
+        "status": 403,
+        "bytes": 43,
+        "sha256": "323035c1907e918ffa978a9bdec9f41f159f8625dde60f9585819811a73f258d"
+      },
+      {
+        "identity": "iss018-drill-denied",
+        "path": "/api/finance-ledger/voucher-download/?id=1",
+        "status": 403,
+        "bytes": 46,
+        "sha256": "ea74f83522e11136cc232d8cf171c7fd703dca0c2bb616e942b8d002fdc1235a"
+      },
+      {
+        "identity": "iss018-drill-owner",
+        "path": "/api/finance-ledger/voucher-download/?id=1",
+        "status": 200,
+        "bytes": 67,
+        "sha256": "18de971f1d8423c8f651c74d2a465d078d0b362e0219cfb73581bf1d96caeffd"
+      },
+      {
+        "identity": "iss018-drill-owner",
+        "path": "/media/finance-vouchers/2026/11/526c461118fb4384bdd68081c1ef38c6.pdf",
+        "status": 404,
+        "bytes": 179,
+        "sha256": "5547992afdadb59737c5c0feb1a35dff294cd27145bf290c031737ecf8a2577d"
+      }
+    ],
+    "evidence": "artifacts/postgres-backups/finance-restored-02140bf46df2.json"
+  },
+  "history_operational_restore": {
+    "status": "PASS",
+    "scoped_tables": 36,
+    "scoped_rows": 198,
+    "sequence_entries": 36,
+    "nonempty_new_tables": {
+      "crm_historyinventorybaseline": {
+        "rows": 2,
+        "row_sha256": "05c0d362565eb63a184eef5daf0f68b4e728517637a22d01eb248a43235383b4",
+        "sequence": {
+          "name": "public.crm_historyinventorybaseline_id_seq",
+          "last_value": 2,
+          "is_called": true
+        }
+      },
+      "crm_historyinventorybaselinereversal": {
+        "rows": 1,
+        "row_sha256": "873fa614f1e1ff174f63a75c387b6e3042879591dac7b11abae64fccb77ac73c",
+        "sequence": {
+          "name": "public.crm_historyinventorybaselinereversal_id_seq",
+          "last_value": 1,
+          "is_called": true
+        }
+      },
+      "crm_historyoperationalcontract": {
+        "rows": 2,
+        "row_sha256": "6b26acc11987cbd9fe52f4fa8c97ebc0e9f7e5aa50cbf8fba052c650170bc41c",
+        "sequence": {
+          "name": "public.crm_historyoperationalcontract_id_seq",
+          "last_value": 2,
+          "is_called": true
+        }
+      }
+    },
+    "guard_probes": [
+      {
+        "table": "crm_historyinventorybaseline",
+        "action": "UPDATE",
+        "sqlstate": "55000",
+        "rejected_by_history_guard": true
+      },
+      {
+        "table": "crm_historyinventorybaseline",
+        "action": "DELETE",
+        "sqlstate": "55000",
+        "rejected_by_history_guard": true
+      },
+      {
+        "table": "crm_historyinventorybaseline",
+        "action": "TRUNCATE",
+        "sqlstate": "55000",
+        "rejected_by_history_guard": true
+      },
+      {
+        "table": "crm_historyinventorybaselinereversal",
+        "action": "UPDATE",
+        "sqlstate": "55000",
+        "rejected_by_history_guard": true
+      },
+      {
+        "table": "crm_historyinventorybaselinereversal",
+        "action": "DELETE",
+        "sqlstate": "55000",
+        "rejected_by_history_guard": true
+      },
+      {
+        "table": "crm_historyinventorybaselinereversal",
+        "action": "TRUNCATE",
+        "sqlstate": "55000",
+        "rejected_by_history_guard": true
+      },
+      {
+        "table": "crm_historyoperationalcontract",
+        "action": "UPDATE",
+        "sqlstate": "55000",
+        "rejected_by_history_guard": true
+      },
+      {
+        "table": "crm_historyoperationalcontract",
+        "action": "DELETE",
+        "sqlstate": "55000",
+        "rejected_by_history_guard": true
+      },
+      {
+        "table": "crm_historyoperationalcontract",
+        "action": "TRUNCATE",
+        "sqlstate": "55000",
+        "rejected_by_history_guard": true
+      }
+    ],
+    "guard_probe_count": 9,
+    "guard_probe_data_unchanged": true,
+    "evidence": "artifacts/postgres-backups/history-operational-restored-02140bf46df2.json"
+  },
+  "cleanup": "complete",
+  "scope_limit": "Owned synthetic PostgreSQL cluster only; not production data, deployment acceptance, or formal operational readiness."
+}

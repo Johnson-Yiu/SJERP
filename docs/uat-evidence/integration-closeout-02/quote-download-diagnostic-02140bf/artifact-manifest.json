@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "candidate_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "diagnostic_copy_only": true,
+  "canonical_product_paths_changed": false,
+  "artifacts": [
+    {
+      "attempt": "01",
+      "name": "chrome-quote-actions-1024.png",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-01\\browser-evidence\\chrome-quote-actions-1024.png",
+      "bytes": 106203,
+      "sha256": "e7a10a12a55c4f894cdb97e967973ebb849e2a06f79b30e00edddfe472a6d4c3"
+    },
+    {
+      "attempt": "01",
+      "name": "chrome-quote-actions-1440.png",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-01\\browser-evidence\\chrome-quote-actions-1440.png",
+      "bytes": 161745,
+      "sha256": "905e301cfe20ae57d97e59c3f2a25f8b609cb52861bc68763ea76d73ec231247"
+    },
+    {
+      "attempt": "01",
+      "name": "chrome-quote-actions-320.png",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-01\\browser-evidence\\chrome-quote-actions-320.png",
+      "bytes": 40493,
+      "sha256": "b13507062872f2573f527aefde72d8ed70a131d08f5774c33c03c5e3817d27f1"
+    },
+    {
+      "attempt": "01",
+      "name": "chrome-quote-actions-390.png",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-01\\browser-evidence\\chrome-quote-actions-390.png",
+      "bytes": 41156,
+      "sha256": "d6e26c55806a6a4fe86c9ec1e050907d81367fef9de4a6f6eaea221ccb2e13d2"
+    },
+    {
+      "attempt": "02",
+      "name": "chrome-quote-actions-1024.png",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-02\\browser-evidence\\chrome-quote-actions-1024.png",
+      "bytes": 106203,
+      "sha256": "e7a10a12a55c4f894cdb97e967973ebb849e2a06f79b30e00edddfe472a6d4c3"
+    },
+    {
+      "attempt": "02",
+      "name": "chrome-quote-actions-1440.png",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-02\\browser-evidence\\chrome-quote-actions-1440.png",
+      "bytes": 161745,
+      "sha256": "905e301cfe20ae57d97e59c3f2a25f8b609cb52861bc68763ea76d73ec231247"
+    },
+    {
+      "attempt": "02",
+      "name": "chrome-quote-actions-320.png",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-02\\browser-evidence\\chrome-quote-actions-320.png",
+      "bytes": 40493,
+      "sha256": "b13507062872f2573f527aefde72d8ed70a131d08f5774c33c03c5e3817d27f1"
+    },
+    {
+      "attempt": "02",
+      "name": "chrome-quote-actions-390.png",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-02\\browser-evidence\\chrome-quote-actions-390.png",
+      "bytes": 41156,
+      "sha256": "d6e26c55806a6a4fe86c9ec1e050907d81367fef9de4a6f6eaea221ccb2e13d2"
+    },
+    {
+      "attempt": "02",
+      "name": "browser-results.json",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-02\\browser-evidence\\browser-results.json",
+      "bytes": 6907,
+      "sha256": "942e8d8df8413822eb1b6a8380226b99d6ba6dee5f934ca5a9438e092fe0a6de"
+    },
+    {
+      "attempt": "03",
+      "name": "chrome-quote-actions-1024.png",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-03\\browser-evidence\\chrome-quote-actions-1024.png",
+      "bytes": 106203,
+      "sha256": "e7a10a12a55c4f894cdb97e967973ebb849e2a06f79b30e00edddfe472a6d4c3"
+    },
+    {
+      "attempt": "03",
+      "name": "chrome-quote-actions-1440.png",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-03\\browser-evidence\\chrome-quote-actions-1440.png",
+      "bytes": 161745,
+      "sha256": "905e301cfe20ae57d97e59c3f2a25f8b609cb52861bc68763ea76d73ec231247"
+    },
+    {
+      "attempt": "03",
+      "name": "chrome-quote-actions-320.png",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-03\\browser-evidence\\chrome-quote-actions-320.png",
+      "bytes": 40493,
+      "sha256": "b13507062872f2573f527aefde72d8ed70a131d08f5774c33c03c5e3817d27f1"
+    },
+    {
+      "attempt": "03",
+      "name": "chrome-quote-actions-390.png",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-03\\browser-evidence\\chrome-quote-actions-390.png",
+      "bytes": 41156,
+      "sha256": "d6e26c55806a6a4fe86c9ec1e050907d81367fef9de4a6f6eaea221ccb2e13d2"
+    },
+    {
+      "attempt": "03",
+      "name": "browser-results.json",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-03\\browser-evidence\\browser-results.json",
+      "bytes": 6907,
+      "sha256": "942e8d8df8413822eb1b6a8380226b99d6ba6dee5f934ca5a9438e092fe0a6de"
+    },
+    {
+      "attempt": "01",
+      "name": "browser-timeline.json",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-01\\browser-timeline.json",
+      "bytes": 28508,
+      "sha256": "5f74574aa1406df4a22e37a4244bb8e45232770afce8257a1e2261f15a37d6b2"
+    },
+    {
+      "attempt": "01",
+      "name": "run-metadata.json",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-01\\run-metadata.json",
+      "bytes": 296,
+      "sha256": "5da37162a5cf8420ca97892e21424446b5822eff338709055856c0849ec66fce"
+    },
+    {
+      "attempt": "01",
+      "name": "runner.log",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-01\\runner.log",
+      "bytes": 16729,
+      "sha256": "7d7cc18590f66be18726eaa7c00d0568fa2379cfae40efd111d874f1f8fb7cc3"
+    },
+    {
+      "attempt": "01",
+      "name": "runner.redacted-v2.log",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-01\\runner.redacted-v2.log",
+      "bytes": 16729,
+      "sha256": "7d7cc18590f66be18726eaa7c00d0568fa2379cfae40efd111d874f1f8fb7cc3"
+    },
+    {
+      "attempt": "01",
+      "name": "log-version-audit.json",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-01\\log-version-audit.json",
+      "bytes": 1000,
+      "sha256": "d86c906ac2e139f56f96d0337833db71cf12b845b63d03fcba73a761957c444f"
+    },
+    {
+      "attempt": "02",
+      "name": "browser-timeline.json",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-02\\browser-timeline.json",
+      "bytes": 29336,
+      "sha256": "cb45a3ce95b876bd4625f78bee78b68800913d795490f322b59f061ce62772ae"
+    },
+    {
+      "attempt": "02",
+      "name": "run-metadata.json",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-02\\run-metadata.json",
+      "bytes": 656,
+      "sha256": "642070c6eab4932a41c3dd9be04156be02d74e85706a38524e9a1721d800f19a"
+    },
+    {
+      "attempt": "02",
+      "name": "runner.redacted.log",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-02\\runner.redacted.log",
+      "bytes": 14586,
+      "sha256": "4f4a387d39ea59c2862b7d051ac4ec0251848a0875a8fd9e136e4611e5e8ec4f"
+    },
+    {
+      "attempt": "03",
+      "name": "browser-timeline.json",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-03\\browser-timeline.json",
+      "bytes": 29341,
+      "sha256": "c15937edb9d6926eaa4a5946b2cb881057579c4ffb949e2291393db799407f8d"
+    },
+    {
+      "attempt": "03",
+      "name": "run-metadata.json",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-03\\run-metadata.json",
+      "bytes": 656,
+      "sha256": "42bfced426dafb00bda4d7958603771bebf6112745f2a1850fe670af1fc773bf"
+    },
+    {
+      "attempt": "03",
+      "name": "runner.redacted.log",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-03\\runner.redacted.log",
+      "bytes": 14608,
+      "sha256": "c4e420fef88319fb5b23a3277a91f2b950e891eb8b44f7564dab4ec1cc702bc8"
+    },
+    {
+      "attempt": "04",
+      "name": "browser-timeline.json",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-04\\browser-timeline.json",
+      "bytes": 31512,
+      "sha256": "216bb7d8feaf3aee7fb43abe4171f828a31d3d1ab8d258a068cee3b2aaf3298c"
+    },
+    {
+      "attempt": "04",
+      "name": "run-metadata.json",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-04\\run-metadata.json",
+      "bytes": 1195,
+      "sha256": "a29a3eaa632595571a8c5ccb568019d362e101b4c63aee0fe7671e307718b64f"
+    },
+    {
+      "attempt": "04",
+      "name": "runner.redacted.log",
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\quote-download-diagnostic-02140bf\\attempt-04\\runner.redacted.log",
+      "bytes": 14585,
+      "sha256": "f0c73d6649c6ba3efa0d194e8e4886accd83bd201c0b1b70e0122984cea26a94"
+    }
+  ],
+  "prior_manifest": {
+    "path": "artifact-manifest-v1.json",
+    "sha256": "c8ddabbc813ffafcd1db50058916fd7de7e0a95e8f7c281eeac6cee3effbc202"
+  }
+}

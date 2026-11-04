@@ -1,0 +1,347 @@
+{
+  "schema_version": 1,
+  "method": "Windows extended-length path namespace (\\\\?\\), ordinary filesystem access only; source was read-only.",
+  "created_at_utc": "2026-11-04T21:50:51.963642+00:00",
+  "source_roots": {
+    "02140bf": ".tmp/final-integrated-02140bf/docs/uat-evidence/integration-closeout-02/final-02140bf-frontend",
+    "447d": ".tmp/final-integrated-447d/docs/uat-evidence/integration-closeout-02/final-447d-frontend"
+  },
+  "recovery_scope": {
+    "new_02140_unavailable_entries": 17,
+    "new_02140_runner_context_entry": 1,
+    "new_02140_recovered_count": 18,
+    "new_02140_remaining_missing": 0,
+    "old_447d_v1_missing_from_both_count": 5,
+    "old_447d_reconciled_count": 5,
+    "old_447d_remaining_missing_from_both": 0
+  },
+  "new_02140_files": [
+    {
+      "relative_path": "browser/iss006-frontend-storage-chrome.spec/screenshots/receive-remove-item-retry-deduplicated.png",
+      "source_path_chars": 260,
+      "published_path_chars": 230,
+      "bytes": 146507,
+      "source_sha256": "176cbdab2de536779fba37660c0955152591bbadb35ef824cfc1f9a9ba5a85fa",
+      "published_sha256": "176cbdab2de536779fba37660c0955152591bbadb35ef824cfc1f9a9ba5a85fa",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/iss006-frontend-storage-chrome.spec/screenshots/receive-remove-item-server-may-have-succeeded.png",
+      "source_path_chars": 267,
+      "published_path_chars": 237,
+      "bytes": 151373,
+      "source_sha256": "710cc2b95ddbb13005ef267f24fe87779d74bdf016d251257a1045d62891a137",
+      "published_sha256": "710cc2b95ddbb13005ef267f24fe87779d74bdf016d251257a1045d62891a137",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/iss006-frontend-storage-chrome.spec/screenshots/ship-remove-item-server-may-have-succeeded.png",
+      "source_path_chars": 264,
+      "published_path_chars": 234,
+      "bytes": 222486,
+      "source_sha256": "1afb2f8194c050fa1e94c9eead314c09d0247971765f1f05644a957eccf21750",
+      "published_sha256": "1afb2f8194c050fa1e94c9eead314c09d0247971765f1f05644a957eccf21750",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/iss007-image-snapshot-real.spec/screenshots/quote-pi-after-sku-replacement-desktop-1440.png",
+      "source_path_chars": 261,
+      "published_path_chars": 231,
+      "bytes": 136498,
+      "source_sha256": "58d3a085a4172cda4ce219f723274689a358d5a807bbf7d4f9938a7c17a80239",
+      "published_sha256": "58d3a085a4172cda4ce219f723274689a358d5a807bbf7d4f9938a7c17a80239",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/finance-reference-basis-reference-basis-across-finance-transactions-and-saved-cash-config-1024-diagnostics.json",
+      "source_path_chars": 307,
+      "published_path_chars": 277,
+      "bytes": 3570,
+      "source_sha256": "6ec0c8cd225b48f5ce84f5dc788a2d159046f7ffee5bb3cbba6448a19aa9036a",
+      "published_sha256": "6ec0c8cd225b48f5ce84f5dc788a2d159046f7ffee5bb3cbba6448a19aa9036a",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/finance-reference-basis-reference-basis-across-finance-transactions-and-saved-cash-config-1440-diagnostics.json",
+      "source_path_chars": 307,
+      "published_path_chars": 277,
+      "bytes": 3570,
+      "source_sha256": "2ba08d6d367b99ab87ed065fb9ea6e9a63eace3d8e7ee8e6ca989641f2dd9d00",
+      "published_sha256": "2ba08d6d367b99ab87ed065fb9ea6e9a63eace3d8e7ee8e6ca989641f2dd9d00",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-empty-and-failed-inventories-distinguish-errors-retry-and-no-records-diagnostics.json",
+      "source_path_chars": 294,
+      "published_path_chars": 264,
+      "bytes": 4093,
+      "source_sha256": "267d76382006f45fc3aa88ca6aaf77130cae569ab2ff905c11497bf3bf3fb5a2",
+      "published_sha256": "267d76382006f45fc3aa88ca6aaf77130cae569ab2ff905c11497bf3bf3fb5a2",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-inventory-overview-reserved-quantities-and-sku-drawer-at-1024-diagnostics.json",
+      "source_path_chars": 287,
+      "published_path_chars": 257,
+      "bytes": 1464,
+      "source_sha256": "8fa31e2e70e7f7d916762c82ff70b179f23e84c0b671a1e1fdaad7764569847d",
+      "published_sha256": "8fa31e2e70e7f7d916762c82ff70b179f23e84c0b671a1e1fdaad7764569847d",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-inventory-overview-reserved-quantities-and-sku-drawer-at-1280-diagnostics.json",
+      "source_path_chars": 287,
+      "published_path_chars": 257,
+      "bytes": 1464,
+      "source_sha256": "4d3d272f8756c0b2cde2830b88c0afbe0e7c77b783b40badb3d6b4b5ce65639f",
+      "published_sha256": "4d3d272f8756c0b2cde2830b88c0afbe0e7c77b783b40badb3d6b4b5ce65639f",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-inventory-overview-reserved-quantities-and-sku-drawer-at-1440-diagnostics.json",
+      "source_path_chars": 287,
+      "published_path_chars": 257,
+      "bytes": 1464,
+      "source_sha256": "b9ed6fd7cb40a58ffbfbb7e675f7ff55676e7f74532eb315c4dca568d632034e",
+      "published_sha256": "b9ed6fd7cb40a58ffbfbb7e675f7ff55676e7f74532eb315c4dca568d632034e",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-ledger-filters-sticky-actions-and-adjustment-dialog-at-1024-diagnostics.json",
+      "source_path_chars": 285,
+      "published_path_chars": 255,
+      "bytes": 1434,
+      "source_sha256": "c898a40d71cd3f928913601b763e344f11f908030fc27b6293eefb089c00e764",
+      "published_sha256": "c898a40d71cd3f928913601b763e344f11f908030fc27b6293eefb089c00e764",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-ledger-filters-sticky-actions-and-adjustment-dialog-at-1280-diagnostics.json",
+      "source_path_chars": 285,
+      "published_path_chars": 255,
+      "bytes": 1434,
+      "source_sha256": "07c7c0e48a52831f025f05f13305f0419e440a60c83514be66c5bb1e4091df70",
+      "published_sha256": "07c7c0e48a52831f025f05f13305f0419e440a60c83514be66c5bb1e4091df70",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-ledger-filters-sticky-actions-and-adjustment-dialog-at-1440-diagnostics.json",
+      "source_path_chars": 285,
+      "published_path_chars": 255,
+      "bytes": 1434,
+      "source_sha256": "7782fb1df680bf03cab6fe78a38f6fd72ef85cd431c3d51f6ae498fcf1268044",
+      "published_sha256": "7782fb1df680bf03cab6fe78a38f6fd72ef85cd431c3d51f6ae498fcf1268044",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-page-restoration-detail-navigation-and-browser-back-preserve-inventory-context-diagnostics.json",
+      "source_path_chars": 304,
+      "published_path_chars": 274,
+      "bytes": 3084,
+      "source_sha256": "63d89982ba03c5d4b6fa79eac22c26d80648090868658308cf5a373c5607a666",
+      "published_sha256": "63d89982ba03c5d4b6fa79eac22c26d80648090868658308cf5a373c5607a666",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-restricted-ui-hides-adjustment-reversal-and-unauthorized-cross-module-entrances-diagnostics.json",
+      "source_path_chars": 305,
+      "published_path_chars": 275,
+      "bytes": 1986,
+      "source_sha256": "b58d50d78285e7b677d23fa2afb8d57e276ca08a6aae75d96e1997512347db4e",
+      "published_sha256": "b58d50d78285e7b677d23fa2afb8d57e276ca08a6aae75d96e1997512347db4e",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/iss041b-evidence-iss-041-b-raw-detail-evidence-at-1440px-diagnostics.json",
+      "source_path_chars": 269,
+      "published_path_chars": 239,
+      "bytes": 1966,
+      "source_sha256": "87d8af328b72b16a7cfa632dc6dddd5b6b265a735bd5f79bba843082baac033e",
+      "published_sha256": "87d8af328b72b16a7cfa632dc6dddd5b6b265a735bd5f79bba843082baac033e",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/iss041b-evidence-iss-041-b-raw-detail-evidence-at-700px-diagnostics.json",
+      "source_path_chars": 268,
+      "published_path_chars": 238,
+      "bytes": 1965,
+      "source_sha256": "f31d326e37ff8941ab86cb536cff7f7a281f6cb6904365f48ef53c6b2bb0ade7",
+      "published_sha256": "f31d326e37ff8941ab86cb536cff7f7a281f6cb6904365f48ef53c6b2bb0ade7",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "artifacts/6dad47d0-8210-4d79-a641-242a2d8e7282/quote-editor-mobile-action-261fe-reserve-preview-save-export/error-context.md",
+      "source_path_chars": 286,
+      "published_path_chars": 256,
+      "bytes": 19523,
+      "source_sha256": "00b2d69ce2f10fb094533b95a043bd84012fa528b09a5967cad7a245e653185a",
+      "published_sha256": "00b2d69ce2f10fb094533b95a043bd84012fa528b09a5967cad7a245e653185a",
+      "byte_exact": true,
+      "action": "COPIED_WITH_EXTENDED_PATH",
+      "credential_candidates": 0
+    }
+  ],
+  "old_447d_files": [
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/finance-reference-basis-reference-basis-across-finance-transactions-and-saved-cash-config-1024-diagnostics.json",
+      "source_path_chars": 301,
+      "published_path_chars": 274,
+      "bytes": 3558,
+      "source_sha256": "1e5efcf3122982a6ac0747a128966217fd43bd5481cdc8fa4092b1202975e8c8",
+      "sealed_sha256": "1e5efcf3122982a6ac0747a128966217fd43bd5481cdc8fa4092b1202975e8c8",
+      "published_sha256": "1e5efcf3122982a6ac0747a128966217fd43bd5481cdc8fa4092b1202975e8c8",
+      "sealed_match": true,
+      "byte_exact": true,
+      "action": "ALREADY_PRESENT_BYTE_EXACT; VERIFIED_VIA_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/finance-reference-basis-reference-basis-across-finance-transactions-and-saved-cash-config-1440-diagnostics.json",
+      "source_path_chars": 301,
+      "published_path_chars": 274,
+      "bytes": 3558,
+      "source_sha256": "5e6e9fa76d694c444b66b90ed9cf8f1563e6955cfad1dddaece163ea1e381007",
+      "sealed_sha256": "5e6e9fa76d694c444b66b90ed9cf8f1563e6955cfad1dddaece163ea1e381007",
+      "published_sha256": "5e6e9fa76d694c444b66b90ed9cf8f1563e6955cfad1dddaece163ea1e381007",
+      "sealed_match": true,
+      "byte_exact": true,
+      "action": "ALREADY_PRESENT_BYTE_EXACT; VERIFIED_VIA_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-empty-and-failed-inventories-distinguish-errors-retry-and-no-records-diagnostics.json",
+      "source_path_chars": 288,
+      "published_path_chars": 261,
+      "bytes": 4078,
+      "source_sha256": "7e603f8f3d2a389e77a58df06114cfd0239873e4f79c0ceb083e8a363b109c1f",
+      "sealed_sha256": "7e603f8f3d2a389e77a58df06114cfd0239873e4f79c0ceb083e8a363b109c1f",
+      "published_sha256": "7e603f8f3d2a389e77a58df06114cfd0239873e4f79c0ceb083e8a363b109c1f",
+      "sealed_match": true,
+      "byte_exact": true,
+      "action": "ALREADY_PRESENT_BYTE_EXACT; VERIFIED_VIA_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-page-restoration-detail-navigation-and-browser-back-preserve-inventory-context-diagnostics.json",
+      "source_path_chars": 298,
+      "published_path_chars": 271,
+      "bytes": 3071,
+      "source_sha256": "ff254ffd11f9f990621bc94967a0d94cb183590241dca4e9eac80cfabd7e2895",
+      "sealed_sha256": "ff254ffd11f9f990621bc94967a0d94cb183590241dca4e9eac80cfabd7e2895",
+      "published_sha256": "ff254ffd11f9f990621bc94967a0d94cb183590241dca4e9eac80cfabd7e2895",
+      "sealed_match": true,
+      "byte_exact": true,
+      "action": "ALREADY_PRESENT_BYTE_EXACT; VERIFIED_VIA_EXTENDED_PATH",
+      "credential_candidates": 0
+    },
+    {
+      "relative_path": "browser/r1_repair_04_evidence_dir/inventory-ux-restricted-ui-hides-adjustment-reversal-and-unauthorized-cross-module-entrances-diagnostics.json",
+      "source_path_chars": 299,
+      "published_path_chars": 272,
+      "bytes": 1981,
+      "source_sha256": "2372ba52de6427a18ba3cb7d11f7421e07ee84b403232d30641560c10cdd7483",
+      "sealed_sha256": "2372ba52de6427a18ba3cb7d11f7421e07ee84b403232d30641560c10cdd7483",
+      "published_sha256": "2372ba52de6427a18ba3cb7d11f7421e07ee84b403232d30641560c10cdd7483",
+      "sealed_match": true,
+      "byte_exact": true,
+      "action": "ALREADY_PRESENT_BYTE_EXACT; VERIFIED_VIA_EXTENDED_PATH",
+      "credential_candidates": 0
+    }
+  ],
+  "credential_scan": {
+    "classes": [
+      "Cookie/Set-Cookie/Authorization",
+      "session/CSRF",
+      "seed credentials/password/secret",
+      "bearer/isolation tokens"
+    ],
+    "recovered_file_count": 23,
+    "candidate_count": 0,
+    "action": "No recovered-file redaction required; originals and published copies byte-exact."
+  },
+  "v1_preservation_snapshots": {
+    "final-02140bf-frontend/SOURCE-EVIDENCE-MANIFEST.json": {
+      "size": 79472,
+      "sha256": "349286f7615447273341385e618c2dfb8abd343c3e3644c9500e031fc05cf43c"
+    },
+    "final-02140bf-frontend/PUBLISHED-EVIDENCE-MANIFEST.json": {
+      "size": 232586,
+      "sha256": "a9e88525b640fe48db3dcdc443bace85df9c1063b7fd685d34d2433e8c53b7a5"
+    },
+    "final-02140bf-frontend/FAIL-RESULT.json": {
+      "size": 15048,
+      "sha256": "2f0bea6e24fb40279957517bb2bff501910f438a027b45018813ef5b55888a5b"
+    },
+    "final-02140bf-frontend/FAIL-RESULT.md": {
+      "size": 3021,
+      "sha256": "1ae0bf9f355690ae536f75de9f1a7a80656b8624d4d032aa713bb08c634989fc"
+    },
+    "final-02140bf-frontend/PUBLISHED-REDACTION-AUDIT.json": {
+      "size": 16406,
+      "sha256": "a6b39fc410da2ff1bfeb89d7e5b1c83ec9f936505085fee508d3f21542a7bc0b"
+    },
+    "final-02140bf-frontend/logs/final-02140bf-frontend-closed-logs.zip": {
+      "size": 67664,
+      "sha256": "ad50d14b961b9be6ded384179020d60f9d4c01de0054236a9716430d58e2f1a6"
+    },
+    "final-447d-frontend/SEALED-EVIDENCE-MANIFEST.json": {
+      "size": 73709,
+      "sha256": "d108b50f4e6643ccf1c371274426030deedc83acc11ced6887860b4cfd119c30"
+    },
+    "final-447d-frontend/PUBLISHED-EVIDENCE-MANIFEST.json": {
+      "size": 419790,
+      "sha256": "f73b6b714ac9713cd4aab8abb253bb5e320ab43774fe624799807e1784014832"
+    },
+    "final-447d-frontend/PUBLISHED-REDACTION-AUDIT.json": {
+      "size": 12549,
+      "sha256": "7413d6cd47edda35f11ef9b52fffea65c3b7a26a5ac4345684a090bcf8731e93"
+    },
+    "final-447d-frontend/PUBLISHED-LOGS-MANIFEST.json": {
+      "size": 11305,
+      "sha256": "e3efe90b8229adb4b6043e291e3b53635f7d9507fbcdc5ddf68efff4409a3b4e"
+    },
+    "final-447d-frontend/PUBLISHED-LOGS-REDACTED.zip": {
+      "size": 69710,
+      "sha256": "ca996f0ac5605a9db390c07595e2c1b5d01a2b481fe0c63dac726d3391f387c5"
+    }
+  },
+  "v1_snapshot_verified_unchanged": true,
+  "source_modified": false,
+  "source_retention_after_task": "UNKNOWN; temporary source lifecycle is external",
+  "tests_rerun": false,
+  "ci_touched": false
+}

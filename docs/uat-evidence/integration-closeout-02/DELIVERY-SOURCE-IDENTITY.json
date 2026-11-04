@@ -1,0 +1,35 @@
+{
+  "source_candidate_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "branch": "codex/r1-prelaunch-consolidation-20261104",
+  "scope": "Exact application objects tested; subsequent report-only commits are not represented as reruns",
+  "application_objects": {
+    "backend": "420100c96b1456c87947d734f9b4fdf5ee4ea71a",
+    "frontend": "59c6612f32c2cc1fb0e95ac95362ebe967da471b",
+    "templates": "535566cc881d16b650af62663f9c6195a42823ad",
+    ".github/workflows": "8a8f196b21213dd764898f51eaa0e0a7e8ad027c"
+  },
+  "ci": "NOT_RUN_USER_QUOTA_PAUSED",
+  "test_status": "FIX_REQUIRED: original Playwright quote saveAs canceled remains unresolved",
+  "ledger": {
+    "total_unique": 124,
+    "FIXED_PENDING_REVIEW": 87,
+    "NEEDS_VERIFICATION": 14,
+    "BLOCKED": 13,
+    "OPEN": 0,
+    "CLOSED": 10,
+    "original_pending_cohort": 86,
+    "additional_pending_supplement": "ISS-121"
+  },
+  "staged_frontend_v2_inventory_hash_check": {
+    "passed_files": 692,
+    "failed_files": 0,
+    "scope": "Git index byte hashes only; not application acceptance"
+  },
+  "remaining": [
+    "Quote original full-suite download cancellation root cause UNKNOWN; diagnostics do not overwrite262/1",
+    "Linux post-fix cross-UID CLI receipt handoff NOT_RUN",
+    "Independent ChatGPT review of original86 plusISS121 not accepted by Codex",
+    "Print full output/pagination7scenes user deferred",
+    "Target formal identity, production config, real historical data/migration execution require separate authorization/conditions"
+  ]
+}

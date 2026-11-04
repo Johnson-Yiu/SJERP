@@ -1,0 +1,396 @@
+{
+  "schema_version": 1,
+  "scan_scope": "Captured source bytes; text/plain data plus decompressed XLSX XML, PDF Flate streams, and PNG text chunks. Independent root-cause subtree excluded from final publication; initial staging copy was removed after scope correction.",
+  "classes_checked": [
+    "Cookie/Set-Cookie",
+    "Authorization header",
+    "Bearer tokens",
+    "session/csrf values",
+    "seed credentials",
+    "password/secret/access/refresh tokens",
+    "closed isolation/drill tokens"
+  ],
+  "candidate_count": 33,
+  "embedded_container_candidate_count": 0,
+  "redacted_file_count": 14,
+  "findings": [
+    {
+      "path": "browser/finance-closeout/http-1440.json",
+      "class": "closed_isolation_token",
+      "value_sha256": "a117288688ad59388f308b82aa30755bcd67d6461625521d70a42c11912dcc05",
+      "value_length": 64,
+      "field": "token"
+    },
+    {
+      "path": "browser/finance-closeout/http-390.json",
+      "class": "closed_isolation_token",
+      "value_sha256": "a117288688ad59388f308b82aa30755bcd67d6461625521d70a42c11912dcc05",
+      "value_length": 64,
+      "field": "token"
+    },
+    {
+      "path": "cash-duplicate/browser-http.json",
+      "class": "closed_isolation_token",
+      "value_sha256": "31a76d7c1c7e8caffd45978dd1550716fded6121fe304172df75182b5888a49d",
+      "value_length": 64,
+      "field": "token"
+    },
+    {
+      "path": "cash-duplicate/browser-http.json",
+      "class": "closed_isolation_token",
+      "value_sha256": "31a76d7c1c7e8caffd45978dd1550716fded6121fe304172df75182b5888a49d",
+      "value_length": 64,
+      "field": "token"
+    },
+    {
+      "path": "cash-duplicate/browser-http.json",
+      "class": "closed_isolation_token",
+      "value_sha256": "ff87ae9ef3c9a0280c910142a2b7bde3413ffd0b21746f6e46359aa6ed67baea",
+      "value_length": 64,
+      "field": "token"
+    },
+    {
+      "path": "cash-duplicate/browser-http.json",
+      "class": "closed_isolation_token",
+      "value_sha256": "ff87ae9ef3c9a0280c910142a2b7bde3413ffd0b21746f6e46359aa6ed67baea",
+      "value_length": 64,
+      "field": "token"
+    },
+    {
+      "path": "independent-bank-fee/http.json",
+      "class": "closed_isolation_token",
+      "value_sha256": "a117288688ad59388f308b82aa30755bcd67d6461625521d70a42c11912dcc05",
+      "value_length": 64,
+      "field": "token"
+    },
+    {
+      "path": "independent-bank-fee/http.json",
+      "class": "closed_isolation_token",
+      "value_sha256": "a117288688ad59388f308b82aa30755bcd67d6461625521d70a42c11912dcc05",
+      "value_length": 64,
+      "field": "token"
+    },
+    {
+      "path": "independent-bank-fee/http.json",
+      "class": "closed_isolation_token",
+      "value_sha256": "a117288688ad59388f308b82aa30755bcd67d6461625521d70a42c11912dcc05",
+      "value_length": 64,
+      "field": "token"
+    },
+    {
+      "path": "independent-bank-fee/http.json",
+      "class": "closed_isolation_token",
+      "value_sha256": "a117288688ad59388f308b82aa30755bcd67d6461625521d70a42c11912dcc05",
+      "value_length": 64,
+      "field": "token"
+    },
+    {
+      "path": "independent-bank-fee/http.json",
+      "class": "closed_isolation_token",
+      "value_sha256": "a117288688ad59388f308b82aa30755bcd67d6461625521d70a42c11912dcc05",
+      "value_length": 64,
+      "field": "token"
+    },
+    {
+      "path": "logs/npm-test-unit.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "8b52554a5d5fbb8fd6f81971fa3f6e0db42c129850337cea2ae1beb1abaa2397",
+      "value_length": 48
+    },
+    {
+      "path": "logs/npm-test-unit.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "87d2f4b431f45a015b93791fbd7b3fa1d97314350cdbbe975daf2afdce3f3735",
+      "value_length": 48
+    },
+    {
+      "path": "logs/npm-test-unit.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "8b52554a5d5fbb8fd6f81971fa3f6e0db42c129850337cea2ae1beb1abaa2397",
+      "value_length": 48
+    },
+    {
+      "path": "logs/npm-test-unit.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "87d2f4b431f45a015b93791fbd7b3fa1d97314350cdbbe975daf2afdce3f3735",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/business-suite.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "c93f1fc936eceb3cad4f460106f15a21aa16c231b5ce48a3536aa11ada8a0401",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/business-suite.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "c93f1fc936eceb3cad4f460106f15a21aa16c231b5ce48a3536aa11ada8a0401",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/iss006-storage-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "60b67191ce21a1c04932d2fa3b9090d82d8b136f1818d393c9be73c6e403f66c",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/iss006-storage-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "60b67191ce21a1c04932d2fa3b9090d82d8b136f1818d393c9be73c6e403f66c",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/iss007-attachment-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "bbf53148953120f1d73c636f42aaccd243c5a70714e398c6e04a73214c4af548",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/iss007-attachment-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "bbf53148953120f1d73c636f42aaccd243c5a70714e398c6e04a73214c4af548",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/iss007-image-snapshot-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "081ba8f45ec9720fdc1b42f658c58ff66c65fb4cf4a2a90c9ca8ac6efe296433",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/iss007-image-snapshot-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "081ba8f45ec9720fdc1b42f658c58ff66c65fb4cf4a2a90c9ca8ac6efe296433",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/iss022-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "2dd3a92c8a42fdc74cd4f79ab11fd9fff210a3d63817d63b2189b67569a5df1b",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/iss022-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "2dd3a92c8a42fdc74cd4f79ab11fd9fff210a3d63817d63b2189b67569a5df1b",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/iss028-035-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "136e471d753e12b14de937bc08df39278c7ea55681ac27e5b41f3bd3d5e4bd0e",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/iss028-035-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "136e471d753e12b14de937bc08df39278c7ea55681ac27e5b41f3bd3d5e4bd0e",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/iss055-rbac.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "bdf67277c43a4eceec0397b4cf3e18d4409838daa8290a1910b0436d659e76eb",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/iss055-rbac.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "bdf67277c43a4eceec0397b4cf3e18d4409838daa8290a1910b0436d659e76eb",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/quote-editor-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "70184720b162586d6eff6f21b03e55addf16e0736f7db412971553467c70768a",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/quote-editor-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "70184720b162586d6eff6f21b03e55addf16e0736f7db412971553467c70768a",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/shared-report-templates-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "3769fbe95f32b3bf9af4044723ac414535501325a08e6813a6e5ea2c510c594c",
+      "value_length": 48
+    },
+    {
+      "path": "logs/playwright-profiles/shared-report-templates-isolated.stdout.log",
+      "class": "seed_or_secret_assignment",
+      "value_sha256": "3769fbe95f32b3bf9af4044723ac414535501325a08e6813a6e5ea2c510c594c",
+      "value_length": 48
+    }
+  ],
+  "redactions": [
+    {
+      "path": "logs/npm-test-unit.log",
+      "classes": [
+        "seed_or_secret_assignment"
+      ],
+      "raw_sha256": "4c6800da02ba6d7119f7b28de4f91975fde60311dd6151ca2d49a86cc11b3e04",
+      "published_sha256": "88fbebe70e0b1810ec186664f3cd21212e9b38a81c2febb1bfae34cb23672e5d",
+      "raw_size": 47446,
+      "published_size": 47398,
+      "source_retained_after_task": "UNKNOWN; source is external temporary evidence and was not modified here"
+    },
+    {
+      "path": "logs/playwright-profiles/business-suite.stdout.log",
+      "classes": [
+        "seed_or_secret_assignment"
+      ],
+      "raw_sha256": "49d1adc8dc1daab9973954f524a2df24b24e109444e35605370af8c439b63e05",
+      "published_sha256": "7903d8bae0a27e6795ad51c97bbc3a9bfc88cacda1298becaebb0e7e62092ef3",
+      "raw_size": 43131,
+      "published_size": 43107,
+      "source_retained_after_task": "UNKNOWN; source is external temporary evidence and was not modified here"
+    },
+    {
+      "path": "logs/playwright-profiles/iss006-storage-isolated.stdout.log",
+      "classes": [
+        "seed_or_secret_assignment"
+      ],
+      "raw_sha256": "779e2525339cd50f7aff6fd5ea61eab55c5181a88501edc2b23dda6847d41c33",
+      "published_sha256": "15d9e375a068713c0e4d064b2d35cb5fb8df6df18029ddde0ad1d4bb85007124",
+      "raw_size": 12494,
+      "published_size": 12470,
+      "source_retained_after_task": "UNKNOWN; source is external temporary evidence and was not modified here"
+    },
+    {
+      "path": "logs/playwright-profiles/iss007-attachment-isolated.stdout.log",
+      "classes": [
+        "seed_or_secret_assignment"
+      ],
+      "raw_sha256": "6e7fe85f1597f9f7acad389e9fe22857c564fb2b92d61504d50af8d4c8991899",
+      "published_sha256": "ef7648ab4056a777b657f6c30d8ac18fb17ee271f25e22186157a07a8101bb69",
+      "raw_size": 11469,
+      "published_size": 11445,
+      "source_retained_after_task": "UNKNOWN; source is external temporary evidence and was not modified here"
+    },
+    {
+      "path": "logs/playwright-profiles/iss007-image-snapshot-isolated.stdout.log",
+      "classes": [
+        "seed_or_secret_assignment"
+      ],
+      "raw_sha256": "d0084ea0097eefb379cff0f4615eb2e35b8cfa6bdfd0de5e3d1bf8907db25847",
+      "published_sha256": "3aef9a282361095ed1d761711de8d092d388388589aa3b652c86126e72433473",
+      "raw_size": 11103,
+      "published_size": 11079,
+      "source_retained_after_task": "UNKNOWN; source is external temporary evidence and was not modified here"
+    },
+    {
+      "path": "logs/playwright-profiles/iss022-isolated.stdout.log",
+      "classes": [
+        "seed_or_secret_assignment"
+      ],
+      "raw_sha256": "4e1650f00d1c5b3466658d7271ca6bfcd59701a32d2ad4f1a8652ab4a337b365",
+      "published_sha256": "8880095b59520b0a7d3b05b8682e9dca8a618fce1db930d0a9c4c4a9e65e529b",
+      "raw_size": 11111,
+      "published_size": 11087,
+      "source_retained_after_task": "UNKNOWN; source is external temporary evidence and was not modified here"
+    },
+    {
+      "path": "logs/playwright-profiles/iss028-035-isolated.stdout.log",
+      "classes": [
+        "seed_or_secret_assignment"
+      ],
+      "raw_sha256": "041ce9c3f484731675f5c5c6a638275200303322946489aba8c4533e6f05089d",
+      "published_sha256": "38bc1e4d45aa60aa1655c6229141320b87eef31ed381536a00ae6eb70160679c",
+      "raw_size": 11316,
+      "published_size": 11292,
+      "source_retained_after_task": "UNKNOWN; source is external temporary evidence and was not modified here"
+    },
+    {
+      "path": "logs/playwright-profiles/iss055-rbac.stdout.log",
+      "classes": [
+        "seed_or_secret_assignment"
+      ],
+      "raw_sha256": "358854689c17fd856cd9dd3b65b43314c82c9126d959fa62f692506f07d53486",
+      "published_sha256": "e17b98a0e20c49d5d85463bc317bafeecb2ceb670252b4d6b4655131605edcba",
+      "raw_size": 11385,
+      "published_size": 11361,
+      "source_retained_after_task": "UNKNOWN; source is external temporary evidence and was not modified here"
+    },
+    {
+      "path": "logs/playwright-profiles/quote-editor-isolated.stdout.log",
+      "classes": [
+        "seed_or_secret_assignment"
+      ],
+      "raw_sha256": "da1ab3b6b8b98472471d1bc8fcbd45cf1d0f22e5eb9313b2b49583ac8a6b12a5",
+      "published_sha256": "0d3d797b6a617d331c84759a629ae9f7cb2b99753e4af0e2350376b02796b9f4",
+      "raw_size": 11934,
+      "published_size": 11910,
+      "source_retained_after_task": "UNKNOWN; source is external temporary evidence and was not modified here"
+    },
+    {
+      "path": "logs/playwright-profiles/shared-report-templates-isolated.stdout.log",
+      "classes": [
+        "seed_or_secret_assignment"
+      ],
+      "raw_sha256": "03ccc4d98e2d0fecde4bd9be5cd8e76a2f8c4f2c6c78a20510cc32cfda18a053",
+      "published_sha256": "cc7c08af4ed84dabc3d00343cd1b0b1570a60f99c97273cf1cc3b4c915171135",
+      "raw_size": 10571,
+      "published_size": 10547,
+      "source_retained_after_task": "UNKNOWN; source is external temporary evidence and was not modified here"
+    },
+    {
+      "path": "browser/finance-closeout/http-1440.json",
+      "classes": [
+        "closed_isolation_token"
+      ],
+      "occurrences": 1,
+      "raw_sha256": "45b1fa584b1afff674547a11c144a47663f2d7dbf2b96741b867586280055ef7",
+      "published_sha256": "72418e580afe3e9b8ecd177bb56600713f4e5c57f47cdc2c6c09f4097b3a7a5a",
+      "raw_size": 317776,
+      "published_size": 317745,
+      "source_retained_after_task": "UNKNOWN; temporary source lifecycle is externally controlled"
+    },
+    {
+      "path": "browser/finance-closeout/http-390.json",
+      "classes": [
+        "closed_isolation_token"
+      ],
+      "occurrences": 1,
+      "raw_sha256": "196113c6d6674ceb4e02bb8584b405d42d4c8537d20521a404f10caaac9193f4",
+      "published_sha256": "d336da6f5a845e73729ee8764fcdaa28d7d401b63d95e6983513308dfa735f33",
+      "raw_size": 367824,
+      "published_size": 367793,
+      "source_retained_after_task": "UNKNOWN; temporary source lifecycle is externally controlled"
+    },
+    {
+      "path": "cash-duplicate/browser-http.json",
+      "classes": [
+        "closed_isolation_token"
+      ],
+      "occurrences": 4,
+      "raw_sha256": "23738ce78424b98b4e14a1257bcaf9ea8c1bba8ee110b608e078a14d165006bd",
+      "published_sha256": "bce420a86274296a7f0434bedbf5b49ad6e06d731e6398bf6ea1845724a4663e",
+      "raw_size": 67610,
+      "published_size": 67486,
+      "source_retained_after_task": "UNKNOWN; temporary source lifecycle is externally controlled"
+    },
+    {
+      "path": "independent-bank-fee/http.json",
+      "classes": [
+        "closed_isolation_token"
+      ],
+      "occurrences": 5,
+      "raw_sha256": "7b767ee1e9210ca201f4adb05307d6aac746f7b7c5e9a256d1b1b212276b90ed",
+      "published_sha256": "50feb099eab0fc75972f3e8794713ccfb28078279580561b6a861a4396937d27",
+      "raw_size": 237079,
+      "published_size": 236924,
+      "source_retained_after_task": "UNKNOWN; temporary source lifecycle is externally controlled"
+    }
+  ],
+  "source_retained_after_task": "UNKNOWN; no original source files were modified or deleted by finalization; future temporary-directory cleanup is external",
+  "excluded_subtree": "quote-download-sandbox-compare-20261105",
+  "candidate_counts_by_class": {
+    "closed_isolation_token": 11,
+    "seed_or_secret_assignment": 22
+  },
+  "cookie_or_session_value_findings": 0,
+  "closed_isolation_token_occurrences": 11,
+  "seed_or_secret_log_occurrences": 22
+}

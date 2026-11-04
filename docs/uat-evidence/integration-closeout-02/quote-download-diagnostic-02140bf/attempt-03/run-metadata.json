@@ -1,0 +1,13 @@
+{
+  "attempt": "03",
+  "runner_exit_code": 0,
+  "published_log": "runner.redacted.log",
+  "published_bytes": 14608,
+  "published_sha256": "c4e420fef88319fb5b23a3277a91f2b950e891eb8b44f7564dab4ec1cc702bc8",
+  "redaction_count": 4,
+  "token_field_matches_remaining": 0,
+  "raw_log_private_path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\quote-download-diagnostic-02140bf-8sdgb0mo\\.tmp\\private-raw-logs\\attempt-03.raw.log",
+  "raw_bytes": 14694,
+  "raw_sha256": "824e73266b5e9d928f3090a80d56c0edc7393ef57f61a2a951bc70031bebaf52",
+  "raw_retained_under_diagnostic_checkout_tmp": true
+}

@@ -1,0 +1,344 @@
+{
+  "schema_version": 1,
+  "issue_id": "ISS-121",
+  "title": "历史资金、库存基准与剩余履约承接",
+  "review_date": "2026-11-05",
+  "review_type": "Codex development-side evidence supplement; not independent ChatGPT acceptance",
+  "current_status": "FIXED_PENDING_REVIEW",
+  "in_prior_86_fixed_pending_review_set": false,
+  "ledger_modified": true,
+  "global_issue_total_recomputed": true,
+  "candidate": {
+    "sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+    "integration_anchor": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+    "backend_object_identical_to_anchor": true,
+    "source_equivalence_evidence": "application-candidate-02140bf.json"
+  },
+  "stable_sources": [
+    {
+      "area": "history operational handoff",
+      "sha": "ba4274742727a6794608dc8581a49b3692d865a6",
+      "integrated_at": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+      "evidence": "INTEGRATED-SOURCE-REVIEW-447D.md; application-equivalence-447d.json"
+    },
+    {
+      "area": "finance",
+      "sha": "e301a86044ffe56b72172a94dc3b00ae09401b05",
+      "note": "3a07e7ef1a9e63c98077d45492ba23b798c7fcdd is an earlier ancestor, not the complete stable delivery SHA",
+      "evidence": "INTEGRATED-SOURCE-REVIEW-447D.md; application-equivalence-447d.json"
+    },
+    {
+      "area": "Linux operations",
+      "sha": "4a4f338b09e9a464f1e66c24a905c35c970729bf",
+      "evidence": "INTEGRATED-SOURCE-REVIEW-447D.md; application-equivalence-447d.json"
+    }
+  ],
+  "code_entrypoints": [
+    {
+      "path": "frontend/src/views/HistoryTakeoverPage.vue",
+      "role": "history intake and handoff UI"
+    },
+    {
+      "path": "frontend/src/router.js",
+      "role": "/history-takeover route"
+    },
+    {
+      "path": "backend/crm/urls.py",
+      "role": "history takeover API routes"
+    },
+    {
+      "path": "backend/crm/history_takeover_api.py",
+      "role": "upload/detail/review/group action API"
+    },
+    {
+      "path": "backend/crm/history_takeover.py",
+      "role": "group preflight, approval, execution, source registration, correction/event history"
+    },
+    {
+      "path": "backend/crm/history_takeover_models.py",
+      "role": "history records, event/handoff and uniqueness constraints"
+    },
+    {
+      "path": "backend/crm/history_operational_finance.py",
+      "role": "verified historical finance source bridge"
+    },
+    {
+      "path": "backend/crm/history_operational_contracts.py",
+      "role": "unsettled balances and continuation contracts"
+    },
+    {
+      "path": "backend/crm/history_operational_inventory.py",
+      "role": "inventory baseline and reversal"
+    },
+    {
+      "path": "backend/crm/services/finance_closeout.py",
+      "role": "formal finance posting, approval, correction and refund controls"
+    },
+    {
+      "path": "backend/crm/migrations/0104_historical_inventory_baseline.py..0108_protect_history_truncate.py",
+      "role": "historical schema, guards and migration state"
+    }
+  ],
+  "evidence": {
+    "chrome_02140": {
+      "result": "PASS",
+      "chrome": "156.0.8078.80",
+      "five_browser_stages_exit_zero": true,
+      "live_and_copied_read_only_verifications_exit_zero": true,
+      "http": {
+        "total": 98,
+        "status_200": 90,
+        "status_201": 8
+      },
+      "screenshots": 8,
+      "result_path": "final-02140bf-history-chrome/result.json",
+      "report_path": "final-02140bf-history-chrome/FINAL-HISTORY-CHROME-02140BF.md",
+      "synthetic_only": true,
+      "two_development_sessions_are_not_real_employee_identity": true
+    },
+    "synthetic_business_state": {
+      "application": "executed",
+      "source_rows": 12,
+      "history_events": 16,
+      "posted_finance_facts": [
+        {
+          "direction": "income",
+          "amount": "287.43",
+          "currency": "CNY"
+        },
+        {
+          "direction": "expense",
+          "amount": "35.00",
+          "currency": "CNY"
+        }
+      ],
+      "inventory_baselines": 1,
+      "inventory_movements": 2,
+      "continuation_contracts": 2,
+      "receipt_units": 3,
+      "shipment_units": 6,
+      "receivable": 40,
+      "payable": 6,
+      "template": {
+        "bytes": 14077,
+        "sha256": "791723d6644a697d8d8657018c5807a8c7de3e59a6f2fe813d41b31c50454720"
+      }
+    },
+    "normal_denial_idempotency_atomicity": {
+      "tests": [
+        {
+          "test": "test_rejection_missing_dependencies_conflicts_and_simulated_data_never_execute",
+          "file": "backend/crm/tests/test_history_takeover.py"
+        },
+        {
+          "test": "test_failure_in_later_business_write_rolls_back_the_whole_group",
+          "file": "backend/crm/tests/test_history_takeover.py"
+        },
+        {
+          "test": "test_unconfirmed_source_cannot_create_instruction",
+          "file": "backend/crm/tests/test_history_operational_finance.py"
+        },
+        {
+          "test": "test_changed_source_does_not_create_finance_instruction",
+          "file": "backend/crm/tests/test_history_operational_finance.py"
+        },
+        {
+          "test": "test_audit_failure_rolls_back_instruction_and_mapping",
+          "file": "backend/crm/tests/test_history_operational_finance.py"
+        },
+        {
+          "test": "test_explicit_amount_review_post_and_idempotent_replay",
+          "file": "backend/crm/tests/test_history_operational_finance.py"
+        },
+        {
+          "test": "test_concurrent_same_source_submission_is_idempotent",
+          "file": "backend/crm/tests/test_history_operational_finance.py"
+        },
+        {
+          "test": "test_concurrent_post_creates_one_fact_and_one_history_event",
+          "file": "backend/crm/tests/test_history_operational_finance.py"
+        },
+        {
+          "test": "test_postgres_concurrent_execute_is_serialized_by_group_lock",
+          "file": "backend/crm/tests/test_history_takeover.py"
+        },
+        {
+          "test": "test_audit_failure_rolls_back_entire_group",
+          "file": "backend/crm/tests/test_history_operational_inventory.py"
+        },
+        {
+          "test": "test_failure_rolls_back_links_drafts_and_plans",
+          "file": "backend/crm/tests/test_history_operational_contracts.py"
+        },
+        {
+          "test": "test_reversal_audit_failure_rolls_back_all_changes",
+          "file": "backend/crm/tests/test_history_operational_contracts.py"
+        }
+      ],
+      "runtime_evidence_scope": "Integrated 447d backend tests/PG evidence; backend Git object is identical at 02140. Tests were not rerun by this supplement."
+    },
+    "source_history_postgres": {
+      "source_sha": "ba4274742727a6794608dc8581a49b3692d865a6",
+      "full_suite": {
+        "total": 1342,
+        "passed": 1311,
+        "skipped": 31,
+        "errors": 0
+      },
+      "focused_guard_suite": {
+        "passed": 90,
+        "skipped": 0,
+        "failed": 0
+      },
+      "failed_earlier_run": {
+        "total": 1341,
+        "errors": 11,
+        "superseded_by_utf8_rerun": true
+      },
+      "evidence": "docs/uat-evidence/history-operational-closeout-20261104/README.md and its logs"
+    },
+    "integrated_postgres_447d": {
+      "suite": {
+        "total": 1410,
+        "passed": 1378,
+        "skipped": 32,
+        "failed": 0
+      },
+      "restore": {
+        "status": "PASS",
+        "postgresql": "17.11",
+        "tables": 102,
+        "rows": 1218,
+        "migrations": 133,
+        "media_files": 5,
+        "cleanup": "complete"
+      },
+      "new_history_tables": {
+        "crm_historyinventorybaseline": 2,
+        "crm_historyinventorybaselinereversal": 1,
+        "crm_historyoperationalcontract": 2
+      },
+      "guard_probes": {
+        "attempted": 9,
+        "rejected": 9,
+        "unchanged": true
+      },
+      "evidence": "final-pg-447d/final-pg-447d-result.json; final-pg-447d/logs/postgres-final-447d-opseed-receipt-relation.log; final-pg-447d/artifacts/postgres-backups/history-operational-restored-447d7816ead2.json"
+    },
+    "integrated_sqlite_447d": {
+      "total": 1410,
+      "passed": 1330,
+      "skipped": 80,
+      "failed": 0,
+      "evidence": "README.md / recorded integrated test result; not rerun by this supplement"
+    },
+    "migration_equivalence": {
+      "chain": [
+        "0103_merge_finance_and_history",
+        "0104_historical_inventory_baseline",
+        "0105_historical_inventory_reversal",
+        "0106_history_operational_contracts",
+        "0107_purchase_location_history",
+        "0108_protect_history_truncate"
+      ],
+      "0104_through_0108_blobs_identical_between_ba427_and_447d": true,
+      "old_database_upgrade_and_data_preservation": "Source logs postgres17-legacy-upgrade.log, postgres17-0108-upgrade.log, postgres17-0108-guard-final.log and postgres17-migration-guards.log; integrated restore includes new table rows."
+    },
+    "chrome_sqlite_copy": {
+      "tables": 102,
+      "business_audit_rows": 1091,
+      "django_sessions_removed_from_published_copy": 2,
+      "integrity": "ok",
+      "evidence": "final-02140bf-history-chrome/FINAL-HISTORY-CHROME-02140BF.md and logs/sanitized-database-copy.log"
+    }
+  },
+  "reviewed_contracts": {
+    "simulated_or_pending_data_rejected_from_formal_posting": true,
+    "history_finance_requires_separate_reviewer_before_post": true,
+    "posting_replay_returns_existing_fact": true,
+    "history_source_record_unique_key": "source_system + record_type + source_record_id",
+    "voucher_source_to_uploaded_file_automatically_matched": false,
+    "correction_overwrites_original_fact": false,
+    "corrections_limited_to_eligible_linked_facts_without_downstream_or_transfer_or_refund_dependencies": true
+  },
+  "closing_gaps": [
+    {
+      "category": "independent review",
+      "required": "Independent reviewer accepts exact integrated code, evidence and remaining limitations; this Codex document is not acceptance."
+    },
+    {
+      "category": "source identifier contract",
+      "required": "Business owner confirms global uniqueness scope for source_system + record_type + source_record_id; add/produce max-length and cross-group collision boundary evidence."
+    },
+    {
+      "category": "voucher correspondence",
+      "required": "Retain reviewable per-source mapping from archived voucher_reference to private file digest and reviewer, or prove mismatches are rejected."
+    },
+    {
+      "category": "posted correction continuity",
+      "required": "Define and evidence correction/refund behavior for posted historical facts, including original source record and handoff linkage; existing correction service has explicit dependency exclusions and is not universal reversal support."
+    },
+    {
+      "category": "business definition",
+      "required": "Confirm full-SKU inventory coverage, balance-only verification responsibility, true source facts and cutover date from authorized business materials."
+    },
+    {
+      "category": "real activation",
+      "required": "Obtain separately authorized real source files, dates, account/balance and vouchers; verify real employee identities/RBAC and target migration/backup/restore/DB-role/storage ACL in target environment."
+    },
+    {
+      "category": "visual review",
+      "required": "Independent review of captured 1440/390 workflow screenshots and states; screenshots themselves are evidence, not sign-off."
+    }
+  ],
+  "dataset_separation": {
+    "postgres_restore_447d": {
+      "tables": 102,
+      "rows": 1218,
+      "migrations": 133,
+      "media_files": 5
+    },
+    "chrome_sqlite_copy_02140": {
+      "tables": 102,
+      "business_audit_rows": 1091,
+      "session_rows_removed": 2
+    },
+    "comparable": false,
+    "note": "Distinct databases, seeds and validation phases; do not reconcile by subtracting row counts."
+  },
+  "log_archives": [
+    {
+      "archive": "final-02140bf-history-chrome-published-logs.zip",
+      "manifest": "final-02140bf-history-chrome-published-logs-manifest.json",
+      "entries": 13,
+      "sha256": "171df07db165dc13d50d3d3e76ce53c4863bfeddc047a72d40c0949039ca5a50",
+      "redaction_occurrences": 2,
+      "zip_and_member_crc_sha_verification": "PASS"
+    },
+    {
+      "archive": "legacy-r01-r03-history-chrome-published-logs.zip",
+      "manifest": "legacy-r01-r03-history-chrome-published-logs-manifest.json",
+      "entries": 32,
+      "sha256": "1da64cccccc564360676c4dde4180fa3ff99f0647fb23f63ff567928e6cebcd2",
+      "redaction_occurrences": 6,
+      "zip_and_member_crc_sha_verification": "PASS"
+    }
+  ],
+  "conclusion": {
+    "definite_new_blocking_defect_found": false,
+    "recommended_issue_status": "FIXED_PENDING_REVIEW",
+    "state_changed": true,
+    "decision_owner": "Parent coordinator: implementation/evidence ready for independent review; no acceptance or closure"
+  },
+  "report_path": "ISS121-REVIEW-SUPPLEMENT.md",
+  "previous_status": "OPEN",
+  "status_calibration": {
+    "date": "2026-11-05",
+    "previous": "OPEN",
+    "current": "FIXED_PENDING_REVIEW",
+    "basis": "Complete stable source ba427474 integrated; exact 02140 PG full regression, restored nonempty history guards and actual Chrome operational handoff evidence. Independent acceptance remains outstanding.",
+    "original_pending_cohort": 86,
+    "new_pending_supplement": 1,
+    "closed_set_unchanged": true
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "review": {
+    "integrated_sha": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+    "frozen_checkout": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/final-integrated-447d",
+    "review_type": "Codex developer-side pre-review; not ChatGPT independent acceptance",
+    "verdict": "No definite defect found in specified merge points; integrated full suites were not rerun.",
+    "definite_defects": []
+  },
+  "stable_sources": [
+    {"component": "finance", "sha": "e301a86044ffe56b72172a94dc3b00ae09401b05", "integration_commit": "087fe34d54e1f34b5e55a59795bf5cfcad9a0d89", "included": true, "earlier_ancestor_not_delivery": "3a07e7ef1a9e63c98077d45492ba23b798c7fcdd"},
+    {"component": "linux_operations", "sha": "4a4f338b09e9a464f1e66c24a905c35c970729bf", "integration_commit": "536789f6dbafb2874b1abfd33ade2b30faa123a4", "included": true},
+    {"component": "history_takeover", "sha": "ba4274742727a6794608dc8581a49b3692d865a6", "integration_commit": "447d7816ead2e971e249cb2e762b1a6f7009b9c0", "included": true}
+  ],
+  "reviewed_implementation_commits": {
+    "finance_classification_and_lock_revalidation": {"sha": "90683506f5d9447974302d83c89ba27351d5dfd4", "ancestor_of_integrated": true},
+    "finance_permission_action_mapping": {"sha": "9af2a32fa81df3aa975424b70a887057e40b6b22", "ancestor_of_integrated": true},
+    "history_implementation": {"sha": "438bc5b8526bb43b48445b4646e82ead0b2caaa6", "ancestor_of_integrated": true}
+  },
+  "migration_equivalence": [
+    {"name": "crm.0104_historical_inventory_baseline", "path": "backend/crm/migrations/0104_historical_inventory_baseline.py", "source_blob": "5665fa2330243597898fe13e90e83077a2ad10a1", "integrated_blob": "5665fa2330243597898fe13e90e83077a2ad10a1", "byte_identical": true, "dependencies": ["auth.0001_initial", "crm.0103_merge_finance_and_history"]},
+    {"name": "crm.0105_historical_operational_contract", "path": "backend/crm/migrations/0105_historical_operational_contract.py", "source_blob": "de0825729e2291c165c9aabde4c70841b6446930", "integrated_blob": "de0825729e2291c165c9aabde4c70841b6446930", "byte_identical": true, "dependencies": ["crm.0104_historical_inventory_baseline"]},
+    {"name": "crm.0106_historical_purchase_balance_mode", "path": "backend/crm/migrations/0106_historical_purchase_balance_mode.py", "source_blob": "546773fad0dcc7402bd80e598ada19cc18a358dc", "integrated_blob": "546773fad0dcc7402bd80e598ada19cc18a358dc", "byte_identical": true, "dependencies": ["crm.0105_historical_operational_contract"]},
+    {"name": "crm.0107_inventory_movement_location", "path": "backend/crm/migrations/0107_inventory_movement_location.py", "source_blob": "ec27acb31b5bf6249ba4a013055ed5edf549e536", "integrated_blob": "ec27acb31b5bf6249ba4a013055ed5edf549e536", "byte_identical": true, "dependencies": ["crm.0106_historical_purchase_balance_mode"]},
+    {"name": "crm.0108_history_append_only_truncate", "path": "backend/crm/migrations/0108_history_append_only_truncate.py", "source_blob": "382594c6c9e3c8274b0f6d9824620bcae038624e", "integrated_blob": "382594c6c9e3c8274b0f6d9824620bcae038624e", "byte_identical": true, "dependencies": ["crm.0107_inventory_movement_location"]}
+  ],
+  "postgresql_source_evidence": {
+    "source_commit": "ba4274742727a6794608dc8581a49b3692d865a6",
+    "source_results_are_not_integrated_447d_reruns": true,
+    "full_run_initial": {
+      "log": "docs/uat-evidence/history-operational-closeout-20261104/logs/postgres17-full.log",
+      "tests_run": 1341, "passed": 1299, "skipped": 31, "errors": 11, "failures": 0,
+      "result": "FAILED",
+      "documented_error_cause": "Windows default GBK decoding of UTF-8 subprocess output"
+    },
+    "full_run_utf8": {
+      "log": "docs/uat-evidence/history-operational-closeout-20261104/logs/postgres17-full-utf8.log",
+      "tests_run": 1342, "passed": 1311, "skipped": 31, "errors": 0, "failures": 0,
+      "result": "OK",
+      "skip_scope": "Environmental skips as documented in source README"
+    },
+    "focused_postgresql": {
+      "log": "docs/uat-evidence/history-operational-closeout-20261104/logs/postgres17-guard-focused-final.log",
+      "tests_run": 90, "passed": 90, "skipped": 0, "errors": 0, "failures": 0,
+      "result": "OK"
+    },
+    "upgrade_evidence": [
+      {"log": "docs/uat-evidence/history-operational-closeout-20261104/logs/postgres17-upgrade.log", "scope": "Fresh upgrade through crm.0107; crm.0104 through crm.0107 applied successfully."},
+      {"log": "docs/uat-evidence/history-operational-closeout-20261104/logs/postgres17-legacy-upgrade.log", "scope": "Pre-0104 synthetic customer, SKU, order and stock movement preserved through crm.0107."},
+      {"log": "docs/uat-evidence/history-operational-closeout-20261104/logs/postgres17-0108-upgrade.log", "scope": "Applied crm.0108 to a database with synthetic historical records."},
+      {"log": "docs/uat-evidence/history-operational-closeout-20261104/logs/postgres17-0108-guard-final.log", "scope": "Downgrade with history refused; TRUNCATE rejected; records preserved."},
+      {"log": "docs/uat-evidence/history-operational-closeout-20261104/logs/postgres17-migration-guards.log", "scope": "Data-bearing downgrade refusals for crm.0106, crm.0105 and crm.0104; latest migrations restored."}
+    ],
+    "reuse_scope": "Reusable only for byte-identical crm.0104–crm.0108 migration files and recorded scenarios; not proof of full integrated 447d PostgreSQL success."
+  },
+  "checks_run_on_frozen_447d": {
+    "python": "3.12.16",
+    "database": "SQLite in-memory only",
+    "full_test_suite_rerun": false,
+    "ci_triggered": false,
+    "system_check": {"command": "python manage.py check", "exit_code": 0, "log": "docs/uat-evidence/integration-closeout-02/closing-logs/django-system-check-447d.log"},
+    "makemigrations_check": {"command": "python manage.py makemigrations --check --dry-run", "exit_code": 0, "result": "No changes detected", "log": "docs/uat-evidence/integration-closeout-02/closing-logs/makemigrations-check-447d.log"},
+    "migration_graph": {
+      "exit_code": 0, "conflicts": {}, "crm_leaf": "0108_history_append_only_truncate",
+      "sequence": ["0103_merge_finance_and_history", "0104_historical_inventory_baseline", "0105_historical_operational_contract", "0106_historical_purchase_balance_mode", "0107_inventory_movement_location", "0108_history_append_only_truncate"],
+      "log": "docs/uat-evidence/integration-closeout-02/closing-logs/migration-graph-447d.log"
+    }
+  },
+  "subsequent_integrated_regression_reported_by_coordinator": {
+    "executed_by_this_review": false,
+    "sqlite_full_suite": {"total": 1410, "passed": 1330, "failed": 0, "skipped": 80, "result_file": "backend-full-447d-python312-result.json"},
+    "postgresql_17_full_suite": {"total": 1410, "passed": 1378, "failed": 0, "skipped": 32, "elapsed_seconds": 1309.665, "log": "postgres-final-447d-opseed-receipt-relation.log"},
+    "postgresql_restore": {"status": "PASS", "tables": 102, "rows": 1218, "migrations": 133, "private_media_files": 5, "cleanup": "complete", "evidence_log": "postgres-final-447d-opseed-receipt-relation.log"},
+    "index": "README.md#实际本地结果各自源码不混计"
+  },
+  "limitations": [
+    "The source migration logs remain source-commit evidence; the separately linked PostgreSQL full-suite and restore results are coordinator-reported integrated 447d evidence, not executed by this review.",
+    "Migration evidence is reusable only for byte-identical crm.0104–crm.0108 and recorded scenarios.",
+    "PostgreSQL superusers/table owners can alter or disable triggers; production runtime/migration role separation requires deployment verification.",
+    "The frozen checkout contained pre-existing documentation/evidence workspace changes; none were edited by this review."
+  ]
+}

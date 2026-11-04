@@ -1,0 +1,169 @@
+{
+  "schema": "download-cancellation-diagnostic-v1",
+  "frozen_candidate_sha": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "frozen_candidate_modified": false,
+  "main_tree_changes": [
+    {
+      "path": "frontend/src/api.js",
+      "sha256": "67a3ff97ef03e823ba5fab7f90ee4ebc569e59c2479b28294f11590b1dc614cf",
+      "change": "Quote XLSX export keeps the appended anchor and Blob URL alive for 1000 ms before cleanup."
+    },
+    {
+      "path": "frontend/src/views/FinanceLedgerPage.vue",
+      "sha256": "4e7fd4c5685f0ed9dbadf4540e72f719a5f4637e693fa1b62ab8c54bcb0e350c",
+      "change": "Finance CSV export appends its anchor and removes it together with revoking the Blob URL after 1000 ms."
+    }
+  ],
+  "test_files": [
+    {
+      "path": "frontend/browser-tests/quote-editor-mobile-actions.spec.js",
+      "sha256": "06d30d0b0a0c14997471f88b67e89d94620e0d51ac5b65de24a27d5ee4811949",
+      "modified": false,
+      "assertions_weakened": false
+    },
+    {
+      "path": "frontend/browser-tests/finance-closeout.spec.js",
+      "sha256": "39633f7a6c763523a52c04c3492212ee5478f8d5cfcc2a74a65cecf046491c5b",
+      "modified": false,
+      "assertions_weakened": false
+    }
+  ],
+  "pre_fix_reproductions": [
+    {
+      "scenario": "Finance CSV original 1440px and 390px cases",
+      "result": "1 failed, 1 passed; 1440px failed at download.saveAs with canceled, 390px passed.",
+      "evidence": "finance-1440-390/logs/finance-original-spec-debug-browser.log",
+      "published_log_sha256": "77c55c28ffab7309270690c5eaa917e4a3d94ec9b707d691f7243228bfa4dc06",
+      "raw_log_sha256": "60b4b084c1f1ef89856734b30e1e7d93a3f67c368270e6f73c8af2393644c790",
+      "http": [
+        { "endpoint": "/api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-01-31&export=csv", "status": 200, "response_bytes": 387 },
+        { "endpoint": "/api/finance-ledger/facts/?date_from=2026-01-01&date_to=2026-01-31&export=csv", "status": 200, "response_bytes": 596 }
+      ]
+    },
+    {
+      "scenario": "Quote XLSX original browser case under normal timing",
+      "result": "1 failed at download.saveAs with canceled.",
+      "raw_log": ".tmp/download-investigation-20261105/quote-normal-console.log",
+      "raw_log_sha256": "a11d6258e53946d67d5bcbb562313c34febb2d3754621515cf460d98bf58b92d",
+      "http": { "endpoint": "/api/quotes/2/export/", "status": 200, "response_bytes": 10217 }
+    }
+  ],
+  "root_cause": {
+    "quote": "The production helper removed the download anchor immediately and revoked its Blob URL on a zero-delay timer. The unmodified browser scenario failed under normal timing and passed when protocol tracing changed the timing; after deferring both cleanup operations by one second, the unchanged original scenario passed under normal timing and the saved workbook was valid. This A/B supports a browser-side Blob download lifecycle race.",
+    "finance": "The production helper clicked a detached anchor. The original 1440px case failed while the 390px case passed; after attaching the anchor and deferring removal and Blob URL revocation together by one second, both unchanged original cases passed under normal timing. This A/B supports a detached-anchor/download lifecycle race.",
+    "protocol_limit": "The instrumented pre-fix protocol runs completed rather than reproducing cancellation; no canceled Browser.downloadProgress event was captured. The causal attribution is based on normal-timing pre-fix reproduction plus the isolated lifecycle-only A/B fixes, not a fabricated canceled protocol event."
+  },
+  "issue_mapping": {
+    "quote_download_lifecycle": "ISS-020 (parent-confirmed existing scope)",
+    "finance_facts_csv_export": "ISS-105 (parent-confirmed existing scope)",
+    "new_issue_created": false,
+    "shared_ledger_modified": false
+  },
+  "post_fix_targeted_runs": [
+    {
+      "scenario": "Quote editor preview/save/export original spec, normal timing",
+      "result": "1 passed, 0 failed, 0 skipped.",
+      "http": { "endpoint": "/api/quotes/2/export/", "status": 200, "response_bytes": 10217 },
+      "browser_download": { "saveAs": "passed", "file_bytes": 10218, "file_sha256": "33fd031633791e75443465d7fee440d96f31461f32226f9627cde601efee5e23" },
+      "workbook_validation": {
+        "zip_openpyxl_valid": true,
+        "sheet": "PI",
+        "rows": 35,
+        "quote_no": "SJ20261104DE002",
+        "line_item_model": "R1-QA-MODEL",
+        "quantity": 1,
+        "unit_price": 12.5
+      },
+      "actual_download_file": "quote-file-content/browser/quote-editor-mobile-actions.spec/captured-quote-export.xlsx"
+    },
+    {
+      "scenario": "Finance CSV 1440px and 390px original spec, normal timing",
+      "result": "2 passed, 0 failed, 0 skipped.",
+      "original_content_assertions": "Retained and passed: both exported CSV files contain the generated synthetic source number and amount 123.45.",
+      "files": [
+        { "path": "finance-after-lifecycle-fix/browser/finance-closeout/facts-1440.csv", "bytes": 387, "sha256": "d5869c23cb442e36ac07cacf987fd89e8f3cf38c53823a6e87e3a6e839602989" },
+        { "path": "finance-after-lifecycle-fix/browser/finance-closeout/facts-390.csv", "bytes": 596, "sha256": "008dfd8df8cab056b73588464f7a44094df73fcd776a98ee080904fc854b1880" }
+      ]
+    },
+    {
+      "scenario": "Quote editor original spec, real Google Chrome channel, normal timing",
+      "result": "1 passed, 0 failed, 0 skipped; all original assertions ran.",
+      "channel_selection": "A temporary test.use({ channel: 'chrome' }) was inserted for this isolated run only; no assertion was changed. The original test file was restored byte-for-byte afterward.",
+      "original_test_sha256_restored": "06d30d0b0a0c14997471f88b67e89d94620e0d51ac5b65de24a27d5ee4811949",
+      "browser_executable": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+      "browser_version": "156.0.8078.80",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "http": { "endpoint": "/api/quotes/2/export/", "status": 200 },
+      "actual_download_file": "quote-google-chrome/browser/quote-editor-mobile-actions.spec/captured-quote-export.xlsx",
+      "download_bytes": 10218,
+      "download_sha256": "fb77af31c5e8bbfe97a503a696a02f09f76d25c6c62990566fc358eda0c58f00",
+      "workbook_validation": {
+        "zip_testzip": "passed",
+        "openpyxl": "passed",
+        "sheet": "PI",
+        "rows": 35,
+        "quote_no": "SJ20261104DE002",
+        "line_item_model": "R1-QA-MODEL",
+        "quantity": 1,
+        "unit_price": 12.5
+      },
+      "screenshots": [
+        { "path": "quote-google-chrome/browser/quote-editor-mobile-actions.spec/chrome-quote-actions-1440.png", "bytes": 161745, "sha256": "905e301cfe20ae57d97e59c3f2a25f8b609cb52861bc68763ea76d73ec231247" },
+        { "path": "quote-google-chrome/browser/quote-editor-mobile-actions.spec/chrome-quote-actions-390.png", "bytes": 41156, "sha256": "d6e26c55806a6a4fe86c9ec1e050907d81367fef9de4a6f6eaea221ccb2e13d2" },
+        { "path": "quote-google-chrome/browser/quote-editor-mobile-actions.spec/chrome-quote-actions-320.png", "bytes": 40493, "sha256": "b13507062872f2573f527aefde72d8ed70a131d08f5774c33c03c5e3817d27f1" },
+        { "path": "quote-google-chrome/browser/quote-editor-mobile-actions.spec/chrome-quote-actions-1024.png", "bytes": 106203, "sha256": "e7a10a12a55c4f894cdb97e967973ebb849e2a06f79b30e00edddfe472a6d4c3" }
+      ]
+    }
+  ],
+  "protocol_diagnostics": {
+    "finance_pre_fix": {
+      "runner_result": "2 passed",
+      "downloads": [
+        { "extension": ".csv", "total_bytes": 387, "received_bytes": 387, "terminal_state": "completed" },
+        { "extension": ".csv", "total_bytes": 596, "received_bytes": 596, "terminal_state": "completed" }
+      ],
+      "raw_log": ".tmp/download-investigation-20261105/finance-protocol-file-debug.log",
+      "raw_log_sha256": "e1095e1ee6181b6fdca9d5a5b713942d810707bfc55de30839c03d3cbbb7af70"
+    },
+    "quote_pre_fix": {
+      "runner_result": "1 passed",
+      "downloads": [
+        { "extension": ".xlsx", "total_bytes": 10217, "received_bytes": 10217, "terminal_state": "completed" }
+      ],
+      "raw_log": ".tmp/download-investigation-20261105/quote-protocol-file-debug.log",
+      "raw_log_sha256": "db541c5d9a7c2f1b75ca581d493b6ff5d7d7ce636146156ae0c4debf663f13ca"
+    }
+  },
+  "npm_ci_audit": {
+    "result": "Both preserved npm ci debug logs exited 0. The install summary reported 4 moderate vulnerabilities.",
+    "deprecated_warnings": [
+      "glob@10.5.0 is deprecated and npm reported its old versions include known security vulnerabilities.",
+      "lucide-vue-next@1.0.0 is deprecated; npm recommends @lucide/vue."
+    ],
+    "audit_advisories": [
+      { "package": "glob@10.5.0", "severity": "moderate", "advisory": "GHSA-3g3m-2fjr-6pw4", "title": "AbortSignal cancellation bypass allows post-timeout filesystem traversal", "vulnerable_versions": ">=9.0.0 <=14.0.1" },
+      { "package": "minimatch@9.0.9", "severity": "moderate", "advisory": "GHSA-g3hv-75wg-m249", "title": "Potential denial of service via globparts amplification", "vulnerable_versions": "<11.0.1 in one audit response; >=7.0.0 <11.0.1 in the other" }
+    ],
+    "cache_logs": [
+      { "path": ".tmp/review-npm-cache/_logs/2026-11-04T18_05_20_334Z-debug-0.log", "sha256": "631d2c5ebddd3f4c93deb2b1aea86b6fd5a20f2a1044da6bb6a8c511d2c4e1ce" },
+      { "path": ".tmp/review-npm-cache/_logs/2026-11-04T18_35_27_709Z-debug-0.log", "sha256": "7e3eca44228e2bf25aa34315e8fb48100a37d2323999fd3d30236d6323bb5188" }
+    ],
+    "note": "The two npm audit response snapshots assigned different internal IDs to the same minimatch GHSA; the GHSA and severity agree. No fresh audit was run."
+  },
+  "sensitive_evidence": {
+    "final_frontend350_manifest_sha256": "d108b50f4e6643ccf1c371274426030deedc83acc11ced6887860b4cfd119c30",
+    "final_frontend350_manifest_remains_byte_exact": true,
+    "final_frontend350_closed_isolation_tokens_redacted": 46,
+    "final_frontend350_text_48hex_remaining": 0,
+    "download_investigation_log_closed_isolation_tokens_redacted": 4,
+    "credential_pattern_hits_in_published_diagnostic_text": 0,
+    "isolated_run_temp_directories_checked": 9,
+    "isolated_run_temp_directories_remaining": 0,
+    "raw_protocol_logs_are_local_tmp_only": true
+  },
+  "not_run_by_this_follow_up": [
+    "Full 9-profile Playwright suite, intentionally left for the parent's final frozen-candidate run.",
+    "Build, full unit suite, PostgreSQL or SQLite regression suites; the parent will run final integrated regression after candidate freeze.",
+    "Packing-list/print export; no evidence here justifies expanding scope into the deferred print package."
+  ]
+}

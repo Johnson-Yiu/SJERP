@@ -1,0 +1,338 @@
+{
+  "schema_version": 1,
+  "product_sha": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "frozen_checkout": ".tmp/final-integrated-447d",
+  "run_id": "ccade4c5-6cb3-48f2-afae-dc077d507370",
+  "chrome_channel_explicit_in_source_scripts": "chrome",
+  "runtime": {
+    "node": "v24.16.0",
+    "python": "Python 3.12.16",
+    "chrome_version": "156.0.8078.80",
+    "chrome_versions": [
+      {
+        "file": "operational/chrome-run.json",
+        "chrome": "156.0.8078.80"
+      },
+      {
+        "file": "inventory-location/inventory-location-chrome.json",
+        "chrome": "156.0.8078.80"
+      },
+      {
+        "file": "history-template.raw.log",
+        "chrome": "156.0.8078.80"
+      }
+    ],
+    "chrome_launch_evidence": [
+      "2026-11-04T19:35:14.718Z pw:browser <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-E49VuM --remote-debugging-pipe --no-startup-window",
+      "2026-11-04T19:35:25.878Z pw:browser <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-XKgvno --remote-debugging-pipe --no-startup-window",
+      "2026-11-04T19:36:06.718Z pw:browser <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-xvOCzZ --remote-debugging-pipe --no-startup-window",
+      "2026-11-04T19:36:19.291Z pw:browser <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-12te72 --remote-debugging-pipe --no-startup-window"
+    ]
+  },
+  "isolation": {
+    "root_basename": "sunjack-r1-repair-06-aYWHFD",
+    "api_port": 53621,
+    "vite_port": 53622,
+    "database": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\db.sqlite3",
+    "media_root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\media",
+    "session_dir_basename": "sunjack-history-operational-closeout-447d-ccade4c5-6cb3-48f2-afae-dc077d507370",
+    "development_superadmin": true,
+    "rbac_enforcement": false,
+    "audit_log_enabled": true,
+    "filesystem_media": true,
+    "pg_environment_variables_removed": true
+  },
+  "identities": {
+    "direct_api": {
+      "verified": true,
+      "database_path_matches": true,
+      "media_root_matches": true,
+      "rbac_enforcement": false
+    },
+    "vite": {
+      "verified": true
+    },
+    "vite_api_proxy": {
+      "verified": true,
+      "database_path_matches": true,
+      "media_root_matches": true
+    }
+  },
+  "seed": {
+    "actors_are_superusers": [
+      false,
+      false
+    ],
+    "audit_log_enabled": true,
+    "database_engine": "django.db.backends.sqlite3",
+    "database_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\db.sqlite3",
+    "development_superadmin_enabled": true,
+    "finance_account_code": "UAT-HISTORY-CNY",
+    "finance_account_id": 1,
+    "finance_voucher_id": 1,
+    "finance_voucher_name": "synthetic-uat.pdf",
+    "finance_voucher_sha256": "94f673e3511b44ae4cce4189c7bf246b5106f5c0d9ed50767c58265d53c19fb9",
+    "finance_voucher_size": 55,
+    "generated_sku": "SKU-000001",
+    "history_application_id": 1,
+    "history_group_id": 1,
+    "history_source_file_name": "synthetic-history-uAT.xlsx",
+    "history_source_system": "Synthetic browser UAT",
+    "history_submission_preflight_only": true,
+    "master_ids": {
+      "category": 1,
+      "customer": 1,
+      "product": 1,
+      "sku": 1,
+      "supplier": 1
+    },
+    "media_root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\media",
+    "rbac_enforcement": false,
+    "synthetic_session_actors": [
+      "synthetic-history-uploader",
+      "synthetic-history-reviewer"
+    ]
+  },
+  "inventory_acceptance_copy": {
+    "source": ".tmp/final-integrated-447d/frontend/scripts/history-inventory-location-chrome-uat.mjs",
+    "acceptance_copy": "docs/uat-evidence/integration-closeout-02/history-inventory-location-chrome-uat-447d-r02.mjs",
+    "fixture_replacements": 6,
+    "only_changes": [
+      "UAT-HT-S1 -> generated API SKU",
+      "@playwright/test -> frozen checkout node_modules entry"
+    ]
+  },
+  "stages": [
+    {
+      "label": "python-version",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 45,
+      "raw_log_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\logs\\python-version.raw.log"
+    },
+    {
+      "label": "isolated-migration",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 33035,
+      "raw_log_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\logs\\isolated-migration.raw.log"
+    },
+    {
+      "label": "synthetic-api-seed",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 11954,
+      "raw_log_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\logs\\synthetic-api-seed.raw.log"
+    },
+    {
+      "label": "history-operational-chrome",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 11207,
+      "raw_log_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\logs\\history-operational-chrome.raw.log"
+    },
+    {
+      "label": "history-operational-workflow",
+      "exit_code": 1,
+      "signal": null,
+      "duration_ms": 40646,
+      "raw_log_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\logs\\history-operational-workflow.raw.log"
+    },
+    {
+      "label": "history-inventory-location",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 11935,
+      "raw_log_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\logs\\history-inventory-location.raw.log"
+    },
+    {
+      "label": "history-template",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 7681,
+      "raw_log_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\logs\\history-template.raw.log"
+    },
+    {
+      "label": "read-only-business-verification",
+      "exit_code": 1,
+      "signal": null,
+      "duration_ms": 946,
+      "raw_log_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\logs\\read-only-business-verification.raw.log"
+    },
+    {
+      "label": "sanitized-database-copy",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 970,
+      "raw_log_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\logs\\sanitized-database-copy.raw.log"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "inventory-location/inventory-location-1440.png",
+      "width": 1440,
+      "height": 1000,
+      "size": 176476,
+      "sha256": "d33c57d79cd8508230db24296fc5b1d9f00d16a7d62fa02d4b9f865d8125038b"
+    },
+    {
+      "path": "inventory-location/inventory-location-390.png",
+      "width": 390,
+      "height": 844,
+      "size": 63357,
+      "sha256": "243d5025c560a128f0931f8a26c0dd4f79fc2a8055139a0f162d13e12fd8860e"
+    },
+    {
+      "path": "operational/history-operational-1440.png",
+      "width": 1440,
+      "height": 5038,
+      "size": 585305,
+      "sha256": "1bce029481f8300838f9f56c65bd7f5e9d1d67096e5e337cdfa211f27f19bfe3"
+    },
+    {
+      "path": "operational/history-operational-390.png",
+      "width": 390,
+      "height": 6099,
+      "size": 503306,
+      "sha256": "9fcc3b1426a7d6051303fe75dd14d4f8283b41d74146df9bc5ff3ac893a52218"
+    }
+  ],
+  "logs": [
+    {
+      "name": "python-version.log",
+      "raw_sha256": "fd14d8d0c62801ac1c9e6d7081306d877f44791307d9f7ab823ec21da1cbc833",
+      "published_sha256": "fd14d8d0c62801ac1c9e6d7081306d877f44791307d9f7ab823ec21da1cbc833",
+      "raw_bytes": 16,
+      "published_bytes": 16,
+      "token_redactions": 0
+    },
+    {
+      "name": "isolated-migration.log",
+      "raw_sha256": "9fdefba48bd4a6c8bbd0291aeb081f8df5962fb5c361f007b301d8e7d5b1c20f",
+      "published_sha256": "9fdefba48bd4a6c8bbd0291aeb081f8df5962fb5c361f007b301d8e7d5b1c20f",
+      "raw_bytes": 179,
+      "published_bytes": 179,
+      "token_redactions": 0
+    },
+    {
+      "name": "synthetic-api-seed.log",
+      "raw_sha256": "9b27863d4ac963e69c4325a36efe504ba362decdeb299526a1a32f13bdd87e02",
+      "published_sha256": "9b27863d4ac963e69c4325a36efe504ba362decdeb299526a1a32f13bdd87e02",
+      "raw_bytes": 1051,
+      "published_bytes": 1051,
+      "token_redactions": 0
+    },
+    {
+      "name": "history-operational-chrome.log",
+      "raw_sha256": "dd2eba8210fb46e001fd69a55a19ade1ddcb678f171ba8e0486df5ee9433b8c7",
+      "published_sha256": "dd2eba8210fb46e001fd69a55a19ade1ddcb678f171ba8e0486df5ee9433b8c7",
+      "raw_bytes": 3340,
+      "published_bytes": 3340,
+      "token_redactions": 0
+    },
+    {
+      "name": "history-operational-workflow.log",
+      "raw_sha256": "5a185adbdbb6d4663d736a56e82f2fe0116bb204713681f5562b4f4955a113c9",
+      "published_sha256": "5a185adbdbb6d4663d736a56e82f2fe0116bb204713681f5562b4f4955a113c9",
+      "raw_bytes": 4808,
+      "published_bytes": 4808,
+      "token_redactions": 0
+    },
+    {
+      "name": "history-inventory-location.log",
+      "raw_sha256": "9fcd956d9120417e1cbe7ed18bb8c1da0be4bae2f2c527660439c45a79ef8653",
+      "published_sha256": "9fcd956d9120417e1cbe7ed18bb8c1da0be4bae2f2c527660439c45a79ef8653",
+      "raw_bytes": 2873,
+      "published_bytes": 2873,
+      "token_redactions": 0
+    },
+    {
+      "name": "history-template.log",
+      "raw_sha256": "3540233e53097c068cbc497230147c3b0e8b27bb8a5bc058d39d82ce5dc3c5d4",
+      "published_sha256": "3540233e53097c068cbc497230147c3b0e8b27bb8a5bc058d39d82ce5dc3c5d4",
+      "raw_bytes": 4001,
+      "published_bytes": 4001,
+      "token_redactions": 0
+    },
+    {
+      "name": "read-only-business-verification.log",
+      "raw_sha256": "5cde9e5cf1fa00bef8f7023e8673453d697ac6e3b6c041f9b23423a0a0fcbf90",
+      "published_sha256": "5cde9e5cf1fa00bef8f7023e8673453d697ac6e3b6c041f9b23423a0a0fcbf90",
+      "raw_bytes": 915,
+      "published_bytes": 915,
+      "token_redactions": 0
+    },
+    {
+      "name": "sanitized-database-copy.log",
+      "raw_sha256": "067c037cb6041990a3d1b8066198bd399998cb3ca74d9d1230098835fbd0ec94",
+      "published_sha256": "067c037cb6041990a3d1b8066198bd399998cb3ca74d9d1230098835fbd0ec94",
+      "raw_bytes": 838,
+      "published_bytes": 838,
+      "token_redactions": 0
+    },
+    {
+      "name": "api-server.log",
+      "raw_sha256": "a4cca1052da9fd74dda58890283c834ef5b2c82629329e217f5953216ed7b2c7",
+      "published_sha256": "be94e5202147fb516b4daaa3c66f0422753eeffb2cfc0070713578806d562640",
+      "raw_bytes": 3286,
+      "published_bytes": 3242,
+      "token_redactions": 2
+    },
+    {
+      "name": "vite-server.log",
+      "raw_sha256": "6efb1d5d44119e359fda8538a4dab909cd49007768c2ecad76f588df6ffdb789",
+      "published_sha256": "6efb1d5d44119e359fda8538a4dab909cd49007768c2ecad76f588df6ffdb789",
+      "raw_bytes": 135,
+      "published_bytes": 135,
+      "token_redactions": 0
+    }
+  ],
+  "database_copy": {
+    "business_and_audit_manifest_sha256": "7872a45c16737c97d860b092a2f1d5e235066b03b78ea6d9970c9b53287fabd1",
+    "business_and_audit_rows": 1039,
+    "business_and_audit_tables_unchanged": true,
+    "django_session_rows_removed_from_published_copy": 2,
+    "published_database": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\docs\\uat-evidence\\integration-closeout-02\\final-447d-history-chrome-r02\\artifacts\\isolated-sanitized.sqlite3",
+    "published_sha256": "368882db524777c46bcfeeb1c3ca01a40ef22bc3f2624ea79fbd2047e644c1f2",
+    "published_table_count": 102,
+    "source_database": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-aYWHFD\\db.sqlite3",
+    "source_sha256": "bf44e4288f0aeaab9dc6e35be7c0f2f964f61bfb82837f41477d2c9aa86f8efe",
+    "source_table_count": 102
+  },
+  "media_copy": {
+    "path": "artifacts/media",
+    "file_count": 1,
+    "files": [
+      {
+        "path": "finance-vouchers/2026/11/931237d39503465fa822a903cfe759e8.pdf",
+        "size": 55,
+        "sha256": "94f673e3511b44ae4cce4189c7bf246b5106f5c0d9ed50767c58265d53c19fb9"
+      }
+    ]
+  },
+  "teardown": {
+    "api_stopped": true,
+    "vite_stopped": true,
+    "ports_released": true,
+    "owned_temp_cleanup": true,
+    "temp_root_removed": "sunjack-r1-repair-06-aYWHFD"
+  },
+  "errors": [
+    "history-operational-workflow: exited code 1",
+    "history-operational-workflow: browser assertions failed; inspect logs/history-operational-workflow.log.",
+    "read-only-business-verification: exited code 1",
+    "Read-only business verification did not complete."
+  ],
+  "blocked_stages": [
+    {
+      "stage": "history-operational-fulfillment",
+      "reason": "Continuation contract scenario did not pass; dependent receipt/shipment requests were not attempted."
+    }
+  ],
+  "template_download": {
+    "path": "template/history-takeover-template.xlsx",
+    "size": 14078,
+    "sha256": "c42f02962bfff702d9163b41c72749c45bb64d5be62d57751d20e53518dd2236"
+  },
+  "final_status": "INCOMPLETE_OR_FAILED"
+}

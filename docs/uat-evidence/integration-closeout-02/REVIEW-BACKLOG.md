@@ -1,14 +1,14 @@
 # 86项待复审：风险与业务模块
 
-起点8087f2c68b19a302a25e814ec8ce6113d91d4750；当前代码a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f。86唯一FPR与公共台账匹配，未关闭Issue。
+起点8087f2c68b19a302a25e814ec8ce6113d91d4750；当前检查代码02140bf46df27ba1abf5b9018507c07aae825769。此处原86唯一FPR与公共台账的原队列匹配；另增ISS-121单独补充复审，合计87项，未关闭Issue。
 
 R1/R2/R3只是复审顺序，不改变原Issue优先级。历史触发背景保留在JSON；当前关闭缺项以最新台账为准，不按旧OPEN/BLOCKED或错误相对路径重复开发。
 
 ## 共用证据
 
-8087 / CI41839476121三项SUCCESS，实际计数见baseline-8087-ci-receipt.json。共享CI只证明执行路径，不代表86项独立接受。906补修SQLite32/32和PG12/12，9af普通角色91/91及PG64/64，已提交a840有序锁/截止日等PG25/25，均有精确源码/前后日志；完整本地及最终精确SHA三CI另列，未把旧CI当新代码通过。
+8087 / CI41839476121三项SUCCESS，实际计数见baseline-8087-ci-receipt.json。共享CI只证明执行路径，不代表86项独立接受。906补修SQLite32/32和PG12/12，9af普通角色91/91及PG64/64，已提交a840有序锁/截止日等PG25/25，均有精确源码/前后日志；冻结a840全量SQLite1266/64skip、PG1300/30skip均0失败；d4财务来源PG30/30。用户2026-11-05因额度暂停后续CI，当前不等待或触发，不能记PASS。原CI与新代码分开。
 
-代码/引用存在性统计：`{'entries': 361, 'present': 361, 'git_blob_present_at_checked_sha': 361}`；`{'unique_references': 98, 'present': 94, 'not_found': 0, 'external_or_unknown': 0, 'historical_ci_jobs_verified': 2, 'regex_fragments_excluded': 2}`。存在不等于内容通过；尚不能定位的历史引用单列在末尾，独立审查决定现有证据是否足够。
+代码/引用存在性统计：`{'entries': 365, 'present': 365, 'git_blob_present_at_checked_sha': 365}`；`{'unique_references': 98, 'present': 94, 'not_found': 0, 'external_or_unknown': 0, 'historical_ci_jobs_verified': 2, 'regex_fragments_excluded': 2}`。存在不等于内容通过；尚不能定位的历史引用单列在末尾，独立审查决定现有证据是否足够。
 
 ## R1：资金/库存、原子性与权限/数据保护（35项）
 
@@ -26,7 +26,7 @@ R1/R2/R3只是复审顺序，不改变原Issue优先级。历史触发背景保�
 | <a id="iss-001"></a>ISS-001 / P1 | 资金与应收应付 | backend/crm/services/finance.py；frontend/src/utils/orderOverview.js；backend/crm/tests/test_fulfillment_receivables.py；frontend/browser-tests/fulfillment-receivables.spec.js | docs/R0-E1-综合业务回归与内测准备.md；docs/Phase3-业务流程与异常UAT计划.md | 前端/后端/财务QA已按方案A完成最小修复及正常/拒绝路径回归；等待ChatGPT独立代码、原图和数据库证据审查，不自行关闭。；completed欠款可继续追踪、逾期与应收导航准确；收齐后待办消失、退款后恢复；无财务权限不泄露；未发齐不得完成、重复请求无副作用；最终精确HEAD三项CI及独立复审通过。 |
 | <a id="iss-004"></a>ISS-004 / P1 | 资金与应收应付 | backend/crm/services/finance.py；frontend/src/utils/orderOverview.js；backend/crm/tests/test_fulfillment_receivables.py；frontend/browser-tests/fulfillment-receivables.spec.js | docs/真实用户E2E-UAT-20260923.md；docs/R0-E1-综合业务回归与内测准备.md | 财务 QA 用隔离订单，在“新增记账”走 USD 正常创建、校验失败无副作用及计划关联；确认 UI 金额、汇率和服务端流水一致。；R1-A下一步：按报告未覆盖分支补验，并交ChatGPT独立审查；不得自行关闭。；直接记账与应收计划两条合法路径均真实 UI 成功；无效金额被清晰拒绝且流水/余额保持不变；自动测试及独立复审通过。 |
 | <a id="iss-104"></a>ISS-104 / P1 | 资金与应收应付 | frontend/src/views/TransactionPage.vue；backend/crm/tests/test_finance_retry_safety.py；frontend/browser-tests/finance-retry-safety.spec.js | docs/R1-A-FUP-01-财务重试安全验收.md；docs/PROJECT_ISSUES.md | 等待ChatGPT独立代码、原图及数据库证据复审；跨刷新恢复、全站通用幂等不在本轮宣称范围，不自动关闭 |
-| <a id="iss-105"></a>ISS-105 / P1 | 资金与应收应付 | backend/crm/services/finance_closeout.py::match_transfer / match_historical_transfer / effective_nature / balance；backend/crm/services/cash_events.py；backend/crm/finance_closeout_api.py；backend/crm/actual_cash_api.py | 906：32/12；9af：角色SQLite91、PG64；a840：PG25含真实锁3；各coordinator-finance-*-result.json与原始失败均可查 | 实际资金、账面参考和账户余额范围准确；正常/拒绝/并发/审计/历史保护与独立复审通过，不以开发session代替正式身份验收。；独立复核已验有效分类、新旧匹配PG有序锁/截止日边界、旧匹配一次重核兼容，以及普通授权角色正向/拒绝；分别查9af角色64项和a840 PG25项及最终精确SHA三CI。 |
+| <a id="iss-105"></a>ISS-105 / P1 | 资金与应收应付 | backend/crm/services/finance_closeout.py::match_transfer / match_historical_transfer / effective_nature / balance；backend/crm/services/cash_events.py；backend/crm/finance_closeout_api.py；backend/crm/actual_cash_api.py | 906：32/12；9af：角色SQLite91、PG64；a840：PG25含真实锁3；d4：原三反例及完整财务PG30；各coordinator-finance-*-result.json与原始失败均可查 | 实际资金、账面参考和账户余额范围准确；正常/拒绝/并发/审计/历史保护与独立复审通过，不以开发session代替正式身份验收。；独立复核已验有效分类、新旧匹配PG有序锁/截止日边界、旧匹配一次重核兼容，以及普通授权角色正向/拒绝；分别查9af角色64项和a840 PG25项及最终精确SHA三CI。 |
 | <a id="iss-107"></a>ISS-107 / P2 | 资金与应收应付 | backend/crm/models.py；backend/crm/migrations/0081_transaction_rmb_reference_label.py；frontend/src/resourceConfigs.js；backend/crm/tests/test_finance_reference_basis.py | docs/uat-evidence/r1-fin-p1/ISS-107-FOLLOWUP.md；docs/PROJECT_ISSUES.md | 模型元数据及自动生成界面无误导旧称；银行实际净额与账面参考分离；历史金额、API键、CSV和保存报表均不变，独立复审通过 |
 | <a id="iss-108"></a>ISS-108 / P1 | 资金与应收应付 | backend/crm/services/finance_closeout.py；backend/crm/services/cash_events.py；backend/crm/models.py；backend/crm/tests/test_finance_closeout.py | docs/uat-evidence/review-integration-batch-20261104/REVIEW-FINANCE-SOURCE.md；docs/uat-evidence/review-integration-batch-20261104/TEST-RESULTS.md | 原始事实不改写、来源及实际期间可核实、不重复核销或释放额度；正常/拒绝/事务原子性/并发与独立复审通过。 |
 | <a id="iss-109"></a>ISS-109 / P2 | 资金与应收应付 | backend/crm/services/finance.py；backend/crm/tests/test_fulfillment_receivables.py；frontend/tests/fulfillment-receivables.spec.js；frontend/browser-tests/fulfillment-receivables.spec.js | docs/PROJECT_ISSUES.md | 任意执行日期下均按显式测试日验证正确部分/全部逾期；两类数据库完整CI及独立审查通过 |

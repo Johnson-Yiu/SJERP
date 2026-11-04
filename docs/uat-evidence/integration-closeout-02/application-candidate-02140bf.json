@@ -1,0 +1,69 @@
+{
+  "candidate_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+  "full_integration_parent": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+  "candidate_frozen_checkout": ".tmp/final-integrated-02140bf",
+  "git_objects": [
+    {
+      "path": "backend",
+      "447d_git_object": "420100c96b1456c87947d734f9b4fdf5ee4ea71a",
+      "candidate_git_object": "420100c96b1456c87947d734f9b4fdf5ee4ea71a",
+      "identical": true
+    },
+    {
+      "path": "frontend/src",
+      "447d_git_object": "a62c7439a5629e827d86b9e9810c3e77cbe72c60",
+      "candidate_git_object": "538c56528e02d3605fad7aee190eab6990fe4a8f",
+      "identical": false
+    },
+    {
+      "path": "frontend/browser-tests",
+      "447d_git_object": "90c478791f6ba0466fa594fa093d81665583b62a",
+      "candidate_git_object": "6ba3df78827aea491c8b05d002b498a29e6096a8",
+      "identical": false
+    },
+    {
+      "path": "frontend/scripts",
+      "447d_git_object": "e2d9ec083fdca8eda23f7b217b8fbf3c43af1b2e",
+      "candidate_git_object": "e2d9ec083fdca8eda23f7b217b8fbf3c43af1b2e",
+      "identical": true
+    },
+    {
+      "path": "frontend/package.json",
+      "447d_git_object": "c8412f6b10eb533591f7d172adcd5dea82d26523",
+      "candidate_git_object": "c8412f6b10eb533591f7d172adcd5dea82d26523",
+      "identical": true
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "447d_git_object": "1a5ce188e997ee6cd9d989e32320c42f312eef8a",
+      "candidate_git_object": "1a5ce188e997ee6cd9d989e32320c42f312eef8a",
+      "identical": true
+    },
+    {
+      "path": "templates",
+      "447d_git_object": "535566cc881d16b650af62663f9c6195a42823ad",
+      "candidate_git_object": "535566cc881d16b650af62663f9c6195a42823ad",
+      "identical": true
+    },
+    {
+      "path": ".github/workflows",
+      "447d_git_object": "8a8f196b21213dd764898f51eaa0e0a7e8ad027c",
+      "candidate_git_object": "8a8f196b21213dd764898f51eaa0e0a7e8ad027c",
+      "identical": true
+    }
+  ],
+  "all_application_or_test_differences_from447d": [
+    "frontend/browser-tests/iss007-attachment-real.spec.js",
+    "frontend/src/api.js",
+    "frontend/src/views/FinanceLedgerPage.vue"
+  ],
+  "only_business_source_changes": [
+    "frontend/src/api.js",
+    "frontend/src/views/FinanceLedgerPage.vue"
+  ],
+  "backend_api_models_calculation_and_migrations_unchanged": true,
+  "original_finance_quote_browser_specs_unchanged": true,
+  "iss007_change": "Only test-level real Chrome and supported browser-identity telemetry; original scenarios/assertions retained.",
+  "ci_policy": "Skip CI per user quota pause; all new commits [skip ci].",
+  "scope": "Committed source equivalence and exact differences, not runtime PASS. Final suites run on this candidate explicitly."
+}

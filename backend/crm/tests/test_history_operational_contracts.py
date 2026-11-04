@@ -253,6 +253,44 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertFalse(PaymentPlan.objects.exists())
 
 
+class HistoricalContractLifecycleTests(HistoryTakeoverFixtureMixin, TestCase):
+    def _run_lifecycle(self, state, amount):
+        rows = self.source_rows(order_state=state, supplier_order_state=state)
+        if state == "cancelled":
+            rows["履约记录"] = []
+        else:
+            rows["履约记录"][0]["quantity_base"] = "10.00"
+            rows["履约记录"][1]["quantity_base"] = "5.00"
+        application, group, _ = self.application_and_group(rows)
+        base = f"/api/import/history-takeovers/{application.pk}/groups/{group.pk}/"
+        reviewed = self.client.post(base + "review/", {"decision": "approve", "note": "合成合同核验", "confirm_manual": True}, format="json")
+        self.assertEqual(reviewed.status_code, 200, reviewed.data)
+        archived = self.client.post(base + "execute/", {}, format="json")
+        self.assertEqual(archived.status_code, 200, archived.data)
+        maker = get_user_model().objects.create_superuser(username="lifecycle-maker", password="test-only")
+        reviewer = get_user_model().objects.create_superuser(username="lifecycle-reviewer", password="test-only")
+        docs = list(group.source_records.filter(record_type__in=["销售订单", "采购订单"]).order_by("pk"))
+        payload = {"cutover_date": "2025-01-01", "reason": "核对合成合同状态", "contracts": [
+            {"source_id": doc.pk, "balance_mode": "balance_only", "balance_amount": amount, "plan_source_ids": [],
+             "evidence_reference": "synthetic://verified-balance", "line_options": []} for doc in docs]}
+        contracts.propose(group.pk, payload, maker)
+        contracts.approve(group.pk, "独立复核合成余额", reviewer)
+        ids, replay = contracts.execute(group.pk, maker)
+        self.assertFalse(replay)
+        self.assertEqual(len(ids), 2)
+        self.assertFalse(Order.objects.filter(status="draft").exists())
+        self.assertFalse(PurchaseOrder.objects.filter(status="draft").exists())
+        self.assertEqual(PaymentPlan.objects.count(), 2 if Decimal(amount) else 0)
+        self.assertFalse(InventoryMovement.objects.exists())
+        self.assertFalse(Transaction.objects.exists())
+
+    def test_cancelled_contracts_do_not_recreate_fulfillment(self):
+        self._run_lifecycle("cancelled", "0")
+
+    def test_completed_contracts_can_carry_verified_unpaid_balance_only(self):
+        self._run_lifecycle("completed", "10")
+
+
 @unittest.skipUnless(connection.vendor == "postgresql", "requires real PostgreSQL row locks")
 @override_settings(FILE_UPLOAD_TEMP_DIR=tempfile.gettempdir())
 class HistoricalContractsPostgresTests(HistoryTakeoverFixtureMixin, TransactionTestCase):

@@ -1,0 +1,94 @@
+{
+  "idempotency": [],
+  "movements": [],
+  "operation_logs": [
+    {
+      "action": "create",
+      "action_label": "创建",
+      "entity": "crm.quote",
+      "id": 22,
+      "object_id": "2",
+      "operator_id": 4
+    },
+    {
+      "action": "custom",
+      "action_label": "标记报价已发送",
+      "entity": "crm.quote",
+      "id": 23,
+      "object_id": "2",
+      "operator_id": 4
+    },
+    {
+      "action": "custom",
+      "action_label": "客户接受报价",
+      "entity": "crm.quote",
+      "id": 24,
+      "object_id": "2",
+      "operator_id": 4
+    },
+    {
+      "action": "create",
+      "action_label": "创建",
+      "entity": "crm.order",
+      "id": 25,
+      "object_id": "2",
+      "operator_id": 4
+    },
+    {
+      "action": "custom",
+      "action_label": "确认销售订单",
+      "entity": "crm.order",
+      "id": 26,
+      "object_id": "2",
+      "operator_id": 4
+    },
+    {
+      "action": "create",
+      "action_label": "结算付款计划",
+      "entity": "crm.transaction",
+      "id": 27,
+      "object_id": "2",
+      "operator_id": 4
+    },
+    {
+      "action": "custom",
+      "action_label": "作废财务流水",
+      "entity": "crm.transaction",
+      "id": 28,
+      "object_id": "2",
+      "operator_id": 4
+    }
+  ],
+  "orders": [
+    {
+      "cancellation_reason": "",
+      "id": 2,
+      "status": "confirmed"
+    }
+  ],
+  "plans": [
+    {
+      "id": 5,
+      "planned_amount": "75.0000",
+      "settled_amount": "0.0000",
+      "status": "open"
+    },
+    {
+      "id": 6,
+      "planned_amount": "175.0000",
+      "settled_amount": "0.0000",
+      "status": "open"
+    }
+  ],
+  "purchases": [],
+  "receipts": [],
+  "shipments": [],
+  "transactions": [
+    {
+      "amount": "10.0000",
+      "id": 2,
+      "status": "cancelled",
+      "void_reason": "Synthetic HTTP core-flow correction"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "orders": [
+    2,
+    3
+  ],
+  "purchases": {
+    "new": {
+      "id": 3,
+      "no": "C039-164a372c-new",
+      "items": [
+        3,
+        4
+      ]
+    },
+    "legacy": {
+      "id": 4,
+      "no": "C039-164a372c-legacy",
+      "items": [
+        5,
+        6
+      ]
+    },
+    "zero": {
+      "id": 5,
+      "no": "C039-164a372c-zero",
+      "items": [
+        7,
+        8
+      ]
+    }
+  }
+}

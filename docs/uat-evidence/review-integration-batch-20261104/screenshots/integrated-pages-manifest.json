@@ -1,0 +1,215 @@
+{
+  "source_head": "d6ebad3a6cd2358e0db14761c33ebbfaf34b0f50",
+  "chrome": "156.0.8078.80",
+  "scope": "Actual integration development UI; owned synthetic SQLite/media; empty business pages are empty-state evidence, not positive workflow acceptance. Includes uncommitted sidebar display fix.",
+  "results": [
+    {
+      "route": "/",
+      "width": 1440,
+      "filename": "integrated-home-1440.png",
+      "heading": "经营概览",
+      "page_errors": [],
+      "sha256": "3941a3672f901b0dd17a1cf5cc71f0fe6bcd1e14b89b42ac6a9b6ea78372c687"
+    },
+    {
+      "route": "/customers",
+      "width": 1440,
+      "filename": "integrated-customers-1440.png",
+      "heading": "客户管理",
+      "page_errors": [],
+      "sha256": "79f87c6277030b1e4f1f167a96655e93f027159473a8635fffbad851809d5c2c"
+    },
+    {
+      "route": "/products",
+      "width": 1440,
+      "filename": "integrated-products-1440.png",
+      "heading": "产品管理",
+      "page_errors": [],
+      "sha256": "36e6ddced1d0fde4057e15478783acae5ed89705e84d9cf1a3fc9246063e2ba1"
+    },
+    {
+      "route": "/skus",
+      "width": 1440,
+      "filename": "integrated-skus-1440.png",
+      "heading": "SKU 管理",
+      "page_errors": [],
+      "sha256": "8717f7813d1adff0c32f22ec1610e8bbabd9bf996d6b940410214497b20245a6"
+    },
+    {
+      "route": "/quotes",
+      "width": 1440,
+      "filename": "integrated-quotes-1440.png",
+      "heading": "报价管理",
+      "page_errors": [],
+      "sha256": "923b2cec43dd45f417c371abaf17934c4537e9852017b9e5a4138fea1339123b"
+    },
+    {
+      "route": "/orders",
+      "width": 1440,
+      "filename": "integrated-orders-1440.png",
+      "heading": "订单管理",
+      "page_errors": [],
+      "sha256": "2202ed6c9d66a4d5bdb172d3d6863a9ecf88f34d3dc98a144a5131cd7ce75185"
+    },
+    {
+      "route": "/purchase-orders",
+      "width": 1440,
+      "filename": "integrated-purchase-orders-1440.png",
+      "heading": "采购管理",
+      "page_errors": [],
+      "sha256": "e48db7b7cd0c63f8df773a39f444ef1165b31c43075c9e29df09a38401e0e9a6"
+    },
+    {
+      "route": "/inventory",
+      "width": 1440,
+      "filename": "integrated-inventory-1440.png",
+      "heading": "库存",
+      "page_errors": [],
+      "sha256": "c55514442883c3eda423a8d0d60ffe812b0e74a8ded9e5c8adc20c5e46a01301"
+    },
+    {
+      "route": "/inventory-movements",
+      "width": 1440,
+      "filename": "integrated-inventory-movements-1440.png",
+      "heading": "库存流水",
+      "page_errors": [],
+      "sha256": "70b770393a698df097a0f0608a9a77b5f570d96c0d49456d28f4cd01743ca3e3"
+    },
+    {
+      "route": "/finance",
+      "width": 1440,
+      "filename": "integrated-finance-1440.png",
+      "heading": "财务概览",
+      "page_errors": [],
+      "sha256": "f531a31f94f5dcfdb5304e7f9130c0ba1b42061c8a5f410f81cc78d6e67d5592"
+    },
+    {
+      "route": "/transactions",
+      "width": 1440,
+      "filename": "integrated-transactions-1440.png",
+      "heading": "财务流水",
+      "page_errors": [],
+      "sha256": "2091e365a184f85175326bfcb6ec51d927e9efc163c573385eec30221ee35e0d"
+    },
+    {
+      "route": "/reports",
+      "width": 1440,
+      "filename": "integrated-reports-1440.png",
+      "heading": "报表中心",
+      "page_errors": [],
+      "sha256": "548edcea30843807aab5b86b9f7091b74dc5b570a6ff7527bc5b020109d16bf5"
+    },
+    {
+      "route": "/finance-ledger",
+      "width": 1440,
+      "filename": "integrated-finance-ledger-1440.png",
+      "heading": "账户资金",
+      "page_errors": [],
+      "sha256": "bb9b51034c0dbbd739ffa4ffb5f0b44641f5c51337189fe98a1e0a3574c175d8"
+    },
+    {
+      "route": "/",
+      "width": 390,
+      "filename": "integrated-home-390.png",
+      "heading": "经营概览",
+      "page_errors": [],
+      "sha256": "362d7269c2f4044395f5044092a01453d93329e7527eefd0e264e24850fe8512"
+    },
+    {
+      "route": "/customers",
+      "width": 390,
+      "filename": "integrated-customers-390.png",
+      "heading": "客户管理",
+      "page_errors": [],
+      "sha256": "3ddf47d9e3ead57b746adad75230f3a3d08db69a5ba0dd8ead9e3b301ea5e360"
+    },
+    {
+      "route": "/products",
+      "width": 390,
+      "filename": "integrated-products-390.png",
+      "heading": "产品管理",
+      "page_errors": [],
+      "sha256": "4b872b534e926dfaf19482c9f0173b11d2e915ece62a77f4a7956ce3d3f08a7d"
+    },
+    {
+      "route": "/skus",
+      "width": 390,
+      "filename": "integrated-skus-390.png",
+      "heading": "SKU 管理",
+      "page_errors": [],
+      "sha256": "a7b62284ba3b02c2582362fb15d768e5d33719aa5eae5b0f771f9aff724773cf"
+    },
+    {
+      "route": "/quotes",
+      "width": 390,
+      "filename": "integrated-quotes-390.png",
+      "heading": "报价管理",
+      "page_errors": [],
+      "sha256": "f21ac5e0182bee3ecb4998decd1ed245b7e2cc4fbd296e83ae665a5af6d7d9f4"
+    },
+    {
+      "route": "/orders",
+      "width": 390,
+      "filename": "integrated-orders-390.png",
+      "heading": "订单管理",
+      "page_errors": [],
+      "sha256": "0d3b3a1de30b9b1a1a536b14a5dc6bba2ea1075954d532e94a6ab8611ddcd108"
+    },
+    {
+      "route": "/purchase-orders",
+      "width": 390,
+      "filename": "integrated-purchase-orders-390.png",
+      "heading": "采购管理",
+      "page_errors": [],
+      "sha256": "7706932d85da052d92575370c6cadf3bcc2cd70357e499446ca876c4079735c7"
+    },
+    {
+      "route": "/inventory",
+      "width": 390,
+      "filename": "integrated-inventory-390.png",
+      "heading": "库存",
+      "page_errors": [],
+      "sha256": "d9aec2ab6256b4f11f0b1b826da2c70e99de34cabcfd3b8430f5721375bb0710"
+    },
+    {
+      "route": "/inventory-movements",
+      "width": 390,
+      "filename": "integrated-inventory-movements-390.png",
+      "heading": "库存流水",
+      "page_errors": [],
+      "sha256": "7bb4c112312cfdca08cf2eeff548ee42716b8ff915cfd9469f4938ecdcff7516"
+    },
+    {
+      "route": "/finance",
+      "width": 390,
+      "filename": "integrated-finance-390.png",
+      "heading": "财务概览",
+      "page_errors": [],
+      "sha256": "a998af02b53e423c10cc6c727acddb74d761c1cb213cacb05bbe62817c53ae17"
+    },
+    {
+      "route": "/transactions",
+      "width": 390,
+      "filename": "integrated-transactions-390.png",
+      "heading": "财务流水",
+      "page_errors": [],
+      "sha256": "1c0711f2d5f8dd1c21b07e6da2a47776756b4fceb504acdb5c4bdd1285fe8616"
+    },
+    {
+      "route": "/reports",
+      "width": 390,
+      "filename": "integrated-reports-390.png",
+      "heading": "报表中心",
+      "page_errors": [],
+      "sha256": "dfc55c1ff91c240ae2f5f3ae7f7b20f1ee7d46068d82cd5e46738c19aa8dfbca"
+    },
+    {
+      "route": "/finance-ledger",
+      "width": 390,
+      "filename": "integrated-finance-ledger-390.png",
+      "heading": "账户资金",
+      "page_errors": [],
+      "sha256": "5b710603b0d8f135277a685bf9099c66d08c1927cb17f39907be4edea3cd6cfe"
+    }
+  ]
+}

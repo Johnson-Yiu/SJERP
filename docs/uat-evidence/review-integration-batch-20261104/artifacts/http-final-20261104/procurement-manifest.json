@@ -1,0 +1,54 @@
+{
+  "artifacts": {},
+  "http_events": [
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": "身份认证信息未提供。",
+      "error_response_raw_hex": "7b2264657461696c223a22e8baabe4bbbde8aea4e8af81e4bfa1e681afe69caae68f90e4be9be38082227d",
+      "method": "POST",
+      "path": "/api/quotes/",
+      "response_bytes": 43,
+      "response_charset": "utf-8",
+      "response_sha256": "323035c1907e918ffa978a9bdec9f41f159f8625dde60f9585819811a73f258d",
+      "status": 403
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": "CSRF Failed: CSRF token missing.",
+      "error_response_raw_hex": "7b2264657461696c223a2243535246204661696c65643a204353524620746f6b656e206d697373696e672e227d",
+      "method": "POST",
+      "path": "/api/quotes/",
+      "response_bytes": 45,
+      "response_charset": "utf-8",
+      "response_sha256": "42b5ba2c392851d1351b17d5cbc856da4495a1564d8b7a4be06cbf7411128efd",
+      "status": 403
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": "CSRF Failed: CSRF token from the 'X-Csrftoken' HTTP header has incorrect length.",
+      "error_response_raw_hex": "7b2264657461696c223a2243535246204661696c65643a204353524620746f6b656e2066726f6d207468652027582d43737266746f6b656e272048545450206865616465722068617320696e636f7272656374206c656e6774682e227d",
+      "method": "POST",
+      "path": "/api/quotes/",
+      "response_bytes": 93,
+      "response_charset": "utf-8",
+      "response_sha256": "71ac82b11a2670862d303ce8b773f62938d023c6f95a056894ce6648ced47b0d",
+      "status": 403
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": "你没有权限执行此操作。",
+      "error_response_raw_hex": "7b2264657461696c223a22e4bda0e6b2a1e69c89e69d83e99990e689a7e8a18ce6ada4e6938de4bd9ce38082227d",
+      "method": "POST",
+      "path": "/api/quotes/",
+      "response_bytes": 46,
+      "response_charset": "utf-8",
+      "response_sha256": "ea74f83522e11136cc232d8cf171c7fd703dca0c2bb616e942b8d002fdc1235a",
+      "status": 403
+    }
+  ],
+  "test": "test_http_auth_csrf_and_rbac_denials_have_no_business_or_success_audit"
+}

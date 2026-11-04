@@ -1,0 +1,1630 @@
+[
+  {
+    "width": 1440,
+    "method": "GET",
+    "path": "/api/rmb-cash-events/",
+    "status": 200,
+    "response": {
+      "results": [
+        {
+          "id": 1,
+          "event_no": "SYNTH-DUP-A-1440",
+          "request_key": "SYNTH-DUP-A-1440",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-23",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-1440",
+          "bank_counterparty": "合成对手甲",
+          "bank_summary": "合成银行摘要甲",
+          "bank_transaction_id": "SYNTH-ID-1440",
+          "evidence_reference": "SYNTH-VOUCHER",
+          "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "evidence_note": "合成银行凭证",
+          "quoted_rate": "1.000000",
+          "status": "confirmed",
+          "confirmed_at": "2026-11-04T09:17:18.475313Z",
+          "created_at": "2026-11-04T09:17:18.423097Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {
+            "kind": "development_superadmin",
+            "action": "confirm_bank_voucher",
+            "note": "开发身份，非正式员工审批"
+          },
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 1,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 1,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-0",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        }
+      ],
+      "coverage_since": null,
+      "note": "人工凭证事件列表，不代表全部银行资金。"
+    }
+  },
+  {
+    "width": 1440,
+    "method": "GET",
+    "path": "/api/rmb-cash-events/sources/",
+    "status": 200,
+    "response": {
+      "results": [
+        {
+          "id": 5,
+          "transaction_no": "SYNTH-FEE-7FD8F5FE-FX",
+          "currency": "USD",
+          "direction": "income",
+          "amount": "200.0000",
+          "family_root": 5,
+          "remaining_candidate_amount": "200.0000",
+          "manual_verification_required": true,
+          "blocked_reason": null
+        }
+      ],
+      "note": "按具体现金行计量；根行不是家族总额。核销不扣减结汇额度，候选额度不代表银行余额。"
+    }
+  },
+  {
+    "width": 1440,
+    "method": "GET",
+    "path": "/api/rmb-cash-events/sources/",
+    "status": 200,
+    "response": {
+      "results": [
+        {
+          "id": 1,
+          "transaction_no": "SYNTH-FEE-7FD8F5FE-0",
+          "currency": "CNY",
+          "direction": "expense",
+          "amount": "5.0000",
+          "family_root": 1,
+          "remaining_candidate_amount": "0.0000",
+          "manual_verification_required": true,
+          "blocked_reason": null
+        },
+        {
+          "id": 2,
+          "transaction_no": "SYNTH-FEE-7FD8F5FE-1",
+          "currency": "CNY",
+          "direction": "expense",
+          "amount": "5.0000",
+          "family_root": 2,
+          "remaining_candidate_amount": "5.0000",
+          "manual_verification_required": true,
+          "blocked_reason": null
+        },
+        {
+          "id": 3,
+          "transaction_no": "SYNTH-FEE-7FD8F5FE-2",
+          "currency": "CNY",
+          "direction": "expense",
+          "amount": "5.0000",
+          "family_root": 3,
+          "remaining_candidate_amount": "5.0000",
+          "manual_verification_required": true,
+          "blocked_reason": null
+        },
+        {
+          "id": 4,
+          "transaction_no": "SYNTH-FEE-7FD8F5FE-3",
+          "currency": "CNY",
+          "direction": "expense",
+          "amount": "5.0000",
+          "family_root": 4,
+          "remaining_candidate_amount": "5.0000",
+          "manual_verification_required": true,
+          "blocked_reason": null
+        }
+      ],
+      "note": "按具体现金行计量；根行不是家族总额。核销不扣减结汇额度，候选额度不代表银行余额。"
+    }
+  },
+  {
+    "width": 1440,
+    "method": "POST",
+    "path": "/api/rmb-cash-events/preview/",
+    "status": 200,
+    "response": {
+      "payload": {
+        "event_no": "P2B-EVENT-fce04dec-3193-4a06-a217-80af3ea488fe",
+        "request_key": "P2B-REQUEST-1fdb13a8-235e-4e9d-b2bf-d171c4533d7e",
+        "source_account": "SYNTH_CNY",
+        "rmb_account": "SYNTH_CNY",
+        "bank_reference": "SYNTH-REF-B-1440",
+        "evidence_reference": "SYNTH-VOUCHER-B",
+        "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "evidence_note": "合成凭证核对",
+        "bank_counterparty": "合成对手乙",
+        "bank_summary": "合成银行摘要乙",
+        "bank_transaction_id": "SYNTH-ID-B-1440",
+        "kind": "bank_fee",
+        "currency": "CNY",
+        "direction": "expense",
+        "bank_date": "2026-10-23",
+        "bank_net_amount": "5.00",
+        "fee_mode": "none",
+        "fee_amount": "0.00",
+        "quoted_rate": "1.000000",
+        "fee_for": null,
+        "sources": [
+          {
+            "transaction_id": 2,
+            "amount": "5.00",
+            "verified": true
+          }
+        ]
+      },
+      "source_total": "5.00",
+      "bank_net_amount": "5.00",
+      "confirmed": false,
+      "duplicate_candidates": {
+        "token": "080a9ed428559ef602668b4c00f114f1a11c3f6b02a435f0bdc154578e4d7f22",
+        "restricted": false,
+        "count": 1,
+        "items": [
+          {
+            "id": 1,
+            "event_no": "SYNTH-DUP-A-1440",
+            "bank_reference": "SYNTH-REF-1440",
+            "bank_counterparty": "合成对手甲",
+            "bank_summary": "合成银行摘要甲",
+            "bank_transaction_id": "SYNTH-ID-1440"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "id": 2,
+          "remaining_candidate_amount": "5.0000",
+          "manual_verification_required": true
+        }
+      ],
+      "note": "只读预览不占用额度，不替代银行凭证确认。"
+    }
+  },
+  {
+    "width": 1440,
+    "method": "POST",
+    "path": "/api/rmb-cash-events/",
+    "status": 201,
+    "response": {
+      "id": 2,
+      "event_no": "P2B-EVENT-fce04dec-3193-4a06-a217-80af3ea488fe",
+      "request_key": "P2B-REQUEST-1fdb13a8-235e-4e9d-b2bf-d171c4533d7e",
+      "kind": "bank_fee",
+      "currency": "CNY",
+      "amount": "5.0000",
+      "direction": "expense",
+      "bank_date": "2026-10-23",
+      "bank_net_amount": "5.00",
+      "fee_mode": "none",
+      "bank_currency": "CNY",
+      "fee_currency": "CNY",
+      "fee_amount": "0.00",
+      "source_account": "SYNTH_CNY",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "SYNTH-REF-B-1440",
+      "bank_counterparty": "合成对手乙",
+      "bank_summary": "合成银行摘要乙",
+      "bank_transaction_id": "SYNTH-ID-B-1440",
+      "evidence_reference": "SYNTH-VOUCHER-B",
+      "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "evidence_note": "合成凭证核对",
+      "quoted_rate": "1.000000",
+      "status": "pending",
+      "confirmed_at": null,
+      "created_at": "2026-11-04T09:17:24.378032Z",
+      "created_actor": {
+        "kind": "development_superadmin",
+        "action": "register",
+        "note": "开发身份，非正式员工审批"
+      },
+      "confirmed_actor": {},
+      "cancelled_actor": {},
+      "cancelled_reason": "",
+      "correction_of": null,
+      "fee_for": null,
+      "sources": [
+        {
+          "transaction_id": 2,
+          "amount": "5.0000",
+          "currency": "CNY",
+          "snapshot": {
+            "id": 2,
+            "transaction_no": "SYNTH-FEE-7FD8F5FE-1",
+            "amount": "5.0000",
+            "currency": "CNY",
+            "direction": "expense",
+            "kind": "bank_fee",
+            "split_from_id": null,
+            "customer_id": null,
+            "supplier_id": null,
+            "order_id": null,
+            "purchase_order_id": null,
+            "plan_id": null,
+            "exchange_rate": "1.000000",
+            "rmb_amount": "5.0000"
+          }
+        }
+      ],
+      "reference_amount": "5.00",
+      "net_minus_reference_information_only": "0.00",
+      "basis": "bank_voucher_manual_v1",
+      "coverage_since": null,
+      "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+    }
+  },
+  {
+    "width": 1440,
+    "method": "GET",
+    "path": "/api/rmb-cash-events/",
+    "status": 200,
+    "response": {
+      "results": [
+        {
+          "id": 2,
+          "event_no": "P2B-EVENT-fce04dec-3193-4a06-a217-80af3ea488fe",
+          "request_key": "P2B-REQUEST-1fdb13a8-235e-4e9d-b2bf-d171c4533d7e",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-23",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-B-1440",
+          "bank_counterparty": "合成对手乙",
+          "bank_summary": "合成银行摘要乙",
+          "bank_transaction_id": "SYNTH-ID-B-1440",
+          "evidence_reference": "SYNTH-VOUCHER-B",
+          "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "evidence_note": "合成凭证核对",
+          "quoted_rate": "1.000000",
+          "status": "pending",
+          "confirmed_at": null,
+          "created_at": "2026-11-04T09:17:24.378032Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {},
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 2,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 2,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-1",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        },
+        {
+          "id": 1,
+          "event_no": "SYNTH-DUP-A-1440",
+          "request_key": "SYNTH-DUP-A-1440",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-23",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-1440",
+          "bank_counterparty": "合成对手甲",
+          "bank_summary": "合成银行摘要甲",
+          "bank_transaction_id": "SYNTH-ID-1440",
+          "evidence_reference": "SYNTH-VOUCHER",
+          "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "evidence_note": "合成银行凭证",
+          "quoted_rate": "1.000000",
+          "status": "confirmed",
+          "confirmed_at": "2026-11-04T09:17:18.475313Z",
+          "created_at": "2026-11-04T09:17:18.423097Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {
+            "kind": "development_superadmin",
+            "action": "confirm_bank_voucher",
+            "note": "开发身份，非正式员工审批"
+          },
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 1,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 1,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-0",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        }
+      ],
+      "coverage_since": null,
+      "note": "人工凭证事件列表，不代表全部银行资金。"
+    }
+  },
+  {
+    "width": 1440,
+    "method": "GET",
+    "path": "/api/rmb-cash-events/2/duplicate-candidates/",
+    "status": 200,
+    "response": {
+      "token": "080a9ed428559ef602668b4c00f114f1a11c3f6b02a435f0bdc154578e4d7f22",
+      "restricted": false,
+      "count": 1,
+      "items": [
+        {
+          "id": 1,
+          "event_no": "SYNTH-DUP-A-1440",
+          "bank_reference": "SYNTH-REF-1440",
+          "bank_counterparty": "合成对手甲",
+          "bank_summary": "合成银行摘要甲",
+          "bank_transaction_id": "SYNTH-ID-1440"
+        }
+      ]
+    }
+  },
+  {
+    "width": 1440,
+    "method": "POST",
+    "path": "/api/rmb-cash-events/2/confirm/",
+    "status": 200,
+    "response": {
+      "id": 2,
+      "event_no": "P2B-EVENT-fce04dec-3193-4a06-a217-80af3ea488fe",
+      "request_key": "P2B-REQUEST-1fdb13a8-235e-4e9d-b2bf-d171c4533d7e",
+      "kind": "bank_fee",
+      "currency": "CNY",
+      "amount": "5.0000",
+      "direction": "expense",
+      "bank_date": "2026-10-23",
+      "bank_net_amount": "5.00",
+      "fee_mode": "none",
+      "bank_currency": "CNY",
+      "fee_currency": "CNY",
+      "fee_amount": "0.00",
+      "source_account": "SYNTH_CNY",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "SYNTH-REF-B-1440",
+      "bank_counterparty": "合成对手乙",
+      "bank_summary": "合成银行摘要乙",
+      "bank_transaction_id": "SYNTH-ID-B-1440",
+      "evidence_reference": "SYNTH-VOUCHER-B",
+      "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "evidence_note": "合成凭证核对",
+      "quoted_rate": "1.000000",
+      "status": "confirmed",
+      "confirmed_at": "2026-11-04T09:17:24.904874Z",
+      "created_at": "2026-11-04T09:17:24.378032Z",
+      "created_actor": {
+        "kind": "development_superadmin",
+        "action": "register",
+        "note": "开发身份，非正式员工审批"
+      },
+      "confirmed_actor": {
+        "kind": "development_superadmin",
+        "action": "confirm_bank_voucher",
+        "note": "开发身份，非正式员工审批"
+      },
+      "cancelled_actor": {},
+      "cancelled_reason": "",
+      "correction_of": null,
+      "fee_for": null,
+      "sources": [
+        {
+          "transaction_id": 2,
+          "amount": "5.0000",
+          "currency": "CNY",
+          "snapshot": {
+            "id": 2,
+            "transaction_no": "SYNTH-FEE-7FD8F5FE-1",
+            "amount": "5.0000",
+            "currency": "CNY",
+            "direction": "expense",
+            "kind": "bank_fee",
+            "split_from_id": null,
+            "customer_id": null,
+            "supplier_id": null,
+            "order_id": null,
+            "purchase_order_id": null,
+            "plan_id": null,
+            "exchange_rate": "1.000000",
+            "rmb_amount": "5.0000"
+          }
+        }
+      ],
+      "reference_amount": "5.00",
+      "net_minus_reference_information_only": "0.00",
+      "basis": "bank_voucher_manual_v1",
+      "coverage_since": null,
+      "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+    }
+  },
+  {
+    "width": 390,
+    "method": "GET",
+    "path": "/api/rmb-cash-events/",
+    "status": 200,
+    "response": {
+      "results": [
+        {
+          "id": 3,
+          "event_no": "SYNTH-DUP-A-390",
+          "request_key": "SYNTH-DUP-A-390",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-24",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-390",
+          "bank_counterparty": "合成对手甲",
+          "bank_summary": "合成银行摘要甲",
+          "bank_transaction_id": "SYNTH-ID-390",
+          "evidence_reference": "SYNTH-VOUCHER",
+          "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "evidence_note": "合成银行凭证",
+          "quoted_rate": "1.000000",
+          "status": "confirmed",
+          "confirmed_at": "2026-11-04T09:17:25.348512Z",
+          "created_at": "2026-11-04T09:17:25.307796Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {
+            "kind": "development_superadmin",
+            "action": "confirm_bank_voucher",
+            "note": "开发身份，非正式员工审批"
+          },
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 3,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 3,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-2",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        },
+        {
+          "id": 2,
+          "event_no": "P2B-EVENT-fce04dec-3193-4a06-a217-80af3ea488fe",
+          "request_key": "P2B-REQUEST-1fdb13a8-235e-4e9d-b2bf-d171c4533d7e",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-23",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-B-1440",
+          "bank_counterparty": "合成对手乙",
+          "bank_summary": "合成银行摘要乙",
+          "bank_transaction_id": "SYNTH-ID-B-1440",
+          "evidence_reference": "SYNTH-VOUCHER-B",
+          "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "evidence_note": "合成凭证核对",
+          "quoted_rate": "1.000000",
+          "status": "confirmed",
+          "confirmed_at": "2026-11-04T09:17:24.904874Z",
+          "created_at": "2026-11-04T09:17:24.378032Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {
+            "kind": "development_superadmin",
+            "action": "confirm_bank_voucher",
+            "note": "开发身份，非正式员工审批"
+          },
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 2,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 2,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-1",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        },
+        {
+          "id": 1,
+          "event_no": "SYNTH-DUP-A-1440",
+          "request_key": "SYNTH-DUP-A-1440",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-23",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-1440",
+          "bank_counterparty": "合成对手甲",
+          "bank_summary": "合成银行摘要甲",
+          "bank_transaction_id": "SYNTH-ID-1440",
+          "evidence_reference": "SYNTH-VOUCHER",
+          "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "evidence_note": "合成银行凭证",
+          "quoted_rate": "1.000000",
+          "status": "confirmed",
+          "confirmed_at": "2026-11-04T09:17:18.475313Z",
+          "created_at": "2026-11-04T09:17:18.423097Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {
+            "kind": "development_superadmin",
+            "action": "confirm_bank_voucher",
+            "note": "开发身份，非正式员工审批"
+          },
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 1,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 1,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-0",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        }
+      ],
+      "coverage_since": null,
+      "note": "人工凭证事件列表，不代表全部银行资金。"
+    }
+  },
+  {
+    "width": 390,
+    "method": "GET",
+    "path": "/api/rmb-cash-events/sources/",
+    "status": 200,
+    "response": {
+      "results": [
+        {
+          "id": 1,
+          "transaction_no": "SYNTH-FEE-7FD8F5FE-0",
+          "currency": "CNY",
+          "direction": "expense",
+          "amount": "5.0000",
+          "family_root": 1,
+          "remaining_candidate_amount": "0.0000",
+          "manual_verification_required": true,
+          "blocked_reason": null
+        },
+        {
+          "id": 2,
+          "transaction_no": "SYNTH-FEE-7FD8F5FE-1",
+          "currency": "CNY",
+          "direction": "expense",
+          "amount": "5.0000",
+          "family_root": 2,
+          "remaining_candidate_amount": "0.0000",
+          "manual_verification_required": true,
+          "blocked_reason": null
+        },
+        {
+          "id": 3,
+          "transaction_no": "SYNTH-FEE-7FD8F5FE-2",
+          "currency": "CNY",
+          "direction": "expense",
+          "amount": "5.0000",
+          "family_root": 3,
+          "remaining_candidate_amount": "0.0000",
+          "manual_verification_required": true,
+          "blocked_reason": null
+        },
+        {
+          "id": 4,
+          "transaction_no": "SYNTH-FEE-7FD8F5FE-3",
+          "currency": "CNY",
+          "direction": "expense",
+          "amount": "5.0000",
+          "family_root": 4,
+          "remaining_candidate_amount": "5.0000",
+          "manual_verification_required": true,
+          "blocked_reason": null
+        }
+      ],
+      "note": "按具体现金行计量；根行不是家族总额。核销不扣减结汇额度，候选额度不代表银行余额。"
+    }
+  },
+  {
+    "width": 390,
+    "method": "POST",
+    "path": "/api/rmb-cash-events/preview/",
+    "status": 200,
+    "response": {
+      "payload": {
+        "event_no": "P2B-EVENT-8d5db814-e333-4485-8ca0-82bc5deba9e1",
+        "request_key": "P2B-REQUEST-f932ac45-2263-4541-88a1-df3d8e34fbef",
+        "source_account": "SYNTH_CNY",
+        "rmb_account": "SYNTH_CNY",
+        "bank_reference": "SYNTH-REF-B-390",
+        "evidence_reference": "SYNTH-VOUCHER-B",
+        "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "evidence_note": "合成凭证核对",
+        "bank_counterparty": "合成对手乙",
+        "bank_summary": "合成银行摘要乙",
+        "bank_transaction_id": "SYNTH-ID-B-390",
+        "kind": "bank_fee",
+        "currency": "CNY",
+        "direction": "expense",
+        "bank_date": "2026-10-24",
+        "bank_net_amount": "5.00",
+        "fee_mode": "none",
+        "fee_amount": "0.00",
+        "quoted_rate": "1.000000",
+        "fee_for": null,
+        "sources": [
+          {
+            "transaction_id": 4,
+            "amount": "5.00",
+            "verified": true
+          }
+        ]
+      },
+      "source_total": "5.00",
+      "bank_net_amount": "5.00",
+      "confirmed": false,
+      "duplicate_candidates": {
+        "token": "06d033ece6645de592db973644cf7357255f24536ff7b03c3b2ace10736f7636",
+        "restricted": false,
+        "count": 1,
+        "items": [
+          {
+            "id": 3,
+            "event_no": "SYNTH-DUP-A-390",
+            "bank_reference": "SYNTH-REF-390",
+            "bank_counterparty": "合成对手甲",
+            "bank_summary": "合成银行摘要甲",
+            "bank_transaction_id": "SYNTH-ID-390"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "id": 4,
+          "remaining_candidate_amount": "5.0000",
+          "manual_verification_required": true
+        }
+      ],
+      "note": "只读预览不占用额度，不替代银行凭证确认。"
+    }
+  },
+  {
+    "width": 390,
+    "method": "POST",
+    "path": "/api/rmb-cash-events/",
+    "status": 201,
+    "response": {
+      "id": 4,
+      "event_no": "P2B-EVENT-8d5db814-e333-4485-8ca0-82bc5deba9e1",
+      "request_key": "P2B-REQUEST-f932ac45-2263-4541-88a1-df3d8e34fbef",
+      "kind": "bank_fee",
+      "currency": "CNY",
+      "amount": "5.0000",
+      "direction": "expense",
+      "bank_date": "2026-10-24",
+      "bank_net_amount": "5.00",
+      "fee_mode": "none",
+      "bank_currency": "CNY",
+      "fee_currency": "CNY",
+      "fee_amount": "0.00",
+      "source_account": "SYNTH_CNY",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "SYNTH-REF-B-390",
+      "bank_counterparty": "合成对手乙",
+      "bank_summary": "合成银行摘要乙",
+      "bank_transaction_id": "SYNTH-ID-B-390",
+      "evidence_reference": "SYNTH-VOUCHER-B",
+      "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "evidence_note": "合成凭证核对",
+      "quoted_rate": "1.000000",
+      "status": "pending",
+      "confirmed_at": null,
+      "created_at": "2026-11-04T09:17:29.599111Z",
+      "created_actor": {
+        "kind": "development_superadmin",
+        "action": "register",
+        "note": "开发身份，非正式员工审批"
+      },
+      "confirmed_actor": {},
+      "cancelled_actor": {},
+      "cancelled_reason": "",
+      "correction_of": null,
+      "fee_for": null,
+      "sources": [
+        {
+          "transaction_id": 4,
+          "amount": "5.0000",
+          "currency": "CNY",
+          "snapshot": {
+            "id": 4,
+            "transaction_no": "SYNTH-FEE-7FD8F5FE-3",
+            "amount": "5.0000",
+            "currency": "CNY",
+            "direction": "expense",
+            "kind": "bank_fee",
+            "split_from_id": null,
+            "customer_id": null,
+            "supplier_id": null,
+            "order_id": null,
+            "purchase_order_id": null,
+            "plan_id": null,
+            "exchange_rate": "1.000000",
+            "rmb_amount": "5.0000"
+          }
+        }
+      ],
+      "reference_amount": "5.00",
+      "net_minus_reference_information_only": "0.00",
+      "basis": "bank_voucher_manual_v1",
+      "coverage_since": null,
+      "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+    }
+  },
+  {
+    "width": 390,
+    "method": "GET",
+    "path": "/api/rmb-cash-events/",
+    "status": 200,
+    "response": {
+      "results": [
+        {
+          "id": 4,
+          "event_no": "P2B-EVENT-8d5db814-e333-4485-8ca0-82bc5deba9e1",
+          "request_key": "P2B-REQUEST-f932ac45-2263-4541-88a1-df3d8e34fbef",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-24",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-B-390",
+          "bank_counterparty": "合成对手乙",
+          "bank_summary": "合成银行摘要乙",
+          "bank_transaction_id": "SYNTH-ID-B-390",
+          "evidence_reference": "SYNTH-VOUCHER-B",
+          "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "evidence_note": "合成凭证核对",
+          "quoted_rate": "1.000000",
+          "status": "pending",
+          "confirmed_at": null,
+          "created_at": "2026-11-04T09:17:29.599111Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {},
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 4,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 4,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-3",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        },
+        {
+          "id": 3,
+          "event_no": "SYNTH-DUP-A-390",
+          "request_key": "SYNTH-DUP-A-390",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-24",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-390",
+          "bank_counterparty": "合成对手甲",
+          "bank_summary": "合成银行摘要甲",
+          "bank_transaction_id": "SYNTH-ID-390",
+          "evidence_reference": "SYNTH-VOUCHER",
+          "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "evidence_note": "合成银行凭证",
+          "quoted_rate": "1.000000",
+          "status": "confirmed",
+          "confirmed_at": "2026-11-04T09:17:25.348512Z",
+          "created_at": "2026-11-04T09:17:25.307796Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {
+            "kind": "development_superadmin",
+            "action": "confirm_bank_voucher",
+            "note": "开发身份，非正式员工审批"
+          },
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 3,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 3,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-2",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        },
+        {
+          "id": 2,
+          "event_no": "P2B-EVENT-fce04dec-3193-4a06-a217-80af3ea488fe",
+          "request_key": "P2B-REQUEST-1fdb13a8-235e-4e9d-b2bf-d171c4533d7e",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-23",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-B-1440",
+          "bank_counterparty": "合成对手乙",
+          "bank_summary": "合成银行摘要乙",
+          "bank_transaction_id": "SYNTH-ID-B-1440",
+          "evidence_reference": "SYNTH-VOUCHER-B",
+          "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "evidence_note": "合成凭证核对",
+          "quoted_rate": "1.000000",
+          "status": "confirmed",
+          "confirmed_at": "2026-11-04T09:17:24.904874Z",
+          "created_at": "2026-11-04T09:17:24.378032Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {
+            "kind": "development_superadmin",
+            "action": "confirm_bank_voucher",
+            "note": "开发身份，非正式员工审批"
+          },
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 2,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 2,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-1",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        },
+        {
+          "id": 1,
+          "event_no": "SYNTH-DUP-A-1440",
+          "request_key": "SYNTH-DUP-A-1440",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-23",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-1440",
+          "bank_counterparty": "合成对手甲",
+          "bank_summary": "合成银行摘要甲",
+          "bank_transaction_id": "SYNTH-ID-1440",
+          "evidence_reference": "SYNTH-VOUCHER",
+          "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "evidence_note": "合成银行凭证",
+          "quoted_rate": "1.000000",
+          "status": "confirmed",
+          "confirmed_at": "2026-11-04T09:17:18.475313Z",
+          "created_at": "2026-11-04T09:17:18.423097Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {
+            "kind": "development_superadmin",
+            "action": "confirm_bank_voucher",
+            "note": "开发身份，非正式员工审批"
+          },
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 1,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 1,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-0",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        }
+      ],
+      "coverage_since": null,
+      "note": "人工凭证事件列表，不代表全部银行资金。"
+    }
+  },
+  {
+    "width": 390,
+    "method": "GET",
+    "path": "/api/rmb-cash-events/4/duplicate-candidates/",
+    "status": 200,
+    "response": {
+      "token": "06d033ece6645de592db973644cf7357255f24536ff7b03c3b2ace10736f7636",
+      "restricted": false,
+      "count": 1,
+      "items": [
+        {
+          "id": 3,
+          "event_no": "SYNTH-DUP-A-390",
+          "bank_reference": "SYNTH-REF-390",
+          "bank_counterparty": "合成对手甲",
+          "bank_summary": "合成银行摘要甲",
+          "bank_transaction_id": "SYNTH-ID-390"
+        }
+      ]
+    }
+  },
+  {
+    "width": 390,
+    "method": "POST",
+    "path": "/api/rmb-cash-events/4/confirm/",
+    "status": 200,
+    "response": {
+      "id": 4,
+      "event_no": "P2B-EVENT-8d5db814-e333-4485-8ca0-82bc5deba9e1",
+      "request_key": "P2B-REQUEST-f932ac45-2263-4541-88a1-df3d8e34fbef",
+      "kind": "bank_fee",
+      "currency": "CNY",
+      "amount": "5.0000",
+      "direction": "expense",
+      "bank_date": "2026-10-24",
+      "bank_net_amount": "5.00",
+      "fee_mode": "none",
+      "bank_currency": "CNY",
+      "fee_currency": "CNY",
+      "fee_amount": "0.00",
+      "source_account": "SYNTH_CNY",
+      "rmb_account": "SYNTH_CNY",
+      "bank_reference": "SYNTH-REF-B-390",
+      "bank_counterparty": "合成对手乙",
+      "bank_summary": "合成银行摘要乙",
+      "bank_transaction_id": "SYNTH-ID-B-390",
+      "evidence_reference": "SYNTH-VOUCHER-B",
+      "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "evidence_note": "合成凭证核对",
+      "quoted_rate": "1.000000",
+      "status": "confirmed",
+      "confirmed_at": "2026-11-04T09:17:29.914548Z",
+      "created_at": "2026-11-04T09:17:29.599111Z",
+      "created_actor": {
+        "kind": "development_superadmin",
+        "action": "register",
+        "note": "开发身份，非正式员工审批"
+      },
+      "confirmed_actor": {
+        "kind": "development_superadmin",
+        "action": "confirm_bank_voucher",
+        "note": "开发身份，非正式员工审批"
+      },
+      "cancelled_actor": {},
+      "cancelled_reason": "",
+      "correction_of": null,
+      "fee_for": null,
+      "sources": [
+        {
+          "transaction_id": 4,
+          "amount": "5.0000",
+          "currency": "CNY",
+          "snapshot": {
+            "id": 4,
+            "transaction_no": "SYNTH-FEE-7FD8F5FE-3",
+            "amount": "5.0000",
+            "currency": "CNY",
+            "direction": "expense",
+            "kind": "bank_fee",
+            "split_from_id": null,
+            "customer_id": null,
+            "supplier_id": null,
+            "order_id": null,
+            "purchase_order_id": null,
+            "plan_id": null,
+            "exchange_rate": "1.000000",
+            "rmb_amount": "5.0000"
+          }
+        }
+      ],
+      "reference_amount": "5.00",
+      "net_minus_reference_information_only": "0.00",
+      "basis": "bank_voucher_manual_v1",
+      "coverage_since": null,
+      "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+    }
+  },
+  {
+    "width": 390,
+    "method": "GET",
+    "path": "/api/rmb-cash-events/",
+    "status": 200,
+    "response": {
+      "results": [
+        {
+          "id": 4,
+          "event_no": "P2B-EVENT-8d5db814-e333-4485-8ca0-82bc5deba9e1",
+          "request_key": "P2B-REQUEST-f932ac45-2263-4541-88a1-df3d8e34fbef",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-24",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-B-390",
+          "bank_counterparty": "合成对手乙",
+          "bank_summary": "合成银行摘要乙",
+          "bank_transaction_id": "SYNTH-ID-B-390",
+          "evidence_reference": "SYNTH-VOUCHER-B",
+          "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "evidence_note": "合成凭证核对",
+          "quoted_rate": "1.000000",
+          "status": "confirmed",
+          "confirmed_at": "2026-11-04T09:17:29.914548Z",
+          "created_at": "2026-11-04T09:17:29.599111Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {
+            "kind": "development_superadmin",
+            "action": "confirm_bank_voucher",
+            "note": "开发身份，非正式员工审批"
+          },
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 4,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 4,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-3",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        },
+        {
+          "id": 3,
+          "event_no": "SYNTH-DUP-A-390",
+          "request_key": "SYNTH-DUP-A-390",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-24",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-390",
+          "bank_counterparty": "合成对手甲",
+          "bank_summary": "合成银行摘要甲",
+          "bank_transaction_id": "SYNTH-ID-390",
+          "evidence_reference": "SYNTH-VOUCHER",
+          "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "evidence_note": "合成银行凭证",
+          "quoted_rate": "1.000000",
+          "status": "confirmed",
+          "confirmed_at": "2026-11-04T09:17:25.348512Z",
+          "created_at": "2026-11-04T09:17:25.307796Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {
+            "kind": "development_superadmin",
+            "action": "confirm_bank_voucher",
+            "note": "开发身份，非正式员工审批"
+          },
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 3,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 3,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-2",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        },
+        {
+          "id": 2,
+          "event_no": "P2B-EVENT-fce04dec-3193-4a06-a217-80af3ea488fe",
+          "request_key": "P2B-REQUEST-1fdb13a8-235e-4e9d-b2bf-d171c4533d7e",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-23",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-B-1440",
+          "bank_counterparty": "合成对手乙",
+          "bank_summary": "合成银行摘要乙",
+          "bank_transaction_id": "SYNTH-ID-B-1440",
+          "evidence_reference": "SYNTH-VOUCHER-B",
+          "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "evidence_note": "合成凭证核对",
+          "quoted_rate": "1.000000",
+          "status": "confirmed",
+          "confirmed_at": "2026-11-04T09:17:24.904874Z",
+          "created_at": "2026-11-04T09:17:24.378032Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {
+            "kind": "development_superadmin",
+            "action": "confirm_bank_voucher",
+            "note": "开发身份，非正式员工审批"
+          },
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 2,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 2,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-1",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        },
+        {
+          "id": 1,
+          "event_no": "SYNTH-DUP-A-1440",
+          "request_key": "SYNTH-DUP-A-1440",
+          "kind": "bank_fee",
+          "currency": "CNY",
+          "amount": "5.0000",
+          "direction": "expense",
+          "bank_date": "2026-10-23",
+          "bank_net_amount": "5.00",
+          "fee_mode": "none",
+          "bank_currency": "CNY",
+          "fee_currency": "CNY",
+          "fee_amount": "0.00",
+          "source_account": "SYNTH_CNY",
+          "rmb_account": "SYNTH_CNY",
+          "bank_reference": "SYNTH-REF-1440",
+          "bank_counterparty": "合成对手甲",
+          "bank_summary": "合成银行摘要甲",
+          "bank_transaction_id": "SYNTH-ID-1440",
+          "evidence_reference": "SYNTH-VOUCHER",
+          "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "evidence_note": "合成银行凭证",
+          "quoted_rate": "1.000000",
+          "status": "confirmed",
+          "confirmed_at": "2026-11-04T09:17:18.475313Z",
+          "created_at": "2026-11-04T09:17:18.423097Z",
+          "created_actor": {
+            "kind": "development_superadmin",
+            "action": "register",
+            "note": "开发身份，非正式员工审批"
+          },
+          "confirmed_actor": {
+            "kind": "development_superadmin",
+            "action": "confirm_bank_voucher",
+            "note": "开发身份，非正式员工审批"
+          },
+          "cancelled_actor": {},
+          "cancelled_reason": "",
+          "correction_of": null,
+          "fee_for": null,
+          "sources": [
+            {
+              "transaction_id": 1,
+              "amount": "5.0000",
+              "currency": "CNY",
+              "snapshot": {
+                "id": 1,
+                "transaction_no": "SYNTH-FEE-7FD8F5FE-0",
+                "amount": "5.0000",
+                "currency": "CNY",
+                "direction": "expense",
+                "kind": "bank_fee",
+                "split_from_id": null,
+                "customer_id": null,
+                "supplier_id": null,
+                "order_id": null,
+                "purchase_order_id": null,
+                "plan_id": null,
+                "exchange_rate": "1.000000",
+                "rmb_amount": "5.0000"
+              }
+            }
+          ],
+          "reference_amount": "5.00",
+          "net_minus_reference_information_only": "0.00",
+          "basis": "bank_voucher_manual_v1",
+          "coverage_since": null,
+          "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。"
+        }
+      ],
+      "coverage_since": null,
+      "note": "人工凭证事件列表，不代表全部银行资金。"
+    }
+  }
+]

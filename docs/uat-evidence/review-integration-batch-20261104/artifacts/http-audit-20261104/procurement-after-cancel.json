@@ -1,0 +1,284 @@
+{
+  "idempotency": [
+    {
+      "id": 1,
+      "key": "review-core-receipt-partial",
+      "operation": "receive",
+      "status": "succeeded",
+      "target_id": 2
+    },
+    {
+      "id": 2,
+      "key": "review-core-shipment-partial",
+      "operation": "ship",
+      "status": "succeeded",
+      "target_id": 1
+    }
+  ],
+  "movements": [
+    {
+      "id": 1,
+      "movement_no": "GR-B0A55EAC70A64823",
+      "quantity": "4.00",
+      "source_no": "PO-2026-00002",
+      "source_type": "receipt",
+      "type": "purchase_in"
+    },
+    {
+      "id": 2,
+      "movement_no": "SH-7B5DB94ED0A1453B",
+      "quantity": "3.00",
+      "source_no": "SH-AC2DC02355BD470A",
+      "source_type": "shipment",
+      "type": "sale_out"
+    },
+    {
+      "id": 3,
+      "movement_no": "REV-F48595312E294510",
+      "quantity": "3.00",
+      "source_no": "SH-AC2DC02355BD470A",
+      "source_type": "reversal",
+      "type": "adjust_in"
+    },
+    {
+      "id": 4,
+      "movement_no": "REV-7E553EDBD0344070",
+      "quantity": "4.00",
+      "source_no": "PO-2026-00002",
+      "source_type": "reversal",
+      "type": "adjust_out"
+    }
+  ],
+  "operation_logs": [
+    {
+      "action": "create",
+      "action_label": "创建",
+      "entity": "crm.quote",
+      "id": 1,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "标记报价已发送",
+      "entity": "crm.quote",
+      "id": 2,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "客户接受报价",
+      "entity": "crm.quote",
+      "id": 3,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "create",
+      "action_label": "创建",
+      "entity": "crm.order",
+      "id": 4,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "设置客户 SKU 优先采购来源",
+      "entity": "crm.customersupplierpreference",
+      "id": 5,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "为销售订单行分配供应商",
+      "entity": "crm.orderitem",
+      "id": 6,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "确认销售订单",
+      "entity": "crm.order",
+      "id": 7,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "开始订单生产",
+      "entity": "crm.order",
+      "id": 8,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "由销售订单生成采购草稿",
+      "entity": "crm.purchaseorder",
+      "id": 9,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "取消采购单",
+      "entity": "crm.purchaseorder",
+      "id": 10,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "由销售订单生成采购草稿",
+      "entity": "crm.purchaseorder",
+      "id": 11,
+      "object_id": "2",
+      "operator_id": 1
+    },
+    {
+      "action": "update",
+      "action_label": "修改",
+      "entity": "crm.purchaseorder",
+      "id": 12,
+      "object_id": "2",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "确认采购下单",
+      "entity": "crm.purchaseorder",
+      "id": 13,
+      "object_id": "2",
+      "operator_id": 1
+    },
+    {
+      "action": "create",
+      "action_label": "结算付款计划",
+      "entity": "crm.transaction",
+      "id": 14,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "作废财务流水",
+      "entity": "crm.transaction",
+      "id": 15,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "登记采购到货",
+      "entity": "crm.purchaseorder",
+      "id": 16,
+      "object_id": "2",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "确认订单发货",
+      "entity": "crm.order",
+      "id": 17,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "冲销销售发货",
+      "entity": "crm.order",
+      "id": 18,
+      "object_id": "1",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "冲销采购入库",
+      "entity": "crm.purchaseorder",
+      "id": 19,
+      "object_id": "2",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "取消采购单",
+      "entity": "crm.purchaseorder",
+      "id": 20,
+      "object_id": "2",
+      "operator_id": 1
+    },
+    {
+      "action": "custom",
+      "action_label": "取消销售订单",
+      "entity": "crm.order",
+      "id": 21,
+      "object_id": "1",
+      "operator_id": 1
+    }
+  ],
+  "orders": [
+    {
+      "cancellation_reason": "Synthetic order cancellation after reversals",
+      "id": 1,
+      "status": "cancelled"
+    }
+  ],
+  "plans": [
+    {
+      "id": 1,
+      "planned_amount": "75.0000",
+      "settled_amount": "0.0000",
+      "status": "cancelled"
+    },
+    {
+      "id": 2,
+      "planned_amount": "175.0000",
+      "settled_amount": "0.0000",
+      "status": "cancelled"
+    },
+    {
+      "id": 3,
+      "planned_amount": "6.0000",
+      "settled_amount": "0.0000",
+      "status": "cancelled"
+    },
+    {
+      "id": 4,
+      "planned_amount": "14.0000",
+      "settled_amount": "0.0000",
+      "status": "cancelled"
+    }
+  ],
+  "purchases": [
+    {
+      "cancellation_reason": "Synthetic purchase cancellation after reversal",
+      "id": 2,
+      "status": "cancelled"
+    }
+  ],
+  "receipts": [
+    {
+      "id": 1,
+      "purchase_item_id": 2,
+      "quantity": "4.00",
+      "reversal_inventory_movement_id": 4
+    }
+  ],
+  "shipments": [
+    {
+      "id": 1,
+      "status": "cancelled"
+    }
+  ],
+  "transactions": [
+    {
+      "amount": "1.0000",
+      "id": 1,
+      "status": "cancelled",
+      "void_reason": "Synthetic payable reversal"
+    }
+  ]
+}

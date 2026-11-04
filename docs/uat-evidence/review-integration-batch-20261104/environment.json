@@ -1,0 +1,11 @@
+{
+  "python": "3.14.5",
+  "django": "6.0.9",
+  "pillow": "13.0.0",
+  "sqlite": "3.50.4",
+  "node": "v24.16.0",
+  "npm": "11.13.0",
+  "chrome": "156.0.8078.80",
+  "postgresql": "17.11 (task-owned disposable clusters only)",
+  "scope": "Task-owned Windows virtual environment from requirements.lock; PostgreSQL tools verified separately as 17.11"
+}

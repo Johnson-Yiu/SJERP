@@ -1,0 +1,11 @@
+# Preserve downloaded files and generated evidence as their actual byte streams.
+artifacts/** -text
+screenshots/*.png -text
+screenshots/*.jpg -text
+*.zip -text
+**/*.pdf binary
+**/*.sqlite3 binary
+**/*.csv -text
+playwright-*/** -text
+path-fix-*/** -text
+cash-ready-fix/** -text

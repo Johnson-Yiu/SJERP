@@ -213,7 +213,9 @@ SHEET_SCHEMAS = {
         _column("group_id", "来源关联组编号", required=True),
         _column("source_record_id", "原系统盘点记录编号", required=True),
         _column("count_date", "盘点日期", "date", True),
+        _column("warehouse_type", "仓库归属", "enum:自有仓,第三方仓", True),
         _column("warehouse", "仓库", required=True),
+        _column("lot_reference", "适用批次/货位"),
         _column("sku_code", "SKU编码"),
         _column("sku_name_snapshot", "盘点SKU名称快照", required=True),
         _column("unit_snapshot", "历史基础单位快照", required=True),
@@ -226,6 +228,7 @@ SHEET_SCHEMAS = {
 }
 
 REQUIRED_WORKSHEETS = {"使用说明", *SHEET_SCHEMAS.keys()}
+LEGACY_INVENTORY_SCHEMA = [column for column in SHEET_SCHEMAS["库存盘点"] if column["key"] not in {"warehouse_type", "lot_reference"}]
 DOMAIN_VIEW_PERMISSIONS = (
     "customers", "suppliers", "skus", "trade_units", "orders", "purchases",
     "transactions", "finance", "inventory",
@@ -372,12 +375,18 @@ def _read_workbook(data):
                 _min_col, _min_row, max_col, max_row = range_boundaries(dimension)
             except (TypeError, ValueError) as exc:
                 raise PreflightInputError(f"工作表“{sheet_name}”没有有效数据区域。") from exc
-            if max_row > MAX_ROWS + 1 or max_col != len(schema):
+            if max_row > MAX_ROWS + 1:
                 raise PreflightInputError(f"工作表“{sheet_name}”行数或列数超出模板范围。", status_code=413)
             headers = list(next(sheet.iter_rows(min_row=1, max_row=1, values_only=True), ()))
             expected = [column["label"] for column in schema]
-            if headers != expected:
+            selected_schema = schema
+            legacy_inventory = sheet_name == "库存盘点" and headers == [column["label"] for column in LEGACY_INVENTORY_SCHEMA]
+            if legacy_inventory:
+                selected_schema = LEGACY_INVENTORY_SCHEMA
+            elif headers != expected:
                 raise PreflightInputError(f"工作表“{sheet_name}”表头与模板不一致。")
+            if max_col != len(selected_schema):
+                raise PreflightInputError(f"工作表“{sheet_name}”行数或列数超出模板范围。", status_code=413)
             parsed = []
             for row_number, cells in enumerate(sheet.iter_rows(min_row=2, values_only=False), start=2):
                 values = []
@@ -392,7 +401,7 @@ def _read_workbook(data):
                     raise PreflightInputError(f"工作簿最多允许 {MAX_ROWS} 条数据行。", status_code=413)
                 parsed.append({
                     "row": row_number,
-                    "data": {column["key"]: value for column, value in zip(schema, values)},
+                    "data": {**{column["key"]: value for column, value in zip(selected_schema, values)}, **({"warehouse_type": None, "lot_reference": None} if legacy_inventory else {})},
                 })
             all_rows[sheet_name] = parsed
     finally:
@@ -1160,8 +1169,7 @@ def _csv_response(payload):
     return response
 
 
-def preflight_bytes(data, user):
-    rows = _read_workbook(data)
+def preflight_rows(rows, user):
     results, groups, _row_lookup, total = _normalize_and_validate(rows)
     _check_master_and_documents(rows, results, user)
     _check_dependencies(rows, results, groups)
@@ -1182,7 +1190,7 @@ def preflight_bytes(data, user):
         group_record = group_records[0]
         group_status = results[("分组", group_record["row"])]["status"]
         group_summary.append({"group_id": group_id, "status": group_status, "coverage_status": group_record["data"].get("coverage_status")})
-    return {
+    payload = {
         "preflight_only": True,
         "approval_or_migration": False,
         "business_write_performed": False,
@@ -1191,6 +1199,12 @@ def preflight_bytes(data, user):
         "groups": group_summary,
         "results": ordered,
     }
+    return payload, rows
+
+
+def preflight_bytes(data, user):
+    payload, _rows = preflight_rows(_read_workbook(data), user)
+    return payload
 
 
 class HistoryImportPreflightView(APIView):

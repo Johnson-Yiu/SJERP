@@ -1,0 +1,319 @@
+{
+  "commit": "e958fe1518093d6179f8281f12bc5c722edd707e",
+  "archive": "historical-second-review-e958.zip",
+  "scope": "Historical originals extracted from Git; not integration runtime screenshots. Main reviewer visually inspected AFTER_partial-shipment-readiness.png, showing order quantity 2 / shipped 1 / remaining 1. Other rows prove original bytes and dimensions only.",
+  "files": [
+    {
+      "git_path": "ux-review/second-review-final/AFTER_customer-list-date.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "53f28046aa94292dc17d52f21c959b56659f2f298019bcf024f3f813a26091a9"
+    },
+    {
+      "git_path": "ux-review/second-review-final/AFTER_customer-list-stale-followup.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "839040ec13080d6c5074d4d8a66fcdb319b0de970e16b4a333f5c9528a37857f"
+    },
+    {
+      "git_path": "ux-review/second-review-final/AFTER_inventory-movement-filter-back.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "f288691311b990a1fd6fa24d4340266dbecb14073d0f8d3a4867aaed720bee75"
+    },
+    {
+      "git_path": "ux-review/second-review-final/AFTER_manual-reversal-stale-detail.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "7aa9003c420391121b8e18a4a7acfc88f91c1aa49532fee8ddd58e5557cf21cf"
+    },
+    {
+      "git_path": "ux-review/second-review-final/AFTER_order-empty-expected-date.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "5080e9c20b6a9f1958324b8e4e0d395679d2f96b56676b2e82e8428d90b5ef97"
+    },
+    {
+      "git_path": "ux-review/second-review-final/AFTER_partial-shipment-readiness.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "7117fafb3627fe66527a0ee81f175cac73c6058f605cdedb5442c38606b13426"
+    },
+    {
+      "git_path": "ux-review/second-review-final/AFTER_quote-country-error.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "b80a574370f4c039152b1cfcce26e40315a5c192cb826ba7076600b7ce29391b"
+    },
+    {
+      "git_path": "ux-review/second-review-final/AFTER_receipt-ledger-reversal-status.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "9bd457539d237d6853cae6ffd8358954b25944ad79a5f59e23bb839cb44ff08c"
+    },
+    {
+      "git_path": "ux-review/second-review-final/AFTER_same-sku-procurement-progress.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "503fb1cf6acab4e8e3cc618e8c3c6f8d29cf2457cc7038c3e8b777cc1fd65061"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P1_customer-list-stale-followup.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "43f535bced874a475417b4551bda34d995fa5a562fa0a5f82d5b4c49c9991543"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P1_inventory-movement-filter-back.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "51099b4d443a3ebbc115a14934a0b261b6c76dd85e82f47e71efe24f047b0b2e"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P1_order-empty-expected-date.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "5331cea7fbd926bbda116400a4f23f2b72cea502b964739efd475bf564fec53b"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P1_partial-shipment-readiness.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "e810842aa75abe86c10e1b46ffa86fff436006f210a03515c3a2f86083a85aa6"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P1_quote-country-error.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "2c8dbe02199d2a3c93e6513b0c01bada83dd77c5b303f0bbfb49ccd16e13c2d1"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P1_receipt-ledger-reversal-status.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "b58c302f69aa15f9f56af44d7cffa9e38bf1b664d0c10b2de18e9f2913d1ec23"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P1_same-sku-procurement-progress.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "8a6b5d3cb25e271dbf53d11a5c9ec68c1737fbcccaa00383d12792353949725e"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P2_completed-procurement-helper.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "913b9bbcf64141314fd35222d863863f2e5714e6f829b54b253529b7e7b4ae44"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P2_duplicate-order-confirm.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "5080e9c20b6a9f1958324b8e4e0d395679d2f96b56676b2e82e8428d90b5ef97"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P2_duplicate-purchase-confirm.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "a54e2aeda242454f88d44cb9b1f22f49ddd733c470409431c4cc671aee300780"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P2_raw-ledger-unit-cost.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "cdaf821ee4bc7b24d58c10e66e5efe22c43e1002ac6d3b3a4ae7dc49d2c9b440"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P2_raw-quote-rate.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "b9fd3b0d72461af34164b1e424ab9c12de7df5ad1651e640ace8f1dfd17cdbfd"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P2_saved-preview-caption.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "27a7d7c9ee1905042ba81bb0076e1e7abfad5c5871e0eb0a6b8f4020a8dae0b2"
+    },
+    {
+      "git_path": "ux-review/second-review-final/DEFECT_P2_trade-base-quantity-spacing.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "370e96e902d8130fef28da4d74c4653388433655660910b94ccf7d057e5e2a27"
+    },
+    {
+      "git_path": "ux-review/second-review-final/FINAL_01_customer_followup.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "839040ec13080d6c5074d4d8a66fcdb319b0de970e16b4a333f5c9528a37857f"
+    },
+    {
+      "git_path": "ux-review/second-review-final/FINAL_02_customer_quotes.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "700829d60ad5582b14c942818dbd45ae5181ebe38c203f3c1375296581af0f47"
+    },
+    {
+      "git_path": "ux-review/second-review-final/FINAL_03_quote_workbench.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "e12565323729bed9cffceaceffcdb14f494f0783e771f61eb407425945307757"
+    },
+    {
+      "git_path": "ux-review/second-review-final/FINAL_04_quote_revision.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "e1c89b6c5a7feafad516837cf1be0be531fcd24d5dfad2ab097df2241576c160"
+    },
+    {
+      "git_path": "ux-review/second-review-final/FINAL_05_order_overview.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "ebfda1ef1037896d7fa99ccfad332fe7151687dc618c22b116e22ecf5666b6b1"
+    },
+    {
+      "git_path": "ux-review/second-review-final/FINAL_06_order_fulfillment.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "503fb1cf6acab4e8e3cc618e8c3c6f8d29cf2457cc7038c3e8b777cc1fd65061"
+    },
+    {
+      "git_path": "ux-review/second-review-final/FINAL_07_purchase_overview.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "de82e2d0762fc11fc980b0ce2ad876303085818ca5fdcd4a126ef1021e68b334"
+    },
+    {
+      "git_path": "ux-review/second-review-final/FINAL_08_purchase_receipt.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "5169a11fe8c532793d4bbc64340e14818da162a69be3cefa6f07cf0caebf71a3"
+    },
+    {
+      "git_path": "ux-review/second-review-final/FINAL_09_inventory_sku.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "f288691311b990a1fd6fa24d4340266dbecb14073d0f8d3a4867aaed720bee75"
+    },
+    {
+      "git_path": "ux-review/second-review-final/FINAL_10_inventory_movement.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "21269a106a428b3d0469b10981397c1b72d7c87a4db210313e4db41b2bcb86d3"
+    },
+    {
+      "git_path": "ux-review/second-review-final/FINAL_11_shipment.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "d835493d6e59096a0c91bbdbedba0cd782fe2a08758271e67e75534a51a255b9"
+    },
+    {
+      "git_path": "ux-review/second-review-final/FINAL_12_payment.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "44663acab3ca661544f3b5143a14fd827927254e41e89250bb6e2a0dc48b4513"
+    },
+    {
+      "git_path": "ux-review/second-review-final/SNAPSHOT_customer_quote_PI_after_master_edit.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "27a7d7c9ee1905042ba81bb0076e1e7abfad5c5871e0eb0a6b8f4020a8dae0b2"
+    },
+    {
+      "git_path": "ux-review/second-review-final/SNAPSHOT_order_after_sku_and_supplier_change.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "7a279589bc85f404b0871e2e3fd482fe6eb4e0856d62e4ba9b82c618a7b7c908"
+    },
+    {
+      "git_path": "ux-review/second-review-final/SNAPSHOT_purchase_after_supplier_mapping_change.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "3a7bb7074dca0c8ebe22373fe0ad2e3b6a3641ae749308f4d314ad3d997f4d86"
+    },
+    {
+      "git_path": "ux-review/second-review-final/SNAPSHOT_quote_after_sku_change.png",
+      "size": [
+        1425,
+        891
+      ],
+      "sha256": "10f83a70ff387ec703556a10897833af330dd09849692b60c57545b1da8b1017"
+    }
+  ]
+}

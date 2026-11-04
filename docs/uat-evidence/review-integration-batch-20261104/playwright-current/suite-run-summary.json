@@ -1,0 +1,137 @@
+{
+  "allPassed": false,
+  "runs": [
+    {
+      "name": "business-suite",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--all-business-tests",
+        "--exclude-business-test",
+        "iss022-moq-real.spec.js",
+        "--exclude-business-test",
+        "iss028-035-category-schema.spec.js",
+        "--exclude-business-test",
+        "iss055-customer-404-real.spec.js",
+        "--exclude-business-test",
+        "iss006-frontend-storage-chrome.spec.js",
+        "--exclude-business-test",
+        "iss007-attachment-real.spec.js",
+        "--exclude-business-test",
+        "iss007-image-snapshot-real.spec.js",
+        "--exclude-business-test",
+        "shared-report-templates.spec.js",
+        "--exclude-business-test",
+        "quote-editor-mobile-actions.spec.js"
+      ],
+      "exitCode": 1,
+      "signal": null,
+      "stdout": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/business-suite.stdout.log",
+      "stderr": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/business-suite.stderr.log"
+    },
+    {
+      "name": "shared-report-templates-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "shared-report-templates.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/shared-report-templates-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/shared-report-templates-isolated.stderr.log"
+    },
+    {
+      "name": "quote-editor-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "quote-editor-mobile-actions.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/quote-editor-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/quote-editor-isolated.stderr.log"
+    },
+    {
+      "name": "iss006-storage-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss006-frontend-storage-chrome.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/iss006-storage-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/iss006-storage-isolated.stderr.log"
+    },
+    {
+      "name": "iss007-attachment-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss007-attachment-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/iss007-attachment-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/iss007-attachment-isolated.stderr.log"
+    },
+    {
+      "name": "iss007-image-snapshot-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss007-image-snapshot-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/iss007-image-snapshot-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/iss007-image-snapshot-isolated.stderr.log"
+    },
+    {
+      "name": "iss022-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss022-moq-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/iss022-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/iss022-isolated.stderr.log"
+    },
+    {
+      "name": "iss028-035-isolated",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss028-035-category-schema.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/iss028-035-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/iss028-035-isolated.stderr.log"
+    },
+    {
+      "name": "iss055-rbac",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\frontend\\scripts\\run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss055-customer-404-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/iss055-rbac.stdout.log",
+      "stderr": "docs/uat-evidence/review-integration-batch-20261104/playwright-current/logs/iss055-rbac.stderr.log"
+    }
+  ]
+}

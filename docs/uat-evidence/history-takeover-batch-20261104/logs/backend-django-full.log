@@ -1,0 +1,15 @@
+Creating test database for alias 'default'...
+
+Bad Request: /api/access-roles/1/permission-matrix/
+..Bad Request: /api/categories/reorder/
+Bad Request: /api/categories/1/
+....Bad Request: /api/customers/
+................
+----------------------------------------------------------------------
+Ran 22 tests in 4.848s
+
+OK
+Destroying test database for alias 'default'...
+
+Found 22 test(s).
+System check identified no issues (0 silenced).

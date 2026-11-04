@@ -1,0 +1,635 @@
+{
+  "source": "docs/PROJECT_ISSUES.md",
+  "unique_ids": 124,
+  "duplicates": [],
+  "counts": {
+    "FIXED_PENDING_REVIEW": 84,
+    "NEEDS_VERIFICATION": 14,
+    "BLOCKED": 15,
+    "CLOSED": 10,
+    "OPEN": 1
+  },
+  "scope": "Current primary Issue rows only, not historical counts. No status changed by this check.",
+  "rows": [
+    {
+      "id": "ISS-001",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 81
+    },
+    {
+      "id": "ISS-002",
+      "status": "NEEDS_VERIFICATION",
+      "line": 82
+    },
+    {
+      "id": "ISS-003",
+      "status": "BLOCKED",
+      "line": 83
+    },
+    {
+      "id": "ISS-004",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 84
+    },
+    {
+      "id": "ISS-005",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 85
+    },
+    {
+      "id": "ISS-006",
+      "status": "NEEDS_VERIFICATION",
+      "line": 86
+    },
+    {
+      "id": "ISS-007",
+      "status": "NEEDS_VERIFICATION",
+      "line": 87
+    },
+    {
+      "id": "ISS-008",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 88
+    },
+    {
+      "id": "ISS-008-FUP-01",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 89
+    },
+    {
+      "id": "ISS-009",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 90
+    },
+    {
+      "id": "ISS-010",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 91
+    },
+    {
+      "id": "ISS-011",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 92
+    },
+    {
+      "id": "ISS-012",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 93
+    },
+    {
+      "id": "ISS-013",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 94
+    },
+    {
+      "id": "ISS-014",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 95
+    },
+    {
+      "id": "ISS-015",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 96
+    },
+    {
+      "id": "ISS-016",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 97
+    },
+    {
+      "id": "ISS-017",
+      "status": "BLOCKED",
+      "line": 103
+    },
+    {
+      "id": "ISS-018",
+      "status": "BLOCKED",
+      "line": 104
+    },
+    {
+      "id": "ISS-051",
+      "status": "BLOCKED",
+      "line": 105
+    },
+    {
+      "id": "ISS-019",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 111
+    },
+    {
+      "id": "ISS-020",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 112
+    },
+    {
+      "id": "ISS-052",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 113
+    },
+    {
+      "id": "ISS-021",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 114
+    },
+    {
+      "id": "ISS-022",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 115
+    },
+    {
+      "id": "ISS-023",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 116
+    },
+    {
+      "id": "ISS-024",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 117
+    },
+    {
+      "id": "ISS-025",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 118
+    },
+    {
+      "id": "ISS-026",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 119
+    },
+    {
+      "id": "ISS-027",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 120
+    },
+    {
+      "id": "ISS-028",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 121
+    },
+    {
+      "id": "ISS-029",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 122
+    },
+    {
+      "id": "ISS-030",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 123
+    },
+    {
+      "id": "ISS-031",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 124
+    },
+    {
+      "id": "ISS-032",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 125
+    },
+    {
+      "id": "ISS-033",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 126
+    },
+    {
+      "id": "ISS-034",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 127
+    },
+    {
+      "id": "ISS-035",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 128
+    },
+    {
+      "id": "ISS-036",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 129
+    },
+    {
+      "id": "ISS-037",
+      "status": "NEEDS_VERIFICATION",
+      "line": 130
+    },
+    {
+      "id": "ISS-038",
+      "status": "BLOCKED",
+      "line": 131
+    },
+    {
+      "id": "ISS-039",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 132
+    },
+    {
+      "id": "ISS-043",
+      "status": "BLOCKED",
+      "line": 133
+    },
+    {
+      "id": "ISS-044",
+      "status": "NEEDS_VERIFICATION",
+      "line": 134
+    },
+    {
+      "id": "ISS-045",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 135
+    },
+    {
+      "id": "ISS-046",
+      "status": "BLOCKED",
+      "line": 136
+    },
+    {
+      "id": "ISS-047",
+      "status": "BLOCKED",
+      "line": 137
+    },
+    {
+      "id": "ISS-053",
+      "status": "NEEDS_VERIFICATION",
+      "line": 139
+    },
+    {
+      "id": "ISS-054",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 140
+    },
+    {
+      "id": "ISS-055",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 141
+    },
+    {
+      "id": "ISS-057",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 143
+    },
+    {
+      "id": "ISS-058",
+      "status": "NEEDS_VERIFICATION",
+      "line": 144
+    },
+    {
+      "id": "ISS-062",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 145
+    },
+    {
+      "id": "ISS-063",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 146
+    },
+    {
+      "id": "ISS-064",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 147
+    },
+    {
+      "id": "ISS-065",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 148
+    },
+    {
+      "id": "ISS-066",
+      "status": "BLOCKED",
+      "line": 149
+    },
+    {
+      "id": "ISS-040",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 155
+    },
+    {
+      "id": "ISS-041",
+      "status": "BLOCKED",
+      "line": 156
+    },
+    {
+      "id": "ISS-042",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 157
+    },
+    {
+      "id": "ISS-048",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 158
+    },
+    {
+      "id": "ISS-049",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 159
+    },
+    {
+      "id": "ISS-050",
+      "status": "NEEDS_VERIFICATION",
+      "line": 160
+    },
+    {
+      "id": "ISS-067",
+      "status": "NEEDS_VERIFICATION",
+      "line": 168
+    },
+    {
+      "id": "ISS-068",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 169
+    },
+    {
+      "id": "ISS-069",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 170
+    },
+    {
+      "id": "ISS-070",
+      "status": "BLOCKED",
+      "line": 171
+    },
+    {
+      "id": "ISS-071",
+      "status": "CLOSED",
+      "line": 179
+    },
+    {
+      "id": "ISS-072",
+      "status": "CLOSED",
+      "line": 180
+    },
+    {
+      "id": "ISS-073",
+      "status": "BLOCKED",
+      "line": 181
+    },
+    {
+      "id": "ISS-074",
+      "status": "NEEDS_VERIFICATION",
+      "line": 182
+    },
+    {
+      "id": "ISS-075",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 190
+    },
+    {
+      "id": "ISS-076",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 191
+    },
+    {
+      "id": "ISS-077",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 192
+    },
+    {
+      "id": "ISS-078",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 193
+    },
+    {
+      "id": "ISS-079",
+      "status": "CLOSED",
+      "line": 204
+    },
+    {
+      "id": "ISS-080",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 205
+    },
+    {
+      "id": "ISS-081",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 213
+    },
+    {
+      "id": "ISS-082",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 214
+    },
+    {
+      "id": "ISS-083",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 215
+    },
+    {
+      "id": "ISS-084",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 222
+    },
+    {
+      "id": "ISS-085",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 223
+    },
+    {
+      "id": "ISS-086",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 224
+    },
+    {
+      "id": "ISS-087",
+      "status": "NEEDS_VERIFICATION",
+      "line": 225
+    },
+    {
+      "id": "ISS-088",
+      "status": "CLOSED",
+      "line": 226
+    },
+    {
+      "id": "ISS-089",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 234
+    },
+    {
+      "id": "ISS-090",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 235
+    },
+    {
+      "id": "ISS-091",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 236
+    },
+    {
+      "id": "ISS-092",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 244
+    },
+    {
+      "id": "ISS-093",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 245
+    },
+    {
+      "id": "ISS-094",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 253
+    },
+    {
+      "id": "ISS-095",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 261
+    },
+    {
+      "id": "ISS-096",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 262
+    },
+    {
+      "id": "ISS-097",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 270
+    },
+    {
+      "id": "ISS-098",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 278
+    },
+    {
+      "id": "ISS-099",
+      "status": "NEEDS_VERIFICATION",
+      "line": 279
+    },
+    {
+      "id": "ISS-100",
+      "status": "BLOCKED",
+      "line": 280
+    },
+    {
+      "id": "ISS-056",
+      "status": "CLOSED",
+      "line": 296
+    },
+    {
+      "id": "ISS-059",
+      "status": "CLOSED",
+      "line": 297
+    },
+    {
+      "id": "ISS-060",
+      "status": "CLOSED",
+      "line": 298
+    },
+    {
+      "id": "ISS-061",
+      "status": "CLOSED",
+      "line": 299
+    },
+    {
+      "id": "ISS-101",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 327
+    },
+    {
+      "id": "ISS-102",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 328
+    },
+    {
+      "id": "ISS-103",
+      "status": "NEEDS_VERIFICATION",
+      "line": 329
+    },
+    {
+      "id": "ISS-104",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 342
+    },
+    {
+      "id": "ISS-105",
+      "status": "OPEN",
+      "line": 351
+    },
+    {
+      "id": "ISS-106",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 366
+    },
+    {
+      "id": "ISS-107",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 385
+    },
+    {
+      "id": "ISS-108",
+      "status": "BLOCKED",
+      "line": 398
+    },
+    {
+      "id": "ISS-109",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 409
+    },
+    {
+      "id": "ISS-110",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 425
+    },
+    {
+      "id": "ISS-111",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 426
+    },
+    {
+      "id": "ISS-112",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 427
+    },
+    {
+      "id": "ISS-113",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 428
+    },
+    {
+      "id": "ISS-114",
+      "status": "NEEDS_VERIFICATION",
+      "line": 429
+    },
+    {
+      "id": "ISS-115",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 439
+    },
+    {
+      "id": "ISS-116",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 440
+    },
+    {
+      "id": "ISS-117",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 441
+    },
+    {
+      "id": "ISS-118",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 451
+    },
+    {
+      "id": "ISS-119",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 452
+    },
+    {
+      "id": "ISS-120",
+      "status": "FIXED_PENDING_REVIEW",
+      "line": 453
+    },
+    {
+      "id": "ISS-121",
+      "status": "BLOCKED",
+      "line": 463
+    },
+    {
+      "id": "ISS-122",
+      "status": "CLOSED",
+      "line": 473
+    },
+    {
+      "id": "ISS-123",
+      "status": "CLOSED",
+      "line": 474
+    }
+  ]
+}

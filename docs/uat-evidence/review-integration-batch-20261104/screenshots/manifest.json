@@ -1,0 +1,118 @@
+{
+  "source_checkout": "4388947d70d26bca66ca0bfc76b2383a2fc0d404",
+  "runtime": "task-owned SQLite and media; Vite 8.3.5; in-app browser",
+  "images": [
+    {
+      "file": "home-1440.jpg",
+      "requested_viewport": [
+        1440,
+        950
+      ],
+      "actual_image": [
+        1440,
+        950
+      ],
+      "sha256": "cb2a1726e10fcf1fafcbfdd0ddd6b9a4f50ab52b3b3e4ab0b798103852a7859e"
+    },
+    {
+      "file": "home-390.jpg",
+      "requested_viewport": [
+        390,
+        844
+      ],
+      "observed_window_inner_size": [
+        390,
+        844
+      ],
+      "observed_body_scroll_width": 375,
+      "actual_image": [
+        375,
+        812
+      ],
+      "sha256": "4f0b1c94ba02c6f0f7955404f3152258aafc19a267a7b54aba9e489f3d843376",
+      "limitation": "Tool returned a different bitmap size. Original bytes retained without resizing; not evidence of exact requested screenshot pixels."
+    },
+    {
+      "file": "customer-saved.jpg",
+      "source_checkout": "4388947d70d26bca66ca0bfc76b2383a2fc0d404 frontend; ce74f8b backend file checkout with existing no-reload UI server",
+      "actual_image": [
+        1280,
+        720
+      ],
+      "sha256": "679f739af5aeb31e716a784e2ebc8e4b6e247c4d5df739aafcb576b87af81675",
+      "scope": "Task-owned synthetic SQLite; development identity; actual IAB save and reopen, not formal employee login or new attachment service acceptance"
+    },
+    {
+      "file": "customer-reopened.jpg",
+      "source_checkout": "4388947d70d26bca66ca0bfc76b2383a2fc0d404 frontend; ce74f8b backend file checkout with existing no-reload UI server",
+      "actual_image": [
+        1280,
+        720
+      ],
+      "sha256": "eef6f4c416243eda6b985bd2692075bd2bddb702eea13ab519881b6f6e29d947",
+      "scope": "Task-owned synthetic SQLite; development identity; actual IAB save and reopen, not formal employee login or new attachment service acceptance"
+    },
+    {
+      "file": "followup-saved.jpg",
+      "source_checkout": "4388947d70d26bca66ca0bfc76b2383a2fc0d404 frontend; ce74f8b backend file checkout with existing no-reload UI server",
+      "actual_image": [
+        1280,
+        720
+      ],
+      "sha256": "7535c9db2469c34f570992cca454774bf88ec48500251cfd591db7f1efa8d2b0",
+      "scope": "Task-owned synthetic SQLite; development identity; actual IAB save and reopen, not formal employee login or new attachment service acceptance"
+    },
+    {
+      "file": "attachment-reopened-0914002.jpg",
+      "source_checkout": "0914002b5d8b3c848b1a78d2cc6e0419764d9053",
+      "actual_image": [
+        1304,
+        892
+      ],
+      "sha256": "4a6e867a398b02a1c69f71c5b166e0240893f56cc2692a8431a5525d9267c788",
+      "scope": "Actual restarted 0914002 backend, synthetic attachment save/reopen; development identity; visible audit card typography remains to review"
+    },
+    {
+      "file": "log-panel-fixed-desktop.jpg",
+      "actual_image": [
+        1440,
+        950
+      ],
+      "sha256": "2054a561c4128f61da598bfe48a0fbfca760a9b2e97c002ae2e640de855e016d",
+      "scope": "Integrated print/core frontend plus uncommitted OperationLogPanel copy/wrap fix; actual owned synthetic app, not a mock. Component hash in Chrome metrics.",
+      "browser": "in-app browser"
+    },
+    {
+      "file": "log-panel-fixed-narrow.jpg",
+      "actual_image": [
+        375,
+        812
+      ],
+      "sha256": "901cda4e2de637f792d93786f3ca3f19110f28079fc78869037b5919fe0d3b5b",
+      "scope": "Integrated print/core frontend plus uncommitted OperationLogPanel copy/wrap fix; actual owned synthetic app, not a mock. Component hash in Chrome metrics.",
+      "browser": "in-app browser"
+    },
+    {
+      "file": "log-panel-chrome-1440.png",
+      "actual_image": [
+        1440,
+        950
+      ],
+      "sha256": "9191c8961b505a2fa8b00b9ed671fe699267703609501238ccb2ff6db9a41f7f",
+      "scope": "Integrated print/core frontend plus uncommitted OperationLogPanel copy/wrap fix; actual owned synthetic app, not a mock. Component hash in Chrome metrics.",
+      "browser": "Chrome 156.0.8078.80",
+      "headless": true
+    },
+    {
+      "file": "log-panel-chrome-390.png",
+      "actual_image": [
+        390,
+        844
+      ],
+      "sha256": "d3a07deb1596a37480124fd6825edb19c2042b9375fe16f0ee6f4d0c3bab7745",
+      "scope": "Integrated print/core frontend plus uncommitted OperationLogPanel copy/wrap fix; actual owned synthetic app, not a mock. Component hash in Chrome metrics.",
+      "browser": "Chrome 156.0.8078.80",
+      "headless": true
+    }
+  ]
+}

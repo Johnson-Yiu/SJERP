@@ -1,0 +1,65 @@
+[
+  {
+    "original_test_output": "docs/uat-evidence/r1-iss037-seller-template-freeze-20261103/browser-http-1440.json",
+    "current_run_copy": "artifacts/fixed-path-browser-output/r1-iss037-seller-template-freeze-20261103/browser-http-1440.json",
+    "current_sha256": "2262fbda9cedede4872d268f373ca425ea794de0dc37a7481eefceaf7a9b0657",
+    "restored_git_blob_sha256": "247fb8c00ea92e2df9e1321bc1415b694b9a5f04c5852374a42985156f649586",
+    "reason": "Test has a fixed historical output directory; preserve current run separately and restore tracked historical bytes. These tracked files were clean at task start."
+  },
+  {
+    "original_test_output": "docs/uat-evidence/r1-iss037-seller-template-freeze-20261103/browser-http-390.json",
+    "current_run_copy": "artifacts/fixed-path-browser-output/r1-iss037-seller-template-freeze-20261103/browser-http-390.json",
+    "current_sha256": "2262fbda9cedede4872d268f373ca425ea794de0dc37a7481eefceaf7a9b0657",
+    "restored_git_blob_sha256": "247fb8c00ea92e2df9e1321bc1415b694b9a5f04c5852374a42985156f649586",
+    "reason": "Test has a fixed historical output directory; preserve current run separately and restore tracked historical bytes. These tracked files were clean at task start."
+  },
+  {
+    "original_test_output": "docs/uat-evidence/r1-iss037-seller-template-freeze-20261103/screenshots/revision-draft-preview-1440.png",
+    "current_run_copy": "artifacts/fixed-path-browser-output/r1-iss037-seller-template-freeze-20261103/screenshots/revision-draft-preview-1440.png",
+    "current_sha256": "0ed7de67d35bcec453cf06e02c754ebdd40ca9905979be61bb69e569840c5197",
+    "restored_git_blob_sha256": "011e9c465b604bfa50b69e21603612668183406ff5e120de5f395bfb0367d732",
+    "reason": "Test has a fixed historical output directory; preserve current run separately and restore tracked historical bytes. These tracked files were clean at task start."
+  },
+  {
+    "original_test_output": "docs/uat-evidence/r1-iss037-seller-template-freeze-20261103/screenshots/saved-pi-1440.png",
+    "current_run_copy": "artifacts/fixed-path-browser-output/r1-iss037-seller-template-freeze-20261103/screenshots/saved-pi-1440.png",
+    "current_sha256": "898abdb11bc159224c8e632fa7ea09e6f7a23f7608522a7e3681832cb3c85d5b",
+    "restored_git_blob_sha256": "6c7dbb626874af1dca03803e9790873d4bd67bb5f1f32d289510e0d91d244a0a",
+    "reason": "Test has a fixed historical output directory; preserve current run separately and restore tracked historical bytes. These tracked files were clean at task start."
+  },
+  {
+    "original_test_output": "docs/uat-evidence/r1-iss037-seller-template-freeze-20261103/screenshots/saved-pi-390.png",
+    "current_run_copy": "artifacts/fixed-path-browser-output/r1-iss037-seller-template-freeze-20261103/screenshots/saved-pi-390.png",
+    "current_sha256": "538c68f556d1537f171561f8e2f636fe3dc914a0256f2c110536a04e184bd676",
+    "restored_git_blob_sha256": "ecd4d347c9f2039042b5ea3dffc038e79126d98904768cc79bd55f646f6902e5",
+    "reason": "Test has a fixed historical output directory; preserve current run separately and restore tracked historical bytes. These tracked files were clean at task start."
+  },
+  {
+    "original_test_output": "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/browser-database.json",
+    "current_run_copy": "artifacts/fixed-path-browser-output/r1-iss105-bank-duplicate-detection-20261103/browser-database.json",
+    "current_sha256": "c256708c2d1a2622551e06d786f219e131e7f9a0357f3510bf05c7ba89967e5a",
+    "restored_git_blob_sha256": "e77b27e6d7ef3aa712f50549c12f837d8d0ba49332761043ae164a3782ad7555",
+    "reason": "Test has a fixed historical output directory; preserve current run separately and restore tracked historical bytes. These tracked files were clean at task start."
+  },
+  {
+    "original_test_output": "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/browser-http.json",
+    "current_run_copy": "artifacts/fixed-path-browser-output/r1-iss105-bank-duplicate-detection-20261103/browser-http.json",
+    "current_sha256": "63c11a4bc4a720d14a0b7700e00d73faa8a1e1a7926148d4fdc92d770766c80c",
+    "restored_git_blob_sha256": "eccd9b3f363bba7e2edff4d3bb4f623e475f817519ce9c278414b26cbe53030b",
+    "reason": "Test has a fixed historical output directory; preserve current run separately and restore tracked historical bytes. These tracked files were clean at task start."
+  },
+  {
+    "original_test_output": "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/screenshots/duplicate-review-1440.png",
+    "current_run_copy": "artifacts/fixed-path-browser-output/r1-iss105-bank-duplicate-detection-20261103/screenshots/duplicate-review-1440.png",
+    "current_sha256": "75915c9ddf7ce4d8a5231fcc4fea32d4cc596d3d0a303bc3855789b63998229f",
+    "restored_git_blob_sha256": "11232929a0ff4497ad2e76fdf775d4378ab1cfd265fb33520979012e504c495c",
+    "reason": "Test has a fixed historical output directory; preserve current run separately and restore tracked historical bytes. These tracked files were clean at task start."
+  },
+  {
+    "original_test_output": "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/screenshots/duplicate-review-390.png",
+    "current_run_copy": "artifacts/fixed-path-browser-output/r1-iss105-bank-duplicate-detection-20261103/screenshots/duplicate-review-390.png",
+    "current_sha256": "8c72779261a5e9a2193cf9f2fef96b92f84f0355721f323a84746fbc14444a8a",
+    "restored_git_blob_sha256": "b143938bd081c8a29777018bcbad4621286aeddfd9207cb955a02a6c2f1108da",
+    "reason": "Test has a fixed historical output directory; preserve current run separately and restore tracked historical bytes. These tracked files were clean at task start."
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "customer": 1,
+  "contact": 1,
+  "sku": 2,
+  "database": "sqlite:///C:/Users/Johnson/AppData/Local/Temp/sunjack-r1-repair-06-wBRcsM/db.sqlite3",
+  "development_identity": true,
+  "historical_order": 1,
+  "historical_purchase": 2
+}

@@ -58,7 +58,7 @@ export const PERMITTED_PAGE_MODULES = [
   ['/product-parameters', 'parameters'], ['/sku-packaging', 'packaging'], ['/sku-trade-units', 'trade_units'],
   ['/product-certificates', 'certificates'], ['/hs-codes', 'hs_codes'], ['/finance', 'finance'],
   ['/receivables', 'finance'], ['/payables', 'finance'], ['/transactions', 'transactions'], ['/rmb-cash-events', 'transactions'],
-  ['/import', 'imports'], ['/organization', 'organization'], ['/historical-orders', 'historical-orders'],
+  ['/import', 'imports'], ['/history-takeover', 'imports'], ['/organization', 'organization'], ['/historical-orders', 'historical-orders'],
 ]
 
 export function firstPermittedPath() {

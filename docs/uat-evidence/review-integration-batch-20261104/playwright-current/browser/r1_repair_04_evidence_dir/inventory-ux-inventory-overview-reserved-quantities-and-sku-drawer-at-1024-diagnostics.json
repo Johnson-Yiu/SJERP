@@ -1,0 +1,54 @@
+{
+  "label": "inventory-ux-inventory overview, reserved quantities and SKU drawer at 1024",
+  "blockedOptionalFonts": true,
+  "fontInterceptions": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "host": "fonts.googleapis.com"
+    }
+  ],
+  "console": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_FAILED"
+    }
+  ],
+  "pageErrors": [],
+  "failedRequests": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap",
+      "method": "GET",
+      "failure": {
+        "errorText": "net::ERR_FAILED"
+      }
+    }
+  ],
+  "apiResponses": [
+    {
+      "url": "http://127.0.0.1:10609/api/session/current-operator/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:10609/api/skus/inventory-list/?page=1",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:10609/api/skus/1/inventory-detail/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:10609/api/operation-logs/?entity=crm.sku&object_id=1&ordering=-created_at",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:10609/api/session/current-operator/",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "nonSuccessfulResponses": []
+}

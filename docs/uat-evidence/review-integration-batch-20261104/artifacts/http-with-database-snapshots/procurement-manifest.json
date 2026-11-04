@@ -1,0 +1,334 @@
+{
+  "artifacts": {
+    "procurement-after-cancel.json": {
+      "bytes": 6155,
+      "content_type": "application/json; charset=utf-8",
+      "sha256": "705f95651eee45c1d35693893ce227ffca7871e15d0e5c48627cda6f11e8e014"
+    },
+    "procurement-before-fulfillment.json": {
+      "bytes": 3695,
+      "content_type": "application/json; charset=utf-8",
+      "sha256": "60737f19076de343b1940798d80e5f6511c69bd53c2eda76957f097af5ec360f"
+    },
+    "procurement-database.sqlite3": {
+      "bytes": 2039808,
+      "content_type": "application/vnd.sqlite3",
+      "sha256": "fe28e180e6430c89476bf52585446fa51ee06cc273eefa71d9d743ed79aaa17c"
+    }
+  },
+  "http_events": [
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/quotes/",
+      "response_bytes": 1400,
+      "response_charset": "utf-8",
+      "response_sha256": "38d1c22f574105a9f06ef8b9d0b0f8eb560a2d12eeb67af2ac75ba2807aa11a7",
+      "status": 201
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/quotes/1/mark-sent/",
+      "response_bytes": 1402,
+      "response_charset": "utf-8",
+      "response_sha256": "ef0f636c99e52e3a33b34b10ccdea596f5e1376e385c3376884662ed31eb9a66",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/quotes/1/accept/",
+      "response_bytes": 1406,
+      "response_charset": "utf-8",
+      "response_sha256": "fd08234cb43d96e47ebdb32968af10bfe77c6fb163b2878bcff84049cd53c224",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "GET",
+      "path": "/api/quotes/1/order-draft/",
+      "response_bytes": 629,
+      "response_charset": "utf-8",
+      "response_sha256": "dfec74cc7d56ad6b78e40b9aa4f2f68dc6f22f771de611436159d8ed2a3e305c",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/orders/",
+      "response_bytes": 1547,
+      "response_charset": "utf-8",
+      "response_sha256": "7f8630bb10b000e59e33f13a41d9da113a26a4ccfb62deb3b65eb8341dec18c5",
+      "status": 201
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/orders/1/items/1/supplier-allocation/",
+      "response_bytes": 503,
+      "response_charset": "utf-8",
+      "response_sha256": "7d54c9dfe379bcadb484de972c92a46b43ffa0fc987888ad9f5324f647717255",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/orders/1/confirm/",
+      "response_bytes": 2240,
+      "response_charset": "utf-8",
+      "response_sha256": "7ba2bd569bdc843a990bb05c98be90d86cc260c4b60541df38d6e875beefbbe1",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/orders/1/start-production/",
+      "response_bytes": 2241,
+      "response_charset": "utf-8",
+      "response_sha256": "ec18c5141e1f46527a1bb770085d65a057743da764affda438996d7593539852",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "GET",
+      "path": "/api/orders/1/procurement-plan/",
+      "response_bytes": 836,
+      "response_charset": "utf-8",
+      "response_sha256": "86a81236347fe54dc8584900d35c64c7f8da6f5d000694852c101af9ba9b70cd",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/orders/1/generate-purchase-drafts/",
+      "response_bytes": 1688,
+      "response_charset": "utf-8",
+      "response_sha256": "7877d982f48d514aab8a3a6bf4d3d7034080695258a0320d4a195082f2ce1321",
+      "status": 201
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/purchase-orders/1/cancel/",
+      "response_bytes": 1713,
+      "response_charset": "utf-8",
+      "response_sha256": "9f47fbaebfd8100035aca95e76b9071b6d3886f9ee01a8cfd486a0ecdd6d7749",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "GET",
+      "path": "/api/orders/1/procurement-plan/",
+      "response_bytes": 836,
+      "response_charset": "utf-8",
+      "response_sha256": "86a81236347fe54dc8584900d35c64c7f8da6f5d000694852c101af9ba9b70cd",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/orders/1/generate-purchase-drafts/",
+      "response_bytes": 1688,
+      "response_charset": "utf-8",
+      "response_sha256": "dcd673a435ea8b4e8467874437f832781c243493a5071b42319620597709f069",
+      "status": 201
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "PATCH",
+      "path": "/api/purchase-orders/2/",
+      "response_bytes": 1797,
+      "response_charset": "utf-8",
+      "response_sha256": "d2fda25ac9590c569ccf9bdcf0b33baa969092111eadfcf051f4b25a413ec19a",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/purchase-orders/2/place/",
+      "response_bytes": 2852,
+      "response_charset": "utf-8",
+      "response_sha256": "1cd21e2a21993e5be48785962e45ccc5b0326a2767d0049d62affd11d44398bc",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "GET",
+      "path": "/api/payment-plans/?direction=payable&purchase_order=2",
+      "response_bytes": 1058,
+      "response_charset": "utf-8",
+      "response_sha256": "7b0f426bf64132dc216ef0cb90a3a487eac840039986aaacfef98b0b1ddffb35",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/payment-plans/3/settle/",
+      "response_bytes": 766,
+      "response_charset": "utf-8",
+      "response_sha256": "80bb39b07d9f88a5ea9fc5593f517738c09e5727ee0b4530aef1aa5242364c7e",
+      "status": 201
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/transactions/1/void/",
+      "response_bytes": 822,
+      "response_charset": "utf-8",
+      "response_sha256": "978a2d215d028aa052121b420373b34391473306cc441da2d1b2bf78db44053b",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/purchase-orders/2/receive/",
+      "response_bytes": 223,
+      "response_charset": "utf-8",
+      "response_sha256": "4f35953a95beff7940a5d6e92cac77a18b0e2751a127dd71ed7b124c53df4e27",
+      "status": 201
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": "超到必须选择原因。",
+      "error_response_raw_hex": "7b2264657461696c223a22e8b685e588b0e5bf85e9a1bbe98089e68ba9e58e9fe59ba0e38082227d",
+      "method": "POST",
+      "path": "/api/purchase-orders/2/receive/",
+      "response_bytes": 40,
+      "response_charset": "utf-8",
+      "response_sha256": "81ccf474aedf60bfb7e2998b8acae5634e51ff1c7dedabe55950c8ef542ad250",
+      "status": 400
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": "当前采购单状态不能取消。",
+      "error_response_raw_hex": "7b2264657461696c223a22e5bd93e5898de98787e8b4ade58d95e78ab6e68081e4b88de883bde58f96e6b688e38082227d",
+      "method": "POST",
+      "path": "/api/purchase-orders/2/cancel/",
+      "response_bytes": 49,
+      "response_charset": "utf-8",
+      "response_sha256": "545b9080e5c83916647585703afc4857218556f1e0a51eca4b2bb0c16bb1d3d1",
+      "status": 400
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/orders/1/ship/",
+      "response_bytes": 65,
+      "response_charset": "utf-8",
+      "response_sha256": "85281fa954735241759bae038ba0ea7898433157dda3ebc48517afe599368fd2",
+      "status": 201
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": "订单已有有效发货记录，不能直接取消。",
+      "error_response_raw_hex": "7b2264657461696c223a22e8aea2e58d95e5b7b2e69c89e69c89e69588e58f91e8b4a7e8aeb0e5bd95efbc8ce4b88de883bde79bb4e68ea5e58f96e6b688e38082227d",
+      "method": "POST",
+      "path": "/api/orders/1/cancel/",
+      "response_bytes": 67,
+      "response_charset": "utf-8",
+      "response_sha256": "518c00e633070c8bb16b0b4ea8e332883ccd17af228371b83a518e99e5e8ddad",
+      "status": 400
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": "当前 SKU 实际库存不足以冲销，请先处理后续出库。",
+      "error_response_raw_hex": "7b2264657461696c223a22e5bd93e5898d20534b5520e5ae9ee99985e5ba93e5ad98e4b88de8b6b3e4bba5e586b2e99480efbc8ce8afb7e58588e5a484e79086e5908ee7bbade587bae5ba93e38082227d",
+      "method": "POST",
+      "path": "/api/purchase-orders/2/receipts/1/reverse/",
+      "response_bytes": 81,
+      "response_charset": "utf-8",
+      "response_sha256": "e77ac07f6e6ebbeee86d9d66ac4b57c720263f85d4e9f38b63285b3f8c00680f",
+      "status": 400
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/shipments/1/reverse/",
+      "response_bytes": 203,
+      "response_charset": "utf-8",
+      "response_sha256": "6fd2c564fd0afcec753105b70953829ea29442df36d761302995f479c21b73f6",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/purchase-orders/2/receipts/1/reverse/",
+      "response_bytes": 383,
+      "response_charset": "utf-8",
+      "response_sha256": "370e50291050ad27531bd81b2763461df22dd4cb23011a627fd4b7cbcc122c0c",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/purchase-orders/2/cancel/",
+      "response_bytes": 3323,
+      "response_charset": "utf-8",
+      "response_sha256": "8fd322eaf26eb2795d350fe5a841dc6a59b3d7c45244d4f245a545cca76f653b",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/orders/1/cancel/",
+      "response_bytes": 2314,
+      "response_charset": "utf-8",
+      "response_sha256": "76286c6daf198bf20727cd1cfcd4c580bc21efa8f6ed3867f36f717b25f22d83",
+      "status": 200
+    }
+  ],
+  "test": "test_purchase_partial_fulfillment_reversal_cancel_and_atomic_failures_over_http"
+}

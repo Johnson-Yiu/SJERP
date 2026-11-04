@@ -1,0 +1,70 @@
+{
+  "passed": 2,
+  "failed": 0,
+  "results": [
+    {
+      "filename": "sidebar-long-name-chrome-1440.png",
+      "chrome": "156.0.8078.80",
+      "text": "开发身份：隔离合成开发身份－超长姓名与部门用于侧栏布局验收－不是正式员工",
+      "title": "隔离合成开发身份－超长姓名与部门用于侧栏布局验收－不是正式员工",
+      "rect": {
+        "x": 62,
+        "y": 871,
+        "width": 160,
+        "height": 21,
+        "top": 871,
+        "right": 222,
+        "bottom": 892,
+        "left": 62
+      },
+      "sidebar": {
+        "x": 0,
+        "y": 0,
+        "width": 248,
+        "height": 950,
+        "top": 0,
+        "right": 248,
+        "bottom": 950,
+        "left": 0
+      },
+      "textOverflow": "ellipsis",
+      "scrollWidth": 504,
+      "clientWidth": 160,
+      "bodyWidth": 1440,
+      "viewport": 1440,
+      "sha256": "79f87c6277030b1e4f1f167a96655e93f027159473a8635fffbad851809d5c2c"
+    },
+    {
+      "filename": "sidebar-long-name-chrome-390.png",
+      "chrome": "156.0.8078.80",
+      "text": "开发身份：隔离合成开发身份－超长姓名与部门用于侧栏布局验收－不是正式员工",
+      "title": "隔离合成开发身份－超长姓名与部门用于侧栏布局验收－不是正式员工",
+      "rect": {
+        "x": 62,
+        "y": 871,
+        "width": 160,
+        "height": 21,
+        "top": 871,
+        "right": 222,
+        "bottom": 892,
+        "left": 62
+      },
+      "sidebar": {
+        "x": 0,
+        "y": 0,
+        "width": 248,
+        "height": 950,
+        "top": 0,
+        "right": 248,
+        "bottom": 950,
+        "left": 0
+      },
+      "textOverflow": "ellipsis",
+      "scrollWidth": 504,
+      "clientWidth": 160,
+      "bodyWidth": 390,
+      "viewport": 390,
+      "sha256": "761b67e2f92d3df3117e7ca09674c8e70cc5c80cccc2d3d7fff3276140e5339e"
+    }
+  ]
+}

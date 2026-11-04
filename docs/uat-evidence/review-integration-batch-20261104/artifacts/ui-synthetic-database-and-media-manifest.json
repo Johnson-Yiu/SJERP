@@ -1,0 +1,26 @@
+{
+  "archive": "ui-synthetic-database-and-media.zip",
+  "sha256": "7aa92b0aa7d98e814d3f3369010d6b7b867b9f265ec257902b38e3d04fdabaf6",
+  "counts": {
+    "crm_customer": 1,
+    "crm_followup": 1,
+    "crm_followupattachment": 1,
+    "crm_operationlog": 0,
+    "auth_user": 0
+  },
+  "files": [
+    {
+      "path": "db.sqlite3",
+      "bytes": 1511424,
+      "sha256": "52cd2e33683ae3bc09ae76677e07d1525c094945b7be8c3b3e4ee7242e78b3d6"
+    },
+    {
+      "path": "media/follow-up-attachments/2026/11/56c7c00712d0446bbc1088d81debf251/e15ee78a8a564592b3da6586f0639f89",
+      "bytes": 70,
+      "sha256": "b3f77a6b02f428da8b8bdb8e81da8ea4fc756d091696994801f9755f9ab0423a"
+    }
+  ],
+  "backend_code_sha": "a866c2912c99bc9c193b4fb8cdf45d7479d726f6",
+  "frontend_code_sha": "46ec7e587ce728487ff0b0562e95995ba424066f",
+  "scope": "Owned synthetic visual acceptance data retained after stopping both owned servers. Anonymous development identity; not authenticated employee audit or a production backup."
+}

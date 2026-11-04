@@ -1,0 +1,1602 @@
+Normalized readable log; exact source bytes preserved in history-source-raw-ci-logs.zip and source Git a0729a0965850028fe52f5b6fcc3e825f23b1289.
+
+backend	Set up job	﻿2026-11-04T11:13:43.1263749Z Current runner version: '2.338.2'
+backend	Set up job	2026-11-04T11:13:43.1302337Z ##[group]Runner Image Provisioner
+backend	Set up job	2026-11-04T11:13:43.1303657Z Hosted Compute Agent
+backend	Set up job	2026-11-04T11:13:43.1304904Z Version: 20261021.618
+backend	Set up job	2026-11-04T11:13:43.1306085Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+backend	Set up job	2026-11-04T11:13:43.1307571Z Build Date: 2026-10-21T00:45:21Z
+backend	Set up job	2026-11-04T11:13:43.1308895Z Worker ID: {3fecc23e-845d-4cec-8571-5f7e7482fcd2}
+backend	Set up job	2026-11-04T11:13:43.1310584Z Region: westcentralus
+backend	Set up job	2026-11-04T11:13:43.1311679Z Cloud: Azure
+backend	Set up job	2026-11-04T11:13:43.1312579Z ##[endgroup]
+backend	Set up job	2026-11-04T11:13:43.1315121Z ##[group]Operating System
+backend	Set up job	2026-11-04T11:13:43.1316260Z Ubuntu
+backend	Set up job	2026-11-04T11:13:43.1317235Z 24.04.5
+backend	Set up job	2026-11-04T11:13:43.1318214Z LTS
+backend	Set up job	2026-11-04T11:13:43.1319408Z ##[endgroup]
+backend	Set up job	2026-11-04T11:13:43.1320468Z ##[group]Runner Image
+backend	Set up job	2026-11-04T11:13:43.1321668Z Image: ubuntu-24.04
+backend	Set up job	2026-11-04T11:13:43.1322644Z Version: 20261025.353.1
+backend	Set up job	2026-11-04T11:13:43.1324592Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+backend	Set up job	2026-11-04T11:13:43.1327708Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+backend	Set up job	2026-11-04T11:13:43.1329949Z ##[endgroup]
+backend	Set up job	2026-11-04T11:13:43.1331947Z ##[group]GITHUB_TOKEN Permissions
+backend	Set up job	2026-11-04T11:13:43.1334838Z Contents: read
+backend	Set up job	2026-11-04T11:13:43.1335996Z Metadata: read
+backend	Set up job	2026-11-04T11:13:43.1337684Z Packages: read
+backend	Set up job	2026-11-04T11:13:43.1338679Z ##[endgroup]
+backend	Set up job	2026-11-04T11:13:43.1342324Z Secret source: Actions
+backend	Set up job	2026-11-04T11:13:43.1343891Z Cache mode: write
+backend	Set up job	2026-11-04T11:13:43.1345024Z Prepare workflow directory
+backend	Set up job	2026-11-04T11:13:43.2336438Z Prepare all required actions
+backend	Set up job	2026-11-04T11:13:43.2554099Z Getting action download info
+backend	Set up job	2026-11-04T11:13:43.5887479Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+backend	Set up job	2026-11-04T11:13:43.7090075Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+backend	Set up job	2026-11-04T11:13:43.9547466Z Complete job name: backend
+backend	Run actions/checkout@v4	﻿2026-11-04T11:13:44.0464352Z ##[group]Run actions/checkout@v4
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0465269Z with:
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0465740Z   repository: Johnson-Yiu/SUNJACK-ERP
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0470029Z   token: ***
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0470480Z   ssh-strict: true
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0470911Z   ssh-user: git
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0471350Z   persist-credentials: true
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0471840Z   clean: true
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0472281Z   sparse-checkout-cone-mode: true
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0473175Z   fetch-depth: 1
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0473906Z   fetch-tags: false
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0474703Z   show-progress: true
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0475525Z   lfs: false
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0476285Z   submodules: false
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0477121Z   set-safe-directory: true
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0478032Z   allow-unsafe-pr-checkout: false
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.0479752Z ##[endgroup]
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5022334Z Syncing repository: Johnson-Yiu/SUNJACK-ERP
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5025735Z ##[group]Getting Git version info
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5027344Z Working directory is '/home/runner/work/SUNJACK-ERP/SUNJACK-ERP'
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5030279Z [command]/usr/bin/git version
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5031441Z git version 2.56.0
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5035074Z ##[endgroup]
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5042237Z Temporarily overriding HOME='/home/runner/work/_temp/ed6cc4ac-dc7f-4c9a-b90b-9be21442a555' before making global git config changes
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5056659Z Adding repository directory to the temporary git global config as a safe directory
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5067657Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/SUNJACK-ERP/SUNJACK-ERP
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5072486Z Deleting the contents of '/home/runner/work/SUNJACK-ERP/SUNJACK-ERP'
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5075221Z ##[group]Initializing the repository
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5076884Z [command]/usr/bin/git init /home/runner/work/SUNJACK-ERP/SUNJACK-ERP
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5079085Z hint: Using 'master' as the name for the initial branch. This default branch name
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5081388Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5086174Z hint: to use in all of your new repositories, which will suppress this warning,
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5087898Z hint: call:
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5088843Z hint:
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5090219Z hint: 	git config --global init.defaultBranch <name>
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5091804Z hint:
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5093342Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5095543Z hint: 'development'. The just-created branch can be renamed via this command:
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5097232Z hint:
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5098224Z hint: 	git branch -m <name>
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5099784Z hint:
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5101448Z hint: Disable this message with "git config set advice.defaultBranchName false"
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5104043Z Initialized empty Git repository in /home/runner/work/SUNJACK-ERP/SUNJACK-ERP/.git/
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5107856Z [command]/usr/bin/git remote add origin https://github.com/Johnson-Yiu/SUNJACK-ERP
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5112971Z ##[endgroup]
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5115058Z ##[group]Disabling automatic garbage collection
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5116627Z [command]/usr/bin/git config --local gc.auto 0
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5128398Z ##[endgroup]
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5130682Z ##[group]Setting up auth
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5132398Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5138213Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5616816Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5671236Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.5952136Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.6007311Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.6358618Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.6419754Z ##[endgroup]
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.6421965Z ##[group]Fetching the repository
+backend	Run actions/checkout@v4	2026-11-04T11:13:44.6434482Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +f1df7b544b7a317c6c2a2160b8441be3b6188cd6:refs/remotes/origin/codex/history-takeover-batch-20261104
+backend	Run actions/checkout@v4	2026-11-04T11:13:55.1494093Z From https://github.com/Johnson-Yiu/SUNJACK-ERP
+backend	Run actions/checkout@v4	2026-11-04T11:13:55.1494951Z  * [new ref]         f1df7b544b7a317c6c2a2160b8441be3b6188cd6 -> origin/codex/history-takeover-batch-20261104
+backend	Run actions/checkout@v4	2026-11-04T11:13:55.1500259Z ##[endgroup]
+backend	Run actions/checkout@v4	2026-11-04T11:13:55.1501283Z ##[group]Determining the checkout info
+backend	Run actions/checkout@v4	2026-11-04T11:13:55.1502306Z ##[endgroup]
+backend	Run actions/checkout@v4	2026-11-04T11:13:55.1502823Z [command]/usr/bin/git sparse-checkout disable
+backend	Run actions/checkout@v4	2026-11-04T11:13:55.1570246Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+backend	Run actions/checkout@v4	2026-11-04T11:13:55.1615404Z ##[group]Checking out the ref
+backend	Run actions/checkout@v4	2026-11-04T11:13:55.1633140Z [command]/usr/bin/git checkout --progress --force -B codex/history-takeover-batch-20261104 refs/remotes/origin/codex/history-takeover-batch-20261104
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.1955638Z Updating files:  78% (4092/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.2040228Z Updating files:  79% (4095/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.2114442Z Updating files:  80% (4147/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.2185885Z Updating files:  81% (4199/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.2295942Z Updating files:  82% (4251/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.2412524Z Updating files:  83% (4302/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.2509325Z Updating files:  84% (4354/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.2633840Z Updating files:  85% (4406/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.2851471Z Updating files:  86% (4458/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.3624596Z Updating files:  87% (4510/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.3722459Z Updating files:  88% (4562/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.3917637Z Updating files:  89% (4613/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.4218302Z Updating files:  90% (4665/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.4431817Z Updating files:  91% (4717/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.4601921Z Updating files:  92% (4769/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5262290Z Updating files:  93% (4821/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5299140Z Updating files:  94% (4873/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5350616Z Updating files:  95% (4924/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5399269Z Updating files:  96% (4976/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5444565Z Updating files:  97% (5028/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5490355Z Updating files:  98% (5080/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5559965Z Updating files:  99% (5132/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5566561Z Updating files: 100% (5183/5183)
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5589653Z Updating files: 100% (5183/5183), done.
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5690446Z Switched to a new branch 'codex/history-takeover-batch-20261104'
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5710334Z branch 'codex/history-takeover-batch-20261104' set up to track 'origin/codex/history-takeover-batch-20261104'.
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5820035Z ##[endgroup]
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5859732Z [command]/usr/bin/git log -1 --format=%H
+backend	Run actions/checkout@v4	2026-11-04T11:13:56.5909932Z f1df7b544b7a317c6c2a2160b8441be3b6188cd6
+backend	Run actions/setup-python@v5	﻿2026-11-04T11:13:56.6247303Z ##[group]Run actions/setup-python@v5
+backend	Run actions/setup-python@v5	2026-11-04T11:13:56.6247613Z with:
+backend	Run actions/setup-python@v5	2026-11-04T11:13:56.6247818Z   python-version: 3.12
+backend	Run actions/setup-python@v5	2026-11-04T11:13:56.6248047Z   check-latest: false
+backend	Run actions/setup-python@v5	2026-11-04T11:13:56.6251345Z   token: ***
+backend	Run actions/setup-python@v5	2026-11-04T11:13:56.6251573Z   update-environment: true
+backend	Run actions/setup-python@v5	2026-11-04T11:13:56.6251821Z   allow-prereleases: false
+backend	Run actions/setup-python@v5	2026-11-04T11:13:56.6252058Z   freethreaded: false
+backend	Run actions/setup-python@v5	2026-11-04T11:13:56.6252274Z ##[endgroup]
+backend	Run actions/setup-python@v5	2026-11-04T11:13:56.7781392Z ##[group]Installed versions
+backend	Run actions/setup-python@v5	2026-11-04T11:13:56.7893141Z (node:2144) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+backend	Run actions/setup-python@v5	2026-11-04T11:13:56.7894574Z Successfully set up CPython (3.12.15)
+backend	Run actions/setup-python@v5	2026-11-04T11:13:56.7895540Z (Use `node --trace-deprecation ...` to show where the warning was created)
+backend	Run actions/setup-python@v5	2026-11-04T11:13:56.7896536Z ##[endgroup]
+backend	Install backend dependencies	﻿2026-11-04T11:13:56.8318208Z ##[group]Run pip install -r backend/requirements.lock
+backend	Install backend dependencies	2026-11-04T11:13:56.8319227Z ^[[36;1mpip install -r backend/requirements.lock^[[0m
+backend	Install backend dependencies	2026-11-04T11:13:56.8401949Z shell: /usr/bin/bash -e {0}
+backend	Install backend dependencies	2026-11-04T11:13:56.8402506Z env:
+backend	Install backend dependencies	2026-11-04T11:13:56.8403039Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Install backend dependencies	2026-11-04T11:13:56.8403856Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+backend	Install backend dependencies	2026-11-04T11:13:56.8404627Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Install backend dependencies	2026-11-04T11:13:56.8405308Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Install backend dependencies	2026-11-04T11:13:56.8405987Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Install backend dependencies	2026-11-04T11:13:56.8406671Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+backend	Install backend dependencies	2026-11-04T11:13:56.8407306Z ##[endgroup]
+backend	Install backend dependencies	2026-11-04T11:13:58.0429725Z Collecting asgiref==3.13.0 (from -r backend/requirements.lock (line 13))
+backend	Install backend dependencies	2026-11-04T11:13:58.1397820Z   Downloading asgiref-3.13.0-py3-none-any.whl.metadata (12 kB)
+backend	Install backend dependencies	2026-11-04T11:13:58.1764645Z Collecting bleach==6.4.0 (from -r backend/requirements.lock (line 14))
+backend	Install backend dependencies	2026-11-04T11:13:58.1959837Z   Downloading bleach-6.4.0-py3-none-any.whl.metadata (32 kB)
+backend	Install backend dependencies	2026-11-04T11:13:58.2993033Z Collecting Django==6.0.9 (from -r backend/requirements.lock (line 15))
+backend	Install backend dependencies	2026-11-04T11:13:58.3196017Z   Downloading django-6.0.9-py3-none-any.whl.metadata (3.9 kB)
+backend	Install backend dependencies	2026-11-04T11:13:58.3534898Z Collecting django-cors-headers==4.9.0 (from -r backend/requirements.lock (line 16))
+backend	Install backend dependencies	2026-11-04T11:13:58.3737157Z   Downloading django_cors_headers-4.9.0-py3-none-any.whl.metadata (16 kB)
+backend	Install backend dependencies	2026-11-04T11:13:58.4034130Z Collecting dj-database-url==3.1.2 (from -r backend/requirements.lock (line 17))
+backend	Install backend dependencies	2026-11-04T11:13:58.4228117Z   Downloading dj_database_url-3.1.2-py3-none-any.whl.metadata (13 kB)
+backend	Install backend dependencies	2026-11-04T11:13:58.4618085Z Collecting djangorestframework==3.18.3 (from -r backend/requirements.lock (line 18))
+backend	Install backend dependencies	2026-11-04T11:13:58.4814212Z   Downloading djangorestframework-3.18.3-py3-none-any.whl.metadata (7.8 kB)
+backend	Install backend dependencies	2026-11-04T11:13:58.5089375Z Collecting et-xmlfile==2.0.0 (from -r backend/requirements.lock (line 19))
+backend	Install backend dependencies	2026-11-04T11:13:58.5289117Z   Downloading et_xmlfile-2.0.0-py3-none-any.whl.metadata (2.7 kB)
+backend	Install backend dependencies	2026-11-04T11:13:58.5607932Z Collecting openpyxl==3.1.5 (from -r backend/requirements.lock (line 20))
+backend	Install backend dependencies	2026-11-04T11:13:58.5806057Z   Downloading openpyxl-3.1.5-py2.py3-none-any.whl.metadata (2.5 kB)
+backend	Install backend dependencies	2026-11-04T11:13:58.8164766Z Collecting Pillow==13.0.0 (from -r backend/requirements.lock (line 21))
+backend	Install backend dependencies	2026-11-04T11:13:58.8360050Z   Downloading pillow-13.0.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)
+backend	Install backend dependencies	2026-11-04T11:13:58.8707508Z Collecting psycopg==3.3.6 (from -r backend/requirements.lock (line 22))
+backend	Install backend dependencies	2026-11-04T11:13:58.8903675Z   Downloading psycopg-3.3.6-py3-none-any.whl.metadata (4.4 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.0672880Z Collecting psycopg-binary==3.3.6 (from -r backend/requirements.lock (line 23))
+backend	Install backend dependencies	2026-11-04T11:13:59.0865434Z   Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.7 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.1158099Z Collecting pycountry==26.2.16 (from -r backend/requirements.lock (line 24))
+backend	Install backend dependencies	2026-11-04T11:13:59.1350350Z   Downloading pycountry-26.2.16-py3-none-any.whl.metadata (12 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.1656904Z Collecting sqlparse==0.6.0 (from -r backend/requirements.lock (line 25))
+backend	Install backend dependencies	2026-11-04T11:13:59.1847847Z   Downloading sqlparse-0.6.0-py3-none-any.whl.metadata (6.0 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.2185044Z Collecting typing-extensions==4.16.0 (from -r backend/requirements.lock (line 26))
+backend	Install backend dependencies	2026-11-04T11:13:59.2377930Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.2675926Z Collecting tzdata==2026.6 (from -r backend/requirements.lock (line 27))
+backend	Install backend dependencies	2026-11-04T11:13:59.2871795Z   Downloading tzdata-2026.6-py2.py3-none-any.whl.metadata (1.4 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.3153539Z Collecting webencodings==0.6.1 (from -r backend/requirements.lock (line 28))
+backend	Install backend dependencies	2026-11-04T11:13:59.3354559Z   Downloading webencodings-0.6.1-py3-none-any.whl.metadata (3.4 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.3715775Z Downloading asgiref-3.13.0-py3-none-any.whl (27 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.3950999Z Downloading bleach-6.4.0-py3-none-any.whl (165 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.4415942Z Downloading django-6.0.9-py3-none-any.whl (8.4 MB)
+backend	Install backend dependencies	2026-11-04T11:13:59.5418797Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.4/8.4 MB 101.7 MB/s  0:00:00
+backend	Install backend dependencies	2026-11-04T11:13:59.5615033Z Downloading django_cors_headers-4.9.0-py3-none-any.whl (12 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.5830597Z Downloading dj_database_url-3.1.2-py3-none-any.whl (9.0 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.6045867Z Downloading djangorestframework-3.18.3-py3-none-any.whl (903 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.6109644Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 904.0/904.0 kB 173.1 MB/s  0:00:00
+backend	Install backend dependencies	2026-11-04T11:13:59.6301788Z Downloading et_xmlfile-2.0.0-py3-none-any.whl (18 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.6542677Z Downloading openpyxl-3.1.5-py2.py3-none-any.whl (250 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.6767630Z Downloading pillow-13.0.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (7.1 MB)
+backend	Install backend dependencies	2026-11-04T11:13:59.7016976Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.1/7.1 MB 313.9 MB/s  0:00:00
+backend	Install backend dependencies	2026-11-04T11:13:59.7208712Z Downloading psycopg-3.3.6-py3-none-any.whl (215 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.7432848Z Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.2 MB)
+backend	Install backend dependencies	2026-11-04T11:13:59.7615941Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 321.8 MB/s  0:00:00
+backend	Install backend dependencies	2026-11-04T11:13:59.7810150Z Downloading pycountry-26.2.16-py3-none-any.whl (8.0 MB)
+backend	Install backend dependencies	2026-11-04T11:13:59.8174166Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.0/8.0 MB 231.6 MB/s  0:00:00
+backend	Install backend dependencies	2026-11-04T11:13:59.8367698Z Downloading sqlparse-0.6.0-py3-none-any.whl (50 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.8582496Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.8823136Z Downloading tzdata-2026.6-py2.py3-none-any.whl (348 kB)
+backend	Install backend dependencies	2026-11-04T11:13:59.9044886Z Downloading webencodings-0.6.1-py3-none-any.whl (8.7 kB)
+backend	Install backend dependencies	2026-11-04T11:14:00.0792879Z Installing collected packages: webencodings, tzdata, typing-extensions, sqlparse, pycountry, psycopg-binary, Pillow, et-xmlfile, asgiref, psycopg, openpyxl, Django, bleach, djangorestframework, django-cors-headers, dj-database-url
+backend	Install backend dependencies	2026-11-04T11:14:03.5719926Z
+backend	Install backend dependencies	2026-11-04T11:14:03.5738841Z Successfully installed Django-6.0.9 Pillow-13.0.0 asgiref-3.13.0 bleach-6.4.0 dj-database-url-3.1.2 django-cors-headers-4.9.0 djangorestframework-3.18.3 et-xmlfile-2.0.0 openpyxl-3.1.5 psycopg-3.3.6 psycopg-binary-3.3.6 pycountry-26.2.16 sqlparse-0.6.0 typing-extensions-4.16.0 tzdata-2026.6 webencodings-0.6.1
+backend	Install backend dependencies	2026-11-04T11:14:03.5748578Z
+backend	Install backend dependencies	2026-11-04T11:14:03.5749576Z [notice] A new release of pip is available: 26.2.2 -> 26.3
+backend	Install backend dependencies	2026-11-04T11:14:03.5750898Z [notice] To update, run: pip install --upgrade pip
+backend	Django system check	﻿2026-11-04T11:14:03.6518215Z ##[group]Run python manage.py check
+backend	Django system check	2026-11-04T11:14:03.6518577Z ^[[36;1mpython manage.py check^[[0m
+backend	Django system check	2026-11-04T11:14:03.6540969Z shell: /usr/bin/bash -e {0}
+backend	Django system check	2026-11-04T11:14:03.6541242Z env:
+backend	Django system check	2026-11-04T11:14:03.6541511Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Django system check	2026-11-04T11:14:03.6541954Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+backend	Django system check	2026-11-04T11:14:03.6542385Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Django system check	2026-11-04T11:14:03.6542762Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Django system check	2026-11-04T11:14:03.6543159Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Django system check	2026-11-04T11:14:03.6543546Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+backend	Django system check	2026-11-04T11:14:03.6543872Z ##[endgroup]
+backend	Django system check	2026-11-04T11:14:05.0442917Z System check identified no issues (0 silenced).
+backend	Check migrations	﻿2026-11-04T11:14:05.1871509Z ##[group]Run python manage.py makemigrations --check --dry-run
+backend	Check migrations	2026-11-04T11:14:05.1872016Z ^[[36;1mpython manage.py makemigrations --check --dry-run^[[0m
+backend	Check migrations	2026-11-04T11:14:05.1892883Z shell: /usr/bin/bash -e {0}
+backend	Check migrations	2026-11-04T11:14:05.1893140Z env:
+backend	Check migrations	2026-11-04T11:14:05.1893409Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Check migrations	2026-11-04T11:14:05.1893851Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+backend	Check migrations	2026-11-04T11:14:05.1894293Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Check migrations	2026-11-04T11:14:05.1894693Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Check migrations	2026-11-04T11:14:05.1895085Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Check migrations	2026-11-04T11:14:05.1895473Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+backend	Check migrations	2026-11-04T11:14:05.1895793Z ##[endgroup]
+backend	Check migrations	2026-11-04T11:14:06.0902615Z No changes detected
+backend	Backend tests	﻿2026-11-04T11:14:06.2312572Z ##[group]Run python manage.py test
+backend	Backend tests	2026-11-04T11:14:06.2312920Z ^[[36;1mpython manage.py test^[[0m
+backend	Backend tests	2026-11-04T11:14:06.2333708Z shell: /usr/bin/bash -e {0}
+backend	Backend tests	2026-11-04T11:14:06.2333964Z env:
+backend	Backend tests	2026-11-04T11:14:06.2334236Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Backend tests	2026-11-04T11:14:06.2334688Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+backend	Backend tests	2026-11-04T11:14:06.2335134Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Backend tests	2026-11-04T11:14:06.2335529Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Backend tests	2026-11-04T11:14:06.2335911Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+backend	Backend tests	2026-11-04T11:14:06.2336293Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+backend	Backend tests	2026-11-04T11:14:06.2336613Z ##[endgroup]
+backend	Backend tests	2026-11-04T11:14:07.4888580Z Creating test database for alias 'default'...
+backend	Backend tests	2026-11-04T11:14:19.6871114Z Bad Request: /api/access-roles/1/permission-matrix/
+backend	Backend tests	2026-11-04T11:14:19.7258517Z ..Bad Request: /api/categories/reorder/
+backend	Backend tests	2026-11-04T11:14:19.7319037Z Bad Request: /api/categories/1/
+backend	Backend tests	2026-11-04T11:14:19.8317339Z ....Bad Request: /api/customers/
+backend	Backend tests	2026-11-04T11:14:21.3596668Z .................Forbidden: /api/actual-rmb-cash/
+backend	Backend tests	2026-11-04T11:14:21.3604663Z Forbidden: /api/actual-rmb-cash/
+backend	Backend tests	2026-11-04T11:14:21.8057411Z .....Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:21.8104874Z Bad Request: /api/shipments/1/packages/1/
+backend	Backend tests	2026-11-04T11:14:21.8164242Z Bad Request: /api/shipments/1/packages/1/
+backend	Backend tests	2026-11-04T11:14:21.8208189Z Bad Request: /api/shipments/1/packages/1/
+backend	Backend tests	2026-11-04T11:14:21.8255129Z Bad Request: /api/shipments/1/copy-estimated-packing/
+backend	Backend tests	2026-11-04T11:14:21.8385427Z Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:21.8433567Z Bad Request: /api/shipments/1/packages/1/
+backend	Backend tests	2026-11-04T11:14:21.8478668Z Bad Request: /api/shipments/1/packages/1/
+backend	Backend tests	2026-11-04T11:14:21.8524311Z Bad Request: /api/shipments/1/packages/1/
+backend	Backend tests	2026-11-04T11:14:21.8567581Z Bad Request: /api/shipments/1/copy-estimated-packing/
+backend	Backend tests	2026-11-04T11:14:22.2276838Z ...Internal Server Error: /api/shipments/1/copy-estimated-packing/
+backend	Backend tests	2026-11-04T11:14:22.2278039Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:14:22.2289545Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:14:22.2291294Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:14:22.2292091Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.2293496Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:14:22.2295105Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:14:22.2296134Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.2307427Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:14:22.2308792Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:22.2309838Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.2311041Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:14:22.2313726Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:22.2314559Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.2315802Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:14:22.2322119Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:14:22.2322892Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.2325959Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:14:22.2327420Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:14:22.2333552Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:14:22.2337597Z     raise exc
+backend	Backend tests	2026-11-04T11:14:22.2339718Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:14:22.2341181Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:22.2341995Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.2343142Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:14:22.2344250Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:14:22.2344934Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.2346191Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 1506, in copy_estimated_packing
+backend	Backend tests	2026-11-04T11:14:22.2347912Z     copy_estimated_to_actual(shipment, plan, replace=request.data.get("replace") is True)
+backend	Backend tests	2026-11-04T11:14:22.2349695Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:14:22.2350879Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:14:22.2351575Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.2352949Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/services/packaging.py", line 161, in copy_estimated_to_actual
+backend	Backend tests	2026-11-04T11:14:22.2354710Z     serializer.save(shipment=shipment)
+backend	Backend tests	2026-11-04T11:14:22.2356088Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/serializers.py", line 210, in save
+backend	Backend tests	2026-11-04T11:14:22.2357525Z     self.instance = self.create(validated_data)
+backend	Backend tests	2026-11-04T11:14:22.2358412Z                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.2359998Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:14:22.2361177Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:14:22.2361894Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.2363035Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/serializers.py", line 2897, in create
+backend	Backend tests	2026-11-04T11:14:22.2364819Z     ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+backend	Backend tests	2026-11-04T11:14:22.2366633Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:14:22.2367860Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:22.2368638Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.2370153Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:14:22.2371366Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:22.2372190Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.2373469Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:14:22.2374673Z     result = effect(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:22.2375380Z              ^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.2376713Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/tests/test_actual_packing.py", line 464, in fail_after_first_carton
+backend	Backend tests	2026-11-04T11:14:22.2378182Z     raise RuntimeError("copy failed after first carton")
+backend	Backend tests	2026-11-04T11:14:22.2379319Z RuntimeError: copy failed after first carton
+backend	Backend tests	2026-11-04T11:14:22.3234198Z .Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:22.5627279Z ..Internal Server Error: /api/shipments/1/packages/1/
+backend	Backend tests	2026-11-04T11:14:22.5628402Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:14:22.5630144Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:14:22.5631493Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:14:22.5632221Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.5633710Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:14:22.5635281Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:14:22.5641260Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.5642917Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:14:22.5644519Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:22.5647303Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.5648488Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:14:22.5649900Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:22.5650636Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.5651968Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:14:22.5655077Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:14:22.5655881Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.5657201Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:14:22.5658846Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:14:22.5660571Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:14:22.5661955Z     raise exc
+backend	Backend tests	2026-11-04T11:14:22.5663292Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:14:22.5673974Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:22.5674795Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.5675919Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:14:22.5677051Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:14:22.5677752Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.5679208Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 1487, in update_package
+backend	Backend tests	2026-11-04T11:14:22.5681642Z     record_operation(request=request, instance=shipment, action="custom", action_label="删除装箱明细", before={"package": before}, metadata={"package_id": package_id})
+backend	Backend tests	2026-11-04T11:14:22.5686870Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:14:22.5688134Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:22.5689172Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.5690434Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:14:22.5691738Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:22.5692563Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:22.5693870Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:14:22.5695181Z     raise effect
+backend	Backend tests	2026-11-04T11:14:22.5695841Z RuntimeError: audit save failed
+backend	Backend tests	2026-11-04T11:14:22.6543837Z .Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:22.6740801Z Bad Request: /api/shipments/1/packages/2/
+backend	Backend tests	2026-11-04T11:14:22.7517633Z .Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:23.0902817Z ...Bad Request: /api/shipments/1/copy-estimated-packing/
+backend	Backend tests	2026-11-04T11:14:23.0994627Z Bad Request: /api/shipments/1/copy-estimated-packing/
+backend	Backend tests	2026-11-04T11:14:23.1081865Z Bad Request: /api/shipments/1/copy-estimated-packing/
+backend	Backend tests	2026-11-04T11:14:23.2683796Z .Bad Request: /api/shipments/2/packages/
+backend	Backend tests	2026-11-04T11:14:23.3907643Z .Internal Server Error: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:23.3908695Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:14:23.3910381Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:14:23.3912302Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:14:23.3913029Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.3914451Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:14:23.3916037Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:14:23.3937808Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.3939852Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:14:23.3941291Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:23.3942021Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.3943307Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:14:23.3944668Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:23.3945577Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.3946933Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:14:23.3948773Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:14:23.3949823Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.3951189Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:14:23.3952542Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:14:23.3954211Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:14:23.3956171Z     raise exc
+backend	Backend tests	2026-11-04T11:14:23.3957399Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:14:23.3958795Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:23.3959904Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.3961065Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:14:23.3962273Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:14:23.3962989Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.3964101Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 1470, in packages
+backend	Backend tests	2026-11-04T11:14:23.3965328Z     package = serializer.save(shipment=shipment)
+backend	Backend tests	2026-11-04T11:14:23.3966178Z               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.3967554Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/serializers.py", line 210, in save
+backend	Backend tests	2026-11-04T11:14:23.3969269Z     self.instance = self.create(validated_data)
+backend	Backend tests	2026-11-04T11:14:23.3970150Z                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.3971293Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:14:23.3972469Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:14:23.3973186Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.3974346Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/serializers.py", line 2897, in create
+backend	Backend tests	2026-11-04T11:14:23.3976140Z     ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+backend	Backend tests	2026-11-04T11:14:23.3977967Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:14:23.3979427Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:23.3980164Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.3981377Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:14:23.3982643Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:23.3983417Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.3985044Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:14:23.3986247Z     raise effect
+backend	Backend tests	2026-11-04T11:14:23.3986849Z RuntimeError: save failed
+backend	Backend tests	2026-11-04T11:14:23.5138354Z .Internal Server Error: /api/shipments/1/packages/1/
+backend	Backend tests	2026-11-04T11:14:23.5148075Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:14:23.5150047Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:14:23.5151459Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:14:23.5166160Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.5167591Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:14:23.5169451Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:14:23.5170428Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.5171914Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:14:23.5173826Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:23.5174594Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.5175870Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:14:23.5177343Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:23.5178147Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.5179694Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:14:23.5180995Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:14:23.5181722Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.5183093Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:14:23.5184545Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:14:23.5186082Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:14:23.5187512Z     raise exc
+backend	Backend tests	2026-11-04T11:14:23.5188716Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:14:23.5190345Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:23.5191105Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.5192349Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:14:23.5193563Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:14:23.5196187Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.5197358Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 1490, in update_package
+backend	Backend tests	2026-11-04T11:14:23.5198715Z     serializer.is_valid(raise_exception=True); serializer.save()
+backend	Backend tests	2026-11-04T11:14:23.5199958Z                                                ^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.5201394Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/serializers.py", line 205, in save
+backend	Backend tests	2026-11-04T11:14:23.5202893Z     self.instance = self.update(self.instance, validated_data)
+backend	Backend tests	2026-11-04T11:14:23.5203826Z                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.5205197Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:14:23.5208614Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:14:23.5209631Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.5210782Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/serializers.py", line 2909, in update
+backend	Backend tests	2026-11-04T11:14:23.5212565Z     ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=instance, **item) for item in items])
+backend	Backend tests	2026-11-04T11:14:23.5214724Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:14:23.5215992Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:23.5216756Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.5217928Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:14:23.5219376Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:23.5220220Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:23.5221484Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:14:23.5222701Z     raise effect
+backend	Backend tests	2026-11-04T11:14:23.5223309Z RuntimeError: save failed
+backend	Backend tests	2026-11-04T11:14:23.6083123Z .Bad Request: /api/shipments/1/packages/1/
+backend	Backend tests	2026-11-04T11:14:23.9670208Z ...Bad Request: /api/shipments/2/packages/
+backend	Backend tests	2026-11-04T11:14:24.0932472Z .Bad Request: /api/shipments/2/packages/
+backend	Backend tests	2026-11-04T11:14:24.2101466Z .Bad Request: /api/shipments/1/copy-estimated-packing/
+backend	Backend tests	2026-11-04T11:14:24.6994834Z .....Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:24.7746505Z .Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:24.7828170Z Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:24.8557253Z .Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:24.8612304Z Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:24.8667197Z Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:25.0480800Z ..Bad Request: /api/shipments/1/copy-estimated-packing/
+backend	Backend tests	2026-11-04T11:14:25.8949433Z .......Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:25.9002694Z Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:25.9057084Z Bad Request: /api/shipments/1/packages/
+backend	Backend tests	2026-11-04T11:14:27.0348588Z ..Method Not Allowed: /api/operation-logs/
+backend	Backend tests	2026-11-04T11:14:27.0363242Z Method Not Allowed: /api/operation-logs/1/
+backend	Backend tests	2026-11-04T11:14:27.0375292Z Method Not Allowed: /api/operation-logs/1/
+backend	Backend tests	2026-11-04T11:14:30.9017680Z ......s........Conflict: /api/rmb-cash-events/2/confirm/
+backend	Backend tests	2026-11-04T11:14:31.0683602Z .Internal Server Error: /api/rmb-cash-events/2/confirm/
+backend	Backend tests	2026-11-04T11:14:31.0684578Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:14:31.0685960Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:14:31.0687311Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:14:31.0687980Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.0689519Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:14:31.0691057Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:14:31.0692010Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.0693419Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:14:31.0694888Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:31.0695649Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.0696876Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:14:31.0698197Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:31.0699179Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.0700554Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:14:31.0701825Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:14:31.0702463Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.0703620Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:14:31.0708744Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:14:31.0710423Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:14:31.0711775Z     raise exc
+backend	Backend tests	2026-11-04T11:14:31.0712871Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:14:31.0714162Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:31.0714935Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.0716045Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/cash_api.py", line 107, in confirm
+backend	Backend tests	2026-11-04T11:14:31.0717639Z     return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"),
+backend	Backend tests	2026-11-04T11:14:31.0719203Z                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.0720534Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:14:31.0721664Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:14:31.0723012Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.0724200Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/services/cash_events.py", line 378, in confirm_event
+backend	Backend tests	2026-11-04T11:14:31.0725724Z     event.save(update_fields=["status", "confirmed_at", "confirmed_actor", "updated_at"])
+backend	Backend tests	2026-11-04T11:14:31.0727187Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:14:31.0728373Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:31.0729359Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.0730606Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:14:31.0732145Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:31.0733003Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.0734214Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:14:31.0735446Z     raise effect
+backend	Backend tests	2026-11-04T11:14:31.0736080Z RuntimeError: event save failed
+backend	Backend tests	2026-11-04T11:14:31.1627599Z .Conflict: /api/rmb-cash-events/2/confirm/
+backend	Backend tests	2026-11-04T11:14:31.3471284Z .Internal Server Error: /api/rmb-cash-events/2/confirm/
+backend	Backend tests	2026-11-04T11:14:31.3472367Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:14:31.3474164Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:14:31.3475628Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:14:31.3499760Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.3501614Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:14:31.3507324Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:14:31.3508371Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.3510051Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:14:31.3511525Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:31.3512309Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.3513574Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:14:31.3514905Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:31.3515655Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.3516950Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:14:31.3518822Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:14:31.3519927Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.3521249Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:14:31.3522663Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:14:31.3524140Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:14:31.3525538Z     raise exc
+backend	Backend tests	2026-11-04T11:14:31.3526692Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:14:31.3528070Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:31.3528853Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.3530348Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/cash_api.py", line 107, in confirm
+backend	Backend tests	2026-11-04T11:14:31.3531955Z     return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"),
+backend	Backend tests	2026-11-04T11:14:31.3533420Z                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.3535119Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:14:31.3536236Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:14:31.3536966Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.3538158Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/services/cash_events.py", line 370, in confirm_event
+backend	Backend tests	2026-11-04T11:14:31.3540134Z     CashDuplicateReview.objects.create(event=event, candidate_ids=[c["id"] for c in candidates["items"]],
+backend	Backend tests	2026-11-04T11:14:31.3541843Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:14:31.3543026Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:31.3543741Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.3544863Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:14:31.3546108Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:31.3546939Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:31.3548183Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:14:31.3549676Z     raise effect
+backend	Backend tests	2026-11-04T11:14:31.3550319Z RuntimeError: audit failed
+backend	Backend tests	2026-11-04T11:14:31.4388183Z .Conflict: /api/rmb-cash-events/2/confirm/
+backend	Backend tests	2026-11-04T11:14:31.8571466Z ...Conflict: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:31.9151159Z .Bad Request: /api/rmb-cash-events/1/confirm/
+backend	Backend tests	2026-11-04T11:14:32.0777908Z ..Conflict: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:32.1944508Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:32.2603121Z .Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:32.4970078Z .Conflict: /api/rmb-cash-events/2/confirm/
+backend	Backend tests	2026-11-04T11:14:32.6010234Z Conflict: /api/rmb-cash-events/4/confirm/
+backend	Backend tests	2026-11-04T11:14:32.7492738Z ..Bad Request: /api/rmb-cash-events/1/confirm/
+backend	Backend tests	2026-11-04T11:14:32.8181250Z Bad Request: /api/rmb-cash-events/2/confirm/
+backend	Backend tests	2026-11-04T11:14:32.8446583Z Bad Request: /api/rmb-cash-events/2/confirm/
+backend	Backend tests	2026-11-04T11:14:33.0830213Z .Bad Request: /api/rmb-cash-events/1/cancel/
+backend	Backend tests	2026-11-04T11:14:33.0844278Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.1284869Z .Conflict: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.1294997Z Bad Request: /api/rmb-cash-events/1/confirm/
+backend	Backend tests	2026-11-04T11:14:33.1858882Z Method Not Allowed: /api/rmb-cash-events/1/
+backend	Backend tests	2026-11-04T11:14:33.1868648Z Method Not Allowed: /api/rmb-cash-events/1/
+backend	Backend tests	2026-11-04T11:14:33.1878365Z Method Not Allowed: /api/rmb-cash-events/1/
+backend	Backend tests	2026-11-04T11:14:33.1995790Z .Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2008713Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2022052Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2034635Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2053906Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2067021Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2079645Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2092536Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2105227Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2120264Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2132661Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2145477Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2158020Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2170639Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2183454Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2197147Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2209300Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2221398Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2233855Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2246133Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2260543Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2272833Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2285213Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2297524Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2309862Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2324340Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2336492Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.2349233Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.3494769Z .Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.4533667Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.5577939Z ..Bad Request: /api/rmb-cash-events/1/confirm/
+backend	Backend tests	2026-11-04T11:14:33.5707154Z Conflict: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.5776049Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:14:33.5787283Z Not Found: /api/rmb-cash-events/not-an-id/
+backend	Backend tests	2026-11-04T11:14:33.6527799Z .Bad Request: /api/rmb-cash-events/preview/
+backend	Backend tests	2026-11-04T11:14:33.7466287Z .....Bad Request: /api/product-certificates/6/
+backend	Backend tests	2026-11-04T11:14:33.7510302Z Bad Request: /api/product-certificates/6/
+backend	Backend tests	2026-11-04T11:14:34.2532062Z .....Bad Request: /api/purchase-orders/1/
+backend	Backend tests	2026-11-04T11:14:34.2830901Z Bad Request: /api/purchase-orders/1/
+backend	Backend tests	2026-11-04T11:14:34.8221840Z .Bad Request: /api/orders/1/cancel/
+backend	Backend tests	2026-11-04T11:14:35.2885119Z ..Bad Request: /api/orders/1/confirm/
+backend	Backend tests	2026-11-04T11:14:35.3184331Z Bad Request: /api/orders/2/confirm/
+backend	Backend tests	2026-11-04T11:14:35.4727451Z .Bad Request: /api/orders/1/
+backend	Backend tests	2026-11-04T11:14:35.4793710Z Bad Request: /api/orders/1/start-production/
+backend	Backend tests	2026-11-04T11:14:35.5767736Z Bad Request: /api/orders/2/
+backend	Backend tests	2026-11-04T11:14:35.7957963Z .Bad Request: /api/purchase-orders/1/cancel/
+backend	Backend tests	2026-11-04T11:14:35.9558528Z .Bad Request: /api/purchase-orders/1/receive/
+backend	Backend tests	2026-11-04T11:14:35.9936393Z Bad Request: /api/purchase-orders/1/place/
+backend	Backend tests	2026-11-04T11:14:36.0008821Z Bad Request: /api/purchase-orders/1/
+backend	Backend tests	2026-11-04T11:14:36.3968652Z ..Bad Request: /api/contacts/1/
+backend	Backend tests	2026-11-04T11:14:36.5312952Z .Bad Request: /api/customers/1/
+backend	Backend tests	2026-11-04T11:14:36.5395081Z Bad Request: /api/customers/2/
+backend	Backend tests	2026-11-04T11:14:36.5476735Z Bad Request: /api/customers/3/
+backend	Backend tests	2026-11-04T11:14:36.5562077Z Bad Request: /api/customers/4/
+backend	Backend tests	2026-11-04T11:14:36.8843085Z ......Bad Request: /api/follow-ups/
+backend	Backend tests	2026-11-04T11:14:36.9209160Z ...Not Found: /api/follow-ups/2/attachments/1/
+backend	Backend tests	2026-11-04T11:14:36.9327894Z .Bad Request: /api/follow-ups/1/
+backend	Backend tests	2026-11-04T11:14:36.9372258Z Bad Request: /api/follow-ups/1/
+backend	Backend tests	2026-11-04T11:14:36.9639747Z .Bad Request: /api/follow-ups/1/attachments/
+backend	Backend tests	2026-11-04T11:14:37.9876755Z ....Bad Request: /api/quotes/1/mark-sent/
+backend	Backend tests	2026-11-04T11:14:37.9928297Z Bad Request: /api/quotes/1/reject/
+backend	Backend tests	2026-11-04T11:14:37.9977915Z Bad Request: /api/quotes/1/expire/
+backend	Backend tests	2026-11-04T11:14:38.2760676Z .Bad Request: /api/orders/1/confirm/
+backend	Backend tests	2026-11-04T11:14:38.4592606Z Bad Request: /api/orders/2/confirm/
+backend	Backend tests	2026-11-04T11:14:38.7819270Z .Bad Request: /api/orders/1/
+backend	Backend tests	2026-11-04T11:14:38.9523948Z Bad Request: /api/orders/1/
+backend	Backend tests	2026-11-04T11:14:39.8022275Z ..Bad Request: /api/quotes/1/order-draft/
+backend	Backend tests	2026-11-04T11:14:39.8101347Z Bad Request: /api/orders/
+backend	Backend tests	2026-11-04T11:14:40.0546853Z Bad Request: /api/quotes/2/order-draft/
+backend	Backend tests	2026-11-04T11:14:40.0626740Z Bad Request: /api/orders/
+backend	Backend tests	2026-11-04T11:14:45.6826382Z ....................Bad Request: /api/orders/
+backend	Backend tests	2026-11-04T11:14:45.6872860Z Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:14:45.7433867Z Bad Request: /api/orders/1/
+backend	Backend tests	2026-11-04T11:14:45.7660758Z Bad Request: /api/purchase-orders/1/
+backend	Backend tests	2026-11-04T11:14:45.7848162Z Bad Request: /api/orders/1/
+backend	Backend tests	2026-11-04T11:14:45.8097224Z Bad Request: /api/purchase-orders/1/
+backend	Backend tests	2026-11-04T11:14:46.2072911Z ...Internal Server Error: /api/orders/
+backend	Backend tests	2026-11-04T11:14:46.2073739Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:14:46.2075086Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:14:46.2076461Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:14:46.2077217Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2078451Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:14:46.2081010Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2081939Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2083314Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:14:46.2084725Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2085437Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2086614Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:14:46.2087921Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2088698Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2090276Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:14:46.2091560Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:14:46.2092283Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2093486Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:14:46.2094667Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:14:46.2095911Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:14:46.2097137Z     raise exc
+backend	Backend tests	2026-11-04T11:14:46.2098164Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:14:46.2099662Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2100407Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2101455Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 1994, in create
+backend	Backend tests	2026-11-04T11:14:46.2102564Z     return super().create(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2103339Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2104579Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/mixins.py", line 19, in create
+backend	Backend tests	2026-11-04T11:14:46.2105852Z     self.perform_create(serializer)
+backend	Backend tests	2026-11-04T11:14:46.2106916Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/audit.py", line 70, in perform_create
+backend	Backend tests	2026-11-04T11:14:46.2107947Z     instance = serializer.save()
+backend	Backend tests	2026-11-04T11:14:46.2108651Z                ^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2110103Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/serializers.py", line 210, in save
+backend	Backend tests	2026-11-04T11:14:46.2111433Z     self.instance = self.create(validated_data)
+backend	Backend tests	2026-11-04T11:14:46.2112565Z                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2113679Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:14:46.2114784Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:14:46.2115464Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2116522Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/serializers.py", line 2360, in create
+backend	Backend tests	2026-11-04T11:14:46.2117670Z     OrderItem.objects.bulk_create(rows)
+backend	Backend tests	2026-11-04T11:14:46.2118837Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:14:46.2120155Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2120875Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2122057Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:14:46.2123258Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2124046Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2125252Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:14:46.2126729Z     raise effect
+backend	Backend tests	2026-11-04T11:14:46.2127321Z RuntimeError: fail
+backend	Backend tests	2026-11-04T11:14:46.2654783Z Internal Server Error: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:14:46.2656120Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:14:46.2657568Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:14:46.2659290Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:14:46.2660056Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2661323Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:14:46.2662808Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2663821Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2665162Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:14:46.2666612Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2667367Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2668539Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:14:46.2670083Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2670943Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2672242Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:14:46.2673606Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:14:46.2674436Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2675775Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:14:46.2676985Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:14:46.2678358Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:14:46.2679932Z     raise exc
+backend	Backend tests	2026-11-04T11:14:46.2681205Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:14:46.2682629Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2683365Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2684397Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 336, in create
+backend	Backend tests	2026-11-04T11:14:46.2685552Z     return super().create(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2686395Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2688353Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/mixins.py", line 19, in create
+backend	Backend tests	2026-11-04T11:14:46.2689914Z     self.perform_create(serializer)
+backend	Backend tests	2026-11-04T11:14:46.2691771Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/audit.py", line 70, in perform_create
+backend	Backend tests	2026-11-04T11:14:46.2698634Z     instance = serializer.save()
+backend	Backend tests	2026-11-04T11:14:46.2699620Z                ^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2701604Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/serializers.py", line 210, in save
+backend	Backend tests	2026-11-04T11:14:46.2704044Z     self.instance = self.create(validated_data)
+backend	Backend tests	2026-11-04T11:14:46.2704835Z                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2705867Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:14:46.2706916Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:14:46.2707560Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2708603Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/serializers.py", line 787, in create
+backend	Backend tests	2026-11-04T11:14:46.2709995Z     PurchaseOrderItem.objects.bulk_create([
+backend	Backend tests	2026-11-04T11:14:46.2722219Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:14:46.2723487Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2724394Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2726315Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:14:46.2727417Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:46.2728188Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:46.2729731Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:14:46.2730982Z     raise effect
+backend	Backend tests	2026-11-04T11:14:46.2731589Z RuntimeError: fail
+backend	Backend tests	2026-11-04T11:14:46.4288333Z .....Bad Request: /api/import/csv/
+backend	Backend tests	2026-11-04T11:14:47.3391506Z ...............................Bad Request: /api/transactions/1/void/
+backend	Backend tests	2026-11-04T11:14:47.3583575Z Bad Request: /api/transactions/1/void/
+backend	Backend tests	2026-11-04T11:14:50.1943925Z ............................Bad Request: /api/finance-dashboard/details/
+backend	Backend tests	2026-11-04T11:14:50.1952881Z Bad Request: /api/finance-dashboard/details/
+backend	Backend tests	2026-11-04T11:14:50.4190692Z ........Bad Request: /api/transactions/
+backend	Backend tests	2026-11-04T11:14:50.4369192Z .Bad Request: /api/transactions/
+backend	Backend tests	2026-11-04T11:14:50.6660011Z ......Bad Request: /api/follow-ups/
+backend	Backend tests	2026-11-04T11:14:50.7736770Z .....Bad Request: /api/follow-ups/
+backend	Backend tests	2026-11-04T11:14:50.7767450Z Bad Request: /api/follow-ups/
+backend	Backend tests	2026-11-04T11:14:50.7868626Z Bad Request: /api/follow-ups/1/
+backend	Backend tests	2026-11-04T11:14:50.9012131Z .....Bad Request: /api/follow-ups/
+backend	Backend tests	2026-11-04T11:14:50.9040542Z Bad Request: /api/follow-ups/
+backend	Backend tests	2026-11-04T11:14:51.2304349Z ......Bad Request: /api/inventory-movements/1/
+backend	Backend tests	2026-11-04T11:14:51.2498402Z .Bad Request: /api/orders/1/ship/
+backend	Backend tests	2026-11-04T11:14:51.2590194Z Bad Request: /api/orders/1/ship/
+backend	Backend tests	2026-11-04T11:14:51.4892741Z ...Bad Request: /api/orders/1/ship/
+backend	Backend tests	2026-11-04T11:14:51.5980271Z ..Bad Request: /api/orders/1/ship/
+backend	Backend tests	2026-11-04T11:14:51.9153661Z .....Bad Request: /api/purchase-orders/1/receive/
+backend	Backend tests	2026-11-04T11:14:51.9385593Z .Bad Request: /api/orders/1/ship/
+backend	Backend tests	2026-11-04T11:14:52.3888443Z ......Bad Request: /api/orders/1/ship/
+backend	Backend tests	2026-11-04T11:14:52.4816792Z ..Bad Request: /api/suppliers/
+backend	Backend tests	2026-11-04T11:14:52.8670230Z ...........Bad Request: /api/inventory-movements/2/
+backend	Backend tests	2026-11-04T11:14:53.5280505Z ......Internal Server Error: /api/purchase-orders/1/receipts/1/reverse/
+backend	Backend tests	2026-11-04T11:14:53.5281682Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:14:53.5283094Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:14:53.5284389Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:14:53.5285066Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:53.5286980Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:14:53.5288470Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:14:53.5289716Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:53.5291211Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:14:53.5292585Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:53.5293375Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:53.5294667Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:14:53.5296006Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:53.5296796Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:53.5298118Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:14:53.5299708Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:14:53.5300816Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:53.5302104Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:14:53.5303464Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:14:53.5304894Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:14:53.5306316Z     raise exc
+backend	Backend tests	2026-11-04T11:14:53.5307510Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:14:53.5308887Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:53.5309964Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:53.5311121Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 525, in reverse_receipt
+backend	Backend tests	2026-11-04T11:14:53.5312278Z     record_operation(
+backend	Backend tests	2026-11-04T11:14:53.5313363Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:14:53.5314519Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:53.5315150Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:53.5316178Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:14:53.5317212Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:53.5317851Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:53.5319239Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:14:53.5320434Z     raise effect
+backend	Backend tests	2026-11-04T11:14:53.5321170Z django.db.utils.DatabaseError: injected audit write failure
+backend	Backend tests	2026-11-04T11:14:54.7413054Z ...Internal Server Error: /api/purchase-orders/1/receive/
+backend	Backend tests	2026-11-04T11:14:54.7414067Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:14:54.7415401Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:14:54.7416691Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:14:54.7417326Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:54.7418548Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:14:54.7420308Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:14:54.7421240Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:54.7422556Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:14:54.7424357Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:54.7425064Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:54.7426230Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:14:54.7427503Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:54.7428276Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:54.7429818Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:14:54.7431375Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:14:54.7432075Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:54.7433373Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:14:54.7435102Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:14:54.7436679Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:14:54.7438161Z     raise exc
+backend	Backend tests	2026-11-04T11:14:54.7439587Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:14:54.7452384Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:54.7453229Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:54.7454292Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 503, in receive
+backend	Backend tests	2026-11-04T11:14:54.7457222Z     record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, after=after, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
+backend	Backend tests	2026-11-04T11:14:54.7460080Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:14:54.7461318Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:54.7462040Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:54.7463161Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:14:54.7464442Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:54.7465210Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:54.7466434Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:14:54.7467628Z     raise effect
+backend	Backend tests	2026-11-04T11:14:54.7468352Z django.db.utils.DatabaseError: injected audit write failure
+backend	Backend tests	2026-11-04T11:14:55.5550362Z ..Bad Request: /api/purchase-orders/1/receipts/1/reverse/
+backend	Backend tests	2026-11-04T11:14:55.9705592Z .Internal Server Error: /api/orders/1/ship/
+backend	Backend tests	2026-11-04T11:14:55.9706623Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:14:55.9707906Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:14:55.9709497Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:14:55.9710083Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:55.9711072Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:14:55.9712275Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:14:55.9713058Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:55.9714265Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:14:55.9715382Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:55.9716076Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:55.9717102Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:14:55.9718568Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:55.9719283Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:55.9720291Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:14:55.9721303Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:14:55.9721768Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:55.9722542Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:14:55.9723133Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:14:55.9723741Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:14:55.9724321Z     raise exc
+backend	Backend tests	2026-11-04T11:14:55.9724799Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:14:55.9725358Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:55.9725653Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:55.9730402Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 2319, in ship
+backend	Backend tests	2026-11-04T11:14:55.9732514Z     record_operation(request=request, instance=order, action="custom", action_label="确认订单发货", before=before, after=after, metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
+backend	Backend tests	2026-11-04T11:14:55.9734337Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:14:55.9735180Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:55.9735675Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:55.9736567Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:14:55.9737539Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:14:55.9738078Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:14:55.9739435Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:14:55.9740314Z     raise effect
+backend	Backend tests	2026-11-04T11:14:55.9740789Z django.db.utils.DatabaseError: injected audit write failure
+backend	Backend tests	2026-11-04T11:14:56.1281835Z .Bad Request: /api/orders/1/complete/
+backend	Backend tests	2026-11-04T11:14:56.3136592Z ....Bad Request: /api/orders/1/complete/
+backend	Backend tests	2026-11-04T11:15:10.8077230Z ............................................Bad Request: /api/transactions/
+backend	Backend tests	2026-11-04T11:15:10.8122756Z Bad Request: /api/transactions/
+backend	Backend tests	2026-11-04T11:15:10.8163187Z Bad Request: /api/transactions/
+backend	Backend tests	2026-11-04T11:15:10.8203284Z Bad Request: /api/transactions/
+backend	Backend tests	2026-11-04T11:15:10.8254446Z Bad Request: /api/transactions/
+backend	Backend tests	2026-11-04T11:15:10.8956453Z ..Bad Request: /api/orders/
+backend	Backend tests	2026-11-04T11:15:10.8966652Z Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:15:10.9793220Z ..Bad Request: /api/purchase-orders/1/place/
+backend	Backend tests	2026-11-04T11:15:10.9881537Z Bad Request: /api/purchase-orders/1/pay/
+backend	Backend tests	2026-11-04T11:15:11.0391695Z .Bad Request: /api/orders/1/confirm/
+backend	Backend tests	2026-11-04T11:15:11.0513867Z Bad Request: /api/orders/1/generate-purchase-drafts/
+backend	Backend tests	2026-11-04T11:15:12.9685689Z ....Bad Request: /api/import/history-preflight/
+backend	Backend tests	2026-11-04T11:15:14.2223374Z ..Bad Request: /api/import/history-preflight/
+backend	Backend tests	2026-11-04T11:15:14.2238306Z Bad Request: /api/import/history-preflight/
+backend	Backend tests	2026-11-04T11:15:17.9665423Z ........Request Entity Too Large: /api/import/history-preflight/
+backend	Backend tests	2026-11-04T11:15:21.2550632Z ......Request Entity Too Large: /api/import/history-preflight/
+backend	Backend tests	2026-11-04T11:15:24.1246824Z ......Bad Request: /api/orders/1/
+backend	Backend tests	2026-11-04T11:15:24.1331148Z Bad Request: /api/purchase-orders/1/
+backend	Backend tests	2026-11-04T11:15:24.9470370Z ..Bad Request: /api/import/history-takeovers/1/groups/1/review/
+backend	Backend tests	2026-11-04T11:15:25.9527038Z ..Bad Request: /api/import/history-takeovers/1/groups/1/correction-review/
+backend	Backend tests	2026-11-04T11:15:26.8574277Z ..Bad Request: /api/import/history-takeovers/1/groups/1/review/
+backend	Backend tests	2026-11-04T11:15:27.3130727Z .Not Found: /api/import/history-takeovers/2/
+backend	Backend tests	2026-11-04T11:15:27.3144839Z Not Found: /api/import/history-takeovers/2/review-report.csv
+backend	Backend tests	2026-11-04T11:15:27.3161554Z Conflict: /api/import/history-takeovers/
+backend	Backend tests	2026-11-04T11:15:27.7587087Z .Bad Request: /api/import/history-takeovers/1/groups/1/execute/
+backend	Backend tests	2026-11-04T11:15:27.8357978Z Bad Request: /api/import/history-takeovers/2/groups/2/review/
+backend	Backend tests	2026-11-04T11:15:28.0410323Z Bad Request: /api/import/history-takeovers/3/groups/3/review/
+backend	Backend tests	2026-11-04T11:15:28.9131167Z ..Bad Request: /api/import/history-takeovers/2/groups/3/review/
+backend	Backend tests	2026-11-04T11:15:28.9166044Z Bad Request: /api/import/history-takeovers/2/groups/3/resolve-master/
+backend	Backend tests	2026-11-04T11:15:29.0086396Z Bad Request: /api/import/history-takeovers/3/groups/4/resolve-master/
+backend	Backend tests	2026-11-04T11:15:29.0120172Z Bad Request: /api/import/history-takeovers/3/groups/4/review/
+backend	Backend tests	2026-11-04T11:15:29.0299828Z .Bad Request: /api/hs-codes/1/
+backend	Backend tests	2026-11-04T11:15:29.0324101Z Bad Request: /api/hs-codes/1/assign-products/
+backend	Backend tests	2026-11-04T11:15:29.0502569Z .Bad Request: /api/products/1/
+backend	Backend tests	2026-11-04T11:15:29.0577788Z ..Bad Request: /api/hs-codes/
+backend	Backend tests	2026-11-04T11:15:29.0706772Z ..Bad Request: /api/hs-codes/1/assign-products/
+backend	Backend tests	2026-11-04T11:15:29.1050919Z ..Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:15:29.1063905Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:15:29.1076361Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:15:29.1092624Z Bad Request: /api/rmb-cash-events/
+backend	Backend tests	2026-11-04T11:15:29.1355596Z Bad Request: /api/rmb-cash-events/1/confirm/
+backend	Backend tests	2026-11-04T11:15:29.2198164Z .Bad Request: /api/rmb-cash-events/1/confirm/
+backend	Backend tests	2026-11-04T11:15:29.3302288Z .Bad Request: /api/rmb-cash-events/preview/
+backend	Backend tests	2026-11-04T11:15:29.3677951Z Not Found: /api/rmb-cash-events/preview/
+backend	Backend tests	2026-11-04T11:15:29.3795563Z Bad Request: /api/rmb-cash-events/preview/
+backend	Backend tests	2026-11-04T11:15:29.3809264Z Bad Request: /api/rmb-cash-events/preview/
+backend	Backend tests	2026-11-04T11:15:29.6621967Z ..Bad Request: /api/inventory-movements/1/reverse/
+backend	Backend tests	2026-11-04T11:15:29.6695659Z Bad Request: /api/inventory-movements/2/reverse/
+backend	Backend tests	2026-11-04T11:15:29.6947518Z .Bad Request: /api/inventory-movements/1/
+backend	Backend tests	2026-11-04T11:15:29.7254084Z Bad Request: /api/inventory-movements/1/reverse/
+backend	Backend tests	2026-11-04T11:15:29.8240724Z ..Bad Request: /api/inventory-movements/1/reverse/
+backend	Backend tests	2026-11-04T11:15:30.4467386Z .....Internal Server Error: /api/inventory-movements/1/reverse/
+backend	Backend tests	2026-11-04T11:15:30.4468508Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:15:30.4470172Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:15:30.4471456Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:15:30.4472142Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.4473390Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:15:30.4474917Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:15:30.4475902Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.4477210Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:15:30.4478567Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:30.4479588Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.4480816Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:15:30.4482112Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:30.4482924Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.4484263Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:15:30.4485674Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:15:30.4486980Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.4488288Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:15:30.4489948Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:15:30.4491355Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:15:30.4492770Z     raise exc
+backend	Backend tests	2026-11-04T11:15:30.4493927Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:15:30.4495270Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:30.4496052Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.4497152Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:15:30.4498255Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:15:30.4499196Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.4500278Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 2910, in reverse
+backend	Backend tests	2026-11-04T11:15:30.4502455Z     record_operation(request=request, instance=reversal, action="create", action_label="生成库存冲销流水", metadata={"source_movement_no": original.movement_no})
+backend	Backend tests	2026-11-04T11:15:30.4504713Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:15:30.4505923Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:30.4506690Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.4507881Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:15:30.4509392Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:30.4510240Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.4511493Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:15:30.4512776Z     result = effect(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:30.4513496Z              ^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.4515004Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/tests/test_inventory_reversal_audit_atomicity.py", line 194, in record_first_then_fail_second
+backend	Backend tests	2026-11-04T11:15:30.4516636Z     raise DatabaseError("second audit failure")
+backend	Backend tests	2026-11-04T11:15:30.4517493Z django.db.utils.DatabaseError: second audit failure
+backend	Backend tests	2026-11-04T11:15:30.8505366Z .Internal Server Error: /api/inventory-movements/1/reverse/
+backend	Backend tests	2026-11-04T11:15:30.8506519Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:15:30.8507888Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:15:30.8509489Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:15:30.8510190Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.8511490Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:15:30.8513052Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:15:30.8514019Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.8515377Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:15:30.8516766Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:30.8517504Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.8518731Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:15:30.8520374Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:30.8521214Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.8522567Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:15:30.8524489Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:15:30.8525190Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.8526552Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:15:30.8528121Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:15:30.8529777Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:15:30.8531207Z     raise exc
+backend	Backend tests	2026-11-04T11:15:30.8532413Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:15:30.8533740Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:30.8534516Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.8535620Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:15:30.8536761Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:15:30.8537434Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.8538486Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 2903, in reverse
+backend	Backend tests	2026-11-04T11:15:30.8540198Z     record_operation(
+backend	Backend tests	2026-11-04T11:15:30.8541289Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:15:30.8542510Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:30.8543281Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.8544545Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:15:30.8545846Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:30.8546674Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:30.8547950Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:15:30.8549468Z     raise effect
+backend	Backend tests	2026-11-04T11:15:30.8550251Z django.db.utils.DatabaseError: first audit failure
+backend	Backend tests	2026-11-04T11:15:31.2450712Z .Bad Request: /api/inventory-movements/1/reverse/
+backend	Backend tests	2026-11-04T11:15:31.6796188Z .Internal Server Error: /api/shipments/1/reverse/
+backend	Backend tests	2026-11-04T11:15:31.6797280Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:15:31.6798686Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:15:31.6800329Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:15:31.6801036Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:31.6802325Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:15:31.6803821Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:15:31.6804761Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:31.6806174Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:15:31.6807538Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:31.6808343Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:31.6809862Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:15:31.6811235Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:31.6812006Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:31.6813296Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:15:31.6814619Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:15:31.6815314Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:31.6816573Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:15:31.6818716Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:15:31.6895163Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:15:31.6898736Z     raise exc
+backend	Backend tests	2026-11-04T11:15:31.6900360Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:15:31.6901690Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:31.6902434Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:31.6903504Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:15:31.6904525Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:15:31.6905139Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:31.6906087Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 1438, in reverse
+backend	Backend tests	2026-11-04T11:15:31.6907119Z     record_operation(
+backend	Backend tests	2026-11-04T11:15:31.6908093Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:15:31.6909871Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:31.6910517Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:31.6911556Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:15:31.6912649Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:31.6913339Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:31.6914448Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:15:31.6915524Z     raise effect
+backend	Backend tests	2026-11-04T11:15:31.6916143Z django.db.utils.DatabaseError: injected audit failure
+backend	Backend tests	2026-11-04T11:15:32.1015860Z .Bad Request: /api/shipments/1/reverse/
+backend	Backend tests	2026-11-04T11:15:32.5328426Z .......Bad Request: /api/purchase-orders/1/receive/
+backend	Backend tests	2026-11-04T11:15:32.5794477Z .Bad Request: /api/purchase-orders/1/receive/
+backend	Backend tests	2026-11-04T11:15:32.6726094Z ..Conflict: /api/purchase-orders/1/receive/
+backend	Backend tests	2026-11-04T11:15:32.7724474Z ..Conflict: /api/purchase-orders/1/receive/
+backend	Backend tests	2026-11-04T11:15:33.8039530Z .....Unprocessable Entity: /api/quotes/1/export/
+backend	Backend tests	2026-11-04T11:15:33.8088146Z Unprocessable Entity: /api/quotes/1/pi-data/
+backend	Backend tests	2026-11-04T11:15:36.5520135Z .........................Bad Request: /api/customers/
+backend	Backend tests	2026-11-04T11:15:36.5551518Z Bad Request: /api/customers/
+backend	Backend tests	2026-11-04T11:15:40.5176767Z ..................Bad Request: /api/orders/1/quantity-adjustments/
+backend	Backend tests	2026-11-04T11:15:40.8334324Z ....Internal Server Error: /api/orders/1/quantity-adjustments/
+backend	Backend tests	2026-11-04T11:15:40.8335740Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:15:40.8337118Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:15:40.8338441Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:15:40.8339444Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:40.8340736Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:15:40.8342269Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:15:40.8343227Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:40.8344565Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:15:40.8345908Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:40.8346648Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:40.8347847Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:15:40.8349443Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:40.8350918Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:40.8352222Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:15:40.8353541Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:15:40.8354985Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:40.8356310Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:15:40.8357723Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:15:40.8359312Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:15:40.8360739Z     raise exc
+backend	Backend tests	2026-11-04T11:15:40.8361907Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:15:40.8363208Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:40.8364021Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:40.8365265Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 2193, in quantity_adjustments
+backend	Backend tests	2026-11-04T11:15:40.8367024Z     adjustment, replayed, preview = apply_quantity_adjustment(
+backend	Backend tests	2026-11-04T11:15:40.8367951Z                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:40.8369375Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:15:40.8370511Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:15:40.8371167Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:40.8372591Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/services/order_quantity_adjustments.py", line 421, in apply_quantity_adjustment
+backend	Backend tests	2026-11-04T11:15:40.8374165Z     rebalance_sku_reservations(SKU.objects.get(pk=sku_id))
+backend	Backend tests	2026-11-04T11:15:40.8375483Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:15:40.8376635Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:40.8377306Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:40.8378311Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:15:40.8379636Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:15:40.8380303Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:15:40.8381384Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:15:40.8382554Z     raise effect
+backend	Backend tests	2026-11-04T11:15:40.8383158Z RuntimeError: reservation failure
+backend	Backend tests	2026-11-04T11:15:40.8538444Z .Bad Request: /api/orders/1/quantity-adjustments/preview/
+backend	Backend tests	2026-11-04T11:15:40.8632859Z Bad Request: /api/orders/1/quantity-adjustments/
+backend	Backend tests	2026-11-04T11:15:41.0518509Z ...Bad Request: /api/orders/1/quantity-adjustments/
+backend	Backend tests	2026-11-04T11:15:41.0624510Z Bad Request: /api/orders/1/quantity-adjustments/
+backend	Backend tests	2026-11-04T11:15:41.0723982Z Bad Request: /api/orders/1/quantity-adjustments/
+backend	Backend tests	2026-11-04T11:15:41.1733007Z ..Bad Request: /api/orders/1/quantity-adjustments/
+backend	Backend tests	2026-11-04T11:15:41.1965827Z .Bad Request: /api/orders/1/quantity-adjustments/
+backend	Backend tests	2026-11-04T11:15:41.2436650Z .Bad Request: /api/orders/1/quantity-adjustments/
+backend	Backend tests	2026-11-04T11:15:41.4460937Z ..Bad Request: /api/orders/1/quantity-adjustments/
+backend	Backend tests	2026-11-04T11:15:41.8490084Z ...Conflict: /api/orders/1/quantity-adjustments/
+backend	Backend tests	2026-11-04T11:15:41.8708125Z Bad Request: /api/orders/1/
+backend	Backend tests	2026-11-04T11:15:42.3045672Z .Bad Request: /api/orders/1/quantity-adjustments/
+backend	Backend tests	2026-11-04T11:15:51.4920456Z .........Bad Request: /api/sku-packaging-profiles/
+backend	Backend tests	2026-11-04T11:15:51.5005950Z Bad Request: /api/sku-packaging-profiles/1/
+backend	Backend tests	2026-11-04T11:15:51.5077815Z Bad Request: /api/sku-packaging-profiles/1/
+backend	Backend tests	2026-11-04T11:15:51.5110207Z Bad Request: /api/sku-packaging-profiles/1/
+backend	Backend tests	2026-11-04T11:15:51.5140528Z Bad Request: /api/sku-packaging-profiles/1/
+backend	Backend tests	2026-11-04T11:15:51.5172212Z Bad Request: /api/sku-packaging-profiles/1/
+backend	Backend tests	2026-11-04T11:15:51.5204873Z Bad Request: /api/sku-packaging-profiles/1/
+backend	Backend tests	2026-11-04T11:15:51.5235035Z Bad Request: /api/sku-packaging-profiles/1/
+backend	Backend tests	2026-11-04T11:15:51.5266962Z Bad Request: /api/sku-packaging-profiles/1/
+backend	Backend tests	2026-11-04T11:15:51.6644972Z .Bad Request: /api/packaging-templates/1/
+backend	Backend tests	2026-11-04T11:16:00.5850192Z .........................Bad Request: /api/shipments/1/export-packing-list/
+backend	Backend tests	2026-11-04T11:16:02.0530522Z ........Bad Request: /api/shipments/1/export-packing-list/
+backend	Backend tests	2026-11-04T11:16:02.7073175Z ...Bad Request: /api/shipments/1/export-packing-list/
+backend	Backend tests	2026-11-04T11:16:03.4574374Z ....Bad Request: /api/payment-plans/
+backend	Backend tests	2026-11-04T11:16:03.4964538Z ..Bad Request: /api/payment-plans/
+backend	Backend tests	2026-11-04T11:16:03.4979252Z Bad Request: /api/payment-plans/
+backend	Backend tests	2026-11-04T11:16:03.4994905Z Bad Request: /api/payment-plans/
+backend	Backend tests	2026-11-04T11:16:03.7844134Z .......Bad Request: /api/orders/1/generate-purchase-drafts/
+backend	Backend tests	2026-11-04T11:16:04.1054099Z ....Bad Request: /api/orders/1/generate-purchase-drafts/
+backend	Backend tests	2026-11-04T11:16:04.1385527Z Bad Request: /api/orders/1/generate-purchase-drafts/
+backend	Backend tests	2026-11-04T11:16:04.3208390Z ...Bad Request: /api/orders/1/generate-purchase-drafts/
+backend	Backend tests	2026-11-04T11:16:04.3369796Z Bad Request: /api/orders/1/generate-purchase-drafts/
+backend	Backend tests	2026-11-04T11:16:04.3528459Z Bad Request: /api/orders/1/generate-purchase-drafts/
+backend	Backend tests	2026-11-04T11:16:04.3702077Z Bad Request: /api/orders/1/generate-purchase-drafts/
+backend	Backend tests	2026-11-04T11:16:04.4150590Z Bad Request: /api/purchase-orders/1/place/
+backend	Backend tests	2026-11-04T11:16:06.3382404Z ....................Bad Request: /api/category-attributes/1/
+backend	Backend tests	2026-11-04T11:16:06.3419331Z Bad Request: /api/category-attributes/1/
+backend	Backend tests	2026-11-04T11:16:06.3450517Z Bad Request: /api/category-attributes/1/
+backend	Backend tests	2026-11-04T11:16:06.3739558Z .Bad Request: /api/categories/3/
+backend	Backend tests	2026-11-04T11:16:06.3826698Z Bad Request: /api/categories/3/
+backend	Backend tests	2026-11-04T11:16:06.3911480Z Bad Request: /api/categories/3/
+backend	Backend tests	2026-11-04T11:16:06.4398416Z ...Bad Request: /api/category-attributes/1/
+backend	Backend tests	2026-11-04T11:16:06.4489140Z Bad Request: /api/category-attributes/
+backend	Backend tests	2026-11-04T11:16:06.4536376Z Bad Request: /api/category-attributes/1/
+backend	Backend tests	2026-11-04T11:16:06.4981559Z ...Bad Request: /api/products/1/sales-model-prefix-preview/
+backend	Backend tests	2026-11-04T11:16:06.6535490Z .Bad Request: /api/products/1/
+backend	Backend tests	2026-11-04T11:16:06.6814810Z .Bad Request: /api/products/1/
+backend	Backend tests	2026-11-04T11:16:06.6894436Z Bad Request: /api/categories/2/
+backend	Backend tests	2026-11-04T11:16:06.8176817Z ..Bad Request: /api/purchase-orders/1/cost-allocation/
+backend	Backend tests	2026-11-04T11:16:06.8403075Z .Bad Request: /api/purchase-orders/1/cost-allocation/
+backend	Backend tests	2026-11-04T11:16:07.0165498Z .Bad Request: /api/purchase-orders/1/cost-allocation/
+backend	Backend tests	2026-11-04T11:16:07.0306968Z Bad Request: /api/purchase-orders/1/cost-allocation/
+backend	Backend tests	2026-11-04T11:16:07.0409613Z Bad Request: /api/purchase-orders/1/cost-allocation/
+backend	Backend tests	2026-11-04T11:16:07.0512258Z Bad Request: /api/purchase-orders/1/cost-allocation/
+backend	Backend tests	2026-11-04T11:16:07.0616566Z Bad Request: /api/purchase-orders/1/cost-allocation/
+backend	Backend tests	2026-11-04T11:16:07.0761583Z Bad Request: /api/purchase-orders/1/cost-allocation/
+backend	Backend tests	2026-11-04T11:16:07.1143551Z Bad Request: /api/purchase-orders/1/cost-allocation/
+backend	Backend tests	2026-11-04T11:16:07.1386860Z Bad Request: /api/purchase-orders/1/
+backend	Backend tests	2026-11-04T11:16:07.2880881Z ...Bad Request: /api/purchase-orders/1/cost-allocation-preview/
+backend	Backend tests	2026-11-04T11:16:07.3701058Z ..Bad Request: /api/purchase-orders/1/cost-allocation/
+backend	Backend tests	2026-11-04T11:16:07.3804725Z Bad Request: /api/purchase-orders/1/cost-allocation/
+backend	Backend tests	2026-11-04T11:16:08.3523018Z ....Bad Request: /api/purchase-orders/1/place/
+backend	Backend tests	2026-11-04T11:16:11.1366799Z ................Bad Request: /api/purchase-orders/1/
+backend	Backend tests	2026-11-04T11:16:11.1463440Z .Bad Request: /api/suppliers/1/
+backend	Backend tests	2026-11-04T11:16:11.1948472Z Bad Request: /api/purchase-orders/1/
+backend	Backend tests	2026-11-04T11:16:11.1988658Z Bad Request: /api/suppliers/1/
+backend	Backend tests	2026-11-04T11:16:11.2467195Z Bad Request: /api/purchase-orders/2/
+backend	Backend tests	2026-11-04T11:16:11.2509684Z Bad Request: /api/suppliers/1/
+backend	Backend tests	2026-11-04T11:16:11.2987997Z Bad Request: /api/purchase-orders/3/
+backend	Backend tests	2026-11-04T11:16:11.3031508Z Bad Request: /api/suppliers/1/
+backend	Backend tests	2026-11-04T11:16:11.3528350Z Bad Request: /api/purchase-orders/4/
+backend	Backend tests	2026-11-04T11:16:11.3570373Z Bad Request: /api/suppliers/1/
+backend	Backend tests	2026-11-04T11:16:11.4056019Z Bad Request: /api/purchase-orders/5/
+backend	Backend tests	2026-11-04T11:16:11.4096914Z Bad Request: /api/suppliers/1/
+backend	Backend tests	2026-11-04T11:16:11.4564158Z Bad Request: /api/purchase-orders/6/
+backend	Backend tests	2026-11-04T11:16:11.4604690Z Bad Request: /api/suppliers/1/
+backend	Backend tests	2026-11-04T11:16:11.5075667Z Bad Request: /api/purchase-orders/7/
+backend	Backend tests	2026-11-04T11:16:11.5119382Z Bad Request: /api/suppliers/1/
+backend	Backend tests	2026-11-04T11:16:11.5619499Z Bad Request: /api/purchase-orders/8/
+backend	Backend tests	2026-11-04T11:16:11.6886831Z Bad Request: /api/suppliers/1/
+backend	Backend tests	2026-11-04T11:16:11.7367344Z Bad Request: /api/purchase-orders/9/
+backend	Backend tests	2026-11-04T11:16:12.1431923Z ...Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:16:12.1480192Z Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:16:12.1527435Z Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:16:12.1575021Z Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:16:12.2069803Z Bad Request: /api/purchase-orders/1/
+backend	Backend tests	2026-11-04T11:16:12.5833123Z .......Bad Request: /api/quotes/availability-preview/
+backend	Backend tests	2026-11-04T11:16:12.5849268Z Bad Request: /api/quotes/availability-preview/
+backend	Backend tests	2026-11-04T11:16:12.5863847Z Bad Request: /api/quotes/availability-preview/
+backend	Backend tests	2026-11-04T11:16:12.5879661Z Bad Request: /api/quotes/availability-preview/
+backend	Backend tests	2026-11-04T11:16:12.5897028Z Bad Request: /api/quotes/availability-preview/
+backend	Backend tests	2026-11-04T11:16:12.5934286Z Bad Request: /api/quotes/availability-preview/
+backend	Backend tests	2026-11-04T11:16:13.0485662Z ...Unprocessable Entity: /api/quotes/preview-template/
+backend	Backend tests	2026-11-04T11:16:13.0546929Z Unprocessable Entity: /api/quotes/preview-template/
+backend	Backend tests	2026-11-04T11:16:13.0586601Z Not Found: /api/quotes/preview-template/
+backend	Backend tests	2026-11-04T11:16:13.5752285Z ..Unprocessable Entity: /api/quotes/1/pi-data/
+backend	Backend tests	2026-11-04T11:16:13.5800151Z Unprocessable Entity: /api/quotes/1/export/
+backend	Backend tests	2026-11-04T11:16:13.5854279Z Unprocessable Entity: /api/quotes/1/mark-sent/
+backend	Backend tests	2026-11-04T11:16:13.6147777Z Unprocessable Entity: /api/quotes/2/export/
+backend	Backend tests	2026-11-04T11:16:14.6791964Z ..Unprocessable Entity: /api/quotes/1/pi-data/
+backend	Backend tests	2026-11-04T11:16:14.6857721Z Unprocessable Entity: /api/quotes/1/export/
+backend	Backend tests	2026-11-04T11:16:16.0318656Z .....Internal Server Error: /api/orders/1/confirm/
+backend	Backend tests	2026-11-04T11:16:16.0320023Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:16:16.0321405Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:16:16.0322705Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:16:16.0323400Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.0324719Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:16:16.0326252Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:16:16.0327200Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.0328617Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:16:16.0330277Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:16:16.0330982Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.0332194Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:16:16.0333512Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:16:16.0334277Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.0335574Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:16:16.0336906Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:16:16.0337640Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.0339162Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:16:16.0341158Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:16:16.0342605Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:16:16.0344033Z     raise exc
+backend	Backend tests	2026-11-04T11:16:16.0345196Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:16:16.0346538Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:16:16.0347304Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.0348447Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 2023, in confirm
+backend	Backend tests	2026-11-04T11:16:16.0349852Z     order = confirm_order(self.get_object())
+backend	Backend tests	2026-11-04T11:16:16.0350633Z             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.0351774Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:16:16.0352932Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:16:16.0353640Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.0354816Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/services/order_lifecycle.py", line 100, in confirm_order
+backend	Backend tests	2026-11-04T11:16:16.0356614Z     final_quote = OrderSerializer()._create_quote_revision_if_needed(
+backend	Backend tests	2026-11-04T11:16:16.0357554Z                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.0358896Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/serializers.py", line 2304, in _create_quote_revision_if_needed
+backend	Backend tests	2026-11-04T11:16:16.0360389Z     create_quote_items(
+backend	Backend tests	2026-11-04T11:16:16.0361333Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:16:16.0362338Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:16:16.0362958Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.0363931Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:16:16.0365002Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:16:16.0365674Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.0366820Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:16:16.0367923Z     raise effect
+backend	Backend tests	2026-11-04T11:16:16.0368558Z RuntimeError: Synthetic order revision failure
+backend	Backend tests	2026-11-04T11:16:16.2813069Z .Internal Server Error: /api/quotes/1/revise/
+backend	Backend tests	2026-11-04T11:16:16.2814090Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:16:16.2815436Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:16:16.2816792Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:16:16.2817477Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.2818748Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:16:16.2820495Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:16:16.2821446Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.2822837Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:16:16.2824232Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:16:16.2824982Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.2826234Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:16:16.2827586Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:16:16.2828343Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.2829885Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:16:16.2831778Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:16:16.2832490Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.2833772Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:16:16.2835204Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:16:16.2836670Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:16:16.2838036Z     raise exc
+backend	Backend tests	2026-11-04T11:16:16.2839473Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:16:16.2840831Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:16:16.2841601Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.2842636Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:16:16.2843650Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:16:16.2844226Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.2845109Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 1870, in revise
+backend	Backend tests	2026-11-04T11:16:16.2846534Z     create_quote_items(revision, item_data, source_items=source_items)
+backend	Backend tests	2026-11-04T11:16:16.2847691Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:16:16.2848722Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:16:16.2849707Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.2850776Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:16:16.2851920Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:16:16.2852705Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:16:16.2853896Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:16:16.2855125Z     raise effect
+backend	Backend tests	2026-11-04T11:16:16.2855763Z RuntimeError: Synthetic item failure
+backend	Backend tests	2026-11-04T11:16:16.4542369Z .Bad Request: /api/quotes/1/
+backend	Backend tests	2026-11-04T11:16:18.5688692Z ......Unprocessable Entity: /api/quotes/1/pi-data/
+backend	Backend tests	2026-11-04T11:16:18.5764341Z Unprocessable Entity: /api/quotes/1/export/
+backend	Backend tests	2026-11-04T11:16:18.5817179Z Unprocessable Entity: /api/quotes/2/pi-data/
+backend	Backend tests	2026-11-04T11:16:18.5866880Z Unprocessable Entity: /api/quotes/2/export/
+backend	Backend tests	2026-11-04T11:16:18.6646887Z ..Bad Request: /api/orders/1/complete/
+backend	Backend tests	2026-11-04T11:16:18.7420134Z ..Bad Request: /api/orders/1/
+backend	Backend tests	2026-11-04T11:16:18.7802675Z .Bad Request: /api/orders/1/complete/
+backend	Backend tests	2026-11-04T11:16:18.7961831Z .Bad Request: /api/orders/1/complete/
+backend	Backend tests	2026-11-04T11:16:20.8914928Z ........Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:16:21.0392954Z .Method Not Allowed: /api/quotes/1/
+backend	Backend tests	2026-11-04T11:16:21.8242039Z .Bad Request: /api/quotes/4/order-draft/
+backend	Backend tests	2026-11-04T11:16:21.9680716Z Bad Request: /api/quotes/5/order-draft/
+backend	Backend tests	2026-11-04T11:16:23.3493419Z .....Bad Request: /api/quotes/1/important-notes/
+backend	Backend tests	2026-11-04T11:16:23.6822104Z ..Bad Request: /api/orders/
+backend	Backend tests	2026-11-04T11:16:23.6956247Z .Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:16:23.8390782Z Bad Request: /api/quotes/1/revise/
+backend	Backend tests	2026-11-04T11:16:25.2590426Z ......Bad Request: /api/quotes/1/
+backend	Backend tests	2026-11-04T11:16:25.2603586Z Bad Request: /api/quotes/1/
+backend	Backend tests	2026-11-04T11:16:25.6754052Z .Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:16:25.9900481Z ..Bad Request: /api/quotes/1/revise/
+backend	Backend tests	2026-11-04T11:16:27.3110671Z ....Bad Request: /api/quotes/1/revise/
+backend	Backend tests	2026-11-04T11:16:27.4610575Z .Bad Request: /api/quotes/1/revise/
+backend	Backend tests	2026-11-04T11:16:27.7697811Z .Bad Request: /api/quotes/1/revise/
+backend	Backend tests	2026-11-04T11:16:28.2507214Z ....Bad Request: /api/skus/1/image/
+backend	Backend tests	2026-11-04T11:16:30.6238802Z ....Unprocessable Entity: /api/quotes/1/export/
+backend	Backend tests	2026-11-04T11:16:33.3397382Z ...Unprocessable Entity: /api/quotes/1/export/
+backend	Backend tests	2026-11-04T11:16:39.4807099Z .....................Bad Request: /api/transactions/
+backend	Backend tests	2026-11-04T11:16:39.5283518Z .Bad Request: /api/transactions/
+backend	Backend tests	2026-11-04T11:16:39.5390899Z Bad Request: /api/transactions/
+backend	Backend tests	2026-11-04T11:16:39.5490663Z Bad Request: /api/transactions/
+backend	Backend tests	2026-11-04T11:16:39.5589344Z Bad Request: /api/transactions/
+backend	Backend tests	2026-11-04T11:16:40.0059663Z ................Bad Request: /api/reports/data/
+backend	Backend tests	2026-11-04T11:16:40.0068563Z Bad Request: /api/reports/data/
+backend	Backend tests	2026-11-04T11:16:40.0077775Z Bad Request: /api/reports/data/
+backend	Backend tests	2026-11-04T11:16:40.0086982Z Bad Request: /api/reports/data/
+backend	Backend tests	2026-11-04T11:16:40.0549962Z ..Bad Request: /api/reports/data/
+backend	Backend tests	2026-11-04T11:16:40.0558453Z Bad Request: /api/reports/data/
+backend	Backend tests	2026-11-04T11:16:40.0567450Z Bad Request: /api/reports/data/
+backend	Backend tests	2026-11-04T11:16:40.0576364Z Bad Request: /api/reports/data/
+backend	Backend tests	2026-11-04T11:16:40.0585460Z Bad Request: /api/reports/data/
+backend	Backend tests	2026-11-04T11:16:40.0594298Z Bad Request: /api/reports/data/
+backend	Backend tests	2026-11-04T11:16:40.0603513Z Bad Request: /api/reports/data/
+backend	Backend tests	2026-11-04T11:16:40.0613174Z Bad Request: /api/reports/data/
+backend	Backend tests	2026-11-04T11:16:40.1117308Z ..Bad Request: /api/reports/details/
+backend	Backend tests	2026-11-04T11:16:41.1543442Z ....................Service Unavailable: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:41.5237360Z .Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:42.6074593Z ...Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:42.9895064Z .Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:43.3599459Z .Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:43.3804358Z Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:43.7345522Z .Request Entity Too Large: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:44.0861236Z .Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:44.0908823Z Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:44.0952902Z Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:44.0999432Z Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:44.1044452Z Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:44.1089581Z Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:44.1133901Z Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:44.4738208Z .Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:44.4784388Z Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:44.4978097Z Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:44.8618442Z .Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:45.2415187Z .Bad Request: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:45.2447150Z Bad Request: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:45.2476195Z Bad Request: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:45.2697509Z Bad Request: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:45.9885795Z ..Forbidden: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:45.9905330Z Service Unavailable: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:46.7157217Z ..Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:47.5225852Z ..Bad Request: /api/import/csv/
+backend	Backend tests	2026-11-04T11:16:47.8827634Z .Request Entity Too Large: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:47.8876769Z Request Entity Too Large: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:47.8934134Z Request Entity Too Large: /api/import/csv/
+backend	Backend tests	2026-11-04T11:16:48.2558570Z .Request Entity Too Large: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:48.6162602Z .Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:48.6208540Z Bad Request: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:48.6261475Z Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:48.6306204Z Bad Request: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:48.6356997Z Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:48.6403513Z Bad Request: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:48.6453531Z Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:48.6498142Z Bad Request: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:48.6549065Z Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:48.6595049Z Bad Request: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:49.0145000Z .Service Unavailable: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:49.3673611Z .Bad Request: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:49.7322507Z .Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:50.5685849Z ..Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:50.5718052Z Bad Request: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:50.9582618Z .Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:51.7020141Z ..Bad Request: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:52.0591342Z .Forbidden: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:52.7893758Z ..Forbidden: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:53.1459355Z .Request Entity Too Large: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:16:53.1510820Z Request Entity Too Large: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:53.1577439Z Request Entity Too Large: /api/import/csv/
+backend	Backend tests	2026-11-04T11:16:53.1606881Z Forbidden: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:16:53.1628363Z Service Unavailable: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:18:03.8818367Z ...............................Bad Request: /api/skus/
+backend	Backend tests	2026-11-04T11:18:03.9607727Z ..Bad Request: /api/skus/
+backend	Backend tests	2026-11-04T11:18:04.1471127Z ..Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:04.3048618Z Bad Request: /api/quotes/1/revise/
+backend	Backend tests	2026-11-04T11:18:04.4934152Z ..Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:04.9083355Z ..Bad Request: /api/sales-rules/
+backend	Backend tests	2026-11-04T11:18:04.9435452Z .Bad Request: /api/sales-rules/2/
+backend	Backend tests	2026-11-04T11:18:04.9495822Z Bad Request: /api/sales-rules/2/
+backend	Backend tests	2026-11-04T11:18:04.9559175Z Bad Request: /api/sales-rules/2/
+backend	Backend tests	2026-11-04T11:18:04.9618457Z Bad Request: /api/sales-rules/2/
+backend	Backend tests	2026-11-04T11:18:04.9657899Z Bad Request: /api/sales-rules/2/
+backend	Backend tests	2026-11-04T11:18:06.3294675Z .....Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:06.4635457Z Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:06.6283143Z Bad Request: /api/orders/
+backend	Backend tests	2026-11-04T11:18:06.6463456Z Bad Request: /api/orders/
+backend	Backend tests	2026-11-04T11:18:07.6780606Z ...Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:07.6835770Z Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:07.6908694Z Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:07.6960482Z Bad Request: /api/orders/
+backend	Backend tests	2026-11-04T11:18:07.7012039Z Bad Request: /api/orders/
+backend	Backend tests	2026-11-04T11:18:07.7063062Z Bad Request: /api/orders/
+backend	Backend tests	2026-11-04T11:18:20.0368742Z .........Bad Request: /api/products/1/combination-rules/
+backend	Backend tests	2026-11-04T11:18:20.0405793Z Bad Request: /api/products/1/combination-rules/
+backend	Backend tests	2026-11-04T11:18:20.0445682Z Bad Request: /api/products/1/combination-rules/
+backend	Backend tests	2026-11-04T11:18:20.0482956Z Bad Request: /api/products/1/combination-rules/
+backend	Backend tests	2026-11-04T11:18:20.0579420Z .Bad Request: /api/products/1/combination-rules/
+backend	Backend tests	2026-11-04T11:18:20.0731477Z .Bad Request: /api/skus/
+backend	Backend tests	2026-11-04T11:18:20.1174194Z Bad Request: /api/skus/
+backend	Backend tests	2026-11-04T11:18:20.2024911Z .Bad Request: /api/skus/
+backend	Backend tests	2026-11-04T11:18:20.2840537Z ...Bad Request: /api/products/1/combination-rules/
+backend	Backend tests	2026-11-04T11:18:20.6819586Z ....Bad Request: /api/skus/2/
+backend	Backend tests	2026-11-04T11:18:20.9849914Z ....Bad Request: /api/skus/
+backend	Backend tests	2026-11-04T11:18:21.0706760Z .Bad Request: /api/skus/
+backend	Backend tests	2026-11-04T11:18:21.1230142Z .Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:21.2126119Z ..Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:21.5454551Z .....Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:21.7242357Z .Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:21.8219597Z ..Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:21.9897539Z .Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:22.0318312Z Bad Request: /api/skus/2/
+backend	Backend tests	2026-11-04T11:18:22.5970114Z ...Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:22.6353572Z .Bad Request: /api/skus/
+backend	Backend tests	2026-11-04T11:18:22.6818542Z Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:23.0165078Z ......Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:23.0766954Z .Bad Request: /api/skus/
+backend	Backend tests	2026-11-04T11:18:23.1174730Z .Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:23.2152782Z .Bad Request: /api/skus/2/
+backend	Backend tests	2026-11-04T11:18:23.5013963Z ....Bad Request: /api/skus/batch-create/
+backend	Backend tests	2026-11-04T11:18:23.7030703Z ..Bad Request: /api/skus/
+backend	Backend tests	2026-11-04T11:18:23.8303419Z .Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:23.8922145Z .Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:18:23.9684533Z .Bad Request: /api/products/1/sku-plan/publish/
+backend	Backend tests	2026-11-04T11:18:24.0545019Z ..Bad Request: /api/supplier-capabilities/
+backend	Backend tests	2026-11-04T11:18:24.2981625Z ...Bad Request: /api/products/1/sku-plan/publish/
+backend	Backend tests	2026-11-04T11:18:24.4064577Z .Bad Request: /api/products/1/sku-plan/publish/
+backend	Backend tests	2026-11-04T11:18:24.4519819Z .Bad Request: /api/supplier-skus/1/
+backend	Backend tests	2026-11-04T11:18:24.5058752Z .Internal Server Error: /api/skus/
+backend	Backend tests	2026-11-04T11:18:24.5060060Z Traceback (most recent call last):
+backend	Backend tests	2026-11-04T11:18:24.5061422Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+backend	Backend tests	2026-11-04T11:18:24.5062739Z     response = get_response(request)
+backend	Backend tests	2026-11-04T11:18:24.5063407Z                ^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:18:24.5064611Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+backend	Backend tests	2026-11-04T11:18:24.5066062Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+backend	Backend tests	2026-11-04T11:18:24.5067147Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:18:24.5068624Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+backend	Backend tests	2026-11-04T11:18:24.5070277Z     return view_func(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:18:24.5070941Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:18:24.5072038Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/viewsets.py", line 124, in view
+backend	Backend tests	2026-11-04T11:18:24.5073700Z     return self.dispatch(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:18:24.5074393Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:18:24.5075634Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 526, in dispatch
+backend	Backend tests	2026-11-04T11:18:24.5076953Z     response = self.handle_exception(exc)
+backend	Backend tests	2026-11-04T11:18:24.5077673Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:18:24.5079199Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 474, in handle_exception
+backend	Backend tests	2026-11-04T11:18:24.5080506Z     self.raise_uncaught_exception(exc)
+backend	Backend tests	2026-11-04T11:18:24.5081863Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 485, in raise_uncaught_exception
+backend	Backend tests	2026-11-04T11:18:24.5083262Z     raise exc
+backend	Backend tests	2026-11-04T11:18:24.5084369Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/views.py", line 523, in dispatch
+backend	Backend tests	2026-11-04T11:18:24.5085677Z     response = handler(request, *args, **kwargs)
+backend	Backend tests	2026-11-04T11:18:24.5086438Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:18:24.5087718Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/rest_framework/mixins.py", line 19, in create
+backend	Backend tests	2026-11-04T11:18:24.5089238Z     self.perform_create(serializer)
+backend	Backend tests	2026-11-04T11:18:24.5090342Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 81, in inner
+backend	Backend tests	2026-11-04T11:18:24.5091441Z     return func(*args, **kwds)
+backend	Backend tests	2026-11-04T11:18:24.5092076Z            ^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:18:24.5093159Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/views.py", line 1116, in perform_create
+backend	Backend tests	2026-11-04T11:18:24.5094324Z     super().perform_create(serializer)
+backend	Backend tests	2026-11-04T11:18:24.5095456Z   File "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/audit.py", line 71, in perform_create
+backend	Backend tests	2026-11-04T11:18:24.5096774Z     record_operation(request=self.request, instance=instance, action="create")
+backend	Backend tests	2026-11-04T11:18:24.5098149Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1139, in __call__
+backend	Backend tests	2026-11-04T11:18:24.5099509Z     return self._mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:18:24.5100181Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:18:24.5101188Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+backend	Backend tests	2026-11-04T11:18:24.5102243Z     return self._execute_mock_call(*args, **kwargs)
+backend	Backend tests	2026-11-04T11:18:24.5102944Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend	Backend tests	2026-11-04T11:18:24.5104032Z   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+backend	Backend tests	2026-11-04T11:18:24.5105493Z     raise effect
+backend	Backend tests	2026-11-04T11:18:24.5106102Z RuntimeError: audit failed
+backend	Backend tests	2026-11-04T11:18:24.5323440Z .Bad Request: /api/skus/batch-create/
+backend	Backend tests	2026-11-04T11:18:24.6463456Z .Bad Request: /api/skus/
+backend	Backend tests	2026-11-04T11:18:24.6905314Z .Bad Request: /api/skus/
+backend	Backend tests	2026-11-04T11:18:24.7015818Z Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:24.7481352Z .Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:24.8310222Z .Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:24.8375178Z Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:24.8438871Z Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:24.8503019Z Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:24.8567866Z Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:24.8633672Z Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:25.1242016Z ....Bad Request: /api/orders/1/items/1/supplier-allocation/
+backend	Backend tests	2026-11-04T11:18:25.1317625Z Bad Request: /api/orders/1/items/1/supplier-allocation/
+backend	Backend tests	2026-11-04T11:18:25.1407787Z Bad Request: /api/orders/1/items/1/supplier-allocation/
+backend	Backend tests	2026-11-04T11:18:25.1592851Z .Bad Request: /api/orders/1/items/1/supplier-allocation/
+backend	Backend tests	2026-11-04T11:18:25.1677614Z Bad Request: /api/orders/1/items/1/supplier-allocation/
+backend	Backend tests	2026-11-04T11:18:25.5278757Z .........Bad Request: /api/products/1/supplier-candidate-pool/
+backend	Backend tests	2026-11-04T11:18:25.5356705Z Bad Request: /api/products/1/supplier-candidate-pool/
+backend	Backend tests	2026-11-04T11:18:25.5535011Z .Bad Request: /api/products/1/supplier-candidate-pool/
+backend	Backend tests	2026-11-04T11:18:25.5720570Z .Bad Request: /api/products/1/supplier-candidate-pool/
+backend	Backend tests	2026-11-04T11:18:25.6282598Z ..Bad Request: /api/suppliers/
+backend	Backend tests	2026-11-04T11:18:28.1567314Z .................Bad Request: /api/purchase-orders/1/
+backend	Backend tests	2026-11-04T11:18:28.1870037Z Bad Request: /api/purchase-orders/1/
+backend	Backend tests	2026-11-04T11:18:28.3033474Z ..Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:18:28.3569835Z .Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:18:28.4524789Z ..Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:18:28.5309517Z .Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:18:28.5738113Z .Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:18:28.7369262Z ..Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:18:28.9076160Z ...Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:18:28.9283054Z .Bad Request: /api/supplier-skus/1/
+backend	Backend tests	2026-11-04T11:18:28.9447808Z Bad Request: /api/supplier-skus/2/
+backend	Backend tests	2026-11-04T11:18:28.9792078Z .Bad Request: /api/supplier-skus/
+backend	Backend tests	2026-11-04T11:18:29.3496831Z .............Bad Request: /api/inventory-movements/1/
+backend	Backend tests	2026-11-04T11:18:29.7535731Z ...........Bad Request: /api/orders/1/ship/
+backend	Backend tests	2026-11-04T11:18:29.7591517Z Bad Request: /api/orders/1/ship/
+backend	Backend tests	2026-11-04T11:18:29.7930800Z .Bad Request: /api/inventory-movements/batch/
+backend	Backend tests	2026-11-04T11:18:29.7997331Z Bad Request: /api/inventory-movements/batch/
+backend	Backend tests	2026-11-04T11:18:30.2111495Z ........Bad Request: /api/payment-plans/1/
+backend	Backend tests	2026-11-04T11:18:30.2713038Z .Bad Request: /api/purchase-orders/1/
+backend	Backend tests	2026-11-04T11:18:30.4881825Z ...Bad Request: /api/purchase-orders/1/receipts/1/reverse/
+backend	Backend tests	2026-11-04T11:18:30.7717857Z .....Bad Request: /api/finance-dashboard/
+backend	Backend tests	2026-11-04T11:18:30.9855066Z ...Bad Request: /api/payment-plans/1/settle/
+backend	Backend tests	2026-11-04T11:18:30.9901300Z Bad Request: /api/payment-plans/1/settle/
+backend	Backend tests	2026-11-04T11:18:30.9946707Z Bad Request: /api/payment-plans/1/settle/
+backend	Backend tests	2026-11-04T11:18:30.9991843Z Bad Request: /api/payment-plans/1/settle/
+backend	Backend tests	2026-11-04T11:18:31.0041098Z Bad Request: /api/payment-plans/1/settle/
+backend	Backend tests	2026-11-04T11:18:31.1264936Z ...Bad Request: /api/shipments/1/reverse/
+backend	Backend tests	2026-11-04T11:18:31.7710805Z ............Bad Request: /api/transactions/1/
+backend	Backend tests	2026-11-04T11:18:31.7770880Z Bad Request: /api/transactions/1/
+backend	Backend tests	2026-11-04T11:18:32.3179385Z ...Bad Request: /api/orders/1/ship/
+backend	Backend tests	2026-11-04T11:18:32.3850819Z ..Bad Request: /api/sku-trade-units/1/
+backend	Backend tests	2026-11-04T11:18:32.3882608Z Bad Request: /api/sku-trade-units/1/
+backend	Backend tests	2026-11-04T11:18:32.3907543Z Bad Request: /api/sku-trade-units/1/
+backend	Backend tests	2026-11-04T11:18:32.3934714Z Bad Request: /api/sku-trade-units/1/
+backend	Backend tests	2026-11-04T11:18:32.3959671Z Bad Request: /api/sku-trade-units/1/
+backend	Backend tests	2026-11-04T11:18:32.3984908Z Bad Request: /api/sku-trade-units/1/
+backend	Backend tests	2026-11-04T11:18:32.4130436Z Bad Request: /api/purchase-orders/
+backend	Backend tests	2026-11-04T11:18:32.4206818Z Bad Request: /api/skus/1/
+backend	Backend tests	2026-11-04T11:18:32.4286184Z .Bad Request: /api/sku-trade-units/
+backend	Backend tests	2026-11-04T11:18:32.4309289Z Bad Request: /api/sku-trade-units/
+backend	Backend tests	2026-11-04T11:18:33.1654457Z .....Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:33.4191233Z .Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:33.6375023Z ..Bad Request: /api/inventory-movements/
+backend	Backend tests	2026-11-04T11:18:33.8611563Z ..Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:33.8652635Z Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:33.8691381Z Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:33.8732640Z Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:34.0111614Z Bad Request: /api/quotes/
+backend	Backend tests	2026-11-04T11:18:50.9690640Z ..sss.sss...ssRequest Entity Too Large: /api/import/csv/preview/
+backend	Backend tests	2026-11-04T11:18:50.9767417Z Request Entity Too Large: /api/import/csv/execute/
+backend	Backend tests	2026-11-04T11:18:50.9831882Z Request Entity Too Large: /api/import/csv/
+backend	Backend tests	2026-11-04T11:19:13.6094232Z ...................s.ss....................s/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/django/test/utils.py:455: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+backend	Backend tests	2026-11-04T11:19:13.6095846Z   with self as context:
+backend	Backend tests	2026-11-04T11:19:13.6325719Z .ssssssss....../home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/tests/test_legacy_qa_tools.py:139: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+backend	Backend tests	2026-11-04T11:19:13.6327257Z   with override_settings(
+backend	Backend tests	2026-11-04T11:19:13.6359330Z ./home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/tests/test_legacy_qa_tools.py:68: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+backend	Backend tests	2026-11-04T11:19:13.6363496Z   with override_settings(
+backend	Backend tests	2026-11-04T11:19:13.6368843Z ./home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/tests/test_legacy_qa_tools.py:92: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+backend	Backend tests	2026-11-04T11:19:13.6370924Z   with override_settings(
+backend	Backend tests	2026-11-04T11:19:13.6391144Z .../home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/tests/test_legacy_qa_tools.py:107: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+backend	Backend tests	2026-11-04T11:19:13.6392959Z   with override_settings(
+backend	Backend tests	2026-11-04T11:19:13.6410107Z ../home/runner/work/SUNJACK-ERP/SUNJACK-ERP/backend/crm/tests/test_legacy_qa_tools.py:82: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+backend	Backend tests	2026-11-04T11:19:13.6411969Z   with override_settings(
+backend	Backend tests	2026-11-04T11:19:47.9873085Z ..sssssssssssssssssssss.........................sssssss.........................
+backend	Backend tests	2026-11-04T11:19:47.9874451Z ----------------------------------------------------------------------
+backend	Backend tests	2026-11-04T11:19:47.9875509Z Ran 1196 tests in 328.350s
+backend	Backend tests	2026-11-04T11:19:47.9876068Z
+backend	Backend tests	2026-11-04T11:19:47.9876421Z OK (skipped=49)
+backend	Backend tests	2026-11-04T11:19:47.9877048Z Destroying test database for alias 'default'...
+backend	Backend tests	2026-11-04T11:19:47.9895128Z Found 1196 test(s).
+backend	Backend tests	2026-11-04T11:19:47.9895825Z System check identified no issues (0 silenced).
+backend	Backend tests	2026-11-04T11:19:47.9897862Z P2A-DATABASE_VERIFICATION {"before": "bc8f8617a8785a437a03c27a5e119852c034b4138ff727acaf246274edfd4317", "after": "bc8f8617a8785a437a03c27a5e119852c034b4138ff727acaf246274edfd4317", "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": true}
+backend	Backend tests	2026-11-04T11:19:47.9900629Z P2A_MIGRATION_VERIFICATION {"vendor": "sqlite", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}
+backend	Post Run actions/setup-python@v5	﻿2026-11-04T11:19:48.3315697Z Post job cleanup.
+backend	Post Run actions/setup-python@v5	2026-11-04T11:19:48.4650069Z (node:2299) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+backend	Post Run actions/setup-python@v5	2026-11-04T11:19:48.4651868Z (Use `node --trace-deprecation ...` to show where the warning was created)
+backend	Post Run actions/checkout@v4	﻿2026-11-04T11:19:48.4977137Z Post job cleanup.
+backend	Post Run actions/checkout@v4	2026-11-04T11:19:48.6139900Z [command]/usr/bin/git version
+backend	Post Run actions/checkout@v4	2026-11-04T11:19:48.6203898Z git version 2.56.0
+backend	Post Run actions/checkout@v4	2026-11-04T11:19:48.6267329Z Temporarily overriding HOME='/home/runner/work/_temp/923d5622-f949-4eaf-a8ec-aa75ee2c1fb1' before making global git config changes
+backend	Post Run actions/checkout@v4	2026-11-04T11:19:48.6271329Z Adding repository directory to the temporary git global config as a safe directory
+backend	Post Run actions/checkout@v4	2026-11-04T11:19:48.6275502Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/SUNJACK-ERP/SUNJACK-ERP
+backend	Post Run actions/checkout@v4	2026-11-04T11:19:48.6370969Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+backend	Post Run actions/checkout@v4	2026-11-04T11:19:48.6450357Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+backend	Post Run actions/checkout@v4	2026-11-04T11:19:48.6923706Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+backend	Post Run actions/checkout@v4	2026-11-04T11:19:48.6999775Z http.https://github.com/.extraheader
+backend	Post Run actions/checkout@v4	2026-11-04T11:19:48.7059961Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+backend	Post Run actions/checkout@v4	2026-11-04T11:19:48.7291147Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+backend	Post Run actions/checkout@v4	2026-11-04T11:19:48.7849685Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+backend	Post Run actions/checkout@v4	2026-11-04T11:19:48.7928960Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+backend	Complete job	﻿2026-11-04T11:19:48.8673641Z Cleaning up orphan processes
+backend	Complete job	2026-11-04T11:19:48.9167654Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

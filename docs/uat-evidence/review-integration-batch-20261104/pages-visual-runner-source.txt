@@ -1,0 +1,30 @@
+import { chromium } from '../frontend/node_modules/@playwright/test/index.mjs'
+import fs from 'node:fs/promises'
+import crypto from 'node:crypto'
+import { execFileSync } from 'node:child_process'
+const root = new URL('../docs/uat-evidence/review-integration-batch-20261104/',import.meta.url)
+const browser = await chromium.launch({channel:'chrome',headless:true})
+const routes = ['/', '/customers', '/products', '/skus', '/quotes', '/orders', '/purchase-orders', '/inventory', '/inventory-movements', '/finance', '/transactions', '/reports', '/finance-ledger']
+const results=[]
+try {
+  for(const width of [1440,390]) {
+    const page=await browser.newPage({viewport:{width,height:950}})
+    for(const route of routes) {
+      const errors=[]
+      const onError=error=>errors.push(error.message)
+      page.on('pageerror',onError)
+      await page.goto('http://127.0.0.1:55462'+route)
+      await page.waitForLoadState('networkidle')
+      await page.locator('.topbar h1').waitFor()
+      const filename=`integrated-${route.slice(1)||'home'}-${width}.png`
+      const bytes=await page.screenshot()
+      await fs.writeFile(new URL('screenshots/'+filename,root),bytes)
+      results.push({route,width,filename,heading:await page.locator('.topbar h1').innerText(),page_errors:errors,sha256:crypto.createHash('sha256').update(bytes).digest('hex')})
+      page.off('pageerror',onError)
+    }
+    await page.close()
+  }
+  const manifest={source_head:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),chrome:browser.version(),scope:'Actual integration development UI; owned synthetic SQLite/media; empty business pages are empty-state evidence, not positive workflow acceptance. Includes uncommitted sidebar display fix.',results}
+  await fs.writeFile(new URL('screenshots/integrated-pages-manifest.json',root),JSON.stringify(manifest,null,2))
+  console.log(JSON.stringify({screenshots:results.length,page_errors:results.flatMap(x=>x.page_errors)}))
+}finally{await browser.close()}

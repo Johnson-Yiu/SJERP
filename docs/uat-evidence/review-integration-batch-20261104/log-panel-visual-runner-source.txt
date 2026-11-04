@@ -1,0 +1,44 @@
+import { chromium } from '../frontend/node_modules/@playwright/test/index.mjs'
+import fs from 'node:fs/promises'
+import crypto from 'node:crypto'
+import assert from 'node:assert/strict'
+
+const root = new URL('../docs/uat-evidence/review-integration-batch-20261104/', import.meta.url)
+const source = await fs.readFile(new URL('../frontend/src/components/OperationLogPanel.vue', import.meta.url))
+const browser = await chromium.launch({ channel: 'chrome', headless: true })
+const metrics = []
+try {
+  for (const width of [1440, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: width === 390 ? 844 : 950 } })
+    await page.goto('http://127.0.0.1:55462/customers?tab=followups&detail=1')
+    await page.getByRole('heading', { name: '集成验收合成客户-20261104', exact: true }).waitFor()
+    await page.getByRole('button', { name: '查看 记录 详情', exact: true }).click()
+    const panel = page.locator('.operation-log-panel')
+    await panel.getByText('当前身份或环境未启用操作日志。', { exact: true }).waitFor()
+    await panel.scrollIntoViewIfNeeded()
+    const layout = await panel.evaluate(el => {
+      const heading = el.querySelector('h3')
+      const range = document.createRange()
+      range.selectNodeContents(heading)
+      return {
+        viewport: [innerWidth, innerHeight], scrollWidth: document.body.scrollWidth,
+        headingText: heading.textContent, headingTextLines: range.getClientRects().length,
+        panel: el.getBoundingClientRect().toJSON(), text: el.innerText,
+      }
+    })
+    assert.equal(layout.headingText, '操作日志')
+    assert.equal(layout.headingTextLines, 1)
+    assert.ok(layout.scrollWidth <= width, 'unexpected horizontal overflow')
+    const image = await page.screenshot()
+    const filename = `log-panel-chrome-${width}.png`
+    await fs.writeFile(new URL(`screenshots/${filename}`, root), image)
+    metrics.push({ filename, chrome: browser.version(), channel: 'chrome', headless: true,
+      component_sha256: crypto.createHash('sha256').update(source).digest('hex'),
+      image_sha256: crypto.createHash('sha256').update(image).digest('hex'), ...layout })
+    await page.close()
+  }
+  await fs.writeFile(new URL('screenshots/log-panel-chrome-metrics.json', root), JSON.stringify(metrics, null, 2) + '\n')
+  console.log(JSON.stringify({ passed: metrics.length, failed: 0, metrics }))
+} finally {
+  await browser.close()
+}

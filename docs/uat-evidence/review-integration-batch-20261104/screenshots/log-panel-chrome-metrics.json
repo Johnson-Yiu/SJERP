@@ -1,0 +1,54 @@
+[
+  {
+    "filename": "log-panel-chrome-1440.png",
+    "chrome": "156.0.8078.80",
+    "channel": "chrome",
+    "headless": true,
+    "component_sha256": "4edf3b2afce0ae11ef190022a795f4f1778679d8e38cc9d208af6dfe8cf1b096",
+    "image_sha256": "9191c8961b505a2fa8b00b9ed671fe699267703609501238ccb2ff6db9a41f7f",
+    "viewport": [
+      1440,
+      950
+    ],
+    "scrollWidth": 1440,
+    "headingText": "操作日志",
+    "headingTextLines": 1,
+    "panel": {
+      "x": 1177.59375,
+      "y": 643.234375,
+      "width": 216.390625,
+      "height": 261.390625,
+      "top": 643.234375,
+      "right": 1393.984375,
+      "bottom": 904.625,
+      "left": 1177.59375
+    },
+    "text": "操作日志\n\n记录创建、修改、删除及业务状态变更。\n\n未启用\n当前身份或环境未启用操作日志。"
+  },
+  {
+    "filename": "log-panel-chrome-390.png",
+    "chrome": "156.0.8078.80",
+    "channel": "chrome",
+    "headless": true,
+    "component_sha256": "4edf3b2afce0ae11ef190022a795f4f1778679d8e38cc9d208af6dfe8cf1b096",
+    "image_sha256": "d3a07deb1596a37480124fd6825edb19c2042b9375fe16f0ee6f4d0c3bab7745",
+    "viewport": [
+      390,
+      844
+    ],
+    "scrollWidth": 390,
+    "headingText": "操作日志",
+    "headingTextLines": 1,
+    "panel": {
+      "x": 16,
+      "y": 636.90625,
+      "width": 358,
+      "height": 181.390625,
+      "top": 636.90625,
+      "right": 374,
+      "bottom": 818.296875,
+      "left": 16
+    },
+    "text": "操作日志\n\n记录创建、修改、删除及业务状态变更。\n\n未启用\n当前身份或环境未启用操作日志。"
+  }
+]

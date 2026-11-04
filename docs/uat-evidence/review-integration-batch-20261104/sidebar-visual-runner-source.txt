@@ -1,0 +1,40 @@
+import { chromium } from '../frontend/node_modules/@playwright/test/index.mjs'
+import fs from 'node:fs/promises'
+import crypto from 'node:crypto'
+import assert from 'node:assert/strict'
+const root = new URL('../docs/uat-evidence/review-integration-batch-20261104/', import.meta.url)
+const browser = await chromium.launch({ channel: 'chrome', headless: true })
+const results = []
+try {
+  for (const width of [1440, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 950 } })
+    await page.goto('http://127.0.0.1:55462/customers')
+    const name = page.locator('.sidebar-identity strong')
+    await name.filter({hasText:'隔离合成开发身份'}).waitFor({state:'attached'})
+    if (width === 390) {
+      await page.locator('.mobile-menu').click()
+      await page.waitForFunction(() => Math.abs(document.querySelector('.sidebar').getBoundingClientRect().left) < 0.5)
+    }
+    await name.waitFor({state:'visible'})
+    const metrics = await name.evaluate(el => {
+      const sidebar = el.closest('.sidebar').getBoundingClientRect()
+      const rect = el.getBoundingClientRect()
+      return {text:el.textContent,title:el.title,rect:rect.toJSON(),sidebar:sidebar.toJSON(),
+        textOverflow:getComputedStyle(el).textOverflow,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,
+        bodyWidth:document.body.scrollWidth,viewport:innerWidth}
+    })
+    assert.ok(metrics.title.startsWith('隔离合成开发身份'))
+    assert.equal(metrics.textOverflow,'ellipsis')
+    assert.ok(metrics.scrollWidth > metrics.clientWidth)
+    assert.ok(metrics.rect.right <= metrics.sidebar.right)
+    assert.ok(metrics.sidebar.left >= -0.5)
+    assert.ok(metrics.bodyWidth <= width)
+    const image = await page.screenshot()
+    const filename = `sidebar-long-name-chrome-${width}.png`
+    await fs.writeFile(new URL(`screenshots/${filename}`,root),image)
+    results.push({filename,chrome:browser.version(),...metrics,sha256:crypto.createHash('sha256').update(image).digest('hex')})
+    await page.close()
+  }
+  await fs.writeFile(new URL('screenshots/sidebar-long-name-metrics.json',root),JSON.stringify({passed:2,failed:0,results},null,2))
+  console.log(JSON.stringify({passed:2,failed:0,results}))
+} finally { await browser.close() }

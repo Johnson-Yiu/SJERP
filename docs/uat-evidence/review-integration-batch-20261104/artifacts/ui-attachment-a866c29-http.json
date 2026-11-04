@@ -1,0 +1,12 @@
+{
+  "code_sha": "a866c2912c99bc9c193b4fb8cdf45d7479d726f6",
+  "url": "http://127.0.0.1:55462/api/media/follow-up-attachments/2026/11/56c7c00712d0446bbc1088d81debf251/e15ee78a8a564592b3da6586f0639f89",
+  "status": 200,
+  "content_type": "text/plain; charset=utf-8",
+  "content_disposition": "inline; filename=\"ui-attachment-synthetic.txt\"",
+  "cache_control": "private, no-store",
+  "nosniff": "nosniff",
+  "bytes": 70,
+  "sha256": "b3f77a6b02f428da8b8bdb8e81da8ea4fc756d091696994801f9755f9ab0423a",
+  "identity": "Owned synthetic development environment, not employee authentication acceptance"
+}

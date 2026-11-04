@@ -1,0 +1,20 @@
+[
+  {
+    "path": "docs/uat-evidence/history-takeover-batch-20261104/logs/github-ci-backend-41819456898.log",
+    "source_sha": "a0729a0965850028fe52f5b6fcc3e825f23b1289",
+    "original_sha256": "dfaeb84b2f335199d3d311ce60a59db49faf68e713e3cbee0e5c7e64be1050c3",
+    "readable_sha256": "6546d2144b1bb9c4924a0ad07e8b3bd5d09378f6e6cebb221ab64e14a5a4e4c5"
+  },
+  {
+    "path": "docs/uat-evidence/history-takeover-batch-20261104/logs/github-ci-frontend-41819456898.log",
+    "source_sha": "a0729a0965850028fe52f5b6fcc3e825f23b1289",
+    "original_sha256": "3e8b9e46b50a927445766f5a18f0ef64465e1880d980ed650028e2d6497fb5a4",
+    "readable_sha256": "d3d5c6914a3963a69b48c491f0d82d67181d00baba89699b05a37134fec13b2b"
+  },
+  {
+    "path": "docs/uat-evidence/history-takeover-batch-20261104/logs/github-ci-postgres17-41819456898.log",
+    "source_sha": "a0729a0965850028fe52f5b6fcc3e825f23b1289",
+    "original_sha256": "f4b9e8f2656b10bb706ded307bcc903a13769fe660c92a634305faa74eda5987",
+    "readable_sha256": "ba0fa6d899ce8efb97738c0a20ffcf3d9d616174d55d85f0ac9ff51824389983"
+  }
+]

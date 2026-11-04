@@ -11,6 +11,7 @@ from .trade_units import SKUTradeUnitViewSet
 from .file_access import protected_media
 from .report_templates import SharedReportTemplateViewSet
 from .history_import_preflight import HistoryImportPreflightView
+from .history_takeover_api import HistoryTakeoverDetailView, HistoryTakeoverGroupActionView, HistoryTakeoverListCreateView, HistoryTakeoverReportView, HistoryTakeoverTemplateView
 
 router = DefaultRouter()
 from .finance_closeout_api import FinanceCloseoutViewSet
@@ -78,5 +79,10 @@ urlpatterns = [
     path("import/csv/preview/", import_csv_preview),
     path("import/csv/execute/", import_csv_execute),
     path("import/history-preflight/", HistoryImportPreflightView.as_view(), name="history-import-preflight"),
+    path("import/history-takeovers/", HistoryTakeoverListCreateView.as_view(), name="history-takeover-list-create"),
+    path("import/history-takeovers/template/", HistoryTakeoverTemplateView.as_view(), name="history-takeover-template"),
+    path("import/history-takeovers/<int:application_id>/", HistoryTakeoverDetailView.as_view(), name="history-takeover-detail"),
+    path("import/history-takeovers/<int:application_id>/review-report.csv", HistoryTakeoverReportView.as_view(), name="history-takeover-report"),
+    path("import/history-takeovers/<int:application_id>/groups/<int:group_id>/<str:operation>/", HistoryTakeoverGroupActionView.as_view(), name="history-takeover-group-action"),
     path("", include(router.urls)),
 ]

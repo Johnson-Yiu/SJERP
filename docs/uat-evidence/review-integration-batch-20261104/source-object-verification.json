@@ -1,0 +1,996 @@
+{
+  "checked_head": "ce74f8b7cf6cd1e1e4e8f50141d9fc38e86c3903",
+  "scope": "Git object existence and ancestry only; non-ancestor is not proof equivalent implementation is missing, and ancestor is not acceptance.",
+  "counts": {
+    "references": 115,
+    "existing": 115,
+    "ancestors": 86
+  },
+  "commits": [
+    {
+      "sha": "0692f4db292bd6fdeea1997562fb79c662f03ae7",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "0b721fcd455b00d35d886f842380a95c38c31b96",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "0bba34c0e7139b77a88d2e838dbf921eff427373",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    },
+    {
+      "sha": "0eeaca68f6acf1f4029a1e955defaaafb765e046",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md"
+      ]
+    },
+    {
+      "sha": "0f0747a9d449e26e93885b3bf469a726f99ffaa8",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "10158f89b50ad477026f4ee2d4d4fd8177d5edcd",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "1480429338d0fc6de20384ea77a43e969a2b7de4",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "199a21e0f407ba9ad772a5dec86e0b30dbd0c9b5",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "1aba37600cadbdf88aebe787d742310bac1a333f",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md"
+      ]
+    },
+    {
+      "sha": "1b2ca0eb5b1947dd53f5ab995828dd33f514e0d4",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "1cad93d0cb0297c33f764f6cb68d5c610512d9e4",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "1d576e961dc021d194e0ec2f9fd7dd6fc629535d",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "2111d193ef3a69db05c23e27813cfbf26d9034d7",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "21812b7c1190540a7214d4b77518ede31221180a",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "273d4a30689b4052e36f0d6338aeb409553aaf1f",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md"
+      ]
+    },
+    {
+      "sha": "28ba758388429f57c2e3516e12385a88ce6646a3",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "2c585901f9e3b7f245dc966940ef70fbd2bba237",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "2d5164287672d9a57a6496761c3ea0d026088072",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "2dc00706696c5035aadd1a64da34bc0266e9a326",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    },
+    {
+      "sha": "2e25b743884123d7ae5599c89586988a12791bf4",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "3571d374adb8e41d515265a5c429639d5b8f4904",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "3625f472b028146c062823990322de32a98759a1",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "3961ef6c4b0499adb0689f14be73372692ddac3f",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "3cf5a8155df746728b0c3c56fc6fd1e8fa7a6e59",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    },
+    {
+      "sha": "3ec269246c39c77bb34d530d8817ba0cb136c9a6",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md"
+      ]
+    },
+    {
+      "sha": "4298c31ec043b2f3fc2d690768455d7df417de08",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "4388947d70d26bca66ca0bfc76b2383a2fc0d404",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    },
+    {
+      "sha": "46353a5436637832f5adadb7bdef6b45cdeada23",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "470eb34e161d97f68ff8a1151870a6ab687f32ea",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "47fcab0f6f37f52475074e65ab7ab188352ae8ce",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "48a2126b07670c5e228180d7e6ca100fa12dbb64",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    },
+    {
+      "sha": "4e4ca504ee398da85fe23cc53d534c6008807e5c",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "512e739ac2beffe90e7153087509b2734c64e853",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    },
+    {
+      "sha": "5a05a8b0c4d856c9378cad452b1e98307bd135c0",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "60df1b045c06c7f2146b44e4a60866b1786024cc",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "61d857c213d832101a19ca5ed13a16f9d7832107",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "64fb397aa065062e192ceb30040421f59b63a08c",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "657a65c10e0234345a2c648998f6d283c500d1b4",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "66338b701afed071bd6482a33a8cca8ebc20bfa2",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "6d5ce10a2ce8a432b427371542eac7378daca655",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "6ec1a50ee14fd17a64de4f68cd63e2b2c426b47b",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "71ec4a4c2d860b9944624a1434d9d7580e9a6d38",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "72a6b27f3f855424f16cd9657996055c68b5ca95",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "7402ad38cf40d1eea0adb076e67021c31be8ac1e",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "742692a6e4887e4b8352736e69a52b1ebe8d066f",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    },
+    {
+      "sha": "7429c9630305bfad61f16475dd5617c13c07959e",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md"
+      ]
+    },
+    {
+      "sha": "7951ecb8c6196f773128ad5978bfcd0a5b30c6b5",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "79841e382c882f33444627e65310170a47a444cf",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "7ab9913e03f1bde341158237e51aeebf77a86abc",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "80a93559852d9d679c86d71250549261c7c2bbd1",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "80dc73ae4ae47f9e04969f39b441af206d34306b",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "82514b1396e1e53d44bcd9314d19bbb65b0fbeed",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "86650adc795ae18a087996b0bdbe37747397e3e0",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "8706200632980c7e3a6a5e0b776e81fdac7e1613",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "8b2b5c19e517addd9604b239211e199a789b739e",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "8cb265e1645bf84d0274f77f2d684f71967fad83",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "8cff96af9f1f2e09dcbc0a29f361017ee23ffb75",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "8d3ca5faa16fb74de95dbc716f5556a5d51bbe79",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "901b762fba20ed558f554cfba37175b303f83db9",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md"
+      ]
+    },
+    {
+      "sha": "9250b066cbd28fd09bd2b1cc1f057604de1f76d9",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "92e8c46d4ce01e18cd164e152d345c58433c9305",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "93736e0773ca2136d4070a604e62324cf832dc6f",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "951adda34b5c60b303725702514cdacac17cc58d",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "9a4d70e1425928358be7001ece43327c00557b0c",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "9c5f1f821cfc1b436f5fffe0b681991fa056b34d",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    },
+    {
+      "sha": "9cd57800ce524d8e0ead90f245215ac4153cf144",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "9d05a70c07d1d8eb9d080dd1d75ea608209a799b",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "9d08009f62920c62399ec48defe7f4d1c2e21411",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "9edbb6488a66a0801ecc1e5bc842df7866c6c7dc",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    },
+    {
+      "sha": "9f0e59ea4e31778e0944bdac8cff858d0cfd9fa2",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "a2cbdecfdb9a827036a51e4d3acb74e45db3d6f2",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "a4fc6d4f01f8c32a4a89f0d46557500a34566e98",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "a55469c1b07e4f13037c6644c69d8a35ef0496a0",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "a6c5b56a00326234681399a3405efa2117198f76",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "a8dd277609d7364d301d1a330f717f00962d8619",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "ab9ce886094a065766a24b35d9b82c7a7c0fd067",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "ad3a08ebd47ad4b94ffe8f6ebfed5f083b9ac57e",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "aef3425ec97b78c3a312f54010d9de60613e75a4",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "af018ac63cf71143d223b9f6db4a087707495693",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "b3559f3bf83b967d06166bd409b00fc92e4e5902",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "b64c54b07908d4bb462c64f120c351d148e06f6f",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "b79af36dc7140507ef210ea61437dd579ba8de8b",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "b916fab613806a9fd00636cc87496803557d45a8",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "b95852a4e4152d60976aa16d3f8e229b1e07a934",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "bd324a8c3fb64af245c3afcabbd4301c84f7711c",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "c27abcb2e95b833c3a4f4c59161c3fcc7c1d4f64",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "c356e57014d28295485d52df23612c2fe6c02444",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    },
+    {
+      "sha": "c3739e77562c5dd8995228d5c3e7375a6728d316",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "c5fc1c11b9728655a363a4f2a5ba0544584a8d07",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "c6a1415437fb2a020ec31d655fe8ce274aa93912",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "c88a121298465fcb04e11f9b65ef9ad251eadf3f",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "c895e1d0d758c1a9c158e940975689dc4b0ae0d6",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "ca486be514744d8d00344cb997a1f0c1389129f0",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "caf0aadf5f7305d5c0d69020a07d2aeab71e4f34",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    },
+    {
+      "sha": "cb2a90d36dbbecc062becbf13d879703b6856456",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "d08ca625ac6beeec51ecc14eb92c97da0ea6f63b",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "d5abc64750d00c89d685bf12c0f8f67d4ba10a97",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "d5d0d15c03d55a718f11a298e08f29a9b9d0c4b0",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "d82643907f2886ecc412fdfa8839d2b8cc165751",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md"
+      ]
+    },
+    {
+      "sha": "da39ea3aa986df9faa12e79b1da3adece03260b7",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "dba4a81c10a464012aa004a539a16378f7517b0e",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "dea057ce0c98fc32da44b72999beb4af78a58176",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "dfa36058206fe7021ff6e6192fbbd247fb471947",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md"
+      ]
+    },
+    {
+      "sha": "e6b40cadb04c54ef3376307daba19f78276a913d",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "e958fe1518093d6179f8281f12bc5c722edd707e",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-PACK.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "efb2546b69ae4ace60715dcb97803145248d3a1b",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "f12b591cb90d6a5d8ebfedf1c559703377c92d84",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md"
+      ]
+    },
+    {
+      "sha": "f2a44dafabdd5cc7b4c5b95abed3865867fd9e7b",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "f2b7fd6487459be69be687ccfeab09e7947df995",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md"
+      ]
+    },
+    {
+      "sha": "f308502362fc8bbee1a57d3905b5c12278719a05",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": false,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    },
+    {
+      "sha": "f779ed858da3bc4dd468645f5405b0fed2556a8d",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    },
+    {
+      "sha": "f936fda9d7276594dbe0edfe1b1f11ab3312c20d",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "f9e2c7493ba86007fb6969d826d336dc4077edb7",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-WORKSPACE-UI.md"
+      ]
+    },
+    {
+      "sha": "fb859b91f68bb62c539d5439c65b52c06f13a58c",
+      "commit_exists_locally": true,
+      "ancestor_of_checked_head": true,
+      "referenced_by": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-REPORTING-UI.md"
+      ]
+    }
+  ]
+}

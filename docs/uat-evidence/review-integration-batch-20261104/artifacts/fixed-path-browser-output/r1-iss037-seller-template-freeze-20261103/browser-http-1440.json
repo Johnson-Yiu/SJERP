@@ -1,0 +1,12 @@
+{
+  "status": 200,
+  "seller": {
+    "name": "Synthetic Seller",
+    "saler": "Synthetic Contact",
+    "address": "Synthetic Address",
+    "email": "synthetic@example.invalid",
+    "phone": "+00 000000"
+  },
+  "sha256": "bbbdf51a61f91bff7ee3602d620df7ee0f69b7beb9799b9026b08268bffe5760",
+  "synthetic_quote": "SYNTH-90A41556"
+}

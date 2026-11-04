@@ -1,0 +1,205 @@
+{
+  "artifacts": {
+    "sales-after-finance.json": {
+      "bytes": 1873,
+      "content_type": "application/json; charset=utf-8",
+      "sha256": "c81bdd271c4292f30e0c260c0c5084b432850d38601f9eaeb620899bf3a9ad06"
+    },
+    "sales-before-finance.json": {
+      "bytes": 1658,
+      "content_type": "application/json; charset=utf-8",
+      "sha256": "c96d8a53fda64d207711aa4d716720019dc08630cf583f8769b722ffd45f64af"
+    },
+    "sales-quote-pi.xlsx": {
+      "bytes": 10159,
+      "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "sha256": "61f6fe3def51ebb161c9f13b50bd3e1b061a6d7a9dbfbf392502aefe9d23581d"
+    },
+    "sales-sales-report.csv": {
+      "bytes": 529,
+      "content_type": "text/csv; charset=utf-8",
+      "sha256": "e465c2d7ab64f610cec1ec3bb481e70a3234c21d21281b73c8dd4f001f11bfd4"
+    }
+  },
+  "http_events": [
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/quotes/",
+      "response_bytes": 1400,
+      "response_charset": "utf-8",
+      "response_sha256": "4836526d00f3c934d2c52d38b57e397ab26a688feff4a6c0aa1ee9d39d2a26ce",
+      "status": 201
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/quotes/2/mark-sent/",
+      "response_bytes": 1402,
+      "response_charset": "utf-8",
+      "response_sha256": "5840768ed2373b6e81df45b527643fcc53038ba033cfeb3fe997aedd3a45ab7c",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/quotes/2/accept/",
+      "response_bytes": 1406,
+      "response_charset": "utf-8",
+      "response_sha256": "c8a15acb557da970323094aa16fc06bd180118e813b8d4ac77b5d98108a37d9e",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "GET",
+      "path": "/api/quotes/2/order-draft/",
+      "response_bytes": 629,
+      "response_charset": "utf-8",
+      "response_sha256": "281bda9c44a4ab2d44faff6b446c24d0c4c5e884e96f6d6cf84c02823733a988",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/orders/",
+      "response_bytes": 1547,
+      "response_charset": "utf-8",
+      "response_sha256": "449eabe2c5c754baa7f0ccb671c8d1cbce433d4fd6ef68e8d3bd9b1571eb4bf3",
+      "status": 201
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "GET",
+      "path": "/api/quotes/2/",
+      "response_bytes": 1406,
+      "response_charset": "utf-8",
+      "response_sha256": "c8a15acb557da970323094aa16fc06bd180118e813b8d4ac77b5d98108a37d9e",
+      "status": 200
+    },
+    {
+      "charset_source": "not applicable",
+      "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "detail": null,
+      "method": "GET",
+      "path": "/api/quotes/2/export/",
+      "response_bytes": 10159,
+      "response_charset": null,
+      "response_sha256": "61f6fe3def51ebb161c9f13b50bd3e1b061a6d7a9dbfbf392502aefe9d23581d",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": "当前报价状态不能执行此操作，请创建修订版重新报价。",
+      "error_response_raw_hex": "7b2264657461696c223a22e5bd93e5898de68aa5e4bbb7e78ab6e68081e4b88de883bde689a7e8a18ce6ada4e6938de4bd9cefbc8ce8afb7e5889be5bbbae4bfaee8aea2e78988e9878de696b0e68aa5e4bbb7e38082227d",
+      "method": "POST",
+      "path": "/api/quotes/2/reject/",
+      "response_bytes": 88,
+      "response_charset": "utf-8",
+      "response_sha256": "56efb09aa08b342146572408b42abecec587d70666dc4f6ddf02bffcc9a9c7ec",
+      "status": 400
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "GET",
+      "path": "/api/quotes/2/",
+      "response_bytes": 1406,
+      "response_charset": "utf-8",
+      "response_sha256": "c8a15acb557da970323094aa16fc06bd180118e813b8d4ac77b5d98108a37d9e",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/orders/2/confirm/",
+      "response_bytes": 1662,
+      "response_charset": "utf-8",
+      "response_sha256": "d3786531eedd6bd6ff339855144841724360f74bef4a691982b80a766f9e1363",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "GET",
+      "path": "/api/reports/data/?source=sales&group_by=customer&date_from=2026-11-01&date_to=2026-11-30",
+      "response_bytes": 835,
+      "response_charset": "utf-8",
+      "response_sha256": "08f3a6665f2d6d5aae30ccb4b81a320a3c5d751b65209ba822b7e1d57ade1b3c",
+      "status": 200
+    },
+    {
+      "charset_source": "Content-Type header",
+      "content_type": "text/csv; charset=utf-8",
+      "detail": null,
+      "method": "GET",
+      "path": "/api/reports/data/?source=sales&group_by=customer&date_from=2026-11-01&date_to=2026-11-30&export=csv",
+      "response_bytes": 529,
+      "response_charset": "utf-8",
+      "response_sha256": "e465c2d7ab64f610cec1ec3bb481e70a3234c21d21281b73c8dd4f001f11bfd4",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "GET",
+      "path": "/api/payment-plans/?direction=receivable&search=SO-2026-00001",
+      "response_bytes": 1084,
+      "response_charset": "utf-8",
+      "response_sha256": "c16b2b9303b52b4ece06f09ef28031c2f413d650d4da32d8a20f0f635a8aab69",
+      "status": 200
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/payment-plans/5/settle/",
+      "response_bytes": 761,
+      "response_charset": "utf-8",
+      "response_sha256": "8cd910561d6790078e9afcfc58c1a607c9eadaa3cfedef497781dab94c57a405",
+      "status": 201
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "error_response_raw_hex": "7b22616d6f756e74223a5b22e5bf85e9a1bbe5a4a7e4ba8ee99bb6e38082225d7d",
+      "method": "POST",
+      "path": "/api/payment-plans/5/settle/",
+      "response_bytes": 33,
+      "response_charset": "utf-8",
+      "response_sha256": "aedfdb91ae72b7cb60dadee35a7a64d1e7c08fe3e80606793127776832e51a17",
+      "status": 400
+    },
+    {
+      "charset_source": "JSON default UTF-8",
+      "content_type": "application/json",
+      "detail": null,
+      "method": "POST",
+      "path": "/api/transactions/2/void/",
+      "response_bytes": 826,
+      "response_charset": "utf-8",
+      "response_sha256": "ce9b1539464b0b6ec332c39156f245358c1622147dd4b2c5b657df1f855125d6",
+      "status": 200
+    }
+  ],
+  "test": "test_quote_export_order_and_receivable_are_saved_and_reconciled_over_http"
+}

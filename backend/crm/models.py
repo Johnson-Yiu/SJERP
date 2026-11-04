@@ -2241,6 +2241,17 @@ class CashSourceAllocation(TimestampedModel):
         raise ValidationError("资金来源分配必须保留。")
 
 
+# Keep the historical takeover workflow in its own module while registering its
+# models in the existing CRM app.
+from .history_takeover_models import (  # noqa: E402,F401
+    HistoryTakeoverApplication,
+    HistoryTakeoverEvent,
+    HistoryTakeoverGroup,
+    HistoryTakeoverHandoff,
+    HistoryTakeoverSourceRecord,
+)
+
+
 class AdvanceAllocation(TimestampedModel):
     """Non-cash allocation: keeps cash totals unchanged and preserves reversal history."""
     advance = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name="allocations")

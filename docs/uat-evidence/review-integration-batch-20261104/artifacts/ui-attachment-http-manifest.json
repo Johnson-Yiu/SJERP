@@ -1,0 +1,12 @@
+{
+  "code_sha": "0914002b5d8b3c848b1a78d2cc6e0419764d9053",
+  "environment": "Owned SQLite/media; development identity, not employee login",
+  "url": "http://127.0.0.1:55462/api/media/follow-up-attachments/2026/11/56c7c00712d0446bbc1088d81debf251/e15ee78a8a564592b3da6586f0639f89",
+  "status": 200,
+  "sha256": "b3f77a6b02f428da8b8bdb8e81da8ea4fc756d091696994801f9755f9ab0423a",
+  "bytes": 70,
+  "content_type": "text/plain; charset=utf-8",
+  "scope": "Actual IAB upload/save/reopen followed by real HTTP download; no claim of authenticated employee download",
+  "content_disposition": "inline; filename=\"e15ee78a8a564592b3da6586f0639f89\"",
+  "cache_control": "private, no-store"
+}

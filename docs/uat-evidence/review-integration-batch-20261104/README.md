@@ -1,5 +1,7 @@
 # REVIEW-INTEGRATION-BATCH-01 当前交付状态
 
+当前接收与回归更新（2026-11-05）：财务完整稳定来源e301a86044ffe56b72172a94dc3b00ae09401b05、Linux完整稳定来源4a4f338b09e9a464f1e66c24a905c35c970729bf均已合入（当前接收锚点536789f6dbafb2874b1abfd33ade2b30faa123a4），来源各自CI均成功，不能替代集成CI。a840冻结版本SQLite1330项1266通过/64跳过、PG1330项1300通过/30跳过，均0失败；合入财务来源后d4e8586的三条原反例SQLite3/3及财务PG30/30通过。Linux预审新发现0600签名回执跨UID交接缺口，归ISS-018，集成内最小修复及真实Linux回归中。历史接续仍在开发验收，未交付完整稳定SHA；当前不能称最终集成完成。最后已核实的统一分支三CI仍为906/41855319673，后文该CI只覆盖其精确SHA。
+
 ## 最新补修代码及实际CI
 
 已正常推送代码 **90683506f5d9447974302d83c89ba27351d5dfd4**；[CI41855319673](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41855319673)三项均SUCCESS，主审已读取实际job日志与artifact元数据绑定同一SHA。这是开发侧实证，不是ChatGPT对86项Issue的独立接受。

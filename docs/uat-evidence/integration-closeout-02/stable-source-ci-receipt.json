@@ -1,0 +1,94 @@
+{
+  "checked_at": "2026-11-05",
+  "scope": "Source CI only; final integration CI remains separate",
+  "sources": [
+    {
+      "name": "finance-adversarial",
+      "sha": "e301a86044ffe56b72172a94dc3b00ae09401b05",
+      "runs": [
+        41862778457
+      ],
+      "results": [
+        {
+          "run_id": 41862778457,
+          "jobs": [
+            {
+              "id": 126688893472,
+              "name": "backend",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "id": 126688893751,
+              "name": "backend-postgres",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "id": 126688893899,
+              "name": "frontend",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "linux-operations",
+      "sha": "4a4f338b09e9a464f1e66c24a905c35c970729bf",
+      "runs": [
+        41866028447,
+        41866028480
+      ],
+      "results": [
+        {
+          "run_id": 41866028447,
+          "jobs": [
+            {
+              "id": 126700319169,
+              "name": "backend",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "id": 126700319517,
+              "name": "frontend",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "id": 126700320173,
+              "name": "backend-postgres",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "run_id": 41866028480,
+          "jobs": [
+            {
+              "id": 126700319715,
+              "name": "nginx-private-media",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "id": 126700319798,
+              "name": "media-fence",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "id": 126700319844,
+              "name": "postgres-role-receipts",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

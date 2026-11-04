@@ -5,6 +5,7 @@ postgres-9068350/** -text
 role-pg-9af/** -text
 lock-order-pg/** -text
 lock-order-pg-committed-a840/** -text
+full-pg-a840/** -text
 *.zip binary
 **/*.png binary
 **/*.jpg binary

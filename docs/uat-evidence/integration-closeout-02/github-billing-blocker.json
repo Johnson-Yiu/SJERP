@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-11-05",
+  "repository": "Johnson-Yiu/SUNJACK-ERP",
+  "observed_run_id": 41874838749,
+  "observed_source_sha": "e8fcc5f7a9b4afdda762810a83134657b9589e93",
+  "scope": "Historical source run, independently read via GitHub API; not a final integration result",
+  "jobs": ["frontend", "backend", "backend-postgres"],
+  "each_job_steps": 0,
+  "each_job_conclusion": "failure",
+  "annotation": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+  "classification": "BLOCKED: GitHub account billing/spending condition, tests never started",
+  "action": "Continue all independent local validation and push the completed stable integration; inspect its own exact-SHA run. Account owner must resolve billing before CI and real Linux runner checks can execute. No billing, workflow evasion, cancellation or blind retries performed."
+}

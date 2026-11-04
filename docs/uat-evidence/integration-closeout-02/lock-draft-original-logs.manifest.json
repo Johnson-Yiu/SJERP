@@ -1,0 +1,76 @@
+{
+  "files": [
+    {
+      "bytes": 453,
+      "sha256": "bc615686e837d944dbb8eee4c6863bc80d9e676e8aec814e2998464c32031b9c",
+      "archive_member": "logs/lock-order-90683506/lock-order-postgres-90683506-uncommitted.log",
+      "source_path": "docs/uat-evidence/integration-closeout-02/logs/lock-order-90683506/lock-order-postgres-90683506-uncommitted.log"
+    },
+    {
+      "bytes": 170,
+      "sha256": "e738ba0f3b95dd959d1fc85c72e172d19f46ef7d51d06f3a6497a56e54e4dc94",
+      "archive_member": "logs/lock-order-90683506/lock-order-postgres-r1-90683506-uncommitted.log",
+      "source_path": "docs/uat-evidence/integration-closeout-02/logs/lock-order-90683506/lock-order-postgres-r1-90683506-uncommitted.log"
+    },
+    {
+      "bytes": 14888,
+      "sha256": "10e892f50bea91e0e1bc4a7ae031a40d318222d372cce5a9cd59ff03faadf15a",
+      "archive_member": "logs/lock-order-90683506/lock-order-postgres-r2-90683506-uncommitted.log",
+      "source_path": "docs/uat-evidence/integration-closeout-02/logs/lock-order-90683506/lock-order-postgres-r2-90683506-uncommitted.log"
+    },
+    {
+      "bytes": 13923,
+      "sha256": "853843eaf21bb43b480c9c2f827e5232d1bad3307451e46099aed8e695b59ea9",
+      "archive_member": "logs/lock-order-90683506/lock-order-postgres-r3-90683506-uncommitted.log",
+      "source_path": "docs/uat-evidence/integration-closeout-02/logs/lock-order-90683506/lock-order-postgres-r3-90683506-uncommitted.log"
+    },
+    {
+      "bytes": 13921,
+      "sha256": "bdeaa125960a28f29c1f1bd8ce35bce447836dcf8a64ec1ceb8edbbd2cd3e686",
+      "archive_member": "logs/lock-order-90683506/lock-order-postgres-r4-90683506-uncommitted.log",
+      "source_path": "docs/uat-evidence/integration-closeout-02/logs/lock-order-90683506/lock-order-postgres-r4-90683506-uncommitted.log"
+    },
+    {
+      "bytes": 20104,
+      "sha256": "c8cbc7df126f3fc069bad0f13e403b0eed997e8ded747cd781a514ee93871da1",
+      "archive_member": "logs/lock-order-90683506/lock-order-postgres-r5-90683506-uncommitted.log",
+      "source_path": "docs/uat-evidence/integration-closeout-02/logs/lock-order-90683506/lock-order-postgres-r5-90683506-uncommitted.log"
+    },
+    {
+      "bytes": 21596,
+      "sha256": "219662d2d753055ccf86be9b3bc9dd2ed399aa0da88cbddb34b24c73426309f5",
+      "archive_member": "logs/lock-order-90683506/lock-order-postgres-r6-90683506-uncommitted.log",
+      "source_path": "docs/uat-evidence/integration-closeout-02/logs/lock-order-90683506/lock-order-postgres-r6-90683506-uncommitted.log"
+    },
+    {
+      "bytes": 193,
+      "sha256": "92311bef3eb82c3eb288d77a40706d7408f2ab86d6c823491824dd8eec294212",
+      "archive_member": "logs/lock-order-90683506/lock-order-postgres-r7-90683506-uncommitted.log",
+      "source_path": "docs/uat-evidence/integration-closeout-02/logs/lock-order-90683506/lock-order-postgres-r7-90683506-uncommitted.log"
+    },
+    {
+      "bytes": 207,
+      "sha256": "25a99d6a226110727d449ab62f3e277a337859b83d20f67b7f0a8e40e6a7ef22",
+      "archive_member": "logs/lock-order-90683506/lock-order-postgres-r8-90683506-uncommitted.log",
+      "source_path": "docs/uat-evidence/integration-closeout-02/logs/lock-order-90683506/lock-order-postgres-r8-90683506-uncommitted.log"
+    },
+    {
+      "bytes": 213,
+      "sha256": "e5bc6d4129450f3383057a714735750318b5d833dc2eed3ad56837add866314c",
+      "archive_member": "logs/lock-order-90683506/lock-order-postgres-final-90683506-uncommitted.log",
+      "source_path": "docs/uat-evidence/integration-closeout-02/logs/lock-order-90683506/lock-order-postgres-final-90683506-uncommitted.log"
+    },
+    {
+      "bytes": 378,
+      "sha256": "f97d3749525a9ae094e24b7d392e11a930c5a8f74de4c1889225ecffd67daf0a",
+      "archive_member": "lock-order-pg/logs/lock-order-postgres-9af2a32-draft.log",
+      "source_path": "docs/uat-evidence/integration-closeout-02/lock-order-pg/logs/lock-order-postgres-9af2a32-draft.log"
+    }
+  ],
+  "file_count": 11,
+  "archive_bytes": 20500,
+  "schema_version": 1,
+  "archive_sha256": "eb3ba956de8d35be996c27bde6e813c2abf418936490e795fa57ab2037956605",
+  "original_bytes_verified": true,
+  "archive": "lock-draft-original-logs.zip"
+}

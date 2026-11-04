@@ -248,7 +248,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-18 R1-A-FUP-02：业务负责人方案A明确；用户确认FUP-01已独立复审通过。真实USD500全部发货、收340欠160时完成履约，应收/逾期/待办保留；尾款收齐及退款40后状态正确恢复。根因是orderTasks对completed提前返回空数组，已修复并增加只读财务派生状态与权限保护；不改完成条件或历史余额。证据：[FUP-02验收](R1-A-FUP-02-订单履约财务分离验收.md)。"
           },
           {
             "kind": "core_23",
@@ -476,7 +477,8 @@
                 "reason": "Duplicate regex substring of the already resolved complete Chinese filename, not a separately missing file"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）；2026-10-18 R1-A：USD直接记账、计划拆分、合法无计划预收及超额已真实成功；新增稳定流水号/保存中保护；同表单重试复用编号。跨刷新、全站并发幂等与真实提交后断网仍未完整覆盖。 证据：[R1-A报告](R1-A-核心业务历史Issue核实与修复.md)。"
           },
           {
             "kind": "core_23",
@@ -704,7 +706,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）；2026-10-18 R1-A：隔离真实UI完成无Sales Order的双SKU采购（含无来源明细）、交易单位、部分收货/冲销/重收及分批付款；265USD全结清。保存断网与全部来源组合仍需补验。 证据：[R1-A报告](R1-A-核心业务历史Issue核实与修复.md)。"
           },
           {
             "kind": "core_23",
@@ -876,7 +879,8 @@
                 "reason": "Duplicate regex substring of the already resolved complete Chinese filename, not a separately missing file"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-24 / `codex/iss-008-country-select` / 实现提交 `90f30d5`"
           },
           {
             "kind": "matrix_supplement",
@@ -1024,7 +1028,8 @@
                 "resolved_path": "docs/uat-evidence/r1-iss008-aliases-bd324-20261031/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-31 / `codex/r1-iss008-aliases-bd324-20261031` / 浏览器测试提交 `dba4a81c10a464012aa004a539a16378f7517b0e`；基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`"
           },
           {
             "kind": "matrix_supplement",
@@ -1180,7 +1185,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "ui_workspace",
@@ -1319,7 +1325,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "ui_workspace",
@@ -1469,7 +1476,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "matrix_supplement",
@@ -1635,7 +1643,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "matrix_supplement",
@@ -1846,7 +1855,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "core_23",
@@ -2019,7 +2029,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "core_23",
@@ -2192,7 +2203,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "core_23",
@@ -2342,7 +2354,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "ui_workspace",
@@ -2525,7 +2538,8 @@
                 "resolved_path": "docs/uat-evidence/iss-019-report-csv/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-24 / `cb2a90d36dbbecc062becbf13d879703b6856456`"
           },
           {
             "kind": "core_23",
@@ -2708,7 +2722,8 @@
                 "resolved_path": "docs/uat-evidence/iss-020-quote-export/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-26 / `codex/iss-020-quote-export`，基线 `28ba758388429f57c2e3516e12385a88ce6646a3`"
           },
           {
             "kind": "core_23",
@@ -2891,7 +2906,8 @@
                 "resolved_path": "docs/uat-evidence/iss-021-integration/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-26 / `codex/next-iss-021-integration`，基线 `b3559f3bf83b967d06166bd409b00fc92e4e5902`"
           },
           {
             "kind": "core_23",
@@ -3087,7 +3103,8 @@
                 "resolved_path": "docs/uat-evidence/integration-r1-repairs-20261028/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-28 / `codex/repair-supplier-purchase-ux-r2` 精确来源 SHA `64fb397aa065062e192ceb30040421f59b63a08c`，集成真实隔离 API/Chrome MOQ 场景 1/1 通过；全量浏览器套件中的对应 spec 亦通过。截图和日志见 [本轮集成报告](uat-evidence/integration-r1-repairs-20261028/README.md)。"
           },
           {
             "kind": "core_23",
@@ -3268,7 +3285,8 @@
                 "resolved_path": "docs/uat-evidence/integration-043-075-023/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-26 / `codex/integration-043-075-023`，源提交 `c6a1415437fb2a020ec31d655fe8ce274aa93912`，基线 `f12b591cb90d6a5d8ebfedf1c559703377c92d84`"
           },
           {
             "kind": "matrix_supplement",
@@ -3494,7 +3512,8 @@
                 "reason": "Duplicate regex substring of the already resolved complete Chinese filename, not a separately missing file"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-28 / 固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；采购推荐成果 `1d576e961dc021d194e0ec2f9fd7dd6fc629535d`，集成验收基线 `b3559f3bf83b967d06166bd409b00fc92e4e5902`。客户+SKU推荐、一次性来源、客户长期偏好、停用过滤和成本口径已有证据；将滞后 OPEN 校准为 FIXED_PENDING_REVIEW，仍待独立业务/代码复审，不关闭。历史台账结论保留：UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "core_23",
@@ -3670,7 +3689,8 @@
                 "resolved_path": "docs/uat-evidence/review-iss025-status-consistency/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-27 / `codex/iss025-report-visual-evidence` / 证据提交 `f9e2c7493ba86007fb6969d826d336dc4077edb7`，基于 `d5d0d15c03d55a718f11a298e08f29a9b9d0c4b0` 的本轮真实 Chrome 视觉补验；新截图及 API/窄屏测量见 [ISS-025-FIX-02 证据](uat-evidence/review-iss025-status-consistency/README.md)"
           },
           {
             "kind": "ui_workspace",
@@ -3858,7 +3878,8 @@
                 "resolved_path": "docs/uat-evidence/iss-026-supplier-lifecycle/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-24 / `codex/iss-026-supplier-lifecycle`：供应商新增 `is_active` 生命周期；API 永久删除统一 405；启用/停用事务审计、候选过滤、新采购拦截、历史采购/付款/来源保留及前端生命周期操作均通过；证据见 [ISS-026 验收](uat-evidence/iss-026-supplier-lifecycle/README.md)。"
           },
           {
             "kind": "core_23",
@@ -4045,7 +4066,8 @@
                 "reason": "Duplicate regex substring of the already resolved complete Chinese filename, not a separately missing file"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-26；统一集成分支 `codex/integration-021-029-027`"
           },
           {
             "kind": "ui_workspace",
@@ -4196,7 +4218,7 @@
           {
             "kind": "current_ledger",
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[30]",
-            "statement": "2026-11-04 核对当前4388947d70d26bca66ca0bfc76b2383a2fc0d404：集成修复47fcab0f6f37f52475074e65ab7ab188352ae8ce已含根分类直接选择、属性继承及真实HTTP/截图证据（uat-evidence/iss-028-035-category-schema/）；当前基线CI三项成功，等待独立复审。历史时点记录（不再作为当前未修复结论）：2026-10-28 / 固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；`codex/verify-iss028-035-category-schema` 当前仅指向该基线，未形成修复提交。本轮未把旧分类报告当作当前缺陷，保持 NEEDS_VERIFICATION，等待隔离样本复现。 历史台账结论保留：UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）",
+            "statement": "2026-11-04 核对已验8087f2c68b19a302a25e814ec8ce6113d91d4750：集成修复47fcab0f6f37f52475074e65ab7ab188352ae8ce已含根分类直接选择、属性继承及真实HTTP/截图证据（uat-evidence/iss-028-035-category-schema/）；当前基线CI三项成功，等待独立复审。历史时点记录（不再作为当前未修复结论）：2026-10-28 / 固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；`codex/verify-iss028-035-category-schema` 当前仅指向该基线，未形成修复提交。本轮未把旧分类报告当作当前缺陷，保持 NEEDS_VERIFICATION，等待隔离样本复现。 历史台账结论保留：UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）；最终集成CI41839476121三项SUCCESS，独立复审未完成。",
             "artifact_refs": [
               {
                 "reference": "真实用户E2E-UAT-20260923.md",
@@ -4221,7 +4243,8 @@
                 "reason": "Suffix of complete Chinese filename, not a separately missing file"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-11-04 核对当前4388947d70d26bca66ca0bfc76b2383a2fc0d404：集成修复47fcab0f6f37f52475074e65ab7ab188352ae8ce已含根分类直接选择、属性继承及真实HTTP/截图证据（uat-evidence/iss-028-035-category-schema/）；当前基线CI三项成功，等待独立复审。历史时点记录（不再作为当前未修复结论）：2026-10-28 / 固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；`codex/verify-iss028-035-category-schema` 当前仅指向该基线，未形成修复提交。本轮未把旧分类报告当作当前缺陷，保持 NEEDS_VERIFICATION，等待隔离样本复现。 历史台账结论保留：UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "core_23",
@@ -4409,7 +4432,8 @@
                 "reason": "Duplicate regex substring of the already resolved complete Chinese filename, not a separately missing file"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-28 / R1-REPAIR-03 精确来源 SHA `c3739e77562c5dd8995228d5c3e7375a6728d316`；集成后历史订单收件人及 ISS-029 API/XLSX 浏览器场景分别 2/2、1/1 通过，真实浏览器证据见 [本轮集成报告](uat-evidence/integration-r1-repairs-20261028/README.md) 与 [来源验收记录](uat-evidence/r1-repair-03-history-recipient-typography/README.md)。"
           },
           {
             "kind": "core_23",
@@ -4569,7 +4593,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "ui_workspace",
@@ -4708,7 +4733,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "ui_workspace",
@@ -4847,7 +4873,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "ui_workspace",
@@ -4986,7 +5013,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "ui_workspace",
@@ -5125,7 +5153,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "ui_workspace",
@@ -5266,7 +5295,7 @@
           {
             "kind": "current_ledger",
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[37]",
-            "statement": "2026-11-04 核对当前4388947d70d26bca66ca0bfc76b2383a2fc0d404：47fcab0f6f37f52475074e65ab7ab188352ae8ce已含分类模板变化、SKU保存重开、API/数据库快照及桌面/窄屏证据（uat-evidence/iss-028-035-category-schema/）；等待独立复审。历史时点记录（不再作为当前未修复结论）：2026-10-28 / 固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；与 ISS-028 同批验证尚未形成修复提交。本轮未改写已发布 SKU，保持 NEEDS_VERIFICATION，等待历史 SKU/模板样本。 历史台账结论保留：UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）",
+            "statement": "2026-11-04 核对已验8087f2c68b19a302a25e814ec8ce6113d91d4750：47fcab0f6f37f52475074e65ab7ab188352ae8ce已含分类模板变化、SKU保存重开、API/数据库快照及桌面/窄屏证据（uat-evidence/iss-028-035-category-schema/）；等待独立复审。历史时点记录（不再作为当前未修复结论）：2026-10-28 / 固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；与 ISS-028 同批验证尚未形成修复提交。本轮未改写已发布 SKU，保持 NEEDS_VERIFICATION，等待历史 SKU/模板样本。 历史台账结论保留：UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）；最终集成CI41839476121三项SUCCESS，独立复审未完成。",
             "artifact_refs": [
               {
                 "reference": "Phase4-生产化加固审计与实施计划.md",
@@ -5275,7 +5304,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-11-04 核对当前4388947d70d26bca66ca0bfc76b2383a2fc0d404：47fcab0f6f37f52475074e65ab7ab188352ae8ce已含分类模板变化、SKU保存重开、API/数据库快照及桌面/窄屏证据（uat-evidence/iss-028-035-category-schema/）；等待独立复审。历史时点记录（不再作为当前未修复结论）：2026-10-28 / 固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；与 ISS-028 同批验证尚未形成修复提交。本轮未改写已发布 SKU，保持 NEEDS_VERIFICATION，等待历史 SKU/模板样本。 历史台账结论保留：UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "core_23",
@@ -5456,7 +5486,8 @@
                 "resolved_path": "docs/uat-evidence/integration-036-002-003-052-058/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-27 / `codex/fix-iss036-snapshot-conflicts` / 精确来源 SHA `b64c54b07908d4bb462c64f120c351d148e06f6f`"
           },
           {
             "kind": "matrix_supplement",
@@ -5653,7 +5684,8 @@
                 "resolved_path": "docs/uat-evidence/r1-rule-gap-fix-batch-20261103/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-11-03 / [独立审查](uat-evidence/r1-iss039-shared-cost-audit-20261103/README.md)；源码`8d3ca5f`已具备采购修改权限跨销售分配，详见[本轮补修/集成](uat-evidence/r1-rule-gap-fix-batch-20261103/README.md)"
           },
           {
             "kind": "core_23",
@@ -5825,7 +5857,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-28 / 固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；集成成果 `a4fc6d4f01f8c32a4a89f0d46557500a34566e98`。Packing List 导出、16列原始模板、样本和混装/分批回归已存在，阶段成果可封版；原生 Excel Print Preview 仍 PENDING，故改为 FIXED_PENDING_REVIEW，不关闭。 历史台账结论保留：UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "ui_reporting",
@@ -5976,7 +6009,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-28 / 固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；共享模板最终成果 `fb859b91f68bb62c539d5439c65b52c06f13a58c`。团队共享模板基础版、权限、版本冲突、删除审计和 Chrome 证据可作为阶段成果冻结；审批、复制、回滚和组织治理不在本阶段，改为 FIXED_PENDING_REVIEW，不等于 CLOSED。 历史台账结论保留：2026-10-23 / `codex/iss-042-shared-reports`：基于 `0bba34c0e7139b77a88d2e838dbf921eff427373` 实施 ISS-042-DEV 团队共享报表模板基础版；共享模板模型/迁移、服务端配置白名单与当前权限校验、发布/取消发布、版本冲突、OperationLog 审计、前端管理、旧配置兼容及跨会话 Chrome 验收已完成，等待独立代码审查"
           },
           {
             "kind": "ui_reporting",
@@ -6145,7 +6179,7 @@
           {
             "kind": "current_ledger",
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[44]",
-            "statement": "2026-11-04 核对当前4388947d70d26bca66ca0bfc76b2383a2fc0d404：72a6b27f3f855424f16cd9657996055c68b5ca95退役旧流程命令并保留历史源码；6ec1a50ee14fd17a64de4f68cd63e2b2c426b47b限制seed_demo开发SQLite/已验证隔离目标、额外alias和非默认路径；test_legacy_qa_tools纳入当前全量。证据uat-evidence/r1-iss045-qa-tools-bd324-20261031/README.md。待独立复审，不将历史脚本成功作为业务闭环。历史时点记录：UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）",
+            "statement": "2026-11-04 核对已验8087f2c68b19a302a25e814ec8ce6113d91d4750：72a6b27f3f855424f16cd9657996055c68b5ca95退役旧流程命令并保留历史源码；6ec1a50ee14fd17a64de4f68cd63e2b2c426b47b限制seed_demo开发SQLite/已验证隔离目标、额外alias和非默认路径；test_legacy_qa_tools纳入当前全量。证据uat-evidence/r1-iss045-qa-tools-bd324-20261031/README.md。待独立复审，不将历史脚本成功作为业务闭环。历史时点记录：UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）；最终集成CI41839476121三项SUCCESS，独立复审未完成。",
             "artifact_refs": [
               {
                 "reference": "Phase3-业务流程与异常UAT计划.md",
@@ -6159,7 +6193,8 @@
                 "resolved_path": "docs/uat-evidence/r1-iss045-qa-tools-bd324-20261031/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-11-04 核对当前4388947d70d26bca66ca0bfc76b2383a2fc0d404：72a6b27f3f855424f16cd9657996055c68b5ca95退役旧流程命令并保留历史源码；6ec1a50ee14fd17a64de4f68cd63e2b2c426b47b限制seed_demo开发SQLite/已验证隔离目标、额外alias和非默认路径；test_legacy_qa_tools纳入当前全量。证据uat-evidence/r1-iss045-qa-tools-bd324-20261031/README.md。待独立复审，不将历史脚本成功作为业务闭环。历史时点记录：UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）"
           },
           {
             "kind": "matrix_supplement",
@@ -6315,7 +6350,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-28 / 固定基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；财务下钻成果 `c356e57014d28295485d52df23612c2fe6c02444`。可靠指标下钻与最小权限补修已有证据，可按该范围阶段封版；财务口径、真实跨账号浏览器、PostgreSQL 和独立复审仍待，改为 P3 / FIXED_PENDING_REVIEW，不关闭。 历史台账结论保留：2026-10-13 / R0-F1 工作树，基线 `bf79ef8`；本轮尚未提交"
           },
           {
             "kind": "ui_reporting",
@@ -6487,7 +6523,8 @@
                 "resolved_path": "docs/uat-evidence/iss-049-quick-filters/TEST_LOG.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-23 / `9d08009f62920c62399ec48defe7f4d1c2e21411`，并入统一集成分支：客户、跟进、财务流水三类列表的筛选控件、URL 状态和真实 Chrome 页面均完成核验；自动回归与证据见 [ISS-049 测试日志](uat-evidence/iss-049-quick-filters/TEST_LOG.md)。"
           },
           {
             "kind": "ui_workspace",
@@ -6707,7 +6744,8 @@
                 "resolved_path": "docs/uat-evidence/r1-iss052-audit-hardening-20261031/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-31 / 分支 `codex/r1-iss052-audit-hardening-20261031`；实现提交 `ab9ce886094a065766a24b35d9b82c7a7c0fd067`，基线 `bd324a8c3fb64af245c3afcabbd4301c84f7711c`。合入来源 `d08ca625ac6beeec51ecc14eb92c97da0ea6f63b`、`8cff96af9f1f2e09dcbc0a29f361017ee23ffb75`、`f2b7fd6487459be69be687ccfeab09e7947df995` 及前置父提交 `a6c5b56a00326234681399a3405efa2117198f76`。CSV 限额/HTTP 413 与导入预览、批次、行级审计链均保留；SQLite 全量回归 1041 项（1021 通过、20 跳过、0 失败），定向 36 项（35 通过、1 项 PostgreSQL 专项跳过）。此句所述历史时点已被后续8087f2c / CI41839476121更新：0091–0094迁移与PG raw SQL审计/回退用例纳入真实PG17全量1282通过/30跳过，0失败；集成Chrome270/270。原历史SQLite结果不冒称新PG结果。"
           },
           {
             "kind": "core_23",
@@ -6859,7 +6897,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-13 / ecdc9bc：只读检查 openReceiptReversal、submitReceiptReversal、反馈模板及现有收货测试；未运行测试。；2026-10-18 R1-A：真实复现旧收货成功残留；已清冲销打开/提交前旧反馈与错误，成功/失败/重试回归及内置浏览器、Chrome原图完成；后端计算不改。 证据：[R1-A报告](R1-A-核心业务历史Issue核实与修复.md)。"
           },
           {
             "kind": "matrix_supplement",
@@ -6998,7 +7037,8 @@
                 "resolved_path": "docs/uat-evidence/iss-055-customer-404/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-28 / 集成基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb` 继续包含 `9c5f1f821cfc1b436f5fffe0b681991fa056b34d`。中文安全 404 和合成隔离 API/Chrome 证据保持有效；正式 RBAC、真实员工会话和独立复审未执行，保持 FIXED_PENDING_REVIEW。 历史台账结论保留：2026-10-28 / R1-REPAIR-05 `codex/fix-iss055-chinese-404` 精确 SHA `9c5f1f821cfc1b436f5fffe0b681991fa056b34d`。真实 Chrome 桌面/窄屏证据及合成隔离 API 回归见 [ISS-055 验收记录](uat-evidence/iss-055-customer-404/README.md)；本轮 Django 全量、Node 单测通过。"
           },
           {
             "kind": "ui_reporting",
@@ -7161,7 +7201,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-14 / 实现提交 `439b5b3`、CI #38426397966 三项 SUCCESS；Node 121/121、Vitest 494/494、财务/报表后端 76/76、销售范围后端 28/28；Codex 内置浏览器完成财务列表、新增、收付款、核销、作废和概览路径  R0-F9新增当前27路由基线与原图索引，归档已实际完成；仍有ISS-100尺寸限制及历史特定状态/独立图片待审，不能据新图自行关闭。"
           },
           {
             "kind": "ui_reporting",
@@ -7294,7 +7335,8 @@
                 "resolved_path": "docs/uat-evidence/iss-062-date-window/acceptance-report.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-11-04复核：当前4388947d70d26bca66ca0bfc76b2383a2fc0d404已包含9edbb6488a66a0801ecc1e5bc842df7866c6c7dc的统一日期实现；test_dashboard_uses_one_server_date_window_for_operating_metrics覆盖截至今日、排除未来/历史订单及12个月零月补齐，未来自定义报表保留。uat-evidence/iss-062-date-window/acceptance-report.md及API/Chrome图完整，原报告结论为待独立代码审查；本地1182全量及当前基线CI通过，保持待独立复审。历史对账记录（不再作为现行规则待决）：2026-10-28 / 日期窗口成果 `9edbb6488a66a0801ecc1e5bc842df7866c6c7dc` 已并入现行基线；隔离 API、真实 Chrome 和文案证据存在。但各经营指标日期上界仍需业务负责人统一确认，故从 P2 / OPEN 校准为 P2 / BLOCKED；不重复开发、不猜定规则。 历史台账结论保留：基线 `4298c31`：sales_ytd 有年初至今日上界；订单数、品类、客户排行和流水仅年初下界；月度数据从去年年初起，并非固定近 12 个月。本轮未改后端"
           },
           {
             "kind": "ui_reporting",
@@ -7483,7 +7525,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "基线 `4298c31` 营销式欢迎标题、实时同步声明、日期说明不足；本轮改为办公分组、明确口径、刷新时间、保留旧数据的失败反馈及权限一致入口，自动回归见 [R0-F2 验收](R0-F2-经营概览与报表中心验收.md)"
           },
           {
             "kind": "ui_reporting",
@@ -7610,7 +7653,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[54]",
             "statement": "本轮分步配置后显式查询；草稿与已查询条件分离，URL 恢复、本地保存/载入/排序/移除/撤销、下钻返回及异步选项回归覆盖",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "本轮分步配置后显式查询；草稿与已查询条件分离，URL 恢复、本地保存/载入/排序/移除/撤销、下钻返回及异步选项回归覆盖"
           },
           {
             "kind": "ui_reporting",
@@ -7737,7 +7781,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[55]",
             "statement": "长名称、大金额、轴标签、表格及多图块布局已优化；导出错误独立显示，不隐藏已查询图表；切换配置清除旧显示覆盖；保留后端权限校验",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "长名称、大金额、轴标签、表格及多图块布局已优化；导出错误独立显示，不隐藏已查询图表；切换配置清除旧显示覆盖；保留后端权限校验"
           },
           {
             "kind": "ui_reporting",
@@ -7875,7 +7920,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[64]",
             "statement": "概览与流水原来一次展示全部记录；新增每页 25 条，URL page 恢复与筛选重置；汇总仍覆盖所有筛选结果。指标保留五项，实际库存附已预留，工作台 1280/1024px 用三列；测试及目视见 F3 验收",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "概览与流水原来一次展示全部记录；新增每页 25 条，URL page 恢复与筛选重置；汇总仍覆盖所有筛选结果。指标保留五项，实际库存附已预留，工作台 1280/1024px 用三列；测试及目视见 F3 验收"
           },
           {
             "kind": "matrix_supplement",
@@ -8030,7 +8076,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[65]",
             "statement": "日志请求失败曾显示为无日志；改为错误与重试。调整选项失败阻止保存并支持重试；无订单查看权限不请求可选订单；保存期间关闭禁用；冲销防重复、清旧反馈，保存/冲销刷新详情。隔离实际保存两条、冲销一条并重开核对通过",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "日志请求失败曾显示为无日志；改为错误与重试。调整选项失败阻止保存并支持重试；无订单查看权限不请求可选订单；保存期间关闭禁用；冲销防重复、清旧反馈，保存/冲销刷新详情。隔离实际保存两条、冲销一条并重开核对通过"
           },
           {
             "kind": "matrix_supplement",
@@ -8169,7 +8216,8 @@
                 "resolved_path": "docs/uat-evidence/integration-r1-repairs-20261028/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-28 / supplier-purchase-ux-r2 精确来源 SHA `64fb397aa065062e192ceb30040421f59b63a08c`；隔离 API/Chrome 付款快照场景 1/1 通过：常规供应商 UI 无固定规则、新采购单为空付款快照、历史显式付款计划仍显示；真实浏览器证据见 [本轮集成报告](uat-evidence/integration-r1-repairs-20261028/README.md)。"
           },
           {
             "kind": "core_23",
@@ -8317,7 +8365,8 @@
                 "resolved_path": "docs/uat-evidence/r0-f5/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-15 用户要求修复后，重新读取接口并验证 `tab.screenshot()` JPEG 字节可用标准文件写入保存；此前无专用保存方法即推断安全禁止的判断错误，当前没有截图导出安全拒绝。已归档联系人/跟进列表及新建表单在1440/1280/1024视口共12张和默认视口验证1张，见 [截图目录](uat-evidence/r0-f5/README.md)。应用代码与业务数据未改  R0-F9新增当前27路由基线与原图索引，归档已实际完成；仍有ISS-100尺寸限制及历史特定状态/独立图片待审，不能据新图自行关闭。"
           },
           {
             "kind": "ui_workspace",
@@ -8449,7 +8498,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[73]",
             "statement": "实现 `92e8c46d4ce01e18cd164e152d345c58433c9305`；CI #38595334483 三项 SUCCESS。联系人列表分组、搜索/筛选及 URL 恢复、分页、长文本布局、重复提示、表单保护、客户/跟进关联入口和返回状态已调整；9 项 Playwright 包含 1440/1280/1024 实际计算布局。隔离 SQLite 内置浏览器实际新增、设主、编辑/删除确认及客户详情往返已检查",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "实现 `92e8c46d4ce01e18cd164e152d345c58433c9305`；CI #38595334483 三项 SUCCESS。联系人列表分组、搜索/筛选及 URL 恢复、分页、长文本布局、重复提示、表单保护、客户/跟进关联入口和返回状态已调整；9 项 Playwright 包含 1440/1280/1024 实际计算布局。隔离 SQLite 内置浏览器实际新增、设主、编辑/删除确认及客户详情往返已检查"
           },
           {
             "kind": "ui_workspace",
@@ -8599,7 +8649,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[74]",
             "statement": "实现 `92e8c46d4ce01e18cd164e152d345c58433c9305`；CI #38595334483 三项 SUCCESS。跟进列表筛选与 URL 恢复、日期/方式/客户、记录/回复/下一步分组、设置/保留/清除计划呈现、富文本详情及附件状态已调整；隔离 SQLite 内置浏览器实际新建跟进、设置日期、保存后列表及客户详情同步。Playwright 覆盖编辑、筛选、上传控件和附件删除确认/取消/重开。实际附件文件选择器未通过受支持接口打开；内容访问/上传下载不据此宣称验收，历史 ISS-007 保留",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "实现 `92e8c46d4ce01e18cd164e152d345c58433c9305`；CI #38595334483 三项 SUCCESS。跟进列表筛选与 URL 恢复、日期/方式/客户、记录/回复/下一步分组、设置/保留/清除计划呈现、富文本详情及附件状态已调整；隔离 SQLite 内置浏览器实际新建跟进、设置日期、保存后列表及客户详情同步。Playwright 覆盖编辑、筛选、上传控件和附件删除确认/取消/重开。实际附件文件选择器未通过受支持接口打开；内容访问/上传下载不据此宣称验收，历史 ISS-007 保留"
           },
           {
             "kind": "core_23",
@@ -8748,7 +8799,8 @@
                 "resolved_path": "docs/uat-evidence/iss-080-contact-duplicates/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "原缺口已在 `codex/iss-080-contact-duplicates` 修复：新建/编辑联系人按客户授权范围通过 `/contacts/?customer=<id>` 分页拉取全量联系人，脱离当前搜索/筛选/分页；同客户邮箱、国际区号安全电话、相同或明显相近姓名提示，编辑排除自身，并提供查看入口。后端 2 项范围/权限测试、Django `crm` 全量 942（跳过14）、前端有效套件、Chrome Use 桌面与 390px 均通过；实现提交 `efb2546b69ae4ace60715dcb97803145248d3a1b`，2026-10-27，证据见 `docs/uat-evidence/iss-080-contact-duplicates/README.md`"
           },
           {
             "kind": "ui_workspace",
@@ -8875,7 +8927,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[77]",
             "statement": "2026-10-15 用户转述 R0-F6 独立代码/自动化/已覆盖交互 PASS，最终 `0b721fcd` / CI #38669003578 三项 SUCCESS；独立图片视觉待审。基线 `86650adc`：筛选不可从 URL 恢复、详情不写记录 ID、产品表单缺未保存/保存中保护。本轮补显式查询、排序和 URL、可刷新详情、返回、表单分组、长文布局、失败恢复及统一保存锁；Vitest/Playwright 与隔离库实际操作见验收报告",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-15 用户转述 R0-F6 独立代码/自动化/已覆盖交互 PASS，最终 `0b721fcd` / CI #38669003578 三项 SUCCESS；独立图片视觉待审。基线 `86650adc`：筛选不可从 URL 恢复、详情不写记录 ID、产品表单缺未保存/保存中保护。本轮补显式查询、排序和 URL、可刷新详情、返回、表单分组、长文布局、失败恢复及统一保存锁；Vitest/Playwright 与隔离库实际操作见验收报告"
           },
           {
             "kind": "ui_workspace",
@@ -9002,7 +9055,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[78]",
             "statement": "2026-10-15 用户转述 `0b721fcd` / CI #38669003578 独立代码/自动化/已覆盖交互 PASS，独立图片视觉待审。分类首载失败只有短暂提示，层级统计随收起/搜索变化，分类保存中可关闭。本轮补持久加载错误与重试、全树最大层级、展开/收起、来源定位、保存/未保存保护、窄桌面、中文名称与 SKU Code 区分；继承只读、冻结拒绝、属性排序预览/确认仍由原规则执行",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-15 用户转述 `0b721fcd` / CI #38669003578 独立代码/自动化/已覆盖交互 PASS，独立图片视觉待审。分类首载失败只有短暂提示，层级统计随收起/搜索变化，分类保存中可关闭。本轮补持久加载错误与重试、全树最大层级、展开/收起、来源定位、保存/未保存保护、窄桌面、中文名称与 SKU Code 区分；继承只读、冻结拒绝、属性排序预览/确认仍由原规则执行"
           },
           {
             "kind": "ui_workspace",
@@ -9129,7 +9183,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[79]",
             "statement": "2026-10-15 用户转述 `0b721fcd` / CI #38669003578 独立代码/自动化/已覆盖交互 PASS，独立图片视觉待审。原通用摘要含不适用的“启用/进行中”，缺产品筛选、参数用途说明与自然重复提示。本轮补参数专用摘要、产品与搜索 URL、产品关联返回、表单分组、保存保护/重试、重复中文提示和关联产品状态中文显示",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "2026-10-15 用户转述 `0b721fcd` / CI #38669003578 独立代码/自动化/已覆盖交互 PASS，独立图片视觉待审。原通用摘要含不适用的“启用/进行中”，缺产品筛选、参数用途说明与自然重复提示。本轮补参数专用摘要、产品与搜索 URL、产品关联返回、表单分组、保存保护/重试、重复中文提示和关联产品状态中文显示"
           },
           {
             "kind": "ui_workspace",
@@ -9245,7 +9300,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[80]",
             "statement": "已核实旧文件不符；重拍 create/edit 为真实1440×1000并更新F6清单。原流程按请求宽度命名但未拒绝像素不符；旧记录不能证明底层时序根因。F7A每张核对DOM、JPEG和文件名，并生成哈希  R0-F9新增当前27路由基线与原图索引，归档已实际完成；仍有ISS-100尺寸限制及历史特定状态/独立图片待审，不能据新图自行关闭。",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "已核实旧文件不符；重拍 create/edit 为真实1440×1000并更新F6清单。原流程按请求宽度命名但未拒绝像素不符；旧记录不能证明底层时序根因。F7A每张核对DOM、JPEG和文件名，并生成哈希  R0-F9新增当前27路由基线与原图索引，归档已实际完成；仍有ISS-100尺寸限制及历史特定状态/独立图片待审，不能据新图自行关闭。"
           },
           {
             "kind": "ui_workspace",
@@ -9365,7 +9421,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[81]",
             "statement": "列表筛选/详情位置不能恢复、只读行缺详情、参数多时查找困难、保存中关闭/重复提交、1024编辑内容撑宽。本轮补URL、详情及库存导航、参数搜索/重复预览、统一保存锁、持久错误与历史重试、三尺寸实际布局回归",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "列表筛选/详情位置不能恢复、只读行缺详情、参数多时查找困难、保存中关闭/重复提交、1024编辑内容撑宽。本轮补URL、详情及库存导航、参数搜索/重复预览、统一保存锁、持久错误与历史重试、三尺寸实际布局回归"
           },
           {
             "kind": "ui_workspace",
@@ -9496,7 +9553,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[82]",
             "statement": "重复编码报错不自然、来源失败提示短暂、批量候选和实际采购语义易混、保存关闭保护不足。补中文持久错误、输入保留重试、保存锁、候选文案、停用后果确认、窄桌面布局",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "重复编码报错不自然、来源失败提示短暂、批量候选和实际采购语义易混、保存关闭保护不足。补中文持久错误、输入保留重试、保存锁、候选文案、停用后果确认、窄桌面布局"
           },
           {
             "kind": "ui_workspace",
@@ -9616,7 +9674,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[85]",
             "statement": "原保存遮罩可关闭、失败提示短暂、URL/关联状态恢复不足；本轮补统一busy/dirty守卫、错误重试、复制草稿、变更风险、关联状态及桌面布局；可控异步自动回归和真实API三尺寸截图见F7B报告  2026-10-15用户明确转述独立代码与自动/已覆盖交互审查PASS；最终a2cbdec / CI #38752391875三项SUCCESS；图片独立视觉仍待审，不扩大为完整视觉接受。",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "原保存遮罩可关闭、失败提示短暂、URL/关联状态恢复不足；本轮补统一busy/dirty守卫、错误重试、复制草稿、变更风险、关联状态及桌面布局；可控异步自动回归和真实API三尺寸截图见F7B报告  2026-10-15用户明确转述独立代码与自动/已覆盖交互审查PASS；最终a2cbdec / CI #38752391875三项SUCCESS；图片独立视觉仍待审，不扩大为完整视觉接受。"
           },
           {
             "kind": "ui_workspace",
@@ -9736,7 +9795,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[86]",
             "statement": "基础/交易单位、供应商专用与定义不可变的说明和编辑反馈不足；补SKU上下文、只读定义/备注启停默认编辑、失败保留、统一守卫和5/10/50米卷展示。重复定义仅提示，未改后端策略  2026-10-15用户明确转述独立代码与自动/已覆盖交互审查PASS；最终a2cbdec / CI #38752391875三项SUCCESS；图片独立视觉仍待审，不扩大为完整视觉接受。",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "基础/交易单位、供应商专用与定义不可变的说明和编辑反馈不足；补SKU上下文、只读定义/备注启停默认编辑、失败保留、统一守卫和5/10/50米卷展示。重复定义仅提示，未改后端策略  2026-10-15用户明确转述独立代码与自动/已覆盖交互审查PASS；最终a2cbdec / CI #38752391875三项SUCCESS；图片独立视觉仍待审，不扩大为完整视觉接受。"
           },
           {
             "kind": "ui_workspace",
@@ -9856,7 +9916,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[87]",
             "statement": "内联保存缺busy保护与持久错误；打开净重应优先取packaging profile。补父子保存锁、失败原关联保留、真实profile显示和交易单位返回编辑上下文；批量筛选/撤销不改算法  2026-10-15用户明确转述独立代码与自动/已覆盖交互审查PASS；最终a2cbdec / CI #38752391875三项SUCCESS；图片独立视觉仍待审，不扩大为完整视觉接受。",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "内联保存缺busy保护与持久错误；打开净重应优先取packaging profile。补父子保存锁、失败原关联保留、真实profile显示和交易单位返回编辑上下文；批量筛选/撤销不改算法  2026-10-15用户明确转述独立代码与自动/已覆盖交互审查PASS；最终a2cbdec / CI #38752391875三项SUCCESS；图片独立视觉仍待审，不扩大为完整视觉接受。"
           },
           {
             "kind": "ui_workspace",
@@ -10006,7 +10067,8 @@
                 "note": "Three successful historical jobs freshly read; historical head SHA not re-queried; not final integration CI"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "原证书页搜索不恢复URL、一般列表请求可逆序覆盖、保存遮罩不受busy保护；有效/临期/空态及关联信息组织不足。本轮复用通用页面，补字段分组、统一守卫、持久中文错误、筛选/排序/分页恢复、请求版本及详情日期状态、安全HTTP(S)文件入口。46张原图和自动/真实记录见F8A报告  用户转述ChatGPT独立代码及自动/已覆盖交互PASS，有条件封版；最终82514b1396e1e53d44bcd9314d19bbb65b0fbeed，[CI #38761364221](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38761364221)三项SUCCESS。独立图片视觉、文件内容和授权缺口继续保留，不扩大验收。"
           },
           {
             "kind": "core_23",
@@ -10149,7 +10211,8 @@
                 "note": "Three successful historical jobs freshly read; historical head SHA not re-queried; not final integration CI"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "原弹窗可保存中关闭/重复提交，选择产品较多时缺已选范围/批量操作，失败易丢反馈；本轮补统一dirty/busy守卫、错误保留/重试、只读能力、完整产品分页加载、筛选范围批量操作/已选数与移入提醒、重开同步和关联导航。1024整页溢出由计算布局测试发现并修复为表内滚动  用户转述ChatGPT独立代码及自动/已覆盖交互PASS，有条件封版；最终82514b1396e1e53d44bcd9314d19bbb65b0fbeed，[CI #38761364221](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/38761364221)三项SUCCESS。独立图片视觉、文件内容和授权缺口继续保留，不扩大验收。"
           },
           {
             "kind": "ui_workspace",
@@ -10287,7 +10350,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "原页面缺确认期间锁定、方法级防重、busy离开保护及旧预览失效防线；模板未就绪可下载空文件；失败/校验/写入阶段易混淆。本轮补统一busy守卫、文件/类型版本绑定、显式阶段、完整响应校验、错误表分页及真实UTF-8 CSV下载；只改前端与回归，不改导入核心。真实四类CSV/UI/DB核对、三尺寸原图及自动回归见[R0-F8B验收](R0-F8B-数据导入验收.md)。用户本轮接受代码、自动及已覆盖真实CSV范围，有条件封版；最终10158f89b50ad477026f4ee2d4d4fd8177d5edcd / CI #38878347385三项SUCCESS；独立图片仍待审"
           },
           {
             "kind": "ui_workspace",
@@ -10414,7 +10478,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "原渲染会补写本地permissions，切换缺dirty确认、保存中可编辑/重复提交/离开，错误短暂消失；现分离服务端配置与草稿，统一守卫、持久反馈、模块搜索/完整提交、POST后GET角色及当前身份回读、失败保留/纯读取重试。实际隔离合成角色保存/取消/拒绝恢复/重开、固定表头与三尺寸见[R0-F8C验收](R0-F8C-组织权限与访问状态验收.md)  用户于2026-10-16本轮转述ChatGPT独立代码、自动化及已覆盖操作复审通过，允许有条件封版；最终b916fab613806a9fd00636cc87496803557d45a8 / CI #38909906403三项SUCCESS。独立图片视觉仍待审。"
           },
           {
             "kind": "ui_workspace",
@@ -10534,7 +10599,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[92]",
             "statement": "原权限状态读取失败仍显示403，拒绝与全局错误混淆，重试无单飞保护；现按路由区分拒绝/读取失败，明确错误、无可访问页面及重试状态，仅返回现有firstPermittedPath。真实停服/恢复、模拟401/403/500/网络及防循环测试见F8C报告；未修改router/accessControl核心  用户于2026-10-16本轮转述ChatGPT独立代码、自动化及已覆盖操作复审通过，允许有条件封版；最终b916fab613806a9fd00636cc87496803557d45a8 / CI #38909906403三项SUCCESS。独立图片视觉仍待审。",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "原权限状态读取失败仍显示403，拒绝与全局错误混淆，重试无单飞保护；现按路由区分拒绝/读取失败，明确错误、无可访问页面及重试状态，仅返回现有firstPermittedPath。真实停服/恢复、模拟401/403/500/网络及防循环测试见F8C报告；未修改router/accessControl核心  用户于2026-10-16本轮转述ChatGPT独立代码、自动化及已覆盖操作复审通过，允许有条件封版；最终b916fab613806a9fd00636cc87496803557d45a8 / CI #38909906403三项SUCCESS。独立图片视觉仍待审。"
           },
           {
             "kind": "ui_workspace",
@@ -10682,7 +10748,8 @@
                 "resolved_path": "docs/uat-evidence/iss-097-admin-permissions/README.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "确认显示缺陷：历史 `superadmin` 存储模板的部分新增模块为未勾选，但服务端 `has_all_permissions()` 和有效矩阵始终授予最高业务角色全部 24 个模块/六类动作。API 现明确返回 `has_all_permissions` 与 `effective_permissions`；页面显示“包含全部ERP业务权限，不受普通勾选项限制”，24/24 复选框全选且只读。未回写模板、未改变开发超级管理员或普通角色授权。真实 Chrome、Django 定向/权限回归、前端全量 Vitest 和生产构建见 [ISS-097 验收记录](uat-evidence/iss-097-admin-permissions/README.md)。"
           },
           {
             "kind": "matrix_supplement",
@@ -10829,7 +10896,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[94]",
             "statement": "B类跨模块列表呈现：产品/SKU状态竖排、报价客户列过窄、订单筛选保留原生外观。仅在ProductPage、SKUPage、DocumentPage加局部列宽/不换行/筛选控件样式；新增12项三尺寸布局回归通过。最终代码0f0747a；内置浏览器与真实Chrome原图见F9索引。业务术语、值及权限均未改",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "B类跨模块列表呈现：产品/SKU状态竖排、报价客户列过窄、订单筛选保留原生外观。仅在ProductPage、SKUPage、DocumentPage加局部列宽/不换行/筛选控件样式；新增12项三尺寸布局回归通过。最终代码0f0747a；内置浏览器与真实Chrome原图见F9索引。业务术语、值及权限均未改"
           },
           {
             "kind": "ui_workspace",
@@ -10934,7 +11002,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "E类采集完成态判定缺失。实际复现DOM完成但首帧仍旧；新流程等待业务状态、连续DOM、轮询原始JPEG尺寸/帧哈希，最终81图稳定。点名12图均补完成数据截图；100的精确尺寸限制仍单列；未发现持续加载程序故障"
           },
           {
             "kind": "ui_reporting",
@@ -11044,7 +11113,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[102]",
             "statement": "E类跨视口旧帧/归档未校验。旧同SHA确认；本轮复现设置视口后首帧滞后，新增物理尺寸/DOM前后校验与原帧观察，新Chrome1440/1280/1024尺寸正确且SHA不同。旧文件缺内部轨迹，不断言唯一历史成因；未仅改名",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "E类跨视口旧帧/归档未校验。旧同SHA确认；本轮复现设置视口后首帧滞后，新增物理尺寸/DOM前后校验与原帧观察，新Chrome1440/1280/1024尺寸正确且SHA不同。旧文件缺内部轨迹，不断言唯一历史成因；未仅改名"
           },
           {
             "kind": "ui_reporting",
@@ -11190,7 +11260,8 @@
                 "resolution": "Coordinator corrected docs/context-relative reference"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "旧guard空快照不能识别修改；网络异常与明确拒绝未区分。现改真实快照、初始化基线、busy拦截、稳定编号显示及结果不明放弃风险确认；真实Django201提交后代理丢弃响应，重试400，数据库逐行不变。修复提交为本节所在Git提交，详见[FUP-01](R1-A-FUP-01-财务重试安全验收.md)"
           },
           {
             "kind": "ui_reporting",
@@ -11473,12 +11544,12 @@
         }
       ],
       "evidence": {
-        "latest_ledger_statement": "当前已包含参考折算/实际资金区分、显式账户、独立启用基准、有效完整更正、转账本金及独立手续费、退回/退款审批、账户核对、私有银行凭证。集成c1937da后端1249项1189通过/60跳过；Chrome认证和开发资金页面各2/2。319941c新增回退与凭证备份保护；真实PG17专项13/13，新财务表与文件恢复一致。来源与完整日志见[综合报告](uat-evidence/review-integration-batch-20261104/README.md)、TEST-RESULTS.md及REVIEW-FINANCE-SOURCE.md。  本轮定向反例补充（2026-11-04）：API可将已追加分类为expense的事实匹配内部本金，且新增本金匹配后完成核对不失效；统一集成已在8087产品代码独立复现3/3失败（含新旧混合匹配），原日志finance-counterexamples-before-fixture-corrected.log保留。最小修复90683506f5d9447974302d83c89ba27351d5dfd4：按有效追加分类校验并在共享锁内重验，将新/旧本金匹配纳入核对指纹；未匹配账户指纹保持旧格式，有匹配的旧核对保守要求重核，不改资金/余额。修后SQLite32/32通过（含5项新回归）；同代码9068350的真实PG17.11专项12/12通过（新回归5/真实性2/真实并发5），99表1081行128迁移4文件恢复及私有HTTP4/4；最终SHA CI按本轮最终报告记录，不提前记通过。 第三项本轮确认缺陷ADV-03：finance-ledger未声明模块，普通认证的全局财务授权角色被通用权限层403拒绝；超管成功不能证明角色可用。候选报告2e20bfdccb711bdd5f9028cb60e287ee742c77c5仅只读检查尚未接收；主审在906产品代码独立6项角色回归为1通过/5失败（finance-role-before.log）。最小补修9af2a32fa81df3aa975424b70a887057e40b6b22已覆盖只读预览、create/update分离及既有finance或reports导出契约，相关SQLite91/91、干净9af检出的真实PG17专项64/64通过；恢复99表1081行128迁移4文件、HTTP4/4、源未变且清理完成。主树未提交测试触发的保护拒绝日志保留，未放宽干净源码保护。不启用运行环境正式RBAC，不改开发超级管理员判定。侧审另列非规范export值的既有解析/格式差异：当前受支持契约为小写csv，未证明越权，不在本轮擅自增加格式或别名，按105兼容边界待独立核查。",
+        "latest_ledger_statement": "当前已包含参考折算/实际资金区分、显式账户、独立启用基准、有效完整更正、转账本金及独立手续费、退回/退款审批、账户核对、私有银行凭证。集成c1937da后端1249项1189通过/60跳过；Chrome认证和开发资金页面各2/2。319941c新增回退与凭证备份保护；真实PG17专项13/13，新财务表与文件恢复一致。来源与完整日志见[综合报告](uat-evidence/review-integration-batch-20261104/README.md)、TEST-RESULTS.md及REVIEW-FINANCE-SOURCE.md。  本轮定向反例补充（2026-11-04）：API可将已追加分类为expense的事实匹配内部本金，且新增本金匹配后完成核对不失效；统一集成已在8087产品代码独立复现3/3失败（含新旧混合匹配），原日志finance-counterexamples-before-fixture-corrected.log保留。最小修复90683506f5d9447974302d83c89ba27351d5dfd4：按有效追加分类校验并在共享锁内重验，将新/旧本金匹配纳入核对指纹；未匹配账户指纹保持旧格式，有匹配的旧核对保守要求重核，不改资金/余额。修后SQLite32/32通过（含5项新回归）；同代码9068350的真实PG17.11专项12/12通过（新回归5/真实性2/真实并发5），99表1081行128迁移4文件恢复及私有HTTP4/4；最终SHA CI按本轮最终报告记录，不提前记通过。 第三项本轮确认缺陷ADV-03：finance-ledger未声明模块，普通认证的全局财务授权角色被通用权限层403拒绝；超管成功不能证明角色可用。候选报告2e20bfdccb711bdd5f9028cb60e287ee742c77c5仅只读检查尚未接收；主审在906产品代码独立6项角色回归为1通过/5失败（finance-role-before.log）。最小补修9af2a32fa81df3aa975424b70a887057e40b6b22已覆盖只读预览、create/update分离及既有finance或reports导出契约，相关SQLite91/91、干净9af检出的真实PG17专项64/64通过；恢复99表1081行128迁移4文件、HTTP4/4、源未变且清理完成。主树未提交测试触发的保护拒绝日志保留，未放宽干净源码保护。不启用运行环境正式RBAC，不改开发超级管理员判定。侧审另列非规范export值的既有解析/格式差异：当前受支持契约为小写csv，未证明越权，不在本轮擅自增加格式或别名，按105兼容边界待独立核查。 后续a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f已提交有序锁/截止日7测试，原clean guard下真实PG专项25/25通过，包含三个独立backend PID/实际阻塞/锁前预读/审计与余额原子断言；不采信已中止的未提交草稿例外。全量本地/最终SHA三CI单独记录。旧合法匹配的核对摘要兼容/一次重核已验；未扫描目标存量中旧缺陷已造成的错误匹配，也不自动改写不可变历史关系，启用前须只读核查并按受控审查处理，不把新写入口修复宣称为存量自动修复。",
         "item_sources": [
           {
             "kind": "current_ledger",
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[105]",
-            "statement": "当前已包含参考折算/实际资金区分、显式账户、独立启用基准、有效完整更正、转账本金及独立手续费、退回/退款审批、账户核对、私有银行凭证。集成c1937da后端1249项1189通过/60跳过；Chrome认证和开发资金页面各2/2。319941c新增回退与凭证备份保护；真实PG17专项13/13，新财务表与文件恢复一致。来源与完整日志见[综合报告](uat-evidence/review-integration-batch-20261104/README.md)、TEST-RESULTS.md及REVIEW-FINANCE-SOURCE.md。  本轮定向反例补充（2026-11-04）：API可将已追加分类为expense的事实匹配内部本金，且新增本金匹配后完成核对不失效；统一集成已在8087产品代码独立复现3/3失败（含新旧混合匹配），原日志finance-counterexamples-before-fixture-corrected.log保留。最小修复90683506f5d9447974302d83c89ba27351d5dfd4：按有效追加分类校验并在共享锁内重验，将新/旧本金匹配纳入核对指纹；未匹配账户指纹保持旧格式，有匹配的旧核对保守要求重核，不改资金/余额。修后SQLite32/32通过（含5项新回归）；同代码9068350的真实PG17.11专项12/12通过（新回归5/真实性2/真实并发5），99表1081行128迁移4文件恢复及私有HTTP4/4；最终SHA CI按本轮最终报告记录，不提前记通过。",
+            "statement": "当前已包含参考折算/实际资金区分、显式账户、独立启用基准、有效完整更正、转账本金及独立手续费、退回/退款审批、账户核对、私有银行凭证。集成c1937da后端1249项1189通过/60跳过；Chrome认证和开发资金页面各2/2。319941c新增回退与凭证备份保护；真实PG17专项13/13，新财务表与文件恢复一致。来源与完整日志见[综合报告](uat-evidence/review-integration-batch-20261104/README.md)、TEST-RESULTS.md及REVIEW-FINANCE-SOURCE.md。  本轮定向反例补充（2026-11-04）：API可将已追加分类为expense的事实匹配内部本金，且新增本金匹配后完成核对不失效；统一集成已在8087产品代码独立复现3/3失败（含新旧混合匹配），原日志finance-counterexamples-before-fixture-corrected.log保留。最小修复90683506f5d9447974302d83c89ba27351d5dfd4：按有效追加分类校验并在共享锁内重验，将新/旧本金匹配纳入核对指纹；未匹配账户指纹保持旧格式，有匹配的旧核对保守要求重核，不改资金/余额。修后SQLite32/32通过（含5项新回归）；同代码9068350的真实PG17.11专项12/12通过（新回归5/真实性2/真实并发5），99表1081行128迁移4文件恢复及私有HTTP4/4；最终SHA CI按本轮最终报告记录，不提前记通过。 第三项本轮确认缺陷ADV-03：finance-ledger未声明模块，普通认证的全局财务授权角色被通用权限层403拒绝；超管成功不能证明角色可用。候选报告2e20bfdccb711bdd5f9028cb60e287ee742c77c5仅只读检查尚未接收；主审在906产品代码独立6项角色回归为1通过/5失败（finance-role-before.log）。最小补修9af2a32fa81df3aa975424b70a887057e40b6b22已覆盖只读预览、create/update分离及既有finance或reports导出契约，相关SQLite91/91、干净9af检出的真实PG17专项64/64通过；恢复99表1081行128迁移4文件、HTTP4/4、源未变且清理完成。主树未提交测试触发的保护拒绝日志保留，未放宽干净源码保护。不启用运行环境正式RBAC，不改开发超级管理员判定。侧审另列非规范export值的既有解析/格式差异：当前受支持契约为小写csv，未证明越权，不在本轮擅自增加格式或别名，按105兼容边界待独立核查。 后续a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f已提交有序锁/截止日7测试，原clean guard下真实PG专项25/25通过，包含三个独立backend PID/实际阻塞/锁前预读/审计与余额原子断言；不采信已中止的未提交草稿例外。全量本地/最终SHA三CI单独记录。旧合法匹配的核对摘要兼容/一次重核已验；未扫描目标存量中旧缺陷已造成的错误匹配，也不自动改写不可变历史关系，启用前须只读核查并按受控审查处理，不把新写入口修复宣称为存量自动修复。",
             "artifact_refs": [
               {
                 "reference": "uat-evidence/review-integration-batch-20261104/README.md",
@@ -11501,7 +11572,8 @@
                 "resolved_path": "docs/uat-evidence/integration-closeout-02/finance-counterexamples-before-fixture-corrected.log"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "当前已包含参考折算/实际资金区分、显式账户、独立启用基准、有效完整更正、转账本金及独立手续费、退回/退款审批、账户核对、私有银行凭证。集成c1937da后端1249项1189通过/60跳过；Chrome认证和开发资金页面各2/2。319941c新增回退与凭证备份保护；真实PG17专项13/13，新财务表与文件恢复一致。来源与完整日志见[综合报告](uat-evidence/review-integration-batch-20261104/README.md)、TEST-RESULTS.md及REVIEW-FINANCE-SOURCE.md。  本轮定向反例补充（2026-11-04）：API可将已追加分类为expense的事实匹配内部本金，且新增本金匹配后完成核对不失效；统一集成已在8087产品代码独立复现3/3失败（含新旧混合匹配），原日志finance-counterexamples-before-fixture-corrected.log保留。最小修复90683506f5d9447974302d83c89ba27351d5dfd4：按有效追加分类校验并在共享锁内重验，将新/旧本金匹配纳入核对指纹；未匹配账户指纹保持旧格式，有匹配的旧核对保守要求重核，不改资金/余额。修后SQLite32/32通过（含5项新回归）；同代码9068350的真实PG17.11专项12/12通过（新回归5/真实性2/真实并发5），99表1081行128迁移4文件恢复及私有HTTP4/4；最终SHA CI按本轮最终报告记录，不提前记通过。"
           },
           {
             "kind": "archived_matrix_row",
@@ -11585,7 +11657,8 @@
                 "resolved_path": "docs/uat-evidence/integration-closeout-02/coordinator-finance-role-postgres-result.json",
                 "status": "PRESENT"
               }
-            ]
+            ],
+            "time_scope": "Historical evidence/mapping; current closing gaps are separate."
           },
           {
             "kind": "coordinator_906_followup",
@@ -11597,7 +11670,8 @@
                 "resolved_path": "docs/uat-evidence/integration-closeout-02/coordinator-finance-lock-order-result.json",
                 "status": "PRESENT"
               }
-            ]
+            ],
+            "time_scope": "Historical evidence/mapping; current closing gaps are separate."
           },
           {
             "kind": "coordinator_906_followup",
@@ -11609,7 +11683,8 @@
                 "resolved_path": "docs/uat-evidence/integration-closeout-02/FINANCE-ROLE-FIX-REVIEW.md",
                 "status": "PRESENT"
               }
-            ]
+            ],
+            "time_scope": "Historical evidence/mapping; current closing gaps are separate."
           }
         ],
         "artifact_presence": {
@@ -11668,7 +11743,7 @@
       "mapping_sources": [],
       "ledger_cells": [
         "2026-10-18用户财务统计审查；本轮完整稳定财务来源3a07e7ef1a9e63c98077d45492ba23b798c7fcdd",
-        "当前已包含参考折算/实际资金区分、显式账户、独立启用基准、有效完整更正、转账本金及独立手续费、退回/退款审批、账户核对、私有银行凭证。集成c1937da后端1249项1189通过/60跳过；Chrome认证和开发资金页面各2/2。319941c新增回退与凭证备份保护；真实PG17专项13/13，新财务表与文件恢复一致。来源与完整日志见[综合报告](uat-evidence/review-integration-batch-20261104/README.md)、TEST-RESULTS.md及REVIEW-FINANCE-SOURCE.md。  本轮定向反例补充（2026-11-04）：API可将已追加分类为expense的事实匹配内部本金，且新增本金匹配后完成核对不失效；统一集成已在8087产品代码独立复现3/3失败（含新旧混合匹配），原日志finance-counterexamples-before-fixture-corrected.log保留。最小修复90683506f5d9447974302d83c89ba27351d5dfd4：按有效追加分类校验并在共享锁内重验，将新/旧本金匹配纳入核对指纹；未匹配账户指纹保持旧格式，有匹配的旧核对保守要求重核，不改资金/余额。修后SQLite32/32通过（含5项新回归）；同代码9068350的真实PG17.11专项12/12通过（新回归5/真实性2/真实并发5），99表1081行128迁移4文件恢复及私有HTTP4/4；最终SHA CI按本轮最终报告记录，不提前记通过。 第三项本轮确认缺陷ADV-03：finance-ledger未声明模块，普通认证的全局财务授权角色被通用权限层403拒绝；超管成功不能证明角色可用。候选报告2e20bfdccb711bdd5f9028cb60e287ee742c77c5仅只读检查尚未接收；主审在906产品代码独立6项角色回归为1通过/5失败（finance-role-before.log）。最小补修9af2a32fa81df3aa975424b70a887057e40b6b22已覆盖只读预览、create/update分离及既有finance或reports导出契约，相关SQLite91/91、干净9af检出的真实PG17专项64/64通过；恢复99表1081行128迁移4文件、HTTP4/4、源未变且清理完成。主树未提交测试触发的保护拒绝日志保留，未放宽干净源码保护。不启用运行环境正式RBAC，不改开发超级管理员判定。侧审另列非规范export值的既有解析/格式差异：当前受支持契约为小写csv，未证明越权，不在本轮擅自增加格式或别名，按105兼容边界待独立核查。",
+        "当前已包含参考折算/实际资金区分、显式账户、独立启用基准、有效完整更正、转账本金及独立手续费、退回/退款审批、账户核对、私有银行凭证。集成c1937da后端1249项1189通过/60跳过；Chrome认证和开发资金页面各2/2。319941c新增回退与凭证备份保护；真实PG17专项13/13，新财务表与文件恢复一致。来源与完整日志见[综合报告](uat-evidence/review-integration-batch-20261104/README.md)、TEST-RESULTS.md及REVIEW-FINANCE-SOURCE.md。  本轮定向反例补充（2026-11-04）：API可将已追加分类为expense的事实匹配内部本金，且新增本金匹配后完成核对不失效；统一集成已在8087产品代码独立复现3/3失败（含新旧混合匹配），原日志finance-counterexamples-before-fixture-corrected.log保留。最小修复90683506f5d9447974302d83c89ba27351d5dfd4：按有效追加分类校验并在共享锁内重验，将新/旧本金匹配纳入核对指纹；未匹配账户指纹保持旧格式，有匹配的旧核对保守要求重核，不改资金/余额。修后SQLite32/32通过（含5项新回归）；同代码9068350的真实PG17.11专项12/12通过（新回归5/真实性2/真实并发5），99表1081行128迁移4文件恢复及私有HTTP4/4；最终SHA CI按本轮最终报告记录，不提前记通过。 第三项本轮确认缺陷ADV-03：finance-ledger未声明模块，普通认证的全局财务授权角色被通用权限层403拒绝；超管成功不能证明角色可用。候选报告2e20bfdccb711bdd5f9028cb60e287ee742c77c5仅只读检查尚未接收；主审在906产品代码独立6项角色回归为1通过/5失败（finance-role-before.log）。最小补修9af2a32fa81df3aa975424b70a887057e40b6b22已覆盖只读预览、create/update分离及既有finance或reports导出契约，相关SQLite91/91、干净9af检出的真实PG17专项64/64通过；恢复99表1081行128迁移4文件、HTTP4/4、源未变且清理完成。主树未提交测试触发的保护拒绝日志保留，未放宽干净源码保护。不启用运行环境正式RBAC，不改开发超级管理员判定。侧审另列非规范export值的既有解析/格式差异：当前受支持契约为小写csv，未证明越权，不在本轮擅自增加格式或别名，按105兼容边界待独立核查。 后续a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f已提交有序锁/截止日7测试，原clean guard下真实PG专项25/25通过，包含三个独立backend PID/实际阻塞/锁前预读/审计与余额原子断言；不采信已中止的未提交草稿例外。全量本地/最终SHA三CI单独记录。旧合法匹配的核对摘要兼容/一次重核已验；未扫描目标存量中旧缺陷已造成的错误匹配，也不自动改写不可变历史关系，启用前须只读核查并按受控审查处理，不把新写入口修复宣称为存量自动修复。",
         "已有实现待ChatGPT独立复审；8087f2c / CI41839476121三CI已实际核实SUCCESS，PG17全量1282通过/30跳过、Chrome270通过；财务反例及独立复审仍待完成，真实账户/日期/余额/来源资料由负责人提供；不重新询问已确认资金原则。",
         "实际资金、账面参考和账户余额范围准确；正常/拒绝/并发/审计/历史保护与独立复审通过，不以开发session代替正式身份验收。"
       ],
@@ -11732,7 +11807,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[106]",
             "statement": "基线7faafcf复现报价列名“履约状态”；本轮报价恢复“状态”，订单保持“履约状态”，增加共享组件双向切换回归及真实Chrome截图",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "基线7faafcf复现报价列名“履约状态”；本轮报价恢复“状态”，订单保持“履约状态”，增加共享组件双向切换回归及真实Chrome截图"
           },
           {
             "kind": "ui_workspace",
@@ -11890,7 +11966,8 @@
                 "resolved_path": "docs/uat-evidence/r1-fin-p1/ISS-107-FOLLOWUP.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "已确认缺陷仅为Transaction.rmb_amount模型元数据仍标为“实际人民币金额”，以及资源入口描述未区分银行事实；公开流水序列化标签、财务概览、报表、CSV、旧保存配置已先行澄清且本轮复核通过。稳定API键income_rmb/expense_rmb/net_cash_rmb/rmb_amount及source=cash保留；本轮新增0081仅调整模型显示元数据，不改历史迁移、金额或配置"
           },
           {
             "kind": "archived_matrix_row",
@@ -12070,7 +12147,8 @@
                 "resolved_path": "docs/uat-evidence/review-integration-batch-20261104/REVIEW-FINANCE-SOURCE.md"
               }
             ],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "可追溯完整更正、银行退回、敏感退款申请/批准/实际扣款区分、真实双人审批和来源限制已经实现，不再描述为尚未实施。原事实与凭证不可直接覆盖，批准不等于实际扣款，不自动释放未知来源额度；集成Chrome两尺寸及负路径已实跑，精确结果和源码见[财务预审](uat-evidence/review-integration-batch-20261104/REVIEW-FINANCE-SOURCE.md)。"
           },
           {
             "kind": "archived_matrix_row",
@@ -12199,7 +12277,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[109]",
             "statement": "原应收回归测试将第一期设为真实今天前一天，却沿用固定历史第二期交期；跨日后第二期也逾期，期望135.32变实际485.32。已固定fixture测试日和两个到期日，补充未来日期全部逾期断言。只改测试，不改规则/金额",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "原应收回归测试将第一期设为真实今天前一天，却沿用固定历史第二期交期；跨日后第二期也逾期，期望135.32变实际485.32。已固定fixture测试日和两个到期日，补充未来日期全部逾期断言。只改测试，不改规则/金额"
           },
           {
             "kind": "archived_matrix_row",
@@ -12329,7 +12408,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[110]",
             "statement": "`CashEventPage.vue`预览成功后修改金额、日期、手续费、来源或凭证仍可沿用旧结果登记，可能造成登记内容未经过对应预览。已增加完整规范化请求指纹、字段变化失效、登记前指纹检查及服务端继续复核；新增Playwright覆盖金额修改和预览失效。",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "`CashEventPage.vue`预览成功后修改金额、日期、手续费、来源或凭证仍可沿用旧结果登记，可能造成登记内容未经过对应预览。已增加完整规范化请求指纹、字段变化失效、登记前指纹检查及服务端继续复核；新增Playwright覆盖金额修改和预览失效。"
           },
           {
             "kind": "archived_matrix_row",
@@ -12448,7 +12528,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[111]",
             "statement": "预览成功调用`formGuard.markClean`，把仍未登记的输入误判为已保存，关闭/导航可能静默丢失。已移除预览清洁标记；登记、确认、放弃成功后才清理基线，并以24小时本地临时快照恢复稳定请求键和必要输入。",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "预览成功调用`formGuard.markClean`，把仍未登记的输入误判为已保存，关闭/导航可能静默丢失。已移除预览清洁标记；登记、确认、放弃成功后才清理基线，并以24小时本地临时快照恢复稳定请求键和必要输入。"
           },
           {
             "kind": "archived_matrix_row",
@@ -12589,7 +12670,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[112]",
             "statement": "原`eventPayload`把所有选中来源自动标记`verified=true`，页面没有逐条人工核实动作。已改为来源选择与核实分离，逐条勾选后才可预览，最终确认增加完整摘要和显式确认。",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "原`eventPayload`把所有选中来源自动标记`verified=true`，页面没有逐条人工核实动作。已改为来源选择与核实分离，逐条勾选后才可预览，最终确认增加完整摘要和显式确认。"
           },
           {
             "kind": "archived_matrix_row",
@@ -12708,7 +12790,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[113]",
             "statement": "来源币种切换/刷新时旧请求可能覆盖新来源并展示失效额度。已加入请求序号、AbortController、币种一致性检查和失败保留输入。",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "来源币种切换/刷新时旧请求可能覆盖新来源并展示失效额度。已加入请求序号、AbortController、币种一致性检查和失败保留输入。"
           },
           {
             "kind": "archived_matrix_row",
@@ -12827,7 +12910,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[115]",
             "statement": "恢复本地草稿后 `useUnsavedChangesGuard` 基线仍为 `null`，直接关闭可能不提示而清除草稿。已在恢复前建立空白新建基线，恢复内容保持dirty；取消关闭保留输入/请求键，确认放弃才清理快照，并新增真实Playwright回归",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "恢复本地草稿后 `useUnsavedChangesGuard` 基线仍为 `null`，直接关闭可能不提示而清除草稿。已在恢复前建立空白新建基线，恢复内容保持dirty；取消关闭保留输入/请求键，确认放弃才清理快照，并新增真实Playwright回归"
           },
           {
             "kind": "archived_matrix_row",
@@ -12946,7 +13030,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[116]",
             "statement": "来源分配金额修改后仍可能保留 `verified=true`，导致人工核实状态不再对应当前金额。已加入金额编辑立即撤销核实、金额基线追踪及30→50 Playwright回归；后端额度/状态校验保留",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "来源分配金额修改后仍可能保留 `verified=true`，导致人工核实状态不再对应当前金额。已加入金额编辑立即撤销核实、金额基线追踪及30→50 Playwright回归；后端额度/状态校验保留"
           },
           {
             "kind": "archived_matrix_row",
@@ -13065,7 +13150,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[117]",
             "statement": "本地快照此前按整个表单对象保存，缺少初始化过期清理和敏感字段边界。已改为字段白名单、版本化快照、页面初始化清理过期记录；凭证引用/SHA256/人工核实说明不落本地，恢复后要求重新填写；稳定请求键仍可用于结果不明回查",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "本地快照此前按整个表单对象保存，缺少初始化过期清理和敏感字段边界。已改为字段白名单、版本化快照、页面初始化清理过期记录；凭证引用/SHA256/人工核实说明不落本地，恢复后要求重新填写；稳定请求键仍可用于结果不明回查"
           },
           {
             "kind": "archived_matrix_row",
@@ -13184,7 +13270,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[118]",
             "statement": "旧版localStorage草稿可能保留凭证引用、SHA256和人工核实说明。恢复后立即用白名单覆盖旧快照；敏感字段不落本地，恢复后重新填写",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "旧版localStorage草稿可能保留凭证引用、SHA256和人工核实说明。恢复后立即用白名单覆盖旧快照；敏感字段不落本地，恢复后重新填写"
           },
           {
             "kind": "archived_matrix_row",
@@ -13311,9 +13398,10 @@
           {
             "kind": "current_ledger",
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[119]",
-            "statement": "后端要求独立手续费的`fee_for`关联，但页面无已确认结汇事件选择。增加最小选择器，后端权限、额度和事务校验保持",
+            "statement": "独立手续费允许不关联父结汇；有明确来源时fee_for可选关联。当前cash_events.normalize以payload.get(\"fee_for\")接收空值，保留关联时的权限/来源校验。含扣/另扣不重复扣减，旧“必须关联且无选择器”只属历史背景。",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "后端要求独立手续费的`fee_for`关联，但页面无已确认结汇事件选择。增加最小选择器，后端权限、额度和事务校验保持"
           },
           {
             "kind": "archived_matrix_row",
@@ -13437,7 +13525,8 @@
             "source_ref": "docs/uat-evidence/integration-closeout-02/ledger-current.json#rows[120]",
             "statement": "浏览器数字输入把`87.60`变为JS `87.6`，服务端Decimal精度校验拒绝。请求体改为规范化字符串，后端规则不变",
             "artifact_refs": [],
-            "exists": true
+            "exists": true,
+            "historical_statement_before_closeout": "浏览器数字输入把`87.60`变为JS `87.6`，服务端Decimal精度校验拒绝。请求体改为规范化字符串，后端规则不变"
           },
           {
             "kind": "archived_matrix_row",

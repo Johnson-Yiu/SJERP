@@ -1,0 +1,37 @@
+{
+  "files": [
+    {
+      "path": "python312-install.log",
+      "bytes": 6153,
+      "sha256": "fbbe0c8057d183014f94875f4409580b2fc42561ab26663cd1563587438d6173"
+    },
+    {
+      "path": "python312-pip-check.log",
+      "bytes": 31,
+      "sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf"
+    },
+    {
+      "path": "python312-system-check-536.log",
+      "bytes": 49,
+      "sha256": "f87ceb15410bde28ff826ce26228e0576558258fa64d145847921a593a61ee63"
+    },
+    {
+      "path": "python312-migrations-check-536.log",
+      "bytes": 21,
+      "sha256": "93e6e2d5be3c054add80c0f19101608803f7ca8a7df1fa41f76bbb9a1f570f4a"
+    },
+    {
+      "path": "full-pg-a840/finance-source-d4e858/finance-delivered-pg/logs/restored-private-http-d4e858675b90.log",
+      "bytes": 462,
+      "sha256": "8ff1a1ae8f679c22848eb6429908f52c82c7545fdb7e0b21f542aed59cad359a"
+    },
+    {
+      "path": "full-pg-a840/logs/restored-private-http-a8400fb8deb1.log",
+      "bytes": 462,
+      "sha256": "408336d388869a11d403b4de47f642288ca2d8a5ec89e5015fb62597cecee79d"
+    }
+  ],
+  "archive_sha256": "2be28285ab05495a772ff1e2dd4b079b83356c45f18fe23f97638286fd7a839a",
+  "scope": "Python3.12 locked install/pip-check/check/migration checks at 536; source-bound a840 and d4 restored HTTP logs; not final integration results",
+  "redactions": 0
+}

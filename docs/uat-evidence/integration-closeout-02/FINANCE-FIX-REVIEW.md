@@ -1,3 +1,5 @@
+当前主审补充（2026-11-05）：以下是906代码的历史静态预审，所列证据缺项后续已有定向补齐，不能再据此称仍未测试。a840有序锁/截止日/旧摘要7项已提交，原clean guard下真实PG25/25通过，包含三个真实阻塞PID和截止日前后匹配/旧摘要兼容。冻结a840全量SQLite1330项1266通过64跳过、PG1330项1300通过30跳过，均0失败；完整财务反例来源合入后原三断言SQLite3/3与PG财务30/30另通过。原始日志见TEST-RESULTS.md、coordinator-finance-lock-order-result.json、full-a840-result.json。均为开发侧实证，不冒充ChatGPT独立复审；旧错误匹配存量未扫描/自动修复，最终集成另验。
+
 # Finance closeout fix review
 
 ## 审查范围与结论

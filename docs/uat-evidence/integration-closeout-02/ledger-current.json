@@ -1,5 +1,5 @@
 {
-  "checked_worktree_head": "a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f",
+  "checked_worktree_head": "536789f6dbafb2874b1abfd33ade2b30faa123a4",
   "baseline_ci_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750",
   "status": "PASS",
   "checks": [
@@ -242,7 +242,7 @@
       "cells": [
         "[Phase 4A BLOCKER-DR-01](Phase4-生产化加固审计与实施计划.md)；[ISS-018 隔离演练](uat-evidence/iss-018-backup-recovery/README.md)；首次日期：UNKNOWN（未从一手记录确认）",
         "2026-10-27 / `codex/integration-018-036-025` / `46353a5436637832f5adadb7bdef6b45cdeada23`",
-        "原有单归档 SQLite+私有媒体一致性备份、恢复、SHA256、状态记录和 7/4/3 保留计划保持；FIX-01 的 POSIX `0700`/`0600` 权限收口和同文件系统 staging 原子切换继续保留；FIX-02 新增恢复报告路径的原始符号链接检查、拒绝指向目标目录本身或内部、恢复成功与报告写入状态分离，并禁止清理命令为不存在的备份目录自动建目录。定向回归覆盖目标冲突、报告符号链接、失败恢复不创建目标、报告写入失败、非目录/符号链接备份目录和默认 dry-run。后续8087f2c / CI41839476121的真实PG17全量1282通过/30跳过，另同SHA隔离专项15/15、99表1081行128迁移4文件恢复及HTTP4/4；原始证据见integration-closeout-02/baseline-8087-ci-receipt.json。目标部署 PostgreSQL运行角色、生产媒体卷、加密异地副本、定时器/告警和 RPO/RTO 仍为 `DEPLOYMENT_VERIFICATION_PENDING`。  本轮Linux来源补充反例：其聊天实际进度报告称自填restore_verified_sha256可授权保留删除，独立签名/真实恢复回执正在修；归本ID的保留安全子项，不因目标部署BLOCKED忽略代码缺陷。当前仅来源聊天进度，尚未接收稳定SHA和原始失败文件，不记为本分支已验修复。",
+        "原有单归档 SQLite+私有媒体一致性备份、恢复、SHA256、状态记录和 7/4/3 保留计划保持；FIX-01 的 POSIX `0700`/`0600` 权限收口和同文件系统 staging 原子切换继续保留；FIX-02 新增恢复报告路径的原始符号链接检查、拒绝指向目标目录本身或内部、恢复成功与报告写入状态分离，并禁止清理命令为不存在的备份目录自动建目录。定向回归覆盖目标冲突、报告符号链接、失败恢复不创建目标、报告写入失败、非目录/符号链接备份目录和默认 dry-run。后续8087f2c / CI41839476121的真实PG17全量1282通过/30跳过，另同SHA隔离专项15/15、99表1081行128迁移4文件恢复及HTTP4/4；原始证据见integration-closeout-02/baseline-8087-ci-receipt.json。目标部署 PostgreSQL运行角色、生产媒体卷、加密异地副本、定时器/告警和 RPO/RTO 仍为 `DEPLOYMENT_VERIFICATION_PENDING`。  本轮已完整接收Linux稳定来源4a4f338b09e9a464f1e66c24a905c35c970729bf（合并536789f6dbafb2874b1abfd33ade2b30faa123a4）：自填restore_verified_sha256不能授权删除，改为实际解密/恢复后独立签名及root受控公钥信任根。来源CI41866028447与真实Linux专项41866028480各三项SUCCESS，原失败及真实文件见uat-evidence/linux-operations-acceptance-20261104/README.md。集成预审另确认正式CLI默认0600回执无法被分离的保留/监控UID直接读取，旧演练经stdout重写未验证交接；此明确接通缺口归本ID，已授权最小修复及真实跨UID回归，当前不记完成。详见uat-evidence/integration-closeout-02/REVIEW-LINUX-STABLE-SOURCE.md及stable-source-ci-receipt.json。来源成功不是集成或目标部署成功。",
         "已授权Linux运维包继续一次性真实Linux/受限角色/恢复回执验收；目标环境另行完成 PostgreSQL 与媒体同一恢复点、独立故障域加密副本、自动任务/告警、恢复记录、POSIX/NTFS 权限和金额/库存/附件关系核对；不能用 SQLite 或开发 Windows ACL 代替。",
         "部署前运维验收",
         "真实备份可恢复且 DB/媒体关系完整，恢复演练、权限、告警、RPO/RTO 与回滚证据经独立复审。"
@@ -494,7 +494,7 @@
       "status": "NEEDS_VERIFICATION",
       "cells": [
         "[Product Completion Review §snapshot](Product-Completion-Review-Phase1.md)；[UX2 snapshot checks](Product-UX-Second-Review.md)；首次日期：UNKNOWN",
-        "2026-11-03 / 审查源码`8d3ca5f`；[独立审查](uat-evidence/r1-iss037-snapshot-audit-20261103/README.md)及[本轮补修/集成](uat-evidence/r1-rule-gap-fix-batch-20261103/README.md)",
+        "2026-11-03 / 审查源码`8d3ca5f`；[独立审查](uat-evidence/r1-iss037-snapshot-audit-20261103/README.md)及[本轮补修/集成](uat-evidence/r1-rule-gap-fix-batch-20261103/README.md)  本轮只读候选补充：财务包CI41857369306（源码3c34d9e121e751af39267fc28338bf2233178fc3）既有原生打印spec第74行1440px/headers=false发生30秒超时，主业务套件244通过/1失败，构建未执行；根因UNKNOWN。完整原始发布日志在候选2e20bfdccb711bdd5f9028cb60e287ee742c77c5:docs/uat-evidence/finance-adversarial-review-20261104/ci-frontend-print-timeout.published.log及manifest中，当前仅Git对象只读审查尚未接收来源。不将前后绿色解释为稳定性已修，打印完整成品/分页仍按用户决定延期，不追加原生打印或催办，保留全量CI原断言。",
         "已有销售订单六项客户/采购单五项供应商及报价买方、商品、图片快照；正式历史使用对应版本规则已确认，旧“当前主档还是快照待决”已过时。本轮只修历史空买方被新修订静默填入；卖方/模板冻结、完整双方字段、历史迁移来源可信度、主体版本与审批分离仍未覆盖。",
         "后端/业务QA按独立报告逐项验收已有实现和本轮空值修订，再实施剩余范围；不重复开发六/五项快照，不批量填历史，不解除正式只读。",
         "定向补修待复审 / 后续完整主体治理",
@@ -1262,7 +1262,7 @@
       "status": "FIXED_PENDING_REVIEW",
       "cells": [
         "2026-10-18用户财务统计审查；本轮完整稳定财务来源3a07e7ef1a9e63c98077d45492ba23b798c7fcdd",
-        "当前已包含参考折算/实际资金区分、显式账户、独立启用基准、有效完整更正、转账本金及独立手续费、退回/退款审批、账户核对、私有银行凭证。集成c1937da后端1249项1189通过/60跳过；Chrome认证和开发资金页面各2/2。319941c新增回退与凭证备份保护；真实PG17专项13/13，新财务表与文件恢复一致。来源与完整日志见[综合报告](uat-evidence/review-integration-batch-20261104/README.md)、TEST-RESULTS.md及REVIEW-FINANCE-SOURCE.md。  本轮定向反例补充（2026-11-04）：API可将已追加分类为expense的事实匹配内部本金，且新增本金匹配后完成核对不失效；统一集成已在8087产品代码独立复现3/3失败（含新旧混合匹配），原日志finance-counterexamples-before-fixture-corrected.log保留。最小修复90683506f5d9447974302d83c89ba27351d5dfd4：按有效追加分类校验并在共享锁内重验，将新/旧本金匹配纳入核对指纹；未匹配账户指纹保持旧格式，有匹配的旧核对保守要求重核，不改资金/余额。修后SQLite32/32通过（含5项新回归）；同代码9068350的真实PG17.11专项12/12通过（新回归5/真实性2/真实并发5），99表1081行128迁移4文件恢复及私有HTTP4/4；最终SHA CI按本轮最终报告记录，不提前记通过。 第三项本轮确认缺陷ADV-03：finance-ledger未声明模块，普通认证的全局财务授权角色被通用权限层403拒绝；超管成功不能证明角色可用。候选报告2e20bfdccb711bdd5f9028cb60e287ee742c77c5仅只读检查尚未接收；主审在906产品代码独立6项角色回归为1通过/5失败（finance-role-before.log）。最小补修9af2a32fa81df3aa975424b70a887057e40b6b22已覆盖只读预览、create/update分离及既有finance或reports导出契约，相关SQLite91/91、干净9af检出的真实PG17专项64/64通过；恢复99表1081行128迁移4文件、HTTP4/4、源未变且清理完成。主树未提交测试触发的保护拒绝日志保留，未放宽干净源码保护。不启用运行环境正式RBAC，不改开发超级管理员判定。侧审另列非规范export值的既有解析/格式差异：当前受支持契约为小写csv，未证明越权，不在本轮擅自增加格式或别名，按105兼容边界待独立核查。 后续a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f已提交有序锁/截止日7测试，原clean guard下真实PG专项25/25通过，包含三个独立backend PID/实际阻塞/锁前预读/审计与余额原子断言；不采信已中止的未提交草稿例外。全量本地/最终SHA三CI单独记录。",
+        "当前已包含参考折算/实际资金区分、显式账户、独立启用基准、有效完整更正、转账本金及独立手续费、退回/退款审批、账户核对、私有银行凭证。集成c1937da后端1249项1189通过/60跳过；Chrome认证和开发资金页面各2/2。319941c新增回退与凭证备份保护；真实PG17专项13/13，新财务表与文件恢复一致。来源与完整日志见[综合报告](uat-evidence/review-integration-batch-20261104/README.md)、TEST-RESULTS.md及REVIEW-FINANCE-SOURCE.md。  本轮定向反例补充（2026-11-04）：API可将已追加分类为expense的事实匹配内部本金，且新增本金匹配后完成核对不失效；统一集成已在8087产品代码独立复现3/3失败（含新旧混合匹配），原日志finance-counterexamples-before-fixture-corrected.log保留。最小修复90683506f5d9447974302d83c89ba27351d5dfd4：按有效追加分类校验并在共享锁内重验，将新/旧本金匹配纳入核对指纹；未匹配账户指纹保持旧格式，有匹配的旧核对保守要求重核，不改资金/余额。修后SQLite32/32通过（含5项新回归）；同代码9068350的真实PG17.11专项12/12通过（新回归5/真实性2/真实并发5），99表1081行128迁移4文件恢复及私有HTTP4/4；最终SHA CI按本轮最终报告记录，不提前记通过。 第三项本轮确认缺陷ADV-03：finance-ledger未声明模块，普通认证的全局财务授权角色被通用权限层403拒绝；超管成功不能证明角色可用。候选报告2e20bfdccb711bdd5f9028cb60e287ee742c77c5仅只读检查尚未接收；主审在906产品代码独立6项角色回归为1通过/5失败（finance-role-before.log）。最小补修9af2a32fa81df3aa975424b70a887057e40b6b22已覆盖只读预览、create/update分离及既有finance或reports导出契约，相关SQLite91/91、干净9af检出的真实PG17专项64/64通过；恢复99表1081行128迁移4文件、HTTP4/4、源未变且清理完成。主树未提交测试触发的保护拒绝日志保留，未放宽干净源码保护。不启用运行环境正式RBAC，不改开发超级管理员判定。侧审另列非规范export值的既有解析/格式差异：当前受支持契约为小写csv，未证明越权，不在本轮擅自增加格式或别名，按105兼容边界待独立核查。 后续a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f已提交有序锁/截止日7测试，原clean guard下真实PG专项25/25通过，包含三个独立backend PID/实际阻塞/锁前预读/审计与余额原子断言；不采信已中止的未提交草稿例外。全量本地/最终SHA三CI单独记录。旧合法匹配的核对摘要兼容/一次重核已验；未扫描目标存量中旧缺陷已造成的错误匹配，也不自动改写不可变历史关系，启用前须只读核查并按受控审查处理，不把新写入口修复宣称为存量自动修复。",
         "已有实现待ChatGPT独立复审；8087f2c / CI41839476121三CI已实际核实SUCCESS，PG17全量1282通过/30跳过、Chrome270通过；财务反例及独立复审仍待完成，真实账户/日期/余额/来源资料由负责人提供；不重新询问已确认资金原则。",
         "实际资金、账面参考和账户余额范围准确；正常/拒绝/并发/审计/历史保护与独立复审通过，不以开发session代替正式身份验收。"
       ]

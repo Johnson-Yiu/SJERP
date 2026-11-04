@@ -23,7 +23,7 @@ class RetentionTests(TestCase):
             path.write_bytes(b"SYNTHETIC-CIPHERTEXT" + bytes([age]))
             replica = Path(self.temp.name) / path.name
             replica.write_bytes(path.read_bytes())
-            self.receipts.append({"name": path.name, "sha256": digest(path), "replica": str(replica),
+            self.receipts.append({"name": path.name, "sha256": digest(path), "restore_verified_sha256": digest(path), "replica": str(replica),
                                   "created_at": (self.now-timedelta(days=age)).isoformat()})
 
     def invoke(self, **kwargs):
@@ -55,3 +55,9 @@ class RetentionTests(TestCase):
     def test_single_backup_never_pruned(self):
         self.receipts = self.receipts[:1]
         self.assertEqual(self.invoke(execute=True)["removed"], [])
+
+    def test_digest_without_restore_verification_never_authorizes_pruning(self):
+        self.receipts[0].pop("restore_verified_sha256")
+        with self.assertRaises(ValueError):
+            self.invoke(execute=True)
+        self.assertTrue(all((self.root / r["name"]).exists() for r in self.receipts))

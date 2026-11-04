@@ -26,6 +26,8 @@ def prune_verified(root, *, owner_id, receipts, keep, minimum_age_seconds, now=N
         names.add(name)
         path = root / name
         expected = receipt["sha256"]
+        if receipt.get("restore_verified_sha256") != expected:
+            raise ValueError("Trusted successful restore receipt for this exact archive is required")
         created = datetime.fromisoformat(receipt["created_at"])
         if created.tzinfo is None or created > now or not re.fullmatch(r"[0-9a-f]{64}", expected):
             raise ValueError("Invalid trusted receipt")

@@ -23,6 +23,20 @@ from .private_media import build_private_media_manifest, compare_private_media_m
 from .backup_recovery import _copy_media_snapshot, _extract_archive, _safe_member_path
 
 
+def verify_media_references(connection, media):
+    paths = {entry["path"] for entry in media["files"]}
+    checked = 0
+    for table, column in (("crm_followupattachment", "file"), ("crm_sku", "image"),
+                          ("crm_productcertificate", "file"), ("crm_quoteitem", "image_snapshot")):
+        rows = connection.execute(sql.SQL("SELECT {} FROM {} WHERE {} IS NOT NULL AND {} <> ''").format(
+            sql.Identifier(column), sql.Identifier(table), sql.Identifier(column), sql.Identifier(column)))
+        for (relative,) in rows:
+            if relative not in paths:
+                raise RuntimeError("Database references a missing private media file")
+            checked += 1
+    return checked
+
+
 def database_state(connection):
     result = {}
     tables = connection.execute("SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename").fetchall()
@@ -107,6 +121,11 @@ class MaintenanceBackup:
             snapshot = connection.execute("SELECT pg_export_snapshot()").fetchone()[0]
             state = database_state(connection)
             media = build_private_media_manifest(media_root)
+            references = verify_media_references(connection, media)
+            applied = {row[0] for row in connection.execute("SELECT name FROM django_migrations WHERE app='crm'")}
+            expected = {file.stem for file in (Path(__file__).resolve().parents[1] / "migrations").glob("[0-9]*.py")}
+            if not expected.issubset(applied):
+                raise RuntimeError("Required application migrations are not complete")
             stage = Path(staging)
             self.tool("pg_dump", "--format=custom", "--no-owner", "--no-acl", "--snapshot", snapshot,
                       "--file", stage / "database.dump", "--dbname", self.database)
@@ -120,7 +139,8 @@ class MaintenanceBackup:
             manifest = {"kind": "sunjack-maintenance-backup", "version": 1, "app_sha": self.app_sha,
                         "postgres_major": 17, "system_identifier": self.system_identifier,
                         "database": self.database, "database_sha256": digest(stage / "database.dump"),
-                        "state": state, "media": media, "media_fence": fence}
+                        "state": state, "media": media, "media_fence": fence, "media_references": references,
+                        "migrations": sorted(applied)}
             (stage / "manifest.json").write_text(json.dumps(manifest, sort_keys=True), encoding="utf-8")
             # Exclusive output is not a success receipt until the whole ZIP closes.
             created_output = False
@@ -186,6 +206,8 @@ class MaintenanceBackup:
                 with psycopg.connect(**options) as restored:
                     if database_state(restored) != manifest["state"]:
                         raise RuntimeError("Restored rows, amounts, relations or sequences differ")
+                    if verify_media_references(restored, manifest["media"]) != manifest["media_references"]:
+                        raise RuntimeError("Restored attachment references differ")
                     for table in ("crm_csvimportbatch", "crm_csvimportrowaudit", "crm_csvimportpreviewaudit"):
                         restored.execute("SAVEPOINT audit_probe")
                         try:

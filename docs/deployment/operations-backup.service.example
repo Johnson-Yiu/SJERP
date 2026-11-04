@@ -1,0 +1,25 @@
+# Review paths, source maintenance orchestration and target identity before use.
+# This unit is intentionally NOT installed or enabled by this work package.
+[Unit]
+Description=SUNJACK verified maintenance backup
+OnFailure=sunjack-backup-alert@%n.service
+
+[Service]
+Type=oneshot
+User=sunjack-backup
+Group=sunjack-backup
+UMask=0077
+WorkingDirectory=/srv/sunjack/release
+ExecStart=/srv/sunjack/venv/bin/python backend/operations_backup.py backup --config /etc/sunjack/backup.json
+TimeoutStartSec=20min
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/sunjack/backups
+StandardOutput=journal
+StandardError=journal
+
+# No credentials in Environment= or command arguments. Provision a protected
+# pgpass file and refer only to its path in backup.json. The backup config must
+# name a NEW destination on every run; no overwrite/retry-in-place is supported.

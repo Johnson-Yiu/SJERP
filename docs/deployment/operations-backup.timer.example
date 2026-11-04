@@ -1,0 +1,14 @@
+[Unit]
+Description=SUNJACK maintenance backup schedule template
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+Persistent=false
+Unit=operations-backup.service
+
+[Install]
+WantedBy=timers.target
+
+# Do not enable until maintenance orchestration, unique destination generation,
+# encryption, independent copy, restore verification and failure alert delivery
+# have passed the target environment acceptance.

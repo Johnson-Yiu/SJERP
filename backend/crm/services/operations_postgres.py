@@ -225,6 +225,23 @@ class MaintenanceBackup:
                             raise RuntimeError("Restored audit trigger did not reject TRUNCATE")
                         finally:
                             restored.execute("ROLLBACK TO SAVEPOINT audit_probe")
+                    rejected_mutations = 0
+                    for table in ("crm_operationlog", "crm_csvimportbatch", "crm_csvimportrowaudit", "crm_csvimportpreviewaudit"):
+                        row = restored.execute(sql.SQL("SELECT id FROM {} LIMIT 1").format(sql.Identifier(table))).fetchone()
+                        if row is None:
+                            continue
+                        for statement in (sql.SQL("UPDATE {} SET id=id WHERE id=%s"), sql.SQL("DELETE FROM {} WHERE id=%s")):
+                            restored.execute("SAVEPOINT audit_row_probe")
+                            try:
+                                restored.execute(statement.format(sql.Identifier(table)), (row[0],))
+                            except psycopg.Error as error:
+                                if "append-only" not in str(error).lower():
+                                    raise RuntimeError("Audit row rejection was not append-only protection") from None
+                                rejected_mutations += 1
+                            else:
+                                raise RuntimeError("Restored audit row mutation was accepted")
+                            finally:
+                                restored.execute("ROLLBACK TO SAVEPOINT audit_row_probe")
                     if database_state(restored) != manifest["state"]:
                         raise RuntimeError("Audit probes changed restored data")
                 media.mkdir(mode=0o700)
@@ -233,7 +250,7 @@ class MaintenanceBackup:
                 if compare_private_media_manifest(manifest["media"], media):
                     raise RuntimeError("Restored media integrity failed")
                 return {"database": target, "media_root": str(media), "verified": True,
-                        "audit_truncate_rejected": True}
+                        "audit_truncate_rejected": True, "audit_row_mutations_rejected": rejected_mutations}
             except Exception as original:
                 if database_created:
                     try:

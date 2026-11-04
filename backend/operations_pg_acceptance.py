@@ -13,6 +13,8 @@ import socket
 import subprocess
 import tempfile
 import time
+import zipfile
+import hashlib
 from unittest.mock import patch
 
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
@@ -92,6 +94,28 @@ def main():
         with patch("crm.services.operations_postgres.verify_readonly_filesystem", return_value={"evidence": "SIMULATED-LINUX-MEDIA-FENCE"}):
             backup = service.backup(media_root=drill.media, destination=archive)
         restored = service.restore(archive=archive, expected_sha256=backup["sha256"], media_parent=root)
+        corrupt = root / "invalid-dump.zip"
+        invalid_dump = b"SYNTHETIC INVALID POSTGRES CUSTOM DUMP"
+        with zipfile.ZipFile(archive) as original, zipfile.ZipFile(corrupt, "w") as changed:
+            for entry in original.infolist():
+                content = original.read(entry)
+                if entry.filename == "database.dump":
+                    content = invalid_dump
+                elif entry.filename == "manifest.json":
+                    manifest = json.loads(content)
+                    manifest["database_sha256"] = hashlib.sha256(invalid_dump).hexdigest()
+                    content = json.dumps(manifest).encode()
+                changed.writestr(entry, content)
+        with drill._connect("postgres") as connection:
+            databases_before = connection.execute("SELECT datname FROM pg_database ORDER BY datname").fetchall()
+        try:
+            service.restore(archive=corrupt, expected_sha256=digest(corrupt), media_parent=root)
+        except RuntimeError:
+            failed_restore_rejected = True
+        else:
+            raise AssertionError("invalid pg_restore input accepted")
+        with drill._connect("postgres") as connection:
+            assert connection.execute("SELECT datname FROM pg_database ORDER BY datname").fetchall() == databases_before
         try:
             service.restore(archive=archive, expected_sha256="0"*64, media_parent=root)
         except ValueError:
@@ -103,7 +127,9 @@ def main():
         result = {"status": "PASS", "scope": "real-PG17-with-simulated-media-fence", "active_session_rejected": active_rejected,
                           "other_login_rejected": login_rejected, "restored_verified": restored["verified"],
                           "audit_truncate_rejected": restored["audit_truncate_rejected"], "source_unchanged": True,
+                          "audit_row_mutations_rejected": restored["audit_row_mutations_rejected"],
                           "real_lock_competition_rejected": lock_competition_rejected, "bad_digest_rejected": bad_digest_rejected,
+                          "failed_restore_rejected_and_owned_database_removed": failed_restore_rejected,
                           "tables": len(before["tables"]), "rows": sum(v["rows"] for v in before["tables"].values()),
                           "seconds": round(time.monotonic()-clock, 3)}
     finally:

@@ -23,6 +23,9 @@ def crypt_file(source, destination, *, executable, key, expected_sha256, decrypt
         return value
     if not executable.is_absolute() or not executable.is_file():
         raise ValueError("An explicit GnuPG executable is required")
+    controller = executable.with_name("gpgconf.exe" if os.name == "nt" else "gpgconf")
+    if not controller.is_file():
+        raise ValueError("Matching gpgconf is required for isolated agent cleanup")
     if not isinstance(key, bytes) or len(key) < 32 or b"\n" in key or b"\r" in key:
         raise ValueError("A separately managed key of at least 32 bytes is required")
     if source.is_symlink() or not source.is_file() or destination.is_symlink():
@@ -38,10 +41,25 @@ def crypt_file(source, destination, *, executable, key, expected_sha256, decrypt
                     "--pinentry-mode", "loopback", "--passphrase-fd", "0", "--no-symkey-cache"]
             args += ["--decrypt"] if decrypt else ["--symmetric", "--cipher-algo", "AES256", "--compress-algo", "none"]
             # Ciphertext or plaintext goes only to our exclusive file descriptor.
-            result = subprocess.run([*args, "--output", "-", "--", tool_path(source)],
-                                    input=key + b"\n", stdout=output, stderr=subprocess.PIPE, timeout=300)
-            if result.returncode:
-                raise RuntimeError("GnuPG operation failed; output not accepted")
+            primary = None
+            try:
+                result = subprocess.run([*args, "--output", "-", "--", tool_path(source)],
+                                        input=key + b"\n", stdout=output, stderr=subprocess.PIPE, timeout=300)
+                if result.returncode:
+                    raise RuntimeError("GnuPG operation failed; output not accepted")
+            except Exception as error:
+                primary = error
+                raise
+            finally:
+                try:
+                    cleanup = subprocess.run([str(controller), "--homedir", tool_path(home), "--kill", "gpg-agent"],
+                                             stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, timeout=30)
+                    if cleanup.returncode:
+                        raise RuntimeError("Isolated GnuPG agent cleanup failed")
+                except Exception as cleanup_error:
+                    if primary is None:
+                        raise
+                    primary.add_note("Isolated agent cleanup failed: " + type(cleanup_error).__name__)
             output.flush()
             os.fsync(output.fileno())
         if decrypt and digest(destination) != expected_sha256:

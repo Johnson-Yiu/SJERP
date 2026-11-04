@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { spawnSync } from 'node:child_process'
+import { runJsonFixture } from './helpers/json-fixture-process.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
 
@@ -10,8 +10,9 @@ fs.mkdirSync(evidence, { recursive: true })
 
 function database(action) {
   if (!process.env.ISOLATED_TEST_PYTHON || !process.env.ISOLATED_TEST_RUN_ID) throw new Error('Use the verified isolated browser runner.')
-  const result = spawnSync(process.env.ISOLATED_TEST_PYTHON, [inspector, action], { cwd: path.resolve('../backend'), env: process.env, encoding: 'utf8' })
+  const result = runJsonFixture(process.env.ISOLATED_TEST_PYTHON, [inspector, action], { cwd: path.resolve('../backend'), env: process.env })
   expect(result.status, result.stderr).toBe(0)
+  if (action === 'snapshot') console.info(`ISS039_SNAPSHOT_BYTES=${Buffer.byteLength(result.stdout, 'utf8')}`)
   return JSON.parse(result.stdout)
 }
 

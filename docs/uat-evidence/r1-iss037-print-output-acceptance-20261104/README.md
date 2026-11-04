@@ -13,6 +13,8 @@
 
 ## 未完成及失败证据
 
+2026-11-04 内置浏览器重试：按用户要求不使用 Chrome，采用 Codex 内置浏览器和独立 SQLite、私有媒体及合成报价 `SYNTH-0ABBAB0C`。服务标识校验和迁移检查通过，`/api/quotes/1/pi-data/` HTTP 200；界面可见保存版本的合成买卖方、银行和 USD 10.00。点击“导出 PI PDF”后浏览器输入调用超时，页面显示按钮被禁用，系统窗口列表未显示打印对话框；未获得 PDF。不能据此判断打印实现、内置浏览器或打印环境的具体故障根因。手工停止本轮测试服务后 4626/4627 无监听；本轮临时目录 `C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-HO4Emj` 仍保留，未删除。此次预览为合成草稿，不代表正式报价成品验收。
+
 2026-11-04 04:00 后续：`npm run test:browser:isolated -- --business-test iss037-print-font-failure.spec.js` 通过 1 项，真实 Chrome 中构造加载失败的字体，验证中文提示及未调用打印；见 `font-failure-1440.png`。复查本机存在 Microsoft Print to PDF，但不代表已取得 Chrome 成品。将 UI 同一按钮的触发改为异步，以排除测试等待同步打印调用作为唯一原因后，再运行原浏览器文件：图片和窄屏探针两项通过，UI 成品测试仍 30 秒超时、目录无 PDF，结果 **2 passed、1 failed**；该轮隔离服务和临时目录已正常清理。不能据此判断根因一定是 Chrome、打印对话或应用，需要在可操作打印对话的隔离桌面继续排查。
 
 真实 UI 打印尝试使用独立 Chrome profile、`--kiosk-printing` 与 Save as PDF 配置，点击界面按钮；该测试 30 秒超时，未产生 PDF，随后 worker teardown 超时。测试汇总为 **2 passed、1 failed、1 teardown error**，不得写成全通过。隔离 API/Vite 已停止；仅定位并停止了命令行含本次临时目录的两个 Chrome 进程。临时目录 `C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-sggleQ` 因 Chrome profile lock 保留，未清除用户数据。后续应先核实该路径及残留状态，再使用可控的真实 Chrome 打印对话或其他获准路径生成并人工检查 UI 成品。

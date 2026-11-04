@@ -1,0 +1,69 @@
+test_management_command_can_write_and_verify_restore_manifest (crm.tests.test_iss047_private_storage.ISS047PrivateMediaStorageTests.test_management_command_can_write_and_verify_restore_manifest) ... ok
+test_manifest_is_relative_deterministic_and_sha256_verified (crm.tests.test_iss047_private_storage.ISS047PrivateMediaStorageTests.test_manifest_is_relative_deterministic_and_sha256_verified) ... ok
+test_new_filesystem_storage_instance_reopens_file_after_restart_simulation (crm.tests.test_iss047_private_storage.ISS047PrivateMediaStorageTests.test_new_filesystem_storage_instance_reopens_file_after_restart_simulation) ... ok
+test_symlink_is_rejected_in_private_media_inventory (crm.tests.test_iss047_private_storage.ISS047PrivateMediaStorageTests.test_symlink_is_rejected_in_private_media_inventory) ... skipped 'symlink creation is not available in this environment'
+test_archive_path_traversal_is_rejected_before_target_commit (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_archive_path_traversal_is_rejected_before_target_commit) ... ok
+test_backup_permissions_are_strict_on_posix_or_explicitly_pending_on_windows (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_backup_permissions_are_strict_on_posix_or_explicitly_pending_on_windows) ... ok
+test_backup_requires_an_explicit_write_quiescence_confirmation (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_backup_requires_an_explicit_write_quiescence_confirmation) ... ok
+test_disk_write_failure_leaves_no_target_or_staging_directory (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_disk_write_failure_leaves_no_target_or_staging_directory) ... ok
+test_existing_empty_target_is_rejected_without_deletion (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_existing_empty_target_is_rejected_without_deletion) ... ok
+test_existing_world_accessible_backup_directory_requires_explicit_tightening (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_existing_world_accessible_backup_directory_requires_explicit_tightening) ... skipped 'POSIX mode check only'
+test_explicit_failure_report_can_be_outside_target (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_explicit_failure_report_can_be_outside_target) ... ok
+test_failed_restore_to_missing_target_does_not_create_target (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_failed_restore_to_missing_target_does_not_create_target) ... ok
+test_media_change_during_copy_discards_archive (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_media_change_during_copy_discards_archive) ... ok
+test_non_empty_target_is_unchanged_and_failure_report_is_a_sibling (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_non_empty_target_is_unchanged_and_failure_report_is_a_sibling) ... ok
+test_prune_missing_directory_fails_without_creating_it (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_missing_directory_fails_without_creating_it) ... ok
+test_prune_non_directory_fails_without_mutating_path (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_non_directory_fails_without_mutating_path) ... ok
+test_prune_symlink_directory_is_rejected (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_symlink_directory_is_rejected) ... skipped "symlink creation unavailable: [WinError 1314] �ͻ���û���������Ȩ��: 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmph9vk9_q9\\\\real-backups' -> 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmph9vk9_q9\\\\backup-link'"
+test_requested_encryption_failure_is_recorded_as_failed (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_requested_encryption_failure_is_recorded_as_failed) ... ok
+test_restore_rejects_tampered_media (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_restore_rejects_tampered_media) ... ok
+test_result_file_inside_existing_target_is_rejected_without_changes (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_result_file_inside_existing_target_is_rejected_without_changes) ... ok
+test_result_file_symlink_is_rejected_without_overwriting_link_target (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_result_file_symlink_is_rejected_without_overwriting_link_target) ... skipped "symlink creation unavailable: [WinError 1314] �ͻ���û���������Ȩ��: 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmp5dy52768\\\\protected-report.json' -> 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\tmp5dy52768\\\\result.json'"
+test_retention_plan_defaults_to_seven_daily_four_weekly_three_monthly_without_deleting (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_retention_plan_defaults_to_seven_daily_four_weekly_three_monthly_without_deleting) ... ok
+test_single_archive_restore_preserves_rows_amount_inventory_and_media_relation (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_single_archive_restore_preserves_rows_amount_inventory_and_media_relation) ... ok
+test_successful_restore_reports_recovery_and_report_status_separately (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_successful_restore_reports_recovery_and_report_status_separately) ... ok
+test_windows_production_requires_external_ntfs_acl_verification (crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_windows_production_requires_external_ntfs_acl_verification) ... ok
+test_postgresql_backup_is_fail_closed_without_bound_snapshot (crm.tests.test_iss018_backup_recovery.ISS018PostgreSQLBackupBoundaryTests.test_postgresql_backup_is_fail_closed_without_bound_snapshot) ... D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\review-integration-python\Lib\site-packages\django\test\utils.py:455: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with self as context:
+ok
+test_http_and_embedded_credentials_rejected_without_echo (crm.tests.test_operations_preflight.OperationsPreflightTests.test_http_and_embedded_credentials_rejected_without_echo) ... ok
+test_insufficient_space_and_invalid_threshold_rejected (crm.tests.test_operations_preflight.OperationsPreflightTests.test_insufficient_space_and_invalid_threshold_rejected) ... ok
+test_overlapping_roots_and_relative_paths_rejected (crm.tests.test_operations_preflight.OperationsPreflightTests.test_overlapping_roots_and_relative_paths_rejected) ... ok
+test_requested_inode_check_fails_closed_when_unavailable (crm.tests.test_operations_preflight.OperationsPreflightTests.test_requested_inode_check_fails_closed_when_unavailable) ... ok
+test_safe_inputs_never_authorize_backup (crm.tests.test_operations_preflight.OperationsPreflightTests.test_safe_inputs_never_authorize_backup) ... ok
+test_unknown_secret_field_rejected_without_echo (crm.tests.test_operations_preflight.OperationsPreflightTests.test_unknown_secret_field_rejected_without_echo) ... ok
+test_actual_cli_success_and_repeated_destination_refused (crm.tests.test_operations_copy.VerifiedCopyTests.test_actual_cli_success_and_repeated_destination_refused) ... ok
+test_cleanup_failure_preserves_primary_error_and_partial_file (crm.tests.test_operations_copy.VerifiedCopyTests.test_cleanup_failure_preserves_primary_error_and_partial_file) ... ok
+test_copy_verification_failure_cleans_only_owned_copy (crm.tests.test_operations_copy.VerifiedCopyTests.test_copy_verification_failure_cleans_only_owned_copy) ... ok
+test_existing_destination_never_overwritten_or_removed (crm.tests.test_operations_copy.VerifiedCopyTests.test_existing_destination_never_overwritten_or_removed) ... ok
+test_fsync_failure_removes_incomplete_copy (crm.tests.test_operations_copy.VerifiedCopyTests.test_fsync_failure_removes_incomplete_copy) ... ok
+test_verified_copy_and_source_preserved (crm.tests.test_operations_copy.VerifiedCopyTests.test_verified_copy_and_source_preserved) ... ok
+test_wrong_and_partial_digest_rejected_before_creation (crm.tests.test_operations_copy.VerifiedCopyTests.test_wrong_and_partial_digest_rejected_before_creation) ... ok
+test_invalid_key_and_existing_output_refused (crm.tests.test_operations_crypto.CryptoSafetyTests.test_invalid_key_and_existing_output_refused) ... ok
+test_tool_failure_preserves_source_and_removes_only_new_output (crm.tests.test_operations_crypto.CryptoSafetyTests.test_tool_failure_preserves_source_and_removes_only_new_output) ... ok
+test_default_dry_run_then_prune_preserves_newest_and_all_replicas (crm.tests.test_operations_retention.RetentionTests.test_default_dry_run_then_prune_preserves_newest_and_all_replicas) ... ok
+test_digest_without_restore_verification_never_authorizes_pruning (crm.tests.test_operations_retention.RetentionTests.test_digest_without_restore_verification_never_authorizes_pruning) ... ok
+test_missing_or_corrupt_replica_refuses_before_any_deletion (crm.tests.test_operations_retention.RetentionTests.test_missing_or_corrupt_replica_refuses_before_any_deletion) ... ok
+test_single_backup_never_pruned (crm.tests.test_operations_retention.RetentionTests.test_single_backup_never_pruned) ... ok
+test_unknown_files_and_wrong_owner_not_deleted (crm.tests.test_operations_retention.RetentionTests.test_unknown_files_and_wrong_owner_not_deleted) ... ok
+test_archive_symlink_refused_before_any_database_operation (crm.tests.test_operations_postgres.MaintenanceSafetyTests.test_archive_symlink_refused_before_any_database_operation) ... ok
+test_failed_backup_never_publishes_success_filename (crm.tests.test_operations_postgres.MaintenanceSafetyTests.test_failed_backup_never_publishes_success_filename) ... ok
+test_restore_wrong_digest_refuses_before_database_connection (crm.tests.test_operations_postgres.MaintenanceSafetyTests.test_restore_wrong_digest_refuses_before_database_connection) ... ok
+test_success_publication_never_overwrites_existing_backup (crm.tests.test_operations_postgres.MaintenanceSafetyTests.test_success_publication_never_overwrites_existing_backup) ... ok
+test_unproved_media_fence_refuses_before_database_connection (crm.tests.test_operations_postgres.MaintenanceSafetyTests.test_unproved_media_fence_refuses_before_database_connection) ... ok
+test_wrong_instance_identity_refused (crm.tests.test_operations_postgres.MaintenanceSafetyTests.test_wrong_instance_identity_refused) ... ok
+test_actual_writable_temporary_directory_never_qualifies (crm.tests.test_operations_fence.OfflineFenceTests.test_actual_writable_temporary_directory_never_qualifies) ... ok
+test_network_submount_and_bind_only_readonly_metadata_refused (crm.tests.test_operations_fence.OfflineFenceTests.test_network_submount_and_bind_only_readonly_metadata_refused) ... ok
+test_offline_database_requires_clean_shutdown_identity_and_version (crm.tests.test_operations_fence.OfflineFenceTests.test_offline_database_requires_clean_shutdown_identity_and_version) ... ok
+test_matching_private_voucher_is_counted (crm.tests.test_review_finance_backup_references.FinanceBackupReferenceTests.test_matching_private_voucher_is_counted) ... ok
+test_missing_or_changed_private_voucher_refuses (crm.tests.test_review_finance_backup_references.FinanceBackupReferenceTests.test_missing_or_changed_private_voucher_refuses) ... ok
+
+----------------------------------------------------------------------
+Ran 57 tests in 2.351s
+
+OK (skipped=4)
+Found 57 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).
+
+RUN_EXIT_CODE=0

@@ -232,8 +232,10 @@ test('only allowlisted real API suites receive fixed synthetic fixture seeds', (
   for (const businessTest of [null, '', 'import-ux.spec.js', '../seed.py']) {
     assert.equal(isolatedFixtureSeed(businessTest), null)
   }
-  assert.equal(isolatedFixtureSeeds({ businessSuite: true }).length, 3)
-  assert.equal(isolatedFixtureSeeds({ businessSuite: true, excludedBusinessTests: ['iss022-moq-real.spec.js'] }).length, 2)
+  assert.equal(isolatedFixtureSeeds({ businessSuite: true }).length, 4)
+  assert.equal(isolatedFixtureSeeds({ businessSuite: true, excludedBusinessTests: ['iss022-moq-real.spec.js'] }).length, 3)
+  assert.equal(isolatedFixtureSeeds({ businessSuite: true }).find(p => p.evidenceEnv === 'FINANCE_AUTH_EVIDENCE_DIR').scriptPath, isolatedFixtureSeed('finance-closeout-approval.spec.js').scriptPath)
+  assert.equal(isolatedFixtureSeeds({ businessSuite: true, excludedBusinessTests: ['finance-closeout-approval.spec.js'] }).some(p => p.evidenceEnv === 'FINANCE_AUTH_EVIDENCE_DIR'), false)
 })
 
 test('API identity comparison checks run ID, token, SQLite path, and MEDIA_ROOT', () => {

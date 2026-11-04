@@ -451,6 +451,7 @@ export function isolatedFixtureSeeds(selection) {
     return profile?.scriptPath ? [profile] : []
   }
   const suiteSeedFiles = [
+    'finance-closeout-approval.spec.js',
     'iss022-moq-real.spec.js',
     'iss075-payment-terms-real.spec.js',
     'historical-orders-fix-03.spec.js',
@@ -570,6 +571,7 @@ async function main() {
       if (fixtureProfile) env[fixtureProfile.evidenceEnv] = path.join(evidenceRoot, 'browser', path.parse(selection.businessTest).name)
     }
     if (selection.businessSuite) {
+      env.FINANCE_AUTH_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', 'finance-closeout-approval')
       env.R1_REPAIR_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', 'historical-orders-and-iss029')
       env.ISS022_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', 'iss022-moq-real')
       env.ISS075_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', 'iss075-payment-terms-real')

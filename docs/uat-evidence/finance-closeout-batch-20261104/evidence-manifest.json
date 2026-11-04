@@ -1,5 +1,5 @@
 {
-  "source_head": "318c0b8d2715d5046034310bb57dee21f992d812",
+  "source_head": "e6e841f10e758ec1d589cd674b6c20beaaebaa85",
   "logs": [
     {
       "original": "acceptance-backend-targeted.log",
@@ -152,9 +152,19 @@
       "published": "chrome-second.redacted.log"
     },
     {
+      "original": "chrome-suite-mode.private.log",
+      "original_sha256": "4716d810e0b47134f59f0ecf503b25d16fd767ae413266028924c84c221d0c95",
+      "published": "chrome-suite-mode.redacted.log"
+    },
+    {
       "original": "chrome-third.private.log",
       "original_sha256": "1013bd9c2414584b7bdfeb98bf710679058c247934f6236df8a1ccaaca6fc8b4",
       "published": "chrome-third.redacted.log"
+    },
+    {
+      "original": "ci-frontend-first.private.log",
+      "original_sha256": "922ee8216270d8b8018cd0d81e406cce37e4a4b2aa94166aa6152f1cb1ea90d5",
+      "published": "ci-frontend-first.redacted.log"
     },
     {
       "original": "ci-postgres-first.private.log",
@@ -240,6 +250,11 @@
       "original": "node-release.log",
       "original_sha256": "0e286257ba822620b0eabe8055c744d91a0f8b271a986bfa59f644777bb490a2",
       "published": "node-release.redacted.log"
+    },
+    {
+      "original": "node-suite-mode.log",
+      "original_sha256": "fb7d757282b8101f0019aa8c69aba66ae516de0bc6c8eaa54ebbb1e0d33c1910",
+      "published": "node-suite-mode.redacted.log"
     },
     {
       "original": "postgres-acceptance.log",
@@ -465,83 +480,83 @@
     },
     {
       "path": "browser/account-facts-1440.png",
-      "size": 143974,
-      "sha256": "5d00c6d30231c4661f5abe915a8824abac0c9b81b8a0fae598565cb2b1455317"
+      "size": 172098,
+      "sha256": "f6d3b0344042095ccfe5a0ad12da7159734d50020212501c8ade80bc5a6183a5"
     },
     {
       "path": "browser/account-facts-390.png",
-      "size": 132809,
-      "sha256": "3b34b65f623e946d2db034bbc91c815f74d48d7626e686b37d8e31d9a0be1b54"
+      "size": 165984,
+      "sha256": "74ac595404d92af197abe8c239b0be2777b59a884648471ebbcb48d51141fe29"
     },
     {
       "path": "browser/authenticated-facts-1440.csv",
       "size": 1862,
-      "sha256": "654575d633aa4c636739bdb16b66363eaf184c6db044f34fe873ce2042822a49"
+      "sha256": "f7f70cf3d41370f56aa69d5df5e85f7d589d43aa5f1e454e9f1d9f9178d18a8d"
     },
     {
       "path": "browser/authenticated-facts-390.csv",
       "size": 3539,
-      "sha256": "63f0fc46e9191093e3dd9be5eb5d49ec28f74f49b7da81a939439c3e81964ba2"
+      "sha256": "bba3aafef7850c5220943e971ae7dd5d963aa33ed61cae4c67097a5f0b0948f2"
     },
     {
       "path": "browser/authenticated-http-1440.json",
       "size": 33380,
-      "sha256": "b54643ccc0aa22853cd313854c46e1dc715901348bd83d13a466f1e911b930da"
+      "sha256": "1d4eedfa8385fb11c5dddd61747c777a96d0d1a1a89a41670fb8bdcbee77a679"
     },
     {
       "path": "browser/authenticated-http-390.json",
       "size": 35798,
-      "sha256": "93e2bf647b95eae23939e92bcd9d9fdab4aeeeb123b6f9eec260b8d4d8482e3c"
+      "sha256": "5713aa8f666ebf1621b6fbf8644e90d042970536e07df23d47038cbbdb0ae6ad"
     },
     {
       "path": "browser/authenticated-http-progress-1440.json",
       "size": 26716,
-      "sha256": "0db98c6931057e2f225eb854bffae7ea15e7d3413f10979d3d7cd86d68cd1ad6"
+      "sha256": "311574becc167e0fe808736f650de2fb272c983c2d6abb38f780f46427418569"
     },
     {
       "path": "browser/authenticated-http-progress-390.json",
       "size": 26710,
-      "sha256": "a8d01f633f5d2bbc342f7fd7c6413b88468b1d865b4884d4c60b4e884107fb29"
+      "sha256": "74794edbf8df4292631968f0c33917988562ee0fc2c4456c0439533184308128"
     },
     {
       "path": "browser/facts-1440.csv",
-      "size": 387,
-      "sha256": "2ffc87071eaf5eac5158d7f5e57a0226c8b6b2aa16b1e06680220be91b85e9ab"
+      "size": 388,
+      "sha256": "6f875958c61277b1492dae02690a831c3edb29f74a63b8343a1b1ec5b371d4b3"
     },
     {
       "path": "browser/facts-390.csv",
-      "size": 596,
-      "sha256": "d62dd311bcfaafa7688b0de2ce6723bdfb905ddc5397dcd1bbb2cc8539112165"
+      "size": 598,
+      "sha256": "7a63135241e64f2de9fcc6a93df5435589057289b7b4720547f6b459fe2b008b"
     },
     {
       "path": "browser/http-1440.json",
-      "size": 26087,
-      "sha256": "2b15dcee2d9196804f0730b3d23ecd4051bf42c06d57c75c7e6d10cda5cd9019"
+      "size": 342955,
+      "sha256": "30a4bff3ecd84b3f50a2f9c4347d87c464a9cb790a36a1b47ed5059380ba69f8"
     },
     {
       "path": "browser/http-390.json",
-      "size": 51074,
-      "sha256": "5253a2b1895ded778cfcb35f4ef3c5624459e9716f1ae1aff4babc5d9bef5f9f"
+      "size": 367823,
+      "sha256": "85865cb68c9270368aa49ce2b5454cda4d3f3f11eec18da63b85410558f09684"
     },
     {
       "path": "browser/reconciliation-completed-1440.png",
-      "size": 135962,
-      "sha256": "c12a7b6d49ba33e817060f94c3207714c50bab805bb471c775474f97e495ed2c"
+      "size": 135004,
+      "sha256": "69c4af21d23c12f97c955c3184ea623c37559721e3141e2a06438edc23251300"
     },
     {
       "path": "browser/reconciliation-completed-390.png",
-      "size": 101949,
-      "sha256": "72500f53f0cc36f6d3a27087e45c58f3c3c8a4194a80b8ae1a723fc7f609fdbb"
+      "size": 101792,
+      "sha256": "93ffd68ee93fa005263099344eaa429273c92033f98005fa8f1b23305cf2523e"
     },
     {
       "path": "browser/reconciliation-reopened-1440.png",
-      "size": 136314,
-      "sha256": "8de68726818d095c07c612ee948fefa781f52619b98a3bd03e532dcad7f3c513"
+      "size": 135358,
+      "sha256": "404e54c1b9421475db0fabe5a17a2d6bc5f8a191bab206e6598f7ed0fd400ccb"
     },
     {
       "path": "browser/reconciliation-reopened-390.png",
-      "size": 102270,
-      "sha256": "d1f10a8e0c2d062ba522ac1f51d941701e711e46184223432d67b77d69031d50"
+      "size": 102113,
+      "sha256": "38bc1610a42737b26913e40f68f67524999a0a98f1640b0299bd1c655869c325"
     },
     {
       "path": "browser/synthetic-voucher-1440.pdf",
@@ -659,9 +674,19 @@
       "sha256": "2ad34b1b69957f40446a0bd812a1fb3952c1c2c2da3d1291d600aec9a6f2930e"
     },
     {
+      "path": "chrome-suite-mode.redacted.log",
+      "size": 29221,
+      "sha256": "13e559b93b21b5158d8a47daa190898de049c65ee8495b7ee80c49699e89d163"
+    },
+    {
       "path": "chrome-third.redacted.log",
       "size": 8946,
       "sha256": "761bba1aea674b4de4a4b9431b2841fd17884976658da2483142f3ce2f15e5ee"
+    },
+    {
+      "path": "ci-frontend-first.redacted.log",
+      "size": 1091410,
+      "sha256": "766ab13b8f3d4c24785d9b6f8784e4f3b1979382727201abef0b8b5475651a6a"
     },
     {
       "path": "ci-postgres-first.redacted.log",
@@ -764,6 +789,11 @@
       "sha256": "9328bad0c4273bfa9ee567c84016c175ea8d239ace222f2e6ce6632ae02dfda7"
     },
     {
+      "path": "node-suite-mode.redacted.log",
+      "size": 16033,
+      "sha256": "15fa1ca1648d1196f1dfe17fb1f28fc4db80bcfb5ac2a2a35984ca9caffd3214"
+    },
+    {
       "path": "postgres-acceptance.redacted.log",
       "size": 33897,
       "sha256": "17763db022727b7ae443b5292868c0abae39eff14afe876bee8a6f9cec218263"
@@ -810,8 +840,8 @@
     },
     {
       "path": "README.md",
-      "size": 12370,
-      "sha256": "4293b631e3a289a0d54f1209d446a9b18080ebb08fff20d2250588096111c0cb"
+      "size": 12887,
+      "sha256": "2bdd9530fb2f1aaafaddb5f580162dc3017fd1337502f225f85bf10352700e9f"
     },
     {
       "path": "run-postgres-tests.py",

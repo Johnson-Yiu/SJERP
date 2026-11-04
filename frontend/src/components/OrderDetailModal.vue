@@ -299,6 +299,7 @@ async function openShipmentDialog(initialOrderItemIds = null) {
       trade_unit: null,
       trade_snapshot: { name: '', unit, base_unit: unit, factor: '1' },
       overage_reason: '',
+      specify_location: false, warehouse_type: '自有仓', warehouse: '', lot_reference: '',
     }
   })
   shipmentDialogOpen.value = true
@@ -364,6 +365,7 @@ async function submitShipment() {
       trade_unit: line.trade_unit,
       trade_snapshot: line.trade_snapshot,
       overage_reason: baseQuantity(line) > Number(line.unshipped_quantity) ? line.overage_reason : '',
+      ...(line.specify_location ? { warehouse_type: line.warehouse_type, warehouse: line.warehouse, lot_reference: line.lot_reference } : {}),
     }, null))
     const payload = { shipment_date: shipmentDate.value, items }
     const requestId = fulfillmentRequestId('ship', props.id, payload)
@@ -523,6 +525,8 @@ watch(() => props.refreshKey, load)
             <div v-if="line.selected" class="shipment-line-fields">
               <TradeUnitPicker :line="line" :sku="shipmentSkuDetails.get(line.sku)" :price-field="null" preserve-base-quantity :historical-unit="line.historical_unit" />
               <label>发货数量<input v-model="line.quantity" :aria-label="`发货数量 ${line.sku_code} 明细 #${line.order_item}`" type="number" min="0.01" step="0.01" required /></label>
+              <label><input v-model="line.specify_location" type="checkbox"> 指定出库仓库和批次</label>
+              <template v-if="line.specify_location"><label>仓库类型<select v-model="line.warehouse_type"><option>自有仓</option><option>第三方仓</option></select></label><label>仓库<input v-model="line.warehouse" maxlength="100" required></label><label>批次或货位（无则留空）<input v-model="line.lot_reference" maxlength="160"></label></template>
               <p v-if="line.trade_unit">交易数量 {{ line.quantity }} {{ line.trade_snapshot?.unit }}，折合 {{ baseQuantity(line) }} {{ line.base_unit }}</p>
               <label v-if="baseQuantity(line) > Number(line.unshipped_quantity)">超发原因<select v-model="line.overage_reason" :aria-label="`超发原因 ${line.sku_code} 明细 #${line.order_item}`" required><option value="">请选择</option><option value="customer_addon">客户追加</option><option value="gift_or_sample">赠品或样品</option><option value="packing_variance">包装尾差</option></select></label>
             </div>

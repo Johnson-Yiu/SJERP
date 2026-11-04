@@ -1,0 +1,37 @@
+
+> senju-crm-erp@1.0.0 build
+> vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 2024 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                        0.56 kB │ gzip:   0.37 kB
+dist/assets/FinanceLedgerPage-DcU23y9J.css             2.50 kB │ gzip:   0.81 kB
+dist/assets/TradeUnitsPage-BagMfA07.css                2.89 kB │ gzip:   0.89 kB
+dist/assets/HistoryOrdersPage-DznBeah8.css             6.55 kB │ gzip:   1.53 kB
+dist/assets/HistoryTakeoverPage-Ch5hMMAb.css           8.68 kB │ gzip:   1.94 kB
+dist/assets/ReportsPage-DvohdynP.css                  18.04 kB │ gzip:   3.42 kB
+dist/assets/index-C1RQWjUB.css                       389.26 kB │ gzip:  63.93 kB
+dist/assets/TradeUnitsPage-DUCG_TJB.js                10.63 kB │ gzip:   4.32 kB
+dist/assets/HistoryOrdersPage-Wfkhxkna.js             12.73 kB │ gzip:   4.45 kB
+dist/assets/FinanceLedgerPage-DRU78Dsr.js             26.98 kB │ gzip:   8.28 kB
+dist/assets/HistoryTakeoverPage-BKka9rbg.js           41.23 kB │ gzip:  11.89 kB
+dist/assets/ReportsPage-C3RhenTJ.js                   51.56 kB │ gzip:  16.61 kB
+dist/assets/_plugin-vue_export-helper-HnUsdNOq.js    140.84 kB │ gzip:  53.46 kB
+dist/assets/index-2NSzgcYF.js                      1,145.87 kB │ gzip: 399.80 kB
+
+✓ built in 3.68s
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[PLUGIN_TIMINGS] JavaScript callbacks ran for 2.8s of this 3.7s build (77%).
+The slowest callbacks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+  - plugin vite:vue transform (60%, 2.2s, 157 calls)
+Additional callback time came from the callbacks below and from callbacks under 1s.
+1 callback is listed without a time. Its calls overlapped, so the time inside one call includes work from other calls. To find its cost, profile the build with `node --cpu-prof`:
+  - plugin vite:css transform (94 calls)
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.

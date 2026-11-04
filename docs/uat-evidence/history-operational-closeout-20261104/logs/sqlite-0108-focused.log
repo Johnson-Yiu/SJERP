@@ -1,0 +1,15 @@
+Creating test database for alias 'default'...
+
+.....sBad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/1/
+.....Bad Request: /api/import/history-takeovers/1/groups/1/finance-post/
+.............ssssss.......................sssssss
+----------------------------------------------------------------------
+Ran 60 tests in 87.162s
+
+OK (skipped=14)
+Destroying test database for alias 'default'...
+
+Found 60 test(s).
+System check identified no issues (0 silenced).

@@ -7,7 +7,7 @@ from django.db import transaction
 
 from django.utils import timezone
 from crm.models import AdvanceAllocation, ContractChangeRequest, Order, PaymentPlan, PurchaseOrder, Transaction
-from crm.services.historical import reject_historical
+from crm.services.historical import reject_historical, reject_unlinked_historical_finance, is_historical, has_verified_history_balance
 
 
 def positive_decimal(value, label):
@@ -29,8 +29,40 @@ def _contract_amount(contract):
 
 
 @transaction.atomic
+def install_history_opening_plans(contract, user):
+    """Install reviewed unpaid balances without creating historical cash transactions."""
+    from . import finance_closeout
+    finance_closeout.access(user, "create")
+    contract = contract.__class__.objects.select_for_update().get(pk=contract.pk)
+    if not is_historical(contract) or not has_verified_history_balance(contract):
+        raise ValidationError("只有已审批的历史合同余额可以建立承接计划。")
+    link = contract.history_balance
+    specs = link.balance_snapshot.get("plans", [])
+    if not isinstance(specs, list) or len(specs) > 100:
+        raise ValidationError("历史未结计划格式无效。")
+    relation = {"order": contract} if isinstance(contract, Order) else {"purchase_order": contract}
+    if PaymentPlan.objects.filter(**relation).exists() or Transaction.objects.filter(**relation).exists():
+        raise ValidationError("历史合同已有计划或资金流水，不能重复承接余额。")
+    amounts = [positive_decimal(spec.get("amount"), "未结金额") for spec in specs]
+    if sum(amounts, Decimal("0")) != link.opening_balance:
+        raise ValidationError("历史未结明细与审核余额不一致。")
+    direction = "receivable" if isinstance(contract, Order) else "payable"
+    rows = []
+    for spec, amount in zip(specs, amounts):
+        row = PaymentPlan(**relation, direction=direction, currency=contract.currency, due_date=spec.get("due_date") or None,
+            planned_amount=amount, settled_amount=0, notes=spec["note"])
+        row.full_clean()
+        row.save()
+        finance_closeout.audit(row, user, "建立历史未结计划")
+        rows.append(row)
+    return rows
+
+
+@transaction.atomic
 def ensure_default_payment_plans(contract, deposit_ratio=None):
     contract = contract.__class__.objects.select_for_update().get(pk=contract.pk)
+    if has_verified_history_balance(contract) or hasattr(contract, "history_continuation"):
+        return list(contract.payment_plans.order_by("id"))
     reject_historical(contract, "生成收付款计划")
     if contract.status in {"draft", "cancelled"}:
         return []
@@ -104,7 +136,8 @@ def record_transaction(payload):
     linked_order = payload.get("order")
     linked_purchase = payload.get("purchase_order")
     for contract in (linked_order, linked_purchase):
-        reject_historical(contract, "登记关联资金流水")
+        if is_historical(contract) and (not plan or not has_verified_history_balance(contract)):
+            reject_historical(contract, "登记关联资金流水")
     if plan:
         plan = PaymentPlan.objects.select_for_update().get(pk=plan.pk)
         if plan.order_id:
@@ -120,7 +153,7 @@ def record_transaction(payload):
         if payload.get("currency", plan.currency) != plan.currency:
             raise ValidationError("实际收付款币种必须与计划原币一致。")
         contract = plan.order or plan.purchase_order
-        reject_historical(contract, "登记关联资金流水")
+        reject_unlinked_historical_finance(contract, "登记关联资金流水")
         if contract.status in {"draft", "cancelled"}:
             raise ValidationError("草稿或已取消合同不能登记收付款。")
         expected = {"order": plan.order, "purchase_order": plan.purchase_order,
@@ -156,7 +189,7 @@ def record_transaction(payload):
             contract = order if kind == "customer_receipt" else purchase
             if not contract:
                 raise ValidationError("客户收款必须关联销售订单，供应商付款必须关联采购单。")
-            reject_historical(contract, "登记收付款")
+            reject_unlinked_historical_finance(contract, "登记收付款")
             if not allow_unplanned_contract_payment:
                 return record_contract_payment(contract, payload)
             payload.update({
@@ -171,7 +204,7 @@ def record_transaction(payload):
             contract = order if kind == "refund" else purchase
             if not contract:
                 raise ValidationError("客户退款必须关联销售订单，供应商退款必须关联采购单。")
-            reject_historical(contract, "登记退款")
+            reject_unlinked_historical_finance(contract, "登记退款")
             return record_contract_refund(contract, payload)
     exchange_rate = positive_decimal(payload.get("exchange_rate", 1), "汇率")
     if payload.get("currency") == "CNY" and exchange_rate != 1:
@@ -297,7 +330,7 @@ def allocate_advance(advance, plan, amount):
         plan.purchase_order = contract
     else:
         raise ValidationError("收付款计划必须关联销售订单或采购单。")
-    reject_historical(plan.order or plan.purchase_order, "分配收付款")
+    reject_unlinked_historical_finance(plan.order or plan.purchase_order, "分配收付款")
     amount = positive_decimal(amount, "分配金额")
     if advance.kind not in {"unallocated_advance", "unallocated_payment"} or advance.status != "confirmed":
         raise ValidationError("只能分配已确认的未分配预收预付。")
@@ -326,7 +359,7 @@ def allocate_advance(advance, plan, amount):
 def record_contract_payment(contract, payload):
     """One cash event may settle several installments; only true excess becomes an advance."""
     contract = contract.__class__.objects.select_for_update().get(pk=contract.pk)
-    reject_historical(contract, "登记收付款")
+    reject_unlinked_historical_finance(contract, "登记收付款")
     if contract.status in {"draft", "cancelled"}:
         raise ValidationError("草稿或已取消合同不能登记收付款。")
     amount = positive_decimal(payload.get("amount"), "收付款金额")
@@ -335,6 +368,8 @@ def record_contract_payment(contract, payload):
     ensure_default_payment_plans(contract)
     plans = list(contract.payment_plans.select_for_update().filter(status="open").order_by("due_date", "pk"))
     if not plans:
+        if is_historical(contract) or hasattr(contract, "history_continuation"):
+            raise ValidationError("历史接续合同没有未结计划；额外款项请登记为未分配预收预付。")
         if isinstance(contract, PurchaseOrder) and not contract.payment_terms_snapshot:
             return record_transaction({
                 **payload,
@@ -372,7 +407,7 @@ def record_contract_refund(contract, payload):
     party_model, party_id = (Customer, contract.customer_id) if isinstance(contract, Order) else (Supplier, contract.supplier_id)
     party_model.objects.select_for_update().get(pk=party_id)
     contract = contract.__class__.objects.select_for_update().get(pk=contract.pk)
-    reject_historical(contract, "登记退款")
+    reject_unlinked_historical_finance(contract, "登记退款")
     guard_refund(contract)
     is_order = isinstance(contract, Order)
     amount = positive_decimal(payload.get("amount"), "退款金额")

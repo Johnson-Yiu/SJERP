@@ -53,6 +53,7 @@ from .services.fulfillment import (
     confirm_shipment,
     FulfillmentIdempotencyConflict,
     json_safe_fulfillment_response,
+    inventory_baseline_expression,
     order_item_metrics,
     record_receipt,
     record_supplier_payment,
@@ -346,14 +347,19 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return Response(self.get_serializer(serializer.instance).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
-        if self.get_object().historical_only or self.get_object().status == "historical":
+        purchase = self.get_object()
+        if purchase.historical_only or purchase.status == "historical":
             return Response({"detail": "历史采购记录不能直接覆盖；请通过受控追溯更正保留原始轨迹。"}, status=status.HTTP_400_BAD_REQUEST)
+        if hasattr(purchase, "history_continuation"):
+            return Response({"detail": "历史接续采购单不能直接覆盖，请通过正式变更或审计更正处理。"}, status=status.HTTP_400_BAD_REQUEST)
         if "status" in request.data:
             return Response({"detail": "采购单状态只能通过确认下单、到货或取消等业务动作变更。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         purchase = self.get_object()
+        if hasattr(purchase, "history_continuation"):
+            return Response({"detail": "历史接续采购单必须保留，请使用取消或审计更正。"}, status=status.HTTP_400_BAD_REQUEST)
         if purchase.status != "draft":
             return Response({"detail": "正式采购单不能删除，请使用取消采购。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().destroy(request, *args, **kwargs)
@@ -1141,7 +1147,7 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         stock_quantity=Coalesce(Sum(Case(
             When(inventory_movements__type__in=["sale_out", "adjust_out", "sample_out", "transfer_out", "production_out", "other_out"], then=-F("inventory_movements__quantity")),
             default=F("inventory_movements__quantity"), output_field=MONEY,
-        )), Decimal("0"), output_field=MONEY),
+        )), Decimal("0"), output_field=MONEY) + inventory_baseline_expression(),
         quote_count=Count("quote_items__quote", distinct=True),
         order_count=Count("order_items__order", distinct=True),
     ).order_by("sku")
@@ -2004,14 +2010,19 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return Response(self.get_serializer(serializer.instance).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
-        if self.get_object().historical_only or self.get_object().status == "historical":
+        order = self.get_object()
+        if order.historical_only or order.status == "historical":
             return Response({"detail": "历史订单不能直接覆盖；请通过受控追溯更正保留原始轨迹。"}, status=status.HTTP_400_BAD_REQUEST)
+        if hasattr(order, "history_continuation"):
+            return Response({"detail": "历史接续订单不能直接覆盖，请通过正式数量变更或审计更正处理。"}, status=status.HTTP_400_BAD_REQUEST)
         if "status" in request.data:
             return Response({"detail": "订单状态只能通过确认、开始生产、发货、完成或取消等业务动作变更。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         order = self.get_object()
+        if hasattr(order, "history_continuation"):
+            return Response({"detail": "历史接续订单必须保留，请使用取消或审计更正。"}, status=status.HTTP_400_BAD_REQUEST)
         if order.status != "draft":
             return Response({"detail": "正式订单不能删除，请使用取消订单。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().destroy(request, *args, **kwargs)

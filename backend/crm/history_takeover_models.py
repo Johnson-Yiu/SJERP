@@ -132,3 +132,104 @@ class HistoryTakeoverEvent(models.Model):
 
     def delete(self, *args, **kwargs):
         raise ValidationError("历史承接审计事件不能删除。")
+
+
+class _InventoryBaselineQuerySet(models.QuerySet):
+    def update(self, **kwargs):
+        raise ValidationError("库存基准记录只允许追加。")
+
+    def delete(self):
+        raise ValidationError("库存基准记录不可删除。")
+
+
+class HistoryInventoryBaseline(models.Model):
+    """A reviewed physical count; its warehouse and cost evidence remain intact."""
+
+    group = models.ForeignKey(HistoryTakeoverGroup, on_delete=models.PROTECT, related_name="inventory_baselines")
+    source = models.OneToOneField(HistoryTakeoverSourceRecord, on_delete=models.PROTECT, related_name="inventory_baseline")
+    sku = models.ForeignKey("crm.SKU", on_delete=models.PROTECT, related_name="historical_inventory_baselines")
+    count_date = models.DateField()
+    warehouse_type = models.CharField(max_length=20)
+    warehouse = models.CharField(max_length=100)
+    lot_reference = models.CharField(max_length=160, blank=True)
+    goods_ownership = models.CharField(max_length=20)
+    unit_snapshot = models.CharField(max_length=30)
+    quantity = models.DecimalField(max_digits=14, decimal_places=2)
+    unit_cost = models.DecimalField(max_digits=24, decimal_places=12)
+    cost_currency = models.CharField(max_length=10)
+    evidence_reference = models.CharField(max_length=500)
+    approval_snapshot = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects = _InventoryBaselineQuerySet.as_manager()
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(quantity__gte=0), name="history_inventory_qty_nonnegative"),
+            models.CheckConstraint(condition=models.Q(unit_cost__gte=0), name="history_inventory_cost_nonnegative"),
+            models.CheckConstraint(condition=models.Q(goods_ownership__in=["own", "third_party"]), name="history_inventory_owner_valid"),
+            models.CheckConstraint(condition=models.Q(warehouse_type__in=["自有仓", "第三方仓"]), name="history_inventory_warehouse_valid"),
+        ]
+
+    def save(self, *args, **kwargs):
+        if self.pk and not self._state.adding:
+            raise ValidationError("库存启用基准只允许追加；请使用受控撤销。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("库存启用基准不可删除。")
+
+
+class HistoryInventoryBaselineReversal(models.Model):
+    baseline = models.OneToOneField(HistoryInventoryBaseline, on_delete=models.PROTECT, related_name="reversal")
+    group = models.ForeignKey(HistoryTakeoverGroup, on_delete=models.PROTECT, related_name="inventory_baseline_reversals")
+    reason = models.TextField()
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects = _InventoryBaselineQuerySet.as_manager()
+
+    def save(self, *args, **kwargs):
+        if self.pk and not self._state.adding:
+            raise ValidationError("库存基准撤销记录只允许追加。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("库存基准撤销记录不可删除。")
+
+
+class HistoryOperationalContract(models.Model):
+    """A traceable operational continuation of one archived contract."""
+
+    group = models.ForeignKey(HistoryTakeoverGroup, on_delete=models.PROTECT, related_name="operational_contracts")
+    source = models.OneToOneField(HistoryTakeoverSourceRecord, on_delete=models.PROTECT, related_name="operational_contract")
+    archived_order = models.OneToOneField("crm.Order", null=True, blank=True, on_delete=models.PROTECT, related_name="history_operational_origin")
+    archived_purchase = models.OneToOneField("crm.PurchaseOrder", null=True, blank=True, on_delete=models.PROTECT, related_name="history_operational_origin")
+    continuation_order = models.OneToOneField("crm.Order", null=True, blank=True, on_delete=models.PROTECT, related_name="history_continuation")
+    continuation_purchase = models.OneToOneField("crm.PurchaseOrder", null=True, blank=True, on_delete=models.PROTECT, related_name="history_continuation")
+    settlement_order = models.OneToOneField("crm.Order", null=True, blank=True, on_delete=models.PROTECT, related_name="history_balance")
+    settlement_purchase = models.OneToOneField("crm.PurchaseOrder", null=True, blank=True, on_delete=models.PROTECT, related_name="history_balance")
+    cutover_date = models.DateField()
+    balance_mode = models.CharField(max_length=16, choices=[("itemized", "逐笔未结"), ("balance_only", "余额承接")])
+    opening_balance = models.DecimalField(max_digits=14, decimal_places=4)
+    currency = models.CharField(max_length=10)
+    evidence_reference = models.CharField(max_length=500)
+    source_snapshot = models.JSONField(default=dict)
+    line_links = models.JSONField(default=list)
+    balance_snapshot = models.JSONField(default=dict)
+    approval_snapshot = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects = _InventoryBaselineQuerySet.as_manager()
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=(models.Q(archived_order__isnull=False, archived_purchase__isnull=True, settlement_order__isnull=False, settlement_purchase__isnull=True, continuation_purchase__isnull=True) | models.Q(archived_order__isnull=True, archived_purchase__isnull=False, settlement_order__isnull=True, settlement_purchase__isnull=False, continuation_order__isnull=True)), name="history_operational_contract_type"),
+            models.CheckConstraint(condition=models.Q(opening_balance__gte=0), name="history_operational_balance_nonnegative"),
+            models.CheckConstraint(condition=models.Q(balance_mode__in=["itemized", "balance_only"]), name="history_operational_balance_mode"),
+        ]
+
+    def save(self, *args, **kwargs):
+        if self.pk and not self._state.adding:
+            raise ValidationError("历史接续记录只允许追加；请创建审计更正。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("历史接续记录不可删除。")

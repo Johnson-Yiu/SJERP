@@ -22,6 +22,10 @@ class PurchaseMOQExceptionRequired(ValidationError):
 
 
 def _validate_purchase_for_placement(purchase, items=None):
+    if hasattr(purchase, "history_continuation"):
+        adjustments = purchase.history_continuation.approval_snapshot.get("adjustments") or {}
+        if adjustments.get("additional_costs_pending") and (purchase.cost_allocation_version <= 0 or not purchase.additional_costs):
+            raise ValidationError("历史接续采购的公共费用尚未登记，请先使用正式采购成本分配保存费用。")
     if purchase.order_id and purchase.order.status not in {"confirmed", "production"}:
         raise ValidationError("关联销售订单当前状态不允许继续采购，请检查订单状态或改为独立采购。")
     items = list(items if items is not None else purchase.items.select_related("sku", "supplier_sku", "trade_unit").order_by("id"))

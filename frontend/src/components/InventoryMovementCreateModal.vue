@@ -43,7 +43,7 @@ const movementPreview = computed(() => `保存时自动生成 · 本次 ${select
 watch(selectedSkuIds, () => {
   const activeIds = new Set(selectedSkus.value.map(sku => String(sku.id)))
   selectedSkus.value.forEach(sku => {
-    if (!lines[sku.id]) lines[sku.id] = { quantity: '', unit_cost: '', warehouse: '默认仓', reference: '', notes: '' }
+    if (!lines[sku.id]) lines[sku.id] = { quantity: '', unit_cost: '', warehouse: '默认仓', warehouse_type: '', lot_reference: '', reference: '', notes: '' }
   })
   Object.keys(lines).forEach(id => { if (!activeIds.has(id)) delete lines[id] })
 })
@@ -67,7 +67,10 @@ async function save() {
   if (selectedSkus.value.some(sku => !Number(lineFor(sku)?.quantity) || Number(lineFor(sku).quantity) <= 0)) { error.value = '请为每个 SKU 填写大于 0 的数量。'; return }
   saving.value = true
   try {
-    const items = selectedSkus.value.map(sku => tradePayload({ sku: sku.id, ...lineFor(sku), quantity: String(lineFor(sku).quantity), unit_cost: lineFor(sku).unit_cost === '' ? 0 : lineFor(sku).unit_cost }, 'unit_cost'))
+    const items = selectedSkus.value.map(sku => {
+      const { warehouse_type, lot_reference, ...line } = lineFor(sku)
+      return tradePayload({ sku: sku.id, ...line, ...(warehouse_type ? { warehouse_type, lot_reference } : {}), quantity: String(line.quantity), unit_cost: line.unit_cost === '' ? 0 : line.unit_cost }, 'unit_cost')
+    })
     const response = await api.post('/inventory-movements/batch/', { ...form, related_orders: selectedOrders.value, items })
     emit('saved', response.data)
   } catch (requestError) {
@@ -96,7 +99,8 @@ onMounted(init)
             <section class="movement-lines">
               <div class="movement-lines-head"><div><strong>SKU 明细</strong><span>每一行将生成一条库存流水。</span></div><b>{{ selectedSkus.length }} 项</b></div>
               <p v-if="!selectedSkus.length" class="movement-empty"><Plus :size="17" /> 请先从上方选择 SKU。</p>
-              <div v-else class="movement-line-wrap"><table><thead><tr><th>SKU</th><th>规格 / 交易单位</th><th>数量 *</th><th>单位成本</th><th>仓库</th><th>参考号</th><th>备注</th></tr></thead><tbody><tr v-for="sku in selectedSkus" :key="sku.id"><td><strong>{{ sku.display_name_cn || sku.product_name || sku.sku }}</strong><small>{{ sku.sku }} · {{ sku.sales_model }}</small></td><td><TradeUnitPicker :line="lineFor(sku)" :sku="sku" price-field="unit_cost" /></td><td><input :aria-label="`${sku.sku} 数量`" v-model="lineFor(sku).quantity" type="number" min="0.01" step="0.01" required /></td><td><input :aria-label="`${sku.sku} 单位成本`" v-model="lineFor(sku).unit_cost" type="number" min="0" step="0.0001" placeholder="0" /></td><td><input :aria-label="`${sku.sku} 仓库`" v-model="lineFor(sku).warehouse" required /></td><td><input :aria-label="`${sku.sku} 参考号`" v-model="lineFor(sku).reference" placeholder="选填" /></td><td><input :aria-label="`${sku.sku} 备注`" v-model="lineFor(sku).notes" placeholder="选填" /></td></tr></tbody></table></div>
+              <p v-if="selectedSkus.length" class="movement-help">表格可左右滚动；盘点基准商品须填写仓库类型和批次。</p>
+              <div v-if="selectedSkus.length" class="movement-line-wrap"><table><thead><tr><th>SKU</th><th>规格 / 交易单位</th><th>数量 *</th><th>单位成本</th><th>仓库</th><th>仓库类型</th><th>批次或货位</th><th>参考号</th><th>备注</th></tr></thead><tbody><tr v-for="sku in selectedSkus" :key="sku.id"><td><strong>{{ sku.display_name_cn || sku.product_name || sku.sku }}</strong><small>{{ sku.sku }} · {{ sku.sales_model }}</small></td><td><TradeUnitPicker :line="lineFor(sku)" :sku="sku" price-field="unit_cost" /></td><td><input :aria-label="`${sku.sku} 数量`" v-model="lineFor(sku).quantity" type="number" min="0.01" step="0.01" required /></td><td><input :aria-label="`${sku.sku} 单位成本`" v-model="lineFor(sku).unit_cost" type="number" min="0" step="0.0001" placeholder="0" /></td><td><input :aria-label="`${sku.sku} 仓库`" v-model="lineFor(sku).warehouse" required /></td><td><select :aria-label="`${sku.sku} 仓库类型`" v-model="lineFor(sku).warehouse_type"><option value="">未指定</option><option value="自有仓">自有仓</option><option value="第三方仓">第三方仓</option></select></td><td><input :aria-label="`${sku.sku} 批次或货位`" v-model="lineFor(sku).lot_reference" :disabled="!lineFor(sku).warehouse_type" placeholder="无则留空" /></td><td><input :aria-label="`${sku.sku} 参考号`" v-model="lineFor(sku).reference" placeholder="选填" /></td><td><input :aria-label="`${sku.sku} 备注`" v-model="lineFor(sku).notes" placeholder="选填" /></td></tr></tbody></table></div>
             </section></section>
           </template>
         </div>

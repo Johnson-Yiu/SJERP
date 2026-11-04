@@ -19,6 +19,7 @@ from .querysets import prefetch_purchase_related_orders
 from .serializers import ContactSerializer, CustomerSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, InventoryMovementSerializer, OrderSerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, QuoteSerializer, SKUSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, protected_media_url
 from .permissions import CONTEXT_MODULES, user_can
 from .sales_scope import scope_customer_queryset, scope_customer_related_queryset
+from .services.fulfillment import inventory_baseline_expression
 
 MONEY = DecimalField(max_digits=20, decimal_places=2)
 
@@ -50,7 +51,7 @@ def _stock_skus(queryset):
         stock_quantity=Coalesce(Sum(Case(
             When(inventory_movements__type__in=["sale_out", "adjust_out", "sample_out", "transfer_out", "production_out", "other_out"], then=-F("inventory_movements__quantity")),
             default=F("inventory_movements__quantity"), output_field=MONEY,
-        )), Decimal("0"), output_field=MONEY)
+        )), Decimal("0"), output_field=MONEY) + inventory_baseline_expression()
     )
 
 

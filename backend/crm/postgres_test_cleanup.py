@@ -16,6 +16,13 @@ TRUNCATE_GUARDS = {
     "crm_csvimportrowaudit": "crm_csvimportrowaudit_truncate_guard",
     "crm_csvimportpreviewaudit": "crm_csvimportpreviewaudit_truncate_guard",
 }
+HISTORY_GUARDS = {
+    "crm_historyinventorybaseline": "crm_historyinventorybaseline_truncate_guard",
+    "crm_historyinventorybaselinereversal": "crm_historyinventorybaselinereversal_truncate_guard",
+    "crm_historyoperationalcontract": "crm_historyoperationalcontract_truncate_guard",
+}
+HISTORY_MIGRATION = "0108_history_append_only_truncate"
+HISTORY_FUNCTION = "crm_reject_history_truncate"
 REVIEW_TABLE = "crm_cashduplicatereview"
 REVIEW_TRIGGER = "crm_cashduplicatereview_truncate_guard"
 REVIEW_MIGRATION = "0096_rmbcashevent_bank_counterparty_and_more"
@@ -69,15 +76,18 @@ def active_truncate_guards(connection):
     with connection.cursor() as cursor:
         cursor.execute(
             "SELECT to_regclass('public.crm_cashduplicatereview') IS NOT NULL, "
+            "EXISTS (SELECT 1 FROM django_migrations WHERE app = %s AND name = %s), "
             "EXISTS (SELECT 1 FROM django_migrations WHERE app = %s AND name = %s)",
-            ["crm", REVIEW_MIGRATION],
+            ["crm", REVIEW_MIGRATION, "crm", HISTORY_MIGRATION],
         )
-        table_exists, migration_applied = cursor.fetchone()
+        table_exists, migration_applied, history_applied = cursor.fetchone()
     if table_exists != migration_applied:
         raise ImproperlyConfigured("Duplicate review migration and table disagree; cleanup refused.")
     guards = dict(TRUNCATE_GUARDS)
     if migration_applied:
         guards[REVIEW_TABLE] = REVIEW_TRIGGER
+    if history_applied:
+        guards.update(HISTORY_GUARDS)
     return guards
 
 
@@ -100,7 +110,7 @@ def assert_truncate_guards_enabled(connection, guards=None):
         )
         actual = set(cursor.fetchall())
     expected = {
-        (table, trigger, "O", 34, GUARD_FUNCTION, "public")
+        (table, trigger, "O", 34, HISTORY_FUNCTION if table in HISTORY_GUARDS else GUARD_FUNCTION, "public")
         for table, trigger in guards.items()
     }
     if actual != expected:

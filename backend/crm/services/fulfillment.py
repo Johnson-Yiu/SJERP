@@ -14,6 +14,7 @@ from django.utils import timezone
 from crm.models import (
     FulfillmentIdempotency,
     GoodsReceipt,
+    HistoryInventoryBaseline,
     InventoryMovement,
     InventoryReservation,
     Order,
@@ -40,6 +41,35 @@ OUTGOING_MOVEMENT_TYPES = [
 ]
 ACTIVE_ORDER_STATUSES = ["confirmed", "production", "shipped"]
 OPEN_PURCHASE_STATUSES = ["ordered", "partial"]
+
+
+def inventory_baseline_expression():
+    totals = HistoryInventoryBaseline.objects.filter(
+        sku_id=OuterRef("pk"), goods_ownership="own", reversal__isnull=True,
+    ).order_by().values("sku_id").annotate(total=Sum("quantity", output_field=QUANTITY_FIELD)).values("total")[:1]
+    return Coalesce(Subquery(totals, output_field=QUANTITY_FIELD), Value(Decimal("0")), output_field=QUANTITY_FIELD)
+
+
+def inventory_location(sku, payload):
+    """Require an explicit location once an opening count introduced locations."""
+    if HistoryInventoryBaseline.objects.filter(sku=sku, reversal__isnull=True).exists():
+        if any(key not in payload for key in ("warehouse", "warehouse_type", "lot_reference")):
+            raise ValidationError("该 SKU 有盘点基准，请明确选择仓库类型、仓库及批次（无批次请留空）。")
+    warehouse = str(payload.get("warehouse", "默认仓")).strip()
+    warehouse_type = payload.get("warehouse_type", "自有仓")
+    lot = str(payload.get("lot_reference", "")).strip()
+    if not warehouse or len(warehouse) > 100 or warehouse_type not in {"自有仓", "第三方仓"} or len(lot) > 160:
+        raise ValidationError("仓库类型、仓库或批次无效。")
+    return {"warehouse": warehouse, "warehouse_type": warehouse_type, "lot_reference": lot}
+
+
+def location_quantity(sku, location):
+    baselines = HistoryInventoryBaseline.objects.filter(sku=sku, goods_ownership="own", reversal__isnull=True, **location)
+    baseline = baselines.aggregate(total=Sum("quantity"))["total"] or Decimal("0")
+    movements = InventoryMovement.objects.filter(sku=sku, **location)
+    incoming = movements.exclude(type__in=OUTGOING_MOVEMENT_TYPES).aggregate(total=Sum("quantity"))["total"] or Decimal("0")
+    outgoing = movements.filter(type__in=OUTGOING_MOVEMENT_TYPES).aggregate(total=Sum("quantity"))["total"] or Decimal("0")
+    return baseline + incoming - outgoing
 
 
 class FulfillmentIdempotencyConflict(ValidationError):
@@ -121,7 +151,7 @@ def complete_fulfillment_idempotency(record, response_payload: dict, response_st
 
 
 def signed_inventory_quantity(sku: SKU) -> Decimal:
-    return sku.inventory_movements.aggregate(
+    movement_total = sku.inventory_movements.aggregate(
         total=Coalesce(
             Sum(
                 Case(
@@ -134,6 +164,10 @@ def signed_inventory_quantity(sku: SKU) -> Decimal:
             output_field=QUANTITY_FIELD,
         )
     )["total"]
+    opening_total = HistoryInventoryBaseline.objects.filter(
+        sku=sku, goods_ownership="own", reversal__isnull=True,
+    ).aggregate(total=Coalesce(Sum("quantity"), Decimal("0"), output_field=QUANTITY_FIELD))["total"]
+    return movement_total + opening_total
 
 
 def active_reservation_quantity(sku: SKU) -> Decimal:
@@ -213,6 +247,14 @@ def bulk_sku_metrics(sku_ids) -> dict[int, dict[str, Decimal]]:
     )
     for row in actual_rows:
         metrics[row["sku_id"]]["actual_quantity"] = row["total"]
+
+    baseline_rows = HistoryInventoryBaseline.objects.filter(
+        sku_id__in=ids, goods_ownership="own", reversal__isnull=True,
+    ).order_by().values("sku_id").annotate(
+        total=Coalesce(Sum("quantity"), Value(zero), output_field=QUANTITY_FIELD)
+    )
+    for row in baseline_rows:
+        metrics[row["sku_id"]]["actual_quantity"] += row["total"]
 
     reservation_rows = InventoryReservation.objects.filter(
         sku_id__in=ids,
@@ -362,6 +404,7 @@ def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsRece
     if related_order_ids:
         list(Order.objects.select_for_update().filter(pk__in=related_order_ids).order_by("pk"))
     SKU.objects.select_for_update().get(pk=purchase_item.sku_id)
+    location = inventory_location(purchase_item.sku, payload)
     if not payload.get('trade_unit') and 'quantity' not in payload:
         raise ValidationError('请填写基础数量，或选择交易规格并填写交易数量。')
     converted = normalize_trade(payload, purchase_item.sku, price_field="unit_cost", existing=purchase_item, supplier_id=purchase_order.supplier_id)
@@ -386,7 +429,7 @@ def record_receipt(purchase_item: PurchaseOrderItem, payload: dict) -> GoodsRece
         supplier_sku=purchase_item.supplier_sku,
         order=None,
         quantity=quantity,
-        warehouse="默认仓",
+        **location,
         unit_cost=payload.get("unit_cost", Decimal("0")),
         reference=purchase_order.purchase_no,
         source_type="receipt",
@@ -518,6 +561,9 @@ def reverse_receipt(receipt: GoodsReceipt, reason: str) -> GoodsReceipt:
     actual_quantity = signed_inventory_quantity(sku)
     if actual_quantity < receipt.quantity:
         raise ValidationError("当前 SKU 实际库存不足以冲销，请先处理后续出库。")
+    location = {key: getattr(original_movement, key) for key in ("warehouse", "warehouse_type", "lot_reference")} if original_movement else inventory_location(sku, {})
+    if HistoryInventoryBaseline.objects.filter(sku=sku, reversal__isnull=True).exists() and location_quantity(sku, location) < receipt.quantity:
+        raise ValidationError("原入库仓库及批次库存不足，不能冲销。")
     movement = InventoryMovement.objects.create(
         **{k: getattr(receipt, k) for k in TRADE_FIELDS},
         movement_no=_movement_no("REV"),
@@ -527,7 +573,7 @@ def reverse_receipt(receipt: GoodsReceipt, reason: str) -> GoodsReceipt:
         supplier_sku=supplier_sku,
         order=None,
         quantity=receipt.quantity,
-        warehouse=original_movement.warehouse if original_movement else "默认仓",
+        **location,
         unit_cost=receipt.unit_cost,
         reference=original_movement.movement_no if original_movement else "",
         source_type="reversal",
@@ -569,11 +615,14 @@ def reverse_manual_inventory_movement(movement: InventoryMovement, reason: str) 
         raise ValidationError("该库存流水已经冲销，不能重复操作。")
 
     sku = SKU.objects.select_for_update().get(pk=movement.sku_id)
+    location = {key: getattr(movement, key) for key in ("warehouse", "warehouse_type", "lot_reference")}
     reversal_type = "adjust_out" if movement.signed_quantity > 0 else "adjust_in"
     if reversal_type in OUTGOING_MOVEMENT_TYPES:
         available = signed_inventory_quantity(sku) - active_reservation_quantity(sku)
         if available < movement.quantity:
             raise ValidationError("当前可用库存不足，无法完整冲销该流水；请先处理相关预留/业务单据。")
+        if HistoryInventoryBaseline.objects.filter(sku=sku, reversal__isnull=True).exists() and location_quantity(sku, location) < movement.quantity:
+            raise ValidationError("原仓库及批次库存不足，无法冲销。")
 
     reversal = InventoryMovement.objects.create(
         **{key: getattr(movement, key) for key in TRADE_FIELDS},
@@ -584,7 +633,7 @@ def reverse_manual_inventory_movement(movement: InventoryMovement, reason: str) 
         supplier_sku=movement.supplier_sku,
         order=movement.order,
         quantity=movement.quantity,
-        warehouse=movement.warehouse,
+        **location,
         unit_cost=movement.unit_cost,
         reference=movement.movement_no,
         source_type="reversal",
@@ -640,6 +689,7 @@ def confirm_shipment(order: Order, payload: dict) -> Shipment:
             raise ValidationError('请填写基础数量，或选择交易规格并填写交易数量。')
         converted = normalize_trade(line, item.sku, price_field=None, existing=item)
         quantity = converted["quantity"]
+        location = inventory_location(item.sku, line)
         remaining = item.quantity - _shipped_quantity(item)
         reason = line.get("overage_reason", "")
         is_overage = quantity > remaining
@@ -652,6 +702,8 @@ def confirm_shipment(order: Order, payload: dict) -> Shipment:
         own_reserved = InventoryReservation.objects.filter(sku=item.sku, order_item__order=order).aggregate(total=Sum("quantity"))["total"] or Decimal("0")
         if quantity > sku_metrics(item.sku)["available_quantity"] + own_reserved:
             raise ValidationError("库存不足，不能确认发货。")
+        if HistoryInventoryBaseline.objects.filter(sku=item.sku, reversal__isnull=True).exists() and quantity > location_quantity(item.sku, location):
+            raise ValidationError("所选仓库及批次库存不足，不能确认发货。")
 
         def create_line(order_item, line_quantity, overage=False, line_reason="", source_order_item=None):
             movement = InventoryMovement.objects.create(
@@ -662,7 +714,7 @@ def confirm_shipment(order: Order, payload: dict) -> Shipment:
                 sku=order_item.sku,
                 order=order,
                 quantity=line_quantity,
-                warehouse="默认仓",
+                **location,
                 reference=shipment.shipment_no,
                 source_type="shipment",
                 source_no=shipment.shipment_no,
@@ -807,6 +859,8 @@ def reverse_shipment(shipment: Shipment, reason: str) -> Shipment:
             order=order,
             quantity=item.quantity,
             warehouse=original_movement.warehouse,
+            warehouse_type=original_movement.warehouse_type,
+            lot_reference=original_movement.lot_reference,
             unit_cost=original_movement.unit_cost,
             reference=original_movement.movement_no,
             source_type="reversal",

@@ -1156,7 +1156,7 @@ class Order(TimestampedModel):
     def paid_amount(self):
         # A draft has no formal receivable yet.  Keep it out of payment
         # projections even if historical/imported rows happen to be linked.
-        if self.status in {"draft", "historical"} or self.historical_only:
+        if self.status == "draft" or ((self.status == "historical" or self.historical_only) and not hasattr(self, "history_balance")):
             return Decimal("0")
         receipts = sum(self.transactions.filter(status="confirmed", kind="customer_receipt").values_list("amount", flat=True), Decimal("0"))
         refunds = sum((t.amount for t in self.transactions.filter(direction="expense", status="confirmed", kind="refund")), Decimal("0"))
@@ -1171,7 +1171,7 @@ class Order(TimestampedModel):
         cancelled order has no current receivable, while a formal order's
         receivable is the sum of its still-open receivable-plan balances.
         """
-        if self.status in {"draft", "cancelled", "historical"} or self.historical_only:
+        if self.status in {"draft", "cancelled"} or ((self.status == "historical" or self.historical_only) and not hasattr(self, "history_balance")):
             return Decimal("0")
         return self.payment_plans.filter(
             direction="receivable", status="open",
@@ -1432,6 +1432,7 @@ class PurchaseOrder(TimestampedModel):
     expected_arrival_date = models.DateField("预计到货日", null=True, blank=True)
     status = models.CharField("状态", max_length=20, choices=STATUS_CHOICES, default="draft")
     historical_only = models.BooleanField("仅用于历史分析", default=False, editable=False, db_index=True)
+    history_finance_mode = models.BooleanField("历史接续财务口径", default=False, editable=False)
     currency = models.CharField("币种", max_length=10, default="USD")
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
     notes = models.TextField("备注", blank=True)
@@ -1455,7 +1456,7 @@ class PurchaseOrder(TimestampedModel):
 
     @property
     def paid_amount(self):
-        if self.status == "historical" or self.historical_only:
+        if (self.status == "historical" or self.historical_only) and not hasattr(self, "history_balance"):
             return Decimal("0")
         paid = sum(self.transactions.filter(status="confirmed", kind="supplier_payment").values_list("amount", flat=True), Decimal("0"))
         allocations = sum(AdvanceAllocation.objects.filter(plan__purchase_order=self, is_active=True, advance__status="confirmed").values_list("amount", flat=True), Decimal("0"))
@@ -1464,8 +1465,10 @@ class PurchaseOrder(TimestampedModel):
 
     @property
     def unpaid_amount(self):
-        if self.status == "historical" or self.historical_only:
+        if (self.status == "historical" or self.historical_only) and not hasattr(self, "history_balance"):
             return Decimal("0")
+        if self.history_finance_mode or self.status == "historical" or self.historical_only:
+            return self.payment_plans.filter(direction="payable", status="open").aggregate(total=models.Sum(models.F("planned_amount") - models.F("settled_amount")))["total"] or Decimal("0")
         return self.total_amount - self.paid_amount
 
     def __str__(self):
@@ -1780,6 +1783,8 @@ class InventoryMovement(TradeUnitLine, TimestampedModel):
     related_orders = models.ManyToManyField(Order, blank=True, related_name="related_inventory_movements", verbose_name="关联订单")
     quantity = models.DecimalField("数量", max_digits=14, decimal_places=2)
     warehouse = models.CharField("仓库", max_length=100, default="默认仓")
+    warehouse_type = models.CharField("仓库类型", max_length=10, choices=[("自有仓", "自有仓"), ("第三方仓", "第三方仓")], default="自有仓")
+    lot_reference = models.CharField("批次或货位", max_length=160, blank=True)
     unit_cost = models.DecimalField("单位成本", max_digits=24, decimal_places=12, default=0)
     reference = models.CharField("参考号", max_length=100, blank=True)
     notes = models.TextField("备注", blank=True)
@@ -2244,6 +2249,9 @@ class CashSourceAllocation(TimestampedModel):
 # Keep the historical takeover workflow in its own module while registering its
 # models in the existing CRM app.
 from .history_takeover_models import (  # noqa: E402,F401
+    HistoryInventoryBaseline,
+    HistoryInventoryBaselineReversal,
+    HistoryOperationalContract,
     HistoryTakeoverApplication,
     HistoryTakeoverEvent,
     HistoryTakeoverGroup,

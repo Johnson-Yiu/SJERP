@@ -1,0 +1,4 @@
+Operations to perform:
+  Apply all migrations: crm
+Running migrations:
+  Applying crm.0108_history_append_only_truncate... OK

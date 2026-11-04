@@ -1,0 +1,12 @@
+Creating test database for alias 'default'...
+
+......Bad Request: /api/import/history-takeovers/1/groups/1/finance-post/
+.............sssss
+----------------------------------------------------------------------
+Ran 24 tests in 115.325s
+
+OK (skipped=5)
+Destroying test database for alias 'default'...
+
+Found 24 test(s).
+System check identified no issues (0 silenced).

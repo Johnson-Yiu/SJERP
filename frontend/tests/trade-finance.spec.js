@@ -121,4 +121,23 @@ describe('trade finance interactions', () => {
     expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/receive/', expect.objectContaining({ purchase_item: 7, quantity: 8, notes: expect.stringContaining('拒收破损 2 件') }), expect.objectContaining({ headers: expect.objectContaining({ 'Idempotency-Key': expect.any(String) }) }))
     wrapper.unmount()
   })
+
+  it('submits an explicitly selected warehouse and batch for opening stock', async () => {
+    const purchase = { id: 2, purchase_no: 'PO-2', status: 'ordered', currency: 'USD', items: [{ id: 7, sku_code: 'SKU-7', quantity: '10', received_quantity: '0', remaining_quantity: '10', unit_price: '3' }] }
+    mocks.listAll.mockImplementation(async url => url === '/purchase-orders/' ? [purchase] : [])
+    const wrapper = mount(PurchaseOrderPage, { ...options, global: { ...options.global, plugins: [await purchaseRouter()], stubs: { RouterLink: true, ContractAmountAdjustments: true } } })
+    await flushPromises()
+    await wrapper.get('.purchase-list-row').trigger('click'); await flushPromises()
+    await wrapper.findAll('.workbench-tabs button').find(button => button.text() === '收货').trigger('click'); await flushPromises()
+    await wrapper.findAll('button').find(button => button.text() === '验货入库').trigger('click')
+    const dialog = wrapper.get('form.receipt-dialog')
+    await dialog.get('.inspection-acknowledgement input').setValue(true)
+    await dialog.findAll('label').find(label => label.text().includes('指定入库仓库和批次')).get('input').setValue(true)
+    await dialog.findAll('label').find(label => label.text().includes('仓库类型')).get('select').setValue('第三方仓')
+    await dialog.findAll('label').find(label => label.text() === '仓库').get('input').setValue('合成第三方仓')
+    await dialog.findAll('label').find(label => label.text().includes('批次或货位')).get('input').setValue('LOT-1')
+    await dialog.trigger('submit'); await flushPromises()
+    expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/receive/', expect.objectContaining({ warehouse_type: '第三方仓', warehouse: '合成第三方仓', lot_reference: 'LOT-1' }), expect.any(Object))
+    wrapper.unmount()
+  })
 })

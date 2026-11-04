@@ -358,6 +358,8 @@ def post(value, user, voucher_checked=False):
     if obj.status in {"cancelled", "failed"} or voucher_checked is not True:
         raise ValidationError("须核实凭证且指令未取消。")
     p = obj.payload
+    if p.get("source_system") == "HISTORY_TAKEOVER_V1" and obj.status != "approved":
+        raise ValidationError("历史资金须由另一名授权人员复核后才能记账。")
     if digest(p) != obj.request_hash:
         raise ValidationError("指令内容完整性异常。")
     if p["truth"] != "verified":

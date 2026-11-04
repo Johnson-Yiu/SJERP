@@ -7,6 +7,10 @@ const evidenceDir = process.env.ISS007_EVIDENCE_DIR || path.resolve(process.cwd(
 const screenshotDir = path.join(evidenceDir, 'screenshots')
 const httpResults = []
 
+// The isolated runner intentionally selects its own default channel. This
+// visual acceptance file requires the installed Google Chrome explicitly.
+test.use({ channel: 'chrome' })
+
 async function responseBytes(response) {
   const body = await response.body()
   return { body, sha256: crypto.createHash('sha256').update(body).digest('hex') }
@@ -18,8 +22,16 @@ async function absoluteRequest(page, href) {
 
 test.describe.configure({ mode: 'serial' })
 
-test.beforeAll(async () => {
+test.beforeAll(async ({ browser }) => {
   await fs.mkdir(screenshotDir, { recursive: true })
+  const cdp = await browser.newBrowserCDPSession()
+  const version = await cdp.send('Browser.getVersion')
+  const command = await cdp.send('Browser.getBrowserCommandLine')
+  await cdp.detach()
+  const identity = { channel: 'chrome', version: browser.version(), product: version.product,
+    executable: command.arguments[0], synthetic_data_only: true }
+  await fs.writeFile(path.join(evidenceDir, 'browser-identity.json'), JSON.stringify(identity, null, 2), 'utf8')
+  console.log(`ISS007_BROWSER_IDENTITY=${JSON.stringify(identity)}`)
 })
 
 test.afterAll(async () => {

@@ -362,6 +362,31 @@ def _repair_restored_file_reference(*, attachment_pk, follow_up_id, original_nam
             )
 
 
+def _is_directory_symlink_or_junction(path):
+    if path.is_symlink():
+        return True
+    is_junction = getattr(path, "is_junction", None)
+    return bool(is_junction and is_junction())
+
+
+def _validate_recovery_directory(media_root, recovery_dir, *, must_exist):
+    if _is_directory_symlink_or_junction(recovery_dir):
+        raise AttachmentCompensationError(
+            "Refusing to use a symlink or junction as the private attachment recovery directory."
+        )
+    if must_exist and not recovery_dir.is_dir():
+        raise AttachmentCompensationError("The private attachment recovery path is not a directory.")
+    try:
+        resolved_root = media_root.resolve(strict=media_root.exists())
+        resolved_dir = recovery_dir.resolve(strict=must_exist)
+        resolved_dir.relative_to(resolved_root)
+    except (OSError, ValueError) as exc:
+        raise AttachmentCompensationError(
+            "The private attachment recovery directory resolves outside MEDIA_ROOT."
+        ) from exc
+    return resolved_dir
+
+
 def _preserve_recovery_copy(
     *,
     backup,
@@ -374,8 +399,11 @@ def _preserve_recovery_copy(
     restored_storage_key=None,
 ):
     """Persist a private recovery copy and manifest before the temporary file closes."""
-    recovery_dir = Path(settings.MEDIA_ROOT).resolve() / ".private-attachment-recovery"
+    media_root = Path(settings.MEDIA_ROOT).resolve()
+    recovery_dir = media_root / ".private-attachment-recovery"
+    _validate_recovery_directory(media_root, recovery_dir, must_exist=False)
     recovery_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
+    recovery_dir = _validate_recovery_directory(media_root, recovery_dir, must_exist=True)
     if os.name != "nt":
         os.chmod(recovery_dir, 0o700)
 
@@ -384,6 +412,7 @@ def _preserve_recovery_copy(
     manifest_path = recovery_dir / f"{recovery_id}.json"
     backup.seek(0)
     digest = hashlib.sha256()
+    _validate_recovery_directory(media_root, recovery_dir, must_exist=True)
     with backup_path.open("xb") as destination:
         for chunk in iter(lambda: backup.read(1024 * 1024), b""):
             destination.write(chunk)
@@ -408,12 +437,15 @@ def _preserve_recovery_copy(
     if restored_storage_key is not None:
         manifest["restored_storage_key"] = restored_storage_key
     manifest_tmp = recovery_dir / f".{recovery_id}.json.tmp"
+    _validate_recovery_directory(media_root, recovery_dir, must_exist=True)
     with manifest_tmp.open("x", encoding="utf-8") as manifest_file:
         json.dump(manifest, manifest_file, ensure_ascii=False, indent=2)
         manifest_file.flush()
         os.fsync(manifest_file.fileno())
+    _validate_recovery_directory(media_root, recovery_dir, must_exist=True)
     os.replace(manifest_tmp, manifest_path)
     if os.name != "nt":
+        _validate_recovery_directory(media_root, recovery_dir, must_exist=True)
         os.chmod(manifest_path, 0o600)
 
     logger.critical(

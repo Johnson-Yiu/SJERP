@@ -1,6 +1,10 @@
 import hashlib
 import json
+import os
 from pathlib import Path
+import shutil
+import stat
+import subprocess
 import tempfile
 import time
 from threading import Event, Thread, current_thread
@@ -396,6 +400,83 @@ class ReviewAttachmentAtomicityTests(TransactionTestCase):
                         str(manifest["recovery_id"]).encode("ascii"),
                     ):
                         self.assertNotIn(sensitive_value, response_body, url)
+
+    def _create_external_directory_link_or_skip(self, link, target):
+        try:
+            link.symlink_to(target, target_is_directory=True)
+            return "symlink"
+        except (NotImplementedError, OSError) as symlink_error:
+            if os.name == "nt":
+                powershell = shutil.which("powershell.exe") or shutil.which("pwsh.exe")
+                if powershell:
+                    link_literal = "'" + str(link).replace("'", "''") + "'"
+                    target_literal = "'" + str(target).replace("'", "''") + "'"
+                    script = (
+                        "$ErrorActionPreference = 'Stop'; "
+                        f"New-Item -ItemType Junction -Path {link_literal} "
+                        f"-Target {target_literal} | Out-Null"
+                    )
+                    junction = subprocess.run(
+                        [powershell, "-NoProfile", "-NonInteractive", "-Command", script],
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                    )
+                    if junction.returncode == 0:
+                        return "junction"
+                    reason = junction.stderr.strip() or junction.stdout.strip() or str(symlink_error)
+                else:
+                    reason = f"PowerShell unavailable; {symlink_error}"
+            else:
+                reason = str(symlink_error)
+            self.skipTest(f"This platform cannot create a directory symlink/junction: {reason}")
+
+    def test_recovery_directory_external_symlink_is_rejected_without_touching_target(self):
+        media_root = Path(self.media_dir.name).resolve()
+        recovery_link = media_root / ".private-attachment-recovery"
+        with tempfile.TemporaryDirectory(prefix="attachment-recovery-external-") as external_name:
+            external_root = Path(external_name)
+            sentinel = external_root / "keep.bin"
+            sentinel.write_bytes(b"external target must remain unchanged")
+            os.chmod(sentinel, 0o640)
+            os.chmod(external_root, 0o750)
+            before = {
+                "paths": sorted(path.relative_to(external_root).as_posix() for path in external_root.rglob("*")),
+                "directory_mode": stat.S_IMODE(external_root.stat().st_mode),
+                "file_mode": stat.S_IMODE(sentinel.stat().st_mode),
+                "file_bytes": sentinel.read_bytes(),
+            }
+            link_kind = self._create_external_directory_link_or_skip(recovery_link, external_root)
+
+            try:
+                with tempfile.TemporaryFile(mode="w+b") as backup:
+                    backup.write(b"do not write this through a linked recovery directory")
+                    backup.seek(0)
+                    with self.assertRaises(attachment_service.AttachmentCompensationError):
+                        attachment_service._preserve_recovery_copy(
+                            backup=backup,
+                            file_name="follow-up-attachments/original.bin",
+                            attachment_pk=741,
+                            follow_up_id=852,
+                            cause=OSError("injected primary failure"),
+                            restore_error=OSError("injected restore failure"),
+                        )
+
+                is_junction = getattr(recovery_link, "is_junction", lambda: False)
+                self.assertTrue(recovery_link.is_symlink() or is_junction(), link_kind)
+                after = {
+                    "paths": sorted(path.relative_to(external_root).as_posix() for path in external_root.rglob("*")),
+                    "directory_mode": stat.S_IMODE(external_root.stat().st_mode),
+                    "file_mode": stat.S_IMODE(sentinel.stat().st_mode),
+                    "file_bytes": sentinel.read_bytes(),
+                }
+                self.assertEqual(after, before)
+            finally:
+                is_junction = getattr(recovery_link, "is_junction", lambda: False)
+                if is_junction():
+                    recovery_link.rmdir()
+                elif recovery_link.is_symlink():
+                    recovery_link.unlink()
 
     def test_delete_failure_with_renamed_restore_repairs_reference_after_rollback(self):
         attachment = FollowUpAttachment.objects.create(

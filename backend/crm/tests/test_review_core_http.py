@@ -126,12 +126,19 @@ class ReviewCoreHttpTests(LiveServerTestCase):
         self.http_events = []
         self.saved_artifacts = {}
 
+    def _evidence_prefix(self):
+        if self._testMethodName.startswith("test_quote"):
+            return "sales"
+        if self._testMethodName.startswith("test_purchase"):
+            return "procurement"
+        return "denials"
+
     def _save_evidence(self, name, content, content_type):
         digest = hashlib.sha256(content).hexdigest()
         self.assertTrue(digest)
         if not self.evidence_dir:
             return digest
-        prefix = "sales" if self._testMethodName.startswith("test_quote") else "procurement"
+        prefix = self._evidence_prefix()
         path = Path(self.evidence_dir) / f"{prefix}-{name}"
         path.parent.mkdir(parents=True, exist_ok=True)
         if path.exists():
@@ -154,7 +161,7 @@ class ReviewCoreHttpTests(LiveServerTestCase):
 
     def tearDown(self):
         if self.evidence_dir:
-            prefix = "sales" if self._testMethodName.startswith("test_quote") else "procurement"
+            prefix = self._evidence_prefix()
             manifest = {
                 "test": self._testMethodName,
                 "http_events": self.http_events,

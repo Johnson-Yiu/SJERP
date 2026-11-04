@@ -15,6 +15,7 @@ def protected_media(request, relative_path):
     """Serve only a stored file whose owning business record is authorized."""
     file_field = None
     content_type = None
+    display_filename = None
 
     attachment = scope_customer_related_queryset(
         FollowUpAttachment.objects.select_related("follow_up"),
@@ -26,6 +27,7 @@ def protected_media(request, relative_path):
             raise Http404
         file_field = attachment.file
         content_type = attachment.content_type
+        display_filename = attachment.name
 
     if file_field is None:
         quote_item = scope_customer_related_queryset(
@@ -53,13 +55,14 @@ def protected_media(request, relative_path):
     if file_field is None:
         raise Http404
     try:
-        resolved_content_type = content_type or mimetypes.guess_type(file_field.name)[0] or "application/octet-stream"
+        filename = display_filename or file_field.name.rsplit("/", 1)[-1]
+        resolved_content_type = content_type or mimetypes.guess_type(filename)[0] or "application/octet-stream"
         if resolved_content_type.lower() == "text/plain":
             resolved_content_type = "text/plain; charset=utf-8"
         response = FileResponse(
             file_field.open("rb"),
             as_attachment=False,
-            filename=file_field.name.rsplit("/", 1)[-1],
+            filename=filename,
             content_type=resolved_content_type,
         )
     except (OSError, ValueError):

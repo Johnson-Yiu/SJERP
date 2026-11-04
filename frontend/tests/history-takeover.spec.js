@@ -88,13 +88,79 @@ describe('controlled history takeover UI', () => {
     wrapper.unmount()
   })
 
-  it('shows source evidence and warns that finance, inventory and fulfillment handoffs are not connected', async () => {
+  it('separates archive completion from financial, inventory and fulfillment handoffs', async () => {
     const value = detail('executed')
     value.groups[0].execution_result = { orders: [{}], purchase_orders: [{}], finance_records_posted: 0, inventory_movements_posted: 0, fulfillment_records_posted: 0 }
+    value.groups[0].finance_handoff_status = 'not_connected'
+    value.groups[0].inventory_handoff_status = 'not_connected'
+    value.groups[0].fulfillment_handoff_status = 'not_connected'
     const wrapper = await mountPage(value)
     expect(wrapper.text()).toContain('来源凭证：synthetic://voucher')
-    expect(wrapper.text()).toContain('正式资金、库存流水、履约记录、采购成本分配均为 0')
+    expect(wrapper.text()).toContain('归档阶段未产生正式资金、库存流水或履约记录')
+    expect(wrapper.text()).toContain('资金交接：尚未接续')
+    expect(wrapper.text()).toContain('库存盘点基准')
+    expect(wrapper.text()).toContain('历史资金接续')
     expect(wrapper.text()).toContain('提交追溯更正申请')
+    wrapper.unmount()
+  })
+
+  it('requires explicit cash amount, account and voucher before saving the historical source', async () => {
+    const value = detail('executed')
+    mocks.get.mockImplementation(async url => {
+      if (url === '/import/history-takeovers/') return { data: { results: [summary(value)] } }
+      if (url === '/finance-ledger/') return { data: { accounts: [{ id: 7, code: 'TEST', name: '合成账户', ownership: 'own', currency: 'CNY', is_active: true }], vouchers: [{ id: 8, name: '凭证.pdf', sha256: 'a'.repeat(64) }] } }
+      return { data: value }
+    })
+    mocks.post.mockImplementation(async url => url.endsWith('/finance-status/')
+      ? { data: { sources: [{ source_id: 9, source_record_id: 'TX-1', status: 'unmapped', source: { amount: '40', currency: 'USD', direction: 'income' } }] } }
+      : { data: { instruction_id: 17, status: 'pending' } })
+    const wrapper = mount(HistoryTakeoverPage)
+    await flushPromises()
+    await wrapper.findAll('button').find(button => button.text() === '读取资金来源、账户和凭证').trigger('click')
+    await flushPromises()
+    const field = label => wrapper.findAll('label').find(item => item.text().includes(label))
+    await field('历史收付款来源').find('select').setValue('9')
+    await field('自有人民币账户').find('select').setValue('7')
+    await field('实际凭证').find('select').setValue('8')
+    await field('实际发生日期').find('input').setValue('2024-09-03')
+    await field('核实依据').find('input').setValue('已核对银行凭证')
+    const submit = wrapper.findAll('button').find(button => button.text() === '保存资金指令')
+    expect(submit.attributes('disabled')).toBeDefined()
+    await field('实际人民币金额').find('input').setValue('287.43')
+    await submit.trigger('click')
+    await flushPromises()
+    expect(mocks.post).toHaveBeenCalledWith('/import/history-takeovers/31/groups/41/finance-submit/', {
+      source_id: 9, mapping: { account: 7, voucher: 8, actual_date: '2024-09-03', amount: '287.43', reason: '已核对银行凭证' },
+    })
+    wrapper.unmount()
+  })
+
+  it('requires explicit goods ownership, cost and full-count confirmation for a stock baseline', async () => {
+    const value = detail('executed')
+    mocks.get.mockImplementation(async url => url === '/import/history-takeovers/'
+      ? { data: { results: [summary(value)] } } : { data: value })
+    mocks.post.mockImplementation(async url => url.endsWith('/inventory-status/')
+      ? { data: { status: 'not_connected', baselines: [], sources: [{ source_id: 12, source: {
+        sku_code: 'SYN-1', counted_quantity: '18', unit_snapshot: 'pcs', warehouse_type: '第三方仓', warehouse: '合成仓', lot_reference: 'LOT-1',
+      } }] } } : { data: { status: 'pending_review' } })
+    const wrapper = mount(HistoryTakeoverPage)
+    await flushPromises()
+    await wrapper.findAll('button').find(button => button.text() === '读取盘点来源').trigger('click')
+    await flushPromises()
+    const field = label => wrapper.findAll('label').find(item => item.text().includes(label))
+    await field('货物所有权').find('select').setValue('own')
+    await field('核实单位成本').find('input').setValue('3.25')
+    await field('成本币种').find('input').setValue('USD')
+    await field('盘点与成本依据').find('input').setValue('核对盘点和采购凭证')
+    const submit = wrapper.findAll('button').find(button => button.text() === '保存基准申请')
+    expect(submit.attributes('disabled')).toBeDefined()
+    await field('已核实这些 SKU 的盘点范围完整').find('input').setValue(true)
+    await submit.trigger('click')
+    await flushPromises()
+    expect(mocks.post).toHaveBeenCalledWith('/import/history-takeovers/31/groups/41/inventory-propose/', {
+      rows: [{ source_id: 12, goods_ownership: 'own', unit_cost: '3.25', cost_currency: 'USD', no_lot: false }],
+      reason: '核对盘点和采购凭证', complete_sku_inventory: true,
+    })
     wrapper.unmount()
   })
 })

@@ -839,6 +839,9 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
 
 
 class ReceiptInputSerializer(serializers.Serializer):
+    warehouse = serializers.CharField(max_length=100, required=False)
+    warehouse_type = serializers.ChoiceField(choices=["自有仓", "第三方仓"], required=False)
+    lot_reference = serializers.CharField(max_length=160, required=False, allow_blank=True)
     request_key = serializers.CharField(max_length=100, required=False, allow_blank=False)
     trade_unit = serializers.IntegerField(required=False, allow_null=True)
     trade_quantity = serializers.DecimalField(max_digits=14, decimal_places=2, required=False)
@@ -864,6 +867,9 @@ class SupplierPaymentInputSerializer(serializers.Serializer):
 
 
 class ShipmentLineInputSerializer(serializers.Serializer):
+    warehouse = serializers.CharField(max_length=100, required=False)
+    warehouse_type = serializers.ChoiceField(choices=["自有仓", "第三方仓"], required=False)
+    lot_reference = serializers.CharField(max_length=160, required=False, allow_blank=True)
     trade_unit = serializers.IntegerField(required=False, allow_null=True)
     trade_quantity = serializers.DecimalField(max_digits=14, decimal_places=2, required=False)
     trade_unit_price = serializers.DecimalField(max_digits=16, decimal_places=4, required=False)
@@ -2489,7 +2495,9 @@ class TransactionSerializer(serializers.ModelSerializer):
         if plan and not contract:
             contract = plan.order or plan.purchase_order
         if contract and (getattr(contract, "historical_only", False) or getattr(contract, "status", None) == "historical"):
-            raise serializers.ValidationError("历史订单仅用于经营分析，不能登记任何关联资金流水。")
+            from .services.historical import has_verified_history_balance
+            if not plan or not has_verified_history_balance(contract):
+                raise serializers.ValidationError("历史订单尚无已核实的未结计划，不能登记关联资金流水。")
         if contract and kind in {"customer_receipt", "supplier_payment", "refund", "supplier_refund"} and attrs.get("currency", "USD") != contract.currency:
             raise serializers.ValidationError("合同收付款及退款币种必须与合同一致。")
         return attrs
@@ -3061,9 +3069,17 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
 
     @transaction.atomic
     def create(self, validated_data):
-        from .services.fulfillment import OUTGOING_MOVEMENT_TYPES
+        from .services.fulfillment import OUTGOING_MOVEMENT_TYPES, inventory_location, location_quantity
+        from .models import HistoryInventoryBaseline
         delta = validated_data["quantity"] * (-1 if validated_data["type"] in OUTGOING_MOVEMENT_TYPES else 1)
         self.check_stock(validated_data["sku"], delta)
+        try:
+            location = inventory_location(validated_data["sku"], validated_data)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(exc.messages) from exc
+        if delta < 0 and HistoryInventoryBaseline.objects.filter(sku=validated_data["sku"], reversal__isnull=True).exists() and location_quantity(validated_data["sku"], location) + delta < 0:
+            raise serializers.ValidationError("所选仓库及批次库存不足。")
+        validated_data.update(location)
         related_orders = validated_data.pop("related_orders", [])
         if related_orders:
             validated_data["order"] = related_orders[0]
@@ -3079,10 +3095,18 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
 
     @transaction.atomic
     def update(self, instance, validated_data):
+        from .services.fulfillment import location_quantity
+        from .models import HistoryInventoryBaseline
         instance = InventoryMovement.objects.select_for_update().get(pk=instance.pk)
+        if any(key in validated_data and validated_data[key] != getattr(instance, key) for key in ("warehouse", "warehouse_type", "lot_reference")):
+            raise serializers.ValidationError("库存流水不能变更仓库或批次，请使用调整流水纠正。")
         quantity = validated_data.get("quantity", instance.quantity)
         sign = -1 if instance.signed_quantity < 0 else 1
-        self.check_stock(instance.sku, (quantity - instance.quantity) * sign)
+        delta = (quantity - instance.quantity) * sign
+        self.check_stock(instance.sku, delta)
+        location = {key: getattr(instance, key) for key in ("warehouse", "warehouse_type", "lot_reference")}
+        if delta < 0 and HistoryInventoryBaseline.objects.filter(sku=instance.sku, reversal__isnull=True).exists() and location_quantity(instance.sku, location) + delta < 0:
+            raise serializers.ValidationError("原仓库及批次库存不足。")
         related_orders = validated_data.pop("related_orders", None)
         if related_orders is not None:
             validated_data["order"] = related_orders[0] if related_orders else None

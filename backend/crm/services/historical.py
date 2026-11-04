@@ -14,3 +14,15 @@ def is_historical(contract):
 def reject_historical(contract, action="正式业务操作"):
     if is_historical(contract):
         raise ValidationError(f"历史订单仅用于经营分析，不能执行{action}。")
+
+
+def has_verified_history_balance(contract):
+    """Only explicitly activated historical balances can settle new cash."""
+    if not contract or not hasattr(contract, "history_balance"):
+        return False
+    return contract.history_balance.group.fulfillment_handoff_status in {"approved", "drafts_created"}
+
+
+def reject_unlinked_historical_finance(contract, action="收付款"):
+    if is_historical(contract) and not has_verified_history_balance(contract):
+        raise ValidationError(f"历史订单尚未核实启用未结余额，不能执行{action}。")

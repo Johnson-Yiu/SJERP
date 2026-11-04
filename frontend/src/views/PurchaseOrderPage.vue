@@ -129,7 +129,7 @@ function openReceipt(row, item) {
   receiptTarget.value = { row, item }
   receiptSuccess.value = null
   notice.value = ''
-  receiptForm.value = { purchase_item: item.id, receipt_date: new Date().toLocaleDateString('en-CA'), quantity: Math.max(0, Number(item.remaining_quantity)), unit_cost: item.unit_price, is_overage: false, overage_reason: '', notes: '', checked: false }
+  receiptForm.value = { purchase_item: item.id, receipt_date: new Date().toLocaleDateString('en-CA'), quantity: Math.max(0, Number(item.remaining_quantity)), unit_cost: item.unit_price, is_overage: false, overage_reason: '', notes: '', checked: false, specify_location: false, warehouse_type: '自有仓', warehouse: '', lot_reference: '' }
   if (item.trade_unit && Number(item.remaining_quantity) % Number(item.trade_snapshot.factor) === 0) Object.assign(receiptForm.value, { trade_unit: item.trade_unit, trade_snapshot: item.trade_snapshot, quantity: Number(item.remaining_quantity) / Number(item.trade_snapshot.factor), unit_cost: item.trade_unit_price })
   receiptForm.value.unit_cost = compactDecimalInput(receiptForm.value.unit_cost)
   error.value = ''
@@ -140,7 +140,8 @@ async function submitReceipt() {
   error.value = ''
   notice.value = ''
   try {
-    const { checked, ...payload } = receiptForm.value
+    const { checked, specify_location, warehouse_type, warehouse, lot_reference, ...payload } = receiptForm.value
+    if (specify_location) Object.assign(payload, { warehouse_type, warehouse, lot_reference })
     Object.assign(payload, tradePayload(payload, 'unit_cost'))
     payload.notes = `已核对型号、数量与外观；仅合格数量入库。${payload.notes}`
     const relatedOrders = receiptTarget.value.row.related_orders || []
@@ -567,6 +568,8 @@ watch(() => route.query.detail, id => {
         <section v-if="baseQuantity(receiptForm) > Number(receiptTarget.item.remaining_quantity)" class="receipt-overage-panel"><h4>本次数量超过当前待到数量</h4><p>待到 {{ receiptTarget.item.remaining_quantity }} · 本次 {{ baseQuantity(receiptForm) }} · 超到 {{ Number((-receiptRemaining).toFixed(6)) }} {{ itemBaseUnit(receiptTarget.item) }}</p><label class="receipt-check"><input v-model="receiptForm.is_overage" type="checkbox" required> 确认超到</label><label>超到原因 *<select v-model="receiptForm.overage_reason" required><option value="">选择超到原因</option><option value="overprocurement">超采</option><option value="gift">供应商赠品</option><option value="carton_variance">包装尾差</option></select></label></section>
         <label>验货备注 / 异常说明<textarea v-model="receiptForm.notes" placeholder="例如：拒收破损 2 件，已联系供应商补货"></textarea></label>
         <label class="receipt-check inspection-acknowledgement"><input v-model="receiptForm.checked" type="checkbox" required> 已核对型号、数量及外观，仅登记合格品</label>
+        <label class="receipt-check"><input v-model="receiptForm.specify_location" type="checkbox"> 指定入库仓库和批次</label>
+        <template v-if="receiptForm.specify_location"><label>仓库类型<select v-model="receiptForm.warehouse_type"><option>自有仓</option><option>第三方仓</option></select></label><label>仓库<input v-model="receiptForm.warehouse" maxlength="100" required></label><label>批次或货位（无则留空）<input v-model="receiptForm.lot_reference" maxlength="160"></label></template>
         <p v-if="error" class="error" role="alert">{{ error }}</p>
         <footer><small>保存后将立即更新：库存、订单预留、采购到货数量、在途数量。</small><div><button type="button" class="btn btn-secondary" :disabled="receiptSaving" @click="receiptTarget = null">取消</button><button class="btn btn-primary" :disabled="receiptSaving || !receiptForm.checked">{{ receiptSaving ? '保存中…' : '确认入库' }}</button></div></footer>
       </form>

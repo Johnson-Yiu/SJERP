@@ -28,6 +28,7 @@ from .history_takeover import (
 )
 from .models import HistoryTakeoverApplication, HistoryTakeoverGroup
 from .permissions import is_permission_admin
+from . import history_operational_finance, history_operational_inventory, history_operational_contracts
 
 
 class HistoryTakeoverPermission(HistoryPreflightPermission):
@@ -195,8 +196,47 @@ class HistoryTakeoverGroupActionView(APIView):
 
         data = request.data
         try:
-            if operation in {"review", "execute", "resolve-master", "correction-review"} and not _admin_required(request):
+            if operation in {"review", "execute", "resolve-master", "correction-review", "finance-status", "finance-submit", "finance-replace", "finance-approve", "finance-post", "finance-cancel", "finance-fail", "inventory-status", "inventory-propose", "inventory-approve", "inventory-execute", "inventory-reverse", "operational-status", "operational-propose", "operational-approve", "operational-execute", "operational-reverse"} and not _admin_required(request):
                 return Response({"detail": "仅管理员可以审核、关联主档或执行历史承接。"}, status=403)
+            if operation == "operational-status":
+                return Response(history_operational_contracts.status(group, request.user))
+            if operation == "operational-propose":
+                obj, replay = history_operational_contracts.propose(group.pk, data, request.user)
+                return Response({"status": obj.status, "idempotent_replay": replay})
+            if operation == "operational-approve":
+                obj, replay = history_operational_contracts.approve(group.pk, data.get("note"), request.user)
+                return Response({"status": obj.status, "idempotent_replay": replay})
+            if operation == "operational-execute":
+                ids, replay = history_operational_contracts.execute(group.pk, request.user)
+                return Response({"contract_ids": ids, "idempotent_replay": replay})
+            if operation == "operational-reverse":
+                replay = history_operational_contracts.reverse(group.pk, data.get("reason"), request.user)
+                return Response({"status": "reversed", "idempotent_replay": replay})
+            if operation == "inventory-status":
+                return Response(history_operational_inventory.status(group, request.user))
+            if operation == "inventory-propose":
+                obj, replay = history_operational_inventory.propose(group.pk, data.get("rows"), data.get("reason"), data.get("complete_sku_inventory"), request.user)
+                return Response({"status": obj.status, "idempotent_replay": replay})
+            if operation == "inventory-approve":
+                obj, replay = history_operational_inventory.approve(group.pk, data.get("note"), request.user)
+                return Response({"status": obj.status, "idempotent_replay": replay})
+            if operation == "inventory-execute":
+                ids, replay = history_operational_inventory.execute(group.pk, request.user)
+                return Response({"baseline_ids": ids, "idempotent_replay": replay})
+            if operation == "inventory-reverse":
+                replay = history_operational_inventory.reverse(group.pk, data.get("reason"), request.user)
+                return Response({"status": "reversed", "idempotent_replay": replay})
+            if operation == "finance-status":
+                return Response({"sources": history_operational_finance.source_status(group, request.user)})
+            if operation in {"finance-submit", "finance-replace"}:
+                if operation == "finance-replace" and data.get("replaces") is None:
+                    return Response({"detail": "请指定需要修订的原资金指令。"}, status=400)
+                obj, created = history_operational_finance.submit_source(group.pk, data.get("source_id"), data.get("mapping"), request.user, replace_id=data.get("replaces") if operation == "finance-replace" else None)
+                return Response({"instruction_id": obj.pk, "status": obj.status, "created": created}, status=201 if created else 200)
+            if operation in {"finance-approve", "finance-post", "finance-cancel", "finance-fail"}:
+                action = operation.removeprefix("finance-")
+                obj = history_operational_finance.advance_source(group.pk, data.get("source_id"), action, request.user, voucher_checked=data.get("voucher_checked") is True, reason=data.get("reason", ""), no_debit_confirmed=data.get("no_debit_confirmed") is True)
+                return Response({"id": obj.pk, "action": action})
             if operation == "review":
                 group = review_group(
                     group, request.user, str(data.get("decision") or ""), str(data.get("note") or ""),

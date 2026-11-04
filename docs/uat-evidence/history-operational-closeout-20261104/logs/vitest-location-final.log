@@ -1,0 +1,8 @@
+
+ RUN  v4.1.12 C:/Users/Johnson/.codex/worktrees/history-operational-closeout-20261104/森爵照明管理系统/frontend
+
+
+ Test Files  2 passed (2)
+      Tests  11 passed (11)
+   Start at  00:25:44
+   Duration  9.48s (transform 2.27s, setup 1.54s, import 2.82s, tests 1.38s, environment 9.83s)

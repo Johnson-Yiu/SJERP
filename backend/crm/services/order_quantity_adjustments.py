@@ -172,16 +172,18 @@ def _normalized_lines(order, canonical_items):
 def _financial_state(order, new_total=None):
     old_total = _money(order.total_amount)
     target_total = old_total if new_total is None else _money(new_total)
-    plans = list(order.payment_plans.select_for_update().exclude(status="cancelled").order_by("-due_date", "-id"))
+    continuation = getattr(order, "history_continuation", None)
+    financial_order = continuation.archived_order if continuation else order
+    plans = list(financial_order.payment_plans.select_for_update().exclude(status="cancelled").order_by("-due_date", "-id"))
     planned = sum((plan.planned_amount for plan in plans), Decimal("0"))
     settled = sum((plan.settled_amount for plan in plans), Decimal("0"))
-    paid = _money(order.paid_amount)
+    paid = _money(financial_order.paid_amount)
     reasons = []
-    if _money(planned) != old_total:
+    if not continuation and _money(planned) != old_total:
         reasons.append(f"现有应收计划合计 {_money(planned)} 与订单金额 {old_total} 不一致")
     if _money(settled) != paid:
         reasons.append(f"应收计划已核销 {_money(settled)} 与已收金额 {paid} 不一致")
-    if settled > target_total:
+    if not continuation and settled > target_total:
         reasons.append(f"调整后订单金额 {target_total} 低于已收金额 {paid}，需先处理退款或资金差额")
     delta = _money(target_total - old_total)
     if delta < 0 and _money(planned + delta) < _money(settled):
@@ -194,7 +196,7 @@ def _financial_state(order, new_total=None):
         "settled": _money(settled),
         "paid": paid,
         "outstanding_before": _money(planned - settled),
-        "outstanding_after": _money(target_total - settled),
+        "outstanding_after": _money(planned - settled + delta) if continuation else _money(target_total - settled),
         "blocking_reasons": reasons,
     }
 
@@ -332,9 +334,11 @@ def preview_quantity_adjustment(order, payload):
 
 def _apply_payment_delta(order, financial, adjustment_id):
     delta = Decimal(str(financial["amount_delta"]))
+    continuation = getattr(order, "history_continuation", None)
+    financial_order = continuation.archived_order if continuation else order
     if delta > 0:
         return PaymentPlan.objects.create(
-            order=order,
+            order=financial_order,
             direction="receivable",
             due_date=order.expected_ship_date,
             planned_amount=delta,
@@ -345,7 +349,7 @@ def _apply_payment_delta(order, financial, adjustment_id):
         return None
     remaining = -delta
     affected = None
-    for plan in order.payment_plans.select_for_update().exclude(status="cancelled").order_by("-due_date", "-id"):
+    for plan in financial_order.payment_plans.select_for_update().exclude(status="cancelled").order_by("-due_date", "-id"):
         reducible = plan.planned_amount - plan.settled_amount
         reduction = min(reducible, remaining)
         if reduction <= 0:

@@ -3,633 +3,509 @@
   "unique_ids": 124,
   "duplicates": [],
   "counts": {
-    "FIXED_PENDING_REVIEW": 84,
+    "FIXED_PENDING_REVIEW": 86,
     "NEEDS_VERIFICATION": 14,
-    "BLOCKED": 15,
+    "BLOCKED": 14,
     "CLOSED": 10,
-    "OPEN": 1
+    "OPEN": 0
   },
-  "scope": "Current primary Issue rows only, not historical counts. No status changed by this check.",
+  "scope": "Current primary rows only; original ISS-105/108 rows retained as quoted history. No Issue closed.",
   "rows": [
     {
       "id": "ISS-001",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 81
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-002",
-      "status": "NEEDS_VERIFICATION",
-      "line": 82
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-003",
-      "status": "BLOCKED",
-      "line": 83
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-004",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 84
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-005",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 85
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-006",
-      "status": "NEEDS_VERIFICATION",
-      "line": 86
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-007",
-      "status": "NEEDS_VERIFICATION",
-      "line": 87
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-008",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 88
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-008-FUP-01",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 89
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-009",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 90
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-010",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 91
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-011",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 92
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-012",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 93
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-013",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 94
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-014",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 95
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-015",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 96
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-016",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 97
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-017",
-      "status": "BLOCKED",
-      "line": 103
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-018",
-      "status": "BLOCKED",
-      "line": 104
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-051",
-      "status": "BLOCKED",
-      "line": 105
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-019",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 111
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-020",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 112
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-052",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 113
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-021",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 114
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-022",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 115
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-023",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 116
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-024",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 117
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-025",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 118
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-026",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 119
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-027",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 120
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-028",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 121
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-029",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 122
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-030",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 123
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-031",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 124
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-032",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 125
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-033",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 126
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-034",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 127
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-035",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 128
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-036",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 129
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-037",
-      "status": "NEEDS_VERIFICATION",
-      "line": 130
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-038",
-      "status": "BLOCKED",
-      "line": 131
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-039",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 132
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-043",
-      "status": "BLOCKED",
-      "line": 133
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-044",
-      "status": "NEEDS_VERIFICATION",
-      "line": 134
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-045",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 135
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-046",
-      "status": "BLOCKED",
-      "line": 136
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-047",
-      "status": "BLOCKED",
-      "line": 137
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-053",
-      "status": "NEEDS_VERIFICATION",
-      "line": 139
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-054",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 140
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-055",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 141
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-057",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 143
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-058",
-      "status": "NEEDS_VERIFICATION",
-      "line": 144
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-062",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 145
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-063",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 146
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-064",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 147
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-065",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 148
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-066",
-      "status": "BLOCKED",
-      "line": 149
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-040",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 155
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-041",
-      "status": "BLOCKED",
-      "line": 156
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-042",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 157
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-048",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 158
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-049",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 159
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-050",
-      "status": "NEEDS_VERIFICATION",
-      "line": 160
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-067",
-      "status": "NEEDS_VERIFICATION",
-      "line": 168
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-068",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 169
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-069",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 170
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-070",
-      "status": "BLOCKED",
-      "line": 171
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-071",
-      "status": "CLOSED",
-      "line": 179
+      "status": "CLOSED"
     },
     {
       "id": "ISS-072",
-      "status": "CLOSED",
-      "line": 180
+      "status": "CLOSED"
     },
     {
       "id": "ISS-073",
-      "status": "BLOCKED",
-      "line": 181
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-074",
-      "status": "NEEDS_VERIFICATION",
-      "line": 182
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-075",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 190
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-076",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 191
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-077",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 192
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-078",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 193
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-079",
-      "status": "CLOSED",
-      "line": 204
+      "status": "CLOSED"
     },
     {
       "id": "ISS-080",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 205
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-081",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 213
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-082",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 214
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-083",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 215
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-084",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 222
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-085",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 223
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-086",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 224
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-087",
-      "status": "NEEDS_VERIFICATION",
-      "line": 225
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-088",
-      "status": "CLOSED",
-      "line": 226
+      "status": "CLOSED"
     },
     {
       "id": "ISS-089",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 234
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-090",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 235
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-091",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 236
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-092",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 244
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-093",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 245
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-094",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 253
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-095",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 261
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-096",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 262
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-097",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 270
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-098",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 278
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-099",
-      "status": "NEEDS_VERIFICATION",
-      "line": 279
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-100",
-      "status": "BLOCKED",
-      "line": 280
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-056",
-      "status": "CLOSED",
-      "line": 296
+      "status": "CLOSED"
     },
     {
       "id": "ISS-059",
-      "status": "CLOSED",
-      "line": 297
+      "status": "CLOSED"
     },
     {
       "id": "ISS-060",
-      "status": "CLOSED",
-      "line": 298
+      "status": "CLOSED"
     },
     {
       "id": "ISS-061",
-      "status": "CLOSED",
-      "line": 299
+      "status": "CLOSED"
     },
     {
       "id": "ISS-101",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 327
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-102",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 328
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-103",
-      "status": "NEEDS_VERIFICATION",
-      "line": 329
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-104",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 342
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-105",
-      "status": "OPEN",
-      "line": 351
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-106",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 366
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-107",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 385
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-108",
-      "status": "BLOCKED",
-      "line": 398
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-109",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 409
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-110",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 425
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-111",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 426
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-112",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 427
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-113",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 428
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-114",
-      "status": "NEEDS_VERIFICATION",
-      "line": 429
+      "status": "NEEDS_VERIFICATION"
     },
     {
       "id": "ISS-115",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 439
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-116",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 440
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-117",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 441
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-118",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 451
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-119",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 452
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-120",
-      "status": "FIXED_PENDING_REVIEW",
-      "line": 453
+      "status": "FIXED_PENDING_REVIEW"
     },
     {
       "id": "ISS-121",
-      "status": "BLOCKED",
-      "line": 463
+      "status": "BLOCKED"
     },
     {
       "id": "ISS-122",
-      "status": "CLOSED",
-      "line": 473
+      "status": "CLOSED"
     },
     {
       "id": "ISS-123",
-      "status": "CLOSED",
-      "line": 474
+      "status": "CLOSED"
     }
   ]
 }

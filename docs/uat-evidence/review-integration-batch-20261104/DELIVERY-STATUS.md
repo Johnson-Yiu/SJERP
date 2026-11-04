@@ -1,25 +1,26 @@
-# 综合验收状态（进行中）
+# 综合验收状态（2026-11-04 阶段检查点）
 
-状态口径：PASS仅用于明确版本、环境和实际执行范围；FIX REQUIRED为已确认需要修复或失败尚未排除；BLOCKED为当前缺少外部交付或目标环境；NEEDS VERIFICATION为证据尚不充分。任何一项PASS均不代表上线授权或Issue关闭。
+**总体状态：NEEDS VERIFICATION。** 当前冻结并已普通推送的集成 HEAD 为 `1f189c3f74fda2908620dd3860230d860f1cbb43`，父提交为 `673ae3724b5db8d69018acbcea3e26c904c3fea3`。该HEAD全量SQLite、PG17及恢复后HTTP已结束；CI run 41829100528的Backend/PG成功，Frontend仍运行。本记录区分各证据的实际执行SHA，也不代表正式handoff、真实部署或上线授权。
 
-| 范围 | 状态 | 当前事实 | 完成门槛 |
+| 范围 | 状态 | 当前可证实结果 | 尚缺的验收 |
 |---|---|---|---|
-| 固定起点及CI | PASS | 4388947，run41782956426三项成功，日志已取得 | 后续修复不得沿用起点CI冒充最终版本 |
-| Issue归一化 | NEEDS VERIFICATION | 124个唯一ID及状态数已核对；两个UI静态预审、核心业务/审计预审及逐ID矩阵已建立 | 继续补实际代码/证据核对缺口，保留UNKNOWN，不自行关闭待独立复审事项 |
-| 源提交对象核实 | PASS | 115个精确引用提交本地均存在；86为ce74f8b祖先，29非祖先 | 非祖先来源须核对cherry-pick/等价实现，不能直接称遗漏；对象存在不等于验收通过 |
-| 核心真实HTTP | PASS（限定范围） | SQLite3/3，103.842秒，合成session，实际XLSX/CSV及三份完整数据库快照；PG同专项通过 | 新资金、正式员工登录及全来源最终验收分别记录 |
-| 附件失败原子性 | PASS（本地专项） | 三个故障及提交不确定、恢复改名、锁释放、恢复目录链接边界均已补修；PG42项通过包含这些路径 | 全来源最终CI、目标私有存储及独立复审 |
-| 本轮PG17 | PASS（专项） | a866c29专项42/42、0失败/跳过，真实备份恢复PASS且清理完成；原全量1199/3错误保留 | 稳定全部来源整合后的全量与最终SHA CI；专项不替代全量 |
-| 本轮浏览器全量 | FIX REQUIRED | 主套件226通过/1失败，过期资金草稿用例隔离8/8通过；其他专项继续执行 | 查清时序失败并在稳定集成版本全量通过，不能相加掩盖失败 |
-| 默认前端单元 | PASS（本地复跑） | npm ci后默认命令177通过/0失败/0取消/0跳过，40.913秒；旧取消记录保留 | 稳定来源整合后的最终CI；原120秒及断言不削弱 |
-| Vitest/构建 | PASS（已执行版本） | 财务合入版本Vitest717/717；最新侧栏版本Node177/177、构建通过，chunk警告仍在 | 历史合入后的必要全量及同SHA最终CI |
-| 本包现场浏览器 | PASS（限定页面） | 首页、客户、中文国家、跟进保存原图/尺寸/摘要 | 稳定集成后其余必要页面、窄屏和核心整链；旧启动进程截图不充当附件新代码验收 |
-| 财务完整来源 | PASS（接收及专项） | 完整来源3a07e7e已合入c1937da；清单112/112摘要匹配；集成版真实Chrome审批2/2、开发资金页面2/2；非verified正常入口拒绝2/2 | PG全量、新表/凭证恢复、迁移回退矩阵及独立复审；内部ORM真实性约束边界仍记录 |
-| 历史承接完整来源 | BLOCKED（未交付） | 开发中继续全量、依赖及浏览器验收 | 明确稳定完整SHA、PG并发和财务接通契约 |
-| 运维完整来源 | PASS（接收） | 完整d289de36已核对远端及精确三CI，合入d6ebad3 | 跨包新表/私有文件覆盖；Linux真实媒体栅栏、目标代理、异地副本和告警仍待目标环境 |
-| 核心前端完整来源 | PASS（接收） | e302199完整交付，远端及精确三项CI重新核对，完整合入06d6cf1 | 全来源最终综合验证及独立复审 |
-| 完整打印与分页 | BLOCKED（明确延期） | 用户决定后续自行处理；不追加催办 | 不扩大为ISS-037主体快照延期，也不自行关闭 |
-| 集成版全量后端 | PASS（财务合入阶段） | c1937da实跑1249项，1189通过、60跳过、0失败，838.208秒 | 运维/历史及补修后的最终全量；不把当前阶段当最终版本 |
-| 最终推送与三CI | NEEDS VERIFICATION | 当前本地d6ebad3，尚未推送；历史最终交付及综合补证继续进行 | 普通提交、明确分支推送、同一最终SHA的Backend/PG/Frontend三项CI |
+| 稳定来源接收 | PASS | `source-receipts.json` 对6个固定完整 SHA的核验点为 HEAD 673；673是当前 HEAD 1f189c3 的直接父提交，因此六来源均在当前历史中。三项新来源及集成锚点：finance `3a07e7e…`→`c1937da…`，operations `d289de3…`→`d6ebad3…`，history `a0729a0…`→`673ae37…`。来源 CI run 41815451746、41814619508、41822826770 是来源证据。 | 正式handoff与真实部署仍须外部验收。 |
+| Issue 台账 | PASS（计数核对） | 124个唯一 ID：`FIXED_PENDING_REVIEW 86`、`NEEDS_VERIFICATION 14`、`BLOCKED 14`、`CLOSED 10`、`OPEN 0`。ISS-105、ISS-108 已从旧 OPEN/BLOCKED 校准为 `FIXED_PENDING_REVIEW`，原状态仅作历史引用；没有关闭 GitHub Issue。 | 86项仍需 ChatGPT 独立复审；FIXED_PENDING_REVIEW 不等于已接受。 |
+| 两处测试冲突 | PASS（合并内容审查） | CSV审计迁移拒绝回退测试仍核查原审计行保留，并增加 migration recorder/历史承接表恢复断言；历史预检模板测试继续精确核对当前完整表头，另列明确旧模板字段集，其它工作表仍逐列精确匹配。没有删除测试场景或跳过测试。 | 最终 HEAD 全量执行仍待完成。 |
+| 0103迁移图 | PASS（HEAD 1f189c3 PG17.11） | PostgreSQL全量恢复清单包含128条迁移并已应用 `0103_merge_finance_and_history`。 | 真实部署库升级仍须在目标环境执行并由运维/业务负责人验收。 |
+| 全量SQLite / PostgreSQL | PASS（HEAD 1f189c3） | SQLite：1312项，1251通过、61跳过、0失败，816.678秒。PostgreSQL 17.11：1312项，1282通过、30跳过、0失败，1008.032秒。 | 跳过项按原状态保留，不计入通过；目标部署环境仍需外部验收。 |
+| Seed、备份恢复与恢复后HTTP | PASS（owned synthetic环境，HEAD 1f189c3） | History 5表、finance 10表seed后恢复；99表、1081行、128迁移、4文件。全部序列和voucher字节一致，源未变、cleanup complete。恢复HTTP 4/4：匿名403、无权用户403、所属用户下载200且SHA匹配、公开media直链404。清单 `artifacts/postgres-backups/finance-restored-1f189c3f74fd.json`；归档 `artifacts/postgres-backups/1f189c3f74fd-0edd1427.zip` SHA256 `6c0dc8077710edb1c47c853d39f62a5d5ce0b6d591607e3745ca45727c4d0688`。 | 仅证明隔离合成源/恢复环境及私有文件路径；不证明正式handoff或真实部署。 |
+| 历史 Chrome 审批/执行 | NEEDS VERIFICATION（浏览器运行有限制） | 首次 Chrome 完成审批/执行；整次浏览器验收因外部字体 GET `https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap` 返回 `net::ERR_NETWORK_ACCESS_DENIED` 记 FAIL，见 `history-network-diagnostic.json`、`history-browser-integrated/chrome-run.json`。沙箱外重开同一个已执行申请，Chrome 1440/390 截图无 errors，见 `history-browser-reopened-approved/chrome-run.json`；这是重开既有申请，不是第二次全新审批。 | 若要证明无该网络错误的全新审批/执行，再跑新申请且保留原断言。 |
+| 历史集成数据库快照 | PASS（隔离合成范围） | `artifacts/history-integrated-synthetic-database.zip` / `.json` 的 source SHA 为 HEAD 673，完整性 `ok`；12条来源记录、3个 handoff 全为 `not_connected`；FinanceFact、FinanceInstruction、Transaction、PaymentPlan、InventoryMovement/Reservation、Shipment、GoodsReceipt、采购成本分摊均为0；最新迁移0103。 | 这不是实际历史导入或 finance/inventory/fulfillment 已接通的证明；未授权真实历史导入。 |
+| Vitest / Node-only / 构建 | PASS（主审当轮实测） | HEAD 673：Vitest 77 files、720/720通过、170.27秒；Node-only 1项通过；生产构建通过。 | 本轮 Vitest/Node/build 原始日志路径尚未写入本包索引；构建警告需以最终日志核实。 |
+| CI run 41829100528 | NEEDS VERIFICATION（部分完成） | 按主审最新状态回报，Backend与PostgreSQL成功，Frontend仍运行中。此次报告更新时GitHub API读取遇HTTP 429，未能独立刷新Frontend最终状态。 | 前端结束后核实三项状态；本轮文档最终提交会产生新SHA，须以该精确SHA核实三项CI。 |
 
-未合并master、未部署、未启用正式RBAC、未导入真实历史、未关闭GitHub Issue。本文件随实际结果更新，不能作为完成报告。
+## 保留事项
+
+- 一次长 `git merge` 未结束时提前执行后续 Git 操作后，385个本包专属文件已从保留 index 恢复，原始 bytes 已核对一致。该工作树恢复结果不作为测试或业务验收证据；单独对比 manifest 路径未记入本报告包。
+- 原受限 token 启动失败保留在 `logs/postgres-finance-seed-319941c.log`，不能覆盖为成功；后续 approved log 是单独的成功运行。
+- 正式handoff、真实历史承接、目标环境配置/存储与真实部署验收仍是外部门槛。没有合并 master、部署、启用正式 RBAC、导入真实历史或关闭 GitHub Issue；本状态不宣布上线就绪。
+
+## 交付前CI更新
+
+代码1f189c3的CI41829100528最终为Backend/PG成功、Frontend失败（ISS039快照子进程2项）。已保留原始失败证据并最小补修有界输出缓冲/诊断；大快照2/2、受影响Chrome2/2和Node179/179通过，原全库/业务/权限断言保留。最终完整前端与精确SHA三CI见统一交付回执，本文各早期运行中/待验句仅保留当时状态，不是当前通过声明。后端全量1312项SQLite/PG均无失败，PG额外8命令专项8/8；未关闭Issue或替代ChatGPT独立复审。

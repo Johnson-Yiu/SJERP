@@ -1,0 +1,18 @@
+{
+  "source_sha": "1f189c3f74fda2908620dd3860230d860f1cbb43",
+  "status": "PASS",
+  "scope": "Existing task-owned synthetic UI SQLite upgraded from finance0102 to merged0103; prior baseline-to0102 log retained separately",
+  "preexisting_crm_tables_preserved": 84,
+  "preexisting_crm_rows_preserved": 400,
+  "added_tables": [
+    "crm_historytakeoverapplication",
+    "crm_historytakeoverevent",
+    "crm_historytakeovergroup",
+    "crm_historytakeoverhandoff",
+    "crm_historytakeoversourcerecord"
+  ],
+  "media_sha256": {
+    "follow-up-attachments\\2026\\11\\56c7c00712d0446bbc1088d81debf251\\e15ee78a8a564592b3da6586f0639f89": "b3f77a6b02f428da8b8bdb8e81da8ea4fc756d091696994801f9755f9ab0423a"
+  },
+  "real_business_database_used": false
+}

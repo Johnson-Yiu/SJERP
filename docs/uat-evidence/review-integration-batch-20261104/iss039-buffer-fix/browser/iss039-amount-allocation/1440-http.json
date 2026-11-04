@@ -1,0 +1,1030 @@
+[
+  {
+    "method": "GET",
+    "path": "/api/purchase-orders/cost-allocation-orders/",
+    "status": 200,
+    "request": null,
+    "body": [
+      {
+        "id": 1,
+        "order_no": "C039-9ebadd78-SO-0",
+        "status": "confirmed",
+        "status_display": "已确认"
+      },
+      {
+        "id": 2,
+        "order_no": "C039-9ebadd78-SO-1",
+        "status": "confirmed",
+        "status_display": "已确认"
+      },
+      {
+        "id": 3,
+        "order_no": "C039-eac8471e-SO-0",
+        "status": "confirmed",
+        "status_display": "已确认"
+      },
+      {
+        "id": 4,
+        "order_no": "C039-eac8471e-SO-1",
+        "status": "confirmed",
+        "status_display": "已确认"
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/api/purchase-orders/2/cost-allocation/",
+    "status": 200,
+    "request": null,
+    "body": {
+      "version": 0,
+      "allocations": [
+        {
+          "purchase_item": 3,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 10000,
+          "additional_amount": 500,
+          "total_amount": 10500
+        },
+        {
+          "purchase_item": 4,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 1000,
+          "additional_amount": 500,
+          "total_amount": 1500
+        }
+      ],
+      "expenses": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "quantity"
+        }
+      ],
+      "expense_breakdown": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "quantity",
+          "shares": [
+            500,
+            500
+          ]
+        }
+      ],
+      "base_amount": 11000,
+      "additional_amount": 1000,
+      "total_amount": 12000,
+      "can_edit": true,
+      "read_only_reason": ""
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/purchase-orders/2/cost-allocation-preview/",
+    "status": 200,
+    "request": {
+      "version": 0,
+      "allocations": [
+        {
+          "purchase_item": 3,
+          "target_type": "inventory",
+          "order": null,
+          "quantity": 10
+        },
+        {
+          "purchase_item": 4,
+          "target_type": "inventory",
+          "order": null,
+          "quantity": 10
+        }
+      ],
+      "expenses": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "amount"
+        }
+      ]
+    },
+    "body": {
+      "version": 0,
+      "allocations": [
+        {
+          "purchase_item": 3,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 10000,
+          "additional_amount": 909.09,
+          "total_amount": 10909.09
+        },
+        {
+          "purchase_item": 4,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 1000,
+          "additional_amount": 90.91,
+          "total_amount": 1090.91
+        }
+      ],
+      "expenses": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "amount"
+        }
+      ],
+      "expense_breakdown": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "amount",
+          "shares": [
+            909.09,
+            90.91
+          ]
+        }
+      ],
+      "base_amount": 11000,
+      "additional_amount": 1000,
+      "total_amount": 12000,
+      "can_edit": true,
+      "read_only_reason": ""
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/purchase-orders/cost-allocation-orders/",
+    "status": 200,
+    "request": null,
+    "body": [
+      {
+        "id": 1,
+        "order_no": "C039-9ebadd78-SO-0",
+        "status": "confirmed",
+        "status_display": "已确认"
+      },
+      {
+        "id": 2,
+        "order_no": "C039-9ebadd78-SO-1",
+        "status": "confirmed",
+        "status_display": "已确认"
+      },
+      {
+        "id": 3,
+        "order_no": "C039-eac8471e-SO-0",
+        "status": "confirmed",
+        "status_display": "已确认"
+      },
+      {
+        "id": 4,
+        "order_no": "C039-eac8471e-SO-1",
+        "status": "confirmed",
+        "status_display": "已确认"
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/api/purchase-orders/2/cost-allocation/",
+    "status": 200,
+    "request": null,
+    "body": {
+      "version": 0,
+      "allocations": [
+        {
+          "purchase_item": 3,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 10000,
+          "additional_amount": 500,
+          "total_amount": 10500
+        },
+        {
+          "purchase_item": 4,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 1000,
+          "additional_amount": 500,
+          "total_amount": 1500
+        }
+      ],
+      "expenses": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "quantity"
+        }
+      ],
+      "expense_breakdown": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "quantity",
+          "shares": [
+            500,
+            500
+          ]
+        }
+      ],
+      "base_amount": 11000,
+      "additional_amount": 1000,
+      "total_amount": 12000,
+      "can_edit": true,
+      "read_only_reason": ""
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/purchase-orders/2/cost-allocation-preview/",
+    "status": 200,
+    "request": {
+      "version": 0,
+      "allocations": [
+        {
+          "purchase_item": 3,
+          "target_type": "inventory",
+          "order": null,
+          "quantity": 10
+        },
+        {
+          "purchase_item": 4,
+          "target_type": "inventory",
+          "order": null,
+          "quantity": 10
+        }
+      ],
+      "expenses": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "amount"
+        }
+      ]
+    },
+    "body": {
+      "version": 0,
+      "allocations": [
+        {
+          "purchase_item": 3,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 10000,
+          "additional_amount": 909.09,
+          "total_amount": 10909.09
+        },
+        {
+          "purchase_item": 4,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 1000,
+          "additional_amount": 90.91,
+          "total_amount": 1090.91
+        }
+      ],
+      "expenses": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "amount"
+        }
+      ],
+      "expense_breakdown": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "amount",
+          "shares": [
+            909.09,
+            90.91
+          ]
+        }
+      ],
+      "base_amount": 11000,
+      "additional_amount": 1000,
+      "total_amount": 12000,
+      "can_edit": true,
+      "read_only_reason": ""
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/purchase-orders/2/cost-allocation/",
+    "status": 200,
+    "request": {
+      "version": 0,
+      "allocations": [
+        {
+          "purchase_item": 3,
+          "target_type": "inventory",
+          "order": null,
+          "quantity": 10
+        },
+        {
+          "purchase_item": 4,
+          "target_type": "inventory",
+          "order": null,
+          "quantity": 10
+        }
+      ],
+      "expenses": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "amount"
+        }
+      ]
+    },
+    "body": {
+      "version": 1,
+      "allocations": [
+        {
+          "purchase_item": 3,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 10000,
+          "additional_amount": 909.09,
+          "total_amount": 10909.09
+        },
+        {
+          "purchase_item": 4,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 1000,
+          "additional_amount": 90.91,
+          "total_amount": 1090.91
+        }
+      ],
+      "expenses": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "amount"
+        }
+      ],
+      "expense_breakdown": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "amount",
+          "shares": [
+            909.09,
+            90.91
+          ]
+        }
+      ],
+      "base_amount": 11000,
+      "additional_amount": 1000,
+      "total_amount": 12000,
+      "can_edit": true,
+      "read_only_reason": ""
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/purchase-orders/cost-allocation-orders/",
+    "status": 200,
+    "request": null,
+    "body": [
+      {
+        "id": 1,
+        "order_no": "C039-9ebadd78-SO-0",
+        "status": "confirmed",
+        "status_display": "已确认"
+      },
+      {
+        "id": 2,
+        "order_no": "C039-9ebadd78-SO-1",
+        "status": "confirmed",
+        "status_display": "已确认"
+      },
+      {
+        "id": 3,
+        "order_no": "C039-eac8471e-SO-0",
+        "status": "confirmed",
+        "status_display": "已确认"
+      },
+      {
+        "id": 4,
+        "order_no": "C039-eac8471e-SO-1",
+        "status": "confirmed",
+        "status_display": "已确认"
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/api/purchase-orders/2/cost-allocation/",
+    "status": 200,
+    "request": null,
+    "body": {
+      "version": 1,
+      "allocations": [
+        {
+          "purchase_item": 3,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 10000,
+          "additional_amount": 909.09,
+          "total_amount": 10909.09
+        },
+        {
+          "purchase_item": 4,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 1000,
+          "additional_amount": 90.91,
+          "total_amount": 1090.91
+        }
+      ],
+      "expenses": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "amount"
+        }
+      ],
+      "expense_breakdown": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "amount",
+          "shares": [
+            909.09,
+            90.91
+          ]
+        }
+      ],
+      "base_amount": 11000,
+      "additional_amount": 1000,
+      "total_amount": 12000,
+      "can_edit": true,
+      "read_only_reason": ""
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/purchase-orders/2/cost-allocation/",
+    "status": 200,
+    "body": {
+      "version": 1,
+      "allocations": [
+        {
+          "purchase_item": 3,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 10000,
+          "additional_amount": 909.09,
+          "total_amount": 10909.09
+        },
+        {
+          "purchase_item": 4,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 1000,
+          "additional_amount": 90.91,
+          "total_amount": 1090.91
+        }
+      ],
+      "expenses": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "amount"
+        }
+      ],
+      "expense_breakdown": [
+        {
+          "name": "合成历史运费",
+          "amount": "1000.00",
+          "method": "amount",
+          "shares": [
+            909.09,
+            90.91
+          ]
+        }
+      ],
+      "base_amount": 11000,
+      "additional_amount": 1000,
+      "total_amount": 12000,
+      "can_edit": true,
+      "read_only_reason": ""
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/purchase-orders/2/cost-allocation/",
+    "status": 400,
+    "request": {
+      "version": 1,
+      "allocations": [
+        {
+          "purchase_item": 3,
+          "target_type": "inventory",
+          "order": null,
+          "quantity": 10
+        },
+        {
+          "purchase_item": 4,
+          "target_type": "inventory",
+          "order": null,
+          "quantity": 10
+        }
+      ],
+      "expenses": [
+        {
+          "name": "非法数量法",
+          "amount": "1000",
+          "method": "quantity"
+        }
+      ]
+    },
+    "body": {
+      "expenses": {
+        "0": {
+          "method": [
+            "新增或修改公共费用只支持按采购金额比例分摊。"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/purchase-orders/2/cost-allocation-preview/",
+    "status": 400,
+    "request": {
+      "version": 1,
+      "allocations": [
+        {
+          "purchase_item": 3,
+          "target_type": "inventory",
+          "order": null,
+          "quantity": 10
+        },
+        {
+          "purchase_item": 4,
+          "target_type": "inventory",
+          "order": null,
+          "quantity": 10
+        }
+      ],
+      "expenses": [
+        {
+          "name": "非法数量法",
+          "amount": "1000",
+          "method": "quantity"
+        }
+      ]
+    },
+    "body": {
+      "expenses": {
+        "0": {
+          "method": [
+            "新增或修改公共费用只支持按采购金额比例分摊。"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/purchase-orders/3/cost-allocation/",
+    "status": 400,
+    "request": {
+      "version": 0,
+      "allocations": [],
+      "expenses": [
+        {
+          "name": "正费用",
+          "amount": "1000",
+          "method": "amount"
+        }
+      ]
+    },
+    "body": [
+      "采购金额为零，不能分摊正公共费用；请核对采购金额或移除公共费用。"
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/api/purchase-orders/3/cost-allocation/",
+    "status": 200,
+    "request": {
+      "version": 0,
+      "allocations": [],
+      "expenses": []
+    },
+    "body": {
+      "version": 1,
+      "allocations": [
+        {
+          "purchase_item": 5,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 0,
+          "additional_amount": 0,
+          "total_amount": 0
+        },
+        {
+          "purchase_item": 6,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 0,
+          "additional_amount": 0,
+          "total_amount": 0
+        }
+      ],
+      "expenses": [],
+      "expense_breakdown": [],
+      "base_amount": 0,
+      "additional_amount": 0,
+      "total_amount": 0,
+      "can_edit": true,
+      "read_only_reason": ""
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/purchase-orders/cost-allocation-orders/",
+    "status": 200,
+    "request": null,
+    "body": [
+      {
+        "id": 1,
+        "order_no": "C039-9ebadd78-SO-0",
+        "status": "confirmed",
+        "status_display": "已确认"
+      },
+      {
+        "id": 2,
+        "order_no": "C039-9ebadd78-SO-1",
+        "status": "confirmed",
+        "status_display": "已确认"
+      },
+      {
+        "id": 3,
+        "order_no": "C039-eac8471e-SO-0",
+        "status": "confirmed",
+        "status_display": "已确认"
+      },
+      {
+        "id": 4,
+        "order_no": "C039-eac8471e-SO-1",
+        "status": "confirmed",
+        "status_display": "已确认"
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/api/purchase-orders/1/cost-allocation/",
+    "status": 200,
+    "request": null,
+    "body": {
+      "version": 0,
+      "allocations": [
+        {
+          "purchase_item": 1,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 10000,
+          "additional_amount": 0,
+          "total_amount": 10000
+        },
+        {
+          "purchase_item": 2,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "inventory",
+          "order": null,
+          "order_no": "",
+          "quantity": 10,
+          "base_amount": 1000,
+          "additional_amount": 0,
+          "total_amount": 1000
+        }
+      ],
+      "expenses": [],
+      "expense_breakdown": [],
+      "base_amount": 11000,
+      "additional_amount": 0,
+      "total_amount": 11000,
+      "can_edit": true,
+      "read_only_reason": ""
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/purchase-orders/1/cost-allocation-preview/",
+    "status": 200,
+    "request": {
+      "version": 0,
+      "allocations": [
+        {
+          "purchase_item": 1,
+          "target_type": "order",
+          "order": 1,
+          "quantity": 10
+        },
+        {
+          "purchase_item": 2,
+          "target_type": "order",
+          "order": 2,
+          "quantity": 10
+        }
+      ],
+      "expenses": [
+        {
+          "name": "运费",
+          "amount": 1000,
+          "method": "amount"
+        }
+      ]
+    },
+    "body": {
+      "version": 0,
+      "allocations": [
+        {
+          "purchase_item": 1,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "order",
+          "order": 1,
+          "order_no": "C039-9ebadd78-SO-0",
+          "quantity": 10,
+          "base_amount": 10000,
+          "additional_amount": 909.09,
+          "total_amount": 10909.09
+        },
+        {
+          "purchase_item": 2,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "order",
+          "order": 2,
+          "order_no": "C039-9ebadd78-SO-1",
+          "quantity": 10,
+          "base_amount": 1000,
+          "additional_amount": 90.91,
+          "total_amount": 1090.91
+        }
+      ],
+      "expenses": [
+        {
+          "name": "运费",
+          "amount": "1000.00",
+          "method": "amount"
+        }
+      ],
+      "expense_breakdown": [
+        {
+          "name": "运费",
+          "amount": "1000.00",
+          "method": "amount",
+          "shares": [
+            909.09,
+            90.91
+          ]
+        }
+      ],
+      "base_amount": 11000,
+      "additional_amount": 1000,
+      "total_amount": 12000,
+      "can_edit": true,
+      "read_only_reason": ""
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/purchase-orders/1/cost-allocation/",
+    "status": 200,
+    "request": {
+      "version": 0,
+      "allocations": [
+        {
+          "purchase_item": 1,
+          "target_type": "order",
+          "order": 1,
+          "quantity": 10
+        },
+        {
+          "purchase_item": 2,
+          "target_type": "order",
+          "order": 2,
+          "quantity": 10
+        }
+      ],
+      "expenses": [
+        {
+          "name": "运费",
+          "amount": 1000,
+          "method": "amount"
+        }
+      ]
+    },
+    "body": {
+      "version": 1,
+      "allocations": [
+        {
+          "purchase_item": 1,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "order",
+          "order": 1,
+          "order_no": "C039-9ebadd78-SO-0",
+          "quantity": 10,
+          "base_amount": 10000,
+          "additional_amount": 909.09,
+          "total_amount": 10909.09
+        },
+        {
+          "purchase_item": 2,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "order",
+          "order": 2,
+          "order_no": "C039-9ebadd78-SO-1",
+          "quantity": 10,
+          "base_amount": 1000,
+          "additional_amount": 90.91,
+          "total_amount": 1090.91
+        }
+      ],
+      "expenses": [
+        {
+          "name": "运费",
+          "amount": "1000.00",
+          "method": "amount"
+        }
+      ],
+      "expense_breakdown": [
+        {
+          "name": "运费",
+          "amount": "1000.00",
+          "method": "amount",
+          "shares": [
+            909.09,
+            90.91
+          ]
+        }
+      ],
+      "base_amount": 11000,
+      "additional_amount": 1000,
+      "total_amount": 12000,
+      "can_edit": true,
+      "read_only_reason": ""
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/purchase-orders/1/cost-allocation/",
+    "status": 200,
+    "body": {
+      "version": 1,
+      "allocations": [
+        {
+          "purchase_item": 1,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "order",
+          "order": 1,
+          "order_no": "C039-9ebadd78-SO-0",
+          "quantity": 10,
+          "base_amount": 10000,
+          "additional_amount": 909.09,
+          "total_amount": 10909.09
+        },
+        {
+          "purchase_item": 2,
+          "sku_code": "C039-9ebadd78",
+          "display_name": "C039-9ebadd78 合成商品",
+          "target_name": "",
+          "target_type": "order",
+          "order": 2,
+          "order_no": "C039-9ebadd78-SO-1",
+          "quantity": 10,
+          "base_amount": 1000,
+          "additional_amount": 90.91,
+          "total_amount": 1090.91
+        }
+      ],
+      "expenses": [
+        {
+          "name": "运费",
+          "amount": "1000.00",
+          "method": "amount"
+        }
+      ],
+      "expense_breakdown": [
+        {
+          "name": "运费",
+          "amount": "1000.00",
+          "method": "amount",
+          "shares": [
+            909.09,
+            90.91
+          ]
+        }
+      ],
+      "base_amount": 11000,
+      "additional_amount": 1000,
+      "total_amount": 12000,
+      "can_edit": true,
+      "read_only_reason": ""
+    }
+  }
+]

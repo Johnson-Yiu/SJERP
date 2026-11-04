@@ -1,0 +1,40 @@
+{
+  "source_sha": "673ae3724b5db8d69018acbcea3e26c904c3fea3",
+  "scope": "Actual integration synthetic Chrome review/execute database; no real history; session file excluded",
+  "database_sha256": "193dc36ceb201ecd400cf49b2b7b6a6961d831fff1cadf6171dd110b13953bdd",
+  "archive_sha256": "79487e21d035409d59c767280702d6f1023663c551234ca99e64d86c08c1791d",
+  "integrity_check": "ok",
+  "counts": {
+    "crm_historytakeoverapplication": 1,
+    "crm_historytakeovergroup": 1,
+    "crm_historytakeoversourcerecord": 12,
+    "crm_historytakeoverhandoff": 3,
+    "crm_historytakeoverevent": 4,
+    "crm_order": 1,
+    "crm_purchaseorder": 1,
+    "crm_financefact": 0,
+    "crm_financeinstruction": 0,
+    "crm_transaction": 0,
+    "crm_paymentplan": 0,
+    "crm_inventorymovement": 0,
+    "crm_inventoryreservation": 0,
+    "crm_shipment": 0,
+    "crm_goodsreceipt": 0,
+    "crm_purchasecostallocation": 0
+  },
+  "handoffs": [
+    [
+      "finance",
+      "not_connected"
+    ],
+    [
+      "fulfillment",
+      "not_connected"
+    ],
+    [
+      "inventory",
+      "not_connected"
+    ]
+  ],
+  "latest_migration": "0103_merge_finance_and_history"
+}

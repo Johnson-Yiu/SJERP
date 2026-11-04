@@ -1,0 +1,47 @@
+{
+  "checked_integration_head": "673ae3724b5db8d69018acbcea3e26c904c3fea3",
+  "sources": [
+    {
+      "name": "baseline",
+      "full_source_sha": "4388947d70d26bca66ca0bfc76b2383a2fc0d404",
+      "ancestor_of_checked_head": true,
+      "source_ci_run": 41782956426,
+      "note": "Source CI provenance; not final integration CI"
+    },
+    {
+      "name": "print",
+      "full_source_sha": "b3d0d386de70d9efd77bf62cdbd87877fbccbfb8",
+      "ancestor_of_checked_head": true,
+      "source_ci_run": 41802910019,
+      "note": "Source CI provenance; not final integration CI"
+    },
+    {
+      "name": "core-workspace",
+      "full_source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "ancestor_of_checked_head": true,
+      "source_ci_run": 41808354916,
+      "note": "Source CI provenance; not final integration CI"
+    },
+    {
+      "name": "finance",
+      "full_source_sha": "3a07e7ef1a9e63c98077d45492ba23b798c7fcdd",
+      "ancestor_of_checked_head": true,
+      "source_ci_run": 41815451746,
+      "note": "Source CI provenance; not final integration CI"
+    },
+    {
+      "name": "operations",
+      "full_source_sha": "d289de36a3da3e4bd6531c812ec21a05f046d570",
+      "ancestor_of_checked_head": true,
+      "source_ci_run": 41814619508,
+      "note": "Source CI provenance; not final integration CI"
+    },
+    {
+      "name": "history",
+      "full_source_sha": "a0729a0965850028fe52f5b6fcc3e825f23b1289",
+      "ancestor_of_checked_head": true,
+      "source_ci_run": 41822826770,
+      "note": "Source CI provenance; not final integration CI"
+    }
+  ]
+}

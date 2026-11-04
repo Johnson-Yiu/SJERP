@@ -10,7 +10,7 @@
 - 历史图像逐文件清单见 [historical-image-manifest.json](historical-image-manifest.json)：39 张来自 `e958fe1518093d6179f8281f12bc5c722edd707e`。主审人工查看 `AFTER_partial-shipment-readiness.png`（订单数量 2、已发 1、剩余 1）；其余清单项核对原始字节/尺寸。该图是历史版本证据，不是当前集成界面截图或当前代码通过证据。
 - SHA 列仅列当前行最近核实字段中可在本地对象库识别为提交的精确 SHA；特别校准项的来源 SHA 与集成/CI HEAD 分开写。无可核实值即 UNKNOWN。
 - 分类：确定缺陷/未完成实现范围、已有修复待独立复审、证据不足、目标环境待验、明确延期、既有关闭。证据不足不推定为代码缺陷。
-- 状态计数：OPEN 1、BLOCKED 15、NEEDS_VERIFICATION 14、FIXED_PENDING_REVIEW 84、CLOSED 10；共 124。按每个 ID 的主分类计数：确定缺陷 2、已有修复待独立复审 84、证据不足 16、目标环境待验 11、明确延期 1、既有关闭 10。ISS-037 打印/分页子范围延期记录在该行，不另增 Issue 计数。
+- 状态计数：OPEN 0、BLOCKED 14、NEEDS_VERIFICATION 14、FIXED_PENDING_REVIEW 86、CLOSED 10；共 124。按每个 ID 的主分类计数：确定缺陷 0、已有修复待独立复审 86、证据不足 15、目标环境待验 12、明确延期 1、既有关闭 10。ISS-037 打印/分页子范围延期记录在该行，不另增 Issue 计数。
 - 共用最新 CI：[GitHub Actions run 41782956426](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41782956426) 的 Backend、Backend PostgreSQL、Frontend 均成功。PostgreSQL job 检出精确 HEAD 4388947d70d26bca66ca0bfc76b2383a2fc0d404；PG17 后端 1182 项、30 跳过、0 失败。Frontend 主 Playwright 227 项通过，另有专项浏览器测试。共用 CI 只证明实际执行路径，不等于全部 Issue 关闭；Vite 大 chunk 警告仍在。
 - PG 校准：ISS-052 旧“PostgreSQL 未执行”记录被上述精确 HEAD 的 PG17 CI 更新；0091–0094 迁移及已执行审计/回退用例通过。ISS-043 应用层 PG 触发器拒绝测试也已执行，目标部署数据库角色/管理员边界仍待验。
 - 资金事实校准：ISS-108 已确认的资金原则不再列为业务待决。ISS-119 已允许独立手续费不关联父结汇、有明确来源时可选关联；不得重复扣除。
@@ -21,7 +21,7 @@
 | ID | 当前台账状态 | 归一分类 | 可核实精确 SHA | 证据路径 | 具体关闭缺项 |
 |---|---|---|---|---|---|
 | ISS-001 | FIXED_PENDING_REVIEW | 已有修复待独立复审 | UNKNOWN | docs/PROJECT_ISSUES.md#L73; docs/R0-E1-综合业务回归与内测准备.md; docs/Phase3-业务流程与异常UAT计划.md; docs/R1-A-FUP-02-订单履约财务分离验收.md | 待复审依据：completed欠款可继续追踪、逾期与应收导航准确；收齐后待办消失、退款后恢复；无财务权限不泄露；未发齐不得完成、重复请求无副作用；最终精确HEAD三项CI及独立复审通过。 |
-| ISS-002 | NEEDS_VERIFICATION | 证据不足 | Pillow/lock 更新提交 3961ef6c4b0499adb0689f14be73372692ddac3f；集成 CI HEAD 4388947d70d26bca66ca0bfc76b2383a2fc0d404 | docs/PROJECT_ISSUES.md#L82; docs/uat-evidence/r1-iss002-security-audit-final-20261101/README.md; docs/uat-evidence/iss-002-python-security/README.md（历史兼容证据）; backend/requirements.txt; backend/requirements.lock; backend/crm/services/sku_images.py; backend/crm/tests/test_sku_images.py; backend/crm/services/packing_list.py; backend/crm/tests/test_packing_list_export.py; GitHub Actions run 41782956426 | 当前事实：固定基线已包含 Pillow 13.0.0 和完整 requirements.lock；Python 3.12 基线全量 CI 通过。较早 Pillow 11.3.0 未解决的描述仅为历史记录，不是当前升级派工。2026-11-01 安全审计报告因 pip-audit 不可用，未查询当前 Python/Pillow 公告；不得声称当前无漏洞。关闭前由运维包对当前 lock 和实际部署镜像执行 pip-audit/公告适用性复核，保存原始输出并确认镜像 pin；状态保持 NEEDS_VERIFICATION。 |
+| ISS-002 | NEEDS_VERIFICATION | 目标环境待验 | 3961ef6c4b0499adb0689f14be73372692ddac3f; d289de36a3da3e4bd6531c812ec21a05f046d570; 1f189c3f74fda2908620dd3860230d860f1cbb43 | dependency-audit-reuse.json; ../operations-readiness-batch-20261104/pip-audit-final.log; runtime-versions.log; TEST-RESULTS.md | 最新锁与源审计一致，Python16项公开库返回无已知漏洞、Pillow13和锁已实施；旧pip-audit不可用仅留历史。仍缺目标镜像/真实暴露边界及安全独立复审，不宣称绝对安全或关闭。 |
 | ISS-003 | BLOCKED | 目标环境待验 | 2111d193ef3a69db05c23e27813cfbf26d9034d7 | docs/PROJECT_ISSUES.md#L75; docs/R0-E1-综合业务回归与内测准备.md; docs/r0-d4b2c-api-permission-matrix.md; AGENTS.md; docs/uat-evidence/iss-003-employee-permissions/README.md | 目标环境凭证：真实隔离账号 UI/API 矩阵、网络状态和业务流程证据完整；拒绝与正常共享业务路径都通过；用户/独立审查确认。 |
 | ISS-004 | FIXED_PENDING_REVIEW | 已有修复待独立复审 | UNKNOWN | docs/PROJECT_ISSUES.md#L76; docs/真实用户E2E-UAT-20260923.md; docs/R0-E1-综合业务回归与内测准备.md; docs/R1-A-核心业务历史Issue核实与修复.md | 待复审依据：直接记账与应收计划两条合法路径均真实 UI 成功；无效金额被清晰拒绝且流水/余额保持不变；自动测试及独立复审通过。 |
 | ISS-005 | FIXED_PENDING_REVIEW | 已有修复待独立复审 | UNKNOWN | docs/PROJECT_ISSUES.md#L77; docs/R0-E1-综合业务回归与内测准备.md; docs/UAT-Round1-正式业务全流程测试.md; docs/R1-A-核心业务历史Issue核实与修复.md | 待复审依据：独立采购全闭环真实 UI 成功；库存、成本和付款统计一致；权限边界下仍可访问共享采购；自动化和复审通过。 |
@@ -125,10 +125,10 @@
 | ISS-102 | P2 / FIXED_PENDING_REVIEW | 已有修复待独立复审 | UNKNOWN | docs/PROJECT_ISSUES.md#L320; 专项证据路径 UNKNOWN | 具体关闭凭证 UNKNOWN；由独立复审者确认范围和证据后再决定。 |
 | ISS-103 | P3 / NEEDS_VERIFICATION | 证据不足 | UNKNOWN | docs/PROJECT_ISSUES.md#L321; 专项证据路径 UNKNOWN | 具体关闭凭证 UNKNOWN；台账本行未提供可解析的验收依据，需补可复现证据后独立判断。 |
 | ISS-104 | P1 / FIXED_PENDING_REVIEW | 已有修复待独立复审 | UNKNOWN | docs/PROJECT_ISSUES.md#L334; docs/R1-A-FUP-01-财务重试安全验收.md | 具体关闭凭证 UNKNOWN；由独立复审者确认范围和证据后再决定。 |
-| ISS-105 | P1 / OPEN | 确定缺陷 / 未完成实现范围 | 部分实现提交 b95852a4e4152d60976aa16d3f8e229b1e07a934；本次集成 CI HEAD 4388947d70d26bca66ca0bfc76b2383a2fc0d404；完整 Issue 实现 SHA UNKNOWN | docs/PROJECT_ISSUES.md#L343; docs/uat-evidence/r1-iss105-actual-cash-audit-20261103/README.md; docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/README.md; docs/uat-evidence/r1-rule-gap-fix-batch-20261103/README.md; backend/crm/services/cash_events.py; [GitHub Actions run 41782956426](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41782956426) | 仍 OPEN。疑似重复识别和独立手续费关联已是部分修复，不代表资金事实闭环。仍缺内部转账从公司毛流量排除、现金/银行/未知来源分类、期初基准与账户对账、凭证文件/哈希绑定、完整操作审计，以及财务真实流水样本复算与独立签核；退款更正按已确认原则实施，不重新列业务规则待决。 |
+| ISS-105 | FIXED_PENDING_REVIEW | 已有修复待独立复审 | 3a07e7ef1a9e63c98077d45492ba23b798c7fcdd; 319941c05e4682d80cd718f577514a39231fabfa | REVIEW-FINANCE-SOURCE.md; TEST-RESULTS.md; artifacts/postgres-backups/finance-restored-319941c05e46.json | 当前已完整集成资金实现；待最终综合SHA三CI、完整PG和ChatGPT独立复审。真实启用账户/日期/余额/每笔凭证仍需外部资料；不再按旧未实施状态重复派工。 |
 | ISS-106 | P2 / FIXED_PENDING_REVIEW | 已有修复待独立复审 | UNKNOWN | docs/PROJECT_ISSUES.md#L358; 专项证据路径 UNKNOWN | 具体关闭凭证 UNKNOWN；由独立复审者确认范围和证据后再决定。 |
 | ISS-107 | P2 / FIXED_PENDING_REVIEW | 已有修复待独立复审 | UNKNOWN | docs/PROJECT_ISSUES.md#L377; 专项证据路径 UNKNOWN | 具体关闭凭证 UNKNOWN；由独立复审者确认范围和证据后再决定。 |
-| ISS-108 | P1 / BLOCKED | 目标环境待验 | UNKNOWN | docs/PROJECT_ISSUES.md#L390; docs/R1-FIN-P2-A-人民币资金事实与结汇后端验收.md; docs/uat-evidence/r1-rule-gap-fix-batch-20261103/README.md | 资金规则原则已确认，不列为业务待决：已确认银行事实不可覆盖，退款/更正保留原记录和凭证，不推测来源或自动解除额度。仍缺经授权的退款/反向更正实现、原始银行凭证、归属/审计/统计验证及独立财务复核；真实启用日/账户/余额须凭证支持。 |
+| ISS-108 | FIXED_PENDING_REVIEW | 已有修复待独立复审 | 3a07e7ef1a9e63c98077d45492ba23b798c7fcdd; 319941c05e4682d80cd718f577514a39231fabfa | REVIEW-FINANCE-SOURCE.md; TEST-RESULTS.md; artifacts/postgres-backups/finance-restored-319941c05e46.json | 当前已完整集成资金实现；待最终综合SHA三CI、完整PG和ChatGPT独立复审。真实启用账户/日期/余额/每笔凭证仍需外部资料；不再按旧未实施状态重复派工。 |
 | ISS-109 | P2 / FIXED_PENDING_REVIEW | 已有修复待独立复审 | UNKNOWN | docs/PROJECT_ISSUES.md#L401; 专项证据路径 UNKNOWN | 具体关闭凭证 UNKNOWN；由独立复审者确认范围和证据后再决定。 |
 | ISS-110 | P1 / FIXED_PENDING_REVIEW | 已有修复待独立复审 | UNKNOWN | docs/PROJECT_ISSUES.md#L417; 专项证据路径 UNKNOWN | 具体关闭凭证 UNKNOWN；由独立复审者确认范围和证据后再决定。 |
 | ISS-111 | P1 / FIXED_PENDING_REVIEW | 已有修复待独立复审 | UNKNOWN | docs/PROJECT_ISSUES.md#L418; 专项证据路径 UNKNOWN | 具体关闭凭证 UNKNOWN；由独立复审者确认范围和证据后再决定。 |
@@ -169,3 +169,7 @@
 | ISS-097 | `backend/crm/views.py::current_operator` 与权限有效矩阵 → `backend/crm/tests/test_functional_rbac.py`、`backend/crm/tests/test_development_access.py`；`frontend/src/views/OrganizationPage.vue` → `frontend/tests/organization-access-ux.spec.js`（superadmin 权限只读全选且不回写模板、只读身份无保存按钮、保存/重读失败路径）。 | `docs/uat-evidence/iss-097-admin-permissions/README.md`、`docs/PROJECT_ISSUES.md#L270`。待独立核对 API 有效矩阵和 UI 一致、普通角色无额外授权；真实员工认证和部署边界继续按 ISS-003/051 验收，不以合成会话代替。 |
 
 覆盖核算：新增上述 16 个 ID，与 65 个 UI sidecar ID、23 个 `REVIEW-PACK.md` 核心 ID、20 个补充 ID 合计 124/124；包含独立子 ID ISS-008-FUP-01。各 ID 均有当前代码/测试入口映射，或明确标出设计 N/A/目标环境外部凭证缺口；证据不足与目标环境未验仍按原状态处理。ISS-036 按台账映射到装箱规则；在 `backend/`、`frontend/` 未找到 healthcheck/healthz/readiness/liveness 命名的源文件或文本引用，未将健康检查误记为已验收。状态数及台账没有变更。
+
+## 财务完整来源接收后的校准
+
+ISS-105、ISS-108已有完整实现及集成实跑证据，现均为FIXED_PENDING_REVIEW；原行保留在主台账引用历史中，不再根据旧OPEN/“未实施”重复派工。真实启用账户/余额/凭证、最终集成三CI及ChatGPT独立复审仍是各自门槛。当前124个ID计数以ledger-verification.json为准，本文前述旧检查点及历史分类不是当前测试通过声明。

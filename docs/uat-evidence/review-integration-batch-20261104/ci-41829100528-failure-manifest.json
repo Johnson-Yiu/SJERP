@@ -1,0 +1,125 @@
+{
+  "run": 41829100528,
+  "source_sha": "1f189c3f74fda2908620dd3860230d860f1cbb43",
+  "full_artifact_sha256": "43e94fb972987300f282690b6d2472f26b704a0fbbdcc1035576f682d6bf70fb",
+  "full_artifact_local": ".tmp/failed-ci-41829100528.zip",
+  "published_subset": "ci-41829100528-failure-evidence.zip",
+  "selected_files": [
+    {
+      "path": "ci-41829100528-1/artifacts/8ccf8ee5-cd1b-4fa6-a1e7-2bfa24f2f650/iss039-amount-allocation-r-5c560-nversion-real-Chrome-1440px/error-context.md",
+      "bytes": 8725,
+      "sha256": "31851880abf5593476a682aa101759300c240b7e98f725a6b02941cccb14faaf"
+    },
+    {
+      "path": "ci-41829100528-1/artifacts/8ccf8ee5-cd1b-4fa6-a1e7-2bfa24f2f650/iss039-amount-allocation-r-8c7a5-onversion-real-Chrome-390px/error-context.md",
+      "bytes": 8724,
+      "sha256": "722369b5096a55646ad65f7b003fec436dd408dff9bad80fae7b7d0f45c56439"
+    },
+    {
+      "path": "ci-41829100528-1/browser/iss039-amount-allocation/1440-fixture.json",
+      "bytes": 405,
+      "sha256": "384f25e2b9e31a8cde15f350061eff6c41ef84bc5395d0daaf0b1c67d7f8d034"
+    },
+    {
+      "path": "ci-41829100528-1/browser/iss039-amount-allocation/390-fixture.json",
+      "bytes": 414,
+      "sha256": "dcf272cebac7e1d5d1ae4285da192abce5e23564f52d8147f9c29ee67446b253"
+    },
+    {
+      "path": "ci-41829100528-1/logs/business-suite.stdout.log",
+      "bytes": 45905,
+      "sha256": "cc604558405140bbdcf9a475462c04a618846a32b2620b6968216e211e100666"
+    },
+    {
+      "path": "ci-41829100528-1/logs/iss006-storage-isolated.stderr.log",
+      "bytes": 14321,
+      "sha256": "688be516393f1f9bbeff6a975ec97bbd206d6b5fe1aa20f4509d379494c26cf6"
+    },
+    {
+      "path": "ci-41829100528-1/logs/business-suite.stderr.log",
+      "bytes": 54137,
+      "sha256": "d5b91a85551229ddcff39e6f3b24dee713898162d8465e012e35149088243737"
+    },
+    {
+      "path": "ci-41829100528-1/logs/iss006-storage-isolated.stdout.log",
+      "bytes": 11709,
+      "sha256": "6d9651b56d31ba6d3b44851be1ace1ffbbd1e848b5d81621631e9bcd6a3f0025"
+    },
+    {
+      "path": "ci-41829100528-1/logs/iss007-attachment-isolated.stdout.log",
+      "bytes": 10573,
+      "sha256": "67d046b03fc65fbcac531431b6b063699818371aa40ab4d10bff135f9b051d23"
+    },
+    {
+      "path": "ci-41829100528-1/logs/iss007-image-snapshot-isolated.stderr.log",
+      "bytes": 9740,
+      "sha256": "5229f59953925a71a4154530ffa6da8154a13639a13eff8ebe2db0f212045d0f"
+    },
+    {
+      "path": "ci-41829100528-1/logs/iss007-image-snapshot-isolated.stdout.log",
+      "bytes": 10527,
+      "sha256": "5af99f2cf43648d89e92efd49041ddf4e6c96b6d233f53a7176e47880e488ac1"
+    },
+    {
+      "path": "ci-41829100528-1/logs/iss007-attachment-isolated.stderr.log",
+      "bytes": 5698,
+      "sha256": "d7c93cebb0eaf983991a496082c118eb4720c1a8fa229ffe948d8872facc9618"
+    },
+    {
+      "path": "ci-41829100528-1/logs/iss022-isolated.stderr.log",
+      "bytes": 4126,
+      "sha256": "3e5e95e214109054f54c45ee084f859e0c15f9928f108316b1e187e9290df74c"
+    },
+    {
+      "path": "ci-41829100528-1/logs/iss022-isolated.stdout.log",
+      "bytes": 10504,
+      "sha256": "33f680744cf847e7fc0c672efb6861b06b8c22666f7d5045d589d4e2c83f8be7"
+    },
+    {
+      "path": "ci-41829100528-1/logs/iss028-035-isolated.stdout.log",
+      "bytes": 10665,
+      "sha256": "67676171afc0e42adf172d80e4f577a3fddb87273b627c0c1d4108b102a4b6a9"
+    },
+    {
+      "path": "ci-41829100528-1/logs/iss028-035-isolated.stderr.log",
+      "bytes": 9594,
+      "sha256": "ef21233081b1158ade2eab18b53f483c76ac79e343b70d5c692e77700d02b388"
+    },
+    {
+      "path": "ci-41829100528-1/logs/iss055-rbac.stderr.log",
+      "bytes": 6620,
+      "sha256": "73c3af1fee757eed86ab84c62eaf2ea83e3b1793d56b563371a77e8135cd7693"
+    },
+    {
+      "path": "ci-41829100528-1/logs/iss055-rbac.stdout.log",
+      "bytes": 10841,
+      "sha256": "8207539d6358d9b443f751bf230637907ebca2779b8c9a61ed1af55147f11a39"
+    },
+    {
+      "path": "ci-41829100528-1/logs/quote-editor-isolated.stderr.log",
+      "bytes": 3870,
+      "sha256": "70ff6c327980f38e7bc48188dfb65de1c493390582df6bad10d1ced45d3f5209"
+    },
+    {
+      "path": "ci-41829100528-1/logs/quote-editor-isolated.stdout.log",
+      "bytes": 10148,
+      "sha256": "9783b61276237a2c24c2b3777b41c7b7a5a1b950a8d53c87b5644f5bc3dc0a2f"
+    },
+    {
+      "path": "ci-41829100528-1/logs/shared-report-templates-isolated.stderr.log",
+      "bytes": 284,
+      "sha256": "a2552878a02249f1a9de223cf39a6ead1417e592a6f1e106b2e9cb678ff81eb8"
+    },
+    {
+      "path": "ci-41829100528-1/logs/shared-report-templates-isolated.stdout.log",
+      "bytes": 9918,
+      "sha256": "2bbcf0e6e39387fbe21867a75aca40ee283ab5f5fffadb53488abd8f86026fd8"
+    },
+    {
+      "path": "ci-41829100528-1/suite-run-summary.json",
+      "bytes": 5457,
+      "sha256": "e7c2b32fb1b5e49b4001e13cf9b82790235a675e70e8a49ea6c7dc9d5a3e9ec8"
+    }
+  ],
+  "scope": "Exact original failed suite logs, summary and ISS039 contexts; Chrome profiles excluded"
+}

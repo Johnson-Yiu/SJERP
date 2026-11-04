@@ -1,0 +1,48 @@
+{
+  "code_sha": "1f189c3f74fda2908620dd3860230d860f1cbb43",
+  "results": {
+    "sqlite": {
+      "total": 1312,
+      "passed": 1251,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 61,
+      "seconds": 816.678,
+      "raw_log": "logs/backend-full-all-sources-1f189c3.log",
+      "skip_reason_counts": {
+        "requires a PostgreSQL database; SQLite cannot prove the production DB guard": 1,
+        "Real PostgreSQL required": 3,
+        "Real PostgreSQL locks required": 3,
+        "requires an isolated PostgreSQL test database": 2,
+        "Real PostgreSQL connections and locks required": 5,
+        "Requires PostgreSQL row locks; SQLite is not evidence of concurrent execution safety.": 1,
+        "本地 SQLite 不提供 PostgreSQL 并发锁语义；需在 PostgreSQL 环境执行。": 1,
+        "PostgreSQL unique-key/row-lock concurrency requires PostgreSQL.": 1,
+        "POSIX mode check only": 1,
+        "symlink creation unavailable: [WinError 1314] 客户端没有所需的特权。: 'C:\\\\\\\\Users\\\\\\\\Johnson\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmpupdb8xga\\\\\\\\real-backups' -> 'C:\\\\\\\\Users\\\\\\\\Johnson\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmpupdb8xga\\\\\\\\backup-link'": 1,
+        "symlink creation unavailable: [WinError 1314] 客户端没有所需的特权。: 'C:\\\\\\\\Users\\\\\\\\Johnson\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmpdmcq2bul\\\\\\\\protected-report.json' -> 'C:\\\\\\\\Users\\\\\\\\Johnson\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmpdmcq2bul\\\\\\\\result.json'": 1,
+        "requires local PostgreSQL 17 binaries": 8,
+        "symlink creation is not available in this environment": 1,
+        "PostgreSQL row-lock tests require PostgreSQL": 20,
+        "requires an explicitly owned PostgreSQL 17 drill cluster": 1,
+        "requires real isolated PostgreSQL": 7,
+        "Requires PostgreSQL session advisory locks.": 2,
+        "Requires PostgreSQL row and advisory locks.": 2
+      }
+    },
+    "postgres17": {
+      "total": 1312,
+      "passed": 1282,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 30,
+      "seconds": 1008.032,
+      "raw_log": "logs/postgres-full-all-sources-1f189c3.log",
+      "skip_reason_counts": {
+        "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.": 21,
+        "requires local PostgreSQL 17 binaries": 8,
+        "symlink creation is not available in this environment": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "backend_full_test_sha": "1f189c3f74fda2908620dd3860230d860f1cbb43",
+  "latest_test_fix_sha": "7a896d0f824a361287cf981c377b07731c45f879",
+  "snapshot_buffer_fix": "03b524db7392ab989c699e31586484fd33a95fcb",
+  "finance_evidence_path_fix": "7a896d0f824a361287cf981c377b07731c45f879",
+  "trees": [
+    {
+      "path": "backend",
+      "tested_tree": "7489ed288edfd80d9692b9133b784c6019eaf9a8",
+      "delivery_code_tree": "7489ed288edfd80d9692b9133b784c6019eaf9a8",
+      "identical": true
+    },
+    {
+      "path": "frontend/src",
+      "tested_tree": "a7a96fd1893d48fd96ee87280544208cd65834dd",
+      "delivery_code_tree": "a7a96fd1893d48fd96ee87280544208cd65834dd",
+      "identical": true
+    }
+  ],
+  "scope": "Production backend and frontend are byte-identical; subsequent changes concern tests and evidence only"
+}

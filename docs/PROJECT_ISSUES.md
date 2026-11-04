@@ -1,12 +1,16 @@
 # SUNJACK-ERP 项目问题台账
 
-## 2026-11-04 REVIEW-INTEGRATION-BATCH-01 复核记录（进行中）
+## 2026-11-04 REVIEW-INTEGRATION-BATCH-01 复核记录（综合回归进行中）
 
-本轮起点 `4388947d70d26bca66ca0bfc76b2383a2fc0d404` 与远端一致，[CI 41782956426](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41782956426) 三项成功。原始日志已归档至[本包证据](uat-evidence/review-integration-batch-20261104/README.md)。PostgreSQL17后端1182项、1152通过、30跳过；0091–0094、三表UPDATE/DELETE/TRUNCATE和回退保护实际执行。ISS-006/043/052 的历史“PG未执行”仅保留为当时记录，不再作为当前重复派工依据；目标部署角色、完整业务范围及独立复审仍分别保留。
+固定起点4388947d70d26bca66ca0bfc76b2383a2fc0d404与CI41782956426已核实。当前已完整接收打印b3d0d386de70d9efd77bf62cdbd87877fbccbfb8、核心工作区e302199f7890c686a309f54aebe8cc31b6202f52、财务3a07e7ef1a9e63c98077d45492ba23b798c7fcdd、运维d289de36a3da3e4bd6531c812ec21a05f046d570、历史a0729a0965850028fe52f5b6fcc3e825f23b1289；各自远端/精确三CI已重新核实，六个固定来源（含起点）均为集成673ae3724b5db8d69018acbcea3e26c904c3fea3的祖先。来源CI不替代集成CI，详见[综合证据](uat-evidence/review-integration-batch-20261104/README.md)和source-receipts.json。
 
-ISS-007 新故障注入确认：批量第二文件存储失败残留一条记录和文件；上传审计失败残留两条记录和文件；删除审计失败已删除记录和文件，三项安全一致性断言均失败。修前日志见本包 `logs/attachment-atomicity-20261104-transactiontest.log`。该问题沿用ISS-007，不重复编号；修复与回归进行中，不标为完成。
+ISS-007三项修前失败已保留。ce74f8b、0914002、a866c29补修覆盖存储/审计/事务失败补偿、提交结果探测、锁释放、恢复目录链接边界及下载原名；真实一次性PG17专项42/42。财务合入阶段全量1249项中1189通过、60跳过、0失败。后续319941c05e4682d80cd718f577514a39231fabfa增强银行来源回退及财务凭证备份引用校验；PG17新专项13/13，94表1027行4文件恢复一致，10张新财务表有合成记录，序列和凭证字节一致且源媒体未变、清理完成。不能以专项替代全来源最终全量或目标存储验收。
 
-ISS-037 仅“打印完整验收与分页改进”子范围由用户明确决定延期、后续自行处理，记为 **BLOCKED（用户延期）**；来源为 `ISSUE FIX A02` 对话的用户消息 `01a1a590-5068-7740-a54f-0b7fc821fefe`。其余主体快照要求不延期，现有有效修复、实际PDF及证据保留，仍等待来源稳定交接。未追加催办指令，未关闭ISS-037。各项当前归一化与关闭缺项将集中记录在本包矩阵中；Codex自查不构成ChatGPT独立复审。
+全来源673ae37的Vitest720/720、字体规范1/1、生产构建通过；财务集成Chrome审批/私有凭证2/2与开发资金页面2/2。历史Chrome完成审核执行并保存合成DB（12源记录、三个not_connected、正式资金/库存/履约0）；首轮因沙箱拒绝Google Fonts整体失败，沙箱外保持全部断言重开同申请通过。日志与失败原因在TEST-RESULTS.md，不删除失败或用来源结果代替集成结果。最终综合Backend/PG/Frontend与同SHA三CI仍待完成。
+
+ISS-105、ISS-108已有完整实现及集成证据，校准为FIXED_PENDING_REVIEW，原行在文末引用历史保留；不再根据旧“未实施”重复派工。其余124个唯一ID重新计数：FIXED_PENDING_REVIEW86、NEEDS_VERIFICATION14、BLOCKED14、CLOSED10、OPEN0。未关闭GitHub Issue。Codex及子代理自查均不是ChatGPT独立复审。正式账户/启用日期/余额/凭证、目标Linux媒体栅栏、HTTPS/运行角色、异地副本/告警仍分别待验。ISS-037仅完整打印及分页按用户决定延期，其余快照主体不延期，未追加催办。
+
+最新综合实测：后端代码1f189c3f74fda2908620dd3860230d860f1cbb43的SQLite全量1312项1251通过/61跳过/0失败，PG17.11全量1312项1282通过/30跳过/0失败；99表1081行128迁移4文件、历史/财务新表/序列/凭证恢复一致，真实恢复HTTP4/4，额外8项备份命令专项8/8，源不变且临时集群清理完成。候选CI41829100528 Backend/PG成功、Frontend270项中268通过/2失败（ISS039快照子进程）。03b524db7392ab989c699e31586484fd33a95fcb最小修复有界缓冲/诊断，Node179/179及Chrome2/2；7a896d0f824a361287cf981c377b07731c45f879修证据根目录，财务Chrome4/4。原全部业务/全库/权限断言保留，产品代码tree与全量已验1f完全一致；最终精确SHA三CI以交付回执核实，不提前登记通过。
 
 ## 2026-11-04 PRELAUNCH-CONSOLIDATION-CLOSEOUT 当前核实
 
@@ -79,7 +83,7 @@ ISS-108/121的已确认原则不是重新待决事项：按原D01–D08及本轮
 | ID | 状态 | 首次发现来源 / 日期 | 最近核实（日期 / HEAD） | 影响与当前证据 | 负责人 / 下一步动作 | 计划阶段 | 关闭验收依据 |
 |---|---|---|---|---|---|---|---|
 | ISS-001 | FIXED_PENDING_REVIEW | [R0-E1 §问题](R0-E1-综合业务回归与内测准备.md)；[Phase 3 状态机 GAP](Phase3-业务流程与异常UAT计划.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-18 R1-A-FUP-02：业务负责人方案A明确；用户确认FUP-01已独立复审通过。真实USD500全部发货、收340欠160时完成履约，应收/逾期/待办保留；尾款收齐及退款40后状态正确恢复。根因是orderTasks对completed提前返回空数组，已修复并增加只读财务派生状态与权限保护；不改完成条件或历史余额。证据：[FUP-02验收](R1-A-FUP-02-订单履约财务分离验收.md)。 | E1 UI 已复现：全部发货但欠 USD 160 时仍可完成订单；工作台随即没有待办，应收仍未结。可能让业务人员停止催收。 | 前端/后端/财务QA已按方案A完成最小修复及正常/拒绝路径回归；等待ChatGPT独立代码、原图和数据库证据审查，不自行关闭。 | R1-A-FUP-02 / 待独立复审 | completed欠款可继续追踪、逾期与应收导航准确；收齐后待办消失、退款后恢复；无财务权限不泄露；未发齐不得完成、重复请求无副作用；最终精确HEAD三项CI及独立复审通过。 |
-| ISS-002 | NEEDS_VERIFICATION | [R0-E1 npm audit](R0-E1-综合业务回归与内测准备.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-11-04核对：当前4388947d70d26bca66ca0bfc76b2383a2fc0d404已包含Python图像依赖升级/锁定提交3961ef6c4b0499adb0689f14be73372692ddac3f，requirements.txt/lock固定Pillow13.0.0；基线CI41782956426以Python3.12通过全量，当前本地pip check正常。r1-iss002-security-audit-final-20261101/README.md明确后续Python漏洞库复验仍未完成，不能称当前无漏洞。历史时点记录：2026-10-27 / `codex/audit-iss002-dependency-security` / 精确来源 SHA `4e4ca504ee398da85fe23cc53d534c6008807e5c`：初始 npm 锁树的 2 moderate、9 high 已逐项核对直接/传递关系和源码可达性；本轮保留精确前端依赖与锁文件并未运行自动修复。 | Pillow 11.3.0 仍在实际图片上传/缩略图/Excel 图片路径，风险未解决，修复需跨大版本；Python 依赖仍缺乏完整 lock 方案，生产解析版本、CI/PostgreSQL 和外部暴露路径未验证。此前集成分支的 11 项 advisory 快照作为历史记录保留，不把本地 audit 数量当成安全结论。证据：[ISS-002 依赖安全审计报告](uat-evidence/iss-002-dependency-audit/README.md)。 | 保持NEEDS_VERIFICATION；运维包核对当前锁文件的安全公告/可达性、pip-audit与部署镜像实际pin，复用已有兼容测试，不重复Pillow升级、不运行无差别audit fix。原后续计划（历史）：先保持 NEEDS_VERIFICATION；另开 Pillow 大版本兼容与生产镜像依赖冻结验收；不得跨大版本升级 Pillow、运行 `npm audit fix` 或将本轮标记为安全审计通过。 | 内测开放外部访问前 | advisory、可达性、修复和延期项逐项复审；Pillow 关闭条件、Python 依赖冻结、精确 HEAD 三项 CI/生产依赖验证通过。 |
+| ISS-002 | NEEDS_VERIFICATION | R0-E1依赖审计及后续锁定修复3961ef6c4b0499adb0689f14be73372692ddac3f；最新稳定运维来源d289de36a3da3e4bd6531c812ec21a05f046d570 | 当前Pillow13.0.0/Django6.0.9及16项精确Python锁已包含；运维来源同日CPython3.12.16实测与pip-audit-final.log公开漏洞库返回无已知漏洞，当前requirements和前端lock与该来源Git字节一致（本包dependency-audit-reuse.json）。集成1f189c3的Python3.12.15 CI Backend1312项1254通过/58跳过、PG1282通过/30跳过；图像路径纳入全量，不能把旧Pillow11.3.0/无lock/pip-audit不可用当当前派工。 | 保留风险：Python锁缺发行包哈希；生产镜像和真实暴露路径未验证；当前本包npm4项moderate开发依赖、无high/critical，旧审计快照不当成当前安全声明。 | 保持NEEDS_VERIFICATION；核对目标镜像解析版本/软件公告适用性及依赖维护策略；独立复审后决定是否关闭。 | 目标环境验证和安全复审 | 来源证据docs/uat-evidence/operations-readiness-batch-20261104/pip-audit-final.log、runtime-versions.log；本包README/TEST-RESULTS.md。无已知漏洞返回只代表该次公开库覆盖，不是绝对安全。 |
 | ISS-003 | BLOCKED | [R0-E1 RBAC 覆盖](R0-E1-综合业务回归与内测准备.md)；[D4-C API 矩阵](r0-d4b2c-api-permission-matrix.md)；[AGENTS 权限约定](../AGENTS.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-10-27 / `codex/verify-iss003-employee-permissions` / 精确来源 SHA `2111d193ef3a69db05c23e27813cfbf26d9034d7`：隔离合成账号定向后端 `131` 项通过；system check、迁移检查和全新 SQLite 迁移通过。证据：[ISS-003 员工权限与数据范围隔离验收](uat-evidence/iss-003-employee-permissions/README.md) | 当前代码已对 self、department、department_tree、all、缺模块权限、跨模块关联、列表/详情/搜索/导出及采购共享路径提供可复核的服务端边界；本轮没有发现可明确安全最小修复的代码缺陷。真实员工会话、正式组织树、生产 PostgreSQL、真实业务数据和真实 Chrome UI 仍未验收，不能把合成账号 API 结果扩大为内测通过。 | 内测负责人提出进入内测及真实测试账号授权；获授权后由 QA 按真实员工 self/department/department_tree/all、缺模块权限、跨模块关联、导出、文件 URL 及桌面/窄屏 UI 执行隔离验收。保留当前开发超级管理员机制，不得自行启用正式 RBAC、降权开发身份或关闭本项。 | 内测准备（须用户明确授权） | 真实隔离账号 UI/API 矩阵、网络状态和业务流程证据完整；拒绝与正常共享业务路径都通过；用户/独立审查确认。 |
 | ISS-004 | FIXED_PENDING_REVIEW | [真实用户 E2E §P1](真实用户E2E-UAT-20260923.md)；[R0-E1 财务覆盖](R0-E1-综合业务回归与内测准备.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）；2026-10-18 R1-A：USD直接记账、计划拆分、合法无计划预收及超额已真实成功；新增稳定流水号/保存中保护；同表单重试复用编号。跨刷新、全站并发幂等与真实提交后断网仍未完整覆盖。 证据：[R1-A报告](R1-A-核心业务历史Issue核实与修复.md)。 | 旧 UAT 的“新增记账”美元客户收款曾失败；应收计划登记可绕行。后续服务层和财务测试覆盖 USD，但 E1 未重新执行该直接 UI 入口。 | 财务 QA 用隔离订单，在“新增记账”走 USD 正常创建、校验失败无副作用及计划关联；确认 UI 金额、汇率和服务端流水一致。；R1-A下一步：按报告未覆盖分支补验，并交ChatGPT独立审查；不得自行关闭。 | R0-E1 补验 | 直接记账与应收计划两条合法路径均真实 UI 成功；无效金额被清晰拒绝且流水/余额保持不变；自动测试及独立复审通过。 |
 | ISS-005 | FIXED_PENDING_REVIEW | [R0-E1 采购覆盖](R0-E1-综合业务回归与内测准备.md)；[Round 1 独立采购 SUP05](UAT-Round1-正式业务全流程测试.md)；首次日期：UNKNOWN（未从一手记录确认） | UNKNOWN（末次核实日期 / HEAD 未记录；本轮未逐项重测）；2026-10-18 R1-A：隔离真实UI完成无Sales Order的双SKU采购（含无来源明细）、交易单位、部分收货/冲销/重收及分批付款；265USD全结清。保存断网与全部来源组合仍需补验。 证据：[R1-A报告](R1-A-核心业务历史Issue核实与修复.md)。 | E1 完成了共享采购链；旧 UI 只证明无来源的独立采购草稿可建，尚未证明独立采购从下单、到货、库存到付款的整条闭环。无销售订单的共享采购人员仍须可工作。 | 采购 QA 在隔离库走无关联订单的采购、部分/全部收货、应付及库存回查，不借 API/脚本替代 UI。；R1-A下一步：按报告未覆盖分支补验，并交ChatGPT独立审查；不得自行关闭。 | R0-E1 补验 | 独立采购全闭环真实 UI 成功；库存、成本和付款统计一致；权限边界下仍可访问共享采购；自动化和复审通过。 |
@@ -348,7 +352,7 @@ ISS-004继续FIXED_PENDING_REVIEW：补充本轮原编号重试与表单保护�
 
 | Issue | 优先级 / 状态 | 首次来源 / 最近核实 | 影响与根因 | 负责人 / 下一步 / 阶段 | 最终验收依据 |
 |---|---|---|---|---|---|
-| ISS-105 | P1 / OPEN | 2026-10-18 用户本轮财务统计审查；基线f779ed858da3bc4dd468645f5405b0fed2556a8d源码核对，未读取真实业务库 | 2026-10-28 / 当前基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；财务 P3-B 阶段记录提交 `0fb9bb8`。核心人民币事实已有阶段成果，但启用政策、历史 cutover、统计覆盖和银行例外业务闭环未完成；保持 P1 / OPEN。 历史台账结论保留：rmb_amount主路径按原币×汇率生成，概览及CSV却称实际人民币收入；无银行结汇事实，无法区分未结汇与实际到账。0值fallback、历史来源及拆分尾差分支待进一步隔离测试，不推断真实损失 | 财务负责人确认统计口径/费用/历史cutover；产品及后端按独立复审后的最小方案另行实施；本轮仅分析，不修业务代码 本轮仅做状态对账，不扩大为生产/正式员工验收。 | 实际CNY与参考折算分开；A–G真实隔离UI/HTTP/Decimal一致；结汇不二次核销、不重复现金；权限/冲销/历史保护及独立复审通过。详见[R1-FIN-AUDIT-01](R1-FIN-AUDIT-01-财务统计与结汇兼容性审查.md) 本轮后续动作：以本轮报告和精确 SHA 为准，不重复派工。 |
+| ISS-105 | P1 / FIXED_PENDING_REVIEW | 2026-10-18用户财务统计审查；本轮完整稳定财务来源3a07e7ef1a9e63c98077d45492ba23b798c7fcdd | 当前已包含参考折算/实际资金区分、显式账户、独立启用基准、有效完整更正、转账本金及独立手续费、退回/退款审批、账户核对、私有银行凭证。集成c1937da后端1249项1189通过/60跳过；Chrome认证和开发资金页面各2/2。319941c新增回退与凭证备份保护；真实PG17专项13/13，新财务表与文件恢复一致。来源与完整日志见[综合报告](uat-evidence/review-integration-batch-20261104/README.md)、TEST-RESULTS.md及REVIEW-FINANCE-SOURCE.md。 | 已有实现待ChatGPT独立复审；最终综合SHA三CI和全量PG仍须核对，真实账户/日期/余额/来源资料由负责人提供；不重新询问已确认资金原则。 | 实际资金、账面参考和账户余额范围准确；正常/拒绝/并发/审计/历史保护与独立复审通过，不以开发session代替正式身份验收。 |
 
 105个唯一ID：OPEN=5、BLOCKED=22、NEEDS_VERIFICATION=26、FIXED_PENDING_REVIEW=44、CLOSED=8；P1=21，其余优先级计数不变。既有Issue状态保持，本轮未修复/关闭Issue；精度收敛为拟议新政策，旧4位记录不据此认定错误。
 
@@ -395,7 +399,7 @@ ISS-105保持P1/OPEN：事实后端不等于实际资金统计已切换；不改
 
 | ID | 优先级 / 状态 | 首次来源 / 日期 | 当前证据与影响 | 负责人 / 下一步 / 阶段 | 最终验收依据 |
 |---|---|---|---|---|---|
-| ISS-108 | P1 / BLOCKED | 用户R1-FIN-P2-A规则D04/D06；2026-10-19；2026-11-03核对既有原则 | 保留原银行事实/凭证、明确银行实际日期、退款/更正不伪造新回款、不自动释放未知来源额度的原则已确认，不再重复列作业务待决。现有代码对未知退款、直接作废/替代活动来源、覆盖/删除/取消已确认事件及零净额安全拒绝；可凭证化更正的增量流程尚未实施。 | 后端/财务QA在后续授权中按已确认原则设计可追溯反向事实和来源映射；财务提供每笔实际撤回/退款凭证及期间，不由代码猜测。保留现有fail-closed，不因本轮可选手续费改为可取消确认事实。 | 原始记录不改写、银行撤回证据/来源分配与记入期间可核实、不重复核销或自动释放额度；正常/拒绝/原子性/真实PG并发及独立复审通过 |
+| ISS-108 | P1 / FIXED_PENDING_REVIEW | 用户R1-FIN-P2-A规则D04/D06；已确认原则沿用；完整财务来源3a07e7ef1a9e63c98077d45492ba23b798c7fcdd | 可追溯完整更正、银行退回、敏感退款申请/批准/实际扣款区分、真实双人审批和来源限制已经实现，不再描述为尚未实施。原事实与凭证不可直接覆盖，批准不等于实际扣款，不自动释放未知来源额度；集成Chrome两尺寸及负路径已实跑，精确结果和源码见[财务预审](uat-evidence/review-integration-batch-20261104/REVIEW-FINANCE-SOURCE.md)。 | 待最终综合CI/真实PG专项及ChatGPT独立复审；真实每笔撤回退款凭证、金额与期间仍需实际资料，不由代码猜测。 | 原始事实不改写、来源及实际期间可核实、不重复核销或释放额度；正常/拒绝/事务原子性/并发与独立复审通过。 |
 
 108个唯一ID：OPEN=5、BLOCKED=23、NEEDS_VERIFICATION=26、FIXED_PENDING_REVIEW=46、CLOSED=8。新增仅108，不关闭或改变其他Issue状态。本轮不设正式启用日，不配置真实账户，不启用RBAC或部署；完成后等待ChatGPT独立复审。
 
@@ -548,3 +552,24 @@ R1-ISS006-POSTGRES-CONCURRENCY-REVIEW-FIX-01 从 `657a65c10e0234345a2c648998f6d2
 R1-POSTGRES-TEST-ISOLATION-01 从 `2e25b743884123d7ae5599c89586988a12791bf4` 新建独立分支 `codex/r1-postgres-test-isolation-20261102`。仅对 runner 本次确认创建的随机本地 PostgreSQL 临时库，在 TransactionTestCase teardown 内以独占锁和单事务完成指定 TRUNCATE 触发器的临时启停/恢复；正文及普通 flush 保持原保护。建库/销毁使用严格维护连接及创建归属快照，拒绝连接覆盖、来源库回退、已有库覆盖和不支持的别名/镜像/并行组合；失败恢复两份配置，回收失败明确报告。未改业务代码、模型、任何迁移或 ISS-052 保护。
 
 锁定依赖 Django 6.0.9 下相关 SQLite 回归最终 137 项发现、113 通过、24 个 PostgreSQL 专项跳过，0 失败；其中本轮控制流程 21 项通过、6 项真实 PostgreSQL 用例未执行。依赖精确核对、语法、Django check、迁移检查及静态发现通过。报告见[测试隔离验收与完整日志](uat-evidence/r1-postgres-test-isolation-20261102/README.md)。**真实 PostgreSQL 清理冲突尚未验收解决，继续 BLOCKED**；下一步在专用 PostgreSQL 17 环境核实六个生命周期/恢复/独立连接场景、ISS-006 并发及 ISS-052 原始 SQL/迁移回归，再运行完整 PostgreSQL 套件。ISS-006 仍 `NEEDS_VERIFICATION`，ISS-052 既有状态不变；无新增/关闭 Issue，集合与状态统计不变。未触发 CI、创建 PR、合并 master 或部署。
+
+### REVIEW-INTEGRATION-BATCH-01 财务原行留档
+
+以下为更新前原行，仅保留历史，不作为当前状态重复计数。
+
+> | ISS-105 | P1 / OPEN | 2026-10-18 用户本轮财务统计审查；基线f779ed858da3bc4dd468645f5405b0fed2556a8d源码核对，未读取真实业务库 | 2026-10-28 / 当前基线 `bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb`；财务 P3-B 阶段记录提交 `0fb9bb8`。核心人民币事实已有阶段成果，但启用政策、历史 cutover、统计覆盖和银行例外业务闭环未完成；保持 P1 / OPEN。 历史台账结论保留：rmb_amount主路径按原币×汇率生成，概览及CSV却称实际人民币收入；无银行结汇事实，无法区分未结汇与实际到账。0值fallback、历史来源及拆分尾差分支待进一步隔离测试，不推断真实损失 | 财务负责人确认统计口径/费用/历史cutover；产品及后端按独立复审后的最小方案另行实施；本轮仅分析，不修业务代码 本轮仅做状态对账，不扩大为生产/正式员工验收。 | 实际CNY与参考折算分开；A–G真实隔离UI/HTTP/Decimal一致；结汇不二次核销、不重复现金；权限/冲销/历史保护及独立复审通过。详见[R1-FIN-AUDIT-01](R1-FIN-AUDIT-01-财务统计与结汇兼容性审查.md) 本轮后续动作：以本轮报告和精确 SHA 为准，不重复派工。 |
+> | ISS-108 | P1 / BLOCKED | 用户R1-FIN-P2-A规则D04/D06；2026-10-19；2026-11-03核对既有原则 | 保留原银行事实/凭证、明确银行实际日期、退款/更正不伪造新回款、不自动释放未知来源额度的原则已确认，不再重复列作业务待决。现有代码对未知退款、直接作废/替代活动来源、覆盖/删除/取消已确认事件及零净额安全拒绝；可凭证化更正的增量流程尚未实施。 | 后端/财务QA在后续授权中按已确认原则设计可追溯反向事实和来源映射；财务提供每笔实际撤回/退款凭证及期间，不由代码猜测。保留现有fail-closed，不因本轮可选手续费改为可取消确认事实。 | 原始记录不改写、银行撤回证据/来源分配与记入期间可核实、不重复核销或自动释放额度；正常/拒绝/原子性/真实PG并发及独立复审通过 |
+
+### REVIEW-INTEGRATION-BATCH-01 早期阶段原文留档
+
+> ## 2026-11-04 REVIEW-INTEGRATION-BATCH-01 复核记录（进行中）
+>
+> 本轮起点 `4388947d70d26bca66ca0bfc76b2383a2fc0d404` 与远端一致，[CI 41782956426](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41782956426) 三项成功。原始日志已归档至[本包证据](uat-evidence/review-integration-batch-20261104/README.md)。PostgreSQL17后端1182项、1152通过、30跳过；0091–0094、三表UPDATE/DELETE/TRUNCATE和回退保护实际执行。ISS-006/043/052 的历史“PG未执行”仅保留为当时记录，不再作为当前重复派工依据；目标部署角色、完整业务范围及独立复审仍分别保留。
+>
+> ISS-007 新故障注入确认：批量第二文件存储失败残留一条记录和文件；上传审计失败残留两条记录和文件；删除审计失败已删除记录和文件，三项安全一致性断言均失败。修前日志见本包 `logs/attachment-atomicity-20261104-transactiontest.log`。该问题沿用ISS-007，不重复编号；修复与回归进行中，不标为完成。
+>
+> ISS-037 仅“打印完整验收与分页改进”子范围由用户明确决定延期、后续自行处理，记为 **BLOCKED（用户延期）**；来源为 `ISSUE FIX A02` 对话的用户消息 `01a1a590-5068-7740-a54f-0b7fc821fefe`。其余主体快照要求不延期，现有有效修复、实际PDF及证据保留，仍等待来源稳定交接。未追加催办指令，未关闭ISS-037。各项当前归一化与关闭缺项将集中记录在本包矩阵中；Codex自查不构成ChatGPT独立复审。
+
+### REVIEW-INTEGRATION-BATCH-01 ISS-002原行留档
+
+> | ISS-002 | NEEDS_VERIFICATION | [R0-E1 npm audit](R0-E1-综合业务回归与内测准备.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-11-04核对：当前4388947d70d26bca66ca0bfc76b2383a2fc0d404已包含Python图像依赖升级/锁定提交3961ef6c4b0499adb0689f14be73372692ddac3f，requirements.txt/lock固定Pillow13.0.0；基线CI41782956426以Python3.12通过全量，当前本地pip check正常。r1-iss002-security-audit-final-20261101/README.md明确后续Python漏洞库复验仍未完成，不能称当前无漏洞。历史时点记录：2026-10-27 / `codex/audit-iss002-dependency-security` / 精确来源 SHA `4e4ca504ee398da85fe23cc53d534c6008807e5c`：初始 npm 锁树的 2 moderate、9 high 已逐项核对直接/传递关系和源码可达性；本轮保留精确前端依赖与锁文件并未运行自动修复。 | Pillow 11.3.0 仍在实际图片上传/缩略图/Excel 图片路径，风险未解决，修复需跨大版本；Python 依赖仍缺乏完整 lock 方案，生产解析版本、CI/PostgreSQL 和外部暴露路径未验证。此前集成分支的 11 项 advisory 快照作为历史记录保留，不把本地 audit 数量当成安全结论。证据：[ISS-002 依赖安全审计报告](uat-evidence/iss-002-dependency-audit/README.md)。 | 保持NEEDS_VERIFICATION；运维包核对当前锁文件的安全公告/可达性、pip-audit与部署镜像实际pin，复用已有兼容测试，不重复Pillow升级、不运行无差别audit fix。原后续计划（历史）：先保持 NEEDS_VERIFICATION；另开 Pillow 大版本兼容与生产镜像依赖冻结验收；不得跨大版本升级 Pillow、运行 `npm audit fix` 或将本轮标记为安全审计通过。 | 内测开放外部访问前 | advisory、可达性、修复和延期项逐项复审；Pillow 关闭条件、Python 依赖冻结、精确 HEAD 三项 CI/生产依赖验证通过。 |

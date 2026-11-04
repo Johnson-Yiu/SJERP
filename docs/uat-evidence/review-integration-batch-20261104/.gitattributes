@@ -9,3 +9,7 @@ screenshots/*.jpg -text
 playwright-*/** -text
 path-fix-*/** -text
 cash-ready-fix/** -text
+finance-browser-*/** -text
+history-browser-*/** -text
+iss039-buffer-fix/** -text
+finance-*-evidence-path/** -text

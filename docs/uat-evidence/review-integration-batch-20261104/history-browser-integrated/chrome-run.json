@@ -1,0 +1,29 @@
+{
+  "browser": "Google Chrome 156.0.8078.80",
+  "origin": "http://127.0.0.1:55462",
+  "applicationId": "1",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "template": "history-takeover-template-v1.xlsx",
+  "screenshots": [
+    "history-takeover-desktop-before-review.png",
+    "history-takeover-desktop-executed.png",
+    "history-takeover-390px-executed.png"
+  ],
+  "mobileWidth": {
+    "viewport": 390,
+    "document": 390,
+    "body": 390
+  },
+  "failures": [
+    "console: Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+  ]
+}

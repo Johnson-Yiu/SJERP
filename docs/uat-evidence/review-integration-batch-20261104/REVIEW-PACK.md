@@ -1,12 +1,13 @@
 # 集中独立复审入口
 
+当前完整来源代码为1f189c3f74fda2908620dd3860230d860f1cbb43（已推送，综合CI41829100528及全量SQLite/PG正在运行）。下表优先入口保留，修后证据以下列最新补充和TEST-RESULTS.md为准；本包自查不构成ChatGPT独立复审。
 审查代码起点：`4388947d70d26bca66ca0bfc76b2383a2fc0d404`。本轮新增测试/修复及最终 SHA 尚待集中交付。以下材料是 Codex 整理的审查输入，审查结论由 ChatGPT 或用户独立给出。历史有效证据按原范围保留；不要求仅为更新时间重做全部旧场景。
 
 | 优先项 | 已有实现/来源与当前入口 | 正常、拒绝路径和实际证据 | 需独立复核或补齐 |
 |---|---|---|---|
 | ISS-001 / 004 / 005 | R1-A 来源 `d82643907f2886ecc412fdfa8839d2b8cc165751`；`backend/crm/services/finance.py`、`frontend/src/utils/orderOverview.js` | [R1-A](../../R1-A-核心业务历史Issue核实与修复.md)、[履约财务分离](../../R1-A-FUP-02-订单履约财务分离验收.md)；欠款完成履约、收齐、退款后待办恢复；独立采购部分收货/冲销/付款 | `test_fulfillment_receivables.py` 与 `fulfillment-receivables.spec.js` 的最终结果；跨刷新和提交后断连结果不明路径仍需具体证据；资金按本次集成前已有支持范围解读 |
 | ISS-006 / 013–015 | 幂等来源 `dfa36058206fe7021ff6e6192fbbd247fb471947`；原子性来源 `7429c9630305bfad61f16475dd5617c13c07959e`；`views.py` 及履约服务 | [冲销原子性](../r1-iss006-reversal-audit-atomicity-20261030/README.md)、[Chrome闭环](../r1-iss006-inventory-chrome-uat-20261031/REPORT.md)；重复请求、冲销拒绝、库存/预留/审计回滚 | 最终 PG 并发实际数量、完整业务闭环及独立代码/截图复核。旧“从未执行 PG”须由精确 CI 和本轮专项替换 |
-| ISS-007 / 078 / 092 | `FollowUpViewSet.upload_attachments/delete_attachment`、`ResourcePage.vue`；附件正常流程已在当前代码 | [文件UAT](../r1-iss007-followup-files-uat-20261031/README.md)；保存重开、私有下载、替换/删除、旧链接和权限拒绝 | 新发现服务端批量部分失败及删除审计失败一致性疑点；本轮故障注入后再定缺陷与修复。生产 ACL 单列 ISS-017 |
+| ISS-007 / 078 / 092 | 本包ce74f8b、0914002、a866c29完整修复，services/attachments.py及FollowUp下载入口；ResourcePage来源e302199完整保留重试 | 修前三项失败、PG42/42、Windows junction1/1、真实Chrome附件保存重开、实际下载70字节与原文件名；CORE-HTTP.md、TEST-RESULTS.md、BROWSER-COPY.md | 最终集成同SHA CI与全量、目标存储ACL/灾难性补偿告警处理、ChatGPT独立复审。不能再按修前疑点派重复开发。 |
 | ISS-019 | 来源 `cb2a90d36dbbecc062becbf13d879703b6856456`；报表 CSV 导出 | [CSV字节/权限](../iss-019-report-csv/README.md)；BOM、公式保护、正常金额及无权限拒绝 | 文件内容与当前查询口径、受限数据来源和导出权限独立复核 |
 | ISS-020 / 029 | 收件人 `273d4a30689b4052e36f0d6338aeb409553aaf1f`；保存版本导出 `0eeaca68f6acf1f4029a1e955defaaafb765e046` | [报价导出](../iss-020-quote-export/README.md)、[收件人快照](../iss-029-quote-recipient-snapshot/README.md)；实际 XLSX/HTTP、缺字段422、权限403、范围404、历史图片及旧版不变 | 独立检查已保存版本/API/实际文件一致性；打印完整验收另列 ISS-037 子范围，不能用 XLSX 或网页截图代替打印成品 |
 | ISS-021 | 来源 `3ec269246c39c77bb34d530d8817ba0cb136c9a6`；数量调整服务/0085迁移 | [调整闭环](../iss-021-integration/README.md)；已发货下限、付款保护、409、重放幂等及故障回滚 | 对当前代码、权限、迁移与实际HTTP数据库快照独立复核 |
@@ -31,3 +32,11 @@
 - [历史精修原图](historical-polish-2c585.zip)：来源 `2c585901f9e3b7f245dc966940ef70fbd2bba237` 的 `ux-review/second-review-final/final-polish/`；ZIP SHA256 `1ff6d84af772b02cbd4fe9996ec2000fad2325a4b50adc2ebb2d3d496620b1a5`。含小数、库存成本、订单/采购确认入口、完成履约说明、商品间距及已保存PI标题共8张。
 
 因此，上述图片的“当前主树路径缺失”已转为“原始历史归档可取得”；仍需核对对应产品版本及由独立审查接受其适用范围，不能从历史原图直接推断当前所有页面通过。
+
+## 本轮集中复审最新材料
+
+- 资金：完整来源3a07e7e、补修319941c，见REVIEW-FINANCE-SOURCE.md；真实Chrome两组4/4、PG新专项13/13与10新财务表/私有凭证恢复，原始PDF/CSV已保存。ISS105/108为FIXED_PENDING_REVIEW。
+- 历史：完整a0729a0，见REVIEW-HISTORY-FINANCE-CONTRACT.md、实际XLSX及合成数据库；源金额/日期不猜测，not_connected不改名，正式资料迁移未授权。
+- 运维：完整d289de36及1f189c3加密发布修复，见REVIEW-OPERATIONS-SOURCE.md；修前3失败、修后6/6、真实GPG2/2，Linux真实媒体栅栏与目标代理/异地恢复仍待验。
+- 迁移：0098历史与0102财务经0103无数据操作汇合，makemigrations无差异；守卫9/9及PG13/13。更完整PG全量/恢复HTTP正在运行，不预记通过。
+- 最终结果及原始文件由本包统一交付，源分支CI只作溯源；不得用Codex/子代理审查记录冒充ChatGPT接受。

@@ -1,0 +1,24 @@
+{
+  "checked_head": "03b524db7392ab989c699e31586484fd33a95fcb",
+  "scope": "Reuse same-day source audit only for identical dependency declarations; not deployment image verification",
+  "files": [
+    {
+      "path": "backend/requirements.txt",
+      "source_sha": "d289de36a3da3e4bd6531c812ec21a05f046d570",
+      "git_bytes_sha256": "03f35d77f6375f552b10c629c3f2429329c9c61ced95ce4c92043b2faea98981",
+      "identical_to_current": true
+    },
+    {
+      "path": "backend/requirements.lock",
+      "source_sha": "d289de36a3da3e4bd6531c812ec21a05f046d570",
+      "git_bytes_sha256": "ac25e8a593b991a69b4277e17752e4fa3bc60e20791559758a9279794730f0ee",
+      "identical_to_current": true
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "source_sha": "d289de36a3da3e4bd6531c812ec21a05f046d570",
+      "git_bytes_sha256": "4ef14d177685f3310aa5ec08650caa203fb23fedfc90a29707c9f37538d8db58",
+      "identical_to_current": true
+    }
+  ]
+}

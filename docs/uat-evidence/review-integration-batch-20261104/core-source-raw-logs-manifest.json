@@ -1,0 +1,161 @@
+{
+  "archive": "core-source-raw-logs.zip",
+  "archive_sha256": "959f05fdf7d1529a4fa4fe5a48b02a1347566ff7a39d221f3989e9f1b8bc6c67",
+  "scope": "Original Git source bytes archived unchanged; named historical log paths are explicitly marked normalized display copies. Failures and results retained.",
+  "files": [
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/customer-followup/after-unit.txt",
+      "raw_git_sha256": "0b9bb40be788c34e9053eda95df6a0de67f7070212ca4d9384492476f7391e10",
+      "display_copy_sha256": "beb8d2c6d93d664c017966b44904f81694a2b2a474321c8bcc92027ebd0cae4f",
+      "raw_bytes": 288
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/customer-followup/before-unit.txt",
+      "raw_git_sha256": "89df53c9638a92ee1eab4c2a4b278a687a0467c0e064e0176e2890b4d4c5097e",
+      "display_copy_sha256": "8c7a50ca86057305d8b4486490d4181b6bb7f5fdd11c0a6ebf107f0e2b60bef9",
+      "raw_bytes": 4537
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/all-fixes-targeted.log",
+      "raw_git_sha256": "fd19410a566ab4d6bd183cddcd37973774c0de95d4c256d0936ed5b3fd1cb4a5",
+      "display_copy_sha256": "e47e24080dfe4b4fa4ed55e7c68e4638530a441c1aa683dabea98f7143a12f87",
+      "raw_bytes": 285
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/build-closeout.log",
+      "raw_git_sha256": "912fcf191b027c57a525a9d98ee4b6e9644315e739c155b1e154b576ac3a4096",
+      "display_copy_sha256": "44c06122a33182f17444ac1e67e5d99710a110243ce474fa2d49e7c065729990",
+      "raw_bytes": 1400
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/build-final.log",
+      "raw_git_sha256": "6eda2e51fa0f1318f179513968ee5c4a5c28bfb782fa0afce569f34a73c17a52",
+      "display_copy_sha256": "0443631c2a68cd36708989148c74aa78a671a7052cadd36799890abc4ef0df47",
+      "raw_bytes": 1400
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/build-inventory-ci-fix.log",
+      "raw_git_sha256": "3799834820a10f3ada190aea6670929065b8e0b532f7cee8fadda3b23dfc9969",
+      "display_copy_sha256": "97fbfb2a14d77f7594995bcba56189f21e70427f2375c7f2e406383bd37c476d",
+      "raw_bytes": 1400
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/build.log",
+      "raw_git_sha256": "a4043b809addbafd8c79d0591b58e4dd83b53f63e509b1d185e02f623650cdbf",
+      "display_copy_sha256": "b1c945c92e2026a73a7a67686c39718babaf95bffd1d947373d1384b86c87ec7",
+      "raw_bytes": 1863
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/ci-66869e0-failed.log",
+      "raw_git_sha256": "e3f7b05b98d9190bda1d4d5c32bd82985e86cd4aede7010acb97afff4a8013fb",
+      "display_copy_sha256": "e7675d1be3e81bac7fef2b6309818a6f7942b321ea7a46f1adbb478b1f323483",
+      "raw_bytes": 480483
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/inventory-ci-fix.log",
+      "raw_git_sha256": "638ba28daa55634514b1cebe877d5dc2321769ddc29000faf75435f8e27ddff6",
+      "display_copy_sha256": "de76dafd49e2aae37ccea8998ab79c1d86741eb72a98610f4484755d38e665b8",
+      "raw_bytes": 284
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/locked-isolated-run.log",
+      "raw_git_sha256": "99d48fde5f2337cda6cb68b0382e10901d1cc85def52d347ec7a821086ff7150",
+      "display_copy_sha256": "f190d1e384b06b576e149ebdef4308ff6995399f9ea9d35c2c4daf24b1e67181",
+      "raw_bytes": 16554
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/node-all.log",
+      "raw_git_sha256": "4e04fe0a90edd1c609540e30129cf2564551c7dd1364a75e6a625ec5b900e611",
+      "display_copy_sha256": "eb0c6c56d95511a05ba6b93fd47b4a8a74cb3e893c6784bcb961bb5dd1aad7da",
+      "raw_bytes": 39157
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/purchase-after.log",
+      "raw_git_sha256": "ea5292b92a9cb530f155ec775e5ce2ae39f31a6313a323fe61616f44742924f0",
+      "display_copy_sha256": "80e0187c19e7b3e110289d29118bc6df4c7e6332395e6bc3f3d08e4728321279",
+      "raw_bytes": 1774
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/purchase-before.log",
+      "raw_git_sha256": "a346d302e36905194344d9a8313e2d903e52546fadd0a6c0d273a47b43d1d6eb",
+      "display_copy_sha256": "1581ab83dba6df38f0337ef12b63682af0306c319096ec94b09a4068e8a3659f",
+      "raw_bytes": 3055
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/purchase-cross-action-after.log",
+      "raw_git_sha256": "61ef52d36234fec2bd049ce4be7c052c93970d82b277365e93dab906ddd2e37e",
+      "display_copy_sha256": "ba6d56994c264bc3da1c237ea2f0d64a25318f6b00b58213c40272c88ec652e6",
+      "raw_bytes": 283
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/purchase-cross-action-before.log",
+      "raw_git_sha256": "f5595c484d30e4e49d7223306c7495222665ee6dc14bc0525756188f31422f71",
+      "display_copy_sha256": "df262e8a01aeafb7940f231dbddef84b40a692905a27d7c26442f1051ced1508",
+      "raw_bytes": 3336
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/purchase-rerun.log",
+      "raw_git_sha256": "ada743cb41fbfa2659c43123a96ce8944da3f6dda1d555decb2c439432f6db81",
+      "display_copy_sha256": "c4cf6e56a5b77a5f76e2a07395bb390215c23dee215d68eeb62ad338741ff083",
+      "raw_bytes": 287
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/real-isolated-run.log",
+      "raw_git_sha256": "070d35dafc7a0434351e9aa35907922b62b0d61e9d4ec7fc214de9ae8ff4ea6f",
+      "display_copy_sha256": "440ef056463438b007afb1af88375bccce1d3224b1c0c1b4dcd8db7c785bcfa1",
+      "raw_bytes": 15211
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/real-isolated-third.log",
+      "raw_git_sha256": "48bd8ea8423bf6882843d17d98875264199feb3f4a7863d186cfe373735124e5",
+      "display_copy_sha256": "9791275df2d9fc244bd5b416814558bcbdfb1b98f7f58042720049315817ea3d",
+      "raw_bytes": 28174
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/visual-final-run.log",
+      "raw_git_sha256": "775f58be2e29c2bf19e63d72178406a6e26f3eaf7f4c0d1bfffbae5f7165fcd9",
+      "display_copy_sha256": "7b91c180a3919256bb487d3bd8b624d0a0e2db2563f2e1c75e8d455cffd7d0b3",
+      "raw_bytes": 14340
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/vitest-closeout-all.log",
+      "raw_git_sha256": "f16dbc2f0f763d6d86da80f8cc34c61d0af7dd14c49151fd290501ffcb4d20d1",
+      "display_copy_sha256": "1f08e7b7556071c29c8060e57f3ebc839dd0bf16c135c3e144acb67f69990402",
+      "raw_bytes": 294
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/vitest-direct-all.log",
+      "raw_git_sha256": "98dbee3cdbe5feb2f1fb9b5609a7c13447d404011dc5f3972f2b1d5b41dad498",
+      "display_copy_sha256": "0a444268eb20a5ec65e6406ff402a8800bc7eefa1296169d2428a3c709db9282",
+      "raw_bytes": 482
+    },
+    {
+      "source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "path": "docs/uat-evidence/core-workspace-ux-batch-20261104/logs/vitest-valid-all.log",
+      "raw_git_sha256": "cbeb8ce8916190d42bc032da7881ec32391c0869a25874a41aae2bae29a99c32",
+      "display_copy_sha256": "4948e3da8a2a5485a4ef28ed0fde7784b2e3700e7b6b053ca3501ea9a9dd5bd6",
+      "raw_bytes": 109
+    }
+  ]
+}

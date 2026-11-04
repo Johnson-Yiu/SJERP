@@ -363,6 +363,7 @@ async function uploadImage(skuId, file) {
 }
 async function clearImage(skuId) { return api.delete(`/skus/${skuId}/image/`) }
 let loadVersion = 0
+let supplierSourcesVersion = 0
 async function load() {
   const version = ++loadVersion
   const search = query.value
@@ -400,6 +401,7 @@ async function openCreate(productId = '') {
   if(typeof productId === 'object') productId = ''
   if (!can('skus', 'create')) return
   parameterSearch.value = ''; saveError.value = ''; toast.text = ''
+  supplierSourcesVersion++
   editingId.value = null
   identityReviewOpen.value = false; identityReviewError.value = ''; pendingIdentitySave.value = null
   supplierSources.value = []
@@ -429,6 +431,7 @@ function openCreateFromRoute() {
 }
 const closeModal = () => { if(saving.value || identityReviewSaving.value || supplierSourceSaving.value || packagingSaving.value) return; return editorScope.requestClose(discardModal) }
 function discardModal() {
+  supplierSourcesVersion++
   identityReviewOpen.value = false; identityReviewError.value = ''; pendingIdentitySave.value = null
   modalOpen.value = false
   routeCreateOpen.value = false
@@ -440,6 +443,7 @@ function discardModal() {
 async function openEdit(row) {
   parameterSearch.value = ''; saveError.value = ''; toast.text = ''
   if (!can('skus', 'update')) return
+  supplierSourcesVersion++
   editingId.value = row.id
   editingPackaging.value = row.packaging || null
   identityReviewOpen.value = false; identityReviewError.value = ''; pendingIdentitySave.value = null
@@ -474,7 +478,15 @@ async function loadSupplierSources(skuId) {
   if (!skuId) return
   supplierSourcesLoading.value = true
   supplierSourcesError.value = ''
-  try { supplierSources.value = await listAll('/supplier-skus/', { params: { sku: skuId } }) } catch (error) { supplierSourcesError.value = `供应商来源加载失败：${apiErrorMessage(error)}` } finally { supplierSourcesLoading.value = false }
+  const version = ++supplierSourcesVersion
+  try {
+    const sources = await listAll('/supplier-skus/', { params: { sku: skuId } })
+    if (version === supplierSourcesVersion) supplierSources.value = sources
+  } catch (error) {
+    if (version === supplierSourcesVersion) supplierSourcesError.value = `供应商来源加载失败：${apiErrorMessage(error)}`
+  } finally {
+    if (version === supplierSourcesVersion) supplierSourcesLoading.value = false
+  }
 }
 function resetSupplierSourceForm() { supplierSourceError.value = ''; toast.text = ''; supplierTraitsText.value = ''; Object.assign(supplierSourceForm, { supplier: '', supplier_model: '', supplier_product_name: '', supplier_sku_code: '', supplier_barcode: '', purchase_price: '0.00', currency: 'USD', moq: 0, lead_time_days: 0, is_active: true, is_preferred: false, remarks: '' }) }
 async function openSupplierSourceCreate() { if (!can('suppliers', 'create')) return; supplierSourceEditingId.value = null; resetSupplierSourceForm(); await nextTick(); supplierSourceGuard.markClean(); supplierSourceDialogOpen.value = true }
@@ -784,7 +796,7 @@ watch([() => route.query.create, () => route.query.product], ([value]) => {
     closeModal()
   }
 })
-onBeforeUnmount(() => { loadVersion++; document.removeEventListener('pointerdown', closePackagingPickerOnOutsideClick); revokeImagePreview() })
+onBeforeUnmount(() => { supplierSourcesVersion++; loadVersion++; document.removeEventListener('pointerdown', closePackagingPickerOnOutsideClick); revokeImagePreview() })
 </script>
 
 <template>
@@ -900,4 +912,6 @@ onBeforeUnmount(() => { loadVersion++; document.removeEventListener('pointerdown
 :global(body:has(.version-modal)){overflow:hidden}
 .version-table th{white-space:nowrap}.version-table td{overflow-wrap:anywhere}
 .sku-list-table th:nth-child(4){width:70px}.sku-list-table .status-tag{white-space:nowrap}
+/* Keep edit fields full width after the later tablet two-column override. */
+@media(max-width:520px){.sku-modal:not(.sku-create-layout) .sku-basics{grid-template-columns:minmax(0,1fr)}}
 </style>

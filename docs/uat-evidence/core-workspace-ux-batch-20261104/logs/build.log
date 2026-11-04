@@ -1,0 +1,33 @@
+# Integration display copy: trailing whitespace normalized; original source Git bytes are preserved in review-integration-batch-20261104/core-source-raw-logs.zip.
+
+> senju-crm-erp@1.0.0 build
+> vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 2020 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                        0.56 kB │ gzip:   0.36 kB
+dist/assets/TradeUnitsPage-BagMfA07.css                2.89 kB │ gzip:   0.89 kB
+dist/assets/HistoryOrdersPage-DznBeah8.css             6.55 kB │ gzip:   1.53 kB
+dist/assets/ReportsPage-DvohdynP.css                  18.04 kB │ gzip:   3.42 kB
+dist/assets/index-B-LCAcTn.css                       388.39 kB │ gzip:  63.75 kB
+dist/assets/TradeUnitsPage-CGRp3hoR.js                10.63 kB │ gzip:   4.32 kB
+dist/assets/HistoryOrdersPage-CQSg7jPP.js             12.73 kB │ gzip:   4.45 kB
+dist/assets/ReportsPage-CUxIetLb.js                   51.56 kB │ gzip:  16.62 kB
+dist/assets/_plugin-vue_export-helper-Dyx_9CLQ.js    140.81 kB │ gzip:  53.45 kB
+dist/assets/index-nX3MYFir.js                      1,137.43 kB │ gzip: 397.13 kB
+
+✓ built in 15.55s
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[PLUGIN_TIMINGS] JavaScript callbacks ran for 8.0s of this 15.4s build (52%).
+The slowest callbacks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+  - plugin vite:vue transform (34%, 5.2s, 153 calls)
+  - plugin vite:css-post renderChunk (7%, 1.0s, 5 calls)
+Additional callback time came from callbacks under 1s.
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.

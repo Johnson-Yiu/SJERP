@@ -62,7 +62,7 @@ const orderLeadTimeDays = ref('')
 const expandedQuoteNodes = ref(new Set())
 const toast = reactive({ show: false, message: '', error: false })
 const form = reactive({})
-const guard = useUnsavedChangesGuard({ data: () => form, enabled: () => open.value && isOrder.value })
+const guard = useUnsavedChangesGuard({ data: () => form, enabled: () => open.value && isOrder.value, busy: () => isOrder.value && open.value && saving.value })
 const activeSkuId = ref('')
 const sourceQuoteLoading = ref(false)
 let sourceQuoteRequest = 0
@@ -89,20 +89,31 @@ function fresh() {
   else form.valid_until = ''
 }
 function notify(message, error = false) { Object.assign(toast, { show: true, message, error }); setTimeout(() => toast.show = false, 2800) }
+let orderListRequest = 0
 async function load() {
+  const request = ++orderListRequest
+  const orderRequest = isOrder.value
+  const resource = props.type
+  const isCurrent = () => (!orderRequest && !isOrder.value) || (request === orderListRequest && props.type === resource)
   loading.value = true
   loadError.value = ''
   try {
     const quoteParams = !isOrder.value ? { status: quoteStatusFilter.value, customer: quoteCustomerFilter.value, ordering: quoteSort.value } : {}
-    rows.value = await listAll(`/${props.type}/`, { params: { ...routeDataQuery(route.query), search: route.query.search || '', ...quoteParams } })
+    const result = await listAll(`/${resource}/`, { params: { ...routeDataQuery(route.query), search: route.query.search || '', ...quoteParams } })
+    if (!isCurrent()) return
+    rows.value = result
     hasLoaded.value = true
     allRecordsExist.value = rows.value.length > 0
     if (!rows.value.length && hasDocumentFilters.value) {
-      try { allRecordsExist.value = (await listAll(`/${props.type}/`)).length > 0 } catch { allRecordsExist.value = false }
+      try {
+        const allRows = await listAll(`/${resource}/`)
+        if (isCurrent()) allRecordsExist.value = allRows.length > 0
+      } catch { if (isCurrent()) allRecordsExist.value = false }
     }
+    if (!isCurrent()) return
     const visibleQuoteIds = new Set(rows.value.map(row => row.id))
     expandedQuoteNodes.value = new Set([...expandedQuoteNodes.value].filter(id => visibleQuoteIds.has(id)))
-  } catch (e) { loadError.value = apiErrorMessage(e) } finally { loading.value = false }
+  } catch (e) { if (isCurrent()) loadError.value = apiErrorMessage(e) } finally { if (isCurrent()) loading.value = false }
 }
 let customerOptionsPromise
 function loadCustomerOptions() {
@@ -216,7 +227,7 @@ async function loadSourceQuote(value, { confirmOverwrite = true } = {}) {
     orderLeadTimeDays.value = daysBetween(form.order_date, form.expected_ship_date)
     activeSkuId.value = String(form.items[0]?.sku || '')
     guard.markClean()
-  } catch (error) { notify(`无法载入报价：${error.message}`, true) }
+  } catch (error) { if (request === sourceQuoteRequest) notify(`无法载入报价：${apiErrorMessage(error)}`, true) }
   finally { if (request === sourceQuoteRequest) sourceQuoteLoading.value = false }
 }
 async function changeSourceQuote(event) {
@@ -473,6 +484,7 @@ watch([() => props.type, () => route.query.create, () => route.query.edit, route
   if (prefillOnlyChanged && route.query.create !== '1') return
   void syncModalFromRoute()
 }, { immediate: true })
+onBeforeUnmount(() => { orderListRequest += 1; sourceQuoteRequest += 1; clearTimeout(timer) })
 onMounted(() => { load(); loadQuoteCustomerOptions() })
 </script>
 

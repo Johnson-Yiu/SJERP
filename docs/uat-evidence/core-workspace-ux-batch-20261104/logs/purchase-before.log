@@ -1,0 +1,43 @@
+# Integration display copy: trailing whitespace normalized; original source Git bytes are preserved in review-integration-batch-20261104/core-source-raw-logs.zip.
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/core-workspace-ux-batch-20261104/frontend
+
+ ❯ tests/core-workspace-purchase-feedback.spec.js (2 tests | 2 failed) 885ms
+   × clears the previous rejected receipt message when a retry succeeds 715ms
+   × keeps a pending receipt visible and ignores a duplicate submit 169ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/core-workspace-purchase-feedback.spec.js > clears the previous rejected receipt message when a retry succeeds
+AssertionError: expected '管理采购下单、到货与供应商应付。 刷新 新建采购单执行中1已下单 / 部分…' not to contain '合成收货拒绝，请重试'
+
+Expected: "合成收货拒绝，请重试"
+Received: "管理采购下单、到货与供应商应付。 刷新 新建采购单执行中1已下单 / 部分到货待到货1尚未全部到货待付款0仍有应付余额已完成0已完成采购搜索状态全部状态草稿已下单部分到货已完成已取消 仅看待到货重置采购单号供应商来源订单下单日期预计到货状态采购金额已付 / 未付操作UX-PO-41历史主体未记录———CNY 0.00— / —关闭采购工作台历史主体未记录 · 下单日期 —UX-PO-41 预计到货 — 取消采购单概览采购明细收货关联销售订单response · data：合成收货拒绝，请重试验货入库已完成，库存、预留及在途数量已同步。核对型号、数量和外观后登记合格数量。不合格品不计可用库存，请备注拒收或待补货情况。UX-SKU · UX-SKU下单 10   · 已到 0  · 剩余 10 验货入库入库记录暂无入库记录"
+
+ ❯ tests/core-workspace-purchase-feedback.spec.js:32:30
+     30|   await wrapper.get('.goods-receipt-dialog').trigger('submit'); await …
+     31|   expect(wrapper.text()).toContain('验货入库已完成')
+     32|   expect(wrapper.text()).not.toContain('合成收货拒绝，请重试')
+       |                              ^
+     33|   const requests = mocks.api.post.mock.calls
+     34|   expect(requests).toHaveLength(2)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/core-workspace-purchase-feedback.spec.js > keeps a pending receipt visible and ignores a duplicate submit
+AssertionError: expected undefined to be defined
+ ❯ tests/core-workspace-purchase-feedback.spec.js:45:41
+     43|   expect(mocks.api.post).toHaveBeenCalledTimes(1)
+     44|   const cancel = wrapper.get('.goods-receipt-dialog footer .btn-second…
+     45|   expect(cancel.attributes('disabled')).toBeDefined()
+       |                                         ^
+     46|   resolve({ data: {} }); await flushPromises()
+     47|   expect(wrapper.find('.goods-receipt-dialog').exists()).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  16:06:25
+   Duration  48.08s (transform 4.59s, setup 4.14s, import 4.89s, tests 885ms, environment 33.85s)

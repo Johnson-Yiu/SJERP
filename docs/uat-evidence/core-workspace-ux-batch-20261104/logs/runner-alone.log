@@ -1,0 +1,26 @@
+✔ bank-fee selection receives fixed synthetic accounts without external configuration (133.6094ms)
+✔ full business suite receives bank-fee synthetic accounts at the standard CI entry (0.2401ms)
+✔ other business selections and infrastructure smoke preserve existing account configuration (2.2192ms)
+✔ port allocator returns a free explicit loopback port (70.721ms)
+✔ port preflight rejects an occupied port instead of reusing another server (2.7241ms)
+✔ actual runner fails before creating isolated resources when its API port is occupied (1065.7004ms)
+✔ port preflight rejects duplicate API and Vite assignments (2.532ms)
+✔ API identity mismatch is rejected before browser tests can proceed (43.4601ms)
+✔ only an existing browser test file can be selected; Playwright service and config overrides are rejected (5.8517ms)
+✔ only allowlisted real API suites receive fixed synthetic fixture seeds (2.0954ms)
+✔ API identity comparison checks run ID, token, SQLite path, and MEDIA_ROOT (0.9944ms)
+✔ a real Vite /api proxy to the wrong database and MEDIA_ROOT is rejected before Playwright (4797.1225ms)
+✔ browser CI invokes the isolated suite and keeps run evidence under an isolated root (3.0233ms)
+✔ SQLite URL preserves an absolute platform path for Django parsing (0.3676ms)
+✔ cleanup removes only a marked run directory under system temp (6.6438ms)
+✔ cleanup refuses an ownership marker belonging to another run (4.1124ms)
+✔ two independent worktree runtimes can start concurrently without sharing ports or data (55707.6069ms)
+ℹ parallel isolated runs: [{"runId":"d8971041-4a2b-48a1-8183-e6eabd149da6","apiPort":"6608","vitePort":"6609","database":"C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-RRA1JY\\db.sqlite3","media":"C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-RRA1JY\\media"},{"runId":"4db82b0f-0145-494d-8ab1-e3c6f6daa63e","apiPort":"6606","vitePort":"6607","database":"C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-sw677L\\db.sqlite3","media":"C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-sw677L\\media"}]
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 62686.5066

@@ -282,6 +282,28 @@ function notify(message, error = false) { clearTimeout(toastTimer); Object.assig
 async function load() {
   loading.value = true
   loadError.value = ''
+  if (isCustomerPage.value) {
+    const request = ++crmRequest
+    const params = { ...routeDataQuery(route.query), search: query.value }
+    try {
+      const nextRows = await listAll('/customers/', { params })
+      if (request !== crmRequest) return
+      rows.value = nextRows
+      hasLoaded.value = true
+      allRecordsExist.value = nextRows.length > 0
+      if (!nextRows.length && hasListFilters.value) {
+        try {
+          const unfiltered = await listAll('/customers/')
+          if (request === crmRequest) allRecordsExist.value = unfiltered.length > 0
+        } catch { if (request === crmRequest) allRecordsExist.value = false }
+      }
+    } catch (error) {
+      if (request === crmRequest) loadError.value = apiErrorMessage(error)
+    } finally {
+      if (request === crmRequest) loading.value = false
+    }
+    return
+  }
   if (isSupplierPage.value) {
     const request = ++ledgerRequest
     try {
@@ -312,7 +334,10 @@ async function load() {
       allRecordsExist.value = nextRows.length > 0
       if (!nextRows.length && hasListFilters.value) {
         const unsearched = { ...params }; delete unsearched.search
-        try { allRecordsExist.value = (await listAll(`/${props.config.endpoint}/`, { params: unsearched })).length > 0 } catch { allRecordsExist.value = false }
+        try {
+          const unsearchedRows = await listAll(`/${props.config.endpoint}/`, { params: unsearched })
+          if (request === crmRequest) allRecordsExist.value = unsearchedRows.length > 0
+        } catch { if (request === crmRequest) allRecordsExist.value = false }
       }
     } catch (error) {
       if (request === crmRequest) loadError.value = apiErrorMessage(error)
@@ -552,11 +577,19 @@ async function openCreate({ isCurrent = () => true } = {}) {
   if (props.config.endpoint === 'follow-ups' && !form.followed_at) form.followed_at = datetimeLocal()
   customerContacts.value = props.config.endpoint === 'customers' ? [emptyContact(true)] : []
   if (!isMovementPage.value) await loadOptions()
+  if ((isCustomerPage.value || isCrmPage.value) && !isCurrent()) return
   if (props.config.endpoint === 'customers') {
-    try { form.code = (await api.get('/customers/next-code/')).data.code } catch { form.code = '保存时自动生成' }
+    let code
+    try { code = (await api.get('/customers/next-code/')).data.code } catch { code = '保存时自动生成' }
+    if (!isCurrent()) return
+    form.code = code
     form.owner_profile = accessState.operator?.employee_profile_id || ''
   }
-  if (['customers', 'follow-ups'].includes(props.config.endpoint) && !form.owner) form.owner = await loadCurrentOperator()
+  if (['customers', 'follow-ups'].includes(props.config.endpoint) && !form.owner) {
+    const owner = await loadCurrentOperator()
+    if (!isCurrent()) return
+    form.owner = owner
+  }
   if (isContactPage.value) void loadContactDuplicateRows(form.customer)
   followUpAttachments.value = []
   pendingFollowUpFiles.value = []

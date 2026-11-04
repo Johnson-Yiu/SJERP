@@ -1,0 +1,1 @@
+PASS: actual HTTP400 leaves DB unchanged; browser saves, cancel, follow-up clear, receipt/reversal and readback verified

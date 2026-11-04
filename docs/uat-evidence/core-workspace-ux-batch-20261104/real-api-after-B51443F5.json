@@ -1,0 +1,657 @@
+{
+  "rejected": {
+    "endpoint": "purchase-orders/1/receive/",
+    "method": "POST",
+    "status": 400,
+    "data": {
+      "quantity": [
+        "请确保该值大于或者等于 0.01。"
+      ]
+    }
+  },
+  "rejected_db_unchanged": true,
+  "http": [
+    {
+      "endpoint": "customers/1/",
+      "method": "GET",
+      "status": 200,
+      "data": {
+        "id": 1,
+        "contact_count": 2,
+        "order_count": 1,
+        "sales_amount": "125.00",
+        "country_display": "Germany / DE",
+        "status_display": "正式客户",
+        "created_at": "2026-11-04T16:57:21.949714+08:00",
+        "updated_at": "2026-11-04T16:59:08.702682+08:00",
+        "name": "合成办公客户 B51443F5",
+        "code": "UXB51443F5",
+        "country": "DE",
+        "region": "",
+        "source": "",
+        "status": "customer",
+        "owner": "",
+        "website": "",
+        "address": "",
+        "notes": "隔离浏览器办公验收备注",
+        "next_follow_up": null,
+        "owner_profile": null
+      }
+    },
+    {
+      "endpoint": "contacts/",
+      "method": "GET",
+      "status": 200,
+      "data": {
+        "count": 2,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            "id": 1,
+            "customer_name": "合成办公客户 B51443F5",
+            "created_at": "2026-11-04T16:57:21.951948+08:00",
+            "updated_at": "2026-11-04T16:57:21.951965+08:00",
+            "name": "合成联系人",
+            "title": "",
+            "email": "office@example.invalid",
+            "phone": "",
+            "whatsapp": "",
+            "is_primary": true,
+            "notes": "",
+            "customer": 1
+          },
+          {
+            "id": 2,
+            "customer_name": "合成办公客户 B51443F5",
+            "created_at": "2026-11-04T16:59:18.729473+08:00",
+            "updated_at": "2026-11-04T16:59:18.729496+08:00",
+            "name": "合成窄屏新联系人",
+            "title": "",
+            "email": "",
+            "phone": "",
+            "whatsapp": "",
+            "is_primary": false,
+            "notes": "",
+            "customer": 1
+          }
+        ]
+      }
+    },
+    {
+      "endpoint": "follow-ups/",
+      "method": "GET",
+      "status": 200,
+      "data": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            "id": 1,
+            "next_follow_up_mode_display": "保留当前计划",
+            "customer_name": "合成办公客户 B51443F5",
+            "contact_name": "合成联系人",
+            "type": "email",
+            "type_display": "邮件",
+            "attachments": [],
+            "created_at": "2026-11-04T16:57:21.952937+08:00",
+            "updated_at": "2026-11-04T16:57:21.952951+08:00",
+            "followed_at": "2026-11-04T16:57:21.952684+08:00",
+            "subject": "合成办公跟进",
+            "content": "仅用于隔离工作区验收",
+            "result": "",
+            "next_action": "",
+            "next_follow_up_mode": "keep",
+            "next_follow_up": null,
+            "owner": "",
+            "customer": 1,
+            "contact": 1
+          }
+        ]
+      }
+    },
+    {
+      "endpoint": "products/1/",
+      "method": "GET",
+      "status": 200,
+      "data": {
+        "id": 1,
+        "sku_definitions": null,
+        "category_name": "合成照明分类 B51443F5",
+        "hs_code_value": "",
+        "sku_count": 1,
+        "parameter_count": 0,
+        "certificate_count": 0,
+        "created_at": "2026-11-04T16:57:21.957372+08:00",
+        "updated_at": "2026-11-04T16:57:21.957385+08:00",
+        "name": "合成长名称灯带及安装规格展示合成长名称灯带及安装规格展示合成长名称灯带及安装规格展示合成长名称灯带及安装规格展示",
+        "name_en": "",
+        "code": "UXPB51443F5",
+        "combination_rules": [],
+        "sales_model_prefix": null,
+        "description": "",
+        "status": "active",
+        "hs_code": null,
+        "category": 1,
+        "additional_categories": [],
+        "suppliers": []
+      }
+    },
+    {
+      "endpoint": "purchase-orders/1/",
+      "method": "GET",
+      "status": 200,
+      "data": {
+        "id": 1,
+        "payment_plans": [
+          {
+            "id": 1,
+            "customer_id": null,
+            "supplier_id": 1,
+            "exchange_rate": 1.0,
+            "remaining_rmb": 20.0,
+            "remaining_amount": "20.0000",
+            "contract_no": "UXPOB51443F5",
+            "counterparty_name": "合成办公供应商 B51443F5",
+            "is_overdue": false,
+            "created_at": "2026-11-04T16:57:21.982358+08:00",
+            "updated_at": "2026-11-04T16:57:21.982376+08:00",
+            "direction": "payable",
+            "due_date": null,
+            "planned_amount": "20.0000",
+            "settled_amount": "0.0000",
+            "currency": "CNY",
+            "status": "open",
+            "notes": "协商尾款",
+            "order": null,
+            "purchase_order": 1
+          }
+        ],
+        "moq_exception": null,
+        "status_display": "已下单",
+        "items": [
+          {
+            "id": 1,
+            "sku": 1,
+            "supplier_sku": null,
+            "sku_code": "UXSKUB51443F5",
+            "display_name": "合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称",
+            "sales_model": "LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-",
+            "supplier_name": "合成办公供应商 B51443F5",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_characteristics_snapshot": {},
+            "quantity": "10.00",
+            "unit_price": "2.0000",
+            "received_quantity": "0.00",
+            "remaining_quantity": "10.00",
+            "overage_quantity": "0.00",
+            "amount": "20.0000",
+            "receipts": [
+              {
+                "id": 1,
+                "receipt_date": "2026-11-04",
+                "quantity": "2.00",
+                "unit_cost": "2.000000000000",
+                "notes": "已核对型号、数量与外观；仅合格数量入库。",
+                "is_overage": false,
+                "overage_reason": "",
+                "overage_reason_display": "",
+                "overage_quantity": "0.00",
+                "overage_summary": "",
+                "inventory_movement": 1,
+                "reversal_inventory_movement": 2,
+                "reversed_at": "2026-11-04T17:00:00.186150+08:00",
+                "reversal_reason": "锁定环境合成回归冲销"
+              }
+            ],
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "supplier_name": "合成办公供应商 B51443F5",
+        "order_no": "UXSOB51443F5",
+        "related_orders": [
+          {
+            "id": 1,
+            "order_no": "UXSOB51443F5"
+          }
+        ],
+        "total_amount": "20.00",
+        "base_amount": "20.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "0.00",
+        "unpaid_amount": "20.00",
+        "created_at": "2026-11-04T16:57:21.971816+08:00",
+        "updated_at": "2026-11-04T17:00:00.187827+08:00",
+        "payment_terms_snapshot": [
+          {
+            "label": "协商尾款",
+            "ratio": "1",
+            "due_basis": "no_date",
+            "offset_days": 0
+          }
+        ],
+        "cost_allocation_version": 0,
+        "additional_costs": [],
+        "purchase_no": "UXPOB51443F5",
+        "supplier_name_snapshot": "合成办公供应商 B51443F5",
+        "supplier_address_snapshot": "",
+        "supplier_contact_name_snapshot": "",
+        "supplier_phone_snapshot": "",
+        "supplier_email_snapshot": "",
+        "order_date": "2026-11-04",
+        "expected_arrival_date": null,
+        "status": "ordered",
+        "historical_only": false,
+        "currency": "CNY",
+        "exchange_rate": "1.000000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "supplier": 1,
+        "order": 1,
+        "sales_link_restricted": false
+      }
+    },
+    {
+      "endpoint": "skus/inventory-list/",
+      "method": "GET",
+      "status": 200,
+      "data": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            "id": 1,
+            "sku": "UXSKUB51443F5",
+            "display_name_cn": "合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称",
+            "product_name": "合成长名称灯带及安装规格展示合成长名称灯带及安装规格展示合成长名称灯带及安装规格展示合成长名称灯带及安装规格展示",
+            "product_code": "UXPB51443F5",
+            "unit": "pcs",
+            "stock_quantity": "0.00",
+            "actual_quantity": 0.0,
+            "reserved_quantity": 0.0,
+            "available_quantity": 0.0,
+            "in_transit_quantity": 10.0,
+            "to_procure_quantity": 0.0,
+            "has_anomaly": false
+          }
+        ]
+      }
+    },
+    {
+      "endpoint": "skus/1/inventory-detail/",
+      "method": "GET",
+      "status": 200,
+      "data": {
+        "sku": {
+          "id": 1,
+          "sku": "UXSKUB51443F5",
+          "display_name_cn": "合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称",
+          "unit": "pcs"
+        },
+        "movements": [
+          {
+            "id": 2,
+            "movement_no": "REV-22382E2A095445A9",
+            "related_orders": [
+              1
+            ],
+            "related_order_nos": [
+              "UXSOB51443F5"
+            ],
+            "sku_code": "UXSKUB51443F5",
+            "display_name": "合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称",
+            "sales_model": "LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-",
+            "product_name": "合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称",
+            "order_no": "",
+            "type_display": "盘亏出库",
+            "signed_quantity": "-2.00",
+            "overage_quantity": "0.00",
+            "overage_summary": "",
+            "reversal_movement": null,
+            "is_reversed": false,
+            "reversal_status": "冲销流水",
+            "created_at": "2026-11-04T17:00:00.183104+08:00",
+            "updated_at": "2026-11-04T17:00:00.183121+08:00",
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "movement_date": "2026-11-04",
+            "type": "adjust_out",
+            "sku_code_snapshot": "UXSKUB51443F5",
+            "sales_model_snapshot": "LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-",
+            "display_name_snapshot": "合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称",
+            "quantity": "2.00",
+            "warehouse": "默认仓",
+            "unit_cost": "2.0000",
+            "reference": "GR-116E77C27D2E4B01",
+            "notes": "冲销采购入库 #1：锁定环境合成回归冲销",
+            "source_type": "reversal",
+            "source_no": "UXPOB51443F5",
+            "is_automatic": true,
+            "is_overage": false,
+            "overage_reason": "",
+            "trade_unit": null,
+            "sku": 1,
+            "supplier_sku": null,
+            "order": null
+          },
+          {
+            "id": 1,
+            "movement_no": "GR-116E77C27D2E4B01",
+            "related_orders": [
+              1
+            ],
+            "related_order_nos": [
+              "UXSOB51443F5"
+            ],
+            "sku_code": "UXSKUB51443F5",
+            "display_name": "合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称",
+            "sales_model": "LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-",
+            "product_name": "合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称",
+            "order_no": "",
+            "type_display": "采购入库",
+            "signed_quantity": "2.00",
+            "overage_quantity": "0.00",
+            "overage_summary": "",
+            "reversal_movement": {
+              "id": 2,
+              "movement_no": "REV-22382E2A095445A9",
+              "movement_date": "2026-11-04",
+              "reason": "冲销采购入库 #1：锁定环境合成回归冲销"
+            },
+            "is_reversed": true,
+            "reversal_status": "已冲销 · REV-22382E2A095445A9",
+            "created_at": "2026-11-04T16:59:49.477450+08:00",
+            "updated_at": "2026-11-04T16:59:49.477468+08:00",
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "movement_date": "2026-11-04",
+            "type": "purchase_in",
+            "sku_code_snapshot": "UXSKUB51443F5",
+            "sales_model_snapshot": "LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-",
+            "display_name_snapshot": "合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称",
+            "quantity": "2.00",
+            "warehouse": "默认仓",
+            "unit_cost": "2.0000",
+            "reference": "UXPOB51443F5",
+            "notes": "已核对型号、数量与外观；仅合格数量入库。",
+            "source_type": "receipt",
+            "source_no": "UXPOB51443F5",
+            "is_automatic": true,
+            "is_overage": false,
+            "overage_reason": "",
+            "trade_unit": null,
+            "sku": 1,
+            "supplier_sku": null,
+            "order": null
+          }
+        ],
+        "purchases": [
+          {
+            "id": 1,
+            "purchase_no": "UXPOB51443F5",
+            "supplier_name": "合成办公供应商 B51443F5",
+            "order_no": "UXSOB51443F5",
+            "order_date": "2026-11-04",
+            "status": "ordered",
+            "status_display": "已下单",
+            "quantity": 10.0,
+            "received_quantity": 0.0
+          }
+        ],
+        "shipments": [],
+        "orders": [
+          {
+            "id": 1,
+            "order_no": "UXSOB51443F5",
+            "customer_name": "合成办公客户 B51443F5",
+            "order_date": "2026-11-04",
+            "status": "confirmed",
+            "status_display": "已确认",
+            "quantity": 10.0,
+            "shipped_quantity": 0.0
+          }
+        ]
+      }
+    }
+  ],
+  "database_after": {
+    "crm_customer": [
+      {
+        "id": 1,
+        "created_at": "2026-11-04 08:57:21.949714",
+        "updated_at": "2026-11-04 08:59:08.702682",
+        "name": "合成办公客户 B51443F5",
+        "code": "UXB51443F5",
+        "country": "DE",
+        "source": "",
+        "status": "customer",
+        "owner": "",
+        "website": "",
+        "address": "",
+        "notes": "隔离浏览器办公验收备注",
+        "next_follow_up": null,
+        "region": "",
+        "owner_profile_id": null
+      }
+    ],
+    "crm_contact": [
+      {
+        "id": 1,
+        "created_at": "2026-11-04 08:57:21.951948",
+        "updated_at": "2026-11-04 08:57:21.951965",
+        "name": "合成联系人",
+        "title": "",
+        "email": "office@example.invalid",
+        "phone": "",
+        "whatsapp": "",
+        "is_primary": 1,
+        "notes": "",
+        "customer_id": 1
+      },
+      {
+        "id": 2,
+        "created_at": "2026-11-04 08:59:18.729473",
+        "updated_at": "2026-11-04 08:59:18.729496",
+        "name": "合成窄屏新联系人",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "whatsapp": "",
+        "is_primary": 0,
+        "notes": "",
+        "customer_id": 1
+      }
+    ],
+    "crm_followup": [
+      {
+        "id": 1,
+        "created_at": "2026-11-04 08:57:21.952937",
+        "updated_at": "2026-11-04 08:57:21.952951",
+        "followed_at": "2026-11-04 08:57:21.952684",
+        "type": "email",
+        "subject": "合成办公跟进",
+        "content": "仅用于隔离工作区验收",
+        "result": "",
+        "next_action": "",
+        "next_follow_up": null,
+        "owner": "",
+        "contact_id": 1,
+        "customer_id": 1,
+        "next_follow_up_mode": "keep"
+      }
+    ],
+    "crm_product": [
+      {
+        "id": 1,
+        "created_at": "2026-11-04 08:57:21.957372",
+        "updated_at": "2026-11-04 08:57:21.957385",
+        "name": "合成长名称灯带及安装规格展示合成长名称灯带及安装规格展示合成长名称灯带及安装规格展示合成长名称灯带及安装规格展示",
+        "code": "UXPB51443F5",
+        "description": "",
+        "status": "active",
+        "category_id": 1,
+        "name_en": "",
+        "sales_model_prefix": null,
+        "hs_code_id": null,
+        "combination_rules": "[]"
+      }
+    ],
+    "crm_purchaseorder": [
+      {
+        "id": 1,
+        "created_at": "2026-11-04 08:57:21.971816",
+        "updated_at": "2026-11-04 09:00:00.187827",
+        "purchase_no": "UXPOB51443F5",
+        "order_date": "2026-11-04",
+        "expected_arrival_date": null,
+        "status": "ordered",
+        "currency": "CNY",
+        "exchange_rate": 1,
+        "notes": "",
+        "order_id": 1,
+        "supplier_id": 1,
+        "additional_costs": "[]",
+        "cost_allocation_version": 0,
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "payment_terms_snapshot": "[{\"label\": \"\\u534f\\u5546\\u5c3e\\u6b3e\", \"ratio\": \"1\", \"due_basis\": \"no_date\", \"offset_days\": 0}]",
+        "historical_only": 0,
+        "supplier_address_snapshot": "",
+        "supplier_contact_name_snapshot": "",
+        "supplier_email_snapshot": "",
+        "supplier_name_snapshot": "合成办公供应商 B51443F5",
+        "supplier_phone_snapshot": ""
+      }
+    ],
+    "crm_purchaseorderitem": [
+      {
+        "id": 1,
+        "quantity": 10,
+        "purchase_order_id": 1,
+        "sku_id": 1,
+        "sku_code_snapshot": "UXSKUB51443F5",
+        "sales_model_snapshot": "LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-",
+        "display_name_snapshot": "合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称",
+        "description_snapshot": "合成长名称灯带及安装规格展示合成长名称灯带及安装规格展示合成长名称灯带及安装规格展示合成长名称灯带及安装规格展示",
+        "supplier_barcode_snapshot": "",
+        "supplier_model_snapshot": "",
+        "supplier_name_snapshot": "合成办公供应商 B51443F5",
+        "supplier_sku_code_snapshot": "",
+        "supplier_sku_id": null,
+        "supplier_characteristics_snapshot": "{}",
+        "trade_quantity": null,
+        "trade_snapshot": "{\"unit\": \"pcs\", \"base_unit\": \"pcs\", \"factor\": \"1\", \"name\": \"\"}",
+        "trade_unit_price": null,
+        "unit_price": 2,
+        "trade_unit_id": null
+      }
+    ],
+    "crm_goodsreceipt": [
+      {
+        "id": 1,
+        "created_at": "2026-11-04 08:59:49.479755",
+        "updated_at": "2026-11-04 09:00:00.186258",
+        "receipt_date": "2026-11-04",
+        "quantity": 2,
+        "unit_cost": 2,
+        "is_overage": 0,
+        "overage_reason": "",
+        "notes": "已核对型号、数量与外观；仅合格数量入库。",
+        "inventory_movement_id": 1,
+        "purchase_item_id": 1,
+        "trade_quantity": null,
+        "trade_snapshot": "{\"base_unit\": \"pcs\", \"unit\": \"pcs\", \"factor\": \"1\", \"name\": \"\"}",
+        "trade_unit_price": null,
+        "trade_unit_id": null,
+        "reversal_inventory_movement_id": 2,
+        "reversed_at": "2026-11-04 09:00:00.186150",
+        "reversal_reason": "锁定环境合成回归冲销",
+        "request_fingerprint": "",
+        "request_key": null
+      }
+    ],
+    "crm_inventorymovement": [
+      {
+        "id": 1,
+        "created_at": "2026-11-04 08:59:49.477450",
+        "updated_at": "2026-11-04 08:59:49.477468",
+        "movement_no": "GR-116E77C27D2E4B01",
+        "movement_date": "2026-11-04",
+        "type": "purchase_in",
+        "quantity": 2,
+        "warehouse": "默认仓",
+        "reference": "UXPOB51443F5",
+        "notes": "已核对型号、数量与外观；仅合格数量入库。",
+        "order_id": null,
+        "sku_id": 1,
+        "is_automatic": 1,
+        "is_overage": 0,
+        "overage_reason": "",
+        "source_no": "UXPOB51443F5",
+        "source_type": "receipt",
+        "sku_code_snapshot": "UXSKUB51443F5",
+        "sales_model_snapshot": "LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-",
+        "display_name_snapshot": "合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称",
+        "supplier_sku_id": null,
+        "trade_quantity": null,
+        "trade_snapshot": "{\"base_unit\": \"pcs\", \"unit\": \"pcs\", \"factor\": \"1\", \"name\": \"\"}",
+        "trade_unit_price": null,
+        "unit_cost": 2,
+        "trade_unit_id": null
+      },
+      {
+        "id": 2,
+        "created_at": "2026-11-04 09:00:00.183104",
+        "updated_at": "2026-11-04 09:00:00.183121",
+        "movement_no": "REV-22382E2A095445A9",
+        "movement_date": "2026-11-04",
+        "type": "adjust_out",
+        "quantity": 2,
+        "warehouse": "默认仓",
+        "reference": "GR-116E77C27D2E4B01",
+        "notes": "冲销采购入库 #1：锁定环境合成回归冲销",
+        "order_id": null,
+        "sku_id": 1,
+        "is_automatic": 1,
+        "is_overage": 0,
+        "overage_reason": "",
+        "source_no": "UXPOB51443F5",
+        "source_type": "reversal",
+        "sku_code_snapshot": "UXSKUB51443F5",
+        "sales_model_snapshot": "LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-LONG-SYNTHETIC-MODEL-",
+        "display_name_snapshot": "合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称合成柔性灯带完整规格及包装名称",
+        "supplier_sku_id": null,
+        "trade_quantity": null,
+        "trade_snapshot": "{\"base_unit\": \"pcs\", \"unit\": \"pcs\", \"factor\": \"1\", \"name\": \"\"}",
+        "trade_unit_price": null,
+        "unit_cost": 2,
+        "trade_unit_id": null
+      }
+    ]
+  }
+}

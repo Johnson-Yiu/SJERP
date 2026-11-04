@@ -1,0 +1,121 @@
+# Integration display copy: trailing whitespace normalized; original source Git bytes are preserved in review-integration-batch-20261104/core-source-raw-logs.zip.
+Baseline: 4388947d70d26bca66ca0bfc76b2383a2fc0d404
+Exit: 1
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/core-workspace-ux-batch-20261104/frontend
+
+ ❯ tests/customer-followup-before.spec.js (8 tests | 8 failed) 1474ms
+   × customer search ignores obsolete success while latest request loads 600ms
+   × customer search ignores obsolete failure while latest request loads 20ms
+   × customers ignores obsolete empty-state probe 184ms
+   × contacts ignores obsolete empty-state probe 109ms
+   × follow-ups ignores obsolete empty-state probe 33ms
+   × obsolete customer next-code response cannot overwrite the current edit form 153ms
+   × obsolete follow-up operator response cannot replace the edited owner 175ms
+   × obsolete follow-up options completion cannot clear the edited attachments 198ms
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  16:13:35
+   Duration  65.21s (transform 8.28s, setup 3.49s, import 9.44s, tests 1.47s, environment 43.73s)
+
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/customer-followup-before.spec.js > customer search ignores obsolete success while latest request loads
+ FAIL  tests/customer-followup-before.spec.js > customer search ignores obsolete failure while latest request loads
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/customer-followup-before.spec.js:39:30
+     37|   else old.reject(new Error('obsolete failure'))
+     38|   await flushPromises()
+     39|   expect(wrapper.vm.loading).toBe(true)
+       |                              ^
+     40|   expect(wrapper.vm.rows).toEqual([])
+     41|   expect(wrapper.vm.loadError).toBe('')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  tests/customer-followup-before.spec.js > customers ignores obsolete empty-state probe
+ FAIL  tests/customer-followup-before.spec.js > contacts ignores obsolete empty-state probe
+ FAIL  tests/customer-followup-before.spec.js > follow-ups ignores obsolete empty-state probe
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/customer-followup-before.spec.js:61:38
+     59|   probe.resolve([{ id: 1 }])
+     60|   await flushPromises()
+     61|   expect(wrapper.vm.allRecordsExist).toBe(false)
+       |                                      ^
+     62| })
+     63| it('obsolete customer next-code response cannot overwrite the current …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  tests/customer-followup-before.spec.js > obsolete customer next-code response cannot overwrite the current edit form
+AssertionError: expected 'OBSOLETE' to be 'CURRENT' // Object.is equality
+
+Expected: "CURRENT"
+Received: "OBSOLETE"
+
+ ❯ tests/customer-followup-before.spec.js:72:32
+     70|   code.resolve({ data: { code: 'OBSOLETE' } })
+     71|   await flushPromises()
+     72|   expect(wrapper.vm.form.code).toBe('CURRENT')
+       |                                ^
+     73|   expect(wrapper.vm.form.owner_profile).toBe(23)
+     74| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  tests/customer-followup-before.spec.js > obsolete follow-up operator response cannot replace the edited owner
+AssertionError: expected '开发身份' to be '历史跟进人' // Object.is equality
+
+Expected: "历史跟进人"
+Received: "开发身份"
+
+ ❯ tests/customer-followup-before.spec.js:83:33
+     81|   operator.resolve({ data: { name: '开发身份' } })
+     82|   await flushPromises()
+     83|   expect(wrapper.vm.form.owner).toBe('历史跟进人')
+       |                                 ^
+     84|   expect(wrapper.vm.form.subject).toBe('当前跟进')
+     85| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  tests/customer-followup-before.spec.js > obsolete follow-up options completion cannot clear the edited attachments
+AssertionError: expected [] to deeply equal [ { id: 11, …(1) } ]
+
+- Expected
++ Received
+
+- [
+-   {
+-     "id": 11,
+-     "original_name": "历史附件.txt",
+-   },
+- ]
++ []
+
+ ❯ tests/customer-followup-before.spec.js:98:42
+     96|   options.resolve([])
+     97|   await flushPromises()
+     98|   expect(wrapper.vm.followUpAttachments).toEqual([attachment])
+       |                                          ^
+     99| })
+    100|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯

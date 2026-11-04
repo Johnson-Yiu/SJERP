@@ -1,0 +1,9 @@
+# Integration display copy: trailing whitespace normalized; original source Git bytes are preserved in review-integration-batch-20261104/core-source-raw-logs.zip.
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/core-workspace-ux-batch-20261104/frontend
+
+
+ Test Files  2 passed (2)
+      Tests  24 passed (24)
+   Start at  17:09:24
+   Duration  6.98s (transform 705ms, setup 601ms, import 1.09s, tests 1.28s, environment 3.51s)

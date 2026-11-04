@@ -1,0 +1,85 @@
+{
+  "python": "3.14.5 (tags/v3.14.5:5607950, May 10 2026, 10:43:50) [MSC v.1944 64 bit (AMD64)]",
+  "dependencies": [
+    {
+      "name": "asgiref",
+      "pinned": "3.13.0",
+      "actual": "3.13.0"
+    },
+    {
+      "name": "bleach",
+      "pinned": "6.4.0",
+      "actual": "6.4.0"
+    },
+    {
+      "name": "Django",
+      "pinned": "6.0.9",
+      "actual": "6.0.9"
+    },
+    {
+      "name": "django-cors-headers",
+      "pinned": "4.9.0",
+      "actual": "4.9.0"
+    },
+    {
+      "name": "dj-database-url",
+      "pinned": "3.1.2",
+      "actual": "3.1.2"
+    },
+    {
+      "name": "djangorestframework",
+      "pinned": "3.18.3",
+      "actual": "3.18.3"
+    },
+    {
+      "name": "et-xmlfile",
+      "pinned": "2.0.0",
+      "actual": "2.0.0"
+    },
+    {
+      "name": "openpyxl",
+      "pinned": "3.1.5",
+      "actual": "3.1.5"
+    },
+    {
+      "name": "Pillow",
+      "pinned": "13.0.0",
+      "actual": "13.0.0"
+    },
+    {
+      "name": "psycopg",
+      "pinned": "3.3.6",
+      "actual": "3.3.6"
+    },
+    {
+      "name": "psycopg-binary",
+      "pinned": "3.3.6",
+      "actual": "3.3.6"
+    },
+    {
+      "name": "pycountry",
+      "pinned": "26.2.16",
+      "actual": "26.2.16"
+    },
+    {
+      "name": "sqlparse",
+      "pinned": "0.6.0",
+      "actual": "0.6.0"
+    },
+    {
+      "name": "typing-extensions",
+      "pinned": "4.16.0",
+      "actual": "4.16.0"
+    },
+    {
+      "name": "tzdata",
+      "pinned": "2026.6",
+      "actual": "2026.6"
+    },
+    {
+      "name": "webencodings",
+      "pinned": "0.6.1",
+      "actual": "0.6.1"
+    }
+  ]
+}

@@ -1,0 +1,376 @@
+# Integration display copy: trailing whitespace normalized; original source Git bytes are preserved in review-integration-batch-20261104/core-source-raw-logs.zip.
+
+> senju-crm-erp@1.0.0 test:unit
+> node --test
+
+✔ bank-fee selection receives fixed synthetic accounts without external configuration (31.4978ms)
+✔ full business suite receives bank-fee synthetic accounts at the standard CI entry (0.2198ms)
+✔ other business selections and infrastructure smoke preserve existing account configuration (2.113ms)
+✔ port allocator returns a free explicit loopback port (55.781ms)
+✔ port preflight rejects an occupied port instead of reusing another server (2.8591ms)
+✔ actual runner fails before creating isolated resources when its API port is occupied (1120.7068ms)
+✔ port preflight rejects duplicate API and Vite assignments (3.3947ms)
+✔ API identity mismatch is rejected before browser tests can proceed (99.3119ms)
+✔ only an existing browser test file can be selected; Playwright service and config overrides are rejected (8.6781ms)
+✔ only allowlisted real API suites receive fixed synthetic fixture seeds (2.0764ms)
+✔ API identity comparison checks run ID, token, SQLite path, and MEDIA_ROOT (0.8646ms)
+✔ a real Vite /api proxy to the wrong database and MEDIA_ROOT is rejected before Playwright (6748.9299ms)
+✔ browser CI invokes the isolated suite and keeps run evidence under an isolated root (3.9305ms)
+✔ SQLite URL preserves an absolute platform path for Django parsing (0.352ms)
+✔ cleanup removes only a marked run directory under system temp (10.3717ms)
+✔ cleanup refuses an ownership marker belonging to another run (7.976ms)
+✖ two independent worktree runtimes can start concurrently without sharing ports or data (120009.8149ms)
+✔ formatApiError preserves field and nested item context (1.4183ms)
+✔ apiErrorMessage uses understandable network and server fallbacks (0.2851ms)
+✔ API errors retain status, parsed data and the original response (4.708ms)
+✔ API parses Blob JSON errors before formatting (3.8027ms)
+✔ aggregated lists include subsequent pages and keep filters (0.8652ms)
+✔ listAll handles non-paginated array actions in one request (0.4374ms)
+✔ failed later pages never return a misleading partial total (0.3002ms)
+✔ category multiselect supports independent leaves, parent coverage and removal (77.1546ms)
+✔ contract adjustment history renders the backend status display (148.0502ms)
+✔ order workbench exposes retained contract amount adjustments (134.5569ms)
+✔ order workbench exposes shipment history and reversal flow (1.6412ms)
+✔ batch over-shipment requires a line-specific reason and one explicit batch warning before submitting (1.573ms)
+✔ order workbench exposes explicit packing plan generation and snapshot display (2.5064ms)
+✔ packing plan loading never generates a plan implicitly (2.2788ms)
+✔ order workbench exposes procurement shortage, draft coverage, generation and linked purchases (1.6121ms)
+✔ lead-time input reserves room for ten digits (70.9637ms)
+✔ order draft contains one order-level tail-goods policy selector (1.6569ms)
+✔ order draft is always a draft and explains that confirmation performs formal actions (1.4099ms)
+✔ order draft does not ask for or submit a backend-generated order number (2.7719ms)
+✔ procurement preview groups by supplier and currency and validates user inputs (69.5877ms)
+✔ SKU candidate filters combine values with OR and attributes with AND, including legacy keys (71.319ms)
+✔ quote detail exposes only valid status actions for draft and sent quotes (408.3314ms)
+✔ status actions call the API, reload quote workbench, and refresh the quote list (2.7156ms)
+✔ terminal quote states render no status transition controls (1.2267ms)
+✔ only non-terminal quotes expose the conversion-to-order actions (2.1463ms)
+✔ saved and revised PI previews use the currency in the official totals DTO (3.5921ms)
+✔ SKU picker synchronizes multi-selection into quote line items (370.8509ms)
+✔ SKU picker keeps a fixed height while search results scroll (2.0514ms)
+✔ quote editor lets users save without exporting the Excel file (1.344ms)
+✔ quote editor keeps every footer action and gives save actions full rows on narrow screens (2.3908ms)
+✔ quote editor blocks a validity date earlier than the quote date (1.2669ms)
+✔ quote status is read-only and cannot be selected while creating or revising (1.3423ms)
+✔ related create modal supports inherited relationships (227.0201ms)
+✔ related quote creation seeds the customer and keeps it locked in create mode (3.9299ms)
+✔ detail relation context carries parent customer and contact (1.6438ms)
+✔ follow-up rows open the shared detailed follow-up view (1.6074ms)
+✔ follow-up creation links days-after input to the next follow-up date (1.24ms)
+✔ related create payload serializes empty optional dates as null (1.372ms)
+✔ quote save stops on MOQ violation or unavailable validation service (232.364ms)
+✔ valid MOQ check allows quote creation and ignores stale check responses (3.0898ms)
+✔ sales-rule editor explains that MOQ uses the SKU base quantity (1.8662ms)
+✔ calendar picker is opened only from its calendar button (120.5343ms)
+✔ date parts remain compact without individual outlines (2.0172ms)
+✔ time parts are grouped into a compact hour-minute control (1.8941ms)
+✔ summary cards provide a reusable, compact metric layout (106.4929ms)
+✔ supplier allocation metrics follow the selected SupplierSKU rather than the first source (384.7839ms)
+✔ supplier filtering and select-all retain selections outside current results (381.6096ms)
+✔ business pages use the shared dialog infrastructure instead of browser dialogs (449.4407ms)
+✔ the shared host exposes DOM-accessible controls for automation (1.3442ms)
+✔ date shortcuts handle year and leap-month boundaries in local time (3.0412ms)
+✔ embedded block overrides do not mutate reusable defaults (0.2779ms)
+✔ bank cash facts use an independent report source and date basis (0.2742ms)
+✔ no settlement selection is JSON null, never zero or NaN (0.9252ms)
+✔ selected settlement keeps its positive integer identity (0.1827ms)
+✔ category cascade merges ancestors and retains same-name leaves under different parents (1.2273ms)
+✔ parent filtering includes descendants without matching similar names or other branches (0.373ms)
+✔ customer lifecycle keys use the canonical Chinese labels (2.0274ms)
+✔ unknown customer lifecycle keys keep their safe fallback (0.241ms)
+✔ legacy cash block IDs and custom configurations retain their query contract (1.8445ms)
+✔ addDays calculates an expected ship date from the order date (6.539ms)
+✔ daysBetween derives the lead time from an expected ship date (0.3448ms)
+✔ date helpers leave incomplete dates empty (0.198ms)
+✔ order tasks draft debt matrix (3.4241ms)
+✔ order tasks cancelled debt matrix (0.1588ms)
+✔ order tasks confirmed debt matrix (0.3351ms)
+✔ order tasks production debt matrix (0.1682ms)
+✔ order tasks shipped debt matrix (0.1303ms)
+✔ order tasks completed debt matrix (0.1203ms)
+✔ completed settled has no tasks, refund dynamically restores only receipt (0.2195ms)
+✔ masked, absent and denied financial amounts never fall back to protected order balance (0.2126ms)
+✔ unknown no_plans is review, never confirmed zero (0.3265ms)
+✔ unknown review is review, never confirmed zero (0.2299ms)
+✔ page identity stays on the same path across transient query changes (0.9935ms)
+✔ list query data excludes modal and detail actions while retaining business context (11.6422ms)
+✔ closing a route modal removes action keys and preserves all context query values (0.4832ms)
+✔ SKU labels come from records with a matching numeric foreign key and clearing preserves unrelated route state (0.355ms)
+✔ preview filters cartesian combinations by all rules and normalizes units (2.4368ms)
+✔ multi-trigger, allowed values, prohibition and empty rules (0.4703ms)
+✔ saved base quantity loads as transaction quantity and sends edited trade quantity (1.249ms)
+✔ switching to base unit clears stale transaction values (0.2418ms)
+✔ receipt cost is interpreted per selected package (0.3097ms)
+✔ SKU selection preserves multiple packaging lines for the same SKU (2.7653ms)
+✔ cash event page keeps the backend two-step and stable-key flow (481.8672ms)
+✔ cash event page keeps bank facts separate from legacy receipt and settlement data (1.7381ms)
+✔ independent fees offer an optional settlement and serialize no selection as null (2.5693ms)
+✔ creating a category attribute updates the local category state without reloading the page (232.4651ms)
+✔ category template explains that published SKU plans do not auto-mutate (1.6563ms)
+✔ quote list renders a recursive parent-child tree with classified document icons (244.6473ms)
+✔ quote tree actions preserve detail, edit, and Excel export entry points (1.0939ms)
+✔ quote list provides summary metrics, filters, and newest-first sorting (1.0356ms)
+✔ every quote row opens detail and dedicated expansion stops propagation (1.3228ms)
+✔ orders reuse the compact summary cards used by the quotation desk (1.2049ms)
+✔ order editor does not expose manual lifecycle status changes (1.1061ms)
+✔ order creation leaves number generation to the backend and keeps saved numbers read-only (1.0533ms)
+✔ order draft edits use PUT, close and refresh on success, and surface failed saves (1.3619ms)
+✔ order editor reports an invalid non-positive line quantity before sending a request (1.6692ms)
+✔ order list limits edit and delete operations to drafts (1.2972ms)
+✔ formal order history prefers the saved party snapshot and labels the live master reference (2.3129ms)
+✔ quote history prefers the saved buyer snapshot and never falls back to the live customer name (1.8758ms)
+✔ editing from the order workbench reloads the current order before opening the editor (0.7624ms)
+✔ document deep links initialize and dynamically synchronize quote and order details (1.7538ms)
+✔ closing a document detail removes only detail and preserves remaining route state (1.0853ms)
+✔ opening list rows pushes their detail id into the current route for refresh and history (1.5118ms)
+✔ invalid document ids cannot break the list route and large not-found ids remain loadable as details (0.2715ms)
+✔ finance dashboard keeps book reference and adds confirmed bank cash facts separately (232.6372ms)
+✔ payable drill keeps the dashboard purchase-only permission boundary (1.696ms)
+✔ history order entry uses isolated endpoints and keeps the analysis-only label visible (116.4394ms)
+✔ history order entry preserves the supplied historical date and does not expose formal actions (1.2414ms)
+✔ history page keeps unauthorized optional requests from blanking authorized data (1.8442ms)
+✔ history page does not offer an entry form without its master-data permissions (1.0859ms)
+✔ history navigation accepts either sales or purchasing view permission (1.1369ms)
+✔ history analysis renders permission-filtered detail tables with local narrow-screen scrolling (0.8198ms)
+✔ inventory page opens a SKU detail panel with linked business records (82.0126ms)
+✔ inventory headers toggle sortable columns (1.194ms)
+✔ packaging list labels physical dimensions and tare weight with their units (165.8602ms)
+✔ packaging page presents tail-goods policies and no mixed-pack setting (1.3207ms)
+✔ packaging form keeps dimensions in one row and shows policy help as a floating panel (2.127ms)
+✔ editing linked template physical data requires verification invalidation confirmation (1.888ms)
+✔ SKU-bearing product prefix changes use preview and explicit apply endpoints (148.2822ms)
+✔ ordinary product data retains the normal save path (1.5283ms)
+✔ purchase desk exposes retained contract amount adjustment history (240.8623ms)
+✔ purchase desk connects creation, receipt and supplier payment actions (2.158ms)
+✔ purchase desk exposes receipt history and the reversal flow (1.9336ms)
+✔ purchase desk labels ordered, received, remaining and overage quantities separately (1.1689ms)
+✔ purchase desk keeps drafts editable and separates placement from draft save (1.9904ms)
+✔ formal purchase history prefers the saved supplier snapshot and exposes its party details (1.9926ms)
+✔ order fulfillment purchase history prefers formal supplier snapshots (1.5077ms)
+✔ purchase creation leaves number generation to the backend and never submits a number (1.6637ms)
+✔ missing supplier source is described as optional without implying automatic creation (1.3395ms)
+✔ purchase price reference only carries across matching currencies and resets stale prices (1.0245ms)
+✔ cost allocation loads minimal cross-order candidates through procurement permission (1.6817ms)
+✔ purchase editor aggregates maintained MOQ in base units without blocking draft save (0.8933ms)
+✔ purchase placement keeps low MOQ as a reasoned soft exception and displays retained evidence (1.7954ms)
+✔ resource payload serializes empty optional dates as null (480.7503ms)
+✔ transaction resource distinguishes book reference from confirmed bank RMB cash (0.3426ms)
+✔ customer projections are visible but not editable customer fields (3.8376ms)
+✔ customer detail shortcuts require the target module action permission (1.5514ms)
+✔ customer, product and SKU details expose a permission-gated report-center shortcut with a safe return path (1.528ms)
+✔ automatic inventory movements are read-only while manual movements are reversed, not deleted (4.2386ms)
+✔ follow-up history summary is distinguished from the current dashboard obligation (1.1209ms)
+✔ customer ownership uses scoped employee options and sends an explicit clear as null (2.118ms)
+✔ ISS-049 reuses URL-backed quick filters for customer and follow-up lists (2.9952ms)
+✔ SKU editor exposes supplier source maintenance through the API (200.6371ms)
+✔ SKU editor canonicalizes abbreviation keys and mirrors backend value formatting (1.4276ms)
+✔ SKU creation relies on generated Sales Model and editing preserves the saved model (2.3875ms)
+✔ editing one SKU keeps its packaging detail when the computed preview key changes (0.4569ms)
+✔ saved parameter suggestions include inherited categories and legacy keys independent of search rows (3.8808ms)
+✔ create and edit include packaging in their single SKU database request (4.6854ms)
+✔ parameter edits submit the explicitly saved Sales Model instead of the generated preview (2.0951ms)
+✔ image failure retains saved SKU IDs for independent retry and reports database success (3.7988ms)
+✔ nested packaging validation messages remain readable (2.3309ms)
+✔ main list pages reuse the shared summary cards (43.9351ms)
+✔ dashboard due follow-ups preserve current-due context when opening the list or a record (136.6418ms)
+✔ finance due contracts navigate by their returned record IDs (2.4946ms)
+✔ import page exposes only supported types and explains insert-only finance imports (2.1852ms)
+✔ import page uses preview and explicit confirmation before a write (1.5813ms)
+✔ top bar has no fake search or notification controls and uses current operator initials (0.9311ms)
+✖ core management lists and selectors use the tested all-pages loader (102.0984ms)
+✔ trade-unit page preserves deactivate and default-source actions (70.7653ms)
+✔ transaction form distinguishes refunds from order expenses (93.0129ms)
+ℹ tests 177
+ℹ suites 0
+ℹ pass 175
+ℹ fail 1
+ℹ cancelled 1
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 154606.5125
+
+✖ failing tests:
+
+test at infrastructure-tests\runner-validation.test.mjs:410:1
+✖ two independent worktree runtimes can start concurrently without sharing ports or data (120009.8149ms)
+  'test timed out after 120000ms'
+
+test at src\views\TaskK1Pagination.test.js:7:1
+✖ core management lists and selectors use the tested all-pages loader (102.0984ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /rows\.value = await listAll\(`\/\$\{props\.type\}\//. Input:
+
+  '<script setup>\r\n' +
+    "import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'\r\n" +
+    '\r\n' +
+    "import { defaultExchangeRate, skuDefaultPrice, currencyHint, salesRateError, changeDocumentCurrency } from '../utils/documentCurrency'\r\n" +
+    "import { compactDecimalInput } from '../utils/decimalInput'\r\n" +
+    "import TradeUnitPicker from '../components/TradeUnitPicker.vue'\r\n" +
+    "import { fromTradeLine, tradePayload, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'\r\n" +
+    "import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'\r\n" +
+    "import { useRoute, useRouter } from 'vue-router'\r\n" +
+    "import { Plus, Search, Pencil, Trash2, FileX2, X, MinusCircle, Download, ChevronDown, ChevronRight, FolderOpen, FileText, FilePenLine, Eye, Clock3, CircleCheck, CircleDollarSign, RotateCcw } from 'lucide-vue-next'\r\n" +
+    "import { api, downloadQuoteExport, listAll } from '../api'\r\n" +
+    "import { apiErrorMessage } from '../utils/apiErrors.js'\r\n" +
+    "import { confirmDialog } from '../dialogs'\r\n" +
+    "import QuoteDetailModal from '../components/QuoteDetailModal.vue'\r\n" +
+    "import QuoteEditorModal from '../components/QuoteEditorModal.vue'\r\n" +
+    "import OrderDraftModal from '../components/OrderDraftModal.vue'\r\n" +
+    "import SkuPickerPanel from '../components/SkuPickerPanel.vue'\r\n" +
+    "import OrderDetailModal from '../components/OrderDetailModal.vue'\r\n" +
+    "import SegmentedDateInput from '../components/SegmentedDateInput.vue'\r\n" +
+    "import SummaryCards from '../components/SummaryCards.vue'\r\n" +
+    "import PageLoadState from '../components/PageLoadState.vue'\r\n" +
+    "import ListEmptyState from '../components/ListEmptyState.vue'\r\n" +
+    "import SkuContextBanner from '../components/SkuContextBanner.vue'\r\n" +
+    "import { deliveryState, receivableNeedsReview } from '../utils/orderOverview.js'\n" +
+    "import { addDays, daysBetween } from '../utils/orderDate'\r\n" +
+    "import { clearModalRoute, modalOrigin } from '../utils/modalNavigation'\r\n" +
+    "import { orderDetailLocation, quoteDetailLocation, workbenchCloseLocation } from '../utils/detailNavigation'\r\n" +
+    "import { documentDetailState, withDocumentDetailQuery, withoutDocumentDetailQuery } from '../utils/documentDetailRoute'\r\n" +
+    "import { routeDataQuery, routeDataQuerySignature } from '../utils/routePageState'\r\n" +
+    "import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuContext'\r\n" +
+    "import { useAccessControl } from '../accessControl'\r\n" +
+    '\r\n' +
+    'const props = defineProps({ type: String })\r\n' +
+    'const { can } = useAccessControl()\r\n' +
+    'const route = useRoute()\r\n' +
+    'const router = useRouter()\r\n' +
+    "const isOrder = computed(() => props.type === 'orders')\r\n" +
+    "const accessModule = computed(() => isOrder.value ? 'orders' : 'quotes')\r\n" +
+    'const inheritedCustomer = computed(() => isOrder.value && Boolean(route.query.customer))\r\n' +
+    'const copy = computed(() => isOrder.value ? {\r\n' +
+    "  title: '订单管理', description: '管理销售订单、履约与回款。', no: 'order_no', noLabel: '订单号', date: 'order_date', dateLabel: '订单日期', statuses: { draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }\r\n" +
+    '} : {\r\n' +
+    "  title: '报价管理', description: '管理报价、修订版及转单进度。', no: 'quote_no', noLabel: '报价单号', date: 'quote_date', dateLabel: '创建时间', statuses: { draft: '草稿', sent: '已发送', accepted: '已接受', rejected: '已拒绝', expired: '已过期' }\r\n" +
+    '})\r\n' +
+    '\r\n' +
+    'const rows = ref([]), customers = ref([]), skus = ref([]), quotes = ref([])\r\n' +
+    "const loading = ref(true), hasLoaded = ref(false), loadError = ref(''), allRecordsExist = ref(false), saving = ref(false), open = ref(false), editingId = ref(null), query = ref(typeof route.query.search === 'string' ? route.query.search : '')\r\n" +
+    'const optionErrors = reactive({}), optionLoaded = reactive({}), optionLoading = ref(false)\r\n' +
+    "const quoteStatusFilter = computed(() => typeof route.query.status === 'string' ? route.query.status : '')\r\n" +
+    "const quoteCustomerFilter = computed(() => typeof route.query.customer === 'string' ? route.query.customer : '')\r\n" +
+    "const quoteSort = computed(() => typeof route.query.ordering === 'string' ? route.query.ordering : '-updated_at')\r\n" +
+    "const orderStatusFilter = computed(() => typeof route.query.status === 'string' ? route.query.status : '')\r\n" +
+    "const orderTodoFilter = computed(() => typeof route.query.todo === 'string' ? route.query.todo : '')\r\n" +
+    'const hasSkuContext = computed(() => isOrder.value && Boolean(skuContextId(route.query.sku)))\r\n' +
+    'const activeSkuContextLabel = computed(() => skuContextLabel(rows.value, route.query.sku))\r\n' +
+    'const quoteDetailId = ref(null), orderDetailId = ref(null)\r\n' +
+    'const returnToOrderDetailId = ref(null)\r\n' +
+    'const orderWorkbenchRefresh = ref(0)\r\n' +
+    'const quoteEditorOpen = ref(false), quoteEditorQuote = ref(null)\r\n' +
+    'const orderDraft = ref(null), workbenchRefresh = ref(0)\r\n' +
+    "const orderLeadTimeDays = ref('')\r\n" +
+    'const expandedQuoteNodes = ref(new Set())\r\n' +
+    "const toast = reactive({ show: false, message: '', error: false })\r\n" +
+    'const form = reactive({})\r\n' +
+    'const guard = useUnsavedChangesGuard({ data: () => form, enabled: () => open.value && isOrder.value, busy: () => isOrder.value && open.value && saving.value })\r\n' +
+    "const activeSkuId = ref('')\r\n" +
+    'const sourceQuoteLoading = ref(false)\r\n' +
+    'let sourceQuoteRequest = 0\r\n' +
+    'let freshOrderDefaults = {}\r\n' +
+    "const eligibleSourceQuotes = computed(() => quotes.value.filter(q => ['draft', 'sent', 'accepted'].includes(q.status)))\r\n" +
+    'const routeActionOpen = ref(false)\r\n' +
+    'let routeActionVersion = 0\r\n' +
+    'let timer\r\n' +
+    'const hasDocumentFilters = computed(() => Boolean(query.value || (isOrder.value ? orderStatusFilter.value || orderTodoFilter.value : quoteStatusFilter.value || quoteCustomerFilter.value)))\r\n' +
+    'const filteredDocumentEmpty = computed(() => hasDocumentFilters.value && allRecordsExist.value)\r\n' +
+    '\r\n' +
+    'function fresh() {\r\n' +
+    '  sourceQuoteRequest += 1\r\n' +
+    '  sourceQuoteLoading.value = false\r\n' +
+    "  const now = new Date(), y = now.getFullYear(), m = String(now.getMonth() + 1).padStart(2, '0'), d = String(now.getDate()).padStart(2, '0')\r\n" +
+    '  Object.keys(form).forEach(k => delete form[k])\r\n' +
+    "  activeSkuId.value = ''\r\n" +
+    "  Object.assign(form, { customer: '', ...(isOrder.value ? {} : { quote_no: '' }), [copy.value.date]: `${y}-${m}-${d}`, status: 'draft', currency: 'USD', exchange_rate: '7.2', shipping_fee: 0, discount: 0, notes: '', items: [] })\r\n" +
+    '  if (isOrder.value) {\r\n' +
+    "    Object.assign(form, { quote: '', expected_ship_date: '' })\r\n" +
+    "    orderLeadTimeDays.value = ''\r\n" +
+    "    freshOrderDefaults = Object.fromEntries(['order_date', 'expected_ship_date', 'currency', 'exchange_rate'].map(key => [key, form[key]]))\r\n" +
+    '  }\r\n' +
+    "  else form.valid_until = ''\r\n" +
+    '}\r\n' +
+    'function notify(message, error = false) { Object.assign(toast, { show: true, message, error }); setTimeout(() => toast.show = false, 2800) }\r\n' +
+    'let orderListRequest = 0\r\n' +
+    'async function load() {\r\n' +
+    '  const request = ++orderListRequest\r\n' +
+    '  const orderRequest = isOrder.value\r\n' +
+    '  const resource = props.type\r\n' +
+    '  const isCurrent = () => (!orderRequest && !isOrder.value) || (request === orderListRequest && props.type === resource)\r\n' +
+    '  loading.value = true\r\n' +
+    "  loadError.value = ''\r\n" +
+    '  try {\r\n' +
+    '    const quoteParams = !isOrder.value ? { status: quoteStatusFilter.value, customer: quoteCustomerFilter.value, ordering: quoteSort.value } : {}\r\n' +
+    "    const result = await listAll(`/${resource}/`, { params: { ...routeDataQuery(route.query), search: route.query.search || '', ...quoteParams } })\r\n" +
+    '    if (!isCurrent()) return\r\n' +
+    '    rows.value = result\r\n' +
+    '    hasLoaded.value = true\r\n' +
+    '    allRecordsExist.value = rows.value.length > 0\r\n' +
+    '    if (!rows.value.length && hasDocumentFilters.value) {\r\n' +
+    '      try {\r\n' +
+    '        const allRows = await listAll(`/${resource}/`)\r\n' +
+    '        if (isCurrent()) allRecordsExist.value = allRows.length > 0\r\n' +
+    '      } catch { if (isCurrent()) allRecordsExist.value = false }\r\n' +
+    '    }\r\n' +
+    '    if (!isCurrent()) return\r\n' +
+    '    const visibleQuoteIds = new Set(rows.value.map(row => row.id))\r\n' +
+    '    expandedQuoteNodes.value = new Set([...expandedQuoteNodes.value].filter(id => visibleQuoteIds.has(id)))\r\n' +
+    '  } catch (e) { if (isCurrent()) loadError.value = apiErrorMessage(e) } finally { if (isCurrent()) loading.value = false }\r\n' +
+    '}\r\n' +
+    'let customerOptionsPromise\r\n' +
+    'function loadCustomerOptions() {\r\n' +
+    "  if (!customerOptionsPromise) customerOptionsPromise = listAll('/customers/').then(result => {\r\n" +
+    '    customers.value = result\r\n' +
+    '    optionLoaded.customers = true\r\n' +
+    '    delete optionErrors.customers\r\n' +
+    '    return result\r\n' +
+    '  }).catch(error => { customerOptionsPromise = null; optionErrors.customers = `客户资料加载失败：${apiErrorMessage(error)}`; throw error })\r\n' +
+    '  return customerOptionsPromise\r\n' +
+    '}\r\n' +
+    'function loadQuoteCustomerOptions() {\r\n' +
+    '  if (!isOrder.value) void loadCustomerOptions().catch(() => {})\r\n' +
+    '}\r\n' +
+    'async function loadOptions() {\r\n' +
+    '  optionLoading.value = true\r\n' +
+    '  const tasks = [\r\n' +
+    "    ['customers', '客户', loadCustomerOptions],\r\n" +
+    "    ['skus', 'SKU', () => listAll('/skus/').then(items => { skus.value = items; optionLoaded.skus = true; delete optionErrors.skus })],\r\n" +
+    '  ]\r\n' +
+    "  if (isOrder.value) tasks.push(['quotes', '报价', () => listAll('/quotes/').then(items => { quotes.value = items; optionLoaded.quotes = true; delete optionErrors.quotes })])\r\n" +
+    '  const results = await Promise.all(tasks.map(async ([key, label, task]) => {\r\n' +
+    '    try { await task(); return true }\r\n' +
+    '    catch (error) { optionErrors[key] ||= `${label}资料加载失败：${apiErrorMessage(error)}`; return false }\r\n' +
+    '  }))\r\n' +
+    '  optionLoading.value = false\r\n' +
+    '  return results.every(Boolean)\r\n' +
+    '}\r\n' +
+    'async function create({ isCurrent = () => true } = {}) {\r\n' +
+    "  if (!can(accessModule.value, 'create')) return\r\n" +
+    '  if (!isOrder.value) {\r\n' +
+    '    if (!await loadOptions()) return\r\n' +
+    '    if (!isCurrent()) return\r\n' +
+    '    quoteEditorQuote.value = route.query.customer ? { customer: Number(route.query.customer) } : null\r\n' +
+    '    quoteEditorOpen.value = true\r\n' +
+    '    return\r\n' +
+    '  }\r\n' +
+    '  returnToOrderDetailId.value = null\r\n' +
+    '  editingId.value = null; fresh()\r\n' +
+    "  form.customer = route.query.customer ? Number(route.query.customer) : ''\r\n" +
+    '  if (await loadOptions() && isCurrent()) { guard.markClean(); open.value = true }\r\n' +
+    '}\r\n' +
+    'async function edit(row, { closeDetail = true, isCurrent = () => true } = {}) {\r\n' +
+    "  if (!can(accessModule.value, 'update')) return\r\n" +
+    '  if (closeDetail) await closeDocumentDetail()\r\n' +
+    '  if (!isOrder.value) {\r\n' +
+    '    if (!await loadOptions()) return\r\n' +
+    '    if (!isCurrent())'... 41732 more characters
+
+      at TestContext.<anonymous> (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/core-workspace-ux-batch-20261104/frontend/src/views/TaskK1Pagination.test.js:21:10)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "<script setup>\r\nimport { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'\r\n\r\nimport { defaultExchangeRate, skuDefaultPrice, currencyHint, salesRateError, changeDocumentCurrency } from '../utils/documentCurrency'\r\nimport { compactDecimalInput } from '../utils/decimalInput'\r\nimport TradeUnitPicker from '../components/TradeUnitPicker.vue'\r\nimport { fromTradeLine, tradePayload, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'\r\nimport { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'\r\nimport { useRoute, useRouter } from 'vue-router'\r\nimport { Plus, Search, Pencil, Trash2, FileX2, X, MinusCircle, Download, ChevronDown, ChevronRight, FolderOpen, FileText, FilePenLine, Eye, Clock3, CircleCheck, CircleDollarSign, RotateCcw } from 'lucide-vue-next'\r\nimport { api, downloadQuoteExport, listAll } from '../api'\r\nimport { apiErrorMessage } from '../utils/apiErrors.js'\r\nimport { confirmDialog } from '../dialogs'\r\nimport QuoteDetailModal from '../components/QuoteDetailModal.vue'\r\nimport QuoteEditorModal from '../components/QuoteEditorModal.vue'\r\nimport OrderDraftModal from '../components/OrderDraftModal.vue'\r\nimport SkuPickerPanel from '../components/SkuPickerPanel.vue'\r\nimport OrderDetailModal from '../components/OrderDetailModal.vue'\r\nimport SegmentedDateInput from '../components/SegmentedDateInput.vue'\r\nimport SummaryCards from '../components/SummaryCards.vue'\r\nimport PageLoadState from '../components/PageLoadState.vue'\r\nimport ListEmptyState from '../components/ListEmptyState.vue'\r\nimport SkuContextBanner from '../components/SkuContextBanner.vue'\r\nimport { deliveryState, receivableNeedsReview } from '../utils/orderOverview.js'\nimport { addDays, daysBetween } from '../utils/orderDate'\r\nimport { clearModalRoute, modalOrigin } from '../utils/modalNavigation'\r\nimport { orderDetailLocation, quoteDetailLocation, workbenchCloseLocation } from '../utils/detailNavigation'\r\nimport { documentDetailState, withDocumentDetailQuery, withoutDocumentDetailQuery } from '../utils/documentDetailRoute'\r\nimport { routeDataQuery, routeDataQuerySignature } from '../utils/routePageState'\r\nimport { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuContext'\r\nimport { useAccessControl } from '../accessControl'\r\n\r\nconst props = defineProps({ type: String })\r\nconst { can } = useAccessControl()\r\nconst route = useRoute()\r\nconst router = useRouter()\r\nconst isOrder = computed(() => props.type === 'orders')\r\nconst accessModule = computed(() => isOrder.value ? 'orders' : 'quotes')\r\nconst inheritedCustomer = computed(() => isOrder.value && Boolean(route.query.customer))\r\nconst copy = computed(() => isOrder.value ? {\r\n  title: '订单管理', description: '管理销售订单、履约与回款。', no: 'order_no', noLabel: '订单号', date: 'order_date', dateLabel: '订单日期', statuses: { draft: '草稿', confirmed: '已确认', production: '生产中', shipped: '已发货', completed: '已完成', cancelled: '已取消' }\r\n} : {\r\n  title: '报价管理', description: '管理报价、修订版及转单进度。', no: 'quote_no', noLabel: '报价单号', date: 'quote_date', dateLabel: '创建时间', statuses: { draft: '草稿', sent: '已发送', accepted: '已接受', rejected: '已拒绝', expired: '已过期' }\r\n})\r\n\r\nconst rows = ref([]), customers = ref([]), skus = ref([]), quotes = ref([])\r\nconst loading = ref(true), hasLoaded = ref(false), loadError = ref(''), allRecordsExist = ref(false), saving = ref(false), open = ref(false), editingId = ref(null), query = ref(typeof route.query.search === 'string' ? route.query.search : '')\r\nconst optionErrors = reactive({}), optionLoaded = reactive({}), optionLoading = ref(false)\r\nconst quoteStatusFilter = computed(() => typeof route.query.status === 'string' ? route.query.status : '')\r\nconst quoteCustomerFilter = computed(() => typeof route.query.customer === 'string' ? route.query.customer : '')\r\nconst quoteSort = computed(() => typeof route.query.ordering === 'string' ? route.query.ordering : '-updated_at')\r\nconst orderStatusFilter = computed(() => typeof route.query.status === 'string' ? route.query.status : '')\r\nconst orderTodoFilter = computed(() => typeof route.query.todo === 'string' ? route.query.todo : '')\r\nconst hasSkuContext = computed(() => isOrder.value && Boolean(skuContextId(route.query.sku)))\r\nconst activeSkuContextLabel = computed(() => skuContextLabel(rows.value, route.query.sku))\r\nconst quoteDetailId = ref(null), orderDetailId = ref(null)\r\nconst returnToOrderDetailId = ref(null)\r\nconst orderWorkbenchRefresh = ref(0)\r\nconst quoteEditorOpen = ref(false), quoteEditorQuote = ref(null)\r\nconst orderDraft = ref(null), workbenchRefresh = ref(0)\r\nconst orderLeadTimeDays = ref('')\r\nconst expandedQuoteNodes = ref(new Set())\r\nconst toast = reactive({ show: false, message: '', error: false })\r\nconst form = reactive({})\r\nconst guard = useUnsavedChangesGuard({ data: () => form, enabled: () => open.value && isOrder.value, busy: () => isOrder.value && open.value && saving.value })\r\nconst activeSkuId = ref('')\r\nconst sourceQuoteLoading = ref(false)\r\nlet sourceQuoteRequest = 0\r\nlet freshOrderDefaults = {}\r\nconst eligibleSourceQuotes = computed(() => quotes.value.filter(q => ['draft', 'sent', 'accepted'].includes(q.status)))\r\nconst routeActionOpen = ref(false)\r\nlet routeActionVersion = 0\r\nlet timer\r\nconst hasDocumentFilters = computed(() => Boolean(query.value || (isOrder.value ? orderStatusFilter.value || orderTodoFilter.value : quoteStatusFilter.value || quoteCustomerFilter.value)))\r\nconst filteredDocumentEmpty = computed(() => hasDocumentFilters.value && allRecordsExist.value)\r\n\r\nfunction fresh() {\r\n  sourceQuoteRequest += 1\r\n  sourceQuoteLoading.value = false\r\n  const now = new Date(), y = now.getFullYear(), m = String(now.getMonth() + 1).padStart(2, '0'), d = String(now.getDate()).padStart(2, '0')\r\n  Object.keys(form).forEach(k => delete form[k])\r\n  activeSkuId.value = ''\r\n  Object.assign(form, { customer: '', ...(isOrder.value ? {} : { quote_no: '' }), [copy.value.date]: `${y}-${m}-${d}`, status: 'draft', currency: 'USD', exchange_rate: '7.2', shipping_fee: 0, discount: 0, notes: '', items: [] })\r\n  if (isOrder.value) {\r\n    Object.assign(form, { quote: '', expected_ship_date: '' })\r\n    orderLeadTimeDays.value = ''\r\n    freshOrderDefaults = Object.fromEntries(['order_date', 'expected_ship_date', 'currency', 'exchange_rate'].map(key => [key, form[key]]))\r\n  }\r\n  else form.valid_until = ''\r\n}\r\nfunction notify(message, error = false) { Object.assign(toast, { show: true, message, error }); setTimeout(() => toast.show = false, 2800) }\r\nlet orderListRequest = 0\r\nasync function load() {\r\n  const request = ++orderListRequest\r\n  const orderRequest = isOrder.value\r\n  const resource = props.type\r\n  const isCurrent = () => (!orderRequest && !isOrder.value) || (request === orderListRequest && props.type === resource)\r\n  loading.value = true\r\n  loadError.value = ''\r\n  try {\r\n    const quoteParams = !isOrder.value ? { status: quoteStatusFilter.value, customer: quoteCustomerFilter.value, ordering: quoteSort.value } : {}\r\n    const result = await listAll(`/${resource}/`, { params: { ...routeDataQuery(route.query), search: route.query.search || '', ...quoteParams } })\r\n    if (!isCurrent()) return\r\n    rows.value = result\r\n    hasLoaded.value = true\r\n    allRecordsExist.value = rows.value.length > 0\r\n    if (!rows.value.length && hasDocumentFilters.value) {\r\n      try {\r\n        const allRows = await listAll(`/${resource}/`)\r\n        if (isCurrent()) allRecordsExist.value = allRows.length > 0\r\n      } catch { if (isCurrent()) allRecordsExist.value = false }\r\n    }\r\n    if (!isCurrent()) return\r\n    const visibleQuoteIds = new Set(rows.value.map(row => row.id))\r\n    expandedQuoteNodes.value = new Set([...expandedQuoteNodes.value].filter(id => visibleQuoteIds.has(id)))\r\n  } catch (e) { if (isCurrent()) loadError.value = apiErrorMessage(e) } finally { if (isCurrent()) loading.value = false }\r\n}\r\nlet customerOptionsPromise\r\nfunction loadCustomerOptions() {\r\n  if (!customerOptionsPromise) customerOptionsPromise = listAll('/customers/').then(result => {\r\n    customers.value = result\r\n    optionLoaded.customers = true\r\n    delete optionErrors.customers\r\n    return result\r\n  }).catch(error => { customerOptionsPromise = null; optionErrors.customers = `客户资料加载失败：${apiErrorMessage(error)}`; throw error })\r\n  return customerOptionsPromise\r\n}\r\nfunction loadQuoteCustomerOptions() {\r\n  if (!isOrder.value) void loadCustomerOptions().catch(() => {})\r\n}\r\nasync function loadOptions() {\r\n  optionLoading.value = true\r\n  const tasks = [\r\n    ['customers', '客户', loadCustomerOptions],\r\n    ['skus', 'SKU', () => listAll('/skus/').then(items => { skus.value = items; optionLoaded.skus = true; delete optionErrors.skus })],\r\n  ]\r\n  if (isOrder.value) tasks.push(['quotes', '报价', () => listAll('/quotes/').then(items => { quotes.value = items; optionLoaded.quotes = true; delete optionErrors.quotes })])\r\n  const results = await Promise.all(tasks.map(async ([key, label, task]) => {\r\n    try { await task(); return true }\r\n    catch (error) { optionErrors[key] ||= `${label}资料加载失败：${apiErrorMessage(error)}`; return false }\r\n  }))\r\n  optionLoading.value = false\r\n  return results.every(Boolean)\r\n}\r\nasync function create({ isCurrent = () => true } = {}) {\r\n  if (!can(accessModule.value, 'create')) return\r\n  if (!isOrder.value) {\r\n    if (!await loadOptions()) return\r\n    if (!isCurrent()) return\r\n    quoteEditorQuote.value = route.query.customer ? { customer: Number(route.query.customer) } : null\r\n    quoteEditorOpen.value = true\r\n    return\r\n  }\r\n  returnToOrderDetailId.value = null\r\n  editingId.value = null; fresh()\r\n  form.customer = route.query.customer ? Number(route.query.customer) : ''\r\n  if (await loadOptions() && isCurrent()) { guard.markClean(); open.value = true }\r\n}\r\nasync function edit(row, { closeDetail = true, isCurrent = () => true } = {}) {\r\n  if (!can(accessModule.value, 'update')) return\r\n  if (closeDetail) await closeDocumentDetail()\r\n  if (!isOrder.value) {\r\n    if (!await loadOptions()) return\r\n    if (!isCurrent())"... 41732 more characters,
+    expected: /rows\.value = await listAll\(`\/\$\{props\.type\}\//,
+    operator: 'match',
+    diff: 'simple'
+  }

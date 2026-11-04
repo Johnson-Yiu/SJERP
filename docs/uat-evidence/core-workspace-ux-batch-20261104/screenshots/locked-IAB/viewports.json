@@ -1,0 +1,50 @@
+[
+  {
+    "file": "customer-saved-1304.jpg",
+    "url": "http://127.0.0.1:7101/customers",
+    "clientWidth": 1304,
+    "height": 892,
+    "pageWidth": 1304,
+    "width": 1304
+  },
+  {
+    "file": "contact-created-390.jpg",
+    "url": "http://127.0.0.1:7101/contacts",
+    "clientWidth": 375,
+    "height": 844,
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "file": "receipt-success-390.jpg",
+    "url": "http://127.0.0.1:7101/purchase-orders?detail=1&tab=receipt",
+    "clientWidth": 375,
+    "height": 844,
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "file": "receipt-reversed-390.jpg",
+    "url": "http://127.0.0.1:7101/purchase-orders?detail=1&tab=receipt",
+    "clientWidth": 375,
+    "height": 844,
+    "pageWidth": 375,
+    "width": 390
+  },
+  {
+    "file": "inventory-390.jpg",
+    "url": "http://127.0.0.1:7101/inventory?detail=1",
+    "clientWidth": 390,
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  },
+  {
+    "file": "sku-editor-390.jpg",
+    "url": "http://127.0.0.1:7101/skus",
+    "clientWidth": 390,
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  }
+]

@@ -45,6 +45,7 @@ from .serializers import protected_media_url, certificate_expiry, AccessRoleSeri
 from .serializers import ProcurementDraftInputSerializer
 from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.finance import allocate_advance, approve_contract_change, reject_contract_change, record_contract_payment, record_transaction, void_transaction
+from .services.attachments import delete_follow_up_attachment, upload_follow_up_attachments
 from .services.fulfillment import (
     begin_fulfillment_idempotency,
     bulk_sku_metrics,
@@ -886,22 +887,22 @@ class FollowUpViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         max_size = 20 * 1024 * 1024
         if any(upload.size > max_size for upload in uploads):
             return Response({"detail": "单个附件不能超过 20 MB。"}, status=status.HTTP_400_BAD_REQUEST)
-        attachments = []
-        for upload in uploads:
-            attachment = FollowUpAttachment(follow_up=follow_up, file=upload, name=upload.name[:255], content_type=upload.content_type or "", size=upload.size)
-            attachment.save()
-            attachments.append(attachment)
-        record_operation(request=request, instance=follow_up, action="custom", action_label="上传跟进附件", metadata={"attachment_ids": [attachment.id for attachment in attachments], "file_names": [attachment.name for attachment in attachments]})
+        attachments = upload_follow_up_attachments(
+            request=request,
+            follow_up=follow_up,
+            uploads=uploads,
+        )
         return Response(FollowUpAttachmentSerializer(attachments, many=True, context={"request": request}).data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["delete"], url_path=r"attachments/(?P<attachment_id>[^/.]+)")
     def delete_attachment(self, request, pk=None, attachment_id=None):
         follow_up = self.get_object()
         attachment = get_object_or_404(FollowUpAttachment, pk=attachment_id, follow_up=follow_up)
-        attachment_name = attachment.name
-        attachment.file.delete(save=False)
-        attachment.delete()
-        record_operation(request=request, instance=follow_up, action="custom", action_label="删除跟进附件", metadata={"attachment_id": attachment_id, "file_name": attachment_name})
+        delete_follow_up_attachment(
+            request=request,
+            follow_up=follow_up,
+            attachment=attachment,
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

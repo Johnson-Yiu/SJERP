@@ -61,3 +61,28 @@ class CsvImportAuditMigrationRollbackTests(TransactionTestCase):
         finally:
             self._migrate_to_latest()
         self.assertIn(self.guard_migration, MigrationRecorder(connection).applied_migrations())
+
+    def test_empty_audit_schema_can_be_removed_and_rebuilt(self):
+        tables = {model._meta.db_table for model in (
+            CSVImportBatch, CSVImportRowAudit, CSVImportPreviewAudit,
+        )}
+        self.assertFalse(CSVImportBatch.objects.exists())
+        self.assertFalse(CSVImportRowAudit.objects.exists())
+        self.assertFalse(CSVImportPreviewAudit.objects.exists())
+        try:
+            executor = MigrationExecutor(connection)
+            executor.migrate([("crm", "0089_operationlog_operator_protect")])
+            self.assertTrue(tables.isdisjoint(connection.introspection.table_names()))
+            applied = MigrationRecorder(connection).applied_migrations()
+            for migration in (
+                "0091_csv_import_audit", "0092_merge_fulfillment_and_csv_audit",
+                "0093_csv_import_preview_audit", "0094_csv_import_audit_truncate_guard",
+            ):
+                self.assertNotIn(("crm", migration), applied)
+        finally:
+            self._migrate_to_latest()
+        self.assertTrue(tables.issubset(connection.introspection.table_names()))
+        self.assertIn(self.guard_migration, MigrationRecorder(connection).applied_migrations())
+        self.assertFalse(CSVImportBatch.objects.exists())
+        self.assertFalse(CSVImportRowAudit.objects.exists())
+        self.assertFalse(CSVImportPreviewAudit.objects.exists())

@@ -23,7 +23,7 @@ class OperationsPreflightTests(TestCase):
         self.assertTrue(result["warnings"])
 
     def test_http_and_embedded_credentials_rejected_without_echo(self):
-        for origin in ("http://erp.example.invalid", "https://synthetic:secret@example.invalid"):
+        for origin in ("http://erp.example.invalid", "https://synthetic:secret@example.invalid", "https://erp.example.invalid:notaport"):
             with self.subTest(origin=origin):
                 result = inspect_config({**self.config, "public_origin": origin})
                 self.assertFalse(result["ok"])
@@ -45,6 +45,7 @@ class OperationsPreflightTests(TestCase):
         self.assertFalse(inspect_config({**self.config, "min_free_bytes": True})["ok"])
 
     def test_requested_inode_check_fails_closed_when_unavailable(self):
-        with mock.patch("crm.services.operations_readiness.os.statvfs", None, create=True):
-            with mock.patch("crm.services.operations_readiness.hasattr", return_value=False):
-                self.assertFalse(inspect_config({**self.config, "min_free_inodes": 1})["ok"])
+        with mock.patch("crm.services.operations_readiness.shutil.disk_usage", return_value=mock.Mock(free=100)):
+            with mock.patch("crm.services.operations_readiness.os.statvfs", None, create=True):
+                with mock.patch("crm.services.operations_readiness.hasattr", return_value=False):
+                    self.assertFalse(inspect_config({**self.config, "min_free_inodes": 1})["ok"])

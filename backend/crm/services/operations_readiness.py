@@ -18,6 +18,7 @@ def inspect_config(config):
     origin = config.get("public_origin", "")
     try:
         parsed = urlsplit(origin)
+        parsed.port  # Validate malformed or out-of-range ports without exposing the origin.
         if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password or parsed.path not in ("", "/") or parsed.query or parsed.fragment:
             errors.append("公开地址必须是无凭据的 HTTPS origin")
     except (TypeError, ValueError):

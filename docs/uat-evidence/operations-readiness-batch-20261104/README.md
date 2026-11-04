@@ -8,6 +8,12 @@
 
 CPython 3.12.16 / 锁定 Django 6.0.9，隔离内存 SQLite 和独立临时媒体，执行 `python manage.py test crm.tests.test_operations_preflight crm.tests.test_iss047_private_storage crm.tests.test_iss018_backup_recovery --verbosity 1`：32 项，28 通过、4 因平台条件跳过；没有将跳过项计为通过。含 HTTPS/凭据拒绝、路径重叠、容量不足、inode 不可核验时拒绝、现有私有媒体和 SQLite 备份恢复边界。结果不证明目标环境代理、ACL 或生产配置安全。
 
+使用来源证据中的 PostgreSQL 17.11 程序二进制，既有 `crm.tests.test_iss018_drill_command` 在本次新建、任务所有的临时集群中重新执行：**8 项通过，806 秒**；成功案例核对 84 张表、923 行、121 项迁移及 2 个媒体文件（66 字节），恢复完成且源媒体不变。六项故障分别返回非零并报告清理完成；production stage 在创建集群前拒绝。原始输出为 [pg17-command-run.log](pg17-command-run.log)。该运行只验证现有隔离演练工具，不验证任意外部媒体写入者或生产运维入口；测试总时长不能作为生产 RTO。
+
+锁定 Python 环境 16 个精确版本逐项匹配，`pip check`、Django check、迁移一致性检查通过；`npm ci` 和前端生产构建通过，保留既有大 chunk 警告。[npm 全依赖审计](npm-audit-all.json)报告 5 项中危开发依赖，[生产依赖审计](npm-audit-production.json)报告 0 项；未运行自动修复。GitHub 公告 API 对 Pillow 13.0.0 的限定查询没有返回记录，但 Python 全量审计工具安装受 TLS 连接错误影响，不能视为完整漏洞审计或证明无漏洞。
+
+首次 [CI #41795791866](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41795791866) 的两个后端失败；Backend 原始日志明确为新增 inode 不可用测试错误地把全局 `os.statvfs` 设空，Linux 的 `shutil.disk_usage` 因此抛出 `TypeError`。测试已隔离磁盘容量 mock，保留原 fail-closed 断言；需以修正后的精确 SHA 重新运行 CI，不能把首次失败写成通过。PostgreSQL job 原始日志下载曾因 GitHub 存储连接失败，具体失败仍需复核。
+
 ## 尚未完成的门槛
 
 1. **BLOCKED / 未实施：生产用途 PostgreSQL 与媒体联合备份及恢复入口。** 现有 `isolated_postgres_drill.py` 和 `postgres_drill_backup.py` 只支持新建的隔离集群；不得将其改名或作为生产工具。必须先形成可证明覆盖 Web、worker、定时任务、外部数据库及媒体写入者的独立维护栅栏或同源原子快照机制，在竞争写入及中断下 fail closed，并经独立安全审查；单个 `quiesced` 标志、进程内锁、文件前后散列均不能证明全写入者一致性。

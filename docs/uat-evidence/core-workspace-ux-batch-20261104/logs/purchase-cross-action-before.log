@@ -1,0 +1,43 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/core-workspace-ux-batch-20261104/frontend
+
+ ❯ tests/core-workspace-purchase-feedback.spec.js (4 tests | 2 failed) 374ms
+   × does not carry a rejected receipt error into a new purchase draft 85ms
+   × keeps a pending reversal visible and sends only one request 35ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/core-workspace-purchase-feedback.spec.js > does not carry a rejected receipt error into a new purchase draft
+AssertionError: expected '新建采购单保存草稿后可确认采购下单。采购基本信息采购单号供应商 * 选择供…' not to contain '旧收货错误'
+
+Expected: "旧收货错误"
+Received: "新建采购单保存草稿后可确认采购下单。采购基本信息采购单号供应商 * 选择供应商整张采购单使用同一供应商。来源销售订单（可选）不关联订单一张采购单可关联多个销售订单，具体归属在成本分配中处理。下单日期 *预计到货币种 *CNY · 人民币USD · 美元EUR · 欧元GBP · 英镑HKD · 港币JPY · 日元AUD · 澳元CAD · 加元SGD · 新加坡元本单付款计划仅记录本单约定；未协商时可暂不填写。阶段名称比例 %到期依据延后天数新增付款阶段合计：0%付款阶段可暂不设置；未协商时不会自动生成应付计划。采购商品选择 SKU 后填写规格、数量和单价。选择 SKU全部分类未命名 SKUSKU: UX-SKUSales Model: —从左侧勾选 SKU 后，可在这里查看详情。请先从上方选择至少一个 SKU。采购金额汇总商品项数 0币种 CNY商品金额 CNY 0.00response · data：旧收货错误保存采购草稿不会生成应付或在途采购；确认采购下单后才进入正式采购流程。取消 保存采购草稿"
+
+ ❯ tests/core-workspace-purchase-feedback.spec.js:55:60
+     53|   await wrapper.get('.goods-receipt-dialog footer .btn-secondary').tri…
+     54|   await wrapper.findAll('button').find(b => b.text() === '新建采购单').trig…
+     55|   expect(wrapper.get('.purchase-create-modal').text()).not.toContain('…
+       |                                                            ^
+     56| })
+     57| it('keeps a pending reversal visible and sends only one request', asyn…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/core-workspace-purchase-feedback.spec.js > keeps a pending reversal visible and sends only one request
+AssertionError: expected undefined to be defined
+ ❯ tests/core-workspace-purchase-feedback.spec.js:65:84
+     63|   await wrapper.get('form.receipt-dialog').trigger('submit'); await fl…
+     64|   expect(mocks.api.post).toHaveBeenCalledTimes(1)
+     65|   expect(wrapper.get('form.receipt-dialog .btn-secondary').attributes(…
+       |                                                                                    ^
+     66|   resolve({ data: {} }); await flushPromises()
+     67|   expect(wrapper.find('form.receipt-dialog').exists()).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  17:08:10
+   Duration  5.71s (transform 670ms, setup 380ms, import 842ms, tests 374ms, environment 3.50s)
+

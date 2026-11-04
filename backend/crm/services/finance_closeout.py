@@ -480,7 +480,7 @@ def match_transfer(data, user):
     inc = FinanceFact.objects.select_for_update().get(pk=pk(data["incoming"]))
     if out.direction != "expense" or inc.direction != "income" or out.account_id == inc.account_id or out.amount != inc.amount:
         raise ValidationError("两端须为不同自有账户、相反方向且本金相等；差额不能当手续费。")
-    if out.kind not in {"cash", "correction"} or inc.kind not in {"cash", "correction"} or out.nature != "internal_principal" or inc.nature != "internal_principal" or {out.pk, inc.pk} & corrected_ids()[0]:
+    if out.kind not in {"cash", "correction"} or inc.kind not in {"cash", "correction"} or effective_nature(out) != "internal_principal" or effective_nature(inc) != "internal_principal" or {out.pk, inc.pk} & corrected_ids()[0]:
         raise ValidationError("只可核实明确标记的内部本金事实。")
     if FinanceHistoricalTransfer.objects.filter(Q(outgoing_fact__in=[out, inc]) | Q(incoming_fact__in=[out, inc])).exists():
         raise cash.CashConflict("本金一端已完成历史银行匹配。")
@@ -520,6 +520,12 @@ def account_rows(own, end, user=None):
     return facts, legacy
 
 
+def effective_nature(fact):
+    """Use the same append-only classification that reporting presents."""
+    classification = fact.classifications.order_by("pk").last()
+    return classification.nature if classification else fact.nature
+
+
 def balance(own, end, user=None):
     facts, legacy = account_rows(own, end, user)
     opening = next((f for f in facts if f.kind == "opening"), None)
@@ -536,7 +542,17 @@ def balance(own, end, user=None):
             total += event.bank_net_amount if event.direction == "income" else -event.bank_net_amount
     corrections = list(FinanceFact.objects.filter(account=own, kind="correction").values_list("pk", flat=True))
     classifications = list(FinanceClassification.objects.filter(fact__in=facts).order_by("pk").values_list("pk", flat=True))
-    return total, digest({"facts": [f.pk for f in facts], "legacy": [e.pk for e in included_legacy], "corrections": corrections, "classifications": classifications})
+    fingerprint = {"facts": [f.pk for f in facts], "legacy": [e.pk for e in included_legacy], "corrections": corrections, "classifications": classifications}
+    matches = list(FinanceTransferMatch.objects.filter(Q(outgoing__in=facts) | Q(incoming__in=facts)).order_by("pk").values_list("pk", flat=True))
+    historical_matches = list(FinanceHistoricalTransfer.objects.filter(
+        Q(outgoing_fact__in=facts) | Q(incoming_fact__in=facts) |
+        Q(outgoing_legacy__in=included_legacy) | Q(incoming_legacy__in=included_legacy)
+    ).order_by("pk").values_list("pk", flat=True))
+    # Leave fingerprints for untouched older reviews byte-compatible. Accounts
+    # with newly tracked matches conservatively require another review.
+    if matches or historical_matches:
+        fingerprint.update(transfer_matches=matches, historical_transfer_matches=historical_matches)
+    return total, digest(fingerprint)
 
 
 def corrected_ids():
@@ -567,8 +583,7 @@ def reporting_events(user, start, end):
         matched.update(value for value in (out, inc) if value is not None)
     result = []
     for f in FinanceFact.objects.select_related("account").filter(actual_date__range=(start, end)).exclude(kind="opening").exclude(pk__in=matched).exclude(kind="correction", amount=0):
-        classification = f.classifications.order_by("pk").last()
-        nature = classification.nature if classification else f.nature
+        nature = effective_nature(f)
         result.append(SimpleNamespace(pk=-f.pk, id=-f.pk, event_no=f"ACCOUNT-{f.pk}", kind=nature,
             currency="CNY", amount=f.amount, direction=f.direction, bank_date=f.actual_date,
             bank_net_amount=f.amount, fee_mode="none", fee_amount=Decimal("0"),
@@ -604,7 +619,7 @@ def match_historical_transfer(data, user):
         else:
             event = FinanceFact.objects.get(pk=pk(ident))
             own_id, value = event.account_id, event.amount
-            if event.kind not in {"cash", "correction"} or event.nature != "internal_principal" or event.pk in corrected_ids()[0]:
+            if event.kind not in {"cash", "correction"} or effective_nature(event) != "internal_principal" or event.pk in corrected_ids()[0]:
                 raise ValidationError("新事实须明确标记为内部本金。")
         if event.direction != direction:
             raise ValidationError("本金两端方向错误。")
@@ -616,7 +631,13 @@ def match_historical_transfer(data, user):
         account(ident, lock=True)
     for prefix, ident, _, _ in sorted(references):
         model = RmbCashEvent if prefix == "legacy" else FinanceFact
-        model.objects.select_for_update().get(pk=ident)
+        locked = model.objects.select_for_update().get(pk=ident)
+        # Classification/correction may have committed while this request was
+        # waiting for the shared account lock. Validate again under that lock.
+        if prefix == "fact" and (effective_nature(locked) != "internal_principal" or ident in corrected_ids()[0]):
+            raise ValidationError("新事实须明确标记为内部本金。")
+        if prefix == "legacy" and ident in corrected_ids()[1]:
+            raise ValidationError("既有银行事实已更正，请使用其有效账户事实版本。")
     values = {"outgoing_" + out[0] + "_id": out[1], "incoming_" + inc[0] + "_id": inc[1]}
     existing = FinanceHistoricalTransfer.objects.filter(**values).first()
     if existing:

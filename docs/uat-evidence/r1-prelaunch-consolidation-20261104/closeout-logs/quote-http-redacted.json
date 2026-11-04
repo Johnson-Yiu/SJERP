@@ -1,0 +1,125 @@
+{
+  "scope": "synthetic isolated Chrome/API; bank and full template omitted",
+  "records": [
+    {
+      "method": "POST",
+      "url": "/quotes/",
+      "status": 201,
+      "id": 1,
+      "recipient_name": "Version A Recipient",
+      "buyer_email": "version-a@example.com",
+      "buyer_address": "Version A Berlin Address"
+    },
+    {
+      "method": "POST",
+      "url": "/quotes/",
+      "status": 400,
+      "id": null
+    },
+    {
+      "method": "get",
+      "url": "/contacts/1/",
+      "status": 200,
+      "id": 1
+    },
+    {
+      "method": "POST",
+      "url": "/quotes/1/revise/",
+      "status": 201,
+      "id": 2,
+      "recipient_name": "Version B Recipient",
+      "buyer_email": "",
+      "buyer_address": "Version B Berlin Address"
+    },
+    {
+      "method": "patch",
+      "url": "/contacts/1/",
+      "status": 200,
+      "id": 1
+    },
+    {
+      "method": "patch",
+      "url": "/customers/1/",
+      "status": 200,
+      "id": 1
+    },
+    {
+      "method": "get",
+      "url": "/quotes/1/",
+      "status": 200,
+      "id": 1,
+      "recipient_name": "Version A Recipient",
+      "buyer_email": "version-a@example.com",
+      "buyer_address": "Version A Berlin Address"
+    },
+    {
+      "method": "get",
+      "url": "/quotes/1/pi-data/?buyer_email=unsaved@example.com",
+      "status": 200,
+      "id": null,
+      "buyer": {
+        "company_name": "ISS029 R1 Snapshot Buyer",
+        "name": "Version A Recipient",
+        "address": "Version A Berlin Address",
+        "email": "version-a@example.com",
+        "phone": "+49 222 A"
+      },
+      "totals": {
+        "currency": "USD",
+        "subtotal": "10.00",
+        "shipping_fee": "0.00",
+        "discount": "0.00",
+        "total_amount": "10.00"
+      }
+    },
+    {
+      "method": "get",
+      "url": "/quotes/2/",
+      "status": 200,
+      "id": 2,
+      "recipient_name": "Version B Recipient",
+      "buyer_email": "",
+      "buyer_address": "Version B Berlin Address"
+    },
+    {
+      "method": "get",
+      "url": "/quotes/2/pi-data/?buyer_email=unsaved@example.com",
+      "status": 200,
+      "id": null,
+      "buyer": {
+        "company_name": "ISS029 R1 Snapshot Buyer",
+        "name": "Version B Recipient",
+        "address": "Version B Berlin Address",
+        "email": "",
+        "phone": "+49 333 B"
+      },
+      "totals": {
+        "currency": "USD",
+        "subtotal": "10.00",
+        "shipping_fee": "0.00",
+        "discount": "0.00",
+        "total_amount": "10.00"
+      }
+    },
+    {
+      "method": "get",
+      "url": "/quotes/2/pi-data/",
+      "status": 200,
+      "id": null,
+      "buyer": {
+        "company_name": "ISS029 R1 Snapshot Buyer",
+        "name": "Version B Recipient",
+        "address": "Version B Berlin Address",
+        "email": "",
+        "phone": "+49 333 B"
+      },
+      "totals": {
+        "currency": "USD",
+        "subtotal": "10.00",
+        "shipping_fee": "0.00",
+        "discount": "0.00",
+        "total_amount": "10.00"
+      }
+    }
+  ]
+}

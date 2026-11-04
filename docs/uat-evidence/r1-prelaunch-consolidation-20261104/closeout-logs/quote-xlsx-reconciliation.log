@@ -1,0 +1,26 @@
+{
+  "scope": "synthetic isolated API responses and actual Chrome downloads",
+  "files": [
+    {
+      "file": "version-a.xlsx",
+      "bytes": 10169,
+      "sha256": "c514f1b3a32bc7a9562729889407f5664adc63b252ae0ec1a9c7b22710695cfc",
+      "quote_id": 1,
+      "saved_api_fields_match": true
+    },
+    {
+      "file": "version-b-empty-email.xlsx",
+      "bytes": 10150,
+      "sha256": "4107c519cf3d154a3480735d50a02a61fc356afd83befb5dfca2cc03e40343aa",
+      "quote_id": 2,
+      "saved_api_fields_match": true
+    },
+    {
+      "file": "version-b-with-unsaved-input.xlsx",
+      "bytes": 10150,
+      "sha256": "d0dd0a35ee0ae2e52c80ca4284729822c45aac210af6f7c0618e9224d648fa13",
+      "quote_id": 2,
+      "saved_api_fields_match": true
+    }
+  ]
+}

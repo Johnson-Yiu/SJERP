@@ -1,5 +1,11 @@
 # SUNJACK-ERP 项目问题台账
 
+## 2026-11-04 PRELAUNCH-CONSOLIDATION-CLOSEOUT 当前核实
+
+ISS-018 继续 **BLOCKED / DEPLOYMENT_VERIFICATION_PENDING**：备份来源 `0692f4db292bd6fdeea1997562fb79c662f03ae7` 的隔离命令和证据已按原 `9250b066` 后的增量集成；锁定 Django 6.0.9 的本机真实 PG17 命令专项 8 项通过。旧表中“真实 PostgreSQL 待验”指生产或目标部署环境，不能再描述为从未做过隔离 PostgreSQL 演练。进程内媒体锁不等于生产多进程写入暂停，生产异地副本、密钥、权限、调度、告警和 RPO/RTO 仍须目标环境验收。
+
+ISS-121 的预检初版及整单 partial 修复继续保留；预检不等于正式迁移或审批，真实启用日期及余额须由财务提供，已确认业务原则不重新列为待决。ISS-037 继续 **NEEDS_VERIFICATION**：保存报价的合成 Chrome/实际 XLSX 定向核对与实际 UI 打印成品分开；打印任务当前明确尚未完成，稳定 SHA 未交付，不以阶段提交或独立渲染 PDF 冒充成品。ISS-105/108 及其未完成实施与外部材料要求不变。未新建或关闭 Issue，历史记录保留；后续动作与证据见[启用前门槛](uat-evidence/r1-prelaunch-consolidation-20261104/READINESS-GATES.md)。
+
 ## 2026-11-04 启用前整合：第一部分
 
 固定起点 `d5abc64750d00c89d685bf12c0f8f67d4ba10a97` 的 [BATCH-02 CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41671231926) 在同一 SHA 上 Backend、PostgreSQL 17、Frontend 均成功。按用户转述的 ChatGPT 复审结论，历史预检 `partial` 整单误报的定向修复通过；完整初版及 FIX-01 的代码、路由、流式上传限额、模板和测试取自 `951adda34b5c60b303725702514cdacac17cc58d`，详见[预检及修复证据](uat-evidence/r1-iss121-history-import-preflight-20261103/FIX-01-REPORT.md)。预检是只读检查，不等于真实历史导入或启用完成，ISS-121 整体仍 BLOCKED。

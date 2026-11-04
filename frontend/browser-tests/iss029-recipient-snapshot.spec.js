@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
+// The recorded browser evidence is specifically from the installed Chrome channel.
+test.use({ channel: 'chrome' })
+
 const evidence = process.env.R1_REPAIR_EVIDENCE_DIR
   ? path.resolve(process.env.R1_REPAIR_EVIDENCE_DIR)
   : path.resolve('../docs/uat-evidence/iss-029-quote-recipient-snapshot')

@@ -42,15 +42,20 @@ test('saved local chart configurations survive reload, reorder, remove and undo'
  await page.locator('.saved-block').first().getByRole('button',{name:'载入查询',exact:true}).click();await expect(page.getByRole('combobox',{name:'统计维度',exact:true})).toHaveValue('customer')
 })
 test('CSV export keeps the last submitted filters while the form has an unsaved draft',async({page})=>{
+ await page.setViewportSize({width:1440,height:1000})
  const state=await mockApi(page);await page.goto('/reports')
  await page.getByRole('combobox',{name:'报表预设',exact:true}).selectOption('sales-customer')
  await page.getByRole('combobox',{name:'筛选维度',exact:true}).selectOption('customer')
  await page.getByRole('combobox',{name:'可用值',exact:true}).selectOption('1')
  await page.getByRole('button',{name:'添加筛选',exact:true}).click()
- await page.getByRole('button',{name:'查询报表',exact:true}).click()
+ const [submittedResponse]=await Promise.all([
+  page.waitForResponse(response=>{const url=new URL(response.url());return url.pathname==='/api/reports/data/' && url.searchParams.get('filter_customer')==='1' && !url.searchParams.has('export')}),
+  page.getByRole('button',{name:'查询报表',exact:true}).click(),
+ ])
+ expect(submittedResponse.status()).toBe(200)
  await expect(page.getByRole('region',{name:'已查询条件'})).toContainText('客户：')
  await expect(page.getByRole('button',{name:'导出 CSV',exact:true})).toBeVisible()
- const submittedRequest=state.reportRequests.at(-1);expect(submittedRequest.get('filter_customer')).toBe('1')
+ const submittedRequest=new URL(submittedResponse.url()).searchParams;expect(submittedRequest.get('filter_customer')).toBe('1')
 
  await page.getByRole('combobox',{name:'可用值',exact:true}).selectOption('2')
  await page.getByRole('button',{name:'添加筛选',exact:true}).click()
@@ -60,7 +65,7 @@ test('CSV export keeps the last submitted filters while the form has an unsaved 
  const exportRequest=state.reportRequests.at(-1)
  expect(exportRequest.get('filter_customer')).toBe('1')
  expect(exportRequest.get('filter_customer')).not.toBe('2')
- await page.screenshot({path:'../docs/uat-evidence/iss-019-report-csv/reports-unsaved-filter-1440.png',fullPage:true})
+ await page.screenshot({path:'../docs/uat-evidence/r1-prelaunch-consolidation-20261104/closeout-logs/reports-unsaved-filter-1440.png',fullPage:true})
 })
 test('drill and previous-analysis return preserve actual period and browser navigation restores URL',async({page})=>{
  await mockApi(page);await page.goto('/reports');await page.getByRole('combobox',{name:'报表预设',exact:true}).selectOption('sales-customer');await page.getByRole('textbox',{name:'开始日期',exact:true}).fill('2026-09-01');await page.getByRole('button',{name:'查询报表',exact:true}).click();await expect(page).toHaveURL(/date_from=2026-09-01/)

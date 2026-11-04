@@ -1,5 +1,11 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## PRELAUNCH-CONSOLIDATION-CLOSEOUT（2026-11-04）
+
+沿用 `codex/r1-prelaunch-consolidation-20261104`，在规则提交 `147de7400c87d4790ddfcd448fd0b808b9374ab9` 上，保留 BATCH-02 两条 0096 与 0097 汇合迁移及 ISS-121 初版/FIX-01；备份命令仅移植来源 `0692f4db292bd6fdeea1997562fb79c662f03ae7` 相对 `9250b066` 的增量。来源的自动 CI [#41772634041](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41772634041) Backend 和 PostgreSQL 成功、Frontend 因报表测试失败，后端 CI 中隔离备份专项按条件跳过，不能冒充已执行。本机单独执行真实隔离 PG17 命令专项与锁定依赖回归；报表测试对实际响应同步，保留原 CSV 内容断言及确定性竞态用例。最终同一 SHA 的 CI、测试和文件证据以本轮专属报告为准，不能预写通过。
+
+打印工作包当前明确尚未完成；用户已操作界面生成合成草稿 PDF，但发现近乎空白的第二页，原因及正式单据完整矩阵仍待核验。不把其移动中或阶段报告 SHA 当作稳定最终成果。历史预检不授权正式导入；ISS-018 生产部署验收、ISS-037 打印成品及其他启用门槛保持[分别追踪](uat-evidence/r1-prelaunch-consolidation-20261104/READINESS-GATES.md)。未关闭 Issue、合并 master、部署或启用正式 RBAC。
+
 ## R1-PRELAUNCH-CONSOLIDATION-01 第一部分（2026-11-04）
 
 独立集成起点 `d5abc64750d00c89d685bf12c0f8f67d4ba10a97`；完整移植历史只读预检初版与 FIX-01 至 `951adda34b5c60b303725702514cdacac17cc58d`，以及隔离备份演练六项提交至 `9250b066cbd28fd09bd2b1cc1f057604de1f76d9`。保留 BATCH-02 两条 0096 和 0097；新库 SQLite 迁移至 0097 成功。锁定 CPython 3.12.16 环境定向 90 项、4 项跳过，system check、迁移一致性检查通过。备份 PG17 既有成功记录仅限独立合成演练；本次未重新运行真实 PG 备份命令。预检 partial 误报定向修复按用户提供的 ChatGPT 复审结论通过，不等于 ISS-121 整体关闭。

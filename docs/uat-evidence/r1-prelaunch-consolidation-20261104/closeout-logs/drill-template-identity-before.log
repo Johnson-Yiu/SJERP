@@ -1,0 +1,15 @@
+test_modified_quote_template_must_reject_reported_commit_sha (__main__.DrillTemplateIdentityTests.test_modified_quote_template_must_reject_reported_commit_sha) ... FAIL
+
+======================================================================
+FAIL: test_modified_quote_template_must_reject_reported_commit_sha (__main__.DrillTemplateIdentityTests.test_modified_quote_template_must_reject_reported_commit_sha)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\docs\uat-evidence\r1-prelaunch-consolidation-20261104\test-drill-template-identity.py", line 35, in test_modified_quote_template_must_reject_reported_commit_sha
+    with self.assertRaises(BackupRecoveryError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BackupRecoveryError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+FAILED (failures=1)

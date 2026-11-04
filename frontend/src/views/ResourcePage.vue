@@ -600,6 +600,15 @@ async function openCreate({ isCurrent = () => true } = {}) {
 }
 async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}) {
   if (!can(accessModule.value, 'update')) return
+  let editRow = row
+  if (props.config.endpoint === 'follow-ups' && (
+    !Array.isArray(row.attachments) ||
+    props.config.fields.some(([name]) => !Object.prototype.hasOwnProperty.call(row, name))
+  )) {
+    try { editRow = (await api.get(`/follow-ups/${row.id}/`)).data }
+    catch (error) { if (isCurrent()) notify(apiErrorMessage(error), true); return }
+    if (!isCurrent()) return
+  }
   clearToast()
   certificateSaveError.value=''
   if (isParameterPage.value) { parameterSaveError.value = ''; toast.show = false }
@@ -607,11 +616,11 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
   supplierSaveError.value = ''
   if (!keepDetail) detailId.value = null
   keepDetailOpen.value = keepDetail
-  editingId.value = row.id; resetForm(); await loadOptions()
+  editingId.value = editRow.id; resetForm(); await loadOptions()
   if (!isCurrent()) return
   props.config.fields.forEach(([name, , type]) => {
     if (type === 'file') return
-    let value = row[name]
+    let value = editRow[name]
     if (type === 'datetime-local' && value) value = value.slice(0, 16)
     form[name] = value ?? (type === 'checkbox' ? false : '')
     if (type === 'followup_schedule') form[name] = value || 'keep'
@@ -619,7 +628,7 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
   if (isContactPage.value) void loadContactDuplicateRows(form.customer)
   if (!isCurrent()) return
   currentCertificateFileUrl.value = isCertificatePage.value ? (row.file_url || '') : ''
-  followUpAttachments.value = props.config.endpoint === 'follow-ups' ? (row.attachments || []) : []
+  followUpAttachments.value = props.config.endpoint === 'follow-ups' ? (editRow.attachments || []) : []
   pendingFollowUpFiles.value = []
   attachmentSaveError.value = ''
   syncFollowUpDaysFromDate()

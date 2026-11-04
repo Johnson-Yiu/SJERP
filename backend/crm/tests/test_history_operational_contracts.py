@@ -13,6 +13,7 @@ from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework.exceptions import APIException
 
 from crm import history_operational_contracts as contracts, history_operational_finance as finance_bridge, history_operational_inventory as inventory
+from crm.history_operational_common import overall_status
 from crm.models import (FinanceFact, HistoryOperationalContract, HistoryTakeoverSourceRecord,
     InventoryMovement, Order, PaymentPlan, PurchaseOrder, Transaction)
 from crm.services.fulfillment import confirm_shipment, record_receipt, reverse_receipt, reverse_shipment, sku_metrics
@@ -91,6 +92,8 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertFalse(Transaction.objects.exists())
         self.assertFalse(FinanceFact.objects.exists())
         self.assertFalse(InventoryMovement.objects.exists())
+        self.group.refresh_from_db()
+        self.assertNotEqual(overall_status(self.group)["state"], "connected")
         account = finance_closeout.create_account({"code": "E2E-HIST", "name": "合成历史账户", "account_type": "bank", "ownership": "own", "ownership_reason": "合成资料"}, self.maker)
         voucher = finance_closeout.upload(SimpleUploadedFile("history.pdf", b"%PDF-1.4\nsynthetic history\n%%EOF"), self.maker)
         source = self.sources[("收付款流水", "TX-SO-1")]
@@ -99,6 +102,11 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
         finance_bridge.advance_source(self.group.pk, source.pk, "approve", self.reviewer)
         finance_bridge.advance_source(self.group.pk, source.pk, "post", self.maker, voucher_checked=True)
         self.assertEqual(FinanceFact.objects.count(), 1)
+        source2 = self.sources[("收付款流水", "TX-PO-1")]
+        finance_bridge.submit_source(self.group.pk, source2.pk, {"account": account.pk, "voucher": voucher.pk,
+            "actual_date": "2024-09-04", "amount": "35.00", "reason": "核对合成付款凭证"}, self.maker)
+        finance_bridge.advance_source(self.group.pk, source2.pk, "approve", self.reviewer)
+        finance_bridge.advance_source(self.group.pk, source2.pk, "post", self.maker, voucher_checked=True)
         self.assertTrue(voucher.file.storage.exists(voucher.file.name))
         self.assertFalse(Transaction.objects.exists())
         self.assertEqual(original_sale.outstanding_amount, Decimal("60"))
@@ -107,6 +115,10 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertEqual(sku_metrics(self.sku)["reserved_quantity"], 0)
         sale = confirm_order(sale)
         purchase = place_purchase_order(purchase, operator=self.maker)
+        self.assertEqual(overall_status(self.group)["state"], "connected")
+        response = self.client.get(f"/api/import/history-takeovers/{self.application.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["groups"][0]["operational_overall"]["state"], "connected")
         self.assertFalse(sale.payment_plans.exists())
         self.assertFalse(purchase.payment_plans.exists())
         location = {"warehouse_type": "自有仓", "warehouse": "SYN-WH-01", "lot_reference": "LOT-HT-01"}
@@ -129,7 +141,7 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertEqual(original_sale.outstanding_amount, Decimal("40"))
         self.assertEqual(original_purchase.unpaid_amount, Decimal("6"))
         self.assertEqual(Transaction.objects.count(), 2)
-        self.assertEqual(FinanceFact.objects.count(), 1)
+        self.assertEqual(FinanceFact.objects.count(), 2)
         reverse_shipment(shipment, "合成发货冲销")
         reverse_receipt(receipt, "合成收货冲销")
         self.assertEqual(sku_metrics(self.sku)["actual_quantity"], Decimal("18"))
@@ -195,6 +207,25 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertEqual(Order.objects.filter(status="draft").count(), 1)
         self.assertEqual(PurchaseOrder.objects.filter(status="draft").count(), 1)
 
+    def test_manual_movements_respect_opening_stock_location(self):
+        self.activate_inventory()
+        payload = {"movement_date": "2025-01-03", "type": "adjust_out", "sku": self.sku.pk, "quantity": "2"}
+        response = self.client.post("/api/inventory-movements/", payload, format="json")
+        self.assertEqual(response.status_code, 400, response.data)
+        payload.update({"warehouse_type": "自有仓", "warehouse": "SYN-WH-01", "lot_reference": "wrong"})
+        response = self.client.post("/api/inventory-movements/", payload, format="json")
+        self.assertEqual(response.status_code, 400, response.data)
+        payload["lot_reference"] = "LOT-HT-01"
+        response = self.client.post("/api/inventory-movements/", payload, format="json")
+        self.assertEqual(response.status_code, 201, response.data)
+        ident = response.data["id"]
+        self.assertEqual(sku_metrics(self.sku)["actual_quantity"], Decimal("16"))
+        changed = self.client.patch(f"/api/inventory-movements/{ident}/", {"warehouse": "OTHER"}, format="json")
+        self.assertEqual(changed.status_code, 400, changed.data)
+        reversed_response = self.client.post(f"/api/inventory-movements/{ident}/reverse/", {"reason": "合成盘点更正"}, format="json")
+        self.assertEqual(reversed_response.status_code, 201, reversed_response.data)
+        self.assertEqual(sku_metrics(self.sku)["actual_quantity"], Decimal("18"))
+
     def test_pending_shared_costs_must_use_formal_cost_workflow_before_placement(self):
         from django.core.exceptions import ValidationError as DjangoValidationError
         from crm.services.purchase_costs import save_costs
@@ -223,6 +254,7 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
 
 
 @unittest.skipUnless(connection.vendor == "postgresql", "requires real PostgreSQL row locks")
+@override_settings(FILE_UPLOAD_TEMP_DIR=tempfile.gettempdir())
 class HistoricalContractsPostgresTests(HistoryTakeoverFixtureMixin, TransactionTestCase):
     def test_concurrent_execute_creates_each_contract_once(self):
         application, group, _ = self.application_and_group()

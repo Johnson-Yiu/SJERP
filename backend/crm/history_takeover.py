@@ -529,20 +529,20 @@ def _source_rows_for_handoff(group, rows, remainder):
         "finance": {
             "contract_version": "1",
             "status": "not_connected",
-            "reason": "资金包稳定交接接口尚未接通；此阶段不创建正式流水、计划或人民币资金事件。",
+            "reason": "归档不会自动记账；须另行映射凭证和账户、复核并通过正式财务服务办理。",
             "payment_plans": [item["data"] for item in plans],
             "source_transactions": [item["data"] for item in transactions],
         },
         "inventory": {
             "contract_version": "1",
             "status": "not_connected",
-            "reason": "正式库存启用基准接口尚未接通；盘点数量只保存在待核实交接区，不生成库存流水或库存余额。",
+            "reason": "归档不会自动启用库存；须另行核对盘点范围、所有权及成本并复核启用。",
             "count_baselines": [item["data"] for item in inventory],
         },
         "fulfillment": {
             "contract_version": "1",
             "status": "not_connected",
-            "reason": "历史履约事实仅归档；剩余数量等待库存分配和正式单据接口接通后处理。",
+            "reason": "历史履约事实仅归档；剩余业务须另行核对、复核并建立接续单。",
             "source_events": [item["data"] for item in fulfillment],
             "remainder_snapshot": remainder,
         },

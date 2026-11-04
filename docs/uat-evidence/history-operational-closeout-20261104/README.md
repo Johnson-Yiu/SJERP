@@ -26,5 +26,16 @@
 - 本机未发现 PostgreSQL 服务或工具；真实 PostgreSQL 17 的迁移、并发及完整回归为 **BLOCKED**，需要 CI 或独立 PostgreSQL 环境验证，不以 SQLite 代替。
 - 公共费用可先建立接续草稿，再经现有采购成本分配保存；有待登记费用的草稿在费用保存前不能正式下单，见 `logs/sqlite-shared-cost.log`。
 - 此记录仍为中间验收，不宣称所有历史状态、真实 PostgreSQL、CI 或端到端浏览器流程已经通过。
+- 基础提交 `438bc5b8526bb43b48445b4646e82ead0b2caaa6` 的 [GitHub CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41868099905) 中 PostgreSQL 作业失败：6 个新增并发/迁移测试在上传夹具时使用了此前 CSV HTTP 测试已经删除的临时目录，报 `FileNotFoundError`，尚未运行到并发断言。已为本包 PostgreSQL 测试单独指定系统临时上传目录，需在后续提交的真实 PostgreSQL CI 重验；不得把首轮失败视为通过。
+- 同一 CI 的前端作业在 `iss007-attachment-real.spec.js` 失败：合成跟进记录编辑弹窗选取附件后，5 秒内未显示文件名，两个后续场景未运行。本包没有修改该跟进附件代码或测试；尚不能据此认定根因或将其视为已修复，保留原运行供集成方复核。
+- 锁定依赖的本地完整 Django 回归：1335 项运行、66 项环境跳过，其余通过；执行时早于整体进度判定及后续小修，后续改动需定向复验。日志包含合成请求和故障注入输出，不是生产数据。
+
+## 同组合成业务演练
+
+真实 Chrome 使用隔离 SQLite、独立媒体目录和两个合成开发身份：完成组审核和归档，两笔历史资金分别保存、由另一身份复核及经正式财务服务记账；审核并启用库存基准；逐笔承接未结计划；建立并确认销售、采购接续单。随后通过同一 Chrome 会话请求正式 API 完成采购收货 3、销售发货 6，以及后续收款 20 USD、付款 4 USD。相同请求键重放收货和发货均返回原记录。结果与请求证据见 [Chrome 工作流记录](screenshots/chrome-workflow.json)、[履约前后状态](screenshots/chrome-fulfillment.json)、[桌面截图](screenshots/history-operational-settled-1440.png)、[390px 截图](screenshots/history-operational-settled-390.png)。
+
+只读复核合成数据库的 [日志](logs/browser-database-verification.log) 显示：两条历史资金事实、两条启用后新收付款、一个库存基准、各一条收货和发货、两条库存流水；原盘点 18，加收货 3、减发货 6 后实际库存 15，预留为 0。原销售和采购行数量仍分别为 10、5，接续行分别为 6、3；已核实的初始未结 60/10 USD 在新收付后为 40/6 USD。两条库存流水保留来源仓库及批次，采购成本归属关联接续销售单。事务失败和冲销验证见自动测试；以上截图不证明真实服务器或真实历史资料已验收。
+
+共享文件冲突点：本包在 `backend/crm/services/finance_closeout.py` 为历史来源增加复核后才能记账的服务边界检查，并在 `backend/crm/services/finance.py` 接入已审核历史未结计划。统一集成时必须与财务包共享服务逐行核对；不得通过删除该检查允许其他 API 绕过双人复核。
 
 本报告为进行中记录，尚不能作为完整业务闭环或交付完成证据。

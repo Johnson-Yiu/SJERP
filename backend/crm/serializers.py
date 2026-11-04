@@ -3098,7 +3098,7 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
         from .services.fulfillment import location_quantity
         from .models import HistoryInventoryBaseline
         instance = InventoryMovement.objects.select_for_update().get(pk=instance.pk)
-        if any(key in validated_data and validated_data[key] != getattr(instance, key) for key in ("warehouse", "warehouse_type", "lot_reference")):
+        if HistoryInventoryBaseline.objects.filter(sku=instance.sku, reversal__isnull=True).exists() and any(key in validated_data and validated_data[key] != getattr(instance, key) for key in ("warehouse", "warehouse_type", "lot_reference")):
             raise serializers.ValidationError("库存流水不能变更仓库或批次，请使用调整流水纠正。")
         quantity = validated_data.get("quantity", instance.quantity)
         sign = -1 if instance.signed_quantity < 0 else 1

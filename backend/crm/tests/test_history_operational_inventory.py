@@ -2,6 +2,7 @@ from datetime import date
 from decimal import Decimal
 from concurrent.futures import ThreadPoolExecutor
 from threading import Barrier
+import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -114,6 +115,7 @@ class HistoricalInventoryBaselineTests(HistoryTakeoverFixtureMixin, TestCase):
 
 
 @unittest.skipUnless(connection.vendor == "postgresql", "requires real PostgreSQL row locks")
+@override_settings(FILE_UPLOAD_TEMP_DIR=tempfile.gettempdir())
 class HistoricalInventoryPostgresTests(HistoryTakeoverFixtureMixin, TransactionTestCase):
     def setUp(self):
         super().setUp()

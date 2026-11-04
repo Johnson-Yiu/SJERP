@@ -129,6 +129,7 @@ class HistoricalFinanceBridgeTests(HistoryTakeoverFixtureMixin, TestCase):
 
 
 @unittest.skipUnless(connection.vendor == "postgresql", "requires real PostgreSQL row locks")
+@override_settings(FILE_UPLOAD_TEMP_DIR=tempfile.gettempdir())
 class HistoricalFinancePostgresTests(HistoryTakeoverFixtureMixin, TransactionTestCase):
     def setUp(self):
         super().setUp()

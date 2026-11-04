@@ -44,6 +44,7 @@ const statuses = {
   needs_reapproval: '需重新审核',
 }
 const handoffLabels = { not_connected: '尚未接续', pending_review: '待复核', approved: '已复核，待启用', posted: '已启用', reversed: '已撤销', sources_posted: '来源资金已记账', drafts_created: '未结余额已启用，接续草稿已生成', no_remaining: '无剩余履约', unmapped: '待映射', pending: '待复核', cancelled: '已取消', failed: '已核实失败', draft: '草稿', confirmed: '已确认', ordered: '已下单', partial: '部分到货', shipped: '已发货', completed: '已完成', production: '生产中' }
+const overallLabels = { not_archived: '未归档', archived: '已归档，待准备接续', pending_review: '接续资料待复核', ready: '可接续或待确认接续单', connected: '适用项目已接续' }
 function handoffLabel(value) { return handoffLabels[value] || value }
 const eventNames = {
   application_submitted: '已提交申请', group_submitted: '关联组已提交', group_approved: '管理员已批准',
@@ -149,6 +150,7 @@ async function loadFinance() {
       api.get('/finance-ledger/'),
     ])
     financeSources.value = status.data.sources || []
+    if (status.data.overall) selectedGroup.value.operational_overall = status.data.overall
     financeAccounts.value = (ledger.data.accounts || []).filter(item => item.ownership === 'own' && item.currency === 'CNY' && item.is_active)
     financeVouchers.value = ledger.data.vouchers || []
   } catch (e) { error.value = e.message }
@@ -185,6 +187,7 @@ async function loadInventory() {
   try {
     const response = await api.post(`/import/history-takeovers/${selected.value.id}/groups/${selectedGroup.value.id}/inventory-status/`, {})
     inventoryStatus.value = response.data
+    if (response.data.overall) selectedGroup.value.operational_overall = response.data.overall
     const previous = new Map((response.data.proposal?.rows || []).map(row => [row.source_id, row]))
     inventoryRows.value = (response.data.sources || []).map(item => ({ ...item, goods_ownership: previous.get(item.source_id)?.goods_ownership || '',
       unit_cost: previous.get(item.source_id)?.unit_cost || '', cost_currency: previous.get(item.source_id)?.cost_currency || '', no_lot: previous.get(item.source_id)?.no_lot || false }))
@@ -214,6 +217,7 @@ async function loadOperational() {
   try {
     const response = await api.post(`/import/history-takeovers/${selected.value.id}/groups/${selectedGroup.value.id}/operational-status/`, {})
     operationalStatus.value = response.data
+    if (response.data.overall) selectedGroup.value.operational_overall = response.data.overall
     const proposal = response.data.proposal
     operationalCutover.value = proposal?.cutover_date || ''
     operationalReason.value = proposal?.reason || ''
@@ -391,6 +395,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
 
           <div v-if="selectedGroup.status === 'executed'" class="takeover-execution">
             <h4>执行结果</h4><p>历史销售单 {{ selectedGroup.execution_result?.orders?.length || 0 }} 张；历史采购单 {{ selectedGroup.execution_result?.purchase_orders?.length || 0 }} 张。</p>
+            <p>整体进度：{{ overallLabels[selectedGroup.operational_overall?.state] || '已归档，待核查接续' }}。</p>
             <p>归档阶段未产生正式资金、库存流水或履约记录。资金交接：{{ handoffLabel(selectedGroup.finance_handoff_status) }}；库存交接：{{ handoffLabel(inventoryStatus?.status || selectedGroup.inventory_handoff_status) }}；履约交接：{{ handoffLabel(operationalStatus?.status || selectedGroup.fulfillment_handoff_status) }}。</p>
             <details v-if="canReview" class="takeover-resolution">
               <summary>历史资金接续</summary>

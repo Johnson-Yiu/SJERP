@@ -1,0 +1,40 @@
+99 objects imported automatically (use -v 2 for details).
+
+{
+  "database": "temporary synthetic SQLite",
+  "finance_facts": 2,
+  "new_transactions": 2,
+  "opening_baselines": 1,
+  "receipts": 1,
+  "shipments": 1,
+  "movements": 2,
+  "reservations": 0,
+  "actual_stock": "15",
+  "reserved_stock": "0",
+  "sales_outstanding": "40",
+  "purchase_outstanding": "6",
+  "payment_plans": 2,
+  "archived_sales_quantity": "10.00",
+  "archived_purchase_quantity": "5.00",
+  "continuation_sales_quantity": "6.00",
+  "continuation_purchase_quantity": "3.00",
+  "purchase_allocated_to_continuation": true,
+  "history_events": 16,
+  "operation_logs": 10,
+  "movement_locations": [
+    {
+      "type": "purchase_in",
+      "quantity": "3.00",
+      "warehouse_type": "自有仓",
+      "warehouse": "SYN-WH-01",
+      "lot_reference": "LOT-HT-01"
+    },
+    {
+      "type": "sale_out",
+      "quantity": "6.00",
+      "warehouse_type": "自有仓",
+      "warehouse": "SYN-WH-01",
+      "lot_reference": "LOT-HT-01"
+    }
+  ]
+}

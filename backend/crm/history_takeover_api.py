@@ -29,6 +29,7 @@ from .history_takeover import (
 from .models import HistoryTakeoverApplication, HistoryTakeoverGroup
 from .permissions import is_permission_admin
 from . import history_operational_finance, history_operational_inventory, history_operational_contracts
+from .history_operational_common import overall_status
 
 
 class HistoryTakeoverPermission(HistoryPreflightPermission):
@@ -61,6 +62,7 @@ def _application_payload(application, *, include_source=True):
             "finance_handoff_status": group.finance_handoff_status,
             "inventory_handoff_status": group.inventory_handoff_status,
             "fulfillment_handoff_status": group.fulfillment_handoff_status,
+            "operational_overall": overall_status(group),
         }
         if include_source:
             item["source_rows"] = group.source_rows
@@ -199,7 +201,7 @@ class HistoryTakeoverGroupActionView(APIView):
             if operation in {"review", "execute", "resolve-master", "correction-review", "finance-status", "finance-submit", "finance-replace", "finance-approve", "finance-post", "finance-cancel", "finance-fail", "inventory-status", "inventory-propose", "inventory-approve", "inventory-execute", "inventory-reverse", "operational-status", "operational-propose", "operational-approve", "operational-execute", "operational-reverse"} and not _admin_required(request):
                 return Response({"detail": "仅管理员可以审核、关联主档或执行历史承接。"}, status=403)
             if operation == "operational-status":
-                return Response(history_operational_contracts.status(group, request.user))
+                return Response({**history_operational_contracts.status(group, request.user), "overall": overall_status(group)})
             if operation == "operational-propose":
                 obj, replay = history_operational_contracts.propose(group.pk, data, request.user)
                 return Response({"status": obj.status, "idempotent_replay": replay})
@@ -213,7 +215,7 @@ class HistoryTakeoverGroupActionView(APIView):
                 replay = history_operational_contracts.reverse(group.pk, data.get("reason"), request.user)
                 return Response({"status": "reversed", "idempotent_replay": replay})
             if operation == "inventory-status":
-                return Response(history_operational_inventory.status(group, request.user))
+                return Response({**history_operational_inventory.status(group, request.user), "overall": overall_status(group)})
             if operation == "inventory-propose":
                 obj, replay = history_operational_inventory.propose(group.pk, data.get("rows"), data.get("reason"), data.get("complete_sku_inventory"), request.user)
                 return Response({"status": obj.status, "idempotent_replay": replay})
@@ -227,7 +229,7 @@ class HistoryTakeoverGroupActionView(APIView):
                 replay = history_operational_inventory.reverse(group.pk, data.get("reason"), request.user)
                 return Response({"status": "reversed", "idempotent_replay": replay})
             if operation == "finance-status":
-                return Response({"sources": history_operational_finance.source_status(group, request.user)})
+                return Response({"sources": history_operational_finance.source_status(group, request.user), "overall": overall_status(group)})
             if operation in {"finance-submit", "finance-replace"}:
                 if operation == "finance-replace" and data.get("replaces") is None:
                     return Response({"detail": "请指定需要修订的原资金指令。"}, status=400)

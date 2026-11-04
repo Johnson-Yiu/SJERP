@@ -115,7 +115,8 @@ def advance_source(group_id, source_id, action, user, *, voucher_checked=False, 
                 "fact_id": result.pk if action == "post" else None})
     statuses = [FinanceInstruction.objects.filter(pk=value).values_list("status", flat=True).first()
                 for value in handoff.payload.get("operational_instructions", {}).values()]
-    total = group.source_records.filter(record_type="收付款流水").count()
+    total = sum(1 for item in group.source_records.filter(record_type="收付款流水")
+                if item.source_snapshot.get("resolved", {}).get("source_status") != "cancelled")
     status = "sources_posted" if total and len(statuses) == total and all(value == "posted" for value in statuses) else "pending_review"
     handoff.status = group.finance_handoff_status = status
     handoff.save(update_fields=["status"])

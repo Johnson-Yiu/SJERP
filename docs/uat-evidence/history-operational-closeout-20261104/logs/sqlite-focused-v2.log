@@ -1,0 +1,27 @@
+Creating test database for alias 'default'...
+
+.......Bad Request: /api/import/history-takeovers/1/groups/1/finance-post/
+...............Bad Request: /api/orders/1/
+Bad Request: /api/purchase-orders/1/
+..Bad Request: /api/import/history-takeovers/1/groups/1/review/
+..Bad Request: /api/import/history-takeovers/1/groups/1/correction-review/
+..Bad Request: /api/import/history-takeovers/1/groups/1/review/
+.Not Found: /api/import/history-takeovers/2/
+Not Found: /api/import/history-takeovers/2/review-report.csv
+Conflict: /api/import/history-takeovers/
+.Bad Request: /api/import/history-takeovers/1/groups/1/execute/
+Bad Request: /api/import/history-takeovers/2/groups/2/review/
+Bad Request: /api/import/history-takeovers/3/groups/3/review/
+..Bad Request: /api/import/history-takeovers/2/groups/3/review/
+Bad Request: /api/import/history-takeovers/2/groups/3/resolve-master/
+Bad Request: /api/import/history-takeovers/3/groups/4/resolve-master/
+Bad Request: /api/import/history-takeovers/3/groups/4/review/
+.sssssss
+----------------------------------------------------------------------
+Ran 40 tests in 113.453s
+
+OK (skipped=7)
+Destroying test database for alias 'default'...
+
+Found 40 test(s).
+System check identified no issues (0 silenced).

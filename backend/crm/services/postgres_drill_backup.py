@@ -79,10 +79,10 @@ class IsolatedPostgresDrill:
     def _assert_application(self):
         repo = Path(__file__).resolve().parents[3]
         actual = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True).stdout.strip()
-        dirty = subprocess.run(["git", "status", "--porcelain", "--untracked-files=all", "--", "backend"],
+        dirty = subprocess.run(["git", "status", "--porcelain", "--untracked-files=all", "--", "backend", "templates"],
                                cwd=repo, capture_output=True, text=True, check=True).stdout
         if actual != self.app_sha or dirty:
-            raise BackupRecoveryError("Application SHA must match a clean backend checkout")
+            raise BackupRecoveryError("Application SHA must match a clean backend and templates checkout")
 
     def _connect(self, database, **kwargs):
         return psycopg.connect(host="127.0.0.1", port=self.port, user=self.user,

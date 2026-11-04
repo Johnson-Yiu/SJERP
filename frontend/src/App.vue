@@ -81,7 +81,7 @@ onMounted(() => { loadAccessControl().catch(() => {}) })
       </nav>
       <div class="sidebar-foot">
         <div class="team-avatars"><span>{{ operatorInitial }}</span></div>
-        <div><strong>{{ operator.development_superadmin ? '开发身份' : '当前账号' }}：{{ operator.name }}</strong><small>{{ operator.role }} · {{ operator.has_all_permissions ? '全部功能与数据权限' : '按账号授权' }}</small></div>
+        <div class="sidebar-identity"><strong :title="operator.name">{{ operator.development_superadmin ? '开发身份' : '当前账号' }}：{{ operator.name }}</strong><small>{{ operator.role }} · {{ operator.has_all_permissions ? '全部功能与数据权限' : '按账号授权' }}</small></div>
       </div>
       <div v-if="accessState.error" class="access-state-error" role="alert">权限状态加载失败：{{ accessState.error }}</div>
     </aside>

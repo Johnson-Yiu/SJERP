@@ -47,6 +47,7 @@ def main():
         secret.unlink()
         started = True
         run_tool([tool(pg, "pg_ctl"), "-D", str(cluster), "-l", str(root / "postgres.log"), "-o", f"-h 127.0.0.1 -p {port}", "-w", "start"])
+        os.environ["ISS018_DRILL_ROOT"] = str(root)
         sha = subprocess.run(["git", "rev-parse", "HEAD"], check=True, capture_output=True, text=True).stdout.strip()
         drill = IsolatedPostgresDrill(task_root=root, pg_bin=pg, port=port, user="iss018_drill_admin", password=password, app_sha=sha)
         drill._manage("migrate", "--noinput", "--verbosity", "0")

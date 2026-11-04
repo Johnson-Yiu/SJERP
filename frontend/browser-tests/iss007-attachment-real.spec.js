@@ -59,6 +59,14 @@ test('customer follow-up attachment uploads, reopens, and serves through private
 
   await page.setViewportSize({ width: 390, height: 844 })
   await page.screenshot({ path: path.join(screenshotDir, 'follow-up-saved-390.png'), fullPage: true })
+  const savedAttachment = reopened.locator('.follow-up-attachment-editor-item.saved').filter({ hasText: 'ISS007-沟通纪要.txt' })
+  await savedAttachment.scrollIntoViewIfNeeded()
+  await expect(savedAttachment.getByRole('link', { name: '查看' })).toBeVisible()
+  await page.screenshot({ path: path.join(screenshotDir, 'follow-up-saved-attachment-390-viewport.png') })
+  await page.setViewportSize({ width: 1440, height: 950 })
+  await savedAttachment.scrollIntoViewIfNeeded()
+  await expect(savedAttachment.getByRole('link', { name: '查看' })).toBeVisible()
+  await page.screenshot({ path: path.join(screenshotDir, 'follow-up-saved-attachment-desktop-viewport.png') })
 })
 
 test('SKU replacement keeps quote image snapshot and exposes thumbnail', async ({ page }) => {

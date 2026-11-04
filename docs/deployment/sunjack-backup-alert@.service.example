@@ -1,0 +1,14 @@
+[Unit]
+Description=Record SUNJACK backup failure for monitoring integration
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/logger -p daemon.err -- SUNJACK backup failed for %i - inspect service exit status and recovery report
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+# This is a local syslog alert ENTRY POINT, not verified external notification.
+# Route daemon.err to the approved monitoring channel and test actual delivery
+# in the target environment; never include credentials or backup contents.

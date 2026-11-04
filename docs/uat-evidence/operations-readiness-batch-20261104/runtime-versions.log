@@ -1,0 +1,103 @@
+{
+  "python": "3.12.16 (main, Oct 26 2026, 14:10:56) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "dependencies": [
+    {
+      "package": "asgiref",
+      "locked": "3.13.0",
+      "installed": "3.13.0",
+      "matches": true
+    },
+    {
+      "package": "bleach",
+      "locked": "6.4.0",
+      "installed": "6.4.0",
+      "matches": true
+    },
+    {
+      "package": "Django",
+      "locked": "6.0.9",
+      "installed": "6.0.9",
+      "matches": true
+    },
+    {
+      "package": "django-cors-headers",
+      "locked": "4.9.0",
+      "installed": "4.9.0",
+      "matches": true
+    },
+    {
+      "package": "dj-database-url",
+      "locked": "3.1.2",
+      "installed": "3.1.2",
+      "matches": true
+    },
+    {
+      "package": "djangorestframework",
+      "locked": "3.18.3",
+      "installed": "3.18.3",
+      "matches": true
+    },
+    {
+      "package": "et-xmlfile",
+      "locked": "2.0.0",
+      "installed": "2.0.0",
+      "matches": true
+    },
+    {
+      "package": "openpyxl",
+      "locked": "3.1.5",
+      "installed": "3.1.5",
+      "matches": true
+    },
+    {
+      "package": "Pillow",
+      "locked": "13.0.0",
+      "installed": "13.0.0",
+      "matches": true
+    },
+    {
+      "package": "psycopg",
+      "locked": "3.3.6",
+      "installed": "3.3.6",
+      "matches": true
+    },
+    {
+      "package": "psycopg-binary",
+      "locked": "3.3.6",
+      "installed": "3.3.6",
+      "matches": true
+    },
+    {
+      "package": "pycountry",
+      "locked": "26.2.16",
+      "installed": "26.2.16",
+      "matches": true
+    },
+    {
+      "package": "sqlparse",
+      "locked": "0.6.0",
+      "installed": "0.6.0",
+      "matches": true
+    },
+    {
+      "package": "typing-extensions",
+      "locked": "4.16.0",
+      "installed": "4.16.0",
+      "matches": true
+    },
+    {
+      "package": "tzdata",
+      "locked": "2026.6",
+      "installed": "2026.6",
+      "matches": true
+    },
+    {
+      "package": "webencodings",
+      "locked": "0.6.1",
+      "installed": "0.6.1",
+      "matches": true
+    }
+  ],
+  "all_match": true
+}

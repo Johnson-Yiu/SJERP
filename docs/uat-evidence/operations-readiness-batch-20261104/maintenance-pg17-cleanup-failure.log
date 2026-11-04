@@ -1,0 +1,14 @@
+{"status": "PASS", "scope": "real-PG17-with-simulated-media-fence", "active_session_rejected": true, "other_login_rejected": true, "restored_verified": true, "audit_truncate_rejected": true, "source_unchanged": true, "real_lock_competition_rejected": true, "bad_digest_rejected": true, "tables": 84, "rows": 923, "seconds": 34.156}
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\operations-readiness-batch-20261104\backend\operations_pg_acceptance.py", line 116, in <module>
+    main()
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\operations-readiness-batch-20261104\backend\operations_pg_acceptance.py", line 112, in main
+    shutil.rmtree(root)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\shutil.py", line 788, in rmtree
+    return _rmtree_unsafe(path, onexc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\shutil.py", line 635, in _rmtree_unsafe
+    onexc(os.unlink, fullname, err)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\shutil.py", line 633, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 5] �ܾ����ʡ�: 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-iss018-pg17-a3m6l7iq\\pgsql\\bin\\postgres.exe'

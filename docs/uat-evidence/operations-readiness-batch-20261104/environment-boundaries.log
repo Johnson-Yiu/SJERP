@@ -1,0 +1,13 @@
+{
+  "platform": "nt",
+  "docker": null,
+  "podman": null,
+  "nginx": null,
+  "actual_fence_refusal": "Offline filesystem fence requires Linux mount evidence",
+  "wsl_exit": 1,
+  "wsl_output_prefix": "\r\r\n\u7248\u6743\u6240\u6709(c) Microsoft Corporation\u3002\u4fdd\u7559\u6240\u6709\u6743\u5229\u3002\r\r\n\r\r\n\u7528\u6cd5: wsl.exe [Argument]\r\r\n\r\r\n\u53c2\u6570:\r\r\n\r\r\n    --install <Options>\r\r\n        \u5b89\u88c5\u9002\u7528\u4e8e Linux \u7684 Windows \u5b50\u7cfb\u7edf\u529f\u80fd\u3002\u5982\u679c\u672a\u6307\u5b9a\u4efb\u4f55\u9009\u9879\uff0c\r\r\n        \u5219\u63a8\u8350\u7684\u529f\u80fd\u5c06\u4e0e\u9ed8\u8ba4\u5206\u53d1\u4e00\u8d77\u5b89\u88c5\u3002\r\r\n\r\r\n        \u82e5\u8981\u67e5\u770b\u9ed8\u8ba4\u5206\u53d1\u4ee5\u53ca\u5176\u4ed6\u6709\u6548\u5206\u53d1\u7684\u5217\u8868\uff0c\r\r\n        \u8bf7\u4f7f\u7528 \"wsl --list --online\"\u3002\r\r\n\r\r\n        \u9009\u9879:\r\r\n            --distribution\u3001-d [Argument]\r\r\n                \u6309\u540d\u79f0\u6307\u5b9a\u8981\u4e0b\u8f7d\u548c\u5b89\u88c5\u7684\u5206\u53d1\u3002\r\r\n\r\r\n                \u53c2\u6570:\r\r\n                    \u6709\u6548\u7684\u5206\u53d1\u540d\u79f0(\u4e0d\u533a\u5206\u5927\u5c0f\u5199)\u3002\r\r\n                    \r\r\n                \u793a\u4f8b:\r\r\n                    wsl --install -d Ubuntu\r\r\n                    wsl --install --distribution Debian\r\r\n\r\r\n            --inbox\r\r\n                \u5b89\u88c5\u53ef\u9009 Windows \u529f\u80fd\uff0c\u800c\u4e0d\u662f Microsoft Store \u4e2d\u63d0\u4f9b\u7684\u7248\u672c\u3002\r\r\n\r\r\n                        --no-distribution\r\r\n  ",
+  "gpg": "gpg (GnuPG) 2.4.9",
+  "openssl": "OpenSSL 3.5.6 7 Apr 2026 (Library: OpenSSL 3.5.6 7 Apr 2026)",
+  "old_task_cleanup_root_absent": true,
+  "wsl_raw_hex_prefix": "0d000d000a00487243674062096728006300290020004d006900630072006f0073006f0066007400200043006f00720070006f0072006100740069006f006e000230dd4f5975406209674367295202300d000d000a000d000d000a002875d56c3a002000770073006c002e0065007800650020005b0041007200670075006d0065006e0074005d000d000d000a000d000d000a00c25370653a000d000d000a000d000d000a0020002000200020002d002d0069006e007300740061006c006c0020003c004f007000"
+}

@@ -1,0 +1,8 @@
+{
+  "public_origin": "https://erp.example.invalid",
+  "media_root": "/replace/with/private/media",
+  "static_root": "/replace/with/static/files",
+  "backup_root": "/replace/with/private/backup",
+  "min_free_bytes": 1073741824,
+  "min_free_inodes": 1000
+}

@@ -189,6 +189,10 @@ class FinanceCloseoutViewSet(viewsets.ViewSet):
         return Response({"id": obj.pk, "difference": str(obj.difference)}, status=201)
 
     @action(detail=False, methods=["get"])
+    def fact_detail(self, request):
+        return Response(fact_data(FinanceFact.objects.select_related("account", "voucher").get(pk=ledger.pk(request.query_params.get("id")))))
+
+    @action(detail=False, methods=["get"])
     def facts(self, request):
         start, end = ledger.iso(request.query_params.get("date_from", "1900-01-01")), ledger.iso(request.query_params.get("date_to", "2099-12-31"))
         if start > end:

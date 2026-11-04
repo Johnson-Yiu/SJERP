@@ -1,10 +1,12 @@
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { api } from '../api'
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import { useAccessControl } from '../accessControl'
 
 const { can } = useAccessControl()
+const route = useRoute()
 const state = reactive({ accounts: [], vouchers: [], instructions: [], reviews: [], mappings: [], transfers: [] })
 const facts = ref([])
 const totals = ref({ inflow: '0', outflow: '0', net: '0' })
@@ -90,7 +92,15 @@ onMounted(async () => {
     if (saved?.key) { draft.request_key = saved.key; attempted.value = saved.attempted === true; if (attempted.value) recoveredKey.value = saved.key }
     else newDraft()
   } catch { storageError.value = true; error.value = '无法恢复请求身份，已阻止提交；请核查历史指令。' }
-  await run(load)
+  await run(async () => {
+    let fact
+    if (route?.query?.fact) {
+      fact = (await api.get('/finance-ledger/fact_detail/', { params: { id: route.query.fact } })).data
+      period.date_from = fact.actual_date; period.date_to = fact.actual_date
+    }
+    await load(); await nextTick()
+    if (fact) document.getElementById(`fact-${fact.id}`)?.scrollIntoView({ block: 'center' })
+  })
 })
 </script>
 

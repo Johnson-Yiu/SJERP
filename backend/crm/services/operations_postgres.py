@@ -75,6 +75,15 @@ class MaintenanceBackup:
     def connect(self):
         return psycopg.connect(**self.options)
 
+    def application_identity(self):
+        repository = Path(__file__).resolve().parents[3]
+        actual = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repository,
+                                capture_output=True, text=True, check=True, timeout=15).stdout.strip()
+        dirty = subprocess.run(["git", "status", "--porcelain", "--untracked-files=all", "--", "backend", "templates"],
+                               cwd=repository, capture_output=True, text=True, check=True, timeout=15).stdout
+        if actual != self.app_sha or dirty:
+            raise RuntimeError("Reviewed application SHA and clean backend/templates checkout required")
+
     def identity(self, connection):
         row = connection.execute("SELECT current_database(), system_identifier::text, current_setting('server_version_num')::int FROM pg_control_system()").fetchone()
         if row[0] != self.database or row[1] != self.system_identifier or row[2] // 10000 != 17:
@@ -112,6 +121,7 @@ class MaintenanceBackup:
     def backup(self, *, media_root, destination):
         media_root, destination = Path(media_root), Path(destination)
         fence = verify_readonly_filesystem(media_root)
+        self.application_identity()
         for name in ("pg_dump", "pg_restore"):
             if not re.search(rb"\b17\.\d+", self.tool(name, "--version")):
                 raise RuntimeError("PostgreSQL tools must match server major 17")
@@ -204,6 +214,7 @@ class MaintenanceBackup:
             manifest = json.loads((stage / "manifest.json").read_text(encoding="utf-8"))
             if manifest.get("kind") != "sunjack-maintenance-backup" or manifest.get("version") != 1 or manifest.get("app_sha") != self.app_sha or manifest.get("postgres_major") != 17:
                 raise ValueError("Archive application or format is incompatible")
+            self.application_identity()
             if digest(stage / "database.dump") != manifest["database_sha256"] or compare_private_media_manifest(manifest["media"], stage / "media"):
                 raise ValueError("Archive database or media integrity failed")
             try:

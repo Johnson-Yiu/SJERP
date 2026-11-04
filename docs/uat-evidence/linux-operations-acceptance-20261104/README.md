@@ -41,3 +41,9 @@ Nginx job 重新在独立合成 SQLite、真实 Nginx 及本地自签测试证�
 新增 [回执清理边界单元测试](local-unit-after-cleanup.log)：49 项全通过。对模拟的临时明文清理错误，保留原恢复错误及清理错误；如果真实恢复已完成但回执签发或清理失败，则不返回成功回执，并在错误附注中标明需要核查的本次恢复目标。这些模拟注入仅验证错误传播，不替代上面的真实 Linux 清理权限失败演练。
 
 本机 Windows 对 Linux mount 验收不能作为通过或阻塞的唯一理由；GitHub Linux runner 已证明支持初始 loop 文件系统操作。外部备份故障域、生产证书、目标服务器角色 ACL、真实调度告警投递及上线仍须单独验收，同机临时副本不是异地容灾。不修改业务模块、公共台账和现有 CI workflow。
+
+## 独立信任根复验
+
+源码 `81d37ddb78748f61d58e24ace023fe7fc16a1379` 的 [Linux 专项运行 41862017884](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41862017884) 三项均成功，保留真实原始日志：[媒体栅栏](81d37dd-media-fence.raw.log.gz)、[PG17 与回执](81d37dd-postgres-role-receipts.raw.log.gz)、[Nginx 与私有附件](81d37dd-nginx-private-media.raw.log.gz)。实际恢复角色的私钥由 root 持有且运行保留的普通账号不能读取；可由普通账号修改的信任配置被拒绝，root 管理的公钥和信任文件可供普通账号验证。实际解密并恢复三次，确认伪造、错包、过期输入拒绝；99 表、975 行，源数据库及合成凭证不变，专项耗时 29.406 秒。真实临时 systemd timer 和 OnFailure 到本机接收器通过；外部告警及独立故障域仍需在目标环境验证。
+
+同轮本地 CPython 3.12 相关单元测试 27 项通过；Django system check 与迁移差异检查通过。该 Linux 测试使用临时 CI 环境和合成密钥，不代表生产密钥交接完成。

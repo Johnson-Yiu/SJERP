@@ -1,0 +1,70 @@
+{
+  "test": "defect_repros.AuthorizedRoleDefectReproduction.test_adv03_authorized_global_finance_role_can_reach_scoped_preview",
+  "requests": [
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-BANK",
+        "name": "合成反例银行",
+        "account_type": "bank",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 1
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-CASH",
+        "name": "合成反例现金",
+        "account_type": "cash",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 2
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/mappings/",
+      "input": {
+        "account": 1,
+        "legacy_code": "SYNTH_CNY",
+        "reason": "合成显式账户映射"
+      },
+      "status": 201,
+      "body": {
+        "id": 1
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/preview/",
+      "input": {
+        "request_key": "ADV-e1dc501e77d349ee832887314640de48",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-e1dc501e77d349ee832887314640de48",
+        "kind": "cash",
+        "account": 1,
+        "voucher": 1,
+        "actual_date": "2026-04-03",
+        "direction": "income",
+        "amount": "20.00",
+        "nature": "unclassified",
+        "truth": "verified",
+        "reason": "合成反例凭证已核实"
+      },
+      "status": 403,
+      "body": {
+        "detail": "你没有权限执行此操作。"
+      }
+    }
+  ]
+}

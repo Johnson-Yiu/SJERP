@@ -1,0 +1,71 @@
+{
+  "python": "3.14.5 (tags/v3.14.5:5607950, May 10 2026, 10:43:50) [MSC v.1944 64 bit (AMD64)]",
+  "executable": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\iss018-command-locked-venv\\Scripts\\python.exe",
+  "pins": {
+    "asgiref": {
+      "locked": "3.13.0",
+      "actual": "3.13.0"
+    },
+    "bleach": {
+      "locked": "6.4.0",
+      "actual": "6.4.0"
+    },
+    "Django": {
+      "locked": "6.0.9",
+      "actual": "6.0.9"
+    },
+    "django-cors-headers": {
+      "locked": "4.9.0",
+      "actual": "4.9.0"
+    },
+    "dj-database-url": {
+      "locked": "3.1.2",
+      "actual": "3.1.2"
+    },
+    "djangorestframework": {
+      "locked": "3.18.3",
+      "actual": "3.18.3"
+    },
+    "et-xmlfile": {
+      "locked": "2.0.0",
+      "actual": "2.0.0"
+    },
+    "openpyxl": {
+      "locked": "3.1.5",
+      "actual": "3.1.5"
+    },
+    "Pillow": {
+      "locked": "13.0.0",
+      "actual": "13.0.0"
+    },
+    "psycopg": {
+      "locked": "3.3.6",
+      "actual": "3.3.6"
+    },
+    "psycopg-binary": {
+      "locked": "3.3.6",
+      "actual": "3.3.6"
+    },
+    "pycountry": {
+      "locked": "26.2.16",
+      "actual": "26.2.16"
+    },
+    "sqlparse": {
+      "locked": "0.6.0",
+      "actual": "0.6.0"
+    },
+    "typing-extensions": {
+      "locked": "4.16.0",
+      "actual": "4.16.0"
+    },
+    "tzdata": {
+      "locked": "2026.6",
+      "actual": "2026.6"
+    },
+    "webencodings": {
+      "locked": "0.6.1",
+      "actual": "0.6.1"
+    }
+  },
+  "all_match": true
+}

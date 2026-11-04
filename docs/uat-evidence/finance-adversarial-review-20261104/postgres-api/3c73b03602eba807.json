@@ -1,0 +1,134 @@
+{
+  "test": "crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_fail_vs_post_cannot_leave_failed_instruction_with_business_fact",
+  "requests": [
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-BANK",
+        "name": "合成反例银行",
+        "account_type": "bank",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 42
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-CASH",
+        "name": "合成反例现金",
+        "account_type": "cash",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 43
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/instructions/",
+      "input": {
+        "request_key": "ADV-dfaf1f81e27f4421ab02238457d24d23",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-dfaf1f81e27f4421ab02238457d24d23",
+        "kind": "cash",
+        "account": 42,
+        "voucher": 22,
+        "actual_date": "2026-04-03",
+        "direction": "expense",
+        "amount": "31.00",
+        "nature": "unclassified",
+        "truth": "verified",
+        "reason": "合成反例凭证已核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 83,
+        "kind": "cash",
+        "status": "pending",
+        "payload": {
+          "request_key": "ADV-dfaf1f81e27f4421ab02238457d24d23",
+          "source_system": "SYNTH-ADVERSARIAL",
+          "source_key": "ADV-dfaf1f81e27f4421ab02238457d24d23",
+          "kind": "cash",
+          "account": 42,
+          "voucher": 22,
+          "actual_date": "2026-04-03",
+          "direction": "expense",
+          "amount": "31.00",
+          "nature": "unclassified",
+          "truth": "verified",
+          "reason": "合成反例凭证已核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 47
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04 15:22:26.886980+00:00",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "pid": 8316,
+      "action": "fail",
+      "input": {
+        "id": 83,
+        "reason": "合成核实未扣款",
+        "no_debit_confirmed": true
+      },
+      "status": 200,
+      "body": {
+        "id": 83,
+        "kind": "cash",
+        "status": "failed",
+        "payload": {
+          "kind": "cash",
+          "truth": "verified",
+          "amount": "31.00",
+          "nature": "unclassified",
+          "reason": "合成反例凭证已核实",
+          "account": 42,
+          "voucher": 22,
+          "direction": "expense",
+          "source_key": "ADV-dfaf1f81e27f4421ab02238457d24d23",
+          "actual_date": "2026-04-03",
+          "allocations": [],
+          "request_key": "ADV-dfaf1f81e27f4421ab02238457d24d23",
+          "source_system": "SYNTH-ADVERSARIAL"
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 47
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04 15:22:26.886980+00:00",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "pid": 30348,
+      "action": "post",
+      "input": {
+        "id": 83,
+        "voucher_checked": true
+      },
+      "status": 400,
+      "body": [
+        "须核实凭证且指令未取消。"
+      ]
+    }
+  ]
+}

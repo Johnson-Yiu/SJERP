@@ -1,0 +1,2361 @@
+{
+  "test": "crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_positive_negative_zero_opening_and_same_day_boundary",
+  "requests": [
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-BANK",
+        "name": "合成反例银行",
+        "account_type": "bank",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 27
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-CASH",
+        "name": "合成反例现金",
+        "account_type": "cash",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 28
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-0",
+        "name": "合成基准",
+        "account_type": "bank",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 29
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/instructions/",
+      "input": {
+        "request_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+        "kind": "opening",
+        "account": 29,
+        "voucher": 16,
+        "actual_date": "2026-04-03",
+        "direction": "income",
+        "amount": "20.00",
+        "nature": "unclassified",
+        "truth": "verified",
+        "reason": "合成反例凭证已核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 57,
+        "kind": "opening",
+        "status": "pending",
+        "payload": {
+          "request_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+          "source_system": "SYNTH-ADVERSARIAL",
+          "source_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+          "kind": "opening",
+          "account": 29,
+          "voucher": 16,
+          "actual_date": "2026-04-03",
+          "direction": "income",
+          "amount": "20.00",
+          "nature": "unclassified",
+          "truth": "verified",
+          "reason": "合成反例凭证已核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 35
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04 15:22:22.486192+00:00",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/approve/",
+      "input": {
+        "id": 57
+      },
+      "status": 200,
+      "body": {
+        "id": 57,
+        "kind": "opening",
+        "status": "approved",
+        "payload": {
+          "kind": "opening",
+          "truth": "verified",
+          "amount": "20.00",
+          "nature": "unclassified",
+          "reason": "合成反例凭证已核实",
+          "account": 29,
+          "voucher": 16,
+          "direction": "income",
+          "source_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+          "actual_date": "2026-04-03",
+          "allocations": [],
+          "request_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+          "source_system": "SYNTH-ADVERSARIAL"
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 35
+        },
+        "approved_actor": {
+          "kind": "authenticated_user",
+          "action": "approve",
+          "user_id": 36
+        },
+        "created_at": "2026-11-04 15:22:22.486192+00:00",
+        "approved_at": "2026-11-04 15:22:22.492978+00:00",
+        "replaces": null
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/post/",
+      "input": {
+        "id": 57,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 31,
+        "account": 29,
+        "account_name": "合成基准",
+        "account_type": "bank",
+        "instruction": 57,
+        "actual_date": "2026-04-03",
+        "amount": "20.00",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "opening",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 16,
+        "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 35
+        },
+        "created_at": "2026-11-04 15:22:22.505295+00:00",
+        "company_flow_included": false,
+        "flow_exclusion_reason": "opening",
+        "classifications": []
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/instructions/",
+      "input": {
+        "request_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+        "kind": "cash",
+        "account": 29,
+        "voucher": 16,
+        "actual_date": "2026-04-03",
+        "direction": "income",
+        "amount": "3.71",
+        "nature": "unclassified",
+        "truth": "verified",
+        "reason": "合成反例凭证已核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 58,
+        "kind": "cash",
+        "status": "pending",
+        "payload": {
+          "request_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+          "source_system": "SYNTH-ADVERSARIAL",
+          "source_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+          "kind": "cash",
+          "account": 29,
+          "voucher": 16,
+          "actual_date": "2026-04-03",
+          "direction": "income",
+          "amount": "3.71",
+          "nature": "unclassified",
+          "truth": "verified",
+          "reason": "合成反例凭证已核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 35
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04 15:22:22.519662+00:00",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/post/",
+      "input": {
+        "id": 58,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 32,
+        "account": 29,
+        "account_name": "合成基准",
+        "account_type": "bank",
+        "instruction": 58,
+        "actual_date": "2026-04-03",
+        "amount": "3.71",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "cash",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 16,
+        "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 35
+        },
+        "created_at": "2026-11-04 15:22:22.532664+00:00",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    },
+    {
+      "method": "get",
+      "path": "/api/finance-ledger/",
+      "input": "2026-06-30",
+      "status": 200,
+      "body": {
+        "accounts": [
+          {
+            "id": 27,
+            "code": "ADV-BANK",
+            "name": "合成反例银行",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成核实",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 28,
+            "code": "ADV-CASH",
+            "name": "合成反例现金",
+            "account_type": "cash",
+            "ownership": "own",
+            "ownership_reason": "合成核实",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 29,
+            "code": "ADV-0",
+            "name": "合成基准",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成核实",
+            "currency": "CNY",
+            "balance": "23.71",
+            "is_active": true
+          }
+        ],
+        "instructions": [
+          {
+            "id": 58,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "kind": "cash",
+              "truth": "verified",
+              "amount": "3.71",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 29,
+              "voucher": 16,
+              "direction": "income",
+              "source_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+              "actual_date": "2026-04-03",
+              "allocations": [],
+              "request_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04 15:22:22.519662+00:00",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 57,
+            "kind": "opening",
+            "status": "posted",
+            "payload": {
+              "kind": "opening",
+              "truth": "verified",
+              "amount": "20.00",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 29,
+              "voucher": 16,
+              "direction": "income",
+              "source_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+              "actual_date": "2026-04-03",
+              "allocations": [],
+              "request_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {
+              "kind": "authenticated_user",
+              "action": "approve",
+              "user_id": 36
+            },
+            "created_at": "2026-11-04 15:22:22.486192+00:00",
+            "approved_at": "2026-11-04 15:22:22.492978+00:00",
+            "replaces": null
+          }
+        ],
+        "vouchers": [
+          {
+            "id": 16,
+            "name": "synthetic-adversarial.pdf",
+            "sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "size": 56
+          }
+        ],
+        "reviews": [],
+        "mappings": [],
+        "transfers": [],
+        "historical_transfers": []
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/instructions/",
+      "input": {
+        "request_key": "ADV-dc898937ca2e4c4a91040e516b465133",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-dc898937ca2e4c4a91040e516b465133",
+        "kind": "cash",
+        "account": 29,
+        "voucher": 16,
+        "actual_date": "2026-04-02",
+        "direction": "income",
+        "amount": "1.00",
+        "nature": "unclassified",
+        "truth": "verified",
+        "reason": "合成反例凭证已核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 59,
+        "kind": "cash",
+        "status": "pending",
+        "payload": {
+          "request_key": "ADV-dc898937ca2e4c4a91040e516b465133",
+          "source_system": "SYNTH-ADVERSARIAL",
+          "source_key": "ADV-dc898937ca2e4c4a91040e516b465133",
+          "kind": "cash",
+          "account": 29,
+          "voucher": 16,
+          "actual_date": "2026-04-02",
+          "direction": "income",
+          "amount": "1.00",
+          "nature": "unclassified",
+          "truth": "verified",
+          "reason": "合成反例凭证已核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 35
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04 15:22:22.565582+00:00",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/post/",
+      "input": {
+        "id": 59,
+        "voucher_checked": true
+      },
+      "status": 400,
+      "body": [
+        "实际日期早于启用基准，须按历史核实流程处理。"
+      ]
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-1",
+        "name": "合成基准",
+        "account_type": "bank",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 30
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/instructions/",
+      "input": {
+        "request_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+        "kind": "opening",
+        "account": 30,
+        "voucher": 16,
+        "actual_date": "2026-04-03",
+        "direction": "expense",
+        "amount": "20.00",
+        "nature": "unclassified",
+        "truth": "verified",
+        "reason": "合成反例凭证已核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 60,
+        "kind": "opening",
+        "status": "pending",
+        "payload": {
+          "request_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+          "source_system": "SYNTH-ADVERSARIAL",
+          "source_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+          "kind": "opening",
+          "account": 30,
+          "voucher": 16,
+          "actual_date": "2026-04-03",
+          "direction": "expense",
+          "amount": "20.00",
+          "nature": "unclassified",
+          "truth": "verified",
+          "reason": "合成反例凭证已核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 35
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04 15:22:22.582200+00:00",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/approve/",
+      "input": {
+        "id": 60
+      },
+      "status": 200,
+      "body": {
+        "id": 60,
+        "kind": "opening",
+        "status": "approved",
+        "payload": {
+          "kind": "opening",
+          "truth": "verified",
+          "amount": "20.00",
+          "nature": "unclassified",
+          "reason": "合成反例凭证已核实",
+          "account": 30,
+          "voucher": 16,
+          "direction": "expense",
+          "source_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+          "actual_date": "2026-04-03",
+          "allocations": [],
+          "request_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+          "source_system": "SYNTH-ADVERSARIAL"
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 35
+        },
+        "approved_actor": {
+          "kind": "authenticated_user",
+          "action": "approve",
+          "user_id": 36
+        },
+        "created_at": "2026-11-04 15:22:22.582200+00:00",
+        "approved_at": "2026-11-04 15:22:22.586951+00:00",
+        "replaces": null
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/post/",
+      "input": {
+        "id": 60,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 33,
+        "account": 30,
+        "account_name": "合成基准",
+        "account_type": "bank",
+        "instruction": 60,
+        "actual_date": "2026-04-03",
+        "amount": "20.00",
+        "direction": "expense",
+        "nature": "unclassified",
+        "kind": "opening",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 16,
+        "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 35
+        },
+        "created_at": "2026-11-04 15:22:22.603063+00:00",
+        "company_flow_included": false,
+        "flow_exclusion_reason": "opening",
+        "classifications": []
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/instructions/",
+      "input": {
+        "request_key": "ADV-4d92d9c4f4ed4680a39d93703f23369e",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-4d92d9c4f4ed4680a39d93703f23369e",
+        "kind": "cash",
+        "account": 30,
+        "voucher": 16,
+        "actual_date": "2026-04-03",
+        "direction": "income",
+        "amount": "3.71",
+        "nature": "unclassified",
+        "truth": "verified",
+        "reason": "合成反例凭证已核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 61,
+        "kind": "cash",
+        "status": "pending",
+        "payload": {
+          "request_key": "ADV-4d92d9c4f4ed4680a39d93703f23369e",
+          "source_system": "SYNTH-ADVERSARIAL",
+          "source_key": "ADV-4d92d9c4f4ed4680a39d93703f23369e",
+          "kind": "cash",
+          "account": 30,
+          "voucher": 16,
+          "actual_date": "2026-04-03",
+          "direction": "income",
+          "amount": "3.71",
+          "nature": "unclassified",
+          "truth": "verified",
+          "reason": "合成反例凭证已核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 35
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04 15:22:22.616311+00:00",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/post/",
+      "input": {
+        "id": 61,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 34,
+        "account": 30,
+        "account_name": "合成基准",
+        "account_type": "bank",
+        "instruction": 61,
+        "actual_date": "2026-04-03",
+        "amount": "3.71",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "cash",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 16,
+        "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-4d92d9c4f4ed4680a39d93703f23369e",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 35
+        },
+        "created_at": "2026-11-04 15:22:22.631942+00:00",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    },
+    {
+      "method": "get",
+      "path": "/api/finance-ledger/",
+      "input": "2026-06-30",
+      "status": 200,
+      "body": {
+        "accounts": [
+          {
+            "id": 27,
+            "code": "ADV-BANK",
+            "name": "合成反例银行",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成核实",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 28,
+            "code": "ADV-CASH",
+            "name": "合成反例现金",
+            "account_type": "cash",
+            "ownership": "own",
+            "ownership_reason": "合成核实",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 29,
+            "code": "ADV-0",
+            "name": "合成基准",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成核实",
+            "currency": "CNY",
+            "balance": "23.71",
+            "is_active": true
+          },
+          {
+            "id": 30,
+            "code": "ADV-1",
+            "name": "合成基准",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成核实",
+            "currency": "CNY",
+            "balance": "-16.29",
+            "is_active": true
+          }
+        ],
+        "instructions": [
+          {
+            "id": 61,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "kind": "cash",
+              "truth": "verified",
+              "amount": "3.71",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 30,
+              "voucher": 16,
+              "direction": "income",
+              "source_key": "ADV-4d92d9c4f4ed4680a39d93703f23369e",
+              "actual_date": "2026-04-03",
+              "allocations": [],
+              "request_key": "ADV-4d92d9c4f4ed4680a39d93703f23369e",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04 15:22:22.616311+00:00",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 60,
+            "kind": "opening",
+            "status": "posted",
+            "payload": {
+              "kind": "opening",
+              "truth": "verified",
+              "amount": "20.00",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 30,
+              "voucher": 16,
+              "direction": "expense",
+              "source_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+              "actual_date": "2026-04-03",
+              "allocations": [],
+              "request_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {
+              "kind": "authenticated_user",
+              "action": "approve",
+              "user_id": 36
+            },
+            "created_at": "2026-11-04 15:22:22.582200+00:00",
+            "approved_at": "2026-11-04 15:22:22.586951+00:00",
+            "replaces": null
+          },
+          {
+            "id": 59,
+            "kind": "cash",
+            "status": "pending",
+            "payload": {
+              "kind": "cash",
+              "truth": "verified",
+              "amount": "1.00",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 29,
+              "voucher": 16,
+              "direction": "income",
+              "source_key": "ADV-dc898937ca2e4c4a91040e516b465133",
+              "actual_date": "2026-04-02",
+              "allocations": [],
+              "request_key": "ADV-dc898937ca2e4c4a91040e516b465133",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04 15:22:22.565582+00:00",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 58,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "kind": "cash",
+              "truth": "verified",
+              "amount": "3.71",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 29,
+              "voucher": 16,
+              "direction": "income",
+              "source_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+              "actual_date": "2026-04-03",
+              "allocations": [],
+              "request_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04 15:22:22.519662+00:00",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 57,
+            "kind": "opening",
+            "status": "posted",
+            "payload": {
+              "kind": "opening",
+              "truth": "verified",
+              "amount": "20.00",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 29,
+              "voucher": 16,
+              "direction": "income",
+              "source_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+              "actual_date": "2026-04-03",
+              "allocations": [],
+              "request_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {
+              "kind": "authenticated_user",
+              "action": "approve",
+              "user_id": 36
+            },
+            "created_at": "2026-11-04 15:22:22.486192+00:00",
+            "approved_at": "2026-11-04 15:22:22.492978+00:00",
+            "replaces": null
+          }
+        ],
+        "vouchers": [
+          {
+            "id": 16,
+            "name": "synthetic-adversarial.pdf",
+            "sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "size": 56
+          }
+        ],
+        "reviews": [],
+        "mappings": [],
+        "transfers": [],
+        "historical_transfers": []
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/instructions/",
+      "input": {
+        "request_key": "ADV-cd09da8ecf1543eeae67a1e5b60121fe",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-cd09da8ecf1543eeae67a1e5b60121fe",
+        "kind": "cash",
+        "account": 30,
+        "voucher": 16,
+        "actual_date": "2026-04-02",
+        "direction": "income",
+        "amount": "1.00",
+        "nature": "unclassified",
+        "truth": "verified",
+        "reason": "合成反例凭证已核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 62,
+        "kind": "cash",
+        "status": "pending",
+        "payload": {
+          "request_key": "ADV-cd09da8ecf1543eeae67a1e5b60121fe",
+          "source_system": "SYNTH-ADVERSARIAL",
+          "source_key": "ADV-cd09da8ecf1543eeae67a1e5b60121fe",
+          "kind": "cash",
+          "account": 30,
+          "voucher": 16,
+          "actual_date": "2026-04-02",
+          "direction": "income",
+          "amount": "1.00",
+          "nature": "unclassified",
+          "truth": "verified",
+          "reason": "合成反例凭证已核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 35
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04 15:22:22.667272+00:00",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/post/",
+      "input": {
+        "id": 62,
+        "voucher_checked": true
+      },
+      "status": 400,
+      "body": [
+        "实际日期早于启用基准，须按历史核实流程处理。"
+      ]
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-2",
+        "name": "合成基准",
+        "account_type": "bank",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 31
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/instructions/",
+      "input": {
+        "request_key": "ADV-9a16227a4f1f483581010d755e81cce5",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-9a16227a4f1f483581010d755e81cce5",
+        "kind": "opening",
+        "account": 31,
+        "voucher": 16,
+        "actual_date": "2026-04-03",
+        "direction": "income",
+        "amount": "0.00",
+        "nature": "unclassified",
+        "truth": "verified",
+        "reason": "合成反例凭证已核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 63,
+        "kind": "opening",
+        "status": "pending",
+        "payload": {
+          "request_key": "ADV-9a16227a4f1f483581010d755e81cce5",
+          "source_system": "SYNTH-ADVERSARIAL",
+          "source_key": "ADV-9a16227a4f1f483581010d755e81cce5",
+          "kind": "opening",
+          "account": 31,
+          "voucher": 16,
+          "actual_date": "2026-04-03",
+          "direction": "income",
+          "amount": "0.00",
+          "nature": "unclassified",
+          "truth": "verified",
+          "reason": "合成反例凭证已核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 35
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04 15:22:22.684725+00:00",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/approve/",
+      "input": {
+        "id": 63
+      },
+      "status": 200,
+      "body": {
+        "id": 63,
+        "kind": "opening",
+        "status": "approved",
+        "payload": {
+          "kind": "opening",
+          "truth": "verified",
+          "amount": "0.00",
+          "nature": "unclassified",
+          "reason": "合成反例凭证已核实",
+          "account": 31,
+          "voucher": 16,
+          "direction": "income",
+          "source_key": "ADV-9a16227a4f1f483581010d755e81cce5",
+          "actual_date": "2026-04-03",
+          "allocations": [],
+          "request_key": "ADV-9a16227a4f1f483581010d755e81cce5",
+          "source_system": "SYNTH-ADVERSARIAL"
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 35
+        },
+        "approved_actor": {
+          "kind": "authenticated_user",
+          "action": "approve",
+          "user_id": 36
+        },
+        "created_at": "2026-11-04 15:22:22.684725+00:00",
+        "approved_at": "2026-11-04 15:22:22.691994+00:00",
+        "replaces": null
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/post/",
+      "input": {
+        "id": 63,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 35,
+        "account": 31,
+        "account_name": "合成基准",
+        "account_type": "bank",
+        "instruction": 63,
+        "actual_date": "2026-04-03",
+        "amount": "0.00",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "opening",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 16,
+        "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-9a16227a4f1f483581010d755e81cce5",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 35
+        },
+        "created_at": "2026-11-04 15:22:22.703836+00:00",
+        "company_flow_included": false,
+        "flow_exclusion_reason": "opening",
+        "classifications": []
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/instructions/",
+      "input": {
+        "request_key": "ADV-d78f444ef9ba423db9008939cbeb6a80",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-d78f444ef9ba423db9008939cbeb6a80",
+        "kind": "cash",
+        "account": 31,
+        "voucher": 16,
+        "actual_date": "2026-04-03",
+        "direction": "income",
+        "amount": "3.71",
+        "nature": "unclassified",
+        "truth": "verified",
+        "reason": "合成反例凭证已核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 64,
+        "kind": "cash",
+        "status": "pending",
+        "payload": {
+          "request_key": "ADV-d78f444ef9ba423db9008939cbeb6a80",
+          "source_system": "SYNTH-ADVERSARIAL",
+          "source_key": "ADV-d78f444ef9ba423db9008939cbeb6a80",
+          "kind": "cash",
+          "account": 31,
+          "voucher": 16,
+          "actual_date": "2026-04-03",
+          "direction": "income",
+          "amount": "3.71",
+          "nature": "unclassified",
+          "truth": "verified",
+          "reason": "合成反例凭证已核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 35
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04 15:22:22.716594+00:00",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/post/",
+      "input": {
+        "id": 64,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 36,
+        "account": 31,
+        "account_name": "合成基准",
+        "account_type": "bank",
+        "instruction": 64,
+        "actual_date": "2026-04-03",
+        "amount": "3.71",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "cash",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 16,
+        "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-d78f444ef9ba423db9008939cbeb6a80",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 35
+        },
+        "created_at": "2026-11-04 15:22:22.731457+00:00",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    },
+    {
+      "method": "get",
+      "path": "/api/finance-ledger/",
+      "input": "2026-06-30",
+      "status": 200,
+      "body": {
+        "accounts": [
+          {
+            "id": 27,
+            "code": "ADV-BANK",
+            "name": "合成反例银行",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成核实",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 28,
+            "code": "ADV-CASH",
+            "name": "合成反例现金",
+            "account_type": "cash",
+            "ownership": "own",
+            "ownership_reason": "合成核实",
+            "currency": "CNY",
+            "balance": null,
+            "is_active": true
+          },
+          {
+            "id": 29,
+            "code": "ADV-0",
+            "name": "合成基准",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成核实",
+            "currency": "CNY",
+            "balance": "23.71",
+            "is_active": true
+          },
+          {
+            "id": 30,
+            "code": "ADV-1",
+            "name": "合成基准",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成核实",
+            "currency": "CNY",
+            "balance": "-16.29",
+            "is_active": true
+          },
+          {
+            "id": 31,
+            "code": "ADV-2",
+            "name": "合成基准",
+            "account_type": "bank",
+            "ownership": "own",
+            "ownership_reason": "合成核实",
+            "currency": "CNY",
+            "balance": "3.71",
+            "is_active": true
+          }
+        ],
+        "instructions": [
+          {
+            "id": 64,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "kind": "cash",
+              "truth": "verified",
+              "amount": "3.71",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 31,
+              "voucher": 16,
+              "direction": "income",
+              "source_key": "ADV-d78f444ef9ba423db9008939cbeb6a80",
+              "actual_date": "2026-04-03",
+              "allocations": [],
+              "request_key": "ADV-d78f444ef9ba423db9008939cbeb6a80",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04 15:22:22.716594+00:00",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 63,
+            "kind": "opening",
+            "status": "posted",
+            "payload": {
+              "kind": "opening",
+              "truth": "verified",
+              "amount": "0.00",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 31,
+              "voucher": 16,
+              "direction": "income",
+              "source_key": "ADV-9a16227a4f1f483581010d755e81cce5",
+              "actual_date": "2026-04-03",
+              "allocations": [],
+              "request_key": "ADV-9a16227a4f1f483581010d755e81cce5",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {
+              "kind": "authenticated_user",
+              "action": "approve",
+              "user_id": 36
+            },
+            "created_at": "2026-11-04 15:22:22.684725+00:00",
+            "approved_at": "2026-11-04 15:22:22.691994+00:00",
+            "replaces": null
+          },
+          {
+            "id": 62,
+            "kind": "cash",
+            "status": "pending",
+            "payload": {
+              "kind": "cash",
+              "truth": "verified",
+              "amount": "1.00",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 30,
+              "voucher": 16,
+              "direction": "income",
+              "source_key": "ADV-cd09da8ecf1543eeae67a1e5b60121fe",
+              "actual_date": "2026-04-02",
+              "allocations": [],
+              "request_key": "ADV-cd09da8ecf1543eeae67a1e5b60121fe",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04 15:22:22.667272+00:00",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 61,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "kind": "cash",
+              "truth": "verified",
+              "amount": "3.71",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 30,
+              "voucher": 16,
+              "direction": "income",
+              "source_key": "ADV-4d92d9c4f4ed4680a39d93703f23369e",
+              "actual_date": "2026-04-03",
+              "allocations": [],
+              "request_key": "ADV-4d92d9c4f4ed4680a39d93703f23369e",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04 15:22:22.616311+00:00",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 60,
+            "kind": "opening",
+            "status": "posted",
+            "payload": {
+              "kind": "opening",
+              "truth": "verified",
+              "amount": "20.00",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 30,
+              "voucher": 16,
+              "direction": "expense",
+              "source_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+              "actual_date": "2026-04-03",
+              "allocations": [],
+              "request_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {
+              "kind": "authenticated_user",
+              "action": "approve",
+              "user_id": 36
+            },
+            "created_at": "2026-11-04 15:22:22.582200+00:00",
+            "approved_at": "2026-11-04 15:22:22.586951+00:00",
+            "replaces": null
+          },
+          {
+            "id": 59,
+            "kind": "cash",
+            "status": "pending",
+            "payload": {
+              "kind": "cash",
+              "truth": "verified",
+              "amount": "1.00",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 29,
+              "voucher": 16,
+              "direction": "income",
+              "source_key": "ADV-dc898937ca2e4c4a91040e516b465133",
+              "actual_date": "2026-04-02",
+              "allocations": [],
+              "request_key": "ADV-dc898937ca2e4c4a91040e516b465133",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04 15:22:22.565582+00:00",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 58,
+            "kind": "cash",
+            "status": "posted",
+            "payload": {
+              "kind": "cash",
+              "truth": "verified",
+              "amount": "3.71",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 29,
+              "voucher": 16,
+              "direction": "income",
+              "source_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+              "actual_date": "2026-04-03",
+              "allocations": [],
+              "request_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {},
+            "created_at": "2026-11-04 15:22:22.519662+00:00",
+            "approved_at": null,
+            "replaces": null
+          },
+          {
+            "id": 57,
+            "kind": "opening",
+            "status": "posted",
+            "payload": {
+              "kind": "opening",
+              "truth": "verified",
+              "amount": "20.00",
+              "nature": "unclassified",
+              "reason": "合成反例凭证已核实",
+              "account": 29,
+              "voucher": 16,
+              "direction": "income",
+              "source_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+              "actual_date": "2026-04-03",
+              "allocations": [],
+              "request_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+              "source_system": "SYNTH-ADVERSARIAL"
+            },
+            "created_actor": {
+              "kind": "authenticated_user",
+              "action": "submit",
+              "user_id": 35
+            },
+            "approved_actor": {
+              "kind": "authenticated_user",
+              "action": "approve",
+              "user_id": 36
+            },
+            "created_at": "2026-11-04 15:22:22.486192+00:00",
+            "approved_at": "2026-11-04 15:22:22.492978+00:00",
+            "replaces": null
+          }
+        ],
+        "vouchers": [
+          {
+            "id": 16,
+            "name": "synthetic-adversarial.pdf",
+            "sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "size": 56
+          }
+        ],
+        "reviews": [],
+        "mappings": [],
+        "transfers": [],
+        "historical_transfers": []
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/instructions/",
+      "input": {
+        "request_key": "ADV-51b08e5ffddc4310b4a1846f376c54b4",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-51b08e5ffddc4310b4a1846f376c54b4",
+        "kind": "cash",
+        "account": 31,
+        "voucher": 16,
+        "actual_date": "2026-04-02",
+        "direction": "income",
+        "amount": "1.00",
+        "nature": "unclassified",
+        "truth": "verified",
+        "reason": "合成反例凭证已核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 65,
+        "kind": "cash",
+        "status": "pending",
+        "payload": {
+          "request_key": "ADV-51b08e5ffddc4310b4a1846f376c54b4",
+          "source_system": "SYNTH-ADVERSARIAL",
+          "source_key": "ADV-51b08e5ffddc4310b4a1846f376c54b4",
+          "kind": "cash",
+          "account": 31,
+          "voucher": 16,
+          "actual_date": "2026-04-02",
+          "direction": "income",
+          "amount": "1.00",
+          "nature": "unclassified",
+          "truth": "verified",
+          "reason": "合成反例凭证已核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 35
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04 15:22:22.773061+00:00",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/post/",
+      "input": {
+        "id": 65,
+        "voucher_checked": true
+      },
+      "status": 400,
+      "body": [
+        "实际日期早于启用基准，须按历史核实流程处理。"
+      ]
+    },
+    {
+      "path": "/api/actual-rmb-cash/",
+      "input": {
+        "date_from": "2026-04-01",
+        "date_to": "2026-06-30"
+      },
+      "status": 200,
+      "body": {
+        "basis": "bank_cash_confirmed_v1",
+        "version": 1,
+        "date_basis": "bank_date",
+        "coverage_status": "registered_confirmed_only",
+        "coverage_since": null,
+        "coverage_configured": false,
+        "period": {
+          "date_from": "2026-04-01",
+          "date_to": "2026-06-30"
+        },
+        "totals": {
+          "inflow": "11.13",
+          "outflow": "0",
+          "net": "11.13",
+          "count": 3
+        },
+        "monthly": [
+          {
+            "month": "2026-04",
+            "inflow": "11.13",
+            "outflow": "0",
+            "net": "11.13",
+            "count": 3
+          },
+          {
+            "month": "2026-05",
+            "inflow": "0",
+            "outflow": "0",
+            "net": "0",
+            "count": 0
+          },
+          {
+            "month": "2026-06",
+            "inflow": "0",
+            "outflow": "0",
+            "net": "0",
+            "count": 0
+          }
+        ],
+        "by_kind": [
+          {
+            "kind": "unclassified",
+            "label": "性质待分类",
+            "inflow": "11.13",
+            "outflow": "0",
+            "net": "11.13",
+            "count": 3
+          }
+        ],
+        "by_account_type": [
+          {
+            "account_type": "bank",
+            "label": "银行",
+            "inflow": "11.13",
+            "outflow": "0",
+            "net": "11.13",
+            "count": 3
+          },
+          {
+            "account_type": "cash",
+            "label": "现金",
+            "inflow": "0",
+            "outflow": "0",
+            "net": "0",
+            "count": 0
+          }
+        ],
+        "events": [
+          {
+            "id": -32,
+            "event_no": "ACCOUNT-32",
+            "kind": "unclassified",
+            "kind_label": "性质待分类",
+            "currency": "CNY",
+            "source_amount": "3.71",
+            "direction": "income",
+            "direction_label": "流入",
+            "bank_date": "2026-04-03",
+            "bank_net_amount": "3.71",
+            "fee_mode": "none",
+            "fee_amount": "0",
+            "bank_reference": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+            "status": "confirmed",
+            "detail_url": "/finance-ledger?fact=32",
+            "account_type": "bank",
+            "refund_excess_amount": "0.00"
+          },
+          {
+            "id": -34,
+            "event_no": "ACCOUNT-34",
+            "kind": "unclassified",
+            "kind_label": "性质待分类",
+            "currency": "CNY",
+            "source_amount": "3.71",
+            "direction": "income",
+            "direction_label": "流入",
+            "bank_date": "2026-04-03",
+            "bank_net_amount": "3.71",
+            "fee_mode": "none",
+            "fee_amount": "0",
+            "bank_reference": "ADV-4d92d9c4f4ed4680a39d93703f23369e",
+            "status": "confirmed",
+            "detail_url": "/finance-ledger?fact=34",
+            "account_type": "bank",
+            "refund_excess_amount": "0.00"
+          },
+          {
+            "id": -36,
+            "event_no": "ACCOUNT-36",
+            "kind": "unclassified",
+            "kind_label": "性质待分类",
+            "currency": "CNY",
+            "source_amount": "3.71",
+            "direction": "income",
+            "direction_label": "流入",
+            "bank_date": "2026-04-03",
+            "bank_net_amount": "3.71",
+            "fee_mode": "none",
+            "fee_amount": "0",
+            "bank_reference": "ADV-d78f444ef9ba423db9008939cbeb6a80",
+            "status": "confirmed",
+            "detail_url": "/finance-ledger?fact=36",
+            "account_type": "bank",
+            "refund_excess_amount": "0.00"
+          }
+        ],
+        "note": "已登记实际人民币资金：含人工确认银行事件及已核实自有银行、现金账户事实，不代表公司全部实际资金，不是利润、销售收入或银行账户余额。"
+      }
+    },
+    {
+      "method": "get",
+      "path": "/api/finance-ledger/facts/",
+      "input": {
+        "date_from": "2026-04-01",
+        "date_to": "2026-06-30"
+      },
+      "status": 200,
+      "body": {
+        "basis": "verified_account_cash_v1",
+        "facts": [
+          {
+            "id": 31,
+            "account": 29,
+            "account_name": "合成基准",
+            "account_type": "bank",
+            "instruction": 57,
+            "actual_date": "2026-04-03",
+            "amount": "20.00",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "opening",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 16,
+            "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "source_system": "SYNTH-ADVERSARIAL",
+            "source_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "authenticated_user",
+              "action": "post",
+              "user_id": 35
+            },
+            "created_at": "2026-11-04 15:22:22.505295+00:00",
+            "company_flow_included": false,
+            "flow_exclusion_reason": "opening",
+            "classifications": []
+          },
+          {
+            "id": 32,
+            "account": 29,
+            "account_name": "合成基准",
+            "account_type": "bank",
+            "instruction": 58,
+            "actual_date": "2026-04-03",
+            "amount": "3.71",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 16,
+            "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "source_system": "SYNTH-ADVERSARIAL",
+            "source_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "authenticated_user",
+              "action": "post",
+              "user_id": 35
+            },
+            "created_at": "2026-11-04 15:22:22.532664+00:00",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          },
+          {
+            "id": 33,
+            "account": 30,
+            "account_name": "合成基准",
+            "account_type": "bank",
+            "instruction": 60,
+            "actual_date": "2026-04-03",
+            "amount": "20.00",
+            "direction": "expense",
+            "nature": "unclassified",
+            "kind": "opening",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 16,
+            "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "source_system": "SYNTH-ADVERSARIAL",
+            "source_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "authenticated_user",
+              "action": "post",
+              "user_id": 35
+            },
+            "created_at": "2026-11-04 15:22:22.603063+00:00",
+            "company_flow_included": false,
+            "flow_exclusion_reason": "opening",
+            "classifications": []
+          },
+          {
+            "id": 34,
+            "account": 30,
+            "account_name": "合成基准",
+            "account_type": "bank",
+            "instruction": 61,
+            "actual_date": "2026-04-03",
+            "amount": "3.71",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 16,
+            "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "source_system": "SYNTH-ADVERSARIAL",
+            "source_key": "ADV-4d92d9c4f4ed4680a39d93703f23369e",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "authenticated_user",
+              "action": "post",
+              "user_id": 35
+            },
+            "created_at": "2026-11-04 15:22:22.631942+00:00",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          },
+          {
+            "id": 35,
+            "account": 31,
+            "account_name": "合成基准",
+            "account_type": "bank",
+            "instruction": 63,
+            "actual_date": "2026-04-03",
+            "amount": "0.00",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "opening",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 16,
+            "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "source_system": "SYNTH-ADVERSARIAL",
+            "source_key": "ADV-9a16227a4f1f483581010d755e81cce5",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "authenticated_user",
+              "action": "post",
+              "user_id": 35
+            },
+            "created_at": "2026-11-04 15:22:22.703836+00:00",
+            "company_flow_included": false,
+            "flow_exclusion_reason": "opening",
+            "classifications": []
+          },
+          {
+            "id": 36,
+            "account": 31,
+            "account_name": "合成基准",
+            "account_type": "bank",
+            "instruction": 64,
+            "actual_date": "2026-04-03",
+            "amount": "3.71",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 16,
+            "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "source_system": "SYNTH-ADVERSARIAL",
+            "source_key": "ADV-d78f444ef9ba423db9008939cbeb6a80",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "authenticated_user",
+              "action": "post",
+              "user_id": 35
+            },
+            "created_at": "2026-11-04 15:22:22.731457+00:00",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          }
+        ],
+        "totals": {
+          "inflow": "11.13",
+          "outflow": "0",
+          "net": "11.13"
+        },
+        "note": "仅已核实自有账户事实；基准不计流入，已核实内部本金不计公司毛流量，账户明细保留实际变动。"
+      }
+    },
+    {
+      "path": "/api/finance-ledger/facts/?export=csv",
+      "csv": "id,account_name,account_type,actual_date,kind,nature,direction,amount,refund_excess_amount,unallocated_amount,company_flow_included,source_system,source_key,voucher_sha256\r\n31,合成基准,bank,2026-04-03,opening,unclassified,income,20.00,0.00,0.00,False,SYNTH-ADVERSARIAL,ADV-c52694e35aee478babed0dc6bcb33c5b,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n32,合成基准,bank,2026-04-03,cash,unclassified,income,3.71,0.00,0.00,True,SYNTH-ADVERSARIAL,ADV-3b8644894bc54d2cab3c6437d3aae1e9,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n33,合成基准,bank,2026-04-03,opening,unclassified,expense,20.00,0.00,0.00,False,SYNTH-ADVERSARIAL,ADV-842b5bb207ce464db3f55d42775ce49d,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n34,合成基准,bank,2026-04-03,cash,unclassified,income,3.71,0.00,0.00,True,SYNTH-ADVERSARIAL,ADV-4d92d9c4f4ed4680a39d93703f23369e,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n35,合成基准,bank,2026-04-03,opening,unclassified,income,0.00,0.00,0.00,False,SYNTH-ADVERSARIAL,ADV-9a16227a4f1f483581010d755e81cce5,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n36,合成基准,bank,2026-04-03,cash,unclassified,income,3.71,0.00,0.00,True,SYNTH-ADVERSARIAL,ADV-d78f444ef9ba423db9008939cbeb6a80,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n"
+    },
+    {
+      "path": "/api/reports/data/",
+      "body": {
+        "basis": "bank_cash_confirmed_v1",
+        "version": 1,
+        "source": "actual_cash",
+        "group_by": "direction",
+        "date_field": "bank_date",
+        "date_label": "银行实际日期",
+        "grain": "month",
+        "comparison": "previous",
+        "period": {
+          "date_from": "2026-04-01",
+          "date_to": "2026-06-30"
+        },
+        "comparison_period": {
+          "date_from": "2025-12-31",
+          "date_to": "2026-03-31"
+        },
+        "totals": {
+          "amount": "11.13",
+          "count": 3,
+          "quantities": {}
+        },
+        "previous": {
+          "amount": "0",
+          "count": 0,
+          "quantities": {}
+        },
+        "changes": {
+          "amount": null,
+          "count": null
+        },
+        "rows": [
+          {
+            "key": "income",
+            "label": "流入",
+            "amount": "11.13",
+            "quantities": {},
+            "count": 3
+          }
+        ],
+        "note": "仅人工确认的银行资金事件；按银行实际日期和人民币净额统计。已登记银行资金汇总，不代表公司全部实际资金，不是利润、销售收入或银行账户余额。",
+        "filters": {},
+        "filter_summary": [],
+        "generated_at": "2026-11-04 15:22:22.849756+00:00"
+      }
+    },
+    {
+      "method": "get",
+      "path": "/api/finance-ledger/facts/",
+      "input": {
+        "date_from": "2026-04-01",
+        "date_to": "2026-06-30"
+      },
+      "status": 200,
+      "body": {
+        "basis": "verified_account_cash_v1",
+        "facts": [
+          {
+            "id": 31,
+            "account": 29,
+            "account_name": "合成基准",
+            "account_type": "bank",
+            "instruction": 57,
+            "actual_date": "2026-04-03",
+            "amount": "20.00",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "opening",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 16,
+            "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "source_system": "SYNTH-ADVERSARIAL",
+            "source_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "authenticated_user",
+              "action": "post",
+              "user_id": 35
+            },
+            "created_at": "2026-11-04 15:22:22.505295+00:00",
+            "company_flow_included": false,
+            "flow_exclusion_reason": "opening",
+            "classifications": []
+          },
+          {
+            "id": 32,
+            "account": 29,
+            "account_name": "合成基准",
+            "account_type": "bank",
+            "instruction": 58,
+            "actual_date": "2026-04-03",
+            "amount": "3.71",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 16,
+            "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "source_system": "SYNTH-ADVERSARIAL",
+            "source_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "authenticated_user",
+              "action": "post",
+              "user_id": 35
+            },
+            "created_at": "2026-11-04 15:22:22.532664+00:00",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          },
+          {
+            "id": 33,
+            "account": 30,
+            "account_name": "合成基准",
+            "account_type": "bank",
+            "instruction": 60,
+            "actual_date": "2026-04-03",
+            "amount": "20.00",
+            "direction": "expense",
+            "nature": "unclassified",
+            "kind": "opening",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 16,
+            "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "source_system": "SYNTH-ADVERSARIAL",
+            "source_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "authenticated_user",
+              "action": "post",
+              "user_id": 35
+            },
+            "created_at": "2026-11-04 15:22:22.603063+00:00",
+            "company_flow_included": false,
+            "flow_exclusion_reason": "opening",
+            "classifications": []
+          },
+          {
+            "id": 34,
+            "account": 30,
+            "account_name": "合成基准",
+            "account_type": "bank",
+            "instruction": 61,
+            "actual_date": "2026-04-03",
+            "amount": "3.71",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 16,
+            "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "source_system": "SYNTH-ADVERSARIAL",
+            "source_key": "ADV-4d92d9c4f4ed4680a39d93703f23369e",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "authenticated_user",
+              "action": "post",
+              "user_id": 35
+            },
+            "created_at": "2026-11-04 15:22:22.631942+00:00",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          },
+          {
+            "id": 35,
+            "account": 31,
+            "account_name": "合成基准",
+            "account_type": "bank",
+            "instruction": 63,
+            "actual_date": "2026-04-03",
+            "amount": "0.00",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "opening",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 16,
+            "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "source_system": "SYNTH-ADVERSARIAL",
+            "source_key": "ADV-9a16227a4f1f483581010d755e81cce5",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "authenticated_user",
+              "action": "post",
+              "user_id": 35
+            },
+            "created_at": "2026-11-04 15:22:22.703836+00:00",
+            "company_flow_included": false,
+            "flow_exclusion_reason": "opening",
+            "classifications": []
+          },
+          {
+            "id": 36,
+            "account": 31,
+            "account_name": "合成基准",
+            "account_type": "bank",
+            "instruction": 64,
+            "actual_date": "2026-04-03",
+            "amount": "3.71",
+            "direction": "income",
+            "nature": "unclassified",
+            "kind": "cash",
+            "refund_excess_amount": "0.00",
+            "unallocated_amount": "0.00",
+            "voucher": 16,
+            "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+            "source_system": "SYNTH-ADVERSARIAL",
+            "source_key": "ADV-d78f444ef9ba423db9008939cbeb6a80",
+            "parent": null,
+            "legacy_parent": null,
+            "actor": {
+              "kind": "authenticated_user",
+              "action": "post",
+              "user_id": 35
+            },
+            "created_at": "2026-11-04 15:22:22.731457+00:00",
+            "company_flow_included": true,
+            "flow_exclusion_reason": "",
+            "classifications": []
+          }
+        ],
+        "totals": {
+          "inflow": "11.13",
+          "outflow": "0",
+          "net": "11.13"
+        },
+        "note": "仅已核实自有账户事实；基准不计流入，已核实内部本金不计公司毛流量，账户明细保留实际变动。"
+      }
+    },
+    {
+      "method": "get",
+      "path": "/api/finance-ledger/fact_detail/",
+      "input": {
+        "id": 31
+      },
+      "status": 200,
+      "body": {
+        "id": 31,
+        "account": 29,
+        "account_name": "合成基准",
+        "account_type": "bank",
+        "instruction": 57,
+        "actual_date": "2026-04-03",
+        "amount": "20.00",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "opening",
+        "refund_excess_amount": "0.00",
+        "unallocated_amount": "0.00",
+        "voucher": 16,
+        "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-c52694e35aee478babed0dc6bcb33c5b",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 35
+        },
+        "created_at": "2026-11-04 15:22:22.505295+00:00",
+        "company_flow_included": false,
+        "flow_exclusion_reason": "opening",
+        "classifications": []
+      }
+    },
+    {
+      "method": "get",
+      "path": "/api/finance-ledger/fact_detail/",
+      "input": {
+        "id": 32
+      },
+      "status": 200,
+      "body": {
+        "id": 32,
+        "account": 29,
+        "account_name": "合成基准",
+        "account_type": "bank",
+        "instruction": 58,
+        "actual_date": "2026-04-03",
+        "amount": "3.71",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "cash",
+        "refund_excess_amount": "0.00",
+        "unallocated_amount": "0.00",
+        "voucher": 16,
+        "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-3b8644894bc54d2cab3c6437d3aae1e9",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 35
+        },
+        "created_at": "2026-11-04 15:22:22.532664+00:00",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    },
+    {
+      "method": "get",
+      "path": "/api/finance-ledger/fact_detail/",
+      "input": {
+        "id": 33
+      },
+      "status": 200,
+      "body": {
+        "id": 33,
+        "account": 30,
+        "account_name": "合成基准",
+        "account_type": "bank",
+        "instruction": 60,
+        "actual_date": "2026-04-03",
+        "amount": "20.00",
+        "direction": "expense",
+        "nature": "unclassified",
+        "kind": "opening",
+        "refund_excess_amount": "0.00",
+        "unallocated_amount": "0.00",
+        "voucher": 16,
+        "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-842b5bb207ce464db3f55d42775ce49d",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 35
+        },
+        "created_at": "2026-11-04 15:22:22.603063+00:00",
+        "company_flow_included": false,
+        "flow_exclusion_reason": "opening",
+        "classifications": []
+      }
+    },
+    {
+      "method": "get",
+      "path": "/api/finance-ledger/fact_detail/",
+      "input": {
+        "id": 34
+      },
+      "status": 200,
+      "body": {
+        "id": 34,
+        "account": 30,
+        "account_name": "合成基准",
+        "account_type": "bank",
+        "instruction": 61,
+        "actual_date": "2026-04-03",
+        "amount": "3.71",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "cash",
+        "refund_excess_amount": "0.00",
+        "unallocated_amount": "0.00",
+        "voucher": 16,
+        "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-4d92d9c4f4ed4680a39d93703f23369e",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 35
+        },
+        "created_at": "2026-11-04 15:22:22.631942+00:00",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    },
+    {
+      "method": "get",
+      "path": "/api/finance-ledger/fact_detail/",
+      "input": {
+        "id": 35
+      },
+      "status": 200,
+      "body": {
+        "id": 35,
+        "account": 31,
+        "account_name": "合成基准",
+        "account_type": "bank",
+        "instruction": 63,
+        "actual_date": "2026-04-03",
+        "amount": "0.00",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "opening",
+        "refund_excess_amount": "0.00",
+        "unallocated_amount": "0.00",
+        "voucher": 16,
+        "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-9a16227a4f1f483581010d755e81cce5",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 35
+        },
+        "created_at": "2026-11-04 15:22:22.703836+00:00",
+        "company_flow_included": false,
+        "flow_exclusion_reason": "opening",
+        "classifications": []
+      }
+    },
+    {
+      "method": "get",
+      "path": "/api/finance-ledger/fact_detail/",
+      "input": {
+        "id": 36
+      },
+      "status": 200,
+      "body": {
+        "id": 36,
+        "account": 31,
+        "account_name": "合成基准",
+        "account_type": "bank",
+        "instruction": 64,
+        "actual_date": "2026-04-03",
+        "amount": "3.71",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "cash",
+        "refund_excess_amount": "0.00",
+        "unallocated_amount": "0.00",
+        "voucher": 16,
+        "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-d78f444ef9ba423db9008939cbeb6a80",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 35
+        },
+        "created_at": "2026-11-04 15:22:22.731457+00:00",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    }
+  ]
+}

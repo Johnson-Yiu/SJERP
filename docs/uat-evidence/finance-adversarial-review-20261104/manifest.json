@@ -1,0 +1,581 @@
+{
+  "baseline": "8087f2c68b19a302a25e814ec8ce6113d91d4750",
+  "source_checkpoint": "2e20bfdccb711bdd5f9028cb60e287ee742c77c5",
+  "normalization": "text LF; no business expectation rewriting",
+  "logs": [
+    {
+      "original": "ci-frontend-print-timeout.log",
+      "original_sha256": "27bf8fd0d9aa479e2741d2c13b50ea0c12ddc40ee364a4fa3b4afbdaf8b306e6",
+      "original_size": 1226381,
+      "published": "ci-frontend-print-timeout.published.log"
+    },
+    {
+      "original": "ci-postgres-first.log",
+      "original_sha256": "0c8ebf9aa56f9944b16a1496e4b2f96ae2405436d2d4bec7d25abe4bc51d9631",
+      "original_size": 570500,
+      "published": "ci-postgres-first.published.log"
+    },
+    {
+      "original": "defects-final-sqlite.log",
+      "original_sha256": "ea9198e13791367b8448f6d4109483dc3022a54173808266da3d17362fa17e63",
+      "original_size": 11338,
+      "published": "defects-final-sqlite.published.log"
+    },
+    {
+      "original": "defects-postgres.log",
+      "original_sha256": "a8d9199b8ca4661ebd1ac8a1801856a3495bb14a0f3ecb0a8f855035e173591a",
+      "original_size": 10660,
+      "published": "defects-postgres.published.log"
+    },
+    {
+      "original": "defects-release-postgres.log",
+      "original_sha256": "524c4541db8cd265c5b3ad2a81eeb9826ba979e1d21b12248bea3eea55b1d573",
+      "original_size": 11541,
+      "published": "defects-release-postgres.published.log"
+    },
+    {
+      "original": "defects-sqlite.log",
+      "original_sha256": "b33a56079e1958729713f88cde497b2ba98f7cbd98052d54dda8c67cebf962a2",
+      "original_size": 10457,
+      "published": "defects-sqlite.published.log"
+    },
+    {
+      "original": "django-check.log",
+      "original_sha256": "f87ceb15410bde28ff826ce26228e0576558258fa64d145847921a593a61ee63",
+      "original_size": 49,
+      "published": "django-check.published.log"
+    },
+    {
+      "original": "migration-check.log",
+      "original_sha256": "93e6e2d5be3c054add80c0f19101608803f7ca8a7df1fa41f76bbb9a1f570f4a",
+      "original_size": 21,
+      "published": "migration-check.published.log"
+    },
+    {
+      "original": "postgres-auth-contract.log",
+      "original_sha256": "f617d9cec83bd25b3ab0c0f3101c6ec890f14a5984f266ee8767e0154f8a33dd",
+      "original_size": 25637,
+      "published": "postgres-auth-contract.published.log"
+    },
+    {
+      "original": "postgres-auth-verified.log",
+      "original_sha256": "d0cc50839e3a96b263168216ebe563778805a69cdebeb6697b98ddbaf8080746",
+      "original_size": 25637,
+      "published": "postgres-auth-verified.published.log"
+    },
+    {
+      "original": "postgres-expanded.log",
+      "original_sha256": "1497cd950f06dfe0a273cc05a49ff649b3967141c02e7e53e1f5c667a26aaffb",
+      "original_size": 26293,
+      "published": "postgres-expanded.published.log"
+    },
+    {
+      "original": "postgres-final.log",
+      "original_sha256": "e716a0d22450793362de87f3f44c763c9c9ac1c00ff5e0fa655f871c3d66b786",
+      "original_size": 25167,
+      "published": "postgres-final.published.log"
+    },
+    {
+      "original": "postgres-first.log",
+      "original_sha256": "f056d559cd9a3711b3f9d0b9541ce842fb77f82086c9e50072d5a2c47affb572",
+      "original_size": 24667,
+      "published": "postgres-first.published.log"
+    },
+    {
+      "original": "postgres-release.log",
+      "original_sha256": "7f91d9ed81a68ec01ff9b0fee9d68b015dafd1d333e0c07c1608328d7e69297e",
+      "original_size": 25391,
+      "published": "postgres-release.published.log"
+    },
+    {
+      "original": "sqlite-auth-contract.log",
+      "original_sha256": "a55c54ba52681cf186b7bb519e80afca57f3a223b392424c2db620db5eaa11a1",
+      "original_size": 31292,
+      "published": "sqlite-auth-contract.published.log"
+    },
+    {
+      "original": "sqlite-corrected-harness.log",
+      "original_sha256": "c605acd17b132da9dee96347df37b2b6c46cfa7477cf0b50189b1a6df21dd97f",
+      "original_size": 30607,
+      "published": "sqlite-corrected-harness.published.log"
+    },
+    {
+      "original": "sqlite-expanded.log",
+      "original_sha256": "9556985226f1a1786647c7cf15ada1b75dfc57cc9dc3c3d107d9ccf489b3ee36",
+      "original_size": 26120,
+      "published": "sqlite-expanded.published.log"
+    },
+    {
+      "original": "sqlite-final.log",
+      "original_sha256": "7d203c6f38a8f92f05a0482c7d49d893024bd985ebcf1a3e45323c8236f0dae4",
+      "original_size": 24495,
+      "published": "sqlite-final.published.log"
+    },
+    {
+      "original": "sqlite-first.log",
+      "original_sha256": "b10424479720b95b90e837f3762deebc7b52b05521ecd62612ccae33dad54f9b",
+      "original_size": 55543,
+      "published": "sqlite-first.published.log"
+    },
+    {
+      "original": "sqlite-regression.log",
+      "original_sha256": "55b6a07b78ee269db6076bd2b29744c1ddb7e25d9b01ba823e826cfd5781e081",
+      "original_size": 30822,
+      "published": "sqlite-regression.published.log"
+    },
+    {
+      "original": "sqlite-release.log",
+      "original_sha256": "077f49f99548d46a3d402e05bfb7b23ac2d867e99a6a0540f4086386afece028",
+      "original_size": 31046,
+      "published": "sqlite-release.published.log"
+    },
+    {
+      "original": "versions.log",
+      "original_sha256": "f361fd679e42147b8694c99326126de86d9566c156244c8c6481d25f2747a333",
+      "original_size": 1555,
+      "published": "versions.published.log"
+    }
+  ],
+  "files": [
+    {
+      "path": "api/01b666a56c844350.json",
+      "bytes": 5619,
+      "sha256_git_lf": "d6f0643e09ce5a44c88c1c67a5ee7d000233231fa8aace12d8ba11c24a371bc5"
+    },
+    {
+      "path": "api/0a5aa4571aacad0d.json",
+      "bytes": 18486,
+      "sha256_git_lf": "64c79dd9b4441cbd563a8434eea676a4deea1481d67db1fc7a1dd99881a5bdeb"
+    },
+    {
+      "path": "api/0fa41d2e31f79cff.json",
+      "bytes": 9925,
+      "sha256_git_lf": "bf71b969921c1f930083180dae9b91c8bd8991014d1a0faeeaa2f3f9e0f1dfce"
+    },
+    {
+      "path": "api/1617cfaffa408ad2.json",
+      "bytes": 54729,
+      "sha256_git_lf": "9c0157e54c4a7a5558348220b51d895645c3a7605bf8d0457593ecb541a7d57e"
+    },
+    {
+      "path": "api/2b79c97eff3a898a.json",
+      "bytes": 1801,
+      "sha256_git_lf": "7504be9d9cd9cb1f9b52cfe0227aeee99e250cd01e3d808b06e698887956e5aa"
+    },
+    {
+      "path": "api/2dd3eb69e4f8ad47.json",
+      "bytes": 75507,
+      "sha256_git_lf": "b8e83720fc56fc356a184f45f4b6f611f4606e976984228067ec8ce870284cb4"
+    },
+    {
+      "path": "api/30f0dd38aa186867.json",
+      "bytes": 18487,
+      "sha256_git_lf": "0db0d1728839f70bbfd93b0036df3a803eec1aea1e6168b239c1122729bff3ab"
+    },
+    {
+      "path": "api/3696668d061d1ea9.json",
+      "bytes": 6463,
+      "sha256_git_lf": "f3b4bebf7ab89aaa6bde7bf7844e041fc6771c86009b4b9e95a3cd5de2412e07"
+    },
+    {
+      "path": "api/417f1c5b64eb2567.json",
+      "bytes": 8559,
+      "sha256_git_lf": "dc52b04dbee90b455b8683f27bb6c21c26b7a16c8138cd951cb6cc8f9c6e2145"
+    },
+    {
+      "path": "api/44cff2cc66a3b94f.json",
+      "bytes": 9946,
+      "sha256_git_lf": "3d6d6c34ab10bcb5d249f1ebb1baaf28c0681ce6d0d3498b5162303f574c8292"
+    },
+    {
+      "path": "api/5477483066ea6aeb.json",
+      "bytes": 1337,
+      "sha256_git_lf": "8979f45f898935e5b74bb43e0e3a0ddb067513a04b0bd17678a6c517e3510bbc"
+    },
+    {
+      "path": "api/5d5cc6dfb500a07b.json",
+      "bytes": 3467,
+      "sha256_git_lf": "0b2669540227d7d5f72b9532b25cf717dd9aff86598fe5a82480ed05ca9b2715"
+    },
+    {
+      "path": "api/95eac0c32e2042a9.json",
+      "bytes": 39771,
+      "sha256_git_lf": "7fc7eb061656442c516023617ca59d99af538d690384bcd2d80702553623ebc6"
+    },
+    {
+      "path": "api/983cd6e68ea83d61.json",
+      "bytes": 4940,
+      "sha256_git_lf": "2815786737bf5bb3d6f8264131152c5a0919de7006b51ee7887f28c54e71721d"
+    },
+    {
+      "path": "api/ad40463233d586c0.json",
+      "bytes": 50287,
+      "sha256_git_lf": "d525cf1aeeb2150af6f7115e0d1774fa29ab34b3aaf080b42030d19d12bffd1a"
+    },
+    {
+      "path": "api/ade4fcdfbc4fd2bf.json",
+      "bytes": 6695,
+      "sha256_git_lf": "874ac51d2be03b09d7aa250b74b3a6255d49e083486b1adb21557d6c0a8ed39d"
+    },
+    {
+      "path": "api/b1a448c501f0fe0c.json",
+      "bytes": 32628,
+      "sha256_git_lf": "b8243595cbcb95cda612c873a5aa58963dc15585b007b06edc8be7220d60382d"
+    },
+    {
+      "path": "api/b813629a44ad4c90.json",
+      "bytes": 102116,
+      "sha256_git_lf": "095fc6f4027b77eed3b1124c2f748bd1b8d26e3c88b414eb401cbda18b557784"
+    },
+    {
+      "path": "api/de001c0fac90e07f.json",
+      "bytes": 6635,
+      "sha256_git_lf": "df27662afbfc171023f15f7dff3310fc92b09275128b338ced77788a11204666"
+    },
+    {
+      "path": "api/f89424744616e169.json",
+      "bytes": 6458,
+      "sha256_git_lf": "fdc487815571aaf1cf3fbb75cc509a9f824e35a34d1455b98fa1e28b673e8c14"
+    },
+    {
+      "path": "api/f977076316cdcdc7.json",
+      "bytes": 37452,
+      "sha256_git_lf": "e3c368803f91cfcfc8c6df028ee1d24e6efa5e7e28f6ef1efb961b4fadad89da"
+    },
+    {
+      "path": "api/fe7eb2f79d215c0b.json",
+      "bytes": 59149,
+      "sha256_git_lf": "535ae3372d8cc5d5a29bcf17b5df8b4d42e2adb671ada8b2fdda58b42aa3a7c3"
+    },
+    {
+      "path": "audit_reachability.py",
+      "bytes": 1136,
+      "sha256_git_lf": "569c8923fbd5a5346209c738db4c4740aeb4f8f2dd04c0e2059f2e80e10829cd"
+    },
+    {
+      "path": "ci-frontend-print-timeout.published.log",
+      "bytes": 1223549,
+      "sha256_git_lf": "5850ec958bbd9f81070883953c9a28c63771cef9c5453520067f27656c4aadaa"
+    },
+    {
+      "path": "ci-postgres-first.published.log",
+      "bytes": 570144,
+      "sha256_git_lf": "30166a2e128c71c703fadcdd0d8a7aacd048775d878f0a74fb8166bb6f4c5a56"
+    },
+    {
+      "path": "COMMANDS.md",
+      "bytes": 2203,
+      "sha256_git_lf": "33f7fb09cbddb33f5be054239d2ac43a0826ea93ae21b5bca4adeca25dfcacc3"
+    },
+    {
+      "path": "defect-api/160c6ca3b38f07e3.json",
+      "bytes": 13749,
+      "sha256_git_lf": "3552af5be9a23d86ff997d69d9a4811dd996084b658d50e153ca094280e6e8b2"
+    },
+    {
+      "path": "defect-api/33e67d7a367dce57.json",
+      "bytes": 1756,
+      "sha256_git_lf": "078128129cb1d816f2614f652c9f0402a5f52ae0726ea6da1c83320832690622"
+    },
+    {
+      "path": "defect-api/c21cd24c45c98c1b.json",
+      "bytes": 21240,
+      "sha256_git_lf": "f841e3f8decff5ba4a72ed8c475dab0998f6e126def2a7e1019ad0bbcb5e2877"
+    },
+    {
+      "path": "defect-pg-api/160c6ca3b38f07e3.json",
+      "bytes": 13758,
+      "sha256_git_lf": "43e29e63330d131cdbbcc4830fae69efd33258d5b79b1b87d319bbeaad839c4a"
+    },
+    {
+      "path": "defect-pg-api/33e67d7a367dce57.json",
+      "bytes": 1756,
+      "sha256_git_lf": "35a467f4ca63d269bb5122fdb0a0ef8cd51b09cf45b53f8d33c1ab6888abc951"
+    },
+    {
+      "path": "defect-pg-api/c21cd24c45c98c1b.json",
+      "bytes": 21260,
+      "sha256_git_lf": "90b87f14b64af0b858a45ef79cd2cbcf6bd85a233297efcbb1c24330010e504a"
+    },
+    {
+      "path": "defect_repros.py",
+      "bytes": 3276,
+      "sha256_git_lf": "f59d2ec288ef3dd26cef9d0af90419f3bfc4dab09eb5d9b123e5e1250d259ce1"
+    },
+    {
+      "path": "defects-final-sqlite.published.log",
+      "bytes": 11156,
+      "sha256_git_lf": "444c7548e077a0afafa5e2fda74dca0621001c1efc172eb9d301a459ab91f75e"
+    },
+    {
+      "path": "defects-postgres.published.log",
+      "bytes": 10486,
+      "sha256_git_lf": "ab993ed89a1f2c06cf00c314154b1b4d0ac445abc8574ea69160944ed23a410a"
+    },
+    {
+      "path": "defects-release-postgres.published.log",
+      "bytes": 11357,
+      "sha256_git_lf": "b111172138e16cf49bfe30c3d7542597433e2f60d074d0cc185042043c9ecfb8"
+    },
+    {
+      "path": "defects-sqlite.published.log",
+      "bytes": 10285,
+      "sha256_git_lf": "98b1c44377181adbb0917cc6e0ad08bd0d894609c9cf9bc10e8d3fc82ae29321"
+    },
+    {
+      "path": "django-check.published.log",
+      "bytes": 48,
+      "sha256_git_lf": "1e3e63f221bde88816c4a4ef7367691607b20cc1d194028a02ec9ae0586cf9b1"
+    },
+    {
+      "path": "migration-check.published.log",
+      "bytes": 20,
+      "sha256_git_lf": "a2bfa7b376c38062f77ce2b1e703876aaa04662f96355cdf5dc9d0d075302b05"
+    },
+    {
+      "path": "PATCH-SUGGESTIONS.md",
+      "bytes": 2610,
+      "sha256_git_lf": "7aca6def6fa8d802a991aad556462bdf612ab26d38c63267013e8fa20b8ac5b4"
+    },
+    {
+      "path": "postgres-api/01b666a56c844350.json",
+      "bytes": 5624,
+      "sha256_git_lf": "b7b52641af7129ee80dd9f80187b2a0e304addad21f167dcff81e150a9e088d3"
+    },
+    {
+      "path": "postgres-api/06b2a20091e30ad6.json",
+      "bytes": 5492,
+      "sha256_git_lf": "78f7d0a46b64a762e75cae6d84feb2d647eeb404607f21eb492715adbdf2557a"
+    },
+    {
+      "path": "postgres-api/07771d98a290b794.json",
+      "bytes": 21383,
+      "sha256_git_lf": "e9dd031635599722dab3d26e9b0069bfd3a6b8dd5efb69aec196ded4731fec6d"
+    },
+    {
+      "path": "postgres-api/0a5aa4571aacad0d.json",
+      "bytes": 18573,
+      "sha256_git_lf": "316a5f9891fcfc22799243fe5a970ee9b9c40ab1f884a957874c56099b1e6e62"
+    },
+    {
+      "path": "postgres-api/0fa41d2e31f79cff.json",
+      "bytes": 9944,
+      "sha256_git_lf": "f5835dfbfa1a43a051986f82e593292a6d88c73fdb32581b4a252600b9567e7e"
+    },
+    {
+      "path": "postgres-api/120590663ce4ba8c.json",
+      "bytes": 25825,
+      "sha256_git_lf": "af689b129e9091a90f219c18a57f872375a21617ed55f036a35b6afb74f4cc01"
+    },
+    {
+      "path": "postgres-api/1617cfaffa408ad2.json",
+      "bytes": 54746,
+      "sha256_git_lf": "2659d5a79d1972e918e0f355cbcc382eeaa1000e62c30241c069bdc8be3df264"
+    },
+    {
+      "path": "postgres-api/1de1e528f07c8787.json",
+      "bytes": 27518,
+      "sha256_git_lf": "426a11785d501d93ee7b84fd5237fc46680353c074be931f9b966917cf6d0329"
+    },
+    {
+      "path": "postgres-api/2b79c97eff3a898a.json",
+      "bytes": 1801,
+      "sha256_git_lf": "cd0cc51a4849937d7a78d91f7f17b380026341b01ea941fff1e86209696ccfd9"
+    },
+    {
+      "path": "postgres-api/2dd3eb69e4f8ad47.json",
+      "bytes": 75815,
+      "sha256_git_lf": "5244c1600629262fea4e6d0b9af39b1963c290aabb220dacf98b707a7d15235e"
+    },
+    {
+      "path": "postgres-api/30f0dd38aa186867.json",
+      "bytes": 18549,
+      "sha256_git_lf": "b7ff3d04d82e736a0c945e38c32536dbaf86aedc5567ebade0608bf3443afe95"
+    },
+    {
+      "path": "postgres-api/3696668d061d1ea9.json",
+      "bytes": 6493,
+      "sha256_git_lf": "55026fac078ffe53fbc77a5f5c48decaff5a075596949cf2bb746f64c659ac35"
+    },
+    {
+      "path": "postgres-api/3c73b03602eba807.json",
+      "bytes": 3678,
+      "sha256_git_lf": "254cc2c1f16a0de25b47e3978ba21837cb9d664b662e8b70fb1896e130aca17f"
+    },
+    {
+      "path": "postgres-api/417f1c5b64eb2567.json",
+      "bytes": 8587,
+      "sha256_git_lf": "b961a1fe4daa73a5e11a336b074a529fd4112d26f5178a4ccf929f615eabcf13"
+    },
+    {
+      "path": "postgres-api/44cff2cc66a3b94f.json",
+      "bytes": 9965,
+      "sha256_git_lf": "4603830a4a1cb1d0b13ca8183a266a2d5cfb3ca773baa1a13e6ec66125366106"
+    },
+    {
+      "path": "postgres-api/5477483066ea6aeb.json",
+      "bytes": 1337,
+      "sha256_git_lf": "8979f45f898935e5b74bb43e0e3a0ddb067513a04b0bd17678a6c517e3510bbc"
+    },
+    {
+      "path": "postgres-api/5d5cc6dfb500a07b.json",
+      "bytes": 3481,
+      "sha256_git_lf": "3a9ab9b7454e4a3ac3fd5a18a57b7ffd5f0fbffaec3059ce2b412f76a3de21ea"
+    },
+    {
+      "path": "postgres-api/95eac0c32e2042a9.json",
+      "bytes": 39945,
+      "sha256_git_lf": "a1c72d02cd47eca3d9a5e69714e01a5309b650ea75c7e3054a2386cd361651a6"
+    },
+    {
+      "path": "postgres-api/983cd6e68ea83d61.json",
+      "bytes": 4944,
+      "sha256_git_lf": "8f2dfd03c702337a830a6775cdc2970904d688c11781c9df8149ced7071422dc"
+    },
+    {
+      "path": "postgres-api/ad40463233d586c0.json",
+      "bytes": 50381,
+      "sha256_git_lf": "ce233f4a3d5ed399ad43a5f80e71aaaf1a58e03b940f7bc3db89b8f27eec1cc5"
+    },
+    {
+      "path": "postgres-api/ade4fcdfbc4fd2bf.json",
+      "bytes": 6712,
+      "sha256_git_lf": "1e7bf326a6038a6fac3c9d78f288d5cd9d021281e1f357adc7f813ca44134f74"
+    },
+    {
+      "path": "postgres-api/b1a448c501f0fe0c.json",
+      "bytes": 32764,
+      "sha256_git_lf": "67f773c9c57f09158a54fd24cfb931ac12e30dae92d684c13e19abb60e27e3d9"
+    },
+    {
+      "path": "postgres-api/b813629a44ad4c90.json",
+      "bytes": 102532,
+      "sha256_git_lf": "068b0e48f856a6caabfe5748da5250ea4172d33564e35d7c4c7fa4778a1cbf55"
+    },
+    {
+      "path": "postgres-api/de001c0fac90e07f.json",
+      "bytes": 6648,
+      "sha256_git_lf": "477dedc8f64f72165daa50b299256baa0dcd77e3d7a84fdab5b20ee4226d8c58"
+    },
+    {
+      "path": "postgres-api/e00ec0007e7d9208.json",
+      "bytes": 19771,
+      "sha256_git_lf": "cea35eb21ba9e39c52bcd72819b415b9142bc2ce4f146262e0ad59f1d515f97d"
+    },
+    {
+      "path": "postgres-api/e3c6cda5c2758d20.json",
+      "bytes": 15682,
+      "sha256_git_lf": "b1519c5ec7cbd89673725cbdd1ab14c31406474553a63c7bf67cc31f7f9c7331"
+    },
+    {
+      "path": "postgres-api/f89424744616e169.json",
+      "bytes": 6485,
+      "sha256_git_lf": "87dc3fd0ef216edc5fabe54576a8464bde39324c415597830ca33cf8fbbefd84"
+    },
+    {
+      "path": "postgres-api/f977076316cdcdc7.json",
+      "bytes": 37569,
+      "sha256_git_lf": "f21b020bf18f457d90ab0a2ccee62ce6aa8c5cf0ea433b8387a3eb92fde9e74c"
+    },
+    {
+      "path": "postgres-api/fe7eb2f79d215c0b.json",
+      "bytes": 59350,
+      "sha256_git_lf": "316859b0942564c02189f15d31c0c0dd14532b8567f0a3636b3632713c802474"
+    },
+    {
+      "path": "postgres-auth-contract.published.log",
+      "bytes": 25288,
+      "sha256_git_lf": "0cde52fa70db4acc4ce6f8b82df0b55f2546455cba3b49c6a3a0578ddbf9a769"
+    },
+    {
+      "path": "postgres-auth-verified.published.log",
+      "bytes": 25288,
+      "sha256_git_lf": "f9df6be2816863889aeb33e2e62f51a00abb1d361897aec9589aa872a5681ac4"
+    },
+    {
+      "path": "postgres-expanded.published.log",
+      "bytes": 25937,
+      "sha256_git_lf": "1b693ebd5e4760228f6939b762048af8b342f847416bf985731f11dcfdabe19b"
+    },
+    {
+      "path": "postgres-final.published.log",
+      "bytes": 24821,
+      "sha256_git_lf": "d962c6a5a74a95bdfb0f8038b78f74a47bee6b509136718aa38b9dd75f6527b2"
+    },
+    {
+      "path": "postgres-first.published.log",
+      "bytes": 24324,
+      "sha256_git_lf": "a6b63237c44d436701b687fefe9dd87e358981b56c7361816e606412fb5ff6f2"
+    },
+    {
+      "path": "postgres-release.published.log",
+      "bytes": 25043,
+      "sha256_git_lf": "8c2a449e7274e823bccd0c1b246352e5b699c3ea911fea842727e6413164481e"
+    },
+    {
+      "path": "publish_evidence.py",
+      "bytes": 2249,
+      "sha256_git_lf": "cb5441da3ea8412c62a3e01b466cb5bd57442fc2dc2fe17c332740a66bb1b7cd"
+    },
+    {
+      "path": "reachability.json",
+      "bytes": 14994,
+      "sha256_git_lf": "7aa434d8196bcc80d06fec9b9de0bf551b32f2ad3604333d45808b2ddcbc0c91"
+    },
+    {
+      "path": "REACHABILITY.md",
+      "bytes": 2385,
+      "sha256_git_lf": "713b93e21f61af38f1ba183872be41a039184d2598166ff4caab296455f95da9"
+    },
+    {
+      "path": "README.md",
+      "bytes": 12690,
+      "sha256_git_lf": "2079adf6520d9c728dfef1afa58c4e40cd7bf5fe346c20c658d641ce56eecee7"
+    },
+    {
+      "path": "run_postgres.py",
+      "bytes": 5446,
+      "sha256_git_lf": "c106d93f30514ddf76af9c95a028f67fa36b39b270f6e828764efc43976e6874"
+    },
+    {
+      "path": "sqlite-auth-contract.published.log",
+      "bytes": 30910,
+      "sha256_git_lf": "12c24e0a52d900dff5128e5665fa7147177465e5230f329c2a20dcfd0a1f4f0f"
+    },
+    {
+      "path": "sqlite-corrected-harness.published.log",
+      "bytes": 30178,
+      "sha256_git_lf": "892de0d41b819301cf206842a4178ba4aae4aa555eb152b484a9baa816a30767"
+    },
+    {
+      "path": "sqlite-expanded.published.log",
+      "bytes": 25771,
+      "sha256_git_lf": "ba925e608e3500a6f5c170e9a193a4a2ba571dba0d3296b96761133fe077e22d"
+    },
+    {
+      "path": "sqlite-final.published.log",
+      "bytes": 24159,
+      "sha256_git_lf": "eae466820ef7212d4b7d1f741caa940a9af60035b8edfaeb783f99a093984705"
+    },
+    {
+      "path": "sqlite-first.published.log",
+      "bytes": 54925,
+      "sha256_git_lf": "d76d068dca1a11d23aa02f9a08191bf0d70f3bc9216cbb4a5c7a838c4b705734"
+    },
+    {
+      "path": "sqlite-regression.published.log",
+      "bytes": 30443,
+      "sha256_git_lf": "66dac2e2e7af84155d4dac125293b3fd7aaad6f7043c2868e8309b53d4107bfe"
+    },
+    {
+      "path": "sqlite-release.published.log",
+      "bytes": 30665,
+      "sha256_git_lf": "5dd73af40093b295aa15f4f7319a1319fd1b9a80dea309d90ca188823d28fe55"
+    },
+    {
+      "path": "versions.published.log",
+      "bytes": 1484,
+      "sha256_git_lf": "f1d67d26343df0ae627d98bece5baa090328b50a7be1b7ad4005698290ae3c0f"
+    }
+  ]
+}

@@ -1,5 +1,4 @@
 """Create synthetic formal PI samples only inside the verified isolated runner."""
-import base64
 import contextlib
 from datetime import date
 import io
@@ -10,6 +9,7 @@ import runpy
 from shutil import copytree
 from io import BytesIO
 from openpyxl import load_workbook
+from PIL import Image, ImageDraw
 from unittest.mock import patch
 
 here = Path(__file__).resolve().parent
@@ -23,8 +23,16 @@ from rest_framework.test import APIClient
 
 client = APIClient(HTTP_HOST='127.0.0.1')
 sku = seeded['sku']
-sku.image.save('synthetic.gif', ContentFile(base64.b64decode('R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==')))
-output = Path(os.environ['ISOLATED_TEST_ROOT']) / 'formal-print-evidence'
+picture = Image.new('RGB', (180, 100), 'white')
+drawing = ImageDraw.Draw(picture)
+drawing.rectangle((12, 35, 168, 65), fill='#285c57')
+for x in range(20, 165, 20):
+    drawing.rectangle((x, 43, x + 8, 57), fill='#edcc71')
+drawing.text((18, 8), 'SYNTHETIC LED', fill='black')
+picture_bytes = BytesIO()
+picture.save(picture_bytes, format='PNG')
+sku.image.save('synthetic-led.png', ContentFile(picture_bytes.getvalue()))
+output = Path(os.environ['ISOLATED_TEST_ROOT']) / f"formal-print-evidence-{seeded['suffix']}"
 output.mkdir()
 samples = []
 for label, count in [('complete', 1), ('multipage', 30), ('optional-empty', 1)]:

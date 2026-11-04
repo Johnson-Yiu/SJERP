@@ -5,6 +5,7 @@ import path from 'node:path'
 
 test.use({ channel: 'chrome' })
 let fixture
+let formalFixture
 const evidence = path.resolve('../docs/uat-evidence/r1-iss037-print-output-acceptance-20261104')
 
 test.beforeAll(() => {
@@ -15,6 +16,11 @@ test.beforeAll(() => {
   expect(seed.status, seed.stderr).toBe(0)
   fixture = JSON.parse(seed.stdout.trim().split('\n').at(-1))
   fs.mkdirSync(evidence, { recursive: true })
+  const formal = spawnSync(process.env.ISOLATED_TEST_PYTHON, [path.join(evidence, 'seed_formal_matrix.py')], {
+    cwd: path.resolve('../backend'), env: process.env, encoding: 'utf8',
+  })
+  expect(formal.status, formal.stderr).toBe(0)
+  formalFixture = JSON.parse(formal.stdout.trim().split('\n').at(-1))
 })
 
 test('saved PI blocks printing when a document image fails', async ({ page }) => {
@@ -61,7 +67,10 @@ test('saved PI permits printing after resources load on narrow screen', async ({
   await rendered.close()
 })
 
-test('Chrome UI print to PDF', async ({ baseURL }, testInfo) => {
+for (const [label, width] of [['complete', 1440], ['complete', 390], ['multipage', 1440], ['optional-empty', 1440]]) {
+test(`Chrome UI print to PDF ${label} ${width}px`, async ({ baseURL }, testInfo) => {
+  const sample = formalFixture.samples.find(item => item.label === label)
+  expect(sample.status).toBe('sent')
   const profile = testInfo.outputPath('chrome-profile')
   const output = testInfo.outputPath('print-output')
   fs.mkdirSync(path.join(profile, 'Default'), { recursive: true })
@@ -70,6 +79,8 @@ test('Chrome UI print to PDF', async ({ baseURL }, testInfo) => {
     printing: { print_preview_sticky_settings: { appState: JSON.stringify({
       recentDestinations: [{ id: 'Save as PDF', origin: 'local', account: '' }],
       selectedDestinationId: 'Save as PDF', version: 2,
+      isHeaderFooterEnabled: false, isLandscapeEnabled: false, scaling: '100',
+      mediaSize: { height_microns: 297000, width_microns: 210000, name: 'ISO_A4', custom_display_name: 'A4' },
     }) } },
     savefile: { default_directory: output },
     download: { default_directory: output, prompt_for_download: false },
@@ -77,8 +88,8 @@ test('Chrome UI print to PDF', async ({ baseURL }, testInfo) => {
   const browser = await chromium.launchPersistentContext(profile, { channel: 'chrome', headless: false, args: ['--kiosk-printing'] })
   try {
     const page = await browser.newPage()
-    await page.setViewportSize({ width: 1440, height: 900 })
-    await page.goto(`${baseURL}/quotes?detail=${fixture.id}`)
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto(`${baseURL}/quotes?detail=${sample.id}`)
     const detail = page.getByRole('dialog', { name: '报价工作台' })
     await expect(detail).toBeVisible()
     await detail.getByRole('button', { name: '预览 PI' }).first().click()
@@ -92,8 +103,9 @@ test('Chrome UI print to PDF', async ({ baseURL }, testInfo) => {
     })
     await expect.poll(() => fs.readdirSync(output).filter(name => name.endsWith('.pdf')), { timeout: 20000 }).not.toHaveLength(0)
     const file = fs.readdirSync(output).find(name => name.endsWith('.pdf'))
-    fs.copyFileSync(path.join(output, file), path.join(evidence, 'chrome-ui-print.pdf'))
+    fs.copyFileSync(path.join(output, file), path.join(evidence, `ui-formal-${label}-${width}.pdf`))
   } finally {
     await browser.close()
   }
 })
+}

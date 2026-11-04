@@ -335,7 +335,8 @@ test('browser CI invokes the isolated suite and keeps run evidence under an isol
     assert.match(job, /uses: actions\/setup-python@v5\s+with:\s+python-version: '3\.12'/, `${name} requires Python 3.12`)
     assert.equal((job.match(/run: pip install -r backend\/requirements\.lock/g) || []).length, 1, `${name} installs all locked Python dependencies`)
     assert.ok(job.indexOf('actions/setup-python@v5') < job.indexOf('run: pip install -r backend/requirements.lock'))
-    assert.doesNotMatch(job, /^\s+(?:if|continue-on-error):/m, `${name} must not skip or ignore required validation`)
+    const validationSteps = job.replace(/      - name: Retain isolated browser and print evidence\r?\n        if: always\(\)\r?\n        uses: actions\/upload-artifact@v4[\s\S]*$/, '')
+    assert.doesNotMatch(validationSteps, /^\s+(?:if|continue-on-error):/m, `${name} must not skip or ignore required validation`)
   }
   const postgres = jobs['backend-postgres']
   assert.match(postgres, /image: postgres:17/)

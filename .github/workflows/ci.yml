@@ -123,3 +123,13 @@ jobs:
       - name: Frontend build
         working-directory: frontend
         run: npm run build
+      - name: Retain isolated browser and print evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: isolated-browser-print-${{ github.sha }}
+          path: |
+            docs/uat-evidence/ci-${{ github.run_id }}-${{ github.run_attempt }}/
+            docs/uat-evidence/r1-iss037-print-output-acceptance-20261104/ui-formal-*.pdf
+          if-no-files-found: warn
+          retention-days: 7

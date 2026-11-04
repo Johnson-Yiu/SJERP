@@ -157,7 +157,7 @@ def main():
             retention_removed = len(retention["removed"])
             assert retention_removed == 2 and len(list(replica_root.iterdir())) == 3
             assert (backup_root / receipts[0]["name"]).exists()
-        result = {"status": "PASS", "scope": "real-PG17-with-simulated-media-fence", "active_session_rejected": active_rejected,
+        result = {"status": "PASS", "source_sha": sha, "scope": "real-PG17-with-simulated-media-fence", "active_session_rejected": active_rejected,
                           "other_login_rejected": login_rejected, "restored_verified": restored["verified"],
                           "audit_truncate_rejected": restored["audit_truncate_rejected"], "source_unchanged": True,
                           "audit_row_mutations_rejected": restored["audit_row_mutations_rejected"],

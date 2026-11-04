@@ -4,10 +4,17 @@ import subprocess
 import tempfile
 from unittest import TestCase, mock
 
-from crm.services.operations_fence import verify_offline_postgres, verify_readonly_filesystem
+from crm.services.operations_fence import verify_offline_postgres, verify_readonly_filesystem, validate_mount_record
 
 
 class OfflineFenceTests(TestCase):
+    def test_network_submount_and_bind_only_readonly_metadata_refused(self):
+        record = {"fstype": "ext4", "fs-options": "ro", "vfs-options": "ro", "maj:min": "8:1", "target": "/synthetic"}
+        self.assertEqual(validate_mount_record(record, "/synthetic")["filesystem"], "8:1")
+        for update in ({"fstype": "nfs4"}, {"children": [{"target": "/synthetic/child"}]}, {"fs-options": "rw"}, {"vfs-options": "rw"}):
+            with self.assertRaises(RuntimeError):
+                validate_mount_record({**record, **update}, "/synthetic")
+
     def test_actual_writable_temporary_directory_never_qualifies(self):
         with tempfile.TemporaryDirectory(prefix="sunjack-fence-") as root:
             with self.assertRaises((RuntimeError, subprocess.SubprocessError, FileNotFoundError)):

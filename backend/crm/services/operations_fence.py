@@ -18,13 +18,20 @@ def verify_readonly_filesystem(path):
         raise ValueError("An existing absolute snapshot root is required")
     if any(p.is_symlink() for p in (path, *path.parents)):
         raise ValueError("Snapshot roots must not contain symlinks")
-    result = subprocess.run(["findmnt", "--json", "--target", str(path),
-                             "--output", "TARGET,FS-OPTIONS,VFS-OPTIONS,MAJ:MIN"],
+    result = subprocess.run(["findmnt", "--json", "--submounts", "--target", str(path),
+                             "--output", "TARGET,FSTYPE,FS-OPTIONS,VFS-OPTIONS,MAJ:MIN"],
                             capture_output=True, text=True, timeout=15, check=True)
     rows = json.loads(result.stdout).get("filesystems", [])
     if len(rows) != 1:
         raise RuntimeError("Filesystem identity could not be determined")
-    row = rows[0]
+    return validate_mount_record(rows[0], path)
+
+
+def validate_mount_record(row, path):
+    """Validate findmnt metadata; this alone is not live filesystem evidence."""
+    path = Path(path)
+    if row.get("fstype") not in {"ext4", "xfs", "btrfs"} or row.get("children"):
+        raise RuntimeError("A dedicated local filesystem without submounts is required")
     if "ro" not in row.get("fs-options", "").split(",") or "ro" not in row.get("vfs-options", "").split(","):
         raise RuntimeError("Filesystem and mount must both be read-only")
     if not row.get("maj:min") or not row.get("target"):

@@ -21,7 +21,7 @@ for source in sorted(root.glob("*.log")):
         text = re.sub(expression, replacement, text)
     text = "\n".join(line.rstrip() for line in text.splitlines()).rstrip() + "\n"
     dest = root / (source.stem.replace(".private", "") + ".redacted.log")
-    dest.write_text(text, encoding="utf-8")
+    dest.write_text(text, encoding="utf-8", newline="\n")
     logs.append({"original": source.name, "original_sha256": hashlib.sha256(source.read_bytes()).hexdigest(), "published": dest.name})
 extensions = {".png", ".pdf", ".csv", ".json", ".md", ".py"}
 files = []

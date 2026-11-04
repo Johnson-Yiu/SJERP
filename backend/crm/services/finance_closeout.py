@@ -163,10 +163,10 @@ def upload(file, user, bank_sources=None):
 @transaction.atomic
 def create_account(data, user):
     access(user, "create")
-    if set(data) - {"code", "name", "account_type", "ownership", "ownership_reason"}:
+    if not isinstance(data, dict) or set(data) - {"code", "name", "account_type", "ownership", "ownership_reason"}:
         raise ValidationError("未知账户字段。")
     kind, owner = data.get("account_type"), data.get("ownership", "unverified")
-    if kind not in {"bank", "cash"} or owner not in {"own", "external", "unverified"}:
+    if not isinstance(kind, str) or not isinstance(owner, str) or kind not in {"bank", "cash"} or owner not in {"own", "external", "unverified"}:
         raise ValidationError("账户类型或归属无效。")
     reason = text(data.get("ownership_reason")) if owner != "unverified" else ""
     code = text(data.get("code"), 40)
@@ -184,7 +184,7 @@ def verify_account(data, user):
     obj = FinanceAccount.objects.select_for_update().get(pk=pk(data.get("account")))
     if FinanceFact.objects.filter(account=obj).exists() or FinanceAccountMapping.objects.filter(account=obj).exists():
         raise ValidationError("账户已有历史事实或映射，不能改写历史归属。")
-    if data.get("ownership") not in {"own", "external"}:
+    if not isinstance(data.get("ownership"), str) or data.get("ownership") not in {"own", "external"}:
         raise ValidationError("须明确核实为自有或外部账户。")
     before = {"ownership": obj.ownership, "ownership_reason": obj.ownership_reason}
     obj.ownership, obj.ownership_reason = data["ownership"], text(data.get("reason"))
@@ -217,20 +217,20 @@ def normalize(data, user=None):
         raise ValidationError("资金承接字段无效。")
     p = dict(data)
     p["request_key"] = text(p.get("request_key"), 128)
-    if p.get("kind") not in KINDS:
+    if not isinstance(p.get("kind"), str) or p.get("kind") not in KINDS:
         raise ValidationError("资金操作类型无效。")
     p["reason"] = text(p.get("reason"))
     p["account"] = account(p.get("account")).pk
     p["voucher"] = voucher(p.get("voucher")).pk
     p["actual_date"] = iso(p.get("actual_date"))
     p["amount"] = str(cash.money(p.get("amount"), zero=True) if p["kind"] in {"opening", "correction"} else amount(p.get("amount")))
-    if p.get("direction") not in {"income", "expense"}:
+    if not isinstance(p.get("direction"), str) or p.get("direction") not in {"income", "expense"}:
         raise ValidationError("资金方向无效。")
     p.setdefault("nature", "unclassified")
-    if p["nature"] not in NATURES:
+    if not isinstance(p["nature"], str) or p["nature"] not in NATURES:
         raise ValidationError("资金性质无效。")
     p.setdefault("truth", "needs_verification")
-    if p["truth"] not in {"verified", "simulated", "needs_verification"}:
+    if not isinstance(p["truth"], str) or p["truth"] not in {"verified", "simulated", "needs_verification"}:
         raise ValidationError("真实性状态无效。")
     p["source_system"] = text(p.get("source_system"), 80)
     p["source_key"] = text(p.get("source_key"), 128)
@@ -504,7 +504,7 @@ def classify(data, user):
     if FinanceTransferMatch.objects.filter(Q(outgoing=fact) | Q(incoming=fact)).exists() or FinanceHistoricalTransfer.objects.filter(Q(outgoing_fact=fact) | Q(incoming_fact=fact)).exists():
         raise ValidationError("已核实内部本金不能直接改成其他性质；请保留两端历史并使用受复核的更正事实。")
     nature = data.get("nature")
-    if nature not in NATURES or nature == "internal_principal":
+    if not isinstance(nature, str) or nature not in NATURES or nature == "internal_principal":
         raise ValidationError("性质无效；内部转账本金须由两端核实流程处理。")
     obj = FinanceClassification.objects.create(fact=fact, nature=nature, reason=text(data.get("reason")), actor=identity(user, "classify"))
     audit(obj, user, "核实资金性质")

@@ -79,6 +79,8 @@ class FinanceCloseoutViewSet(viewsets.ViewSet):
 
     def initial(self, request, *args, **kwargs):
         super().initial(request, *args, **kwargs)
+        if request.method == "POST" and not isinstance(request.data, dict):
+            raise ValidationError("资金操作需要对象格式。")
         operation = "view" if request.method in {"GET", "HEAD", "OPTIONS"} or self.action == "preview" else "create" if self.action in {"accounts", "vouchers", "instructions"} else "update"
         ledger.access(request.user, operation)
 

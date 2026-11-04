@@ -206,6 +206,16 @@ class FinanceCloseoutTests(CloseoutFixture, TestCase):
                 ledger.submit(self.data(), self.maker)
         self.assertFalse(FinanceInstruction.objects.exists())
 
+    def test_malformed_json_commands_are_rejected_without_partial_writes(self):
+        client = APIClient()
+        client.force_authenticate(self.maker)
+        self.assertEqual(client.post("/api/finance-ledger/instructions/", [], format="json").status_code, 400)
+        for field in ("kind", "nature", "direction", "truth"):
+            response = client.post("/api/finance-ledger/instructions/", self.data(**{field: {"invalid": True}}), format="json")
+            self.assertEqual(response.status_code, 400, response.data)
+        self.assertFalse(FinanceInstruction.objects.exists())
+        self.assertFalse(FinanceFact.objects.exists())
+
     @override_settings(DEVELOPMENT_SUPERADMIN=False)
     def test_unauthenticated_api_and_voucher_download_are_denied(self):
         client = APIClient()

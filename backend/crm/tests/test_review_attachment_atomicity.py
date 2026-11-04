@@ -30,7 +30,7 @@ from crm.models import (
     RolePermission,
 )
 from crm.services import attachments as attachment_service
-from crm.services.attachments import _delete_lock_key
+from crm.services.attachments import _delete_lock_key, _serialized_attachment_delete
 from crm.services.private_media import build_private_media_manifest
 
 
@@ -105,6 +105,11 @@ class ReviewAttachmentAtomicityTests(TransactionTestCase):
         def run():
             close_old_connections()
             try:
+                initial_pid = None
+                if connection.vendor == "postgresql":
+                    with connection.cursor() as cursor:
+                        cursor.execute("SELECT pg_backend_pid()")
+                        initial_pid = cursor.fetchone()[0]
                 client = APIClient(raise_request_exception=False)
                 client.force_authenticate(self.operator)
                 started.set()
@@ -112,6 +117,23 @@ class ReviewAttachmentAtomicityTests(TransactionTestCase):
                     f"/api/follow-ups/{self.follow_up.pk}/attachments/{attachment_pk}/"
                 )
                 results[name] = response.status_code
+                if connection.vendor == "postgresql":
+                    lock_key = _delete_lock_key(attachment_pk) & ((1 << 64) - 1)
+                    class_id = (lock_key >> 32) & 0xFFFFFFFF
+                    object_id = lock_key & 0xFFFFFFFF
+                    with connection.cursor() as cursor:
+                        cursor.execute("SELECT pg_backend_pid()")
+                        final_pid = cursor.fetchone()[0]
+                        cursor.execute(
+                            "SELECT count(*) FROM pg_locks "
+                            "WHERE pid = %s AND locktype = 'advisory' AND granted "
+                            "AND classid = %s::oid AND objid = %s::oid AND objsubid = 1",
+                            [initial_pid, class_id, object_id],
+                        )
+                        own_lock_count = cursor.fetchone()[0]
+                    results[f"{name}_initial_pid"] = initial_pid
+                    results[f"{name}_final_pid"] = final_pid
+                    results[f"{name}_own_lock_count_before_close"] = own_lock_count
             except Exception as exc:  # make thread failures visible to the test thread
                 results[name] = exc
             finally:
@@ -119,6 +141,18 @@ class ReviewAttachmentAtomicityTests(TransactionTestCase):
                 close_old_connections()
 
         return Thread(target=run, name=name, daemon=True)
+
+    def _assert_worker_released_own_lock(self, results, name):
+        self.assertEqual(
+            results.get(f"{name}_initial_pid"),
+            results.get(f"{name}_final_pid"),
+            "the worker connection must remain the same while its advisory lock is checked",
+        )
+        self.assertEqual(
+            results.get(f"{name}_own_lock_count_before_close"),
+            0,
+            "the worker's PostgreSQL advisory lock must be released before its connection closes",
+        )
 
     def _wait_for_postgres_advisory_waiter(self, attachment_pk):
         lock_key = _delete_lock_key(attachment_pk) & ((1 << 64) - 1)
@@ -348,7 +382,163 @@ class ReviewAttachmentAtomicityTests(TransactionTestCase):
             for url in (f"/api/media/{recovery_key}", f"/media/{recovery_key}"):
                 for client in (APIClient(), self.client):
                     response = client.get(url)
-                    self.assertNotEqual(response.status_code, 200, url)
+                    self.assertIn(response.status_code, (401, 403, 404), url)
+                    response_body = (
+                        b"".join(response.streaming_content)
+                        if getattr(response, "streaming", False)
+                        else response.content
+                    )
+                    for sensitive_value in (
+                        b"recovery bytes",
+                        str(manifest["backup_path"]).encode("utf-8"),
+                        str(manifest["original_storage_key"]).encode("utf-8"),
+                        str(manifest["sha256"]).encode("ascii"),
+                        str(manifest["recovery_id"]).encode("ascii"),
+                    ):
+                        self.assertNotIn(sensitive_value, response_body, url)
+
+    def test_delete_failure_with_renamed_restore_repairs_reference_after_rollback(self):
+        attachment = FollowUpAttachment.objects.create(
+            follow_up=self.follow_up,
+            file=SimpleUploadedFile("rename-on-restore.txt", b"restore with a new key", content_type="text/plain"),
+            name="rename-on-restore.txt",
+            content_type="text/plain",
+            size=len(b"restore with a new key"),
+        )
+        original_key = attachment.file.name
+        original_save = default_storage.save
+        renamed_keys = []
+
+        def save_under_renamed_key(requested_name, content, max_length=None):
+            parent, _leaf = requested_name.rsplit("/", 1)
+            returned_name = original_save(
+                f"{parent}/restored-with-new-name.bin",
+                content,
+                max_length=max_length,
+            )
+            renamed_keys.append(returned_name)
+            return returned_name
+
+        with patch.object(default_storage, "save", side_effect=save_under_renamed_key):
+            with patch(
+                "crm.services.attachments.record_operation",
+                side_effect=DatabaseError("injected audit failure after attachment row delete"),
+            ):
+                response = self.client.delete(
+                    f"/api/follow-ups/{self.follow_up.pk}/attachments/{attachment.pk}/"
+                )
+
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(len(renamed_keys), 1)
+        self.assertEqual(
+            self.attachment_state("删除跟进附件"),
+            (1, 1, 0),
+            "rollback must leave one row, one restored file, and no success audit",
+        )
+        restored = FollowUpAttachment.objects.get(pk=attachment.pk)
+        self.assertNotEqual(restored.file.name, original_key)
+        self.assertEqual(restored.file.name, renamed_keys[0])
+        self.assertTrue(default_storage.exists(restored.file.name))
+        self.assertEqual(_read_storage(default_storage, restored.file.name), b"restore with a new key")
+        self.assertFalse(default_storage.exists(original_key))
+        self.assertFalse((Path(self.media_dir.name) / ".private-attachment-recovery").exists())
+
+    def test_commit_success_then_exception_does_not_restore_orphan_file(self):
+        attachment = FollowUpAttachment.objects.create(
+            follow_up=self.follow_up,
+            file=SimpleUploadedFile("commit-then-raise.txt", b"committed delete", content_type="text/plain"),
+            name="commit-then-raise.txt",
+            content_type="text/plain",
+            size=len(b"committed delete"),
+        )
+        original_key = attachment.file.name
+        original_commit = BaseDatabaseWrapper.commit
+        original_delete = default_storage.delete
+        storage_deleted = []
+
+        def delete_and_mark(name):
+            result = original_delete(name)
+            if name == original_key:
+                storage_deleted.append(name)
+            return result
+
+        def commit_then_raise(db_connection):
+            result = original_commit(db_connection)
+            if storage_deleted:
+                raise DatabaseError("injected exception after the database commit succeeded")
+            return result
+
+        with patch.object(default_storage, "delete", side_effect=delete_and_mark):
+            with patch.object(BaseDatabaseWrapper, "commit", autospec=True, side_effect=commit_then_raise):
+                response = self.client.delete(
+                    f"/api/follow-ups/{self.follow_up.pk}/attachments/{attachment.pk}/"
+                )
+
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(storage_deleted, [original_key])
+        self.assertFalse(FollowUpAttachment.objects.filter(pk=attachment.pk).exists())
+        self.assertFalse(default_storage.exists(original_key))
+        self.assertTrue(
+            OperationLog.objects.filter(
+                object_id=str(self.follow_up.pk),
+                action_label="删除跟进附件",
+                metadata__attachment_id=attachment.pk,
+            ).exists()
+        )
+        self.assertFalse((Path(self.media_dir.name) / ".private-attachment-recovery").exists())
+
+    def test_unreadable_commit_outcome_preserves_recovery_copy_as_uncertain(self):
+        attachment = FollowUpAttachment.objects.create(
+            follow_up=self.follow_up,
+            file=SimpleUploadedFile("uncertain-commit.txt", b"retain uncertain bytes", content_type="text/plain"),
+            name="uncertain-commit.txt",
+            content_type="text/plain",
+            size=len(b"retain uncertain bytes"),
+        )
+        original_key = attachment.file.name
+        original_commit = BaseDatabaseWrapper.commit
+        original_delete = default_storage.delete
+        storage_deleted = []
+
+        def delete_and_mark(name):
+            result = original_delete(name)
+            if name == original_key:
+                storage_deleted.append(name)
+            return result
+
+        def fail_commit_after_file_delete(db_connection):
+            if storage_deleted:
+                raise DatabaseError("injected commit failure before commit")
+            return original_commit(db_connection)
+
+        with patch.object(default_storage, "delete", side_effect=delete_and_mark):
+            with patch.object(
+                BaseDatabaseWrapper,
+                "commit",
+                autospec=True,
+                side_effect=fail_commit_after_file_delete,
+            ):
+                with patch.object(
+                    attachment_service,
+                    "_probe_attachment_delete_outcome",
+                    side_effect=DatabaseError("injected independent connection probe failure"),
+                ):
+                    response = self.client.delete(
+                        f"/api/follow-ups/{self.follow_up.pk}/attachments/{attachment.pk}/"
+                    )
+
+        self.assertEqual(response.status_code, 500)
+        self.assertTrue(FollowUpAttachment.objects.filter(pk=attachment.pk, file=original_key).exists())
+        self.assertFalse(default_storage.exists(original_key))
+        recovery_dir = Path(self.media_dir.name) / ".private-attachment-recovery"
+        backups = list(recovery_dir.glob("*.bin"))
+        manifests = list(recovery_dir.glob("*.json"))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual(len(manifests), 1)
+        self.assertEqual(backups[0].read_bytes(), b"retain uncertain bytes")
+        manifest = json.loads(manifests[0].read_text(encoding="utf-8"))
+        self.assertEqual(manifest["transaction_outcome"], "uncertain")
+        self.assertEqual(manifest["original_storage_key"], original_key)
 
     def test_storage_candidate_collision_and_rename_never_delete_other_object(self):
         original_save = default_storage.save
@@ -534,6 +724,64 @@ class ReviewAttachmentAtomicityTests(TransactionTestCase):
         self.assertTrue(stored_path.is_file())
         self.assertFalse(OperationLog.objects.filter(action_label="删除跟进附件").exists())
 
+    @skipUnless(connection.vendor == "postgresql", "Requires PostgreSQL session advisory locks.")
+    def test_postgres_session_lock_is_released_before_connection_close(self):
+        attachment_pk = 9_876_543
+        lock_key = _delete_lock_key(attachment_pk) & ((1 << 64) - 1)
+        class_id = (lock_key >> 32) & 0xFFFFFFFF
+        object_id = lock_key & 0xFFFFFFFF
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT pg_backend_pid()")
+            initial_pid = cursor.fetchone()[0]
+
+        with _serialized_attachment_delete(attachment_pk):
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT pg_backend_pid()")
+                self.assertEqual(cursor.fetchone()[0], initial_pid)
+                cursor.execute(
+                    "SELECT count(*) FROM pg_locks "
+                    "WHERE pid = %s AND locktype = 'advisory' AND granted "
+                    "AND classid = %s::oid AND objid = %s::oid AND objsubid = 1",
+                    [initial_pid, class_id, object_id],
+                )
+                self.assertEqual(cursor.fetchone()[0], 1)
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT pg_backend_pid()")
+            self.assertEqual(cursor.fetchone()[0], initial_pid)
+            cursor.execute(
+                "SELECT count(*) FROM pg_locks "
+                "WHERE pid = %s AND locktype = 'advisory' AND granted "
+                "AND classid = %s::oid AND objid = %s::oid AND objsubid = 1",
+                [initial_pid, class_id, object_id],
+            )
+            self.assertEqual(cursor.fetchone()[0], 0)
+
+    @skipUnless(connection.vendor == "postgresql", "Requires PostgreSQL session advisory locks.")
+    def test_postgres_false_unlock_result_is_logged_and_discards_connection(self):
+        attachment_pk = 9_876_544
+        lock_key = _delete_lock_key(attachment_pk)
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT pg_backend_pid()")
+            backend_pid = cursor.fetchone()[0]
+
+        with self.assertLogs(attachment_service.logger, level="CRITICAL") as captured:
+            with _serialized_attachment_delete(attachment_pk):
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT pg_advisory_unlock(%s)", [lock_key])
+                    self.assertTrue(cursor.fetchone()[0])
+                    cursor.execute("SELECT pg_backend_pid()")
+                    self.assertEqual(cursor.fetchone()[0], backend_pid)
+                    cursor.execute(
+                        "SELECT count(*) FROM pg_locks "
+                        "WHERE pid = %s AND locktype = 'advisory' AND granted AND objsubid = 1",
+                        [backend_pid],
+                    )
+                    self.assertEqual(cursor.fetchone()[0], 0)
+
+        self.assertIsNone(connection.connection)
+        self.assertTrue(any("Could not confirm release" in message for message in captured.output))
+
     @skipUnless(connection.vendor == "postgresql", "Requires PostgreSQL row and advisory locks.")
     def test_postgres_second_delete_waits_through_audit_failure_compensation(self):
         attachment = FollowUpAttachment.objects.create(
@@ -582,6 +830,8 @@ class ReviewAttachmentAtomicityTests(TransactionTestCase):
         self.assertFalse(second.is_alive())
         self.assertEqual(results.get("attachment-audit-failure-first"), 500)
         self.assertEqual(results.get("attachment-audit-failure-second"), 204)
+        self._assert_worker_released_own_lock(results, "attachment-audit-failure-first")
+        self._assert_worker_released_own_lock(results, "attachment-audit-failure-second")
         self.assertFalse(FollowUpAttachment.objects.filter(pk=attachment.pk).exists())
         self.assertFalse(stored_path.exists())
         self.assertEqual(OperationLog.objects.filter(action_label="删除跟进附件").count(), 1)
@@ -646,6 +896,8 @@ class ReviewAttachmentAtomicityTests(TransactionTestCase):
         self.assertFalse(second.is_alive())
         self.assertEqual(results.get("attachment-commit-failure-first"), 500)
         self.assertEqual(results.get("attachment-commit-failure-second"), 204)
+        self._assert_worker_released_own_lock(results, "attachment-commit-failure-first")
+        self._assert_worker_released_own_lock(results, "attachment-commit-failure-second")
         self.assertFalse(FollowUpAttachment.objects.filter(pk=attachment.pk).exists())
         self.assertFalse(stored_path.exists())
         self.assertEqual(OperationLog.objects.filter(action_label="删除跟进附件").count(), 1)

@@ -26,15 +26,21 @@ from django.test import Client, LiveServerTestCase, override_settings
 from openpyxl import load_workbook
 
 from crm.models import (
+    AccessRole,
     Customer,
+    EmployeeProfile,
     FulfillmentIdempotency,
     GoodsReceipt,
     InventoryMovement,
+    OrganizationUnit,
     OperationLog,
     Order,
     PaymentPlan,
+    Position,
     Product,
     PurchaseOrder,
+    Quote,
+    RolePermission,
     Shipment,
     SKU,
     Supplier,
@@ -85,7 +91,7 @@ class ReviewCoreHttpTests(LiveServerTestCase):
             display_name_cn="合成测试灯具",
         )
         self.supplier = Supplier.objects.create(
-            code=f"RCH-V-{suffix}",
+            code="RV",
             name=f"Review synthetic supplier {suffix}",
         )
         self.supplier_source = SupplierSKU.objects.create(
@@ -175,7 +181,11 @@ class ReviewCoreHttpTests(LiveServerTestCase):
         }
         if body is not None:
             request_headers["Content-Type"] = "application/json"
-        request_headers.update(headers or {})
+        for key, value in (headers or {}).items():
+            if value is None:
+                request_headers.pop(key, None)
+            else:
+                request_headers[key] = value
         try:
             connection.request(method, path, body=body, headers=request_headers)
             response = connection.getresponse()
@@ -286,6 +296,96 @@ class ReviewCoreHttpTests(LiveServerTestCase):
         self.assertTrue(rows, f"Missing audit row for {label} object={object_id}")
         self.assertTrue(all(row.operator_id == self.session_user.pk for row in rows))
         return rows
+
+    def test_http_auth_csrf_and_rbac_denials_have_no_business_or_success_audit(self):
+        quote_payload = {
+            "customer": self.customer.pk,
+            "quote_date": self.request_date.isoformat(),
+            "valid_until": "2026-12-04",
+            "currency": "USD",
+            "exchange_rate": "7.100000",
+            "items": [{
+                "sku": self.sku.pk,
+                "quantity": "1",
+                "unit_price": "25.00",
+                "description": "Synthetic denied quote",
+            }],
+        }
+        before_quotes = list(Quote.objects.order_by("pk").values_list("pk", "status"))
+        before_snapshot = self._snapshot()
+        before_audits = list(OperationLog.objects.order_by("pk").values_list(
+            "id", "entity", "object_id", "operator_id", "action", "action_label",
+        ))
+
+        def assert_denied_without_writes(*, expected_statuses, headers):
+            status_code, payload, _ = self._request(
+                "POST", "/api/quotes/", quote_payload, headers=headers,
+            )
+            self.assertIn(status_code, expected_statuses, payload)
+            self.assertEqual(
+                list(Quote.objects.order_by("pk").values_list("pk", "status")),
+                before_quotes,
+            )
+            self.assertEqual(self._snapshot(), before_snapshot)
+            self.assertEqual(
+                list(OperationLog.objects.order_by("pk").values_list(
+                    "id", "entity", "object_id", "operator_id", "action", "action_label",
+                )),
+                before_audits,
+            )
+
+        # Authentication challenge configuration may express an anonymous
+        # denial as 401 or 403; both must reject before creating business rows.
+        assert_denied_without_writes(
+            expected_statuses={401, 403},
+            headers={"Cookie": None, "X-CSRFToken": None},
+        )
+        # Keep the valid session and CSRF cookie but omit the request header.
+        assert_denied_without_writes(
+            expected_statuses={403},
+            headers={"X-CSRFToken": None},
+        )
+        assert_denied_without_writes(
+            expected_statuses={403},
+            headers={"X-CSRFToken": "deliberately-invalid-csrf-token"},
+        )
+
+        unit = OrganizationUnit.objects.create(
+            name="Core HTTP restricted unit",
+            code=f"RCH-U-{self._testMethodName[-8:].upper()}",
+        )
+        position = Position.objects.create(
+            unit=unit,
+            name="报价只读",
+            code=f"RCH-POS-{self._testMethodName[-8:].upper()}",
+        )
+        role = AccessRole.objects.create(
+            name="Core HTTP quote viewer",
+            code=f"rch-quote-view-{self._testMethodName[-8:].lower()}",
+            default_data_scope="all",
+        )
+        RolePermission.objects.create(role=role, module="quotes", can_view=True)
+        restricted_user = get_user_model().objects.create_user(
+            username=f"review-limited-{self._testMethodName[-8:].lower()}",
+            password="isolated-test-only",
+        )
+        profile = EmployeeProfile.objects.create(
+            user=restricted_user,
+            display_name="Core HTTP restricted employee",
+            unit=unit,
+            position=position,
+        )
+        profile.roles.add(role)
+        restricted_session = Client()
+        restricted_session.force_login(restricted_user)
+        self.cookie_header = "; ".join((
+            f"{settings.SESSION_COOKIE_NAME}={restricted_session.cookies[settings.SESSION_COOKIE_NAME].value}",
+            f"{settings.CSRF_COOKIE_NAME}={self.csrf_token}",
+        ))
+        assert_denied_without_writes(
+            expected_statuses={403},
+            headers={"X-CSRFToken": self.csrf_token},
+        )
 
     def test_quote_export_order_and_receivable_are_saved_and_reconciled_over_http(self):
         quote, saved_order = self._create_accepted_quote_and_order()

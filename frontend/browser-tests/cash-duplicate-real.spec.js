@@ -4,7 +4,10 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 test.use({ channel: 'chrome' })
-const report = path.resolve('../docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103')
+const fixtureRoot = path.resolve('../docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103')
+const report = process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT
+  ? path.resolve(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'cash-duplicate')
+  : fixtureRoot
 const seed = path.resolve('../docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/seed_browser.py')
 const screenshots = path.join(report, 'screenshots')
 const results = []
@@ -19,7 +22,7 @@ test.beforeAll(() => {
 })
 test.afterAll(() => {
   fs.writeFileSync(path.join(report, 'browser-http.json'), JSON.stringify(results, null, 2))
-  const inspect = spawnSync(process.env.ISOLATED_TEST_PYTHON, [path.join(report, 'inspect_browser.py')], { cwd: path.resolve('../backend'), env: process.env, encoding: 'utf8' })
+  const inspect = spawnSync(process.env.ISOLATED_TEST_PYTHON, [path.join(fixtureRoot, 'inspect_browser.py')], { cwd: path.resolve('../backend'), env: process.env, encoding: 'utf8' })
   expect(inspect.status, inspect.stderr).toBe(0)
   const data = JSON.parse(inspect.stdout.trim().split('\n').at(-1))
   fs.writeFileSync(path.join(report, 'browser-database.json'), JSON.stringify(data, null, 2))

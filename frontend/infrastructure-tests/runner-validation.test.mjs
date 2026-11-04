@@ -49,17 +49,37 @@ test('other business selections and infrastructure smoke preserve existing accou
 })
 
 function runProcess(command, args, options) {
+  const { testSignal, traceLabel, ...spawnOptions } = options
+  const started = performance.now()
+  const trace = message => {
+    if (traceLabel) process.stdout.write(`[${traceLabel} +${Math.round(performance.now() - started)}ms] ${message}\n`)
+  }
   const child = spawn(command, args, {
-    ...options,
+    ...spawnOptions,
     windowsHide: true,
     stdio: ['ignore', 'pipe', 'pipe'],
   })
   let output = ''
-  child.stdout.on('data', chunk => { output += chunk.toString() })
-  child.stderr.on('data', chunk => { output += chunk.toString() })
+  const append = chunk => { output += chunk.toString(); trace(chunk.toString().trimEnd()) }
+  child.stdout.on('data', append)
+  child.stderr.on('data', append)
+  trace(`spawned owned runner pid=${child.pid}`)
+  const cancel = () => {
+    trace(`test cancelled; stopping owned runner pid=${child.pid}`)
+    void stopOwnedProcessTree(child).then(
+      () => trace('owned runner cleanup finished'),
+      error => trace(`owned runner cleanup failed: ${error.message}`),
+    )
+  }
+  testSignal?.addEventListener('abort', cancel, { once: true })
+  if (testSignal?.aborted) cancel()
   return new Promise((resolve, reject) => {
     child.once('error', reject)
-    child.once('close', (code, signal) => resolve({ code, signal, output }))
+    child.once('close', (code, signal) => {
+      testSignal?.removeEventListener('abort', cancel)
+      trace(`closed code=${code} signal=${signal}`)
+      resolve({ code, signal, output })
+    })
   })
 }
 
@@ -408,19 +428,23 @@ test('cleanup refuses an ownership marker belonging to another run', async () =>
 })
 
 test('two independent worktree runtimes can start concurrently without sharing ports or data', { timeout: 120000 }, async t => {
+  const started = performance.now()
+  const phase = message => process.stdout.write(`[parallel setup +${Math.round(performance.now() - started)}ms] ${message}\n`)
   const parent = await mkdtemp(path.join(os.tmpdir(), 'sunjack-parallel-worktrees-'))
+  phase(`created ${parent}`)
   try {
     const worktrees = await Promise.all([
       createShadowWorktree(parent, 'worktree-a'),
       createShadowWorktree(parent, 'worktree-b'),
     ])
     const env = { ...process.env }
+    phase('both shadow worktrees ready')
     delete env.ISOLATED_API_PORT
     delete env.ISOLATED_VITE_PORT
     const results = await Promise.all(worktrees.map(worktree => runProcess(
       process.execPath,
       [path.join(worktree.frontend, 'scripts/run-isolated-browser-tests.mjs')],
-      { cwd: worktree.frontend, env },
+      { cwd: worktree.frontend, env, testSignal: t.signal, traceLabel: path.basename(worktree.root) },
     )))
     for (const result of results) {
       assert.equal(result.code, 0, result.output)

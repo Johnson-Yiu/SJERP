@@ -4,13 +4,16 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 test.use({ channel: 'chrome' })
-const report = path.resolve('../docs/uat-evidence/r1-iss037-seller-template-freeze-20261103')
+const fixtureRoot = path.resolve('../docs/uat-evidence/r1-iss037-seller-template-freeze-20261103')
+const report = process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT
+  ? path.resolve(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'seller-freeze')
+  : fixtureRoot
 const evidence = path.join(report, 'screenshots')
 let fixture
 
 test.beforeAll(() => {
   expect(process.env.ISOLATED_TEST_RUN_ID).toBeTruthy()
-  const seed = spawnSync(process.env.ISOLATED_TEST_PYTHON, [path.join(report, 'seed_browser.py')], {
+  const seed = spawnSync(process.env.ISOLATED_TEST_PYTHON, [path.join(fixtureRoot, 'seed_browser.py')], {
     cwd: path.resolve('../backend'), env: process.env, encoding: 'utf8',
   })
   expect(seed.status, seed.stderr).toBe(0)

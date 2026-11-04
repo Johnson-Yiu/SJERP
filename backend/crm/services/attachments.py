@@ -12,11 +12,11 @@ from uuid import uuid4
 
 from django.conf import settings
 from django.core.files import File
-from django.db import connection, transaction
+from django.db import connection, connections, transaction
 from django.http import Http404
 
-from ..audit import record_operation
-from ..models import FollowUpAttachment
+from ..audit import audit_is_enabled, record_operation
+from ..models import FollowUp, FollowUpAttachment, OperationLog
 
 
 logger = logging.getLogger(__name__)
@@ -50,9 +50,12 @@ def _serialized_attachment_delete(attachment_pk):
         try:
             with connection.cursor() as cursor:
                 cursor.execute("SELECT pg_advisory_unlock(%s)", [lock_key])
+                unlocked = cursor.fetchone()
+            if not unlocked or not unlocked[0]:
+                raise RuntimeError("PostgreSQL reported that this session did not release its attachment lock.")
         except Exception:
             logger.critical(
-                "Could not release attachment delete session lock for id=%s; "
+                "Could not confirm release of attachment delete session lock for id=%s; "
                 "the PostgreSQL connection must be discarded.",
                 attachment_pk,
                 exc_info=True,
@@ -247,7 +250,7 @@ def _storage_matches_backup(storage, name, backup):
 
 
 def _restore_deleted_file(*, storage, file_name, backup, attachment_pk, field):
-    """Restore file bytes after a failed delete transaction; repair its key if needed."""
+    """Restore file bytes; return the actual storage key without mutating the DB."""
     if _storage_matches_backup(storage, file_name, backup):
         return file_name
 
@@ -273,16 +276,103 @@ def _restore_deleted_file(*, storage, file_name, backup, attachment_pk, field):
     if not _storage_matches_backup(storage, restored_name, backup):
         raise AttachmentCompensationError("Restored attachment bytes did not match the backup.")
 
-    if restored_name != file_name:
-        updated = FollowUpAttachment.objects.filter(pk=attachment_pk).update(file=restored_name)
-        if updated != 1:
-            raise AttachmentCompensationError(
-                "Attachment file was restored under a new key, but its database reference was not updated."
-            )
     return restored_name
 
 
-def _preserve_recovery_copy(*, backup, file_name, attachment_pk, follow_up_id, cause, restore_error):
+def _probe_attachment_delete_outcome(*, attachment_pk, follow_up_id, file_name, audit_expected):
+    """Read delete state through a new DB session after a durable commit exception."""
+    probe = connections["default"].copy(alias=f"attachment_delete_probe_{uuid4().hex}")
+    try:
+        quote = probe.ops.quote_name
+        attachment_table = quote(FollowUpAttachment._meta.db_table)
+        attachment_pk_column = quote(FollowUpAttachment._meta.pk.column)
+        attachment_follow_up_column = quote(FollowUpAttachment._meta.get_field("follow_up").column)
+        attachment_file_column = quote(FollowUpAttachment._meta.get_field("file").column)
+        with probe.cursor() as cursor:
+            cursor.execute(
+                f"SELECT {attachment_file_column} FROM {attachment_table} "
+                f"WHERE {attachment_pk_column} = %s AND {attachment_follow_up_column} = %s",
+                [attachment_pk, follow_up_id],
+            )
+            row = cursor.fetchone()
+
+        audit_table = quote(OperationLog._meta.db_table)
+        audit_object_column = quote(OperationLog._meta.get_field("object_id").column)
+        audit_entity_column = quote(OperationLog._meta.get_field("entity").column)
+        audit_label_column = quote(OperationLog._meta.get_field("action_label").column)
+        audit_metadata_column = quote(OperationLog._meta.get_field("metadata").column)
+        with probe.cursor() as cursor:
+            cursor.execute(
+                f"SELECT {audit_metadata_column} FROM {audit_table} "
+                f"WHERE {audit_object_column} = %s AND {audit_entity_column} = %s "
+                f"AND {audit_label_column} = %s",
+                [str(follow_up_id), FollowUp._meta.label_lower, "删除跟进附件"],
+            )
+            audit_rows = cursor.fetchall()
+
+        attachment_audit_exists = False
+        for (metadata,) in audit_rows:
+            if isinstance(metadata, bytes):
+                metadata = metadata.decode("utf-8")
+            if isinstance(metadata, str):
+                metadata = json.loads(metadata)
+            if isinstance(metadata, dict) and str(metadata.get("attachment_id")) == str(attachment_pk):
+                attachment_audit_exists = True
+                break
+
+        if row is None:
+            if attachment_audit_exists or not audit_expected:
+                return "committed"
+            return "uncertain"
+        if row[0] != file_name or attachment_audit_exists:
+            return "uncertain"
+        return "rolled_back"
+    finally:
+        probe.close()
+
+
+def _repair_restored_file_reference(*, attachment_pk, follow_up_id, original_name, restored_name):
+    """Persist a renamed compensation key only after the failed delete rolled back."""
+    with transaction.atomic(durable=True):
+        try:
+            attachment = FollowUpAttachment.objects.select_for_update().get(
+                pk=attachment_pk,
+                follow_up_id=follow_up_id,
+            )
+        except FollowUpAttachment.DoesNotExist as exc:
+            raise AttachmentCompensationError(
+                "The attachment row is unavailable after rollback; restored file reference was not changed."
+            ) from exc
+
+        current_name = attachment.file.name
+        if current_name == restored_name:
+            return
+        if current_name != original_name:
+            raise AttachmentCompensationError(
+                "The attachment file reference changed while compensation was running."
+            )
+        updated = FollowUpAttachment.objects.filter(
+            pk=attachment_pk,
+            follow_up_id=follow_up_id,
+            file=original_name,
+        ).update(file=restored_name)
+        if updated != 1:
+            raise AttachmentCompensationError(
+                "Could not persist the renamed compensation file reference after rollback."
+            )
+
+
+def _preserve_recovery_copy(
+    *,
+    backup,
+    file_name,
+    attachment_pk,
+    follow_up_id,
+    cause,
+    restore_error,
+    transaction_outcome="rollback_pending",
+    restored_storage_key=None,
+):
     """Persist a private recovery copy and manifest before the temporary file closes."""
     recovery_dir = Path(settings.MEDIA_ROOT).resolve() / ".private-attachment-recovery"
     recovery_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -313,7 +403,10 @@ def _preserve_recovery_copy(*, backup, file_name, attachment_pk, follow_up_id, c
         "backup_path": str(backup_path),
         "cause_type": type(cause).__name__,
         "restore_error_type": type(restore_error).__name__,
+        "transaction_outcome": transaction_outcome,
     }
+    if restored_storage_key is not None:
+        manifest["restored_storage_key"] = restored_storage_key
     manifest_tmp = recovery_dir / f".{recovery_id}.json.tmp"
     with manifest_tmp.open("x", encoding="utf-8") as manifest_file:
         json.dump(manifest, manifest_file, ensure_ascii=False, indent=2)
@@ -331,7 +424,17 @@ def _preserve_recovery_copy(*, backup, file_name, attachment_pk, follow_up_id, c
     return backup_path, manifest_path
 
 
-def _raise_with_recovery_copy(*, backup, file_name, attachment_pk, follow_up_id, cause, restore_error):
+def _raise_with_recovery_copy(
+    *,
+    backup,
+    file_name,
+    attachment_pk,
+    follow_up_id,
+    cause,
+    restore_error,
+    transaction_outcome="rollback_pending",
+    restored_storage_key=None,
+):
     try:
         backup_path, manifest_path = _preserve_recovery_copy(
             backup=backup,
@@ -340,6 +443,8 @@ def _raise_with_recovery_copy(*, backup, file_name, attachment_pk, follow_up_id,
             follow_up_id=follow_up_id,
             cause=cause,
             restore_error=restore_error,
+            transaction_outcome=transaction_outcome,
+            restored_storage_key=restored_storage_key,
         )
     except Exception as persist_error:
         logger.critical(
@@ -353,10 +458,11 @@ def _raise_with_recovery_copy(*, backup, file_name, attachment_pk, follow_up_id,
             "Attachment compensation failed and the temporary recovery copy could not be persisted."
         ) from persist_error
 
-    raise AttachmentCompensationError(
-        "Attachment compensation failed; recovery copy retained at "
-        f"{backup_path} with manifest {manifest_path}."
-    ) from restore_error
+    if transaction_outcome == "uncertain":
+        message = "Attachment delete outcome is uncertain; recovery copy retained at "
+    else:
+        message = "Attachment compensation failed; recovery copy retained at "
+    raise AttachmentCompensationError(f"{message}{backup_path} with manifest {manifest_path}.") from restore_error
 
 
 def delete_follow_up_attachment(*, request, follow_up, attachment):
@@ -378,10 +484,12 @@ def delete_follow_up_attachment(*, request, follow_up, attachment):
     file_name = None
     backup = None
     compensation_attempted = False
+    restored_name = None
 
     def restore_or_preserve(cause):
+        nonlocal restored_name
         try:
-            _restore_deleted_file(
+            restored_name = _restore_deleted_file(
                 storage=storage,
                 file_name=file_name,
                 backup=backup,
@@ -447,12 +555,120 @@ def delete_follow_up_attachment(*, request, follow_up, attachment):
                         restore_or_preserve(database_error)
                         raise
             except Exception as transaction_error:
-                # This path covers failure while entering/committing the durable
-                # transaction. The session lock above excludes another delete
-                # until commit-failure compensation finishes.
-                if backup is not None and file_name and not compensation_attempted:
+                # The session advisory lock remains held while a new connection
+                # distinguishes a rollback from a commit followed by a client-side
+                # exception. Never recreate a file for a committed deletion.
+                if backup is None or not file_name:
+                    raise
+
+                if compensation_attempted:
+                    outcome = "rolled_back"
+                else:
+                    try:
+                        outcome = _probe_attachment_delete_outcome(
+                            attachment_pk=attachment_pk,
+                            follow_up_id=follow_up.pk,
+                            file_name=file_name,
+                            audit_expected=audit_is_enabled(request),
+                        )
+                    except Exception as probe_error:
+                        _raise_with_recovery_copy(
+                            backup=backup,
+                            file_name=file_name,
+                            attachment_pk=attachment_pk,
+                            follow_up_id=follow_up.pk,
+                            cause=transaction_error,
+                            restore_error=probe_error,
+                            transaction_outcome="uncertain",
+                        )
+
+                if outcome == "committed":
+                    if restored_name is not None:
+                        inconsistent = AttachmentCompensationError(
+                            "Database commit was confirmed after a file had already been restored."
+                        )
+                        _raise_with_recovery_copy(
+                            backup=backup,
+                            file_name=file_name,
+                            attachment_pk=attachment_pk,
+                            follow_up_id=follow_up.pk,
+                            cause=transaction_error,
+                            restore_error=inconsistent,
+                            transaction_outcome="uncertain",
+                            restored_storage_key=restored_name,
+                        )
+
+                    if storage.exists(file_name):
+                        if _storage_matches_backup(storage, file_name, backup):
+                            try:
+                                storage.delete(file_name)
+                            except Exception as cleanup_error:
+                                _raise_with_recovery_copy(
+                                    backup=backup,
+                                    file_name=file_name,
+                                    attachment_pk=attachment_pk,
+                                    follow_up_id=follow_up.pk,
+                                    cause=transaction_error,
+                                    restore_error=cleanup_error,
+                                    transaction_outcome="committed_storage_cleanup_failed",
+                                )
+                        else:
+                            mismatch = AttachmentCompensationError(
+                                "A different storage object occupies the committed attachment key."
+                            )
+                            _raise_with_recovery_copy(
+                                backup=backup,
+                                file_name=file_name,
+                                attachment_pk=attachment_pk,
+                                follow_up_id=follow_up.pk,
+                                cause=transaction_error,
+                                restore_error=mismatch,
+                                transaction_outcome="committed_storage_mismatch",
+                            )
+                    logger.warning(
+                        "Attachment deletion committed despite a database exception; confirmed by a new connection. "
+                        "attachment_id=%s",
+                        attachment_pk,
+                    )
+                    return
+
+                if outcome == "uncertain":
+                    state_error = AttachmentCompensationError(
+                        "The attachment row and audit record do not prove either commit or rollback."
+                    )
+                    _raise_with_recovery_copy(
+                        backup=backup,
+                        file_name=file_name,
+                        attachment_pk=attachment_pk,
+                        follow_up_id=follow_up.pk,
+                        cause=transaction_error,
+                        restore_error=state_error,
+                        transaction_outcome="uncertain",
+                    )
+
+                if not compensation_attempted:
                     compensation_attempted = True
                     restore_or_preserve(transaction_error)
+
+                if restored_name and restored_name != file_name:
+                    try:
+                        _repair_restored_file_reference(
+                            attachment_pk=attachment_pk,
+                            follow_up_id=follow_up.pk,
+                            original_name=file_name,
+                            restored_name=restored_name,
+                        )
+                    except Exception as reference_error:
+                        _raise_with_recovery_copy(
+                            backup=backup,
+                            file_name=file_name,
+                            attachment_pk=attachment_pk,
+                            follow_up_id=follow_up.pk,
+                            cause=transaction_error,
+                            restore_error=reference_error,
+                            transaction_outcome="rolled_back",
+                            restored_storage_key=restored_name,
+                        )
                 raise
     finally:
         if backup is not None:

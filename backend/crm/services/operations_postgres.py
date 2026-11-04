@@ -14,6 +14,7 @@ import zipfile
 import shutil
 import re
 import stat
+from contextlib import contextmanager
 
 import psycopg
 from psycopg import sql
@@ -22,6 +23,32 @@ from .operations_copy import digest
 from .operations_fence import verify_readonly_filesystem
 from .private_media import build_private_media_manifest, compare_private_media_manifest
 from .backup_recovery import _copy_media_snapshot, _extract_archive, _safe_member_path
+
+
+@contextmanager
+def publish_archive(destination):
+    """Only publish the final name after all nested verification/DB exits succeed."""
+    destination = Path(destination)
+    partial = destination.parent / (".sunjack-" + uuid.uuid4().hex + ".partial")
+    fd = os.open(partial, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+    original = None
+    try:
+        with os.fdopen(fd, "wb") as output:
+            yield output
+            output.flush()
+            os.fsync(output.fileno())
+        # Same-filesystem hard link gives exclusive publication, never replace.
+        os.link(partial, destination)
+    except Exception as error:
+        original = error
+        raise
+    finally:
+        try:
+            partial.unlink()
+        except OSError as cleanup_error:
+            if original is None:
+                raise
+            original.add_note("Partial archive cleanup failed: " + type(cleanup_error).__name__)
 
 
 def verify_media_references(connection, media):
@@ -127,7 +154,7 @@ class MaintenanceBackup:
                 raise RuntimeError("PostgreSQL tools must match server major 17")
         if destination.exists() or destination.is_symlink():
             raise FileExistsError("Backup destination already exists")
-        with self.connect() as connection, tempfile.TemporaryDirectory(prefix="sunjack-backup-stage-") as staging:
+        with publish_archive(destination) as output, self.connect() as connection, tempfile.TemporaryDirectory(prefix="sunjack-backup-stage-") as staging:
             self.writer_gate(connection)
             connection.execute("SET LOCAL lock_timeout='5s'")
             tables = connection.execute("SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename").fetchall()
@@ -159,23 +186,10 @@ class MaintenanceBackup:
                         "state": state, "media": media, "media_fence": fence, "media_references": references,
                         "migrations": sorted(applied)}
             (stage / "manifest.json").write_text(json.dumps(manifest, sort_keys=True), encoding="utf-8")
-            # Exclusive output is not a success receipt until the whole ZIP closes.
-            created_output = False
-            try:
-                fd = os.open(destination, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
-                with os.fdopen(fd, "wb") as output:
-                    created_output = True
-                    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-                        for file in sorted(stage.rglob("*")):
-                            if file.is_file():
-                                archive.write(file, file.relative_to(stage).as_posix())
-            except Exception as original:
-                try:
-                    if created_output:
-                        destination.unlink(missing_ok=True)
-                except OSError as error:
-                    original.add_note("Backup output cleanup failed: " + type(error).__name__)
-                raise
+            with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+                for file in sorted(stage.rglob("*")):
+                    if file.is_file():
+                        archive.write(file, file.relative_to(stage).as_posix())
         return {"sha256": digest(destination), "manifest": manifest}
 
     def restore(self, *, archive, expected_sha256, media_parent):

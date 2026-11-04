@@ -5,7 +5,7 @@ import stat
 import zipfile
 from crm.services.operations_copy import digest
 
-from crm.services.operations_postgres import MaintenanceBackup
+from crm.services.operations_postgres import MaintenanceBackup, publish_archive
 
 
 class MaintenanceSafetyTests(TestCase):
@@ -52,3 +52,24 @@ class MaintenanceSafetyTests(TestCase):
                 with self.assertRaisesRegex(ValueError, "Archive links"):
                     self.service.restore(archive=source, expected_sha256=digest(source), media_parent=root)
                 connect.assert_not_called()
+
+    def test_failed_backup_never_publishes_success_filename(self):
+        with tempfile.TemporaryDirectory(prefix="sunjack-publication-") as folder:
+            destination = Path(folder) / "backup.zip"
+            with self.assertRaisesRegex(RuntimeError, "synthetic commit failure"):
+                with publish_archive(destination) as stream:
+                    stream.write(b"synthetic archive")
+                    self.assertFalse(destination.exists())
+                    raise RuntimeError("synthetic commit failure")
+            self.assertFalse(destination.exists())
+            self.assertEqual(list(Path(folder).iterdir()), [])
+
+    def test_success_publication_never_overwrites_existing_backup(self):
+        with tempfile.TemporaryDirectory(prefix="sunjack-publication-") as folder:
+            destination = Path(folder) / "backup.zip"
+            destination.write_bytes(b"preserve")
+            with self.assertRaises(FileExistsError):
+                with publish_archive(destination) as stream:
+                    stream.write(b"new archive")
+            self.assertEqual(destination.read_bytes(), b"preserve")
+            self.assertEqual(list(Path(folder).iterdir()), [destination])

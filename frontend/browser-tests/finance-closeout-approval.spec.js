@@ -5,7 +5,9 @@ import { execFileSync } from 'node:child_process'
 import { syntheticVoucherPdf } from './helpers/bank-voucher.js'
 
 test.use({ channel: 'chrome' })
-const root = process.env.FINANCE_CLOSEOUT_EVIDENCE || '../docs/uat-evidence/finance-closeout-batch-20261104/browser'
+const root = process.env.FINANCE_CLOSEOUT_EVIDENCE || (process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT
+  ? path.join(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'browser', 'finance-closeout-approval')
+  : '../docs/uat-evidence/finance-closeout-batch-20261104/browser')
 
 for (const width of [1440, 390]) test(`authenticated finance closure and reconciliation ${width}px`, async ({ page, context, baseURL }) => {
   test.setTimeout(120000) // Real multi-account approval, posting and file workflow.

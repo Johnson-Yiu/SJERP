@@ -4,7 +4,9 @@ import path from 'node:path'
 import { syntheticVoucherPdf } from './helpers/bank-voucher.js'
 
 test.use({ channel: 'chrome' })
-const root = process.env.FINANCE_CLOSEOUT_EVIDENCE || '../docs/uat-evidence/finance-closeout-batch-20261104/browser'
+const root = process.env.FINANCE_CLOSEOUT_EVIDENCE || (process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT
+  ? path.join(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'browser', 'finance-closeout')
+  : '../docs/uat-evidence/finance-closeout-batch-20261104/browser')
 
 for (const width of [1440, 390]) test(`real account ledger at ${width}px`, async ({ page }) => {
   await fs.mkdir(root, { recursive: true })

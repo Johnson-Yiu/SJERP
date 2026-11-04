@@ -1,5 +1,9 @@
 # ISS-037 打印成品验收：进行中
 
+## 正式夹具补充（PRINT-FINAL-CLOSEOUT-02）
+
+`seed_formal_matrix.py` 复用隔离检查及合成模板，建立完整、30行长描述、空可选字段三组资料，通过正式发送接口确认；`formal-matrix/samples.json` 来自实际保存状态。隔离专项 `iss037-formal-fixtures.spec.js` 通过，保存 API JSON、实际 XLSX、打印 HTML 和合成媒体。修改当前卖方和打印模板后，新报价采用新内容，旧正式报价的打印 HTML 和卖方保持相同，实际重新导出的 XLSX 卖方单元格与旧版一致；对应 after-current-template-change.xlsx 已归档。首次客户端 Host 为 testserver 失败，改用隔离允许的 127.0.0.1 后通过，未放宽环境设置。图片为1像素合成GIF，只能验证文件链路，尚不足以验证商品图片视觉保真。本项不代表实际打印 PDF 已生成或逐页矩阵完成，打印分页与桌面/窄屏输出继续待验。
+
 ## PRINT-ACCEPTANCE-CLOSEOUT 核查（2026-11-04）
 
 ### 用户协助实际打印（2026-11-04）

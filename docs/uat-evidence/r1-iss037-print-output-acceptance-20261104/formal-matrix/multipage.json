@@ -1,0 +1,714 @@
+{
+  "invoice_no": "FORMAL-multipage-F70B6A42",
+  "seller": {
+    "name": "Synthetic Seller",
+    "saler": "Synthetic Contact",
+    "address": "Synthetic Address",
+    "email": "synthetic@example.invalid",
+    "phone": "+00 000000"
+  },
+  "bank": [
+    [
+      "Beneficiary Name",
+      "SYNTHETIC-22"
+    ],
+    [
+      "Beneficiary Account Number",
+      "SYNTHETIC-23"
+    ],
+    [
+      "Swift Code",
+      "SYNTHETIC-24"
+    ],
+    [
+      "Country/Region",
+      "SYNTHETIC-25"
+    ],
+    [
+      "Beneficiary Address",
+      "SYNTHETIC-26"
+    ],
+    [
+      "Beneficiary Bank",
+      "SYNTHETIC-27"
+    ],
+    [
+      "Beneficiary Bank Address",
+      "SYNTHETIC-28"
+    ],
+    [
+      "Bank Code",
+      "SYNTHETIC-29"
+    ],
+    [
+      "Branch Code",
+      "SYNTHETIC-30"
+    ]
+  ],
+  "bank_notice": "Synthetic notice",
+  "template_sha256": "46530c6f8f0ed31afff9b09f221f35d952f48e6ceafb7788d0370acc3faaa667",
+  "buyer": {
+    "company_name": "Synthetic Freeze Buyer F70B6A42",
+    "name": "Synthetic Recipient",
+    "address": "Synthetic Buyer Address",
+    "email": "buyer@example.invalid",
+    "phone": "+00 111111"
+  },
+  "terms": {
+    "quote_date": "2026-11-04",
+    "valid_until": null,
+    "validity_days": 30,
+    "lead_time_days": null,
+    "trading_terms": "",
+    "shipping_details": "",
+    "notes": ""
+  },
+  "totals": {
+    "currency": "USD",
+    "subtotal": "467.40",
+    "shipping_fee": "0.00",
+    "discount": "0.00",
+    "total_amount": "467.40"
+  },
+  "payment_splits": {
+    "deposit_ratio": "0.0000",
+    "deposit_amount": "0.00",
+    "balance_ratio": "1.0000",
+    "balance_amount": "467.40"
+  },
+  "products": [
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 1. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "1.00",
+      "base_quantity": "1.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "1.01",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_sPxQUpC.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 2. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "2.00",
+      "base_quantity": "2.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "2.01",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_vGRx6F1.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 3. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "3.00",
+      "base_quantity": "3.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "3.02",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_TxaoBXD.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 4. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "4.00",
+      "base_quantity": "4.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "4.02",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_jQBcDNB.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 5. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "5.00",
+      "base_quantity": "5.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "5.03",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_zthnm2F.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 6. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "6.00",
+      "base_quantity": "6.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "6.03",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_2dGL6En.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 7. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "7.00",
+      "base_quantity": "7.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "7.04",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_ZC1XNpe.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 8. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "8.00",
+      "base_quantity": "8.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "8.04",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_Phq8I8h.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 9. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "9.00",
+      "base_quantity": "9.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "9.05",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_nolPVbw.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 10. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "10.00",
+      "base_quantity": "10.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "10.05",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_90DfDRW.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 11. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "11.00",
+      "base_quantity": "11.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "11.06",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_5t9Xp0r.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 12. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "12.00",
+      "base_quantity": "12.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "12.06",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_wrVzWzT.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 13. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "13.00",
+      "base_quantity": "13.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "13.07",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_IUUNKeb.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 14. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "14.00",
+      "base_quantity": "14.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "14.07",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_VftWFQ1.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 15. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "15.00",
+      "base_quantity": "15.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "15.08",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_UbIJf5G.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 16. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "16.00",
+      "base_quantity": "16.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "16.08",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_UJmpfzK.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 17. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "17.00",
+      "base_quantity": "17.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "17.09",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_b97XzMA.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 18. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "18.00",
+      "base_quantity": "18.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "18.09",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_XExvhZM.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 19. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "19.00",
+      "base_quantity": "19.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "19.10",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_IwvLxEC.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 20. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "20.00",
+      "base_quantity": "20.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "20.10",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_DDP7V8C.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 21. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "21.00",
+      "base_quantity": "21.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "21.11",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_25H3KAy.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 22. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "22.00",
+      "base_quantity": "22.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "22.11",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_Bg2wUoC.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 23. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "23.00",
+      "base_quantity": "23.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "23.12",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_PVof73b.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 24. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "24.00",
+      "base_quantity": "24.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "24.12",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_KLTLKa8.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 25. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "25.00",
+      "base_quantity": "25.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "25.13",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_KpEqbTy.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 26. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "26.00",
+      "base_quantity": "26.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "26.13",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_IL8llJ9.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 27. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "27.00",
+      "base_quantity": "27.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "27.14",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_M0yTteX.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 28. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "28.00",
+      "base_quantity": "28.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "28.14",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_TBsyFo7.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 29. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "29.00",
+      "base_quantity": "29.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "29.15",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_KulZmuh.png"
+    },
+    {
+      "sku": "SYNTH-F70B6A42",
+      "sku_code": "SYNTH-F70B6A42",
+      "model": "SYNTH-M-F70B6A42",
+      "sales_model": "SYNTH-M-F70B6A42",
+      "product_name": "Synthetic Freeze Product F70B6A42",
+      "display_name": "Synthetic Freeze Product F70B6A42",
+      "description": "Synthetic product row 30. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. ",
+      "quantity": "30.00",
+      "base_quantity": "30.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "30.15",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_pD2Buqv.png"
+    }
+  ],
+  "amount_words": "SAY TOTAL US DOLLARS FOUR HUNDRED SIXTY SEVEN AND CENTS FORTY ONLY",
+  "print_sha256": "9f18a6f8dfbe60ee322b67116e3961d822c06c4a8391d3b0ba124c949d240cf3",
+  "print_html": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><title>FORMAL-multipage-F70B6A42</title>\n<style>\nbody{font:14px Arial,sans-serif;color:#111;margin:24px}h1{text-align:center;font-size:24px}h2{font-size:16px;border-bottom:1px solid #333}.parties{display:grid;grid-template-columns:1fr 1fr;gap:24px}dl{display:grid;grid-template-columns:110px 1fr;gap:4px}dt{font-weight:bold}dd{margin:0;white-space:pre-line}table{border-collapse:collapse;width:100%;margin-top:18px}th,td{border:1px solid #555;padding:5px;text-align:left}td img{max-width:60px;max-height:60px}.totals{text-align:right}.notice{white-space:pre-line}@media print{body{margin:8mm}}@media screen and (max-width:500px){.parties{grid-template-columns:1fr}table,tbody,tr,td{display:block}thead{display:none}tr{border:1px solid #555;margin-bottom:10px}td{border:0;border-bottom:1px solid #ddd;display:grid;grid-template-columns:110px 1fr;overflow-wrap:anywhere}td::before{content:attr(data-label);font-weight:bold}td:last-child{border-bottom:0}}\n</style></head><body>\n<h1>Proforma Invoice</h1><div class=\"parties\"><section><h2>Buyer Information</h2><dl>\n<dt>Name</dt><dd>Synthetic Freeze Buyer F70B6A42</dd><dt>Recipient</dt><dd>Synthetic Recipient</dd><dt>Address</dt><dd>Synthetic Buyer Address</dd><dt>Tax ID</dt><dd></dd><dt>Email</dt><dd>buyer@example.invalid</dd><dt>Tel</dt><dd>+00 111111</dd></dl></section>\n<section><h2>Seller Information</h2><dl><dt>Name</dt><dd>Synthetic Seller</dd><dt>Saler</dt><dd>Synthetic Contact</dd><dt>Address</dt><dd>Synthetic Address</dd><dt>Email</dt><dd>synthetic@example.invalid</dd><dt>Tel</dt><dd>+00 000000</dd><dt>Date</dt><dd>2026年11月4日</dd></dl></section></div>\n<p>Invoice No. <strong>FORMAL-multipage-F70B6A42</strong></p><table><thead><tr><th>No.</th><th>Image</th><th>Model</th><th>Description</th><th>Quantity</th><th>Unit</th><th>Unit Price USD</th><th>Total USD</th></tr></thead><tbody>\n<tr><td data-label=\"No.\">1</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_sPxQUpC.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 1. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">1.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">1.01 USD</td></tr><tr><td data-label=\"No.\">2</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_vGRx6F1.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 2. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">2.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">2.01 USD</td></tr><tr><td data-label=\"No.\">3</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_TxaoBXD.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 3. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">3.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">3.02 USD</td></tr><tr><td data-label=\"No.\">4</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_jQBcDNB.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 4. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">4.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">4.02 USD</td></tr><tr><td data-label=\"No.\">5</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_zthnm2F.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 5. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">5.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">5.03 USD</td></tr><tr><td data-label=\"No.\">6</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_2dGL6En.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 6. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">6.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">6.03 USD</td></tr><tr><td data-label=\"No.\">7</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_ZC1XNpe.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 7. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">7.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">7.04 USD</td></tr><tr><td data-label=\"No.\">8</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_Phq8I8h.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 8. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">8.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">8.04 USD</td></tr><tr><td data-label=\"No.\">9</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_nolPVbw.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 9. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">9.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">9.05 USD</td></tr><tr><td data-label=\"No.\">10</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_90DfDRW.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 10. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">10.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">10.05 USD</td></tr><tr><td data-label=\"No.\">11</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_5t9Xp0r.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 11. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">11.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">11.06 USD</td></tr><tr><td data-label=\"No.\">12</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_wrVzWzT.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 12. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">12.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">12.06 USD</td></tr><tr><td data-label=\"No.\">13</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_IUUNKeb.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 13. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">13.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">13.07 USD</td></tr><tr><td data-label=\"No.\">14</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_VftWFQ1.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 14. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">14.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">14.07 USD</td></tr><tr><td data-label=\"No.\">15</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_UbIJf5G.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 15. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">15.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">15.08 USD</td></tr><tr><td data-label=\"No.\">16</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_UJmpfzK.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 16. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">16.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">16.08 USD</td></tr><tr><td data-label=\"No.\">17</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_b97XzMA.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 17. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">17.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">17.09 USD</td></tr><tr><td data-label=\"No.\">18</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_XExvhZM.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 18. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">18.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">18.09 USD</td></tr><tr><td data-label=\"No.\">19</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_IwvLxEC.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 19. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">19.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">19.10 USD</td></tr><tr><td data-label=\"No.\">20</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_DDP7V8C.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 20. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">20.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">20.10 USD</td></tr><tr><td data-label=\"No.\">21</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_25H3KAy.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 21. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">21.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">21.11 USD</td></tr><tr><td data-label=\"No.\">22</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_Bg2wUoC.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 22. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">22.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">22.11 USD</td></tr><tr><td data-label=\"No.\">23</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_PVof73b.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 23. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">23.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">23.12 USD</td></tr><tr><td data-label=\"No.\">24</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_KLTLKa8.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 24. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">24.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">24.12 USD</td></tr><tr><td data-label=\"No.\">25</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_KpEqbTy.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 25. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">25.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">25.13 USD</td></tr><tr><td data-label=\"No.\">26</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_IL8llJ9.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 26. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">26.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">26.13 USD</td></tr><tr><td data-label=\"No.\">27</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_M0yTteX.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 27. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">27.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">27.14 USD</td></tr><tr><td data-label=\"No.\">28</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_TBsyFo7.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 28. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">28.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">28.14 USD</td></tr><tr><td data-label=\"No.\">29</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_KulZmuh.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 29. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">29.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">29.15 USD</td></tr><tr><td data-label=\"No.\">30</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_pD2Buqv.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-F70B6A42</td><td data-label=\"Description\">Synthetic product row 30. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. Long specification and installation details. </td><td data-label=\"Quantity\">30.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">30.15 USD</td></tr></tbody></table>\n<div class=\"totals\"><p>Sub Total: 467.40</p><p>Shipping Cost: 0.00</p><p>Discount: 0.00</p><p><strong>Grand Total: 467.40</strong></p></div>\n<p>SAY TOTAL US DOLLARS FOUR HUNDRED SIXTY SEVEN AND CENTS FORTY ONLY</p><section><h2>NOTES</h2><p>Lead time: 10 Days<br>Price Valid Date: 30 Days<br>Deposit: 0% (USD 0.00)<br>Balance: 100% (USD 467.40)<br>Trading terms: <br>Shipping details: <br>The price is EXCLUDE customs duties and VAT. If the goods generate the customs taxes and VAT taxes in buyer's local, the buyer should pay by themselves.</p><p class=\"notice\"></p></section>\n<section><h2>BANK INFORMATION</h2><dl><dt>Beneficiary Name</dt><dd>SYNTHETIC-22</dd><dt>Beneficiary Account Number</dt><dd>SYNTHETIC-23</dd><dt>Swift Code</dt><dd>SYNTHETIC-24</dd><dt>Country/Region</dt><dd>SYNTHETIC-25</dd><dt>Beneficiary Address</dt><dd>SYNTHETIC-26</dd><dt>Beneficiary Bank</dt><dd>SYNTHETIC-27</dd><dt>Beneficiary Bank Address</dt><dd>SYNTHETIC-28</dd><dt>Bank Code</dt><dd>SYNTHETIC-29</dd><dt>Branch Code</dt><dd>SYNTHETIC-30</dd></dl><p class=\"notice\">Synthetic notice</p></section></body></html>\n"
+}

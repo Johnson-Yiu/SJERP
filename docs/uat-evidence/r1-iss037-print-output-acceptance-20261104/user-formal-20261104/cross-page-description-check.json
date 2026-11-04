@@ -1,0 +1,5 @@
+{
+  "method": "pdfplumber description-column x0 193..392, top 35..820; exclude repeated Description heading and browser margins",
+  "missing_descriptions": [],
+  "rows": 30
+}

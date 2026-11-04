@@ -1,0 +1,73 @@
+Proforma Invoice
+Buyer Information
+Name Synthetic Freeze Buyer
+F70B6A42
+Recipient Synthetic Recipient
+Address Synthetic Buyer Address
+Tax ID
+Email buyer@example.invalid
+Tel +00 111111
+Seller Information
+Name Synthetic Seller
+Saler Synthetic Contact
+Address Synthetic Address
+Email synthetic@example.invalid
+Tel +00 000000
+Date 2026 年 11 ⽉ 4 ⽇
+Invoice No. FORMAL-complete-F70B6A42
+No. Image Model Description QuantityUnit
+Unit
+Price
+USD
+Total
+USD
+1
+ SYNTH-M-
+F70B6A42
+Synthetic product row 1. Long
+specification and installation
+details.
+1.00 pcs 1.01
+USD
+1.01
+USD
+Sub Total: 1.01
+Shipping Cost: 0.00
+Discount: 0.00
+Grand Total: 1.01
+SAY TOTAL US DOLLARS ONE AND CENTS ONE ONLY
+NOTES
+Lead time: 10 Days
+Price Valid Date: 30 Days
+Deposit: 0% (USD 0.00)
+Balance: 100% (USD 1.01)
+Trading terms:
+Shipping details:
+The price is EXCLUDE customs duties and VAT. If the goods generate the customs taxes and VAT taxes
+in buyer's local, the buyer should pay by themselves.
+BANK INFORMATION
+Beneficiary
+Name
+SYNTHETIC-22
+Beneficiary
+Account
+Number
+SYNTHETIC-23
+Swift Code SYNTHETIC-24
+Country/RegionSYNTHETIC-25
+Beneficiary
+Address
+SYNTHETIC-26
+Beneficiary
+Bank
+SYNTHETIC-27
+Beneficiary
+Bank Address
+SYNTHETIC-28
+2026/11/4 15:42 FORMAL-complete-F70B6A42
+127.0.0.1:7507/quotes?detail=2 1/2
+Bank Code SYNTHETIC-29
+Branch CodeSYNTHETIC-30
+Synthetic notice
+2026/11/4 15:42 FORMAL-complete-F70B6A42
+127.0.0.1:7507/quotes?detail=2 2/2

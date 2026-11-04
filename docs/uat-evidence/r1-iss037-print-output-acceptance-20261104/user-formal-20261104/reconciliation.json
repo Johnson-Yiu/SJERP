@@ -1,0 +1,133 @@
+[
+  {
+    "source": "formal-complete-headers.pdf.pdf",
+    "file": "complete-first.pdf",
+    "sha256": "efd3a4b8f38157494ff21ab424576afaea169a979ba282bca8f2f4cfeaa6b363",
+    "pages": 2,
+    "image_objects": 1,
+    "missing": [],
+    "missing_descriptions": [],
+    "page_text_lengths": [
+      1276,
+      139
+    ],
+    "page_sizes": [
+      [
+        594.95996,
+        841.91998
+      ],
+      [
+        594.95996,
+        841.91998
+      ]
+    ]
+  },
+  {
+    "source": "formal-complete-noheaders.pdf.pdf",
+    "file": "complete-second.pdf",
+    "sha256": "a5e49eb572da38a3e278ce4fca4d927323ce79f2e118edde09991d06bc2fbef8",
+    "pages": 2,
+    "image_objects": 1,
+    "missing": [],
+    "missing_descriptions": [],
+    "page_text_lengths": [
+      1276,
+      139
+    ],
+    "page_sizes": [
+      [
+        594.95996,
+        841.91998
+      ],
+      [
+        594.95996,
+        841.91998
+      ]
+    ]
+  },
+  {
+    "source": "formal-multipage.pdf.pdf",
+    "file": "multipage.pdf",
+    "sha256": "fdffd06b0a1a8ee23d69bdee0f1ca182f88cabb598ac33377f4d10ca5bdf2c1e",
+    "pages": 9,
+    "image_objects": 30,
+    "missing": [],
+    "missing_descriptions": [
+      8,
+      16,
+      24
+    ],
+    "page_text_lengths": [
+      2362,
+      2897,
+      2299,
+      2917,
+      2303,
+      2917,
+      2303,
+      2420,
+      379
+    ],
+    "page_sizes": [
+      [
+        594.95996,
+        841.91998
+      ],
+      [
+        594.95996,
+        841.91998
+      ],
+      [
+        594.95996,
+        841.91998
+      ],
+      [
+        594.95996,
+        841.91998
+      ],
+      [
+        594.95996,
+        841.91998
+      ],
+      [
+        594.95996,
+        841.91998
+      ],
+      [
+        594.95996,
+        841.91998
+      ],
+      [
+        594.95996,
+        841.91998
+      ],
+      [
+        594.95996,
+        841.91998
+      ]
+    ]
+  },
+  {
+    "source": "formal-optional-empty.pdf.pdf",
+    "file": "optional-empty.pdf",
+    "sha256": "6843001fc751f9dd83adef29034ee5dd108b0fcdbde0e9d1a997bdc5785fd305",
+    "pages": 2,
+    "image_objects": 1,
+    "missing": [],
+    "missing_descriptions": [],
+    "page_text_lengths": [
+      1186,
+      63
+    ],
+    "page_sizes": [
+      [
+        594.95996,
+        841.91998
+      ],
+      [
+        594.95996,
+        841.91998
+      ]
+    ]
+  }
+]

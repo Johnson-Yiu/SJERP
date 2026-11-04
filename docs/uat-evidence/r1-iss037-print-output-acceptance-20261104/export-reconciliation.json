@@ -1,0 +1,23 @@
+[
+  {
+    "label": "complete",
+    "rows": 1,
+    "subtotal": "1.01",
+    "embedded_images": 1,
+    "frozen_cells_equal": true
+  },
+  {
+    "label": "multipage",
+    "rows": 30,
+    "subtotal": "467.40",
+    "embedded_images": 30,
+    "frozen_cells_equal": true
+  },
+  {
+    "label": "optional-empty",
+    "rows": 1,
+    "subtotal": "1.01",
+    "embedded_images": 1,
+    "frozen_cells_equal": true
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "archive": "print-source-raw-ci-logs.zip",
+  "archive_sha256": "16449833902cf800989fdec7b8f98aa3559cedf0d790980a30d01908e8e85a1f",
+  "scope": "Original source commit Git bytes archived unchanged; historical paths are clearly marked whitespace-normalized display copies. No failure content removed.",
+  "files": [
+    {
+      "source_sha": "b3d0d386de70d9efd77bf62cdbd87877fbccbfb8",
+      "path": "docs/uat-evidence/r1-iss037-print-output-acceptance-20261104/closeout-16608ab-ci-failure.txt",
+      "raw_git_sha256": "4fb7741731cdddae9ac44b5a287abce91c28a82d2b8394b2cd132fc348bff0c5",
+      "display_copy_sha256": "1cc98adf269476f86ca75ecb199e070318650d6c68a991f1dd1c33b82b891240",
+      "raw_bytes": 496553
+    },
+    {
+      "source_sha": "b3d0d386de70d9efd77bf62cdbd87877fbccbfb8",
+      "path": "docs/uat-evidence/r1-iss037-print-output-acceptance-20261104/closeout-earlier-ci-failure.log",
+      "raw_git_sha256": "a1d1098ed2ee4676a29c99044ba56c4daf033e1787cb1bb4d8649683a255e196",
+      "display_copy_sha256": "8fc71d6c0e3e9ab97507e8c186e1ba2c2eb72f953bc17168fb333ce4d49367a9",
+      "raw_bytes": 498430
+    }
+  ]
+}

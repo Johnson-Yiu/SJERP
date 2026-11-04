@@ -87,8 +87,11 @@ def restore_and_sign(service, *, encrypted_archive, encrypted_sha256, plaintext_
     if os.name == "posix" and signing_key.stat().st_mode & 0o077:
         raise ValueError("Signing key must not be accessible to group or others")
     observed = encrypted_archive.stat()
-    with tempfile.TemporaryDirectory(prefix="sunjack-recovery-receipt-") as folder:
-        plaintext = Path(folder) / "archive.zip"
+    temporary = tempfile.TemporaryDirectory(prefix="sunjack-recovery-receipt-")
+    restored = None
+    primary = None
+    try:
+        plaintext = Path(temporary.name) / "archive.zip"
         crypt_file(encrypted_archive, plaintext, executable=gpg_executable, key=encryption_key,
                    expected_sha256=plaintext_sha256, decrypt=True, msys_paths=msys_paths)
         with zipfile.ZipFile(plaintext) as bundle:
@@ -113,4 +116,19 @@ def restore_and_sign(service, *, encrypted_archive, encrypted_sha256, plaintext_
         except Exception as error:
             error.add_note("Restore target retained for inspection: " + str(restored.get("database", "unknown")))
             raise
+    except Exception as error:
+        primary = error
+        raise
+    finally:
+        try:
+            temporary.cleanup()
+        except Exception as cleanup_error:
+            detail = "Temporary plaintext cleanup failed: " + type(cleanup_error).__name__
+            if restored is not None:
+                detail += "; restored target retained: " + str(restored.get("database", "unknown"))
+            if primary is not None:
+                primary.add_note(detail)
+            else:
+                cleanup_error.add_note(detail)
+                raise
     return {"payload": payload, "signature": base64.b64encode(signature).decode("ascii")}, restored

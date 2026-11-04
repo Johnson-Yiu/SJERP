@@ -36,6 +36,8 @@ PG17 使用该 job 自建的 PostgreSQL 17 service，维护角色和应用角色
 
 Nginx job 重新在独立合成 SQLite、真实 Nginx 及本地自签测试证书上通过：SKU 文件授权/匿名/越权/公开直链分别为 200/403/404/404，财务凭证为 200/403/403/404；私有响应 no-store，两个服务重启后文件仍可访问，14.068 秒。此实验不替代真实证书、目标主机 ACL、部署代理或生产数据验证。
 
-真实 systemd 定时器及 `OnFailure` 到任务自建本机接收器的补充验证正在执行；以随后对应 SHA 的输出为准。定时器不可用时须记录实际错误，不能从直接调用监控命令推断调度通过。
+`bcac0ec503e0e48064e20907b5de97c8da7f89ef` 的 [Linux 运行 41859454586](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41859454586) 三个 job 均成功，原始日志：[PG17 与 systemd](linux-pg-pass-bcac0ec.raw.log.gz)、[Nginx](linux-nginx-pass-bcac0ec.raw.log.gz)、[媒体栅栏](linux-media-pass-bcac0ec.raw.log.gz)。PG17 专项实际创建独立 systemd timer，使已过期的备份监控退出码为 1；`OnFailure` 触发唯一临时告警 unit，并由任务独占的本地 UDP 接收器收到合成告警；唯一临时 unit 已清理。该实验只证明本机入口与传递，不代表外部值班通知或生产调度已验收。PG17、受限角色、真实媒体竞争、加密恢复、回执及故障路径同时通过，99 表、975 行，29.639 秒。
+
+新增 [回执清理边界单元测试](local-unit-after-cleanup.log)：49 项全通过。对模拟的临时明文清理错误，保留原恢复错误及清理错误；如果真实恢复已完成但回执签发或清理失败，则不返回成功回执，并在错误附注中标明需要核查的本次恢复目标。这些模拟注入仅验证错误传播，不替代上面的真实 Linux 清理权限失败演练。
 
 本机 Windows 对 Linux mount 验收不能作为通过或阻塞的唯一理由；GitHub Linux runner 已证明支持初始 loop 文件系统操作。外部备份故障域、生产证书、目标服务器角色 ACL、真实调度告警投递及上线仍须单独验收，同机临时副本不是异地容灾。不修改业务模块、公共台账和现有 CI workflow。

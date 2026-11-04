@@ -84,3 +84,26 @@ class ReceiptIssuanceTests(TestCase):
             with self.assertRaisesRegex(RuntimeError, "changed during restore"):
                 self.call()
             signer.assert_not_called()
+
+    def test_cleanup_failure_preserves_restore_error(self):
+        scratch = self.root_case / "synthetic-staging"
+        scratch.mkdir()
+        temporary = mock.Mock(name=str(scratch))
+        temporary.name = str(scratch)
+        temporary.cleanup.side_effect = PermissionError("synthetic cleanup failure")
+        self.service.restore.side_effect = RuntimeError("synthetic primary failure")
+        with mock.patch("crm.services.operations_receipt.tempfile.TemporaryDirectory", return_value=temporary):
+            with self.assertRaisesRegex(RuntimeError, "primary failure") as raised:
+                self.call()
+        self.assertTrue(any("Temporary plaintext cleanup failed: PermissionError" in note for note in raised.exception.__notes__))
+
+    def test_cleanup_failure_after_restore_does_not_return_receipt(self):
+        scratch = self.root_case / "synthetic-staging"
+        scratch.mkdir()
+        temporary = mock.Mock(name=str(scratch))
+        temporary.name = str(scratch)
+        temporary.cleanup.side_effect = PermissionError("synthetic cleanup failure")
+        with mock.patch("crm.services.operations_receipt.tempfile.TemporaryDirectory", return_value=temporary):
+            with self.assertRaises(PermissionError) as raised:
+                self.call()
+        self.assertTrue(any("restored target retained" in note.lower() for note in raised.exception.__notes__))

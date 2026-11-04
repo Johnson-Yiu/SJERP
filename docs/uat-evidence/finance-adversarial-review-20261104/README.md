@@ -44,8 +44,8 @@
 
 | 实际运行 | 结果 | 日志 |
 |---|---|---|
-| SQLite 新增+既有相关组合 | 55项，48通过，7个真实PG条件跳过，exit 0 | sqlite-release.log |
-| 真实PG17.11新增专属验证 | 26项全部实际执行通过，0跳过，exit 0；含7组独立连接竞争、2项真实TCP HTTP | postgres-release.log |
+| SQLite 新增+既有相关组合 | 56项，49通过，7个真实PG条件跳过，exit 0；此前55项记录保留 | sqlite-auth-contract.log |
+| 真实PG17.11新增专属验证 | 27项全部实际执行通过，0跳过，exit 0；含7组独立连接竞争、3项真实TCP HTTP。此前26项记录保留 | postgres-auth-verified.log |
 | SQLite 三项未修反例 | 3项全部按原规则断言失败，exit 1 | defects-final-sqlite.log |
 | 真实PG17.11三项未修反例 | 3项全部按原规则断言失败，exit 1；测试库销毁、cleanup complete | defects-release-postgres.log |
 | Django检查/迁移一致性 | exit 0，无遗漏迁移；未新增或改动模型/迁移 | django-check.log / migration-check.log |
@@ -56,6 +56,7 @@ CI运行现有完整Backend/PostgreSQL/Frontend，最终精确SHA及三Job状态
 - 正常/反例PG入口：`run_postgres.py` / `--reproduce-defects`；只启动新随机集群，独立媒体，随机源/测试库，校验data_directory，确认测试库销毁，停止并清理自有集群。失败exit不伪装为0。
 - 历次日志不覆盖：sqlite-first/corrected-harness/expanded记录测试夹具修正及授权角色真实失败；sqlite-release、postgres-release是冻结专属测试后的复验；defects-final-sqlite、defects-release-postgres为未修反例。
 - 夹具问题明确与产品区分：长测试名文件超过Windows路径长度，改哈希短名（完整test id保留JSON）；Customer字段/Order日期按模型修正；ORM `_state`对象地址不能作历史字段比较，改`.values()`全字段；报表`amount`原合同为收入减支出的有符号净额（reporting.py 83/146），首轮误当毛额，毛额API/CSV逐方向断言完整保留。没有借此改动三项业务缺陷的期望。
+- CI 41855126285的PG全量1338项出现1个新增HTTP测试失败：部署设置按既有SessionAuthenticationWithChallenge返回匿名401，而测试误用了普通Session的403。测试现在显式保留普通Session精确403，并另验实际配置及部署Session挑战子类的精确状态/WWW-Authenticate与无文件泄漏；认证后无权角色仍精确403。不改认证器/设置/工作流，不把401当产品权限缺陷；原始完整Job日志为ci-postgres-first。
 
 ## 可达性与后续协调
 

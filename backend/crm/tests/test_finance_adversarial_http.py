@@ -2,10 +2,14 @@
 import json
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.contrib.sessions.backends.db import SessionStore
 from django.test import LiveServerTestCase, override_settings
+from rest_framework.authentication import SessionAuthentication
+from crm.finance_closeout_api import FinanceCloseoutViewSet
+from crm.authentication import SessionAuthenticationWithChallenge
 
 from crm.tests.test_finance_adversarial_review import AdversarialFixture, BASE
 from crm.tests.test_finance_data_scope import RBAC_SETTINGS
@@ -56,7 +60,9 @@ class FinanceAdversarialLiveHTTPTests(AdversarialFixture, LiveServerTestCase):
         self.assertIn(b"37.91", body)
 
     def test_real_private_file_and_anonymous_role_denials(self):
-        with override_settings(**RBAC_SETTINGS):
+        # This case explicitly tests session authentication: DRF returns 403
+        # without an authentication challenge. Keep the exact 403 assertions.
+        with override_settings(**RBAC_SETTINGS), patch.object(FinanceCloseoutViewSet, "authentication_classes", [SessionAuthentication]):
             status, body, headers = self.http(BASE + f"voucher-download/?id={self.proof}")
             self.assertEqual(status, 200, body)
             self.assertEqual(body, self.proof_bytes)
@@ -65,3 +71,16 @@ class FinanceAdversarialLiveHTTPTests(AdversarialFixture, LiveServerTestCase):
             for path in (BASE, BASE + f"voucher-download/?id={self.proof}", BASE + "facts/?export=csv"):
                 self.assertEqual(self.http(path, authenticated=False)[0], 403)
                 self.assertEqual(self.http(path, user=no_role)[0], 403)
+
+    def test_configured_anonymous_authentication_challenge_is_exact_and_has_no_file_bytes(self):
+        # Staging uses the existing challenge-bearing session subclass, while
+        # development uses plain session auth. Both still use Django sessions.
+        with override_settings(**RBAC_SETTINGS):
+            for authenticators in (FinanceCloseoutViewSet.authentication_classes, [SessionAuthenticationWithChallenge]):
+                with patch.object(FinanceCloseoutViewSet, "authentication_classes", authenticators):
+                    challenge = FinanceCloseoutViewSet().get_authenticators()[0].authenticate_header(None)
+                    for path in (BASE, BASE + f"voucher-download/?id={self.proof}", BASE + "facts/?export=csv"):
+                        status, body, headers = self.http(path, authenticated=False)
+                        self.assertEqual(status, 401 if challenge else 403)
+                        self.assertEqual(headers.get("WWW-Authenticate"), challenge)
+                        self.assertNotIn(self.proof_bytes, body)

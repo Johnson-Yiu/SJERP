@@ -35,9 +35,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-0348abc9e2244d3b8ee87110d756a28c",
+        "request_key": "ADV-c8cb90fce7814530867c2f4a2a4f9ee1",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-0348abc9e2244d3b8ee87110d756a28c",
+        "source_key": "ADV-c8cb90fce7814530867c2f4a2a4f9ee1",
         "kind": "cash",
         "account": 23,
         "voucher": 14,
@@ -54,9 +54,9 @@
         "kind": "cash",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-0348abc9e2244d3b8ee87110d756a28c",
+          "request_key": "ADV-c8cb90fce7814530867c2f4a2a4f9ee1",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-0348abc9e2244d3b8ee87110d756a28c",
+          "source_key": "ADV-c8cb90fce7814530867c2f4a2a4f9ee1",
           "kind": "cash",
           "account": 23,
           "voucher": 14,
@@ -74,7 +74,7 @@
           "user_id": 30
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:04:31.103717+00:00",
+        "created_at": "2026-11-04 15:22:22.233784+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -103,7 +103,7 @@
         "voucher": 14,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-0348abc9e2244d3b8ee87110d756a28c",
+        "source_key": "ADV-c8cb90fce7814530867c2f4a2a4f9ee1",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -111,7 +111,7 @@
           "action": "post",
           "user_id": 30
         },
-        "created_at": "2026-11-04 15:04:31.116547+00:00",
+        "created_at": "2026-11-04 15:22:22.246051+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -121,9 +121,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-48e653f26cad48249aeee25f1787028f",
+        "request_key": "ADV-bad6f0a507c640d9a013562aaf309b3c",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-48e653f26cad48249aeee25f1787028f",
+        "source_key": "ADV-bad6f0a507c640d9a013562aaf309b3c",
         "kind": "refund_approval",
         "account": 23,
         "voucher": 14,
@@ -148,9 +148,9 @@
         "kind": "refund_approval",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-48e653f26cad48249aeee25f1787028f",
+          "request_key": "ADV-bad6f0a507c640d9a013562aaf309b3c",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-48e653f26cad48249aeee25f1787028f",
+          "source_key": "ADV-bad6f0a507c640d9a013562aaf309b3c",
           "kind": "refund_approval",
           "account": 23,
           "voucher": 14,
@@ -175,7 +175,7 @@
           "user_id": 30
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:04:31.134461+00:00",
+        "created_at": "2026-11-04 15:22:22.263326+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -201,7 +201,7 @@
           "account": 23,
           "voucher": 14,
           "direction": "income",
-          "source_key": "ADV-48e653f26cad48249aeee25f1787028f",
+          "source_key": "ADV-bad6f0a507c640d9a013562aaf309b3c",
           "actual_date": "2026-04-03",
           "allocations": [
             {
@@ -209,7 +209,7 @@
               "amount": "50.00"
             }
           ],
-          "request_key": "ADV-48e653f26cad48249aeee25f1787028f",
+          "request_key": "ADV-bad6f0a507c640d9a013562aaf309b3c",
           "excess_reason": "合成批准",
           "source_system": "SYNTH-ADVERSARIAL"
         },
@@ -223,8 +223,8 @@
           "action": "approve",
           "user_id": 31
         },
-        "created_at": "2026-11-04 15:04:31.134461+00:00",
-        "approved_at": "2026-11-04 15:04:31.139279+00:00",
+        "created_at": "2026-11-04 15:22:22.263326+00:00",
+        "approved_at": "2026-11-04 15:22:22.267107+00:00",
         "replaces": null
       }
     },
@@ -232,9 +232,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-7ccdcd381a0b44be92b9e3c409692ffa",
+        "request_key": "ADV-167b76a8d6994680bbb1073d7808def7",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-7ccdcd381a0b44be92b9e3c409692ffa",
+        "source_key": "ADV-167b76a8d6994680bbb1073d7808def7",
         "kind": "refund_payment",
         "account": 23,
         "voucher": 14,
@@ -258,9 +258,9 @@
         "kind": "refund_payment",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-7ccdcd381a0b44be92b9e3c409692ffa",
+          "request_key": "ADV-167b76a8d6994680bbb1073d7808def7",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-7ccdcd381a0b44be92b9e3c409692ffa",
+          "source_key": "ADV-167b76a8d6994680bbb1073d7808def7",
           "kind": "refund_payment",
           "account": 23,
           "voucher": 14,
@@ -284,7 +284,7 @@
           "user_id": 30
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:04:31.149984+00:00",
+        "created_at": "2026-11-04 15:22:22.277231+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -310,7 +310,7 @@
           "voucher": 14,
           "approval": 52,
           "direction": "expense",
-          "source_key": "ADV-7ccdcd381a0b44be92b9e3c409692ffa",
+          "source_key": "ADV-167b76a8d6994680bbb1073d7808def7",
           "actual_date": "2026-04-03",
           "allocations": [
             {
@@ -318,7 +318,7 @@
               "amount": "40.00"
             }
           ],
-          "request_key": "ADV-7ccdcd381a0b44be92b9e3c409692ffa",
+          "request_key": "ADV-167b76a8d6994680bbb1073d7808def7",
           "source_system": "SYNTH-ADVERSARIAL"
         },
         "created_actor": {
@@ -331,8 +331,8 @@
           "action": "approve",
           "user_id": 31
         },
-        "created_at": "2026-11-04 15:04:31.149984+00:00",
-        "approved_at": "2026-11-04 15:04:31.155492+00:00",
+        "created_at": "2026-11-04 15:22:22.277231+00:00",
+        "approved_at": "2026-11-04 15:22:22.281756+00:00",
         "replaces": null
       }
     },
@@ -360,7 +360,7 @@
         "voucher": 14,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-7ccdcd381a0b44be92b9e3c409692ffa",
+        "source_key": "ADV-167b76a8d6994680bbb1073d7808def7",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -368,7 +368,7 @@
           "action": "post",
           "user_id": 30
         },
-        "created_at": "2026-11-04 15:04:31.181070+00:00",
+        "created_at": "2026-11-04 15:22:22.308515+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -378,9 +378,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-734c996f962f49379b901eef040a7e00",
+        "request_key": "ADV-ddca798357c6479f9ceceb14a8cfd0fe",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-734c996f962f49379b901eef040a7e00",
+        "source_key": "ADV-ddca798357c6479f9ceceb14a8cfd0fe",
         "kind": "refund_payment",
         "account": 23,
         "voucher": 14,
@@ -404,9 +404,9 @@
         "kind": "refund_payment",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-734c996f962f49379b901eef040a7e00",
+          "request_key": "ADV-ddca798357c6479f9ceceb14a8cfd0fe",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-734c996f962f49379b901eef040a7e00",
+          "source_key": "ADV-ddca798357c6479f9ceceb14a8cfd0fe",
           "kind": "refund_payment",
           "account": 23,
           "voucher": 14,
@@ -430,7 +430,7 @@
           "user_id": 30
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:04:31.197073+00:00",
+        "created_at": "2026-11-04 15:22:22.326047+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -456,7 +456,7 @@
           "voucher": 14,
           "approval": 52,
           "direction": "expense",
-          "source_key": "ADV-734c996f962f49379b901eef040a7e00",
+          "source_key": "ADV-ddca798357c6479f9ceceb14a8cfd0fe",
           "actual_date": "2026-04-03",
           "allocations": [
             {
@@ -464,7 +464,7 @@
               "amount": "11.00"
             }
           ],
-          "request_key": "ADV-734c996f962f49379b901eef040a7e00",
+          "request_key": "ADV-ddca798357c6479f9ceceb14a8cfd0fe",
           "source_system": "SYNTH-ADVERSARIAL"
         },
         "created_actor": {
@@ -477,8 +477,8 @@
           "action": "approve",
           "user_id": 31
         },
-        "created_at": "2026-11-04 15:04:31.197073+00:00",
-        "approved_at": "2026-11-04 15:04:31.201563+00:00",
+        "created_at": "2026-11-04 15:22:22.326047+00:00",
+        "approved_at": "2026-11-04 15:22:22.329442+00:00",
         "replaces": null
       }
     },
@@ -498,9 +498,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-18024c3ec0ec4528b2ffba8e021519b0",
+        "request_key": "ADV-c0c7ff595c63445cb08c944be86eba6a",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-18024c3ec0ec4528b2ffba8e021519b0",
+        "source_key": "ADV-c0c7ff595c63445cb08c944be86eba6a",
         "kind": "refund_payment",
         "account": 23,
         "voucher": 14,
@@ -524,9 +524,9 @@
         "kind": "refund_payment",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-18024c3ec0ec4528b2ffba8e021519b0",
+          "request_key": "ADV-c0c7ff595c63445cb08c944be86eba6a",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-18024c3ec0ec4528b2ffba8e021519b0",
+          "source_key": "ADV-c0c7ff595c63445cb08c944be86eba6a",
           "kind": "refund_payment",
           "account": 23,
           "voucher": 14,
@@ -550,7 +550,7 @@
           "user_id": 30
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:04:31.236959+00:00",
+        "created_at": "2026-11-04 15:22:22.360614+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -576,7 +576,7 @@
           "voucher": 14,
           "approval": 52,
           "direction": "expense",
-          "source_key": "ADV-18024c3ec0ec4528b2ffba8e021519b0",
+          "source_key": "ADV-c0c7ff595c63445cb08c944be86eba6a",
           "actual_date": "2026-04-03",
           "allocations": [
             {
@@ -584,7 +584,7 @@
               "amount": "10.00"
             }
           ],
-          "request_key": "ADV-18024c3ec0ec4528b2ffba8e021519b0",
+          "request_key": "ADV-c0c7ff595c63445cb08c944be86eba6a",
           "source_system": "SYNTH-ADVERSARIAL"
         },
         "created_actor": {
@@ -597,8 +597,8 @@
           "action": "approve",
           "user_id": 31
         },
-        "created_at": "2026-11-04 15:04:31.236959+00:00",
-        "approved_at": "2026-11-04 15:04:31.241122+00:00",
+        "created_at": "2026-11-04 15:22:22.360614+00:00",
+        "approved_at": "2026-11-04 15:22:22.364052+00:00",
         "replaces": null
       }
     },
@@ -626,7 +626,7 @@
         "voucher": 14,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-18024c3ec0ec4528b2ffba8e021519b0",
+        "source_key": "ADV-c0c7ff595c63445cb08c944be86eba6a",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -634,7 +634,7 @@
           "action": "post",
           "user_id": 30
         },
-        "created_at": "2026-11-04 15:04:31.269904+00:00",
+        "created_at": "2026-11-04 15:22:22.391476+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []

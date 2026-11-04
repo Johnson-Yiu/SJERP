@@ -50,9 +50,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-25a8dd7b18a34c568fbb87a8f0e93bae",
+        "request_key": "ADV-bb8be6bd3be044c0a3ef181795714f52",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-25a8dd7b18a34c568fbb87a8f0e93bae",
+        "source_key": "ADV-bb8be6bd3be044c0a3ef181795714f52",
         "kind": "cash",
         "account": 46,
         "voucher": 24,
@@ -69,9 +69,9 @@
         "kind": "cash",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-25a8dd7b18a34c568fbb87a8f0e93bae",
+          "request_key": "ADV-bb8be6bd3be044c0a3ef181795714f52",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-25a8dd7b18a34c568fbb87a8f0e93bae",
+          "source_key": "ADV-bb8be6bd3be044c0a3ef181795714f52",
           "kind": "cash",
           "account": 46,
           "voucher": 24,
@@ -89,7 +89,7 @@
           "user_id": 51
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:04:49.140350+00:00",
+        "created_at": "2026-11-04 15:22:30.551353+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -118,7 +118,7 @@
         "voucher": 24,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-25a8dd7b18a34c568fbb87a8f0e93bae",
+        "source_key": "ADV-bb8be6bd3be044c0a3ef181795714f52",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -126,7 +126,7 @@
           "action": "post",
           "user_id": 51
         },
-        "created_at": "2026-11-04 15:04:49.172591+00:00",
+        "created_at": "2026-11-04 15:22:30.582302+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -136,9 +136,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-f3a19f66a718495384cfce344feb83a6",
+        "request_key": "ADV-bb225399e7ae425eb658dff597d04f5e",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-f3a19f66a718495384cfce344feb83a6",
+        "source_key": "ADV-bb225399e7ae425eb658dff597d04f5e",
         "kind": "cash",
         "account": 47,
         "voucher": 24,
@@ -155,9 +155,9 @@
         "kind": "cash",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-f3a19f66a718495384cfce344feb83a6",
+          "request_key": "ADV-bb225399e7ae425eb658dff597d04f5e",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-f3a19f66a718495384cfce344feb83a6",
+          "source_key": "ADV-bb225399e7ae425eb658dff597d04f5e",
           "kind": "cash",
           "account": 47,
           "voucher": 24,
@@ -175,7 +175,7 @@
           "user_id": 51
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:04:49.201882+00:00",
+        "created_at": "2026-11-04 15:22:30.604907+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -204,7 +204,7 @@
         "voucher": 24,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-f3a19f66a718495384cfce344feb83a6",
+        "source_key": "ADV-bb225399e7ae425eb658dff597d04f5e",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -212,7 +212,7 @@
           "action": "post",
           "user_id": 51
         },
-        "created_at": "2026-11-04 15:04:49.215714+00:00",
+        "created_at": "2026-11-04 15:22:30.619190+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -222,9 +222,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-9fe703b8edfe4458ab664759d1b32dd2",
+        "request_key": "ADV-5e69b7f188fd4e14ac87c5e4cb9f1903",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-9fe703b8edfe4458ab664759d1b32dd2",
+        "source_key": "ADV-5e69b7f188fd4e14ac87c5e4cb9f1903",
         "kind": "cash",
         "account": 48,
         "voucher": 24,
@@ -241,9 +241,9 @@
         "kind": "cash",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-9fe703b8edfe4458ab664759d1b32dd2",
+          "request_key": "ADV-5e69b7f188fd4e14ac87c5e4cb9f1903",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-9fe703b8edfe4458ab664759d1b32dd2",
+          "source_key": "ADV-5e69b7f188fd4e14ac87c5e4cb9f1903",
           "kind": "cash",
           "account": 48,
           "voucher": 24,
@@ -261,7 +261,7 @@
           "user_id": 51
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:04:49.228832+00:00",
+        "created_at": "2026-11-04 15:22:30.630229+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -290,7 +290,7 @@
         "voucher": 24,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-9fe703b8edfe4458ab664759d1b32dd2",
+        "source_key": "ADV-5e69b7f188fd4e14ac87c5e4cb9f1903",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -298,14 +298,14 @@
           "action": "post",
           "user_id": 51
         },
-        "created_at": "2026-11-04 15:04:49.245017+00:00",
+        "created_at": "2026-11-04 15:22:30.643331+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
       }
     },
     {
-      "pid": 13116,
+      "pid": 8872,
       "action": "transfers",
       "input": {
         "outgoing": 50,
@@ -318,7 +318,7 @@
       }
     },
     {
-      "pid": 33628,
+      "pid": 6112,
       "action": "transfers",
       "input": {
         "outgoing": 50,
@@ -419,7 +419,7 @@
             "bank_net_amount": "47.00",
             "fee_mode": "none",
             "fee_amount": "0",
-            "bank_reference": "ADV-f3a19f66a718495384cfce344feb83a6",
+            "bank_reference": "ADV-bb225399e7ae425eb658dff597d04f5e",
             "status": "confirmed",
             "detail_url": "/finance-ledger?fact=51",
             "account_type": "cash",
@@ -456,7 +456,7 @@
             "voucher": 24,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-25a8dd7b18a34c568fbb87a8f0e93bae",
+            "source_key": "ADV-bb8be6bd3be044c0a3ef181795714f52",
             "parent": null,
             "legacy_parent": null,
             "actor": {
@@ -464,7 +464,7 @@
               "action": "post",
               "user_id": 51
             },
-            "created_at": "2026-11-04 15:04:49.172591+00:00",
+            "created_at": "2026-11-04 15:22:30.582302+00:00",
             "company_flow_included": false,
             "flow_exclusion_reason": "internal_principal",
             "classifications": []
@@ -485,7 +485,7 @@
             "voucher": 24,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-f3a19f66a718495384cfce344feb83a6",
+            "source_key": "ADV-bb225399e7ae425eb658dff597d04f5e",
             "parent": null,
             "legacy_parent": null,
             "actor": {
@@ -493,7 +493,7 @@
               "action": "post",
               "user_id": 51
             },
-            "created_at": "2026-11-04 15:04:49.215714+00:00",
+            "created_at": "2026-11-04 15:22:30.619190+00:00",
             "company_flow_included": true,
             "flow_exclusion_reason": "",
             "classifications": []
@@ -514,7 +514,7 @@
             "voucher": 24,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-9fe703b8edfe4458ab664759d1b32dd2",
+            "source_key": "ADV-5e69b7f188fd4e14ac87c5e4cb9f1903",
             "parent": null,
             "legacy_parent": null,
             "actor": {
@@ -522,7 +522,7 @@
               "action": "post",
               "user_id": 51
             },
-            "created_at": "2026-11-04 15:04:49.245017+00:00",
+            "created_at": "2026-11-04 15:22:30.643331+00:00",
             "company_flow_included": false,
             "flow_exclusion_reason": "internal_principal",
             "classifications": []
@@ -538,7 +538,7 @@
     },
     {
       "path": "/api/finance-ledger/facts/?export=csv",
-      "csv": "id,account_name,account_type,actual_date,kind,nature,direction,amount,refund_excess_amount,unallocated_amount,company_flow_included,source_system,source_key,voucher_sha256\r\n50,合成反例银行,bank,2026-04-03,cash,internal_principal,expense,47.00,0.00,0.00,False,SYNTH-ADVERSARIAL,ADV-25a8dd7b18a34c568fbb87a8f0e93bae,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n51,合成反例现金,cash,2026-04-05,cash,internal_principal,income,47.00,0.00,0.00,True,SYNTH-ADVERSARIAL,ADV-f3a19f66a718495384cfce344feb83a6,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n52,合成第三银行,bank,2026-04-05,cash,internal_principal,income,47.00,0.00,0.00,False,SYNTH-ADVERSARIAL,ADV-9fe703b8edfe4458ab664759d1b32dd2,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n"
+      "csv": "id,account_name,account_type,actual_date,kind,nature,direction,amount,refund_excess_amount,unallocated_amount,company_flow_included,source_system,source_key,voucher_sha256\r\n50,合成反例银行,bank,2026-04-03,cash,internal_principal,expense,47.00,0.00,0.00,False,SYNTH-ADVERSARIAL,ADV-bb8be6bd3be044c0a3ef181795714f52,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n51,合成反例现金,cash,2026-04-05,cash,internal_principal,income,47.00,0.00,0.00,True,SYNTH-ADVERSARIAL,ADV-bb225399e7ae425eb658dff597d04f5e,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n52,合成第三银行,bank,2026-04-05,cash,internal_principal,income,47.00,0.00,0.00,False,SYNTH-ADVERSARIAL,ADV-5e69b7f188fd4e14ac87c5e4cb9f1903,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n"
     },
     {
       "path": "/api/reports/data/",
@@ -585,7 +585,7 @@
         "note": "仅人工确认的银行资金事件；按银行实际日期和人民币净额统计。已登记银行资金汇总，不代表公司全部实际资金，不是利润、销售收入或银行账户余额。",
         "filters": {},
         "filter_summary": [],
-        "generated_at": "2026-11-04 15:04:49.446247+00:00"
+        "generated_at": "2026-11-04 15:22:30.826420+00:00"
       }
     },
     {
@@ -615,7 +615,7 @@
             "voucher": 24,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-25a8dd7b18a34c568fbb87a8f0e93bae",
+            "source_key": "ADV-bb8be6bd3be044c0a3ef181795714f52",
             "parent": null,
             "legacy_parent": null,
             "actor": {
@@ -623,7 +623,7 @@
               "action": "post",
               "user_id": 51
             },
-            "created_at": "2026-11-04 15:04:49.172591+00:00",
+            "created_at": "2026-11-04 15:22:30.582302+00:00",
             "company_flow_included": false,
             "flow_exclusion_reason": "internal_principal",
             "classifications": []
@@ -644,7 +644,7 @@
             "voucher": 24,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-f3a19f66a718495384cfce344feb83a6",
+            "source_key": "ADV-bb225399e7ae425eb658dff597d04f5e",
             "parent": null,
             "legacy_parent": null,
             "actor": {
@@ -652,7 +652,7 @@
               "action": "post",
               "user_id": 51
             },
-            "created_at": "2026-11-04 15:04:49.215714+00:00",
+            "created_at": "2026-11-04 15:22:30.619190+00:00",
             "company_flow_included": true,
             "flow_exclusion_reason": "",
             "classifications": []
@@ -673,7 +673,7 @@
             "voucher": 24,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-9fe703b8edfe4458ab664759d1b32dd2",
+            "source_key": "ADV-5e69b7f188fd4e14ac87c5e4cb9f1903",
             "parent": null,
             "legacy_parent": null,
             "actor": {
@@ -681,7 +681,7 @@
               "action": "post",
               "user_id": 51
             },
-            "created_at": "2026-11-04 15:04:49.245017+00:00",
+            "created_at": "2026-11-04 15:22:30.643331+00:00",
             "company_flow_included": false,
             "flow_exclusion_reason": "internal_principal",
             "classifications": []
@@ -718,7 +718,7 @@
         "voucher": 24,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-25a8dd7b18a34c568fbb87a8f0e93bae",
+        "source_key": "ADV-bb8be6bd3be044c0a3ef181795714f52",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -726,7 +726,7 @@
           "action": "post",
           "user_id": 51
         },
-        "created_at": "2026-11-04 15:04:49.172591+00:00",
+        "created_at": "2026-11-04 15:22:30.582302+00:00",
         "company_flow_included": false,
         "flow_exclusion_reason": "internal_principal",
         "classifications": []
@@ -755,7 +755,7 @@
         "voucher": 24,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-f3a19f66a718495384cfce344feb83a6",
+        "source_key": "ADV-bb225399e7ae425eb658dff597d04f5e",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -763,7 +763,7 @@
           "action": "post",
           "user_id": 51
         },
-        "created_at": "2026-11-04 15:04:49.215714+00:00",
+        "created_at": "2026-11-04 15:22:30.619190+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -792,7 +792,7 @@
         "voucher": 24,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-9fe703b8edfe4458ab664759d1b32dd2",
+        "source_key": "ADV-5e69b7f188fd4e14ac87c5e4cb9f1903",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -800,7 +800,7 @@
           "action": "post",
           "user_id": 51
         },
-        "created_at": "2026-11-04 15:04:49.245017+00:00",
+        "created_at": "2026-11-04 15:22:30.643331+00:00",
         "company_flow_included": false,
         "flow_exclusion_reason": "internal_principal",
         "classifications": []

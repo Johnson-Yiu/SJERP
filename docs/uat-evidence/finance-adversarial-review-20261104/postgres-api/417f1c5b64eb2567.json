@@ -13,7 +13,7 @@
       },
       "status": 201,
       "body": {
-        "id": 55
+        "id": 57
       }
     },
     {
@@ -28,19 +28,19 @@
       },
       "status": 201,
       "body": {
-        "id": 56
+        "id": 58
       }
     },
     {
       "transport": "real_tcp_http",
       "path": "/api/finance-ledger/instructions/",
       "request": {
-        "request_key": "ADV-3de0a8fdcbf14a83881d3eeea26d24ca",
+        "request_key": "ADV-9a42d9c264a849f3b914a4a725e2bc59",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-3de0a8fdcbf14a83881d3eeea26d24ca",
+        "source_key": "ADV-9a42d9c264a849f3b914a4a725e2bc59",
         "kind": "opening",
-        "account": 55,
-        "voucher": 28,
+        "account": 57,
+        "voucher": 29,
         "actual_date": "2026-04-01",
         "direction": "income",
         "amount": "37.91",
@@ -50,7 +50,7 @@
       },
       "status": 201,
       "headers": {
-        "Date": "Wed, 04 Nov 2026 15:05:22 GMT",
+        "Date": "Wed, 04 Nov 2026 15:23:06 GMT",
         "Server": "WSGIServer/0.2 CPython/3.14.5",
         "Content-Type": "application/json",
         "Allow": "POST, OPTIONS",
@@ -61,7 +61,7 @@
         "Referrer-Policy": "same-origin",
         "Cross-Origin-Opener-Policy": "same-origin"
       },
-      "body": "{\"id\":93,\"kind\":\"opening\",\"status\":\"pending\",\"payload\":{\"request_key\":\"ADV-3de0a8fdcbf14a83881d3eeea26d24ca\",\"source_system\":\"SYNTH-ADVERSARIAL\",\"source_key\":\"ADV-3de0a8fdcbf14a83881d3eeea26d24ca\",\"kind\":\"opening\",\"account\":55,\"voucher\":28,\"actual_date\":\"2026-04-01\",\"direction\":\"income\",\"amount\":\"37.91\",\"nature\":\"unclassified\",\"truth\":\"verified\",\"reason\":\"合成反例凭证已核实\",\"allocations\":[]},\"created_actor\":{\"kind\":\"authenticated_user\",\"action\":\"submit\",\"user_id\":60},\"approved_actor\":{},\"created_at\":\"2026-11-04T15:05:22.513265Z\",\"approved_at\":null,\"replaces\":null}"
+      "body": "{\"id\":93,\"kind\":\"opening\",\"status\":\"pending\",\"payload\":{\"request_key\":\"ADV-9a42d9c264a849f3b914a4a725e2bc59\",\"source_system\":\"SYNTH-ADVERSARIAL\",\"source_key\":\"ADV-9a42d9c264a849f3b914a4a725e2bc59\",\"kind\":\"opening\",\"account\":57,\"voucher\":29,\"actual_date\":\"2026-04-01\",\"direction\":\"income\",\"amount\":\"37.91\",\"nature\":\"unclassified\",\"truth\":\"verified\",\"reason\":\"合成反例凭证已核实\",\"allocations\":[]},\"created_actor\":{\"kind\":\"authenticated_user\",\"action\":\"submit\",\"user_id\":62},\"approved_actor\":{},\"created_at\":\"2026-11-04T15:23:06.524332Z\",\"approved_at\":null,\"replaces\":null}"
     },
     {
       "transport": "real_tcp_http",
@@ -71,7 +71,7 @@
       },
       "status": 400,
       "headers": {
-        "Date": "Wed, 04 Nov 2026 15:05:24 GMT",
+        "Date": "Wed, 04 Nov 2026 15:23:08 GMT",
         "Server": "WSGIServer/0.2 CPython/3.14.5",
         "Content-Type": "application/json",
         "Allow": "POST, OPTIONS",
@@ -92,7 +92,7 @@
       },
       "status": 200,
       "headers": {
-        "Date": "Wed, 04 Nov 2026 15:05:26 GMT",
+        "Date": "Wed, 04 Nov 2026 15:23:10 GMT",
         "Server": "WSGIServer/0.2 CPython/3.14.5",
         "Content-Type": "application/json",
         "Allow": "POST, OPTIONS",
@@ -103,7 +103,7 @@
         "Referrer-Policy": "same-origin",
         "Cross-Origin-Opener-Policy": "same-origin"
       },
-      "body": "{\"id\":93,\"kind\":\"opening\",\"status\":\"approved\",\"payload\":{\"kind\":\"opening\",\"truth\":\"verified\",\"amount\":\"37.91\",\"nature\":\"unclassified\",\"reason\":\"合成反例凭证已核实\",\"account\":55,\"voucher\":28,\"direction\":\"income\",\"source_key\":\"ADV-3de0a8fdcbf14a83881d3eeea26d24ca\",\"actual_date\":\"2026-04-01\",\"allocations\":[],\"request_key\":\"ADV-3de0a8fdcbf14a83881d3eeea26d24ca\",\"source_system\":\"SYNTH-ADVERSARIAL\"},\"created_actor\":{\"kind\":\"authenticated_user\",\"action\":\"submit\",\"user_id\":60},\"approved_actor\":{\"kind\":\"authenticated_user\",\"action\":\"approve\",\"user_id\":61},\"created_at\":\"2026-11-04T15:05:22.513265Z\",\"approved_at\":\"2026-11-04T15:05:26.854672Z\",\"replaces\":null}"
+      "body": "{\"id\":93,\"kind\":\"opening\",\"status\":\"approved\",\"payload\":{\"kind\":\"opening\",\"truth\":\"verified\",\"amount\":\"37.91\",\"nature\":\"unclassified\",\"reason\":\"合成反例凭证已核实\",\"account\":57,\"voucher\":29,\"direction\":\"income\",\"source_key\":\"ADV-9a42d9c264a849f3b914a4a725e2bc59\",\"actual_date\":\"2026-04-01\",\"allocations\":[],\"request_key\":\"ADV-9a42d9c264a849f3b914a4a725e2bc59\",\"source_system\":\"SYNTH-ADVERSARIAL\"},\"created_actor\":{\"kind\":\"authenticated_user\",\"action\":\"submit\",\"user_id\":62},\"approved_actor\":{\"kind\":\"authenticated_user\",\"action\":\"approve\",\"user_id\":63},\"created_at\":\"2026-11-04T15:23:06.524332Z\",\"approved_at\":\"2026-11-04T15:23:10.911908Z\",\"replaces\":null}"
     },
     {
       "transport": "real_tcp_http",
@@ -114,7 +114,7 @@
       },
       "status": 200,
       "headers": {
-        "Date": "Wed, 04 Nov 2026 15:05:29 GMT",
+        "Date": "Wed, 04 Nov 2026 15:23:13 GMT",
         "Server": "WSGIServer/0.2 CPython/3.14.5",
         "Content-Type": "application/json",
         "Allow": "POST, OPTIONS",
@@ -125,7 +125,7 @@
         "Referrer-Policy": "same-origin",
         "Cross-Origin-Opener-Policy": "same-origin"
       },
-      "body": "{\"id\":56,\"account\":55,\"account_name\":\"合成反例银行\",\"account_type\":\"bank\",\"instruction\":93,\"actual_date\":\"2026-04-01\",\"amount\":\"37.91\",\"direction\":\"income\",\"nature\":\"unclassified\",\"kind\":\"opening\",\"refund_excess_amount\":\"0\",\"unallocated_amount\":\"0.00\",\"voucher\":28,\"voucher_sha256\":\"671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\",\"source_system\":\"SYNTH-ADVERSARIAL\",\"source_key\":\"ADV-3de0a8fdcbf14a83881d3eeea26d24ca\",\"parent\":null,\"legacy_parent\":null,\"actor\":{\"kind\":\"authenticated_user\",\"action\":\"post\",\"user_id\":60},\"created_at\":\"2026-11-04T15:05:29.072895Z\",\"company_flow_included\":false,\"flow_exclusion_reason\":\"opening\",\"classifications\":[]}"
+      "body": "{\"id\":56,\"account\":57,\"account_name\":\"合成反例银行\",\"account_type\":\"bank\",\"instruction\":93,\"actual_date\":\"2026-04-01\",\"amount\":\"37.91\",\"direction\":\"income\",\"nature\":\"unclassified\",\"kind\":\"opening\",\"refund_excess_amount\":\"0\",\"unallocated_amount\":\"0.00\",\"voucher\":29,\"voucher_sha256\":\"671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\",\"source_system\":\"SYNTH-ADVERSARIAL\",\"source_key\":\"ADV-9a42d9c264a849f3b914a4a725e2bc59\",\"parent\":null,\"legacy_parent\":null,\"actor\":{\"kind\":\"authenticated_user\",\"action\":\"post\",\"user_id\":62},\"created_at\":\"2026-11-04T15:23:13.037108Z\",\"company_flow_included\":false,\"flow_exclusion_reason\":\"opening\",\"classifications\":[]}"
     },
     {
       "transport": "real_tcp_http",
@@ -136,7 +136,7 @@
       },
       "status": 200,
       "headers": {
-        "Date": "Wed, 04 Nov 2026 15:05:31 GMT",
+        "Date": "Wed, 04 Nov 2026 15:23:15 GMT",
         "Server": "WSGIServer/0.2 CPython/3.14.5",
         "Content-Type": "application/json",
         "Allow": "POST, OPTIONS",
@@ -147,7 +147,7 @@
         "Referrer-Policy": "same-origin",
         "Cross-Origin-Opener-Policy": "same-origin"
       },
-      "body": "{\"id\":56,\"account\":55,\"account_name\":\"合成反例银行\",\"account_type\":\"bank\",\"instruction\":93,\"actual_date\":\"2026-04-01\",\"amount\":\"37.91\",\"direction\":\"income\",\"nature\":\"unclassified\",\"kind\":\"opening\",\"refund_excess_amount\":\"0.00\",\"unallocated_amount\":\"0.00\",\"voucher\":28,\"voucher_sha256\":\"671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\",\"source_system\":\"SYNTH-ADVERSARIAL\",\"source_key\":\"ADV-3de0a8fdcbf14a83881d3eeea26d24ca\",\"parent\":null,\"legacy_parent\":null,\"actor\":{\"kind\":\"authenticated_user\",\"action\":\"post\",\"user_id\":60},\"created_at\":\"2026-11-04T15:05:29.072895Z\",\"company_flow_included\":false,\"flow_exclusion_reason\":\"opening\",\"classifications\":[]}"
+      "body": "{\"id\":56,\"account\":57,\"account_name\":\"合成反例银行\",\"account_type\":\"bank\",\"instruction\":93,\"actual_date\":\"2026-04-01\",\"amount\":\"37.91\",\"direction\":\"income\",\"nature\":\"unclassified\",\"kind\":\"opening\",\"refund_excess_amount\":\"0.00\",\"unallocated_amount\":\"0.00\",\"voucher\":29,\"voucher_sha256\":\"671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\",\"source_system\":\"SYNTH-ADVERSARIAL\",\"source_key\":\"ADV-9a42d9c264a849f3b914a4a725e2bc59\",\"parent\":null,\"legacy_parent\":null,\"actor\":{\"kind\":\"authenticated_user\",\"action\":\"post\",\"user_id\":62},\"created_at\":\"2026-11-04T15:23:13.037108Z\",\"company_flow_included\":false,\"flow_exclusion_reason\":\"opening\",\"classifications\":[]}"
     },
     {
       "transport": "real_tcp_http",
@@ -155,7 +155,7 @@
       "request": null,
       "status": 200,
       "headers": {
-        "Date": "Wed, 04 Nov 2026 15:05:33 GMT",
+        "Date": "Wed, 04 Nov 2026 15:23:17 GMT",
         "Server": "WSGIServer/0.2 CPython/3.14.5",
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": "attachment; filename=\"account-cash-facts.csv\"",
@@ -167,7 +167,7 @@
         "Referrer-Policy": "same-origin",
         "Cross-Origin-Opener-Policy": "same-origin"
       },
-      "body": "﻿id,account_name,account_type,actual_date,kind,nature,direction,amount,refund_excess_amount,unallocated_amount,company_flow_included,source_system,source_key,voucher_sha256\r\n56,合成反例银行,bank,2026-04-01,opening,unclassified,income,37.91,0.00,0.00,False,SYNTH-ADVERSARIAL,ADV-3de0a8fdcbf14a83881d3eeea26d24ca,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n"
+      "body": "﻿id,account_name,account_type,actual_date,kind,nature,direction,amount,refund_excess_amount,unallocated_amount,company_flow_included,source_system,source_key,voucher_sha256\r\n56,合成反例银行,bank,2026-04-01,opening,unclassified,income,37.91,0.00,0.00,False,SYNTH-ADVERSARIAL,ADV-9a42d9c264a849f3b914a4a725e2bc59,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n"
     }
   ]
 }

@@ -35,9 +35,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-7a2f7dedc1d34c35a262bd7561fa08a5",
+        "request_key": "ADV-d28b27df28c24292b1a61efa8a511280",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-7a2f7dedc1d34c35a262bd7561fa08a5",
+        "source_key": "ADV-d28b27df28c24292b1a61efa8a511280",
         "kind": "cash",
         "account": 1,
         "voucher": 1,
@@ -54,9 +54,9 @@
         "kind": "cash",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-7a2f7dedc1d34c35a262bd7561fa08a5",
+          "request_key": "ADV-d28b27df28c24292b1a61efa8a511280",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-7a2f7dedc1d34c35a262bd7561fa08a5",
+          "source_key": "ADV-d28b27df28c24292b1a61efa8a511280",
           "kind": "cash",
           "account": 1,
           "voucher": 1,
@@ -74,7 +74,7 @@
           "user_id": 1
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:05:04.103201+00:00",
+        "created_at": "2026-11-04 15:21:42.594433+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -103,7 +103,7 @@
         "voucher": 1,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-7a2f7dedc1d34c35a262bd7561fa08a5",
+        "source_key": "ADV-d28b27df28c24292b1a61efa8a511280",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -111,7 +111,7 @@
           "action": "post",
           "user_id": 1
         },
-        "created_at": "2026-11-04 15:05:04.114642+00:00",
+        "created_at": "2026-11-04 15:21:42.608107+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -121,9 +121,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-a0c53b2f889b4cc994510962c2500c6e",
+        "request_key": "ADV-bfda920f64cb42e798a8851aa7172b64",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-a0c53b2f889b4cc994510962c2500c6e",
+        "source_key": "ADV-bfda920f64cb42e798a8851aa7172b64",
         "kind": "refund_approval",
         "account": 1,
         "voucher": 1,
@@ -142,9 +142,9 @@
         "kind": "refund_approval",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-a0c53b2f889b4cc994510962c2500c6e",
+          "request_key": "ADV-bfda920f64cb42e798a8851aa7172b64",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-a0c53b2f889b4cc994510962c2500c6e",
+          "source_key": "ADV-bfda920f64cb42e798a8851aa7172b64",
           "kind": "refund_approval",
           "account": 1,
           "voucher": 1,
@@ -164,7 +164,7 @@
           "user_id": 1
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:05:04.124130+00:00",
+        "created_at": "2026-11-04 15:21:42.622862+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -181,9 +181,9 @@
         "kind": "refund_approval",
         "status": "approved",
         "payload": {
-          "request_key": "ADV-a0c53b2f889b4cc994510962c2500c6e",
+          "request_key": "ADV-bfda920f64cb42e798a8851aa7172b64",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-a0c53b2f889b4cc994510962c2500c6e",
+          "source_key": "ADV-bfda920f64cb42e798a8851aa7172b64",
           "kind": "refund_approval",
           "account": 1,
           "voucher": 1,
@@ -207,8 +207,8 @@
           "action": "approve",
           "user_id": 2
         },
-        "created_at": "2026-11-04 15:05:04.124130+00:00",
-        "approved_at": "2026-11-04 15:05:04.126900+00:00",
+        "created_at": "2026-11-04 15:21:42.622862+00:00",
+        "approved_at": "2026-11-04 15:21:42.626668+00:00",
         "replaces": null
       }
     },
@@ -216,9 +216,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-8078262cfbb144fc9c1a69047214be13",
+        "request_key": "ADV-2ab62b3ba92c4033afa59439168ee4bd",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-8078262cfbb144fc9c1a69047214be13",
+        "source_key": "ADV-2ab62b3ba92c4033afa59439168ee4bd",
         "kind": "refund_approval",
         "account": 1,
         "voucher": 1,
@@ -237,9 +237,9 @@
         "kind": "refund_approval",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-8078262cfbb144fc9c1a69047214be13",
+          "request_key": "ADV-2ab62b3ba92c4033afa59439168ee4bd",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-8078262cfbb144fc9c1a69047214be13",
+          "source_key": "ADV-2ab62b3ba92c4033afa59439168ee4bd",
           "kind": "refund_approval",
           "account": 1,
           "voucher": 1,
@@ -259,7 +259,7 @@
           "user_id": 1
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:05:04.132076+00:00",
+        "created_at": "2026-11-04 15:21:42.638773+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -276,9 +276,9 @@
         "kind": "refund_approval",
         "status": "approved",
         "payload": {
-          "request_key": "ADV-8078262cfbb144fc9c1a69047214be13",
+          "request_key": "ADV-2ab62b3ba92c4033afa59439168ee4bd",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-8078262cfbb144fc9c1a69047214be13",
+          "source_key": "ADV-2ab62b3ba92c4033afa59439168ee4bd",
           "kind": "refund_approval",
           "account": 1,
           "voucher": 1,
@@ -302,8 +302,8 @@
           "action": "approve",
           "user_id": 2
         },
-        "created_at": "2026-11-04 15:05:04.132076+00:00",
-        "approved_at": "2026-11-04 15:05:04.137227+00:00",
+        "created_at": "2026-11-04 15:21:42.638773+00:00",
+        "approved_at": "2026-11-04 15:21:42.642987+00:00",
         "replaces": null
       }
     },
@@ -311,9 +311,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-fc05f7257d864616963c49ff68b60884",
+        "request_key": "ADV-1b73a14246f84e308da432ab1e412cdf",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-fc05f7257d864616963c49ff68b60884",
+        "source_key": "ADV-1b73a14246f84e308da432ab1e412cdf",
         "kind": "refund_payment",
         "account": 1,
         "voucher": 1,
@@ -331,9 +331,9 @@
         "kind": "refund_payment",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-fc05f7257d864616963c49ff68b60884",
+          "request_key": "ADV-1b73a14246f84e308da432ab1e412cdf",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-fc05f7257d864616963c49ff68b60884",
+          "source_key": "ADV-1b73a14246f84e308da432ab1e412cdf",
           "kind": "refund_payment",
           "account": 1,
           "voucher": 1,
@@ -352,7 +352,7 @@
           "user_id": 1
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:05:04.143117+00:00",
+        "created_at": "2026-11-04 15:21:42.652846+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -369,9 +369,9 @@
         "kind": "refund_payment",
         "status": "approved",
         "payload": {
-          "request_key": "ADV-fc05f7257d864616963c49ff68b60884",
+          "request_key": "ADV-1b73a14246f84e308da432ab1e412cdf",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-fc05f7257d864616963c49ff68b60884",
+          "source_key": "ADV-1b73a14246f84e308da432ab1e412cdf",
           "kind": "refund_payment",
           "account": 1,
           "voucher": 1,
@@ -394,8 +394,8 @@
           "action": "approve",
           "user_id": 2
         },
-        "created_at": "2026-11-04 15:05:04.143117+00:00",
-        "approved_at": "2026-11-04 15:05:04.145873+00:00",
+        "created_at": "2026-11-04 15:21:42.652846+00:00",
+        "approved_at": "2026-11-04 15:21:42.656818+00:00",
         "replaces": null
       }
     },
@@ -423,7 +423,7 @@
         "voucher": 1,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-fc05f7257d864616963c49ff68b60884",
+        "source_key": "ADV-1b73a14246f84e308da432ab1e412cdf",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -431,7 +431,7 @@
           "action": "post",
           "user_id": 1
         },
-        "created_at": "2026-11-04 15:05:04.164813+00:00",
+        "created_at": "2026-11-04 15:21:42.681107+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -441,9 +441,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-75b4c2016a7d43d38999bdc91ca192a2",
+        "request_key": "ADV-ce904679c5df4c009c1ad678ef7dd40f",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-75b4c2016a7d43d38999bdc91ca192a2",
+        "source_key": "ADV-ce904679c5df4c009c1ad678ef7dd40f",
         "kind": "refund_payment",
         "account": 1,
         "voucher": 1,
@@ -461,9 +461,9 @@
         "kind": "refund_payment",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-75b4c2016a7d43d38999bdc91ca192a2",
+          "request_key": "ADV-ce904679c5df4c009c1ad678ef7dd40f",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-75b4c2016a7d43d38999bdc91ca192a2",
+          "source_key": "ADV-ce904679c5df4c009c1ad678ef7dd40f",
           "kind": "refund_payment",
           "account": 1,
           "voucher": 1,
@@ -482,7 +482,7 @@
           "user_id": 1
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:05:04.174946+00:00",
+        "created_at": "2026-11-04 15:21:42.696407+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -499,9 +499,9 @@
         "kind": "refund_payment",
         "status": "approved",
         "payload": {
-          "request_key": "ADV-75b4c2016a7d43d38999bdc91ca192a2",
+          "request_key": "ADV-ce904679c5df4c009c1ad678ef7dd40f",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-75b4c2016a7d43d38999bdc91ca192a2",
+          "source_key": "ADV-ce904679c5df4c009c1ad678ef7dd40f",
           "kind": "refund_payment",
           "account": 1,
           "voucher": 1,
@@ -524,8 +524,8 @@
           "action": "approve",
           "user_id": 2
         },
-        "created_at": "2026-11-04 15:05:04.174946+00:00",
-        "approved_at": "2026-11-04 15:05:04.178292+00:00",
+        "created_at": "2026-11-04 15:21:42.696407+00:00",
+        "approved_at": "2026-11-04 15:21:42.703380+00:00",
         "replaces": null
       }
     },
@@ -553,7 +553,7 @@
         "voucher": 1,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-75b4c2016a7d43d38999bdc91ca192a2",
+        "source_key": "ADV-ce904679c5df4c009c1ad678ef7dd40f",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -561,7 +561,7 @@
           "action": "post",
           "user_id": 1
         },
-        "created_at": "2026-11-04 15:05:04.202326+00:00",
+        "created_at": "2026-11-04 15:21:42.740320+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -571,9 +571,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-6d5f18303d6348f7904e17074254282f",
+        "request_key": "ADV-4af525dfdee54145a78269cb338e10db",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-6d5f18303d6348f7904e17074254282f",
+        "source_key": "ADV-4af525dfdee54145a78269cb338e10db",
         "kind": "refund_return",
         "account": 1,
         "voucher": 1,
@@ -591,9 +591,9 @@
         "kind": "refund_return",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-6d5f18303d6348f7904e17074254282f",
+          "request_key": "ADV-4af525dfdee54145a78269cb338e10db",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-6d5f18303d6348f7904e17074254282f",
+          "source_key": "ADV-4af525dfdee54145a78269cb338e10db",
           "kind": "refund_return",
           "account": 1,
           "voucher": 1,
@@ -612,7 +612,7 @@
           "user_id": 1
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:05:04.210963+00:00",
+        "created_at": "2026-11-04 15:21:42.761010+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -641,7 +641,7 @@
         "voucher": 1,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-6d5f18303d6348f7904e17074254282f",
+        "source_key": "ADV-4af525dfdee54145a78269cb338e10db",
         "parent": 3,
         "legacy_parent": null,
         "actor": {
@@ -649,7 +649,7 @@
           "action": "post",
           "user_id": 1
         },
-        "created_at": "2026-11-04 15:05:04.224588+00:00",
+        "created_at": "2026-11-04 15:21:42.782003+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -659,9 +659,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-d65d15f90a5a4f708118aef67b167c31",
+        "request_key": "ADV-030bbfd0eaa24179aac8e69dfff5bf7d",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-d65d15f90a5a4f708118aef67b167c31",
+        "source_key": "ADV-030bbfd0eaa24179aac8e69dfff5bf7d",
         "kind": "refund_return",
         "account": 1,
         "voucher": 1,
@@ -679,9 +679,9 @@
         "kind": "refund_return",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-d65d15f90a5a4f708118aef67b167c31",
+          "request_key": "ADV-030bbfd0eaa24179aac8e69dfff5bf7d",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-d65d15f90a5a4f708118aef67b167c31",
+          "source_key": "ADV-030bbfd0eaa24179aac8e69dfff5bf7d",
           "kind": "refund_return",
           "account": 1,
           "voucher": 1,
@@ -700,7 +700,7 @@
           "user_id": 1
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:05:04.233693+00:00",
+        "created_at": "2026-11-04 15:21:42.794944+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -729,7 +729,7 @@
         "voucher": 1,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-d65d15f90a5a4f708118aef67b167c31",
+        "source_key": "ADV-030bbfd0eaa24179aac8e69dfff5bf7d",
         "parent": 3,
         "legacy_parent": null,
         "actor": {
@@ -737,7 +737,7 @@
           "action": "post",
           "user_id": 1
         },
-        "created_at": "2026-11-04 15:05:04.249656+00:00",
+        "created_at": "2026-11-04 15:21:42.813418+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -747,9 +747,9 @@
       "method": "post",
       "path": "/api/finance-ledger/instructions/",
       "input": {
-        "request_key": "ADV-fb5c9d82ba8c45a6b2ea2c7f07eb7362",
+        "request_key": "ADV-a97a7223fe244e6e902541d62e6c3438",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-fb5c9d82ba8c45a6b2ea2c7f07eb7362",
+        "source_key": "ADV-a97a7223fe244e6e902541d62e6c3438",
         "kind": "refund_return",
         "account": 1,
         "voucher": 1,
@@ -767,9 +767,9 @@
         "kind": "refund_return",
         "status": "pending",
         "payload": {
-          "request_key": "ADV-fb5c9d82ba8c45a6b2ea2c7f07eb7362",
+          "request_key": "ADV-a97a7223fe244e6e902541d62e6c3438",
           "source_system": "SYNTH-ADVERSARIAL",
-          "source_key": "ADV-fb5c9d82ba8c45a6b2ea2c7f07eb7362",
+          "source_key": "ADV-a97a7223fe244e6e902541d62e6c3438",
           "kind": "refund_return",
           "account": 1,
           "voucher": 1,
@@ -788,7 +788,7 @@
           "user_id": 1
         },
         "approved_actor": {},
-        "created_at": "2026-11-04 15:05:04.260367+00:00",
+        "created_at": "2026-11-04 15:21:42.830526+00:00",
         "approved_at": null,
         "replaces": null
       }
@@ -894,7 +894,7 @@
             "bank_net_amount": "93.00",
             "fee_mode": "none",
             "fee_amount": "0",
-            "bank_reference": "ADV-7a2f7dedc1d34c35a262bd7561fa08a5",
+            "bank_reference": "ADV-d28b27df28c24292b1a61efa8a511280",
             "status": "confirmed",
             "detail_url": "/finance-ledger?fact=1",
             "account_type": "bank",
@@ -913,7 +913,7 @@
             "bank_net_amount": "80.00",
             "fee_mode": "none",
             "fee_amount": "0",
-            "bank_reference": "ADV-fc05f7257d864616963c49ff68b60884",
+            "bank_reference": "ADV-1b73a14246f84e308da432ab1e412cdf",
             "status": "confirmed",
             "detail_url": "/finance-ledger?fact=2",
             "account_type": "bank",
@@ -932,7 +932,7 @@
             "bank_net_amount": "60.00",
             "fee_mode": "none",
             "fee_amount": "0",
-            "bank_reference": "ADV-75b4c2016a7d43d38999bdc91ca192a2",
+            "bank_reference": "ADV-ce904679c5df4c009c1ad678ef7dd40f",
             "status": "confirmed",
             "detail_url": "/finance-ledger?fact=3",
             "account_type": "bank",
@@ -951,7 +951,7 @@
             "bank_net_amount": "21.00",
             "fee_mode": "none",
             "fee_amount": "0",
-            "bank_reference": "ADV-6d5f18303d6348f7904e17074254282f",
+            "bank_reference": "ADV-4af525dfdee54145a78269cb338e10db",
             "status": "confirmed",
             "detail_url": "/finance-ledger?fact=4",
             "account_type": "bank",
@@ -970,7 +970,7 @@
             "bank_net_amount": "39.00",
             "fee_mode": "none",
             "fee_amount": "0",
-            "bank_reference": "ADV-d65d15f90a5a4f708118aef67b167c31",
+            "bank_reference": "ADV-030bbfd0eaa24179aac8e69dfff5bf7d",
             "status": "confirmed",
             "detail_url": "/finance-ledger?fact=5",
             "account_type": "bank",
@@ -1007,7 +1007,7 @@
             "voucher": 1,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-7a2f7dedc1d34c35a262bd7561fa08a5",
+            "source_key": "ADV-d28b27df28c24292b1a61efa8a511280",
             "parent": null,
             "legacy_parent": null,
             "actor": {
@@ -1015,7 +1015,7 @@
               "action": "post",
               "user_id": 1
             },
-            "created_at": "2026-11-04 15:05:04.114642+00:00",
+            "created_at": "2026-11-04 15:21:42.608107+00:00",
             "company_flow_included": true,
             "flow_exclusion_reason": "",
             "classifications": []
@@ -1036,7 +1036,7 @@
             "voucher": 1,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-fc05f7257d864616963c49ff68b60884",
+            "source_key": "ADV-1b73a14246f84e308da432ab1e412cdf",
             "parent": null,
             "legacy_parent": null,
             "actor": {
@@ -1044,7 +1044,7 @@
               "action": "post",
               "user_id": 1
             },
-            "created_at": "2026-11-04 15:05:04.164813+00:00",
+            "created_at": "2026-11-04 15:21:42.681107+00:00",
             "company_flow_included": true,
             "flow_exclusion_reason": "",
             "classifications": []
@@ -1065,7 +1065,7 @@
             "voucher": 1,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-75b4c2016a7d43d38999bdc91ca192a2",
+            "source_key": "ADV-ce904679c5df4c009c1ad678ef7dd40f",
             "parent": null,
             "legacy_parent": null,
             "actor": {
@@ -1073,7 +1073,7 @@
               "action": "post",
               "user_id": 1
             },
-            "created_at": "2026-11-04 15:05:04.202326+00:00",
+            "created_at": "2026-11-04 15:21:42.740320+00:00",
             "company_flow_included": true,
             "flow_exclusion_reason": "",
             "classifications": []
@@ -1094,7 +1094,7 @@
             "voucher": 1,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-6d5f18303d6348f7904e17074254282f",
+            "source_key": "ADV-4af525dfdee54145a78269cb338e10db",
             "parent": 3,
             "legacy_parent": null,
             "actor": {
@@ -1102,7 +1102,7 @@
               "action": "post",
               "user_id": 1
             },
-            "created_at": "2026-11-04 15:05:04.224588+00:00",
+            "created_at": "2026-11-04 15:21:42.782003+00:00",
             "company_flow_included": true,
             "flow_exclusion_reason": "",
             "classifications": []
@@ -1123,7 +1123,7 @@
             "voucher": 1,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-d65d15f90a5a4f708118aef67b167c31",
+            "source_key": "ADV-030bbfd0eaa24179aac8e69dfff5bf7d",
             "parent": 3,
             "legacy_parent": null,
             "actor": {
@@ -1131,7 +1131,7 @@
               "action": "post",
               "user_id": 1
             },
-            "created_at": "2026-11-04 15:05:04.249656+00:00",
+            "created_at": "2026-11-04 15:21:42.813418+00:00",
             "company_flow_included": true,
             "flow_exclusion_reason": "",
             "classifications": []
@@ -1147,7 +1147,7 @@
     },
     {
       "path": "/api/finance-ledger/facts/?export=csv",
-      "csv": "id,account_name,account_type,actual_date,kind,nature,direction,amount,refund_excess_amount,unallocated_amount,company_flow_included,source_system,source_key,voucher_sha256\r\n1,合成反例银行,bank,2026-04-03,cash,unclassified,income,93.00,0.00,0.00,True,SYNTH-ADVERSARIAL,ADV-7a2f7dedc1d34c35a262bd7561fa08a5,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n2,合成反例银行,bank,2026-04-03,refund_payment,unclassified,expense,80.00,0.00,80.00,True,SYNTH-ADVERSARIAL,ADV-fc05f7257d864616963c49ff68b60884,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n3,合成反例银行,bank,2026-04-03,refund_payment,unclassified,expense,60.00,47.00,60.00,True,SYNTH-ADVERSARIAL,ADV-75b4c2016a7d43d38999bdc91ca192a2,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n4,合成反例银行,bank,2026-04-09,refund_return,unclassified,income,21.00,0.00,0.00,True,SYNTH-ADVERSARIAL,ADV-6d5f18303d6348f7904e17074254282f,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n5,合成反例银行,bank,2026-04-10,refund_return,unclassified,income,39.00,0.00,0.00,True,SYNTH-ADVERSARIAL,ADV-d65d15f90a5a4f708118aef67b167c31,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n"
+      "csv": "id,account_name,account_type,actual_date,kind,nature,direction,amount,refund_excess_amount,unallocated_amount,company_flow_included,source_system,source_key,voucher_sha256\r\n1,合成反例银行,bank,2026-04-03,cash,unclassified,income,93.00,0.00,0.00,True,SYNTH-ADVERSARIAL,ADV-d28b27df28c24292b1a61efa8a511280,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n2,合成反例银行,bank,2026-04-03,refund_payment,unclassified,expense,80.00,0.00,80.00,True,SYNTH-ADVERSARIAL,ADV-1b73a14246f84e308da432ab1e412cdf,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n3,合成反例银行,bank,2026-04-03,refund_payment,unclassified,expense,60.00,47.00,60.00,True,SYNTH-ADVERSARIAL,ADV-ce904679c5df4c009c1ad678ef7dd40f,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n4,合成反例银行,bank,2026-04-09,refund_return,unclassified,income,21.00,0.00,0.00,True,SYNTH-ADVERSARIAL,ADV-4af525dfdee54145a78269cb338e10db,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n5,合成反例银行,bank,2026-04-10,refund_return,unclassified,income,39.00,0.00,0.00,True,SYNTH-ADVERSARIAL,ADV-030bbfd0eaa24179aac8e69dfff5bf7d,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n"
     },
     {
       "path": "/api/reports/data/",
@@ -1201,7 +1201,7 @@
         "note": "仅人工确认的银行资金事件；按银行实际日期和人民币净额统计。已登记银行资金汇总，不代表公司全部实际资金，不是利润、销售收入或银行账户余额。",
         "filters": {},
         "filter_summary": [],
-        "generated_at": "2026-11-04 15:05:04.338978+00:00"
+        "generated_at": "2026-11-04 15:21:42.905701+00:00"
       }
     },
     {
@@ -1231,7 +1231,7 @@
             "voucher": 1,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-7a2f7dedc1d34c35a262bd7561fa08a5",
+            "source_key": "ADV-d28b27df28c24292b1a61efa8a511280",
             "parent": null,
             "legacy_parent": null,
             "actor": {
@@ -1239,7 +1239,7 @@
               "action": "post",
               "user_id": 1
             },
-            "created_at": "2026-11-04 15:05:04.114642+00:00",
+            "created_at": "2026-11-04 15:21:42.608107+00:00",
             "company_flow_included": true,
             "flow_exclusion_reason": "",
             "classifications": []
@@ -1260,7 +1260,7 @@
             "voucher": 1,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-fc05f7257d864616963c49ff68b60884",
+            "source_key": "ADV-1b73a14246f84e308da432ab1e412cdf",
             "parent": null,
             "legacy_parent": null,
             "actor": {
@@ -1268,7 +1268,7 @@
               "action": "post",
               "user_id": 1
             },
-            "created_at": "2026-11-04 15:05:04.164813+00:00",
+            "created_at": "2026-11-04 15:21:42.681107+00:00",
             "company_flow_included": true,
             "flow_exclusion_reason": "",
             "classifications": []
@@ -1289,7 +1289,7 @@
             "voucher": 1,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-75b4c2016a7d43d38999bdc91ca192a2",
+            "source_key": "ADV-ce904679c5df4c009c1ad678ef7dd40f",
             "parent": null,
             "legacy_parent": null,
             "actor": {
@@ -1297,7 +1297,7 @@
               "action": "post",
               "user_id": 1
             },
-            "created_at": "2026-11-04 15:05:04.202326+00:00",
+            "created_at": "2026-11-04 15:21:42.740320+00:00",
             "company_flow_included": true,
             "flow_exclusion_reason": "",
             "classifications": []
@@ -1318,7 +1318,7 @@
             "voucher": 1,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-6d5f18303d6348f7904e17074254282f",
+            "source_key": "ADV-4af525dfdee54145a78269cb338e10db",
             "parent": 3,
             "legacy_parent": null,
             "actor": {
@@ -1326,7 +1326,7 @@
               "action": "post",
               "user_id": 1
             },
-            "created_at": "2026-11-04 15:05:04.224588+00:00",
+            "created_at": "2026-11-04 15:21:42.782003+00:00",
             "company_flow_included": true,
             "flow_exclusion_reason": "",
             "classifications": []
@@ -1347,7 +1347,7 @@
             "voucher": 1,
             "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
             "source_system": "SYNTH-ADVERSARIAL",
-            "source_key": "ADV-d65d15f90a5a4f708118aef67b167c31",
+            "source_key": "ADV-030bbfd0eaa24179aac8e69dfff5bf7d",
             "parent": 3,
             "legacy_parent": null,
             "actor": {
@@ -1355,7 +1355,7 @@
               "action": "post",
               "user_id": 1
             },
-            "created_at": "2026-11-04 15:05:04.249656+00:00",
+            "created_at": "2026-11-04 15:21:42.813418+00:00",
             "company_flow_included": true,
             "flow_exclusion_reason": "",
             "classifications": []
@@ -1392,7 +1392,7 @@
         "voucher": 1,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-7a2f7dedc1d34c35a262bd7561fa08a5",
+        "source_key": "ADV-d28b27df28c24292b1a61efa8a511280",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -1400,7 +1400,7 @@
           "action": "post",
           "user_id": 1
         },
-        "created_at": "2026-11-04 15:05:04.114642+00:00",
+        "created_at": "2026-11-04 15:21:42.608107+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -1429,7 +1429,7 @@
         "voucher": 1,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-fc05f7257d864616963c49ff68b60884",
+        "source_key": "ADV-1b73a14246f84e308da432ab1e412cdf",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -1437,7 +1437,7 @@
           "action": "post",
           "user_id": 1
         },
-        "created_at": "2026-11-04 15:05:04.164813+00:00",
+        "created_at": "2026-11-04 15:21:42.681107+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -1466,7 +1466,7 @@
         "voucher": 1,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-75b4c2016a7d43d38999bdc91ca192a2",
+        "source_key": "ADV-ce904679c5df4c009c1ad678ef7dd40f",
         "parent": null,
         "legacy_parent": null,
         "actor": {
@@ -1474,7 +1474,7 @@
           "action": "post",
           "user_id": 1
         },
-        "created_at": "2026-11-04 15:05:04.202326+00:00",
+        "created_at": "2026-11-04 15:21:42.740320+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -1503,7 +1503,7 @@
         "voucher": 1,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-6d5f18303d6348f7904e17074254282f",
+        "source_key": "ADV-4af525dfdee54145a78269cb338e10db",
         "parent": 3,
         "legacy_parent": null,
         "actor": {
@@ -1511,7 +1511,7 @@
           "action": "post",
           "user_id": 1
         },
-        "created_at": "2026-11-04 15:05:04.224588+00:00",
+        "created_at": "2026-11-04 15:21:42.782003+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []
@@ -1540,7 +1540,7 @@
         "voucher": 1,
         "voucher_sha256": "671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3",
         "source_system": "SYNTH-ADVERSARIAL",
-        "source_key": "ADV-d65d15f90a5a4f708118aef67b167c31",
+        "source_key": "ADV-030bbfd0eaa24179aac8e69dfff5bf7d",
         "parent": 3,
         "legacy_parent": null,
         "actor": {
@@ -1548,7 +1548,7 @@
           "action": "post",
           "user_id": 1
         },
-        "created_at": "2026-11-04 15:05:04.249656+00:00",
+        "created_at": "2026-11-04 15:21:42.813418+00:00",
         "company_flow_included": true,
         "flow_exclusion_reason": "",
         "classifications": []

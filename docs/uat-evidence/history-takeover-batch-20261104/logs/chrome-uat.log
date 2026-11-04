@@ -1,0 +1,46 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+ExpectError: expect(locator).toBeVisible() failed
+
+Locator: getByRole('heading', { name: '历史资料承接' })
+Expected: visible
+Error: strict mode violation: getByRole('heading', { name: '历史资料承接' }) resolved to 2 elements:
+    1) <h1>历史资料承接</h1> aka locator('h1')
+    2) <h2 data-v-02813ec1="">历史资料承接</h2> aka locator('h2')
+
+Call log:
+  - Expect "toBeVisible" getByRole('heading', { name: '历史资料承接' }) with timeout 5000ms
+  - waiting for getByRole('heading', { name: '历史资料承接' })
+
+    at captureRawStack (C:\Users\Johnson\.codex\worktrees\history-takeover-batch-20261104\森爵照明管理系统\frontend\node_modules\playwright-core\lib\coreBundle.js:9282:17)
+    at callMatcherAsStep (C:\Users\Johnson\.codex\worktrees\history-takeover-batch-20261104\森爵照明管理系统\frontend\node_modules\playwright\lib\matchers\expect.js:13316:57)
+    at Object.toBeVisible (C:\Users\Johnson\.codex\worktrees\history-takeover-batch-20261104\森爵照明管理系统\frontend\node_modules\playwright\lib\matchers\expect.js:13308:23)
+    at C:\Users\Johnson\.codex\worktrees\history-takeover-batch-20261104\森爵照明管理系统\frontend\scripts\history-takeover-chrome-uat.mjs:27:63 {
+  matcherResult: {
+    message: 'expect(locator).toBeVisible() failed\n' +
+      '\n' +
+      "Locator: getByRole('heading', { name: '历史资料承接' })\n" +
+      'Expected: visible\n' +
+      "Error: strict mode violation: getByRole('heading', { name: '历史资料承接' }) resolved to 2 elements:\n" +
+      "    1) <h1>历史资料承接</h1> aka locator('h1')\n" +
+      `    2) <h2 data-v-02813ec1="">历史资料承接</h2> aka locator('h2')\n` +
+      '\n' +
+      'Call log:\n' +
+      `  - Expect "toBeVisible" getByRole('heading', { name: '历史资料承接' }) with timeout 5000ms\n` +
+      "  - waiting for getByRole('heading', { name: '历史资料承接' })\n",
+    pass: false,
+    actual: undefined,
+    name: 'toBeVisible',
+    expected: 'visible',
+    log: [
+      `  - Expect "toBeVisible" getByRole('heading', { name: '历史资料承接' }) with timeout 5000ms`,
+      "  - waiting for getByRole('heading', { name: '历史资料承接' })"
+    ],
+    timeout: undefined,
+    ariaSnapshot: undefined
+  }
+}
+
+Node.js v24.16.0

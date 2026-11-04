@@ -44,6 +44,7 @@ export const routes = [
   { path: '/quotes', component: DocumentPage, props: { type: 'quotes' }, meta: { title: '报价管理', eyebrow: 'Quotation desk', module: 'quotes' } },
   { path: '/orders', component: DocumentPage, props: { type: 'orders' }, meta: { title: '订单管理', eyebrow: 'Sales orders', module: 'orders' } },
   { path: '/import', component: ImportPage, meta: { title: '数据导入', eyebrow: 'Data onboarding', module: 'imports' } },
+  { path: '/history-takeover', component: () => import('./views/HistoryTakeoverPage.vue'), meta: { title: '历史资料承接', eyebrow: 'Controlled history intake', module: 'imports' } },
   { path: '/organization', component: OrganizationPage, meta: { title: '组织与权限', eyebrow: 'Organization & access', module: 'organization' } },
   { path: '/inventory', component: InventoryPage, meta: { title: '库存', eyebrow: 'Current inventory', module: 'inventory' } },
   { path: '/purchase-orders', component: PurchaseOrderPage, meta: { title: '采购管理', eyebrow: 'Procurement desk', module: 'purchases' } },

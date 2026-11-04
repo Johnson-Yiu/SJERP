@@ -1,0 +1,15 @@
+[04/Nov/2026 17:43:38] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[04/Nov/2026 17:44:00] "GET /api/session/current-operator/ HTTP/1.1" 200 2675
+[04/Nov/2026 17:44:00] "GET /api/import/history-takeovers/ HTTP/1.1" 200 6267
+[04/Nov/2026 17:44:00] "GET /api/import/history-takeovers/1/ HTTP/1.1" 200 12547
+[04/Nov/2026 17:44:04] "GET /api/import/history-takeovers/template/ HTTP/1.1" 200 14133
+[04/Nov/2026 17:44:05] "POST /api/import/history-takeovers/1/groups/1/review/ HTTP/1.1" 200 11618
+[04/Nov/2026 17:44:05] "GET /api/import/history-takeovers/ HTTP/1.1" 200 6717
+[04/Nov/2026 17:44:05] "GET /api/import/history-takeovers/1/ HTTP/1.1" 200 12997
+[04/Nov/2026 17:44:06] "POST /api/import/history-takeovers/1/groups/1/execute/ HTTP/1.1" 200 17390
+[04/Nov/2026 17:44:06] "GET /api/import/history-takeovers/ HTTP/1.1" 200 13102
+[04/Nov/2026 17:44:06] "GET /api/import/history-takeovers/1/ HTTP/1.1" 200 19382
+[04/Nov/2026 17:47:18] "GET /api/session/current-operator/ HTTP/1.1" 200 2675
+[04/Nov/2026 17:47:19] "GET /api/import/history-takeovers/ HTTP/1.1" 200 13102
+[04/Nov/2026 17:47:19] "GET /api/import/history-takeovers/1/ HTTP/1.1" 200 19382
+[04/Nov/2026 17:47:30] "GET /api/import/history-takeovers/template/ HTTP/1.1" 200 14134

@@ -1,0 +1,202 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+ExpectError: expect(locator).toBeVisible() failed
+
+Locator: getByRole('button', { name: '逐组执行' })
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" getByRole('button', { name: '逐组执行' }) with timeout 5000ms
+  - waiting for getByRole('button', { name: '逐组执行' })
+
+    at captureRawStack (C:\Users\Johnson\.codex\worktrees\history-takeover-batch-20261104\森爵照明管理系统\frontend\node_modules\playwright-core\lib\coreBundle.js:9282:17)
+    at callMatcherAsStep (C:\Users\Johnson\.codex\worktrees\history-takeover-batch-20261104\森爵照明管理系统\frontend\node_modules\playwright\lib\matchers\expect.js:13316:57)
+    at Object.toBeVisible (C:\Users\Johnson\.codex\worktrees\history-takeover-batch-20261104\森爵照明管理系统\frontend\node_modules\playwright\lib\matchers\expect.js:13308:23)
+    at C:\Users\Johnson\.codex\worktrees\history-takeover-batch-20261104\森爵照明管理系统\frontend\scripts\history-takeover-chrome-uat.mjs:40:60 {
+  matcherResult: {
+    message: 'expect(locator).toBeVisible() failed\n' +
+      '\n' +
+      "Locator: getByRole('button', { name: '逐组执行' })\n" +
+      'Expected: visible\n' +
+      'Timeout: 5000ms\n' +
+      'Error: element(s) not found\n' +
+      '\n' +
+      'Call log:\n' +
+      `  - Expect "toBeVisible" getByRole('button', { name: '逐组执行' }) with timeout 5000ms\n` +
+      "  - waiting for getByRole('button', { name: '逐组执行' })\n",
+    pass: false,
+    actual: undefined,
+    name: 'toBeVisible',
+    expected: 'visible',
+    log: [
+      `  - Expect "toBeVisible" getByRole('button', { name: '逐组执行' }) with timeout 5000ms`,
+      "  - waiting for getByRole('button', { name: '逐组执行' })"
+    ],
+    timeout: 5000,
+    ariaSnapshot: '- complementary:\n' +
+      '  - text: S\n' +
+      '  - strong: 森爵照明管理系统\n' +
+      '  - text: 客户 · 销售 · 产品\n' +
+      '  - navigation:\n' +
+      '    - text: 经营\n' +
+      '    - link "经营概览":\n' +
+      '      - /url: /\n' +
+      '    - link "报表中心":\n' +
+      '      - /url: /reports\n' +
+      '    - link "历史订单分析":\n' +
+      '      - /url: /historical-orders\n' +
+      '    - text: 客户\n' +
+      '    - link "客户管理":\n' +
+      '      - /url: /customers\n' +
+      '    - link "联系人":\n' +
+      '      - /url: /contacts\n' +
+      '    - link "跟进记录":\n' +
+      '      - /url: /follow-ups\n' +
+      '    - text: 销售\n' +
+      '    - link "报价管理":\n' +
+      '      - /url: /quotes\n' +
+      '    - link "订单管理":\n' +
+      '      - /url: /orders\n' +
+      '    - text: 采购与库存\n' +
+      '    - link "供应商管理":\n' +
+      '      - /url: /suppliers\n' +
+      '    - link "采购管理":\n' +
+      '      - /url: /purchase-orders\n' +
+      '    - link "库存":\n' +
+      '      - /url: /inventory\n' +
+      '    - link "库存流水":\n' +
+      '      - /url: /inventory-movements\n' +
+      '    - text: 产品资料\n' +
+      '    - link "产品管理":\n' +
+      '      - /url: /products\n' +
+      '    - link "SKU 管理":\n' +
+      '      - /url: /skus\n' +
+      '    - link "产品分类":\n' +
+      '      - /url: /categories\n' +
+      '    - link "产品参数":\n' +
+      '      - /url: /product-parameters\n' +
+      '    - link "包装管理":\n' +
+      '      - /url: /sku-packaging\n' +
+      '    - link "交易单位":\n' +
+      '      - /url: /sku-trade-units\n' +
+      '    - link "产品证书":\n' +
+      '      - /url: /product-certificates\n' +
+      '    - link "HS 编码维护":\n' +
+      '      - /url: /hs-codes\n' +
+      '    - text: 财务与工具\n' +
+      '    - link "财务概览":\n' +
+      '      - /url: /finance\n' +
+      '    - link "应收计划":\n' +
+      '      - /url: /receivables\n' +
+      '    - link "应付计划":\n' +
+      '      - /url: /payables\n' +
+      '    - link "财务流水":\n' +
+      '      - /url: /transactions\n' +
+      '    - link "人民币资金":\n' +
+      '      - /url: /rmb-cash-events\n' +
+      '    - link "数据导入":\n' +
+      '      - /url: /import\n' +
+      '    - link "历史资料承接":\n' +
+      '      - /url: /history-takeover\n' +
+      '    - text: 组织与系统\n' +
+      '    - link "组织与权限":\n' +
+      '      - /url: /organization\n' +
+      '  - text: S\n' +
+      '  - strong: 开发身份：synthetic-history-uploader\n' +
+      '  - text: 超级管理员 · 全部功能与数据权限\n' +
+      '- main:\n' +
+      '  - text: Controlled history intake\n' +
+      '  - heading "历史资料承接" [level=1]\n' +
+      '  - text: 11月4日周三 S\n' +
+      '  - main:\n' +
+      '    - paragraph: 受控流程\n' +
+      '    - heading "历史资料承接" [level=2]\n' +
+      '    - paragraph: 申请、核实和逐组承接；预检通过不代表已批准或已迁移。\n' +
+      '    - text: 需要相关业务完整查看权限\n' +
+      '    - alert: "CSRF Failed: Origin checking failed - http://127.0.0.1:5195 does not match any trusted origins."\n' +
+      '    - heading "提交承接申请" [level=3]\n' +
+      '    - paragraph: 来源行和凭证引用会纳入申请记录。\n' +
+      '    - button "下载承接模板"\n' +
+      '    - text: 选择 .xlsx 文件\n' +
+      '    - button "选择 .xlsx 文件"\n' +
+      '    - button "提交申请并预检" [disabled]\n' +
+      '    - paragraph: 模拟或待核实资料只留在暂存区；不会创建主档、资金流水、库存流水或履约记录。\n' +
+      '    - complementary:\n' +
+      '      - heading "申请记录" [level=3]\n' +
+      '      - button "刷新"\n' +
+      '      - button "synthetic-history-uAT.xlsx 待审核 · 1 组 SHA256 43fe7d3d1c4e":\n' +
+      '        - strong: synthetic-history-uAT.xlsx\n' +
+      '        - text: 待审核 · 1 组 SHA256 43fe7d3d1c4e\n' +
+      '    - paragraph: "申请 #1 · 待审核"\n' +
+      '    - heading "synthetic-history-uAT.xlsx" [level=3]\n' +
+      '    - paragraph: 申请人：开发身份（非实名） · 不得作为实名审核人\n' +
+      '    - button "下载核验报告"\n' +
+      '    - text: 行数\n' +
+      '    - strong: "12"\n' +
+      '    - text: 阻断\n' +
+      '    - strong: "0"\n' +
+      '    - text: 待核实\n' +
+      '    - strong: "3"\n' +
+      '    - text: 警告\n' +
+      '    - strong: "5"\n' +
+      '    - paragraph: 预检状态：待人工核实。审核前须核实真实性、来源凭证、主档依赖和关联冲突。\n' +
+      '    - button "HT-G1 待审核":\n' +
+      '      - text: HT-G1\n' +
+      '      - emphasis: 待审核\n' +
+      '    - article:\n' +
+      '      - heading "关联组 HT-G1" [level=4]\n' +
+      '      - paragraph: Synthetic browser UAT · complete · 真实\n' +
+      '      - text: 待审核\n' +
+      '      - paragraph: 来源凭证：synthetic://manifest/HT-G1\n' +
+      '      - strong: 分组 · 第 2 行 · 待人工核实\n' +
+      '      - list:\n' +
+      '        - listitem: 关联组内至少一条记录需人工核实。\n' +
+      '      - strong: 销售订单 · 第 2 行 · 待人工核实\n' +
+      '      - list:\n' +
+      '        - listitem: 原业务部分完成；须按已核实履约和资金明细重建剩余状态。\n' +
+      '        - listitem: 客户当前主档名称与历史快照不同；两者须分别保留。\n' +
+      '      - strong: 销售明细 · 第 2 行 · 警告\n' +
+      '      - list:\n' +
+      '        - listitem: SKU当前主档名称与历史快照不同；两者须分别保留。\n' +
+      '      - strong: 采购订单 · 第 2 行 · 待人工核实\n' +
+      '      - list:\n' +
+      '        - listitem: 原业务部分完成；须按已核实履约和资金明细重建剩余状态。\n' +
+      '        - listitem: 供应商当前主档名称与历史快照不同；两者须分别保留。\n' +
+      '      - strong: 采购明细 · 第 2 行 · 警告\n' +
+      '      - list:\n' +
+      '        - listitem: SKU当前主档名称与历史快照不同；两者须分别保留。\n' +
+      '      - strong: 收付款计划 · 第 2 行 · 通过\n' +
+      '      - strong: 收付款计划 · 第 3 行 · 通过\n' +
+      '      - strong: 收付款流水 · 第 2 行 · 通过\n' +
+      '      - strong: 收付款流水 · 第 3 行 · 通过\n' +
+      '      - strong: 履约记录 · 第 2 行 · 警告\n' +
+      '      - list:\n' +
+      '        - listitem: SKU当前主档名称与历史快照不同；两者须分别保留。\n' +
+      '      - strong: 履约记录 · 第 3 行 · 警告\n' +
+      '      - list:\n' +
+      '        - listitem: SKU当前主档名称与历史快照不同；两者须分别保留。\n' +
+      '      - strong: 库存盘点 · 第 2 行 · 警告\n' +
+      '      - list:\n' +
+      '        - listitem: SKU当前主档名称与历史快照不同；两者须分别保留。\n' +
+      '      - group: 人工关联现有主档\n' +
+      '      - text: 审核依据\n' +
+      '      - textbox "审核依据":\n' +
+      '        - /placeholder: 写明真实性、来源凭证和依赖核对结果\n' +
+      '        - text: 合成验收：核对隔离工作簿、合成主体和来源凭证引用。\n' +
+      '      - checkbox "已依据原始凭证核实所有待核实项" [checked]\n' +
+      '      - text: 已依据原始凭证核实所有待核实项\n' +
+      '      - button "拒绝本组"\n' +
+      '      - button "批准本组"\n' +
+      '      - button "撤回"\n' +
+      '    - heading "申请与操作记录" [level=4]\n' +
+      '    - list:\n' +
+      '      - listitem: 关联组已提交 开发身份（非实名） · 2026/11/4 17:34:17\n' +
+      '      - listitem: 已提交申请 开发身份（非实名） · 2026/11/4 17:34:17'
+  }
+}
+
+Node.js v24.16.0

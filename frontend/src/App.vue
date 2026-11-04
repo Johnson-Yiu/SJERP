@@ -42,6 +42,7 @@ const nav = [
   { label: '财务流水', path: '/transactions', module: 'transactions', icon: WalletCards },
   { label: '人民币资金', path: '/rmb-cash-events', module: 'transactions', icon: WalletCards },
   { label: '数据导入', path: '/import', module: 'imports', icon: Upload },
+  { label: '历史资料承接', path: '/history-takeover', module: 'imports', icon: History },
   { section: '组织与系统' },
   { label: '组织与权限', path: '/organization', module: 'organization', icon: ShieldCheck },
 ]

@@ -1,0 +1,16 @@
+
+ RUN  v4.1.12 C:/Users/Johnson/.codex/worktrees/history-takeover-batch-20261104/森爵照明管理系统/frontend
+
+ ❯ tests/detail-drawer-typography.spec.js (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/detail-drawer-typography.spec.js [ tests/detail-drawer-typography.spec.js ]
+Error: No test suite found in file C:/Users/Johnson/.codex/worktrees/history-takeover-batch-20261104/森爵照明管理系统/frontend/tests/detail-drawer-typography.spec.js
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 70 passed (71)
+      Tests  684 passed (684)
+   Start at  17:32:30
+   Duration  311.03s (transform 31.09s, setup 66.18s, import 55.19s, tests 59.38s, environment 658.24s)

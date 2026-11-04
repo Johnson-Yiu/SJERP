@@ -111,7 +111,7 @@ it('Sidebar preserves every route, module and Finance order in the requested gro
     '经营': ['/', '/reports', '/historical-orders'], '客户': ['/customers', '/contacts', '/follow-ups'], '销售': ['/quotes', '/orders'],
     '采购与库存': ['/suppliers', '/purchase-orders', '/inventory', '/inventory-movements'],
     '产品资料': ['/products', '/skus', '/categories', '/product-parameters', '/sku-packaging', '/sku-trade-units', '/product-certificates', '/hs-codes'],
-    '财务与工具': ['/finance', '/receivables', '/payables', '/transactions', '/rmb-cash-events', '/import'], '组织与系统': ['/organization'],
+    '财务与工具': ['/finance', '/receivables', '/payables', '/transactions', '/rmb-cash-events', '/import', '/history-takeover'], '组织与系统': ['/organization'],
   }
   const actual = {}; let group
   for (const node of wrapper.findAll('.sidebar nav > *')) {

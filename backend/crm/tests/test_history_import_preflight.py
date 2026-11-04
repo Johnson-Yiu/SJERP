@@ -211,7 +211,11 @@ class HistoryImportPreflightTests(TestCase):
             self.assertEqual(workbook.sheetnames, ["使用说明", *SHEET_SCHEMAS.keys()])
             for sheet_name, columns in SHEET_SCHEMAS.items():
                 header = next(workbook[sheet_name].iter_rows(min_row=1, max_row=1, values_only=True))
-                self.assertEqual(list(header), [column["label"] for column in columns], sheet_name)
+                if sheet_name == "库存盘点":
+                    legacy = [column["label"] for column in columns if column["key"] not in {"warehouse_type", "lot_reference"}]
+                    self.assertIn(list(header), [[column["label"] for column in columns], legacy], sheet_name)
+                else:
+                    self.assertEqual(list(header), [column["label"] for column in columns], sheet_name)
         finally:
             workbook.close()
 

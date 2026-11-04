@@ -345,6 +345,8 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return Response(self.get_serializer(serializer.instance).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
+        if self.get_object().historical_only or self.get_object().status == "historical":
+            return Response({"detail": "历史采购记录不能直接覆盖；请通过受控追溯更正保留原始轨迹。"}, status=status.HTTP_400_BAD_REQUEST)
         if "status" in request.data:
             return Response({"detail": "采购单状态只能通过确认下单、到货或取消等业务动作变更。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().update(request, *args, **kwargs)
@@ -2001,6 +2003,8 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return Response(self.get_serializer(serializer.instance).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
+        if self.get_object().historical_only or self.get_object().status == "historical":
+            return Response({"detail": "历史订单不能直接覆盖；请通过受控追溯更正保留原始轨迹。"}, status=status.HTTP_400_BAD_REQUEST)
         if "status" in request.data:
             return Response({"detail": "订单状态只能通过确认、开始生产、发货、完成或取消等业务动作变更。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().update(request, *args, **kwargs)

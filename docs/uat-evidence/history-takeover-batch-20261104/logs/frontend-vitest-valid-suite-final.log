@@ -1,0 +1,8 @@
+
+ RUN  v4.1.12 C:/Users/Johnson/.codex/worktrees/history-takeover-batch-20261104/森爵照明管理系统/frontend
+
+
+ Test Files  70 passed (70)
+      Tests  684 passed (684)
+   Start at  17:46:01
+   Duration  263.26s (transform 34.83s, setup 52.50s, import 60.41s, tests 63.35s, environment 546.85s)

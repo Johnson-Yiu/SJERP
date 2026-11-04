@@ -16,6 +16,14 @@ CPython 3.12.16 / 锁定 Django 6.0.9，隔离内存 SQLite 和独立临时媒�
 
 ## 尚未完成的门槛
 
+### 持续实施补充
+
+提交 `5d13f33c018b88f60878587770dc6dbf79fc0af9` 的 [CI #41797932846](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41797932846) 已核实 Backend、backend-postgres、Frontend 三项 SUCCESS；此结论不覆盖其后的新增代码。
+
+新增 `operations_copy.py` 实际命令行入口与完整摘要核对、排他创建、仅清理本次目标及清理错误保留；新增 Nginx 私有媒体拒绝和 API 禁缓存模板。执行命令见 [RUNBOOK](RUNBOOK.md)。CPython 3.12.16 运行 `python -m unittest discover -s backend/crm/tests -p 'test_operations_*.py' -v`：15 项通过，原始日志 [operations-unit.log](operations-unit.log)。包括复制命令真实成功/重复目标拒绝、错误摘要、fsync/校验失败、清理失败保留原异常，以及本机可写目录无法满足只读栅栏的实际拒绝。停机状态与 PID 拒绝使用模拟工具输出，不能冒充真实 Linux 卷/竞争写入验收。
+
+新增的离线源检查要求 Linux 文件系统与挂载都为只读，并检查 PG17 干净停机、系统标识及外部存储链接；尚未接入联合归档/恢复。当前 Windows 无可用 Linux 发行版，`wsl --list --quiet` 返回帮助和非零；未自动安装系统组件。Docker、Podman、Nginx、OpenSSL 命令均未发现。真实 Linux 只读卷、代理及加密演练仍待环境满足后执行，其余实施继续推进。
+
 1. **BLOCKED / 未实施：生产用途 PostgreSQL 与媒体联合备份及恢复入口。** 现有 `isolated_postgres_drill.py` 和 `postgres_drill_backup.py` 只支持新建的隔离集群；不得将其改名或作为生产工具。必须先形成可证明覆盖 Web、worker、定时任务、外部数据库及媒体写入者的独立维护栅栏或同源原子快照机制，在竞争写入及中断下 fail closed，并经独立安全审查；单个 `quiesced` 标志、进程内锁、文件前后散列均不能证明全写入者一致性。
 2. **未实施：恢复前身份和空目标验证、恢复后业务及媒体对账和故障回滚的生产入口。** 来源专项已完成一次性 PG17 合成演练，不能将其运行结果表述为本轮生产工具验收。审计保护不得关闭；数据库所有者与应用账户应分离。
 3. **未实施：可安全执行的保留、加密副本、调度和告警工具。** 需要验证备份完整性、明确所有权且确认其他独立有效副本后才能删除；同机临时复制不是异地容灾。密钥交由独立保管者，不写入命令行、仓库、归档或日志。

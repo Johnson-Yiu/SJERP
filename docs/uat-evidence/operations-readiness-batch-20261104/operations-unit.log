@@ -5,6 +5,8 @@ test_existing_destination_never_overwritten_or_removed (test_operations_copy.Ver
 test_fsync_failure_removes_incomplete_copy (test_operations_copy.VerifiedCopyTests.test_fsync_failure_removes_incomplete_copy) ... ok
 test_verified_copy_and_source_preserved (test_operations_copy.VerifiedCopyTests.test_verified_copy_and_source_preserved) ... ok
 test_wrong_and_partial_digest_rejected_before_creation (test_operations_copy.VerifiedCopyTests.test_wrong_and_partial_digest_rejected_before_creation) ... ok
+test_actual_writable_temporary_directory_never_qualifies (test_operations_fence.OfflineFenceTests.test_actual_writable_temporary_directory_never_qualifies) ... ok
+test_offline_database_requires_clean_shutdown_identity_and_version (test_operations_fence.OfflineFenceTests.test_offline_database_requires_clean_shutdown_identity_and_version) ... ok
 test_http_and_embedded_credentials_rejected_without_echo (test_operations_preflight.OperationsPreflightTests.test_http_and_embedded_credentials_rejected_without_echo) ... ok
 test_insufficient_space_and_invalid_threshold_rejected (test_operations_preflight.OperationsPreflightTests.test_insufficient_space_and_invalid_threshold_rejected) ... ok
 test_overlapping_roots_and_relative_paths_rejected (test_operations_preflight.OperationsPreflightTests.test_overlapping_roots_and_relative_paths_rejected) ... ok
@@ -13,6 +15,6 @@ test_safe_inputs_never_authorize_backup (test_operations_preflight.OperationsPre
 test_unknown_secret_field_rejected_without_echo (test_operations_preflight.OperationsPreflightTests.test_unknown_secret_field_rejected_without_echo) ... ok
 
 ----------------------------------------------------------------------
-Ran 13 tests in 2.187s
+Ran 15 tests in 1.671s
 
 OK

@@ -72,6 +72,23 @@ def flow_rows(user, start, end):
 
 
 class FinanceCloseoutViewSet(viewsets.ViewSet):
+    permission_action_map = {
+        "preview": "view", "accounts": "create", "vouchers": "create", "instructions": "create",
+    }
+
+    @property
+    def permission_module(self):
+        request = getattr(self, "request", None)
+        # Match the existing CSV contract (finance OR reports export). The
+        # ordinary ledger.access() checks still require global finance and
+        # transaction read scope before any data is returned.
+        if (getattr(self, "action", None) == "facts" and request is not None
+                and request.query_params.get("export") == "csv"
+                and not user_can(request.user, "finance", "export")
+                and user_can(request.user, "reports", "export")):
+            return "reports"
+        return "finance"
+
     def initialize_request(self, request, *args, **kwargs):
         if request.method == "POST" and request.path.rstrip("/").endswith("/finance-ledger/vouchers"):
             request.upload_handlers.insert(0, FinanceVoucherUploadHandler(request))

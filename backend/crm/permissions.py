@@ -167,6 +167,12 @@ def action_for_request(request, view=None):
         return "import"
     if request.method in SAFE_METHODS:
         return "view"
+    if request.method == "POST" and view is not None:
+        # Explicit view-owned action metadata; never take this from input data.
+        declared = getattr(view, "permission_action_map", {})
+        action_override = declared.get(action) if isinstance(declared, dict) else None
+        if isinstance(action_override, str) and action_override in ACTION_FIELDS:
+            return action_override
     if request.method == "DELETE":
         return "delete"
     if request.method == "POST" and (action == "create" or action in {"batch_create", "create_batch", "historical", "create_historical"}):

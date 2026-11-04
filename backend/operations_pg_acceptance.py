@@ -24,6 +24,7 @@ from isolated_postgres_drill import run_tool, tool
 from crm.services.postgres_drill_backup import IsolatedPostgresDrill
 from crm.services.operations_postgres import MaintenanceBackup, database_state
 from crm.services.operations_copy import digest
+import psycopg
 
 
 def main():
@@ -56,6 +57,16 @@ def main():
         with drill._connect(drill.source) as connection:
             system = connection.execute("SELECT system_identifier::text FROM pg_control_system()").fetchone()[0]
             before = database_state(connection)
+        with drill._connect(drill.source) as holder, drill._connect(drill.source) as competitor:
+            holder.execute("LOCK TABLE crm_customer IN SHARE MODE")
+            competitor.execute("SET LOCAL lock_timeout='300ms'")
+            try:
+                competitor.execute("UPDATE crm_customer SET id=id")
+            except psycopg.errors.LockNotAvailable:
+                lock_competition_rejected = True
+                competitor.rollback()
+            else:
+                raise AssertionError("competing table writer bypassed SHARE lock")
         service = MaintenanceBackup(connection_options=options, pg_bin=pg, expected_database=drill.source, expected_system_identifier=system, app_sha=sha)
         with drill._connect(drill.source) as active, service.connect() as connection:
             try:
@@ -81,11 +92,18 @@ def main():
         with patch("crm.services.operations_postgres.verify_readonly_filesystem", return_value={"evidence": "SIMULATED-LINUX-MEDIA-FENCE"}):
             backup = service.backup(media_root=drill.media, destination=archive)
         restored = service.restore(archive=archive, expected_sha256=backup["sha256"], media_parent=root)
+        try:
+            service.restore(archive=archive, expected_sha256="0"*64, media_parent=root)
+        except ValueError:
+            bad_digest_rejected = True
+        else:
+            raise AssertionError("wrong archive digest accepted")
         with drill._connect(drill.source) as connection:
             assert database_state(connection) == before
         print(json.dumps({"status": "PASS", "scope": "real-PG17-with-simulated-media-fence", "active_session_rejected": active_rejected,
                           "other_login_rejected": login_rejected, "restored_verified": restored["verified"],
                           "audit_truncate_rejected": restored["audit_truncate_rejected"], "source_unchanged": True,
+                          "real_lock_competition_rejected": lock_competition_rejected, "bad_digest_rejected": bad_digest_rejected,
                           "tables": len(before["tables"]), "rows": sum(v["rows"] for v in before["tables"].values()),
                           "seconds": round(time.monotonic()-clock, 3)}))
     finally:

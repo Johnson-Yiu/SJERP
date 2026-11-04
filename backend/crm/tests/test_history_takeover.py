@@ -164,9 +164,6 @@ class HistoryTakeoverFixtureMixin:
             format="multipart",
         )
 
-
-@override_settings(AUDIT_LOG_ENABLED=True)
-class HistoryTakeoverWorkflowTests(HistoryTakeoverFixtureMixin, TestCase):
     def application_and_group(self, rows=None):
         rows = rows or self.source_rows()
         group_id = rows["分组"][0]["group_id"]
@@ -176,6 +173,9 @@ class HistoryTakeoverWorkflowTests(HistoryTakeoverFixtureMixin, TestCase):
         group = application.groups.get(source_group_id=group_id)
         return application, group, response
 
+
+@override_settings(AUDIT_LOG_ENABLED=True)
+class HistoryTakeoverWorkflowTests(HistoryTakeoverFixtureMixin, TestCase):
     def review_and_execute(self, application, group):
         review = self.client.post(
             f"/api/import/history-takeovers/{application.pk}/groups/{group.pk}/review/",

@@ -20,6 +20,12 @@
 
 ## 本轮正在执行的验收
 
-专用工作流增加三个互相独立的 runner job：原始媒体栅栏；新建 PG17 服务、真实只读媒体、非超级用户维护/运行角色、签名回执及故障测试；Nginx、自签测试证书、合成 SQLite、认证和越权附件及进程重启测试。所有系统资源仅属于一次性 runner；不使用生产 secret、数据库或媒体。源码与每项原始日志、实际通过或失败、目标环境余项待执行后逐项补录，不预写通过。
+专用工作流增加三个互相独立的 runner job：原始媒体栅栏；新建 PG17 服务、真实只读媒体、非超级用户维护/运行角色、签名回执及故障测试；Nginx、自签测试证书、合成 SQLite、认证和越权附件及进程重启测试。所有系统资源仅属于一次性 runner；不使用生产 secret、数据库或媒体。
+
+源码 `56d64848bed5dac0a507348c10313a566012b0be` 的 [专用运行 41857531961](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41857531961) 中，真实 Linux media-fence 与 Nginx 私有附件 job 成功，PG17 job 失败；[三个 job 的原始压缩日志](./)均保留。Nginx 用实际 `nginx -t` 及自签测试证书：SKU 下载授权 200、匿名 403、无权 404、公开直链 404；财务凭证授权 200、匿名 403、无权 403、公开直链 404；私有响应 no-store，Nginx 和 Django 重启后合成文件仍可访问，19.369 秒。该证书不代表正式证书通过。
+
+PG17 首轮的维护/受限账号、真实媒体门禁及两类中途更改已执行到恢复阶段，但报 `RuntimeError: pg_restore failed; credential-bearing diagnostics withheld`，不得将该 job 写成成功。独立使用真实 PG17 客户端重现发现：`pg_restore --list -` 把 `-` 视为文件名，省略文件名才读 stdin；这是测试容器客户端传输器的调用错误。[原始失败日志](linux-pg-failure.raw.log.gz)及[真实客户端复现](pg-restore-stdin-repro.log)保留。已仅修正该测试传输器，后续运行结果须以对应精确 SHA 为准。
+
+[本机真实 PG17/GPG 回执专项](local-real-pg-receipt.log)在 `56d64848bed5dac0a507348c10313a566012b0be`：99 表、1005 行，真实加密、恢复、签名回执和两份旧归档保留处理通过，源数据库未变，62.969 秒，cleanup complete；该运行的媒体只读栅栏是模拟，不能代替 Linux job。
 
 本机 Windows 对 Linux mount 验收不能作为通过或阻塞的唯一理由；GitHub Linux runner 已证明支持初始 loop 文件系统操作。外部备份故障域、生产证书、目标服务器角色 ACL、真实调度告警投递及上线仍须单独验收，同机临时副本不是异地容灾。不修改业务模块、公共台账和现有 CI workflow。

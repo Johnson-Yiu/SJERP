@@ -21,7 +21,9 @@ if tool == "pg_dump" and "--file" in arguments:
 elif tool == "pg_restore" and "--version" not in arguments:
     source = Path(arguments[-1])
     with source.open("rb") as input_file:
-        result = subprocess.run(command + arguments[:-1] + ["-"], stdin=input_file, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # pg_restore reads stdin when the filename is omitted; a literal "-"
+        # is interpreted as a filename by PostgreSQL 17.
+        result = subprocess.run(command + arguments[:-1], stdin=input_file, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 else:
     result = subprocess.run(command + arguments, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     sys.stdout.buffer.write(result.stdout)

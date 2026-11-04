@@ -52,8 +52,10 @@ export async function downloadQuoteExport(id, quoteNo) {
   anchor.download = `${quoteNo}.xlsx`
   document.body.appendChild(anchor)
   anchor.click()
-  anchor.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 0)
+  setTimeout(() => {
+    anchor.remove()
+    URL.revokeObjectURL(url)
+  }, 1000)
 }
 
 export async function downloadPackingListExport(id, shipmentNo) {

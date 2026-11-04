@@ -26,10 +26,10 @@ test.beforeAll(async ({ browser }) => {
   await fs.mkdir(screenshotDir, { recursive: true })
   const cdp = await browser.newBrowserCDPSession()
   const version = await cdp.send('Browser.getVersion')
-  const command = await cdp.send('Browser.getBrowserCommandLine')
   await cdp.detach()
   const identity = { channel: 'chrome', version: browser.version(), product: version.product,
-    executable: command.arguments[0], synthetic_data_only: true }
+    user_agent: version.userAgent, launch_path_evidence: 'Playwright pw:browser launch log',
+    synthetic_data_only: true }
   await fs.writeFile(path.join(evidenceDir, 'browser-identity.json'), JSON.stringify(identity, null, 2), 'utf8')
   console.log(`ISS007_BROWSER_IDENTITY=${JSON.stringify(identity)}`)
 })

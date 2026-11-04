@@ -1,5 +1,13 @@
 # ISS-037 打印成品验收：进行中
 
+## PRINT-ACCEPTANCE-CLOSEOUT 核查（2026-11-04）
+
+远端规则提交 `f5f23339278f9dd5a121093c9d86a8a9bba819a2` 已快进，原有三份本地未提交生成文件未覆盖。本地采用内存 SQLite 与专用临时媒体，`python manage.py test crm.tests.test_quote_template_snapshot crm.tests.test_quote_template_migration crm.tests.test_iss020_quote_export --verbosity 1`：19 项通过；`npm run build` 通过（保留原有大包警告）。这些只证明对应自动化，不等同 UI 成品矩阵。
+
+规则提交的 [CI #41772625020](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41772625020)：backend、backend-postgres 成功；frontend 在隔离 Playwright 阶段失败，随后构建未运行。日志中 229 项通过、1 项失败；失败是本分支 `Chrome UI print to PDF` 强制 `headless:false`，Linux runner 报 `Missing X server or $DISPLAY`，浏览器没有启动。这是该测试的 CI 图形环境条件失败，不能据此推断产品打印成功或失败，也不能将其跳过写成通过。此前本机内置浏览器实际点击的输入调用超时，打印按钮保持禁用，无可见打印窗口、无 PDF；具体原因仍未确定。现有已保存版本样本是草稿，尚不能代替正式报价。
+
+工作包状态：A 的两项现象及 CI 失败路径已定位，应用阻塞与浏览器/宿主的根因仍未隔离；B 的真实 UI PDF、正式文件逐页和模板变化后跨预览/XLSX/打印对账仍 BLOCKED；C 的本地后端定向及构建通过，完整最终 CI 需以新提交的真实结果另行核验。解除条件是在获准且可操作内置浏览器打印对话的隔离环境中取得实际 PDF，并对全部场景逐项对账；不更换为用户禁止的浏览器，不把独立渲染或打印事件当成 UI 成品。
+
 基线 `d5abc64750d00c89d685bf12c0f8f67d4ba10a97`。本记录只覆盖合成数据的局部检查，**不构成实际 UI 打印成品验收通过**，不关闭 ISS-037。
 
 ## 本轮已核实

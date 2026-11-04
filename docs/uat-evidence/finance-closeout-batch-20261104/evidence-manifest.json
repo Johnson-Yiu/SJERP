@@ -1,5 +1,5 @@
 {
-  "source_head": "d9090ff7ff1da121b9f6bb51c1766cd4c5e407fb",
+  "source_head": "66c2395746ece741f9b5aa75547c6386a7862698",
   "logs": [
     {
       "original": "acceptance-backend-targeted.log",
@@ -715,8 +715,8 @@
     },
     {
       "path": "README.md",
-      "size": 11420,
-      "sha256": "a95dedac66de70cdb452f800239c9082767561b852426add4eddb2fb5194324b"
+      "size": 11418,
+      "sha256": "5fa4bcc09e4c0ca5124205a3e3c8d3bd1af976e642fe7309b03ca4b4d879bfbe"
     },
     {
       "path": "run-postgres-tests.py",

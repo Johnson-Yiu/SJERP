@@ -1,0 +1,23 @@
+{
+  "connection": {
+    "host": "127.0.0.1",
+    "port": 55432,
+    "user": "sunjack_maintenance",
+    "dbname": "sunjack_isolated_acceptance",
+    "passfile": "/etc/sunjack-secrets/pgpass",
+    "sslmode": "verify-full",
+    "sslrootcert": "/etc/sunjack/tls/postgres-ca.pem",
+    "connect_timeout": 10
+  },
+  "pg_bin": "/usr/lib/postgresql/17/bin",
+  "expected_database": "sunjack_isolated_acceptance",
+  "expected_system_identifier": "REPLACE_WITH_VERIFIED_ISOLATED_CLUSTER_ID",
+  "app_sha": "REPLACE_WITH_EXACT_REVIEWED_40_CHARACTER_SHA",
+  "media_root": "/srv/sunjack/private-media-readonly",
+  "destination_directory": "/srv/sunjack/backups",
+  "encryption": {
+    "key_file": "/etc/sunjack-secrets/backup-key",
+    "executable": "/usr/bin/gpg",
+    "msys_paths": false
+  }
+}

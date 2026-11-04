@@ -7,7 +7,7 @@ from crm.services.operations_postgres import MaintenanceBackup
 
 class MaintenanceSafetyTests(TestCase):
     def setUp(self):
-        self.service = MaintenanceBackup(connection_options={}, pg_bin="/explicit/tools", expected_database="synthetic",
+        self.service = MaintenanceBackup(connection_options={"host": "127.0.0.1", "port": 9999, "user": "synthetic", "dbname": "synthetic"}, pg_bin="/explicit/tools", expected_database="synthetic",
                                          expected_system_identifier="1234", app_sha="a" * 40)
 
     def test_unproved_media_fence_refuses_before_database_connection(self):

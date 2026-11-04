@@ -62,6 +62,10 @@ class MaintenanceBackup:
         if len(app_sha) != 40 or any(c not in "0123456789abcdef" for c in app_sha):
             raise ValueError("A complete application SHA is required")
         self.options = dict(connection_options)
+        if not all(self.options.get(key) for key in ("host", "port", "user", "dbname")):
+            raise ValueError("Explicit PostgreSQL host, port, user and database required")
+        if self.options["dbname"] != expected_database:
+            raise ValueError("Database connection and expected identity differ")
         self.pg_bin = Path(pg_bin)
         self.database = expected_database
         self.system_identifier = str(expected_system_identifier)
@@ -92,7 +96,9 @@ class MaintenanceBackup:
         if not executable.is_absolute() or not executable.is_file():
             raise ValueError("Explicit PostgreSQL tools are required")
         environment = os.environ.copy()
-        for option, variable in (("host", "PGHOST"), ("port", "PGPORT"), ("user", "PGUSER"), ("password", "PGPASSWORD"), ("passfile", "PGPASSFILE")):
+        for variable in ("PGHOSTADDR", "PGSERVICE", "PGSERVICEFILE", "PGOPTIONS", "PGPASSWORD", "PGPASSFILE", "PGSSLMODE", "PGSSLROOTCERT"):
+            environment.pop(variable, None)
+        for option, variable in (("host", "PGHOST"), ("port", "PGPORT"), ("user", "PGUSER"), ("password", "PGPASSWORD"), ("passfile", "PGPASSFILE"), ("sslmode", "PGSSLMODE"), ("sslrootcert", "PGSSLROOTCERT")):
             if option in self.options:
                 environment[variable] = str(self.options[option])
         environment["PGCONNECT_TIMEOUT"] = "10"

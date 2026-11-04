@@ -100,16 +100,27 @@ def main():
             raise AssertionError("wrong archive digest accepted")
         with drill._connect(drill.source) as connection:
             assert database_state(connection) == before
-        print(json.dumps({"status": "PASS", "scope": "real-PG17-with-simulated-media-fence", "active_session_rejected": active_rejected,
+        result = {"status": "PASS", "scope": "real-PG17-with-simulated-media-fence", "active_session_rejected": active_rejected,
                           "other_login_rejected": login_rejected, "restored_verified": restored["verified"],
                           "audit_truncate_rejected": restored["audit_truncate_rejected"], "source_unchanged": True,
                           "real_lock_competition_rejected": lock_competition_rejected, "bad_digest_rejected": bad_digest_rejected,
                           "tables": len(before["tables"]), "rows": sum(v["rows"] for v in before["tables"].values()),
-                          "seconds": round(time.monotonic()-clock, 3)}))
+                          "seconds": round(time.monotonic()-clock, 3)}
     finally:
         if started:
             run_tool([tool(pg, "pg_ctl"), "-D", str(cluster), "-m", "fast", "-w", "stop"])
-        shutil.rmtree(root)
+        if root.parent.resolve() != Path(tempfile.gettempdir()).resolve() or not root.name.startswith("sunjack-iss018-pg17-") or root.is_symlink():
+            raise RuntimeError("Owned cleanup root identity mismatch")
+        for attempt in range(5):
+            try:
+                shutil.rmtree(root)
+                break
+            except PermissionError:
+                if attempt == 4:
+                    raise
+                time.sleep(1)
+    result["cleanup"] = "complete"
+    print(json.dumps(result))
 
 
 if __name__ == "__main__":

@@ -57,6 +57,7 @@ CI运行现有完整Backend/PostgreSQL/Frontend，最终精确SHA及三Job状态
 - 历次日志不覆盖：sqlite-first/corrected-harness/expanded记录测试夹具修正及授权角色真实失败；sqlite-release、postgres-release是冻结专属测试后的复验；defects-final-sqlite、defects-release-postgres为未修反例。
 - 夹具问题明确与产品区分：长测试名文件超过Windows路径长度，改哈希短名（完整test id保留JSON）；Customer字段/Order日期按模型修正；ORM `_state`对象地址不能作历史字段比较，改`.values()`全字段；报表`amount`原合同为收入减支出的有符号净额（reporting.py 83/146），首轮误当毛额，毛额API/CSV逐方向断言完整保留。没有借此改动三项业务缺陷的期望。
 - CI 41855126285的PG全量1338项出现1个新增HTTP测试失败：部署设置按既有SessionAuthenticationWithChallenge返回匿名401，而测试误用了普通Session的403。测试现在显式保留普通Session精确403，并另验实际配置及部署Session挑战子类的精确状态/WWW-Authenticate与无文件泄漏；认证后无权角色仍精确403。不改认证器/设置/工作流，不把401当产品权限缺陷；原始完整Job日志为ci-postgres-first。
+- CI [41857369306](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41857369306)，源码3c34d9e121e751af39267fc28338bf2233178fc3：Backend 1339项/65跳过、PostgreSQL1339项/30跳过均成功，七组新竞争均实际执行。Frontend失败1项既有ISS-037原生打印`iss037-print-output-acceptance.spec.js:74`的1440px/headers=false场景，30000ms测试超时；业务套件其余244项通过，后续其他隔离套件继续执行，构建因前步骤失败未执行。完整日志ci-frontend-print-timeout；[官方打印产物](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41857369306/artifacts/13339801702)。本包未改打印测试、前端或产品代码，前一运行41855126285的Frontend成功。仅凭超时和前次成功不能确定根因或宣称修复。按现有ISS-037关联跟进，不新建重复Issue，不加超时/删断言；由打印/集成任务接收。此后纯证据提交的CI另按精确SHA交付，不覆盖本次失败，也不把后续重跑绿色当作打印稳定性已经修复。
 
 ## 可达性与后续协调
 

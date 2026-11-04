@@ -67,8 +67,9 @@ test('saved PI permits printing after resources load on narrow screen', async ({
   await rendered.close()
 })
 
-for (const [label, width] of [['complete', 1440], ['complete', 390], ['multipage', 1440], ['optional-empty', 1440]]) {
-test(`Chrome UI print to PDF ${label} ${width}px`, async ({ baseURL }, testInfo) => {
+for (const [label, width, headers = false] of [['complete', 1440], ['complete', 1440, true], ['complete', 390], ['multipage', 1440], ['optional-empty', 1440]]) {
+test(`Chrome UI print to PDF ${label} ${width}px headers=${headers}`, async ({ baseURL }, testInfo) => {
+  const artifactName = `ui-formal-${label}-${width}-headers-${headers}`
   const sample = formalFixture.samples.find(item => item.label === label)
   expect(sample.status).toBe('sent')
   const profile = testInfo.outputPath('chrome-profile')
@@ -79,7 +80,7 @@ test(`Chrome UI print to PDF ${label} ${width}px`, async ({ baseURL }, testInfo)
     printing: { print_preview_sticky_settings: { appState: JSON.stringify({
       recentDestinations: [{ id: 'Save as PDF', origin: 'local', account: '' }],
       selectedDestinationId: 'Save as PDF', version: 2,
-      isHeaderFooterEnabled: false, isLandscapeEnabled: false, scaling: '100',
+      isHeaderFooterEnabled: headers, isLandscapeEnabled: false, scaling: '100', marginsType: 0,
       mediaSize: { height_microns: 297000, width_microns: 210000, name: 'ISO_A4', custom_display_name: 'A4' },
     }) } },
     savefile: { default_directory: output },
@@ -92,8 +93,18 @@ test(`Chrome UI print to PDF ${label} ${width}px`, async ({ baseURL }, testInfo)
     await page.goto(`${baseURL}/quotes?detail=${sample.id}`)
     const detail = page.getByRole('dialog', { name: '报价工作台' })
     await expect(detail).toBeVisible()
+    const response = page.waitForResponse(r => r.url().includes(`/quotes/${sample.id}/pi-data/`))
     await detail.getByRole('button', { name: '预览 PI' }).first().click()
+    const pi = await response
+    expect(pi.status()).toBe(200)
+    const saved = await pi.json()
+    expect(saved.seller.name).toBe('Synthetic Seller')
+    expect(saved.buyer.name).toBe(label === 'optional-empty' ? '' : 'Synthetic Recipient')
+    fs.writeFileSync(path.join(evidence, `${artifactName}.json`), JSON.stringify({
+      source: 'UI print button', paper: 'A4', headers, width, quote: sample, api: saved,
+    }, null, 2))
     await expect(page.locator('iframe[title="已保存 PI"]')).toBeVisible()
+    await page.screenshot({ path: path.join(evidence, `${artifactName}.png`) })
     // The native print dialog may block the renderer, so schedule a real DOM
     // click after this evaluation returns and poll the output from Node.
     await page.evaluate(() => {
@@ -103,7 +114,7 @@ test(`Chrome UI print to PDF ${label} ${width}px`, async ({ baseURL }, testInfo)
     })
     await expect.poll(() => fs.readdirSync(output).filter(name => name.endsWith('.pdf')), { timeout: 20000 }).not.toHaveLength(0)
     const file = fs.readdirSync(output).find(name => name.endsWith('.pdf'))
-    fs.copyFileSync(path.join(output, file), path.join(evidence, `ui-formal-${label}-${width}.pdf`))
+    fs.copyFileSync(path.join(output, file), path.join(evidence, `${artifactName}.pdf`))
   } finally {
     await browser.close()
   }

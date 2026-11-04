@@ -131,5 +131,7 @@ jobs:
           path: |
             docs/uat-evidence/ci-${{ github.run_id }}-${{ github.run_attempt }}/
             docs/uat-evidence/r1-iss037-print-output-acceptance-20261104/ui-formal-*.pdf
+            docs/uat-evidence/r1-iss037-print-output-acceptance-20261104/ui-formal-*.json
+            docs/uat-evidence/r1-iss037-print-output-acceptance-20261104/ui-formal-*.png
           if-no-files-found: warn
           retention-days: 7

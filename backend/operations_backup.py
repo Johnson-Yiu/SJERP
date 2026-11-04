@@ -84,16 +84,21 @@ def main():
     args = parser.parse_args()
     try:
         config = json.loads(Path(args.config).read_text(encoding="utf-8"))
-        allowed = {"connection", "pg_bin", "expected_database", "expected_system_identifier", "app_sha", "media_root", "destination", "destination_directory", "archive", "expected_sha256", "encrypted_sha256", "media_parent", "encryption", "receipt_signing", "receipt_output"}
+        allowed = {"connection", "pg_bin", "expected_database", "expected_system_identifier", "app_sha", "media_root", "destination", "destination_directory", "archive", "expected_sha256", "encrypted_sha256", "media_parent", "encryption", "receipt_signing", "receipt_output", "receipt_read_group"}
         if not isinstance(config, dict) or set(config) - allowed:
             raise ValueError("Unsupported configuration")
+        if args.operation != "restore-encrypted-verify" and "receipt_read_group" in config:
+            raise ValueError("Receipt reader group applies only to restore-encrypted-verify")
         connection = config["connection"]
         if not isinstance(connection, dict) or set(connection) - {"host", "port", "user", "dbname", "passfile", "sslmode", "sslrootcert", "connect_timeout"}:
             raise ValueError("Only nonsecret connection options and a separate passfile path are accepted")
         if connection.get("dbname") != config["expected_database"]:
             raise ValueError("Database identity must be explicit")
-        import os
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+        import django
+        from django.apps import apps
+        if not apps.ready:
+            django.setup()
         # Service helpers need Django settings, but this process never starts a web service.
         from crm.services.operations_postgres import MaintenanceBackup
         service = MaintenanceBackup(connection_options=connection, pg_bin=config["pg_bin"],
@@ -129,7 +134,12 @@ def main():
                 result = service.backup(media_root=config["media_root"], destination=destination)
             result["archive"] = str(destination)
         elif args.operation == "restore-encrypted-verify":
-            from crm.services.operations_receipt import restore_and_sign
+            from crm.services.operations_receipt import (
+                publish_receipt_file,
+                resolve_receipt_read_group,
+                restore_and_sign,
+            )
+            receipt_group_gid = resolve_receipt_read_group(config.get("receipt_read_group"))
             encryption = dict(config["encryption"])
             if set(encryption) - {"key_file", "executable", "msys_paths"}:
                 raise ValueError("Unsupported encryption configuration")
@@ -151,15 +161,17 @@ def main():
                 media_parent=config["media_parent"], gpg_executable=encryption["executable"], encryption_key=key,
                 msys_paths=encryption.get("msys_paths", False), openssl_executable=signer["executable"], signing_key=signer["private_key"])
             try:
-                from crm.services.operations_postgres import publish_archive
-                with publish_archive(receipt_path) as output:
-                    output.write(json.dumps(receipt, sort_keys=True).encode("utf-8"))
+                publication = publish_receipt_file(
+                    receipt_path,
+                    json.dumps(receipt, sort_keys=True).encode("utf-8"),
+                    group_gid=receipt_group_gid,
+                )
             except Exception as error:
                 error.add_note("Verified restore exists; operator must inspect target " + restored["database"])
                 raise
             result = {**restored, "receipt_file": str(receipt_path)}
-            if output.staging_cleanup_warning:
-                result["receipt_staging_cleanup_warning"] = output.staging_cleanup_warning
+            if publication["staging_cleanup_warning"]:
+                result["receipt_staging_cleanup_warning"] = publication["staging_cleanup_warning"]
         else:
             result = service.restore(archive=config["archive"], expected_sha256=config["expected_sha256"], media_parent=config["media_parent"])
         print(json.dumps({"status": "VERIFIED", **result}, sort_keys=True))

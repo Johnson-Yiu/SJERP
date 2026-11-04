@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - codex/linux-operations-acceptance-20261104
+      - codex/r1-prelaunch-consolidation-20261104
 permissions:
   contents: read
 jobs:

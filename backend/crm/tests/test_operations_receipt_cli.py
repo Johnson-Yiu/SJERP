@@ -1,9 +1,12 @@
 import contextlib
 import io
 import json
+import os
 from pathlib import Path
+import stat
 import sys
 import tempfile
+import unittest
 from unittest import TestCase, mock
 
 import operations_backup
@@ -42,6 +45,71 @@ class ReceiptCliTests(TestCase):
         self.assertEqual(status, 0)
         self.assertEqual(result["status"], "VERIFIED")
         self.assertEqual(json.loads(self.receipt.read_text(encoding="utf-8")), signed)
+        if os.name == "posix":
+            self.assertEqual(stat.S_IMODE(self.receipt.stat().st_mode), 0o600)
+        restore.assert_called_once()
+
+    @unittest.skipUnless(os.name == "posix", "POSIX group publication requires Linux/POSIX")
+    def test_configured_group_receipt_is_0640_and_uses_the_current_group(self):
+        import grp
+
+        group = grp.getgrgid(os.getegid()).gr_name
+        config = json.loads(self.config.read_text(encoding="utf-8"))
+        config["receipt_read_group"] = group
+        self.config.write_text(json.dumps(config), encoding="utf-8")
+        signed = {"payload": {"synthetic": True}, "signature": "synthetic-signature"}
+
+        status, result, restore = self.invoke(lambda *_args, **_kwargs: (signed, {"database": "sunjack_restore_synthetic", "verified": True}))
+
+        info = self.receipt.stat()
+        self.assertEqual(status, 0)
+        self.assertEqual(result["status"], "VERIFIED")
+        self.assertEqual(info.st_gid, os.getegid())
+        self.assertEqual(stat.S_IMODE(info.st_mode), 0o640)
+        self.assertEqual(json.loads(self.receipt.read_text(encoding="utf-8")), signed)
+        restore.assert_called_once()
+
+    def test_unknown_or_unsupported_receipt_group_fails_before_restore(self):
+        config = json.loads(self.config.read_text(encoding="utf-8"))
+        config["receipt_read_group"] = "sunjack-no-such-receipt-group-" + "f" * 16
+        self.config.write_text(json.dumps(config), encoding="utf-8")
+
+        status, result, restore = self.invoke(AssertionError("invalid group must fail before restore"))
+
+        self.assertEqual(status, 1)
+        self.assertEqual(result["status"], "FAILED")
+        self.assertFalse(self.receipt.exists())
+        self.assertEqual(list(self.root.glob(".sunjack-receipt-*.partial")), [])
+        restore.assert_not_called()
+
+    @unittest.skipUnless(os.name == "posix", "POSIX descriptor permission failure requires Linux/POSIX")
+    def test_group_permission_failure_never_publishes_receipt(self):
+        import grp
+
+        config = json.loads(self.config.read_text(encoding="utf-8"))
+        config["receipt_read_group"] = grp.getgrgid(os.getegid()).gr_name
+        self.config.write_text(json.dumps(config), encoding="utf-8")
+        signed = {"payload": {"synthetic": True}, "signature": "synthetic-signature"}
+        with mock.patch("crm.services.operations_receipt.os.fchmod", side_effect=PermissionError("synthetic mode failure")), \
+             mock.patch("crm.services.operations_receipt.os.link") as link:
+            status, result, restore = self.invoke(lambda *_args, **_kwargs: (signed, {"database": "sunjack_restore_synthetic", "verified": True}))
+
+        self.assertEqual(status, 1)
+        self.assertEqual(result["status"], "FAILED")
+        self.assertFalse(self.receipt.exists())
+        self.assertEqual(list(self.root.glob(".sunjack-receipt-*.partial")), [])
+        link.assert_not_called()
+        restore.assert_called_once()
+
+    def test_link_publication_failure_cleans_staging_and_does_not_publish(self):
+        signed = {"payload": {"synthetic": True}, "signature": "synthetic-signature"}
+        with mock.patch("crm.services.operations_receipt.os.link", side_effect=OSError("synthetic publication failure")):
+            status, result, restore = self.invoke(lambda *_args, **_kwargs: (signed, {"database": "sunjack_restore_synthetic", "verified": True}))
+
+        self.assertEqual(status, 1)
+        self.assertEqual(result["status"], "FAILED")
+        self.assertFalse(self.receipt.exists())
+        self.assertEqual(list(self.root.glob(".sunjack-receipt-*.partial")), [])
         restore.assert_called_once()
 
     def test_failed_restore_and_existing_receipt_never_overwrite(self):

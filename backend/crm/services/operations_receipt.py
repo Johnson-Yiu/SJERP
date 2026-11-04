@@ -12,10 +12,122 @@ from pathlib import Path
 import re
 import subprocess
 import tempfile
+import uuid
 import zipfile
 
 from .operations_copy import digest
 from .operations_crypto import crypt_file
+
+
+def resolve_receipt_read_group(group_name):
+    """Resolve an explicitly configured POSIX reader group before recovery."""
+    if group_name is None:
+        return None
+    if (not isinstance(group_name, str) or not group_name or
+            group_name != group_name.strip() or "\x00" in group_name):
+        raise ValueError("Receipt reader group must be a non-empty POSIX group name")
+    if os.name != "posix":
+        raise ValueError("Receipt reader groups are supported only on POSIX")
+    try:
+        import grp
+    except ImportError as error:
+        raise ValueError("POSIX group lookup is unavailable") from error
+    try:
+        return grp.getgrnam(group_name).gr_gid
+    except KeyError as error:
+        raise ValueError("Configured receipt reader group does not exist") from error
+
+
+def _set_receipt_file_permissions(fd, group_gid):
+    if os.name != "posix":
+        if group_gid is not None:
+            raise ValueError("Receipt reader groups are supported only on POSIX")
+        return
+    if not hasattr(os, "fchmod"):
+        raise RuntimeError("File descriptor permission control is unavailable")
+    if group_gid is None:
+        os.fchmod(fd, 0o600)
+        return
+    if type(group_gid) is not int or group_gid < 0 or not hasattr(os, "fchown"):
+        raise ValueError("A valid POSIX receipt reader group is required")
+    # Keep the staging file private until its contents are complete. The group
+    # and read-only mode are applied to the open descriptor before publication.
+    os.fchown(fd, -1, group_gid)
+    os.fchmod(fd, 0o640)
+
+
+def publish_receipt_file(destination, content, *, group_gid=None):
+    """Atomically publish a signed receipt, optionally readable by one group."""
+    destination = Path(destination)
+    if (not destination.is_absolute() or destination.is_symlink() or
+            not destination.parent.is_dir() or os.path.lexists(destination)):
+        raise ValueError("A new absolute receipt path in an existing directory is required")
+    if not isinstance(content, bytes):
+        raise TypeError("Receipt content must be bytes")
+    if group_gid is not None and (type(group_gid) is not int or group_gid < 0):
+        raise ValueError("A valid POSIX receipt reader group is required")
+
+    staging = destination.parent / (".sunjack-receipt-" + uuid.uuid4().hex + ".partial")
+    fd = os.open(staging, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+    identity = os.fstat(fd)
+    published = False
+    linked = False
+    primary = None
+    result = {"staging_cleanup_warning": None}
+    try:
+        with os.fdopen(fd, "wb") as stream:
+            fd = None
+            stream.write(content)
+            stream.flush()
+            os.fsync(stream.fileno())
+            _set_receipt_file_permissions(stream.fileno(), group_gid)
+            os.fsync(stream.fileno())
+        current = staging.lstat()
+        if (current.st_dev, current.st_ino) != (identity.st_dev, identity.st_ino):
+            raise RuntimeError("Receipt staging path identity changed")
+        # A hard link publishes exclusively and never replaces an existing file.
+        os.link(staging, destination, follow_symlinks=False)
+        linked = True
+        final = destination.lstat()
+        if (final.st_dev, final.st_ino) != (identity.st_dev, identity.st_ino):
+            raise RuntimeError("Published receipt identity changed")
+        expected_mode = 0o640 if group_gid is not None else 0o600
+        if os.name == "posix" and (final.st_mode & 0o777) != expected_mode:
+            raise RuntimeError("Published receipt permissions differ from the requested mode")
+        if group_gid is not None and final.st_gid != group_gid:
+            raise RuntimeError("Published receipt group differs from the requested group")
+        published = True
+    except Exception as error:
+        primary = error
+        raise
+    finally:
+        if fd is not None:
+            os.close(fd)
+        if linked and not published:
+            try:
+                final = destination.lstat()
+                if (final.st_dev, final.st_ino) == (identity.st_dev, identity.st_ino):
+                    destination.unlink()
+            except FileNotFoundError:
+                pass
+            except Exception as cleanup_error:
+                if primary is not None:
+                    primary.add_note("Failed to remove unpublished receipt link: " + type(cleanup_error).__name__)
+        try:
+            current = staging.lstat()
+            if (current.st_dev, current.st_ino) != (identity.st_dev, identity.st_ino):
+                raise RuntimeError("Refusing to remove a replaced receipt staging path")
+            staging.unlink()
+        except FileNotFoundError:
+            pass
+        except Exception as cleanup_error:
+            if published:
+                result["staging_cleanup_warning"] = type(cleanup_error).__name__
+            elif primary is not None:
+                primary.add_note("Receipt staging cleanup failed: " + type(cleanup_error).__name__)
+            else:
+                raise
+    return result
 
 
 def _canonical(value):

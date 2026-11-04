@@ -3,6 +3,7 @@ import hashlib
 import base64
 import errno
 import getpass
+import grp
 import json
 import os
 from pathlib import Path
@@ -11,6 +12,7 @@ import secrets
 import signal
 import socket
 import shutil
+import stat
 import subprocess
 import sys
 import time
@@ -28,13 +30,29 @@ django.setup()
 from crm.services.operations_copy import digest, verified_copy
 from crm.services.operations_crypto import crypt_file
 from crm.services.operations_postgres import MaintenanceBackup, database_state, publish_archive
-from crm.services.operations_receipt import _canonical, _openssl, public_key_fingerprint, restore_and_sign
+from crm.services.operations_receipt import _canonical, _openssl, public_key_fingerprint
 from crm.services.operations_retention import prune_verified
 from crm.services.operations_monitor import check_backup_freshness
 
 
 def command(*arguments, **kwargs):
     return subprocess.run(list(map(str, arguments)), check=True, timeout=300, **kwargs)
+
+
+def run_root_receipt_cli(*, backend, config_path, encryption_key, container, port):
+    signer = subprocess.run([
+        "sudo", "-n", "env", "GITHUB_ACTIONS=true", "GITHUB_SHA=" + os.environ["GITHUB_SHA"],
+        "SUNJACK_CI_POSTGRES_CONTAINER=" + container, "SUNJACK_CI_POSTGRES_PORT=" + str(port),
+        "TMPDIR=" + os.environ["TMPDIR"], "PYTHONPATH=" + str(backend), "GIT_CONFIG_COUNT=1",
+        "GIT_CONFIG_KEY_0=safe.directory", "GIT_CONFIG_VALUE_0=" + str(backend.parent), sys.executable,
+        str(Path(__file__).with_name("linux_receipt_signer.py")), str(config_path),
+    ], input=encryption_key + b"\n", capture_output=True, timeout=600)
+    if signer.returncode:
+        raise RuntimeError("Root operations_backup CLI failed: " + signer.stderr.decode("utf-8", errors="replace")[-3000:])
+    result = json.loads(signer.stdout)
+    if result.get("status") != "VERIFIED" or "receipt" in result:
+        raise RuntimeError("Root signer did not report a file-only operations_backup CLI result")
+    return result
 
 
 def exercise_owned_timer(backend, monitor_script, config):
@@ -109,6 +127,8 @@ def exercise_owned_timer(backend, monitor_script, config):
 
 def main():
     start = time.monotonic()
+    if os.geteuid() == 0:
+        raise RuntimeError("The Linux acceptance parent must be an unprivileged retention account")
     root = Path(os.environ["SUNJACK_CI_ROOT"]).resolve(strict=True)
     runner_temp = Path(os.environ["RUNNER_TEMP"]).resolve(strict=True)
     if os.environ.get("GITHUB_ACTIONS") != "true" or root.parent != runner_temp or not root.name.startswith("sunjack-linux-pg-"):
@@ -399,6 +419,12 @@ service.backup(media_root=root+"/media",destination=root+"/interrupt-test/must-n
         command("sudo", "install", "-o", "root", "-g", "root", "-m", "0644", staged_trust, trust_file)
         key = secrets.token_hex(32).encode()
         now = datetime.now(timezone.utc)
+        retention_gid = os.getegid()
+        retention_group = grp.getgrgid(retention_gid).gr_name
+        default_receipt_read_denied = False
+        group_receipts_readable = 0
+        group_receipt_writes_denied = 0
+        real_signed_restore_count = 0
         receipts = []
         for age in (1, 2, 3):
             encrypted = archive_root / ("backup-" + uuid.uuid4().hex + ".gpg")
@@ -423,29 +449,57 @@ service.backup(media_root=root+"/media",destination=root+"/interrupt-test/must-n
                 assert not (root / "wrong-key-cli-output").exists()
             timestamp = (now-timedelta(days=age)).timestamp()
             os.utime(encrypted, (timestamp, timestamp))
-            signer_config = root / ("synthetic-signer-" + str(age) + ".json")
-            signer_config.write_text(json.dumps({"connection": options, "pg_bin": str(tool_dir), "database": database,
+            signer_base = {"connection": options, "pg_bin": str(tool_dir), "database": database,
                 "system_identifier": system, "archive": str(encrypted), "cipher_sha256": cipher["sha256"],
                 "plaintext_sha256": backup["sha256"], "media_parent": str(root), "gpg": gpg,
-                "openssl": openssl, "signing_key": str(private)}), encoding="utf-8")
-            signer = subprocess.run(["sudo", "-n", "env", "GITHUB_ACTIONS=true", "GITHUB_SHA=" + os.environ["GITHUB_SHA"],
-                "SUNJACK_CI_POSTGRES_CONTAINER=" + container, "SUNJACK_CI_POSTGRES_PORT=" + str(port),
-                "TMPDIR=" + os.environ["TMPDIR"], "PYTHONPATH=" + str(backend), "GIT_CONFIG_COUNT=1",
-                "GIT_CONFIG_KEY_0=safe.directory", "GIT_CONFIG_VALUE_0=" + str(backend.parent), sys.executable,
-                str(Path(__file__).with_name("linux_receipt_signer.py")), str(signer_config)],
-                input=key+b"\n", capture_output=True, timeout=300)
-            if signer.returncode:
-                raise RuntimeError("Independent recovery signer failed: " + signer.stderr.decode("utf-8", errors="replace")[-3000:])
-            signed_data = json.loads(signer.stdout)
-            signed, signed_restore = signed_data["receipt"], signed_data["restored"]
+                "openssl": openssl, "signing_key": str(private)}
+            if age == 1:
+                default_receipt = root / "receipt-default-0600.json"
+                default_config = root / "synthetic-signer-default.json"
+                default_config.write_text(json.dumps({**signer_base, "receipt_output": str(default_receipt)}), encoding="utf-8")
+                default_result = run_root_receipt_cli(backend=backend, config_path=default_config,
+                    encryption_key=key, container=container, port=port)
+                real_signed_restore_count += 1
+                default_info = default_receipt.stat()
+                assert default_info.st_uid == 0 and stat.S_IMODE(default_info.st_mode) == 0o600
+                try:
+                    default_receipt.read_bytes()
+                except PermissionError:
+                    default_receipt_read_denied = True
+                else:
+                    raise AssertionError("Unprivileged retention account read the default private receipt")
+                assert default_result["receipt_file"] == str(default_receipt)
+
+            receipt_file = root / ("signed-receipt-" + str(age) + ".json")
+            signer_config = root / ("synthetic-signer-" + str(age) + ".json")
+            signer_config.write_text(json.dumps({**signer_base, "receipt_output": str(receipt_file),
+                "receipt_read_group": retention_group}), encoding="utf-8")
+            signed_restore = run_root_receipt_cli(backend=backend, config_path=signer_config,
+                encryption_key=key, container=container, port=port)
+            real_signed_restore_count += 1
             restored_root = Path(signed_restore["media_root"])
             if restored_root.parent != root or not re.fullmatch(r"sunjack_restore_[0-9a-f]{32}", restored_root.name):
                 raise RuntimeError("Restored media target is outside the task-owned root")
             restored_hash = command("sudo", "sha256sum", restored_root / "finance-vouchers/synthetic.bin", capture_output=True, text=True).stdout.split()[0]
             assert signed_restore["verified"] and restored_hash == voucher_sha
+            receipt_info = receipt_file.stat()
+            assert receipt_info.st_uid == 0 and receipt_info.st_gid == retention_gid
+            assert stat.S_IMODE(receipt_info.st_mode) == 0o640
+            signed = json.loads(receipt_file.read_text(encoding="utf-8"))
+            group_receipts_readable += 1
+            try:
+                with receipt_file.open("ab") as stream:
+                    stream.write(b"\n")
+            except PermissionError:
+                group_receipt_writes_denied += 1
+            else:
+                raise AssertionError("Unprivileged retention account wrote to the signed receipt")
+            if json.loads(receipt_file.read_text(encoding="utf-8")) != signed:
+                raise AssertionError("Receipt changed after the denied write attempt")
             replica = replica_root / encrypted.name
             verified_copy(encrypted, replica, cipher["sha256"])
-            receipts.append({"name": encrypted.name, "sha256": cipher["sha256"], "restore_receipt": signed, "replica": str(replica),
+            receipts.append({"name": encrypted.name, "sha256": cipher["sha256"], "restore_receipt": signed,
+                             "receipt_file": str(receipt_file), "replica": str(replica),
                              "created_at": datetime.fromtimestamp(encrypted.stat().st_mtime_ns/1_000_000_000, timezone.utc).isoformat()})
         original = receipts[0]["restore_receipt"]
         attacker_key = key_root / "synthetic-attacker.pem"
@@ -473,8 +527,7 @@ service.backup(media_root=root+"/media",destination=root+"/interrupt-test/must-n
             pass
         else:
             raise AssertionError("A missed schedule was not detected")
-        receipt_file = root / "verified-receipt.json"
-        receipt_file.write_text(json.dumps(original), encoding="utf-8")
+        receipt_file = Path(receipts[0]["receipt_file"])
         monitor_config = root / "monitor.json"
         monitor_config.write_text(json.dumps({"archive": str(archive_root / receipts[0]["name"]),
             "receipt_file": str(receipt_file), "receipt_trust_file": str(trust_file),
@@ -559,10 +612,14 @@ service.backup(media_root=root+"/media",destination=root+"/interrupt-test/must-n
             "runtime_update_delete_truncate_denied": True, "other_login_rejected": True, "active_connection_rejected": True,
             "actual_readonly_media": True, "independent_write_protection": "tested in media-fence job",
             "remount_during_backup_rejected": True, "changed_file_during_backup_rejected": True,
-            "restored_private_voucher_sha256": voucher_sha, "real_signed_restores": len(receipts),
+            "restored_private_voucher_sha256": voucher_sha, "real_signed_restores": real_signed_restore_count,
+            "retention_receipt_files": len(receipts),
             "forged_wrong_archive_expired_rejected": True, "retention_deleted": len(result["removed"]),
             "operator_writable_trust_anchor_rejected": True, "root_owned_trust_cli_verified": True,
             "retention_cannot_read_recovery_signing_key": True,
+            "default_receipt_0600_unreadable_by_retention": default_receipt_read_denied,
+            "group_receipt_0640_readable_by_retention": group_receipts_readable,
+            "group_receipt_write_denied": group_receipt_writes_denied,
             "group_writable_retention_root_rejected": True,
             "missed_schedule_detected": True,
             "monitor_healthy_and_failure_exit_codes_verified": True, "local_alert_entry": local_alert,

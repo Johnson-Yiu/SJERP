@@ -7,7 +7,7 @@ from threading import Barrier
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
-from django.db import close_old_connections, connection
+from django.db import DatabaseError, close_old_connections, connection, connections, transaction
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework.exceptions import APIException
@@ -70,6 +70,35 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
         inventory.propose(self.group.pk, [row], "核对合成盘点", True, self.maker)
         inventory.approve(self.group.pk, "复核合成盘点", self.reviewer)
         inventory.execute(self.group.pk, self.maker)
+
+    @unittest.skipUnless(connection.vendor == "postgresql", "requires PostgreSQL TRUNCATE triggers")
+    def test_history_records_reject_raw_truncate_and_preserve_rows(self):
+        self.activate_inventory()
+        inventory.reverse(self.group.pk, "合成记录撤销", self.reviewer)
+        self.approve_contracts()
+        contracts.execute(self.group.pk, self.maker)
+        tables = ("crm_historyinventorybaseline", "crm_historyinventorybaselinereversal", "crm_historyoperationalcontract")
+        with connection.cursor() as cursor:
+            before = {}
+            for table in tables:
+                cursor.execute(f"SELECT count(*) FROM {connection.ops.quote_name(table)}")
+                before[table] = cursor.fetchone()[0]
+                self.assertGreater(before[table], 0)
+                cursor.execute("SELECT tgenabled, tgtype FROM pg_trigger WHERE tgrelid = %s::regclass AND tgname = %s", [table, table + "_truncate_guard"])
+                self.assertEqual(cursor.fetchone(), ("O", 34))
+        # Flush deferred FK trigger events before TRUNCATE so PostgreSQL reaches
+        # the statement guard instead of rejecting an in-use relation first.
+        with connection.cursor() as cursor:
+            cursor.execute("SET CONSTRAINTS ALL IMMEDIATE")
+        for table in tables:
+            with self.subTest(table=table):
+                with self.assertRaisesMessage(DatabaseError, "append-only"), transaction.atomic():
+                    with connection.cursor() as cursor:
+                        cursor.execute(f"TRUNCATE TABLE {connection.ops.quote_name(table)} CASCADE")
+                with connection.cursor() as cursor:
+                    for checked in tables:
+                        cursor.execute(f"SELECT count(*) FROM {connection.ops.quote_name(checked)}")
+                        self.assertEqual(cursor.fetchone()[0], before[checked])
 
     def test_group_balance_stock_receipt_shipment_and_later_settlement(self):
         original_sale = Order.objects.get(order_no="HIST-SO-HT-1")
@@ -318,7 +347,7 @@ class HistoricalContractsPostgresTests(HistoryTakeoverFixtureMixin, TransactionT
                 gate.wait(timeout=20)
                 return contracts.execute(group.pk, actor)
             finally:
-                close_old_connections()
+                connections.close_all()
         with ThreadPoolExecutor(max_workers=2) as pool:
             results = list(pool.map(worker, range(2)))
         self.assertEqual(results[0][0], results[1][0])

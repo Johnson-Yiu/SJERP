@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.db import close_old_connections, connection
+from django.db import close_old_connections, connection, connections
 from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework.exceptions import APIException
 
@@ -160,7 +160,7 @@ class HistoricalFinancePostgresTests(HistoryTakeoverFixtureMixin, TransactionTes
                 gate.wait(timeout=20)
                 return func(user)
             finally:
-                close_old_connections()
+                connections.close_all()
         with ThreadPoolExecutor(max_workers=2) as pool:
             return list(pool.map(worker, range(2)))
 

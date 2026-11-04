@@ -1,0 +1,6 @@
+99 objects imported automatically (use -v 2 for details).
+
+PASS 0106_historical_purchase_balance_mode: 库存流水已有仓库类型或批次，不允许回退丢失资料。
+PASS 0105_historical_operational_contract: Refusing to remove historical purchase balance semantics.
+PASS 0104_historical_inventory_baseline: Refusing to remove recorded historical operational contracts.
+PASS synthetic source data preserved and latest migrations restored

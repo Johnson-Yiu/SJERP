@@ -1,0 +1,210 @@
+Creating test database for alias 'default' ('test_sunjack_937f7e14156648c9bfb7a824bec0f68c')...
+
+Found 43 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+  Applying crm.0078_historical_contract_scope... OK
+  Applying crm.0079_shared_report_template... OK
+  Applying crm.0080_formal_party_snapshots... OK
+  Applying crm.0081_transaction_rmb_reference_label... OK
+  Applying crm.0081_supplier_lifecycle... OK
+  Applying crm.0081_product_certificate_private_file... OK
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+  Applying crm.0083_customer_supplier_preference... OK
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+  Applying crm.0085_order_quantity_adjustment... OK
+  Applying crm.0086_purchase_moq_exception... OK
+  Applying crm.0087_amount_calculation_compatibility... OK
+  Applying crm.0088_operationlog_append_only... OK
+  Applying crm.0089_operationlog_operator_protect... OK
+  Applying crm.0091_csv_import_audit... OK
+  Applying crm.0090_fulfillment_idempotency... OK
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+  Applying crm.0093_csv_import_preview_audit... OK
+  Applying crm.0094_csv_import_audit_truncate_guard... OK
+  Applying crm.0090_fulfillment_request_idempotency... OK
+  Applying crm.0095_merge_fulfillment_idempotency... OK
+  Applying crm.0096_rmbcashevent_bank_counterparty_and_more... OK
+  Applying crm.0096_quote_pi_template_snapshots... OK
+  Applying crm.0097_merge_quote_and_cash_review... OK
+  Applying crm.0098_finance_accounts... OK
+  Applying crm.0099_finance_closeout_workflows... OK
+  Applying crm.0100_finance_legacy_fact_links... OK
+  Applying crm.0101_finance_historical_transfer_links... OK
+  Applying crm.0102_bank_private_voucher_binding... OK
+  Applying crm.0098_history_takeover_workflow... OK
+  Applying crm.0103_merge_finance_and_history... OK
+  Applying crm.0104_historical_inventory_baseline... OK
+  Applying crm.0105_historical_operational_contract... OK
+  Applying crm.0106_historical_purchase_balance_mode... OK
+  Applying crm.0107_inventory_movement_location... OK
+test_cancelled_contracts_do_not_recreate_fulfillment (crm.tests.test_history_operational_contracts.HistoricalContractLifecycleTests.test_cancelled_contracts_do_not_recreate_fulfillment) ... ok
+test_completed_contracts_can_carry_verified_unpaid_balance_only (crm.tests.test_history_operational_contracts.HistoricalContractLifecycleTests.test_completed_contracts_can_carry_verified_unpaid_balance_only) ... ok
+test_balance_only_requires_explicit_amount_and_never_guesses (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_balance_only_requires_explicit_amount_and_never_guesses) ... ok
+test_failure_rolls_back_links_drafts_and_plans (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_failure_rolls_back_links_drafts_and_plans) ... ok
+test_group_balance_stock_receipt_shipment_and_later_settlement (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_group_balance_stock_receipt_shipment_and_later_settlement) ... ok
+test_manual_movements_respect_opening_stock_location (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_manual_movements_respect_opening_stock_location) ... Bad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/5/
+ok
+test_pending_shared_costs_must_use_formal_cost_workflow_before_placement (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_pending_shared_costs_must_use_formal_cost_workflow_before_placement) ... ok
+test_reversal_audit_failure_rolls_back_all_changes (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_reversal_audit_failure_rolls_back_all_changes) ... ok
+test_reversal_is_idempotent_and_preserves_records (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_reversal_is_idempotent_and_preserves_records) ... ok
+test_reversal_rejects_formal_downstream_work (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_reversal_rejects_formal_downstream_work) ... ok
+test_api_enforces_separate_review_and_permission (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_api_enforces_separate_review_and_permission) ... Bad Request: /api/import/history-takeovers/11/groups/11/finance-post/
+ok
+test_audit_failure_rolls_back_instruction_and_mapping (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_audit_failure_rolls_back_instruction_and_mapping) ... ok
+test_changed_source_does_not_create_finance_instruction (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_changed_source_does_not_create_finance_instruction) ... ok
+test_explicit_amount_review_post_and_idempotent_replay (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_explicit_amount_review_post_and_idempotent_replay) ... ok
+test_missing_amount_and_foreign_source_leave_no_instruction (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_missing_amount_and_foreign_source_leave_no_instruction) ... ok
+test_unconfirmed_source_cannot_create_instruction (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_unconfirmed_source_cannot_create_instruction) ... ok
+test_unknown_result_cannot_be_marked_failed_and_revision_replays (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_unknown_result_cannot_be_marked_failed_and_revision_replays) ... ok
+test_audit_failure_rolls_back_entire_group (crm.tests.test_history_operational_inventory.HistoricalInventoryBaselineTests.test_audit_failure_rolls_back_entire_group) ... ok
+test_baseline_is_not_movement_and_reversal_preserves_evidence (crm.tests.test_history_operational_inventory.HistoricalInventoryBaselineTests.test_baseline_is_not_movement_and_reversal_preserves_evidence) ... ok
+test_existing_or_later_movements_prevent_unsafe_baseline_and_reversal (crm.tests.test_history_operational_inventory.HistoricalInventoryBaselineTests.test_existing_or_later_movements_prevent_unsafe_baseline_and_reversal) ... ok
+test_later_movement_blocks_reversal (crm.tests.test_history_operational_inventory.HistoricalInventoryBaselineTests.test_later_movement_blocks_reversal) ... ok
+test_source_change_after_approval_is_rejected (crm.tests.test_history_operational_inventory.HistoricalInventoryBaselineTests.test_source_change_after_approval_is_rejected) ... ok
+test_third_party_owned_goods_do_not_increase_available_stock (crm.tests.test_history_operational_inventory.HistoricalInventoryBaselineTests.test_third_party_owned_goods_do_not_increase_available_stock) ... ok
+test_audit_events_are_database_append_only_and_development_identity_is_not_real_operator (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_audit_events_are_database_append_only_and_development_identity_is_not_real_operator) ... ok
+test_cancelled_and_completed_lifecycle_states_are_preserved_without_replaying_fulfillment (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_cancelled_and_completed_lifecycle_states_are_preserved_without_replaying_fulfillment) ... ok
+test_complete_synthetic_group_executes_once_without_posting_finance_stock_or_fulfillment (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_complete_synthetic_group_executes_once_without_posting_finance_stock_or_fulfillment) ... Bad Request: /api/orders/33/
+Bad Request: /api/purchase-orders/32/
+ok
+test_downloaded_template_matches_parser_and_requires_warehouse_origin_and_lot (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_downloaded_template_matches_parser_and_requires_warehouse_origin_and_lot) ... ok
+test_existing_document_conflict_blocks_approval_without_creating_a_duplicate (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_existing_document_conflict_blocks_approval_without_creating_a_duplicate) ... Bad Request: /api/import/history-takeovers/29/groups/29/review/
+ok
+test_failure_in_later_business_write_rolls_back_the_whole_group (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_failure_in_later_business_write_rolls_back_the_whole_group) ... ok
+test_late_fact_and_voucher_review_append_without_overwriting_history (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_late_fact_and_voucher_review_append_without_overwriting_history) ... Bad Request: /api/import/history-takeovers/31/groups/31/correction-review/
+ok
+test_master_change_between_approval_and_execution_requires_reapproval (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_master_change_between_approval_and_execution_requires_reapproval) ... ok
+test_name_candidate_requires_explicit_admin_mapping_and_preserves_source_value (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_name_candidate_requires_explicit_admin_mapping_and_preserves_source_value) ... Bad Request: /api/import/history-takeovers/33/groups/33/review/
+ok
+test_non_admin_application_access_is_scoped_to_applicant (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_non_admin_application_access_is_scoped_to_applicant) ... Not Found: /api/import/history-takeovers/35/
+Not Found: /api/import/history-takeovers/35/review-report.csv
+Conflict: /api/import/history-takeovers/
+ok
+test_rejection_missing_dependencies_conflicts_and_simulated_data_never_execute (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_rejection_missing_dependencies_conflicts_and_simulated_data_never_execute) ... Bad Request: /api/import/history-takeovers/36/groups/34/execute/
+Bad Request: /api/import/history-takeovers/37/groups/35/review/
+Bad Request: /api/import/history-takeovers/38/groups/36/review/
+ok
+test_restricted_employee_cannot_open_takeover_endpoints (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_restricted_employee_cannot_open_takeover_endpoints) ... ok
+test_terminal_groups_cannot_be_revived_and_group_action_returns_the_requested_group (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_terminal_groups_cannot_be_revived_and_group_action_returns_the_requested_group) ... Bad Request: /api/import/history-takeovers/40/groups/39/review/
+Bad Request: /api/import/history-takeovers/40/groups/39/resolve-master/
+Bad Request: /api/import/history-takeovers/41/groups/40/resolve-master/
+Bad Request: /api/import/history-takeovers/41/groups/40/review/
+ok
+test_concurrent_execute_creates_each_contract_once (crm.tests.test_history_operational_contracts.HistoricalContractsPostgresTests.test_concurrent_execute_creates_each_contract_once) ... ok
+test_concurrent_post_creates_one_fact_and_one_history_event (crm.tests.test_history_operational_finance.HistoricalFinancePostgresTests.test_concurrent_post_creates_one_fact_and_one_history_event) ... ok
+test_concurrent_same_source_submission_is_idempotent (crm.tests.test_history_operational_finance.HistoricalFinancePostgresTests.test_concurrent_same_source_submission_is_idempotent) ... ok
+test_different_groups_same_sku_cannot_double_the_stock (crm.tests.test_history_operational_inventory.HistoricalInventoryPostgresTests.test_different_groups_same_sku_cannot_double_the_stock) ... ok
+test_migration_refuses_to_remove_existing_baseline (crm.tests.test_history_operational_inventory.HistoricalInventoryPostgresTests.test_migration_refuses_to_remove_existing_baseline) ... ok
+test_same_group_concurrent_replay_creates_one_baseline (crm.tests.test_history_operational_inventory.HistoricalInventoryPostgresTests.test_same_group_concurrent_replay_creates_one_baseline) ... ok
+test_postgres_concurrent_execute_is_serialized_by_group_lock (crm.tests.test_history_takeover.HistoryTakeoverPostgresConcurrencyTests.test_postgres_concurrent_execute_is_serialized_by_group_lock) ... ok
+
+----------------------------------------------------------------------
+Ran 43 tests in 299.180s
+
+OK
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

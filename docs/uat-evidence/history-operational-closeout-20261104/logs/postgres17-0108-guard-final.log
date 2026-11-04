@@ -1,0 +1,5 @@
+99 objects imported automatically (use -v 2 for details).
+
+PASS 0108 refuses downgrade with pre-existing synthetic history
+PASS 0108 TRUNCATE trigger blocks populated upgraded table
+PASS pre-existing synthetic contracts remain intact

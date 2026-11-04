@@ -1,0 +1,1435 @@
+Creating test database for alias 'default'...
+
+Bad Request: /api/access-roles/1/permission-matrix/
+..Bad Request: /api/categories/reorder/
+Bad Request: /api/categories/2/
+....Bad Request: /api/customers/
+.................Forbidden: /api/actual-rmb-cash/
+Forbidden: /api/actual-rmb-cash/
+.....Bad Request: /api/shipments/4/packages/
+Bad Request: /api/shipments/4/packages/5/
+Bad Request: /api/shipments/4/packages/5/
+Bad Request: /api/shipments/4/packages/5/
+Bad Request: /api/shipments/4/copy-estimated-packing/
+Bad Request: /api/shipments/4/packages/
+Bad Request: /api/shipments/4/packages/5/
+Bad Request: /api/shipments/4/packages/5/
+Bad Request: /api/shipments/4/packages/5/
+Bad Request: /api/shipments/4/copy-estimated-packing/
+...Internal Server Error: /api/shipments/8/copy-estimated-packing/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 1513, in copy_estimated_packing
+    copy_estimated_to_actual(shipment, plan, replace=request.data.get("replace") is True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\services\packaging.py", line 161, in copy_estimated_to_actual
+    serializer.save(shipment=shipment)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\serializers.py", line 2905, in create
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1247, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\tests\test_actual_packing.py", line 464, in fail_after_first_carton
+    raise RuntimeError("copy failed after first carton")
+RuntimeError: copy failed after first carton
+.Bad Request: /api/shipments/9/packages/
+..Internal Server Error: /api/shipments/11/packages/14/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 1494, in update_package
+    record_operation(request=request, instance=shipment, action="custom", action_label="删除装箱明细", before={"package": before}, metadata={"package_id": package_id})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: audit save failed
+.Bad Request: /api/shipments/12/packages/
+Bad Request: /api/shipments/12/packages/16/
+.Bad Request: /api/shipments/13/packages/
+...Bad Request: /api/shipments/16/copy-estimated-packing/
+Bad Request: /api/shipments/16/copy-estimated-packing/
+Bad Request: /api/shipments/16/copy-estimated-packing/
+.Bad Request: /api/shipments/18/packages/
+.Internal Server Error: /api/shipments/19/packages/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 1477, in packages
+    package = serializer.save(shipment=shipment)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\serializers.py", line 2905, in create
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: save failed
+.Internal Server Error: /api/shipments/20/packages/31/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 1497, in update_package
+    serializer.is_valid(raise_exception=True); serializer.save()
+                                               ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\serializers.py", line 205, in save
+    self.instance = self.update(self.instance, validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\serializers.py", line 2917, in update
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=instance, **item) for item in items])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: save failed
+.Bad Request: /api/shipments/21/packages/32/
+...Bad Request: /api/shipments/26/packages/
+.Bad Request: /api/shipments/28/packages/
+.Bad Request: /api/shipments/29/copy-estimated-packing/
+.....Bad Request: /api/shipments/37/packages/
+.Bad Request: /api/shipments/38/packages/
+Bad Request: /api/shipments/38/packages/
+.Bad Request: /api/shipments/39/packages/
+Bad Request: /api/shipments/39/packages/
+Bad Request: /api/shipments/39/packages/
+..Bad Request: /api/shipments/41/copy-estimated-packing/
+.......Bad Request: /api/shipments/52/packages/
+Bad Request: /api/shipments/52/packages/
+Bad Request: /api/shipments/52/packages/
+..Method Not Allowed: /api/operation-logs/
+Method Not Allowed: /api/operation-logs/21/
+Method Not Allowed: /api/operation-logs/21/
+.........Forbidden: /api/finance-ledger/voucher-download/
+..........Conflict: /api/rmb-cash-events/19/confirm/
+.Internal Server Error: /api/rmb-cash-events/21/confirm/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\cash_api.py", line 151, in confirm
+    return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"),
+                               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        duplicate_token=request.data.get("duplicate_token"), duplicate_reason=request.data.get("duplicate_reason"))))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\services\cash_events.py", line 395, in confirm_event
+    event.save(update_fields=["status", "confirmed_at", "confirmed_actor", "updated_at"])
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: event save failed
+.Conflict: /api/rmb-cash-events/23/confirm/
+.Internal Server Error: /api/rmb-cash-events/25/confirm/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\cash_api.py", line 151, in confirm
+    return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"),
+                               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        duplicate_token=request.data.get("duplicate_token"), duplicate_reason=request.data.get("duplicate_reason"))))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\services\cash_events.py", line 386, in confirm_event
+    CashDuplicateReview.objects.create(event=event, candidate_ids=[c["id"] for c in candidates["items"]],
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                       reason=duplicate_reason.strip(), actor=actor(user, "release_duplicate_candidate"))
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: audit failed
+.Conflict: /api/rmb-cash-events/27/confirm/
+...Conflict: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/32/confirm/
+..Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/
+.Conflict: /api/rmb-cash-events/39/confirm/
+Conflict: /api/rmb-cash-events/41/confirm/
+..Bad Request: /api/rmb-cash-events/43/confirm/
+Bad Request: /api/rmb-cash-events/44/confirm/
+Bad Request: /api/rmb-cash-events/44/confirm/
+.Bad Request: /api/rmb-cash-events/45/cancel/
+Bad Request: /api/rmb-cash-events/
+.Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/46/confirm/
+Method Not Allowed: /api/rmb-cash-events/46/
+Method Not Allowed: /api/rmb-cash-events/46/
+Method Not Allowed: /api/rmb-cash-events/46/
+.Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+..Bad Request: /api/rmb-cash-events/50/confirm/
+Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Not Found: /api/rmb-cash-events/not-an-id/
+.Bad Request: /api/rmb-cash-events/preview/
+.........Bad Request: /api/product-certificates/44/
+Bad Request: /api/product-certificates/44/
+.....Bad Request: /api/purchase-orders/16/
+Bad Request: /api/purchase-orders/16/
+.Bad Request: /api/orders/128/cancel/
+..Bad Request: /api/orders/130/confirm/
+Bad Request: /api/orders/131/confirm/
+.Bad Request: /api/orders/132/
+Bad Request: /api/orders/132/start-production/
+Bad Request: /api/orders/133/
+.Bad Request: /api/purchase-orders/20/cancel/
+.Bad Request: /api/purchase-orders/21/receive/
+Bad Request: /api/purchase-orders/21/place/
+Bad Request: /api/purchase-orders/21/
+..Bad Request: /api/contacts/7/
+.Bad Request: /api/customers/159/
+Bad Request: /api/customers/160/
+Bad Request: /api/customers/161/
+Bad Request: /api/customers/162/
+......Bad Request: /api/follow-ups/
+...Not Found: /api/follow-ups/15/attachments/4/
+.Bad Request: /api/follow-ups/16/
+Bad Request: /api/follow-ups/16/
+.Bad Request: /api/follow-ups/17/attachments/
+....Bad Request: /api/quotes/20/mark-sent/
+Bad Request: /api/quotes/20/reject/
+Bad Request: /api/quotes/20/expire/
+.Bad Request: /api/orders/142/confirm/
+Bad Request: /api/orders/143/confirm/
+.Bad Request: /api/orders/144/
+Bad Request: /api/orders/144/
+..Bad Request: /api/quotes/29/order-draft/
+Bad Request: /api/orders/
+Bad Request: /api/quotes/30/order-draft/
+Bad Request: /api/orders/
+....................Bad Request: /api/orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/orders/170/
+Bad Request: /api/purchase-orders/23/
+Bad Request: /api/orders/170/
+Bad Request: /api/purchase-orders/23/
+...Internal Server Error: /api/orders/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 2001, in create
+    return super().create(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\audit.py", line 70, in perform_create
+    instance = serializer.save()
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\serializers.py", line 2366, in create
+    OrderItem.objects.bulk_create(rows)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: fail
+Internal Server Error: /api/purchase-orders/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 338, in create
+    return super().create(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\audit.py", line 70, in perform_create
+    instance = serializer.save()
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\serializers.py", line 787, in create
+    PurchaseOrderItem.objects.bulk_create([
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+        PurchaseOrderItem(
+        ^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        ) for item in items
+        ^^^^^^^^^^^^^^^^^^^
+    ])
+    ^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: fail
+.....Bad Request: /api/import/csv/
+...............................Bad Request: /api/transactions/140/void/
+Bad Request: /api/transactions/140/void/
+...............Not Found: /api/media/finance-vouchers/2026/11/e41240537423469191a70b540c0aff5a.pdf
+...Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+...........Unauthorized: /api/finance-ledger/
+Unauthorized: /api/finance-ledger/voucher-download/
+Unauthorized: /api/finance-ledger/instructions/
+.Content Too Large: /api/finance-ledger/vouchers/
+..........................Bad Request: /api/finance-dashboard/details/
+Bad Request: /api/finance-dashboard/details/
+........Bad Request: /api/transactions/
+.Bad Request: /api/transactions/
+........Bad Request: /api/follow-ups/
+.....Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/67/
+.....Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/
+......Bad Request: /api/inventory-movements/241/
+.Bad Request: /api/orders/342/ship/
+Bad Request: /api/orders/342/ship/
+...Bad Request: /api/orders/346/ship/
+..Bad Request: /api/orders/348/ship/
+.....Bad Request: /api/purchase-orders/61/receive/
+.Bad Request: /api/orders/354/ship/
+......Bad Request: /api/orders/358/ship/
+..Bad Request: /api/suppliers/
+...........Bad Request: /api/inventory-movements/285/
+......Internal Server Error: /api/purchase-orders/78/receipts/16/reverse/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 532, in reverse_receipt
+    record_operation(
+    ~~~~~~~~~~~~~~~~^
+        request=request,
+        ^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+        },
+        ^^
+    )
+    ^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit write failure
+...Internal Server Error: /api/purchase-orders/80/receive/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 510, in receive
+    record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, after=after, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit write failure
+..Bad Request: /api/purchase-orders/82/receipts/21/reverse/
+.Internal Server Error: /api/orders/385/ship/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 2331, in ship
+    record_operation(request=request, instance=order, action="custom", action_label="确认订单发货", before=before, after=after, metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit write failure
+.Bad Request: /api/orders/386/complete/
+....Bad Request: /api/orders/390/complete/
+............................................Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+..Bad Request: /api/orders/
+Bad Request: /api/purchase-orders/
+..Bad Request: /api/purchase-orders/95/place/
+Bad Request: /api/purchase-orders/95/pay/
+.Bad Request: /api/orders/405/confirm/
+Bad Request: /api/orders/405/generate-purchase-drafts/
+....Bad Request: /api/import/history-preflight/
+..Bad Request: /api/import/history-preflight/
+Bad Request: /api/import/history-preflight/
+........Content Too Large: /api/import/history-preflight/
+......Content Too Large: /api/import/history-preflight/
+..........Bad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/315/
+.....Bad Request: /api/import/history-takeovers/12/groups/12/finance-post/
+...............Bad Request: /api/orders/441/
+Bad Request: /api/purchase-orders/129/
+..Bad Request: /api/import/history-takeovers/30/groups/30/review/
+..Bad Request: /api/import/history-takeovers/32/groups/32/correction-review/
+..Bad Request: /api/import/history-takeovers/34/groups/34/review/
+.Not Found: /api/import/history-takeovers/36/
+Not Found: /api/import/history-takeovers/36/review-report.csv
+Conflict: /api/import/history-takeovers/
+.Bad Request: /api/import/history-takeovers/37/groups/35/execute/
+Bad Request: /api/import/history-takeovers/38/groups/36/review/
+Bad Request: /api/import/history-takeovers/39/groups/37/review/
+..Bad Request: /api/import/history-takeovers/41/groups/40/review/
+Bad Request: /api/import/history-takeovers/41/groups/40/resolve-master/
+Bad Request: /api/import/history-takeovers/42/groups/41/resolve-master/
+Bad Request: /api/import/history-takeovers/42/groups/41/review/
+.Bad Request: /api/hs-codes/2/
+Bad Request: /api/hs-codes/2/assign-products/
+.Bad Request: /api/products/416/
+..Bad Request: /api/hs-codes/
+..Bad Request: /api/hs-codes/7/assign-products/
+..Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/61/confirm/
+.Bad Request: /api/rmb-cash-events/62/confirm/
+.Bad Request: /api/rmb-cash-events/preview/
+Not Found: /api/rmb-cash-events/preview/
+Bad Request: /api/rmb-cash-events/preview/
+Bad Request: /api/rmb-cash-events/preview/
+..Bad Request: /api/inventory-movements/321/reverse/
+Bad Request: /api/inventory-movements/322/reverse/
+.Bad Request: /api/inventory-movements/323/
+Bad Request: /api/inventory-movements/323/reverse/
+..Bad Request: /api/inventory-movements/328/reverse/
+.....Internal Server Error: /api/inventory-movements/340/reverse/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 2922, in reverse
+    record_operation(request=request, instance=reversal, action="create", action_label="生成库存冲销流水", metadata={"source_movement_no": original.movement_no})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1247, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\tests\test_inventory_reversal_audit_atomicity.py", line 194, in record_first_then_fail_second
+    raise DatabaseError("second audit failure")
+django.db.utils.DatabaseError: second audit failure
+.Internal Server Error: /api/inventory-movements/342/reverse/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 2915, in reverse
+    record_operation(
+    ~~~~~~~~~~~~~~~~^
+        request=request,
+        ^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        metadata={"reversal_movement_id": reversal.id, "reversal_movement_no": reversal.movement_no, "reason": input_serializer.validated_data["reason"]},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: first audit failure
+.Bad Request: /api/inventory-movements/344/reverse/
+.Internal Server Error: /api/shipments/75/reverse/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 1445, in reverse
+    record_operation(
+    ~~~~~~~~~~~~~~~~^
+        request=request,
+        ^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+        },
+        ^^
+    )
+    ^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit failure
+.Bad Request: /api/shipments/76/reverse/
+.......Bad Request: /api/purchase-orders/148/receive/
+.Bad Request: /api/purchase-orders/149/receive/
+..Conflict: /api/purchase-orders/151/receive/
+..Conflict: /api/purchase-orders/152/receive/
+.....Unprocessable Content: /api/quotes/41/export/
+Unprocessable Content: /api/quotes/41/pi-data/
+.........................Bad Request: /api/customers/
+Bad Request: /api/customers/
+..................Bad Request: /api/orders/519/quantity-adjustments/
+....Internal Server Error: /api/orders/523/quantity-adjustments/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 2205, in quantity_adjustments
+    adjustment, replayed, preview = apply_quantity_adjustment(
+                                    ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        order,
+        ^^^^^^
+        request.data,
+        ^^^^^^^^^^^^^
+        operator=request.user,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\services\order_quantity_adjustments.py", line 425, in apply_quantity_adjustment
+    rebalance_sku_reservations(SKU.objects.get(pk=sku_id))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: reservation failure
+.Bad Request: /api/orders/524/quantity-adjustments/preview/
+Bad Request: /api/orders/524/quantity-adjustments/
+...Bad Request: /api/orders/527/quantity-adjustments/
+Bad Request: /api/orders/527/quantity-adjustments/
+Bad Request: /api/orders/527/quantity-adjustments/
+..Bad Request: /api/orders/529/quantity-adjustments/
+.Bad Request: /api/orders/530/quantity-adjustments/
+.Bad Request: /api/orders/531/quantity-adjustments/
+..Bad Request: /api/orders/533/quantity-adjustments/
+...Conflict: /api/orders/536/quantity-adjustments/
+Bad Request: /api/orders/536/
+.Bad Request: /api/orders/537/quantity-adjustments/
+.........Bad Request: /api/sku-packaging-profiles/
+Bad Request: /api/sku-packaging-profiles/16/
+Bad Request: /api/sku-packaging-profiles/16/
+Bad Request: /api/sku-packaging-profiles/16/
+Bad Request: /api/sku-packaging-profiles/16/
+Bad Request: /api/sku-packaging-profiles/16/
+Bad Request: /api/sku-packaging-profiles/16/
+Bad Request: /api/sku-packaging-profiles/16/
+Bad Request: /api/sku-packaging-profiles/16/
+.Bad Request: /api/packaging-templates/11/
+.........................Bad Request: /api/shipments/105/export-packing-list/
+........Bad Request: /api/shipments/113/export-packing-list/
+...Bad Request: /api/shipments/118/export-packing-list/
+....Bad Request: /api/payment-plans/
+..Bad Request: /api/payment-plans/
+Bad Request: /api/payment-plans/
+Bad Request: /api/payment-plans/
+.......Bad Request: /api/orders/615/generate-purchase-drafts/
+....Bad Request: /api/orders/619/generate-purchase-drafts/
+Bad Request: /api/orders/619/generate-purchase-drafts/
+...Bad Request: /api/orders/622/generate-purchase-drafts/
+Bad Request: /api/orders/622/generate-purchase-drafts/
+Bad Request: /api/orders/622/generate-purchase-drafts/
+Bad Request: /api/orders/622/generate-purchase-drafts/
+Bad Request: /api/purchase-orders/193/place/
+....................Bad Request: /api/category-attributes/5/
+Bad Request: /api/category-attributes/5/
+Bad Request: /api/category-attributes/5/
+.Bad Request: /api/categories/34/
+Bad Request: /api/categories/34/
+Bad Request: /api/categories/34/
+...Bad Request: /api/category-attributes/13/
+Bad Request: /api/category-attributes/
+Bad Request: /api/category-attributes/13/
+...Bad Request: /api/products/600/sales-model-prefix-preview/
+.Bad Request: /api/products/602/
+.Bad Request: /api/products/603/
+Bad Request: /api/categories/58/
+..Bad Request: /api/purchase-orders/239/cost-allocation/
+.Bad Request: /api/purchase-orders/240/cost-allocation/
+.Bad Request: /api/purchase-orders/241/cost-allocation/
+Bad Request: /api/purchase-orders/241/cost-allocation/
+Bad Request: /api/purchase-orders/241/cost-allocation/
+Bad Request: /api/purchase-orders/241/cost-allocation/
+Bad Request: /api/purchase-orders/241/cost-allocation/
+Bad Request: /api/purchase-orders/241/cost-allocation/
+Bad Request: /api/purchase-orders/241/cost-allocation/
+Bad Request: /api/purchase-orders/241/
+...Bad Request: /api/purchase-orders/244/cost-allocation-preview/
+..Bad Request: /api/purchase-orders/246/cost-allocation/
+Bad Request: /api/purchase-orders/246/cost-allocation/
+....Bad Request: /api/purchase-orders/251/place/
+................Bad Request: /api/purchase-orders/270/
+.Bad Request: /api/suppliers/328/
+Bad Request: /api/purchase-orders/271/
+Bad Request: /api/suppliers/328/
+Bad Request: /api/purchase-orders/272/
+Bad Request: /api/suppliers/328/
+Bad Request: /api/purchase-orders/273/
+Bad Request: /api/suppliers/328/
+Bad Request: /api/purchase-orders/274/
+Bad Request: /api/suppliers/328/
+Bad Request: /api/purchase-orders/275/
+Bad Request: /api/suppliers/328/
+Bad Request: /api/purchase-orders/276/
+Bad Request: /api/suppliers/328/
+Bad Request: /api/purchase-orders/277/
+Bad Request: /api/suppliers/328/
+Bad Request: /api/purchase-orders/278/
+Bad Request: /api/suppliers/328/
+Bad Request: /api/purchase-orders/279/
+...Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/286/
+.......Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+...Unprocessable Content: /api/quotes/preview-template/
+Unprocessable Content: /api/quotes/preview-template/
+Not Found: /api/quotes/preview-template/
+..Unprocessable Content: /api/quotes/59/pi-data/
+Unprocessable Content: /api/quotes/59/export/
+Unprocessable Content: /api/quotes/59/mark-sent/
+Unprocessable Content: /api/quotes/60/export/
+..Unprocessable Content: /api/quotes/63/pi-data/
+Unprocessable Content: /api/quotes/63/export/
+.....Internal Server Error: /api/orders/746/confirm/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 2035, in confirm
+    order = confirm_order(self.get_object())
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\services\order_lifecycle.py", line 100, in confirm_order
+    final_quote = OrderSerializer()._create_quote_revision_if_needed(
+        source_quote,
+    ...<7 lines>...
+        _order_item_payload(items),
+    )
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\serializers.py", line 2310, in _create_quote_revision_if_needed
+    create_quote_items(
+    ~~~~~~~~~~~~~~~~~~^
+        revision,
+        ^^^^^^^^^
+    ...<11 lines>...
+        source_items=source_items,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: Synthetic order revision failure
+.Internal Server Error: /api/quotes/73/revise/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 1877, in revise
+    create_quote_items(revision, item_data, source_items=source_items)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: Synthetic item failure
+.Bad Request: /api/quotes/76/
+......Unprocessable Content: /api/quotes/93/pi-data/
+Unprocessable Content: /api/quotes/93/export/
+Unprocessable Content: /api/quotes/94/pi-data/
+Unprocessable Content: /api/quotes/94/export/
+..Bad Request: /api/orders/750/complete/
+..Bad Request: /api/orders/752/
+.Bad Request: /api/orders/753/complete/
+.Bad Request: /api/orders/754/complete/
+........Bad Request: /api/quotes/
+.Method Not Allowed: /api/quotes/107/
+.Bad Request: /api/quotes/111/order-draft/
+Bad Request: /api/quotes/112/order-draft/
+.....Bad Request: /api/quotes/118/important-notes/
+..Bad Request: /api/orders/
+.Bad Request: /api/quotes/
+Bad Request: /api/quotes/122/revise/
+......Bad Request: /api/quotes/133/
+Bad Request: /api/quotes/133/
+.Bad Request: /api/quotes/
+..Bad Request: /api/quotes/138/revise/
+....Bad Request: /api/quotes/148/revise/
+.Bad Request: /api/quotes/149/revise/
+.Bad Request: /api/quotes/150/revise/
+....Bad Request: /api/skus/819/image/
+....Unprocessable Content: /api/quotes/160/export/
+...Unprocessable Content: /api/quotes/166/export/
+.....................Bad Request: /api/transactions/
+.Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+................Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+..Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+..Bad Request: /api/reports/details/
+.....................Service Unavailable: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+...Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+.Content Too Large: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/preview/
+..Forbidden: /api/import/csv/execute/
+Service Unavailable: /api/import/csv/execute/
+..Bad Request: /api/import/csv/execute/
+..Bad Request: /api/import/csv/
+.Content Too Large: /api/import/csv/preview/
+Content Too Large: /api/import/csv/execute/
+Content Too Large: /api/import/csv/
+.Content Too Large: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/preview/
+.Service Unavailable: /api/import/csv/preview/
+.Bad Request: /api/import/csv/preview/
+.Bad Request: /api/import/csv/execute/
+..Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/preview/
+.Bad Request: /api/import/csv/execute/
+..Bad Request: /api/import/csv/execute/
+.Forbidden: /api/import/csv/execute/
+..Forbidden: /api/import/csv/execute/
+.Content Too Large: /api/import/csv/preview/
+Content Too Large: /api/import/csv/execute/
+Content Too Large: /api/import/csv/
+Forbidden: /api/import/csv/execute/
+Service Unavailable: /api/import/csv/execute/
+...............................Bad Request: /api/skus/
+..Bad Request: /api/skus/
+..Bad Request: /api/quotes/
+Bad Request: /api/quotes/187/revise/
+..Bad Request: /api/quotes/
+..Bad Request: /api/sales-rules/
+.Bad Request: /api/sales-rules/9/
+Bad Request: /api/sales-rules/9/
+Bad Request: /api/sales-rules/9/
+Bad Request: /api/sales-rules/9/
+Bad Request: /api/sales-rules/9/
+.....Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/orders/
+Bad Request: /api/orders/
+...Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/orders/
+Bad Request: /api/orders/
+Bad Request: /api/orders/
+.........Bad Request: /api/products/820/combination-rules/
+Bad Request: /api/products/820/combination-rules/
+Bad Request: /api/products/820/combination-rules/
+Bad Request: /api/products/820/combination-rules/
+.Bad Request: /api/products/821/combination-rules/
+.Bad Request: /api/skus/
+Bad Request: /api/skus/
+.Bad Request: /api/skus/
+...Bad Request: /api/products/826/combination-rules/
+....Bad Request: /api/skus/1018/
+....Bad Request: /api/skus/
+.Bad Request: /api/skus/
+.Bad Request: /api/skus/1025/
+..Bad Request: /api/skus/1027/
+.....Bad Request: /api/skus/1032/
+.Bad Request: /api/skus/1033/
+..Bad Request: /api/skus/1035/
+.Bad Request: /api/skus/1036/
+Bad Request: /api/skus/1037/
+...Bad Request: /api/skus/1040/
+.Bad Request: /api/skus/
+Bad Request: /api/skus/1041/
+......Bad Request: /api/skus/1047/
+.Bad Request: /api/skus/
+.Bad Request: /api/skus/1049/
+.Bad Request: /api/skus/1051/
+....Bad Request: /api/skus/batch-create/
+..Bad Request: /api/skus/
+.Bad Request: /api/skus/1060/
+.Bad Request: /api/purchase-orders/
+.Bad Request: /api/products/876/sku-plan/publish/
+..Bad Request: /api/supplier-capabilities/
+...Bad Request: /api/products/881/sku-plan/publish/
+.Bad Request: /api/products/882/sku-plan/publish/
+.Bad Request: /api/supplier-skus/69/
+.Internal Server Error: /api/skus/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 1123, in perform_create
+    super().perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\audit.py", line 71, in perform_create
+    record_operation(request=self.request, instance=instance, action="create")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: audit failed
+.Bad Request: /api/skus/batch-create/
+.Bad Request: /api/skus/
+.Bad Request: /api/skus/
+Bad Request: /api/skus/1082/
+.Bad Request: /api/skus/1083/
+.Bad Request: /api/skus/1084/
+Bad Request: /api/skus/1084/
+Bad Request: /api/skus/1084/
+Bad Request: /api/skus/1084/
+Bad Request: /api/skus/1084/
+Bad Request: /api/skus/1084/
+....Bad Request: /api/orders/879/items/954/supplier-allocation/
+Bad Request: /api/orders/879/items/954/supplier-allocation/
+Bad Request: /api/orders/879/items/954/supplier-allocation/
+.Bad Request: /api/orders/880/items/955/supplier-allocation/
+Bad Request: /api/orders/880/items/955/supplier-allocation/
+.........Bad Request: /api/products/903/supplier-candidate-pool/
+Bad Request: /api/products/903/supplier-candidate-pool/
+.Bad Request: /api/products/905/supplier-candidate-pool/
+.Bad Request: /api/products/906/supplier-candidate-pool/
+..Bad Request: /api/suppliers/
+.................Bad Request: /api/purchase-orders/361/
+Bad Request: /api/purchase-orders/361/
+..Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+..Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+..Bad Request: /api/purchase-orders/
+...Bad Request: /api/purchase-orders/
+.Bad Request: /api/supplier-skus/101/
+Bad Request: /api/supplier-skus/102/
+.Bad Request: /api/supplier-skus/
+.............Bad Request: /api/inventory-movements/538/
+...........Bad Request: /api/orders/966/ship/
+Bad Request: /api/orders/966/ship/
+.Bad Request: /api/inventory-movements/batch/
+Bad Request: /api/inventory-movements/batch/
+........Bad Request: /api/payment-plans/549/
+.Bad Request: /api/purchase-orders/404/
+...Bad Request: /api/purchase-orders/407/receipts/55/reverse/
+.....Bad Request: /api/finance-dashboard/
+...Bad Request: /api/payment-plans/554/settle/
+Bad Request: /api/payment-plans/554/settle/
+Bad Request: /api/payment-plans/554/settle/
+Bad Request: /api/payment-plans/554/settle/
+Bad Request: /api/payment-plans/554/settle/
+...Bad Request: /api/shipments/144/reverse/
+............Bad Request: /api/transactions/568/
+Bad Request: /api/transactions/568/
+...Bad Request: /api/orders/1007/ship/
+..Bad Request: /api/sku-trade-units/31/
+Bad Request: /api/sku-trade-units/31/
+Bad Request: /api/sku-trade-units/31/
+Bad Request: /api/sku-trade-units/31/
+Bad Request: /api/sku-trade-units/31/
+Bad Request: /api/sku-trade-units/31/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/skus/1214/
+.Bad Request: /api/sku-trade-units/
+Bad Request: /api/sku-trade-units/
+.....Bad Request: /api/quotes/
+.Bad Request: /api/quotes/
+..Bad Request: /api/inventory-movements/
+..Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+..Conflict: /api/rmb-cash-events/65/confirm/
+..Conflict: /api/rmb-cash-events/69/confirm/
+...........Content Too Large: /api/import/csv/preview/
+Content Too Large: /api/import/csv/execute/
+Content Too Large: /api/import/csv/
+...........................................sssssssssssssssssssssC:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\test\utils.py:455: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with self as context:
+.ssssssss...s..C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\tests\test_legacy_qa_tools.py:139: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+.C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\tests\test_legacy_qa_tools.py:68: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+.C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\tests\test_legacy_qa_tools.py:92: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+...C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\tests\test_legacy_qa_tools.py:107: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+..C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\tests\test_legacy_qa_tools.py:82: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+..Bad Request: /api/quotes/1/accept/
+.Bad Request: /api/purchase-orders/3/receive/
+..Internal Server Error: /api/purchase-orders/5/cost-allocation/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-history-closeout-lock-20261105\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Johnson\.codex\worktrees\history-operational-closeout-20261104\森爵照明管理系统\backend\crm\views.py", line 442, in cost_allocation
+    record_operation(
+    ~~~~~~~~~~~~~~~~^
+        request=request,
+        ^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+        metadata={"purchase_no": purchase.purchase_no},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit failure
+...Bad Request: /api/purchase-orders/8/cost-allocation/
+....Bad Request: /api/import/csv/
+.........Bad Request: /api/purchase-orders/16/receipts/15/reverse/
+.s.......................................Attachment deletion committed despite a database exception; confirmed by a new connection. attachment_id=2
+.Attachment recovery copy retained: backup=C:\Users\Johnson\AppData\Local\Temp\iss007-attachment-atomicity-9i3xa7k4\.private-attachment-recovery\3a9995029dde4daa8c1ec387249996c2.bin manifest=C:\Users\Johnson\AppData\Local\Temp\iss007-attachment-atomicity-9i3xa7k4\.private-attachment-recovery\3a9995029dde4daa8c1ec387249996c2.json
+.................Attachment recovery copy retained: backup=C:\Users\Johnson\AppData\Local\Temp\iss007-attachment-atomicity-h6wn4mpl\.private-attachment-recovery\956c134c88d3400980366e8ff0a43d87.bin manifest=C:\Users\Johnson\AppData\Local\Temp\iss007-attachment-atomicity-h6wn4mpl\.private-attachment-recovery\956c134c88d3400980366e8ff0a43d87.json
+...Unauthorized: /api/quotes/
+Forbidden: /api/quotes/
+Forbidden: /api/quotes/
+Forbidden: /api/quotes/
+.Bad Request: /api/purchase-orders/3/receive/
+Bad Request: /api/purchase-orders/3/cancel/
+Bad Request: /api/orders/2/cancel/
+Bad Request: /api/purchase-orders/3/receipts/1/reverse/
+.Bad Request: /api/quotes/3/reject/
+Bad Request: /api/payment-plans/5/settle/
+.........................................................
+----------------------------------------------------------------------
+Ran 1342 tests in 1298.930s
+
+OK (skipped=31)
+Found 1342 test(s).
+System check identified no issues (0 silenced).
+P2A-DATABASE_VERIFICATION {"before": "c532dbd30b2338e00b2ce5f7f4241d9b5c1623e839c9e12efb8dc8f386757335", "after": "c532dbd30b2338e00b2ce5f7f4241d9b5c1623e839c9e12efb8dc8f386757335", "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": true}
+P2A_REAL_POSTGRES_CONCURRENCY {"case": "confirm_void_refund", "legacy_unchanged": true, "remaining": "0.0000", "vendor": "postgresql"}
+P2A_REAL_POSTGRES_CONCURRENCY {"case": "same_request_and_confirm", "one_event": true, "one_allocation": true, "vendor": "postgresql"}
+P2A_REAL_POSTGRES_CONCURRENCY {"case": "different_keys_shared_source", "results": ["confirmed", "conflict"], "source": "100.0000", "confirmed_usage": "60.0000", "remaining": "40.0000", "vendor": "postgresql"}
+P2A_MIGRATION_VERIFICATION {"vendor": "postgresql", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "身份认证信息未提供。", "error_response_raw_hex": "7b2264657461696c223a22e8baabe4bbbde8aea4e8af81e4bfa1e681afe69caae68f90e4be9be38082227d", "method": "POST", "path": "/api/quotes/", "response_bytes": 43, "response_charset": "utf-8", "response_sha256": "323035c1907e918ffa978a9bdec9f41f159f8625dde60f9585819811a73f258d", "status": 401}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "CSRF Failed: CSRF token missing.", "error_response_raw_hex": "7b2264657461696c223a2243535246204661696c65643a204353524620746f6b656e206d697373696e672e227d", "method": "POST", "path": "/api/quotes/", "response_bytes": 45, "response_charset": "utf-8", "response_sha256": "42b5ba2c392851d1351b17d5cbc856da4495a1564d8b7a4be06cbf7411128efd", "status": 403}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "CSRF Failed: CSRF token from the 'X-Csrftoken' HTTP header has incorrect length.", "error_response_raw_hex": "7b2264657461696c223a2243535246204661696c65643a204353524620746f6b656e2066726f6d207468652027582d43737266746f6b656e272048545450206865616465722068617320696e636f7272656374206c656e6774682e227d", "method": "POST", "path": "/api/quotes/", "response_bytes": 93, "response_charset": "utf-8", "response_sha256": "71ac82b11a2670862d303ce8b773f62938d023c6f95a056894ce6648ced47b0d", "status": 403}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "你没有权限执行此操作。", "error_response_raw_hex": "7b2264657461696c223a22e4bda0e6b2a1e69c89e69d83e99990e689a7e8a18ce6ada4e6938de4bd9ce38082227d", "method": "POST", "path": "/api/quotes/", "response_bytes": 46, "response_charset": "utf-8", "response_sha256": "ea74f83522e11136cc232d8cf171c7fd703dca0c2bb616e942b8d002fdc1235a", "status": 403}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/", "response_bytes": 1401, "response_charset": "utf-8", "response_sha256": "e331dd349c32815877734c4ba42bc4f01c1b240ce5546353c06098e763ac3037", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/2/mark-sent/", "response_bytes": 1403, "response_charset": "utf-8", "response_sha256": "9b5ea3ea75d3835c5a6a7a22ea8b946bf6600ba6cb9696755e85a898640657a4", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/2/accept/", "response_bytes": 1407, "response_charset": "utf-8", "response_sha256": "0c2417d8368083733d19f2c3139407b326f410383140a81c4e3df2c8da7dde6e", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/quotes/2/order-draft/", "response_bytes": 630, "response_charset": "utf-8", "response_sha256": "65b89e2149df7845401e15a754ad15c4ac9c9299e0d275ad6d6650dbb02ff713", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/", "response_bytes": 1548, "response_charset": "utf-8", "response_sha256": "3700385f4b56e64dc85e9eed05dfabb02593504c7e4fb0f9b423a07a356b7319", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/items/1/supplier-allocation/", "response_bytes": 503, "response_charset": "utf-8", "response_sha256": "0d946c1cf337e7834cfafa705c97039d8f3c8efb0cbb258654041d9f1d1c5966", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/confirm/", "response_bytes": 2241, "response_charset": "utf-8", "response_sha256": "80a42d8791e1eba3ee1c6b86bc327d8c10ee38f515d1b417b7e37863ccc5dc62", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/start-production/", "response_bytes": 2242, "response_charset": "utf-8", "response_sha256": "e329b56429e35106dc2811cf97d1233e1afcf15da023c6353556ed966d75eeeb", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/orders/2/procurement-plan/", "response_bytes": 836, "response_charset": "utf-8", "response_sha256": "31fb5cc959a20b599211335fb6e17313fdc255416128fb99bcc2d0bcf6a95a8f", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/generate-purchase-drafts/", "response_bytes": 1717, "response_charset": "utf-8", "response_sha256": "9d80a1e8fc198e4aef6606546efe10a71382996a2ea6abf0a328d6ce95bd86d5", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/2/cancel/", "response_bytes": 1742, "response_charset": "utf-8", "response_sha256": "67acc9bfe4f06998fd011f90886b5de88edf1a9bc96703d0a924f1122f27caff", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/orders/2/procurement-plan/", "response_bytes": 836, "response_charset": "utf-8", "response_sha256": "31fb5cc959a20b599211335fb6e17313fdc255416128fb99bcc2d0bcf6a95a8f", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/generate-purchase-drafts/", "response_bytes": 1717, "response_charset": "utf-8", "response_sha256": "31f3183dc38b536710e135a1c24d113fafdca83ed7c400502892f87935b28ab0", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "PATCH", "path": "/api/purchase-orders/3/", "response_bytes": 1826, "response_charset": "utf-8", "response_sha256": "dc018e7fa7cca115a225f6af13f875849e2d4f76e60345e5542c4d3db681a716", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/3/place/", "response_bytes": 2881, "response_charset": "utf-8", "response_sha256": "f57dc588745df7a7c56a371965b1a60f416e94147f3ed0008915a814b5c0d867", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/payment-plans/?direction=payable&purchase_order=3", "response_bytes": 1058, "response_charset": "utf-8", "response_sha256": "1bf0a85e1d4698e9a102860824fac76a17fb366bd50a181be23704d33255864c", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/payment-plans/3/settle/", "response_bytes": 766, "response_charset": "utf-8", "response_sha256": "27cee046a7869100fc5abfa2fe0d4b07373ee8557938f11faded8e5b2adcb622", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/transactions/1/void/", "response_bytes": 822, "response_charset": "utf-8", "response_sha256": "74f59753726f9b938652209f3fa0472fefde0e44b32243d554bf04fb5022078d", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/3/receive/", "response_bytes": 223, "response_charset": "utf-8", "response_sha256": "eca726f30d020c04bce8417b21fcf96d88d407827b52ae9f040aff72e08dd1c1", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "超到必须选择原因。", "error_response_raw_hex": "7b2264657461696c223a22e8b685e588b0e5bf85e9a1bbe98089e68ba9e58e9fe59ba0e38082227d", "method": "POST", "path": "/api/purchase-orders/3/receive/", "response_bytes": 40, "response_charset": "utf-8", "response_sha256": "81ccf474aedf60bfb7e2998b8acae5634e51ff1c7dedabe55950c8ef542ad250", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "当前采购单状态不能取消。", "error_response_raw_hex": "7b2264657461696c223a22e5bd93e5898de98787e8b4ade58d95e78ab6e68081e4b88de883bde58f96e6b688e38082227d", "method": "POST", "path": "/api/purchase-orders/3/cancel/", "response_bytes": 49, "response_charset": "utf-8", "response_sha256": "545b9080e5c83916647585703afc4857218556f1e0a51eca4b2bb0c16bb1d3d1", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/ship/", "response_bytes": 65, "response_charset": "utf-8", "response_sha256": "984acac3a4c0804d465667cbd0307560b90f5c10d87f2044ce3249eea7707f0a", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "订单已有有效发货记录，不能直接取消。", "error_response_raw_hex": "7b2264657461696c223a22e8aea2e58d95e5b7b2e69c89e69c89e69588e58f91e8b4a7e8aeb0e5bd95efbc8ce4b88de883bde79bb4e68ea5e58f96e6b688e38082227d", "method": "POST", "path": "/api/orders/2/cancel/", "response_bytes": 67, "response_charset": "utf-8", "response_sha256": "518c00e633070c8bb16b0b4ea8e332883ccd17af228371b83a518e99e5e8ddad", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "当前 SKU 实际库存不足以冲销，请先处理后续出库。", "error_response_raw_hex": "7b2264657461696c223a22e5bd93e5898d20534b5520e5ae9ee99985e5ba93e5ad98e4b88de8b6b3e4bba5e586b2e99480efbc8ce8afb7e58588e5a484e79086e5908ee7bbade587bae5ba93e38082227d", "method": "POST", "path": "/api/purchase-orders/3/receipts/1/reverse/", "response_bytes": 81, "response_charset": "utf-8", "response_sha256": "e77ac07f6e6ebbeee86d9d66ac4b57c720263f85d4e9f38b63285b3f8c00680f", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/shipments/1/reverse/", "response_bytes": 203, "response_charset": "utf-8", "response_sha256": "e53f8adefa53df32d5d57b64fdeb9b8beef27b5c9c309d518d9e26700707004c", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/3/receipts/1/reverse/", "response_bytes": 383, "response_charset": "utf-8", "response_sha256": "e0c5e2b40f110382cddf3697b6f080ea3bb2ffc3c1ecb9c413d0dd09ed958302", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/3/cancel/", "response_bytes": 3352, "response_charset": "utf-8", "response_sha256": "0f18e33eeb4f115d98f63c8dee179c8eba96d1743b06cbe7ade4dae2160b9166", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/cancel/", "response_bytes": 2315, "response_charset": "utf-8", "response_sha256": "3e70185e6ec64713f050086c5becc0c9bcbcab9c020fe7d0be51b31e325c9c5d", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/", "response_bytes": 1401, "response_charset": "utf-8", "response_sha256": "4cd8dd9c0ad47bde92f91fee4781057f2db0765d0ab9150e88d36857d0e86e8a", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/3/mark-sent/", "response_bytes": 1403, "response_charset": "utf-8", "response_sha256": "120dd29f87c630859a7419c45553c5e01220e4b5e980d36f2994d837c679d4d9", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/3/accept/", "response_bytes": 1407, "response_charset": "utf-8", "response_sha256": "b2a94ddab7c162856f6057bc26bbb349acc3a04fad8d078dcd70ce898a4b97a6", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/quotes/3/order-draft/", "response_bytes": 630, "response_charset": "utf-8", "response_sha256": "e2ea729c361bc4b09f5b384696e98cb86ffc6d119f1deaba2b649e1ec2943d20", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/", "response_bytes": 1548, "response_charset": "utf-8", "response_sha256": "ca612c112353d6295aa0e9387329f215c4e9621b1ffab420843a72a94950faf6", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/quotes/3/", "response_bytes": 1407, "response_charset": "utf-8", "response_sha256": "b2a94ddab7c162856f6057bc26bbb349acc3a04fad8d078dcd70ce898a4b97a6", "status": 200}
+CORE_HTTP {"charset_source": "not applicable", "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "detail": null, "method": "GET", "path": "/api/quotes/3/export/", "response_bytes": 10157, "response_charset": null, "response_sha256": "e8fcdd57d7b644fb71b67be11e87cc37395c5275c72d45d30c15a23dbd350092", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "当前报价状态不能执行此操作，请创建修订版重新报价。", "error_response_raw_hex": "7b2264657461696c223a22e5bd93e5898de68aa5e4bbb7e78ab6e68081e4b88de883bde689a7e8a18ce6ada4e6938de4bd9cefbc8ce8afb7e5889be5bbbae4bfaee8aea2e78988e9878de696b0e68aa5e4bbb7e38082227d", "method": "POST", "path": "/api/quotes/3/reject/", "response_bytes": 88, "response_charset": "utf-8", "response_sha256": "56efb09aa08b342146572408b42abecec587d70666dc4f6ddf02bffcc9a9c7ec", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/quotes/3/", "response_bytes": 1407, "response_charset": "utf-8", "response_sha256": "b2a94ddab7c162856f6057bc26bbb349acc3a04fad8d078dcd70ce898a4b97a6", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/3/confirm/", "response_bytes": 1663, "response_charset": "utf-8", "response_sha256": "8fbcc22fc8e147f83c0e39a852d00f1a45ec27e15c6eb7a69dee15c7f734610b", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/reports/data/?source=sales&group_by=customer&date_from=2026-11-01&date_to=2026-11-30", "response_bytes": 836, "response_charset": "utf-8", "response_sha256": "2910e6e3470852faecc2aa579ecfcd6ceefeb0fb98b880f315aae43dbcdac446", "status": 200}
+CORE_HTTP {"charset_source": "Content-Type header", "content_type": "text/csv; charset=utf-8", "detail": null, "method": "GET", "path": "/api/reports/data/?source=sales&group_by=customer&date_from=2026-11-01&date_to=2026-11-30&export=csv", "response_bytes": 529, "response_charset": "utf-8", "response_sha256": "e465c2d7ab64f610cec1ec3bb481e70a3234c21d21281b73c8dd4f001f11bfd4", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/payment-plans/?direction=receivable&search=SO-2026-00001", "response_bytes": 1086, "response_charset": "utf-8", "response_sha256": "89a4a0c2a155eddda52341a5fb188450f9490053218ada1b84abf114b0b6cbbe", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/payment-plans/5/settle/", "response_bytes": 762, "response_charset": "utf-8", "response_sha256": "189cfbbb51a4c3676014b0610d6cc5d63dd8d435dcd4bcfb2c3e98b16abb3f24", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "error_response_raw_hex": "7b22616d6f756e74223a5b22e5bf85e9a1bbe5a4a7e4ba8ee99bb6e38082225d7d", "method": "POST", "path": "/api/payment-plans/5/settle/", "response_bytes": 33, "response_charset": "utf-8", "response_sha256": "aedfdb91ae72b7cb60dadee35a7a64d1e7c08fe3e80606793127776832e51a17", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/transactions/2/void/", "response_bytes": 827, "response_charset": "utf-8", "response_sha256": "7d37eb432273bf5d822bdea30399f2e3e210b27482b1c492111aac36cd246225", "status": 200}

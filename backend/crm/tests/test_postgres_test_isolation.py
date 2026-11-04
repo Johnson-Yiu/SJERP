@@ -48,7 +48,7 @@ class CleanupControlFlowTests(SimpleTestCase):
     def set_guard_state(self, exists, applied):
         def result():
             statement = self.cursor.execute.call_args.args[0]
-            return (exists, applied) if "to_regclass" in statement else (self.name, "public")
+            return (exists, applied, False) if "to_regclass" in statement else (self.name, "public")
         self.cursor.fetchone.side_effect = result
         guards = dict(TRUNCATE_GUARDS)
         if exists and applied:

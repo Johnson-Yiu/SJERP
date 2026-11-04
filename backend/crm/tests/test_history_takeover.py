@@ -7,7 +7,7 @@ from threading import Barrier
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
-from django.db import DatabaseError, close_old_connections, connection, transaction
+from django.db import DatabaseError, close_old_connections, connection, connections, transaction
 from django.test import TestCase, TransactionTestCase, override_settings
 from openpyxl import Workbook, load_workbook
 from rest_framework.test import APIClient
@@ -588,7 +588,7 @@ class HistoryTakeoverPostgresConcurrencyTests(HistoryTakeoverFixtureMixin, Trans
                 _result, replay = execute_group(current, actor)
                 return replay
             finally:
-                close_old_connections()
+                connections.close_all()
 
         with ThreadPoolExecutor(max_workers=2) as pool:
             replayed = list(pool.map(lambda _index: run_execution(), range(2)))

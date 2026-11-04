@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.db import DatabaseError, close_old_connections, connection, transaction
+from django.db import DatabaseError, close_old_connections, connection, connections, transaction
 from django.db.migrations.executor import MigrationExecutor
 from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework.exceptions import APIException
@@ -147,7 +147,7 @@ class HistoricalInventoryPostgresTests(HistoryTakeoverFixtureMixin, TransactionT
                 except APIException:
                     return "conflict"
             finally:
-                close_old_connections()
+                connections.close_all()
         with ThreadPoolExecutor(max_workers=2) as pool:
             return list(pool.map(run, group_ids))
 
@@ -175,7 +175,7 @@ class HistoricalInventoryPostgresTests(HistoryTakeoverFixtureMixin, TransactionT
         executor = MigrationExecutor(connection)
         latest = executor.loader.graph.leaf_nodes()
         try:
-            with self.assertRaisesRegex(RuntimeError, "Refusing to remove recorded historical inventory baselines"):
+            with self.assertRaisesRegex(RuntimeError, "Refusing to remove historical append-only TRUNCATE protection"):
                 executor.migrate([("crm", "0103_merge_finance_and_history")])
             self.assertEqual(HistoryInventoryBaseline.objects.count(), 1)
         finally:

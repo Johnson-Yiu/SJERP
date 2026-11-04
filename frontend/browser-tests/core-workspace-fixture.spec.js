@@ -6,8 +6,11 @@ import path from 'node:path'
 test('isolated core workspace fixture and real API contracts', async ({ request }) => {
   test.setTimeout(process.env.CORE_WORKSPACE_IAB === '1' ? 3600000 : 120000)
   const root = path.resolve('..')
-  const evidence = path.join(root, 'docs/uat-evidence/core-workspace-ux-batch-20261104')
-  const result = execFileSync(process.env.ISOLATED_TEST_PYTHON, [path.join(evidence, 'seed_workspace.py')], { cwd: path.join(root, 'backend'), env: process.env, encoding: 'utf8' })
+  const fixtureRoot = path.join(root, 'docs/uat-evidence/core-workspace-ux-batch-20261104')
+  const evidence = process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT
+    ? path.resolve(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'core-workspace')
+    : fixtureRoot
+  const result = execFileSync(process.env.ISOLATED_TEST_PYTHON, [path.join(fixtureRoot, 'seed_workspace.py')], { cwd: path.join(root, 'backend'), env: process.env, encoding: 'utf8' })
   const fixture = JSON.parse(result.trim().split('\n').at(-1))
   const http = []
   for (const endpoint of ['customers/', 'contacts/', 'follow-ups/', 'products/', 'skus/inventory-list/', `orders/${fixture.order}/`, `purchase-orders/${fixture.purchase}/`]) {

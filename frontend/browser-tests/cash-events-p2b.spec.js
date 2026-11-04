@@ -165,6 +165,7 @@ test('expired local draft is removed during page initialization and sensitive ev
     return route.fulfill({ json: [] })
   })
   await page.goto('/rmb-cash-events')
+  await expect(page.getByRole('button', { name: '新建资金事件', exact: true })).toBeVisible()
   expect(await page.evaluate(() => localStorage.getItem('sunjack:r1-fin-p2-b:cash-event-draft:v1'))).toBeNull()
   await page.getByRole('button', { name: '新建资金事件' }).click()
   await page.getByLabel('银行净额（CNY）').fill('705.00')

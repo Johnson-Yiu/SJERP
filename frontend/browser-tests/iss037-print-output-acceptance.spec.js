@@ -6,7 +6,10 @@ import path from 'node:path'
 test.use({ channel: 'chrome' })
 let fixture
 let formalFixture
-const evidence = path.resolve('../docs/uat-evidence/r1-iss037-print-output-acceptance-20261104')
+const fixtureRoot = path.resolve('../docs/uat-evidence/r1-iss037-print-output-acceptance-20261104')
+const evidence = process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT
+  ? path.resolve(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'print-output')
+  : fixtureRoot
 
 test.beforeAll(() => {
   expect(process.env.ISOLATED_TEST_RUN_ID).toBeTruthy()
@@ -16,7 +19,7 @@ test.beforeAll(() => {
   expect(seed.status, seed.stderr).toBe(0)
   fixture = JSON.parse(seed.stdout.trim().split('\n').at(-1))
   fs.mkdirSync(evidence, { recursive: true })
-  const formal = spawnSync(process.env.ISOLATED_TEST_PYTHON, [path.join(evidence, 'seed_formal_matrix.py')], {
+  const formal = spawnSync(process.env.ISOLATED_TEST_PYTHON, [path.join(fixtureRoot, 'seed_formal_matrix.py')], {
     cwd: path.resolve('../backend'), env: process.env, encoding: 'utf8',
   })
   expect(formal.status, formal.stderr).toBe(0)

@@ -40,6 +40,7 @@
 |---|---|---|
 | Django CRM 完整测试 | 1183 tests，OK（52 skipped）；系统检查通过 | [backend-django-crm.log](logs/backend-django-crm.log) |
 | 本包与预检定向测试 | 37 tests，36 passed、1 skipped；SQLite 下 PostgreSQL 并发用例按设计跳过 | [backend-history-takeover-targeted.log](logs/backend-history-takeover-targeted.log) |
+| 迁移回滚隔离回归 | 16 tests，15 passed、1 PostgreSQL-only skipped；涵盖拒绝回滚后恢复最新迁移以及后续历史承接流程 | [migration-rollback-restore-regression.log](logs/migration-rollback-restore-regression.log) |
 | SQLite 全新数据库迁移 | 全量迁移至 0098 成功 | [sqlite-fresh-migrations.log](logs/sqlite-fresh-migrations.log) |
 | SQLite 0097 升级 | 从 CRM 0097 升至 0098 成功 | [sqlite-upgrade-0097-to-0098.log](logs/sqlite-upgrade-0097-to-0098.log) |
 | Django 检查 | `makemigrations --check --dry-run --noinput` 与 `manage.py check` 通过 | [django-checks.log](logs/django-checks.log) |
@@ -47,7 +48,7 @@
 | 有效 Vitest | 70 files / 684 tests passed | [frontend-vitest-valid-suite-final.log](logs/frontend-vitest-valid-suite-final.log) |
 | 前端生产构建 | 成功；Vite 报告主 JS chunk 超过 500 kB 的体积警告 | [frontend-build.log](logs/frontend-build.log) |
 
-完整 CRM 测试有 52 项跳过；专项并发用例使用 `TransactionTestCase`，显式要求 PostgreSQL 行锁。当前机器没有可用 PostgreSQL 17 服务，因此本地并发验收不能用 SQLite 替代。首个 GitHub PostgreSQL 17 job 发现测试类缺少创建申请 helper（`AttributeError: application_and_group`）；helper 已移入共享夹具。第二轮随后暴露前序 ISS-052 413 用例留下的临时上传目录设置污染；并发用例现显式恢复内存上传配置。两次 CI 原始日志均以无损 ZIP 保存：[helper 初次失败](logs/github-postgres17-initial-failure.zip)、[上传目录隔离失败](logs/github-postgres17-upload-isolation-failure.zip)。最新分支提交会再次运行 PostgreSQL 17 job。Vitest 最终执行有效测试目录并排除了使用 `node:test` 的 `detail-drawer-typography.spec.js`；初次广域自动发现日志保留供追溯，不计为有效 Vitest 结果。
+完整 CRM 测试有 52 项跳过；专项并发用例使用 `TransactionTestCase`，显式要求 PostgreSQL 行锁。当前机器没有可用 PostgreSQL 17 服务，因此本地并发验收不能用 SQLite 替代。GitHub PostgreSQL 17 job 先后发现并修复三项测试夹具问题：缺少创建申请 helper、ISS-052 413 用例留下的临时上传目录设置污染，以及 CSV 审计迁移拒绝回滚时未恢复之前已逐项撤销的 0095–0098 迁移。第三项会导致后续 PG 并发夹具访问的 `crm_historytakeoverapplication` 表缺失；回滚测试现无论成功或预期拒绝都会在 `finally` 中恢复迁移图，并断言承接表恢复。最新 PG17 原始失败日志已保存：[首次 helper 失败](logs/github-postgres17-initial-failure.zip)、[上传目录设置污染](logs/github-postgres17-upload-isolation-failure.zip)、[迁移状态未恢复](logs/github-postgres17-migration-restore-failure.zip)。这轮回归后会重新运行完整三项 CI；结果以本报告更新记录为准。Vitest 最终执行有效测试目录并排除了使用 `node:test` 的 `detail-drawer-typography.spec.js`；初次广域自动发现日志保留供追溯，不计为有效 Vitest 结果。
 
 ## Chrome 与模板证据
 

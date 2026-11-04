@@ -17,6 +17,7 @@ class CsvImportAuditMigrationRollbackTests(TransactionTestCase):
         executor.migrate(executor.loader.graph.leaf_nodes())
 
     def test_reverse_is_refused_while_any_audit_history_exists(self):
+        latest = MigrationExecutor(connection).loader.graph.leaf_nodes()
         operator = get_user_model().objects.create_user(
             username="csv-audit-rollback-operator",
             password="isolated-test-only",
@@ -41,14 +42,23 @@ class CsvImportAuditMigrationRollbackTests(TransactionTestCase):
             result="failed",
         )
 
-        executor = MigrationExecutor(connection)
-        with self.assertRaisesRegex(RuntimeError, "Refusing to reverse CSV import audit protection"):
-            executor.migrate([self.parent_migration])
+        try:
+            executor = MigrationExecutor(connection)
+            with self.assertRaisesRegex(RuntimeError, "Refusing to reverse CSV import audit protection"):
+                executor.migrate([self.parent_migration])
+
+            self.assertIn(self.guard_migration, MigrationRecorder(connection).applied_migrations())
+            self.assertTrue(CSVImportPreviewAudit.objects.filter(pk=preview.pk).exists())
+            self.assertTrue(CSVImportBatch.objects.filter(pk=batch.pk).exists())
+            self.assertTrue(CSVImportRowAudit.objects.filter(pk=row.pk).exists())
+        finally:
+            # MigrationExecutor commits each successfully reversed migration
+            # before reaching 0094's refusal, so restore the full graph even
+            # when the expected refusal occurs partway through the rollback.
+            self._migrate_to_latest()
 
         self.assertIn(self.guard_migration, MigrationRecorder(connection).applied_migrations())
-        self.assertTrue(CSVImportPreviewAudit.objects.filter(pk=preview.pk).exists())
-        self.assertTrue(CSVImportBatch.objects.filter(pk=batch.pk).exists())
-        self.assertTrue(CSVImportRowAudit.objects.filter(pk=row.pk).exists())
+        self.assertIn("crm_historytakeoverapplication", connection.introspection.table_names())
 
     def test_empty_audit_tables_allow_reverse_and_forward_migration(self):
         self.assertFalse(CSVImportPreviewAudit.objects.exists())

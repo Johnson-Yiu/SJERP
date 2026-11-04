@@ -1962,6 +1962,188 @@ class Transaction(TimestampedModel):
         ordering = ["-transaction_date", "-id"]
 
 
+class FinanceAccount(TimestampedModel):
+    """Explicit account identity; legacy labels never establish ownership."""
+    code = models.CharField(max_length=40, unique=True)
+    name = models.CharField(max_length=200)
+    account_type = models.CharField(max_length=12, choices=[("bank", "银行"), ("cash", "现金")])
+    ownership = models.CharField(max_length=12, choices=[("unverified", "待核实"), ("own", "自有"), ("external", "外部")], default="unverified")
+    currency = models.CharField(max_length=3, default="CNY")
+    is_active = models.BooleanField(default=True)
+    ownership_reason = models.TextField(blank=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(account_type__in=["bank", "cash"]), name="finance_account_type_valid"),
+            models.CheckConstraint(condition=models.Q(ownership__in=["unverified", "own", "external"]), name="finance_account_owner_valid"),
+            models.CheckConstraint(condition=models.Q(ownership="unverified") | ~models.Q(ownership_reason=""), name="finance_account_owner_reason"),
+        ]
+
+
+class FinanceAppendOnly(models.Model):
+    objects = OperationLogQuerySet.as_manager()
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        if self.pk and not self._state.adding:
+            raise ValidationError("资金历史只允许追加。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("资金历史不可删除。")
+
+
+class FinanceVoucher(FinanceAppendOnly):
+    file = models.FileField(upload_to="finance-vouchers/%Y/%m/")
+    original_name = models.CharField(max_length=200)
+    sha256 = models.CharField(max_length=64)
+    size = models.PositiveIntegerField()
+    actor = models.JSONField()
+    scope = models.CharField(max_length=12, default="account")
+    bank_sources = models.JSONField(default=list)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            raise ValidationError("凭证只允许追加。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("凭证不可删除。")
+
+
+class FinanceBankVoucherBinding(FinanceAppendOnly):
+    event = models.OneToOneField("RmbCashEvent", on_delete=models.PROTECT, related_name="private_voucher_binding")
+    voucher = models.ForeignKey(FinanceVoucher, on_delete=models.PROTECT)
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class FinanceInstruction(TimestampedModel):
+    request_key = models.CharField(max_length=128, unique=True)
+    request_hash = models.CharField(max_length=64)
+    payload = models.JSONField()
+    kind = models.CharField(max_length=30)
+    status = models.CharField(max_length=16, default="pending")
+    created_actor = models.JSONField()
+    approved_actor = models.JSONField(default=dict)
+    approved_at = models.DateTimeField(null=True)
+    reason = models.TextField()
+    replaces = models.ForeignKey("self", null=True, on_delete=models.PROTECT)
+
+    def save(self, *args, **kwargs):
+        if self.pk and not self._state.adding:
+            previous = type(self).objects.get(pk=self.pk)
+            for field in ("request_key", "request_hash", "payload", "kind", "created_actor", "reason", "replaces_id"):
+                if getattr(previous, field) != getattr(self, field):
+                    raise ValidationError("指令内容不可覆盖；取消后创建修订并重新复核。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("资金指令必须保留历史。")
+
+
+class FinanceFact(models.Model):
+    """Actual CNY movement or independent opening snapshot; never overwrite."""
+    instruction = models.OneToOneField(FinanceInstruction, on_delete=models.PROTECT)
+    account = models.ForeignKey(FinanceAccount, on_delete=models.PROTECT)
+    voucher = models.ForeignKey(FinanceVoucher, on_delete=models.PROTECT)
+    actual_date = models.DateField()
+    amount = models.DecimalField(max_digits=18, decimal_places=2)
+    direction = models.CharField(max_length=10)
+    kind = models.CharField(max_length=30)
+    excess_amount = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+    nature = models.CharField(max_length=30, default="unclassified")
+    truth = models.CharField(max_length=20, default="verified")
+    source_system = models.CharField(max_length=80)
+    source_key = models.CharField(max_length=128)
+    parent = models.ForeignKey("self", null=True, on_delete=models.PROTECT)
+    legacy_parent = models.ForeignKey("RmbCashEvent", null=True, on_delete=models.PROTECT)
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects = OperationLogQuerySet.as_manager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["source_system", "source_key"], name="finance_fact_source_unique"),
+            models.CheckConstraint(condition=models.Q(amount__gt=0) | models.Q(kind__in=["opening", "correction"], amount=0), name="finance_fact_positive"),
+            models.CheckConstraint(condition=models.Q(direction__in=["income", "expense"]), name="finance_fact_direction_valid"),
+            models.CheckConstraint(condition=models.Q(parent__isnull=True) | models.Q(legacy_parent__isnull=True), name="finance_fact_one_parent"),
+            models.UniqueConstraint(fields=["account"], condition=models.Q(kind="opening"), name="finance_opening_account_unique"),
+        ]
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            raise ValidationError("资金事实只允许追加；请发起更正。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("资金事实不可删除。")
+
+
+class FinanceAccountMapping(FinanceAppendOnly):
+    legacy_code = models.CharField(max_length=40, unique=True)
+    account = models.ForeignKey(FinanceAccount, on_delete=models.PROTECT)
+    reason = models.TextField()
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects = OperationLogQuerySet.as_manager()
+
+
+class FinanceReview(FinanceAppendOnly):
+    account = models.ForeignKey(FinanceAccount, on_delete=models.PROTECT)
+    date_from = models.DateField()
+    date_to = models.DateField()
+    voucher = models.ForeignKey(FinanceVoucher, on_delete=models.PROTECT)
+    statement_balance = models.DecimalField(max_digits=18, decimal_places=2)
+    calculated_balance = models.DecimalField(max_digits=18, decimal_places=2)
+    difference = models.DecimalField(max_digits=18, decimal_places=2)
+    fingerprint = models.CharField(max_length=64)
+    completed = models.BooleanField(default=False)
+    reason = models.TextField()
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects = OperationLogQuerySet.as_manager()
+
+
+class FinanceTransferMatch(FinanceAppendOnly):
+    outgoing = models.OneToOneField(FinanceFact, on_delete=models.PROTECT, related_name="outgoing_match")
+    incoming = models.OneToOneField(FinanceFact, on_delete=models.PROTECT, related_name="incoming_match")
+    reason = models.TextField()
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects = OperationLogQuerySet.as_manager()
+
+
+class FinanceHistoricalTransfer(FinanceAppendOnly):
+    outgoing_fact = models.OneToOneField(FinanceFact, null=True, on_delete=models.PROTECT, related_name="historical_outgoing_match")
+    incoming_fact = models.OneToOneField(FinanceFact, null=True, on_delete=models.PROTECT, related_name="historical_incoming_match")
+    outgoing_legacy = models.OneToOneField("RmbCashEvent", null=True, on_delete=models.PROTECT, related_name="historical_outgoing_match")
+    incoming_legacy = models.OneToOneField("RmbCashEvent", null=True, on_delete=models.PROTECT, related_name="historical_incoming_match")
+    outgoing_voucher = models.ForeignKey(FinanceVoucher, on_delete=models.PROTECT, related_name="historical_transfer_outgoing")
+    incoming_voucher = models.ForeignKey(FinanceVoucher, on_delete=models.PROTECT, related_name="historical_transfer_incoming")
+    reason = models.TextField()
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(outgoing_fact__isnull=False, outgoing_legacy__isnull=True) | models.Q(outgoing_fact__isnull=True, outgoing_legacy__isnull=False), name="finance_transfer_out_one_ref"),
+            models.CheckConstraint(condition=models.Q(incoming_fact__isnull=False, incoming_legacy__isnull=True) | models.Q(incoming_fact__isnull=True, incoming_legacy__isnull=False), name="finance_transfer_in_one_ref"),
+        ]
+
+
+class FinanceClassification(FinanceAppendOnly):
+    fact = models.ForeignKey(FinanceFact, on_delete=models.PROTECT, related_name="classifications")
+    nature = models.CharField(max_length=30)
+    reason = models.TextField()
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects = OperationLogQuerySet.as_manager()
+
+
 class RmbCashEvent(TimestampedModel):
     """Additive bank facts. Never a second business receipt or a bank balance."""
     event_no = models.CharField(max_length=64, unique=True)
@@ -2009,7 +2191,7 @@ class RmbCashEvent(TimestampedModel):
             allowed = {"status", "confirmed_at", "confirmed_actor", "cancelled_reason", "updated_at"}
             if old.status != "pending" or any(getattr(old, f.attname) != getattr(self, f.attname) for f in self._meta.concrete_fields if f.name not in allowed):
                 from django.core.exceptions import ValidationError
-                raise ValidationError("资金事实及凭证快照不可覆盖；更正政策待明确。")
+                raise ValidationError("资金事实及凭证快照不可覆盖；请使用留痕更正指令保留原始记录。")
         return super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):

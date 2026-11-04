@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test'
 import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
+import { uploadBankVoucherViaApi, uploadBankVoucherThroughUi } from './helpers/bank-voucher.js'
 
 // Real Django + SQLite only: run through scripts/run-isolated-browser-tests.mjs.
 test.use({ channel: 'chrome' })
@@ -78,6 +79,7 @@ for (const [index, width] of [1440, 390].entries()) {
     expect((await refused).status()).toBe(400)
     await expect(page.getByRole('alert')).toBeVisible()
     await page.getByLabel('银行净额（CNY）').fill('5.00')
+    await uploadBankVoucherThroughUi(page)
     const previewResponse = page.waitForResponse(r => r.url().endsWith('/rmb-cash-events/preview/') && r.request().method() === 'POST')
     await page.getByRole('button', { name: '后端预览' }).click()
     const preview = await previewResponse
@@ -98,7 +100,10 @@ for (const [index, width] of [1440, 390].entries()) {
     await page.getByRole('checkbox', { name: /我已核对以上银行凭证/ }).check()
     await page.getByRole('button', { name: '确认银行凭证' }).click()
     await expect(page.locator('.review-banner')).toContainText('已确认')
+    const proofWidth = await page.locator('.private-bank-proof').evaluate(el => ({ content: el.scrollWidth, width: el.clientWidth }))
+    expect(proofWidth.content).toBeLessThanOrEqual(proofWidth.width)
     await page.locator('.review-banner').scrollIntoViewIfNeeded()
+    await page.locator('.private-bank-proof').scrollIntoViewIfNeeded()
     await page.screenshot({ path: path.join(evidence, 'screenshots', `confirmed-fee-${width}.png`) })
     const replay = await page.request.post(`/api/rmb-cash-events/${created.id}/confirm/`, { data: { voucher_checked: true } })
     expect(replay.status()).toBe(200)
@@ -115,7 +120,14 @@ for (const [index, width] of [1440, 390].entries()) {
 }
 
 test('real API preserves optional-parent rejection, source quota and idempotency protections', async ({ page }) => {
+  const privateProofs = new Map()
   const call = async (suffix, data, expected) => {
+    if (!suffix && data.sources) {
+      const ids = data.sources.map(s => s.transaction_id).sort((a, b) => a - b)
+      const key = JSON.stringify(ids)
+      if (!privateProofs.has(key)) privateProofs.set(key, await uploadBankVoucherViaApi(page, ids))
+      data = { ...data, private_voucher: privateProofs.get(key) }
+    }
     const response = await page.request.post('/api/rmb-cash-events/' + suffix, { data })
     const result = await response.json()
     http.push({ method: 'POST', path: '/api/rmb-cash-events/' + suffix, request: data, status: response.status(), result })

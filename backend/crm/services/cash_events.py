@@ -12,6 +12,7 @@ from django.utils import timezone
 from rest_framework.exceptions import APIException, NotFound, ValidationError
 
 from crm.finance_scope import require_finance_permission, scope_transaction_queryset, validate_finance_relations
+from crm.audit import snapshot
 from crm.models import CashDuplicateReview, CashSourceAllocation, Customer, RmbCashEvent, Supplier, Transaction
 from crm.permissions import development_superadmin_enabled
 
@@ -24,6 +25,12 @@ class CashConflict(APIException):
 UNITS = {c: Decimal("0.01") for c in ("CNY", "USD", "EUR", "GBP", "HKD", "AUD")}
 UNITS["JPY"] = Decimal("1")
 ACTIVE = ("pending", "confirmed")
+
+
+def audit_cash_event(event, user, label, before=None):
+    """Financial facts always append audit, including explicitly labelled dev identity."""
+    from crm.services.finance_closeout import audit
+    audit(event, user, label, before=before)
 
 
 def money(value, currency="CNY", *, zero=False, rate=False):
@@ -159,12 +166,15 @@ def available(row):
 def normalize(payload):
     if not isinstance(payload, dict):
         raise ValidationError("需要资金事件对象。")
-    fields = {"event_no", "request_key", "kind", "currency", "direction", "bank_date", "bank_net_amount", "fee_mode", "fee_amount", "source_account", "rmb_account", "bank_reference", "bank_counterparty", "bank_summary", "bank_transaction_id", "evidence_reference", "evidence_sha256", "evidence_note", "quoted_rate", "sources", "fee_for", "correction_of"}
+    fields = {"event_no", "request_key", "kind", "currency", "direction", "bank_date", "bank_net_amount", "fee_mode", "fee_amount", "source_account", "rmb_account", "bank_reference", "bank_counterparty", "bank_summary", "bank_transaction_id", "evidence_reference", "evidence_sha256", "evidence_note", "quoted_rate", "sources", "fee_for", "correction_of", "private_voucher"}
     if set(payload) - fields:
         raise ValidationError("存在未支持的字段，不接受银行登录凭据或推测的资金更正。")
     if payload.get("correction_of") is not None:
-        raise ValidationError("更正日期、来源解除及反向口径尚未明确，本版拒绝更正，保留原记录。")
+        raise ValidationError("请使用账户资金更正流程保留原事实；不能直接覆盖银行事件或释放来源。")
     p = {}
+    if payload.get("private_voucher") is not None:
+        from crm.services.finance_closeout import pk
+        p["private_voucher"] = pk(payload["private_voucher"])
     lengths = {"event_no": 64, "request_key": 128, "source_account": 40, "rmb_account": 40, "bank_reference": 120, "evidence_reference": 200, "evidence_sha256": 64, "evidence_note": 500}
     for k, maximum in lengths.items():
         value = payload.get(k, "")
@@ -320,7 +330,7 @@ def register_event(payload, user):
             raise CashConflict()
         return existing, False
     rows = validate_sources(p, user)
-    values = {k: v for k, v in p.items() if k not in {"sources", "fee_for"}}
+    values = {k: v for k, v in p.items() if k not in {"sources", "fee_for", "private_voucher"}}
     values.update(request_hash=digest, request_payload=p, amount=sum((Decimal(s["amount"]) for s in p["sources"]), Decimal("0")), created_actor=actor(user, "register"), fee_for_id=p["fee_for"])
     try:
         with transaction.atomic():
@@ -333,6 +343,10 @@ def register_event(payload, user):
             return existing, False
         raise CashConflict()
     event.refresh_from_db()
+    if p.get("private_voucher"):
+        from crm.services.bank_vouchers import bind
+        bind(event, p["private_voucher"], user, operation="create")
+    audit_cash_event(event, user, "登记银行资金事件")
     return event, True
 
 
@@ -361,6 +375,8 @@ def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None
     if event.status != "pending" or voucher_checked is not True:
         raise ValidationError("只有待确认事件可由人工核实银行凭证后确认。")
     validate_sources(p, user, confirmation=True)
+    from crm.services.bank_vouchers import require_verified_file
+    require_verified_file(event, user)
     candidates = duplicate_candidates(p, user, exclude_id=event.pk)
     if candidates["restricted"]:
         raise CashConflict("存在无权查看的疑似重复资金记录，请联系有权人员核对。")
@@ -372,10 +388,12 @@ def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None
     for a in event.sources.select_related("source"):
         if a.source_snapshot != source_snapshot(a.source):
             raise ValidationError("来源快照已变化，请核查原流水；不能覆盖旧证据。")
+    before = snapshot(event)
     event.status = "confirmed"
     event.confirmed_at = timezone.now()
     event.confirmed_actor = actor(user, "confirm_bank_voucher")
     event.save(update_fields=["status", "confirmed_at", "confirmed_actor", "updated_at"])
+    audit_cash_event(event, user, "确认银行资金事件", before=before)
     return event
 
 
@@ -386,16 +404,18 @@ def cancel_pending(event_id, user, reason):
     event = RmbCashEvent.objects.select_for_update().get(pk=event.pk)
     if event.status != "pending" or not isinstance(reason, str) or not 1 <= len(reason.strip()) <= 500:
         raise ValidationError("仅可有理由地放弃未确认草稿，已确认银行事实不可作废或释放来源。")
+    before = snapshot(event)
     event.status = "cancelled"
     event.cancelled_reason = reason.strip()
     event.confirmed_actor = actor(user, "cancel_pending")
     event.save(update_fields=["status", "cancelled_reason", "confirmed_actor", "updated_at"])
+    audit_cash_event(event, user, "放弃银行资金草稿", before=before)
     return event
 
 
 def guard_void(rows, operation="作废"):
     if CashSourceAllocation.objects.filter(source_id__in=[r.pk for r in rows], event__status__in=ACTIVE).exists():
-        raise ValidationError(f"来源有关联待确认/已确认银行资金事件，不能直接{operation}。未确认草稿可留痕放弃；已确认更正规则待明确。")
+        raise ValidationError(f"来源有关联待确认/已确认银行资金事件，不能直接{operation}。未确认草稿可留痕放弃；已确认事实请走账户资金更正，不能自动释放来源。")
 
 
 def guard_replacement(row):

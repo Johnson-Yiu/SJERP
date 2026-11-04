@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test'
 import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
+import { uploadBankVoucherViaApi, uploadBankVoucherThroughUi } from './helpers/bank-voucher.js'
 
 test.use({ channel: 'chrome' })
 const fixtureRoot = path.resolve('../docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103')
@@ -37,6 +38,7 @@ for (const [index, width] of [1440, 390].entries()) {
     // bank-fee suite when both share the same isolated full-suite database.
     const date = index ? '2026-10-24' : '2026-10-23'
     const data = { event_no: `SYNTH-DUP-A-${width}`, request_key: `SYNTH-DUP-A-${width}`, kind: 'bank_fee', currency: 'CNY', direction: 'expense', bank_date: date, bank_net_amount: '5.00', fee_mode: 'none', fee_amount: '0', source_account: 'SYNTH_CNY', rmb_account: 'SYNTH_CNY', bank_reference: `SYNTH-REF-${width}`, bank_counterparty: '合成对手甲', bank_summary: '合成银行摘要甲', bank_transaction_id: `SYNTH-ID-${width}`, evidence_reference: 'SYNTH-VOUCHER', evidence_sha256: 'a'.repeat(64), evidence_note: '合成银行凭证', quoted_rate: '1', fee_for: null, correction_of: null, sources: [{ transaction_id: fixture.fee_ids[index * 2], amount: '5.00', verified: true }] }
+    data.private_voucher = await uploadBankVoucherViaApi(page, data.sources.map(s => s.transaction_id))
     const first = await page.request.post('/api/rmb-cash-events/', { data })
     expect(first.status()).toBe(201)
     const firstId = (await first.json()).id
@@ -62,6 +64,7 @@ for (const [index, width] of [1440, 390].entries()) {
     await page.locator('.source-option').filter({ hasText: fixture.fee_names[index * 2 + 1] }).getByRole('button', { name: '选择', exact: true }).click()
     await page.locator('.allocation-table input[type="number"]').fill('5.00')
     await page.locator('.verification-toggle input').check()
+    await uploadBankVoucherThroughUi(page)
     await page.getByRole('button', { name: '后端预览' }).click()
     await expect(page.locator('.preview-box')).toBeVisible()
     await expect(page.locator('.warning-box').filter({ hasText: '疑似重复' })).toBeVisible()

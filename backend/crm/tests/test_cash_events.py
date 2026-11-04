@@ -3,6 +3,8 @@ from datetime import date
 from decimal import Decimal as D
 import hashlib
 import json
+import tempfile
+import uuid
 from threading import Barrier
 import unittest
 from unittest.mock import patch
@@ -10,12 +12,13 @@ from unittest.mock import patch
 from django.apps import apps
 from django.contrib.auth.models import AnonymousUser
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.files.base import ContentFile
 from django.db import connection, close_old_connections, connections
 from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework.exceptions import APIException
 from rest_framework.test import APIClient
 
-from crm.models import CashSourceAllocation, Customer, Order, PaymentPlan, Product, RmbCashEvent, SKU, Transaction
+from crm.models import CashSourceAllocation, Customer, FinanceBankVoucherBinding, FinanceVoucher, OperationLog, Order, PaymentPlan, Product, RmbCashEvent, SKU, Transaction
 from crm.services import cash_events as cash
 from crm.services.finance import allocate_advance, record_contract_refund, record_transaction, void_transaction
 from crm.tests import test_finance_data_scope as scope_fixture
@@ -25,19 +28,38 @@ URL = "/api/rmb-cash-events/"
 
 
 def legacy_hash():
-    data = {m.__name__: list(m.objects.order_by("pk").values()) for m in apps.get_app_config("crm").get_models() if m not in {RmbCashEvent, CashSourceAllocation}}
+    # Appended financial audit is an intended side effect; business facts still
+    # remain byte-for-byte unchanged. Audit correctness is asserted separately.
+    data = {m.__name__: list(m.objects.order_by("pk").values()) for m in apps.get_app_config("crm").get_models() if m not in {RmbCashEvent, CashSourceAllocation, OperationLog, FinanceVoucher, FinanceBankVoucherBinding}}
     return hashlib.sha256(json.dumps(data, sort_keys=True, cls=DjangoJSONEncoder).encode()).hexdigest()
+
+
+def bank_voucher(rows):
+    ids = sorted(row.pk for row in rows)
+    proof = FinanceVoucher.objects.filter(scope="bank", bank_sources=ids).first()
+    if proof is None:
+        content = b"%PDF-1.4\nSynthetic bank voucher\n%%EOF"
+        proof = FinanceVoucher(original_name="synthetic-bank.pdf", sha256=hashlib.sha256(content).hexdigest(), size=len(content), scope="bank", bank_sources=ids, actor={"kind": "synthetic_fixture"})
+        proof.file.save(uuid.uuid4().hex + ".pdf", ContentFile(content), save=False)
+        proof.save()
+    return proof
 
 
 def payload(rows, amounts=None, key="BANK-1", currency="USD", **changes):
     amounts = amounts or [format(r.amount, ".0f" if currency == "JPY" else ".2f") for r in rows]
     p = dict(event_no=key, request_key=key, kind="fx_settlement", currency=currency, direction="income", bank_date="2026-10-18", bank_net_amount="705.00", fee_mode="included", fee_amount="5.00", source_account="SYNTH_FX", rmb_account="SYNTH_CNY", bank_reference="SYNTH-BANK-REF", evidence_reference="SYNTH-VOUCHER", evidence_sha256="a" * 64, evidence_note="合成银行凭证人工核实", quoted_rate="7.100000", sources=[dict(transaction_id=r.pk, amount=a, verified=True) for r, a in zip(rows, amounts)])
     p.update(changes)
+    p.setdefault("private_voucher", bank_voucher(rows).pk)
     return p
 
 
 class CashFixture:
     def setup_cash(self):
+        media = tempfile.TemporaryDirectory(prefix="synthetic-bank-media-")
+        self.addCleanup(media.cleanup)
+        media_settings = override_settings(MEDIA_ROOT=media.name)
+        media_settings.enable()
+        self.addCleanup(media_settings.disable)
         self.client = APIClient()
         self.user = AnonymousUser()
         self.customer = Customer.objects.create(code="BANK-C", name="Synthetic customer")
@@ -46,6 +68,7 @@ class CashFixture:
         self.order.items.create(sku=self.sku, quantity=1, unit_price=100)
         self.plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=100)
         self.receipt = record_transaction(dict(transaction_no="BANK-T", plan=self.plan, amount="100", exchange_rate="7", currency="USD"))
+        bank_voucher([self.receipt])
 
     def register(self, p):
         r = self.client.post(URL, p, format="json")
@@ -80,6 +103,10 @@ class CashEventTests(CashFixture, TestCase):
         self.assertEqual(r.data["created_actor"]["kind"], "development_superadmin")
         self.assertIsNone(r.data["coverage_since"])
         self.assertEqual(before, legacy_hash())
+        audits = OperationLog.objects.filter(entity="crm.rmbcashevent", object_id=str(pk))
+        self.assertEqual(audits.count(), 2)
+        self.assertTrue(FinanceBankVoucherBinding.objects.filter(event_id=pk).exists())
+        self.assertTrue(all(row.operator_id is None and row.metadata["actor"]["kind"] == "development_superadmin" for row in audits))
         self.assertEqual(old_report, self.client.get("/api/finance-dashboard/").data)
         print("P2A-DATABASE_VERIFICATION", json.dumps({"before": before, "after": legacy_hash(), "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": True}))
 

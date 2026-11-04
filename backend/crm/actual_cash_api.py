@@ -22,13 +22,16 @@ from .services import cash_events as cash
 
 BASIS = "bank_cash_confirmed_v1"
 NOTE = (
-    "已登记银行资金汇总：仅含按银行日期登记且人工确认的人民币资金事件，"
+    "已登记实际人民币资金：含人工确认银行事件及已核实自有银行、现金账户事实，"
     "不代表公司全部实际资金，不是利润、销售收入或银行账户余额。"
 )
 KIND_LABELS = {
     "fx_settlement": "外币结汇到账",
     "cny_direct": "人民币直接收付",
     "bank_fee": "独立银行扣费",
+    "unclassified": "性质待分类", "income": "其他收入", "expense": "其他支出",
+    "interest": "利息", "loan": "借款", "capital": "注资", "commercial_refund": "商业退款",
+    "refund_excess": "超额退款", "internal_principal": "待核实内部本金", "correction": "资金更正",
 }
 
 
@@ -59,13 +62,17 @@ def _event_row(event):
         "fee_amount": str(event.fee_amount),
         "bank_reference": event.bank_reference,
         "status": event.status,
-        "detail_url": f"/rmb-cash-events?event={event.pk}",
+        "detail_url": getattr(event, "detail_url", f"/rmb-cash-events?event={event.pk}"),
+        "account_type": getattr(event, "account_type", "bank"),
+        "refund_excess_amount": str(getattr(event, "excess_amount", Decimal("0"))),
     }
 
 
 def _visible_events(request, start, end):
     candidates = RmbCashEvent.objects.filter(status="confirmed", bank_date__range=(start, end)).order_by("bank_date", "pk")
-    return [event for event in candidates if cash.visible(event, request.user)]
+    from .services.finance_closeout import corrected_ids, historical_transfer_ids, reporting_events
+    matched = historical_transfer_ids() | corrected_ids()[1]
+    return [event for event in candidates if event.pk not in matched and cash.visible(event, request.user)] + reporting_events(request.user, start, end)
 
 
 def _summary(events, start, end):
@@ -131,6 +138,11 @@ def actual_cash_report(request):
         return response
     def encode(row):
         return {key: (_serialize_decimal(value) if isinstance(value, Decimal) else value) for key, value in row.items()}
+    by_account_type = []
+    for account_type, label in (("bank", "银行"), ("cash", "现金")):
+        subset = [event for event in events if getattr(event, "account_type", "bank") == account_type]
+        summary, _, _ = _summary(subset, start, end)
+        by_account_type.append({"account_type": account_type, "label": label, **encode(summary)})
     return Response({
         "basis": BASIS,
         "version": 1,
@@ -142,6 +154,7 @@ def actual_cash_report(request):
         "totals": encode(totals),
         "monthly": [encode(row) for row in monthly],
         "by_kind": [encode(row) for row in by_kind],
+        "by_account_type": by_account_type,
         "events": [_event_row(event) for event in events],
         "note": NOTE,
     })

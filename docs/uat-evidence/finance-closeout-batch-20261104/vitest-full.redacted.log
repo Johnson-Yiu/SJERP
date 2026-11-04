@@ -1,0 +1,195 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/finance-closeout-batch-20261104/frontend
+
+stderr | tests/phase2a-list-shell.spec.js > Sidebar preserves every route, module and Finance order in the requested groups
+[VUE_ROUTER_R0004] No match found for location with path "/"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/reports"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/historical-orders"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/contacts"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/follow-ups"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/suppliers"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/products"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/skus"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/categories"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/product-parameters"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/sku-packaging"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/sku-trade-units"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/product-certificates"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/hs-codes"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/finance"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/receivables"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/payables"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/transactions"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/rmb-cash-events"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/finance-ledger"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/import"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+[VUE_ROUTER_R0004] No match found for location with path "/organization"
+├▶ fix: Add a route matching this path or check for typos in the location.
+╰▶ see: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Catch-all-404-Not-found-Route
+
+ ❯ tests/phase2a-list-shell.spec.js (22 tests | 1 failed) 1629ms
+   × Sidebar preserves every route, module and Finance order in the requested groups 52ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/phase2a-list-shell.spec.js > Sidebar preserves every route, module and Finance order in the requested groups
+AssertionError: expected { …(7) } to deeply equal { …(7) }
+
+- Expected
++ Received
+
+@@ -26,10 +26,11 @@
+      "/finance",
+      "/receivables",
+      "/payables",
+      "/transactions",
+      "/rmb-cash-events",
++     "/finance-ledger",
+      "/import",
+    ],
+    "采购与库存": [
+      "/suppliers",
+      "/purchase-orders",
+
+ ❯ tests/phase2a-list-shell.spec.js:123:3
+    121|   expect(actual).toEqual(expected)
+    122|   expect(wrapper.get('.nav-item.router-link-active').attributes('href'…
+    123| })
+       |   ^
+    124| it('List-only CSS defines nowrap, minimum widths, desktop five cards a…
+    125|   const css = readFileSync('src/styles.css', 'utf8')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 6 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files D:/Codex项目/森爵照明管理系统/.worktrees/finance-closeout-batch-20261104/frontend/tests/route-lifecycle.spec.js.
+ ❯ ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:94
+ ❯ runNextTicks node:internal/process/task_queues:65:5
+ ❯ listOnTimeout node:internal/timers:567:9
+ ❯ process.processTimers node:internal/timers:541:7
+ ❯ Pool.schedule ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ ❯ Timeout.<anonymous> ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3108:58
+ ❯ listOnTimeout node:internal/timers:605:17
+ ❯ process.processTimers node:internal/timers:541:7
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files D:/Codex项目/森爵照明管理系统/.worktrees/finance-closeout-batch-20261104/frontend/tests/purchase-editor-receipt.spec.js.
+ ❯ ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:94
+ ❯ runNextTicks node:internal/process/task_queues:65:5
+ ❯ listOnTimeout node:internal/timers:567:9
+ ❯ process.processTimers node:internal/timers:541:7
+ ❯ Pool.schedule ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ ❯ Timeout.<anonymous> ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3108:58
+ ❯ listOnTimeout node:internal/timers:605:17
+ ❯ process.processTimers node:internal/timers:541:7
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files D:/Codex项目/森爵照明管理系统/.worktrees/finance-closeout-batch-20261104/frontend/tests/unsaved-changes.spec.js.
+ ❯ ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:94
+ ❯ Pool.schedule ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ ❯ Timeout.<anonymous> ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3108:58
+ ❯ listOnTimeout node:internal/timers:605:17
+ ❯ process.processTimers node:internal/timers:541:7
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files D:/Codex项目/森爵照明管理系统/.worktrees/finance-closeout-batch-20261104/frontend/tests/second-review-foundation.spec.js.
+ ❯ ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:94
+ ❯ runNextTicks node:internal/process/task_queues:65:5
+ ❯ listOnTimeout node:internal/timers:567:9
+ ❯ process.processTimers node:internal/timers:541:7
+ ❯ Pool.schedule ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ ❯ Timeout.<anonymous> ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3108:58
+ ❯ listOnTimeout node:internal/timers:605:17
+ ❯ process.processTimers node:internal/timers:541:7
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files D:/Codex项目/森爵照明管理系统/.worktrees/finance-closeout-batch-20261104/frontend/tests/quote-editor-availability.spec.js.
+ ❯ ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:94
+ ❯ runNextTicks node:internal/process/task_queues:65:5
+ ❯ listOnTimeout node:internal/timers:567:9
+ ❯ process.processTimers node:internal/timers:541:7
+ ❯ Pool.schedule ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ ❯ Timeout.<anonymous> ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3108:58
+ ❯ listOnTimeout node:internal/timers:605:17
+ ❯ process.processTimers node:internal/timers:541:7
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files D:/Codex项目/森爵照明管理系统/.worktrees/finance-closeout-batch-20261104/frontend/tests/inventory-ledger.spec.js.
+ ❯ ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:94
+ ❯ Pool.schedule ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ ❯ Timeout.<anonymous> ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3108:58
+ ❯ listOnTimeout node:internal/timers:605:17
+ ❯ process.processTimers node:internal/timers:541:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed | 63 passed (64)
+      Tests  1 failed | 542 passed (543)
+     Errors  6 errors
+   Start at  16:37:27
+   Duration  412.34s (transform 12.11s, setup 57.31s, import 28.28s, tests 30.60s, environment 673.12s)

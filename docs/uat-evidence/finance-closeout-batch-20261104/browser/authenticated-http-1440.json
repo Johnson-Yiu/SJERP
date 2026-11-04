@@ -1,0 +1,1165 @@
+{
+  "records": [
+    {
+      "action": "accounts",
+      "request": {
+        "code": "SYNTH-AUTH-B-1440-1793788567027",
+        "name": "合成核对银行-1440",
+        "account_type": "bank",
+        "ownership": "own",
+        "ownership_reason": "合成开户凭证"
+      },
+      "status": 201,
+      "body": {
+        "id": 1
+      }
+    },
+    {
+      "action": "accounts",
+      "request": {
+        "code": "SYNTH-AUTH-C-1440-1793788567027",
+        "name": "合成核对现金-1440",
+        "account_type": "cash",
+        "ownership": "own",
+        "ownership_reason": "合成现金盘点凭证"
+      },
+      "status": 201,
+      "body": {
+        "id": 2
+      }
+    },
+    {
+      "action": "instructions",
+      "request": {
+        "request_key": "SYNTH-AUTH-1440-1793788567027-2",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-2",
+        "kind": "opening",
+        "account": 1,
+        "actual_date": "2026-02-01",
+        "amount": "1000.00",
+        "direction": "income",
+        "nature": "unclassified",
+        "truth": "verified",
+        "voucher": 1,
+        "reason": "合成资料逐项核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 1,
+        "kind": "opening",
+        "status": "pending",
+        "payload": {
+          "request_key": "SYNTH-AUTH-1440-1793788567027-2",
+          "source_system": "SYNTH-AUTH-CHROME",
+          "source_key": "SYNTH-AUTH-1440-1793788567027-2",
+          "kind": "opening",
+          "account": 1,
+          "actual_date": "2026-02-01",
+          "amount": "1000.00",
+          "direction": "income",
+          "nature": "unclassified",
+          "truth": "verified",
+          "voucher": 1,
+          "reason": "合成资料逐项核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 1
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04T10:36:07.161117Z",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "action": "approve",
+      "request": {
+        "id": 1
+      },
+      "status": 400,
+      "body": [
+        "发起人不得审批自己的指令。"
+      ]
+    },
+    {
+      "action": "post",
+      "request": {
+        "id": 1,
+        "voucher_checked": true
+      },
+      "status": 400,
+      "body": [
+        "此操作须经另一名授权人员复核。"
+      ]
+    },
+    {
+      "action": "approve-via-ui",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "kind": "opening",
+        "status": "approved",
+        "payload": {
+          "request_key": "SYNTH-AUTH-1440-1793788567027-2",
+          "source_system": "SYNTH-AUTH-CHROME",
+          "source_key": "SYNTH-AUTH-1440-1793788567027-2",
+          "kind": "opening",
+          "account": 1,
+          "actual_date": "2026-02-01",
+          "amount": "1000.00",
+          "direction": "income",
+          "nature": "unclassified",
+          "truth": "verified",
+          "voucher": 1,
+          "reason": "合成资料逐项核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 1
+        },
+        "approved_actor": {
+          "kind": "authenticated_user",
+          "action": "approve",
+          "user_id": 2
+        },
+        "created_at": "2026-11-04T10:36:07.161117Z",
+        "approved_at": "2026-11-04T10:36:14.236387Z",
+        "replaces": null
+      }
+    },
+    {
+      "action": "post",
+      "request": {
+        "id": 1,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 1,
+        "account": 1,
+        "account_name": "合成核对银行-1440",
+        "account_type": "bank",
+        "instruction": 1,
+        "actual_date": "2026-02-01",
+        "amount": "1000.00",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "opening",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 1,
+        "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-2",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 1
+        },
+        "created_at": "2026-11-04T10:36:14.660565Z",
+        "company_flow_included": false,
+        "flow_exclusion_reason": "opening",
+        "classifications": []
+      }
+    },
+    {
+      "action": "instructions",
+      "request": {
+        "request_key": "SYNTH-AUTH-1440-1793788567027-7",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-7",
+        "kind": "cash",
+        "account": 1,
+        "actual_date": "2026-02-02",
+        "amount": "100.00",
+        "direction": "income",
+        "nature": "unclassified",
+        "truth": "verified",
+        "voucher": 1,
+        "reason": "合成资料逐项核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 2,
+        "kind": "cash",
+        "status": "pending",
+        "payload": {
+          "request_key": "SYNTH-AUTH-1440-1793788567027-7",
+          "source_system": "SYNTH-AUTH-CHROME",
+          "source_key": "SYNTH-AUTH-1440-1793788567027-7",
+          "kind": "cash",
+          "account": 1,
+          "actual_date": "2026-02-02",
+          "amount": "100.00",
+          "direction": "income",
+          "nature": "unclassified",
+          "truth": "verified",
+          "voucher": 1,
+          "reason": "合成资料逐项核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 1
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04T10:36:14.700785Z",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "action": "post",
+      "request": {
+        "id": 2,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 2,
+        "account": 1,
+        "account_name": "合成核对银行-1440",
+        "account_type": "bank",
+        "instruction": 2,
+        "actual_date": "2026-02-02",
+        "amount": "100.00",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "cash",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 1,
+        "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-7",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 1
+        },
+        "created_at": "2026-11-04T10:36:14.797832Z",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    },
+    {
+      "action": "instructions",
+      "request": {
+        "request_key": "SYNTH-AUTH-1440-1793788567027-9",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-9",
+        "kind": "correction",
+        "account": 1,
+        "actual_date": "2026-02-03",
+        "amount": "90.00",
+        "direction": "income",
+        "nature": "correction",
+        "truth": "verified",
+        "voucher": 1,
+        "reason": "合成资料逐项核实",
+        "parent": 2
+      },
+      "status": 201,
+      "body": {
+        "id": 3,
+        "kind": "correction",
+        "status": "pending",
+        "payload": {
+          "request_key": "SYNTH-AUTH-1440-1793788567027-9",
+          "source_system": "SYNTH-AUTH-CHROME",
+          "source_key": "SYNTH-AUTH-1440-1793788567027-9",
+          "kind": "correction",
+          "account": 1,
+          "actual_date": "2026-02-03",
+          "amount": "90.00",
+          "direction": "income",
+          "nature": "correction",
+          "truth": "verified",
+          "voucher": 1,
+          "reason": "合成资料逐项核实",
+          "parent": 2,
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 1
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04T10:36:14.852357Z",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "action": "approve",
+      "request": {
+        "id": 3
+      },
+      "status": 200,
+      "body": {
+        "id": 3,
+        "kind": "correction",
+        "status": "approved",
+        "payload": {
+          "request_key": "SYNTH-AUTH-1440-1793788567027-9",
+          "source_system": "SYNTH-AUTH-CHROME",
+          "source_key": "SYNTH-AUTH-1440-1793788567027-9",
+          "kind": "correction",
+          "account": 1,
+          "actual_date": "2026-02-03",
+          "amount": "90.00",
+          "direction": "income",
+          "nature": "correction",
+          "truth": "verified",
+          "voucher": 1,
+          "reason": "合成资料逐项核实",
+          "parent": 2,
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 1
+        },
+        "approved_actor": {
+          "kind": "authenticated_user",
+          "action": "approve",
+          "user_id": 2
+        },
+        "created_at": "2026-11-04T10:36:14.852357Z",
+        "approved_at": "2026-11-04T10:36:15.113715Z",
+        "replaces": null
+      }
+    },
+    {
+      "action": "post",
+      "request": {
+        "id": 3,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 3,
+        "account": 1,
+        "account_name": "合成核对银行-1440",
+        "account_type": "bank",
+        "instruction": 3,
+        "actual_date": "2026-02-03",
+        "amount": "90.00",
+        "direction": "income",
+        "nature": "correction",
+        "kind": "correction",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 1,
+        "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-9",
+        "parent": 2,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 1
+        },
+        "created_at": "2026-11-04T10:36:15.165454Z",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    },
+    {
+      "action": "instructions",
+      "request": {
+        "request_key": "SYNTH-AUTH-1440-1793788567027-12",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-12",
+        "kind": "refund_approval",
+        "account": 1,
+        "actual_date": "2026-02-02",
+        "amount": "150.00",
+        "direction": "expense",
+        "nature": "unclassified",
+        "truth": "verified",
+        "voucher": 1,
+        "reason": "合成资料逐项核实",
+        "parent": 3,
+        "excess_reason": "按已核实90元收款批准额外赔偿60元"
+      },
+      "status": 201,
+      "body": {
+        "id": 4,
+        "kind": "refund_approval",
+        "status": "pending",
+        "payload": {
+          "request_key": "SYNTH-AUTH-1440-1793788567027-12",
+          "source_system": "SYNTH-AUTH-CHROME",
+          "source_key": "SYNTH-AUTH-1440-1793788567027-12",
+          "kind": "refund_approval",
+          "account": 1,
+          "actual_date": "2026-02-02",
+          "amount": "150.00",
+          "direction": "expense",
+          "nature": "unclassified",
+          "truth": "verified",
+          "voucher": 1,
+          "reason": "合成资料逐项核实",
+          "parent": 3,
+          "excess_reason": "按已核实90元收款批准额外赔偿60元",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 1
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04T10:36:15.207016Z",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "action": "approve",
+      "request": {
+        "id": 4
+      },
+      "status": 200,
+      "body": {
+        "id": 4,
+        "kind": "refund_approval",
+        "status": "approved",
+        "payload": {
+          "request_key": "SYNTH-AUTH-1440-1793788567027-12",
+          "source_system": "SYNTH-AUTH-CHROME",
+          "source_key": "SYNTH-AUTH-1440-1793788567027-12",
+          "kind": "refund_approval",
+          "account": 1,
+          "actual_date": "2026-02-02",
+          "amount": "150.00",
+          "direction": "expense",
+          "nature": "unclassified",
+          "truth": "verified",
+          "voucher": 1,
+          "reason": "合成资料逐项核实",
+          "parent": 3,
+          "excess_reason": "按已核实90元收款批准额外赔偿60元",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 1
+        },
+        "approved_actor": {
+          "kind": "authenticated_user",
+          "action": "approve",
+          "user_id": 2
+        },
+        "created_at": "2026-11-04T10:36:15.207016Z",
+        "approved_at": "2026-11-04T10:36:15.241776Z",
+        "replaces": null
+      }
+    },
+    {
+      "action": "post",
+      "request": {
+        "id": 4,
+        "voucher_checked": true
+      },
+      "status": 400,
+      "body": [
+        "批准退款不等于实际扣款；请登记真实扣款。"
+      ]
+    },
+    {
+      "action": "instructions",
+      "request": {
+        "request_key": "SYNTH-AUTH-1440-1793788567027-15",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-15",
+        "kind": "refund_payment",
+        "account": 1,
+        "actual_date": "2026-02-04",
+        "amount": "150.00",
+        "direction": "expense",
+        "nature": "commercial_refund",
+        "truth": "verified",
+        "voucher": 1,
+        "reason": "合成资料逐项核实",
+        "approval": 4
+      },
+      "status": 201,
+      "body": {
+        "id": 5,
+        "kind": "refund_payment",
+        "status": "pending",
+        "payload": {
+          "request_key": "SYNTH-AUTH-1440-1793788567027-15",
+          "source_system": "SYNTH-AUTH-CHROME",
+          "source_key": "SYNTH-AUTH-1440-1793788567027-15",
+          "kind": "refund_payment",
+          "account": 1,
+          "actual_date": "2026-02-04",
+          "amount": "150.00",
+          "direction": "expense",
+          "nature": "commercial_refund",
+          "truth": "verified",
+          "voucher": 1,
+          "reason": "合成资料逐项核实",
+          "approval": 4,
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 1
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04T10:36:15.306478Z",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "action": "approve",
+      "request": {
+        "id": 5
+      },
+      "status": 200,
+      "body": {
+        "id": 5,
+        "kind": "refund_payment",
+        "status": "approved",
+        "payload": {
+          "request_key": "SYNTH-AUTH-1440-1793788567027-15",
+          "source_system": "SYNTH-AUTH-CHROME",
+          "source_key": "SYNTH-AUTH-1440-1793788567027-15",
+          "kind": "refund_payment",
+          "account": 1,
+          "actual_date": "2026-02-04",
+          "amount": "150.00",
+          "direction": "expense",
+          "nature": "commercial_refund",
+          "truth": "verified",
+          "voucher": 1,
+          "reason": "合成资料逐项核实",
+          "approval": 4,
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 1
+        },
+        "approved_actor": {
+          "kind": "authenticated_user",
+          "action": "approve",
+          "user_id": 2
+        },
+        "created_at": "2026-11-04T10:36:15.306478Z",
+        "approved_at": "2026-11-04T10:36:15.359701Z",
+        "replaces": null
+      }
+    },
+    {
+      "action": "post",
+      "request": {
+        "id": 5,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 4,
+        "account": 1,
+        "account_name": "合成核对银行-1440",
+        "account_type": "bank",
+        "instruction": 5,
+        "actual_date": "2026-02-04",
+        "amount": "150.00",
+        "direction": "expense",
+        "nature": "commercial_refund",
+        "kind": "refund_payment",
+        "refund_excess_amount": "60.00",
+        "unallocated_amount": "150.00",
+        "voucher": 1,
+        "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-15",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 1
+        },
+        "created_at": "2026-11-04T10:36:15.472910Z",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    },
+    {
+      "action": "instructions",
+      "request": {
+        "request_key": "SYNTH-AUTH-1440-1793788567027-18",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-18",
+        "kind": "refund_return",
+        "account": 1,
+        "actual_date": "2026-02-05",
+        "amount": "50.00",
+        "direction": "income",
+        "nature": "unclassified",
+        "truth": "verified",
+        "voucher": 1,
+        "reason": "合成资料逐项核实",
+        "parent": 4
+      },
+      "status": 201,
+      "body": {
+        "id": 6,
+        "kind": "refund_return",
+        "status": "pending",
+        "payload": {
+          "request_key": "SYNTH-AUTH-1440-1793788567027-18",
+          "source_system": "SYNTH-AUTH-CHROME",
+          "source_key": "SYNTH-AUTH-1440-1793788567027-18",
+          "kind": "refund_return",
+          "account": 1,
+          "actual_date": "2026-02-05",
+          "amount": "50.00",
+          "direction": "income",
+          "nature": "unclassified",
+          "truth": "verified",
+          "voucher": 1,
+          "reason": "合成资料逐项核实",
+          "parent": 4,
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 1
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04T10:36:15.534138Z",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "action": "post",
+      "request": {
+        "id": 6,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 5,
+        "account": 1,
+        "account_name": "合成核对银行-1440",
+        "account_type": "bank",
+        "instruction": 6,
+        "actual_date": "2026-02-05",
+        "amount": "50.00",
+        "direction": "income",
+        "nature": "unclassified",
+        "kind": "refund_return",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 1,
+        "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-18",
+        "parent": 4,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 1
+        },
+        "created_at": "2026-11-04T10:36:15.612434Z",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    },
+    {
+      "action": "instructions",
+      "request": {
+        "request_key": "SYNTH-AUTH-1440-1793788567027-20",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-20",
+        "kind": "cash",
+        "account": 1,
+        "actual_date": "2026-02-06",
+        "amount": "40.00",
+        "direction": "expense",
+        "nature": "internal_principal",
+        "truth": "verified",
+        "voucher": 1,
+        "reason": "合成资料逐项核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 7,
+        "kind": "cash",
+        "status": "pending",
+        "payload": {
+          "request_key": "SYNTH-AUTH-1440-1793788567027-20",
+          "source_system": "SYNTH-AUTH-CHROME",
+          "source_key": "SYNTH-AUTH-1440-1793788567027-20",
+          "kind": "cash",
+          "account": 1,
+          "actual_date": "2026-02-06",
+          "amount": "40.00",
+          "direction": "expense",
+          "nature": "internal_principal",
+          "truth": "verified",
+          "voucher": 1,
+          "reason": "合成资料逐项核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 1
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04T10:36:15.676747Z",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "action": "post",
+      "request": {
+        "id": 7,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 6,
+        "account": 1,
+        "account_name": "合成核对银行-1440",
+        "account_type": "bank",
+        "instruction": 7,
+        "actual_date": "2026-02-06",
+        "amount": "40.00",
+        "direction": "expense",
+        "nature": "internal_principal",
+        "kind": "cash",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 1,
+        "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-20",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 1
+        },
+        "created_at": "2026-11-04T10:36:15.976679Z",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    },
+    {
+      "action": "instructions",
+      "request": {
+        "request_key": "SYNTH-AUTH-1440-1793788567027-22",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-22",
+        "kind": "cash",
+        "account": 2,
+        "actual_date": "2026-02-07",
+        "amount": "40.00",
+        "direction": "income",
+        "nature": "internal_principal",
+        "truth": "verified",
+        "voucher": 1,
+        "reason": "合成资料逐项核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 8,
+        "kind": "cash",
+        "status": "pending",
+        "payload": {
+          "request_key": "SYNTH-AUTH-1440-1793788567027-22",
+          "source_system": "SYNTH-AUTH-CHROME",
+          "source_key": "SYNTH-AUTH-1440-1793788567027-22",
+          "kind": "cash",
+          "account": 2,
+          "actual_date": "2026-02-07",
+          "amount": "40.00",
+          "direction": "income",
+          "nature": "internal_principal",
+          "truth": "verified",
+          "voucher": 1,
+          "reason": "合成资料逐项核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 1
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04T10:36:16.023479Z",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "action": "post",
+      "request": {
+        "id": 8,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 7,
+        "account": 2,
+        "account_name": "合成核对现金-1440",
+        "account_type": "cash",
+        "instruction": 8,
+        "actual_date": "2026-02-07",
+        "amount": "40.00",
+        "direction": "income",
+        "nature": "internal_principal",
+        "kind": "cash",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 1,
+        "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-22",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 1
+        },
+        "created_at": "2026-11-04T10:36:16.065709Z",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    },
+    {
+      "action": "transfers",
+      "request": {
+        "outgoing": 6,
+        "incoming": 7,
+        "reason": "合成跨日两端真实凭证核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 1
+      }
+    },
+    {
+      "action": "classifications",
+      "request": {
+        "fact": 3,
+        "nature": "interest",
+        "reason": "合成利息核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 1
+      }
+    },
+    {
+      "action": "reviews",
+      "request": {
+        "account": 1,
+        "date_from": "2026-02-01",
+        "date_to": "2026-02-28",
+        "voucher": 1,
+        "statement_balance": "950.00",
+        "completed": true,
+        "reason": "合成银行月末核对"
+      },
+      "status": 201,
+      "body": {
+        "id": 1,
+        "difference": "0.00"
+      }
+    },
+    {
+      "action": "instructions",
+      "request": {
+        "request_key": "SYNTH-AUTH-1440-1793788567027-27",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-27",
+        "kind": "cash",
+        "account": 1,
+        "actual_date": "2026-02-08",
+        "amount": "1.00",
+        "direction": "income",
+        "nature": "interest",
+        "truth": "verified",
+        "voucher": 1,
+        "reason": "合成资料逐项核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 9,
+        "kind": "cash",
+        "status": "pending",
+        "payload": {
+          "request_key": "SYNTH-AUTH-1440-1793788567027-27",
+          "source_system": "SYNTH-AUTH-CHROME",
+          "source_key": "SYNTH-AUTH-1440-1793788567027-27",
+          "kind": "cash",
+          "account": 1,
+          "actual_date": "2026-02-08",
+          "amount": "1.00",
+          "direction": "income",
+          "nature": "interest",
+          "truth": "verified",
+          "voucher": 1,
+          "reason": "合成资料逐项核实",
+          "allocations": []
+        },
+        "created_actor": {
+          "kind": "authenticated_user",
+          "action": "submit",
+          "user_id": 1
+        },
+        "approved_actor": {},
+        "created_at": "2026-11-04T10:36:17.366470Z",
+        "approved_at": null,
+        "replaces": null
+      }
+    },
+    {
+      "action": "post",
+      "request": {
+        "id": 9,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "body": {
+        "id": 8,
+        "account": 1,
+        "account_name": "合成核对银行-1440",
+        "account_type": "bank",
+        "instruction": 9,
+        "actual_date": "2026-02-08",
+        "amount": "1.00",
+        "direction": "income",
+        "nature": "interest",
+        "kind": "cash",
+        "refund_excess_amount": "0",
+        "unallocated_amount": "0.00",
+        "voucher": 1,
+        "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
+        "source_system": "SYNTH-AUTH-CHROME",
+        "source_key": "SYNTH-AUTH-1440-1793788567027-27",
+        "parent": null,
+        "legacy_parent": null,
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "post",
+          "user_id": 1
+        },
+        "created_at": "2026-11-04T10:36:17.431629Z",
+        "company_flow_included": true,
+        "flow_exclusion_reason": "",
+        "classifications": []
+      }
+    }
+  ],
+  "actual": {
+    "basis": "bank_cash_confirmed_v1",
+    "version": 1,
+    "date_basis": "bank_date",
+    "coverage_status": "registered_confirmed_only",
+    "coverage_since": null,
+    "coverage_configured": false,
+    "period": {
+      "date_from": "2026-02-01",
+      "date_to": "2026-02-28"
+    },
+    "totals": {
+      "inflow": "141.00",
+      "outflow": "150.00",
+      "net": "-9.00",
+      "count": 4
+    },
+    "monthly": [
+      {
+        "month": "2026-02",
+        "inflow": "141.00",
+        "outflow": "150.00",
+        "net": "-9.00",
+        "count": 4
+      }
+    ],
+    "by_kind": [
+      {
+        "kind": "commercial_refund",
+        "label": "商业退款",
+        "inflow": "0",
+        "outflow": "150.00",
+        "net": "-150.00",
+        "count": 1
+      },
+      {
+        "kind": "interest",
+        "label": "利息",
+        "inflow": "91.00",
+        "outflow": "0",
+        "net": "91.00",
+        "count": 2
+      },
+      {
+        "kind": "unclassified",
+        "label": "性质待分类",
+        "inflow": "50.00",
+        "outflow": "0",
+        "net": "50.00",
+        "count": 1
+      }
+    ],
+    "by_account_type": [
+      {
+        "account_type": "bank",
+        "label": "银行",
+        "inflow": "141.00",
+        "outflow": "150.00",
+        "net": "-9.00",
+        "count": 4
+      },
+      {
+        "account_type": "cash",
+        "label": "现金",
+        "inflow": "0",
+        "outflow": "0",
+        "net": "0",
+        "count": 0
+      }
+    ],
+    "events": [
+      {
+        "id": -3,
+        "event_no": "ACCOUNT-3",
+        "kind": "interest",
+        "kind_label": "利息",
+        "currency": "CNY",
+        "source_amount": "90.00",
+        "direction": "income",
+        "direction_label": "流入",
+        "bank_date": "2026-02-03",
+        "bank_net_amount": "90.00",
+        "fee_mode": "none",
+        "fee_amount": "0",
+        "bank_reference": "SYNTH-AUTH-1440-1793788567027-9",
+        "status": "confirmed",
+        "detail_url": "/finance-ledger?fact=3",
+        "account_type": "bank",
+        "refund_excess_amount": "0.00"
+      },
+      {
+        "id": -4,
+        "event_no": "ACCOUNT-4",
+        "kind": "commercial_refund",
+        "kind_label": "商业退款",
+        "currency": "CNY",
+        "source_amount": "150.00",
+        "direction": "expense",
+        "direction_label": "流出",
+        "bank_date": "2026-02-04",
+        "bank_net_amount": "150.00",
+        "fee_mode": "none",
+        "fee_amount": "0",
+        "bank_reference": "SYNTH-AUTH-1440-1793788567027-15",
+        "status": "confirmed",
+        "detail_url": "/finance-ledger?fact=4",
+        "account_type": "bank",
+        "refund_excess_amount": "60.00"
+      },
+      {
+        "id": -5,
+        "event_no": "ACCOUNT-5",
+        "kind": "unclassified",
+        "kind_label": "性质待分类",
+        "currency": "CNY",
+        "source_amount": "50.00",
+        "direction": "income",
+        "direction_label": "流入",
+        "bank_date": "2026-02-05",
+        "bank_net_amount": "50.00",
+        "fee_mode": "none",
+        "fee_amount": "0",
+        "bank_reference": "SYNTH-AUTH-1440-1793788567027-18",
+        "status": "confirmed",
+        "detail_url": "/finance-ledger?fact=5",
+        "account_type": "bank",
+        "refund_excess_amount": "0.00"
+      },
+      {
+        "id": -8,
+        "event_no": "ACCOUNT-8",
+        "kind": "interest",
+        "kind_label": "利息",
+        "currency": "CNY",
+        "source_amount": "1.00",
+        "direction": "income",
+        "direction_label": "流入",
+        "bank_date": "2026-02-08",
+        "bank_net_amount": "1.00",
+        "fee_mode": "none",
+        "fee_amount": "0",
+        "bank_reference": "SYNTH-AUTH-1440-1793788567027-27",
+        "status": "confirmed",
+        "detail_url": "/finance-ledger?fact=8",
+        "account_type": "bank",
+        "refund_excess_amount": "0.00"
+      }
+    ],
+    "note": "已登记实际人民币资金：含人工确认银行事件及已核实自有银行、现金账户事实，不代表公司全部实际资金，不是利润、销售收入或银行账户余额。"
+  },
+  "core_tables_before": {
+    "sha256": "869cc4349f0ec3c203fe3ef7894fd7b69cea337e1fbbaf0baac68ecb44014ce7",
+    "counts": {
+      "Order": 0,
+      "PurchaseOrder": 0,
+      "InventoryMovement": 0,
+      "PaymentPlan": 0,
+      "Transaction": 0
+    }
+  },
+  "core_tables_after": {
+    "sha256": "869cc4349f0ec3c203fe3ef7894fd7b69cea337e1fbbaf0baac68ecb44014ce7",
+    "counts": {
+      "Order": 0,
+      "PurchaseOrder": 0,
+      "InventoryMovement": 0,
+      "PaymentPlan": 0,
+      "Transaction": 0
+    }
+  }
+}

@@ -1,0 +1,380 @@
+
+> senju-crm-erp@1.0.0 test:unit
+> node --test
+
+✔ bank-fee selection receives fixed synthetic accounts without external configuration (76.7131ms)
+✔ full business suite receives bank-fee synthetic accounts at the standard CI entry (0.249ms)
+✔ other business selections and infrastructure smoke preserve existing account configuration (1.2267ms)
+✔ port allocator returns a free explicit loopback port (61.9589ms)
+✔ port preflight rejects an occupied port instead of reusing another server (4.5767ms)
+✔ actual runner fails before creating isolated resources when its API port is occupied (893.8462ms)
+✔ port preflight rejects duplicate API and Vite assignments (2.667ms)
+✔ API identity mismatch is rejected before browser tests can proceed (40.4115ms)
+✔ only an existing browser test file can be selected; Playwright service and config overrides are rejected (5.3363ms)
+✔ only allowlisted real API suites receive fixed synthetic fixture seeds (2.3591ms)
+✔ API identity comparison checks run ID, token, SQLite path, and MEDIA_ROOT (0.8434ms)
+✔ a real Vite /api proxy to the wrong database and MEDIA_ROOT is rejected before Playwright (1948.4959ms)
+✔ browser CI invokes the isolated suite and keeps run evidence under an isolated root (3.0638ms)
+✔ SQLite URL preserves an absolute platform path for Django parsing (0.311ms)
+✔ cleanup removes only a marked run directory under system temp (4.7242ms)
+✔ cleanup refuses an ownership marker belonging to another run (4.3428ms)
+✔ two independent worktree runtimes can start concurrently without sharing ports or data (103279.8206ms)
+ℹ parallel isolated runs: [{"runId":"fac5dbcf-6528-44f5-bea4-618856510100","apiPort":"3050","vitePort":"3051","database":"C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-Qt5Gqk\\db.sqlite3","media":"C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-Qt5Gqk\\media"},{"runId":"5d1f8850-99a4-4b8f-8eeb-6b905638bc3a","apiPort":"3052","vitePort":"3053","database":"C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-eObqec\\db.sqlite3","media":"C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-eObqec\\media"}]
+✔ formatApiError preserves field and nested item context (1.3908ms)
+✔ apiErrorMessage uses understandable network and server fallbacks (0.3516ms)
+✔ API errors retain status, parsed data and the original response (5.2653ms)
+✔ API parses Blob JSON errors before formatting (2.8503ms)
+✔ aggregated lists include subsequent pages and keep filters (0.8304ms)
+✔ listAll handles non-paginated array actions in one request (0.3167ms)
+✔ failed later pages never return a misleading partial total (0.3144ms)
+✔ category multiselect supports independent leaves, parent coverage and removal (107.727ms)
+✔ contract adjustment history renders the backend status display (83.4078ms)
+✔ order workbench exposes retained contract amount adjustments (23.0683ms)
+✔ order workbench exposes shipment history and reversal flow (1.5175ms)
+✔ batch over-shipment requires a line-specific reason and one explicit batch warning before submitting (1.5709ms)
+✔ order workbench exposes explicit packing plan generation and snapshot display (2.6965ms)
+✔ packing plan loading never generates a plan implicitly (1.2448ms)
+✔ order workbench exposes procurement shortage, draft coverage, generation and linked purchases (1.0152ms)
+✔ lead-time input reserves room for ten digits (17.5879ms)
+✔ order draft contains one order-level tail-goods policy selector (1.0989ms)
+✔ order draft is always a draft and explains that confirmation performs formal actions (1.1503ms)
+✔ order draft does not ask for or submit a backend-generated order number (1.767ms)
+✔ procurement preview groups by supplier and currency and validates user inputs (10.8345ms)
+✔ SKU candidate filters combine values with OR and attributes with AND, including legacy keys (23.8259ms)
+✔ quote detail exposes only valid status actions for draft and sent quotes (30.8237ms)
+✔ status actions call the API, reload quote workbench, and refresh the quote list (2.9115ms)
+✔ terminal quote states render no status transition controls (1.3757ms)
+✔ only non-terminal quotes expose the conversion-to-order actions (1.1096ms)
+✔ saved and revised PI previews use the currency in the official totals DTO (2.6063ms)
+✔ SKU picker synchronizes multi-selection into quote line items (39.1458ms)
+✔ SKU picker keeps a fixed height while search results scroll (1.9517ms)
+✔ quote editor lets users save without exporting the Excel file (1.0637ms)
+✔ quote editor keeps every footer action and gives save actions full rows on narrow screens (2.0902ms)
+✔ quote editor blocks a validity date earlier than the quote date (0.9295ms)
+✔ quote status is read-only and cannot be selected while creating or revising (1.0818ms)
+✔ related create modal supports inherited relationships (41.4408ms)
+✔ related quote creation seeds the customer and keeps it locked in create mode (3.8237ms)
+✔ detail relation context carries parent customer and contact (1.8065ms)
+✔ follow-up rows open the shared detailed follow-up view (2.3527ms)
+✔ follow-up creation links days-after input to the next follow-up date (1.5578ms)
+✔ related create payload serializes empty optional dates as null (1.2275ms)
+✔ quote save stops on MOQ violation or unavailable validation service (17.6139ms)
+✔ valid MOQ check allows quote creation and ignores stale check responses (3.0049ms)
+✔ sales-rule editor explains that MOQ uses the SKU base quantity (1.8061ms)
+✔ calendar picker is opened only from its calendar button (37.5832ms)
+✔ date parts remain compact without individual outlines (1.7631ms)
+✔ time parts are grouped into a compact hour-minute control (0.9452ms)
+✔ summary cards provide a reusable, compact metric layout (103.5487ms)
+✔ supplier allocation metrics follow the selected SupplierSKU rather than the first source (82.2686ms)
+✔ supplier filtering and select-all retain selections outside current results (181.12ms)
+✔ business pages use the shared dialog infrastructure instead of browser dialogs (26.4119ms)
+✔ the shared host exposes DOM-accessible controls for automation (1.1794ms)
+✔ date shortcuts handle year and leap-month boundaries in local time (2.3607ms)
+✔ embedded block overrides do not mutate reusable defaults (0.2485ms)
+✔ bank cash facts use an independent report source and date basis (0.1442ms)
+✔ no settlement selection is JSON null, never zero or NaN (2.0031ms)
+✔ selected settlement keeps its positive integer identity (0.285ms)
+✔ category cascade merges ancestors and retains same-name leaves under different parents (1.3435ms)
+✔ parent filtering includes descendants without matching similar names or other branches (0.4037ms)
+✔ customer lifecycle keys use the canonical Chinese labels (2.337ms)
+✔ unknown customer lifecycle keys keep their safe fallback (0.2379ms)
+✔ legacy cash block IDs and custom configurations retain their query contract (1.9201ms)
+✔ addDays calculates an expected ship date from the order date (2.0665ms)
+✔ daysBetween derives the lead time from an expected ship date (0.3292ms)
+✔ date helpers leave incomplete dates empty (0.1662ms)
+✔ order tasks draft debt matrix (3.0066ms)
+✔ order tasks cancelled debt matrix (0.1775ms)
+✔ order tasks confirmed debt matrix (0.3275ms)
+✔ order tasks production debt matrix (0.1273ms)
+✔ order tasks shipped debt matrix (0.1145ms)
+✔ order tasks completed debt matrix (0.1104ms)
+✔ completed settled has no tasks, refund dynamically restores only receipt (0.2654ms)
+✔ masked, absent and denied financial amounts never fall back to protected order balance (0.467ms)
+✔ unknown no_plans is review, never confirmed zero (0.601ms)
+✔ unknown review is review, never confirmed zero (0.2825ms)
+✔ page identity stays on the same path across transient query changes (1.0604ms)
+✔ list query data excludes modal and detail actions while retaining business context (47.7462ms)
+✔ closing a route modal removes action keys and preserves all context query values (0.8383ms)
+✔ SKU labels come from records with a matching numeric foreign key and clearing preserves unrelated route state (1.1914ms)
+✔ preview filters cartesian combinations by all rules and normalizes units (2.2422ms)
+✔ multi-trigger, allowed values, prohibition and empty rules (0.3389ms)
+✔ saved base quantity loads as transaction quantity and sends edited trade quantity (0.9598ms)
+✔ switching to base unit clears stale transaction values (0.1905ms)
+✔ receipt cost is interpreted per selected package (0.1427ms)
+✔ SKU selection preserves multiple packaging lines for the same SKU (1.5341ms)
+✔ cash event page keeps the backend two-step and stable-key flow (49.8872ms)
+✔ cash event page keeps bank facts separate from legacy receipt and settlement data (1.2947ms)
+✔ independent fees offer an optional settlement and serialize no selection as null (2.1501ms)
+✔ creating a category attribute updates the local category state without reloading the page (56.2465ms)
+✔ category template explains that published SKU plans do not auto-mutate (1.1262ms)
+✔ quote list renders a recursive parent-child tree with classified document icons (170.1432ms)
+✔ quote tree actions preserve detail, edit, and Excel export entry points (1.0866ms)
+✔ quote list provides summary metrics, filters, and newest-first sorting (0.8915ms)
+✔ every quote row opens detail and dedicated expansion stops propagation (1.0329ms)
+✔ orders reuse the compact summary cards used by the quotation desk (0.967ms)
+✔ order editor does not expose manual lifecycle status changes (0.9083ms)
+✔ order creation leaves number generation to the backend and keeps saved numbers read-only (0.9442ms)
+✔ order draft edits use PUT, close and refresh on success, and surface failed saves (0.9394ms)
+✔ order editor reports an invalid non-positive line quantity before sending a request (1.4615ms)
+✔ order list limits edit and delete operations to drafts (0.9262ms)
+✔ formal order history prefers the saved party snapshot and labels the live master reference (1.3878ms)
+✔ quote history prefers the saved buyer snapshot and never falls back to the live customer name (1.7855ms)
+✔ editing from the order workbench reloads the current order before opening the editor (0.8414ms)
+✔ document deep links initialize and dynamically synchronize quote and order details (1.6082ms)
+✔ closing a document detail removes only detail and preserves remaining route state (0.9595ms)
+✔ opening list rows pushes their detail id into the current route for refresh and history (1.4577ms)
+✔ invalid document ids cannot break the list route and large not-found ids remain loadable as details (0.2842ms)
+✖ finance dashboard keeps book reference and adds confirmed bank cash facts separately (74.2966ms)
+✔ payable drill keeps the dashboard purchase-only permission boundary (44.4445ms)
+✔ history order entry uses isolated endpoints and keeps the analysis-only label visible (24.2091ms)
+✔ history order entry preserves the supplied historical date and does not expose formal actions (1.2366ms)
+✔ history page keeps unauthorized optional requests from blanking authorized data (1.6714ms)
+✔ history page does not offer an entry form without its master-data permissions (0.9769ms)
+✔ history navigation accepts either sales or purchasing view permission (1.1661ms)
+✔ history analysis renders permission-filtered detail tables with local narrow-screen scrolling (1.1344ms)
+✔ inventory page opens a SKU detail panel with linked business records (23.0248ms)
+✔ inventory headers toggle sortable columns (1.1528ms)
+✔ packaging list labels physical dimensions and tare weight with their units (31.4781ms)
+✔ packaging page presents tail-goods policies and no mixed-pack setting (1.2496ms)
+✔ packaging form keeps dimensions in one row and shows policy help as a floating panel (1.7608ms)
+✔ editing linked template physical data requires verification invalidation confirmation (1.1007ms)
+✔ SKU-bearing product prefix changes use preview and explicit apply endpoints (26.1981ms)
+✔ ordinary product data retains the normal save path (1.159ms)
+✔ purchase desk exposes retained contract amount adjustment history (32.3074ms)
+✔ purchase desk connects creation, receipt and supplier payment actions (1.4098ms)
+✔ purchase desk exposes receipt history and the reversal flow (1.1219ms)
+✔ purchase desk labels ordered, received, remaining and overage quantities separately (0.8346ms)
+✔ purchase desk keeps drafts editable and separates placement from draft save (1.4586ms)
+✔ formal purchase history prefers the saved supplier snapshot and exposes its party details (1.2224ms)
+✔ order fulfillment purchase history prefers formal supplier snapshots (1.0279ms)
+✔ purchase creation leaves number generation to the backend and never submits a number (1.5756ms)
+✔ missing supplier source is described as optional without implying automatic creation (1.406ms)
+✔ purchase price reference only carries across matching currencies and resets stale prices (1.064ms)
+✔ cost allocation loads minimal cross-order candidates through procurement permission (1.1887ms)
+✔ purchase editor aggregates maintained MOQ in base units without blocking draft save (0.8321ms)
+✔ purchase placement keeps low MOQ as a reasoned soft exception and displays retained evidence (1.2685ms)
+✔ resource payload serializes empty optional dates as null (60.0881ms)
+✔ transaction resource distinguishes book reference from confirmed bank RMB cash (0.3241ms)
+✔ customer projections are visible but not editable customer fields (3.6792ms)
+✔ customer detail shortcuts require the target module action permission (1.2321ms)
+✔ customer, product and SKU details expose a permission-gated report-center shortcut with a safe return path (1.2636ms)
+✔ automatic inventory movements are read-only while manual movements are reversed, not deleted (3.3034ms)
+✔ follow-up history summary is distinguished from the current dashboard obligation (0.9987ms)
+✔ customer ownership uses scoped employee options and sends an explicit clear as null (1.512ms)
+✔ ISS-049 reuses URL-backed quick filters for customer and follow-up lists (2.9446ms)
+✔ SKU editor exposes supplier source maintenance through the API (37.172ms)
+✔ SKU editor canonicalizes abbreviation keys and mirrors backend value formatting (1.5201ms)
+✔ SKU creation relies on generated Sales Model and editing preserves the saved model (2.2812ms)
+✔ editing one SKU keeps its packaging detail when the computed preview key changes (0.4091ms)
+✔ saved parameter suggestions include inherited categories and legacy keys independent of search rows (3.502ms)
+✔ create and edit include packaging in their single SKU database request (4.0379ms)
+✔ parameter edits submit the explicitly saved Sales Model instead of the generated preview (2.1431ms)
+✔ image failure retains saved SKU IDs for independent retry and reports database success (3.7446ms)
+✔ nested packaging validation messages remain readable (1.6066ms)
+✔ main list pages reuse the shared summary cards (99.48ms)
+✔ dashboard due follow-ups preserve current-due context when opening the list or a record (56.5109ms)
+✔ finance due contracts navigate by their returned record IDs (2.2681ms)
+✔ import page exposes only supported types and explains insert-only finance imports (1.1058ms)
+✔ import page uses preview and explicit confirmation before a write (0.9735ms)
+✔ top bar has no fake search or notification controls and uses current operator initials (0.9488ms)
+✔ core management lists and selectors use the tested all-pages loader (39.5255ms)
+✔ trade-unit page preserves deactivate and default-source actions (49.7414ms)
+✔ transaction form distinguishes refunds from order expenses (76.6565ms)
+ℹ tests 177
+ℹ suites 0
+ℹ pass 176
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 107360.3703
+
+✖ failing tests:
+
+test at src\views\FinanceDashboardPage.test.js:7:1
+✖ finance dashboard keeps book reference and adds confirmed bank cash facts separately (74.2966ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /不代表公司全部银行余额/. Input:
+
+  '<script setup>\r\n' +
+    "import { BOOK_RMB_NOTE } from '../utils/financeBasis.js'\r\n" +
+    "import { computed, onMounted, ref, watch } from 'vue'\r\n" +
+    "import { useRoute, useRouter } from 'vue-router'\r\n" +
+    "import { api } from '../api'\r\n" +
+    "import PageLoadState from '../components/PageLoadState.vue'\r\n" +
+    "import { useAccessControl } from '../accessControl'\r\n" +
+    "import { apiErrorMessage } from '../utils/apiErrors.js'\r\n" +
+    '\r\n' +
+    'const data = ref({ metrics: {}, due_items: [] })\r\n' +
+    'const actualCash = ref(null)\r\n' +
+    'const actualCashLoading = ref(false)\r\n' +
+    "const actualCashError = ref('')\r\n" +
+    'const loading = ref(true)\r\n' +
+    "const error = ref('')\r\n" +
+    'const hasLoaded = ref(false)\r\n' +
+    'const { can } = useAccessControl()\r\n' +
+    'const route = useRoute(), router = useRouter()\r\n' +
+    "const today = new Date().toLocaleDateString('en-CA')\r\n" +
+    'const dateFrom = ref(`${today.slice(0, 7)}-01`), dateTo = ref(today)\r\n' +
+    "const exporting = ref(false), notice = ref('')\r\n" +
+    "const drill = ref(null), drillLoading = ref(false), drillError = ref('')\r\n" +
+    'const actualCashEvents = ref(null)\r\n' +
+    'let loadVersion = 0\r\n' +
+    'let actualCashVersion = 0\r\n' +
+    'let drillVersion = 0\r\n' +
+    "const rangeError = computed(() => dateFrom.value && dateTo.value && dateFrom.value > dateTo.value ? '开始日期不能晚于结束日期。' : '')\r\n" +
+    'const periodCards = [\r\n' +
+    "  ['sales_rmb', '合同销售额'], ['estimated_profit_rmb', '预计订单利润'], ['purchase_cost_rmb', '订单采购归属成本'], ['order_expense_rmb', '订单费用'],\r\n" +
+    "  ['income_rmb', '账面收入（折算参考）'], ['expense_rmb', '账面支出（折算参考）'], ['net_cash_rmb', '账面净收支（折算参考）'],\r\n" +
+    ']\r\n' +
+    'const balanceCards = [\r\n' +
+    "  ['receivable_count', '待收笔数', 'count'], ['receivable_rmb', '待收款（人民币折算参考）'], ['payable_count', '待付款笔数', 'count'], ['payable_rmb', '待付款（人民币折算参考）'],\r\n" +
+    "  ['advance_receipt_rmb', '未核销预收款（人民币折算参考）'], ['advance_payment_rmb', '未核销预付款（人民币折算参考）'],\r\n" +
+    ']\r\n' +
+    '\r\n' +
+    "function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }\r\n" +
+    'function canDrill(metric) {\r\n' +
+    "  if (metric === 'sales_rmb' || metric === 'receivable_count' || metric === 'receivable_rmb') return can('orders', 'view')\r\n" +
+    "  if (['purchase_cost_rmb', 'order_expense_rmb', 'estimated_profit_rmb'].includes(metric)) return can('orders', 'view') && can('purchases', 'view')\r\n" +
+    "  if (['payable_count', 'payable_rmb'].includes(metric)) return can('purchases', 'view')\r\n" +
+    "  return can('transactions', 'view')\r\n" +
+    '}\r\n' +
+    'function drillAmount(row) {\r\n' +
+    "  return drill.value?.amount_unit === '笔' ? `${row.amount || 0} 笔` : `¥${money(row.amount)}`\r\n" +
+    '}\r\n' +
+    'function drillBasisLabel(value) {\r\n' +
+    "  return value === 'order_date' ? '订单日期' : value === 'transaction_date' ? '流水发生日期' : '当前余额'\r\n" +
+    '}\r\n' +
+    "async function openDrill(metric, page = 1, sortBy = 'date', sortOrder = 'asc') {\r\n" +
+    '  if (!canDrill(metric) || !data.value.period) return\r\n' +
+    '  const version = ++drillVersion\r\n' +
+    '  drillLoading.value = true\r\n' +
+    "  drillError.value = ''\r\n" +
+    '  try {\r\n' +
+    "    const response = await api.get('/finance-dashboard/details/', { params: { metric, date_from: data.value.period.date_from, date_to: data.value.period.date_to, page, page_size: 50, sort_by: sortBy, sort_order: sortOrder } })\r\n" +
+    '    if (version !== drillVersion) return\r\n' +
+    '    drill.value = response.data\r\n' +
+    '  } catch (err) {\r\n' +
+    "    if (version === drillVersion) drillError.value = apiErrorMessage(err) || '构成明细加载失败，请刷新后重试。'\r\n" +
+    '  } finally {\r\n' +
+    '    if (version === drillVersion) drillLoading.value = false\r\n' +
+    '  }\r\n' +
+    '}\r\n' +
+    "function closeDrill() { drillVersion += 1; drill.value = null; drillError.value = ''; drillLoading.value = false }\r\n" +
+    'function sortDrill(field) {\r\n' +
+    '  if (!drill.value) return\r\n' +
+    "  const sortOrder = drill.value.sort_by === field && drill.value.sort_order === 'asc' ? 'desc' : 'asc'\r\n" +
+    '  void openDrill(drill.value.metric, 1, field, sortOrder)\r\n' +
+    '}\r\n' +
+    "function showActualCashEvents() { actualCashEvents.value?.scrollIntoView({ behavior: 'smooth', block: 'start' }) }\r\n" +
+    'async function load() {\r\n' +
+    '  if (rangeError.value) return\r\n' +
+    '  const version = ++loadVersion\r\n' +
+    '  const from = dateFrom.value\r\n' +
+    '  const to = dateTo.value\r\n' +
+    '  loading.value = true\r\n' +
+    "  error.value = ''\r\n" +
+    '  closeDrill()\r\n' +
+    "  const legacyRequest = api.get('/finance-dashboard/', { params: { date_from: from, date_to: to } })\r\n" +
+    "  if (can('transactions', 'view')) void loadActualCash({ from, to })\r\n" +
+    '  else {\r\n' +
+    '    actualCashVersion += 1\r\n' +
+    '    actualCash.value = null\r\n' +
+    "    actualCashError.value = ''\r\n" +
+    '    actualCashLoading.value = false\r\n' +
+    '  }\r\n' +
+    '  try {\r\n' +
+    '    const response = await legacyRequest\r\n' +
+    '    if (version !== loadVersion) return\r\n' +
+    '    data.value = response.data\r\n' +
+    '    hasLoaded.value = true\r\n' +
+    '  } catch (err) {\r\n' +
+    "    if (version === loadVersion) error.value = apiErrorMessage(err) || '财务概览加载失败，请稍后重试。'\r\n" +
+    '  } finally {\r\n' +
+    '    if (version === loadVersion) loading.value = false\r\n' +
+    '  }\r\n' +
+    '}\r\n' +
+    'async function loadActualCash({ from = dateFrom.value, to = dateTo.value } = {}) {\r\n' +
+    "  if (!can('transactions', 'view')) return\r\n" +
+    '  const version = ++actualCashVersion\r\n' +
+    '  actualCashLoading.value = true\r\n' +
+    "  actualCashError.value = ''\r\n" +
+    '  actualCash.value = null\r\n' +
+    '  try {\r\n' +
+    "    const response = await api.get('/actual-rmb-cash/', { params: { date_from: from, date_to: to } })\r\n" +
+    '    if (version !== actualCashVersion) return\r\n' +
+    "    if (response.data?.basis !== 'bank_cash_confirmed_v1') throw new Error('银行实际资金统计口径无效。')\r\n" +
+    '    actualCash.value = response.data\r\n' +
+    '  } catch (err) {\r\n' +
+    "    if (version === actualCashVersion) actualCashError.value = apiErrorMessage(err) || '银行实际资金加载失败，请稍后重试。'\r\n" +
+    '  } finally {\r\n' +
+    '    if (version === actualCashVersion) actualCashLoading.value = false\r\n' +
+    '  }\r\n' +
+    '}\r\n' +
+    'async function applyPeriod() {\r\n' +
+    '  if (rangeError.value) return\r\n' +
+    '  if (route.query.date_from === dateFrom.value && route.query.date_to === dateTo.value) { await load(); return }\r\n' +
+    '  await router.replace({ path: route.path, query: { ...route.query, date_from: dateFrom.value, date_to: dateTo.value }, hash: route.hash })\r\n' +
+    '}\r\n' +
+    'function syncPeriod() {\r\n' +
+    "  if (typeof route.query.date_from === 'string') dateFrom.value = route.query.date_from\r\n" +
+    "  if (typeof route.query.date_to === 'string') dateTo.value = route.query.date_to\r\n" +
+    '}\r\n' +
+    'function resetPeriod() {\r\n' +
+    "  const now = new Date().toLocaleDateString('en-CA')\r\n" +
+    '  dateFrom.value = `${now.slice(0, 7)}-01`; dateTo.value = now\r\n' +
+    '  void applyPeriod()\r\n' +
+    '}\r\n' +
+    'async function exportReport() {\r\n' +
+    "  if (!can('finance', 'export')) return\r\n" +
+    '  exporting.value = true\r\n' +
+    "  error.value = ''\r\n" +
+    '  try {\r\n' +
+    "    const response = await api.get('/finance-dashboard/', { params: { date_from: data.value.period.date_from, date_to: data.value.period.date_to, export: 'csv' }, responseType: 'blob' })\r\n" +
+    '    const url = URL.createObjectURL(response.data)\r\n' +
+    "    const anchor = document.createElement('a'); anchor.href = url; anchor.download = `账面收支参考-${data.value.period.date_from}-${data.value.period.date_to}.csv`; anchor.click()\r\n" +
+    '    setTimeout(() => URL.revokeObjectURL(url), 1000)\r\n' +
+    "    notice.value = 'CSV 已开始下载。'\r\n" +
+    "  } catch (err) { error.value = apiErrorMessage(err) || '导出失败，请稍后重试。' } finally { exporting.value = false }\r\n" +
+    '}\r\n' +
+    'async function exportActualCash() {\r\n' +
+    "  if (!can('transactions', 'view') || !can('reports', 'export') || !actualCash.value) return\r\n" +
+    '  try {\r\n' +
+    "    const response = await api.get('/actual-rmb-cash/', { params: { date_from: actualCash.value.period.date_from, date_to: actualCash.value.period.date_to, export: 'csv' }, responseType: 'blob' })\r\n" +
+    "    const url = URL.createObjectURL(response.data), anchor = document.createElement('a')\r\n" +
+    '    anchor.href = url; anchor.download = `银行实际人民币资金-${actualCash.value.period.date_from}-${actualCash.value.period.date_to}.csv`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)\r\n' +
+    "    notice.value = '银行实际资金 CSV 已开始下载。'\r\n" +
+    "  } catch (err) { actualCashError.value = apiErrorMessage(err) || '银行实际资金导出失败，请稍后重试。' }\r\n" +
+    '}\r\n' +
+    'syncPeriod()\r\n' +
+    'watch(() => [route.query.date_from, route.query.date_to], () => { syncPeriod(); void load() })\r\n' +
+    'onMounted(load)\r\n' +
+    '</script>\r\n' +
+    '\r\n' +
+    '<template>\r\n' +
+    '  <section class="finance-page">\r\n' +
+    '    <header><div><p class="page-lede">合同、应收应付与两种资金口径分开列示。合同按订单日期，账面收支按流水发生日期，银行实际资金按银行实际日期；当前待结与未核销是当前余额。</p></div><button class="secondary" :disabled="loading" @click="load">刷新数据</button></header>\r\n' +
+    `    <form class="report-filters" aria-label="概览日期范围" @submit.prevent="applyPeriod"><label>开始日期<input v-model="dateFrom" type="date" required></label><label>结束日期<input v-model="dateTo" type="date" required></label><button :disabled="loading || !!rangeError">查询</button><button type="button" class="secondary" @click="resetPeriod">本月至今</button><button v-if="can('finance', 'export')" type="button" class="secondary" :disabled="loading || exporting || !data.period || !!error" @click="exportReport">{{ exporting ? '正在导出…' : '导出 CSV' }}</button></form>\r\n` +
+    '    <p v-if="rangeError" class="error" role="alert">{{ rangeError }}</p>\r\n' +
+    '    <p v-if="notice" class="notice" role="status">{{ notice }}</p>\r\n' +
+    '    <p class="definition-note">合同销售额按订单日期，账面收支按流水发生日期。待收、待付按合同汇率折算，未核销预收预付按原流水汇率折算，均为当前参考值。银行实际人民币资金按银行实际日期统计；当前待结与未核销不受所选期间限制。预计订单利润 = 合同销售额 − 采购归属成本 − 订单费用，仅作经营估算。</p>\r\n' +
+    '    <p class="definition-note">{{ data.cash_basis?.note || BOOK_RMB_NOTE }}</p>\r\n' +
+    '    <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="error" @retry="load" />\r\n' +
+    '    <template v-if="hasLoaded">\r\n' +
+    '    <section class="metric-section"><header><div><h3>所选期间</h3><p>{{ data.period?.date_from }} 至 {{ data.period?.date_to }}</p></div></header><div class="cards period-cards">\r\n' +
+    '      <article v-for="[key, label] in periodCards" :key="key"><span>{{ label }}</span><strong>¥{{ money(data.metrics[key]) }}</strong><button v-if="canDrill(key)" type="button" class="metric-drill" :disabled="drillLoading" @click="openDrill(key)">查看构成明细</button></article>\r\n' +
+    '    </div></section>\r\n' +
+    '    <section class="metric-section"><header><div><h3>当前待结与未核销（余额）</h3><p>截至当前的待结与未核销金额，不受所选期间筛选限制</p></div></header><div class="cards balance-cards">\r\n' +
+    '      <article v-for="[key, label, kind] in balanceCards" :key="key"><span>{{ label }}</span><strong>{{ kind === \'count\' ? `${data.metrics[key] || 0} 笔` : `¥${money(data.metrics[key])}` }}</strong><button v-if="canDrill(key)" type="button" class="metric-drill" :disabled="drillLoading" @click="openDrill(key)">查看构成明细</button></article>\r\n' +
+    '    </div></section>\r\n' +
+    '    <section v-if="drill || drill'... 11812 more characters
+
+      at TestContext.<anonymous> (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/finance-closeout-batch-20261104/frontend/src/views/FinanceDashboardPage.test.js:12:10)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<script setup>\r\nimport { BOOK_RMB_NOTE } from \'../utils/financeBasis.js\'\r\nimport { computed, onMounted, ref, watch } from \'vue\'\r\nimport { useRoute, useRouter } from \'vue-router\'\r\nimport { api } from \'../api\'\r\nimport PageLoadState from \'../components/PageLoadState.vue\'\r\nimport { useAccessControl } from \'../accessControl\'\r\nimport { apiErrorMessage } from \'../utils/apiErrors.js\'\r\n\r\nconst data = ref({ metrics: {}, due_items: [] })\r\nconst actualCash = ref(null)\r\nconst actualCashLoading = ref(false)\r\nconst actualCashError = ref(\'\')\r\nconst loading = ref(true)\r\nconst error = ref(\'\')\r\nconst hasLoaded = ref(false)\r\nconst { can } = useAccessControl()\r\nconst route = useRoute(), router = useRouter()\r\nconst today = new Date().toLocaleDateString(\'en-CA\')\r\nconst dateFrom = ref(`${today.slice(0, 7)}-01`), dateTo = ref(today)\r\nconst exporting = ref(false), notice = ref(\'\')\r\nconst drill = ref(null), drillLoading = ref(false), drillError = ref(\'\')\r\nconst actualCashEvents = ref(null)\r\nlet loadVersion = 0\r\nlet actualCashVersion = 0\r\nlet drillVersion = 0\r\nconst rangeError = computed(() => dateFrom.value && dateTo.value && dateFrom.value > dateTo.value ? \'开始日期不能晚于结束日期。\' : \'\')\r\nconst periodCards = [\r\n  [\'sales_rmb\', \'合同销售额\'], [\'estimated_profit_rmb\', \'预计订单利润\'], [\'purchase_cost_rmb\', \'订单采购归属成本\'], [\'order_expense_rmb\', \'订单费用\'],\r\n  [\'income_rmb\', \'账面收入（折算参考）\'], [\'expense_rmb\', \'账面支出（折算参考）\'], [\'net_cash_rmb\', \'账面净收支（折算参考）\'],\r\n]\r\nconst balanceCards = [\r\n  [\'receivable_count\', \'待收笔数\', \'count\'], [\'receivable_rmb\', \'待收款（人民币折算参考）\'], [\'payable_count\', \'待付款笔数\', \'count\'], [\'payable_rmb\', \'待付款（人民币折算参考）\'],\r\n  [\'advance_receipt_rmb\', \'未核销预收款（人民币折算参考）\'], [\'advance_payment_rmb\', \'未核销预付款（人民币折算参考）\'],\r\n]\r\n\r\nfunction money(value) { return Number(value || 0).toLocaleString(\'zh-CN\', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }\r\nfunction canDrill(metric) {\r\n  if (metric === \'sales_rmb\' || metric === \'receivable_count\' || metric === \'receivable_rmb\') return can(\'orders\', \'view\')\r\n  if ([\'purchase_cost_rmb\', \'order_expense_rmb\', \'estimated_profit_rmb\'].includes(metric)) return can(\'orders\', \'view\') && can(\'purchases\', \'view\')\r\n  if ([\'payable_count\', \'payable_rmb\'].includes(metric)) return can(\'purchases\', \'view\')\r\n  return can(\'transactions\', \'view\')\r\n}\r\nfunction drillAmount(row) {\r\n  return drill.value?.amount_unit === \'笔\' ? `${row.amount || 0} 笔` : `¥${money(row.amount)}`\r\n}\r\nfunction drillBasisLabel(value) {\r\n  return value === \'order_date\' ? \'订单日期\' : value === \'transaction_date\' ? \'流水发生日期\' : \'当前余额\'\r\n}\r\nasync function openDrill(metric, page = 1, sortBy = \'date\', sortOrder = \'asc\') {\r\n  if (!canDrill(metric) || !data.value.period) return\r\n  const version = ++drillVersion\r\n  drillLoading.value = true\r\n  drillError.value = \'\'\r\n  try {\r\n    const response = await api.get(\'/finance-dashboard/details/\', { params: { metric, date_from: data.value.period.date_from, date_to: data.value.period.date_to, page, page_size: 50, sort_by: sortBy, sort_order: sortOrder } })\r\n    if (version !== drillVersion) return\r\n    drill.value = response.data\r\n  } catch (err) {\r\n    if (version === drillVersion) drillError.value = apiErrorMessage(err) || \'构成明细加载失败，请刷新后重试。\'\r\n  } finally {\r\n    if (version === drillVersion) drillLoading.value = false\r\n  }\r\n}\r\nfunction closeDrill() { drillVersion += 1; drill.value = null; drillError.value = \'\'; drillLoading.value = false }\r\nfunction sortDrill(field) {\r\n  if (!drill.value) return\r\n  const sortOrder = drill.value.sort_by === field && drill.value.sort_order === \'asc\' ? \'desc\' : \'asc\'\r\n  void openDrill(drill.value.metric, 1, field, sortOrder)\r\n}\r\nfunction showActualCashEvents() { actualCashEvents.value?.scrollIntoView({ behavior: \'smooth\', block: \'start\' }) }\r\nasync function load() {\r\n  if (rangeError.value) return\r\n  const version = ++loadVersion\r\n  const from = dateFrom.value\r\n  const to = dateTo.value\r\n  loading.value = true\r\n  error.value = \'\'\r\n  closeDrill()\r\n  const legacyRequest = api.get(\'/finance-dashboard/\', { params: { date_from: from, date_to: to } })\r\n  if (can(\'transactions\', \'view\')) void loadActualCash({ from, to })\r\n  else {\r\n    actualCashVersion += 1\r\n    actualCash.value = null\r\n    actualCashError.value = \'\'\r\n    actualCashLoading.value = false\r\n  }\r\n  try {\r\n    const response = await legacyRequest\r\n    if (version !== loadVersion) return\r\n    data.value = response.data\r\n    hasLoaded.value = true\r\n  } catch (err) {\r\n    if (version === loadVersion) error.value = apiErrorMessage(err) || \'财务概览加载失败，请稍后重试。\'\r\n  } finally {\r\n    if (version === loadVersion) loading.value = false\r\n  }\r\n}\r\nasync function loadActualCash({ from = dateFrom.value, to = dateTo.value } = {}) {\r\n  if (!can(\'transactions\', \'view\')) return\r\n  const version = ++actualCashVersion\r\n  actualCashLoading.value = true\r\n  actualCashError.value = \'\'\r\n  actualCash.value = null\r\n  try {\r\n    const response = await api.get(\'/actual-rmb-cash/\', { params: { date_from: from, date_to: to } })\r\n    if (version !== actualCashVersion) return\r\n    if (response.data?.basis !== \'bank_cash_confirmed_v1\') throw new Error(\'银行实际资金统计口径无效。\')\r\n    actualCash.value = response.data\r\n  } catch (err) {\r\n    if (version === actualCashVersion) actualCashError.value = apiErrorMessage(err) || \'银行实际资金加载失败，请稍后重试。\'\r\n  } finally {\r\n    if (version === actualCashVersion) actualCashLoading.value = false\r\n  }\r\n}\r\nasync function applyPeriod() {\r\n  if (rangeError.value) return\r\n  if (route.query.date_from === dateFrom.value && route.query.date_to === dateTo.value) { await load(); return }\r\n  await router.replace({ path: route.path, query: { ...route.query, date_from: dateFrom.value, date_to: dateTo.value }, hash: route.hash })\r\n}\r\nfunction syncPeriod() {\r\n  if (typeof route.query.date_from === \'string\') dateFrom.value = route.query.date_from\r\n  if (typeof route.query.date_to === \'string\') dateTo.value = route.query.date_to\r\n}\r\nfunction resetPeriod() {\r\n  const now = new Date().toLocaleDateString(\'en-CA\')\r\n  dateFrom.value = `${now.slice(0, 7)}-01`; dateTo.value = now\r\n  void applyPeriod()\r\n}\r\nasync function exportReport() {\r\n  if (!can(\'finance\', \'export\')) return\r\n  exporting.value = true\r\n  error.value = \'\'\r\n  try {\r\n    const response = await api.get(\'/finance-dashboard/\', { params: { date_from: data.value.period.date_from, date_to: data.value.period.date_to, export: \'csv\' }, responseType: \'blob\' })\r\n    const url = URL.createObjectURL(response.data)\r\n    const anchor = document.createElement(\'a\'); anchor.href = url; anchor.download = `账面收支参考-${data.value.period.date_from}-${data.value.period.date_to}.csv`; anchor.click()\r\n    setTimeout(() => URL.revokeObjectURL(url), 1000)\r\n    notice.value = \'CSV 已开始下载。\'\r\n  } catch (err) { error.value = apiErrorMessage(err) || \'导出失败，请稍后重试。\' } finally { exporting.value = false }\r\n}\r\nasync function exportActualCash() {\r\n  if (!can(\'transactions\', \'view\') || !can(\'reports\', \'export\') || !actualCash.value) return\r\n  try {\r\n    const response = await api.get(\'/actual-rmb-cash/\', { params: { date_from: actualCash.value.period.date_from, date_to: actualCash.value.period.date_to, export: \'csv\' }, responseType: \'blob\' })\r\n    const url = URL.createObjectURL(response.data), anchor = document.createElement(\'a\')\r\n    anchor.href = url; anchor.download = `银行实际人民币资金-${actualCash.value.period.date_from}-${actualCash.value.period.date_to}.csv`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)\r\n    notice.value = \'银行实际资金 CSV 已开始下载。\'\r\n  } catch (err) { actualCashError.value = apiErrorMessage(err) || \'银行实际资金导出失败，请稍后重试。\' }\r\n}\r\nsyncPeriod()\r\nwatch(() => [route.query.date_from, route.query.date_to], () => { syncPeriod(); void load() })\r\nonMounted(load)\r\n</script>\r\n\r\n<template>\r\n  <section class="finance-page">\r\n    <header><div><p class="page-lede">合同、应收应付与两种资金口径分开列示。合同按订单日期，账面收支按流水发生日期，银行实际资金按银行实际日期；当前待结与未核销是当前余额。</p></div><button class="secondary" :disabled="loading" @click="load">刷新数据</button></header>\r\n    <form class="report-filters" aria-label="概览日期范围" @submit.prevent="applyPeriod"><label>开始日期<input v-model="dateFrom" type="date" required></label><label>结束日期<input v-model="dateTo" type="date" required></label><button :disabled="loading || !!rangeError">查询</button><button type="button" class="secondary" @click="resetPeriod">本月至今</button><button v-if="can(\'finance\', \'export\')" type="button" class="secondary" :disabled="loading || exporting || !data.period || !!error" @click="exportReport">{{ exporting ? \'正在导出…\' : \'导出 CSV\' }}</button></form>\r\n    <p v-if="rangeError" class="error" role="alert">{{ rangeError }}</p>\r\n    <p v-if="notice" class="notice" role="status">{{ notice }}</p>\r\n    <p class="definition-note">合同销售额按订单日期，账面收支按流水发生日期。待收、待付按合同汇率折算，未核销预收预付按原流水汇率折算，均为当前参考值。银行实际人民币资金按银行实际日期统计；当前待结与未核销不受所选期间限制。预计订单利润 = 合同销售额 − 采购归属成本 − 订单费用，仅作经营估算。</p>\r\n    <p class="definition-note">{{ data.cash_basis?.note || BOOK_RMB_NOTE }}</p>\r\n    <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="error" @retry="load" />\r\n    <template v-if="hasLoaded">\r\n    <section class="metric-section"><header><div><h3>所选期间</h3><p>{{ data.period?.date_from }} 至 {{ data.period?.date_to }}</p></div></header><div class="cards period-cards">\r\n      <article v-for="[key, label] in periodCards" :key="key"><span>{{ label }}</span><strong>¥{{ money(data.metrics[key]) }}</strong><button v-if="canDrill(key)" type="button" class="metric-drill" :disabled="drillLoading" @click="openDrill(key)">查看构成明细</button></article>\r\n    </div></section>\r\n    <section class="metric-section"><header><div><h3>当前待结与未核销（余额）</h3><p>截至当前的待结与未核销金额，不受所选期间筛选限制</p></div></header><div class="cards balance-cards">\r\n      <article v-for="[key, label, kind] in balanceCards" :key="key"><span>{{ label }}</span><strong>{{ kind === \'count\' ? `${data.metrics[key] || 0} 笔` : `¥${money(data.metrics[key])}` }}</strong><button v-if="canDrill(key)" type="button" class="metric-drill" :disabled="drillLoading" @click="openDrill(key)">查看构成明细</button></article>\r\n    </div></section>\r\n    <section v-if="drill || drill'... 11812 more characters,
+    expected: /不代表公司全部银行余额/,
+    operator: 'match',
+    diff: 'simple'
+  }

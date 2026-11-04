@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 
-from .models import RmbCashEvent, Transaction
+from .models import FinanceBankVoucherBinding, RmbCashEvent, Transaction
 from .services import cash_events as cash
 
 
@@ -21,7 +21,11 @@ class CashEventPermission(BasePermission):
 def event_data(event):
     allocations = list(event.sources.order_by("source_id"))
     reference = sum((a.amount * Decimal(a.source_snapshot["exchange_rate"]) for a in allocations), Decimal("0")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    binding = FinanceBankVoucherBinding.objects.filter(event=event).select_related("voucher").first()
     return {
+        "private_voucher": binding.voucher_id if binding else None,
+        "private_voucher_sha256": binding.voucher.sha256 if binding else None,
+        "evidence_basis": "file_bound_v1" if binding else "historical_manual_reference_only",
         "id": event.pk, "event_no": event.event_no, "request_key": event.request_key,
         "kind": event.kind, "currency": event.currency, "amount": str(event.amount),
         "direction": event.direction, "bank_date": event.bank_date,
@@ -48,6 +52,46 @@ def event_data(event):
 
 class RmbCashEventViewSet(viewsets.ViewSet):
     permission_classes = [CashEventPermission]
+
+    def initialize_request(self, request, *args, **kwargs):
+        if request.method == "POST" and request.path.rstrip("/").endswith("/rmb-cash-events/voucher-upload"):
+            from .finance_closeout_api import FinanceVoucherUploadHandler
+            request.upload_handlers.insert(0, FinanceVoucherUploadHandler(request))
+        return super().initialize_request(request, *args, **kwargs)
+
+    @action(detail=False, methods=["post"], url_path="voucher-upload")
+    def voucher_upload(self, request):
+        import json
+        from .finance_closeout_api import VoucherTooLarge
+        from .services.finance_closeout import upload
+        cash.access(request.user, "create")
+        files = request.FILES
+        if getattr(request._request, "_csv_import_upload_limit_exceeded", None):
+            raise VoucherTooLarge()
+        try:
+            sources = json.loads(request.data.get("sources", "[]"))
+        except (ValueError, TypeError):
+            raise ValidationError("来源列表无效。")
+        if not isinstance(sources, list) or len(files.getlist("file")) != 1:
+            raise ValidationError("须上传一份文件并明确来源列表。")
+        obj = upload(files.get("file"), request.user, bank_sources=sources)
+        return Response({"id": obj.pk, "sha256": obj.sha256, "size": obj.size}, status=201)
+
+    @action(detail=True, methods=["post"], url_path="bind-voucher")
+    def bind_voucher(self, request, pk=None):
+        from .services.bank_vouchers import bind
+        bind(cash.get_event(request.user, pk=pk), request.data.get("private_voucher"), request.user)
+        return Response(event_data(cash.get_event(request.user, pk=pk)))
+
+    @action(detail=True, methods=["get"], url_path="voucher-download")
+    def voucher_download(self, request, pk=None):
+        from django.http import FileResponse
+        from .services.bank_vouchers import require_verified_file
+        obj = require_verified_file(cash.get_event(request.user, pk=pk), request.user)
+        response = FileResponse(obj.file.open("rb"), as_attachment=True, filename=obj.original_name, content_type="application/octet-stream")
+        response["Cache-Control"] = "private, no-store"
+        response["X-Content-Type-Options"] = "nosniff"
+        return response
 
     def list(self, request):
         cash.access(request.user)

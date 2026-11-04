@@ -118,8 +118,16 @@ class DuplicateMigrationTests(CashFixture, TransactionTestCase):
         pk = self.register(payload([self.receipt], key="MIGRATION-REVIEW"))
         review = CashDuplicateReview.objects.create(event_id=pk, candidate_ids=[123], reason="合成核实", actor={"kind": "development_superadmin"})
         executor = MigrationExecutor(connection)
+        # The new private-file guard is encountered before 0096 on the full
+        # reverse path. Keep the original guard's exact assertion independently.
+        from importlib import import_module
+        from types import SimpleNamespace
+        from django.apps import apps
+        original_guard = import_module("crm.migrations.0096_rmbcashevent_bank_counterparty_and_more").refuse_reverse_with_review_history
+        with self.assertRaisesRegex(RuntimeError, "Refusing to remove duplicate review audit history"):
+            original_guard(apps, SimpleNamespace(connection=connection))
         try:
-            with self.assertRaisesRegex(RuntimeError, "Refusing to remove duplicate review audit history"):
+            with self.assertRaisesRegex(RuntimeError, "银行私有凭证历史"):
                 executor.migrate([("crm", "0095_merge_fulfillment_idempotency")])
         finally:
             executor = MigrationExecutor(connection)

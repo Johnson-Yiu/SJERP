@@ -76,6 +76,11 @@ def product_dims(sku):
 
 def records(source, date_field, start, end, user=None):
     """Yield one item/adjustment/event at a time, keeping document IDs for distinct counts."""
+    if source == "actual_cash":
+        from .services.finance_closeout import reporting_events
+        for fact in reporting_events(user, start, end):
+            dims = {"direction": (fact.direction, "流入" if fact.direction == "income" else "流出"), "kind": (fact.kind, fact.kind), "currency": ("CNY", "CNY")}
+            yield fact.bank_date, fact.pk, dims, fact.bank_net_amount if fact.direction == "income" else -fact.bank_net_amount, Decimal(0), ""
     model = {"sales": Order, "purchase": PurchaseOrder, "profit": Order, "customers": Customer, "cash": Transaction, "actual_cash": RmbCashEvent, "inventory": InventoryMovement}[source]
     field = date_field + ("__date" if date_field.endswith("_at") else "")
     qs = model.objects.filter(**{field + "__range": (start, end)}).order_by("pk")
@@ -92,7 +97,8 @@ def records(source, date_field, start, end, user=None):
             qs = scope_transaction_queryset(qs, user)
     elif source == "actual_cash":
         # This source is intentionally independent from the legacy book cash source.
-        qs = qs.filter(status="confirmed")
+        from .services.finance_closeout import corrected_ids, historical_transfer_ids
+        qs = qs.filter(status="confirmed").exclude(pk__in=historical_transfer_ids() | corrected_ids()[1])
     elif source == "customers" and user is not None:
         qs = scope_customer_queryset(qs, user)
     elif source == "inventory": qs = qs.select_related("sku__product__category")

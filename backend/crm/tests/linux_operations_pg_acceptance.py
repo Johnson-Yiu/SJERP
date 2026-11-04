@@ -2,6 +2,7 @@
 import hashlib
 import base64
 import errno
+import getpass
 import json
 import os
 from pathlib import Path
@@ -34,6 +35,76 @@ from crm.services.operations_monitor import check_backup_freshness
 
 def command(*arguments, **kwargs):
     return subprocess.run(list(map(str, arguments)), check=True, timeout=300, **kwargs)
+
+
+def exercise_owned_timer(backend, monitor_script, config):
+    """Use task-owned transient timers and an OnFailure loopback alert."""
+    systemd_run, systemctl, logger = shutil.which("systemd-run"), shutil.which("systemctl"), shutil.which("logger")
+    if not systemd_run or not systemctl or not logger:
+        return {"status": "BLOCKED", "reason": "systemd-run, systemctl or logger unavailable"}
+    unit = "sunjack-ci-monitor-" + uuid.uuid4().hex
+    alert_unit = "sunjack-ci-alert-" + uuid.uuid4().hex
+    primary = None
+    receiver = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        receiver.bind(("127.0.0.1", 0))
+        receiver.settimeout(10)
+        alert_port = receiver.getsockname()[1]
+        alert = subprocess.run(["sudo", "-n", systemd_run, "--unit=" + alert_unit, "--on-active=1d", "--",
+                                logger, "--server", "127.0.0.1", "--port", str(alert_port), "--udp", "--priority", "user.err",
+                                "--", "SUNJACK synthetic scheduled failure alert"], capture_output=True, text=True, timeout=30)
+        if alert.returncode:
+            return {"status": "BLOCKED", "reason": (alert.stderr or alert.stdout).strip()[:500]}
+        start = subprocess.run(["sudo", "-n", systemd_run, "--unit=" + unit, "--on-active=2s",
+                                "--timer-property=AccuracySec=1s", "--property=Type=oneshot",
+                                "--property=User=" + getpass.getuser(), "--property=WorkingDirectory=" + str(backend),
+                                "--property=OnFailure=" + alert_unit + ".service", "--setenv=PYTHONPATH=" + str(backend),
+                                "--", sys.executable, str(monitor_script), "--config", str(config)],
+                               capture_output=True, text=True, timeout=30)
+        if start.returncode:
+            return {"status": "BLOCKED", "reason": (start.stderr or start.stdout).strip()[:500]}
+        deadline = time.monotonic() + 40
+        while time.monotonic() < deadline:
+            status = subprocess.run([systemctl, "show", unit + ".service", "--property=Result", "--value"],
+                                    capture_output=True, text=True, timeout=10)
+            if status.returncode == 0 and status.stdout.strip() == "exit-code":
+                code = subprocess.run([systemctl, "show", unit + ".service", "--property=ExecMainStatus", "--value"],
+                                      capture_output=True, text=True, timeout=10)
+                if code.returncode != 0 or code.stdout.strip() != "1":
+                    raise RuntimeError("Scheduled stale-backup monitor did not exit with status 1")
+                message, _ = receiver.recvfrom(4096)
+                if b"SUNJACK synthetic scheduled failure alert" not in message:
+                    raise RuntimeError("Scheduled OnFailure alert payload was not delivered to the owned receiver")
+                return {"status": "PASS", "monitor_exit": 1, "on_failure_alert": "task-owned loopback receiver",
+                        "unit_scope": "unique temporary runner units"}
+            time.sleep(1)
+        raise RuntimeError("Transient monitor timer did not run within 40 seconds")
+    except Exception as error:
+        primary = error
+        raise
+    finally:
+        receiver.close()
+        failures = []
+        # Only this function's random unit names are touched.
+        for name in (unit + ".timer", unit + ".service", alert_unit + ".timer", alert_unit + ".service"):
+            loaded = subprocess.run([systemctl, "show", name, "--property=LoadState", "--value"],
+                                    capture_output=True, text=True, timeout=10)
+            if loaded.returncode == 0 and loaded.stdout.strip() not in ("", "not-found"):
+                stopped = subprocess.run(["sudo", "-n", systemctl, "stop", name], capture_output=True, text=True, timeout=20)
+                if stopped.returncode:
+                    failures.append("stop " + name + ": " + stopped.stderr.strip()[:200])
+                if name.endswith(".service"):
+                    still_loaded = subprocess.run([systemctl, "show", name, "--property=LoadState", "--value"],
+                                                  capture_output=True, text=True, timeout=10)
+                    if still_loaded.returncode == 0 and still_loaded.stdout.strip() not in ("", "not-found"):
+                        reset = subprocess.run(["sudo", "-n", systemctl, "reset-failed", name], capture_output=True, text=True, timeout=20)
+                        if reset.returncode:
+                            failures.append("reset " + name + ": " + reset.stderr.strip()[:200])
+        if failures:
+            if primary is not None:
+                primary.add_note("Task-owned transient unit cleanup failed: " + "; ".join(failures))
+            else:
+                raise RuntimeError("Task-owned transient unit cleanup failed: " + "; ".join(failures))
 
 
 def main():
@@ -385,6 +456,7 @@ service.backup(media_root=root+"/media",destination=root+"/interrupt-test/must-n
         monitor = subprocess.run([sys.executable, str(monitor_script), "--config", str(monitor_config)],
                                  capture_output=True, text=True, timeout=60)
         assert monitor.returncode == 1 and json.loads(monitor.stdout)["status"] == "ALERT"
+        scheduler = exercise_owned_timer(backend, monitor_script, monitor_config)
         logger = shutil.which("logger")
         if logger:
             alert = subprocess.run([logger, "-s", "-p", "user.err", "--", "SUNJACK synthetic missed-backup alert"],
@@ -445,6 +517,7 @@ service.backup(media_root=root+"/media",destination=root+"/interrupt-test/must-n
             "missed_schedule_detected": True,
             "monitor_healthy_and_failure_exit_codes_verified": True, "local_alert_entry": local_alert,
             "loopback_alert_delivery": loopback_alert,
+            "transient_scheduler": scheduler,
             "wrong_key_rejected": True, "actual_enospc_rejected": True, "interrupted_backup_not_published": True,
             "real_cleanup_permission_failure_reported": True,
             "replicas_same_runner_only": True, "tables": len(before["tables"]),

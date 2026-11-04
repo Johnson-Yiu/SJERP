@@ -15,6 +15,8 @@ import tempfile
 import time
 import zipfile
 import hashlib
+import uuid
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
@@ -26,12 +28,17 @@ from isolated_postgres_drill import run_tool, tool
 from crm.services.postgres_drill_backup import IsolatedPostgresDrill
 from crm.services.operations_postgres import MaintenanceBackup, database_state
 from crm.services.operations_copy import digest
+from crm.services.operations_copy import verified_copy
+from crm.services.operations_crypto import crypt_file
+from crm.services.operations_retention import prune_verified
 import psycopg
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--postgres-bin", required=True)
+    parser.add_argument("--gpg")
+    parser.add_argument("--msys-paths", action="store_true")
     args = parser.parse_args()
     root = Path(tempfile.mkdtemp(prefix="sunjack-iss018-pg17-"))
     pg = root / "pgsql" / "bin"
@@ -124,12 +131,39 @@ def main():
             raise AssertionError("wrong archive digest accepted")
         with drill._connect(drill.source) as connection:
             assert database_state(connection) == before
+        retention_removed = None
+        if args.gpg:
+            backup_root, replica_root = root / "encrypted", root / "local-replicas"
+            backup_root.mkdir(); replica_root.mkdir()
+            owner = uuid.uuid4().hex
+            (backup_root / ".sunjack-backup-owner").write_text(owner, encoding="ascii")
+            key = secrets.token_hex(32).encode()
+            receipts = []
+            now = datetime.now(timezone.utc)
+            for age in (1, 2, 3):
+                name = "backup-" + uuid.uuid4().hex + ".gpg"
+                encrypted = backup_root / name
+                cipher = crypt_file(archive, encrypted, executable=args.gpg, key=key,
+                                    expected_sha256=backup["sha256"], msys_paths=args.msys_paths)
+                plaintext = root / ("verified-" + str(age) + ".zip")
+                crypt_file(encrypted, plaintext, executable=args.gpg, key=key, expected_sha256=backup["sha256"],
+                           msys_paths=args.msys_paths, decrypt=True)
+                replica = replica_root / name
+                verified_copy(encrypted, replica, cipher["sha256"])
+                receipts.append({"name": name, "sha256": cipher["sha256"], "restore_verified_sha256": cipher["sha256"],
+                                 "replica": str(replica), "created_at": (now-timedelta(days=age)).isoformat()})
+            retention = prune_verified(backup_root, owner_id=owner, receipts=receipts, keep=1,
+                                       minimum_age_seconds=86400, now=now, execute=True)
+            retention_removed = len(retention["removed"])
+            assert retention_removed == 2 and len(list(replica_root.iterdir())) == 3
+            assert (backup_root / receipts[0]["name"]).exists()
         result = {"status": "PASS", "scope": "real-PG17-with-simulated-media-fence", "active_session_rejected": active_rejected,
                           "other_login_rejected": login_rejected, "restored_verified": restored["verified"],
                           "audit_truncate_rejected": restored["audit_truncate_rejected"], "source_unchanged": True,
                           "audit_row_mutations_rejected": restored["audit_row_mutations_rejected"],
                           "real_lock_competition_rejected": lock_competition_rejected, "bad_digest_rejected": bad_digest_rejected,
                           "failed_restore_rejected_and_owned_database_removed": failed_restore_rejected,
+                          "encrypted_retention_removed": retention_removed, "replicas_are_local_only": True,
                           "tables": len(before["tables"]), "rows": sum(v["rows"] for v in before["tables"].values()),
                           "seconds": round(time.monotonic()-clock, 3)}
     finally:

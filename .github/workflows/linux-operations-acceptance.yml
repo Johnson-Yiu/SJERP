@@ -1,6 +1,9 @@
 name: Linux operations acceptance
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - codex/linux-operations-acceptance-20261104
 permissions:
   contents: read
 jobs:

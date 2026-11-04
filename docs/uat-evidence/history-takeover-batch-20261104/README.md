@@ -47,8 +47,9 @@
 | 前端 Node 单测 | 177 passed，0 failed | [frontend-node-unit.log](logs/frontend-node-unit.log) |
 | 有效 Vitest | 70 files / 684 tests passed | [frontend-vitest-valid-suite-final.log](logs/frontend-vitest-valid-suite-final.log) |
 | 前端生产构建 | 成功；Vite 报告主 JS chunk 超过 500 kB 的体积警告 | [frontend-build.log](logs/frontend-build.log) |
+| GitHub CI（[run 41819456898](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41819456898)，被测代码提交 `f1df7b544b7a317c6c2a2160b8441be3b6188cd6`） | 三项全部成功：backend 1196 tests / 49 skipped；backend-postgres（PostgreSQL 17）1196 / 30 skipped，历史承接并发用例通过；frontend Node 177、Vitest 70 files、Playwright stability 和生产构建通过 | [backend CI 原始日志](logs/github-ci-backend-41819456898.log)、[PostgreSQL 17 CI 原始日志](logs/github-ci-postgres17-41819456898.log)、[frontend CI 原始日志](logs/github-ci-frontend-41819456898.log) |
 
-完整 CRM 测试有 52 项跳过；专项并发用例使用 `TransactionTestCase`，显式要求 PostgreSQL 行锁。当前机器没有可用 PostgreSQL 17 服务，因此本地并发验收不能用 SQLite 替代。GitHub PostgreSQL 17 job 先后发现并修复三项测试夹具问题：缺少创建申请 helper、ISS-052 413 用例留下的临时上传目录设置污染，以及 CSV 审计迁移拒绝回滚时未恢复之前已逐项撤销的 0095–0098 迁移。第三项会导致后续 PG 并发夹具访问的 `crm_historytakeoverapplication` 表缺失；回滚测试现无论成功或预期拒绝都会在 `finally` 中恢复迁移图，并断言承接表恢复。最新 PG17 原始失败日志已保存：[首次 helper 失败](logs/github-postgres17-initial-failure.zip)、[上传目录设置污染](logs/github-postgres17-upload-isolation-failure.zip)、[迁移状态未恢复](logs/github-postgres17-migration-restore-failure.zip)。这轮回归后会重新运行完整三项 CI；结果以本报告更新记录为准。Vitest 最终执行有效测试目录并排除了使用 `node:test` 的 `detail-drawer-typography.spec.js`；初次广域自动发现日志保留供追溯，不计为有效 Vitest 结果。
+专项并发用例使用 `TransactionTestCase`，显式要求 PostgreSQL 行锁；本机 SQLite 的一次跳过不作为并发通过证据。GitHub PostgreSQL 17 job 先后发现并修复三项测试夹具问题：缺少创建申请 helper、ISS-052 413 用例留下的临时上传目录设置污染，以及 CSV 审计迁移拒绝回滚时未恢复之前已逐项撤销的 0095–0098 迁移。第三项会导致后续 PG 并发夹具访问的 `crm_historytakeoverapplication` 表缺失；回滚测试现无论成功或预期拒绝都会在 `finally` 中恢复迁移图，并断言承接表恢复。随后 run `41819456898` 的 backend、frontend 和 PostgreSQL 17 三项均通过；其中 PG 专项并发测试明确为 `ok`。失败过程日志与最终成功日志均保留在上表链接中；CI 输出的单次临时测试密钥已替换为 `[REDACTED_EPHEMERAL_CI_SECRET]`，没有真实生产密钥。Vitest 执行有效测试目录并排除了使用 `node:test` 的 `detail-drawer-typography.spec.js`；初次广域自动发现日志保留供追溯，不计为有效 Vitest 结果。
 
 ## Chrome 与模板证据
 
